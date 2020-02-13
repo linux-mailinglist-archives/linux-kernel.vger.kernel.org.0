@@ -2,64 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C53115C149
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:22:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 335CD15C141
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:20:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727646AbgBMPWP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:22:15 -0500
-Received: from foss.arm.com ([217.140.110.172]:47730 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726937AbgBMPWO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:22:14 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 663CD328;
-        Thu, 13 Feb 2020 07:22:14 -0800 (PST)
-Received: from [10.1.195.59] (ifrit.cambridge.arm.com [10.1.195.59])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5FE623F68E;
-        Thu, 13 Feb 2020 07:22:12 -0800 (PST)
-Subject: Re: [PATCH v3 5/7] cpufreq: add function to get the hardware max
- frequency
-To:     Ionela Voinescu <ionela.voinescu@arm.com>
-Cc:     catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com,
-        maz@kernel.org, suzuki.poulose@arm.com, sudeep.holla@arm.com,
-        lukasz.luba@arm.com, rjw@rjwysocki.net, peterz@infradead.org,
-        mingo@redhat.com, vincent.guittot@linaro.org,
-        viresh.kumar@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-References: <20200211184542.29585-1-ionela.voinescu@arm.com>
- <20200211184542.29585-6-ionela.voinescu@arm.com>
- <b63a4a47-99e5-9c71-73be-740aedde4714@arm.com>
- <20200213125918.GA2397@arm.com>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <cf821516-e66b-94d4-ee63-5f94602a7cff@arm.com>
-Date:   Thu, 13 Feb 2020 15:22:11 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727716AbgBMPUQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:20:16 -0500
+Received: from gateway24.websitewelcome.com ([192.185.51.202]:29849 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725781AbgBMPUP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:20:15 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id 74AA826C53
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 09:20:06 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 2GHejKvRhRP4z2GHejmOYb; Thu, 13 Feb 2020 09:20:06 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=FzwndPNG9cL8oQtA52+rBVe5lruQNhcNOn+JDkai228=; b=EGPpPhRYbskr6+VmGSSowwhgSS
+        9xIje5KbQw7090l6jCfXnLcyAUhOT03gaAeAlpVdLeZBIlk181fQ+SuoFXZhwVGcjhbv2TkRJepoH
+        2iK0H1JfjzliWgwCrfBd8/yhcSkokWXt7szg/FfrK8m72TEP3Zhqk+WunpEyBxKZlPgH3mv53ppQJ
+        iLaVhL0zGjK8aqdy4m1FMFoT32LQ/6H/4P89OGDrgzy7JuL2dg9yuYDqhmw430/Q9uY6pgK6JD8MT
+        M5Y/EzydgpeKCe8twYrmStpmJi7yYj8FI5WLIXnMXkSE7RocZ1nxz+ejeg4SbHoOA8esiytzJoZsK
+        nux3Jrcg==;
+Received: from [200.68.140.15] (port=13063 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j2GHc-003Adg-P2; Thu, 13 Feb 2020 09:20:04 -0600
+Date:   Thu, 13 Feb 2020 09:22:41 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Peter Oberparleiter <oberpar@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] gcov: gcc_4_7: Replace zero-length array with flexible-array
+ member
+Message-ID: <20200213152241.GA877@embeddedor>
 MIME-Version: 1.0
-In-Reply-To: <20200213125918.GA2397@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.68.140.15
+X-Source-L: No
+X-Exim-ID: 1j2GHc-003Adg-P2
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [200.68.140.15]:13063
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 21
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/13/20 12:59 PM, Ionela Voinescu wrote:
->> What about intel_pstate / turbo stuff? IIRC one of Giovanni's issues was that
->> turbo freq is not always reported as the max freq. Dunno if we can do
->> anything about it; at the very least maybe document the caveat?
->>
-> 
-> Okay, I can add details in the description in regards to potential
-> reasons to overwrite this function. But basically this is one of the
-> reasons for making this a weak function. The best information we can
-> generically get for maximum hardware frequency is cpuinfo.max_freq.
-> But if platforms have the possibility to obtain this differently from
-> either hardware or firmware they can overwrite this.
-> 
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-Right, that would be handled by a different implementation of
-that function, so this wasn't too relevant of a comment. Sorry!
+struct foo {
+        int stuff;
+        struct boo array[];
+};
+
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
+
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
+
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
+
+This issue was found with the help of Coccinelle.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ kernel/gcov/gcc_4_7.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/gcov/gcc_4_7.c b/kernel/gcov/gcc_4_7.c
+index ec37563674d6..908fdf5098c3 100644
+--- a/kernel/gcov/gcc_4_7.c
++++ b/kernel/gcov/gcc_4_7.c
+@@ -68,7 +68,7 @@ struct gcov_fn_info {
+ 	unsigned int ident;
+ 	unsigned int lineno_checksum;
+ 	unsigned int cfg_checksum;
+-	struct gcov_ctr_info ctrs[0];
++	struct gcov_ctr_info ctrs[];
+ };
+ 
+ /**
+-- 
+2.25.0
 
