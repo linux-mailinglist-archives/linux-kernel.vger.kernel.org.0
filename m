@@ -2,65 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D850C15C053
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 15:30:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCC6615C094
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 15:45:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727589AbgBMOaG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 09:30:06 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:60584 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726780AbgBMOaG (ORCPT
+        id S1727581AbgBMOpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 09:45:34 -0500
+Received: from os.inf.tu-dresden.de ([141.76.48.99]:42832 "EHLO
+        os.inf.tu-dresden.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727347AbgBMOpd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 09:30:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=KTXaMIDU0VI58k/CHPXmfgCSDh5X+93IZYgYYvIbxGE=; b=QXUdB0/6AYsObrEOZa7o4zPxjv
-        UC2iUMIw08PUkLzXQ1OQAtizLfmmBWEkBW/lGlqfp7M0pym9jVcl7kZK/ic6rltzWi8GT5JzjmOlB
-        xkqeUwFBAMD+Pf7pV6M2+XgBCL8C46dw966pg6hG+xm1EZ36yaMzhKmOkodRVxrPXzy8rDs2jaQjg
-        VRdAFafSYz/LKKI4xNk0NB1RTHg+ta/h30n5fao/Su7dOFGe2C2LZb6a1Mo733D4OrFUUEedegjea
-        V1nCfMOeF0/bPJ7k0/cRQEvadIZH8n7Uzkan1jx3F/UFGmz4Os4ZX2y3a3IYTDMgoipisXgBY450w
-        GdED8D/Q==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j2FVF-00084J-Mh; Thu, 13 Feb 2020 14:30:05 +0000
-Date:   Thu, 13 Feb 2020 06:30:05 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 06/25] mm: Allow hpages to be arbitrary order
-Message-ID: <20200213143005.GL7778@bombadil.infradead.org>
-References: <20200212041845.25879-1-willy@infradead.org>
- <20200212041845.25879-7-willy@infradead.org>
- <20200213141107.ftfnenli72eburei@box>
+        Thu, 13 Feb 2020 09:45:33 -0500
+X-Greylist: delayed 1583 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 Feb 2020 09:45:32 EST
+Received: from [2002:8d4c:3001:48::120:84] (helo=jupiter)
+        by os.inf.tu-dresden.de with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256) (Exim 4.93.0.3)
+        id 1j2FKe-0000pY-M0; Thu, 13 Feb 2020 15:19:08 +0100
+From:   Maksym Planeta <mplaneta@os.inf.tu-dresden.de>
+To:     mplaneta@os.inf.tu-dresden.de, Zhou Wang <wangzhou1@hisilicon.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Song Liu <song@kernel.org>, Gao Xiang <xiang@kernel.org>,
+        Chao Yu <chao@kernel.org>, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org
+Subject: [PATCH] Remove WQ_CPU_INTENSIVE flag from unbound wq's
+Date:   Thu, 13 Feb 2020 15:18:23 +0100
+Message-Id: <20200213141823.2174236-1-mplaneta@os.inf.tu-dresden.de>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200213141107.ftfnenli72eburei@box>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 05:11:07PM +0300, Kirill A. Shutemov wrote:
-> On Tue, Feb 11, 2020 at 08:18:26PM -0800, Matthew Wilcox wrote:
-> > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> > 
-> > Remove the assumption in hpage_nr_pages() that compound pages are
-> > necessarily PMD sized.  The return type needs to be signed as we need
-> > to use the negative value, eg when calling update_lru_size().
-> 
-> But should it be long?
-> Any reason to use macros instead of inline function?
+The documentation [1] says that WQ_CPU_INTENSIVE is "meaningless" for
+unbound wq. I remove this flag from places where unbound queue is
+allocated. This is supposed to improve code readability.
 
-Huh, that does look like a bit of a weird change now you point it out.
-I'll change it back:
+1. https://www.kernel.org/doc/html/latest/core-api/workqueue.html#flags
 
- static inline int hpage_nr_pages(struct page *page)
+Signed-off-by: Maksym Planeta <mplaneta@os.inf.tu-dresden.de>
+---
+ drivers/crypto/hisilicon/qm.c | 3 +--
+ drivers/md/dm-crypt.c         | 2 +-
+ drivers/md/dm-verity-target.c | 2 +-
+ drivers/md/raid5.c            | 2 +-
+ fs/erofs/zdata.c              | 2 +-
+ 5 files changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/crypto/hisilicon/qm.c b/drivers/crypto/hisilicon/qm.c
+index b57da5ef8b5b..4a39cb2c6a0b 100644
+--- a/drivers/crypto/hisilicon/qm.c
++++ b/drivers/crypto/hisilicon/qm.c
+@@ -1148,8 +1148,7 @@ struct hisi_qp *hisi_qm_create_qp(struct hisi_qm *qm, u8 alg_type)
+ 	qp->qp_id = qp_id;
+ 	qp->alg_type = alg_type;
+ 	INIT_WORK(&qp->work, qm_qp_work_func);
+-	qp->wq = alloc_workqueue("hisi_qm", WQ_UNBOUND | WQ_HIGHPRI |
+-				 WQ_CPU_INTENSIVE | WQ_MEM_RECLAIM, 0);
++	qp->wq = alloc_workqueue("hisi_qm", WQ_UNBOUND | WQ_HIGHPRI | WQ_MEM_RECLAIM, 0);
+ 	if (!qp->wq) {
+ 		ret = -EFAULT;
+ 		goto err_free_qp_mem;
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index c6a529873d0f..44d56325fa27 100644
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -3032,7 +3032,7 @@ static int crypt_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+ 						  1, devname);
+ 	else
+ 		cc->crypt_queue = alloc_workqueue("kcryptd/%s",
+-						  WQ_CPU_INTENSIVE | WQ_MEM_RECLAIM | WQ_UNBOUND,
++						  WQ_MEM_RECLAIM | WQ_UNBOUND,
+ 						  num_online_cpus(), devname);
+ 	if (!cc->crypt_queue) {
+ 		ti->error = "Couldn't create kcryptd queue";
+diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
+index 0d61e9c67986..20f92c7ea07e 100644
+--- a/drivers/md/dm-verity-target.c
++++ b/drivers/md/dm-verity-target.c
+@@ -1190,7 +1190,7 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ 	}
+ 
+ 	/* WQ_UNBOUND greatly improves performance when running on ramdisk */
+-	v->verify_wq = alloc_workqueue("kverityd", WQ_CPU_INTENSIVE | WQ_MEM_RECLAIM | WQ_UNBOUND, num_online_cpus());
++	v->verify_wq = alloc_workqueue("kverityd", WQ_MEM_RECLAIM | WQ_UNBOUND, num_online_cpus());
+ 	if (!v->verify_wq) {
+ 		ti->error = "Cannot allocate workqueue";
+ 		r = -ENOMEM;
+diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+index ba00e9877f02..cd93a1731b82 100644
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -8481,7 +8481,7 @@ static int __init raid5_init(void)
+ 	int ret;
+ 
+ 	raid5_wq = alloc_workqueue("raid5wq",
+-		WQ_UNBOUND|WQ_MEM_RECLAIM|WQ_CPU_INTENSIVE|WQ_SYSFS, 0);
++		WQ_UNBOUND|WQ_MEM_RECLAIM|WQ_SYSFS, 0);
+ 	if (!raid5_wq)
+ 		return -ENOMEM;
+ 
+diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+index 80e47f07d946..b2a679f720e9 100644
+--- a/fs/erofs/zdata.c
++++ b/fs/erofs/zdata.c
+@@ -43,7 +43,7 @@ void z_erofs_exit_zip_subsystem(void)
+ static inline int z_erofs_init_workqueue(void)
  {
--	if (unlikely(PageTransHuge(page)))
--		return HPAGE_PMD_NR;
--	return 1;
-+	return compound_nr(page);
- }
+ 	const unsigned int onlinecpus = num_possible_cpus();
+-	const unsigned int flags = WQ_UNBOUND | WQ_HIGHPRI | WQ_CPU_INTENSIVE;
++	const unsigned int flags = WQ_UNBOUND | WQ_HIGHPRI;
+ 
+ 	/*
+ 	 * no need to spawn too many threads, limiting threads could minimum
+-- 
+2.24.1
+
