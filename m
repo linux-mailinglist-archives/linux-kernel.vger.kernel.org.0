@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9957A15C521
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF41015C234
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:31:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388051AbgBMPxe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:53:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43442 "EHLO mail.kernel.org"
+        id S2387992AbgBMPah (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:30:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387507AbgBMP0E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:26:04 -0500
+        id S1729408AbgBMP12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:27:28 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CBC4C2469A;
-        Thu, 13 Feb 2020 15:26:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0ABAF206DB;
+        Thu, 13 Feb 2020 15:27:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607563;
-        bh=dxP9b95RA/Ex7UPTD+619gJTLhBTm3vGZUaa0dKoiBc=;
+        s=default; t=1581607648;
+        bh=IiXe6jCzo8BSAkTH7IipY/0w/iKdCxdpdW2+rrn8XmY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M49WWvSHj26fss+d/SlSb8pxLlMledyxvAZuB542I4BklZxW2BM0WUmPSgS0dBC3x
-         jEiCOS/auvzAbq9rXjFRSALcBIgTzDjgyYY+rDxfXZSTNISzx/+DXCI8Msp7a1rT3T
-         CZGpVLeiSWLnApeG5zl3AguTGIRZWx8a2yIyGn7s=
+        b=FqNctNpwfhxXQySG9JiCNnyomEiI3mzNN2NCacRCK5NWNCqwZSeLTqr2G8O2DUq3u
+         SLw3SlVHB6FhD19PtClIl8HYdPK8rtlxko88CzRzVLOqTfsS16hh2aN5+IAAgVJu/9
+         wduqHl8GPWFUsq+zrJLc7ofYdxg8Oj2ZZZh+B7PI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Doug Meyer <dmeyer@gigaio.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 4.14 145/173] PCI/switchtec: Fix vep_vector_number ioread width
+        stable@vger.kernel.org, Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 5.4 41/96] arm64: dts: qcom: msm8998: Fix tcsr syscon size
 Date:   Thu, 13 Feb 2020 07:20:48 -0800
-Message-Id: <20200213152008.236429353@linuxfoundation.org>
+Message-Id: <20200213151855.123670622@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
-References: <20200213151931.677980430@linuxfoundation.org>
+In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
+References: <20200213151839.156309910@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Logan Gunthorpe <logang@deltatee.com>
+From: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
 
-commit 9375646b4cf03aee81bc6c305aa18cc80b682796 upstream.
+commit 05caa5bf9cab9983dd7a50428c46b7e617ba20d6 upstream.
 
-vep_vector_number is actually a 16 bit register which should be read with
-ioread16() instead of ioread32().
+The tcsr syscon region is really 0x40000 in size.  We need access to the
+full region so that we can access the axi resets when managing the
+modem subsystem.
 
-Fixes: 080b47def5e5 ("MicroSemi Switchtec management interface driver")
-Link: https://lore.kernel.org/r/20200106190337.2428-3-logang@deltatee.com
-Reported-by: Doug Meyer <dmeyer@gigaio.com>
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Fixes: c7833949564e ("arm64: dts: qcom: msm8998: Add smem related nodes")
+Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Link: https://lore.kernel.org/r/20191107045948.4341-1-jeffrey.l.hugo@gmail.com
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/switch/switchtec.c |    2 +-
+ arch/arm64/boot/dts/qcom/msm8998.dtsi |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/pci/switch/switchtec.c
-+++ b/drivers/pci/switch/switchtec.c
-@@ -1399,7 +1399,7 @@ static int switchtec_init_isr(struct swi
- 	if (nvecs < 0)
- 		return nvecs;
+--- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+@@ -985,7 +985,7 @@
  
--	event_irq = ioread32(&stdev->mmio_part_cfg->vep_vector_number);
-+	event_irq = ioread16(&stdev->mmio_part_cfg->vep_vector_number);
- 	if (event_irq < 0 || event_irq >= nvecs)
- 		return -EFAULT;
+ 		tcsr_mutex_regs: syscon@1f40000 {
+ 			compatible = "syscon";
+-			reg = <0x01f40000 0x20000>;
++			reg = <0x01f40000 0x40000>;
+ 		};
  
+ 		tlmm: pinctrl@3400000 {
 
 
