@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E51F615C1BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:26:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 578AA15C1FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:28:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729144AbgBMPZ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:25:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37070 "EHLO mail.kernel.org"
+        id S1729560AbgBMP2G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:28:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728618AbgBMPYO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:24:14 -0500
+        id S1728429AbgBMPZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:46 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1066B246C0;
-        Thu, 13 Feb 2020 15:24:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 640712469A;
+        Thu, 13 Feb 2020 15:25:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607453;
-        bh=GnbcFCki+GpOvyTW/7oFyQksBt67GS7u47CLJkCeKj4=;
+        s=default; t=1581607545;
+        bh=dhbP0bTNFvA2W+EO+RuzAkourtrN9TVWvXr59sDHD88=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tHOgX1Szi4rAFB5IQ8626rRlhQJuAurNY8L+JCc6LKVFJ7+OeU3TcAIJwP3a70zAm
-         fEFpAd0G0Jd48tbJB9OBqEkPSEhjqN7RBEpw10c04+KLdouzVphF3ZkzrPT0GEQutC
-         PB+eTACbspIOFtlNLxTvQzBvt1gDxP+Ixve2+f0c=
+        b=N9ZciP2Ra79EPZ0Bd7c/DDRh2rYH9KIWqdfDDT/9CZ6A/mwjAKVPXI97pXQl+Q7gt
+         uQCfc19NE5V1VYm81nt4s6JCNp3e6Vp+rxHH/v4on3XMZo9ZIzASli/CHhrzLZ3VUQ
+         J7javmcDvEiJbmwvtR6TiO/UVj2ommA/2B67k4K4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Filipe Manana <fdmanana@suse.com>,
         David Sterba <dsterba@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 081/116] Btrfs: fix assertion failure on fsync with NO_HOLES enabled
-Date:   Thu, 13 Feb 2020 07:20:25 -0800
-Message-Id: <20200213151914.306329468@linuxfoundation.org>
+Subject: [PATCH 4.14 125/173] Btrfs: fix race between adding and putting tree mod seq elements and nodes
+Date:   Thu, 13 Feb 2020 07:20:28 -0800
+Message-Id: <20200213152003.824933287@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
-References: <20200213151842.259660170@linuxfoundation.org>
+In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
+References: <20200213151931.677980430@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,112 +48,245 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Filipe Manana <fdmanana@suse.com>
 
-[ Upstream commit 0ccc3876e4b2a1559a4dbe3126dda4459d38a83b ]
+[ Upstream commit 7227ff4de55d931bbdc156c8ef0ce4f100c78a5b ]
 
-Back in commit a89ca6f24ffe4 ("Btrfs: fix fsync after truncate when
-no_holes feature is enabled") I added an assertion that is triggered when
-an inline extent is found to assert that the length of the (uncompressed)
-data the extent represents is the same as the i_size of the inode, since
-that is true most of the time I couldn't find or didn't remembered about
-any exception at that time. Later on the assertion was expanded twice to
-deal with a case of a compressed inline extent representing a range that
-matches the sector size followed by an expanding truncate, and another
-case where fallocate can update the i_size of the inode without adding
-or updating existing extents (if the fallocate range falls entirely within
-the first block of the file). These two expansion/fixes of the assertion
-were done by commit 7ed586d0a8241 ("Btrfs: fix assertion on fsync of
-regular file when using no-holes feature") and commit 6399fb5a0b69a
-("Btrfs: fix assertion failure during fsync in no-holes mode").
-These however missed the case where an falloc expands the i_size of an
-inode to exactly the sector size and inline extent exists, for example:
+There is a race between adding and removing elements to the tree mod log
+list and rbtree that can lead to use-after-free problems.
 
- $ mkfs.btrfs -f -O no-holes /dev/sdc
- $ mount /dev/sdc /mnt
+Consider the following example that explains how/why the problems happens:
 
- $ xfs_io -f -c "pwrite -S 0xab 0 1096" /mnt/foobar
- wrote 1096/1096 bytes at offset 0
- 1 KiB, 1 ops; 0.0002 sec (4.448 MiB/sec and 4255.3191 ops/sec)
+1) Task A has mod log element with sequence number 200. It currently is
+   the only element in the mod log list;
 
- $ xfs_io -c "falloc 1096 3000" /mnt/foobar
- $ xfs_io -c "fsync" /mnt/foobar
- Segmentation fault
+2) Task A calls btrfs_put_tree_mod_seq() because it no longer needs to
+   access the tree mod log. When it enters the function, it initializes
+   'min_seq' to (u64)-1. Then it acquires the lock 'tree_mod_seq_lock'
+   before checking if there are other elements in the mod seq list.
+   Since the list it empty, 'min_seq' remains set to (u64)-1. Then it
+   unlocks the lock 'tree_mod_seq_lock';
 
- $ dmesg
- [701253.602385] assertion failed: len == i_size || (len == fs_info->sectorsize && btrfs_file_extent_compression(leaf, extent) != BTRFS_COMPRESS_NONE) || (len < i_size && i_size < fs_info->sectorsize), file: fs/btrfs/tree-log.c, line: 4727
- [701253.602962] ------------[ cut here ]------------
- [701253.603224] kernel BUG at fs/btrfs/ctree.h:3533!
- [701253.603503] invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC PTI
- [701253.603774] CPU: 2 PID: 7192 Comm: xfs_io Tainted: G        W         5.0.0-rc8-btrfs-next-45 #1
- [701253.604054] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.2-0-gf9626ccb91-prebuilt.qemu-project.org 04/01/2014
- [701253.604650] RIP: 0010:assfail.constprop.23+0x18/0x1a [btrfs]
- (...)
- [701253.605591] RSP: 0018:ffffbb48c186bc48 EFLAGS: 00010286
- [701253.605914] RAX: 00000000000000de RBX: ffff921d0a7afc08 RCX: 0000000000000000
- [701253.606244] RDX: 0000000000000000 RSI: ffff921d36b16868 RDI: ffff921d36b16868
- [701253.606580] RBP: ffffbb48c186bcf0 R08: 0000000000000000 R09: 0000000000000000
- [701253.606913] R10: 0000000000000003 R11: 0000000000000000 R12: ffff921d05d2de18
- [701253.607247] R13: ffff921d03b54000 R14: 0000000000000448 R15: ffff921d059ecf80
- [701253.607769] FS:  00007f14da906700(0000) GS:ffff921d36b00000(0000) knlGS:0000000000000000
- [701253.608163] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- [701253.608516] CR2: 000056087ea9f278 CR3: 00000002268e8001 CR4: 00000000003606e0
- [701253.608880] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
- [701253.609250] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
- [701253.609608] Call Trace:
- [701253.609994]  btrfs_log_inode+0xdfb/0xe40 [btrfs]
- [701253.610383]  btrfs_log_inode_parent+0x2be/0xa60 [btrfs]
- [701253.610770]  ? do_raw_spin_unlock+0x49/0xc0
- [701253.611150]  btrfs_log_dentry_safe+0x4a/0x70 [btrfs]
- [701253.611537]  btrfs_sync_file+0x3b2/0x440 [btrfs]
- [701253.612010]  ? do_sysinfo+0xb0/0xf0
- [701253.612552]  do_fsync+0x38/0x60
- [701253.612988]  __x64_sys_fsync+0x10/0x20
- [701253.613360]  do_syscall_64+0x60/0x1b0
- [701253.613733]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
- [701253.614103] RIP: 0033:0x7f14da4e66d0
- (...)
- [701253.615250] RSP: 002b:00007fffa670fdb8 EFLAGS: 00000246 ORIG_RAX: 000000000000004a
- [701253.615647] RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007f14da4e66d0
- [701253.616047] RDX: 000056087ea9c260 RSI: 000056087ea9c260 RDI: 0000000000000003
- [701253.616450] RBP: 0000000000000001 R08: 0000000000000020 R09: 0000000000000010
- [701253.616854] R10: 000000000000009b R11: 0000000000000246 R12: 000056087ea9c260
- [701253.617257] R13: 000056087ea9c240 R14: 0000000000000000 R15: 000056087ea9dd10
- (...)
- [701253.619941] ---[ end trace e088d74f132b6da5 ]---
+3) Before task A acquires the lock 'tree_mod_log_lock', task B adds
+   itself to the mod seq list through btrfs_get_tree_mod_seq() and gets a
+   sequence number of 201;
 
-Updating the assertion again to allow for this particular case would result
-in a meaningless assertion, plus there is currently no risk of logging
-content that would result in any corruption after a log replay if the size
-of the data encoded in an inline extent is greater than the inode's i_size
-(which is not currently possibe either with or without compression),
-therefore just remove the assertion.
+4) Some other task, name it task C, modifies a btree and because there
+   elements in the mod seq list, it adds a tree mod elem to the tree
+   mod log rbtree. That node added to the mod log rbtree is assigned
+   a sequence number of 202;
 
+5) Task B, which is doing fiemap and resolving indirect back references,
+   calls btrfs get_old_root(), with 'time_seq' == 201, which in turn
+   calls tree_mod_log_search() - the search returns the mod log node
+   from the rbtree with sequence number 202, created by task C;
+
+6) Task A now acquires the lock 'tree_mod_log_lock', starts iterating
+   the mod log rbtree and finds the node with sequence number 202. Since
+   202 is less than the previously computed 'min_seq', (u64)-1, it
+   removes the node and frees it;
+
+7) Task B still has a pointer to the node with sequence number 202, and
+   it dereferences the pointer itself and through the call to
+   __tree_mod_log_rewind(), resulting in a use-after-free problem.
+
+This issue can be triggered sporadically with the test case generic/561
+from fstests, and it happens more frequently with a higher number of
+duperemove processes. When it happens to me, it either freezes the VM or
+it produces a trace like the following before crashing:
+
+  [ 1245.321140] general protection fault: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC PTI
+  [ 1245.321200] CPU: 1 PID: 26997 Comm: pool Not tainted 5.5.0-rc6-btrfs-next-52 #1
+  [ 1245.321235] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.0-0-ga698c8995f-prebuilt.qemu.org 04/01/2014
+  [ 1245.321287] RIP: 0010:rb_next+0x16/0x50
+  [ 1245.321307] Code: ....
+  [ 1245.321372] RSP: 0018:ffffa151c4d039b0 EFLAGS: 00010202
+  [ 1245.321388] RAX: 6b6b6b6b6b6b6b6b RBX: ffff8ae221363c80 RCX: 6b6b6b6b6b6b6b6b
+  [ 1245.321409] RDX: 0000000000000001 RSI: 0000000000000000 RDI: ffff8ae221363c80
+  [ 1245.321439] RBP: ffff8ae20fcc4688 R08: 0000000000000002 R09: 0000000000000000
+  [ 1245.321475] R10: ffff8ae20b120910 R11: 00000000243f8bb1 R12: 0000000000000038
+  [ 1245.321506] R13: ffff8ae221363c80 R14: 000000000000075f R15: ffff8ae223f762b8
+  [ 1245.321539] FS:  00007fdee1ec7700(0000) GS:ffff8ae236c80000(0000) knlGS:0000000000000000
+  [ 1245.321591] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  [ 1245.321614] CR2: 00007fded4030c48 CR3: 000000021da16003 CR4: 00000000003606e0
+  [ 1245.321642] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+  [ 1245.321668] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+  [ 1245.321706] Call Trace:
+  [ 1245.321798]  __tree_mod_log_rewind+0xbf/0x280 [btrfs]
+  [ 1245.321841]  btrfs_search_old_slot+0x105/0xd00 [btrfs]
+  [ 1245.321877]  resolve_indirect_refs+0x1eb/0xc60 [btrfs]
+  [ 1245.321912]  find_parent_nodes+0x3dc/0x11b0 [btrfs]
+  [ 1245.321947]  btrfs_check_shared+0x115/0x1c0 [btrfs]
+  [ 1245.321980]  ? extent_fiemap+0x59d/0x6d0 [btrfs]
+  [ 1245.322029]  extent_fiemap+0x59d/0x6d0 [btrfs]
+  [ 1245.322066]  do_vfs_ioctl+0x45a/0x750
+  [ 1245.322081]  ksys_ioctl+0x70/0x80
+  [ 1245.322092]  ? trace_hardirqs_off_thunk+0x1a/0x1c
+  [ 1245.322113]  __x64_sys_ioctl+0x16/0x20
+  [ 1245.322126]  do_syscall_64+0x5c/0x280
+  [ 1245.322139]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+  [ 1245.322155] RIP: 0033:0x7fdee3942dd7
+  [ 1245.322177] Code: ....
+  [ 1245.322258] RSP: 002b:00007fdee1ec6c88 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+  [ 1245.322294] RAX: ffffffffffffffda RBX: 00007fded40210d8 RCX: 00007fdee3942dd7
+  [ 1245.322314] RDX: 00007fded40210d8 RSI: 00000000c020660b RDI: 0000000000000004
+  [ 1245.322337] RBP: 0000562aa89e7510 R08: 0000000000000000 R09: 00007fdee1ec6d44
+  [ 1245.322369] R10: 0000000000000073 R11: 0000000000000246 R12: 00007fdee1ec6d48
+  [ 1245.322390] R13: 00007fdee1ec6d40 R14: 00007fded40210d0 R15: 00007fdee1ec6d50
+  [ 1245.322423] Modules linked in: ....
+  [ 1245.323443] ---[ end trace 01de1e9ec5dff3cd ]---
+
+Fix this by ensuring that btrfs_put_tree_mod_seq() computes the minimum
+sequence number and iterates the rbtree while holding the lock
+'tree_mod_log_lock' in write mode. Also get rid of the 'tree_mod_seq_lock'
+lock, since it is now redundant.
+
+Fixes: bd989ba359f2ac ("Btrfs: add tree modification log functions")
+Fixes: 097b8a7c9e48e2 ("Btrfs: join tree mod log code with the code holding back delayed refs")
 CC: stable@vger.kernel.org # 4.4+
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
 Signed-off-by: Filipe Manana <fdmanana@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/tree-log.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ fs/btrfs/ctree.c             | 8 ++------
+ fs/btrfs/ctree.h             | 6 ++----
+ fs/btrfs/delayed-ref.c       | 8 ++++----
+ fs/btrfs/disk-io.c           | 1 -
+ fs/btrfs/tests/btrfs-tests.c | 1 -
+ 5 files changed, 8 insertions(+), 16 deletions(-)
 
-diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
-index 7ee573cddde96..f79682937faf4 100644
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -4443,13 +4443,8 @@ static int btrfs_log_trailing_hole(struct btrfs_trans_handle *trans,
- 					struct btrfs_file_extent_item);
+diff --git a/fs/btrfs/ctree.c b/fs/btrfs/ctree.c
+index a7b9859449c5a..f5a8c0d26cf36 100644
+--- a/fs/btrfs/ctree.c
++++ b/fs/btrfs/ctree.c
+@@ -354,12 +354,10 @@ u64 btrfs_get_tree_mod_seq(struct btrfs_fs_info *fs_info,
+ 			   struct seq_list *elem)
+ {
+ 	write_lock(&fs_info->tree_mod_log_lock);
+-	spin_lock(&fs_info->tree_mod_seq_lock);
+ 	if (!elem->seq) {
+ 		elem->seq = btrfs_inc_tree_mod_seq(fs_info);
+ 		list_add_tail(&elem->list, &fs_info->tree_mod_seq_list);
+ 	}
+-	spin_unlock(&fs_info->tree_mod_seq_lock);
+ 	write_unlock(&fs_info->tree_mod_log_lock);
  
- 		if (btrfs_file_extent_type(leaf, extent) ==
--		    BTRFS_FILE_EXTENT_INLINE) {
--			len = btrfs_file_extent_inline_len(leaf,
--							   path->slots[0],
--							   extent);
--			ASSERT(len == i_size);
-+		    BTRFS_FILE_EXTENT_INLINE)
- 			return 0;
--		}
+ 	return elem->seq;
+@@ -379,7 +377,7 @@ void btrfs_put_tree_mod_seq(struct btrfs_fs_info *fs_info,
+ 	if (!seq_putting)
+ 		return;
  
- 		len = btrfs_file_extent_num_bytes(leaf, extent);
- 		/* Last extent goes beyond i_size, no need to log a hole. */
+-	spin_lock(&fs_info->tree_mod_seq_lock);
++	write_lock(&fs_info->tree_mod_log_lock);
+ 	list_del(&elem->list);
+ 	elem->seq = 0;
+ 
+@@ -390,19 +388,17 @@ void btrfs_put_tree_mod_seq(struct btrfs_fs_info *fs_info,
+ 				 * blocker with lower sequence number exists, we
+ 				 * cannot remove anything from the log
+ 				 */
+-				spin_unlock(&fs_info->tree_mod_seq_lock);
++				write_unlock(&fs_info->tree_mod_log_lock);
+ 				return;
+ 			}
+ 			min_seq = cur_elem->seq;
+ 		}
+ 	}
+-	spin_unlock(&fs_info->tree_mod_seq_lock);
+ 
+ 	/*
+ 	 * anything that's lower than the lowest existing (read: blocked)
+ 	 * sequence number can be removed from the tree.
+ 	 */
+-	write_lock(&fs_info->tree_mod_log_lock);
+ 	tm_root = &fs_info->tree_mod_log;
+ 	for (node = rb_first(tm_root); node; node = next) {
+ 		next = rb_next(node);
+diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+index 664710848e6f1..5412b12491cb8 100644
+--- a/fs/btrfs/ctree.h
++++ b/fs/btrfs/ctree.h
+@@ -869,14 +869,12 @@ struct btrfs_fs_info {
+ 	struct list_head delayed_iputs;
+ 	struct mutex cleaner_delayed_iput_mutex;
+ 
+-	/* this protects tree_mod_seq_list */
+-	spinlock_t tree_mod_seq_lock;
+ 	atomic64_t tree_mod_seq;
+-	struct list_head tree_mod_seq_list;
+ 
+-	/* this protects tree_mod_log */
++	/* this protects tree_mod_log and tree_mod_seq_list */
+ 	rwlock_t tree_mod_log_lock;
+ 	struct rb_root tree_mod_log;
++	struct list_head tree_mod_seq_list;
+ 
+ 	atomic_t nr_async_submits;
+ 	atomic_t async_submit_draining;
+diff --git a/fs/btrfs/delayed-ref.c b/fs/btrfs/delayed-ref.c
+index d56bd36254681..45714f1c43a31 100644
+--- a/fs/btrfs/delayed-ref.c
++++ b/fs/btrfs/delayed-ref.c
+@@ -281,7 +281,7 @@ void btrfs_merge_delayed_refs(struct btrfs_trans_handle *trans,
+ 	if (head->is_data)
+ 		return;
+ 
+-	spin_lock(&fs_info->tree_mod_seq_lock);
++	read_lock(&fs_info->tree_mod_log_lock);
+ 	if (!list_empty(&fs_info->tree_mod_seq_list)) {
+ 		struct seq_list *elem;
+ 
+@@ -289,7 +289,7 @@ void btrfs_merge_delayed_refs(struct btrfs_trans_handle *trans,
+ 					struct seq_list, list);
+ 		seq = elem->seq;
+ 	}
+-	spin_unlock(&fs_info->tree_mod_seq_lock);
++	read_unlock(&fs_info->tree_mod_log_lock);
+ 
+ 	ref = list_first_entry(&head->ref_list, struct btrfs_delayed_ref_node,
+ 			       list);
+@@ -317,7 +317,7 @@ int btrfs_check_delayed_seq(struct btrfs_fs_info *fs_info,
+ 	struct seq_list *elem;
+ 	int ret = 0;
+ 
+-	spin_lock(&fs_info->tree_mod_seq_lock);
++	read_lock(&fs_info->tree_mod_log_lock);
+ 	if (!list_empty(&fs_info->tree_mod_seq_list)) {
+ 		elem = list_first_entry(&fs_info->tree_mod_seq_list,
+ 					struct seq_list, list);
+@@ -331,7 +331,7 @@ int btrfs_check_delayed_seq(struct btrfs_fs_info *fs_info,
+ 		}
+ 	}
+ 
+-	spin_unlock(&fs_info->tree_mod_seq_lock);
++	read_unlock(&fs_info->tree_mod_log_lock);
+ 	return ret;
+ }
+ 
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 6c6c15fdeef71..44b15617c7b9f 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -2455,7 +2455,6 @@ int open_ctree(struct super_block *sb,
+ 	spin_lock_init(&fs_info->fs_roots_radix_lock);
+ 	spin_lock_init(&fs_info->delayed_iput_lock);
+ 	spin_lock_init(&fs_info->defrag_inodes_lock);
+-	spin_lock_init(&fs_info->tree_mod_seq_lock);
+ 	spin_lock_init(&fs_info->super_lock);
+ 	spin_lock_init(&fs_info->qgroup_op_lock);
+ 	spin_lock_init(&fs_info->buffer_lock);
+diff --git a/fs/btrfs/tests/btrfs-tests.c b/fs/btrfs/tests/btrfs-tests.c
+index d3f25376a0f86..6c92101e80928 100644
+--- a/fs/btrfs/tests/btrfs-tests.c
++++ b/fs/btrfs/tests/btrfs-tests.c
+@@ -115,7 +115,6 @@ struct btrfs_fs_info *btrfs_alloc_dummy_fs_info(u32 nodesize, u32 sectorsize)
+ 	spin_lock_init(&fs_info->qgroup_op_lock);
+ 	spin_lock_init(&fs_info->super_lock);
+ 	spin_lock_init(&fs_info->fs_roots_radix_lock);
+-	spin_lock_init(&fs_info->tree_mod_seq_lock);
+ 	mutex_init(&fs_info->qgroup_ioctl_lock);
+ 	mutex_init(&fs_info->qgroup_rescan_lock);
+ 	rwlock_init(&fs_info->tree_mod_log_lock);
 -- 
 2.20.1
 
