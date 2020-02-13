@@ -2,118 +2,204 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E029D15B88E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 05:25:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29D6915B881
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 05:23:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729674AbgBMEZM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Feb 2020 23:25:12 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:18996 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729358AbgBMEZM (ORCPT
+        id S1729648AbgBMEXg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Feb 2020 23:23:36 -0500
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:41685 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729440AbgBMEXf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Feb 2020 23:25:12 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e44cf8a0002>; Wed, 12 Feb 2020 20:24:43 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 12 Feb 2020 20:25:11 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 12 Feb 2020 20:25:11 -0800
-Received: from [10.2.168.250] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 13 Feb
- 2020 04:25:11 +0000
-Subject: Re: [PATCH 1/1] checkpatch: support "base-commit:" format
-To:     Joe Perches <joe@perches.com>
-CC:     Andy Whitcroft <apw@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20200212233221.47662-1-jhubbard@nvidia.com>
- <20200212233221.47662-2-jhubbard@nvidia.com>
- <a22937adb1bb364e4f5b8f30ee928a2df5cc226c.camel@perches.com>
- <2dab786b686735ec0c4ee614c64448d78c67a51d.camel@perches.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <5b8d6faf-4eec-ae8a-42e4-0b16713ed288@nvidia.com>
-Date:   Wed, 12 Feb 2020 20:22:14 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
-MIME-Version: 1.0
-In-Reply-To: <2dab786b686735ec0c4ee614c64448d78c67a51d.camel@perches.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1581567883; bh=CH0W1IgPYwgWyTV2KHOAEhDBrtMU65kM4pCC54fWw+0=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=sFkA2Qy936atZnIJPkXIUXcq1h54enMuxBxrb+d/HnleDChtcUZ5u7zT3oW7wD76Q
-         T02wSRzNM0/9fSD1KiIm0CVhyDHip9rgMKoYKf0ii758rUiZbsorlxux0hf4zBikFD
-         gEjjQjt07XWWBkuh5lLdExIU2WeK9tmzPpoYs7GRS+FzJ2slPd5PzkQ3SYGZTTywaJ
-         ieZHQOzjQ/hkv2T8lLCWSidVsw7Og7jRszYIJ6Vibo1JzvSk2OaivDak8iu1GKnO4i
-         jb/T1zAAXk86TwAb79Dtjv9l64RQTgdVNa3dY7b8ZaEAJs6lIpbNHVqh2FCWK0GvYz
-         ngPuJJW/Zhn0Q==
+        Wed, 12 Feb 2020 23:23:35 -0500
+Received: by mail-pg1-f202.google.com with SMTP id z10so2908430pgz.8
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2020 20:23:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=y/l4QcnQmnFHC9Qtzrj2Afn8rUnVhJiL0LNmFafuuSU=;
+        b=f8031fcjT53HNVYPQmy3REJdJzaNg4KA0YlKgivEBB0IgusTy6l5NrDsjO+74g/3MO
+         T/Vb0EDI1sxEx42SrmfdfLfjh4mPNxTPUp9WnQzU+a0BZrhqgSJ7dUnq3Ga2sVBjqkR6
+         ssvzfFcNDEFLMRh4SQTE/ENZvF0Wg+BU4k20OnlQm8dUK2v9i5Wz6RtRNWtijgecAIW6
+         jH+wI1UpJ0Jl4ul+BW1fYGBopP5gSWOTUelkXxn/EvSAO/JJ6DvL/LZiQSROH43LMsBh
+         7XnNuXGRZxeyZ5UhalN78/amh/N3NAhsSV+v21huqPf3Q7xd1RW0ZU3FDjLvYiP/KaiA
+         gfiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=y/l4QcnQmnFHC9Qtzrj2Afn8rUnVhJiL0LNmFafuuSU=;
+        b=cJcn19PBS8vVQP+tHAnNAd/zMNl7cpAVaEGptadY9lMzTEdVfYj1/jlVYA6z8j2dAM
+         2SSU/7XY0rWGjezJToxbn+rqLpXqIiAJazEB7HDyl9IcJcZg1bV2Fy2VDhdwr6XlWWha
+         tRE8vK5e8h+fCYxbqAWtGIA3eRJfMGfIceMdO1/iuiVvk7Bx99wISww+wiHzm+n8K6vB
+         xsz4iN8e1r3Iyr7svO5UhHXqoyBkMElEPMNGS8dkSif/omIVWgSQRF+8uUwfpx3URrip
+         HufSoO/PBaDn2dh+wYTJ2UCRyFwW59gLIn+19vSh9jJGl8BxRxJtUJBTGFzsJBQ2NlOH
+         qasw==
+X-Gm-Message-State: APjAAAV1uNvRYbSlvDImVZBHWni4xw4olJ2Fht8mG7inIHLQd70A9AWd
+        uBh31nNAqZwRYBkJpeGtkqrZ9AedFfY=
+X-Google-Smtp-Source: APXvYqyr6m8cQz82vDkf58+STTVBDflPhp/EHbKYlIUwxat+GQenNnCGOf7c6sVmCb2xlV0X7sa3JOMNRTF1
+X-Received: by 2002:a65:5a48:: with SMTP id z8mr15465779pgs.157.1581567815093;
+ Wed, 12 Feb 2020 20:23:35 -0800 (PST)
+Date:   Wed, 12 Feb 2020 20:23:31 -0800
+In-Reply-To: <20200212222922.5dfa9f36@oasis.local.home>
+Message-Id: <20200213042331.157606-1-zzyiwei@google.com>
+Mime-Version: 1.0
+References: <20200212222922.5dfa9f36@oasis.local.home>
+X-Mailer: git-send-email 2.25.0.225.g125e21ebc7-goog
+Subject: [PATCH v3] gpu/trace: add gpu memory tracepoints
+From:   zzyiwei@google.com
+To:     rostedt@goodmis.org, linux-kernel@vger.kernel.org
+Cc:     prahladk@google.com, joelaf@google.com, android-kernel@google.com,
+        Yiwei Zhang <zzyiwei@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/12/20 5:32 PM, Joe Perches wrote:
-> On Wed, 2020-02-12 at 17:06 -0800, Joe Perches wrote:
->> On Wed, 2020-02-12 at 15:32 -0800, John Hubbard wrote:
->>> In order to support the get-lore-mbox.py tool described in [1], I ran:
->>>
->>>      git format-patch --base=<commit> --cover-letter <revrange>
->>>
->>> ...which generated a "base-commit: <commit-hash>" tag at the end of the
->>> cover letter. However, checkpatch.pl generated an error upon encounting
->>> "base-commit:" in the cover letter:
->>>
->>>      "ERROR: Please use git commit description style..."
->>>
->>> ...because it found the "commit" keyword, and failed to recognize that
->>> it was part of the "base-commit" phrase, and as such, should not be
->>> subjected to the same commit description style rules.
->>>
->>> Update checkpatch.pl to include a special case for "base-commit:", so
->>> that that tag no longer generates a checkpatch error.
-> []
->>> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> []
->>> @@ -2761,6 +2761,7 @@ sub process {
->>>   
->>>   # Check for git id commit length and improperly formed commit descriptions
->>>   		if ($in_commit_log && !$commit_log_possible_stack_dump &&
->>> +		    $line !~ /base-commit:/ &&
->>
->> If this base-commit: entry is only at the start of line,
+From: Yiwei Zhang <zzyiwei@google.com>
 
+This change adds the below gpu memory tracepoint:
+gpu_mem/gpu_mem_total: track global or process gpu memory total counters
 
-As far as I can tell, we should be able to rely on that, yes.
+Signed-off-by: Yiwei Zhang <zzyiwei@google.com>
+---
+ drivers/Kconfig                   |  2 ++
+ drivers/gpu/Makefile              |  1 +
+ drivers/gpu/trace/Kconfig         |  4 +++
+ drivers/gpu/trace/Makefile        |  3 ++
+ drivers/gpu/trace/trace_gpu_mem.c | 13 +++++++
+ include/trace/events/gpu_mem.h    | 57 +++++++++++++++++++++++++++++++
+ 6 files changed, 80 insertions(+)
+ create mode 100644 drivers/gpu/trace/Kconfig
+ create mode 100644 drivers/gpu/trace/Makefile
+ create mode 100644 drivers/gpu/trace/trace_gpu_mem.c
+ create mode 100644 include/trace/events/gpu_mem.h
 
-
->> I presume this should actually be
->>
->> 		    $line !~ /^base-commit:/ &&
->> or maybe
->> 		    $line !~ /^\s*base-commit:/ &&
->>
->>>   		    $line !~ /^\s*(?:Link|Patchwork|http|https|BugLink):/i &&
-> 
-> and probably better to just add it to this line instead like
-> 
->   		    $line !~ /^\s*(?:Link|Patchwork|http|https|BugLink|base-commit):/i &&
->  
-
-Yes, that looks nice. I'll send a v2 doing it that way.
-
-
-thanks,
+diff --git a/drivers/Kconfig b/drivers/Kconfig
+index 8befa53f43be..e0eda1a5c3f9 100644
+--- a/drivers/Kconfig
++++ b/drivers/Kconfig
+@@ -200,6 +200,8 @@ source "drivers/thunderbolt/Kconfig"
+ 
+ source "drivers/android/Kconfig"
+ 
++source "drivers/gpu/trace/Kconfig"
++
+ source "drivers/nvdimm/Kconfig"
+ 
+ source "drivers/dax/Kconfig"
+diff --git a/drivers/gpu/Makefile b/drivers/gpu/Makefile
+index f17d01f076c7..835c88318cec 100644
+--- a/drivers/gpu/Makefile
++++ b/drivers/gpu/Makefile
+@@ -5,3 +5,4 @@
+ obj-$(CONFIG_TEGRA_HOST1X)	+= host1x/
+ obj-y			+= drm/ vga/
+ obj-$(CONFIG_IMX_IPUV3_CORE)	+= ipu-v3/
++obj-$(CONFIG_TRACE_GPU_MEM)		+= trace/
+diff --git a/drivers/gpu/trace/Kconfig b/drivers/gpu/trace/Kconfig
+new file mode 100644
+index 000000000000..c24e9edd022e
+--- /dev/null
++++ b/drivers/gpu/trace/Kconfig
+@@ -0,0 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0-only
++
++config TRACE_GPU_MEM
++	bool
+diff --git a/drivers/gpu/trace/Makefile b/drivers/gpu/trace/Makefile
+new file mode 100644
+index 000000000000..b70fbdc5847f
+--- /dev/null
++++ b/drivers/gpu/trace/Makefile
+@@ -0,0 +1,3 @@
++# SPDX-License-Identifier: GPL-2.0
++
++obj-$(CONFIG_TRACE_GPU_MEM) += trace_gpu_mem.o
+diff --git a/drivers/gpu/trace/trace_gpu_mem.c b/drivers/gpu/trace/trace_gpu_mem.c
+new file mode 100644
+index 000000000000..01e855897b6d
+--- /dev/null
++++ b/drivers/gpu/trace/trace_gpu_mem.c
+@@ -0,0 +1,13 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * GPU memory trace points
++ *
++ * Copyright (C) 2020 Google, Inc.
++ */
++
++#include <linux/module.h>
++
++#define CREATE_TRACE_POINTS
++#include <trace/events/gpu_mem.h>
++
++EXPORT_TRACEPOINT_SYMBOL(gpu_mem_total);
+diff --git a/include/trace/events/gpu_mem.h b/include/trace/events/gpu_mem.h
+new file mode 100644
+index 000000000000..1897822a9150
+--- /dev/null
++++ b/include/trace/events/gpu_mem.h
+@@ -0,0 +1,57 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * GPU memory trace points
++ *
++ * Copyright (C) 2020 Google, Inc.
++ */
++
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM gpu_mem
++
++#if !defined(_TRACE_GPU_MEM_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_GPU_MEM_H
++
++#include <linux/tracepoint.h>
++
++/*
++ * The gpu_memory_total event indicates that there's an update to either the
++ * global or process total gpu memory counters.
++ *
++ * This event should be emitted whenever the kernel device driver allocates,
++ * frees, imports, unimports memory in the GPU addressable space.
++ *
++ * @gpu_id: This is the gpu id.
++ *
++ * @pid: Put 0 for global total, while positive pid for process total.
++ *
++ * @size: Virtual size of the allocation in bytes.
++ *
++ */
++TRACE_EVENT(gpu_mem_total,
++
++	TP_PROTO(uint32_t gpu_id, uint32_t pid, uint64_t size),
++
++	TP_ARGS(gpu_id, pid, size),
++
++	TP_STRUCT__entry(
++		__field(uint32_t, gpu_id)
++		__field(uint32_t, pid)
++		__field(uint64_t, size)
++	),
++
++	TP_fast_assign(
++		__entry->gpu_id = gpu_id;
++		__entry->pid = pid;
++		__entry->size = size;
++	),
++
++	TP_printk("gpu_id=%u pid=%u size=%llu",
++		__entry->gpu_id,
++		__entry->pid,
++		__entry->size)
++);
++
++#endif /* _TRACE_GPU_MEM_H */
++
++/* This part must be outside protection */
++#include <trace/define_trace.h>
 -- 
-John Hubbard
-NVIDIA
+2.25.0.225.g125e21ebc7-goog
+
