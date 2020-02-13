@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8283015C282
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:35:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8E5C15C44A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388184AbgBMPcY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:32:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56452 "EHLO mail.kernel.org"
+        id S1729960AbgBMPpp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:45:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728445AbgBMP2k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:28:40 -0500
+        id S2387439AbgBMP1Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:27:25 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D52E24676;
-        Thu, 13 Feb 2020 15:28:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 529432468D;
+        Thu, 13 Feb 2020 15:27:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607719;
-        bh=AzyPehGb52ECJ+zdCScD6NmW/QG6jNq0X+C2XumulvU=;
+        s=default; t=1581607644;
+        bh=8o5e555fo6HVVk33P4Q8tLT7prYOfmlPR4EsrzZIo9g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LsbSZOz3rHjdc00g1Uqc2xoY/QQmcTpn8xm6s65IAssHf6zB6yeZXZQpJB4m8Wneu
-         qHVB5Uu0UBQ71tHzs002nFjyABh3KC6WbskobfPbCcbU5m2bGbfc1ht6BCi37OkXju
-         unXR/8F7N2fmvf+naACm/S+TvLA0ypFZrzjNZBqk=
+        b=h+pw4i7nRZlG8EZRPrcrLPvPOdEyQJXO9XCt6fRQPZkK+eMpA1iq2dACRB+Rq4DY+
+         RPQdw+muETkY2StTG2X8IGU2Y6BSUIiF+icUbQY7Xud3rzwBL1HFUCeB4baQq6wvTV
+         /0QvNRuZJilUOt2IWFa8zTTk+tO6EchrXQFYMKZk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH 5.5 062/120] ARM: dts: meson8: use the actual frequency for the GPUs 182.1MHz OPP
-Date:   Thu, 13 Feb 2020 07:20:58 -0800
-Message-Id: <20200213151922.555702018@linuxfoundation.org>
+        stable@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 5.4 52/96] soc: qcom: rpmhpd: Set active_only for active only power domains
+Date:   Thu, 13 Feb 2020 07:20:59 -0800
+Message-Id: <20200213151859.509408868@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
-References: <20200213151901.039700531@linuxfoundation.org>
+In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
+References: <20200213151839.156309910@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Douglas Anderson <dianders@chromium.org>
 
-commit fe634a7a9a57fb736e39fb71aa9adc6448a90f94 upstream.
+commit 5d0d4d42bed0090d3139e7c5ca1587d76d48add6 upstream.
 
-The clock setup on Meson8 cannot achieve a Mali frequency of exactly
-182.15MHz. The vendor driver uses "FCLK_DIV7 / 2" for this frequency,
-which translates to 2550MHz / 7 / 2 = 182142857Hz.
-Update the GPU operating point to that specific frequency to not confuse
-myself when comparing the frequency from the .dts with the actual clock
-rate on the system.
+The 'active_only' attribute was accidentally never set to true for any
+power domains meaning that all the code handling this attribute was
+dead.
 
-Fixes: 7d3f6b536e72c9 ("ARM: dts: meson8: add the Mali-450 MP6 GPU")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+NOTE that the RPM power domain code (as opposed to the RPMh one) gets
+this right.
+
+Acked-by: Rajendra Nayak <rnayak@codeaurora.org>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Fixes: 279b7e8a62cc ("soc: qcom: rpmhpd: Add RPMh power domain driver")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Link: https://lore.kernel.org/r/20190214173633.211000-1-dianders@chromium.org
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/meson8.dtsi |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/soc/qcom/rpmhpd.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/arm/boot/dts/meson8.dtsi
-+++ b/arch/arm/boot/dts/meson8.dtsi
-@@ -129,8 +129,8 @@
- 	gpu_opp_table: gpu-opp-table {
- 		compatible = "operating-points-v2";
+--- a/drivers/soc/qcom/rpmhpd.c
++++ b/drivers/soc/qcom/rpmhpd.c
+@@ -93,6 +93,7 @@ static struct rpmhpd sdm845_mx = {
  
--		opp-182150000 {
--			opp-hz = /bits/ 64 <182150000>;
-+		opp-182142857 {
-+			opp-hz = /bits/ 64 <182142857>;
- 			opp-microvolt = <1150000>;
- 		};
- 		opp-318750000 {
+ static struct rpmhpd sdm845_mx_ao = {
+ 	.pd = { .name = "mx_ao", },
++	.active_only = true,
+ 	.peer = &sdm845_mx,
+ 	.res_name = "mx.lvl",
+ };
+@@ -107,6 +108,7 @@ static struct rpmhpd sdm845_cx = {
+ 
+ static struct rpmhpd sdm845_cx_ao = {
+ 	.pd = { .name = "cx_ao", },
++	.active_only = true,
+ 	.peer = &sdm845_cx,
+ 	.parent = &sdm845_mx_ao.pd,
+ 	.res_name = "cx.lvl",
 
 
