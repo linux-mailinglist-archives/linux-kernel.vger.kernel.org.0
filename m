@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09BF515C163
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:23:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2518B15C1F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:28:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728212AbgBMPW7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:22:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60798 "EHLO mail.kernel.org"
+        id S1728888AbgBMP16 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:27:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728107AbgBMPWq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:22:46 -0500
+        id S2387483AbgBMPZk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:40 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E387124699;
-        Thu, 13 Feb 2020 15:22:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90C5F24693;
+        Thu, 13 Feb 2020 15:25:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607365;
-        bh=wgQjZs1ddBRdFqlffXn/FGMRtYF9eRuUuRtsGAyWpRA=;
+        s=default; t=1581607539;
+        bh=QU5hlEcn8A5qyauh+f5DdOPlzw74Il9ZLeMFavcEx8c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UzVzQE5KvvNPxjPUNFeGq48Oeo/uvsEwuxPrNM3cV+3ao7dtHN64iElheoTdAsAxu
-         X4Byiu+JLDMB8vuCrtxp39uCeZSkU/6b9KqUg71b6U2AgorZF43XmeG6XWf2O3eCHv
-         k7k1fExDXDnra7iYfdV90kBNycngPVTuFxYt5nh8=
+        b=CiHcqdUr9OTviKbiQSWHnqTR9HzmRE59Df2WkGe5DhBADZlL+x/3Wuy7IS9ki/jgr
+         LE9uP3Hzyf90drwACldYYL1GnYZHop2RMfDpNq9PhhXrdvU0B9OOdE7qDDUfy0SL1n
+         1fNuc9FSgC2rFooNDGam+t4XCCAAI/bXH7VC928w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 53/91] ppp: Adjust indentation into ppp_async_input
-Date:   Thu, 13 Feb 2020 07:20:10 -0800
-Message-Id: <20200213151842.139701943@linuxfoundation.org>
+        stable@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
+        Richard Weinberger <richard@nod.at>
+Subject: [PATCH 4.14 108/173] ubi: fastmap: Fix inverted logic in seen selfcheck
+Date:   Thu, 13 Feb 2020 07:20:11 -0800
+Message-Id: <20200213151959.862589401@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
-References: <20200213151821.384445454@linuxfoundation.org>
+In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
+References: <20200213151931.677980430@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,61 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Sascha Hauer <s.hauer@pengutronix.de>
 
-commit 08cbc75f96029d3092664213a844a5e25523aa35 upstream.
+commit ef5aafb6e4e9942a28cd300bdcda21ce6cbaf045 upstream.
 
-Clang warns:
+set_seen() sets the bit corresponding to the PEB number in the bitmap,
+so when self_check_seen() wants to find PEBs that haven't been seen we
+have to print the PEBs that have their bit cleared, not the ones which
+have it set.
 
-../drivers/net/ppp/ppp_async.c:877:6: warning: misleading indentation;
-statement is not part of the previous 'if' [-Wmisleading-indentation]
-                                ap->rpkt = skb;
-                                ^
-../drivers/net/ppp/ppp_async.c:875:5: note: previous statement is here
-                                if (!skb)
-                                ^
-1 warning generated.
-
-This warning occurs because there is a space before the tab on this
-line. Clean up this entire block's indentation so that it is consistent
-with the Linux kernel coding style and clang no longer warns.
-
-Fixes: 6722e78c9005 ("[PPP]: handle misaligned accesses")
-Link: https://github.com/ClangBuiltLinux/linux/issues/800
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 5d71afb00840 ("ubi: Use bitmaps in Fastmap self-check code")
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ppp/ppp_async.c |   18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/mtd/ubi/fastmap.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ppp/ppp_async.c
-+++ b/drivers/net/ppp/ppp_async.c
-@@ -878,15 +878,15 @@ ppp_async_input(struct asyncppp *ap, con
- 				skb = dev_alloc_skb(ap->mru + PPP_HDRLEN + 2);
- 				if (!skb)
- 					goto nomem;
-- 				ap->rpkt = skb;
-- 			}
-- 			if (skb->len == 0) {
-- 				/* Try to get the payload 4-byte aligned.
-- 				 * This should match the
-- 				 * PPP_ALLSTATIONS/PPP_UI/compressed tests in
-- 				 * process_input_packet, but we do not have
-- 				 * enough chars here to test buf[1] and buf[2].
-- 				 */
-+				ap->rpkt = skb;
-+			}
-+			if (skb->len == 0) {
-+				/* Try to get the payload 4-byte aligned.
-+				 * This should match the
-+				 * PPP_ALLSTATIONS/PPP_UI/compressed tests in
-+				 * process_input_packet, but we do not have
-+				 * enough chars here to test buf[1] and buf[2].
-+				 */
- 				if (buf[0] != PPP_ALLSTATIONS)
- 					skb_reserve(skb, 2 + (buf[0] & 1));
- 			}
+--- a/drivers/mtd/ubi/fastmap.c
++++ b/drivers/mtd/ubi/fastmap.c
+@@ -73,7 +73,7 @@ static int self_check_seen(struct ubi_de
+ 		return 0;
+ 
+ 	for (pnum = 0; pnum < ubi->peb_count; pnum++) {
+-		if (test_bit(pnum, seen) && ubi->lookuptbl[pnum]) {
++		if (!test_bit(pnum, seen) && ubi->lookuptbl[pnum]) {
+ 			ubi_err(ubi, "self-check failed for PEB %d, fastmap didn't see it", pnum);
+ 			ret = -EINVAL;
+ 		}
 
 
