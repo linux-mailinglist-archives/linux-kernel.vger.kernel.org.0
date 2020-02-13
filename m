@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52A6A15C409
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:52:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D175015C423
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387615AbgBMP0g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:26:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39440 "EHLO mail.kernel.org"
+        id S1728993AbgBMP1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:27:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728858AbgBMPYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:24:55 -0500
+        id S1728928AbgBMPZK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:10 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5447E246A4;
-        Thu, 13 Feb 2020 15:24:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54DE124689;
+        Thu, 13 Feb 2020 15:25:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607495;
-        bh=XBzjrddAAyUu1vsIm5IwAqfqOvGPpOdXctWjSZOa7YI=;
+        s=default; t=1581607509;
+        bh=uCk4q5ynbHYhKxkn9XvhbYEQ4vr65YGL+KGVX3uiaGI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Dtkk8ASgIGVzzoKwMH5mZyJdz6+ImB1bS+uKv9VG+/mJT8G+OdufufbpcxP9R/WvY
-         Oq87bL7MNFqxkHgJFFeDfOqGvs5F/kNgnlLoQXtWxLE07+8PsXbugAkidpTiDrQSkF
-         MFkUkXYIM2B4sVBxnr14zuHrCaVLYUIU7mS3TzXs=
+        b=clEhN5SvDFWaqHxHZA46SMCsu8GpGHW1KbNL1RKOjKiY+QTO3pMq/9K5VNFaERjdY
+         DoesGR/o5eqHy0y8lbGyNg4aVAs85+O4Tk/C7db3VvuS540CiWR4eL2aVZC6HLXZJr
+         mqibvHbgvLNMb814dswONHUJK38QT+HgQCkClocI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Quinn Tran <qutran@marvell.com>,
-        Himanshu Madhani <hmadhani@marvell.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 047/173] scsi: qla2xxx: Fix mtcp dump collection failure
-Date:   Thu, 13 Feb 2020 07:19:10 -0800
-Message-Id: <20200213151945.853627319@linuxfoundation.org>
+        stable@vger.kernel.org, Chengguang Xu <cgxu519@mykernel.net>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 4.14 051/173] f2fs: code cleanup for f2fs_statfs_project()
+Date:   Thu, 13 Feb 2020 07:19:14 -0800
+Message-Id: <20200213151946.833585404@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
 References: <20200213151931.677980430@linuxfoundation.org>
@@ -44,37 +43,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Quinn Tran <qutran@marvell.com>
+From: Chengguang Xu <cgxu519@mykernel.net>
 
-commit 641e0efddcbde52461e017136acd3ce7f2ef0c14 upstream.
+commit bf2cbd3c57159c2b639ee8797b52ab5af180bf83 upstream.
 
-MTCP dump failed due to MB Reg 10 was picking garbage data from stack
-memory.
+Calling min_not_zero() to simplify complicated prjquota
+limit comparison in f2fs_statfs_project().
 
-Fixes: 81178772b636a ("[SCSI] qla2xxx: Implemetation of mctp.")
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20191217220617.28084-14-hmadhani@marvell.com
-Signed-off-by: Quinn Tran <qutran@marvell.com>
-Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_mbx.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/f2fs/super.c |   16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_mbx.c
-+++ b/drivers/scsi/qla2xxx/qla_mbx.c
-@@ -5853,9 +5853,8 @@ qla2x00_dump_mctp_data(scsi_qla_host_t *
- 	mcp->mb[7] = LSW(MSD(req_dma));
- 	mcp->mb[8] = MSW(addr);
- 	/* Setting RAM ID to valid */
--	mcp->mb[10] |= BIT_7;
- 	/* For MCTP RAM ID is 0x40 */
--	mcp->mb[10] |= 0x40;
-+	mcp->mb[10] = BIT_7 | 0x40;
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -912,12 +912,8 @@ static int f2fs_statfs_project(struct su
+ 		return PTR_ERR(dquot);
+ 	spin_lock(&dq_data_lock);
  
- 	mcp->out_mb |= MBX_10|MBX_8|MBX_7|MBX_6|MBX_5|MBX_4|MBX_3|MBX_2|MBX_1|
- 	    MBX_0;
+-	limit = 0;
+-	if (dquot->dq_dqb.dqb_bsoftlimit)
+-		limit = dquot->dq_dqb.dqb_bsoftlimit;
+-	if (dquot->dq_dqb.dqb_bhardlimit &&
+-			(!limit || dquot->dq_dqb.dqb_bhardlimit < limit))
+-		limit = dquot->dq_dqb.dqb_bhardlimit;
++	limit = min_not_zero(dquot->dq_dqb.dqb_bsoftlimit,
++					dquot->dq_dqb.dqb_bhardlimit);
+ 	if (limit)
+ 		limit >>= sb->s_blocksize_bits;
+ 
+@@ -929,12 +925,8 @@ static int f2fs_statfs_project(struct su
+ 			 (buf->f_blocks - curblock) : 0;
+ 	}
+ 
+-	limit = 0;
+-	if (dquot->dq_dqb.dqb_isoftlimit)
+-		limit = dquot->dq_dqb.dqb_isoftlimit;
+-	if (dquot->dq_dqb.dqb_ihardlimit &&
+-			(!limit || dquot->dq_dqb.dqb_ihardlimit < limit))
+-		limit = dquot->dq_dqb.dqb_ihardlimit;
++	limit = min_not_zero(dquot->dq_dqb.dqb_isoftlimit,
++					dquot->dq_dqb.dqb_ihardlimit);
+ 
+ 	if (limit && buf->f_files > limit) {
+ 		buf->f_files = limit;
 
 
