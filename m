@@ -2,125 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69D3D15C135
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:17:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53DC315C158
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:22:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbgBMPRS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:17:18 -0500
-Received: from gateway31.websitewelcome.com ([192.185.143.51]:26372 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725781AbgBMPRS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:17:18 -0500
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id AEB15506F5
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 09:17:16 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 2GEujLNe8vBMd2GEujJsPM; Thu, 13 Feb 2020 09:17:16 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=684Vt5p3cSpSPnZQgafEEsbbX1LCWvO9fPk/miYfTYo=; b=TAdcRinFB6FgWLrJq17nRP7FWU
-        9SXuaYGM6glT9xF9ZsTkOXEY67Yxb88+cBRXIl4oUtIaLZCDCzjkGKnyb+KazS26zUqjPUCCu6vLX
-        4SGnKgMaCAx3i42meV/eb4ogCVeZMSO9/2YwSizenhtuPOWOOCJaql0H90qLAleLEWMZEKUL+EiyW
-        Gc24P3JlwQ5nZWf+NXZhgt3UDYtxEjofcwCfO9Jd2wXaPg9hPHEj1jHaPMXu6AmW8xcbVaav2Chlz
-        f6YePMuKgJPPROZwClhNmoyp6ga1ZYPrIEWUPIzSRm3d2jfiM4b+e5Z19AzINkwUPGbhcWELbYz/2
-        2sfPL8iw==;
-Received: from [200.68.140.15] (port=27827 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j2GEt-0038wY-2T; Thu, 13 Feb 2020 09:17:15 -0600
-Date:   Thu, 13 Feb 2020 09:19:51 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>
-Cc:     linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] sched/fair: Replace zero-length array with flexible-array
- member
-Message-ID: <20200213151951.GA32363@embeddedor>
+        id S1728088AbgBMPWn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:22:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60222 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727973AbgBMPWf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:22:35 -0500
+Received: from localhost (unknown [104.132.1.104])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 865CC20848;
+        Thu, 13 Feb 2020 15:22:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581607354;
+        bh=HoPYvoEBNfhFq7YxHxFAAPfn70vdc+PTMBDCMsHQFcs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=QxSqYl1JMvlURIw2Mny+CDZ7MjuIqZ9V1QqC4CuQA4rvuvsq8EjqFScU2DMWyY1Ur
+         JlpqR1nbfZRNafbumjEi6ePjDHZZBoKD8Fy//AMYi5FFE9o7333+GxSbDJMBHAap9k
+         9xry7oQMfwvsPuNTj1cNKZ84SUANFWl2RL9EOOUI=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Nick Finco <nifi@google.com>,
+        Marios Pomonis <pomonis@google.com>,
+        Andrew Honig <ahonig@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.4 37/91] KVM: x86: Protect kvm_hv_msr_[get|set]_crash_data() from Spectre-v1/L1TF attacks
+Date:   Thu, 13 Feb 2020 07:19:54 -0800
+Message-Id: <20200213151835.916554087@linuxfoundation.org>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
+References: <20200213151821.384445454@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.68.140.15
-X-Source-L: No
-X-Exim-ID: 1j2GEt-0038wY-2T
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.15]:27827
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 19
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+From: Marios Pomonis <pomonis@google.com>
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+commit 8618793750071d66028584a83ed0b4fa7eb4f607 upstream.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+This fixes Spectre-v1/L1TF vulnerabilities in kvm_hv_msr_get_crash_data()
+and kvm_hv_msr_set_crash_data().
+These functions contain index computations that use the
+(attacker-controlled) MSR number.
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+Fixes: e7d9513b60e8 ("kvm/x86: added hyper-v crash msrs into kvm hyperv context")
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
+Signed-off-by: Nick Finco <nifi@google.com>
+Signed-off-by: Marios Pomonis <pomonis@google.com>
+Reviewed-by: Andrew Honig <ahonig@google.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- kernel/sched/fair.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kvm/hyperv.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index f38ff5a335d3..12a424878b23 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1081,7 +1081,7 @@ struct numa_group {
- 	 * more by CPU use than by memory faults.
- 	 */
- 	unsigned long *faults_cpu;
--	unsigned long faults[0];
-+	unsigned long faults[];
- };
+--- a/arch/x86/kvm/hyperv.c
++++ b/arch/x86/kvm/hyperv.c
+@@ -26,6 +26,7 @@
+ #include "hyperv.h"
  
- /*
--- 
-2.25.0
+ #include <linux/kvm_host.h>
++#include <linux/nospec.h>
+ #include <trace/events/kvm.h>
+ 
+ #include "trace.h"
+@@ -53,11 +54,12 @@ static int kvm_hv_msr_get_crash_data(str
+ 				     u32 index, u64 *pdata)
+ {
+ 	struct kvm_hv *hv = &vcpu->kvm->arch.hyperv;
++	size_t size = ARRAY_SIZE(hv->hv_crash_param);
+ 
+-	if (WARN_ON_ONCE(index >= ARRAY_SIZE(hv->hv_crash_param)))
++	if (WARN_ON_ONCE(index >= size))
+ 		return -EINVAL;
+ 
+-	*pdata = hv->hv_crash_param[index];
++	*pdata = hv->hv_crash_param[array_index_nospec(index, size)];
+ 	return 0;
+ }
+ 
+@@ -96,11 +98,12 @@ static int kvm_hv_msr_set_crash_data(str
+ 				     u32 index, u64 data)
+ {
+ 	struct kvm_hv *hv = &vcpu->kvm->arch.hyperv;
++	size_t size = ARRAY_SIZE(hv->hv_crash_param);
+ 
+-	if (WARN_ON_ONCE(index >= ARRAY_SIZE(hv->hv_crash_param)))
++	if (WARN_ON_ONCE(index >= size))
+ 		return -EINVAL;
+ 
+-	hv->hv_crash_param[index] = data;
++	hv->hv_crash_param[array_index_nospec(index, size)] = data;
+ 	return 0;
+ }
+ 
+
 
