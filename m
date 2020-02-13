@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61D5215C2A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:38:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05FCB15C35B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729698AbgBMP3Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:29:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45270 "EHLO mail.kernel.org"
+        id S2387805AbgBMPk3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:40:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387564AbgBMP02 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:26:28 -0500
+        id S2387778AbgBMP2p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:28:45 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22D3420661;
-        Thu, 13 Feb 2020 15:26:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF99E24670;
+        Thu, 13 Feb 2020 15:28:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607588;
-        bh=+8K9qALO+PnHir5xlA2IA3S4gSUrvcUcxgqPV0CBVvc=;
+        s=default; t=1581607724;
+        bh=lPkTcJsktgq1DVCQu6Pr6czb8dK9EqddpNJ+KE3I0zw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jsWRGKSkcQQ2IU5ek20Bk6EoO6YQEn9pLLuXnni1UJCus9Qjpa7hZLrMyY+pjDYy8
-         gmdVW+7FnWRTD7KC09mi3PipahLPldERUVFTp79HMJqYxrencecSU7Nl8t2DRi4Zyx
-         k8aqb3TPUo58DLAKl1T0Zj1eieoezCHsjuUXVpLQ=
+        b=ve0S8ZCelfXV/ISqDPxvL/HQSRnl9iCmWEs7CXiZk5wpD13vYZxxKaAPEqysHbGda
+         3Fs0nTzukxD0wl0HCwDV4Ton5oR2G/1lZ0yJZ+c24UVbyldQh5D04k691u1kkIPlSM
+         ZiJebjM1BjR+jCo5e88k8kBXwnPUgGhH2VyXyMyc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Asutosh Das <asutoshd@codeaurora.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.19 07/52] scsi: ufs: Fix ufshcd_probe_hba() reture value in case ufshcd_scsi_add_wlus() fails
-Date:   Thu, 13 Feb 2020 07:20:48 -0800
-Message-Id: <20200213151813.630401481@linuxfoundation.org>
+        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>
+Subject: [PATCH 5.5 053/120] ARC: [plat-axs10x]: Add missing multicast filter number to GMAC node
+Date:   Thu, 13 Feb 2020 07:20:49 -0800
+Message-Id: <20200213151919.834820192@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151810.331796857@linuxfoundation.org>
-References: <20200213151810.331796857@linuxfoundation.org>
+In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
+References: <20200213151901.039700531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,39 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bean Huo <beanhuo@micron.com>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
 
-commit b9fc5320212efdfb4e08b825aaa007815fd11d16 upstream.
+commit 7980dff398f86a618f502378fa27cf7e77449afa upstream.
 
-A non-zero error value likely being returned by ufshcd_scsi_add_wlus() in
-case of failure of adding the WLs, but ufshcd_probe_hba() doesn't use this
-value, and doesn't report this failure to upper caller.  This patch is to
-fix this issue.
+Add a missing property to GMAC node so that multicast filtering works
+correctly.
 
-Fixes: 2a8fa600445c ("ufs: manually add well known logical units")
-Link: https://lore.kernel.org/r/20200120130820.1737-2-huobean@gmail.com
-Reviewed-by: Asutosh Das <asutoshd@codeaurora.org>
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-Reviewed-by: Stanley Chu <stanley.chu@mediatek.com>
-Signed-off-by: Bean Huo <beanhuo@micron.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 556cc1c5f528 ("ARC: [axs101] Add support for AXS101 SDP (software development platform)")
+Acked-by: Alexey Brodkin <abrodkin@synopsys.com>
+Signed-off-by: Jose Abreu <Jose.Abreu@synopsys.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/ufs/ufshcd.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arc/boot/dts/axs10x_mb.dtsi |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -6685,7 +6685,8 @@ static int ufshcd_probe_hba(struct ufs_h
- 			ufshcd_init_icc_levels(hba);
- 
- 		/* Add required well known logical units to scsi mid layer */
--		if (ufshcd_scsi_add_wlus(hba))
-+		ret = ufshcd_scsi_add_wlus(hba);
-+		if (ret)
- 			goto out;
- 
- 		/* Initialize devfreq after UFS device is detected */
+--- a/arch/arc/boot/dts/axs10x_mb.dtsi
++++ b/arch/arc/boot/dts/axs10x_mb.dtsi
+@@ -78,6 +78,7 @@
+ 			interrupt-names = "macirq";
+ 			phy-mode = "rgmii";
+ 			snps,pbl = < 32 >;
++			snps,multicast-filter-bins = <256>;
+ 			clocks = <&apbclk>;
+ 			clock-names = "stmmaceth";
+ 			max-speed = <100>;
 
 
