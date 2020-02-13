@@ -2,171 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A031315BBBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 10:32:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05D5315BBC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 10:36:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729742AbgBMJcd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 04:32:33 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55474 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729714AbgBMJcc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 04:32:32 -0500
-Received: by mail-wm1-f65.google.com with SMTP id q9so5374180wmj.5
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 01:32:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Szpi62myEK2IMzveHJnGljROe4VEIiMR6+A5LS1u+08=;
-        b=IZ/jRT8tVuua0sL39WTc+wyGo7krKaHTgpTnUl6GA1IzY929+tYE9xzDHAPJ7eTUO4
-         ewWD2AVTtOansBKEcImgFyD7gZaWyArRt8E4YCpaAgHfU8WHenLdRYHI4xn8aASzxx79
-         Ki6UFtPL8l51d6rRU+Ku9dAGw/oAWy/+YbVcLRm0aGNzTvj9oW3bFAbNM2aYs0W3QG5W
-         DL1T4RR4+IfykhyLhURbuLf1MT9uIEnqFMTovXQLXmhV0F8nHfMhqg9U1C25ocG9RUUP
-         nZiL9rIzo9xWbB5is9YKKSA4GKFwUsl08AgZMdpUceBZ2bfFJc3BmsqHDu7tyHSP4GfX
-         2AAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Szpi62myEK2IMzveHJnGljROe4VEIiMR6+A5LS1u+08=;
-        b=idDhyXlSlSQHWqHdko+rJxHdXsopWRr1J+O3GSSJaxWe7a98Y/RLoa1OJLOdNPHwiP
-         I0qXhEMKxdQYtXoI5TjL75Zgm8h33F92t1bUR5GjZXm7DvAm+tCD+yjm+CRPs3HIgr/k
-         5Wdeum5+pg2cpXeRMGQQi6N5bSHSQu7H+mDLbBdr0etpEUa32hJF9PgMI9ZFBNsyHofU
-         0rZlQJo8zGrJ3lod4mP6dxvbFGm8LAntg4+9a6ypVq2venzoSUlqdvvK5soLpf9BCIaH
-         6nnBLUA5CC7itECtOdORjQrgRkvGpREBRnTwjv0jLRqdmsmNOh656MmKw7sKsrKKtJsD
-         d+Yw==
-X-Gm-Message-State: APjAAAXDYpFcNROZGbG1e0kzJ8etuk/UYweTmmHdlsMGJRQiklXxDXoj
-        FN1qZfsBzA4tNtX1Ez9qWVs=
-X-Google-Smtp-Source: APXvYqzsD2FBaQGfErOtCUuWNM+0vrFghHrVr/9Xriu0M2+OB7g2HYg2A1mGS+dIBGwoOTZNi3+MgA==
-X-Received: by 2002:a1c:6a06:: with SMTP id f6mr4886871wmc.137.1581586350475;
-        Thu, 13 Feb 2020 01:32:30 -0800 (PST)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id l2sm2160747wme.1.2020.02.13.01.32.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 01:32:29 -0800 (PST)
-Date:   Thu, 13 Feb 2020 10:32:27 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     tglx@linutronix.de, mingo@redhat.com,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        Michal Hocko <mhocko@suse.com>, vishal.l.verma@intel.com,
-        hch@lst.de, linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
-Subject: Re: [PATCH v4 4/6] x86/mm: Introduce CONFIG_KEEP_NUMA
-Message-ID: <20200213093227.GA90266@gmail.com>
-References: <157966227494.2508551.7206194169374588977.stgit@dwillia2-desk3.amr.corp.intel.com>
- <157966229575.2508551.1892426244277171485.stgit@dwillia2-desk3.amr.corp.intel.com>
+        id S1729588AbgBMJgr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 04:36:47 -0500
+Received: from mga07.intel.com ([134.134.136.100]:37870 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726232AbgBMJgq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 04:36:46 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2020 01:36:46 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,436,1574150400"; 
+   d="scan'208";a="347697106"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga001.fm.intel.com with ESMTP; 13 Feb 2020 01:36:44 -0800
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1j2AvO-0016A1-2o; Thu, 13 Feb 2020 11:36:46 +0200
+Date:   Thu, 13 Feb 2020 11:36:46 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
+Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        keescook@chromium.org, tobin@kernel.org, gregkh@linuxfoundation.org
+Subject: Re: [PATCH v2] lib/string: update match_string() doc-strings with
+ correct behavior
+Message-ID: <20200213093646.GY10400@smile.fi.intel.com>
+References: <20200212144723.21884-1-alexandru.ardelean@analog.com>
+ <20200213072722.8249-1-alexandru.ardelean@analog.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <157966229575.2508551.1892426244277171485.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200213072722.8249-1-alexandru.ardelean@analog.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Dan Williams <dan.j.williams@intel.com> wrote:
-
-> Currently x86 numa_meminfo is marked __initdata in the
-> CONFIG_MEMORY_HOTPLUG=n case. In support of a new facility to allow
-> drivers to map reserved memory to a 'target_node'
-> (phys_to_target_node()), add support for removing the __initdata
-> designation for those users. Both memory hotplug and
-> phys_to_target_node() users select CONFIG_KEEP_NUMA to tell the arch to
-> maintain its physical address to numa mapping infrastructure post init.
+On Thu, Feb 13, 2020 at 09:27:22AM +0200, Alexandru Ardelean wrote:
+> There were a few attempts at changing behavior of the match_string()
+> helpers (i.e. 'match_string()' & 'sysfs_match_string()'), to change &
+> extend the behavior according to the doc-string.
 > 
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: <x86@kernel.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> But the simplest approach is to just fix the doc-strings. The current
+> behavior is fine as-is, and some bugs were introduced trying to fix it.
+> 
+> As for extending the behavior, new helpers can always be introduced if
+> needed.
+> 
+> The match_string() helpers behave more like 'strncmp()' in the sense that
+> they go up to n elements or until the first NULL element in the array of
+> strings.
+> 
+> This change updates the doc-strings with this info.
+
+Thanks, looks good to me now.
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+> 
+> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
 > ---
->  arch/x86/mm/numa.c   |    6 +-----
->  include/linux/numa.h |    6 ++++++
->  mm/Kconfig           |    5 +++++
->  3 files changed, 12 insertions(+), 5 deletions(-)
-
-The concept and the x86 portions look sane, just a few minor nits:
-
+>  lib/string.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 > 
-> diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
-> index 99f7a68738f0..5289d9d6799a 100644
-> --- a/arch/x86/mm/numa.c
-> +++ b/arch/x86/mm/numa.c
-> @@ -25,11 +25,7 @@ nodemask_t numa_nodes_parsed __initdata;
->  struct pglist_data *node_data[MAX_NUMNODES] __read_mostly;
->  EXPORT_SYMBOL(node_data);
->  
-> -static struct numa_meminfo numa_meminfo
-> -#ifndef CONFIG_MEMORY_HOTPLUG
-> -__initdata
-> -#endif
-> -;
-> +static struct numa_meminfo numa_meminfo __initdata_numa;
->  
->  static int numa_distance_cnt;
->  static u8 *numa_distance;
-> diff --git a/include/linux/numa.h b/include/linux/numa.h
-> index 20f4e44b186c..c005ed6b807b 100644
-> --- a/include/linux/numa.h
-> +++ b/include/linux/numa.h
-> @@ -13,6 +13,12 @@
->  
->  #define	NUMA_NO_NODE	(-1)
->  
-> +#ifdef CONFIG_KEEP_NUMA
-> +#define __initdata_numa
-> +#else
-> +#define __initdata_numa __initdata
-> +#endif
-> +
->  #ifdef CONFIG_NUMA
->  int numa_map_to_online_node(int node);
->  #else
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index ab80933be65f..001f1185eadf 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -139,6 +139,10 @@ config HAVE_FAST_GUP
->  config ARCH_KEEP_MEMBLOCK
->  	bool
->  
-> +# Keep arch numa mapping infrastructure post-init.
+> diff --git a/lib/string.c b/lib/string.c
+> index f607b967d978..6012c385fb31 100644
+> --- a/lib/string.c
+> +++ b/lib/string.c
+> @@ -699,6 +699,14 @@ EXPORT_SYMBOL(sysfs_streq);
+>   * @n:		number of strings in the array or -1 for NULL terminated arrays
+>   * @string:	string to match with
+>   *
+> + * This routine will look for a string in an array of strings up to the
+> + * n-th element in the array or until the first NULL element.
+> + *
+> + * Historically the value of -1 for @n, was used to search in arrays that
+> + * are NULL terminated. However, the function does not make a distinction
+> + * when finishing the search: either @n elements have been compared OR
+> + * the first NULL element was found.
+> + *
+>   * Return:
+>   * index of a @string in the @array if matches, or %-EINVAL otherwise.
+>   */
+> @@ -727,6 +735,14 @@ EXPORT_SYMBOL(match_string);
+>   *
+>   * Returns index of @str in the @array or -EINVAL, just like match_string().
+>   * Uses sysfs_streq instead of strcmp for matching.
+> + *
+> + * This routine will look for a string in an array of strings up to the
+> + * n-th element in the array or until the first NULL element.
+> + *
+> + * Historically the value of -1 for @n, was used to search in arrays that
+> + * are NULL terminated. However, the function does not make a distinction
+> + * when finishing the search: either @n elements have been compared OR
+> + * the first NULL element was found.
+>   */
+>  int __sysfs_match_string(const char * const *array, size_t n, const char *str)
+>  {
+> -- 
+> 2.20.1
+> 
 
-s/numa/NUMA
-
-Please also capitalize consistently in the rest of the series.
-
-> +config KEEP_NUMA
-> +	bool
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-So most of our recent new NUMA options followed the naming pattern of:
-
-  CONFIG_NUMA_*
-
-Such as CONFIG_NUMA_BALANCING or CONFIG_NUMA_EMU.
-
-So I'd suggesting naming it to CONFIG_NUMA_KEEP, or, a bit more 
-descriptively, such as CONFIG_NUMA_KEEP_MAPPING or such?
-
-'Keeping NUMA' is kind of lame - of course we keep NUMA. ;-)
-
-Thanks,
-
-	Ingo
