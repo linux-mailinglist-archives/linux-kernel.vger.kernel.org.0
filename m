@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90CBB15C23C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:31:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B22415C4D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388001AbgBMPbE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:31:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52168 "EHLO mail.kernel.org"
+        id S2388138AbgBMPvI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:51:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729483AbgBMP1n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:43 -0500
+        id S2387528AbgBMP0T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:26:19 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64014222C2;
-        Thu, 13 Feb 2020 15:27:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8681C24676;
+        Thu, 13 Feb 2020 15:26:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607662;
-        bh=qtD4kttmnNspxcI9KmmiufATSWlPGV+r4mNd/jnyryw=;
+        s=default; t=1581607578;
+        bh=+AozUer+RTveAtjd+snUjhhpsON3Db5m0S4zTsSF4T4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eYXf8AMP0v49S4lFWNaVjz7UJzcnwgmngwtglpSUwVXl/dscV2UL/VJxE2wxw365R
-         Slih14ANWQI3fn7Uo/DQSRHQtm/kgs7zwqwjTfAupZPXMSRWH9XjS5Zbtldk7dbM3o
-         c+Gy2QuIqZEpGcrOjH909kAzlsttdkLQCczFmlt4=
+        b=oPHFZJpd2sjYsu+XDrYavwfRQZcN+KMor2IWLCcoFWX0Amrqm6/JQqB6oB5hsHn81
+         f6rmKSpi7rMMH9mY7JBhri+yuNxOGXizc67h/d4xnYQQRzwAiaQfvIcUgUIrcfcoFx
+         umm4JVJUwbVNP1ygmmI0Ti5o9x2sPUVfb3/3BajQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Doug Smythies <dsmythies@telus.net>,
-        Qais Yousef <qais.yousef@arm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: [PATCH 5.4 64/96] sched/uclamp: Fix a bug in propagating uclamp value in new cgroups
+        stable@vger.kernel.org,
+        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+        Anand Lodnoor <anand.lodnoor@broadcom.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 168/173] scsi: megaraid_sas: Do not initiate OCR if controller is not in ready state
 Date:   Thu, 13 Feb 2020 07:21:11 -0800
-Message-Id: <20200213151903.707374301@linuxfoundation.org>
+Message-Id: <20200213152013.403952129@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
-References: <20200213151839.156309910@linuxfoundation.org>
+In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
+References: <20200213151931.677980430@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,57 +45,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qais Yousef <qais.yousef@arm.com>
+From: Anand Lodnoor <anand.lodnoor@broadcom.com>
 
-commit 7226017ad37a888915628e59a84a2d1e57b40707 upstream.
+commit 6d7537270e3283b92f9b327da9d58a4de40fe8d0 upstream.
 
-When a new cgroup is created, the effective uclamp value wasn't updated
-with a call to cpu_util_update_eff() that looks at the hierarchy and
-update to the most restrictive values.
+Driver initiates OCR if a DCMD command times out. But there is a deadlock
+if the driver attempts to invoke another OCR before the mutex lock
+(reset_mutex) is released from the previous session of OCR.
 
-Fix it by ensuring to call cpu_util_update_eff() when a new cgroup
-becomes online.
+This patch takes care of the above scenario using new flag
+MEGASAS_FUSION_OCR_NOT_POSSIBLE to indicate if OCR is possible.
 
-Without this change, the newly created cgroup uses the default
-root_task_group uclamp values, which is 1024 for both uclamp_{min, max},
-which will cause the rq to to be clamped to max, hence cause the
-system to run at max frequency.
-
-The problem was observed on Ubuntu server and was reproduced on Debian
-and Buildroot rootfs.
-
-By default, Ubuntu and Debian create a cpu controller cgroup hierarchy
-and add all tasks to it - which creates enough noise to keep the rq
-uclamp value at max most of the time. Imitating this behavior makes the
-problem visible in Buildroot too which otherwise looks fine since it's a
-minimal userspace.
-
-Fixes: 0b60ba2dd342 ("sched/uclamp: Propagate parent clamps")
-Reported-by: Doug Smythies <dsmythies@telus.net>
-Signed-off-by: Qais Yousef <qais.yousef@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Tested-by: Doug Smythies <dsmythies@telus.net>
-Link: https://lore.kernel.org/lkml/000701d5b965$361b6c60$a2524520$@net/
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/1579000882-20246-9-git-send-email-anand.lodnoor@broadcom.com
+Signed-off-by: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
+Signed-off-by: Anand Lodnoor <anand.lodnoor@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/sched/core.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/scsi/megaraid/megaraid_sas_base.c   |    3 ++-
+ drivers/scsi/megaraid/megaraid_sas_fusion.c |    3 ++-
+ drivers/scsi/megaraid/megaraid_sas_fusion.h |    1 +
+ 3 files changed, 5 insertions(+), 2 deletions(-)
 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -7090,6 +7090,12 @@ static int cpu_cgroup_css_online(struct
- 
- 	if (parent)
- 		sched_online_group(tg, parent);
-+
-+#ifdef CONFIG_UCLAMP_TASK_GROUP
-+	/* Propagate the effective uclamp value for the new group */
-+	cpu_util_update_eff(css);
-+#endif
-+
- 	return 0;
+--- a/drivers/scsi/megaraid/megaraid_sas_base.c
++++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+@@ -4109,7 +4109,8 @@ dcmd_timeout_ocr_possible(struct megasas
+ 	if (instance->adapter_type == MFI_SERIES)
+ 		return KILL_ADAPTER;
+ 	else if (instance->unload ||
+-			test_bit(MEGASAS_FUSION_IN_RESET, &instance->reset_flags))
++			test_bit(MEGASAS_FUSION_OCR_NOT_POSSIBLE,
++				 &instance->reset_flags))
+ 		return IGNORE_TIMEOUT;
+ 	else
+ 		return INITIATE_OCR;
+--- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
++++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+@@ -4212,6 +4212,7 @@ int megasas_reset_fusion(struct Scsi_Hos
+ 	if (instance->requestorId && !instance->skip_heartbeat_timer_del)
+ 		del_timer_sync(&instance->sriov_heartbeat_timer);
+ 	set_bit(MEGASAS_FUSION_IN_RESET, &instance->reset_flags);
++	set_bit(MEGASAS_FUSION_OCR_NOT_POSSIBLE, &instance->reset_flags);
+ 	atomic_set(&instance->adprecovery, MEGASAS_ADPRESET_SM_POLLING);
+ 	instance->instancet->disable_intr(instance);
+ 	megasas_sync_irqs((unsigned long)instance);
+@@ -4399,7 +4400,7 @@ fail_kill_adapter:
+ 		atomic_set(&instance->adprecovery, MEGASAS_HBA_OPERATIONAL);
+ 	}
+ out:
+-	clear_bit(MEGASAS_FUSION_IN_RESET, &instance->reset_flags);
++	clear_bit(MEGASAS_FUSION_OCR_NOT_POSSIBLE, &instance->reset_flags);
+ 	mutex_unlock(&instance->reset_mutex);
+ 	return retval;
  }
+--- a/drivers/scsi/megaraid/megaraid_sas_fusion.h
++++ b/drivers/scsi/megaraid/megaraid_sas_fusion.h
+@@ -100,6 +100,7 @@ enum MR_RAID_FLAGS_IO_SUB_TYPE {
  
+ #define MEGASAS_FP_CMD_LEN	16
+ #define MEGASAS_FUSION_IN_RESET 0
++#define MEGASAS_FUSION_OCR_NOT_POSSIBLE 1
+ #define THRESHOLD_REPLY_COUNT 50
+ #define RAID_1_PEER_CMDS 2
+ #define JBOD_MAPS_COUNT	2
 
 
