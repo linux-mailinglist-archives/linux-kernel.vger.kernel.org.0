@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2518B15C1F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:28:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE0D715C1AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:25:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728888AbgBMP16 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:27:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41758 "EHLO mail.kernel.org"
+        id S2387436AbgBMPZ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:25:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387483AbgBMPZk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:25:40 -0500
+        id S1728238AbgBMPXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:23:54 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90C5F24693;
-        Thu, 13 Feb 2020 15:25:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8AE4E24690;
+        Thu, 13 Feb 2020 15:23:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607539;
-        bh=QU5hlEcn8A5qyauh+f5DdOPlzw74Il9ZLeMFavcEx8c=;
+        s=default; t=1581607433;
+        bh=p8cD7wYDh+Z1T66YAJXu20TxPoEcVP8J4XSrr6VskDs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CiHcqdUr9OTviKbiQSWHnqTR9HzmRE59Df2WkGe5DhBADZlL+x/3Wuy7IS9ki/jgr
-         LE9uP3Hzyf90drwACldYYL1GnYZHop2RMfDpNq9PhhXrdvU0B9OOdE7qDDUfy0SL1n
-         1fNuc9FSgC2rFooNDGam+t4XCCAAI/bXH7VC928w=
+        b=xocKHBl7wi+bCsF7i39IxCxlJKECJl6JRwAdwPt0PQXoTkaIhNPdtQRjidn25Yws3
+         ng/MdqDekEAkv9uBozmtZNBZwaVO/nZPH4KEw6Ot2Epjxp6vG5CPAL+vKBMSoVUstj
+         9h4aV5MYlNXSMOSGsOZrXn/pkKoSKzrO3krFgAvU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
-        Richard Weinberger <richard@nod.at>
-Subject: [PATCH 4.14 108/173] ubi: fastmap: Fix inverted logic in seen selfcheck
-Date:   Thu, 13 Feb 2020 07:20:11 -0800
-Message-Id: <20200213151959.862589401@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        "J. Bruce Fields" <bfields@redhat.com>
+Subject: [PATCH 4.9 068/116] nfsd: fix delay timer on 32-bit architectures
+Date:   Thu, 13 Feb 2020 07:20:12 -0800
+Message-Id: <20200213151909.332090680@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
-References: <20200213151931.677980430@linuxfoundation.org>
+In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
+References: <20200213151842.259660170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sascha Hauer <s.hauer@pengutronix.de>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit ef5aafb6e4e9942a28cd300bdcda21ce6cbaf045 upstream.
+commit 2561c92b12f4f4e386d453556685f75775c0938b upstream.
 
-set_seen() sets the bit corresponding to the PEB number in the bitmap,
-so when self_check_seen() wants to find PEBs that haven't been seen we
-have to print the PEBs that have their bit cleared, not the ones which
-have it set.
+The nfsd4_cb_layout_done() function takes a 'time_t' value,
+multiplied by NSEC_PER_SEC*2 to get a nanosecond value.
 
-Fixes: 5d71afb00840 ("ubi: Use bitmaps in Fastmap self-check code")
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-Signed-off-by: Richard Weinberger <richard@nod.at>
+This works fine on 64-bit architectures, but on 32-bit, any
+value over 1 second results in a signed integer overflow
+with unexpected results.
+
+Cast one input to a 64-bit type in order to produce the
+same result that we have on 64-bit architectures, regarless
+of the type of nfsd4_lease.
+
+Fixes: 6b9b21073d3b ("nfsd: give up on CB_LAYOUTRECALLs after two lease periods")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/ubi/fastmap.c |    2 +-
+ fs/nfsd/nfs4layouts.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/mtd/ubi/fastmap.c
-+++ b/drivers/mtd/ubi/fastmap.c
-@@ -73,7 +73,7 @@ static int self_check_seen(struct ubi_de
- 		return 0;
+--- a/fs/nfsd/nfs4layouts.c
++++ b/fs/nfsd/nfs4layouts.c
+@@ -680,7 +680,7 @@ nfsd4_cb_layout_done(struct nfsd4_callba
  
- 	for (pnum = 0; pnum < ubi->peb_count; pnum++) {
--		if (test_bit(pnum, seen) && ubi->lookuptbl[pnum]) {
-+		if (!test_bit(pnum, seen) && ubi->lookuptbl[pnum]) {
- 			ubi_err(ubi, "self-check failed for PEB %d, fastmap didn't see it", pnum);
- 			ret = -EINVAL;
- 		}
+ 		/* Client gets 2 lease periods to return it */
+ 		cutoff = ktime_add_ns(task->tk_start,
+-					 nn->nfsd4_lease * NSEC_PER_SEC * 2);
++					 (u64)nn->nfsd4_lease * NSEC_PER_SEC * 2);
+ 
+ 		if (ktime_before(now, cutoff)) {
+ 			rpc_delay(task, HZ/100); /* 10 mili-seconds */
 
 
