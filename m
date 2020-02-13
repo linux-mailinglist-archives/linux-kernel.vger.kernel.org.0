@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B49B15C188
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:24:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD68215C1C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:26:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387405AbgBMPYD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:24:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33744 "EHLO mail.kernel.org"
+        id S1728356AbgBMP0N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:26:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728266AbgBMPXI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:23:08 -0500
+        id S1728693AbgBMPY0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:24:26 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF0ED246B1;
-        Thu, 13 Feb 2020 15:23:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF26824689;
+        Thu, 13 Feb 2020 15:24:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607387;
-        bh=du9oXxZbxUbew44pUv5fioKxk69e07rtJO050qyje3k=;
+        s=default; t=1581607466;
+        bh=FxYiCaXQskh90KrwG3iV7GTqM8cjabD5+J+amsqs1UY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YvcJjqZ4Cp8lUbwwfVd4n7hNTwpsP8JxcmXUN0jMfeBXos9RkmmBbcn1vj/27FNJU
-         6te436r9Wg9txkIoY6u6xfHkYX1PHgvQUg4/nNxSYzFjsMR4pFvSY1nJuN15khnqgR
-         XJvkT1bSSAC7tJjl2s8qsSqj3Hm5fjc+6Ge1AHOY=
+        b=POH54u7Vr79CHJl7fGsj9PiBOiU9VnNHlV4XCWj74sCtITXqGfCpT2LEULk8fu01y
+         EH/EIj5crObIh5NL+z5pa5Ksls0jVXRrFXjFQK+t9M0Y3lagttU/SBu0E98P2OPYW1
+         KP66uN+s4T/Azpjw8mqwZvBTcwr7AUsRRrX3q2ZA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qing Xu <m1s5p6688@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 88/91] mwifiex: Fix possible buffer overflows in mwifiex_cmd_append_vsie_tlv()
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 4.9 101/116] nfs: NFS_SWAP should depend on SWAP
 Date:   Thu, 13 Feb 2020 07:20:45 -0800
-Message-Id: <20200213151856.833108534@linuxfoundation.org>
+Message-Id: <20200213151921.815202739@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
-References: <20200213151821.384445454@linuxfoundation.org>
+In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
+References: <20200213151842.259660170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qing Xu <m1s5p6688@gmail.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit b70261a288ea4d2f4ac7cd04be08a9f0f2de4f4d ]
+commit 474c4f306eefbb21b67ebd1de802d005c7d7ecdc upstream.
 
-mwifiex_cmd_append_vsie_tlv() calls memcpy() without checking
-the destination size may trigger a buffer overflower,
-which a local user could use to cause denial of service
-or the execution of arbitrary code.
-Fix it by putting the length check before calling memcpy().
+If CONFIG_SWAP=n, it does not make much sense to offer the user the
+option to enable support for swapping over NFS, as that will still fail
+at run time:
 
-Signed-off-by: Qing Xu <m1s5p6688@gmail.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+    # swapon /swap
+    swapon: /swap: swapon failed: Function not implemented
+
+Fix this by adding a dependency on CONFIG_SWAP.
+
+Fixes: a564b8f0398636ba ("nfs: enable swap on NFS")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/wireless/mwifiex/scan.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/nfs/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/mwifiex/scan.c b/drivers/net/wireless/mwifiex/scan.c
-index 39b78dc1bd92b..e7c8972431d34 100644
---- a/drivers/net/wireless/mwifiex/scan.c
-+++ b/drivers/net/wireless/mwifiex/scan.c
-@@ -2568,6 +2568,13 @@ mwifiex_cmd_append_vsie_tlv(struct mwifiex_private *priv,
- 			vs_param_set->header.len =
- 				cpu_to_le16((((u16) priv->vs_ie[id].ie[1])
- 				& 0x00FF) + 2);
-+			if (le16_to_cpu(vs_param_set->header.len) >
-+				MWIFIEX_MAX_VSIE_LEN) {
-+				mwifiex_dbg(priv->adapter, ERROR,
-+					    "Invalid param length!\n");
-+				break;
-+			}
-+
- 			memcpy(vs_param_set->ie, priv->vs_ie[id].ie,
- 			       le16_to_cpu(vs_param_set->header.len));
- 			*buffer += le16_to_cpu(vs_param_set->header.len) +
--- 
-2.20.1
-
+--- a/fs/nfs/Kconfig
++++ b/fs/nfs/Kconfig
+@@ -89,7 +89,7 @@ config NFS_V4
+ config NFS_SWAP
+ 	bool "Provide swap over NFS support"
+ 	default n
+-	depends on NFS_FS
++	depends on NFS_FS && SWAP
+ 	select SUNRPC_SWAP
+ 	help
+ 	  This option enables swapon to work on files located on NFS mounts.
 
 
