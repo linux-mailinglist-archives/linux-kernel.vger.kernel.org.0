@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6AB215C23A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:31:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0420115C283
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:35:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729803AbgBMPaz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:30:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51458 "EHLO mail.kernel.org"
+        id S1729714AbgBMPdG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:33:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729450AbgBMP1g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:36 -0500
+        id S2387504AbgBMP2w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:28:52 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9228524685;
-        Thu, 13 Feb 2020 15:27:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C47EC206DB;
+        Thu, 13 Feb 2020 15:28:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607655;
-        bh=eA2xG7o/gojCA1Jlfncc6S6XqFxRCP2rOYoV6DMyWws=;
+        s=default; t=1581607731;
+        bh=dPmNghqpDzjIZPEWpK9qL+Y/G3+b0ngJ5XVWYCr9ioc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jAgKL7Ibq+qEObgz82l392ieSs3SfJPkiaxIPL+GYFaI+Fk2I9d6r22MbWxmEfgTM
-         f/rP2fnnRkBO3JKhp1AM7usRIoSnKKBHqtWJ41QYu1MJa02OioOME0Y45xjjOd8BI+
-         H1PdeBiJp68Xmrnw326Scu+1epvMKbACvOMGwzYg=
+        b=F5NhPZgGkVjSnTMmBBP8qwrEVG3tp1+9Cna90wmchmGZvG+e2jHLy9UUjMJ3kMC9P
+         B72ephHT4f5ENEptku4BeiI7Ptj4UUeY230qVn8/LF3BmnviiJXIzZmE6GshMZYAYE
+         tCU9rZcl9BCBY3HsF2eUHHDiB2pXagKYPAEEQfrc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Beata Michalska <beata.michalska@linaro.org>,
-        James Morse <james.morse@arm.com>,
-        Marc Zyngier <maz@kernel.org>
-Subject: [PATCH 5.4 70/96] KVM: arm: Make inject_abt32() inject an external abort instead
+        stable@vger.kernel.org, Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH 5.5 081/120] arm64: cpufeature: Fix the type of no FP/SIMD capability
 Date:   Thu, 13 Feb 2020 07:21:17 -0800
-Message-Id: <20200213151905.657123366@linuxfoundation.org>
+Message-Id: <20200213151928.803124228@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151839.156309910@linuxfoundation.org>
-References: <20200213151839.156309910@linuxfoundation.org>
+In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
+References: <20200213151901.039700531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,57 +46,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Morse <james.morse@arm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-commit 21aecdbd7f3ab02c9b82597dc733ee759fb8b274 upstream.
+commit 449443c03d8cfdacf7313e17779a2594ebf87e6d upstream.
 
-KVM's inject_abt64() injects an external-abort into an aarch64 guest.
-The KVM_CAP_ARM_INJECT_EXT_DABT is intended to do exactly this, but
-for an aarch32 guest inject_abt32() injects an implementation-defined
-exception, 'Lockdown fault'.
+The NO_FPSIMD capability is defined with scope SYSTEM, which implies
+that the "absence" of FP/SIMD on at least one CPU is detected only
+after all the SMP CPUs are brought up. However, we use the status
+of this capability for every context switch. So, let us change
+the scope to LOCAL_CPU to allow the detection of this capability
+as and when the first CPU without FP is brought up.
 
-Change this to external abort. For non-LPAE we now get the documented:
-| Unhandled fault: external abort on non-linefetch (0x008) at 0x9c800f00
-and for LPAE:
-| Unhandled fault: synchronous external abort (0x210) at 0x9c800f00
+Also, the current type allows hotplugged CPU to be brought up without
+FP/SIMD when all the current CPUs have FP/SIMD and we have the userspace
+up. Fix both of these issues by changing the capability to
+BOOT_RESTRICTED_LOCAL_CPU_FEATURE.
 
-Fixes: 74a64a981662a ("KVM: arm/arm64: Unify 32bit fault injection")
-Reported-by: Beata Michalska <beata.michalska@linaro.org>
-Signed-off-by: James Morse <james.morse@arm.com>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/20200121123356.203000-3-james.morse@arm.com
+Fixes: 82e0191a1aa11abf ("arm64: Support systems without FP/ASIMD")
+Cc: Will Deacon <will@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- virt/kvm/arm/aarch32.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ arch/arm64/kernel/cpufeature.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/virt/kvm/arm/aarch32.c
-+++ b/virt/kvm/arm/aarch32.c
-@@ -15,6 +15,10 @@
- #include <asm/kvm_emulate.h>
- #include <asm/kvm_hyp.h>
- 
-+#define DFSR_FSC_EXTABT_LPAE	0x10
-+#define DFSR_FSC_EXTABT_nLPAE	0x08
-+#define DFSR_LPAE		BIT(9)
-+
- /*
-  * Table taken from ARMv8 ARM DDI0487B-B, table G1-10.
-  */
-@@ -182,10 +186,10 @@ static void inject_abt32(struct kvm_vcpu
- 	/* Give the guest an IMPLEMENTATION DEFINED exception */
- 	is_lpae = (vcpu_cp15(vcpu, c2_TTBCR) >> 31);
- 	if (is_lpae) {
--		*fsr = 1 << 9 | 0x34;
-+		*fsr = DFSR_LPAE | DFSR_FSC_EXTABT_LPAE;
- 	} else {
--		/* Surprise! DFSR's FS[4] lives in bit 10 */
--		*fsr = BIT(10) | 0x4; /* 0x14 */
-+		/* no need to shuffle FS[4] into DFSR[10] as its 0 */
-+		*fsr = DFSR_FSC_EXTABT_nLPAE;
- 	}
- }
- 
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -1368,7 +1368,7 @@ static const struct arm64_cpu_capabiliti
+ 	{
+ 		/* FP/SIMD is not implemented */
+ 		.capability = ARM64_HAS_NO_FPSIMD,
+-		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
++		.type = ARM64_CPUCAP_BOOT_RESTRICTED_CPU_LOCAL_FEATURE,
+ 		.min_field_value = 0,
+ 		.matches = has_no_fpsimd,
+ 	},
 
 
