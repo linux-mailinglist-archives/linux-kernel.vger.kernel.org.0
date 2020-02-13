@@ -2,61 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDE1115CDA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 22:56:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0778A15CDAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 22:59:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728359AbgBMVz7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 16:55:59 -0500
-Received: from scoopta.email ([198.58.106.30]:36964 "EHLO scoopta.email"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728055AbgBMVz7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 16:55:59 -0500
-DKIM-Signature: a=rsa-sha256; b=HWzannKX/lNL9+XrJD8pGhjb5zTU/GCSJt/P3SgtyLSmHCNNzv0Xb/4FEMQLkCjEd/PlDom6JLOeP+aA/yXvLQz0NZHNxLwXyJ3SnzLHOSxlJ4R6Y1ZDaeGZ3oeHFHdaR2wPuPNAAWeu0tj3fcO/CiFAMPxZ/dWibbKhVhFsHclw4/NbDHz9MEjn1FmhOG0iho64FArtHKZfZUoFygPCwLAnrdObeG3UfdrFYenc+MK2hs0B+O/BPA+z0edzyafM8cFaWNcizFoqy/NeF2Kdl4prUTJ2q4sbsnhKcVJr0jooXHRQ9gFUf49BMW64/9xXWDwn0oQw6P6jZyuSN3Wy71pNhpodoV+yV1QpHwweg8JVAR5sMkXYRL0jecXfjSdE3OoGOgjGQTeW9kjwuNG3P3A2JI8E8pVrbiXJjTgbKtzr1CJPDQN+P8AoBS9UZhRt5i7FN8LxMebc17IzEQ/DdIQZKabTKEnIHPxcQdsECygmj93JbLhpugcerrnr4CU2At5V1jFwFg+2KA0SPydb2Xd3cGE9RO1r3IwWbtskpO2SP8YW18u/PN7swrziKYtVG9i4mAVuaFAolSi0rT7YZeWHrEkcmPw/174SZNoB54t2ZYgrNCOubZKLgX9nfeFD+OzTNMUPlp/Wl7fPgH3kjjat1XPiAa7w1Apwq3HmZZe/HonA/IaH6Glsd22/f0uYnmj1HbtTb9b2k4nU3Q8Gyl+FZkrR7cvXY6tIk1DHvQWnrERZfwK2wZqCkt/WfR3Pffy/j3jS1WH3Zdx34GCrpPdeGIVdAapunSgUY443otuOHpz1nOlWpBch6M2+EVbVdOuUN/NTIE3makiyP8I2+9ZW1vxLc0McL7giPkcEjbFKsfs3BhlvfILfaVMMH0MVUDZeVdDHWYz7Ed0KVB/WS6SYMYTKVATjT13GmamFssZXcGRXpWcNfNvR/JXyrsbch5sjiNMCrtz2zVJi014rONkKjN9DUnAbMLOhCoEFz5jWE9TrZ3388U0LSD3GQAUVpMlFwjeP0wvy4sHnDNuj+JcBNFhTV26dwwJsRX8QOC4oHaLYYt7NeMVWyw66FlvGbTIys98bgm4FN1Q77ZvXo7hB/4py5HzKN+DflyVXTxMb5ZAevHT0mtDToBJH0CS6wIneA+t080oxINyRRnai4bpEY43IMNUL02AAjxnGR7f3+TbiYGPFSGf6p4z+BYiY/8oXEJalENhO6/CiSKWfnpmbVvCzxjxo9nlQxn9p7pz6Ggte1gd767J3BHkEjaFWvJrC2nmk5idWGmSYdWMmHFi5KZLWkCTiDpn6fgPK1jyCu2VZbP/qqFqpGjv3JhV8yCYu46f4sNjKYwwRom+o4g==; s=20190906; c=relaxed/relaxed; d=scoopta.email; v=1; bh=NWIzN1D0PkBfXyoPl6HGIphhT6OjbDAKi1Q4VdD9UMA=; h=Message-ID:Date:Subject:From:To:MIME-Version:Content-Type;
+        id S1728433AbgBMV7K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 16:59:10 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:43661 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727991AbgBMV7K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 16:59:10 -0500
+Received: by mail-ed1-f67.google.com with SMTP id dc19so8687149edb.10
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 13:59:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dR96Ls041PGles0WWTgdxsFA4gswjPBr2dNrlkBSuNQ=;
+        b=rRCxR57CMKJEJvKUsBRBaCGNlEl5GeneJok3J1oqVCL9i03XHBTkzBKLVXlCX80abR
+         waS3e2st7hqr5AUSVywbiuHu/XcoJmFgOcPcq/NRWkATB05enSVqkl80JRFrqFA7+TzZ
+         VP60OmlNYIOOnNo1pTgwF6ZUTJ9B+xYWfKepxQsuTcSQlH2ADq4oxtRLbeGf/SyLe7Z5
+         YYEdGrtOkXicpYXO7tS/kxFgOlUN19E6+SiiE6iPdGEHXwVtgWm62Jeai1NFqHNb4FeV
+         UgDE19W1OOEMKwc3kfP3rCvuUG9qKToWRYzTN/pkKxHZ/jtbJNqySZOSNxS3RDDHFH+p
+         8DDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dR96Ls041PGles0WWTgdxsFA4gswjPBr2dNrlkBSuNQ=;
+        b=Fx6qV7wol1H9GZIi6gZFgR3XuGNSDXNVBOoeN0PSpDAk4mTmM55SwbIa4hGoFs44i2
+         yrQGQxTLK7ECsbUcqB66wE7kfQ1pqXhOB43mecQkfal1G9o4RJmrFnytS3ZFyrRRX7/H
+         4gaeN0N6bo+2Vz/3aibId2I8nqprbbwv0vlXWyCFRfMl4kMVdfDuPyQgaVNnBZOtAorv
+         ZcK4MfrW1EqStnujrE3csj+qyU51aEXhD8q/uSUmAM1iMfAgbZ4xLpiCFYu5iHhKqEdA
+         GNOuA6/Dpotx8qYTZ2psnIVAPbkUBOHW25S3M1bYfpDG4dSv9C863xfYXq56rDScgyIZ
+         t23g==
+X-Gm-Message-State: APjAAAU8RPlGXIacD1/D3Ca8+NoYAujv9cjBNVh2mB9q0Ai2+/XORDqM
+        HurP8t7PLJ/zbk8WZkacf6MJ2wHA/hglQPAaQw9J
+X-Google-Smtp-Source: APXvYqwJlC4P1+vTqQ7auzlqHDyoqi32fnbka+h4eFFK4GnrJSQwBwYPSRpLTAitL/ZfvrnPR1P7gUIIEptxDZxCT9E=
+X-Received: by 2002:a50:a7a5:: with SMTP id i34mr17484612edc.128.1581631147637;
+ Thu, 13 Feb 2020 13:59:07 -0800 (PST)
 MIME-Version: 1.0
-X-UserIsAuth: true
-Received: from 75-128-38-74.static.mtpk.ca.charter.com (EHLO [192.168.0.102]) ([75.128.38.74])
-          by scoopta.email (JAMES SMTP Server ) with ESMTPA ID -140762169
-          for <linux-kernel@vger.kernel.org>;
-          Thu, 13 Feb 2020 13:55:58 -0800 (PST)
-Subject: Re: RX 5700 XT Issues
-From:   Scoopta <mlist@scoopta.email>
-To:     linux-kernel@vger.kernel.org
-References: <8e09f86e-b241-971a-ea8c-8948b9e06d20@scoopta.email>
- <3b2eff03-35b0-36f4-21a7-6a117733d4ad@scoopta.email>
- <2f5a756d-64d3-800c-499c-8531a6571e3a@scoopta.email>
-Message-ID: <e63e075c-949b-84ea-d4c2-94510ee4704d@scoopta.email>
-Date:   Thu, 13 Feb 2020 13:55:57 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
-In-Reply-To: <2f5a756d-64d3-800c-499c-8531a6571e3a@scoopta.email>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <cover.1577736799.git.rgb@redhat.com> <5941671b6b6b5de28ab2cc80e72f288cf83291d5.1577736799.git.rgb@redhat.com>
+ <CAHC9VhQYXQp+C0EHwLuW50yUenfH4KF1xKQdS=bn_OzHfnFmmg@mail.gmail.com>
+ <20200205003930.2efpm4tvrisgmj4t@madcap2.tricolour.ca> <CAHC9VhSsfBbfYmqLoR=QBgF5_VwbA8Dqqz97MjqwwJ6Jq6fHwA@mail.gmail.com>
+ <20200206125135.u4dmybkmvxfgui2b@madcap2.tricolour.ca>
+In-Reply-To: <20200206125135.u4dmybkmvxfgui2b@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 13 Feb 2020 16:58:56 -0500
+Message-ID: <CAHC9VhT8RsFtmqD22p_NxJaqoAg+do9mX45Luw9fEkr+nQjvxg@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V8 16/16] audit: add capcontid to set contid
+ outside init_user_ns
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     nhorman@tuxdriver.com, linux-api@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
+        simo@redhat.com, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I've opened a bug report here 
-https://gitlab.freedesktop.org/drm/amd/issues/1047 about this issue
-
-On 2/12/20 1:34 AM, Scoopta wrote:
-> I've attached the dmesg output after the error happens.
+On Thu, Feb 6, 2020 at 7:52 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2020-02-05 17:56, Paul Moore wrote:
+> > On Tue, Feb 4, 2020 at 7:39 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > On 2020-01-22 16:29, Paul Moore wrote:
+> > > > On Tue, Dec 31, 2019 at 2:51 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > >
+> > > > > Provide a mechanism similar to CAP_AUDIT_CONTROL to explicitly give a
+> > > > > process in a non-init user namespace the capability to set audit
+> > > > > container identifiers.
+> > > > >
+> > > > > Provide /proc/$PID/audit_capcontid interface to capcontid.
+> > > > > Valid values are: 1==enabled, 0==disabled
+> > > >
+> > > > It would be good to be more explicit about "enabled" and "disabled" in
+> > > > the commit description.  For example, which setting allows the target
+> > > > task to set audit container IDs of it's children processes?
+> > >
+> > > Ok...
+> > >
+> > > > > Report this action in message type AUDIT_SET_CAPCONTID 1022 with fields
+> > > > > opid= capcontid= old-capcontid=
+> > > > >
+> > > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > > > ---
+> > > > >  fs/proc/base.c             | 55 ++++++++++++++++++++++++++++++++++++++++++++++
+> > > > >  include/linux/audit.h      | 14 ++++++++++++
+> > > > >  include/uapi/linux/audit.h |  1 +
+> > > > >  kernel/audit.c             | 35 +++++++++++++++++++++++++++++
+> > > > >  4 files changed, 105 insertions(+)
+> >
+> > ...
+> >
+> > > > > diff --git a/kernel/audit.c b/kernel/audit.c
+> > > > > index 1287f0b63757..1c22dd084ae8 100644
+> > > > > --- a/kernel/audit.c
+> > > > > +++ b/kernel/audit.c
+> > > > > @@ -2698,6 +2698,41 @@ static bool audit_contid_isowner(struct task_struct *tsk)
+> > > > >         return false;
+> > > > >  }
+> > > > >
+> > > > > +int audit_set_capcontid(struct task_struct *task, u32 enable)
+> > > > > +{
+> > > > > +       u32 oldcapcontid;
+> > > > > +       int rc = 0;
+> > > > > +       struct audit_buffer *ab;
+> > > > > +
+> > > > > +       if (!task->audit)
+> > > > > +               return -ENOPROTOOPT;
+> > > > > +       oldcapcontid = audit_get_capcontid(task);
+> > > > > +       /* if task is not descendant, block */
+> > > > > +       if (task == current)
+> > > > > +               rc = -EBADSLT;
+> > > > > +       else if (!task_is_descendant(current, task))
+> > > > > +               rc = -EXDEV;
+> > > >
+> > > > See my previous comments about error code sanity.
+> > >
+> > > I'll go with EXDEV.
+> > >
+> > > > > +       else if (current_user_ns() == &init_user_ns) {
+> > > > > +               if (!capable(CAP_AUDIT_CONTROL) && !audit_get_capcontid(current))
+> > > > > +                       rc = -EPERM;
+> > > >
+> > > > I think we just want to use ns_capable() in the context of the current
+> > > > userns to check CAP_AUDIT_CONTROL, yes?  Something like this ...
+> > >
+> > > I thought we had firmly established in previous discussion that
+> > > CAP_AUDIT_CONTROL in anything other than init_user_ns was completely irrelevant
+> > > and untrustable.
+> >
+> > In the case of a container with multiple users, and multiple
+> > applications, one being a nested orchestrator, it seems relevant to
+> > allow that container to control which of it's processes are able to
+> > exercise CAP_AUDIT_CONTROL.  Granted, we still want to control it
+> > within the overall host, e.g. the container in question must be
+> > allowed to run a nested orchestrator, but allowing the container
+> > itself to provide it's own granularity seems like the right thing to
+> > do.
 >
-> On 2/11/20 9:45 PM, Scoopta wrote:
->> My previous statement doesn't appear to be correct syslog just wasn't
->> being flushed despite doing an REISUB. I'm getting a powerplay error.
->> Specifically it seems related to
->> https://gitlab.freedesktop.org/drm/amd/issues/900
->>
->> On 2/11/20 7:13 PM, Scoopta wrote:
->>> When playing demanding games my RX 5700 XT will sometimes just stop. All
->>> my displays turn off but the system stays responsive. Audio keeps
->>> working and I can REISUB no problem, the card just stops. Fans turn off
->>> lm-sensors reports N/A as all information on the sensors and my monitors
->>> go into power save. syslog is also completely quiet. amdgpu doesn't seem
->>> to error or anything so I have no idea how to troubleshoot if this is a
->>> hardware issue or if it's a driver issue. I couldn't find a drm or GPU
->>> specific list so I'm sending it here. I want to be sure it's not a
->>> driver issue or other kernel issue before doing an RMA.
->>>
+> Looking back to discussion on the v6 patch 2/10 (2019-05-30 15:29 Paul
+> Moore[1], 2019-07-08 14:05 RGB[2]) , it occurs to me that the
+> ns_capable(CAP_AUDIT_CONTROL) application was dangerous since there was
+> no parental accountability in storage or reporting.  Now that is in
+> place, it does seem a bit more reasonable to allow it, but I'm still not
+> clear on why we would want both mechanisms now.  I don't understand what
+> the last line in that email meant: "We would probably still want a
+> ns_capable(CAP_AUDIT_CONTROL) restriction in this case."  Allow
+> ns_capable(CAP_AUDIT_CONTROL) to govern these actions, or restrict
+> ns_capable(CAP_AUDIT_CONTROL) from being used to govern these actions?
+>
+> If an unprivileged user has been given capcontid to be able run their
+> own container orchestrator/engine and spawns a user namespace with
+> CAP_AUDIT_CONTROL, what matters is capcontid, and not CAP_AUDIT_CONTROL.
+> I could see needing CAP_AUDIT_CONTROL *in addition* to capcontid to give
+> it finer grained control, but since capcontid would have to be given to
+> each process explicitly anways, I don't see the point.
+>
+> If that unprivileged user had not been given capcontid,
+> giving itself or one of its descendants CAP_AUDIT_CONTROL should not let
+> it jump into the game all of a sudden unless the now chained audit
+> container identifiers are deemed accountable enough.  And then now we
+> need those hard limits on container depth and network namespace
+> container membership.
+
+Perhaps I'm not correctly understanding what you are trying to do with
+this patchset, but my current understanding is that you are trying to
+use capcontid to control which child audit container IDs (ACIDs) are
+allowed to manage their own ACIDs.  Further, I believe that the
+capcontid setting operates at a per-ACID level, meaning there is no
+provision for the associated container to further restrict that
+ability, i.e. no access control granularity below the ACID level.  My
+thinking is that ns_capable(CAP_AUDIT_CONTROL) could be used within an
+ACID to increase the granularity of the access controls so that only
+privileged processes running inside the ACID would be able to manage
+the ACIDs.  Does that make sense?
+
+-- 
+paul moore
+www.paul-moore.com
