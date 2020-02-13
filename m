@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1822815C1D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:26:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0F5A15C1D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:26:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387634AbgBMP0s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:26:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39642 "EHLO mail.kernel.org"
+        id S2387632AbgBMP0q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:26:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728882AbgBMPZA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:25:00 -0500
+        id S1728417AbgBMPZB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:01 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB09524693;
-        Thu, 13 Feb 2020 15:24:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67836246A4;
+        Thu, 13 Feb 2020 15:25:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607499;
-        bh=dUIA7XYKh2tjWz5vcmmzWs7dwmjsqJYdL6fQNXnZiDE=;
+        s=default; t=1581607500;
+        bh=x/XNKUFPLS3neS+LDoNIiq/pjbpPs7OtyRIHTd6zdl0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NPGYROw0hrW8/agwVGZKnB1VWYt8ETaFHn+5B9OzeB4jAYOv3jNUZ9YzjPsjWS8XX
-         m4E4+U4uroVnrZV5HamkQGMOQXKLEh2+Gg4+oFwRiojIgZMAIhMTYJUDTM7L4bAwwJ
-         0sznpEVU0c6oSgU7RanHoL8vggksFLTfBnm4NePw=
+        b=dSnA5phARhJZmPBQRvBFBr2aJKS5U8ZiYruK6TMhLc9XtTyMlqqa1EiplrwhO27vA
+         k1I2nmlapQ39mKA3yCPK6UKVYN7gtqyqrb1/lh7FwuBiwqe1hPg1+g8xLxfDLhA6dD
+         Pn0Shoy/VcXktazsdPSXodHlNBt8wy3UUsCIM7Ug=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Phil Elwell <phil@raspberrypi.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.14 036/173] mmc: spi: Toggle SPI polarity, do not hardcode it
-Date:   Thu, 13 Feb 2020 07:18:59 -0800
-Message-Id: <20200213151942.906422152@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.14 037/173] ACPI: video: Do not export a non working backlight interface on MSI MS-7721 boards
+Date:   Thu, 13 Feb 2020 07:19:00 -0800
+Message-Id: <20200213151943.327388407@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
 References: <20200213151931.677980430@linuxfoundation.org>
@@ -45,64 +43,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit af3ed119329cf9690598c5a562d95dfd128e91d6 upstream.
+commit d21a91629f4b8e794fc4c0e0c17c85cedf1d806c upstream.
 
-The code in mmc_spi_initsequence() tries to send a burst with
-high chipselect and for this reason hardcodes the device into
-SPI_CS_HIGH.
+Despite our heuristics to not wrongly export a non working ACPI backlight
+interface on desktop machines, we still end up exporting one on desktops
+using a motherboard from the MSI MS-7721 series.
 
-This is not good because the SPI_CS_HIGH flag indicates
-logical "asserted" CS not always the physical level. In
-some cases the signal is inverted in the GPIO library and
-in that case SPI_CS_HIGH is already set, and enforcing
-SPI_CS_HIGH again will actually drive it low.
+I've looked at improving the heuristics, but in this case a quirk seems
+to be the only way to solve this.
 
-Instead of hard-coding this, toggle the polarity so if the
-default is LOW it goes high to assert chipselect but if it
-is already high then toggle it low instead.
+While at it also add a comment to separate the video_detect_force_none
+entries in the video_detect_dmi_table from other type of entries, as we
+already do for the other entry types.
 
-Cc: Phil Elwell <phil@raspberrypi.org>
-Reported-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Mark Brown <broonie@kernel.org>
-Link: https://lore.kernel.org/r/20191204152749.12652-1-linus.walleij@linaro.org
-Cc: stable@vger.kernel.org
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: All applicable <stable@vger.kernel.org>
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1783786
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/mmc_spi.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/acpi/video_detect.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/drivers/mmc/host/mmc_spi.c
-+++ b/drivers/mmc/host/mmc_spi.c
-@@ -1154,17 +1154,22 @@ static void mmc_spi_initsequence(struct
- 	 * SPI protocol.  Another is that when chipselect is released while
- 	 * the card returns BUSY status, the clock must issue several cycles
- 	 * with chipselect high before the card will stop driving its output.
-+	 *
-+	 * SPI_CS_HIGH means "asserted" here. In some cases like when using
-+	 * GPIOs for chip select, SPI_CS_HIGH is set but this will be logically
-+	 * inverted by gpiolib, so if we want to ascertain to drive it high
-+	 * we should toggle the default with an XOR as we do here.
- 	 */
--	host->spi->mode |= SPI_CS_HIGH;
-+	host->spi->mode ^= SPI_CS_HIGH;
- 	if (spi_setup(host->spi) != 0) {
- 		/* Just warn; most cards work without it. */
- 		dev_warn(&host->spi->dev,
- 				"can't change chip-select polarity\n");
--		host->spi->mode &= ~SPI_CS_HIGH;
-+		host->spi->mode ^= SPI_CS_HIGH;
- 	} else {
- 		mmc_spi_readbytes(host, 18);
+--- a/drivers/acpi/video_detect.c
++++ b/drivers/acpi/video_detect.c
+@@ -328,6 +328,11 @@ static const struct dmi_system_id video_
+ 		DMI_MATCH(DMI_PRODUCT_NAME, "Precision 7510"),
+ 		},
+ 	},
++
++	/*
++	 * Desktops which falsely report a backlight and which our heuristics
++	 * for this do not catch.
++	 */
+ 	{
+ 	 .callback = video_detect_force_none,
+ 	 .ident = "Dell OptiPlex 9020M",
+@@ -336,6 +341,14 @@ static const struct dmi_system_id video_
+ 		DMI_MATCH(DMI_PRODUCT_NAME, "OptiPlex 9020M"),
+ 		},
+ 	},
++	{
++	 .callback = video_detect_force_none,
++	 .ident = "MSI MS-7721",
++	 .matches = {
++		DMI_MATCH(DMI_SYS_VENDOR, "MSI"),
++		DMI_MATCH(DMI_PRODUCT_NAME, "MS-7721"),
++		},
++	},
+ 	{ },
+ };
  
--		host->spi->mode &= ~SPI_CS_HIGH;
-+		host->spi->mode ^= SPI_CS_HIGH;
- 		if (spi_setup(host->spi) != 0) {
- 			/* Wot, we can't get the same setup we had before? */
- 			dev_err(&host->spi->dev,
 
 
