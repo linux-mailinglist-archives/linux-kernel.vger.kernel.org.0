@@ -2,99 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A45815CE09
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 23:24:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 359F015CE0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 23:27:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727777AbgBMWYA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 17:24:00 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:35034 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727347AbgBMWYA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 17:24:00 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j2Mti-00CGBO-G2; Thu, 13 Feb 2020 22:23:50 +0000
-Date:   Thu, 13 Feb 2020 22:23:50 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>
-Subject: Re: [PATCH v8 07/11] proc: flush task dcache entries from all procfs
- instances
-Message-ID: <20200213222350.GU23230@ZenIV.linux.org.uk>
-References: <20200212200335.GO23230@ZenIV.linux.org.uk>
- <CAHk-=wi+1CPShMFvJNPfnrJ8DD8uVKUOQ5TQzQUNGLUkeoahkg@mail.gmail.com>
- <20200212203833.GQ23230@ZenIV.linux.org.uk>
- <20200212204124.GR23230@ZenIV.linux.org.uk>
- <CAHk-=wi5FOGV_3tALK3n6E2fK3Oa_yCYkYQtCSaXLSEm2DUCKg@mail.gmail.com>
- <87lfp7h422.fsf@x220.int.ebiederm.org>
- <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
- <87pnejf6fz.fsf@x220.int.ebiederm.org>
- <20200213055527.GS23230@ZenIV.linux.org.uk>
- <CAHk-=wgQnNHYxV7-SyRP=g9vTHyNAK9g1juLLB=eho4=DHVZEQ@mail.gmail.com>
+        id S1727800AbgBMW1p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 17:27:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33580 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726780AbgBMW1o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 17:27:44 -0500
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 186822082F
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 22:27:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581632864;
+        bh=SRtP8pkvAAiuwHsxABDH84x3VSuC9ZAaIoBIlv/+HFs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ZDoGWRiYk87A+My3o5po3FXcsuYvRfERkmYRnQ1jifjpPLdzFag2KmuQkNs0l0lgL
+         d9eDPa4eiRNgO4cE6Lc5p5K0z09o9UuL9G5yPCrXGruXG6sZjMjPV1JrrZmSKK0dsO
+         DqmBgiDeNjk8I/FdT+1LbG6z5DFmSbDKWF66V4Q0=
+Received: by mail-wr1-f43.google.com with SMTP id n10so6747113wrm.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 14:27:44 -0800 (PST)
+X-Gm-Message-State: APjAAAXddpxSeokJQmCKahfytmrKm/F4ey1Q4KoBS+IwhAbx+0AmM0Fb
+        rwL4NK+NVd1+m/yk9zvhiCTv8Vi4H0h8DraPyusVrQ==
+X-Google-Smtp-Source: APXvYqxEATt8gqwMkpoZDC4PKFMldll/nLW5HggQMlZbcat0HevpC3zeHLonBBPiDLtuGM4TKcmOMRvBzQUYzZ9gYTA=
+X-Received: by 2002:adf:a354:: with SMTP id d20mr23603033wrb.257.1581632862640;
+ Thu, 13 Feb 2020 14:27:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgQnNHYxV7-SyRP=g9vTHyNAK9g1juLLB=eho4=DHVZEQ@mail.gmail.com>
+References: <20200212204652.1489-1-tony.luck@intel.com> <20200212204652.1489-5-tony.luck@intel.com>
+ <20200213170308.GM31799@zn.tnic> <20200213221913.GB21107@agluck-desk2.amr.corp.intel.com>
+In-Reply-To: <20200213221913.GB21107@agluck-desk2.amr.corp.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 13 Feb 2020 14:27:31 -0800
+X-Gmail-Original-Message-ID: <CALCETrVrL1Ps9ubAcKQykxTofn4hbkESBYE9H22Ws5Pis_vG+g@mail.gmail.com>
+Message-ID: <CALCETrVrL1Ps9ubAcKQykxTofn4hbkESBYE9H22Ws5Pis_vG+g@mail.gmail.com>
+Subject: Re: [PATCH 4/5] x86/mce: Fix all mce notifiers to update the
+ mce->handled bitmask
+To:     "Luck, Tony" <tony.luck@intel.com>
+Cc:     Borislav Petkov <bp@alien8.de>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 01:30:11PM -0800, Linus Torvalds wrote:
-> On Wed, Feb 12, 2020 at 9:55 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Thu, Feb 13, 2020 at 2:19 PM Luck, Tony <tony.luck@intel.com> wrote:
+>
+> On Thu, Feb 13, 2020 at 06:03:08PM +0100, Borislav Petkov wrote:
+> > On Wed, Feb 12, 2020 at 12:46:51PM -0800, Tony Luck wrote:
+> > > If the handler took any action to log or deal with the error, set
+> > > a bit int mce->handled so that the default handler on the end of
+> > > the machine check chain can see what has been done.
+> > >
+> > > [!!! What to do about NOTIFY_STOP ... any handler that returns this
+> > > value short-circuits calling subsequent entries on the chain. In
+> > > some cases this may be the right thing to do ... but it others we
+> > > really want to keep calling other functions on the chain]
 > >
-> > What I don't understand is the insistence on getting those dentries
-> > via dcache lookups.
-> 
-> I don't think that's an "insistence", it's more of a "historical
-> behavior" together with "several changes over the years to deal with
-> dentry-level cleanups and updates".
-> 
-> > _IF_ we are willing to live with cacheline
-> > contention (on ->d_lock of root dentry, if nothing else), why not
-> > do the following:
-> >         * put all dentries of such directories ([0-9]* and [0-9]*/task/*)
-> > into a list anchored in task_struct; have non-counting reference to
-> > task_struct stored in them (might simplify part of get_proc_task() users,
-> 
-> Hmm.
-> 
-> Right now I don't think we actually create any dentries at all for the
-> short-lived process case.
-> 
-> Wouldn't your suggestion make fork/exit rather worse?
-> 
-> Or would you create the dentries dynamically still at lookup time, and
-> then attach them to the process at that point?
-> 
-> What list would you use for the dentry chaining? Would you play games
-> with the dentry hashing, and "hash" them off the process, and never
-> hit in the lookup cache?
+> > Yes, we can kill that NOTIFY_STOP thing in the mce code since it is
+> > nasty.
+>
+> Well, there are places where we want to keep NOTIFY_STOP.
 
-I'd been thinking of ->d_fsdata pointing to a structure with list_head
-and a (non-counting) task_struct pointer for those guys.  Allocated
-on lookup, of course (as well as readdir ;-/) and put on the list
-at the same time.
+I very very strongly disagree.
 
-IOW, for short-lived process we simply have an empty (h)list anchored
-in task_struct and that's it.
+>
+> 1) Default case for CEC.  We want it to "hide" the corrected error.
+>    That was one of the main goals for CEC.  We've discussed cases
+>    where CEC shouldn't hide (when internal threshold exceeded and
+>    it tries to take a page offline ... probably something related to
+>    CMCI storms ... though we didn't really come to any conclusion)
+
+Then put this logic in do_machine_check() or in some sensible place
+that it calls via some ops structure or directly.  Don't hide it in
+some incomprehensible, possibly nondeterministic place in a notifier
+chain.
+
+> 2) Errata. Perhaps a vendor/platform specific function at the head
+>    of the notify chain that weeds out errors that should never have
+>    been reported.
+
+No, do this before the notifier chain please.
+
+AMA Capital Management, LLC
