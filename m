@@ -2,128 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E58D215C87D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:40:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68C3A15C881
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:41:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728508AbgBMQkW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 11:40:22 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39486 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727924AbgBMQkT (ORCPT
+        id S1728054AbgBMQk5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 11:40:57 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:36710 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727671AbgBMQk4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 11:40:19 -0500
-Received: by mail-wm1-f68.google.com with SMTP id c84so7514071wme.4;
-        Thu, 13 Feb 2020 08:40:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ljIvDHLN6tog1gjQ51iNc2XMRU3cMi+uSkVVHu8cuT4=;
-        b=OMkAGME7j7rQnbLnlKwKqvhjvo5FGigM7wlHU4CrcLnpiLC86ihdKcBsofYTSxPYRa
-         KGW5vVaAF/GZ3G/ddvB9xGhznGLkrPRgmy1cagbrgJD4JfTiVEpTAZrru5VrHjeeaPWI
-         kE4FOcM/lEx5lU7e3eD+mqvL3xOyFU1BQORJ26Q6jaH6IbjDtsO9XLK8oUVw478zdqa/
-         peqvVcAUWFVhRbH9/zAv/g/e40YHVFdd6Zm8zBdbxlsYd8GAFHF+Va2g313xWjGqd/gX
-         Ax+Hi+JHQVG0hbR23B73PHZWmAtYDIDUPCFX5cW8ktC2+XWiC1JDzhN4Ka03y8Fsh5cM
-         /C+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ljIvDHLN6tog1gjQ51iNc2XMRU3cMi+uSkVVHu8cuT4=;
-        b=brZMdueK+0D+dVEt0SSYwtrOQ2txdWQihFgONow/k5PV594m9AYEoyPyhSO6qAlh0b
-         DsPwlY9E6JS0e62v0JvHabLDi9uZERZefupASyMvLDpfkKUJhYzBFslgEJyuP5hX/nNM
-         zKSKa8omOOAevvAPksCA/SQS+7OpFPZ1ZnocP3DHAN/qtsaP77bPffwuelK2z733mAR7
-         pAkiLuXsjLHqbJ7Ruv2+tV+y/ltMOVekNQMrdu12x0V5jLRZfvAbd4Qd8lsT7alY561P
-         buK++8va0seUKmUFyaR/5gcNh7Lm5aqk+nsyqvLbIhnUz3zH+i8R7QqTWCH3lCVNyfkM
-         gOwA==
-X-Gm-Message-State: APjAAAW4Jcn350qukmjSStGfydoMvTqC8KwOp3TPBlhvrrR939+EuPnX
-        PGdN5lZS15wy3VxU0rSM4+s=
-X-Google-Smtp-Source: APXvYqw7sINzUbnoD5ydFKpKcLaCTZ30fHyF6HFAksiO/pDQK8NvJDQvWRxVCSqMtK3CJfsOF10GSg==
-X-Received: by 2002:a1c:5445:: with SMTP id p5mr6643132wmi.75.1581612017438;
-        Thu, 13 Feb 2020 08:40:17 -0800 (PST)
-Received: from localhost (p2E5BEF3F.dip0.t-ipconnect.de. [46.91.239.63])
-        by smtp.gmail.com with ESMTPSA id y7sm3352850wrr.56.2020.02.13.08.40.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 08:40:16 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Arnd Bergmann <arnd@arndb.de>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Joerg Roedel <joro@8bytes.org>, Olof Johansson <olof@lixom.net>,
-        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 5/5] iommu: arm-smmu: Get reference to memory controller
-Date:   Thu, 13 Feb 2020 17:39:59 +0100
-Message-Id: <20200213163959.819733-6-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200213163959.819733-1-thierry.reding@gmail.com>
-References: <20200213163959.819733-1-thierry.reding@gmail.com>
+        Thu, 13 Feb 2020 11:40:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=luwMxyZU6lFzVJt3SO6czFv4ciHzh854fmX24FDkPhk=; b=EYB6bMxMkcq8ZMZOFxKpztIYpm
+        8JWzqukpe0Mwhyc9DrWPgOzOCUWcrkOCR57n3FXNizFJHMrXrV5cZYfoQ3/B2mDq5D7TpwAWeOcL1
+        BscLNMPC3RFO4Z3/WojgVh9vB4h3ihYsKmyxqhBjqQ6mjRulcMC2qo+Am4nG3blmyHSKAhrhjUuLV
+        szuKDgRj+go9B0Ka173GGhy8DJ4cn//+4EkKDYHve6MswcBITTKOin4tfLXaLhQqrnzaVNc2cC8fR
+        WtpM4snTUyzhSzyDVf5fhpq6YGxjnBJwcpRMOq6gHzXTkxOEfayMsz2nYyKfVBwW//BtDF9lX/9Ng
+        a1sKGrCQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j2HXW-0000mE-M2; Thu, 13 Feb 2020 16:40:34 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E667D307963;
+        Thu, 13 Feb 2020 17:38:41 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 0EFA620206D69; Thu, 13 Feb 2020 17:40:31 +0100 (CET)
+Date:   Thu, 13 Feb 2020 17:40:31 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        rostedt@goodmis.org, mingo@kernel.org, gregkh@linuxfoundation.org,
+        gustavo@embeddedor.com, tglx@linutronix.de, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com
+Subject: Re: [PATCH v2 3/9] rcu,tracing: Create trace_rcu_{enter,exit}()
+Message-ID: <20200213164031.GH14914@hirez.programming.kicks-ass.net>
+References: <20200212210139.382424693@infradead.org>
+ <20200212210749.971717428@infradead.org>
+ <20200212232005.GC115917@google.com>
+ <20200213082716.GI14897@hirez.programming.kicks-ass.net>
+ <20200213135138.GB2935@paulmck-ThinkPad-P72>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200213135138.GB2935@paulmck-ThinkPad-P72>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On Thu, Feb 13, 2020 at 05:51:38AM -0800, Paul E. McKenney wrote:
 
-Use the memory controller framework to obtain a reference to the memory
-controller to which the SMMU will make memory requests. This allows the
-two drivers to properly order their probes so that the memory controller
-can be programmed first.
+> The reason for the irq argument is to avoid invoking
+> rcu_prepare_for_idle() and rcu_dynticks_task_enter() from NMI context
+> from rcu_nmi_exit_common().  Similarly, we need to avoid invoking
+> rcu_dynticks_task_exit() and rcu_cleanup_after_idle() from NMI context
+> from rcu_nmi_enter_common().
 
-An example where this is required is Tegra186 where the stream IDs need
-to be associated with memory clients before memory requests are emitted
-with the correct stream ID.
+Aaah, I see. I didn't grep hard enough earlier today (I only found
+stubs). Yes, those take locks, we mustn't call them from NMI context.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/iommu/arm-smmu.c | 11 +++++++++++
- drivers/iommu/arm-smmu.h |  2 ++
- 2 files changed, 13 insertions(+)
+> It might well be that I could make these functions be NMI-safe, but
+> rcu_prepare_for_idle() in particular would be a bit ugly at best.
+> So, before looking into that, I have a question.  Given these proposed
+> changes, will rcu_nmi_exit_common() and rcu_nmi_enter_common() be able
+> to just use in_nmi()?
 
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 16c4b87af42b..862ea55018e8 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -2109,6 +2109,17 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
- 	}
- 	smmu->dev = dev;
- 
-+	smmu->mc = devm_memory_controller_get_optional(dev, NULL);
-+	if (IS_ERR(smmu->mc)) {
-+		err = PTR_ERR(smmu->mc);
-+
-+		if (err != -EPROBE_DEFER)
-+			dev_err(dev, "failed to get memory controller: %d\n",
-+				err);
-+
-+		return err;
-+	}
-+
- 	if (dev->of_node)
- 		err = arm_smmu_device_dt_probe(pdev, smmu);
- 	else
-diff --git a/drivers/iommu/arm-smmu.h b/drivers/iommu/arm-smmu.h
-index 8d1cd54d82a6..d38bcd3ce447 100644
---- a/drivers/iommu/arm-smmu.h
-+++ b/drivers/iommu/arm-smmu.h
-@@ -18,6 +18,7 @@
- #include <linux/io-64-nonatomic-hi-lo.h>
- #include <linux/io-pgtable.h>
- #include <linux/iommu.h>
-+#include <linux/memory-controller.h>
- #include <linux/mutex.h>
- #include <linux/spinlock.h>
- #include <linux/types.h>
-@@ -253,6 +254,7 @@ enum arm_smmu_implementation {
- 
- struct arm_smmu_device {
- 	struct device			*dev;
-+	struct memory_controller	*mc;
- 
- 	void __iomem			*base;
- 	unsigned int			numpage;
--- 
-2.24.1
-
+That _should_ already be the case today. That is, if we end up in a
+tracer and in_nmi() is unreliable we're already screwed anyway.
