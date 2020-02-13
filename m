@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A5B515C216
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:29:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A915115C224
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:29:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729418AbgBMP3A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:29:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44912 "EHLO mail.kernel.org"
+        id S2387889AbgBMP3t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:29:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729196AbgBMP0V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:26:21 -0500
+        id S1729279AbgBMP0x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:26:53 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2247C20661;
-        Thu, 13 Feb 2020 15:26:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E32C2465D;
+        Thu, 13 Feb 2020 15:26:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607581;
-        bh=ybrmC2rHhdfkY7gVnF0IU5j4QPB1DHBHoIR7OzmC2is=;
+        s=default; t=1581607612;
+        bh=5IGcf0Cuf4hPbDef247OB/duOvf0GB+NRDuUUuPMJ1k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RrbkQZhPLCr1a38bo5jPzbcz/elGiMRGATWl1/62fUN+ujAYAxx8k4OZ3B+5yl4sP
-         jtbld8JwAaaW9Fa70J9/Co44HimstQxYYwnQ3gTgTgKjaGDTWsP2PuCw81ecAd6KQk
-         Ub2DjWAeBuzzAHgUeHY5KP7MfpKjOqNketY9yno8=
+        b=YSXz3X59z1WrHimIx3KtS0jee8rbxirpy2aTS1wAaXD+uGjgM+quJqc87OcTnnpQH
+         C8JZJycRhB2Y/4UvnyabXnZ/1qRHq8CGAx4WFybjP7yzbEDJYAQFycnh2XH7rLZ4r9
+         mSCzQvorY6Y6dHuoCQFgwzNPiTxC2un8qhAUazuA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicolai Stange <nstange@suse.de>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 172/173] libertas: dont exit from lbs_ibss_join_existing() with RCU read lock held
-Date:   Thu, 13 Feb 2020 07:21:15 -0800
-Message-Id: <20200213152014.343895495@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Beata Michalska <beata.michalska@linaro.org>,
+        James Morse <james.morse@arm.com>,
+        Marc Zyngier <maz@kernel.org>
+Subject: [PATCH 4.19 38/52] KVM: arm: Make inject_abt32() inject an external abort instead
+Date:   Thu, 13 Feb 2020 07:21:19 -0800
+Message-Id: <20200213151825.869221014@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
-References: <20200213151931.677980430@linuxfoundation.org>
+In-Reply-To: <20200213151810.331796857@linuxfoundation.org>
+References: <20200213151810.331796857@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +45,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolai Stange <nstange@suse.de>
+From: James Morse <james.morse@arm.com>
 
-[ Upstream commit c7bf1fb7ddca331780b9a733ae308737b39f1ad4 ]
+commit 21aecdbd7f3ab02c9b82597dc733ee759fb8b274 upstream.
 
-Commit e5e884b42639 ("libertas: Fix two buffer overflows at parsing bss
-descriptor") introduced a bounds check on the number of supplied rates to
-lbs_ibss_join_existing().
+KVM's inject_abt64() injects an external-abort into an aarch64 guest.
+The KVM_CAP_ARM_INJECT_EXT_DABT is intended to do exactly this, but
+for an aarch32 guest inject_abt32() injects an implementation-defined
+exception, 'Lockdown fault'.
 
-Unfortunately, it introduced a return path from within a RCU read side
-critical section without a corresponding rcu_read_unlock(). Fix this.
+Change this to external abort. For non-LPAE we now get the documented:
+| Unhandled fault: external abort on non-linefetch (0x008) at 0x9c800f00
+and for LPAE:
+| Unhandled fault: synchronous external abort (0x210) at 0x9c800f00
 
-Fixes: e5e884b42639 ("libertas: Fix two buffer overflows at parsing bss descriptor")
-Signed-off-by: Nicolai Stange <nstange@suse.de>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 74a64a981662a ("KVM: arm/arm64: Unify 32bit fault injection")
+Reported-by: Beata Michalska <beata.michalska@linaro.org>
+Signed-off-by: James Morse <james.morse@arm.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Link: https://lore.kernel.org/r/20200121123356.203000-3-james.morse@arm.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/wireless/marvell/libertas/cfg.c | 1 +
- 1 file changed, 1 insertion(+)
+ virt/kvm/arm/aarch32.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/marvell/libertas/cfg.c b/drivers/net/wireless/marvell/libertas/cfg.c
-index 4ffc188d2ffd3..a2874f111d122 100644
---- a/drivers/net/wireless/marvell/libertas/cfg.c
-+++ b/drivers/net/wireless/marvell/libertas/cfg.c
-@@ -1788,6 +1788,7 @@ static int lbs_ibss_join_existing(struct lbs_private *priv,
- 		rates_max = rates_eid[1];
- 		if (rates_max > MAX_RATES) {
- 			lbs_deb_join("invalid rates");
-+			rcu_read_unlock();
- 			goto out;
- 		}
- 		rates = cmd.bss.rates;
--- 
-2.20.1
-
+--- a/virt/kvm/arm/aarch32.c
++++ b/virt/kvm/arm/aarch32.c
+@@ -26,6 +26,10 @@
+ #include <asm/kvm_emulate.h>
+ #include <asm/kvm_hyp.h>
+ 
++#define DFSR_FSC_EXTABT_LPAE	0x10
++#define DFSR_FSC_EXTABT_nLPAE	0x08
++#define DFSR_LPAE		BIT(9)
++
+ /*
+  * Table taken from ARMv8 ARM DDI0487B-B, table G1-10.
+  */
+@@ -193,10 +197,10 @@ static void inject_abt32(struct kvm_vcpu
+ 	/* Give the guest an IMPLEMENTATION DEFINED exception */
+ 	is_lpae = (vcpu_cp15(vcpu, c2_TTBCR) >> 31);
+ 	if (is_lpae) {
+-		*fsr = 1 << 9 | 0x34;
++		*fsr = DFSR_LPAE | DFSR_FSC_EXTABT_LPAE;
+ 	} else {
+-		/* Surprise! DFSR's FS[4] lives in bit 10 */
+-		*fsr = BIT(10) | 0x4; /* 0x14 */
++		/* no need to shuffle FS[4] into DFSR[10] as its 0 */
++		*fsr = DFSR_FSC_EXTABT_nLPAE;
+ 	}
+ }
+ 
 
 
