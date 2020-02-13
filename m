@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F060A15C421
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FBD715C432
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387665AbgBMP1F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:27:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40036 "EHLO mail.kernel.org"
+        id S2387486AbgBMP1Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:27:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728919AbgBMPZI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:25:08 -0500
+        id S1728516AbgBMPZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:22 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C526C246A3;
-        Thu, 13 Feb 2020 15:25:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3323124690;
+        Thu, 13 Feb 2020 15:25:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607506;
-        bh=rnUAQxha5PjK5HbsT8UT0RJBat2b5wPYL/hdyIgr9r4=;
+        s=default; t=1581607522;
+        bh=SIsmPf3abXu8RlcQgswvaUTqnh7SxIEE2Cc3DW6G/Lc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MCfDcfWmwNhg6BB8Vh1sZt5T4lTslmaW25Eis7JtKfTavtnLzAujr6+crJ2+L+lSE
-         DaFfTJrX4Z310AOyHN91ZmUZdHQbYdPzCD0PYU9GfEH4RxPmeDXQMN/+/JZCvFyt9N
-         oIq1ZmJ8tUfhtz0XzKAKYhYrCCBKoCTVMemOI2SU=
+        b=xgqd11IRRmxuh41Ct60EIMj3pHNQSoXTUYO2ecQsyxd0mbUhlJmigW58CySHj+GTY
+         78ZuBZqzWPJe8ztFLExoFnxg9R3h4n7zOQRE0Vjc3iK1c2cZrefZzlOqAxFe0GWp52
+         y2XshKEpWBd/Qw+v4Cfw6tqCjdnLxeYhmXbcGXxE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 065/173] crypto: atmel-aes - Fix counter overflow in CTR mode
-Date:   Thu, 13 Feb 2020 07:19:28 -0800
-Message-Id: <20200213151950.113618457@linuxfoundation.org>
+        stable@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
+        Stephen Warren <swarren@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>
+Subject: [PATCH 4.14 072/173] ARM: tegra: Enable PLLP bypass during Tegra124 LP1
+Date:   Thu, 13 Feb 2020 07:19:35 -0800
+Message-Id: <20200213151951.723509496@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
 References: <20200213151931.677980430@linuxfoundation.org>
@@ -44,104 +44,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tudor Ambarus <tudor.ambarus@microchip.com>
+From: Stephen Warren <swarren@nvidia.com>
 
-commit 781a08d9740afa73357f1a60d45d7c93d7cca2dd upstream.
+commit 1a3388d506bf5b45bb283e6a4c4706cfb4897333 upstream.
 
-32 bit counter is not supported by neither of our AES IPs, all implement
-a 16 bit block counter. Drop the 32 bit block counter logic.
+For a little over a year, U-Boot has configured the flow controller to
+perform automatic RAM re-repair on off->on power transitions of the CPU
+rail[1]. This is mandatory for correct operation of Tegra124. However,
+RAM re-repair relies on certain clocks, which the kernel must enable and
+leave running. PLLP is one of those clocks. This clock is shut down
+during LP1 in order to save power. Enable bypass (which I believe routes
+osc_div_clk, essentially the crystal clock, to the PLL output) so that
+this clock signal toggles even though the PLL is not active. This is
+required so that LP1 power mode (system suspend) operates correctly.
 
-Fixes: fcac83656a3e ("crypto: atmel-aes - fix the counter overflow in CTR mode")
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+The bypass configuration must then be undone when resuming from LP1, so
+that all peripheral clocks run at the expected rate. Without this, many
+peripherals won't work correctly; for example, the UART baud rate would
+be incorrect.
+
+NVIDIA's downstream kernel code only does this if not compiled for
+Tegra30, so the added code is made conditional upon the chip ID.
+NVIDIA's downstream code makes this change conditional upon the active
+CPU cluster. The upstream kernel currently doesn't support cluster
+switching, so this patch doesn't test the active CPU cluster ID.
+
+[1] 3cc7942a4ae5 ARM: tegra: implement RAM repair
+
+Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/atmel-aes.c |   37 ++++++++++++-------------------------
- 1 file changed, 12 insertions(+), 25 deletions(-)
+ arch/arm/mach-tegra/sleep-tegra30.S |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/drivers/crypto/atmel-aes.c
-+++ b/drivers/crypto/atmel-aes.c
-@@ -91,7 +91,6 @@
- struct atmel_aes_caps {
- 	bool			has_dualbuff;
- 	bool			has_cfb64;
--	bool			has_ctr32;
- 	bool			has_gcm;
- 	bool			has_xts;
- 	bool			has_authenc;
-@@ -990,8 +989,9 @@ static int atmel_aes_ctr_transfer(struct
- 	struct atmel_aes_ctr_ctx *ctx = atmel_aes_ctr_ctx_cast(dd->ctx);
- 	struct ablkcipher_request *req = ablkcipher_request_cast(dd->areq);
- 	struct scatterlist *src, *dst;
--	u32 ctr, blocks;
- 	size_t datalen;
-+	u32 ctr;
-+	u16 blocks, start, end;
- 	bool use_dma, fragmented = false;
+--- a/arch/arm/mach-tegra/sleep-tegra30.S
++++ b/arch/arm/mach-tegra/sleep-tegra30.S
+@@ -382,6 +382,14 @@ _pll_m_c_x_done:
+ 	pll_locked r1, r0, CLK_RESET_PLLC_BASE
+ 	pll_locked r1, r0, CLK_RESET_PLLX_BASE
  
- 	/* Check for transfer completion. */
-@@ -1003,27 +1003,17 @@ static int atmel_aes_ctr_transfer(struct
- 	datalen = req->nbytes - ctx->offset;
- 	blocks = DIV_ROUND_UP(datalen, AES_BLOCK_SIZE);
- 	ctr = be32_to_cpu(ctx->iv[3]);
--	if (dd->caps.has_ctr32) {
--		/* Check 32bit counter overflow. */
--		u32 start = ctr;
--		u32 end = start + blocks - 1;
--
--		if (end < start) {
--			ctr |= 0xffffffff;
--			datalen = AES_BLOCK_SIZE * -start;
--			fragmented = true;
--		}
--	} else {
--		/* Check 16bit counter overflow. */
--		u16 start = ctr & 0xffff;
--		u16 end = start + (u16)blocks - 1;
--
--		if (blocks >> 16 || end < start) {
--			ctr |= 0xffff;
--			datalen = AES_BLOCK_SIZE * (0x10000-start);
--			fragmented = true;
--		}
++	tegra_get_soc_id TEGRA_APB_MISC_BASE, r1
++	cmp	r1, #TEGRA30
++	beq	1f
++	ldr	r1, [r0, #CLK_RESET_PLLP_BASE]
++	bic	r1, r1, #(1<<31)	@ disable PllP bypass
++	str	r1, [r0, #CLK_RESET_PLLP_BASE]
++1:
 +
-+	/* Check 16bit counter overflow. */
-+	start = ctr & 0xffff;
-+	end = start + blocks - 1;
-+
-+	if (blocks >> 16 || end < start) {
-+		ctr |= 0xffff;
-+		datalen = AES_BLOCK_SIZE * (0x10000 - start);
-+		fragmented = true;
- 	}
-+
- 	use_dma = (datalen >= ATMEL_AES_DMA_THRESHOLD);
+ 	mov32	r7, TEGRA_TMRUS_BASE
+ 	ldr	r1, [r7]
+ 	add	r1, r1, #LOCK_DELAY
+@@ -641,7 +649,10 @@ tegra30_switch_cpu_to_clk32k:
+ 	str	r0, [r4, #PMC_PLLP_WB0_OVERRIDE]
  
- 	/* Jump to offset. */
-@@ -2536,7 +2526,6 @@ static void atmel_aes_get_cap(struct atm
- {
- 	dd->caps.has_dualbuff = 0;
- 	dd->caps.has_cfb64 = 0;
--	dd->caps.has_ctr32 = 0;
- 	dd->caps.has_gcm = 0;
- 	dd->caps.has_xts = 0;
- 	dd->caps.has_authenc = 0;
-@@ -2547,7 +2536,6 @@ static void atmel_aes_get_cap(struct atm
- 	case 0x500:
- 		dd->caps.has_dualbuff = 1;
- 		dd->caps.has_cfb64 = 1;
--		dd->caps.has_ctr32 = 1;
- 		dd->caps.has_gcm = 1;
- 		dd->caps.has_xts = 1;
- 		dd->caps.has_authenc = 1;
-@@ -2556,7 +2544,6 @@ static void atmel_aes_get_cap(struct atm
- 	case 0x200:
- 		dd->caps.has_dualbuff = 1;
- 		dd->caps.has_cfb64 = 1;
--		dd->caps.has_ctr32 = 1;
- 		dd->caps.has_gcm = 1;
- 		dd->caps.max_burst_size = 4;
- 		break;
+ 	/* disable PLLP, PLLA, PLLC and PLLX */
++	tegra_get_soc_id TEGRA_APB_MISC_BASE, r1
++	cmp	r1, #TEGRA30
+ 	ldr	r0, [r5, #CLK_RESET_PLLP_BASE]
++	orrne	r0, r0, #(1 << 31)	@ enable PllP bypass on fast cluster
+ 	bic	r0, r0, #(1 << 30)
+ 	str	r0, [r5, #CLK_RESET_PLLP_BASE]
+ 	ldr	r0, [r5, #CLK_RESET_PLLA_BASE]
 
 
