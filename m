@@ -2,97 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 946F715C4C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D264B15C28B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:35:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388083AbgBMPua (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:50:30 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41772 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387560AbgBMP02 (ORCPT
+        id S1729933AbgBMPeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:34:09 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:37787 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729664AbgBMPaP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:26:28 -0500
-Received: by mail-pf1-f194.google.com with SMTP id j9so3231088pfa.8;
-        Thu, 13 Feb 2020 07:26:28 -0800 (PST)
+        Thu, 13 Feb 2020 10:30:15 -0500
+Received: by mail-pj1-f68.google.com with SMTP id m13so2573489pjb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 07:30:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=3YsWsylZ4489Gb3tnUr9kkkeFg/lh1zGRWfBEejFiwA=;
-        b=CdYnWy14vgKMDE8saobSvrpuwdjIw7BGvH3RroVir3x/MBhrWIMYWQXHeaV5pbj1a+
-         bLeq+kKlKdPsWosW3KD3WQrSBY2/ToqH8gIsQMljOcMAj4NIMIEMYVyki1iYe38Lm9zn
-         jEb9voFR6JAun43lFlu0Sn2B/uEnHoMryDTh/BWQdOirvc6eez1/JumX8NtoxfdZen+r
-         6wcKFEooJ47FjLHBDddTPHoXeun6W1qEMYCpPHFKiglaClnP6iBBwg5BBSO0wG/TzsgL
-         3MFtjslnEKVUBdcAhUb0yw34mCgVSg/S1/E7RIlCciQRkNczx1/+V7HglHxTi70Ehwjm
-         s+5Q==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=h4tXxCDqUAeynBn8YfdI4d7ZTww8jr1pxW2BfTAecOw=;
+        b=JBecrczYg/FyZDYE2AD6DZpQw8AIB6CSVaDIj1K/dFnFrEr2zRO+zLKtyzp0Z39Xnq
+         IuzUCdw9nwffWRWpajJpZT4OwMlCOpi+ovKz39fufc6rkztLeurDSzyNe3kRmokyBG5a
+         +gmLrP5OOJcRjRxe3NO22f1QhCsls+vFKA2xeDyT0LwwB82JrEWA0p0tk+R0gX0c2r7S
+         JAlpTr7pQJSmAat59NdTtv1EOte41xirVsrnmS7VmioGXwX+f6Xb7ZDenCH+XGQZrBMm
+         8W02xkMZue137NK7rZCbMlPlIIdZLugk5OSsohCHVUeZa3qxGN2q42ZhcsH2tzSRajoX
+         wjlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=3YsWsylZ4489Gb3tnUr9kkkeFg/lh1zGRWfBEejFiwA=;
-        b=PkTOaVxRg69dHD+e3WcyRT0YEsQnmU5fZ3burjFRYhgR2ulOmEUabaGh4p0TG+6gsS
-         LTeu3aaA6lLsfNp+V9Fvxb8eVpQEdWJNzAw2rkemXZxj1i0R1pM6VrV1FnnyfI+cRDXZ
-         mx5CD9otTryQ3Fp39OtsJVedkxjClq9lH+rPtf+KeF+IEQ4VnOGVZ0LdHHHr4kiBCg45
-         QHXmpnH7jnQKs4FGd7h641yj1+I6OI6JOAusHVbzit99v8gPeKw1g97K9Tiv8bUg8uWP
-         oC95LyvpNEbXcmF+8sg+HuUlTy7naMK2OeeeMuCTyWhg/tJmPD7hYvKfHDQvjh0xJRNf
-         822A==
-X-Gm-Message-State: APjAAAUQVupEqTPmDOg0bi5dGYW4xZGwFA/p7tIvd+FMSZneOjh7zVw3
-        LBLDY+EqqaK88eKAYLMJRw==
-X-Google-Smtp-Source: APXvYqxb1gt5GdQ7FxVEv5Kv5nacrmWzCQlAA3YUYdxzXLhKbg4wJSto+u81h9uRby9JM7fcpafvlA==
-X-Received: by 2002:a62:e91a:: with SMTP id j26mr14805034pfh.189.1581607587813;
-        Thu, 13 Feb 2020 07:26:27 -0800 (PST)
-Received: from madhuparna-HP-Notebook.nitk.ac.in ([2402:3a80:1ee8:f65a:fc5b:5bfd:1ab4:4848])
-        by smtp.gmail.com with ESMTPSA id z3sm3609082pfz.155.2020.02.13.07.26.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 07:26:27 -0800 (PST)
-From:   madhuparnabhowmik10@gmail.com
-To:     tytso@mit.edu, adilger.kernel@dilger.ca
-Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        joel@joelfernandes.org, frextrite@gmail.com,
-        linux-kernel-mentees@lists.linuxfoundation.org, paulmck@kernel.org,
-        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
-Subject: [PATCH] fs: ext4: mballoc.c: Use built-in RCU list checking
-Date:   Thu, 13 Feb 2020 20:55:58 +0530
-Message-Id: <20200213152558.7070-1-madhuparnabhowmik10@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=h4tXxCDqUAeynBn8YfdI4d7ZTww8jr1pxW2BfTAecOw=;
+        b=mpsnLCv6ELctWO+pvXnlIKnSjo8QQd0uvfCKAe1BVlQ7lxGa+K6f0Vcj6OjK0QwDcr
+         JGuhobf8mefnRy7dpEue4g2YClpjJ9NA4vttjjP5/aoDiRfT2YRtbgaCaZS23VXimcYW
+         3fR5QbjeSlzXUF5RX3CB9rasmdpgebihb1cW0MsZHDO6GIjHAEB0hW94017i2I7s3GuD
+         +rYPFv+7N8Bp9VKTXhYphkbNEmi/sH2c9u/5k1BeK8oc0Q1ey6s7MMFG9AMDTxUzbOiv
+         sD9IKKlLgquD25PmqXf7yeC/p04EEOFZRA+pyEXetsPLczeTNaI6IudMuUNwYYKgeO1n
+         dijA==
+X-Gm-Message-State: APjAAAWxAfAZ8/rSNrFaipxKyJ8QY1Iunw1ffE4hLvlPPOeS3DmikejT
+        wCk+N+RvnNGg0jyIv3bGvqb9
+X-Google-Smtp-Source: APXvYqz4gm0XDqU07OdTiTdJXfSfampqcbHQpGnuG26etIIxJDg/VSwU6SBMHKkVPXZ7r6GHgiSJqg==
+X-Received: by 2002:a17:90b:97:: with SMTP id bb23mr5485019pjb.53.1581607815090;
+        Thu, 13 Feb 2020 07:30:15 -0800 (PST)
+Received: from mani ([103.59.133.81])
+        by smtp.gmail.com with ESMTPSA id x6sm3506464pfi.83.2020.02.13.07.30.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Feb 2020 07:30:14 -0800 (PST)
+Date:   Thu, 13 Feb 2020 21:00:08 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Dan Williams <dcbw@redhat.com>
+Cc:     davem@davemloft.net, kuba@kernel.org, bjorn.andersson@linaro.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] Migrate QRTR Nameservice to Kernel
+Message-ID: <20200213153007.GA26254@mani>
+References: <20200213091427.13435-1-manivannan.sadhasivam@linaro.org>
+ <34daecbeb05d31e30ef11574f873553290c29d16.camel@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <34daecbeb05d31e30ef11574f873553290c29d16.camel@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+Hi Dan,
 
-list_for_each_entry_rcu() has built-in RCU and lock checking.
+On Thu, Feb 13, 2020 at 09:22:39AM -0600, Dan Williams wrote:
+> On Thu, 2020-02-13 at 14:44 +0530, Manivannan Sadhasivam wrote:
+> > Hello,
+> > 
+> > This patchset migrates the Qualcomm IPC Router (QRTR) Nameservice
+> > from userspace
+> > to kernel under net/qrtr.
+> > 
+> > The userspace implementation of it can be found here:
+> > https://github.com/andersson/qrtr/blob/master/src/ns.c
+> > 
+> > This change is required for enabling the WiFi functionality of some
+> > Qualcomm
+> > WLAN devices using ATH11K without any dependency on a userspace
+> > daemon.
+> 
+> Just out of curiousity, what's the motivation for not requiring a
+> userspace daemon? What are the downsides of the current userspace
+> daemon implementation?
+>
 
-Pass cond argument to list_for_each_entry_rcu() to silence
-false lockdep warning when CONFIG_PROVE_RCU_LIST is enabled
-by default.
+The primary motivation is to eliminate the need for installing and starting
+a userspace tool for the basic WiFi usage. This will be critical for the
+Qualcomm WLAN devices deployed in x86 laptops.
 
-Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
----
- fs/ext4/mballoc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Also, there are some plans to implement QRTR link negotiation based on this
+in future.
 
-diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index a3e2767bdf2f..70418e13e9e8 100644
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -4280,7 +4280,7 @@ ext4_mb_discard_lg_preallocations(struct super_block *sb,
+Thanks,
+Mani
  
- 	spin_lock(&lg->lg_prealloc_lock);
- 	list_for_each_entry_rcu(pa, &lg->lg_prealloc_list[order],
--						pa_inode_list) {
-+						pa_inode_list, lockdep_is_held(&lg->lg_prealloc_lock)) {
- 		spin_lock(&pa->pa_lock);
- 		if (atomic_read(&pa->pa_count)) {
- 			/*
-@@ -4363,7 +4363,7 @@ static void ext4_mb_add_n_trim(struct ext4_allocation_context *ac)
- 	/* Add the prealloc space to lg */
- 	spin_lock(&lg->lg_prealloc_lock);
- 	list_for_each_entry_rcu(tmp_pa, &lg->lg_prealloc_list[order],
--						pa_inode_list) {
-+						pa_inode_list, lockdep_is_held(&lg->lg_prealloc_lock)) {
- 		spin_lock(&tmp_pa->pa_lock);
- 		if (tmp_pa->pa_deleted) {
- 			spin_unlock(&tmp_pa->pa_lock);
--- 
-2.17.1
-
+> Dan
+> 
+> > The original userspace code is published under BSD3 license. For
+> > migrating it
+> > to Linux kernel, I have adapted Dual BSD/GPL license.
+> > 
+> > This patchset has been verified on Dragonboard410c and Intel NUC with
+> > QCA6390
+> > WLAN device.
+> > 
+> > Thanks,
+> > Mani
+> > 
+> > Manivannan Sadhasivam (2):
+> >   net: qrtr: Migrate nameservice to kernel from userspace
+> >   net: qrtr: Fix the local node ID as 1
+> > 
+> >  net/qrtr/Makefile |   2 +-
+> >  net/qrtr/ns.c     | 730
+> > ++++++++++++++++++++++++++++++++++++++++++++++
+> >  net/qrtr/qrtr.c   |  51 +---
+> >  net/qrtr/qrtr.h   |   4 +
+> >  4 files changed, 746 insertions(+), 41 deletions(-)
+> >  create mode 100644 net/qrtr/ns.c
+> > 
+> 
