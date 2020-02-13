@@ -2,121 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5DDF15BBDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 10:43:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7383015BBE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 10:43:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729728AbgBMJml (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 04:42:41 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:51294 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729440AbgBMJml (ORCPT
+        id S1729794AbgBMJnE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 04:43:04 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42324 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729440AbgBMJnE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 04:42:41 -0500
-Received: from localhost ([127.0.0.1] helo=vostro.local)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <john.ogness@linutronix.de>)
-        id 1j2B13-0006Ng-1r; Thu, 13 Feb 2020 10:42:37 +0100
-From:   John Ogness <john.ogness@linutronix.de>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] printk: use the lockless ringbuffer
-References: <20200128161948.8524-1-john.ogness@linutronix.de>
-        <20200128161948.8524-3-john.ogness@linutronix.de>
-        <20200213090757.GA36551@google.com>
-Date:   Thu, 13 Feb 2020 10:42:35 +0100
-In-Reply-To: <20200213090757.GA36551@google.com> (Sergey Senozhatsky's message
-        of "Thu, 13 Feb 2020 18:07:57 +0900")
-Message-ID: <87v9oarfg4.fsf@linutronix.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+        Thu, 13 Feb 2020 04:43:04 -0500
+Received: by mail-pg1-f196.google.com with SMTP id w21so2788396pgl.9
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 01:43:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=NoGUqRpq1F77wcdshkLX1E0mBsPP95pWUoHQOnOvrik=;
+        b=PZPAygbXf35pGVvey68bGizPw7g3pQJ2BxVMk8RCqukzpbiRkFrrEVDHzhPxDT1v8O
+         BmdBCCzhGg1mqmMXi233FUZVYwx7iFvzRSfs3KvjJkoS7U1SBzHT7vIBlPC3i5J5+ne+
+         JiexY8XFovWpYjZ1D8yF82T6x6H31LpdWePek5DStlFYOG7dtaXmaDYn+oti8Z75dzVo
+         tP/y8TNe4vsT1EN5KQFVqs27BVb2oz/8eX22GDnEDLKbVkNRZL6/iYRMKvPKK0afSH1O
+         rZnTueO7A+YCp2knuxwjglDR342/ujy4FQgTDLNvyio/xY+hKV7giUM+IjTnEb9z+h0z
+         ozXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=NoGUqRpq1F77wcdshkLX1E0mBsPP95pWUoHQOnOvrik=;
+        b=Xu0sf2QYpTQ386ylNN/cldzCevVINzqaWHu5GoWGw1XoRkgtSTnEaN9F8bsfdEf/ZU
+         9HEOE0bH2/S8v3a/1qmTSzg26qnmFe43ZQBuRakfYTb++IfP8+jtPOlO+iGw4U3Lxhuf
+         V4YnGhnmwqxYV31dIb4OV3gUj4v3JiNCnALf8Re+yeMqdLNnhT2xUi7sW/Gdnlw4gft/
+         OKx3tsqF1vPb1a7GNrDiF5LsQUj+Nax2PM3jIGLarMkXHbMhKs8fU5unU2Hz4GAB91ek
+         unIKGZYbUgNetvRrEffhMsnRr4xUWsEghanNqlF0cOpE2pLCZiQcHLMk2VniJ364jdtP
+         vatw==
+X-Gm-Message-State: APjAAAW3ySREXV1GNjlPAQ3yCqF1B7dZ61jCna91jzO1ptXf46Xmxnkd
+        Spu+1lpTJ2PLBbw2QeDMMbD4QQ==
+X-Google-Smtp-Source: APXvYqyb/1C2ZIIlDPuaXok56IVD4v4T9EnKvkkqKbl8eWGafz0TN3Sk1x1XXOZucUcEJGpMrGaO5A==
+X-Received: by 2002:a62:52d0:: with SMTP id g199mr12680304pfb.241.1581586983496;
+        Thu, 13 Feb 2020 01:43:03 -0800 (PST)
+Received: from [10.149.0.118] ([45.135.186.75])
+        by smtp.gmail.com with ESMTPSA id w26sm2421887pfj.119.2020.02.13.01.42.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Feb 2020 01:43:02 -0800 (PST)
+Subject: Re: [PATCH v12 2/4] uacce: add uacce driver
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, jonathan.cameron@huawei.com,
+        dave.jiang@intel.com, grant.likely@arm.com,
+        jean-philippe <jean-philippe@linaro.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        ilias.apalodimas@linaro.org, francois.ozog@linaro.org,
+        kenneth-lee-2012@foxmail.com, Wangzhou <wangzhou1@hisilicon.com>,
+        "haojian . zhuang" <haojian.zhuang@linaro.org>,
+        guodong.xu@linaro.org, linux-accelerators@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        iommu@lists.linux-foundation.org,
+        Kenneth Lee <liguozhu@hisilicon.com>,
+        Zaibo Xu <xuzaibo@huawei.com>
+References: <1579097568-17542-1-git-send-email-zhangfei.gao@linaro.org>
+ <1579097568-17542-3-git-send-email-zhangfei.gao@linaro.org>
+ <20200210233711.GA1787983@kroah.com>
+ <20200213091509.v7ebvtot6rvlpfjt@gondor.apana.org.au>
+From:   zhangfei <zhangfei.gao@linaro.org>
+Message-ID: <19f2e7b7-d3fc-681e-270c-2e8650df1ac8@linaro.org>
+Date:   Thu, 13 Feb 2020 17:42:43 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20200213091509.v7ebvtot6rvlpfjt@gondor.apana.org.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-02-13, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
->> -	while (user->seq == log_next_seq) {
->> +	if (!prb_read_valid(prb, user->seq, r)) {
->>  		if (file->f_flags & O_NONBLOCK) {
->>  			ret = -EAGAIN;
->>  			logbuf_unlock_irq();
->> @@ -890,30 +758,26 @@ static ssize_t devkmsg_read(struct file *file, char __user *buf,
->>  
->>  		logbuf_unlock_irq();
->>  		ret = wait_event_interruptible(log_wait,
->> -					       user->seq != log_next_seq);
->> +					prb_read_valid(prb, user->seq, r));
->>  		if (ret)
->>  			goto out;
->>  		logbuf_lock_irq();
->>  	}
->>  
->> -	if (user->seq < log_first_seq) {
->> -		/* our last seen message is gone, return error and reset */
->> -		user->idx = log_first_idx;
->> -		user->seq = log_first_seq;
->> +	if (user->seq < r->info->seq) {
->> +		/* the expected message is gone, return error and reset */
->> +		user->seq = r->info->seq;
->>  		ret = -EPIPE;
->>  		logbuf_unlock_irq();
->>  		goto out;
->>  	}
->
-> Sorry, why doesn't this do something like
->
-> 	if (user->seq < prb_first_seq(prb)) {
-> 		/* the expected message is gone, return error and reset */
-> 		user->seq = prb_first_seq(prb);
-> 		ret = -EPIPE;
-> 		...
-> 	}
 
-Here prb_read_valid() was successful, so a record _was_ read. The
-kerneldoc for the prb_read_valid() says:
 
- * On success, the reader must check r->info.seq to see which record was
- * actually read.
+On 2020/2/13 下午5:15, Herbert Xu wrote:
+> On Mon, Feb 10, 2020 at 03:37:11PM -0800, Greg Kroah-Hartman wrote:
+>> Looks much saner now, thanks for all of the work on this:
+>>
+>> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>
+>> Or am I supposed to take this in my tree?  If so, I can, but I need an
+>> ack for the crypto parts.
+> I can take this series through the crypto tree if that's fine with
+> you.
 
-The value will either be the requested user->seq or some higher value
-because user->seq is not available.
+Thanks Herbert
+That's a good idea, otherwise there may be build issue if taken separately.
 
-There are 2 reasons why user->seq is not available (and a later record
-_is_ available):
+By the way, the latest v13 is on v5.6-rc1
+https://lkml.org/lkml/2020/2/11/54
 
-1. The ringbuffer overtook user->seq. In this case, comparing and then
-   setting using prb_first_seq() could be appropriate. And r->info->seq
-   might even already be what prb_first_seq() would return. (More on
-   this below.)
-
-2. The record with user->seq has no data because the writer failed to
-   allocate dataring space. In this case, resetting back to
-   prb_first_seq() would be incorrect. And since r->info->seq is the
-   next valid record, it is appropriate that the next devkmsg_read()
-   starts there.
-
-Rather than checking these cases separately, it is enough just to check
-for the 2nd case. For the 1st case, prb_first_seq() could be less than
-r->info->seq if all the preceeding records have no data. But this just
-means the whole set of records with missing data are skipped, which
-matches existing behavior. (For example, currently when devkmsg is
-behind 10 messages, there are not 10 -EPIPE returns. Instead it
-immediately catches up to the next available record.)
-
-Perhaps the new comment should be:
-
-/*
- * The expected message is gone, return error and
- * reset to the next available message.
- */
-
-John Ogness
+Thanks
