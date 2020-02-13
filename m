@@ -2,97 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 738CA15BBE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 10:43:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5DDF15BBDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 10:43:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729867AbgBMJn3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 04:43:29 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38594 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726232AbgBMJn2 (ORCPT
+        id S1729728AbgBMJml (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 04:42:41 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:51294 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729440AbgBMJml (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 04:43:28 -0500
-Received: by mail-pg1-f195.google.com with SMTP id d6so2798744pgn.5
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 01:43:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=rnMtiz3/CgXO54DRdrz4I+ZEIJZQA5oMvmzvY1V4tLU=;
-        b=nNaASGbpcyA/9zyOeTcUx5XdEA1ycNW6vpkrnXkZTTKm1eSCnIbLSlf8wPfhylP1ER
-         PpL2Z6yYPtFDsdKU4kZAb9Y6/a8XnXo67psfg8ynOJp+DZtlXalspNE7GS3Km0v1Y1xm
-         bXf/TSes3k/ym47UMQfyqWxijpaLzbjY7+BQSPwB7glfpF2H1OLVVtwSEPPB2RZYqxFi
-         TesxiA27IILgVeKGPaUguw3Ygk4LlfdBh9piGIiLT5Hn6aMXFLoYff8K8YJgY6qo2ymb
-         1MU7HGTIqvgfugVI73jt0znV64nWlVveIez4P1ptf0j8l1etvnbkRy6Ik+1w0lAJI4bI
-         qWrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=rnMtiz3/CgXO54DRdrz4I+ZEIJZQA5oMvmzvY1V4tLU=;
-        b=P05EgXDJMBK85Z40RE3TB6oguCvUYHv2C7VaVX2QmTryp2OseiSxoZJXMk+Ry6oJyQ
-         /MmyqcBv7kpzR+Vx9/Gi4UrmQudOsngSRf7smCkICAi1RbCLdnHR3JzBObKirGbLVLtY
-         mgevMMw5JatElBU27jYSnFLrI7v4KArJvGrxaQxOxcw818RsbpZKJSfFEshI42xab7AK
-         O6qs87kNYiIsSrvkKLFqSQX1az3YVvv/Fkv4AzhrnHUNEfJ4J9i7MyL5OZ59zCNpSIph
-         ik2k62pp7SALB0uOkFJKcEJ54mm3maid0UTIYrZ4i8Sg0KZPR8+TqXJ6GjJJM+Z666F1
-         kMtA==
-X-Gm-Message-State: APjAAAUft+TOBtGLx0GaJFH0f9bvfp/f0uvfyp2NiPx1Hj1QrKuuP4FH
-        WBbL4O02hgumwfh6gMZcfeMi+w==
-X-Google-Smtp-Source: APXvYqxYxedQckM5TgeRc/S2SpKyRfEZ1qP2Q7dKiYJa4K/q5fKHHR2QcJID9iGeHnn4omLEnVYg6w==
-X-Received: by 2002:a63:9919:: with SMTP id d25mr16807304pge.22.1581587007240;
-        Thu, 13 Feb 2020 01:43:27 -0800 (PST)
-Received: from localhost.localdomain (li1441-214.members.linode.com. [45.118.134.214])
-        by smtp.gmail.com with ESMTPSA id 3sm2310277pfi.13.2020.02.13.01.43.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 01:43:26 -0800 (PST)
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        Robert Walker <robert.walker@arm.com>,
+        Thu, 13 Feb 2020 04:42:41 -0500
+Received: from localhost ([127.0.0.1] helo=vostro.local)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <john.ogness@linutronix.de>)
+        id 1j2B13-0006Ng-1r; Thu, 13 Feb 2020 10:42:37 +0100
+From:   John Ogness <john.ogness@linutronix.de>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Petr Mladek <pmladek@suse.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Coresight ML <coresight@lists.linaro.org>
-Cc:     Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v4 5/5] perf cs-etm: Fix unsigned variable comparison to zero
-Date:   Thu, 13 Feb 2020 17:42:04 +0800
-Message-Id: <20200213094204.2568-6-leo.yan@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200213094204.2568-1-leo.yan@linaro.org>
-References: <20200213094204.2568-1-leo.yan@linaro.org>
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] printk: use the lockless ringbuffer
+References: <20200128161948.8524-1-john.ogness@linutronix.de>
+        <20200128161948.8524-3-john.ogness@linutronix.de>
+        <20200213090757.GA36551@google.com>
+Date:   Thu, 13 Feb 2020 10:42:35 +0100
+In-Reply-To: <20200213090757.GA36551@google.com> (Sergey Senozhatsky's message
+        of "Thu, 13 Feb 2020 18:07:57 +0900")
+Message-ID: <87v9oarfg4.fsf@linutronix.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The variable 'offset' in function cs_etm__sample() is u64 type, it's not
-appropriate to check it with 'while (offset > 0)'; this patch changes to
-'while (offset)'.
+On 2020-02-13, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
+>> -	while (user->seq == log_next_seq) {
+>> +	if (!prb_read_valid(prb, user->seq, r)) {
+>>  		if (file->f_flags & O_NONBLOCK) {
+>>  			ret = -EAGAIN;
+>>  			logbuf_unlock_irq();
+>> @@ -890,30 +758,26 @@ static ssize_t devkmsg_read(struct file *file, char __user *buf,
+>>  
+>>  		logbuf_unlock_irq();
+>>  		ret = wait_event_interruptible(log_wait,
+>> -					       user->seq != log_next_seq);
+>> +					prb_read_valid(prb, user->seq, r));
+>>  		if (ret)
+>>  			goto out;
+>>  		logbuf_lock_irq();
+>>  	}
+>>  
+>> -	if (user->seq < log_first_seq) {
+>> -		/* our last seen message is gone, return error and reset */
+>> -		user->idx = log_first_idx;
+>> -		user->seq = log_first_seq;
+>> +	if (user->seq < r->info->seq) {
+>> +		/* the expected message is gone, return error and reset */
+>> +		user->seq = r->info->seq;
+>>  		ret = -EPIPE;
+>>  		logbuf_unlock_irq();
+>>  		goto out;
+>>  	}
+>
+> Sorry, why doesn't this do something like
+>
+> 	if (user->seq < prb_first_seq(prb)) {
+> 		/* the expected message is gone, return error and reset */
+> 		user->seq = prb_first_seq(prb);
+> 		ret = -EPIPE;
+> 		...
+> 	}
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
-Reviewed-by: Mike Leach <mike.leach@linaro.org>
----
- tools/perf/util/cs-etm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Here prb_read_valid() was successful, so a record _was_ read. The
+kerneldoc for the prb_read_valid() says:
 
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index aa4b6d060ebb..bba969d48076 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -962,7 +962,7 @@ static inline u64 cs_etm__instr_addr(struct cs_etm_queue *etmq,
- 	if (packet->isa == CS_ETM_ISA_T32) {
- 		u64 addr = packet->start_addr;
- 
--		while (offset > 0) {
-+		while (offset) {
- 			addr += cs_etm__t32_instr_size(etmq,
- 						       trace_chan_id, addr);
- 			offset--;
--- 
-2.17.1
+ * On success, the reader must check r->info.seq to see which record was
+ * actually read.
 
+The value will either be the requested user->seq or some higher value
+because user->seq is not available.
+
+There are 2 reasons why user->seq is not available (and a later record
+_is_ available):
+
+1. The ringbuffer overtook user->seq. In this case, comparing and then
+   setting using prb_first_seq() could be appropriate. And r->info->seq
+   might even already be what prb_first_seq() would return. (More on
+   this below.)
+
+2. The record with user->seq has no data because the writer failed to
+   allocate dataring space. In this case, resetting back to
+   prb_first_seq() would be incorrect. And since r->info->seq is the
+   next valid record, it is appropriate that the next devkmsg_read()
+   starts there.
+
+Rather than checking these cases separately, it is enough just to check
+for the 2nd case. For the 1st case, prb_first_seq() could be less than
+r->info->seq if all the preceeding records have no data. But this just
+means the whole set of records with missing data are skipped, which
+matches existing behavior. (For example, currently when devkmsg is
+behind 10 messages, there are not 10 -EPIPE returns. Instead it
+immediately catches up to the next available record.)
+
+Perhaps the new comment should be:
+
+/*
+ * The expected message is gone, return error and
+ * reset to the next available message.
+ */
+
+John Ogness
