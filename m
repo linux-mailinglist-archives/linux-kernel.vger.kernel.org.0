@@ -2,96 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 541F215C459
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 946F715C4C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:54:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729164AbgBMPqY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:46:24 -0500
-Received: from smtprelay0089.hostedemail.com ([216.40.44.89]:58096 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729347AbgBMP1R (ORCPT
+        id S2388083AbgBMPua (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:50:30 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41772 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387560AbgBMP02 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:27:17 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 3742A182CF66A;
-        Thu, 13 Feb 2020 15:27:16 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:599:800:960:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1431:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2525:2560:2563:2682:2685:2731:2828:2859:2895:2902:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3872:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:7974:8957:9025:10004:10400:10848:11026:11232:11658:11914:12043:12297:12438:12555:12740:12760:12895:13439:14093:14097:14181:14659:14721:21080:21325:21451:21611:21627:21740:21939:30054:30064:30070:30080:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:7,LUA_SUMMARY:none
-X-HE-Tag: brick88_5c65b482ae422
-X-Filterd-Recvd-Size: 3028
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf15.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 13 Feb 2020 15:27:14 +0000 (UTC)
-Message-ID: <19c18048e1fdec0b3db5c9a1b58f2b83514a6419.camel@perches.com>
-Subject: Re: [PATCH v2 1/1] checkpatch: support "base-commit:" format
-From:   Joe Perches <joe@perches.com>
-To:     John Hubbard <jhubbard@nvidia.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Andy Whitcroft <apw@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Thu, 13 Feb 2020 07:25:57 -0800
-In-Reply-To: <20200213055004.69235-2-jhubbard@nvidia.com>
-References: <20200213055004.69235-1-jhubbard@nvidia.com>
-         <20200213055004.69235-2-jhubbard@nvidia.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 13 Feb 2020 10:26:28 -0500
+Received: by mail-pf1-f194.google.com with SMTP id j9so3231088pfa.8;
+        Thu, 13 Feb 2020 07:26:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=3YsWsylZ4489Gb3tnUr9kkkeFg/lh1zGRWfBEejFiwA=;
+        b=CdYnWy14vgKMDE8saobSvrpuwdjIw7BGvH3RroVir3x/MBhrWIMYWQXHeaV5pbj1a+
+         bLeq+kKlKdPsWosW3KD3WQrSBY2/ToqH8gIsQMljOcMAj4NIMIEMYVyki1iYe38Lm9zn
+         jEb9voFR6JAun43lFlu0Sn2B/uEnHoMryDTh/BWQdOirvc6eez1/JumX8NtoxfdZen+r
+         6wcKFEooJ47FjLHBDddTPHoXeun6W1qEMYCpPHFKiglaClnP6iBBwg5BBSO0wG/TzsgL
+         3MFtjslnEKVUBdcAhUb0yw34mCgVSg/S1/E7RIlCciQRkNczx1/+V7HglHxTi70Ehwjm
+         s+5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=3YsWsylZ4489Gb3tnUr9kkkeFg/lh1zGRWfBEejFiwA=;
+        b=PkTOaVxRg69dHD+e3WcyRT0YEsQnmU5fZ3burjFRYhgR2ulOmEUabaGh4p0TG+6gsS
+         LTeu3aaA6lLsfNp+V9Fvxb8eVpQEdWJNzAw2rkemXZxj1i0R1pM6VrV1FnnyfI+cRDXZ
+         mx5CD9otTryQ3Fp39OtsJVedkxjClq9lH+rPtf+KeF+IEQ4VnOGVZ0LdHHHr4kiBCg45
+         QHXmpnH7jnQKs4FGd7h641yj1+I6OI6JOAusHVbzit99v8gPeKw1g97K9Tiv8bUg8uWP
+         oC95LyvpNEbXcmF+8sg+HuUlTy7naMK2OeeeMuCTyWhg/tJmPD7hYvKfHDQvjh0xJRNf
+         822A==
+X-Gm-Message-State: APjAAAUQVupEqTPmDOg0bi5dGYW4xZGwFA/p7tIvd+FMSZneOjh7zVw3
+        LBLDY+EqqaK88eKAYLMJRw==
+X-Google-Smtp-Source: APXvYqxb1gt5GdQ7FxVEv5Kv5nacrmWzCQlAA3YUYdxzXLhKbg4wJSto+u81h9uRby9JM7fcpafvlA==
+X-Received: by 2002:a62:e91a:: with SMTP id j26mr14805034pfh.189.1581607587813;
+        Thu, 13 Feb 2020 07:26:27 -0800 (PST)
+Received: from madhuparna-HP-Notebook.nitk.ac.in ([2402:3a80:1ee8:f65a:fc5b:5bfd:1ab4:4848])
+        by smtp.gmail.com with ESMTPSA id z3sm3609082pfz.155.2020.02.13.07.26.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2020 07:26:27 -0800 (PST)
+From:   madhuparnabhowmik10@gmail.com
+To:     tytso@mit.edu, adilger.kernel@dilger.ca
+Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        joel@joelfernandes.org, frextrite@gmail.com,
+        linux-kernel-mentees@lists.linuxfoundation.org, paulmck@kernel.org,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+Subject: [PATCH] fs: ext4: mballoc.c: Use built-in RCU list checking
+Date:   Thu, 13 Feb 2020 20:55:58 +0530
+Message-Id: <20200213152558.7070-1-madhuparnabhowmik10@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2020-02-12 at 21:50 -0800, John Hubbard wrote:
-> In order to support the get-lore-mbox.py tool described in [1], I ran:
-> 
->     git format-patch --base=<commit> --cover-letter <revrange>
-> 
-> ...which generated a "base-commit: <commit-hash>" tag at the end of the
-> cover letter. However, checkpatch.pl generated an error upon encounting
-> "base-commit:" in the cover letter:
-> 
->     "ERROR: Please use git commit description style..."
-> 
-> ...because it found the "commit" keyword, and failed to recognize that
-> it was part of the "base-commit" phrase, and as such, should not be
-> subjected to the same commit description style rules.
-> 
-> Update checkpatch.pl to include a special case for "base-commit:" (at
-> the start of the line, possibly with some leading whitespace) so
-> that that tag no longer generates a checkpatch error.
-> 
-> [1] https://lwn.net/Articles/811528/ "Better tools for kernel
->     developers"
-> 
-> Cc: Andy Whitcroft <apw@canonical.com>
-> Suggested-by: Joe Perches <joe@perches.com>
+From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
 
-Acked-by: Joe Perches <joe@perches.com>
+list_for_each_entry_rcu() has built-in RCU and lock checking.
 
-Andrew, can you pick this up please?
+Pass cond argument to list_for_each_entry_rcu() to silence
+false lockdep warning when CONFIG_PROVE_RCU_LIST is enabled
+by default.
 
-> Cc: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
->  scripts/checkpatch.pl | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index a63380c6b0d2..1e66fc7a2f2f 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -2761,7 +2761,7 @@ sub process {
->  
->  # Check for git id commit length and improperly formed commit descriptions
->  		if ($in_commit_log && !$commit_log_possible_stack_dump &&
-> -		    $line !~ /^\s*(?:Link|Patchwork|http|https|BugLink):/i &&
-> +		    $line !~ /^\s*(?:Link|Patchwork|http|https|BugLink|base-commit):/i &&
->  		    $line !~ /^This reverts commit [0-9a-f]{7,40}/ &&
->  		    ($line =~ /\bcommit\s+[0-9a-f]{5,}\b/i ||
->  		     ($line =~ /(?:\s|^)[0-9a-f]{12,40}(?:[\s"'\(\[]|$)/i &&
+Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+---
+ fs/ext4/mballoc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+index a3e2767bdf2f..70418e13e9e8 100644
+--- a/fs/ext4/mballoc.c
++++ b/fs/ext4/mballoc.c
+@@ -4280,7 +4280,7 @@ ext4_mb_discard_lg_preallocations(struct super_block *sb,
+ 
+ 	spin_lock(&lg->lg_prealloc_lock);
+ 	list_for_each_entry_rcu(pa, &lg->lg_prealloc_list[order],
+-						pa_inode_list) {
++						pa_inode_list, lockdep_is_held(&lg->lg_prealloc_lock)) {
+ 		spin_lock(&pa->pa_lock);
+ 		if (atomic_read(&pa->pa_count)) {
+ 			/*
+@@ -4363,7 +4363,7 @@ static void ext4_mb_add_n_trim(struct ext4_allocation_context *ac)
+ 	/* Add the prealloc space to lg */
+ 	spin_lock(&lg->lg_prealloc_lock);
+ 	list_for_each_entry_rcu(tmp_pa, &lg->lg_prealloc_list[order],
+-						pa_inode_list) {
++						pa_inode_list, lockdep_is_held(&lg->lg_prealloc_lock)) {
+ 		spin_lock(&tmp_pa->pa_lock);
+ 		if (tmp_pa->pa_deleted) {
+ 			spin_unlock(&tmp_pa->pa_lock);
+-- 
+2.17.1
 
