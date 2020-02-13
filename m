@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AF4615C297
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:35:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA3A015C248
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:31:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388031AbgBMPbk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:31:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53952 "EHLO mail.kernel.org"
+        id S2388039AbgBMPbl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:31:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53994 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728122AbgBMP2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:28:01 -0500
+        id S1729536AbgBMP2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:28:03 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8DF324670;
-        Thu, 13 Feb 2020 15:28:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8FA63222C2;
+        Thu, 13 Feb 2020 15:28:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1581607681;
-        bh=Wsgst0ju19D/IyonbwPY+OOZ91mtaatbv2Vwm4gfyG4=;
+        bh=Z0WUW3WebhFnMI1JtileyBhNCkLIzEIlAU4RtOpoYm4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DFpAQHpCn18UOFM3icqobAhvdetNJtsWbWklo6Swjg4DsWm1RRk0zJkBlIzGszVXi
-         1V2ENMfHuC6Hc7jcqA8r0uWJoRmuBhmbjO1xaAWXHirXMx5HLhSocLk28O/iadviVp
-         +W26gAK9B1P0BmN8pbdVjQtzvm/ysxuv8U/Lbi3Y=
+        b=JYckIh3Ax/6ic8SPjdKNOsXFRN4QveWav0JasEkSh6YyrGM2HhlUxiQkewQcMQjAT
+         ETPUx6Y34pm83Nw6c1LmZABDi92rxiJSAMupvGivNHOtuWTV4EY7brJy2+GydRGIsj
+         rO/5tFnR1hmDh8zFFtPqytEz8e/0WVxdIgLkJ/bw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Danit Goldberg <danitg@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>,
+        Manjunath Patil <manjunath.b.patil@oracle.com>,
+        Rama Nichanamatlu <rama.nichanamatlu@oracle.com>,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
         Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 5.5 003/120] IB/mlx5: Return the administrative GUID if exists
-Date:   Thu, 13 Feb 2020 07:19:59 -0800
-Message-Id: <20200213151902.446410775@linuxfoundation.org>
+Subject: [PATCH 5.5 004/120] IB/mlx4: Fix leak in id_map_find_del
+Date:   Thu, 13 Feb 2020 07:20:00 -0800
+Message-Id: <20200213151902.741710086@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
 References: <20200213151901.039700531@linuxfoundation.org>
@@ -44,115 +47,127 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Danit Goldberg <danitg@mellanox.com>
+From: Håkon Bugge <haakon.bugge@oracle.com>
 
-commit 4bbd4923d1f5627b0c47a9d7dfb5cc91224cfe0c upstream.
+commit ea660ad7c1c476fd6e5e3b17780d47159db71dea upstream.
 
-A user can change the operational GUID (a.k.a affective GUID) through
-link/infiniband. Therefore it is preferred to return the currently set
-GUID if it exists instead of the operational.
+Using CX-3 virtual functions, either from a bare-metal machine or
+pass-through from a VM, MAD packets are proxied through the PF driver.
 
-This way the PF can query which VF GUID will be set in the next bind.  In
-order to align with MAC address, zero is returned if administrative GUID
-is not set.
+Since the VF drivers have separate name spaces for MAD Transaction Ids
+(TIDs), the PF driver has to re-map the TIDs and keep the book keeping in
+a cache.
 
-For example, before setting administrative GUID:
- $ ip link show
- ib0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 4092 qdisc mq state UP mode DEFAULT group default qlen 256
- link/infiniband 00:00:00:08:fe:80:00:00:00:00:00:00:52:54:00:c0:fe:12:34:55 brd 00:ff:ff:ff:ff:12:40:1b:ff:ff:00:00:00:00:00:00:ff:ff:ff:ff
- vf 0     link/infiniband 00:00:00:08:fe:80:00:00:00:00:00:00:52:54:00:c0:fe:12:34:55 brd 00:ff:ff:ff:ff:12:40:1b:ff:ff:00:00:00:00:00:00:ff:ff:ff:ff,
- spoof checking off, NODE_GUID 00:00:00:00:00:00:00:00, PORT_GUID 00:00:00:00:00:00:00:00, link-state auto, trust off, query_rss off
+Following the RDMA Connection Manager (CM) protocol, it is clear when an
+entry has to evicted from the cache. When a DREP is sent from
+mlx4_ib_multiplex_cm_handler(), id_map_find_del() is called. Similar when
+a REJ is received by the mlx4_ib_demux_cm_handler(), id_map_find_del() is
+called.
 
-Then:
+This function wipes out the TID in use from the IDR or XArray and removes
+the id_map_entry from the table.
 
- $ ip link set ib0 vf 0 node_guid 11:00:af:21:cb:05:11:00
- $ ip link set ib0 vf 0 port_guid 22:11:af:21:cb:05:11:00
+In short, it does everything except the topping of the cake, which is to
+remove the entry from the list and free it. In other words, for the REJ
+case enumerated above, one id_map_entry will be leaked.
 
-After setting administrative GUID:
- $ ip link show
- ib0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 4092 qdisc mq state UP mode DEFAULT group default qlen 256
- link/infiniband 00:00:00:08:fe:80:00:00:00:00:00:00:52:54:00:c0:fe:12:34:55 brd 00:ff:ff:ff:ff:12:40:1b:ff:ff:00:00:00:00:00:00:ff:ff:ff:ff
- vf 0     link/infiniband 00:00:00:08:fe:80:00:00:00:00:00:00:52:54:00:c0:fe:12:34:55 brd 00:ff:ff:ff:ff:12:40:1b:ff:ff:00:00:00:00:00:00:ff:ff:ff:ff,
- spoof checking off, NODE_GUID 11:00:af:21:cb:05:11:00, PORT_GUID 22:11:af:21:cb:05:11:00, link-state auto, trust off, query_rss off
+For the other case above, a DREQ has been received first. The reception of
+the DREQ will trigger queuing of a delayed work to delete the
+id_map_entry, for the case where the VM doesn't send back a DREP.
 
-Fixes: 9c0015ef0928 ("IB/mlx5: Implement callbacks for getting VFs GUID attributes")
-Link: https://lore.kernel.org/r/20200116120048.12744-1-leon@kernel.org
-Signed-off-by: Danit Goldberg <danitg@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+In the normal case, the VM _will_ send back a DREP, and id_map_find_del()
+will be called.
+
+But this scenario introduces a secondary leak. First, when the DREQ is
+received, a delayed work is queued. The VM will then return a DREP, which
+will call id_map_find_del(). As stated above, this will free the TID used
+from the XArray or IDR. Now, there is window where that particular TID can
+be re-allocated, lets say by an outgoing REQ. This TID will later be wiped
+out by the delayed work, when the function id_map_ent_timeout() is
+called. But the id_map_entry allocated by the outgoing REQ will not be
+de-allocated, and we have a leak.
+
+Both leaks are fixed by removing the id_map_find_del() function and only
+using schedule_delayed(). Of course, a check in schedule_delayed() to see
+if the work already has been queued, has been added.
+
+Another benefit of always using the delayed version for deleting entries,
+is that we do get a TimeWait effect; a TID no longer in use, will occupy
+the XArray or IDR for CM_CLEANUP_CACHE_TIMEOUT time, without any ability
+of being re-used for that time period.
+
+Fixes: 3cf69cc8dbeb ("IB/mlx4: Add CM paravirtualization")
+Link: https://lore.kernel.org/r/20200123155521.1212288-1-haakon.bugge@oracle.com
+Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
+Signed-off-by: Manjunath Patil <manjunath.b.patil@oracle.com>
+Reviewed-by: Rama Nichanamatlu <rama.nichanamatlu@oracle.com>
+Reviewed-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/mlx5/ib_virt.c |   28 ++++++++++++----------------
- include/linux/mlx5/driver.h          |    5 +++++
- 2 files changed, 17 insertions(+), 16 deletions(-)
+ drivers/infiniband/hw/mlx4/cm.c |   29 +++--------------------------
+ 1 file changed, 3 insertions(+), 26 deletions(-)
 
---- a/drivers/infiniband/hw/mlx5/ib_virt.c
-+++ b/drivers/infiniband/hw/mlx5/ib_virt.c
-@@ -164,8 +164,10 @@ static int set_vf_node_guid(struct ib_de
- 	in->field_select = MLX5_HCA_VPORT_SEL_NODE_GUID;
- 	in->node_guid = guid;
- 	err = mlx5_core_modify_hca_vport_context(mdev, 1, 1, vf + 1, in);
--	if (!err)
-+	if (!err) {
- 		vfs_ctx[vf].node_guid = guid;
-+		vfs_ctx[vf].node_guid_valid = 1;
-+	}
- 	kfree(in);
- 	return err;
+--- a/drivers/infiniband/hw/mlx4/cm.c
++++ b/drivers/infiniband/hw/mlx4/cm.c
+@@ -186,23 +186,6 @@ out:
+ 	kfree(ent);
  }
-@@ -185,8 +187,10 @@ static int set_vf_port_guid(struct ib_de
- 	in->field_select = MLX5_HCA_VPORT_SEL_PORT_GUID;
- 	in->port_guid = guid;
- 	err = mlx5_core_modify_hca_vport_context(mdev, 1, 1, vf + 1, in);
--	if (!err)
-+	if (!err) {
- 		vfs_ctx[vf].port_guid = guid;
-+		vfs_ctx[vf].port_guid_valid = 1;
-+	}
- 	kfree(in);
- 	return err;
- }
-@@ -208,20 +212,12 @@ int mlx5_ib_get_vf_guid(struct ib_device
- {
- 	struct mlx5_ib_dev *dev = to_mdev(device);
- 	struct mlx5_core_dev *mdev = dev->mdev;
--	struct mlx5_hca_vport_context *rep;
--	int err;
-+	struct mlx5_vf_context *vfs_ctx = mdev->priv.sriov.vfs_ctx;
  
--	rep = kzalloc(sizeof(*rep), GFP_KERNEL);
--	if (!rep)
--		return -ENOMEM;
-+	node_guid->guid =
-+		vfs_ctx[vf].node_guid_valid ? vfs_ctx[vf].node_guid : 0;
-+	port_guid->guid =
-+		vfs_ctx[vf].port_guid_valid ? vfs_ctx[vf].port_guid : 0;
- 
--	err = mlx5_query_hca_vport_context(mdev, 1, 1, vf+1, rep);
--	if (err)
--		goto ex;
+-static void id_map_find_del(struct ib_device *ibdev, int pv_cm_id)
+-{
+-	struct mlx4_ib_sriov *sriov = &to_mdev(ibdev)->sriov;
+-	struct rb_root *sl_id_map = &sriov->sl_id_map;
+-	struct id_map_entry *ent, *found_ent;
 -
--	port_guid->guid = rep->port_guid;
--	node_guid->guid = rep->node_guid;
--ex:
--	kfree(rep);
--	return err;
-+	return 0;
- }
---- a/include/linux/mlx5/driver.h
-+++ b/include/linux/mlx5/driver.h
-@@ -461,6 +461,11 @@ struct mlx5_vf_context {
- 	int	enabled;
- 	u64	port_guid;
- 	u64	node_guid;
-+	/* Valid bits are used to validate administrative guid only.
-+	 * Enabled after ndo_set_vf_guid
-+	 */
-+	u8	port_guid_valid:1;
-+	u8	node_guid_valid:1;
- 	enum port_state_policy	policy;
- };
+-	spin_lock(&sriov->id_map_lock);
+-	ent = xa_erase(&sriov->pv_id_table, pv_cm_id);
+-	if (!ent)
+-		goto out;
+-	found_ent = id_map_find_by_sl_id(ibdev, ent->slave_id, ent->sl_cm_id);
+-	if (found_ent && found_ent == ent)
+-		rb_erase(&found_ent->node, sl_id_map);
+-out:
+-	spin_unlock(&sriov->id_map_lock);
+-}
+-
+ static void sl_id_map_add(struct ib_device *ibdev, struct id_map_entry *new)
+ {
+ 	struct rb_root *sl_id_map = &to_mdev(ibdev)->sriov.sl_id_map;
+@@ -294,7 +277,7 @@ static void schedule_delayed(struct ib_d
+ 	spin_lock(&sriov->id_map_lock);
+ 	spin_lock_irqsave(&sriov->going_down_lock, flags);
+ 	/*make sure that there is no schedule inside the scheduled work.*/
+-	if (!sriov->is_going_down) {
++	if (!sriov->is_going_down && !id->scheduled_delete) {
+ 		id->scheduled_delete = 1;
+ 		schedule_delayed_work(&id->timeout, CM_CLEANUP_CACHE_TIMEOUT);
+ 	}
+@@ -341,9 +324,6 @@ cont:
  
+ 	if (mad->mad_hdr.attr_id == CM_DREQ_ATTR_ID)
+ 		schedule_delayed(ibdev, id);
+-	else if (mad->mad_hdr.attr_id == CM_DREP_ATTR_ID)
+-		id_map_find_del(ibdev, pv_cm_id);
+-
+ 	return 0;
+ }
+ 
+@@ -382,12 +362,9 @@ int mlx4_ib_demux_cm_handler(struct ib_d
+ 		*slave = id->slave_id;
+ 	set_remote_comm_id(mad, id->sl_cm_id);
+ 
+-	if (mad->mad_hdr.attr_id == CM_DREQ_ATTR_ID)
++	if (mad->mad_hdr.attr_id == CM_DREQ_ATTR_ID ||
++	    mad->mad_hdr.attr_id == CM_REJ_ATTR_ID)
+ 		schedule_delayed(ibdev, id);
+-	else if (mad->mad_hdr.attr_id == CM_REJ_ATTR_ID ||
+-			mad->mad_hdr.attr_id == CM_DREP_ATTR_ID) {
+-		id_map_find_del(ibdev, (int) pv_cm_id);
+-	}
+ 
+ 	return 0;
+ }
 
 
