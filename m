@@ -2,43 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1691215C1EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:27:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF5DA15C167
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:23:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728327AbgBMP1n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:27:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41674 "EHLO mail.kernel.org"
+        id S1728245AbgBMPXF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:23:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387471AbgBMPZg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:25:36 -0500
+        id S1728122AbgBMPWs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:22:48 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6FC42469A;
-        Thu, 13 Feb 2020 15:25:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 79C1B24689;
+        Thu, 13 Feb 2020 15:22:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607535;
-        bh=aVRBNsjbkGq2j5Vekvmr/nzCQ0znuGbtHlWs8JYHqpU=;
+        s=default; t=1581607367;
+        bh=wp6DlfLy2ZTgy4xURGFu8rOf9ZQEUYuUErnKGeDGjD0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SflEVo70ipZ27ucIeSodR4IZjMzJbkXf0V8V2FFm5mBtA82bvBo5H3fkDnQLata21
-         ShDSdG/Za1aBJnWLY6Q3MygyRuwg8xkFBztO6pH+uW7fiDEaRLbc0Lgos9V+gAvhYc
-         nXOqqLVMhChJU8yGUSplIHG4YZXEALIIhqaVa4bY=
+        b=R44F5IEPkMirMtfXlTHS1lS6at7epN8mdDDIJSmtt55qFN44i3M+2PTstRKOV7Iu0
+         YKVMVYuNLk+2daNnK1+JW7WYG1IU9pLbzPIS67dfshtnkDiaRk4f93XeO6OW4qahlt
+         7jS7pYToi/c0fTVSpoYrh8rSQtEF2YLCNiWGLhIk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Himanshu Madhani <hmadhani@marvell.com>,
-        Quinn Tran <qutran@marvell.com>,
-        Martin Wilck <mwilck@suse.com>,
-        Daniel Wagner <dwagner@suse.de>,
-        Roman Bolshakov <r.bolshakov@yadro.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 093/173] scsi: qla2xxx: Fix the endianness of the qla82xx_get_fw_size() return type
-Date:   Thu, 13 Feb 2020 07:19:56 -0800
-Message-Id: <20200213151956.517930283@linuxfoundation.org>
+        stable@vger.kernel.org, Nick Finco <nifi@google.com>,
+        Marios Pomonis <pomonis@google.com>,
+        Andrew Honig <ahonig@google.com>,
+        Jim Mattson <jmattson@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.4 40/91] KVM: x86: Protect ioapic_read_indirect() from Spectre-v1/L1TF attacks
+Date:   Thu, 13 Feb 2020 07:19:57 -0800
+Message-Id: <20200213151837.086387403@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
-References: <20200213151931.677980430@linuxfoundation.org>
+In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
+References: <20200213151821.384445454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,60 +46,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bart Van Assche <bvanassche@acm.org>
+From: Marios Pomonis <pomonis@google.com>
 
-commit 3f5f7335e5e234e340b48ecb24c2aba98a61f934 upstream.
+commit 8c86405f606ca8508b8d9280680166ca26723695 upstream.
 
-Since qla82xx_get_fw_size() returns a number in CPU-endian format, change
-its return type from __le32 into u32. This patch does not change any
-functionality.
+This fixes a Spectre-v1/L1TF vulnerability in ioapic_read_indirect().
+This function contains index computations based on the
+(attacker-controlled) IOREGSEL register.
 
-Fixes: 9c2b297572bf ("[SCSI] qla2xxx: Support for loading Unified ROM Image (URI) format firmware file.")
-Cc: Himanshu Madhani <hmadhani@marvell.com>
-Cc: Quinn Tran <qutran@marvell.com>
-Cc: Martin Wilck <mwilck@suse.com>
-Cc: Daniel Wagner <dwagner@suse.de>
-Cc: Roman Bolshakov <r.bolshakov@yadro.com>
-Link: https://lore.kernel.org/r/20191219004905.39586-1-bvanassche@acm.org
-Reviewed-by: Daniel Wagner <dwagner@suse.de>
-Reviewed-by: Roman Bolshakov <r.bolshakov@yadro.com>
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: a2c118bfab8b ("KVM: Fix bounds checking in ioapic indirect register reads (CVE-2013-1798)")
+
+Signed-off-by: Nick Finco <nifi@google.com>
+Signed-off-by: Marios Pomonis <pomonis@google.com>
+Reviewed-by: Andrew Honig <ahonig@google.com>
+Cc: stable@vger.kernel.org
+Reviewed-by: Jim Mattson <jmattson@google.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_nx.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ arch/x86/kvm/ioapic.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_nx.c
-+++ b/drivers/scsi/qla2xxx/qla_nx.c
-@@ -1605,8 +1605,7 @@ qla82xx_get_bootld_offset(struct qla_hw_
- 	return (u8 *)&ha->hablob->fw->data[offset];
- }
+--- a/arch/x86/kvm/ioapic.c
++++ b/arch/x86/kvm/ioapic.c
+@@ -74,13 +74,14 @@ static unsigned long ioapic_read_indirec
+ 	default:
+ 		{
+ 			u32 redir_index = (ioapic->ioregsel - 0x10) >> 1;
+-			u64 redir_content;
++			u64 redir_content = ~0ULL;
  
--static __le32
--qla82xx_get_fw_size(struct qla_hw_data *ha)
-+static u32 qla82xx_get_fw_size(struct qla_hw_data *ha)
- {
- 	struct qla82xx_uri_data_desc *uri_desc = NULL;
+-			if (redir_index < IOAPIC_NUM_PINS)
+-				redir_content =
+-					ioapic->redirtbl[redir_index].bits;
+-			else
+-				redir_content = ~0ULL;
++			if (redir_index < IOAPIC_NUM_PINS) {
++				u32 index = array_index_nospec(
++					redir_index, IOAPIC_NUM_PINS);
++
++				redir_content = ioapic->redirtbl[index].bits;
++			}
  
-@@ -1617,7 +1616,7 @@ qla82xx_get_fw_size(struct qla_hw_data *
- 			return cpu_to_le32(uri_desc->size);
- 	}
- 
--	return cpu_to_le32(*(u32 *)&ha->hablob->fw->data[FW_SIZE_OFFSET]);
-+	return get_unaligned_le32(&ha->hablob->fw->data[FW_SIZE_OFFSET]);
- }
- 
- static u8 *
-@@ -1808,7 +1807,7 @@ qla82xx_fw_load_from_blob(struct qla_hw_
- 	}
- 
- 	flashaddr = FLASH_ADDR_START;
--	size = (__force u32)qla82xx_get_fw_size(ha) / 8;
-+	size = qla82xx_get_fw_size(ha) / 8;
- 	ptr64 = (u64 *)qla82xx_get_fw_offs(ha);
- 
- 	for (i = 0; i < size; i++) {
+ 			result = (ioapic->ioregsel & 0x1) ?
+ 			    (redir_content >> 32) & 0xffffffff :
 
 
