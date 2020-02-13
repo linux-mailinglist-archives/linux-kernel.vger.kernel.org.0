@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD97215C578
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:10:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F24F15C5E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:11:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728048AbgBMPWk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:22:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59954 "EHLO mail.kernel.org"
+        id S1728986AbgBMPZY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:25:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727960AbgBMPWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:22:31 -0500
+        id S1727973AbgBMPXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:23:49 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 078D62469A;
-        Thu, 13 Feb 2020 15:22:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF66024689;
+        Thu, 13 Feb 2020 15:23:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607350;
-        bh=xIU6Nwqa904aEcK0t4PQtkloNsGxD+863Oj+mHYhQY4=;
+        s=default; t=1581607429;
+        bh=EdcqFa5oYtp3YKnMWp07VPMN7Aerrh6Z98oWMSIKQeQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=btO8/4xXs7ersuBXMujp3cUPHNx2Cdjttgr0Wpx7Hf/+UNrOYIlw/rZfn27IYHJPp
-         G4bApOG63Qy91GDqNogQsnRWvJobC8c/WsEE4DhCsaa2E8GP0Dghtdsi4dlhSV0HGX
-         noq7CzJo/LFaK5l5h78J2C9CK8iOPlpmvZgYb9kA=
+        b=IeDpCO9cG3ZbyMHdhQSiMMdWK+drqUt/ixDwcsD7hem59IBigXKmjEk1ReKTFkIGj
+         mHc1AEA/wHs6ZjNJNWXJQFCl9m4SsvLMhi/Q6s7CK0Z9VCOkRtWsauOLXm6SinXMIk
+         slDZTHz2mzVtQxHmiwJjVGb/vYOKk8sttoM2PBWE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.4 30/91] crypto: picoxcell - adjust the position of tasklet_init and fix missed tasklet_kill
-Date:   Thu, 13 Feb 2020 07:19:47 -0800
-Message-Id: <20200213151833.166396815@linuxfoundation.org>
+        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.9 044/116] KVM: x86: Refactor prefix decoding to prevent Spectre-v1/L1TF attacks
+Date:   Thu, 13 Feb 2020 07:19:48 -0800
+Message-Id: <20200213151900.140135328@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
-References: <20200213151821.384445454@linuxfoundation.org>
+In-Reply-To: <20200213151842.259660170@linuxfoundation.org>
+References: <20200213151842.259660170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,62 +42,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuhong Yuan <hslester96@gmail.com>
+From: Marios Pomonis <pomonis@google.com>
 
-commit 7f8c36fe9be46862c4f3c5302f769378028a34fa upstream.
+commit 125ffc5e0a56a3eded608dc51e09d5ebf72cf652 upstream.
 
-Since tasklet is needed to be initialized before registering IRQ
-handler, adjust the position of tasklet_init to fix the wrong order.
+This fixes Spectre-v1/L1TF vulnerabilities in
+vmx_read_guest_seg_selector(), vmx_read_guest_seg_base(),
+vmx_read_guest_seg_limit() and vmx_read_guest_seg_ar().  When
+invoked from emulation, these functions contain index computations
+based on the (attacker-influenced) segment value.  Using constants
+prevents the attack.
 
-Besides, to fix the missed tasklet_kill, this patch adds a helper
-function and uses devm_add_action to kill the tasklet automatically.
-
-Fixes: ce92136843cb ("crypto: picoxcell - add support for the picoxcell crypto engines")
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/picoxcell_crypto.c |   15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ arch/x86/kvm/emulate.c |   16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
---- a/drivers/crypto/picoxcell_crypto.c
-+++ b/drivers/crypto/picoxcell_crypto.c
-@@ -1610,6 +1610,11 @@ static bool spacc_is_compatible(struct p
- 	return false;
- }
- 
-+static void spacc_tasklet_kill(void *data)
-+{
-+	tasklet_kill(data);
-+}
-+
- static int spacc_probe(struct platform_device *pdev)
- {
- 	int i, err, ret = -EINVAL;
-@@ -1652,6 +1657,14 @@ static int spacc_probe(struct platform_d
- 		return -ENXIO;
- 	}
- 
-+	tasklet_init(&engine->complete, spacc_spacc_complete,
-+		     (unsigned long)engine);
-+
-+	ret = devm_add_action(&pdev->dev, spacc_tasklet_kill,
-+			      &engine->complete);
-+	if (ret)
-+		return ret;
-+
- 	if (devm_request_irq(&pdev->dev, irq->start, spacc_spacc_irq, 0,
- 			     engine->name, engine)) {
- 		dev_err(engine->dev, "failed to request IRQ\n");
-@@ -1714,8 +1727,6 @@ static int spacc_probe(struct platform_d
- 	INIT_LIST_HEAD(&engine->completed);
- 	INIT_LIST_HEAD(&engine->in_progress);
- 	engine->in_flight = 0;
--	tasklet_init(&engine->complete, spacc_spacc_complete,
--		     (unsigned long)engine);
- 
- 	platform_set_drvdata(pdev, engine);
- 
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -5053,16 +5053,28 @@ int x86_decode_insn(struct x86_emulate_c
+ 				ctxt->ad_bytes = def_ad_bytes ^ 6;
+ 			break;
+ 		case 0x26:	/* ES override */
++			has_seg_override = true;
++			ctxt->seg_override = VCPU_SREG_ES;
++			break;
+ 		case 0x2e:	/* CS override */
++			has_seg_override = true;
++			ctxt->seg_override = VCPU_SREG_CS;
++			break;
+ 		case 0x36:	/* SS override */
++			has_seg_override = true;
++			ctxt->seg_override = VCPU_SREG_SS;
++			break;
+ 		case 0x3e:	/* DS override */
+ 			has_seg_override = true;
+-			ctxt->seg_override = (ctxt->b >> 3) & 3;
++			ctxt->seg_override = VCPU_SREG_DS;
+ 			break;
+ 		case 0x64:	/* FS override */
++			has_seg_override = true;
++			ctxt->seg_override = VCPU_SREG_FS;
++			break;
+ 		case 0x65:	/* GS override */
+ 			has_seg_override = true;
+-			ctxt->seg_override = ctxt->b & 7;
++			ctxt->seg_override = VCPU_SREG_GS;
+ 			break;
+ 		case 0x40 ... 0x4f: /* REX */
+ 			if (mode != X86EMUL_MODE_PROT64)
 
 
