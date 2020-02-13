@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6889615C39D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:44:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69BA215C439
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387670AbgBMPnD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:43:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54138 "EHLO mail.kernel.org"
+        id S1729427AbgBMP1c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:27:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729542AbgBMP2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:28:04 -0500
+        id S1729023AbgBMPZa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:30 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 842322168B;
-        Thu, 13 Feb 2020 15:28:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34FF820848;
+        Thu, 13 Feb 2020 15:25:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607683;
-        bh=BJPUC+Pua1rzB3+wAh4ZHva9Wdewqir9ahqmes+T8KA=;
+        s=default; t=1581607529;
+        bh=GA+fYb+0DRK+VeQeKUaCgGZFbiP+DH5OSDA2JxVANdU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ChaenLmeJRQBTk6UPDm+ytYrbOfUiQFdA7CMRK6RU0o7C2S7iJnIdAK8Jyq/AER39
-         Fo9aJT3qD34l0hY6+65LvfBZd1SOt/H4gcEs1GpGV8CDEKovF8yFMid4kh8hPs8Z56
-         gwZgb6CjlNrIteb8mbQbnfoz8Sokt+9l0m/Iro6Y=
+        b=tV8DAJ9AqqlbK/93sIi41VpAfuecw/3/o3XFI8ewCsxH7APTDlfXlEAparRVUfXHf
+         3H3+rgZ8+6izfdGxUKzZNHiQRIO8tWbGNq0PZEz7/mw2WghevLyr4ScL9sF/PC9d6Q
+         FmnkOWQgaY6VNXlWPauMYrbVGbQUfGFmGspSA7HU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yishai Hadas <yishaih@mellanox.com>,
-        =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 5.5 007/120] RDMA/core: Fix locking in ib_uverbs_event_read
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 100/173] NFC: pn544: Adjust indentation in pn544_hci_check_presence
 Date:   Thu, 13 Feb 2020 07:20:03 -0800
-Message-Id: <20200213151904.016323249@linuxfoundation.org>
+Message-Id: <20200213151958.029772178@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
-References: <20200213151901.039700531@linuxfoundation.org>
+In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
+References: <20200213151931.677980430@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,107 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Gunthorpe <jgg@mellanox.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-commit 14e23bd6d22123f6f3b2747701fa6cd4c6d05873 upstream.
+commit 5080832627b65e3772a35d1dced68c64e2b24442 upstream.
 
-This should not be using ib_dev to test for disassociation, during
-disassociation is_closed is set under lock and the waitq is triggered.
+Clang warns
 
-Instead check is_closed and be sure to re-obtain the lock to test the
-value after the wait_event returns.
+../drivers/nfc/pn544/pn544.c:696:4: warning: misleading indentation;
+statement is not part of the previous 'if' [-Wmisleading-indentation]
+                 return nfc_hci_send_cmd(hdev, NFC_HCI_RF_READER_A_GATE,
+                 ^
+../drivers/nfc/pn544/pn544.c:692:3: note: previous statement is here
+                if (target->nfcid1_len != 4 && target->nfcid1_len != 7 &&
+                ^
+1 warning generated.
 
-Fixes: 036b10635739 ("IB/uverbs: Enable device removal when there are active user space applications")
-Link: https://lore.kernel.org/r/1578504126-9400-12-git-send-email-yishaih@mellanox.com
-Signed-off-by: Yishai Hadas <yishaih@mellanox.com>
-Reviewed-by: Håkon Bugge <haakon.bugge@oracle.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+This warning occurs because there is a space after the tab on this line.
+Remove it so that the indentation is consistent with the Linux kernel
+coding style and clang no longer warns.
+
+Fixes: da052850b911 ("NFC: Add pn544 presence check for different targets")
+Link: https://github.com/ClangBuiltLinux/linux/issues/814
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/uverbs_main.c |   32 ++++++++++++++------------------
- 1 file changed, 14 insertions(+), 18 deletions(-)
+ drivers/nfc/pn544/pn544.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/core/uverbs_main.c
-+++ b/drivers/infiniband/core/uverbs_main.c
-@@ -220,7 +220,6 @@ void ib_uverbs_release_file(struct kref
- }
+--- a/drivers/nfc/pn544/pn544.c
++++ b/drivers/nfc/pn544/pn544.c
+@@ -704,7 +704,7 @@ static int pn544_hci_check_presence(stru
+ 		    target->nfcid1_len != 10)
+ 			return -EOPNOTSUPP;
  
- static ssize_t ib_uverbs_event_read(struct ib_uverbs_event_queue *ev_queue,
--				    struct ib_uverbs_file *uverbs_file,
- 				    struct file *filp, char __user *buf,
- 				    size_t count, loff_t *pos,
- 				    size_t eventsz)
-@@ -238,19 +237,16 @@ static ssize_t ib_uverbs_event_read(stru
- 
- 		if (wait_event_interruptible(ev_queue->poll_wait,
- 					     (!list_empty(&ev_queue->event_list) ||
--			/* The barriers built into wait_event_interruptible()
--			 * and wake_up() guarentee this will see the null set
--			 * without using RCU
--			 */
--					     !uverbs_file->device->ib_dev)))
-+					      ev_queue->is_closed)))
- 			return -ERESTARTSYS;
- 
-+		spin_lock_irq(&ev_queue->lock);
-+
- 		/* If device was disassociated and no event exists set an error */
--		if (list_empty(&ev_queue->event_list) &&
--		    !uverbs_file->device->ib_dev)
-+		if (list_empty(&ev_queue->event_list) && ev_queue->is_closed) {
-+			spin_unlock_irq(&ev_queue->lock);
- 			return -EIO;
--
--		spin_lock_irq(&ev_queue->lock);
-+		}
- 	}
- 
- 	event = list_entry(ev_queue->event_list.next, struct ib_uverbs_event, list);
-@@ -285,8 +281,7 @@ static ssize_t ib_uverbs_async_event_rea
- {
- 	struct ib_uverbs_async_event_file *file = filp->private_data;
- 
--	return ib_uverbs_event_read(&file->ev_queue, file->uverbs_file, filp,
--				    buf, count, pos,
-+	return ib_uverbs_event_read(&file->ev_queue, filp, buf, count, pos,
- 				    sizeof(struct ib_uverbs_async_event_desc));
- }
- 
-@@ -296,9 +291,8 @@ static ssize_t ib_uverbs_comp_event_read
- 	struct ib_uverbs_completion_event_file *comp_ev_file =
- 		filp->private_data;
- 
--	return ib_uverbs_event_read(&comp_ev_file->ev_queue,
--				    comp_ev_file->uobj.ufile, filp,
--				    buf, count, pos,
-+	return ib_uverbs_event_read(&comp_ev_file->ev_queue, filp, buf, count,
-+				    pos,
- 				    sizeof(struct ib_uverbs_comp_event_desc));
- }
- 
-@@ -321,7 +315,9 @@ static __poll_t ib_uverbs_event_poll(str
- static __poll_t ib_uverbs_async_event_poll(struct file *filp,
- 					       struct poll_table_struct *wait)
- {
--	return ib_uverbs_event_poll(filp->private_data, filp, wait);
-+	struct ib_uverbs_async_event_file *file = filp->private_data;
-+
-+	return ib_uverbs_event_poll(&file->ev_queue, filp, wait);
- }
- 
- static __poll_t ib_uverbs_comp_event_poll(struct file *filp,
-@@ -335,9 +331,9 @@ static __poll_t ib_uverbs_comp_event_pol
- 
- static int ib_uverbs_async_event_fasync(int fd, struct file *filp, int on)
- {
--	struct ib_uverbs_event_queue *ev_queue = filp->private_data;
-+	struct ib_uverbs_async_event_file *file = filp->private_data;
- 
--	return fasync_helper(fd, filp, on, &ev_queue->async_queue);
-+	return fasync_helper(fd, filp, on, &file->ev_queue.async_queue);
- }
- 
- static int ib_uverbs_comp_event_fasync(int fd, struct file *filp, int on)
+-		 return nfc_hci_send_cmd(hdev, NFC_HCI_RF_READER_A_GATE,
++		return nfc_hci_send_cmd(hdev, NFC_HCI_RF_READER_A_GATE,
+ 				     PN544_RF_READER_CMD_ACTIVATE_NEXT,
+ 				     target->nfcid1, target->nfcid1_len, NULL);
+ 	} else if (target->supported_protocols & (NFC_PROTO_JEWEL_MASK |
 
 
