@@ -2,87 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0242E15C9C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 18:54:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF3DC15C9C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 18:58:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727930AbgBMRx6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 12:53:58 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:17942 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726282AbgBMRx6 (ORCPT
+        id S1727963AbgBMR6E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 12:58:04 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:42144 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726282AbgBMR6E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 12:53:58 -0500
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01DHms5h018499;
-        Thu, 13 Feb 2020 12:53:55 -0500
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y1tn6hvdg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 13 Feb 2020 12:53:54 -0500
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 01DHgear018533;
-        Thu, 13 Feb 2020 17:53:53 GMT
-Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
-        by ppma04dal.us.ibm.com with ESMTP id 2y1mm8rf3p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 13 Feb 2020 17:53:53 +0000
-Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01DHrqcl48366068
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 13 Feb 2020 17:53:52 GMT
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F3DCE6E052;
-        Thu, 13 Feb 2020 17:53:51 +0000 (GMT)
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EDE876E04C;
-        Thu, 13 Feb 2020 17:53:50 +0000 (GMT)
-Received: from swastik.ibm.com (unknown [9.160.122.180])
-        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 13 Feb 2020 17:53:50 +0000 (GMT)
-Subject: Re: [PATCH 2/3] tpm: ibmvtpm: Wait for buffer to be set before
- proceeding
-To:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org
-Cc:     aik@ozlabs.ru, david@gibson.dropbear.id.au,
-        linux-kernel@vger.kernel.org, gcwilson@linux.ibm.com,
-        Stefan Berger <stefanb@linux.ibm.com>
-References: <20200204132706.3220416-1-stefanb@linux.vnet.ibm.com>
- <20200204132706.3220416-3-stefanb@linux.vnet.ibm.com>
-From:   Nayna <nayna@linux.vnet.ibm.com>
-Message-ID: <568c8b9b-31e1-c6eb-c88b-12e8cf731473@linux.vnet.ibm.com>
-Date:   Thu, 13 Feb 2020 12:53:50 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Thu, 13 Feb 2020 12:58:04 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01DHnDmY149658;
+        Thu, 13 Feb 2020 17:57:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=Lr2ff7BNAkqLAkRgxJk1xwlEWpx8tFNSwxBL0+W8sLg=;
+ b=QUSBYNqQh8fmU0UOxitL4OfEki1jaAsfdKQPoCZtOFb2ROx+X0umxmPqWq6dLS8F/SR6
+ X+zlG1hvy4pOZgmvKVZaiZEeMshqOoq3r+aSSZqOEmZV7rFqJyYr4O1vxC5KV/GcoVh5
+ DWZFLZanK8PsitgVzRrf50s0hptoSctGiNmlnLznK9UfqgyNjjlWR3BxLmTZ0lfGkfPG
+ INuwGNzB6I5eWeYCtt0CHMaS45KjPsrhfMPCACEbeAkJXKk0iQJ5RqIaOxwwOYnGO+jg
+ F7PiLwOEljgfPukQrbx3m8wy01/DT/JreLqc3iNh12Vo8ln4Y5rylQXcSjVfcr/BLj9C /A== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2y2p3sv38m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 13 Feb 2020 17:57:59 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01DHvTbg028918;
+        Thu, 13 Feb 2020 17:57:58 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2y4kajy2m7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 13 Feb 2020 17:57:58 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01DHvses018923;
+        Thu, 13 Feb 2020 17:57:54 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 13 Feb 2020 09:57:53 -0800
+Date:   Thu, 13 Feb 2020 09:57:53 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Regression: hibernation is broken since
+ e6bc9de714972cac34daa1dc1567ee48a47a9342
+Message-ID: <20200213175753.GS6874@magnolia>
+References: <20200213172351.GA6747@dumbo>
 MIME-Version: 1.0
-In-Reply-To: <20200204132706.3220416-3-stefanb@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-13_06:2020-02-12,2020-02-13 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
- malwarescore=0 mlxscore=0 impostorscore=0 phishscore=0 priorityscore=1501
- suspectscore=0 lowpriorityscore=0 mlxlogscore=845 spamscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002130127
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200213172351.GA6747@dumbo>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9530 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 bulkscore=0
+ suspectscore=0 mlxscore=0 malwarescore=0 adultscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002130127
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9530 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 malwarescore=0
+ suspectscore=0 mlxlogscore=999 priorityscore=1501 clxscore=1015
+ impostorscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002130127
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Feb 13, 2020 at 06:23:51PM +0100, Domenico Andreoli wrote:
+> Hi,
+> 
+>   at some point between 5.2 and 5.3 my laptop started to refuse
+> hibernating and come back to a full functional state. It's fully 100%
+> reproducible, no oopses or any other damage to the state seems to happen.
+> 
+> It took me a while to follow the trail down to this commit. If I revert
+> it from v5.6-rc1, the hibernation is back as in the old times.
 
-On 2/4/20 8:27 AM, Stefan Berger wrote:
-> From: Stefan Berger <stefanb@linux.ibm.com>
->
-> Synchronize with the results from the CRQs before continuing with
-> the initialization. This avoids trying to send TPM commands while
-> the rtce buffer has not been allocated, yet.
+Hmm, do you know which hibernation mechanism your computer is using?
 
-Seems like it is not specific to vtpm 2.0.  Shall it be clarified that 
-it is a fix for vtpm 1.2 also ?
+--D
 
-Thanks & Regards,
-
-     - Nayna
-
+> 
+> commit e6bc9de714972cac34daa1dc1567ee48a47a9342
+> Merge: b6c0d3577246 dc617f29dbe5
+> Author: Linus Torvalds <torvalds@linux-foundation.org>
+> Date:   Wed Sep 18 17:35:20 2019 -0700
+> 
+>     Merge tag 'vfs-5.4-merge-1' of git://git.kernel.org/pub/scm/fs/xfs/xfs-linux
+> 
+>     Pull swap access updates from Darrick Wong:
+>      "Prohibit writing to active swap files and swap partitions.
+> 
+>       There's no non-malicious use case for allowing userspace to scribble
+>       on storage that the kernel thinks it owns"
+> 
+>     * tag 'vfs-5.4-merge-1' of git://git.kernel.org/pub/scm/fs/xfs/xfs-linux:
+>       vfs: don't allow writes to swap files
+>       mm: set S_SWAPFILE on blockdev swap devices
+> 
+> 
+> Is it possible to do anything?
+> 
+> Regards,
+> Domenico
+> 
+> -- 
+> rsa4096: 3B10 0CA1 8674 ACBA B4FE  FCD2 CE5B CF17 9960 DE13
+> ed25519: FFB4 0CC3 7F2E 091D F7DA  356E CC79 2832 ED38 CB05
