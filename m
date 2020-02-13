@@ -2,114 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25D1915CC4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 21:25:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E429F15CC51
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 21:25:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728124AbgBMUXk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 15:23:40 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60164 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727778AbgBMUXi (ORCPT
+        id S1728308AbgBMUX5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 15:23:57 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36405 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727772AbgBMUX5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 15:23:38 -0500
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01DKKxE7128115;
-        Thu, 13 Feb 2020 15:23:33 -0500
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y1tn6p7e7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 13 Feb 2020 15:23:33 -0500
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 01DKKVil016210;
-        Thu, 13 Feb 2020 20:23:32 GMT
-Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
-        by ppma03wdc.us.ibm.com with ESMTP id 2y5bc00va9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 13 Feb 2020 20:23:32 +0000
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01DKNVxE15598480
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 13 Feb 2020 20:23:31 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A01C3112062;
-        Thu, 13 Feb 2020 20:23:31 +0000 (GMT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 92297112067;
-        Thu, 13 Feb 2020 20:23:31 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 13 Feb 2020 20:23:31 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     aik@ozlabs.ru, david@gibson.dropbear.id.au,
-        linux-kernel@vger.kernel.org, nayna@linux.vnet.ibm.com,
-        gcwilson@linux.ibm.com, jgg@ziepe.ca,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v2 4/4] tpm: ibmvtpm: Add support for TPM 2
-Date:   Thu, 13 Feb 2020 15:23:29 -0500
-Message-Id: <20200213202329.898607-5-stefanb@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200213202329.898607-1-stefanb@linux.vnet.ibm.com>
-References: <20200213202329.898607-1-stefanb@linux.vnet.ibm.com>
+        Thu, 13 Feb 2020 15:23:57 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p17so8207495wma.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 12:23:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=googlenew;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=z0gjJEmRAwNymPwA00fmzFhjNC7Qe4kL5vReX8cevnI=;
+        b=Hz/xL3g4x51bG7UTsON1g0txoL+UQIUGlDIxuBxUvr2H3k12pXc/T/otefb4iCRVft
+         4ov86aKFTIW1nMR+qgtLawZAt6+nyiYLHH4OCVRSmd1Fh3PaOR9aMQ/e5M/sPXu7owO4
+         jOS7Po0sT9ic7cUHflzW8HE8OycaB9fYChOyRnCocqK6mu1rT/gnzpro/8OZSG+Ay0kk
+         C+ANlMSCQ/oPcITNh6DtEDm5Mr/DpbgwrsDe8A3Vo0JQot/cuxDnVwJ6MIYADFOig9Aq
+         xt6hnnucC1kJVZpl7n7GqLBnFfhymOeWIUp+ApzWYNs0sqVarGSIZ/fw/Nb3LhVBOYeF
+         y/MQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=z0gjJEmRAwNymPwA00fmzFhjNC7Qe4kL5vReX8cevnI=;
+        b=SDDXdKEn7aEMrkaxG3zhVsBy/MgDt9xK5iFNrlL/5I76utPp8d+c2lrnot5pHWU3L5
+         kPyVeX68uU0Bku5Mf2GbSMmGIBAcEIhdhdTHtk9UoJJhKeZWawyic6afuP/WTdIWEc95
+         TGGNL2Xc2OTImPrBc+ncXUiDHENxDSC1sWjfESTwpBN3dz8m91P2BIxsHitjifsVWGKb
+         9g9ov8ZWmucsNE0akMbSNPY2MMkUya32jtTVSvW2vIHUOEk9qoS8K0t2WdUchICkl3cg
+         eJJBPVtucisqH1Wusc+3i+der9lF0HbYHyexukAsKkrpAxhL2bQhcbkCPdmvkZ6EkDrK
+         4rOw==
+X-Gm-Message-State: APjAAAWRi1CBoARJjcGpAMLvPIA8iuOYSpTncM+XIGUNwVP93crTuCh2
+        o5FvuDJe/j6BneaQ5VWz7AuZaA==
+X-Google-Smtp-Source: APXvYqzqyPeBFBhVewwKaBK9XjxIwvnsPNpsAByNUUEuukhTDypWS6UDuisfdJZDF6q4I4Mj1hC2NA==
+X-Received: by 2002:a1c:a5c7:: with SMTP id o190mr7779715wme.183.1581625434916;
+        Thu, 13 Feb 2020 12:23:54 -0800 (PST)
+Received: from [10.83.36.153] ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id o15sm4276160wra.83.2020.02.13.12.23.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Feb 2020 12:23:54 -0800 (PST)
+Subject: Re: [PATCH 1/2] watchdog: Check WDOG_STOP_ON_REBOOT in reboot
+ notifier
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-kernel@vger.kernel.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-watchdog@vger.kernel.org
+References: <20200213175958.105914-1-dima@arista.com>
+ <20200213175958.105914-2-dima@arista.com>
+ <20200213191230.GA17448@roeck-us.net>
+From:   Dmitry Safonov <dima@arista.com>
+Message-ID: <3de88f30-e601-77b3-d477-ca9ce461c920@arista.com>
+Date:   Thu, 13 Feb 2020 20:23:53 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-13_08:2020-02-12,2020-02-13 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
- malwarescore=0 mlxscore=0 impostorscore=0 phishscore=0 priorityscore=1501
- suspectscore=1 lowpriorityscore=0 mlxlogscore=999 spamscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002130143
+In-Reply-To: <20200213191230.GA17448@roeck-us.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Berger <stefanb@linux.ibm.com>
+Hi Guenter,
 
-Support TPM 2 in the IBM vTPM driver. The hypervisor tells us what
-version of TPM is connected through the vio_device_id.
+On 2/13/20 7:12 PM, Guenter Roeck wrote:
+> Does that really have to be decided at runtime, by the user ?
+> How about doing it with a module parameter ?
+> 
+> Also, I am not sure if an ioctl is the best means to do this, if it indeed
+> makes sense to decide it at runtime. ioctl implies an open watchdog device,
+> which interferes with the watchdog daemon. This means that the watchdog
+> daemon would have to be modified to support this, making this a quite expensive
+> change. It also implies that the action would have to be known when the
+> watchdog daemon is started, suggesting that a module parameter should be
+> sufficient.
 
-In case a TPM 2 is found, we set the TPM_OPS_AUTO_STARTUP flag to
-have properly initialize the TPM and driver.
+Yes, fair points. I went with ioctl() because the timeout can be changed
+in runtime. But you're right, I'll look into making it a module
+parameter instead.
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- drivers/char/tpm/tpm_ibmvtpm.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
-index eee566eddb35..25cd256c7c3d 100644
---- a/drivers/char/tpm/tpm_ibmvtpm.c
-+++ b/drivers/char/tpm/tpm_ibmvtpm.c
-@@ -29,6 +29,7 @@ static const char tpm_ibmvtpm_driver_name[] = "tpm_ibmvtpm";
- 
- static const struct vio_device_id tpm_ibmvtpm_device_table[] = {
- 	{ "IBM,vtpm", "IBM,vtpm"},
-+	{ "IBM,vtpm", "IBM,vtpm20"},
- 	{ "", "" }
- };
- MODULE_DEVICE_TABLE(vio, tpm_ibmvtpm_device_table);
-@@ -443,7 +444,7 @@ static bool tpm_ibmvtpm_req_canceled(struct tpm_chip *chip, u8 status)
- 	return (status == 0);
- }
- 
--static const struct tpm_class_ops tpm_ibmvtpm = {
-+const static struct tpm_class_ops tpm_ibmvtpm = {
- 	.recv = tpm_ibmvtpm_recv,
- 	.send = tpm_ibmvtpm_send,
- 	.cancel = tpm_ibmvtpm_cancel,
-@@ -672,6 +673,9 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
- 	if (rc)
- 		goto init_irq_cleanup;
- 
-+	if (!strcmp(id->compat, "IBM,vtpm20"))
-+		chip->flags |= TPM_CHIP_FLAG_TPM2;
-+
- 	if (!wait_event_timeout(ibmvtpm->crq_queue.wq,
- 				ibmvtpm->rtce_buf != NULL,
- 				HZ)) {
--- 
-2.23.0
-
+Thanks for the review and time,
+          Dmitry
