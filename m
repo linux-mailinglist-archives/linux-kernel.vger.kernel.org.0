@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBB8915C651
+	by mail.lfdr.de (Postfix) with ESMTP id 177B415C64F
 	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 17:12:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729992AbgBMP71 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:59:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39334 "EHLO mail.kernel.org"
+        id S1730071AbgBMP7U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:59:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727978AbgBMPYy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:24:54 -0500
+        id S1728814AbgBMPYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:24:55 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C22C3246AD;
-        Thu, 13 Feb 2020 15:24:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B28A24691;
+        Thu, 13 Feb 2020 15:24:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607492;
-        bh=UcB75R57FiRoBTEkAPF5DZwDBQVw/QCjV4Ivyvlae5o=;
+        s=default; t=1581607494;
+        bh=BnVKot2FBC7XTfew6p7jQ1OMsDt0f3DfxyXDR2MkV0Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jqmScfUcyiA0i3CkOBM6RqDPwPAeeueUZFO3nH4U4QfFEyIut9Yb/9UZjQdRzQx1m
-         Wh8u6ZLWkllKla5vdkJL3wZB9YzbEe0rxaw/cQkt5qm24BtJpjFb0GmgM0xFqrWaMe
-         +Gg3sI8RKpnc8FZIoMi8K3MBsLv6BnJNabOw3KHQ=
+        b=TN1uAIdK2IY90v9z2vG85a+YsbNLqYovP0O+0jPLR7F0WlCqDL1TypvcSl07P2E5r
+         rZ5LJjgpE+/GNAHIKoOpqxnNqeuG1CixG6sLAreGF1ofgRjnqonlqbgEbIffyjTm2l
+         ykIn6i5sp7IwesArNtKJjfbyUBoHlPJkjoqOH6PY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        Michael Kelley <mikelley@microsoft.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 043/173] mmc: sdhci-of-at91: fix memleak on clk_get failure
-Date:   Thu, 13 Feb 2020 07:19:06 -0800
-Message-Id: <20200213151944.811844803@linuxfoundation.org>
+Subject: [PATCH 4.14 045/173] hv_balloon: Balloon up according to request page number
+Date:   Thu, 13 Feb 2020 07:19:08 -0800
+Message-Id: <20200213151945.341737590@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
 References: <20200213151931.677980430@linuxfoundation.org>
@@ -47,57 +45,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+From: Tianyu Lan <Tianyu.Lan@microsoft.com>
 
-[ Upstream commit a04184ce777b46e92c2b3c93c6dcb2754cb005e1 ]
+commit d33c240d47dab4fd15123d9e73fc8810cbc6ed6a upstream.
 
-sdhci_alloc_host() does its work not using managed infrastructure, so
-needs explicit free on error path. Add it where needed.
+Current code has assumption that balloon request memory size aligns
+with 2MB. But actually Hyper-V doesn't guarantee such alignment. When
+balloon driver receives non-aligned balloon request, it produces warning
+and balloon up more memory than requested in order to keep 2MB alignment.
+Remove the warning and balloon up memory according to actual requested
+memory size.
 
-Cc: <stable@vger.kernel.org>
-Fixes: bb5f8ea4d514 ("mmc: sdhci-of-at91: introduce driver for the Atmel SDMMC")
-Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Link: https://lore.kernel.org/r/b2a44d5be2e06ff075f32477e466598bb0f07b36.1577961679.git.mirq-linux@rere.qmqm.pl
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Fixes: f6712238471a ("hv: hv_balloon: avoid memory leak on alloc_error of 2MB memory block")
+Cc: stable@vger.kernel.org
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Tianyu Lan <Tianyu.Lan@microsoft.com>
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/mmc/host/sdhci-of-at91.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/hv/hv_balloon.c |   13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-of-at91.c b/drivers/mmc/host/sdhci-of-at91.c
-index 564e7be21e068..1dadd460cc8fb 100644
---- a/drivers/mmc/host/sdhci-of-at91.c
-+++ b/drivers/mmc/host/sdhci-of-at91.c
-@@ -331,19 +331,22 @@ static int sdhci_at91_probe(struct platform_device *pdev)
- 	priv->mainck = devm_clk_get(&pdev->dev, "baseclk");
- 	if (IS_ERR(priv->mainck)) {
- 		dev_err(&pdev->dev, "failed to get baseclk\n");
--		return PTR_ERR(priv->mainck);
-+		ret = PTR_ERR(priv->mainck);
-+		goto sdhci_pltfm_free;
+--- a/drivers/hv/hv_balloon.c
++++ b/drivers/hv/hv_balloon.c
+@@ -1170,10 +1170,7 @@ static unsigned int alloc_balloon_pages(
+ 	unsigned int i = 0;
+ 	struct page *pg;
+ 
+-	if (num_pages < alloc_unit)
+-		return 0;
+-
+-	for (i = 0; (i * alloc_unit) < num_pages; i++) {
++	for (i = 0; i < num_pages / alloc_unit; i++) {
+ 		if (bl_resp->hdr.size + sizeof(union dm_mem_page_range) >
+ 			PAGE_SIZE)
+ 			return i * alloc_unit;
+@@ -1207,7 +1204,7 @@ static unsigned int alloc_balloon_pages(
+ 
  	}
  
- 	priv->hclock = devm_clk_get(&pdev->dev, "hclock");
- 	if (IS_ERR(priv->hclock)) {
- 		dev_err(&pdev->dev, "failed to get hclock\n");
--		return PTR_ERR(priv->hclock);
-+		ret = PTR_ERR(priv->hclock);
-+		goto sdhci_pltfm_free;
+-	return num_pages;
++	return i * alloc_unit;
+ }
+ 
+ static void balloon_up(struct work_struct *dummy)
+@@ -1222,9 +1219,6 @@ static void balloon_up(struct work_struc
+ 	long avail_pages;
+ 	unsigned long floor;
+ 
+-	/* The host balloons pages in 2M granularity. */
+-	WARN_ON_ONCE(num_pages % PAGES_IN_2M != 0);
+-
+ 	/*
+ 	 * We will attempt 2M allocations. However, if we fail to
+ 	 * allocate 2M chunks, we will go back to 4k allocations.
+@@ -1234,14 +1228,13 @@ static void balloon_up(struct work_struc
+ 	avail_pages = si_mem_available();
+ 	floor = compute_balloon_floor();
+ 
+-	/* Refuse to balloon below the floor, keep the 2M granularity. */
++	/* Refuse to balloon below the floor. */
+ 	if (avail_pages < num_pages || avail_pages - num_pages < floor) {
+ 		pr_warn("Balloon request will be partially fulfilled. %s\n",
+ 			avail_pages < num_pages ? "Not enough memory." :
+ 			"Balloon floor reached.");
+ 
+ 		num_pages = avail_pages > floor ? (avail_pages - floor) : 0;
+-		num_pages -= num_pages % PAGES_IN_2M;
  	}
  
- 	priv->gck = devm_clk_get(&pdev->dev, "multclk");
- 	if (IS_ERR(priv->gck)) {
- 		dev_err(&pdev->dev, "failed to get multclk\n");
--		return PTR_ERR(priv->gck);
-+		ret = PTR_ERR(priv->gck);
-+		goto sdhci_pltfm_free;
- 	}
- 
- 	ret = sdhci_at91_set_clks_presets(&pdev->dev);
--- 
-2.20.1
-
+ 	while (!done) {
 
 
