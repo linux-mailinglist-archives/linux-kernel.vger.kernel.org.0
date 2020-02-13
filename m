@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB05515C207
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:28:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A11C615C17F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:23:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729055AbgBMP2Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:28:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42610 "EHLO mail.kernel.org"
+        id S1727875AbgBMPXq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:23:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33146 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729091AbgBMPZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:25:51 -0500
+        id S1728222AbgBMPXC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:23:02 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADE5B24693;
-        Thu, 13 Feb 2020 15:25:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E60902469A;
+        Thu, 13 Feb 2020 15:23:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607550;
-        bh=sDVloQ0gtz8WZ3p0QvAxsOXSizQEKXzw5W9VDqyug68=;
+        s=default; t=1581607382;
+        bh=c37catCXQ/yGhz6D+YLiRTmWKuW5Gr2suXO/MLMWmkM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a2BcFmESyhdI4QCuEXFJ51nY397k8bEe4jw+etfYM0K4dp1MKXVslgGrn2Oh3TSum
-         RQSv91UCc1LgPeT6fuKRqqZpvWOYhsEB1OorwWkA6peGVLOE/WB3wNDCur8B470Ou5
-         A/0ZyPMu5rsr7lKFAb20xrp9uuEqGUte3h3CSVmg=
+        b=1CcbJCivwBZw7flxuI4TL164MftH8vN7LosbyHDpuUfSggO1z7GHRij5BnfJC6KGM
+         jq6LK67G9KM4iFSWGyDj4TXa2Iid9qtIm0O7qDiwkg6wyqpG7+HYd+/DjjQ6cZRZHp
+         xgByFttSOeDWQm2kKhcqtXoIRR7WGn3Xr0IgiEa8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Harini Katakam <harini.katakam@xilinx.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 115/173] net: macb: Remove unnecessary alignment check for TSO
-Date:   Thu, 13 Feb 2020 07:20:18 -0800
-Message-Id: <20200213152001.489242907@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 62/91] NFS: Directory page cache pages need to be locked when read
+Date:   Thu, 13 Feb 2020 07:20:19 -0800
+Message-Id: <20200213151846.058632156@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
-References: <20200213151931.677980430@linuxfoundation.org>
+In-Reply-To: <20200213151821.384445454@linuxfoundation.org>
+References: <20200213151821.384445454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,47 +46,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Harini Katakam <harini.katakam@xilinx.com>
+From: Trond Myklebust <trondmy@gmail.com>
 
-[ Upstream commit 41c1ef978c8d0259c6636e6d2d854777e92650eb ]
+[ Upstream commit 114de38225d9b300f027e2aec9afbb6e0def154b ]
 
-The IP TSO implementation does NOT require the length to be a
-multiple of 8. That is only a requirement for UFO as per IP
-documentation. Hence, exit macb_features_check function in the
-beginning if the protocol is not UDP. Only when it is UDP,
-proceed further to the alignment checks. Update comments to
-reflect the same. Also remove dead code checking for protocol
-TCP when calculating header length.
+When a NFS directory page cache page is removed from the page cache,
+its contents are freed through a call to nfs_readdir_clear_array().
+To prevent the removal of the page cache entry until after we've
+finished reading it, we must take the page lock.
 
-Fixes: 1629dd4f763c ("cadence: Add LSO support.")
-Signed-off-by: Harini Katakam <harini.katakam@xilinx.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 11de3b11e08c ("NFS: Fix a memory leak in nfs_readdir")
+Cc: stable@vger.kernel.org # v2.6.37+
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Reviewed-by: Benjamin Coddington <bcodding@redhat.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/cadence/macb_main.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ fs/nfs/dir.c | 30 +++++++++++++++++++-----------
+ 1 file changed, 19 insertions(+), 11 deletions(-)
 
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -1577,16 +1577,14 @@ static netdev_features_t macb_features_c
+diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
+index e2927aeb092d0..2ac3d2527ad20 100644
+--- a/fs/nfs/dir.c
++++ b/fs/nfs/dir.c
+@@ -720,8 +720,6 @@ int nfs_readdir_filler(nfs_readdir_descriptor_t *desc, struct page* page)
+ static
+ void cache_page_release(nfs_readdir_descriptor_t *desc)
+ {
+-	if (!desc->page->mapping)
+-		nfs_readdir_clear_array(desc->page);
+ 	page_cache_release(desc->page);
+ 	desc->page = NULL;
+ }
+@@ -735,19 +733,28 @@ struct page *get_cache_page(nfs_readdir_descriptor_t *desc)
  
- 	/* Validate LSO compatibility */
+ /*
+  * Returns 0 if desc->dir_cookie was found on page desc->page_index
++ * and locks the page to prevent removal from the page cache.
+  */
+ static
+-int find_cache_page(nfs_readdir_descriptor_t *desc)
++int find_and_lock_cache_page(nfs_readdir_descriptor_t *desc)
+ {
+ 	int res;
  
--	/* there is only one buffer */
--	if (!skb_is_nonlinear(skb))
-+	/* there is only one buffer or protocol is not UDP */
-+	if (!skb_is_nonlinear(skb) || (ip_hdr(skb)->protocol != IPPROTO_UDP))
- 		return features;
+ 	desc->page = get_cache_page(desc);
+ 	if (IS_ERR(desc->page))
+ 		return PTR_ERR(desc->page);
+-
+-	res = nfs_readdir_search_array(desc);
++	res = lock_page_killable(desc->page);
+ 	if (res != 0)
+-		cache_page_release(desc);
++		goto error;
++	res = -EAGAIN;
++	if (desc->page->mapping != NULL) {
++		res = nfs_readdir_search_array(desc);
++		if (res == 0)
++			return 0;
++	}
++	unlock_page(desc->page);
++error:
++	cache_page_release(desc);
+ 	return res;
+ }
  
- 	/* length of header */
- 	hdrlen = skb_transport_offset(skb);
--	if (ip_hdr(skb)->protocol == IPPROTO_TCP)
--		hdrlen += tcp_hdrlen(skb);
+@@ -762,7 +769,7 @@ int readdir_search_pagecache(nfs_readdir_descriptor_t *desc)
+ 		desc->last_cookie = 0;
+ 	}
+ 	do {
+-		res = find_cache_page(desc);
++		res = find_and_lock_cache_page(desc);
+ 	} while (res == -EAGAIN);
+ 	return res;
+ }
+@@ -807,7 +814,6 @@ int nfs_do_filldir(nfs_readdir_descriptor_t *desc)
  
--	/* For LSO:
-+	/* For UFO only:
- 	 * When software supplies two or more payload buffers all payload buffers
- 	 * apart from the last must be a multiple of 8 bytes in size.
- 	 */
+ 	nfs_readdir_release_array(desc->page);
+ out:
+-	cache_page_release(desc);
+ 	dfprintk(DIRCACHE, "NFS: nfs_do_filldir() filling ended @ cookie %Lu; returning = %d\n",
+ 			(unsigned long long)*desc->dir_cookie, res);
+ 	return res;
+@@ -853,13 +859,13 @@ int uncached_readdir(nfs_readdir_descriptor_t *desc)
+ 
+ 	status = nfs_do_filldir(desc);
+ 
++ out_release:
++	nfs_readdir_clear_array(desc->page);
++	cache_page_release(desc);
+  out:
+ 	dfprintk(DIRCACHE, "NFS: %s: returns %d\n",
+ 			__func__, status);
+ 	return status;
+- out_release:
+-	cache_page_release(desc);
+-	goto out;
+ }
+ 
+ /* The file offset position represents the dirent entry number.  A
+@@ -925,6 +931,8 @@ static int nfs_readdir(struct file *file, struct dir_context *ctx)
+ 			break;
+ 
+ 		res = nfs_do_filldir(desc);
++		unlock_page(desc->page);
++		cache_page_release(desc);
+ 		if (res < 0)
+ 			break;
+ 	} while (!desc->eof);
+-- 
+2.20.1
+
 
 
