@@ -2,136 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F42915CBC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 21:12:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4FF415CBD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 21:19:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728407AbgBMUMv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 15:12:51 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:33727 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728100AbgBMUMu (ORCPT
+        id S2387396AbgBMUTf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 15:19:35 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33019 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728359AbgBMUTf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 15:12:50 -0500
-Received: by mail-pf1-f194.google.com with SMTP id n7so3626789pfn.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 12:12:50 -0800 (PST)
+        Thu, 13 Feb 2020 15:19:35 -0500
+Received: by mail-lj1-f195.google.com with SMTP id y6so8121186lji.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 12:19:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Em2FaAYttibjTQlPuyOTgle0cIehhPkcJObsB7mmxQ4=;
-        b=UUEAaBo8QzHRBzSTg5vwmEwtBZHIqo8GM6h67erAyXq9FaDWBAU6ir6JHFm5b5diIV
-         HGWsJNDUrBMq8XkvSBRBNdSSnVo7QRrvOMGbMi4++YLam3x4bpheUpxPqL0nIVQiGhM5
-         wFBYyGzAdq57vTFYJhluzz5kWAZTiuunHzIg4nV6XVmMowY494/FBW7F+k7invAvbZ0u
-         349HgFlf3nLnrDlGAeeclZeyHNlXZAVUx2AJjjZQ8m74wI1MglsOpM3/jwU+jMgBt49d
-         KKo78LddH450ayeAYP+lbVv7jKVJwUjYpvPpYqdDXM4aBjH7FlHFOH+2XRGqs9w9YhTy
-         sGyw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=DwVZSFEq0W28DM18hDTvCj9e8HcEAgSZLjRA5gyrBFU=;
+        b=Vyc3sRQ1QOwrox+evcccNRQBSMXSNzw3PVk3EXZdtOms1u9chLhvINkI9cUllcwCFT
+         DPYjFaEUwuJajVUA0tq5EIDfLt97XP36OrNkXGsrbdqJqvIGkoxYifu40N8EXJT7qWrO
+         64bRzYRBYqxe1FECL+BOJrtNLARWyDIaVTLt+OH53m3TMMVXiTIY9rNvY8DdyabgUnQW
+         dsqIy8TFk0OLSt38yhjIz5KISZQsdbW3tb7XxanhUnc0asTbpI+G5YiMoSr9rZMH8d34
+         vDab9/gn11rrz26yB5mw+myU2xNaKBgioPgvXrwdomzxEJ/2cqpdWhmFiTZQOZG6D9Wr
+         xPYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Em2FaAYttibjTQlPuyOTgle0cIehhPkcJObsB7mmxQ4=;
-        b=tMIfDBgxE2xdQR/1mUG1W2CJYgT9cTUgxlsNVPop7CJxvZjoU4qCkRZq7zG8B4dKs+
-         kwRpzfGdUQfFxfkwyvgvgtwBreYTKNuTYIAJMQ1lcTaRs0Rd9PAn/uWLYei88jXEUd93
-         MJW7k8NuoRK/0aPRzqZQlC4DAJxjMMGk5T6iP5qgVe2gv2xdHcnlNjdcFDZlYZYy+3Lo
-         zQC1fIYwGGx0Gei5leeEv7gQGRVNCIhYYMhIsyqf3KBeMOkw87atuM8QYxa540I4EhO6
-         4fF4KAzeD6HBxemNdz4CWRIh6rDjnyix8McUeaf2xv3in/6VOc50Uc11WSrfZ9SGElj6
-         3kng==
-X-Gm-Message-State: APjAAAVtUfrsgXwNEDACBd5Udgfq49Pirn4BN/XrpNlYrTSH3Ofzx1NG
-        fLVdpu2JuguAgqL74iMtqVFxEg==
-X-Google-Smtp-Source: APXvYqz6C2//bSkNXWpg1QFzaCdhtdkUlSkJBK805RDsjAufMVdJhjl5udMwJOsTXCI9bhdi8VtmPg==
-X-Received: by 2002:aa7:8703:: with SMTP id b3mr14998134pfo.67.1581624769948;
-        Thu, 13 Feb 2020 12:12:49 -0800 (PST)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id u23sm3988269pfm.29.2020.02.13.12.12.48
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=DwVZSFEq0W28DM18hDTvCj9e8HcEAgSZLjRA5gyrBFU=;
+        b=UpVTZEegJnXyLxiu9TCTZcqWr/IqQ4A9qeBk5j76xZdn093Y3FQ+sU+3P/nPQrAmBN
+         LKjImtfpGfiCkSZXSFQNI7nCkk42s0MoVI0Gi+v34PwMGBIN9RQpz5V2U2EQjyorsRG0
+         F99Q0DPTFK9BAf3HwjKRNt9qUALNF6k8rr3plAGXNaLIItOuoJE3VZGNXUUNagBEopC4
+         0m0kFwYk5Y+DUs87FCNOc2/vdlTte3JFen+/jRuOjjN60yp5mgtfXOTxLAVnQ5K34s0l
+         pRDKvK+7kHe5g4DRtSb+6Z+0euPbmYgDYPbvqa8Ravragw4G0HYKStMMlPDdU1qvsZEO
+         u6kA==
+X-Gm-Message-State: APjAAAWn85kvoOz+P/JmEAbgVS/4izThW5utllrn8d8x/AIDuV0yS0Y3
+        4T0e1YLI90XRMkj4KeGCaEyyiI2lh/4dBQ==
+X-Google-Smtp-Source: APXvYqx038IS+Ijfeh1//hkEoQpHVSqFBNIuH5C+1O568EPNKOQjnbiPQh7Uf1VmGHESUeIqO/HpLg==
+X-Received: by 2002:a2e:9a51:: with SMTP id k17mr11552111ljj.206.1581625172663;
+        Thu, 13 Feb 2020 12:19:32 -0800 (PST)
+Received: from localhost.localdomain ([5.20.204.163])
+        by smtp.gmail.com with ESMTPSA id s22sm2209470ljm.41.2020.02.13.12.19.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 12:12:49 -0800 (PST)
-Date:   Thu, 13 Feb 2020 12:12:47 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Dikshita Agarwal <dikshita@codeaurora.org>,
-        linux-media@vger.kernel.org, stanimir.varbanov@linaro.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, vgarodia@codeaurora.org,
-        Odelu Kukatla <okukatla@codeaurora.org>
-Subject: Re: [PATCH V4 0/4] Enable video on sc7180
-Message-ID: <20200213201247.GQ3948@builder>
-References: <1579006416-11599-1-git-send-email-dikshita@codeaurora.org>
- <20200203180240.GD3948@builder>
- <20200213185305.GF50449@google.com>
- <20200213192627.GA1455@tuxbook-pro>
- <20200213195725.GH50449@google.com>
+        Thu, 13 Feb 2020 12:19:32 -0800 (PST)
+From:   Andrey Lebedev <andrey.lebedev@gmail.com>
+To:     mripard@kernel.org, wens@csie.org, airlied@linux.ie,
+        daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     linux-sunxi@googlegroups.com, Andrey Lebedev <andrey@lebedev.lt>
+Subject: [PATCH v3 1/3] drm/sun4i: tcon: Introduce LVDS setup routine setting
+Date:   Thu, 13 Feb 2020 22:18:53 +0200
+Message-Id: <20200213201854.810-1-andrey.lebedev@gmail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200210195633.GA21832@kedthinkpad>
+References: <20200210195633.GA21832@kedthinkpad>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200213195725.GH50449@google.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 13 Feb 11:57 PST 2020, Matthias Kaehlcke wrote:
+From: Andrey Lebedev <andrey@lebedev.lt>
 
-> On Thu, Feb 13, 2020 at 11:26:27AM -0800, Bjorn Andersson wrote:
-> > On Thu 13 Feb 10:53 PST 2020, Matthias Kaehlcke wrote:
-> > 
-> > > Hi Bjorn,
-> > > 
-> > > On Mon, Feb 03, 2020 at 10:02:40AM -0800, Bjorn Andersson wrote:
-> > > > On Tue 14 Jan 04:53 PST 2020, Dikshita Agarwal wrote:
-> > > > 
-> > > > > Hello,
-> > > > > 
-> > > > > Changes since v3:
-> > > > > 
-> > > > >   - addressed DT and DT schema review comments.
-> > > > > 
-> > > > >   - renamed DT schema file.
-> > > > > 
-> > > > > v3 can be found at [1].
-> > > > > These changes depend on patch series [2] - [6].
-> > > > > 
-> > > > > Thanks,
-> > > > > Dikshita
-> > > > > 
-> > > > 
-> > > > Picked up the dts patches for 5.7, with Stan's acks
-> > > 
-> > > I can't seem to find the patches in the QCOM repo, neither in
-> > > 'arm64-for-5.7' nor 'for-next'. Am I looking at the wrong place or
-> > > maybe you forget to push these?
-> > > 
-> > 
-> > Thanks for the question Matthias, I was looking for this email as I
-> > rebased onto v5.6-rc1 earlier this week, but got distracted.
-> > 
-> > I pulled them in, but in the rebase I realized that we don't have the
-> > interconnects in place, so in it's current form these patches doesn't
-> > compile.
-> > 
-> > Seems we're waiting for rather trivial respin of
-> > https://lore.kernel.org/linux-arm-msm/1577782737-32068-1-git-send-email-okukatla@codeaurora.org/
-> > to get this settled.
-> 
-> Hm, there has been no response to the comments in more than a month, also
-> the series depends on another ('Split SDM845 interconnect nodes and
-> consolidate RPMh support' https://patchwork.kernel.org/project/linux-arm-msm/list/?series=238831),
-> even though that isn't mentioned anywhere.
-> 
+Different sunxi flavors require slightly different sequence for enabling
+LVDS output. This allows to differentiate between them.
 
-Sibi is revisiting David's 845 series, so my expectation is that it will
-land in this cycle.
+Signed-off-by: Andrey Lebedev <andrey@lebedev.lt>
+---
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 68 ++++++++++++++++--------------
+ drivers/gpu/drm/sun4i/sun4i_tcon.h |  3 ++
+ 2 files changed, 39 insertions(+), 32 deletions(-)
 
-> IIUC the interconnect configuration isn't strictly required to get the
-> video codec to work. I wonder if it would make sense to respin this
-> series to remove the interconnect properties. They could be added in a
-> separate patch after the ICC support has landed.
-> 
-> Dikshita/Bjorn, what do you think?
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index c81cdce6ed55..cc6b05ca2c69 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -114,46 +114,48 @@ static void sun4i_tcon_channel_set_status(struct sun4i_tcon *tcon, int channel,
+ 	}
+ }
+ 
++static void sun6i_tcon_setup_lvds_phy(struct sun4i_tcon *tcon,
++				      const struct drm_encoder *encoder)
++{
++	u8 val;
++
++	regmap_write(tcon->regs, SUN4I_TCON0_LVDS_ANA0_REG,
++		     SUN6I_TCON0_LVDS_ANA0_C(2) |
++		     SUN6I_TCON0_LVDS_ANA0_V(3) |
++		     SUN6I_TCON0_LVDS_ANA0_PD(2) |
++		     SUN6I_TCON0_LVDS_ANA0_EN_LDO);
++	udelay(2);
++
++	regmap_update_bits(tcon->regs, SUN4I_TCON0_LVDS_ANA0_REG,
++			   SUN6I_TCON0_LVDS_ANA0_EN_MB,
++			   SUN6I_TCON0_LVDS_ANA0_EN_MB);
++	udelay(2);
++
++	regmap_update_bits(tcon->regs, SUN4I_TCON0_LVDS_ANA0_REG,
++			   SUN6I_TCON0_LVDS_ANA0_EN_DRVC,
++			   SUN6I_TCON0_LVDS_ANA0_EN_DRVC);
++
++	if (sun4i_tcon_get_pixel_depth(encoder) == 18)
++		val = 7;
++	else
++		val = 0xf;
++
++	regmap_write_bits(tcon->regs, SUN4I_TCON0_LVDS_ANA0_REG,
++			  SUN6I_TCON0_LVDS_ANA0_EN_DRVD(0xf),
++			  SUN6I_TCON0_LVDS_ANA0_EN_DRVD(val));
++
++}
++
+ static void sun4i_tcon_lvds_set_status(struct sun4i_tcon *tcon,
+ 				       const struct drm_encoder *encoder,
+ 				       bool enabled)
+ {
+ 	if (enabled) {
+-		u8 val;
+-
+ 		regmap_update_bits(tcon->regs, SUN4I_TCON0_LVDS_IF_REG,
+ 				   SUN4I_TCON0_LVDS_IF_EN,
+ 				   SUN4I_TCON0_LVDS_IF_EN);
+-
+-		/*
+-		 * As their name suggest, these values only apply to the A31
+-		 * and later SoCs. We'll have to rework this when merging
+-		 * support for the older SoCs.
+-		 */
+-		regmap_write(tcon->regs, SUN4I_TCON0_LVDS_ANA0_REG,
+-			     SUN6I_TCON0_LVDS_ANA0_C(2) |
+-			     SUN6I_TCON0_LVDS_ANA0_V(3) |
+-			     SUN6I_TCON0_LVDS_ANA0_PD(2) |
+-			     SUN6I_TCON0_LVDS_ANA0_EN_LDO);
+-		udelay(2);
+-
+-		regmap_update_bits(tcon->regs, SUN4I_TCON0_LVDS_ANA0_REG,
+-				   SUN6I_TCON0_LVDS_ANA0_EN_MB,
+-				   SUN6I_TCON0_LVDS_ANA0_EN_MB);
+-		udelay(2);
+-
+-		regmap_update_bits(tcon->regs, SUN4I_TCON0_LVDS_ANA0_REG,
+-				   SUN6I_TCON0_LVDS_ANA0_EN_DRVC,
+-				   SUN6I_TCON0_LVDS_ANA0_EN_DRVC);
+-
+-		if (sun4i_tcon_get_pixel_depth(encoder) == 18)
+-			val = 7;
+-		else
+-			val = 0xf;
+-
+-		regmap_write_bits(tcon->regs, SUN4I_TCON0_LVDS_ANA0_REG,
+-				  SUN6I_TCON0_LVDS_ANA0_EN_DRVD(0xf),
+-				  SUN6I_TCON0_LVDS_ANA0_EN_DRVD(val));
++		if (tcon->quirks->setup_lvds_phy)
++			tcon->quirks->setup_lvds_phy(tcon, encoder);
+ 	} else {
+ 		regmap_update_bits(tcon->regs, SUN4I_TCON0_LVDS_IF_REG,
+ 				   SUN4I_TCON0_LVDS_IF_EN, 0);
+@@ -1465,12 +1467,14 @@ static const struct sun4i_tcon_quirks sun8i_a33_quirks = {
+ 	.has_channel_0		= true,
+ 	.has_lvds_alt		= true,
+ 	.dclk_min_div		= 1,
++	.setup_lvds_phy		= sun6i_tcon_setup_lvds_phy,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun8i_a83t_lcd_quirks = {
+ 	.supports_lvds		= true,
+ 	.has_channel_0		= true,
+ 	.dclk_min_div		= 1,
++	.setup_lvds_phy		= sun6i_tcon_setup_lvds_phy,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun8i_a83t_tv_quirks = {
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+index a62ec826ae71..2974e59ef9f2 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+@@ -228,6 +228,9 @@ struct sun4i_tcon_quirks {
+ 
+ 	/* callback to handle tcon muxing options */
+ 	int	(*set_mux)(struct sun4i_tcon *, const struct drm_encoder *);
++	/* handler for LVDS setup routine */
++	void	(*setup_lvds_phy)(struct sun4i_tcon *tcon,
++				  const struct drm_encoder *encoder);
+ };
+ 
+ struct sun4i_tcon {
+-- 
+2.20.1
 
-That sounds likely. Dikshita, can you confirm that we can just omit the
-interconnect lines from the patch and I'll just apply the patches again
-without these (and you can follow up with adding interconnects later).
-
-Regards,
-Bjorn
