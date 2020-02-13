@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EB9A15C417
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A358115C41E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 16:53:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729275AbgBMP0w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 10:26:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39862 "EHLO mail.kernel.org"
+        id S2387641AbgBMP1B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 10:27:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728899AbgBMPZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:25:03 -0500
+        id S1728916AbgBMPZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:25:06 -0500
 Received: from localhost (unknown [104.132.1.104])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 051B124693;
-        Thu, 13 Feb 2020 15:25:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0E7A24690;
+        Thu, 13 Feb 2020 15:25:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581607503;
-        bh=lLtqOmb6ArOFmm28b9QmeMjMkS6NyDFvFIkExuqLrsY=;
+        s=default; t=1581607505;
+        bh=tbigJHaGlahfqu6ShGcWa0Uyh4Y+pqsErulVyERbI1A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qvUaxORK5Kj4QP20lzmsMYmu1iH1sQqlhuVX6JqfMvP6ZPHaayaEzvTBMCo0OnNfh
-         paaujLoZGjVPcihrKYNESB6Y2EY3QYrH6LA6Qa8PVPyvp+Djyhi4uV0P8MlP+lDEpP
-         qxVm58u3ldnzgV3CotxESS6fxlygioT24MxZgqJM=
+        b=xWLQi21h/hLV7R85UXeGSaDEwWmh3da4ir8hE49lBQAyLHcw/oyRf+w+s1qUw+jmk
+         SXI7VOwBkfUqwSQB8UJxzrZSNH+0un42lzgPcOowjbCUIiv9447L8qL7Y5y2OC+7tx
+         6Sbf4WE+SfM2eNO7sNgpoylXcmBy5NP3ZWzC4nQo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Amol Grover <frextrite@gmail.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 059/173] tracing: Annotate ftrace_graph_notrace_hash pointer with __rcu
-Date:   Thu, 13 Feb 2020 07:19:22 -0800
-Message-Id: <20200213151948.709228320@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Jesper Dangaard Brouer <brouer@redhat.com>
+Subject: [PATCH 4.14 062/173] samples/bpf: Dont try to remove users homedir on clean
+Date:   Thu, 13 Feb 2020 07:19:25 -0800
+Message-Id: <20200213151949.478573907@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
 References: <20200213151931.677980430@linuxfoundation.org>
@@ -44,72 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amol Grover <frextrite@gmail.com>
+From: Toke Høiland-Jørgensen <toke@redhat.com>
 
-[ Upstream commit fd0e6852c407dd9aefc594f54ddcc21d84803d3b ]
+commit b2e5e93ae8af6a34bca536cdc4b453ab1e707b8b upstream.
 
-Fix following instances of sparse error
-kernel/trace/ftrace.c:5667:29: error: incompatible types in comparison
-kernel/trace/ftrace.c:5813:21: error: incompatible types in comparison
-kernel/trace/ftrace.c:5868:36: error: incompatible types in comparison
-kernel/trace/ftrace.c:5870:25: error: incompatible types in comparison
+The 'clean' rule in the samples/bpf Makefile tries to remove backup
+files (ending in ~). However, if no such files exist, it will instead try
+to remove the user's home directory. While the attempt is mostly harmless,
+it does lead to a somewhat scary warning like this:
 
-Use rcu_dereference_protected to dereference the newly annotated pointer.
+rm: cannot remove '~': Is a directory
 
-Link: http://lkml.kernel.org/r/20200205055701.30195-1-frextrite@gmail.com
+Fix this by using find instead of shell expansion to locate any actual
+backup files that need to be removed.
 
-Signed-off-by: Amol Grover <frextrite@gmail.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: b62a796c109c ("samples/bpf: allow make to be run from samples/bpf/ directory")
+Signed-off-by: Toke Høiland-Jørgensen <toke@redhat.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Acked-by: Jesper Dangaard Brouer <brouer@redhat.com>
+Link: https://lore.kernel.org/bpf/157952560126.1683545.7273054725976032511.stgit@toke.dk
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- kernel/trace/ftrace.c | 2 +-
- kernel/trace/trace.h  | 8 ++++++--
- 2 files changed, 7 insertions(+), 3 deletions(-)
+ samples/bpf/Makefile |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 6af28692f0f53..dd9fdb52e24ad 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -5147,7 +5147,7 @@ static const struct file_operations ftrace_notrace_fops = {
- static DEFINE_MUTEX(graph_lock);
+--- a/samples/bpf/Makefile
++++ b/samples/bpf/Makefile
+@@ -184,7 +184,7 @@ all: $(LIBBPF)
  
- struct ftrace_hash __rcu *ftrace_graph_hash = EMPTY_HASH;
--struct ftrace_hash *ftrace_graph_notrace_hash = EMPTY_HASH;
-+struct ftrace_hash __rcu *ftrace_graph_notrace_hash = EMPTY_HASH;
+ clean:
+ 	$(MAKE) -C ../../ M=$(CURDIR) clean
+-	@rm -f *~
++	@find $(CURDIR) -type f -name '*~' -delete
  
- enum graph_filter_type {
- 	GRAPH_FILTER_NOTRACE	= 0,
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 17f36488d3c84..757bb1bffed99 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -869,7 +869,7 @@ extern void __trace_graph_return(struct trace_array *tr,
- 
- #ifdef CONFIG_DYNAMIC_FTRACE
- extern struct ftrace_hash __rcu *ftrace_graph_hash;
--extern struct ftrace_hash *ftrace_graph_notrace_hash;
-+extern struct ftrace_hash __rcu *ftrace_graph_notrace_hash;
- 
- static inline int ftrace_graph_addr(struct ftrace_graph_ent *trace)
- {
-@@ -922,10 +922,14 @@ static inline void ftrace_graph_addr_finish(struct ftrace_graph_ret *trace)
- static inline int ftrace_graph_notrace_addr(unsigned long addr)
- {
- 	int ret = 0;
-+	struct ftrace_hash *notrace_hash;
- 
- 	preempt_disable_notrace();
- 
--	if (ftrace_lookup_ip(ftrace_graph_notrace_hash, addr))
-+	notrace_hash = rcu_dereference_protected(ftrace_graph_notrace_hash,
-+						 !preemptible());
-+
-+	if (ftrace_lookup_ip(notrace_hash, addr))
- 		ret = 1;
- 
- 	preempt_enable_notrace();
--- 
-2.20.1
-
+ $(LIBBPF): FORCE
+ 	$(MAKE) -C $(dir $@) $(notdir $@)
 
 
