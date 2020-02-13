@@ -2,135 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B81B615BAE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 09:41:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68D3B15BAF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 09:44:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729636AbgBMIlW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 03:41:22 -0500
-Received: from mail-eopbgr50081.outbound.protection.outlook.com ([40.107.5.81]:20036
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        id S1729653AbgBMInr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 03:43:47 -0500
+Received: from mail-bn8nam11on2068.outbound.protection.outlook.com ([40.107.236.68]:51710
+        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729459AbgBMIlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 03:41:21 -0500
+        id S1726232AbgBMInr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 03:43:47 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hyFzuYki3xmTI4VWNlDk0WWvMXwYCgdcWp8iJfo/bRwdxUibiN03Izm5EmN3epv4dCPaJe9FGi4zbIE4dtOcW+UaCGIAGE5DFtyIsZlHuT+UR9ll8TYlQu0CJWVGTE5ZMXSJjevp7IBZ+BscCQ+dApPoXjpzK5W2Q2R3UTtNuJsEe3Nwcl4Oeaosz9YP6cHvra0oelYXX1kJGVaGN1UQQPjkDFg6Eev1hBXvYOrwhHTBi1cn3EIteBU5LMw5ctD/XyN7Ae7q9FrzCvgAClmPVDirGFoy+CsVXX6Hqr34JYCLItpiz9tV8VE5GMvgRpxcEHoM6lB1piewcdFx6oyPRA==
+ b=V0SaHEqw5z3+8UrtA/LoHDrIZIydAGvblq4Igpl9DRHafkhMec0CVHJvRwzsrIbOjaZ8SX0waqk35Q6d5H/99bSQCXZo7Y5xwwwD62IOwb8eOLqqfDZ7binXNGUpIw+5G8moBXzfTS2SGnjVl6jBvGybMdxUXzF3173fLnB2KJOIQzQZG4LLF1gVpGtfQS3APyTIwkitpBbMRYRG6pRa21FrOJ1uZYrnCAg33Xd24Iu/i2Kgl/kzVc3pyyprSyMVw/FMWhC1Vi6OfPmuTf6vNdnX//0TNOTQOJUzkEaSAzT2yPMgw2sk9CbMJT3R1jagVwrePVKSRc5xsL2rvV/tIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5S1MvUIiqzlKPMj2vGBQE/JW1NpAv2wx6XaKvTqdkCg=;
- b=EGHYOzb+SqmxLOlhmjsZ2ChoQnyPqyG2utXZ0UU9ywkV55XpsVVlxXAOcBTklhdcyTLynJGhoWY7GkGUWUFZ/e5TeC25FgGGR6aKb9A8VQ+Z4R/g0EJsuNsSOjfwIUNYDcqqXfHKoZDcFfL1yMswOPzcjR7gLDmpYej2EvSw70AzBIZIzv59G/eNIgLuuidu0DUN7Fjy/vnUcBbrhaC6kQdD7cqLS3S2LvD6JvtAkE5lrrx6WwlnM41M/TRZs3v0EK0Oxl3xgUGHOdiq70ph8Tka00tZqsxok7MvBb2m1zVHJXOSGLZaD6fCRO/0vsWCbcwB7Zdx4w+hVTFXdEVXnQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ bh=pXNhmnWF48lYQU6Klqv7Ry1mzvTlKQ5idXWAfRD1C7A=;
+ b=UyxH5x7eeR4OBeUyfMIxgTcw2meRU0ombUdcImk8FFfTUVKo1LIxrSDlxJruoI67uiTqGoCvpCYNtlo78RqDvKyjJBzkQrdeKDFyXxGmR6hhDEQz7KNxDRVwe3UU0s8DwjjvF+APp+NERDyOttNUV6xd6wWPdd1bH55qUTCJ1pAKIdmhg0Odd/YVCzCrmS85BPmA9dq1EgLnAPMRa/EnXwCh0SES+2FOto5ZbZFG5H3P2KbdVOAXENM1ouULiq+vtsNH//nEK36Hzt56SHmqV7uAEtKHgJJsTOHTIWZ7WrAw0vlqSM+3v0E/3FYl5G7oZufcYrUTSGKchRK/OWv7iA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=infradead.org smtp.mailfrom=xilinx.com;
+ dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
+ not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5S1MvUIiqzlKPMj2vGBQE/JW1NpAv2wx6XaKvTqdkCg=;
- b=c7En8POGR9mgYiSlva87/5i4ycwbGRSbIKS08Ajwt64tihYynCRBgzxmT0TRNP+UVVNSOEP/QgaDTQLWOVpbRUmw+0UYe96LFRJ/29Tk1BFwLs0WGVizFden0l04mOtwKdu+/2ZCelN6zkaZ/0/k3iWT+BNMIilpYPXBu35eXSA=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3850.eurprd04.prod.outlook.com (52.134.65.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2707.28; Thu, 13 Feb 2020 08:41:17 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::e44d:fa34:a0af:d96]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::e44d:fa34:a0af:d96%5]) with mapi id 15.20.2729.024; Thu, 13 Feb 2020
- 08:41:17 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     =?utf-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= 
-        <u.kleine-koenig@pengutronix.de>
-CC:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "allison@lohutok.net" <allison@lohutok.net>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "rfontana@redhat.com" <rfontana@redhat.com>,
-        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "dsterba@suse.com" <dsterba@suse.com>, Peng Fan <peng.fan@nxp.com>,
-        "okuno.kohji@jp.panasonic.com" <okuno.kohji@jp.panasonic.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH V2] ARM: imx: Add missing of_node_put()
-Thread-Topic: [PATCH V2] ARM: imx: Add missing of_node_put()
-Thread-Index: AQHV4jaMGodULu2PXUCnEPn6S7cDiagYx+aAgAAGNxA=
-Date:   Thu, 13 Feb 2020 08:41:17 +0000
-Message-ID: <DB3PR0402MB3916D1A18B80F35B9F86563CF51A0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <1581574854-9366-1-git-send-email-Anson.Huang@nxp.com>
- <20200213081825.mox35tzizscdk7km@pengutronix.de>
-In-Reply-To: <20200213081825.mox35tzizscdk7km@pengutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.68]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 8c48139a-67bb-49ec-2a26-08d7b0607e3d
-x-ms-traffictypediagnostic: DB3PR0402MB3850:|DB3PR0402MB3850:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB3PR0402MB385047A3E252D7BAEE7F9217F51A0@DB3PR0402MB3850.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 031257FE13
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(366004)(396003)(136003)(39860400002)(199004)(189003)(478600001)(55016002)(7416002)(6506007)(81156014)(8676002)(7696005)(81166006)(8936002)(86362001)(2906002)(64756008)(316002)(9686003)(54906003)(52536014)(6916009)(76116006)(44832011)(4326008)(66556008)(5660300002)(66446008)(66476007)(71200400001)(66946007)(186003)(26005)(33656002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3850;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 9T6EKZBAC5m7m/RqrBFU5Id8EPvbXW15M/+yh5pJiYYdPJkLM5vQGFNYX8IqY2REqOIML71HgjrKUovnGM7Ywggo+XAGAIND6w66YK56Rh42PcWwblEivsB+nSMjgwMvPeGcd7yELHIFEgUbGHlEEtmUZWIp1+etmPExjLhVAilYS54y2Xf8hY4BQVY5INHN4hGDIiTCV5N2gOuJBfj3M2YQVM1FgmzMwskHUyo2CnaNNTVlNsqB3hq+wQW/y/YzxBLOcG44H/VKJ/X8wBXwhCGpY4A9RAhTZPo1n/UJii6WdXxSvViVI1kizK7YvN70EOT6fQqYFhvReNLSL4d3L30RqLUyJLy95/gc9KZA3OuhiXkPGf+gpYBsGLUHIGQXxDlOEtif2gyHSMMqg7YXCoXuZ34Hj6iYzWPImYqCE/4w0ujsisRhu6pp6CqBeRHQ
-x-ms-exchange-antispam-messagedata: IrchKLeE3R6WSb95TxK+C6goBqT7UnQGA0T9kzSPB9NC3yK6GUMABC2hrrZVQNu6PYi8kAUTDROqarnlAt7b33ZoiU6WFIS7DlCqWI/IRhJ33N9u3Nzb8ImVoHF7+Oc1nTZ1Zqw2P2Fup1YXvYmYfw==
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ bh=pXNhmnWF48lYQU6Klqv7Ry1mzvTlKQ5idXWAfRD1C7A=;
+ b=be4yle3YuujAw6SDm2v3aMQj8WGIh5qrLE5wSfJJ++wEnuTaeH1ib+P6AxNZW8q+b4a6T2DbD+ryxpwec/4E+zG5Z6BaiO9ZpOAhJMpvYUEMdc8ltayEuHjfpV+1MzAcnH4FKRhCkIeULJ827n+/tFcqKurBvHm+q9kBLOxWJhw=
+Received: from BN6PR02CA0039.namprd02.prod.outlook.com (2603:10b6:404:5f::25)
+ by DM6PR02MB7035.namprd02.prod.outlook.com (2603:10b6:5:25b::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2729.23; Thu, 13 Feb
+ 2020 08:43:03 +0000
+Received: from SN1NAM02FT021.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::201) by BN6PR02CA0039.outlook.office365.com
+ (2603:10b6:404:5f::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2729.22 via Frontend
+ Transport; Thu, 13 Feb 2020 08:43:03 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; infradead.org; dkim=none (message not signed)
+ header.d=none;infradead.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ SN1NAM02FT021.mail.protection.outlook.com (10.152.72.144) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2729.22
+ via Frontend Transport; Thu, 13 Feb 2020 08:43:03 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1j2A5O-0002iu-Uf; Thu, 13 Feb 2020 00:43:02 -0800
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1j2A5J-0008WC-RI; Thu, 13 Feb 2020 00:42:57 -0800
+Received: from xsj-pvapsmtp01 (smtp2.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id 01D8gqlV020865;
+        Thu, 13 Feb 2020 00:42:52 -0800
+Received: from [172.30.17.107]
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <michals@xilinx.com>)
+        id 1j2A5E-0008Uv-1d; Thu, 13 Feb 2020 00:42:52 -0800
+Subject: Re: [PATCH 3/7] microblaze: Define SMP safe bit operations
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Michal Simek <michal.simek@xilinx.com>
+Cc:     linux-kernel@vger.kernel.org, monstr@monstr.eu, git@xilinx.com,
+        arnd@arndb.de, Stefan Asserhall <stefan.asserhall@xilinx.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Will Deacon <will@kernel.org>
+References: <cover.1581522136.git.michal.simek@xilinx.com>
+ <6a052c943197ed33db09ad42877e8a2b7dad6b96.1581522136.git.michal.simek@xilinx.com>
+ <20200212155309.GA14973@hirez.programming.kicks-ass.net>
+From:   Michal Simek <michal.simek@xilinx.com>
+Message-ID: <cd4c6117-bc61-620c-8477-44df6e51d7b8@xilinx.com>
+Date:   Thu, 13 Feb 2020 09:42:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8c48139a-67bb-49ec-2a26-08d7b0607e3d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2020 08:41:17.6211
+In-Reply-To: <20200212155309.GA14973@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(346002)(39860400002)(376002)(189003)(199004)(186003)(26005)(110136005)(356004)(54906003)(316002)(6666004)(4326008)(36756003)(426003)(5660300002)(2616005)(336012)(44832011)(478600001)(31696002)(81166006)(81156014)(8676002)(9786002)(8936002)(2906002)(31686004)(70586007)(70206006);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB7035;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8312dd5d-d76c-4095-4ec7-08d7b060bd3c
+X-MS-TrafficTypeDiagnostic: DM6PR02MB7035:
+X-LD-Processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
+X-Microsoft-Antispam-PRVS: <DM6PR02MB7035719EFE98DB669B5C8E4DC61A0@DM6PR02MB7035.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-Forefront-PRVS: 031257FE13
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: WoKtdMFz82wT/WNthEgTpJKW0vUCcy3KGgRh8+VclBVQtmVer5iZWRWWCwMpY07CaYa1PthuPW16iybXKl3qwsy4pFSZ4S1jRzy25zgoAgKyD2Jax+MWVaIOcOvpSVLyrR8eVwcGpHZZcJeZabmeCgQS+MJYX0zM2Kjjg/h5IrQK8yLdtm9bZdL+BffCr3jeXuGrHU1BI/q1OC/2p1bHu4QnqLNDue5ymJ8BN5qBxEjoxfRjl6Z7ww23EEtLpBiGM8o1L+ROLhQX4dM4a6MkaJn6sqLfHESc1WF530oxU4RJwkDf6GygzcMUgQzMqKKLb1tM13RbZljou11kgyx8UbmI4ucHQU8PQg1cl9dLXe+uwSHCDb2go7Cc7MyND8rSjHKQP+Cz6RYJ52SFTs6rwpycRBmtsrjyqukVXLGvqM1vJj5Y/ktdD/u/Wg9EsaoU
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2020 08:43:03.3288
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ygZQN8vaEfal8pKvMbPWHI2PFgNzCKpd7SBYEAiOZUBXE05InIkDv5WeddllE+p9raX1jvKDP2ct5LbBoLQzuw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3850
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8312dd5d-d76c-4095-4ec7-08d7b060bd3c
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB7035
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIFV3ZQ0KDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggVjJdIEFSTTogaW14OiBBZGQgbWlzc2lu
-ZyBvZl9ub2RlX3B1dCgpDQo+IA0KPiBPbiBUaHUsIEZlYiAxMywgMjAyMCBhdCAwMjoyMDo1NFBN
-ICswODAwLCBBbnNvbiBIdWFuZyB3cm90ZToNCj4gPiBBZnRlciBmaW5pc2hpbmcgdXNpbmcgZGV2
-aWNlIG5vZGUgZ290IGZyb20gb2ZfZmluZF9jb21wYXRpYmxlX25vZGUoKSwNCj4gPiBvZl9ub2Rl
-X3B1dCgpIG5lZWRzIHRvIGJlIGNhbGxlZC4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEFuc29u
-IEh1YW5nIDxBbnNvbi5IdWFuZ0BueHAuY29tPg0KPiA+IC0tLQ0KPiA+IENoYW5nZXMgc2luY2Ug
-VjE6DQo+ID4gCS0gY29ycmVjdCBzb21lIG9mX25vZGVfcHV0KCkgcGxhY2UgdG8gbWFrZSBzdXJl
-IGl0IGlzIHNhZmUgdG8gYmUgcHV0Lg0KPiA+IC0tLQ0KPiA+ICBhcmNoL2FybS9tYWNoLWlteC9h
-bmF0b3AuYyAgICAgfCAzICsrKw0KPiA+ICBhcmNoL2FybS9tYWNoLWlteC9ncGMuYyAgICAgICAg
-fCAxICsNCj4gPiAgYXJjaC9hcm0vbWFjaC1pbXgvcGxhdHNtcC5jICAgIHwgMSArDQo+ID4gIGFy
-Y2gvYXJtL21hY2gtaW14L3BtLWlteDYuYyAgICB8IDIgKysNCj4gPiAgYXJjaC9hcm0vbWFjaC1p
-bXgvcG0taW14N3VscC5jIHwgMSArDQo+ID4gIDUgZmlsZXMgY2hhbmdlZCwgOCBpbnNlcnRpb25z
-KCspDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC1pbXgvYW5hdG9wLmMgYi9h
-cmNoL2FybS9tYWNoLWlteC9hbmF0b3AuYw0KPiA+IGluZGV4IDhmYjY4YzAuLjU5ODU3MzEgMTAw
-NjQ0DQo+ID4gLS0tIGEvYXJjaC9hcm0vbWFjaC1pbXgvYW5hdG9wLmMNCj4gPiArKysgYi9hcmNo
-L2FybS9tYWNoLWlteC9hbmF0b3AuYw0KPiA+IEBAIC0xMzUsNiArMTM1LDcgQEAgdm9pZCBfX2lu
-aXQgaW14X2luaXRfcmV2aXNpb25fZnJvbV9hbmF0b3Aodm9pZCkNCj4gPiAgCQkJdm9pZCBfX2lv
-bWVtICpzcmNfYmFzZTsNCj4gPiAgCQkJdTMyIHNibXIyOw0KPiA+DQo+ID4gKwkJCW9mX25vZGVf
-cHV0KG5wKTsNCj4gPiAgCQkJbnAgPSBvZl9maW5kX2NvbXBhdGlibGVfbm9kZShOVUxMLCBOVUxM
-LA0KPiA+ICAJCQkJCQkgICAgICJmc2wsaW14NnVsLXNyYyIpOw0KPiA+ICAJCQlzcmNfYmFzZSA9
-IG9mX2lvbWFwKG5wLCAwKTsNCj4gPiBAQCAtMTUyLDYgKzE1Myw4IEBAIHZvaWQgX19pbml0IGlt
-eF9pbml0X3JldmlzaW9uX2Zyb21fYW5hdG9wKHZvaWQpDQo+ID4NCj4gPiAgCW14Y19zZXRfY3B1
-X3R5cGUoZGlncHJvZyA+PiAxNiAmIDB4ZmYpOw0KPiA+ICAJaW14X3NldF9zb2NfcmV2aXNpb24o
-cmV2aXNpb24pOw0KPiA+ICsNCj4gPiArCW9mX25vZGVfcHV0KG5wKTsNCj4gPiAgfQ0KPiANCj4g
-SXQgd291bGQgYmUgYSBiaXQgbW9yZSBuYXR1cmFsIGhlcmUgSU1ITyB0byBpbnRyb2R1Y2UgYSBz
-ZWNvbmQgc3RydWN0DQo+IGRldmljZV9ub2RlICogdmFyaWFibGUgZm9yIHRoZSBmc2wsaW14NnVs
-LXNyYyBkZXZpY2UuIFRoZW4gZWFjaCBvZl9ub2RlX3B1dA0KPiB3b3VsZCBiZWxvbmcgdG8gZXhh
-Y3RseSBvbmUgb2ZfZmluZF9jb21wYXRpYmxlX25vZGUoKS4NCj4gKE5vdyB0aGUgb2Zfbm9kZV9w
-dXQoKSBpbiBsaW5lIDE1NyBmcmVlcyB0aGUgZnNsLGlteDZ1bC1zcmMgb24gaS5NWDZVTEwgYW5k
-DQo+IGZzbCxpbXg2cS1hbmF0b3Agb24gdGhlIG90aGVycy4pDQoNCk1ha2Ugc2Vuc2UsIHBsZWFz
-ZSBoZWxwIHJldmlldyBWMy4NClRoYW5rcywNCkFuc29uDQo=
+On 12. 02. 20 16:53, Peter Zijlstra wrote:
+> On Wed, Feb 12, 2020 at 04:42:25PM +0100, Michal Simek wrote:
+>> From: Stefan Asserhall <stefan.asserhall@xilinx.com>
+>>
+>> For SMP based system there is a need to have proper bit operations.
+>> Microblaze is using exclusive load and store instructions.
+>>
+>> Signed-off-by: Stefan Asserhall <stefan.asserhall@xilinx.com>
+>> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> 
+>> +/*
+>> + * clear_bit doesn't imply a memory barrier
+>> + */
+>> +#define smp_mb__before_clear_bit()	smp_mb()
+>> +#define smp_mb__after_clear_bit()	smp_mb()
+> 
+> These macros no longer exist.
+
+ok. Easy to remove.
+
+> 
+> Also, might I draw your attention to:
+> 
+>   include/asm-generic/bitops/atomic.h
+> 
+> This being a ll/sc arch, I'm thinking that if you do your atomic_t
+> implementation right, the generic atomic bitop code should be near
+> optimal.
+> 
+
+Based on my look it looks like that I can replace implementations in
+this file by sourcing which will be using atomic operations.
+
+#include <asm-generic/bitops/atomic.h>
+#include <asm-generic/bitops/lock.h>
+
+Correct?
+
+Would be good to run any testsuite to prove that all operations works as
+expected. Is there any testsuite I can use to confirm it?
+
+Thanks,
+Michal
