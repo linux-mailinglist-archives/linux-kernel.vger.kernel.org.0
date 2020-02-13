@@ -2,132 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15BF215C03B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 15:22:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87DC215C04B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 15:27:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730191AbgBMOVz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 09:21:55 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45596 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730157AbgBMOVz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 09:21:55 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01DEJDbo137542
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 09:21:54 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y4j8bqn17-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 09:21:54 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Thu, 13 Feb 2020 14:21:52 -0000
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 13 Feb 2020 14:21:49 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01DEKsB640173906
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 13 Feb 2020 14:20:54 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B306DAE055;
-        Thu, 13 Feb 2020 14:21:48 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9E73AAE05A;
-        Thu, 13 Feb 2020 14:21:48 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 13 Feb 2020 14:21:48 +0000 (GMT)
-Received: by tuxmaker.boeblingen.de.ibm.com (Postfix, from userid 25651)
-        id 2AF32E03C5; Thu, 13 Feb 2020 15:21:48 +0100 (CET)
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, qemu-devel <qemu-devel@nongnu.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Yury Norov <yury.norov@gmail.com>,
-        Allison Randal <allison@lohutok.net>,
-        Joe Perches <joe@perches.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH] uapi: fix userspace breakage, use __BITS_PER_LONG for swap
-Date:   Thu, 13 Feb 2020 15:21:47 +0100
-X-Mailer: git-send-email 2.24.1
+        id S1727561AbgBMO1t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 09:27:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46512 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725781AbgBMO1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 09:27:48 -0500
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A312F222C2;
+        Thu, 13 Feb 2020 14:22:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581603729;
+        bh=6VfGSAC1HNOSPZvAehIj0dyrn4ZvRctoIk3FH92JPYI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=kSeAbcjQ8QOxAe4QgIbYkEwyQm3vrPqRAkJtjE0GbKOtRmcwL4e4Um3YxtPHyFnrh
+         sMbizg7K02UaBIu2Fg5l9afFMJ+YXwXAZ+pOfkgKZPgX3I8z6mAeRgXjKDavzXGviQ
+         cFL3ig+yq/2tfGch9ygjX6/xRILMKkgI2klDov8I=
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1j2FNX-004qXJ-U9; Thu, 13 Feb 2020 14:22:08 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20021314-0012-0000-0000-000003868148
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20021314-0013-0000-0000-000021C304CC
-Message-Id: <20200213142147.17604-1-borntraeger@de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-13_04:2020-02-12,2020-02-13 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- mlxlogscore=976 clxscore=1015 impostorscore=0 mlxscore=0 adultscore=0
- lowpriorityscore=0 malwarescore=0 bulkscore=0 spamscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002130114
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 13 Feb 2020 14:22:07 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     Zenghui Yu <yuzenghui@huawei.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.cs.columbia.edu, tglx@linutronix.de,
+        jason@lakedaemon.net, wanghaibin.wang@huawei.com
+Subject: Re: [PATCH v2 3/6] irqchip/gic-v4.1: Ensure L2 vPE table is allocated
+ at RD level
+In-Reply-To: <20200206075711.1275-4-yuzenghui@huawei.com>
+References: <20200206075711.1275-1-yuzenghui@huawei.com>
+ <20200206075711.1275-4-yuzenghui@huawei.com>
+Message-ID: <2f6a27ac57aef9b948952c210c9a5882@kernel.org>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/1.3.10
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: yuzenghui@huawei.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, tglx@linutronix.de, jason@lakedaemon.net, wanghaibin.wang@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QEMU has a funny new build error message when I use the upstream kernel headers:
+Hi Zenghui,
 
-  CC      block/file-posix.o
-In file included from /home/cborntra/REPOS/qemu/include/qemu/timer.h:4,
-                 from /home/cborntra/REPOS/qemu/include/qemu/timed-average.h:29,
-                 from /home/cborntra/REPOS/qemu/include/block/accounting.h:28,
-                 from /home/cborntra/REPOS/qemu/include/block/block_int.h:27,
-                 from /home/cborntra/REPOS/qemu/block/file-posix.c:30:
-/usr/include/linux/swab.h: In function ‘__swab’:
-/home/cborntra/REPOS/qemu/include/qemu/bitops.h:20:34: error: "sizeof" is not defined, evaluates to 0 [-Werror=undef]
-   20 | #define BITS_PER_LONG           (sizeof (unsigned long) * BITS_PER_BYTE)
-      |                                  ^~~~~~
-/home/cborntra/REPOS/qemu/include/qemu/bitops.h:20:41: error: missing binary operator before token "("
-   20 | #define BITS_PER_LONG           (sizeof (unsigned long) * BITS_PER_BYTE)
-      |                                         ^
-cc1: all warnings being treated as errors
-make: *** [/home/cborntra/REPOS/qemu/rules.mak:69: block/file-posix.o] Error 1
-rm tests/qemu-iotests/socket_scm_helper.o
+On 2020-02-06 07:57, Zenghui Yu wrote:
+> In GICv4, we will ensure that level2 vPE table memory is allocated
+> for the specified vpe_id on all v4 ITS, in its_alloc_vpe_table().
+> This still works well for the typical GICv4.1 implementation, where
+> the new vPE table is shared between the ITSs and the RDs.
+> 
+> To make it explicit, let us introduce allocate_vpe_l2_table() to
+> make sure that the L2 tables are allocated on all v4.1 RDs. We're
+> likely not need to allocate memory in it because the vPE table is
+> shared and (L2 table is) already allocated at ITS level, except
+> for the case where the ITS doesn't share anything (say SVPET == 0,
+> practically unlikely but architecturally allowed).
+> 
+> The implementation of allocate_vpe_l2_table() is mostly copied from
+> its_alloc_table_entry().
+> 
+> Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+> ---
+>  drivers/irqchip/irq-gic-v3-its.c | 80 ++++++++++++++++++++++++++++++++
+>  1 file changed, 80 insertions(+)
+> 
+> diff --git a/drivers/irqchip/irq-gic-v3-its.c 
+> b/drivers/irqchip/irq-gic-v3-its.c
+> index 0f1fe56ce0af..ae4e7b355b46 100644
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> @@ -2443,6 +2443,72 @@ static u64 
+> inherit_vpe_l1_table_from_rd(cpumask_t **mask)
+>  	return 0;
+>  }
+> 
+> +static bool allocate_vpe_l2_table(int cpu, u32 id)
+> +{
+> +	void __iomem *base = gic_data_rdist_cpu(cpu)->rd_base;
+> +	u64 val, gpsz, npg;
+> +	unsigned int psz, esz, idx;
+> +	struct page *page;
+> +	__le64 *table;
+> +
+> +	if (!gic_rdists->has_rvpeid)
+> +		return true;
+> +
+> +	val  = gits_read_vpropbaser(base + SZ_128K + GICR_VPROPBASER);
 
-This was triggered by commit d5767057c9a ("uapi: rename ext2_swab() to swab() and share globally in swab.h")
-This patch is doing
-+#include <asm/bitsperlong.h>
-but it uses BITS_PER_LONG.
+Having rebased the rest of the GICv4.1 series on top of -rc1, I've hit a 
+small
+issue right here. I run a FVP model that only spawns 4 CPUs, while the 
+DT has
+8 of them. This means that online_cpus = 4, and possible_cpus = 8.
 
-The kernel file asm/bitsperlong.h provide only __BITS_PER_LONG.
+So in my case, half of the RDs have base == NULL, and things stop 
+quickly.
 
-Let us use the __ variant in swap.h
-Fixes: d5767057c9a ("uapi: rename ext2_swab() to swab() and share globally in swab.h")
-Cc: Yury Norov <yury.norov@gmail.com>
-Cc: Allison Randal <allison@lohutok.net>
-Cc: Joe Perches <joe@perches.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: William Breathitt Gray <vilhelm.gray@gmail.com>
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
----
- include/uapi/linux/swab.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I plan to queue the following:
 
-diff --git a/include/uapi/linux/swab.h b/include/uapi/linux/swab.h
-index fa7f97da5b76..7272f85d6d6a 100644
---- a/include/uapi/linux/swab.h
-+++ b/include/uapi/linux/swab.h
-@@ -135,9 +135,9 @@ static inline __attribute_const__ __u32 __fswahb32(__u32 val)
- 
- static __always_inline unsigned long __swab(const unsigned long y)
- {
--#if BITS_PER_LONG == 64
-+#if __BITS_PER_LONG == 64
- 	return __swab64(y);
--#else /* BITS_PER_LONG == 32 */
-+#else /* __BITS_PER_LONG == 32 */
- 	return __swab32(y);
- #endif
- }
+diff --git a/drivers/irqchip/irq-gic-v3-its.c 
+b/drivers/irqchip/irq-gic-v3-its.c
+index d85dc8dcb0ad..7656b353a95f 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -2526,6 +2526,10 @@ static bool allocate_vpe_l2_table(int cpu, u32 
+id)
+  	if (!gic_rdists->has_rvpeid)
+  		return true;
+
++	/* Skip non-present CPUs */
++	if (!base)
++		return true;
++
+  	val  = gicr_read_vpropbaser(base + SZ_128K + GICR_VPROPBASER);
+
+  	esz  = FIELD_GET(GICR_VPROPBASER_4_1_ENTRY_SIZE, val) + 1;
+
+
+Thanks,
+
+         M.
 -- 
-2.24.1
-
+Jazz is not dead. It just smells funny...
