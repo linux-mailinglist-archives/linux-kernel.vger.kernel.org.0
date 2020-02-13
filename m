@@ -2,231 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4A7A15B971
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 07:12:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E098315B960
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2020 07:11:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729787AbgBMGLz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 01:11:55 -0500
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:54249 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729755AbgBMGLx (ORCPT
+        id S1729732AbgBMGLK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 01:11:10 -0500
+Received: from gateway21.websitewelcome.com ([192.185.45.155]:14807 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729383AbgBMGLJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 01:11:53 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 4A4185787;
-        Thu, 13 Feb 2020 01:11:52 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Thu, 13 Feb 2020 01:11:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm1; bh=a9fTVyecXZrj4
-        58LoOMqCDqMuCHq/1PpDqlvwxBn0+c=; b=oO1fEF3quLxfZqwDeQ9/UNhL3HvU7
-        EsJHZLhrBLEbi/R5gpHI8kHWC/7NXVLisih/bgVrWjQK3ZNPBdzcWkpgxwiX39Ia
-        q98Vh2qnkGidwIgdd0fhWVIr+eAF6Ln4nB+0drCqIrm1S/1nQ70u//5dQ8gUSRtw
-        Wib4kghZMCtGyyKRPEgmUG6DEHTmtpVzKCsxHX0YE/As829aSAmT/YiavYW5k+b1
-        xM5NZLX5HRbPMMFMwKDUBB7Z5kT/0M+0sJH0TOh/UhQHOxdQPXs64+3FuHGEPiJH
-        oyOehFN1eLBoB8zuviA1BQ9fYnBIaEoDLR9jCxW5MFgknDBs+BlqqozwA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=a9fTVyecXZrj458LoOMqCDqMuCHq/1PpDqlvwxBn0+c=; b=oIifojuq
-        S5ysWOq2g9Cx7o/fk4hirjDVqXdBd8nyMR2KoJWIB+ddmM329Uc/f1e/FkgjkAGr
-        hOrFyuMc+B+frHaT9+GvQokTBhve7+mqGFoBRHs9FcG6BTVu/PO8AuD3E05MlPC3
-        DcXl290S97f5922T8EWufCmkFbSJO9g40EfNPwa6QngMMkBSk4K/5IS8ZczCmqY9
-        crAcoBD62VsajZhu1lYFjGM5PV3fTXvxQwGZFtHXyBNICzKlA77yVMMU3lo8A3Qt
-        BxY3vhfpT9btBQUjhS29I+Ue66jUVXhQkKDHlZz6u2sSO1Upv6G3CBRSQAZUmKkr
-        IH2M2hxfMDfncw==
-X-ME-Sender: <xms:qOhEXooMJhtRvkCJDvNnjLyNRcAwO4xiWjOPZZ0MRQg38HBZ4ZHuDg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrieejgdelhecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepufgrmhhuvghl
-    ucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecukfhppe
-    ejtddrudefhedrudegkedrudehudenucevlhhushhtvghrufhiiigvpedunecurfgrrhgr
-    mhepmhgrihhlfhhrohhmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
-X-ME-Proxy: <xmx:qOhEXq8_Wrvd1OZCq8AlQQpfWQbjrbPnz7M5UjPbZikWqz8OoEHkTg>
-    <xmx:qOhEXv9g92D09xqgbZ78izXkK0rw5PyY_Iuq1DyQHtSvI71vKzw0-A>
-    <xmx:qOhEXhsGIfBscFXYf-IGYPEpMGri3E_eJwGDABLdjpKT36FYGuOb5Q>
-    <xmx:qOhEXkzjoOxGGG-uqS15ZlGwDxj5xaMwH3uvkM6tgnwSP7KxBHShJQ>
-Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 69E5C3280059;
-        Thu, 13 Feb 2020 01:11:51 -0500 (EST)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Jerome Brunet <jbrunet@baylibre.com>
-Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Samuel Holland <samuel@sholland.org>
-Subject: [PATCH 4/4] ASoC: simple-card: Add support for codec-to-codec dai_links
-Date:   Thu, 13 Feb 2020 00:11:47 -0600
-Message-Id: <20200213061147.29386-5-samuel@sholland.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200213061147.29386-1-samuel@sholland.org>
-References: <20200213061147.29386-1-samuel@sholland.org>
+        Thu, 13 Feb 2020 01:11:09 -0500
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id 20793400C6EA2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 00:11:08 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 27iOjmjufSl8q27iOjVMFF; Thu, 13 Feb 2020 00:11:08 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=ojdiWiFv5ooTl6FyYNua5SpLKzy89/VIsicFh/83C2g=; b=Uw3GWhHE9plPJBJANIakK1olap
+        QCivh/2NoSEIhW6BPIhfBO4j9RohoF8zF9xPGcKVDEuFKHtzcOOLhBjS1yQYrhrGQwZtzVQtJgPOK
+        rjlOU9C36TiUV0Ua383szihpEyHJ1DLOya33hZzdWjfBzE2a06pBZ4hF2vVeIPNobC1nRh6vLVWIZ
+        Iz94ERUzGOPOboTqN0+fhfQYIvkB6JwYpDJHYHGWAuObDS4qxIpYFyVLus9YEWXo8BflxU4vg19hF
+        tPUx/4ZcDIzBLp0IuNSZQIcXGf+IoweKqBaYen5Hza5ZFRwyZOj50XQPbDCZNblRZOycRElvcf94O
+        1A7IBfzA==;
+Received: from [200.68.140.15] (port=3953 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j27iN-0029rv-Jl; Thu, 13 Feb 2020 00:11:07 -0600
+Subject: Re: [PATCH] auxdisplay: charlcd: replace zero-length array with
+ flexible-array member
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>
+References: <20200212195231.GA2867@embeddedor>
+ <CANiq72nt19x2Z6ErT8a1_2c0sKfjkv_yUFMZS2mf3HWp3RvnDQ@mail.gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <0dd75019-4d02-24ee-fdf1-f713a99d4141@embeddedor.com>
+Date:   Thu, 13 Feb 2020 00:13:41 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72nt19x2Z6ErT8a1_2c0sKfjkv_yUFMZS2mf3HWp3RvnDQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.68.140.15
+X-Source-L: No
+X-Exim-ID: 1j27iN-0029rv-Jl
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [200.68.140.15]:3953
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 8
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For now we assume there are only a few sets of valid PCM stream
-parameters, to avoid needing to specify them in the device tree. We
-also assume they are the same in both directions. We calculate the
-common subset of parameters, and then the existing code automatically
-chooses the highest quality of the remaining values.
+Hi Miguel,
 
-Signed-off-by: Samuel Holland <samuel@sholland.org>
----
- .../devicetree/bindings/sound/simple-card.txt |  1 +
- Documentation/sound/soc/codec-to-codec.rst    |  9 ++++-
- include/sound/simple_card_utils.h             |  1 +
- sound/soc/generic/simple-card-utils.c         | 39 +++++++++++++++++++
- sound/soc/generic/simple-card.c               | 12 ++++++
- 5 files changed, 60 insertions(+), 2 deletions(-)
+On 2/12/20 14:49, Miguel Ojeda wrote:
+> Hi Gustavo,
+> 
+> On Wed, Feb 12, 2020 at 8:49 PM Gustavo A. R. Silva
+> <gustavo@embeddedor.com> wrote:
+>>
+>> The current codebase makes use of the zero-length array language
+>> extension to the C90 standard, but the preferred mechanism to declare
+>> variable-length types such as these ones is a flexible array member[1][2],
+>> introduced in C99:
+>>
+>> struct foo {
+>>         int stuff;
+>>         struct boo array[];
+>> };
+>>
+>> By making use of the mechanism above, we will get a compiler warning
+>> in case the flexible array does not occur last in the structure, which
+>> will help us prevent some kind of undefined behavior bugs from being
+>> inadvertenly introduced[3] to the codebase from now on.
+> 
+> s:inadvertenly:inadvertently:
+> 
 
-diff --git a/Documentation/devicetree/bindings/sound/simple-card.txt b/Documentation/devicetree/bindings/sound/simple-card.txt
-index 79954cd6e37b..18a62e404a30 100644
---- a/Documentation/devicetree/bindings/sound/simple-card.txt
-+++ b/Documentation/devicetree/bindings/sound/simple-card.txt
-@@ -63,6 +63,7 @@ Optional dai-link subnode properties:
- - mclk-fs             			: Multiplication factor between stream
- 					  rate and codec mclk, applied only for
- 					  the dai-link.
-+- codec-to-codec			: Indicates a codec-to-codec dai-link.
- 
- For backward compatibility the frame-master and bitclock-master
- properties can be used as booleans in codec subnode to indicate if the
-diff --git a/Documentation/sound/soc/codec-to-codec.rst b/Documentation/sound/soc/codec-to-codec.rst
-index 810109d7500d..efe0a8c07933 100644
---- a/Documentation/sound/soc/codec-to-codec.rst
-+++ b/Documentation/sound/soc/codec-to-codec.rst
-@@ -104,5 +104,10 @@ Make sure to name your corresponding cpu and codec playback and capture
- dai names ending with "Playback" and "Capture" respectively as dapm core
- will link and power those dais based on the name.
- 
--Note that in current device tree there is no way to mark a dai_link
--as codec to codec. However, it may change in future.
-+A dai_link in a "simple-audio-card" can be marked as codec to codec in
-+the device tree by adding the "codec-to-codec" property. The dai_link
-+will be initialized with the subset of stream parameters (channels,
-+format, sample rate) supported by all DAIs on the link. Since there is
-+no way to provide these parameters in the device tree, this is mostly
-+useful for communication with simple fixed-function codecs, such as a
-+Bluetooth controller or cellular modem.
-diff --git a/include/sound/simple_card_utils.h b/include/sound/simple_card_utils.h
-index bbdd1542d6f1..80b60237b3cd 100644
---- a/include/sound/simple_card_utils.h
-+++ b/include/sound/simple_card_utils.h
-@@ -49,6 +49,7 @@ struct asoc_simple_priv {
- 		struct asoc_simple_data adata;
- 		struct snd_soc_codec_conf *codec_conf;
- 		unsigned int mclk_fs;
-+		bool codec_to_codec;
- 	} *dai_props;
- 	struct asoc_simple_jack hp_jack;
- 	struct asoc_simple_jack mic_jack;
-diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
-index 9b794775df53..2de4cfead790 100644
---- a/sound/soc/generic/simple-card-utils.c
-+++ b/sound/soc/generic/simple-card-utils.c
-@@ -331,6 +331,41 @@ static int asoc_simple_init_dai(struct snd_soc_dai *dai,
- 	return 0;
- }
- 
-+static int asoc_simple_init_dai_link_params(struct snd_soc_pcm_runtime *rtd,
-+					    struct simple_dai_props *dai_props)
-+{
-+	struct snd_soc_dai_link *dai_link = rtd->dai_link;
-+	struct snd_soc_pcm_stream *params;
-+	struct snd_pcm_hardware hw;
-+	int ret;
-+
-+	if (!dai_props->codec_to_codec)
-+		return 0;
-+
-+	/* Assumes the hardware capabilities are the same in both directions */
-+	ret = snd_soc_runtime_calc_hw(rtd, &hw, SNDRV_PCM_STREAM_PLAYBACK);
-+	if (ret < 0) {
-+		dev_err(rtd->dev, "simple-card: no valid dai_link params\n");
-+		return ret;
-+	}
-+
-+	params = devm_kzalloc(rtd->dev, sizeof(*params), GFP_KERNEL);
-+	if (!params)
-+		return -ENOMEM;
-+
-+	params->formats = hw.formats;
-+	params->rates = hw.rates;
-+	params->rate_min = hw.rate_min;
-+	params->rate_max = hw.rate_max;
-+	params->channels_min = hw.channels_min;
-+	params->channels_max = hw.channels_max;
-+
-+	dai_link->params = params;
-+	dai_link->num_params = 1;
-+
-+	return 0;
-+}
-+
- int asoc_simple_dai_init(struct snd_soc_pcm_runtime *rtd)
- {
- 	struct asoc_simple_priv *priv = snd_soc_card_get_drvdata(rtd->card);
-@@ -347,6 +382,10 @@ int asoc_simple_dai_init(struct snd_soc_pcm_runtime *rtd)
- 	if (ret < 0)
- 		return ret;
- 
-+	ret = asoc_simple_init_dai_link_params(rtd, dai_props);
-+	if (ret < 0)
-+		return ret;
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(asoc_simple_dai_init);
-diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
-index 55e9f8800b3e..179ab4482d10 100644
---- a/sound/soc/generic/simple-card.c
-+++ b/sound/soc/generic/simple-card.c
-@@ -77,6 +77,16 @@ static int asoc_simple_parse_dai(struct device_node *node,
- 	return 0;
- }
- 
-+static void simple_parse_codec_to_codec(struct device_node *node,
-+					struct simple_dai_props *props,
-+					char *prefix)
-+{
-+	char prop[128];
-+
-+	snprintf(prop, sizeof(prop), "%scodec-to-codec", prefix);
-+	props->codec_to_codec = of_property_read_bool(node, prop);
-+}
-+
- static void simple_parse_convert(struct device *dev,
- 				 struct device_node *np,
- 				 struct asoc_simple_data *adata)
-@@ -217,6 +227,7 @@ static int simple_dai_link_of_dpcm(struct asoc_simple_priv *priv,
- 					     "prefix");
- 	}
- 
-+	simple_parse_codec_to_codec(node, dai_props, prefix);
- 	simple_parse_convert(dev, np, &dai_props->adata);
- 	simple_parse_mclk_fs(top, np, codec, dai_props, prefix);
- 
-@@ -292,6 +303,7 @@ static int simple_dai_link_of(struct asoc_simple_priv *priv,
- 	if (ret < 0)
- 		goto dai_link_of_err;
- 
-+	simple_parse_codec_to_codec(node, dai_props, prefix);
- 	simple_parse_mclk_fs(top, cpu, codec, dai_props, prefix);
- 
- 	ret = asoc_simple_parse_cpu(cpu, dai_link, &single_cpu);
--- 
-2.24.1
+Thanks for this.
 
+>> Also, notice that, dynamic memory allocations won't be affected by
+>> this change:
+>>
+>> "Flexible array members have incomplete type, and so the sizeof operator
+>> may not be applied. As a quirk of the original implementation of
+>> zero-length arrays, sizeof evaluates to zero."[1]
+>>
+>> This issue was found with the help of Coccinelle.
+>>
+>> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+>> [2] https://github.com/KSPP/linux/issues/21
+>> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> 
+> I saw the discussion regarding this -- thanks! Do you want me to
+> handle this or will you push everything centrally? If the latter, have
+> my
+> 
+
+Please, go ahead and handle it.
+
+> Acked-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+> 
+
+Thanks
+--
+Gustavo
