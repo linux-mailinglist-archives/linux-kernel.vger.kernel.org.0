@@ -2,116 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34C3715E86C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:00:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B713815E874
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:00:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394406AbgBNQ7p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:59:45 -0500
-Received: from mga05.intel.com ([192.55.52.43]:48344 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392665AbgBNQ7k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:59:40 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2020 08:59:40 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,441,1574150400"; 
-   d="scan'208";a="238408448"
-Received: from unknown (HELO [10.7.201.139]) ([10.7.201.139])
-  by orsmga006.jf.intel.com with ESMTP; 14 Feb 2020 08:59:39 -0800
-Subject: Re: [PATCH 41/62] x86/sev-es: Handle MSR events
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     x86@kernel.org, hpa@zytor.com, Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Jiri Slaby <jslaby@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Juergen Gross <jgross@suse.com>,
+        id S2394416AbgBNRAW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:00:22 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41849 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390550AbgBNRAS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 12:00:18 -0500
+Received: by mail-pf1-f196.google.com with SMTP id j9so5154301pfa.8
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 09:00:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=mMbk3LUtFFonCbHvxPtq3VRJfckeTUY1K1Awq5IpEbQ=;
+        b=E7rBgMfTslEdAa51yhBteDEbNwDifWOiivwEpnXPMMNzoZKvpflgLsVZc40XE+ngvI
+         5QH1pUHuUdcQwwYKHxR4MVzCMQSjfJchmWGwkHXa2N4V5ZoDb/PB75kOw5zrlNHkODpP
+         nDKL7tDcGoUnqt/iIS40qR9S7P+4WDRrgPAlCV1qS285y6B1MyOriTMeBCIVYaYR7Z0d
+         Hc8r6IeWSt4HRmi6C+2rqaOFeSdvRbelf6T3HH9GeF6vyXUgn/RI5m/8cpa8SfVttlm7
+         rQO64Ek2PuLq+5v2dQlFxFJbxfbA8BuI3h3cYoCNidcSsqwDv+4WR0MlvuC7wPz7P/pm
+         ddYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=mMbk3LUtFFonCbHvxPtq3VRJfckeTUY1K1Awq5IpEbQ=;
+        b=VmyyFEcnUaPJKmv7qjwZ51xyXU//XW8UXSor1Vk7HDk3ICLh94VBIO206D+lHfiY2r
+         snGNm8debCdiqDDr3+WjjhuIrtlsypmolOm4Lp/i0F0+PPUha3FO7leGe2NAUVyatdfK
+         lgOTG5tRLWALyPQP9OKjR5wiLUCg+F3ZTZ5752rm+icmTyHAacxhEsy4ikqKfmteJJKJ
+         DKyQBed1BWHbKxY90aR9tl851VAkZhKP9ZJJ5pYm3hDisXQ/IEEnYwI5coaREwo5MPwg
+         HP1QsaP2cYf8Hu3sWog9AefkiRhT5hBsdXkj+9NjqfEWuqXkfUEKFkGQM7SgjlfIjKhZ
+         lpEg==
+X-Gm-Message-State: APjAAAWnbqhCuZXMor90S2Q3J93/CcReviwVPEgTkXJRzQ2MMZSGhmwg
+        2rwYmPbhqNDrRUcCIs79vxg+ew==
+X-Google-Smtp-Source: APXvYqx9pwndWjzTw48b+2ZezAwXcX8mfwTFPA0lWnMyxbbEihEqWPppJWAVTyKw1qxnoF6lMrSwkg==
+X-Received: by 2002:a62:8246:: with SMTP id w67mr4318627pfd.107.1581699617881;
+        Fri, 14 Feb 2020 09:00:17 -0800 (PST)
+Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:5404:91ba:59dc:9400])
+        by smtp.googlemail.com with ESMTPSA id 133sm7556599pfy.14.2020.02.14.09.00.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Feb 2020 09:00:17 -0800 (PST)
+Subject: Re: [PATCH 0/3] random: add random.rng_seed to bootconfig entry
+To:     Rob Herring <robh@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Theodore Ts'o <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
         Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Joerg Roedel <jroedel@suse.de>
-References: <20200211135256.24617-1-joro@8bytes.org>
- <20200211135256.24617-42-joro@8bytes.org>
- <b688b4ad-5a64-d2df-6dd8-e23fac75a6b9@intel.com>
- <20200214072324.GE22063@8bytes.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <d43a1cc5-4229-e1fb-2a7a-d701d7b12ea9@intel.com>
-Date:   Fri, 14 Feb 2020 08:59:39 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Potapenko <glider@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Juergen Gross <jgross@suse.com>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>
+References: <158166060044.9887.549561499483343724.stgit@devnote2>
+ <CAL_JsqJ_VwHdpQ_WnQHu5J-bfs1vRPd5HQwVekR+5kKdVi4sXw@mail.gmail.com>
+From:   Mark Salyzyn <salyzyn@android.com>
+Message-ID: <1694f42c-bfc9-570a-64d2-3984965c8940@android.com>
+Date:   Fri, 14 Feb 2020 09:00:16 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20200214072324.GE22063@8bytes.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_JsqJ_VwHdpQ_WnQHu5J-bfs1vRPd5HQwVekR+5kKdVi4sXw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/13/20 11:23 PM, Joerg Roedel wrote:
-> Yes, investigating this is on the list for future optimizations (besides
-> caching CPUID results). My idea is to use alternatives patching for
-> this. But the exception handling is needed anyway because #VC
-> exceptions happen very early already, basically the first thing after
-> setting up a stack is calling verify_cpu(), which uses CPUID.
+On 2/14/20 5:49 AM, Rob Herring wrote:
+> On Fri, Feb 14, 2020 at 12:10 AM Masami Hiramatsu <mhiramat@kernel.org> wrote:
+>> Hi,
+>>
+>> The following series is bootconfig based implementation of
+>> the rng_seed option patch originally from Mark Salyzyn.
+>> Note that I removed unrelated command line fixes from this
+>> series.
+> Why do we need this? There's already multiple other ways to pass
+> random seed and this doesn't pass the "too complex for the command
+> line" argument you had for needing bootconfig.
+>
+> Rob
 
-Ahh, bummer.  How does a guest know that it's running under SEV-ES?
-What's the enumeration mechanism if CPUID doesn't "work"?
+Android is the use case I can vouch for. But also KVM.
 
-> The other reason is that things like MMIO and IOIO instructions can't be
-> easily patched by alternatives. Those would work with the runtime
-> checking you showed above, though.
+Android Cuttlefish is an emulated device used extensively in the testing 
+and development infrastructure for In-house, partner, and system and 
+application developers for Android. There is no bootloader, per-se. 
+Because of the Android GKI distribution, there is also no rng virtual 
+driver built in, it is loaded later as a module, too late for many 
+aspects of KASLR and networking. There is no Device Tree, it does 
+however have access to the content of the initrd image, and to the 
+command line for the kernel. The only convenient way to get early 
+entropy is going to have to be one of those two places.
 
-Is there a reason we can't make a rule that you *must* do MMIO through
-an accessor function so we *can* patch them?  I know random drivers
-might break the rule, but are SEV-ES guests going to be running random
-drivers?  I would think that they mostly if not all want to use virtio.
+In addition, 2B Android devices on the planet, especially in light of 
+the Android GKI distribution were everything that is vendor created is 
+in a module, needs a way to collect early entropy prior to module load 
+and pass it to the kernel. Yes, they do have access to the recently 
+added Device Tree approach, and we expect them to use it, as I have an 
+active backport for the mechanism into the Android 4.19 and 5.4 kernels. 
+There may also be some benefit to allowing the 13000 different 
+bootloaders an option to use bootconfig as a way of propagating the much 
+needed entropy to their kernels. I could make a case to also allow them 
+command line as another option to relieve their development stress to 
+deliver product, but we can stop there. Regardless, this early entropy 
+has the benefit of greatly improving security and precious boot time.
+
+Sincerely -- Mark Salyzyn
+
