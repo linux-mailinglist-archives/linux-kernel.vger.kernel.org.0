@@ -2,97 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A09A115F4EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:24:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3835F15F541
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:39:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404912AbgBNSYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:24:44 -0500
-Received: from foss.arm.com ([217.140.110.172]:43234 "EHLO foss.arm.com"
+        id S2395025AbgBNS0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:26:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405530AbgBNSYj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 13:24:39 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3F24B101E;
-        Fri, 14 Feb 2020 10:24:39 -0800 (PST)
-Received: from eglon.cambridge.arm.com (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E3DA03F68E;
-        Fri, 14 Feb 2020 10:24:37 -0800 (PST)
-From:   James Morse <james.morse@arm.com>
-To:     x86@kernel.org, linux-kernel@vger.kernel.org
-Cc:     Fenghua Yu <fenghua.yu@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
-        James Morse <james.morse@arm.com>
-Subject: [PATCH 02/10] x86/resctrl: Remove max_delay
-Date:   Fri, 14 Feb 2020 18:23:53 +0000
-Message-Id: <20200214182401.39008-3-james.morse@arm.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200214182401.39008-1-james.morse@arm.com>
-References: <20200214182401.39008-1-james.morse@arm.com>
+        id S1729659AbgBNPtC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:49:02 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C54F24680;
+        Fri, 14 Feb 2020 15:49:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581695341;
+        bh=RgAX4s5PvLf12O0Wh0R3zX85TiTmkInjzwWw9mxZ/6Y=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Mu6zXySW9Q86wbK6Yy19eLGdRVmARK1UngenWfpDk89ZH846dzGLpf5m6zp9VJe66
+         DOkUa9r9+IQhMviF+Sm4r1jUXS4PN4V4tSmgWhTt2HXbtxTjybvqtcnPmoJsWglpUv
+         wdwpS6UZmQB/85DOS8ApICAfeXvOJGCt+p3cCVA8=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Maya Erez <merez@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 005/542] wil6210: fix break that is never reached because of zero'ing of a retry counter
+Date:   Fri, 14 Feb 2020 10:39:57 -0500
+Message-Id: <20200214154854.6746-5-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
+References: <20200214154854.6746-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-max_delay is used by x86's rdt_get_mem_config() as a local variable.
-Remove it, replacing it with a local variable.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: James Morse <james.morse@arm.com>
+[ Upstream commit 5b1413f00b5beb9f5fed94e43ea0c497d5db9633 ]
+
+There is a check on the retry counter invalid_buf_id_retry that is always
+false because invalid_buf_id_retry is initialized to zero on each iteration
+of a while-loop.  Fix this by initializing the retry counter before the
+while-loop starts.
+
+Addresses-Coverity: ("Logically dead code")
+Fixes: b4a967b7d0f5 ("wil6210: reset buff id in status message after completion")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Maya Erez <merez@codeaurora.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/resctrl/core.c     | 8 ++++----
- arch/x86/kernel/cpu/resctrl/internal.h | 3 ---
- 2 files changed, 4 insertions(+), 7 deletions(-)
+ drivers/net/wireless/ath/wil6210/txrx_edma.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index 89049b343c7a..7d295ae620bb 100644
---- a/arch/x86/kernel/cpu/resctrl/core.c
-+++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -254,16 +254,16 @@ static bool __get_mem_config_intel(struct rdt_resource *r)
- {
- 	union cpuid_0x10_3_eax eax;
- 	union cpuid_0x10_x_edx edx;
--	u32 ebx, ecx;
-+	u32 ebx, ecx, max_delay;
+diff --git a/drivers/net/wireless/ath/wil6210/txrx_edma.c b/drivers/net/wireless/ath/wil6210/txrx_edma.c
+index 778b63be6a9a4..02548d40253c7 100644
+--- a/drivers/net/wireless/ath/wil6210/txrx_edma.c
++++ b/drivers/net/wireless/ath/wil6210/txrx_edma.c
+@@ -869,6 +869,7 @@ static struct sk_buff *wil_sring_reap_rx_edma(struct wil6210_priv *wil,
+ 	u8 data_offset;
+ 	struct wil_rx_status_extended *s;
+ 	u16 sring_idx = sring - wil->srings;
++	int invalid_buff_id_retry;
  
- 	cpuid_count(0x00000010, 3, &eax.full, &ebx, &ecx, &edx.full);
- 	r->num_closid = edx.split.cos_max + 1;
--	r->membw.max_delay = eax.split.max_delay + 1;
-+	max_delay = eax.split.max_delay + 1;
- 	r->default_ctrl = MAX_MBA_BW;
- 	if (ecx & MBA_IS_LINEAR) {
- 		r->membw.delay_linear = true;
--		r->membw.min_bw = MAX_MBA_BW - r->membw.max_delay;
--		r->membw.bw_gran = MAX_MBA_BW - r->membw.max_delay;
-+		r->membw.min_bw = MAX_MBA_BW - max_delay;
-+		r->membw.bw_gran = MAX_MBA_BW - max_delay;
- 	} else {
- 		if (!rdt_get_mb_table(r))
- 			return false;
-diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index 90ca6a090c77..3e3ba85843c4 100644
---- a/arch/x86/kernel/cpu/resctrl/internal.h
-+++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -361,8 +361,6 @@ struct rdt_cache {
+ 	BUILD_BUG_ON(sizeof(struct wil_rx_status_extended) > sizeof(skb->cb));
  
- /**
-  * struct rdt_membw - Memory bandwidth allocation related data
-- * @max_delay:		Max throttle delay. Delay is the hardware
-- *			representation for memory bandwidth.
-  * @min_bw:		Minimum memory bandwidth percentage user can request
-  * @bw_gran:		Granularity at which the memory bandwidth is allocated
-  * @delay_linear:	True if memory B/W delay is in linear scale
-@@ -370,7 +368,6 @@ struct rdt_cache {
-  * @mb_map:		Mapping of memory B/W percentage to memory B/W delay
-  */
- struct rdt_membw {
--	u32		max_delay;
- 	u32		min_bw;
- 	u32		bw_gran;
- 	u32		delay_linear;
+@@ -882,9 +883,9 @@ static struct sk_buff *wil_sring_reap_rx_edma(struct wil6210_priv *wil,
+ 	/* Extract the buffer ID from the status message */
+ 	buff_id = le16_to_cpu(wil_rx_status_get_buff_id(msg));
+ 
++	invalid_buff_id_retry = 0;
+ 	while (!buff_id) {
+ 		struct wil_rx_status_extended *s;
+-		int invalid_buff_id_retry = 0;
+ 
+ 		wil_dbg_txrx(wil,
+ 			     "buff_id is not updated yet by HW, (swhead 0x%x)\n",
 -- 
-2.24.1
+2.20.1
 
