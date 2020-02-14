@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 681BD15FB1E
+	by mail.lfdr.de (Postfix) with ESMTP id D223115FB1F
 	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 00:57:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728543AbgBNX4o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 18:56:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36510 "EHLO mail.kernel.org"
+        id S1728566AbgBNX4s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 18:56:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727959AbgBNX4n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 18:56:43 -0500
+        id S1727959AbgBNX4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 18:56:47 -0500
 Received: from paulmck-ThinkPad-P72.c.hoisthospitality.com (unknown [62.84.152.189])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EABFA2467D;
-        Fri, 14 Feb 2020 23:56:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87BBD2467E;
+        Fri, 14 Feb 2020 23:56:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581724603;
-        bh=HwUNCGUdfre5UmNq9Q+iEz2ZVX6Edk3KkkIAZWEfhV8=;
+        s=default; t=1581724606;
+        bh=YJsKqtq5hgtJjA3M1Egg6/HLjFJpeqz3ZuMIDCW7JrM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tCcJzu++A/qHESXdUUEcN90k9g7/Ms3GSjJUKfmW535E9iUj2LTPUlG/5Q8ANcVye
-         Yk+MkuEl8hZMNZeZdcSZCC6dXGN94jFb4jVrCbPhchZPohJxOXRpX8Byq/+4TgamjC
-         FNXPdKT7qxwOqJblpm6hk41EfLEsUGbKfd3t/3MU=
+        b=wdiPAqx6p49VpCnPfC6hRdpN6AZlt0pblNL8FqBA305vSh7B8D5Wuo302nmv6FM0Z
+         THBOWT25H2xBXsvmIU1VHvcYMweZuWutLekYjleqfkcEpFsLi7lMAC/wuzNxvCmFRN
+         4gYjEzAmd4WIvFxjqhFxo85BLxBp1WCWnbkvLOG4=
 From:   paulmck@kernel.org
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
@@ -31,10 +31,11 @@ Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH tip/core/rcu 09/30] rcu: Add WRITE_ONCE() to rcu_node ->qsmaskinitnext
-Date:   Fri, 14 Feb 2020 15:55:46 -0800
-Message-Id: <20200214235607.13749-9-paulmck@kernel.org>
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>
+Subject: [PATCH tip/core/rcu 10/30] locking/rtmutex: rcu: Add WRITE_ONCE() to rt_mutex ->owner
+Date:   Fri, 14 Feb 2020 15:55:47 -0800
+Message-Id: <20200214235607.13749-10-paulmck@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20200214235536.GA13364@paulmck-ThinkPad-P72>
 References: <20200214235536.GA13364@paulmck-ThinkPad-P72>
@@ -45,41 +46,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Paul E. McKenney" <paulmck@kernel.org>
 
-The rcu_state structure's ->qsmaskinitnext field is read locklessly,
-so this commit adds the WRITE_ONCE() to an update in order to provide
-proper documentation and READ_ONCE()/WRITE_ONCE() pairing.
+The rt_mutex structure's ->owner field is read locklessly, so this
+commit adds the WRITE_ONCE() to an update in order to provide proper
+documentation and READ_ONCE()/WRITE_ONCE() pairing.
 
 This data race was reported by KCSAN.  Not appropriate for backporting
-due to failure being unlikely for systems not doing incessant CPU-hotplug
-operations.
+due to failure being unlikely.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Will Deacon <will@kernel.org>
 ---
- kernel/rcu/tree.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/locking/rtmutex.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 9443909..346321a 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -3379,7 +3379,7 @@ void rcu_cpu_starting(unsigned int cpu)
- 	rnp = rdp->mynode;
- 	mask = rdp->grpmask;
- 	raw_spin_lock_irqsave_rcu_node(rnp, flags);
--	rnp->qsmaskinitnext |= mask;
-+	WRITE_ONCE(rnp->qsmaskinitnext, rnp->qsmaskinitnext | mask);
- 	oldmask = rnp->expmaskinitnext;
- 	rnp->expmaskinitnext |= mask;
- 	oldmask ^= rnp->expmaskinitnext;
-@@ -3432,7 +3432,7 @@ void rcu_report_dead(unsigned int cpu)
- 		rcu_report_qs_rnp(mask, rnp, rnp->gp_seq, flags);
- 		raw_spin_lock_irqsave_rcu_node(rnp, flags);
- 	}
--	rnp->qsmaskinitnext &= ~mask;
-+	WRITE_ONCE(rnp->qsmaskinitnext, rnp->qsmaskinitnext & ~mask);
- 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- 	raw_spin_unlock(&rcu_state.ofl_lock);
+diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+index 851bbb1..c9f090d 100644
+--- a/kernel/locking/rtmutex.c
++++ b/kernel/locking/rtmutex.c
+@@ -57,7 +57,7 @@ rt_mutex_set_owner(struct rt_mutex *lock, struct task_struct *owner)
+ 	if (rt_mutex_has_waiters(lock))
+ 		val |= RT_MUTEX_HAS_WAITERS;
  
+-	lock->owner = (struct task_struct *)val;
++	WRITE_ONCE(lock->owner, (struct task_struct *)val);
+ }
+ 
+ static inline void clear_rt_mutex_waiters(struct rt_mutex *lock)
 -- 
 2.9.5
 
