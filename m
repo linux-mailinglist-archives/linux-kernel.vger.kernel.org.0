@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E065F15E8C8
+	by mail.lfdr.de (Postfix) with ESMTP id 6059F15E8C7
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:03:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394435AbgBNRCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:02:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46578 "EHLO mail.kernel.org"
+        id S2394422AbgBNRCo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:02:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392526AbgBNQQB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:16:01 -0500
+        id S2404205AbgBNQQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:16:04 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07016246F5;
-        Fri, 14 Feb 2020 16:15:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E3B1246F0;
+        Fri, 14 Feb 2020 16:16:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696960;
-        bh=zCSN13PuFpNnQ8k862eulbO3JS6sVcwQ5D/rjbdsX/8=;
+        s=default; t=1581696964;
+        bh=hoSFGmctaTzSSVStkDlRbN6DIPzYVjHFy5EUE2RbAa8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DVviZVr4MI8XA3hA925LV5jjaxWnYSYVI5B9ey0CLAGPoWHTA6y/NJE5XD0GLN1mK
-         V0AHen7dX9YJOiiFSMi5SV/mMT8dvCNB6xzHiexd9NL6HL7b1u3z28CtnJ3CdnxkDt
-         sFUNM+OFAaTTKhAljt92GpWwLOQtzJdGezYONRNI=
+        b=wphf8WR8btfYVAt449la7yNKQMHFZk0Waw8RBfcsVKMZjdJKrFQvr3MEu1WhZ19+m
+         zbQNpiT/kJOs0dsJtBt7YbNmBARq9qLUu2Qkd+/GKuaWdf7WvXnbQwTTHSM9fLSsTB
+         gxP3D57rgwKP/zdcGABrZb89uJmap+hWHo3ktBfY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>,
-        alsa-devel@alsa-project.org
-Subject: [PATCH AUTOSEL 4.19 200/252] ALSA: hda/hdmi - add retry logic to parse_intel_hdmi()
-Date:   Fri, 14 Feb 2020 11:10:55 -0500
-Message-Id: <20200214161147.15842-200-sashal@kernel.org>
+Cc:     Vasily Gorbik <gor@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 4.19 203/252] s390: adjust -mpacked-stack support check for clang 10
+Date:   Fri, 14 Feb 2020 11:10:58 -0500
+Message-Id: <20200214161147.15842-203-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -43,50 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai Vehmanen <kai.vehmanen@linux.intel.com>
+From: Vasily Gorbik <gor@linux.ibm.com>
 
-[ Upstream commit 2928fa0a97ebb9549cb877fdc99aed9b95438c3a ]
+[ Upstream commit 253b3c4b2920e07ce9e2b18800b9b65245e2fafa ]
 
-The initial snd_hda_get_sub_node() can fail on certain
-devices (e.g. some Chromebook models using Intel GLK).
-The failure rate is very low, but as this is is part of
-the probe process, end-user impact is high.
+clang 10 introduces -mpacked-stack compiler option implementation. At the
+same time currently it does not support a combination of -mpacked-stack
+and -mbackchain. This leads to the following build error:
 
-In observed cases, related hardware status registers have
-expected values, but the node query still fails. Retrying
-the node query does seem to help, so fix the problem by
-adding retry logic to the query. This does not impact
-non-Intel platforms.
+clang: error: unsupported option '-mpacked-stack with -mbackchain' for
+target 's390x-ibm-linux'
 
-BugLink: https://github.com/thesofproject/linux/issues/1642
-Signed-off-by: Kai Vehmanen <kai.vehmanen@linux.intel.com>
-Reviewed-by: Takashi Iwai <tiwai@suse.de>
-Link: https://lore.kernel.org/r/20200120160117.29130-4-kai.vehmanen@linux.intel.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+If/when clang adds support for a combination of -mpacked-stack and
+-mbackchain it would also require -msoft-float (like gcc does). According
+to Ulrich Weigand "stack slot assigned to the kernel backchain overlaps
+the stack slot assigned to the FPR varargs (both are required to be
+placed immediately after the saved r15 slot if present)."
+
+Extend -mpacked-stack compiler option support check to include all 3
+options -mpacked-stack -mbackchain -msoft-float which must present to
+support -mpacked-stack with -mbackchain.
+
+Acked-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/patch_hdmi.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/s390/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/pci/hda/patch_hdmi.c b/sound/pci/hda/patch_hdmi.c
-index c827a2a89cc3d..c67fadd5aae53 100644
---- a/sound/pci/hda/patch_hdmi.c
-+++ b/sound/pci/hda/patch_hdmi.c
-@@ -2604,9 +2604,12 @@ static int alloc_intel_hdmi(struct hda_codec *codec)
- /* parse and post-process for Intel codecs */
- static int parse_intel_hdmi(struct hda_codec *codec)
- {
--	int err;
-+	int err, retries = 3;
-+
-+	do {
-+		err = hdmi_parse_codec(codec);
-+	} while (err < 0 && retries--);
+diff --git a/arch/s390/Makefile b/arch/s390/Makefile
+index e6c2e8925fefa..4bccde36cb161 100644
+--- a/arch/s390/Makefile
++++ b/arch/s390/Makefile
+@@ -63,7 +63,7 @@ cflags-y += -Wa,-I$(srctree)/arch/$(ARCH)/include
+ #
+ cflags-$(CONFIG_FRAME_POINTER) += -fno-optimize-sibling-calls
  
--	err = hdmi_parse_codec(codec);
- 	if (err < 0) {
- 		generic_spec_free(codec);
- 		return err;
+-ifeq ($(call cc-option-yn,-mpacked-stack),y)
++ifeq ($(call cc-option-yn,-mpacked-stack -mbackchain -msoft-float),y)
+ cflags-$(CONFIG_PACK_STACK)  += -mpacked-stack -D__PACK_STACK
+ aflags-$(CONFIG_PACK_STACK)  += -D__PACK_STACK
+ endif
 -- 
 2.20.1
 
