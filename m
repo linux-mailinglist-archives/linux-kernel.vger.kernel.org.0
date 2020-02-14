@@ -2,133 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFAD515D476
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 10:14:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAFE215D480
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 10:16:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387417AbgBNJO6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 04:14:58 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:53920 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729123AbgBNJOz (ORCPT
+        id S1729065AbgBNJQk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 04:16:40 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:45022 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728864AbgBNJQj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 04:14:55 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01E9EoiG111864;
-        Fri, 14 Feb 2020 03:14:50 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1581671691;
-        bh=OzHgH5nWkKfcQlJ+YZ/ZYmveXJLzjgDJI2DOc610CdM=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=fj2/m+vqeHwlobG7670Ae3pCfFkNWkBoySACbhTOCs+CRmd/t3odMB4UaGqOYXSru
-         /fn0llcgHkb4mR2820vf+8d7cumlOo9A5VALwPDlinOaNrWUJNktHyWk5eXz+myB3H
-         w8MgMX9dC2VnWiRh+h+vnoNCMUHuv782jFyphrLA=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01E9EoYD076831
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 14 Feb 2020 03:14:50 -0600
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 14
- Feb 2020 03:14:50 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 14 Feb 2020 03:14:50 -0600
-Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01E9Ea42043021;
-        Fri, 14 Feb 2020 03:14:48 -0600
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <vkoul@kernel.org>
-CC:     <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dan.j.williams@intel.com>, <grygorii.strashko@ti.com>,
-        <vigneshr@ti.com>
-Subject: [PATCH v2 6/6] dmaengine: ti: k3-udma: Fix terminated transfer handling
-Date:   Fri, 14 Feb 2020 11:14:41 +0200
-Message-ID: <20200214091441.27535-7-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200214091441.27535-1-peter.ujfalusi@ti.com>
-References: <20200214091441.27535-1-peter.ujfalusi@ti.com>
+        Fri, 14 Feb 2020 04:16:39 -0500
+Received: by mail-oi1-f193.google.com with SMTP id d62so8747075oia.11;
+        Fri, 14 Feb 2020 01:16:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=yJIG2+5rAA/omb/XOuOyU/XY01fpqVjXiUmRI7jlVsY=;
+        b=OhzdPMysleAxFIa7tsDq1Ei3imWZgu66zPkITqJATuRSJ02hM2QCWESz8Zzr2N6+Kv
+         zqZQdVVuAa1ZpqS/pLAVL+Tgx6LBFzqvgP3t3ott9+2BIaR25/sW5pEpT3CWXyq8wr2o
+         CWgRR/+239LizvfgZfvKDsSSS9/SRV7oytIrycLS20rD/TLNCzGB2HkjtM1/5PGhpM6G
+         1H6Hu86r+oGeHLebNrDSgFJjAH7njngDfFN981JpsCl1w9A6llOhArl28ePzuKv4mFfP
+         qhivzjXS/9o7xLwq0p3wlZFeUs7UPJdorISawh1e0s1cXsR1+D8Z97eeTZWswGkOmyaD
+         EK4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=yJIG2+5rAA/omb/XOuOyU/XY01fpqVjXiUmRI7jlVsY=;
+        b=sY0CjFqiSymf/pfc/x7RPNOi/nHr4sdKrMaRZZAjNcPAYIZ2bPQp88dAzEx91sqbCp
+         zVZG9Mv8YUVZWmxaXERJvJioe32T2BQ7jlLratmYpuZ/QHLbcdRR6Ihj5Uksqg61eg1d
+         QrP01tnUN8FmGru01fl09Yj0GM1N7IcoPcxJB7onwRtYEcw0ugZH4U9hAjBHG1ull8yz
+         s5Y/E1Nv7L0N07mguploCi4NAGQ0GC1KnSxnqkURRSh8+PH/Aj5vlo8/JxIGa4sVU/9Y
+         VsEWQIzoBwDRC8iVlBYmwsF01YItYPLtcGANAd//p1mhNyu8oH+PxJLifqqiFzfBftdR
+         pnyw==
+X-Gm-Message-State: APjAAAWv7kKtFDJToVe/KAHiwMYMe48l8gzQPgtHJx3+J1VIf3Jm9cZv
+        GnmuzJ7S/T2j2MYkJVu5yXxWKs9S8oF2SLmoI4vW0tG0lg4=
+X-Google-Smtp-Source: APXvYqy46/3PWFWzsB9YfYAq2ltYbwzagbLttlQg6ScSiwe+seEKxbquh7gEBmLKFz1xqkzDM1lIM31Q/N61CtrCeqE=
+X-Received: by 2002:aca:8d5:: with SMTP id 204mr1147247oii.141.1581671798823;
+ Fri, 14 Feb 2020 01:16:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Fri, 14 Feb 2020 17:16:28 +0800
+Message-ID: <CANRm+CznPq3LQUyiXr8nA7uP5q+d8Ud-Ki-W7vPCo_BjDJtOSw@mail.gmail.com>
+Subject: [PATCH v2] KVM: X86: Grab KVM's srcu lock when accessing hv assist page
+To:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we receive back the descriptor of the terminated transfer the cookie
-must be marked as completed to make sure that the accounting is correct.
+From: wanpeng li <wanpengli@tencent.com>
 
-In udma_tx_status() the status should be marked as completed if the channel
-is no longer running (it can only happen if the channel is not yet started
-for the first time, or after a channel termination).
+For the duration of mapping eVMCS, it derefences ->memslots without holding
+->srcu or ->slots_lock when accessing hv assist page. This patch fixes it by
+moving nested_sync_vmcs12_to_shadow to prepare_guest_switch, where the SRCU
+is already taken.
 
-Fixes: 25dcb5dd7b7ce ("dmaengine: ti: New driver for K3 UDMA")
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+It can be reproduced by running kvm's evmcs_test selftest.
+
+  =============================
+  warning: suspicious rcu usage
+  5.6.0-rc1+ #53 tainted: g        w ioe
+  -----------------------------
+  ./include/linux/kvm_host.h:623 suspicious rcu_dereference_check() usage!
+
+  other info that might help us debug this:
+
+   rcu_scheduler_active = 2, debug_locks = 1
+  1 lock held by evmcs_test/8507:
+   #0: ffff9ddd156d00d0 (&vcpu->mutex){+.+.}, at:
+kvm_vcpu_ioctl+0x85/0x680 [kvm]
+
+  stack backtrace:
+  cpu: 6 pid: 8507 comm: evmcs_test tainted: g        w ioe     5.6.0-rc1+ #53
+  hardware name: dell inc. optiplex 7040/0jctf8, bios 1.4.9 09/12/2016
+  call trace:
+   dump_stack+0x68/0x9b
+   kvm_read_guest_cached+0x11d/0x150 [kvm]
+   kvm_hv_get_assist_page+0x33/0x40 [kvm]
+   nested_enlightened_vmentry+0x2c/0x60 [kvm_intel]
+   nested_vmx_handle_enlightened_vmptrld.part.52+0x32/0x1c0 [kvm_intel]
+   nested_sync_vmcs12_to_shadow+0x439/0x680 [kvm_intel]
+   vmx_vcpu_run+0x67a/0xe60 [kvm_intel]
+   vcpu_enter_guest+0x35e/0x1bc0 [kvm]
+   kvm_arch_vcpu_ioctl_run+0x40b/0x670 [kvm]
+   kvm_vcpu_ioctl+0x370/0x680 [kvm]
+   ksys_ioctl+0x235/0x850
+   __x64_sys_ioctl+0x16/0x20
+   do_syscall_64+0x77/0x780
+   entry_syscall_64_after_hwframe+0x49/0xbe
+
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
 ---
- drivers/dma/ti/k3-udma.c | 29 +++++++++++++++--------------
- 1 file changed, 15 insertions(+), 14 deletions(-)
+ arch/x86/kvm/vmx/vmx.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/dma/ti/k3-udma.c b/drivers/dma/ti/k3-udma.c
-index 9b4e1e5fa849..0536866a58ce 100644
---- a/drivers/dma/ti/k3-udma.c
-+++ b/drivers/dma/ti/k3-udma.c
-@@ -1097,29 +1097,27 @@ static irqreturn_t udma_ring_irq_handler(int irq, void *data)
- 			goto out;
- 		}
- 
--		if (uc->cyclic) {
--			/* push the descriptor back to the ring */
--			if (d == uc->desc) {
-+		if (d == uc->desc) {
-+			/* active descriptor */
-+			if (uc->cyclic) {
- 				udma_cyclic_packet_elapsed(uc);
- 				vchan_cyclic_callback(&d->vd);
--			}
--		} else {
--			bool desc_done = false;
--
--			if (d == uc->desc) {
--				desc_done = udma_is_desc_really_done(uc, d);
--
--				if (desc_done) {
-+			} else {
-+				if (udma_is_desc_really_done(uc, d)) {
- 					uc->bcnt += d->residue;
- 					udma_start(uc);
-+					vchan_cookie_complete(&d->vd);
- 				} else {
- 					schedule_delayed_work(&uc->tx_drain.work,
- 							      0);
- 				}
- 			}
--
--			if (desc_done)
--				vchan_cookie_complete(&d->vd);
-+		} else {
-+			/*
-+			 * terminated descriptor, mark the descriptor as
-+			 * completed to update the channel's cookie marker
-+			 */
-+			dma_cookie_complete(&d->vd.tx);
- 		}
- 	}
- out:
-@@ -2769,6 +2767,9 @@ static enum dma_status udma_tx_status(struct dma_chan *chan,
- 
- 	ret = dma_cookie_status(chan, cookie, txstate);
- 
-+	if (!udma_is_chan_running(uc))
-+		ret = DMA_COMPLETE;
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 9a66648..6bd6ca4 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -1214,6 +1214,9 @@ void vmx_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
+
+     vmx_set_host_fs_gs(host_state, fs_sel, gs_sel, fs_base, gs_base);
+     vmx->guest_state_loaded = true;
 +
- 	if (ret == DMA_IN_PROGRESS && udma_is_chan_paused(uc))
- 		ret = DMA_PAUSED;
- 
--- 
-Peter
++    if (vmx->nested.need_vmcs12_to_shadow_sync)
++        nested_sync_vmcs12_to_shadow(vcpu);
+ }
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+ static void vmx_prepare_switch_to_host(struct vcpu_vmx *vmx)
+@@ -6480,9 +6483,6 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
+         vmcs_write32(PLE_WINDOW, vmx->ple_window);
+     }
 
+-    if (vmx->nested.need_vmcs12_to_shadow_sync)
+-        nested_sync_vmcs12_to_shadow(vcpu);
+-
+     if (kvm_register_is_dirty(vcpu, VCPU_REGS_RSP))
+         vmcs_writel(GUEST_RSP, vcpu->arch.regs[VCPU_REGS_RSP]);
+     if (kvm_register_is_dirty(vcpu, VCPU_REGS_RIP))
+--
+2.7.4
