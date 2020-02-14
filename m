@@ -2,99 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 088AF15D994
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 15:33:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A669815D98B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 15:31:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729438AbgBNOdX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 09:33:23 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35154 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbgBNOdX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 09:33:23 -0500
-Received: by mail-wm1-f68.google.com with SMTP id b17so10863628wmb.0;
-        Fri, 14 Feb 2020 06:33:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=I7FmDXyfboRLEPAe8bo8K3mXwXolpPNpCrODWfL+mak=;
-        b=gAGGyVySMmr2ATay53+kqMswj1tPiJDsz3jS4++s3wXWDQlHnkpWf2HL70eWdJ+fsv
-         CQvQV1BddgIFW0e4KztZJD7K4semtYzzKwObmrXtXYQ/cxD8Qzy6aTxMTRNqh6cRubpF
-         r1mn7IPnxTtShGYjCl7ka+xqU3DkAAl59gyDCf6L/mYm7eFQ7XNxMEWhLhC5inUVRkjG
-         b3lWZWNLQKotrlB26P93uU+wUAvI9uiOrpPMGRWGQwTatskOO7SGxBeGQoOg8tiuvbvj
-         b02BwS2WnHhy3I04PFR9L9ZP6j0IWJ9ssjt+UJS+QH/c2pmOi3Ohh3JE9B08BgCSKO/U
-         JhWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=I7FmDXyfboRLEPAe8bo8K3mXwXolpPNpCrODWfL+mak=;
-        b=GpmBROZNhghhymDlmg1EU/EIZhu3Mej5TqB08f5v71VF2Ro8vbA1VtM0McNRTtaeeu
-         FxsXBKVs1iy5fV275QDcOztFwuNSIW5tUnhuvxVeBHr2LDlTlH7nUMfqyW2ioTTTkg9w
-         gqL9qLXEhM/+q9qL5w+LuENpCCrSqFXf9RuI69V0RiJtMlBzqK6xrRiNw+qjxcKEiV8k
-         w+MCdC5hxtWUoZ4ush5onATQzGEIjgIzCw+345Zn+9u8jyTQTAjE7NGdxPnCyiYhd7J0
-         Ea+b1Rl35cDMW4zsbQjvZHwkfKyp+DfZqwP6njRsoU0+zxNntW585wgvnhJy18FLRIUo
-         GwDA==
-X-Gm-Message-State: APjAAAXiMstNfoeoc7ap6jGDRIX2AOI1ixK8Gl8bC37zMkKpx5mCaPIi
-        tI4wuW63ZRlgxJcZppHchOAx2snMNgiWjQ==
-X-Google-Smtp-Source: APXvYqx1QmY2R3J7t7fyqRZrLDCCPv+AondDOF0VmfUJgnj3oPdg3EMRb9Zs6jCDFFBEg13lUluE9g==
-X-Received: by 2002:a7b:cf12:: with SMTP id l18mr5265928wmg.66.1581690799833;
-        Fri, 14 Feb 2020 06:33:19 -0800 (PST)
-Received: from t1700.criteois.lan ([91.199.242.236])
-        by smtp.gmail.com with ESMTPSA id w13sm7511520wru.38.2020.02.14.06.33.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2020 06:33:19 -0800 (PST)
-From:   Erwan Velu <erwanaliasr1@gmail.com>
-X-Google-Original-From: Erwan Velu <e.velu@criteo.com>
-Cc:     Erwan Velu <e.velu@criteo.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] kvm: x86: Print "disabled by bios" only once per host
-Date:   Fri, 14 Feb 2020 15:30:35 +0100
-Message-Id: <20200214143035.607115-1-e.velu@criteo.com>
-X-Mailer: git-send-email 2.24.1
+        id S2387461AbgBNObo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 09:31:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60290 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728123AbgBNObo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 09:31:44 -0500
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6C7E206B6;
+        Fri, 14 Feb 2020 14:31:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581690703;
+        bh=+8T/dPPlxh7EgMeFLHxDhIho7wHw3zbcndMewJB3C5E=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Sd3B9EKMO0mDZx13eyRi0lrg6IFzSGwoGW1cJEjewzc711JypHJAHG0wzLihtYMHt
+         9GnVyyeI3+lxfOrcOM4UktzrRKqAv0Y2e1Q7ZFAh991wwU7oYkn8yIoXfOqY4UGb+/
+         kfISL9euEiBMDqiRxldue0RROqb4yVbtjjz1Efi0=
+Date:   Fri, 14 Feb 2020 14:31:37 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
+Cc:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <nuno.sa@analog.com>
+Subject: Re: [PATCH v2 4/9] iio: imu: adis: add unlocked
+ __adis_initial_startup()
+Message-ID: <20200214143137.72e995b3@archlinux>
+In-Reply-To: <20200210132606.9315-4-alexandru.ardelean@analog.com>
+References: <20200210132606.9315-1-alexandru.ardelean@analog.com>
+        <20200210132606.9315-4-alexandru.ardelean@analog.com>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current behavior is to print a "disabled by bios" message per CPU thread.
-As modern CPUs can have up to 64 cores, 128 on a dual socket, and turns this
-printk to be a pretty noisy by showing up to 256 times the same line in a row.
+On Mon, 10 Feb 2020 15:26:01 +0200
+Alexandru Ardelean <alexandru.ardelean@analog.com> wrote:
 
-This patch offer to only print the message once per host considering the BIOS will
-disabled the feature for all sockets/cores at once and not on a per core basis.
+> This change splits the __adis_initial_startup() away from
+> adis_initial_startup(). The unlocked version can be used in certain calls
+> during probe, where races won't happen since the ADIS driver may not be
+> registered yet with IIO.
+>=20
+> Signed-off-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Applied.  Thanks,
 
-Signed-off-by: Erwan Velu <e.velu@criteo.com>
----
- arch/x86/kvm/x86.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Jonathan
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index fbabb2f06273..8f0d7a09d453 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -7300,7 +7300,7 @@ int kvm_arch_init(void *opaque)
- 		goto out;
- 	}
- 	if (ops->disabled_by_bios()) {
--		printk(KERN_ERR "kvm: disabled by bios\n");
-+		printk_once(KERN_ERR "kvm: disabled by bios\n");
- 		r = -EOPNOTSUPP;
- 		goto out;
- 	}
--- 
-2.24.1
+> ---
+>  drivers/iio/imu/adis.c       | 14 ++++----------
+>  include/linux/iio/imu/adis.h | 13 ++++++++++++-
+>  2 files changed, 16 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/drivers/iio/imu/adis.c b/drivers/iio/imu/adis.c
+> index 022bb54fb748..e4897dad34ab 100644
+> --- a/drivers/iio/imu/adis.c
+> +++ b/drivers/iio/imu/adis.c
+> @@ -365,7 +365,7 @@ static int adis_self_test(struct adis *adis)
+>  }
+> =20
+>  /**
+> - * adis_inital_startup() - Performs device self-test
+> + * __adis_initial_startup() - Device initial setup
+>   * @adis: The adis device
+>   *
+>   * Returns 0 if the device is operational, a negative error code otherwi=
+se.
+> @@ -373,28 +373,22 @@ static int adis_self_test(struct adis *adis)
+>   * This function should be called early on in the device initialization =
+sequence
+>   * to ensure that the device is in a sane and known state and that it is=
+ usable.
+>   */
+> -int adis_initial_startup(struct adis *adis)
+> +int __adis_initial_startup(struct adis *adis)
+>  {
+>  	int ret;
+> =20
+> -	mutex_lock(&adis->state_lock);
+> -
+>  	ret =3D adis_self_test(adis);
+>  	if (ret) {
+>  		dev_err(&adis->spi->dev, "Self-test failed, trying reset.\n");
+>  		__adis_reset(adis);
+>  		ret =3D adis_self_test(adis);
+> -		if (ret) {
+> +		if (ret)
+>  			dev_err(&adis->spi->dev, "Second self-test failed, giving up.\n");
+> -			goto out_unlock;
+> -		}
+>  	}
+> =20
+> -out_unlock:
+> -	mutex_unlock(&adis->state_lock);
+>  	return ret;
+>  }
+> -EXPORT_SYMBOL_GPL(adis_initial_startup);
+> +EXPORT_SYMBOL_GPL(__adis_initial_startup);
+> =20
+>  /**
+>   * adis_single_conversion() - Performs a single sample conversion
+> diff --git a/include/linux/iio/imu/adis.h b/include/linux/iio/imu/adis.h
+> index d2fcf45b4cef..15e75670f923 100644
+> --- a/include/linux/iio/imu/adis.h
+> +++ b/include/linux/iio/imu/adis.h
+> @@ -297,6 +297,7 @@ static inline int adis_read_reg_32(struct adis *adis,=
+ unsigned int reg,
+> =20
+>  int adis_enable_irq(struct adis *adis, bool enable);
+>  int __adis_check_status(struct adis *adis);
+> +int __adis_initial_startup(struct adis *adis);
+> =20
+>  static inline int adis_check_status(struct adis *adis)
+>  {
+> @@ -309,7 +310,17 @@ static inline int adis_check_status(struct adis *adi=
+s)
+>  	return ret;
+>  }
+> =20
+> -int adis_initial_startup(struct adis *adis);
+> +/* locked version of __adis_initial_startup() */
+> +static inline int adis_initial_startup(struct adis *adis)
+> +{
+> +	int ret;
+> +
+> +	mutex_lock(&adis->state_lock);
+> +	ret =3D __adis_initial_startup(adis);
+> +	mutex_unlock(&adis->state_lock);
+> +
+> +	return ret;
+> +}
+> =20
+>  int adis_single_conversion(struct iio_dev *indio_dev,
+>  	const struct iio_chan_spec *chan, unsigned int error_mask,
 
