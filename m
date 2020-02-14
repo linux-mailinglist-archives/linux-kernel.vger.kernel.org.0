@@ -2,109 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53FC715F90A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 22:55:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A77015F8EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 22:47:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387709AbgBNVyd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 16:54:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59484 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728911AbgBNVyc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 16:54:32 -0500
-Received: from localhost (unknown [65.119.211.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A914A24649;
-        Fri, 14 Feb 2020 21:54:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581717271;
-        bh=4EaJD4cBQj2ixLoQQ9Ro1z/eRAHDR7cjQ7KLJA2dnYQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cH50z6/hQ484QtdtM5AbiW5rhX8uAxBJ1xvtyDj7AaCp7i2VBV/JQskY7FIW/iJEK
-         qb+yMvXEQrefwv+MBxWKsHs94qopKbTcKYeH7mwqR5UFKZ2KRvwzXt2SDqNx1hrBca
-         VV0MIrjMZotasSKN6+pva+GYlfR5aLKTZIPWmGyw=
-Date:   Fri, 14 Feb 2020 16:47:30 -0500
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@google.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Joerg Roedel <jroedel@suse.de>, Will Deacon <will@kernel.org>,
-        John Garry <john.garry@huawei.com>, linux-pci@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 5.5 253/542] PCI/ATS: Restore EXPORT_SYMBOL_GPL()
- for pci_{enable,disable}_ats()
-Message-ID: <20200214214730.GC4193448@kroah.com>
-References: <20200214154854.6746-1-sashal@kernel.org>
- <20200214154854.6746-253-sashal@kernel.org>
+        id S1730490AbgBNVrw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 16:47:52 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:44743 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730436AbgBNVrv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 16:47:51 -0500
+Received: by mail-lj1-f193.google.com with SMTP id q8so12249698ljj.11
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 13:47:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ULvgOcWtqQoiiZTQEcdkHo/hzvR0mDvJVo9JBCmHaro=;
+        b=UghfVcGD99QDVJvEji3DwtzpIp/PGb7GJofQVdGg87wpeWgj5k1fmihFbyHJDkzhXm
+         S1NEmhmLvIIspUxPsjqWYv+g8q0cgFqkqJsqk6YpKTd6xRAfC/+pRYqVa+LT/zHudhSe
+         ezPpARw61nPYCHiuMSRuvAH2pkTlrESq7Y0NpQrB9ACMChfUqXxp93LrOIYT2VYUQCJo
+         gmb8qcWUBCD71s/4fRxFDy4T3zhcDp/8yu4ZXGH549/K9U19OlbHknT8fxAAk5duXcIa
+         zBQ+s0+fPCvaocHwCtDCGP4wFwcvFTeDl1IPB9yATUIb5hn70+tb0HH0Q6XBRHaUjClO
+         2Vvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ULvgOcWtqQoiiZTQEcdkHo/hzvR0mDvJVo9JBCmHaro=;
+        b=at/zGH07q03HZX4B02UyJ1uil4GIbQS5NQtsse+PEBGyK2Zy3demWycRs+RNoLiv6b
+         +Y6Bmn1nvqbWF0o1Y2un4K3TDKubVKWibtIU4ag+luKbfGb0kw1POA4oDk4kDTzOohRI
+         SQA+HnHl2wtt4FjCBmabpskCwNQS7tFoTe6xCstbl5ew9nXZ9mmuaGEi6ZoqRPJaAECB
+         NqIsZhf6rwDRfCmyC0NaZhcvxZq8JgM15xjOkLf15ML1R6KUYgzQQqC5Ga8PHd2OEUVK
+         gf8e4Tm+xE+MZpfw5b0j4e5SQW/2xmjszpxdoQ9qegNHRUcJQ1g8s2Z3CpbfBgLodJSu
+         9OiA==
+X-Gm-Message-State: APjAAAXkPoPA9XZSZldU1efiSPR7FOCnqVXv4BS9xgrW1LsX0QdrKx/6
+        GlSXKqo4hh+7hssi5BDEqtv+iQj77ZFXaDttW2Pdkw==
+X-Google-Smtp-Source: APXvYqwOnenDJydesgZENHJdVpOerGyyRYO7zjT1GE3p1T0WHWXpqjZg+ov2CAwduAn/RxPssJiAJvJqDMAmNkptrfI=
+X-Received: by 2002:a2e:85cd:: with SMTP id h13mr3415670ljj.191.1581716868386;
+ Fri, 14 Feb 2020 13:47:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200214154854.6746-253-sashal@kernel.org>
+References: <20200208013552.241832-1-drosen@google.com> <20200208013552.241832-2-drosen@google.com>
+ <20200212033800.GC870@sol.localdomain>
+In-Reply-To: <20200212033800.GC870@sol.localdomain>
+From:   Daniel Rosenberg <drosen@google.com>
+Date:   Fri, 14 Feb 2020 13:47:37 -0800
+Message-ID: <CA+PiJmT_8EzyFO283_E62+UC6vtCGOJXKHAFqnH3QM9LA+PHAw@mail.gmail.com>
+Subject: Re: [PATCH v7 1/8] unicode: Add utf8_casefold_iter
+To:     Eric Biggers <ebiggers@kernel.org>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fscrypt@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 10:44:05AM -0500, Sasha Levin wrote:
-> From: Greg Kroah-Hartman <gregkh@google.com>
-> 
-> [ Upstream commit bb950bca5d522119f8b9ce3f6cbac4841c6d6517 ]
-> 
-> Commit d355bb209783 ("PCI/ATS: Remove unnecessary EXPORT_SYMBOL_GPL()")
-> unexported a bunch of symbols from the PCI core since the only external
-> users were non-modular IOMMU drivers. Although most of those symbols
-> can remain private for now, 'pci_{enable,disable_ats()' is required for
-> the ARM SMMUv3 driver to build as a module, otherwise we get a build
-> failure as follows:
-> 
->   | ERROR: "pci_enable_ats" [drivers/iommu/arm-smmu-v3.ko] undefined!
->   | ERROR: "pci_disable_ats" [drivers/iommu/arm-smmu-v3.ko] undefined!
-> 
-> Re-export these two functions so that the ARM SMMUv3 driver can be build
-> as a module.
-> 
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Joerg Roedel <jroedel@suse.de>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@google.com>
-> [will: rewrote commit message]
-> Signed-off-by: Will Deacon <will@kernel.org>
-> Tested-by: John Garry <john.garry@huawei.com> # smmu v3
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> Signed-off-by: Joerg Roedel <jroedel@suse.de>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  drivers/pci/ats.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/pci/ats.c b/drivers/pci/ats.c
-> index b6f064c885c37..3ef0bb281e7cc 100644
-> --- a/drivers/pci/ats.c
-> +++ b/drivers/pci/ats.c
-> @@ -69,6 +69,7 @@ int pci_enable_ats(struct pci_dev *dev, int ps)
->  	dev->ats_enabled = 1;
->  	return 0;
->  }
-> +EXPORT_SYMBOL_GPL(pci_enable_ats);
->  
->  /**
->   * pci_disable_ats - disable the ATS capability
-> @@ -87,6 +88,7 @@ void pci_disable_ats(struct pci_dev *dev)
->  
->  	dev->ats_enabled = 0;
->  }
-> +EXPORT_SYMBOL_GPL(pci_disable_ats);
->  
->  void pci_restore_ats_state(struct pci_dev *dev)
->  {
-> -- 
-> 2.20.1
-> 
+On Tue, Feb 11, 2020 at 7:38 PM Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> Indirect function calls are expensive these days for various reasons, including
+> Spectre mitigations and CFI.  Are you sure it's okay from a performance
+> perspective to make an indirect call for every byte of the pathname?
+>
+> > +typedef int (*utf8_itr_actor_t)(struct utf8_itr_context *, int byte, int pos);
+>
+> The byte argument probably should be 'u8', to avoid confusion about whether it's
+> a byte or a Unicode codepoint.
+>
+> - Eric
 
-This isn't needed to be backported as the problem it solves is not in
-the 5.5 or older kernels, it only showed up in 5.6-rc1, and this was
-part of a larger patchset.
-
-So please drop from everywhere, thanks.
-
-greg k-h
+Gabriel, what do you think here? I could change it to either exposing
+the things necessary to do the hashing in libfs, or instead of the
+general purpose iterator, just have a hash function inside of unicode
+that will compute the hash given a seed value.
+-Daniel
