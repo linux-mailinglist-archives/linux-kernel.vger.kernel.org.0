@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98A8F15E6FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:51:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A836E15E769
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:54:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392803AbgBNQTp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:19:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51580 "EHLO mail.kernel.org"
+        id S2406797AbgBNQx7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:53:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404847AbgBNQSr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:18:47 -0500
+        id S2404866AbgBNQSx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:18:53 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E85F24706;
-        Fri, 14 Feb 2020 16:18:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 745CA2470E;
+        Fri, 14 Feb 2020 16:18:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697127;
-        bh=Ul5D6/mqKZIgJ1DfYAEbn7m5d2kt5rrccOxP0rGDR54=;
+        s=default; t=1581697132;
+        bh=lhYkUkKhNIN5XzZ3oL3+l7aoO6QBE7b9lZ90yaiKQ40=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FTHHQPASxjEQg8iedo8hGFFXASWZUelCtd5ERC23gdD9GLQgQtcJCk2o8Hu23b2aV
-         X9JDWeKYibkdcFzVHMz7EUTT3n3PMfu0372Ppuaa5JIvgAJ6DHQV3hOZxStHmU1jbi
-         8GPwk6YR371RGbGgQgpO1Es1/dgEfQynwBo3IvUY=
+        b=c8XbUhGgrIb6SzC7QbOKR3tEFmjCpuf5S641JkaK7asKMGTwsyad4nIQACmk4BWJw
+         v3eMuu1lZicRNjiBiUe1bveuu+830r50TOPigETTdHIuOBL5Saz9hKKKinRcPhLZt3
+         +Jq0N94tuAwtlJ1WRfMOjf7IepW8993jEJPimMc8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Xiongfeng Wang <wangxiongfeng2@huawei.com>,
-        Hulk Robot <hulkci@huawei.com>,
+Cc:     Arnd Bergmann <arnd@arndb.de>, kbuild test robot <lkp@intel.com>,
+        "kernelci . org bot" <bot@kernelci.org>,
+        Olof's autobuilder <build@lixom.net>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 071/186] tty: serial: amba-pl011: remove set but unused variable
-Date:   Fri, 14 Feb 2020 11:15:20 -0500
-Message-Id: <20200214161715.18113-71-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 075/186] isdn: don't mark kcapi_proc_exit as __exit
+Date:   Fri, 14 Feb 2020 11:15:24 -0500
+Message-Id: <20200214161715.18113-75-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161715.18113-1-sashal@kernel.org>
 References: <20200214161715.18113-1-sashal@kernel.org>
@@ -44,49 +46,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiongfeng Wang <wangxiongfeng2@huawei.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 94345aee285334e9e12fc70572e3d9380791a64e ]
+[ Upstream commit b33bdf8020c94438269becc6dace9ed49257c4ba ]
 
-Fix the following warning:
-drivers/tty/serial/amba-pl011.c: In function check_apply_cts_event_workaround:
-drivers/tty/serial/amba-pl011.c:1461:15: warning: variable dummy_read set but not used [-Wunused-but-set-variable]
+As everybody pointed out by now, my patch to clean up CAPI introduced
+a link time warning, as the two parts of the capi driver are now in
+one module and the exit function may need to be called in the error
+path of the init function:
 
-The data read is useless and can be dropped.
+>> WARNING: drivers/isdn/capi/kernelcapi.o(.text+0xea4): Section mismatch in reference from the function kcapi_exit() to the function .exit.text:kcapi_proc_exit()
+   The function kcapi_exit() references a function in an exit section.
+   Often the function kcapi_proc_exit() has valid usage outside the exit section
+   and the fix is to remove the __exit annotation of kcapi_proc_exit.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
-Link: https://lore.kernel.org/r/1575619526-34482-1-git-send-email-wangxiongfeng2@huawei.com
+Remove the incorrect __exit annotation.
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: kernelci.org bot <bot@kernelci.org>
+Reported-by: Olof's autobuilder <build@lixom.net>
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Link: https://lore.kernel.org/r/20191216194909.1983639-1-arnd@arndb.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/amba-pl011.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/isdn/capi/kcapi_proc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
-index 637f72fb6427f..00a29052c226d 100644
---- a/drivers/tty/serial/amba-pl011.c
-+++ b/drivers/tty/serial/amba-pl011.c
-@@ -1474,8 +1474,6 @@ static void pl011_modem_status(struct uart_amba_port *uap)
- 
- static void check_apply_cts_event_workaround(struct uart_amba_port *uap)
- {
--	unsigned int dummy_read;
--
- 	if (!uap->vendor->cts_event_workaround)
- 		return;
- 
-@@ -1487,8 +1485,8 @@ static void check_apply_cts_event_workaround(struct uart_amba_port *uap)
- 	 * single apb access will incur 2 pclk(133.12Mhz) delay,
- 	 * so add 2 dummy reads
- 	 */
--	dummy_read = pl011_read(uap, REG_ICR);
--	dummy_read = pl011_read(uap, REG_ICR);
-+	pl011_read(uap, REG_ICR);
-+	pl011_read(uap, REG_ICR);
+diff --git a/drivers/isdn/capi/kcapi_proc.c b/drivers/isdn/capi/kcapi_proc.c
+index 68db3c5a10636..d6ca626219c93 100644
+--- a/drivers/isdn/capi/kcapi_proc.c
++++ b/drivers/isdn/capi/kcapi_proc.c
+@@ -309,7 +309,7 @@ kcapi_proc_init(void)
+ 	proc_create("capi/driver",       0, NULL, &proc_driver_ops);
  }
  
- static irqreturn_t pl011_int(int irq, void *dev_id)
+-void __exit
++void
+ kcapi_proc_exit(void)
+ {
+ 	remove_proc_entry("capi/driver",       NULL);
 -- 
 2.20.1
 
