@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EC4815E018
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:12:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 516F615E01A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:12:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391943AbgBNQMO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:12:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37550 "EHLO mail.kernel.org"
+        id S2388909AbgBNQMT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:12:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391709AbgBNQLH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:11:07 -0500
+        id S2391723AbgBNQLL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:11:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF9FD246A1;
-        Fri, 14 Feb 2020 16:11:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 929A02467C;
+        Fri, 14 Feb 2020 16:11:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696666;
-        bh=zgVsgEnnXQ7LrYe7AE7KvemzilGGhK+OX2oKdOz0gEs=;
+        s=default; t=1581696670;
+        bh=S3Nc5wzGIiH5GB3g7PUxAN4EYIumqeMsxMMOXpWjoMg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XnWLUsyAeZWLnHkdarNkkPJVdlwuiVYYAFczs4wvyIjvYVkZVT4C8Q7aBlqGCLVnK
-         tGPnTWVGaVbMOX8mnOD5g6PTg18RRe+GoQOKLUHgCgSudK8bD93jNUd1nE8eH4hiXn
-         3M/yxuOmzGZHpWCdjSp3RIVD59BUr6m0Ipusn8jA=
+        b=cAwrrMpqrc6jP5YHUKfR3Css2C72YM/yU64w7p0TWZwo4bM6sZ+Kg2azuohrOvGwG
+         bbNpNFShjYxaCsPDmpTOyYi3Vi0bfxCmgDp+tvPLLojIt/KEPykYEuzGP5CkAWntd0
+         WknEX3XRV9vby7DENQdm7ik1gj4JjiNZ1M/X3FJA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Coly Li <colyli@suse.de>, kbuild test robot <lkp@intel.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-bcache@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 437/459] bcache: explicity type cast in bset_bkey_last()
-Date:   Fri, 14 Feb 2020 11:01:27 -0500
-Message-Id: <20200214160149.11681-437-sashal@kernel.org>
+Cc:     Amol Grover <frextrite@gmail.com>,
+        kbuild test robot <lkp@intel.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Keith Busch <kbusch@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.4 440/459] nvmet: Pass lockdep expression to RCU lists
+Date:   Fri, 14 Feb 2020 11:01:30 -0500
+Message-Id: <20200214160149.11681-440-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -43,50 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Coly Li <colyli@suse.de>
+From: Amol Grover <frextrite@gmail.com>
 
-[ Upstream commit 7c02b0055f774ed9afb6e1c7724f33bf148ffdc0 ]
+[ Upstream commit 4ac76436a6d07dec1c3c766f234aa787a16e8f65 ]
 
-In bset.h, macro bset_bkey_last() is defined as,
-    bkey_idx((struct bkey *) (i)->d, (i)->keys)
+ctrl->subsys->namespaces and subsys->namespaces are traversed with
+list_for_each_entry_rcu outside an RCU read-side critical section but
+under the protection of ctrl->subsys->lock and subsys->lock respectively.
 
-Parameter i can be variable type of data structure, the macro always
-works once the type of struct i has member 'd' and 'keys'.
-
-bset_bkey_last() is also used in macro csum_set() to calculate the
-checksum of a on-disk data structure. When csum_set() is used to
-calculate checksum of on-disk bcache super block, the parameter 'i'
-data type is struct cache_sb_disk. Inside struct cache_sb_disk (also in
-struct cache_sb) the member keys is __u16 type. But bkey_idx() expects
-unsigned int (a 32bit width), so there is problem when sending
-parameters via stack to call bkey_idx().
-
-Sparse tool from Intel 0day kbuild system reports this incompatible
-problem. bkey_idx() is part of user space API, so the simplest fix is
-to cast the (i)->keys to unsigned int type in macro bset_bkey_last().
+Hence, add the corresponding lockdep expression to the list traversal
+primitive to silence false-positive lockdep warnings, and harden RCU
+lists.
 
 Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Coly Li <colyli@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Signed-off-by: Amol Grover <frextrite@gmail.com>
+Signed-off-by: Keith Busch <kbusch@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/bcache/bset.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/nvme/target/core.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/md/bcache/bset.h b/drivers/md/bcache/bset.h
-index c71365e7c1fac..a50dcfda656f5 100644
---- a/drivers/md/bcache/bset.h
-+++ b/drivers/md/bcache/bset.h
-@@ -397,7 +397,8 @@ void bch_btree_keys_stats(struct btree_keys *b, struct bset_stats *state);
+diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
+index 3a67e244e5685..57a4062cbb59e 100644
+--- a/drivers/nvme/target/core.c
++++ b/drivers/nvme/target/core.c
+@@ -555,7 +555,8 @@ int nvmet_ns_enable(struct nvmet_ns *ns)
+ 	} else {
+ 		struct nvmet_ns *old;
  
- /* Bkey utility code */
+-		list_for_each_entry_rcu(old, &subsys->namespaces, dev_link) {
++		list_for_each_entry_rcu(old, &subsys->namespaces, dev_link,
++					lockdep_is_held(&subsys->lock)) {
+ 			BUG_ON(ns->nsid == old->nsid);
+ 			if (ns->nsid < old->nsid)
+ 				break;
+@@ -1174,7 +1175,8 @@ static void nvmet_setup_p2p_ns_map(struct nvmet_ctrl *ctrl,
  
--#define bset_bkey_last(i)	bkey_idx((struct bkey *) (i)->d, (i)->keys)
-+#define bset_bkey_last(i)	bkey_idx((struct bkey *) (i)->d, \
-+					 (unsigned int)(i)->keys)
+ 	ctrl->p2p_client = get_device(req->p2p_client);
  
- static inline struct bkey *bset_bkey_idx(struct bset *i, unsigned int idx)
- {
+-	list_for_each_entry_rcu(ns, &ctrl->subsys->namespaces, dev_link)
++	list_for_each_entry_rcu(ns, &ctrl->subsys->namespaces, dev_link,
++				lockdep_is_held(&ctrl->subsys->lock))
+ 		nvmet_p2pmem_ns_add_p2p(ctrl, ns);
+ }
+ 
 -- 
 2.20.1
 
