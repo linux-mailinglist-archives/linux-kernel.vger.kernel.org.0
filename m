@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8931415EA03
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:11:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D295115EA06
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:11:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404092AbgBNRKw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:10:52 -0500
-Received: from mout.gmx.net ([212.227.17.22]:33787 "EHLO mout.gmx.net"
+        id S2404287AbgBNRK7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:10:59 -0500
+Received: from mout.gmx.net ([212.227.17.22]:50273 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403969AbgBNRKt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 12:10:49 -0500
+        id S2404029AbgBNRKv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 12:10:51 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1581700221;
-        bh=CB/jvaWBo96vvElchO6vbMU7pp5SiakOX2WgI/elrxk=;
+        s=badeba3b8450; t=1581700222;
+        bh=C4bRvd+anZPjZdhrq0g5uP15WaxOlA4xkJx2cX/cwR8=;
         h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=O0QPNcYMf9/jcYQiUS409ypfz/BZ+HF0rILIl+sIkBkCfminnZtP7Hn40wYthVPRX
-         d63D93syYuoWotMpUTtHopYEbBLdveoFFyYPt5ivOapbJZADVjQ8XZViUoNKOdBeIn
-         DCHuhHcFM0itwQeSAOlvU5+wtzkD1BQJuG06/OmA=
+        b=Bkddf+wqkD25EPKMI3jhV0ainIMFqqsDml2mz5l4v2TAVBRTYFCnXRaD251FrPOSo
+         gHNVJZ2+DAectQi8hPECL/cW8xwW3Z/ZmcA4Vya5NFli3g1x5i+E6p2odymuH9lSQN
+         SX8wXWavo7p7IYIELTbhqHcqZZoZzSAiWjPmhNck=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
 Received: from longitude ([37.201.214.12]) by mail.gmx.com (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MLQxX-1ikiDu22Lr-00IVH5; Fri, 14
- Feb 2020 18:10:21 +0100
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MSbx3-1iwInX26gr-00SzWk; Fri, 14
+ Feb 2020 18:10:22 +0100
 From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
 To:     linux-mtd@lists.infradead.org
 Cc:     Jonathan Corbet <corbet@lwn.net>,
@@ -37,63 +37,76 @@ Cc:     Jonathan Corbet <corbet@lwn.net>,
         Rob Herring <robh@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Eric Biggers <ebiggers@google.com>
-Subject: [PATCH 3/4] docs: filesystems: link ubifs-authentication.rst
-Date:   Fri, 14 Feb 2020 18:08:06 +0100
-Message-Id: <20200214170833.25803-3-j.neuschaefer@gmx.net>
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 4/4] docs: ubifs-authentication: fix Sphinx warning
+Date:   Fri, 14 Feb 2020 18:08:07 +0100
+Message-Id: <20200214170833.25803-4-j.neuschaefer@gmx.net>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214170833.25803-1-j.neuschaefer@gmx.net>
 References: <20200214170833.25803-1-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:d1I+0xGCOx6MEU/g2PFkawbvdBMkXnvhQ+wTl+mYXvNW3XQ9N2T
- ieKNrz4Uw0FUXq5zE+W2x6h/Y1BF9oJiL8cXw4Zxm5MCR+r91juS7OPfLGOV9wIm/0ue+L9
- uOVC148/lbb2CTSIqbOExKZgvQNtNKsmkGShJcSP/IGxR4FCLu+F9ZoqRaHmt1wSZWOZe/K
- pvc+JAfttZsxsFE0CeDNQ==
+X-Provags-ID: V03:K1:Rdn58+GqlLmKn3Z54kUzJkfM2zd5RR9+vW93b7mKESA1LfJPTZm
+ UahMD4MlDJVlqELtTQVqFi42/6MjWqE7NhhmYjTlzjwihF19LGkIRetM9hdAlBsO5xXYf7i
+ DQTIcG44AQa6M+W8Fu0KdALWD8eiFvqimCqtgI7HGCni1yZWZ+PEYIAm9VbxhWDBz1d4/SD
+ J/NEWI8jDpZa2TuF0ECTA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:hbJyRwaE8dU=:iz6hKUflA5q8GHIHUyAt8R
- DusWTtnjhdhTYEsuoQl7gMREyyS3I284UGK54dICTtMA16hD0av37Shw15NrVjigw10wbEKR5
- Sw5JKfImwlDk/F4Jz9iat3YKZwfsN/HW4AkTapSxlkA+jsy25FeLupoUwKZ2UjVGelFQKQjes
- GO7h/cFGji1nH91dbvjbJ1SAyDyodQHy3r9pqXFXF4AQG6sxXKmtEHVKb74qJzv1fRvJFvoT8
- trM6pU1eiCM/l4GFh+qu+B8TECWSshUnCrIMvR38EtxE6r8TuqfYFL3rlNGh9bay+spy144sF
- NsDzM4aLEB1oj6wExmH+0feZ/a/qMLbgtk4TYJY+21DEz0YhIypocvm0emB1/6oqfMaScgrbJ
- eMFN8zLanMjGZtDxLI4/i+z4ngwMRuyDVebiyAT5nmqI//L73VVxzXV2SRqdGP0wSLmjxt6NE
- giCI1ArkOy9RwQvT8zaEYCoiAzzSDnk55abyHIqEz/ekXW4uldC4MomZ5wLx3XvZWTJbfPajY
- TeMsmIwmnA3aJYUdIx78C5feBof1HG3OKRpym5X4ecCJ5TDeeDBM4np1ceO8MFPwyDSSmhfxX
- et4pEh0MehKvNRrcTTOeO90ER1ApjP3Twqawrjw5PX4l1Cs8oEH5oqtnFSkFOi5BMh47qt7NX
- oq0j9Mvxfqf7yBwGe6pq79bqf/jQTWlCmTCRBzF6CJpDCJo1NQt5aiXyQvrPcV9x3/VavNF1F
- 8q2/4pIzdseTM2MROC4WzX18PXvK3yO8wS2ykIxgE52L3jtWOlbsbih52SmDdkJo+PMSrIFKN
- 0foloOYtYHiblho49yKSdliMQBphu1KUUUA7EC0P3PnOq+7gruqBHsG1M7+p1eDEdoZ7BYFCr
- tMLCbUihroJ+0STQRlYeC51etmm9mBk+6ZKplBz7hCaUwMKBAi0GB88EkMCoWntY8thk191Wp
- Ai64T9TQKOFh1hb+TyGcWetfkuVFhTC3dp/BosR89HuVitbe0Jmf0jROA179+wAaq7g/ByX2N
- ItOwr5OI0D6p27ReuYRnylk4l936sU7idsoJZr16+CLOThjYKRFHpugpQzDd7N25wxYsczgOt
- I9C8/Tdqe264eE7ekaHsNxfaAHCT3t2LCqYsSdbrLrw6G2FjLzEpzhGODVmMK/yciGvM4/N2Z
- 26OHOFOrVTz0I3syGlRxPUIHre/vSxyLNiwxaRI7VQNpXpcjTWv0k6C8X2Cj/fYAQOrRWnR87
- Lnl9F6oIge3C31nFP
+X-UI-Out-Filterresults: notjunk:1;V03:K0:5htk30vUBLw=:miuq7mT7OvoHijSqAWFP51
+ YoAZYMQ0VM4NgA8Um6qsjCuB+aax1crdfkH0frkg0N5M2MHE0ih0HA+fIRk5b0YCjmCRnpWZ5
+ WI2D/FH1gjHEfOHPOaTqhoUsgA9lbiu+ACqv4SRQYiR7zmwuvpotcojMuJ5EoEq6b1nef2kkT
+ Q3QOUBBn5mltvfkxSiBsA7OFyne9gcfStfJ5ILtkAPTRnUWn3E2eE8iQac9nJHw0XhPeJzlkk
+ d6pHB/d3w7kzuoahXZ4YQNTlsRVLFAJdtHg8FWDVnEBTfjm34wcmzRWCCVLZk55jjVgnFLQgV
+ 0n1e3gX1doV4EMozvOlEeKUod66AORDZboAEc1iGYb9Ih/0IdSOM4BvLX4j4f3OQLSs80O5R3
+ z7m9c99kz9I+6EZ3U/YcFn9yg7YduEajiEn8U9veQwnLcmGkuUYPjFpMbhMgNqSB/VDS61FSW
+ QkriSHoKjcuO8Bj4u1FjHCqQs1Bh9WsrAehjmtJ1PnVzDk9NwntSR8PBmZxbQUVuCUCbZS3Qz
+ SzHaTFTyqGwLIkXCtGGVSlhMXMIlqFDEo+PGI/5JcQ27DZXQ2M70pyVtDGmrMMuex/hkBCk7x
+ ZIL9LRVoSDqNB7CxNQBHjNzp6njkdovPOufPWcynBryWfPteuNhWldTOM0YExPa0ub9DDoARD
+ //9PcDmHj3WcxrFr1LYvvLgp+MchiumvXSrKVo4yx1cHmdxi6IhsnBzMmCpb+Jdv9nmTOD2ZG
+ zYEzNjetfQQdnZYslCuPvazepbhlVeEhNPolkKPVCIX5d5wYNLLA9d8/eOLxF0JeHqyKtHF6E
+ yL08bcIqksW2uQOjgkCGB8P/Cjhip0+sP0JIDY5wuJ42YiV2wE10kq506menDlf65woATxxzm
+ iWoqSZOK/Jc/W020devIHk3iVM9ZccYni6qH4QhvivCPCrAZvvOBRS7FEKiTRdQFuuOwHEHXX
+ +SOZMF9q2VQhb5bV2gm/VWSWoBNEhOicH/NoMwSdE4Vpl8H3sSfmz9xue+tA0gYPq/onkfApr
+ 69SLdPOdU7p3Oeg/YtUfKO1YV+85jHZA03lAELbYyyL6qNVqfUDg2DGspNXCGs0IEDKc2TZP7
+ gDkpcIWHdbR1h9CpQQ/8OKtAvWrb1Qasm4drGoGh2sh5UTti2Eg9vss1jXXXavQ5LbptRUg+h
+ eslzLbtOWRZjYPP05Pga7EEwAqRPMULiKkD09eE10SsriYwhHID2VaJfz+zIr18epG8w/sGlc
+ TeKe3xYWvKDltl82n
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This fixes the following warning:
+
+Documentation/filesystems/ubifs-authentication.rst:98: WARNING:
+  Inline interpreted text or phrase reference start-string without end-str=
+ing.
+
 Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
 =2D--
- Documentation/filesystems/index.rst | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/filesystems/ubifs-authentication.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/filesystems/index.rst b/Documentation/filesyste=
-ms/index.rst
-index 386eaad008b2..ac574d521f11 100644
-=2D-- a/Documentation/filesystems/index.rst
-+++ b/Documentation/filesystems/index.rst
-@@ -49,5 +49,6 @@ Documentation for filesystem implementations.
-    autofs
-    fuse
-    overlayfs
-+   ubifs-authentication
-    virtiofs
-    vfat
+diff --git a/Documentation/filesystems/ubifs-authentication.rst b/Document=
+ation/filesystems/ubifs-authentication.rst
+index 12babb95a822..97f3780c2620 100644
+=2D-- a/Documentation/filesystems/ubifs-authentication.rst
++++ b/Documentation/filesystems/ubifs-authentication.rst
+@@ -100,7 +100,7 @@ of nodes. Eg. data nodes (`struct ubifs_data_node`) wh=
+ich store chunks of file
+ contents or inode nodes (`struct ubifs_ino_node`) which represent VFS ino=
+des.
+ Almost all types of nodes share a common header (`ubifs_ch`) containing b=
+asic
+ information like node type, node length, a sequence number, etc. (see
+-`fs/ubifs/ubifs-media.h`in kernel source). Exceptions are entries of the =
+LPT
++`fs/ubifs/ubifs-media.h` in kernel source). Exceptions are entries of the=
+ LPT
+ and some less important node types like padding nodes which are used to p=
+ad
+ unusable content at the end of LEBs.
+
 =2D-
 2.20.1
 
