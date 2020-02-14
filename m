@@ -2,45 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5576315F4E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:24:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD43A15F4BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:24:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404809AbgBNSYf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:24:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51786 "EHLO mail.kernel.org"
+        id S1729867AbgBNPtS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:49:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729792AbgBNPtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:49:13 -0500
+        id S1729822AbgBNPtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:49:15 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 515D22468F;
-        Fri, 14 Feb 2020 15:49:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 303742467D;
+        Fri, 14 Feb 2020 15:49:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695351;
-        bh=HzO3ag8UxDL8oDxRgE0ImymDAM2E6B8Jsq3Oz5gyom4=;
+        s=default; t=1581695354;
+        bh=D4GG98E9c9Y1icIuu9/OOXLVnOGJq8xtVvyjOWugdBc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hDynDPCXeN51Co1bTEouT8GjnKA++9fE8ZJBun3XsgwOxr522wlrN2dOZH7g9oLkr
-         Qgivwkah9mycappKWXA78h4YQaxGdBlB9L4OuafYfgXjmm6Si7hdyOxbGXoTeHP4Jz
-         2mPjpllkdGhJXdXFfUMa4yLUUgX97C3rdxB74uBk=
+        b=F8Sxij1ssfjFFSOAWM3Tq18XPsFsFrzWcsATZ9OMWb2dpM+0rUr0KFNRwt/xAaQ1Z
+         VO8RGx8O+9fPCbb4W7J2lEqCyPxo22J/UP1/9B5HpjSW1eHmKffCyYa/gvd0+00rF/
+         hDUkMPgSYlChsUI5sCTaWebvEewtypExroDS9kfQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marco Elver <elver@google.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dmitry Vyukov <dvyukov@google.com>, rcu@vger.kernel.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.5 013/542] rcu: Fix data-race due to atomic_t copy-by-value
-Date:   Fri, 14 Feb 2020 10:40:05 -0500
-Message-Id: <20200214154854.6746-13-sashal@kernel.org>
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>,
+        Javier Gonzalez <javier@javigon.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+        Chao Yu <yuchao0@huawei.com>, Sasha Levin <sashal@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 5.5 015/542] f2fs: preallocate DIO blocks when forcing buffered_io
+Date:   Fri, 14 Feb 2020 10:40:07 -0500
+Message-Id: <20200214154854.6746-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -49,130 +47,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marco Elver <elver@google.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-[ Upstream commit 6cf539a87a61a4fbc43f625267dbcbcf283872ed ]
+[ Upstream commit 47501f87c61ad2aa234add63e1ae231521dbc3f5 ]
 
-This fixes a data-race where `atomic_t dynticks` is copied by value. The
-copy is performed non-atomically, resulting in a data-race if `dynticks`
-is updated concurrently.
+The previous preallocation and DIO decision like below.
 
-This data-race was found with KCSAN:
-==================================================================
-BUG: KCSAN: data-race in dyntick_save_progress_counter / rcu_irq_enter
+                         allow_outplace_dio              !allow_outplace_dio
+f2fs_force_buffered_io   (*) No_Prealloc / Buffered_IO   Prealloc / Buffered_IO
+!f2fs_force_buffered_io  No_Prealloc / DIO               Prealloc / DIO
 
-write to 0xffff989dbdbe98e0 of 4 bytes by task 10 on cpu 3:
- atomic_add_return include/asm-generic/atomic-instrumented.h:78 [inline]
- rcu_dynticks_snap kernel/rcu/tree.c:310 [inline]
- dyntick_save_progress_counter+0x43/0x1b0 kernel/rcu/tree.c:984
- force_qs_rnp+0x183/0x200 kernel/rcu/tree.c:2286
- rcu_gp_fqs kernel/rcu/tree.c:1601 [inline]
- rcu_gp_fqs_loop+0x71/0x880 kernel/rcu/tree.c:1653
- rcu_gp_kthread+0x22c/0x3b0 kernel/rcu/tree.c:1799
- kthread+0x1b5/0x200 kernel/kthread.c:255
- <snip>
+But, Javier reported Case (*) where zoned device bypassed preallocation but
+fell back to buffered writes in f2fs_direct_IO(), resulting in stale data
+being read.
 
-read to 0xffff989dbdbe98e0 of 4 bytes by task 154 on cpu 7:
- rcu_nmi_enter_common kernel/rcu/tree.c:828 [inline]
- rcu_irq_enter+0xda/0x240 kernel/rcu/tree.c:870
- irq_enter+0x5/0x50 kernel/softirq.c:347
- <snip>
+In order to fix the issue, actually we need to preallocate blocks whenever
+we fall back to buffered IO like this. No change is made in the other cases.
 
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 7 PID: 154 Comm: kworker/7:1H Not tainted 5.3.0+ #5
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
-Workqueue: kblockd blk_mq_run_work_fn
-==================================================================
+                         allow_outplace_dio              !allow_outplace_dio
+f2fs_force_buffered_io   (*) Prealloc / Buffered_IO      Prealloc / Buffered_IO
+!f2fs_force_buffered_io  No_Prealloc / DIO               Prealloc / DIO
 
-Signed-off-by: Marco Elver <elver@google.com>
-Cc: Paul E. McKenney <paulmck@kernel.org>
-Cc: Josh Triplett <josh@joshtriplett.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Joel Fernandes <joel@joelfernandes.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Reported-and-tested-by: Javier Gonzalez <javier@javigon.com>
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+Tested-by: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Reviewed-by: Javier González <javier@javigon.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/trace/events/rcu.h |  4 ++--
- kernel/rcu/tree.c          | 11 ++++++-----
- 2 files changed, 8 insertions(+), 7 deletions(-)
+ fs/f2fs/data.c | 13 -------------
+ fs/f2fs/file.c | 43 +++++++++++++++++++++++++++++++++----------
+ 2 files changed, 33 insertions(+), 23 deletions(-)
 
-diff --git a/include/trace/events/rcu.h b/include/trace/events/rcu.h
-index 66122602bd085..697e2c0624dcd 100644
---- a/include/trace/events/rcu.h
-+++ b/include/trace/events/rcu.h
-@@ -449,7 +449,7 @@ TRACE_EVENT_RCU(rcu_fqs,
-  */
- TRACE_EVENT_RCU(rcu_dyntick,
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index a034cd0ce0217..fc40a72f7827f 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1180,19 +1180,6 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
+ 	int err = 0;
+ 	bool direct_io = iocb->ki_flags & IOCB_DIRECT;
  
--	TP_PROTO(const char *polarity, long oldnesting, long newnesting, atomic_t dynticks),
-+	TP_PROTO(const char *polarity, long oldnesting, long newnesting, int dynticks),
+-	/* convert inline data for Direct I/O*/
+-	if (direct_io) {
+-		err = f2fs_convert_inline_inode(inode);
+-		if (err)
+-			return err;
+-	}
+-
+-	if (direct_io && allow_outplace_dio(inode, iocb, from))
+-		return 0;
+-
+-	if (is_inode_flag_set(inode, FI_NO_PREALLOC))
+-		return 0;
+-
+ 	map.m_lblk = F2FS_BLK_ALIGN(iocb->ki_pos);
+ 	map.m_len = F2FS_BYTES_TO_BLK(iocb->ki_pos + iov_iter_count(from));
+ 	if (map.m_len > map.m_lblk)
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 13aef5f28fa8f..33c412d178f0f 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -3383,18 +3383,41 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 				ret = -EAGAIN;
+ 				goto out;
+ 			}
+-		} else {
+-			preallocated = true;
+-			target_size = iocb->ki_pos + iov_iter_count(from);
++			goto write;
++		}
  
- 	TP_ARGS(polarity, oldnesting, newnesting, dynticks),
+-			err = f2fs_preallocate_blocks(iocb, from);
+-			if (err) {
+-				clear_inode_flag(inode, FI_NO_PREALLOC);
+-				inode_unlock(inode);
+-				ret = err;
+-				goto out;
+-			}
++		if (is_inode_flag_set(inode, FI_NO_PREALLOC))
++			goto write;
++
++		if (iocb->ki_flags & IOCB_DIRECT) {
++			/*
++			 * Convert inline data for Direct I/O before entering
++			 * f2fs_direct_IO().
++			 */
++			err = f2fs_convert_inline_inode(inode);
++			if (err)
++				goto out_err;
++			/*
++			 * If force_buffere_io() is true, we have to allocate
++			 * blocks all the time, since f2fs_direct_IO will fall
++			 * back to buffered IO.
++			 */
++			if (!f2fs_force_buffered_io(inode, iocb, from) &&
++					allow_outplace_dio(inode, iocb, from))
++				goto write;
++		}
++		preallocated = true;
++		target_size = iocb->ki_pos + iov_iter_count(from);
++
++		err = f2fs_preallocate_blocks(iocb, from);
++		if (err) {
++out_err:
++			clear_inode_flag(inode, FI_NO_PREALLOC);
++			inode_unlock(inode);
++			ret = err;
++			goto out;
+ 		}
++write:
+ 		ret = __generic_file_write_iter(iocb, from);
+ 		clear_inode_flag(inode, FI_NO_PREALLOC);
  
-@@ -464,7 +464,7 @@ TRACE_EVENT_RCU(rcu_dyntick,
- 		__entry->polarity = polarity;
- 		__entry->oldnesting = oldnesting;
- 		__entry->newnesting = newnesting;
--		__entry->dynticks = atomic_read(&dynticks);
-+		__entry->dynticks = dynticks;
- 	),
- 
- 	TP_printk("%s %lx %lx %#3x", __entry->polarity,
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 1694a6b57ad8c..6145e08a14072 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -577,7 +577,7 @@ static void rcu_eqs_enter(bool user)
- 	}
- 
- 	lockdep_assert_irqs_disabled();
--	trace_rcu_dyntick(TPS("Start"), rdp->dynticks_nesting, 0, rdp->dynticks);
-+	trace_rcu_dyntick(TPS("Start"), rdp->dynticks_nesting, 0, atomic_read(&rdp->dynticks));
- 	WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) && !user && !is_idle_task(current));
- 	rdp = this_cpu_ptr(&rcu_data);
- 	do_nocb_deferred_wakeup(rdp);
-@@ -650,14 +650,15 @@ static __always_inline void rcu_nmi_exit_common(bool irq)
- 	 * leave it in non-RCU-idle state.
- 	 */
- 	if (rdp->dynticks_nmi_nesting != 1) {
--		trace_rcu_dyntick(TPS("--="), rdp->dynticks_nmi_nesting, rdp->dynticks_nmi_nesting - 2, rdp->dynticks);
-+		trace_rcu_dyntick(TPS("--="), rdp->dynticks_nmi_nesting, rdp->dynticks_nmi_nesting - 2,
-+				  atomic_read(&rdp->dynticks));
- 		WRITE_ONCE(rdp->dynticks_nmi_nesting, /* No store tearing. */
- 			   rdp->dynticks_nmi_nesting - 2);
- 		return;
- 	}
- 
- 	/* This NMI interrupted an RCU-idle CPU, restore RCU-idleness. */
--	trace_rcu_dyntick(TPS("Startirq"), rdp->dynticks_nmi_nesting, 0, rdp->dynticks);
-+	trace_rcu_dyntick(TPS("Startirq"), rdp->dynticks_nmi_nesting, 0, atomic_read(&rdp->dynticks));
- 	WRITE_ONCE(rdp->dynticks_nmi_nesting, 0); /* Avoid store tearing. */
- 
- 	if (irq)
-@@ -744,7 +745,7 @@ static void rcu_eqs_exit(bool user)
- 	rcu_dynticks_task_exit();
- 	rcu_dynticks_eqs_exit();
- 	rcu_cleanup_after_idle();
--	trace_rcu_dyntick(TPS("End"), rdp->dynticks_nesting, 1, rdp->dynticks);
-+	trace_rcu_dyntick(TPS("End"), rdp->dynticks_nesting, 1, atomic_read(&rdp->dynticks));
- 	WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) && !user && !is_idle_task(current));
- 	WRITE_ONCE(rdp->dynticks_nesting, 1);
- 	WARN_ON_ONCE(rdp->dynticks_nmi_nesting);
-@@ -833,7 +834,7 @@ static __always_inline void rcu_nmi_enter_common(bool irq)
- 	}
- 	trace_rcu_dyntick(incby == 1 ? TPS("Endirq") : TPS("++="),
- 			  rdp->dynticks_nmi_nesting,
--			  rdp->dynticks_nmi_nesting + incby, rdp->dynticks);
-+			  rdp->dynticks_nmi_nesting + incby, atomic_read(&rdp->dynticks));
- 	WRITE_ONCE(rdp->dynticks_nmi_nesting, /* Prevent store tearing. */
- 		   rdp->dynticks_nmi_nesting + incby);
- 	barrier();
 -- 
 2.20.1
 
