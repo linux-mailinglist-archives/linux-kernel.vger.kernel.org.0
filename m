@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 632DC15E55E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:42:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57F4715E560
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:42:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393204AbgBNQWX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:22:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55582 "EHLO mail.kernel.org"
+        id S2393216AbgBNQWZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:22:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405000AbgBNQVL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:21:11 -0500
+        id S2392929AbgBNQVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:21:12 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 500E624696;
-        Fri, 14 Feb 2020 16:21:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 912EC246A6;
+        Fri, 14 Feb 2020 16:21:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697271;
-        bh=UKNtu5XRs/pDceewTzCYEE9giWtipSmHD1MFay/pACc=;
+        s=default; t=1581697272;
+        bh=YfbMbyD05HzVkW76A5HvNdRv/srdjyjD6bLEWEbPA+k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0g+CyMJ+sOk6kSjJuKaP54s92e1ER1t6lcQP1DxSYDBP+ZOgQPRm5+0pVQcL7JAqg
-         JmKo+TJ/xjbRmSiT8aAZpHH28C7TYdBA6TfRLyx0Aiso2nl8TyW7D8cY362d7Hmzq2
-         lH6bMnX4YA+Z9Tgie7TrMO6n2chpwtBcDqM3hhOA=
+        b=1n8lqmPqUIZZ+Z1mA1HfvcuS30Nk80zL25mleJnmdyD4EoAhmW9okYehhDbtOCumv
+         6Kchp4RszsBj2xem8GSc+qvERinSATlG8cU0mFCh5y73+wHUYevSejG5J6iVq2Pae6
+         SH61ZlUYRa34AW5JRxcR8hduhbvPRlv6es46PQ+I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vasily Averin <vvs@virtuozzo.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Sasha Levin <sashal@kernel.org>, devel@lists.orangefs.org
-Subject: [PATCH AUTOSEL 4.14 184/186] help_next should increase position index
-Date:   Fri, 14 Feb 2020 11:17:13 -0500
-Message-Id: <20200214161715.18113-184-sashal@kernel.org>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sasha Levin <sashal@kernel.org>,
+        virtualization@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 4.14 185/186] virtio_balloon: prevent pfn array overflow
+Date:   Fri, 14 Feb 2020 11:17:14 -0500
+Message-Id: <20200214161715.18113-185-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161715.18113-1-sashal@kernel.org>
 References: <20200214161715.18113-1-sashal@kernel.org>
@@ -43,33 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: "Michael S. Tsirkin" <mst@redhat.com>
 
-[ Upstream commit 9f198a2ac543eaaf47be275531ad5cbd50db3edf ]
+[ Upstream commit 6e9826e77249355c09db6ba41cd3f84e89f4b614 ]
 
-if seq_file .next fuction does not change position index,
-read after some lseek can generate unexpected output.
+Make sure, at build time, that pfn array is big enough to hold a single
+page.  It happens to be true since the PAGE_SHIFT value at the moment is
+20, which is 1M - exactly 256 4K balloon pages.
 
-https://bugzilla.kernel.org/show_bug.cgi?id=206283
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: Mike Marshall <hubcap@omnibond.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/orangefs/orangefs-debugfs.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/virtio/virtio_balloon.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/orangefs/orangefs-debugfs.c b/fs/orangefs/orangefs-debugfs.c
-index 1c59dff530dee..34d1cc98260d2 100644
---- a/fs/orangefs/orangefs-debugfs.c
-+++ b/fs/orangefs/orangefs-debugfs.c
-@@ -305,6 +305,7 @@ static void *help_start(struct seq_file *m, loff_t *pos)
- 
- static void *help_next(struct seq_file *m, void *v, loff_t *pos)
+diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+index 499531608fa26..71970773aad13 100644
+--- a/drivers/virtio/virtio_balloon.c
++++ b/drivers/virtio/virtio_balloon.c
+@@ -132,6 +132,8 @@ static void set_page_pfns(struct virtio_balloon *vb,
  {
-+	(*pos)++;
- 	gossip_debug(GOSSIP_DEBUGFS_DEBUG, "help_next: start\n");
+ 	unsigned int i;
  
- 	return NULL;
++	BUILD_BUG_ON(VIRTIO_BALLOON_PAGES_PER_PAGE > VIRTIO_BALLOON_ARRAY_PFNS_MAX);
++
+ 	/*
+ 	 * Set balloon pfns pointing at this page.
+ 	 * Note that the first pfn points at start of the page.
 -- 
 2.20.1
 
