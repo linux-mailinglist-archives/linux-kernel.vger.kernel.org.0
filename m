@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E88715E071
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:14:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 592F715E074
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:14:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392195AbgBNQNh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:13:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40720 "EHLO mail.kernel.org"
+        id S2403934AbgBNQNr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:13:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41322 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391431AbgBNQMy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:12:54 -0500
+        id S2392131AbgBNQNM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:13:12 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A07AE246AD;
-        Fri, 14 Feb 2020 16:12:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A738246A4;
+        Fri, 14 Feb 2020 16:13:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696773;
-        bh=dVCBeU47LpUoBpEaYThXBUKJX+NcHZty3tt/uZlIUyw=;
+        s=default; t=1581696792;
+        bh=q3gQzD6QIulW6yEBz0CbhxbIwfb79m/k2yoZlGddEIY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K3aGQRdtw6Rh18cLg7HVlpraCAAdf4qgLfSRa/w3udaqArtI/CjK0/a5Nf1fhod7P
-         /Q6AMlf7skV3qylu71PxfVVyOYomM78ZuW5cpe4wQsLEIwwUex+m+6zZlt+/ANLg3N
-         5rfEpHX8HKZPKke6YtZF5j/UVlA7kq6c0+1XflNU=
+        b=t2GD7kcQy9JD0WLPXU0mqO4qxFplASzQwcnxkXbJEIC7yJvGzi9Fh3BrPkKWARLvD
+         ZRoqkgM4MpUB5hkhLZxlaR4x6Ip7mUOgmy9G/WQqgo0TqMNJM2OuwAkLDxfy9bpWNY
+         TO4+E/8DTCIniEfDFXqiGyMawRNoeKNtXiMgFSaw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Julian Wiedmann <jwi@linux.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Thomas Huth <thuth@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 051/252] KVM: s390: ENOTSUPP -> EOPNOTSUPP fixups
-Date:   Fri, 14 Feb 2020 11:08:26 -0500
-Message-Id: <20200214161147.15842-51-sashal@kernel.org>
+Cc:     zhengbin <zhengbin13@huawei.com>, Hulk Robot <hulkci@huawei.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.19 066/252] drm/gma500: remove set but not used variable 'channel_eq'
+Date:   Fri, 14 Feb 2020 11:08:41 -0500
+Message-Id: <20200214161147.15842-66-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -46,54 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian Borntraeger <borntraeger@de.ibm.com>
+From: zhengbin <zhengbin13@huawei.com>
 
-[ Upstream commit c611990844c28c61ca4b35ff69d3a2ae95ccd486 ]
+[ Upstream commit a7adabeece570b8a566dd592219410456676796e ]
 
-There is no ENOTSUPP for userspace.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Reported-by: Julian Wiedmann <jwi@linux.ibm.com>
-Fixes: 519783935451 ("KVM: s390: introduce ais mode modify function")
-Fixes: 2c1a48f2e5ed ("KVM: S390: add new group for flic")
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Reviewed-by: Thomas Huth <thuth@redhat.com>
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+drivers/gpu/drm/gma500/cdv_intel_dp.c: In function cdv_intel_dp_complete_link_train:
+drivers/gpu/drm/gma500/cdv_intel_dp.c:1596:7: warning: variable channel_eq set but not used [-Wunused-but-set-variable]
+
+It is never used, so remove it.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: zhengbin <zhengbin13@huawei.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/1573902268-117518-1-git-send-email-zhengbin13@huawei.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/kvm/interrupt.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/gma500/cdv_intel_dp.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
-index 05ea466b9e403..3515f2b55eb9e 100644
---- a/arch/s390/kvm/interrupt.c
-+++ b/arch/s390/kvm/interrupt.c
-@@ -2109,7 +2109,7 @@ static int flic_ais_mode_get_all(struct kvm *kvm, struct kvm_device_attr *attr)
- 		return -EINVAL;
+diff --git a/drivers/gpu/drm/gma500/cdv_intel_dp.c b/drivers/gpu/drm/gma500/cdv_intel_dp.c
+index 90ed20083009f..710296bafe9b0 100644
+--- a/drivers/gpu/drm/gma500/cdv_intel_dp.c
++++ b/drivers/gpu/drm/gma500/cdv_intel_dp.c
+@@ -1593,7 +1593,6 @@ cdv_intel_dp_complete_link_train(struct gma_encoder *encoder)
+ {
+ 	struct drm_device *dev = encoder->base.dev;
+ 	struct cdv_intel_dp *intel_dp = encoder->dev_priv;
+-	bool channel_eq = false;
+ 	int tries, cr_tries;
+ 	u32 reg;
+ 	uint32_t DP = intel_dp->DP;
+@@ -1601,7 +1600,6 @@ cdv_intel_dp_complete_link_train(struct gma_encoder *encoder)
+ 	/* channel equalization */
+ 	tries = 0;
+ 	cr_tries = 0;
+-	channel_eq = false;
  
- 	if (!test_kvm_facility(kvm, 72))
--		return -ENOTSUPP;
-+		return -EOPNOTSUPP;
+ 	DRM_DEBUG_KMS("\n");
+ 		reg = DP | DP_LINK_TRAIN_PAT_2;
+@@ -1647,7 +1645,6 @@ cdv_intel_dp_complete_link_train(struct gma_encoder *encoder)
  
- 	mutex_lock(&fi->ais_lock);
- 	ais.simm = fi->simm;
-@@ -2412,7 +2412,7 @@ static int modify_ais_mode(struct kvm *kvm, struct kvm_device_attr *attr)
- 	int ret = 0;
+ 		if (cdv_intel_channel_eq_ok(encoder)) {
+ 			DRM_DEBUG_KMS("PT2 train is done\n");
+-			channel_eq = true;
+ 			break;
+ 		}
  
- 	if (!test_kvm_facility(kvm, 72))
--		return -ENOTSUPP;
-+		return -EOPNOTSUPP;
- 
- 	if (copy_from_user(&req, (void __user *)attr->addr, sizeof(req)))
- 		return -EFAULT;
-@@ -2492,7 +2492,7 @@ static int flic_ais_mode_set_all(struct kvm *kvm, struct kvm_device_attr *attr)
- 	struct kvm_s390_ais_all ais;
- 
- 	if (!test_kvm_facility(kvm, 72))
--		return -ENOTSUPP;
-+		return -EOPNOTSUPP;
- 
- 	if (copy_from_user(&ais, (void __user *)attr->addr, sizeof(ais)))
- 		return -EFAULT;
 -- 
 2.20.1
 
