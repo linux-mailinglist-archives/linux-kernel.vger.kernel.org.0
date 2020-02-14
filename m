@@ -2,107 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13FF015EC3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:26:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 438A115EC56
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:27:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390391AbgBNR0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:26:01 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38184 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391762AbgBNRZ5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 12:25:57 -0500
-Received: by mail-ot1-f68.google.com with SMTP id z9so9866205oth.5
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 09:25:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pSMjarGrsUPgAx4tKo+8H+L0Szt0s9yVAf2VYNsMa0o=;
-        b=mvatJYP90LnHgm4N3PgyesVQnHTRUe3LaAPWZ8NIe/6hGTT9VXzGU4p93LbBGMbcjX
-         /yS+R0dEibti1vzOD9ljhXo77ULGzns2X3pNni2DVSQZLibtfeHATYRWKLw7hUcFvwrb
-         kZvvSwqU8+PCs/3gZBUwSpBAWg2eV6/8nYAhDloNoFzfqXj3FLn0igJIUnlgGxFRnqp7
-         Yyx9Tbb5VcHJwVWeLWoCCt8BWIUPNSuibtHv9hDWURcgYOJUrI1WjA+YHwa/H24k6Wic
-         UcGcSvj50fKLOtLiH8Xl62mzM2CoJd6JwKQw4ClcmGH5keWOYMc+C2kftdXdx+iFwwWv
-         zolQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pSMjarGrsUPgAx4tKo+8H+L0Szt0s9yVAf2VYNsMa0o=;
-        b=lwLJXxLVInFe3wP+6SD92OiUjPtAjEzQvRAJhoQSf3cQwYJsEZwZpqtc8yfvKIHks0
-         07eAcBkSeE4JQXEd8fBjgdzQq0jcZmtSV57aHHPQaylu9w2ZVTedP7ERQs4apFh1Us+d
-         3MWSgmUhYPWkP3H3jGmHpRDbnPoGypB1uw7WoDoTPbEXCRkz/FJI51mk9AO0hy1ctqrF
-         30YVHJdmlhyLP4PW4Tn0DPMswm5gpMu0Lz32pCuLLBNeUjVcOZJ5nYSUFFfU2+vNDZ54
-         XEk7ftZTSLdpFEql6GbM+iVWAhknXLOCltL7L7Q8u/wBMeFBEcP4HoOgZIbf7agUqJYV
-         k7lA==
-X-Gm-Message-State: APjAAAXZVij6YwKXy2Jgy0nMeDTFn+311qm/oLlePRQVO2eHHsFRpi2W
-        ybYqWQAL08oWpXo2qozUXw0E9cve17CuMLkT6VWn1w==
-X-Google-Smtp-Source: APXvYqxPBAMd0tGmcjPd0FZvV4wf35i2R/TBjgEwIelMFvAF+MVxbxS6HVKJ8WwbllYOc5XQ8Fb54aD+vOj9De/2vRU=
-X-Received: by 2002:a05:6830:1d6e:: with SMTP id l14mr3117234oti.32.1581701156723;
- Fri, 14 Feb 2020 09:25:56 -0800 (PST)
+        id S2394498AbgBNR0k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:26:40 -0500
+Received: from mga09.intel.com ([134.134.136.24]:40382 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390996AbgBNR0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 12:26:38 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2020 09:26:37 -0800
+X-IronPort-AV: E=Sophos;i="5.70,441,1574150400"; 
+   d="scan'208";a="223081578"
+Received: from ddalessa-mobl.amr.corp.intel.com (HELO [10.254.204.146]) ([10.254.204.146])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 14 Feb 2020 09:26:35 -0800
+Subject: Re: [PATCH 3/3] infiniband: sw: rdmavt: mcast.c: Use built-in RCU
+ list checking
+To:     madhuparnabhowmik04@gmail.com, mike.marciniszyn@intel.com,
+        jgg@ziepe.ca, paulmck@kernel.org
+Cc:     joel@joelfernandes.org, frextrite@gmail.com,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        rcu@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200114162536.20388-1-madhuparnabhowmik04@gmail.com>
+From:   Dennis Dalessandro <dennis.dalessandro@intel.com>
+Message-ID: <b9a48945-7fc7-2463-2b56-61ad43e54754@intel.com>
+Date:   Fri, 14 Feb 2020 12:26:34 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-References: <20200214170520.160271-1-minchan@kernel.org> <20200214170520.160271-2-minchan@kernel.org>
-In-Reply-To: <20200214170520.160271-2-minchan@kernel.org>
-From:   Jann Horn <jannh@google.com>
-Date:   Fri, 14 Feb 2020 18:25:30 +0100
-Message-ID: <CAG48ez3S5+EasZ1ZWcMQYZQQ5zJOBtY-_C7oz6DMfG4Gcyig1g@mail.gmail.com>
-Subject: Re: [PATCH v5 1/7] mm: pass task and mm to do_madvise
-To:     Minchan Kim <minchan@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        io-uring <io-uring@vger.kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Oleksandr Natalenko <oleksandr@redhat.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Tim Murray <timmurray@google.com>,
-        Daniel Colascione <dancol@google.com>,
-        Sandeep Patil <sspatil@google.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Brian Geffon <bgeffon@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        John Dias <joaodias@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>, sj38.park@gmail.com,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200114162536.20388-1-madhuparnabhowmik04@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Jens and io-uring list
+On 1/14/2020 11:25 AM, madhuparnabhowmik04@gmail.com wrote:
+> From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+> 
+> Use built-in RCU and lock-checking for list_for_each_entry_rcu()
+> by passing the cond argument.
+> 
+> Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+> ---
+>   drivers/infiniband/sw/rdmavt/mcast.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/infiniband/sw/rdmavt/mcast.c b/drivers/infiniband/sw/rdmavt/mcast.c
+> index dd11c6fcd060..31c7f12c7665 100644
+> --- a/drivers/infiniband/sw/rdmavt/mcast.c
+> +++ b/drivers/infiniband/sw/rdmavt/mcast.c
+> @@ -224,7 +224,7 @@ static int rvt_mcast_add(struct rvt_dev_info *rdi, struct rvt_ibport *ibp,
+>   		}
+>   
+>   		/* Search the QP list to see if this is already there. */
+> -		list_for_each_entry_rcu(p, &tmcast->qp_list, list) {
+> +		list_for_each_entry_rcu(p, &tmcast->qp_list, list, lockdep_is_held(&(ibp->lock))) {
+>   			if (p->qp == mqp->qp) {
+>   				ret = ESRCH;
+>   				goto bail;
+> 
 
-On Fri, Feb 14, 2020 at 6:06 PM Minchan Kim <minchan@kernel.org> wrote:
-> In upcoming patches, do_madvise will be called from external process
-> context so we shouldn't asssume "current" is always hinted process's
-> task_struct.
-[...]
-> [1] http://lore.kernel.org/r/CAG48ez27=pwm5m_N_988xT1huO7g7h6arTQL44zev6TD-h-7Tg@mail.gmail.com
-[...]
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-[...]
-> @@ -2736,7 +2736,7 @@ static int io_madvise(struct io_kiocb *req, struct io_kiocb **nxt,
->         if (force_nonblock)
->                 return -EAGAIN;
->
-> -       ret = do_madvise(ma->addr, ma->len, ma->advice);
-> +       ret = do_madvise(current, current->mm, ma->addr, ma->len, ma->advice);
->         if (ret < 0)
->                 req_set_fail_links(req);
->         io_cqring_add_event(req, ret);
+This one is OK. The lock is held and it is the correct one to use when 
+updating the list.
 
-Jens, can you have a look at this change and the following patch
-<https://lore.kernel.org/linux-mm/20200214170520.160271-4-minchan@kernel.org/>
-("[PATCH v5 3/7] mm: check fatal signal pending of target process")?
-Basically Minchan's patch tries to plumb through the identity of the
-target task so that if that task gets killed in the middle of the
-operation, the (potentially long-running and costly) madvise operation
-can be cancelled. Just passing in "current" instead (which in this
-case is the uring worker thread AFAIK) doesn't really break anything,
-other than making the optimization not work, but I wonder whether this
-couldn't be done more cleanly - maybe by passing in NULL to mean "we
-don't know who the target task is", since I think we don't know that
-here?
+Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
