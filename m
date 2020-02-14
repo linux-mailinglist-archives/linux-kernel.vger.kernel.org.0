@@ -2,88 +2,209 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A406415DB36
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:41:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BF9615DBCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:51:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729553AbgBNPk5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:40:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47760 "EHLO mail.kernel.org"
+        id S1730460AbgBNPuZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:50:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729439AbgBNPk4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:40:56 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1730403AbgBNPuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:50:15 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DAB72467D;
-        Fri, 14 Feb 2020 15:40:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E74C124650;
+        Fri, 14 Feb 2020 15:50:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581694856;
-        bh=v+owP3ISw49O9bIkXyz/Z8SVlg482uuJFZRpP3SjwZk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=dw/uu2/OPxIJNPP8VUXDeP9Sc2WVGmzRPoWs4iuQKali0vUWF+VTJelxUBa2aTZoi
-         2Dgp+74o2WzDNNZyrGtSBwgQ26SMMu6XPai2Dcoe5kwrRsMc+WbfVsaMMVwlY35Odw
-         pZdhpHHsNcPSWtMwwTqgbIp5znmx5Mch57Th72QY=
-Date:   Fri, 14 Feb 2020 15:40:51 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Alexandru Tachici <alexandru.tachici@analog.com>
-Cc:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/5] staging: iio: adc: ad7192: fail probe on
- get_voltage
-Message-ID: <20200214154051.3aa1d09a@archlinux>
-In-Reply-To: <20200212161721.16200-2-alexandru.tachici@analog.com>
-References: <20200212161721.16200-1-alexandru.tachici@analog.com>
-        <20200212161721.16200-2-alexandru.tachici@analog.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        s=default; t=1581695415;
+        bh=vra5Iov8kMoiTcjt7/yz+FaHmHlIAp8cXCJ/a9dcOwc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=BFov258gGPUAxNCb6/skAyXb/xq29nJGo6uJ9eStYWMaFXil14iTplpHns+JDf0Xa
+         rJ0jgui8nLRZ4r2Tb3JVtB5fED5fMWakYiXIc/4RYNPjAF6SJdA0HHM0ga2M1aFz6s
+         +uu2GW/xCIxIj++0QUDnAzivlB8wmrLl+ziLqZ44=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, bristot@redhat.com,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.5 061/542] kprobes: Fix optimize_kprobe()/unoptimize_kprobe() cancellation logic
+Date:   Fri, 14 Feb 2020 10:40:53 -0500
+Message-Id: <20200214154854.6746-61-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
+References: <20200214154854.6746-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Feb 2020 18:17:17 +0200
-Alexandru Tachici <alexandru.tachici@analog.com> wrote:
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-> This patch makes the ad7192_probe fail in case
-> regulator_get_voltage will return an error or voltage
-> is set to 0.
-> 
-> Signed-off-by: Alexandru Tachici <alexandru.tachici@analog.com>
-There are some corner cases around this that we may meet
-in the future. Particularly if someone uses a variable reg
-to provide this voltage.  However, we can fix those when
-we come to them.
+[ Upstream commit e4add247789e4ba5e08ad8256183ce2e211877d4 ]
 
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to play with it.
+optimize_kprobe() and unoptimize_kprobe() cancels if a given kprobe
+is on the optimizing_list or unoptimizing_list already. However, since
+the following commit:
 
-Thanks,
+  f66c0447cca1 ("kprobes: Set unoptimized flag after unoptimizing code")
 
-Jonathan
+modified the update timing of the KPROBE_FLAG_OPTIMIZED, it doesn't
+work as expected anymore.
 
-> ---
->  drivers/staging/iio/adc/ad7192.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/iio/adc/ad7192.c b/drivers/staging/iio/adc/ad7192.c
-> index bf3e2a9cc07f..41da8b4cdc48 100644
-> --- a/drivers/staging/iio/adc/ad7192.c
-> +++ b/drivers/staging/iio/adc/ad7192.c
-> @@ -899,10 +899,13 @@ static int ad7192_probe(struct spi_device *spi)
->  
->  	voltage_uv = regulator_get_voltage(st->avdd);
->  
-> -	if (voltage_uv)
-> +	if (voltage_uv > 0) {
->  		st->int_vref_mv = voltage_uv / 1000;
-> -	else
-> +	} else {
-> +		ret = voltage_uv;
->  		dev_err(&spi->dev, "Device tree error, reference voltage undefined\n");
-> +		goto error_disable_avdd;
-> +	}
->  
->  	spi_set_drvdata(spi, indio_dev);
->  	st->devid = spi_get_device_id(spi)->driver_data;
+The optimized_kprobe could be in the following states:
+
+- [optimizing]: Before inserting jump instruction
+  op.kp->flags has KPROBE_FLAG_OPTIMIZED and
+  op->list is not empty.
+
+- [optimized]: jump inserted
+  op.kp->flags has KPROBE_FLAG_OPTIMIZED and
+  op->list is empty.
+
+- [unoptimizing]: Before removing jump instruction (including unused
+  optprobe)
+  op.kp->flags has KPROBE_FLAG_OPTIMIZED and
+  op->list is not empty.
+
+- [unoptimized]: jump removed
+  op.kp->flags doesn't have KPROBE_FLAG_OPTIMIZED and
+  op->list is empty.
+
+Current code mis-expects [unoptimizing] state doesn't have
+KPROBE_FLAG_OPTIMIZED, and that can cause incorrect results.
+
+To fix this, introduce optprobe_queued_unopt() to distinguish [optimizing]
+and [unoptimizing] states and fixes the logic in optimize_kprobe() and
+unoptimize_kprobe().
+
+[ mingo: Cleaned up the changelog and the code a bit. ]
+
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: bristot@redhat.com
+Fixes: f66c0447cca1 ("kprobes: Set unoptimized flag after unoptimizing code")
+Link: https://lkml.kernel.org/r/157840814418.7181.13478003006386303481.stgit@devnote2
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ kernel/kprobes.c | 67 +++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 43 insertions(+), 24 deletions(-)
+
+diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+index 53534aa258a60..fd81882f05210 100644
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -610,6 +610,18 @@ void wait_for_kprobe_optimizer(void)
+ 	mutex_unlock(&kprobe_mutex);
+ }
+ 
++static bool optprobe_queued_unopt(struct optimized_kprobe *op)
++{
++	struct optimized_kprobe *_op;
++
++	list_for_each_entry(_op, &unoptimizing_list, list) {
++		if (op == _op)
++			return true;
++	}
++
++	return false;
++}
++
+ /* Optimize kprobe if p is ready to be optimized */
+ static void optimize_kprobe(struct kprobe *p)
+ {
+@@ -631,17 +643,21 @@ static void optimize_kprobe(struct kprobe *p)
+ 		return;
+ 
+ 	/* Check if it is already optimized. */
+-	if (op->kp.flags & KPROBE_FLAG_OPTIMIZED)
++	if (op->kp.flags & KPROBE_FLAG_OPTIMIZED) {
++		if (optprobe_queued_unopt(op)) {
++			/* This is under unoptimizing. Just dequeue the probe */
++			list_del_init(&op->list);
++		}
+ 		return;
++	}
+ 	op->kp.flags |= KPROBE_FLAG_OPTIMIZED;
+ 
+-	if (!list_empty(&op->list))
+-		/* This is under unoptimizing. Just dequeue the probe */
+-		list_del_init(&op->list);
+-	else {
+-		list_add(&op->list, &optimizing_list);
+-		kick_kprobe_optimizer();
+-	}
++	/* On unoptimizing/optimizing_list, op must have OPTIMIZED flag */
++	if (WARN_ON_ONCE(!list_empty(&op->list)))
++		return;
++
++	list_add(&op->list, &optimizing_list);
++	kick_kprobe_optimizer();
+ }
+ 
+ /* Short cut to direct unoptimizing */
+@@ -662,31 +678,34 @@ static void unoptimize_kprobe(struct kprobe *p, bool force)
+ 		return; /* This is not an optprobe nor optimized */
+ 
+ 	op = container_of(p, struct optimized_kprobe, kp);
+-	if (!kprobe_optimized(p)) {
+-		/* Unoptimized or unoptimizing case */
+-		if (force && !list_empty(&op->list)) {
+-			/*
+-			 * Only if this is unoptimizing kprobe and forced,
+-			 * forcibly unoptimize it. (No need to unoptimize
+-			 * unoptimized kprobe again :)
+-			 */
+-			list_del_init(&op->list);
+-			force_unoptimize_kprobe(op);
+-		}
++	if (!kprobe_optimized(p))
+ 		return;
+-	}
+ 
+ 	op->kp.flags &= ~KPROBE_FLAG_OPTIMIZED;
+ 	if (!list_empty(&op->list)) {
+-		/* Dequeue from the optimization queue */
+-		list_del_init(&op->list);
++		if (optprobe_queued_unopt(op)) {
++			/* Queued in unoptimizing queue */
++			if (force) {
++				/*
++				 * Forcibly unoptimize the kprobe here, and queue it
++				 * in the freeing list for release afterwards.
++				 */
++				force_unoptimize_kprobe(op);
++				list_move(&op->list, &freeing_list);
++			}
++		} else {
++			/* Dequeue from the optimizing queue */
++			list_del_init(&op->list);
++			op->kp.flags &= ~KPROBE_FLAG_OPTIMIZED;
++		}
+ 		return;
+ 	}
++
+ 	/* Optimized kprobe case */
+-	if (force)
++	if (force) {
+ 		/* Forcibly update the code: this is a special case */
+ 		force_unoptimize_kprobe(op);
+-	else {
++	} else {
+ 		list_add(&op->list, &unoptimizing_list);
+ 		kick_kprobe_optimizer();
+ 	}
+-- 
+2.20.1
 
