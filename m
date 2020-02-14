@@ -2,117 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07CE115DB57
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:45:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8718715DCE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:56:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729663AbgBNPpa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:45:30 -0500
-Received: from foss.arm.com ([217.140.110.172]:35094 "EHLO foss.arm.com"
+        id S2387702AbgBNP4O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:56:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729627AbgBNPp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:45:27 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CA4AC328;
-        Fri, 14 Feb 2020 07:45:26 -0800 (PST)
-Received: from localhost (e108754-lin.cambridge.arm.com [10.1.198.52])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B5D83F68E;
-        Fri, 14 Feb 2020 07:45:26 -0800 (PST)
-Date:   Fri, 14 Feb 2020 15:45:25 +0000
-From:   Ionela Voinescu <ionela.voinescu@arm.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com,
-        maz@kernel.org, suzuki.poulose@arm.com, sudeep.holla@arm.com,
-        lukasz.luba@arm.com, valentin.schneider@arm.com, rjw@rjwysocki.net,
-        peterz@infradead.org, mingo@redhat.com, vincent.guittot@linaro.org,
-        viresh.kumar@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 7/7] clocksource/drivers/arm_arch_timer: validate
- arch_timer_rate
-Message-ID: <20200214154525.GA21875@arm.com>
-References: <20200211184542.29585-1-ionela.voinescu@arm.com>
- <20200211184542.29585-8-ionela.voinescu@arm.com>
- <87mu9mgg41.fsf@nanos.tec.linutronix.de>
+        id S2387675AbgBNP4M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:56:12 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6DEF222C4;
+        Fri, 14 Feb 2020 15:56:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581695771;
+        bh=4SZ3LZ4NJqJF+7zF2Dlcszw7U77PR0xJMMQ+rBFKY8k=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=kzuqnol1/wKDLRsHPHss3xpxNEnPloYE7PsYhIN6cN8Qqwpxj9JMGjCQsWmY3o2/i
+         YPa0pxHd/qXbMM8aENBEpsDkVrYvdFCQ6NBzYQixXpizvNGFfFJJiziFIr0iFontil
+         1xZFsugvE9PKYMLyiKBElQl+ooi3wFJVDju82NZE=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Logan Gunthorpe <logang@deltatee.com>, Kit Chow <kchow@gigaio.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 337/542] PCI: Don't disable bridge BARs when assigning bus resources
+Date:   Fri, 14 Feb 2020 10:45:29 -0500
+Message-Id: <20200214154854.6746-337-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
+References: <20200214154854.6746-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <87mu9mgg41.fsf@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+From: Logan Gunthorpe <logang@deltatee.com>
 
-On Friday 14 Feb 2020 at 01:35:58 (+0100), Thomas Gleixner wrote:
-> Ionela Voinescu <ionela.voinescu@arm.com> writes:
-> 
-> > From: Valentin Schneider <valentin.schneider@arm.com>
-> >
-> > Using an arch timer with a frequency of less than 1MHz can result in an
-> > incorrect functionality of the system which assumes a reasonable rate.
-> >
-> > One example is the use of activity monitors for frequency invariance
-> > which uses the rate of the arch timer as the known rate of the constant
-> > cycle counter in computing its ratio compared to the maximum frequency
-> > of a CPU. For arch timer frequencies less than 1MHz this ratio could
-> > end up being 0 which is an invalid value for its use.
-> >
-> > Therefore, warn if the arch timer rate is below 1MHz which contravenes
-> > the recommended architecture interval of 1 to 50MHz.
-> >
-> > Signed-off-by: Ionela Voinescu <ionela.voinescu@arm.com>
-> 
-> So this patch is from Valentin. Where is his Signed-off-by?
-> 
+[ Upstream commit 9db8dc6d0785225c42a37be7b44d1b07b31b8957 ]
 
-Yes, sorry about this. This was based on a diff that Valentin provided
-in v2. I'll change the author as agreed at:
-https://lore.kernel.org/lkml/20200212103249.GA19041@arm.com/
+Some PCI bridges implement BARs in addition to bridge windows.  For
+example, here's a PLX switch:
 
-> >  
-> > +static int validate_timer_rate(void)
-> > +{
-> > +	if (!arch_timer_rate)
-> > +		return -EINVAL;
-> > +
-> > +	/* Arch timer frequency < 1MHz can cause trouble */
-> > +	WARN_ON(arch_timer_rate < 1000000);
-> 
-> This does not make sense to me. If the rate is out of bounds then why
-> warn an just continue instead of making it fail?
-> 
+  04:00.0 PCI bridge: PLX Technology, Inc. PEX 8724 24-Lane, 6-Port PCI
+            Express Gen 3 (8 GT/s) Switch, 19 x 19mm FCBGA (rev ca)
+	    (prog-if 00 [Normal decode])
+      Flags: bus master, fast devsel, latency 0, IRQ 30, NUMA node 0
+      Memory at 90a00000 (32-bit, non-prefetchable) [size=256K]
+      Bus: primary=04, secondary=05, subordinate=0a, sec-latency=0
+      I/O behind bridge: 00002000-00003fff
+      Memory behind bridge: 90000000-909fffff
+      Prefetchable memory behind bridge: 0000380000800000-0000380000bfffff
 
-Because it's not a hard restriction, it's just atypical for the rate to
-be below 1Mhz. The spec only mentions a typical range of 1 to 50MHz and
-the warning is only here to flag a potentially problematic rate, below
-what is assumed typical in the spec.
+Previously, when the kernel assigned resource addresses (with the
+pci=realloc command line parameter, for example) it could clear the struct
+resource corresponding to the BAR.  When this happened, lspci would report
+this BAR as "ignored":
 
-In [1], where I'm actually relying on arch_timer_rate being higher than
-than 1/SCHED_CAPACITY_SCALE² of the maximum frequency, I am making it
-fail, as, for that scenario, it is a hard restriction.
+   Region 0: Memory at <ignored> (32-bit, non-prefetchable) [size=256K]
 
+This is because the kernel reports a zero start address and zero flags
+in the corresponding sysfs resource file and in /proc/bus/pci/devices.
+Investigation with 'lspci -x', however, shows the BIOS-assigned address
+will still be programmed in the device's BAR registers.
 
-+	 * We use a factor of 2 * SCHED_CAPACITY_SHIFT -> SCHED_CAPACITY_SCALE²
-+	 * in order to ensure a good resolution for arch_max_freq_scale for
-+	 * very low arch timer frequencies (up to the KHz range which should be
-+	 * unlikely).
-+	 */
-+	ratio = (u64)arch_timer_get_rate() << (2 * SCHED_CAPACITY_SHIFT);
-+	ratio = div64_u64(ratio, max_freq_hz);
-+	if (!ratio) {
-+		pr_err("System timer frequency too low.\n");
-+		return -EINVAL;
-+	}
+It's clearly a bug that the kernel lost track of the BAR value, but in most
+cases, this still won't result in a visible issue because nothing uses the
+memory, so nothing is affected.  However, when an IOMMU is in use, it will
+not reserve this space in the IOVA because the kernel no longer thinks the
+range is valid.  (See dmar_init_reserved_ranges() for the Intel
+implementation of this.)
+
+Without the proper reserved range, a DMA mapping may allocate an IOVA that
+matches a bridge BAR, which results in DMA accesses going to the BAR
+instead of the intended RAM.
+
+The problem was in pci_assign_unassigned_root_bus_resources().  When any
+resource from a bridge device fails to get assigned, the code set the
+resource's flags to zero.  This makes sense for bridge windows, as they
+will be re-enabled later, but for regular BARs, it makes the kernel
+permanently lose track of the fact that they decode address space.
+
+Change pci_assign_unassigned_root_bus_resources() and
+pci_assign_unassigned_bridge_resources() so they only clear "res->flags"
+for bridge *windows*, not bridge BARs.
+
+Fixes: da7822e5ad71 ("PCI: update bridge resources to get more big ranges when allocating space (again)")
+Link: https://lore.kernel.org/r/20200108213208.4612-1-logang@deltatee.com
+[bhelgaas: commit log, check for pci_is_bridge()]
+Reported-by: Kit Chow <kchow@gigaio.com>
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/pci/setup-bus.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+index f279826204eb4..591161ce0f516 100644
+--- a/drivers/pci/setup-bus.c
++++ b/drivers/pci/setup-bus.c
+@@ -1803,12 +1803,18 @@ void pci_assign_unassigned_root_bus_resources(struct pci_bus *bus)
+ 	/* Restore size and flags */
+ 	list_for_each_entry(fail_res, &fail_head, list) {
+ 		struct resource *res = fail_res->res;
++		int idx;
+ 
+ 		res->start = fail_res->start;
+ 		res->end = fail_res->end;
+ 		res->flags = fail_res->flags;
+-		if (fail_res->dev->subordinate)
+-			res->flags = 0;
 +
++		if (pci_is_bridge(fail_res->dev)) {
++			idx = res - &fail_res->dev->resource[0];
++			if (idx >= PCI_BRIDGE_RESOURCES &&
++			    idx <= PCI_BRIDGE_RESOURCE_END)
++				res->flags = 0;
++		}
+ 	}
+ 	free_list(&fail_head);
+ 
+@@ -2055,12 +2061,18 @@ void pci_assign_unassigned_bridge_resources(struct pci_dev *bridge)
+ 	/* Restore size and flags */
+ 	list_for_each_entry(fail_res, &fail_head, list) {
+ 		struct resource *res = fail_res->res;
++		int idx;
+ 
+ 		res->start = fail_res->start;
+ 		res->end = fail_res->end;
+ 		res->flags = fail_res->flags;
+-		if (fail_res->dev->subordinate)
+-			res->flags = 0;
++
++		if (pci_is_bridge(fail_res->dev)) {
++			idx = res - &fail_res->dev->resource[0];
++			if (idx >= PCI_BRIDGE_RESOURCES &&
++			    idx <= PCI_BRIDGE_RESOURCE_END)
++				res->flags = 0;
++		}
+ 	}
+ 	free_list(&fail_head);
+ 
+-- 
+2.20.1
 
-[1] https://lore.kernel.org/lkml/89339501-5ee4-e871-3076-c8b02c6fbf6e@arm.com/
-
-Thanks,
-Ionela.
-
-> Thanks,
-> 
->         tglx
