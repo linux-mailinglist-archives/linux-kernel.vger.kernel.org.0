@@ -2,78 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18B9215DA7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:18:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D512515DA74
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:17:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729552AbgBNPSh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:18:37 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54230 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726191AbgBNPSh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:18:37 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 3CB97AF57;
-        Fri, 14 Feb 2020 15:18:35 +0000 (UTC)
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-In-Reply-To: <8bd7a25a-359d-5b30-4c95-004032d78cb6@samsung.com>
-Date:   Fri, 14 Feb 2020 16:14:23 +0100
-From:   "Nicolas Saenz Julienne" <nsaenzjulienne@suse.de>
-To:     "Marek Szyprowski" <m.szyprowski@samsung.com>,
-        "Stefan Wahren" <stefan.wahren@i2se.com>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ARM: bcm2835_defconfig: add minimal support for
- Raspberry Pi4
-Message-Id: <C0LZGU1IU7QO.9VKWHWJ56XZV@vian>
+        id S1729527AbgBNPRp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:17:45 -0500
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:59454 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729434AbgBNPRp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:17:45 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R271e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TpyzSP6_1581693462;
+Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TpyzSP6_1581693462)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 14 Feb 2020 23:17:42 +0800
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] locking/rtmutex: Remove unused rt_mutex_cmpxchg_relaxed()
+Date:   Fri, 14 Feb 2020 23:17:18 +0800
+Message-Id: <1581693439-33092-1-git-send-email-alex.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <87c1cdbc-6af0-3f56-e986-b9df894fe4da@linux.alibaba.com>
+References: <87c1cdbc-6af0-3f56-e986-b9df894fe4da@linux.alibaba.com>
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri Feb 14, 2020 at 1:25 PM, Marek Szyprowski wrote:
-> Hi Stefan,
->
-> On 13.02.2020 10:59, Stefan Wahren wrote:
-> > On 13.02.20 08:35, Marek Szyprowski wrote:
-> >> On 12.02.2020 19:31, Nicolas Saenz Julienne wrote:
-> >>> On Wed, 2020-02-12 at 11:20 +0100, Marek Szyprowski wrote:
-> >>>> Add drivers for the minimal set of devices needed to boot Raspberry =
-Pi4
-> >>>> board.
-> >>>>
-> >>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> >>> Just so you know, the amount of support on the RPi4 you might be able=
- to get
-> >>> updating bcm2835_defconfig's config is very limited. Only 1GB of ram =
-and no
-> >>> PCIe (so no USBs).
-> >> Yes, I know. A lots of core features is missing: SMP, HIGHMEM, LPAE, P=
-CI
-> >> and so on, but having a possibility to boot RPi4 with this defconfig
-> >> increases the test coverage.
-> > in case you want to increase test coverage, we better enable all
-> > Raspberry Pi 4 relevant hardware parts (hwrng, thermal, PCI ...). This
-> > is what we did for older Pi boards.
->
-> Okay, I will add thermal in v2. HWRNG is already selected as module.
-> Enabling PCI without LPAE makes no sense as the driver won't be able to
-> initialize properly.
+This macro isn't interested by anyone, so remove it.
 
-Agree on this.
+Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+---
+ kernel/locking/rtmutex.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-> > SMP, HIGHMEM, LPAE are different and shouldn't be enabled in
-> > bcm2835_defconfig from my PoV.
->
-> Maybe it would make sense to also add bcm2711_defconfig or
-> bcm2835_lpae_defconfig?
+diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+index 851bbb10819d..7ad22eade1cc 100644
+--- a/kernel/locking/rtmutex.c
++++ b/kernel/locking/rtmutex.c
+@@ -141,7 +141,6 @@ static void fixup_rt_mutex_waiters(struct rt_mutex *lock)
+  * set up.
+  */
+ #ifndef CONFIG_DEBUG_RT_MUTEXES
+-# define rt_mutex_cmpxchg_relaxed(l,c,n) (cmpxchg_relaxed(&l->owner, c, n) == c)
+ # define rt_mutex_cmpxchg_acquire(l,c,n) (cmpxchg_acquire(&l->owner, c, n) == c)
+ # define rt_mutex_cmpxchg_release(l,c,n) (cmpxchg_release(&l->owner, c, n) == c)
+ 
+@@ -202,7 +201,6 @@ static inline bool unlock_rt_mutex_safe(struct rt_mutex *lock,
+ }
+ 
+ #else
+-# define rt_mutex_cmpxchg_relaxed(l,c,n)	(0)
+ # define rt_mutex_cmpxchg_acquire(l,c,n)	(0)
+ # define rt_mutex_cmpxchg_release(l,c,n)	(0)
+ 
+-- 
+1.8.3.1
 
-IMO bcm2711_defconfig if the last resort solution. I don't think you can
-do bcm2835_lpae_defconfig as RPi and RPi2 SoCs don't support LPAE. An
-intemediate solution is being discussed here:
-https://lkml.org/lkml/2020/1/10/694
-
-Regards,
-Nicolas
