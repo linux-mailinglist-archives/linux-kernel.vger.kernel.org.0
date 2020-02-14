@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F186415DEF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:06:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2D3F15DEFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:06:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390448AbgBNQGc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:06:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55946 "EHLO mail.kernel.org"
+        id S2390478AbgBNQGi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:06:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390244AbgBNQFu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:05:50 -0500
+        id S2389536AbgBNQFx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:05:53 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40C072082F;
-        Fri, 14 Feb 2020 16:05:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FF122082F;
+        Fri, 14 Feb 2020 16:05:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696349;
-        bh=88HK1gOY1FHSYpLNTI+/uJaGR/7f7jW7TlUIoj3OmtE=;
+        s=default; t=1581696352;
+        bh=+6OD4s2vRRb+ORzvSH/0sh+5jFUR8ccoPu4YOS3Y5Bg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nJe3QgDV8XxC9Q2gC9Gt0WZsaAKXhRWvCmmeWN+ok3aAD+5PpXCfm2X1REu2aYRqc
-         J1rBEGsnNMdNVf0ok2kGetIyknA1+9aSavTw/Hnxd09XnDF2f73zg6PpWwowijtbKr
-         IW4obQq7BX5AV0L7BRJWzzn4mYEDzFVh/XI8lv04=
+        b=mNYCcxQ0GDRc9wWZDSL8asa8ROUjZfUCfImVxt40RRCXxfMzECoH+qg+cyzW4+YS/
+         PQ3CyMqV2t2H8FfuM4ZQnDqmbaorB8NIMIHHzXsndLv8Av5QVivHBuDayI7tT1W8Kx
+         EkvzbvmjKzARmA1QXtq3NVOnI93Lz1HXA7IgGLIw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Willem de Bruijn <willemb@google.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
+Cc:     =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 183/459] selftests/net: make so_txtime more robust to timer variance
-Date:   Fri, 14 Feb 2020 10:57:13 -0500
-Message-Id: <20200214160149.11681-183-sashal@kernel.org>
+        bpf@vger.kernel.org, clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 5.4 186/459] samples/bpf: Set -fno-stack-protector when building BPF programs
+Date:   Fri, 14 Feb 2020 10:57:16 -0500
+Message-Id: <20200214160149.11681-186-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -45,224 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Willem de Bruijn <willemb@google.com>
+From: Toke Høiland-Jørgensen <toke@redhat.com>
 
-[ Upstream commit ea6a547669b37453f2b1a5d85188d75b3613dfaa ]
+[ Upstream commit 450278977acbf494a20367c22fbb38729772d1fc ]
 
-The SO_TXTIME test depends on accurate timers. In some virtualized
-environments the test has been reported to be flaky. This is easily
-reproduced by disabling kvm acceleration in Qemu.
+It seems Clang can in some cases turn on stack protection by default, which
+doesn't work with BPF. This was reported once before[0], but it seems the
+flag to explicitly turn off the stack protector wasn't added to the
+Makefile, so do that now.
 
-Allow greater variance in a run and retry to further reduce flakiness.
+The symptom of this is compile errors like the following:
 
-Observed errors are one of two kinds: either the packet arrives too
-early or late at recv(), or it was dropped in the qdisc itself and the
-recv() call times out.
+error: <unknown>:0:0: in function bpf_prog1 i32 (%struct.__sk_buff*): A call to built-in function '__stack_chk_fail' is not supported.
 
-In the latter case, the qdisc queues a notification to the error
-queue of the send socket. Also explicitly report this cause.
+[0] https://www.spinics.net/lists/netdev/msg556400.html
 
-Link: https://lore.kernel.org/netdev/CA+FuTSdYOnJCsGuj43xwV1jxvYsaoa_LzHQF9qMyhrkLrivxKw@mail.gmail.com
-Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Signed-off-by: Toke Høiland-Jørgensen <toke@redhat.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Link: https://lore.kernel.org/bpf/20191216103819.359535-1-toke@redhat.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/net/so_txtime.c  | 84 +++++++++++++++++++++++-
- tools/testing/selftests/net/so_txtime.sh |  9 ++-
- 2 files changed, 88 insertions(+), 5 deletions(-)
+ samples/bpf/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/testing/selftests/net/so_txtime.c b/tools/testing/selftests/net/so_txtime.c
-index 34df4c8882afb..383bac05ac324 100644
---- a/tools/testing/selftests/net/so_txtime.c
-+++ b/tools/testing/selftests/net/so_txtime.c
-@@ -12,7 +12,11 @@
- #include <arpa/inet.h>
- #include <error.h>
- #include <errno.h>
-+#include <inttypes.h>
- #include <linux/net_tstamp.h>
-+#include <linux/errqueue.h>
-+#include <linux/ipv6.h>
-+#include <linux/tcp.h>
- #include <stdbool.h>
- #include <stdlib.h>
- #include <stdio.h>
-@@ -28,7 +32,7 @@ static int	cfg_clockid	= CLOCK_TAI;
- static bool	cfg_do_ipv4;
- static bool	cfg_do_ipv6;
- static uint16_t	cfg_port	= 8000;
--static int	cfg_variance_us	= 2000;
-+static int	cfg_variance_us	= 4000;
+diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
+index e7ad48c605e0f..6d1df7117e117 100644
+--- a/samples/bpf/Makefile
++++ b/samples/bpf/Makefile
+@@ -219,6 +219,7 @@ BTF_LLVM_PROBE := $(shell echo "int main() { return 0; }" | \
+ 			  readelf -S ./llvm_btf_verify.o | grep BTF; \
+ 			  /bin/rm -f ./llvm_btf_verify.o)
  
- static uint64_t glob_tstart;
- 
-@@ -43,6 +47,9 @@ static struct timed_send cfg_in[MAX_NUM_PKT];
- static struct timed_send cfg_out[MAX_NUM_PKT];
- static int cfg_num_pkt;
- 
-+static int cfg_errq_level;
-+static int cfg_errq_type;
-+
- static uint64_t gettime_ns(void)
- {
- 	struct timespec ts;
-@@ -90,13 +97,15 @@ static void do_send_one(int fdt, struct timed_send *ts)
- 
- }
- 
--static void do_recv_one(int fdr, struct timed_send *ts)
-+static bool do_recv_one(int fdr, struct timed_send *ts)
- {
- 	int64_t tstop, texpect;
- 	char rbuf[2];
- 	int ret;
- 
- 	ret = recv(fdr, rbuf, sizeof(rbuf), 0);
-+	if (ret == -1 && errno == EAGAIN)
-+		return true;
- 	if (ret == -1)
- 		error(1, errno, "read");
- 	if (ret != 1)
-@@ -113,6 +122,8 @@ static void do_recv_one(int fdr, struct timed_send *ts)
- 
- 	if (labs(tstop - texpect) > cfg_variance_us)
- 		error(1, 0, "exceeds variance (%d us)", cfg_variance_us);
-+
-+	return false;
- }
- 
- static void do_recv_verify_empty(int fdr)
-@@ -125,12 +136,70 @@ static void do_recv_verify_empty(int fdr)
- 		error(1, 0, "recv: not empty as expected (%d, %d)", ret, errno);
- }
- 
-+static void do_recv_errqueue_timeout(int fdt)
-+{
-+	char control[CMSG_SPACE(sizeof(struct sock_extended_err)) +
-+		     CMSG_SPACE(sizeof(struct sockaddr_in6))] = {0};
-+	char data[sizeof(struct ipv6hdr) +
-+		  sizeof(struct tcphdr) + 1];
-+	struct sock_extended_err *err;
-+	struct msghdr msg = {0};
-+	struct iovec iov = {0};
-+	struct cmsghdr *cm;
-+	int64_t tstamp = 0;
-+	int ret;
-+
-+	iov.iov_base = data;
-+	iov.iov_len = sizeof(data);
-+
-+	msg.msg_iov = &iov;
-+	msg.msg_iovlen = 1;
-+
-+	msg.msg_control = control;
-+	msg.msg_controllen = sizeof(control);
-+
-+	while (1) {
-+		ret = recvmsg(fdt, &msg, MSG_ERRQUEUE);
-+		if (ret == -1 && errno == EAGAIN)
-+			break;
-+		if (ret == -1)
-+			error(1, errno, "errqueue");
-+		if (msg.msg_flags != MSG_ERRQUEUE)
-+			error(1, 0, "errqueue: flags 0x%x\n", msg.msg_flags);
-+
-+		cm = CMSG_FIRSTHDR(&msg);
-+		if (cm->cmsg_level != cfg_errq_level ||
-+		    cm->cmsg_type != cfg_errq_type)
-+			error(1, 0, "errqueue: type 0x%x.0x%x\n",
-+				    cm->cmsg_level, cm->cmsg_type);
-+
-+		err = (struct sock_extended_err *)CMSG_DATA(cm);
-+		if (err->ee_origin != SO_EE_ORIGIN_TXTIME)
-+			error(1, 0, "errqueue: origin 0x%x\n", err->ee_origin);
-+		if (err->ee_code != ECANCELED)
-+			error(1, 0, "errqueue: code 0x%x\n", err->ee_code);
-+
-+		tstamp = ((int64_t) err->ee_data) << 32 | err->ee_info;
-+		tstamp -= (int64_t) glob_tstart;
-+		tstamp /= 1000 * 1000;
-+		fprintf(stderr, "send: pkt %c at %" PRId64 "ms dropped\n",
-+				data[ret - 1], tstamp);
-+
-+		msg.msg_flags = 0;
-+		msg.msg_controllen = sizeof(control);
-+	}
-+
-+	error(1, 0, "recv: timeout");
-+}
-+
- static void setsockopt_txtime(int fd)
- {
- 	struct sock_txtime so_txtime_val = { .clockid = cfg_clockid };
- 	struct sock_txtime so_txtime_val_read = { 0 };
- 	socklen_t vallen = sizeof(so_txtime_val);
- 
-+	so_txtime_val.flags = SOF_TXTIME_REPORT_ERRORS;
-+
- 	if (setsockopt(fd, SOL_SOCKET, SO_TXTIME,
- 		       &so_txtime_val, sizeof(so_txtime_val)))
- 		error(1, errno, "setsockopt txtime");
-@@ -194,7 +263,8 @@ static void do_test(struct sockaddr *addr, socklen_t alen)
- 	for (i = 0; i < cfg_num_pkt; i++)
- 		do_send_one(fdt, &cfg_in[i]);
- 	for (i = 0; i < cfg_num_pkt; i++)
--		do_recv_one(fdr, &cfg_out[i]);
-+		if (do_recv_one(fdr, &cfg_out[i]))
-+			do_recv_errqueue_timeout(fdt);
- 
- 	do_recv_verify_empty(fdr);
- 
-@@ -280,6 +350,10 @@ int main(int argc, char **argv)
- 		addr6.sin6_family = AF_INET6;
- 		addr6.sin6_port = htons(cfg_port);
- 		addr6.sin6_addr = in6addr_loopback;
-+
-+		cfg_errq_level = SOL_IPV6;
-+		cfg_errq_type = IPV6_RECVERR;
-+
- 		do_test((void *)&addr6, sizeof(addr6));
- 	}
- 
-@@ -289,6 +363,10 @@ int main(int argc, char **argv)
- 		addr4.sin_family = AF_INET;
- 		addr4.sin_port = htons(cfg_port);
- 		addr4.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-+
-+		cfg_errq_level = SOL_IP;
-+		cfg_errq_type = IP_RECVERR;
-+
- 		do_test((void *)&addr4, sizeof(addr4));
- 	}
- 
-diff --git a/tools/testing/selftests/net/so_txtime.sh b/tools/testing/selftests/net/so_txtime.sh
-index 5aa519328a5b5..3f7800eaecb1e 100755
---- a/tools/testing/selftests/net/so_txtime.sh
-+++ b/tools/testing/selftests/net/so_txtime.sh
-@@ -5,7 +5,12 @@
- 
- # Run in network namespace
- if [[ $# -eq 0 ]]; then
--	./in_netns.sh $0 __subprocess
-+	if ! ./in_netns.sh $0 __subprocess; then
-+		# test is time sensitive, can be flaky
-+		echo "test failed: retry once"
-+		./in_netns.sh $0 __subprocess
-+	fi
-+
- 	exit $?
- fi
- 
-@@ -18,7 +23,7 @@ tc qdisc add dev lo root fq
- ./so_txtime -4 -6 -c mono a,10,b,20 a,10,b,20
- ./so_txtime -4 -6 -c mono a,20,b,10 b,20,a,20
- 
--if tc qdisc replace dev lo root etf clockid CLOCK_TAI delta 200000; then
-+if tc qdisc replace dev lo root etf clockid CLOCK_TAI delta 400000; then
- 	! ./so_txtime -4 -6 -c tai a,-1 a,-1
- 	! ./so_txtime -4 -6 -c tai a,0 a,0
- 	./so_txtime -4 -6 -c tai a,10 a,10
++BPF_EXTRA_CFLAGS += -fno-stack-protector
+ ifneq ($(BTF_LLVM_PROBE),)
+ 	EXTRA_CFLAGS += -g
+ else
 -- 
 2.20.1
 
