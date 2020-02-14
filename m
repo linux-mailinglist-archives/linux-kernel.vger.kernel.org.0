@@ -2,110 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2911915D7EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 14:07:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 827C215D802
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 14:11:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729080AbgBNNHP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 08:07:15 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41885 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbgBNNHO (ORCPT
+        id S1729274AbgBNNLG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 08:11:06 -0500
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.21]:14641 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729032AbgBNNLG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 08:07:14 -0500
-Received: by mail-pg1-f194.google.com with SMTP id 70so4938999pgf.8
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 05:07:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sWFS4TNhJKgHZrDSECdzXUZNDwqr6aFn1S5mWIDwQBk=;
-        b=OuPmM2ZtbzcJifbGfpmNJkAMu7JOjVo8qf78dtwRyCp6R9h4aGUAY238tzIDq/PZTJ
-         2mad+QBySu6AOzjHTA3LsQibYqLqm4Vc+2OJOKxeojb5tVv9XGGIJuxUYLcAA3PlEwf7
-         MhSVK7TgpSzcdtwZ5CsJzDSyYcfK8Y/vovIrhknpUE3Oh9Y1ZNlvo7JhSEPO8uMCN2S/
-         OyiR/czzDgBCUJ8WTd6mO5iSsv/JoMX0r00Ne4BP6HmsW9ZaeACbBMekiupO5Fmg3ANC
-         h8IUY4bbld8TPM65KUSCLv6r/d4DirfpiLyn2ede9FFO5516l4akjhv8Iw2rmGMqLfXR
-         O+Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sWFS4TNhJKgHZrDSECdzXUZNDwqr6aFn1S5mWIDwQBk=;
-        b=my6YOlIZtc8VtS2ikWhJdUn20Kr0JGDViMTb/I6i4zqt7KACHWcOnmYo8+jMRL7uMb
-         1SlZvJtBlg7hyR7b3Y1VZz7vYv/BIeZSAXBsL+Dsn9h3ku4pzQ3xc8N2juaUNl7lSkyl
-         IonMAgotlBgPj6gRjNNVbbobp/w2kKh+rsGHa215ME7wPNmmwaz87cUpzHIwdOAShWdJ
-         olaQqN6tRjZep+yNgh3+kQycLN5h56tX+c2dw4sKmT9xJO38+zXMYtcJAG19JIG7EJrM
-         7/LFp2z2bfNZaw1WA40VctnS+wevX+aX2YgQ5YV0zUf21AGv1qt+HcT8TKq6rI6EruOs
-         vUmA==
-X-Gm-Message-State: APjAAAVVUI01jcuAm3TXDIvC2c/ooFdynMuM3lmsyBXRds6OKT+YTBfO
-        VsFuVG5+2/nu/hW4+mt4FHU=
-X-Google-Smtp-Source: APXvYqw3lNsRSUEHDuHqCpxq1u9xqLkNp7mqqa6f68ukq8YcUBTUSvo7LiRC6M0bWJpLzU4kVuHp6A==
-X-Received: by 2002:a63:691:: with SMTP id 139mr3563463pgg.325.1581685634099;
-        Fri, 14 Feb 2020 05:07:14 -0800 (PST)
-Received: from localhost ([106.51.232.35])
-        by smtp.gmail.com with ESMTPSA id s13sm12576162pjp.1.2020.02.14.05.07.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Feb 2020 05:07:13 -0800 (PST)
-Date:   Fri, 14 Feb 2020 18:37:10 +0530
-From:   afzal mohammed <afzal.mohd.ma@gmail.com>
-To:     Greg Ungerer <gerg@linux-m68k.org>
-Cc:     linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: Re: [PATCH 06/18] m68k: Replace setup_irq() by request_irq()
-Message-ID: <20200214130710.GA5675@afzalpc>
-References: <cover.1581478323.git.afzal.mohd.ma@gmail.com>
- <1941c51a3237c4e9df6d9a5b87615cd1bba572dc.1581478324.git.afzal.mohd.ma@gmail.com>
- <bfb9c0bb-0c16-5516-d788-bbd2ca86fc58@linux-m68k.org>
+        Fri, 14 Feb 2020 08:11:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1581685864;
+        s=strato-dkim-0002; d=gerhold.net;
+        h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=2iQ0MT1U9CEUvMzykFVhxG6fcNf9dbQ++m0bxVU4LOA=;
+        b=QRZ7tfWuQfyu5XGZM09W/LcqlGoQbNr6aG9UHgzwDMla0AS3p9vd9Sq9daOEEzh4tR
+        ZL2cqg1PqduwWmVOZXliFNVK6FwueobZO2nN+H1kd0hNPv5DLRWguKsragdSp38JrXPe
+        F9YOqs3mXjIAKReHt4rf2yspQ2Otq4mdq1vRpciAnm8YSKPuSpGnWCF0vit2ZqLkjLxp
+        c2ZRJ8aSwyJYUjX5bKurs6TuuNttLPt5kJZDnm2PGctrK3jd91N10EQa9OEDYkGIxUu3
+        6XGOqZzUs7byzWdcsbQcjHLfM+bEc2bMQ/XjkMaybV++8DyqeD1cdp+rAXK5ju1HNo4t
+        ub5A==
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u266EZF6ORJKAk/tplRN"
+X-RZG-CLASS-ID: mo00
+Received: from gerhold.net
+        by smtp.strato.de (RZmta 46.1.12 AUTH)
+        with ESMTPSA id a01fe9w1ED81Prk
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Fri, 14 Feb 2020 14:08:01 +0100 (CET)
+Date:   Fri, 14 Feb 2020 14:07:55 +0100
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: extcon: sm5502: USB-HOST (OTG) detection not working
+Message-ID: <20200214130755.GA93507@gerhold.net>
+References: <20191011145015.GA127238@gerhold.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bfb9c0bb-0c16-5516-d788-bbd2ca86fc58@linux-m68k.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20191011145015.GA127238@gerhold.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+Hi Chanwoo,
 
-On Thu, Feb 13, 2020 at 05:11:17PM +1000, Greg Ungerer wrote:
-> On 12/2/20 6:03 pm, afzal mohammed wrote:
+On Fri, Oct 11, 2019 at 04:50:21PM +0200, Stephan Gerhold wrote:
+> Hi Chanwoo,
+> 
+> after getting interrupts working on my Samsung Galaxy A5 (2015),
+> I am now trying to make the extcon device detect USB-HOST=1
+> when I plug in an USB OTG adapter.
+> 
+> At the moment, the driver can sucessfully detect:
+>   - USB=1 + SDP=1 when I detect the phone to a PC
+>   - DCP=1 when I connect it to an AC charger
+> but it does not set USB-HOST=1 when I connect the USB OTG adapter.
+> 
+> It seems to be a problem in the sm5502 driver, since I do get an
+> SM5502_IRQ_INT1_ATTACH interrupt when I plug in the USB OTG adapter.
+> 
+> In this case, SM5502 reports:
+>     SM5502_REG_ADC = 0x00 (SM5502_MUIC_ADC_GROUND)
+>     SM5502_REG_DEV_TYPE1 = 0x80 (SM5502_REG_DEV_TYPE1_USB_OTG_MASK)
+> 
+> However, at the moment the sm5502 driver ignores all attach events with
+> SM5502_REG_ADC == SM5502_MUIC_ADC_GROUND:
+> 
+> 	/*
+> 	 * If ADC is SM5502_MUIC_ADC_GROUND(0x0), external cable hasn't
+> 	 * connected with to MUIC device.
+> 	 */
+> 	cable_type = adc & SM5502_REG_ADC_MASK;
+> 	if (cable_type == SM5502_MUIC_ADC_GROUND)
+> 		return SM5502_MUIC_ADC_GROUND;
+> 
+> However, I definitely have a cable attached in this case...
+> 
+> The sm5502 driver seems to expect SM5502_REG_ADC == SM5502_MUIC_ADC_OPEN.
+> Any idea why my hardware reports ADC_GROUND for the USB OTG adapter
+> instead of ADC_OPEN?
+> 
+> Confusingly, the driver used in the original downstream kernel of
+> the Samsung Galaxy A5 [1] calls ADC = 0x00 "ADC_OTG" instead of
+> "ADC_GROUND".
+> So getting ADC = 0x00 may not be entirely unexpected here...
+> 
+> Thanks in advance,
+> Stephan
+> 
+> [1]: https://github.com/msm8916-mainline/android_kernel_qcom_msm8916/blob/SM-A500FU/drivers/misc/sm5502.c#L195
 
-> > diff --git a/arch/m68k/68000/timers.c b/arch/m68k/68000/timers.c
-> > index 71ddb4c98726..7a55d664592e 100644
-> > --- a/arch/m68k/68000/timers.c
-> > +++ b/arch/m68k/68000/timers.c
-> > @@ -68,12 +68,6 @@ static irqreturn_t hw_tick(int irq, void *dummy)
-> >   /***************************************************************************/
-> > -static struct irqaction m68328_timer_irq = {
-> > -	.name	 = "timer",
-> > -	.flags	 = IRQF_TIMER,
-> > -	.handler = hw_tick,
-> > -};
-> > -
-> >   /***************************************************************************/
+This mail is quite old now but I am still confused by this.
+Any idea what could be wrong here?
 
-> Remove this comment line as well. Nothing left to separate
-> between those comment lines with the struct initialization removed.
+I was not able to find any datasheet for SM5502 unfortunately...
 
-i will remove above as well as the similar ones.
-
-Because  you mentioned, i checked cocci o/p (change above was provided
-as is by running cocci). Cocci by default removes the comment line you
-mentioned. Initially that was the way cocci was run, but then it was
-observed that in another file in addition to removing associated
-comments, it was swallowing other unrelated comments that were living
-together. Also sometimes associated comments had to be retained, just
-that it had to be relocated near added code (that is not applicable in
-this case). So i ran cocci w/ "--keep-comments" option & decided to
-manually handle comment related, in this file i failed noticing the
-unneeded comment line during self review.
-
-> I tested this out on ColdFire hardware I have, worked fine.
-> All defconfigs still compiled too.
-
-Thanks for testing
-
-Regards
-afzal
+Thanks,
+Stephan
