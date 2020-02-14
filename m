@@ -2,125 +2,340 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4443615D7B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 13:53:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A307315D7CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 13:56:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728522AbgBNMxA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 07:53:00 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:38204 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728036AbgBNMxA (ORCPT
+        id S1729282AbgBNMzy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 07:55:54 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:38759 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729246AbgBNMzt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 07:53:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=t2we0PE4j6hAaHGoRgkn7qXbGUrgutHcAcfmLiFHRWw=; b=gTW/aS9oGb4ii6R1UHqUFibeIu
-        HVTlUHsngfOl9p+lAIz8fXKg99K2QHktwiGApSQmfU10a7bdqhzAhmD/8mYBb5RplQ/wddEhRhzl0
-        UNibu0iKNWFvS84vncGjjwRiK1z9eBJ/+SzzOYlZ10UQZ9v0Ejx1MMzf3TwX3kJe9loNp7x8nQ/lY
-        TSSsBT/V5FBv8iIEl2xXglUvl1zqVe7Varbf7SW4CmyuMHqzwKjI5zh9ZuoY4ZB+Y4DyEeWrFXRA/
-        F6Di1f7xaHUaoIasPGQ97V6TFm9+AoLrfJ8+X6z/HVa+f5IG+f9A3oYt1HaM/89g4T5irIK6X0xo5
-        GwzrEyIg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j2aSh-0002aC-Kx; Fri, 14 Feb 2020 12:52:51 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E1DF330067C;
-        Fri, 14 Feb 2020 13:50:59 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id C73B620B33554; Fri, 14 Feb 2020 13:52:49 +0100 (CET)
-Date:   Fri, 14 Feb 2020 13:52:49 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Douglas Raillard <douglas.raillard@arm.com>
-Cc:     linux-kernel@vger.kernel.org, rjw@rjwysocki.net,
-        viresh.kumar@linaro.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        qperret@google.com, linux-pm@vger.kernel.org
-Subject: Re: [RFC PATCH v4 0/6] sched/cpufreq: Make schedutil energy aware
-Message-ID: <20200214125249.GL14879@hirez.programming.kicks-ass.net>
-References: <20200122173538.1142069-1-douglas.raillard@arm.com>
- <c49ca012-bb3e-580d-9b45-359caa67d7c1@arm.com>
- <20200210132133.GH14897@hirez.programming.kicks-ass.net>
- <4a664419-f5a6-882f-83ee-5bbf20ff33d3@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4a664419-f5a6-882f-83ee-5bbf20ff33d3@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 14 Feb 2020 07:55:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581684948;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:in-reply-to:in-reply-to:references:references;
+        bh=7ru/6nhMHiYVk3JxzyUQLK5rcTm79OfGE8uzADOwxvU=;
+        b=H0uu/1EBQAYL3HhV+uaf5c85DONrrjRI0RD+cBPoZjboq7e1H4aW/pXmVmQPITeKkZmc30
+        DgVBuq7co+fV889xGzJn6ZxAR2gIuX7Q76s/Zupzfa7WPE0aMwicUktGR8kNLXNulejgjJ
+        oV5039GeE7gFQ0JePxFUjxtTuQjWavw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-278-NaK_KGUGO8m9K7SprXbQzQ-1; Fri, 14 Feb 2020 07:55:42 -0500
+X-MC-Unique: NaK_KGUGO8m9K7SprXbQzQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E7800477;
+        Fri, 14 Feb 2020 12:55:40 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-117-39.ams2.redhat.com [10.36.117.39])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3E8E919E9C;
+        Fri, 14 Feb 2020 12:55:36 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 6CAB546A0; Fri, 14 Feb 2020 13:55:35 +0100 (CET)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     gurchetansingh@chromium.org, olvaffe@gmail.com,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v4 1/6] drm/virtio: rework notification for better batching
+Date:   Fri, 14 Feb 2020 13:55:30 +0100
+Message-Id: <20200214125535.26349-2-kraxel@redhat.com>
+In-Reply-To: <20200214125535.26349-1-kraxel@redhat.com>
+References: <20200214125535.26349-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 05:49:48PM +0000, Douglas Raillard wrote:
-> On 2/10/20 1:21 PM, Peter Zijlstra wrote:
+Drop the virtio_gpu_{disable,enable}_notify().  Add a new
+virtio_gpu_notify() call instead, which must be called whenever
+the driver wants make sure the host is notified needed.
 
-> > assuming cs[].cost ~ f^3, and given our cost_margin ~ f, that leaves a
-> > factor f^2 on the table.
-> 
-> I'm guessing that you arrived to `cost_margin ~ f` this way:
-> 
-> cost_margin = util - util_est_enqueued
-> cost_margin = util - constant
-> 
-> # with constant small enough
-> cost_margin ~ util
-> 
-> # with util ~ 1/f
-> cost_margin ~ 1/f
-> 
-> In the case you describe, `constant` is actually almost equal to `util`
-> so `cost_margin ~! util`, and that series assumes frequency invariant
-> util_avg so `util !~ 1/f` (I'll probably have to fix that).
+Drop automatic notification from command submission.  Add
+virtio_gpu_notify() calls after each command query instead.
+This allows more fine-grained control over host notification
+and can move around the notify calls in subsequent patches to
+batch command submissions. With this in place it is also
+possible to make notification optional for userspace ioctls.
 
-Nah, perhaps already clear from the other email; but it goes like:
+Page flip batching goes away (temporarely).
 
-  boost = util_avg - util_est
-  cost_margin = boost * C = C * util_avg - C * util_est
+v3:
+ - move batching to separate patches.
+v2:
+ - rebase to latest drm-misc-next.
+ - use "if (!atomic_read())".
+ - add review & test tags.
 
-And since u ~ f (per schedutil construction), cost_margin is a function
-linear in either u or f.
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Reviewed-by: Gurchetan Singh <gurchetansingh@chromium.org>
+Tested-by: Gurchetan Singh <gurchetansingh@chromium.org>
+Reviewed-by: Chia-I Wu <olvaffe@gmail.com>
+---
+ drivers/gpu/drm/virtio/virtgpu_drv.h   |  6 ++--
+ drivers/gpu/drm/virtio/virtgpu_plane.c |  4 ---
+ drivers/gpu/drm/virtio/virtgpu_vq.c    | 50 ++++++++++++++++----------
+ 3 files changed, 33 insertions(+), 27 deletions(-)
 
-> > So the higher the min_freq, the less effective the boost.
-> 
-> Yes, since the boost is allowing a fixed amount of extra power. Higher
-> OPPs are less efficient than lower ones, so if min_freq is high, we
-> won't speed up as much as if min_freq was low.
-> 
-> > Maybe it all works out in practise, but I'm missing a big picture
-> 
-> Here is a big picture :)
-> 
-> https://gist.github.com/douglas-raillard-arm/f76586428836ec70c6db372993e0b731#file-ramp_boost-svg
-> 
-> The board is a Juno R0, with a periodic task pinned on a big CPU
-> (capa=1024):
-> * phase 1:  5% duty cycle (=51 PELT units)
-> * phase 2: 75% duty cycle (=768 PELT units)
-> 
-> Legend:
-> * blue square wave: when the task executes (like in kernelshark)
-> * base_cost = cost of frequency as selected by schedutil in normal
-> operations
-> * allowed_cost = base_cost + cost_margin
-> * util = util_avg
-> 
-> note: the small gaps right after the duty cycle transition between
-> t=4.15 and 4.25 are due to sugov task executing, so there is no dequeue
-> and no util_est update.
-
-I'm confused by the giant drop in frequency (blue line) around 4.18
-
-schedutil shouldn't select f < max(util_avg, util_est), which is
-violated right about there.
-
-I'm also confused by the base_cost line; how can that be flat until
-somewhere around 4.16. Sadly there is no line for pure schedutil freq to
-compare against.
-
-Other than that, I can see the green line is consistent with
-util_avg>util_est, and how it help grow the frequency (blue).
+diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
+index af9403e1cf78..2f6c4ccbfd14 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_drv.h
++++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
+@@ -179,8 +179,7 @@ struct virtio_gpu_device {
+ 	struct virtio_gpu_queue cursorq;
+ 	struct kmem_cache *vbufs;
+ 
+-	bool disable_notify;
+-	bool pending_notify;
++	atomic_t pending_commands;
+ 
+ 	struct ida	resource_ida;
+ 
+@@ -335,8 +334,7 @@ void virtio_gpu_dequeue_ctrl_func(struct work_struct *work);
+ void virtio_gpu_dequeue_cursor_func(struct work_struct *work);
+ void virtio_gpu_dequeue_fence_func(struct work_struct *work);
+ 
+-void virtio_gpu_disable_notify(struct virtio_gpu_device *vgdev);
+-void virtio_gpu_enable_notify(struct virtio_gpu_device *vgdev);
++void virtio_gpu_notify(struct virtio_gpu_device *vgdev);
+ 
+ /* virtio_gpu_display.c */
+ void virtio_gpu_modeset_init(struct virtio_gpu_device *vgdev);
+diff --git a/drivers/gpu/drm/virtio/virtgpu_plane.c b/drivers/gpu/drm/virtio/virtgpu_plane.c
+index d1c3f5fbfee4..08b2e4127eb3 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_plane.c
++++ b/drivers/gpu/drm/virtio/virtgpu_plane.c
+@@ -154,8 +154,6 @@ static void virtio_gpu_primary_plane_update(struct drm_plane *plane,
+ 	if (!drm_atomic_helper_damage_merged(old_state, plane->state, &rect))
+ 		return;
+ 
+-	virtio_gpu_disable_notify(vgdev);
+-
+ 	bo = gem_to_virtio_gpu_obj(plane->state->fb->obj[0]);
+ 	if (bo->dumb)
+ 		virtio_gpu_update_dumb_bo(vgdev, plane->state, &rect);
+@@ -186,8 +184,6 @@ static void virtio_gpu_primary_plane_update(struct drm_plane *plane,
+ 				      rect.y1,
+ 				      rect.x2 - rect.x1,
+ 				      rect.y2 - rect.y1);
+-
+-	virtio_gpu_enable_notify(vgdev);
+ }
+ 
+ static int virtio_gpu_cursor_prepare_fb(struct drm_plane *plane,
+diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
+index 67caecde623e..6cc259cfa517 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_vq.c
++++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
+@@ -329,7 +329,6 @@ static void virtio_gpu_queue_ctrl_sgs(struct virtio_gpu_device *vgdev,
+ 				      int incnt)
+ {
+ 	struct virtqueue *vq = vgdev->ctrlq.vq;
+-	bool notify = false;
+ 	int ret, idx;
+ 
+ 	if (!drm_dev_enter(vgdev->ddev, &idx)) {
+@@ -368,16 +367,10 @@ static void virtio_gpu_queue_ctrl_sgs(struct virtio_gpu_device *vgdev,
+ 
+ 	trace_virtio_gpu_cmd_queue(vq, virtio_gpu_vbuf_ctrl_hdr(vbuf));
+ 
+-	notify = virtqueue_kick_prepare(vq);
++	atomic_inc(&vgdev->pending_commands);
+ 
+ 	spin_unlock(&vgdev->ctrlq.qlock);
+ 
+-	if (notify) {
+-		if (vgdev->disable_notify)
+-			vgdev->pending_notify = true;
+-		else
+-			virtqueue_notify(vq);
+-	}
+ 	drm_dev_exit(idx);
+ }
+ 
+@@ -434,19 +427,20 @@ static void virtio_gpu_queue_fenced_ctrl_buffer(struct virtio_gpu_device *vgdev,
+ 	}
+ }
+ 
+-void virtio_gpu_disable_notify(struct virtio_gpu_device *vgdev)
++void virtio_gpu_notify(struct virtio_gpu_device *vgdev)
+ {
+-	vgdev->disable_notify = true;
+-}
++	bool notify;
+ 
+-void virtio_gpu_enable_notify(struct virtio_gpu_device *vgdev)
+-{
+-	vgdev->disable_notify = false;
+-
+-	if (!vgdev->pending_notify)
++	if (!atomic_read(&vgdev->pending_commands))
+ 		return;
+-	vgdev->pending_notify = false;
+-	virtqueue_notify(vgdev->ctrlq.vq);
++
++	spin_lock(&vgdev->ctrlq.qlock);
++	atomic_set(&vgdev->pending_commands, 0);
++	notify = virtqueue_kick_prepare(vgdev->ctrlq.vq);
++	spin_unlock(&vgdev->ctrlq.qlock);
++
++	if (notify)
++		virtqueue_notify(vgdev->ctrlq.vq);
+ }
+ 
+ static void virtio_gpu_queue_ctrl_buffer(struct virtio_gpu_device *vgdev,
+@@ -520,6 +514,7 @@ void virtio_gpu_cmd_create_resource(struct virtio_gpu_device *vgdev,
+ 	cmd_p->height = cpu_to_le32(params->height);
+ 
+ 	virtio_gpu_queue_fenced_ctrl_buffer(vgdev, vbuf, fence);
++	virtio_gpu_notify(vgdev);
+ 	bo->created = true;
+ }
+ 
+@@ -549,6 +544,7 @@ void virtio_gpu_cmd_unref_resource(struct virtio_gpu_device *vgdev,
+ 
+ 	vbuf->resp_cb_data = bo;
+ 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
++	virtio_gpu_notify(vgdev);
+ }
+ 
+ void virtio_gpu_cmd_set_scanout(struct virtio_gpu_device *vgdev,
+@@ -571,6 +567,7 @@ void virtio_gpu_cmd_set_scanout(struct virtio_gpu_device *vgdev,
+ 	cmd_p->r.y = cpu_to_le32(y);
+ 
+ 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
++	virtio_gpu_notify(vgdev);
+ }
+ 
+ void virtio_gpu_cmd_resource_flush(struct virtio_gpu_device *vgdev,
+@@ -592,6 +589,7 @@ void virtio_gpu_cmd_resource_flush(struct virtio_gpu_device *vgdev,
+ 	cmd_p->r.y = cpu_to_le32(y);
+ 
+ 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
++	virtio_gpu_notify(vgdev);
+ }
+ 
+ void virtio_gpu_cmd_transfer_to_host_2d(struct virtio_gpu_device *vgdev,
+@@ -624,6 +622,7 @@ void virtio_gpu_cmd_transfer_to_host_2d(struct virtio_gpu_device *vgdev,
+ 	cmd_p->r.y = cpu_to_le32(y);
+ 
+ 	virtio_gpu_queue_fenced_ctrl_buffer(vgdev, vbuf, fence);
++	virtio_gpu_notify(vgdev);
+ }
+ 
+ static void
+@@ -647,6 +646,7 @@ virtio_gpu_cmd_resource_attach_backing(struct virtio_gpu_device *vgdev,
+ 	vbuf->data_size = sizeof(*ents) * nents;
+ 
+ 	virtio_gpu_queue_fenced_ctrl_buffer(vgdev, vbuf, fence);
++	virtio_gpu_notify(vgdev);
+ }
+ 
+ static void virtio_gpu_cmd_get_display_info_cb(struct virtio_gpu_device *vgdev,
+@@ -779,6 +779,7 @@ int virtio_gpu_cmd_get_display_info(struct virtio_gpu_device *vgdev)
+ 	vgdev->display_info_pending = true;
+ 	cmd_p->type = cpu_to_le32(VIRTIO_GPU_CMD_GET_DISPLAY_INFO);
+ 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
++	virtio_gpu_notify(vgdev);
+ 	return 0;
+ }
+ 
+@@ -802,6 +803,7 @@ int virtio_gpu_cmd_get_capset_info(struct virtio_gpu_device *vgdev, int idx)
+ 	cmd_p->hdr.type = cpu_to_le32(VIRTIO_GPU_CMD_GET_CAPSET_INFO);
+ 	cmd_p->capset_index = cpu_to_le32(idx);
+ 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
++	virtio_gpu_notify(vgdev);
+ 	return 0;
+ }
+ 
+@@ -877,6 +879,7 @@ int virtio_gpu_cmd_get_capset(struct virtio_gpu_device *vgdev,
+ 	cmd_p->capset_version = cpu_to_le32(version);
+ 	*cache_p = cache_ent;
+ 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
++	virtio_gpu_notify(vgdev);
+ 
+ 	return 0;
+ }
+@@ -904,6 +907,7 @@ int virtio_gpu_cmd_get_edids(struct virtio_gpu_device *vgdev)
+ 		cmd_p->hdr.type = cpu_to_le32(VIRTIO_GPU_CMD_GET_EDID);
+ 		cmd_p->scanout = cpu_to_le32(scanout);
+ 		virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
++		virtio_gpu_notify(vgdev);
+ 	}
+ 
+ 	return 0;
+@@ -924,6 +928,7 @@ void virtio_gpu_cmd_context_create(struct virtio_gpu_device *vgdev, uint32_t id,
+ 	strncpy(cmd_p->debug_name, name, sizeof(cmd_p->debug_name) - 1);
+ 	cmd_p->debug_name[sizeof(cmd_p->debug_name) - 1] = 0;
+ 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
++	virtio_gpu_notify(vgdev);
+ }
+ 
+ void virtio_gpu_cmd_context_destroy(struct virtio_gpu_device *vgdev,
+@@ -938,6 +943,7 @@ void virtio_gpu_cmd_context_destroy(struct virtio_gpu_device *vgdev,
+ 	cmd_p->hdr.type = cpu_to_le32(VIRTIO_GPU_CMD_CTX_DESTROY);
+ 	cmd_p->hdr.ctx_id = cpu_to_le32(id);
+ 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
++	virtio_gpu_notify(vgdev);
+ }
+ 
+ void virtio_gpu_cmd_context_attach_resource(struct virtio_gpu_device *vgdev,
+@@ -956,7 +962,7 @@ void virtio_gpu_cmd_context_attach_resource(struct virtio_gpu_device *vgdev,
+ 	cmd_p->hdr.ctx_id = cpu_to_le32(ctx_id);
+ 	cmd_p->resource_id = cpu_to_le32(bo->hw_res_handle);
+ 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
+-
++	virtio_gpu_notify(vgdev);
+ }
+ 
+ void virtio_gpu_cmd_context_detach_resource(struct virtio_gpu_device *vgdev,
+@@ -975,6 +981,7 @@ void virtio_gpu_cmd_context_detach_resource(struct virtio_gpu_device *vgdev,
+ 	cmd_p->hdr.ctx_id = cpu_to_le32(ctx_id);
+ 	cmd_p->resource_id = cpu_to_le32(bo->hw_res_handle);
+ 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
++	virtio_gpu_notify(vgdev);
+ }
+ 
+ void
+@@ -1006,6 +1013,8 @@ virtio_gpu_cmd_resource_create_3d(struct virtio_gpu_device *vgdev,
+ 	cmd_p->flags = cpu_to_le32(params->flags);
+ 
+ 	virtio_gpu_queue_fenced_ctrl_buffer(vgdev, vbuf, fence);
++	virtio_gpu_notify(vgdev);
++
+ 	bo->created = true;
+ }
+ 
+@@ -1039,6 +1048,7 @@ void virtio_gpu_cmd_transfer_to_host_3d(struct virtio_gpu_device *vgdev,
+ 	cmd_p->level = cpu_to_le32(level);
+ 
+ 	virtio_gpu_queue_fenced_ctrl_buffer(vgdev, vbuf, fence);
++	virtio_gpu_notify(vgdev);
+ }
+ 
+ void virtio_gpu_cmd_transfer_from_host_3d(struct virtio_gpu_device *vgdev,
+@@ -1065,6 +1075,7 @@ void virtio_gpu_cmd_transfer_from_host_3d(struct virtio_gpu_device *vgdev,
+ 	cmd_p->level = cpu_to_le32(level);
+ 
+ 	virtio_gpu_queue_fenced_ctrl_buffer(vgdev, vbuf, fence);
++	virtio_gpu_notify(vgdev);
+ }
+ 
+ void virtio_gpu_cmd_submit(struct virtio_gpu_device *vgdev,
+@@ -1088,6 +1099,7 @@ void virtio_gpu_cmd_submit(struct virtio_gpu_device *vgdev,
+ 	cmd_p->size = cpu_to_le32(data_size);
+ 
+ 	virtio_gpu_queue_fenced_ctrl_buffer(vgdev, vbuf, fence);
++	virtio_gpu_notify(vgdev);
+ }
+ 
+ int virtio_gpu_object_attach(struct virtio_gpu_device *vgdev,
+-- 
+2.18.2
 
