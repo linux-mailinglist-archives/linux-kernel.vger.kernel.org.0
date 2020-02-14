@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52B0B15E302
+	by mail.lfdr.de (Postfix) with ESMTP id BCD4C15E303
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:26:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406295AbgBNQ0G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:26:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60552 "EHLO mail.kernel.org"
+        id S2405675AbgBNQ0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:26:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405777AbgBNQYA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:24:00 -0500
+        id S2405796AbgBNQYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:24:04 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BCCC92478A;
-        Fri, 14 Feb 2020 16:23:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3085B2478B;
+        Fri, 14 Feb 2020 16:24:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697439;
-        bh=0QNtSPm+AoXsO2JMqGV5AUqG6/mCDO+xNWdo/XCLGBg=;
+        s=default; t=1581697443;
+        bh=f3FB7IBIjO231L3q8BcFPZb+tImF0hnLMlwnUYFEUMk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m0p1IFqa5/JZlvBZ/pd/CBId/XDIyoH9bNWTlSJPgizoK18UnSg3kVpxeqW4FxVZJ
-         D8GGrJaNZFvgrH/Kh5Ahpk0OPer5WZVpqPoeEfNIjZ3DJL0yvNnl6N0wYFajS7xkxc
-         E9lEzLC3wR93BV1Mhq3JCTOAjfwumjP32JAiOF6s=
+        b=XjDj1Qiltypln4sA2+UOCHvid5d7VB+lY1KbuQ6AYdhhmNWzVCJuETCD2c+Fy1uvH
+         w8B6P6NmwIlqz27ZFsc9KuyoHJ7LaSd1OxPQyX19h3/IKf9ppU1vmDUhqOAPeHx/Ja
+         16tyel7Bv8dAlhdPFWxraSboFcUR42AbLoXT9RrI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Qing Xu <m1s5p6688@gmail.com>, Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 125/141] mwifiex: Fix possible buffer overflows in mwifiex_cmd_append_vsie_tlv()
-Date:   Fri, 14 Feb 2020 11:21:05 -0500
-Message-Id: <20200214162122.19794-125-sashal@kernel.org>
+Cc:     Vasily Averin <vvs@virtuozzo.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 129/141] ftrace: fpid_next() should increase position index
+Date:   Fri, 14 Feb 2020 11:21:09 -0500
+Message-Id: <20200214162122.19794-129-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214162122.19794-1-sashal@kernel.org>
 References: <20200214162122.19794-1-sashal@kernel.org>
@@ -43,41 +43,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qing Xu <m1s5p6688@gmail.com>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-[ Upstream commit b70261a288ea4d2f4ac7cd04be08a9f0f2de4f4d ]
+[ Upstream commit e4075e8bdffd93a9b6d6e1d52fabedceeca5a91b ]
 
-mwifiex_cmd_append_vsie_tlv() calls memcpy() without checking
-the destination size may trigger a buffer overflower,
-which a local user could use to cause denial of service
-or the execution of arbitrary code.
-Fix it by putting the length check before calling memcpy().
+if seq_file .next fuction does not change position index,
+read after some lseek can generate unexpected output.
 
-Signed-off-by: Qing Xu <m1s5p6688@gmail.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Without patch:
+ # dd bs=4 skip=1 if=/sys/kernel/tracing/set_ftrace_pid
+ dd: /sys/kernel/tracing/set_ftrace_pid: cannot skip to specified offset
+ id
+ no pid
+ 2+1 records in
+ 2+1 records out
+ 10 bytes copied, 0.000213285 s, 46.9 kB/s
+
+Notice the "id" followed by "no pid".
+
+With the patch:
+ # dd bs=4 skip=1 if=/sys/kernel/tracing/set_ftrace_pid
+ dd: /sys/kernel/tracing/set_ftrace_pid: cannot skip to specified offset
+ id
+ 0+1 records in
+ 0+1 records out
+ 3 bytes copied, 0.000202112 s, 14.8 kB/s
+
+Notice that it only prints "id" and not the "no pid" afterward.
+
+Link: http://lkml.kernel.org/r/4f87c6ad-f114-30bb-8506-c32274ce2992@virtuozzo.com
+
+https://bugzilla.kernel.org/show_bug.cgi?id=206283
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/marvell/mwifiex/scan.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ kernel/trace/ftrace.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/scan.c b/drivers/net/wireless/marvell/mwifiex/scan.c
-index 828c6f5eb83c8..5fde2e2f1fea8 100644
---- a/drivers/net/wireless/marvell/mwifiex/scan.c
-+++ b/drivers/net/wireless/marvell/mwifiex/scan.c
-@@ -2878,6 +2878,13 @@ mwifiex_cmd_append_vsie_tlv(struct mwifiex_private *priv,
- 			vs_param_set->header.len =
- 				cpu_to_le16((((u16) priv->vs_ie[id].ie[1])
- 				& 0x00FF) + 2);
-+			if (le16_to_cpu(vs_param_set->header.len) >
-+				MWIFIEX_MAX_VSIE_LEN) {
-+				mwifiex_dbg(priv->adapter, ERROR,
-+					    "Invalid param length!\n");
-+				break;
-+			}
-+
- 			memcpy(vs_param_set->ie, priv->vs_ie[id].ie,
- 			       le16_to_cpu(vs_param_set->header.len));
- 			*buffer += le16_to_cpu(vs_param_set->header.len) +
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 71a40e5c3a9f0..2ae98f8bce81b 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -5455,9 +5455,10 @@ static void *fpid_next(struct seq_file *m, void *v, loff_t *pos)
+ 	struct trace_array *tr = m->private;
+ 	struct trace_pid_list *pid_list = rcu_dereference_sched(tr->function_pids);
+ 
+-	if (v == FTRACE_NO_PIDS)
++	if (v == FTRACE_NO_PIDS) {
++		(*pos)++;
+ 		return NULL;
+-
++	}
+ 	return trace_pid_next(pid_list, v, pos);
+ }
+ 
 -- 
 2.20.1
 
