@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 443A015DF90
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:10:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EB4615DF93
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:10:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391227AbgBNQJM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:09:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33172 "EHLO mail.kernel.org"
+        id S2390884AbgBNQJR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:09:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391154AbgBNQJC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:09:02 -0500
+        id S2389963AbgBNQJK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:09:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9B6F2187F;
-        Fri, 14 Feb 2020 16:09:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 988AD24681;
+        Fri, 14 Feb 2020 16:09:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696541;
-        bh=3CRFopYcnMfNlMr6Cl0kK49QtkB2fzwmfKth7Fj+OI8=;
+        s=default; t=1581696549;
+        bh=JisXudK13Jk6Kspb8myNxbaBJxcABpU3ZxO3USpbX0w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z7FhN9Q/WmJtXRhbfvhKpy3sVWWqawUVw0yIuyueXdlNGKJytDCgdt2pz9+OWvIQO
-         qt4iLd12IYT3bwTJsHomidY8Nows5Yqr/bGcR2P1UGOyvkw5ZQTyd0wxXKxQFcaUqd
-         yBVjqvHJDnGgCMa4oOTgi7c1VQUG3A/r5vxxlMdE=
+        b=P2Ry/xdDrIas9EIQFjWqwaivTqr4jLFRNEbauVx4khClXSiL7ubtnUgha2OnPDFuF
+         u/jS8/WwYWM1KrJqyyfVUOdGrfB5xKbuFaTg7U7LkCKL29a0TDgqK5nWKIn+2hPXTp
+         8Wkw0iqbYAe8nh7OJCLzq5tOmCHCTIgRtV6jPU9M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Boqun Feng <boqun.feng@gmail.com>, linux-hyperv@vger.kernel.org,
-        Michael Kelley <mikelley@microsoft.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.4 336/459] clocksource/drivers/hyper-v: Reserve PAGE_SIZE space for tsc page
-Date:   Fri, 14 Feb 2020 10:59:46 -0500
-Message-Id: <20200214160149.11681-336-sashal@kernel.org>
+Cc:     Lokesh Vutla <lokeshvutla@ti.com>, Suman Anna <s-anna@ti.com>,
+        Tero Kristo <t-kristo@ti.com>, Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 342/459] arm64: dts: ti: k3-j721e-main: Add missing power-domains for smmu
+Date:   Fri, 14 Feb 2020 10:59:52 -0500
+Message-Id: <20200214160149.11681-342-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -44,69 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Boqun Feng <boqun.feng@gmail.com>
+From: Lokesh Vutla <lokeshvutla@ti.com>
 
-[ Upstream commit ddc61bbc45017726a2b450350d476b4dc5ae25ce ]
+[ Upstream commit 3f03a58b25753843ce9e4511e9e246c51bd11011 ]
 
-Currently, the reserved size for a tsc page is 4K, which is enough for
-communicating with hypervisor. However, in the case where we want to
-export the tsc page to userspace (e.g. for vDSO to read the
-clocksource), the tsc page should be at least PAGE_SIZE, otherwise, when
-PAGE_SIZE is larger than 4K, extra kernel data will be mapped into
-userspace, which means leaking kernel information.
+Add power-domains entry for smmu, so that the it is accessible as long
+as the driver is active. Without this device shutdown is throwing the
+below warning:
+"[   44.736348] arm-smmu-v3 36600000.smmu: failed to clear cr0"
 
-Therefore reserve PAGE_SIZE space for tsc_pg as a preparation for the
-vDSO support of ARM64 in the future. Also, while at it, replace all
-reference to tsc_pg with hv_get_tsc_page() since it should be the only
-interface to access tsc page.
-
-Signed-off-by: Boqun Feng (Microsoft) <boqun.feng@gmail.com>
-Cc: linux-hyperv@vger.kernel.org
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Link: https://lore.kernel.org/r/20191126021723.4710-1-boqun.feng@gmail.com
+Reported-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clocksource/hyperv_timer.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/ti/k3-j721e-main.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clocksource/hyperv_timer.c b/drivers/clocksource/hyperv_timer.c
-index 2317d4e3daaff..bcac936fa62bd 100644
---- a/drivers/clocksource/hyperv_timer.c
-+++ b/drivers/clocksource/hyperv_timer.c
-@@ -213,17 +213,20 @@ EXPORT_SYMBOL_GPL(hv_stimer_global_cleanup);
- struct clocksource *hyperv_cs;
- EXPORT_SYMBOL_GPL(hyperv_cs);
- 
--static struct ms_hyperv_tsc_page tsc_pg __aligned(PAGE_SIZE);
-+static union {
-+	struct ms_hyperv_tsc_page page;
-+	u8 reserved[PAGE_SIZE];
-+} tsc_pg __aligned(PAGE_SIZE);
- 
- struct ms_hyperv_tsc_page *hv_get_tsc_page(void)
- {
--	return &tsc_pg;
-+	return &tsc_pg.page;
- }
- EXPORT_SYMBOL_GPL(hv_get_tsc_page);
- 
- static u64 notrace read_hv_clock_tsc(struct clocksource *arg)
- {
--	u64 current_tick = hv_read_tsc_page(&tsc_pg);
-+	u64 current_tick = hv_read_tsc_page(hv_get_tsc_page());
- 
- 	if (current_tick == U64_MAX)
- 		hv_get_time_ref_count(current_tick);
-@@ -278,7 +281,7 @@ static bool __init hv_init_tsc_clocksource(void)
- 		return false;
- 
- 	hyperv_cs = &hyperv_cs_tsc;
--	phys_addr = virt_to_phys(&tsc_pg);
-+	phys_addr = virt_to_phys(hv_get_tsc_page());
- 
- 	/*
- 	 * The Hyper-V TLFS specifies to preserve the value of reserved
+diff --git a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
+index 698ef9a1d5b75..96445111e3985 100644
+--- a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
+@@ -43,6 +43,7 @@
+ 	smmu0: smmu@36600000 {
+ 		compatible = "arm,smmu-v3";
+ 		reg = <0x0 0x36600000 0x0 0x100000>;
++		power-domains = <&k3_pds 229 TI_SCI_PD_EXCLUSIVE>;
+ 		interrupt-parent = <&gic500>;
+ 		interrupts = <GIC_SPI 772 IRQ_TYPE_EDGE_RISING>,
+ 			     <GIC_SPI 768 IRQ_TYPE_EDGE_RISING>;
 -- 
 2.20.1
 
