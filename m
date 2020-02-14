@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02E1815DD8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:59:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96E1C15DD93
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:59:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388920AbgBNP70 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:59:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44050 "EHLO mail.kernel.org"
+        id S2388946AbgBNP7e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:59:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44154 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388015AbgBNP7Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:59:24 -0500
+        id S2388015AbgBNP70 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:59:26 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28D032187F;
-        Fri, 14 Feb 2020 15:59:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80330222C4;
+        Fri, 14 Feb 2020 15:59:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695963;
-        bh=TWzxZdh+1w/QN9Qql6vnCAe/bCVTUibqvLYrczzLyag=;
+        s=default; t=1581695966;
+        bh=J82JkTofHDDCykmw5UKeVbFfNcfQzl+TMlBOTvHz5nY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Uf4EA8KhkiAxOXNZIZEd7nS+SZEggYgo1OYDjto16Yq0X5dSRq7A9osnJbbY0Qp1r
-         PW12hzNT2N8qkdjcXxAGkqOGbyUM/ehjorYLrLWxVDhkOfapG14VFnX7EobhF2nUyD
-         T+NcIhWTnjNFPC0qfFSeQRFfCpbv1usuKAEuJpK4=
+        b=mMOp6lKuD+1QT6tWM8mn4FfAFvV/Vqp43Eworx3qTm/0pAiDhTem/wsJnCe1B5GW/
+         /kIrFs+998Cum4NqrtjBmdGo9StU51OmvRwWxCJF6Ni1szqVqMofTAlH8pjzII6LXE
+         hVES5TrDIYCjdJLR5CRyMYG3oqVBytkSQ/e7fisg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marc Zyngier <maz@kernel.org>, Heyi Guo <guoheyi@huawei.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.5 492/542] irqchip/gic-v3: Only provision redistributors that are enabled in ACPI
-Date:   Fri, 14 Feb 2020 10:48:04 -0500
-Message-Id: <20200214154854.6746-492-sashal@kernel.org>
+Cc:     Ben Skeggs <bskeggs@redhat.com>, Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.5 494/542] drm/nouveau/disp/nv50-: prevent oops when no channel method map provided
+Date:   Fri, 14 Feb 2020 10:48:06 -0500
+Message-Id: <20200214154854.6746-494-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -42,68 +42,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marc Zyngier <maz@kernel.org>
+From: Ben Skeggs <bskeggs@redhat.com>
 
-[ Upstream commit 926b5dfa6b8dc666ff398044af6906b156e1d949 ]
+[ Upstream commit 0e6176c6d286316e9431b4f695940cfac4ffe6c2 ]
 
-We currently allocate redistributor region structures for
-individual redistributors when ACPI doesn't present us with
-compact MMIO regions covering multiple redistributors.
+The implementations for most channel types contains a map of methods to
+priv registers in order to provide debugging info when a disp exception
+has been raised.
 
-It turns out that we allocate these structures even when
-the redistributor is flagged as disabled by ACPI. It works
-fine until someone actually tries to tarse one of these
-structures, and access the corresponding MMIO region.
+This info is missing from the implementation of PIO channels as they're
+rather simplistic already, however, if an exception is raised by one of
+them, we'd end up triggering a NULL-pointer deref.  Not ideal...
 
-Instead, track the number of enabled redistributors, and
-only allocate what is required. This makes sure that there
-is no invalid data to misuse.
-
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Reported-by: Heyi Guo <guoheyi@huawei.com>
-Tested-by: Heyi Guo <guoheyi@huawei.com>
-Link: https://lore.kernel.org/r/20191216062745.63397-1-guoheyi@huawei.com
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=206299
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/irqchip/irq-gic-v3.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index d6218012097b4..3f5baa5043db4 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -1821,6 +1821,7 @@ static struct
- 	struct redist_region *redist_regs;
- 	u32 nr_redist_regions;
- 	bool single_redist;
-+	int enabled_rdists;
- 	u32 maint_irq;
- 	int maint_irq_mode;
- 	phys_addr_t vcpu_base;
-@@ -1915,8 +1916,10 @@ static int __init gic_acpi_match_gicc(union acpi_subtable_headers *header,
- 	 * If GICC is enabled and has valid gicr base address, then it means
- 	 * GICR base is presented via GICC
- 	 */
--	if ((gicc->flags & ACPI_MADT_ENABLED) && gicc->gicr_base_address)
-+	if ((gicc->flags & ACPI_MADT_ENABLED) && gicc->gicr_base_address) {
-+		acpi_data.enabled_rdists++;
- 		return 0;
-+	}
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c b/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
+index bcf32d92ee5a9..50e3539f33d22 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
+@@ -74,6 +74,8 @@ nv50_disp_chan_mthd(struct nv50_disp_chan *chan, int debug)
  
- 	/*
- 	 * It's perfectly valid firmware can pass disabled GICC entry, driver
-@@ -1946,8 +1949,10 @@ static int __init gic_acpi_count_gicr_regions(void)
+ 	if (debug > subdev->debug)
+ 		return;
++	if (!mthd)
++		return;
  
- 	count = acpi_table_parse_madt(ACPI_MADT_TYPE_GENERIC_INTERRUPT,
- 				      gic_acpi_match_gicc, 0);
--	if (count > 0)
-+	if (count > 0) {
- 		acpi_data.single_redist = true;
-+		count = acpi_data.enabled_rdists;
-+	}
- 
- 	return count;
- }
+ 	for (i = 0; (list = mthd->data[i].mthd) != NULL; i++) {
+ 		u32 base = chan->head * mthd->addr;
 -- 
 2.20.1
 
