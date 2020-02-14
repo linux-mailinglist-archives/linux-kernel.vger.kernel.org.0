@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A3F515E494
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:36:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 669FD15E385
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:30:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393735AbgBNQgt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:36:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60830 "EHLO mail.kernel.org"
+        id S2406361AbgBNQ0P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:26:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405481AbgBNQYJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:24:09 -0500
+        id S2405599AbgBNQYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:24:12 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6CDCD24793;
-        Fri, 14 Feb 2020 16:24:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 237E82476A;
+        Fri, 14 Feb 2020 16:24:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697449;
-        bh=ZuyCav726QAW4wkyACC8DfsuCQ/gIOxRELipMzd9PM8=;
+        s=default; t=1581697452;
+        bh=RQoQ8frxlbI1QjilHnH3/LmzPQ60HcJMzxc+C18UY60=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vNqlZqRjE4bO7KvUM+Uh6uvk80I/WhveHQDmubRN/xJke2OVKM9iLqRzaUCJGNHry
-         h/XvHDPDLpZKpr7azmB+coqjTmMGb+eeyhtsAV8/5vYDUbj1VeM2bxowkf4VkOR2oL
-         ulQ4Hg67G6zgjUP7tt2hT2ycXorRKcB/1fnxwfU8=
+        b=sIMm4P02YtTpDd08G3z4cXkkvmTvG10Msji6l/Fm7koiVTTB6qJi35mjMUbdPRGoc
+         oPjFACIpR2cBdZx669ZAnaV454WsrL65gJla7uocv47dMQqepczPaWiD8hE4PjYY9i
+         UA8saW8uKe9rv77Dby89O/73uuE3/ta6dQAtpPak=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.9 133/141] lib/scatterlist.c: adjust indentation in __sg_alloc_table
-Date:   Fri, 14 Feb 2020 11:21:13 -0500
-Message-Id: <20200214162122.19794-133-sashal@kernel.org>
+Cc:     Coly Li <colyli@suse.de>, kbuild test robot <lkp@intel.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-bcache@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 135/141] bcache: explicity type cast in bset_bkey_last()
+Date:   Fri, 14 Feb 2020 11:21:15 -0500
+Message-Id: <20200214162122.19794-135-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214162122.19794-1-sashal@kernel.org>
 References: <20200214162122.19794-1-sashal@kernel.org>
@@ -45,49 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Coly Li <colyli@suse.de>
 
-[ Upstream commit 4e456fee215677584cafa7f67298a76917e89c64 ]
+[ Upstream commit 7c02b0055f774ed9afb6e1c7724f33bf148ffdc0 ]
 
-Clang warns:
+In bset.h, macro bset_bkey_last() is defined as,
+    bkey_idx((struct bkey *) (i)->d, (i)->keys)
 
-  ../lib/scatterlist.c:314:5: warning: misleading indentation; statement
-  is not part of the previous 'if' [-Wmisleading-indentation]
-                          return -ENOMEM;
-                          ^
-  ../lib/scatterlist.c:311:4: note: previous statement is here
-                          if (prv)
-                          ^
-  1 warning generated.
+Parameter i can be variable type of data structure, the macro always
+works once the type of struct i has member 'd' and 'keys'.
 
-This warning occurs because there is a space before the tab on this
-line.  Remove it so that the indentation is consistent with the Linux
-kernel coding style and clang no longer warns.
+bset_bkey_last() is also used in macro csum_set() to calculate the
+checksum of a on-disk data structure. When csum_set() is used to
+calculate checksum of on-disk bcache super block, the parameter 'i'
+data type is struct cache_sb_disk. Inside struct cache_sb_disk (also in
+struct cache_sb) the member keys is __u16 type. But bkey_idx() expects
+unsigned int (a 32bit width), so there is problem when sending
+parameters via stack to call bkey_idx().
 
-Link: http://lkml.kernel.org/r/20191218033606.11942-1-natechancellor@gmail.com
-Link: https://github.com/ClangBuiltLinux/linux/issues/830
-Fixes: edce6820a9fd ("scatterlist: prevent invalid free when alloc fails")
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Sparse tool from Intel 0day kbuild system reports this incompatible
+problem. bkey_idx() is part of user space API, so the simplest fix is
+to cast the (i)->keys to unsigned int type in macro bset_bkey_last().
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Coly Li <colyli@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/scatterlist.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/bcache/bset.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/lib/scatterlist.c b/lib/scatterlist.c
-index a854cc39f084f..ef8c14a56d0a7 100644
---- a/lib/scatterlist.c
-+++ b/lib/scatterlist.c
-@@ -317,7 +317,7 @@ int __sg_alloc_table(struct sg_table *table, unsigned int nents,
- 			if (prv)
- 				table->nents = ++table->orig_nents;
+diff --git a/drivers/md/bcache/bset.h b/drivers/md/bcache/bset.h
+index b935839ab79c6..f483041eed986 100644
+--- a/drivers/md/bcache/bset.h
++++ b/drivers/md/bcache/bset.h
+@@ -380,7 +380,8 @@ void bch_btree_keys_stats(struct btree_keys *, struct bset_stats *);
  
-- 			return -ENOMEM;
-+			return -ENOMEM;
- 		}
+ /* Bkey utility code */
  
- 		sg_init_table(sg, alloc_size);
+-#define bset_bkey_last(i)	bkey_idx((struct bkey *) (i)->d, (i)->keys)
++#define bset_bkey_last(i)	bkey_idx((struct bkey *) (i)->d, \
++					 (unsigned int)(i)->keys)
+ 
+ static inline struct bkey *bset_bkey_idx(struct bset *i, unsigned idx)
+ {
 -- 
 2.20.1
 
