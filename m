@@ -2,93 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38D6D15EAEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:17:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C6FD15EAF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:17:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393076AbgBNRRN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:17:13 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:42494 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391794AbgBNRRJ (ORCPT
+        id S2394660AbgBNRRx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:17:53 -0500
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:42649 "EHLO
+        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390394AbgBNRRo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 12:17:09 -0500
-Received: by mail-qk1-f194.google.com with SMTP id o28so8553197qkj.9;
-        Fri, 14 Feb 2020 09:17:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=IdlVcb5dgVZlXRPD8rS0Jjj+aVnIOc6gaR6g0J3FbHQ=;
-        b=ODwbG+2jhyTDeEphpYnP1t0/Mb0Zzo8HZnFx1Ag/PWLSFJxk35pcALKXDL2gz9QssI
-         XGpd6QU9jxYgpiAQ/1CbldrTlr0dP4TgK287aaDEyjK4Kj1Mx5ZM7hCTN6jccFtQpZMC
-         h8fl0XeptvgVV+h2z5hk0vPFGUNOaKT0NE6OawTpmp+slE3nNA04K+NQZTvjz6YlxEjj
-         gKSGXmQ39+QRRclyI/pipZ00ZT1svVygDCYVy8d24a8FF8aEnAJ/M5UsBpftzWN4HWlj
-         mPD8Bkdfj9Edh4Xog2Rl3GtPLK1BB54JpYSIHFSD5tqtvlntmVR7NN+aegN2xFumOcCq
-         /JXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=IdlVcb5dgVZlXRPD8rS0Jjj+aVnIOc6gaR6g0J3FbHQ=;
-        b=m2aaNWf5arAg72HHFyylmAIIAZuwRn8mb30tuigHyD0bENiukMFEKoM/tadFfj0du1
-         a3RYVsu9Fi4YUtjacSWC0uwpRZIOpn6dajDx7mv6fSt4kihSBYDLH/uGWi7HZ3RGMs5K
-         DrVEF2l0+ObRuoECkddaW9e+fHM64B8mmkx86W/Z8GiZRlANzfp1k7dBRdpDZZf4WyhZ
-         GEVi9wEyVbdFFkFYEdICli87Kn8E6IvJIv4fGMEc1vRqdep0IWHWqYUyo3tHnCMH1hph
-         GtIjxyFNlcuPRRKL0OUwDoUIT3tYrP13FXiNv8QuFxE0p+fji4cOQRJfWz2BOontHSQ/
-         cfOg==
-X-Gm-Message-State: APjAAAXjKiR8Ouox01TsWcgNXAkzUpZb/2TFMsXtkque83w7bxzeUkiJ
-        s0BMIwTxlStxUmBrnw98E6M=
-X-Google-Smtp-Source: APXvYqwYC4SuleWwqVLizbqWwlysvOv9/rnyvzpKK4TNN/ygM6V82+rcJbylqZJ/QXcqYfsMVy8sWQ==
-X-Received: by 2002:a05:620a:14a2:: with SMTP id x2mr3676073qkj.36.1581700627406;
-        Fri, 14 Feb 2020 09:17:07 -0800 (PST)
-Received: from localhost ([2600:380:5844:e924:5e59:2aee:b2b0:b657])
-        by smtp.gmail.com with ESMTPSA id u4sm3614110qkh.59.2020.02.14.09.17.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2020 09:17:06 -0800 (PST)
-Date:   Fri, 14 Feb 2020 12:17:04 -0500
-From:   Tejun Heo <tj@kernel.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH v2 3/3] mm: memcontrol: recursive memory.low protection
-Message-ID: <20200214171704.GN88887@mtj.thefacebook.com>
-References: <20200213074049.GA31689@dhcp22.suse.cz>
- <20200213135348.GF88887@mtj.thefacebook.com>
- <20200213154731.GE31689@dhcp22.suse.cz>
- <20200213155249.GI88887@mtj.thefacebook.com>
- <20200213163636.GH31689@dhcp22.suse.cz>
- <20200213165711.GJ88887@mtj.thefacebook.com>
- <20200214071537.GL31689@dhcp22.suse.cz>
- <20200214135728.GK88887@mtj.thefacebook.com>
- <20200214151318.GC31689@dhcp22.suse.cz>
- <20200214165311.GA253674@cmpxchg.org>
+        Fri, 14 Feb 2020 12:17:44 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R951e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0TpzUUPH_1581700648;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TpzUUPH_1581700648)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 15 Feb 2020 01:17:30 +0800
+Subject: Re: [v2 PATCH] mm: shmem: allow split THP when truncating THP
+ partially
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Hugh Dickins <hughd@google.com>, kirill.shutemov@linux.intel.com,
+        aarcange@redhat.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <1575420174-19171-1-git-send-email-yang.shi@linux.alibaba.com>
+ <alpine.LSU.2.11.1912041601270.12930@eggly.anvils>
+ <00f0bb7d-3c25-a65f-ea94-3e2de8e9bcdd@linux.alibaba.com>
+ <33768a7e-837d-3bcd-fb98-19727921d6fd@linux.alibaba.com>
+ <cd21f6a6-32a5-7d31-3bcd-4fc3f6cc0a84@linux.alibaba.com>
+ <20200214154021.kgeon6i76yfdbaa5@box>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <a6ee0597-dc5f-6aaf-4651-f588cc62599c@linux.alibaba.com>
+Date:   Fri, 14 Feb 2020 09:17:26 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200214165311.GA253674@cmpxchg.org>
+In-Reply-To: <20200214154021.kgeon6i76yfdbaa5@box>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 11:53:11AM -0500, Johannes Weiner wrote:
-> However, what you've really done just now is flattened the resource
-> hierarchy. You configured the_workload not just more important than
-> its sibling "misc", but you actually pulled it up the resource tree
-> and declared it more important than what's running in other sessions,
-> what users are running, and even the system software. Your cgroup tree
-> still reflects process ownership, but it doesn't actually reflect the
-> resource hierarchy you just configured.
 
-Just to second this point, anything moving in this direction will be a
-hard nack from me. We don't want use_hierarchy for cgroup2 and I'm
-baffled that this is even being suggested seriously. If we have
-learned *anything* from cgroup1's mistakes, this should be the one.
 
-Thanks.
+On 2/14/20 7:40 AM, Kirill A. Shutemov wrote:
+> On Thu, Feb 13, 2020 at 04:38:01PM -0800, Yang Shi wrote:
+>> Hi Kirill,
+>>
+>>
+>> Would you please help review this patch? I don't know why Hugh didn't
+>> response though I pinged him twice.
+> I have not noticed anything wrong with the patch.
+>
+> But the function gets ugly beyond the reason. Any chance you could
+> restructure it to get somewhat maintainable? (It's not easy, I know).
 
--- 
-tejun
+Yes, those goto looks not neat. I'm going to give it a try. Any 
+suggestion is absolutely welcome.
+
+>
+
