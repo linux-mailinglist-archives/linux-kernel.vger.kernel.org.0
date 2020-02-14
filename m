@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF29615EFA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:49:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF0DD15EFA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:49:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390216AbgBNRtK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:49:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44024 "EHLO mail.kernel.org"
+        id S2389816AbgBNRtF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:49:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388907AbgBNP7X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:59:23 -0500
+        id S2388555AbgBNP7Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:59:25 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCA2D24654;
-        Fri, 14 Feb 2020 15:59:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F4B42067D;
+        Fri, 14 Feb 2020 15:59:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695962;
-        bh=Yi9pz/ne4bmU10ZVJ5yO0fZjC2dJYgduYi8RFyzbxhU=;
+        s=default; t=1581695965;
+        bh=dkc3DcPnSfReoLTVZWTryE+VHvgOIvMyhzYaUJQ6280=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DIAINiU3O6pm5gi3fE3grBTqBVU74I64iHO+9TRBpc36+LapCl3czkStRgyecp2yl
-         CDPOgw9ruiAz+8HO/1Ft2JKhegGs/pt3zFOWtVY+26AOcgE+xW5iBhh+Hdt2co0bRZ
-         GWQvEs4hiDcT3xR8c/136QwlI9pcT2S+pU2Ysr5Y=
+        b=tSspkLhQDnihXztlp3RZJWkBJX+yAafv9LQy2bpOZzT1brmgkmrcJvHQcAp4TVi7Q
+         GFPTa0glBcAZZqxypUOyoBxU/jHhh6nScqDPK1WhrxouQCmEERCcnYoGqN5sm0wpYH
+         S+7f8RB2eeUQLh6oP3nVclTOepK8iFgxe21VlFJk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dor Askayo <dor.askayo@gmail.com>, Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.5 491/542] drm/amd/display: do not allocate display_mode_lib unnecessarily
-Date:   Fri, 14 Feb 2020 10:48:03 -0500
-Message-Id: <20200214154854.6746-491-sashal@kernel.org>
+Cc:     Bharata B Rao <bharata@linux.ibm.com>,
+        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Sasha Levin <sashal@kernel.org>, kvm-ppc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 5.5 493/542] KVM: PPC: Book3S HV: Release lock on page-out failure path
+Date:   Fri, 14 Feb 2020 10:48:05 -0500
+Message-Id: <20200214154854.6746-493-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -44,65 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dor Askayo <dor.askayo@gmail.com>
+From: Bharata B Rao <bharata@linux.ibm.com>
 
-[ Upstream commit bb67bfd2e7101bf2ac5327b0b7a847cd9fb9723f ]
+[ Upstream commit e032e3b55b6f487e48c163c5dca74086f147a169 ]
 
-This allocation isn't required and can fail when resuming from suspend.
+When migrate_vma_setup() fails in kvmppc_svm_page_out(),
+release kvm->arch.uvmem_lock before returning.
 
-Bug: https://gitlab.freedesktop.org/drm/amd/issues/1009
-Signed-off-by: Dor Askayo <dor.askayo@gmail.com>
-Reviewed-by: Leo Li <sunpeng.li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fixes: ca9f4942670 ("KVM: PPC: Book3S HV: Support for running secure guests")
+Signed-off-by: Bharata B Rao <bharata@linux.ibm.com>
+Reviewed-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/core/dc.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ arch/powerpc/kvm/book3s_hv_uvmem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc.c b/drivers/gpu/drm/amd/display/dc/core/dc.c
-index 32f31bf919151..8904a85186aab 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc.c
-@@ -2396,12 +2396,7 @@ void dc_set_power_state(
- 	enum dc_acpi_cm_power_state power_state)
- {
- 	struct kref refcount;
--	struct display_mode_lib *dml = kzalloc(sizeof(struct display_mode_lib),
--						GFP_KERNEL);
--
--	ASSERT(dml);
--	if (!dml)
--		return;
-+	struct display_mode_lib *dml;
+diff --git a/arch/powerpc/kvm/book3s_hv_uvmem.c b/arch/powerpc/kvm/book3s_hv_uvmem.c
+index 2de264fc31563..5914fbfa5e0a7 100644
+--- a/arch/powerpc/kvm/book3s_hv_uvmem.c
++++ b/arch/powerpc/kvm/book3s_hv_uvmem.c
+@@ -543,7 +543,7 @@ kvmppc_svm_page_out(struct vm_area_struct *vma, unsigned long start,
  
- 	switch (power_state) {
- 	case DC_ACPI_CM_POWER_STATE_D0:
-@@ -2423,6 +2418,12 @@ void dc_set_power_state(
- 		 * clean state, and dc hw programming optimizations will not
- 		 * cause any trouble.
- 		 */
-+		dml = kzalloc(sizeof(struct display_mode_lib),
-+				GFP_KERNEL);
-+
-+		ASSERT(dml);
-+		if (!dml)
-+			return;
+ 	ret = migrate_vma_setup(&mig);
+ 	if (ret)
+-		return ret;
++		goto out;
  
- 		/* Preserve refcount */
- 		refcount = dc->current_state->refcount;
-@@ -2436,10 +2437,10 @@ void dc_set_power_state(
- 		dc->current_state->refcount = refcount;
- 		dc->current_state->bw_ctx.dml = *dml;
- 
-+		kfree(dml);
-+
- 		break;
- 	}
--
--	kfree(dml);
- }
- 
- void dc_resume(struct dc *dc)
+ 	spage = migrate_pfn_to_page(*mig.src);
+ 	if (!spage || !(*mig.src & MIGRATE_PFN_MIGRATE))
 -- 
 2.20.1
 
