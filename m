@@ -2,102 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD63215ECE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:31:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D220315EFE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:51:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389838AbgBNRaF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:30:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59160 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390726AbgBNQHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:07:39 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 035832067D;
-        Fri, 14 Feb 2020 16:07:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696458;
-        bh=fnx7SJY0GVFCyYRf53hfDuerPrwVmGYhI3JvugVoLLg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xLOwjpdfHF7/xpWJya84oDKURXrNR1RVpOUNVnnhSmhbE36Q1AisPvkA9XE9/MyiR
-         5+laB7HTARYErJI064hu7uvDBUaHdSXCiMKY730qEgY5ABhyb6vtRzjVUFpPpc6gOt
-         4or7blyzk3egUFwZwNnG6rGNypc3cxqrEumma05k=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yongqiang Niu <yongqiang.niu@mediatek.com>,
-        Hsin-Yi Wang <hsinyi@chromium.org>, CK Hu <ck.hu@mediatek.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 270/459] drm/mediatek: Add gamma property according to hardware capability
-Date:   Fri, 14 Feb 2020 10:58:40 -0500
-Message-Id: <20200214160149.11681-270-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
-References: <20200214160149.11681-1-sashal@kernel.org>
+        id S2390032AbgBNRvH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:51:07 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:39840 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S2388139AbgBNP66 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:58:58 -0500
+Received: (qmail 3236 invoked by uid 2102); 14 Feb 2020 10:58:57 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 14 Feb 2020 10:58:57 -0500
+Date:   Fri, 14 Feb 2020 10:58:57 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Boqun Feng <boqun.feng@gmail.com>
+cc:     linux-kernel@vger.kernel.org,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Jonathan Corbet <corbet@lwn.net>, <linux-arch@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>
+Subject: Re: [RFC 3/3] tools/memory-model: Add litmus test for RMW +
+ smp_mb__after_atomic()
+In-Reply-To: <20200214040132.91934-4-boqun.feng@gmail.com>
+Message-ID: <Pine.LNX.4.44L0.2002141049310.1579-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yongqiang Niu <yongqiang.niu@mediatek.com>
+On Fri, 14 Feb 2020, Boqun Feng wrote:
 
-[ Upstream commit 4cebc1de506fa753301266a5a23bb21bca52ad3a ]
+> We already use a litmus test in atomic_t.txt to describe atomic RMW +
+> smp_mb__after_atomic() is "strong acquire" (both the read and the write
+> part is ordered).
 
-If there is no gamma function in the crtc
-display path, don't add gamma property
-for crtc
+"strong acquire" is not an appropriate description -- there is no such
+thing as a strong acquire in the LKMM -- nor is it a good name for the
+litmus test.  A better description would be "stronger than acquire", as
+in the sentence preceding the litmus test in atomic_t.txt.
 
-Fixes: 2f3f4dda747c ("drm/mediatek: Add gamma correction.")
-Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
-Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
-Signed-off-by: CK Hu <ck.hu@mediatek.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+>  So make it a litmus test in memory-model litmus-tests
+> directory, so that people can access the litmus easily.
+> 
+> Additionally, change the processor numbers "P1, P2" to "P0, P1" in
+> atomic_t.txt for the consistency with the processor numbers in the
+> litmus test, which herd can handle.
+> 
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> ---
+>  Documentation/atomic_t.txt                    |  6 ++--
+>  ...+mb__after_atomic-is-strong-acquire.litmus | 29 +++++++++++++++++++
+>  tools/memory-model/litmus-tests/README        |  5 ++++
+>  3 files changed, 37 insertions(+), 3 deletions(-)
+>  create mode 100644 tools/memory-model/litmus-tests/Atomic-RMW+mb__after_atomic-is-strong-acquire.litmus
+> 
+> diff --git a/Documentation/atomic_t.txt b/Documentation/atomic_t.txt
+> index ceb85ada378e..e3ad4e4cd9ed 100644
+> --- a/Documentation/atomic_t.txt
+> +++ b/Documentation/atomic_t.txt
+> @@ -238,14 +238,14 @@ strictly stronger than ACQUIRE. As illustrated:
+>    {
+>    }
+>  
+> -  P1(int *x, atomic_t *y)
+> +  P0(int *x, atomic_t *y)
+>    {
+>      r0 = READ_ONCE(*x);
+>      smp_rmb();
+>      r1 = atomic_read(y);
+>    }
+>  
+> -  P2(int *x, atomic_t *y)
+> +  P1(int *x, atomic_t *y)
+>    {
+>      atomic_inc(y);
+>      smp_mb__after_atomic();
+> @@ -260,7 +260,7 @@ This should not happen; but a hypothetical atomic_inc_acquire() --
+>  because it would not order the W part of the RMW against the following
+>  WRITE_ONCE.  Thus:
+>  
+> -  P1			P2
+> +  P0			P1
+>  
+>  			t = LL.acq *y (0)
+>  			t++;
+> diff --git a/tools/memory-model/litmus-tests/Atomic-RMW+mb__after_atomic-is-strong-acquire.litmus b/tools/memory-model/litmus-tests/Atomic-RMW+mb__after_atomic-is-strong-acquire.litmus
+> new file mode 100644
+> index 000000000000..e7216cf9d92a
+> --- /dev/null
+> +++ b/tools/memory-model/litmus-tests/Atomic-RMW+mb__after_atomic-is-strong-acquire.litmus
+> @@ -0,0 +1,29 @@
+> +C Atomic-RMW+mb__after_atomic-is-strong-acquire
+> +
+> +(*
+> + * Result: Never
+> + *
+> + * Test of an atomic RMW followed by a smp_mb__after_atomic() is
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-index 0b3d284d19569..e6c049f4f08bb 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-@@ -537,6 +537,7 @@ int mtk_drm_crtc_create(struct drm_device *drm_dev,
- 	int pipe = priv->num_pipes;
- 	int ret;
- 	int i;
-+	uint gamma_lut_size = 0;
- 
- 	if (!path)
- 		return 0;
-@@ -587,6 +588,9 @@ int mtk_drm_crtc_create(struct drm_device *drm_dev,
- 		}
- 
- 		mtk_crtc->ddp_comp[i] = comp;
-+
-+		if (comp->funcs && comp->funcs->gamma_set)
-+			gamma_lut_size = MTK_LUT_SIZE;
- 	}
- 
- 	mtk_crtc->layer_nr = mtk_ddp_comp_layer_nr(mtk_crtc->ddp_comp[0]);
-@@ -609,8 +613,10 @@ int mtk_drm_crtc_create(struct drm_device *drm_dev,
- 				NULL, pipe);
- 	if (ret < 0)
- 		return ret;
--	drm_mode_crtc_set_gamma_size(&mtk_crtc->base, MTK_LUT_SIZE);
--	drm_crtc_enable_color_mgmt(&mtk_crtc->base, 0, false, MTK_LUT_SIZE);
-+
-+	if (gamma_lut_size)
-+		drm_mode_crtc_set_gamma_size(&mtk_crtc->base, gamma_lut_size);
-+	drm_crtc_enable_color_mgmt(&mtk_crtc->base, 0, false, gamma_lut_size);
- 	priv->num_pipes++;
- 
- 	return 0;
--- 
-2.20.1
+s/Test of/Test that/
+
+> + * "strong-acquire": both the read and write part of the RMW is ordered before
+
+This should say "stronger than a normal acquire".  And "part" should be
+"parts", and "is ordered" should be "are ordered".
+
+Also, please try to arrange the line breaks so that the comment lines
+don't have vastly different lengths.
+
+Similar changes should be made for the text added to README.
+
+Alan Stern
 
