@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1314615F004
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:52:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B8B715EFD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:51:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389860AbgBNRwL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:52:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42814 "EHLO mail.kernel.org"
+        id S2388737AbgBNP6z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:58:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388300AbgBNP6k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:58:40 -0500
+        id S2388562AbgBNP6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:58:41 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD1712067D;
-        Fri, 14 Feb 2020 15:58:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F02F24681;
+        Fri, 14 Feb 2020 15:58:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695919;
-        bh=h4NPam10N3eignnDowrf5YwosObCNIFmYck3owIaMUg=;
+        s=default; t=1581695920;
+        bh=6zXHtMvPOWZZVz1WXnJVvUXrtnS42BuV0zOkgI24V18=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h6F4WA7jI0O6GA7aJ+/SXJ7jaPE7bPnYBtaGnqJJhw91YtpTU8fRfnNyVBkdM/fQU
-         Lkx6cVxx+ZeLKJfgjl/gqEoLKfAVFY8dR44doZIYEqdnwmt01D30adcO+MaFDmbYxk
-         5+fLkQX3ss6qh6Uj1HaFYBBbReTnpB/CVBZgOy4s=
+        b=QvnDNDAYwCbAmXqYxZQ2eXsky9o+7zuKJOc/9YTvBuSCTq1jKjLLD6PjVMsBj7M/w
+         fSYOuMkHd2Btx96ztDzRcKMtZFN+5nsPHSI1fVgXXAGKxQsNWUgnx6Tp7ZEFrV1Qxz
+         9wOEEECB0V5B6nw052FlfFvwddVBjZ745oABbX5I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dongdong Liu <liudongdong3@huawei.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 457/542] PCI/AER: Initialize aer_fifo
-Date:   Fri, 14 Feb 2020 10:47:29 -0500
-Message-Id: <20200214154854.6746-457-sashal@kernel.org>
+Cc:     Barret Rhoden <brho@google.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Sasha Levin <sashal@kernel.org>,
+        iommu@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 5.5 458/542] iommu/vt-d: Mark firmware tainted if RMRR fails sanity check
+Date:   Fri, 14 Feb 2020 10:47:30 -0500
+Message-Id: <20200214154854.6746-458-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -44,47 +45,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dongdong Liu <liudongdong3@huawei.com>
+From: Barret Rhoden <brho@google.com>
 
-[ Upstream commit d95f20c4f07020ebc605f3b46af4b6db9eb5fc99 ]
+[ Upstream commit f5a68bb0752e0cf77c06f53f72258e7beb41381b ]
 
-Previously we did not call INIT_KFIFO() for aer_fifo.  This leads to
-kfifo_put() sometimes returning 0 (queue full) when in fact it is not.
+RMRR entries describe memory regions that are DMA targets for devices
+outside the kernel's control.
 
-It is easy to reproduce the problem by using aer-inject:
+RMRR entries that fail the sanity check are pointing to regions of
+memory that the firmware did not tell the kernel are reserved or
+otherwise should not be used.
 
-  $ aer-inject -s :82:00.0 multiple-corr-nonfatal
+Instead of aborting DMAR processing, this commit marks the firmware
+as tainted. These RMRRs will still be identity mapped, otherwise,
+some devices, e.x. graphic devices, will not work during boot.
 
-The content of the multiple-corr-nonfatal file is as below:
-
-  AER
-  COR RCVR
-  HL 0 1 2 3
-  AER
-  UNCOR POISON_TLP
-  HL 4 5 6 7
-
-Fixes: 27c1ce8bbed7 ("PCI/AER: Use kfifo for tracking events instead of reimplementing it")
-Link: https://lore.kernel.org/r/1579767991-103898-1-git-send-email-liudongdong3@huawei.com
-Signed-off-by: Dongdong Liu <liudongdong3@huawei.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Barret Rhoden <brho@google.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Fixes: f036c7fa0ab60 ("iommu/vt-d: Check VT-d RMRR region in BIOS is reported as reserved")
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/pcie/aer.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/iommu/intel-iommu.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-index 1ca86f2e01665..4a818b07a1afb 100644
---- a/drivers/pci/pcie/aer.c
-+++ b/drivers/pci/pcie/aer.c
-@@ -1445,6 +1445,7 @@ static int aer_probe(struct pcie_device *dev)
- 		return -ENOMEM;
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index 541896ab3d086..dfedbb04f647d 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -4320,12 +4320,16 @@ int __init dmar_parse_one_rmrr(struct acpi_dmar_header *header, void *arg)
+ {
+ 	struct acpi_dmar_reserved_memory *rmrr;
+ 	struct dmar_rmrr_unit *rmrru;
+-	int ret;
  
- 	rpc->rpd = port;
-+	INIT_KFIFO(rpc->aer_fifo);
- 	set_service_data(dev, rpc);
+ 	rmrr = (struct acpi_dmar_reserved_memory *)header;
+-	ret = arch_rmrr_sanity_check(rmrr);
+-	if (ret)
+-		return ret;
++	if (arch_rmrr_sanity_check(rmrr))
++		WARN_TAINT(1, TAINT_FIRMWARE_WORKAROUND,
++			   "Your BIOS is broken; bad RMRR [%#018Lx-%#018Lx]\n"
++			   "BIOS vendor: %s; Ver: %s; Product Version: %s\n",
++			   rmrr->base_address, rmrr->end_address,
++			   dmi_get_system_info(DMI_BIOS_VENDOR),
++			   dmi_get_system_info(DMI_BIOS_VERSION),
++			   dmi_get_system_info(DMI_PRODUCT_VERSION));
  
- 	status = devm_request_threaded_irq(device, dev->irq, aer_irq, aer_isr,
+ 	rmrru = kzalloc(sizeof(*rmrru), GFP_KERNEL);
+ 	if (!rmrru)
 -- 
 2.20.1
 
