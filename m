@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6F9E15E983
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:08:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE01015E981
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:08:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389738AbgBNRHW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:07:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44066 "EHLO mail.kernel.org"
+        id S2394418AbgBNRHS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:07:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392324AbgBNQOb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:14:31 -0500
+        id S2392331AbgBNQOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:14:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB3CC246D0;
-        Fri, 14 Feb 2020 16:14:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2943F246AA;
+        Fri, 14 Feb 2020 16:14:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696870;
-        bh=09CLZHhNHNyqqmnT9B63fYO3RiBBKa0IUbToH8AhA4g=;
+        s=default; t=1581696872;
+        bh=sRSHDjt1zfYM/QXsil6XobwK6csvrwRtCUObDsVdiHU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TuVMW6DNusx4wcTRieqx/1aaJlGpuXF9WkHk+yZvhOY6iuQXECU9Vs07wWwMMPvGr
-         sxDCfBCvAFhpcLlZdIpparJfQhQD6GxRWkfhBvR8W1XxVgQt0Ixg8Wyp3Ewbk2j0V1
-         qctBqZFUiARry81EHLfbnMzf0KxKn6gufecnXqMI=
+        b=GR+PVliD6WrlZRwXqn8CtwjRUAm7uHpzJUik6/trYzBKaRgGKXwTJ9BZRK5Yaxkah
+         s3onfxipXSaUYFhGgHKQ5lcYSjNwH2xU6Osm5JjEtzH2WEWlH3ceBWS0mMZqSlnl1O
+         xAJtDQj/QwDqkFcSG7XuL5Iu5YFDJ+WGtP5jJzSE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>,
         alsa-devel@alsa-project.org
-Subject: [PATCH AUTOSEL 4.19 128/252] ALSA: sh: Fix unused variable warnings
-Date:   Fri, 14 Feb 2020 11:09:43 -0500
-Message-Id: <20200214161147.15842-128-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 130/252] ALSA: sh: Fix compile warning wrt const
+Date:   Fri, 14 Feb 2020 11:09:45 -0500
+Message-Id: <20200214161147.15842-130-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -44,50 +44,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 5da116f164ce265e397b8f59af5c39e4a61d61a5 ]
+[ Upstream commit f1dd4795b1523fbca7ab4344dd5a8bb439cc770d ]
 
-Remove unused variables that are left over after the conversion of new
-PCM ops:
-  sound/sh/sh_dac_audio.c:166:26: warning: unused variable 'runtime'
-  sound/sh/sh_dac_audio.c:186:26: warning: unused variable 'runtime'
-  sound/sh/sh_dac_audio.c:205:26: warning: unused variable 'runtime'
+A long-standing compile warning was seen during build test:
+  sound/sh/aica.c: In function 'load_aica_firmware':
+  sound/sh/aica.c:521:25: warning: passing argument 2 of 'spu_memload' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
 
-Fixes: 1cc2f8ba0b3e ("ALSA: sh: Convert to the new PCM ops")
-Link: https://lore.kernel.org/r/20200104110057.13875-1-tiwai@suse.de
+Fixes: 198de43d758c ("[ALSA] Add ALSA support for the SEGA Dreamcast PCM device")
+Link: https://lore.kernel.org/r/20200105144823.29547-69-tiwai@suse.de
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/sh/sh_dac_audio.c | 3 ---
- 1 file changed, 3 deletions(-)
+ sound/sh/aica.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/sh/sh_dac_audio.c b/sound/sh/sh_dac_audio.c
-index 834b2574786f5..6251b5e1b64a2 100644
---- a/sound/sh/sh_dac_audio.c
-+++ b/sound/sh/sh_dac_audio.c
-@@ -190,7 +190,6 @@ static int snd_sh_dac_pcm_copy(struct snd_pcm_substream *substream,
- {
- 	/* channel is not used (interleaved data) */
- 	struct snd_sh_dac *chip = snd_pcm_substream_chip(substream);
--	struct snd_pcm_runtime *runtime = substream->runtime;
+diff --git a/sound/sh/aica.c b/sound/sh/aica.c
+index ad3f71358486a..69ac44b335602 100644
+--- a/sound/sh/aica.c
++++ b/sound/sh/aica.c
+@@ -117,10 +117,10 @@ static void spu_memset(u32 toi, u32 what, int length)
+ }
  
- 	if (copy_from_user_toio(chip->data_buffer + pos, src, count))
- 		return -EFAULT;
-@@ -210,7 +209,6 @@ static int snd_sh_dac_pcm_copy_kernel(struct snd_pcm_substream *substream,
+ /* spu_memload - write to SPU address space */
+-static void spu_memload(u32 toi, void *from, int length)
++static void spu_memload(u32 toi, const void *from, int length)
  {
- 	/* channel is not used (interleaved data) */
- 	struct snd_sh_dac *chip = snd_pcm_substream_chip(substream);
--	struct snd_pcm_runtime *runtime = substream->runtime;
- 
- 	memcpy_toio(chip->data_buffer + pos, src, count);
- 	chip->buffer_end = chip->data_buffer + pos + count;
-@@ -229,7 +227,6 @@ static int snd_sh_dac_pcm_silence(struct snd_pcm_substream *substream,
- {
- 	/* channel is not used (interleaved data) */
- 	struct snd_sh_dac *chip = snd_pcm_substream_chip(substream);
--	struct snd_pcm_runtime *runtime = substream->runtime;
- 
- 	memset_io(chip->data_buffer + pos, 0, count);
- 	chip->buffer_end = chip->data_buffer + pos + count;
+ 	unsigned long flags;
+-	u32 *froml = from;
++	const u32 *froml = from;
+ 	u32 __iomem *to = (u32 __iomem *) (SPU_MEMORY_BASE + toi);
+ 	int i;
+ 	u32 val;
 -- 
 2.20.1
 
