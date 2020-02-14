@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 509AD15FAC6
+	by mail.lfdr.de (Postfix) with ESMTP id BB01C15FAC7
 	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 00:40:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728454AbgBNXjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 18:39:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59908 "EHLO mail.kernel.org"
+        id S1728467AbgBNXjZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 18:39:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728426AbgBNXjT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 18:39:19 -0500
+        id S1728426AbgBNXjX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 18:39:23 -0500
 Received: from paulmck-ThinkPad-P72.c.hoisthospitality.com (unknown [62.84.152.189])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 745B024673;
-        Fri, 14 Feb 2020 23:39:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 416842465D;
+        Fri, 14 Feb 2020 23:39:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581723558;
-        bh=Qp97dYZv0V8DJDuNUWv5M4dQNx+u3lirpGz1bG3dsO0=;
+        s=default; t=1581723562;
+        bh=Xp78FGzNqHuEO65RxH11Myi+um4691vIjCePxsT4fL8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FxY7OCjtYlOTPlwtP627oO0otjjB4dxwWwxbt0BmBxM/QZl4lLc97jsbhy53jOwBc
-         /tqzCgX8o5AHqUhWvxIRgrMKtLvXGvz2u7393hHbrAAfuh4LmUGxWGrlGoGCXOSJeq
-         xIZEVjxIcT1A1s6GFkQ5PjKg2bfIJRfeDiIXIY8c=
+        b=Y/dn2nGYNI4BjQ5yakLl8EhElCMCEX9iUSv9lB4rMBeJv2xcvk9YzokEOyjgJqywB
+         fVjLRrxx93LsARAJnaB4MfCqizPsRiRlGhoKOH6vbRsBW6p5ROEAbLuRglUZMQFKa4
+         ZX8x5/QK2XNATKO825VUXBnxkcXPNs8NWQCA5c14=
 From:   paulmck@kernel.org
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
@@ -33,9 +33,9 @@ Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         SeongJae Park <sjpark@amazon.de>,
         "Paul E . McKenney" <paulmck@kernel.org>
-Subject: [PATCH tip/core/rcu 3/9] doc/RCU/listRCU: Fix typos in a example code snippets
-Date:   Fri, 14 Feb 2020 15:38:57 -0800
-Message-Id: <20200214233903.12916-3-paulmck@kernel.org>
+Subject: [PATCH tip/core/rcu 4/9] doc/RCU/listRCU: Update example function name
+Date:   Fri, 14 Feb 2020 15:38:58 -0800
+Message-Id: <20200214233903.12916-4-paulmck@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <@@@>
 References: <@@@>
@@ -46,34 +46,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: SeongJae Park <sjpark@amazon.de>
 
+listRCU.rst document gives an example with 'ipc_lock()', but the
+function has dropped off by commit 82061c57ce93 ("ipc: drop
+ipc_lock()").  Because the main logic of 'ipc_lock()' has melded in
+'shm_lock()' by the commit, this commit updates the document to use
+'shm_lock()' instead.
+
+Reviewed-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
 Signed-off-by: SeongJae Park <sjpark@amazon.de>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- Documentation/RCU/listRCU.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Documentation/RCU/listRCU.rst | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/Documentation/RCU/listRCU.rst b/Documentation/RCU/listRCU.rst
-index 55d2b30..e768f56 100644
+index e768f56..2a643e2 100644
 --- a/Documentation/RCU/listRCU.rst
 +++ b/Documentation/RCU/listRCU.rst
-@@ -226,7 +226,7 @@ need to be filled in)::
- 		list_for_each_entry(e, list, list) {
- 			if (!audit_compare_rule(rule, &e->rule)) {
- 				e->rule.action = newaction;
--				e->rule.file_count = newfield_count;
-+				e->rule.field_count = newfield_count;
- 				write_unlock(&auditsc_lock);
- 				return 0;
- 			}
-@@ -255,7 +255,7 @@ RCU (*read-copy update*) its name.  The RCU code is as follows::
- 					return -ENOMEM;
- 				audit_copy_rule(&ne->rule, &e->rule);
- 				ne->rule.action = newaction;
--				ne->rule.file_count = newfield_count;
-+				ne->rule.field_count = newfield_count;
- 				list_replace_rcu(&e->list, &ne->list);
- 				call_rcu(&e->rcu, audit_free_rule);
- 				return 0;
+@@ -286,11 +286,11 @@ time the external state changes before Linux becomes aware of the change,
+ additional RCU-induced staleness is generally not a problem.
+ 
+ However, there are many examples where stale data cannot be tolerated.
+-One example in the Linux kernel is the System V IPC (see the ipc_lock()
+-function in ipc/util.c).  This code checks a *deleted* flag under a
++One example in the Linux kernel is the System V IPC (see the shm_lock()
++function in ipc/shm.c).  This code checks a *deleted* flag under a
+ per-entry spinlock, and, if the *deleted* flag is set, pretends that the
+ entry does not exist.  For this to be helpful, the search function must
+-return holding the per-entry lock, as ipc_lock() does in fact do.
++return holding the per-entry spinlock, as shm_lock() does in fact do.
+ 
+ .. _quick_quiz:
+ 
 -- 
 2.9.5
 
