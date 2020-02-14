@@ -2,87 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EECD15ECE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:31:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C36615F003
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:52:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391479AbgBNRaY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:30:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58942 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390346AbgBNQHa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:07:30 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA5252467B;
-        Fri, 14 Feb 2020 16:07:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696449;
-        bh=9bpJw+BGlm+ozrpPpsGfyfMVr5eMgWl1Iod/H0eoXC8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tl8Bjn3/FHzSiXSsZF0hXpX3I1ygA8VxhduySvRn1bSuzO0eJE5nX6cNOcSIgqRkM
-         WP5M1UuuQxyLWOm4zRV4qUxUnDDW/EP0FaX83kInKmV3rNhZFogcHyorIIxfmZc//O
-         jhxPZ9rZU+WC7O2DQM9sKoE85PeqaKwmsFvbfvpo=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     YueHaibing <yuehaibing@huawei.com>, Hulk Robot <hulkci@huawei.com>,
-        Chen Zhou <chenzhou10@huawei.com>,
-        Li Yang <leoyang.li@nxp.com>, Sasha Levin <sashal@kernel.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 263/459] soc: fsl: qe: remove set but not used variable 'mm_gc'
-Date:   Fri, 14 Feb 2020 10:58:33 -0500
-Message-Id: <20200214160149.11681-263-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
-References: <20200214160149.11681-1-sashal@kernel.org>
+        id S2389032AbgBNRwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:52:05 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:50744 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388661AbgBNP6m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:58:42 -0500
+Received: by mail-pj1-f66.google.com with SMTP id r67so4053483pjb.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 07:58:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rajagiritech-edu-in.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=cISYdBXk2YHE0Hv5QeEUFIegtZb+aZP3D0K2PcFOxv0=;
+        b=Wm9qOazSsBZqOW7bBRLJEkqORGDUsQVeYt23qm28055nc0seZE/6WvXTJ4ukn44RRS
+         4sSlU44l7wArk/bgum3DqF5VvVRIzFSECMBntydVeAEtu9Wrj9Vqw0qnFJ5ngo+/u6IE
+         wY3Q3qkaW6DOsmktiKfHxZSFzB54Z36SD8n+bQu88+CVA9TMr8q+gI5KNQSiE/CDWHew
+         FO/GChYLjoOevw9YhiDOlQKk9r4cchbIe4BHKZuOBoXBKzOJPxdtLFfU3Q0XhJVe9hXT
+         KUJNehz7NNMcSIqxbYBlqhBX2lXhwW4btQqe5UA9eB41aXFQ9iisFJNMM/dW7fvUET3o
+         4BXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=cISYdBXk2YHE0Hv5QeEUFIegtZb+aZP3D0K2PcFOxv0=;
+        b=IXP0pPfYjCQwl5sF2x7GE/uz5cnT5Ey5Er8S6/PQMYe4J4oRNB3MOMtCTb5A2oQF+h
+         /KU3LwSZpFsSd8yEN0K0egvufl6jv6ZzMKhnlQnc6sdcihGzxSi1CK7LQqnS5oBM/94n
+         3WQvsPhqGC79W0yDJuFg90yC/yzCTvN3Zm6YMln+Rj8objLbmh472CDzy/u89LLZwrHa
+         C2noMfDQAvqeIm7xJosqdxvAzBG4dUegAzwK9Ywq9S0M4kIr/pMT6Qro24bLL3hzOztO
+         wZl3nWCw6rSWa6k57bH0cGRF1oMGXjuDv+frzttnyQJSb3wMsDHjsyXPheQPdJgXvDTX
+         Oaqw==
+X-Gm-Message-State: APjAAAVrZrZM2MnfGwiQmf3CRVOsZLP/4Uje0YO1zjAdFgS36Sm88MBK
+        DoLQz3OA3zPlkV3liVQas1Vt+w==
+X-Google-Smtp-Source: APXvYqxwlJ0m6uM/kOjvrdm0keDywJW1dC1Cj1dLQ436kTE9gW8qeoO/r+EEjwjLZXI4sbqhe3ZUFg==
+X-Received: by 2002:a17:902:7c02:: with SMTP id x2mr4126952pll.60.1581695921762;
+        Fri, 14 Feb 2020 07:58:41 -0800 (PST)
+Received: from debian ([122.164.201.151])
+        by smtp.gmail.com with ESMTPSA id t11sm7016598pjo.21.2020.02.14.07.58.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2020 07:58:41 -0800 (PST)
+Date:   Fri, 14 Feb 2020 21:28:34 +0530
+From:   Jeffrin Jose <jeffrin@rajagiritech.edu.in>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org,
+        jeffrin@rajagiritech.edu.in
+Subject: Re: [PATCH 5.5 000/120] 5.5.4-stable review
+Message-ID: <20200214155834.GA6389@debian>
+References: <20200213151901.039700531@linuxfoundation.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+On Thu, Feb 13, 2020 at 07:19:56AM -0800, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.5.4 release.
+> There are 120 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 15 Feb 2020 15:16:41 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.5.4-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.5.y
+> and the diffstat can be found below.
+> 
 
-[ Upstream commit 6e62bd36e9ad85a22d92b1adce6a0336ea549733 ]
+hello,
 
-drivers/soc/fsl/qe/gpio.c: In function qe_pin_request:
-drivers/soc/fsl/qe/gpio.c:163:26: warning: variable mm_gc set but not used [-Wunused-but-set-variable]
+compiled and booted 5.5.4-rc1+ . No new errors according to "dmesg -l err"
 
-commit 1e714e54b5ca ("powerpc: qe_lib-gpio: use gpiochip data pointer")
-left behind this unused variable.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Li Yang <leoyang.li@nxp.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/soc/fsl/qe/gpio.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/soc/fsl/qe/gpio.c b/drivers/soc/fsl/qe/gpio.c
-index f0c29ed8f0ff1..807df73728fc7 100644
---- a/drivers/soc/fsl/qe/gpio.c
-+++ b/drivers/soc/fsl/qe/gpio.c
-@@ -160,7 +160,6 @@ struct qe_pin *qe_pin_request(struct device_node *np, int index)
- {
- 	struct qe_pin *qe_pin;
- 	struct gpio_chip *gc;
--	struct of_mm_gpio_chip *mm_gc;
- 	struct qe_gpio_chip *qe_gc;
- 	int err;
- 	unsigned long flags;
-@@ -186,7 +185,6 @@ struct qe_pin *qe_pin_request(struct device_node *np, int index)
- 		goto err0;
- 	}
- 
--	mm_gc = to_of_mm_gpio_chip(gc);
- 	qe_gc = gpiochip_get_data(gc);
- 
- 	spin_lock_irqsave(&qe_gc->lock, flags);
--- 
-2.20.1
-
+--
+software engineer
+rajagiri school of engineering and technology
