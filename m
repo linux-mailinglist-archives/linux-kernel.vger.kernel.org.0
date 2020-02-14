@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2681815DF7B
+	by mail.lfdr.de (Postfix) with ESMTP id 9099015DF7C
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:09:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390017AbgBNQI6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:08:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60310 "EHLO mail.kernel.org"
+        id S2391147AbgBNQJA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:09:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390935AbgBNQI0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:08:26 -0500
+        id S2390660AbgBNQId (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:08:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96AF42067D;
-        Fri, 14 Feb 2020 16:08:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77DB524676;
+        Fri, 14 Feb 2020 16:08:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696505;
-        bh=g8Kp9f3K2OdE1CStYCduB8XSWIWgHeqg5wXYm3POm5A=;
+        s=default; t=1581696512;
+        bh=Uht5GtVklLaXQw3IXPvUNUVpdxyIbB2MtgFOyDgstrU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YVMWE7v2Axg8jJJtpOOCft6NfGE79aL9DlReaGyfQ1XANIL4opGP2yPT5BfRbVfaP
-         RfFoi/trI6kZrhr7OTTNI0a3vuVV0S58h4u46JSNOxWHLk2uWOeXiPKuJWoFNLH87D
-         m0QB5rBANGKlolh4rcKNbKl3vk99zMyOldlrIgYs=
+        b=0NgvHaeMbiTY8UekcjObMr84hGPGlFcA+feENyWgHN5a/vG0w2W0LI7ITDWoXWU0K
+         bQVWQop/OjKoqlM1+KJ/8DHePPo4Bz6tnk3n7nQYen0lX6e1VSP8T6vasHsG6N6mlp
+         EVzdf9HOo22oIinrMIbPjFHvOGe7pDdWockllKUM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, devel@driverdev.osuosl.org
-Subject: [PATCH AUTOSEL 5.4 308/459] vme: bridges: reduce stack usage
-Date:   Fri, 14 Feb 2020 10:59:18 -0500
-Message-Id: <20200214160149.11681-308-sashal@kernel.org>
+Cc:     Mikulas Patocka <mpatocka@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, dm-devel@redhat.com
+Subject: [PATCH AUTOSEL 5.4 314/459] dm thin: don't allow changing data device during thin-pool reload
+Date:   Fri, 14 Feb 2020 10:59:24 -0500
+Message-Id: <20200214160149.11681-314-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -43,108 +43,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-[ Upstream commit 7483e7a939c074d887450ef1c4d9ccc5909405f8 ]
+[ Upstream commit 873937e75f9a8ea231a502c3d29d9cb6ad91b3ef ]
 
-With CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3, the stack usage in vme_fake
-grows above the warning limit:
+The existing code allows changing the data device when the thin-pool
+target is reloaded.
 
-drivers/vme/bridges/vme_fake.c: In function 'fake_master_read':
-drivers/vme/bridges/vme_fake.c:610:1: error: the frame size of 1160 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
-drivers/vme/bridges/vme_fake.c: In function 'fake_master_write':
-drivers/vme/bridges/vme_fake.c:797:1: error: the frame size of 1160 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
+This capability is not required and only complicates device lifetime
+guarantees. This can cause crashes like the one reported here:
+	https://bugzilla.redhat.com/show_bug.cgi?id=1788596
+where the kernel tries to issue a flush bio located in a structure that
+was already freed.
 
-The problem is that in some configurations, each call to
-fake_vmereadX() puts another variable on the stack.
+Take the first step to simplifying the thin-pool's data device lifetime
+by disallowing changing it. Like the thin-pool's metadata device, the
+data device is now set in pool_create() and it cannot be changed for a
+given thin-pool.
 
-Reduce the amount of inlining to get back to the previous state,
-with no function using more than 200 bytes each.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Link: https://lore.kernel.org/r/20200107200610.3482901-1-arnd@arndb.de
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/vme/bridges/vme_fake.c | 30 ++++++++++++++++++------------
- 1 file changed, 18 insertions(+), 12 deletions(-)
+ drivers/md/dm-thin.c | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/vme/bridges/vme_fake.c b/drivers/vme/bridges/vme_fake.c
-index 3208a4409e44e..6a1bc284f297c 100644
---- a/drivers/vme/bridges/vme_fake.c
-+++ b/drivers/vme/bridges/vme_fake.c
-@@ -414,8 +414,9 @@ static void fake_lm_check(struct fake_driver *bridge, unsigned long long addr,
+diff --git a/drivers/md/dm-thin.c b/drivers/md/dm-thin.c
+index 69201bdf7f4c6..1b2c98b43519f 100644
+--- a/drivers/md/dm-thin.c
++++ b/drivers/md/dm-thin.c
+@@ -231,6 +231,7 @@ struct pool {
+ 	struct dm_target *ti;	/* Only set if a pool target is bound */
+ 
+ 	struct mapped_device *pool_md;
++	struct block_device *data_dev;
+ 	struct block_device *md_dev;
+ 	struct dm_pool_metadata *pmd;
+ 
+@@ -2945,6 +2946,7 @@ static struct kmem_cache *_new_mapping_cache;
+ 
+ static struct pool *pool_create(struct mapped_device *pool_md,
+ 				struct block_device *metadata_dev,
++				struct block_device *data_dev,
+ 				unsigned long block_size,
+ 				int read_only, char **error)
+ {
+@@ -3052,6 +3054,7 @@ static struct pool *pool_create(struct mapped_device *pool_md,
+ 	pool->last_commit_jiffies = jiffies;
+ 	pool->pool_md = pool_md;
+ 	pool->md_dev = metadata_dev;
++	pool->data_dev = data_dev;
+ 	__pool_table_insert(pool);
+ 
+ 	return pool;
+@@ -3093,6 +3096,7 @@ static void __pool_dec(struct pool *pool)
+ 
+ static struct pool *__pool_find(struct mapped_device *pool_md,
+ 				struct block_device *metadata_dev,
++				struct block_device *data_dev,
+ 				unsigned long block_size, int read_only,
+ 				char **error, int *created)
+ {
+@@ -3103,19 +3107,23 @@ static struct pool *__pool_find(struct mapped_device *pool_md,
+ 			*error = "metadata device already in use by a pool";
+ 			return ERR_PTR(-EBUSY);
+ 		}
++		if (pool->data_dev != data_dev) {
++			*error = "data device already in use by a pool";
++			return ERR_PTR(-EBUSY);
++		}
+ 		__pool_inc(pool);
+ 
+ 	} else {
+ 		pool = __pool_table_lookup(pool_md);
+ 		if (pool) {
+-			if (pool->md_dev != metadata_dev) {
++			if (pool->md_dev != metadata_dev || pool->data_dev != data_dev) {
+ 				*error = "different pool cannot replace a pool";
+ 				return ERR_PTR(-EINVAL);
+ 			}
+ 			__pool_inc(pool);
+ 
+ 		} else {
+-			pool = pool_create(pool_md, metadata_dev, block_size, read_only, error);
++			pool = pool_create(pool_md, metadata_dev, data_dev, block_size, read_only, error);
+ 			*created = 1;
+ 		}
  	}
- }
+@@ -3368,7 +3376,7 @@ static int pool_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ 		goto out;
+ 	}
  
--static u8 fake_vmeread8(struct fake_driver *bridge, unsigned long long addr,
--		u32 aspace, u32 cycle)
-+static noinline_for_stack u8 fake_vmeread8(struct fake_driver *bridge,
-+					   unsigned long long addr,
-+					   u32 aspace, u32 cycle)
- {
- 	u8 retval = 0xff;
- 	int i;
-@@ -446,8 +447,9 @@ static u8 fake_vmeread8(struct fake_driver *bridge, unsigned long long addr,
- 	return retval;
- }
+-	pool = __pool_find(dm_table_get_md(ti->table), metadata_dev->bdev,
++	pool = __pool_find(dm_table_get_md(ti->table), metadata_dev->bdev, data_dev->bdev,
+ 			   block_size, pf.mode == PM_READ_ONLY, &ti->error, &pool_created);
+ 	if (IS_ERR(pool)) {
+ 		r = PTR_ERR(pool);
+@@ -4114,7 +4122,7 @@ static struct target_type pool_target = {
+ 	.name = "thin-pool",
+ 	.features = DM_TARGET_SINGLETON | DM_TARGET_ALWAYS_WRITEABLE |
+ 		    DM_TARGET_IMMUTABLE,
+-	.version = {1, 21, 0},
++	.version = {1, 22, 0},
+ 	.module = THIS_MODULE,
+ 	.ctr = pool_ctr,
+ 	.dtr = pool_dtr,
+@@ -4493,7 +4501,7 @@ static void thin_io_hints(struct dm_target *ti, struct queue_limits *limits)
  
--static u16 fake_vmeread16(struct fake_driver *bridge, unsigned long long addr,
--		u32 aspace, u32 cycle)
-+static noinline_for_stack u16 fake_vmeread16(struct fake_driver *bridge,
-+					     unsigned long long addr,
-+					     u32 aspace, u32 cycle)
- {
- 	u16 retval = 0xffff;
- 	int i;
-@@ -478,8 +480,9 @@ static u16 fake_vmeread16(struct fake_driver *bridge, unsigned long long addr,
- 	return retval;
- }
- 
--static u32 fake_vmeread32(struct fake_driver *bridge, unsigned long long addr,
--		u32 aspace, u32 cycle)
-+static noinline_for_stack u32 fake_vmeread32(struct fake_driver *bridge,
-+					     unsigned long long addr,
-+					     u32 aspace, u32 cycle)
- {
- 	u32 retval = 0xffffffff;
- 	int i;
-@@ -609,8 +612,9 @@ static ssize_t fake_master_read(struct vme_master_resource *image, void *buf,
- 	return retval;
- }
- 
--static void fake_vmewrite8(struct fake_driver *bridge, u8 *buf,
--			   unsigned long long addr, u32 aspace, u32 cycle)
-+static noinline_for_stack void fake_vmewrite8(struct fake_driver *bridge,
-+					      u8 *buf, unsigned long long addr,
-+					      u32 aspace, u32 cycle)
- {
- 	int i;
- 	unsigned long long start, end, offset;
-@@ -639,8 +643,9 @@ static void fake_vmewrite8(struct fake_driver *bridge, u8 *buf,
- 
- }
- 
--static void fake_vmewrite16(struct fake_driver *bridge, u16 *buf,
--			    unsigned long long addr, u32 aspace, u32 cycle)
-+static noinline_for_stack void fake_vmewrite16(struct fake_driver *bridge,
-+					       u16 *buf, unsigned long long addr,
-+					       u32 aspace, u32 cycle)
- {
- 	int i;
- 	unsigned long long start, end, offset;
-@@ -669,8 +674,9 @@ static void fake_vmewrite16(struct fake_driver *bridge, u16 *buf,
- 
- }
- 
--static void fake_vmewrite32(struct fake_driver *bridge, u32 *buf,
--			    unsigned long long addr, u32 aspace, u32 cycle)
-+static noinline_for_stack void fake_vmewrite32(struct fake_driver *bridge,
-+					       u32 *buf, unsigned long long addr,
-+					       u32 aspace, u32 cycle)
- {
- 	int i;
- 	unsigned long long start, end, offset;
+ static struct target_type thin_target = {
+ 	.name = "thin",
+-	.version = {1, 21, 0},
++	.version = {1, 22, 0},
+ 	.module	= THIS_MODULE,
+ 	.ctr = thin_ctr,
+ 	.dtr = thin_dtr,
 -- 
 2.20.1
 
