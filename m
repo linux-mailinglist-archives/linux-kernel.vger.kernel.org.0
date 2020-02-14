@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E802215E2E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:25:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCFF315E2EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:25:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406152AbgBNQZf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:25:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59736 "EHLO mail.kernel.org"
+        id S2406167AbgBNQZi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:25:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405651AbgBNQX2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:23:28 -0500
+        id S2405657AbgBNQXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:23:31 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 031C624764;
-        Fri, 14 Feb 2020 16:23:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7703A24776;
+        Fri, 14 Feb 2020 16:23:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697407;
-        bh=1ncGh5Rk9EITS77TL+pGGDb/7PSP3K5PnHevgyuW3vM=;
+        s=default; t=1581697410;
+        bh=zg6Uq7ArT0C+WyG4FP67wrVc7ANAPFZHEsRcL6m0R6U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hXyy75tlWb4pnMA1c92ToC5bR3NYo+eAeCS8K4KAPQPJaxOHD14yqM48oBr+equjO
-         gUfCH3ZnPlPQ8taaveNVciUWV9B0RODknRAN6l7k5DeGWMYHY8jHkaqsg9DnlOMEeu
-         nkTN7x+IBgAY+VivpCoLRx+l3N/WvAOIH0UY82/E=
+        b=u7O2o9pt8U4bwIJB2bBN42fv7kVC+tBRtcngVnxRe920X0lPEKQf5tUWj4XYxbkbR
+         72rDkaMgf9R9+9oXydNhrFZ77t0COvOdbRWy3BV4argW+4ZuM2NyBoJSMyunHTDm3D
+         50quqgDZcsKAhLeedWqOH2uPrOVY6ampY5O8A41A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
+Cc:     Will Deacon <will@kernel.org>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
         Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.9 100/141] drm/vmwgfx: prevent memory leak in vmw_cmdbuf_res_add
-Date:   Fri, 14 Feb 2020 11:20:40 -0500
-Message-Id: <20200214162122.19794-100-sashal@kernel.org>
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 4.9 102/141] iommu/arm-smmu-v3: Use WRITE_ONCE() when changing validity of an STE
+Date:   Fri, 14 Feb 2020 11:20:42 -0500
+Message-Id: <20200214162122.19794-102-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214162122.19794-1-sashal@kernel.org>
 References: <20200214162122.19794-1-sashal@kernel.org>
@@ -44,38 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Will Deacon <will@kernel.org>
 
-[ Upstream commit 40efb09a7f53125719e49864da008495e39aaa1e ]
+[ Upstream commit d71e01716b3606a6648df7e5646ae12c75babde4 ]
 
-In vmw_cmdbuf_res_add if drm_ht_insert_item fails the allocated memory
-for cres should be released.
+If, for some bizarre reason, the compiler decided to split up the write
+of STE DWORD 0, we could end up making a partial structure valid.
 
-Fixes: 18e4a4669c50 ("drm/vmwgfx: Fix compat shader namespace")
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Reviewed-by: Thomas Hellstrom <thellstrom@vmware.com>
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+Although this probably won't happen, follow the example of the
+context-descriptor code and use WRITE_ONCE() to ensure atomicity of the
+write.
+
+Reported-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf_res.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/iommu/arm-smmu-v3.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf_res.c b/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf_res.c
-index 1f013d45c9e9a..0c7c3005594cc 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf_res.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf_res.c
-@@ -210,8 +210,10 @@ int vmw_cmdbuf_res_add(struct vmw_cmdbuf_res_manager *man,
+diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+index 7bd98585d78d2..48d3820087881 100644
+--- a/drivers/iommu/arm-smmu-v3.c
++++ b/drivers/iommu/arm-smmu-v3.c
+@@ -1103,7 +1103,8 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
+ 	}
  
- 	cres->hash.key = user_key | (res_type << 24);
- 	ret = drm_ht_insert_item(&man->resources, &cres->hash);
--	if (unlikely(ret != 0))
-+	if (unlikely(ret != 0)) {
-+		kfree(cres);
- 		goto out_invalid_key;
-+	}
+ 	arm_smmu_sync_ste_for_sid(smmu, sid);
+-	dst[0] = cpu_to_le64(val);
++	/* See comment in arm_smmu_write_ctx_desc() */
++	WRITE_ONCE(dst[0], cpu_to_le64(val));
+ 	arm_smmu_sync_ste_for_sid(smmu, sid);
  
- 	cres->state = VMW_CMDBUF_RES_ADD;
- 	cres->res = vmw_resource_reference(res);
+ 	/* It's likely that we'll want to use the new STE soon */
 -- 
 2.20.1
 
