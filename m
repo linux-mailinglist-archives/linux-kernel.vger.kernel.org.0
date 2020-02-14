@@ -2,221 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 196D515D92A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 15:15:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30F5115D939
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 15:17:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387424AbgBNOPP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 09:15:15 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:14231 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729102AbgBNOPO (ORCPT
+        id S2387434AbgBNORQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 09:17:16 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:38530 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726191AbgBNORQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 09:15:14 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e46ab2f0004>; Fri, 14 Feb 2020 06:14:07 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 14 Feb 2020 06:15:14 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 14 Feb 2020 06:15:14 -0800
-Received: from [10.21.133.51] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 14 Feb
- 2020 14:15:11 +0000
-Subject: Re: [PATCH v8 12/19] dmaengine: tegra-apb: Keep clock enabled only
- during of DMA transfer
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-CC:     <dmaengine@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200209163356.6439-1-digetx@gmail.com>
- <20200209163356.6439-13-digetx@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <e446d1b5-4aec-70fb-b0b8-5f2127c48cf8@nvidia.com>
-Date:   Fri, 14 Feb 2020 14:15:08 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Fri, 14 Feb 2020 09:17:16 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j2bmK-0000fb-M0; Fri, 14 Feb 2020 07:17:12 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j2bmJ-0004QP-SP; Fri, 14 Feb 2020 07:17:12 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Solar Designer <solar@openwall.com>
+References: <20200212200335.GO23230@ZenIV.linux.org.uk>
+        <CAHk-=wi+1CPShMFvJNPfnrJ8DD8uVKUOQ5TQzQUNGLUkeoahkg@mail.gmail.com>
+        <20200212203833.GQ23230@ZenIV.linux.org.uk>
+        <20200212204124.GR23230@ZenIV.linux.org.uk>
+        <CAHk-=wi5FOGV_3tALK3n6E2fK3Oa_yCYkYQtCSaXLSEm2DUCKg@mail.gmail.com>
+        <87lfp7h422.fsf@x220.int.ebiederm.org>
+        <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
+        <87pnejf6fz.fsf@x220.int.ebiederm.org>
+        <20200213055527.GS23230@ZenIV.linux.org.uk>
+        <CAHk-=wgQnNHYxV7-SyRP=g9vTHyNAK9g1juLLB=eho4=DHVZEQ@mail.gmail.com>
+        <20200213222350.GU23230@ZenIV.linux.org.uk>
+        <CAHk-=wjePLiQqUfQGCrNb0wp+EtgRddQbcK-pHH=6rxbdYNNOA@mail.gmail.com>
+Date:   Fri, 14 Feb 2020 08:15:16 -0600
+In-Reply-To: <CAHk-=wjePLiQqUfQGCrNb0wp+EtgRddQbcK-pHH=6rxbdYNNOA@mail.gmail.com>
+        (Linus Torvalds's message of "Thu, 13 Feb 2020 14:47:48 -0800")
+Message-ID: <87wo8pb6h7.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20200209163356.6439-13-digetx@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1581689647; bh=0lgJPUG73bATzz8SB8TuCQIcob3pNRGhHkhwJhUA28I=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=oAPqFbWCKPcgHLfkaWXudnHr5p8BU2bhNl0pBHKfRYRd5BhScN4mdirDvW4xIj3/l
-         BbcivKJA0PZ6gaJNJiaLAvLZMoE2hoLRxAikZh0yE44bFEHxJIADXTxPa7ki8rjUmo
-         zv3cAuRb4kBsKyddmmX9qsxw+8Z++CmKTUvF+XFKrDTK4o9RpOXqeUtfNRLGOxFyyL
-         UHfixXTzr9breTyRlERZTKL/mWThmCvXzn0cUUK0uiRtpglDYLeugnMoZZ+M6Elv2s
-         /y/NtYCEDdUOp2nuF9x86sGgZ1O/hf8wBIu3iInjfM271WrhVf3kE4kBIFXLhs6e4V
-         +0ywkUOEqQ34w==
+Content-Type: text/plain
+X-XM-SPF: eid=1j2bmJ-0004QP-SP;;;mid=<87wo8pb6h7.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18c96o3FroerQ43pTuS8ANjCZtZB2o8mLY=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa03.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMSubLong autolearn=disabled
+        version=3.4.2
+X-Spam-Virus: No
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4663]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa03 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa03 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Linus Torvalds <torvalds@linux-foundation.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 399 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 2.3 (0.6%), b_tie_ro: 1.64 (0.4%), parse: 0.67
+        (0.2%), extract_message_metadata: 12 (3.0%), get_uri_detail_list: 1.12
+        (0.3%), tests_pri_-1000: 13 (3.3%), tests_pri_-950: 1.09 (0.3%),
+        tests_pri_-900: 0.85 (0.2%), tests_pri_-90: 26 (6.5%), check_bayes: 25
+        (6.2%), b_tokenize: 7 (1.8%), b_tok_get_all: 10 (2.6%), b_comp_prob:
+        1.97 (0.5%), b_tok_touch_all: 3.2 (0.8%), b_finish: 0.64 (0.2%),
+        tests_pri_0: 244 (61.1%), check_dkim_signature: 0.40 (0.1%),
+        check_dkim_adsp: 2.6 (0.7%), poll_dns_idle: 78 (19.6%), tests_pri_10:
+        2.6 (0.6%), tests_pri_500: 94 (23.6%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v8 07/11] proc: flush task dcache entries from all procfs instances
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Linus Torvalds <torvalds@linux-foundation.org> writes:
 
-On 09/02/2020 16:33, Dmitry Osipenko wrote:
-> It's a bit impractical to enable hardware's clock at the time of DMA
-> channel's allocation because most of DMA client drivers allocate DMA
-> channel at the time of the driver's probing, and thus, DMA clock is kept
-> always-enabled in practice, defeating the whole purpose of runtime PM.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/dma/tegra20-apb-dma.c | 36 ++++++++++++++++++++++++-----------
->  1 file changed, 25 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-> index 049e98ae1240..6e057a9f0e46 100644
-> --- a/drivers/dma/tegra20-apb-dma.c
-> +++ b/drivers/dma/tegra20-apb-dma.c
-> @@ -569,6 +569,7 @@ static bool handle_continuous_head_request(struct tegra_dma_channel *tdc,
->  	hsgreq = list_first_entry(&tdc->pending_sg_req, typeof(*hsgreq), node);
->  	if (!hsgreq->configured) {
->  		tegra_dma_stop(tdc);
-> +		pm_runtime_put(tdc->tdma->dev);
->  		dev_err(tdc2dev(tdc), "Error in DMA transfer, aborting DMA\n");
->  		tegra_dma_abort_all(tdc);
->  		return false;
-> @@ -604,9 +605,14 @@ static void handle_once_dma_done(struct tegra_dma_channel *tdc,
->  	list_add_tail(&sgreq->node, &tdc->free_sg_req);
->  
->  	/* Do not start DMA if it is going to be terminate */
-> -	if (to_terminate || list_empty(&tdc->pending_sg_req))
-> +	if (to_terminate)
->  		return;
->  
-> +	if (list_empty(&tdc->pending_sg_req)) {
-> +		pm_runtime_put(tdc->tdma->dev);
-> +		return;
-> +	}
-> +
->  	tdc_start_head_req(tdc);
->  }
->  
-> @@ -712,6 +718,7 @@ static void tegra_dma_issue_pending(struct dma_chan *dc)
->  {
->  	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
->  	unsigned long flags;
-> +	int err;
->  
->  	spin_lock_irqsave(&tdc->lock, flags);
->  	if (list_empty(&tdc->pending_sg_req)) {
-> @@ -719,6 +726,12 @@ static void tegra_dma_issue_pending(struct dma_chan *dc)
->  		goto end;
->  	}
->  	if (!tdc->busy) {
-> +		err = pm_runtime_get_sync(tdc->tdma->dev);
-> +		if (err < 0) {
-> +			dev_err(tdc2dev(tdc), "Failed to enable DMA\n");
-> +			goto end;
-> +		}
-> +
->  		tdc_start_head_req(tdc);
->  
->  		/* Continuous single mode: Configure next req */
-> @@ -774,6 +787,8 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
->  	}
->  	tegra_dma_resume(tdc);
->  
-> +	pm_runtime_put(tdc->tdma->dev);
-> +
->  skip_dma_stop:
->  	tegra_dma_abort_all(tdc);
->  
-> @@ -1268,22 +1283,15 @@ tegra_dma_prep_dma_cyclic(struct dma_chan *dc, dma_addr_t buf_addr,
->  static int tegra_dma_alloc_chan_resources(struct dma_chan *dc)
->  {
->  	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
-> -	struct tegra_dma *tdma = tdc->tdma;
-> -	int ret;
->  
->  	dma_cookie_init(&tdc->dma_chan);
->  
-> -	ret = pm_runtime_get_sync(tdma->dev);
-> -	if (ret < 0)
-> -		return ret;
-> -
->  	return 0;
->  }
->  
->  static void tegra_dma_free_chan_resources(struct dma_chan *dc)
->  {
->  	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
-> -	struct tegra_dma *tdma = tdc->tdma;
->  	struct tegra_dma_desc *dma_desc;
->  	struct tegra_dma_sg_req *sg_req;
->  	struct list_head dma_desc_list;
-> @@ -1316,7 +1324,6 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
->  		list_del(&sg_req->node);
->  		kfree(sg_req);
->  	}
-> -	pm_runtime_put(tdma->dev);
->  
->  	tdc->slave_id = TEGRA_APBDMA_SLAVE_ID_INVALID;
->  }
-> @@ -1416,6 +1423,11 @@ static int tegra_dma_probe(struct platform_device *pdev)
->  
->  	spin_lock_init(&tdma->global_lock);
->  
-> +	ret = clk_prepare(tdma->dma_clk);
-> +	if (ret)
-> +		return ret;
-> +
-> +	pm_runtime_irq_safe(&pdev->dev);
->  	pm_runtime_enable(&pdev->dev);
->  
->  	ret = pm_runtime_get_sync(&pdev->dev);
-> @@ -1531,6 +1543,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
->  
->  err_pm_disable:
->  	pm_runtime_disable(&pdev->dev);
-> +	clk_unprepare(tdma->dma_clk);
->  
->  	return ret;
->  }
-> @@ -1541,6 +1554,7 @@ static int tegra_dma_remove(struct platform_device *pdev)
->  
->  	dma_async_device_unregister(&tdma->dma_dev);
->  	pm_runtime_disable(&pdev->dev);
-> +	clk_unprepare(tdma->dma_clk);
->  
->  	return 0;
->  }
-> @@ -1569,7 +1583,7 @@ static int tegra_dma_runtime_suspend(struct device *dev)
->  						  TEGRA_APBDMA_CHAN_WCOUNT);
->  	}
->  
-> -	clk_disable_unprepare(tdma->dma_clk);
-> +	clk_disable(tdma->dma_clk);
->  
->  	return 0;
->  }
-> @@ -1580,7 +1594,7 @@ static int tegra_dma_runtime_resume(struct device *dev)
->  	unsigned int i;
->  	int ret;
->  
-> -	ret = clk_prepare_enable(tdma->dma_clk);
-> +	ret = clk_enable(tdma->dma_clk);
->  	if (ret < 0) {
->  		dev_err(dev, "clk_enable failed: %d\n", ret);
->  		return ret;
-> 
+> I guess a lot of readdir users end up doing a stat on it immediately
+> afterwards. I think right now we do it to get the inode number, and
+> maybe that is a basic requirement (even if I don't think it's really
+> stable - an inode could be evicted and then the ino changes, no?)
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+All I know is proc_fill_cache seemed like a good idea at the time.
+I may have been to clever.
 
-Thanks!
-Jon
+While I think proc_fill_cache probably exacerbates the issue
+it isn't the reason we have the flushing logic.  The proc
+flushing logic was introduced in around 2.5.9 much earlier
+than the other proc things.
 
--- 
-nvpublic
+commit 0030633355db2bba32d97655df73b04215018ab9
+Author: Alexander Viro <viro@math.psu.edu>
+Date:   Sun Apr 21 23:03:37 2002 -0700
+
+    [PATCH] (3/5) sane procfs/dcache interaction
+    
+     - sane dentry retention.  Namely, we don't kill /proc/<pid> dentries at the
+       first opportunity (as the current tree does).  Instead we do the following:
+            * ->d_delete() kills it only if process is already dead.
+            * all ->lookup() in proc/base.c end with checking if process is still
+              alive and unhash if it isn't.
+            * proc_pid_lookup() (lookup for /proc/<pid>) caches reference to dentry
+              in task_struct.  It's _not_ counted in ->d_count.
+            * ->d_iput() resets said reference to NULL.
+            * release_task() (burying a zombie) checks if there is a cached
+              reference and if there is - shrinks the subtree.
+            * tasklist_lock is used for exclusion.
+       That way we are guaranteed that after release_task() all dentries in
+       /proc/<pid> will go away as soon as possible; OTOH, before release_task()
+       we have normal retention policy - they go away under memory pressure with
+       the same rules as for dentries on any other fs.
+
+Tracking down when this logic was introduced I also see that this code
+has broken again and again any time proc changes (like now).  So it is
+definitely subtle and fragile.
+
+Eric
