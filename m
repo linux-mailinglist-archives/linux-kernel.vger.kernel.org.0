@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10CD215E880
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:00:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C4D615E87E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:00:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388921AbgBNRAo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:00:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47422 "EHLO mail.kernel.org"
+        id S2394339AbgBNRAc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:00:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392197AbgBNQQe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:16:34 -0500
+        id S2404293AbgBNQQg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:16:36 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D021F206D7;
-        Fri, 14 Feb 2020 16:16:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 492A5206D7;
+        Fri, 14 Feb 2020 16:16:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696993;
-        bh=ml6QscKtm4bBJ/vUH8hmDsJo0+uiqHtRTEA2EJWmucA=;
+        s=default; t=1581696996;
+        bh=A7mtqHMBRXmpZws71RLcV6YiKcGVfMgqWoLgobCuYsc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iKTkXFF6eCrQRl5eKUm179Pb6tTGyo6/AmyZQAgrLJtqGE6KqlnRGzUEM8gn1qq3+
-         4Mn4o49TNAKPYAnCle03tjNiU786/geiiFU/BsGflEj7oMWGt2mf0s5hqvcvYZMU2w
-         i5G4iKGPzUALgirM79OJ2czgaGesqBNR+r1uILFg=
+        b=XhZo+lJ2hmP/ZnMbgJBo9RRWHYKP+SswfIu1r8M6N22DMvNge7WeisAa4HYO8s7bq
+         dHSbYFaSLVVyUwIhzP1sETvoWGgmf4oEB8uxfkptMCVwEnUaIPTOf6wkCky9Sh0GEM
+         7GOaATm6uB6W/fwOq+xpz8fOzeYrhIDWKrEb/4qk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Qing Xu <m1s5p6688@gmail.com>, Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 227/252] mwifiex: Fix possible buffer overflows in mwifiex_ret_wmm_get_status()
-Date:   Fri, 14 Feb 2020 11:11:22 -0500
-Message-Id: <20200214161147.15842-227-sashal@kernel.org>
+Cc:     Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 229/252] ceph: check availability of mds cluster on mount after wait timeout
+Date:   Fri, 14 Feb 2020 11:11:24 -0500
+Message-Id: <20200214161147.15842-229-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -43,38 +43,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qing Xu <m1s5p6688@gmail.com>
+From: Xiubo Li <xiubli@redhat.com>
 
-[ Upstream commit 3a9b153c5591548612c3955c9600a98150c81875 ]
+[ Upstream commit 97820058fb2831a4b203981fa2566ceaaa396103 ]
 
-mwifiex_ret_wmm_get_status() calls memcpy() without checking the
-destination size.Since the source is given from remote AP which
-contains illegal wmm elements , this may trigger a heap buffer
-overflow.
-Fix it by putting the length check before calling memcpy().
+If all the MDS daemons are down for some reason, then the first mount
+attempt will fail with EIO after the mount request times out.  A mount
+attempt will also fail with EIO if all of the MDS's are laggy.
 
-Signed-off-by: Qing Xu <m1s5p6688@gmail.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+This patch changes the code to return -EHOSTUNREACH in these situations
+and adds a pr_info error message to help the admin determine the cause.
+
+URL: https://tracker.ceph.com/issues/4386
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/marvell/mwifiex/wmm.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/ceph/mds_client.c | 3 +--
+ fs/ceph/super.c      | 5 +++++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/wmm.c b/drivers/net/wireless/marvell/mwifiex/wmm.c
-index 64916ba15df5d..429ea2752e6aa 100644
---- a/drivers/net/wireless/marvell/mwifiex/wmm.c
-+++ b/drivers/net/wireless/marvell/mwifiex/wmm.c
-@@ -977,6 +977,10 @@ int mwifiex_ret_wmm_get_status(struct mwifiex_private *priv,
- 				    "WMM Parameter Set Count: %d\n",
- 				    wmm_param_ie->qos_info_bitmap & mask);
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 09db6d08614d2..a2e903203bf9f 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -2343,8 +2343,7 @@ static void __do_request(struct ceph_mds_client *mdsc,
+ 		if (!(mdsc->fsc->mount_options->flags &
+ 		      CEPH_MOUNT_OPT_MOUNTWAIT) &&
+ 		    !ceph_mdsmap_is_cluster_available(mdsc->mdsmap)) {
+-			err = -ENOENT;
+-			pr_info("probably no mds server is up\n");
++			err = -EHOSTUNREACH;
+ 			goto finish;
+ 		}
+ 	}
+diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+index 2bd0b1ed9708e..c4314f4492401 100644
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -1106,6 +1106,11 @@ static struct dentry *ceph_mount(struct file_system_type *fs_type,
+ 	return res;
  
-+			if (wmm_param_ie->vend_hdr.len + 2 >
-+				sizeof(struct ieee_types_wmm_parameter))
-+				break;
+ out_splat:
++	if (!ceph_mdsmap_is_cluster_available(fsc->mdsc->mdsmap)) {
++		pr_info("No mds server is up or the cluster is laggy\n");
++		err = -EHOSTUNREACH;
++	}
 +
- 			memcpy((u8 *) &priv->curr_bss_params.bss_descriptor.
- 			       wmm_ie, wmm_param_ie,
- 			       wmm_param_ie->vend_hdr.len + 2);
+ 	ceph_mdsc_close_sessions(fsc->mdsc);
+ 	deactivate_locked_super(sb);
+ 	goto out_final;
 -- 
 2.20.1
 
