@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DF6315E05A
+	by mail.lfdr.de (Postfix) with ESMTP id A7C2A15E05B
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:13:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392046AbgBNQMn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:12:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38750 "EHLO mail.kernel.org"
+        id S2392064AbgBNQMr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:12:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391851AbgBNQLu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:11:50 -0500
+        id S2391603AbgBNQL4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:11:56 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A919222C2;
-        Fri, 14 Feb 2020 16:11:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 542EA246B2;
+        Fri, 14 Feb 2020 16:11:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696709;
-        bh=MKNm3DH+iFG/2MKS7mW0IPl2gpbcCAHThyKYruf9gXM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Z4Oh62ci8HZzM61xAIyouudBRbxEve7eXRxatUKe8UOM4Wo4XgP8mT5MuHfH4vbG9
-         tu9GintuoQGixsUQRDO+U7HowWSMVU9DRpCvxcNOeTmG0Bx9giPuz6QmvQ4/+pwiAS
-         F8Jr7IbNjqC87w1yqeQ46iIVAEzqa7gffkfrd7OU=
+        s=default; t=1581696715;
+        bh=KcmnulXej6XgTmboJX/Yo76IHAYu9ieXcZsiWl31o5o=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=MVAE82qoqgCGnhEVv7y/zI1CJQxycgXIq3ZIaWUXsl8Iyk5U1rLobyzx0/0R0Wz5D
+         vKabHLeVerVH2G5KEfkCGlRuRuPYEHgpeo513sXvaFgblzRHJ4mGkS1kvWjuhJYHqH
+         nK+vZ4w9ULoX/sAPkhZeEE2NMsroedkg2XUhJdc8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     yu kuai <yukuai3@huawei.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 001/252] drm/amdgpu: remove set but not used variable 'mc_shared_chmap' from 'gfx_v6_0.c' and 'gfx_v7_0.c'
-Date:   Fri, 14 Feb 2020 11:07:36 -0500
-Message-Id: <20200214161147.15842-1-sashal@kernel.org>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 4.19 005/252] media: i2c: adv748x: Fix unsafe macros
+Date:   Fri, 14 Feb 2020 11:07:40 -0500
+Message-Id: <20200214161147.15842-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
+References: <20200214161147.15842-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -43,74 +47,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: yu kuai <yukuai3@huawei.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-[ Upstream commit 747a397d394fac0001e4b3c03d7dce3a118af567 ]
+[ Upstream commit 0d962e061abcf1b9105f88fb850158b5887fbca3 ]
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Enclose multiple macro parameters in parentheses in order to
+make such macros safer and fix the Clang warning below:
 
-drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c: In function
-‘gfx_v6_0_constants_init’:
-drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c:1579:6: warning: variable
-‘mc_shared_chmap’ set but not used [-Wunused-but-set-variable]
+drivers/media/i2c/adv748x/adv748x-afe.c:452:12: warning: operator '?:'
+has lower precedence than '|'; '|' will be evaluated first
+[-Wbitwise-conditional-parentheses]
 
-drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c: In function
-‘gfx_v7_0_gpu_early_init’:
-drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c:4262:6: warning: variable
-‘mc_shared_chmap’ set but not used [-Wunused-but-set-variable]
+ret = sdp_clrset(state, ADV748X_SDP_FRP, ADV748X_SDP_FRP_MASK, enable
+? ctrl->val - 1 : 0);
 
-Fixes: 2cd46ad22383 ("drm/amdgpu: add graphic pipeline implementation for si v8")
-Fixes: d93f3ca706b8 ("drm/amdgpu/gfx7: rework gpu_init()")
-Signed-off-by: yu kuai <yukuai3@huawei.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fixes: 3e89586a64df ("media: i2c: adv748x: add adv748x driver")
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c | 3 +--
- drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c | 3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ drivers/media/i2c/adv748x/adv748x.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
-index de184a8860573..016756cec0d10 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
-@@ -1555,7 +1555,7 @@ static void gfx_v6_0_config_init(struct amdgpu_device *adev)
- static void gfx_v6_0_gpu_init(struct amdgpu_device *adev)
- {
- 	u32 gb_addr_config = 0;
--	u32 mc_shared_chmap, mc_arb_ramcfg;
-+	u32 mc_arb_ramcfg;
- 	u32 sx_debug_1;
- 	u32 hdp_host_path_cntl;
- 	u32 tmp;
-@@ -1657,7 +1657,6 @@ static void gfx_v6_0_gpu_init(struct amdgpu_device *adev)
+diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
+index 1cf46c401664d..9cc5672e4148a 100644
+--- a/drivers/media/i2c/adv748x/adv748x.h
++++ b/drivers/media/i2c/adv748x/adv748x.h
+@@ -361,10 +361,10 @@ int adv748x_write_block(struct adv748x_state *state, int client_page,
  
- 	WREG32(mmBIF_FB_EN, BIF_FB_EN__FB_READ_EN_MASK | BIF_FB_EN__FB_WRITE_EN_MASK);
+ #define io_read(s, r) adv748x_read(s, ADV748X_PAGE_IO, r)
+ #define io_write(s, r, v) adv748x_write(s, ADV748X_PAGE_IO, r, v)
+-#define io_clrset(s, r, m, v) io_write(s, r, (io_read(s, r) & ~m) | v)
++#define io_clrset(s, r, m, v) io_write(s, r, (io_read(s, r) & ~(m)) | (v))
  
--	mc_shared_chmap = RREG32(mmMC_SHARED_CHMAP);
- 	adev->gfx.config.mc_arb_ramcfg = RREG32(mmMC_ARB_RAMCFG);
- 	mc_arb_ramcfg = adev->gfx.config.mc_arb_ramcfg;
+ #define hdmi_read(s, r) adv748x_read(s, ADV748X_PAGE_HDMI, r)
+-#define hdmi_read16(s, r, m) (((hdmi_read(s, r) << 8) | hdmi_read(s, r+1)) & m)
++#define hdmi_read16(s, r, m) (((hdmi_read(s, r) << 8) | hdmi_read(s, (r)+1)) & (m))
+ #define hdmi_write(s, r, v) adv748x_write(s, ADV748X_PAGE_HDMI, r, v)
  
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
-index 95452c5a9df6e..8bdcc4a6655af 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
-@@ -4323,7 +4323,7 @@ static int gfx_v7_0_late_init(void *handle)
- static void gfx_v7_0_gpu_early_init(struct amdgpu_device *adev)
- {
- 	u32 gb_addr_config;
--	u32 mc_shared_chmap, mc_arb_ramcfg;
-+	u32 mc_arb_ramcfg;
- 	u32 dimm00_addr_map, dimm01_addr_map, dimm10_addr_map, dimm11_addr_map;
- 	u32 tmp;
+ #define repeater_read(s, r) adv748x_read(s, ADV748X_PAGE_REPEATER, r)
+@@ -372,11 +372,11 @@ int adv748x_write_block(struct adv748x_state *state, int client_page,
  
-@@ -4400,7 +4400,6 @@ static void gfx_v7_0_gpu_early_init(struct amdgpu_device *adev)
- 		break;
- 	}
+ #define sdp_read(s, r) adv748x_read(s, ADV748X_PAGE_SDP, r)
+ #define sdp_write(s, r, v) adv748x_write(s, ADV748X_PAGE_SDP, r, v)
+-#define sdp_clrset(s, r, m, v) sdp_write(s, r, (sdp_read(s, r) & ~m) | v)
++#define sdp_clrset(s, r, m, v) sdp_write(s, r, (sdp_read(s, r) & ~(m)) | (v))
  
--	mc_shared_chmap = RREG32(mmMC_SHARED_CHMAP);
- 	adev->gfx.config.mc_arb_ramcfg = RREG32(mmMC_ARB_RAMCFG);
- 	mc_arb_ramcfg = adev->gfx.config.mc_arb_ramcfg;
+ #define cp_read(s, r) adv748x_read(s, ADV748X_PAGE_CP, r)
+ #define cp_write(s, r, v) adv748x_write(s, ADV748X_PAGE_CP, r, v)
+-#define cp_clrset(s, r, m, v) cp_write(s, r, (cp_read(s, r) & ~m) | v)
++#define cp_clrset(s, r, m, v) cp_write(s, r, (cp_read(s, r) & ~(m)) | (v))
  
+ #define txa_read(s, r) adv748x_read(s, ADV748X_PAGE_TXA, r)
+ #define txb_read(s, r) adv748x_read(s, ADV748X_PAGE_TXB, r)
 -- 
 2.20.1
 
