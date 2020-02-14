@@ -2,80 +2,222 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC4C215D382
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 09:10:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EB4615D38B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 09:12:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728889AbgBNIKW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 03:10:22 -0500
-Received: from stargate.chelsio.com ([12.32.117.8]:7483 "EHLO
-        stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726004AbgBNIKW (ORCPT
+        id S1729010AbgBNIMa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 03:12:30 -0500
+Received: from outbound-smtp18.blacknight.com ([46.22.139.245]:48903 "EHLO
+        outbound-smtp18.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725897AbgBNIMY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 03:10:22 -0500
-Received: from [10.193.191.83] (vinay-kumar.asicdesigners.com [10.193.191.83])
-        by stargate.chelsio.com (8.13.8/8.13.8) with ESMTP id 01E8A37G002040;
-        Fri, 14 Feb 2020 00:10:04 -0800
-Subject: Re: [PATCH] crypto: chelsio - remove extra allocation for chtls_dev
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Stephen Kitt <steve@sk2.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Atul Gupta <atul.gupta@chelsio.com>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-References: <20200124222051.1925415-1-steve@sk2.org>
- <20200213054751.4okuxe3hr2i4dxzs@gondor.apana.org.au>
-From:   Vinay Kumar Yadav <vinay.yadav@chelsio.com>
-Message-ID: <23d0939e-0a7b-f822-ae64-0cb64f6aefc2@chelsio.com>
-Date:   Fri, 14 Feb 2020 13:40:02 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
-MIME-Version: 1.0
-In-Reply-To: <20200213054751.4okuxe3hr2i4dxzs@gondor.apana.org.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Fri, 14 Feb 2020 03:12:24 -0500
+Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
+        by outbound-smtp18.blacknight.com (Postfix) with ESMTPS id D3ED11C2F60
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 08:12:20 +0000 (GMT)
+Received: (qmail 30669 invoked from network); 14 Feb 2020 08:12:20 -0000
+Received: from unknown (HELO stampy.112glenside.lan) (mgorman@techsingularity.net@[84.203.18.57])
+  by 81.17.254.9 with ESMTPA; 14 Feb 2020 08:12:20 -0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Phil Auld <pauld@redhat.com>, Hillf Danton <hdanton@sina.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>
+Subject: [PATCH 00/12] Reconcile NUMA balancing decisions with the load balancer v2
+Date:   Fri, 14 Feb 2020 08:12:07 +0000
+Message-Id: <20200214081219.26352-1-mgorman@techsingularity.net>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Herbert,
+Changelog since V1:
+o Rebase on top of Vincent's series and rework
 
-On 2/13/2020 11:17 AM, Herbert Xu wrote:
-> On Fri, Jan 24, 2020 at 11:20:51PM +0100, Stephen Kitt wrote:
->> chtls_uld_add allocates room for info->nports net_device structs
->> following the chtls_dev struct, presumably because it was originally
->> intended that the ports array would be stored there. This is suggested
->> by the assignment which was present in initial versions and removed by
->> c4e848586cf1 ("crypto: chelsio - remove redundant assignment to
->> cdev->ports"):
->>
->> 	cdev->ports = (struct net_device **)(cdev + 1);
->>
->> This assignment was never used, being overwritten by lldi->ports
->> immediately afterwards, and I couldn't find any uses of the memory
->> allocated past the end of the struct.
->>
->> Signed-off-by: Stephen Kitt <steve@sk2.org>
-> Thanks for the patch!
->
-> I think the problem goes deeper though.  It appears that instead
-> of allocating a ports array this function actually hangs onto the
-> array from the function argument "info".  This seems to be broken
-> and possibly the extra memory allocated was meant to accomodate
-> the ports array.  Indeed, the code removed by the commit that you
-> mentioned indicates this as well (although the memory was never
-> actually used).
+Note: The baseline for this series is tip/sched/core as of February
+	12th rebased on top of v5.6-rc1. The series includes patches from
+	Vincent as I needed to add a fix and build on top of it. Vincent's
+	patches may change based on feedback (split request from Peter,
+	Valentin has suggestions). However, I do not expect a collision
+	if Vincent's patches change as the patches are based on top.
 
-Yes, memory was never used. Author allocated port array but later 
-realized that he can use port array allocated by lld(cxgb4) and missed 
-to remove memory allocation at commit mentioned in patch. I think this 
-patch will correct memory allocation.
+The NUMA balancer makes placement decisions on tasks that partially
+take the load balancer into account and vice versa but there are
+inconsistencies. This can result in placement decisions that override
+each other leading to unnecessary migrations -- both task placement
+and page placement. This series reconciles many of the decisions --
+partially Vincent's work with some fixes and optimisations on top to
+merge our two series.
 
->
-> Dave, I think we should talk about the maintainence of the chelsio
-> net/crypto drivers.  They have quite a bit of overlap and there is
-> simply not enough people on the crypto side to review these drivers
-> properly.  Would it be possible for all future changes to these
-> drivers to go through the net tree?
->   
-> Cheers,
+The first patch is unrelated. It's picked up by tip but was not present in
+the tree at the time of the fork. I'm including it here because I tested
+with it.
+
+The second and third patches are tracing only and was needed to get
+sensible data out of ftrace with respect to task placement for NUMA
+balancing. The NUMA balancer is *far* easier to analyse with the
+patches and informed how the series should be developed.
+
+Patches 4-5 are Vincent's and use very similar code patterns and logic
+between NUMA and load balancer. Patch 6 is a fix to Vincent's work that
+is necessary to avoid serious imbalances being introduced by the NUMA
+balancer. Patches 7-8 are also Vincents (wanted to keep the fix close)
+and I have not reviewed them personally but Peter and Valentin have. If
+Vincent's patches change due to review, I'm not expecting further
+collisions.
+
+The rest of the series are a mix of optimisations and improvements, one
+of which stops the NUMA balancer fighting with itself.
+
+Note that this is not necessarily a universal performance win although
+performance results are generally ok (small gains/losses depending on
+the machine and workload). However, task migrations, page migrations,
+variability and overall overhead are generally reduced.
+
+Tests are still running and take quite a long time so I do not have a
+full picture. The main reference workload I used was specjbb running one
+JVM per node which typically would be expected to split evenly. It's
+an interesting workload because the number of "warehouses" does not
+linearly related to the number of running tasks due to the creation of
+GC threads and other interfering activity. The mmtests configuration used
+is jvm-specjbb2005-multi with two runs -- one with ftrace enabling
+relevant scheduler tracepoints.
+
+The headline performance of the series looks like
+
+			     baseline-v1          stopsearch-v2
+Hmean     tput-1     39748.93 (   0.00%)    37855.19 (  -4.76%)
+Hmean     tput-2     88648.59 (   0.00%)    89706.93 (   1.19%)
+Hmean     tput-3    136285.01 (   0.00%)   138279.68 (   1.46%)
+Hmean     tput-4    181312.69 (   0.00%)   183341.22 (   1.12%)
+Hmean     tput-5    228725.85 (   0.00%)   230540.83 (   0.79%)
+Hmean     tput-6    273246.83 (   0.00%)   273741.82 (   0.18%)
+Hmean     tput-7    317708.89 (   0.00%)   319298.84 (   0.50%)
+Hmean     tput-8    362378.08 (   0.00%)   364753.29 (   0.66%)
+Hmean     tput-9    403792.00 (   0.00%)   410765.39 (   1.73%)
+Hmean     tput-10   446000.88 (   0.00%)   453180.73 (   1.61%)
+Hmean     tput-11   486188.58 (   0.00%)   494345.95 (   1.68%)
+Hmean     tput-12   522288.84 (   0.00%)   524459.25 (   0.42%)
+Hmean     tput-13   532394.06 (   0.00%)   534592.16 (   0.41%)
+Hmean     tput-14   539440.66 (   0.00%)   541280.93 (   0.34%)
+Hmean     tput-15   541843.50 (   0.00%)   548813.57 (   1.29%)
+Hmean     tput-16   546510.71 (   0.00%)   552708.10 (   1.13%)
+Hmean     tput-17   544501.21 (   0.00%)   553142.46 (   1.59%)
+Hmean     tput-18   544802.98 (   0.00%)   552455.01 (   1.40%)
+Hmean     tput-19   545265.27 (   0.00%)   550940.90 (   1.04%)
+Hmean     tput-20   543284.33 (   0.00%)   546843.99 (   0.66%)
+Hmean     tput-21   543375.11 (   0.00%)   545722.53 (   0.43%)
+Hmean     tput-22   542536.60 (   0.00%)   542321.44 (  -0.04%)
+Hmean     tput-23   536402.28 (   0.00%)   536480.37 (   0.01%)
+Hmean     tput-24   532307.76 (   0.00%)   532388.47 (   0.02%)
+Stddev    tput-1      1426.23 (   0.00%)     1193.60 (  16.31%)
+Stddev    tput-2      4437.10 (   0.00%)      438.41 (  90.12%)
+Stddev    tput-3      3021.47 (   0.00%)     3103.49 (  -2.71%)
+Stddev    tput-4      4098.39 (   0.00%)     2165.16 (  47.17%)
+Stddev    tput-5      3524.22 (   0.00%)     1998.99 (  43.28%)
+Stddev    tput-6      3237.13 (   0.00%)     2529.32 (  21.87%)
+Stddev    tput-7      2534.27 (   0.00%)     3405.43 ( -34.38%)
+Stddev    tput-8      3847.37 (   0.00%)     1854.03 (  51.81%)
+Stddev    tput-9      5278.55 (   0.00%)     3961.92 (  24.94%)
+Stddev    tput-10     5311.08 (   0.00%)     3467.65 (  34.71%)
+Stddev    tput-11     7537.76 (   0.00%)     1424.11 (  81.11%)
+Stddev    tput-12     5023.29 (   0.00%)     2231.63 (  55.57%)
+Stddev    tput-13     3852.32 (   0.00%)     2602.86 (  32.43%)
+Stddev    tput-14    11859.59 (   0.00%)     6292.54 (  46.94%)
+Stddev    tput-15    16298.10 (   0.00%)     1254.41 (  92.30%)
+Stddev    tput-16     9041.77 (   0.00%)      665.39 (  92.64%)
+Stddev    tput-17     9322.50 (   0.00%)     2362.44 (  74.66%)
+Stddev    tput-18    16040.01 (   0.00%)     1965.05 (  87.75%)
+Stddev    tput-19     8814.09 (   0.00%)     1846.96 (  79.05%)
+Stddev    tput-20     7812.82 (   0.00%)     1658.17 (  78.78%)
+Stddev    tput-21     6584.58 (   0.00%)     3459.87 (  47.45%)
+Stddev    tput-22     8294.36 (   0.00%)     3616.85 (  56.39%)
+Stddev    tput-23     6887.93 (   0.00%)     2765.49 (  59.85%)
+Stddev    tput-24     6081.83 (   0.00%)      173.24 (  97.15%)
+
+This is showing a small gain in performance with much less variability.
+The high-level NUMA stats from /proc/vmstat look like this
+
+Ops NUMA base-page range updates     2564863.00     1962764.00
+Ops NUMA PTE updates                 1172223.00     1030924.00
+Ops NUMA PMD updates                    2720.00        1820.00
+Ops NUMA hint faults                  997432.00      875869.00
+Ops NUMA hint local faults %          922859.00      795995.00
+Ops NUMA hint local percent               92.52          90.88
+Ops NUMA pages migrated                30286.00       36589.00
+Ops AutoNUMA cost                       5005.69        4393.78
+
+The percentage of local hits is similar in absolute terms but note
+that fewer PTEs were marked for hinting and fewer faults were
+trapped. There is generally some degree of variability with this
+workload.
+
+A separate run gathered information from ftrace and analysed it
+offline.
+
+                                             5.6.0-rc1       5.6.0-rc1
+                                           baseline-v2   stopsearch-v2
+Ops Migrate failed no CPU                      1871.00          689.00
+Ops Migrate failed move to   idle                 0.00            0.00
+Ops Migrate failed swap task fail               872.00          568.00
+Ops Task Migrated swapped                      6702.00         3344.00
+Ops Task Migrated swapped local NID               0.00            0.00
+Ops Task Migrated swapped within group         1094.00          124.00
+Ops Task Migrated idle CPU                    14409.00        14610.00
+Ops Task Migrated idle CPU local NID              0.00            0.00
+Ops Task Migrate retry                         2355.00         1074.00
+Ops Task Migrate retry success                    0.00            0.00
+Ops Task Migrate retry failed                  2355.00         1074.00
+Ops Load Balance cross NUMA                 1248401.00      1261853.00
+
+"Migrate failed no CPU" is the times when NUMA balancing did not
+find a suitable page on a preferred node. This is increased because
+the series avoids making decisions that the LB would override.
+
+"Migrate failed swap task fail" is when migrate_swap fails and it
+can fail for a lot of reasons.
+
+"Task Migrated swapped" is lower which would would be a concern but in
+this test, locality was higher unlike the test with tracing disabled.
+This event triggers when two tasks are swapped to keep load neutral or
+improved from the perspective of the load balancer. The series attempts
+to swap tasks that both move to their preferred node.
+
+"Task Migrated idle CPU" is similar and while the the series does try to
+avoid NUMA Balancer and LB fighting each other, it also continues to
+obey overall CPU load balancer.
+
+"Task Migrate retry failed" happens when NUMA balancing makes multiple
+attempts to place a task on a preferred node. It is slightly reduced here
+but it would generally be expected to happen to maintain CPU load balance.
+
+In general, for this workload it varies quite a bit between machines. This
+machine was generally good. A more modern 2-socket machine showed similar
+with less performance gains and mixed variability but higher locality and less
+PTE scanning. A 4 socket machine showed gains generally, more variability at
+low utilisation and less variability (up to 91%) at higher utilisation.
+
+Very broadly speaking, performance is moved. There is room for improvement
+by allowing a larger degree of imbalance between NUMA nodes but that would
+be enough of a regression magnet that it should be treated separately.
+
+ include/linux/sched.h        |  17 +-
+ include/trace/events/sched.h |  49 ++--
+ kernel/sched/core.c          |  13 -
+ kernel/sched/debug.c         |  17 +-
+ kernel/sched/fair.c          | 598 ++++++++++++++++++++++++++++---------------
+ kernel/sched/pelt.c          |  45 ++--
+ kernel/sched/sched.h         |  42 ++-
+ 7 files changed, 499 insertions(+), 282 deletions(-)
+
+-- 
+2.16.4
+
