@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84A7915E658
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:47:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD60C15E594
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:42:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394163AbgBNQrX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:47:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55138 "EHLO mail.kernel.org"
+        id S2405427AbgBNQWR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:22:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404759AbgBNQVB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:21:01 -0500
+        id S2405301AbgBNQVD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:21:03 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E2E824719;
-        Fri, 14 Feb 2020 16:21:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A425A24743;
+        Fri, 14 Feb 2020 16:21:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697261;
-        bh=j0fReE2jsNbtiJWgJbFRTOm8cy02fxQnFVLmTF8Ts1s=;
+        s=default; t=1581697262;
+        bh=n11QlKoKBxyutbZj/PQ2zDMnJllH2zULDMkm5Sg16Fs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w9WZWTxponlbQ3L5/59V7jUyH5lN6tZHZ7PxklUA6KGu3IfHwh9LgxyQc69uoubP9
-         ngw3qsfZTxQ/q5UZLuw411pSu5qr6JO4XU0cKEIKnN+S1WMwhwStoAu5dgiqJwrpzU
-         iUkI6gFRb8ul3cNqdjoOQXqRgx1s4a5L5vsct+iw=
+        b=HNLJtpUDGaG1xodSG3F7E4MvDjS8Jymk4DXLtdM5nsUYJvfAbuFcw/mLPYlVA6EtF
+         VnBEl1XRusT1bgx1iPlIxZHSKtAlljc1acazoMxS3UNYZRhh7F53iGkB0duicQh0Jl
+         qisZk4+jmxvZvGCrAaKYkGjA8w4+wBmWpmzcJ2NI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+Cc:     Yunfeng Ye <yeyunfeng@huawei.com>,
+        zhengbin <zhengbin13@huawei.com>,
+        Hu Shiyuan <hushiyuan@huawei.com>,
+        Feilong Lin <linfeilong@huawei.com>, Jan Kara <jack@suse.cz>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.14 176/186] lib/scatterlist.c: adjust indentation in __sg_alloc_table
-Date:   Fri, 14 Feb 2020 11:17:05 -0500
-Message-Id: <20200214161715.18113-176-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, reiserfs-devel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 177/186] reiserfs: prevent NULL pointer dereference in reiserfs_insert_item()
+Date:   Fri, 14 Feb 2020 11:17:06 -0500
+Message-Id: <20200214161715.18113-177-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161715.18113-1-sashal@kernel.org>
 References: <20200214161715.18113-1-sashal@kernel.org>
@@ -45,49 +47,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Yunfeng Ye <yeyunfeng@huawei.com>
 
-[ Upstream commit 4e456fee215677584cafa7f67298a76917e89c64 ]
+[ Upstream commit aacee5446a2a1aa35d0a49dab289552578657fb4 ]
 
-Clang warns:
+The variable inode may be NULL in reiserfs_insert_item(), but there is
+no check before accessing the member of inode.
 
-  ../lib/scatterlist.c:314:5: warning: misleading indentation; statement
-  is not part of the previous 'if' [-Wmisleading-indentation]
-                          return -ENOMEM;
-                          ^
-  ../lib/scatterlist.c:311:4: note: previous statement is here
-                          if (prv)
-                          ^
-  1 warning generated.
+Fix this by adding NULL pointer check before calling reiserfs_debug().
 
-This warning occurs because there is a space before the tab on this
-line.  Remove it so that the indentation is consistent with the Linux
-kernel coding style and clang no longer warns.
-
-Link: http://lkml.kernel.org/r/20191218033606.11942-1-natechancellor@gmail.com
-Link: https://github.com/ClangBuiltLinux/linux/issues/830
-Fixes: edce6820a9fd ("scatterlist: prevent invalid free when alloc fails")
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Link: http://lkml.kernel.org/r/79c5135d-ff25-1cc9-4e99-9f572b88cc00@huawei.com
+Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+Cc: zhengbin <zhengbin13@huawei.com>
+Cc: Hu Shiyuan <hushiyuan@huawei.com>
+Cc: Feilong Lin <linfeilong@huawei.com>
+Cc: Jan Kara <jack@suse.cz>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/scatterlist.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/reiserfs/stree.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/lib/scatterlist.c b/lib/scatterlist.c
-index 11fce289d1166..834c846c5af84 100644
---- a/lib/scatterlist.c
-+++ b/lib/scatterlist.c
-@@ -317,7 +317,7 @@ int __sg_alloc_table(struct sg_table *table, unsigned int nents,
- 			if (prv)
- 				table->nents = ++table->orig_nents;
- 
-- 			return -ENOMEM;
-+			return -ENOMEM;
- 		}
- 
- 		sg_init_table(sg, alloc_size);
+diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
+index 0037aea97d39a..2946713cb00d6 100644
+--- a/fs/reiserfs/stree.c
++++ b/fs/reiserfs/stree.c
+@@ -2250,7 +2250,8 @@ int reiserfs_insert_item(struct reiserfs_transaction_handle *th,
+ 	/* also releases the path */
+ 	unfix_nodes(&s_ins_balance);
+ #ifdef REISERQUOTA_DEBUG
+-	reiserfs_debug(th->t_super, REISERFS_DEBUG_CODE,
++	if (inode)
++		reiserfs_debug(th->t_super, REISERFS_DEBUG_CODE,
+ 		       "reiserquota insert_item(): freeing %u id=%u type=%c",
+ 		       quota_bytes, inode->i_uid, head2type(ih));
+ #endif
 -- 
 2.20.1
 
