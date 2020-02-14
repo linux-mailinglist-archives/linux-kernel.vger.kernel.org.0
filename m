@@ -2,112 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 701BF15E3B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:32:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D1AD15E3D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:32:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406846AbgBNQbt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:31:49 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54683 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406548AbgBNQbo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:31:44 -0500
-Received: by mail-wm1-f68.google.com with SMTP id g1so10556871wmh.4;
-        Fri, 14 Feb 2020 08:31:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eAPiyJCQWJAYuCQbg5vLQMsHB0XHMIF5EmjZS4cVVMc=;
-        b=U/MyHARiUoYbmegGISDczV0sWnxf/CnBisvcw2jP8Q2HgYSyL06jv5gfeTBP2p4i3D
-         QhuS8B+4XAy9CwyDawix1OFxAgYhQpFMMsmC94tYIm2qmJnfyh55YEg0pWY1pHMg+ocI
-         manMWCwf4ahuziuNMS3zGbJONPoQWeeIR3zEGrreA3w7fmh8XdV/8B78hr80zPWdC2LT
-         cVlEtA0td92IIYlzvtt2X0tnS9sXkgKV/dqnFWYcWfP6BnqJjk5hQc+N90kscu4bfQXt
-         FkBvGcZCIWjwRCYqPZxbptIimSIJ9le4M94WzYU5Og0VLFp9HC3MZoCehWOIBKHr6K6o
-         HyJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eAPiyJCQWJAYuCQbg5vLQMsHB0XHMIF5EmjZS4cVVMc=;
-        b=ikZ1Iu3zCpnrDIpDMbRTIChci9UEZq2p8zvEu7cCwQucbuXs2TPQRLy2ise+Kglf2/
-         db3bcZNvSYN2uIC8iqPTKObVPyJSQ9m+YPtHBCL6XIpO30G0b1T2graVmj9N0k0o/J5v
-         fsUt5iRwwGaRkIiVPcfG4CXwE9seogkpGzD3SyX4yMyMejJS5QjnlXLH3+cHHNlOgqlo
-         jtrr0vETLHlkq3L0v/w9+5hOZkI2kS2STdbawZ22tFY/eDrT2cSSP7Y+AyNAMa3V0gZi
-         zIHC/aA5OUl2dRatU9kQClHCCb7i8S11HZjjqm/K6xdagQnf55OICZdZUio81NcMiVip
-         kgdw==
-X-Gm-Message-State: APjAAAWyOnxfs1rIvM1rQuXAMJaRw+OltZoXvx7k/a73x2NJHI349w0S
-        y0WI1lxkizsANNl9BRCruVo6vAsgGIU4oSiwKxs=
-X-Google-Smtp-Source: APXvYqzlHaboZa+02wB3RWO97MuTp7IBVGo1BoTiJj/H1xoW7PoNMQhdrNk38Zh5PiWw6BYvdcF+waGi/AJsrdjus7I=
-X-Received: by 2002:a05:600c:2c53:: with SMTP id r19mr5496620wmg.39.1581697902657;
- Fri, 14 Feb 2020 08:31:42 -0800 (PST)
+        id S2406380AbgBNQc0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:32:26 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:46302 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2393515AbgBNQcX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:32:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=EVE2QyhWUcN4faOpoE+Hy0shAp6QLvkX+MzRUb+BF8o=; b=DGtJGdns92ALhj0LSBlHNMtF6I
+        DhAVpF8S7uZJn68IIMdm5g7arm1DSs0SWj7Amd4JzBs7bUmEUo/exo8CrdC8PyDeRRLSst8j7eoCi
+        9IETsM3kUrmjRbteV9lFAM1gS/qNFrporaX9mIi83Yd7vypiemAz2aZPpdmSK7V00J08=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
+        (envelope-from <andrew@lunn.ch>)
+        id 1j2dsr-0000Hl-9O; Fri, 14 Feb 2020 17:32:05 +0100
+Date:   Fri, 14 Feb 2020 17:32:05 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     Paul Cercueil <paul@crapouillou.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Petr =?utf-8?Q?=C5=A0tetiar?= <ynezz@true.cz>,
+        Richard Fontana <rfontana@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com
+Subject: Re: [PATCH v2] net: davicom: dm9000: allow to pass MAC address
+ through mac_addr module parameter
+Message-ID: <20200214163205.GL31084@lunn.ch>
+References: <0d6b4d383bb29ed5d4710e9706e5ad6c7f92d9da.1581696454.git.hns@goldelico.com>
 MIME-Version: 1.0
-References: <20200214154854.6746-1-sashal@kernel.org> <20200214154854.6746-530-sashal@kernel.org>
-In-Reply-To: <20200214154854.6746-530-sashal@kernel.org>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Fri, 14 Feb 2020 11:31:31 -0500
-Message-ID: <CADnq5_Oq-6VYYMWgvSbTcs5S6+DHP1K+ambo3Cd_BBkYFQk8HQ@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 5.5 530/542] drm/amdgpu/smu10: fix smu10_get_clock_by_type_with_voltage
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "for 3.8" <stable@vger.kernel.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Evan Quan <evan.quan@amd.com>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0d6b4d383bb29ed5d4710e9706e5ad6c7f92d9da.1581696454.git.hns@goldelico.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 11:00 AM Sasha Levin <sashal@kernel.org> wrote:
->
-> From: Alex Deucher <alexander.deucher@amd.com>
->
-> [ Upstream commit 1064ad4aeef94f51ca230ac639a9e996fb7867a0 ]
->
-> Cull out 0 clocks to avoid a warning in DC.
->
-> Bug: https://gitlab.freedesktop.org/drm/amd/issues/963
+On Fri, Feb 14, 2020 at 05:07:35PM +0100, H. Nikolaus Schaller wrote:
+> The MIPS Ingenic CI20 board is shipped with a quite old u-boot
+> (ci20-v2013.10 see https://elinux.org/CI20_Dev_Zone). This passes
+> the MAC address through dm9000.mac_addr=xx:xx:xx:xx:xx:xx
+> kernel module parameter to give the board a fixed MAC address.
 
-All of the upstream commits that reference this bug need to be applied
-or this patch set will be broken.  Please either apply them all or
-drop them.
+I think this will get ACKed.
 
-Alex
+There is a well defined way to pass the MAC address via DT. The driver
+supports that already.
 
-> Reviewed-by: Evan Quan <evan.quan@amd.com>
-> Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
-> index 627a42e8fd318..fed3fc4bb57a9 100644
-> --- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
-> +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
-> @@ -1080,9 +1080,11 @@ static int smu10_get_clock_by_type_with_voltage(struct pp_hwmgr *hwmgr,
->
->         clocks->num_levels = 0;
->         for (i = 0; i < pclk_vol_table->count; i++) {
-> -               clocks->data[i].clocks_in_khz = pclk_vol_table->entries[i].clk  * 10;
-> -               clocks->data[i].voltage_in_mv = pclk_vol_table->entries[i].vol;
-> -               clocks->num_levels++;
-> +               if (pclk_vol_table->entries[i].clk) {
-> +                       clocks->data[clocks->num_levels].clocks_in_khz = pclk_vol_table->entries[i].clk  * 10;
-> +                       clocks->data[clocks->num_levels].voltage_in_mv = pclk_vol_table->entries[i].vol;
-> +                       clocks->num_levels++;
-> +               }
->         }
->
->         return 0;
-> --
-> 2.20.1
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+uboot for this board appears to be open:
+
+https://github.com/MIPS/CI20_u-boot
+
+and it is documented to how build it.
+
+So there is no reason why it cannot be made to support the standard
+mechanism.
+
+	Andrew
