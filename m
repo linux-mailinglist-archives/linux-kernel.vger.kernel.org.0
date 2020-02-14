@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFFF515E3B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:32:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CD6615E3A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:31:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406432AbgBNQbs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:31:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36250 "EHLO mail.kernel.org"
+        id S2406820AbgBNQbf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:31:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406279AbgBNQ0D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:26:03 -0500
+        id S2406292AbgBNQ0G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:26:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65134247C2;
-        Fri, 14 Feb 2020 16:26:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C990247B1;
+        Fri, 14 Feb 2020 16:26:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697563;
-        bh=iKESaSe8KqutxIY0wXUL7WNxpaQHoif996AI3uvbYa4=;
+        s=default; t=1581697565;
+        bh=FMn3dqKXlRf0VWYX1FOgHq9M1KnMQBmA7KSUS80C7sI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sASzKkBGKvM+nWL0bPqO7fDh/2IUXS5jiBPP9IsqD8qOslAVE0f93vKkWsMN5mfax
-         u7Y33Ktskz39VLwUU1wYRYOkEU1ovqBFrrcXmrCeP/lh4Bt2336zURRfQ/0UyrPPFW
-         6bBBDz7DQqabS7Va8iTjTVi/Pu/wTQqaUDN+Rk3I=
+        b=WJf496GpW7e0eTtkS9NFJ0cu67/asa9N3IPJK5C7n4OIhmnt7hb3xcT0EU4xEvBln
+         Mq43Ix0n0X/U3zD9oZRozW//64vP7EFQeSEl4t3y+dt14t4sgRyI2QPLeU5cwl5gGB
+         0M9YkvbKNxCcAYcbxeeQkwwCLpYhSMCUiCYCjnaM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Peter=20Gro=C3=9Fe?= <pegro@friiks.de>,
-        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>,
-        alsa-devel@alsa-project.org
-Subject: [PATCH AUTOSEL 4.4 079/100] ALSA: hda - Add docking station support for Lenovo Thinkpad T420s
-Date:   Fri, 14 Feb 2020 11:24:03 -0500
-Message-Id: <20200214162425.21071-79-sashal@kernel.org>
+Cc:     "zhangyi (F)" <yi.zhang@huawei.com>, Jan Kara <jack@suse.cz>,
+        Theodore Ts'o <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>,
+        linux-ext4@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 081/100] jbd2: switch to use jbd2_journal_abort() when failed to submit the commit record
+Date:   Fri, 14 Feb 2020 11:24:05 -0500
+Message-Id: <20200214162425.21071-81-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214162425.21071-1-sashal@kernel.org>
 References: <20200214162425.21071-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -44,33 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Große <pegro@friiks.de>
+From: "zhangyi (F)" <yi.zhang@huawei.com>
 
-[ Upstream commit ef7d84caa5928b40b1c93a26dbe5a3f12737c6ab ]
+[ Upstream commit d0a186e0d3e7ac05cc77da7c157dae5aa59f95d9 ]
 
-Lenovo Thinkpad T420s uses the same codec as T420, so apply the
-same quirk to enable audio output on a docking station.
+We invoke jbd2_journal_abort() to abort the journal and record errno
+in the jbd2 superblock when committing journal transaction besides the
+failure on submitting the commit record. But there is no need for the
+case and we can also invoke jbd2_journal_abort() instead of
+__jbd2_journal_abort_hard().
 
-Signed-off-by: Peter Große <pegro@friiks.de>
-Link: https://lore.kernel.org/r/20200122180106.9351-1-pegro@friiks.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 818d276ceb83a ("ext4: Add the journal checksum feature")
+Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Link: https://lore.kernel.org/r/20191204124614.45424-2-yi.zhang@huawei.com
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/patch_conexant.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/jbd2/commit.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/pci/hda/patch_conexant.c b/sound/pci/hda/patch_conexant.c
-index 05e745e2f4271..3150ddfbdb25e 100644
---- a/sound/pci/hda/patch_conexant.c
-+++ b/sound/pci/hda/patch_conexant.c
-@@ -866,6 +866,7 @@ static const struct snd_pci_quirk cxt5066_fixups[] = {
- 	SND_PCI_QUIRK(0x17aa, 0x215f, "Lenovo T510", CXT_PINCFG_LENOVO_TP410),
- 	SND_PCI_QUIRK(0x17aa, 0x21ce, "Lenovo T420", CXT_PINCFG_LENOVO_TP410),
- 	SND_PCI_QUIRK(0x17aa, 0x21cf, "Lenovo T520", CXT_PINCFG_LENOVO_TP410),
-+	SND_PCI_QUIRK(0x17aa, 0x21d2, "Lenovo T420s", CXT_PINCFG_LENOVO_TP410),
- 	SND_PCI_QUIRK(0x17aa, 0x21da, "Lenovo X220", CXT_PINCFG_LENOVO_TP410),
- 	SND_PCI_QUIRK(0x17aa, 0x21db, "Lenovo X220-tablet", CXT_PINCFG_LENOVO_TP410),
- 	SND_PCI_QUIRK(0x17aa, 0x38af, "Lenovo IdeaPad Z560", CXT_FIXUP_MUTE_LED_EAPD),
+diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
+index ebbd7d054cabd..6710fff0085e0 100644
+--- a/fs/jbd2/commit.c
++++ b/fs/jbd2/commit.c
+@@ -797,7 +797,7 @@ void jbd2_journal_commit_transaction(journal_t *journal)
+ 		err = journal_submit_commit_record(journal, commit_transaction,
+ 						 &cbh, crc32_sum);
+ 		if (err)
+-			__jbd2_journal_abort_hard(journal);
++			jbd2_journal_abort(journal, err);
+ 	}
+ 
+ 	blk_finish_plug(&plug);
+@@ -890,7 +890,7 @@ void jbd2_journal_commit_transaction(journal_t *journal)
+ 		err = journal_submit_commit_record(journal, commit_transaction,
+ 						&cbh, crc32_sum);
+ 		if (err)
+-			__jbd2_journal_abort_hard(journal);
++			jbd2_journal_abort(journal, err);
+ 	}
+ 	if (cbh)
+ 		err = journal_wait_on_commit_record(journal, cbh);
 -- 
 2.20.1
 
