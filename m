@@ -2,117 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCFD415DBAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:51:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E40D615DB31
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:40:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730017AbgBNPtf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:49:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52514 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729987AbgBNPtc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:49:32 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC609217F4;
-        Fri, 14 Feb 2020 15:49:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695371;
-        bh=EH0AaaBxidM6w52kyxw8SmOZ2SPi6FAU5ED1YOkX3CA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xT3U7hlF8bRC0E5nM/2LiJ1VcEu4lk+OgFs0VaVjn116fykb84BI3/r3c+PMC0c1Z
-         WDjFK6qMzoFAu9cbXBDKKU0nfahX6fzRmXpNiiSy0MZnTxjV/javZbfJzKBnJeT914
-         cHGKEhTiVZwDlv3R9uvETbhT6fEKBNkvKMVBuWYs=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     James Sewart <jamessewart@arista.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 028/542] PCI: Fix pci_add_dma_alias() bitmask size
-Date:   Fri, 14 Feb 2020 10:40:20 -0500
-Message-Id: <20200214154854.6746-28-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
-References: <20200214154854.6746-1-sashal@kernel.org>
+        id S2387492AbgBNPkD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:40:03 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:40470 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729444AbgBNPkD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:40:03 -0500
+Received: by mail-lj1-f195.google.com with SMTP id n18so11223626ljo.7
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 07:40:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=uy1CqztgoQcCozHkTL1K6dkcJO5oDdn+9A9vOrHmi5Y=;
+        b=Mq0KFbpLoF9RH+Q6+bpFpQUbThxc7670g4NmcANUlhxvng9ufszICF8xEA10dOqyvg
+         sYpkFypNrcfijcqbmimN8MTI24oUlCmnJlLw8OLen6BekOa/Hj6Gh2gXFAotHK5ouAlZ
+         hS9+xuWgLAPFIEW43m1yXgPgJoa9tt8RrsCcpwjCvlP3of9LrTGfLV4SeUO6NIdkqJDm
+         KM/CrpG7ab5yoOr3w8MpB+OAAwSpQc5ICXjgo238k5xIHZVmgvvBceJT5Fhy9PQqneCb
+         fulT7PRZFeOLhom9RUoYK8V5zWKeQv4wXTuMF/rX7ZZpc2+gZs795fVMZCaPkUuRFpvx
+         q4eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=uy1CqztgoQcCozHkTL1K6dkcJO5oDdn+9A9vOrHmi5Y=;
+        b=pWuqsQgnLNeG18LKwu0k1ccHhtAS7Rpd20yaVCoxjHLZgR/B/L8BEERwcs5UNAKk0B
+         5w4aY7UoOs7oCU8xjmi9zW+pr5Wig7pVhXQd6m/Pq8yNGvpLlqoVA9d8lqo8f3e6CTGH
+         mxTCIqK+CVLdL8TyiHyZinXpgaBV/vBK9aLVUnpz8j38kaAgaeVsGZ/bltIoQecL4Ndv
+         0/fyojDfJmFkzyYVirezlHzKOCcQy2BU+6Dwyk51X1LZ8+Ru89XvXdHCzH/Y5iy2SOLp
+         gPXxWjmrQdNa5VHQkKNwNi9ewydOLzMMsLppXcIxcZreDDUBJLmcBO9XKMfVLmOPyDqQ
+         v4xw==
+X-Gm-Message-State: APjAAAWHGA7YhZ8dTGLfbYMrmm8eNC9luRiizmXs2XwC2hxeaGHGT5ep
+        hyCPYgBRYAQT7yi+H9k+OqmQGA==
+X-Google-Smtp-Source: APXvYqyC35t7KSeDUk29sXEeP6DQL1WQaVxSElgrK2NjnDQFWzTLnR9PNmQep3WcsiJ7EYwiBf+M5w==
+X-Received: by 2002:a2e:300e:: with SMTP id w14mr2482342ljw.222.1581694801044;
+        Fri, 14 Feb 2020 07:40:01 -0800 (PST)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id r9sm3835738lfc.72.2020.02.14.07.40.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2020 07:40:00 -0800 (PST)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 0CFDA100F30; Fri, 14 Feb 2020 18:40:21 +0300 (+03)
+Date:   Fri, 14 Feb 2020 18:40:21 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     Hugh Dickins <hughd@google.com>, kirill.shutemov@linux.intel.com,
+        aarcange@redhat.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [v2 PATCH] mm: shmem: allow split THP when truncating THP
+ partially
+Message-ID: <20200214154021.kgeon6i76yfdbaa5@box>
+References: <1575420174-19171-1-git-send-email-yang.shi@linux.alibaba.com>
+ <alpine.LSU.2.11.1912041601270.12930@eggly.anvils>
+ <00f0bb7d-3c25-a65f-ea94-3e2de8e9bcdd@linux.alibaba.com>
+ <33768a7e-837d-3bcd-fb98-19727921d6fd@linux.alibaba.com>
+ <cd21f6a6-32a5-7d31-3bcd-4fc3f6cc0a84@linux.alibaba.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cd21f6a6-32a5-7d31-3bcd-4fc3f6cc0a84@linux.alibaba.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Sewart <jamessewart@arista.com>
+On Thu, Feb 13, 2020 at 04:38:01PM -0800, Yang Shi wrote:
+> Hi Kirill,
+> 
+> 
+> Would you please help review this patch? I don't know why Hugh didn't
+> response though I pinged him twice.
 
-[ Upstream commit f8bf2aeb651b3460a4b36fd7ba1ba1d31777d35c ]
+I have not noticed anything wrong with the patch.
 
-The number of possible devfns is 256, but pci_add_dma_alias() allocated a
-bitmap of size 255.  Fix this off-by-one error.
+But the function gets ugly beyond the reason. Any chance you could
+restructure it to get somewhat maintainable? (It's not easy, I know).
 
-This fixes commits 338c3149a221 ("PCI: Add support for multiple DMA
-aliases") and c6635792737b ("PCI: Allocate dma_alias_mask with
-bitmap_zalloc()"), but I doubt it was possible to see a problem because
-it takes 4 64-bit longs (or 8 32-bit longs) to hold 255 bits, and
-bitmap_zalloc() doesn't save the 255-bit size anywhere.
-
-[bhelgaas: commit log, move #define to drivers/pci/pci.h, include loop
-limit fix from Qian Cai:
-https://lore.kernel.org/r/20191218170004.5297-1-cai@lca.pw]
-Signed-off-by: James Sewart <jamessewart@arista.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/pci/pci.c    | 2 +-
- drivers/pci/pci.h    | 3 +++
- drivers/pci/search.c | 4 ++--
- 3 files changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index e87196cc1a7fb..7b5fa2eabe095 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -6017,7 +6017,7 @@ EXPORT_SYMBOL_GPL(pci_pr3_present);
- void pci_add_dma_alias(struct pci_dev *dev, u8 devfn)
- {
- 	if (!dev->dma_alias_mask)
--		dev->dma_alias_mask = bitmap_zalloc(U8_MAX, GFP_KERNEL);
-+		dev->dma_alias_mask = bitmap_zalloc(MAX_NR_DEVFNS, GFP_KERNEL);
- 	if (!dev->dma_alias_mask) {
- 		pci_warn(dev, "Unable to allocate DMA alias mask\n");
- 		return;
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index a0a53bd05a0b8..6394e7746fb54 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -4,6 +4,9 @@
- 
- #include <linux/pci.h>
- 
-+/* Number of possible devfns: 0.0 to 1f.7 inclusive */
-+#define MAX_NR_DEVFNS 256
-+
- #define PCI_FIND_CAP_TTL	48
- 
- #define PCI_VSEC_ID_INTEL_TBT	0x1234	/* Thunderbolt */
-diff --git a/drivers/pci/search.c b/drivers/pci/search.c
-index bade14002fd8a..e4dbdef5aef05 100644
---- a/drivers/pci/search.c
-+++ b/drivers/pci/search.c
-@@ -41,9 +41,9 @@ int pci_for_each_dma_alias(struct pci_dev *pdev,
- 	 * DMA, iterate over that too.
- 	 */
- 	if (unlikely(pdev->dma_alias_mask)) {
--		u8 devfn;
-+		unsigned int devfn;
- 
--		for_each_set_bit(devfn, pdev->dma_alias_mask, U8_MAX) {
-+		for_each_set_bit(devfn, pdev->dma_alias_mask, MAX_NR_DEVFNS) {
- 			ret = fn(pdev, PCI_DEVID(pdev->bus->number, devfn),
- 				 data);
- 			if (ret)
 -- 
-2.20.1
-
+ Kirill A. Shutemov
