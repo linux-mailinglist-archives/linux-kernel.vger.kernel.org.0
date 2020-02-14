@@ -2,101 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AC2815F5D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:40:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1603E15F56F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:39:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730852AbgBNSkD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:40:03 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:33798 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729781AbgBNSkB (ORCPT
+        id S2389070AbgBNShD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:37:03 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:55987 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387551AbgBNShC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 13:40:01 -0500
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j2fqp-0000uO-PK; Fri, 14 Feb 2020 18:38:07 +0000
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>
-Cc:     smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Phil Estes <estesp@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v2 28/28] devpts: handle fsid mappings
-Date:   Fri, 14 Feb 2020 19:35:54 +0100
-Message-Id: <20200214183554.1133805-29-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200214183554.1133805-1-christian.brauner@ubuntu.com>
-References: <20200214183554.1133805-1-christian.brauner@ubuntu.com>
+        Fri, 14 Feb 2020 13:37:02 -0500
+Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1j2fpO-0004c8-S7; Fri, 14 Feb 2020 19:36:39 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id 57DD9101161; Fri, 14 Feb 2020 19:36:37 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     David Miller <davem@davemloft.net>
+Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, ast@kernel.org, daniel@iogearbox.net,
+        bigeasy@linutronix.de, peterz@infradead.org, williams@redhat.com,
+        rostedt@goodmis.org, juri.lelli@redhat.com, mingo@kernel.org
+Subject: Re: [RFC patch 00/19] bpf: Make BPF and PREEMPT_RT co-exist
+In-Reply-To: <20200214.095303.341559462549043464.davem@davemloft.net>
+Date:   Fri, 14 Feb 2020 19:36:37 +0100
+Message-ID: <87pneht3re.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a uid or gid mount option is specified with devpts have it lookup the
-corresponding kfsids in the fsid mappings. If no fsid mappings are setup the
-behavior is unchanged, i.e. fsids are looked up in the id mappings.
+David Miller <davem@davemloft.net> writes:
 
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
-/* v2 */
-unchanged
----
- fs/devpts/inode.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+> From: Thomas Gleixner <tglx@linutronix.de>
+> Date: Fri, 14 Feb 2020 14:39:17 +0100
+>
+>> This is a follow up to the initial patch series which David posted a
+>> while ago:
+>> 
+>>  https://lore.kernel.org/bpf/20191207.160357.828344895192682546.davem@davemloft.net/
+>> 
+>> which was (while non-functional on RT) a good starting point for further
+>> investigations.
+>
+> This looks really good after a cursory review, thanks for doing this week.
+>
+> I was personally unaware of the pre-allocation rules for MAPs used by
+> tracing et al.  And that definitely shapes how this should be handled.
 
-diff --git a/fs/devpts/inode.c b/fs/devpts/inode.c
-index 42e5a766d33c..139958892572 100644
---- a/fs/devpts/inode.c
-+++ b/fs/devpts/inode.c
-@@ -24,6 +24,7 @@
- #include <linux/parser.h>
- #include <linux/fsnotify.h>
- #include <linux/seq_file.h>
-+#include <linux/fsuidgid.h>
- 
- #define DEVPTS_DEFAULT_MODE 0600
- /*
-@@ -277,7 +278,7 @@ static int parse_mount_options(char *data, int op, struct pts_mount_opts *opts)
- 		case Opt_uid:
- 			if (match_int(&args[0], &option))
- 				return -EINVAL;
--			uid = make_kuid(current_user_ns(), option);
-+			uid = make_kfsuid(current_user_ns(), option);
- 			if (!uid_valid(uid))
- 				return -EINVAL;
- 			opts->uid = uid;
-@@ -286,7 +287,7 @@ static int parse_mount_options(char *data, int op, struct pts_mount_opts *opts)
- 		case Opt_gid:
- 			if (match_int(&args[0], &option))
- 				return -EINVAL;
--			gid = make_kgid(current_user_ns(), option);
-+			gid = make_kfsgid(current_user_ns(), option);
- 			if (!gid_valid(gid))
- 				return -EINVAL;
- 			opts->gid = gid;
-@@ -410,7 +411,7 @@ static int devpts_show_options(struct seq_file *seq, struct dentry *root)
- 			   from_kuid_munged(&init_user_ns, opts->uid));
- 	if (opts->setgid)
- 		seq_printf(seq, ",gid=%u",
--			   from_kgid_munged(&init_user_ns, opts->gid));
-+			   from_kfsgid_munged(&init_user_ns, opts->gid));
- 	seq_printf(seq, ",mode=%03o", opts->mode);
- 	seq_printf(seq, ",ptmxmode=%03o", opts->ptmxmode);
- 	if (opts->max < NR_UNIX98_PTY_MAX)
--- 
-2.25.0
+Hmm. I just noticed that my analysis only holds for PERF events. But
+that's broken on mainline already.
+
+Assume the following simplified callchain:
+
+       kmalloc() from regular non BPF context
+         cache empty
+           freelist empty
+             lock(zone->lock);
+                tracepoint or kprobe
+                  BPF()
+                    update_elem()
+                      lock(bucket)
+                        kmalloc()
+                          cache empty
+                            freelist empty
+                              lock(zone->lock);  <- DEADLOCK
+
+So really, preallocation _must_ be enforced for all variants of
+intrusive instrumentation. There is no if and but, it's simply mandatory
+as all intrusive instrumentation has to follow the only sensible
+principle: KISS = Keep It Safe and Simple.
+
+The above is a perfectly valid scenario and works with perf and tracing,
+so it has to work with BPF in the same safe way.
+
+I might be missing some magic enforcement of that, but I got lost in the
+maze.
+
+Thanks,
+
+        tglx
 
