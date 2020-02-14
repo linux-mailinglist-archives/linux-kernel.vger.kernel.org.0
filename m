@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ED5B15ED70
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:34:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2498B15EDD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:37:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389104AbgBNQGO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:06:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55414 "EHLO mail.kernel.org"
+        id S1730845AbgBNRgX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:36:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390190AbgBNQFd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:05:33 -0500
+        id S2390192AbgBNQFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:05:35 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8CAC2187F;
-        Fri, 14 Feb 2020 16:05:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EEA0C217F4;
+        Fri, 14 Feb 2020 16:05:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696332;
-        bh=g0H+3ovq4kYtjGmq5NPbNijrKDqg75LfmPzzqNKWwBk=;
+        s=default; t=1581696333;
+        bh=D6q+W0uw71RZQXApkieYo4qW7HwpywQhRGI3KCCb+3o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hGO6MJiatgMRGHHIVEV5JWItFTWHf2hTMILTXJa5aBBYNaCmgmF/Sgzvq+1AuiP8i
-         F8UTmd1aRYzRWmne24zmy1nA5hBw3OYHUehS3/ysY1CoQBxpmmrwlo7vs2ehIsU8+W
-         ZADrdvyqtcVclkxDdDv6HuhGDLSH9b7Q2QNcNKKk=
+        b=uz9II/afRIVo1edRhrdnV5IyYU95iziYZ9Rqf3d7MHTbceiLp6H6dvE9HR0h8ykLb
+         lhnS9o51TKz2DuoDogppBjobMvHPN+abyGBiDL6zMyjmNecUzFDyIPwXCXDmFpgdjq
+         DwjERsYrBF6T4FZ2uCoQJIttOgeEKa7NT1rZDXIM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chuhong Yuan <hslester96@gmail.com>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        dmaengine@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 170/459] dmaengine: axi-dmac: add a check for devm_regmap_init_mmio
-Date:   Fri, 14 Feb 2020 10:57:00 -0500
-Message-Id: <20200214160149.11681-170-sashal@kernel.org>
+Cc:     Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.4 171/459] clk: imx: Add correct failure handling for clk based helpers
+Date:   Fri, 14 Feb 2020 10:57:01 -0500
+Message-Id: <20200214160149.11681-171-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -44,54 +43,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuhong Yuan <hslester96@gmail.com>
+From: Abel Vesa <abel.vesa@nxp.com>
 
-[ Upstream commit a5b982af953bcc838cd198b0434834cc1dff14ec ]
+[ Upstream commit f60f1c62c3188fcca945581e35e3440ee3fdcc95 ]
 
-The driver misses checking the result of devm_regmap_init_mmio().
-Add a check to fix it.
+If the clk_hw based API returns an error, trying to return the clk from
+hw will end up in a NULL pointer dereference. So adding the to_clk
+checker and using it inside every clk based macro helper we handle that
+case correctly.
 
-Fixes: fc15be39a827 ("dmaengine: axi-dmac: add regmap support")
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-Reviewed-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Link: https://lore.kernel.org/r/20191209085711.16001-1-hslester96@gmail.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+This to_clk is also temporary and will go away along with the clk based
+macro helpers once there is no user that need them anymore.
+
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/dma-axi-dmac.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/clk/imx/clk.h | 37 ++++++++++++++++++++++---------------
+ 1 file changed, 22 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/dma/dma-axi-dmac.c b/drivers/dma/dma-axi-dmac.c
-index a0ee404b736ed..f1d149e328395 100644
---- a/drivers/dma/dma-axi-dmac.c
-+++ b/drivers/dma/dma-axi-dmac.c
-@@ -830,6 +830,7 @@ static int axi_dmac_probe(struct platform_device *pdev)
- 	struct dma_device *dma_dev;
- 	struct axi_dmac *dmac;
- 	struct resource *res;
-+	struct regmap *regmap;
- 	int ret;
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index f7a389a50401a..6fe64ff8ffa12 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -51,48 +51,48 @@ struct imx_pll14xx_clk {
+ };
  
- 	dmac = devm_kzalloc(&pdev->dev, sizeof(*dmac), GFP_KERNEL);
-@@ -921,10 +922,17 @@ static int axi_dmac_probe(struct platform_device *pdev)
+ #define imx_clk_cpu(name, parent_name, div, mux, pll, step) \
+-	imx_clk_hw_cpu(name, parent_name, div, mux, pll, step)->clk
++	to_clk(imx_clk_hw_cpu(name, parent_name, div, mux, pll, step))
  
- 	platform_set_drvdata(pdev, dmac);
+ #define clk_register_gate2(dev, name, parent_name, flags, reg, bit_idx, \
+ 				cgr_val, clk_gate_flags, lock, share_count) \
+-	clk_hw_register_gate2(dev, name, parent_name, flags, reg, bit_idx, \
+-				cgr_val, clk_gate_flags, lock, share_count)->clk
++	to_clk(clk_hw_register_gate2(dev, name, parent_name, flags, reg, bit_idx, \
++				cgr_val, clk_gate_flags, lock, share_count))
  
--	devm_regmap_init_mmio(&pdev->dev, dmac->base, &axi_dmac_regmap_config);
-+	regmap = devm_regmap_init_mmio(&pdev->dev, dmac->base,
-+		 &axi_dmac_regmap_config);
-+	if (IS_ERR(regmap)) {
-+		ret = PTR_ERR(regmap);
-+		goto err_free_irq;
-+	}
+ #define imx_clk_pllv3(type, name, parent_name, base, div_mask) \
+-	imx_clk_hw_pllv3(type, name, parent_name, base, div_mask)->clk
++	to_clk(imx_clk_hw_pllv3(type, name, parent_name, base, div_mask))
  
- 	return 0;
+ #define imx_clk_pfd(name, parent_name, reg, idx) \
+-	imx_clk_hw_pfd(name, parent_name, reg, idx)->clk
++	to_clk(imx_clk_hw_pfd(name, parent_name, reg, idx))
  
-+err_free_irq:
-+	free_irq(dmac->irq, dmac);
- err_unregister_of:
- 	of_dma_controller_free(pdev->dev.of_node);
- err_unregister_device:
+ #define imx_clk_gate_exclusive(name, parent, reg, shift, exclusive_mask) \
+-	imx_clk_hw_gate_exclusive(name, parent, reg, shift, exclusive_mask)->clk
++	to_clk(imx_clk_hw_gate_exclusive(name, parent, reg, shift, exclusive_mask))
+ 
+ #define imx_clk_fixed_factor(name, parent, mult, div) \
+-	imx_clk_hw_fixed_factor(name, parent, mult, div)->clk
++	to_clk(imx_clk_hw_fixed_factor(name, parent, mult, div))
+ 
+ #define imx_clk_divider2(name, parent, reg, shift, width) \
+-	imx_clk_hw_divider2(name, parent, reg, shift, width)->clk
++	to_clk(imx_clk_hw_divider2(name, parent, reg, shift, width))
+ 
+ #define imx_clk_gate_dis(name, parent, reg, shift) \
+-	imx_clk_hw_gate_dis(name, parent, reg, shift)->clk
++	to_clk(imx_clk_hw_gate_dis(name, parent, reg, shift))
+ 
+ #define imx_clk_gate2(name, parent, reg, shift) \
+-	imx_clk_hw_gate2(name, parent, reg, shift)->clk
++	to_clk(imx_clk_hw_gate2(name, parent, reg, shift))
+ 
+ #define imx_clk_gate2_flags(name, parent, reg, shift, flags) \
+-	imx_clk_hw_gate2_flags(name, parent, reg, shift, flags)->clk
++	to_clk(imx_clk_hw_gate2_flags(name, parent, reg, shift, flags))
+ 
+ #define imx_clk_gate2_shared2(name, parent, reg, shift, share_count) \
+-	imx_clk_hw_gate2_shared2(name, parent, reg, shift, share_count)->clk
++	to_clk(imx_clk_hw_gate2_shared2(name, parent, reg, shift, share_count))
+ 
+ #define imx_clk_gate3(name, parent, reg, shift) \
+-	imx_clk_hw_gate3(name, parent, reg, shift)->clk
++	to_clk(imx_clk_hw_gate3(name, parent, reg, shift))
+ 
+ #define imx_clk_gate4(name, parent, reg, shift) \
+-	imx_clk_hw_gate4(name, parent, reg, shift)->clk
++	to_clk(imx_clk_hw_gate4(name, parent, reg, shift))
+ 
+ #define imx_clk_mux(name, reg, shift, width, parents, num_parents) \
+-	imx_clk_hw_mux(name, reg, shift, width, parents, num_parents)->clk
++	to_clk(imx_clk_hw_mux(name, reg, shift, width, parents, num_parents))
+ 
+ struct clk *imx_clk_pll14xx(const char *name, const char *parent_name,
+ 		 void __iomem *base, const struct imx_pll14xx_clk *pll_clk);
+@@ -195,6 +195,13 @@ struct clk_hw *imx_clk_hw_fixup_mux(const char *name, void __iomem *reg,
+ 			      u8 shift, u8 width, const char * const *parents,
+ 			      int num_parents, void (*fixup)(u32 *val));
+ 
++static inline struct clk *to_clk(struct clk_hw *hw)
++{
++	if (IS_ERR_OR_NULL(hw))
++		return ERR_CAST(hw);
++	return hw->clk;
++}
++
+ static inline struct clk *imx_clk_fixed(const char *name, int rate)
+ {
+ 	return clk_register_fixed_rate(NULL, name, NULL, 0, rate);
 -- 
 2.20.1
 
