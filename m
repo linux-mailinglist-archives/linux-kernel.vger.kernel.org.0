@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E62615E1E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:21:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6DF715E1EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:21:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405302AbgBNQVD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:21:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53164 "EHLO mail.kernel.org"
+        id S2405319AbgBNQVH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:21:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53260 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404888AbgBNQTy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:19:54 -0500
+        id S2405087AbgBNQT5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:19:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79B002470C;
-        Fri, 14 Feb 2020 16:19:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC7EB24713;
+        Fri, 14 Feb 2020 16:19:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697194;
-        bh=J+cD7ae9Q47vSdnutjU4ymEVk+kSRaBnycI4ag1zGXM=;
+        s=default; t=1581697196;
+        bh=t/3OO/Z5qwKOOusAvvBnwxg/E0dLIpIMxH436hfRD4A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=quTDitaODj0PksUQ4AcmsF8v4eLeuZCKDHfBQLkUoJzFzf1NaZQrt8IcIYnvDDkHN
-         DEZYHokdWGPqFgYp+toMowLlqa9uLf2gaJgmzyNq5S76o6yN0p3VxNO5iJlozrtV7X
-         AfLK7NScQFpdK0vHxdZ5KQpseyvWVdcF0E3cMWyw=
+        b=VQ1zl4ObjFBm8osVr9uPF1yQoMx4ypvTKwdPOywUQ8N9NHd5NjFlCRY0iPA9JLhZb
+         K5VDY3YewMczzgD5YNuuYBl0M7lYrqVMV+pnBQ7AQfGciLK9EJA8tgFmxFkH8A5B8w
+         +vIxgCyS6vvpLvexLMmgWXDE2cUAhzbs6K+0qRCU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jose Abreu <Jose.Abreu@synopsys.com>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.14 123/186] ARC: [plat-axs10x]: Add missing multicast filter number to GMAC node
-Date:   Fri, 14 Feb 2020 11:16:12 -0500
-Message-Id: <20200214161715.18113-123-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.14 125/186] drm/nouveau/secboot/gm20b: initialize pointer in gm20b_secboot_new()
+Date:   Fri, 14 Feb 2020 11:16:14 -0500
+Message-Id: <20200214161715.18113-125-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161715.18113-1-sashal@kernel.org>
 References: <20200214161715.18113-1-sashal@kernel.org>
@@ -45,34 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jose Abreu <Jose.Abreu@synopsys.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 7980dff398f86a618f502378fa27cf7e77449afa ]
+[ Upstream commit 3613a9bea95a1470dd42e4ed1cc7d86ebe0a2dc0 ]
 
-Add a missing property to GMAC node so that multicast filtering works
-correctly.
+We accidentally set "psb" which is a no-op instead of "*psb" so it
+generates a static checker warning.  We should probably set it before
+the first error return so that it's always initialized.
 
-Fixes: 556cc1c5f528 ("ARC: [axs101] Add support for AXS101 SDP (software development platform)")
-Acked-by: Alexey Brodkin <abrodkin@synopsys.com>
-Signed-off-by: Jose Abreu <Jose.Abreu@synopsys.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Fixes: 923f1bd27bf1 ("drm/nouveau/secboot/gm20b: add secure boot support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arc/boot/dts/axs10x_mb.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arc/boot/dts/axs10x_mb.dtsi b/arch/arc/boot/dts/axs10x_mb.dtsi
-index e114000a84f56..d825b9dbae5de 100644
---- a/arch/arc/boot/dts/axs10x_mb.dtsi
-+++ b/arch/arc/boot/dts/axs10x_mb.dtsi
-@@ -70,6 +70,7 @@
- 			interrupt-names = "macirq";
- 			phy-mode = "rgmii";
- 			snps,pbl = < 32 >;
-+			snps,multicast-filter-bins = <256>;
- 			clocks = <&apbclk>;
- 			clock-names = "stmmaceth";
- 			max-speed = <100>;
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c
+index 30491d132d59c..fbd10a67c6c6a 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c
+@@ -108,6 +108,7 @@ gm20b_secboot_new(struct nvkm_device *device, int index,
+ 	struct gm200_secboot *gsb;
+ 	struct nvkm_acr *acr;
+ 
++	*psb = NULL;
+ 	acr = acr_r352_new(BIT(NVKM_SECBOOT_FALCON_FECS) |
+ 			   BIT(NVKM_SECBOOT_FALCON_PMU));
+ 	if (IS_ERR(acr))
+@@ -116,10 +117,8 @@ gm20b_secboot_new(struct nvkm_device *device, int index,
+ 	acr->optional_falcons = BIT(NVKM_SECBOOT_FALCON_PMU);
+ 
+ 	gsb = kzalloc(sizeof(*gsb), GFP_KERNEL);
+-	if (!gsb) {
+-		psb = NULL;
++	if (!gsb)
+ 		return -ENOMEM;
+-	}
+ 	*psb = &gsb->base;
+ 
+ 	ret = nvkm_secboot_ctor(&gm20b_secboot, acr, device, index, &gsb->base);
 -- 
 2.20.1
 
