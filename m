@@ -2,201 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E8B815F68E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 20:13:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C9BE15F699
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 20:13:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389086AbgBNTMh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 14:12:37 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38086 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388768AbgBNTMF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 14:12:05 -0500
-Received: by mail-ot1-f68.google.com with SMTP id z9so10169810oth.5
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 11:12:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6uqzI/vJCb+lytMRQLBtmGBNvQ3CBGyQ4CHe99juhWw=;
-        b=A01RKV0yUncA2zmUFntZswW/86rIj8tLC2M+AhXaShqxWykJDCkRYD43cXW50sXU39
-         MAa7XyeI7GLjetxuKiKl6Z+csq3oWb/Ynl+99TLWkIoJSkpYl2aCL7j/cGo8BHzrvsd2
-         8aySaepz0fQ2TgDbNN875+eReDdnjC93cTHaog9V5AwTUQwx8yb1iHjXkm3WNamm65pV
-         hGFAn/wkc14F1h7uUo5Lzol4RTLd0WtY2Xogo92Ly7NncWyYlAwKRiui1jUZR5WcYhIt
-         FXIzTf3dg9PluaRNFM74ih0l8HABOHZ+yTWC3VapgIcDQ1btBJ0IDtlJKNucSnOnbLig
-         c0/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6uqzI/vJCb+lytMRQLBtmGBNvQ3CBGyQ4CHe99juhWw=;
-        b=e+fa00TW40u+NpCes3nKR1S80AC00T5eSu42GhS7lYnRGV4N3I/OI4IBiEMvh2fOqe
-         oXdy5/+zgfZ52Yz6VnSSywAhN38Rt2OoHGOib5lzBwAgV17MM96tOlQp+A+89RnOG9zD
-         ErEXyse7WBDlDwbfk7TfJkW8LaVFY9lIj3JVL1Itt1sG+nWzYE8/7hk8U+mccSfedGnH
-         QgDKbaKuYFGtHjsdvYXI0BgHN4jddrxPs/9T00CNwImRr35z5DSUtqVyVM/ddRNwKiPu
-         WqNUD3TbC064eA2TS+/M448NmcpSuXaHhN4kzKRqHT0bb1ZA48mLT7L/ma3INemtJld1
-         W8dA==
-X-Gm-Message-State: APjAAAVUsScjbG4gndlwQQYOTE0uBkY91GQHb80kylUEOr3OQ2KkdUrV
-        fVYEbJLHu8txauAhGwN8foeotQZ3FqFFl3evOhkaFA==
-X-Google-Smtp-Source: APXvYqw9Sh4U5QH4PzNP9ZbTWhW45tXHy/W8ePIQAS0ykZLvuNQTIJlI1t1RupZqm8jvXOKMHeZWx2pyg/XWkHVOixM=
-X-Received: by 2002:a05:6830:1d6e:: with SMTP id l14mr3411629oti.32.1581707524096;
- Fri, 14 Feb 2020 11:12:04 -0800 (PST)
+        id S2388592AbgBNTN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 14:13:28 -0500
+Received: from mail.dlink.ru ([178.170.168.18]:39436 "EHLO fd.dlink.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387950AbgBNTN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 14:13:28 -0500
+Received: by fd.dlink.ru (Postfix, from userid 5000)
+        id 3A6A41B20805; Fri, 14 Feb 2020 22:13:24 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru 3A6A41B20805
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dlink.ru; s=mail;
+        t=1581707604; bh=nhwdDqOJlQOl87aKKC1lm6aCScw7AzhefyZ1wDtS7gM=;
+        h=From:To:Cc:Subject:Date;
+        b=DY4dBz5AoMAcKmdPUcOGmsbVictVqh8ydt+C2b60OuKVD2Yl8EuvU2I6VXU8uYyBn
+         ZCF/rIdXanWiCZigjzm9IVcJ87yF9r7H8GR36ZylmCfQ1l0rwPoS/lGlnvFukv4hy9
+         4diizy5KiiVJJAPqU13qsLWwWDDqAWISiPxU6LP0=
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.dlink.ru
+X-Spam-Level: 
+X-Spam-Status: No, score=-99.2 required=7.5 tests=BAYES_50,URIBL_BLOCKED,
+        USER_IN_WHITELIST autolearn=disabled version=3.4.2
+Received: from mail.rzn.dlink.ru (mail.rzn.dlink.ru [178.170.168.13])
+        by fd.dlink.ru (Postfix) with ESMTP id 748631B201C3;
+        Fri, 14 Feb 2020 22:13:17 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru 748631B201C3
+Received: from mail.rzn.dlink.ru (localhost [127.0.0.1])
+        by mail.rzn.dlink.ru (Postfix) with ESMTP id 41F041B2267C;
+        Fri, 14 Feb 2020 22:13:16 +0300 (MSK)
+Received: from localhost.localdomain (unknown [196.196.203.118])
+        by mail.rzn.dlink.ru (Postfix) with ESMTPA;
+        Fri, 14 Feb 2020 22:13:16 +0300 (MSK)
+From:   Alexander Lobakin <alobakin@dlink.ru>
+To:     Leon Romanovsky <leon@kernel.org>
+Cc:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Maxim Mikityanskiy <maximmi@mellanox.com>,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexander Lobakin <alobakin@dlink.ru>
+Subject: [PATCH rdma] IB/mlx5: Fix linkage failure on 32-bit arches
+Date:   Fri, 14 Feb 2020 22:13:09 +0300
+Message-Id: <20200214191309.155654-1-alobakin@dlink.ru>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-References: <20200214183554.1133805-1-christian.brauner@ubuntu.com> <20200214183554.1133805-5-christian.brauner@ubuntu.com>
-In-Reply-To: <20200214183554.1133805-5-christian.brauner@ubuntu.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Fri, 14 Feb 2020 20:11:36 +0100
-Message-ID: <CAG48ez2o81ZwwL9muYyheN9vY69vJR5sB9LsLh=nk6wB4iuUgw@mail.gmail.com>
-Subject: Re: [PATCH v2 04/28] fsuidgid: add fsid mapping helpers
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@ubuntu.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Stephen Barber <smbarber@chromium.org>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Phil Estes <estesp@gmail.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 7:37 PM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
-> This adds a set of helpers to translate between kfsuid/kfsgid and their
-> userspace fsuid/fsgid counter parts relative to a given user namespace.
->
-> - kuid_t make_kfsuid(struct user_namespace *from, uid_t fsuid)
->   Maps a user-namespace fsuid pair into a kfsuid.
->   If no fsuid mappings have been written it behaves identical to calling
->   make_kuid(). This ensures backwards compatibility for workloads unaware
->   or not in need of fsid mappings.
-[...]
-> +#ifdef CONFIG_USER_NS_FSID
-> +/**
-> + *     make_kfsuid - Map a user-namespace fsuid pair into a kuid.
-> + *     @ns:  User namespace that the fsuid is in
-> + *     @fsuid: User identifier
-> + *
-> + *     Maps a user-namespace fsuid pair into a kernel internal kfsuid,
-> + *     and returns that kfsuid.
-> + *
-> + *     When there is no mapping defined for the user-namespace kfsuid
-> + *     pair INVALID_UID is returned.  Callers are expected to test
-> + *     for and handle INVALID_UID being returned.  INVALID_UID
-> + *     may be tested for using uid_valid().
-> + */
-> +kuid_t make_kfsuid(struct user_namespace *ns, uid_t fsuid)
-> +{
-> +       unsigned extents = ns->fsuid_map.nr_extents;
-> +       smp_rmb();
-> +
-> +       /* Map the fsuid to a global kernel fsuid */
-> +       if (extents == 0)
-> +               return KUIDT_INIT(map_id_down(&ns->uid_map, fsuid));
-> +
-> +       return KUIDT_INIT(map_id_down(&ns->fsuid_map, fsuid));
-> +}
-> +EXPORT_SYMBOL(make_kfsuid);
+Commit f164be8c0366 ("IB/mlx5: Extend caps stage to handle VAR
+capabilities") introduced a straight "/" division of the u64
+variable "bar_size", which emits an __udivdi3() libgcc call on
+32-bit arches and certain GCC versions:
 
-What effect is this fallback going to have for nested namespaces?
+error: "__udivdi3" [drivers/infiniband/hw/mlx5/mlx5_ib.ko] undefined! [1]
 
-Let's say we have an outer namespace N1 with this uid_map:
+Replace it with the corresponding div_u64() call.
+Compile-tested on ARCH=mips 32r2el_defconfig BOARDS=ocelot.
 
-    0 100000 65535
+[1] https://lore.kernel.org/linux-mips/CAMuHMdXM9S1VkFMZ8eDAyZR6EE4WkJY215Lcn2qdOaPeadF+EQ@mail.gmail.com/
 
-and with this fsuid_map:
+Fixes: f164be8c0366 ("IB/mlx5: Extend caps stage to handle VAR
+capabilities")
+Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
+---
+ drivers/infiniband/hw/mlx5/main.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-    0 300000 65535
+diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
+index e874d688d040..c47530e4d202 100644
+--- a/drivers/infiniband/hw/mlx5/main.c
++++ b/drivers/infiniband/hw/mlx5/main.c
+@@ -6545,7 +6545,8 @@ static int mlx5_ib_init_var_table(struct mlx5_ib_dev *dev)
+ 					doorbell_bar_offset);
+ 	bar_size = (1ULL << log_doorbell_bar_size) * 4096;
+ 	var_table->stride_size = 1ULL << log_doorbell_stride;
+-	var_table->num_var_hw_entries = bar_size / var_table->stride_size;
++	var_table->num_var_hw_entries = div_u64(bar_size,
++						var_table->stride_size);
+ 	mutex_init(&var_table->bitmap_lock);
+ 	var_table->bitmap = bitmap_zalloc(var_table->num_var_hw_entries,
+ 					  GFP_KERNEL);
+-- 
+2.25.0
 
-Now from in there, a process that is not aware of the existence of
-fsuid mappings creates a new user namespace N2 with the following
-uid_map:
-
-    0 1000 1
-
-At this point, if a process in N2 does chown("foo", 0, 0), is that
-going to make "foo" owned by kuid 101000, which isn't even mapped in
-N1?
-
-> @@ -1215,11 +1376,13 @@ static bool new_idmap_permitted(const struct file *file,
->             uid_eq(ns->owner, cred->euid)) {
->                 u32 id = new_map->extent[0].lower_first;
->                 if (cap_setid == CAP_SETUID) {
-> -                       kuid_t uid = make_kuid(ns->parent, id);
-> +                       kuid_t uid = map_fsid ? make_kfsuid(ns->parent, id) :
-> +                                               make_kuid(ns->parent, id);
->                         if (uid_eq(uid, cred->euid))
->                                 return true;
-
-Let's say we have an outer user namespace N1 with this uid_map:
-
-    0 1000 3000
-
-and this fsuid_map:
-
-    0 2000 3000
-
-and in that namespace, a process is running as UID 1000 (which means
-kernel-euid=2000, kernel-fsuid=3000). Now this process unshares its
-user namespace and from this nested user namespace N2, tries to write
-the following fsuid_map:
-
-    0 1000 1
-
-This should work, since the only ID it maps is the one the process had
-in N1; but the code is AFAICS going to run as follows:
-
-        if ((new_map->nr_extents == 1) && (new_map->extent[0].count == 1) &&
-            uid_eq(ns->owner, cred->euid)) { // branch taken
-                u32 id = new_map->extent[0].lower_first;
-                if (cap_setid == CAP_SETUID) { // branch taken
-                        // uid = make_kfsuid(ns->parent, 1000) = 3000
-                        kuid_t uid = map_fsid ? make_kfsuid(ns->parent, id) :
-                                                make_kuid(ns->parent, id);
-                        // uid_eq(3000, 2000)
-                        if (uid_eq(uid, cred->euid)) // not taken
-                                return true;
-                } else [...]
-        }
-
-Instead, I think what would succeed is this, which shouldn't be allowed:
-
-    0 0 1
-
-which AFAICS will evaluate as follows:
-
-        if ((new_map->nr_extents == 1) && (new_map->extent[0].count == 1) &&
-            uid_eq(ns->owner, cred->euid)) { // branch taken
-                u32 id = new_map->extent[0].lower_first;
-                if (cap_setid == CAP_SETUID) { // branch taken
-                        // uid = make_kfsuid(ns->parent, 0) = 2000
-                        kuid_t uid = map_fsid ? make_kfsuid(ns->parent, id) :
-                                                make_kuid(ns->parent, id);
-                        // uid_eq(2000, 2000)
-                        if (uid_eq(uid, cred->euid)) // taken
-                                return true;
-                } else [...]
-        }
-
->                 } else if (cap_setid == CAP_SETGID) {
-> -                       kgid_t gid = make_kgid(ns->parent, id);
-> +                       kgid_t gid = map_fsid ? make_kfsgid(ns->parent, id) :
-> +                                               make_kgid(ns->parent, id);
->                         if (!(ns->flags & USERNS_SETGROUPS_ALLOWED) &&
->                             gid_eq(gid, cred->egid))
->                                 return true;
-> --
-> 2.25.0
->
