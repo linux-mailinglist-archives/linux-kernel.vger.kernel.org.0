@@ -2,87 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7B8B15DB07
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:34:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8651615DB0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:36:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387540AbgBNPeE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:34:04 -0500
-Received: from david.siemens.de ([192.35.17.14]:45136 "EHLO david.siemens.de"
+        id S1729535AbgBNPg1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:36:27 -0500
+Received: from foss.arm.com ([217.140.110.172]:34708 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387398AbgBNPeD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:34:03 -0500
-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-        by david.siemens.de (8.15.2/8.15.2) with ESMTPS id 01EFXoue022931
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 14 Feb 2020 16:33:50 +0100
-Received: from [139.25.68.37] ([139.25.68.37])
-        by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 01EFXnI9026125;
-        Fri, 14 Feb 2020 16:33:49 +0100
-From:   Jan Kiszka <jan.kiszka@siemens.com>
-Subject: [PATCH] riscv: Add support for mem=
-To:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-riscv@lists.infradead.org
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Message-ID: <899dc26e-aca5-0a81-ccb5-c0fda59503f0@siemens.com>
-Date:   Fri, 14 Feb 2020 16:33:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1729260AbgBNPg0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:36:26 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8962F328;
+        Fri, 14 Feb 2020 07:36:25 -0800 (PST)
+Received: from e120937-lin.cambridge.arm.com (e120937-lin.cambridge.arm.com [10.1.197.50])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 884EA3F68E;
+        Fri, 14 Feb 2020 07:36:24 -0800 (PST)
+From:   Cristian Marussi <cristian.marussi@arm.com>
+To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     sudeep.holla@arm.com, lukasz.luba@arm.com,
+        james.quinlan@broadcom.com, Jonathan.Cameron@Huawei.com,
+        cristian.marussi@arm.com
+Subject: [RFC PATCH v2 00/13] SCMI Notifications Core Support
+Date:   Fri, 14 Feb 2020 15:35:22 +0000
+Message-Id: <20200214153535.32046-1-cristian.marussi@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+Hi all,
 
-This sets a memory limit provided via mem= on the command line,
-analogously to many other architectures.
+this series wants to introduce SCMI Notification Support, built on top of
+the standard Kernel notification chain subsystem.
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- arch/riscv/mm/init.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+At initialization time each SCMI Protocol takes care to register with the
+new SCMI notification core the set of its own events which it intends to
+support.
 
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index 965a8cf4829c..09948e43741b 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -488,8 +488,26 @@ static inline void setup_vm_final(void)
- }
- #endif /* CONFIG_MMU */
- 
-+static phys_addr_t memory_limit = PHYS_ADDR_MAX;
-+
-+/*
-+ * Limit the memory size that was specified via FDT.
-+ */
-+static int __init early_mem(char *p)
-+{
-+	if (!p)
-+		return 1;
-+
-+	memory_limit = memparse(p, &p) & PAGE_MASK;
-+	pr_notice("Memory limited to %lldMB\n", memory_limit >> 20);
-+
-+	return 0;
-+}
-+early_param("mem", early_mem);
-+
- void __init paging_init(void)
- {
-+	memblock_enforce_memory_limit(memory_limit);
- 	setup_vm_final();
- 	memblocks_present();
- 	sparse_init();
+Using a possibly proposed API in include/linux/scmi_protocol.h (not
+finalized though, NO EXPORTs_) a Kernel user can register its own
+notifier_t callback (via a notifier_block as usual) against any registered
+event as identified by the tuple:
+
+		(proto_id, event_id, src_id)
+
+where src_id represents a generic source identifier which is protocol
+dependent like domain_id, performance_id, sensor_id and so forth.
+(users can anyway do NOT provide any src_id, and subscribe instead to ALL
+ the existing (if any) src_id sources for that proto_id/evt_id combination)
+
+Each of the above tuple-specified event will be served on its own dedicated
+blocking notification chain.
+
+Upon a notification delivery all the users' registered notifier_t callbacks
+will be in turn invoked and fed with the event_id as @action param and a
+generated custom per-event struct _report as @data param.
+(as in include/linux/scmi_protocol.h)
+
+The final step of notification delivery via users' callback invocation is
+instead delegated to a pool of deferred workers (Kernel cmwq): each
+SCMI protocol has its own dedicated worker and dedicated queue to push
+events from the rx ISR to the worker.
+
+The series is marked as RFC mainly because:
+
+- the API as said is tentative and not EXPORTed; currently consisting of a
+  generic interface like:
+
+ 	 scmi_register_event_notifier(proto_id, evt_id, *src_id, *nb)
+
+  as found in scmi_protocol.h, or using the equivalent 'handle' operations
+  in scmi_notify_ops if used by an scmi_driver.
+
+  It's open for discussion.
+
+- no Event priorization has been considered: each protocol has its own
+  queue and deferred worker instance, so as to avoid that one protocol
+  flood can overrun a single queue and influence other protocols'
+  notifications' delivery.
+  But that's it, all the workers are unbound, low_pri cmwq workers.
+
+  Should we enforce some sort of built-in prio amongst the events ?
+  Should this priority instead be compile time configurable ?
+
+  Again, open for discussion.
+
+- no configuration is possible: it can be imagined that on a real platform
+  events' priority (if any) and events queues' depth could be something
+  somehow compile-time configurable, but this is not addressed by this
+  series at all.
+
+Based on scmi-next 5.6 [1], on top of:
+
+commit 5c8a47a5a91d ("firmware: arm_scmi: Make scmi core independent of
+		      the transport type")
+
+This series has been tested on JUNO with an experimental firmware only
+supporting Perf Notifications.
+
+Any thoughts ?
+
+Thanks
+
+Cristian
+----
+
+v1 --> v2:
+- dropped anti-tampering patch
+- rebased on top of scmi-for-next-5.6, which includes Viresh series that
+  make SCMI core independent of transport (5c8a47a5a91d)
+- add a few new SCMI transport methods on top of Viresh patch to address
+  needs of SCMI Notifications
+- reviewed/renamed scmi_handle_xfer_delayed_resp()
+- split main SCMI Notification core patch (~1k lines) into three chunks:
+  protocol-registration / callbacks-registration / dispatch-and-delivery
+- removed awkward usage of IDR maps in favour of pure hashtables
+- added enable/disable refcounting in notification core (was broken in v1)
+- removed per-protocol candidate API: a single generic API is now proposed
+  instead of scmi_register_<proto>_event_notifier(evt_id, *src_id, *nb)
+- added handle->notify_ops as an alternative notification API
+  for scmi_driver
+- moved ALL_SRCIDs enabled handling from protocol code to core code
+- reviewed protocol registration/unregistration logic to use devres
+- reviewed cleanup phase on shutdown
+- fixed  ERROR: reference preceded by free as reported by kbuild test robot
+
+[1] git://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux.git
+
+Cristian Marussi (10):
+  firmware: arm_scmi: Add notifications support in transport layer
+  firmware: arm_scmi: Add notification protocol-registration
+  firmware: arm_scmi: Add notification callbacks-registration
+  firmware: arm_scmi: Add notification dispatch and delivery
+  firmware: arm_scmi: Enable notification core
+  firmware: arm_scmi: Add Power notifications support
+  firmware: arm_scmi: Add Perf notifications support
+  firmware: arm_scmi: Add Sensor notifications support
+  firmware: arm_scmi: Add Reset notifications support
+  firmware: arm_scmi: Add Base notifications support
+
+Sudeep Holla (3):
+  firmware: arm_scmi: Add receive buffer support for notifications
+  firmware: arm_scmi: Update protocol commands and notification list
+  firmware: arm_scmi: Add support for notifications message processing
+
+ drivers/firmware/arm_scmi/Makefile  |    2 +-
+ drivers/firmware/arm_scmi/base.c    |  121 +++
+ drivers/firmware/arm_scmi/bus.c     |   11 +
+ drivers/firmware/arm_scmi/common.h  |   12 +
+ drivers/firmware/arm_scmi/driver.c  |  118 ++-
+ drivers/firmware/arm_scmi/mailbox.c |   17 +
+ drivers/firmware/arm_scmi/notify.c  | 1102 +++++++++++++++++++++++++++
+ drivers/firmware/arm_scmi/notify.h  |   78 ++
+ drivers/firmware/arm_scmi/perf.c    |  140 +++-
+ drivers/firmware/arm_scmi/power.c   |  133 +++-
+ drivers/firmware/arm_scmi/reset.c   |  100 ++-
+ drivers/firmware/arm_scmi/sensors.c |   77 +-
+ drivers/firmware/arm_scmi/shmem.c   |   15 +
+ include/linux/scmi_protocol.h       |  114 +++
+ 14 files changed, 2009 insertions(+), 31 deletions(-)
+ create mode 100644 drivers/firmware/arm_scmi/notify.c
+ create mode 100644 drivers/firmware/arm_scmi/notify.h
+
 -- 
-2.16.4
+2.17.1
 
-
--- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
