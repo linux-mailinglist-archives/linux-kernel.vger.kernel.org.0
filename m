@@ -2,192 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E54315DD88
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:59:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D18715DB6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:48:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388848AbgBNP7N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:59:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43540 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388079AbgBNP7E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:59:04 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45C5E24676;
-        Fri, 14 Feb 2020 15:59:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695943;
-        bh=4pUYKDBzgvYoqf6/aH4gDSa4xbqFOfFk2RFJfTH18QU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VkydN3Acca48d0vWld8bFRVIvGj6NXRWfM+eNL2fO+uBO0oxYeN/EIUjIz7xibdGH
-         qAdNDPAQiXn7XXmEmtngMY244uNlLutp/stnRVxzGxSb2emWop/hjhzawZY9VH/HYX
-         PwDujibT1V5ddiVevH/OtAgjj7GpIJIQmvmEwm6c=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     YueHaibing <yuehaibing@huawei.com>, Hulk Robot <hulkci@huawei.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 476/542] rtlwifi: rtl8723ae: remove unused variables
-Date:   Fri, 14 Feb 2020 10:47:48 -0500
-Message-Id: <20200214154854.6746-476-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
-References: <20200214154854.6746-1-sashal@kernel.org>
+        id S1729498AbgBNPru (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:47:50 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:39786 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1728911AbgBNPrt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:47:49 -0500
+Received: (qmail 3175 invoked by uid 2102); 14 Feb 2020 10:47:48 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 14 Feb 2020 10:47:48 -0500
+Date:   Fri, 14 Feb 2020 10:47:48 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Boqun Feng <boqun.feng@gmail.com>
+cc:     linux-kernel@vger.kernel.org,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Jonathan Corbet <corbet@lwn.net>, <linux-arch@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>
+Subject: Re: [RFC 2/3] tools/memory-model: Add a litmus test for atomic_set()
+In-Reply-To: <20200214040132.91934-3-boqun.feng@gmail.com>
+Message-ID: <Pine.LNX.4.44L0.2002141028280.1579-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+On Fri, 14 Feb 2020, Boqun Feng wrote:
 
-[ Upstream commit c5f9852411098474ab21f5d7b1b84e5cdd59ca5a ]
+> We already use a litmus test in atomic_t.txt to describe the behavior of
+> an atomic_set() with the an atomic RMW, so add it into the litmus-tests
+> directory to make it easily accessible for anyone who cares about the
+> semantics of our atomic APIs.
+> 
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> ---
+>  .../Atomic-set-observable-to-RMW.litmus       | 24 +++++++++++++++++++
+>  tools/memory-model/litmus-tests/README        |  3 +++
+>  2 files changed, 27 insertions(+)
+>  create mode 100644 tools/memory-model/litmus-tests/Atomic-set-observable-to-RMW.litmus
 
-drivers/net/wireless/realtek/rtlwifi/rtl8723ae/dm.c:16:18:
- warning: ofdmswing_table defined but not used [-Wunused-const-variable=]
-drivers/net/wireless/realtek/rtlwifi/rtl8723ae/dm.c:56:17:
- warning: cckswing_table_ch1ch13 defined but not used [-Wunused-const-variable=]
-drivers/net/wireless/realtek/rtlwifi/rtl8723ae/dm.c:92:17:
- warning: cckswing_table_ch14 defined but not used [-Wunused-const-variable=]
+I don't like that name, or the corresponding sentence in atomic_t.txt:
 
-These variable is never used, so remove them.
+	A subtle detail of atomic_set{}() is that it should be
+	observable to the RMW ops.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- .../wireless/realtek/rtlwifi/rtl8723ae/dm.c   | 112 ------------------
- 1 file changed, 112 deletions(-)
+"Observable" doesn't get the point across -- the point being that the
+atomic RMW ops have to be _atomic_ with respect to all atomic store
+operations, including atomic_set.
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/dm.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/dm.c
-index d8260c7afe09e..c61a92df9d73f 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/dm.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/dm.c
-@@ -13,118 +13,6 @@
- #include "fw.h"
- #include "hal_btc.h"
- 
--static const u32 ofdmswing_table[OFDM_TABLE_SIZE] = {
--	0x7f8001fe,
--	0x788001e2,
--	0x71c001c7,
--	0x6b8001ae,
--	0x65400195,
--	0x5fc0017f,
--	0x5a400169,
--	0x55400155,
--	0x50800142,
--	0x4c000130,
--	0x47c0011f,
--	0x43c0010f,
--	0x40000100,
--	0x3c8000f2,
--	0x390000e4,
--	0x35c000d7,
--	0x32c000cb,
--	0x300000c0,
--	0x2d4000b5,
--	0x2ac000ab,
--	0x288000a2,
--	0x26000098,
--	0x24000090,
--	0x22000088,
--	0x20000080,
--	0x1e400079,
--	0x1c800072,
--	0x1b00006c,
--	0x19800066,
--	0x18000060,
--	0x16c0005b,
--	0x15800056,
--	0x14400051,
--	0x1300004c,
--	0x12000048,
--	0x11000044,
--	0x10000040,
--};
--
--static const u8 cckswing_table_ch1ch13[CCK_TABLE_SIZE][8] = {
--	{0x36, 0x35, 0x2e, 0x25, 0x1c, 0x12, 0x09, 0x04},
--	{0x33, 0x32, 0x2b, 0x23, 0x1a, 0x11, 0x08, 0x04},
--	{0x30, 0x2f, 0x29, 0x21, 0x19, 0x10, 0x08, 0x03},
--	{0x2d, 0x2d, 0x27, 0x1f, 0x18, 0x0f, 0x08, 0x03},
--	{0x2b, 0x2a, 0x25, 0x1e, 0x16, 0x0e, 0x07, 0x03},
--	{0x28, 0x28, 0x22, 0x1c, 0x15, 0x0d, 0x07, 0x03},
--	{0x26, 0x25, 0x21, 0x1b, 0x14, 0x0d, 0x06, 0x03},
--	{0x24, 0x23, 0x1f, 0x19, 0x13, 0x0c, 0x06, 0x03},
--	{0x22, 0x21, 0x1d, 0x18, 0x11, 0x0b, 0x06, 0x02},
--	{0x20, 0x20, 0x1b, 0x16, 0x11, 0x08, 0x05, 0x02},
--	{0x1f, 0x1e, 0x1a, 0x15, 0x10, 0x0a, 0x05, 0x02},
--	{0x1d, 0x1c, 0x18, 0x14, 0x0f, 0x0a, 0x05, 0x02},
--	{0x1b, 0x1a, 0x17, 0x13, 0x0e, 0x09, 0x04, 0x02},
--	{0x1a, 0x19, 0x16, 0x12, 0x0d, 0x09, 0x04, 0x02},
--	{0x18, 0x17, 0x15, 0x11, 0x0c, 0x08, 0x04, 0x02},
--	{0x17, 0x16, 0x13, 0x10, 0x0c, 0x08, 0x04, 0x02},
--	{0x16, 0x15, 0x12, 0x0f, 0x0b, 0x07, 0x04, 0x01},
--	{0x14, 0x14, 0x11, 0x0e, 0x0b, 0x07, 0x03, 0x02},
--	{0x13, 0x13, 0x10, 0x0d, 0x0a, 0x06, 0x03, 0x01},
--	{0x12, 0x12, 0x0f, 0x0c, 0x09, 0x06, 0x03, 0x01},
--	{0x11, 0x11, 0x0f, 0x0c, 0x09, 0x06, 0x03, 0x01},
--	{0x10, 0x10, 0x0e, 0x0b, 0x08, 0x05, 0x03, 0x01},
--	{0x0f, 0x0f, 0x0d, 0x0b, 0x08, 0x05, 0x03, 0x01},
--	{0x0e, 0x0e, 0x0c, 0x0a, 0x08, 0x05, 0x02, 0x01},
--	{0x0d, 0x0d, 0x0c, 0x0a, 0x07, 0x05, 0x02, 0x01},
--	{0x0d, 0x0c, 0x0b, 0x09, 0x07, 0x04, 0x02, 0x01},
--	{0x0c, 0x0c, 0x0a, 0x09, 0x06, 0x04, 0x02, 0x01},
--	{0x0b, 0x0b, 0x0a, 0x08, 0x06, 0x04, 0x02, 0x01},
--	{0x0b, 0x0a, 0x09, 0x08, 0x06, 0x04, 0x02, 0x01},
--	{0x0a, 0x0a, 0x09, 0x07, 0x05, 0x03, 0x02, 0x01},
--	{0x0a, 0x09, 0x08, 0x07, 0x05, 0x03, 0x02, 0x01},
--	{0x09, 0x09, 0x08, 0x06, 0x05, 0x03, 0x01, 0x01},
--	{0x09, 0x08, 0x07, 0x06, 0x04, 0x03, 0x01, 0x01}
--};
--
--static const u8 cckswing_table_ch14[CCK_TABLE_SIZE][8] = {
--	{0x36, 0x35, 0x2e, 0x1b, 0x00, 0x00, 0x00, 0x00},
--	{0x33, 0x32, 0x2b, 0x19, 0x00, 0x00, 0x00, 0x00},
--	{0x30, 0x2f, 0x29, 0x18, 0x00, 0x00, 0x00, 0x00},
--	{0x2d, 0x2d, 0x17, 0x17, 0x00, 0x00, 0x00, 0x00},
--	{0x2b, 0x2a, 0x25, 0x15, 0x00, 0x00, 0x00, 0x00},
--	{0x28, 0x28, 0x24, 0x14, 0x00, 0x00, 0x00, 0x00},
--	{0x26, 0x25, 0x21, 0x13, 0x00, 0x00, 0x00, 0x00},
--	{0x24, 0x23, 0x1f, 0x12, 0x00, 0x00, 0x00, 0x00},
--	{0x22, 0x21, 0x1d, 0x11, 0x00, 0x00, 0x00, 0x00},
--	{0x20, 0x20, 0x1b, 0x10, 0x00, 0x00, 0x00, 0x00},
--	{0x1f, 0x1e, 0x1a, 0x0f, 0x00, 0x00, 0x00, 0x00},
--	{0x1d, 0x1c, 0x18, 0x0e, 0x00, 0x00, 0x00, 0x00},
--	{0x1b, 0x1a, 0x17, 0x0e, 0x00, 0x00, 0x00, 0x00},
--	{0x1a, 0x19, 0x16, 0x0d, 0x00, 0x00, 0x00, 0x00},
--	{0x18, 0x17, 0x15, 0x0c, 0x00, 0x00, 0x00, 0x00},
--	{0x17, 0x16, 0x13, 0x0b, 0x00, 0x00, 0x00, 0x00},
--	{0x16, 0x15, 0x12, 0x0b, 0x00, 0x00, 0x00, 0x00},
--	{0x14, 0x14, 0x11, 0x0a, 0x00, 0x00, 0x00, 0x00},
--	{0x13, 0x13, 0x10, 0x0a, 0x00, 0x00, 0x00, 0x00},
--	{0x12, 0x12, 0x0f, 0x09, 0x00, 0x00, 0x00, 0x00},
--	{0x11, 0x11, 0x0f, 0x09, 0x00, 0x00, 0x00, 0x00},
--	{0x10, 0x10, 0x0e, 0x08, 0x00, 0x00, 0x00, 0x00},
--	{0x0f, 0x0f, 0x0d, 0x08, 0x00, 0x00, 0x00, 0x00},
--	{0x0e, 0x0e, 0x0c, 0x07, 0x00, 0x00, 0x00, 0x00},
--	{0x0d, 0x0d, 0x0c, 0x07, 0x00, 0x00, 0x00, 0x00},
--	{0x0d, 0x0c, 0x0b, 0x06, 0x00, 0x00, 0x00, 0x00},
--	{0x0c, 0x0c, 0x0a, 0x06, 0x00, 0x00, 0x00, 0x00},
--	{0x0b, 0x0b, 0x0a, 0x06, 0x00, 0x00, 0x00, 0x00},
--	{0x0b, 0x0a, 0x09, 0x05, 0x00, 0x00, 0x00, 0x00},
--	{0x0a, 0x0a, 0x09, 0x05, 0x00, 0x00, 0x00, 0x00},
--	{0x0a, 0x09, 0x08, 0x05, 0x00, 0x00, 0x00, 0x00},
--	{0x09, 0x09, 0x08, 0x05, 0x00, 0x00, 0x00, 0x00},
--	{0x09, 0x08, 0x07, 0x04, 0x00, 0x00, 0x00, 0x00}
--};
--
- static u8 rtl8723e_dm_initial_gain_min_pwdb(struct ieee80211_hw *hw)
- {
- 	struct rtl_priv *rtlpriv = rtl_priv(hw);
--- 
-2.20.1
+Suggestion: Atomic-RMW-ops-are-atomic-WRT-atomic_set.litmus, with 
+corresponding changes to the comment in the litmus test and the entry 
+in README.
+
+Alan
+
+> diff --git a/tools/memory-model/litmus-tests/Atomic-set-observable-to-RMW.litmus b/tools/memory-model/litmus-tests/Atomic-set-observable-to-RMW.litmus
+> new file mode 100644
+> index 000000000000..4326f56f2c1a
+> --- /dev/null
+> +++ b/tools/memory-model/litmus-tests/Atomic-set-observable-to-RMW.litmus
+> @@ -0,0 +1,24 @@
+> +C Atomic-set-observable-to-RMW
+> +
+> +(*
+> + * Result: Never
+> + *
+> + * Test of the result of atomic_set() must be observable to atomic RMWs.
+> + *)
+> +
+> +{
+> +	atomic_t v = ATOMIC_INIT(1);
+> +}
+> +
+> +P0(atomic_t *v)
+> +{
+> +	(void)atomic_add_unless(v,1,0);
+> +}
+> +
+> +P1(atomic_t *v)
+> +{
+> +	atomic_set(v, 0);
+> +}
+> +
+> +exists
+> +(v=2)
+> diff --git a/tools/memory-model/litmus-tests/README b/tools/memory-model/litmus-tests/README
+> index 681f9067fa9e..81eeacebd160 100644
+> --- a/tools/memory-model/litmus-tests/README
+> +++ b/tools/memory-model/litmus-tests/README
+> @@ -2,6 +2,9 @@
+>  LITMUS TESTS
+>  ============
+>  
+> +Atomic-set-observable-to-RMW.litmus
+> +	Test of the result of atomic_set() must be observable to atomic RMWs.
+> +
+>  CoRR+poonceonce+Once.litmus
+>  	Test of read-read coherence, that is, whether or not two
+>  	successive reads from the same variable are ordered.
+> 
 
