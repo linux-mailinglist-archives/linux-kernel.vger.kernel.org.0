@@ -2,146 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B1BA15FACD
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 00:40:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A525815FAD0
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 00:40:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728526AbgBNXji (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 18:39:38 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:41088 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728508AbgBNXjg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 18:39:36 -0500
-Received: by mail-qt1-f194.google.com with SMTP id l21so8129944qtr.8;
-        Fri, 14 Feb 2020 15:39:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=hoAgCZmN1XpQfzhP7Qb2SDiMGckSqZQxEo33rnXwsdw=;
-        b=GiyfG6xCNJtKMIsMrJ0JETDXBBAyOPTCbu/OraMznyUx6FTbJL+P5TOaGb7l8oGWQI
-         SXSFn7JcHaSQ+vy8eBzE4Mk1XvnK5pyxO8EhfqvyDtxqihB62wMHfVyjlvTk5MVx8bnY
-         EX6Jj55YMmfZXjLqb5KrFLzySRLvkr9LEVTIWpaePjmwccaAjQrH7IW8DU7MBSbSP++J
-         dC79e6C+6QcDHEsLoyYbxOBvy7eaYgtHwbzWsfAuD3K2SjMp6CMepOigSXJ0B3NvuwdK
-         xYvr/IsSW2s26mQHEC/nhHB/fY21FhfJpwjQGNROMOhHeuO7ZXDzllp0GSVRfiZHacO1
-         oMQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=hoAgCZmN1XpQfzhP7Qb2SDiMGckSqZQxEo33rnXwsdw=;
-        b=ozlqRrbo+kXz6ktM8AfcqR5uv359gfhI3Fvc0fx7Y3lRDToe3ytdu9jyCPZcv2uNJG
-         +8MBJAYoSuYWtXVN4w8kKcYoOg0yHwB4wD76w/mJm7/OgHeN2KNaYEavHvIxLG3oGlUn
-         4N+5rhmmif4SVzSIzxkkdwyDFoXG6oSlk76ybTFSIdhbxLCaV3tGbr5M7/wv2xNPQUre
-         unuqxhIy0c4XoOBcSqvTNkOT+GXRhmHTcyfbg1QF3GHAyOrX7NbHL1nNbMYvmvm9WEkk
-         wMgxasaRbTOQ0W6QnktuDXyILjH2S7NoWS60KW/Gp3rrJ7UpwNQ79+1vNNPvBFEAInC8
-         lB1A==
-X-Gm-Message-State: APjAAAV8vYX0g0JfaBZ0Mdr79JKjn3S5rkpmNavXPzYGDDaLgcrKguzk
-        atkGdUt1SoE9J8wfOXJD0ao=
-X-Google-Smtp-Source: APXvYqx3BeiZdYbFqiqZThJjhFru01Fhwt+njOg1zUCcKoBB9diaS5ss3OTQymFFbGM+iSitXjNXOw==
-X-Received: by 2002:ac8:7309:: with SMTP id x9mr4693926qto.338.1581723575009;
-        Fri, 14 Feb 2020 15:39:35 -0800 (PST)
-Received: from auth2-smtp.messagingengine.com (auth2-smtp.messagingengine.com. [66.111.4.228])
-        by smtp.gmail.com with ESMTPSA id o55sm4442553qtf.46.2020.02.14.15.39.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Feb 2020 15:39:34 -0800 (PST)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailauth.nyi.internal (Postfix) with ESMTP id 7471121B62;
-        Fri, 14 Feb 2020 18:39:33 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Fri, 14 Feb 2020 18:39:33 -0500
-X-ME-Sender: <xms:qy9HXqD7S2_2ZqlYI8eRO9_2pY3jghDRdk8hpj5jZQH-xaS5wqZ_xA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrjedugdduudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhunhcu
-    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucffohhmrghinh
-    epkhgvrhhnvghlrdhorhhgnecukfhppeehvddrudehhedrudduuddrjedunecuvehluhhs
-    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvsh
-    hmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheeh
-    vddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgv
-X-ME-Proxy: <xmx:qy9HXhIviJvlUbTmxaxaQJVvEi3fKVyQeb0RKrzp9lPKCoMYFmfE9Q>
-    <xmx:qy9HXj-c_jflPjxVhRRBHFJJRtbhyklgy84Lc_ZKoiH-Msso6xSfDQ>
-    <xmx:qy9HXiq3aiESJx3K282WRdsyeyhNprRm-zdquoue6IfvbfgUKUgR1A>
-    <xmx:tS9HXm67rBD3WFnBqJcgx0XxstMh1eLdFKLsOBmDDscaGE_zwwCLvUS2b5c>
-Received: from localhost (unknown [52.155.111.71])
-        by mail.messagingengine.com (Postfix) with ESMTPA id D4D7A30606E9;
-        Fri, 14 Feb 2020 18:39:22 -0500 (EST)
-Date:   Sat, 15 Feb 2020 07:39:21 +0800
-From:   Boqun Feng <boqun.feng@gmail.com>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     linux-kernel@vger.kernel.org,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Will Deacon <will@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-arch@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [RFC 0/3] tools/memory-model: Add litmus tests for atomic APIs
-Message-ID: <20200214233921.GA110915@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
-References: <20200214040132.91934-1-boqun.feng@gmail.com>
- <Pine.LNX.4.44L0.2002141024141.1579-100000@iolanthe.rowland.org>
+        id S1728555AbgBNXkG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 18:40:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60746 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727983AbgBNXkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 18:40:06 -0500
+Received: from paulmck-ThinkPad-P72.home (unknown [62.84.152.189])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B078E2187F;
+        Fri, 14 Feb 2020 23:40:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581723605;
+        bh=P3PrqY8rGU0zQljxzqKpqhR6KHKcyTeu6sKBhqLMeR8=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=ZoJanWRXUKxRt9zUSLc6Vh8940BKILbjXhvzhIxo+lsp3tVu1BmoITDnwbDD13msK
+         9nPdOOXLYrYeW2X/3W0U6AyO16dgv+CQf17Nk6v3T/x7j73J6uRM5wV9+U8fEpCMIh
+         UC/QEEYqUCRQ3VUp27ocIsRIrGBtsYaKrTynr0Zo=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 4A98E3520D46; Fri, 14 Feb 2020 15:40:04 -0800 (PST)
+Date:   Fri, 14 Feb 2020 15:40:04 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Marco Elver <elver@google.com>
+Cc:     andreyknvl@google.com, glider@google.com, dvyukov@google.com,
+        kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+        rostedt@goodmis.org, mingo@redhat.com, x86@kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: Re: [PATCH v2] kcsan, trace: Make KCSAN compatible with tracing
+Message-ID: <20200214234004.GT2935@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20200214211035.209972-1-elver@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.2002141024141.1579-100000@iolanthe.rowland.org>
+In-Reply-To: <20200214211035.209972-1-elver@google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 10:27:44AM -0500, Alan Stern wrote:
-> On Fri, 14 Feb 2020, Boqun Feng wrote:
+On Fri, Feb 14, 2020 at 10:10:35PM +0100, Marco Elver wrote:
+> Previously the system would lock up if ftrace was enabled together with
+> KCSAN. This is due to recursion on reporting if the tracer code is
+> instrumented with KCSAN.
 > 
-> > A recent discussion raises up the requirement for having test cases for
-> > atomic APIs:
-> > 
-> > 	https://lore.kernel.org/lkml/20200213085849.GL14897@hirez.programming.kicks-ass.net/
-> > 
-> > , and since we already have a way to generate a test module from a
-> > litmus test with klitmus[1]. It makes sense that we add more litmus
-> > tests for atomic APIs into memory-model.
+> To avoid this for all types of tracing, disable KCSAN instrumentation
+> for all of kernel/trace.
 > 
-> It might be worth discussing this point a little more fully.  The 
-
-I'm open to any suggestion, and ...
-
-> set of tests in tools/memory-model/litmus-tests/ is deliberately rather 
-> limited.  Paul has a vastly more expansive set of litmus tests in a 
-
-I'm OK if we want to limit the number of litmus tests in
-tools/memory-model/litmus-tests directory. But ...
-
-> GitHub repository, and I am doubtful about how many new tests we want 
-> to keep in the kernel source.
+> Furthermore, since KCSAN relies on udelay() to introduce delay, we have
+> to disable ftrace for udelay() (currently done for x86) in case KCSAN is
+> used together with lockdep and ftrace. The reason is that it may corrupt
+> lockdep IRQ flags tracing state due to a peculiar case of recursion
+> (details in Makefile comment).
 > 
+> Signed-off-by: Marco Elver <elver@google.com>
+> Reported-by: Qian Cai <cai@lca.pw>
+> Cc: Paul E. McKenney <paulmck@kernel.org>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
 
-I think we all agree we want to use litmus tests as much as possbile for
-discussing locking/parallel programming/memory model related problems,
-right? This is benefical for both kernel and the herd tool, as they can
-improve each other.
+Queued for review and further testing, thank you!
 
-Atomic APIs (perhaps even {READ,WRITE}_ONCE(), smp_load_acquire() and
-smp_store_release()) have been longing for some more concrete examples
-as a complement for the semantics description in the docs, so that
-people can check their understandings. Further, with the help of
-klitmus, the litmus tests can be a useful tool for testing if a new arch
-support is added to kernel. That's why I plan to add litmus tests into
-kernel source.
+Qian, does this also fix things for you?
 
-Thoughts?
+							Thanx, Paul
 
-Regards,
-Boqun
-
-> Perhaps it makes sense to have tests corresponding to all the examples
-> in Documentation/, perhaps not.  How do people feel about this?
+> ---
+> v2:
+> *  Fix KCSAN+lockdep+ftrace compatibility.
+> ---
+>  arch/x86/lib/Makefile | 5 +++++
+>  kernel/kcsan/Makefile | 2 ++
+>  kernel/trace/Makefile | 3 +++
+>  3 files changed, 10 insertions(+)
 > 
-> Alan
+> diff --git a/arch/x86/lib/Makefile b/arch/x86/lib/Makefile
+> index 432a077056775..6110bce7237bd 100644
+> --- a/arch/x86/lib/Makefile
+> +++ b/arch/x86/lib/Makefile
+> @@ -8,6 +8,11 @@ KCOV_INSTRUMENT_delay.o	:= n
+>  
+>  # KCSAN uses udelay for introducing watchpoint delay; avoid recursion.
+>  KCSAN_SANITIZE_delay.o := n
+> +ifdef CONFIG_KCSAN
+> +# In case KCSAN+lockdep+ftrace are enabled, disable ftrace for delay.o to avoid
+> +# lockdep -> [other libs] -> KCSAN -> udelay -> ftrace -> lockdep recursion.
+> +CFLAGS_REMOVE_delay.o = $(CC_FLAGS_FTRACE)
+> +endif
+>  
+>  # Early boot use of cmdline; don't instrument it
+>  ifdef CONFIG_AMD_MEM_ENCRYPT
+> diff --git a/kernel/kcsan/Makefile b/kernel/kcsan/Makefile
+> index df6b7799e4927..d4999b38d1be5 100644
+> --- a/kernel/kcsan/Makefile
+> +++ b/kernel/kcsan/Makefile
+> @@ -4,6 +4,8 @@ KCOV_INSTRUMENT := n
+>  UBSAN_SANITIZE := n
+>  
+>  CFLAGS_REMOVE_core.o = $(CC_FLAGS_FTRACE)
+> +CFLAGS_REMOVE_debugfs.o = $(CC_FLAGS_FTRACE)
+> +CFLAGS_REMOVE_report.o = $(CC_FLAGS_FTRACE)
+>  
+>  CFLAGS_core.o := $(call cc-option,-fno-conserve-stack,) \
+>  	$(call cc-option,-fno-stack-protector,)
+> diff --git a/kernel/trace/Makefile b/kernel/trace/Makefile
+> index f9dcd19165fa2..6b601d88bf71e 100644
+> --- a/kernel/trace/Makefile
+> +++ b/kernel/trace/Makefile
+> @@ -6,6 +6,9 @@ ifdef CONFIG_FUNCTION_TRACER
+>  ORIG_CFLAGS := $(KBUILD_CFLAGS)
+>  KBUILD_CFLAGS = $(subst $(CC_FLAGS_FTRACE),,$(ORIG_CFLAGS))
+>  
+> +# Avoid recursion due to instrumentation.
+> +KCSAN_SANITIZE := n
+> +
+>  ifdef CONFIG_FTRACE_SELFTEST
+>  # selftest needs instrumentation
+>  CFLAGS_trace_selftest_dynamic.o = $(CC_FLAGS_FTRACE)
+> -- 
+> 2.25.0.265.gbab2e86ba0-goog
 > 
