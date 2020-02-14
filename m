@@ -2,85 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32A6815F915
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 22:55:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF25615F8FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 22:52:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388517AbgBNVyq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 16:54:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59848 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388314AbgBNVyn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 16:54:43 -0500
-Received: from localhost (unknown [65.119.211.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8341E222C4;
-        Fri, 14 Feb 2020 21:54:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581717282;
-        bh=D5P4kvvPGXWzS41Um5m7v8Cms+3z0uV0f+EbWgL/Wac=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BB12WRc3qPtAPbIc12JSTy1L7iFcbp9ZU7UL830LMJffofRJI2Bz9tmaW0OAfA7g0
-         rbxk1RVn4X6tWo1wAeMx0EMhLGzKlEOmvfJxIJiruvNP7+xIEuo86hKDvZciEiCWry
-         +71k6EfbhLtyIMVmeayjhVab7J+TvD0OmIKuyPpE=
-Date:   Fri, 14 Feb 2020 16:51:34 -0500
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Engraf <david.engraf@sysgo.com>,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH AUTOSEL 5.5 222/542] Revert "tty/serial: atmel: fix out
- of range clock divider handling"
-Message-ID: <20200214215134.GK4193448@kroah.com>
-References: <20200214154854.6746-1-sashal@kernel.org>
- <20200214154854.6746-222-sashal@kernel.org>
+        id S1730533AbgBNVwQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 16:52:16 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:52484 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729294AbgBNVwP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 16:52:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=JDqW3+yJAM9jVR7Ghm5MrosXfPSkCVIcccbCU9OgNXc=; b=hz5GhptLfsT+0yQU9qc0ZIxHtb
+        aSizTtgJ5Z2czFoJXkhOTyQ/H4oNTOeElCde2XyE/U1cnz6xFVxy33Q1N2p9GHvbhWpLCcfToitx2
+        JNAMNKVezqs8ZKppXVRfnx6kPT1/6lBE6nQ8oPMK+rYOY9BuG/DDc+OOGeNMT8t64SvDfi6uzpg/j
+        2HciwNER8HTmH7kjh7JLKzpKVeUvPAj5JbhLmKFZUXiQjYrpJY6tGl76bLD//pJpeGNeaiSYGpgg0
+        +LFghr9HL0uU2ZvdVjO7dAp+3hz8sZbzhVKk2HJF0YPcMLsEyvAxvnZvhFww+4dWXxz+MToYmbPNX
+        unx3dgyw==;
+Received: from [2601:1c0:6280:3f0::19c2]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j2ish-0007s9-03; Fri, 14 Feb 2020 21:52:15 +0000
+Subject: Re: [PATCH] pinctrl: ingenic: Make unreachable path more robust
+To:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Paul Cercueil <paul@crapouillou.net>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>
+References: <73f0c9915473d9e4b3681fb5cc55144291a43192.1581698101.git.jpoimboe@redhat.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <4fe47436-85b1-ff2e-6247-c8c599fe1dd3@infradead.org>
+Date:   Fri, 14 Feb 2020 13:52:13 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200214154854.6746-222-sashal@kernel.org>
+In-Reply-To: <73f0c9915473d9e4b3681fb5cc55144291a43192.1581698101.git.jpoimboe@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 10:43:34AM -0500, Sasha Levin wrote:
-> From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+On 2/14/20 8:37 AM, Josh Poimboeuf wrote:
+> In the second loop of ingenic_pinconf_set(), it annotates the switch
+> default case as unreachable().  The annotation is technically correct,
+> because that same case would have resulted in an early return in the
+> previous loop.
 > 
-> [ Upstream commit 6dbd54e4154dfe386b3333687de15be239576617 ]
+> However, if a bug were to get introduced later, for example if an
+> additional case were added to the first loop without adjusting the
+> second loop, it would result in nasty undefined behavior: most likely
+> the function's generated code would fall through to the next function.
 > 
-> This reverts commit 751d0017334db9c4d68a8909c59f662a6ecbcec6.
+> Another issue is that, while objtool normally understands unreachable()
+> annotations, there's one special case where it doesn't: when the
+> annotation occurs immediately after a 'ret' instruction.  That happens
+> to be the case here because unreachable() is immediately before the
+> return.
 > 
-> The wrong commit got added to the tty-next tree, the correct one is in
-> the tty-linus branch.
+> So change the unreachable() to BUG() so that the unreachable code, if
+> ever executed, would panic instead of introducing undefined behavior.
+> This also makes objtool happy.
 > 
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: David Engraf <david.engraf@sysgo.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> This fixes the following objtool warning:
+> 
+>   drivers/pinctrl/pinctrl-ingenic.o: warning: objtool: ingenic_pinconf_set() falls through to next function ingenic_pinconf_group_set()
+> 
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+
+Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+
+Thanks.
+
 > ---
->  drivers/tty/serial/atmel_serial.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  drivers/pinctrl/pinctrl-ingenic.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
-> index 1ba9bc667e136..ab4d4a0b36497 100644
-> --- a/drivers/tty/serial/atmel_serial.c
-> +++ b/drivers/tty/serial/atmel_serial.c
-> @@ -2270,6 +2270,9 @@ static void atmel_set_termios(struct uart_port *port, struct ktermios *termios,
->  		mode |= ATMEL_US_USMODE_NORMAL;
+> diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
+> index 96f04d121ebd..6b61ac6cd4d2 100644
+> --- a/drivers/pinctrl/pinctrl-ingenic.c
+> +++ b/drivers/pinctrl/pinctrl-ingenic.c
+> @@ -2158,7 +2158,7 @@ static int ingenic_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+>  			break;
+>  
+>  		default:
+> -			unreachable();
+> +			BUG();
+>  		}
 >  	}
 >  
-> +	/* set the mode, clock divisor, parity, stop bits and data size */
-> +	atmel_uart_writel(port, ATMEL_US_MR, mode);
-> +
->  	/*
->  	 * Set the baud rate:
->  	 * Fractional baudrate allows to setup output frequency more
-> -- 
-> 2.20.1
 > 
 
-Are you sure this is correct to be added?  This was the result of some
-fun merge problems, I don't think it's needed anywhere else...
+-- 
+~Randy
 
-greg k-h
