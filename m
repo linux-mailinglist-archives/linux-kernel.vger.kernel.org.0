@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 071A915E0BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:15:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FCA715E0C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:15:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389945AbgBNQO6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:14:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43816 "EHLO mail.kernel.org"
+        id S2404086AbgBNQPH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:15:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392211AbgBNQOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:14:20 -0500
+        id S2404016AbgBNQOZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:14:25 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF9B0246C0;
-        Fri, 14 Feb 2020 16:14:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6D93246C9;
+        Fri, 14 Feb 2020 16:14:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696859;
-        bh=eJHvavbwDhaDoKtab7r5Qax9OPhlFMAT8cZzB+PD9fs=;
+        s=default; t=1581696864;
+        bh=0WYT4szMb7DP/YdPdxU6t2Y/fi4579HGwYwbNDVFFZ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TZbTQ24RjlA4xy3nmBq3znQA5mlNrFHA2r5veQgURU0pSY+tG8c6b1elaslcb4ZpA
-         oFAIbahcz2l+mJW3SC14T+RIuSF6vDXKp7VcHW/O59dj97xkb6XHhm/BThKn9DKdr/
-         uC7rBtctrKWwrXX/uBE2uQ7iisK2yW7JeNGSWnGs=
+        b=g/IQ+rQfV+dOYvMBuWbvUnQCPngVROmbfmoPmFI796XhZx8k4zhW9k432Va1zv6+L
+         GHquBqgWCmbacP/Oe30Cz1DpkUcq6Gu39IzTS/kytjPN27H5tspBRz6WKixrjIqCUa
+         +mc2OAXBul8obSD6o/+lXI7phvDCoOgJe4xfOoZ4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vinay Kumar Yadav <vinay.yadav@chelsio.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 119/252] crypto: chtls - Fixed memory leak
-Date:   Fri, 14 Feb 2020 11:09:34 -0500
-Message-Id: <20200214161147.15842-119-sashal@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 123/252] pinctrl: sh-pfc: r8a7778: Fix duplicate SDSELF_B and SD1_CLK_B
+Date:   Fri, 14 Feb 2020 11:09:38 -0500
+Message-Id: <20200214161147.15842-123-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -43,143 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vinay Kumar Yadav <vinay.yadav@chelsio.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 93e23eb2ed6c11b4f483c8111ac155ec2b1f3042 ]
+[ Upstream commit 805f635703b2562b5ddd822c62fc9124087e5dd5 ]
 
-Freed work request skbs when connection terminates.
-enqueue_wr()/ dequeue_wr() is shared between softirq
-and application contexts, should be protected by socket
-lock. Moved dequeue_wr() to appropriate file.
+The FN_SDSELF_B and FN_SD1_CLK_B enum IDs are used twice, which means
+one set of users must be wrong.  Replace them by the correct enum IDs.
 
-Signed-off-by: Vinay Kumar Yadav <vinay.yadav@chelsio.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: 87f8c988636db0d4 ("sh-pfc: Add r8a7778 pinmux support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20191218194812.12741-2-geert+renesas@glider.be
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/chelsio/chtls/chtls_cm.c | 27 +++++++++++++------------
- drivers/crypto/chelsio/chtls/chtls_cm.h | 21 +++++++++++++++++++
- drivers/crypto/chelsio/chtls/chtls_hw.c |  3 +++
- 3 files changed, 38 insertions(+), 13 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7778.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/crypto/chelsio/chtls/chtls_cm.c b/drivers/crypto/chelsio/chtls/chtls_cm.c
-index 8b749c721c871..28d24118c6450 100644
---- a/drivers/crypto/chelsio/chtls/chtls_cm.c
-+++ b/drivers/crypto/chelsio/chtls/chtls_cm.c
-@@ -731,6 +731,14 @@ static int chtls_close_listsrv_rpl(struct chtls_dev *cdev, struct sk_buff *skb)
- 	return 0;
- }
- 
-+static void chtls_purge_wr_queue(struct sock *sk)
-+{
-+	struct sk_buff *skb;
-+
-+	while ((skb = dequeue_wr(sk)) != NULL)
-+		kfree_skb(skb);
-+}
-+
- static void chtls_release_resources(struct sock *sk)
- {
- 	struct chtls_sock *csk = rcu_dereference_sk_user_data(sk);
-@@ -745,6 +753,11 @@ static void chtls_release_resources(struct sock *sk)
- 	kfree_skb(csk->txdata_skb_cache);
- 	csk->txdata_skb_cache = NULL;
- 
-+	if (csk->wr_credits != csk->wr_max_credits) {
-+		chtls_purge_wr_queue(sk);
-+		chtls_reset_wr_list(csk);
-+	}
-+
- 	if (csk->l2t_entry) {
- 		cxgb4_l2t_release(csk->l2t_entry);
- 		csk->l2t_entry = NULL;
-@@ -1714,6 +1727,7 @@ static void chtls_peer_close(struct sock *sk, struct sk_buff *skb)
- 		else
- 			sk_wake_async(sk, SOCK_WAKE_WAITD, POLL_IN);
- 	}
-+	kfree_skb(skb);
- }
- 
- static void chtls_close_con_rpl(struct sock *sk, struct sk_buff *skb)
-@@ -2041,19 +2055,6 @@ static int chtls_conn_cpl(struct chtls_dev *cdev, struct sk_buff *skb)
- 	return 0;
- }
- 
--static struct sk_buff *dequeue_wr(struct sock *sk)
--{
--	struct chtls_sock *csk = rcu_dereference_sk_user_data(sk);
--	struct sk_buff *skb = csk->wr_skb_head;
--
--	if (likely(skb)) {
--	/* Don't bother clearing the tail */
--		csk->wr_skb_head = WR_SKB_CB(skb)->next_wr;
--		WR_SKB_CB(skb)->next_wr = NULL;
--	}
--	return skb;
--}
--
- static void chtls_rx_ack(struct sock *sk, struct sk_buff *skb)
- {
- 	struct cpl_fw4_ack *hdr = cplhdr(skb) + RSS_HDR;
-diff --git a/drivers/crypto/chelsio/chtls/chtls_cm.h b/drivers/crypto/chelsio/chtls/chtls_cm.h
-index 78eb3afa3a80d..4282d8a4eae48 100644
---- a/drivers/crypto/chelsio/chtls/chtls_cm.h
-+++ b/drivers/crypto/chelsio/chtls/chtls_cm.h
-@@ -188,6 +188,12 @@ static inline void chtls_kfree_skb(struct sock *sk, struct sk_buff *skb)
- 	kfree_skb(skb);
- }
- 
-+static inline void chtls_reset_wr_list(struct chtls_sock *csk)
-+{
-+	csk->wr_skb_head = NULL;
-+	csk->wr_skb_tail = NULL;
-+}
-+
- static inline void enqueue_wr(struct chtls_sock *csk, struct sk_buff *skb)
- {
- 	WR_SKB_CB(skb)->next_wr = NULL;
-@@ -200,4 +206,19 @@ static inline void enqueue_wr(struct chtls_sock *csk, struct sk_buff *skb)
- 		WR_SKB_CB(csk->wr_skb_tail)->next_wr = skb;
- 	csk->wr_skb_tail = skb;
- }
-+
-+static inline struct sk_buff *dequeue_wr(struct sock *sk)
-+{
-+	struct chtls_sock *csk = rcu_dereference_sk_user_data(sk);
-+	struct sk_buff *skb = NULL;
-+
-+	skb = csk->wr_skb_head;
-+
-+	if (likely(skb)) {
-+	 /* Don't bother clearing the tail */
-+		csk->wr_skb_head = WR_SKB_CB(skb)->next_wr;
-+		WR_SKB_CB(skb)->next_wr = NULL;
-+	}
-+	return skb;
-+}
- #endif
-diff --git a/drivers/crypto/chelsio/chtls/chtls_hw.c b/drivers/crypto/chelsio/chtls/chtls_hw.c
-index 4909607558644..64d24823c65aa 100644
---- a/drivers/crypto/chelsio/chtls/chtls_hw.c
-+++ b/drivers/crypto/chelsio/chtls/chtls_hw.c
-@@ -361,6 +361,7 @@ int chtls_setkey(struct chtls_sock *csk, u32 keylen, u32 optname)
- 	kwr->sc_imm.cmd_more = cpu_to_be32(ULPTX_CMD_V(ULP_TX_SC_IMM));
- 	kwr->sc_imm.len = cpu_to_be32(klen);
- 
-+	lock_sock(sk);
- 	/* key info */
- 	kctx = (struct _key_ctx *)(kwr + 1);
- 	ret = chtls_key_info(csk, kctx, keylen, optname);
-@@ -399,8 +400,10 @@ int chtls_setkey(struct chtls_sock *csk, u32 keylen, u32 optname)
- 		csk->tlshws.txkey = keyid;
- 	}
- 
-+	release_sock(sk);
- 	return ret;
- out_notcb:
-+	release_sock(sk);
- 	free_tls_keyid(sk);
- out_nokey:
- 	kfree_skb(skb);
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
+index 00d61d1752496..c60fce1225b02 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
+@@ -2325,7 +2325,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		FN_ATAG0_A,	0,		FN_REMOCON_B,	0,
+ 		/* IP0_11_8 [4] */
+ 		FN_SD1_DAT2_A,	FN_MMC_D2,	0,		FN_BS,
+-		FN_ATADIR0_A,	0,		FN_SDSELF_B,	0,
++		FN_ATADIR0_A,	0,		FN_SDSELF_A,	0,
+ 		FN_PWM4_B,	0,		0,		0,
+ 		0,		0,		0,		0,
+ 		/* IP0_7_5 [3] */
+@@ -2367,7 +2367,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		FN_TS_SDAT0_A,	0,		0,		0,
+ 		0,		0,		0,		0,
+ 		/* IP1_10_8 [3] */
+-		FN_SD1_CLK_B,	FN_MMC_D6,	0,		FN_A24,
++		FN_SD1_CD_A,	FN_MMC_D6,	0,		FN_A24,
+ 		FN_DREQ1_A,	0,		FN_HRX0_B,	FN_TS_SPSYNC0_A,
+ 		/* IP1_7_5 [3] */
+ 		FN_A23,		FN_HTX0_B,	FN_TX2_B,	FN_DACK2_A,
 -- 
 2.20.1
 
