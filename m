@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADE9C15EFB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:50:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE65C15EFBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:50:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388820AbgBNP7K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:59:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43340 "EHLO mail.kernel.org"
+        id S2388829AbgBNP7M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:59:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388740AbgBNP64 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:58:56 -0500
+        id S2388007AbgBNP65 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:58:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84B802467C;
-        Fri, 14 Feb 2020 15:58:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA7352467B;
+        Fri, 14 Feb 2020 15:58:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695935;
-        bh=AWcXrUPmg1Ok0gkYHL79LaRTs1+QfXtcYfPh5YIhW2I=;
+        s=default; t=1581695936;
+        bh=EPGMpNhnCU4ScCAQzPrYBJssBA7zn57+mhDsCbxyLQw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FSlTUjqBqkTlCgefOQNUhLzg1x8O9OST6mdesnqR0dX83/cW/sO+PgNISqmbGgHOC
-         s48PLn0gNgB8IkbxhQlcfo3/vnPivOEpdo9P7KgE4v/hriaWAURu4BERzxCw2UJqgf
-         FmYU1x1WHJjMa8v7twAp52RQ8ANXYNvPb1YmboQw=
+        b=EEyC4K71vuAdmzy/CScZSaa+MpwhytCAZcZf3efxtJo8PG4iG7SASqywOgHkVhEHU
+         WlDhzsFi6TrK8i+si3/tPcY1GvDrGcJoJmzBX9F+I2Dri4utKmWzMT1xueNpgLLAcP
+         G6r+ZOPtyvkkyGRv+9NXvAlwEsBIOuRcQ8ZKi3H4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nicola Lunghi <nick83ola@gmail.com>, Takashi Iwai <tiwai@suse.de>,
-        Sasha Levin <sashal@kernel.org>, alsa-devel@alsa-project.org
-Subject: [PATCH AUTOSEL 5.5 470/542] ALSA: usb-audio: add quirks for Line6 Helix devices fw>=2.82
-Date:   Fri, 14 Feb 2020 10:47:42 -0500
-Message-Id: <20200214154854.6746-470-sashal@kernel.org>
+Cc:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 471/542] ath10k: pci: Only dump ATH10K_MEM_REGION_TYPE_IOREG when safe
+Date:   Fri, 14 Feb 2020 10:47:43 -0500
+Message-Id: <20200214154854.6746-471-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -42,39 +44,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicola Lunghi <nick83ola@gmail.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
-[ Upstream commit b81cbf7abfc94878a3c6f0789f2185ee55b1cc21 ]
+[ Upstream commit d239380196c4e27a26fa4bea73d2bf994c14ec2d ]
 
-With firmware 2.82 Line6 changed the usb id of some of the Helix
-devices but the quirks is still needed.
+ath10k_pci_dump_memory_reg() will try to access memory of type
+ATH10K_MEM_REGION_TYPE_IOREG however, if a hardware restart is in progress
+this can crash a system.
 
-Add it to the quirk list for line6 helix family of devices.
+Individual ioread32() time has been observed to jump from 15-20 ticks to >
+80k ticks followed by a secure-watchdog bite and a system reset.
 
-Thanks to Jens for pointing out the missing ids.
+Work around this corner case by only issuing the read transaction when the
+driver state is ATH10K_STATE_ON.
 
-Signed-off-by: Nicola Lunghi <nick83ola@gmail.com>
-Link: https://lore.kernel.org/r/20200125150917.5040-1-nick83ola@gmail.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Tested-on: QCA9988 PCI 10.4-3.9.0.2-00044
+
+Fixes: 219cc084c6706 ("ath10k: add memory dump support QCA9984")
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/usb/format.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/wireless/ath/ath10k/pci.c | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
-diff --git a/sound/usb/format.c b/sound/usb/format.c
-index d79db71305f63..53922f73467f4 100644
---- a/sound/usb/format.c
-+++ b/sound/usb/format.c
-@@ -296,6 +296,9 @@ static int line6_parse_audio_format_rates_quirk(struct snd_usb_audio *chip,
- 	case USB_ID(0x0E41, 0x4242): /* Line6 Helix Rack */
- 	case USB_ID(0x0E41, 0x4244): /* Line6 Helix LT */
- 	case USB_ID(0x0E41, 0x4246): /* Line6 HX-Stomp */
-+	case USB_ID(0x0E41, 0x4248): /* Line6 Helix >= fw 2.82 */
-+	case USB_ID(0x0E41, 0x4249): /* Line6 Helix Rack >= fw 2.82 */
-+	case USB_ID(0x0E41, 0x424a): /* Line6 Helix LT >= fw 2.82 */
- 		/* supported rates: 48Khz */
- 		kfree(fp->rate_table);
- 		fp->rate_table = kmalloc(sizeof(int), GFP_KERNEL);
+diff --git a/drivers/net/wireless/ath/ath10k/pci.c b/drivers/net/wireless/ath/ath10k/pci.c
+index bb44f5a0941b9..4822a65f6f3c2 100644
+--- a/drivers/net/wireless/ath/ath10k/pci.c
++++ b/drivers/net/wireless/ath/ath10k/pci.c
+@@ -1604,11 +1604,22 @@ static int ath10k_pci_dump_memory_reg(struct ath10k *ar,
+ {
+ 	struct ath10k_pci *ar_pci = ath10k_pci_priv(ar);
+ 	u32 i;
++	int ret;
++
++	mutex_lock(&ar->conf_mutex);
++	if (ar->state != ATH10K_STATE_ON) {
++		ath10k_warn(ar, "Skipping pci_dump_memory_reg invalid state\n");
++		ret = -EIO;
++		goto done;
++	}
+ 
+ 	for (i = 0; i < region->len; i += 4)
+ 		*(u32 *)(buf + i) = ioread32(ar_pci->mem + region->start + i);
+ 
+-	return region->len;
++	ret = region->len;
++done:
++	mutex_unlock(&ar->conf_mutex);
++	return ret;
+ }
+ 
+ /* if an error happened returns < 0, otherwise the length */
+@@ -1704,7 +1715,11 @@ static void ath10k_pci_dump_memory(struct ath10k *ar,
+ 			count = ath10k_pci_dump_memory_sram(ar, current_region, buf);
+ 			break;
+ 		case ATH10K_MEM_REGION_TYPE_IOREG:
+-			count = ath10k_pci_dump_memory_reg(ar, current_region, buf);
++			ret = ath10k_pci_dump_memory_reg(ar, current_region, buf);
++			if (ret < 0)
++				break;
++
++			count = ret;
+ 			break;
+ 		default:
+ 			ret = ath10k_pci_dump_memory_generic(ar, current_region, buf);
 -- 
 2.20.1
 
