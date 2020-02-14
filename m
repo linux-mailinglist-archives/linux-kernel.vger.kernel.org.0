@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1567A15ECD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:30:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7443A15ECDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:31:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390382AbgBNQH1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:07:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57218 "EHLO mail.kernel.org"
+        id S2390687AbgBNQH3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:07:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390485AbgBNQGk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:06:40 -0500
+        id S2390144AbgBNQGl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:06:41 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C97524650;
-        Fri, 14 Feb 2020 16:06:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E766222C2;
+        Fri, 14 Feb 2020 16:06:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696399;
-        bh=Aa4LQc/fQ6MQQpm24YQGRNw2rQxRYku0iwSvM44nrAE=;
+        s=default; t=1581696400;
+        bh=BMSj3i+Zs6AHfdEoKpkr+5pJSuTkEp65CL/I5pXfE30=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DSckwMlYxEp8aVA6+Fg39/5qxUJpy7s9xJzTaIwHXMedCJr6qWYeAyOaSzo01hjv5
-         qnwOmXRyQ6+n8CdEFWBUL6tGj+qOP/5cXlQGOBWbk9iGAcLLGyqul+/PD3F8Q4z0yC
-         x8b57o2/4A0jEJJPiZz1A2Lcw/2UnPgwW1WcTofI=
+        b=gL5syfccITRa7zVVmoA+jIjQ4Qb/72Wg4mOxCOMNNxfFzuRSmIX0hJWxJUThO5dI8
+         BKLsJlJhU0g1veilL4c52EhrRv1cbHWyPp8R8Qcjr5hklLdqlqlLogsCFEdUsF+rvE
+         LKxqUDOl3PbHQXiciy5m7z+CS7A2Eatrm2gwINto=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Logan Gunthorpe <logang@deltatee.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        dmaengine@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 224/459] dmaengine: Store module owner in dma_device struct
-Date:   Fri, 14 Feb 2020 10:57:54 -0500
-Message-Id: <20200214160149.11681-224-sashal@kernel.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>, Hulk Robot <hulkci@huawei.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, alsa-devel@alsa-project.org
+Subject: [PATCH AUTOSEL 5.4 225/459] ASoC: Intel: kbl_da7219_max98357a: remove unused variable 'constraints_16000' and 'ch_mono'
+Date:   Fri, 14 Feb 2020 10:57:55 -0500
+Message-Id: <20200214160149.11681-225-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -43,78 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Logan Gunthorpe <logang@deltatee.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit dae7a589c18a4d979d5f14b09374e871b995ceb1 ]
+[ Upstream commit c5614fb8e3d13be7bba79f71b798468a3a6224f7 ]
 
-dma_chan_to_owner() dereferences the driver from the struct device to
-obtain the owner and call module_[get|put](). However, if the backing
-device is unbound before the dma_device is unregistered, the driver
-will be cleared and this will cause a NULL pointer dereference.
+sound/soc/intel/boards/kbl_da7219_max98357a.c:343:48:
+ warning: constraints_16000 defined but not used [-Wunused-const-variable=]
+sound/soc/intel/boards/kbl_da7219_max98357a.c:348:27:
+ warning: ch_mono defined but not used [-Wunused-const-variable=]
 
-Instead, store a pointer to the owner module in the dma_device struct
-so the module reference can be properly put when the channel is put, even
-if the backing device was destroyed first.
+They are never used, so can be removed.
 
-This change helps to support a safer unbind of DMA engines.
-If the dma_device is unregistered in the driver's remove function,
-there's no guarantee that there are no existing clients and a users
-action may trigger the WARN_ONCE in dma_async_device_unregister()
-which is unlikely to leave the system in a consistent state.
-Instead, a better approach is to allow the backing driver to go away
-and fail any subsequent requests to it.
-
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Link: https://lore.kernel.org/r/20191216190120.21374-2-logang@deltatee.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Link: https://lore.kernel.org/r/20191224140237.36732-1-yuehaibing@huawei.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/dmaengine.c   | 4 +++-
- include/linux/dmaengine.h | 2 ++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ sound/soc/intel/boards/kbl_da7219_max98357a.c | 13 -------------
+ 1 file changed, 13 deletions(-)
 
-diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
-index 03ac4b96117cd..4b604086b1b3a 100644
---- a/drivers/dma/dmaengine.c
-+++ b/drivers/dma/dmaengine.c
-@@ -179,7 +179,7 @@ __dma_device_satisfies_mask(struct dma_device *device,
+diff --git a/sound/soc/intel/boards/kbl_da7219_max98357a.c b/sound/soc/intel/boards/kbl_da7219_max98357a.c
+index 537a88932bb69..0d55319a0773c 100644
+--- a/sound/soc/intel/boards/kbl_da7219_max98357a.c
++++ b/sound/soc/intel/boards/kbl_da7219_max98357a.c
+@@ -336,19 +336,6 @@ static struct snd_soc_ops kabylake_dmic_ops = {
+ 	.startup = kabylake_dmic_startup,
+ };
  
- static struct module *dma_chan_to_owner(struct dma_chan *chan)
- {
--	return chan->device->dev->driver->owner;
-+	return chan->device->owner;
- }
+-static const unsigned int rates_16000[] = {
+-	16000,
+-};
+-
+-static const struct snd_pcm_hw_constraint_list constraints_16000 = {
+-	.count = ARRAY_SIZE(rates_16000),
+-	.list  = rates_16000,
+-};
+-
+-static const unsigned int ch_mono[] = {
+-	1,
+-};
+-
+ SND_SOC_DAILINK_DEF(dummy,
+ 	DAILINK_COMP_ARRAY(COMP_DUMMY()));
  
- /**
-@@ -919,6 +919,8 @@ int dma_async_device_register(struct dma_device *device)
- 		return -EIO;
- 	}
- 
-+	device->owner = device->dev->driver->owner;
-+
- 	if (dma_has_cap(DMA_MEMCPY, device->cap_mask) && !device->device_prep_dma_memcpy) {
- 		dev_err(device->dev,
- 			"Device claims capability %s, but op is not defined\n",
-diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
-index dad4a68fa0094..8013562751a50 100644
---- a/include/linux/dmaengine.h
-+++ b/include/linux/dmaengine.h
-@@ -674,6 +674,7 @@ struct dma_filter {
-  * @fill_align: alignment shift for memset operations
-  * @dev_id: unique device ID
-  * @dev: struct device reference for dma mapping api
-+ * @owner: owner module (automatically set based on the provided dev)
-  * @src_addr_widths: bit mask of src addr widths the device supports
-  *	Width is specified in bytes, e.g. for a device supporting
-  *	a width of 4 the mask should have BIT(4) set.
-@@ -737,6 +738,7 @@ struct dma_device {
- 
- 	int dev_id;
- 	struct device *dev;
-+	struct module *owner;
- 
- 	u32 src_addr_widths;
- 	u32 dst_addr_widths;
 -- 
 2.20.1
 
