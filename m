@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53D3315E925
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:05:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2091515E986
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:08:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404071AbgBNQPE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:15:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43954 "EHLO mail.kernel.org"
+        id S2392697AbgBNRH3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:07:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403902AbgBNQOX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:14:23 -0500
+        id S2389077AbgBNQO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:14:29 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F470246D1;
-        Fri, 14 Feb 2020 16:14:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 50BC7246C9;
+        Fri, 14 Feb 2020 16:14:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696863;
-        bh=MoUzBAvRtBWq8Ndubur4hy59jRiTGFG7/mRJIg9KZ+E=;
+        s=default; t=1581696869;
+        bh=tUg751Affnoyn3FW3QZPYI49oz153hfQFyw6kq9w/7c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jmhw/mCzW993eCvPUqfV6EZcrF9iRvPjFcnSQ7Bhzn+54cZJQk/ltkdYCnlFtq7Ac
-         XbXO4XJfeAUODuZKGSDembsa8SbHWVCeqq3lQwj4eF1OqbBrcUclMlhh4U06bFPbFj
-         mmnTGT4vIDgnU89UY1xzMZwLm2ferHgpm/YqoHn8=
+        b=DydkC+POnT3dwBRP3WzbOSYRIJm3ycCArGZZRur2iv0aLxxzycsHcvHbMN0/0bLqM
+         m5Caq6g6/LQdbAPqKKt0o9hqwUfMXbI3CHlik0zXyr7kXe2SMyxY4AWe1x0wrpVQNs
+         8Nx25fE/Q8nNDhHA3tEnX5gtFIaHkXhDNF5D6tWA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
-        kbuild test robot <lkp@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 122/252] PM / devfreq: rk3399_dmc: Add COMPILE_TEST and HAVE_ARM_SMCCC dependency
-Date:   Fri, 14 Feb 2020 11:09:37 -0500
-Message-Id: <20200214161147.15842-122-sashal@kernel.org>
+Cc:     Icenowy Zheng <icenowy@aosc.io>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 127/252] clk: sunxi-ng: add mux and pll notifiers for A64 CPU clock
+Date:   Fri, 14 Feb 2020 11:09:42 -0500
+Message-Id: <20200214161147.15842-127-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -43,50 +45,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chanwoo Choi <cw00.choi@samsung.com>
+From: Icenowy Zheng <icenowy@aosc.io>
 
-[ Upstream commit eff5d31f7407fa9d31fb840106f1593399457298 ]
+[ Upstream commit ec97faff743b398e21f74a54c81333f3390093aa ]
 
-To build test, add COMPILE_TEST depedency to both ARM_RK3399_DMC_DEVFREQ
-and DEVFREQ_EVENT_ROCKCHIP_DFI configuration. And ARM_RK3399_DMC_DEVFREQ
-used the SMCCC interface so that add HAVE_ARM_SMCCC dependency to prevent
-the build break.
+The A64 PLL_CPU clock has the same instability if some factor changed
+without the PLL gated like other SoCs with sun6i-style CCU, e.g. A33,
+H3.
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Add the mux and pll notifiers for A64 CPU clock to workaround the
+problem.
+
+Fixes: c6a0637460c2 ("clk: sunxi-ng: Add A64 clocks")
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/devfreq/Kconfig       | 3 ++-
- drivers/devfreq/event/Kconfig | 2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 28 ++++++++++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
-index 6a172d338f6dc..4c4ec68b0566d 100644
---- a/drivers/devfreq/Kconfig
-+++ b/drivers/devfreq/Kconfig
-@@ -103,7 +103,8 @@ config ARM_TEGRA_DEVFREQ
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+index dec4a130390a3..9ac6c299e0744 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+@@ -901,11 +901,26 @@ static const struct sunxi_ccu_desc sun50i_a64_ccu_desc = {
+ 	.num_resets	= ARRAY_SIZE(sun50i_a64_ccu_resets),
+ };
  
- config ARM_RK3399_DMC_DEVFREQ
- 	tristate "ARM RK3399 DMC DEVFREQ Driver"
--	depends on ARCH_ROCKCHIP
-+	depends on (ARCH_ROCKCHIP && HAVE_ARM_SMCCC) || \
-+		(COMPILE_TEST && HAVE_ARM_SMCCC)
- 	select DEVFREQ_EVENT_ROCKCHIP_DFI
- 	select DEVFREQ_GOV_SIMPLE_ONDEMAND
- 	select PM_DEVFREQ_EVENT
-diff --git a/drivers/devfreq/event/Kconfig b/drivers/devfreq/event/Kconfig
-index cd949800eed96..8851bc4e8e3e1 100644
---- a/drivers/devfreq/event/Kconfig
-+++ b/drivers/devfreq/event/Kconfig
-@@ -33,7 +33,7 @@ config DEVFREQ_EVENT_EXYNOS_PPMU
++static struct ccu_pll_nb sun50i_a64_pll_cpu_nb = {
++	.common	= &pll_cpux_clk.common,
++	/* copy from pll_cpux_clk */
++	.enable	= BIT(31),
++	.lock	= BIT(28),
++};
++
++static struct ccu_mux_nb sun50i_a64_cpu_nb = {
++	.common		= &cpux_clk.common,
++	.cm		= &cpux_clk.mux,
++	.delay_us	= 1, /* > 8 clock cycles at 24 MHz */
++	.bypass_index	= 1, /* index of 24 MHz oscillator */
++};
++
+ static int sun50i_a64_ccu_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res;
+ 	void __iomem *reg;
+ 	u32 val;
++	int ret;
  
- config DEVFREQ_EVENT_ROCKCHIP_DFI
- 	tristate "ROCKCHIP DFI DEVFREQ event Driver"
--	depends on ARCH_ROCKCHIP
-+	depends on ARCH_ROCKCHIP || COMPILE_TEST
- 	help
- 	  This add the devfreq-event driver for Rockchip SoC. It provides DFI
- 	  (DDR Monitor Module) driver to count ddr load.
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	reg = devm_ioremap_resource(&pdev->dev, res);
+@@ -919,7 +934,18 @@ static int sun50i_a64_ccu_probe(struct platform_device *pdev)
+ 
+ 	writel(0x515, reg + SUN50I_A64_PLL_MIPI_REG);
+ 
+-	return sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
++	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
++	if (ret)
++		return ret;
++
++	/* Gate then ungate PLL CPU after any rate changes */
++	ccu_pll_notifier_register(&sun50i_a64_pll_cpu_nb);
++
++	/* Reparent CPU during PLL CPU rate changes */
++	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
++				  &sun50i_a64_cpu_nb);
++
++	return 0;
+ }
+ 
+ static const struct of_device_id sun50i_a64_ccu_ids[] = {
 -- 
 2.20.1
 
