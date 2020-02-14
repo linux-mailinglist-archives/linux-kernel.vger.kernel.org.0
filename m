@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B17F15EAD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:17:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64B6815EABF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:16:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394431AbgBNRQS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:16:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39020 "EHLO mail.kernel.org"
+        id S2392118AbgBNRQG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:16:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391877AbgBNQL5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:11:57 -0500
+        id S2390425AbgBNQMA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:12:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8D36222C2;
-        Fri, 14 Feb 2020 16:11:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98CE1246A4;
+        Fri, 14 Feb 2020 16:11:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696716;
-        bh=+2u6VCYeEc6ZE9pvV3ZpiM8JNxbrXYBB8tjL4aeEA3s=;
+        s=default; t=1581696720;
+        bh=TWYKJH7EdXk4lvXiINzi24/zw7SjtOiQoX3rzjP6BGw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RLgFKLQtnejhjC9HxOWBEM1PgM9FwOwSwlnwONl7viGtmTH7dzTyLiho/gD7Pg2fm
-         OP1PlEFQn9WR5Tv8FEo9ACyVk3coi/Dq2Btt/qCZHQTczFtqHhDDwDDe/8gSZXF+Nv
-         M2QOS+TN8GqNUO03fRTc2MDxais/mILAXbIKiRU8=
+        b=onQso5oakTYtS0b9H5Jk7tb10+20fFuo09lgGId7489T9Yl/cyX+Vw+vRmJffciam
+         kx4ywbLo+JqnzjnvSMdcxEQQeWlMVdkb6m9oeY++oAKJQ1jtKqrS04xSAqp+x2z+lb
+         RNbMHCohw8pfG8NUKl5SemicBMxYZdl5eJcsbggw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 006/252] cpu/hotplug, stop_machine: Fix stop_machine vs hotplug order
-Date:   Fri, 14 Feb 2020 11:07:41 -0500
-Message-Id: <20200214161147.15842-6-sashal@kernel.org>
+Cc:     Zahari Petkov <zahari@balena.io>, Pavel Machek <pavel@ucw.cz>,
+        Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 009/252] leds: pca963x: Fix open-drain initialization
+Date:   Fri, 14 Feb 2020 11:07:44 -0500
+Message-Id: <20200214161147.15842-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -43,89 +42,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Zahari Petkov <zahari@balena.io>
 
-[ Upstream commit 45178ac0cea853fe0e405bf11e101bdebea57b15 ]
+[ Upstream commit 697529091ac7a0a90ca349b914bb30641c13c753 ]
 
-Paul reported a very sporadic, rcutorture induced, workqueue failure.
-When the planets align, the workqueue rescuer's self-migrate fails and
-then triggers a WARN for running a work on the wrong CPU.
+Before commit bb29b9cccd95 ("leds: pca963x: Add bindings to invert
+polarity") Mode register 2 was initialized directly with either 0x01
+or 0x05 for open-drain or totem pole (push-pull) configuration.
 
-Tejun then figured that set_cpus_allowed_ptr()'s stop_one_cpu() call
-could be ignored! When stopper->enabled is false, stop_machine will
-insta complete the work, without actually doing the work. Worse, it
-will not WARN about this (we really should fix this).
+Afterwards, MODE2 initialization started using bitwise operations on
+top of the default MODE2 register value (0x05). Using bitwise OR for
+setting OUTDRV with 0x01 and 0x05 does not produce correct results.
+When open-drain is used, instead of setting OUTDRV to 0, the driver
+keeps it as 1:
 
-It turns out there is a small window where a freshly online'ed CPU is
-marked 'online' but doesn't yet have the stopper task running:
+Open-drain: 0x05 | 0x01 -> 0x05 (0b101 - incorrect)
+Totem pole: 0x05 | 0x05 -> 0x05 (0b101 - correct but still wrong)
 
-	BP				AP
+Now OUTDRV setting uses correct bitwise operations for initialization:
 
-	bringup_cpu()
-	  __cpu_up(cpu, idle)	 -->	start_secondary()
-					...
-					cpu_startup_entry()
-	  bringup_wait_for_ap()
-	    wait_for_ap_thread() <--	  cpuhp_online_idle()
-					  while (1)
-					    do_idle()
+Open-drain: 0x05 & ~0x04 -> 0x01 (0b001 - correct)
+Totem pole: 0x05 | 0x04 -> 0x05 (0b101 - correct)
 
-					... available to run kthreads ...
+Additional MODE2 register definitions are introduced now as well.
 
-	    stop_machine_unpark()
-	      stopper->enable = true;
-
-Close this by moving the stop_machine_unpark() into
-cpuhp_online_idle(), such that the stopper thread is ready before we
-start the idle loop and schedule.
-
-Reported-by: "Paul E. McKenney" <paulmck@kernel.org>
-Debugged-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Tested-by: "Paul E. McKenney" <paulmck@kernel.org>
+Fixes: bb29b9cccd95 ("leds: pca963x: Add bindings to invert polarity")
+Signed-off-by: Zahari Petkov <zahari@balena.io>
+Signed-off-by: Pavel Machek <pavel@ucw.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/cpu.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/leds/leds-pca963x.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index 8d6b8b5493f9f..2d850eaaf82e3 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -493,8 +493,7 @@ static int bringup_wait_for_ap(unsigned int cpu)
- 	if (WARN_ON_ONCE((!cpu_online(cpu))))
- 		return -ECANCELED;
+diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
+index 5c0908113e388..bbcde13b77f16 100644
+--- a/drivers/leds/leds-pca963x.c
++++ b/drivers/leds/leds-pca963x.c
+@@ -43,6 +43,8 @@
+ #define PCA963X_LED_PWM		0x2	/* Controlled through PWM */
+ #define PCA963X_LED_GRP_PWM	0x3	/* Controlled through PWM/GRPPWM */
  
--	/* Unpark the stopper thread and the hotplug thread of the target cpu */
--	stop_machine_unpark(cpu);
-+	/* Unpark the hotplug thread of the target cpu */
- 	kthread_unpark(st->thread);
++#define PCA963X_MODE2_OUTDRV	0x04	/* Open-drain or totem pole */
++#define PCA963X_MODE2_INVRT	0x10	/* Normal or inverted direction */
+ #define PCA963X_MODE2_DMBLNK	0x20	/* Enable blinking */
  
- 	/*
-@@ -1048,8 +1047,8 @@ void notify_cpu_starting(unsigned int cpu)
- 
- /*
-  * Called from the idle task. Wake up the controlling task which brings the
-- * stopper and the hotplug thread of the upcoming CPU up and then delegates
-- * the rest of the online bringup to the hotplug thread.
-+ * hotplug thread of the upcoming CPU up and then delegates the rest of the
-+ * online bringup to the hotplug thread.
-  */
- void cpuhp_online_idle(enum cpuhp_state state)
- {
-@@ -1059,6 +1058,12 @@ void cpuhp_online_idle(enum cpuhp_state state)
- 	if (state != CPUHP_AP_ONLINE_IDLE)
- 		return;
- 
-+	/*
-+	 * Unpart the stopper thread before we start the idle loop (and start
-+	 * scheduling); this ensures the stopper task is always available.
-+	 */
-+	stop_machine_unpark(smp_processor_id());
-+
- 	st->state = CPUHP_AP_ONLINE_IDLE;
- 	complete_ap_thread(st, true);
- }
+ #define PCA963X_MODE1		0x00
+@@ -462,12 +464,12 @@ static int pca963x_probe(struct i2c_client *client,
+ 						    PCA963X_MODE2);
+ 		/* Configure output: open-drain or totem pole (push-pull) */
+ 		if (pdata->outdrv == PCA963X_OPEN_DRAIN)
+-			mode2 |= 0x01;
++			mode2 &= ~PCA963X_MODE2_OUTDRV;
+ 		else
+-			mode2 |= 0x05;
++			mode2 |= PCA963X_MODE2_OUTDRV;
+ 		/* Configure direction: normal or inverted */
+ 		if (pdata->dir == PCA963X_INVERTED)
+-			mode2 |= 0x10;
++			mode2 |= PCA963X_MODE2_INVRT;
+ 		i2c_smbus_write_byte_data(pca963x->chip->client, PCA963X_MODE2,
+ 					  mode2);
+ 	}
 -- 
 2.20.1
 
