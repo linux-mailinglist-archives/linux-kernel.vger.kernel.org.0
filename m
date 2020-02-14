@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CA1D15E9D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:10:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1434D15E9C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:09:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392571AbgBNRJg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:09:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42996 "EHLO mail.kernel.org"
+        id S2394606AbgBNRJY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:09:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392218AbgBNQNv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:13:51 -0500
+        id S2392230AbgBNQNx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:13:53 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 135AB246CC;
-        Fri, 14 Feb 2020 16:13:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3AE2C246CE;
+        Fri, 14 Feb 2020 16:13:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696830;
-        bh=VjGmQW4ZaEIwBplxGXhjzp+VjZggaABay/iw0AmQNss=;
+        s=default; t=1581696833;
+        bh=37Tl3sdRVJVadsU+L3wETW4srSquGpwjxB81nM98w+Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0L97qoQ3Wgn674naHHVwpJYS25nh1nLNLVDHUre5Eyta1+CAUh5LeLBKFAkFi24bY
-         1Wyivz7Yc0tnO1pymsd3yL/C9q+jm9OskIrVXQk/2/dia7obTpo+fuOfphotH0n8g2
-         u0sM3+3oMsym+ETOUk101K0cZexfjed5jGvgN9wI=
+        b=jCxEmFam5pfQw4og8DT0logeA36eMH3gMEkp47Gon1S7rvmw6Kizxueh0NIeCphbD
+         AqhIJf2KLvLsAw44oaxFa7MVgrK6mUkQ2M2u+QFHH59IjF6t016ysQK0+Jjl+ghB5W
+         1t1NxMcF974STTvL09IcPVYgNgqmHKfhk5ahibg0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>,
-        reiserfs-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 096/252] reiserfs: Fix spurious unlock in reiserfs_fill_super() error handling
-Date:   Fri, 14 Feb 2020 11:09:11 -0500
-Message-Id: <20200214161147.15842-96-sashal@kernel.org>
+Cc:     Aditya Pakki <pakki001@umn.edu>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 098/252] fore200e: Fix incorrect checks of NULL pointer dereference
+Date:   Fri, 14 Feb 2020 11:09:13 -0500
+Message-Id: <20200214161147.15842-98-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -42,34 +44,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kara <jack@suse.cz>
+From: Aditya Pakki <pakki001@umn.edu>
 
-[ Upstream commit 4d5c1adaf893b8aa52525d2b81995e949bcb3239 ]
+[ Upstream commit bbd20c939c8aa3f27fa30e86691af250bf92973a ]
 
-When we fail to allocate string for journal device name we jump to
-'error' label which tries to unlock reiserfs write lock which is not
-held. Jump to 'error_unlocked' instead.
+In fore200e_send and fore200e_close, the pointers from the arguments
+are dereferenced in the variable declaration block and then checked
+for NULL. The patch fixes these issues by avoiding NULL pointer
+dereferences.
 
-Fixes: f32485be8397 ("reiserfs: delay reiserfs lock until journal initialization")
-Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/reiserfs/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/atm/fore200e.c | 25 ++++++++++++++++++-------
+ 1 file changed, 18 insertions(+), 7 deletions(-)
 
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index 6280efeceb0a2..de5eda33c92a0 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -1954,7 +1954,7 @@ static int reiserfs_fill_super(struct super_block *s, void *data, int silent)
- 		if (!sbi->s_jdev) {
- 			SWARN(silent, s, "", "Cannot allocate memory for "
- 				"journal device name");
--			goto error;
-+			goto error_unlocked;
- 		}
- 	}
- #ifdef CONFIG_QUOTA
+diff --git a/drivers/atm/fore200e.c b/drivers/atm/fore200e.c
+index 99a38115b0a8f..86aab14872fd0 100644
+--- a/drivers/atm/fore200e.c
++++ b/drivers/atm/fore200e.c
+@@ -1504,12 +1504,14 @@ fore200e_open(struct atm_vcc *vcc)
+ static void
+ fore200e_close(struct atm_vcc* vcc)
+ {
+-    struct fore200e*        fore200e = FORE200E_DEV(vcc->dev);
+     struct fore200e_vcc*    fore200e_vcc;
++    struct fore200e*        fore200e;
+     struct fore200e_vc_map* vc_map;
+     unsigned long           flags;
+ 
+     ASSERT(vcc);
++    fore200e = FORE200E_DEV(vcc->dev);
++
+     ASSERT((vcc->vpi >= 0) && (vcc->vpi < 1<<FORE200E_VPI_BITS));
+     ASSERT((vcc->vci >= 0) && (vcc->vci < 1<<FORE200E_VCI_BITS));
+ 
+@@ -1554,10 +1556,10 @@ fore200e_close(struct atm_vcc* vcc)
+ static int
+ fore200e_send(struct atm_vcc *vcc, struct sk_buff *skb)
+ {
+-    struct fore200e*        fore200e     = FORE200E_DEV(vcc->dev);
+-    struct fore200e_vcc*    fore200e_vcc = FORE200E_VCC(vcc);
++    struct fore200e*        fore200e;
++    struct fore200e_vcc*    fore200e_vcc;
+     struct fore200e_vc_map* vc_map;
+-    struct host_txq*        txq          = &fore200e->host_txq;
++    struct host_txq*        txq;
+     struct host_txq_entry*  entry;
+     struct tpd*             tpd;
+     struct tpd_haddr        tpd_haddr;
+@@ -1570,9 +1572,18 @@ fore200e_send(struct atm_vcc *vcc, struct sk_buff *skb)
+     unsigned char*          data;
+     unsigned long           flags;
+ 
+-    ASSERT(vcc);
+-    ASSERT(fore200e);
+-    ASSERT(fore200e_vcc);
++    if (!vcc)
++        return -EINVAL;
++
++    fore200e = FORE200E_DEV(vcc->dev);
++    fore200e_vcc = FORE200E_VCC(vcc);
++
++    if (!fore200e)
++        return -EINVAL;
++
++    txq = &fore200e->host_txq;
++    if (!fore200e_vcc)
++        return -EINVAL;
+ 
+     if (!test_bit(ATM_VF_READY, &vcc->flags)) {
+ 	DPRINTK(1, "VC %d.%d.%d not ready for tx\n", vcc->itf, vcc->vpi, vcc->vpi);
 -- 
 2.20.1
 
