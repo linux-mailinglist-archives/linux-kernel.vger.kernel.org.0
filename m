@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14C4015DF6F
+	by mail.lfdr.de (Postfix) with ESMTP id 88B1F15DF72
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:09:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390223AbgBNQIg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:08:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59584 "EHLO mail.kernel.org"
+        id S2391016AbgBNQIi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:08:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390140AbgBNQHx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:07:53 -0500
+        id S2390040AbgBNQH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:07:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31445222C2;
-        Fri, 14 Feb 2020 16:07:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9EFEA24676;
+        Fri, 14 Feb 2020 16:07:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696472;
-        bh=tbsB6vHECRwHjZ/VQdlleAytqMHIOfGHbwngLBFASr0=;
+        s=default; t=1581696476;
+        bh=IDpon7Kel+MjWfOUEwoMjIHhIYdi6Oyu2TpugZYs3X0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=urp+jtuC4WnWTtoHHTb8XTZb/+Neun2983ESi3Cl88y05TWq02Ig3Qbva5DGQkVla
-         sVNnlwwKTWWTmDGYBTNN3H94FG9Rdzd6FEJP2w6lOfJW2DrUeQWxmNTkV/3sqW04gc
-         zMNSpjgpBF+jimtorse9eXJtnmuV2oLF6oj/RY0o=
+        b=S+1HwI2dY2R7hdokZMOQQusQH/hOmBj6RBUqURwoWhUKesj4LSTgV6Y1mePg+49Gy
+         GN9ILySibHfH2SHrnyREdcSyMRT8P8cLNis0Bp/pyGfEXkIAIJ3i4/4Tcla27RZwY1
+         4j4BGncnjhrnMZPtw8HVJkQpJzwe8mT6mx9Puxo0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 281/459] ARM: at91: pm: use SAM9X60 PMC's compatible
-Date:   Fri, 14 Feb 2020 10:58:51 -0500
-Message-Id: <20200214160149.11681-281-sashal@kernel.org>
+Cc:     Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Andy Gospodarek <gospo@broadcom.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 284/459] bnxt: Detach page from page pool before sending up the stack
+Date:   Fri, 14 Feb 2020 10:58:54 -0500
+Message-Id: <20200214160149.11681-284-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -44,35 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
+From: Jonathan Lemon <jonathan.lemon@gmail.com>
 
-[ Upstream commit 6b9dfd986a81a999a27b6ed9dbe91203089c62dd ]
+[ Upstream commit 3071c51783b39d6a676d02a9256c3b3f87804285 ]
 
-SAM9X60 PMC's has a different PMC. It was not integrated at the moment
-commit 01c7031cfa73 ("ARM: at91: pm: initial PM support for SAM9X60")
-was published.
+When running in XDP mode, pages come from the page pool, and should
+be freed back to the same pool or specifically detached.  Currently,
+when the driver re-initializes, the page pool destruction is delayed
+forever since it thinks there are oustanding pages.
 
-Fixes: 01c7031cfa73 ("ARM: at91: pm: initial PM support for SAM9X60")
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-Link: https://lore.kernel.org/r/1576062248-18514-2-git-send-email-claudiu.beznea@microchip.com
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Fixes: 322b87ca55f2 ("bnxt_en: add page_pool support")
+Signed-off-by: Jonathan Lemon <jonathan.lemon@gmail.com>
+Reviewed-by: Andy Gospodarek <gospo@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-at91/pm.c | 1 +
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
-index d5af6aedc02c4..03250768340e4 100644
---- a/arch/arm/mach-at91/pm.c
-+++ b/arch/arm/mach-at91/pm.c
-@@ -751,6 +751,7 @@ static const struct of_device_id atmel_pmc_ids[] __initconst = {
- 	{ .compatible = "atmel,sama5d3-pmc", .data = &pmc_infos[1] },
- 	{ .compatible = "atmel,sama5d4-pmc", .data = &pmc_infos[1] },
- 	{ .compatible = "atmel,sama5d2-pmc", .data = &pmc_infos[1] },
-+	{ .compatible = "microchip,sam9x60-pmc", .data = &pmc_infos[1] },
- 	{ /* sentinel */ },
- };
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+index 41297533b4a86..68618891b0e42 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -942,6 +942,7 @@ static struct sk_buff *bnxt_rx_page_skb(struct bnxt *bp,
+ 	dma_addr -= bp->rx_dma_offset;
+ 	dma_unmap_page_attrs(&bp->pdev->dev, dma_addr, PAGE_SIZE, bp->rx_dir,
+ 			     DMA_ATTR_WEAK_ORDERING);
++	page_pool_release_page(rxr->page_pool, page);
  
+ 	if (unlikely(!payload))
+ 		payload = eth_get_headlen(bp->dev, data_ptr, len);
 -- 
 2.20.1
 
