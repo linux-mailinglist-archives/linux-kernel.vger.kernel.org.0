@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 012B915E168
+	by mail.lfdr.de (Postfix) with ESMTP id 6B3D915E169
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:18:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404667AbgBNQST (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:18:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48630 "EHLO mail.kernel.org"
+        id S2404733AbgBNQS0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:18:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392707AbgBNQRY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:17:24 -0500
+        id S2404480AbgBNQRa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:17:30 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5A6D24691;
-        Fri, 14 Feb 2020 16:17:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B1749246ED;
+        Fri, 14 Feb 2020 16:17:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697043;
-        bh=8sqCPZQbHgG0+crtLnvdav5mlOwK/qn5XMgbdTOn95I=;
+        s=default; t=1581697049;
+        bh=eD/DJ1LstZ9eNOd8Ti1BbuQe6wDVPeHT7k72/pE1F6o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SRHUhRDbEE20+ChELuqaLNTWH8cu2xyVFkKq46hDLqMm1OcMTI7btdVMrlmxSqPwq
-         W1Ty7AjfxhCJsgE6xcvJnJXc3w3Lr2fesBCRfUivykyRjqDsDZUMy2hh65hUaP4iQb
-         mews/3hFbuhfF8y84QNOSQgsYNuWS9s1x1ojneOs=
+        b=NNXtlQMyhJauqjBME8wsHKKtAQE5z1Fww5Kv+oTpfHr/NyTwB2Ocj4JGUjS8LkZNm
+         i6a9UFDRrsFe729Sj/FNVPyenzFE5eWftP5m9D90TR7TUGASYQNU2/oWSFmrPGCM72
+         1vxLO9H9ylySxSEtku3+sIYM909GnQgnTc/DnHcU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.14 005/186] media: i2c: adv748x: Fix unsafe macros
-Date:   Fri, 14 Feb 2020 11:14:14 -0500
-Message-Id: <20200214161715.18113-5-sashal@kernel.org>
+Cc:     Ritesh Harjani <riteshh@linux.ibm.com>, Jan Kara <jack@suse.cz>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Theodore Ts'o <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>,
+        linux-ext4@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 010/186] ext4: fix ext4_dax_read/write inode locking sequence for IOCB_NOWAIT
+Date:   Fri, 14 Feb 2020 11:14:19 -0500
+Message-Id: <20200214161715.18113-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161715.18113-1-sashal@kernel.org>
 References: <20200214161715.18113-1-sashal@kernel.org>
@@ -47,62 +45,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: Ritesh Harjani <riteshh@linux.ibm.com>
 
-[ Upstream commit 0d962e061abcf1b9105f88fb850158b5887fbca3 ]
+[ Upstream commit f629afe3369e9885fd6e9cc7a4f514b6a65cf9e9 ]
 
-Enclose multiple macro parameters in parentheses in order to
-make such macros safer and fix the Clang warning below:
+Apparently our current rwsem code doesn't like doing the trylock, then
+lock for real scheme.  So change our dax read/write methods to just do the
+trylock for the RWF_NOWAIT case.
+This seems to fix AIM7 regression in some scalable filesystems upto ~25%
+in some cases. Claimed in commit 942491c9e6d6 ("xfs: fix AIM7 regression")
 
-drivers/media/i2c/adv748x/adv748x-afe.c:452:12: warning: operator '?:'
-has lower precedence than '|'; '|' will be evaluated first
-[-Wbitwise-conditional-parentheses]
-
-ret = sdp_clrset(state, ADV748X_SDP_FRP, ADV748X_SDP_FRP_MASK, enable
-? ctrl->val - 1 : 0);
-
-Fixes: 3e89586a64df ("media: i2c: adv748x: add adv748x driver")
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Tested-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
+Link: https://lore.kernel.org/r/20191212055557.11151-2-riteshh@linux.ibm.com
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/adv748x/adv748x.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/ext4/file.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
-index 296c5f8a8c633..1991c22be51a9 100644
---- a/drivers/media/i2c/adv748x/adv748x.h
-+++ b/drivers/media/i2c/adv748x/adv748x.h
-@@ -372,10 +372,10 @@ int adv748x_write_block(struct adv748x_state *state, int client_page,
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index 4ede0af9d6fe3..acec134da57df 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -38,9 +38,10 @@ static ssize_t ext4_dax_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	struct inode *inode = file_inode(iocb->ki_filp);
+ 	ssize_t ret;
  
- #define io_read(s, r) adv748x_read(s, ADV748X_PAGE_IO, r)
- #define io_write(s, r, v) adv748x_write(s, ADV748X_PAGE_IO, r, v)
--#define io_clrset(s, r, m, v) io_write(s, r, (io_read(s, r) & ~m) | v)
-+#define io_clrset(s, r, m, v) io_write(s, r, (io_read(s, r) & ~(m)) | (v))
+-	if (!inode_trylock_shared(inode)) {
+-		if (iocb->ki_flags & IOCB_NOWAIT)
++	if (iocb->ki_flags & IOCB_NOWAIT) {
++		if (!inode_trylock_shared(inode))
+ 			return -EAGAIN;
++	} else {
+ 		inode_lock_shared(inode);
+ 	}
+ 	/*
+@@ -188,9 +189,10 @@ ext4_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	struct inode *inode = file_inode(iocb->ki_filp);
+ 	ssize_t ret;
  
- #define hdmi_read(s, r) adv748x_read(s, ADV748X_PAGE_HDMI, r)
--#define hdmi_read16(s, r, m) (((hdmi_read(s, r) << 8) | hdmi_read(s, r+1)) & m)
-+#define hdmi_read16(s, r, m) (((hdmi_read(s, r) << 8) | hdmi_read(s, (r)+1)) & (m))
- #define hdmi_write(s, r, v) adv748x_write(s, ADV748X_PAGE_HDMI, r, v)
- 
- #define repeater_read(s, r) adv748x_read(s, ADV748X_PAGE_REPEATER, r)
-@@ -383,11 +383,11 @@ int adv748x_write_block(struct adv748x_state *state, int client_page,
- 
- #define sdp_read(s, r) adv748x_read(s, ADV748X_PAGE_SDP, r)
- #define sdp_write(s, r, v) adv748x_write(s, ADV748X_PAGE_SDP, r, v)
--#define sdp_clrset(s, r, m, v) sdp_write(s, r, (sdp_read(s, r) & ~m) | v)
-+#define sdp_clrset(s, r, m, v) sdp_write(s, r, (sdp_read(s, r) & ~(m)) | (v))
- 
- #define cp_read(s, r) adv748x_read(s, ADV748X_PAGE_CP, r)
- #define cp_write(s, r, v) adv748x_write(s, ADV748X_PAGE_CP, r, v)
--#define cp_clrset(s, r, m, v) cp_write(s, r, (cp_read(s, r) & ~m) | v)
-+#define cp_clrset(s, r, m, v) cp_write(s, r, (cp_read(s, r) & ~(m)) | (v))
- 
- #define txa_read(s, r) adv748x_read(s, ADV748X_PAGE_TXA, r)
- #define txb_read(s, r) adv748x_read(s, ADV748X_PAGE_TXB, r)
+-	if (!inode_trylock(inode)) {
+-		if (iocb->ki_flags & IOCB_NOWAIT)
++	if (iocb->ki_flags & IOCB_NOWAIT) {
++		if (!inode_trylock(inode))
+ 			return -EAGAIN;
++	} else {
+ 		inode_lock(inode);
+ 	}
+ 	ret = ext4_write_checks(iocb, from);
 -- 
 2.20.1
 
