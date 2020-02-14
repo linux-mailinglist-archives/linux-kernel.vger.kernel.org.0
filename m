@@ -2,37 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E17E15E7EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:57:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83BFE15E7B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:56:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404578AbgBNQRw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:17:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47794 "EHLO mail.kernel.org"
+        id S2404612AbgBNQR5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:17:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392520AbgBNQQr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:16:47 -0500
+        id S2404051AbgBNQQv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:16:51 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 495C524681;
-        Fri, 14 Feb 2020 16:16:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43F5024681;
+        Fri, 14 Feb 2020 16:16:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697007;
-        bh=64DALbzlGlflbsgACuyMA97btfFobsAvGvVaIDbOK/4=;
+        s=default; t=1581697010;
+        bh=Uh+F+K4G4VhwM0jMFoF67RQma0Fxf9NzqW3BVuHHRXk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LsbL24WmEO7YDa8GqAAN/c8JcKN7mPQ0NFSa/122LuV23Xki81Dn5ZuTDHJ31yQ7s
-         nAbF4xRgUVh1wSFEk4Pg/THpp5EV36NSwxgMwzXuzXIwxFgKbSS/wss+PqJlHSn3cT
-         pV8KrqGivEmdDiXxBfzZHT/pwlheLEu6549Df6zM=
+        b=RC4XDh00owcp+QrZzZGDN3mXkqJP4PwGyujPfOXFIkZ6l/lSi896emJZ0I4yjL+3D
+         1tmAWRUC2L1Wh8mxUU6JFfd20GBlg3NyqmCG9orhUKr3jOHQMg9bnz9QB3CEWfh1eq
+         pm/ahn2HO+aaWvOUW1ckQ2PnBbsRCloBvmOMuOHs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.19 238/252] lib/scatterlist.c: adjust indentation in __sg_alloc_table
-Date:   Fri, 14 Feb 2020 11:11:33 -0500
-Message-Id: <20200214161147.15842-238-sashal@kernel.org>
+Cc:     Zenghui Yu <yuzenghui@huawei.com>, Marc Zyngier <maz@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 241/252] irqchip/gic-v3-its: Reference to its_invall_cmd descriptor when building INVALL
+Date:   Fri, 14 Feb 2020 11:11:36 -0500
+Message-Id: <20200214161147.15842-241-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -45,49 +42,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Zenghui Yu <yuzenghui@huawei.com>
 
-[ Upstream commit 4e456fee215677584cafa7f67298a76917e89c64 ]
+[ Upstream commit 107945227ac5d4c37911c7841b27c64b489ce9a9 ]
 
-Clang warns:
+It looks like an obvious mistake to use its_mapc_cmd descriptor when
+building the INVALL command block. It so far worked by luck because
+both its_mapc_cmd.col and its_invall_cmd.col sit at the same offset of
+the ITS command descriptor, but we should not rely on it.
 
-  ../lib/scatterlist.c:314:5: warning: misleading indentation; statement
-  is not part of the previous 'if' [-Wmisleading-indentation]
-                          return -ENOMEM;
-                          ^
-  ../lib/scatterlist.c:311:4: note: previous statement is here
-                          if (prv)
-                          ^
-  1 warning generated.
-
-This warning occurs because there is a space before the tab on this
-line.  Remove it so that the indentation is consistent with the Linux
-kernel coding style and clang no longer warns.
-
-Link: http://lkml.kernel.org/r/20191218033606.11942-1-natechancellor@gmail.com
-Link: https://github.com/ClangBuiltLinux/linux/issues/830
-Fixes: edce6820a9fd ("scatterlist: prevent invalid free when alloc fails")
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: cc2d3216f53c ("irqchip: GICv3: ITS command queue")
+Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Link: https://lore.kernel.org/r/20191202071021.1251-1-yuzenghui@huawei.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/scatterlist.c | 2 +-
+ drivers/irqchip/irq-gic-v3-its.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/scatterlist.c b/lib/scatterlist.c
-index 8c3036c37ba0e..60e7eca2f4bed 100644
---- a/lib/scatterlist.c
-+++ b/lib/scatterlist.c
-@@ -305,7 +305,7 @@ int __sg_alloc_table(struct sg_table *table, unsigned int nents,
- 			if (prv)
- 				table->nents = ++table->orig_nents;
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index 050d6e040128d..bf7b69449b438 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -578,7 +578,7 @@ static struct its_collection *its_build_invall_cmd(struct its_node *its,
+ 						   struct its_cmd_desc *desc)
+ {
+ 	its_encode_cmd(cmd, GITS_CMD_INVALL);
+-	its_encode_collection(cmd, desc->its_mapc_cmd.col->col_id);
++	its_encode_collection(cmd, desc->its_invall_cmd.col->col_id);
  
-- 			return -ENOMEM;
-+			return -ENOMEM;
- 		}
+ 	its_fixup_cmd(cmd);
  
- 		sg_init_table(sg, alloc_size);
 -- 
 2.20.1
 
