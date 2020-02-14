@@ -2,149 +2,226 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B6BA15F568
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:39:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E79015F58A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:39:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730403AbgBNSfK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:35:10 -0500
-Received: from foss.arm.com ([217.140.110.172]:43648 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728239AbgBNSfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 13:35:09 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D1DE8106F;
-        Fri, 14 Feb 2020 10:35:08 -0800 (PST)
-Received: from [10.1.196.37] (e121345-lin.cambridge.arm.com [10.1.196.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1E3E03F68E;
-        Fri, 14 Feb 2020 10:35:06 -0800 (PST)
-Subject: Re: arm64 iommu groups issue
-To:     John Garry <john.garry@huawei.com>, Marc Zyngier <maz@kernel.org>,
-        Will Deacon <will@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        "Guohanjun (Hanjun Guo)" <guohanjun@huawei.com>
-Cc:     iommu <iommu@lists.linux-foundation.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linuxarm <linuxarm@huawei.com>,
-        Shameerali Kolothum Thodi 
-        <shameerali.kolothum.thodi@huawei.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Saravana Kannan <saravanak@google.com>
-References: <9625faf4-48ef-2dd3-d82f-931d9cf26976@huawei.com>
- <4768c541-ebf4-61d5-0c5e-77dee83f8f94@arm.com>
- <a18b7f26-9713-a5c7-507e-ed70e40bc007@huawei.com>
- <ddc7eaff-c3f9-4304-9b4e-75eff2c66cd5@huawei.com>
- <be464e2a-03d5-0b2e-24ee-96d0d14fd739@arm.com>
- <35fc8d13-b1c1-6a9e-4242-284da7f00764@huawei.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <68643b18-c920-f997-a6d4-a5d9177c0f4e@arm.com>
-Date:   Fri, 14 Feb 2020 18:35:05 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1730571AbgBNSiA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:38:00 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:33609 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730427AbgBNSh6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 13:37:58 -0500
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1j2fqG-0000uO-Vs; Fri, 14 Feb 2020 18:37:33 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>
+Cc:     smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Phil Estes <estesp@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH v2 00/28] user_namespace: introduce fsid mappings
+Date:   Fri, 14 Feb 2020 19:35:26 +0100
+Message-Id: <20200214183554.1133805-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-In-Reply-To: <35fc8d13-b1c1-6a9e-4242-284da7f00764@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/02/2020 2:09 pm, John Garry wrote:
->>>
->>> @@ -2420,6 +2421,10 @@ void pci_device_add(struct pci_dev *dev, struct
->>> pci_bus *bus)
->>>        /* Set up MSI IRQ domain */
->>>        pci_set_msi_domain(dev);
->>>
->>> +    parent = dev->dev.parent;
->>> +    if (parent && parent->bus == &pci_bus_type)
->>> +        device_link_add(&dev->dev, parent, DL_FLAG_AUTOPROBE_CONSUMER);
->>> +
->>>        /* Notifier could use PCI capabilities */
->>>        dev->match_driver = false;
->>>        ret = device_add(&dev->dev);
->>> -- 
->>>
->>> This would work, but the problem is that if the port driver fails in
->>> probing - and not just for -EPROBE_DEFER - then the child device will
->>> never probe. This very thing happens on my dev board. However we could
->>> expand the device links API to cover this sort of scenario.
->>
->> Yes, that's an undesirable issue, but in fact I think it's mostly
->> indicative that involving drivers in something which is designed to
->> happen at a level below drivers is still fundamentally wrong and doomed
->> to be fragile at best.
-> 
-> Right, and even worse is that it relies on the port driver even existing 
-> at all.
-> 
-> All this iommu group assignment should be taken outside device driver 
-> probe paths.
-> 
-> However we could still consider device links for sync'ing the SMMU and 
-> each device probing.
+Hey everyone,
 
-Yes, we should get that for DT now thanks to the of_devlink stuff, but 
-cooking up some equivalent for IORT might be worthwhile.
+This is v2 with various fixes after discussions with Jann.
 
->> Another thought that crosses my mind is that when pci_device_group()
->> walks up to the point of ACS isolation and doesn't find an existing
->> group, it can still infer that everything it walked past *should* be put
->> in the same group it's then eventually going to return. Unfortunately I
->> can't see an obvious way for it to act on that knowledge, though, since
->> recursive iommu_probe_device() is unlikely to end well.
-> 
-> I'd be inclined not to change that code.
-> 
->>
->>> As for alternatives, it looks pretty difficult to me to disassociate the
->>> group allocation from the dma_configure path.
->>
->> Indeed it's non-trivial, but it really does need cleaning up at some 
->> point.
->>
->> Having just had yet another spark, does something like the untested
->> super-hack below work at all? 
-> 
-> I tried it and it doesn't (yet) work.
+From pings and off-list questions and discussions at Google Container
+Security Summit there seems to be quite a lot of interest in this
+patchset with use-cases ranging from layer sharing for app containers
+and k8s, as well as data sharing between containers with different id
+mappings. I haven't Cced all people because I don't have all the email
+adresses at hand but I've at least added Phil now. :)
 
-Bleh - further reinforcement of the "ideas after 6PM are bad ideas" rule...
+This is the implementation of shiftfs which was cooked up during lunch at
+Linux Plumbers 2019 the day after the container's microconference. The
+idea is a design-stew from Stéphane, Aleksa, Eric, and myself. Back then
+we all were quite busy with other work and couldn't really sit down and
+implement it. But I took a few days last week to do this work, including
+demos and performance testing.
+This implementation does not require us to touch the vfs substantially
+at all. Instead, we implement shiftfs via fsid mappings.
+With this patch, it took me 20 mins to port both LXD and LXC to support
+shiftfs via fsid mappings.
 
-> So when we try 
-> iommu_bus_replay()->add_iommu_group()->iommu_probe_device()->arm_smmu_add_device(), 
-> 
-> the iommu_fwspec is still NULL for that device - this is not set until 
-> later when the device driver is going to finally probe in 
-> iort_iommu_xlate()->iommu_fwspec_init(), and it's too late...
-> 
-> And this looks to be the reason for which current 
-> iommu_bus_init()->bus_for_each_device(..., add_iommu_group) fails also.
+For anyone wanting to play with this the branch can be pulled from:
+https://github.com/brauner/linux/tree/fsid_mappings
+https://gitlab.com/brauner/linux/-/tree/fsid_mappings
+https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/log/?h=fsid_mappings
 
-Of course, just adding a 'correct' add_device replay without the 
-of_xlate process doesn't help at all. No wonder this looked suspiciously 
-simpler than where the first idea left off...
+The main use case for shiftfs for us is in allowing shared writable
+storage to multiple containers using non-overlapping id mappings.
+In such a scenario you want the fsids to be valid and identical in both
+containers for the shared mount. A demo for this exists in [3].
+If you don't want to read on, go straight to the other demos below in
+[1] and [2].
 
-(on reflection, the core of this idea seems to be recycling the existing 
-iommu_bus_init walk rather than building up a separate "waiting list", 
-while forgetting that that wasn't the difficult part of the original 
-idea anyway)
+People not as familiar with user namespaces might not be aware that fsid
+mappings already exist. Right now, fsid mappings are always identical to
+id mappings. Specifically, the kernel will lookup fsuids in the uid
+mappings and fsgids in the gid mappings of the relevant user namespace.
 
-> On this current code mentioned, the principle of this seems wrong to me 
-> - we call bus_for_each_device(..., add_iommu_group) for the first SMMU 
-> in the system which probes, but we attempt to add_iommu_group() for all 
-> devices on the bus, even though the SMMU for that device may yet to have 
-> probed.
+With this patch series we simply introduce the ability to create fsid
+mappings that are different from the id mappings of a user namespace.
+The whole feature set is placed under a config option that defaults to
+false.
 
-Yes, iommu_bus_init() is one of the places still holding a 
-deeply-ingrained assumption that the ops go live for all IOMMU instances 
-at once, which is what warranted the further replay in 
-of_iommu_configure() originally. Moving that out of 
-of_platform_device_create() to support probe deferral is where the 
-trouble really started.
+In the usual case of running an unprivileged container we will have
+setup an id mapping, e.g. 0 100000 100000. The on-disk mapping will
+correspond to this id mapping, i.e. all files which we want to appear as
+0:0 inside the user namespace will be chowned to 100000:100000 on the
+host. This works, because whenever the kernel needs to do a filesystem
+access it will lookup the corresponding uid and gid in the idmapping
+tables of the container.
+Now think about the case where we want to have an id mapping of 0 100000
+100000 but an on-disk mapping of 0 300000 100000 which is needed to e.g.
+share a single on-disk mapping with multiple containers that all have
+different id mappings.
+This will be problematic. Whenever a filesystem access is requested, the
+kernel will now try to lookup a mapping for 300000 in the id mapping
+tables of the user namespace but since there is none the files will
+appear to be owned by the overflow id, i.e. usually 65534:65534 or
+nobody:nogroup.
 
-Robin.
+With fsid mappings we can solve this by writing an id mapping of 0
+100000 100000 and an fsid mapping of 0 300000 100000. On filesystem
+access the kernel will now lookup the mapping for 300000 in the fsid
+mapping tables of the user namespace. And since such a mapping exists,
+the corresponding files will have correct ownership.
+
+A note on proc (and sys), the proc filesystem is special in sofar as it
+only has a single superblock that is (currently but might be about to
+change) visible in all user namespaces (same goes for sys). This means
+it has special semantics in many ways, including how file ownership and
+access works. The fsid mapping implementation does not alter how proc
+(and sys) ownership works. proc and sys will both continue to lookup
+filesystem access in id mapping tables.
+
+When Writing fsid mappings the same rules apply as when writing id
+mappings so I won't reiterate them here. The limit of fs id mappings is
+the same as for id mappings, i.e. 340 lines.
+
+# Performance
+Back when I extended the range of possible id mappings to 340 I did
+performance testing by booting into single user mode, creating 1,000,000
+files to fstat()ing them and calculated the mean fstat() time per file.
+(Back when Linux was still fast. I won't mention that the stat
+ numbers have (thanks microcode!) doubled since then...)
+I did the same test for this patchset: one vanilla kernel, one kernel
+with my fsid mapping patches but CONFIG_USER_NS_FSID set to n and one
+with fsid mappings patches enabled. I then ran the same test on all
+three kernels and compared the numbers. The implementation does not
+introduce overhead. That's all I can say. Here are the numbers:
+
+             | vanilla v5.5 | fsid mappings       | fsid mappings      | fsid mappings      |
+	     |              | disabled in Kconfig | enabled in Kconfig | enabled in Kconfig |
+	     |   	    |                     | and unset for all  | and set for all    |
+	     |   	    |    		  | test cases         | test cases         |
+-------------|--------------|---------------------|--------------------|--------------------|
+ 0  mappings |       367 ns |              365 ns |             365 ns |             N/A    |
+ 1  mappings |       362 ns |              367 ns |             363 ns |             363 ns |
+ 2  mappings |       361 ns |              369 ns |             363 ns |             364 ns |
+ 3  mappings |       361 ns |              368 ns |             366 ns |             365 ns |
+ 5  mappings |       365 ns |              368 ns |             363 ns |             365 ns |
+ 10 mappings |       391 ns |              388 ns |             387 ns |             389 ns |
+ 50 mappings |       395 ns |              398 ns |             401 ns |             397 ns |
+100 mappings |       400 ns |              405 ns |             399 ns |             399 ns |
+200 mappings |       404 ns |              407 ns |             430 ns |             404 ns |
+300 mappings |       492 ns |              494 ns |             432 ns |             413 ns |
+340 mappings |       495 ns |              497 ns |             500 ns |             484 ns |
+
+# Demos
+[1]: Create a container with different id and fsid mappings.
+     https://asciinema.org/a/300233 
+[2]: Create a container with id mappings but without fsid mappings.
+     https://asciinema.org/a/300234
+[3]: Share storage between multiple containers with non-overlapping id
+     mappings.
+     https://asciinema.org/a/300235
+
+Thanks!
+Christian
+
+Christian Brauner (28):
+  user_namespace: introduce fsid mappings infrastructure
+  proc: add /proc/<pid>/fsuid_map
+  proc: add /proc/<pid>/fsgid_map
+  fsuidgid: add fsid mapping helpers
+  proc: task_state(): use from_kfs{g,u}id_munged
+  cred: add kfs{g,u}id
+  sys: __sys_setfsuid(): handle fsid mappings
+  sys: __sys_setfsgid(): handle fsid mappings
+  sys:__sys_setuid(): handle fsid mappings
+  sys:__sys_setgid(): handle fsid mappings
+  sys:__sys_setreuid(): handle fsid mappings
+  sys:__sys_setregid(): handle fsid mappings
+  sys:__sys_setresuid(): handle fsid mappings
+  sys:__sys_setresgid(): handle fsid mappings
+  fs: add is_userns_visible() helper
+  namei: may_{o_}create(): handle fsid mappings
+  inode: inode_owner_or_capable(): handle fsid mappings
+  capability: privileged_wrt_inode_uidgid(): handle fsid mappings
+  stat: handle fsid mappings
+  open: handle fsid mappings
+  posix_acl: handle fsid mappings
+  attr: notify_change(): handle fsid mappings
+  commoncap: cap_bprm_set_creds(): handle fsid mappings
+  commoncap: cap_task_fix_setuid(): handle fsid mappings
+  commoncap: handle fsid mappings with vfs caps
+  exec: bprm_fill_uid(): handle fsid mappings
+  ptrace: adapt ptrace_may_access() to always uses unmapped fsids
+  devpts: handle fsid mappings
+
+ fs/attr.c                      |  23 ++-
+ fs/devpts/inode.c              |   7 +-
+ fs/exec.c                      |  25 ++-
+ fs/inode.c                     |   7 +-
+ fs/namei.c                     |  36 +++-
+ fs/open.c                      |  16 +-
+ fs/posix_acl.c                 |  21 +--
+ fs/proc/array.c                |   5 +-
+ fs/proc/base.c                 |  34 ++++
+ fs/stat.c                      |  48 ++++--
+ include/linux/cred.h           |   4 +
+ include/linux/fs.h             |   5 +
+ include/linux/fsuidgid.h       | 122 +++++++++++++
+ include/linux/stat.h           |   1 +
+ include/linux/user_namespace.h |  10 ++
+ init/Kconfig                   |  11 ++
+ kernel/capability.c            |  10 +-
+ kernel/ptrace.c                |   4 +-
+ kernel/sys.c                   | 106 +++++++++---
+ kernel/user.c                  |  22 +++
+ kernel/user_namespace.c        | 303 ++++++++++++++++++++++++++++++++-
+ security/commoncap.c           |  35 ++--
+ 22 files changed, 757 insertions(+), 98 deletions(-)
+ create mode 100644 include/linux/fsuidgid.h
+
+
+base-commit: bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9
+-- 
+2.25.0
+
