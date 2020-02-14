@@ -2,37 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6F6D15DCE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:56:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6D8015DCE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:56:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731814AbgBNP4C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:56:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37276 "EHLO mail.kernel.org"
+        id S1731659AbgBNP4F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:56:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731422AbgBNPz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:55:56 -0500
+        id S1730958AbgBNP4A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:56:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 795B224676;
-        Fri, 14 Feb 2020 15:55:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 461F524689;
+        Fri, 14 Feb 2020 15:55:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695755;
-        bh=6j1K92uXQHGUNZx44H0eiABCvbiGImXRdsQbp3X8P6A=;
+        s=default; t=1581695759;
+        bh=zAa2uEgQbd2JoS7G+0gTzPTd/qwhQJyo3d9rW0gWzZU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FZfWP+s4qH4O7clynH7/CPtZKUsLJ6Wzdl71bI9ULIjG3SDU2UxLoBquKxAFkcLc6
-         JnBsS8ThlJlW62v2SOUpDDaUw9ZLqY/SAFsNoxzUbGm1njdz430u7oOAFBNfI6THbb
-         Q1rk/vQBLcUdgN46IgDzrd685j3SwlWRYuOaJDfY=
+        b=ymxWoFPRfiJbiWQ/3uiGYs7RSruMccRfE+UyYiw7tQePLEDBEE+Y6GXvud5kV3K6f
+         kznUsYrTv5VxUvN0sRZpYRUWt8NXh3Az77GyNjO5PKJF5ncUoK7NmfNE/urze2UN5X
+         kvUmVPJ++jQb57/XU1SPh9ttyGkkN/fi/buqOisw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 324/542] Input: edt-ft5x06 - work around first register access error
-Date:   Fri, 14 Feb 2020 10:45:16 -0500
-Message-Id: <20200214154854.6746-324-sashal@kernel.org>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sekhar Nori <nsekhar@ti.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.5 328/542] clocksource: davinci: only enable clockevents once tim34 is initialized
+Date:   Fri, 14 Feb 2020 10:45:20 -0500
+Message-Id: <20200214154854.6746-328-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -45,53 +42,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Philipp Zabel <p.zabel@pengutronix.de>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-[ Upstream commit e112324cc0422c046f1cf54c56f333d34fa20885 ]
+[ Upstream commit cea931c25104e6bddc42eb067f58193f355dbdd7 ]
 
-The EP0700MLP1 returns bogus data on the first register read access
-(reading the threshold parameter from register 0x00):
+The DM365 platform has a strange quirk (only present when using ancient
+u-boot - mainline u-boot v2013.01 and later works fine) where if we
+enable the second half of the timer in periodic mode before we do its
+initialization - the time won't start flowing and we can't boot.
 
-    edt_ft5x06 2-0038: crc error: 0xfc expected, got 0x40
+When using more recent u-boot, we can enable the timer, then reinitialize
+it and all works fine.
 
-It ignores writes until then. This patch adds a dummy read after which
-the number of sensors and parameter read/writes work correctly.
+To work around this issue only enable clockevents once tim34 is
+initialized i.e. move clockevents_config_and_register() below tim34
+initialization.
 
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/touchscreen/edt-ft5x06.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/clocksource/timer-davinci.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
-index d61731c0037d1..b87b1e074f624 100644
---- a/drivers/input/touchscreen/edt-ft5x06.c
-+++ b/drivers/input/touchscreen/edt-ft5x06.c
-@@ -1050,6 +1050,7 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client,
- {
- 	const struct edt_i2c_chip_data *chip_data;
- 	struct edt_ft5x06_ts_data *tsdata;
-+	u8 buf[2] = { 0xfc, 0x00 };
- 	struct input_dev *input;
- 	unsigned long irq_flags;
- 	int error;
-@@ -1140,6 +1141,12 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client,
- 		return error;
+diff --git a/drivers/clocksource/timer-davinci.c b/drivers/clocksource/timer-davinci.c
+index 62745c9620498..e421946a91c5a 100644
+--- a/drivers/clocksource/timer-davinci.c
++++ b/drivers/clocksource/timer-davinci.c
+@@ -302,10 +302,6 @@ int __init davinci_timer_register(struct clk *clk,
+ 		return rv;
  	}
  
-+	/*
-+	 * Dummy read access. EP0700MLP1 returns bogus data on the first
-+	 * register read access and ignores writes.
-+	 */
-+	edt_ft5x06_ts_readwrite(tsdata->client, 2, buf, 2, buf);
+-	clockevents_config_and_register(&clockevent->dev, tick_rate,
+-					DAVINCI_TIMER_MIN_DELTA,
+-					DAVINCI_TIMER_MAX_DELTA);
+-
+ 	davinci_clocksource.dev.rating = 300;
+ 	davinci_clocksource.dev.read = davinci_clocksource_read;
+ 	davinci_clocksource.dev.mask =
+@@ -323,6 +319,10 @@ int __init davinci_timer_register(struct clk *clk,
+ 		davinci_clocksource_init_tim34(base);
+ 	}
+ 
++	clockevents_config_and_register(&clockevent->dev, tick_rate,
++					DAVINCI_TIMER_MIN_DELTA,
++					DAVINCI_TIMER_MAX_DELTA);
 +
- 	edt_ft5x06_ts_set_regs(tsdata);
- 	edt_ft5x06_ts_get_defaults(&client->dev, tsdata);
- 	edt_ft5x06_ts_get_parameters(tsdata);
+ 	rv = clocksource_register_hz(&davinci_clocksource.dev, tick_rate);
+ 	if (rv) {
+ 		pr_err("Unable to register clocksource");
 -- 
 2.20.1
 
