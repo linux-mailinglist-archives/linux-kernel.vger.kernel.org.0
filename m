@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4389A15F3FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:22:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54C4615F3FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:22:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392266AbgBNSRG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:17:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56178 "EHLO mail.kernel.org"
+        id S2405019AbgBNSQ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:16:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730727AbgBNPvT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:51:19 -0500
+        id S1730746AbgBNPvW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:51:22 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 100F124649;
-        Fri, 14 Feb 2020 15:51:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6FDA2465D;
+        Fri, 14 Feb 2020 15:51:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695478;
-        bh=sOWt88WVkaqu6GMzTtpvWwwMB224frFvtLxOEicCWVI=;
+        s=default; t=1581695481;
+        bh=HnWhr6/KKXYznfesNXl5gOHM6wIdNTDv3KbNna8Ndxc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RHOLBxujQosx3eOlgNu8wqaYwg5tOKZ6wE5XYyzbNtJc6Aw5qsRbmI+s2nlOtb70p
-         LntM+8AiAj5mjjAqI4rtVoxN7RqN3evErV5m0swrJ8iH4AnbzQxXZ1XEHjYLOALGjD
-         Vx0vzkw7rT13KgSazhhtlIs8uA1fBLOPDmLQBPwc=
+        b=osyLz0MlWwJLVhCxGdxUX8/BI+wT+TSk5+VkHYdIgzzwYbaPNCQYYXPHO3PK+TeEa
+         Txp171XWkslZ9ZK3ocpiSQBdftjWDCA0Dyn2gDXhe9vabf+ZJHFsdruboT0QkwAezQ
+         KvgLkQTyDKtJ6yplQuVa4PotWSws6/fLXkOfXrwk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nicolai Stange <nstange@suse.de>,
-        Kalle Valo <kvalo@codeaurora.org>,
+Cc:     Christophe Roullier <christophe.roullier@st.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
         Sasha Levin <sashal@kernel.org>,
-        libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 111/542] libertas: don't exit from lbs_ibss_join_existing() with RCU read lock held
-Date:   Fri, 14 Feb 2020 10:41:43 -0500
-Message-Id: <20200214154854.6746-111-sashal@kernel.org>
+        linux-watchdog@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.5 113/542] drivers: watchdog: stm32_iwdg: set WDOG_HW_RUNNING at probe
+Date:   Fri, 14 Feb 2020 10:41:45 -0500
+Message-Id: <20200214154854.6746-113-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -45,37 +47,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolai Stange <nstange@suse.de>
+From: Christophe Roullier <christophe.roullier@st.com>
 
-[ Upstream commit c7bf1fb7ddca331780b9a733ae308737b39f1ad4 ]
+[ Upstream commit 85fdc63fe256b595f923a69848cd99972ff446d8 ]
 
-Commit e5e884b42639 ("libertas: Fix two buffer overflows at parsing bss
-descriptor") introduced a bounds check on the number of supplied rates to
-lbs_ibss_join_existing().
+If the watchdog hardware is already enabled during the boot process,
+when the Linux watchdog driver loads, it should start/reset the watchdog
+and tell the watchdog framework. As a result, ping can be generated from
+the watchdog framework (if CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED is set),
+until the userspace watchdog daemon takes over control
 
-Unfortunately, it introduced a return path from within a RCU read side
-critical section without a corresponding rcu_read_unlock(). Fix this.
+Fixes:4332d113c66a ("watchdog: Add STM32 IWDG driver")
 
-Fixes: e5e884b42639 ("libertas: Fix two buffer overflows at parsing bss descriptor")
-Signed-off-by: Nicolai Stange <nstange@suse.de>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Christophe Roullier <christophe.roullier@st.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/r/20191122132246.8473-1-christophe.roullier@st.com
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/marvell/libertas/cfg.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/watchdog/stm32_iwdg.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/net/wireless/marvell/libertas/cfg.c b/drivers/net/wireless/marvell/libertas/cfg.c
-index c9401c121a14e..68985d7663491 100644
---- a/drivers/net/wireless/marvell/libertas/cfg.c
-+++ b/drivers/net/wireless/marvell/libertas/cfg.c
-@@ -1785,6 +1785,7 @@ static int lbs_ibss_join_existing(struct lbs_private *priv,
- 		rates_max = rates_eid[1];
- 		if (rates_max > MAX_RATES) {
- 			lbs_deb_join("invalid rates");
-+			rcu_read_unlock();
- 			goto out;
- 		}
- 		rates = cmd.bss.rates;
+diff --git a/drivers/watchdog/stm32_iwdg.c b/drivers/watchdog/stm32_iwdg.c
+index a3a329011a06b..25188d6bbe152 100644
+--- a/drivers/watchdog/stm32_iwdg.c
++++ b/drivers/watchdog/stm32_iwdg.c
+@@ -262,6 +262,24 @@ static int stm32_iwdg_probe(struct platform_device *pdev)
+ 	watchdog_set_nowayout(wdd, WATCHDOG_NOWAYOUT);
+ 	watchdog_init_timeout(wdd, 0, dev);
+ 
++	/*
++	 * In case of CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED is set
++	 * (Means U-Boot/bootloaders leaves the watchdog running)
++	 * When we get here we should make a decision to prevent
++	 * any side effects before user space daemon will take care of it.
++	 * The best option, taking into consideration that there is no
++	 * way to read values back from hardware, is to enforce watchdog
++	 * being run with deterministic values.
++	 */
++	if (IS_ENABLED(CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED)) {
++		ret = stm32_iwdg_start(wdd);
++		if (ret)
++			return ret;
++
++		/* Make sure the watchdog is serviced */
++		set_bit(WDOG_HW_RUNNING, &wdd->status);
++	}
++
+ 	ret = devm_watchdog_register_device(dev, wdd);
+ 	if (ret)
+ 		return ret;
 -- 
 2.20.1
 
