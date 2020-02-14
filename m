@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4EF315DE87
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:05:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFFF815DE8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:05:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389749AbgBNQDs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:03:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50946 "EHLO mail.kernel.org"
+        id S2389761AbgBNQDu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:03:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389697AbgBNQDh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:03:37 -0500
+        id S2387842AbgBNQDm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:03:42 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E84B52082F;
-        Fri, 14 Feb 2020 16:03:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FEA42082F;
+        Fri, 14 Feb 2020 16:03:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696216;
-        bh=WuG/B6lmBEnh3GUKDiqWFqR3zitCFb14UJnbGdNR6mY=;
+        s=default; t=1581696221;
+        bh=dbHTO3vRSZeNK1+qa30KRzeCXUUCMWdbmz/CWj6bU6U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BkFOzB6hZAlLBqKg2uWvbLleEtoAy6M8wQAmuyYqfsNig30v2bvRxSMmE657Ehh5+
-         09v68FqzPUaTB7/zoxRphtAy7pz5PoYy3KlH0124DG8y+rmeU4UN4/fawBYOLUHZ59
-         eN2h67XwlKoK5rWGG2+UZpy8CEELcgFNHiLr2ueo=
+        b=cusW2ucIFoB3HT1W/xyXjwdGcwyDw4viWSUozJGj0S7BH15y5cZiZnQgNBVKpN0sr
+         JkSPS9LgiOHAUvT/e6nseVbcwX5REcoksjAodM2OednK/wyWWsS6ZEsxQWJmhbu4z0
+         U/wC3pAwPW5RaVOGDL2yalP9w8P8V3Fo+lZgX5Zo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chen Zhou <chenzhou10@huawei.com>, Peng Ma <peng.ma@nxp.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        dmaengine@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 080/459] dmaengine: fsl-qdma: fix duplicated argument to &&
-Date:   Fri, 14 Feb 2020 10:55:30 -0500
-Message-Id: <20200214160149.11681-80-sashal@kernel.org>
+Cc:     Oliver O'Halloran <oohall@gmail.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 5.4 084/459] powerpc/iov: Move VF pdev fixup into pcibios_fixup_iov()
+Date:   Fri, 14 Feb 2020 10:55:34 -0500
+Message-Id: <20200214160149.11681-84-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -43,39 +44,121 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen Zhou <chenzhou10@huawei.com>
+From: Oliver O'Halloran <oohall@gmail.com>
 
-[ Upstream commit 4b048178854da11656596d36a107577d66fd1e08 ]
+[ Upstream commit 965c94f309be58fbcc6c8d3e4f123376c5970d79 ]
 
-There is duplicated argument to && in function fsl_qdma_free_chan_resources,
-which looks like a typo, pointer fsl_queue->desc_pool also needs NULL check,
-fix it.
-Detected with coccinelle.
+An ioda_pe for each VF is allocated in pnv_pci_sriov_enable() before
+the pci_dev for the VF is created. We need to set the pe->pdev pointer
+at some point after the pci_dev is created. Currently we do that in:
 
-Fixes: b092529e0aa0 ("dmaengine: fsl-qdma: Add qDMA controller driver for Layerscape SoCs")
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
-Reviewed-by: Peng Ma <peng.ma@nxp.com>
-Tested-by: Peng Ma <peng.ma@nxp.com>
-Link: https://lore.kernel.org/r/20200120125843.34398-1-chenzhou10@huawei.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+pcibios_bus_add_device()
+	pnv_pci_dma_dev_setup() (via phb->ops.dma_dev_setup)
+		/* fixup is done here */
+		pnv_pci_ioda_dma_dev_setup() (via pnv_phb->dma_dev_setup)
+
+The fixup needs to be done before setting up DMA for for the VF's PE,
+but there's no real reason to delay it until this point. Move the
+fixup into pnv_pci_ioda_fixup_iov() so the ordering is:
+
+	pcibios_add_device()
+		pnv_pci_ioda_fixup_iov() (via ppc_md.pcibios_fixup_sriov)
+
+	pcibios_bus_add_device()
+		...
+
+This isn't strictly required, but it's a slightly more logical place
+to do the fixup and it simplifies pnv_pci_dma_dev_setup().
+
+Signed-off-by: Oliver O'Halloran <oohall@gmail.com>
+Reviewed-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20200110070207.439-4-oohall@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/fsl-qdma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/platforms/powernv/pci-ioda.c | 29 +++++++++++++++++++----
+ arch/powerpc/platforms/powernv/pci.c      | 14 -----------
+ 2 files changed, 25 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/dma/fsl-qdma.c b/drivers/dma/fsl-qdma.c
-index 89792083d62c5..95cc0256b3878 100644
---- a/drivers/dma/fsl-qdma.c
-+++ b/drivers/dma/fsl-qdma.c
-@@ -304,7 +304,7 @@ static void fsl_qdma_free_chan_resources(struct dma_chan *chan)
+diff --git a/arch/powerpc/platforms/powernv/pci-ioda.c b/arch/powerpc/platforms/powernv/pci-ioda.c
+index 2432a50d48d58..e9cda7e316a50 100644
+--- a/arch/powerpc/platforms/powernv/pci-ioda.c
++++ b/arch/powerpc/platforms/powernv/pci-ioda.c
+@@ -2905,9 +2905,6 @@ static void pnv_pci_ioda_fixup_iov_resources(struct pci_dev *pdev)
+ 	struct pci_dn *pdn;
+ 	int mul, total_vfs;
  
- 	vchan_dma_desc_free_list(&fsl_chan->vchan, &head);
+-	if (!pdev->is_physfn || pci_dev_is_added(pdev))
+-		return;
+-
+ 	pdn = pci_get_pdn(pdev);
+ 	pdn->vfs_expanded = 0;
+ 	pdn->m64_single_mode = false;
+@@ -2982,6 +2979,30 @@ static void pnv_pci_ioda_fixup_iov_resources(struct pci_dev *pdev)
+ 		res->end = res->start - 1;
+ 	}
+ }
++
++static void pnv_pci_ioda_fixup_iov(struct pci_dev *pdev)
++{
++	if (WARN_ON(pci_dev_is_added(pdev)))
++		return;
++
++	if (pdev->is_virtfn) {
++		struct pnv_ioda_pe *pe = pnv_ioda_get_pe(pdev);
++
++		/*
++		 * VF PEs are single-device PEs so their pdev pointer needs to
++		 * be set. The pdev doesn't exist when the PE is allocated (in
++		 * (pcibios_sriov_enable()) so we fix it up here.
++		 */
++		pe->pdev = pdev;
++		WARN_ON(!(pe->flags & PNV_IODA_PE_VF));
++	} else if (pdev->is_physfn) {
++		/*
++		 * For PFs adjust their allocated IOV resources to match what
++		 * the PHB can support using it's M64 BAR table.
++		 */
++		pnv_pci_ioda_fixup_iov_resources(pdev);
++	}
++}
+ #endif /* CONFIG_PCI_IOV */
  
--	if (!fsl_queue->comp_pool && !fsl_queue->comp_pool)
-+	if (!fsl_queue->comp_pool && !fsl_queue->desc_pool)
- 		return;
+ static void pnv_ioda_setup_pe_res(struct pnv_ioda_pe *pe,
+@@ -3878,7 +3899,7 @@ static void __init pnv_pci_init_ioda_phb(struct device_node *np,
+ 	ppc_md.pcibios_default_alignment = pnv_pci_default_alignment;
  
- 	list_for_each_entry_safe(comp_temp, _comp_temp,
+ #ifdef CONFIG_PCI_IOV
+-	ppc_md.pcibios_fixup_sriov = pnv_pci_ioda_fixup_iov_resources;
++	ppc_md.pcibios_fixup_sriov = pnv_pci_ioda_fixup_iov;
+ 	ppc_md.pcibios_iov_resource_alignment = pnv_pci_iov_resource_alignment;
+ 	ppc_md.pcibios_sriov_enable = pnv_pcibios_sriov_enable;
+ 	ppc_md.pcibios_sriov_disable = pnv_pcibios_sriov_disable;
+diff --git a/arch/powerpc/platforms/powernv/pci.c b/arch/powerpc/platforms/powernv/pci.c
+index e8e58a2cccddf..8307e1f4086cb 100644
+--- a/arch/powerpc/platforms/powernv/pci.c
++++ b/arch/powerpc/platforms/powernv/pci.c
+@@ -814,20 +814,6 @@ void pnv_pci_dma_dev_setup(struct pci_dev *pdev)
+ {
+ 	struct pci_controller *hose = pci_bus_to_host(pdev->bus);
+ 	struct pnv_phb *phb = hose->private_data;
+-#ifdef CONFIG_PCI_IOV
+-	struct pnv_ioda_pe *pe;
+-
+-	/* Fix the VF pdn PE number */
+-	if (pdev->is_virtfn) {
+-		list_for_each_entry(pe, &phb->ioda.pe_list, list) {
+-			if (pe->rid == ((pdev->bus->number << 8) |
+-			    (pdev->devfn & 0xff))) {
+-				pe->pdev = pdev;
+-				break;
+-			}
+-		}
+-	}
+-#endif /* CONFIG_PCI_IOV */
+ 
+ 	if (phb && phb->dma_dev_setup)
+ 		phb->dma_dev_setup(phb, pdev);
 -- 
 2.20.1
 
