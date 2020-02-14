@@ -2,90 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F10B015E609
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:46:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E27915E61F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:46:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394104AbgBNQpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:45:11 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:37774 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389082AbgBNQpJ (ORCPT
+        id S2406307AbgBNQps (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:45:48 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:35397 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392989AbgBNQp3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:45:09 -0500
-Received: by mail-pj1-f68.google.com with SMTP id m13so4162708pjb.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 08:45:09 -0800 (PST)
+        Fri, 14 Feb 2020 11:45:29 -0500
+Received: by mail-io1-f68.google.com with SMTP id h8so11237531iob.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 08:45:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=CPoNQ+Sf1fHspzF09NwteMM4WEWx0QsGsv6flTB39KM=;
-        b=rdWN8LwnE+yDBw0Yxnm8NrLJssyO0EPhZNDWZzVwZO3XCtHtou5Zh6h6hWv9EeCVTm
-         NpQHMImVRfOWB+7cIlNmX3PVT70LSzerCvNl2ceieb0MbKTzz5+oVv3w0AxQ149colJu
-         j2bV8cnIygPKg25FmMzM7VE31g2FdG6sf+UcF9ZnDO0+O9TM3/BKCO+zYpkYh1EeTSf4
-         kKruPVlp0XUX0WvUoMHQCtrahnz0rjYUMU6YIyMQcdY2aGcdIJb+CvwJqVLGYBIF4nCj
-         U298WiHSPB/vWH9hYfwXSm8IIndleNTKsUe/kbwAeOWybMbhwe9z8ls91081fzWjMTVe
-         1xxg==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=AjDTQ++9QAUeFd+rM3tBuggZ7ZACTbI+xzsIgBMTRTo=;
+        b=ycrObv7TUf+k9MpCwzfm6tpUYr91Ogua7iMMx/VPIyahPd051i0e8Zamp2+sJc+N8E
+         MWpaXBeFRSxAIxjhBIfwlmJ9Utg1WcZFzLFLnGzOTp253vcU4bYZtK/b/xhIKCacawsC
+         pTXpDNMaiGidQ5WERxCg9jlO1UvXIF+LkGZQUkpfPaoVfWXxa3ML5a8Ugg8b19dMzAdX
+         a0L1qnU4FiUCktmkrosHUiA8C+oKvv1qXOJftnyzBiAoQ6BAEiYP0y77C91rHeryrnYn
+         RORh0OoP+qRXz/gK3nZBAbvCPPGW2LqwsQy7WpzUV1diTJlqLQnYYDHhawlkODozl+Hu
+         TJtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=CPoNQ+Sf1fHspzF09NwteMM4WEWx0QsGsv6flTB39KM=;
-        b=K21GSiM6/B0kGTGww6a449hCKmzFcHRyf5E1yXZToYDpyr964VNbNgKgHot7K55grW
-         AeKUl5k5ZS4+3MO/dZ/qrbBAby3PbR8M4/0ZZqrndgvmKByd0POtJwNRoZEm2tr1RknN
-         XnbonI2pMXGyYxylOxcT7Cu0xs23rMSX0lxYzYamtM4NAxE95NtuMzt9TTJgB7huVIQ+
-         F3Cqnc3/Ku4mltAKP1emGZeCmyyvSlRx356R8KA0KJpV1jC4f+FKDWjO9GxkSY8eDSEP
-         WEzNN3UZbIE7I+834FIHSeUWMFrn7ijRhuhiH7xbqAzaO5iRf+Oh0C0Sk5lFcLGLm8Fk
-         gaNw==
-X-Gm-Message-State: APjAAAUjLkqg1rhZi9f3dbLUcxTFPnrR/qBoXgTGdjowWwOJEny7k27i
-        B07BlOHuq/+XKwVkm+2nzQ==
-X-Google-Smtp-Source: APXvYqxge33YQRmBtTCmBNT7WE1SwgFIMCYS29+b4FN3wZu5vaLM1r03WPyC7m/WSeA+ON98qNlyjw==
-X-Received: by 2002:a17:90a:102:: with SMTP id b2mr4673412pjb.64.1581698708825;
-        Fri, 14 Feb 2020 08:45:08 -0800 (PST)
-Received: from madhuparna-HP-Notebook.nitk.ac.in ([2409:4071:2305:77c6:fc5b:5bfd:1ab4:4848])
-        by smtp.gmail.com with ESMTPSA id 200sm7474682pfz.121.2020.02.14.08.45.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2020 08:45:08 -0800 (PST)
-From:   madhuparnabhowmik10@gmail.com
-To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        mark.rutland@arm.com
-Cc:     linux-kernel@vger.kernel.org, namhyung@kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        joel@joelfernandes.org, frextrite@gmail.com,
-        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
-Subject: [PATCH RESEND] events:core.c: Use built-in RCU list checking
-Date:   Fri, 14 Feb 2020 22:14:54 +0530
-Message-Id: <20200214164454.19942-1-madhuparnabhowmik10@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=AjDTQ++9QAUeFd+rM3tBuggZ7ZACTbI+xzsIgBMTRTo=;
+        b=PTFN2NBNK54P1EpwN6DnUhE17ZvnDCSqk2X79jFJC7dwlaUC0iCPCPSSO/2zyp2Tnx
+         3ALmk/3bnTok5Am3pEQjsgdhhL8fFMQuRxojWX5yg4xJr2lAnU9LcZA15DSsi0QRrP9t
+         AcvqsXhrmBYMBHekpsm29FZxukAgt4yHQCBsfGLd7KjYbzV6sAqC9bc++kwxXHfrqcz5
+         t6Y0MoDfgbu9arFWnPwRUu4XnpuGzhht4CrMdeIfcZq+X77MiDo5KQ5q68WL4voCkaNx
+         kMuMAzosi4/rmEzO34I6Vlx/+UXioIbDE73KS9ayXBkBKFv+iOzlhdge+5/QtYUz88j6
+         99PQ==
+X-Gm-Message-State: APjAAAW1Xzciu6pdkbPXezt/XnLhVI78PdHr6jilbEUcle9sMreU+B9E
+        DvclqxBxWQb71n9y3hleVhaz4JCx7ag=
+X-Google-Smtp-Source: APXvYqxWJ3CWx/BsESTmCh48/BdVAfeJ6FBaTCG5T4yzDJV8DfeGgXGXDGP+viVJlJzScdgBgSHEEA==
+X-Received: by 2002:a5e:c803:: with SMTP id y3mr2905152iol.116.1581698727961;
+        Fri, 14 Feb 2020 08:45:27 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id q90sm2127344ili.27.2020.02.14.08.45.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Feb 2020 08:45:27 -0800 (PST)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 5.6-rc2
+Message-ID: <d72d51a9-488d-c75b-4daf-bb74960c7531@kernel.dk>
+Date:   Fri, 14 Feb 2020 09:45:26 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+Hi Linus,
 
-list_for_each_entry_rcu has built-in RCU and lock checking.
+Here's a set of fixes for io_uring that should go into this release.
+This pull request contains:
 
-Pass cond argument to list_for_each_entry_rcu() to silence
-false lockdep warning when CONFIG_PROVE_RCU_LIST is enabled
-by default.
+- Various fixes with cleanups from Pavel, fixing corner cases where
+  we're not correctly dealing with iovec cleanup.
 
-Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
----
- kernel/events/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+- Clarify that statx/openat/openat2 don't accept fixed files
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 4ff86d57f9e5..04d28f3eb8df 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -3760,7 +3760,8 @@ static void perf_adjust_freq_unthr_context(struct perf_event_context *ctx,
- 	raw_spin_lock(&ctx->lock);
- 	perf_pmu_disable(ctx->pmu);
- 
--	list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
-+	list_for_each_entry_rcu(event, &ctx->event_list, event_entry,
-+				lockdep_is_held(&ctx->lock)) {
- 		if (event->state != PERF_EVENT_STATE_ACTIVE)
- 			continue;
- 
+- Buffered raw device write EOPTNOTSUPP fix
+
+- Ensure async workers grab current->fs
+
+- A few task exit fixes with pending requests that grab the file table
+
+- send/recvmsg async load fix
+
+- io-wq offline node setup fix
+
+- CQ overflow flush in poll
+
+Please pull!
+
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.6-2020-02-14
+
+
+----------------------------------------------------------------
+Jens Axboe (11):
+      io_uring: statx/openat/openat2 don't support fixed files
+      io_uring: retry raw bdev writes if we hit -EOPNOTSUPP
+      io-wq: add support for inheriting ->fs
+      io_uring: grab ->fs as part of async preparation
+      io_uring: allow AT_FDCWD for non-file openat/openat2/statx
+      io-wq: make io_wqe_cancel_work() take a match handler
+      io-wq: add io_wq_cancel_pid() to cancel based on a specific pid
+      io_uring: cancel pending async work if task exits
+      io_uring: retain sockaddr_storage across send/recvmsg async punt
+      io-wq: don't call kXalloc_node() with non-online node
+      io_uring: prune request from overflow list on flush
+
+Pavel Begunkov (8):
+      io_uring: get rid of delayed mm check
+      io_uring: fix deferred req iovec leak
+      io_uring: remove unused struct io_async_open
+      io_uring: fix iovec leaks
+      io_uring: add cleanup for openat()/statx()
+      io_uring: fix async close() with f_op->flush()
+      io_uring: fix double prep iovec leak
+      io_uring: fix openat/statx's filename leak
+
+Randy Dunlap (1):
+      io_uring: fix 1-bit bitfields to be unsigned
+
+Stefano Garzarella (1):
+      io_uring: flush overflowed CQ events in the io_uring_poll()
+
+ fs/io-wq.c    |  92 +++++++++++++++---
+ fs/io-wq.h    |   6 +-
+ fs/io_uring.c | 299 +++++++++++++++++++++++++++++++++++++++-------------------
+ 3 files changed, 284 insertions(+), 113 deletions(-)
+
 -- 
-2.17.1
+Jens Axboe
 
