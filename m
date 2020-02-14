@@ -2,127 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 323A615F3E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:22:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63E4C15F45D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:23:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404846AbgBNSQQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:16:16 -0500
-Received: from foss.arm.com ([217.140.110.172]:42910 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404808AbgBNSQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 13:16:13 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 994AC328;
-        Fri, 14 Feb 2020 10:16:12 -0800 (PST)
-Received: from eglon.cambridge.arm.com (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 651713F68E;
-        Fri, 14 Feb 2020 10:16:11 -0800 (PST)
-From:   James Morse <james.morse@arm.com>
-To:     x86@kernel.org, linux-kernel@vger.kernel.org
-Cc:     Fenghua Yu <fenghua.yu@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        James Morse <james.morse@arm.com>
-Subject: [PATCH v2] x86/resctrl: Preserve CDP enable over cpuhp
-Date:   Fri, 14 Feb 2020 18:16:00 +0000
-Message-Id: <20200214181600.38779-1-james.morse@arm.com>
-X-Mailer: git-send-email 2.24.1
+        id S2405307AbgBNSUk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:20:40 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43943 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729283AbgBNSUh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 13:20:37 -0500
+Received: by mail-pg1-f196.google.com with SMTP id u12so4990187pgb.10
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 10:20:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ErA6jWmmhfb1QGDKOQtEER5Ilc0UgOh2Gqv2PGMN0HE=;
+        b=AlN8Rr9wAt7e/JdQ398Ln/0Pgz9LEQu52lKml03hoYL+Kej1LX1Cr4EeA10Qe8zdrP
+         RK5SP9i2jYx35aykVGR2g/0onBcpFUJNpFwV4ymCb2LK76xcOP9aPMs6fRWoa5WdtKQd
+         0lbSub1/AJjFLlTVC6kAYd/C/yWF/VPZ9UVBw4Dxnn1dVhBoMDo0d09btXNlKci2LOb3
+         TONpvgLieMjffTOazxw56KMEaMYiO5AfO5eZKVow4wKVjpBiKetJn4EUQoKoyYoQbL30
+         ldK/cUpZwYrhB+k/33T0vmnMq6nS5FeADc4EdcgS/WPWtsgWAw88v+i2+w59r7ob/irL
+         7HNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ErA6jWmmhfb1QGDKOQtEER5Ilc0UgOh2Gqv2PGMN0HE=;
+        b=g0X0LuqhjHE71Gr+Q7uifXSAZkzmKzbpfT3vVUtjEqkjgsF3BsoLVZ294aLUuJ5TRk
+         dk0FgPzn/lblf/da1rDYhlX4zpASX+AFOJbRaTTe87q+y/FV+bl7i7NBEFl+laYijSwp
+         q16LUK3ZOy+5bR+cAqXv9lmjzHe+3qh61iKzTTqQomNNKxd2sGlri86kv7u+liGfKFlP
+         mpdYA4VeLzDT54qA1y2qsUatLatFeIc5AWfUNH+azUz0HAtTECUq9kw6Bz46HWoAH/+M
+         mWuW8rYAZyKj3ncf1eLLIRsz+zQU+tbAXLCnzTXkZjsj1LhUlRw7Iqa/dTb+kiVAf7wZ
+         P+/A==
+X-Gm-Message-State: APjAAAVjC5l3epf/bvh3dYpsi89qVH7uuMY9q189BeTltl5d63GBWDZL
+        WnvqYq2sOxvX6ESI+t84hrk=
+X-Google-Smtp-Source: APXvYqxRukUjTxlNcRdQc6EB6yehiYsWGKukYpYn476AdEmv6xHv+atjQeeskaxXJY1Etjlq4A58CQ==
+X-Received: by 2002:a63:3712:: with SMTP id e18mr4918078pga.316.1581704436575;
+        Fri, 14 Feb 2020 10:20:36 -0800 (PST)
+Received: from workstation-portable ([146.196.37.246])
+        by smtp.gmail.com with ESMTPSA id o11sm7196634pjs.6.2020.02.14.10.20.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2020 10:20:36 -0800 (PST)
+Date:   Fri, 14 Feb 2020 23:50:27 +0530
+From:   Amol Grover <frextrite@gmail.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>
+Subject: Re: [PATCH v2] callchain: Annotate RCU pointer with __rcu
+Message-ID: <20200214182027.GB15350@workstation-portable>
+References: <20200130141818.18391-1-frextrite@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200130141818.18391-1-frextrite@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Resctrl assumes that all CPUs are online when the filesystem is
-mounted, and that CPUs remember their CDP-enabled state over CPU
-hotplug.
+On Thu, Jan 30, 2020 at 07:48:19PM +0530, Amol Grover wrote:
+> Fixes following instances of sparse error
+> error: incompatible types in comparison expression
+> (different address spaces)
+> kernel/events/callchain.c:66:9: error: incompatible types in comparison
+> kernel/events/callchain.c:96:9: error: incompatible types in comparison
+> kernel/events/callchain.c:161:19: error: incompatible types in comparison
+> 
+> This introduces the following warning
+> kernel/events/callchain.c:65:17: warning: incorrect type in assignment
+> which is fixed as below
+> 
+> callchain_cpus_entries is annotated as an RCU pointer.
+> Hence rcu_dereference_protected or similar RCU API is
+> required to dereference the pointer.
+> 
+> Signed-off-by: Amol Grover <frextrite@gmail.com>
 
-This goes wrong when resctrl's CDP-enabled state changes while all
-the CPUs in a domain are offline.
+Hey Peter,
 
-When a domain comes online, enable (or disable!) CDP to match resctrl's
-current setting.
+Can you have a look at this patch as well? I have already done the
+requested changes.
 
-Fixes: 5ff193fbde20 ("x86/intel_rdt: Add basic resctrl filesystem support")
-Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
-Signed-off-by: James Morse <james.morse@arm.com>
+Thanks
+Amol
 
----
-Changes since v1:
- * Explicitly test for L2/L3 resources to ignore duplicate calls.
- * Poke the LxDATA resources to avoid confusing CDP-off with CDP-unsupported.
- * Moved code to rdtgroup.c for fewer exported functions.
-
-v1: lore.kernel.org/r/20200212185359.163111-1-james.morse@arm.com
----
- arch/x86/kernel/cpu/resctrl/core.c     |  2 ++
- arch/x86/kernel/cpu/resctrl/internal.h |  1 +
- arch/x86/kernel/cpu/resctrl/rdtgroup.c | 18 ++++++++++++++++++
- 3 files changed, 21 insertions(+)
-
-diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index 89049b343c7a..d8cc5223b7ce 100644
---- a/arch/x86/kernel/cpu/resctrl/core.c
-+++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -578,6 +578,8 @@ static void domain_add_cpu(int cpu, struct rdt_resource *r)
- 	d->id = id;
- 	cpumask_set_cpu(cpu, &d->cpu_mask);
- 
-+	rdt_domain_reconfigure_cdp(r);
-+
- 	if (r->alloc_capable && domain_setup_ctrlval(r, d)) {
- 		kfree(d);
- 		return;
-diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index 181c992f448c..3dd13f3a8b23 100644
---- a/arch/x86/kernel/cpu/resctrl/internal.h
-+++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -601,5 +601,6 @@ bool has_busy_rmid(struct rdt_resource *r, struct rdt_domain *d);
- void __check_limbo(struct rdt_domain *d, bool force_free);
- bool cbm_validate_intel(char *buf, u32 *data, struct rdt_resource *r);
- bool cbm_validate_amd(char *buf, u32 *data, struct rdt_resource *r);
-+void rdt_domain_reconfigure_cdp(struct rdt_resource *r);
- 
- #endif /* _ASM_X86_RESCTRL_INTERNAL_H */
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index 064e9ef44cd6..5967320a1951 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -1831,6 +1831,9 @@ static int set_cache_qos_cfg(int level, bool enable)
- 	struct rdt_domain *d;
- 	int cpu;
- 
-+	 /* CDP state is restored during cpuhp, which takes this lock */
-+	lockdep_assert_held(&rdtgroup_mutex);
-+
- 	if (level == RDT_RESOURCE_L3)
- 		update = l3_qos_cfg_update;
- 	else if (level == RDT_RESOURCE_L2)
-@@ -1859,6 +1862,21 @@ static int set_cache_qos_cfg(int level, bool enable)
- 	return 0;
- }
- 
-+/* Restore the qos cfg state when a package comes online */
-+void rdt_domain_reconfigure_cdp(struct rdt_resource *r)
-+{
-+	lockdep_assert_held(&rdtgroup_mutex);
-+
-+	if (!r->alloc_capable)
-+		return;
-+
-+	if (r == &rdt_resources_all[RDT_RESOURCE_L2DATA])
-+		l2_qos_cfg_update(&r->alloc_enabled);
-+
-+	if (r == &rdt_resources_all[RDT_RESOURCE_L3DATA])
-+		l3_qos_cfg_update(&r->alloc_enabled);
-+}
-+
- /*
-  * Enable or disable the MBA software controller
-  * which helps user specify bandwidth in MBps.
--- 
-2.24.1
-
+> ---
+> v2:
+> - Squash both the commits into a single one.
+> 
+>  kernel/events/callchain.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
+> index c2b41a263166..a672d02a1b3a 100644
+> --- a/kernel/events/callchain.c
+> +++ b/kernel/events/callchain.c
+> @@ -32,7 +32,7 @@ static inline size_t perf_callchain_entry__sizeof(void)
+>  static DEFINE_PER_CPU(int, callchain_recursion[PERF_NR_CONTEXTS]);
+>  static atomic_t nr_callchain_events;
+>  static DEFINE_MUTEX(callchain_mutex);
+> -static struct callchain_cpus_entries *callchain_cpus_entries;
+> +static struct callchain_cpus_entries __rcu *callchain_cpus_entries;
+>  
+>  
+>  __weak void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry,
+> @@ -62,7 +62,8 @@ static void release_callchain_buffers(void)
+>  {
+>  	struct callchain_cpus_entries *entries;
+>  
+> -	entries = callchain_cpus_entries;
+> +	entries = rcu_dereference_protected(callchain_cpus_entries,
+> +					    lockdep_is_held(&callchain_mutex));
+>  	RCU_INIT_POINTER(callchain_cpus_entries, NULL);
+>  	call_rcu(&entries->rcu_head, release_callchain_buffers_rcu);
+>  }
+> -- 
+> 2.24.1
+> 
