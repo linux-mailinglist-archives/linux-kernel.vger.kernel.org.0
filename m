@@ -2,60 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0AAA15D0DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 05:06:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56A4015D0D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 05:05:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728631AbgBNEF7 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 13 Feb 2020 23:05:59 -0500
-Received: from wnbcorp.com ([175.126.38.143]:53471 "EHLO blank.cafe24.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728309AbgBNEF6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 23:05:58 -0500
-Received: from [136.243.108.165] (static.165.108.243.136.clients.your-server.de [136.243.108.165])
-        (authenticated bits=0)
-        by blank.cafe24.com (8.14.4/8.14.4) with ESMTP id 01E3xIM5005753;
-        Fri, 14 Feb 2020 13:03:51 +0900
-Message-Id: <202002140403.01E3xIM5005753@blank.cafe24.com>
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1728541AbgBNEFR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 23:05:17 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:45038 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728369AbgBNEFQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 23:05:16 -0500
+Received: by mail-ot1-f68.google.com with SMTP id h9so7864491otj.11
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 20:05:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Sn4bMSFgKGNC4Gr+AMrvlK002u6brQw4ngrFt1iH2VU=;
+        b=yyCesyl6BuSTLYF6201FSZmcpQy7F4CUIyh77rzsAC+SLsu7qtefl2ET5LrX1cSiBA
+         laoVLfkmmS4RXv9DQ3Qg2fqaz/51nLSLQOkb3knowvE1u7B6iH0ga/WLGNxaHHkOCHoV
+         cShuwJlRy4QcJaN2UtOlzrZ2PWwy3ZlIiQI+5g76wCCA4m7Y7KPYTzgxlewsw/uKxnJJ
+         P0wOXIKjDV4cXBLPOYoIUaSV6tyxR2+KeyQUnb/ZmZgWRoAuXVleHlK/BhpC1QewkqCD
+         hUxnusFs+RwVGtYIrCAtRXNGLgO0AekDsQygH2KLHwB2A7p1TAaL1XpomZ8JdWTXpSko
+         uLqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Sn4bMSFgKGNC4Gr+AMrvlK002u6brQw4ngrFt1iH2VU=;
+        b=lQBvuOZkox7/M2VU0ZvLwzddtJ3lkhCP9wXqyp4f6AG5radD2yXPXQwtlu6jVDQaYe
+         hXq/NYaJmrsnnYPy7m8l7U8TM7CUNGFE3ZpwnerKEJQZfyWev57ZqvrTrlZiclJBksRd
+         gAgtAPxiXoEMt2wEB9NbxwwgtEDXJ6xNeiIN4YkEiwV8Z1DoUcFNOeOkut0LZ1zJQ0TM
+         +TdNfkIeTElDYz584UFLTJdTqdjXia7A/tXGtHElyVEuQaFp2vqubNUEKcunzF7NfMcZ
+         kcElS6M6hZyUBIOu761CsTHuF1SYDI5+C6OJVP5z9piEsiqUjFrO3W3A0Hl6zBRMbZOb
+         0I7g==
+X-Gm-Message-State: APjAAAVGMZoo17R8nYg8t+HboLgdZfGlFxylfQf7FoGbSgPvLYDYRzgS
+        wUq+HCOB2CVTUvai9YRbLvpLqoPZhVBrVxinh6RPajiLdIw=
+X-Google-Smtp-Source: APXvYqx9pjGF4udxe4xSGSF+CBjS/GwdhBXB94dfU7P4DTxLms3xkZ/OAyQpT0WO+V01GD6u1Y1ueGNfUqKxW37i//4=
+X-Received: by 2002:a05:6830:1094:: with SMTP id y20mr716696oto.12.1581653116335;
+ Thu, 13 Feb 2020 20:05:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: =?utf-8?q?IMF_ESPA=C3=91A_NOTIFICACION?=
-To:     Recipients <test2@cafe24.com>
-From:   "IMF" <test2@cafe24.com>
-Date:   Thu, 13 Feb 2020 20:03:40 -0800
-Reply-To: jose.pablo@bk.ru
+References: <20200214004413.12450-1-john.stultz@linaro.org> <20200214021922.GO1443@yoga>
+In-Reply-To: <20200214021922.GO1443@yoga>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Thu, 13 Feb 2020 20:05:05 -0800
+Message-ID: <CALAqxLWSXGQ0eD-1cxdB-mkJkyySRLo2MqZ4Y0YokhSZJJ6f-g@mail.gmail.com>
+Subject: Re: [RFC][PATCH] driver core: Extend returning EPROBE_DEFER for two
+ minutes after late_initcall
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Todd Kjos <tkjos@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-INTERNATIONALER WÄHRUNGSFONDS (IWF).
+On Thu, Feb 13, 2020 at 6:19 PM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+> The purpose of 25b4e70dcce9 ("driver core: allow stopping deferred probe
+> after init") is to ensure that when the kernel boots with a DeviceTree
+> blob that references a resource (power-domain in this case) that either
+> hasn't been compiled in, or simply doesn't exist yet, it should continue
+> to boot - under the assumption that these resources probably aren't
+> needed to provide a functional system.
+>
+> I don't think your patch maintains this behavior, because when userspace
+> kicks in and load kernel modules during the first two minutes they will
+> all end up in the probe deferral list. Past two minutes any event that
+> registers a new driver (i.e. manual intervention) will kick of a new
+> wave of probing, which will now continue as expected, ignoring any
+> power-domains that is yet to be probed (either because they don't exist
+> or they are further down the probe deferral list).
 
-FINANCIAL MONITORY DEPARTMENT / UNIT.
+Hmm. I'll have to look at that again. I worry the logic is overloaded
+a bit, because the logic in __driver_deferred_probe_check_state() will
+only return -EPROBE_DEFER before late_initcall otherwise it returns
+-ETIMEDOUT or 0.  So if we call__genpd_dev_pm_attach() after
+late_initcall and the pd isn't ready, the driver probe will fail
+permanently and not function.
 
-Kundendienstzeiten / Montag bis Sonntag
+I'd think in the case you describe (correct me if I'm misunderstanding
+you), modules that load in the first two minutes would hit
+EPROBE_DEFER only if a dependency is missing, and will continue to try
+to probe next round. But once the two minutes are up, they will catch
+ETIMEDOUT and fail permanently.
 
-Sprechstunde Montag bis Sonntag:
+> You can improve the situation somewhat by calling
+> driver_deferred_probe_trigger() in your
+> deferred_initcall_done_work_func(), to remove the need for human
+> intervention. But the outcome will still depend on the order in
+> deferred_probe_active_list.
 
- 
+Ok. I'll take a look at that.
 
-Attn: Begünstigter
-
-HINWEIS: Wenn Sie diese Nachricht in Ihrem SPAM / BULK-Ordner erhalten haben, bitten wir Sie, sie aufgrund der von Ihrem Mail- / Internetdienstanbieter auferlegten Einschränkungen ernsthaft zu behandeln.
-
-Damit möchten wir Sie über eine sehr wichtige Information informieren, die Ihnen dabei helfen wird, all die Schwierigkeiten zu überwinden, die Sie aufgrund der übermäßigen Nachfrage korrupter Bankangestellter und des Kurierdienstes bei der Erlangung einer lange überfälligen Zahlung hatten Unternehmen, nach denen Ihr Fonds nicht an Sie ausgezahlt wird.
-
-INTERNATIONALER WÄHRUNGSFONDS (IWF). Es könnte Sie interessieren, zu wissen, dass Berichte über die unangenehme Art und Weise, wie Menschen wie Sie von verschiedenen Banken und Kurierdiensten in ganz Europa nach Afrika und Asien behandelt werden, auf so viele Arten in unser Büro gelangt sind, und wir haben beschlossen, dem ein Ende zu setzen Deshalb wurde ich beauftragt, Ihre Transaktion abzuwickeln.
-
-Alle staatlichen und nichtstaatlichen Parasiten, Nichtregierungsorganisationen, Finanzunternehmen, Banken, Sicherheitsfirmen und Kurierunternehmen, die in letzter Zeit mit Ihnen in Kontakt standen, wurden angewiesen, von Ihrer Transaktion zurückzutreten, und Ihnen wurde geraten, seitdem NICHT mehr darauf zu antworten Der IWF ist nun direkt für Ihre Zahlung verantwortlich. Es wird Ihnen hiermit geraten, im Zusammenhang mit Ihrer Transaktion KEINE weiteren Zahlungen an Institute zu überweisen, da Ihr Geld direkt von unserer Quelle an Sie überwiesen wird. Ich hoffe das ist klar. Jede Handlung, die dieser Anweisung zuwiderläuft, erfolgt auf eigenes Risiko. Antworten Sie auf diese E-Mail unter (donpablo.jose@yandex.com) mit sofortiger Wirkung, und wir geben Ihnen weitere Einzelheiten zur Freigabe Ihres Fonds. Name des Abteilungsleiters: Herr Jose Pablo E-Mail: donpablo.jose@yandex.com
-
-
-Hochachtungsvoll
-
- 
-Untersuchungsabteilung / Gesetzgebungsabteilung
-Rechtsanwältin Ana Marie
-IWF ESPAÑA und Untersuchungsabteilung
- 
-Der Inhalt dieser E-Mail (und aller Anhänge) ist vertraulich und ausschließlich für den angegebenen Adressaten bestimmt. Der Zugriff auf diese E-Mail durch Dritte ist nicht gestattet. Wenn Sie nicht der beabsichtigte Empfänger sind, beachten Sie bitte, dass jegliche Form der Veröffentlichung, Offenlegung, Vervielfältigung, Veröffentlichung oder anderweitigen Verbreitung des Inhalts dieser E-Mail verboten und möglicherweise rechtswidrig ist. Bitte informieren Sie in diesem Fall den Absender umgehend über die E-Mail. Darüber hinaus weisen wir Sie hiermit darauf hin, dass die E-Mail-Kommunikation über das Internet nicht sicher ist, da Dritte auf E-Mails zugreifen und diese manipulieren können.
+Thanks so much for the feedback!
+-john
