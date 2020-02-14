@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BFA615E7E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:57:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EA7A15E7DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:57:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394325AbgBNQ4t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:56:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49608 "EHLO mail.kernel.org"
+        id S2394310AbgBNQ4c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:56:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404597AbgBNQRz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:17:55 -0500
+        id S2404615AbgBNQR6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:17:58 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84E53246FC;
-        Fri, 14 Feb 2020 16:17:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5E0324694;
+        Fri, 14 Feb 2020 16:17:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697075;
-        bh=vryvSdo/3/KfXGVCRD19mzsGxVTJKiG/aRm1Km2IjyE=;
+        s=default; t=1581697077;
+        bh=HSfHtUdMFWc6CS5XaUONf1lMrkLQkHO5y1TvGHsvi9A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MLr0x3flUQDDe7eClDVcuwk8bPMZ3bvnE3yCZcyn1xH2qeZAz6+mFGAfeTJH9M2U6
-         32mVcE69QucWnEftlWA5ihFleGG8uQ7zAIcLP9MzkiOKsdp20k2HrQz3ohbgRwXrkB
-         9E10YppMSaTZZz+NnlEvxEHWX7KNZFAl4yKxTCH0=
+        b=tHfisUWvlh9+4YalNGAXWbu8AAIdGthz/2wEsFz7OyqeAGCByWCXXW+VqyqoeZjM9
+         +8qcx7Sw9pwTnIkWMkvyjg3H8gcGdXiDOo5xT9f8Gd88PWaczdC/LRV0/LpeC4AS4W
+         +fm3Au4pO1GuRfFjwNCa5CABesumzWHhFjBLOXWc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 030/186] nfs: NFS_SWAP should depend on SWAP
-Date:   Fri, 14 Feb 2020 11:14:39 -0500
-Message-Id: <20200214161715.18113-30-sashal@kernel.org>
+Cc:     Siddhesh Poyarekar <siddhesh@gotplt.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Tim Bird <tim.bird@sony.com>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 032/186] kselftest: Minimise dependency of get_size on C library interfaces
+Date:   Fri, 14 Feb 2020 11:14:41 -0500
+Message-Id: <20200214161715.18113-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161715.18113-1-sashal@kernel.org>
 References: <20200214161715.18113-1-sashal@kernel.org>
@@ -43,40 +46,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Siddhesh Poyarekar <siddhesh@gotplt.org>
 
-[ Upstream commit 474c4f306eefbb21b67ebd1de802d005c7d7ecdc ]
+[ Upstream commit 6b64a650f0b2ae3940698f401732988699eecf7a ]
 
-If CONFIG_SWAP=n, it does not make much sense to offer the user the
-option to enable support for swapping over NFS, as that will still fail
-at run time:
+It was observed[1] on arm64 that __builtin_strlen led to an infinite
+loop in the get_size selftest.  This is because __builtin_strlen (and
+other builtins) may sometimes result in a call to the C library
+function.  The C library implementation of strlen uses an IFUNC
+resolver to load the most efficient strlen implementation for the
+underlying machine and hence has a PLT indirection even for static
+binaries.  Because this binary avoids the C library startup routines,
+the PLT initialization never happens and hence the program gets stuck
+in an infinite loop.
 
-    # swapon /swap
-    swapon: /swap: swapon failed: Function not implemented
+On x86_64 the __builtin_strlen just happens to expand inline and avoid
+the call but that is not always guaranteed.
 
-Fix this by adding a dependency on CONFIG_SWAP.
+Further, while testing on x86_64 (Fedora 31), it was observed that the
+test also failed with a segfault inside write() because the generated
+code for the write function in glibc seems to access TLS before the
+syscall (probably due to the cancellation point check) and fails
+because TLS is not initialised.
 
-Fixes: a564b8f0398636ba ("nfs: enable swap on NFS")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+To mitigate these problems, this patch reduces the interface with the
+C library to just the syscall function.  The syscall function still
+sets errno on failure, which is undesirable but for now it only
+affects cases where syscalls fail.
+
+[1] https://bugs.linaro.org/show_bug.cgi?id=5479
+
+Signed-off-by: Siddhesh Poyarekar <siddhesh@gotplt.org>
+Reported-by: Masami Hiramatsu <masami.hiramatsu@linaro.org>
+Tested-by: Masami Hiramatsu <masami.hiramatsu@linaro.org>
+Reviewed-by: Tim Bird <tim.bird@sony.com>
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/testing/selftests/size/get_size.c | 24 ++++++++++++++++++------
+ 1 file changed, 18 insertions(+), 6 deletions(-)
 
-diff --git a/fs/nfs/Kconfig b/fs/nfs/Kconfig
-index 5f93cfacb3d14..ac3e06367cb68 100644
---- a/fs/nfs/Kconfig
-+++ b/fs/nfs/Kconfig
-@@ -89,7 +89,7 @@ config NFS_V4
- config NFS_SWAP
- 	bool "Provide swap over NFS support"
- 	default n
--	depends on NFS_FS
-+	depends on NFS_FS && SWAP
- 	select SUNRPC_SWAP
- 	help
- 	  This option enables swapon to work on files located on NFS mounts.
+diff --git a/tools/testing/selftests/size/get_size.c b/tools/testing/selftests/size/get_size.c
+index d4b59ab979a09..f55943b6d1e2a 100644
+--- a/tools/testing/selftests/size/get_size.c
++++ b/tools/testing/selftests/size/get_size.c
+@@ -12,23 +12,35 @@
+  * own execution.  It also attempts to have as few dependencies
+  * on kernel features as possible.
+  *
+- * It should be statically linked, with startup libs avoided.
+- * It uses no library calls, and only the following 3 syscalls:
++ * It should be statically linked, with startup libs avoided.  It uses
++ * no library calls except the syscall() function for the following 3
++ * syscalls:
+  *   sysinfo(), write(), and _exit()
+  *
+  * For output, it avoids printf (which in some C libraries
+  * has large external dependencies) by  implementing it's own
+  * number output and print routines, and using __builtin_strlen()
++ *
++ * The test may crash if any of the above syscalls fails because in some
++ * libc implementations (e.g. the GNU C Library) errno is saved in
++ * thread-local storage, which does not get initialized due to avoiding
++ * startup libs.
+  */
+ 
+ #include <sys/sysinfo.h>
+ #include <unistd.h>
++#include <sys/syscall.h>
+ 
+ #define STDOUT_FILENO 1
+ 
+ static int print(const char *s)
+ {
+-	return write(STDOUT_FILENO, s, __builtin_strlen(s));
++	size_t len = 0;
++
++	while (s[len] != '\0')
++		len++;
++
++	return syscall(SYS_write, STDOUT_FILENO, s, len);
+ }
+ 
+ static inline char *num_to_str(unsigned long num, char *buf, int len)
+@@ -80,12 +92,12 @@ void _start(void)
+ 	print("TAP version 13\n");
+ 	print("# Testing system size.\n");
+ 
+-	ccode = sysinfo(&info);
++	ccode = syscall(SYS_sysinfo, &info);
+ 	if (ccode < 0) {
+ 		print("not ok 1");
+ 		print(test_name);
+ 		print(" ---\n reason: \"could not get sysinfo\"\n ...\n");
+-		_exit(ccode);
++		syscall(SYS_exit, ccode);
+ 	}
+ 	print("ok 1");
+ 	print(test_name);
+@@ -101,5 +113,5 @@ void _start(void)
+ 	print(" ...\n");
+ 	print("1..1\n");
+ 
+-	_exit(0);
++	syscall(SYS_exit, 0);
+ }
 -- 
 2.20.1
 
