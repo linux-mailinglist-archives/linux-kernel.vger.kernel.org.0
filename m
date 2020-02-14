@@ -2,42 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DA0115EF7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:48:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1092D15EF83
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:49:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388988AbgBNP7s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:59:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44622 "EHLO mail.kernel.org"
+        id S2390190AbgBNRsX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:48:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388976AbgBNP7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:59:42 -0500
+        id S2388986AbgBNP7p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:59:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 506D82067D;
-        Fri, 14 Feb 2020 15:59:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35EF82086A;
+        Fri, 14 Feb 2020 15:59:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695982;
-        bh=L/7k3m7ujjUJpg6AZQAv5OmhaIa7hFweHAdzA6ZUDXQ=;
+        s=default; t=1581695985;
+        bh=ghfHmbsHqcAaTT8fpcwffk7RwHomEhJQzeyQkH2KBl8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wdb0E80sGhEqIUAlPwI8sdT8Va8jooW0w96beJnBSo41qsqxVOup2vlD9phRfjpYw
-         vyluzX5l+8JDaOGMbS3J/+GMiTcnjwXBIGFUEegPJGyjz+3Oxhr4zure6pKuA0SR3d
-         Didcv+vixp00CiZIK9tggsQIraalSJJ1t1fMM0uM=
+        b=om5SD5LV5ESAp7VQwojPA+Hd3fu/DJfg3uCcsmb48rvJjNsMvJrjpLxYdlFB6atqL
+         gCCFzYPISS69rPAZN/w3FNvCoSqKisB9jxtluCTpV/izIA2pmFO7Y91WfCf2GAKWLz
+         873XZK6N8cRvxm9zeoiib3Pdrax6sAJqEyGOqdoI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Masahiro Yamada <masahiroy@kernel.org>, Gang He <ghe@suse.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Changwei Ge <gechangwei@live.cn>,
-        Jun Piao <piaojun@huawei.com>,
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, ocfs2-devel@oss.oracle.com
-Subject: [PATCH AUTOSEL 5.5 505/542] ocfs2: make local header paths relative to C files
-Date:   Fri, 14 Feb 2020 10:48:17 -0500
-Message-Id: <20200214154854.6746-505-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 5.5 507/542] lib/scatterlist.c: adjust indentation in __sg_alloc_table
+Date:   Fri, 14 Feb 2020 10:48:19 -0500
+Message-Id: <20200214154854.6746-507-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -50,338 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <masahiroy@kernel.org>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit ca322fb6030956c2337fbf1c1beeb08c5dd5c943 ]
+[ Upstream commit 4e456fee215677584cafa7f67298a76917e89c64 ]
 
-Gang He reports the failure of building fs/ocfs2/ as an external module
-of the kernel installed on the system:
+Clang warns:
 
- $ cd fs/ocfs2
- $ make -C /lib/modules/`uname -r`/build M=`pwd` modules
+  ../lib/scatterlist.c:314:5: warning: misleading indentation; statement
+  is not part of the previous 'if' [-Wmisleading-indentation]
+                          return -ENOMEM;
+                          ^
+  ../lib/scatterlist.c:311:4: note: previous statement is here
+                          if (prv)
+                          ^
+  1 warning generated.
 
-If you want to make it work reliably, I'd recommend to remove ccflags-y
-from the Makefiles, and to make header paths relative to the C files.  I
-think this is the correct usage of the #include "..." directive.
+This warning occurs because there is a space before the tab on this
+line.  Remove it so that the indentation is consistent with the Linux
+kernel coding style and clang no longer warns.
 
-Link: http://lkml.kernel.org/r/20191227022950.14804-1-ghe@suse.com
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-Signed-off-by: Gang He <ghe@suse.com>
-Reported-by: Gang He <ghe@suse.com>
-Reviewed-by: Gang He <ghe@suse.com>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <jiangqi903@gmail.com>
-Cc: Changwei Ge <gechangwei@live.cn>
-Cc: Jun Piao <piaojun@huawei.com>
+Link: http://lkml.kernel.org/r/20191218033606.11942-1-natechancellor@gmail.com
+Link: https://github.com/ClangBuiltLinux/linux/issues/830
+Fixes: edce6820a9fd ("scatterlist: prevent invalid free when alloc fails")
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/dlm/Makefile      | 2 --
- fs/ocfs2/dlm/dlmast.c      | 8 ++++----
- fs/ocfs2/dlm/dlmconvert.c  | 8 ++++----
- fs/ocfs2/dlm/dlmdebug.c    | 8 ++++----
- fs/ocfs2/dlm/dlmdomain.c   | 8 ++++----
- fs/ocfs2/dlm/dlmlock.c     | 8 ++++----
- fs/ocfs2/dlm/dlmmaster.c   | 8 ++++----
- fs/ocfs2/dlm/dlmrecovery.c | 8 ++++----
- fs/ocfs2/dlm/dlmthread.c   | 8 ++++----
- fs/ocfs2/dlm/dlmunlock.c   | 8 ++++----
- fs/ocfs2/dlmfs/Makefile    | 2 --
- fs/ocfs2/dlmfs/dlmfs.c     | 4 ++--
- fs/ocfs2/dlmfs/userdlm.c   | 6 +++---
- 13 files changed, 41 insertions(+), 45 deletions(-)
+ lib/scatterlist.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ocfs2/dlm/Makefile b/fs/ocfs2/dlm/Makefile
-index 38b2243727763..5e700b45d32d2 100644
---- a/fs/ocfs2/dlm/Makefile
-+++ b/fs/ocfs2/dlm/Makefile
-@@ -1,6 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
--ccflags-y := -I $(srctree)/$(src)/..
--
- obj-$(CONFIG_OCFS2_FS_O2CB) += ocfs2_dlm.o
+diff --git a/lib/scatterlist.c b/lib/scatterlist.c
+index c2cf2c311b7db..5813072bc5895 100644
+--- a/lib/scatterlist.c
++++ b/lib/scatterlist.c
+@@ -311,7 +311,7 @@ int __sg_alloc_table(struct sg_table *table, unsigned int nents,
+ 			if (prv)
+ 				table->nents = ++table->orig_nents;
  
- ocfs2_dlm-objs := dlmdomain.o dlmdebug.o dlmthread.o dlmrecovery.o \
-diff --git a/fs/ocfs2/dlm/dlmast.c b/fs/ocfs2/dlm/dlmast.c
-index 4de89af96abf0..6abaded3ff6bd 100644
---- a/fs/ocfs2/dlm/dlmast.c
-+++ b/fs/ocfs2/dlm/dlmast.c
-@@ -23,15 +23,15 @@
- #include <linux/spinlock.h>
+- 			return -ENOMEM;
++			return -ENOMEM;
+ 		}
  
- 
--#include "cluster/heartbeat.h"
--#include "cluster/nodemanager.h"
--#include "cluster/tcp.h"
-+#include "../cluster/heartbeat.h"
-+#include "../cluster/nodemanager.h"
-+#include "../cluster/tcp.h"
- 
- #include "dlmapi.h"
- #include "dlmcommon.h"
- 
- #define MLOG_MASK_PREFIX ML_DLM
--#include "cluster/masklog.h"
-+#include "../cluster/masklog.h"
- 
- static void dlm_update_lvb(struct dlm_ctxt *dlm, struct dlm_lock_resource *res,
- 			   struct dlm_lock *lock);
-diff --git a/fs/ocfs2/dlm/dlmconvert.c b/fs/ocfs2/dlm/dlmconvert.c
-index 965f45dbe17bf..6051edc33aefa 100644
---- a/fs/ocfs2/dlm/dlmconvert.c
-+++ b/fs/ocfs2/dlm/dlmconvert.c
-@@ -23,9 +23,9 @@
- #include <linux/spinlock.h>
- 
- 
--#include "cluster/heartbeat.h"
--#include "cluster/nodemanager.h"
--#include "cluster/tcp.h"
-+#include "../cluster/heartbeat.h"
-+#include "../cluster/nodemanager.h"
-+#include "../cluster/tcp.h"
- 
- #include "dlmapi.h"
- #include "dlmcommon.h"
-@@ -33,7 +33,7 @@
- #include "dlmconvert.h"
- 
- #define MLOG_MASK_PREFIX ML_DLM
--#include "cluster/masklog.h"
-+#include "../cluster/masklog.h"
- 
- /* NOTE: __dlmconvert_master is the only function in here that
-  * needs a spinlock held on entry (res->spinlock) and it is the
-diff --git a/fs/ocfs2/dlm/dlmdebug.c b/fs/ocfs2/dlm/dlmdebug.c
-index 4d0b452012b25..c5c6efba7b5e2 100644
---- a/fs/ocfs2/dlm/dlmdebug.c
-+++ b/fs/ocfs2/dlm/dlmdebug.c
-@@ -17,9 +17,9 @@
- #include <linux/debugfs.h>
- #include <linux/export.h>
- 
--#include "cluster/heartbeat.h"
--#include "cluster/nodemanager.h"
--#include "cluster/tcp.h"
-+#include "../cluster/heartbeat.h"
-+#include "../cluster/nodemanager.h"
-+#include "../cluster/tcp.h"
- 
- #include "dlmapi.h"
- #include "dlmcommon.h"
-@@ -27,7 +27,7 @@
- #include "dlmdebug.h"
- 
- #define MLOG_MASK_PREFIX ML_DLM
--#include "cluster/masklog.h"
-+#include "../cluster/masklog.h"
- 
- static int stringify_lockname(const char *lockname, int locklen, char *buf,
- 			      int len);
-diff --git a/fs/ocfs2/dlm/dlmdomain.c b/fs/ocfs2/dlm/dlmdomain.c
-index ee6f459f97706..357cfc702ce36 100644
---- a/fs/ocfs2/dlm/dlmdomain.c
-+++ b/fs/ocfs2/dlm/dlmdomain.c
-@@ -20,9 +20,9 @@
- #include <linux/debugfs.h>
- #include <linux/sched/signal.h>
- 
--#include "cluster/heartbeat.h"
--#include "cluster/nodemanager.h"
--#include "cluster/tcp.h"
-+#include "../cluster/heartbeat.h"
-+#include "../cluster/nodemanager.h"
-+#include "../cluster/tcp.h"
- 
- #include "dlmapi.h"
- #include "dlmcommon.h"
-@@ -30,7 +30,7 @@
- #include "dlmdebug.h"
- 
- #define MLOG_MASK_PREFIX (ML_DLM|ML_DLM_DOMAIN)
--#include "cluster/masklog.h"
-+#include "../cluster/masklog.h"
- 
- /*
-  * ocfs2 node maps are array of long int, which limits to send them freely
-diff --git a/fs/ocfs2/dlm/dlmlock.c b/fs/ocfs2/dlm/dlmlock.c
-index baff087f38632..83f0760e4fbaa 100644
---- a/fs/ocfs2/dlm/dlmlock.c
-+++ b/fs/ocfs2/dlm/dlmlock.c
-@@ -25,9 +25,9 @@
- #include <linux/delay.h>
- 
- 
--#include "cluster/heartbeat.h"
--#include "cluster/nodemanager.h"
--#include "cluster/tcp.h"
-+#include "../cluster/heartbeat.h"
-+#include "../cluster/nodemanager.h"
-+#include "../cluster/tcp.h"
- 
- #include "dlmapi.h"
- #include "dlmcommon.h"
-@@ -35,7 +35,7 @@
- #include "dlmconvert.h"
- 
- #define MLOG_MASK_PREFIX ML_DLM
--#include "cluster/masklog.h"
-+#include "../cluster/masklog.h"
- 
- static struct kmem_cache *dlm_lock_cache;
- 
-diff --git a/fs/ocfs2/dlm/dlmmaster.c b/fs/ocfs2/dlm/dlmmaster.c
-index 74b768ca1cd88..c9d7037b6793c 100644
---- a/fs/ocfs2/dlm/dlmmaster.c
-+++ b/fs/ocfs2/dlm/dlmmaster.c
-@@ -25,9 +25,9 @@
- #include <linux/delay.h>
- 
- 
--#include "cluster/heartbeat.h"
--#include "cluster/nodemanager.h"
--#include "cluster/tcp.h"
-+#include "../cluster/heartbeat.h"
-+#include "../cluster/nodemanager.h"
-+#include "../cluster/tcp.h"
- 
- #include "dlmapi.h"
- #include "dlmcommon.h"
-@@ -35,7 +35,7 @@
- #include "dlmdebug.h"
- 
- #define MLOG_MASK_PREFIX (ML_DLM|ML_DLM_MASTER)
--#include "cluster/masklog.h"
-+#include "../cluster/masklog.h"
- 
- static void dlm_mle_node_down(struct dlm_ctxt *dlm,
- 			      struct dlm_master_list_entry *mle,
-diff --git a/fs/ocfs2/dlm/dlmrecovery.c b/fs/ocfs2/dlm/dlmrecovery.c
-index 064ce5bbc3f6c..bcaaca5112d6e 100644
---- a/fs/ocfs2/dlm/dlmrecovery.c
-+++ b/fs/ocfs2/dlm/dlmrecovery.c
-@@ -26,16 +26,16 @@
- #include <linux/delay.h>
- 
- 
--#include "cluster/heartbeat.h"
--#include "cluster/nodemanager.h"
--#include "cluster/tcp.h"
-+#include "../cluster/heartbeat.h"
-+#include "../cluster/nodemanager.h"
-+#include "../cluster/tcp.h"
- 
- #include "dlmapi.h"
- #include "dlmcommon.h"
- #include "dlmdomain.h"
- 
- #define MLOG_MASK_PREFIX (ML_DLM|ML_DLM_RECOVERY)
--#include "cluster/masklog.h"
-+#include "../cluster/masklog.h"
- 
- static void dlm_do_local_recovery_cleanup(struct dlm_ctxt *dlm, u8 dead_node);
- 
-diff --git a/fs/ocfs2/dlm/dlmthread.c b/fs/ocfs2/dlm/dlmthread.c
-index 61c51c268460a..fd40c17cd0225 100644
---- a/fs/ocfs2/dlm/dlmthread.c
-+++ b/fs/ocfs2/dlm/dlmthread.c
-@@ -25,16 +25,16 @@
- #include <linux/delay.h>
- 
- 
--#include "cluster/heartbeat.h"
--#include "cluster/nodemanager.h"
--#include "cluster/tcp.h"
-+#include "../cluster/heartbeat.h"
-+#include "../cluster/nodemanager.h"
-+#include "../cluster/tcp.h"
- 
- #include "dlmapi.h"
- #include "dlmcommon.h"
- #include "dlmdomain.h"
- 
- #define MLOG_MASK_PREFIX (ML_DLM|ML_DLM_THREAD)
--#include "cluster/masklog.h"
-+#include "../cluster/masklog.h"
- 
- static int dlm_thread(void *data);
- static void dlm_flush_asts(struct dlm_ctxt *dlm);
-diff --git a/fs/ocfs2/dlm/dlmunlock.c b/fs/ocfs2/dlm/dlmunlock.c
-index 3883633e82eb9..dcb17ca8ae74d 100644
---- a/fs/ocfs2/dlm/dlmunlock.c
-+++ b/fs/ocfs2/dlm/dlmunlock.c
-@@ -23,15 +23,15 @@
- #include <linux/spinlock.h>
- #include <linux/delay.h>
- 
--#include "cluster/heartbeat.h"
--#include "cluster/nodemanager.h"
--#include "cluster/tcp.h"
-+#include "../cluster/heartbeat.h"
-+#include "../cluster/nodemanager.h"
-+#include "../cluster/tcp.h"
- 
- #include "dlmapi.h"
- #include "dlmcommon.h"
- 
- #define MLOG_MASK_PREFIX ML_DLM
--#include "cluster/masklog.h"
-+#include "../cluster/masklog.h"
- 
- #define DLM_UNLOCK_FREE_LOCK           0x00000001
- #define DLM_UNLOCK_CALL_AST            0x00000002
-diff --git a/fs/ocfs2/dlmfs/Makefile b/fs/ocfs2/dlmfs/Makefile
-index a9874e441bd4a..c7895f65be0ea 100644
---- a/fs/ocfs2/dlmfs/Makefile
-+++ b/fs/ocfs2/dlmfs/Makefile
-@@ -1,6 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
--ccflags-y := -I $(srctree)/$(src)/..
--
- obj-$(CONFIG_OCFS2_FS) += ocfs2_dlmfs.o
- 
- ocfs2_dlmfs-objs := userdlm.o dlmfs.o
-diff --git a/fs/ocfs2/dlmfs/dlmfs.c b/fs/ocfs2/dlmfs/dlmfs.c
-index 4f1668c81e1f1..8e4f1ace467c1 100644
---- a/fs/ocfs2/dlmfs/dlmfs.c
-+++ b/fs/ocfs2/dlmfs/dlmfs.c
-@@ -33,11 +33,11 @@
- 
- #include <linux/uaccess.h>
- 
--#include "stackglue.h"
-+#include "../stackglue.h"
- #include "userdlm.h"
- 
- #define MLOG_MASK_PREFIX ML_DLMFS
--#include "cluster/masklog.h"
-+#include "../cluster/masklog.h"
- 
- 
- static const struct super_operations dlmfs_ops;
-diff --git a/fs/ocfs2/dlmfs/userdlm.c b/fs/ocfs2/dlmfs/userdlm.c
-index 525b14ddfba50..3df5be25bfb1f 100644
---- a/fs/ocfs2/dlmfs/userdlm.c
-+++ b/fs/ocfs2/dlmfs/userdlm.c
-@@ -21,12 +21,12 @@
- #include <linux/types.h>
- #include <linux/crc32.h>
- 
--#include "ocfs2_lockingver.h"
--#include "stackglue.h"
-+#include "../ocfs2_lockingver.h"
-+#include "../stackglue.h"
- #include "userdlm.h"
- 
- #define MLOG_MASK_PREFIX ML_DLMFS
--#include "cluster/masklog.h"
-+#include "../cluster/masklog.h"
- 
- 
- static inline struct user_lock_res *user_lksb_to_lock_res(struct ocfs2_dlm_lksb *lksb)
+ 		sg_init_table(sg, alloc_size);
 -- 
 2.20.1
 
