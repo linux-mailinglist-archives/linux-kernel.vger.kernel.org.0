@@ -2,85 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53C5D15E0F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:16:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E00515E00F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:12:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392536AbgBNQQQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:16:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45414 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404099AbgBNQPS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:15:18 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82C5A246DC;
-        Fri, 14 Feb 2020 16:15:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696918;
-        bh=Y7jB+ZV6za5sKFnujUyx0EMJDwQuK6xqKOM5vsnZ9L8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sjFvnt63p1vIwg4swe2hWGPtKaLKnMvWR0xz2ivyDUxTkHeAL2GL/3ozxyn7a0xtn
-         Yq+euzyFmDpp5rRz1emrFTNESiMpm45qN10slDhtHMGRDFf8VvhG2JImehn1Moe87T
-         WMlNcg3NnEw8GLtxnTvXACvkq95hvi6cLKGXZn9o=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Li RongQing <lirongqing@baidu.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 166/252] bpf: Return -EBADRQC for invalid map type in __bpf_tx_xdp_map
-Date:   Fri, 14 Feb 2020 11:10:21 -0500
-Message-Id: <20200214161147.15842-166-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
-References: <20200214161147.15842-1-sashal@kernel.org>
+        id S2390827AbgBNQLz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:11:55 -0500
+Received: from mo4-p04-ob.smtp.rzone.de ([85.215.255.124]:36123 "EHLO
+        mo4-p04-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391603AbgBNQKu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:10:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1581696641;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=dZbZVnixfoO3ZI6/71WGGwComZxww6jvUSKhufZA4ck=;
+        b=qqR6ysT+tq1UT58oNVjbDZpcqqp4orVxHFkTflGkO6wVlP2TF8HBx3xLLUY3bhtLQo
+        Zscr3oXH0pD+M2EfKPS1MjtQePLHWDOWYVVASGDKS3niSsnUb9UyAcjrRXhNbSDoJQdv
+        Pqwf/Q6uVedE0GNIa/xpsFUm7LplgyJ/PPmIqR2+KX572aecjXdFyP3SFNiMsTQ3p4ex
+        dtaZQdLF38e6Mt9wnNbPEczKaVy92a86kYG5Gq369btAC/7XNMJ112HZVE/ICcEVqYyd
+        sZ7Wvn0tad/24RcZaduQXZP1DHSZsbVgsrp70V2vDuAu/OQjVTbO4gmM8YXXrLZF3Jqz
+        r3/g==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1OAA2UNf2M7OMfsfQx3"
+X-RZG-CLASS-ID: mo00
+Received: from iMac.fritz.box
+        by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
+        with ESMTPSA id U06217w1EGAWFl5
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Fri, 14 Feb 2020 17:10:32 +0100 (CET)
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+To:     Paul Boddie <paul@boddie.org.uk>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        letux-kernel@openphoenux.org, kernel@pyra-handheld.com
+Subject: [PATCH v2 10/12] MIPS: DTS: CI20: add DT node for SW1 as Enter button
+Date:   Fri, 14 Feb 2020 17:10:22 +0100
+Message-Id: <c3ee5a9d9831c291cff3762c01a6f3d8665745d2.1581696624.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <cover.1581696624.git.hns@goldelico.com>
+References: <cover.1581696624.git.hns@goldelico.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Li RongQing <lirongqing@baidu.com>
+The SW1 button can be used as a simple one-button keyboard
+and is connected to PD17.
 
-[ Upstream commit 0a29275b6300f39f78a87f2038bbfe5bdbaeca47 ]
+Note: SW1 has a second meaning to change the boot sequence
+when pressed while powering on.
 
-A negative value should be returned if map->map_type is invalid
-although that is impossible now, but if we run into such situation
-in future, then xdpbuff could be leaked.
-
-Daniel Borkmann suggested:
-
--EBADRQC should be returned to stay consistent with generic XDP
-for the tracepoint output and not to be confused with -EOPNOTSUPP
-from other locations like dev_map_enqueue() when ndo_xdp_xmit is
-missing and such.
-
-Suggested-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Link: https://lore.kernel.org/bpf/1578618277-18085-1-git-send-email-lirongqing@baidu.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- net/core/filter.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/mips/boot/dts/ingenic/ci20.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/net/core/filter.c b/net/core/filter.c
-index 9daf1a4118b51..40b3af05c883c 100644
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -3207,7 +3207,7 @@ static int __bpf_tx_xdp_map(struct net_device *dev_rx, void *fwd,
- 		return err;
- 	}
- 	default:
--		break;
-+		return -EBADRQC;
- 	}
- 	return 0;
- }
+diff --git a/arch/mips/boot/dts/ingenic/ci20.dts b/arch/mips/boot/dts/ingenic/ci20.dts
+index b4a820313992..8f9d182566db 100644
+--- a/arch/mips/boot/dts/ingenic/ci20.dts
++++ b/arch/mips/boot/dts/ingenic/ci20.dts
+@@ -4,6 +4,7 @@
+ #include "jz4780.dtsi"
+ #include <dt-bindings/clock/ingenic,tcu.h>
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
+ 
+ / {
+ 	compatible = "img,ci20", "ingenic,jz4780";
+@@ -25,6 +26,17 @@
+ 		       0x30000000 0x30000000>;
+ 	};
+ 
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		sw1 {
++			label = "ci20:sw1";
++			linux,code = <KEY_ENTER>;
++			gpios = <&gpd 17 GPIO_ACTIVE_HIGH>;
++			wakeup-source;
++		};
++	};
++
+ 	leds {
+ 		compatible = "gpio-leds";
+ 
 -- 
-2.20.1
+2.23.0
 
