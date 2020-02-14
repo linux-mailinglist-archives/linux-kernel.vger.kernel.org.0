@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 858EA15FA01
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 23:56:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A03915FA04
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 23:57:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727976AbgBNW4w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 17:56:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48718 "EHLO mail.kernel.org"
+        id S1728033AbgBNW5A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 17:57:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726164AbgBNW4u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 17:56:50 -0500
+        id S1727951AbgBNW4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 17:56:52 -0500
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8A0F2168B;
-        Fri, 14 Feb 2020 22:56:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11098217F4;
+        Fri, 14 Feb 2020 22:56:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581721010;
-        bh=GEz2+lin0VRu87Ptt5fXE8dJXTA7/WGuVk2vdP20BZM=;
+        s=default; t=1581721011;
+        bh=MDMUy09PK4vU60vxIfNNBpzrbndQvvmmUdPTgYAQoxc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=Ycw5POMKZ1cV+GXFleKQvIeC1YBWshMRWppS/puCGd4/F/djl83nbcY+/REAq3Siu
-         jXdxUv2XRduhUUg2G65l7+iF/D1YH8tDSO2sjSAxDDzo/hc/jioCEaFQ6sYPiTXH1c
-         f/YAiHcy/yTXivE2xXIJhpmgr+NbeoH3i/x3f5FU=
+        b=Halg2QR1SsP03GrcyYXjynF6UzPvVIKnFqKqFySYdf/iMJ05hazooSkIF0UzUKWgJ
+         CJeHGQ7eUseZz1taF+Fw/RnJD+wGmLQX/KRTiUw+1B29xkOeR2nfpQ2b90WnJBXaAV
+         rzqknUpkBRXG6/Zrgu9o6CC5vRpoZjZMWyBg/v2I=
 From:   Tom Zanussi <zanussi@kernel.org>
 To:     rostedt@goodmis.org
 Cc:     artem.bityutskiy@linux.intel.com, mhiramat@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/4] tracing: Make synth_event trace functions endian-correct
-Date:   Fri, 14 Feb 2020 16:56:39 -0600
-Message-Id: <2011354355e405af9c9d28abba430d1f5ff7771a.1581720155.git.zanussi@kernel.org>
+Subject: [PATCH v2 3/4] tracing: Check that number of vals matches number of synth event fields
+Date:   Fri, 14 Feb 2020 16:56:40 -0600
+Message-Id: <32819cac708714693669e0dfe10fe9d935e94a16.1581720155.git.zanussi@kernel.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1581720155.git.zanussi@kernel.org>
 References: <cover.1581720155.git.zanussi@kernel.org>
@@ -41,103 +41,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-synth_event_trace(), synth_event_trace_array() and
-__synth_event_add_val() write directly into the trace buffer and need
-to take endianness into account, like trace_event_raw_event_synth()
-does.
+Commit 7276531d4036('tracing: Consolidate trace() functions')
+inadvertently dropped the synth_event_trace() and
+synth_event_trace_array() checks that verify the number of values
+passed in matches the number of fields in the synthetic event being
+traced, so add them back.
 
 Signed-off-by: Tom Zanussi <zanussi@kernel.org>
 ---
- kernel/trace/trace_events_hist.c | 62 +++++++++++++++++++++++++++++++++++++---
- 1 file changed, 58 insertions(+), 4 deletions(-)
+ kernel/trace/trace_events_hist.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 483b3fd1094f..913760d2d505 100644
+index 913760d2d505..95d4c871f87b 100644
 --- a/kernel/trace/trace_events_hist.c
 +++ b/kernel/trace/trace_events_hist.c
-@@ -1898,7 +1898,25 @@ int synth_event_trace(struct trace_event_file *file, unsigned int n_vals, ...)
- 			strscpy(str_field, str_val, STR_VAR_LEN_MAX);
- 			n_u64 += STR_VAR_LEN_MAX / sizeof(u64);
- 		} else {
--			state.entry->fields[n_u64] = val;
-+			struct synth_field *field = state.event->fields[i];
-+
-+			switch (field->size) {
-+			case 1:
-+				*(u8 *)&state.entry->fields[n_u64] = (u8)val;
-+				break;
-+
-+			case 2:
-+				*(u16 *)&state.entry->fields[n_u64] = (u16)val;
-+				break;
-+
-+			case 4:
-+				*(u32 *)&state.entry->fields[n_u64] = (u32)val;
-+				break;
-+
-+			default:
-+				state.entry->fields[n_u64] = val;
-+				break;
-+			}
- 			n_u64++;
- 		}
+@@ -1885,6 +1885,11 @@ int synth_event_trace(struct trace_event_file *file, unsigned int n_vals, ...)
+ 		return ret;
  	}
-@@ -1950,7 +1968,26 @@ int synth_event_trace_array(struct trace_event_file *file, u64 *vals,
- 			strscpy(str_field, str_val, STR_VAR_LEN_MAX);
- 			n_u64 += STR_VAR_LEN_MAX / sizeof(u64);
- 		} else {
--			state.entry->fields[n_u64] = vals[i];
-+			struct synth_field *field = state.event->fields[i];
-+			u64 val = vals[i];
-+
-+			switch (field->size) {
-+			case 1:
-+				*(u8 *)&state.entry->fields[n_u64] = (u8)val;
-+				break;
-+
-+			case 2:
-+				*(u16 *)&state.entry->fields[n_u64] = (u16)val;
-+				break;
-+
-+			case 4:
-+				*(u32 *)&state.entry->fields[n_u64] = (u32)val;
-+				break;
-+
-+			default:
-+				state.entry->fields[n_u64] = val;
-+				break;
-+			}
- 			n_u64++;
- 		}
- 	}
-@@ -2069,8 +2106,25 @@ static int __synth_event_add_val(const char *field_name, u64 val,
  
- 		str_field = (char *)&entry->fields[field->offset];
- 		strscpy(str_field, str_val, STR_VAR_LEN_MAX);
--	} else
--		entry->fields[field->offset] = val;
-+	} else {
-+		switch (field->size) {
-+		case 1:
-+			*(u8 *)&trace_state->entry->fields[field->offset] = (u8)val;
-+			break;
-+
-+		case 2:
-+			*(u16 *)&trace_state->entry->fields[field->offset] = (u16)val;
-+			break;
-+
-+		case 4:
-+			*(u32 *)&trace_state->entry->fields[field->offset] = (u32)val;
-+			break;
-+
-+		default:
-+			trace_state->entry->fields[field->offset] = val;
-+			break;
-+		}
++	if (n_vals != state.event->n_fields) {
++		ret = -EINVAL;
++		goto out;
 +	}
-  out:
++
+ 	va_start(args, n_vals);
+ 	for (i = 0, n_u64 = 0; i < state.event->n_fields; i++) {
+ 		u64 val;
+@@ -1921,7 +1926,7 @@ int synth_event_trace(struct trace_event_file *file, unsigned int n_vals, ...)
+ 		}
+ 	}
+ 	va_end(args);
+-
++out:
+ 	__synth_event_trace_end(&state);
+ 
  	return ret;
- }
+@@ -1960,6 +1965,11 @@ int synth_event_trace_array(struct trace_event_file *file, u64 *vals,
+ 		return ret;
+ 	}
+ 
++	if (n_vals != state.event->n_fields) {
++		ret = -EINVAL;
++		goto out;
++	}
++
+ 	for (i = 0, n_u64 = 0; i < state.event->n_fields; i++) {
+ 		if (state.event->fields[i]->is_string) {
+ 			char *str_val = (char *)(long)vals[i];
+@@ -1991,7 +2001,7 @@ int synth_event_trace_array(struct trace_event_file *file, u64 *vals,
+ 			n_u64++;
+ 		}
+ 	}
+-
++out:
+ 	__synth_event_trace_end(&state);
+ 
+ 	return ret;
 -- 
 2.14.1
 
