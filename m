@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C70615F534
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:39:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8139F15F52D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:39:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390893AbgBNSZY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:25:24 -0500
-Received: from foss.arm.com ([217.140.110.172]:43288 "EHLO foss.arm.com"
+        id S2394939AbgBNSYx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:24:53 -0500
+Received: from foss.arm.com ([217.140.110.172]:43308 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405570AbgBNSYq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 13:24:46 -0500
+        id S2405588AbgBNSYs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 13:24:48 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD4AB328;
-        Fri, 14 Feb 2020 10:24:45 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E6633101E;
+        Fri, 14 Feb 2020 10:24:47 -0800 (PST)
 Received: from eglon.cambridge.arm.com (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 74CEB3F68E;
-        Fri, 14 Feb 2020 10:24:44 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9803D3F68E;
+        Fri, 14 Feb 2020 10:24:46 -0800 (PST)
 From:   James Morse <james.morse@arm.com>
 To:     x86@kernel.org, linux-kernel@vger.kernel.org
 Cc:     Fenghua Yu <fenghua.yu@intel.com>,
@@ -25,9 +25,9 @@ Cc:     Fenghua Yu <fenghua.yu@intel.com>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H . Peter Anvin" <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
         James Morse <james.morse@arm.com>
-Subject: [PATCH 05/10] x86/resctrl: Include pid.h
-Date:   Fri, 14 Feb 2020 18:23:56 +0000
-Message-Id: <20200214182401.39008-6-james.morse@arm.com>
+Subject: [PATCH 06/10] x86/resctrl: Use is_closid_match() in more places
+Date:   Fri, 14 Feb 2020 18:23:57 +0000
+Message-Id: <20200214182401.39008-7-james.morse@arm.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200214182401.39008-1-james.morse@arm.com>
 References: <20200214182401.39008-1-james.morse@arm.com>
@@ -38,27 +38,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We are about to disturb the header soup. This header uses struct pid
-and struct pid_namespace. Include their header.
+rdtgroup_tasks_assigned() and show_rdt_tasks() loop over threads testing
+for a CTRL/MON group match by closid/rmid with the provided rdtgrp.
+Further down the file are helpers to do this, move these further up and
+make use of them here.
+
+These helpers additionally check for alloc/mon capable. This is harmless
+as rdtgroup_mkdir() tests these capable flags before allowing the config
+directories to be created.
 
 Signed-off-by: James Morse <james.morse@arm.com>
 ---
- include/linux/resctrl.h | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 30 ++++++++++++--------------
+ 1 file changed, 14 insertions(+), 16 deletions(-)
 
-diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index daf5cf64c6a6..9b05af9b3e28 100644
---- a/include/linux/resctrl.h
-+++ b/include/linux/resctrl.h
-@@ -2,6 +2,8 @@
- #ifndef _RESCTRL_H
- #define _RESCTRL_H
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index fef09105cbe4..c84b1f355a9a 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -592,6 +592,18 @@ static int __rdtgroup_move_task(struct task_struct *tsk,
+ 	return ret;
+ }
  
-+#include <linux/pid.h>
++static bool is_closid_match(struct task_struct *t, struct rdtgroup *r)
++{
++	return (rdt_alloc_capable &&
++	       (r->type == RDTCTRL_GROUP) && (t->closid == r->closid));
++}
 +
- #ifdef CONFIG_PROC_CPU_RESCTRL
++static bool is_rmid_match(struct task_struct *t, struct rdtgroup *r)
++{
++	return (rdt_mon_capable &&
++	       (r->type == RDTMON_GROUP) && (t->rmid == r->mon.rmid));
++}
++
+ /**
+  * rdtgroup_tasks_assigned - Test if tasks have been assigned to resource group
+  * @r: Resource group
+@@ -607,8 +619,7 @@ int rdtgroup_tasks_assigned(struct rdtgroup *r)
  
- int proc_resctrl_show(struct seq_file *m,
+ 	rcu_read_lock();
+ 	for_each_process_thread(p, t) {
+-		if ((r->type == RDTCTRL_GROUP && t->closid == r->closid) ||
+-		    (r->type == RDTMON_GROUP && t->rmid == r->mon.rmid)) {
++		if (is_closid_match(t, r) || is_rmid_match(t, r)) {
+ 			ret = 1;
+ 			break;
+ 		}
+@@ -706,8 +717,7 @@ static void show_rdt_tasks(struct rdtgroup *r, struct seq_file *s)
+ 
+ 	rcu_read_lock();
+ 	for_each_process_thread(p, t) {
+-		if ((r->type == RDTCTRL_GROUP && t->closid == r->closid) ||
+-		    (r->type == RDTMON_GROUP && t->rmid == r->mon.rmid))
++		if (is_closid_match(t, r) || is_rmid_match(t, r))
+ 			seq_printf(s, "%d\n", t->pid);
+ 	}
+ 	rcu_read_unlock();
+@@ -2231,18 +2241,6 @@ static int reset_all_ctrls(struct rdt_resource *r)
+ 	return 0;
+ }
+ 
+-static bool is_closid_match(struct task_struct *t, struct rdtgroup *r)
+-{
+-	return (rdt_alloc_capable &&
+-		(r->type == RDTCTRL_GROUP) && (t->closid == r->closid));
+-}
+-
+-static bool is_rmid_match(struct task_struct *t, struct rdtgroup *r)
+-{
+-	return (rdt_mon_capable &&
+-		(r->type == RDTMON_GROUP) && (t->rmid == r->mon.rmid));
+-}
+-
+ /*
+  * Move tasks from one to the other group. If @from is NULL, then all tasks
+  * in the systems are moved unconditionally (used for teardown).
 -- 
 2.24.1
 
