@@ -2,133 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 230A115EBB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:22:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BDC815EC1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:25:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404012AbgBNRWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:22:20 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:42658 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390454AbgBNRWQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 12:22:16 -0500
-Received: by mail-io1-f66.google.com with SMTP id z1so10773508iom.9
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 09:22:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xv17a45pi5NucetgPC6cMwzW5Vj6j3Q1UdEccsF87iI=;
-        b=jdkH5PaG1H+2nkU3l9wXveH84Du4g4JPLe3p08esY/8YFJ54sSW20xmuXMNZuEdGXv
-         oplq+b/lfm9egkj7LuYMxQ8bJ6oBD/rGnBL+Ep43i0dgfs34aOJeeo/BekoVdQGl1xyH
-         61cgMmjI5k08v96putoK2ty0W7x0iSRkgmVyGo+/IrOTRHF0v66Cy8vJbXt73GL4ijDn
-         6RAW+PifPqEORYEqm43APpyAPqzRvTEInCFBs8NCy3ErMv1DQT8qUSuRig62bqsUv7mN
-         /aPMdW990kBDVRD9r1Mbe9LaF/zd4ojApPMkioKtmZdRLxYfFS0q/r5wKYnNY6vILx67
-         YfFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xv17a45pi5NucetgPC6cMwzW5Vj6j3Q1UdEccsF87iI=;
-        b=iXgVZKvOSKQOFFLBHMloEVwE4AsBdf06A7r547/IjKYxkpVBIHkX7CPGFWkK2V5fnZ
-         xoUEf/3Y44ZIAUuERQpPmCaVn3DtbruRCGgM2HpT7qK5U16fltD+jlyAq3eri+9y8a5u
-         0dG7wE6i9tZVIyKHhyDMirTCTyTqxsYF3xV6K16jL4K0SoBlxkhwd0JRMIHyAxC0fDJD
-         hRFiAn85gztpw/nqq3SnjkW91jFnLCwMDYHo3wUDLYMOmfnJ2FtnfoWlwFFYnHyMTM24
-         Vjlz3g8Gl16dU/DaFdA+VsvaaLGDmgsnaNMZjSAcWRicBBtxab506/4qIjTiv5LlE8FT
-         bTAg==
-X-Gm-Message-State: APjAAAXMD9nVz6BCPwlpBIVzhKmhsyhXHuQEq04MOLEKFFu7EtL/yOxw
-        VGl9DiBIk8R62M8E1KCILGkTvalCq1nPGJJWcxT2ew==
-X-Google-Smtp-Source: APXvYqypSbqZ4jw/jzA7yD97cGOuUK73KMvRHZK3KHww9cRWf4lUdMOs3QJI2H26Auomb9rUQ87gBjcB9xIRLzsGHZY=
-X-Received: by 2002:a05:6638:44a:: with SMTP id r10mr3354681jap.36.1581700935651;
- Fri, 14 Feb 2020 09:22:15 -0800 (PST)
+        id S2391111AbgBNRZC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:25:02 -0500
+Received: from mga17.intel.com ([192.55.52.151]:43172 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390928AbgBNRY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 12:24:59 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2020 09:24:56 -0800
+X-IronPort-AV: E=Sophos;i="5.70,441,1574150400"; 
+   d="scan'208";a="223081205"
+Received: from ddalessa-mobl.amr.corp.intel.com (HELO [10.254.204.146]) ([10.254.204.146])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 14 Feb 2020 09:24:54 -0800
+Subject: Re: [PATCH 1/3] infiniband: hw: hfi1: verbs.c: Use built-in RCU list
+ checking
+To:     Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     mike.marciniszyn@intel.com,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Amol Grover <frextrite@gmail.com>,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        rcu@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200114162345.19995-1-madhuparnabhowmik04@gmail.com>
+ <20200114165740.GB22037@ziepe.ca>
+ <74adec84-ec5b-ea1b-7adf-3f8608838259@intel.com>
+ <25133367-6544-d0af-ae30-5178909748b1@intel.com>
+ <CAF65HP0RsW5FMRRf5Lia2=MTKex-KwO7-_NsCUef94YKBg+pfA@mail.gmail.com>
+From:   Dennis Dalessandro <dennis.dalessandro@intel.com>
+Message-ID: <c773894a-b011-2419-683a-3b851583fc73@intel.com>
+Date:   Fri, 14 Feb 2020 12:24:52 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-References: <20200212211251.32091-1-mathieu.poirier@linaro.org>
- <20200212211251.32091-2-mathieu.poirier@linaro.org> <034dcb0b-e305-aab9-f52b-5f725856480f@st.com>
-In-Reply-To: <034dcb0b-e305-aab9-f52b-5f725856480f@st.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Fri, 14 Feb 2020 10:22:04 -0700
-Message-ID: <CANLsYkxfavBjbtkOco59xatvW82+uoDAsos5Js_M9_55F_a_Pg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] rpmsg: core: Add wildcard match for name service
-To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>, Suman Anna <s-anna@ti.com>,
-        Xiang Xiao <xiaoxiang@xiaomi.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Loic PALLARDY <loic.pallardy@st.com>,
-        remoteproc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAF65HP0RsW5FMRRf5Lia2=MTKex-KwO7-_NsCUef94YKBg+pfA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Feb 2020 at 06:56, Arnaud POULIQUEN <arnaud.pouliquen@st.com> wrote:
->
-> Hi Mathieu,
->
-> Simple and elegant :)
-> I tested it with my rpmsg_tty client which defines several IDs: work fine.
+On 2/14/2020 10:43 AM, Madhuparna Bhowmik wrote:
+> 
+> 
+> On Wed, Jan 15, 2020 at 12:05 AM <madhuparnabhowmik04@gmail.com 
+> <mailto:madhuparnabhowmik04@gmail.com>> wrote:
+> 
+>     From: Dennis Dalessandro <dennis.dalessandro@intel.com
+>     <mailto:dennis.dalessandro@intel.com>>
+> 
+>     On 1/14/2020 12:00 PM, Dennis Dalessandro wrote:
+>      > On 1/14/2020 11:57 AM, Jason Gunthorpe wrote:
+>      >> On Tue, Jan 14, 2020 at 09:53:45PM +0530,
+>      >> madhuparnabhowmik04@gmail.com
+>     <mailto:madhuparnabhowmik04@gmail.com> wrote:
+>      >>> From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com
+>     <mailto:madhuparnabhowmik04@gmail.com>>
+>      >>>
+>      >>> list_for_each_entry_rcu has built-in RCU and lock checking.
+>      >>> Pass cond argument to list_for_each_entry_rcu.
+>      >>>
+>      >>> Signed-off-by: Madhuparna Bhowmik
+>     <madhuparnabhowmik04@gmail.com <mailto:madhuparnabhowmik04@gmail.com>>
+>      >>>   drivers/infiniband/hw/hfi1/verbs.c | 2 +-
+>      >>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>      >>>
+>      >>> diff --git a/drivers/infiniband/hw/hfi1/verbs.c
+>      >>> b/drivers/infiniband/hw/hfi1/verbs.c
+>      >>> index 089e201d7550..22f2d4fd2577 100644
+>      >>> +++ b/drivers/infiniband/hw/hfi1/verbs.c
+>      >>> @@ -515,7 +515,7 @@ static inline void hfi1_handle_packet(struct
+>      >>> hfi1_packet *packet,
+>      >>>                          opa_get_lid(packet->dlid, 9B));
+>      >>>           if (!mcast)
+>      >>>               goto drop;
+>      >>> -        list_for_each_entry_rcu(p, &mcast->qp_list, list) {
+>      >>> +        list_for_each_entry_rcu(p, &mcast->qp_list, list,
+>      >>> lockdep_is_held(&(ibp->rvp.lock))) {
+>      >>
+>      >> Okay, this looks reasonable
+>      >>
+>      >> Mike, Dennis, is this the right lock to test?
+>      >>
+>      >
+>      > I'm looking at that right now actually, I don't think this is
+>     correct.
+>      > Wanted to talk to Mike before I send a response though.
+>      >
+>      > -Denny
+> 
+>     That's definitely going to throw a ton of lock dep messages. It's not
+>     really the right lock either. Instead what we probably need to do is
+>     what we do in the non-multicast part of the code and take the
+>     rcu_read_lock().
+> 
+>     I'd say hold off on this and we'll fix it right. Same goes for the
+>     qib one.
+> 
+>     Alright, thank you for reviewing.
+> 
+>     The rdmavt one though looks to be OK. I'll give it a test.
+> 
+> Hi,
+> I just wanted to follow up on this.
+> Any updates?
+> Also, is the bug fixed now?
+> 
+> Thank you,
+> Madhuparna
+> 
+>     Thank you,
+>     Madhuparna
+> 
+>     -Denny
+> 
 
-Perfect - many thanks for giving this a spin.
+I've got a patch going through internal discussion and testing for 
+adding rcu read locking.
 
->
-> Just a question regarding the comment else
-> Acked-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
->
->
-> On 2/12/20 10:12 PM, Mathieu Poirier wrote:
-> > Adding the capability to supplement the base definition published
-> > by an rpmsg_driver with a postfix description so that it is possible
-> > for several entity to use the same service.
-> >
-> > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > ---
-> >  drivers/rpmsg/rpmsg_core.c | 20 +++++++++++++++++++-
-> >  1 file changed, 19 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-> > index e330ec4dfc33..bfd25978fa35 100644
-> > --- a/drivers/rpmsg/rpmsg_core.c
-> > +++ b/drivers/rpmsg/rpmsg_core.c
-> > @@ -399,7 +399,25 @@ ATTRIBUTE_GROUPS(rpmsg_dev);
-> >  static inline int rpmsg_id_match(const struct rpmsg_device *rpdev,
-> >                                 const struct rpmsg_device_id *id)
-> >  {
-> > -     return strncmp(id->name, rpdev->id.name, RPMSG_NAME_SIZE) == 0;
-> > +     size_t len = min_t(size_t, strlen(id->name), RPMSG_NAME_SIZE);
-> > +
-> > +     /*
-> > +      * Allow for wildcard matches.  For example if rpmsg_driver::id_table
-> > +      * is:
-> > +      *
-> > +      * static struct rpmsg_device_id rpmsg_driver_sample_id_table[] = {
-> > +      *      { .name = "rpmsg-client-sample" },
-> > +      *      { },
-> > +      * }
-> > +      *
-> > +      * Then it is possible to support "rpmsg-client-sample*", i.e:
-> > +      *      rpmsg-client-sample
-> > +      *      rpmsg-client-sample_instance0
-> > +      *      rpmsg-client-sample_instance1
-> > +      *      ...
-> > +      *      rpmsg-client-sample_instanceX
-> > +      */
-> What about adding this as function documentation? i don't know if it makes sense
-> for a static volatile function...
+The RDMAVT patch, I was OK with going in, I guess I just mentioned that 
+in a reply rather than adding an RB tag. Let me go ahead and do that.
 
-It didn't cross my mind because (and as you pointed out) it is a
-static function.  Let me know if you're keen on seeing this corrected
-and I'll go for a respin.
-
-Mathieu
-
->
-> Regards
-> Arnaud
->
-> > +     return strncmp(id->name, rpdev->id.name, len) == 0;
-> >  }
-> >
-> >  /* match rpmsg channel and rpmsg driver */
-> >
+-Denny
