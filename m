@@ -2,43 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD43A15F4BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:24:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C855D15F4C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:24:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729867AbgBNPtS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:49:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51852 "EHLO mail.kernel.org"
+        id S2405330AbgBNSXf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:23:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729822AbgBNPtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:49:15 -0500
+        id S1729847AbgBNPtR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:49:17 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 303742467D;
-        Fri, 14 Feb 2020 15:49:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4B5B24684;
+        Fri, 14 Feb 2020 15:49:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695354;
-        bh=D4GG98E9c9Y1icIuu9/OOXLVnOGJq8xtVvyjOWugdBc=;
+        s=default; t=1581695356;
+        bh=J1j4OCreJQkS7zD0uwA8aoWiIOqAgpvxOtjmXUV0ThQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F8Sxij1ssfjFFSOAWM3Tq18XPsFsFrzWcsATZ9OMWb2dpM+0rUr0KFNRwt/xAaQ1Z
-         VO8RGx8O+9fPCbb4W7J2lEqCyPxo22J/UP1/9B5HpjSW1eHmKffCyYa/gvd0+00rF/
-         hDUkMPgSYlChsUI5sCTaWebvEewtypExroDS9kfQ=
+        b=s1FOrJSFHK1fcrKCAqWyONa1z7M/tWLqmODPCdEwKKw39JFV5WyjS5bwI87zVXqaj
+         kiJYXwKB/h0IbVaMu25Cm9t4KRsEBU4gEWU7c5jZ/ODfVe2aMvBuE7yMzUhkC7KiHZ
+         XLVN7emu2Qra+z8EIavcCDYrtvDYkIib1uT9/RU8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>,
-        Javier Gonzalez <javier@javigon.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-        Chao Yu <yuchao0@huawei.com>, Sasha Levin <sashal@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 5.5 015/542] f2fs: preallocate DIO blocks when forcing buffered_io
-Date:   Fri, 14 Feb 2020 10:40:07 -0500
-Message-Id: <20200214154854.6746-15-sashal@kernel.org>
+Cc:     Eric Biggers <ebiggers@google.com>,
+        Pascal Van Leeuwen <pvanleeuwen@verimatrix.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.5 017/542] crypto: testmgr - don't try to decrypt uninitialized buffers
+Date:   Fri, 14 Feb 2020 10:40:09 -0500
+Message-Id: <20200214154854.6746-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -47,119 +46,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Eric Biggers <ebiggers@google.com>
 
-[ Upstream commit 47501f87c61ad2aa234add63e1ae231521dbc3f5 ]
+[ Upstream commit eb455dbd02cb1074b37872ffca30a81cb2a18eaa ]
 
-The previous preallocation and DIO decision like below.
+Currently if the comparison fuzz tests encounter an encryption error
+when generating an skcipher or AEAD test vector, they will still test
+the decryption side (passing it the uninitialized ciphertext buffer)
+and expect it to fail with the same error.
 
-                         allow_outplace_dio              !allow_outplace_dio
-f2fs_force_buffered_io   (*) No_Prealloc / Buffered_IO   Prealloc / Buffered_IO
-!f2fs_force_buffered_io  No_Prealloc / DIO               Prealloc / DIO
+This is sort of broken because it's not well-defined usage of the API to
+pass an uninitialized buffer, and furthermore in the AEAD case it's
+acceptable for the decryption error to be EBADMSG (meaning "inauthentic
+input") even if the encryption error was something else like EINVAL.
 
-But, Javier reported Case (*) where zoned device bypassed preallocation but
-fell back to buffered writes in f2fs_direct_IO(), resulting in stale data
-being read.
+Fix this for skcipher by explicitly initializing the ciphertext buffer
+on error, and for AEAD by skipping the decryption test on error.
 
-In order to fix the issue, actually we need to preallocate blocks whenever
-we fall back to buffered IO like this. No change is made in the other cases.
-
-                         allow_outplace_dio              !allow_outplace_dio
-f2fs_force_buffered_io   (*) Prealloc / Buffered_IO      Prealloc / Buffered_IO
-!f2fs_force_buffered_io  No_Prealloc / DIO               Prealloc / DIO
-
-Reported-and-tested-by: Javier Gonzalez <javier@javigon.com>
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-Tested-by: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Reviewed-by: Javier González <javier@javigon.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Reported-by: Pascal Van Leeuwen <pvanleeuwen@verimatrix.com>
+Fixes: d435e10e67be ("crypto: testmgr - fuzz skciphers against their generic implementation")
+Fixes: 40153b10d91c ("crypto: testmgr - fuzz AEADs against their generic implementation")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/data.c | 13 -------------
- fs/f2fs/file.c | 43 +++++++++++++++++++++++++++++++++----------
- 2 files changed, 33 insertions(+), 23 deletions(-)
+ crypto/testmgr.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index a034cd0ce0217..fc40a72f7827f 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1180,19 +1180,6 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
- 	int err = 0;
- 	bool direct_io = iocb->ki_flags & IOCB_DIRECT;
+diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+index 82513b6b0abd0..2c96963b2e51e 100644
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -2102,6 +2102,7 @@ static void generate_random_aead_testvec(struct aead_request *req,
+ 	 * If the key or authentication tag size couldn't be set, no need to
+ 	 * continue to encrypt.
+ 	 */
++	vec->crypt_error = 0;
+ 	if (vec->setkey_error || vec->setauthsize_error)
+ 		goto done;
  
--	/* convert inline data for Direct I/O*/
--	if (direct_io) {
--		err = f2fs_convert_inline_inode(inode);
+@@ -2245,10 +2246,12 @@ static int test_aead_vs_generic_impl(const char *driver,
+ 					req, tsgls);
+ 		if (err)
+ 			goto out;
+-		err = test_aead_vec_cfg(driver, DECRYPT, &vec, vec_name, cfg,
+-					req, tsgls);
 -		if (err)
--			return err;
--	}
--
--	if (direct_io && allow_outplace_dio(inode, iocb, from))
--		return 0;
--
--	if (is_inode_flag_set(inode, FI_NO_PREALLOC))
--		return 0;
--
- 	map.m_lblk = F2FS_BLK_ALIGN(iocb->ki_pos);
- 	map.m_len = F2FS_BYTES_TO_BLK(iocb->ki_pos + iov_iter_count(from));
- 	if (map.m_len > map.m_lblk)
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 13aef5f28fa8f..33c412d178f0f 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -3383,18 +3383,41 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 				ret = -EAGAIN;
- 				goto out;
- 			}
--		} else {
--			preallocated = true;
--			target_size = iocb->ki_pos + iov_iter_count(from);
-+			goto write;
-+		}
- 
--			err = f2fs_preallocate_blocks(iocb, from);
--			if (err) {
--				clear_inode_flag(inode, FI_NO_PREALLOC);
--				inode_unlock(inode);
--				ret = err;
--				goto out;
--			}
-+		if (is_inode_flag_set(inode, FI_NO_PREALLOC))
-+			goto write;
-+
-+		if (iocb->ki_flags & IOCB_DIRECT) {
-+			/*
-+			 * Convert inline data for Direct I/O before entering
-+			 * f2fs_direct_IO().
-+			 */
-+			err = f2fs_convert_inline_inode(inode);
+-			goto out;
++		if (vec.crypt_error == 0) {
++			err = test_aead_vec_cfg(driver, DECRYPT, &vec, vec_name,
++						cfg, req, tsgls);
 +			if (err)
-+				goto out_err;
-+			/*
-+			 * If force_buffere_io() is true, we have to allocate
-+			 * blocks all the time, since f2fs_direct_IO will fall
-+			 * back to buffered IO.
-+			 */
-+			if (!f2fs_force_buffered_io(inode, iocb, from) &&
-+					allow_outplace_dio(inode, iocb, from))
-+				goto write;
++				goto out;
 +		}
-+		preallocated = true;
-+		target_size = iocb->ki_pos + iov_iter_count(from);
-+
-+		err = f2fs_preallocate_blocks(iocb, from);
-+		if (err) {
-+out_err:
-+			clear_inode_flag(inode, FI_NO_PREALLOC);
-+			inode_unlock(inode);
-+			ret = err;
-+			goto out;
- 		}
-+write:
- 		ret = __generic_file_write_iter(iocb, from);
- 		clear_inode_flag(inode, FI_NO_PREALLOC);
- 
+ 		cond_resched();
+ 	}
+ 	err = 0;
+@@ -2678,6 +2681,15 @@ static void generate_random_cipher_testvec(struct skcipher_request *req,
+ 	skcipher_request_set_callback(req, 0, crypto_req_done, &wait);
+ 	skcipher_request_set_crypt(req, &src, &dst, vec->len, iv);
+ 	vec->crypt_error = crypto_wait_req(crypto_skcipher_encrypt(req), &wait);
++	if (vec->crypt_error != 0) {
++		/*
++		 * The only acceptable error here is for an invalid length, so
++		 * skcipher decryption should fail with the same error too.
++		 * We'll test for this.  But to keep the API usage well-defined,
++		 * explicitly initialize the ciphertext buffer too.
++		 */
++		memset((u8 *)vec->ctext, 0, vec->len);
++	}
+ done:
+ 	snprintf(name, max_namelen, "\"random: len=%u klen=%u\"",
+ 		 vec->len, vec->klen);
 -- 
 2.20.1
 
