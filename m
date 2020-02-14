@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B112915E2BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:25:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7716715E2D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:25:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393331AbgBNQZG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:25:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59134 "EHLO mail.kernel.org"
+        id S2393357AbgBNQZJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:25:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393341AbgBNQXH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:23:07 -0500
+        id S2389207AbgBNQXL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:23:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A6A02475E;
-        Fri, 14 Feb 2020 16:23:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6475024761;
+        Fri, 14 Feb 2020 16:23:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697386;
-        bh=AHEsC+E3W2xJQbzUvuMY92P8qdh5Jea/uQfL/fYkVJo=;
+        s=default; t=1581697390;
+        bh=S/7wKCFsMpQXLfwmfnjbr6se+wh/HZTqdiZYHh5D5iE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EeA/n7SZ2JucN9//MSkwkKY9gdEtUiM6AKRhnV02qp74OGM81upGHakwGxLO0eQwj
-         40cejI8Rb8CoqpAYLoID4e4PkMlENYy1NGwCM2dzvdrJ21qiqkaNkf2ZIrb3Ij1fOl
-         AQc/OGI1yRKWnp4rWhhuilQ2SqWPY/BOLXJhSuVM=
+        b=oPpiVPO2/hu904iDyXORSXNyUG4ntS9c6huIYyjQbrQRlqNq1uiGOXeQMG2xXqcQv
+         Dy8qvNa7LApGUau1cieLaX4zhJodL5EKi2JhN9VIq/dBgYMkA0HLc5TdxRDMWOaF5u
+         hMShyLtGq3k6f8FT1ennPP1v4wNhcMNRCUSuWlew=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Shuah Khan <skhan@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 082/141] usbip: Fix unsafe unaligned pointer usage
-Date:   Fri, 14 Feb 2020 11:20:22 -0500
-Message-Id: <20200214162122.19794-82-sashal@kernel.org>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        =?UTF-8?q?Karl=20Rudb=C3=A6k=20Olsen?= <karl@micro-technic.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 085/141] ARM: dts: at91: sama5d3: fix maximum peripheral clock rates
+Date:   Fri, 14 Feb 2020 11:20:25 -0500
+Message-Id: <20200214162122.19794-85-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214162122.19794-1-sashal@kernel.org>
 References: <20200214162122.19794-1-sashal@kernel.org>
@@ -44,151 +45,176 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shuah Khan <skhan@linuxfoundation.org>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit 585c91f40d201bc564d4e76b83c05b3b5363fe7e ]
+[ Upstream commit ee0aa926ddb0bd8ba59e33e3803b3b5804e3f5da ]
 
-Fix unsafe unaligned pointer usage in usbip network interfaces. usbip tool
-build fails with new gcc -Werror=address-of-packed-member checks.
+Currently the maximum rate for peripheral clock is calculated based on a
+typical 133MHz MCK. The maximum frequency is defined in the datasheet as a
+ratio to MCK. Some sama5d3 platforms are using a 166MHz MCK. Update the
+device trees to match the maximum rate based on 166MHz.
 
-usbip_network.c: In function ‘usbip_net_pack_usb_device’:
-usbip_network.c:79:32: error: taking address of packed member of ‘struct usbip_usb_device’ may result in an unaligned pointer value [-Werror=address-of-packed-member]
-   79 |  usbip_net_pack_uint32_t(pack, &udev->busnum);
-
-Fix with minor changes to pass by value instead of by address.
-
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-Link: https://lore.kernel.org/r/20200109012416.2875-1-skhan@linuxfoundation.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: Karl Rudbæk Olsen <karl@micro-technic.com>
+Fixes: d2e8190b7916 ("ARM: at91/dt: define sama5d3 clocks")
+Link: https://lore.kernel.org/r/20200110172007.1253659-1-alexandre.belloni@bootlin.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/usb/usbip/src/usbip_network.c | 40 +++++++++++++++++------------
- tools/usb/usbip/src/usbip_network.h | 12 +++------
- 2 files changed, 27 insertions(+), 25 deletions(-)
+ arch/arm/boot/dts/sama5d3.dtsi      | 28 ++++++++++++++--------------
+ arch/arm/boot/dts/sama5d3_can.dtsi  |  4 ++--
+ arch/arm/boot/dts/sama5d3_uart.dtsi |  4 ++--
+ 3 files changed, 18 insertions(+), 18 deletions(-)
 
-diff --git a/tools/usb/usbip/src/usbip_network.c b/tools/usb/usbip/src/usbip_network.c
-index b4c37e76a6e08..187dfaa67d0a2 100644
---- a/tools/usb/usbip/src/usbip_network.c
-+++ b/tools/usb/usbip/src/usbip_network.c
-@@ -62,39 +62,39 @@ void usbip_setup_port_number(char *arg)
- 	info("using port %d (\"%s\")", usbip_port, usbip_port_string);
- }
+diff --git a/arch/arm/boot/dts/sama5d3.dtsi b/arch/arm/boot/dts/sama5d3.dtsi
+index 4c84d333fc7e6..33c0d26689347 100644
+--- a/arch/arm/boot/dts/sama5d3.dtsi
++++ b/arch/arm/boot/dts/sama5d3.dtsi
+@@ -1109,49 +1109,49 @@
+ 					usart0_clk: usart0_clk {
+ 						#clock-cells = <0>;
+ 						reg = <12>;
+-						atmel,clk-output-range = <0 66000000>;
++						atmel,clk-output-range = <0 83000000>;
+ 					};
  
--void usbip_net_pack_uint32_t(int pack, uint32_t *num)
-+uint32_t usbip_net_pack_uint32_t(int pack, uint32_t num)
- {
- 	uint32_t i;
+ 					usart1_clk: usart1_clk {
+ 						#clock-cells = <0>;
+ 						reg = <13>;
+-						atmel,clk-output-range = <0 66000000>;
++						atmel,clk-output-range = <0 83000000>;
+ 					};
  
- 	if (pack)
--		i = htonl(*num);
-+		i = htonl(num);
- 	else
--		i = ntohl(*num);
-+		i = ntohl(num);
+ 					usart2_clk: usart2_clk {
+ 						#clock-cells = <0>;
+ 						reg = <14>;
+-						atmel,clk-output-range = <0 66000000>;
++						atmel,clk-output-range = <0 83000000>;
+ 					};
  
--	*num = i;
-+	return i;
- }
+ 					usart3_clk: usart3_clk {
+ 						#clock-cells = <0>;
+ 						reg = <15>;
+-						atmel,clk-output-range = <0 66000000>;
++						atmel,clk-output-range = <0 83000000>;
+ 					};
  
--void usbip_net_pack_uint16_t(int pack, uint16_t *num)
-+uint16_t usbip_net_pack_uint16_t(int pack, uint16_t num)
- {
- 	uint16_t i;
+ 					uart0_clk: uart0_clk {
+ 						#clock-cells = <0>;
+ 						reg = <16>;
+-						atmel,clk-output-range = <0 66000000>;
++						atmel,clk-output-range = <0 83000000>;
+ 					};
  
- 	if (pack)
--		i = htons(*num);
-+		i = htons(num);
- 	else
--		i = ntohs(*num);
-+		i = ntohs(num);
+ 					twi0_clk: twi0_clk {
+ 						reg = <18>;
+ 						#clock-cells = <0>;
+-						atmel,clk-output-range = <0 16625000>;
++						atmel,clk-output-range = <0 41500000>;
+ 					};
  
--	*num = i;
-+	return i;
- }
+ 					twi1_clk: twi1_clk {
+ 						#clock-cells = <0>;
+ 						reg = <19>;
+-						atmel,clk-output-range = <0 16625000>;
++						atmel,clk-output-range = <0 41500000>;
+ 					};
  
- void usbip_net_pack_usb_device(int pack, struct usbip_usb_device *udev)
- {
--	usbip_net_pack_uint32_t(pack, &udev->busnum);
--	usbip_net_pack_uint32_t(pack, &udev->devnum);
--	usbip_net_pack_uint32_t(pack, &udev->speed);
-+	udev->busnum = usbip_net_pack_uint32_t(pack, udev->busnum);
-+	udev->devnum = usbip_net_pack_uint32_t(pack, udev->devnum);
-+	udev->speed = usbip_net_pack_uint32_t(pack, udev->speed);
+ 					twi2_clk: twi2_clk {
+ 						#clock-cells = <0>;
+ 						reg = <20>;
+-						atmel,clk-output-range = <0 16625000>;
++						atmel,clk-output-range = <0 41500000>;
+ 					};
  
--	usbip_net_pack_uint16_t(pack, &udev->idVendor);
--	usbip_net_pack_uint16_t(pack, &udev->idProduct);
--	usbip_net_pack_uint16_t(pack, &udev->bcdDevice);
-+	udev->idVendor = usbip_net_pack_uint16_t(pack, udev->idVendor);
-+	udev->idProduct = usbip_net_pack_uint16_t(pack, udev->idProduct);
-+	udev->bcdDevice = usbip_net_pack_uint16_t(pack, udev->bcdDevice);
- }
+ 					mci0_clk: mci0_clk {
+@@ -1167,19 +1167,19 @@
+ 					spi0_clk: spi0_clk {
+ 						#clock-cells = <0>;
+ 						reg = <24>;
+-						atmel,clk-output-range = <0 133000000>;
++						atmel,clk-output-range = <0 166000000>;
+ 					};
  
- void usbip_net_pack_usb_interface(int pack __attribute__((unused)),
-@@ -141,6 +141,14 @@ ssize_t usbip_net_send(int sockfd, void *buff, size_t bufflen)
- 	return usbip_net_xmit(sockfd, buff, bufflen, 1);
- }
+ 					spi1_clk: spi1_clk {
+ 						#clock-cells = <0>;
+ 						reg = <25>;
+-						atmel,clk-output-range = <0 133000000>;
++						atmel,clk-output-range = <0 166000000>;
+ 					};
  
-+static inline void usbip_net_pack_op_common(int pack,
-+					    struct op_common *op_common)
-+{
-+	op_common->version = usbip_net_pack_uint16_t(pack, op_common->version);
-+	op_common->code = usbip_net_pack_uint16_t(pack, op_common->code);
-+	op_common->status = usbip_net_pack_uint32_t(pack, op_common->status);
-+}
-+
- int usbip_net_send_op_common(int sockfd, uint32_t code, uint32_t status)
- {
- 	struct op_common op_common;
-@@ -152,7 +160,7 @@ int usbip_net_send_op_common(int sockfd, uint32_t code, uint32_t status)
- 	op_common.code    = code;
- 	op_common.status  = status;
+ 					tcb0_clk: tcb0_clk {
+ 						#clock-cells = <0>;
+ 						reg = <26>;
+-						atmel,clk-output-range = <0 133000000>;
++						atmel,clk-output-range = <0 166000000>;
+ 					};
  
--	PACK_OP_COMMON(1, &op_common);
-+	usbip_net_pack_op_common(1, &op_common);
+ 					pwm_clk: pwm_clk {
+@@ -1190,7 +1190,7 @@
+ 					adc_clk: adc_clk {
+ 						#clock-cells = <0>;
+ 						reg = <29>;
+-						atmel,clk-output-range = <0 66000000>;
++						atmel,clk-output-range = <0 83000000>;
+ 					};
  
- 	rc = usbip_net_send(sockfd, &op_common, sizeof(op_common));
- 	if (rc < 0) {
-@@ -176,7 +184,7 @@ int usbip_net_recv_op_common(int sockfd, uint16_t *code)
- 		goto err;
- 	}
+ 					dma0_clk: dma0_clk {
+@@ -1221,13 +1221,13 @@
+ 					ssc0_clk: ssc0_clk {
+ 						#clock-cells = <0>;
+ 						reg = <38>;
+-						atmel,clk-output-range = <0 66000000>;
++						atmel,clk-output-range = <0 83000000>;
+ 					};
  
--	PACK_OP_COMMON(0, &op_common);
-+	usbip_net_pack_op_common(0, &op_common);
+ 					ssc1_clk: ssc1_clk {
+ 						#clock-cells = <0>;
+ 						reg = <39>;
+-						atmel,clk-output-range = <0 66000000>;
++						atmel,clk-output-range = <0 83000000>;
+ 					};
  
- 	if (op_common.version != USBIP_VERSION) {
- 		dbg("version mismatch: %d %d", op_common.version,
-diff --git a/tools/usb/usbip/src/usbip_network.h b/tools/usb/usbip/src/usbip_network.h
-index c1e875cf1078c..573fa839b66b7 100644
---- a/tools/usb/usbip/src/usbip_network.h
-+++ b/tools/usb/usbip/src/usbip_network.h
-@@ -33,12 +33,6 @@ struct op_common {
+ 					sha_clk: sha_clk {
+diff --git a/arch/arm/boot/dts/sama5d3_can.dtsi b/arch/arm/boot/dts/sama5d3_can.dtsi
+index c5a3772741bf6..0fac79f75c06c 100644
+--- a/arch/arm/boot/dts/sama5d3_can.dtsi
++++ b/arch/arm/boot/dts/sama5d3_can.dtsi
+@@ -37,13 +37,13 @@
+ 					can0_clk: can0_clk {
+ 						#clock-cells = <0>;
+ 						reg = <40>;
+-						atmel,clk-output-range = <0 66000000>;
++						atmel,clk-output-range = <0 83000000>;
+ 					};
  
- } __attribute__((packed));
+ 					can1_clk: can1_clk {
+ 						#clock-cells = <0>;
+ 						reg = <41>;
+-						atmel,clk-output-range = <0 66000000>;
++						atmel,clk-output-range = <0 83000000>;
+ 					};
+ 				};
+ 			};
+diff --git a/arch/arm/boot/dts/sama5d3_uart.dtsi b/arch/arm/boot/dts/sama5d3_uart.dtsi
+index 2511d748867bd..71818c7bfb673 100644
+--- a/arch/arm/boot/dts/sama5d3_uart.dtsi
++++ b/arch/arm/boot/dts/sama5d3_uart.dtsi
+@@ -42,13 +42,13 @@
+ 					uart0_clk: uart0_clk {
+ 						#clock-cells = <0>;
+ 						reg = <16>;
+-						atmel,clk-output-range = <0 66000000>;
++						atmel,clk-output-range = <0 83000000>;
+ 					};
  
--#define PACK_OP_COMMON(pack, op_common)  do {\
--	usbip_net_pack_uint16_t(pack, &(op_common)->version);\
--	usbip_net_pack_uint16_t(pack, &(op_common)->code);\
--	usbip_net_pack_uint32_t(pack, &(op_common)->status);\
--} while (0)
--
- /* ---------------------------------------------------------------------- */
- /* Dummy Code */
- #define OP_UNSPEC	0x00
-@@ -164,11 +158,11 @@ struct op_devlist_reply_extra {
- } while (0)
- 
- #define PACK_OP_DEVLIST_REPLY(pack, reply)  do {\
--	usbip_net_pack_uint32_t(pack, &(reply)->ndev);\
-+	(reply)->ndev = usbip_net_pack_uint32_t(pack, (reply)->ndev);\
- } while (0)
- 
--void usbip_net_pack_uint32_t(int pack, uint32_t *num);
--void usbip_net_pack_uint16_t(int pack, uint16_t *num);
-+uint32_t usbip_net_pack_uint32_t(int pack, uint32_t num);
-+uint16_t usbip_net_pack_uint16_t(int pack, uint16_t num);
- void usbip_net_pack_usb_device(int pack, struct usbip_usb_device *udev);
- void usbip_net_pack_usb_interface(int pack, struct usbip_usb_interface *uinf);
- 
+ 					uart1_clk: uart1_clk {
+ 						#clock-cells = <0>;
+ 						reg = <17>;
+-						atmel,clk-output-range = <0 66000000>;
++						atmel,clk-output-range = <0 83000000>;
+ 					};
+ 				};
+ 			};
 -- 
 2.20.1
 
