@@ -2,87 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2360D15E9DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:10:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D9EA15EA2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:12:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392254AbgBNRKA convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 14 Feb 2020 12:10:00 -0500
-Received: from muru.com ([72.249.23.125]:55280 "EHLO muru.com"
+        id S2403996AbgBNRLv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:11:51 -0500
+Received: from mga06.intel.com ([134.134.136.31]:10329 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394586AbgBNRJv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 12:09:51 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 0E82B80E7;
-        Fri, 14 Feb 2020 17:10:33 +0000 (UTC)
-Date:   Fri, 14 Feb 2020 09:09:46 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Sebastian Reichel <sre@kernel.org>
-Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        "Arthur D ." <spinal.by@gmail.com>,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        Merlijn Wajer <merlijn@wizzup.org>, Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH] ASoC: ti: Allocate dais dynamically for TDM and audio
- graph card
-Message-ID: <20200214170946.GB64767@atomide.com>
-References: <20200211171645.41990-1-tony@atomide.com>
- <cd46c6ec-80e3-332f-4922-e58a3acbfc61@ti.com>
- <20200212143543.GI64767@atomide.com>
- <20200214003452.xuadnylj2udqyljs@earth.universe>
- <20200214013454.GX64767@atomide.com>
- <20200214130428.gkhmr55ptmi2bh2x@earth.universe>
+        id S2394490AbgBNRLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 12:11:47 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2020 09:11:46 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,441,1574150400"; 
+   d="scan'208";a="234517959"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by orsmga003.jf.intel.com with ESMTP; 14 Feb 2020 09:11:46 -0800
+Date:   Fri, 14 Feb 2020 09:11:46 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jethro Beekman <jethro@fortanix.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
+        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
+        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
+        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
+        rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
+        linux-security-module@vger.kernel.org,
+        Haitao Huang <haitao.huang@linux.intel.com>
+Subject: Re: [PATCH v26 10/22] x86/sgx: Linux Enclave Driver
+Message-ID: <20200214171146.GD20690@linux.intel.com>
+References: <20200209212609.7928-1-jarkko.sakkinen@linux.intel.com>
+ <20200209212609.7928-11-jarkko.sakkinen@linux.intel.com>
+ <d17c50a7-6900-731b-43a2-d6e49b8eb44d@fortanix.com>
+ <20200213180737.GC18610@linux.intel.com>
+ <a4d9a58d-6984-5894-f6c8-73f2b2b466aa@fortanix.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20200214130428.gkhmr55ptmi2bh2x@earth.universe>
+In-Reply-To: <a4d9a58d-6984-5894-f6c8-73f2b2b466aa@fortanix.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Sebastian Reichel <sre@kernel.org> [200214 13:05]:
-> On Thu, Feb 13, 2020 at 05:34:54PM -0800, Tony Lindgren wrote:
-> > And bluetooth would be similar to cpcap_audio and mot_mdm6600_audio
-> > above.
-> 
-> My understanding is, that CPU is not involved for calls (except for
-> setting up cpcap registers correctly). Basically McBSP3 should
-> remain idle for a call and data goes directly from modem to cpcap.
-> The same should work for modem <-> BT, except that CPCAP seems to
-> always provide the clock. That would imply a direct link between
-> modem and codec / BT?
-
-Yes the direct link is i2s. I'm ot sure if mcbsp can be idle during
-voice call though, I guess it should be doable since mcbsp is not
-the clock master :)
-
-> > My guess is that only cpcap registers and clock rate needs to be
-> > changed for bluetooth audio BTW, so if somebody havs a bluetooth
-> > headset just do the following in Android:
+On Fri, Feb 14, 2020 at 10:24:10AM +0100, Jethro Beekman wrote:
+> On 2020-02-13 19:07, Sean Christopherson wrote:
+> > On Thu, Feb 13, 2020 at 02:59:52PM +0100, Jethro Beekman wrote:
+> >> On 2020-02-09 22:25, Jarkko Sakkinen wrote:
+> >>> +/**
+> >>> + * struct sgx_enclave_add_pages - parameter structure for the
+> >>> + *                                %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
+> >>> + * @src:	start address for the page data
+> >>> + * @offset:	starting page offset
+> >>> + * @length:	length of the data (multiple of the page size)
+> >>> + * @secinfo:	address for the SECINFO data
+> >>> + * @flags:	page control flags
+> >>> + * @count:	number of bytes added (multiple of the page size)
+> >>> + */
+> >>> +struct sgx_enclave_add_pages {
+> >>> +	__u64	src;
+> >>> +	__u64	offset;
+> >>> +	__u64	length;
+> >>> +	__u64	secinfo;
+> >>> +	__u64	flags;
+> >>> +	__u64	count;
+> >>> +};
+> >>
+> >> Compared to the last time I looked at the patch set, this API removes the
+> >> ability to measure individual pages chunks. That is not acceptable.
 > > 
-> > # cpcaprw --all > /tmp/before
-> > configure bluetooth headset for audio in android and start
-> > playing some music or make a phone call
-> > ...
-> > # cpcaprw --all > /tmp/after
-> > stop playing music or phone call
-> > ...
-> > diff -u /tmp/before /tmp/after
-> > 
-> > The registers will be different for a bluetooth phone call and
-> > playing music.
+> > Why is it not acceptable?  E.g. what specific use case do you have that
+> > _requires_ on measuring partial 4k pages of an enclave?
 > 
-> I can provider register values once I find some time.
+> The use case is someone gives me an enclave and I want to load it. If I don't
+> load it exactly as the enclave author specified, the enclave hash will be
+> different, and it won't work.
 
-OK great.
-
-Regards,
-
-Tony
-
+And if our ABI says "thou shall measure in 4k chunks", then it's an invalid
+enclave if its author generated MRENCLAVE using a different granularity.
