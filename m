@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27B0F15EC24
+	by mail.lfdr.de (Postfix) with ESMTP id 920AA15EC25
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:25:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390444AbgBNQIw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:08:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60074 "EHLO mail.kernel.org"
+        id S2391085AbgBNQIx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:08:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390887AbgBNQIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:08:15 -0500
+        id S2390894AbgBNQIQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:08:16 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A3F712067D;
-        Fri, 14 Feb 2020 16:08:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EDA7B222C2;
+        Fri, 14 Feb 2020 16:08:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696494;
-        bh=tRYepbfaD7Zd5Bn6ptVzfWced5IDJEWaxH48PkLZIew=;
+        s=default; t=1581696495;
+        bh=hVrg8rRe/pnLXFS4sp1Q4wJtlR5vsf1nCybQKCaUqxU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y2fKV6h4UNlT6IYgssJGz697jNmxKJwmlw4Znuv1paPsm4VIVEHAl1FiZntqkp8pp
-         /3Df1+kjz2iWpx8WbjlCi0pQ3x1o0lv5PYB0NxR22cGUrBQLSw3Coo7g2AQfEr45r5
-         wVMcUg2fFoKoRHmnGkJzMpQPoDSDlnK8vdUQDeQM=
+        b=v1guLAlOIhd7gexJlXb4Z2HIX8s44vSZM4cXZJfpSEjrZeEb19lZXZrpyNKE7GzLV
+         gu8jUGwLrpdMN8RkMv6Jnx1SBJwNOIEWfZwaVg5YjLulyl07K3kFwcgVtRtLjCbZeE
+         n4ZNY143SoN0XMf8gZJn/xCLUyeor4O2JXYu12kE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Derek Kiernan <derek.kiernan@xilinx.com>,
-        Dragan Cvetic <dragan.cvetic@xilinx.com>,
+Cc:     Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 299/459] misc: xilinx_sdfec: fix xsdfec_poll()'s return type
-Date:   Fri, 14 Feb 2020 10:59:09 -0500
-Message-Id: <20200214160149.11681-299-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, sparmaintainer@unisys.com
+Subject: [PATCH AUTOSEL 5.4 300/459] visorbus: fix uninitialized variable access
+Date:   Fri, 14 Feb 2020 10:59:10 -0500
+Message-Id: <20200214160149.11681-300-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -46,62 +43,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit fa4e7fc1386078edcfddd8848cb0374f4af74fe7 ]
+[ Upstream commit caf82f727e69b647f09d57a1fc56e69d22a5f483 ]
 
-xsdfec_poll() is defined as returning 'unsigned int' but the
-.poll method is declared as returning '__poll_t', a bitwise type.
+The setup_crash_devices_work_queue function only partially initializes
+the message it sends to chipset_init, leading to undefined behavior:
 
-Fix this by using the proper return type and using the EPOLL
-constants instead of the POLL ones, as required for __poll_t.
+drivers/visorbus/visorchipset.c: In function 'setup_crash_devices_work_queue':
+drivers/visorbus/visorchipset.c:333:6: error: '((unsigned char*)&msg.hdr.flags)[0]' is used uninitialized in this function [-Werror=uninitialized]
+  if (inmsg->hdr.flags.response_expected)
 
-CC: Derek Kiernan <derek.kiernan@xilinx.com>
-CC: Dragan Cvetic <dragan.cvetic@xilinx.com>
-Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Acked-by: Dragan Cvetic <dragan.cvetic@xilinx.com>
-Link: https://lore.kernel.org/r/20191209213655.57985-1-luc.vanoostenryck@gmail.com
+Set up the entire structure, zero-initializing the 'response_expected'
+flag.
+
+This was apparently found by the patch that added the -O3 build option
+in Kconfig.
+
+Fixes: 12e364b9f08a ("staging: visorchipset driver to provide registration and other services")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Link: https://lore.kernel.org/r/20200107202950.782951-1-arnd@arndb.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/misc/xilinx_sdfec.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/visorbus/visorchipset.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/misc/xilinx_sdfec.c b/drivers/misc/xilinx_sdfec.c
-index 11835969e9828..48ba7e02bed72 100644
---- a/drivers/misc/xilinx_sdfec.c
-+++ b/drivers/misc/xilinx_sdfec.c
-@@ -1025,25 +1025,25 @@ static long xsdfec_dev_compat_ioctl(struct file *file, unsigned int cmd,
- }
- #endif
- 
--static unsigned int xsdfec_poll(struct file *file, poll_table *wait)
-+static __poll_t xsdfec_poll(struct file *file, poll_table *wait)
+diff --git a/drivers/visorbus/visorchipset.c b/drivers/visorbus/visorchipset.c
+index ca752b8f495fa..cb1eb7e05f871 100644
+--- a/drivers/visorbus/visorchipset.c
++++ b/drivers/visorbus/visorchipset.c
+@@ -1210,14 +1210,17 @@ static void setup_crash_devices_work_queue(struct work_struct *work)
  {
--	unsigned int mask = 0;
-+	__poll_t mask = 0;
- 	struct xsdfec_dev *xsdfec;
+ 	struct controlvm_message local_crash_bus_msg;
+ 	struct controlvm_message local_crash_dev_msg;
+-	struct controlvm_message msg;
++	struct controlvm_message msg = {
++		.hdr.id = CONTROLVM_CHIPSET_INIT,
++		.cmd.init_chipset = {
++			.bus_count = 23,
++			.switch_count = 0,
++		},
++	};
+ 	u32 local_crash_msg_offset;
+ 	u16 local_crash_msg_count;
  
- 	xsdfec = container_of(file->private_data, struct xsdfec_dev, miscdev);
- 
- 	if (!xsdfec)
--		return POLLNVAL | POLLHUP;
-+		return EPOLLNVAL | EPOLLHUP;
- 
- 	poll_wait(file, &xsdfec->waitq, wait);
- 
- 	/* XSDFEC ISR detected an error */
- 	spin_lock_irqsave(&xsdfec->error_data_lock, xsdfec->flags);
- 	if (xsdfec->state_updated)
--		mask |= POLLIN | POLLPRI;
-+		mask |= EPOLLIN | EPOLLPRI;
- 
- 	if (xsdfec->stats_updated)
--		mask |= POLLIN | POLLRDNORM;
-+		mask |= EPOLLIN | EPOLLRDNORM;
- 	spin_unlock_irqrestore(&xsdfec->error_data_lock, xsdfec->flags);
- 
- 	return mask;
+ 	/* send init chipset msg */
+-	msg.hdr.id = CONTROLVM_CHIPSET_INIT;
+-	msg.cmd.init_chipset.bus_count = 23;
+-	msg.cmd.init_chipset.switch_count = 0;
+ 	chipset_init(&msg);
+ 	/* get saved message count */
+ 	if (visorchannel_read(chipset_dev->controlvm_channel,
 -- 
 2.20.1
 
