@@ -2,65 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9650015F8A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 22:19:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B460D15F8B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 22:23:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389321AbgBNVSj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 16:18:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51486 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730459AbgBNVSg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 16:18:36 -0500
-Received: from localhost (unknown [65.119.211.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2389087AbgBNVXa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 16:23:30 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:23218 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728741AbgBNVXa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 16:23:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581715408;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=wVVyuecHVtlhk7EhdI8+dEdFCvdA4cReUnIw+jCKbOs=;
+        b=QqBAHjXwg1wOs/PalqpW02f3f4Yq9u3FcCKuYulq9g2r3RDpN6OPlAmh5KTRjhQmQ1BMNF
+        KsbuUyWSGRB4/S2CdqnOelsQPCD0eCbKn6vO6eg86CgkdkiR7f0tjMasAUMOU2psct0dua
+        IxRZUrxgpQs5mNra9N+bbqmbjRNfIUw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-431-RfyJzzHnPOCFAEI2Hcc5Hw-1; Fri, 14 Feb 2020 16:23:24 -0500
+X-MC-Unique: RfyJzzHnPOCFAEI2Hcc5Hw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 717AB24649;
-        Fri, 14 Feb 2020 21:18:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581715115;
-        bh=Uzqk7dvc4/so2Sog967beDxTUsqE4HY78f8gCHtW3E0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gd9hl6T29dSfp+Ymf5tBk+eXTpiKOpAaz1aRaAftfpj1WGd5bRva4vBPsnlsbWE6I
-         jGqXgfx66wr2IKNS0lvwUZS9D/0anYiblydM2dInJ2hDrqia3rY9pzspf/CavA/Z2h
-         kKAyBMGrfsKLDocdFBi3CJKh4eckzaXMGtGTD0O4=
-Date:   Fri, 14 Feb 2020 16:18:07 -0500
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 5.5 000/120] 5.5.4-stable review
-Message-ID: <20200214211807.GB4144398@kroah.com>
-References: <20200213151901.039700531@linuxfoundation.org>
- <20200214162829.GD18488@roeck-us.net>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 04F728017CC;
+        Fri, 14 Feb 2020 21:23:22 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 32C5C1001B0B;
+        Fri, 14 Feb 2020 21:23:20 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v3 00/12] Enable per-file/directory DAX operations V3
+References: <20200208193445.27421-1-ira.weiny@intel.com>
+        <x49imke1nj0.fsf@segfault.boston.devel.redhat.com>
+        <20200211201718.GF12866@iweiny-DESK2.sc.intel.com>
+        <x49sgjf1t7n.fsf@segfault.boston.devel.redhat.com>
+        <20200213190156.GA22854@iweiny-DESK2.sc.intel.com>
+        <20200213190513.GB22854@iweiny-DESK2.sc.intel.com>
+        <20200213195839.GG6870@magnolia>
+        <20200213232923.GC22854@iweiny-DESK2.sc.intel.com>
+        <CAPcyv4hkWoC+xCqicH1DWzmU2DcpY0at_A6HaBsrdLbZ6qzWow@mail.gmail.com>
+        <20200214200607.GA18593@iweiny-DESK2.sc.intel.com>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Fri, 14 Feb 2020 16:23:19 -0500
+In-Reply-To: <20200214200607.GA18593@iweiny-DESK2.sc.intel.com> (Ira Weiny's
+        message of "Fri, 14 Feb 2020 12:06:07 -0800")
+Message-ID: <x4936bcdfso.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200214162829.GD18488@roeck-us.net>
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 08:28:29AM -0800, Guenter Roeck wrote:
-> On Thu, Feb 13, 2020 at 07:19:56AM -0800, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.5.4 release.
-> > There are 120 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sat, 15 Feb 2020 15:16:41 +0000.
-> > Anything received after that time might be too late.
-> > 
-> 
-> For v5.5.3-121-ged6d023a1817:
-> 
-> Build results:
-> 	total: 157 pass: 157 fail: 0
-> Qemu test results:
-> 	total: 400 pass: 400 fail: 0
+Ira Weiny <ira.weiny@intel.com> writes:
 
-Great, thanks for testing all of these and letting me know.
+> [disclaimer: the following assumes the underlying 'device' (superblock)
+> supports DAX]
+>
+> ... which results in S_DAX == false when the file is opened without the mount
+> option.  The key would be that all directories/files created under a root with
+> XFS_DIFLAG2_DAX == true would inherit their flag and be XFS_DIFLAG2_DAX == true
+> all the way down the tree.  Any file not wanting DAX would need to set
+> XFS_DIFLAG2_DAX == false.  And setting false could be used on a directory to
+> allow a user or group to not use dax on files in that sub-tree.
+>
+> Then without '-o dax' (XFS_MOUNT_DAX == false) all files when opened set S_DAX
+> equal to XFS_DIFLAG2_DAX value.  (Directories, as of V4, never get S_DAX set.)
+>
+> If '-o dax' (XFS_MOUNT_DAX == true) then S_DAX is set on all files.
 
-greg k-h
+One more clarifying question.  Let's say I set XFS_DIFLAG2_DAX on an
+inode.  I then open the file, and perform mmap/load/store/etc.  I close
+the file, and I unset XFS_DIFLAG2_DAX.  Will the next open treat the
+file as S_DAX or not?  My guess is the inode won't be evicted, and so
+S_DAX will remain set.
+
+The reason I ask is I've had requests from application developers to do
+just this.  They want to be able to switch back and forth between dax
+modes.
+
+Thanks,
+Jeff
+
+> [1] I'm beginning to think that if I type dax one more time I'm going to go
+> crazy...  :-P
+
+dax dax dax!
+
