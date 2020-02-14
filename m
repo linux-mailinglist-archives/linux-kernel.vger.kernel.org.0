@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9028715F801
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 21:48:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1167415F802
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 21:48:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388255AbgBNUss (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 15:48:48 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35339 "EHLO
+        id S2388380AbgBNUsu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 15:48:50 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42406 "EHLO
         mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387963AbgBNUsp (ORCPT
+        with ESMTP id S2388171AbgBNUsq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 15:48:45 -0500
-Received: by mail-wr1-f67.google.com with SMTP id w12so12470124wrt.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 12:48:44 -0800 (PST)
+        Fri, 14 Feb 2020 15:48:46 -0500
+Received: by mail-wr1-f67.google.com with SMTP id k11so12451777wrd.9
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 12:48:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=tPSIqzx9vIZmVccTZdN79SZaoDc7U8iHLI6k79OYee8=;
-        b=SAs7Wj9iHmb/zSwkTvomEzdPbXq05Sd9SaBEFloQT7W0rfNjR9tK19jHCfSIwa/dUm
-         XR0rMeBEPnCmXd3X1lvxtlyTyJjVqoWcpb4IFPIZ5hICg6Vb3mXfBQ65NOCGrzo1QLhs
-         0D02676HGo5ppmbbpbdyg594eE163CNSxpzrM1IU8Vr35ikBgantlnwews8zOklU1sED
-         S6MWwQrm/GL36VREjr1N9KgwSyK+N0i44mcb861KvthYaN28zGAR2JLi+u7YThgEBNR3
-         D1nMQjzSQKJOgwccLk5YZFEDVOiaqiu291FZosOTzK36BpyVDA1PYQWFeFbgi4P8SccC
-         i0OA==
+        bh=fYMUoir6P369DFUPvjd9IwSNVlH2uDcEsa0cDBpYLmc=;
+        b=IH965hYmyOF45cvMjEbRiDZZHOfl7fOe2Zt2qY2QXjTrD5vr4E5o4ASz8NwEfLdoyf
+         8QJ2ggGHOVmUtDfg+vWAdH5Q2dGsRU1nSYUITlgpiO7Rh2xI/Qa6qPAriZdxx4Ed8lhP
+         M62ffg9W1oDsfpS6MIGSI576dgmdWMpUEGvDIWrmdHObOhZiFkh0PNnuBdtD5l17XqZu
+         Ut+cb9B8iSuqnnhoEYEkasVH9Vh4zT/JL3p9zadH9BwHaUTKi6F+SlpuvmmweEK8szLn
+         ipvYMQPdKaczrekBAqMiz+3LYbwNKeIeRsrSTjbQvwT0dltW8NTNL6ZkifJDrLLE1gro
+         J9WA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=tPSIqzx9vIZmVccTZdN79SZaoDc7U8iHLI6k79OYee8=;
-        b=JdWG/l/m4tWQ5FHtSK/DkZW7jlLnH1VkS5mhRkPfZCrbtyXDTyUEz9Hrq/zKiAYBdB
-         R0ie6sZeUKvRPQskH/r0KuxRpkYAleNUTJwFFVpVtfNb3H04f1zXk0KcFQlU0hgcTRDE
-         yDAAE8uzxk8BYMyrTAKTuaTXuJo/e80M2UP1AtAqTt+Ey6r+nSLy2FyleGV2ncQgPbQZ
-         javzy7eYBhEFHYnlxn78dDQG6iTHI1LFamX9hkLY1vK6ucfbDttacEvxEGr3rM2mcgFL
-         +zp0xvmZyXIkQT1c5Yozuy4J2PeIW30oGHs9T6edYCzlZ7OcgqBu1ogJTkUS3vazlVUQ
-         vfYw==
-X-Gm-Message-State: APjAAAV1QDiK8YLEptvB7tvhvBJCcTOukHmTbHvW4PLeBQojgHImqQ1K
-        ZWcJFq1iVVifw2BikSP7lyGHnjZegEYa
-X-Google-Smtp-Source: APXvYqw7skjqb5hmOvClXAQmeSz8gA1tf4s1sD5scej7zfnCJfQl4Ra+Gq0SvjaSdhJmMY/zSq11GA==
-X-Received: by 2002:a5d:6987:: with SMTP id g7mr5612512wru.422.1581713323059;
-        Fri, 14 Feb 2020 12:48:43 -0800 (PST)
+        bh=fYMUoir6P369DFUPvjd9IwSNVlH2uDcEsa0cDBpYLmc=;
+        b=BUPh0qTKMlKsurvuUEaj/cezJZyoaWkNqfGLQKu4FfkSCMA3gcwoKicXfEexDLvr3h
+         Dtwwx6l+YhuIkYQ1IsVpXyoHHJL1qM4hEyO6U7zwRYWeJC3mJsGTmKvTfoZk5l3oxigx
+         ippwduvSPO/2YJ1op3PaMZwABX9x0E4DcoUx+WVplehXYjRGO/t34iV91nr0gruh0HQ5
+         jumuI0YEanMp8juYtEc4b9KxbxQIYPAgR2hCce9ZPdscWCA2IzX+/91q+pxHLMg5vZQg
+         TxABaXE2YuptdOMf7DzgvD393PvBsOaVHwvcPzZWZxHg/io3dyMhnoxiPOh8WKyHLISW
+         QKGQ==
+X-Gm-Message-State: APjAAAUWPURKJ8E5Pt25WshF0urubGKvqYkmW+tCp+ooUcQi/vTibEZU
+        +yDwHbngc937IOzxol9SVkKBo4f8HdRA
+X-Google-Smtp-Source: APXvYqw/O96To8bCrgkPpvj8JepZ3NSkL1ul2b+UKRpE5VHbikhxIVb/2uqKJmL9Jlv+6W9sjjD/Bw==
+X-Received: by 2002:a5d:4085:: with SMTP id o5mr5687888wrp.321.1581713324201;
+        Fri, 14 Feb 2020 12:48:44 -0800 (PST)
 Received: from ninjahost.lan (host-2-102-13-223.as13285.net. [2.102.13.223])
-        by smtp.googlemail.com with ESMTPSA id y12sm8660782wmj.6.2020.02.14.12.48.42
+        by smtp.googlemail.com with ESMTPSA id y12sm8660782wmj.6.2020.02.14.12.48.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2020 12:48:42 -0800 (PST)
+        Fri, 14 Feb 2020 12:48:43 -0800 (PST)
 From:   Jules Irenge <jbi.octave@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     boqun.feng@gmail.com, Jules Irenge <jbi.octave@gmail.com>,
@@ -54,9 +54,9 @@ Cc:     boqun.feng@gmail.com, Jules Irenge <jbi.octave@gmail.com>,
         Joonsoo Kim <iamjoonsoo.kim@lge.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         linux-mm@kvack.org (open list:SLAB ALLOCATOR)
-Subject: [PATCH 08/30] mm/slub: Add missing annotation for get_map()
-Date:   Fri, 14 Feb 2020 20:47:19 +0000
-Message-Id: <20200214204741.94112-9-jbi.octave@gmail.com>
+Subject: [PATCH 09/30] mm/slub: Add missing annotation for put_map()
+Date:   Fri, 14 Feb 2020 20:47:20 +0000
+Message-Id: <20200214204741.94112-10-jbi.octave@gmail.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200214204741.94112-1-jbi.octave@gmail.com>
 References: <0/30>
@@ -68,30 +68,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sparse reports a warning at get_map()()
+Sparse reports a warning at put_map()()
 
- warning: context imbalance in get_map() - wrong count at exit
+ warning: context imbalance in put_map() - unexpected unlock
 
-The root cause is the missing annotation at get_map()
-Add the missing __acquires(&object_map_lock) annotation
+The root cause is the missing annotation at put_map()
+Add the missing __releases(&object_map_lock) annotation
 
 Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
 ---
- mm/slub.c | 1 +
- 1 file changed, 1 insertion(+)
+ mm/slub.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/mm/slub.c b/mm/slub.c
-index 17dc00e33115..3c6d348afcf9 100644
+index 3c6d348afcf9..c273d0f32b8f 100644
 --- a/mm/slub.c
 +++ b/mm/slub.c
-@@ -449,6 +449,7 @@ static DEFINE_SPINLOCK(object_map_lock);
-  * not vanish from under us.
-  */
- static unsigned long *get_map(struct kmem_cache *s, struct page *page)
-+	__acquires(&object_map_lock)
+@@ -466,7 +466,7 @@ static unsigned long *get_map(struct kmem_cache *s, struct page *page)
+ 	return object_map;
+ }
+ 
+-static void put_map(unsigned long *map)
++static void put_map(unsigned long *map) __releases(&object_map_lock)
  {
- 	void *p;
- 	void *addr = page_address(page);
+ 	VM_BUG_ON(map != object_map);
+ 	lockdep_assert_held(&object_map_lock);
 -- 
 2.24.1
 
