@@ -2,280 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1344115D331
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 08:52:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68B7B15D333
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 08:52:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729025AbgBNHv6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 02:51:58 -0500
-Received: from mail-pf1-f202.google.com ([209.85.210.202]:38003 "EHLO
-        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728859AbgBNHv4 (ORCPT
+        id S1729047AbgBNHwY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 02:52:24 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:37045 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728374AbgBNHwX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 02:51:56 -0500
-Received: by mail-pf1-f202.google.com with SMTP id 203so5558834pfx.5
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 23:51:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=X3y8JgVnk/Y9e0wWlm/DnS2whJ3/NHmhaM/cE8sR5AM=;
-        b=UWSOWVyiZEDSHUL+hsZWXqTQHXKv1j/CHtOXetotarbYpgoo7UHWOBBEuy9+7wzbwG
-         YJP8dylj/d/8sdZ07ahHGIL+vPtrXSqtILfNjivnvpyn1PlaSPOe78RhAHpIrA5X1eh8
-         DypxajFX9JdpSfjhRmAEvFdecLF7T4/7dHup4YRpfXPYJmFaT2xredL40Zg7vrfNvwLe
-         +tOq4/NIBr+KmAvR3bPrZWX0hBYrjBBnj4pzE8PmVXnouZ6oAq0fDkrMpJ00wdKTH4Gf
-         YkZkhI/0LfuLdVjQPtYzO8C9D6Tbo52JiYPjtClSygMiyhvhuJU6IeIs9SmmXKA0JI9e
-         tWYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=X3y8JgVnk/Y9e0wWlm/DnS2whJ3/NHmhaM/cE8sR5AM=;
-        b=DgcIEYNKUznY9DI1UblSHTTfdM5acyy35WSsExB2vWdekeWzSHbAX/w4s/iHNzzdHI
-         /68cSdDAubfsyqL5TqIy1uQhqFBnfSC9563P5D2BYxzVCkiv8BSVRoFfB/0ON4NVL4KH
-         fhM9oD9PDLXhU9P9IA5GHI7g/pjla8F0iQ5LpTKJIzEgCTJ8efD9m+op6UZaz5OhpDnz
-         lnXkN4x940BLnhyzuoFaXYFCP6fWtF2KL7pYMyNfdM/7LvJySuQvjMqQ8X+CrBXjcEvk
-         mxvDYfTgamQkT3Lu1qDIW9IHFUgxuihVtW1bQUxP7AbJ0yLOvfVBXCkNKD3AwNbLh+7E
-         z5Xg==
-X-Gm-Message-State: APjAAAU30cdr+DUAtEo/PcjAaWDfRPGwqxrN59iFJXpBOpcRmuuWf/9X
-        pIHz2Mum5OcO3c2h/GFlqV0LM3SQDGl8
-X-Google-Smtp-Source: APXvYqzVNdKxwZfStBbO+rtuI9HYXlVwLC98SDq+6OeQ9VvuCkSzbDmRKC1z8pCIdCWEZPpWAdTpcs5Ie4hH
-X-Received: by 2002:a63:755:: with SMTP id 82mr2156795pgh.154.1581666715949;
- Thu, 13 Feb 2020 23:51:55 -0800 (PST)
-Date:   Thu, 13 Feb 2020 23:51:33 -0800
-In-Reply-To: <20200214075133.181299-1-irogers@google.com>
-Message-Id: <20200214075133.181299-7-irogers@google.com>
-Mime-Version: 1.0
-References: <20191206231539.227585-1-irogers@google.com> <20200214075133.181299-1-irogers@google.com>
-X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
-Subject: [PATCH v6 6/6] perf/cgroup: Order events in RB tree by cgroup id
-From:   Ian Rogers <irogers@google.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Marco Elver <elver@google.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Gary Hook <Gary.Hook@amd.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Cc:     Stephane Eranian <eranian@google.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Ian Rogers <irogers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 14 Feb 2020 02:52:23 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id C1F1722116;
+        Fri, 14 Feb 2020 02:52:22 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Fri, 14 Feb 2020 02:52:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=FfWukEscDXi4AiOAUwFnISerJNT
+        2ulBjdIfmoaDjhfE=; b=Z38/5FwBT6wIDGSePzDRMo4642ClZld+yNMGR+vLRsU
+        i//MH128GCl2EtPqPWssIZtyhUta6Lw3Wo4ML3zsXaYLjdgUh/xNqotb6ulJj7Oj
+        ZaI7JPGJ+ZhcJbQaYrSqmPBJnCvTAc9I31cBKDM3KI9TbnyQaLrj1uRdyoKgPxqW
+        x0bw+3KIkKsztIzi1aOFr0AzETpp/qhh7n6vPKg9cFeTIdGCkiO9Ew8fIZyq53HA
+        yf4X4Q+pK2lLRYCakC52ZHY1WlQvtUC7hztnclpIBUZkSC41Rpw6V6A/rwWU9Zvx
+        onXwUPrzr+SPawEUEPMRsNFwuEi4/ey4Emo9cFlVVkQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=FfWukE
+        scDXi4AiOAUwFnISerJNT2ulBjdIfmoaDjhfE=; b=NKi+uOWDuThMPIsLcRNOoE
+        pS45sqNDvq/FkiQsUlp3x7GL3fXbid8Lf6Twi3KWAOqzQ2yS9bg/A5aJyLjn40Vl
+        9rNx2u+tevyM+/VWRYMfC3uOCtMrpOnma/9u3fA9+nnGTGXUlC+fQUc1EtVfL7Q4
+        hfZudf8aRpKr4J4NFoYNwgmMBKsfxnHG1MAzMF8ypK0E3Dl3KLkfpsLtB4kQ1a4K
+        JqP6q/rxcVyWFVt5KmrCE4fdWwQXcARiWuHavWUGJbaWYcRcHGmxUELLuza0FoB+
+        0u7Gek7FOTABf7sl+ud1ty6KqpCz8c2aDV+KTeHCuRLa/XoF/jDHiJtzs6anzAJQ
+        ==
+X-ME-Sender: <xms:tFFGXkpA1pzCRTjqvFgfaRva6i4lwuyCJbVIZvPMBCW62UBf7O6Qpg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrieelgdduudegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecukfhppeeltd
+    drkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
+    lhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:tFFGXhNgSQ0iQpv9OGOEJ9A-R0hYHZn5-IGI6hKLnQkheCGLD25Dog>
+    <xmx:tFFGXmqDL0f1yuNg8MzbGYMnPazFMFH-sSXv3mquJ4AAXF1GVu8bZA>
+    <xmx:tFFGXsETKERymYp8JggfZEbg-xP5EPPbomwoGFk_1eJd_c6aTPK4HQ>
+    <xmx:tlFGXpbe3nccuQN2oSfBiDUIqwk5IRAeB6NPDoZmwGd0H_qTP64QSg>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 249683280066;
+        Fri, 14 Feb 2020 02:52:20 -0500 (EST)
+Date:   Fri, 14 Feb 2020 08:52:18 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Andrey Lebedev <andrey.lebedev@gmail.com>
+Cc:     wens@csie.org, airlied@linux.ie, daniel@ffwll.ch,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Andrey Lebedev <andrey@lebedev.lt>
+Subject: Re: [PATCH v2 2/2] ARM: sun7i: dts: Add LVDS panel support on A20
+Message-ID: <20200214075218.huxdhmd4qfoakat2@gilmour.lan>
+References: <20200210195633.GA21832@kedthinkpad>
+ <20200212222355.17141-2-andrey.lebedev@gmail.com>
+ <20200213094304.hf3glhgmquypxpyf@gilmour.lan>
+ <20200213200823.GA28336@kedthinkpad>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="x5jathax6z2l7lsv"
+Content-Disposition: inline
+In-Reply-To: <20200213200823.GA28336@kedthinkpad>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If one is monitoring 6 events on 20 cgroups the per-CPU RB tree will
-hold 120 events. The scheduling in of the events currently iterates
-over all events looking to see which events match the task's cgroup or
-its cgroup hierarchy. If a task is in 1 cgroup with 6 events, then 114
-events are considered unnecessarily.
 
-This change orders events in the RB tree by cgroup id if it is present.
-This means scheduling in may go directly to events associated with the
-task's cgroup if one is present. The per-CPU iterator storage in
-visit_groups_merge is sized sufficent for an iterator per cgroup depth,
-where different iterators are needed for the task's cgroup and parent
-cgroups. By considering the set of iterators when visiting, the lowest
-group_index event may be selected and the insertion order group_index
-property is maintained. This also allows event rotation to function
-correctly, as although events are grouped into a cgroup, rotation always
-selects the lowest group_index event to rotate (delete/insert into the
-tree) and the min heap of iterators make it so that the group_index order
-is maintained.
+--x5jathax6z2l7lsv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Ian Rogers <irogers@google.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Link: https://lkml.kernel.org/r/20190724223746.153620-3-irogers@google.com
----
- kernel/events/core.c | 97 +++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 87 insertions(+), 10 deletions(-)
+Hi,
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 4eb4e67463bf..2eb17c2be5fc 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -1577,6 +1577,30 @@ perf_event_groups_less(struct perf_event *left, struct perf_event *right)
- 	if (left->cpu > right->cpu)
- 		return false;
- 
-+#ifdef CONFIG_CGROUP_PERF
-+	if (left->cgrp != right->cgrp) {
-+		if (!left->cgrp || !left->cgrp->css.cgroup) {
-+			/*
-+			 * Left has no cgroup but right does, no cgroups come
-+			 * first.
-+			 */
-+			return true;
-+		}
-+		if (!right->cgrp || right->cgrp->css.cgroup) {
-+			/*
-+			 * Right has no cgroup but left does, no cgroups come
-+			 * first.
-+			 */
-+			return false;
-+		}
-+		/* Two dissimilar cgroups, order by id. */
-+		if (left->cgrp->css.cgroup->kn->id < right->cgrp->css.cgroup->kn->id)
-+			return true;
-+
-+		return false;
-+	}
-+#endif
-+
- 	if (left->group_index < right->group_index)
- 		return true;
- 	if (left->group_index > right->group_index)
-@@ -1656,25 +1680,48 @@ del_event_from_groups(struct perf_event *event, struct perf_event_context *ctx)
- }
- 
- /*
-- * Get the leftmost event in the @cpu subtree.
-+ * Get the leftmost event in the cpu/cgroup subtree.
-  */
- static struct perf_event *
--perf_event_groups_first(struct perf_event_groups *groups, int cpu)
-+perf_event_groups_first(struct perf_event_groups *groups, int cpu,
-+			struct cgroup *cgrp)
- {
- 	struct perf_event *node_event = NULL, *match = NULL;
- 	struct rb_node *node = groups->tree.rb_node;
-+#ifdef CONFIG_CGROUP_PERF
-+	u64 node_cgrp_id, cgrp_id = 0;
-+
-+	if (cgrp)
-+		cgrp_id = cgrp->kn->id;
-+#endif
- 
- 	while (node) {
- 		node_event = container_of(node, struct perf_event, group_node);
- 
- 		if (cpu < node_event->cpu) {
- 			node = node->rb_left;
--		} else if (cpu > node_event->cpu) {
-+			continue;
-+		}
-+		if (cpu > node_event->cpu) {
- 			node = node->rb_right;
--		} else {
--			match = node_event;
-+			continue;
-+		}
-+#ifdef CONFIG_CGROUP_PERF
-+		node_cgrp_id = 0;
-+		if (node_event->cgrp && node_event->cgrp->css.cgroup)
-+			node_cgrp_id = node_event->cgrp->css.cgroup->kn->id;
-+
-+		if (cgrp_id < node_cgrp_id) {
- 			node = node->rb_left;
-+			continue;
-+		}
-+		if (cgrp_id > node_cgrp_id) {
-+			node = node->rb_right;
-+			continue;
- 		}
-+#endif
-+		match = node_event;
-+		node = node->rb_left;
- 	}
- 
- 	return match;
-@@ -1687,12 +1734,26 @@ static struct perf_event *
- perf_event_groups_next(struct perf_event *event)
- {
- 	struct perf_event *next;
-+#ifdef CONFIG_CGROUP_PERF
-+	u64 curr_cgrp_id = 0;
-+	u64 next_cgrp_id = 0;
-+#endif
- 
- 	next = rb_entry_safe(rb_next(&event->group_node), typeof(*event), group_node);
--	if (next && next->cpu == event->cpu)
--		return next;
-+	if (next == NULL || next->cpu != event->cpu)
-+		return NULL;
- 
--	return NULL;
-+#ifdef CONFIG_CGROUP_PERF
-+	if (event->cgrp && event->cgrp->css.cgroup)
-+		curr_cgrp_id = event->cgrp->css.cgroup->kn->id;
-+
-+	if (next->cgrp && next->cgrp->css.cgroup)
-+		next_cgrp_id = next->cgrp->css.cgroup->kn->id;
-+
-+	if (curr_cgrp_id != next_cgrp_id)
-+		return NULL;
-+#endif
-+	return next;
- }
- 
- /*
-@@ -3469,6 +3530,9 @@ static noinline int visit_groups_merge(struct perf_cpu_context *cpuctx,
- 				int (*func)(struct perf_event *, void *),
- 				void *data)
- {
-+#ifdef CONFIG_CGROUP_PERF
-+	struct cgroup_subsys_state *css = NULL;
-+#endif
- 	/* Space for per CPU and/or any CPU event iterators. */
- 	struct perf_event *itrs[2];
- 	struct min_heap event_heap;
-@@ -3484,6 +3548,11 @@ static noinline int visit_groups_merge(struct perf_cpu_context *cpuctx,
- 		};
- 
- 		lockdep_assert_held(&cpuctx->ctx.lock);
-+
-+#ifdef CONFIG_CGROUP_PERF
-+		if (cpuctx->cgrp)
-+			css = &cpuctx->cgrp->css;
-+#endif
- 	} else {
- 		event_heap = (struct min_heap){
- 			.data = itrs,
-@@ -3491,11 +3560,19 @@ static noinline int visit_groups_merge(struct perf_cpu_context *cpuctx,
- 			.cap = ARRAY_SIZE(itrs),
- 		};
- 		/* Events not within a CPU context may be on any CPU. */
--		__heap_add(&event_heap, perf_event_groups_first(groups, -1));
-+		__heap_add(&event_heap, perf_event_groups_first(groups, -1,
-+									NULL));
- 	}
- 	evt = event_heap.data;
- 
--	__heap_add(&event_heap, perf_event_groups_first(groups, cpu));
-+	__heap_add(&event_heap, perf_event_groups_first(groups, cpu, NULL));
-+
-+#ifdef CONFIG_CGROUP_PERF
-+	for (; css; css = css->parent) {
-+		__heap_add(&event_heap, perf_event_groups_first(groups, cpu,
-+								css->cgroup));
-+	}
-+#endif
- 
- 	min_heapify_all(&event_heap, &perf_min_heap);
- 
--- 
-2.25.0.265.gbab2e86ba0-goog
+On Thu, Feb 13, 2020 at 10:08:23PM +0200, Andrey Lebedev wrote:
+> On Thu, Feb 13, 2020 at 10:43:04AM +0100, Maxime Ripard wrote:
+> > On Thu, Feb 13, 2020 at 12:23:57AM +0200, andrey.lebedev@gmail.com wrote:
+> > > From: Andrey Lebedev <andrey@lebedev.lt>
+> > >
+> > > Define pins for LVDS channels 0 and 1, configure reset line for tcon0 and
+> > > provide sample LVDS panel, connected to tcon0.
+> > >
+> > > Signed-off-by: Andrey Lebedev <andrey@lebedev.lt>
+> >
+> > And this prefix should be ARM: dts: sun7i ;)
+>
+> Ah, thanks, I think I've got the pattern now!
+>
+> > > +			/omit-if-no-ref/
+> > > +			lcd_lvds0_pins: lcd_lvds0_pins {
+> >
+> > underscores in the node names will create a dtc warning at
+> > compilation, you should use lcd-lvds0-pins instead.
 
+It's silenced by default, but you'll get them with W=1
+
+> You're right, I wasn't following the naming convention here. dtc doesn't
+> produce any warning on this though. Fixed that anyway.
+>
+> > This will create a spurious warning message for TCON1, since we
+> > adjusted the driver to tell it supports LVDS, but there's no LVDS
+> > reset line, so we need to make it finer grained.
+>
+> Yes, I can attribute two of the messages in my dmesg log [1] to this
+> ("Missing LVDS properties" and "LVDS output disabled". "sun4i-tcon
+> 1c0d000.lcd-controller" is indeed tcon1). And yes, I can see how they
+> can be confusing to someone.
+>
+> I'd need some pointers on how to deal with that though (if we want to do
+> it in this scope).
+
+Like I was mentionning, you could introduce a new compatible for each
+TCON (tcon0 and tcon1) and only set the support_lvds flag for tcon0
+
+Maxime
+
+--x5jathax6z2l7lsv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXkZRsgAKCRDj7w1vZxhR
+xVn9AP0VqLi8/MHY79s8QWyp+/otjpGvsgLBU2Zk6DQhh8ltugD+NXF9PEFDFa8/
+e3b3qvGzp/u5wrJVKi3rJiHrzi/5OAM=
+=c3MI
+-----END PGP SIGNATURE-----
+
+--x5jathax6z2l7lsv--
