@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22F2D15F0B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:57:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBCAC15F0F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:59:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388247AbgBNP5a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:57:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39500 "EHLO mail.kernel.org"
+        id S2389037AbgBNR6c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:58:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388122AbgBNP5G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:57:06 -0500
+        id S2388154AbgBNP5K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:57:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3C732067D;
-        Fri, 14 Feb 2020 15:57:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13EA624689;
+        Fri, 14 Feb 2020 15:57:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695825;
-        bh=7cQc4SRp6iphGymWqLpNl7n+Za/QHc3wM/3uBQapzDQ=;
+        s=default; t=1581695828;
+        bh=KtHUM5HyImmGo6KestKDTwrLLid3F9tW3NA7FWlzLew=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X9Ddffi6E0noNrhTvfMrSZRwGxaomatNG2BxzQIWK5AJsNCNE63QAFNDPbz8aZ1KW
-         K9cPdg/7mm5uPfnaLHmWKwyz8zpr1XDSklGKRW0QQ1rLyPnC0AWsW/DIgVZ8qM5zyF
-         PoHxzhHDLHSlec0cuZRZwPeehL8GQmN1bN2xrhRM=
+        b=YLr/FtZsy760OaGuUu+Kj4dU+L3bxe0Jk5ipA6I3umAY8WfObjF2n81UE07XFpWMO
+         JQ+J2MNPtN3I0n35mNaS/diRBPwDIvCbp7tGXljJNaa5UVFiEB65qi51xhhpRXUTCW
+         vkiX9SK+qnSUcsq6q+1wKGYlazYUka0FJ792z8Mk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Zaibo Xu <xuzaibo@huawei.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 379/542] crypto: hisilicon - Bugfixed tfm leak
-Date:   Fri, 14 Feb 2020 10:46:11 -0500
-Message-Id: <20200214154854.6746-379-sashal@kernel.org>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        kbuild test robot <lkp@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 382/542] PM / devfreq: Add debugfs support with devfreq_summary file
+Date:   Fri, 14 Feb 2020 10:46:14 -0500
+Message-Id: <20200214154854.6746-382-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -43,81 +43,171 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zaibo Xu <xuzaibo@huawei.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
 
-[ Upstream commit dfee9955abc7ec9364413d16316181322cf44f2f ]
+[ Upstream commit 490a421bc575d1bf391a6ad5b582dcfbd0037724 ]
 
-1.Fixed the bug of software tfm leakage.
-2.Update HW error log message.
+Add debugfs interface to provide debugging information of devfreq device.
+It contains 'devfreq_summary' entry to show the summary of registered
+devfreq devices as following and the additional debugfs file will be added.
+- /sys/kernel/debug/devfreq/devfreq_summary
 
-Signed-off-by: Zaibo Xu <xuzaibo@huawei.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+[Detailed description of each field of 'devfreq_summary' debugfs file]
+- dev_name	: Device name of h/w
+- dev		: Device name made by devfreq core
+- parent_dev	: If devfreq device uses the passive governor,
+		  show parent devfreq device name. Otherwise, show 'null'.
+- governor	: Devfreq governor name
+- polling_ms	: If devfreq device uses the simple_ondemand governor,
+		  polling_ms is necessary for the period. (unit: millisecond)
+- cur_freq_Hz	: Current frequency (unit: Hz)
+- min_freq_Hz	: Minimum frequency (unit: Hz)
+- max_freq_Hz	: Maximum frequency (unit: Hz)
+
+[For example on Exynos5422-based Odroid-XU3 board]
+$ cat /sys/kernel/debug/devfreq/devfreq_summary
+dev_name                       dev        parent_dev governor        polling_ms  cur_freq_Hz  min_freq_Hz  max_freq_Hz
+------------------------------ ---------- ---------- --------------- ---------- ------------ ------------ ------------
+10c20000.memory-controller     devfreq0   null       simple_ondemand          0    165000000    165000000    825000000
+soc:bus_wcore                  devfreq1   null       simple_ondemand         50    532000000     88700000    532000000
+soc:bus_noc                    devfreq2   devfreq1   passive                  0    111000000     66600000    111000000
+soc:bus_fsys_apb               devfreq3   devfreq1   passive                  0    222000000    111000000    222000000
+soc:bus_fsys                   devfreq4   devfreq1   passive                  0    200000000     75000000    200000000
+soc:bus_fsys2                  devfreq5   devfreq1   passive                  0    200000000     75000000    200000000
+soc:bus_mfc                    devfreq6   devfreq1   passive                  0    333000000     83250000    333000000
+soc:bus_gen                    devfreq7   devfreq1   passive                  0    266000000     88700000    266000000
+soc:bus_peri                   devfreq8   devfreq1   passive                  0     66600000     66600000     66600000
+soc:bus_g2d                    devfreq9   devfreq1   passive                  0    333000000     83250000    333000000
+soc:bus_g2d_acp                devfreq10  devfreq1   passive                  0    266000000     66500000    266000000
+soc:bus_jpeg                   devfreq11  devfreq1   passive                  0    300000000     75000000    300000000
+soc:bus_jpeg_apb               devfreq12  devfreq1   passive                  0    166500000     83250000    166500000
+soc:bus_disp1_fimd             devfreq13  devfreq1   passive                  0    200000000    120000000    200000000
+soc:bus_disp1                  devfreq14  devfreq1   passive                  0    300000000    120000000    300000000
+soc:bus_gscl_scaler            devfreq15  devfreq1   passive                  0    300000000    150000000    300000000
+soc:bus_mscl                   devfreq16  devfreq1   passive                  0    666000000     84000000    666000000
+
+[lkp: Reported the build error]
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/hisilicon/hpre/hpre_crypto.c |  7 +++++-
- drivers/crypto/hisilicon/hpre/hpre_main.c   | 24 ++++++++++-----------
- 2 files changed, 18 insertions(+), 13 deletions(-)
+ drivers/devfreq/devfreq.c | 82 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 82 insertions(+)
 
-diff --git a/drivers/crypto/hisilicon/hpre/hpre_crypto.c b/drivers/crypto/hisilicon/hpre/hpre_crypto.c
-index 98f037e6ea3e4..d8b015266ee49 100644
---- a/drivers/crypto/hisilicon/hpre/hpre_crypto.c
-+++ b/drivers/crypto/hisilicon/hpre/hpre_crypto.c
-@@ -1043,6 +1043,7 @@ static unsigned int hpre_rsa_max_size(struct crypto_akcipher *tfm)
- static int hpre_rsa_init_tfm(struct crypto_akcipher *tfm)
- {
- 	struct hpre_ctx *ctx = akcipher_tfm_ctx(tfm);
-+	int ret;
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index 554d155106a5f..e99f082d15df5 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -10,6 +10,7 @@
+ #include <linux/kernel.h>
+ #include <linux/kmod.h>
+ #include <linux/sched.h>
++#include <linux/debugfs.h>
+ #include <linux/errno.h>
+ #include <linux/err.h>
+ #include <linux/init.h>
+@@ -33,6 +34,7 @@
+ #define HZ_PER_KHZ	1000
  
- 	ctx->rsa.soft_tfm = crypto_alloc_akcipher("rsa-generic", 0, 0);
- 	if (IS_ERR(ctx->rsa.soft_tfm)) {
-@@ -1050,7 +1051,11 @@ static int hpre_rsa_init_tfm(struct crypto_akcipher *tfm)
- 		return PTR_ERR(ctx->rsa.soft_tfm);
- 	}
+ static struct class *devfreq_class;
++static struct dentry *devfreq_debugfs;
  
--	return hpre_ctx_init(ctx);
-+	ret = hpre_ctx_init(ctx);
-+	if (ret)
-+		crypto_free_akcipher(ctx->rsa.soft_tfm);
+ /*
+  * devfreq core provides delayed work based load monitoring helper
+@@ -1614,6 +1616,81 @@ static struct attribute *devfreq_attrs[] = {
+ };
+ ATTRIBUTE_GROUPS(devfreq);
+ 
++/**
++ * devfreq_summary_show() - Show the summary of the devfreq devices
++ * @s:		seq_file instance to show the summary of devfreq devices
++ * @data:	not used
++ *
++ * Show the summary of the devfreq devices via 'devfreq_summary' debugfs file.
++ * It helps that user can know the detailed information of the devfreq devices.
++ *
++ * Return 0 always because it shows the information without any data change.
++ */
++static int devfreq_summary_show(struct seq_file *s, void *data)
++{
++	struct devfreq *devfreq;
++	struct devfreq *p_devfreq = NULL;
++	unsigned long cur_freq, min_freq, max_freq;
++	unsigned int polling_ms;
 +
-+	return ret;
++	seq_printf(s, "%-30s %-10s %-10s %-15s %10s %12s %12s %12s\n",
++			"dev_name",
++			"dev",
++			"parent_dev",
++			"governor",
++			"polling_ms",
++			"cur_freq_Hz",
++			"min_freq_Hz",
++			"max_freq_Hz");
++	seq_printf(s, "%30s %10s %10s %15s %10s %12s %12s %12s\n",
++			"------------------------------",
++			"----------",
++			"----------",
++			"---------------",
++			"----------",
++			"------------",
++			"------------",
++			"------------");
++
++	mutex_lock(&devfreq_list_lock);
++
++	list_for_each_entry_reverse(devfreq, &devfreq_list, node) {
++#if IS_ENABLED(CONFIG_DEVFREQ_GOV_PASSIVE)
++		if (!strncmp(devfreq->governor_name, DEVFREQ_GOV_PASSIVE,
++							DEVFREQ_NAME_LEN)) {
++			struct devfreq_passive_data *data = devfreq->data;
++
++			if (data)
++				p_devfreq = data->parent;
++		} else {
++			p_devfreq = NULL;
++		}
++#endif
++
++		mutex_lock(&devfreq->lock);
++		cur_freq = devfreq->previous_freq,
++		get_freq_range(devfreq, &min_freq, &max_freq);
++		polling_ms = devfreq->profile->polling_ms,
++		mutex_unlock(&devfreq->lock);
++
++		seq_printf(s,
++			"%-30s %-10s %-10s %-15s %10d %12ld %12ld %12ld\n",
++			dev_name(devfreq->dev.parent),
++			dev_name(&devfreq->dev),
++			p_devfreq ? dev_name(&p_devfreq->dev) : "null",
++			devfreq->governor_name,
++			polling_ms,
++			cur_freq,
++			min_freq,
++			max_freq);
++	}
++
++	mutex_unlock(&devfreq_list_lock);
++
++	return 0;
++}
++DEFINE_SHOW_ATTRIBUTE(devfreq_summary);
++
+ static int __init devfreq_init(void)
+ {
+ 	devfreq_class = class_create(THIS_MODULE, "devfreq");
+@@ -1630,6 +1707,11 @@ static int __init devfreq_init(void)
+ 	}
+ 	devfreq_class->dev_groups = devfreq_groups;
+ 
++	devfreq_debugfs = debugfs_create_dir("devfreq", NULL);
++	debugfs_create_file("devfreq_summary", 0444,
++				devfreq_debugfs, NULL,
++				&devfreq_summary_fops);
++
+ 	return 0;
  }
- 
- static void hpre_rsa_exit_tfm(struct crypto_akcipher *tfm)
-diff --git a/drivers/crypto/hisilicon/hpre/hpre_main.c b/drivers/crypto/hisilicon/hpre/hpre_main.c
-index 34e0424410bfc..0c98c37e39f4a 100644
---- a/drivers/crypto/hisilicon/hpre/hpre_main.c
-+++ b/drivers/crypto/hisilicon/hpre/hpre_main.c
-@@ -106,18 +106,18 @@ static const char * const hpre_debug_file_name[] = {
- };
- 
- static const struct hpre_hw_error hpre_hw_errors[] = {
--	{ .int_msk = BIT(0), .msg = "hpre_ecc_1bitt_err" },
--	{ .int_msk = BIT(1), .msg = "hpre_ecc_2bit_err" },
--	{ .int_msk = BIT(2), .msg = "hpre_data_wr_err" },
--	{ .int_msk = BIT(3), .msg = "hpre_data_rd_err" },
--	{ .int_msk = BIT(4), .msg = "hpre_bd_rd_err" },
--	{ .int_msk = BIT(5), .msg = "hpre_ooo_2bit_ecc_err" },
--	{ .int_msk = BIT(6), .msg = "hpre_cltr1_htbt_tm_out_err" },
--	{ .int_msk = BIT(7), .msg = "hpre_cltr2_htbt_tm_out_err" },
--	{ .int_msk = BIT(8), .msg = "hpre_cltr3_htbt_tm_out_err" },
--	{ .int_msk = BIT(9), .msg = "hpre_cltr4_htbt_tm_out_err" },
--	{ .int_msk = GENMASK(15, 10), .msg = "hpre_ooo_rdrsp_err" },
--	{ .int_msk = GENMASK(21, 16), .msg = "hpre_ooo_wrrsp_err" },
-+	{ .int_msk = BIT(0), .msg = "core_ecc_1bit_err_int_set" },
-+	{ .int_msk = BIT(1), .msg = "core_ecc_2bit_err_int_set" },
-+	{ .int_msk = BIT(2), .msg = "dat_wb_poison_int_set" },
-+	{ .int_msk = BIT(3), .msg = "dat_rd_poison_int_set" },
-+	{ .int_msk = BIT(4), .msg = "bd_rd_poison_int_set" },
-+	{ .int_msk = BIT(5), .msg = "ooo_ecc_2bit_err_int_set" },
-+	{ .int_msk = BIT(6), .msg = "cluster1_shb_timeout_int_set" },
-+	{ .int_msk = BIT(7), .msg = "cluster2_shb_timeout_int_set" },
-+	{ .int_msk = BIT(8), .msg = "cluster3_shb_timeout_int_set" },
-+	{ .int_msk = BIT(9), .msg = "cluster4_shb_timeout_int_set" },
-+	{ .int_msk = GENMASK(15, 10), .msg = "ooo_rdrsp_err_int_set" },
-+	{ .int_msk = GENMASK(21, 16), .msg = "ooo_wrrsp_err_int_set" },
- 	{ /* sentinel */ }
- };
- 
+ subsys_initcall(devfreq_init);
 -- 
 2.20.1
 
