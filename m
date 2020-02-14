@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6BB315DEB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:05:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CFF015DEB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:05:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390012AbgBNQEu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:04:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52296 "EHLO mail.kernel.org"
+        id S2390023AbgBNQEw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:04:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389900AbgBNQET (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:04:19 -0500
+        id S2389907AbgBNQEV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:04:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88A6C24676;
-        Fri, 14 Feb 2020 16:04:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB952222C2;
+        Fri, 14 Feb 2020 16:04:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696259;
-        bh=Dalcud8G3DF/3fo1QodJmuZ93FL/HOW+boXVE+ef1Cw=;
+        s=default; t=1581696261;
+        bh=IMCcHLqqHFw5wnRqiar7HehcGSTaDbVtwD0fhhQgh8g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D9l6nhgg46NNiY4lYsHxlUloYVV0RoEjH4AxXNBDLUkCCjrGii+jdYntlX65hheoF
-         gdl3MBgowNMeNP8K26loXDe8tY+AOyqjlTALbLnMZW/JCLR3prBG8DGD+nZWrdIL6k
-         lq2YXfv6Etxz63OBDwd2/bJujjwYwYeGopQho1bc=
+        b=zEdEKTdE+0rrCOFoo6wRzldpAgafBu9Md9vnIaPR6p1bCb3kKJ6QUmr0beOthCoPN
+         Gkpm0G1gvu8awn4JxAU2G/MG+m2hHjSUrsBAeryyr27kXFu/OIwEmBv9OlHZJ0S0wn
+         Rwcy8PGWe1iJbPXdIS4oT1HWmil7mKBVGCGTwbRc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yong Zhao <Yong.Zhao@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.4 113/459] drm/amdkfd: Fix a bug in SDMA RLC queue counting under HWS mode
-Date:   Fri, 14 Feb 2020 10:56:03 -0500
-Message-Id: <20200214160149.11681-113-sashal@kernel.org>
+Cc:     =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Quentin Monnet <quentin@isovalent.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 114/459] bpftool: Don't crash on missing xlated program instructions
+Date:   Fri, 14 Feb 2020 10:56:04 -0500
+Message-Id: <20200214160149.11681-114-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -45,55 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yong Zhao <Yong.Zhao@amd.com>
+From: Toke Høiland-Jørgensen <toke@redhat.com>
 
-[ Upstream commit f38abc15d157b7b31fa7f651dc8bf92858c963f8 ]
+[ Upstream commit d95f1e8b462c4372ac409886070bb8719d8a4d3a ]
 
-The sdma_queue_count increment should be done before
-execute_queues_cpsch(), which calls pm_calc_rlib_size() where
-sdma_queue_count is used to calculate whether over_subscription is
-triggered.
+Turns out the xlated program instructions can also be missing if
+kptr_restrict sysctl is set. This means that the previous fix to check the
+jited_prog_insns pointer was insufficient; add another check of the
+xlated_prog_insns pointer as well.
 
-With the previous code, when a SDMA queue is created,
-compute_queue_count in pm_calc_rlib_size() is one more than the
-actual compute queue number, because the queue_count has been
-incremented while sdma_queue_count has not. This patch fixes that.
-
-Signed-off-by: Yong Zhao <Yong.Zhao@amd.com>
-Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fixes: 5b79bcdf0362 ("bpftool: Don't crash on missing jited insns or ksyms")
+Fixes: cae73f233923 ("bpftool: use bpf_program__get_prog_info_linear() in prog.c:do_dump()")
+Signed-off-by: Toke Høiland-Jørgensen <toke@redhat.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Reviewed-by: Quentin Monnet <quentin@isovalent.com>
+Link: https://lore.kernel.org/bpf/20200206102906.112551-1-toke@redhat.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ tools/bpf/bpftool/prog.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
-index f335f73919d15..a2ed9c257cb0d 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
-@@ -1181,16 +1181,18 @@ static int create_queue_cpsch(struct device_queue_manager *dqm, struct queue *q,
- 
- 	list_add(&q->list, &qpd->queues_list);
- 	qpd->queue_count++;
-+
-+	if (q->properties.type == KFD_QUEUE_TYPE_SDMA)
-+		dqm->sdma_queue_count++;
-+	else if (q->properties.type == KFD_QUEUE_TYPE_SDMA_XGMI)
-+		dqm->xgmi_sdma_queue_count++;
-+
- 	if (q->properties.is_active) {
- 		dqm->queue_count++;
- 		retval = execute_queues_cpsch(dqm,
- 				KFD_UNMAP_QUEUES_FILTER_DYNAMIC_QUEUES, 0);
- 	}
- 
--	if (q->properties.type == KFD_QUEUE_TYPE_SDMA)
--		dqm->sdma_queue_count++;
--	else if (q->properties.type == KFD_QUEUE_TYPE_SDMA_XGMI)
--		dqm->xgmi_sdma_queue_count++;
- 	/*
- 	 * Unconditionally increment this counter, regardless of the queue's
- 	 * type or whether the queue is active.
+diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
+index ea0bcd58bcb9a..2e388421c32f4 100644
+--- a/tools/bpf/bpftool/prog.c
++++ b/tools/bpf/bpftool/prog.c
+@@ -500,7 +500,7 @@ static int do_dump(int argc, char **argv)
+ 		buf = (unsigned char *)(info->jited_prog_insns);
+ 		member_len = info->jited_prog_len;
+ 	} else {	/* DUMP_XLATED */
+-		if (info->xlated_prog_len == 0) {
++		if (info->xlated_prog_len == 0 || !info->xlated_prog_insns) {
+ 			p_err("error retrieving insn dump: kernel.kptr_restrict set?");
+ 			goto err_free;
+ 		}
 -- 
 2.20.1
 
