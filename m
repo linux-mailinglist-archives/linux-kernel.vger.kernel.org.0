@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE0D915EF78
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:48:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8A7115EF8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:49:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388959AbgBNP7h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:59:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44290 "EHLO mail.kernel.org"
+        id S2389824AbgBNRs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:48:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388929AbgBNP7a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:59:30 -0500
+        id S2387591AbgBNP7b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:59:31 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 04CAD2187F;
-        Fri, 14 Feb 2020 15:59:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E94D24680;
+        Fri, 14 Feb 2020 15:59:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695969;
-        bh=sysEa46Yz0+Q77T04gaS8Khuim8g/xr/Jf5pGs2Miq0=;
+        s=default; t=1581695970;
+        bh=o+o0M9tu1mUFpsW0wcJx7bRm3a8dmU2NUuterE4EqvM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MAUKKEbqnlV+/kojYXYkfXfAgsLteKQ0LuGsQuAvZHQ5u2x4b+vBOqDMMk0G8W15a
-         9Ts4ASlKv6Ddya9D5YIdGKLd0Y2Ca7e6IBdMd9Y9dzAjd2IWvctHCkQFA/4oMpGJjT
-         olBVYB3DHiZ1lP8dVEPj3yh9cpvT6QSxORc0tfR0=
+        b=J4Yl6TaGwhb9QSQYu/tzv1qriFYnc/cM/Em6fzd1mpbbrA68EYiuMN95ARTiYbeB+
+         FeQYW93bCFEMNPHSYWTdJsotQ+Ntn+5gcX4R+AchIcUkBvsBsrWuMuwcqnGeCMzR0p
+         pkUSdZGkWROIlBQx82sAO3MDuz2n45qFoLAQrRSM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Vasily Averin <vvs@virtuozzo.com>,
         Steven Rostedt <rostedt@goodmis.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.5 497/542] ftrace: fpid_next() should increase position index
-Date:   Fri, 14 Feb 2020 10:48:09 -0500
-Message-Id: <20200214154854.6746-497-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.5 498/542] trigger_next should increase position index
+Date:   Fri, 14 Feb 2020 10:48:10 -0500
+Message-Id: <20200214154854.6746-498-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -45,57 +45,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Vasily Averin <vvs@virtuozzo.com>
 
-[ Upstream commit e4075e8bdffd93a9b6d6e1d52fabedceeca5a91b ]
+[ Upstream commit 6722b23e7a2ace078344064a9735fb73e554e9ef ]
 
 if seq_file .next fuction does not change position index,
 read after some lseek can generate unexpected output.
 
 Without patch:
- # dd bs=4 skip=1 if=/sys/kernel/tracing/set_ftrace_pid
- dd: /sys/kernel/tracing/set_ftrace_pid: cannot skip to specified offset
- id
- no pid
- 2+1 records in
- 2+1 records out
- 10 bytes copied, 0.000213285 s, 46.9 kB/s
+ # dd bs=30 skip=1 if=/sys/kernel/tracing/events/sched/sched_switch/trigger
+ dd: /sys/kernel/tracing/events/sched/sched_switch/trigger: cannot skip to specified offset
+ n traceoff snapshot stacktrace enable_event disable_event enable_hist disable_hist hist
+ # Available triggers:
+ # traceon traceoff snapshot stacktrace enable_event disable_event enable_hist disable_hist hist
+ 6+1 records in
+ 6+1 records out
+ 206 bytes copied, 0.00027916 s, 738 kB/s
 
-Notice the "id" followed by "no pid".
+Notice the printing of "# Available triggers:..." after the line.
 
 With the patch:
- # dd bs=4 skip=1 if=/sys/kernel/tracing/set_ftrace_pid
- dd: /sys/kernel/tracing/set_ftrace_pid: cannot skip to specified offset
- id
- 0+1 records in
- 0+1 records out
- 3 bytes copied, 0.000202112 s, 14.8 kB/s
+ # dd bs=30 skip=1 if=/sys/kernel/tracing/events/sched/sched_switch/trigger
+ dd: /sys/kernel/tracing/events/sched/sched_switch/trigger: cannot skip to specified offset
+ n traceoff snapshot stacktrace enable_event disable_event enable_hist disable_hist hist
+ 2+1 records in
+ 2+1 records out
+ 88 bytes copied, 0.000526867 s, 167 kB/s
 
-Notice that it only prints "id" and not the "no pid" afterward.
+It only prints the end of the file, and does not restart.
 
-Link: http://lkml.kernel.org/r/4f87c6ad-f114-30bb-8506-c32274ce2992@virtuozzo.com
+Link: http://lkml.kernel.org/r/3c35ee24-dd3a-8119-9c19-552ed253388a@virtuozzo.com
 
 https://bugzilla.kernel.org/show_bug.cgi?id=206283
 Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/trace/ftrace.c | 5 +++--
+ kernel/trace/trace_events_trigger.c | 5 +++--
  1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 3581bd96d6eb3..ddb47a0af854b 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -7038,9 +7038,10 @@ static void *fpid_next(struct seq_file *m, void *v, loff_t *pos)
- 	struct trace_array *tr = m->private;
- 	struct trace_pid_list *pid_list = rcu_dereference_sched(tr->function_pids);
+diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
+index 40106fff06a48..287d77eae59b3 100644
+--- a/kernel/trace/trace_events_trigger.c
++++ b/kernel/trace/trace_events_trigger.c
+@@ -116,9 +116,10 @@ static void *trigger_next(struct seq_file *m, void *t, loff_t *pos)
+ {
+ 	struct trace_event_file *event_file = event_file_data(m->private);
  
--	if (v == FTRACE_NO_PIDS)
-+	if (v == FTRACE_NO_PIDS) {
+-	if (t == SHOW_AVAILABLE_TRIGGERS)
++	if (t == SHOW_AVAILABLE_TRIGGERS) {
 +		(*pos)++;
  		return NULL;
 -
 +	}
- 	return trace_pid_next(pid_list, v, pos);
+ 	return seq_list_next(t, &event_file->triggers, pos);
  }
  
 -- 
