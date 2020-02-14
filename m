@@ -2,135 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5F4215D016
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 03:42:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F8D115D01C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 03:42:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728355AbgBNCmF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 21:42:05 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:35248 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728141AbgBNCmF (ORCPT
+        id S1728483AbgBNCms (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 21:42:48 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39023 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728004AbgBNCms (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 21:42:05 -0500
-Received: by mail-oi1-f194.google.com with SMTP id b18so8057324oie.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 18:42:04 -0800 (PST)
+        Thu, 13 Feb 2020 21:42:48 -0500
+Received: by mail-pf1-f196.google.com with SMTP id 84so4109721pfy.6;
+        Thu, 13 Feb 2020 18:42:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rb54aW+yG+Az/OBoZh/+Q8ucLKJK4gIKkwvNE3BmAkA=;
-        b=AnvE2hFIoK20rgu+1vrDSm7/MyKg0VTpi+/H+mR061EJODNY79P2jbBeD1Th9tjqKD
-         3OP3hU4wPICUCXr3qDjOjHjm5izu1OGSCmeuQEByAQLqqIRMm18Gj6t76wGP/kYQWkW/
-         zWgNqgmPRxI1GaW+kBzo8/Ts6habSAgLtZi3pQMO5ujhMaUMGZIDgoAEHC8ub8L3IxnJ
-         gxary9YltpeZ678g/6cKIXLIaeozrnG4Yx8WDE/6adVBXo4AC55GEObgye+/qAMSA861
-         XpAEpt9ILf4+9CQKB9nzmmEFzaZABow8Ds99RwI2+TUwtSIdvGub3qt+WBdSq0xTKtv4
-         lDlQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CZDOMDG2RZUfkNh7l0YIqZzEpJOX/xGLD5t790ic9jk=;
+        b=G7Qu3tSHrt5GVgh3YVSDD9xMrSt+jM7YQ6RLz5t0b2v40G9oII/7JxcKUwx56HouiB
+         xjyrSR+ow9cK56CEqz+D6Fd+5emgib05c3zyELt/GdW0PsoPNv+1KXMWqRFdhZuTrVpj
+         +kRz4UwZjAjPVmssI/TXAla7Q2z/olRUeg4QQXWlQ2TvsjcWgC5T9nzcs5VYC+qspb86
+         qeeZkBPSXAmbJtqvUHQHyP0NniyGCZyzR8+Bh088BsCe/eJaJxBYhdeshDyM/k4xkWwj
+         f7jPoU/n0VUoh+ybreYjjXeIryGU6bKsyfqeOGqYXOOrxKtxbCWRJKTBBkit5JBwDTTm
+         DFIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rb54aW+yG+Az/OBoZh/+Q8ucLKJK4gIKkwvNE3BmAkA=;
-        b=ZoRbvQhaMCFfSuqPZhUVn1ihCFaDxVdLNHM3zxSB5uuTRd/ZCusP5v5fhbQ+mE4+oR
-         Lkzk1ZpipJ01r0ZcEF+KUc2cnYU1XXONNPrxjU9LHmuXwdWs1+6hosNxonFJTTqei5Ug
-         myMj31Sia2qFPJtaiZn0mXI53iwl5O9JVgJ1KzWF3NnKPY1ZWsGhZuK2AkvhTZA2f/TL
-         3p+JnRVilIn/d1QYdDBIFKN6o3pUhuboblelht1fkhb5RRbGUjUy9uOW7zUj9h3xYeTg
-         XdTsKPGEHIMozOEFA+jgQFE2pD8hr61vJnaQPOtzzHzAC0ac3BZnEAMv/sEWrueaagDm
-         hcuQ==
-X-Gm-Message-State: APjAAAW8lclPFOuhoWUT2o7DsY0UPJwvQ7hhFr+8lLwdOPt/J6EL/lSu
-        klICZN6Vneg53TYL5pE+XR9td27N+Am7ZdVWwW06uA==
-X-Google-Smtp-Source: APXvYqyynZyVpLGLOpOvAwB2gyWSQn+oremBsTZD5ZaGsqFIs8mu92cC2I3zKOM79o+mNd/x+ev8z5JMZDeNp3GcDgo=
-X-Received: by 2002:a05:6808:18:: with SMTP id u24mr480842oic.10.1581648124218;
- Thu, 13 Feb 2020 18:42:04 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CZDOMDG2RZUfkNh7l0YIqZzEpJOX/xGLD5t790ic9jk=;
+        b=YFwuaUzeA0qDY2hpvrhJRDYCPglzTZZe/X0x5mdkIiCBW2ABulYwPZEi1LGXkxmivJ
+         kfZleBK1Cw/97tpnnz64PL8Vs3gm5SaIis6ZKtGwmhnhnSPaYRf5r+DCgFtAmE6S2hom
+         Qh2VQVE3VgpjCkNF5cTIGDhuDKzYwKFmfcV/I9G+4Sx3FXtZJfmpSEVHkbskXVD1ZqAl
+         GAAHvW61d7r3DbtKqz0exhZLHP7sZNBM4g3ZRnOx1HBq8DqAy4QDOjDFjOaki8CcLiHg
+         NbMDsB41/56uWMvnnu9hUe/wnVVezV8MXbomCK1yZOQgztBBVZuW2TPAhEAAF/hmIn9T
+         4BdQ==
+X-Gm-Message-State: APjAAAUyaxL4xaF6OF613mftApyf579Ja/w83j72BkOguxAwuF8W48GE
+        WEit8+pLGXj0f3KjxFtLNtOwUZr0
+X-Google-Smtp-Source: APXvYqzUcvIPqYHtwkzQFMd3TRZUQFeZfOgdy6PXX1AKHwaoEchoy9nBhZrFaPduBFTVz3qS3UkshA==
+X-Received: by 2002:a63:ff05:: with SMTP id k5mr1020851pgi.185.1581648167823;
+        Thu, 13 Feb 2020 18:42:47 -0800 (PST)
+Received: from localhost ([2401:fa00:8f:203:5bbb:c872:f2b1:f53b])
+        by smtp.gmail.com with ESMTPSA id j14sm4584373pgs.57.2020.02.13.18.42.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2020 18:42:47 -0800 (PST)
+Date:   Fri, 14 Feb 2020 11:42:45 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        rostedt@goodmis.org, mingo@kernel.org, joel@joelfernandes.org,
+        gregkh@linuxfoundation.org, gustavo@embeddedor.com,
+        tglx@linutronix.de, paulmck@kernel.org, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+        sergey.senozhatsky.work@gmail.com
+Subject: Re: [PATCH v2 9/9] perf,tracing: Allow function tracing when !RCU
+Message-ID: <20200214024244.GH36551@google.com>
+References: <20200212210139.382424693@infradead.org>
+ <20200212210750.312024711@infradead.org>
+ <20200214022839.GG36551@google.com>
 MIME-Version: 1.0
-References: <20200214004413.12450-1-john.stultz@linaro.org> <CAL_Jsq+P0FZU9DnRhgYu6kvCFVbia=Z20VWNR2qi-Zwv=YtQhQ@mail.gmail.com>
-In-Reply-To: <CAL_Jsq+P0FZU9DnRhgYu6kvCFVbia=Z20VWNR2qi-Zwv=YtQhQ@mail.gmail.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Thu, 13 Feb 2020 18:41:50 -0800
-Message-ID: <CALAqxLWN84baRzByTSfzz7-MpAexgKyY2YkrsPFG9BPBqQdhXw@mail.gmail.com>
-Subject: Re: [RFC][PATCH] driver core: Extend returning EPROBE_DEFER for two
- minutes after late_initcall
-To:     Rob Herring <robh@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Alexander Graf <agraf@suse.de>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Todd Kjos <tkjos@google.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200214022839.GG36551@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 5:51 PM Rob Herring <robh@kernel.org> wrote:
-> On Thu, Feb 13, 2020 at 6:44 PM John Stultz <john.stultz@linaro.org> wrote:
-> > Due to commit e01afc3250255 ("PM / Domains: Stop deferring probe
-> > at the end of initcall"), along with commit 25b4e70dcce9
-> > ("driver core: allow stopping deferred probe after init") after
-> > late_initcall, drivers will stop getting EPROBE_DEFER, and
-> > instead see an error causing the driver to fail to load.
-> >
-> > That change causes trouble when trying to use many clk drivers
-> > as modules, as the clk modules may not load until much later
-> > after init has started. If a dependent driver loads and gets an
-> > error instead of EPROBE_DEFER, it won't try to reload later when
-> > the dependency is met, and will thus fail to load.
-> >
-> > Instead of reverting that patch, this patch tries to extend the
-> > time that EPROBE_DEFER is retruned by two minutes, to (hopefully)
-> > ensure that everything has had a chance to load.
->
-> I think regulators already has some delay like this. We should use the
-> same timeouts.
+On (20/02/14 11:28), Sergey Senozhatsky wrote:
+> On (20/02/12 22:01), Peter Zijlstra wrote:
+> > Since perf is now able to deal with !rcu_is_watching() contexts,
+> > remove the restraint.
+> > 
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > ---
+> >  kernel/trace/trace_event_perf.c |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > --- a/kernel/trace/trace_event_perf.c
+> > +++ b/kernel/trace/trace_event_perf.c
+> > @@ -477,7 +477,7 @@ static int perf_ftrace_function_register
+> >  {
+> >  	struct ftrace_ops *ops = &event->ftrace_ops;
+> >  
+> > -	ops->flags   = FTRACE_OPS_FL_RCU;
+> > +	ops->flags   = 0;
+> 
+> FTRACE_OPS_FL_ENABLED?
 
-Sounds good. My memory was a bit foggy from the time I initially
-brought this up, and I looked briefly before sending this out and
-didn't find the regulator change you had mentioned. If you have a
-specific pointer (or patch name or something) let me know, otherwise
-I'll dig around later tonight/tomorrow.
+No, never mind.
 
-> We also have the 'deferred_probe_timeout' cmdline option. It's deemed
-> a debug option currently, but we could change that and change the
-> default.
-
-I looked at that code, but couldn't really make heads or tails of it.
-The initcalls_done is checked and returns before the
-deferred_probe_timeout is looked at, so I was guessing the
-deferred_probe_timeout was addressing a bit more subtle issue than
-what I was going for. If its really the same functionality, I'm happy
-to try to rework it.
-
-> > Specifically, on db845c, this change allows us to set
-> > SDM_GPUCC_845, QCOM_CLK_RPMH and COMMON_CLK_QCOM as modules and
-> > get a working system, where as without it the display will fail
-> > to load.
-> >
-> > Cc: Alexander Graf <agraf@suse.de>
-> > Cc: Rob Herring <robh@kernel.org>
-> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> > Cc: Kevin Hilman <khilman@kernel.org>
-> > Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> > Cc: Pavel Machek <pavel@ucw.cz>
-> > Cc: Len Brown <len.brown@intel.com>
-> > Cc: Todd Kjos <tkjos@google.com>
-> > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: linux-pm@vger.kernel.org
-> > Fixes: e01afc3250255 ("PM / Domains: Stop deferring probe at the end of initcall")
-> > Fixes: 25b4e70dcce9 ("driver core: allow stopping deferred probe after init")
->
-> We can debate the design, but those work as designed. So Fixes?
->
-
-Well, clk module loading would have worked, and then stopped working
-with e01afc3250255, so it is a regression of sorts.  And really the
-tags are mostly for making sure patches get applied to trees that
-backported these commits (and it's not my intention to shame a patch
-as broken. :)
-
-thanks
--john
+	-ss
