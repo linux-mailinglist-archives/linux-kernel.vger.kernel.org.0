@@ -2,87 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D9EA15EA2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:12:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5008015E9F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:11:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403996AbgBNRLv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:11:51 -0500
-Received: from mga06.intel.com ([134.134.136.31]:10329 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394490AbgBNRLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 12:11:47 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2020 09:11:46 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,441,1574150400"; 
-   d="scan'208";a="234517959"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by orsmga003.jf.intel.com with ESMTP; 14 Feb 2020 09:11:46 -0800
-Date:   Fri, 14 Feb 2020 09:11:46 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jethro Beekman <jethro@fortanix.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
-        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
-        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
-        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
-        rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
-        linux-security-module@vger.kernel.org,
-        Haitao Huang <haitao.huang@linux.intel.com>
-Subject: Re: [PATCH v26 10/22] x86/sgx: Linux Enclave Driver
-Message-ID: <20200214171146.GD20690@linux.intel.com>
-References: <20200209212609.7928-1-jarkko.sakkinen@linux.intel.com>
- <20200209212609.7928-11-jarkko.sakkinen@linux.intel.com>
- <d17c50a7-6900-731b-43a2-d6e49b8eb44d@fortanix.com>
- <20200213180737.GC18610@linux.intel.com>
- <a4d9a58d-6984-5894-f6c8-73f2b2b466aa@fortanix.com>
+        id S2394629AbgBNRK3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:10:29 -0500
+Received: from gateway36.websitewelcome.com ([192.185.194.2]:34163 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390252AbgBNRK1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 12:10:27 -0500
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 3E62A400D4744
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 10:24:35 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 2eTxjhCWb8vkB2eTxjengd; Fri, 14 Feb 2020 11:10:25 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=BuEqONPSEjbS6nR+nsgUPfM1v5+Y+62xNXlUsAnUd/c=; b=H6W/Fiysye58hDJxiiYBMewzcd
+        VBQLgnSAN28NP/JizT+q1WA/GLkUQjzDs71ZQcSDWPJUJqAbUNFgGTYDntMRyHou+3dCqT14qCXC1
+        PV27mRIl/oku9JMFvMq9eND7VNgLR6LBjVIw/Bse2pmxb84plypHp+xPIw9Ud2kHzlcCKobwbEBAq
+        NYTs04MyY8ZSjljzrOCrBd3dMLne3zhsOKcySI0/KQTemQmjT4hT8qBufqJOqJ50JWsU5HhLEIVRr
+        KT3SBt059LMfSFeiQEbZWgaHOdC6z8m5x3/Y/to+zL8qH1SXjaYVnEXSlNl4XfRwI1E6NiP+Y+WTa
+        fhWfo0oA==;
+Received: from [200.68.140.137] (port=41921 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j2eTw-003don-BC; Fri, 14 Feb 2020 11:10:24 -0600
+Date:   Fri, 14 Feb 2020 11:13:02 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>
+Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] dmanegine: ioat/dca: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200214171302.GA20586@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a4d9a58d-6984-5894-f6c8-73f2b2b466aa@fortanix.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.68.140.137
+X-Source-L: No
+X-Exim-ID: 1j2eTw-003don-BC
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [200.68.140.137]:41921
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 10:24:10AM +0100, Jethro Beekman wrote:
-> On 2020-02-13 19:07, Sean Christopherson wrote:
-> > On Thu, Feb 13, 2020 at 02:59:52PM +0100, Jethro Beekman wrote:
-> >> On 2020-02-09 22:25, Jarkko Sakkinen wrote:
-> >>> +/**
-> >>> + * struct sgx_enclave_add_pages - parameter structure for the
-> >>> + *                                %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
-> >>> + * @src:	start address for the page data
-> >>> + * @offset:	starting page offset
-> >>> + * @length:	length of the data (multiple of the page size)
-> >>> + * @secinfo:	address for the SECINFO data
-> >>> + * @flags:	page control flags
-> >>> + * @count:	number of bytes added (multiple of the page size)
-> >>> + */
-> >>> +struct sgx_enclave_add_pages {
-> >>> +	__u64	src;
-> >>> +	__u64	offset;
-> >>> +	__u64	length;
-> >>> +	__u64	secinfo;
-> >>> +	__u64	flags;
-> >>> +	__u64	count;
-> >>> +};
-> >>
-> >> Compared to the last time I looked at the patch set, this API removes the
-> >> ability to measure individual pages chunks. That is not acceptable.
-> > 
-> > Why is it not acceptable?  E.g. what specific use case do you have that
-> > _requires_ on measuring partial 4k pages of an enclave?
-> 
-> The use case is someone gives me an enclave and I want to load it. If I don't
-> load it exactly as the enclave author specified, the enclave hash will be
-> different, and it won't work.
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-And if our ABI says "thou shall measure in 4k chunks", then it's an invalid
-enclave if its author generated MRENCLAVE using a different granularity.
+struct foo {
+        int stuff;
+        struct boo array[];
+};
+
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
+
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
+
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
+
+This issue was found with the help of Coccinelle.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/dma/ioat/dca.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/dma/ioat/dca.c b/drivers/dma/ioat/dca.c
+index be61c32a876f..0be385587c4c 100644
+--- a/drivers/dma/ioat/dca.c
++++ b/drivers/dma/ioat/dca.c
+@@ -102,7 +102,7 @@ struct ioat_dca_priv {
+ 	int			 max_requesters;
+ 	int			 requester_count;
+ 	u8			 tag_map[IOAT_TAG_MAP_LEN];
+-	struct ioat_dca_slot 	 req_slots[0];
++	struct ioat_dca_slot	 req_slots[];
+ };
+ 
+ static int ioat_dca_dev_managed(struct dca_provider *dca,
+-- 
+2.25.0
+
