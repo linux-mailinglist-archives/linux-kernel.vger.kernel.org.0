@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1674415E8AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:02:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49DEA15E8A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:01:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404377AbgBNRCD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:02:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46948 "EHLO mail.kernel.org"
+        id S2392647AbgBNRBq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:01:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391602AbgBNQQO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:16:14 -0500
+        id S2392564AbgBNQQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:16:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98F32206D7;
-        Fri, 14 Feb 2020 16:16:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13D502467D;
+        Fri, 14 Feb 2020 16:16:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696973;
-        bh=jqAWu14HX263xH1zHoJdTznvfw3tsQDNr6KgxoX2kEs=;
+        s=default; t=1581696980;
+        bh=qqlDImGmJ/ltysibA8Y/8cqTSseCIAt8Tv2oNnF45rs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=apHGqaT5vpp96nJdfuecyeHW9Czf4xYTlxACbMvx5dM0LAe+a85KQKvaqm4siR9pQ
-         6MQZD9o0I0y1wnduk/fZqahLi9ThC66yd+RdNycYfhKpeQji4jvF1DZrrj8GpWhiY7
-         tcRL1NY3DvfXASt6uqsyyEmeTmXFNwMD2IDNFCz4=
+        b=F/tclDCcYingECbw2penmEH25D8wO7jZ0rBJZ53P+jkoIqywvnt1qnrrYdHyoRUee
+         aVxo3jkkwdizuKSH7RkDc6Y9Mtjb6G740oMkrx/nxlBDN4Cm4z0k5GSDYrI0sr1r+d
+         4BMWTKFNaKnqJjQxPYBxbqFSQTtzFxrRoChX7mVw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Jiri Slaby <jslaby@suse.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 211/252] tty: n_hdlc: Use flexible-array member and struct_size() helper
-Date:   Fri, 14 Feb 2020 11:11:06 -0500
-Message-Id: <20200214161147.15842-211-sashal@kernel.org>
+Cc:     "zhangyi (F)" <yi.zhang@huawei.com>, Jan Kara <jack@suse.cz>,
+        Theodore Ts'o <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>,
+        linux-ext4@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 217/252] jbd2: make sure ESHUTDOWN to be recorded in the journal superblock
+Date:   Fri, 14 Feb 2020 11:11:12 -0500
+Message-Id: <20200214161147.15842-217-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -44,103 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: "zhangyi (F)" <yi.zhang@huawei.com>
 
-[ Upstream commit 85f4c95172d606dd66f7ee1fa50c45a245535ffd ]
+[ Upstream commit 0e98c084a21177ef136149c6a293b3d1eb33ff92 ]
 
-Old code in the kernel uses 1-byte and 0-byte arrays to indicate the
-presence of a "variable length array":
+Commit fb7c02445c49 ("ext4: pass -ESHUTDOWN code to jbd2 layer") want
+to allow jbd2 layer to distinguish shutdown journal abort from other
+error cases. So the ESHUTDOWN should be taken precedence over any other
+errno which has already been recoded after EXT4_FLAGS_SHUTDOWN is set,
+but it only update errno in the journal suoerblock now if the old errno
+is 0.
 
-struct something {
-    int length;
-    u8 data[1];
-};
-
-struct something *instance;
-
-instance = kmalloc(sizeof(*instance) + size, GFP_KERNEL);
-instance->length = size;
-memcpy(instance->data, source, size);
-
-There is also 0-byte arrays. Both cases pose confusion for things like
-sizeof(), CONFIG_FORTIFY_SOURCE, etc.[1] Instead, the preferred mechanism
-to declare variable-length types such as the one above is a flexible array
-member[2] which need to be the last member of a structure and empty-sized:
-
-struct something {
-        int stuff;
-        u8 data[];
-};
-
-Also, by making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertenly introduced[3] to the codebase from now on.
-
-Lastly, make use of the struct_size() helper to safely calculate the
-allocation size for instances of struct n_hdlc_buf and avoid any potential
-type mistakes[4][5].
-
-[1] https://github.com/KSPP/linux/issues/21
-[2] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-[4] https://lore.kernel.org/lkml/60e14fb7-8596-e21c-f4be-546ce39e7bdb@embeddedor.com/
-[5] commit 553d66cb1e86 ("iommu/vt-d: Use struct_size() helper")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Reviewed-by: Jiri Slaby <jslaby@suse.cz>
-Link: https://lore.kernel.org/r/20200121172138.GA3162@embeddedor
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: fb7c02445c49 ("ext4: pass -ESHUTDOWN code to jbd2 layer")
+Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Link: https://lore.kernel.org/r/20191204124614.45424-4-yi.zhang@huawei.com
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/n_hdlc.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ fs/jbd2/journal.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/tty/n_hdlc.c b/drivers/tty/n_hdlc.c
-index 0636e10c76c7f..1ef8dbfa24b4b 100644
---- a/drivers/tty/n_hdlc.c
-+++ b/drivers/tty/n_hdlc.c
-@@ -115,11 +115,9 @@
- struct n_hdlc_buf {
- 	struct list_head  list_item;
- 	int		  count;
--	char		  buf[1];
-+	char		  buf[];
- };
+diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+index 1a96287f92647..a15a22d209090 100644
+--- a/fs/jbd2/journal.c
++++ b/fs/jbd2/journal.c
+@@ -2133,8 +2133,7 @@ static void __journal_abort_soft (journal_t *journal, int errno)
  
--#define	N_HDLC_BUF_SIZE	(sizeof(struct n_hdlc_buf) + maxframe)
--
- struct n_hdlc_buf_list {
- 	struct list_head  list;
- 	int		  count;
-@@ -524,7 +522,8 @@ static void n_hdlc_tty_receive(struct tty_struct *tty, const __u8 *data,
- 		/* no buffers in free list, attempt to allocate another rx buffer */
- 		/* unless the maximum count has been reached */
- 		if (n_hdlc->rx_buf_list.count < MAX_RX_BUF_COUNT)
--			buf = kmalloc(N_HDLC_BUF_SIZE, GFP_ATOMIC);
-+			buf = kmalloc(struct_size(buf, buf, maxframe),
-+				      GFP_ATOMIC);
+ 	if (journal->j_flags & JBD2_ABORT) {
+ 		write_unlock(&journal->j_state_lock);
+-		if (!old_errno && old_errno != -ESHUTDOWN &&
+-		    errno == -ESHUTDOWN)
++		if (old_errno != -ESHUTDOWN && errno == -ESHUTDOWN)
+ 			jbd2_journal_update_sb_errno(journal);
+ 		return;
  	}
- 	
- 	if (!buf) {
-@@ -853,7 +852,7 @@ static struct n_hdlc *n_hdlc_alloc(void)
- 
- 	/* allocate free rx buffer list */
- 	for(i=0;i<DEFAULT_RX_BUF_COUNT;i++) {
--		buf = kmalloc(N_HDLC_BUF_SIZE, GFP_KERNEL);
-+		buf = kmalloc(struct_size(buf, buf, maxframe), GFP_KERNEL);
- 		if (buf)
- 			n_hdlc_buf_put(&n_hdlc->rx_free_buf_list,buf);
- 		else if (debuglevel >= DEBUG_LEVEL_INFO)	
-@@ -862,7 +861,7 @@ static struct n_hdlc *n_hdlc_alloc(void)
- 	
- 	/* allocate free tx buffer list */
- 	for(i=0;i<DEFAULT_TX_BUF_COUNT;i++) {
--		buf = kmalloc(N_HDLC_BUF_SIZE, GFP_KERNEL);
-+		buf = kmalloc(struct_size(buf, buf, maxframe), GFP_KERNEL);
- 		if (buf)
- 			n_hdlc_buf_put(&n_hdlc->tx_free_buf_list,buf);
- 		else if (debuglevel >= DEBUG_LEVEL_INFO)	
 -- 
 2.20.1
 
