@@ -2,58 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0CCE15E2D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:25:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7098315E314
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:26:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393376AbgBNQZN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:25:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59322 "EHLO mail.kernel.org"
+        id S2393401AbgBNQ0t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:26:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405560AbgBNQXM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:23:12 -0500
-Received: from localhost (lfbn-ncy-1-985-231.w90-101.abo.wanadoo.fr [90.101.63.231])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2393250AbgBNQY5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:24:57 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E504924770;
-        Fri, 14 Feb 2020 16:23:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B16C3247A9;
+        Fri, 14 Feb 2020 16:24:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697392;
-        bh=TF7nf8htivvgSQBa3WfkCeKmnRr4qYLJB2BHntFpgsg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oOk2fHXEOYyF8ZVHHDptFYkVYiOqO+JumnNM/Ul3W+diwYvXoHi9mO06MBa8STRe/
-         FPaoHCKMrZIn640djVle9q48Z+6ZHWmEUvOc/R4wJw4xB+JKSRilEp/SoLMN6Db8Ox
-         EiQ7skBhoc+GalmUkl/m+2H+oYblHIie/fK9zpKg=
-Date:   Fri, 14 Feb 2020 17:23:09 +0100
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Chris Wilson <chris@chris-wilson.co.uk>
-Subject: Re: [PATCH] sched/vtime: Prevent unstable evaluation of
- WARN(vtime->state)
-Message-ID: <20200214162308.GA25496@lenoir>
-References: <20200123180849.28486-1-frederic@kernel.org>
+        s=default; t=1581697496;
+        bh=pDZYNfZ6e+2lGkF820EqJ0gQxy6sw5tEScQC/CtWeCA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=kQ+WmcMF8mQV53cVSiLKMt3yPXTOg3jRkC6ae4zpcB/omL0r7GEcWRjqKUYIBWkQv
+         VsqnB2NXB6wadmoEXnnK6DUHrArpNeXch5uMQ8mv/f7MRCHNbiZBvjYj1NGQMez2hn
+         YTu4PQEa2JUr8aO45p2nmk6SbjCnLF8n2OviTrgg=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     yu kuai <yukuai3@huawei.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.4 025/100] drm/amdgpu: remove set but not used variable 'mc_shared_chmap'
+Date:   Fri, 14 Feb 2020 11:23:09 -0500
+Message-Id: <20200214162425.21071-25-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200214162425.21071-1-sashal@kernel.org>
+References: <20200214162425.21071-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200123180849.28486-1-frederic@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 23, 2020 at 07:08:49PM +0100, Frederic Weisbecker wrote:
-> From: Chris Wilson <chris@chris-wilson.co.uk>
-> 
-> As the vtime is sampled under loose seqcount protection by kcpustat, the
-> vtime fields may change as the code flows. Where logic dictates a field
-> has a static value, use a READ_ONCE.
-> 
-> Fixes: 74722bb223d0 ("sched/vtime: Bring up complete kcpustat accessor")
-> Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+From: yu kuai <yukuai3@huawei.com>
 
-Ping?
+[ Upstream commit e98042db2cb8d0b728cd76e05b9c2e1c84b7f72b ]
+
+Fixes gcc '-Wunused-but-set-variable' warning:
+
+drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c: In function
+‘gfx_v8_0_gpu_early_init’:
+drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c:1713:6: warning: variable
+‘mc_shared_chmap’ set but not used [-Wunused-but-set-variable]
+
+Fixes: 0bde3a95eaa9 ("drm/amdgpu: split gfx8 gpu init into sw and hw parts")
+Signed-off-by: yu kuai <yukuai3@huawei.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+index d1054034d14b1..65d0a3e4f1f00 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+@@ -967,7 +967,7 @@ static int gfx_v8_0_mec_init(struct amdgpu_device *adev)
+ static void gfx_v8_0_gpu_early_init(struct amdgpu_device *adev)
+ {
+ 	u32 gb_addr_config;
+-	u32 mc_shared_chmap, mc_arb_ramcfg;
++	u32 mc_arb_ramcfg;
+ 	u32 dimm00_addr_map, dimm01_addr_map, dimm10_addr_map, dimm11_addr_map;
+ 	u32 tmp;
+ 
+@@ -1131,7 +1131,6 @@ static void gfx_v8_0_gpu_early_init(struct amdgpu_device *adev)
+ 		break;
+ 	}
+ 
+-	mc_shared_chmap = RREG32(mmMC_SHARED_CHMAP);
+ 	adev->gfx.config.mc_arb_ramcfg = RREG32(mmMC_ARB_RAMCFG);
+ 	mc_arb_ramcfg = adev->gfx.config.mc_arb_ramcfg;
+ 
+-- 
+2.20.1
+
