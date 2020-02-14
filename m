@@ -2,124 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E270D15FAB3
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 00:37:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F373215FAB6
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 00:37:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbgBNXgx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 18:36:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58560 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727529AbgBNXgx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 18:36:53 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 072F620848;
-        Fri, 14 Feb 2020 23:36:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581723412;
-        bh=CQufoR7vHijqQ6Q1/0cEdB0Ync1D9nO2IZkeI2H75Sc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=yrgmy2q8EpweD7RUkFgiP8HX+Qp1QWR8CzgtZf5aGrXo1Vdar0+Idl9I1sraSBoWV
-         tjuBzFH0WwkRBq9QqLyUV8ngZhQxffr3nY1hqpgeQkh0SaQGwFw2dOqFmGxC2B2efv
-         OXZZdEqJhCLqWa3xB2PDpmEw8YE3nz1+/r0FUj+8=
-Date:   Fri, 14 Feb 2020 18:36:50 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH AUTOSEL 4.4 080/100] char: hpet: Use flexible-array member
-Message-ID: <20200214233650.GF1734@sasha-vm>
-References: <20200214162425.21071-1-sashal@kernel.org>
- <20200214162425.21071-80-sashal@kernel.org>
- <20200214174314.GA250980@gmail.com>
+        id S1728249AbgBNXh6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 18:37:58 -0500
+Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:11094 "EHLO
+        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727935AbgBNXh6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 18:37:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1581723478; x=1613259478;
+  h=from:to:subject:date:message-id:references:in-reply-to:
+   content-id:content-transfer-encoding:mime-version;
+  bh=EQ7DYgwRNfv/wLxL7rAiSYHGXBWj+UpFbImhG+fPeeA=;
+  b=frwXioL5A6gIcBbvs3qeVm8regPJYzCZP19izrYOZ9sgVJZwiTn/8HW8
+   wKpvMxIynKFbKQ11mFgdY+D7bzZNP0lk2yFs5m6rqkAtvq81xiMDoFePX
+   I+ukea/T9UdV3cqIcJJKz20FXf8tUc4WkOXC/YjOHpRLcanJ/RlS9JYeX
+   8=;
+IronPort-SDR: Q+WsFLrDc545+uyxEQXx2T1ZRLEWdxxBOun40BWcJP2NUiHjjlq24uaOoUb2DTvjrBMDx/6M8O
+ LKQVe6HaWxjw==
+X-IronPort-AV: E=Sophos;i="5.70,442,1574121600"; 
+   d="scan'208";a="16799280"
+Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1a-16acd5e0.us-east-1.amazon.com) ([10.47.23.38])
+  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP; 14 Feb 2020 23:37:56 +0000
+Received: from EX13MTAUWB001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1a-16acd5e0.us-east-1.amazon.com (Postfix) with ESMTPS id C02A6A25F4;
+        Fri, 14 Feb 2020 23:37:48 +0000 (UTC)
+Received: from EX13D05UWB001.ant.amazon.com (10.43.161.181) by
+ EX13MTAUWB001.ant.amazon.com (10.43.161.249) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 14 Feb 2020 23:37:47 +0000
+Received: from EX13D07UWB001.ant.amazon.com (10.43.161.238) by
+ EX13D05UWB001.ant.amazon.com (10.43.161.181) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 14 Feb 2020 23:37:46 +0000
+Received: from EX13D07UWB001.ant.amazon.com ([10.43.161.238]) by
+ EX13D07UWB001.ant.amazon.com ([10.43.161.238]) with mapi id 15.00.1367.000;
+ Fri, 14 Feb 2020 23:37:46 +0000
+From:   "Agarwal, Anchal" <anchalag@amazon.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
+        "jgross@suse.com" <jgross@suse.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "Kamata, Munehisa" <kamatam@amazon.com>,
+        "sstabellini@kernel.org" <sstabellini@kernel.org>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        "roger.pau@citrix.com" <roger.pau@citrix.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "len.brown@intel.com" <len.brown@intel.com>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "Valentin, Eduardo" <eduval@amazon.com>,
+        "Singh, Balbir" <sblbir@amazon.com>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>,
+        "fllinden@amaozn.com" <fllinden@amaozn.com>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>
+Subject: Re: [RFC PATCH v3 00/12] Enable PM hibernation on guest VMs
+Thread-Topic: [RFC PATCH v3 00/12] Enable PM hibernation on guest VMs
+Thread-Index: AQHV4fPo8eXu12vqTkyMeBw6bIMui6gY9+iAgAHdmAA=
+Date:   Fri, 14 Feb 2020 23:37:46 +0000
+Message-ID: <F2086290-8DF5-4CD5-B142-DA9FD85D27E1@amazon.com>
+References: <20200212222935.GA3421@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com>
+ <87a75m3ftk.fsf@nanos.tec.linutronix.de>
+In-Reply-To: <87a75m3ftk.fsf@nanos.tec.linutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.162.233]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7EB21256422AE247A547687FA7DB3733@amazon.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20200214174314.GA250980@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 09:43:14AM -0800, Eric Biggers wrote:
->On Fri, Feb 14, 2020 at 11:24:04AM -0500, Sasha Levin wrote:
->> From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
->>
->> [ Upstream commit 987f028b8637cfa7658aa456ae73f8f21a7a7f6f ]
->>
->> Old code in the kernel uses 1-byte and 0-byte arrays to indicate the
->> presence of a "variable length array":
->>
->> struct something {
->>     int length;
->>     u8 data[1];
->> };
->>
->> struct something *instance;
->>
->> instance = kmalloc(sizeof(*instance) + size, GFP_KERNEL);
->> instance->length = size;
->> memcpy(instance->data, source, size);
->>
->> There is also 0-byte arrays. Both cases pose confusion for things like
->> sizeof(), CONFIG_FORTIFY_SOURCE, etc.[1] Instead, the preferred mechanism
->> to declare variable-length types such as the one above is a flexible array
->> member[2] which need to be the last member of a structure and empty-sized:
->>
->> struct something {
->>         int stuff;
->>         u8 data[];
->> };
->>
->> Also, by making use of the mechanism above, we will get a compiler warning
->> in case the flexible array does not occur last in the structure, which
->> will help us prevent some kind of undefined behavior bugs from being
->> unadvertenly introduced[3] to the codebase from now on.
->>
->> [1] https://github.com/KSPP/linux/issues/21
->> [2] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
->> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> Link: https://lore.kernel.org/r/20200120235326.GA29231@embeddedor.com
->> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Signed-off-by: Sasha Levin <sashal@kernel.org>
->> ---
->>  drivers/char/hpet.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/char/hpet.c b/drivers/char/hpet.c
->> index 5b38d7a8202a1..38c2ae93ce492 100644
->> --- a/drivers/char/hpet.c
->> +++ b/drivers/char/hpet.c
->> @@ -112,7 +112,7 @@ struct hpets {
->>  	unsigned long hp_delta;
->>  	unsigned int hp_ntimer;
->>  	unsigned int hp_which;
->> -	struct hpet_dev hp_dev[1];
->> +	struct hpet_dev hp_dev[];
->>  };
->>
->
->Umm, why are you backporting this without the commit that fixes it?  Does your
-
-mhm, for some reason it failed to apply to 4.19 and older. I can look at
-that.
-
->AUTOSEL process really still not pay attention to Fixes tags?  They are there
->for a reason.
-
-Yes, it looks at the Fixes tag, thank you for the explanation.
-
->And for that matter, why are you backporting it all, given that this is a
->cleanup and not a fix?
-
-If I recall correctly CONFIG_FORTIFY_SOURCE=y results in user visible
-warnings, which we try to fix in the stable kernel.
-
--- 
-Thanks,
-Sasha
+SSBkaWQgcmVzZW5kIHRoZW0gdG9kYXkuIEFwb2xvZ2llcyBmb3IgZGVsYXkNCmh0dHBzOi8vbGtt
+bC5vcmcvbGttbC8yMDIwLzIvMTQvMjc4OQ0KDQpUaGFua3MsDQpBbmNoYWwNCg0K77u/ICAgIEFu
+Y2hhLA0KICAgIA0KICAgIEFuY2hhbCBBZ2Fyd2FsIDxhbmNoYWxhZ0BhbWF6b24uY29tPiB3cml0
+ZXM6DQogICAgDQogICAgPiBIZWxsbywNCiAgICA+IEkgYW0gc2VuZGluZyBvdXQgYSB2MyB2ZXJz
+aW9uIG9mIHNlcmllcyBvZiBwYXRjaGVzIHRoYXQgaW1wbGVtZW50cyBndWVzdA0KICAgID4gUE0g
+aGliZXJuYXRpb24uDQogICAgDQogICAgY2FuIHlvdSBwcmV0dHkgcGxlYXNlIHRocmVhZCB5b3Vy
+IHBhdGNoIHNlcmllcyBzbyB0aGF0IHRoZSAxLW4vbiBtYWlscw0KICAgIGhhdmUgYQ0KICAgIA0K
+ICAgICAgUmVmZXJlbmNlczogPG1lc3NhZ2UtaWQtb2YtMC1vZi1uLW1haWxAd2hhdGV2ZXJ5b3Vy
+Y2xpZW50cHV0c3RoZXJlPg0KICAgIA0KICAgIGluIHRoZSBoZWFkZXJzPyBnaXQtc2VuZC1lbWFp
+bCBkb2VzIHRoYXQgcHJvcGVyIGFzIGRvIG90aGVyIHRvb2xzLg0KICAgIA0KICAgIENvbGxlY3Rp
+bmcgdGhlIGluZGl2aWR1YWwgbWFpbHMgaXMgcGFpbmZ1bC4NCiAgICANCiAgICBUaGFua3MsDQog
+ICAgDQogICAgICAgICAgICB0Z2x4DQogICAgDQoNCg==
