@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59F2015F2FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:20:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBF4615F3D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:22:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730899AbgBNPvz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:51:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56848 "EHLO mail.kernel.org"
+        id S2404645AbgBNSPv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:15:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730843AbgBNPvn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:51:43 -0500
+        id S1729475AbgBNPvr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:51:47 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7AEB2467E;
-        Fri, 14 Feb 2020 15:51:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A88F524676;
+        Fri, 14 Feb 2020 15:51:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695502;
-        bh=LUMQ4dfbhY9whkPxnaGYGSz/mst3o4nhse0JeJl/eyc=;
+        s=default; t=1581695506;
+        bh=wKF6to/Ae7L+wJeSIQu3UCpCEcTa0xmUwfpSPCOZrZI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=krkUnuZyd0c5sd/p3qINKvcQnHHFeHUcyZZJ9FkEnckgfXmkVS4nPdeUslAViDjdG
-         BnHg6snwQMaoLaRSxCVg16AnzqbP4hhMT8+v9ml8/XEGiE3wr0+hzbcK1SU6SJiDlW
-         6WMIR3rrdv0+m5p+vhPsOMQeNKNnGJEB0sF9zBgM=
+        b=mvScXVCZZGKbdhDLBBA8Pf1/tP6aX9MO+p+8ZaCwgzXkSUkc96Hr73x+FgaAS4iqc
+         p5Qp3Ws/4Bp5FgBfZMjynkEPkUM0ZTkCvcdfilJVqVylr0uTI6L3b7ndalN9MlNgOa
+         S29QIkVTgPNXErNpIPm+NWd6v6U4hg0CSbaifSVU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 129/542] clk: qcom: Don't overwrite 'cfg' in clk_rcg2_dfs_populate_freq()
-Date:   Fri, 14 Feb 2020 10:42:01 -0500
-Message-Id: <20200214154854.6746-129-sashal@kernel.org>
+Cc:     Lorenzo Bianconi <lorenzo@kernel.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.5 132/542] mt76: mt7615: fix max_nss in mt7615_eeprom_parse_hw_cap
+Date:   Fri, 14 Feb 2020 10:42:04 -0500
+Message-Id: <20200214154854.6746-132-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -44,58 +46,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Boyd <sboyd@kernel.org>
+From: Lorenzo Bianconi <lorenzo@kernel.org>
 
-[ Upstream commit 21e157c62eeded8b1558a991b4820b761d48a730 ]
+[ Upstream commit d08f3010f4a32eec3c8aa771f03a1b342a1472fa ]
 
-The DFS frequency table logic overwrites 'cfg' while detecting the
-parent clk and then later on in clk_rcg2_dfs_populate_freq() we use that
-same variable to figure out the mode of the clk, either MND or not. Add
-a new variable to hold the parent clk bit so that 'cfg' is left
-untouched for use later.
+Fix u8 cast reading max_nss from MT_TOP_STRAP_STA register in
+mt7615_eeprom_parse_hw_cap routine
 
-This fixes problems in detecting the supported frequencies for any clks
-in DFS mode.
-
-Fixes: cc4f6944d0e3 ("clk: qcom: Add support for RCG to register for DFS")
-Reported-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Link: https://lkml.kernel.org/r/20200128193329.45635-1-sboyd@kernel.org
-Tested-by: Rajendra Nayak <rnayak@codeaurora.org>
+Fixes: acf5457fd99db ("mt76: mt7615: read {tx,rx} mask from eeprom")
+Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/clk-rcg2.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/wireless/mediatek/mt76/mt7615/eeprom.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 8f4b9bec29565..5e0f7d8f168dd 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -952,7 +952,7 @@ static void clk_rcg2_dfs_populate_freq(struct clk_hw *hw, unsigned int l,
- 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
- 	struct clk_hw *p;
- 	unsigned long prate = 0;
--	u32 val, mask, cfg, mode;
-+	u32 val, mask, cfg, mode, src;
- 	int i, num_parents;
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/eeprom.c b/drivers/net/wireless/mediatek/mt76/mt7615/eeprom.c
+index eccad4987ac83..17e277bf39e0f 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7615/eeprom.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7615/eeprom.c
+@@ -92,8 +92,9 @@ static int mt7615_check_eeprom(struct mt76_dev *dev)
  
- 	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + SE_PERF_DFSR(l), &cfg);
-@@ -962,12 +962,12 @@ static void clk_rcg2_dfs_populate_freq(struct clk_hw *hw, unsigned int l,
- 	if (cfg & mask)
- 		f->pre_div = cfg & mask;
+ static void mt7615_eeprom_parse_hw_cap(struct mt7615_dev *dev)
+ {
+-	u8 val, *eeprom = dev->mt76.eeprom.data;
++	u8 *eeprom = dev->mt76.eeprom.data;
+ 	u8 tx_mask, rx_mask, max_nss;
++	u32 val;
  
--	cfg &= CFG_SRC_SEL_MASK;
--	cfg >>= CFG_SRC_SEL_SHIFT;
-+	src = cfg & CFG_SRC_SEL_MASK;
-+	src >>= CFG_SRC_SEL_SHIFT;
- 
- 	num_parents = clk_hw_get_num_parents(hw);
- 	for (i = 0; i < num_parents; i++) {
--		if (cfg == rcg->parent_map[i].cfg) {
-+		if (src == rcg->parent_map[i].cfg) {
- 			f->src = rcg->parent_map[i].src;
- 			p = clk_hw_get_parent_by_index(&rcg->clkr.hw, i);
- 			prate = clk_hw_get_rate(p);
+ 	val = FIELD_GET(MT_EE_NIC_WIFI_CONF_BAND_SEL,
+ 			eeprom[MT_EE_WIFI_CONF]);
 -- 
 2.20.1
 
