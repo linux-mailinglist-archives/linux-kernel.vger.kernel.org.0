@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95B1C15E5D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:44:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B47FF15E4E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:39:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393969AbgBNQoF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:44:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56644 "EHLO mail.kernel.org"
+        id S2405603AbgBNQXV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:23:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393081AbgBNQVq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:21:46 -0500
+        id S2404904AbgBNQVt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:21:49 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA665246BB;
-        Fri, 14 Feb 2020 16:21:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2B54246C5;
+        Fri, 14 Feb 2020 16:21:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697306;
-        bh=bUl18KgYsD1pERCGM7Tr1bxlg61pSdWjL5hSVsWT+90=;
+        s=default; t=1581697308;
+        bh=ajpB8eecB8S6mcm+Ep69bc4C07rF0kg9REsPpgf97+0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=02vcwAtnAuMSd8xFb4cCqsINh94vGz8pK+gYNDXDR/Byfm6U0NvyS+N+rhY1NaqlT
-         eY2Xakvmc1ok5zVKc02wQgGr3vrvkjuZ2o+56QhNBAFNTMDgfKeQNamvK1FgNBR2Pc
-         fIc3dXvJFEJ1+yEWZkTZP1Gc1+CvpOe4tgWSMqbU=
+        b=VxkshYGsZ4frBNTLtRJPmvmGWSly/LyhGp71zAZ5xERCnRwE0m5BD7I8qMhiDOXzM
+         5tFod9h0OuUdmJ13EwPbVwuwmAhqNyh+FpZUaiLeKEhvXyGYkuvssxUoUBoDD4Omre
+         PB/EvR7i58ew/VkipBhn4wdG/UBHpdcRndmy12e8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, sparclinux@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 018/141] sparc: Add .exit.data section.
-Date:   Fri, 14 Feb 2020 11:19:18 -0500
-Message-Id: <20200214162122.19794-18-sashal@kernel.org>
+Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 020/141] usb: gadget: udc: fix possible sleep-in-atomic-context bugs in gr_probe()
+Date:   Fri, 14 Feb 2020 11:19:20 -0500
+Message-Id: <20200214162122.19794-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214162122.19794-1-sashal@kernel.org>
 References: <20200214162122.19794-1-sashal@kernel.org>
@@ -42,41 +44,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "David S. Miller" <davem@davemloft.net>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit 548f0b9a5f4cffa0cecf62eb12aa8db682e4eee6 ]
+[ Upstream commit 9c1ed62ae0690dfe5d5e31d8f70e70a95cb48e52 ]
 
-This fixes build errors of all sorts.
+The driver may sleep while holding a spinlock.
+The function call path (from bottom to top) in Linux 4.19 is:
 
-Also, emit .exit.text unconditionally.
+drivers/usb/gadget/udc/core.c, 1175:
+	kzalloc(GFP_KERNEL) in usb_add_gadget_udc_release
+drivers/usb/gadget/udc/core.c, 1272:
+	usb_add_gadget_udc_release in usb_add_gadget_udc
+drivers/usb/gadget/udc/gr_udc.c, 2186:
+	usb_add_gadget_udc in gr_probe
+drivers/usb/gadget/udc/gr_udc.c, 2183:
+	spin_lock in gr_probe
 
-Signed-off-by: David S. Miller <davem@davemloft.net>
+drivers/usb/gadget/udc/core.c, 1195:
+	mutex_lock in usb_add_gadget_udc_release
+drivers/usb/gadget/udc/core.c, 1272:
+	usb_add_gadget_udc_release in usb_add_gadget_udc
+drivers/usb/gadget/udc/gr_udc.c, 2186:
+	usb_add_gadget_udc in gr_probe
+drivers/usb/gadget/udc/gr_udc.c, 2183:
+	spin_lock in gr_probe
+
+drivers/usb/gadget/udc/gr_udc.c, 212:
+	debugfs_create_file in gr_probe
+drivers/usb/gadget/udc/gr_udc.c, 2197:
+	gr_dfs_create in gr_probe
+drivers/usb/gadget/udc/gr_udc.c, 2183:
+    spin_lock in gr_probe
+
+drivers/usb/gadget/udc/gr_udc.c, 2114:
+	devm_request_threaded_irq in gr_request_irq
+drivers/usb/gadget/udc/gr_udc.c, 2202:
+	gr_request_irq in gr_probe
+drivers/usb/gadget/udc/gr_udc.c, 2183:
+    spin_lock in gr_probe
+
+kzalloc(GFP_KERNEL), mutex_lock(), debugfs_create_file() and
+devm_request_threaded_irq() can sleep at runtime.
+
+To fix these possible bugs, usb_add_gadget_udc(), gr_dfs_create() and
+gr_request_irq() are called without handling the spinlock.
+
+These bugs are found by a static analysis tool STCheck written by myself.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Felipe Balbi <balbi@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/sparc/kernel/vmlinux.lds.S | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/usb/gadget/udc/gr_udc.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/arch/sparc/kernel/vmlinux.lds.S b/arch/sparc/kernel/vmlinux.lds.S
-index 572db686f8458..385d6d04564d5 100644
---- a/arch/sparc/kernel/vmlinux.lds.S
-+++ b/arch/sparc/kernel/vmlinux.lds.S
-@@ -151,12 +151,14 @@ SECTIONS
+diff --git a/drivers/usb/gadget/udc/gr_udc.c b/drivers/usb/gadget/udc/gr_udc.c
+index 39b7136d31d9c..9e246d2e55ca3 100644
+--- a/drivers/usb/gadget/udc/gr_udc.c
++++ b/drivers/usb/gadget/udc/gr_udc.c
+@@ -2200,8 +2200,6 @@ static int gr_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
  	}
- 	PERCPU_SECTION(SMP_CACHE_BYTES)
  
--#ifdef CONFIG_JUMP_LABEL
- 	. = ALIGN(PAGE_SIZE);
- 	.exit.text : {
- 		EXIT_TEXT
+-	spin_lock(&dev->lock);
+-
+ 	/* Inside lock so that no gadget can use this udc until probe is done */
+ 	retval = usb_add_gadget_udc(dev->dev, &dev->gadget);
+ 	if (retval) {
+@@ -2210,15 +2208,21 @@ static int gr_probe(struct platform_device *pdev)
  	}
--#endif
+ 	dev->added = 1;
+ 
++	spin_lock(&dev->lock);
 +
-+	.exit.data : {
-+		EXIT_DATA
+ 	retval = gr_udc_init(dev);
+-	if (retval)
++	if (retval) {
++		spin_unlock(&dev->lock);
+ 		goto out;
+-
+-	gr_dfs_create(dev);
 +	}
  
- 	. = ALIGN(PAGE_SIZE);
- 	__init_end = .;
+ 	/* Clear all interrupt enables that might be left on since last boot */
+ 	gr_disable_interrupts_and_pullup(dev);
+ 
++	spin_unlock(&dev->lock);
++
++	gr_dfs_create(dev);
++
+ 	retval = gr_request_irq(dev, dev->irq);
+ 	if (retval) {
+ 		dev_err(dev->dev, "Failed to request irq %d\n", dev->irq);
+@@ -2247,8 +2251,6 @@ static int gr_probe(struct platform_device *pdev)
+ 		dev_info(dev->dev, "regs: %p, irq %d\n", dev->regs, dev->irq);
+ 
+ out:
+-	spin_unlock(&dev->lock);
+-
+ 	if (retval)
+ 		gr_remove(pdev);
+ 
 -- 
 2.20.1
 
