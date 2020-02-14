@@ -2,100 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A73F15E4CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:38:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 521B215E4EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:39:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390516AbgBNQiM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:38:12 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:44602 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393822AbgBNQiH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:38:07 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01EGVRU9177974;
-        Fri, 14 Feb 2020 16:37:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=q7LK0zVHD6kckSz3zHVmf2SZkUr5cu8r6SR5IXnD0kA=;
- b=qX70sO0Gr9p+AflLX+hORJrXc7RNqSWSNezzJKw5GgwEj5RP37gxO55L3hCYUbxN0trR
- TOZ7mgOsFqd8x/Tjgt5g6ZEooKuUjt6KuqG10uG8eB2n8Fag9oWiui/mUWqs5Ed6vlx2
- vykicqj+OMKDLqY8Mpo77qzRIr2RL0ubuzmHzSZT5OJkSXvv4u4FJFC/p9Dfae0kfDWv
- o8IwC7UbX/dYIXheOAj14fFyRvFl64t5HmBw6+TNFQrXx9GGkbxlo47W32ldbqNYZ/R2
- kdvmQLRV1pSK09zNxst28Q9JBLHwzG1GLYTmzKFkhzbI4wxU4E3zg+hk+5mpmI3XK4PT EQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2y2p3t29d8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 14 Feb 2020 16:37:46 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01EGbUei097455;
-        Fri, 14 Feb 2020 16:37:45 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 2y4k3dasps-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 14 Feb 2020 16:37:45 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01EGbhxs006002;
-        Fri, 14 Feb 2020 16:37:43 GMT
-Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 14 Feb 2020 08:37:42 -0800
-Date:   Fri, 14 Feb 2020 11:37:58 -0500
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     Yang Yingliang <yangyingliang@huawei.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Steffen Klassert <steffen.klassert@secunet.com>
-Subject: Re: [PATCH 4.19 091/195] padata: Remove broken queue flushing
-Message-ID: <20200214163758.455gqh73dhzvbvtv@ca-dmjordan1.us.oracle.com>
-References: <20200210122305.731206734@linuxfoundation.org>
- <20200210122314.217904406@linuxfoundation.org>
- <5E4674BB.4020900@huawei.com>
+        id S2393844AbgBNQie (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:38:34 -0500
+Received: from mout.gmx.net ([212.227.15.18]:43427 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2393832AbgBNQib (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:38:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1581698305;
+        bh=aljnTBBsgqVrEDd/gZAFSsxFP6sDswfp9xiGBdfL1cM=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=bqDWKVI/Vp3YAxe60eR6+WGucMg1H67N6O8r8ZLW0yRNqU143urojx8/60nnRRebe
+         YXHkLM9nXvblGEL649ohvDF9PjBn9Iowm4fZW59mdhKgOJdt++r/WATx7Rd5tU4QFw
+         r+N4obr7fkme+oFpoNvlJ5ivK9VnijHrdQTP7dKM=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from longitude ([37.201.214.12]) by mail.gmx.com (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MbzuH-1jcWAY0P8x-00dVlW; Fri, 14
+ Feb 2020 17:38:25 +0100
+From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     dri-devel@lists.freedesktop.org
+Cc:     =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND] drm/mcde: Fix Sphinx formatting
+Date:   Fri, 14 Feb 2020 17:38:15 +0100
+Message-Id: <20200214163815.25442-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5E4674BB.4020900@huawei.com>
-User-Agent: NeoMutt/20180716
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9531 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999 adultscore=0
- bulkscore=0 malwarescore=0 phishscore=0 suspectscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002140127
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9531 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 malwarescore=0
- suspectscore=0 mlxlogscore=999 priorityscore=1501 clxscore=1011
- impostorscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002140126
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:vZ9nWg5BWeKK1PKzyMUn6ldpagxahM+XpFuW53lIDolnke9gr2c
+ RQUC5gkxbZz06w9tIB974S2dxOP+wJyl/79mFZdPo53zqFruF4o5j7rhFhLZMmmxH+84llB
+ ER3FYu+hDSOh0QulSLYKQ4gv47VrGK5uvKalLABt6Jo90zAp8Sc0xK7qFy2cKFEK8dPzcls
+ 7bFG99gh7lgzU6Gl/hufQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:KIrrjmF1rqM=:ZfVoE6CxftqLKTNVFw+DBU
+ xxz+xlB5M8SyPHZ5JiBz6sFQkWwVJNtjCZvh4EKOvQMKcOoeT3cArZfbsniXkdpGZC0wA4V+j
+ FH5YNtoofAJny+FanImwgUZWRPigBIk8k+Jl2FVPiu7gsMUaNCt+ouS9vKazLK4n9tn8//fqe
+ /g0YwCrHezTjvq89mfbPtr7dEkyxTO7CNAowKicHLwmvPeEXazEVTXij6rSkzeblitTxyGpl8
+ A7H7QWXtskfX6dxGM6AFh4trMzDalDA+7iIQmcmhHcQA+FDrgSzcxJutRROJwHBXzwesYIDjM
+ pjDSEfRMwYlmdQ139qZJGs3oIQd9W9OGWzj95MPA/0z8h3XAxZ2mcWBDzYSwEGIxlsn/LzwUD
+ TbVWfPOv9++PRETtt+zmoIjdSLrQE85gNSepi0dI5VcaoVwcw1IpQNha7Egc8odcmoYqzLdOo
+ 23AOiLN6frx1mFeLYu/THm/doCFEgI+DMxBUdbIihwabvrRzojqflzHwLHHLBuSYt30ObrpW3
+ 7nj+L1sbKCevzQqI9CsFNcaswseH6eblVWBYNQLJm0DkScn4lBUpzezkpkGUwrsW7/+bJkdv7
+ T5MFJzV/X8QUBUcZ90nWtIh6XCkdZjFo6kbu6DNmrRKaR8NaFwkqEbeKCM//8Q5ymgx8h9Wg4
+ PDGyRDlCfMYYtQBNV4ObwzWs+ebTH2WIoavKLQ9l5Ld7BBPM3XEBgjvvFfQ4+NhM/EjJ6my+K
+ sqmuLNp6F1yP9tE0dOLPbf/tOejYjOGvM0sm8yOPBhvhchzQ7WGC+ccbBEDhb8Y9dMj5u0GIf
+ aZF2qUyQZ2GfkrnCJYQmzExhWOjlUi4Ubz29ajvHdY00W5WEsMLQbDMu1rEs62CcxpkxdfyCE
+ amTSV25I0hEBFVtgkAGsakRCI5hDBBv0Ve+NlAOvUwHM7003uhyjhWc4Ya4un1WzkBSksUMLN
+ ZdvYUoER/4Exl7UZCVnL/dyt5NUXJxxsZIDcqDWUVOxq7GreLQrVUDWoRedOr+SpGlwrS/Pcl
+ 0QkC//3zXqLKjU+ZDO8odU9+A435N5GFTZUkB5+7ZIc2IbLz8YDvaBbkMAuXqQzsjLGb/TFa3
+ xpZx6+XXMJJcqMOjKe1/xX0h3mbGGG1zU8EHSFlSbZ/ehGilzBuMtEZPOFUe33fGTPWDyAADP
+ I3qjgN/TL5v5DQppmNQ/Ka8YJ/4MtXjTbImesOL3T7qkBf5LW6hHLC8cVd/wtLMMeEBoKUAaD
+ VaAHYEDD+dx1aegof
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Yang,
+- Format the pipe diagram as a monospace block.
+- Fix formatting of the list. Without the empty line, the first dash is
+  not parsed as a bullet point.
 
-On Fri, Feb 14, 2020 at 06:21:47PM +0800, Yang Yingliang wrote:
-> On 2020/2/10 20:32, Greg Kroah-Hartman wrote:
-> > @@ -501,8 +509,7 @@ static struct parallel_data *padata_alloc_pd(struct padata_instance *pinst,
-> >   	timer_setup(&pd->timer, padata_reorder_timer, 0);
-> >   	atomic_set(&pd->seq_nr, -1);
-> >   	atomic_set(&pd->reorder_objects, 0);
-> > -	atomic_set(&pd->refcnt, 0);
-> > -	pd->pinst = pinst;
-> This patch remove this assignment, it's cause a null-ptr-deref when using
-> pd->pinst in padata_reorder().
+Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+=2D--
+Previous copy: https://lore.kernel.org/lkml/20191002153827.23026-2-j.neusc=
+haefer@gmx.net/
 
-Thanks for reporting.  This change is based on an enhancement in mainline that
-moved this assignment but isn't in 4.19:
+It seems that this patch got lost, somehow.
+=2D--
+ drivers/gpu/drm/mcde/mcde_drv.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-  bfde23ce200e ("padata: unbind parallel jobs from specific CPUs")
+diff --git a/drivers/gpu/drm/mcde/mcde_drv.c b/drivers/gpu/drm/mcde/mcde_d=
+rv.c
+index 9a09eba53182..c535abed4765 100644
+=2D-- a/drivers/gpu/drm/mcde/mcde_drv.c
++++ b/drivers/gpu/drm/mcde/mcde_drv.c
+@@ -20,11 +20,11 @@
+  * input formats including most variants of RGB and YUV.
+  *
+  * The hardware has four display pipes, and the layout is a little
+- * bit like this:
++ * bit like this::
+  *
+- * Memory     -> Overlay -> Channel -> FIFO -> 5 formatters -> DSI/DPI
+- * External      0..5       0..3       A,B,    3 x DSI         bridge
+- * source 0..9                         C0,C1   2 x DPI
++ *   Memory     -> Overlay -> Channel -> FIFO -> 5 formatters -> DSI/DPI
++ *   External      0..5       0..3       A,B,    3 x DSI         bridge
++ *   source 0..9                         C0,C1   2 x DPI
+  *
+  * FIFOs A and B are for LCD and HDMI while FIFO CO/C1 are for
+  * panels with embedded buffer.
+@@ -43,6 +43,7 @@
+  * to change as we exploit more of the hardware capabilities.
+  *
+  * TODO:
++ *
+  * - Enabled damaged rectangles using drm_plane_enable_fb_damage_clips()
+  *   so we can selectively just transmit the damaged area to a
+  *   command-only display.
+=2D-
+2.20.1
 
-A version of _this_ patch (i.e. remove broken queue flushing) has been posted
-for 4.14, 4.9, and 4.4, all of which would likely result in the same issue, so
-let's hold off on merging those until I can post fixed versions.
-
-I'll start working on the 4.19 fix now.
