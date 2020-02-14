@@ -2,149 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A56715E364
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:30:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40D0F15E361
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:30:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406577AbgBNQaC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:30:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37116 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406436AbgBNQ0a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:26:30 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F18B1246FB;
-        Fri, 14 Feb 2020 16:26:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697589;
-        bh=eD0+slTQEDPWptH6UvgJhptAS0AAfbbJ/DGCI2QLIbQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MU3lLoFbU/6Ar0wLrO66gpfqjczXUXX3JvW6T+D2/8x3o85Pym7OJRm3oAuv2trEc
-         mhERDY1IYyAkwZ8s9HTmyOJSyOWYlz6TcIHqWkn8DS21s1NubZJyTTW8o4MwoZci9C
-         HZlP5Q+xPRxnqpt7OJKs0EFFOHEUlwxz3sFSsF5Y=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Zhiqiang Liu <liuzhiqiang26@huawei.com>,
-        Bob Liu <bob.liu@oracle.com>, Ming Lei <ming.lei@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 100/100] brd: check and limit max_part par
-Date:   Fri, 14 Feb 2020 11:24:24 -0500
-Message-Id: <20200214162425.21071-100-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214162425.21071-1-sashal@kernel.org>
-References: <20200214162425.21071-1-sashal@kernel.org>
+        id S2405806AbgBNQ3l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:29:41 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:37104 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393402AbgBNQ0t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:26:49 -0500
+Received: by mail-pl1-f196.google.com with SMTP id c23so3911307plz.4;
+        Fri, 14 Feb 2020 08:26:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=B5LavZnvDc2H0BilbcHTMEaeHVyUFn+jvZShai3pdz4=;
+        b=FojDOUKhHE/32/VEavk94WoIhrYrOObwR06J9FRHFHAIp+jFrNhRAZC71hw1sOqzbb
+         rajf8h286q1k6zL+D8lbdRmcRWf7mDziyJ+8oef2DTpsAfwJqZKjy1IqeecXVkJhLJkK
+         jBNnItT6nT2+Gw0p0WJlA78rtbv+UHs6uU0XUZ72oClHNLyRDz85Pxiy8/QEyzxHxs4i
+         SLeoqXtnxXcOdlkowqqBjvJhN7mVXhEx/GVgeUoyBv1pQiNXu+WXUzixajtfxYGCAxCM
+         XiusUlVEb4JNaOMI3Hu6GTpTSbKQVn10wyOqRkCcuWwdzC8CXx3QqclvXhszrelilUVh
+         MbSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=B5LavZnvDc2H0BilbcHTMEaeHVyUFn+jvZShai3pdz4=;
+        b=l2Rmyzgg+otKw8MlyDW5x1vHsEECpWGr5iFWEpZ1Kg+X0g2IT5qqGyFzvqhbdlSjjT
+         7fTdL/xQlyEpGyUOvymGdMWC9ZeTp9syB0DRvcWKc9cFY7GR7e3wyTqPsS/3BKIMNZn0
+         sg8D0HRfUo3a4RZINCYcLMo4/csoqhK5e/miBB+wm7htySSia8Z88SNzeqqebd3x5Y77
+         zi/R2Emy1w1lLsz48ffWjIVDMacvlfR5EApHBUKkg4pREIQX1drpMVVSj26QmGhxchve
+         q6f/BFq1zSZMwQcLcY7vZAL/dxttPNgOzcHac07tQM5uev6SlsraMwGfRPeuc8f+tKuN
+         YZUg==
+X-Gm-Message-State: APjAAAUjmMdf74l5mwDcgmbJugwASiCESHPaIfLbs77GxFb8icJ6xbW8
+        /qpOkVFSEUJvsIB8zixe7xc=
+X-Google-Smtp-Source: APXvYqx7lg9W8azBTIVgcSYBl/71cYY2Qqr/zdB8ci7UekByj8eHdv/HkemitzSzxfeAMEYl4cFcEw==
+X-Received: by 2002:a17:90a:17c2:: with SMTP id q60mr4327761pja.111.1581697609226;
+        Fri, 14 Feb 2020 08:26:49 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id o14sm7549898pgm.67.2020.02.14.08.26.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Feb 2020 08:26:48 -0800 (PST)
+Date:   Fri, 14 Feb 2020 08:26:47 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.14 000/173] 4.14.171-stable review
+Message-ID: <20200214162647.GA18488@roeck-us.net>
+References: <20200213151931.677980430@linuxfoundation.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200213151931.677980430@linuxfoundation.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhiqiang Liu <liuzhiqiang26@huawei.com>
+On Thu, Feb 13, 2020 at 07:18:23AM -0800, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.171 release.
+> There are 173 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 15 Feb 2020 15:16:41 +0000.
+> Anything received after that time might be too late.
+> 
 
-[ Upstream commit c8ab422553c81a0eb070329c63725df1cd1425bc ]
+For v4.14.170-175-gfc30e3f7ed49:
 
-In brd_init func, rd_nr num of brd_device are firstly allocated
-and add in brd_devices, then brd_devices are traversed to add each
-brd_device by calling add_disk func. When allocating brd_device,
-the disk->first_minor is set to i * max_part, if rd_nr * max_part
-is larger than MINORMASK, two different brd_device may have the same
-devt, then only one of them can be successfully added.
-when rmmod brd.ko, it will cause oops when calling brd_exit.
+Build results:
+	total: 172 pass: 172 fail: 0
+Qemu test results:
+	total: 378 pass: 378 fail: 0
 
-Follow those steps:
-  # modprobe brd rd_nr=3 rd_size=102400 max_part=1048576
-  # rmmod brd
-then, the oops will appear.
-
-Oops log:
-[  726.613722] Call trace:
-[  726.614175]  kernfs_find_ns+0x24/0x130
-[  726.614852]  kernfs_find_and_get_ns+0x44/0x68
-[  726.615749]  sysfs_remove_group+0x38/0xb0
-[  726.616520]  blk_trace_remove_sysfs+0x1c/0x28
-[  726.617320]  blk_unregister_queue+0x98/0x100
-[  726.618105]  del_gendisk+0x144/0x2b8
-[  726.618759]  brd_exit+0x68/0x560 [brd]
-[  726.619501]  __arm64_sys_delete_module+0x19c/0x2a0
-[  726.620384]  el0_svc_common+0x78/0x130
-[  726.621057]  el0_svc_handler+0x38/0x78
-[  726.621738]  el0_svc+0x8/0xc
-[  726.622259] Code: aa0203f6 aa0103f7 aa1e03e0 d503201f (7940e260)
-
-Here, we add brd_check_and_reset_par func to check and limit max_part par.
-
---
-V5->V6:
- - remove useless code
-
-V4->V5:(suggested by Ming Lei)
- - make sure max_part is not larger than DISK_MAX_PARTS
-
-V3->V4:(suggested by Ming Lei)
- - remove useless change
- - add one limit of max_part
-
-V2->V3: (suggested by Ming Lei)
- - clear .minors when running out of consecutive minor space in brd_alloc
- - remove limit of rd_nr
-
-V1->V2:
- - add more checks in brd_check_par_valid as suggested by Ming Lei.
-
-Signed-off-by: Zhiqiang Liu <liuzhiqiang26@huawei.com>
-Reviewed-by: Bob Liu <bob.liu@oracle.com>
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/block/brd.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/block/brd.c b/drivers/block/brd.c
-index 1914c63ca8b1d..58c1138ad5e17 100644
---- a/drivers/block/brd.c
-+++ b/drivers/block/brd.c
-@@ -581,6 +581,25 @@ static struct kobject *brd_probe(dev_t dev, int *part, void *data)
- 	return kobj;
- }
- 
-+static inline void brd_check_and_reset_par(void)
-+{
-+	if (unlikely(!max_part))
-+		max_part = 1;
-+
-+	/*
-+	 * make sure 'max_part' can be divided exactly by (1U << MINORBITS),
-+	 * otherwise, it is possiable to get same dev_t when adding partitions.
-+	 */
-+	if ((1U << MINORBITS) % max_part != 0)
-+		max_part = 1UL << fls(max_part);
-+
-+	if (max_part > DISK_MAX_PARTS) {
-+		pr_info("brd: max_part can't be larger than %d, reset max_part = %d.\n",
-+			DISK_MAX_PARTS, DISK_MAX_PARTS);
-+		max_part = DISK_MAX_PARTS;
-+	}
-+}
-+
- static int __init brd_init(void)
- {
- 	struct brd_device *brd, *next;
-@@ -604,8 +623,7 @@ static int __init brd_init(void)
- 	if (register_blkdev(RAMDISK_MAJOR, "ramdisk"))
- 		return -EIO;
- 
--	if (unlikely(!max_part))
--		max_part = 1;
-+	brd_check_and_reset_par();
- 
- 	for (i = 0; i < rd_nr; i++) {
- 		brd = brd_alloc(i);
--- 
-2.20.1
-
+Guenter
