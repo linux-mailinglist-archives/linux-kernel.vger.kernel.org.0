@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 948EF15F388
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:22:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 272A615F384
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:22:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393320AbgBNSMc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:12:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60486 "EHLO mail.kernel.org"
+        id S2393277AbgBNSMZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:12:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729825AbgBNPxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:53:08 -0500
+        id S1731163AbgBNPxL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:53:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E44FF24649;
-        Fri, 14 Feb 2020 15:53:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 805D324649;
+        Fri, 14 Feb 2020 15:53:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695587;
-        bh=g0H+3ovq4kYtjGmq5NPbNijrKDqg75LfmPzzqNKWwBk=;
+        s=default; t=1581695590;
+        bh=kXw+U02kMo5+dBWgsIEkSY6dFpeagC5XzqBhgIO2FW8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xrZgLHSdXOpgDiJAqDNAgJLfhvz2hf2Lkc7OZ8yyBVXVDmQIDXbjr8S1FJVAkZtdE
-         J2xZmFqLHrIrzDwhv7G4iVjJD5hpHUh/9k9Y0k3IbEHfyr2OQ7wXDfesdqhVzbujU8
-         YZomBiR5V+NFpe2kiQUAYQjVNBpafgP225B8K5Wg=
+        b=ufjCryc395phdeWJW7b7cBbBGGoeq6hJ+l67iuqMhLvpx4sT9i/2D0VW4fMRRKvPq
+         SyRZiP2+VDFOzLoQE7/DXUSJG/2vMKGzI8EGjxwZALkmGdBs0QlIvmQ+OLn1PCKfNm
+         Rd5VlfXJ7P2l9gegiF23n5cNwqHSLrvoiLDCSyIs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chuhong Yuan <hslester96@gmail.com>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        dmaengine@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 195/542] dmaengine: axi-dmac: add a check for devm_regmap_init_mmio
-Date:   Fri, 14 Feb 2020 10:43:07 -0500
-Message-Id: <20200214154854.6746-195-sashal@kernel.org>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 197/542] ARM: exynos_defconfig: Bring back explicitly wanted options
+Date:   Fri, 14 Feb 2020 10:43:09 -0500
+Message-Id: <20200214154854.6746-197-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -44,54 +45,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuhong Yuan <hslester96@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 
-[ Upstream commit a5b982af953bcc838cd198b0434834cc1dff14ec ]
+[ Upstream commit 9f9e2df2e64df197ff6548ef494f76be5b35d08a ]
 
-The driver misses checking the result of devm_regmap_init_mmio().
-Add a check to fix it.
+Few options KALLSYMS_ALL, SCSI, PM_DEVFREQ and mutex/spinlock debugging
+were removed with savedefconfig because they were selected by other
+options.  However these are user-visible options and they might not be
+selected in the future.  Exactly this happened with commit 0e4a459f56c3
+("tracing: Remove unnecessary DEBUG_FS dependency") removing the
+dependency between DEBUG_FS and TRACING.
 
-Fixes: fc15be39a827 ("dmaengine: axi-dmac: add regmap support")
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-Reviewed-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Link: https://lore.kernel.org/r/20191209085711.16001-1-hslester96@gmail.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+To avoid losing these options in the future, explicitly mention them in
+defconfig.
+
+Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/dma-axi-dmac.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ arch/arm/configs/exynos_defconfig | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/dma/dma-axi-dmac.c b/drivers/dma/dma-axi-dmac.c
-index a0ee404b736ed..f1d149e328395 100644
---- a/drivers/dma/dma-axi-dmac.c
-+++ b/drivers/dma/dma-axi-dmac.c
-@@ -830,6 +830,7 @@ static int axi_dmac_probe(struct platform_device *pdev)
- 	struct dma_device *dma_dev;
- 	struct axi_dmac *dmac;
- 	struct resource *res;
-+	struct regmap *regmap;
- 	int ret;
- 
- 	dmac = devm_kzalloc(&pdev->dev, sizeof(*dmac), GFP_KERNEL);
-@@ -921,10 +922,17 @@ static int axi_dmac_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, dmac);
- 
--	devm_regmap_init_mmio(&pdev->dev, dmac->base, &axi_dmac_regmap_config);
-+	regmap = devm_regmap_init_mmio(&pdev->dev, dmac->base,
-+		 &axi_dmac_regmap_config);
-+	if (IS_ERR(regmap)) {
-+		ret = PTR_ERR(regmap);
-+		goto err_free_irq;
-+	}
- 
- 	return 0;
- 
-+err_free_irq:
-+	free_irq(dmac->irq, dmac);
- err_unregister_of:
- 	of_dma_controller_free(pdev->dev.of_node);
- err_unregister_device:
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index fde84f123fbb5..ead8348ec999f 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -38,6 +38,7 @@ CONFIG_CRYPTO_SHA256_ARM=m
+ CONFIG_CRYPTO_SHA512_ARM=m
+ CONFIG_CRYPTO_AES_ARM_BS=m
+ CONFIG_CRYPTO_CHACHA20_NEON=m
++CONFIG_KALLSYMS_ALL=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+ CONFIG_PARTITION_ADVANCED=y
+@@ -92,6 +93,7 @@ CONFIG_BLK_DEV_LOOP=y
+ CONFIG_BLK_DEV_CRYPTOLOOP=y
+ CONFIG_BLK_DEV_RAM=y
+ CONFIG_BLK_DEV_RAM_SIZE=8192
++CONFIG_SCSI=y
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_SG=y
+ CONFIG_ATA=y
+@@ -291,6 +293,7 @@ CONFIG_CROS_EC_SPI=y
+ CONFIG_COMMON_CLK_MAX77686=y
+ CONFIG_COMMON_CLK_S2MPS11=y
+ CONFIG_EXYNOS_IOMMU=y
++CONFIG_PM_DEVFREQ=y
+ CONFIG_DEVFREQ_GOV_PERFORMANCE=y
+ CONFIG_DEVFREQ_GOV_POWERSAVE=y
+ CONFIG_DEVFREQ_GOV_USERSPACE=y
+@@ -356,4 +359,7 @@ CONFIG_SOFTLOCKUP_DETECTOR=y
+ # CONFIG_DETECT_HUNG_TASK is not set
+ CONFIG_PROVE_LOCKING=y
+ CONFIG_DEBUG_ATOMIC_SLEEP=y
++CONFIG_DEBUG_RT_MUTEXES=y
++CONFIG_DEBUG_SPINLOCK=y
++CONFIG_DEBUG_MUTEXES=y
+ CONFIG_DEBUG_USER=y
 -- 
 2.20.1
 
