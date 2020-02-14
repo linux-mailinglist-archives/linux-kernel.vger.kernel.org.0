@@ -2,158 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4CE115EDE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:37:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BC0115ED48
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:33:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387468AbgBNRg7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:36:59 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46339 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390145AbgBNQFV (ORCPT
+        id S2390470AbgBNRdE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:33:04 -0500
+Received: from UCOL19PA37.eemsg.mail.mil ([214.24.24.197]:60335 "EHLO
+        UCOL19PA37.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390455AbgBNQGf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:05:21 -0500
-Received: by mail-lj1-f195.google.com with SMTP id x14so11276271ljd.13
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 08:05:19 -0800 (PST)
+        Fri, 14 Feb 2020 11:06:35 -0500
+X-EEMSG-check-017: 76796021|UCOL19PA37_ESA_OUT04.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.70,441,1574121600"; 
+   d="scan'208";a="76796021"
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by UCOL19PA37.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 14 Feb 2020 16:06:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HZy/2z20rQr+AZdAg5mBnbB8bwtIRJaA+N58PUrVOnU=;
-        b=q0kKzSxAaRi40pL9e42a2YRfXqBYeh0GO136AUpv4Sy/B5RUFaHSKYdAat9LWsXNQq
-         8wGk9sMJS0ZGQZnZmamOiwBWCaHh4f+ufFpczx5vfyYxe51fyIbpiMudk1ydapLoFb6w
-         rK5X45HcvQMyVFfXq5inLv61KrGjtD3sOyTS3NinbHykT5tm3bXP5siZBYRmyJ8tOshn
-         v08UpR9sZAH9Kov4ZV8GwlsDKvoKEcCqUIrjR/c9usKy2X676NJuNVvJbwkc043fp+PU
-         wTIUfFBpObrZz8GamGuuqGVA7qMKeNbvXcV7ajy1qIngZPf/rVUZi/qEDJI0+Ou4NVai
-         NieA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HZy/2z20rQr+AZdAg5mBnbB8bwtIRJaA+N58PUrVOnU=;
-        b=bJEsnIGHLyAm8QVP41nDI50Wxte4DH1zcgxDzhNioRLpRMot58xcrb1S1Jt8I06rU1
-         gvWExJah5WHV5wq20ebihnp8hcMm3F7Fz/KgtsxhEhtL8IHemBy21+WNYvW4aJ6YebQM
-         pPE34s98oibkkMXdeR/NpZ3XPLDjPBu/QYt6ZCfvD4S3HShaDb852nzR3HHtN4WLqjnl
-         JHArWZPqvmK6L/LMLJJecKn+iNBlC84rNwzScyfAJd0GvGy/XD6uOVgN4Jpxtj3LP1vS
-         hMWZefyNwrs25BPerU0g1JPJTNrZyU4ac02aIxsVK4fMxOS8PqjoTXE3bvtEE5VYcok2
-         wOSA==
-X-Gm-Message-State: APjAAAUWoWSkRoU+PC6yysS/8xeypqFQ/cn9i25Zw+Umh2kmgxvp7sfy
-        ElObUnlgNxvxk5SCp4Q9La+ZcRgjjWI/HqRB5pAf9Q==
-X-Google-Smtp-Source: APXvYqzJN7ytfDnK6tZ5nG+mPSSYfHbFQ8ddbX1jdU4abEP4ser8GiuEaC5aIp2nOnJIJo+28PrKUKGhtrbKXFffkjc=
-X-Received: by 2002:a2e:81c3:: with SMTP id s3mr2530015ljg.168.1581696318753;
- Fri, 14 Feb 2020 08:05:18 -0800 (PST)
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1581696390; x=1613232390;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=pkuyM9BpXgAmo35Ot9rhpzPQQM9SFT5CnmiggrmTKDI=;
+  b=QR7fGnKdOV7G+wPK0XPFMlIJzKO8yBxIZXP6pXFCT41AfLRKTNuIK5AV
+   RFAKCMd00b3CQcbAAySH51e4EuoE94tCGmeXhrWIr7iCZgq4kP7RakEby
+   ktYjhrusBVEaHfZpGUQkgFrnrF1sDdpfN8/ZdyN0gWzjRTRtHUyzR71GL
+   /Ql/ouN8SfE/iCOfO/tCDKrxZ/NljqD1ah2NtslwUgDb5IExcd1f80h6/
+   VtCnd7QPYa/aAFFVMvdnqIwtz1i+1Meu1sXOyz2udPgHml+FZ87McHhOb
+   W45f+RC7F+LUydVmnp5E2En3KD1565hJsXJg6taCotZKtqAzNdcgLQTsZ
+   A==;
+X-IronPort-AV: E=Sophos;i="5.70,441,1574121600"; 
+   d="scan'208";a="39137111"
+IronPort-PHdr: =?us-ascii?q?9a23=3A4pCgqBCRARvRfDj+JdDCUyQJP3N1i/DPJgcQr6?=
+ =?us-ascii?q?AfoPdwSP36oMSwAkXT6L1XgUPTWs2DsrQY0raQ7PirCTdIyK3CmU5BWaQEbw?=
+ =?us-ascii?q?UCh8QSkl5oK+++Imq/EsTXaTcnFt9JTl5v8iLzG0FUHMHjew+a+SXqvnYdFR?=
+ =?us-ascii?q?rlKAV6OPn+FJLMgMSrzeCy/IDYbxlViDanbr5+MRq7oR/Tu8UKjodvKag8wQ?=
+ =?us-ascii?q?bVr3VVfOhb2WxnKVWPkhjm+8y+5oRj8yNeu/Ig885PT6D3dLkmQLJbETorLX?=
+ =?us-ascii?q?k76NXkuhffQwSP4GAcUngNnRpTHwfF9hD6UYzvvSb8q+FwxTOVPczyTbAzRD?=
+ =?us-ascii?q?Si86JmQwLmhSsbKzI09nzch9duh6xHvh2uux1/w5bVYI6LMvp+Yrjdds4eSW?=
+ =?us-ascii?q?ZYQ8pdSzBNDoa6YoQBFeoBOftToZf7qVUAsBCyARCgCP3rxzNNgHL9wK803P?=
+ =?us-ascii?q?k7EQzewQIuAdwOvnTXotv7OqgdXuK6w7XHwzjYc/Nb2y3w5JTUfh0vo/yBW6?=
+ =?us-ascii?q?97f8rLyUkoEgPIlkieqZD7MDON1uQCrW6b5Pd9W+KqkWEnrwVxrSavx8wxjY?=
+ =?us-ascii?q?TJnZ8aykvf+CVlwIc6Od24SElhbd6iC5tfrTuWN4RxQsM8WmxlvjsxxL4euZ?=
+ =?us-ascii?q?OjYSQHx5sqywTfZvCaaYSE/B3uWPiLLTtlgn9uZaixiAyo8Ue6z+3xTsy00F?=
+ =?us-ascii?q?FXoSVbitTMrXUN1wDL6siAV/t94l+t2TaR2ADX7eFJOVw0mrDBK54g374wjY?=
+ =?us-ascii?q?AfsUXFHi/4n0X2l7GZeVk+9ui06+XofrXmppiGO49ylg7+Kbghlta6AeQ5Ng?=
+ =?us-ascii?q?gCR2mb+eKi273/5UD1XbpHg/IsnqTZrZzWP9oXq6GnDwNPz4ov8xO/AC2n0N?=
+ =?us-ascii?q?Qck3kHNlVFeBefgojyJl7OO+v1Deu/gluwkDdrwOrKPrv6AprXNHTDn7Dhfa?=
+ =?us-ascii?q?hl505G1AUz1cxf545TCrwZO/L8QFTxtNzCAR89KAG0wPjoCM971owAXWKDGK?=
+ =?us-ascii?q?iZMLndsVWQ/OIgP/GMZJMJuDb6M/Ul4//ujXkkmV4SZKWp3oUYaGq+Hvt4J0?=
+ =?us-ascii?q?WUemTsgtgfHmcQpAY+T/LliEeEUTFNY3a+RaU85is0CIi+F4fMWpitgKCd3C?=
+ =?us-ascii?q?e8BpBWfXxGBUqXHnfsaYqJQOkMaC2MLc97iDAEVqauS5Un1R6wsA/20b1nLv?=
+ =?us-ascii?q?Db+icAr5LsyMB15/HPlRE17TF0F96S03yJT2xvhmMHXSI23KRmrUx4zVeD1r?=
+ =?us-ascii?q?J4jOJCGdNP4PNJVx8wNYTAwOxiF9DyRgXBc8+TSFa9Q9WpHCw+TtUzw98PeE?=
+ =?us-ascii?q?tyB9KigQ3d0CWwHr8VjbuLBIYu/a7G2HjxPcl9wW7c1KY9l1kmXtdPNWq+i6?=
+ =?us-ascii?q?5k6QfTA4/Jk0OEl6elbqkcwiHN+3mZzWaUv0FXThRwUaPbUnAbfEfWqs755k?=
+ =?us-ascii?q?yRB4OpXI8uKQtIgeqPNKpMIonyhE5GTfPLO9nEZW+13WCqCkDMjreNapf6Pm?=
+ =?us-ascii?q?YQxiPQDGAanA0Ju3WLLw4zAmGmuW2aRCdyHFjrbmvy/uRk7nC2VEk5y0eNdU?=
+ =?us-ascii?q?Iy+aCy/0sumfGES/4VlokBsSMlpiQ8SE2xxPrKGtGAoExnZ6wabtQjtgQUnV?=
+ =?us-ascii?q?nFvhBwa8TzZ5tpgUQTJkEu5RLj?=
+X-IPAS-Result: =?us-ascii?q?A2BMAAAPxUZe/wHyM5BmGgEBAQEBAQEBAQMBAQEBEQEBA?=
+ =?us-ascii?q?QICAQEBAYF7gX2BbSASKoQUiQOGWQEBBAaBN4lwkUoJAQEBAQEBAQEBNwQBA?=
+ =?us-ascii?q?YRAAoIlOBMCEAEBAQUBAQEBAQUDAQFshUOCOykBgwEBAQEBAyMEEUEQCxUDA?=
+ =?us-ascii?q?gIfBwICVwYBDAYCAQGCYz+CVyWtInV/M4VKg0aBPoEOKow+eYEHgREnD4JdP?=
+ =?us-ascii?q?odbgl4EjWSJY0aXbYJEgk+TfAYcmxgtjjudPyKBWCsIAhgIIQ87gmxQGA2OK?=
+ =?us-ascii?q?RcVjiwjAzCQWAEB?=
+Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 14 Feb 2020 16:06:29 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 01EG5UMo166729;
+        Fri, 14 Feb 2020 11:05:30 -0500
+Subject: Re: [PATCH AUTOSEL 5.5 190/542] selinux: ensure we cleanup the
+ internal AVC counters on error in avc_insert()
+To:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Cc:     Paul Moore <paul@paul-moore.com>, rsiddoji@codeaurora.org,
+        selinux@vger.kernel.org
+References: <20200214154854.6746-1-sashal@kernel.org>
+ <20200214154854.6746-190-sashal@kernel.org>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <64b56666-4e4a-10e0-0a1d-60ee28615d23@tycho.nsa.gov>
+Date:   Fri, 14 Feb 2020 11:07:37 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200128153806.7780-1-benjamin.gaignard@st.com>
- <20200128153806.7780-3-benjamin.gaignard@st.com> <20200128155243.GC3438643@kroah.com>
- <0dd9dc95-1329-0ad4-d03d-99899ea4f574@st.com> <20200128165712.GA3667596@kroah.com>
- <62b38576-0e1a-e30e-a954-a8b6a7d8d897@st.com> <CACRpkdY427EzpAt7f5wwqHpRS_SHM8Fvm+cFrwY8op0E_J+D9Q@mail.gmail.com>
- <20200129095240.GA3852081@kroah.com> <20200129111717.GA3928@sirena.org.uk>
- <0b109c05-24cf-a1c4-6072-9af8a61f45b2@st.com> <20200131090650.GA2267325@kroah.com>
-In-Reply-To: <20200131090650.GA2267325@kroah.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 14 Feb 2020 17:05:07 +0100
-Message-ID: <CACRpkdajhivkOkZ63v-hr7+6ObhTffYOx5uZP0P-MYvuVnyweA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/7] bus: Introduce firewall controller framework
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Grant Likely <grant.likely@arm.com>
-Cc:     Benjamin GAIGNARD <benjamin.gaignard@st.com>,
-        "robh@kernel.org" <robh@kernel.org>,
-        Loic PALLARDY <loic.pallardy@st.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "system-dt@lists.openampproject.org" 
-        <system-dt@lists.openampproject.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "lkml@metux.net" <lkml@metux.net>,
-        "linux-imx@nxp.com" <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "fabio.estevam@nxp.com" <fabio.estevam@nxp.com>,
-        "stefano.stabellini@xilinx.com" <stefano.stabellini@xilinx.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200214154854.6746-190-sashal@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 31, 2020 at 10:06 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+On 2/14/20 10:43 AM, Sasha Levin wrote:
+> From: Paul Moore <paul@paul-moore.com>
+> 
+> [ Upstream commit d8db60cb23e49a92cf8cada3297395c7fa50fdf8 ]
+> 
+> Fix avc_insert() to call avc_node_kill() if we've already allocated
+> an AVC node and the code fails to insert the node in the cache.
+> 
+> Fixes: fa1aa143ac4a ("selinux: extended permissions for ioctls")
+> Reported-by: rsiddoji@codeaurora.org
+> Suggested-by: Stephen Smalley <sds@tycho.nsa.gov>
+> Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
-> Why do people want to abuse the platform bus so much?  If a device is on
-> a bus that can have such a controller, then it is on a real bus, use it!
+You should also apply 030b995ad9ece9fa2d218af4429c1c78c2342096 
+("selinux: ensure we cleanup the internal AVC counters on error in 
+avc_update()") which fixes one additional instance of the same kind of 
+bug not addressed by this patch.
 
-I'm not saying it is a good thing, but the reason why it is (ab)used so
-much can be found in:
-drivers/of/platform.c
+> ---
+>   security/selinux/avc.c | 51 ++++++++++++++++++++----------------------
+>   1 file changed, 24 insertions(+), 27 deletions(-)
+> 
+> diff --git a/security/selinux/avc.c b/security/selinux/avc.c
+> index 23dc888ae3056..6646300f7ccb2 100644
+> --- a/security/selinux/avc.c
+> +++ b/security/selinux/avc.c
+> @@ -617,40 +617,37 @@ static struct avc_node *avc_insert(struct selinux_avc *avc,
+>   	struct avc_node *pos, *node = NULL;
+>   	int hvalue;
+>   	unsigned long flag;
+> +	spinlock_t *lock;
+> +	struct hlist_head *head;
+>   
+>   	if (avc_latest_notif_update(avc, avd->seqno, 1))
+> -		goto out;
+> +		return NULL;
+>   
+>   	node = avc_alloc_node(avc);
+> -	if (node) {
+> -		struct hlist_head *head;
+> -		spinlock_t *lock;
+> -		int rc = 0;
+> -
+> -		hvalue = avc_hash(ssid, tsid, tclass);
+> -		avc_node_populate(node, ssid, tsid, tclass, avd);
+> -		rc = avc_xperms_populate(node, xp_node);
+> -		if (rc) {
+> -			kmem_cache_free(avc_node_cachep, node);
+> -			return NULL;
+> -		}
+> -		head = &avc->avc_cache.slots[hvalue];
+> -		lock = &avc->avc_cache.slots_lock[hvalue];
+> +	if (!node)
+> +		return NULL;
+>   
+> -		spin_lock_irqsave(lock, flag);
+> -		hlist_for_each_entry(pos, head, list) {
+> -			if (pos->ae.ssid == ssid &&
+> -			    pos->ae.tsid == tsid &&
+> -			    pos->ae.tclass == tclass) {
+> -				avc_node_replace(avc, node, pos);
+> -				goto found;
+> -			}
+> +	avc_node_populate(node, ssid, tsid, tclass, avd);
+> +	if (avc_xperms_populate(node, xp_node)) {
+> +		avc_node_kill(avc, node);
+> +		return NULL;
+> +	}
+> +
+> +	hvalue = avc_hash(ssid, tsid, tclass);
+> +	head = &avc->avc_cache.slots[hvalue];
+> +	lock = &avc->avc_cache.slots_lock[hvalue];
+> +	spin_lock_irqsave(lock, flag);
+> +	hlist_for_each_entry(pos, head, list) {
+> +		if (pos->ae.ssid == ssid &&
+> +			pos->ae.tsid == tsid &&
+> +			pos->ae.tclass == tclass) {
+> +			avc_node_replace(avc, node, pos);
+> +			goto found;
+>   		}
+> -		hlist_add_head_rcu(&node->list, head);
+> -found:
+> -		spin_unlock_irqrestore(lock, flag);
+>   	}
+> -out:
+> +	hlist_add_head_rcu(&node->list, head);
+> +found:
+> +	spin_unlock_irqrestore(lock, flag);
+>   	return node;
+>   }
+>   
+> 
 
-TL;DR: struct platform_device is the Device McDeviceFace and
-platform bus the Bus McBusFace used by the device tree parser since
-it is slightly to completely unaware of what devices it is actually
-spawning.
-
-And everything and its dog is using device tree in the embedded
-world. (A quick glance in drivers/acpi gives me the impression
-that ACPI is doing the very same thing but I am not a domain expert
-there so I am not really sure.)
-
-Whenever a device is created from a device tree it gets spawned
-on either the platform bus or the amba bus. In 99 cases out of
-100 it is going to be a platform_device.
-
-In most device trees all devices ultimately spawn from the device
-tree and the root of absolutely everything including irq chips on
-the SoC, timers, PCI hosts and USB root hubs and whatnot is a
-platform device, because that is how the core device tree parser has
-chosen to spawn off devices.
-
-This generic code goes back to
-commit eca3930163ba8884060ce9d9ff5ef0d9b7c7b00f
-"of: Merge of_platform_bus_type with platform_bus_type"
-where the device tree-specific bus was replaced by the
-platform bus. This code was then moved down to drivers/of
-and used in multiple architectures. Grant's patch makes perfect
-sense because at the time some devices were created using board
-files (thus platform_device) and others using device tree and having
-two different probe paths and driver files for this reason alone
-was not reasonable. The same reasoning will apply to ACPI
-vs device tree drivers.
-
-What we  *could* have done was to handle special devices
-special, like happened for AMBA PrimeCells. Mea Culpa, I suppose
-I am one of the guilty.
-
-Supporting new bus types for root devices in systems described
-in device tree would requiring patching drivers/of/platform.c
-and people are afraid of that because the code there is pretty
-complex.
-
-Instead platform_device is (ab)used to carry stuff over from the
-device tree to respective subsystem.
-
-In some cases the struct platform_device from device tree is
-discarded after use, it is just left dangling in memory with no other
-purpose than to serve as .parent for whatever device on whatever
-bus we were really creating.
-
-For some devices such as root irq_chips they serve no purpose
-whatsoever, they are just created and sitting around never
-to be probed, because the code instantiating them parse the
-device tree directly.
-
-For the devices that actually probe to drive a piece of silicon,
-arguably a different type of device on a different bus should be
-created, such as (I am making this up) struct soc_device
-on soc_bus. (Incidentally soc_bus exists, but its current use case
-is not for this.)
-
-I don't really see any better option for Benjamin or anyone else
-though?
-
-The reason why it is used so much should at least be clarified
-now I think.
-
-Yours,
-Linus Walleij
