@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8139F15F52D
+	by mail.lfdr.de (Postfix) with ESMTP id EB1F715F52E
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:39:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394939AbgBNSYx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:24:53 -0500
-Received: from foss.arm.com ([217.140.110.172]:43308 "EHLO foss.arm.com"
+        id S2394906AbgBNSY5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:24:57 -0500
+Received: from foss.arm.com ([217.140.110.172]:43326 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405588AbgBNSYs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 13:24:48 -0500
+        id S2389038AbgBNSYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 13:24:50 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E6633101E;
-        Fri, 14 Feb 2020 10:24:47 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 09B1D106F;
+        Fri, 14 Feb 2020 10:24:50 -0800 (PST)
 Received: from eglon.cambridge.arm.com (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9803D3F68E;
-        Fri, 14 Feb 2020 10:24:46 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AF8713F68E;
+        Fri, 14 Feb 2020 10:24:48 -0800 (PST)
 From:   James Morse <james.morse@arm.com>
 To:     x86@kernel.org, linux-kernel@vger.kernel.org
 Cc:     Fenghua Yu <fenghua.yu@intel.com>,
@@ -25,9 +25,9 @@ Cc:     Fenghua Yu <fenghua.yu@intel.com>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H . Peter Anvin" <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
         James Morse <james.morse@arm.com>
-Subject: [PATCH 06/10] x86/resctrl: Use is_closid_match() in more places
-Date:   Fri, 14 Feb 2020 18:23:57 +0000
-Message-Id: <20200214182401.39008-7-james.morse@arm.com>
+Subject: [PATCH 07/10] x86/resctrl: Add arch_needs_linear to explain AMD/Intel MBA difference
+Date:   Fri, 14 Feb 2020 18:23:58 +0000
+Message-Id: <20200214182401.39008-8-james.morse@arm.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200214182401.39008-1-james.morse@arm.com>
 References: <20200214182401.39008-1-james.morse@arm.com>
@@ -38,82 +38,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rdtgroup_tasks_assigned() and show_rdt_tasks() loop over threads testing
-for a CTRL/MON group match by closid/rmid with the provided rdtgrp.
-Further down the file are helpers to do this, move these further up and
-make use of them here.
+The configuration values user-space provides to the resctrl filesystem
+are ABI. To make this work on another architecture we want to move all
+the ABI bits out of /arch/x86 and under /fs.
 
-These helpers additionally check for alloc/mon capable. This is harmless
-as rdtgroup_mkdir() tests these capable flags before allowing the config
-directories to be created.
+To do this, the differences between AMD and Intel CPUs needs to be
+explained to resctrl via resource properties, instead of function
+pointers that let the arch code accept subtly different values on
+different platforms/architectures.
+
+For MBA, Intel CPUs reject configuration attempts for non-linear
+resources, whereas AMD ignore this field as its MBA resource is never
+linear. To merge the parse/validate functions we need to explain
+this difference.
+
+Add arch_needs_linear to indicate the arch code needs the linear
+property to be true to configure this resource. AMD can set this
+and delay_linear to false. Intel can set arch_needs_linear
+to true to keep the existing "No support for non-linear MB domains"
+error message for affected platforms.
 
 Signed-off-by: James Morse <james.morse@arm.com>
 ---
- arch/x86/kernel/cpu/resctrl/rdtgroup.c | 30 ++++++++++++--------------
- 1 file changed, 14 insertions(+), 16 deletions(-)
+ arch/x86/kernel/cpu/resctrl/core.c        | 3 +++
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 8 +++++++-
+ arch/x86/kernel/cpu/resctrl/internal.h    | 2 ++
+ 3 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index fef09105cbe4..c84b1f355a9a 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -592,6 +592,18 @@ static int __rdtgroup_move_task(struct task_struct *tsk,
- 	return ret;
- }
- 
-+static bool is_closid_match(struct task_struct *t, struct rdtgroup *r)
-+{
-+	return (rdt_alloc_capable &&
-+	       (r->type == RDTCTRL_GROUP) && (t->closid == r->closid));
-+}
-+
-+static bool is_rmid_match(struct task_struct *t, struct rdtgroup *r)
-+{
-+	return (rdt_mon_capable &&
-+	       (r->type == RDTMON_GROUP) && (t->rmid == r->mon.rmid));
-+}
-+
- /**
-  * rdtgroup_tasks_assigned - Test if tasks have been assigned to resource group
-  * @r: Resource group
-@@ -607,8 +619,7 @@ int rdtgroup_tasks_assigned(struct rdtgroup *r)
- 
- 	rcu_read_lock();
- 	for_each_process_thread(p, t) {
--		if ((r->type == RDTCTRL_GROUP && t->closid == r->closid) ||
--		    (r->type == RDTMON_GROUP && t->rmid == r->mon.rmid)) {
-+		if (is_closid_match(t, r) || is_rmid_match(t, r)) {
- 			ret = 1;
- 			break;
- 		}
-@@ -706,8 +717,7 @@ static void show_rdt_tasks(struct rdtgroup *r, struct seq_file *s)
- 
- 	rcu_read_lock();
- 	for_each_process_thread(p, t) {
--		if ((r->type == RDTCTRL_GROUP && t->closid == r->closid) ||
--		    (r->type == RDTMON_GROUP && t->rmid == r->mon.rmid))
-+		if (is_closid_match(t, r) || is_rmid_match(t, r))
- 			seq_printf(s, "%d\n", t->pid);
+diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
+index 7d295ae620bb..f022dc823c53 100644
+--- a/arch/x86/kernel/cpu/resctrl/core.c
++++ b/arch/x86/kernel/cpu/resctrl/core.c
+@@ -260,6 +260,7 @@ static bool __get_mem_config_intel(struct rdt_resource *r)
+ 	r->num_closid = edx.split.cos_max + 1;
+ 	max_delay = eax.split.max_delay + 1;
+ 	r->default_ctrl = MAX_MBA_BW;
++	r->membw.arch_needs_linear = true;
+ 	if (ecx & MBA_IS_LINEAR) {
+ 		r->membw.delay_linear = true;
+ 		r->membw.min_bw = MAX_MBA_BW - max_delay;
+@@ -267,6 +268,7 @@ static bool __get_mem_config_intel(struct rdt_resource *r)
+ 	} else {
+ 		if (!rdt_get_mb_table(r))
+ 			return false;
++		r->membw.arch_needs_linear = false;
  	}
- 	rcu_read_unlock();
-@@ -2231,18 +2241,6 @@ static int reset_all_ctrls(struct rdt_resource *r)
- 	return 0;
- }
+ 	r->data_width = 3;
  
--static bool is_closid_match(struct task_struct *t, struct rdtgroup *r)
--{
--	return (rdt_alloc_capable &&
--		(r->type == RDTCTRL_GROUP) && (t->closid == r->closid));
--}
--
--static bool is_rmid_match(struct task_struct *t, struct rdtgroup *r)
--{
--	return (rdt_mon_capable &&
--		(r->type == RDTMON_GROUP) && (t->rmid == r->mon.rmid));
--}
--
- /*
-  * Move tasks from one to the other group. If @from is NULL, then all tasks
-  * in the systems are moved unconditionally (used for teardown).
+@@ -288,6 +290,7 @@ static bool __rdt_get_mem_config_amd(struct rdt_resource *r)
+ 
+ 	/* AMD does not use delay */
+ 	r->membw.delay_linear = false;
++	r->membw.arch_needs_linear = false;
+ 
+ 	r->membw.min_bw = 0;
+ 	r->membw.bw_gran = 1;
+diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+index 055c8613b531..db8e6c0cadb1 100644
+--- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
++++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+@@ -33,6 +33,12 @@ static bool bw_validate_amd(char *buf, unsigned long *data,
+ 	unsigned long bw;
+ 	int ret;
+ 
++	/* temporary: always false on AMD */
++	if (!r->membw.delay_linear && r->membw.arch_needs_linear) {
++		rdt_last_cmd_puts("No support for non-linear MB domains\n");
++		return false;
++	}
++
+ 	ret = kstrtoul(buf, 10, &bw);
+ 	if (ret) {
+ 		rdt_last_cmd_printf("Non-decimal digit in MB value %s\n", buf);
+@@ -82,7 +88,7 @@ static bool bw_validate(char *buf, unsigned long *data, struct rdt_resource *r)
+ 	/*
+ 	 * Only linear delay values is supported for current Intel SKUs.
+ 	 */
+-	if (!r->membw.delay_linear) {
++	if (!r->membw.delay_linear && r->membw.arch_needs_linear) {
+ 		rdt_last_cmd_puts("No support for non-linear MB domains\n");
+ 		return false;
+ 	}
+diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
+index 3e3ba85843c4..1fa692c54e15 100644
+--- a/arch/x86/kernel/cpu/resctrl/internal.h
++++ b/arch/x86/kernel/cpu/resctrl/internal.h
+@@ -363,6 +363,7 @@ struct rdt_cache {
+  * struct rdt_membw - Memory bandwidth allocation related data
+  * @min_bw:		Minimum memory bandwidth percentage user can request
+  * @bw_gran:		Granularity at which the memory bandwidth is allocated
++ * @arch_needs_linear:  True if we can't configure non-linear resources
+  * @delay_linear:	True if memory B/W delay is in linear scale
+  * @mba_sc:		True if MBA software controller(mba_sc) is enabled
+  * @mb_map:		Mapping of memory B/W percentage to memory B/W delay
+@@ -371,6 +372,7 @@ struct rdt_membw {
+ 	u32		min_bw;
+ 	u32		bw_gran;
+ 	u32		delay_linear;
++	bool		arch_needs_linear;
+ 	bool		mba_sc;
+ 	u32		*mb_map;
+ };
 -- 
 2.24.1
 
