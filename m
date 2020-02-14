@@ -2,123 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA5A415F69D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 20:14:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B169F15F6A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 20:14:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388636AbgBNTOK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 14:14:10 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:42060 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387603AbgBNTOJ (ORCPT
+        id S2388853AbgBNTOx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 14:14:53 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40182 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388250AbgBNTOx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 14:14:09 -0500
-Received: by mail-qt1-f195.google.com with SMTP id r5so7677937qtt.9
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 11:14:09 -0800 (PST)
+        Fri, 14 Feb 2020 14:14:53 -0500
+Received: by mail-wm1-f67.google.com with SMTP id t14so11844371wmi.5
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 11:14:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=scnEoR+rGyXwnk7+XhNjguBgKH2xz3AYHqxz930H50g=;
-        b=RzdXkWTLw9HZo7wGGYxbe32zLEXoVEUum/GroJFlvy/OqFanHtxrUUSTvsI9E8M27N
-         TByGA/BF7OrGpT/4xfadH6mDsaBVOqQJnWMvdlfwtqI3bwaehXqHQihHrKxfmB4wW1SV
-         Vj4545QIFYgl3393+10HVm88sNn+2DwlX6jRxw6SdyXvqGCe6VuMf+qunmPmOlemlX1j
-         VETn72COVYnOpbGYfD4q5n/vcnCdvep7XtH3bNaaqvX6AtNn8rZM+3YMMHqnzD/gwUXm
-         tisJGXe0T/pAVQ/Qb0EK2mRmiocplXXt+SBTsZReo94obPoke06rofB4BUi702zvNQYJ
-         dsRA==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=3/uupSJ5RdwyA7ehfydikl3HpiFLgfBAqG7GerpJi7c=;
+        b=bhg9/ibeciuu4Ehv/+5VnxzdhVR6BHlImtjOZ+pPpe4yBnv3DYy5GkYmSdTQ0lf3wI
+         ulBkqUncQAxNdUqMhsIWhWlhC88PGD1o+rW4i8a3nBi1xj65vzIjPEKwHZnAs/fwBE2x
+         cDbmW6ayWu9v5S3BLzcVxXkdcDiFgbNaR86dZ7S1c2aEWE68cE49eX1Z9GHikMH9M2tY
+         DkjeV5xIBEucE8volM/K6bNCmnRL7Pg2raIr8DOxI0/2n/JvPlxmFrco1AByyKR/eM0m
+         xxR2PIOVmDxUK2hAFYs8kAf4X11yxS/8Edi2bzzIxpxNW5Hwr19KuARUlkbAIzYXFO5S
+         KxWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=scnEoR+rGyXwnk7+XhNjguBgKH2xz3AYHqxz930H50g=;
-        b=L0ZpQqmT0skD9Bl5pqQjlLFEn/yRlcp0IAuu23FAcokWKeFFFZa5xPP2YuI+/CvTr7
-         CIavSXMJbnlcPUA8cwrk6U6e0iXOyVeFlFmwt4OunDdmyZIW/Cpe+dfgrXcTV4P/kNjS
-         +wZ4WyvwU8FbmP/IHxceK91HRd2YGkdQjzI2YrD34n9GRdgIYtK1ekbmpyHMHEhesMFd
-         lcBLrbvnLsXdxwS3u9mMoroui4+Obp6UDhMO+Fq1m0aIRUR/Ud0FsezfUEwTbMLmZ252
-         nHsCOdIPCj55GkB8kJf6NbEfiFlYBwCaFBj4C12IqOEqvhMJRfRGnooVNp6RNQPQ6zgt
-         7pfA==
-X-Gm-Message-State: APjAAAWnCeRqs3cNqbbCOQ1ujM3cyYKwIjnNCfVPUd0m/oVyWG6fvycY
-        ST4BTfxIVotiG/Lmtk0xxSD3ldY7/IqlFw==
-X-Google-Smtp-Source: APXvYqywuXE1sPf3ZVbmi/yqbjXdbPGAskWSsolHbLxZksHzi47OXzqWC5sMv7lEn+r7hypEB6sacw==
-X-Received: by 2002:ac8:145:: with SMTP id f5mr3793275qtg.194.1581707648516;
-        Fri, 14 Feb 2020 11:14:08 -0800 (PST)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id u4sm3816823qkh.59.2020.02.14.11.14.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Feb 2020 11:14:07 -0800 (PST)
-Message-ID: <1581707646.7365.72.camel@lca.pw>
-Subject: Re: [PATCH] kvm/emulate: fix a -Werror=cast-function-type
-From:   Qian Cai <cai@lca.pw>
-To:     Jim Mattson <jmattson@google.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Fri, 14 Feb 2020 14:14:06 -0500
-In-Reply-To: <CALMp9eTRn-46oKg5a9h79EZOvHGwT=8ZZN15Zmy5NUYsd+r8wQ@mail.gmail.com>
-References: <1581695768-6123-1-git-send-email-cai@lca.pw>
-         <20200214165923.GA20690@linux.intel.com> <1581700124.7365.70.camel@lca.pw>
-         <CALMp9eTRn-46oKg5a9h79EZOvHGwT=8ZZN15Zmy5NUYsd+r8wQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=3/uupSJ5RdwyA7ehfydikl3HpiFLgfBAqG7GerpJi7c=;
+        b=bPuJFqIRrb4IWxwbpqypv4ntnYa7Tw2HoN1I5KUsyB7UCpyTmYSNkgTW6XObZWxEHH
+         e3c06igt7FU29i0yaKxtraT29R5ugB6pnpwnLhW+NJA1jP9xoRXZgrmovXJzNuGohHXw
+         O+N8s0yx16AKxD4Y2Jy/I+kAeBC7zcXTecCX99sNnTH6qzn+CWedtrlDn1q9lZWTyQ6H
+         /F4QJFrgV1FsgsxyJXaCnMKoIf4e6O7WCpBJiPgzRvyKAmjvd88EWM6tWtoSEkyCa8E+
+         sTTe+Xx9Dw7KmZLZTMK933jpP0wKyuP9+2I2VMv29yCNOgz5ON313cq/dFk0GlJkg+Cp
+         K0Ow==
+X-Gm-Message-State: APjAAAXEyZ0B5mCWOrLPP/88YF44M4wmsbwz/kVoT4Kw3nRM+K2N+nRc
+        IoLXk8vxKYVo8SwE9z+he1G3fQ==
+X-Google-Smtp-Source: APXvYqwOROtwg8ZpOG1fo2gk0W+2Y4A+QNx4Yrvyeo3f6izuFJXQ4Xs25CzIa4xAOjzg1uSQfJHE/A==
+X-Received: by 2002:a1c:5441:: with SMTP id p1mr6420025wmi.161.1581707690024;
+        Fri, 14 Feb 2020 11:14:50 -0800 (PST)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.gmail.com with ESMTPSA id x21sm7922966wmi.30.2020.02.14.11.14.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Feb 2020 11:14:49 -0800 (PST)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Jianxin Pan <jianxin.pan@amlogic.com>,
+        linux-amlogic@lists.infradead.org
+Cc:     Jianxin Pan <jianxin.pan@amlogic.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Xingyu Chen <xingyu.chen@amlogic.com>
+Subject: Re: [PATCH v6 0/4] arm64: meson: add support for A1 Power Domains
+In-Reply-To: <1579087831-94965-1-git-send-email-jianxin.pan@amlogic.com>
+References: <1579087831-94965-1-git-send-email-jianxin.pan@amlogic.com>
+Date:   Fri, 14 Feb 2020 11:14:46 -0800
+Message-ID: <7hd0ahasm1.fsf@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2020-02-14 at 09:40 -0800, Jim Mattson wrote:
-> On Fri, Feb 14, 2020 at 9:08 AM Qian Cai <cai@lca.pw> wrote:
-> > 
-> > On Fri, 2020-02-14 at 08:59 -0800, Sean Christopherson wrote:
-> > > On Fri, Feb 14, 2020 at 10:56:08AM -0500, Qian Cai wrote:
-> > > > arch/x86/kvm/emulate.c: In function 'x86_emulate_insn':
-> > > > arch/x86/kvm/emulate.c:5686:22: error: cast between incompatible
-> > > > function types from 'int (*)(struct x86_emulate_ctxt *)' to 'void
-> > > > (*)(struct fastop *)' [-Werror=cast-function-type]
-> > > >     rc = fastop(ctxt, (fastop_t)ctxt->execute);
-> > > > 
-> > > > Fixes: 3009afc6e39e ("KVM: x86: Use a typedef for fastop functions")
-> > > > Signed-off-by: Qian Cai <cai@lca.pw>
-> > > > ---
-> > > >  arch/x86/kvm/emulate.c | 8 +++++---
-> > > >  1 file changed, 5 insertions(+), 3 deletions(-)
-> > > > 
-> > > > diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-> > > > index ddbc61984227..17ae820cf59d 100644
-> > > > --- a/arch/x86/kvm/emulate.c
-> > > > +++ b/arch/x86/kvm/emulate.c
-> > > > @@ -5682,10 +5682,12 @@ int x86_emulate_insn(struct x86_emulate_ctxt *ctxt)
-> > > >             ctxt->eflags &= ~X86_EFLAGS_RF;
-> > > > 
-> > > >     if (ctxt->execute) {
-> > > > -           if (ctxt->d & Fastop)
-> > > > -                   rc = fastop(ctxt, (fastop_t)ctxt->execute);
-> > > 
-> > > Alternatively, can we do -Wno-cast-function-type?  That's a silly warning
-> > > IMO.
-> > 
-> > I am doing W=1 on linux-next where some of the warnings might be silly but the
-> > recent commit changes all warnings to errors forces me having to silence those
-> > somehow.
-> > 
-> > > 
-> > > If not, will either of these work?
-> > > 
-> > >                       rc = fastop(ctxt, (void *)ctxt->execute);
-> > > 
-> > > or
-> > >                       rc = fastop(ctxt, (fastop_t)(void *)ctxt->execute);
-> > 
-> > I have no strong preference. I originally thought just to go back the previous
-> > code style where might be more acceptable, but it is up to maintainers.
-> 
-> It seems misguided to define a local variable just to get an implicit
-> cast from (void *) to (fastop_t). Sean's first suggestion gives you
-> the same implicit cast without the local variable. The second
-> suggestion makes both casts explicit.
+Jianxin Pan <jianxin.pan@amlogic.com> writes:
 
-OK, I'll do a v2 using the first suggestion which looks simpler once it passed
-compilations.
+> This patchset introduces a "Secure Power Doamin Controller". In A1/C1, power
+> controller registers such as PWRCTRL_FOCRSTN, PWRCTRL_PWR_OFF, PWRCTRL_MEM_PD
+> and PWRCTRL_ISO_EN, are in the secure domain, and should be accessed from ATF
+> by smc.
+
+Series queued for v5.7 with Rob's ack on the DT bindings.
+
+Thanks,
+
+Kevin
