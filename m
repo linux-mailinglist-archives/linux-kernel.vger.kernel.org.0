@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A4D015DBA3
+	by mail.lfdr.de (Postfix) with ESMTP id BEC2615DBA4
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:51:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729830AbgBNPtP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:49:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51830 "EHLO mail.kernel.org"
+        id S1729850AbgBNPtR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:49:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729804AbgBNPtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:49:13 -0500
+        id S1729804AbgBNPtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:49:15 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0657B217F4;
-        Fri, 14 Feb 2020 15:49:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 935EF217F4;
+        Fri, 14 Feb 2020 15:49:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695352;
-        bh=gy6cSk/mJ9DL3eoxl/R33L4+8ze4UUWArDMHb+InQKI=;
+        s=default; t=1581695355;
+        bh=iZIRaUEUsPfVHTOn9MDUDIfCsp4dj78qw/0Z1aF2xFQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eYkIDO7Hbs5dKI6M2CECkVcEgualeKP24JIOVXXQh1XY4X6UCXF5loMyhpfJQyopv
-         0Ia9gFT4QqZ+7j0ITkEJnJ5zlEzSLbQRkGyGX0pfqdDGyR2ttJ4xgw+dTGplPDlR9L
-         loQVbknkyyy0DZauk0FGl9WtrbNfwN4Mdpc8BIfo=
+        b=y4ohYkayTz73jdjs7vrkuy064rP84Hsd0zgj7WsTZtsqB38K/rdegVvjdeRqz3dIJ
+         XHHGiTSt07ejORAtPRPTokmumx/nbHHpRv3pZy1/RgcbJ7aVxHXe1g3BAW2mUCw0tW
+         6c3pW52yiC2slniDvzgxmcNcGVYDyhK1Lvk3rTMY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chuhong Yuan <hslester96@gmail.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        dmaengine@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 014/542] dmaengine: ti: edma: add missed operations
-Date:   Fri, 14 Feb 2020 10:40:06 -0500
-Message-Id: <20200214154854.6746-14-sashal@kernel.org>
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 5.5 016/542] f2fs: call f2fs_balance_fs outside of locked page
+Date:   Fri, 14 Feb 2020 10:40:08 -0500
+Message-Id: <20200214154854.6746-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -44,131 +43,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuhong Yuan <hslester96@gmail.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-[ Upstream commit 2a03c1314506557277829562dd2ec5c11a6ea914 ]
+[ Upstream commit bdf03299248916640a835a05d32841bb3d31912d ]
 
-The driver forgets to call pm_runtime_disable and pm_runtime_put_sync in
-probe failure and remove.
-Add the calls and modify probe failure handling to fix it.
+Otherwise, we can hit deadlock by waiting for the locked page in
+move_data_block in GC.
 
-To simplify the fix, the patch adjusts the calling order and merges checks
-for devm_kcalloc.
+ Thread A                     Thread B
+ - do_page_mkwrite
+  - f2fs_vm_page_mkwrite
+   - lock_page
+                              - f2fs_balance_fs
+                                  - mutex_lock(gc_mutex)
+                               - f2fs_gc
+                                - do_garbage_collect
+                                 - ra_data_block
+                                  - grab_cache_page
+   - f2fs_balance_fs
+    - mutex_lock(gc_mutex)
 
-Fixes: 2b6b3b742019 ("ARM/dmaengine: edma: Merge the two drivers under drivers/dma/")
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Link: https://lore.kernel.org/r/20191124052855.6472-1-hslester96@gmail.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Fixes: 39a8695824510 ("f2fs: refactor ->page_mkwrite() flow")
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/ti/edma.c | 37 ++++++++++++++++++++-----------------
- 1 file changed, 20 insertions(+), 17 deletions(-)
+ fs/f2fs/file.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/dma/ti/edma.c b/drivers/dma/ti/edma.c
-index 756a3c951dc72..0628ee4bf1b41 100644
---- a/drivers/dma/ti/edma.c
-+++ b/drivers/dma/ti/edma.c
-@@ -2289,13 +2289,6 @@ static int edma_probe(struct platform_device *pdev)
- 	if (!info)
- 		return -ENODEV;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 33c412d178f0f..6c4436a5ce797 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -50,7 +50,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 	struct page *page = vmf->page;
+ 	struct inode *inode = file_inode(vmf->vma->vm_file);
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	struct dnode_of_data dn = { .node_changed = false };
++	struct dnode_of_data dn;
+ 	int err;
  
--	pm_runtime_enable(dev);
--	ret = pm_runtime_get_sync(dev);
--	if (ret < 0) {
--		dev_err(dev, "pm_runtime_get_sync() failed\n");
--		return ret;
--	}
--
- 	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
- 	if (ret)
- 		return ret;
-@@ -2326,27 +2319,31 @@ static int edma_probe(struct platform_device *pdev)
+ 	if (unlikely(f2fs_cp_error(sbi))) {
+@@ -63,6 +63,9 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 		goto err;
+ 	}
  
- 	platform_set_drvdata(pdev, ecc);
- 
-+	pm_runtime_enable(dev);
-+	ret = pm_runtime_get_sync(dev);
-+	if (ret < 0) {
-+		dev_err(dev, "pm_runtime_get_sync() failed\n");
-+		pm_runtime_disable(dev);
-+		return ret;
-+	}
++	/* should do out of any locked page */
++	f2fs_balance_fs(sbi, true);
 +
- 	/* Get eDMA3 configuration from IP */
- 	ret = edma_setup_from_hw(dev, info, ecc);
- 	if (ret)
--		return ret;
-+		goto err_disable_pm;
+ 	sb_start_pagefault(inode->i_sb);
  
- 	/* Allocate memory based on the information we got from the IP */
- 	ecc->slave_chans = devm_kcalloc(dev, ecc->num_channels,
- 					sizeof(*ecc->slave_chans), GFP_KERNEL);
--	if (!ecc->slave_chans)
--		return -ENOMEM;
+ 	f2fs_bug_on(sbi, f2fs_has_inline_data(inode));
+@@ -120,8 +123,6 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ out_sem:
+ 	up_read(&F2FS_I(inode)->i_mmap_sem);
  
- 	ecc->slot_inuse = devm_kcalloc(dev, BITS_TO_LONGS(ecc->num_slots),
- 				       sizeof(unsigned long), GFP_KERNEL);
--	if (!ecc->slot_inuse)
--		return -ENOMEM;
- 
- 	ecc->channels_mask = devm_kcalloc(dev,
- 					   BITS_TO_LONGS(ecc->num_channels),
- 					   sizeof(unsigned long), GFP_KERNEL);
--	if (!ecc->channels_mask)
--		return -ENOMEM;
-+	if (!ecc->slave_chans || !ecc->slot_inuse || !ecc->channels_mask)
-+		goto err_disable_pm;
- 
- 	/* Mark all channels available initially */
- 	bitmap_fill(ecc->channels_mask, ecc->num_channels);
-@@ -2388,7 +2385,7 @@ static int edma_probe(struct platform_device *pdev)
- 				       ecc);
- 		if (ret) {
- 			dev_err(dev, "CCINT (%d) failed --> %d\n", irq, ret);
--			return ret;
-+			goto err_disable_pm;
- 		}
- 		ecc->ccint = irq;
- 	}
-@@ -2404,7 +2401,7 @@ static int edma_probe(struct platform_device *pdev)
- 				       ecc);
- 		if (ret) {
- 			dev_err(dev, "CCERRINT (%d) failed --> %d\n", irq, ret);
--			return ret;
-+			goto err_disable_pm;
- 		}
- 		ecc->ccerrint = irq;
- 	}
-@@ -2412,7 +2409,8 @@ static int edma_probe(struct platform_device *pdev)
- 	ecc->dummy_slot = edma_alloc_slot(ecc, EDMA_SLOT_ANY);
- 	if (ecc->dummy_slot < 0) {
- 		dev_err(dev, "Can't allocate PaRAM dummy slot\n");
--		return ecc->dummy_slot;
-+		ret = ecc->dummy_slot;
-+		goto err_disable_pm;
- 	}
- 
- 	queue_priority_mapping = info->queue_priority_mapping;
-@@ -2512,6 +2510,9 @@ static int edma_probe(struct platform_device *pdev)
- 
- err_reg1:
- 	edma_free_slot(ecc, ecc->dummy_slot);
-+err_disable_pm:
-+	pm_runtime_put_sync(dev);
-+	pm_runtime_disable(dev);
- 	return ret;
- }
- 
-@@ -2542,6 +2543,8 @@ static int edma_remove(struct platform_device *pdev)
- 	if (ecc->dma_memcpy)
- 		dma_async_device_unregister(ecc->dma_memcpy);
- 	edma_free_slot(ecc, ecc->dummy_slot);
-+	pm_runtime_put_sync(dev);
-+	pm_runtime_disable(dev);
- 
- 	return 0;
- }
+-	f2fs_balance_fs(sbi, dn.node_changed);
+-
+ 	sb_end_pagefault(inode->i_sb);
+ err:
+ 	return block_page_mkwrite_return(err);
 -- 
 2.20.1
 
