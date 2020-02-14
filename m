@@ -2,85 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43C7C15D1EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 07:12:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFCAE15D1E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 07:08:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728736AbgBNGM3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 01:12:29 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:50826 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725777AbgBNGM3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 01:12:29 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B7C781A4732;
-        Fri, 14 Feb 2020 07:12:26 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 48D3E1A0226;
-        Fri, 14 Feb 2020 07:12:20 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 9C5214029B;
-        Fri, 14 Feb 2020 14:12:12 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     linux@armlinux.org.uk, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com,
-        kstewart@linuxfoundation.org, rfontana@redhat.com,
-        gregkh@linuxfoundation.org, tglx@linutronix.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V2] ARM: imx: Remove unused includes on mach-imx6q.c
-Date:   Fri, 14 Feb 2020 14:06:46 +0800
-Message-Id: <1581660406-24463-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1728527AbgBNGIk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 01:08:40 -0500
+Received: from relay11.mail.gandi.net ([217.70.178.231]:50843 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725828AbgBNGIk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 01:08:40 -0500
+Received: from localhost (50-39-173-182.bvtn.or.frontiernet.net [50.39.173.182])
+        (Authenticated sender: josh@joshtriplett.org)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 64818100003;
+        Fri, 14 Feb 2020 06:08:36 +0000 (UTC)
+Date:   Thu, 13 Feb 2020 22:08:34 -0800
+From:   Josh Triplett <josh@joshtriplett.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Applying pipe fix this merge window?
+Message-ID: <20200213225952.GA5902@localhost>
+References: <20200208083604.GA86051@localhost>
+ <CAHk-=whdiabQ0dqVDJ0_5dfur7f2D5oESCjv34f4svrK3RJj=w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whdiabQ0dqVDJ0_5dfur7f2D5oESCjv34f4svrK3RJj=w@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Many includes are NOT used on mach-imx6q.c now, remove them.
+On Wed, Feb 12, 2020 at 12:03:26PM -0800, Linus Torvalds wrote:
+> And I realized that I find it surprising that it makes your build
+> times noticeably better.
+> 
+> Yes, I have that silly example program to show the issue in the commit
+> message, and yes, the exclusive directed write->read wakeups should
+> most definitely improve by that commit.
+> 
+> But the make jobserver code ends up using "poll()/pselect()" and
+> non-blocking reads, because of how it handles the child death signals.
+> 
+> Which means that none of the nice exclusive directed write->read
+> wakeups should even trigger in the first place, because the readers
+> never block, and he poll/pselect code doesn't use exclusive wakeups
+> (because it can't - it doesn't actually consume the data).
+> 
+> So I was looking at it, and going "it should actually not help GNU
+> jobserver at all" in the fixed jobserver case.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-Changes since V1:
-	- linux/of.h can also be removed.
----
- arch/arm/mach-imx/mach-imx6q.c | 13 -------------
- 1 file changed, 13 deletions(-)
+I dug into this a little further yesterday and today:
 
-diff --git a/arch/arm/mach-imx/mach-imx6q.c b/arch/arm/mach-imx/mach-imx6q.c
-index edd26e0..284bce1 100644
---- a/arch/arm/mach-imx/mach-imx6q.c
-+++ b/arch/arm/mach-imx/mach-imx6q.c
-@@ -5,29 +5,16 @@
-  */
- 
- #include <linux/clk.h>
--#include <linux/clkdev.h>
--#include <linux/cpu.h>
--#include <linux/delay.h>
--#include <linux/export.h>
--#include <linux/init.h>
--#include <linux/io.h>
--#include <linux/irq.h>
- #include <linux/irqchip.h>
--#include <linux/of.h>
--#include <linux/of_address.h>
--#include <linux/of_irq.h>
- #include <linux/of_platform.h>
--#include <linux/pm_opp.h>
- #include <linux/pci.h>
- #include <linux/phy.h>
--#include <linux/reboot.h>
- #include <linux/regmap.h>
- #include <linux/micrel_phy.h>
- #include <linux/mfd/syscon.h>
- #include <linux/mfd/syscon/imx6q-iomuxc-gpr.h>
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
--#include <asm/system_misc.h>
- 
- #include "common.h"
- #include "cpuidle.h"
--- 
-2.7.4
+- With hindsight, I realized that the performance improvements I
+  observed for GNU make didn't measure the pipe fix in isolation; they
+  measured 5.4 versus ~5.5-rc4 plus the pipe fix, which would include
+  all the other pipe work in 5.5 and potentially other optimizations.
+  *That* showed substantial performance improvements in GNU make, on the
+  order of a couple of seconds in a 30-60 second kernel build. ("5.5-rc4
+  plus pipe fix" is what I hammered on for a month on various systems.)
 
+- Measuring the pipe fix patch in isolation
+  (0bf999f9c5e74c7ecf9dafb527146601e5c848b9, with and without the pipe
+  fix reverted, with nothing else changed), GNU make performance indeed
+  doesn't show any difference.
+
+- Other things that use the GNU make jobserver (with pipe fds in
+  blocking mode) benefit much more heavily, in wall-clock time and in
+  total CPU time. I saw jobs that involved just a minute or two of
+  wall-clock time, where the total CPU time went down by *minutes*.
+
+Hope that helps,
+Josh Triplett
