@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7573C15E280
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:24:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A87315E28B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:24:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405775AbgBNQX7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:23:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57256 "EHLO mail.kernel.org"
+        id S2405797AbgBNQYE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:24:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387788AbgBNQWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:22:10 -0500
+        id S2393192AbgBNQWV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:22:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ACA83246DF;
-        Fri, 14 Feb 2020 16:22:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24D7724748;
+        Fri, 14 Feb 2020 16:22:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697329;
-        bh=jn4K9rDlecWTJSRHUz03JEu4YRkIIjvf91FBDrRDW14=;
+        s=default; t=1581697341;
+        bh=fFAY4u15hVnQZTtLDHb/0vJN8XTyQ+k5F3zCX4jEDm4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PepKEXcFte97Cc2hl/ii68rXDcQtRKm9SBUzaFpxSdkRIXYupe0weqkSFF3++H7oq
-         fNTDn5iv9Gb7jJKyAGwSS9nPmQGwriGL9a3C01xDmHXQp7G56vUj8FCcGY6kidpM/Q
-         NqT+RiZtEe4ofHR1WVwteVzSS7N7a46gBSpQ378Q=
+        b=bYv/fjGh7bmm/4V+4DpN9qhL8fD8cy0iJ2EwAzSdP9hPFBkLYNFBPCmN48UtJT4fS
+         /c2g7CQyzT6M1lDuPdY72W3JylrkVXWqYZAfpeAW+WFdpOiPcB8S9cel+xExGi0Ezw
+         GaaA52ZEewSh4avamOGbymT7hv3awwLqJ9u4MssA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     yu kuai <yukuai3@huawei.com>,
+Cc:     zhengbin <zhengbin13@huawei.com>, Hulk Robot <hulkci@huawei.com>,
         Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.9 037/141] drm/amdgpu: remove set but not used variable 'amdgpu_connector'
-Date:   Fri, 14 Feb 2020 11:19:37 -0500
-Message-Id: <20200214162122.19794-37-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 046/141] drm/radeon: remove set but not used variable 'blocks'
+Date:   Fri, 14 Feb 2020 11:19:46 -0500
+Message-Id: <20200214162122.19794-46-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214162122.19794-1-sashal@kernel.org>
 References: <20200214162122.19794-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -45,45 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: yu kuai <yukuai3@huawei.com>
+From: zhengbin <zhengbin13@huawei.com>
 
-[ Upstream commit 4f2922d12d6c63d0f4aa4e859ad95aee6d0d4ea0 ]
+[ Upstream commit 77441f77949807fda4a0aec0bdf3e86ae863fd56 ]
 
 Fixes gcc '-Wunused-but-set-variable' warning:
 
-drivers/gpu/drm/amd/amdgpu/amdgpu_display.c: In function
-‘amdgpu_display_crtc_scaling_mode_fixup’:
-drivers/gpu/drm/amd/amdgpu/amdgpu_display.c:693:27: warning: variable
-‘amdgpu_connector’ set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/radeon/radeon_combios.c: In function radeon_combios_get_power_modes:
+drivers/gpu/drm/radeon/radeon_combios.c:2638:10: warning: variable blocks set but not used [-Wunused-but-set-variable]
 
-Fixes: d38ceaf99ed0 ("drm/amdgpu: add core driver (v4)")
-Signed-off-by: yu kuai <yukuai3@huawei.com>
+It is introduced by commit 56278a8edace ("drm/radeon/kms:
+pull power mode info from bios tables (v3)"), but never used,
+so remove it.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: zhengbin <zhengbin13@huawei.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_display.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/gpu/drm/radeon/radeon_combios.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-index 15a2d8f3725d5..f29f025202d03 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-@@ -666,7 +666,6 @@ bool amdgpu_crtc_scaling_mode_fixup(struct drm_crtc *crtc,
- 	struct amdgpu_crtc *amdgpu_crtc = to_amdgpu_crtc(crtc);
- 	struct amdgpu_encoder *amdgpu_encoder;
- 	struct drm_connector *connector;
--	struct amdgpu_connector *amdgpu_connector;
- 	u32 src_v = 1, dst_v = 1;
- 	u32 src_h = 1, dst_h = 1;
+diff --git a/drivers/gpu/drm/radeon/radeon_combios.c b/drivers/gpu/drm/radeon/radeon_combios.c
+index 3178ba0c537c1..a01e52445ad11 100644
+--- a/drivers/gpu/drm/radeon/radeon_combios.c
++++ b/drivers/gpu/drm/radeon/radeon_combios.c
+@@ -2635,7 +2635,7 @@ void radeon_combios_get_power_modes(struct radeon_device *rdev)
+ {
+ 	struct drm_device *dev = rdev->ddev;
+ 	u16 offset, misc, misc2 = 0;
+-	u8 rev, blocks, tmp;
++	u8 rev, tmp;
+ 	int state_index = 0;
+ 	struct radeon_i2c_bus_rec i2c_bus;
  
-@@ -678,7 +677,6 @@ bool amdgpu_crtc_scaling_mode_fixup(struct drm_crtc *crtc,
- 			continue;
- 		amdgpu_encoder = to_amdgpu_encoder(encoder);
- 		connector = amdgpu_get_connector_for_encoder(encoder);
--		amdgpu_connector = to_amdgpu_connector(connector);
- 
- 		/* set scaling */
- 		if (amdgpu_encoder->rmx_type == RMX_OFF)
+@@ -2725,7 +2725,6 @@ void radeon_combios_get_power_modes(struct radeon_device *rdev)
+ 		offset = combios_get_table_offset(dev, COMBIOS_POWERPLAY_INFO_TABLE);
+ 		if (offset) {
+ 			rev = RBIOS8(offset);
+-			blocks = RBIOS8(offset + 0x2);
+ 			/* power mode 0 tends to be the only valid one */
+ 			rdev->pm.power_state[state_index].num_clock_modes = 1;
+ 			rdev->pm.power_state[state_index].clock_info[0].mclk = RBIOS32(offset + 0x5 + 0x2);
 -- 
 2.20.1
 
