@@ -2,132 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D51815F9EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 23:44:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B100E15F9F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 23:49:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727845AbgBNWok (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 17:44:40 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:43370 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727528AbgBNWok (ORCPT
+        id S1727926AbgBNWs7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 17:48:59 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:33776 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727822AbgBNWs6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 17:44:40 -0500
-Received: by mail-ot1-f66.google.com with SMTP id p8so10652116oth.10
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 14:44:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BieUm8+5YIDYgpe+FhMyY8gKnYdFr8G076ODKkZnCSI=;
-        b=L3eP57FHmgpwX0BXPjR4dUwWPeYx6VHKH+dC4bF26fzsa3xP9s0imlWA+E6uN0S05K
-         6yf51tiwkAerV/SJR1fGiA7Wr7WLGZ+zBOxXt4Qenpn5rfbjKgPm/mIibXFJTTd1Tp8t
-         Bq0p5XsdziD0E4io0BuEe8rJgP3xOcdLDCN8eS8l52k8BwSaxsGA+Wt0tRIEeIquIIJ2
-         auK+UxC6K6JqgIfyOGPbbekMOBylIsf5X7uNHK4QhAbHdShRHe/5UFvUjzVGbTfgjopB
-         SV18xbWZSDFVHxHJtWH3a/dtf1SPGdnTpCqTw50f6gi648Gtjpk6CtDMj2n25/NpIiJR
-         DBRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BieUm8+5YIDYgpe+FhMyY8gKnYdFr8G076ODKkZnCSI=;
-        b=tFh/UI+i6Ukj9BOZLiWSZ6a+Djgk0TM83M67sh+qsN9MNfa1JQLXFSIez7/PQMeDCa
-         EtYolCYXhmE5wramwwGBjkbURaZ2AtN/ohq7JmyVC3rXZbSUQ8bR/voX3g5CdPTAQnTt
-         HsUGrxu9UqMz8IvnTCURd+rxDD48hdLhByQpasD/jJE69g5Ioo3HjO00cVHWyN6eeShf
-         wOhv8VmtGMdFvg+CdOLKobsj9xRKWj71qcisG4CyBpwM6NAY96Xvcj6Xvisv8cvuo3hj
-         I2b03nTFU8hO7vw415aN/TRqVwJMQAoSgapserScOmT2v255RDZrHEGbpRrpk74vAtMs
-         /dfg==
-X-Gm-Message-State: APjAAAUCyA7upjvY52jlx2CWUr+woQVErTvz4lOxsgQzeJRlGFxgZgiP
-        ttSrq9IM08wxi8XGhTHAnT+lHWyA9fD5PhJPRdekSg==
-X-Google-Smtp-Source: APXvYqwtMloELc8yyjiKROZUWk9iBobR5zrhOA3kDqcmzqBo65VARWEAjndXv65IUMTNhasNaouQOIRld/mI5menbbA=
-X-Received: by 2002:a05:6830:1e2b:: with SMTP id t11mr4117327otr.81.1581720279231;
- Fri, 14 Feb 2020 14:44:39 -0800 (PST)
-MIME-Version: 1.0
-References: <20200214222415.181467-1-shakeelb@google.com> <20200214223303.GA60585@carbon.dhcp.thefacebook.com>
-In-Reply-To: <20200214223303.GA60585@carbon.dhcp.thefacebook.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Fri, 14 Feb 2020 14:44:28 -0800
-Message-ID: <CALvZod5Vbua5=J6p2RDqmdJTC3D234zy41t-DHrL=qWMjh_OdA@mail.gmail.com>
-Subject: Re: [PATCH v2] cgroup: memcg: net: do not associate sock with
- unrelated cgroup
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Eric Dumazet <edumazet@google.com>, Tejun Heo <tj@kernel.org>,
-        Greg Thelen <gthelen@google.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Fri, 14 Feb 2020 17:48:58 -0500
+Received: from callcc.thunk.org (guestnat-104-133-0-101.corp.google.com [104.133.0.101] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 01EMljDT018457
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 14 Feb 2020 17:47:45 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id AD4A242032C; Fri, 14 Feb 2020 17:47:44 -0500 (EST)
+Date:   Fri, 14 Feb 2020 17:47:44 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        Vasily Gorbik <gor@linux.ibm.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Potapenko <glider@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Juergen Gross <jgross@suse.com>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH 2/3] random: rng-seed source is utf-8
+Message-ID: <20200214224744.GC439135@mit.edu>
+References: <158166060044.9887.549561499483343724.stgit@devnote2>
+ <158166062748.9887.15284887096084339722.stgit@devnote2>
+ <CAL_Jsq+BDfWgGTVtppD-JEFHZRqpc00WaV2N7c6qsPBSaxOEPw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_Jsq+BDfWgGTVtppD-JEFHZRqpc00WaV2N7c6qsPBSaxOEPw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 2:33 PM Roman Gushchin <guro@fb.com> wrote:
->
-> On Fri, Feb 14, 2020 at 02:24:15PM -0800, Shakeel Butt wrote:
-> > We are testing network memory accounting in our setup and noticed
-> > inconsistent network memory usage and often unrelated cgroups network
-> > usage correlates with testing workload. On further inspection, it
-> > seems like mem_cgroup_sk_alloc() and cgroup_sk_alloc() are broken in
-> > irq context specially for cgroup v1.
+On Fri, Feb 14, 2020 at 01:58:35PM -0600, Rob Herring wrote:
+> On Fri, Feb 14, 2020 at 12:10 AM Masami Hiramatsu <mhiramat@kernel.org> wrote:
 > >
-> > mem_cgroup_sk_alloc() and cgroup_sk_alloc() can be called in irq context
-> > and kind of assumes that this can only happen from sk_clone_lock()
-> > and the source sock object has already associated cgroup. However in
-> > cgroup v1, where network memory accounting is opt-in, the source sock
-> > can be unassociated with any cgroup and the new cloned sock can get
-> > associated with unrelated interrupted cgroup.
+> > From: Mark Salyzyn <salyzyn@android.com>
 > >
-> > Cgroup v2 can also suffer if the source sock object was created by
-> > process in the root cgroup or if sk_alloc() is called in irq context.
-> > The fix is to just do nothing in interrupt.
-> >
-> > Fixes: 2d7580738345 ("mm: memcontrol: consolidate cgroup socket tracking")
-> > Fixes: d979a39d7242 ("cgroup: duplicate cgroup reference when cloning sockets")
-> > Signed-off-by: Shakeel Butt <shakeelb@google.com>
-> > ---
-> >
-> > Changes since v1:
-> > - Fix cgroup_sk_alloc() too.
-> >
-> >  kernel/cgroup/cgroup.c | 4 ++++
-> >  mm/memcontrol.c        | 4 ++++
-> >  2 files changed, 8 insertions(+)
-> >
-> > diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-> > index 9a8a5ded3c48..46e5f5518fba 100644
-> > --- a/kernel/cgroup/cgroup.c
-> > +++ b/kernel/cgroup/cgroup.c
-> > @@ -6449,6 +6449,10 @@ void cgroup_sk_alloc(struct sock_cgroup_data *skcd)
-> >               return;
-> >       }
-> >
-> > +     /* Do not associate the sock with unrelated interrupted task's memcg. */
->                                                                        ^^^^^
->                                                                        cgroup?
-> > +     if (in_interrupt())
-> > +             return;
-> > +
-> >       rcu_read_lock();
-> >
-> >       while (true) {
-> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > index 63bb6a2aab81..f500da82bfe8 100644
-> > --- a/mm/memcontrol.c
-> > +++ b/mm/memcontrol.c
-> > @@ -6697,6 +6697,10 @@ void mem_cgroup_sk_alloc(struct sock *sk)
-> >               return;
-> >       }
->
-> Can you, please, include the stacktrace into the commit log?
-> Except a minor typo (see above),
-> Reviewed-by: Roman Gushchin <guro@fb.com>
->
-> A really good catch.
->
+> > commit 428826f5358c922dc378830a1717b682c0823160
+> > ("fdt: add support for rng-seed") makes the assumption that the data
+> > in rng-seed is binary, when it is typically constructed of utf-8
+> 
+> Typically? Why is that?
+> 
+> > characters which has a bitness of roughly 6 to give appropriate
+> > credit due for the entropy.
 
-Thanks, I will add the stack trace and fix the typo.
+This is why I really think what gets specified via the boot command
+line, or bootconfig, should specify the bits of entropy and the
+entropy seed *separately*, so it can be specified explicitly, instead
+of assuming that *everyone knows* that rng-seed is either (a) a binary
+string, or (b) utf-8, or (c) a hex string.  The fact is, everyone does
+*not* know, or everyone will have a different implementation, which
+everyone will say is *obviously* the only way to go....
 
-Shakeel
+	      	     		     	  - Ted
