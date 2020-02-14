@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E679115DF76
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:09:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C654515DF78
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:09:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391052AbgBNQIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:08:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59834 "EHLO mail.kernel.org"
+        id S2390697AbgBNQIs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:08:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390838AbgBNQID (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:08:03 -0500
+        id S2390850AbgBNQIG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:08:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A368F2467E;
-        Fri, 14 Feb 2020 16:08:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91266222C2;
+        Fri, 14 Feb 2020 16:08:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696482;
-        bh=kpIYvkygOL80jCOC4mTASNNjnr+Ez++17Cyd5v07r7w=;
+        s=default; t=1581696486;
+        bh=abcxH2FDkY67ywKz9OWa3xtvSrEUbS2mzMluiL1bXfE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YlEekXucA2iEXRzgzVM5vqq9vB/agGMLLZBBuyM4xVev7NY0FrJYhyvQpo8Ts5Jk7
-         KRbxrbxLcINvke+eFCR6J5OUBmSVSjPbAYb+7tSYe/TCzts0z0i2O5fhcZTezP42CE
-         gQsqGokXXswNyPJuAOOH2re//6ACJt8w6DICmnxA=
+        b=Kx88ZxmPEFGf3efP04Cj49sxWbjo47Y+dR6ttjlsXBISmdIOQOJJykuV5WEBOCIVK
+         bIX+OU23gpyGCQVA9yDbPX+/gfIEz7z6fooOrKidx0ixs8ZusDjGk5N3fghs8uz9Yx
+         lUJJbcJu/knaUUA8wytQmgw2m6jYWFhzoXFZK+Ww=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Johan Jonker <jbx6244@gmail.com>, Heiko Stuebner <heiko@sntech.de>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 289/459] arm64: dts: rockchip: add reg property to brcmf sub-nodes
-Date:   Fri, 14 Feb 2020 10:58:59 -0500
-Message-Id: <20200214160149.11681-289-sashal@kernel.org>
+Cc:     Chen Zhou <chenzhou10@huawei.com>, Hulk Robot <hulkci@huawei.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, alsa-devel@alsa-project.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.4 292/459] ASoC: atmel: fix build error with CONFIG_SND_ATMEL_SOC_DMA=m
+Date:   Fri, 14 Feb 2020 10:59:02 -0500
+Message-Id: <20200214160149.11681-292-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -44,88 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Jonker <jbx6244@gmail.com>
+From: Chen Zhou <chenzhou10@huawei.com>
 
-[ Upstream commit 96ff264bccb22175bbe2185a1eb5204ca3c5f03f ]
+[ Upstream commit 8fea78029f5e6ed734ae1957bef23cfda1af4354 ]
 
-An experimental test with the command below gives this error:
-rk3399-firefly.dt.yaml: dwmmc@fe310000: wifi@1:
-'reg' is a required property
-rk3399-orangepi.dt.yaml: dwmmc@fe310000: wifi@1:
-'reg' is a required property
-rk3399-khadas-edge.dt.yaml: dwmmc@fe310000: wifi@1:
-'reg' is a required property
-rk3399-khadas-edge-captain.dt.yaml: dwmmc@fe310000: wifi@1:
-'reg' is a required property
-rk3399-khadas-edge-v.dt.yaml: dwmmc@fe310000: wifi@1:
-'reg' is a required property
-So fix this by adding a reg property to the brcmf sub node.
-Also add #address-cells and #size-cells to prevent more warnings.
+If CONFIG_SND_ATMEL_SOC_DMA=m, build error:
 
-make ARCH=arm64 dtbs_check
-DT_SCHEMA_FILES=Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
+sound/soc/atmel/atmel_ssc_dai.o: In function `atmel_ssc_set_audio':
+(.text+0x7cd): undefined reference to `atmel_pcm_dma_platform_register'
 
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
-Link: https://lore.kernel.org/r/20200110142128.13522-1-jbx6244@gmail.com
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Function atmel_pcm_dma_platform_register is defined under
+CONFIG SND_ATMEL_SOC_DMA, so select SND_ATMEL_SOC_DMA in
+CONFIG SND_ATMEL_SOC_SSC, same to CONFIG_SND_ATMEL_SOC_PDC.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+Link: https://lore.kernel.org/r/20200113133242.144550-1-chenzhou10@huawei.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/rockchip/rk3399-firefly.dts      | 3 +++
- arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi | 3 +++
- arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts     | 3 +++
- 3 files changed, 9 insertions(+)
+ sound/soc/atmel/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts b/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts
-index c706db0ee9ec6..76f5db696009b 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts
-@@ -669,9 +669,12 @@
- 	vqmmc-supply = &vcc1v8_s3;	/* IO line */
- 	vmmc-supply = &vcc_sdio;	/* card's power */
+diff --git a/sound/soc/atmel/Kconfig b/sound/soc/atmel/Kconfig
+index f118c229ed829..d1dc8e6366dcb 100644
+--- a/sound/soc/atmel/Kconfig
++++ b/sound/soc/atmel/Kconfig
+@@ -19,6 +19,8 @@ config SND_ATMEL_SOC_DMA
  
-+	#address-cells = <1>;
-+	#size-cells = <0>;
- 	status = "okay";
+ config SND_ATMEL_SOC_SSC
+ 	tristate
++	select SND_ATMEL_SOC_DMA
++	select SND_ATMEL_SOC_PDC
  
- 	brcmf: wifi@1 {
-+		reg = <1>;
- 		compatible = "brcm,bcm4329-fmac";
- 		interrupt-parent = <&gpio0>;
- 		interrupts = <RK_PA3 GPIO_ACTIVE_HIGH>;
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi
-index 4944d78a0a1cb..e87a04477440e 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi
-@@ -654,9 +654,12 @@
- 	sd-uhs-sdr104;
- 	vqmmc-supply = <&vcc1v8_s3>;
- 	vmmc-supply = <&vccio_sd>;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
- 	status = "okay";
- 
- 	brcmf: wifi@1 {
-+		reg = <1>;
- 		compatible = "brcm,bcm4329-fmac";
- 		interrupt-parent = <&gpio0>;
- 		interrupts = <RK_PA3 GPIO_ACTIVE_HIGH>;
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts b/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
-index 0541dfce924d6..9c659f3115c88 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
-@@ -648,9 +648,12 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sdio0_bus4 &sdio0_cmd &sdio0_clk>;
- 	sd-uhs-sdr104;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
- 	status = "okay";
- 
- 	brcmf: wifi@1 {
-+		reg = <1>;
- 		compatible = "brcm,bcm4329-fmac";
- 		interrupt-parent = <&gpio0>;
- 		interrupts = <RK_PA3 GPIO_ACTIVE_HIGH>;
+ config SND_ATMEL_SOC_SSC_PDC
+ 	tristate "SoC PCM DAI support for AT91 SSC controller using PDC"
 -- 
 2.20.1
 
