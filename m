@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3FBF15DC49
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:53:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C55CF15DC4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:53:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730477AbgBNPv5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:51:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56882 "EHLO mail.kernel.org"
+        id S1730435AbgBNPwB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:52:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730847AbgBNPvo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:51:44 -0500
+        id S1730852AbgBNPvp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:51:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 108A224686;
-        Fri, 14 Feb 2020 15:51:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 578F02465D;
+        Fri, 14 Feb 2020 15:51:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695504;
-        bh=xzcDHUr0AgOeeRhMZggU0VLWyxXQOHzz4fX3m50JerA=;
+        s=default; t=1581695505;
+        bh=mEbUikUJPdO2aLyeQBlvtyjvsrmBOXxH5GFU6k+4vuM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j80lsGFn8D5uyG60r7xR9LEQlxbqB9ZGC6+GIv+cU9dneXVOnFkyXpyvFrTDaNQd8
-         TQ+ICBRNyDJESXVv3vYSDXdOxzYH3Ss3GpMSxxzz+SerkzpG2QG/JjF/ygYCgbznPW
-         4xyWcDycFNfiS7ELqGfjOAqYnUOf1LUijfnYVGlk=
+        b=cGqHRBgH3dtHRinDlTUa/2iD1OY39U7gAQYLDmCBNTSy/mz5+GVLLao2AgmzYBe57
+         edP9J0e9KRRSrzOADlSFe1RukPwkeaUeghZOP3Vb/LGB6qIYWw7b5e0/SZwEMUWfQG
+         n+R96c+9oA4ppSZacNAdqgNEYF8dSyLRZqREweow=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 130/542] clk: qcom: rcg2: Don't crash if our parent can't be found; return an error
-Date:   Fri, 14 Feb 2020 10:42:02 -0500
-Message-Id: <20200214154854.6746-130-sashal@kernel.org>
+Cc:     Yong Zhao <Yong.Zhao@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.5 131/542] drm/amdkfd: Fix a bug in SDMA RLC queue counting under HWS mode
+Date:   Fri, 14 Feb 2020 10:42:03 -0500
+Message-Id: <20200214154854.6746-131-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -45,68 +45,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Yong Zhao <Yong.Zhao@amd.com>
 
-[ Upstream commit 908b050114d8fefdddc57ec9fbc213c3690e7f5f ]
+[ Upstream commit f38abc15d157b7b31fa7f651dc8bf92858c963f8 ]
 
-When I got my clock parenting slightly wrong I ended up with a crash
-that looked like this:
+The sdma_queue_count increment should be done before
+execute_queues_cpsch(), which calls pm_calc_rlib_size() where
+sdma_queue_count is used to calculate whether over_subscription is
+triggered.
 
-  Unable to handle kernel NULL pointer dereference at virtual
-  address 0000000000000000
-  ...
-  pc : clk_hw_get_rate+0x14/0x44
-  ...
-  Call trace:
-   clk_hw_get_rate+0x14/0x44
-   _freq_tbl_determine_rate+0x94/0xfc
-   clk_rcg2_determine_rate+0x2c/0x38
-   clk_core_determine_round_nolock+0x4c/0x88
-   clk_core_round_rate_nolock+0x6c/0xa8
-   clk_core_round_rate_nolock+0x9c/0xa8
-   clk_core_set_rate_nolock+0x70/0x180
-   clk_set_rate+0x3c/0x6c
-   of_clk_set_defaults+0x254/0x360
-   platform_drv_probe+0x28/0xb0
-   really_probe+0x120/0x2dc
-   driver_probe_device+0x64/0xfc
-   device_driver_attach+0x4c/0x6c
-   __driver_attach+0xac/0xc0
-   bus_for_each_dev+0x84/0xcc
-   driver_attach+0x2c/0x38
-   bus_add_driver+0xfc/0x1d0
-   driver_register+0x64/0xf8
-   __platform_driver_register+0x4c/0x58
-   msm_drm_register+0x5c/0x60
-   ...
+With the previous code, when a SDMA queue is created,
+compute_queue_count in pm_calc_rlib_size() is one more than the
+actual compute queue number, because the queue_count has been
+incremented while sdma_queue_count has not. This patch fixes that.
 
-It turned out that clk_hw_get_parent_by_index() was returning NULL and
-we weren't checking.  Let's check it so that we don't crash.
-
-Fixes: ac269395cdd8 ("clk: qcom: Convert to clk_hw based provider APIs")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Link: https://lkml.kernel.org/r/20200203103049.v4.1.I7487325fe8e701a68a07d3be8a6a4b571eca9cfa@changeid
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Yong Zhao <Yong.Zhao@amd.com>
+Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/clk-rcg2.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 5e0f7d8f168dd..cecdb07ce13ba 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -217,6 +217,9 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
+index 984c2f2b24b60..d128a8bbe19d0 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
+@@ -1225,16 +1225,18 @@ static int create_queue_cpsch(struct device_queue_manager *dqm, struct queue *q,
  
- 	clk_flags = clk_hw_get_flags(hw);
- 	p = clk_hw_get_parent_by_index(hw, index);
-+	if (!p)
-+		return -EINVAL;
+ 	list_add(&q->list, &qpd->queues_list);
+ 	qpd->queue_count++;
 +
- 	if (clk_flags & CLK_SET_RATE_PARENT) {
- 		rate = f->freq;
- 		if (f->pre_div) {
++	if (q->properties.type == KFD_QUEUE_TYPE_SDMA)
++		dqm->sdma_queue_count++;
++	else if (q->properties.type == KFD_QUEUE_TYPE_SDMA_XGMI)
++		dqm->xgmi_sdma_queue_count++;
++
+ 	if (q->properties.is_active) {
+ 		dqm->queue_count++;
+ 		retval = execute_queues_cpsch(dqm,
+ 				KFD_UNMAP_QUEUES_FILTER_DYNAMIC_QUEUES, 0);
+ 	}
+ 
+-	if (q->properties.type == KFD_QUEUE_TYPE_SDMA)
+-		dqm->sdma_queue_count++;
+-	else if (q->properties.type == KFD_QUEUE_TYPE_SDMA_XGMI)
+-		dqm->xgmi_sdma_queue_count++;
+ 	/*
+ 	 * Unconditionally increment this counter, regardless of the queue's
+ 	 * type or whether the queue is active.
 -- 
 2.20.1
 
