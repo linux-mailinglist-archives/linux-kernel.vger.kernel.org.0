@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5C6715EB04
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:18:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD3BC15EAF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:17:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394633AbgBNRRj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:17:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37948 "EHLO mail.kernel.org"
+        id S2394537AbgBNRRc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:17:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391346AbgBNQLT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:11:19 -0500
+        id S2390394AbgBNQLX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:11:23 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F72F24684;
-        Fri, 14 Feb 2020 16:11:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C7586222C2;
+        Fri, 14 Feb 2020 16:11:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696679;
-        bh=bsY2Ez2fjYKqL4INXHo6t0AnfkI2oIAHfv+cfuoZhC0=;
+        s=default; t=1581696682;
+        bh=Vu3XjvYbCgw86NCz8BhfJsyxkHdSDYwpHnwGfWUj6ss=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UJb6K2obOccp31EJoQ7V05tuC02tcJNN8LhkHCKtw30Zgot5EznjqKLJ9gWMC/iCw
-         dseFa70Hors9+iZyaDnELY5dRqsuKJLHymYsZJbvhAblENj9XJCokOi074SuQBzGgD
-         pRuwSfQHC7QxF2PvmKDryAWav9mgOE+I1FXves84=
+        b=NMus8fKA7OXri256pL0C0n5/k2mZ2byhPBg5aDzsG0L/yVIlRTfwKQEgy//ozHttR
+         Ixq97vttGX3BGFZRBBDfCVF7U9UUhOp865c7Ro8cujC5nZp6L32Rxc0QnQYlSYMI5Z
+         4wv1isFuvBXgkb3sjIkhucF2oRAArts/2BC2K6kQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.4 447/459] microblaze: Prevent the overflow of the start
-Date:   Fri, 14 Feb 2020 11:01:37 -0500
-Message-Id: <20200214160149.11681-447-sashal@kernel.org>
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        Evan Quan <evan.quan@amd.com>, Sasha Levin <sashal@kernel.org>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.4 450/459] drm/amdgpu/smu10: fix smu10_get_clock_by_type_with_voltage
+Date:   Fri, 14 Feb 2020 11:01:40 -0500
+Message-Id: <20200214160149.11681-450-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -43,35 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-[ Upstream commit 061d2c1d593076424c910cb1b64ecdb5c9a6923f ]
+[ Upstream commit 1064ad4aeef94f51ca230ac639a9e996fb7867a0 ]
 
-In case the start + cache size is more than the max int the
-start overflows.
-Prevent the same.
+Cull out 0 clocks to avoid a warning in DC.
 
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Bug: https://gitlab.freedesktop.org/drm/amd/issues/963
+Reviewed-by: Evan Quan <evan.quan@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/microblaze/kernel/cpu/cache.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/arch/microblaze/kernel/cpu/cache.c b/arch/microblaze/kernel/cpu/cache.c
-index 0bde47e4fa694..dcba53803fa5f 100644
---- a/arch/microblaze/kernel/cpu/cache.c
-+++ b/arch/microblaze/kernel/cpu/cache.c
-@@ -92,7 +92,8 @@ static inline void __disable_dcache_nomsr(void)
- #define CACHE_LOOP_LIMITS(start, end, cache_line_length, cache_size)	\
- do {									\
- 	int align = ~(cache_line_length - 1);				\
--	end = min(start + cache_size, end);				\
-+	if (start <  UINT_MAX - cache_size)				\
-+		end = min(start + cache_size, end);			\
- 	start &= align;							\
- } while (0)
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
+index 627a42e8fd318..fed3fc4bb57a9 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
+@@ -1080,9 +1080,11 @@ static int smu10_get_clock_by_type_with_voltage(struct pp_hwmgr *hwmgr,
  
+ 	clocks->num_levels = 0;
+ 	for (i = 0; i < pclk_vol_table->count; i++) {
+-		clocks->data[i].clocks_in_khz = pclk_vol_table->entries[i].clk  * 10;
+-		clocks->data[i].voltage_in_mv = pclk_vol_table->entries[i].vol;
+-		clocks->num_levels++;
++		if (pclk_vol_table->entries[i].clk) {
++			clocks->data[clocks->num_levels].clocks_in_khz = pclk_vol_table->entries[i].clk  * 10;
++			clocks->data[clocks->num_levels].voltage_in_mv = pclk_vol_table->entries[i].vol;
++			clocks->num_levels++;
++		}
+ 	}
+ 
+ 	return 0;
 -- 
 2.20.1
 
