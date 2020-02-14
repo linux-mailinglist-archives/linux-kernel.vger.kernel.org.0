@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7979415E1D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:20:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63D9215E1E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:21:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392775AbgBNQUx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:20:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52978 "EHLO mail.kernel.org"
+        id S2392921AbgBNQU7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:20:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392826AbgBNQTt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:19:49 -0500
+        id S2405065AbgBNQTw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:19:52 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9DC124718;
-        Fri, 14 Feb 2020 16:19:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6FA002471D;
+        Fri, 14 Feb 2020 16:19:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697188;
-        bh=WslAfIa6kh4Qg5x4GYIkJ0a9Jvm/LHDo4JeViWDefCc=;
+        s=default; t=1581697192;
+        bh=5GAH1D31Jg6YN2y96DofgQKtwEufW/I2MEgvZT31F00=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bTYd8PQx8KtOOQX3I3SdR9IMGldUTjYL7RBh85mXB+XqOE+qHYS9i5ZKEmalJDPQp
-         HFpdIAHr/7A58vdq1LnT++aCAh6owVJIjWmv5UsK1pNrbRzOBRoMgs3KSL4eseQVPi
-         NmH+vYFjM0DmefMEcn1m1Ju3MaV/u8fKrxeNr8t8=
+        b=Mqr/zQ/jLUPrSN5TSyTdLf0xcmnv6px3W9dnvFdXvhjHct0/2hisj/E4uQStoNNcQ
+         Z6MDcnAc/1wDOSWMKxb5hu2NYZ6PFrFEYYDZUKPkhEOiQsRgBLR33WF0LwltWku1Mi
+         E7sgDIR1dVFI3gf9OQziJLPXLDhQ+BntP9WfBPwc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Logan Gunthorpe <logang@deltatee.com>, Kit Chow <kchow@gigaio.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 118/186] PCI: Don't disable bridge BARs when assigning bus resources
-Date:   Fri, 14 Feb 2020 11:16:07 -0500
-Message-Id: <20200214161715.18113-118-sashal@kernel.org>
+Cc:     Simon Schwartz <kern.simon@theschwartz.xyz>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 121/186] driver core: platform: Prevent resouce overflow from causing infinite loops
+Date:   Fri, 14 Feb 2020 11:16:10 -0500
+Message-Id: <20200214161715.18113-121-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161715.18113-1-sashal@kernel.org>
 References: <20200214161715.18113-1-sashal@kernel.org>
@@ -43,113 +43,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Logan Gunthorpe <logang@deltatee.com>
+From: Simon Schwartz <kern.simon@theschwartz.xyz>
 
-[ Upstream commit 9db8dc6d0785225c42a37be7b44d1b07b31b8957 ]
+[ Upstream commit 39cc539f90d035a293240c9443af50be55ee81b8 ]
 
-Some PCI bridges implement BARs in addition to bridge windows.  For
-example, here's a PLX switch:
+num_resources in the platform_device struct is declared as a u32.  The
+for loops that iterate over num_resources use an int as the counter,
+which can cause infinite loops on architectures with smaller ints.
+Change the loop counters to u32.
 
-  04:00.0 PCI bridge: PLX Technology, Inc. PEX 8724 24-Lane, 6-Port PCI
-            Express Gen 3 (8 GT/s) Switch, 19 x 19mm FCBGA (rev ca)
-	    (prog-if 00 [Normal decode])
-      Flags: bus master, fast devsel, latency 0, IRQ 30, NUMA node 0
-      Memory at 90a00000 (32-bit, non-prefetchable) [size=256K]
-      Bus: primary=04, secondary=05, subordinate=0a, sec-latency=0
-      I/O behind bridge: 00002000-00003fff
-      Memory behind bridge: 90000000-909fffff
-      Prefetchable memory behind bridge: 0000380000800000-0000380000bfffff
-
-Previously, when the kernel assigned resource addresses (with the
-pci=realloc command line parameter, for example) it could clear the struct
-resource corresponding to the BAR.  When this happened, lspci would report
-this BAR as "ignored":
-
-   Region 0: Memory at <ignored> (32-bit, non-prefetchable) [size=256K]
-
-This is because the kernel reports a zero start address and zero flags
-in the corresponding sysfs resource file and in /proc/bus/pci/devices.
-Investigation with 'lspci -x', however, shows the BIOS-assigned address
-will still be programmed in the device's BAR registers.
-
-It's clearly a bug that the kernel lost track of the BAR value, but in most
-cases, this still won't result in a visible issue because nothing uses the
-memory, so nothing is affected.  However, when an IOMMU is in use, it will
-not reserve this space in the IOVA because the kernel no longer thinks the
-range is valid.  (See dmar_init_reserved_ranges() for the Intel
-implementation of this.)
-
-Without the proper reserved range, a DMA mapping may allocate an IOVA that
-matches a bridge BAR, which results in DMA accesses going to the BAR
-instead of the intended RAM.
-
-The problem was in pci_assign_unassigned_root_bus_resources().  When any
-resource from a bridge device fails to get assigned, the code set the
-resource's flags to zero.  This makes sense for bridge windows, as they
-will be re-enabled later, but for regular BARs, it makes the kernel
-permanently lose track of the fact that they decode address space.
-
-Change pci_assign_unassigned_root_bus_resources() and
-pci_assign_unassigned_bridge_resources() so they only clear "res->flags"
-for bridge *windows*, not bridge BARs.
-
-Fixes: da7822e5ad71 ("PCI: update bridge resources to get more big ranges when allocating space (again)")
-Link: https://lore.kernel.org/r/20200108213208.4612-1-logang@deltatee.com
-[bhelgaas: commit log, check for pci_is_bridge()]
-Reported-by: Kit Chow <kchow@gigaio.com>
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Simon Schwartz <kern.simon@theschwartz.xyz>
+Link: https://lore.kernel.org/r/2201ce63a2a171ffd2ed14e867875316efcf71db.camel@theschwartz.xyz
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/setup-bus.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ drivers/base/platform.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-index 958da7db90331..fb73e975d22b5 100644
---- a/drivers/pci/setup-bus.c
-+++ b/drivers/pci/setup-bus.c
-@@ -1824,12 +1824,18 @@ void pci_assign_unassigned_root_bus_resources(struct pci_bus *bus)
- 	/* restore size and flags */
- 	list_for_each_entry(fail_res, &fail_head, list) {
- 		struct resource *res = fail_res->res;
-+		int idx;
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index f1105de0d9fed..e3d40c41c33b0 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -28,6 +28,7 @@
+ #include <linux/limits.h>
+ #include <linux/property.h>
+ #include <linux/kmemleak.h>
++#include <linux/types.h>
  
- 		res->start = fail_res->start;
- 		res->end = fail_res->end;
- 		res->flags = fail_res->flags;
--		if (fail_res->dev->subordinate)
--			res->flags = 0;
-+
-+		if (pci_is_bridge(fail_res->dev)) {
-+			idx = res - &fail_res->dev->resource[0];
-+			if (idx >= PCI_BRIDGE_RESOURCES &&
-+			    idx <= PCI_BRIDGE_RESOURCE_END)
-+				res->flags = 0;
-+		}
- 	}
- 	free_list(&fail_head);
+ #include "base.h"
+ #include "power/power.h"
+@@ -68,7 +69,7 @@ void __weak arch_setup_pdev_archdata(struct platform_device *pdev)
+ struct resource *platform_get_resource(struct platform_device *dev,
+ 				       unsigned int type, unsigned int num)
+ {
+-	int i;
++	u32 i;
  
-@@ -1895,12 +1901,18 @@ void pci_assign_unassigned_bridge_resources(struct pci_dev *bridge)
- 	/* restore size and flags */
- 	list_for_each_entry(fail_res, &fail_head, list) {
- 		struct resource *res = fail_res->res;
-+		int idx;
+ 	for (i = 0; i < dev->num_resources; i++) {
+ 		struct resource *r = &dev->resource[i];
+@@ -163,7 +164,7 @@ struct resource *platform_get_resource_byname(struct platform_device *dev,
+ 					      unsigned int type,
+ 					      const char *name)
+ {
+-	int i;
++	u32 i;
  
- 		res->start = fail_res->start;
- 		res->end = fail_res->end;
- 		res->flags = fail_res->flags;
--		if (fail_res->dev->subordinate)
--			res->flags = 0;
-+
-+		if (pci_is_bridge(fail_res->dev)) {
-+			idx = res - &fail_res->dev->resource[0];
-+			if (idx >= PCI_BRIDGE_RESOURCES &&
-+			    idx <= PCI_BRIDGE_RESOURCE_END)
-+				res->flags = 0;
-+		}
- 	}
- 	free_list(&fail_head);
+ 	for (i = 0; i < dev->num_resources; i++) {
+ 		struct resource *r = &dev->resource[i];
+@@ -360,7 +361,8 @@ EXPORT_SYMBOL_GPL(platform_device_add_properties);
+  */
+ int platform_device_add(struct platform_device *pdev)
+ {
+-	int i, ret;
++	u32 i;
++	int ret;
  
+ 	if (!pdev)
+ 		return -EINVAL;
+@@ -447,7 +449,7 @@ EXPORT_SYMBOL_GPL(platform_device_add);
+  */
+ void platform_device_del(struct platform_device *pdev)
+ {
+-	int i;
++	u32 i;
+ 
+ 	if (pdev) {
+ 		device_remove_properties(&pdev->dev);
 -- 
 2.20.1
 
