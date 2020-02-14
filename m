@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9699515E1CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:20:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7762615E1CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:20:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392870AbgBNQUg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:20:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52564 "EHLO mail.kernel.org"
+        id S2392878AbgBNQUm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:20:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404993AbgBNQT3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:19:29 -0500
+        id S2405037AbgBNQTl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:19:41 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B8372470B;
-        Fri, 14 Feb 2020 16:19:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D22BA24706;
+        Fri, 14 Feb 2020 16:19:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697168;
-        bh=IBGB+xDX7Tk9f82+ViaLQcfskmpjmicN/oxDPAoTq6I=;
+        s=default; t=1581697180;
+        bh=60wDpPFn61IGgirDpObDN+GtIav6ew+mgPwLMFb64XY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B3YW+iOn1bt7w0FlbjjQihtN3ne6dWQPCCF/ftYvS9gfQJP6tgICqe6i70+FYwp5q
-         6DYqLUtsVnnQzL24yZz9FkghiTfgJwP/YupEV+UxqQh/2U11rGYwO9hEsYuQbEmeKF
-         qRq0NS1dEyzMh5qfcNu5Yca8pNZYazEpGS9V7TpQ=
+        b=DEnMXb+e638ZwfYjul/wdRjG4PGQJuJD33fjJdHuWob+60Ft0LhXb/r98gpuULyHK
+         ukpfjZY1gJ1EQtcba6mKc1MHF/jGU71qSOdeDLUvTDPTxiijzpfDuCXK5fWvzIQFov
+         BgfQQzBg0mIILzCx2FFYJj9YrHsM0wNhySxMFidU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chen Zhou <chenzhou10@huawei.com>, Hulk Robot <hulkci@huawei.com>,
-        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        =?UTF-8?q?Karl=20Rudb=C3=A6k=20Olsen?= <karl@micro-technic.com>,
         Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.14 103/186] drm/gma500: remove set but not used variables 'hist_reg'
-Date:   Fri, 14 Feb 2020 11:15:52 -0500
-Message-Id: <20200214161715.18113-103-sashal@kernel.org>
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 112/186] ARM: dts: at91: sama5d3: define clock rate range for tcb1
+Date:   Fri, 14 Feb 2020 11:16:01 -0500
+Message-Id: <20200214161715.18113-112-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161715.18113-1-sashal@kernel.org>
 References: <20200214161715.18113-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -44,43 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen Zhou <chenzhou10@huawei.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit 72f775611daf3ce20358388facbaf11f22899fa2 ]
+[ Upstream commit a7e0f3fc01df4b1b7077df777c37feae8c9e8b6d ]
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+The clock rate range for the TCB1 clock is missing. define it in the device
+tree.
 
-drivers/gpu/drm/gma500/psb_irq.c: In function psb_irq_turn_off_dpst:
-drivers/gpu/drm/gma500/psb_irq.c:473:6:
-	warning: variable hist_reg set but not used [-Wunused-but-set-variable]
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
-Signed-off-by: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20191227114811.14907-1-chenzhou10@huawei.com
+Reported-by: Karl Rudbæk Olsen <karl@micro-technic.com>
+Fixes: d2e8190b7916 ("ARM: at91/dt: define sama5d3 clocks")
+Link: https://lore.kernel.org/r/20200110172007.1253659-2-alexandre.belloni@bootlin.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/gma500/psb_irq.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm/boot/dts/sama5d3_tcb1.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/gma500/psb_irq.c b/drivers/gpu/drm/gma500/psb_irq.c
-index f75f199c84311..518d7b4456bf1 100644
---- a/drivers/gpu/drm/gma500/psb_irq.c
-+++ b/drivers/gpu/drm/gma500/psb_irq.c
-@@ -471,12 +471,11 @@ void psb_irq_turn_off_dpst(struct drm_device *dev)
- {
- 	struct drm_psb_private *dev_priv =
- 	    (struct drm_psb_private *) dev->dev_private;
--	u32 hist_reg;
- 	u32 pwm_reg;
- 
- 	if (gma_power_begin(dev, false)) {
- 		PSB_WVDC32(0x00000000, HISTOGRAM_INT_CONTROL);
--		hist_reg = PSB_RVDC32(HISTOGRAM_INT_CONTROL);
-+		PSB_RVDC32(HISTOGRAM_INT_CONTROL);
- 
- 		psb_disable_pipestat(dev_priv, 0, PIPE_DPST_EVENT_ENABLE);
- 
+diff --git a/arch/arm/boot/dts/sama5d3_tcb1.dtsi b/arch/arm/boot/dts/sama5d3_tcb1.dtsi
+index 801f9745e82f1..b80dbc45a3c20 100644
+--- a/arch/arm/boot/dts/sama5d3_tcb1.dtsi
++++ b/arch/arm/boot/dts/sama5d3_tcb1.dtsi
+@@ -23,6 +23,7 @@
+ 					tcb1_clk: tcb1_clk {
+ 						#clock-cells = <0>;
+ 						reg = <27>;
++						atmel,clk-output-range = <0 166000000>;
+ 					};
+ 				};
+ 			};
 -- 
 2.20.1
 
