@@ -2,88 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76E7715D25D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 07:48:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CFBA15D26A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 07:53:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728754AbgBNGsk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 01:48:40 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:3591 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725897AbgBNGsk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 01:48:40 -0500
-X-UUID: 8c8f9b2b36a54850b631df62dc69840b-20200214
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=793AtRhL6KTU8oRy5ebaU3z1XDM9P+It3bT3YTeZoSU=;
-        b=mNOYLuie8RFfAObLdxVKO47u9kXFV9XODlwdMQBEcAs/8GHTOLaBqkdm0YIMMXTK6xRaEKjsdVmN3S7XyjLLC8fcRMvcrbQ32vCQvHhtjySMHNWP+RXOIUVsnohSlwPNEbUNU1DMVrz/mMGiepG83AUfnrHOxmDNkYubsbdkY+g=;
-X-UUID: 8c8f9b2b36a54850b631df62dc69840b-20200214
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 313290993; Fri, 14 Feb 2020 14:48:33 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs05n2.mediatek.inc (172.21.101.140) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 14 Feb 2020 14:47:41 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 14 Feb 2020 14:48:32 +0800
-Message-ID: <1581662912.17949.4.camel@mtksdaap41>
-Subject: Re: [PATCH 2/3] drm/mediatek: make sure previous message done or be
- aborted before send
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
-CC:     David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        YT Shen <yt.shen@mediatek.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>, <tfiga@chromium.org>,
-        <drinkcat@chromium.org>, <linux-kernel@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>
-Date:   Fri, 14 Feb 2020 14:48:32 +0800
-In-Reply-To: <20200214044954.16923-2-bibby.hsieh@mediatek.com>
-References: <20200214044954.16923-1-bibby.hsieh@mediatek.com>
-         <20200214044954.16923-2-bibby.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+        id S1728540AbgBNGxC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 01:53:02 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:5448 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725845AbgBNGxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 01:53:02 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 48Jkbc3MLZz9tyVn;
+        Fri, 14 Feb 2020 07:53:00 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=LhTXZqO/; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id tLPVScggPYMq; Fri, 14 Feb 2020 07:53:00 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 48Jkbc2KX3z9tyVm;
+        Fri, 14 Feb 2020 07:53:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1581663180; bh=PznlyhTfVjsLdMRcw5jtGZY9T5cbjSYoG6t4AKdJfBI=;
+        h=From:Subject:To:Cc:Date:From;
+        b=LhTXZqO/+RdZvQAIo7mr/JLoI7+aitamijtkPi08C01RM3H/k9qbnNvev/fYvIc8a
+         MXJ5Rpdrbd6ePIjyo6BaV48wKWBAFXD4BBfpfwpBlRQPY3GN2FjcHV6q4MK/yZfgpF
+         QsWvysu4KoaSuNZRI3tKCwSuKvuvY2saCQ20UTwQ=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 344608B878;
+        Fri, 14 Feb 2020 07:53:01 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id xk75eBqZoejo; Fri, 14 Feb 2020 07:53:01 +0100 (CET)
+Received: from pc16570vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.230.102])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 057048B874;
+        Fri, 14 Feb 2020 07:53:01 +0100 (CET)
+Received: by pc16570vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id A1580652F5; Fri, 14 Feb 2020 06:53:00 +0000 (UTC)
+Message-Id: <7bce32ccbab3ba3e3e0f27da6961bf6313df97ed.1581663140.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc/6xx: Fix power_save_ppc32_restore() with
+ CONFIG_VMAP_STACK
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Larry Finger <Larry.Finger@lwfinger.net>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Fri, 14 Feb 2020 06:53:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIEJpYmJ5Og0KDQpPbiBGcmksIDIwMjAtMDItMTQgYXQgMTI6NDkgKzA4MDAsIEJpYmJ5IEhz
-aWVoIHdyb3RlOg0KPiBNZWRpYXRlayBDTURRIGRyaXZlciByZW1vdmVkIGF0b21pYyBwYXJhbWV0
-ZXIgYW5kIGltcGxlbWVudGF0aW9uDQo+IHJlbGF0ZWQgdG8gYXRvbWljLiBEUk0gZHJpdmVyIG5l
-ZWQgdG8gbWFrZSBzdXJlIHByZXZpb3VzIG1lc3NhZ2UNCj4gZG9uZSBvciBiZSBhYm9ydGVkIGJl
-Zm9yZSB3ZSBzZW5kIG5leHQgbWVzc2FnZS4NCj4gDQo+IElmIHByZXZpb3VzIG1lc3NhZ2UgaXMg
-c3RpbGwgd2FpdGluZyBmb3IgZXZlbnQsIGl0IG1lYW5zIHRoZQ0KPiBzZXR0aW5nIGhhc24ndCBi
-ZWVuIHVwZGF0ZWQgaW50byBkaXNwbGF5IGhhcmR3YXJlIHJlZ2lzdGVyLA0KPiB3ZSBjYW4gYWJv
-cnQgdGhlIG1lc3NhZ2UgYW5kIHNlbmQgbmV4dCBtZXNzYWdlIHRvIHVwZGF0ZSB0aGUNCj4gbmV3
-ZXN0IHNldHRpbmcgaW50byBkaXNwbGF5IGhhcmR3YXJlLg0KPiBJZiBwcmV2aW91cyBtZXNzYWdl
-IGFscmVhZHkgc3RhcnRlZCwgd2UgaGF2ZSB0byB3YWl0IGl0IHVudGlsDQo+IHRyYW5zbWlzc2lv
-biBoYXMgYmVlbiBjb21wbGV0ZWQuDQo+IA0KPiBTbyB3ZSBmbHVzaCBtYm94IGNsaWVudCBiZWZv
-cmUgd2Ugc2VuZCBuZXcgbWVzc2FnZSB0byBjb250cm9sbGVyDQo+IGRyaXZlci4NCj4gDQoNClJl
-dmlld2VkLWJ5OiBDSyBIdSA8Y2suaHVAbWVkaWF0ZWsuY29tPg0KDQo+IFRoaXMgcGF0Y2ggZGVw
-ZW5kcyBvbiBwdGFjaDoNCj4gWzAvM10gUmVtb3ZlIGF0b21pY19leGVjDQo+IGh0dHBzOi8vcGF0
-Y2h3b3JrLmtlcm5lbC5vcmcvY292ZXIvMTEzODE2NzcvDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBC
-aWJieSBIc2llaCA8YmliYnkuaHNpZWhAbWVkaWF0ZWsuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMv
-Z3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2NydGMuYyB8IDEgKw0KPiAgMSBmaWxlIGNoYW5nZWQs
-IDEgaW5zZXJ0aW9uKCspDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL21lZGlh
-dGVrL210a19kcm1fY3J0Yy5jIGIvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0
-Yy5jDQo+IGluZGV4IDNjNTNlYTIyMjA4Yy4uZTM1YjY2YzViYTBmIDEwMDY0NA0KPiAtLS0gYS9k
-cml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9jcnRjLmMNCj4gKysrIGIvZHJpdmVycy9n
-cHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0Yy5jDQo+IEBAIC00OTEsNiArNDkxLDcgQEAgc3Rh
-dGljIHZvaWQgbXRrX2RybV9jcnRjX2h3X2NvbmZpZyhzdHJ1Y3QgbXRrX2RybV9jcnRjICptdGtf
-Y3J0YykNCj4gIAl9DQo+ICAjaWYgSVNfRU5BQkxFRChDT05GSUdfTVRLX0NNRFEpDQo+ICAJaWYg
-KG10a19jcnRjLT5jbWRxX2NsaWVudCkgew0KPiArCQltYm94X2ZsdXNoKG10a19jcnRjLT5jbWRx
-X2NsaWVudC0+Y2hhbiwgMjAwMCk7DQo+ICAJCWNtZHFfaGFuZGxlID0gY21kcV9wa3RfY3JlYXRl
-KG10a19jcnRjLT5jbWRxX2NsaWVudCwgUEFHRV9TSVpFKTsNCj4gIAkJY21kcV9wa3RfY2xlYXJf
-ZXZlbnQoY21kcV9oYW5kbGUsIG10a19jcnRjLT5jbWRxX2V2ZW50KTsNCj4gIAkJY21kcV9wa3Rf
-d2ZlKGNtZHFfaGFuZGxlLCBtdGtfY3J0Yy0+Y21kcV9ldmVudCk7DQoNCg==
+power_save_ppc32_restore() is called during exception entry, before
+re-enabling the MMU. It substracts KERNELBASE from the address
+of nap_save_msscr0 to access it.
+
+With CONFIG_VMAP_STACK enabled, data MMU translation has already been
+re-enabled, so power_save_ppc32_restore() has to access
+nap_save_msscr0 by its virtual address.
+
+Reported-by: Larry Finger <Larry.Finger@lwfinger.net>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Fixes: cd08f109e262 ("powerpc/32s: Enable CONFIG_VMAP_STACK")
+Tested-by: Larry Finger <Larry.Finger@lwfinger.net>
+---
+ arch/powerpc/kernel/idle_6xx.S | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/powerpc/kernel/idle_6xx.S b/arch/powerpc/kernel/idle_6xx.S
+index 0ffdd18b9f26..433d97bea1f3 100644
+--- a/arch/powerpc/kernel/idle_6xx.S
++++ b/arch/powerpc/kernel/idle_6xx.S
+@@ -166,7 +166,11 @@ BEGIN_FTR_SECTION
+ 	mfspr	r9,SPRN_HID0
+ 	andis.	r9,r9,HID0_NAP@h
+ 	beq	1f
++#ifdef CONFIG_VMAP_STACK
++	addis	r9, r11, nap_save_msscr0@ha
++#else
+ 	addis	r9,r11,(nap_save_msscr0-KERNELBASE)@ha
++#endif
+ 	lwz	r9,nap_save_msscr0@l(r9)
+ 	mtspr	SPRN_MSSCR0, r9
+ 	sync
+@@ -174,7 +178,11 @@ BEGIN_FTR_SECTION
+ 1:
+ END_FTR_SECTION_IFSET(CPU_FTR_NAP_DISABLE_L2_PR)
+ BEGIN_FTR_SECTION
++#ifdef CONFIG_VMAP_STACK
++	addis	r9, r11, nap_save_hid1@ha
++#else
+ 	addis	r9,r11,(nap_save_hid1-KERNELBASE)@ha
++#endif
+ 	lwz	r9,nap_save_hid1@l(r9)
+ 	mtspr	SPRN_HID1, r9
+ END_FTR_SECTION_IFSET(CPU_FTR_DUAL_PLL_750FX)
+-- 
+2.25.0
 
