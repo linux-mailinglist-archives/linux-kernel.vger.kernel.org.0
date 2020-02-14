@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C260215ED54
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:33:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19F9A15EDB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:36:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390428AbgBNQG1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:06:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55836 "EHLO mail.kernel.org"
+        id S2390161AbgBNRfy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:35:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390220AbgBNQFo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:05:44 -0500
+        id S2390067AbgBNQFr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:05:47 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D108217F4;
-        Fri, 14 Feb 2020 16:05:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 053082467D;
+        Fri, 14 Feb 2020 16:05:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696344;
-        bh=J8OSz6X/3CfAu5lvqon5+DI7TzDJwMi7/bF87DT5l6c=;
+        s=default; t=1581696346;
+        bh=8uG1pKmllG6vODb9BHuyO83kQ55D5RpViPviNkzTLOs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DtAUQJo691gQaqWErPe1/30diaoUzllrSTSctq61EsvXo910xU3SUauykuj5M9GxO
-         L7VGrDcrxhZiOGQXQbbkxozKidxjqTzrccBfyzPBvIq4NUAtoQBEp/4FhiYA0QhbNg
-         R8zkfNbrJq88D2nfVvnqUQv1wsgwh6GBvcHd6mNU=
+        b=v6kotx0uYbjCkpuHvjOmxE5NBX6x7bCnAeZYPqUgpWE2V/cHPj/wZf5hORjBM9lGW
+         z2lvuOFS3kLGye/OWSU1oDY0HSE1j8ioppyOiFmtDJkvxt5WYBCmY5bcHsbs+01YAw
+         DX+Dvnal7Yvq2iWJIIwanrrYUYiIN2dX/3HP4yL8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Daniel Drake <drake@endlessm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 179/459] PCI: Add generic quirk for increasing D3hot delay
-Date:   Fri, 14 Feb 2020 10:57:09 -0500
-Message-Id: <20200214160149.11681-179-sashal@kernel.org>
+Cc:     Jakub Kicinski <jakub.kicinski@netronome.com>,
+        John Hurley <john.hurley@netronome.com>,
+        Sasha Levin <sashal@kernel.org>, oss-drivers@netronome.com,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 181/459] Revert "nfp: abm: fix memory leak in nfp_abm_u32_knode_replace"
+Date:   Fri, 14 Feb 2020 10:57:11 -0500
+Message-Id: <20200214160149.11681-181-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -44,59 +44,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Drake <drake@endlessm.com>
+From: Jakub Kicinski <jakub.kicinski@netronome.com>
 
-[ Upstream commit 62fe23df067715a21c4aef44068efe7ceaa8f627 ]
+[ Upstream commit 1d1997db870f4058676439ef7014390ba9e24eb2 ]
 
-Separate the D3 delay increase functionality out of quirk_radeon_pm() into
-its own function so that it can be shared with other quirks, including the
-AMD Ryzen XHCI quirk that will be introduced in a followup commit.
+This reverts commit 78beef629fd9 ("nfp: abm: fix memory leak in
+nfp_abm_u32_knode_replace").
 
-Tweak the function name and message to indicate more clearly that the delay
-relates to a D3hot-to-D0 transition.
+The quoted commit does not fix anything and resulted in a bogus
+CVE-2019-19076.
 
-Link: https://lore.kernel.org/r/20191127053836.31624-1-drake@endlessm.com
-Signed-off-by: Daniel Drake <drake@endlessm.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+If match is NULL then it is known there is no matching entry in
+list, hence, calling nfp_abm_u32_knode_delete() is pointless.
+
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Reviewed-by: John Hurley <john.hurley@netronome.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/quirks.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/netronome/nfp/abm/cls.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index 7afbce082d83e..5c863af9452ec 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -1871,16 +1871,21 @@ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL,	0x2609, quirk_intel_pcie_pm);
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL,	0x260a, quirk_intel_pcie_pm);
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL,	0x260b, quirk_intel_pcie_pm);
+diff --git a/drivers/net/ethernet/netronome/nfp/abm/cls.c b/drivers/net/ethernet/netronome/nfp/abm/cls.c
+index 9f8a1f69c0c4c..23ebddfb95325 100644
+--- a/drivers/net/ethernet/netronome/nfp/abm/cls.c
++++ b/drivers/net/ethernet/netronome/nfp/abm/cls.c
+@@ -176,10 +176,8 @@ nfp_abm_u32_knode_replace(struct nfp_abm_link *alink,
+ 	u8 mask, val;
+ 	int err;
  
-+static void quirk_d3hot_delay(struct pci_dev *dev, unsigned int delay)
-+{
-+	if (dev->d3_delay >= delay)
-+		return;
-+
-+	dev->d3_delay = delay;
-+	pci_info(dev, "extending delay after power-on from D3hot to %d msec\n",
-+		 dev->d3_delay);
-+}
-+
- static void quirk_radeon_pm(struct pci_dev *dev)
- {
- 	if (dev->subsystem_vendor == PCI_VENDOR_ID_APPLE &&
--	    dev->subsystem_device == 0x00e2) {
--		if (dev->d3_delay < 20) {
--			dev->d3_delay = 20;
--			pci_info(dev, "extending delay after power-on from D3 to %d msec\n",
--				 dev->d3_delay);
--		}
+-	if (!nfp_abm_u32_check_knode(alink->abm, knode, proto, extack)) {
+-		err = -EOPNOTSUPP;
++	if (!nfp_abm_u32_check_knode(alink->abm, knode, proto, extack))
+ 		goto err_delete;
 -	}
-+	    dev->subsystem_device == 0x00e2)
-+		quirk_d3hot_delay(dev, 20);
- }
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_ATI, 0x6741, quirk_radeon_pm);
  
+ 	tos_off = proto == htons(ETH_P_IP) ? 16 : 20;
+ 
+@@ -200,18 +198,14 @@ nfp_abm_u32_knode_replace(struct nfp_abm_link *alink,
+ 		if ((iter->val & cmask) == (val & cmask) &&
+ 		    iter->band != knode->res->classid) {
+ 			NL_SET_ERR_MSG_MOD(extack, "conflict with already offloaded filter");
+-			err = -EOPNOTSUPP;
+ 			goto err_delete;
+ 		}
+ 	}
+ 
+ 	if (!match) {
+ 		match = kzalloc(sizeof(*match), GFP_KERNEL);
+-		if (!match) {
+-			err = -ENOMEM;
+-			goto err_delete;
+-		}
+-
++		if (!match)
++			return -ENOMEM;
+ 		list_add(&match->list, &alink->dscp_map);
+ 	}
+ 	match->handle = knode->handle;
+@@ -227,7 +221,7 @@ nfp_abm_u32_knode_replace(struct nfp_abm_link *alink,
+ 
+ err_delete:
+ 	nfp_abm_u32_knode_delete(alink, knode);
+-	return err;
++	return -EOPNOTSUPP;
+ }
+ 
+ static int nfp_abm_setup_tc_block_cb(enum tc_setup_type type,
 -- 
 2.20.1
 
