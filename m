@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9516315E27E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:24:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7573C15E280
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:24:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405754AbgBNQXz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:23:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57070 "EHLO mail.kernel.org"
+        id S2405775AbgBNQX7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:23:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57256 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405202AbgBNQWF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:22:05 -0500
+        id S2387788AbgBNQWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:22:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6820246CE;
-        Fri, 14 Feb 2020 16:22:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACA83246DF;
+        Fri, 14 Feb 2020 16:22:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697324;
-        bh=0kT5xc+IVb1pEroXTrduFksV6+JEEfPcC8u/t3uHsk0=;
+        s=default; t=1581697329;
+        bh=jn4K9rDlecWTJSRHUz03JEu4YRkIIjvf91FBDrRDW14=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hJ3uKaXVQP4peat/sz4xTW5SpzlaltWQRp1ox3VzgGHxkrKrVSziRK3e8ufCjqPvC
-         PIGIUTAi9r90O/pMdCZF6lItqOGMzm0hhtdsreI/2rqng3DrkT3kWuCbT6y89ByZ9J
-         7mfwzor6PvQiJqhdQ/i/kXNcvWYWjI+wcIC6AFM4=
+        b=PepKEXcFte97Cc2hl/ii68rXDcQtRKm9SBUzaFpxSdkRIXYupe0weqkSFF3++H7oq
+         fNTDn5iv9Gb7jJKyAGwSS9nPmQGwriGL9a3C01xDmHXQp7G56vUj8FCcGY6kidpM/Q
+         NqT+RiZtEe4ofHR1WVwteVzSS7N7a46gBSpQ378Q=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     yu kuai <yukuai3@huawei.com>,
         Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.9 033/141] drm/amdgpu: remove set but not used variable 'dig_connector'
-Date:   Fri, 14 Feb 2020 11:19:33 -0500
-Message-Id: <20200214162122.19794-33-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 037/141] drm/amdgpu: remove set but not used variable 'amdgpu_connector'
+Date:   Fri, 14 Feb 2020 11:19:37 -0500
+Message-Id: <20200214162122.19794-37-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214162122.19794-1-sashal@kernel.org>
 References: <20200214162122.19794-1-sashal@kernel.org>
@@ -47,46 +47,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: yu kuai <yukuai3@huawei.com>
 
-[ Upstream commit 5bea7fedb7fe4d5e6d3ba9f385dd3619fb004ce7 ]
+[ Upstream commit 4f2922d12d6c63d0f4aa4e859ad95aee6d0d4ea0 ]
 
 Fixes gcc '-Wunused-but-set-variable' warning:
 
-drivers/gpu/drm/amd/amdgpu/atombios_dp.c: In function
-‘amdgpu_atombios_dp_get_panel_mode’:
-drivers/gpu/drm/amd/amdgpu/atombios_dp.c:364:36: warning: variable
-‘dig_connector’ set but not used [-Wunused-but-set-variable]
-
-It is never used, so can be removed.
+drivers/gpu/drm/amd/amdgpu/amdgpu_display.c: In function
+‘amdgpu_display_crtc_scaling_mode_fixup’:
+drivers/gpu/drm/amd/amdgpu/amdgpu_display.c:693:27: warning: variable
+‘amdgpu_connector’ set but not used [-Wunused-but-set-variable]
 
 Fixes: d38ceaf99ed0 ("drm/amdgpu: add core driver (v4)")
 Signed-off-by: yu kuai <yukuai3@huawei.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/atombios_dp.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_display.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/atombios_dp.c b/drivers/gpu/drm/amd/amdgpu/atombios_dp.c
-index f81068ba4cc67..d712dee892545 100644
---- a/drivers/gpu/drm/amd/amdgpu/atombios_dp.c
-+++ b/drivers/gpu/drm/amd/amdgpu/atombios_dp.c
-@@ -361,7 +361,6 @@ int amdgpu_atombios_dp_get_panel_mode(struct drm_encoder *encoder,
- 			       struct drm_connector *connector)
- {
- 	struct amdgpu_connector *amdgpu_connector = to_amdgpu_connector(connector);
--	struct amdgpu_connector_atom_dig *dig_connector;
- 	int panel_mode = DP_PANEL_MODE_EXTERNAL_DP_MODE;
- 	u16 dp_bridge = amdgpu_connector_encoder_get_dp_bridge_encoder_id(connector);
- 	u8 tmp;
-@@ -369,8 +368,6 @@ int amdgpu_atombios_dp_get_panel_mode(struct drm_encoder *encoder,
- 	if (!amdgpu_connector->con_priv)
- 		return panel_mode;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+index 15a2d8f3725d5..f29f025202d03 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+@@ -666,7 +666,6 @@ bool amdgpu_crtc_scaling_mode_fixup(struct drm_crtc *crtc,
+ 	struct amdgpu_crtc *amdgpu_crtc = to_amdgpu_crtc(crtc);
+ 	struct amdgpu_encoder *amdgpu_encoder;
+ 	struct drm_connector *connector;
+-	struct amdgpu_connector *amdgpu_connector;
+ 	u32 src_v = 1, dst_v = 1;
+ 	u32 src_h = 1, dst_h = 1;
  
--	dig_connector = amdgpu_connector->con_priv;
--
- 	if (dp_bridge != ENCODER_OBJECT_ID_NONE) {
- 		/* DP bridge chips */
- 		if (drm_dp_dpcd_readb(&amdgpu_connector->ddc_bus->aux,
+@@ -678,7 +677,6 @@ bool amdgpu_crtc_scaling_mode_fixup(struct drm_crtc *crtc,
+ 			continue;
+ 		amdgpu_encoder = to_amdgpu_encoder(encoder);
+ 		connector = amdgpu_get_connector_for_encoder(encoder);
+-		amdgpu_connector = to_amdgpu_connector(connector);
+ 
+ 		/* set scaling */
+ 		if (amdgpu_encoder->rmx_type == RMX_OFF)
 -- 
 2.20.1
 
