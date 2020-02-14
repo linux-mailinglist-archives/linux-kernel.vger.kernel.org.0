@@ -2,79 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F32C115CF57
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 02:05:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C448215CF5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 02:08:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728142AbgBNBFL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 20:05:11 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:45478 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727609AbgBNBFL (ORCPT
+        id S1728063AbgBNBH6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 20:07:58 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:37294 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727609AbgBNBH6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 20:05:11 -0500
-Received: by mail-io1-f65.google.com with SMTP id i11so8681296ioi.12
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 17:05:11 -0800 (PST)
+        Thu, 13 Feb 2020 20:07:58 -0500
+Received: by mail-pl1-f194.google.com with SMTP id c23so3052930plz.4
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 17:07:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=RFjST6WTWl2HErgo/MFlw9oz3Ck4pyxWRgkJWzlGF00=;
-        b=BkwEG5MR3XYaUn7Aj8Wy1bPPpJ73mZZ+ua8WAc83HYSFEDQpdDOqQkNNpeeyPXxJ6H
-         jIbYae+xdrztxf5rRkum0/Q2o6L/D3y+4tq3SH1oyrNBy28sKqGGOqJJ/FWy0N1QFEVd
-         tCQcAtPCikGTVuzgaC8iu1SbP3cLqTjS8JHBNZIDO/tv8OF7oVNvsx8VpJShA5czvStf
-         5LZj+/g5WB40UyABedvQSyrtP6bQHGl/mDLw+wi5PHygizSFtvHBQf8AckgupHQGCBs5
-         h+32F/Ew2duSv66AquhdJ1b7QmR002bM3anN//O0vL8vwPqdh9+QcjCNGxTnUf0pzIrb
-         GLnQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3CPCapu1GC3zKeozUVk/96Rk3HOBQ2hayAYwRebPM/Q=;
+        b=HFpHZ5jey714qrgQOWFv5LsO1c0xeYgTZ6kfhpdZ5Et0raLU1SaiBPFLShRc/8A/1R
+         sTjlilcCAlpFlegVgoq8H7ksteFvpS15E2LVmoGkXb6rAdMIum8M22TTqjddmuvRQ5II
+         8SznGO6UmaLebdD0335Ff16adN3Ad7DoVGULlf33PCKQ/EnyFbL0IQFzpOH9CKDJLb/7
+         74qfpc+EGryGmVB4bw+eTXU12t4aiEYPdzaDUoMJXVTDLjUgdv/+VP4GSUn/JPTHtX9V
+         9TUD7s99AzmksXTxEUGoJv7HOpRa8pPW4AyV2ujGGd1SC5zKTgor12o+0B2w5JJ9TpYQ
+         4oSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=RFjST6WTWl2HErgo/MFlw9oz3Ck4pyxWRgkJWzlGF00=;
-        b=g4a691RQ3mVEiRAMTnuWRmPPbaBqMYxj3A+xUqXXiijOxdvVP263iWatYXmx2IF/i4
-         eTxuN6fit+BJUeSoo3JAHVX+KgoKH3/CWtoTK6tMe4br2AwVjgH7sH+AST4pVXbmFJy/
-         ENwZX016S2Y+YbLaqYNBvpedZTFqZMTT4u42kgMbiwaLumVM+3vjOW6ybN/oobcmGHfu
-         jE6qkIWoZ8Wbj2KPgfsrW1j7NS4zjWT2dzMSHGaYX++58lkftTPTWmNdm8iQdKHVwH9X
-         T/dvC0eT84aVj018j+rqaYbOfSNwkZsCnO71xCvoKSMuClU6jA3uGB5iYngl0H0Bn+UH
-         UiZQ==
-X-Gm-Message-State: APjAAAW8AqUvUpA/QYmqwy4yHzhXY72Hb3jQ8aTRZg4D4aUw8ntgLIsc
-        Xm69dBYSBKQLlpLFZhDFmJkfvS05u8KRr7FEuao=
-X-Google-Smtp-Source: APXvYqzWGkbBwj76VinT4hSobrgA84homzg/1UwaNAu+EtrWLmb5B2q0WMfyZP2LwXl5k0A0TkYJ7o+SvKPqVDzJ8ZM=
-X-Received: by 2002:a05:6638:2b7:: with SMTP id d23mr591890jaq.108.1581642310477;
- Thu, 13 Feb 2020 17:05:10 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3CPCapu1GC3zKeozUVk/96Rk3HOBQ2hayAYwRebPM/Q=;
+        b=DscaczdBatZHohBhnN4Z4vh6Q9nvcfW5PyStZFQ9n9JRUtSITK64n48AYhh1T+2R71
+         9UKOm0LLxDKu/MGWkNhzYVCH9Wn0Q2l8ECYCyRDljtdyLlsc3NVFK6Lhh93nRiJ4kJQr
+         scz1L7j07E9L3Ru5ICY1X34Wn8jGEISoFrZWsMIjJsgQqxpP0hAFnc6ZguP6pbUmp3jc
+         /HM7p3PEm283S76d0K7qNLGJp6vyndEF68l72bxZiIFVHPSzq49wH/DYZ2Fkk2ve4I6V
+         WvQn7olAEI1ZjrLc3t9Pr0zoGktig6r/kdPk3Hd+W2lbkedIYbgDCeFB45EzDzieRrug
+         hqEg==
+X-Gm-Message-State: APjAAAV+jKaGk/m7vc48OUZkM7BMS959KaTeh8uRda/z48bzLDz33gr2
+        9PMIXywjWrYls2Bc3SxIzFPa/jxU
+X-Google-Smtp-Source: APXvYqwfqxrXmr5gzsXHXHDZ/siiAgsJ3md5k3TstMkBABjkXqBrfETvfO7gRdCR0gz4XtHzr/NFDA==
+X-Received: by 2002:a17:902:694b:: with SMTP id k11mr693763plt.334.1581642477752;
+        Thu, 13 Feb 2020 17:07:57 -0800 (PST)
+Received: from localhost ([2401:fa00:8f:203:5bbb:c872:f2b1:f53b])
+        by smtp.gmail.com with ESMTPSA id 3sm4468953pfi.13.2020.02.13.17.07.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2020 17:07:56 -0800 (PST)
+Date:   Fri, 14 Feb 2020 10:07:55 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     John Ogness <john.ogness@linutronix.de>,
+        lijiang <lijiang@redhat.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] printk: replace ringbuffer
+Message-ID: <20200214010755.GA13877@google.com>
+References: <20200128161948.8524-1-john.ogness@linutronix.de>
+ <dc4ca9b5-d2a2-03af-c186-204a3aad2399@redhat.com>
+ <20200205044848.GH41358@google.com>
+ <20200205050204.GI41358@google.com>
+ <88827ae2-7af5-347b-29fb-cffb94350f8f@redhat.com>
+ <20200205063640.GJ41358@google.com>
+ <877e11h0ir.fsf@linutronix.de>
+ <cd7509a5-48fd-e652-90f4-1e0fe2311134@redhat.com>
+ <87sgjp9foj.fsf@linutronix.de>
+ <20200213130720.j4e5qv37am2bapup@pathway.suse.cz>
 MIME-Version: 1.0
-Received: by 2002:a02:548a:0:0:0:0:0 with HTTP; Thu, 13 Feb 2020 17:05:10
- -0800 (PST)
-Reply-To: dunawattara96@outlook.com
-From:   Mr Duna Wattara <drhajizo31@gmail.com>
-Date:   Thu, 13 Feb 2020 17:05:10 -0800
-Message-ID: <CACp2wHyxhV0p-Wch9tYxPQkAFpn9X9gudjoCVh2W78BZopgCgA@mail.gmail.com>
-Subject: with due respect
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200213130720.j4e5qv37am2bapup@pathway.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+On (20/02/13 14:07), Petr Mladek wrote:
+> On Wed 2020-02-05 17:12:12, John Ogness wrote:
+> > On 2020-02-05, lijiang <lijiang@redhat.com> wrote:
+> > > Do you have any suggestions about the size of CONFIG_LOG_* and
+> > > CONFIG_PRINTK_* options by default?
+> > 
+> > The new printk implementation consumes more than double the memory that
+> > the current printk implementation requires. This is because dictionaries
+> > and meta-data are now stored separately.
+> > 
+> > If the old defaults (LOG_BUF_SHIFT=17 LOG_CPU_MAX_BUF_SHIFT=12) were
+> > chosen because they are maximally acceptable defaults, then the defaults
+> > should be reduced by 1 so that the final size is "similar" to the
+> > current implementation.
+> >
+> > If instead the defaults are left as-is, a machine with less than 64 CPUs
+> > will reserve 336KiB for printk information (128KiB text, 128KiB
+> > dictionary, 80KiB meta-data).
+> > 
+> > It might also be desirable to reduce the dictionary size (maybe 1/4 the
+> > size of text?).
+> 
+> Good questions. It would be great to check the usage on some real
+> systems.
 
-I know that this mail will come to you as a surprise as we have never
-met before, but need not to worry as I am contacting you independently
-of my investigation and no one is informed of this communication.
+[..]
 
-I need your urgent assistance in transferring the sum of $11.3million
-immediately to your private account.The money has been here in our
-Bank lying dormant for years now without anybody coming for the claim of it.
+> I wish the dictionaries were never added ;-) They complicate the code
+> and nobody knows how many people actually use the information.
 
-I want to release the money to you as the relative to our deceased
-customer (the account owner) who died a long with his supposed NEXT OF
-KIN since 16th October 2005. The Banking laws here does not allow such
-money to stay more than 15 years, because the money will be recalled
-to the Bank treasury account as unclaimed fund.
+Maybe we can have CONFIG_PRINTK_EXTRA_PAYLOAD [for dicts] so people can
+compile it out if it's not needed. This can save several bytes here and
+there.
 
-By indicating your interest I will send you the full details on how
-the business will be executed.
-
-Please respond urgently and delete if you are not interested.
-
-Best Regards,
-Mr. Duna Wattara.
+	-ss
