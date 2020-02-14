@@ -2,33 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DA4815F83D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 21:56:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1EB415F841
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 21:56:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387998AbgBNU4T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 15:56:19 -0500
-Received: from foss.arm.com ([217.140.110.172]:44960 "EHLO foss.arm.com"
+        id S2388370AbgBNU4Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 15:56:24 -0500
+Received: from foss.arm.com ([217.140.110.172]:44974 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730150AbgBNU4T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 15:56:19 -0500
+        id S2388053AbgBNU4X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 15:56:23 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6467E30E;
-        Fri, 14 Feb 2020 12:56:18 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 176A0101E;
+        Fri, 14 Feb 2020 12:56:23 -0800 (PST)
 Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D73A53F68F;
-        Fri, 14 Feb 2020 12:56:17 -0800 (PST)
-Date:   Fri, 14 Feb 2020 20:56:16 +0000
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8DF8D3F68F;
+        Fri, 14 Feb 2020 12:56:22 -0800 (PST)
+Date:   Fri, 14 Feb 2020 20:56:21 +0000
 From:   Mark Brown <broonie@kernel.org>
 To:     Jerome Brunet <jbrunet@baylibre.com>
 Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        kbuild test robot <lkp@intel.com>,
         Kevin Hilman <khilman@baylibre.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: meson: codec-glue: fix pcm format cast warning" to the asoc tree
-In-Reply-To:  <20200214131350.337968-6-jbrunet@baylibre.com>
-Message-Id:  <applied-20200214131350.337968-6-jbrunet@baylibre.com>
+Subject: Applied "ASoC: meson: aiu: fix acodec dai input name init" to the asoc tree
+In-Reply-To:  <20200214131350.337968-5-jbrunet@baylibre.com>
+Message-Id:  <applied-20200214131350.337968-5-jbrunet@baylibre.com>
 X-Patchwork-Hint: ignore
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -37,7 +36,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: meson: codec-glue: fix pcm format cast warning
+   ASoC: meson: aiu: fix acodec dai input name init
 
 has been applied to the asoc tree at
 
@@ -62,36 +61,34 @@ to this mail.
 Thanks,
 Mark
 
-From 3cd23f021e2e5f3350125abcb39f12430df87d06 Mon Sep 17 00:00:00 2001
+From 74a56f2a4a9ec72ef1daceeb2dda8b41370c1419 Mon Sep 17 00:00:00 2001
 From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Fri, 14 Feb 2020 14:13:50 +0100
-Subject: [PATCH] ASoC: meson: codec-glue: fix pcm format cast warning
+Date: Fri, 14 Feb 2020 14:13:49 +0100
+Subject: [PATCH] ASoC: meson: aiu: fix acodec dai input name init
 
-Clarify the cast of snd_pcm_format_t and fix the sparse warning:
-restricted snd_pcm_format_t degrades to integer
+Remove the double initialization of the dai input name as reported by
+sparse.
 
-Fixes: 9c29fd9bdf92 ("ASoC: meson: g12a: extract codec-to-codec utils")
-Reported-by: kbuild test robot <lkp@intel.com>
+Fixes: 65816025d461 ("ASoC: meson: aiu: add internal dac codec control support")
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Link: https://lore.kernel.org/r/20200214131350.337968-6-jbrunet@baylibre.com
+Link: https://lore.kernel.org/r/20200214131350.337968-5-jbrunet@baylibre.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/meson/meson-codec-glue.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/meson/aiu-acodec-ctrl.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/sound/soc/meson/meson-codec-glue.c b/sound/soc/meson/meson-codec-glue.c
-index 97bbc967e176..524a33472337 100644
---- a/sound/soc/meson/meson-codec-glue.c
-+++ b/sound/soc/meson/meson-codec-glue.c
-@@ -74,7 +74,7 @@ int meson_codec_glue_input_hw_params(struct snd_pcm_substream *substream,
- 	data->params.rates = snd_pcm_rate_to_rate_bit(params_rate(params));
- 	data->params.rate_min = params_rate(params);
- 	data->params.rate_max = params_rate(params);
--	data->params.formats = 1 << params_format(params);
-+	data->params.formats = 1ULL << (__force int) params_format(params);
- 	data->params.channels_min = params_channels(params);
- 	data->params.channels_max = params_channels(params);
- 	data->params.sig_bits = dai->driver->playback.sig_bits;
+diff --git a/sound/soc/meson/aiu-acodec-ctrl.c b/sound/soc/meson/aiu-acodec-ctrl.c
+index 12d8a4d351a1..b8e88b1a4fc8 100644
+--- a/sound/soc/meson/aiu-acodec-ctrl.c
++++ b/sound/soc/meson/aiu-acodec-ctrl.c
+@@ -128,7 +128,6 @@ static const struct snd_soc_dai_ops aiu_acodec_ctrl_output_ops = {
+ 
+ #define AIU_ACODEC_INPUT(xname) {				\
+ 	.name = "ACODEC CTRL " xname,				\
+-	.name = xname,						\
+ 	.playback = AIU_ACODEC_STREAM(xname, "Playback", 8),	\
+ 	.ops = &aiu_acodec_ctrl_input_ops,			\
+ 	.probe = meson_codec_glue_input_dai_probe,		\
 -- 
 2.20.1
 
