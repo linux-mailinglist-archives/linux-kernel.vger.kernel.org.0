@@ -2,79 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CE6315D019
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 03:42:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CBB015D024
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 03:44:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728443AbgBNCmg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 21:42:36 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10619 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728004AbgBNCmf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 21:42:35 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 7FACC6BB37394EE36B5A;
-        Fri, 14 Feb 2020 10:42:31 +0800 (CST)
-Received: from huawei.com (10.175.105.18) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Fri, 14 Feb 2020
- 10:42:23 +0800
-From:   linmiaohe <linmiaohe@huawei.com>
-To:     <pbonzini@redhat.com>, <rkrcmar@redhat.com>,
-        <sean.j.christopherson@intel.com>, <vkuznets@redhat.com>,
-        <wanpengli@tencent.com>, <jmattson@google.com>, <joro@8bytes.org>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-        <hpa@zytor.com>
-CC:     <linmiaohe@huawei.com>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <x86@kernel.org>
-Subject: [PATCH] KVM: nVMX: Fix some obsolete comments and grammar error
-Date:   Fri, 14 Feb 2020 10:44:05 +0800
-Message-ID: <1581648245-8414-1-git-send-email-linmiaohe@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1728412AbgBNCoN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 21:44:13 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:42709 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728004AbgBNCoN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 21:44:13 -0500
+Received: by mail-pg1-f194.google.com with SMTP id w21so4169033pgl.9
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 18:44:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:in-reply-to:references
+         :subject:from:cc:to:date:message-id:user-agent;
+        bh=niNApjCO06O7a+lFbqctq/E/HFCOZGM44slzM8VnlEo=;
+        b=IPZYguxYwiX88hRwH7QTLPVac3hJ/RngX14B4KoZqW6OiO/2xsVmTwj+HhOFyfg7nh
+         TT0vT38gm9VGUvEz2ocWIbn+qo8hKz8aOteojzMKPNJwdp3Ifg8ap0Hv7Ilq+x9zZLw8
+         7xsWgM62nwwp1kelkqj+SxQtFQoO+K1f4zu1I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding
+         :in-reply-to:references:subject:from:cc:to:date:message-id
+         :user-agent;
+        bh=niNApjCO06O7a+lFbqctq/E/HFCOZGM44slzM8VnlEo=;
+        b=YOG/VhKvibBmgNhrqdxAWk/YwyoYf2knkyk+gwUBVYBh7yEZbUN+8ggaGEisxfLLzH
+         qzu4MD4wUPEaA0WpaS7RbT31AXgUS8IA1yEE2mkY5L4yC+PxLnNsDQnGX8zq0jtqUsuA
+         y/9SatQFN2n1mtpE9P4NGu2afDBt2QhkNz/OM7fUfGva9WRSJQ8TWJgxDAXKGkDISXoJ
+         CaPMOUsvZkW3GuAJ1SxKeDoZ4OmYJhlf1c6tKMwlCG+zfDIFUPIlTJdUMgS0a0KYtOFR
+         Y1bkytvUxBxgSM+RP6XHLN3aN62Wez8JnXfkMCg5RFc/VMoXKu0t1zVctlx2VsPmJE66
+         7MOQ==
+X-Gm-Message-State: APjAAAVtyZ5vTTeZsVu0mQJT3uNZTXCyPyTPtmOwJmbOT5QDpOIvwKxP
+        mqJh4Vw2ZRySllLXYuFBDhj5Jw==
+X-Google-Smtp-Source: APXvYqwzYj+wvXbHesIqdU5LMCnildAw4yCq+8revIbEfOsWKVii3zdqeKtfxcBEcLKIdQKk+eTHGA==
+X-Received: by 2002:a63:74b:: with SMTP id 72mr1052514pgh.162.1581648252362;
+        Thu, 13 Feb 2020 18:44:12 -0800 (PST)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id c10sm4575360pgj.49.2020.02.13.18.44.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2020 18:44:11 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.105.18]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <e7ba4dbd8e9c8aedd6f5db1b3453d9782b7943cd.1579692800.git.saiprakash.ranjan@codeaurora.org>
+References: <cover.1579692800.git.saiprakash.ranjan@codeaurora.org> <e7ba4dbd8e9c8aedd6f5db1b3453d9782b7943cd.1579692800.git.saiprakash.ranjan@codeaurora.org>
+Subject: Re: [PATCH 1/2] iommu: arm-smmu-impl: Convert to a generic reset implementation
+From:   Stephen Boyd <swboyd@chromium.org>
+Cc:     iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+To:     Joerg Roedel <joro@8bytes.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
+        Will Deacon <will@kernel.org>
+Date:   Thu, 13 Feb 2020 18:44:10 -0800
+Message-ID: <158164825099.184098.18396989716299086067@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miaohe Lin <linmiaohe@huawei.com>
+Quoting Sai Prakash Ranjan (2020-01-22 03:48:01)
+> Currently the QCOM specific smmu reset implementation is very
+> specific to SDM845 SoC and has a wait-for-safe logic which
+> may not be required for other SoCs. So move the SDM845 specific
+> logic to its specific reset function. Also add SC7180 SMMU
+> compatible for calling into QCOM specific implementation.
+>=20
+> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+> ---
 
-Fix wrong variable names and grammar error in comment.
-
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
----
- arch/x86/kvm/vmx/nested.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index 657c2eda357c..f2d8cb68dce8 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -3160,10 +3160,10 @@ static void load_vmcs12_host_state(struct kvm_vcpu *vcpu,
-  * or KVM_SET_NESTED_STATE).  Otherwise it's called from vmlaunch/vmresume.
-  *
-  * Returns:
-- *	NVMX_ENTRY_SUCCESS: Entered VMX non-root mode
-- *	NVMX_ENTRY_VMFAIL:  Consistency check VMFail
-- *	NVMX_ENTRY_VMEXIT:  Consistency check VMExit
-- *	NVMX_ENTRY_KVM_INTERNAL_ERROR: KVM internal error
-+ *	NVMX_VMENTRY_SUCCESS: Entered VMX non-root mode
-+ *	NVMX_VMENTRY_VMFAIL:  Consistency check VMFail
-+ *	NVMX_VMENTRY_VMEXIT:  Consistency check VMExit
-+ *	NVMX_VMENTRY_KVM_INTERNAL_ERROR: KVM internal error
-  */
- enum nvmx_vmentry_status nested_vmx_enter_non_root_mode(struct kvm_vcpu *vcpu,
- 							bool from_vmentry)
-@@ -5301,7 +5301,7 @@ static bool nested_vmx_exit_handled_io(struct kvm_vcpu *vcpu,
- }
- 
- /*
-- * Return 1 if we should exit from L2 to L1 to handle an MSR access access,
-+ * Return 1 if we should exit from L2 to L1 to handle an MSR access,
-  * rather than handle it ourselves in L0. I.e., check whether L1 expressed
-  * disinterest in the current event (read or write a specific MSR) by using an
-  * MSR bitmap. This may be the case even when L0 doesn't use MSR bitmaps.
--- 
-2.19.1
-
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
