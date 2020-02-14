@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0EAC15E0B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:15:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2702015E0B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:15:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392385AbgBNQOr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:14:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43422 "EHLO mail.kernel.org"
+        id S2391904AbgBNQOv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:14:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43514 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392178AbgBNQOK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:14:10 -0500
+        id S2391113AbgBNQOM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:14:12 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D341246D3;
-        Fri, 14 Feb 2020 16:14:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A13BC246D5;
+        Fri, 14 Feb 2020 16:14:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696850;
-        bh=XKoTIc29oW1apUheo+XZNDmTHb2Iqz0eGdKtiIjddzw=;
+        s=default; t=1581696852;
+        bh=vVexZEER5O/jm8hcPhJvhiZ8rHMq++7YZdv102yM0tw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RqxdNLqOFfiJ4ZSakMqxUt5MvN1nZrs1u5SePLmmLM3EnvWbrXJIvkrjipLjQFln3
-         RJkqJsvrmxpbIfB0ThkwwAfBNmJkZJ+YaHWJGYg0daq/tMhNvCBWSObv3tA6+A2DWV
-         93vpjuk7TYyMUGabkcO5y1rrCiqm3CUi+hOZ4cOI=
+        b=IhEnV7UGM8A7GwSoQ6wkT6VRDxNdd6wPyeSefu/3lPDtPUj5MORPtpjID+14vP3y1
+         /W0blwTDnsMRIRONOOmMOHU+8AHsi1Odz0qgdMKQi8DIu/jmBn5r861VhxUBzXiXql
+         iRLtauuhBdMuKF7dmwpLptOn8TOZY/wVJf1n9R7c=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chen Zhou <chenzhou10@huawei.com>, Hulk Robot <hulkci@huawei.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 111/252] scsi: ibmvscsi_tgt: remove set but not used variables 'iue' and 'sd'
-Date:   Fri, 14 Feb 2020 11:09:26 -0500
-Message-Id: <20200214161147.15842-111-sashal@kernel.org>
+Cc:     Bibby Hsieh <bibby.hsieh@mediatek.com>, CK Hu <ck.hu@mediatek.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 113/252] drm/mediatek: handle events when enabling/disabling crtc
+Date:   Fri, 14 Feb 2020 11:09:28 -0500
+Message-Id: <20200214161147.15842-113-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -44,63 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen Zhou <chenzhou10@huawei.com>
+From: Bibby Hsieh <bibby.hsieh@mediatek.com>
 
-[ Upstream commit 4aca8fe7716669e39f7857b2e1fc5dfd4475b7e5 ]
+[ Upstream commit 411f5c1eacfebb1f6e40b653d29447cdfe7282aa ]
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+The driver currently handles vblank events only when updating planes on
+an already enabled CRTC. The atomic update API however allows requesting
+an event when enabling or disabling a CRTC. This currently leads to
+event objects being leaked in the kernel and to events not being sent
+out. Fix it.
 
-drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c: In function ibmvscsis_send_messages:
-drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:1888:19: warning: variable iue set but not used [-Wunused-but-set-variable]
-drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c: In function ibmvscsis_queue_data_in:
-drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:3806:8: warning: variable sd set but not used [-Wunused-but-set-variable]
-
-Link: https://lore.kernel.org/r/20191213064042.161840-1-chenzhou10@huawei.com
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+Signed-off-by: CK Hu <ck.hu@mediatek.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c | 5 -----
- 1 file changed, 5 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
-index f42a619198c46..9b368a2afb252 100644
---- a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
-+++ b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
-@@ -1885,7 +1885,6 @@ static void ibmvscsis_send_messages(struct scsi_info *vscsi)
- 	 */
- 	struct viosrp_crq *crq = (struct viosrp_crq *)&msg_hi;
- 	struct ibmvscsis_cmd *cmd, *nxt;
--	struct iu_entry *iue;
- 	long rc = ADAPT_SUCCESS;
- 	bool retry = false;
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+index 92ecb9bf982cf..b86ee7d25af36 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+@@ -308,6 +308,7 @@ static int mtk_crtc_ddp_hw_init(struct mtk_drm_crtc *mtk_crtc)
+ static void mtk_crtc_ddp_hw_fini(struct mtk_drm_crtc *mtk_crtc)
+ {
+ 	struct drm_device *drm = mtk_crtc->base.dev;
++	struct drm_crtc *crtc = &mtk_crtc->base;
+ 	int i;
  
-@@ -1939,8 +1938,6 @@ static void ibmvscsis_send_messages(struct scsi_info *vscsi)
- 					 */
- 					vscsi->credit += 1;
- 				} else {
--					iue = cmd->iue;
--
- 					crq->valid = VALID_CMD_RESP_EL;
- 					crq->format = cmd->rsp.format;
+ 	DRM_DEBUG_DRIVER("%s\n", __func__);
+@@ -329,6 +330,13 @@ static void mtk_crtc_ddp_hw_fini(struct mtk_drm_crtc *mtk_crtc)
+ 	mtk_disp_mutex_unprepare(mtk_crtc->mutex);
  
-@@ -3814,7 +3811,6 @@ static int ibmvscsis_queue_data_in(struct se_cmd *se_cmd)
- 						 se_cmd);
- 	struct iu_entry *iue = cmd->iue;
- 	struct scsi_info *vscsi = cmd->adapter;
--	char *sd;
- 	uint len = 0;
- 	int rc;
+ 	pm_runtime_put(drm->dev);
++
++	if (crtc->state->event && !crtc->state->active) {
++		spin_lock_irq(&crtc->dev->event_lock);
++		drm_crtc_send_vblank_event(crtc, crtc->state->event);
++		crtc->state->event = NULL;
++		spin_unlock_irq(&crtc->dev->event_lock);
++	}
+ }
  
-@@ -3822,7 +3818,6 @@ static int ibmvscsis_queue_data_in(struct se_cmd *se_cmd)
- 			       1);
- 	if (rc) {
- 		dev_err(&vscsi->dev, "srp_transfer_data failed: %d\n", rc);
--		sd = se_cmd->sense_buffer;
- 		se_cmd->scsi_sense_length = 18;
- 		memset(se_cmd->sense_buffer, 0, se_cmd->scsi_sense_length);
- 		/* Logical Unit Communication Time-out asc/ascq = 0x0801 */
+ static void mtk_crtc_ddp_config(struct drm_crtc *crtc)
 -- 
 2.20.1
 
