@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8095015E171
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:18:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BB6D15E177
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:18:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404832AbgBNQSm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:18:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49628 "EHLO mail.kernel.org"
+        id S2404363AbgBNQSv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:18:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404607AbgBNQR5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:17:57 -0500
+        id S2392729AbgBNQSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:18:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98FC2246E1;
-        Fri, 14 Feb 2020 16:17:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 988FC2470A;
+        Fri, 14 Feb 2020 16:18:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697076;
-        bh=lAkB0FGYBEcU1ex+SWbExJA6tcMV4n0xw9kTIpdIvV8=;
+        s=default; t=1581697087;
+        bh=ybrmC2rHhdfkY7gVnF0IU5j4QPB1DHBHoIR7OzmC2is=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dHjQrqi1fyi4TItM82NwindJ/fhK07qXK5wzohQV8lOgN7ym+fQa/FaFoH8HkZJLM
-         zthgeTeux/Z2YBZYe/8Dx10fB8iHn63bBOE1aaC02jsJ+DFLjTN2ZPRGgMbq+pygD1
-         1eSuuE15MhYUm2qFtcf3a3IPGCjAC0U3Xqf6FlN8=
+        b=PQAtDq4sj9cuPW3pppWEL4QpF2nciZpqYZVOAyGwJBgiFKAp6VwXcyupwK3XL4Hg9
+         c7fNTkhCJQRF4/0ql7qK1l2qHbZlSIXSYUzgFhGPjKGmXP9ojHIBC3nv+J/5cwRDEF
+         a75FSU78KRh/qe/3WPHxByjwbeFYryGMnXk5fV1Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
+Cc:     Nicolai Stange <nstange@suse.de>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.14 031/186] clocksource/drivers/bcm2835_timer: Fix memory leak of timer
-Date:   Fri, 14 Feb 2020 11:14:40 -0500
-Message-Id: <20200214161715.18113-31-sashal@kernel.org>
+        libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 040/186] libertas: don't exit from lbs_ibss_join_existing() with RCU read lock held
+Date:   Fri, 14 Feb 2020 11:14:49 -0500
+Message-Id: <20200214161715.18113-40-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161715.18113-1-sashal@kernel.org>
 References: <20200214161715.18113-1-sashal@kernel.org>
@@ -46,49 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Nicolai Stange <nstange@suse.de>
 
-[ Upstream commit 2052d032c06761330bca4944bb7858b00960e868 ]
+[ Upstream commit c7bf1fb7ddca331780b9a733ae308737b39f1ad4 ]
 
-Currently when setup_irq fails the error exit path will leak the
-recently allocated timer structure.  Originally the code would
-throw a panic but a later commit changed the behaviour to return
-via the err_iounmap path and hence we now have a memory leak. Fix
-this by adding a err_timer_free error path that kfree's timer.
+Commit e5e884b42639 ("libertas: Fix two buffer overflows at parsing bss
+descriptor") introduced a bounds check on the number of supplied rates to
+lbs_ibss_join_existing().
 
-Addresses-Coverity: ("Resource Leak")
-Fixes: 524a7f08983d ("clocksource/drivers/bcm2835_timer: Convert init function to return error")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Link: https://lore.kernel.org/r/20191219213246.34437-1-colin.king@canonical.com
+Unfortunately, it introduced a return path from within a RCU read side
+critical section without a corresponding rcu_read_unlock(). Fix this.
+
+Fixes: e5e884b42639 ("libertas: Fix two buffer overflows at parsing bss descriptor")
+Signed-off-by: Nicolai Stange <nstange@suse.de>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clocksource/bcm2835_timer.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/wireless/marvell/libertas/cfg.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clocksource/bcm2835_timer.c b/drivers/clocksource/bcm2835_timer.c
-index 39e489a96ad74..8894cfc32be06 100644
---- a/drivers/clocksource/bcm2835_timer.c
-+++ b/drivers/clocksource/bcm2835_timer.c
-@@ -134,7 +134,7 @@ static int __init bcm2835_timer_init(struct device_node *node)
- 	ret = setup_irq(irq, &timer->act);
- 	if (ret) {
- 		pr_err("Can't set up timer IRQ\n");
--		goto err_iounmap;
-+		goto err_timer_free;
- 	}
- 
- 	clockevents_config_and_register(&timer->evt, freq, 0xf, 0xffffffff);
-@@ -143,6 +143,9 @@ static int __init bcm2835_timer_init(struct device_node *node)
- 
- 	return 0;
- 
-+err_timer_free:
-+	kfree(timer);
-+
- err_iounmap:
- 	iounmap(base);
- 	return ret;
+diff --git a/drivers/net/wireless/marvell/libertas/cfg.c b/drivers/net/wireless/marvell/libertas/cfg.c
+index 4ffc188d2ffd3..a2874f111d122 100644
+--- a/drivers/net/wireless/marvell/libertas/cfg.c
++++ b/drivers/net/wireless/marvell/libertas/cfg.c
+@@ -1788,6 +1788,7 @@ static int lbs_ibss_join_existing(struct lbs_private *priv,
+ 		rates_max = rates_eid[1];
+ 		if (rates_max > MAX_RATES) {
+ 			lbs_deb_join("invalid rates");
++			rcu_read_unlock();
+ 			goto out;
+ 		}
+ 		rates = cmd.bss.rates;
 -- 
 2.20.1
 
