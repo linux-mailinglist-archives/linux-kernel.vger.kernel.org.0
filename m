@@ -2,36 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29E5E15EB8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:21:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BDD415EB82
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:21:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391606AbgBNRV1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:21:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35880 "EHLO mail.kernel.org"
+        id S2391237AbgBNRVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:21:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391360AbgBNQKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:10:21 -0500
+        id S2391467AbgBNQKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:10:23 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 753252469D;
-        Fri, 14 Feb 2020 16:10:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD682222C2;
+        Fri, 14 Feb 2020 16:10:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696621;
-        bh=eE876jpDjIIko1hMQjdb/Pa6jHh6hICzrR88/8tAfN4=;
+        s=default; t=1581696623;
+        bh=AWcXrUPmg1Ok0gkYHL79LaRTs1+QfXtcYfPh5YIhW2I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wjGYVtf64fpytZguAIK4J7CTEVe1STfmQAGXa2RJIkgJcBq7HtjAx6DJLbTFZF6tn
-         T7Rkd2/9sMLsJ3x8orTN7upXWIxXemjhiTNye7BKVY9b9EWaCxc/NG1V/pqOe3370f
-         eyIvzeTHbUzgEsd1sIPHzD2L0xE2ciHJF75ibCNY=
+        b=MMPXzhjCh6//mBRy4YkG4mkYqQBs91FoFBFs9orcf56eXSJ/rPDx/W70/rUUYe12C
+         kxKrlnOMtAZ5l+xL566/dSoaRrL8/igvoAS3dSc0X1LnTYXe33UcpgDVmbYUwCBWWH
+         MsQuJQ8szBu/yl5YH88Ohba2KwJPNW/yHkql365w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Olof Johansson <olof@lixom.net>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 402/459] ARM: 8949/1: mm: mark free_memmap as __init
-Date:   Fri, 14 Feb 2020 11:00:52 -0500
-Message-Id: <20200214160149.11681-402-sashal@kernel.org>
+Cc:     Nicola Lunghi <nick83ola@gmail.com>, Takashi Iwai <tiwai@suse.de>,
+        Sasha Levin <sashal@kernel.org>, alsa-devel@alsa-project.org
+Subject: [PATCH AUTOSEL 5.4 404/459] ALSA: usb-audio: add quirks for Line6 Helix devices fw>=2.82
+Date:   Fri, 14 Feb 2020 11:00:54 -0500
+Message-Id: <20200214160149.11681-404-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -44,39 +42,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Olof Johansson <olof@lixom.net>
+From: Nicola Lunghi <nick83ola@gmail.com>
 
-[ Upstream commit 31f3010e60522ede237fb145a63b4af5a41718c2 ]
+[ Upstream commit b81cbf7abfc94878a3c6f0789f2185ee55b1cc21 ]
 
-As of commit ac7c3e4ff401 ("compiler: enable CONFIG_OPTIMIZE_INLINING
-forcibly"), free_memmap() might not always be inlined, and thus is
-triggering a section warning:
+With firmware 2.82 Line6 changed the usb id of some of the Helix
+devices but the quirks is still needed.
 
-WARNING: vmlinux.o(.text.unlikely+0x904): Section mismatch in reference from the function free_memmap() to the function .meminit.text:memblock_free()
+Add it to the quirk list for line6 helix family of devices.
 
-Mark it as __init, since the faller (free_unused_memmap) already is.
+Thanks to Jens for pointing out the missing ids.
 
-Fixes: ac7c3e4ff401 ("compiler: enable CONFIG_OPTIMIZE_INLINING forcibly")
-Signed-off-by: Olof Johansson <olof@lixom.net>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Nicola Lunghi <nick83ola@gmail.com>
+Link: https://lore.kernel.org/r/20200125150917.5040-1-nick83ola@gmail.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mm/init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/usb/format.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
-index b4be3baa83d4d..6f19ba53fd1f2 100644
---- a/arch/arm/mm/init.c
-+++ b/arch/arm/mm/init.c
-@@ -323,7 +323,7 @@ static inline void poison_init_mem(void *s, size_t count)
- 		*p++ = 0xe7fddef0;
- }
- 
--static inline void
-+static inline void __init
- free_memmap(unsigned long start_pfn, unsigned long end_pfn)
- {
- 	struct page *start_pg, *end_pg;
+diff --git a/sound/usb/format.c b/sound/usb/format.c
+index d79db71305f63..53922f73467f4 100644
+--- a/sound/usb/format.c
++++ b/sound/usb/format.c
+@@ -296,6 +296,9 @@ static int line6_parse_audio_format_rates_quirk(struct snd_usb_audio *chip,
+ 	case USB_ID(0x0E41, 0x4242): /* Line6 Helix Rack */
+ 	case USB_ID(0x0E41, 0x4244): /* Line6 Helix LT */
+ 	case USB_ID(0x0E41, 0x4246): /* Line6 HX-Stomp */
++	case USB_ID(0x0E41, 0x4248): /* Line6 Helix >= fw 2.82 */
++	case USB_ID(0x0E41, 0x4249): /* Line6 Helix Rack >= fw 2.82 */
++	case USB_ID(0x0E41, 0x424a): /* Line6 Helix LT >= fw 2.82 */
+ 		/* supported rates: 48Khz */
+ 		kfree(fp->rate_table);
+ 		fp->rate_table = kmalloc(sizeof(int), GFP_KERNEL);
 -- 
 2.20.1
 
