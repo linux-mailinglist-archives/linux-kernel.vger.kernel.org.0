@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B127815ED08
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:32:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6F3D15ED06
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:32:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391169AbgBNRb3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:31:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58110 "EHLO mail.kernel.org"
+        id S2390978AbgBNRbS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:31:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390227AbgBNQHF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:07:05 -0500
+        id S2390598AbgBNQHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:07:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B553024676;
-        Fri, 14 Feb 2020 16:07:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B0852067D;
+        Fri, 14 Feb 2020 16:07:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696425;
-        bh=zCIYw9z1h9aAJIfGIBE8mP8Jq4/hNqd3Ryhiqlsldjg=;
+        s=default; t=1581696430;
+        bh=IL0DlRLZwPFnTOfxoGC0+a/kYVgGNy0nkZp7u869IZc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zRyzvXF5QEBnNkCpzyUsEVU98+hlsb8QJB+o1jnuTarsMHmvRuPF62mge5W5flN4Z
-         JYidV8ekCBOHFnr12BiqcrrOdffMrKGDuxQyQrjIaXTwLe6eLqb9jE6Y5dY+8uZmZ0
-         E65JQirXEsDMA39US+KL2PlShWwBtK2rFXh+c0wI=
+        b=MmXwT/mB2UEieua5DL0roq3cZK3dnZ1UwM0hpPCF4Tz8TRmot9wS8TjEPUTSOtD59
+         ThD+JL0t3DGJKaeSh2ob5iqV/2oryxV0d5wz9zJxt8GUa12Kwa6vlZEz9ZytWfupIc
+         zK1MZBYkQywzpDe/NahSHdQIxkmIWs0Bkt/4Jnks=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>,
-        alsa-devel@alsa-project.org
-Subject: [PATCH AUTOSEL 5.4 245/459] ALSA: hda/realtek - Apply mic mute LED quirk for Dell E7xx laptops, too
-Date:   Fri, 14 Feb 2020 10:58:15 -0500
-Message-Id: <20200214160149.11681-245-sashal@kernel.org>
+Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 249/459] vfio/spapr/nvlink2: Skip unpinning pages on error exit
+Date:   Fri, 14 Feb 2020 10:58:19 -0500
+Message-Id: <20200214160149.11681-249-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -42,58 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Alexey Kardashevskiy <aik@ozlabs.ru>
 
-[ Upstream commit 5fab5829674c279839a7408ab30c71c6dfe726b9 ]
+[ Upstream commit 338b4e10f939a71194d8ecef7ece205a942cec05 ]
 
-Dell E7xx laptops have also mic mute LED that is driven by the
-dell-laptop platform driver.  Bind it with the capture control as
-already done for other models.
+The nvlink2 subdriver for IBM Witherspoon machines preregisters
+GPU memory in the IOMMI API so KVM TCE code can map this memory
+for DMA as well. This is done by mm_iommu_newdev() called from
+vfio_pci_nvgpu_regops::mmap.
 
-A caveat is that the fixup hook for the mic mute LED has to be applied
-at last, otherwise it results in the invalid override of the callback.
+In an unlikely event of failure the data->mem remains NULL and
+since mm_iommu_put() (which unregisters the region and unpins memory
+if that was regular memory) does not expect mem=NULL, it should not be
+called.
 
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=205529
-Link: https://lore.kernel.org/r/20200105081119.21396-1-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+This adds a check to only call mm_iommu_put() for a valid data->mem.
+
+Fixes: 7f92891778df ("vfio_pci: Add NVIDIA GV100GL [Tesla V100 SXM2] subdriver")
+Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/patch_realtek.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/vfio/pci/vfio_pci_nvlink2.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 68832f52c1ad2..e8d5f6befa1f3 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -5848,6 +5848,7 @@ enum {
- 	ALC288_FIXUP_DELL1_MIC_NO_PRESENCE,
- 	ALC288_FIXUP_DELL_XPS_13,
- 	ALC288_FIXUP_DISABLE_AAMIX,
-+	ALC292_FIXUP_DELL_E7X_AAMIX,
- 	ALC292_FIXUP_DELL_E7X,
- 	ALC292_FIXUP_DISABLE_AAMIX,
- 	ALC293_FIXUP_DISABLE_AAMIX_MULTIJACK,
-@@ -6543,12 +6544,19 @@ static const struct hda_fixup alc269_fixups[] = {
- 		.chained = true,
- 		.chain_id = ALC293_FIXUP_DELL1_MIC_NO_PRESENCE
- 	},
--	[ALC292_FIXUP_DELL_E7X] = {
-+	[ALC292_FIXUP_DELL_E7X_AAMIX] = {
- 		.type = HDA_FIXUP_FUNC,
- 		.v.func = alc_fixup_dell_xps13,
- 		.chained = true,
- 		.chain_id = ALC292_FIXUP_DISABLE_AAMIX
- 	},
-+	[ALC292_FIXUP_DELL_E7X] = {
-+		.type = HDA_FIXUP_FUNC,
-+		.v.func = snd_hda_gen_fixup_micmute_led,
-+		/* micmute fixup must be applied at last */
-+		.chained_before = true,
-+		.chain_id = ALC292_FIXUP_DELL_E7X_AAMIX,
-+	},
- 	[ALC298_FIXUP_ALIENWARE_MIC_NO_PRESENCE] = {
- 		.type = HDA_FIXUP_PINS,
- 		.v.pins = (const struct hda_pintbl[]) {
+diff --git a/drivers/vfio/pci/vfio_pci_nvlink2.c b/drivers/vfio/pci/vfio_pci_nvlink2.c
+index f2983f0f84bea..3f5f8198a6bb1 100644
+--- a/drivers/vfio/pci/vfio_pci_nvlink2.c
++++ b/drivers/vfio/pci/vfio_pci_nvlink2.c
+@@ -97,8 +97,10 @@ static void vfio_pci_nvgpu_release(struct vfio_pci_device *vdev,
+ 
+ 	/* If there were any mappings at all... */
+ 	if (data->mm) {
+-		ret = mm_iommu_put(data->mm, data->mem);
+-		WARN_ON(ret);
++		if (data->mem) {
++			ret = mm_iommu_put(data->mm, data->mem);
++			WARN_ON(ret);
++		}
+ 
+ 		mmdrop(data->mm);
+ 	}
 -- 
 2.20.1
 
