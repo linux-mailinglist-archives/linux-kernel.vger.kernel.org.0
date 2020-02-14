@@ -2,149 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3B8115EF6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:48:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D6FC15EFC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:50:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389979AbgBNRr5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:47:57 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:39214 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389163AbgBNRrz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 12:47:55 -0500
-Received: by mail-qt1-f194.google.com with SMTP id c5so7498609qtj.6;
-        Fri, 14 Feb 2020 09:47:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=H+bcYUOrw2Ec/4DtIbHXNA+UE0pkCSGSt87LCFpCLwo=;
-        b=mGUWL5x5/ddWeJndVHUtzpNm4U3UwftZq3hvLy8lPhOLA7bneN33HuW16QXONzF1RZ
-         bcO9orAA7CDhhTsxYwVjKtHj+Cm4oZd9C7t0DfgonqYm7iEh7Dhwq7iEzMPTawnDmMr7
-         nMGOOQqkE0jfRwwCZVTmxuuPuhlaGfEz2wCyA6cCgvb1SpQ6eqOdZ+PmOSzU3+uUej/b
-         QevI9N8IfO7NNBkO8t40aScYabPZRAzrC1lNEVfu7nlRwDqRwSnhDrvbVXEXTuyl+aP+
-         s5hhCSZ7pajQhDU4F8XHELnoLqSSTHnQBkp4GUPdybENcwfsDvaz8FqGIGpHiIXFJHmx
-         4pyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=H+bcYUOrw2Ec/4DtIbHXNA+UE0pkCSGSt87LCFpCLwo=;
-        b=sjxvWTm/nnCsGZKe9/B89Fri7h92ZLXkH0NcHYedc0raOr6TjuMeTs/iL/TmRnovfs
-         xJ1EKwMFZ1lH7JrzYHZjPwP8vuRe+k/5wIRwEDq1ie26StFYtVhFimJETHcQ19OvaCLK
-         LS61wi0l+KFotIkts4O7Xp6dqjDCRpndKcArtd6Ac4NBsH7OVe9BXwi5aeoJSEoA8lhN
-         /lpEJL/SNDcu5HvSUeG/3hi95DGlrEX7379zN7z9fL3rUQS0RB7P6Kw8lqM7oBtdwmua
-         qTFyecoETnR6qVqMMQPmXjIbe5vtScJDjav7Lll1nu5a53HrFaLrwW+x4Vvv2EFi8sFD
-         kZ/Q==
-X-Gm-Message-State: APjAAAXsK4vHf482/y2aG2+bMFNcjcwQ5NdL/8sqSIvPqVMAix4pmSOk
-        vdvTPr9o+t3WbLw/NDigzf8OXd9OXsPQuw2y9pU=
-X-Google-Smtp-Source: APXvYqzehCXpsoVGV8M2tbw+6jU4FpDwGO7PhmOV64EuR2joOSQ/4HR4OlLBjVv5MgRZM1cs03RZCLRBRMF0AFF8dBY=
-X-Received: by 2002:ac8:5457:: with SMTP id d23mr3349919qtq.93.1581702474041;
- Fri, 14 Feb 2020 09:47:54 -0800 (PST)
+        id S2390251AbgBNRuB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:50:01 -0500
+Received: from foss.arm.com ([217.140.110.172]:42128 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388732AbgBNRt6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 12:49:58 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5B8E1328;
+        Fri, 14 Feb 2020 09:49:57 -0800 (PST)
+Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 157803F68E;
+        Fri, 14 Feb 2020 09:49:53 -0800 (PST)
+Date:   Fri, 14 Feb 2020 17:49:49 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Pankaj Bansal <pankaj.bansal@nxp.com>
+Cc:     Marc Zyngier <maz@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Makarand Pawagi <makarand.pawagi@nxp.com>,
+        Calvin Johnson <calvin.johnson@nxp.com>,
+        "stuyoder@gmail.com" <stuyoder@gmail.com>,
+        "nleeder@codeaurora.org" <nleeder@codeaurora.org>,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Cristi Sovaiala <cristian.sovaiala@nxp.com>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Will Deacon <will@kernel.org>,
+        "jon@solid-run.com" <jon@solid-run.com>,
+        Russell King <linux@armlinux.org.uk>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andy Wang <Andy.Wang@arm.com>, Varun Sethi <V.Sethi@nxp.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Paul Yang <Paul.Yang@arm.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Shameerali Kolothum Thodi 
+        <shameerali.kolothum.thodi@huawei.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [EXT] Re: [PATCH] bus: fsl-mc: Add ACPI support for fsl-mc
+Message-ID: <20200214174949.GA30484@e121166-lin.cambridge.arm.com>
+References: <1580198925-50411-1-git-send-email-makarand.pawagi@nxp.com>
+ <20200128110916.GA491@e121166-lin.cambridge.arm.com>
+ <DB8PR04MB7164DDF48480956F05886DABEB070@DB8PR04MB7164.eurprd04.prod.outlook.com>
+ <12531d6c569c7e14dffe8e288d9f4a0b@kernel.org>
+ <CAKv+Gu8uaJBmy5wDgk=uzcmC4vkEyOjW=JRvhpjfsdh-HcOCLg@mail.gmail.com>
+ <VI1PR0401MB249622CFA9B213632F1DE955F1150@VI1PR0401MB2496.eurprd04.prod.outlook.com>
+ <7349fa0e6d62a3e0d0e540f2e17646e0@kernel.org>
+ <VI1PR0401MB2496373E0C6D1097F22B3026F1150@VI1PR0401MB2496.eurprd04.prod.outlook.com>
+ <20200214161957.GA27513@e121166-lin.cambridge.arm.com>
+ <VI1PR0401MB2496800C88A3A2CF912959E6F1150@VI1PR0401MB2496.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-References: <CAEf4BzZfGXHL36ntjkQsTTEEa9yzqnS=Xs4XCibejpo5AKGpuQ@mail.gmail.com>
- <C0LP269G4WO4.1Q4M8CK4K92SU@dlxu-fedora-R90QNFJV>
-In-Reply-To: <C0LP269G4WO4.1Q4M8CK4K92SU@dlxu-fedora-R90QNFJV>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Fri, 14 Feb 2020 09:47:43 -0800
-Message-ID: <CAEf4Bzb7n+RGfKHP0ik7M6P7WGHke3FzsoLmuUmrEYmzK_Neog@mail.gmail.com>
-Subject: Re: [PATCH v7 bpf-next RESEND 2/2] selftests/bpf: add
- bpf_read_branch_records() selftest
-To:     Daniel Xu <dxu@dxuuu.xyz>
-Cc:     bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>,
-        Peter Ziljstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <VI1PR0401MB2496800C88A3A2CF912959E6F1150@VI1PR0401MB2496.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 11:05 PM Daniel Xu <dxu@dxuuu.xyz> wrote:
->
-> On Tue Feb 11, 2020 at 11:30 AM, Andrii Nakryiko wrote:
-> > On Mon, Feb 10, 2020 at 12:09 PM Daniel Xu <dxu@dxuuu.xyz> wrote:
-> [...]
->
-> >
-> > > +       /* generate some branches on cpu 0 */
-> > > +       CPU_ZERO(&cpu_set);
-> > > +       CPU_SET(0, &cpu_set);
-> > > +       err = pthread_setaffinity_np(pthread_self(), sizeof(cpu_set), &cpu_set);
-> > > +       if (CHECK(err, "set_affinity", "cpu #0, err %d\n", err))
-> > > +               goto out_free_pb;
-> > > +       /* spin the loop for a while (random high number) */
-> > > +       for (i = 0; i < 1000000; ++i)
-> > > +               ++j;
-> > > +
-> >
-> >
-> > test_perf_branches__detach here?
->
-> Yeah, good idea.
->
-> [...]
->
-> > > +struct fake_perf_branch_entry {
-> > > +       __u64 _a;
-> > > +       __u64 _b;
-> > > +       __u64 _c;
-> > > +};
-> > > +
-> > > +struct output {
-> > > +       int required_size;
-> > > +       int written_stack;
-> > > +       int written_map;
-> > > +};
-> > > +
-> > > +struct {
-> > > +       __uint(type, BPF_MAP_TYPE_PERF_EVENT_ARRAY);
-> > > +       __uint(key_size, sizeof(int));
-> > > +       __uint(value_size, sizeof(int));
-> > > +} perf_buf_map SEC(".maps");
-> > > +
-> > > +typedef struct fake_perf_branch_entry fpbe_t[30];
-> > > +
-> > > +struct {
-> > > +       __uint(type, BPF_MAP_TYPE_ARRAY);
-> > > +       __uint(max_entries, 1);
-> > > +       __type(key, __u32);
-> > > +       __type(value, fpbe_t);
-> > > +} scratch_map SEC(".maps");
-> >
-> >
-> > Can you please use global variables instead of array
->
-> If you mean `scratch_map`, sure.
->
-> > and perf_event_array?
->
-> Do you mean replace the perf ring buffer with global variables? I think
-> that would limit the number of samples we validate in userspace to a fixed
-> number. It might be better to validate as many as the system gives us.
->
-> Let me know what you think. I might be overthinking it.
+On Fri, Feb 14, 2020 at 04:35:10PM +0000, Pankaj Bansal wrote:
 
-Yeah, I meant get rid of perf_buffer and just use global variables for
-outputting data.
+[...]
 
-re: validating multiple samples in perf_buffer. Given you don't really
-control how many samples you'll get and you check nothing specific
-about any single sample, I think it's fine to just validate any. They
-are not supposed to differ much, right? Checking that size is multiple
-of perf_branch_entry size is pretty much the only thing we can check,
-no?
+> > -----Original Message-----
+> > From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> > Sent: Friday, February 14, 2020 9:50 PM
+> > To: Pankaj Bansal <pankaj.bansal@nxp.com>
+> > Cc: Marc Zyngier <maz@kernel.org>; Ard Biesheuvel
+> > <ard.biesheuvel@linaro.org>; Makarand Pawagi <makarand.pawagi@nxp.com>;
+> > Calvin Johnson <calvin.johnson@nxp.com>; stuyoder@gmail.com;
+> > nleeder@codeaurora.org; Ioana Ciornei <ioana.ciornei@nxp.com>; Cristi
+> > Sovaiala <cristian.sovaiala@nxp.com>; Hanjun Guo <guohanjun@huawei.com>;
+> > Will Deacon <will@kernel.org>; jon@solid-run.com; Russell King
+> > <linux@armlinux.org.uk>; ACPI Devel Maling List <linux-acpi@vger.kernel.org>;
+> > Len Brown <lenb@kernel.org>; Jason Cooper <jason@lakedaemon.net>; Andy
+> > Wang <Andy.Wang@arm.com>; Varun Sethi <V.Sethi@nxp.com>; Thomas
+> > Gleixner <tglx@linutronix.de>; linux-arm-kernel <linux-arm-
+> > kernel@lists.infradead.org>; Laurentiu Tudor <laurentiu.tudor@nxp.com>; Paul
+> > Yang <Paul.Yang@arm.com>; netdev@vger.kernel.org; Rafael J. Wysocki
+> > <rjw@rjwysocki.net>; Linux Kernel Mailing List <linux-kernel@vger.kernel.org>;
+> > Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>;
+> > Sudeep Holla <sudeep.holla@arm.com>; Robin Murphy
+> > <robin.murphy@arm.com>
+> > Subject: Re: [EXT] Re: [PATCH] bus: fsl-mc: Add ACPI support for fsl-mc
+Side note: would you mind removing the email headers (as above) in your
+replies please ?
 
->
-> > Would make BPF side clearer and userspace simpler.
-> > struct output member will just become variables.
->
->
-> Thanks,
-> Daniel
+> > On Fri, Feb 14, 2020 at 03:58:14PM +0000, Pankaj Bansal wrote:
+> > 
+> > [...]
+> > 
+> > > > Why should the device know about its own ID? That's a bus/interconnect
+> > thing.
+> > > > And nothing should be passed *to* IORT. IORT is the source.
+> > >
+> > > IORT is translation between Input IDs <-> Output IDs. The Input ID is still
+> > expected to be passed to parse IORT table.
+> > 
+> > Named components use an array of single mappings (as in entries with single
+> > mapping flag set) - Input ID is irrelevant.
+> > 
+> > Not sure what your named component is though and what you want to do with
+> > it, the fact that IORT allows mapping for named components do not necessarily
+> > mean that it can describe what your system really is, on that you need to
+> > elaborate for us to be able to help.
+> 
+> Details about MC bus can be read from here:
+> https://elixir.bootlin.com/linux/latest/source/Documentation/networking/device_drivers/freescale/dpaa2/overview.rst#L324
+> 
+> As stated above, in Linux MC is a bus (just like PCI bus, AMBA bus etc)
+> There can be multiple devices attached to this bus. Moreover, we can dynamically create/destroy these devices.
+> Now, we want to represent this BUS (not individual devices connected to bus) in IORT table.
+> The only possible way right now we see is that we describe it as Named components having a pool of ID mappings.
+> As and when devices are created and attached to bus, we sift through this pool to correctly determine the output ID for the device.
+> Now the input ID that we provide, can come from device itself.
+> Then we can use the Platform MSI framework for MC bus devices.
+
+So are you asking me if that's OK ? Or there is something you can't
+describe with IORT ?
+
+Side note: can you explain to me please how the MSI allocation flow
+and kernel data structures/drivers are modeled in DT ? I had a quick
+look at:
+
+drivers/irqchip/irq-gic-v3-its-fsl-mc-msi.c
+
+and to start with, does that code imply that we create a
+DOMAIN_BUS_FSL_MC_MSI on ALL DT systems with an ITS device node ?
+
+I *think* you have a specific API to allocate MSIs for MC devices:
+
+fsl_mc_msi_domain_alloc_irqs()
+
+which hook into the IRQ domain created in the file above that handles
+the cascading to an ITS domain, correct ?
+
+Thanks,
+Lorenzo
