@@ -2,104 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 827C215D802
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 14:11:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9656015D7F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 14:09:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729274AbgBNNLG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 08:11:06 -0500
-Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.21]:14641 "EHLO
-        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729032AbgBNNLG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 08:11:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1581685864;
-        s=strato-dkim-0002; d=gerhold.net;
-        h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=2iQ0MT1U9CEUvMzykFVhxG6fcNf9dbQ++m0bxVU4LOA=;
-        b=QRZ7tfWuQfyu5XGZM09W/LcqlGoQbNr6aG9UHgzwDMla0AS3p9vd9Sq9daOEEzh4tR
-        ZL2cqg1PqduwWmVOZXliFNVK6FwueobZO2nN+H1kd0hNPv5DLRWguKsragdSp38JrXPe
-        F9YOqs3mXjIAKReHt4rf2yspQ2Otq4mdq1vRpciAnm8YSKPuSpGnWCF0vit2ZqLkjLxp
-        c2ZRJ8aSwyJYUjX5bKurs6TuuNttLPt5kJZDnm2PGctrK3jd91N10EQa9OEDYkGIxUu3
-        6XGOqZzUs7byzWdcsbQcjHLfM+bEc2bMQ/XjkMaybV++8DyqeD1cdp+rAXK5ju1HNo4t
-        ub5A==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u266EZF6ORJKAk/tplRN"
-X-RZG-CLASS-ID: mo00
-Received: from gerhold.net
-        by smtp.strato.de (RZmta 46.1.12 AUTH)
-        with ESMTPSA id a01fe9w1ED81Prk
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Fri, 14 Feb 2020 14:08:01 +0100 (CET)
-Date:   Fri, 14 Feb 2020 14:07:55 +0100
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: extcon: sm5502: USB-HOST (OTG) detection not working
-Message-ID: <20200214130755.GA93507@gerhold.net>
-References: <20191011145015.GA127238@gerhold.net>
+        id S1729248AbgBNNJa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 08:09:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45140 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726191AbgBNNJa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 08:09:30 -0500
+Received: from localhost (unknown [106.201.58.38])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D02F02086A;
+        Fri, 14 Feb 2020 13:09:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581685769;
+        bh=S1KcqlRgaFv8iW8vw5VXuHf37fRz7NJhUiPg/24MFmM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ew9lNr986QqTsMdVyURhpqV13JrXJfHXSDcBF5HSqYvPETinKZMV+FMEHTwrmmt3U
+         EIcpnBgGSAfUYY4ClcqTE+zYekP6sLxR/JYKRQEhz3TmEIqTSzBlWZuK7Ypjmj4uXs
+         ukwSWiU+C5n8Je0aDM44pz4T1WHEwJoU6Ig29yDk=
+Date:   Fri, 14 Feb 2020 18:39:23 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
+        devicetree@vger.kernel.org, jshriram@codeaurora.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        mturquette@baylibre.com, psodagud@codeaurora.org,
+        robh+dt@kernel.org, tdas@codeaurora.org, tsoni@codeaurora.org,
+        vnkgutta@codeaurora.org
+Subject: Re: [PATCH v2 6/7] clk: qcom: gcc: Add global clock controller
+ driver for SM8250
+Message-ID: <20200214130923.GV2618@vkoul-mobl>
+References: <1579905147-12142-1-git-send-email-vnkgutta@codeaurora.org>
+ <1579905147-12142-7-git-send-email-vnkgutta@codeaurora.org>
+ <20200205194022.C5E8C20730@mail.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191011145015.GA127238@gerhold.net>
+In-Reply-To: <20200205194022.C5E8C20730@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chanwoo,
+On 05-02-20, 11:40, Stephen Boyd wrote:
 
-On Fri, Oct 11, 2019 at 04:50:21PM +0200, Stephan Gerhold wrote:
-> Hi Chanwoo,
+> > +static const struct clk_parent_data gcc_parent_data_2[] = {
+> > +       { .fw_name = "bi_tcxo" },
+> > +       { .fw_name = "sleep_clk", .name = "sleep_clk" },
 > 
-> after getting interrupts working on my Samsung Galaxy A5 (2015),
-> I am now trying to make the extcon device detect USB-HOST=1
-> when I plug in an USB OTG adapter.
-> 
-> At the moment, the driver can sucessfully detect:
->   - USB=1 + SDP=1 when I detect the phone to a PC
->   - DCP=1 when I connect it to an AC charger
-> but it does not set USB-HOST=1 when I connect the USB OTG adapter.
-> 
-> It seems to be a problem in the sm5502 driver, since I do get an
-> SM5502_IRQ_INT1_ATTACH interrupt when I plug in the USB OTG adapter.
-> 
-> In this case, SM5502 reports:
->     SM5502_REG_ADC = 0x00 (SM5502_MUIC_ADC_GROUND)
->     SM5502_REG_DEV_TYPE1 = 0x80 (SM5502_REG_DEV_TYPE1_USB_OTG_MASK)
-> 
-> However, at the moment the sm5502 driver ignores all attach events with
-> SM5502_REG_ADC == SM5502_MUIC_ADC_GROUND:
-> 
-> 	/*
-> 	 * If ADC is SM5502_MUIC_ADC_GROUND(0x0), external cable hasn't
-> 	 * connected with to MUIC device.
-> 	 */
-> 	cable_type = adc & SM5502_REG_ADC_MASK;
-> 	if (cable_type == SM5502_MUIC_ADC_GROUND)
-> 		return SM5502_MUIC_ADC_GROUND;
-> 
-> However, I definitely have a cable attached in this case...
-> 
-> The sm5502 driver seems to expect SM5502_REG_ADC == SM5502_MUIC_ADC_OPEN.
-> Any idea why my hardware reports ADC_GROUND for the USB OTG adapter
-> instead of ADC_OPEN?
-> 
-> Confusingly, the driver used in the original downstream kernel of
-> the Samsung Galaxy A5 [1] calls ADC = 0x00 "ADC_OTG" instead of
-> "ADC_GROUND".
-> So getting ADC = 0x00 may not be entirely unexpected here...
-> 
-> Thanks in advance,
-> Stephan
-> 
-> [1]: https://github.com/msm8916-mainline/android_kernel_qcom_msm8916/blob/SM-A500FU/drivers/misc/sm5502.c#L195
+> Please drop .name
 
-This mail is quite old now but I am still confused by this.
-Any idea what could be wrong here?
+Yup, will do
 
-I was not able to find any datasheet for SM5502 unfortunately...
+> > +static const struct clk_parent_data gcc_parent_data_5[] = {
+> > +       { .fw_name = "bi_tcxo" },
+> > +       { .hw = &gpll0.clkr.hw },
+> > +       { .fw_name = "aud_ref_clk", .name = "aud_ref_clk" },
+> 
+> Why have .name? Pleas remove it.
 
-Thanks,
-Stephan
+Dropped...
+
+> > +       { .hw = &gpll0_out_even.clkr.hw },
+> > +       { .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
+> 
+> Please drop these test inputs. I don't see any reason why they're listed.
+
+Dropped this and rest.
+
+> > +static struct clk_branch gcc_sys_noc_cpuss_ahb_clk = {
+> > +       .halt_reg = 0x48198,
+> > +       .halt_check = BRANCH_HALT_VOTED,
+> > +       .clkr = {
+> > +               .enable_reg = 0x52000,
+> > +               .enable_mask = BIT(0),
+> > +               .hw.init = &(struct clk_init_data){
+> > +                       .name = "gcc_sys_noc_cpuss_ahb_clk",
+> > +                       .parent_data = &(const struct clk_parent_data){
+> > +                               .hw = &gcc_cpuss_ahb_postdiv_clk_src.clkr.hw,
+> > +                       },
+> > +                       .num_parents = 1,
+> > +                       .flags = CLK_IS_CRITICAL | CLK_SET_RATE_PARENT,
+> > +                       .ops = &clk_branch2_ops,
+> > +               },
+> > +       },
+> > +};
+> 
+> Is there a need for this clk to be exposed? Why can't we just turn the
+> bit on in probe and ignore it after that? I'd prefer to not have
+> CLK_IS_CRITICAL in this driver unless necessary.
+
+yeah moved it as setting a bit in probe..
+
+> > +       /*
+> > +        * Keep the clocks always-ON
+> > +        * GCC_VIDEO_AHB_CLK, GCC_CAMERA_AHB_CLK, GCC_DISP_AHB_CLK,
+> > +        * GCC_CPUSS_DVM_BUS_CLK, GCC_GPU_CFG_AHB_CLK
+> > +        */
+> > +       regmap_update_bits(regmap, 0x0b004, BIT(0), BIT(0));
+> > +       regmap_update_bits(regmap, 0x0b008, BIT(0), BIT(0));
+> > +       regmap_update_bits(regmap, 0x0b00c, BIT(0), BIT(0));
+> > +       regmap_update_bits(regmap, 0x4818c, BIT(0), BIT(0));
+> > +       regmap_update_bits(regmap, 0x71004, BIT(0), BIT(0));
+> 
+> These look like the AHB clks above that we just enabled and then ignore.
+
+right, I think these are rest of the always-on clocks
+
+-- 
+~Vinod
