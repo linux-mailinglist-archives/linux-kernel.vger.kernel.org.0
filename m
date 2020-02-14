@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2462D15F14D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:03:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5168F15F130
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:03:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387633AbgBNSBK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:01:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38024 "EHLO mail.kernel.org"
+        id S2387790AbgBNP4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:56:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387731AbgBNP4S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:56:18 -0500
+        id S2387744AbgBNP4T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:56:19 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF8EB222C4;
-        Fri, 14 Feb 2020 15:56:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 154EC206D7;
+        Fri, 14 Feb 2020 15:56:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695777;
-        bh=+0812Eg5+LNOtMVydZcCyoOxN83vHjF8PnFw8dcCjhE=;
+        s=default; t=1581695778;
+        bh=p5HfsD/7oSJvIOKScBFttuw+L3MLtwgbJ+C+qro4QB4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d5H1XIABIJSH4EbemufsniTFeM7z0sdVGI5LAkDWW4MzfJ+vq/XwSG43Ofo06K0te
-         H/bo5gxpFnHrH/apBczsAuSa+QWbdNUkbfHQCN1mUYRootXP32IStHpOnAEIWZhlNg
-         /7vHQ1tTo0XKXykkZs1WT2xhOdWeG6FBkTZEzOTA=
+        b=Iw3NsrwX5tpuVap832gLAEL8PfhKutoPdE13UyvaVYH395bjna1F4PGb4ht8pcJZm
+         9lbYK2PplOXswD2zd9bp+qKqDVom4RIRBN+2XfRGZie9wxgd2UxpSRmqNJtW29AUYe
+         oQbAmbODBYYn4+gxCa75J/hBxyeATMYAurpdetVE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ioana Ciornei <ioana.ciornei@nxp.com>,
-        kbuild test robot <lkp@intel.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+Cc:     Hongbo Yao <yaohongbo@huawei.com>, Hulk Robot <hulkci@huawei.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.5 342/542] bus: fsl-mc: properly empty-initialize structure
-Date:   Fri, 14 Feb 2020 10:45:34 -0500
-Message-Id: <20200214154854.6746-342-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.5 343/542] misc: genwqe: fix compile warnings
+Date:   Fri, 14 Feb 2020 10:45:35 -0500
+Message-Id: <20200214154854.6746-343-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -45,42 +43,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ioana Ciornei <ioana.ciornei@nxp.com>
+From: Hongbo Yao <yaohongbo@huawei.com>
 
-[ Upstream commit cff081ea9d0962defd733daf6778f62b1dac3daa ]
+[ Upstream commit 8edf4cd193067ac5e03fd9580f1affbb6a3f729b ]
 
-Use the proper form of the empty initializer when working with
-structures that contain an array. Otherwise, older gcc versions (eg gcc
-4.9) will complain about this.
+Using the following command will get compile warnings:
+make W=1 drivers/misc/genwqe/card_ddcb.o ARCH=x86_64
 
-Fixes: 1ac210d128ef ("bus: fsl-mc: add the fsl_mc_get_endpoint function")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
-Acked-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Link: https://lore.kernel.org/r/20191204142950.30206-1-ioana.ciornei@nxp.com
+drivers/misc/genwqe/card_ddcb.c: In function setup_ddcb_queue:
+drivers/misc/genwqe/card_ddcb.c:1024:6: warning: variable rc set but not
+used [-Wunused-but-set-variable]
+drivers/misc/genwqe/card_ddcb.c: In function genwqe_card_thread:
+drivers/misc/genwqe/card_ddcb.c:1190:23: warning: variable rc set but
+not used [-Wunused-but-set-variable]
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Hongbo Yao <yaohongbo@huawei.com>
+Link: https://lore.kernel.org/r/20191205111655.170382-1-yaohongbo@huawei.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/bus/fsl-mc/fsl-mc-bus.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/misc/genwqe/card_ddcb.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/bus/fsl-mc/fsl-mc-bus.c b/drivers/bus/fsl-mc/fsl-mc-bus.c
-index a07cc19becdba..c78d10ea641fb 100644
---- a/drivers/bus/fsl-mc/fsl-mc-bus.c
-+++ b/drivers/bus/fsl-mc/fsl-mc-bus.c
-@@ -715,9 +715,9 @@ EXPORT_SYMBOL_GPL(fsl_mc_device_remove);
- struct fsl_mc_device *fsl_mc_get_endpoint(struct fsl_mc_device *mc_dev)
- {
- 	struct fsl_mc_device *mc_bus_dev, *endpoint;
--	struct fsl_mc_obj_desc endpoint_desc = { 0 };
--	struct dprc_endpoint endpoint1 = { 0 };
--	struct dprc_endpoint endpoint2 = { 0 };
-+	struct fsl_mc_obj_desc endpoint_desc = {{ 0 }};
-+	struct dprc_endpoint endpoint1 = {{ 0 }};
-+	struct dprc_endpoint endpoint2 = {{ 0 }};
- 	int state, err;
+diff --git a/drivers/misc/genwqe/card_ddcb.c b/drivers/misc/genwqe/card_ddcb.c
+index 026c6ca245408..905106579935a 100644
+--- a/drivers/misc/genwqe/card_ddcb.c
++++ b/drivers/misc/genwqe/card_ddcb.c
+@@ -1084,7 +1084,7 @@ static int setup_ddcb_queue(struct genwqe_dev *cd, struct ddcb_queue *queue)
+ 				queue->ddcb_daddr);
+ 	queue->ddcb_vaddr = NULL;
+ 	queue->ddcb_daddr = 0ull;
+-	return -ENODEV;
++	return rc;
  
- 	mc_bus_dev = to_fsl_mc_device(mc_dev->dev.parent);
+ }
+ 
+@@ -1179,7 +1179,7 @@ static irqreturn_t genwqe_vf_isr(int irq, void *dev_id)
+  */
+ static int genwqe_card_thread(void *data)
+ {
+-	int should_stop = 0, rc = 0;
++	int should_stop = 0;
+ 	struct genwqe_dev *cd = (struct genwqe_dev *)data;
+ 
+ 	while (!kthread_should_stop()) {
+@@ -1187,12 +1187,12 @@ static int genwqe_card_thread(void *data)
+ 		genwqe_check_ddcb_queue(cd, &cd->queue);
+ 
+ 		if (GENWQE_POLLING_ENABLED) {
+-			rc = wait_event_interruptible_timeout(
++			wait_event_interruptible_timeout(
+ 				cd->queue_waitq,
+ 				genwqe_ddcbs_in_flight(cd) ||
+ 				(should_stop = kthread_should_stop()), 1);
+ 		} else {
+-			rc = wait_event_interruptible_timeout(
++			wait_event_interruptible_timeout(
+ 				cd->queue_waitq,
+ 				genwqe_next_ddcb_ready(cd) ||
+ 				(should_stop = kthread_should_stop()), HZ);
 -- 
 2.20.1
 
