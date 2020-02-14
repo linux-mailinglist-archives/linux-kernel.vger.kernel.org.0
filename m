@@ -2,119 +2,231 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4711C15E58B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:42:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A08C515E5FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:45:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394005AbgBNQmW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:42:22 -0500
-Received: from mailoutvs57.siol.net ([185.57.226.248]:53551 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2388948AbgBNQmU (ORCPT
+        id S2393900AbgBNQoy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:44:54 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:27817 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2393959AbgBNQov (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:42:20 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 3F1E752389C;
-        Fri, 14 Feb 2020 17:42:16 +0100 (CET)
-X-Virus-Scanned: amavisd-new at psrvmta09.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta09.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id gPTKP3VPISxT; Fri, 14 Feb 2020 17:42:15 +0100 (CET)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id D26BF52389B;
-        Fri, 14 Feb 2020 17:42:15 +0100 (CET)
-Received: from jernej-laptop.localnet (cpe-194-152-20-232.static.triera.net [194.152.20.232])
-        (Authenticated sender: jernej.skrabec@siol.net)
-        by mail.siol.net (Postfix) with ESMTPA id 8286452389D;
-        Fri, 14 Feb 2020 17:42:14 +0100 (CET)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        a.zummo@towertech.it, alexandre.belloni@bootlin.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH 1/2] rtc: sun6i: Make external 32k oscillator optional
-Date:   Fri, 14 Feb 2020 17:42:13 +0100
-Message-ID: <5326350.DvuYhMxLoT@jernej-laptop>
-In-Reply-To: <20200214081443.ajz2sxh5ztk6qb2i@gilmour.lan>
-References: <20200213211427.33004-1-jernej.skrabec@siol.net> <20200213211427.33004-2-jernej.skrabec@siol.net> <20200214081443.ajz2sxh5ztk6qb2i@gilmour.lan>
+        Fri, 14 Feb 2020 11:44:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581698689;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=o1A1SrX1zBsASGrayq0vRC5S/HwSS0PwydKpbfc/Bgo=;
+        b=cTyOZDifK7ptB8oV6x2zEn7XURBRyQiAp5dpZ9TSzHw0LMD48pEfAqA7jk9IpRgpeMRfvC
+        814jUdNU5mrhrOBSNknSYgjC9AfdmCQ6wpAU+U4LzhqDCLeMD+bMLN+bVOyAxaUqNKn7uk
+        jkgyGBQR7jhggogKeqDePeqL2YhoDLw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-278-pBJfwSSoOaanm1qLVXdpgA-1; Fri, 14 Feb 2020 11:44:41 -0500
+X-MC-Unique: pBJfwSSoOaanm1qLVXdpgA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4BEA4DB62;
+        Fri, 14 Feb 2020 16:44:40 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 67C5B19C4F;
+        Fri, 14 Feb 2020 16:44:39 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH v2 2/4] libnvdimm/namespace: Enforce memremap_compat_align()
+References: <158155489850.3343782.2687127373754434980.stgit@dwillia2-desk3.amr.corp.intel.com>
+        <158155490897.3343782.14216276134794923581.stgit@dwillia2-desk3.amr.corp.intel.com>
+        <x49k14q5ezs.fsf@segfault.boston.devel.redhat.com>
+        <CAPcyv4hQouRNBcJ4uZ2mysr_aKstLhvUf66gRQ_3QoQNyOy72g@mail.gmail.com>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Fri, 14 Feb 2020 11:44:38 -0500
+In-Reply-To: <CAPcyv4hQouRNBcJ4uZ2mysr_aKstLhvUf66gRQ_3QoQNyOy72g@mail.gmail.com>
+        (Dan Williams's message of "Thu, 13 Feb 2020 14:43:28 -0800")
+Message-ID: <x49h7ztdsp5.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime,
+Dan Williams <dan.j.williams@intel.com> writes:
 
-Dne petek, 14. februar 2020 ob 09:14:43 CET je Maxime Ripard napisal(a):
-> Hi Jernej,
-> 
-> Thanks for taking care of this
-> 
-> On Thu, Feb 13, 2020 at 10:14:26PM +0100, Jernej Skrabec wrote:
-> > Some boards, like OrangePi PC2 (H5), OrangePi Plus 2E (H3) and Tanix TX6
-> > (H6) don't have external 32kHz oscillator. Till H6, it didn't really
-> > matter if external oscillator was enabled because HW detected error and
-> > fall back to internal one. H6 has same functionality but it's the first
-> > SoC which have "auto switch bypass" bit documented and always enabled in
-> > driver. This prevents RTC to work correctly if external crystal is not
-> > present on board. There are other side effects - all peripherals which
-> > depends on this clock also don't work (HDMI CEC for example).
-> > 
-> > Make clocks property optional. If it is present, select external
-> > oscillator. If not, stay on internal.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  drivers/rtc/rtc-sun6i.c | 14 ++++++--------
-> >  1 file changed, 6 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
-> > index 852f5f3b3592..538cf7e19034 100644
-> > --- a/drivers/rtc/rtc-sun6i.c
-> > +++ b/drivers/rtc/rtc-sun6i.c
-> > @@ -250,19 +250,17 @@ static void __init sun6i_rtc_clk_init(struct
-> > device_node *node,> 
-> >  		writel(reg, rtc->base + SUN6I_LOSC_CTRL);
-> >  	
-> >  	}
-> > 
-> > -	/* Switch to the external, more precise, oscillator */
-> > -	reg |= SUN6I_LOSC_CTRL_EXT_OSC;
-> > -	if (rtc->data->has_losc_en)
-> > -		reg |= SUN6I_LOSC_CTRL_EXT_LOSC_EN;
-> > +	/* Switch to the external, more precise, oscillator, if present */
-> > +	if (of_get_property(node, "clocks", NULL)) {
-> > +		reg |= SUN6I_LOSC_CTRL_EXT_OSC;
-> > +		if (rtc->data->has_losc_en)
-> > +			reg |= SUN6I_LOSC_CTRL_EXT_LOSC_EN;
-> > +	}
-> > 
-> >  	writel(reg, rtc->base + SUN6I_LOSC_CTRL);
-> >  	
-> >  	/* Yes, I know, this is ugly. */
-> >  	sun6i_rtc = rtc;
-> > 
-> > -	/* Deal with old DTs */
-> > -	if (!of_get_property(node, "clocks", NULL))
-> > -		goto err;
-> > -
-> 
-> Doesn't that prevent the parents to be properly set if there's an
-> external crystal?
+> On Thu, Feb 13, 2020 at 1:55 PM Jeff Moyer <jmoyer@redhat.com> wrote:
+>>
+>> Dan Williams <dan.j.williams@intel.com> writes:
+>>
+>> > The pmem driver on PowerPC crashes with the following signature when
+>> > instantiating misaligned namespaces that map their capacity via
+>> > memremap_pages().
+>> >
+>> >     BUG: Unable to handle kernel data access at 0xc001000406000000
+>> >     Faulting instruction address: 0xc000000000090790
+>> >     NIP [c000000000090790] arch_add_memory+0xc0/0x130
+>> >     LR [c000000000090744] arch_add_memory+0x74/0x130
+>> >     Call Trace:
+>> >      arch_add_memory+0x74/0x130 (unreliable)
+>> >      memremap_pages+0x74c/0xa30
+>> >      devm_memremap_pages+0x3c/0xa0
+>> >      pmem_attach_disk+0x188/0x770
+>> >      nvdimm_bus_probe+0xd8/0x470
+>> >
+>> > With the assumption that only memremap_pages() has alignment
+>> > constraints, enforce memremap_compat_align() for
+>> > pmem_should_map_pages(), nd_pfn, or nd_dax cases.
+>> >
+>> > Reported-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+>> > Cc: Jeff Moyer <jmoyer@redhat.com>
+>> > Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+>> > Link: https://lore.kernel.org/r/158041477336.3889308.4581652885008605170.stgit@dwillia2-desk3.amr.corp.intel.com
+>> > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+>> > ---
+>> >  drivers/nvdimm/namespace_devs.c |   10 ++++++++++
+>> >  1 file changed, 10 insertions(+)
+>> >
+>> > diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
+>> > index 032dc61725ff..aff1f32fdb4f 100644
+>> > --- a/drivers/nvdimm/namespace_devs.c
+>> > +++ b/drivers/nvdimm/namespace_devs.c
+>> > @@ -1739,6 +1739,16 @@ struct nd_namespace_common *nvdimm_namespace_common_probe(struct device *dev)
+>> >               return ERR_PTR(-ENODEV);
+>> >       }
+>> >
+>> > +     if (pmem_should_map_pages(dev) || nd_pfn || nd_dax) {
+>> > +             struct nd_namespace_io *nsio = to_nd_namespace_io(&ndns->dev);
+>> > +             resource_size_t start = nsio->res.start;
+>> > +
+>> > +             if (!IS_ALIGNED(start | size, memremap_compat_align())) {
+>> > +                     dev_dbg(&ndns->dev, "misaligned, unable to map\n");
+>> > +                     return ERR_PTR(-EOPNOTSUPP);
+>> > +             }
+>> > +     }
+>> > +
+>> >       if (is_namespace_pmem(&ndns->dev)) {
+>> >               struct nd_namespace_pmem *nspm;
+>> >
+>>
+>> Actually, I take back my ack.  :) This prevents a previously working
+>> namespace from being successfully probed/setup.
+>
+> Do you have a test case handy? I can see a potential gap with a
+> namespace that used internal padding to fix up the alignment.
 
-No, why?
+# ndctl list -v -n namespace0.0
+[
+  {
+    "dev":"namespace0.0",
+    "mode":"fsdax",
+    "map":"dev",
+    "size":52846133248,
+    "uuid":"b99f6f6a-2909-4189-9bfa-6eeebd95d40e",
+    "raw_uuid":"aff43777-015b-493f-bbf9-7c7b0fe33519",
+    "sector_size":512,
+    "align":4096,
+    "blockdev":"pmem0",
+    "numa_node":0
+  }
+]
 
-Check these two clk_summary:
-http://ix.io/2bHY Tanix TX6 (no external crystal)
-http://ix.io/2bI2 OrangePi 3 (external crystal present)
+# cat /sys/bus/nd/devices/region0/mappings
+6
 
-Please disregard ac200_clk in first case, it's part of another work.
+# grep namespace0.0 /proc/iomem
+  1860000000-24e0003fff : namespace0.0
 
-Best regards,
-Jernej
+> The goal of this check is to catch cases that are just going to fail
+> devm_memremap_pages(), and the expectation is that it could not have
+> worked before unless it was ported from another platform, or someone
+> flipped the page-size switch on PowerPC.
 
+On x86, creation and probing of the namespace worked fine before this
+patch.  What *doesn't* work is creating another fsdax namespace after
+this one.  sector mode namespaces can still be created, though:
 
+[
+  {
+    "dev":"namespace0.1",
+    "mode":"sector",
+    "size":53270768640,
+    "uuid":"67ea2c74-d4b1-4fc9-9c1a-a7d2a6c2a4a7",
+    "sector_size":512,
+    "blockdev":"pmem0.1s"
+  },
+
+# grep namespace0.1 /proc/iomem
+  24e0004000-3160007fff : namespace0.1
+
+>> I thought we were only going to enforce the alignment for a newly
+>> created namespace?  This should only check whether the alignment
+>> works for the current platform.
+>
+> The model is a new default 16MB alignment is enforced at creation
+> time, but if you need to support previously created namespaces then
+> you can manually trim that alignment requirement to no less than
+> memremap_compat_align() because that's the point at which
+> devm_memremap_pages() will start failing or crashing.
+
+The problem is that older kernels did not enforce alignment to
+SUBSECTION_SIZE.  We shouldn't prevent those namespaces from being
+accessed.  The probe itself will not cause the WARN_ON to trigger.
+Creating new namespaces at misaligned addresses could, but you've
+altered the free space allocation such that we won't hit that anymore.
+
+If I drop this patch, the probe will still work, and allocating new
+namespaces will also work:
+
+# ndctl list
+[
+  {
+    "dev":"namespace0.1",
+    "mode":"sector",
+    "size":53270768640,
+    "uuid":"67ea2c74-d4b1-4fc9-9c1a-a7d2a6c2a4a7",
+    "sector_size":512,
+    "blockdev":"pmem0.1s"
+  },
+  {
+    "dev":"namespace0.0",
+    "mode":"fsdax",
+    "map":"dev",
+    "size":52846133248,
+    "uuid":"b99f6f6a-2909-4189-9bfa-6eeebd95d40e",
+    "sector_size":512,
+    "align":4096,
+    "blockdev":"pmem0"
+  }
+]
+ ndctl create-namespace -m fsdax -s 36g -r 0
+{
+  "dev":"namespace0.2",
+  "mode":"fsdax",
+  "map":"dev",
+  "size":"35.44 GiB (38.05 GB)",
+  "uuid":"7893264c-c7ef-4cbe-95e1-ccf2aff041fb",
+  "sector_size":512,
+  "align":2097152,
+  "blockdev":"pmem0.2"
+}
+
+proc/iomem:
+
+1860000000-d55fffffff : Persistent Memory
+  1860000000-24e0003fff : namespace0.0
+  24e0004000-3160007fff : namespace0.1
+  3162000000-3a61ffffff : namespace0.2
+
+So, maybe the right thing is to make memremap_compat_align return
+PAGE_SIZE for x86 instead of SUBSECTION_SIZE?
+
+-Jeff
 
