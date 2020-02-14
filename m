@@ -2,157 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF62215F381
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:22:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DEBB915F15B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:03:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393264AbgBNSMR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:12:17 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:32993 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393208AbgBNSMN (ORCPT
+        id S2389500AbgBNSCC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:02:02 -0500
+Received: from mta-p5.oit.umn.edu ([134.84.196.205]:36036 "EHLO
+        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731102AbgBNSBz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 13:12:13 -0500
-Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1j2fD2-0005g2-9K; Fri, 14 Feb 2020 17:57:01 +0000
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-To:     jani.nikula@linux.intel.com, ville.syrjala@linux.intel.com,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com
-Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        =?UTF-8?q?Jos=C3=A9=20Roberto=20de=20Souza?= <jose.souza@intel.com>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        Imre Deak <imre.deak@intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Manasi Navare <manasi.d.navare@intel.com>,
-        Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>,
-        Matt Roper <matthew.d.roper@intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Ramalingam C <ramalingam.c@intel.com>,
-        Uma Shankar <uma.shankar@intel.com>,
-        intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4] drm/i915: Init lspcon after HPD in intel_dp_detect()
-Date:   Sat, 15 Feb 2020 01:56:27 +0800
-Message-Id: <20200214175646.25532-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 14 Feb 2020 13:01:55 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p5.oit.umn.edu (Postfix) with ESMTP id 48K1RP6VLfz9vk6h
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 18:01:53 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p5.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id kSyzKTdGdnri for <linux-kernel@vger.kernel.org>;
+        Fri, 14 Feb 2020 12:01:53 -0600 (CST)
+Received: from mail-yw1-f70.google.com (mail-yw1-f70.google.com [209.85.161.70])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id 48K1RP59lfz9vk6d
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 12:01:53 -0600 (CST)
+Received: by mail-yw1-f70.google.com with SMTP id k129so7017091ywe.13
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 10:01:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umn.edu; s=google;
+        h=subject:to:cc:references:in-reply-to:from:message-id:date
+         :user-agent:mime-version:content-language:content-transfer-encoding;
+        bh=pYWIECtn8aDrMNtySZ1V/LxrQeF+fHrO5BZKWhubLdY=;
+        b=mFSUtiFbPGJ+jvlssT4lthfvbWO9cBGvSi2IVJn7EVVpY/hXgMKUg91Eg1BKdsS7aD
+         fDTCovQCVqze8d1t2H/18gNHjtfE0702W5eqm7l82yIEPS6pSmM2yCSv+FDlz1jsESXE
+         frjzz2RCfzVVcQUAiZTY7sK6/dy5w3RX8n1LZgXpv7TNtUAX7XdCQh8blfJwC9O2r/aY
+         ym+AwMRHRNvO4QbVPIt5JB78mNFHi1JoC+kaUZa8DsOiGADlpB/tITALpxxgSj1wlQ2L
+         +YIHXCYRW6TGHDfKEuJ2SItr777Wm7W4Huw80E3bZ76e4ipMl3GYI4yFnfgTsoV/LIVR
+         UQhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:in-reply-to:from
+         :message-id:date:user-agent:mime-version:content-language
+         :content-transfer-encoding;
+        bh=pYWIECtn8aDrMNtySZ1V/LxrQeF+fHrO5BZKWhubLdY=;
+        b=JAp1bHBfinZToHfJcRTzck4L1BHf3EvdIOmVI0BSKUfijtvOg6RCbFyVzFaXxnMTLH
+         hjmvPYHhudpUAQ94ixAIcldY06pBz6yLJ8I7d++wK2MqtR4ePNjQHnhMs0DEEJREc1+d
+         tR/qOij8jpvuauL+2JcI82gNsfqT/neTlyMj4ZaJ6KfS61xeSduoPI7/Xu1mHWJ/CAOm
+         rGgcMH2mrs5gdpxCLFAY6UHS4akluFwOMgvhXapH3JLfgW2nH5OuG1Y17Hzsh5l/fi7t
+         ewnoxz/GVtOxt99UYkjiVQhACkIE7Vcqn38fUILF2UGKhZJtUZ/589cdvJIAJ4fTOHQJ
+         Zb5A==
+X-Gm-Message-State: APjAAAVkfgVazUm77pUNvThVra6KM8Jpfue9CSjuBrKhZ2NazMnv+12H
+        DuRonDX88n+ecLZXvGLprQR7HazXsbbzGRzOksqsevBZuJmvKk+7copamKXiKO+qZGPiB3cZVYR
+        GNansyQw45FFgjkWzqpZHjnKcFOoi52q3kDHS/emPjIltWVpTpmlwKU2x2o8wTapKNgGleS++Tf
+        Cj
+X-Received: by 2002:a25:ce91:: with SMTP id x139mr3952104ybe.336.1581703312964;
+        Fri, 14 Feb 2020 10:01:52 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxEdLx4j1GqpTmR3PwKqjlopSJDXBlgmIO+PHQz5D00SVwcApq/sDcUE3ZOELHCEybG/NvClA==
+X-Received: by 2002:a25:ce91:: with SMTP id x139mr3952073ybe.336.1581703312669;
+        Fri, 14 Feb 2020 10:01:52 -0800 (PST)
+Received: from [128.101.106.66] (cs-u-syssec1.cs.umn.edu. [128.101.106.66])
+        by smtp.gmail.com with ESMTPSA id m15sm2899909ywh.78.2020.02.14.10.01.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Feb 2020 10:01:52 -0800 (PST)
+Subject: Re: [PATCH] ecryptfs: replace BUG_ON with error handling code
+To:     Tyler Hicks <tyhicks@canonical.com>
+Cc:     kjlu@umn.edu, ecryptfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191215172404.28204-1-pakki001@umn.edu>
+ <20200214173818.GB250165@elm>
+In-Reply-To: <20200214173818.GB250165@elm>
+From:   Aditya Pakki <pakki001@umn.edu>
+Message-ID: <710ceeb1-6b88-4361-d199-414e0714c78f@umn.edu>
+Date:   Fri, 14 Feb 2020 12:01:51 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On HP 800 G4 DM, if HDMI cable isn't plugged before boot, the HDMI port
-becomes useless and never responds to cable hotplugging:
-[    3.031904] [drm:lspcon_init [i915]] *ERROR* Failed to probe lspcon
-[    3.031945] [drm:intel_ddi_init [i915]] *ERROR* LSPCON init failed on port D
+On 2/14/20 11:38 AM, Tyler Hicks wrote:
+> On 2019-12-15 11:24:04, Aditya Pakki wrote:
+>> In crypt_scatterlist, if the crypt_stat argument is not set up
+>> correctly, we avoid crashing, by returning the error upstream.
+>> This patch performs the fix.
+>>
+>> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+> 
+> Hi Aditya - I wanted to check in to see if you are able to submit a new
+> revision taking into account the feedback from Markus.
+> 
+> Also, I'm curious if you've been able to hit this BUG_ON() or if you are
+> just being proactive in cleaning up this function?
+> 
+> Let me know if I can help you prepare a v2 of this patch. Thanks!
+> 
+> Tyler
+> 
+>> ---
+>>  fs/ecryptfs/crypto.c | 6 ++++--
+>>  1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/ecryptfs/crypto.c b/fs/ecryptfs/crypto.c
+>> index f91db24bbf3b..a064b408d841 100644
+>> --- a/fs/ecryptfs/crypto.c
+>> +++ b/fs/ecryptfs/crypto.c
+>> @@ -311,8 +311,10 @@ static int crypt_scatterlist(struct ecryptfs_crypt_stat *crypt_stat,
+>>  	struct extent_crypt_result ecr;
+>>  	int rc = 0;
+>>  
+>> -	BUG_ON(!crypt_stat || !crypt_stat->tfm
+>> -	       || !(crypt_stat->flags & ECRYPTFS_STRUCT_INITIALIZED));
+>> +	if (!crypt_stat || !crypt_stat->tfm
+>> +	       || !(crypt_stat->flags & ECRYPTFS_STRUCT_INITIALIZED))
+>> +		return -EINVAL;
+>> +
+>>  	if (unlikely(ecryptfs_verbosity > 0)) {
+>>  		ecryptfs_printk(KERN_DEBUG, "Key size [%zd]; key:\n",
+>>  				crypt_stat->key_size);
+>> -- 
+>> 2.20.1
+>>
 
-Seems like the lspcon chip on the system in question only gets powered
-after the cable is plugged.
-
-So let's call lspcon_init() dynamically to properly initialize the
-lspcon chip and make HDMI port work.
-
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
-v4:
- - Trust VBT in intel_infoframe_init().
- - Init lspcon in intel_dp_detect().
-
-v3:
- - Make sure it's handled under long HPD case.
-
-v2: 
- - Move lspcon_init() inside of intel_dp_hpd_pulse().
-
- drivers/gpu/drm/i915/display/intel_ddi.c  | 17 +----------------
- drivers/gpu/drm/i915/display/intel_dp.c   | 13 ++++++++++++-
- drivers/gpu/drm/i915/display/intel_hdmi.c |  2 +-
- 3 files changed, 14 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/gpu/drm/i915/display/intel_ddi.c b/drivers/gpu/drm/i915/display/intel_ddi.c
-index 33f1dc3d7c1a..ca717434b406 100644
---- a/drivers/gpu/drm/i915/display/intel_ddi.c
-+++ b/drivers/gpu/drm/i915/display/intel_ddi.c
-@@ -4741,7 +4741,7 @@ void intel_ddi_init(struct drm_i915_private *dev_priv, enum port port)
- 		&dev_priv->vbt.ddi_port_info[port];
- 	struct intel_digital_port *intel_dig_port;
- 	struct intel_encoder *encoder;
--	bool init_hdmi, init_dp, init_lspcon = false;
-+	bool init_hdmi, init_dp;
- 	enum phy phy = intel_port_to_phy(dev_priv, port);
- 
- 	init_hdmi = port_info->supports_dvi || port_info->supports_hdmi;
-@@ -4754,7 +4754,6 @@ void intel_ddi_init(struct drm_i915_private *dev_priv, enum port port)
- 		 * is initialized before lspcon.
- 		 */
- 		init_dp = true;
--		init_lspcon = true;
- 		init_hdmi = false;
- 		DRM_DEBUG_KMS("VBT says port %c has lspcon\n", port_name(port));
- 	}
-@@ -4833,20 +4832,6 @@ void intel_ddi_init(struct drm_i915_private *dev_priv, enum port port)
- 			goto err;
- 	}
- 
--	if (init_lspcon) {
--		if (lspcon_init(intel_dig_port))
--			/* TODO: handle hdmi info frame part */
--			DRM_DEBUG_KMS("LSPCON init success on port %c\n",
--				port_name(port));
--		else
--			/*
--			 * LSPCON init faied, but DP init was success, so
--			 * lets try to drive as DP++ port.
--			 */
--			DRM_ERROR("LSPCON init failed on port %c\n",
--				port_name(port));
--	}
--
- 	intel_infoframe_init(intel_dig_port);
- 
- 	return;
-diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
-index c7424e2a04a3..43117aa86292 100644
---- a/drivers/gpu/drm/i915/display/intel_dp.c
-+++ b/drivers/gpu/drm/i915/display/intel_dp.c
-@@ -5663,8 +5663,19 @@ intel_dp_detect(struct drm_connector *connector,
- 	/* Can't disconnect eDP */
- 	if (intel_dp_is_edp(intel_dp))
- 		status = edp_detect(intel_dp);
--	else if (intel_digital_port_connected(encoder))
-+	else if (intel_digital_port_connected(encoder)) {
-+		if (intel_bios_is_lspcon_present(dev_priv, dig_port->base.port) &&
-+		    !dig_port->lspcon.active) {
-+			if (lspcon_init(dig_port))
-+				DRM_DEBUG_KMS("LSPCON init success on port %c\n",
-+					      port_name(dig_port->base.port));
-+			else
-+				DRM_DEBUG_KMS("LSPCON init failed on port %c\n",
-+					      port_name(dig_port->base.port));
-+		}
-+
- 		status = intel_dp_detect_dpcd(intel_dp);
-+	}
- 	else
- 		status = connector_status_disconnected;
- 
-diff --git a/drivers/gpu/drm/i915/display/intel_hdmi.c b/drivers/gpu/drm/i915/display/intel_hdmi.c
-index 93ac0f296852..27a5aa8cefc9 100644
---- a/drivers/gpu/drm/i915/display/intel_hdmi.c
-+++ b/drivers/gpu/drm/i915/display/intel_hdmi.c
-@@ -3100,7 +3100,7 @@ void intel_infoframe_init(struct intel_digital_port *intel_dig_port)
- 		intel_dig_port->set_infoframes = g4x_set_infoframes;
- 		intel_dig_port->infoframes_enabled = g4x_infoframes_enabled;
- 	} else if (HAS_DDI(dev_priv)) {
--		if (intel_dig_port->lspcon.active) {
-+		if (intel_bios_is_lspcon_present(dev_priv, intel_dig_port->base.port)) {
- 			intel_dig_port->write_infoframe = lspcon_write_infoframe;
- 			intel_dig_port->read_infoframe = lspcon_read_infoframe;
- 			intel_dig_port->set_infoframes = lspcon_set_infoframes;
--- 
-2.17.1
-
+The bug was detected by a static analysis tool and have not encountered it. I can send a v2 right away.
