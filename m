@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94B0115E125
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:17:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C64B15E126
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:17:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404355AbgBNQRB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:17:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46676 "EHLO mail.kernel.org"
+        id S2404398AbgBNQRJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:17:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404216AbgBNQQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:16:06 -0500
+        id S2392535AbgBNQQQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:16:16 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F48B246E1;
-        Fri, 14 Feb 2020 16:16:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D25224676;
+        Fri, 14 Feb 2020 16:16:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696965;
-        bh=cF1ZhSgj1uFdLMJQbYjeVeg4+j2VvQJSgVqJXoxH8Kg=;
+        s=default; t=1581696975;
+        bh=qNBAU3xK4JahUW1sNvtwiy+hzRc9gO7mgdonY+4u7rs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eBSrakbCPaOJc7TYyfeuN95dkUW8dp0E1sKEPzpqzbFJq1yAYlA5Xjlhhy6Dxmrcp
-         KwmlMTiyfvKFrc2N3XIYm8XwaGfKCdUGWbeJ22qmb9OrcAmqfndJkfKENWiegAogxq
-         /D+qA7Pv7TsWy1Re4LoysgOVS/9+DLxvhK3RniBs=
+        b=QnmAvkU+apC7DyGtEnkCVEtHxEMdl814H6kJGGfPFfcWSAQ8ntpvEedz/Dq0bI7Hn
+         AP5lvr4D7kxN4uLqopBSW+JtM1WD5biZ+3SnwpXKxPLnLf7ye4Vbrs5AlTlf1J4Dyx
+         vNhVqzGjKkaF7u4cpzxTQmgmMWu8BEJh6shhWyqE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vasily Gorbik <gor@linux.ibm.com>,
-        Sven Schnelle <sven.schnelle@ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 204/252] s390/ftrace: generate traced function stack frame
-Date:   Fri, 14 Feb 2020 11:10:59 -0500
-Message-Id: <20200214161147.15842-204-sashal@kernel.org>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 213/252] char: hpet: Use flexible-array member
+Date:   Fri, 14 Feb 2020 11:11:08 -0500
+Message-Id: <20200214161147.15842-213-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -44,101 +43,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Gorbik <gor@linux.ibm.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-[ Upstream commit 45f7a0da600d3c409b5ad8d5ddddacd98ddc8840 ]
+[ Upstream commit 987f028b8637cfa7658aa456ae73f8f21a7a7f6f ]
 
-Currently backtrace from ftraced function does not contain ftraced
-function itself. e.g. for "path_openat":
+Old code in the kernel uses 1-byte and 0-byte arrays to indicate the
+presence of a "variable length array":
 
-arch_stack_walk+0x15c/0x2d8
-stack_trace_save+0x50/0x68
-stack_trace_call+0x15e/0x3d8
-ftrace_graph_caller+0x0/0x1c <-- ftrace code
-do_filp_open+0x7c/0xe8 <-- ftraced function caller
-do_open_execat+0x76/0x1b8
-open_exec+0x52/0x78
-load_elf_binary+0x180/0x1160
-search_binary_handler+0x8e/0x288
-load_script+0x2a8/0x2b8
-search_binary_handler+0x8e/0x288
-__do_execve_file.isra.39+0x6fa/0xb40
-__s390x_sys_execve+0x56/0x68
-system_call+0xdc/0x2d8
+struct something {
+    int length;
+    u8 data[1];
+};
 
-Ftraced function is expected in the backtrace by ftrace kselftests, which
-are now failing. It would also be nice to have it for clarity reasons.
+struct something *instance;
 
-"ftrace_caller" itself is called without stack frame allocated for it
-and does not store its caller (ftraced function). Instead it simply
-allocates a stack frame for "ftrace_trace_function" and sets backchain
-to point to ftraced function stack frame (which contains ftraced function
-caller in saved r14).
+instance = kmalloc(sizeof(*instance) + size, GFP_KERNEL);
+instance->length = size;
+memcpy(instance->data, source, size);
 
-To fix this issue make "ftrace_caller" allocate a stack frame
-for itself just to store ftraced function for the stack unwinder.
-As a result backtrace looks like the following:
+There is also 0-byte arrays. Both cases pose confusion for things like
+sizeof(), CONFIG_FORTIFY_SOURCE, etc.[1] Instead, the preferred mechanism
+to declare variable-length types such as the one above is a flexible array
+member[2] which need to be the last member of a structure and empty-sized:
 
-arch_stack_walk+0x15c/0x2d8
-stack_trace_save+0x50/0x68
-stack_trace_call+0x15e/0x3d8
-ftrace_graph_caller+0x0/0x1c <-- ftrace code
-path_openat+0x6/0xd60  <-- ftraced function
-do_filp_open+0x7c/0xe8 <-- ftraced function caller
-do_open_execat+0x76/0x1b8
-open_exec+0x52/0x78
-load_elf_binary+0x180/0x1160
-search_binary_handler+0x8e/0x288
-load_script+0x2a8/0x2b8
-search_binary_handler+0x8e/0x288
-__do_execve_file.isra.39+0x6fa/0xb40
-__s390x_sys_execve+0x56/0x68
-system_call+0xdc/0x2d8
+struct something {
+        int stuff;
+        u8 data[];
+};
 
-Reported-by: Sven Schnelle <sven.schnelle@ibm.com>
-Tested-by: Sven Schnelle <sven.schnelle@ibm.com>
-Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Also, by making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+unadvertenly introduced[3] to the codebase from now on.
+
+[1] https://github.com/KSPP/linux/issues/21
+[2] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Link: https://lore.kernel.org/r/20200120235326.GA29231@embeddedor.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/kernel/mcount.S | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ drivers/char/hpet.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/s390/kernel/mcount.S b/arch/s390/kernel/mcount.S
-index e93fbf02490cf..83afd5b78e16a 100644
---- a/arch/s390/kernel/mcount.S
-+++ b/arch/s390/kernel/mcount.S
-@@ -25,6 +25,12 @@ ENTRY(ftrace_stub)
- #define STACK_PTREGS	  (STACK_FRAME_OVERHEAD)
- #define STACK_PTREGS_GPRS (STACK_PTREGS + __PT_GPRS)
- #define STACK_PTREGS_PSW  (STACK_PTREGS + __PT_PSW)
-+#ifdef __PACK_STACK
-+/* allocate just enough for r14, r15 and backchain */
-+#define TRACED_FUNC_FRAME_SIZE	24
-+#else
-+#define TRACED_FUNC_FRAME_SIZE	STACK_FRAME_OVERHEAD
-+#endif
+diff --git a/drivers/char/hpet.c b/drivers/char/hpet.c
+index c0732f0322484..39d8bab9f2164 100644
+--- a/drivers/char/hpet.c
++++ b/drivers/char/hpet.c
+@@ -113,7 +113,7 @@ struct hpets {
+ 	unsigned long hp_delta;
+ 	unsigned int hp_ntimer;
+ 	unsigned int hp_which;
+-	struct hpet_dev hp_dev[1];
++	struct hpet_dev hp_dev[];
+ };
  
- ENTRY(_mcount)
- 	BR_EX	%r14
-@@ -38,9 +44,16 @@ ENTRY(ftrace_caller)
- #if !(defined(CC_USING_HOTPATCH) || defined(CC_USING_NOP_MCOUNT))
- 	aghi	%r0,MCOUNT_RETURN_FIXUP
- #endif
--	aghi	%r15,-STACK_FRAME_SIZE
-+	# allocate stack frame for ftrace_caller to contain traced function
-+	aghi	%r15,-TRACED_FUNC_FRAME_SIZE
- 	stg	%r1,__SF_BACKCHAIN(%r15)
-+	stg	%r0,(__SF_GPRS+8*8)(%r15)
-+	stg	%r15,(__SF_GPRS+9*8)(%r15)
-+	# allocate pt_regs and stack frame for ftrace_trace_function
-+	aghi	%r15,-STACK_FRAME_SIZE
- 	stg	%r1,(STACK_PTREGS_GPRS+15*8)(%r15)
-+	aghi	%r1,-TRACED_FUNC_FRAME_SIZE
-+	stg	%r1,__SF_BACKCHAIN(%r15)
- 	stg	%r0,(STACK_PTREGS_PSW+8)(%r15)
- 	stmg	%r2,%r14,(STACK_PTREGS_GPRS+2*8)(%r15)
- #ifdef CONFIG_HAVE_MARCH_Z196_FEATURES
+ static struct hpets *hpets;
 -- 
 2.20.1
 
