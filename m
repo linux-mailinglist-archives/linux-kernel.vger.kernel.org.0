@@ -2,44 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FD6115EC69
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:28:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 049D615EC6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:28:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390886AbgBNQIO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:08:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59010 "EHLO mail.kernel.org"
+        id S2390910AbgBNQIU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:08:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390700AbgBNQHd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:07:33 -0500
+        id S2390723AbgBNQHi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:07:38 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 972112187F;
-        Fri, 14 Feb 2020 16:07:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2F3224654;
+        Fri, 14 Feb 2020 16:07:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696452;
-        bh=+AG47mcdv+Z5uu7zaMQ7K8RGn5uNt6MMQCp2P0BPRO8=;
+        s=default; t=1581696457;
+        bh=veonelLyHYVdZEaWEmcvfnbE3w0QTXWIx3ruw3NtQm4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZfLIYIxiUSHkrrliBq27Vh/b4vzBm7H50oRC4rdwAAmoBGH8NJehi2YCT6kTAzcIZ
-         cluoE8snJOmF2Gk5Bx5h/lrWGkGQSDj8xjsq8DoMzPQ3eMZtsJFUR6Ht5vAWlUw4lr
-         rRQxkKayQD4t0zWxX7A91+fSrUwo4Rx1ovvdGkOg=
+        b=OO289xAiajvRJbb28W2ZNR5SQEZTUCidRJgPvaqW4OrUtSiTgMTP+9LxlT02t6OS1
+         maCFEc/g7dpoLd7gyidBhjbdALUbp7478zl0xgRvFfTQuwtA+8F5P0j04xf3vuP9dU
+         B0dPMWlmWvrSn8kvbfVnQIykNO0dRt7FMm5qwKt4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Eric Biggers <ebiggers@google.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 265/459] crypto: atmel-sha - fix error handling when setting hmac key
-Date:   Fri, 14 Feb 2020 10:58:35 -0500
-Message-Id: <20200214160149.11681-265-sashal@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>,
+        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 269/459] udf: Fix free space reporting for metadata and virtual partitions
+Date:   Fri, 14 Feb 2020 10:58:39 -0500
+Message-Id: <20200214160149.11681-269-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -48,45 +44,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Jan Kara <jack@suse.cz>
 
-[ Upstream commit b529f1983b2dcc46354f311feda92e07b6e9e2da ]
+[ Upstream commit a4a8b99ec819ca60b49dc582a4287ef03411f117 ]
 
-HMAC keys can be of any length, and atmel_sha_hmac_key_set() can only
-fail due to -ENOMEM.  But atmel_sha_hmac_setkey() incorrectly treated
-any error as a "bad key length" error.  Fix it to correctly propagate
-the -ENOMEM error code and not set any tfm result flags.
+Free space on filesystems with metadata or virtual partition maps
+currently gets misreported. This is because these partitions are just
+remapped onto underlying real partitions from which keep track of free
+blocks. Take this remapping into account when counting free blocks as
+well.
 
-Fixes: 81d8750b2b59 ("crypto: atmel-sha - add support to hmac(shaX)")
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Ludovic Desroches <ludovic.desroches@microchip.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Reviewed-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Reviewed-by: Pali Rohár <pali.rohar@gmail.com>
+Reported-by: Pali Rohár <pali.rohar@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/atmel-sha.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ fs/udf/super.c | 22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/crypto/atmel-sha.c b/drivers/crypto/atmel-sha.c
-index d32626458e67c..1f9c16395a3fc 100644
---- a/drivers/crypto/atmel-sha.c
-+++ b/drivers/crypto/atmel-sha.c
-@@ -1918,12 +1918,7 @@ static int atmel_sha_hmac_setkey(struct crypto_ahash *tfm, const u8 *key,
+diff --git a/fs/udf/super.c b/fs/udf/super.c
+index 008bf96b1732d..4baa1ca91e9be 100644
+--- a/fs/udf/super.c
++++ b/fs/udf/super.c
+@@ -2491,17 +2491,29 @@ static unsigned int udf_count_free_table(struct super_block *sb,
+ static unsigned int udf_count_free(struct super_block *sb)
  {
- 	struct atmel_sha_hmac_ctx *hmac = crypto_ahash_ctx(tfm);
+ 	unsigned int accum = 0;
+-	struct udf_sb_info *sbi;
++	struct udf_sb_info *sbi = UDF_SB(sb);
+ 	struct udf_part_map *map;
++	unsigned int part = sbi->s_partition;
++	int ptype = sbi->s_partmaps[part].s_partition_type;
++
++	if (ptype == UDF_METADATA_MAP25) {
++		part = sbi->s_partmaps[part].s_type_specific.s_metadata.
++							s_phys_partition_ref;
++	} else if (ptype == UDF_VIRTUAL_MAP15 || ptype == UDF_VIRTUAL_MAP20) {
++		/*
++		 * Filesystems with VAT are append-only and we cannot write to
++ 		 * them. Let's just report 0 here.
++		 */
++		return 0;
++	}
  
--	if (atmel_sha_hmac_key_set(&hmac->hkey, key, keylen)) {
--		crypto_ahash_set_flags(tfm, CRYPTO_TFM_RES_BAD_KEY_LEN);
--		return -EINVAL;
--	}
--
--	return 0;
-+	return atmel_sha_hmac_key_set(&hmac->hkey, key, keylen);
- }
+-	sbi = UDF_SB(sb);
+ 	if (sbi->s_lvid_bh) {
+ 		struct logicalVolIntegrityDesc *lvid =
+ 			(struct logicalVolIntegrityDesc *)
+ 			sbi->s_lvid_bh->b_data;
+-		if (le32_to_cpu(lvid->numOfPartitions) > sbi->s_partition) {
++		if (le32_to_cpu(lvid->numOfPartitions) > part) {
+ 			accum = le32_to_cpu(
+-					lvid->freeSpaceTable[sbi->s_partition]);
++					lvid->freeSpaceTable[part]);
+ 			if (accum == 0xFFFFFFFF)
+ 				accum = 0;
+ 		}
+@@ -2510,7 +2522,7 @@ static unsigned int udf_count_free(struct super_block *sb)
+ 	if (accum)
+ 		return accum;
  
- static int atmel_sha_hmac_init(struct ahash_request *req)
+-	map = &sbi->s_partmaps[sbi->s_partition];
++	map = &sbi->s_partmaps[part];
+ 	if (map->s_partition_flags & UDF_PART_FLAG_UNALLOC_BITMAP) {
+ 		accum += udf_count_free_bitmap(sb,
+ 					       map->s_uspace.s_bitmap);
 -- 
 2.20.1
 
