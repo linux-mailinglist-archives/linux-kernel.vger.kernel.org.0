@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFE3115F2C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:20:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E7F815F430
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:23:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730549AbgBNPuj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:50:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54652 "EHLO mail.kernel.org"
+        id S2405282AbgBNSTR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:19:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730491AbgBNPua (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:50:30 -0500
+        id S1730518AbgBNPue (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:50:34 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 237EA2467D;
-        Fri, 14 Feb 2020 15:50:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA69024688;
+        Fri, 14 Feb 2020 15:50:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695430;
-        bh=xz74wdWetr21C9f11ZsRx1P/anaoJIBj+Ddglaa/a/Y=;
+        s=default; t=1581695433;
+        bh=zbK5P6bE+5w9JpZDIVeW4d4YCT86HCfVE6Z0vyzn7KM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MQpfaBSyupbOSjry+9vrOwrg+Ta0dyh7YgOdh/5iuy3rhOB3VQT7H/tryWM70F3u5
-         3hbEJ94tvJ+HAWB88AgA7qpSCd2HYhHXXd7j/HXV+ub7Kl6f+KNHpfwg0PdoTArlHf
-         KjTAcwsStkzFCtuqk046zVZV8YS8W1G779exP+dI=
+        b=R+QX5IosFj6JEcMveVs/fm32I/rxTvJ7WF0MSIVcrQdzZnG6euQCiNAksdX8plWKZ
+         ymaqzHkSlw8RFep0yrDWKvhy7idTstes6Ls2v1+YVD4Amhx26uBcIUuXh8ittqynBy
+         dLNIk9FkEYgFJFpCvCL1i7NMHYbuVfmTXkfas8wY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.5 073/542] arm64: cpufeature: Fix the type of no FP/SIMD capability
-Date:   Fri, 14 Feb 2020 10:41:05 -0500
-Message-Id: <20200214154854.6746-73-sashal@kernel.org>
+Cc:     John Keeping <john@metanate.com>,
+        Minas Harutyunyan <hminas@synopsys.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 076/542] usb: dwc2: Fix IN FIFO allocation
+Date:   Fri, 14 Feb 2020 10:41:08 -0500
+Message-Id: <20200214154854.6746-76-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -47,47 +45,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+From: John Keeping <john@metanate.com>
 
-[ Upstream commit 449443c03d8cfdacf7313e17779a2594ebf87e6d ]
+[ Upstream commit 644139f8b64d818f6345351455f14471510879a5 ]
 
-The NO_FPSIMD capability is defined with scope SYSTEM, which implies
-that the "absence" of FP/SIMD on at least one CPU is detected only
-after all the SMP CPUs are brought up. However, we use the status
-of this capability for every context switch. So, let us change
-the scope to LOCAL_CPU to allow the detection of this capability
-as and when the first CPU without FP is brought up.
+On chips with fewer FIFOs than endpoints (for example RK3288 which has 9
+endpoints, but only 6 which are cabable of input), the DPTXFSIZN
+registers above the FIFO count may return invalid values.
 
-Also, the current type allows hotplugged CPU to be brought up without
-FP/SIMD when all the current CPUs have FP/SIMD and we have the userspace
-up. Fix both of these issues by changing the capability to
-BOOT_RESTRICTED_LOCAL_CPU_FEATURE.
+With logging added on startup, I see:
 
-Fixes: 82e0191a1aa11abf ("arm64: Support systems without FP/ASIMD")
-Cc: Will Deacon <will@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Will Deacon <will@kernel.org>
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=1 sz=256
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=2 sz=128
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=3 sz=128
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=4 sz=64
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=5 sz=64
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=6 sz=32
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=7 sz=0
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=8 sz=0
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=9 sz=0
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=10 sz=0
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=11 sz=0
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=12 sz=0
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=13 sz=0
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=14 sz=0
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=15 sz=0
+
+but:
+
+	# cat /sys/kernel/debug/ff580000.usb/fifo
+	Non-periodic FIFOs:
+	RXFIFO: Size 275
+	NPTXFIFO: Size 16, Start 0x00000113
+
+	Periodic TXFIFOs:
+		DPTXFIFO 1: Size 256, Start 0x00000123
+		DPTXFIFO 2: Size 128, Start 0x00000223
+		DPTXFIFO 3: Size 128, Start 0x000002a3
+		DPTXFIFO 4: Size 64, Start 0x00000323
+		DPTXFIFO 5: Size 64, Start 0x00000363
+		DPTXFIFO 6: Size 32, Start 0x000003a3
+		DPTXFIFO 7: Size 0, Start 0x000003e3
+		DPTXFIFO 8: Size 0, Start 0x000003a3
+		DPTXFIFO 9: Size 256, Start 0x00000123
+
+so it seems that FIFO 9 is mirroring FIFO 1.
+
+Fix the allocation by using the FIFO count instead of the endpoint count
+when selecting a FIFO for an endpoint.
+
+Acked-by: Minas Harutyunyan <hminas@synopsys.com>
+Signed-off-by: John Keeping <john@metanate.com>
+Signed-off-by: Felipe Balbi <balbi@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kernel/cpufeature.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/dwc2/gadget.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 04cf64e9f0c97..b4f84513655d6 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -1368,7 +1368,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
- 	{
- 		/* FP/SIMD is not implemented */
- 		.capability = ARM64_HAS_NO_FPSIMD,
--		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
-+		.type = ARM64_CPUCAP_BOOT_RESTRICTED_CPU_LOCAL_FEATURE,
- 		.min_field_value = 0,
- 		.matches = has_no_fpsimd,
- 	},
+diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
+index 6be10e496e105..a9133773b89e4 100644
+--- a/drivers/usb/dwc2/gadget.c
++++ b/drivers/usb/dwc2/gadget.c
+@@ -4056,11 +4056,12 @@ static int dwc2_hsotg_ep_enable(struct usb_ep *ep,
+ 	 * a unique tx-fifo even if it is non-periodic.
+ 	 */
+ 	if (dir_in && hsotg->dedicated_fifos) {
++		unsigned fifo_count = dwc2_hsotg_tx_fifo_count(hsotg);
+ 		u32 fifo_index = 0;
+ 		u32 fifo_size = UINT_MAX;
+ 
+ 		size = hs_ep->ep.maxpacket * hs_ep->mc;
+-		for (i = 1; i < hsotg->num_of_eps; ++i) {
++		for (i = 1; i <= fifo_count; ++i) {
+ 			if (hsotg->fifo_map & (1 << i))
+ 				continue;
+ 			val = dwc2_readl(hsotg, DPTXFSIZN(i));
 -- 
 2.20.1
 
