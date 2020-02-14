@@ -2,82 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03F4B15EAC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:17:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC02215E92A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:05:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391404AbgBNQLi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:11:38 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.83]:14012 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391573AbgBNQKn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:10:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1581696638;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=l2ioSw/GBEgoEsJDqdX898kUDDw9CYiqWmti4ETUA48=;
-        b=fqmZXBoIsAPESbIJWYhBGNmG3oQIKsP4I5KOyZmSJNJA9jy2pyfvQr0F3q20KRG0MB
-        ME5Ac97r0cY6547NuoWhzKAkCWwxXWSRzAcoNmApreiT4u5jKcX4yOjpZ68d+hOhsrfc
-        cNDKhHPt1YiomGPQ0mSWAhatUaYxzlS4ieanQRQK+dxui8YdfdbUojrZxqcuPUtqNSgw
-        dMPrtGUrCbd6ZwiR7pdPk3TagHKzBYXlPU2N24eYnSy+ZcBk/jtL3ImJtTsim3gapmJd
-        UoWZddH4FODlZXfDXS8WSQ5VTXKBHBOtYRGnfrVnm6hJM8RjbIacBkryLmeNHON45HX1
-        V+iw==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1OAA2UNf2M7OMfsfQx3"
-X-RZG-CLASS-ID: mo00
-Received: from iMac.fritz.box
-        by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
-        with ESMTPSA id U06217w1EGASFky
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Fri, 14 Feb 2020 17:10:28 +0100 (CET)
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-To:     Paul Boddie <paul@boddie.org.uk>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paulburton@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Kees Cook <keescook@chromium.org>
-Cc:     devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        letux-kernel@openphoenux.org, kernel@pyra-handheld.com
-Subject: [PATCH v2 03/12] MIPS: CI20: defconfig: configure for supporting modules
-Date:   Fri, 14 Feb 2020 17:10:15 +0100
-Message-Id: <db4db9e0b024aa3051a6f1f7be07323418d1d453.1581696624.git.hns@goldelico.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <cover.1581696624.git.hns@goldelico.com>
-References: <cover.1581696624.git.hns@goldelico.com>
+        id S2392561AbgBNRFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:05:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45310 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2392425AbgBNQPM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:15:12 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A83DC246DC;
+        Fri, 14 Feb 2020 16:15:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581696912;
+        bh=hVrg8rRe/pnLXFS4sp1Q4wJtlR5vsf1nCybQKCaUqxU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=SoVpXz0b2uYWxxLxTHxFNYCTozc8uvcxqQhVjmnCrXcEuFGOUJ9bAvJ9p5Ye+liTu
+         t4mm8sF5v5LRMozOiUcu7DpK2wqlpgzHzn+aeSi/wud7MSPKX1prRtE9jHWiLMrgxs
+         gbnXgid9VJI9l0pL62wyEtRS08oQ+xcFkEKuHJlY=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, sparmaintainer@unisys.com
+Subject: [PATCH AUTOSEL 4.19 161/252] visorbus: fix uninitialized variable access
+Date:   Fri, 14 Feb 2020 11:10:16 -0500
+Message-Id: <20200214161147.15842-161-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
+References: <20200214161147.15842-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Not all drivers need to be compiled into the kernel.
-Support building and loading of kernel modules.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+[ Upstream commit caf82f727e69b647f09d57a1fc56e69d22a5f483 ]
+
+The setup_crash_devices_work_queue function only partially initializes
+the message it sends to chipset_init, leading to undefined behavior:
+
+drivers/visorbus/visorchipset.c: In function 'setup_crash_devices_work_queue':
+drivers/visorbus/visorchipset.c:333:6: error: '((unsigned char*)&msg.hdr.flags)[0]' is used uninitialized in this function [-Werror=uninitialized]
+  if (inmsg->hdr.flags.response_expected)
+
+Set up the entire structure, zero-initializing the 'response_expected'
+flag.
+
+This was apparently found by the patch that added the -O3 build option
+in Kconfig.
+
+Fixes: 12e364b9f08a ("staging: visorchipset driver to provide registration and other services")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Link: https://lore.kernel.org/r/20200107202950.782951-1-arnd@arndb.de
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/configs/ci20_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/visorbus/visorchipset.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/arch/mips/configs/ci20_defconfig b/arch/mips/configs/ci20_defconfig
-index be41df2a81fb..e0d3c9d4c2ae 100644
---- a/arch/mips/configs/ci20_defconfig
-+++ b/arch/mips/configs/ci20_defconfig
-@@ -1,4 +1,5 @@
- # CONFIG_LOCALVERSION_AUTO is not set
-+CONFIG_MODULES=y
- CONFIG_KERNEL_XZ=y
- CONFIG_SYSVIPC=y
- CONFIG_POSIX_MQUEUE=y
+diff --git a/drivers/visorbus/visorchipset.c b/drivers/visorbus/visorchipset.c
+index ca752b8f495fa..cb1eb7e05f871 100644
+--- a/drivers/visorbus/visorchipset.c
++++ b/drivers/visorbus/visorchipset.c
+@@ -1210,14 +1210,17 @@ static void setup_crash_devices_work_queue(struct work_struct *work)
+ {
+ 	struct controlvm_message local_crash_bus_msg;
+ 	struct controlvm_message local_crash_dev_msg;
+-	struct controlvm_message msg;
++	struct controlvm_message msg = {
++		.hdr.id = CONTROLVM_CHIPSET_INIT,
++		.cmd.init_chipset = {
++			.bus_count = 23,
++			.switch_count = 0,
++		},
++	};
+ 	u32 local_crash_msg_offset;
+ 	u16 local_crash_msg_count;
+ 
+ 	/* send init chipset msg */
+-	msg.hdr.id = CONTROLVM_CHIPSET_INIT;
+-	msg.cmd.init_chipset.bus_count = 23;
+-	msg.cmd.init_chipset.switch_count = 0;
+ 	chipset_init(&msg);
+ 	/* get saved message count */
+ 	if (visorchannel_read(chipset_dev->controlvm_channel,
 -- 
-2.23.0
+2.20.1
 
