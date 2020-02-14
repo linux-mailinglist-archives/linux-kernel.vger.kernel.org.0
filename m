@@ -2,130 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E27915E61F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:46:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89D8215E689
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:49:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406307AbgBNQps (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:45:48 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:35397 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392989AbgBNQp3 (ORCPT
+        id S2392471AbgBNQsO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:48:14 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:63064 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2392112AbgBNQsK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:45:29 -0500
-Received: by mail-io1-f68.google.com with SMTP id h8so11237531iob.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 08:45:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=AjDTQ++9QAUeFd+rM3tBuggZ7ZACTbI+xzsIgBMTRTo=;
-        b=ycrObv7TUf+k9MpCwzfm6tpUYr91Ogua7iMMx/VPIyahPd051i0e8Zamp2+sJc+N8E
-         MWpaXBeFRSxAIxjhBIfwlmJ9Utg1WcZFzLFLnGzOTp253vcU4bYZtK/b/xhIKCacawsC
-         pTXpDNMaiGidQ5WERxCg9jlO1UvXIF+LkGZQUkpfPaoVfWXxa3ML5a8Ugg8b19dMzAdX
-         a0L1qnU4FiUCktmkrosHUiA8C+oKvv1qXOJftnyzBiAoQ6BAEiYP0y77C91rHeryrnYn
-         RORh0OoP+qRXz/gK3nZBAbvCPPGW2LqwsQy7WpzUV1diTJlqLQnYYDHhawlkODozl+Hu
-         TJtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=AjDTQ++9QAUeFd+rM3tBuggZ7ZACTbI+xzsIgBMTRTo=;
-        b=PTFN2NBNK54P1EpwN6DnUhE17ZvnDCSqk2X79jFJC7dwlaUC0iCPCPSSO/2zyp2Tnx
-         3ALmk/3bnTok5Am3pEQjsgdhhL8fFMQuRxojWX5yg4xJr2lAnU9LcZA15DSsi0QRrP9t
-         AcvqsXhrmBYMBHekpsm29FZxukAgt4yHQCBsfGLd7KjYbzV6sAqC9bc++kwxXHfrqcz5
-         t6Y0MoDfgbu9arFWnPwRUu4XnpuGzhht4CrMdeIfcZq+X77MiDo5KQ5q68WL4voCkaNx
-         kMuMAzosi4/rmEzO34I6Vlx/+UXioIbDE73KS9ayXBkBKFv+iOzlhdge+5/QtYUz88j6
-         99PQ==
-X-Gm-Message-State: APjAAAW1Xzciu6pdkbPXezt/XnLhVI78PdHr6jilbEUcle9sMreU+B9E
-        DvclqxBxWQb71n9y3hleVhaz4JCx7ag=
-X-Google-Smtp-Source: APXvYqxWJ3CWx/BsESTmCh48/BdVAfeJ6FBaTCG5T4yzDJV8DfeGgXGXDGP+viVJlJzScdgBgSHEEA==
-X-Received: by 2002:a5e:c803:: with SMTP id y3mr2905152iol.116.1581698727961;
-        Fri, 14 Feb 2020 08:45:27 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id q90sm2127344ili.27.2020.02.14.08.45.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2020 08:45:27 -0800 (PST)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 5.6-rc2
-Message-ID: <d72d51a9-488d-c75b-4daf-bb74960c7531@kernel.dk>
-Date:   Fri, 14 Feb 2020 09:45:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Fri, 14 Feb 2020 11:48:10 -0500
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01EGh4gr004629;
+        Fri, 14 Feb 2020 17:47:47 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=FNp5VEUp2vyJtgWvaOR8hQzLMqdi1PLqDQdOv//CVm4=;
+ b=Fm5MEs5JszxH/P4yoMoGZ66cmxMJN5n28ZfM9u9Q7IEGrK3MZdmL6qhHxb1Z4W9Fc07F
+ 409fvSJe3CpLPLY3AdgpNj8+Ey2SPEjGHWvs2mS+WvLtS1G7+3M9Sc4+Uwna7Q31BlCo
+ xL+awQnL60pOZjTXsCtzxgswpgDbmGkvmuBmu9Vmceu4vG0mGq+5WgQPeqXNSfP9uTDK
+ Lq+coSdr6fUqA8L4oMZcmPlSLNmPPmK7ufbtvNCqnJQ6+lCKPezucvIk/IR5nK3l5UgA
+ wQ6Z9bhObhwq62sxBq6tn2dzphVlQynoysfASHsn35rKPT/jfD1ldenHhC7syFHM8tjb eQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2y1ufhw6kj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 14 Feb 2020 17:47:47 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 47E82100038;
+        Fri, 14 Feb 2020 17:47:43 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 379F62C0965;
+        Fri, 14 Feb 2020 17:47:43 +0100 (CET)
+Received: from localhost (10.75.127.45) by SFHDAG5NODE3.st.com (10.75.127.15)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 14 Feb 2020 17:47:42
+ +0100
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+To:     <jic23@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <mcoquelin.stm32@gmail.com>,
+        <benjamin.gaignard@st.com>, <alexandre.torgue@st.com>,
+        <fabrice.gasnier@st.com>, <olivier.moysan@st.com>,
+        <linux-iio@vger.kernel.org>, <lars@metafoo.de>, <knaack.h@gmx.de>,
+        <pmeerw@pmeerw.net>, <linux-stm32@st-md-mailman.stormreply.com>
+Subject: [PATCH] iio: trigger: stm32-timer: disable master mode when stopping
+Date:   Fri, 14 Feb 2020 17:46:35 +0100
+Message-ID: <1581698795-437-1-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-14_05:2020-02-12,2020-02-14 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Master mode should be disabled when stopping. This mainly impacts
+possible other use-case after timer has been stopped. Currently,
+master mode remains set (from start routine).
 
-Here's a set of fixes for io_uring that should go into this release.
-This pull request contains:
+Fixes: 6fb34812c2a2 ("iio: stm32 trigger: Add support for TRGO2 triggers")
 
-- Various fixes with cleanups from Pavel, fixing corner cases where
-  we're not correctly dealing with iovec cleanup.
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+---
+ drivers/iio/trigger/stm32-timer-trigger.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-- Clarify that statx/openat/openat2 don't accept fixed files
-
-- Buffered raw device write EOPTNOTSUPP fix
-
-- Ensure async workers grab current->fs
-
-- A few task exit fixes with pending requests that grab the file table
-
-- send/recvmsg async load fix
-
-- io-wq offline node setup fix
-
-- CQ overflow flush in poll
-
-Please pull!
-
-
-  git://git.kernel.dk/linux-block.git tags/io_uring-5.6-2020-02-14
-
-
-----------------------------------------------------------------
-Jens Axboe (11):
-      io_uring: statx/openat/openat2 don't support fixed files
-      io_uring: retry raw bdev writes if we hit -EOPNOTSUPP
-      io-wq: add support for inheriting ->fs
-      io_uring: grab ->fs as part of async preparation
-      io_uring: allow AT_FDCWD for non-file openat/openat2/statx
-      io-wq: make io_wqe_cancel_work() take a match handler
-      io-wq: add io_wq_cancel_pid() to cancel based on a specific pid
-      io_uring: cancel pending async work if task exits
-      io_uring: retain sockaddr_storage across send/recvmsg async punt
-      io-wq: don't call kXalloc_node() with non-online node
-      io_uring: prune request from overflow list on flush
-
-Pavel Begunkov (8):
-      io_uring: get rid of delayed mm check
-      io_uring: fix deferred req iovec leak
-      io_uring: remove unused struct io_async_open
-      io_uring: fix iovec leaks
-      io_uring: add cleanup for openat()/statx()
-      io_uring: fix async close() with f_op->flush()
-      io_uring: fix double prep iovec leak
-      io_uring: fix openat/statx's filename leak
-
-Randy Dunlap (1):
-      io_uring: fix 1-bit bitfields to be unsigned
-
-Stefano Garzarella (1):
-      io_uring: flush overflowed CQ events in the io_uring_poll()
-
- fs/io-wq.c    |  92 +++++++++++++++---
- fs/io-wq.h    |   6 +-
- fs/io_uring.c | 299 +++++++++++++++++++++++++++++++++++++++-------------------
- 3 files changed, 284 insertions(+), 113 deletions(-)
-
+diff --git a/drivers/iio/trigger/stm32-timer-trigger.c b/drivers/iio/trigger/stm32-timer-trigger.c
+index 2e0d32a..2f82e8c 100644
+--- a/drivers/iio/trigger/stm32-timer-trigger.c
++++ b/drivers/iio/trigger/stm32-timer-trigger.c
+@@ -161,7 +161,8 @@ static int stm32_timer_start(struct stm32_timer_trigger *priv,
+ 	return 0;
+ }
+ 
+-static void stm32_timer_stop(struct stm32_timer_trigger *priv)
++static void stm32_timer_stop(struct stm32_timer_trigger *priv,
++			     struct iio_trigger *trig)
+ {
+ 	u32 ccer, cr1;
+ 
+@@ -179,6 +180,12 @@ static void stm32_timer_stop(struct stm32_timer_trigger *priv)
+ 	regmap_write(priv->regmap, TIM_PSC, 0);
+ 	regmap_write(priv->regmap, TIM_ARR, 0);
+ 
++	/* Force disable master mode */
++	if (stm32_timer_is_trgo2_name(trig->name))
++		regmap_update_bits(priv->regmap, TIM_CR2, TIM_CR2_MMS2, 0);
++	else
++		regmap_update_bits(priv->regmap, TIM_CR2, TIM_CR2_MMS, 0);
++
+ 	/* Make sure that registers are updated */
+ 	regmap_update_bits(priv->regmap, TIM_EGR, TIM_EGR_UG, TIM_EGR_UG);
+ }
+@@ -197,7 +204,7 @@ static ssize_t stm32_tt_store_frequency(struct device *dev,
+ 		return ret;
+ 
+ 	if (freq == 0) {
+-		stm32_timer_stop(priv);
++		stm32_timer_stop(priv, trig);
+ 	} else {
+ 		ret = stm32_timer_start(priv, trig, freq);
+ 		if (ret)
 -- 
-Jens Axboe
+2.7.4
 
