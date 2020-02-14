@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9099015DF7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:09:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 772A415DF7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:09:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391147AbgBNQJA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:09:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60474 "EHLO mail.kernel.org"
+        id S2391184AbgBNQJF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:09:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390660AbgBNQId (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:08:33 -0500
+        id S2391044AbgBNQIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:08:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77DB524676;
-        Fri, 14 Feb 2020 16:08:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DCE35222C2;
+        Fri, 14 Feb 2020 16:08:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696512;
-        bh=Uht5GtVklLaXQw3IXPvUNUVpdxyIbB2MtgFOyDgstrU=;
+        s=default; t=1581696524;
+        bh=tah2T/OvVrsNU75aEekf6ABk4+xYfjAbZ42HFtcrqkg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0NgvHaeMbiTY8UekcjObMr84hGPGlFcA+feENyWgHN5a/vG0w2W0LI7ITDWoXWU0K
-         bQVWQop/OjKoqlM1+KJ/8DHePPo4Bz6tnk3n7nQYen0lX6e1VSP8T6vasHsG6N6mlp
-         EVzdf9HOo22oIinrMIbPjFHvOGe7pDdWockllKUM=
+        b=VabyCJjylbThaWkEhmoPvzRJsZwhQ7/sNqPJvGjF161jn4ii21KsRwdC3rdRlxaRh
+         LYvQKC/WQjR7p0UiLSOCVlG2h+/ugUL3NZZ4nU49t6flSxewnC4SuGI+H987GlZcUu
+         LLWECYFgkSmMJ89mBfrUtUpaprS1VORGV53oPnjk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mikulas Patocka <mpatocka@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, dm-devel@redhat.com
-Subject: [PATCH AUTOSEL 5.4 314/459] dm thin: don't allow changing data device during thin-pool reload
-Date:   Fri, 14 Feb 2020 10:59:24 -0500
-Message-Id: <20200214160149.11681-314-sashal@kernel.org>
+Cc:     Sergey Gorenko <sergeygo@mellanox.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 324/459] IB/srp: Never use immediate data if it is disabled by a user
+Date:   Fri, 14 Feb 2020 10:59:34 -0500
+Message-Id: <20200214160149.11681-324-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -43,120 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Sergey Gorenko <sergeygo@mellanox.com>
 
-[ Upstream commit 873937e75f9a8ea231a502c3d29d9cb6ad91b3ef ]
+[ Upstream commit 0fbb37dd82998b5c83355997b3bdba2806968ac7 ]
 
-The existing code allows changing the data device when the thin-pool
-target is reloaded.
+Some SRP targets that do not support specification SRP-2, put the garbage
+to the reserved bits of the SRP login response.  The problem was not
+detected for a long time because the SRP initiator ignored those bits. But
+now one of them is used as SRP_LOGIN_RSP_IMMED_SUPP. And it causes a
+critical error on the target when the initiator sends immediate data.
 
-This capability is not required and only complicates device lifetime
-guarantees. This can cause crashes like the one reported here:
-	https://bugzilla.redhat.com/show_bug.cgi?id=1788596
-where the kernel tries to issue a flush bio located in a structure that
-was already freed.
+The ib_srp module has a use_imm_date parameter to enable or disable
+immediate data manually. But it does not help in the above case, because
+use_imm_date is ignored at handling the SRP login response. The problem is
+definitely caused by a bug on the target side, but the initiator's
+behavior also does not look correct.  The initiator should not use
+immediate data if use_imm_date is disabled by a user.
 
-Take the first step to simplifying the thin-pool's data device lifetime
-by disallowing changing it. Like the thin-pool's metadata device, the
-data device is now set in pool_create() and it cannot be changed for a
-given thin-pool.
+This commit adds an additional checking of use_imm_date at the handling of
+SRP login response to avoid unexpected use of immediate data.
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Fixes: 882981f4a411 ("RDMA/srp: Add support for immediate data")
+Link: https://lore.kernel.org/r/20200115133055.30232-1-sergeygo@mellanox.com
+Signed-off-by: Sergey Gorenko <sergeygo@mellanox.com>
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/dm-thin.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+ drivers/infiniband/ulp/srp/ib_srp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/md/dm-thin.c b/drivers/md/dm-thin.c
-index 69201bdf7f4c6..1b2c98b43519f 100644
---- a/drivers/md/dm-thin.c
-+++ b/drivers/md/dm-thin.c
-@@ -231,6 +231,7 @@ struct pool {
- 	struct dm_target *ti;	/* Only set if a pool target is bound */
- 
- 	struct mapped_device *pool_md;
-+	struct block_device *data_dev;
- 	struct block_device *md_dev;
- 	struct dm_pool_metadata *pmd;
- 
-@@ -2945,6 +2946,7 @@ static struct kmem_cache *_new_mapping_cache;
- 
- static struct pool *pool_create(struct mapped_device *pool_md,
- 				struct block_device *metadata_dev,
-+				struct block_device *data_dev,
- 				unsigned long block_size,
- 				int read_only, char **error)
- {
-@@ -3052,6 +3054,7 @@ static struct pool *pool_create(struct mapped_device *pool_md,
- 	pool->last_commit_jiffies = jiffies;
- 	pool->pool_md = pool_md;
- 	pool->md_dev = metadata_dev;
-+	pool->data_dev = data_dev;
- 	__pool_table_insert(pool);
- 
- 	return pool;
-@@ -3093,6 +3096,7 @@ static void __pool_dec(struct pool *pool)
- 
- static struct pool *__pool_find(struct mapped_device *pool_md,
- 				struct block_device *metadata_dev,
-+				struct block_device *data_dev,
- 				unsigned long block_size, int read_only,
- 				char **error, int *created)
- {
-@@ -3103,19 +3107,23 @@ static struct pool *__pool_find(struct mapped_device *pool_md,
- 			*error = "metadata device already in use by a pool";
- 			return ERR_PTR(-EBUSY);
- 		}
-+		if (pool->data_dev != data_dev) {
-+			*error = "data device already in use by a pool";
-+			return ERR_PTR(-EBUSY);
-+		}
- 		__pool_inc(pool);
- 
- 	} else {
- 		pool = __pool_table_lookup(pool_md);
- 		if (pool) {
--			if (pool->md_dev != metadata_dev) {
-+			if (pool->md_dev != metadata_dev || pool->data_dev != data_dev) {
- 				*error = "different pool cannot replace a pool";
- 				return ERR_PTR(-EINVAL);
- 			}
- 			__pool_inc(pool);
- 
- 		} else {
--			pool = pool_create(pool_md, metadata_dev, block_size, read_only, error);
-+			pool = pool_create(pool_md, metadata_dev, data_dev, block_size, read_only, error);
- 			*created = 1;
- 		}
- 	}
-@@ -3368,7 +3376,7 @@ static int pool_ctr(struct dm_target *ti, unsigned argc, char **argv)
- 		goto out;
- 	}
- 
--	pool = __pool_find(dm_table_get_md(ti->table), metadata_dev->bdev,
-+	pool = __pool_find(dm_table_get_md(ti->table), metadata_dev->bdev, data_dev->bdev,
- 			   block_size, pf.mode == PM_READ_ONLY, &ti->error, &pool_created);
- 	if (IS_ERR(pool)) {
- 		r = PTR_ERR(pool);
-@@ -4114,7 +4122,7 @@ static struct target_type pool_target = {
- 	.name = "thin-pool",
- 	.features = DM_TARGET_SINGLETON | DM_TARGET_ALWAYS_WRITEABLE |
- 		    DM_TARGET_IMMUTABLE,
--	.version = {1, 21, 0},
-+	.version = {1, 22, 0},
- 	.module = THIS_MODULE,
- 	.ctr = pool_ctr,
- 	.dtr = pool_dtr,
-@@ -4493,7 +4501,7 @@ static void thin_io_hints(struct dm_target *ti, struct queue_limits *limits)
- 
- static struct target_type thin_target = {
- 	.name = "thin",
--	.version = {1, 21, 0},
-+	.version = {1, 22, 0},
- 	.module	= THIS_MODULE,
- 	.ctr = thin_ctr,
- 	.dtr = thin_dtr,
+diff --git a/drivers/infiniband/ulp/srp/ib_srp.c b/drivers/infiniband/ulp/srp/ib_srp.c
+index b5960351bec08..8708ed5477e99 100644
+--- a/drivers/infiniband/ulp/srp/ib_srp.c
++++ b/drivers/infiniband/ulp/srp/ib_srp.c
+@@ -2536,7 +2536,8 @@ static void srp_cm_rep_handler(struct ib_cm_id *cm_id,
+ 	if (lrsp->opcode == SRP_LOGIN_RSP) {
+ 		ch->max_ti_iu_len = be32_to_cpu(lrsp->max_ti_iu_len);
+ 		ch->req_lim       = be32_to_cpu(lrsp->req_lim_delta);
+-		ch->use_imm_data  = lrsp->rsp_flags & SRP_LOGIN_RSP_IMMED_SUPP;
++		ch->use_imm_data  = srp_use_imm_data &&
++			(lrsp->rsp_flags & SRP_LOGIN_RSP_IMMED_SUPP);
+ 		ch->max_it_iu_len = srp_max_it_iu_len(target->cmd_sg_cnt,
+ 						      ch->use_imm_data);
+ 		WARN_ON_ONCE(ch->max_it_iu_len >
 -- 
 2.20.1
 
