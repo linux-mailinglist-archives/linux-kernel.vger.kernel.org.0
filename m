@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7443A15ECDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:31:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EF8B15ED43
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:33:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390687AbgBNQH3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:07:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57278 "EHLO mail.kernel.org"
+        id S2390650AbgBNRcw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:32:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57306 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390144AbgBNQGl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:06:41 -0500
+        id S2390490AbgBNQGm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:06:42 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E766222C2;
-        Fri, 14 Feb 2020 16:06:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 494E522314;
+        Fri, 14 Feb 2020 16:06:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696400;
-        bh=BMSj3i+Zs6AHfdEoKpkr+5pJSuTkEp65CL/I5pXfE30=;
+        s=default; t=1581696402;
+        bh=Cnisj9RKGQR/FA7XIim+1rtIYd3BMtJlvkxzs51h6yw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gL5syfccITRa7zVVmoA+jIjQ4Qb/72Wg4mOxCOMNNxfFzuRSmIX0hJWxJUThO5dI8
-         BKLsJlJhU0g1veilL4c52EhrRv1cbHWyPp8R8Qcjr5hklLdqlqlLogsCFEdUsF+rvE
-         LKxqUDOl3PbHQXiciy5m7z+CS7A2Eatrm2gwINto=
+        b=RH1ukmnMw7aX6iTsW327bMCSzXCS8Ktl6vboafxJS38Gy9kA8hkJpK0TCFYy3yzDq
+         ZrGuDZ4qjoMrwRRJFJjimQCrDiQLyHWDXd8+kSQ9zxudmeQdgg49X4NRlEgwxXNsHu
+         1LT67S6zMm7uCte+o6KXb0prz8Z2ZgHVEqsC3p8U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     YueHaibing <yuehaibing@huawei.com>, Hulk Robot <hulkci@huawei.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, alsa-devel@alsa-project.org
-Subject: [PATCH AUTOSEL 5.4 225/459] ASoC: Intel: kbl_da7219_max98357a: remove unused variable 'constraints_16000' and 'ch_mono'
-Date:   Fri, 14 Feb 2020 10:57:55 -0500
-Message-Id: <20200214160149.11681-225-sashal@kernel.org>
+Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
+        Robin Gong <yibin.gong@nxp.com>, Vinod Koul <vkoul@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, dmaengine@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.4 226/459] dmaengine: imx-sdma: Fix memory leak
+Date:   Fri, 14 Feb 2020 10:57:56 -0500
+Message-Id: <20200214160149.11681-226-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -43,50 +44,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Sascha Hauer <s.hauer@pengutronix.de>
 
-[ Upstream commit c5614fb8e3d13be7bba79f71b798468a3a6224f7 ]
+[ Upstream commit 02939cd167095f16328a1bd5cab5a90b550606df ]
 
-sound/soc/intel/boards/kbl_da7219_max98357a.c:343:48:
- warning: constraints_16000 defined but not used [-Wunused-const-variable=]
-sound/soc/intel/boards/kbl_da7219_max98357a.c:348:27:
- warning: ch_mono defined but not used [-Wunused-const-variable=]
+The current descriptor is not on any list of the virtual DMA channel.
+Once sdma_terminate_all() is called when a descriptor is currently
+in flight then this one is forgotten to be freed. We have to call
+vchan_terminate_vdesc() on this descriptor to re-add it to the lists.
+Now that we also free the currently running descriptor we can (and
+actually have to) remove the current descriptor from its list also
+for the cyclic case.
 
-They are never used, so can be removed.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20191224140237.36732-1-yuehaibing@huawei.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+Reviewed-by: Robin Gong <yibin.gong@nxp.com>
+Tested-by: Robin Gong <yibin.gong@nxp.com>
+Link: https://lore.kernel.org/r/20191216105328.15198-10-s.hauer@pengutronix.de
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/intel/boards/kbl_da7219_max98357a.c | 13 -------------
- 1 file changed, 13 deletions(-)
+ drivers/dma/imx-sdma.c | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
-diff --git a/sound/soc/intel/boards/kbl_da7219_max98357a.c b/sound/soc/intel/boards/kbl_da7219_max98357a.c
-index 537a88932bb69..0d55319a0773c 100644
---- a/sound/soc/intel/boards/kbl_da7219_max98357a.c
-+++ b/sound/soc/intel/boards/kbl_da7219_max98357a.c
-@@ -336,19 +336,6 @@ static struct snd_soc_ops kabylake_dmic_ops = {
- 	.startup = kabylake_dmic_startup,
- };
+diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
+index c27e206a764c3..66f1b2ac5cde4 100644
+--- a/drivers/dma/imx-sdma.c
++++ b/drivers/dma/imx-sdma.c
+@@ -760,12 +760,8 @@ static void sdma_start_desc(struct sdma_channel *sdmac)
+ 		return;
+ 	}
+ 	sdmac->desc = desc = to_sdma_desc(&vd->tx);
+-	/*
+-	 * Do not delete the node in desc_issued list in cyclic mode, otherwise
+-	 * the desc allocated will never be freed in vchan_dma_desc_free_list
+-	 */
+-	if (!(sdmac->flags & IMX_DMA_SG_LOOP))
+-		list_del(&vd->node);
++
++	list_del(&vd->node);
  
--static const unsigned int rates_16000[] = {
--	16000,
--};
--
--static const struct snd_pcm_hw_constraint_list constraints_16000 = {
--	.count = ARRAY_SIZE(rates_16000),
--	.list  = rates_16000,
--};
--
--static const unsigned int ch_mono[] = {
--	1,
--};
--
- SND_SOC_DAILINK_DEF(dummy,
- 	DAILINK_COMP_ARRAY(COMP_DUMMY()));
+ 	sdma->channel_control[channel].base_bd_ptr = desc->bd_phys;
+ 	sdma->channel_control[channel].current_bd_ptr = desc->bd_phys;
+@@ -1071,7 +1067,6 @@ static void sdma_channel_terminate_work(struct work_struct *work)
  
+ 	spin_lock_irqsave(&sdmac->vc.lock, flags);
+ 	vchan_get_all_descriptors(&sdmac->vc, &head);
+-	sdmac->desc = NULL;
+ 	spin_unlock_irqrestore(&sdmac->vc.lock, flags);
+ 	vchan_dma_desc_free_list(&sdmac->vc, &head);
+ 	sdmac->context_loaded = false;
+@@ -1080,11 +1075,19 @@ static void sdma_channel_terminate_work(struct work_struct *work)
+ static int sdma_disable_channel_async(struct dma_chan *chan)
+ {
+ 	struct sdma_channel *sdmac = to_sdma_chan(chan);
++	unsigned long flags;
++
++	spin_lock_irqsave(&sdmac->vc.lock, flags);
+ 
+ 	sdma_disable_channel(chan);
+ 
+-	if (sdmac->desc)
++	if (sdmac->desc) {
++		vchan_terminate_vdesc(&sdmac->desc->vd);
++		sdmac->desc = NULL;
+ 		schedule_work(&sdmac->terminate_worker);
++	}
++
++	spin_unlock_irqrestore(&sdmac->vc.lock, flags);
+ 
+ 	return 0;
+ }
 -- 
 2.20.1
 
