@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E5A515DD86
+	by mail.lfdr.de (Postfix) with ESMTP id A856315DD87
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:59:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388811AbgBNP7H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:59:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43300 "EHLO mail.kernel.org"
+        id S2388838AbgBNP7M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:59:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388400AbgBNP6y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:58:54 -0500
+        id S2388760AbgBNP7A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:59:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FF04222C4;
-        Fri, 14 Feb 2020 15:58:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 757C32067D;
+        Fri, 14 Feb 2020 15:58:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695934;
-        bh=PLNrytnzgF1eAeTHEjvYL517Oe7v9++dJm1YPKnNc2U=;
+        s=default; t=1581695939;
+        bh=72jwIr70tZSmKLso6PZnaN8QwHlfCrUagBq8IFNznWo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S5lqIXlvgeFHkmc3ms1vvR9ZrOlliLaSHMZt8hbDRq5o8Su/Pi0Cdn4lWnBQkG6+y
-         6CtaL4hC4eQCuHTIbvlRi8zqerUp/CsRZPuOY3eQ3d9XvVumnUw1TTliU7600UaHab
-         8Eb03El6glPRq30+Ig9+gJoii2/YFwTW73hCL+yg=
+        b=DCpsgHSUWONT3uXS7FOGr+LXEWW8YHK7KMPkCk6gt6CohZEuk65RUbTozM3VCyYwN
+         tz2RZ6S5dQctyfPeQ66YsIKG55ApfT2ckqFxHs1X4L1PDo7FoqGMTi03bR3aP//TE6
+         /rP8ocurhshBviGWFUfSq/NGdtslMrRrO6xYTF+Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jason Gunthorpe <jgg@mellanox.com>,
-        Gal Pressman <galpress@amazon.com>,
-        Michal Kalderon <michal.kalderon@marvell.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 469/542] RDMA/core: Ensure that rdma_user_mmap_entry_remove() is a fence
-Date:   Fri, 14 Feb 2020 10:47:41 -0500
-Message-Id: <20200214154854.6746-469-sashal@kernel.org>
+Cc:     Yan-Hsuan Chuang <yhchuang@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 473/542] rtw88: fix potential NULL skb access in TX ISR
+Date:   Fri, 14 Feb 2020 10:47:45 -0500
+Message-Id: <20200214154854.6746-473-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -44,41 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Gunthorpe <jgg@mellanox.com>
+From: Yan-Hsuan Chuang <yhchuang@realtek.com>
 
-[ Upstream commit 6b3712c0246ca7b2b8fa05eab2362cf267410f7e ]
+[ Upstream commit f4f84ff8377d4cedf18317747bc407b2cf657d0f ]
 
-The set of entry->driver_removed is missing locking, protect it with
-xa_lock() which is held by the only reader.
+Sometimes the TX queue may be empty and we could possible
+dequeue a NULL pointer, crash the kernel. If the skb is NULL
+then there is nothing to do, just leave the ISR.
 
-Otherwise readers may continue to see driver_removed = false after
-rdma_user_mmap_entry_remove() returns and may continue to try and
-establish new mmaps.
+And the TX queue should not be empty here, so print an error
+to see if there is anything wrong for DMA ring.
 
-Fixes: 3411f9f01b76 ("RDMA/core: Create mmap database and cookie helper functions")
-Link: https://lore.kernel.org/r/20200115202041.GA17199@ziepe.ca
-Reviewed-by: Gal Pressman <galpress@amazon.com>
-Acked-by: Michal Kalderon <michal.kalderon@marvell.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: e3037485c68e ("rtw88: new Realtek 802.11ac driver")
+Signed-off-by: Yan-Hsuan Chuang <yhchuang@realtek.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/core/ib_core_uverbs.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/wireless/realtek/rtw88/pci.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/infiniband/core/ib_core_uverbs.c b/drivers/infiniband/core/ib_core_uverbs.c
-index b7cb59844ece4..b51bd7087a881 100644
---- a/drivers/infiniband/core/ib_core_uverbs.c
-+++ b/drivers/infiniband/core/ib_core_uverbs.c
-@@ -232,7 +232,9 @@ void rdma_user_mmap_entry_remove(struct rdma_user_mmap_entry *entry)
- 	if (!entry)
- 		return;
+diff --git a/drivers/net/wireless/realtek/rtw88/pci.c b/drivers/net/wireless/realtek/rtw88/pci.c
+index a58e8276a41a3..a6746b5a9ff2d 100644
+--- a/drivers/net/wireless/realtek/rtw88/pci.c
++++ b/drivers/net/wireless/realtek/rtw88/pci.c
+@@ -832,6 +832,11 @@ static void rtw_pci_tx_isr(struct rtw_dev *rtwdev, struct rtw_pci *rtwpci,
  
-+	xa_lock(&entry->ucontext->mmap_xa);
- 	entry->driver_removed = true;
-+	xa_unlock(&entry->ucontext->mmap_xa);
- 	kref_put(&entry->ref, rdma_user_mmap_entry_free);
- }
- EXPORT_SYMBOL(rdma_user_mmap_entry_remove);
+ 	while (count--) {
+ 		skb = skb_dequeue(&ring->queue);
++		if (!skb) {
++			rtw_err(rtwdev, "failed to dequeue %d skb TX queue %d, BD=0x%08x, rp %d -> %d\n",
++				count, hw_queue, bd_idx, ring->r.rp, cur_rp);
++			break;
++		}
+ 		tx_data = rtw_pci_get_tx_data(skb);
+ 		pci_unmap_single(rtwpci->pdev, tx_data->dma, skb->len,
+ 				 PCI_DMA_TODEVICE);
 -- 
 2.20.1
 
