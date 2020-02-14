@@ -2,206 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 244BC15EDF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:38:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1F1315EE03
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:38:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390689AbgBNRhS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:37:18 -0500
-Received: from mail-il1-f199.google.com ([209.85.166.199]:42111 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390612AbgBNRhQ (ORCPT
+        id S2392381AbgBNRhz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:37:55 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:42296 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387566AbgBNRhw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 12:37:16 -0500
-Received: by mail-il1-f199.google.com with SMTP id s13so8190715ili.9
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 09:37:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=gOMw5WSI6uBq6uEWNfGFgc8NIaIHo411fneSXFMRfCA=;
-        b=ESJxiEVxItUcLvf/tEIiE73X4ec+W6sFSJHsnwMbmMzTkVJbxu+F3jbilBi0JWIUJD
-         4zyrGRxcJI0JQgyVttC98QzhBYbGOSKbB6hI/VcK+aZCgIK8EVJ/6gHXPfWhGP7vqOal
-         tPylwyDLSE1mnJA+BMYehFmQyzyNeOO0I7S7C2GZ+qhMWy3aYrNVSWaek3bo6dY9qBYj
-         Wu9aAGQSyLWaSgeG/YK/Ol0kdQWLZ7Cb7igmTpK4lJiUpmDjq8eMaZFa1+njVfmXq95+
-         /E+okavtpPtAInBVIIsEw6PdzQ1TsJMbIGk9HBF/hcla7tizxbTMfkE/0fLkxDFPMh5I
-         zVPg==
-X-Gm-Message-State: APjAAAV2wlYElXgAO9bHe93xRJgnTmbr45Cj9EfgxRGKc+3hAogdys0o
-        Vo2GWLjea4ijm4BQStsQAZ3/Yx6W7TGAky3jyqohLrL2KQSP
-X-Google-Smtp-Source: APXvYqxdtEw8JEouC9e0fzkSg3MRf5uz8Al1+TDJohN2sIm1QXVfxpay0ZlVjrIWZiGMKQnz4If3aaFmNxVudvrO2CeYflvs50Ix
+        Fri, 14 Feb 2020 12:37:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=nr8dc65Z/q/8A+WtruCX26CcC/LTkMCzKZawK5yXtHc=; b=Tf4KMkWHFrljmVBhrYMWj7YnUm
+        lMuDhc+cLFNpTcJ391Ib6a/TbyJ38iZ2ydjcI+5hzUOdAwJYP+VxiyQxcGDK21TeXCWpQ6g047/t7
+        t06my+JqVLs4FwHwjopqA7jZSQqAzYeJeddRdbU1IV82ycqEzuIIoq1cfg84wzT2R1mpSMkCpyzxH
+        1jSodJ6rK9GqjQ8ghqr9ELtsALOpvH7yru9FRoyonxiwLjbSxPTN7cRRj1UXIGDk2ShOxJj6yEtIF
+        OLdReRiq0zD9BOQPIxNj8Z1IpHX4ps5BTb3JPDoDmHSglsCVXNNXvTboxtgWK59xb+y7tJoYOlMEC
+        oNGAYI1Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j2euI-0001RF-Ac; Fri, 14 Feb 2020 17:37:38 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 281B3307B91;
+        Fri, 14 Feb 2020 18:35:44 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C366820B33554; Fri, 14 Feb 2020 18:37:34 +0100 (CET)
+Date:   Fri, 14 Feb 2020 18:37:34 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Shuah Khan <skhan@linuxfoundation.org>
+Cc:     Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Marco Elver <elver@google.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Gary Hook <Gary.Hook@amd.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        linux-kernel@vger.kernel.org,
+        Stephane Eranian <eranian@google.com>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH v6 1/6] perf/cgroup: Reorder perf_cgroup_connect()
+Message-ID: <20200214173734.GN14914@hirez.programming.kicks-ass.net>
+References: <20191206231539.227585-1-irogers@google.com>
+ <20200214075133.181299-1-irogers@google.com>
+ <20200214075133.181299-2-irogers@google.com>
+ <28dafe17-5a63-cc69-4f1e-fd75edb8b1bd@linuxfoundation.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:409d:: with SMTP id d29mr3927439ill.66.1581701834425;
- Fri, 14 Feb 2020 09:37:14 -0800 (PST)
-Date:   Fri, 14 Feb 2020 09:37:14 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fb4c32059e8ca78c@google.com>
-Subject: possible deadlock in n_tty_receive_buf_common
-From:   syzbot <syzbot+41a045bca47dde704c4c@syzkaller.appspotmail.com>
-To:     gregkh@linuxfoundation.org, jslaby@suse.com,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <28dafe17-5a63-cc69-4f1e-fd75edb8b1bd@linuxfoundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Fri, Feb 14, 2020 at 09:11:24AM -0700, Shuah Khan wrote:
+> On 2/14/20 12:51 AM, Ian Rogers wrote:
+> > From: Peter Zijlstra <peterz@infradead.org>
+> > 
+> > Move perf_cgroup_connect() after perf_event_alloc(), such that we can
+> > find/use the PMU's cpu context.
+> 
+> Can you elaborate on this usage? It will helpful to know how
+> this is used and what do we get from it. What were we missing
+> with the way it was done before?
 
-syzbot found the following crash on:
-
-HEAD commit:    9f01828e Add linux-next specific files for 20200214
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=119f6c29e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ffb2752ee30931a0
-dashboard link: https://syzkaller.appspot.com/bug?extid=41a045bca47dde704c4c
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1172fc09e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15a3a431e00000
-
-Bisection is inconclusive: the bug happens on the oldest tested release.
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=106596b5e00000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=126596b5e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=146596b5e00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+41a045bca47dde704c4c@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-5.6.0-rc1-next-20200214-syzkaller #0 Not tainted
-------------------------------------------------------
-syz-executor167/9787 is trying to acquire lock:
-ffff88809a1872a0 (&tty->termios_rwsem){++++}, at: n_tty_receive_buf_common+0x8a/0x2b70 drivers/tty/n_tty.c:1705
-
-but task is already holding lock:
-ffffffff8a1414c0 (sel_lock){+.+.}, at: paste_selection+0x15a/0x4d0 drivers/tty/vt/selection.c:374
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (sel_lock){+.+.}:
-       __mutex_lock_common kernel/locking/mutex.c:956 [inline]
-       __mutex_lock+0x156/0x13c0 kernel/locking/mutex.c:1103
-       mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1118
-       set_selection_kernel+0x39d/0x13d0 drivers/tty/vt/selection.c:217
-       set_selection_user+0x95/0xd9 drivers/tty/vt/selection.c:181
-       tioclinux+0x11c/0x480 drivers/tty/vt/vt.c:3050
-       vt_ioctl+0x1a41/0x26c0 drivers/tty/vt/vt_ioctl.c:364
-       tty_ioctl+0xa37/0x14f0 drivers/tty/tty_io.c:2660
-       vfs_ioctl fs/ioctl.c:47 [inline]
-       ksys_ioctl+0x123/0x180 fs/ioctl.c:763
-       __do_sys_ioctl fs/ioctl.c:772 [inline]
-       __se_sys_ioctl fs/ioctl.c:770 [inline]
-       __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:770
-       do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-       entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #1 (console_lock){+.+.}:
-       console_lock+0x47/0x80 kernel/printk/printk.c:2286
-       con_flush_chars drivers/tty/vt/vt.c:3223 [inline]
-       con_flush_chars+0x3d/0xa0 drivers/tty/vt/vt.c:3215
-       n_tty_write+0xc85/0x1080 drivers/tty/n_tty.c:2350
-       do_tty_write drivers/tty/tty_io.c:962 [inline]
-       tty_write+0x496/0x7f0 drivers/tty/tty_io.c:1046
-       __vfs_write+0x8a/0x110 fs/read_write.c:494
-       vfs_write+0x268/0x5d0 fs/read_write.c:558
-       ksys_write+0x14f/0x290 fs/read_write.c:611
-       __do_sys_write fs/read_write.c:623 [inline]
-       __se_sys_write fs/read_write.c:620 [inline]
-       __x64_sys_write+0x73/0xb0 fs/read_write.c:620
-       do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-       entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #0 (&tty->termios_rwsem){++++}:
-       check_prev_add kernel/locking/lockdep.c:2481 [inline]
-       check_prevs_add kernel/locking/lockdep.c:2586 [inline]
-       validate_chain kernel/locking/lockdep.c:3203 [inline]
-       __lock_acquire+0x29cd/0x6320 kernel/locking/lockdep.c:4190
-       lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4720
-       down_read+0x95/0x440 kernel/locking/rwsem.c:1492
-       n_tty_receive_buf_common+0x8a/0x2b70 drivers/tty/n_tty.c:1705
-       n_tty_receive_buf2+0x34/0x40 drivers/tty/n_tty.c:1777
-       tty_ldisc_receive_buf+0xad/0x1c0 drivers/tty/tty_buffer.c:461
-       paste_selection+0x1ff/0x4d0 drivers/tty/vt/selection.c:389
-       tioclinux+0x133/0x480 drivers/tty/vt/vt.c:3055
-       vt_ioctl+0x1a41/0x26c0 drivers/tty/vt/vt_ioctl.c:364
-       tty_ioctl+0xa37/0x14f0 drivers/tty/tty_io.c:2660
-       vfs_ioctl fs/ioctl.c:47 [inline]
-       ksys_ioctl+0x123/0x180 fs/ioctl.c:763
-       __do_sys_ioctl fs/ioctl.c:772 [inline]
-       __se_sys_ioctl fs/ioctl.c:770 [inline]
-       __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:770
-       do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-       entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-other info that might help us debug this:
-
-Chain exists of:
-  &tty->termios_rwsem --> console_lock --> sel_lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(sel_lock);
-                               lock(console_lock);
-                               lock(sel_lock);
-  lock(&tty->termios_rwsem);
-
- *** DEADLOCK ***
-
-3 locks held by syz-executor167/9787:
- #0: ffff88809a187090 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
- #1: ffff8880aa5be0a8 (&buf->lock){+.+.}, at: tty_buffer_lock_exclusive+0x30/0x40 drivers/tty/tty_buffer.c:61
- #2: ffffffff8a1414c0 (sel_lock){+.+.}, at: paste_selection+0x15a/0x4d0 drivers/tty/vt/selection.c:374
-
-stack backtrace:
-CPU: 1 PID: 9787 Comm: syz-executor167 Not tainted 5.6.0-rc1-next-20200214-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x197/0x210 lib/dump_stack.c:118
- print_circular_bug.isra.0.cold+0x163/0x172 kernel/locking/lockdep.c:1688
- check_noncircular+0x32e/0x3e0 kernel/locking/lockdep.c:1812
- check_prev_add kernel/locking/lockdep.c:2481 [inline]
- check_prevs_add kernel/locking/lockdep.c:2586 [inline]
- validate_chain kernel/locking/lockdep.c:3203 [inline]
- __lock_acquire+0x29cd/0x6320 kernel/locking/lockdep.c:4190
- lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4720
- down_read+0x95/0x440 kernel/locking/rwsem.c:1492
- n_tty_receive_buf_common+0x8a/0x2b70 drivers/tty/n_tty.c:1705
- n_tty_receive_buf2+0x34/0x40 drivers/tty/n_tty.c:1777
- tty_ldisc_receive_buf+0xad/0x1c0 drivers/tty/tty_buffer.c:461
- paste_selection+0x1ff/0x4d0 drivers/tty/vt/selection.c:389
- tioclinux+0x133/0x480 drivers/tty/vt/vt.c:3055
- vt_ioctl+0x1a41/0x26c0 drivers/tty/vt/vt_ioctl.c:364
- tty_ioctl+0xa37/0x14f0 drivers/tty/tty_io.c:2660
- vfs_ioctl fs/ioctl.c:47 [inline]
- ksys_ioctl+0x123/0x180 fs/ioctl.c:763
- __do_sys_ioctl fs/ioctl.c:772 [inline]
- __se_sys_ioctl fs/ioctl.c:770 [inline]
- __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:770
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440219
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 5b 14 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffe5133a1c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440219
-RDX: 0000000020000040 RSI: 000000000000541c RDI: 0000000000000004
-RBP: 00000000006ca018 R08: 000000000000000d R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000401b00
-R13: 0000000000401b90 R14: 0000000000000000 R15: 000000000
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+It says so right there. We need it after perf_event_alloc() so that we
+can find/use the event's PMU cpu context.
