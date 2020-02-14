@@ -2,175 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4F9815EE2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:39:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC56315EE6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:40:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394767AbgBNRi5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:38:57 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:29623 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389979AbgBNRiz (ORCPT
+        id S1730701AbgBNRkL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:40:11 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:43400 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390001AbgBNRkI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 12:38:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581701933;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=LkNDcKP8WfZzEgb1FMJ+6cGSN8qV8eyUCjq3RWyKemo=;
-        b=eSB0ODoXEkySTCD+lfr3FbRId4esqRa0hbDjBTd3vy7yhTlUFsoKcTqpB6i160ghYS/QoF
-        eyNCOloW7UxsaZV5SVf8HwKf+JQOFUNFPfF1u/RXrKst62axFSdh4q6Jg+aPDXa2W92T/F
-        PUPDDaX+CCoPEkVR5DQJK9RYiqWfHB4=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-344-87JngVzSMTiWpXx8ab4HmQ-1; Fri, 14 Feb 2020 12:38:47 -0500
-X-MC-Unique: 87JngVzSMTiWpXx8ab4HmQ-1
-Received: by mail-qv1-f72.google.com with SMTP id dc2so6151846qvb.7
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 09:38:47 -0800 (PST)
+        Fri, 14 Feb 2020 12:40:08 -0500
+Received: by mail-pf1-f193.google.com with SMTP id s1so5204946pfh.10
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 09:40:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=3eXuOgfEolpkZ5hPj8gcQuPTURlTdrMwkoy/D3yOIvc=;
+        b=scFiUdiFkMp38HNXCebJUGM5/Xev4sTfpdTyi+eIORpvxEE0NyI4nWVBHUHdSXuU5d
+         RiPBBexlo3EQIACh+gtrdkaprcMAxzHOwE42W3z3TOHhCccOugoonMcadDsGExGx24pZ
+         H5/pvCKDjTt4FVP9c5g/C0+RgXXbdQ1Xqk7FmQlbb6AZ5h2ILWTjgqWfIwcHgBV+L7JY
+         TSCYm2FabsMtQ8YOEMv0D3S/L1piI0FOoF1PWbmE6EHuG+gpgg4BZW4kiiK6A07bGmUH
+         FXPJ4y0WsutSbFR4CDk3jDnnfWv6EdKE+piowBnqUmvtaAu45SrnpvEWExNeyJp8gdnO
+         cUZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:organization:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=LkNDcKP8WfZzEgb1FMJ+6cGSN8qV8eyUCjq3RWyKemo=;
-        b=NV6NVaq1wPc2CxWAkvEE0ZykIRoRdk5SF6hQrGJR3V60AU3gWjgwNMUsp9+Sciq7hH
-         PLcZOvpUKXn86fFKOSge/76pM5Zo1+WkUeo+b1lzQOtF8jBvyg4OlqF0+n7RgaCGOWXN
-         GM/f/F4l3wOqS+veaoMaITx8SsZDEWBWmmTuQOQ5/XMHFCLHcD/ee8+v5QTKi05jEEZF
-         M+zxEe7a7g+U64jS9ctUU9usDFFD48KpBa2kFmpsAtp3HmsQQygI0HYK108EOdIq/mGU
-         Drt3B3qU6kiKtRyzz0fRFJl/NZMrVny36a/H+O+W+s6xVnhB1buPV+X3VKkQaR2TLMDY
-         pU1g==
-X-Gm-Message-State: APjAAAULzzGoyLh0oxSKZ0+ViyXQyKV/xIbrbcFISbh+qiRkCrcsQf2G
-        XhzOKhVJXZnF5lk8bfjsH/1xS1bRxO5PJw0Lvrw+ZjJjSafZ2XP/WdvIiy+kaQ8s8PU/YcKyAB9
-        lkbwVetBwswhjtgq5iJBG+3MD
-X-Received: by 2002:a37:6c45:: with SMTP id h66mr3584212qkc.360.1581701926139;
-        Fri, 14 Feb 2020 09:38:46 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxYO2nGgtY9wiWp/sFhAYQ2hS7P1MCs1W6nqmfBghB9oJYriPY8kbNaYKdzQGMJrePguHQxGw==
-X-Received: by 2002:a37:6c45:: with SMTP id h66mr3584200qkc.360.1581701925875;
-        Fri, 14 Feb 2020 09:38:45 -0800 (PST)
-Received: from dhcp-10-20-1-196.bss.redhat.com ([144.121.20.162])
-        by smtp.gmail.com with ESMTPSA id f32sm3801569qtk.89.2020.02.14.09.38.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2020 09:38:45 -0800 (PST)
-Message-ID: <6fa270d0d395d87c41b7d0a9ec87eadea5398eb6.camel@redhat.com>
-Subject: Re: [PATCH 4.9 087/116] drm/dp_mst: Remove VCPI while disabling
- topology mgr
-From:   Lyude Paul <lyude@redhat.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     stable@vger.kernel.org, Wayne Lin <Wayne.Lin@amd.com>,
-        Sasha Levin <sashal@kernel.org>
-Date:   Fri, 14 Feb 2020 12:38:44 -0500
-In-Reply-To: <20200213151916.429278047@linuxfoundation.org>
-References: <20200213151842.259660170@linuxfoundation.org>
-         <20200213151916.429278047@linuxfoundation.org>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=3eXuOgfEolpkZ5hPj8gcQuPTURlTdrMwkoy/D3yOIvc=;
+        b=dNATy7JcztwBej+gshkzlnMNcKY31OhOj8UuAMRFLkSpJohh8CzAhIMcOZBne4Gjev
+         VLEjpkKeTFrB7pQFkMjPrSyp9vo1Gd1M3G02tG7KyL1ralk0kLAR42wL8aj31LkSNTW8
+         iEYtUJWRFEI1PiSSjUqjn1jLZJ3N74AcUoypWPTAh9oj+ypZtwQrYC3y95ypde7ofnQv
+         JqNMoCB49zwiam8BFmYQGL5mnMd3DS3t+75CDEKCU05DUUHHqEnoJRWVTV1E6HUQpSih
+         gc5lISyl2nbudPAloARrIERBOFdwZjGKKEF2BMDL4X/IClZwZyHwJlscmpCC8ej58hxW
+         X02w==
+X-Gm-Message-State: APjAAAXx05Bju9qPV+/WL4NjkYTzsob+MP8ibn+ws/Tj9K8Tj7jZe17R
+        aSdJmo6r2GxjhVAhDLiVMBbskg==
+X-Google-Smtp-Source: APXvYqw6w4pf9w58UmNm5LBUCfGCa8I1IoNvSrGAdVzQAvVkPnOFhecSxwSGlrlAdNuVi3wRbquU2g==
+X-Received: by 2002:a63:f40d:: with SMTP id g13mr4919987pgi.374.1581702007228;
+        Fri, 14 Feb 2020 09:40:07 -0800 (PST)
+Received: from ?IPv6:2600:1010:b013:3558:61dd:b73f:191c:9246? ([2600:1010:b013:3558:61dd:b73f:191c:9246])
+        by smtp.gmail.com with ESMTPSA id h3sm7424340pfo.102.2020.02.14.09.40.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Feb 2020 09:40:06 -0800 (PST)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   Andy Lutomirski <luto@amacapital.net>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v26 10/22] x86/sgx: Linux Enclave Driver
+Date:   Fri, 14 Feb 2020 09:40:00 -0800
+Message-Id: <D18DD438-2458-4264-9D56-A05EB84BB545@amacapital.net>
+References: <20200214171146.GD20690@linux.intel.com>
+Cc:     Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
+        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
+        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
+        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
+        rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
+        linux-security-module@vger.kernel.org,
+        Haitao Huang <haitao.huang@linux.intel.com>
+In-Reply-To: <20200214171146.GD20690@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+X-Mailer: iPhone Mail (17D50)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We should drop this and the versions for all of the other kernel versions.
-This patch later got reverted in a86675968e2300fb567994459da3dbc4cd1b322a in
-drm-misc/drm-misc-next, and then replaced with a proper fix in
-8732fe46b20c951493bfc4dba0ad08efdf41de81
 
-On Thu, 2020-02-13 at 07:20 -0800, Greg Kroah-Hartman wrote:
-> From: Wayne Lin <Wayne.Lin@amd.com>
-> 
-> [ Upstream commit 64e62bdf04ab8529f45ed0a85122c703035dec3a ]
-> 
-> [Why]
-> 
-> This patch is trying to address the issue observed when hotplug DP
-> daisy chain monitors.
-> 
-> e.g.
-> src-mstb-mstb-sst -> src (unplug) mstb-mstb-sst -> src-mstb-mstb-sst
-> (plug in again)
-> 
-> Once unplug a DP MST capable device, driver will call
-> drm_dp_mst_topology_mgr_set_mst() to disable MST. In this function,
-> it cleans data of topology manager while disabling mst_state. However,
-> it doesn't clean up the proposed_vcpis of topology manager.
-> If proposed_vcpi is not reset, once plug in MST daisy chain monitors
-> later, code will fail at checking port validation while trying to
-> allocate payloads.
-> 
-> When MST capable device is plugged in again and try to allocate
-> payloads by calling drm_dp_update_payload_part1(), this
-> function will iterate over all proposed virtual channels to see if
-> any proposed VCPI's num_slots is greater than 0. If any proposed
-> VCPI's num_slots is greater than 0 and the port which the
-> specific virtual channel directed to is not in the topology, code then
-> fails at the port validation. Since there are stale VCPI allocations
-> from the previous topology enablement in proposed_vcpi[], code will fail
-> at port validation and reurn EINVAL.
-> 
-> [How]
-> 
-> Clean up the data of stale proposed_vcpi[] and reset mgr->proposed_vcpis
-> to NULL while disabling mst in drm_dp_mst_topology_mgr_set_mst().
-> 
-> Changes since v1:
-> *Add on more details in commit message to describe the issue which the
-> patch is trying to fix
-> 
-> Signed-off-by: Wayne Lin <Wayne.Lin@amd.com>
-> [added cc to stable]
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Link: 
-> https://patchwork.freedesktop.org/patch/msgid/20191205090043.7580-1-Wayne.Lin@amd.com
-> Cc: <stable@vger.kernel.org> # v3.17+
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  drivers/gpu/drm/drm_dp_mst_topology.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c
-> b/drivers/gpu/drm/drm_dp_mst_topology.c
-> index 17aedaaf364c1..8b1d497b7f99f 100644
-> --- a/drivers/gpu/drm/drm_dp_mst_topology.c
-> +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-> @@ -2042,6 +2042,7 @@ static bool drm_dp_get_vc_payload_bw(int dp_link_bw,
->  int drm_dp_mst_topology_mgr_set_mst(struct drm_dp_mst_topology_mgr *mgr,
-> bool mst_state)
->  {
->  	int ret = 0;
-> +	int i = 0;
->  	struct drm_dp_mst_branch *mstb = NULL;
->  
->  	mutex_lock(&mgr->lock);
-> @@ -2106,10 +2107,21 @@ int drm_dp_mst_topology_mgr_set_mst(struct
-> drm_dp_mst_topology_mgr *mgr, bool ms
->  		/* this can fail if the device is gone */
->  		drm_dp_dpcd_writeb(mgr->aux, DP_MSTM_CTRL, 0);
->  		ret = 0;
-> +		mutex_lock(&mgr->payload_lock);
->  		memset(mgr->payloads, 0, mgr->max_payloads * sizeof(struct
-> drm_dp_payload));
->  		mgr->payload_mask = 0;
->  		set_bit(0, &mgr->payload_mask);
-> +		for (i = 0; i < mgr->max_payloads; i++) {
-> +			struct drm_dp_vcpi *vcpi = mgr->proposed_vcpis[i];
-> +
-> +			if (vcpi) {
-> +				vcpi->vcpi = 0;
-> +				vcpi->num_slots = 0;
-> +			}
-> +			mgr->proposed_vcpis[i] = NULL;
-> +		}
->  		mgr->vcpi_mask = 0;
-> +		mutex_unlock(&mgr->payload_lock);
->  	}
->  
->  out_unlock:
--- 
-Cheers,
-	Lyude Paul (she/her)
-	Associate Software Engineer at Red Hat
 
+> On Feb 14, 2020, at 9:11 AM, Sean Christopherson <sean.j.christopherson@in=
+tel.com> wrote:
+>=20
+> =EF=BB=BFOn Fri, Feb 14, 2020 at 10:24:10AM +0100, Jethro Beekman wrote:
+>>> On 2020-02-13 19:07, Sean Christopherson wrote:
+>>> On Thu, Feb 13, 2020 at 02:59:52PM +0100, Jethro Beekman wrote:
+>>>> On 2020-02-09 22:25, Jarkko Sakkinen wrote:
+>>>>> +/**
+>>>>> + * struct sgx_enclave_add_pages - parameter structure for the
+>>>>> + *                                %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
+>>>>> + * @src:    start address for the page data
+>>>>> + * @offset:    starting page offset
+>>>>> + * @length:    length of the data (multiple of the page size)
+>>>>> + * @secinfo:    address for the SECINFO data
+>>>>> + * @flags:    page control flags
+>>>>> + * @count:    number of bytes added (multiple of the page size)
+>>>>> + */
+>>>>> +struct sgx_enclave_add_pages {
+>>>>> +    __u64    src;
+>>>>> +    __u64    offset;
+>>>>> +    __u64    length;
+>>>>> +    __u64    secinfo;
+>>>>> +    __u64    flags;
+>>>>> +    __u64    count;
+>>>>> +};
+>>>>=20
+>>>> Compared to the last time I looked at the patch set, this API removes t=
+he
+>>>> ability to measure individual pages chunks. That is not acceptable.
+>>>=20
+>>> Why is it not acceptable?  E.g. what specific use case do you have that
+>>> _requires_ on measuring partial 4k pages of an enclave?
+>>=20
+>> The use case is someone gives me an enclave and I want to load it. If I d=
+on't
+>> load it exactly as the enclave author specified, the enclave hash will be=
+
+>> different, and it won't work.
+>=20
+> And if our ABI says "thou shall measure in 4k chunks", then it's an invali=
+d
+> enclave if its author generated MRENCLAVE using a different granularity.
+
+ISTM, unless there=E2=80=99s a particularly compelling reason, if an enclave=
+ is valid, we should be able to load it.=
