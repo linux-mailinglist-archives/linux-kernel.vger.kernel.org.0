@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC9AD15DE11
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:03:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2727415DE15
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:03:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389193AbgBNQBy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:01:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47684 "EHLO mail.kernel.org"
+        id S2388482AbgBNQCB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:02:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388705AbgBNQBw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:01:52 -0500
+        id S2389195AbgBNQBy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:01:54 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C815C2067D;
-        Fri, 14 Feb 2020 16:01:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 52EBE2082F;
+        Fri, 14 Feb 2020 16:01:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696111;
-        bh=qStBGHPkTXhC16Gn47aKMJJ/N5wTThCfHowY2fSdCRw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=jZVMT4MnUUtf+S/oP2ATc7AbxOUnB5XXWE2J33qHn5fAdyJnch59QpuGdtNIoen9U
-         AmupylHS/9ej5ZxcvfPwL3G/irThWq5gqgqA2xjy0Dsdo7WRJAO6xCxBASPU/3Gzvn
-         Tk9I52t9MQGp9WiR16ayCrho96LmUzVj3mi5CYKA=
+        s=default; t=1581696114;
+        bh=ySzhj8c70C8x5NMMk9F+nbbW1KMpZZRpt6qN/z686dI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=vjjmxWS0WM+UDHCKvFJyuJWQ8lJLarjIXji39xY9CHGIcGCctAP7/iYXv9bTEdupT
+         EbYAVgHq1zSjnQ3uUASpMMlO3CUtxEPraM4un+hV/A75ZAtp4YpO77SGhzFPNX6ln+
+         ydk0Vikj5xFW2j7hkWB3Idok35CL7QpLFdZ6p0VI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     yu kuai <yukuai3@huawei.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.4 001/459] drm/amdgpu: remove set but not used variable 'mc_shared_chmap' from 'gfx_v6_0.c' and 'gfx_v7_0.c'
-Date:   Fri, 14 Feb 2020 10:54:11 -0500
-Message-Id: <20200214160149.11681-1-sashal@kernel.org>
+Cc:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 003/459] ath10k: Fix qmi init error handling
+Date:   Fri, 14 Feb 2020 10:54:13 -0500
+Message-Id: <20200214160149.11681-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
+References: <20200214160149.11681-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -43,73 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: yu kuai <yukuai3@huawei.com>
+From: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
 
-[ Upstream commit 747a397d394fac0001e4b3c03d7dce3a118af567 ]
+[ Upstream commit f8a595a87e93a33a10879f4b856be818d2f53c84 ]
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+When ath10k_qmi_init() fails, the error handling does not free the irq
+resources, which causes an issue if we EPROBE_DEFER as we'll attempt to
+(re-)register irqs which are already registered.
 
-drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c: In function
-‘gfx_v6_0_constants_init’:
-drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c:1579:6: warning: variable
-‘mc_shared_chmap’ set but not used [-Wunused-but-set-variable]
+Fix this by doing a power off since we just powered on the hardware, and
+freeing the irqs as error handling.
 
-drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c: In function
-‘gfx_v7_0_gpu_early_init’:
-drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c:4262:6: warning: variable
-‘mc_shared_chmap’ set but not used [-Wunused-but-set-variable]
-
-Fixes: 2cd46ad22383 ("drm/amdgpu: add graphic pipeline implementation for si v8")
-Fixes: d93f3ca706b8 ("drm/amdgpu/gfx7: rework gpu_init()")
-Signed-off-by: yu kuai <yukuai3@huawei.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fixes: ba94c753ccb4 ("ath10k: add QMI message handshake for wcn3990 client")
+Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c | 3 +--
- drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c | 3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ drivers/net/wireless/ath/ath10k/snoc.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
-index 7f0a63628c43a..31f44d05e606d 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
-@@ -1576,7 +1576,7 @@ static void gfx_v6_0_config_init(struct amdgpu_device *adev)
- static void gfx_v6_0_constants_init(struct amdgpu_device *adev)
- {
- 	u32 gb_addr_config = 0;
--	u32 mc_shared_chmap, mc_arb_ramcfg;
-+	u32 mc_arb_ramcfg;
- 	u32 sx_debug_1;
- 	u32 hdp_host_path_cntl;
- 	u32 tmp;
-@@ -1678,7 +1678,6 @@ static void gfx_v6_0_constants_init(struct amdgpu_device *adev)
- 
- 	WREG32(mmBIF_FB_EN, BIF_FB_EN__FB_READ_EN_MASK | BIF_FB_EN__FB_WRITE_EN_MASK);
- 
--	mc_shared_chmap = RREG32(mmMC_SHARED_CHMAP);
- 	adev->gfx.config.mc_arb_ramcfg = RREG32(mmMC_ARB_RAMCFG);
- 	mc_arb_ramcfg = adev->gfx.config.mc_arb_ramcfg;
- 
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
-index 791ba398f007e..58b7ef97bff54 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
-@@ -4258,7 +4258,7 @@ static int gfx_v7_0_late_init(void *handle)
- static void gfx_v7_0_gpu_early_init(struct amdgpu_device *adev)
- {
- 	u32 gb_addr_config;
--	u32 mc_shared_chmap, mc_arb_ramcfg;
-+	u32 mc_arb_ramcfg;
- 	u32 dimm00_addr_map, dimm01_addr_map, dimm10_addr_map, dimm11_addr_map;
- 	u32 tmp;
- 
-@@ -4335,7 +4335,6 @@ static void gfx_v7_0_gpu_early_init(struct amdgpu_device *adev)
- 		break;
+diff --git a/drivers/net/wireless/ath/ath10k/snoc.c b/drivers/net/wireless/ath/ath10k/snoc.c
+index fc15a0037f0e6..63607c3b8e818 100644
+--- a/drivers/net/wireless/ath/ath10k/snoc.c
++++ b/drivers/net/wireless/ath/ath10k/snoc.c
+@@ -1729,13 +1729,16 @@ static int ath10k_snoc_probe(struct platform_device *pdev)
+ 	ret = ath10k_qmi_init(ar, msa_size);
+ 	if (ret) {
+ 		ath10k_warn(ar, "failed to register wlfw qmi client: %d\n", ret);
+-		goto err_core_destroy;
++		goto err_power_off;
  	}
  
--	mc_shared_chmap = RREG32(mmMC_SHARED_CHMAP);
- 	adev->gfx.config.mc_arb_ramcfg = RREG32(mmMC_ARB_RAMCFG);
- 	mc_arb_ramcfg = adev->gfx.config.mc_arb_ramcfg;
+ 	ath10k_dbg(ar, ATH10K_DBG_SNOC, "snoc probe\n");
+ 
+ 	return 0;
+ 
++err_power_off:
++	ath10k_hw_power_off(ar);
++
+ err_free_irq:
+ 	ath10k_snoc_free_irq(ar);
  
 -- 
 2.20.1
