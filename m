@@ -2,39 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D985315E339
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:28:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59F6415E33A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:28:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393446AbgBNQ2S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:28:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37012 "EHLO mail.kernel.org"
+        id S2393466AbgBNQ2V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:28:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406415AbgBNQ00 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:26:26 -0500
+        id S2406423AbgBNQ01 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:26:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D838024705;
-        Fri, 14 Feb 2020 16:26:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE553246F3;
+        Fri, 14 Feb 2020 16:26:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697585;
-        bh=gF0Lo1ZXucCmV5ExXcPWhYb8NldkbJ0vESAs+B/OOB0=;
+        s=default; t=1581697587;
+        bh=efPlRvP3BDmjGZsC5qocUrqTpzq37N32vCI719Nqkx0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CxNMs0D9ajJCT4AdQEwMalaQIy/VUbxHhR7SDwzhaY7In18ereiONeawrPRtfCTpr
-         Q/lrjTjGl+WZMMC1jLy/us0gpKKnM0ntsOagJ984YulF8ega2qKvL7+yoOpdNb7RN2
-         3BhgCFf9m5CbHy5zuc+sRDls0fNzJUofd2QTro1A=
+        b=jINs0FJTMXk2swG+pgQU/h3IsY15bBg8FokYuILfGFJKBSSmYImceOAvhvbBbAaaQ
+         EY819ZRqiFZ0zwlkoOtFVffu0GulNw5e8aunae4RX2DoUdIHpnXirtdX+zK3rcRBs7
+         R9pLiV5fknDbA2HB6Jim5i2TH9R5m326VBeJbFDs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yunfeng Ye <yeyunfeng@huawei.com>,
-        zhengbin <zhengbin13@huawei.com>,
-        Hu Shiyuan <hushiyuan@huawei.com>,
-        Feilong Lin <linfeilong@huawei.com>, Jan Kara <jack@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, reiserfs-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 096/100] reiserfs: prevent NULL pointer dereference in reiserfs_insert_item()
-Date:   Fri, 14 Feb 2020 11:24:20 -0500
-Message-Id: <20200214162425.21071-96-sashal@kernel.org>
+Cc:     Zenghui Yu <yuzenghui@huawei.com>, Marc Zyngier <maz@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 098/100] irqchip/gic-v3-its: Reference to its_invall_cmd descriptor when building INVALL
+Date:   Fri, 14 Feb 2020 11:24:22 -0500
+Message-Id: <20200214162425.21071-98-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214162425.21071-1-sashal@kernel.org>
 References: <20200214162425.21071-1-sashal@kernel.org>
@@ -47,42 +42,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunfeng Ye <yeyunfeng@huawei.com>
+From: Zenghui Yu <yuzenghui@huawei.com>
 
-[ Upstream commit aacee5446a2a1aa35d0a49dab289552578657fb4 ]
+[ Upstream commit 107945227ac5d4c37911c7841b27c64b489ce9a9 ]
 
-The variable inode may be NULL in reiserfs_insert_item(), but there is
-no check before accessing the member of inode.
+It looks like an obvious mistake to use its_mapc_cmd descriptor when
+building the INVALL command block. It so far worked by luck because
+both its_mapc_cmd.col and its_invall_cmd.col sit at the same offset of
+the ITS command descriptor, but we should not rely on it.
 
-Fix this by adding NULL pointer check before calling reiserfs_debug().
-
-Link: http://lkml.kernel.org/r/79c5135d-ff25-1cc9-4e99-9f572b88cc00@huawei.com
-Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
-Cc: zhengbin <zhengbin13@huawei.com>
-Cc: Hu Shiyuan <hushiyuan@huawei.com>
-Cc: Feilong Lin <linfeilong@huawei.com>
-Cc: Jan Kara <jack@suse.cz>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: cc2d3216f53c ("irqchip: GICv3: ITS command queue")
+Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Link: https://lore.kernel.org/r/20191202071021.1251-1-yuzenghui@huawei.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/reiserfs/stree.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/irqchip/irq-gic-v3-its.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
-index 24cbe013240fa..e3a4cbad9620c 100644
---- a/fs/reiserfs/stree.c
-+++ b/fs/reiserfs/stree.c
-@@ -2249,7 +2249,8 @@ int reiserfs_insert_item(struct reiserfs_transaction_handle *th,
- 	/* also releases the path */
- 	unfix_nodes(&s_ins_balance);
- #ifdef REISERQUOTA_DEBUG
--	reiserfs_debug(th->t_super, REISERFS_DEBUG_CODE,
-+	if (inode)
-+		reiserfs_debug(th->t_super, REISERFS_DEBUG_CODE,
- 		       "reiserquota insert_item(): freeing %u id=%u type=%c",
- 		       quota_bytes, inode->i_uid, head2type(ih));
- #endif
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index cf11d43ce2416..d4ae43f71e723 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -352,7 +352,7 @@ static struct its_collection *its_build_invall_cmd(struct its_cmd_block *cmd,
+ 						   struct its_cmd_desc *desc)
+ {
+ 	its_encode_cmd(cmd, GITS_CMD_INVALL);
+-	its_encode_collection(cmd, desc->its_mapc_cmd.col->col_id);
++	its_encode_collection(cmd, desc->its_invall_cmd.col->col_id);
+ 
+ 	its_fixup_cmd(cmd);
+ 
 -- 
 2.20.1
 
