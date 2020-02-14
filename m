@@ -2,81 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6EB415EED6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:43:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21A0A15EED2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:43:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389665AbgBNRn3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:43:29 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:37167 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389828AbgBNRnY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 12:43:24 -0500
-Received: by mail-io1-f65.google.com with SMTP id k24so11423587ioc.4
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 09:43:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vH6F7s/7KJOmKxjFPtdbua/0bzQH273F8zOPdozonb8=;
-        b=Ux0PhWNqk4sJNEs0icorJrDWXp824NUdWvxe43XntaFe4SR1FlgGObmsib+qpD1Ty7
-         umGaCdf7ZDRykv+Sv2UF5ntf+qG8pt5dWqR/xopxpGobdyEjt5xGlt4rw1j4DFllB77o
-         FOztyw1X44q3OjHuAhB1kKDHPd0QVA4rXe0fj30RB2ZhUuqqjhwAILokrOlystz9aCtH
-         BuJQ4pE3vnGZV+wn6vUDXCbeHqMTyxNMwnukmyBKdCF353gbp6mq3IwTWL+1hDurD3Vq
-         OEXtqLyEqHCMjGkg5XDUqbWHcyfnFD5fNCN7/5hBPPH64kCTgNVhIl1huzTna60C8xnK
-         fgxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vH6F7s/7KJOmKxjFPtdbua/0bzQH273F8zOPdozonb8=;
-        b=s/f2iG/z+C+KWloVnrIh4W8Fjys9pwTed9thuOfP0q876Admk/bZ5ba5akfZs4Y0sn
-         itfYyIKFP9GS372RoRHOWjRvOM3SgidatFpCVhVvYzEjpYNsdNrEyEP1H16Q9tqZwqiT
-         hVRPa9Q78I4hoeHCgJ/IwxZ922odex4s8KJmJjtfiW2mxTJyS3TqGl/Ku0B/xvpWXBCt
-         CK0r2MeFhZXxJ+t9NngJz8bgqFrrmlsZBmwm7rozXfFbH21G6EUXtwJ+VBfIf4DrqsX7
-         2ieUNxOOJSqPudS+EgC0XmyjrnAtEvHzEmOJ8luW1m9yS23N6o7w7aGPMKX71KBZv4pX
-         Fcew==
-X-Gm-Message-State: APjAAAV4UE6k83GroQUmBxJQsQOG19WifnHft6aCOU5u+g7Qlg4Miri6
-        99p7IPVDIkaUfisVdQ19EUngGrWt38xjb9e2j1QyRw==
-X-Google-Smtp-Source: APXvYqzLzSD4wBOn+oU2MaRsuKpeItnXRIq8O1WrWQrL68J+eAQXMFVizCcOMm7FYVALf8go9yilwPgtCiPr2/V3muY=
-X-Received: by 2002:a5e:8e4c:: with SMTP id r12mr3089863ioo.119.1581702203932;
- Fri, 14 Feb 2020 09:43:23 -0800 (PST)
+        id S2389682AbgBNRnU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:43:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53628 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729435AbgBNRnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 12:43:17 -0500
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12C08206B6;
+        Fri, 14 Feb 2020 17:43:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581702196;
+        bh=H6Y0hmBFe+SFsB2P3r1rTo2hh+y6SavpS7DbrVSvImc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eBxecK+rFHPvCkkSrgojh8zE9sVHfDNvwS+lxmbxHnoHeUOR/RF7fGq2FFLI4sAF9
+         K+5aO+ZEkmN9ulvRBNZ36FKR6ZwMovVFyrquLTPFFFRRhi1XW5UWOyD1p/5wDG0bOM
+         FRyx2kyGjX3HPHjCd27AaooIhM5HEQkKbkst2oWk=
+Date:   Fri, 14 Feb 2020 09:43:14 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH AUTOSEL 4.4 080/100] char: hpet: Use flexible-array member
+Message-ID: <20200214174314.GA250980@gmail.com>
+References: <20200214162425.21071-1-sashal@kernel.org>
+ <20200214162425.21071-80-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20200214143035.607115-1-e.velu@criteo.com>
-In-Reply-To: <20200214143035.607115-1-e.velu@criteo.com>
-From:   Jim Mattson <jmattson@google.com>
-Date:   Fri, 14 Feb 2020 09:43:13 -0800
-Message-ID: <CALMp9eSdOz4NMHEM_J1V3PiyTsivPG3AJ-NX1CTvyxF_uJFaAQ@mail.gmail.com>
-Subject: Re: [PATCH] kvm: x86: Print "disabled by bios" only once per host
-To:     Erwan Velu <erwanaliasr1@gmail.com>
-Cc:     Erwan Velu <e.velu@criteo.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200214162425.21071-80-sashal@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 6:33 AM Erwan Velu <erwanaliasr1@gmail.com> wrote:
->
-> The current behavior is to print a "disabled by bios" message per CPU thread.
-> As modern CPUs can have up to 64 cores, 128 on a dual socket, and turns this
-> printk to be a pretty noisy by showing up to 256 times the same line in a row.
->
-> This patch offer to only print the message once per host considering the BIOS will
-> disabled the feature for all sockets/cores at once and not on a per core basis.
+On Fri, Feb 14, 2020 at 11:24:04AM -0500, Sasha Levin wrote:
+> From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+> 
+> [ Upstream commit 987f028b8637cfa7658aa456ae73f8f21a7a7f6f ]
+> 
+> Old code in the kernel uses 1-byte and 0-byte arrays to indicate the
+> presence of a "variable length array":
+> 
+> struct something {
+>     int length;
+>     u8 data[1];
+> };
+> 
+> struct something *instance;
+> 
+> instance = kmalloc(sizeof(*instance) + size, GFP_KERNEL);
+> instance->length = size;
+> memcpy(instance->data, source, size);
+> 
+> There is also 0-byte arrays. Both cases pose confusion for things like
+> sizeof(), CONFIG_FORTIFY_SOURCE, etc.[1] Instead, the preferred mechanism
+> to declare variable-length types such as the one above is a flexible array
+> member[2] which need to be the last member of a structure and empty-sized:
+> 
+> struct something {
+>         int stuff;
+>         u8 data[];
+> };
+> 
+> Also, by making use of the mechanism above, we will get a compiler warning
+> in case the flexible array does not occur last in the structure, which
+> will help us prevent some kind of undefined behavior bugs from being
+> unadvertenly introduced[3] to the codebase from now on.
+> 
+> [1] https://github.com/KSPP/linux/issues/21
+> [2] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Link: https://lore.kernel.org/r/20200120235326.GA29231@embeddedor.com
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  drivers/char/hpet.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/hpet.c b/drivers/char/hpet.c
+> index 5b38d7a8202a1..38c2ae93ce492 100644
+> --- a/drivers/char/hpet.c
+> +++ b/drivers/char/hpet.c
+> @@ -112,7 +112,7 @@ struct hpets {
+>  	unsigned long hp_delta;
+>  	unsigned int hp_ntimer;
+>  	unsigned int hp_which;
+> -	struct hpet_dev hp_dev[1];
+> +	struct hpet_dev hp_dev[];
+>  };
+>  
 
-That's quite an assumption you're making. I guess I've seen more
-broken BIOSes than you have. :-) Still, I would rather see the message
-just once--perhaps with an additional warning if all logical
-processors aren't in agreement.
+Umm, why are you backporting this without the commit that fixes it?  Does your
+AUTOSEL process really still not pay attention to Fixes tags?  They are there
+for a reason.
+
+And for that matter, why are you backporting it all, given that this is a
+cleanup and not a fix?
+
+- Eric
