@@ -2,127 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D220315EFE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:51:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2055215EE8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:41:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390032AbgBNRvH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:51:07 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:39840 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S2388139AbgBNP66 (ORCPT
+        id S2390141AbgBNRl2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:41:28 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:33430 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389712AbgBNQDm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:58:58 -0500
-Received: (qmail 3236 invoked by uid 2102); 14 Feb 2020 10:58:57 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 14 Feb 2020 10:58:57 -0500
-Date:   Fri, 14 Feb 2020 10:58:57 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Boqun Feng <boqun.feng@gmail.com>
-cc:     linux-kernel@vger.kernel.org,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Will Deacon <will@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>, <linux-arch@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>
-Subject: Re: [RFC 3/3] tools/memory-model: Add litmus test for RMW +
- smp_mb__after_atomic()
-In-Reply-To: <20200214040132.91934-4-boqun.feng@gmail.com>
-Message-ID: <Pine.LNX.4.44L0.2002141049310.1579-100000@iolanthe.rowland.org>
+        Fri, 14 Feb 2020 11:03:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=vWvhCkmP10pOefEokptjf5gNpQByGXrHCLm2fjpQLRQ=; b=VCS5visrKpAL+Ru5FY/G0h94PF
+        MRs9RZXEy+XhvvLBu4HzE+Ed33L6Z0f2KGHW7sJVb06H30RZt6ZdaFnl4TIHuT+93DBWIdiEkdl12
+        VyGaJAUCFsfCeiNV0jSSN4Lz7qORyUBqbLb/AraVAK+XDJgVeTipoyvmuMDWCzqpmBLE1JAqt/HAc
+        Y1hrahhKXOY3jcxwcCxFt9iofsSXg9l5AW6BNd/82HfepDdNRDi1Vtj3TioDDl+oenDnmaflYS4NT
+        eN3yRu+nLR5BBbhfQryyJ7xcU9/53ByshYrmJL2RtsfJb6QOkdsVKfp2AvvokNsEL5MZd2vn5Qt/n
+        V/xyxDOw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j2dRO-00022S-7n; Fri, 14 Feb 2020 16:03:42 +0000
+Date:   Fri, 14 Feb 2020 08:03:42 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 13/25] fs: Add zero_user_large
+Message-ID: <20200214160342.GA7778@bombadil.infradead.org>
+References: <20200212041845.25879-1-willy@infradead.org>
+ <20200212041845.25879-14-willy@infradead.org>
+ <20200214135248.zqcqx3erb4pnlvmu@box>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200214135248.zqcqx3erb4pnlvmu@box>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 14 Feb 2020, Boqun Feng wrote:
-
-> We already use a litmus test in atomic_t.txt to describe atomic RMW +
-> smp_mb__after_atomic() is "strong acquire" (both the read and the write
-> part is ordered).
-
-"strong acquire" is not an appropriate description -- there is no such
-thing as a strong acquire in the LKMM -- nor is it a good name for the
-litmus test.  A better description would be "stronger than acquire", as
-in the sentence preceding the litmus test in atomic_t.txt.
-
->  So make it a litmus test in memory-model litmus-tests
-> directory, so that people can access the litmus easily.
+On Fri, Feb 14, 2020 at 04:52:48PM +0300, Kirill A. Shutemov wrote:
+> On Tue, Feb 11, 2020 at 08:18:33PM -0800, Matthew Wilcox wrote:
+> > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> > 
+> > We can't kmap() a THP, so add a wrapper around zero_user() for large
+> > pages.
 > 
-> Additionally, change the processor numbers "P1, P2" to "P0, P1" in
-> atomic_t.txt for the consistency with the processor numbers in the
-> litmus test, which herd can handle.
+> I would rather address it closer to the root: make zero_user_segments()
+> handle compound pages.
+
+Hah.  I ended up doing that, but hadn't sent it out.  I don't like
+how ugly it is:
+
+@@ -219,18 +219,57 @@ static inline void zero_user_segments(struct page *page,
+        unsigned start1, unsigned end1,
+        unsigned start2, unsigned end2)
+ {
+-       void *kaddr = kmap_atomic(page);
+-
+-       BUG_ON(end1 > PAGE_SIZE || end2 > PAGE_SIZE);
+-
+-       if (end1 > start1)
+-               memset(kaddr + start1, 0, end1 - start1);
+-
+-       if (end2 > start2)
+-               memset(kaddr + start2, 0, end2 - start2);
+-
+-       kunmap_atomic(kaddr);
+-       flush_dcache_page(page);
++       unsigned int i;
++
++       BUG_ON(end1 > thp_size(page) || end2 > thp_size(page));
++
++       for (i = 0; i < hpage_nr_pages(page); i++) {
++               void *kaddr;
++               unsigned this_end;
++
++               if (end1 == 0 && start2 >= PAGE_SIZE) {
++                       start2 -= PAGE_SIZE;
++                       end2 -= PAGE_SIZE;
++                       continue;
++               }
++
++               if (start1 >= PAGE_SIZE) {
++                       start1 -= PAGE_SIZE;
++                       end1 -= PAGE_SIZE;
++                       if (start2) {
++                               start2 -= PAGE_SIZE;
++                               end2 -= PAGE_SIZE;
++                       }
++                       continue;
++               }
++
++               kaddr = kmap_atomic(page + i);
++
++               this_end = min_t(unsigned, end1, PAGE_SIZE);
++               if (end1 > start1)
++                       memset(kaddr + start1, 0, this_end - start1);
++               end1 -= this_end;
++               start1 = 0;
++
++               if (start2 >= PAGE_SIZE) {
++                       start2 -= PAGE_SIZE;
++                       end2 -= PAGE_SIZE;
++               } else {
++                       this_end = min_t(unsigned, end2, PAGE_SIZE);
++                       if (end2 > start2)
++                               memset(kaddr + start2, 0, this_end - start2);
++                       end2 -= this_end;
++                       start2 = 0;
++               }
++
++               kunmap_atomic(kaddr);
++               flush_dcache_page(page + i);
++
++               if (!end1 && !end2)
++                       break;
++       }
++
++       BUG_ON((start1 | start2 | end1 | end2) != 0);
+ }
+
+I think at this point it has to move out-of-line too.
+
+> > +static inline void zero_user_large(struct page *page,
+> > +		unsigned start, unsigned size)
+> > +{
+> > +	unsigned int i;
+> > +
+> > +	for (i = 0; i < thp_order(page); i++) {
+> > +		if (start > PAGE_SIZE) {
 > 
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> ---
->  Documentation/atomic_t.txt                    |  6 ++--
->  ...+mb__after_atomic-is-strong-acquire.litmus | 29 +++++++++++++++++++
->  tools/memory-model/litmus-tests/README        |  5 ++++
->  3 files changed, 37 insertions(+), 3 deletions(-)
->  create mode 100644 tools/memory-model/litmus-tests/Atomic-RMW+mb__after_atomic-is-strong-acquire.litmus
-> 
-> diff --git a/Documentation/atomic_t.txt b/Documentation/atomic_t.txt
-> index ceb85ada378e..e3ad4e4cd9ed 100644
-> --- a/Documentation/atomic_t.txt
-> +++ b/Documentation/atomic_t.txt
-> @@ -238,14 +238,14 @@ strictly stronger than ACQUIRE. As illustrated:
->    {
->    }
->  
-> -  P1(int *x, atomic_t *y)
-> +  P0(int *x, atomic_t *y)
->    {
->      r0 = READ_ONCE(*x);
->      smp_rmb();
->      r1 = atomic_read(y);
->    }
->  
-> -  P2(int *x, atomic_t *y)
-> +  P1(int *x, atomic_t *y)
->    {
->      atomic_inc(y);
->      smp_mb__after_atomic();
-> @@ -260,7 +260,7 @@ This should not happen; but a hypothetical atomic_inc_acquire() --
->  because it would not order the W part of the RMW against the following
->  WRITE_ONCE.  Thus:
->  
-> -  P1			P2
-> +  P0			P1
->  
->  			t = LL.acq *y (0)
->  			t++;
-> diff --git a/tools/memory-model/litmus-tests/Atomic-RMW+mb__after_atomic-is-strong-acquire.litmus b/tools/memory-model/litmus-tests/Atomic-RMW+mb__after_atomic-is-strong-acquire.litmus
-> new file mode 100644
-> index 000000000000..e7216cf9d92a
-> --- /dev/null
-> +++ b/tools/memory-model/litmus-tests/Atomic-RMW+mb__after_atomic-is-strong-acquire.litmus
-> @@ -0,0 +1,29 @@
-> +C Atomic-RMW+mb__after_atomic-is-strong-acquire
-> +
-> +(*
-> + * Result: Never
-> + *
-> + * Test of an atomic RMW followed by a smp_mb__after_atomic() is
+> Off-by-one? >= ?
 
-s/Test of/Test that/
-
-> + * "strong-acquire": both the read and write part of the RMW is ordered before
-
-This should say "stronger than a normal acquire".  And "part" should be
-"parts", and "is ordered" should be "are ordered".
-
-Also, please try to arrange the line breaks so that the comment lines
-don't have vastly different lengths.
-
-Similar changes should be made for the text added to README.
-
-Alan Stern
+Good catch; I'd also noticed that when I came to redo the zero_user_segments().
 
