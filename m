@@ -2,107 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44B4E15E91D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:05:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03F4B15EAC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:17:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403815AbgBNRFI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:05:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45268 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390864AbgBNQPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:15:11 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9406B246AA;
-        Fri, 14 Feb 2020 16:15:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696911;
-        bh=6L1lnAbht/JPe3hG1XjntAupH2MlKR4WZGXOY6X6pOM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A4Z+7euYwgTzPKtueFeP2maBrASStkwmX5A8Is5DGoikUstYR7/ek/PQaJdekClZX
-         Q1QRVRZfubKwAZgfu/fi8ZcPniaUnwo74DeNtc6EsUvTLIoxrv7IGJHN4MeTg42C8f
-         Z2VzO0lzJjQ6US3hSf4i6ZUChS5iq5HodOpVB3xQ=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hongbo Yao <yaohongbo@huawei.com>, Hulk Robot <hulkci@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 160/252] misc: genwqe: fix compile warnings
-Date:   Fri, 14 Feb 2020 11:10:15 -0500
-Message-Id: <20200214161147.15842-160-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
-References: <20200214161147.15842-1-sashal@kernel.org>
+        id S2391404AbgBNQLi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:11:38 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.83]:14012 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391573AbgBNQKn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:10:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1581696638;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=l2ioSw/GBEgoEsJDqdX898kUDDw9CYiqWmti4ETUA48=;
+        b=fqmZXBoIsAPESbIJWYhBGNmG3oQIKsP4I5KOyZmSJNJA9jy2pyfvQr0F3q20KRG0MB
+        ME5Ac97r0cY6547NuoWhzKAkCWwxXWSRzAcoNmApreiT4u5jKcX4yOjpZ68d+hOhsrfc
+        cNDKhHPt1YiomGPQ0mSWAhatUaYxzlS4ieanQRQK+dxui8YdfdbUojrZxqcuPUtqNSgw
+        dMPrtGUrCbd6ZwiR7pdPk3TagHKzBYXlPU2N24eYnSy+ZcBk/jtL3ImJtTsim3gapmJd
+        UoWZddH4FODlZXfDXS8WSQ5VTXKBHBOtYRGnfrVnm6hJM8RjbIacBkryLmeNHON45HX1
+        V+iw==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1OAA2UNf2M7OMfsfQx3"
+X-RZG-CLASS-ID: mo00
+Received: from iMac.fritz.box
+        by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
+        with ESMTPSA id U06217w1EGASFky
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Fri, 14 Feb 2020 17:10:28 +0100 (CET)
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+To:     Paul Boddie <paul@boddie.org.uk>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        letux-kernel@openphoenux.org, kernel@pyra-handheld.com
+Subject: [PATCH v2 03/12] MIPS: CI20: defconfig: configure for supporting modules
+Date:   Fri, 14 Feb 2020 17:10:15 +0100
+Message-Id: <db4db9e0b024aa3051a6f1f7be07323418d1d453.1581696624.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <cover.1581696624.git.hns@goldelico.com>
+References: <cover.1581696624.git.hns@goldelico.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hongbo Yao <yaohongbo@huawei.com>
+Not all drivers need to be compiled into the kernel.
+Support building and loading of kernel modules.
 
-[ Upstream commit 8edf4cd193067ac5e03fd9580f1affbb6a3f729b ]
-
-Using the following command will get compile warnings:
-make W=1 drivers/misc/genwqe/card_ddcb.o ARCH=x86_64
-
-drivers/misc/genwqe/card_ddcb.c: In function setup_ddcb_queue:
-drivers/misc/genwqe/card_ddcb.c:1024:6: warning: variable rc set but not
-used [-Wunused-but-set-variable]
-drivers/misc/genwqe/card_ddcb.c: In function genwqe_card_thread:
-drivers/misc/genwqe/card_ddcb.c:1190:23: warning: variable rc set but
-not used [-Wunused-but-set-variable]
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Hongbo Yao <yaohongbo@huawei.com>
-Link: https://lore.kernel.org/r/20191205111655.170382-1-yaohongbo@huawei.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- drivers/misc/genwqe/card_ddcb.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/mips/configs/ci20_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/misc/genwqe/card_ddcb.c b/drivers/misc/genwqe/card_ddcb.c
-index 656449cb4476b..cdbf5f78f1fa3 100644
---- a/drivers/misc/genwqe/card_ddcb.c
-+++ b/drivers/misc/genwqe/card_ddcb.c
-@@ -1093,7 +1093,7 @@ static int setup_ddcb_queue(struct genwqe_dev *cd, struct ddcb_queue *queue)
- 				queue->ddcb_daddr);
- 	queue->ddcb_vaddr = NULL;
- 	queue->ddcb_daddr = 0ull;
--	return -ENODEV;
-+	return rc;
- 
- }
- 
-@@ -1188,7 +1188,7 @@ static irqreturn_t genwqe_vf_isr(int irq, void *dev_id)
-  */
- static int genwqe_card_thread(void *data)
- {
--	int should_stop = 0, rc = 0;
-+	int should_stop = 0;
- 	struct genwqe_dev *cd = (struct genwqe_dev *)data;
- 
- 	while (!kthread_should_stop()) {
-@@ -1196,12 +1196,12 @@ static int genwqe_card_thread(void *data)
- 		genwqe_check_ddcb_queue(cd, &cd->queue);
- 
- 		if (GENWQE_POLLING_ENABLED) {
--			rc = wait_event_interruptible_timeout(
-+			wait_event_interruptible_timeout(
- 				cd->queue_waitq,
- 				genwqe_ddcbs_in_flight(cd) ||
- 				(should_stop = kthread_should_stop()), 1);
- 		} else {
--			rc = wait_event_interruptible_timeout(
-+			wait_event_interruptible_timeout(
- 				cd->queue_waitq,
- 				genwqe_next_ddcb_ready(cd) ||
- 				(should_stop = kthread_should_stop()), HZ);
+diff --git a/arch/mips/configs/ci20_defconfig b/arch/mips/configs/ci20_defconfig
+index be41df2a81fb..e0d3c9d4c2ae 100644
+--- a/arch/mips/configs/ci20_defconfig
++++ b/arch/mips/configs/ci20_defconfig
+@@ -1,4 +1,5 @@
+ # CONFIG_LOCALVERSION_AUTO is not set
++CONFIG_MODULES=y
+ CONFIG_KERNEL_XZ=y
+ CONFIG_SYSVIPC=y
+ CONFIG_POSIX_MQUEUE=y
 -- 
-2.20.1
+2.23.0
 
