@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D360D15DD7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:59:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE12315DD7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:59:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388331AbgBNP6p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:58:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42270 "EHLO mail.kernel.org"
+        id S2388707AbgBNP6t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:58:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42518 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388176AbgBNP6Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:58:24 -0500
+        id S2388603AbgBNP6a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:58:30 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4B172082F;
-        Fri, 14 Feb 2020 15:58:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8FE05206D7;
+        Fri, 14 Feb 2020 15:58:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695904;
-        bh=ISVgM2uaL0NDzsSwfis/vLF2Fomgdr3iu2TfHqtIxR0=;
+        s=default; t=1581695909;
+        bh=1DR/GWaW9CSgGTPT5u/Hw+nrWr3h63KmxvHEXN9F2Tw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tCG6Xo9hxkJdSKLsvkg+Lox9zvy9yNkgYsxNYI5ACsa1ACU1OF1trS8/esCmLNnKA
-         723JPKX0KSVXo8mOc22lWxp+A/urhkTIUWbWC6G0Q/YQPWcuypW9OlYwAfLgrlGDbY
-         N7a7nWPazpmnw5nVi1rbPmPpqpmi3Vx+18wtdQB8=
+        b=we9gPWHSS9VJjwddmo0k0hn7YwHPw0MKsSgmvZDiUIVBClwx+lzzleMZL0YDMBlS5
+         rLpH2SGbAIhgitYxtOSXKdi13xiskwnrj0y3/h4HkDAUJMrKXRKdcv8lKfQiRhXxem
+         7YlbKpiaL7xmlPpBGXisPLohwrxmNfdGifAFCMQU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 5.5 445/542] powerpc/ptdump: Only enable PPC_CHECK_WX with STRICT_KERNEL_RWX
-Date:   Fri, 14 Feb 2020 10:47:17 -0500
-Message-Id: <20200214154854.6746-445-sashal@kernel.org>
+Cc:     Nikolay Borisov <nborisov@suse.com>, Su Yue <Damenly_Su@gmx.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Sasha Levin <sashal@kernel.org>, linux-btrfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 449/542] btrfs: Fix split-brain handling when changing FSID to metadata uuid
+Date:   Fri, 14 Feb 2020 10:47:21 -0500
+Message-Id: <20200214154854.6746-449-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -43,35 +44,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Nikolay Borisov <nborisov@suse.com>
 
-[ Upstream commit f509247b08f2dcf7754d9ed85ad69a7972aa132b ]
+[ Upstream commit 1362089d2ad7e20d16371b39d3c11990d4ec23e4 ]
 
-ptdump_check_wx() is called from mark_rodata_ro() which only exists
-when CONFIG_STRICT_KERNEL_RWX is selected.
+Current code doesn't correctly handle the situation which arises when
+a file system that has METADATA_UUID_INCOMPAT flag set and has its FSID
+changed to the one in metadata uuid. This causes the incompat flag to
+disappear.
 
-Fixes: 453d87f6a8ae ("powerpc/mm: Warn if W+X pages found on boot")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/922d4939c735c6b52b4137838bcc066fffd4fc33.1578989545.git.christophe.leroy@c-s.fr
+In case of a power failure we could end up in a situation where part of
+the disks in a multi-disk filesystem are correctly reverted to
+METADATA_UUID_INCOMPAT flag unset state, while others have
+METADATA_UUID_INCOMPAT set and CHANGING_FSID_V2_IN_PROGRESS.
+
+This patch corrects the behavior required to handle the case where a
+disk of the second type is scanned first, creating the necessary
+btrfs_fs_devices. Subsequently, when a disk which has already completed
+the transition is scanned it should overwrite the data in
+btrfs_fs_devices.
+
+Reported-by: Su Yue <Damenly_Su@gmx.com>
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/Kconfig.debug | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/volumes.c | 42 ++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 38 insertions(+), 4 deletions(-)
 
-diff --git a/arch/powerpc/Kconfig.debug b/arch/powerpc/Kconfig.debug
-index 4e1d398474627..0b063830eea84 100644
---- a/arch/powerpc/Kconfig.debug
-+++ b/arch/powerpc/Kconfig.debug
-@@ -371,7 +371,7 @@ config PPC_PTDUMP
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index c5c0dc0cbf517..a8b71ded4d212 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -723,6 +723,32 @@ static struct btrfs_fs_devices *find_fsid_changed(
  
- config PPC_DEBUG_WX
- 	bool "Warn on W+X mappings at boot"
--	depends on PPC_PTDUMP
-+	depends on PPC_PTDUMP && STRICT_KERNEL_RWX
- 	help
- 	  Generate a warning if any W+X mappings are found at boot.
+ 	return NULL;
+ }
++
++static struct btrfs_fs_devices *find_fsid_reverted_metadata(
++				struct btrfs_super_block *disk_super)
++{
++	struct btrfs_fs_devices *fs_devices;
++
++	/*
++	 * Handle the case where the scanned device is part of an fs whose last
++	 * metadata UUID change reverted it to the original FSID. At the same
++	 * time * fs_devices was first created by another constitutent device
++	 * which didn't fully observe the operation. This results in an
++	 * btrfs_fs_devices created with metadata/fsid different AND
++	 * btrfs_fs_devices::fsid_change set AND the metadata_uuid of the
++	 * fs_devices equal to the FSID of the disk.
++	 */
++	list_for_each_entry(fs_devices, &fs_uuids, fs_list) {
++		if (memcmp(fs_devices->fsid, fs_devices->metadata_uuid,
++			   BTRFS_FSID_SIZE) != 0 &&
++		    memcmp(fs_devices->metadata_uuid, disk_super->fsid,
++			   BTRFS_FSID_SIZE) == 0 &&
++		    fs_devices->fsid_change)
++			return fs_devices;
++	}
++
++	return NULL;
++}
+ /*
+  * Add new device to list of registered devices
+  *
+@@ -762,7 +788,9 @@ static noinline struct btrfs_device *device_list_add(const char *path,
+ 		fs_devices = find_fsid(disk_super->fsid,
+ 				       disk_super->metadata_uuid);
+ 	} else {
+-		fs_devices = find_fsid(disk_super->fsid, NULL);
++		fs_devices = find_fsid_reverted_metadata(disk_super);
++		if (!fs_devices)
++			fs_devices = find_fsid(disk_super->fsid, NULL);
+ 	}
  
+ 
+@@ -792,12 +820,18 @@ static noinline struct btrfs_device *device_list_add(const char *path,
+ 		 * a device which had the CHANGING_FSID_V2 flag then replace the
+ 		 * metadata_uuid/fsid values of the fs_devices.
+ 		 */
+-		if (has_metadata_uuid && fs_devices->fsid_change &&
++		if (fs_devices->fsid_change &&
+ 		    found_transid > fs_devices->latest_generation) {
+ 			memcpy(fs_devices->fsid, disk_super->fsid,
+ 					BTRFS_FSID_SIZE);
+-			memcpy(fs_devices->metadata_uuid,
+-					disk_super->metadata_uuid, BTRFS_FSID_SIZE);
++
++			if (has_metadata_uuid)
++				memcpy(fs_devices->metadata_uuid,
++				       disk_super->metadata_uuid,
++				       BTRFS_FSID_SIZE);
++			else
++				memcpy(fs_devices->metadata_uuid,
++				       disk_super->fsid, BTRFS_FSID_SIZE);
+ 
+ 			fs_devices->fsid_change = false;
+ 		}
 -- 
 2.20.1
 
