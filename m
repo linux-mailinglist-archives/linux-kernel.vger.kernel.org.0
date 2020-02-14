@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FFE715DE1C
+	by mail.lfdr.de (Postfix) with ESMTP id B9B5A15DE1E
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:03:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389288AbgBNQCQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:02:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48202 "EHLO mail.kernel.org"
+        id S2389301AbgBNQCT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:02:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388346AbgBNQCG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:02:06 -0500
+        id S2389208AbgBNQCI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:02:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A94E2187F;
-        Fri, 14 Feb 2020 16:02:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A10A5206CC;
+        Fri, 14 Feb 2020 16:02:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696126;
-        bh=TIlAmDaKuKNXe97gekocfkoxJrftjK9We8gokKkrcl0=;
+        s=default; t=1581696127;
+        bh=Wf6+5th2F9srA5n2O4rn5EYSr5Vxtth49+lAj9Yemro=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r2epvvdTOxggURQqL6h4d3pBgBNfVbrTixNZf7RBnRvA5vsB30QrdaUoJmSvfF3os
-         NnQOEx+t1ASvQibgQ0jSjMw7Rp4RuRzlBD8V+5jlMWAiBlmYtiHjdnfCRrI2lTMISN
-         kR8SF5z7CC3Hwfrz0PVQavJWcOIaq3cUkFsJ22sA=
+        b=kpapbOD4/DWCTIUmGh9LLD2pM5PAPRFmTMsx8P818NSH7nTwM2sIes9rZJTsrFdLl
+         zegoXHiHgaNlV6IXy7/9rNCJN7gSrqBt3hLMMJNUQnBlXV9RReOHjQFXNS4g/Qx5Eo
+         IpgSrL8+zLGwoI3SCw8HDXoTi3juyDnhEqu1Y2BE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 5.4 012/459] f2fs: call f2fs_balance_fs outside of locked page
-Date:   Fri, 14 Feb 2020 10:54:22 -0500
-Message-Id: <20200214160149.11681-12-sashal@kernel.org>
+Cc:     Eric Biggers <ebiggers@google.com>,
+        Pascal Van Leeuwen <pvanleeuwen@verimatrix.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.4 013/459] crypto: testmgr - don't try to decrypt uninitialized buffers
+Date:   Fri, 14 Feb 2020 10:54:23 -0500
+Message-Id: <20200214160149.11681-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -43,66 +46,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Eric Biggers <ebiggers@google.com>
 
-[ Upstream commit bdf03299248916640a835a05d32841bb3d31912d ]
+[ Upstream commit eb455dbd02cb1074b37872ffca30a81cb2a18eaa ]
 
-Otherwise, we can hit deadlock by waiting for the locked page in
-move_data_block in GC.
+Currently if the comparison fuzz tests encounter an encryption error
+when generating an skcipher or AEAD test vector, they will still test
+the decryption side (passing it the uninitialized ciphertext buffer)
+and expect it to fail with the same error.
 
- Thread A                     Thread B
- - do_page_mkwrite
-  - f2fs_vm_page_mkwrite
-   - lock_page
-                              - f2fs_balance_fs
-                                  - mutex_lock(gc_mutex)
-                               - f2fs_gc
-                                - do_garbage_collect
-                                 - ra_data_block
-                                  - grab_cache_page
-   - f2fs_balance_fs
-    - mutex_lock(gc_mutex)
+This is sort of broken because it's not well-defined usage of the API to
+pass an uninitialized buffer, and furthermore in the AEAD case it's
+acceptable for the decryption error to be EBADMSG (meaning "inauthentic
+input") even if the encryption error was something else like EINVAL.
 
-Fixes: 39a8695824510 ("f2fs: refactor ->page_mkwrite() flow")
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Fix this for skcipher by explicitly initializing the ciphertext buffer
+on error, and for AEAD by skipping the decryption test on error.
+
+Reported-by: Pascal Van Leeuwen <pvanleeuwen@verimatrix.com>
+Fixes: d435e10e67be ("crypto: testmgr - fuzz skciphers against their generic implementation")
+Fixes: 40153b10d91c ("crypto: testmgr - fuzz AEADs against their generic implementation")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/file.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ crypto/testmgr.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 44bc5f4a9ce19..c3a9da79ac997 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -50,7 +50,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
- 	struct page *page = vmf->page;
- 	struct inode *inode = file_inode(vmf->vma->vm_file);
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--	struct dnode_of_data dn = { .node_changed = false };
-+	struct dnode_of_data dn;
- 	int err;
+diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+index c39e39e55dc20..7473c5bc06b1a 100644
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -2102,6 +2102,7 @@ static void generate_random_aead_testvec(struct aead_request *req,
+ 	 * If the key or authentication tag size couldn't be set, no need to
+ 	 * continue to encrypt.
+ 	 */
++	vec->crypt_error = 0;
+ 	if (vec->setkey_error || vec->setauthsize_error)
+ 		goto done;
  
- 	if (unlikely(f2fs_cp_error(sbi))) {
-@@ -63,6 +63,9 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
- 		goto err;
+@@ -2245,10 +2246,12 @@ static int test_aead_vs_generic_impl(const char *driver,
+ 					req, tsgls);
+ 		if (err)
+ 			goto out;
+-		err = test_aead_vec_cfg(driver, DECRYPT, &vec, vec_name, cfg,
+-					req, tsgls);
+-		if (err)
+-			goto out;
++		if (vec.crypt_error == 0) {
++			err = test_aead_vec_cfg(driver, DECRYPT, &vec, vec_name,
++						cfg, req, tsgls);
++			if (err)
++				goto out;
++		}
+ 		cond_resched();
  	}
- 
-+	/* should do out of any locked page */
-+	f2fs_balance_fs(sbi, true);
-+
- 	sb_start_pagefault(inode->i_sb);
- 
- 	f2fs_bug_on(sbi, f2fs_has_inline_data(inode));
-@@ -120,8 +123,6 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
- out_sem:
- 	up_read(&F2FS_I(inode)->i_mmap_sem);
- 
--	f2fs_balance_fs(sbi, dn.node_changed);
--
- 	sb_end_pagefault(inode->i_sb);
- err:
- 	return block_page_mkwrite_return(err);
+ 	err = 0;
+@@ -2678,6 +2681,15 @@ static void generate_random_cipher_testvec(struct skcipher_request *req,
+ 	skcipher_request_set_callback(req, 0, crypto_req_done, &wait);
+ 	skcipher_request_set_crypt(req, &src, &dst, vec->len, iv);
+ 	vec->crypt_error = crypto_wait_req(crypto_skcipher_encrypt(req), &wait);
++	if (vec->crypt_error != 0) {
++		/*
++		 * The only acceptable error here is for an invalid length, so
++		 * skcipher decryption should fail with the same error too.
++		 * We'll test for this.  But to keep the API usage well-defined,
++		 * explicitly initialize the ciphertext buffer too.
++		 */
++		memset((u8 *)vec->ctext, 0, vec->len);
++	}
+ done:
+ 	snprintf(name, max_namelen, "\"random: len=%u klen=%u\"",
+ 		 vec->len, vec->klen);
 -- 
 2.20.1
 
