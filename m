@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 382C315DC6F
+	by mail.lfdr.de (Postfix) with ESMTP id A22E615DC70
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:53:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730752AbgBNPxJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:53:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59604 "EHLO mail.kernel.org"
+        id S1731164AbgBNPxL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:53:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731061AbgBNPwr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:52:47 -0500
+        id S1730505AbgBNPwx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:52:53 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5EBAA222C4;
-        Fri, 14 Feb 2020 15:52:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 739392468D;
+        Fri, 14 Feb 2020 15:52:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695567;
-        bh=vMAIxQCEcBteBvTjRTi8zaQHQRbcimfsWflvIWcKtRU=;
+        s=default; t=1581695572;
+        bh=xn0c89TUYb91GwJwguGAuyRfda2/y67RUJKduA4/pk4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vDL04vJppJ0l+GABfBMUIv6b6NtLE2FsRO9U0wMUGo9gTfxkZId1yqNmCYbYSt1SA
-         VIicDTk8+PyuIvvX7uVIohyZIK4hneJaJBgaHMVlZ2g5XhvY4pjj4Caq2+W/L5H8wy
-         GLBvvxFABO79+xCE/Aw0g/zxdwG+PWAZDME+Xoho=
+        b=ttkySf0izKySq5C7/9J2gyjSefSppV+ZPPSCO9lJJeB1TBR8lLbTrhPhMb+EUvHXV
+         epu9RVHhTGNRXeRG4ljtgzNCFvJ0rpTh/isMVWrpGg8pc4G8fSzKWokNhTQ7FeuaCe
+         LTfGnY2QYMVc0UuRrac+QG+irbmlENvMgFoYYYdg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Thong Thai <thong.thai@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.5 179/542] Revert "drm/amdgpu: enable VCN DPG on Raven and Raven2"
-Date:   Fri, 14 Feb 2020 10:42:51 -0500
-Message-Id: <20200214154854.6746-179-sashal@kernel.org>
+Cc:     Andre Przywara <andre.przywara@arm.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 183/542] arm64: dts: allwinner: H6: Add PMU mode
+Date:   Fri, 14 Feb 2020 10:42:55 -0500
+Message-Id: <20200214154854.6746-183-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -44,49 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thong Thai <thong.thai@amd.com>
+From: Andre Przywara <andre.przywara@arm.com>
 
-[ Upstream commit d515959125f24767d02e82587a11e444eeba0e7b ]
+[ Upstream commit 7aa9b9eb7d6a8fde7acbe0446444f7e3fae1fe3b ]
 
-This reverts commit a4840d91c984f93b2acdcd44441d624bbc1af0d2.
+Add the Performance Monitoring Unit (PMU) device tree node to the H6
+.dtsi, which tells DT users which interrupts are triggered by PMU
+overflow events on each core. The numbers come from the manual and have
+been checked in U-Boot and with perf in Linux.
 
-Reverting due to power efficiency issues seen on Raven 1 and 2
-when DPG mode is enabled.
+Tested with perf record and taskset on a Pine H64.
 
-Signed-off-by: Thong Thai <thong.thai@amd.com>
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/soc15.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/soc15.c b/drivers/gpu/drm/amd/amdgpu/soc15.c
-index 8e1640bc07aff..04ea7cd692955 100644
---- a/drivers/gpu/drm/amd/amdgpu/soc15.c
-+++ b/drivers/gpu/drm/amd/amdgpu/soc15.c
-@@ -1145,9 +1145,7 @@ static int soc15_common_early_init(void *handle)
- 				AMD_CG_SUPPORT_SDMA_LS |
- 				AMD_CG_SUPPORT_VCN_MGCG;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+index 29824081b43b0..24ffe2dcbddbf 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+@@ -70,6 +70,16 @@
+ 		clock-output-names = "ext_osc32k";
+ 	};
  
--			adev->pg_flags = AMD_PG_SUPPORT_SDMA |
--				AMD_PG_SUPPORT_VCN |
--				AMD_PG_SUPPORT_VCN_DPG;
-+			adev->pg_flags = AMD_PG_SUPPORT_SDMA | AMD_PG_SUPPORT_VCN;
- 		} else if (adev->pdev->device == 0x15d8) {
- 			adev->cg_flags = AMD_CG_SUPPORT_GFX_MGCG |
- 				AMD_CG_SUPPORT_GFX_MGLS |
-@@ -1190,9 +1188,7 @@ static int soc15_common_early_init(void *handle)
- 				AMD_CG_SUPPORT_SDMA_LS |
- 				AMD_CG_SUPPORT_VCN_MGCG;
- 
--			adev->pg_flags = AMD_PG_SUPPORT_SDMA |
--				AMD_PG_SUPPORT_VCN |
--				AMD_PG_SUPPORT_VCN_DPG;
-+			adev->pg_flags = AMD_PG_SUPPORT_SDMA | AMD_PG_SUPPORT_VCN;
- 		}
- 		break;
- 	case CHIP_ARCTURUS:
++	pmu {
++		compatible = "arm,cortex-a53-pmu",
++			     "arm,armv8-pmuv3";
++		interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>;
++	};
++
+ 	psci {
+ 		compatible = "arm,psci-0.2";
+ 		method = "smc";
 -- 
 2.20.1
 
