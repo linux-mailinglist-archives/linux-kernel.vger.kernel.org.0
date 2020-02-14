@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 695B415E35A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:30:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01C0215E31E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:27:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406570AbgBNQ1I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:27:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34450 "EHLO mail.kernel.org"
+        id S2406186AbgBNQ1K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:27:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393368AbgBNQZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:25:11 -0500
+        id S2393377AbgBNQZO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:25:14 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8DCCE247C8;
-        Fri, 14 Feb 2020 16:25:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E9A49247AA;
+        Fri, 14 Feb 2020 16:25:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697511;
-        bh=GOe/Q8d9pnM7OTay7ZXq8JIEleloYnDKCFv4IzHU8VM=;
+        s=default; t=1581697513;
+        bh=fobOvtTsBlnfM82O2ukhKTEbN7D6+EJ5BS1Y8mr+I0s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e6BgdH6VgqjwmIiz+7XN1MckCsM9eZUOslKxHsGgp715ZTOBeR+t6CBzcFfFX9MN6
-         8xNdsE3hF9LCV5WsYgPGq1CcZ2JvzxmIrKGZNt6Q5uWiLX94dE1hos2SsrPc2pFvT2
-         dgb2e87R2eXp3DZ5iPUhWEUhrcyvzSuPbt+lmEyw=
+        b=u7Ny9QzHbuwOzxXmRYlgsStvYykNgh3Jeit20viP/Za0FltA/ks+bLR6IZo5iszO1
+         2LM5jqExPDSgt7uwax9E4qcTN9ZOnYknBICN0To8xLmrswlOabmbdnpetvVjBf3k78
+         O5I/mIkjyaHbOTP5vB5v4yFrskMe8f8dPxuKgtc4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mao Wenan <maowenan@huawei.com>, Hulk Robot <hulkci@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 037/100] NFC: port100: Convert cpu_to_le16(le16_to_cpu(E1) + E2) to use le16_add_cpu().
-Date:   Fri, 14 Feb 2020 11:23:21 -0500
-Message-Id: <20200214162425.21071-37-sashal@kernel.org>
+Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        linux-crypto@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 039/100] padata: always acquire cpu_hotplug_lock before pinst->lock
+Date:   Fri, 14 Feb 2020 11:23:23 -0500
+Message-Id: <20200214162425.21071-39-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214162425.21071-1-sashal@kernel.org>
 References: <20200214162425.21071-1-sashal@kernel.org>
@@ -43,34 +45,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mao Wenan <maowenan@huawei.com>
+From: Daniel Jordan <daniel.m.jordan@oracle.com>
 
-[ Upstream commit 718eae277e62a26e5862eb72a830b5e0fe37b04a ]
+[ Upstream commit 38228e8848cd7dd86ccb90406af32de0cad24be3 ]
 
-Convert cpu_to_le16(le16_to_cpu(frame->datalen) + len) to
-use le16_add_cpu(), which is more concise and does the same thing.
+lockdep complains when padata's paths to update cpumasks via CPU hotplug
+and sysfs are both taken:
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+  # echo 0 > /sys/devices/system/cpu/cpu1/online
+  # echo ff > /sys/kernel/pcrypt/pencrypt/parallel_cpumask
+
+  ======================================================
+  WARNING: possible circular locking dependency detected
+  5.4.0-rc8-padata-cpuhp-v3+ #1 Not tainted
+  ------------------------------------------------------
+  bash/205 is trying to acquire lock:
+  ffffffff8286bcd0 (cpu_hotplug_lock.rw_sem){++++}, at: padata_set_cpumask+0x2b/0x120
+
+  but task is already holding lock:
+  ffff8880001abfa0 (&pinst->lock){+.+.}, at: padata_set_cpumask+0x26/0x120
+
+  which lock already depends on the new lock.
+
+padata doesn't take cpu_hotplug_lock and pinst->lock in a consistent
+order.  Which should be first?  CPU hotplug calls into padata with
+cpu_hotplug_lock already held, so it should have priority.
+
+Fixes: 6751fb3c0e0c ("padata: Use get_online_cpus/put_online_cpus")
+Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc: Eric Biggers <ebiggers@kernel.org>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nfc/port100.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/padata.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/nfc/port100.c b/drivers/nfc/port100.c
-index 87d5099967040..3ffbed72adf75 100644
---- a/drivers/nfc/port100.c
-+++ b/drivers/nfc/port100.c
-@@ -545,7 +545,7 @@ static void port100_tx_update_payload_len(void *_frame, int len)
- {
- 	struct port100_frame *frame = _frame;
+diff --git a/kernel/padata.c b/kernel/padata.c
+index 282b489a286db..2b30113fd3f44 100644
+--- a/kernel/padata.c
++++ b/kernel/padata.c
+@@ -661,8 +661,8 @@ int padata_set_cpumask(struct padata_instance *pinst, int cpumask_type,
+ 	struct cpumask *serial_mask, *parallel_mask;
+ 	int err = -EINVAL;
  
--	frame->datalen = cpu_to_le16(le16_to_cpu(frame->datalen) + len);
-+	le16_add_cpu(&frame->datalen, len);
+-	mutex_lock(&pinst->lock);
+ 	get_online_cpus();
++	mutex_lock(&pinst->lock);
+ 
+ 	switch (cpumask_type) {
+ 	case PADATA_CPU_PARALLEL:
+@@ -680,8 +680,8 @@ int padata_set_cpumask(struct padata_instance *pinst, int cpumask_type,
+ 	err =  __padata_set_cpumasks(pinst, parallel_mask, serial_mask);
+ 
+ out:
+-	put_online_cpus();
+ 	mutex_unlock(&pinst->lock);
++	put_online_cpus();
+ 
+ 	return err;
  }
- 
- static bool port100_rx_frame_is_valid(void *_frame)
 -- 
 2.20.1
 
