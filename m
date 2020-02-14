@@ -2,126 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBEB215DB39
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:41:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C46215DBD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:51:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729586AbgBNPlC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:41:02 -0500
-Received: from mail-qv1-f67.google.com ([209.85.219.67]:43446 "EHLO
-        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729439AbgBNPlB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:41:01 -0500
-Received: by mail-qv1-f67.google.com with SMTP id p2so4450713qvo.10;
-        Fri, 14 Feb 2020 07:41:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=PUP4np+G4VE7PuRhOk6undkvvxru+QNxEyvlFdHRy8M=;
-        b=ZbT6gpBkKjiYBwLqeSqmGvHliwzu3GiTDD1TN6F1csmbHvQf5zew22ys7x8sByZCFB
-         q48R1dqd6gb7760yQUKvX4ZNOKbkvtwgVXPFolXQrQXFKuoaSdlGKyGE+fp8z//c61Hd
-         9aFr16nzHuax9MVICJO+adiLztmf99s8R7h4dW7aDkTdvIDlLGhEAskwkWWFDaMuKHh+
-         EBqbHa95IoXx+rusv2pI09ldunnEOGJq3Ra9uXfWr3ii4cIPUeeLkQmcWl2DMBT4FrBk
-         hTj1LXm+1GQmksx8ne1jW4r0o3tNzCKAJvVd/3eOw9vI5C/TQEWBf3N/WArbWsU/bI6K
-         f3iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=PUP4np+G4VE7PuRhOk6undkvvxru+QNxEyvlFdHRy8M=;
-        b=P05Di6E8QV69jFzp/Z7wTXS5j8uMQGfMbSjkfPT+n/pQTnZUe8us3U1W/HfaJjcRQU
-         cVlxEcOoeLtBU55vo/qA2GPiEluUJLnilgMje3oaDpq7xejUBc6MeHQcunA3zvipQ6M5
-         ILE5Cxhjwg8G3MAqLpJRMcp+v5BA/sLgCmG1SZt6PkLp9u/FoO4zxKB8GiyOqkICCxqN
-         Qks81Es2gD7dOmcglDN1grirVnWwhXXP9MOBmhP9bVOSRvovh0UzrlRmFeUDtzBpp+gZ
-         6LJ8q1NEd4BOm7fjrtlPX+P3Pw1PYA/7uKj1mqzTvwuf3jUcvAIXggYL+yV51uESRz8I
-         4Qvw==
-X-Gm-Message-State: APjAAAXeGbv5fc/lhDmGjBCPJ1nsm/X8YzA4U7vKtpO1dh36ASTUAjLj
-        UVR9e2JRGRgUaI1x3LXEofZqxFDFGzQ=
-X-Google-Smtp-Source: APXvYqxdW4fylNswjll7xxYrCS6rXZrMDa0xELAOaKYQie0LHhRSG3Il+FkHWaO6Oesbu4IpntutBQ==
-X-Received: by 2002:a0c:e408:: with SMTP id o8mr2707981qvl.236.1581694860207;
-        Fri, 14 Feb 2020 07:41:00 -0800 (PST)
-Received: from localhost ([71.172.127.161])
-        by smtp.gmail.com with ESMTPSA id s22sm3440963qke.19.2020.02.14.07.40.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2020 07:40:59 -0800 (PST)
-Date:   Fri, 14 Feb 2020 10:40:57 -0500
-From:   Tejun Heo <tj@kernel.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH v2 3/3] mm: memcontrol: recursive memory.low protection
-Message-ID: <20200214154057.GM88887@mtj.thefacebook.com>
-References: <20200212170826.GC180867@cmpxchg.org>
- <20200213074049.GA31689@dhcp22.suse.cz>
- <20200213135348.GF88887@mtj.thefacebook.com>
- <20200213154731.GE31689@dhcp22.suse.cz>
- <20200213155249.GI88887@mtj.thefacebook.com>
- <20200213163636.GH31689@dhcp22.suse.cz>
- <20200213165711.GJ88887@mtj.thefacebook.com>
- <20200214071537.GL31689@dhcp22.suse.cz>
- <20200214135728.GK88887@mtj.thefacebook.com>
- <20200214151318.GC31689@dhcp22.suse.cz>
+        id S1730498AbgBNPuc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:50:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54462 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730461AbgBNPuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:50:25 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82B2624686;
+        Fri, 14 Feb 2020 15:50:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581695425;
+        bh=Nqpuz4d+htBfl/ekXZG3MCc0UaBli9XkrokB59aAyT4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=BwPnSkH4EX3pF5BiSxEFwtkr+JytUATZlbqrBNvrXogCCeM56SMQbHdQuPX++O8f9
+         2ore8igSWH/kKUS1sSXxyXciprA+atfMpfrANsAyGntGrfyu6XuoOaLdPVDpC/yfTk
+         0CbloSeqAWNGJazJKVKBT3pSW9Lrl4zv2mQei7xw=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.5 069/542] uio: fix a sleep-in-atomic-context bug in uio_dmem_genirq_irqcontrol()
+Date:   Fri, 14 Feb 2020 10:41:01 -0500
+Message-Id: <20200214154854.6746-69-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
+References: <20200214154854.6746-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200214151318.GC31689@dhcp22.suse.cz>
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-On Fri, Feb 14, 2020 at 04:13:18PM +0100, Michal Hocko wrote:
-> On Fri 14-02-20 08:57:28, Tejun Heo wrote:
-> > But that doesn't work for other controllers at all. I'm having a
-> > difficult time imagining how making this one control mechanism work
-> > that way makes sense. Memory protection has to be configured together
-> > with IO protection to be actually effective.
-> 
-> Please be more specific. If the protected workload is mostly in-memory,
-> I do not really see how IO controller is relevant. See the example of
-> the DB setup I've mentioned elsewhere.
+[ Upstream commit b74351287d4bd90636c3f48bc188c2f53824c2d4 ]
 
-Most applications, even the ones which don't use explicit IOs much,
-don't have set memory footprint which is uniformly accessed and there
-needs to be some level of reclaim activity for the working set to be
-established and maintained. Without IO control, memory protection
-isn't enough in protecting the workload.
+The driver may sleep while holding a spinlock.
+The function call path (from bottom to top) in Linux 4.19 is:
 
-Even if we narrow down the discussion to something like memcache which
-has fixed memory footprint with almost uniform access pattern, real
-world applications don't exist in vacuum - they compete on CPU, have
-to do logging, pulls in metric ton of libraries which implicitly
-accesses stuff and so on. If somebody else is pummeling the filesystem
-and there's no IO isolation set up, it'll stall noticeably every once
-in a while.
+kernel/irq/manage.c, 523:
+	synchronize_irq in disable_irq
+drivers/uio/uio_dmem_genirq.c, 140:
+	disable_irq in uio_dmem_genirq_irqcontrol
+drivers/uio/uio_dmem_genirq.c, 134:
+	_raw_spin_lock_irqsave in uio_dmem_genirq_irqcontrol
 
-> > As for cgroup hierarchy being unrelated to how controllers behave, it
-> > frankly reminds me of cgroup1 memcg flat hierarchy thing I'm not sure
-> > how that would actually work in terms of resource isolation. Also, I'm
-> > not sure how systemd forces such configurations and I'd think systemd
-> > folks would be happy to fix them if there are such problems. Is the
-> > point you're trying to make "because of systemd, we have to contort
-> > how memory controller behaves"?
-> 
-> No, I am just saying and as explained in reply to Johannes, there are
-> practical cases where the cgroup hierarchy reflects organizational
-> structure as well.
+synchronize_irq() can sleep at runtime.
 
-Oh I see. If cgroup hierarchy isn't set up for resource control,
-resource control not working well seems par for the course. I mean, no
-other controllers would work anyway, so I'm having a hard time to see
-what the point is. What we ultimately want is cgroup actually being
-useful for its primary purpose of resource control while supporting
-other organizational use cases and while the established usages aren't
-there yet I haven't seen anything fundamentally blocking that.
+To fix this bug, disable_irq() is called without holding the spinlock.
 
-Thanks.
+This bug is found by a static analysis tool STCheck written by myself.
 
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Link: https://lore.kernel.org/r/20191218094405.6009-1-baijiaju1990@gmail.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/uio/uio_dmem_genirq.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/uio/uio_dmem_genirq.c b/drivers/uio/uio_dmem_genirq.c
+index 81c88f7bbbcbb..f6ab3f28c8382 100644
+--- a/drivers/uio/uio_dmem_genirq.c
++++ b/drivers/uio/uio_dmem_genirq.c
+@@ -132,11 +132,13 @@ static int uio_dmem_genirq_irqcontrol(struct uio_info *dev_info, s32 irq_on)
+ 	if (irq_on) {
+ 		if (test_and_clear_bit(0, &priv->flags))
+ 			enable_irq(dev_info->irq);
++		spin_unlock_irqrestore(&priv->lock, flags);
+ 	} else {
+-		if (!test_and_set_bit(0, &priv->flags))
++		if (!test_and_set_bit(0, &priv->flags)) {
++			spin_unlock_irqrestore(&priv->lock, flags);
+ 			disable_irq(dev_info->irq);
++		}
+ 	}
+-	spin_unlock_irqrestore(&priv->lock, flags);
+ 
+ 	return 0;
+ }
 -- 
-tejun
+2.20.1
+
