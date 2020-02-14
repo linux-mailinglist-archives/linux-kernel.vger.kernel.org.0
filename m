@@ -2,265 +2,266 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C537715DA18
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:00:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0DE915DA90
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:21:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387594AbgBNO75 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 09:59:57 -0500
-Received: from relay10.mail.gandi.net ([217.70.178.230]:44731 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387561AbgBNO74 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 09:59:56 -0500
-Received: from localhost (lfbn-lyo-1-1670-129.w90-65.abo.wanadoo.fr [90.65.102.129])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 789F524000E;
-        Fri, 14 Feb 2020 14:59:52 +0000 (UTC)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] clk: at91: add at91rm9200 pmc driver
-Date:   Fri, 14 Feb 2020 15:59:33 +0100
-Message-Id: <20200214145934.53648-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.24.1
+        id S1729589AbgBNPVG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:21:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33878 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729258AbgBNPVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:21:05 -0500
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0AED24654;
+        Fri, 14 Feb 2020 15:21:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581693664;
+        bh=NUmIChI4CSvM/V96pPD/59RpOipRQWXmgTrR4oHv1gw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=dL+v/x6n18085w4Of512Dh6t3GvW3Hy89aNRH2kFGv0dFWia0Udsx8UYxlP21jFVD
+         MVShhuagcfEYolIbV1G+p1zlgWMbxIxf5NMNGWMoCosTdwiVeOqqMJOyv8jOweKdxg
+         CZRRKgVv5+t3BXqfezj4VJ2P6jwzXYPlxuRE3h9o=
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1j2cPh-0057sw-26; Fri, 14 Feb 2020 14:57:53 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Robert Richter <rrichter@marvell.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Zenghui Yu <yuzenghui@huawei.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v4 10/20] irqchip/gic-v4.1: Move doorbell management to the GICv4 abstraction layer
+Date:   Fri, 14 Feb 2020 14:57:26 +0000
+Message-Id: <20200214145736.18550-11-maz@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200214145736.18550-1-maz@kernel.org>
+References: <20200214145736.18550-1-maz@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, lorenzo.pieralisi@arm.com, jason@lakedaemon.net, rrichter@marvell.com, tglx@linutronix.de, yuzenghui@huawei.com, eric.auger@redhat.com, james.morse@arm.com, julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a driver for the PMC clocks of the at91rm9200.
+In order to hide some of the differences between v4.0 and v4.1, move
+the doorbell management out of the KVM code, and into the GICv4-specific
+layer. This allows the calling code to ask for the doorbell when blocking,
+and otherwise to leave the doorbell permanently disabled.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+This matches the v4.1 code perfectly, and only results in a minor
+refactoring of the v4.0 code.
+
+Signed-off-by: Marc Zyngier <maz@kernel.org>
 ---
- drivers/clk/at91/Makefile     |   1 +
- drivers/clk/at91/at91rm9200.c | 199 ++++++++++++++++++++++++++++++++++
- 2 files changed, 200 insertions(+)
- create mode 100644 drivers/clk/at91/at91rm9200.c
+ drivers/irqchip/irq-gic-v4.c       | 45 +++++++++++++++++++++++++++---
+ include/kvm/arm_vgic.h             |  1 +
+ include/linux/irqchip/arm-gic-v4.h |  3 +-
+ virt/kvm/arm/vgic/vgic-v3.c        |  4 ++-
+ virt/kvm/arm/vgic/vgic-v4.c        | 34 ++++++++++------------
+ 5 files changed, 61 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/clk/at91/Makefile b/drivers/clk/at91/Makefile
-index 3732241352ce..08fa7930c8fd 100644
---- a/drivers/clk/at91/Makefile
-+++ b/drivers/clk/at91/Makefile
-@@ -15,6 +15,7 @@ obj-$(CONFIG_HAVE_AT91_H32MX)		+= clk-h32mx.o
- obj-$(CONFIG_HAVE_AT91_GENERATED_CLK)	+= clk-generated.o
- obj-$(CONFIG_HAVE_AT91_I2S_MUX_CLK)	+= clk-i2s-mux.o
- obj-$(CONFIG_HAVE_AT91_SAM9X60_PLL)	+= clk-sam9x60-pll.o
-+obj-$(CONFIG_SOC_AT91RM9200) += at91rm9200.o
- obj-$(CONFIG_SOC_AT91SAM9) += at91sam9260.o at91sam9rl.o at91sam9x5.o
- obj-$(CONFIG_SOC_SAM9X60) += sam9x60.o
- obj-$(CONFIG_SOC_SAMA5D4) += sama5d4.o
-diff --git a/drivers/clk/at91/at91rm9200.c b/drivers/clk/at91/at91rm9200.c
-new file mode 100644
-index 000000000000..90b2ace7f7bd
---- /dev/null
-+++ b/drivers/clk/at91/at91rm9200.c
-@@ -0,0 +1,199 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/clk-provider.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/slab.h>
-+
-+#include <dt-bindings/clock/at91.h>
-+
-+#include "pmc.h"
-+
-+struct sck {
-+	char *n;
-+	char *p;
-+	u8 id;
-+};
-+
-+struct pck {
-+	char *n;
-+	u8 id;
-+};
-+
-+static const struct clk_master_characteristics rm9200_mck_characteristics = {
-+	.output = { .min = 0, .max = 80000000 },
-+	.divisors = { 1, 2, 3, 4 },
-+};
-+
-+static u8 rm9200_pll_out[] = { 0, 2 };
-+
-+static const struct clk_range rm9200_pll_outputs[] = {
-+	{ .min = 80000000, .max = 160000000 },
-+	{ .min = 150000000, .max = 180000000 },
-+};
-+
-+static const struct clk_pll_characteristics rm9200_pll_characteristics = {
-+	.input = { .min = 1000000, .max = 32000000 },
-+	.num_output = ARRAY_SIZE(rm9200_pll_outputs),
-+	.output = rm9200_pll_outputs,
-+	.out = rm9200_pll_out,
-+};
-+
-+static const struct sck at91rm9200_systemck[] = {
-+	{ .n = "udpck", .p = "usbck",    .id = 2 },
-+	{ .n = "uhpck", .p = "usbck",    .id = 4 },
-+	{ .n = "pck0",  .p = "prog0",    .id = 8 },
-+	{ .n = "pck1",  .p = "prog1",    .id = 9 },
-+	{ .n = "pck2",  .p = "prog2",    .id = 10 },
-+	{ .n = "pck3",  .p = "prog3",    .id = 11 },
-+};
-+
-+static const struct pck at91rm9200_periphck[] = {
-+	{ .n = "pioA_clk",   .id = 2 },
-+	{ .n = "pioB_clk",   .id = 3 },
-+	{ .n = "pioC_clk",   .id = 4 },
-+	{ .n = "pioD_clk",   .id = 5 },
-+	{ .n = "usart0_clk", .id = 6 },
-+	{ .n = "usart1_clk", .id = 7 },
-+	{ .n = "usart2_clk", .id = 8 },
-+	{ .n = "usart3_clk", .id = 9 },
-+	{ .n = "mci0_clk",   .id = 10 },
-+	{ .n = "udc_clk",    .id = 11 },
-+	{ .n = "twi0_clk",   .id = 12 },
-+	{ .n = "spi0_clk",   .id = 13 },
-+	{ .n = "ssc0_clk",   .id = 14 },
-+	{ .n = "ssc1_clk",   .id = 15 },
-+	{ .n = "ssc2_clk",   .id = 16 },
-+	{ .n = "tc0_clk",    .id = 17 },
-+	{ .n = "tc1_clk",    .id = 18 },
-+	{ .n = "tc2_clk",    .id = 19 },
-+	{ .n = "tc3_clk",    .id = 20 },
-+	{ .n = "tc4_clk",    .id = 21 },
-+	{ .n = "tc5_clk",    .id = 22 },
-+	{ .n = "ohci_clk",   .id = 23 },
-+	{ .n = "macb0_clk",  .id = 24 },
-+};
-+
-+static void __init at91rm9200_pmc_setup(struct device_node *np)
+diff --git a/drivers/irqchip/irq-gic-v4.c b/drivers/irqchip/irq-gic-v4.c
+index c01910d53f9e..117ba6db023d 100644
+--- a/drivers/irqchip/irq-gic-v4.c
++++ b/drivers/irqchip/irq-gic-v4.c
+@@ -87,6 +87,11 @@ static struct irq_domain *gic_domain;
+ static const struct irq_domain_ops *vpe_domain_ops;
+ static const struct irq_domain_ops *sgi_domain_ops;
+ 
++static bool has_v4_1(void)
 +{
-+	const char *slowxtal_name, *mainxtal_name;
-+	struct pmc_data *at91rm9200_pmc;
-+	u32 usb_div[] = { 1, 2, 0, 0 };
-+	const char *parent_names[6];
-+	struct regmap *regmap;
-+	struct clk_hw *hw;
-+	int i;
-+	bool bypass;
-+
-+	i = of_property_match_string(np, "clock-names", "slow_xtal");
-+	if (i < 0)
-+		return;
-+
-+	slowxtal_name = of_clk_get_parent_name(np, i);
-+
-+	i = of_property_match_string(np, "clock-names", "main_xtal");
-+	if (i < 0)
-+		return;
-+	mainxtal_name = of_clk_get_parent_name(np, i);
-+
-+	regmap = device_node_to_regmap(np);
-+	if (IS_ERR(regmap))
-+		return;
-+
-+	at91rm9200_pmc = pmc_data_allocate(PMC_MAIN + 1,
-+					    nck(at91rm9200_systemck),
-+					    nck(at91rm9200_periphck), 0);
-+	if (!at91rm9200_pmc)
-+		return;
-+
-+	bypass = of_property_read_bool(np, "atmel,osc-bypass");
-+
-+	hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name,
-+					bypass);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	hw = at91_clk_register_rm9200_main(regmap, "mainck", "main_osc");
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	at91rm9200_pmc->chws[PMC_MAIN] = hw;
-+
-+	hw = at91_clk_register_pll(regmap, "pllack", "mainck", 0,
-+				   &at91rm9200_pll_layout,
-+				   &rm9200_pll_characteristics);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	hw = at91_clk_register_pll(regmap, "pllbck", "mainck", 1,
-+				   &at91rm9200_pll_layout,
-+				   &rm9200_pll_characteristics);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	parent_names[0] = slowxtal_name;
-+	parent_names[1] = "mainck";
-+	parent_names[2] = "pllack";
-+	parent_names[3] = "pllbck";
-+	hw = at91_clk_register_master(regmap, "masterck", 4, parent_names,
-+				      &at91rm9200_master_layout,
-+				      &rm9200_mck_characteristics);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	at91rm9200_pmc->chws[PMC_MCK] = hw;
-+
-+	hw = at91rm9200_clk_register_usb(regmap, "usbck", "pllbck", usb_div);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	parent_names[0] = slowxtal_name;
-+	parent_names[1] = "mainck";
-+	parent_names[2] = "pllack";
-+	parent_names[3] = "pllbck";
-+	for (i = 0; i < 4; i++) {
-+		char name[6];
-+
-+		snprintf(name, sizeof(name), "prog%d", i);
-+
-+		hw = at91_clk_register_programmable(regmap, name,
-+						    parent_names, 4, i,
-+						    &at91rm9200_programmable_layout);
-+		if (IS_ERR(hw))
-+			goto err_free;
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(at91rm9200_systemck); i++) {
-+		hw = at91_clk_register_system(regmap, at91rm9200_systemck[i].n,
-+					      at91rm9200_systemck[i].p,
-+					      at91rm9200_systemck[i].id);
-+		if (IS_ERR(hw))
-+			goto err_free;
-+
-+		at91rm9200_pmc->shws[at91rm9200_systemck[i].id] = hw;
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(at91rm9200_periphck); i++) {
-+		hw = at91_clk_register_peripheral(regmap,
-+						  at91rm9200_periphck[i].n,
-+						  "masterck",
-+						  at91rm9200_periphck[i].id);
-+		if (IS_ERR(hw))
-+			goto err_free;
-+
-+		at91rm9200_pmc->phws[at91rm9200_periphck[i].id] = hw;
-+	}
-+
-+	of_clk_add_hw_provider(np, of_clk_hw_pmc_get, at91rm9200_pmc);
-+
-+	return;
-+
-+err_free:
-+	pmc_data_free(at91rm9200_pmc);
++	return !!sgi_domain_ops;
 +}
-+/* 
-+ * While the TCB can be used as the clocksource, the system timer is most likely
-+ * to be used instead. However, the pinctrl driver doesn't support probe
-+ * deferring properly. Once this is fixed, this can be switched to a platform
-+ * driver.
-+ */
-+CLK_OF_DECLARE_DRIVER(at91rm9200_pmc, "atmel,at91rm9200-pmc",
-+		      at91rm9200_pmc_setup);
++
+ int its_alloc_vcpu_irqs(struct its_vm *vm)
+ {
+ 	int vpe_base_irq, i;
+@@ -139,18 +144,50 @@ static int its_send_vpe_cmd(struct its_vpe *vpe, struct its_cmd_info *info)
+ 	return irq_set_vcpu_affinity(vpe->irq, info);
+ }
+ 
+-int its_schedule_vpe(struct its_vpe *vpe, bool on)
++int its_make_vpe_non_resident(struct its_vpe *vpe, bool db)
+ {
+-	struct its_cmd_info info;
++	struct irq_desc *desc = irq_to_desc(vpe->irq);
++	struct its_cmd_info info = { };
+ 	int ret;
+ 
+ 	WARN_ON(preemptible());
+ 
+-	info.cmd_type = on ? SCHEDULE_VPE : DESCHEDULE_VPE;
++	info.cmd_type = DESCHEDULE_VPE;
++	if (has_v4_1()) {
++		/* GICv4.1 can directly deal with doorbells */
++		info.req_db = db;
++	} else {
++		/* Undo the nested disable_irq() calls... */
++		while (db && irqd_irq_disabled(&desc->irq_data))
++			enable_irq(vpe->irq);
++	}
++
++	ret = its_send_vpe_cmd(vpe, &info);
++	if (!ret)
++		vpe->resident = false;
++
++	return ret;
++}
++
++int its_make_vpe_resident(struct its_vpe *vpe, bool g0en, bool g1en)
++{
++	struct its_cmd_info info = { };
++	int ret;
++
++	WARN_ON(preemptible());
++
++	info.cmd_type = SCHEDULE_VPE;
++	if (has_v4_1()) {
++		info.g0en = g0en;
++		info.g1en = g1en;
++	} else {
++		/* Disabled the doorbell, as we're about to enter the guest */
++		disable_irq_nosync(vpe->irq);
++	}
+ 
+ 	ret = its_send_vpe_cmd(vpe, &info);
+ 	if (!ret)
+-		vpe->resident = on;
++		vpe->resident = true;
+ 
+ 	return ret;
+ }
+diff --git a/include/kvm/arm_vgic.h b/include/kvm/arm_vgic.h
+index 9d53f545a3d5..63457908c9c4 100644
+--- a/include/kvm/arm_vgic.h
++++ b/include/kvm/arm_vgic.h
+@@ -70,6 +70,7 @@ struct vgic_global {
+ 
+ 	/* Hardware has GICv4? */
+ 	bool			has_gicv4;
++	bool			has_gicv4_1;
+ 
+ 	/* GIC system register CPU interface */
+ 	struct static_key_false gicv3_cpuif;
+diff --git a/include/linux/irqchip/arm-gic-v4.h b/include/linux/irqchip/arm-gic-v4.h
+index a1a9d40266f5..cca4198fa1d5 100644
+--- a/include/linux/irqchip/arm-gic-v4.h
++++ b/include/linux/irqchip/arm-gic-v4.h
+@@ -120,7 +120,8 @@ struct its_cmd_info {
+ 
+ int its_alloc_vcpu_irqs(struct its_vm *vm);
+ void its_free_vcpu_irqs(struct its_vm *vm);
+-int its_schedule_vpe(struct its_vpe *vpe, bool on);
++int its_make_vpe_resident(struct its_vpe *vpe, bool g0en, bool g1en);
++int its_make_vpe_non_resident(struct its_vpe *vpe, bool db);
+ int its_invall_vpe(struct its_vpe *vpe);
+ int its_map_vlpi(int irq, struct its_vlpi_map *map);
+ int its_get_vlpi(int irq, struct its_vlpi_map *map);
+diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
+index f45635a6f0ec..1bc09b523486 100644
+--- a/virt/kvm/arm/vgic/vgic-v3.c
++++ b/virt/kvm/arm/vgic/vgic-v3.c
+@@ -595,7 +595,9 @@ int vgic_v3_probe(const struct gic_kvm_info *info)
+ 	/* GICv4 support? */
+ 	if (info->has_v4) {
+ 		kvm_vgic_global_state.has_gicv4 = gicv4_enable;
+-		kvm_info("GICv4 support %sabled\n",
++		kvm_vgic_global_state.has_gicv4_1 = info->has_v4_1 && gicv4_enable;
++		kvm_info("GICv4%s support %sabled\n",
++			 kvm_vgic_global_state.has_gicv4_1 ? ".1" : "",
+ 			 gicv4_enable ? "en" : "dis");
+ 	}
+ 
+diff --git a/virt/kvm/arm/vgic/vgic-v4.c b/virt/kvm/arm/vgic/vgic-v4.c
+index 46f875589c47..1eb0f8c76219 100644
+--- a/virt/kvm/arm/vgic/vgic-v4.c
++++ b/virt/kvm/arm/vgic/vgic-v4.c
+@@ -67,10 +67,10 @@
+  * it. And if we've migrated our vcpu from one CPU to another, we must
+  * tell the ITS (so that the messages reach the right redistributor).
+  * This is done in two steps: first issue a irq_set_affinity() on the
+- * irq corresponding to the vcpu, then call its_schedule_vpe(). You
+- * must be in a non-preemptible context. On exit, another call to
+- * its_schedule_vpe() tells the redistributor that we're done with the
+- * vcpu.
++ * irq corresponding to the vcpu, then call its_make_vpe_resident().
++ * You must be in a non-preemptible context. On exit, a call to
++ * its_make_vpe_non_resident() tells the redistributor that we're done
++ * with the vcpu.
+  *
+  * Finally, the doorbell handling: Each vcpu is allocated an interrupt
+  * which will fire each time a VLPI is made pending whilst the vcpu is
+@@ -86,7 +86,8 @@ static irqreturn_t vgic_v4_doorbell_handler(int irq, void *info)
+ 	struct kvm_vcpu *vcpu = info;
+ 
+ 	/* We got the message, no need to fire again */
+-	if (!irqd_irq_disabled(&irq_to_desc(irq)->irq_data))
++	if (!kvm_vgic_global_state.has_gicv4_1 &&
++	    !irqd_irq_disabled(&irq_to_desc(irq)->irq_data))
+ 		disable_irq_nosync(irq);
+ 
+ 	vcpu->arch.vgic_cpu.vgic_v3.its_vpe.pending_last = true;
+@@ -199,19 +200,11 @@ void vgic_v4_teardown(struct kvm *kvm)
+ int vgic_v4_put(struct kvm_vcpu *vcpu, bool need_db)
+ {
+ 	struct its_vpe *vpe = &vcpu->arch.vgic_cpu.vgic_v3.its_vpe;
+-	struct irq_desc *desc = irq_to_desc(vpe->irq);
+ 
+ 	if (!vgic_supports_direct_msis(vcpu->kvm) || !vpe->resident)
+ 		return 0;
+ 
+-	/*
+-	 * If blocking, a doorbell is required. Undo the nested
+-	 * disable_irq() calls...
+-	 */
+-	while (need_db && irqd_irq_disabled(&desc->irq_data))
+-		enable_irq(vpe->irq);
+-
+-	return its_schedule_vpe(vpe, false);
++	return its_make_vpe_non_resident(vpe, need_db);
+ }
+ 
+ int vgic_v4_load(struct kvm_vcpu *vcpu)
+@@ -232,18 +225,19 @@ int vgic_v4_load(struct kvm_vcpu *vcpu)
+ 	if (err)
+ 		return err;
+ 
+-	/* Disabled the doorbell, as we're about to enter the guest */
+-	disable_irq_nosync(vpe->irq);
+-
+-	err = its_schedule_vpe(vpe, true);
++	err = its_make_vpe_resident(vpe, false, vcpu->kvm->arch.vgic.enabled);
+ 	if (err)
+ 		return err;
+ 
+ 	/*
+ 	 * Now that the VPE is resident, let's get rid of a potential
+-	 * doorbell interrupt that would still be pending.
++	 * doorbell interrupt that would still be pending. This is a
++	 * GICv4.0 only "feature"...
+ 	 */
+-	return irq_set_irqchip_state(vpe->irq, IRQCHIP_STATE_PENDING, false);
++	if (!kvm_vgic_global_state.has_gicv4_1)
++		err = irq_set_irqchip_state(vpe->irq, IRQCHIP_STATE_PENDING, false);
++
++	return err;
+ }
+ 
+ static struct vgic_its *vgic_get_its(struct kvm *kvm,
 -- 
-2.24.1
+2.20.1
 
