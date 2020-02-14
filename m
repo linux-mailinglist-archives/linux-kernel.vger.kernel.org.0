@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAAB515DCCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:56:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D85815DCCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:56:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731244AbgBNPy7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:54:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35392 "EHLO mail.kernel.org"
+        id S1731309AbgBNPzH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:55:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731241AbgBNPyx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:54:53 -0500
+        id S1731260AbgBNPzA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:55:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F1FE24676;
-        Fri, 14 Feb 2020 15:54:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7318A24673;
+        Fri, 14 Feb 2020 15:54:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695693;
-        bh=MpOLrtBpFCiszf4oe87gUXnv6QKAfqqQwxxRDU9gY+c=;
+        s=default; t=1581695699;
+        bh=M0PJ8JZoSZ8dwHqx5cyIQLl2ynmitGbooB65Z3iUNV8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TXINiA4tQ/z7WmhSii7nfOaOxTuxWgj1sNoDbKeNEcvEjlSizmEr4FdbspK8IeP2j
-         0I8GT3fGR5twOWil88spVScnqZjVNUQsMqGUJKT+SbvC/9z0+rt+PUtytSmnhWGe7w
-         ut8FOPFhr1hxrJn5Qh0aL0kK603Ns55PCNeqoQS8=
+        b=vKCcBlEElL2cVELYCPc/3RwWvP/queUuMXdWeYcQ5lvPodC9SYCQ7J/ABmJiRFk+N
+         Li6yCupHc4OgGuhtDGS8a0Y3z34w+A91e2Uq3Agm5j2eZIpQHqOxKQiZFqJmma9zmI
+         y1mP2QIw6RFLkUPxnFszlRg9laqJXMk2UNfoMwCw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Peter Rosin <peda@axentia.se>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 276/542] fbdev: fix numbering of fbcon options
-Date:   Fri, 14 Feb 2020 10:44:28 -0500
-Message-Id: <20200214154854.6746-276-sashal@kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Niklas Cassel <nks@flawful.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 281/542] clk: Use parent node pointer during registration if necessary
+Date:   Fri, 14 Feb 2020 10:44:33 -0500
+Message-Id: <20200214154854.6746-281-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -48,65 +45,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Rosin <peda@axentia.se>
+From: Stephen Boyd <sboyd@kernel.org>
 
-[ Upstream commit fd933c00ebe220060e66fb136a7050a242456566 ]
+[ Upstream commit 9011f92622e5ef2d075f45e5fa818776d4feb8c0 ]
 
-Three shall be the number thou shalt count, and the number of the
-counting shall be three. Four shalt thou not count...
+Sometimes clk drivers are attached to devices which are children of a
+parent device that is connected to a node in DT. This happens when
+devices are MFD-ish and the parent device driver mostly registers child
+devices to match against drivers placed in their respective subsystem
+directories like drivers/clk, drivers/regulator, etc. When the clk
+driver calls clk_register() with a device pointer, that struct device
+pointer won't have a device_node associated with it because it was
+created purely in software as a way to partition logic to a subsystem.
 
-One! Two! Five!
+This causes problems for the way we find parent clks for the clks
+registered by these child devices because we look at the registering
+device's device_node pointer to lookup 'clocks' and 'clock-names'
+properties. Let's use the parent device's device_node pointer if the
+registering device doesn't have a device_node but the parent does. This
+simplifies clk registration code by avoiding the need to assign some
+device_node to the device registering the clk.
 
-Fixes: efb985f6b265 ("[PATCH] fbcon: Console Rotation - Add framebuffer console documentation")
-Signed-off-by: Peter Rosin <peda@axentia.se>
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190827110854.12574-2-peda@axentia.se
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reported-by: Niklas Cassel <niklas.cassel@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Link: https://lkml.kernel.org/r/20191230190455.141339-1-sboyd@kernel.org
+[sboyd@kernel.org: Fixup kernel-doc notation]
+Reviewed-by: Niklas Cassel <nks@flawful.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Tested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/fb/fbcon.rst | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/clk.c | 27 +++++++++++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/fb/fbcon.rst b/Documentation/fb/fbcon.rst
-index ebca41785abea..65ba402551374 100644
---- a/Documentation/fb/fbcon.rst
-+++ b/Documentation/fb/fbcon.rst
-@@ -127,7 +127,7 @@ C. Boot options
- 	is typically located on the same video card.  Thus, the consoles that
- 	are controlled by the VGA console will be garbled.
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 53585cfc4b9ba..66f056ac4c156 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3736,6 +3736,28 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
+ 	return ERR_PTR(ret);
+ }
  
--4. fbcon=rotate:<n>
-+5. fbcon=rotate:<n>
++/**
++ * dev_or_parent_of_node() - Get device node of @dev or @dev's parent
++ * @dev: Device to get device node of
++ *
++ * Return: device node pointer of @dev, or the device node pointer of
++ * @dev->parent if dev doesn't have a device node, or NULL if neither
++ * @dev or @dev->parent have a device node.
++ */
++static struct device_node *dev_or_parent_of_node(struct device *dev)
++{
++	struct device_node *np;
++
++	if (!dev)
++		return NULL;
++
++	np = dev_of_node(dev);
++	if (!np)
++		np = dev_of_node(dev->parent);
++
++	return np;
++}
++
+ /**
+  * clk_register - allocate a new clock, register it and return an opaque cookie
+  * @dev: device that is registering this clock
+@@ -3751,7 +3773,7 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
+  */
+ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+ {
+-	return __clk_register(dev, dev_of_node(dev), hw);
++	return __clk_register(dev, dev_or_parent_of_node(dev), hw);
+ }
+ EXPORT_SYMBOL_GPL(clk_register);
  
- 	This option changes the orientation angle of the console display. The
- 	value 'n' accepts the following:
-@@ -152,21 +152,21 @@ C. Boot options
- 	Actually, the underlying fb driver is totally ignorant of console
- 	rotation.
+@@ -3767,7 +3789,8 @@ EXPORT_SYMBOL_GPL(clk_register);
+  */
+ int clk_hw_register(struct device *dev, struct clk_hw *hw)
+ {
+-	return PTR_ERR_OR_ZERO(__clk_register(dev, dev_of_node(dev), hw));
++	return PTR_ERR_OR_ZERO(__clk_register(dev, dev_or_parent_of_node(dev),
++			       hw));
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_register);
  
--5. fbcon=margin:<color>
-+6. fbcon=margin:<color>
- 
- 	This option specifies the color of the margins. The margins are the
- 	leftover area at the right and the bottom of the screen that are not
- 	used by text. By default, this area will be black. The 'color' value
- 	is an integer number that depends on the framebuffer driver being used.
- 
--6. fbcon=nodefer
-+7. fbcon=nodefer
- 
- 	If the kernel is compiled with deferred fbcon takeover support, normally
- 	the framebuffer contents, left in place by the firmware/bootloader, will
- 	be preserved until there actually is some text is output to the console.
- 	This option causes fbcon to bind immediately to the fbdev device.
- 
--7. fbcon=logo-pos:<location>
-+8. fbcon=logo-pos:<location>
- 
- 	The only possible 'location' is 'center' (without quotes), and when
- 	given, the bootup logo is moved from the default top-left corner
 -- 
 2.20.1
 
