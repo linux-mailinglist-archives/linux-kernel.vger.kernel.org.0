@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 597F015EF6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:48:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 784DB15EF6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:48:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389237AbgBNRr7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:47:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45016 "EHLO mail.kernel.org"
+        id S2389955AbgBNRrk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:47:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388991AbgBNP74 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:59:56 -0500
+        id S2389042AbgBNQAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:00:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A114024654;
-        Fri, 14 Feb 2020 15:59:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6027222314;
+        Fri, 14 Feb 2020 15:59:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695995;
-        bh=9Ctd1fmVcttbjX+dX5w5TzwYoyTQbQ9VFRC0ZOZZ1FI=;
+        s=default; t=1581695999;
+        bh=Mn14DlESABQtKLvTvserqm6tq4FNSFJNS1Etw+77Saw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F+xLyT3YmmqNaFNt0PMyTiwKfpxI2FV8VMfbqiDCrAYgVk6WVFjguYqW2NSiaqZIC
-         +vAVKwaACAucY3bk9Tkb2Vn/LanSfsaA8XHM7PNfuI6Z7i0ilAsqLbpnR27WDJvxzP
-         9WCIN9GEg94ggBV79sdfZAhE6g38nFTKb5w28FRI=
+        b=oIdxHk/AS+9NYO3E3F860ero/nsI+gjL6W1yvw80JPdJmPfn6SDLP0JBcWtFfuoEp
+         aKLHe0H8mJWyKvbly9zg9cJ8Zi4RYO8glVCEQchTGXfmi+uX1ep/HK91b/y/8u/pDf
+         aCdNHOnz1WLmWz6UY+dLu2vKANLF2Zt6ccSUSLsM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Edmund Nadolski <edmund.nadolski@intel.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.5 515/542] nvme-pci: remove nvmeq->tags
-Date:   Fri, 14 Feb 2020 10:48:27 -0500
-Message-Id: <20200214154854.6746-515-sashal@kernel.org>
+Cc:     Andrei Otcheretianski <andrei.otcheretianski@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 518/542] iwlwifi: mvm: Check the sta is not NULL in iwl_mvm_cfg_he_sta()
+Date:   Fri, 14 Feb 2020 10:48:30 -0500
+Message-Id: <20200214154854.6746-518-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -44,98 +45,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christoph Hellwig <hch@lst.de>
+From: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
 
-[ Upstream commit cfa27356f835dc7755192e7b941d4f4851acbcc7 ]
+[ Upstream commit 12d47f0ea5e0aa63f19ba618da55a7c67850ca10 ]
 
-There is no real need to have a pointer to the tagset in
-struct nvme_queue, as we only need it in a single place, and that place
-can derive the used tagset from the device and qid trivially.  This
-fixes a problem with stale pointer exposure when tagsets are reset,
-and also shrinks the nvme_queue structure.  It also matches what most
-other transports have done since day 1.
+Fix a kernel panic by checking that the sta is not NULL.
+This could happen during a reconfig flow, as mac80211 moves the sta
+between all the states without really checking if the previous state was
+successfully set. So, if for some reason we failed to add back the
+station, subsequent calls to sta_state() callback will be done when the
+station is NULL. This would result in a following panic:
 
-Reported-by: Edmund Nadolski <edmund.nadolski@intel.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Keith Busch <kbusch@kernel.org>
+BUG: unable to handle kernel NULL pointer dereference at
+0000000000000040
+IP: iwl_mvm_cfg_he_sta+0xfc/0x690 [iwlmvm]
+[..]
+Call Trace:
+ iwl_mvm_mac_sta_state+0x629/0x6f0 [iwlmvm]
+ drv_sta_state+0xf4/0x950 [mac80211]
+ ieee80211_reconfig+0xa12/0x2180 [mac80211]
+ ieee80211_restart_work+0xbb/0xe0 [mac80211]
+ process_one_work+0x1e2/0x610
+ worker_thread+0x4d/0x3e0
+[..]
+
+Signed-off-by: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/pci.c | 23 ++++++++---------------
- 1 file changed, 8 insertions(+), 15 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 365a2ddbeaa76..da392b50f73e7 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -167,7 +167,6 @@ struct nvme_queue {
- 	 /* only used for poll queues: */
- 	spinlock_t cq_poll_lock ____cacheline_aligned_in_smp;
- 	volatile struct nvme_completion *cqes;
--	struct blk_mq_tags **tags;
- 	dma_addr_t sq_dma_addr;
- 	dma_addr_t cq_dma_addr;
- 	u32 __iomem *q_db;
-@@ -376,29 +375,17 @@ static int nvme_admin_init_hctx(struct blk_mq_hw_ctx *hctx, void *data,
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
+index 6717f25c46b1c..8ecd1f6875deb 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
+@@ -5,10 +5,9 @@
+  *
+  * GPL LICENSE SUMMARY
+  *
+- * Copyright(c) 2012 - 2014 Intel Corporation. All rights reserved.
+  * Copyright(c) 2013 - 2015 Intel Mobile Communications GmbH
+  * Copyright(c) 2016 - 2017 Intel Deutschland GmbH
+- * Copyright(c) 2018 - 2019 Intel Corporation
++ * Copyright(c) 2012 - 2014, 2018 - 2020 Intel Corporation
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of version 2 of the GNU General Public License as
+@@ -28,10 +27,9 @@
+  *
+  * BSD LICENSE
+  *
+- * Copyright(c) 2012 - 2014 Intel Corporation. All rights reserved.
+  * Copyright(c) 2013 - 2015 Intel Mobile Communications GmbH
+  * Copyright(c) 2016 - 2017 Intel Deutschland GmbH
+- * Copyright(c) 2018 - 2019 Intel Corporation
++ * Copyright(c) 2012 - 2014, 2018 - 2020 Intel Corporation
+  * All rights reserved.
+  *
+  * Redistribution and use in source and binary forms, with or without
+@@ -2037,7 +2035,7 @@ static void iwl_mvm_cfg_he_sta(struct iwl_mvm *mvm,
+ 	rcu_read_lock();
  
- 	WARN_ON(hctx_idx != 0);
- 	WARN_ON(dev->admin_tagset.tags[0] != hctx->tags);
--	WARN_ON(nvmeq->tags);
- 
- 	hctx->driver_data = nvmeq;
--	nvmeq->tags = &dev->admin_tagset.tags[0];
- 	return 0;
- }
- 
--static void nvme_admin_exit_hctx(struct blk_mq_hw_ctx *hctx, unsigned int hctx_idx)
--{
--	struct nvme_queue *nvmeq = hctx->driver_data;
--
--	nvmeq->tags = NULL;
--}
--
- static int nvme_init_hctx(struct blk_mq_hw_ctx *hctx, void *data,
- 			  unsigned int hctx_idx)
- {
- 	struct nvme_dev *dev = data;
- 	struct nvme_queue *nvmeq = &dev->queues[hctx_idx + 1];
- 
--	if (!nvmeq->tags)
--		nvmeq->tags = &dev->tagset.tags[hctx_idx];
--
- 	WARN_ON(dev->tagset.tags[hctx_idx] != hctx->tags);
- 	hctx->driver_data = nvmeq;
- 	return 0;
-@@ -948,6 +935,13 @@ static inline void nvme_ring_cq_doorbell(struct nvme_queue *nvmeq)
- 		writel(head, nvmeq->q_db + nvmeq->dev->db_stride);
- }
- 
-+static inline struct blk_mq_tags *nvme_queue_tagset(struct nvme_queue *nvmeq)
-+{
-+	if (!nvmeq->qid)
-+		return nvmeq->dev->admin_tagset.tags[0];
-+	return nvmeq->dev->tagset.tags[nvmeq->qid - 1];
-+}
-+
- static inline void nvme_handle_cqe(struct nvme_queue *nvmeq, u16 idx)
- {
- 	volatile struct nvme_completion *cqe = &nvmeq->cqes[idx];
-@@ -972,7 +966,7 @@ static inline void nvme_handle_cqe(struct nvme_queue *nvmeq, u16 idx)
+ 	sta = rcu_dereference(mvm->fw_id_to_mac_id[sta_ctxt_cmd.sta_id]);
+-	if (IS_ERR(sta)) {
++	if (IS_ERR_OR_NULL(sta)) {
+ 		rcu_read_unlock();
+ 		WARN(1, "Can't find STA to configure HE\n");
  		return;
- 	}
- 
--	req = blk_mq_tag_to_rq(*nvmeq->tags, cqe->command_id);
-+	req = blk_mq_tag_to_rq(nvme_queue_tagset(nvmeq), cqe->command_id);
- 	trace_nvme_sq(req, cqe->sq_head, nvmeq->sq_tail);
- 	nvme_end_request(req, cqe->status, cqe->result);
- }
-@@ -1572,7 +1566,6 @@ static const struct blk_mq_ops nvme_mq_admin_ops = {
- 	.queue_rq	= nvme_queue_rq,
- 	.complete	= nvme_pci_complete_rq,
- 	.init_hctx	= nvme_admin_init_hctx,
--	.exit_hctx      = nvme_admin_exit_hctx,
- 	.init_request	= nvme_init_request,
- 	.timeout	= nvme_timeout,
- };
 -- 
 2.20.1
 
