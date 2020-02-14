@@ -2,54 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 109F715EDDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:37:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E1B815EDF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:38:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390492AbgBNRgt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:36:49 -0500
-Received: from mga12.intel.com ([192.55.52.136]:39280 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390178AbgBNRgs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 12:36:48 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2020 09:36:46 -0800
-X-IronPort-AV: E=Sophos;i="5.70,441,1574150400"; 
-   d="scan'208";a="238420888"
-Received: from agluck-desk2.sc.intel.com (HELO agluck-desk2.amr.corp.intel.com) ([10.3.52.68])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2020 09:36:46 -0800
-Date:   Fri, 14 Feb 2020 09:36:44 -0800
-From:   "Luck, Tony" <tony.luck@intel.com>
-To:     Prarit Bhargava <prarit@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Krupp <centos@akr.yagii.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-edac@vger.kernel.org
-Subject: Re: [PATCH] x86/mce: Do not log spurious corrected mce errors
-Message-ID: <20200214173644.GA7913@agluck-desk2.amr.corp.intel.com>
-References: <20200214123407.4184-1-prarit@redhat.com>
+        id S2390266AbgBNRhU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:37:20 -0500
+Received: from mail-il1-f199.google.com ([209.85.166.199]:55937 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390238AbgBNRhP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 12:37:15 -0500
+Received: by mail-il1-f199.google.com with SMTP id w62so8113567ila.22
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 09:37:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=5F+xFY1+W/Hlac79V6ZobQB/3n68BJuYvhyjKZywEuE=;
+        b=IiZQNpjxiGJE4pxvUbf32Arx5mVSOCVep7P1Y6z8aoqZk/9PJbDJ/OpbrS2wfN5vyq
+         LxoxMpIoZSZw9LORE8IwaVNJOLyr++Ly3F2aVrHGl1DbuZ3MN34x5Kiu40NyMKQZCX+K
+         7RYyYk2g/SC0Btu7Vo0tshVGrjE+d45pb0qtHeGTGmrk5wJFqOgU4RukmVskHMLQ777C
+         JUgyk3MKTQ11QLdfMWGUCM+KCqqYv+gunrgNCk89ov1FpcPeqYPEU3czc4+l3+YCf+f5
+         bEIBCCllJnUI6VaamidQhlXSyQIAILNf/lOMdRIB3SGA4Ky4Vl/TSoQHCXKqqhwKTT3U
+         11VQ==
+X-Gm-Message-State: APjAAAUYf+ZSZg4okNieNkErpH8gKOtfwSjOmxZaAF9+FaO/lasEEciq
+        hpf3IL8uF8/+q20a7b80gcZTp6wP91nEjbnjCWCLLMMoYYuK
+X-Google-Smtp-Source: APXvYqzbsVvDyxQKl/xehVX2UF3KhAqgullVm/2J57JdImUF93XtDZ+eMr3+hVL6v2CdR9bVBWDbK4C1e7Qgu2QNh0RvlyELRwjj
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200214123407.4184-1-prarit@redhat.com>
+X-Received: by 2002:a02:8587:: with SMTP id d7mr3471135jai.39.1581701834636;
+ Fri, 14 Feb 2020 09:37:14 -0800 (PST)
+Date:   Fri, 14 Feb 2020 09:37:14 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000fe87be059e8ca7bc@google.com>
+Subject: memory leak in nfs_fs_context_parse_monolithic
+From:   syzbot <syzbot+193c375dcddb4f345091@syzkaller.appspotmail.com>
+To:     anna.schumaker@netapp.com, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        trond.myklebust@hammerspace.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 07:34:07AM -0500, Prarit Bhargava wrote:
->  #ifdef CONFIG_X86_MCE_AMD
->  extern bool amd_filter_mce(struct mce *m);
-> +extern bool intel_filter_mce(struct mce *m);
->  #else
+Hello,
 
-Something very weird is going on here. Why does
-CONFIG_X86_MCE_AMD have to be set to enable some
-*Intel* filter operation?
+syzbot found the following crash on:
 
--Tony
+HEAD commit:    0bf999f9 linux/pipe_fs_i.h: fix kernel-doc warnings after ..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1589bd4ee00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2802e33434f4f863
+dashboard link: https://syzkaller.appspot.com/bug?extid=193c375dcddb4f345091
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13dec65ee00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14c05311e00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+193c375dcddb4f345091@syzkaller.appspotmail.com
+
+executing program
+BUG: memory leak
+unreferenced object 0xffff8881166b3ac0 (size 32):
+  comm "syz-executor191", pid 7127, jiffies 4294946216 (age 12.850s)
+  hex dump (first 32 bytes):
+    00 66 73 00 00 00 00 00 00 00 00 00 00 00 00 00  .fs.............
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<000000006202a794>] kmemleak_alloc_recursive include/linux/kmemleak.h:43 [inline]
+    [<000000006202a794>] slab_post_alloc_hook mm/slab.h:586 [inline]
+    [<000000006202a794>] slab_alloc mm/slab.c:3320 [inline]
+    [<000000006202a794>] __do_kmalloc mm/slab.c:3654 [inline]
+    [<000000006202a794>] __kmalloc_track_caller+0x165/0x300 mm/slab.c:3671
+    [<000000007e324303>] kstrdup+0x3a/0x70 mm/util.c:60
+    [<000000002835aac3>] nfs23_parse_monolithic fs/nfs/fs_context.c:958 [inline]
+    [<000000002835aac3>] nfs_fs_context_parse_monolithic+0x5cf/0x8f0 fs/nfs/fs_context.c:1147
+    [<000000004fe3f934>] parse_monolithic_mount_data+0x37/0x40 fs/fs_context.c:679
+    [<00000000dccb779f>] do_new_mount fs/namespace.c:2818 [inline]
+    [<00000000dccb779f>] do_mount+0x945/0xc80 fs/namespace.c:3107
+    [<000000006234487e>] __do_sys_mount fs/namespace.c:3316 [inline]
+    [<000000006234487e>] __se_sys_mount fs/namespace.c:3293 [inline]
+    [<000000006234487e>] __x64_sys_mount+0xc0/0x140 fs/namespace.c:3293
+    [<00000000d2937fdd>] do_syscall_64+0x73/0x220 arch/x86/entry/common.c:294
+    [<00000000fa6ba8f3>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
