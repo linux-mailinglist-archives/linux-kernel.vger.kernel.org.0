@@ -2,45 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 874DD15EC90
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:29:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6594C15EC94
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:29:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390801AbgBNQHy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:07:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58264 "EHLO mail.kernel.org"
+        id S2390809AbgBNQIB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:08:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390595AbgBNQHK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:07:10 -0500
+        id S2390637AbgBNQHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:07:19 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEF5024650;
-        Fri, 14 Feb 2020 16:07:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 546C92067D;
+        Fri, 14 Feb 2020 16:07:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696429;
-        bh=+PkrT4iG1T7Rl6JWmdEM27E+WQtpZRSY2P7dpNAA9Wc=;
+        s=default; t=1581696439;
+        bh=5jtGsCSjRRpD360ikcBkCoYPXgSmQEYS0wrNFktcNKQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TddSkq5bvm7q9IH430KMZ4pqB11gZ2KKjEDxtVBcbJt7eS8wtDd2pD9gqBB3QkENT
-         7g8fg/plS2Vr8wbd423JExWAsIYAoUFwTkTrKgYpnaA2+pTM6leEV2JOhT3iw9sCvG
-         ps+g1iCElEkOerjhRqNYI7/UgT4Kb0AlzK2Hcaqs=
+        b=ZG5yGpulag7NVhZeKumgoqhkTA4HP/7VC4VEmoQ6X/QhLGeCop21P0ZrwG0EFlgR2
+         sRxixbD3DJgYrvDeYc4pIrjBEDAsxgDxlvT8ZH0lM/LSR7rB0HzxxptSPTEf7YoKxT
+         ZXKjxOgarZKbevq4ELdYwhpSO2DVLFGKuyckyh6w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andrey Zhizhikin <andrey.z@gmail.com>,
-        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>,
-        Petr Mladek <pmladek@suse.com>, Jiri Olsa <jolsa@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        bpf@vger.kernel.org, netdev@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.4 248/459] tools lib api fs: Fix gcc9 stringop-truncation compilation error
-Date:   Fri, 14 Feb 2020 10:58:18 -0500
-Message-Id: <20200214160149.11681-248-sashal@kernel.org>
+Cc:     Felix Kuehling <Felix.Kuehling@amd.com>,
+        shaoyunl <shaoyun.liu@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.4 255/459] drm/amdkfd: Fix permissions of hang_hws
+Date:   Fri, 14 Feb 2020 10:58:25 -0500
+Message-Id: <20200214160149.11681-255-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -53,63 +45,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrey Zhizhikin <andrey.z@gmail.com>
+From: Felix Kuehling <Felix.Kuehling@amd.com>
 
-[ Upstream commit 6794200fa3c9c3e6759dae099145f23e4310f4f7 ]
+[ Upstream commit 2bdac179e217a0c0b548a8c60524977586621b19 ]
 
-GCC9 introduced string hardening mechanisms, which exhibits the error
-during fs api compilation:
+Reading from /sys/kernel/debug/kfd/hang_hws would cause a kernel
+oops because we didn't implement a read callback. Set the permission
+to write-only to prevent that.
 
-error: '__builtin_strncpy' specified bound 4096 equals destination size
-[-Werror=stringop-truncation]
-
-This comes when the length of copy passed to strncpy is is equal to
-destination size, which could potentially lead to buffer overflow.
-
-There is a need to mitigate this potential issue by limiting the size of
-destination by 1 and explicitly terminate the destination with NULL.
-
-Signed-off-by: Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Andrii Nakryiko <andriin@fb.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc: Martin KaFai Lau <kafai@fb.com>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Song Liu <songliubraving@fb.com>
-Cc: Yonghong Song <yhs@fb.com>
-Cc: bpf@vger.kernel.org
-Cc: netdev@vger.kernel.org
-Link: http://lore.kernel.org/lkml/20191211080109.18765-1-andrey.zhizhikin@leica-geosystems.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
+Reviewed-by: shaoyunl  <shaoyun.liu@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/lib/api/fs/fs.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdkfd/kfd_debugfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/lib/api/fs/fs.c b/tools/lib/api/fs/fs.c
-index 7aba8243a0e7c..bd021a0eeef8c 100644
---- a/tools/lib/api/fs/fs.c
-+++ b/tools/lib/api/fs/fs.c
-@@ -210,6 +210,7 @@ static bool fs__env_override(struct fs *fs)
- 	size_t name_len = strlen(fs->name);
- 	/* name + "_PATH" + '\0' */
- 	char upper_name[name_len + 5 + 1];
-+
- 	memcpy(upper_name, fs->name, name_len);
- 	mem_toupper(upper_name, name_len);
- 	strcpy(&upper_name[name_len], "_PATH");
-@@ -219,7 +220,8 @@ static bool fs__env_override(struct fs *fs)
- 		return false;
- 
- 	fs->found = true;
--	strncpy(fs->path, override_path, sizeof(fs->path));
-+	strncpy(fs->path, override_path, sizeof(fs->path) - 1);
-+	fs->path[sizeof(fs->path) - 1] = '\0';
- 	return true;
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_debugfs.c b/drivers/gpu/drm/amd/amdkfd/kfd_debugfs.c
+index 15c523027285c..511712c2e382d 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_debugfs.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_debugfs.c
+@@ -93,7 +93,7 @@ void kfd_debugfs_init(void)
+ 			    kfd_debugfs_hqds_by_device, &kfd_debugfs_fops);
+ 	debugfs_create_file("rls", S_IFREG | 0444, debugfs_root,
+ 			    kfd_debugfs_rls_by_device, &kfd_debugfs_fops);
+-	debugfs_create_file("hang_hws", S_IFREG | 0644, debugfs_root,
++	debugfs_create_file("hang_hws", S_IFREG | 0200, debugfs_root,
+ 			    NULL, &kfd_debugfs_hang_hws_fops);
  }
  
 -- 
