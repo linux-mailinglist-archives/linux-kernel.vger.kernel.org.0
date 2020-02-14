@@ -2,35 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14B5C15DBC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:51:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB96815DBCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:51:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729632AbgBNPuO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:50:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53954 "EHLO mail.kernel.org"
+        id S1730422AbgBNPuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:50:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730363AbgBNPuI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:50:08 -0500
+        id S1730375AbgBNPuK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:50:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77AF022314;
-        Fri, 14 Feb 2020 15:50:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F60824691;
+        Fri, 14 Feb 2020 15:50:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695408;
-        bh=fPl5CA2wmeIK8jarfsPxfk2GQe02TOM2RTLnsYOCum4=;
+        s=default; t=1581695409;
+        bh=OHflqUrzlm8/xx/dM//1K4Fu0XHAEpTzk5pVqK1KuwU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y/HPU+EiBE6C9xNlcbtLUibnz5fgFYpA+dD8TwLiS45QQ5TQSOhIpbWprbuT8YZP+
-         8TkyseSg3lBccH1Oec3XbLxNGe7a/OlDSmG6rqsT9uxZWwmRcy/3Ra7UmM5Sps4uKQ
-         E10w4jqspNfgraPXv5c6xoKqwUbXMFhtAa7mIGpM=
+        b=pMmuEBmu0BG4wZHgr3zBeANTv3Qfx1WAkF5JXC1qO/7wInl5427zFGC1/LjQdpcUH
+         MR/+w+v0N/F1/iIQsnS+9qm8f3wWhkHFQMCuldkoc2U1YGa1/dQXze2DXQbvJFP0aB
+         M1m4Vx7OD+zP62Y+bqPNpm2eQgcDT19K82shQs+0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     YueHaibing <yuehaibing@huawei.com>,
-        Miroslav Benes <mbenes@suse.cz>, Jessica Yu <jeyu@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.5 056/542] kernel/module: Fix memleak in module_add_modinfo_attrs()
-Date:   Fri, 14 Feb 2020 10:40:48 -0500
-Message-Id: <20200214154854.6746-56-sashal@kernel.org>
+Cc:     Baruch Siach <baruch@tkos.co.il>,
+        Denis Odintsov <d.odintsov@traviangames.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 057/542] arm64: dts: marvell: clearfog-gt-8k: fix switch cpu port node
+Date:   Fri, 14 Feb 2020 10:40:49 -0500
+Message-Id: <20200214154854.6746-57-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -43,35 +47,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Baruch Siach <baruch@tkos.co.il>
 
-[ Upstream commit f6d061d617124abbd55396a3bc37b9bf7d33233c ]
+[ Upstream commit 62bba54d99407aedfe9b0a02e72e23c06e2b0116 ]
 
-In module_add_modinfo_attrs() if sysfs_create_file() fails
-on the first iteration of the loop (so i = 0), we forget to
-free the modinfo_attrs.
+Explicitly set the switch cpu (upstream) port phy-mode and managed
+properties. This fixes the Marvell 88E6141 switch serdes configuration
+with the recently enabled phylink layer.
 
-Fixes: bc6f2a757d52 ("kernel/module: Fix mem leak in module_add_modinfo_attrs")
-Reviewed-by: Miroslav Benes <mbenes@suse.cz>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Jessica Yu <jeyu@kernel.org>
+Fixes: a6120833272c ("arm64: dts: add support for SolidRun Clearfog GT 8K")
+Reported-by: Denis Odintsov <d.odintsov@traviangames.com>
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/module.c | 2 ++
+ arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dts | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/kernel/module.c b/kernel/module.c
-index b56f3224b161b..8785e31c2dd0f 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -1781,6 +1781,8 @@ static int module_add_modinfo_attrs(struct module *mod)
- error_out:
- 	if (i > 0)
- 		module_remove_modinfo_attrs(mod, --i);
-+	else
-+		kfree(mod->modinfo_attrs);
- 	return error;
- }
+diff --git a/arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dts b/arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dts
+index bd881497b8729..a211a046b2f2f 100644
+--- a/arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dts
++++ b/arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dts
+@@ -408,6 +408,8 @@
+ 				reg = <5>;
+ 				label = "cpu";
+ 				ethernet = <&cp1_eth2>;
++				phy-mode = "2500base-x";
++				managed = "in-band-status";
+ 			};
+ 		};
  
 -- 
 2.20.1
