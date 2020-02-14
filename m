@@ -2,95 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ADF415E0F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:16:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85B7715E009
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:12:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392529AbgBNQQB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:16:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45098 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404072AbgBNQPE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:15:04 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87729246E2;
-        Fri, 14 Feb 2020 16:15:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696904;
-        bh=7d2HlSTu28tCyC8lFDF6nFQvL3dmP8YskVis4QaibWI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CkWMuEcXpfoi97XMNJc3e5ChApFWCrZcbyS8zNEnhr7UllqVdU3jRaoLog+GlkvIm
-         RpTAKiztYTz+7cAdS5avWoFFr7N7V3zOrqF1IYClhGiDEJsvXb0BIGvvnhvS3rq8h/
-         D5MLwb6RbB7K5LCg+M51IcoO0ueN8v6xd2ysFekk=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 154/252] wan: ixp4xx_hss: fix compile-testing on 64-bit
-Date:   Fri, 14 Feb 2020 11:10:09 -0500
-Message-Id: <20200214161147.15842-154-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
-References: <20200214161147.15842-1-sashal@kernel.org>
+        id S2391097AbgBNQLp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:11:45 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.80]:35138 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391572AbgBNQKn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:10:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1581696638;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=ZPKJi9DpktAlJ6/TPMniw8POBwTJ4LOZk0WaWGAQMpk=;
+        b=K/NEapG6OwX2fYjxumsHooW6mv71uv28Ih34WLaJTmFCd2AdnmipCe09aBxcjFcx7J
+        96N58/ep9EvH1ZqVUh+8rNXYh1hcMAxeNI3+lJPGcsEA/VxisI3J7VO3xN9g90Lkcaa6
+        rn3QoUJ3X6QNFb+ROYrD3GZMljljrU7JWMUfDX2gi2DRp23AglcKPg3SMBLFp1sJdgXA
+        LADu/oov94tKN4JxHBMYe6jAjoWDP3BnHFar2jrKSi4YvEaWBJwv+C2hTiv3MTlUbroe
+        L3tcdf/XErG6goXBjoR9zAdS//IfC9WlRgWiZJe6Q5n37zhhodHOEKPnf5GYjD33iPI3
+        ovxg==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1OAA2UNf2M7OMfsfQx3"
+X-RZG-CLASS-ID: mo00
+Received: from iMac.fritz.box
+        by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
+        with ESMTPSA id U06217w1EGAPFkv
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Fri, 14 Feb 2020 17:10:25 +0100 (CET)
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+To:     Paul Boddie <paul@boddie.org.uk>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        letux-kernel@openphoenux.org, kernel@pyra-handheld.com
+Subject: [PATCH v2 00/12] MIPS: Fixes and improvements for CI20 board (JZ4780)
+Date:   Fri, 14 Feb 2020 17:10:12 +0100
+Message-Id: <cover.1581696624.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+V2:
+* dropped "net: davicom: dm9000: allow to pass MAC address through mac_addr module parameter"
+  from this series because it goes through the netdev tree
+  (suggested by Andrew Lunn <andrew@lunn.ch>)
+* added a "fixes:" for "MIPS: DTS: CI20: fix PMU definitions for ACT8600"
+  and "MIPS: DTS: CI20: fix interrupt for pcf8563 RTC"
+  (suggested by Andreas Kemnade <andreas@kemnade.info>)
+* "i2c: jz4780: silence log flood on txabrt" dropped because it is
+  replaced by a new version in v5.6 by Wolfram Sang <wsa@the-dreams.de>
 
-[ Upstream commit 504c28c853ec5c626900b914b5833daf0581a344 ]
+PATCH V1 2020-02-11 22:41:43:
+This patch set provides several improvements for the CI20 board:
 
-Change the driver to use portable integer types to avoid
-warnings during compile testing:
+* suppress warnings from i2c if device is not responding
+* make ingenic-drm found through DT
+* allow davicom dm9000 ethernet controller to use MAC address provided by U-Boot
+* fix #include in jz4780.dtsi
+* configure for loadable kernel modules
+* add DTS for IR sensor and SW1 button
+* configure so that LEDs, IR sensor, SW1 button have drivers
+* fix DTS for ACT8600 PMU and configure driver
+* fix interrupt of nxp,pcf8563
 
-drivers/net/wan/ixp4xx_hss.c:863:21: error: cast to 'u32 *' (aka 'unsigned int *') from smaller integer type 'int' [-Werror,-Wint-to-pointer-cast]
-        memcpy_swab32(mem, (u32 *)((int)skb->data & ~3), bytes / 4);
-                           ^
-drivers/net/wan/ixp4xx_hss.c:979:12: error: incompatible pointer types passing 'u32 *' (aka 'unsigned int *') to parameter of type 'dma_addr_t *' (aka 'unsigned long long *') [-Werror,-Wincompatible-pointer-types]
-                                              &port->desc_tab_phys)))
-                                              ^~~~~~~~~~~~~~~~~~~~
-include/linux/dmapool.h:27:20: note: passing argument to parameter 'handle' here
-                     dma_addr_t *handle);
-                                 ^
+There is another patch set in our queue to add HDMI support on top of this work.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/wan/ixp4xx_hss.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Signed-off-by: Paul Boddie <paul@boddie.org.uk>
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 
-diff --git a/drivers/net/wan/ixp4xx_hss.c b/drivers/net/wan/ixp4xx_hss.c
-index 6a505c26a3e74..a269ed63d90f7 100644
---- a/drivers/net/wan/ixp4xx_hss.c
-+++ b/drivers/net/wan/ixp4xx_hss.c
-@@ -261,7 +261,7 @@ struct port {
- 	struct hss_plat_info *plat;
- 	buffer_t *rx_buff_tab[RX_DESCS], *tx_buff_tab[TX_DESCS];
- 	struct desc *desc_tab;	/* coherent */
--	u32 desc_tab_phys;
-+	dma_addr_t desc_tab_phys;
- 	unsigned int id;
- 	unsigned int clock_type, clock_rate, loopback;
- 	unsigned int initialized, carrier;
-@@ -861,7 +861,7 @@ static int hss_hdlc_xmit(struct sk_buff *skb, struct net_device *dev)
- 		dev->stats.tx_dropped++;
- 		return NETDEV_TX_OK;
- 	}
--	memcpy_swab32(mem, (u32 *)((int)skb->data & ~3), bytes / 4);
-+	memcpy_swab32(mem, (u32 *)((uintptr_t)skb->data & ~3), bytes / 4);
- 	dev_kfree_skb(skb);
- #endif
- 
+
+Alex Smith (1):
+  MIPS: DTS: CI20: add DT node for IR sensor
+
+H. Nikolaus Schaller (11):
+  drm: ingenic-drm: add MODULE_DEVICE_TABLE
+  MIPS: DTS: jz4780: add #includes for irq.h and gpio.h
+  MIPS: CI20: defconfig: configure for supporting modules
+  MIPS: CI20: defconfig: compile leds-gpio driver into the kernel and
+    configure for LED triggers
+  MIPS: DTS: CI20: fix PMU definitions for ACT8600
+  MIPS: CI20: defconfig: configure CONFIG_REGULATOR_ACT8865 for PMU
+  MIPS: DTS: CI20: give eth0_power a defined voltage.
+  MIPS: CI20: defconfig: compile gpio-ir driver
+  MIPS: DTS: CI20: add DT node for SW1 as Enter button
+  MIPS: CI20: defconfig: configure for CONFIG_KEYBOARD_GPIO=m
+  MIPS: DTS: CI20: fix interrupt for pcf8563 RTC
+
+ arch/mips/boot/dts/ingenic/ci20.dts    | 71 ++++++++++++++++++++------
+ arch/mips/boot/dts/ingenic/jz4780.dtsi |  2 +
+ arch/mips/configs/ci20_defconfig       | 21 ++++++++
+ drivers/gpu/drm/ingenic/ingenic-drm.c  |  2 +
+ 4 files changed, 80 insertions(+), 16 deletions(-)
+
 -- 
-2.20.1
+2.23.0
 
