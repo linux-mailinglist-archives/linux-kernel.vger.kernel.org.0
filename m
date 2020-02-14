@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7316415F1CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:08:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2726B15F187
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:03:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387433AbgBNPzi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:55:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36422 "EHLO mail.kernel.org"
+        id S2387524AbgBNPzl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:55:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731757AbgBNPzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:55:24 -0500
+        id S1731771AbgBNPz0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:55:26 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16E18222C4;
-        Fri, 14 Feb 2020 15:55:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97E342467C;
+        Fri, 14 Feb 2020 15:55:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695723;
-        bh=jkH9pWg94cm9T1Q+S+xwhjrfK4jGO8fl3b9h2Vti3GA=;
+        s=default; t=1581695726;
+        bh=9bpJw+BGlm+ozrpPpsGfyfMVr5eMgWl1Iod/H0eoXC8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RC7ueCvNi/ZknvDDBx04F+fji8EsZWmYa3D0R72iLGIm5Kmc4tfpplxeaiGOADwX4
-         Du/v+FcIJC7uTERSFZ5XezLDjWSf75yP7gt9LVOHQU5/I/KXonFWU9VF+BHbkYFWx4
-         VQ0XfxPzdZ2gQrnjfmxlmTD46dbE1yasDiMwV/lM=
+        b=jUIf5KLjk41Sgworc7BYzkNMTyuSN0TlyTI2vGgs0NZtOVXkLb7V/M/UxnShkh3uj
+         GjRyqH2zoQ15agGgx/vgYgMsDv4zS08b2A91B4p8zPM5HGavvb67nMStKT++cudyBz
+         SWn9r7tfE1WCuWs2fhZKlr/u4QDei11Bsv5H/KsY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.5 300/542] ARM: dts: meson8: use the actual frequency for the GPU's 182.1MHz OPP
-Date:   Fri, 14 Feb 2020 10:44:52 -0500
-Message-Id: <20200214154854.6746-300-sashal@kernel.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>, Hulk Robot <hulkci@huawei.com>,
+        Chen Zhou <chenzhou10@huawei.com>,
+        Li Yang <leoyang.li@nxp.com>, Sasha Levin <sashal@kernel.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.5 302/542] soc: fsl: qe: remove set but not used variable 'mm_gc'
+Date:   Fri, 14 Feb 2020 10:44:54 -0500
+Message-Id: <20200214154854.6746-302-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -45,40 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit fe634a7a9a57fb736e39fb71aa9adc6448a90f94 ]
+[ Upstream commit 6e62bd36e9ad85a22d92b1adce6a0336ea549733 ]
 
-The clock setup on Meson8 cannot achieve a Mali frequency of exactly
-182.15MHz. The vendor driver uses "FCLK_DIV7 / 2" for this frequency,
-which translates to 2550MHz / 7 / 2 = 182142857Hz.
-Update the GPU operating point to that specific frequency to not confuse
-myself when comparing the frequency from the .dts with the actual clock
-rate on the system.
+drivers/soc/fsl/qe/gpio.c: In function qe_pin_request:
+drivers/soc/fsl/qe/gpio.c:163:26: warning: variable mm_gc set but not used [-Wunused-but-set-variable]
 
-Fixes: 7d3f6b536e72c9 ("ARM: dts: meson8: add the Mali-450 MP6 GPU")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+commit 1e714e54b5ca ("powerpc: qe_lib-gpio: use gpiochip data pointer")
+left behind this unused variable.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Li Yang <leoyang.li@nxp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/meson8.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/soc/fsl/qe/gpio.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/meson8.dtsi b/arch/arm/boot/dts/meson8.dtsi
-index 3c534cd50ee3b..db2033f674c67 100644
---- a/arch/arm/boot/dts/meson8.dtsi
-+++ b/arch/arm/boot/dts/meson8.dtsi
-@@ -129,8 +129,8 @@
- 	gpu_opp_table: gpu-opp-table {
- 		compatible = "operating-points-v2";
+diff --git a/drivers/soc/fsl/qe/gpio.c b/drivers/soc/fsl/qe/gpio.c
+index f0c29ed8f0ff1..807df73728fc7 100644
+--- a/drivers/soc/fsl/qe/gpio.c
++++ b/drivers/soc/fsl/qe/gpio.c
+@@ -160,7 +160,6 @@ struct qe_pin *qe_pin_request(struct device_node *np, int index)
+ {
+ 	struct qe_pin *qe_pin;
+ 	struct gpio_chip *gc;
+-	struct of_mm_gpio_chip *mm_gc;
+ 	struct qe_gpio_chip *qe_gc;
+ 	int err;
+ 	unsigned long flags;
+@@ -186,7 +185,6 @@ struct qe_pin *qe_pin_request(struct device_node *np, int index)
+ 		goto err0;
+ 	}
  
--		opp-182150000 {
--			opp-hz = /bits/ 64 <182150000>;
-+		opp-182142857 {
-+			opp-hz = /bits/ 64 <182142857>;
- 			opp-microvolt = <1150000>;
- 		};
- 		opp-318750000 {
+-	mm_gc = to_of_mm_gpio_chip(gc);
+ 	qe_gc = gpiochip_get_data(gc);
+ 
+ 	spin_lock_irqsave(&qe_gc->lock, flags);
 -- 
 2.20.1
 
