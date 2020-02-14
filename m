@@ -2,132 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A2ED15D9EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 15:58:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA10415DA04
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 15:58:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387550AbgBNO55 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 09:57:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51364 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387523AbgBNO5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 09:57:54 -0500
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EDE5246B0;
-        Fri, 14 Feb 2020 14:57:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581692273;
-        bh=R6j+U+I+XQkvCRJstNT8X5ez+Q80+JuN85z9z5HuAN4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vrSGUAlZmZfRATl02GeeyMM+P7SKT8PY6M7IFawtJO55BBmCTZ4e0FQ+n1TKNGbqH
-         zTyPVma143y2U06HiST13Yle/622ayd9CSWaPohtHRZF0bLx/X9CQiMZRYJm2Fya/K
-         BPCV5U00sfk/mmWWFLh9GUJm6XFDd2vpwCnZYmVk=
-Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1j2cPg-0057sw-02; Fri, 14 Feb 2020 14:57:52 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Robert Richter <rrichter@marvell.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Zenghui Yu <yuzenghui@huawei.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v4 09/20] irqchip/gic-v4.1: Plumb set_vcpu_affinity SGI callbacks
-Date:   Fri, 14 Feb 2020 14:57:25 +0000
-Message-Id: <20200214145736.18550-10-maz@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214145736.18550-1-maz@kernel.org>
-References: <20200214145736.18550-1-maz@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 62.31.163.78
-X-SA-Exim-Rcpt-To: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, lorenzo.pieralisi@arm.com, jason@lakedaemon.net, rrichter@marvell.com, tglx@linutronix.de, yuzenghui@huawei.com, eric.auger@redhat.com, james.morse@arm.com, julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+        id S2387581AbgBNO6k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 09:58:40 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:37432 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729241AbgBNO6i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 09:58:38 -0500
+Received: from marcel-macbook.fritz.box (p4FEFC5A7.dip0.t-ipconnect.de [79.239.197.167])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 3FA2ACECE6;
+        Fri, 14 Feb 2020 16:08:00 +0100 (CET)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
+Subject: Re: [Bluez PATCH v5] bluetooth: secure bluetooth stack from bluedump
+ attack
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20200214191609.Bluez.v5.1.Ia71869d2f3e19a76a6a352c61088a085a1d41ba6@changeid>
+Date:   Fri, 14 Feb 2020 15:58:36 +0100
+Cc:     Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        chromeos-bluetooth-upstreaming@chromium.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <FCBA4B93-8249-4557-96C1-83060CFA8640@holtmann.org>
+References: <20200214191609.Bluez.v5.1.Ia71869d2f3e19a76a6a352c61088a085a1d41ba6@changeid>
+To:     Howard Chung <howardchung@google.com>
+X-Mailer: Apple Mail (2.3608.60.0.2.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As for VLPIs, there is a number of configuration bits that cannot
-be directly communicated through the normal irqchip API, and we
-have to use our good old friend set_vcpu_affinity.
+Hi Howard,
 
-This is used to configure group and priority for a given vSGI.
+> Attack scenario:
+> 1. A Chromebook (let's call this device A) is paired to a legitimate
+>   Bluetooth classic device (e.g. a speaker) (let's call this device
+>   B).
+> 2. A malicious device (let's call this device C) pretends to be the
+>   Bluetooth speaker by using the same BT address.
+> 3. If device A is not currently connected to device B, device A will
+>   be ready to accept connection from device B in the background
+>   (technically, doing Page Scan).
+> 4. Therefore, device C can initiate connection to device A
+>   (because device A is doing Page Scan) and device A will accept the
+>   connection because device A trusts device C's address which is the
+>   same as device B's address.
+> 5. Device C won't be able to communicate at any high level Bluetooth
+>   profile with device A because device A enforces that device C is
+>   encrypted with their common Link Key, which device C doesn't have.
+>   But device C can initiate pairing with device A with just-works
+>   model without requiring user interaction (there is only pairing
+>   notification). After pairing, device A now trusts device C with a
+>   new different link key, common between device A and C.
+> 6. From now on, device A trusts device C, so device C can at anytime
+>   connect to device A to do any kind of high-level hijacking, e.g.
+>   speaker hijack or mouse/keyboard hijack.
+> 
+> Since we don't know whether the repairing is legitimate or not,
+> leave the decision to user space if all the conditions below are met.
+> - the pairing is initialized by peer
+> - the authorization method is just-work
+> - host already had the link key to the peer
+> 
+> Signed-off-by: Howard Chung <howardchung@google.com>
+> ---
+> 
+> Changes in v5:
+> - Rephrase the comment
+> 
+> Changes in v4:
+> - optimise the check in smp.c.
+> 
+> Changes in v3:
+> - Change confirm_hint from 2 to 1
+> - Fix coding style (declaration order)
+> 
+> Changes in v2:
+> - Remove the HCI_PERMIT_JUST_WORK_REPAIR debugfs option
+> - Fix the added code in classic
+> - Add a similar fix for LE
+> 
+> net/bluetooth/hci_event.c | 10 ++++++++++
+> net/bluetooth/smp.c       | 19 +++++++++++++++++++
+> 2 files changed, 29 insertions(+)
 
-Signed-off-by: Marc Zyngier <maz@kernel.org>
----
- drivers/irqchip/irq-gic-v3-its.c   | 18 ++++++++++++++++++
- include/linux/irqchip/arm-gic-v4.h |  5 +++++
- 2 files changed, 23 insertions(+)
+patch has been applied to bluetooth-next tree.
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index a9753435c4ff..a2e824eae43f 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -3969,6 +3969,23 @@ static int its_sgi_get_irqchip_state(struct irq_data *d,
- 	return 0;
- }
- 
-+static int its_sgi_set_vcpu_affinity(struct irq_data *d, void *vcpu_info)
-+{
-+	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
-+	struct its_cmd_info *info = vcpu_info;
-+
-+	switch (info->cmd_type) {
-+	case PROP_UPDATE_SGI:
-+		vpe->sgi_config[d->hwirq].priority = info->priority;
-+		vpe->sgi_config[d->hwirq].group = info->group;
-+		its_configure_sgi(d, false);
-+		return 0;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
- static struct irq_chip its_sgi_irq_chip = {
- 	.name			= "GICv4.1-sgi",
- 	.irq_mask		= its_sgi_mask_irq,
-@@ -3976,6 +3993,7 @@ static struct irq_chip its_sgi_irq_chip = {
- 	.irq_set_affinity	= its_sgi_set_affinity,
- 	.irq_set_irqchip_state	= its_sgi_set_irqchip_state,
- 	.irq_get_irqchip_state	= its_sgi_get_irqchip_state,
-+	.irq_set_vcpu_affinity	= its_sgi_set_vcpu_affinity,
- };
- 
- static int its_sgi_irq_domain_alloc(struct irq_domain *domain,
-diff --git a/include/linux/irqchip/arm-gic-v4.h b/include/linux/irqchip/arm-gic-v4.h
-index 30b4855bf766..a1a9d40266f5 100644
---- a/include/linux/irqchip/arm-gic-v4.h
-+++ b/include/linux/irqchip/arm-gic-v4.h
-@@ -98,6 +98,7 @@ enum its_vcpu_info_cmd_type {
- 	SCHEDULE_VPE,
- 	DESCHEDULE_VPE,
- 	INVALL_VPE,
-+	PROP_UPDATE_SGI,
- };
- 
- struct its_cmd_info {
-@@ -110,6 +111,10 @@ struct its_cmd_info {
- 			bool		g0en;
- 			bool		g1en;
- 		};
-+		struct {
-+			u8		priority;
-+			bool		group;
-+		};
- 	};
- };
- 
--- 
-2.20.1
+Regards
+
+Marcel
 
