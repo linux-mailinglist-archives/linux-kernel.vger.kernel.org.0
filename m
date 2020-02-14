@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE7DD15E021
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:12:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EC0515E025
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:12:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388694AbgBNQM3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:12:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37982 "EHLO mail.kernel.org"
+        id S2392034AbgBNQMj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:12:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390977AbgBNQLW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:11:22 -0500
+        id S2391818AbgBNQLd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:11:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A815524680;
-        Fri, 14 Feb 2020 16:11:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B96F246A4;
+        Fri, 14 Feb 2020 16:11:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696681;
-        bh=z45Deq5jpfh5BBTwJ6zU+HtvdTraWuKGso37UKduEvs=;
+        s=default; t=1581696693;
+        bh=nk3Sqj0NLjtU5VjaolQGd8Dtv/Yym6D2gggQLfIKF8c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jIHwb2WHQ9Q9JO18f0AB1ihuAzdjuDOJrBbGtpGCPaZog/LF+e38LZ0sEtHpmo4IS
-         5e1ytJabteoPUenYXlKnpdMbA4teKZX5tsrGKC7VM/KcfYHne7/8M2C/uZZCjh9nD2
-         MYHEzCjd8JiclDeIoeWnpkX7NR2PYqEcstjFrmhM=
+        b=S7EF/VE7x4WrsQaxp26jNwP+eZLmxqFa6BZXLtaARzeYnH/3sYIPMiZHlax20HNmc
+         eAJ5+uI7cpMZ5+4f2Ra5A4CQOiH3+cHsiP0TYFlY26KBFd8A/oZdRO1GLrNUPRInRz
+         RtzvTGAK8kvNNQdaVcwxi9rZxyvKhH/k3mAx8HDY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alex Deucher <alexander.deucher@amd.com>,
-        Evan Quan <evan.quan@amd.com>, Sasha Levin <sashal@kernel.org>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.4 449/459] drm/amdgpu/smu10: fix smu10_get_clock_by_type_with_latency
-Date:   Fri, 14 Feb 2020 11:01:39 -0500
-Message-Id: <20200214160149.11681-449-sashal@kernel.org>
+Cc:     Ido Schimmel <idosch@mellanox.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 459/459] mlxsw: spectrum_dpipe: Add missing error path
+Date:   Fri, 14 Feb 2020 11:01:49 -0500
+Message-Id: <20200214160149.11681-459-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -43,47 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alex Deucher <alexander.deucher@amd.com>
+From: Ido Schimmel <idosch@mellanox.com>
 
-[ Upstream commit 4d0a72b66065dd7e274bad6aa450196d42fd8f84 ]
+[ Upstream commit 3a99cbb6fa7bca1995586ec2dc21b0368aad4937 ]
 
-Only send non-0 clocks to DC for validation.  This mirrors
-what the windows driver does.
+In case devlink_dpipe_entry_ctx_prepare() failed, release RTNL that was
+previously taken and free the memory allocated by
+mlxsw_sp_erif_entry_prepare().
 
-Bug: https://gitlab.freedesktop.org/drm/amd/issues/963
-Reviewed-by: Evan Quan <evan.quan@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fixes: 2ba5999f009d ("mlxsw: spectrum: Add Support for erif table entries access")
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_dpipe.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
-index 1115761982a78..627a42e8fd318 100644
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
-@@ -1026,12 +1026,15 @@ static int smu10_get_clock_by_type_with_latency(struct pp_hwmgr *hwmgr,
- 
- 	clocks->num_levels = 0;
- 	for (i = 0; i < pclk_vol_table->count; i++) {
--		clocks->data[i].clocks_in_khz = pclk_vol_table->entries[i].clk * 10;
--		clocks->data[i].latency_in_us = latency_required ?
--						smu10_get_mem_latency(hwmgr,
--						pclk_vol_table->entries[i].clk) :
--						0;
--		clocks->num_levels++;
-+		if (pclk_vol_table->entries[i].clk) {
-+			clocks->data[clocks->num_levels].clocks_in_khz =
-+				pclk_vol_table->entries[i].clk * 10;
-+			clocks->data[clocks->num_levels].latency_in_us = latency_required ?
-+				smu10_get_mem_latency(hwmgr,
-+						      pclk_vol_table->entries[i].clk) :
-+				0;
-+			clocks->num_levels++;
-+		}
- 	}
- 
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_dpipe.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_dpipe.c
+index 49933818c6f59..2dc0978428e64 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_dpipe.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_dpipe.c
+@@ -215,7 +215,7 @@ mlxsw_sp_dpipe_table_erif_entries_dump(void *priv, bool counters_enabled,
+ start_again:
+ 	err = devlink_dpipe_entry_ctx_prepare(dump_ctx);
+ 	if (err)
+-		return err;
++		goto err_ctx_prepare;
+ 	j = 0;
+ 	for (; i < rif_count; i++) {
+ 		struct mlxsw_sp_rif *rif = mlxsw_sp_rif_by_index(mlxsw_sp, i);
+@@ -247,6 +247,7 @@ mlxsw_sp_dpipe_table_erif_entries_dump(void *priv, bool counters_enabled,
  	return 0;
+ err_entry_append:
+ err_entry_get:
++err_ctx_prepare:
+ 	rtnl_unlock();
+ 	devlink_dpipe_entry_clear(&entry);
+ 	return err;
 -- 
 2.20.1
 
