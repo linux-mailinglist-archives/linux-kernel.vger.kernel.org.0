@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7808215EA30
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:12:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6EAE15E9CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:10:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394322AbgBNRMB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:12:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41286 "EHLO mail.kernel.org"
+        id S2403946AbgBNQNs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:13:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392125AbgBNQNL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:13:11 -0500
+        id S2392136AbgBNQNO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:13:14 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1A99246BE;
-        Fri, 14 Feb 2020 16:13:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 58C9B24696;
+        Fri, 14 Feb 2020 16:13:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696790;
-        bh=+jis4DE3IIgqFeCmKzwXpOLiKwa1li8NWsKZs+Gltg4=;
+        s=default; t=1581696793;
+        bh=7lG+dWiKK0SAsQ/9MpxIx6tL6YFcunMBoZY+JdjCtaE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q4xQsPmrVvoaMpcM5LTtuKMwGgOWzBUXEi0gt8y7l6KUekBL+8fQ/O2Lp6XSDV5W9
-         jrY012KBYh5G79y2ACWCTJ6pik/eOf6f3xbXzii8WYLiV4fMFEzamLyitqui1tuvRE
-         ILmTU37CbPmiR0OxS+SP1oUER4okQxjRX7ws2W24=
+        b=sLj5lC2bBEhx+yRPj+kyw2IblsZM/7reWF1u8OlMogSgZqiuUfHKHUqn24+NWbzae
+         PwBmPIjdzylv1/e/JeJUBTmzO8S38QnNDIcrgXrLAFJuvBzRdkwFrHjZTMgA310gfx
+         CYPTe439sl/6qKdczjokXYAM724GvtrpD/QIhroM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     zhengbin <zhengbin13@huawei.com>, Hulk Robot <hulkci@huawei.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Sasha Levin <sashal@kernel.org>,
+Cc:     zhengbin <zhengbin13@huawei.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Hulk Robot <hulkci@huawei.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 065/252] drm/gma500: remove set but not used variable 'is_hdmi','is_crt'
-Date:   Fri, 14 Feb 2020 11:08:40 -0500
-Message-Id: <20200214161147.15842-65-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 067/252] drm/amd/display: remove set but not used variable 'bp' in bios_parser2.c
+Date:   Fri, 14 Feb 2020 11:08:42 -0500
+Message-Id: <20200214161147.15842-67-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -46,53 +48,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: zhengbin <zhengbin13@huawei.com>
 
-[ Upstream commit 834c43a97f341d319aa7b74099bbce2c4e75bc72 ]
+[ Upstream commit 589d8d282ebe1eab2dd8b1fba3e60322787a50e6 ]
 
 Fixes gcc '-Wunused-but-set-variable' warning:
 
-drivers/gpu/drm/gma500/cdv_intel_display.c: In function cdv_intel_crtc_mode_set:
-drivers/gpu/drm/gma500/cdv_intel_display.c:594:7: warning: variable is_hdmi set but not used [-Wunused-but-set-variable]
-drivers/gpu/drm/gma500/cdv_intel_display.c: In function cdv_intel_crtc_mode_set:
-drivers/gpu/drm/gma500/cdv_intel_display.c:593:7: warning: variable is_crt set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c: In function bios_get_board_layout_info:
+drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c:1826:22: warning: variable bp set but not used [-Wunused-but-set-variable]
 
-They are not used since commit acd7ef927e06 ("gma500:
-Update the Cedarview clock handling")
+It is introduced by commit 1eeedbcc20d6 ("drm/amd/display:
+get board layout for edid emulation"), but never used,
+so remove it.
 
+Reviewed-by: Harry Wentland <harry.wentland@amd.com>
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: zhengbin <zhengbin13@huawei.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/1573828027-122323-4-git-send-email-zhengbin13@huawei.com
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/gma500/cdv_intel_display.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/gma500/cdv_intel_display.c b/drivers/gpu/drm/gma500/cdv_intel_display.c
-index 17db4b4749d5a..9854fdd7c51cf 100644
---- a/drivers/gpu/drm/gma500/cdv_intel_display.c
-+++ b/drivers/gpu/drm/gma500/cdv_intel_display.c
-@@ -590,8 +590,8 @@ static int cdv_intel_crtc_mode_set(struct drm_crtc *crtc,
- 	struct gma_clock_t clock;
- 	u32 dpll = 0, dspcntr, pipeconf;
- 	bool ok;
--	bool is_crt = false, is_lvds = false, is_tv = false;
--	bool is_hdmi = false, is_dp = false;
-+	bool is_lvds = false, is_tv = false;
-+	bool is_dp = false;
- 	struct drm_mode_config *mode_config = &dev->mode_config;
- 	struct drm_connector *connector;
- 	const struct gma_limit_t *limit;
-@@ -615,10 +615,7 @@ static int cdv_intel_crtc_mode_set(struct drm_crtc *crtc,
- 			is_tv = true;
- 			break;
- 		case INTEL_OUTPUT_ANALOG:
--			is_crt = true;
--			break;
- 		case INTEL_OUTPUT_HDMI:
--			is_hdmi = true;
- 			break;
- 		case INTEL_OUTPUT_DISPLAYPORT:
- 			is_dp = true;
+diff --git a/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c b/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
+index eab007e1793c2..9ee6814e80c7c 100644
+--- a/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
++++ b/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
+@@ -2029,7 +2029,6 @@ static enum bp_result bios_get_board_layout_info(
+ 	struct board_layout_info *board_layout_info)
+ {
+ 	unsigned int i;
+-	struct bios_parser *bp;
+ 	enum bp_result record_result;
+ 
+ 	const unsigned int slot_index_to_vbios_id[MAX_BOARD_SLOTS] = {
+@@ -2038,7 +2037,6 @@ static enum bp_result bios_get_board_layout_info(
+ 		0, 0
+ 	};
+ 
+-	bp = BP_FROM_DCB(dcb);
+ 	if (board_layout_info == NULL) {
+ 		DC_LOG_DETECTION_EDID_PARSER("Invalid board_layout_info\n");
+ 		return BP_RESULT_BADINPUT;
 -- 
 2.20.1
 
