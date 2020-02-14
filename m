@@ -2,186 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B15E115F67F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 20:13:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E8B815F68E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 20:13:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388389AbgBNTLc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 14:11:32 -0500
-Received: from mail.efficios.com ([167.114.26.124]:39954 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387499AbgBNTLa (ORCPT
+        id S2389086AbgBNTMh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 14:12:37 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:38086 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388768AbgBNTMF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 14:11:30 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.efficios.com (Postfix) with ESMTP id 680A923BC4A;
-        Fri, 14 Feb 2020 14:11:29 -0500 (EST)
-Received: from mail.efficios.com ([127.0.0.1])
-        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id TcPM7Ry9pqIq; Fri, 14 Feb 2020 14:11:29 -0500 (EST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.efficios.com (Postfix) with ESMTP id E37F523BC49;
-        Fri, 14 Feb 2020 14:11:28 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com E37F523BC49
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1581707488;
-        bh=BwocIdJ32MF6rN8SbWERs4qF83E6BOd6O3a5XNTTwUM=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=u4Y+SzgUEWqaBJAj+n5ulWl0tWeX+D6s/UV45wjSv90GM0IbqdrJGmjNO5KnxwAjI
-         v47M0ItKq4/avXufSvae+2f2pyP+ZYWq/1JnmSwgOYRgTaLU9dT+IzVcKAW8rRodNA
-         AEtR5pZQJzH9c7EZJzVm0LoygNNv21o9EfAn3UGRTOyB1zNGfs0wtqVhMQXEdJr4OL
-         GrFJ7uStC48HDYYUSFCOMNfy9P3Cu80EhznAKiSMx5YbgewFtoZJ+QWH9SI40Jw1Op
-         6c2HA0l7oaSpXyfNFhhDUAar48DZf/4tWw15PXTDnQ7wnrRR25OtFmXxRquSpW2m8G
-         kJmq7Cr7LbMyg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([127.0.0.1])
-        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id ixSyBUEApmFR; Fri, 14 Feb 2020 14:11:28 -0500 (EST)
-Received: from localhost (192-222-181-218.qc.cable.ebox.net [192.222.181.218])
-        by mail.efficios.com (Postfix) with ESMTPSA id 539DD23BB53;
-        Fri, 14 Feb 2020 14:11:28 -0500 (EST)
-Date:   Fri, 14 Feb 2020 14:11:26 -0500
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        David Miller <davem@davemloft.net>, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Sebastian Sewior <bigeasy@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Clark Williams <williams@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [RFC patch 14/19] bpf: Use migrate_disable() in hashtab code
-Message-ID: <20200214191126.lbiusetaxecdl3of@localhost>
-References: <20200214133917.304937432@linutronix.de>
- <20200214161504.325142160@linutronix.de>
+        Fri, 14 Feb 2020 14:12:05 -0500
+Received: by mail-ot1-f68.google.com with SMTP id z9so10169810oth.5
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 11:12:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6uqzI/vJCb+lytMRQLBtmGBNvQ3CBGyQ4CHe99juhWw=;
+        b=A01RKV0yUncA2zmUFntZswW/86rIj8tLC2M+AhXaShqxWykJDCkRYD43cXW50sXU39
+         MAa7XyeI7GLjetxuKiKl6Z+csq3oWb/Ynl+99TLWkIoJSkpYl2aCL7j/cGo8BHzrvsd2
+         8aySaepz0fQ2TgDbNN875+eReDdnjC93cTHaog9V5AwTUQwx8yb1iHjXkm3WNamm65pV
+         hGFAn/wkc14F1h7uUo5Lzol4RTLd0WtY2Xogo92Ly7NncWyYlAwKRiui1jUZR5WcYhIt
+         FXIzTf3dg9PluaRNFM74ih0l8HABOHZ+yTWC3VapgIcDQ1btBJ0IDtlJKNucSnOnbLig
+         c0/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6uqzI/vJCb+lytMRQLBtmGBNvQ3CBGyQ4CHe99juhWw=;
+        b=e+fa00TW40u+NpCes3nKR1S80AC00T5eSu42GhS7lYnRGV4N3I/OI4IBiEMvh2fOqe
+         oXdy5/+zgfZ52Yz6VnSSywAhN38Rt2OoHGOib5lzBwAgV17MM96tOlQp+A+89RnOG9zD
+         ErEXyse7WBDlDwbfk7TfJkW8LaVFY9lIj3JVL1Itt1sG+nWzYE8/7hk8U+mccSfedGnH
+         QgDKbaKuYFGtHjsdvYXI0BgHN4jddrxPs/9T00CNwImRr35z5DSUtqVyVM/ddRNwKiPu
+         WqNUD3TbC064eA2TS+/M448NmcpSuXaHhN4kzKRqHT0bb1ZA48mLT7L/ma3INemtJld1
+         W8dA==
+X-Gm-Message-State: APjAAAVUsScjbG4gndlwQQYOTE0uBkY91GQHb80kylUEOr3OQ2KkdUrV
+        fVYEbJLHu8txauAhGwN8foeotQZ3FqFFl3evOhkaFA==
+X-Google-Smtp-Source: APXvYqw9Sh4U5QH4PzNP9ZbTWhW45tXHy/W8ePIQAS0ykZLvuNQTIJlI1t1RupZqm8jvXOKMHeZWx2pyg/XWkHVOixM=
+X-Received: by 2002:a05:6830:1d6e:: with SMTP id l14mr3411629oti.32.1581707524096;
+ Fri, 14 Feb 2020 11:12:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200214161504.325142160@linutronix.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20200214183554.1133805-1-christian.brauner@ubuntu.com> <20200214183554.1133805-5-christian.brauner@ubuntu.com>
+In-Reply-To: <20200214183554.1133805-5-christian.brauner@ubuntu.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Fri, 14 Feb 2020 20:11:36 +0100
+Message-ID: <CAG48ez2o81ZwwL9muYyheN9vY69vJR5sB9LsLh=nk6wB4iuUgw@mail.gmail.com>
+Subject: Re: [PATCH v2 04/28] fsuidgid: add fsid mapping helpers
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Stephen Barber <smbarber@chromium.org>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Phil Estes <estesp@gmail.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14-Feb-2020 02:39:31 PM, Thomas Gleixner wrote:
-> The required protection is that the caller cannot be migrated to a
-> different CPU as these places take either a hash bucket lock or might
-> trigger a kprobe inside the memory allocator. Both scenarios can lead to
-> deadlocks. The deadlock prevention is per CPU by incrementing a per CPU
-> variable which temporarily blocks the invocation of BPF programs from perf
-> and kprobes.
-> 
-> Replace the preempt_disable/enable() pairs with migrate_disable/enable()
-> pairs to prepare BPF to work on PREEMPT_RT enabled kernels. On a non-RT
-> kernel this maps to preempt_disable/enable(), i.e. no functional change.
+On Fri, Feb 14, 2020 at 7:37 PM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+> This adds a set of helpers to translate between kfsuid/kfsgid and their
+> userspace fsuid/fsgid counter parts relative to a given user namespace.
+>
+> - kuid_t make_kfsuid(struct user_namespace *from, uid_t fsuid)
+>   Maps a user-namespace fsuid pair into a kfsuid.
+>   If no fsuid mappings have been written it behaves identical to calling
+>   make_kuid(). This ensures backwards compatibility for workloads unaware
+>   or not in need of fsid mappings.
+[...]
+> +#ifdef CONFIG_USER_NS_FSID
+> +/**
+> + *     make_kfsuid - Map a user-namespace fsuid pair into a kuid.
+> + *     @ns:  User namespace that the fsuid is in
+> + *     @fsuid: User identifier
+> + *
+> + *     Maps a user-namespace fsuid pair into a kernel internal kfsuid,
+> + *     and returns that kfsuid.
+> + *
+> + *     When there is no mapping defined for the user-namespace kfsuid
+> + *     pair INVALID_UID is returned.  Callers are expected to test
+> + *     for and handle INVALID_UID being returned.  INVALID_UID
+> + *     may be tested for using uid_valid().
+> + */
+> +kuid_t make_kfsuid(struct user_namespace *ns, uid_t fsuid)
+> +{
+> +       unsigned extents = ns->fsuid_map.nr_extents;
+> +       smp_rmb();
+> +
+> +       /* Map the fsuid to a global kernel fsuid */
+> +       if (extents == 0)
+> +               return KUIDT_INIT(map_id_down(&ns->uid_map, fsuid));
+> +
+> +       return KUIDT_INIT(map_id_down(&ns->fsuid_map, fsuid));
+> +}
+> +EXPORT_SYMBOL(make_kfsuid);
 
-Will that _really_ work on RT ?
+What effect is this fallback going to have for nested namespaces?
 
-I'm puzzled about what will happen in the following scenario on RT:
+Let's say we have an outer namespace N1 with this uid_map:
 
-Thread A is preempted within e.g. htab_elem_free_rcu, and Thread B is
-scheduled and runs through a bunch of tracepoints. Both are on the
-same CPU's runqueue:
+    0 100000 65535
 
-CPU 1
+and with this fsuid_map:
 
-Thread A is scheduled
-(Thread A) htab_elem_free_rcu()
-(Thread A)   migrate disable
-(Thread A)   __this_cpu_inc(bpf_prog_active); -> per-cpu variable for
-                                               deadlock prevention.
-Thread A is preempted
-Thread B is scheduled
-(Thread B) Runs through various tracepoints:
-           trace_call_bpf()
-           if (unlikely(__this_cpu_inc_return(bpf_prog_active) != 1)) {
-               -> will skip any instrumentation that happens to be on
-                  this CPU until...
-Thread B is preempted
-Thread A is scheduled
-(Thread A)  __this_cpu_dec(bpf_prog_active);
-(Thread A)  migrate enable
+    0 300000 65535
 
-Having all those events randomly and silently discarded might be quite
-unexpected from a user standpoint. This turns the deadlock prevention
-mechanism into a random tracepoint-dropping facility, which is
-unsettling. One alternative approach we could consider to solve this
-is to make this deadlock prevention nesting counter per-thread rather
-than per-cpu.
+Now from in there, a process that is not aware of the existence of
+fsuid mappings creates a new user namespace N2 with the following
+uid_map:
 
-Also, I don't think using __this_cpu_inc() without preempt-disable or
-irq off is safe. You'll probably want to move to this_cpu_inc/dec
-instead, which can be heavier on some architectures.
+    0 1000 1
 
-Thanks,
+At this point, if a process in N2 does chown("foo", 0, 0), is that
+going to make "foo" owned by kuid 101000, which isn't even mapped in
+N1?
 
-Mathieu
+> @@ -1215,11 +1376,13 @@ static bool new_idmap_permitted(const struct file *file,
+>             uid_eq(ns->owner, cred->euid)) {
+>                 u32 id = new_map->extent[0].lower_first;
+>                 if (cap_setid == CAP_SETUID) {
+> -                       kuid_t uid = make_kuid(ns->parent, id);
+> +                       kuid_t uid = map_fsid ? make_kfsuid(ns->parent, id) :
+> +                                               make_kuid(ns->parent, id);
+>                         if (uid_eq(uid, cred->euid))
+>                                 return true;
 
+Let's say we have an outer user namespace N1 with this uid_map:
 
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
->  kernel/bpf/hashtab.c |   12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> --- a/kernel/bpf/hashtab.c
-> +++ b/kernel/bpf/hashtab.c
-> @@ -698,11 +698,11 @@ static void htab_elem_free_rcu(struct rc
->  	 * we're calling kfree, otherwise deadlock is possible if kprobes
->  	 * are placed somewhere inside of slub
->  	 */
-> -	preempt_disable();
-> +	migrate_disable();
->  	__this_cpu_inc(bpf_prog_active);
->  	htab_elem_free(htab, l);
->  	__this_cpu_dec(bpf_prog_active);
-> -	preempt_enable();
-> +	migrate_enable();
->  }
->  
->  static void free_htab_elem(struct bpf_htab *htab, struct htab_elem *l)
-> @@ -1327,7 +1327,7 @@ static int
->  	}
->  
->  again:
-> -	preempt_disable();
-> +	migrate_disable();
->  	this_cpu_inc(bpf_prog_active);
->  	rcu_read_lock();
->  again_nocopy:
-> @@ -1347,7 +1347,7 @@ static int
->  		raw_spin_unlock_irqrestore(&b->lock, flags);
->  		rcu_read_unlock();
->  		this_cpu_dec(bpf_prog_active);
-> -		preempt_enable();
-> +		migrate_enable();
->  		goto after_loop;
->  	}
->  
-> @@ -1356,7 +1356,7 @@ static int
->  		raw_spin_unlock_irqrestore(&b->lock, flags);
->  		rcu_read_unlock();
->  		this_cpu_dec(bpf_prog_active);
-> -		preempt_enable();
-> +		migrate_enable();
->  		kvfree(keys);
->  		kvfree(values);
->  		goto alloc;
-> @@ -1406,7 +1406,7 @@ static int
->  
->  	rcu_read_unlock();
->  	this_cpu_dec(bpf_prog_active);
-> -	preempt_enable();
-> +	migrate_enable();
->  	if (bucket_cnt && (copy_to_user(ukeys + total * key_size, keys,
->  	    key_size * bucket_cnt) ||
->  	    copy_to_user(uvalues + total * value_size, values,
-> 
+    0 1000 3000
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+and this fsuid_map:
+
+    0 2000 3000
+
+and in that namespace, a process is running as UID 1000 (which means
+kernel-euid=2000, kernel-fsuid=3000). Now this process unshares its
+user namespace and from this nested user namespace N2, tries to write
+the following fsuid_map:
+
+    0 1000 1
+
+This should work, since the only ID it maps is the one the process had
+in N1; but the code is AFAICS going to run as follows:
+
+        if ((new_map->nr_extents == 1) && (new_map->extent[0].count == 1) &&
+            uid_eq(ns->owner, cred->euid)) { // branch taken
+                u32 id = new_map->extent[0].lower_first;
+                if (cap_setid == CAP_SETUID) { // branch taken
+                        // uid = make_kfsuid(ns->parent, 1000) = 3000
+                        kuid_t uid = map_fsid ? make_kfsuid(ns->parent, id) :
+                                                make_kuid(ns->parent, id);
+                        // uid_eq(3000, 2000)
+                        if (uid_eq(uid, cred->euid)) // not taken
+                                return true;
+                } else [...]
+        }
+
+Instead, I think what would succeed is this, which shouldn't be allowed:
+
+    0 0 1
+
+which AFAICS will evaluate as follows:
+
+        if ((new_map->nr_extents == 1) && (new_map->extent[0].count == 1) &&
+            uid_eq(ns->owner, cred->euid)) { // branch taken
+                u32 id = new_map->extent[0].lower_first;
+                if (cap_setid == CAP_SETUID) { // branch taken
+                        // uid = make_kfsuid(ns->parent, 0) = 2000
+                        kuid_t uid = map_fsid ? make_kfsuid(ns->parent, id) :
+                                                make_kuid(ns->parent, id);
+                        // uid_eq(2000, 2000)
+                        if (uid_eq(uid, cred->euid)) // taken
+                                return true;
+                } else [...]
+        }
+
+>                 } else if (cap_setid == CAP_SETGID) {
+> -                       kgid_t gid = make_kgid(ns->parent, id);
+> +                       kgid_t gid = map_fsid ? make_kfsgid(ns->parent, id) :
+> +                                               make_kgid(ns->parent, id);
+>                         if (!(ns->flags & USERNS_SETGROUPS_ALLOWED) &&
+>                             gid_eq(gid, cred->egid))
+>                                 return true;
+> --
+> 2.25.0
+>
