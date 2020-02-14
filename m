@@ -2,38 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3127515DD2F
+	by mail.lfdr.de (Postfix) with ESMTP id A4DA415DD30
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:57:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387976AbgBNP4q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:56:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38386 "EHLO mail.kernel.org"
+        id S2388000AbgBNP4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:56:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387858AbgBNP4d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:56:33 -0500
+        id S2387913AbgBNP4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:56:38 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3147B24654;
-        Fri, 14 Feb 2020 15:56:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A5D6424676;
+        Fri, 14 Feb 2020 15:56:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695792;
-        bh=3wGW2BrunnOgr3U/ABE1pDq4qPc9Y4WepmDP45PXgNs=;
+        s=default; t=1581695798;
+        bh=sMUNR4yGWZ+2fKyLeI7Zo66jkrR7W2W8hwkVr/geNGk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MNc/SvIhgdJ2jd1P2vPZh7PXLAPS+QejE4UNR8kaNkyGSPXqSTaHIuV06sgzEon9i
-         8cnYtf+ylw//A/vwcDSeeEa4kdj3oHiXHJjSDw9Y4P/wMD+tL8T1Hul0KqRSYH4a91
-         4q2FF1AsrU5IpnBpqiKPQMcpTOp5w8wgdMN2NYCg=
+        b=WETvc97kfZgS4iTiETjW1T1arwxeBxNe7Yi1G/zPsAyk76751yxdfBvTZeeSunaW6
+         zxuKDFnu5I1LYatNKxB8ICkYR6bw0DHTL5LFzwoovk9mQsJsjwHNraW46SRCHxSyw3
+         xYKng0P/yU7JErkVTh7EQnGi/Hg5uCYhBxCBnuSM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Reto Schneider <reto.schneider@husqvarnagroup.com>,
-        Stefan Roese <sr@denx.de>, Paul Burton <paul.burton@mips.com>,
-        Paul Burton <paulburton@kernel.org>,
-        linux-mips@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.5 354/542] MIPS: ralink: dts: gardena_smart_gateway_mt7688: Limit UART1
-Date:   Fri, 14 Feb 2020 10:45:46 -0500
-Message-Id: <20200214154854.6746-354-sashal@kernel.org>
+Cc:     Ben Skeggs <bskeggs@redhat.com>, Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.5 359/542] drm/nouveau/fault/gv100-: fix memory leak on module unload
+Date:   Fri, 14 Feb 2020 10:45:51 -0500
+Message-Id: <20200214154854.6746-359-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -46,38 +42,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Reto Schneider <reto.schneider@husqvarnagroup.com>
+From: Ben Skeggs <bskeggs@redhat.com>
 
-[ Upstream commit e8c192011c920517e5578d51c7aff0ecadd25de3 ]
+[ Upstream commit 633cc9beeb6f9b5fa2f17a2a9d0e2790cb6c3de7 ]
 
-The radio module asserts CTS when its RX buffer has 10 bytes left.
-Putting just 8 instead of 16 bytes into the UART1 TX buffer on the Linux
-side ensures to not overflow the RX buffer on the radio module side.
-
-Signed-off-by: Reto Schneider <reto.schneider@husqvarnagroup.com>
-Signed-off-by: Stefan Roese <sr@denx.de>
-Cc: Paul Burton <paul.burton@mips.com>
-Signed-off-by: Paul Burton <paulburton@kernel.org>
-Cc: linux-mips@vger.kernel.org
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/boot/dts/ralink/gardena_smart_gateway_mt7688.dts | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/nouveau/nvkm/subdev/fault/base.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/mips/boot/dts/ralink/gardena_smart_gateway_mt7688.dts b/arch/mips/boot/dts/ralink/gardena_smart_gateway_mt7688.dts
-index aa5caaa311047..aad9a8a8669b4 100644
---- a/arch/mips/boot/dts/ralink/gardena_smart_gateway_mt7688.dts
-+++ b/arch/mips/boot/dts/ralink/gardena_smart_gateway_mt7688.dts
-@@ -177,6 +177,9 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinmux_i2s_gpio>;		/* GPIO0..3 */
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/fault/base.c b/drivers/gpu/drm/nouveau/nvkm/subdev/fault/base.c
+index ca251560d3e09..bb4a4266897c3 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/fault/base.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/fault/base.c
+@@ -146,6 +146,7 @@ nvkm_fault_dtor(struct nvkm_subdev *subdev)
+ 	struct nvkm_fault *fault = nvkm_fault(subdev);
+ 	int i;
  
-+	fifo-size = <8>;
-+	tx-threshold = <8>;
-+
- 	rts-gpios = <&gpio 1 GPIO_ACTIVE_LOW>;
- 	cts-gpios = <&gpio 2 GPIO_ACTIVE_LOW>;
- };
++	nvkm_notify_fini(&fault->nrpfb);
+ 	nvkm_event_fini(&fault->event);
+ 
+ 	for (i = 0; i < fault->buffer_nr; i++) {
 -- 
 2.20.1
 
