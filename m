@@ -2,194 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 131C315D2F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 08:39:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AC4715D2D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 08:33:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728945AbgBNHjB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 02:39:01 -0500
-Received: from mail.windriver.com ([147.11.1.11]:49580 "EHLO
-        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728773AbgBNHjB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 02:39:01 -0500
-Received: from ALA-HCB.corp.ad.wrs.com (ala-hcb.corp.ad.wrs.com [147.11.189.41])
-        by mail.windriver.com (8.15.2/8.15.2) with ESMTPS id 01E7VTAM010691
-        (version=TLSv1 cipher=AES256-SHA bits=256 verify=FAIL);
-        Thu, 13 Feb 2020 23:31:29 -0800 (PST)
-Received: from pek-lpg-core2.corp.ad.wrs.com (128.224.153.41) by
- ALA-HCB.corp.ad.wrs.com (147.11.189.41) with Microsoft SMTP Server id
- 14.3.468.0; Thu, 13 Feb 2020 23:31:28 -0800
-From:   <zhe.he@windriver.com>
-To:     <rostedt@goodmis.org>, <acme@redhat.com>, <tstoyanov@vmware.com>,
-        <hewenliang4@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <zhe.he@windriver.com>
-Subject: [PATCH] tools lib traceevent: Take care of return value of asprintf
-Date:   Fri, 14 Feb 2020 15:31:26 +0800
-Message-ID: <1581665486-20386-1-git-send-email-zhe.he@windriver.com>
-X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+        id S1728878AbgBNHdP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 02:33:15 -0500
+Received: from mga18.intel.com ([134.134.136.126]:29563 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728691AbgBNHdP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 02:33:15 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2020 23:33:14 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,439,1574150400"; 
+   d="scan'208";a="257438882"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by fmsmga004.fm.intel.com with ESMTP; 13 Feb 2020 23:33:13 -0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        rientjes@google.com, Wei Yang <richardw.yang@linux.intel.com>
+Subject: [PATCH v2] mm/vmscan.c: only adjust related kswapd cpu affinity when online cpu
+Date:   Fri, 14 Feb 2020 15:33:20 +0800
+Message-Id: <20200214073320.28735-1-richardw.yang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: He Zhe <zhe.he@windriver.com>
+When onlining a cpu, kswapd_cpu_online() is called to adjust kswapd cpu
+affinity.
 
-According to the API, if memory allocation wasn't possible, or some other
-error occurs, asprintf will return -1, and the contents of strp below are
-undefined.
+Current routine does like this:
 
-int asprintf(char **strp, const char *fmt, ...);
+  a) Iterate all the numa node
+  b) Adjust cpu affinity when node has an online cpu
 
-This patch takes care of return value of asprintf to make it less error
-prone and prevent the following build warning.
+For a) this is not necessary, since the particular online cpu belongs to
+a particular numa node. So it is not necessary to iterate on every nodes
+on the system. This new onlined cpu just affect kswapd cpu affinity of
+this particular node.
 
-ignoring return value of ‘asprintf’, declared with attribute warn_unused_result [-Wunused-result]
+For b) several cpumask operation is used to check whether the node has
+an online CPU. Since at this point we are sure one of our CPU onlined,
+we can set the cpu affinity directly to current cpumask_of_node().
 
-Signed-off-by: He Zhe <zhe.he@windriver.com>
+This patch simplifies the logic by set cpu affinity of the affected
+kswapd.
+
 ---
- tools/lib/traceevent/parse-filter.c | 42 +++++++++++++++++++++++++++++--------
- 1 file changed, 33 insertions(+), 9 deletions(-)
+v2:
+  * rephrase the changelog
 
-diff --git a/tools/lib/traceevent/parse-filter.c b/tools/lib/traceevent/parse-filter.c
-index 20eed71..279b572 100644
---- a/tools/lib/traceevent/parse-filter.c
-+++ b/tools/lib/traceevent/parse-filter.c
-@@ -1912,6 +1912,7 @@ static char *op_to_str(struct tep_event_filter *filter, struct tep_filter_arg *a
- 	int left_val = -1;
- 	int right_val = -1;
- 	int val;
-+	int ret;
- 
- 	switch (arg->op.type) {
- 	case TEP_FILTER_OP_AND:
-@@ -1958,7 +1959,9 @@ static char *op_to_str(struct tep_event_filter *filter, struct tep_filter_arg *a
- 				default:
- 					break;
- 				}
--				asprintf(&str, val ? "TRUE" : "FALSE");
-+				ret = asprintf(&str, val ? "TRUE" : "FALSE");
-+				if (ret < 0)
-+					str = NULL;
- 				break;
- 			}
- 		}
-@@ -1976,7 +1979,9 @@ static char *op_to_str(struct tep_event_filter *filter, struct tep_filter_arg *a
- 			break;
- 		}
- 
--		asprintf(&str, "(%s) %s (%s)", left, op, right);
-+		ret = asprintf(&str, "(%s) %s (%s)", left, op, right);
-+		if (ret < 0)
-+			str = NULL;
- 		break;
- 
- 	case TEP_FILTER_OP_NOT:
-@@ -1992,10 +1997,14 @@ static char *op_to_str(struct tep_event_filter *filter, struct tep_filter_arg *a
- 			right_val = 0;
- 		if (right_val >= 0) {
- 			/* just return the opposite */
--			asprintf(&str, right_val ? "FALSE" : "TRUE");
-+			ret = asprintf(&str, right_val ? "FALSE" : "TRUE");
-+			if (ret < 0)
-+				str = NULL;
- 			break;
- 		}
--		asprintf(&str, "%s(%s)", op, right);
-+		ret = asprintf(&str, "%s(%s)", op, right);
-+		if (ret < 0)
-+			str = NULL;
- 		break;
- 
- 	default:
-@@ -2010,8 +2019,11 @@ static char *op_to_str(struct tep_event_filter *filter, struct tep_filter_arg *a
- static char *val_to_str(struct tep_event_filter *filter, struct tep_filter_arg *arg)
+Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+---
+ mm/vmscan.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 665f33258cd7..acc5af82b6ed 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -4029,18 +4029,19 @@ unsigned long shrink_all_memory(unsigned long nr_to_reclaim)
+    restore their cpu bindings. */
+ static int kswapd_cpu_online(unsigned int cpu)
  {
- 	char *str = NULL;
-+	int ret;
+-	int nid;
++	int nid = cpu_to_node(cpu);
++	pg_data_t *pgdat;
++	const struct cpumask *mask;
  
--	asprintf(&str, "%lld", arg->value.val);
-+	ret = asprintf(&str, "%lld", arg->value.val);
-+	if (ret < 0)
-+		str = NULL;
+-	for_each_node_state(nid, N_MEMORY) {
+-		pg_data_t *pgdat = NODE_DATA(nid);
+-		const struct cpumask *mask;
++	if (!node_state(nid, N_MEMORY))
++		return 0;
  
- 	return str;
+-		mask = cpumask_of_node(pgdat->node_id);
++	pgdat = NODE_DATA(nid);
++	mask = cpumask_of_node(nid);
++
++	/* One of our CPUs online: restore mask */
++	set_cpus_allowed_ptr(pgdat->kswapd, mask);
+ 
+-		if (cpumask_any_and(cpu_online_mask, mask) < nr_cpu_ids)
+-			/* One of our CPUs online: restore mask */
+-			set_cpus_allowed_ptr(pgdat->kswapd, mask);
+-	}
+ 	return 0;
  }
-@@ -2027,6 +2039,7 @@ static char *exp_to_str(struct tep_event_filter *filter, struct tep_filter_arg *
- 	char *rstr;
- 	char *op;
- 	char *str = NULL;
-+	int ret;
  
- 	lstr = arg_to_str(filter, arg->exp.left);
- 	rstr = arg_to_str(filter, arg->exp.right);
-@@ -2069,7 +2082,9 @@ static char *exp_to_str(struct tep_event_filter *filter, struct tep_filter_arg *
- 		break;
- 	}
- 
--	asprintf(&str, "%s %s %s", lstr, op, rstr);
-+	ret = asprintf(&str, "%s %s %s", lstr, op, rstr);
-+	if (ret < 0)
-+		str = NULL;
- out:
- 	free(lstr);
- 	free(rstr);
-@@ -2083,6 +2098,7 @@ static char *num_to_str(struct tep_event_filter *filter, struct tep_filter_arg *
- 	char *rstr;
- 	char *str = NULL;
- 	char *op = NULL;
-+	int ret;
- 
- 	lstr = arg_to_str(filter, arg->num.left);
- 	rstr = arg_to_str(filter, arg->num.right);
-@@ -2113,7 +2129,9 @@ static char *num_to_str(struct tep_event_filter *filter, struct tep_filter_arg *
- 		if (!op)
- 			op = "<=";
- 
--		asprintf(&str, "%s %s %s", lstr, op, rstr);
-+		ret = asprintf(&str, "%s %s %s", lstr, op, rstr);
-+		if (ret < 0)
-+			str = NULL;
- 		break;
- 
- 	default:
-@@ -2131,6 +2149,7 @@ static char *str_to_str(struct tep_event_filter *filter, struct tep_filter_arg *
- {
- 	char *str = NULL;
- 	char *op = NULL;
-+	int ret;
- 
- 	switch (arg->str.type) {
- 	case TEP_FILTER_CMP_MATCH:
-@@ -2148,8 +2167,10 @@ static char *str_to_str(struct tep_event_filter *filter, struct tep_filter_arg *
- 		if (!op)
- 			op = "!~";
- 
--		asprintf(&str, "%s %s \"%s\"",
-+		ret = asprintf(&str, "%s %s \"%s\"",
- 			 arg->str.field->name, op, arg->str.val);
-+		if (ret < 0)
-+			str = NULL;
- 		break;
- 
- 	default:
-@@ -2162,10 +2183,13 @@ static char *str_to_str(struct tep_event_filter *filter, struct tep_filter_arg *
- static char *arg_to_str(struct tep_event_filter *filter, struct tep_filter_arg *arg)
- {
- 	char *str = NULL;
-+	int ret;
- 
- 	switch (arg->type) {
- 	case TEP_FILTER_ARG_BOOLEAN:
--		asprintf(&str, arg->boolean.value ? "TRUE" : "FALSE");
-+		ret = asprintf(&str, arg->boolean.value ? "TRUE" : "FALSE");
-+		if (ret < 0)
-+			str = NULL;
- 		return str;
- 
- 	case TEP_FILTER_ARG_OP:
 -- 
-2.7.4
+2.17.1
 
