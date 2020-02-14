@@ -2,130 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B713815E874
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:00:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F083715ECD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:30:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394416AbgBNRAW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:00:22 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41849 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390550AbgBNRAS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 12:00:18 -0500
-Received: by mail-pf1-f196.google.com with SMTP id j9so5154301pfa.8
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 09:00:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=mMbk3LUtFFonCbHvxPtq3VRJfckeTUY1K1Awq5IpEbQ=;
-        b=E7rBgMfTslEdAa51yhBteDEbNwDifWOiivwEpnXPMMNzoZKvpflgLsVZc40XE+ngvI
-         5QH1pUHuUdcQwwYKHxR4MVzCMQSjfJchmWGwkHXa2N4V5ZoDb/PB75kOw5zrlNHkODpP
-         nDKL7tDcGoUnqt/iIS40qR9S7P+4WDRrgPAlCV1qS285y6B1MyOriTMeBCIVYaYR7Z0d
-         Hc8r6IeWSt4HRmi6C+2rqaOFeSdvRbelf6T3HH9GeF6vyXUgn/RI5m/8cpa8SfVttlm7
-         rQO64Ek2PuLq+5v2dQlFxFJbxfbA8BuI3h3cYoCNidcSsqwDv+4WR0MlvuC7wPz7P/pm
-         ddYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=mMbk3LUtFFonCbHvxPtq3VRJfckeTUY1K1Awq5IpEbQ=;
-        b=VmyyFEcnUaPJKmv7qjwZ51xyXU//XW8UXSor1Vk7HDk3ICLh94VBIO206D+lHfiY2r
-         snGNm8debCdiqDDr3+WjjhuIrtlsypmolOm4Lp/i0F0+PPUha3FO7leGe2NAUVyatdfK
-         lgOTG5tRLWALyPQP9OKjR5wiLUCg+F3ZTZ5752rm+icmTyHAacxhEsy4ikqKfmteJJKJ
-         DKyQBed1BWHbKxY90aR9tl851VAkZhKP9ZJJ5pYm3hDisXQ/IEEnYwI5coaREwo5MPwg
-         HP1QsaP2cYf8Hu3sWog9AefkiRhT5hBsdXkj+9NjqfEWuqXkfUEKFkGQM7SgjlfIjKhZ
-         lpEg==
-X-Gm-Message-State: APjAAAWnbqhCuZXMor90S2Q3J93/CcReviwVPEgTkXJRzQ2MMZSGhmwg
-        2rwYmPbhqNDrRUcCIs79vxg+ew==
-X-Google-Smtp-Source: APXvYqx9pwndWjzTw48b+2ZezAwXcX8mfwTFPA0lWnMyxbbEihEqWPppJWAVTyKw1qxnoF6lMrSwkg==
-X-Received: by 2002:a62:8246:: with SMTP id w67mr4318627pfd.107.1581699617881;
-        Fri, 14 Feb 2020 09:00:17 -0800 (PST)
-Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:5404:91ba:59dc:9400])
-        by smtp.googlemail.com with ESMTPSA id 133sm7556599pfy.14.2020.02.14.09.00.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2020 09:00:17 -0800 (PST)
-Subject: Re: [PATCH 0/3] random: add random.rng_seed to bootconfig entry
-To:     Rob Herring <robh@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        Theodore Ts'o <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Potapenko <glider@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Juergen Gross <jgross@suse.com>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>
-References: <158166060044.9887.549561499483343724.stgit@devnote2>
- <CAL_JsqJ_VwHdpQ_WnQHu5J-bfs1vRPd5HQwVekR+5kKdVi4sXw@mail.gmail.com>
-From:   Mark Salyzyn <salyzyn@android.com>
-Message-ID: <1694f42c-bfc9-570a-64d2-3984965c8940@android.com>
-Date:   Fri, 14 Feb 2020 09:00:16 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S2390057AbgBNQHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:07:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57958 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389901AbgBNQHB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:07:01 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1CAE24687;
+        Fri, 14 Feb 2020 16:06:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581696420;
+        bh=y3cLW9E43Gt6K/m046jOyePIA/a7L/iQ/HgdNX4WiRg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=dJiEuwWHE46lSyvDVaxebEqC3enXhMuqeEQNJTSIC3CRYI21yfkIuKhAW2uaYlNeT
+         y+p6i6Xu3LflAJIlamLR0D7TkGXKSdXkQgQMWnpcqumJe+yYbS4FSY2HGGzxiQz69n
+         fFqkdBNn8xWoJBgsCll+2IROnTK3h2O0ZfmbYPZI=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Icenowy Zheng <icenowy@aosc.io>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 241/459] clk: sunxi-ng: add mux and pll notifiers for A64 CPU clock
+Date:   Fri, 14 Feb 2020 10:58:11 -0500
+Message-Id: <20200214160149.11681-241-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
+References: <20200214160149.11681-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqJ_VwHdpQ_WnQHu5J-bfs1vRPd5HQwVekR+5kKdVi4sXw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/14/20 5:49 AM, Rob Herring wrote:
-> On Fri, Feb 14, 2020 at 12:10 AM Masami Hiramatsu <mhiramat@kernel.org> wrote:
->> Hi,
->>
->> The following series is bootconfig based implementation of
->> the rng_seed option patch originally from Mark Salyzyn.
->> Note that I removed unrelated command line fixes from this
->> series.
-> Why do we need this? There's already multiple other ways to pass
-> random seed and this doesn't pass the "too complex for the command
-> line" argument you had for needing bootconfig.
->
-> Rob
+From: Icenowy Zheng <icenowy@aosc.io>
 
-Android is the use case I can vouch for. But also KVM.
+[ Upstream commit ec97faff743b398e21f74a54c81333f3390093aa ]
 
-Android Cuttlefish is an emulated device used extensively in the testing 
-and development infrastructure for In-house, partner, and system and 
-application developers for Android. There is no bootloader, per-se. 
-Because of the Android GKI distribution, there is also no rng virtual 
-driver built in, it is loaded later as a module, too late for many 
-aspects of KASLR and networking. There is no Device Tree, it does 
-however have access to the content of the initrd image, and to the 
-command line for the kernel. The only convenient way to get early 
-entropy is going to have to be one of those two places.
+The A64 PLL_CPU clock has the same instability if some factor changed
+without the PLL gated like other SoCs with sun6i-style CCU, e.g. A33,
+H3.
 
-In addition, 2B Android devices on the planet, especially in light of 
-the Android GKI distribution were everything that is vendor created is 
-in a module, needs a way to collect early entropy prior to module load 
-and pass it to the kernel. Yes, they do have access to the recently 
-added Device Tree approach, and we expect them to use it, as I have an 
-active backport for the mechanism into the Android 4.19 and 5.4 kernels. 
-There may also be some benefit to allowing the 13000 different 
-bootloaders an option to use bootconfig as a way of propagating the much 
-needed entropy to their kernels. I could make a case to also allow them 
-command line as another option to relieve their development stress to 
-deliver product, but we can stop there. Regardless, this early entropy 
-has the benefit of greatly improving security and precious boot time.
+Add the mux and pll notifiers for A64 CPU clock to workaround the
+problem.
 
-Sincerely -- Mark Salyzyn
+Fixes: c6a0637460c2 ("clk: sunxi-ng: Add A64 clocks")
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 28 ++++++++++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+index 49bd7a4c015c4..5f66bf8797723 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+@@ -921,11 +921,26 @@ static const struct sunxi_ccu_desc sun50i_a64_ccu_desc = {
+ 	.num_resets	= ARRAY_SIZE(sun50i_a64_ccu_resets),
+ };
+ 
++static struct ccu_pll_nb sun50i_a64_pll_cpu_nb = {
++	.common	= &pll_cpux_clk.common,
++	/* copy from pll_cpux_clk */
++	.enable	= BIT(31),
++	.lock	= BIT(28),
++};
++
++static struct ccu_mux_nb sun50i_a64_cpu_nb = {
++	.common		= &cpux_clk.common,
++	.cm		= &cpux_clk.mux,
++	.delay_us	= 1, /* > 8 clock cycles at 24 MHz */
++	.bypass_index	= 1, /* index of 24 MHz oscillator */
++};
++
+ static int sun50i_a64_ccu_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res;
+ 	void __iomem *reg;
+ 	u32 val;
++	int ret;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	reg = devm_ioremap_resource(&pdev->dev, res);
+@@ -939,7 +954,18 @@ static int sun50i_a64_ccu_probe(struct platform_device *pdev)
+ 
+ 	writel(0x515, reg + SUN50I_A64_PLL_MIPI_REG);
+ 
+-	return sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
++	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
++	if (ret)
++		return ret;
++
++	/* Gate then ungate PLL CPU after any rate changes */
++	ccu_pll_notifier_register(&sun50i_a64_pll_cpu_nb);
++
++	/* Reparent CPU during PLL CPU rate changes */
++	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
++				  &sun50i_a64_cpu_nb);
++
++	return 0;
+ }
+ 
+ static const struct of_device_id sun50i_a64_ccu_ids[] = {
+-- 
+2.20.1
 
