@@ -2,130 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DDFB15F3C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:22:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 147D915F3CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:22:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404506AbgBNSPK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:15:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51372 "EHLO mail.kernel.org"
+        id S2393597AbgBNSPb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:15:31 -0500
+Received: from foss.arm.com ([217.140.110.172]:42868 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403889AbgBNSPH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 13:15:07 -0500
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84D7D2468D;
-        Fri, 14 Feb 2020 18:15:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581704106;
-        bh=EgUf06AnxJMKKDD9vyJH7e9zyuboRGgH8QAWwfCzsDE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=nZm10juJDfo2Yj82liZpPmIrIhwcXj3fMK4wNQ63R5sKqZahT0J541opn6Y9KxtqM
-         ZtnTUYYvsGLLcmxPXiE+lRyUBJSF/VWm6e9ozUt8Eu7GEq7sWz0L6cpWbZ9F+js8M/
-         nvXSd+CB4UnQkmhAAWv07+BbOiNFFWKPj18wiZPE=
-Received: by mail-qt1-f176.google.com with SMTP id d18so7568169qtj.10;
-        Fri, 14 Feb 2020 10:15:06 -0800 (PST)
-X-Gm-Message-State: APjAAAVP49jSHFKzyjF1pc1JoIzvGE9oo7avw605O41P9X930rrPejwf
-        WCYRZPjEpNkz7tn5zGPTNnJE79JAfrl+S4cXFg==
-X-Google-Smtp-Source: APXvYqxw+F4z1ZYq1QXrq+yJXzMLC4EqWE0yp7S40U2pHrAhLEMwW0jmuZvKNd4LOAWn0VfF1Z6wh3ZcM0sed4WWACc=
-X-Received: by 2002:aed:2344:: with SMTP id i4mr3684530qtc.136.1581704105492;
- Fri, 14 Feb 2020 10:15:05 -0800 (PST)
+        id S2389512AbgBNSP3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 13:15:29 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5531C328;
+        Fri, 14 Feb 2020 10:15:29 -0800 (PST)
+Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6F09B3F68E;
+        Fri, 14 Feb 2020 10:15:28 -0800 (PST)
+Subject: Re: RPI4: fail too boot with an initrd
+To:     LABBE Corentin <clabbe@baylibre.com>
+References: <20200214132748.GA23276@Red>
+Cc:     u-boot@lists.denx.de, nsaenzjulienne@suse.de,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From:   James Morse <james.morse@arm.com>
+Message-ID: <b726290c-1038-3771-5187-6ac370bc92c9@arm.com>
+Date:   Fri, 14 Feb 2020 18:15:27 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <158166060044.9887.549561499483343724.stgit@devnote2>
- <CAL_JsqJ_VwHdpQ_WnQHu5J-bfs1vRPd5HQwVekR+5kKdVi4sXw@mail.gmail.com> <1694f42c-bfc9-570a-64d2-3984965c8940@android.com>
-In-Reply-To: <1694f42c-bfc9-570a-64d2-3984965c8940@android.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 14 Feb 2020 12:14:53 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKb=qBH6QXphEZi7vMS+2K5kNj1riXQiUWma=bidAjN5A@mail.gmail.com>
-Message-ID: <CAL_JsqKb=qBH6QXphEZi7vMS+2K5kNj1riXQiUWma=bidAjN5A@mail.gmail.com>
-Subject: Re: [PATCH 0/3] random: add random.rng_seed to bootconfig entry
-To:     Mark Salyzyn <salyzyn@android.com>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        "Theodore Ts'o" <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Potapenko <glider@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Juergen Gross <jgross@suse.com>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200214132748.GA23276@Red>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 11:00 AM Mark Salyzyn <salyzyn@android.com> wrote:
->
-> On 2/14/20 5:49 AM, Rob Herring wrote:
-> > On Fri, Feb 14, 2020 at 12:10 AM Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> >> Hi,
-> >>
-> >> The following series is bootconfig based implementation of
-> >> the rng_seed option patch originally from Mark Salyzyn.
-> >> Note that I removed unrelated command line fixes from this
-> >> series.
-> > Why do we need this? There's already multiple other ways to pass
-> > random seed and this doesn't pass the "too complex for the command
-> > line" argument you had for needing bootconfig.
-> >
-> > Rob
->
-> Android is the use case I can vouch for. But also KVM.
->
-> Android Cuttlefish is an emulated device used extensively in the testing
-> and development infrastructure for In-house, partner, and system and
-> application developers for Android. There is no bootloader, per-se.
-> Because of the Android GKI distribution, there is also no rng virtual
-> driver built in, it is loaded later as a module, too late for many
-> aspects of KASLR and networking. There is no Device Tree, it does
-> however have access to the content of the initrd image, and to the
-> command line for the kernel. The only convenient way to get early
-> entropy is going to have to be one of those two places.
+Hi Corentin,
 
-I'm familiar with Cuttlefish somewhat. Guess who got virtio-gpu
-working on Android[1]. :) I assume DT doesn't work for you because you
-need x86 builds, but doesn't QEMU use UEFI in that case which also has
-a mechanism for passing entropy.
+On 14/02/2020 13:27, LABBE Corentin wrote:
+> Since the inclusion of the "enable network support in RPi4 config" serie on uboot, I
+> have started to work on adding the rpi4 in kernelCI.
+> But I fail to succeed in using a kernel/dtb/ramdisk downloaded via tftp.
+> 
+> Using booti I hit:
+> [    0.000000] Linux version 5.6.0-rc1-next-20200212 (clabbe@build2-bionic-1804) (gcc version 7.4.1 20181213 [linaro-7.4-2019.02 revision 56ec6f6b99cc167ff0c2f8e1a2eed33b1edc85d4] (Linaro    GCC 7.4-2019.02)) #66 SMP PREEMPT Wed Feb 12 10:14:20 UTC 2020
+> [    0.000000] Machine model: Raspberry Pi 4 Model B
+> [    0.000000] earlycon: uart0 at MMIO32 0x00000000fe215040 (options '')
+> [    0.000000] printk: bootconsole [uart0] enabled
+> [    0.000000] efi: Getting EFI parameters from FDT:
+> [    0.000000] efi: UEFI not found.
 
-To clarify my question: Why do we need random seed in bootconfig
-rather than just the kernel command line? I'm not understanding why
-things changed from your original patch.
+So no EFI,
 
-> In addition, 2B Android devices on the planet, especially in light of
-> the Android GKI distribution were everything that is vendor created is
-> in a module, needs a way to collect early entropy prior to module load
-> and pass it to the kernel. Yes, they do have access to the recently
-> added Device Tree approach, and we expect them to use it, as I have an
-> active backport for the mechanism into the Android 4.19 and 5.4 kernels.
-> There may also be some benefit to allowing the 13000 different
-> bootloaders an option to use bootconfig as a way of propagating the much
-> needed entropy to their kernels. I could make a case to also allow them
-> command line as another option to relieve their development stress to
-> deliver product, but we can stop there. Regardless, this early entropy
-> has the benefit of greatly improving security and precious boot time.
+> [    0.000000] OF: reserved mem: failed to allocate memory for node 'linux,cma'
 
-We're going to update 13000 bootloaders to understand bootconfig
-rather than use the infrastructure already in place (DT and/or command
-line)?
+Out of memory.
 
-bootconfig is an ftrace feature only IMO. If it's more than that, I
-imagine there will be some opinions about that. Adding new
-bootloader-kernel interfaces is painful and not something to just add
-without much review.
+> [    0.000000] cma: Failed to reserve 32 MiB
+> [    0.000000] Kernel panic - not syncing: Failed to allocate page table page
 
-Rob
+Out of memory...
+
+> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 5.6.0-rc1-next-20200212 #66
+> [    0.000000] Hardware name: Raspberry Pi 4 Model B (DT)
+> [    0.000000] Call trace:
+> [    0.000000]  dump_backtrace+0x0/0x1a0
+> [    0.000000]  show_stack+0x14/0x20
+> [    0.000000]  dump_stack+0xbc/0x104
+> [    0.000000]  panic+0x16c/0x37c
+> [    0.000000]  early_pgtable_alloc+0x30/0xa0
+
+... really early!
+
+> [    0.000000]  __create_pgd_mapping+0x36c/0x588
+> [    0.000000]  map_kernel_segment+0x70/0xa4
+> [    0.000000]  paging_init+0xf4/0x528
+> [    0.000000]  setup_arch+0x250/0x5d8
+> [    0.000000]  start_kernel+0x90/0x6d8
+> 
+>  
+> Since the same kernel boot with bootefi and that bootefi lack ramdisk address,
+
+Booting with EFI will cause linux to use the EFI memory map.
+
+Does your DT have a memory node? (or does it expect EFI to provide the information)
+
+
+> I tried to add the address in the dtb via:
+> fdt addr 0x02400000; fdt resize; fdt set /chosen linux,initrd-start 0x02700000; fdt set /chosen linux,initrd-end 0x10000000; bootefi 0x00080000 0x02400000
+> But with that, I get:
+> initrd not fully accessible via the linear mapping -- please check your bootloader ...
+
+So this one is an EFI boot, but you can't find where to put the initramfs such that the
+kernel agrees its in memory.
+
+If you boot with 'efi=debug', linux will print the EFI memory map. Could you compare that
+to where U-Boot thinks memory is?
+
+(it sounds like your DT memory node is missing, and your EFI memory map is surprisingly small)
+
+
+Thanks,
+
+James
