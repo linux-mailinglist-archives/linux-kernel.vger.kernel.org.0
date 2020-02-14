@@ -2,110 +2,224 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86BF915D831
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 14:16:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8277615D846
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 14:19:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729286AbgBNNQO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 08:16:14 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42490 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728121AbgBNNQO (ORCPT
+        id S1729242AbgBNNTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 08:19:15 -0500
+Received: from mail.windriver.com ([147.11.1.11]:50844 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728452AbgBNNTO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 08:16:14 -0500
-Received: by mail-wr1-f65.google.com with SMTP id k11so10855642wrd.9
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 05:16:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version;
-        bh=dttGVPvYe+0DFSlsyRJJUIcITjzQToEc+jk1zM06Pt4=;
-        b=n4dLxQPN0JhQQXTz6SAWnhIsES9PG/QVSp0Dyca5BW5cpCWum4eN99uqSXNHYL7Enn
-         +dQ6hjLXyzNN+qRU6P8ZQ3bymeC05amrV2ZQs/Oru8U9C/TTUrBI0e7s1j31+6c0lBlB
-         X50KMfhdpCPfu63obK7Sgb6H6mVprmx1vYdIUpn1TSeCMXVI0PiitAaY/f+5+fHwDg3V
-         l5+gFxyYCqkIhi+K84UgNZ5lyLXjnNjI2x6z7PmmTgecaZchzZWhTuT761DMKg4ESnYa
-         AxfmDuOlpYhvctS4KcMy0He5uS0OxyE9fDBB+PVucONar1gJtmNqOQJANF+zrODomHHX
-         SOsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=dttGVPvYe+0DFSlsyRJJUIcITjzQToEc+jk1zM06Pt4=;
-        b=kViLE76S+K4SGe/7+uidv8r5OjhbhOCmbZX81fFnBJHXugpxk6ERc4Z5FpS5BKpKx9
-         bpq2GUYYTuRtI5yz+mfKg+YTXNnU6WI5dJLAnFCyO1FMuRz14SeRz3/GNh3meTEoCC8z
-         wNnAjKIepH+pH+8D5GDJsBA4eF8nixJLDzBL03nHyE7KicOWC2iEF41Qaa20ur8CNt/I
-         yk964+jAAGm12DzVpHcgqQuZYczvRRE/T53NJxd7l7BxRB32dLINbC8n3pnN5q4/gOdF
-         t+c3V6XW78kxNu9l4IbL6LbIdJUv2t19Kb3BwZsw3cf7VfiGPAeYEbuWpwuud3UB+NgY
-         Avsg==
-X-Gm-Message-State: APjAAAV6dpYLGcaztIWE0/l3J93zg0hsTKYAWhMCFHsv9P8pm4Yf4GUz
-        nMhfhvS+OQ+ELE4lhBA90CmAYg==
-X-Google-Smtp-Source: APXvYqwJkUMkAB0wiz7MQgXQAaFjzRStc5erCu+G50eOFaOD6CBvB6S541TCYfW4sox+swqm82Pg5A==
-X-Received: by 2002:adf:81c2:: with SMTP id 60mr3995329wra.8.1581686171959;
-        Fri, 14 Feb 2020 05:16:11 -0800 (PST)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id s23sm7147787wra.15.2020.02.14.05.16.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2020 05:16:11 -0800 (PST)
-References: <20200213155159.3235792-1-jbrunet@baylibre.com> <20200213155159.3235792-6-jbrunet@baylibre.com> <20200213182157.GJ4333@sirena.org.uk>
-User-agent: mu4e 1.3.3; emacs 26.3
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH 5/9] ASoC: meson: aiu: add hdmi codec control support
-In-reply-to: <20200213182157.GJ4333@sirena.org.uk>
-Date:   Fri, 14 Feb 2020 14:16:10 +0100
-Message-ID: <1j36bdfgx1.fsf@starbuckisacylon.baylibre.com>
+        Fri, 14 Feb 2020 08:19:14 -0500
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail.windriver.com (8.15.2/8.15.2) with ESMTPS id 01EDHVwX002356
+        (version=TLSv1 cipher=AES256-SHA bits=256 verify=FAIL);
+        Fri, 14 Feb 2020 05:17:32 -0800 (PST)
+Received: from [128.224.162.175] (128.224.162.175) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.468.0; Fri, 14 Feb
+ 2020 05:17:30 -0800
+Subject: Re: [PATCH] tools lib traceevent: Take care of return value of
+ asprintf
+To:     Arnaldo Carvalho de Melo <acme@redhat.com>
+CC:     <rostedt@goodmis.org>, <tstoyanov@vmware.com>,
+        <hewenliang4@huawei.com>, <linux-kernel@vger.kernel.org>
+References: <1581665486-20386-1-git-send-email-zhe.he@windriver.com>
+ <20200214125754.GA2974@redhat.com>
+From:   He Zhe <zhe.he@windriver.com>
+Message-ID: <076aa690-3781-97b4-7850-5ec0e2f5e13e@windriver.com>
+Date:   Fri, 14 Feb 2020 21:17:26 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20200214125754.GA2974@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [128.224.162.175]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On Thu 13 Feb 2020 at 19:21, Mark Brown <broonie@kernel.org> wrote:
 
-> On Thu, Feb 13, 2020 at 04:51:55PM +0100, Jerome Brunet wrote:
+On 2/14/20 8:57 PM, Arnaldo Carvalho de Melo wrote:
+> Em Fri, Feb 14, 2020 at 03:31:26PM +0800, zhe.he@windriver.com escreveu:
+>> From: He Zhe <zhe.he@windriver.com>
+>>
+>> According to the API, if memory allocation wasn't possible, or some other
+>> error occurs, asprintf will return -1, and the contents of strp below are
+>> undefined.
+>>
+>> int asprintf(char **strp, const char *fmt, ...);
+>>
+>> This patch takes care of return value of asprintf to make it less error
+>> prone and prevent the following build warning.
+>>
+>> ignoring return value of ‘asprintf’, declared with attribute warn_unused_result [-Wunused-result]
+> Sure this fixes problems, but can you make it more compact, i.e. no need
+> to add most if not all those 'int ret;' lines, just check the asprintf
+> result directly, i.e.:
 >
->> +int aiu_add_component(struct device *dev,
->> +		      const struct snd_soc_component_driver *component_driver,
->> +		      struct snd_soc_dai_driver *dai_drv,
->> +		      int num_dai,
->> +		      const char *debugfs_prefix)
->> +{
->> +	struct snd_soc_component *component;
->> +
->> +	component = devm_kzalloc(dev, sizeof(*component), GFP_KERNEL);
->> +	if (!component)
->> +		return -ENOMEM;
->> +
->> +#ifdef CONFIG_DEBUG_FS
->> +	component->debugfs_prefix = debugfs_prefix;
->> +#endif
+>                              if (asprintf(&str, val ? "TRUE" : "FALSE") < 0)
+>                                      str = NULL;
 >
-> You really shouldn't be doing this as it could conflict with something
-> the machine driver wants to do however it's probably not going to be an
-> issue in practice as it's not like there's going to be multiple SoCs in
-> the card at once and if there were there'd doubltess be other issues.
+> saving the return value for that function is interesting when you need
+> to know how many bytes it printed to do some extra calculation, but if
+> all you need is to know if it failed, checking against < 0 is enough,
+> no?
 
-I'm not sure I understand (and I'd prefer to :) )
+OK. Thanks. I'll send v2.
 
-As you said before, initially the there was supposed to be a 1:1 mapping
-between device and component. The component name is directly derived
-from the device name, and the debugfs directory is created from component name.
+Zhe
 
-I would have preferred to use snd_soc_register_component() directly, but
-with multiple components from the same device I got:
+>
+> - Arnaldo
+>
+>  
+>> Signed-off-by: He Zhe <zhe.he@windriver.com>
+>> ---
+>>  tools/lib/traceevent/parse-filter.c | 42 +++++++++++++++++++++++++++++--------
+>>  1 file changed, 33 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/tools/lib/traceevent/parse-filter.c b/tools/lib/traceevent/parse-filter.c
+>> index 20eed71..279b572 100644
+>> --- a/tools/lib/traceevent/parse-filter.c
+>> +++ b/tools/lib/traceevent/parse-filter.c
+>> @@ -1912,6 +1912,7 @@ static char *op_to_str(struct tep_event_filter *filter, struct tep_filter_arg *a
+>>  	int left_val = -1;
+>>  	int right_val = -1;
+>>  	int val;
+>> +	int ret;
+>>  
+>>  	switch (arg->op.type) {
+>>  	case TEP_FILTER_OP_AND:
+>> @@ -1958,7 +1959,9 @@ static char *op_to_str(struct tep_event_filter *filter, struct tep_filter_arg *a
+>>  				default:
+>>  					break;
+>>  				}
+>> -				asprintf(&str, val ? "TRUE" : "FALSE");
+>> +				ret = asprintf(&str, val ? "TRUE" : "FALSE");
+>> +				if (ret < 0)
+>> +					str = NULL;
+>>  				break;
+>>  			}
+>>  		}
+>> @@ -1976,7 +1979,9 @@ static char *op_to_str(struct tep_event_filter *filter, struct tep_filter_arg *a
+>>  			break;
+>>  		}
+>>  
+>> -		asprintf(&str, "(%s) %s (%s)", left, op, right);
+>> +		ret = asprintf(&str, "(%s) %s (%s)", left, op, right);
+>> +		if (ret < 0)
+>> +			str = NULL;
+>>  		break;
+>>  
+>>  	case TEP_FILTER_OP_NOT:
+>> @@ -1992,10 +1997,14 @@ static char *op_to_str(struct tep_event_filter *filter, struct tep_filter_arg *a
+>>  			right_val = 0;
+>>  		if (right_val >= 0) {
+>>  			/* just return the opposite */
+>> -			asprintf(&str, right_val ? "FALSE" : "TRUE");
+>> +			ret = asprintf(&str, right_val ? "FALSE" : "TRUE");
+>> +			if (ret < 0)
+>> +				str = NULL;
+>>  			break;
+>>  		}
+>> -		asprintf(&str, "%s(%s)", op, right);
+>> +		ret = asprintf(&str, "%s(%s)", op, right);
+>> +		if (ret < 0)
+>> +			str = NULL;
+>>  		break;
+>>  
+>>  	default:
+>> @@ -2010,8 +2019,11 @@ static char *op_to_str(struct tep_event_filter *filter, struct tep_filter_arg *a
+>>  static char *val_to_str(struct tep_event_filter *filter, struct tep_filter_arg *arg)
+>>  {
+>>  	char *str = NULL;
+>> +	int ret;
+>>  
+>> -	asprintf(&str, "%lld", arg->value.val);
+>> +	ret = asprintf(&str, "%lld", arg->value.val);
+>> +	if (ret < 0)
+>> +		str = NULL;
+>>  
+>>  	return str;
+>>  }
+>> @@ -2027,6 +2039,7 @@ static char *exp_to_str(struct tep_event_filter *filter, struct tep_filter_arg *
+>>  	char *rstr;
+>>  	char *op;
+>>  	char *str = NULL;
+>> +	int ret;
+>>  
+>>  	lstr = arg_to_str(filter, arg->exp.left);
+>>  	rstr = arg_to_str(filter, arg->exp.right);
+>> @@ -2069,7 +2082,9 @@ static char *exp_to_str(struct tep_event_filter *filter, struct tep_filter_arg *
+>>  		break;
+>>  	}
+>>  
+>> -	asprintf(&str, "%s %s %s", lstr, op, rstr);
+>> +	ret = asprintf(&str, "%s %s %s", lstr, op, rstr);
+>> +	if (ret < 0)
+>> +		str = NULL;
+>>  out:
+>>  	free(lstr);
+>>  	free(rstr);
+>> @@ -2083,6 +2098,7 @@ static char *num_to_str(struct tep_event_filter *filter, struct tep_filter_arg *
+>>  	char *rstr;
+>>  	char *str = NULL;
+>>  	char *op = NULL;
+>> +	int ret;
+>>  
+>>  	lstr = arg_to_str(filter, arg->num.left);
+>>  	rstr = arg_to_str(filter, arg->num.right);
+>> @@ -2113,7 +2129,9 @@ static char *num_to_str(struct tep_event_filter *filter, struct tep_filter_arg *
+>>  		if (!op)
+>>  			op = "<=";
+>>  
+>> -		asprintf(&str, "%s %s %s", lstr, op, rstr);
+>> +		ret = asprintf(&str, "%s %s %s", lstr, op, rstr);
+>> +		if (ret < 0)
+>> +			str = NULL;
+>>  		break;
+>>  
+>>  	default:
+>> @@ -2131,6 +2149,7 @@ static char *str_to_str(struct tep_event_filter *filter, struct tep_filter_arg *
+>>  {
+>>  	char *str = NULL;
+>>  	char *op = NULL;
+>> +	int ret;
+>>  
+>>  	switch (arg->str.type) {
+>>  	case TEP_FILTER_CMP_MATCH:
+>> @@ -2148,8 +2167,10 @@ static char *str_to_str(struct tep_event_filter *filter, struct tep_filter_arg *
+>>  		if (!op)
+>>  			op = "!~";
+>>  
+>> -		asprintf(&str, "%s %s \"%s\"",
+>> +		ret = asprintf(&str, "%s %s \"%s\"",
+>>  			 arg->str.field->name, op, arg->str.val);
+>> +		if (ret < 0)
+>> +			str = NULL;
+>>  		break;
+>>  
+>>  	default:
+>> @@ -2162,10 +2183,13 @@ static char *str_to_str(struct tep_event_filter *filter, struct tep_filter_arg *
+>>  static char *arg_to_str(struct tep_event_filter *filter, struct tep_filter_arg *arg)
+>>  {
+>>  	char *str = NULL;
+>> +	int ret;
+>>  
+>>  	switch (arg->type) {
+>>  	case TEP_FILTER_ARG_BOOLEAN:
+>> -		asprintf(&str, arg->boolean.value ? "TRUE" : "FALSE");
+>> +		ret = asprintf(&str, arg->boolean.value ? "TRUE" : "FALSE");
+>> +		if (ret < 0)
+>> +			str = NULL;
+>>  		return str;
+>>  
+>>  	case TEP_FILTER_ARG_OP:
+>> -- 
+>> 2.7.4
 
-debugfs: Directory 'c1105400.audio-controller' with parent 'AWESOME-CARD' already present!
-debugfs: Directory 'c1105400.audio-controller' with parent 'AWESOME-CARD' already present!
-
-I copied the code above from other direct users of
-snd_soc_add_component() (soc-generic-dmaengine-pcm.c and
-stm32_adfsdm.c). I suppose they had the same name collision issue.
-
-Instead of addressing the debugfs side effect, maybe  we could just make
-sure that each component name is unique within ASoC ? I'd be happy submit
-something if you think this can helpful.
