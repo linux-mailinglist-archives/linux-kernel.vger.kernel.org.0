@@ -2,192 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 292C615F404
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:23:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 323A615F3E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:22:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405145AbgBNSRT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:17:19 -0500
-Received: from smtprelay0076.hostedemail.com ([216.40.44.76]:51244 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2405119AbgBNSRS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 13:17:18 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id AB4161822451B;
-        Fri, 14 Feb 2020 18:17:16 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:2:41:355:379:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1437:1515:1516:1518:1535:1593:1594:1605:1606:1730:1747:1777:1792:2393:2553:2559:2562:2828:2897:3138:3139:3140:3141:3142:3653:3865:3866:3867:3868:4321:4605:5007:6119:8603:8957:9010:10004:10848:11026:11473:11658:11914:12043:12296:12297:12438:12555:12760:12986:13439:14394:14659:14664:21080:21433:21451:21627:21939:30054:30070:30080:30090,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: north37_224944e309a50
-X-Filterd-Recvd-Size: 5967
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf17.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 14 Feb 2020 18:17:15 +0000 (UTC)
-Message-ID: <60559197a1af9e0af7f329cc3427989e5756846f.camel@perches.com>
-Subject: [PATCH] usb-storage: Use const to reduce object data size
-From:   Joe Perches <joe@perches.com>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Fri, 14 Feb 2020 10:15:57 -0800
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        id S2404846AbgBNSQQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:16:16 -0500
+Received: from foss.arm.com ([217.140.110.172]:42910 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404808AbgBNSQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 13:16:13 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 994AC328;
+        Fri, 14 Feb 2020 10:16:12 -0800 (PST)
+Received: from eglon.cambridge.arm.com (eglon.cambridge.arm.com [10.1.196.105])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 651713F68E;
+        Fri, 14 Feb 2020 10:16:11 -0800 (PST)
+From:   James Morse <james.morse@arm.com>
+To:     x86@kernel.org, linux-kernel@vger.kernel.org
+Cc:     Fenghua Yu <fenghua.yu@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        James Morse <james.morse@arm.com>
+Subject: [PATCH v2] x86/resctrl: Preserve CDP enable over cpuhp
+Date:   Fri, 14 Feb 2020 18:16:00 +0000
+Message-Id: <20200214181600.38779-1-james.morse@arm.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make structs const to reduce data size ~20KB.
+Resctrl assumes that all CPUs are online when the filesystem is
+mounted, and that CPUs remember their CDP-enabled state over CPU
+hotplug.
 
-Change function arguments and prototypes as necessary to compile.
+This goes wrong when resctrl's CDP-enabled state changes while all
+the CPUs in a domain are offline.
 
-$ size (x86-64 defconfig pre)
-   text	   data	    bss	    dec	    hex	filename
-  12281	  10948	    480	  23709	   5c9d	./drivers/usb/storage/usb.o
-    111	  10528	      8	  10647	   2997	./drivers/usb/storage/usual-tables.o
+When a domain comes online, enable (or disable!) CDP to match resctrl's
+current setting.
 
-$ size (x86-64 defconfig post)
-   text	   data	    bss	    dec	    hex	filename
-  22809	    420	    480	  23709	   5c9d	drivers/usb/storage/usb.o
-  10551	      0	      0	  10551	   2937	drivers/usb/storage/usual-tables.o
+Fixes: 5ff193fbde20 ("x86/intel_rdt: Add basic resctrl filesystem support")
+Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: James Morse <james.morse@arm.com>
 
-Signed-off-by: Joe Perches <joe@perches.com>
 ---
+Changes since v1:
+ * Explicitly test for L2/L3 resources to ignore duplicate calls.
+ * Poke the LxDATA resources to avoid confusing CDP-off with CDP-unsupported.
+ * Moved code to rdtgroup.c for fewer exported functions.
 
-compile tested only
+v1: lore.kernel.org/r/20200212185359.163111-1-james.morse@arm.com
+---
+ arch/x86/kernel/cpu/resctrl/core.c     |  2 ++
+ arch/x86/kernel/cpu/resctrl/internal.h |  1 +
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 18 ++++++++++++++++++
+ 3 files changed, 21 insertions(+)
 
- drivers/usb/storage/usb.c          | 10 +++++-----
- drivers/usb/storage/usb.h          |  5 +++--
- drivers/usb/storage/usual-tables.c |  6 +++---
- include/linux/usb_usual.h          |  2 +-
- 4 files changed, 12 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/usb/storage/usb.c b/drivers/usb/storage/usb.c
-index 9a79cd..94a6472 100644
---- a/drivers/usb/storage/usb.c
-+++ b/drivers/usb/storage/usb.c
-@@ -121,12 +121,12 @@ MODULE_PARM_DESC(quirks, "supplemental list of
-device IDs and their quirks");
- 	.initFunction = init_function,	\
+diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
+index 89049b343c7a..d8cc5223b7ce 100644
+--- a/arch/x86/kernel/cpu/resctrl/core.c
++++ b/arch/x86/kernel/cpu/resctrl/core.c
+@@ -578,6 +578,8 @@ static void domain_add_cpu(int cpu, struct rdt_resource *r)
+ 	d->id = id;
+ 	cpumask_set_cpu(cpu, &d->cpu_mask);
+ 
++	rdt_domain_reconfigure_cdp(r);
++
+ 	if (r->alloc_capable && domain_setup_ctrlval(r, d)) {
+ 		kfree(d);
+ 		return;
+diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
+index 181c992f448c..3dd13f3a8b23 100644
+--- a/arch/x86/kernel/cpu/resctrl/internal.h
++++ b/arch/x86/kernel/cpu/resctrl/internal.h
+@@ -601,5 +601,6 @@ bool has_busy_rmid(struct rdt_resource *r, struct rdt_domain *d);
+ void __check_limbo(struct rdt_domain *d, bool force_free);
+ bool cbm_validate_intel(char *buf, u32 *data, struct rdt_resource *r);
+ bool cbm_validate_amd(char *buf, u32 *data, struct rdt_resource *r);
++void rdt_domain_reconfigure_cdp(struct rdt_resource *r);
+ 
+ #endif /* _ASM_X86_RESCTRL_INTERNAL_H */
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index 064e9ef44cd6..5967320a1951 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -1831,6 +1831,9 @@ static int set_cache_qos_cfg(int level, bool enable)
+ 	struct rdt_domain *d;
+ 	int cpu;
+ 
++	 /* CDP state is restored during cpuhp, which takes this lock */
++	lockdep_assert_held(&rdtgroup_mutex);
++
+ 	if (level == RDT_RESOURCE_L3)
+ 		update = l3_qos_cfg_update;
+ 	else if (level == RDT_RESOURCE_L2)
+@@ -1859,6 +1862,21 @@ static int set_cache_qos_cfg(int level, bool enable)
+ 	return 0;
  }
  
--static struct us_unusual_dev us_unusual_dev_list[] = {
-+static const struct us_unusual_dev us_unusual_dev_list[] = {
- #	include "unusual_devs.h"
- 	{ }		/* Terminating entry */
- };
- 
--static struct us_unusual_dev for_dynamic_ids =
-+static const struct us_unusual_dev for_dynamic_ids =
- 		USUAL_DEV(USB_SC_SCSI, USB_PR_BULK);
- 
- #undef UNUSUAL_DEV
-@@ -583,7 +583,7 @@ EXPORT_SYMBOL_GPL(usb_stor_adjust_quirks);
- 
- /* Get the unusual_devs entries and the string descriptors */
- static int get_device_info(struct us_data *us, const struct
-usb_device_id *id,
--		struct us_unusual_dev *unusual_dev)
-+		const struct us_unusual_dev *unusual_dev)
- {
- 	struct usb_device *dev = us->pusb_dev;
- 	struct usb_interface_descriptor *idesc =
-@@ -933,7 +933,7 @@ static unsigned int usb_stor_sg_tablesize(struct
-usb_interface *intf)
- int usb_stor_probe1(struct us_data **pus,
- 		struct usb_interface *intf,
- 		const struct usb_device_id *id,
--		struct us_unusual_dev *unusual_dev,
-+		const struct us_unusual_dev *unusual_dev,
- 		struct scsi_host_template *sht)
- {
- 	struct Scsi_Host *host;
-@@ -1092,7 +1092,7 @@ static struct scsi_host_template
-usb_stor_host_template;
- static int storage_probe(struct usb_interface *intf,
- 			 const struct usb_device_id *id)
- {
--	struct us_unusual_dev *unusual_dev;
-+	const struct us_unusual_dev *unusual_dev;
- 	struct us_data *us;
- 	int result;
- 	int size;
-diff --git a/drivers/usb/storage/usb.h b/drivers/usb/storage/usb.h
-index 85052c..5850d62 100644
---- a/drivers/usb/storage/usb.h
-+++ b/drivers/usb/storage/usb.h
-@@ -93,7 +93,8 @@ struct us_data {
- 	struct mutex		dev_mutex;	 /* protect pusb_dev */
- 	struct usb_device	*pusb_dev;	 /* this usb_device */
- 	struct usb_interface	*pusb_intf;	 /* this interface */
--	struct us_unusual_dev   *unusual_dev;	 /* device-filter
-entry     */
-+	const struct us_unusual_dev   *unusual_dev;
-+						/* device-filter
-entry     */
- 	unsigned long		fflags;		 /* fixed flags from
-filter */
- 	unsigned long		dflags;		 /* dynamic atomic
-bitflags */
- 	unsigned int		send_bulk_pipe;	 /* cached pipe values
-*/
-@@ -185,7 +186,7 @@ extern int usb_stor_post_reset(struct usb_interface
-*iface);
- extern int usb_stor_probe1(struct us_data **pus,
- 		struct usb_interface *intf,
- 		const struct usb_device_id *id,
--		struct us_unusual_dev *unusual_dev,
-+		const struct us_unusual_dev *unusual_dev,
- 		struct scsi_host_template *sht);
- extern int usb_stor_probe2(struct us_data *us);
- extern void usb_stor_disconnect(struct usb_interface *intf);
-diff --git a/drivers/usb/storage/usual-tables.c
-b/drivers/usb/storage/usual-tables.c
-index cfd12e5..529512 100644
---- a/drivers/usb/storage/usual-tables.c
-+++ b/drivers/usb/storage/usual-tables.c
-@@ -40,7 +40,7 @@
- 	.driver_info = (flags) \
- }
- 
--struct usb_device_id usb_storage_usb_ids[] = {
-+const struct usb_device_id usb_storage_usb_ids[] = {
- #	include "unusual_devs.h"
- 	{ }		/* Terminating entry */
- };
-@@ -68,7 +68,7 @@ struct ignore_entry {
- 	.bcdmax = bcdDeviceMax,		\
- }
- 
--static struct ignore_entry ignore_ids[] = {
-+static const struct ignore_entry ignore_ids[] = {
- #	include "unusual_alauda.h"
- #	include "unusual_cypress.h"
- #	include "unusual_datafab.h"
-@@ -92,7 +92,7 @@ int usb_usual_ignore_device(struct usb_interface
-*intf)
- {
- 	struct usb_device *udev;
- 	unsigned vid, pid, bcd;
--	struct ignore_entry *p;
-+	const struct ignore_entry *p;
- 
- 	udev = interface_to_usbdev(intf);
- 	vid = le16_to_cpu(udev->descriptor.idVendor);
-diff --git a/include/linux/usb_usual.h b/include/linux/usb_usual.h
-index 000a595..4a19ac3 100644
---- a/include/linux/usb_usual.h
-+++ b/include/linux/usb_usual.h
-@@ -92,6 +92,6 @@ enum { US_DO_ALL_FLAGS };
- #include <linux/usb/storage.h>
- 
- extern int usb_usual_ignore_device(struct usb_interface *intf);
--extern struct usb_device_id usb_storage_usb_ids[];
-+extern const struct usb_device_id usb_storage_usb_ids[];
- 
- #endif /* __LINUX_USB_USUAL_H */
-
++/* Restore the qos cfg state when a package comes online */
++void rdt_domain_reconfigure_cdp(struct rdt_resource *r)
++{
++	lockdep_assert_held(&rdtgroup_mutex);
++
++	if (!r->alloc_capable)
++		return;
++
++	if (r == &rdt_resources_all[RDT_RESOURCE_L2DATA])
++		l2_qos_cfg_update(&r->alloc_enabled);
++
++	if (r == &rdt_resources_all[RDT_RESOURCE_L3DATA])
++		l3_qos_cfg_update(&r->alloc_enabled);
++}
++
+ /*
+  * Enable or disable the MBA software controller
+  * which helps user specify bandwidth in MBps.
+-- 
+2.24.1
 
