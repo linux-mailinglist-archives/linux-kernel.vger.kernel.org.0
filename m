@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88B1F15DF72
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:09:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E679115DF76
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:09:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391016AbgBNQIi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:08:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59690 "EHLO mail.kernel.org"
+        id S2391052AbgBNQIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:08:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390040AbgBNQH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:07:57 -0500
+        id S2390838AbgBNQID (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:08:03 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EFEA24676;
-        Fri, 14 Feb 2020 16:07:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A368F2467E;
+        Fri, 14 Feb 2020 16:08:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696476;
-        bh=IDpon7Kel+MjWfOUEwoMjIHhIYdi6Oyu2TpugZYs3X0=;
+        s=default; t=1581696482;
+        bh=kpIYvkygOL80jCOC4mTASNNjnr+Ez++17Cyd5v07r7w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S+1HwI2dY2R7hdokZMOQQusQH/hOmBj6RBUqURwoWhUKesj4LSTgV6Y1mePg+49Gy
-         GN9ILySibHfH2SHrnyREdcSyMRT8P8cLNis0Bp/pyGfEXkIAIJ3i4/4Tcla27RZwY1
-         4j4BGncnjhrnMZPtw8HVJkQpJzwe8mT6mx9Puxo0=
+        b=YlEekXucA2iEXRzgzVM5vqq9vB/agGMLLZBBuyM4xVev7NY0FrJYhyvQpo8Ts5Jk7
+         KRbxrbxLcINvke+eFCR6J5OUBmSVSjPbAYb+7tSYe/TCzts0z0i2O5fhcZTezP42CE
+         gQsqGokXXswNyPJuAOOH2re//6ACJt8w6DICmnxA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Andy Gospodarek <gospo@broadcom.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 284/459] bnxt: Detach page from page pool before sending up the stack
-Date:   Fri, 14 Feb 2020 10:58:54 -0500
-Message-Id: <20200214160149.11681-284-sashal@kernel.org>
+Cc:     Johan Jonker <jbx6244@gmail.com>, Heiko Stuebner <heiko@sntech.de>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.4 289/459] arm64: dts: rockchip: add reg property to brcmf sub-nodes
+Date:   Fri, 14 Feb 2020 10:58:59 -0500
+Message-Id: <20200214160149.11681-289-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -44,36 +44,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jonathan Lemon <jonathan.lemon@gmail.com>
+From: Johan Jonker <jbx6244@gmail.com>
 
-[ Upstream commit 3071c51783b39d6a676d02a9256c3b3f87804285 ]
+[ Upstream commit 96ff264bccb22175bbe2185a1eb5204ca3c5f03f ]
 
-When running in XDP mode, pages come from the page pool, and should
-be freed back to the same pool or specifically detached.  Currently,
-when the driver re-initializes, the page pool destruction is delayed
-forever since it thinks there are oustanding pages.
+An experimental test with the command below gives this error:
+rk3399-firefly.dt.yaml: dwmmc@fe310000: wifi@1:
+'reg' is a required property
+rk3399-orangepi.dt.yaml: dwmmc@fe310000: wifi@1:
+'reg' is a required property
+rk3399-khadas-edge.dt.yaml: dwmmc@fe310000: wifi@1:
+'reg' is a required property
+rk3399-khadas-edge-captain.dt.yaml: dwmmc@fe310000: wifi@1:
+'reg' is a required property
+rk3399-khadas-edge-v.dt.yaml: dwmmc@fe310000: wifi@1:
+'reg' is a required property
+So fix this by adding a reg property to the brcmf sub node.
+Also add #address-cells and #size-cells to prevent more warnings.
 
-Fixes: 322b87ca55f2 ("bnxt_en: add page_pool support")
-Signed-off-by: Jonathan Lemon <jonathan.lemon@gmail.com>
-Reviewed-by: Andy Gospodarek <gospo@broadcom.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+make ARCH=arm64 dtbs_check
+DT_SCHEMA_FILES=Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
+
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+Link: https://lore.kernel.org/r/20200110142128.13522-1-jbx6244@gmail.com
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/rockchip/rk3399-firefly.dts      | 3 +++
+ arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi | 3 +++
+ arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts     | 3 +++
+ 3 files changed, 9 insertions(+)
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index 41297533b4a86..68618891b0e42 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -942,6 +942,7 @@ static struct sk_buff *bnxt_rx_page_skb(struct bnxt *bp,
- 	dma_addr -= bp->rx_dma_offset;
- 	dma_unmap_page_attrs(&bp->pdev->dev, dma_addr, PAGE_SIZE, bp->rx_dir,
- 			     DMA_ATTR_WEAK_ORDERING);
-+	page_pool_release_page(rxr->page_pool, page);
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts b/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts
+index c706db0ee9ec6..76f5db696009b 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts
+@@ -669,9 +669,12 @@
+ 	vqmmc-supply = &vcc1v8_s3;	/* IO line */
+ 	vmmc-supply = &vcc_sdio;	/* card's power */
  
- 	if (unlikely(!payload))
- 		payload = eth_get_headlen(bp->dev, data_ptr, len);
++	#address-cells = <1>;
++	#size-cells = <0>;
+ 	status = "okay";
+ 
+ 	brcmf: wifi@1 {
++		reg = <1>;
+ 		compatible = "brcm,bcm4329-fmac";
+ 		interrupt-parent = <&gpio0>;
+ 		interrupts = <RK_PA3 GPIO_ACTIVE_HIGH>;
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi
+index 4944d78a0a1cb..e87a04477440e 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi
+@@ -654,9 +654,12 @@
+ 	sd-uhs-sdr104;
+ 	vqmmc-supply = <&vcc1v8_s3>;
+ 	vmmc-supply = <&vccio_sd>;
++	#address-cells = <1>;
++	#size-cells = <0>;
+ 	status = "okay";
+ 
+ 	brcmf: wifi@1 {
++		reg = <1>;
+ 		compatible = "brcm,bcm4329-fmac";
+ 		interrupt-parent = <&gpio0>;
+ 		interrupts = <RK_PA3 GPIO_ACTIVE_HIGH>;
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts b/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
+index 0541dfce924d6..9c659f3115c88 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
+@@ -648,9 +648,12 @@
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sdio0_bus4 &sdio0_cmd &sdio0_clk>;
+ 	sd-uhs-sdr104;
++	#address-cells = <1>;
++	#size-cells = <0>;
+ 	status = "okay";
+ 
+ 	brcmf: wifi@1 {
++		reg = <1>;
+ 		compatible = "brcm,bcm4329-fmac";
+ 		interrupt-parent = <&gpio0>;
+ 		interrupts = <RK_PA3 GPIO_ACTIVE_HIGH>;
 -- 
 2.20.1
 
