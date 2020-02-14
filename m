@@ -2,84 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B169F15F6A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 20:14:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EEA215F6C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 20:24:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388853AbgBNTOx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 14:14:53 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:40182 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388250AbgBNTOx (ORCPT
+        id S2388286AbgBNTYU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 14:24:20 -0500
+Received: from eddie.linux-mips.org ([148.251.95.138]:38744 "EHLO
+        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729320AbgBNTYT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 14:14:53 -0500
-Received: by mail-wm1-f67.google.com with SMTP id t14so11844371wmi.5
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 11:14:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=3/uupSJ5RdwyA7ehfydikl3HpiFLgfBAqG7GerpJi7c=;
-        b=bhg9/ibeciuu4Ehv/+5VnxzdhVR6BHlImtjOZ+pPpe4yBnv3DYy5GkYmSdTQ0lf3wI
-         ulBkqUncQAxNdUqMhsIWhWlhC88PGD1o+rW4i8a3nBi1xj65vzIjPEKwHZnAs/fwBE2x
-         cDbmW6ayWu9v5S3BLzcVxXkdcDiFgbNaR86dZ7S1c2aEWE68cE49eX1Z9GHikMH9M2tY
-         DkjeV5xIBEucE8volM/K6bNCmnRL7Pg2raIr8DOxI0/2n/JvPlxmFrco1AByyKR/eM0m
-         xxR2PIOVmDxUK2hAFYs8kAf4X11yxS/8Edi2bzzIxpxNW5Hwr19KuARUlkbAIzYXFO5S
-         KxWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=3/uupSJ5RdwyA7ehfydikl3HpiFLgfBAqG7GerpJi7c=;
-        b=bPuJFqIRrb4IWxwbpqypv4ntnYa7Tw2HoN1I5KUsyB7UCpyTmYSNkgTW6XObZWxEHH
-         e3c06igt7FU29i0yaKxtraT29R5ugB6pnpwnLhW+NJA1jP9xoRXZgrmovXJzNuGohHXw
-         O+N8s0yx16AKxD4Y2Jy/I+kAeBC7zcXTecCX99sNnTH6qzn+CWedtrlDn1q9lZWTyQ6H
-         /F4QJFrgV1FsgsxyJXaCnMKoIf4e6O7WCpBJiPgzRvyKAmjvd88EWM6tWtoSEkyCa8E+
-         sTTe+Xx9Dw7KmZLZTMK933jpP0wKyuP9+2I2VMv29yCNOgz5ON313cq/dFk0GlJkg+Cp
-         K0Ow==
-X-Gm-Message-State: APjAAAXEyZ0B5mCWOrLPP/88YF44M4wmsbwz/kVoT4Kw3nRM+K2N+nRc
-        IoLXk8vxKYVo8SwE9z+he1G3fQ==
-X-Google-Smtp-Source: APXvYqwOROtwg8ZpOG1fo2gk0W+2Y4A+QNx4Yrvyeo3f6izuFJXQ4Xs25CzIa4xAOjzg1uSQfJHE/A==
-X-Received: by 2002:a1c:5441:: with SMTP id p1mr6420025wmi.161.1581707690024;
-        Fri, 14 Feb 2020 11:14:50 -0800 (PST)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.gmail.com with ESMTPSA id x21sm7922966wmi.30.2020.02.14.11.14.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Feb 2020 11:14:49 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Jianxin Pan <jianxin.pan@amlogic.com>,
-        linux-amlogic@lists.infradead.org
-Cc:     Jianxin Pan <jianxin.pan@amlogic.com>,
+        Fri, 14 Feb 2020 14:24:19 -0500
+X-Greylist: delayed 459 seconds by postgrey-1.27 at vger.kernel.org; Fri, 14 Feb 2020 14:24:17 EST
+Received: (from localhost user: 'ladis' uid#1021 fake: STDIN
+        (ladis@eddie.linux-mips.org)) by eddie.linux-mips.org
+        id S23994981AbgBNTQgVDTwM (ORCPT
+        <rfc822;linux-input@vger.kernel.org> + 3 others);
+        Fri, 14 Feb 2020 20:16:36 +0100
+Date:   Fri, 14 Feb 2020 20:16:34 +0100
+From:   Ladislav Michl <ladis@linux-mips.org>
+To:     Merlijn Wajer <merlijn@wizzup.org>
+Cc:     =?iso-8859-2?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Jian Hu <jian.hu@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Xingyu Chen <xingyu.chen@amlogic.com>
-Subject: Re: [PATCH v6 0/4] arm64: meson: add support for A1 Power Domains
-In-Reply-To: <1579087831-94965-1-git-send-email-jianxin.pan@amlogic.com>
-References: <1579087831-94965-1-git-send-email-jianxin.pan@amlogic.com>
-Date:   Fri, 14 Feb 2020 11:14:46 -0800
-Message-ID: <7hd0ahasm1.fsf@baylibre.com>
+        Mark Rutland <mark.rutland@arm.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Mattias Jacobsson <2pi@mok.nu>,
+        "Darren Hart (VMware)" <dvhart@infradead.org>,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [RFC PATCH 1/2] Input: add `SW_MACHINE_COVER`
+Message-ID: <20200214191634.GA6251@lenoch>
+References: <20200214130249.6845-1-merlijn@wizzup.org>
+ <20200214130249.6845-2-merlijn@wizzup.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200214130249.6845-2-merlijn@wizzup.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jianxin Pan <jianxin.pan@amlogic.com> writes:
+Hi Merlijn,
 
-> This patchset introduces a "Secure Power Doamin Controller". In A1/C1, power
-> controller registers such as PWRCTRL_FOCRSTN, PWRCTRL_PWR_OFF, PWRCTRL_MEM_PD
-> and PWRCTRL_ISO_EN, are in the secure domain, and should be accessed from ATF
-> by smc.
+On Fri, Feb 14, 2020 at 02:02:47PM +0100, Merlijn Wajer wrote:
+> This event code represents the state of a removable cover of a device.
+> Value 1 means that the cover is open or removed, value 0 means that the
+> cover is closed.
+> 
+> This can be used to preempt users removing a removable mmc card or even
+> the battery, allowing userspace to attempt to safely unmount a card.
+> ---
+>  include/linux/mod_devicetable.h        | 2 +-
+>  include/uapi/linux/input-event-codes.h | 3 ++-
+>  2 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/mod_devicetable.h b/include/linux/mod_devicetable.h
+> index 448621c32e4d..4c692cb3cc1d 100644
+> --- a/include/linux/mod_devicetable.h
+> +++ b/include/linux/mod_devicetable.h
+> @@ -299,7 +299,7 @@ struct pcmcia_device_id {
+>  #define INPUT_DEVICE_ID_LED_MAX		0x0f
+>  #define INPUT_DEVICE_ID_SND_MAX		0x07
+>  #define INPUT_DEVICE_ID_FF_MAX		0x7f
+> -#define INPUT_DEVICE_ID_SW_MAX		0x0f
+> +#define INPUT_DEVICE_ID_SW_MAX		0x10
+>  #define INPUT_DEVICE_ID_PROP_MAX	0x1f
+>  
+>  #define INPUT_DEVICE_ID_MATCH_BUS	1
+> diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
+> index 64cee116928e..318a6387cdfb 100644
+> --- a/include/uapi/linux/input-event-codes.h
+> +++ b/include/uapi/linux/input-event-codes.h
+> @@ -807,7 +807,8 @@
+>  #define SW_LINEIN_INSERT	0x0d  /* set = inserted */
+>  #define SW_MUTE_DEVICE		0x0e  /* set = device disabled */
+>  #define SW_PEN_INSERTED		0x0f  /* set = pen inserted */
+> -#define SW_MAX			0x0f
+> +#define SW_MACHINE_COVER	 0x10 /* set = cover closed */
 
-Series queued for v5.7 with Rob's ack on the DT bindings.
+There is an extra space above ^
 
-Thanks,
-
-Kevin
+> +#define SW_MAX			0x10
+>  #define SW_CNT			(SW_MAX+1)
+>  
+>  /*
+> -- 
+> 2.23.0
