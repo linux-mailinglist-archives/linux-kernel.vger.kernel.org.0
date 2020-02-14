@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADF2C15F280
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:10:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9464715F267
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:09:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392325AbgBNSJn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:09:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33432 "EHLO mail.kernel.org"
+        id S1731017AbgBNPyH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:54:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731351AbgBNPxy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:53:54 -0500
+        id S1730304AbgBNPx4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:53:56 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2C7124649;
-        Fri, 14 Feb 2020 15:53:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09C3224676;
+        Fri, 14 Feb 2020 15:53:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695633;
-        bh=3gwgFUqvJ8N/VlvUVeaLWqEWpiO5LJUZARXPEDPwzPU=;
+        s=default; t=1581695636;
+        bh=zERLyX57mTufDyJ7gVj+1+koC2enHgrS/6UrUIXrfNo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r9OT6xpddjE4WdVUxI0deQMBo1FGHNF7vRyRpi64t0HnrwEsZ7U7nNtOljJPGfNav
-         yfrUSPMN7Afazv/4SGj61AB4J+ood6ELVhLN1qE6PDC3IuaFfQsBkjOWOJkvG7bPO4
-         vmtGaeXMtJiiR322XoVaMdghfVIBVoAClcIkdRYs=
+        b=xqcIwbD8gSA+/1iE3yFjTBIjiSebqVaa8eQemCTCECaRJWlGAIjQ3eO9pl9lc0NZb
+         MGKurRM1P9l7Y5I1NirWIdcGckjWqw4Wp6Q/V20g4I9GxsdJ8ADMSSFOHdqxDxbplm
+         LMJb5dL+w4W+N1Lm9Cf0SHgSBECGjPYCPVAh2ecs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     yu kuai <yukuai3@huawei.com>, Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>, linux-wireless@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 230/542] bcma: remove set but not used variable 'sizel'
-Date:   Fri, 14 Feb 2020 10:43:42 -0500
-Message-Id: <20200214154854.6746-230-sashal@kernel.org>
+Cc:     Sung Lee <sung.lee@amd.com>, Yongqiang Sun <yongqiang.sun@amd.com>,
+        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.5 232/542] drm/amd/display: Fix update_bw_bounding_box Calcs
+Date:   Fri, 14 Feb 2020 10:43:44 -0500
+Message-Id: <20200214154854.6746-232-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -43,54 +45,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: yu kuai <yukuai3@huawei.com>
+From: Sung Lee <sung.lee@amd.com>
 
-[ Upstream commit f427939391f290cbeabe0231eb8a116429d823f0 ]
+[ Upstream commit 615b9b585eb57c1d49382d16a62de768f2c6a340 ]
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+[Why]
+Previously update_bw_bounding_box for RN was commented out
+due to incorrect values causing BSOD on Hybrid Graphics.
+However, commenting out this function also may cause issues
+such as underflow in certain cases such as 2x4K displays.
 
-drivers/bcma/scan.c: In function ‘bcma_erom_get_addr_desc’:
+[How]
+Fix dram_speed_mts calculations.
+Update from proper index of clock_limits[]
 
-drivers/bcma/scan.c:222:20: warning: variable ‘sizel’ set but
-not used [-Wunused-but-set-variable]
-
-It is never used, and so can be removed.
-
-Fixes: 8369ae33b705 ("bcma: add Broadcom specific AMBA bus driver")
-Signed-off-by: yu kuai <yukuai3@huawei.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sung Lee <sung.lee@amd.com>
+Reviewed-by: Yongqiang Sun <yongqiang.sun@amd.com>
+Acked-by: Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/bcma/scan.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/bcma/scan.c b/drivers/bcma/scan.c
-index 4a2d1b235fb5a..1f2de714b4017 100644
---- a/drivers/bcma/scan.c
-+++ b/drivers/bcma/scan.c
-@@ -219,7 +219,7 @@ static s32 bcma_erom_get_mst_port(struct bcma_bus *bus, u32 __iomem **eromptr)
- static u32 bcma_erom_get_addr_desc(struct bcma_bus *bus, u32 __iomem **eromptr,
- 				  u32 type, u8 port)
+diff --git a/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c b/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c
+index fe0ed4c09ad0a..83cda43a1b6b3 100644
+--- a/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c
+@@ -1352,12 +1352,6 @@ struct display_stream_compressor *dcn21_dsc_create(
+ 
+ static void update_bw_bounding_box(struct dc *dc, struct clk_bw_params *bw_params)
  {
--	u32 addrl, addrh, sizel, sizeh = 0;
-+	u32 addrl, addrh, sizeh = 0;
- 	u32 size;
- 
- 	u32 ent = bcma_erom_get_ent(bus, eromptr);
-@@ -239,12 +239,9 @@ static u32 bcma_erom_get_addr_desc(struct bcma_bus *bus, u32 __iomem **eromptr,
- 
- 	if ((ent & SCAN_ADDR_SZ) == SCAN_ADDR_SZ_SZD) {
- 		size = bcma_erom_get_ent(bus, eromptr);
--		sizel = size & SCAN_SIZE_SZ;
- 		if (size & SCAN_SIZE_SG32)
- 			sizeh = bcma_erom_get_ent(bus, eromptr);
--	} else
--		sizel = SCAN_ADDR_SZ_BASE <<
--				((ent & SCAN_ADDR_SZ) >> SCAN_ADDR_SZ_SHIFT);
-+	}
- 
- 	return addrl;
+-	/*
+-	TODO: Fix this function to calcualte correct values.
+-	There are known issues with this function currently
+-	that will need to be investigated. Use hardcoded known good values for now.
+-
+-
+ 	struct dcn21_resource_pool *pool = TO_DCN21_RES_POOL(dc->res_pool);
+ 	struct clk_limit_table *clk_table = &bw_params->clk_table;
+ 	int i;
+@@ -1372,11 +1366,10 @@ static void update_bw_bounding_box(struct dc *dc, struct clk_bw_params *bw_param
+ 		dcn2_1_soc.clock_limits[i].dcfclk_mhz = clk_table->entries[i].dcfclk_mhz;
+ 		dcn2_1_soc.clock_limits[i].fabricclk_mhz = clk_table->entries[i].fclk_mhz;
+ 		dcn2_1_soc.clock_limits[i].socclk_mhz = clk_table->entries[i].socclk_mhz;
+-		dcn2_1_soc.clock_limits[i].dram_speed_mts = clk_table->entries[i].memclk_mhz * 16 / 1000;
++		dcn2_1_soc.clock_limits[i].dram_speed_mts = clk_table->entries[i].memclk_mhz * 2;
+ 	}
+-	dcn2_1_soc.clock_limits[i] = dcn2_1_soc.clock_limits[i - i];
++	dcn2_1_soc.clock_limits[i] = dcn2_1_soc.clock_limits[i - 1];
+ 	dcn2_1_soc.num_states = i;
+-	*/
  }
+ 
+ /* Temporary Place holder until we can get them from fuse */
 -- 
 2.20.1
 
