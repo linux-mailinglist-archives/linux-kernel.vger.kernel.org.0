@@ -2,35 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10A6C15EA9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:15:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1650A15EA19
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:12:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394625AbgBNRPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:15:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39852 "EHLO mail.kernel.org"
+        id S2391816AbgBNQNN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:13:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391985AbgBNQMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:12:23 -0500
+        id S2391992AbgBNQMZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:12:25 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D72ED24696;
-        Fri, 14 Feb 2020 16:12:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB0A8246AB;
+        Fri, 14 Feb 2020 16:12:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696743;
-        bh=k+XzV/W9UPSf5JZG4LsaLccqrAu0LZ7Ag9WTLrAZBPE=;
+        s=default; t=1581696744;
+        bh=LzYNPR9J2ibU/qyDs0q0oCcykAYhAy9FH0BzO5SvP3k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rJRWllfOgbfOHLmfuauY+iNCir6DFA3W8JDB9eZ6e2ryHlnvicCkp124CWpAW+Uyb
-         /6VzBYiwg+p9x41TD++kpPIxpnlu0CB5SkO0b2QHvG0PGQPtDVE31ac2rb2YZIM7l1
-         qsmQFxYQS0DrbgtGxrSUD7UYJWZ7UPo1oIvRGxt4=
+        b=cTTG+dbZ8U1/i7/r7FzmsWAJLOjV2NrGAJDzo7/wmVgXzak/8eCn0v/lfRovQahKT
+         Q6kSpAtf2nocTQc3p80/LfdHydAgBzVBuJL7tW7D9oyT8fujg8pQkNFFpoALgPdrcz
+         sSGYNT/ukBzDSZqVNDoeS0lLEbMoGmGXkjYrFao0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 027/252] uio: fix a sleep-in-atomic-context bug in uio_dmem_genirq_irqcontrol()
-Date:   Fri, 14 Feb 2020 11:08:02 -0500
-Message-Id: <20200214161147.15842-27-sashal@kernel.org>
+Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 028/252] arm64: cpufeature: Fix the type of no FP/SIMD capability
+Date:   Fri, 14 Feb 2020 11:08:03 -0500
+Message-Id: <20200214161147.15842-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -43,54 +47,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-[ Upstream commit b74351287d4bd90636c3f48bc188c2f53824c2d4 ]
+[ Upstream commit 449443c03d8cfdacf7313e17779a2594ebf87e6d ]
 
-The driver may sleep while holding a spinlock.
-The function call path (from bottom to top) in Linux 4.19 is:
+The NO_FPSIMD capability is defined with scope SYSTEM, which implies
+that the "absence" of FP/SIMD on at least one CPU is detected only
+after all the SMP CPUs are brought up. However, we use the status
+of this capability for every context switch. So, let us change
+the scope to LOCAL_CPU to allow the detection of this capability
+as and when the first CPU without FP is brought up.
 
-kernel/irq/manage.c, 523:
-	synchronize_irq in disable_irq
-drivers/uio/uio_dmem_genirq.c, 140:
-	disable_irq in uio_dmem_genirq_irqcontrol
-drivers/uio/uio_dmem_genirq.c, 134:
-	_raw_spin_lock_irqsave in uio_dmem_genirq_irqcontrol
+Also, the current type allows hotplugged CPU to be brought up without
+FP/SIMD when all the current CPUs have FP/SIMD and we have the userspace
+up. Fix both of these issues by changing the capability to
+BOOT_RESTRICTED_LOCAL_CPU_FEATURE.
 
-synchronize_irq() can sleep at runtime.
-
-To fix this bug, disable_irq() is called without holding the spinlock.
-
-This bug is found by a static analysis tool STCheck written by myself.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Link: https://lore.kernel.org/r/20191218094405.6009-1-baijiaju1990@gmail.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 82e0191a1aa11abf ("arm64: Support systems without FP/ASIMD")
+Cc: Will Deacon <will@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/uio/uio_dmem_genirq.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/arm64/kernel/cpufeature.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/uio/uio_dmem_genirq.c b/drivers/uio/uio_dmem_genirq.c
-index e1134a4d97f3f..a00b4aee6c799 100644
---- a/drivers/uio/uio_dmem_genirq.c
-+++ b/drivers/uio/uio_dmem_genirq.c
-@@ -135,11 +135,13 @@ static int uio_dmem_genirq_irqcontrol(struct uio_info *dev_info, s32 irq_on)
- 	if (irq_on) {
- 		if (test_and_clear_bit(0, &priv->flags))
- 			enable_irq(dev_info->irq);
-+		spin_unlock_irqrestore(&priv->lock, flags);
- 	} else {
--		if (!test_and_set_bit(0, &priv->flags))
-+		if (!test_and_set_bit(0, &priv->flags)) {
-+			spin_unlock_irqrestore(&priv->lock, flags);
- 			disable_irq(dev_info->irq);
-+		}
- 	}
--	spin_unlock_irqrestore(&priv->lock, flags);
- 
- 	return 0;
- }
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 220ebfa0ece6e..1375307fbe4d2 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -1241,7 +1241,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+ 	{
+ 		/* FP/SIMD is not implemented */
+ 		.capability = ARM64_HAS_NO_FPSIMD,
+-		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
++		.type = ARM64_CPUCAP_BOOT_RESTRICTED_CPU_LOCAL_FEATURE,
+ 		.min_field_value = 0,
+ 		.matches = has_no_fpsimd,
+ 	},
 -- 
 2.20.1
 
