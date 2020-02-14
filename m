@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B3E615DEBD
+	by mail.lfdr.de (Postfix) with ESMTP id 95E3C15DEBE
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:05:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389161AbgBNQFK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:05:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52978 "EHLO mail.kernel.org"
+        id S2389633AbgBNQFM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:05:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53084 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389499AbgBNQEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:04:36 -0500
+        id S2389977AbgBNQEi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:04:38 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6483124676;
-        Fri, 14 Feb 2020 16:04:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14DCE24654;
+        Fri, 14 Feb 2020 16:04:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696275;
-        bh=HpiIeod6sqqqok91ZLMDjz0W7nDlJkN/pEmAn0kleNs=;
+        s=default; t=1581696277;
+        bh=ubf65owY3R1jt2S2MSLqWNz0w0EIJ38dB3SvZMalPsA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i+EsdO0h04L06q93O9MxpBLqmhNXvv7Ivw1FEk35MO6ZAenriQtqnZRezYryQJr/g
-         OLSb1NLRjdZ3VANjpURbfrH8o2ewAC4ptY0DvhaAVObVzqK5PYOW+kEEHRWTWnNUgM
-         YAv3ghhxJ7jkZ8RSa5XQ36sYgCZkqRrufNerCtjc=
+        b=igCf/LGtGdxRXQFyE6yfhXRuvcZvRpGeF/Ncv/wK+Y5VRtYn120iqdfdVevMYlY1W
+         npHteed2nyHUIMuqEfj+Ns704jTX+Xpqt/l2cOUIEzzqkYF9zGvkjQUm9Pm+O86rin
+         DUNeQBhNdEUpCFuXLiyZinXqGLhvksa9G4T85M7s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     zhengbin <zhengbin13@huawei.com>, Evan Quan <evan.quan@amd.com>,
-        Hulk Robot <hulkci@huawei.com>,
+Cc:     yu kuai <yukuai3@huawei.com>,
         Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.4 125/459] drm/amd/powerplay: remove set but not used variable 'data'
-Date:   Fri, 14 Feb 2020 10:56:15 -0500
-Message-Id: <20200214160149.11681-125-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 127/459] drm/amdgpu: remove set but not used variable 'amdgpu_connector'
+Date:   Fri, 14 Feb 2020 10:56:17 -0500
+Message-Id: <20200214160149.11681-127-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -45,46 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhengbin <zhengbin13@huawei.com>
+From: yu kuai <yukuai3@huawei.com>
 
-[ Upstream commit 4bf321c177c74f7d834956387cd74805c3098322 ]
+[ Upstream commit 4f2922d12d6c63d0f4aa4e859ad95aee6d0d4ea0 ]
 
 Fixes gcc '-Wunused-but-set-variable' warning:
 
-drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c: In function vega10_get_performance_level:
-drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c:5217:23: warning: variable data set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/amd/amdgpu/amdgpu_display.c: In function
+‘amdgpu_display_crtc_scaling_mode_fixup’:
+drivers/gpu/drm/amd/amdgpu/amdgpu_display.c:693:27: warning: variable
+‘amdgpu_connector’ set but not used [-Wunused-but-set-variable]
 
-'data' is introduced by commit f688b614b643 ("drm/amd/pp:
-Implement get_performance_level for legacy dgpu"), but never used,
-so remove it.
-
-Reviewed-by: Evan Quan <evan.quan@amd.com>
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: zhengbin <zhengbin13@huawei.com>
+Fixes: d38ceaf99ed0 ("drm/amdgpu: add core driver (v4)")
+Signed-off-by: yu kuai <yukuai3@huawei.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c | 2 --
+ drivers/gpu/drm/amd/amdgpu/amdgpu_display.c | 2 --
  1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
-index beacfffbdc3eb..a3d9d612af1be 100644
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
-@@ -5247,13 +5247,11 @@ static int vega10_get_performance_level(struct pp_hwmgr *hwmgr, const struct pp_
- 				PHM_PerformanceLevel *level)
- {
- 	const struct vega10_power_state *ps;
--	struct vega10_hwmgr *data;
- 	uint32_t i;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+index 82efc1e22e611..21c9cfa40e9d6 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+@@ -687,7 +687,6 @@ bool amdgpu_display_crtc_scaling_mode_fixup(struct drm_crtc *crtc,
+ 	struct amdgpu_crtc *amdgpu_crtc = to_amdgpu_crtc(crtc);
+ 	struct amdgpu_encoder *amdgpu_encoder;
+ 	struct drm_connector *connector;
+-	struct amdgpu_connector *amdgpu_connector;
+ 	u32 src_v = 1, dst_v = 1;
+ 	u32 src_h = 1, dst_h = 1;
  
- 	if (level == NULL || hwmgr == NULL || state == NULL)
- 		return -EINVAL;
+@@ -699,7 +698,6 @@ bool amdgpu_display_crtc_scaling_mode_fixup(struct drm_crtc *crtc,
+ 			continue;
+ 		amdgpu_encoder = to_amdgpu_encoder(encoder);
+ 		connector = amdgpu_get_connector_for_encoder(encoder);
+-		amdgpu_connector = to_amdgpu_connector(connector);
  
--	data = hwmgr->backend;
- 	ps = cast_const_phw_vega10_power_state(state);
- 
- 	i = index > ps->performance_level_count - 1 ?
+ 		/* set scaling */
+ 		if (amdgpu_encoder->rmx_type == RMX_OFF)
 -- 
 2.20.1
 
