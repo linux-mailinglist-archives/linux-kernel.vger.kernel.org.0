@@ -2,147 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93A3A15F201
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:09:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5136815F237
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:09:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387890AbgBNSFg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:05:36 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36828 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387940AbgBNSFd (ORCPT
+        id S2392320AbgBNSHq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:07:46 -0500
+Received: from USFB19PA32.eemsg.mail.mil ([214.24.26.195]:50945 "EHLO
+        USFB19PA32.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389243AbgBNSHo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 13:05:33 -0500
-Received: by mail-pf1-f194.google.com with SMTP id 185so5252186pfv.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 10:05:31 -0800 (PST)
+        Fri, 14 Feb 2020 13:07:44 -0500
+X-EEMSG-check-017: 56598909|USFB19PA32_ESA_OUT02.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.70,441,1574121600"; 
+   d="scan'208";a="56598909"
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by USFB19PA32.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 14 Feb 2020 18:07:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=9PeJVIEeg3tPQINwbm2y3Jjzsm6FgJXYc98QBZ5VnR4=;
-        b=X5AmDy0koPxHa3FXVlVNXC5GRkH+MypAPLkG1iYq293gW8Hu59/dvez7dVkjkygWhK
-         pmEf4mwGZC/ZEdK9qKmZqyhzF/rj6qutlX8on6FC0tVMwYILg1Mtj6ze6Hrauz0Vm8em
-         k7mh60J/kqwEGidfAQvvEFq+dZM/irbQ+1FXKq3J2s1r/iJliXcSnLgXrZsRooT5ZmSl
-         A9LHjWYSkJsPBuLoHXqtb0B71ZjaMMj80hXBSpp1IKSufV385R9jUV3EL61dakE/7Quw
-         qKmmTOh9oCedlFug9SbxngbCsjI2d6BrtdzjtGqDHysTOyUdeFxenVndWh2dlOLAnen9
-         LMeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=9PeJVIEeg3tPQINwbm2y3Jjzsm6FgJXYc98QBZ5VnR4=;
-        b=o0BsjX9ICEjpfHMcw5zBsHxQHlRai9V5Ha/vfRaJXemLaEZktv8QRfWyG0EOm5p2Uo
-         V6uCg3eat6OdMurmdOzK8v3WmNc/5gGxIh3g0Kqs3LdAxSCBzEVR2VxDuSsE01BWhcjs
-         YdTP0IDPNhftMJnfPS4k8kW3PUUOrPuGulSx3ck/V7AralcL+aikMN8ScxPaG9FTwvx4
-         U5WuFAEoGEnqhHx/FlAxVIlPKOWQ57pWUkYc6b/Depyl0rzidecxYSWFQiCAIv2Q3vOj
-         5rXKuMRVFl2hMGsi8d4h7iEs4+BV/N5r5UsAYd9gNImb7aVRv6F9bKHCTiosUi33hrLZ
-         ZPeA==
-X-Gm-Message-State: APjAAAVg4usuGo1D9rDIvPz7IvBdof4YNPXqCIggO8w3LLMA0G386NRC
-        OhRkkmBEG4OKY7Gh8SdaYr8Zmw==
-X-Google-Smtp-Source: APXvYqzwS1u3R0qkJViYDmwkbl/4A7ldgXR8I3CqSydNDrM+iNJ355KUhkxhJte4M+6mfkKogfumtg==
-X-Received: by 2002:a63:ba03:: with SMTP id k3mr5028786pgf.52.1581703530837;
-        Fri, 14 Feb 2020 10:05:30 -0800 (PST)
-Received: from google.com ([2620:15c:2ce:0:9efe:9f1:9267:2b27])
-        by smtp.gmail.com with ESMTPSA id p16sm7474658pgi.50.2020.02.14.10.05.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2020 10:05:30 -0800 (PST)
-Date:   Fri, 14 Feb 2020 10:05:27 -0800
-From:   Fangrui Song <maskray@google.com>
-To:     Arvind Sankar <nivedita@alum.mit.edu>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>, jpoimboe@redhat.com,
-        peterz@infradead.org, clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] objtool: ignore .L prefixed local symbols
-Message-ID: <20200214180527.z44b4bmzn336mff2@google.com>
-References: <20200213184708.205083-1-ndesaulniers@google.com>
- <20200213192055.23kn5pp3s6gwxamq@google.com>
- <20200214061654.GA3136404@rani.riverdale.lan>
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1581703661; x=1613239661;
+  h=subject:from:to:cc:references:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=ZmEj9uPZdHOZAKRIp4AYJ5EUxrhvAKsghoYmsQJ8N7o=;
+  b=Zhq0BFS0Y1HMVNQg/PSwdqMDhZeDtXpZLaF1qrpa4OgxAcuKbtnB+9BJ
+   yKhPvd+rMtyUUhT7wj69hIXUpfwj2aksCSjXPTOA95gAI1WUGA6yaOzYU
+   Ei/bbES0GI3zTkSw6wykstXuYHVKcnd3lY86/pdF0JQtSrhFNWFQey7CN
+   ZsDqIUStWHApBTokmMUPh8vvUycpa7KgXAdiphUSv5WTGZIQWaOwCQ+Fr
+   13yAJPXUV26ThO7VdDNUiyKyLbpg/COMyaCbAHg01220GfjTfR1gsH2o8
+   tyNYweqLwzQFnr1k5lhIwaYhy73DBb8uklsyHmxSAkdJk/LaKb198nGXa
+   A==;
+X-IronPort-AV: E=Sophos;i="5.70,441,1574121600"; 
+   d="scan'208";a="39145515"
+IronPort-PHdr: =?us-ascii?q?9a23=3A5Ab/UxN4X/ceccRAbyMl6mtUPXoX/o7sNwtQ0K?=
+ =?us-ascii?q?IMzox0K/jyrsbcNUDSrc9gkEXOFd2Cra4d16yJ6+u5AT1IyK3CmU5BWaQEbw?=
+ =?us-ascii?q?UCh8QSkl5oK+++Imq/EsTXaTcnFt9JTl5v8iLzG0FUHMHjew+a+SXqvnYdFR?=
+ =?us-ascii?q?rlKAV6OPn+FJLMgMSrzeCy/IDYbxlViDanbr5+MRq7oR/Tu8UKjoduN7o9xx?=
+ =?us-ascii?q?/UqXZUZupawn9lKl2Ukxvg/Mm74YRt8z5Xu/Iv9s5AVbv1cqElRrFGDzooLn?=
+ =?us-ascii?q?446tTzuRbMUQWA6H0cUn4LkhVTGAjK8Av6XpbqvSTksOd2xTSXMtf3TbAwXj?=
+ =?us-ascii?q?Si8rtrRRr1gyoJKzI17GfagdFrgalFvByuuQBww4/MYIGUKvV+eL/dfcgHTm?=
+ =?us-ascii?q?ZFR8pdSjBNDp+5Y4YJAeUBJ+JYpJTjqVUIoxW1GA2gCPrvxzJMg3P727Ax3e?=
+ =?us-ascii?q?Y8HgHcxAEuAtIAvmrarNv2OqkdX++6w6vUwjvMdP5WxTTw5ZLUfhw9r/yBX7?=
+ =?us-ascii?q?R9etfRx0k1EAPFi02dp5H5PzyLzuQNs3aU7+x9Xuyyjm4osQVxojyxycYsl4?=
+ =?us-ascii?q?LEgZkVxU3f9Shi3IY0JcG3SE58YdK+FptQrDuVO5F5QsMlXWFloSA3waAFt5?=
+ =?us-ascii?q?6jZCUG1ZsqyhHFZ/GHboSE+AzvWemPLTtimX5ofq+0iQyo/ki60OL8U9G50F?=
+ =?us-ascii?q?NNriVYjNbBrmsN1xnP6sifTft941uh1S6P1w/N7uFEJlg5lbbBJJ47w74wi4?=
+ =?us-ascii?q?ETvV7CHi/wlkX2i7SWeVs49eSy9+TmYqnppp+bN4NujAHxLr8uldClDeQ9Mw?=
+ =?us-ascii?q?gOW3CX+eW61LL94U30WKhGg/I5n6XDsJ3WON4XqrC2DgNLyIov9g6zDzK839?=
+ =?us-ascii?q?QZmXkHIkhFeBWCj4XxIFHBPev4AOyjg1WsjDhrx/fGMqfnApXWNHfPirjhfb?=
+ =?us-ascii?q?Fj60JE0go80chf545ICrEGOP/8R1X+tNrEAR8+Nwy52OnnCNJ61oMRXWKAHL?=
+ =?us-ascii?q?WVP7/VsV+N/ugvOfWDZJcJuDbhLPgo/+LujX48mV8YYKmpx4EXZ2q4H/l9LE?=
+ =?us-ascii?q?WZZn3sgtgFEWgUpAYxUOvqiFiaWz5Je3myR7485i08CI++FofMWIStgL2H3C?=
+ =?us-ascii?q?emEZxbfX5GCl+SHnfybYmEWOkDaDiUIsB/ljwIT7+hS5Uu1Ru2rg/116JnLv?=
+ =?us-ascii?q?bI+i0frZ/j0Nl15+vOlRA97DB0FNqS3H2QT2Fun2MIWz830Ll6oUx611iDzK?=
+ =?us-ascii?q?x4jOJDGNxN6PNGTB06OYTfz+NkEdDyXBzOftOTRFahWNWmDik7TsgtzN8Wf0?=
+ =?us-ascii?q?Z9B9KigwjH3yqrBb8VirOKCIU68qLHwnf+Odh9xGjC1KQ6kVkmTdVANXe8iq?=
+ =?us-ascii?q?586QfTHYjJnFudl6qwcqQcxiHN/n+ZzWWSpEFYTBJwUaLdUHAbZ0vWq8n550?=
+ =?us-ascii?q?zbQ7+tF7snKA1BxtCGKqZRdN3pgktJRO35NNTdfW2xgWGwCgiMxr+Wa4rqYW?=
+ =?us-ascii?q?od1j3HCEcYiwAT4WqGNQ8mCyeivWLeCSdjFUzgY0zy6+lysnC7QVEuzwGMcU?=
+ =?us-ascii?q?Jh06C5+hkPhfyTU/kTxK4LuD89qzVoG1awx8zWC9uapwpmZ6hdYM0y4FFG1W?=
+ =?us-ascii?q?LHrQB9Op2gL6Z/hl8RaQh3uFnu1xptBoVdksggtGkqwxZqKaKEzFNBcCuV3Y?=
+ =?us-ascii?q?jqNb3KLmn/5wivZLTL2lHaydqW/6AP6PMiq1r9pg2mCk0i83B/2dlPz3Sc/o?=
+ =?us-ascii?q?nKDBYVUZ/pVEY38Rt6qqrVYik64IPU2nlsPreuvjDe3NIpAfMvygy8cNdHLK?=
+ =?us-ascii?q?OECAjyHtUeB8ipK+wlhUOpbhILPOBT6aE0JdmpeuCJ2K6sO+Zgkzamgnpd7I?=
+ =?us-ascii?q?9h1UKM8jJ2SvTU0JYd3/GYwgyHWi/+jFi/vMD3l55EaCodHmq4zijkC4pRab?=
+ =?us-ascii?q?NocYkXDmeuJp7/+tIrq5frWnNcvHWkA1od086ufxfaO1D02wZX0WwYpnuonS?=
+ =?us-ascii?q?b+xDtxxWIHtK2aiRfSzvzieRxPAWtCQG1vnB+4OoSvp8wLV0ivKQ4ynV2q4l?=
+ =?us-ascii?q?islPsTn7h2M2SGGRQARCPxNWw3F/Lt57c=3D?=
+X-IPAS-Result: =?us-ascii?q?A2CMAwA84UZe/wHyM5BmHQEBAQkBEQUFAYF7gX2BbSASh?=
+ =?us-ascii?q?D6JA4ZZAQEEBoESJYlwkUoJAQEBAQEBAQEBNwQBAYRAAoIlOBMCEAEBAQUBA?=
+ =?us-ascii?q?QEBAQUDAQFshUOCOykBgwIBBSMPAQVBEAsOCgICJgICVwYNCAEBgmM/glclr?=
+ =?us-ascii?q?jiBMokdgT6BDiqMPnmBB4E4DAOCXT6HW4JeBI1ggj6Hb5dtgkSCT5N8BgIam?=
+ =?us-ascii?q?xisJyKBWCsIAhgIIQ+DKE8YDY4pF45BIwORCAEB?=
+Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 14 Feb 2020 18:07:39 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 01EI6e3h233238;
+        Fri, 14 Feb 2020 13:06:40 -0500
+Subject: Re: [PATCH 2/3] Teach SELinux about anonymous inodes
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+To:     Daniel Colascione <dancol@google.com>
+Cc:     Tim Murray <timmurray@google.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>, paul@paul-moore.com,
+        Nick Kralevich <nnk@google.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>
+References: <20200211225547.235083-1-dancol@google.com>
+ <20200214032635.75434-1-dancol@google.com>
+ <20200214032635.75434-3-dancol@google.com>
+ <9ca03838-8686-0007-0971-ee63bf5031da@tycho.nsa.gov>
+ <CAKOZuev-=7Lgu35E3tzpHQn0m_KAvvrqi+ZJr1dpqRjHERRSqg@mail.gmail.com>
+ <23f725ca-5b5a-5938-fcc8-5bbbfc9ba9bc@tycho.nsa.gov>
+Message-ID: <97603935-9f6b-ccf4-4229-87f26380c3db@tycho.nsa.gov>
+Date:   Fri, 14 Feb 2020 13:08:48 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20200214061654.GA3136404@rani.riverdale.lan>
+In-Reply-To: <23f725ca-5b5a-5938-fcc8-5bbbfc9ba9bc@tycho.nsa.gov>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I know little about objtool, but if it may be used by other
-architectures, hope the following explanations don't appear to be too
-off-topic:)
+On 2/14/20 1:02 PM, Stephen Smalley wrote:
+> It shouldn't fire for non-anon inodes because on a (non-anon) file 
+> creation, security_transition_sid() is passed the parent directory SID 
+> as the second argument and we only assign task SIDs to /proc/pid 
+> directories, which don't support (userspace) file creation anyway.
+> 
+> However, in the absence of a matching type_transition rule, we'll end up 
+> defaulting to the task SID on the anon inode, and without a separate 
+> class we won't be able to distinguish it from a /proc/pid inode.  So 
+> that might justify a separate anoninode or similar class.
+> 
+> This however reminded me that for the context_inode case, we not only 
+> want to inherit the SID but also the sclass from the context_inode. That 
+> is so that anon inodes created via device node ioctls inherit the same 
+> SID/class pair as the device node and a single allowx rule can govern 
+> all ioctl commands on that device.
 
-On 2020-02-14, Arvind Sankar wrote:
->On Thu, Feb 13, 2020 at 11:20:55AM -0800, Fangrui Song wrote:
->> On 2020-02-13, Nick Desaulniers wrote:
->> >Top of tree LLVM has optimizations related to
->> >-fno-semantic-interposition to avoid emitting PLT relocations for
->> >references to symbols located in the same translation unit, where it
->> >will emit "local symbol" references.
->> >
->> >Clang builds fall back on GNU as for assembling, currently. It appears a
->> >bug in GNU as introduced around 2.31 is keeping around local labels in
->> >the symbol table, despite the documentation saying:
->> >
->> >"Local symbols are defined and used within the assembler, but they are
->> >normally not saved in object files."
->>
->> If you can reword the paragraph above mentioning the fact below without being
->> more verbose, please do that.
->>
->> If the reference is within the same section which defines the .L symbol,
->> there is no outstanding relocation. If the reference is outside the
->> section, there will be an R_X86_64_PLT32 referencing .L
->>
->
->Can you describe what case the clang change is supposed to optimize?
->AFAICT, it kicks in when the symbol is known by the compiler to be local
->to the DSO and defined in the same translation unit.
->
->But then there are two cases:
->(a) we have call foo, where foo is defined in the same section as the
->call instruction. In this case the assembler should be able to fully
->resolve foo and not generate any relocation, regardless of whether foo
->is global or local.
-
-If foo is STB_GLOBAL or STB_WEAK, the assembler cannot fully resolve a
-reference to foo in the same section, unless the assembler can assume
-(the codegen tells it) the call to foo cannot be interposed by another
-foo definition at runtime.
-
->(b) we have call foo, where foo is defined in a different section from
->the call instruction. In this case the assembler must generate a
->relocation regardless of whether foo is global or local, and the linker
->should eliminate it.
->In what case does does replacing call foo with call .Lfoo$local help?
-
-For -fPIC -fno-semantic-interposition, the assembly emitter can perform
-the following optimization:
-
-   void foo() {}
-   void bar() { foo(); }
-
-   .globl foo, bar
-   foo:
-   .Lfoo$local:
-     ret
-   bar:
-     call foo  --> call .Lfoo$local
-     ret
-
-call foo generates an R_X86_64_PLT32. In a -shared link, it creates an
-unneeded PLT entry for foo.
-
-call .Lfoo$local generates an R_X86_64_PLT32. In a -shared link, .Lfoo$local is
-non-preemptible => no PLT entry is created.
-
-For -fno-PIC and -fPIE, the final link is expected to be -no-pie or
--pie. This optimization does not save anything, because PLT entries will
-not be generated. With clang's integrated assembler, it may increase the
-number of STT_SECTION symbols (because .Lfoo$local will be turned to a
-STT_SECTION relative relocation), but the size increase is very small.
-
-
-I want to teach clang -fPIC to use -fno-semantic-interposition by
-default. (It is currently an LLVM optimization, not realized in clang.)
-clang traditionally makes various -fno-semantic-interposition
-assumptions and can perform interprocedural optimizations even if the
-strict ELF rule disallows them.
+At least that's the way our patch worked with the /dev/kvm example. 
+However, if we are introducing a separate anoninode class for the 
+type_transition case, maybe we should apply that to all anon inodes 
+regardless of how they are labeled (based on context_inode or 
+transition) and then we'd need to write two allowx rules, one for ioctls 
+on the original device node and one for those on anon inodes created 
+from it.  Not sure how Android wants to handle that as the original 
+developer and primary user of SELinux ioctl whitelisting.
