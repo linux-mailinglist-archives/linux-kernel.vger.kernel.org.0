@@ -2,175 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91D7C15D8DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 14:57:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B04EC15D8EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 15:03:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729263AbgBNN5c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 08:57:32 -0500
-Received: from mail-qv1-f65.google.com ([209.85.219.65]:38094 "EHLO
-        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728173AbgBNN5c (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 08:57:32 -0500
-Received: by mail-qv1-f65.google.com with SMTP id g6so4301403qvy.5;
-        Fri, 14 Feb 2020 05:57:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=pRCR8JFRteiLiVzqAfjfoL4EPL1tfp3Ime2M/1tWd2A=;
-        b=Xt+4QjfcAQFD4vbXwLw142jzmUR/mbfyWcR2LGQxEG3Q4CI4VnpvrtZdxIzjAMG0NM
-         12gk7hnv23oml5u4GPRoSAR1zri9vwXrb4GXVszIma+EJWc+TMedI/TsHu9IB/yiwvYl
-         l9tmJ9l3SL8pc7gpPoKNofC0lO0V1mMt/tZfMprNr3xounTF0mzLJ/zcCN7ETn//1KVY
-         o8dDRv2rXzXiog5yCkv1sCoPDAeKuTOzemq55dKXyAPWVs+wzVeCeYAfolPGJ5Vik8aP
-         ddWHw6bWMPQ7qFme1giV2oPfdSwVecasRRbWE2WJQN4DJ9FWqkiRq3DGzyLJC1eYmFjF
-         zDFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=pRCR8JFRteiLiVzqAfjfoL4EPL1tfp3Ime2M/1tWd2A=;
-        b=QwETe9g+1cZCFJ9Sg7V95PXzeHj90TS7A9X9qDS/7TbEgkhIWFLGZb814BNif+hk4f
-         pkUYZzf0l1ZMY1K6rFtKtxIBCaH0o0+UKiupLFr/Ew7et4jetELwPHBhTIAmYYXJTJ/M
-         9PbT4PkQZDOP9Ynr535ixcBICmVHlApZ+yXCZALQfvGzwbK/RXdimI907OxVXjpCceYx
-         TlnqI9zDmQkH/A/AZcDL9Zn74FqPeMEXlkh082gVbuOSfXLzLZMlMCA3UCUtQu+YHhTg
-         Qhu8zuiyY7Vi5/iEX0NczoPYuRl7FvUf3KaF4j95nFGLhTDsazeycmal4e3BPZ8TjIHX
-         637w==
-X-Gm-Message-State: APjAAAVVfi2mfhmYv9VhzyuZeEksR6/TGN345XaB0344+qDyRJztumgl
-        8hNc+N6bP+YF4GPXTSkwH/Q=
-X-Google-Smtp-Source: APXvYqwMGPF1vQTzvjZZAzqYcaur4NxkkfsQZNmn2Qcu3JNVWIdK1pxN9mTSXfJCZUr4riuWjBkKbw==
-X-Received: by 2002:ad4:4dc9:: with SMTP id cw9mr2299790qvb.0.1581688651050;
-        Fri, 14 Feb 2020 05:57:31 -0800 (PST)
-Received: from localhost ([71.172.127.161])
-        by smtp.gmail.com with ESMTPSA id c26sm3149342qtn.19.2020.02.14.05.57.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2020 05:57:30 -0800 (PST)
-Date:   Fri, 14 Feb 2020 08:57:28 -0500
-From:   Tejun Heo <tj@kernel.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH v2 3/3] mm: memcontrol: recursive memory.low protection
-Message-ID: <20200214135728.GK88887@mtj.thefacebook.com>
-References: <20200203215201.GD6380@cmpxchg.org>
- <20200211164753.GQ10636@dhcp22.suse.cz>
- <20200212170826.GC180867@cmpxchg.org>
- <20200213074049.GA31689@dhcp22.suse.cz>
- <20200213135348.GF88887@mtj.thefacebook.com>
- <20200213154731.GE31689@dhcp22.suse.cz>
- <20200213155249.GI88887@mtj.thefacebook.com>
- <20200213163636.GH31689@dhcp22.suse.cz>
- <20200213165711.GJ88887@mtj.thefacebook.com>
- <20200214071537.GL31689@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200214071537.GL31689@dhcp22.suse.cz>
+        id S1729393AbgBNODX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 09:03:23 -0500
+Received: from mail.archive.org ([207.241.224.6]:60020 "EHLO mail.archive.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726191AbgBNODX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 09:03:23 -0500
+X-Greylist: delayed 512 seconds by postgrey-1.27 at vger.kernel.org; Fri, 14 Feb 2020 09:03:22 EST
+Received: from mail.archive.org (localhost [127.0.0.1])
+        by mail.archive.org (Postfix) with ESMTP id 579221F8CC;
+        Fri, 14 Feb 2020 13:54:50 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.archive.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,SHORTCIRCUIT
+        autolearn=disabled version=3.4.2
+Received: from archivecd-merlijn-development-nuc-1.fritz.box (a82-161-36-93.adsl.xs4all.nl [82.161.36.93])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: merlijn@archive.org)
+        by mail.archive.org (Postfix) with ESMTPSA id 4A4921F267;
+        Fri, 14 Feb 2020 13:54:48 +0000 (UTC)
+From:   Merlijn Wajer <merlijn@wizzup.org>
+To:     linux-scsi@vger.kernel.org
+Cc:     Merlijn Wajer <merlijn@archive.org>, Jens Axboe <axboe@kernel.dk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Merlijn Wajer" <merlijn@wizzup.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: sr: get rid of sr global mutex
+Date:   Fri, 14 Feb 2020 14:54:32 +0100
+Message-Id: <20200214135433.29448-1-merlijn@wizzup.org>
+X-Mailer: git-send-email 2.17.1
+X-Envelope-From: <merlijn@wizzup.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+From: Merlijn Wajer <merlijn@archive.org>
 
-On Fri, Feb 14, 2020 at 08:15:37AM +0100, Michal Hocko wrote:
-> > Yes, it can set up the control knobs as directed but it doesn't ship
-> > with any material resource configurations or has conventions set up
-> > around it.
-> 
-> Right. But services might use those knobs, right? And that means that if
-> somebody wants a memory protection then the service file is going to use 
-> MemoryLow=$FOO and that is likely not going to work properly without an
-> an additional hassles, e.g. propagate upwards, which systemd doesn't do
-> unless I am mistaken.
+When replacing the Big Kernel Lock in commit
+2a48fc0ab24241755dc93bfd4f01d68efab47f5a ("block: autoconvert trivial
+BKL users to private mutex"), the lock was replaced with a sr-wide lock.
 
-While there are applications where strict protection makes sense, in a
-lot of cases, resource decisions have to consider factors global to
-the system - how much is there and for what purpose the system is
-being set up. Static per-service configuration for sure doesn't work
-and neither will dynamic configuration without considering system-wide
-factors.
+This causes very poor performance when using multiple sr devices, as the
+sr driver was not able to execute more than one command to one drive at
+any given time, even when there were many CD drives available.
 
-Another aspect is that as configuration gets more granular and
-stricter with memory knobs, the configuration becomes less
-work-conserving. Kernel's MM keeps track of dynamic behavior and adapt
-to the dynamic usage, these configurations can't.
+Replace the global mutex with per-sr-device mutex.
 
-So, while individual applications may indicate what its resource
-dispositions are, a working configuration is not gonna come from each
-service declaring how many bytes they want.
+Someone tried this patch at the time, but it never made it
+upstream, due to possible concerns with race conditions, but it's not
+clear the patch actually caused those:
 
-This doesn't mean configurations are more tedious or difficult. In
-fact, in a lot of cases, categorizing applications on the system
-broadly and assigning ballpark weights and memory protections from the
-higher level is sufficient.
+https://www.spinics.net/lists/linux-scsi/msg63706.html
+https://www.spinics.net/lists/linux-scsi/msg63750.html
 
-> > > Besides that we are talking about memcg features which are available only
-> > > unified hieararchy and that is what systemd is using already.
-> > 
-> > I'm not quite sure what the above sentence is trying to say.
-> 
-> I meant to say that once the unified hierarchy is used by systemd you
-> cannot configure it differently to suit your needs without interfering
-> with systemd.
+Also see
 
-I haven't experienced systemd getting in the way of structuring cgroup
-hierarchy and configuring them. It's pretty flexible and easy to
-configure. Do you have any specific constraints on mind?
+http://lists.xiph.org/pipermail/paranoia/2019-December/001647.html
 
-> > There's a plan to integrate streamlined implementation of oomd into
-> > systemd. There was a thread somewhere but the only thing I can find
-> > now is a phoronix link.
-> > 
-> >   https://www.phoronix.com/scan.php?page=news_item&px=Systemd-Facebook-OOMD
-> 
-> I am not sure I see how that is going to change much wrt. resource
-> distribution TBH. Is the existing cgroup hierarchy going to change for
-> the OOMD to be deployed?
+Signed-off-by: Merlijn Wajer <merlijn@archive.org>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/scsi/sr.c | 16 +++++++++-------
+ drivers/scsi/sr.h |  2 ++
+ 2 files changed, 11 insertions(+), 7 deletions(-)
 
-It's not a hard requirement but it'll be a lot more useful with actual
-resource hierarchy. As more resource control features get enabled, I
-think it'll converge that way because that's more useful.
-
-> > Yeah, exactly, all it needs to do is placing scopes / services
-> > according to resource hierarchy and configure overall policy at higher
-> > level slices, which is exactly what the memory.low semantics change
-> > will allow.
-> 
-> Let me ask more specifically. Is there any plan or existing API to allow
-> to configure which services are related resource wise?
-
-At kernel level, no. They seem like pretty high level policy decisions
-to me.
-
-> > > That being said, I do not really blame systemd here. We are not making
-> > > their life particularly easy TBH.
-> > 
-> > Do you mind elaborating a bit?
-> 
-> I believe I have already expressed the configurability concern elsewhere
-> in the email thread. It boils down to necessity to propagate
-> protection all the way up the hierarchy properly if you really need to
-> protect leaf cgroups that are organized without a resource control in
-> mind. Which is what systemd does.
-
-But that doesn't work for other controllers at all. I'm having a
-difficult time imagining how making this one control mechanism work
-that way makes sense. Memory protection has to be configured together
-with IO protection to be actually effective.
-
-As for cgroup hierarchy being unrelated to how controllers behave, it
-frankly reminds me of cgroup1 memcg flat hierarchy thing I'm not sure
-how that would actually work in terms of resource isolation. Also, I'm
-not sure how systemd forces such configurations and I'd think systemd
-folks would be happy to fix them if there are such problems. Is the
-point you're trying to make "because of systemd, we have to contort
-how memory controller behaves"?
-
-Thanks.
-
+diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
+index 38ddbbfe5..6809fdcfd 100644
+--- a/drivers/scsi/sr.c
++++ b/drivers/scsi/sr.c
+@@ -77,7 +77,6 @@ MODULE_ALIAS_SCSI_DEVICE(TYPE_WORM);
+ 	 CDC_CD_R|CDC_CD_RW|CDC_DVD|CDC_DVD_R|CDC_DVD_RAM|CDC_GENERIC_PACKET| \
+ 	 CDC_MRW|CDC_MRW_W|CDC_RAM)
+ 
+-static DEFINE_MUTEX(sr_mutex);
+ static int sr_probe(struct device *);
+ static int sr_remove(struct device *);
+ static blk_status_t sr_init_command(struct scsi_cmnd *SCpnt);
+@@ -535,9 +534,9 @@ static int sr_block_open(struct block_device *bdev, fmode_t mode)
+ 	scsi_autopm_get_device(sdev);
+ 	check_disk_change(bdev);
+ 
+-	mutex_lock(&sr_mutex);
++	mutex_lock(&cd->lock);
+ 	ret = cdrom_open(&cd->cdi, bdev, mode);
+-	mutex_unlock(&sr_mutex);
++	mutex_unlock(&cd->lock);
+ 
+ 	scsi_autopm_put_device(sdev);
+ 	if (ret)
+@@ -550,10 +549,10 @@ static int sr_block_open(struct block_device *bdev, fmode_t mode)
+ static void sr_block_release(struct gendisk *disk, fmode_t mode)
+ {
+ 	struct scsi_cd *cd = scsi_cd(disk);
+-	mutex_lock(&sr_mutex);
++	mutex_lock(&cd->lock);
+ 	cdrom_release(&cd->cdi, mode);
+ 	scsi_cd_put(cd);
+-	mutex_unlock(&sr_mutex);
++	mutex_unlock(&cd->lock);
+ }
+ 
+ static int sr_block_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd,
+@@ -564,7 +563,7 @@ static int sr_block_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd,
+ 	void __user *argp = (void __user *)arg;
+ 	int ret;
+ 
+-	mutex_lock(&sr_mutex);
++	mutex_lock(&cd->lock);
+ 
+ 	ret = scsi_ioctl_block_when_processing_errors(sdev, cmd,
+ 			(mode & FMODE_NDELAY) != 0);
+@@ -594,7 +593,7 @@ static int sr_block_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd,
+ 	scsi_autopm_put_device(sdev);
+ 
+ out:
+-	mutex_unlock(&sr_mutex);
++	mutex_unlock(&cd->lock);
+ 	return ret;
+ }
+ 
+@@ -700,6 +699,7 @@ static int sr_probe(struct device *dev)
+ 	disk = alloc_disk(1);
+ 	if (!disk)
+ 		goto fail_free;
++	mutex_init(&cd->lock);
+ 
+ 	spin_lock(&sr_index_lock);
+ 	minor = find_first_zero_bit(sr_index_bits, SR_DISKS);
+@@ -1009,6 +1009,8 @@ static void sr_kref_release(struct kref *kref)
+ 
+ 	put_disk(disk);
+ 
++	mutex_destroy(&cd->lock);
++
+ 	kfree(cd);
+ }
+ 
+diff --git a/drivers/scsi/sr.h b/drivers/scsi/sr.h
+index a2bb7b8ba..339c624e0 100644
+--- a/drivers/scsi/sr.h
++++ b/drivers/scsi/sr.h
+@@ -20,6 +20,7 @@
+ 
+ #include <linux/genhd.h>
+ #include <linux/kref.h>
++#include <linux/mutex.h>
+ 
+ #define MAX_RETRIES	3
+ #define SR_TIMEOUT	(30 * HZ)
+@@ -51,6 +52,7 @@ typedef struct scsi_cd {
+ 	bool ignore_get_event:1;	/* GET_EVENT is unreliable, use TUR */
+ 
+ 	struct cdrom_device_info cdi;
++	struct mutex lock;
+ 	/* We hold gendisk and scsi_device references on probe and use
+ 	 * the refs on this kref to decide when to release them */
+ 	struct kref kref;
 -- 
-tejun
+2.17.1
