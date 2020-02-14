@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8485015E268
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:23:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E25A615E26B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:23:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405561AbgBNQXO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:23:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56662 "EHLO mail.kernel.org"
+        id S2405584AbgBNQXR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:23:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404392AbgBNQVs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:21:48 -0500
+        id S2393095AbgBNQVu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:21:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF4E7246AC;
-        Fri, 14 Feb 2020 16:21:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E73CC246B8;
+        Fri, 14 Feb 2020 16:21:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697307;
-        bh=k+XzV/W9UPSf5JZG4LsaLccqrAu0LZ7Ag9WTLrAZBPE=;
+        s=default; t=1581697309;
+        bh=yi9QOP/il3GJcu7Kn35kfDf8jWGVv+A/VKq1CrPmysg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JaHtPS9vqjFLGeIAXKfy8qIf9fwO+roV/ejpA0X3IvWGwatVFZe+a/PHh9LgRj9u3
-         u9xS/9mLGnWbjHBXsBnfj7kRqcCnlCqEXH65ZsTr9vtwEgEqzebK9c45L+bc5xdRGk
-         cRckJAESama3i8d5nFkcIuPtGAE0Jk0V7obAkFx4=
+        b=WXKJDCpcMoI0p4PXTrVbzKt2gQEXQgr9teWc+lKc6mRtyLl9gbfgXDDoXVQCOlKPY
+         aohQpm0VDM5Tjn7PVYcbDl/kYDhR+ogOIGnjP64xn3wYErjIt0FQdaRTiTVaH3R/Ym
+         JhxCoiF/iBmk+1PnjBI1IRiFkLJlkPlZUPb7xXy4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 019/141] uio: fix a sleep-in-atomic-context bug in uio_dmem_genirq_irqcontrol()
-Date:   Fri, 14 Feb 2020 11:19:19 -0500
-Message-Id: <20200214162122.19794-19-sashal@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 021/141] nfs: NFS_SWAP should depend on SWAP
+Date:   Fri, 14 Feb 2020 11:19:21 -0500
+Message-Id: <20200214162122.19794-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214162122.19794-1-sashal@kernel.org>
 References: <20200214162122.19794-1-sashal@kernel.org>
@@ -43,54 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit b74351287d4bd90636c3f48bc188c2f53824c2d4 ]
+[ Upstream commit 474c4f306eefbb21b67ebd1de802d005c7d7ecdc ]
 
-The driver may sleep while holding a spinlock.
-The function call path (from bottom to top) in Linux 4.19 is:
+If CONFIG_SWAP=n, it does not make much sense to offer the user the
+option to enable support for swapping over NFS, as that will still fail
+at run time:
 
-kernel/irq/manage.c, 523:
-	synchronize_irq in disable_irq
-drivers/uio/uio_dmem_genirq.c, 140:
-	disable_irq in uio_dmem_genirq_irqcontrol
-drivers/uio/uio_dmem_genirq.c, 134:
-	_raw_spin_lock_irqsave in uio_dmem_genirq_irqcontrol
+    # swapon /swap
+    swapon: /swap: swapon failed: Function not implemented
 
-synchronize_irq() can sleep at runtime.
+Fix this by adding a dependency on CONFIG_SWAP.
 
-To fix this bug, disable_irq() is called without holding the spinlock.
-
-This bug is found by a static analysis tool STCheck written by myself.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Link: https://lore.kernel.org/r/20191218094405.6009-1-baijiaju1990@gmail.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: a564b8f0398636ba ("nfs: enable swap on NFS")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/uio/uio_dmem_genirq.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fs/nfs/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/uio/uio_dmem_genirq.c b/drivers/uio/uio_dmem_genirq.c
-index e1134a4d97f3f..a00b4aee6c799 100644
---- a/drivers/uio/uio_dmem_genirq.c
-+++ b/drivers/uio/uio_dmem_genirq.c
-@@ -135,11 +135,13 @@ static int uio_dmem_genirq_irqcontrol(struct uio_info *dev_info, s32 irq_on)
- 	if (irq_on) {
- 		if (test_and_clear_bit(0, &priv->flags))
- 			enable_irq(dev_info->irq);
-+		spin_unlock_irqrestore(&priv->lock, flags);
- 	} else {
--		if (!test_and_set_bit(0, &priv->flags))
-+		if (!test_and_set_bit(0, &priv->flags)) {
-+			spin_unlock_irqrestore(&priv->lock, flags);
- 			disable_irq(dev_info->irq);
-+		}
- 	}
--	spin_unlock_irqrestore(&priv->lock, flags);
- 
- 	return 0;
- }
+diff --git a/fs/nfs/Kconfig b/fs/nfs/Kconfig
+index b1daeafbea920..c3428767332c2 100644
+--- a/fs/nfs/Kconfig
++++ b/fs/nfs/Kconfig
+@@ -89,7 +89,7 @@ config NFS_V4
+ config NFS_SWAP
+ 	bool "Provide swap over NFS support"
+ 	default n
+-	depends on NFS_FS
++	depends on NFS_FS && SWAP
+ 	select SUNRPC_SWAP
+ 	help
+ 	  This option enables swapon to work on files located on NFS mounts.
 -- 
 2.20.1
 
