@@ -2,88 +2,229 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FB7315FA9A
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 00:29:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCECA15FA5C
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 00:24:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728376AbgBNX2M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 18:28:12 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:40275 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728093AbgBNX2L (ORCPT
+        id S1728296AbgBNXWl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 18:22:41 -0500
+Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:8451 "EHLO
+        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728273AbgBNXWh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 18:28:11 -0500
-Received: by mail-wm1-f67.google.com with SMTP id t14so12508670wmi.5
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 15:28:10 -0800 (PST)
+        Fri, 14 Feb 2020 18:22:37 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=8DAOKrUKnSTSUtrxbYUAUVprhFSWYyQ0hs2kBQzRq1M=;
-        b=jyTx6MYVtdp47uQWK/BDNJE9gtuxURKjUGLEDKO0xucWGmsyzxT2B+Kr8yeQBVi0GR
-         HUXSVmPY3ihugNkWw7GP9pHzbrqw5eG6rCkVxCJqtIRpj1Vy1rOb/RlS5RognJz4OOQI
-         lcSb5MpFDclf0LTFre8uFWRNoGbiRdDlhTlSbsoXgLuML4tXl4PCmqoco0C4qNcgptY8
-         OgZj29LhnAyVOTHMlfP+uPO/6sqDG+xSFbY4Iyw5JsraY1EkkzHglYxDK9oquSL8MMRF
-         44+hA5JMCFPgxf9i0ql+NICQ/7NQjMVLFDuLz005ba3nXIr+AufpJfkSiLfm73oBNZYH
-         /9jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=8DAOKrUKnSTSUtrxbYUAUVprhFSWYyQ0hs2kBQzRq1M=;
-        b=aaD6f6ImPQY7IEVgtRYuFcD9sD9Xrw9XtWTs+Uc2M7r5ex/xr8qvUxyp6ABhMERK6F
-         7IlnVbRkqAG0ek6/k0uvnI8NwAY5dB5/czzOXWZAfOkALDNEwuDF3YwO8r0jZjXGbpMA
-         rVXiMRC8dmQ21DEfdbUivzWFptJH04F3YKEwbLd53CmFvdn4hEJLJzZqUwl8Wng7BWPC
-         +7ZeBswe5ZRx6wIDL7W7cAYUpmVjyaH/X0/NnnqW93u98jltIpKO6irHZvCRlhilBvV2
-         NwRqkDsgGOBwQHWFHBhPpC9M1K3qbWKG81FtJNxu043ts3iO7snayl6D8xyd1dKS6Y/v
-         g8UA==
-X-Gm-Message-State: APjAAAUGW93T5A+cBt00DU3zH9djTT6cL7d5k+SQ6n9isNqvFyJWIUCj
-        RFT4zkMbEgFPlrY4uTJ2oSXyRz2O
-X-Google-Smtp-Source: APXvYqwG4e23kEIuy/Z66nvJlxoeGsm3XG/rC4+MMYA2kxlfzzaagrfuYqdeTH7BBiX8bp00kprWIQ==
-X-Received: by 2002:a1c:f60e:: with SMTP id w14mr6904153wmc.188.1581722505397;
-        Fri, 14 Feb 2020 15:21:45 -0800 (PST)
-Received: from s-8d3a30ba.on.site.uni-stuttgart.de ([2001:7c7:212a:d400:f15d:b157:ec2d:b5e4])
-        by smtp.gmail.com with ESMTPSA id n3sm8833012wrs.8.2020.02.14.15.21.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2020 15:21:44 -0800 (PST)
-Date:   Sat, 15 Feb 2020 00:21:43 +0100
-From:   Sandesh Kenjana Ashok <sandeshkenjanaashok@gmail.com>
-To:     Ioana Radulescu <ruxandra.radulescu@nxp.com>
-Cc:     Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org
-Subject: [PATCH] staging: fsl-dpaa2: ethsw: ethsw.c: Fix line over 80
- characters
-Message-ID: <20200214232143.GA20675@SandeshPC>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1581722557; x=1613258557;
+  h=date:from:to:subject:message-id:references:mime-version:
+   in-reply-to;
+  bh=eMxbySX2+Q9C9EOEiRSgj0VbC617wxOCoVYvUYL8fpI=;
+  b=WICp9M02s017QBgouIW2fL8yanCHWC10hGpybHWE0fEu+nag6alQ8cnz
+   8lh8aHcVKA7hZm8Z5qUZGdtVq2a5l9Uif78V6Thn+CCuzaG3jTsv/d5oF
+   wqpy0YjPch33NcDS7EVFdtAyaybvoCmouMDqL7Fc2oohZmksIxvCwvagE
+   8=;
+IronPort-SDR: y8XMJpVBLvSO59b36Gvrm5SW1/nIbpAtTjjiO/1OKPsLUicx920bBL8XverR7HeoI3BJ2aceF9
+ AUi0ra0Y0/HQ==
+X-IronPort-AV: E=Sophos;i="5.70,442,1574121600"; 
+   d="scan'208";a="16797643"
+Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1d-f273de60.us-east-1.amazon.com) ([10.47.23.38])
+  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP; 14 Feb 2020 23:22:34 +0000
+Received: from EX13MTAUEE002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1d-f273de60.us-east-1.amazon.com (Postfix) with ESMTPS id 1A7F0A07D0;
+        Fri, 14 Feb 2020 23:22:26 +0000 (UTC)
+Received: from EX13D08UEE003.ant.amazon.com (10.43.62.118) by
+ EX13MTAUEE002.ant.amazon.com (10.43.62.24) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 14 Feb 2020 23:22:09 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (10.43.61.82) by
+ EX13D08UEE003.ant.amazon.com (10.43.62.118) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 14 Feb 2020 23:22:08 +0000
+Received: from dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com
+ (172.22.96.68) by mail-relay.amazon.com (10.43.61.243) with Microsoft SMTP
+ Server id 15.0.1367.3 via Frontend Transport; Fri, 14 Feb 2020 23:22:08 +0000
+Received: by dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com (Postfix, from userid 4335130)
+        id 756394028E; Fri, 14 Feb 2020 23:22:08 +0000 (UTC)
+Date:   Fri, 14 Feb 2020 23:22:08 +0000
+From:   Anchal Agarwal <anchalag@amazon.com>
+To:     <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+        <hpa@zytor.com>, <x86@kernel.org>, <boris.ostrovsky@oracle.com>,
+        <jgross@suse.com>, <linux-pm@vger.kernel.org>,
+        <linux-mm@kvack.org>, <kamatam@amazon.com>,
+        <sstabellini@kernel.org>, <konrad.wilk@oracle.com>,
+        <roger.pau@citrix.com>, <axboe@kernel.dk>, <davem@davemloft.net>,
+        <rjw@rjwysocki.net>, <len.brown@intel.com>, <pavel@ucw.cz>,
+        <peterz@infradead.org>, <eduval@amazon.com>, <sblbir@amazon.com>,
+        <anchalag@amazon.com>, <xen-devel@lists.xenproject.org>,
+        <vkuznets@redhat.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <dwmw@amazon.co.uk>,
+        <fllinden@amaozn.com>, <benh@kernel.crashing.org>
+Subject: [RFC PATCH v3 01/12] xen/manage: keep track of the on-going suspend
+ mode
+Message-ID: <36567b7204db25d7307a165a6565837a213efdf8.1581721799.git.anchalag@amazon.com>
+References: <cover.1581721799.git.anchalag@amazon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <cover.1581721799.git.anchalag@amazon.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Issue found by checkpatch.
+From: Munehisa Kamata <kamatam@amazon.com>
 
-Signed-off-by: Sandesh Kenjana Ashok <sandeshkenjanaashok@gmail.com>
+Guest hibernation is different from xen suspend/resume/live migration.
+Xen save/restore does not use pm_ops as is needed by guest hibernation.
+Hibernation in guest follows ACPI path and is guest inititated , the
+hibernation image is saved within guest as compared to later modes
+which are xen toolstack assisted and image creation/storage is in
+control of hypervisor/host machine.
+To differentiate between Xen suspend and PM hibernation, keep track
+of the on-going suspend mode by mainly using a new PM notifier.
+Introduce simple functions which help to know the on-going suspend mode
+so that other Xen-related code can behave differently according to the
+current suspend mode.
+Since Xen suspend doesn't have corresponding PM event, its main logic
+is modfied to acquire pm_mutex and set the current mode.
+
+Though, acquirng pm_mutex is still right thing to do, we may
+see deadlock if PM hibernation is interrupted by Xen suspend.
+PM hibernation depends on xenwatch thread to process xenbus state
+transactions, but the thread will sleep to wait pm_mutex which is
+already held by PM hibernation context in the scenario. Xen shutdown
+code may need some changes to avoid the issue.
+
+[Anchal Changelog: Merged patch xen/manage: introduce helper function
+to know the on-going suspend mode into this one for better readability]
+Signed-off-by: Anchal Agarwal <anchalag@amazon.com>
+Signed-off-by: Munehisa Kamata <kamatam@amazon.com>
 ---
- drivers/staging/fsl-dpaa2/ethsw/ethsw.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/xen/manage.c  | 73 +++++++++++++++++++++++++++++++++++++++++++
+ include/xen/xen-ops.h |  3 ++
+ 2 files changed, 76 insertions(+)
 
-diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-index 39c0fe347188..676d1ad1b50d 100644
---- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-+++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-@@ -1492,7 +1492,8 @@ static void ethsw_unregister_notifier(struct device *dev)
- 	err = unregister_switchdev_blocking_notifier(nb);
- 	if (err)
- 		dev_err(dev,
--			"Failed to unregister switchdev blocking notifier (%d)\n", err);
-+			"Failed to unregister switchdev blocking notifier (%d)\n",
-+			err);
+diff --git a/drivers/xen/manage.c b/drivers/xen/manage.c
+index cd046684e0d1..0b30ab522b77 100644
+--- a/drivers/xen/manage.c
++++ b/drivers/xen/manage.c
+@@ -14,6 +14,7 @@
+ #include <linux/freezer.h>
+ #include <linux/syscore_ops.h>
+ #include <linux/export.h>
++#include <linux/suspend.h>
  
- 	err = unregister_switchdev_notifier(&ethsw->port_switchdev_nb);
- 	if (err)
+ #include <xen/xen.h>
+ #include <xen/xenbus.h>
+@@ -40,6 +41,31 @@ enum shutdown_state {
+ /* Ignore multiple shutdown requests. */
+ static enum shutdown_state shutting_down = SHUTDOWN_INVALID;
+ 
++enum suspend_modes {
++	NO_SUSPEND = 0,
++	XEN_SUSPEND,
++	PM_SUSPEND,
++	PM_HIBERNATION,
++};
++
++/* Protected by pm_mutex */
++static enum suspend_modes suspend_mode = NO_SUSPEND;
++
++bool xen_suspend_mode_is_xen_suspend(void)
++{
++	return suspend_mode == XEN_SUSPEND;
++}
++
++bool xen_suspend_mode_is_pm_suspend(void)
++{
++	return suspend_mode == PM_SUSPEND;
++}
++
++bool xen_suspend_mode_is_pm_hibernation(void)
++{
++	return suspend_mode == PM_HIBERNATION;
++}
++
+ struct suspend_info {
+ 	int cancelled;
+ };
+@@ -99,6 +125,10 @@ static void do_suspend(void)
+ 	int err;
+ 	struct suspend_info si;
+ 
++	lock_system_sleep();
++
++	suspend_mode = XEN_SUSPEND;
++
+ 	shutting_down = SHUTDOWN_SUSPEND;
+ 
+ 	err = freeze_processes();
+@@ -162,6 +192,10 @@ static void do_suspend(void)
+ 	thaw_processes();
+ out:
+ 	shutting_down = SHUTDOWN_INVALID;
++
++	suspend_mode = NO_SUSPEND;
++
++	unlock_system_sleep();
+ }
+ #endif	/* CONFIG_HIBERNATE_CALLBACKS */
+ 
+@@ -387,3 +421,42 @@ int xen_setup_shutdown_event(void)
+ EXPORT_SYMBOL_GPL(xen_setup_shutdown_event);
+ 
+ subsys_initcall(xen_setup_shutdown_event);
++
++static int xen_pm_notifier(struct notifier_block *notifier,
++			   unsigned long pm_event, void *unused)
++{
++	switch (pm_event) {
++	case PM_SUSPEND_PREPARE:
++		suspend_mode = PM_SUSPEND;
++		break;
++	case PM_HIBERNATION_PREPARE:
++	case PM_RESTORE_PREPARE:
++		suspend_mode = PM_HIBERNATION;
++		break;
++	case PM_POST_SUSPEND:
++	case PM_POST_RESTORE:
++	case PM_POST_HIBERNATION:
++		/* Set back to the default */
++		suspend_mode = NO_SUSPEND;
++		break;
++	default:
++		pr_warn("Receive unknown PM event 0x%lx\n", pm_event);
++		return -EINVAL;
++	}
++
++	return 0;
++};
++
++static struct notifier_block xen_pm_notifier_block = {
++	.notifier_call = xen_pm_notifier
++};
++
++static int xen_setup_pm_notifier(void)
++{
++	if (!xen_hvm_domain())
++		return -ENODEV;
++
++	return register_pm_notifier(&xen_pm_notifier_block);
++}
++
++subsys_initcall(xen_setup_pm_notifier);
+diff --git a/include/xen/xen-ops.h b/include/xen/xen-ops.h
+index d89969aa9942..6c36e161dfd1 100644
+--- a/include/xen/xen-ops.h
++++ b/include/xen/xen-ops.h
+@@ -40,6 +40,9 @@ u64 xen_steal_clock(int cpu);
+ 
+ int xen_setup_shutdown_event(void);
+ 
++bool xen_suspend_mode_is_xen_suspend(void);
++bool xen_suspend_mode_is_pm_suspend(void);
++bool xen_suspend_mode_is_pm_hibernation(void);
+ extern unsigned long *xen_contiguous_bitmap;
+ 
+ #if defined(CONFIG_XEN_PV) || defined(CONFIG_ARM) || defined(CONFIG_ARM64)
 -- 
-2.17.1
+2.24.1.AMZN
 
