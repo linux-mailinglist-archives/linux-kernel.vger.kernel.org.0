@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D0EF15ED20
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:32:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A10515EDA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:35:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389043AbgBNQGo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:06:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56166 "EHLO mail.kernel.org"
+        id S2394747AbgBNRfE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:35:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390274AbgBNQF7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:05:59 -0500
+        id S2390297AbgBNQGD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:06:03 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3AAE0217F4;
-        Fri, 14 Feb 2020 16:05:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF54124676;
+        Fri, 14 Feb 2020 16:06:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696359;
-        bh=gUEGfpV552sDu9X3kZ+5/zD3JhIkLGBT0fJ533BkoeE=;
+        s=default; t=1581696362;
+        bh=Xdz5g+eobi2ZEQdasmCypMVgaHUhILG5k0/pdY3tblI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fPmuhl8FVe6MBJusVryBmLewCZXjESUGPysUXnzg013OBsPUnQf1NUqRRWmqvNKcd
-         ktrhDDKoYqHbFnjOvloei9rOEVpCgYgzyXhsEzfUsWrjW5eb64h8LsHQkAvAPiF6HI
-         wTRFA/j/cOy8MMksQAlCnX8lyhyc2i3P9WGXeCTQ=
+        b=SpPBNezk3kk6DmBl416fkfNXqt2YX9agdar9H1DYkHMq03QM4cAejnRl4ekEOgL56
+         KC4b6MUfcImPf4hBxkr37lW98xhe6PV9X5g+OxFb3kA9LpbJKrgRrYOdBhfbfqhmv/
+         o5HwrjWVBmVkriGRgxf8pGbbG1GhkZqGsp7dW9EY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Suman Anna <s-anna@ti.com>, Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 191/459] ARM: OMAP2+: Add workaround for DRA7 DSP MStandby errata i879
-Date:   Fri, 14 Feb 2020 10:57:21 -0500
-Message-Id: <20200214160149.11681-191-sashal@kernel.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>,
+        alsa-devel@alsa-project.org, clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 5.4 194/459] ALSA: usx2y: Adjust indentation in snd_usX2Y_hwdep_dsp_status
+Date:   Fri, 14 Feb 2020 10:57:24 -0500
+Message-Id: <20200214160149.11681-194-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -43,122 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suman Anna <s-anna@ti.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 2f14101a1d760db72393910d481fbf7768c44530 ]
+[ Upstream commit df4654bd6e42125d9b85ce3a26eaca2935290b98 ]
 
-Errata Title:
-i879: DSP MStandby requires CD_EMU in SW_WKUP
+Clang warns:
 
-Description:
-The DSP requires the internal emulation clock to be actively toggling
-in order to successfully enter a low power mode via execution of the
-IDLE instruction and PRCM MStandby/Idle handshake. This assumes that
-other prerequisites and software sequence are followed.
+../sound/usb/usx2y/usX2Yhwdep.c:122:3: warning: misleading indentation;
+statement is not part of the previous 'if' [-Wmisleading-indentation]
+        info->version = USX2Y_DRIVER_VERSION;
+        ^
+../sound/usb/usx2y/usX2Yhwdep.c:120:2: note: previous statement is here
+        if (us428->chip_status & USX2Y_STAT_CHIP_INIT)
+        ^
+1 warning generated.
 
-Workaround:
-The emulation clock to the DSP is free-running anytime CCS is connected
-via JTAG debugger to the DSP subsystem or when the CD_EMU clock domain
-is set in SW_WKUP mode. The CD_EMU domain can be set in SW_WKUP mode
-via the CM_EMU_CLKSTCTRL [1:0]CLKTRCTRL field.
+This warning occurs because there is a space before the tab on this
+line. Remove it so that the indentation is consistent with the Linux
+kernel coding style and clang no longer warns.
 
-Implementation:
-This patch implements this workaround by denying the HW_AUTO mode
-for the EMU clockdomain during the power-up of any DSP processor
-and re-enabling the HW_AUTO mode during the shutdown of the last
-DSP processor (actually done during the enabling and disabling of
-the respective DSP MDMA MMUs). Reference counting has to be used to
-manage the independent sequencing between the multiple DSP processors.
+This was introduced before the beginning of git history so no fixes tag.
 
-This switching is done at runtime rather than a static clockdomain
-flags value to meet the target power domain state for the EMU power
-domain during suspend.
-
-Note that the DSP MStandby behavior is not consistent across all
-boards prior to this fix. Please see commit 45f871eec6c0 ("ARM:
-OMAP2+: Extend DRA7 IPU1 MMU pdata quirks to DSP MDMA MMUs") for
-details.
-
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Link: https://github.com/ClangBuiltLinux/linux/issues/831
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Link: https://lore.kernel.org/r/20191218034257.54535-1-natechancellor@gmail.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-omap2/omap-iommu.c | 43 +++++++++++++++++++++++++++++---
- 1 file changed, 40 insertions(+), 3 deletions(-)
+ sound/usb/usx2y/usX2Yhwdep.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-omap2/omap-iommu.c b/arch/arm/mach-omap2/omap-iommu.c
-index f1a6ece8108e4..78247e6f4a720 100644
---- a/arch/arm/mach-omap2/omap-iommu.c
-+++ b/arch/arm/mach-omap2/omap-iommu.c
-@@ -11,14 +11,43 @@
- 
- #include "omap_hwmod.h"
- #include "omap_device.h"
-+#include "clockdomain.h"
- #include "powerdomain.h"
- 
-+static void omap_iommu_dra7_emu_swsup_config(struct platform_device *pdev,
-+					     bool enable)
-+{
-+	static struct clockdomain *emu_clkdm;
-+	static DEFINE_SPINLOCK(emu_lock);
-+	static atomic_t count;
-+	struct device_node *np = pdev->dev.of_node;
-+
-+	if (!of_device_is_compatible(np, "ti,dra7-dsp-iommu"))
-+		return;
-+
-+	if (!emu_clkdm) {
-+		emu_clkdm = clkdm_lookup("emu_clkdm");
-+		if (WARN_ON_ONCE(!emu_clkdm))
-+			return;
-+	}
-+
-+	spin_lock(&emu_lock);
-+
-+	if (enable && (atomic_inc_return(&count) == 1))
-+		clkdm_deny_idle(emu_clkdm);
-+	else if (!enable && (atomic_dec_return(&count) == 0))
-+		clkdm_allow_idle(emu_clkdm);
-+
-+	spin_unlock(&emu_lock);
-+}
-+
- int omap_iommu_set_pwrdm_constraint(struct platform_device *pdev, bool request,
- 				    u8 *pwrst)
- {
- 	struct powerdomain *pwrdm;
- 	struct omap_device *od;
- 	u8 next_pwrst;
-+	int ret = 0;
- 
- 	od = to_omap_device(pdev);
- 	if (!od)
-@@ -31,13 +60,21 @@ int omap_iommu_set_pwrdm_constraint(struct platform_device *pdev, bool request,
- 	if (!pwrdm)
- 		return -EINVAL;
- 
--	if (request)
-+	if (request) {
- 		*pwrst = pwrdm_read_next_pwrst(pwrdm);
-+		omap_iommu_dra7_emu_swsup_config(pdev, true);
-+	}
- 
- 	if (*pwrst > PWRDM_POWER_RET)
--		return 0;
-+		goto out;
- 
- 	next_pwrst = request ? PWRDM_POWER_ON : *pwrst;
- 
--	return pwrdm_set_next_pwrst(pwrdm, next_pwrst);
-+	ret = pwrdm_set_next_pwrst(pwrdm, next_pwrst);
-+
-+out:
-+	if (!request)
-+		omap_iommu_dra7_emu_swsup_config(pdev, false);
-+
-+	return ret;
+diff --git a/sound/usb/usx2y/usX2Yhwdep.c b/sound/usb/usx2y/usX2Yhwdep.c
+index d1caa8ed9e681..9985fc139487b 100644
+--- a/sound/usb/usx2y/usX2Yhwdep.c
++++ b/sound/usb/usx2y/usX2Yhwdep.c
+@@ -119,7 +119,7 @@ static int snd_usX2Y_hwdep_dsp_status(struct snd_hwdep *hw,
+ 	info->num_dsps = 2;		// 0: Prepad Data, 1: FPGA Code
+ 	if (us428->chip_status & USX2Y_STAT_CHIP_INIT)
+ 		info->chip_ready = 1;
+- 	info->version = USX2Y_DRIVER_VERSION; 
++	info->version = USX2Y_DRIVER_VERSION;
+ 	return 0;
  }
+ 
 -- 
 2.20.1
 
