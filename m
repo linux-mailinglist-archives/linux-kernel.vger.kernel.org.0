@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E05415EBB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:22:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD3BA15EBB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:22:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391598AbgBNRW1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:22:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35214 "EHLO mail.kernel.org"
+        id S2391733AbgBNRWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:22:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391378AbgBNQKA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:10:00 -0500
+        id S2390454AbgBNQKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:10:03 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EAAC24693;
-        Fri, 14 Feb 2020 16:09:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B9B724650;
+        Fri, 14 Feb 2020 16:10:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696600;
-        bh=fFOQjnVPcFd1wvOtxaBYad+RJUFESpmrhGZ80I46uD4=;
+        s=default; t=1581696602;
+        bh=0AGS+MlQMepeARnJsKYIBXgbmtmIqDDXRQy0zLTy+2Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q+sDNSbv4Bv0vb5rnFpjF//6HIS3OcjfALxxIyWFJjW6q9SeVngl58AeekkbqnqS5
-         b4o1hitqIVPzzsPRzo6p2vX/g+/lsx+bNJwFGUY30iMmn7vCUFSmAlNp8TdtQKCsi5
-         k30ASvz51Pd3ewliBAdjw6CBfqaTQLr5QocWMIqI=
+        b=iDjuYum31+mnFTHFC7UYKJhi3BzZJJOrtDcY562ThKjNO8UiXMWR8KjPohaa8HeoQ
+         iq8qKFnwOOWY49bYR7OLdTQaqX8YqObdwBdAy2nGJfza61U5BsDcpIP4SDhRkO/5ip
+         VFB84W1pWM+khZMpxQGNtAd97+kERtV6/FMNaGyk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     David Sterba <dsterba@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Sasha Levin <sashal@kernel.org>, linux-btrfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 385/459] btrfs: separate definition of assertion failure handlers
-Date:   Fri, 14 Feb 2020 11:00:35 -0500
-Message-Id: <20200214160149.11681-385-sashal@kernel.org>
+Cc:     Tero Kristo <t-kristo@ti.com>, Benoit Parrot <bparrot@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 387/459] ARM: dts: am43xx: add support for clkout1 clock
+Date:   Fri, 14 Feb 2020 11:00:37 -0500
+Message-Id: <20200214160149.11681-387-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -44,68 +44,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Sterba <dsterba@suse.com>
+From: Tero Kristo <t-kristo@ti.com>
 
-[ Upstream commit 68c467cbb2f389b6c933e235bce0d1756fc8cc34 ]
+[ Upstream commit 01053dadb79d63b65f7b353e68b4b6ccf4effedb ]
 
-There's a report where objtool detects unreachable instructions, eg.:
+clkout1 clock node and its generation tree was missing. Add this based
+on the data on TRM and PRCM functional spec.
 
-  fs/btrfs/ctree.o: warning: objtool: btrfs_search_slot()+0x2d4: unreachable instruction
+commit 664ae1ab2536 ("ARM: dts: am43xx: add clkctrl nodes") effectively
+reverted this commit 8010f13a40d3 ("ARM: dts: am43xx: add support for
+clkout1 clock") which is needed for the ov2659 camera sensor clock
+definition hence it is being re-applied here.
 
-This seems to be a false positive due to compiler version. The cause is
-in the ASSERT macro implementation that does the conditional check as
-IS_DEFINED(CONFIG_BTRFS_ASSERT) and not an #ifdef.
+Note that because of the current dts node name dependency for mapping to
+clock domain, we must still use "clkout1-*ck" naming instead of generic
+"clock@" naming for the node. And because of this, it's probably best to
+apply the dts node addition together along with the other clock changes.
 
-To avoid that, use the ifdefs directly.
-
-There are still 2 reports that aren't fixed:
-
-  fs/btrfs/extent_io.o: warning: objtool: __set_extent_bit()+0x71f: unreachable instruction
-  fs/btrfs/relocation.o: warning: objtool: find_data_references()+0x4e0: unreachable instruction
-
-Co-developed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: 664ae1ab2536 ("ARM: dts: am43xx: add clkctrl nodes")
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Tested-by: Benoit Parrot <bparrot@ti.com>
+Acked-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Benoit Parrot <bparrot@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/ctree.h | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+ arch/arm/boot/dts/am43xx-clocks.dtsi | 54 ++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
-diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-index 290ca193c6c0f..169075550a5a2 100644
---- a/fs/btrfs/ctree.h
-+++ b/fs/btrfs/ctree.h
-@@ -3107,17 +3107,21 @@ do {								\
- 	rcu_read_unlock();					\
- } while (0)
- 
--__cold
--static inline void assfail(const char *expr, const char *file, int line)
-+#ifdef CONFIG_BTRFS_ASSERT
-+__cold __noreturn
-+static inline void assertfail(const char *expr, const char *file, int line)
- {
--	if (IS_ENABLED(CONFIG_BTRFS_ASSERT)) {
--		pr_err("assertion failed: %s, in %s:%d\n", expr, file, line);
--		BUG();
--	}
-+	pr_err("assertion failed: %s, in %s:%d\n", expr, file, line);
-+	BUG();
- }
- 
--#define ASSERT(expr)	\
--	(likely(expr) ? (void)0 : assfail(#expr, __FILE__, __LINE__))
-+#define ASSERT(expr)						\
-+	(likely(expr) ? (void)0 : assertfail(#expr, __FILE__, __LINE__))
+diff --git a/arch/arm/boot/dts/am43xx-clocks.dtsi b/arch/arm/boot/dts/am43xx-clocks.dtsi
+index 091356f2a8c16..c726cd8dbdf1b 100644
+--- a/arch/arm/boot/dts/am43xx-clocks.dtsi
++++ b/arch/arm/boot/dts/am43xx-clocks.dtsi
+@@ -704,6 +704,60 @@
+ 		ti,bit-shift = <8>;
+ 		reg = <0x2a48>;
+ 	};
 +
-+#else
-+static inline void assertfail(const char *expr, const char* file, int line) { }
-+#define ASSERT(expr)	(void)(expr)
-+#endif
++	clkout1_osc_div_ck: clkout1-osc-div-ck {
++		#clock-cells = <0>;
++		compatible = "ti,divider-clock";
++		clocks = <&sys_clkin_ck>;
++		ti,bit-shift = <20>;
++		ti,max-div = <4>;
++		reg = <0x4100>;
++	};
++
++	clkout1_src2_mux_ck: clkout1-src2-mux-ck {
++		#clock-cells = <0>;
++		compatible = "ti,mux-clock";
++		clocks = <&clk_rc32k_ck>, <&sysclk_div>, <&dpll_ddr_m2_ck>,
++			 <&dpll_per_m2_ck>, <&dpll_disp_m2_ck>,
++			 <&dpll_mpu_m2_ck>;
++		reg = <0x4100>;
++	};
++
++	clkout1_src2_pre_div_ck: clkout1-src2-pre-div-ck {
++		#clock-cells = <0>;
++		compatible = "ti,divider-clock";
++		clocks = <&clkout1_src2_mux_ck>;
++		ti,bit-shift = <4>;
++		ti,max-div = <8>;
++		reg = <0x4100>;
++	};
++
++	clkout1_src2_post_div_ck: clkout1-src2-post-div-ck {
++		#clock-cells = <0>;
++		compatible = "ti,divider-clock";
++		clocks = <&clkout1_src2_pre_div_ck>;
++		ti,bit-shift = <8>;
++		ti,max-div = <32>;
++		ti,index-power-of-two;
++		reg = <0x4100>;
++	};
++
++	clkout1_mux_ck: clkout1-mux-ck {
++		#clock-cells = <0>;
++		compatible = "ti,mux-clock";
++		clocks = <&clkout1_osc_div_ck>, <&clk_rc32k_ck>,
++			 <&clkout1_src2_post_div_ck>, <&dpll_extdev_m2_ck>;
++		ti,bit-shift = <16>;
++		reg = <0x4100>;
++	};
++
++	clkout1_ck: clkout1-ck {
++		#clock-cells = <0>;
++		compatible = "ti,gate-clock";
++		clocks = <&clkout1_mux_ck>;
++		ti,bit-shift = <23>;
++		reg = <0x4100>;
++	};
+ };
  
- /*
-  * Use that for functions that are conditionally exported for sanity tests but
+ &prcm {
 -- 
 2.20.1
 
