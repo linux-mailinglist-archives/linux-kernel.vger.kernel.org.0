@@ -2,68 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F13715F898
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 22:17:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81B5015F858
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 22:00:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389359AbgBNVRI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 16:17:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51048 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387988AbgBNVRH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 16:17:07 -0500
-Received: from localhost (unknown [65.119.211.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1AA7E24654;
-        Fri, 14 Feb 2020 21:17:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581715027;
-        bh=acV4UmbvY0EknDqCExrCuDI4Q3EtwQSmdTmdHp6Oq4E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kzCL+Bv5y7A5KoRnZOJPG7ONuIccTJ8wNVF9KyvdiD4yJU2HOFbX7sIjTZ/HyAR7F
-         nGLg7RkPE9b/T8+4aOsy3z5CykG2k2n+wytCkHlXLvWkNggqFnbuiz4EodcL7KTM5e
-         g+9H81z/Ux1WoYQK5NCTadNmuiZbCHF9ouMO1XHM=
-Date:   Fri, 14 Feb 2020 15:49:54 -0500
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc:     Yang Yingliang <yangyingliang@huawei.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 091/195] padata: Remove broken queue flushing
-Message-ID: <20200214204954.GA4087825@kroah.com>
-References: <20200210122305.731206734@linuxfoundation.org>
- <20200210122314.217904406@linuxfoundation.org>
- <5E4674BB.4020900@huawei.com>
- <20200214152128.GC3959278@kroah.com>
- <20200214201006.6qlfqillveotr47n@ca-dmjordan1.us.oracle.com>
+        id S2388294AbgBNVAo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 16:00:44 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:36149 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387432AbgBNVAo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 16:00:44 -0500
+Received: by mail-ot1-f68.google.com with SMTP id j20so10475412otq.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 13:00:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7DMurB2EcIliipQAm/Fyz3iYQa8JFCY3mjh5m99SUJQ=;
+        b=K7T9OJLg4Rd6RuoeGZfJRBGbV7nSZMbJ5Vfkg9phnHv4jBT/9bBmEuX7Ysbb7zSCfq
+         2s+cMkr/gk9UaS2jQgaY4MoqrLuxyZxKIBNhGOf2D64qdFVNqOKzpV14sAYT0iHNnM4l
+         lyzdxLTmt1uf3N/8m89DK6/febbiFEDywSo/UGz5XRmKsA8ecZHAr6YVgqG/2c8L9Ie2
+         lmVDfCT4+tNZ14mSY+CSv1w+C5mhumA18t6gnUWBqmdmA91FK6d6fbiUWXJCtFdm0RNG
+         YnUxig7JD1deO+/D/aY8AFrxQmrDEkq5L6qeijk4AHlMztzl8h84OP5LzX5rK/NmK5f/
+         fqOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7DMurB2EcIliipQAm/Fyz3iYQa8JFCY3mjh5m99SUJQ=;
+        b=oM9Djd+h3ZfVPw2PSPDQMJl4ZbewAjF9EYUYzgN0I2hnvRLsrIh0FnjZgQEWaCbu6w
+         YgfZx6fV28cZp5qdYTS2Uz13Wzt1Rfj/PVTf3duEdjWyYBwTXZqAkG62Rdd4OV9RAQk/
+         FE1GWTejE5HQSiObevIA2puOLDjXETVQGiQ/nUnGaEz/vch8OIVQm/njqKs5JSgPVgLz
+         wwNfpGwkqvNmcHG4XkEJEjgAkkFCuR6L5yPaHUUk+PUHCgKIW/ot2Balm4ljig7KYYXA
+         UZKJUHbRQZZ0QWVEI/8iCf0VEGyIab5clrRwPJVkUuYGRXxbM15FBDbMnXqdOW17OeGW
+         o4/A==
+X-Gm-Message-State: APjAAAX2sVRCwTLtDo8htr2VibFSwQL1YhBRcFjtij6iOMxlxilekcLY
+        dYDmRgElqc9cz1/09opPzpDxHk5NAVlRiMCbwFP1Aw==
+X-Google-Smtp-Source: APXvYqwVLssaKbrmX/2dVzzlIfrCtRMpETQMFACNwFjNeW45I2jNMr2nyglMTtsq4MTz7pBu11KLlg1FFHUUKP9tKjM=
+X-Received: by 2002:a9d:2028:: with SMTP id n37mr3941956ota.127.1581714042131;
+ Fri, 14 Feb 2020 13:00:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200214201006.6qlfqillveotr47n@ca-dmjordan1.us.oracle.com>
+References: <7ff9e944-1c6c-f7c1-d812-e12817c7a317@oracle.com> <20200214204544.231482-1-almasrymina@google.com>
+In-Reply-To: <20200214204544.231482-1-almasrymina@google.com>
+From:   Mina Almasry <almasrymina@google.com>
+Date:   Fri, 14 Feb 2020 13:00:31 -0800
+Message-ID: <CAHS8izMjyLzCsSga59dE+zDC3sLBuA=_u4EtsShN+EZQ1EQitw@mail.gmail.com>
+Subject: Re: [PATCH] hugetlb: fix CONFIG_CGROUP_HUGETLB ifdefs
+To:     linux-mm@kvack.org, linux-next@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>
+Cc:     David Rientjes <rientjes@google.com>,
+        Greg Thelen <gthelen@google.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 03:10:06PM -0500, Daniel Jordan wrote:
-> On Fri, Feb 14, 2020 at 07:21:28AM -0800, Greg Kroah-Hartman wrote:
-> > So this causes a problem in the 4.19-rc tree but not in Linus's tree?
-> > Or am I confused?  Should it be dropped from stable or is there some
-> > other fix-of-a-fix that I need to apply here?
-> 
-> This causes a problem in 4.19.103 and 4.19-rc but not Linus's tree.
-> 
-> The fix-of-a-fix is posted recently here:
-> 
->     https://lore.kernel.org/lkml/20200214182821.337706-1-daniel.m.jordan@oracle.com/
-> 
-> For 4.14, 4.9, and 4.4, I'm posting a revised version of "Remove broken queue
-> flushing" in each review thread.  4.14 is already up.  Is this what I should be
-> doing?
-
-That is exactly correct, thanks for doing this, I'll drop what is
-currently in these trees and then queue your new fix up for the next
-round of releases, thanks!
-
-greg k-h
+On Fri, Feb 14, 2020 at 12:46 PM Mina Almasry <almasrymina@google.com> wrote:
+>
+> Fixes an #ifdef bug in the patch referred to below that was
+> causing a build error when CONFIG_DEBUG_VM &&
+> !CONFIG_CCGROUP_HUGETLB.
+>
+> Fixes: b5f16a533ce8a ("hugetlb: support file_region coalescing again")
+> Signed-off-by: Mina Almasry <almasrymina@google.com>
+> Cc: David Rientjes <rientjes@google.com>
+> Cc: Greg Thelen <gthelen@google.com>
+> Cc: Mike Kravetz <mike.kravetz@oracle.com>
+> Cc: Shakeel Butt <shakeelb@google.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> ---
+>  mm/hugetlb.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+>
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index ee6d262fe6ac0..95d34c58981d2 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -289,7 +289,7 @@ static bool has_same_uncharge_info(struct file_region *rg,
+>  #endif
+>  }
+>
+> -#ifdef CONFIG_DEBUG_VM
+> +#if defined(CONFIG_DEBUG_VM) && defined(CONFIG_CGROUP_HUGETLB)
+>  static void dump_resv_map(struct resv_map *resv)
+>  {
+>         struct list_head *head = &resv->regions;
+> @@ -325,6 +325,10 @@ static void check_coalesce_bug(struct resv_map *resv)
+>                 }
+>         }
+>  }
+> +#else
+> +static void check_coalesce_bug(struct resv_map *resv)
+> +{
+> +}
+>  #endif
+>
+>  static void coalesce_file_region(struct resv_map *resv, struct file_region *rg)
+> @@ -431,9 +435,7 @@ static long add_reservation_in_range(struct resv_map *resv, long f, long t,
+>         }
+>
+>         VM_BUG_ON(add < 0);
+> -#ifdef CONFIG_DEBUG_VM
+>         check_coalesce_bug(resv);
+> -#endif
+>         return add;
+>  }
+>
+> --
+> 2.25.0.265.gbab2e86ba0-goog
