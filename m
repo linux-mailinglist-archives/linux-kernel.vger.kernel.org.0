@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7C2A15E05B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:13:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 207DE15E05C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:14:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392064AbgBNQMr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:12:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38988 "EHLO mail.kernel.org"
+        id S2391690AbgBNQMu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:12:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39100 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391603AbgBNQL4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:11:56 -0500
+        id S2391659AbgBNQL6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:11:58 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 542EA246B2;
-        Fri, 14 Feb 2020 16:11:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFE30246A2;
+        Fri, 14 Feb 2020 16:11:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696715;
-        bh=KcmnulXej6XgTmboJX/Yo76IHAYu9ieXcZsiWl31o5o=;
+        s=default; t=1581696717;
+        bh=PMSX/tFOGngG/68Yc2H6qa4dqSV6/a54J+KGhwu72ZA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MVAE82qoqgCGnhEVv7y/zI1CJQxycgXIq3ZIaWUXsl8Iyk5U1rLobyzx0/0R0Wz5D
-         vKabHLeVerVH2G5KEfkCGlRuRuPYEHgpeo513sXvaFgblzRHJ4mGkS1kvWjuhJYHqH
-         nK+vZ4w9ULoX/sAPkhZeEE2NMsroedkg2XUhJdc8=
+        b=hAE00UWXs+DWQGmsGDxNEkTBvwd6pyCYE/CHQtnDzjdDNZA+o10nec0LYGUV6BNaZ
+         o8WZX5v2WGBtFNLbp8BXS7C03V+Tgdxn/ijmjU73JCAifReqk3iTqS14lEAd55HpAO
+         oLEK7+ZIJPiwySsvytyF/pIhrJcntydvwdHk3Wo0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.19 005/252] media: i2c: adv748x: Fix unsafe macros
-Date:   Fri, 14 Feb 2020 11:07:40 -0500
-Message-Id: <20200214161147.15842-5-sashal@kernel.org>
+Cc:     Zhengyuan Liu <liuzhengyuan@kylinos.cn>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org,
+        devel@acpica.org
+Subject: [PATCH AUTOSEL 4.19 007/252] tools/power/acpi: fix compilation error
+Date:   Fri, 14 Feb 2020 11:07:42 -0500
+Message-Id: <20200214161147.15842-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -47,62 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: Zhengyuan Liu <liuzhengyuan@kylinos.cn>
 
-[ Upstream commit 0d962e061abcf1b9105f88fb850158b5887fbca3 ]
+[ Upstream commit 1985f8c7f9a42a651a9750d6fcadc74336d182df ]
 
-Enclose multiple macro parameters in parentheses in order to
-make such macros safer and fix the Clang warning below:
+If we compile tools/acpi target in the top source directory, we'd get a
+compilation error showing as bellow:
 
-drivers/media/i2c/adv748x/adv748x-afe.c:452:12: warning: operator '?:'
-has lower precedence than '|'; '|' will be evaluated first
-[-Wbitwise-conditional-parentheses]
+	# make tools/acpi
+	  DESCEND  power/acpi
+	  DESCEND  tools/acpidbg
+	  CC       tools/acpidbg/acpidbg.o
+	Assembler messages:
+	Fatal error: can't create /home/lzy/kernel-upstream/power/acpi/\
+			tools/acpidbg/acpidbg.o: No such file or directory
+	../../Makefile.rules:26: recipe for target '/home/lzy/kernel-upstream/\
+			power/acpi/tools/acpidbg/acpidbg.o' failed
+	make[3]: *** [/home/lzy/kernel-upstream//power/acpi/tools/acpidbg/\
+			acpidbg.o] Error 1
+	Makefile:19: recipe for target 'acpidbg' failed
+	make[2]: *** [acpidbg] Error 2
+	Makefile:54: recipe for target 'acpi' failed
+	make[1]: *** [acpi] Error 2
+	Makefile:1607: recipe for target 'tools/acpi' failed
+	make: *** [tools/acpi] Error 2
 
-ret = sdp_clrset(state, ADV748X_SDP_FRP, ADV748X_SDP_FRP_MASK, enable
-? ctrl->val - 1 : 0);
-
-Fixes: 3e89586a64df ("media: i2c: adv748x: add adv748x driver")
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Fixes: d5a4b1a540b8 ("tools/power/acpi: Remove direct kernel source include reference")
+Signed-off-by: Zhengyuan Liu <liuzhengyuan@kylinos.cn>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/adv748x/adv748x.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ tools/power/acpi/Makefile.config | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
-index 1cf46c401664d..9cc5672e4148a 100644
---- a/drivers/media/i2c/adv748x/adv748x.h
-+++ b/drivers/media/i2c/adv748x/adv748x.h
-@@ -361,10 +361,10 @@ int adv748x_write_block(struct adv748x_state *state, int client_page,
+diff --git a/tools/power/acpi/Makefile.config b/tools/power/acpi/Makefile.config
+index f304be71c278c..fc116c060b98d 100644
+--- a/tools/power/acpi/Makefile.config
++++ b/tools/power/acpi/Makefile.config
+@@ -18,7 +18,7 @@ include $(srctree)/../../scripts/Makefile.include
  
- #define io_read(s, r) adv748x_read(s, ADV748X_PAGE_IO, r)
- #define io_write(s, r, v) adv748x_write(s, ADV748X_PAGE_IO, r, v)
--#define io_clrset(s, r, m, v) io_write(s, r, (io_read(s, r) & ~m) | v)
-+#define io_clrset(s, r, m, v) io_write(s, r, (io_read(s, r) & ~(m)) | (v))
+ OUTPUT=$(srctree)/
+ ifeq ("$(origin O)", "command line")
+-	OUTPUT := $(O)/power/acpi/
++	OUTPUT := $(O)/tools/power/acpi/
+ endif
+ #$(info Determined 'OUTPUT' to be $(OUTPUT))
  
- #define hdmi_read(s, r) adv748x_read(s, ADV748X_PAGE_HDMI, r)
--#define hdmi_read16(s, r, m) (((hdmi_read(s, r) << 8) | hdmi_read(s, r+1)) & m)
-+#define hdmi_read16(s, r, m) (((hdmi_read(s, r) << 8) | hdmi_read(s, (r)+1)) & (m))
- #define hdmi_write(s, r, v) adv748x_write(s, ADV748X_PAGE_HDMI, r, v)
- 
- #define repeater_read(s, r) adv748x_read(s, ADV748X_PAGE_REPEATER, r)
-@@ -372,11 +372,11 @@ int adv748x_write_block(struct adv748x_state *state, int client_page,
- 
- #define sdp_read(s, r) adv748x_read(s, ADV748X_PAGE_SDP, r)
- #define sdp_write(s, r, v) adv748x_write(s, ADV748X_PAGE_SDP, r, v)
--#define sdp_clrset(s, r, m, v) sdp_write(s, r, (sdp_read(s, r) & ~m) | v)
-+#define sdp_clrset(s, r, m, v) sdp_write(s, r, (sdp_read(s, r) & ~(m)) | (v))
- 
- #define cp_read(s, r) adv748x_read(s, ADV748X_PAGE_CP, r)
- #define cp_write(s, r, v) adv748x_write(s, ADV748X_PAGE_CP, r, v)
--#define cp_clrset(s, r, m, v) cp_write(s, r, (cp_read(s, r) & ~m) | v)
-+#define cp_clrset(s, r, m, v) cp_write(s, r, (cp_read(s, r) & ~(m)) | (v))
- 
- #define txa_read(s, r) adv748x_read(s, ADV748X_PAGE_TXA, r)
- #define txb_read(s, r) adv748x_read(s, ADV748X_PAGE_TXB, r)
 -- 
 2.20.1
 
