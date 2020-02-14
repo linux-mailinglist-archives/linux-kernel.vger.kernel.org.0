@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 019B515E474
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:36:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A5B115E545
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:41:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405882AbgBNQY3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:24:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58644 "EHLO mail.kernel.org"
+        id S2393266AbgBNQkd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:40:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387583AbgBNQWr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:22:47 -0500
+        id S2393263AbgBNQWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:22:53 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DBF0F24758;
-        Fri, 14 Feb 2020 16:22:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0340D24762;
+        Fri, 14 Feb 2020 16:22:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697366;
-        bh=NQhSwyYXRqDIefeJAhsB5HufY4DubhhD3WurtJ5yuNs=;
+        s=default; t=1581697372;
+        bh=dE5/nvNLJI0zjMewiymZtePjfK0j8kzyC/D2KWwxLCI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2je1zYD6dBD+jaM/oMEPYaRw0+OiNgGJGMyCN+rw2gJvEMGJudKu8k5Yzw1gITIfm
-         lCpq/BkHdb+glGb5rFeAX394mroINaAG+te33pVOc7VW5POYoWrbtVCRw2DkaUkrKA
-         u3Cg66Xvcn7CtN2pN3psR2HO3ldh2LWPzJQ93ijE=
+        b=qjCRc6qYUnA+U1NUGnDbkaINSIeWrQzCsmicjFT9SLDaDH/8wDZrEj1+ECi3Loo5K
+         4C7BwkesRCSb91y2JNgY5yqnuZrgL5xS5LdaAu3LIv6M7CGXFYuwwhwRStLeMsuIxL
+         wNnbSEazBYghHqADuwC1nklnbE1N+rzIG6oQuzO4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Aditya Pakki <pakki001@umn.edu>, Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 066/141] orinoco: avoid assertion in case of NULL pointer
-Date:   Fri, 14 Feb 2020 11:20:06 -0500
-Message-Id: <20200214162122.19794-66-sashal@kernel.org>
+Cc:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rtc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 071/141] rtc: hym8563: Return -EINVAL if the time is known to be invalid
+Date:   Fri, 14 Feb 2020 11:20:11 -0500
+Message-Id: <20200214162122.19794-71-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214162122.19794-1-sashal@kernel.org>
 References: <20200214162122.19794-1-sashal@kernel.org>
@@ -43,35 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aditya Pakki <pakki001@umn.edu>
+From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
-[ Upstream commit c705f9fc6a1736dcf6ec01f8206707c108dca824 ]
+[ Upstream commit f236a2a2ebabad0848ad0995af7ad1dc7029e895 ]
 
-In ezusb_init, if upriv is NULL, the code crashes. However, the caller
-in ezusb_probe can handle the error and print the failure message.
-The patch replaces the BUG_ON call to error return.
+The current code returns -EPERM when the voltage loss bit is set.
+Since the bit indicates that the time value is not valid, return
+-EINVAL instead, which is the appropriate error code for this
+situation.
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: dcaf03849352 ("rtc: add hym8563 rtc-driver")
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Link: https://lore.kernel.org/r/20191212153111.966923-1-paul.kocialkowski@bootlin.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intersil/orinoco/orinoco_usb.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/rtc/rtc-hym8563.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/intersil/orinoco/orinoco_usb.c b/drivers/net/wireless/intersil/orinoco/orinoco_usb.c
-index 8244d82629511..4e91c74fcfad9 100644
---- a/drivers/net/wireless/intersil/orinoco/orinoco_usb.c
-+++ b/drivers/net/wireless/intersil/orinoco/orinoco_usb.c
-@@ -1351,7 +1351,8 @@ static int ezusb_init(struct hermes *hw)
- 	int retval;
+diff --git a/drivers/rtc/rtc-hym8563.c b/drivers/rtc/rtc-hym8563.c
+index e5ad527cb75e3..a8c2d38b24112 100644
+--- a/drivers/rtc/rtc-hym8563.c
++++ b/drivers/rtc/rtc-hym8563.c
+@@ -105,7 +105,7 @@ static int hym8563_rtc_read_time(struct device *dev, struct rtc_time *tm)
  
- 	BUG_ON(in_interrupt());
--	BUG_ON(!upriv);
-+	if (!upriv)
+ 	if (!hym8563->valid) {
+ 		dev_warn(&client->dev, "no valid clock/calendar values available\n");
+-		return -EPERM;
 +		return -EINVAL;
+ 	}
  
- 	upriv->reply_count = 0;
- 	/* Write the MAGIC number on the simulated registers to keep
+ 	ret = i2c_smbus_read_i2c_block_data(client, HYM8563_SEC, 7, buf);
 -- 
 2.20.1
 
