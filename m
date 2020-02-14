@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4A1615EB10
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:18:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29E5E15EB8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:21:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391705AbgBNQLG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:11:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35768 "EHLO mail.kernel.org"
+        id S2391606AbgBNRV1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:21:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391451AbgBNQKS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:10:18 -0500
+        id S2391360AbgBNQKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:10:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB22624697;
-        Fri, 14 Feb 2020 16:10:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 753252469D;
+        Fri, 14 Feb 2020 16:10:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696617;
-        bh=QTJ9Kg3VYZ3zWPWj0Uv6WNsojZ4uA4pahx8vI4MGYX0=;
+        s=default; t=1581696621;
+        bh=eE876jpDjIIko1hMQjdb/Pa6jHh6hICzrR88/8tAfN4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E8W5f88TXTbhfm8CU8O97cqGShRCamjv8OiB784co4s3TznPnY8Nu+qEEkIIRpdso
-         iwWpRmjJ8YT8rKcA3rAfWHQhjLCLE3q3Up4epGkuCFtrzAkebQvKREHG10bJnA56wA
-         nhWqAHBAKygF4OWXSgOJOalsjd8qzopwfCrxgJiU=
+        b=wjGYVtf64fpytZguAIK4J7CTEVe1STfmQAGXa2RJIkgJcBq7HtjAx6DJLbTFZF6tn
+         T7Rkd2/9sMLsJ3x8orTN7upXWIxXemjhiTNye7BKVY9b9EWaCxc/NG1V/pqOe3370f
+         eyIvzeTHbUzgEsd1sIPHzD2L0xE2ciHJF75ibCNY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "zhangyi (F)" <yi.zhang@huawei.com>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>,
-        linux-ext4@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 399/459] jbd2: make sure ESHUTDOWN to be recorded in the journal superblock
-Date:   Fri, 14 Feb 2020 11:00:49 -0500
-Message-Id: <20200214160149.11681-399-sashal@kernel.org>
+Cc:     Olof Johansson <olof@lixom.net>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.4 402/459] ARM: 8949/1: mm: mark free_memmap as __init
+Date:   Fri, 14 Feb 2020 11:00:52 -0500
+Message-Id: <20200214160149.11681-402-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -43,41 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "zhangyi (F)" <yi.zhang@huawei.com>
+From: Olof Johansson <olof@lixom.net>
 
-[ Upstream commit 0e98c084a21177ef136149c6a293b3d1eb33ff92 ]
+[ Upstream commit 31f3010e60522ede237fb145a63b4af5a41718c2 ]
 
-Commit fb7c02445c49 ("ext4: pass -ESHUTDOWN code to jbd2 layer") want
-to allow jbd2 layer to distinguish shutdown journal abort from other
-error cases. So the ESHUTDOWN should be taken precedence over any other
-errno which has already been recoded after EXT4_FLAGS_SHUTDOWN is set,
-but it only update errno in the journal suoerblock now if the old errno
-is 0.
+As of commit ac7c3e4ff401 ("compiler: enable CONFIG_OPTIMIZE_INLINING
+forcibly"), free_memmap() might not always be inlined, and thus is
+triggering a section warning:
 
-Fixes: fb7c02445c49 ("ext4: pass -ESHUTDOWN code to jbd2 layer")
-Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Link: https://lore.kernel.org/r/20191204124614.45424-4-yi.zhang@huawei.com
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+WARNING: vmlinux.o(.text.unlikely+0x904): Section mismatch in reference from the function free_memmap() to the function .meminit.text:memblock_free()
+
+Mark it as __init, since the faller (free_unused_memmap) already is.
+
+Fixes: ac7c3e4ff401 ("compiler: enable CONFIG_OPTIMIZE_INLINING forcibly")
+Signed-off-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/jbd2/journal.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm/mm/init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index 65e78d3a2f64c..c1ce2805c5639 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -2114,8 +2114,7 @@ static void __journal_abort_soft (journal_t *journal, int errno)
+diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+index b4be3baa83d4d..6f19ba53fd1f2 100644
+--- a/arch/arm/mm/init.c
++++ b/arch/arm/mm/init.c
+@@ -323,7 +323,7 @@ static inline void poison_init_mem(void *s, size_t count)
+ 		*p++ = 0xe7fddef0;
+ }
  
- 	if (journal->j_flags & JBD2_ABORT) {
- 		write_unlock(&journal->j_state_lock);
--		if (!old_errno && old_errno != -ESHUTDOWN &&
--		    errno == -ESHUTDOWN)
-+		if (old_errno != -ESHUTDOWN && errno == -ESHUTDOWN)
- 			jbd2_journal_update_sb_errno(journal);
- 		return;
- 	}
+-static inline void
++static inline void __init
+ free_memmap(unsigned long start_pfn, unsigned long end_pfn)
+ {
+ 	struct page *start_pg, *end_pg;
 -- 
 2.20.1
 
