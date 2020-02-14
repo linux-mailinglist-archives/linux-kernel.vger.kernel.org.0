@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA7FD15DFB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:10:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ECB815DFC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:11:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388911AbgBNQKO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:10:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34514 "EHLO mail.kernel.org"
+        id S2391464AbgBNQKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:10:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391337AbgBNQJn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:09:43 -0500
+        id S2391360AbgBNQJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:09:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F47324650;
-        Fri, 14 Feb 2020 16:09:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84CD822314;
+        Fri, 14 Feb 2020 16:09:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696583;
-        bh=w8oOzN/MuS/Grjr1/hWfb3MV/kWKCyQn5q65rT9Fg5s=;
+        s=default; t=1581696590;
+        bh=vhv9ahD5jt/VGshNDEu0h4s5rHcm99nOExO90XMU3HQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b8RQ/ue81H7Kdd1Duu8vTSeJ0/Gxge8N05Lq6qjVPouc95EoCNrl/xt/SVKPJFK4U
-         t6gSWSGWpvhxl610NI+91TewHtKF+ejNN/oyVnHVBkfauFhKGpSvc7hTxeAiQwUz0e
-         1l9Isa5233XPnxKK7/Ewtnr5nxTmVhM8RuqPbSnc=
+        b=Icvgyuw723MmrF57mpBdYT10h3gnnre4iQk5GC/IjFMZcFohEgZaHcpmuiHEhpq3h
+         9dDwhLjHLXI8tfJwO1+xP9XGxPzgqAEx6FbQ1HovU8U4Zwbu+rC/OQNlDcP01sBle8
+         5jJdJX0rLpFAEXy64ilMMjbaV5JSJf7PDxF1yARg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Borislav Petkov <bp@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.4 371/459] x86/decoder: Add TEST opcode to Group3-2
-Date:   Fri, 14 Feb 2020 11:00:21 -0500
-Message-Id: <20200214160149.11681-371-sashal@kernel.org>
+Cc:     =?UTF-8?q?Peter=20Gro=C3=9Fe?= <pegro@friiks.de>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>,
+        alsa-devel@alsa-project.org
+Subject: [PATCH AUTOSEL 5.4 377/459] ALSA: hda - Add docking station support for Lenovo Thinkpad T420s
+Date:   Fri, 14 Feb 2020 11:00:27 -0500
+Message-Id: <20200214160149.11681-377-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -43,78 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Peter Große <pegro@friiks.de>
 
-[ Upstream commit 8b7e20a7ba54836076ff35a28349dabea4cec48f ]
+[ Upstream commit ef7d84caa5928b40b1c93a26dbe5a3f12737c6ab ]
 
-Add TEST opcode to Group3-2 reg=001b as same as Group3-1 does.
+Lenovo Thinkpad T420s uses the same codec as T420, so apply the
+same quirk to enable audio output on a docking station.
 
-Commit
-
-  12a78d43de76 ("x86/decoder: Add new TEST instruction pattern")
-
-added a TEST opcode assignment to f6 XX/001/XXX (Group 3-1), but did
-not add f7 XX/001/XXX (Group 3-2).
-
-Actually, this TEST opcode variant (ModRM.reg /1) is not described in
-the Intel SDM Vol2 but in AMD64 Architecture Programmer's Manual Vol.3,
-Appendix A.2 Table A-6. ModRM.reg Extensions for the Primary Opcode Map.
-
-Without this fix, Randy found a warning by insn_decoder_test related
-to this issue as below.
-
-    HOSTCC  arch/x86/tools/insn_decoder_test
-    HOSTCC  arch/x86/tools/insn_sanity
-    TEST    posttest
-  arch/x86/tools/insn_decoder_test: warning: Found an x86 instruction decoder bug, please report this.
-  arch/x86/tools/insn_decoder_test: warning: ffffffff81000bf1:	f7 0b 00 01 08 00    	testl  $0x80100,(%rbx)
-  arch/x86/tools/insn_decoder_test: warning: objdump says 6 bytes, but insn_get_length() says 2
-  arch/x86/tools/insn_decoder_test: warning: Decoded and checked 11913894 instructions with 1 failures
-    TEST    posttest
-  arch/x86/tools/insn_sanity: Success: decoded and checked 1000000 random instructions with 0 errors (seed:0x871ce29c)
-
-To fix this error, add the TEST opcode according to AMD64 APM Vol.3.
-
- [ bp: Massage commit message. ]
-
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-Link: https://lkml.kernel.org/r/157966631413.9580.10311036595431878351.stgit@devnote2
+Signed-off-by: Peter Große <pegro@friiks.de>
+Link: https://lore.kernel.org/r/20200122180106.9351-1-pegro@friiks.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/lib/x86-opcode-map.txt       | 2 +-
- tools/arch/x86/lib/x86-opcode-map.txt | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ sound/pci/hda/patch_conexant.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/lib/x86-opcode-map.txt b/arch/x86/lib/x86-opcode-map.txt
-index 0a0e9112f2842..5cb9f009f2be3 100644
---- a/arch/x86/lib/x86-opcode-map.txt
-+++ b/arch/x86/lib/x86-opcode-map.txt
-@@ -909,7 +909,7 @@ EndTable
- 
- GrpTable: Grp3_2
- 0: TEST Ev,Iz
--1:
-+1: TEST Ev,Iz
- 2: NOT Ev
- 3: NEG Ev
- 4: MUL rAX,Ev
-diff --git a/tools/arch/x86/lib/x86-opcode-map.txt b/tools/arch/x86/lib/x86-opcode-map.txt
-index 0a0e9112f2842..5cb9f009f2be3 100644
---- a/tools/arch/x86/lib/x86-opcode-map.txt
-+++ b/tools/arch/x86/lib/x86-opcode-map.txt
-@@ -909,7 +909,7 @@ EndTable
- 
- GrpTable: Grp3_2
- 0: TEST Ev,Iz
--1:
-+1: TEST Ev,Iz
- 2: NOT Ev
- 3: NEG Ev
- 4: MUL rAX,Ev
+diff --git a/sound/pci/hda/patch_conexant.c b/sound/pci/hda/patch_conexant.c
+index 90aa0f400a57d..1e20e85e9b466 100644
+--- a/sound/pci/hda/patch_conexant.c
++++ b/sound/pci/hda/patch_conexant.c
+@@ -922,6 +922,7 @@ static const struct snd_pci_quirk cxt5066_fixups[] = {
+ 	SND_PCI_QUIRK(0x17aa, 0x215f, "Lenovo T510", CXT_PINCFG_LENOVO_TP410),
+ 	SND_PCI_QUIRK(0x17aa, 0x21ce, "Lenovo T420", CXT_PINCFG_LENOVO_TP410),
+ 	SND_PCI_QUIRK(0x17aa, 0x21cf, "Lenovo T520", CXT_PINCFG_LENOVO_TP410),
++	SND_PCI_QUIRK(0x17aa, 0x21d2, "Lenovo T420s", CXT_PINCFG_LENOVO_TP410),
+ 	SND_PCI_QUIRK(0x17aa, 0x21da, "Lenovo X220", CXT_PINCFG_LENOVO_TP410),
+ 	SND_PCI_QUIRK(0x17aa, 0x21db, "Lenovo X220-tablet", CXT_PINCFG_LENOVO_TP410),
+ 	SND_PCI_QUIRK(0x17aa, 0x38af, "Lenovo IdeaPad Z560", CXT_FIXUP_MUTE_LED_EAPD),
 -- 
 2.20.1
 
