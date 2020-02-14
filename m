@@ -2,119 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61C7615F573
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:39:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E35915F5B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:40:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389392AbgBNShG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:37:06 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:38857 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388824AbgBNShD (ORCPT
+        id S2390204AbgBNSic (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:38:32 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:56768 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388315AbgBNSiI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 13:37:03 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1581705423; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=Lve/8NkQ1+pW/USqTTKmFAidSUSOjj1HUCuP/rW4dNg=; b=u7UoSFamGdbF5svGcEW+llI7xSPdrS9+asj9Iol5gFqdVv9nRfBQZgy0KxDGxacpYd9NUSNA
- ZHUGwg0CTFzF6tw3AagwaPW6a450AEDNGVXn0qoTjlUx9+52+yWDd6EISYySqcegbIzqrPmE
- SkAAeRbjzw/J3SkbhcnuNPyglPA=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e46e8c6.7faad7e4a490-smtp-out-n01;
- Fri, 14 Feb 2020 18:36:54 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 00FA9C4479F; Fri, 14 Feb 2020 18:36:53 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jcrouse)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D597FC4479C;
-        Fri, 14 Feb 2020 18:36:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D597FC4479C
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-From:   Jordan Crouse <jcrouse@codeaurora.org>
-To:     linux-arm-msm@vger.kernel.org
-Cc:     Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>,
-        Sean Paul <sean@poorly.run>, Wen Yang <wen.yang99@zte.com.cn>,
-        AngeloGioacchino Del Regno <kholk11@gmail.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Rob Clark <robdclark@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        freedreno@lists.freedesktop.org,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Ben Dooks <ben.dooks@codethink.co.uk>,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: [PATCH] drm/msm/a5xx: Always set an OPP supported hardware value
-Date:   Fri, 14 Feb 2020 11:36:44 -0700
-Message-Id: <1581705404-5124-1-git-send-email-jcrouse@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        Fri, 14 Feb 2020 13:38:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1581705485; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=beZzKtKyiHGgH1Qk/SiuKXMW0hDwqXZLEktuMIuWvEE=;
+        b=sC5pJA/nh5xcTm7rWdmK2CKb8najbEJln1+fkR17tqQylQ5NhHpjbnDlOK5AnbztrT6vIl
+        bV7+EhcjF8AqgTGgCFQ+sFlp/PYN6uiSrjG2Ew3MIdT2Wo7mLp3cWlnNAFhc2Fi6Jpu7c1
+        LLPZu0xnCOeBG/mVs5pupfLnYePF4GU=
+Date:   Fri, 14 Feb 2020 15:37:38 -0300
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v4 5/6] MIPS: CI20: Modify DTS to support high resolution
+ timer for SMP.
+To:     =?UTF-8?b?5ZGo55Cw5p2w?= "(Zhou Yanjie)" 
+        <zhouyanjie@wanyeetech.com>
+Cc:     linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, ralf@linux-mips.org, paulburton@kernel.org,
+        jiaxun.yang@flygoat.com, chenhc@lemote.com, allison@lohutok.net,
+        tglx@linutronix.de, daniel.lezcano@linaro.org,
+        geert+renesas@glider.be, krzk@kernel.org, keescook@chromium.org,
+        ebiederm@xmission.com, miquel.raynal@bootlin.com,
+        paul@boddie.org.uk, hns@goldelico.com, sernia.zhou@foxmail.com,
+        zhenwenjin@gmail.com, mips-creator-ci20-dev@googlegroups.com,
+        1326991897@qq.com
+Message-Id: <1581705458.3.2@crapouillou.net>
+In-Reply-To: <1581703360-112557-7-git-send-email-zhouyanjie@wanyeetech.com>
+References: <1581703360-112557-1-git-send-email-zhouyanjie@wanyeetech.com>
+        <1581703360-112557-7-git-send-email-zhouyanjie@wanyeetech.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the opp table specifies opp-supported-hw as a property but the driver
-has not set a supported hardware value the OPP subsystem will reject
-all the table entries.
+Hi Zhou,
 
-Set a "default" value that will match the default table entries but not
-conflict with any possible real bin values. Also fix a small memory leak
-and free the buffer allocated by nvmem_cell_read().
+I think you can move this patch before the clocksource one - it will=20
+work with the old clocksource code and in generally it's a good idea to=20
+ensure (if possible) that you can git-bisect without ending up with a=20
+broken kernel.
 
-Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
----
+-Paul
 
- drivers/gpu/drm/msm/adreno/a5xx_gpu.c | 27 ++++++++++++++++++++-------
- 1 file changed, 20 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-index 7d9e63e..724024a 100644
---- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-@@ -1446,18 +1446,31 @@ static const struct adreno_gpu_funcs funcs = {
- static void check_speed_bin(struct device *dev)
- {
- 	struct nvmem_cell *cell;
--	u32 bin, val;
-+	u32 val;
-+
-+	/*
-+	 * If the OPP table specifies a opp-supported-hw property then we have
-+	 * to set something with dev_pm_opp_set_supported_hw() or the table
-+	 * doesn't get populated so pick an arbitrary value that should
-+	 * ensure the default frequencies are selected but not conflict with any
-+	 * actual bins
-+	 */
-+	val = 0x80;
- 
- 	cell = nvmem_cell_get(dev, "speed_bin");
- 
--	/* If a nvmem cell isn't defined, nothing to do */
--	if (IS_ERR(cell))
--		return;
-+	if (!IS_ERR(cell)) {
-+		void *buf = nvmem_cell_read(cell, NULL);
-+
-+		if (!IS_ERR(buf)) {
-+			u8 bin = *((u8 *) buf);
- 
--	bin = *((u32 *) nvmem_cell_read(cell, NULL));
--	nvmem_cell_put(cell);
-+			val = (1 << bin);
-+			kfree(buf);
-+		}
- 
--	val = (1 << bin);
-+		nvmem_cell_put(cell);
-+	}
- 
- 	dev_pm_opp_set_supported_hw(dev, &val, 1);
- }
--- 
-2.7.4
+Le sam., f=C3=A9vr. 15, 2020 at 02:02, =E5=91=A8=E7=90=B0=E6=9D=B0 (Zhou Ya=
+njie)=20
+<zhouyanjie@wanyeetech.com> a =C3=A9crit :
+> Modify DTS, change tcu channel from 2 to 3, channel #0 and #1 for
+> per core local timer, #2 for clocksource.
+>=20
+> Tested-by: H. Nikolaus Schaller <hns@goldelico.com>
+> Tested-by: Paul Boddie <paul@boddie.org.uk>
+> Signed-off-by: =E5=91=A8=E7=90=B0=E6=9D=B0 (Zhou Yanjie) <zhouyanjie@wany=
+eetech.com>
+> ---
+>=20
+> Notes:
+>     v1->v2:
+>     No change.
+>=20
+>     v2->v3:
+>     No change.
+>=20
+>     v3->v4:
+>     Rebase on top of kernel 5.6-rc1.
+>=20
+>  arch/mips/boot/dts/ingenic/ci20.dts | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/arch/mips/boot/dts/ingenic/ci20.dts=20
+> b/arch/mips/boot/dts/ingenic/ci20.dts
+> index 37b9316..98c4c42 100644
+> --- a/arch/mips/boot/dts/ingenic/ci20.dts
+> +++ b/arch/mips/boot/dts/ingenic/ci20.dts
+> @@ -456,6 +456,13 @@
+>=20
+>  &tcu {
+>  	/* 3 MHz for the system timer and clocksource */
+> -	assigned-clocks =3D <&tcu TCU_CLK_TIMER0>, <&tcu TCU_CLK_TIMER1>;
+> -	assigned-clock-rates =3D <3000000>, <3000000>;
+> +	assigned-clocks =3D <&tcu TCU_CLK_TIMER0>, <&tcu TCU_CLK_TIMER1>,
+> +					  <&tcu TCU_CLK_TIMER2>;
+> +	assigned-clock-rates =3D <3000000>, <3000000>, <750000>;
+> +
+> +	/*
+> +	 * Use channel #0 and #1 for the per core system timer,
+> +	 * and use channel #2 for the clocksource.
+> +	 */
+> +	ingenic,pwm-channels-mask =3D <0xF8>;
+>  };
+> --
+> 2.7.4
+>=20
+
+=
+
