@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A94015DD52
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:58:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 007B815DD53
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:58:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388407AbgBNP5z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:57:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40932 "EHLO mail.kernel.org"
+        id S2388423AbgBNP56 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:57:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388327AbgBNP5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:57:40 -0500
+        id S2388335AbgBNP5m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:57:42 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 471DC2468C;
-        Fri, 14 Feb 2020 15:57:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 695E4206D7;
+        Fri, 14 Feb 2020 15:57:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695860;
-        bh=7oaIDcG5sR819ZC9N4iXtsmUArGfUPkCaLdu3IjP0BA=;
+        s=default; t=1581695861;
+        bh=NCPh7QAILdwW6sZgMyC9KMgO2sRrkiBpBn7WM+PIb8Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fz5mP+oZGzdpnUG0pCe756IQ4gaID5bHuhXhcZUrKSU4QPw2bKbXl3EJfRbzAov/m
-         xahqU4QJlxPo0MUK+pGdoWlH1/ztMEDKM5qkkCIiyf31dwpAa7OkWrnsTJceyqgIJj
-         fzvXs8AYxynfnQpNFeMhfjhXIrxK1MVIziOgseZk=
+        b=pQQSwOXDoKuagdimiAOQ2/2zvPKZgMy5Ea6v959X/f+SEGm0imciF8KGt2bmCpTVk
+         CFMMPkZp5b3V3Ftmotcf8BzETFLXTl+W3KO/uXskNHB7oqw4/bL/0F0QBUWgNYQy75
+         xBtIj1rY2iPTrrfzJZFh/jNo4MlnJGr6qjP1t6vU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.5 407/542] regulator: vctrl-regulator: Avoid deadlock getting and setting the voltage
-Date:   Fri, 14 Feb 2020 10:46:39 -0500
-Message-Id: <20200214154854.6746-407-sashal@kernel.org>
+Cc:     "Pan, Xinhui" <Xinhui.Pan@amd.com>, Feifei Xu <Feifei.Xu@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        xinhui pan <xinhui.pan@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.5 408/542] drm/amdgpu: add the lost mutex_init back
+Date:   Fri, 14 Feb 2020 10:46:40 -0500
+Message-Id: <20200214154854.6746-408-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -44,171 +47,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+From: "Pan, Xinhui" <Xinhui.Pan@amd.com>
 
-[ Upstream commit e9153311491da9d9863ead9888a1613531cb4a1b ]
+[ Upstream commit bd0522112332663e386df1b8642052463ea9b3b9 ]
 
-`cat /sys/kernel/debug/regulator/regulator_summary` ends on a deadlock
-when you have a voltage controlled regulator (vctrl).
+Initialize notifier_lock.
 
-The problem is that the vctrl_get_voltage() and vctrl_set_voltage() calls the
-regulator_get_voltage() and regulator_set_voltage() and that will try to lock
-again the dependent regulators (the regulator supplying the control voltage).
-
-Fix the issue by exporting the unlocked version of the regulator_get_voltage()
-and regulator_set_voltage() API so drivers that need it, like the voltage
-controlled regulator driver can use it.
-
-Fixes: f8702f9e4aa7 ("regulator: core: Use ww_mutex for regulators locking")
-Reported-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Link: https://lore.kernel.org/r/20200116094543.2847321-1-enric.balletbo@collabora.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Bug: https://gitlab.freedesktop.org/drm/amd/issues/1016
+Reviewed-by: Feifei Xu <Feifei.Xu@amd.com>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: xinhui pan <xinhui.pan@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/regulator/core.c            |  2 ++
- drivers/regulator/vctrl-regulator.c | 38 +++++++++++++++++------------
- 2 files changed, 25 insertions(+), 15 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 03d79fee2987e..e7d167ce326cb 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -3470,6 +3470,7 @@ int regulator_set_voltage_rdev(struct regulator_dev *rdev, int min_uV,
- out:
- 	return ret;
- }
-+EXPORT_SYMBOL(regulator_set_voltage_rdev);
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+index 332b9c24a2cd0..a2f788ad7e1c6 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+@@ -2797,6 +2797,7 @@ int amdgpu_device_init(struct amdgpu_device *adev,
+ 	mutex_init(&adev->notifier_lock);
+ 	mutex_init(&adev->virt.dpm_mutex);
+ 	mutex_init(&adev->psp.mutex);
++	mutex_init(&adev->notifier_lock);
  
- static int regulator_limit_voltage_step(struct regulator_dev *rdev,
- 					int *current_uV, int *min_uV)
-@@ -4034,6 +4035,7 @@ int regulator_get_voltage_rdev(struct regulator_dev *rdev)
- 		return ret;
- 	return ret - rdev->constraints->uV_offset;
- }
-+EXPORT_SYMBOL(regulator_get_voltage_rdev);
- 
- /**
-  * regulator_get_voltage - get regulator output voltage
-diff --git a/drivers/regulator/vctrl-regulator.c b/drivers/regulator/vctrl-regulator.c
-index 9a9ee81881098..cbadb1c996790 100644
---- a/drivers/regulator/vctrl-regulator.c
-+++ b/drivers/regulator/vctrl-regulator.c
-@@ -11,10 +11,13 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-+#include <linux/regulator/coupler.h>
- #include <linux/regulator/driver.h>
- #include <linux/regulator/of_regulator.h>
- #include <linux/sort.h>
- 
-+#include "internal.h"
-+
- struct vctrl_voltage_range {
- 	int min_uV;
- 	int max_uV;
-@@ -79,7 +82,7 @@ static int vctrl_calc_output_voltage(struct vctrl_data *vctrl, int ctrl_uV)
- static int vctrl_get_voltage(struct regulator_dev *rdev)
- {
- 	struct vctrl_data *vctrl = rdev_get_drvdata(rdev);
--	int ctrl_uV = regulator_get_voltage(vctrl->ctrl_reg);
-+	int ctrl_uV = regulator_get_voltage_rdev(vctrl->ctrl_reg->rdev);
- 
- 	return vctrl_calc_output_voltage(vctrl, ctrl_uV);
- }
-@@ -90,16 +93,16 @@ static int vctrl_set_voltage(struct regulator_dev *rdev,
- {
- 	struct vctrl_data *vctrl = rdev_get_drvdata(rdev);
- 	struct regulator *ctrl_reg = vctrl->ctrl_reg;
--	int orig_ctrl_uV = regulator_get_voltage(ctrl_reg);
-+	int orig_ctrl_uV = regulator_get_voltage_rdev(ctrl_reg->rdev);
- 	int uV = vctrl_calc_output_voltage(vctrl, orig_ctrl_uV);
- 	int ret;
- 
- 	if (req_min_uV >= uV || !vctrl->ovp_threshold)
- 		/* voltage rising or no OVP */
--		return regulator_set_voltage(
--			ctrl_reg,
-+		return regulator_set_voltage_rdev(ctrl_reg->rdev,
- 			vctrl_calc_ctrl_voltage(vctrl, req_min_uV),
--			vctrl_calc_ctrl_voltage(vctrl, req_max_uV));
-+			vctrl_calc_ctrl_voltage(vctrl, req_max_uV),
-+			PM_SUSPEND_ON);
- 
- 	while (uV > req_min_uV) {
- 		int max_drop_uV = (uV * vctrl->ovp_threshold) / 100;
-@@ -114,9 +117,10 @@ static int vctrl_set_voltage(struct regulator_dev *rdev,
- 		next_uV = max_t(int, req_min_uV, uV - max_drop_uV);
- 		next_ctrl_uV = vctrl_calc_ctrl_voltage(vctrl, next_uV);
- 
--		ret = regulator_set_voltage(ctrl_reg,
-+		ret = regulator_set_voltage_rdev(ctrl_reg->rdev,
-+					    next_ctrl_uV,
- 					    next_ctrl_uV,
--					    next_ctrl_uV);
-+					    PM_SUSPEND_ON);
- 		if (ret)
- 			goto err;
- 
-@@ -130,7 +134,8 @@ static int vctrl_set_voltage(struct regulator_dev *rdev,
- 
- err:
- 	/* Try to go back to original voltage */
--	regulator_set_voltage(ctrl_reg, orig_ctrl_uV, orig_ctrl_uV);
-+	regulator_set_voltage_rdev(ctrl_reg->rdev, orig_ctrl_uV, orig_ctrl_uV,
-+				   PM_SUSPEND_ON);
- 
- 	return ret;
- }
-@@ -155,9 +160,10 @@ static int vctrl_set_voltage_sel(struct regulator_dev *rdev,
- 
- 	if (selector >= vctrl->sel || !vctrl->ovp_threshold) {
- 		/* voltage rising or no OVP */
--		ret = regulator_set_voltage(ctrl_reg,
-+		ret = regulator_set_voltage_rdev(ctrl_reg->rdev,
-+					    vctrl->vtable[selector].ctrl,
- 					    vctrl->vtable[selector].ctrl,
--					    vctrl->vtable[selector].ctrl);
-+					    PM_SUSPEND_ON);
- 		if (!ret)
- 			vctrl->sel = selector;
- 
-@@ -173,9 +179,10 @@ static int vctrl_set_voltage_sel(struct regulator_dev *rdev,
- 		else
- 			next_sel = vctrl->vtable[vctrl->sel].ovp_min_sel;
- 
--		ret = regulator_set_voltage(ctrl_reg,
-+		ret = regulator_set_voltage_rdev(ctrl_reg->rdev,
- 					    vctrl->vtable[next_sel].ctrl,
--					    vctrl->vtable[next_sel].ctrl);
-+					    vctrl->vtable[next_sel].ctrl,
-+					    PM_SUSPEND_ON);
- 		if (ret) {
- 			dev_err(&rdev->dev,
- 				"failed to set control voltage to %duV\n",
-@@ -195,9 +202,10 @@ static int vctrl_set_voltage_sel(struct regulator_dev *rdev,
- err:
- 	if (vctrl->sel != orig_sel) {
- 		/* Try to go back to original voltage */
--		if (!regulator_set_voltage(ctrl_reg,
-+		if (!regulator_set_voltage_rdev(ctrl_reg->rdev,
-+					   vctrl->vtable[orig_sel].ctrl,
- 					   vctrl->vtable[orig_sel].ctrl,
--					   vctrl->vtable[orig_sel].ctrl))
-+					   PM_SUSPEND_ON))
- 			vctrl->sel = orig_sel;
- 		else
- 			dev_warn(&rdev->dev,
-@@ -482,7 +490,7 @@ static int vctrl_probe(struct platform_device *pdev)
- 		if (ret)
- 			return ret;
- 
--		ctrl_uV = regulator_get_voltage(vctrl->ctrl_reg);
-+		ctrl_uV = regulator_get_voltage_rdev(vctrl->ctrl_reg->rdev);
- 		if (ctrl_uV < 0) {
- 			dev_err(&pdev->dev, "failed to get control voltage\n");
- 			return ctrl_uV;
+ 	r = amdgpu_device_check_arguments(adev);
+ 	if (r)
 -- 
 2.20.1
 
