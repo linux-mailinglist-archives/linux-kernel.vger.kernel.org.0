@@ -2,149 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 772CD15D313
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 08:45:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BC2815D329
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 08:48:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728932AbgBNHpj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 02:45:39 -0500
-Received: from mga09.intel.com ([134.134.136.24]:55938 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725897AbgBNHpi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 02:45:38 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2020 23:45:38 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,439,1574150400"; 
-   d="scan'208";a="406913159"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
-  by orsmga005.jf.intel.com with ESMTP; 13 Feb 2020 23:45:35 -0800
-Subject: Re: [RFT PATCH v2] xhci: Fix memory leak when caching protocol
- extended capability PSI tables
-To:     Jon Hunter <jonathanh@nvidia.com>, gregkh@linuxfoundation.org,
-        m.szyprowski@samsung.com
-Cc:     pmenzel@molgen.mpg.de, mika.westerberg@linux.intel.com,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, krzk@kernel.org,
-        stable <stable@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-References: <20d0559f-8d0f-42f5-5ebf-7f658a172161@linux.intel.com>
- <20200211150158.14475-1-mathias.nyman@linux.intel.com>
- <f42f7f73-48e7-74ad-2524-2514f29490cb@nvidia.com>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mathias.nyman@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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 fiD/
-Message-ID: <0f871a8f-aa96-4684-1d9c-a18c6edfb62f@linux.intel.com>
-Date:   Fri, 14 Feb 2020 09:47:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728948AbgBNHsc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 02:48:32 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38505 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728799AbgBNHsb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 02:48:31 -0500
+Received: by mail-lj1-f196.google.com with SMTP id w1so9638778ljh.5
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 23:48:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rDMP/iMlsFSKAhNbTsv4LG78iIuugxuS+5R4an07o3U=;
+        b=Yu55m6e0R8WQA775FlnYEulghk58+/9qINdSt+j/Q+Jt27zfUuRaRilHgLlTv5qpKG
+         BciFyd8ZzEnlEOPIdS08RksfxMkQDLIboUyXvIOl7CWM04WAdzp0S6QMA71Bo7G/Ed+i
+         EdF+qQaXxZJogPcKGj9lMRPjS3LX3IEiWmrYkZCmrTnnaUdgGkJF93kei7Acs4M3rxQo
+         oI7yqsURGPQEoXB2hHzYV6TVixhOk6VzKyzteAz73/r9KAhDsEctSiPIqKe3qOCr7G0r
+         KU/oQ3lGywzxEncr0gzwkbLVZtL/zSXj3s+/Bc5YyTXsm7sRfm81g8LCaAd1GFdumUyj
+         E9dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rDMP/iMlsFSKAhNbTsv4LG78iIuugxuS+5R4an07o3U=;
+        b=C4GnycIcfjxxK0w7V9RWiFf8TfBCQxGFbt8QIWRJX6xeyi8Gdu57xbOtWX/s3NlbTL
+         Knj7zcXlW9mCB2TTOlR4cH8K+eiQm7w070W6JFqmTMpppZj8bbinkQ1CFEq4TAMhOrE5
+         /7nDHT/t1ECIWwilBfkGYEgzANcFuhlF67MHa4Z+pQHCRoVzNUxgMiqZhxtjmjPNczNp
+         1e4pKqyzUAzBH2m6eqhlKf7KSq03Wq+WIClou6drGdywXKSKt4IujALCjG0/W1l3LXPA
+         R5yvUkjkZIEM47FVjkxVJ2HGZlmMPd63JGe9B+NGflDERJzo1rBBEuAga50thAIV6xg3
+         Q9jQ==
+X-Gm-Message-State: APjAAAVpx6y4gMU+4uiqbICfiR9O9vy0IVewU1Gemrd/rQtYqaHMIcrR
+        KhzHLaVaQoxu/SNDtrNgYbfUgv8mieca1Ggtji/gyQ==
+X-Google-Smtp-Source: APXvYqwI9wj/WDlBwsOBWlQX9JRZ1Qt5hua3dZfzWGZEb9PZR0p6ZYwyMmrnme6SkDTraHb3Oza5TwWXwDNBBnX0/ks=
+X-Received: by 2002:a2e:9596:: with SMTP id w22mr1156786ljh.21.1581666509696;
+ Thu, 13 Feb 2020 23:48:29 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <f42f7f73-48e7-74ad-2524-2514f29490cb@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20200211174651.10330-1-vincent.guittot@linaro.org>
+ <20200211174651.10330-5-vincent.guittot@linaro.org> <94eae44f-7608-936d-4fde-dcf93cfa6b9b@arm.com>
+ <e997556f-8adc-2165-2e76-ce9b0229c977@arm.com>
+In-Reply-To: <e997556f-8adc-2165-2e76-ce9b0229c977@arm.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Fri, 14 Feb 2020 08:48:18 +0100
+Message-ID: <CAKfTPtBEUJVxUa8k=-fKXKJwwj4VJv0CAh-2xG0j6Z5vG1xVjA@mail.gmail.com>
+Subject: Re: [RFC 4/4] sched/fair: Take into runnable_avg to classify group
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Phil Auld <pauld@redhat.com>, Parth Shah <parth@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13.2.2020 15.33, Jon Hunter wrote:
-> 
-> On 11/02/2020 15:01, Mathias Nyman wrote:
->> xhci driver assumed that xHC controllers have at most one custom
->> supported speed table (PSI) for all usb 3.x ports.
->> Memory was allocated for one PSI table under the xhci hub structure.
->>
->> Turns out this is not the case, some controllers have a separate
->> "supported protocol capability" entry with a PSI table for each port.
->> This means each usb3 roothub port can in theory support different custom
->> speeds.
->>
->> To solve this, cache all supported protocol capabilities with their PSI
->> tables in an array, and add pointers to the xhci port structure so that
->> every port points to its capability entry in the array.
->>
->> When creating the SuperSpeedPlus USB Device Capability BOS descriptor
->> for the xhci USB 3.1 roothub we for now will use only data from the
->> first USB 3.1 capable protocol capability entry in the array.
->> This could be improved later, this patch focuses resolving
->> the memory leak.
->>
->> Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
->> Reported-by: Sajja Venkateswara Rao <VenkateswaraRao.Sajja@amd.com>
->> Fixes: 47189098f8be ("xhci: parse xhci protocol speed ID list for usb 3.1 usage")
->> Cc: stable <stable@vger.kernel.org> # v4.4+
->> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-> 
-> 
-> Since next-20200211, we have been observing a regression exiting suspend
-> on our Tegra124 Jetson TK1 board. Bisect is pointing to this commit and
-> reverting on top of -next fixes the problem.
-> 
-> On exiting suspend, I am seeing the following ...
-> 
-> [   56.216793] tegra-xusb 70090000.usb: Firmware already loaded, Falcon state 0x20
-> [   56.216834] usb usb3: root hub lost power or was reset
-> [   56.216837] usb usb4: root hub lost power or was reset
-> [   56.217760] tegra-xusb 70090000.usb: No ports on the roothubs?
-> [   56.218257] tegra-xusb 70090000.usb: failed to resume XHCI: -12
-> [   56.218299] PM: dpm_run_callback(): platform_pm_resume+0x0/0x40 returns -12
-> [   56.218312] PM: Device 70090000.usb failed to resume: error -12
-> [   56.334366] hub 4-0:1.0: hub_ext_port_status failed (err = -32)
-> [   56.334368] hub 3-0:1.0: hub_ext_port_status failed (err = -32)
-> 
-> Let me know if you have any thoughts on this.
-> 
-> Cheers
-> Jon
+On Thu, 13 Feb 2020 at 19:37, Valentin Schneider
+<valentin.schneider@arm.com> wrote:
+>
+> On 2/13/20 6:32 PM, Valentin Schneider wrote:
+> >> @@ -7911,6 +7912,10 @@ group_has_capacity(unsigned int imbalance_pct, struct sg_lb_stats *sgs)
+> >>      if (sgs->sum_nr_running < sgs->group_weight)
+> >>              return true;
+> >>
+> >> +    if ((sgs->group_capacity * imbalance_pct) <
+> >> +                    (sgs->group_runnable * 100))
+> >> +            return false;
+> >> +
+> >
+> > I haven't stared long enough at patch 2, but I'll ask anyway - with this new
+> > condition, do we still need the next one (based on util)? AIUI
+> > group_runnable is >= group_util, so if group_runnable is within the allowed
+> > margin then group_util has to be as well.
+> >
+>
+> Hmph, actually util_est breaks the runnable >= util assumption I think...
 
-This was an issue with the first version, and should be fixed in the second.
+yes, that's 1 reason
 
-next-20200211 has the faulty version, 
-next-20200213 is fixed, reverted first version and applied second.
+and also the 2 conditions are a bit different as  the imbalance_pct is
+not on the same side of the condition.
 
-Does next-20200213 work for you?
+For util_avg, the tests is true when util_avg is still below but close
+to capacity
+For runnable_avg, the test is true  when runnable is significantly
+above capacity
 
--Mathias
+>
+> >>      if ((sgs->group_capacity * 100) >
+> >>                      (sgs->group_util * imbalance_pct))
+> >>              return true;
