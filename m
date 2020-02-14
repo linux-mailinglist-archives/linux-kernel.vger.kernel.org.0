@@ -2,74 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E358E15E486
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:36:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C56BF15E58A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:42:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393545AbgBNQg3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:36:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32810 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405857AbgBNQYT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:24:19 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33C0824795;
-        Fri, 14 Feb 2020 16:24:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697458;
-        bh=03m/YZuxHUtpmwUPg60w1w/fNkSrmXYJ/3/BRkmRcWw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=neGE/R5Sm4/rYVA2Eybu5HZoulgNO0yf099M4eWOuclm+DfahwMNYwEGhnoJ7D4O/
-         zCM1J1TkTdjy5oqBh4Fd4llFl3i9nKZTie74hiDlUVtMJaXgkdfY8UvMaDsaVeM59b
-         SQTlms/UtMltdK7V7MNf/aNfe0jqfyiu6jg6FH+I=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vasily Averin <vvs@virtuozzo.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Sasha Levin <sashal@kernel.org>, devel@lists.orangefs.org
-Subject: [PATCH AUTOSEL 4.9 141/141] help_next should increase position index
-Date:   Fri, 14 Feb 2020 11:21:21 -0500
-Message-Id: <20200214162122.19794-141-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214162122.19794-1-sashal@kernel.org>
-References: <20200214162122.19794-1-sashal@kernel.org>
+        id S2393995AbgBNQmP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:42:15 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51658 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393183AbgBNQWU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:22:20 -0500
+Received: by mail-wm1-f67.google.com with SMTP id t23so10541401wmi.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 08:22:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=googlenew;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uMByKESFF6nm9zU7UWxKm836eFhEE78GS/aSmv36ypo=;
+        b=FEsP6b4PM8K2qgHByFNdjEpNN83Dy0kO3xo64FEZW/HbkCHfGWkwblq/rVxc68lo4m
+         y2TZU7hRlS+LIdoDstsMPoUxOK/eD/qexwlcWEm08t906uNd4KFhYVCTFU9onCXSlV3G
+         5Os73M6PIfRB6aC7ISLMBISqu6x9hErAy6WyBhFnOICVb95hCpeGkl17WpqHSDn5Tyhf
+         +0YvtU6ArO+EK8f8bVRmqeWSG+AKwuVsa24KnR68y3OzT3Vkn+jv3Z+rkLdxOHnKkYnT
+         QNACqSTbYh3FWt2UJKd4aECHPb0nvWIyadlzsJ5/X9BRkiJvidC0eMhpUSr4MxBovQbT
+         FD5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uMByKESFF6nm9zU7UWxKm836eFhEE78GS/aSmv36ypo=;
+        b=rosliqS6jVEeNf0KswxhD95fy4JbZaJQAy/dbX00/JEryHSbpsH27OABI1yjwIUx/M
+         mhxAmdSuBms5irtDOAtFgHoYzDGtdJaakJ4ymrUiddlfj9fl91mVEG/MoQdo3D7Zxdpr
+         /73GHbbIlyGI5X+yJZ2EbTIZDBQUD2X6cLwoqrva9kk8hl8MzLw2kc/F1EmCpXWYkJ05
+         v7tXNNylYt/xc2JqSBMviQy0BqlinfYLC1d4q9d6wNiPohNgJ4sCZzFX2qLAXy+fc6Ek
+         o8ZLucZ3rZCsKXfj/yfg5BVkuN+iSTPFrfFRJBnFmiskh2PLu/5S1q9xTrNDQ8aJL1PD
+         KyNg==
+X-Gm-Message-State: APjAAAXOd7w9f3dQaymgBa3hLtho1Cc/4DQb45iS0ZJ7j3ZtaOrzUakj
+        wO9Ul86Ok5J1h8HLxL7+U8W2UrTkAqI=
+X-Google-Smtp-Source: APXvYqwd1BWya5wKyEDwJf/2EFU6deZJQYKlRpi3dDVo29Tsl6lLtugAnoYgXjnE13cW5icxKPKRqw==
+X-Received: by 2002:a05:600c:248:: with SMTP id 8mr5421515wmj.1.1581697335728;
+        Fri, 14 Feb 2020 08:22:15 -0800 (PST)
+Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id p5sm7489433wrt.79.2020.02.14.08.22.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2020 08:22:15 -0800 (PST)
+From:   Dmitry Safonov <dima@arista.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Dmitry Safonov <dima@arista.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-watchdog@vger.kernel.org
+Subject: [PATCHv2] watchdog: Add stop_on_reboot parameter to control reboot policy
+Date:   Fri, 14 Feb 2020 16:22:09 +0000
+Message-Id: <20200214162209.129107-1-dima@arista.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Averin <vvs@virtuozzo.com>
+Many watchdog drivers use watchdog_stop_on_reboot() helper in order
+to stop the watchdog on system reboot. Unfortunately, this logic is
+coded in driver's probe function and doesn't allows user to decide what
+to do during shutdown/reboot.
 
-[ Upstream commit 9f198a2ac543eaaf47be275531ad5cbd50db3edf ]
+On the other side, Xen and Qemu watchdog drivers (xen_wdt and i6300esb)
+may be configured to either send NMI or turn off/reboot VM as
+the watchdog action. As the kernel may stuck at any state, sending NMIs
+can't reliably reboot the VM.
 
-if seq_file .next fuction does not change position index,
-read after some lseek can generate unexpected output.
+At Arista, we benefited from the following set-up: the emulated watchdogs
+trigger VM reset and softdog is set to catch less severe conditions to
+generate vmcore. Just before reboot watchdog's timeout is increased
+to some good-enough value (3 mins). That keeps watchdog always running
+and guarantees that VM doesn't stuck.
 
-https://bugzilla.kernel.org/show_bug.cgi?id=206283
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: Mike Marshall <hubcap@omnibond.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Provide new stop_on_reboot module parameter to let user control
+watchdog's reboot policy.
+
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>
+Cc: linux-watchdog@vger.kernel.org
+Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- fs/orangefs/orangefs-debugfs.c | 1 +
- 1 file changed, 1 insertion(+)
+Changes v1 => v2: Add module parameter instead of ioctl()
 
-diff --git a/fs/orangefs/orangefs-debugfs.c b/fs/orangefs/orangefs-debugfs.c
-index 0748a26598fca..7d7df003f9d8d 100644
---- a/fs/orangefs/orangefs-debugfs.c
-+++ b/fs/orangefs/orangefs-debugfs.c
-@@ -304,6 +304,7 @@ static void *help_start(struct seq_file *m, loff_t *pos)
+ drivers/watchdog/watchdog_core.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/drivers/watchdog/watchdog_core.c b/drivers/watchdog/watchdog_core.c
+index 861daf4f37b2..5ead96199a0b 100644
+--- a/drivers/watchdog/watchdog_core.c
++++ b/drivers/watchdog/watchdog_core.c
+@@ -39,6 +39,10 @@
  
- static void *help_next(struct seq_file *m, void *v, loff_t *pos)
- {
-+	(*pos)++;
- 	gossip_debug(GOSSIP_DEBUGFS_DEBUG, "help_next: start\n");
+ static DEFINE_IDA(watchdog_ida);
  
- 	return NULL;
++static int stop_on_reboot = -1;
++module_param(stop_on_reboot, int, 0644);
++MODULE_PARM_DESC(stop_on_reboot, "Stop watchdogs on reboot (0=keep watching, 1=stop)");
++
+ /*
+  * Deferred Registration infrastructure.
+  *
+@@ -254,6 +258,14 @@ static int __watchdog_register_device(struct watchdog_device *wdd)
+ 		}
+ 	}
+ 
++	/* Module parameter to force watchdog policy on reboot. */
++	if (stop_on_reboot != -1) {
++		if (stop_on_reboot)
++			set_bit(WDOG_STOP_ON_REBOOT, &wdd->status);
++		else
++			clear_bit(WDOG_STOP_ON_REBOOT, &wdd->status);
++	}
++
+ 	if (test_bit(WDOG_STOP_ON_REBOOT, &wdd->status)) {
+ 		wdd->reboot_nb.notifier_call = watchdog_reboot_notifier;
+ 
 -- 
-2.20.1
+2.25.0
 
