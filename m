@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3D4B15E78F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:55:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96E2B15E78C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:55:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406813AbgBNQyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:54:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51056 "EHLO mail.kernel.org"
+        id S2404958AbgBNQyP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:54:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404803AbgBNQSh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:18:37 -0500
+        id S2404836AbgBNQSn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:18:43 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD1F9246F8;
-        Fri, 14 Feb 2020 16:18:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 345A824703;
+        Fri, 14 Feb 2020 16:18:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697116;
-        bh=Zmrtpa0LZihMZl3Ce8bNs5Bu/r1pFub2fc8hCI01eR4=;
+        s=default; t=1581697123;
+        bh=POQBEBmj9YQfomHR0dXXKcpPqERbDd5yZUvqqBkcoNE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EG2U3AxO4g4fW/vw4pVs0leHBRdXqSZT0olG1sbFR3eZ4E7kJctITQDaF1FHbYYPA
-         vfc1AIH5EOBlD+qWFjlMnTzJCeu9ouw9RRkZOgKAQZa5MopCh+avhapi8ELL4yGylr
-         Vwx9o4wwLcAU2H9zPpBVFCk8RAF90+UDn4zKSYn8=
+        b=T6YO/MxqHQ2bjV8HFgttXlpubjVAunUkXNe5dwq6oa9ilLQ6vCZfE40V4UI31FaDg
+         YvhG5/7OY0gCHIzUZd2p8zHTK5ZXWQJmJe/hkV25IZQb3/2dCT+8tbVR6j02DWc+aV
+         fm1AiQtODdlqNuk3OPzrHh2GeOMi74wTahya4Llg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Qiang Zhao <qiang.zhao@nxp.com>, Timur Tabi <timur@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Li Yang <leoyang.li@nxp.com>, Sasha Levin <sashal@kernel.org>,
-        netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.14 063/186] net/wan/fsl_ucc_hdlc: reject muram offsets above 64K
-Date:   Fri, 14 Feb 2020 11:15:12 -0500
-Message-Id: <20200214161715.18113-63-sashal@kernel.org>
+Cc:     Manu Gautam <mgautam@codeaurora.org>,
+        Paolo Pisati <p.pisati@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 068/186] arm64: dts: qcom: msm8996: Disable USB2 PHY suspend by core
+Date:   Fri, 14 Feb 2020 11:15:17 -0500
+Message-Id: <20200214161715.18113-68-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161715.18113-1-sashal@kernel.org>
 References: <20200214161715.18113-1-sashal@kernel.org>
@@ -45,42 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+From: Manu Gautam <mgautam@codeaurora.org>
 
-[ Upstream commit 148587a59f6b85831695e0497d9dd1af5f0495af ]
+[ Upstream commit d026c96b25b7ce5df89526aad2df988d553edb4d ]
 
-Qiang Zhao points out that these offsets get written to 16-bit
-registers, and there are some QE platforms with more than 64K
-muram. So it is possible that qe_muram_alloc() gives us an allocation
-that can't actually be used by the hardware, so detect and reject
-that.
+QUSB2 PHY on msm8996 doesn't work well when autosuspend by
+dwc3 core using USB2PHYCFG register is enabled. One of the
+issue seen is that PHY driver reports PLL lock failure and
+fails phy_init() if dwc3 core has USB2 PHY suspend enabled.
+Fix this by using quirks to disable USB2 PHY LPM/suspend and
+dwc3 core already takes care of explicitly suspending PHY
+during suspend if quirks are specified.
 
-Reported-by: Qiang Zhao <qiang.zhao@nxp.com>
-Reviewed-by: Timur Tabi <timur@kernel.org>
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Acked-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Li Yang <leoyang.li@nxp.com>
+Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
+Signed-off-by: Paolo Pisati <p.pisati@gmail.com>
+Link: https://lore.kernel.org/r/20191209151501.26993-1-p.pisati@gmail.com
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wan/fsl_ucc_hdlc.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/net/wan/fsl_ucc_hdlc.c b/drivers/net/wan/fsl_ucc_hdlc.c
-index 571a1ff8f81f2..6a26cef621935 100644
---- a/drivers/net/wan/fsl_ucc_hdlc.c
-+++ b/drivers/net/wan/fsl_ucc_hdlc.c
-@@ -240,6 +240,11 @@ static int uhdlc_init(struct ucc_hdlc_private *priv)
- 		ret = -ENOMEM;
- 		goto free_riptr;
- 	}
-+	if (riptr != (u16)riptr || tiptr != (u16)tiptr) {
-+		dev_err(priv->dev, "MURAM allocation out of addressable range\n");
-+		ret = -ENOMEM;
-+		goto free_tiptr;
-+	}
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 6f372ec055dd3..da2949586c7a3 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -788,6 +788,8 @@
+ 				interrupts = <0 138 0>;
+ 				phys = <&hsusb_phy2>;
+ 				phy-names = "usb2-phy";
++				snps,dis_u2_susphy_quirk;
++				snps,dis_enblslpm_quirk;
+ 			};
+ 		};
  
- 	/* Set RIPTR, TIPTR */
- 	iowrite16be(riptr, &priv->ucc_pram->riptr);
+@@ -817,6 +819,8 @@
+ 				interrupts = <0 131 0>;
+ 				phys = <&hsusb_phy1>, <&ssusb_phy_0>;
+ 				phy-names = "usb2-phy", "usb3-phy";
++				snps,dis_u2_susphy_quirk;
++				snps,dis_enblslpm_quirk;
+ 			};
+ 		};
+ 	};
 -- 
 2.20.1
 
