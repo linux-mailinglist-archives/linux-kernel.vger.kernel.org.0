@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8FF515ECFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:31:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C60F915ED4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:33:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390608AbgBNQHM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:07:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56950 "EHLO mail.kernel.org"
+        id S2394706AbgBNRdL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:33:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390435AbgBNQG3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:06:29 -0500
+        id S2390460AbgBNQGf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:06:35 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83319206D7;
-        Fri, 14 Feb 2020 16:06:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A591206D7;
+        Fri, 14 Feb 2020 16:06:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696389;
-        bh=O223LQV9enNAUAJH8Cah5pckGd311AgxJ5giEGsj2OE=;
+        s=default; t=1581696394;
+        bh=K/DJiKFEzUAGJvxk7WrgVvcyAL+NjxVoqaFyqp0oFlU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sKkyb6uCIQf4P7VmAvndURRa0TssA8m1YwroFbIsxyc/z+JRmR0i0jHp+IXR5Bue/
-         4a0H5LB1H7lVl7GhobX3pAA3C8hvTwAqZ6/9aO+jQstbN35JVePhrc2caSM+V5U6RF
-         v7CVu6Ss9KoZTLsnEvOxS7+zTNNxx9sdE8A4vhjE=
+        b=iD7WweQ1Lv0jdBpP1wtzcCc/lW1sdkqpWEYQXQvj++bo7Ne3YxpbNUHNJoAlgtFCH
+         nfKikktK1rM200rFQjlB0hNqZqLiUV9DumO0W6XbhpMcjJ9NFShad8mH+FBWPkn3Ij
+         FxXm8QocZnhteoMGGzP4KfFZFn7uArvjIHo+dJKg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 215/459] arm64: dts: renesas: r8a77990: ebisu: Remove clkout-lr-synchronous from sound
-Date:   Fri, 14 Feb 2020 10:57:45 -0500
-Message-Id: <20200214160149.11681-215-sashal@kernel.org>
+Cc:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rtc@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 219/459] rtc: hym8563: Return -EINVAL if the time is known to be invalid
+Date:   Fri, 14 Feb 2020 10:57:49 -0500
+Message-Id: <20200214160149.11681-219-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -44,37 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
-[ Upstream commit bf2b74ce9b33a2edd6ba1930ce60a71830790910 ]
+[ Upstream commit f236a2a2ebabad0848ad0995af7ad1dc7029e895 ]
 
-rcar_sound doesn't support clkout-lr-synchronous in upstream.
-It was supported under out-of-tree rcar_sound.
-upstream rcar_sound is supporting
-	- clkout-lr-synchronous
-	+ clkout-lr-asynchronous
+The current code returns -EPERM when the voltage loss bit is set.
+Since the bit indicates that the time value is not valid, return
+-EINVAL instead, which is the appropriate error code for this
+situation.
 
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Link: https://lore.kernel.org/r/87mubt3tux.wl-kuninori.morimoto.gx@renesas.com
-Fixes: 56629fcba94c698d ("arm64: dts: renesas: ebisu: Enable Audio")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: dcaf03849352 ("rtc: add hym8563 rtc-driver")
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Link: https://lore.kernel.org/r/20191212153111.966923-1-paul.kocialkowski@bootlin.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/rtc/rtc-hym8563.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-index b38f9d442fc08..e6d700f8c1948 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-@@ -636,7 +636,6 @@
- 	/* audio_clkout0/1/2/3 */
- 	#clock-cells = <1>;
- 	clock-frequency = <12288000 11289600>;
--	clkout-lr-synchronous;
+diff --git a/drivers/rtc/rtc-hym8563.c b/drivers/rtc/rtc-hym8563.c
+index 443f6d05ce29c..fb6d7967ec006 100644
+--- a/drivers/rtc/rtc-hym8563.c
++++ b/drivers/rtc/rtc-hym8563.c
+@@ -97,7 +97,7 @@ static int hym8563_rtc_read_time(struct device *dev, struct rtc_time *tm)
  
- 	status = "okay";
+ 	if (!hym8563->valid) {
+ 		dev_warn(&client->dev, "no valid clock/calendar values available\n");
+-		return -EPERM;
++		return -EINVAL;
+ 	}
  
+ 	ret = i2c_smbus_read_i2c_block_data(client, HYM8563_SEC, 7, buf);
 -- 
 2.20.1
 
