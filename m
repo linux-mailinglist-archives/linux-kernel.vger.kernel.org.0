@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31BFA15E6F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:51:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 661B015E62C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:47:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394215AbgBNQvO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:51:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53034 "EHLO mail.kernel.org"
+        id S2405311AbgBNQVG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:21:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404649AbgBNQTw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:19:52 -0500
+        id S2392271AbgBNQT4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:19:56 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5665F24716;
-        Fri, 14 Feb 2020 16:19:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC3BE2471E;
+        Fri, 14 Feb 2020 16:19:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697191;
-        bh=ABpt12Sdooe3Fx5J/Vp+kpGN5zd/p+KMh8wX2CZw/Lk=;
+        s=default; t=1581697195;
+        bh=IanB/lM2ZpQpeoxyeB6ocDTSzPJwvsxqB0XyUjcUZus=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LwfaRUHAVMyyfz93oHc0OM2jFOLlD0I86VW2eTdZxQz7pmSURBbY7RGnNpaUXBp9/
-         ueQoiUoEKoE2gHe/QI2AcdgyZO9dDaoos+eqzTyloMwQF9swOPzvXAchOExGwsZoCX
-         zN1bNQVCtBdTnbcLr3klS0/aszbFdaWcHWHVwVtQ=
+        b=EWi48oFOjwQYky84TFwVfx/F1aORMeZtuKihQaGFabsjNeZ5+MKggY8HsHGAeyhqu
+         RCqWalZJE3t+DaQ3pT5VC1uwejoZ/7+DScZhBIKPhxrQwhjhN0v3KNhxaEPkUTA335
+         j+KGlwZgS/2RpbJ7KadBZI352RwCfu1vyYtKp6EQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+Cc:     Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.14 120/186] tty: synclink_gt: Adjust indentation in several functions
-Date:   Fri, 14 Feb 2020 11:16:09 -0500
-Message-Id: <20200214161715.18113-120-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, devel@driverdev.osuosl.org
+Subject: [PATCH AUTOSEL 4.14 124/186] vme: bridges: reduce stack usage
+Date:   Fri, 14 Feb 2020 11:16:13 -0500
+Message-Id: <20200214161715.18113-124-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161715.18113-1-sashal@kernel.org>
 References: <20200214161715.18113-1-sashal@kernel.org>
@@ -44,116 +43,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 446e76873b5e4e70bdee5db2f2a894d5b4a7d081 ]
+[ Upstream commit 7483e7a939c074d887450ef1c4d9ccc5909405f8 ]
 
-Clang warns:
+With CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3, the stack usage in vme_fake
+grows above the warning limit:
 
-../drivers/tty/synclink_gt.c:1337:3: warning: misleading indentation;
-statement is not part of the previous 'if' [-Wmisleading-indentation]
-        if (C_CRTSCTS(tty)) {
-        ^
-../drivers/tty/synclink_gt.c:1335:2: note: previous statement is here
-        if (I_IXOFF(tty))
-        ^
-../drivers/tty/synclink_gt.c:2563:3: warning: misleading indentation;
-statement is not part of the previous 'if' [-Wmisleading-indentation]
-        if (I_BRKINT(info->port.tty) || I_PARMRK(info->port.tty))
-        ^
-../drivers/tty/synclink_gt.c:2561:2: note: previous statement is here
-        if (I_INPCK(info->port.tty))
-        ^
-../drivers/tty/synclink_gt.c:3221:3: warning: misleading indentation;
-statement is not part of the previous 'else' [-Wmisleading-indentation]
-        set_signals(info);
-        ^
-../drivers/tty/synclink_gt.c:3219:2: note: previous statement is here
-        else
-        ^
-3 warnings generated.
+drivers/vme/bridges/vme_fake.c: In function 'fake_master_read':
+drivers/vme/bridges/vme_fake.c:610:1: error: the frame size of 1160 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
+drivers/vme/bridges/vme_fake.c: In function 'fake_master_write':
+drivers/vme/bridges/vme_fake.c:797:1: error: the frame size of 1160 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
 
-The indentation on these lines is not at all consistent, tabs and spaces
-are mixed together. Convert to just using tabs to be consistent with the
-Linux kernel coding style and eliminate these warnings from clang.
+The problem is that in some configurations, each call to
+fake_vmereadX() puts another variable on the stack.
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/822
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Link: https://lore.kernel.org/r/20191218023912.13827-1-natechancellor@gmail.com
+Reduce the amount of inlining to get back to the previous state,
+with no function using more than 200 bytes each.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Link: https://lore.kernel.org/r/20200107200610.3482901-1-arnd@arndb.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/synclink_gt.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/vme/bridges/vme_fake.c | 30 ++++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/tty/synclink_gt.c b/drivers/tty/synclink_gt.c
-index 344e8c427c7e2..9d68f89a2bf8d 100644
---- a/drivers/tty/synclink_gt.c
-+++ b/drivers/tty/synclink_gt.c
-@@ -1349,10 +1349,10 @@ static void throttle(struct tty_struct * tty)
- 	DBGINFO(("%s throttle\n", info->device_name));
- 	if (I_IXOFF(tty))
- 		send_xchar(tty, STOP_CHAR(tty));
-- 	if (C_CRTSCTS(tty)) {
-+	if (C_CRTSCTS(tty)) {
- 		spin_lock_irqsave(&info->lock,flags);
- 		info->signals &= ~SerialSignal_RTS;
--	 	set_signals(info);
-+		set_signals(info);
- 		spin_unlock_irqrestore(&info->lock,flags);
+diff --git a/drivers/vme/bridges/vme_fake.c b/drivers/vme/bridges/vme_fake.c
+index 30b3acc938330..e81ec763b5555 100644
+--- a/drivers/vme/bridges/vme_fake.c
++++ b/drivers/vme/bridges/vme_fake.c
+@@ -418,8 +418,9 @@ static void fake_lm_check(struct fake_driver *bridge, unsigned long long addr,
  	}
  }
-@@ -1374,10 +1374,10 @@ static void unthrottle(struct tty_struct * tty)
- 		else
- 			send_xchar(tty, START_CHAR(tty));
- 	}
-- 	if (C_CRTSCTS(tty)) {
-+	if (C_CRTSCTS(tty)) {
- 		spin_lock_irqsave(&info->lock,flags);
- 		info->signals |= SerialSignal_RTS;
--	 	set_signals(info);
-+		set_signals(info);
- 		spin_unlock_irqrestore(&info->lock,flags);
- 	}
- }
-@@ -2575,8 +2575,8 @@ static void change_params(struct slgt_info *info)
- 	info->read_status_mask = IRQ_RXOVER;
- 	if (I_INPCK(info->port.tty))
- 		info->read_status_mask |= MASK_PARITY | MASK_FRAMING;
-- 	if (I_BRKINT(info->port.tty) || I_PARMRK(info->port.tty))
-- 		info->read_status_mask |= MASK_BREAK;
-+	if (I_BRKINT(info->port.tty) || I_PARMRK(info->port.tty))
-+		info->read_status_mask |= MASK_BREAK;
- 	if (I_IGNPAR(info->port.tty))
- 		info->ignore_status_mask |= MASK_PARITY | MASK_FRAMING;
- 	if (I_IGNBRK(info->port.tty)) {
-@@ -3207,7 +3207,7 @@ static int tiocmset(struct tty_struct *tty,
- 		info->signals &= ~SerialSignal_DTR;
  
- 	spin_lock_irqsave(&info->lock,flags);
-- 	set_signals(info);
-+	set_signals(info);
- 	spin_unlock_irqrestore(&info->lock,flags);
- 	return 0;
- }
-@@ -3218,7 +3218,7 @@ static int carrier_raised(struct tty_port *port)
- 	struct slgt_info *info = container_of(port, struct slgt_info, port);
- 
- 	spin_lock_irqsave(&info->lock,flags);
-- 	get_signals(info);
-+	get_signals(info);
- 	spin_unlock_irqrestore(&info->lock,flags);
- 	return (info->signals & SerialSignal_DCD) ? 1 : 0;
- }
-@@ -3233,7 +3233,7 @@ static void dtr_rts(struct tty_port *port, int on)
- 		info->signals |= SerialSignal_RTS | SerialSignal_DTR;
- 	else
- 		info->signals &= ~(SerialSignal_RTS | SerialSignal_DTR);
-- 	set_signals(info);
-+	set_signals(info);
- 	spin_unlock_irqrestore(&info->lock,flags);
+-static u8 fake_vmeread8(struct fake_driver *bridge, unsigned long long addr,
+-		u32 aspace, u32 cycle)
++static noinline_for_stack u8 fake_vmeread8(struct fake_driver *bridge,
++					   unsigned long long addr,
++					   u32 aspace, u32 cycle)
+ {
+ 	u8 retval = 0xff;
+ 	int i;
+@@ -450,8 +451,9 @@ static u8 fake_vmeread8(struct fake_driver *bridge, unsigned long long addr,
+ 	return retval;
  }
  
+-static u16 fake_vmeread16(struct fake_driver *bridge, unsigned long long addr,
+-		u32 aspace, u32 cycle)
++static noinline_for_stack u16 fake_vmeread16(struct fake_driver *bridge,
++					     unsigned long long addr,
++					     u32 aspace, u32 cycle)
+ {
+ 	u16 retval = 0xffff;
+ 	int i;
+@@ -482,8 +484,9 @@ static u16 fake_vmeread16(struct fake_driver *bridge, unsigned long long addr,
+ 	return retval;
+ }
+ 
+-static u32 fake_vmeread32(struct fake_driver *bridge, unsigned long long addr,
+-		u32 aspace, u32 cycle)
++static noinline_for_stack u32 fake_vmeread32(struct fake_driver *bridge,
++					     unsigned long long addr,
++					     u32 aspace, u32 cycle)
+ {
+ 	u32 retval = 0xffffffff;
+ 	int i;
+@@ -613,8 +616,9 @@ static ssize_t fake_master_read(struct vme_master_resource *image, void *buf,
+ 	return retval;
+ }
+ 
+-static void fake_vmewrite8(struct fake_driver *bridge, u8 *buf,
+-			   unsigned long long addr, u32 aspace, u32 cycle)
++static noinline_for_stack void fake_vmewrite8(struct fake_driver *bridge,
++					      u8 *buf, unsigned long long addr,
++					      u32 aspace, u32 cycle)
+ {
+ 	int i;
+ 	unsigned long long start, end, offset;
+@@ -643,8 +647,9 @@ static void fake_vmewrite8(struct fake_driver *bridge, u8 *buf,
+ 
+ }
+ 
+-static void fake_vmewrite16(struct fake_driver *bridge, u16 *buf,
+-			    unsigned long long addr, u32 aspace, u32 cycle)
++static noinline_for_stack void fake_vmewrite16(struct fake_driver *bridge,
++					       u16 *buf, unsigned long long addr,
++					       u32 aspace, u32 cycle)
+ {
+ 	int i;
+ 	unsigned long long start, end, offset;
+@@ -673,8 +678,9 @@ static void fake_vmewrite16(struct fake_driver *bridge, u16 *buf,
+ 
+ }
+ 
+-static void fake_vmewrite32(struct fake_driver *bridge, u32 *buf,
+-			    unsigned long long addr, u32 aspace, u32 cycle)
++static noinline_for_stack void fake_vmewrite32(struct fake_driver *bridge,
++					       u32 *buf, unsigned long long addr,
++					       u32 aspace, u32 cycle)
+ {
+ 	int i;
+ 	unsigned long long start, end, offset;
 -- 
 2.20.1
 
