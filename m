@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3722315F060
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:54:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97EB315F05A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:54:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388757AbgBNRyY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:54:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41656 "EHLO mail.kernel.org"
+        id S2388484AbgBNRyR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:54:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388460AbgBNP6F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:58:05 -0500
+        id S2388473AbgBNP6H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:58:07 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E2DDE206D7;
-        Fri, 14 Feb 2020 15:58:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB6A224681;
+        Fri, 14 Feb 2020 15:58:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695884;
-        bh=BUOOIABxjFARvL7gHrijQqmmIT1LUnzmkZ+eCUq/m8A=;
+        s=default; t=1581695886;
+        bh=FSZNZhAOFhYYMThmr+oCAnsLgXdPEgdWYjoPiw6Ulfs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dvFSGCg7IZe9r59r2Tgv66+Mrc9EVHdhh7eeD+cvETPm549G73fbgtLl1aXflgYdd
-         eVX6ZvHlMiJEKgqN8RlDwJizilFHmFXj0VByCHYy8Xo+DeuotWZpbR6P/RkWWAvupT
-         MRqYsemlHDjxcw2dl/o4EuqVDvelshT1j9xnGuq0=
+        b=vLJaeKm1o/ntxSh/1NTXAw0he0D4TMUGDTtSilHskdtKyRlvvYpv1JQEYhfjF31/c
+         PYtBym8hIS2nFHolg5+4drfOaFfyrtX3PmLGxgBpdGL36QHK43DMrgsYh8bvarSCvs
+         ICauRyL+H0fkXxOqujUBWJS3VnC8aZ6NrsjSSWNQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Michael Walle <michael@walle.cc>, Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-spi@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 428/542] spi: spi-fsl-qspi: Ensure width is respected in spi-mem operations
-Date:   Fri, 14 Feb 2020 10:47:00 -0500
-Message-Id: <20200214154854.6746-428-sashal@kernel.org>
+Cc:     Masahiro Yamada <masahiroy@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-kbuild@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 430/542] kbuild: use -S instead of -E for precise cc-option test in Kconfig
+Date:   Fri, 14 Feb 2020 10:47:02 -0500
+Message-Id: <20200214154854.6746-430-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -42,39 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Walle <michael@walle.cc>
+From: Masahiro Yamada <masahiroy@kernel.org>
 
-[ Upstream commit b0177aca7aea7e8917d4e463334b51facb293d02 ]
+[ Upstream commit 3bed1b7b9d79ca40e41e3af130931a3225e951a3 ]
 
-Make use of a core helper to ensure the desired width is respected
-when calling spi-mem operators.
+Currently, -E (stop after the preprocessing stage) is used to check
+whether the given compiler flag is supported.
 
-Otherwise only the SPI controller will be matched with the flash chip,
-which might lead to wrong widths. Also consider the width specified by
-the user in the device tree.
+While it is faster than -S (or -c), it can be false-positive. You need
+to run the compilation proper to check the flag more precisely.
 
-Fixes: 84d043185dbe ("spi: Add a driver for the Freescale/NXP QuadSPI controller")
-Signed-off-by: Michael Walle <michael@walle.cc>
-Link: https://lore.kernel.org/r/20200114154613.8195-1-michael@walle.cc
-Signed-off-by: Mark Brown <broonie@kernel.org>
+For example, -E and -S disagree about the support of
+"--param asan-instrument-allocas=1".
+
+$ gcc -Werror --param asan-instrument-allocas=1 -E -x c /dev/null -o /dev/null
+$ echo $?
+0
+
+$ gcc -Werror --param asan-instrument-allocas=1 -S -x c /dev/null -o /dev/null
+cc1: error: invalid --param name ‘asan-instrument-allocas’; did you mean ‘asan-instrument-writes’?
+$ echo $?
+1
+
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-fsl-qspi.c | 2 +-
+ scripts/Kconfig.include | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-fsl-qspi.c b/drivers/spi/spi-fsl-qspi.c
-index 79b1558b74b8a..e8a499cd1f135 100644
---- a/drivers/spi/spi-fsl-qspi.c
-+++ b/drivers/spi/spi-fsl-qspi.c
-@@ -410,7 +410,7 @@ static bool fsl_qspi_supports_op(struct spi_mem *mem,
- 	    op->data.nbytes > q->devtype_data->txfifo)
- 		return false;
+diff --git a/scripts/Kconfig.include b/scripts/Kconfig.include
+index d4adfbe426903..bfb44b265a948 100644
+--- a/scripts/Kconfig.include
++++ b/scripts/Kconfig.include
+@@ -25,7 +25,7 @@ failure = $(if-success,$(1),n,y)
  
--	return true;
-+	return spi_mem_default_supports_op(mem, op);
- }
+ # $(cc-option,<flag>)
+ # Return y if the compiler supports <flag>, n otherwise
+-cc-option = $(success,$(CC) -Werror $(CLANG_FLAGS) $(1) -E -x c /dev/null -o /dev/null)
++cc-option = $(success,$(CC) -Werror $(CLANG_FLAGS) $(1) -S -x c /dev/null -o /dev/null)
  
- static void fsl_qspi_prepare_lut(struct fsl_qspi *q,
+ # $(ld-option,<flag>)
+ # Return y if the linker supports <flag>, n otherwise
 -- 
 2.20.1
 
