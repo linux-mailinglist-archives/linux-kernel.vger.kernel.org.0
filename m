@@ -2,143 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2974215E9C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:09:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2360D15E9DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:10:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394597AbgBNRJR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:09:17 -0500
-Received: from mga06.intel.com ([134.134.136.31]:10149 "EHLO mga06.intel.com"
+        id S2392254AbgBNRKA convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 14 Feb 2020 12:10:00 -0500
+Received: from muru.com ([72.249.23.125]:55280 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392336AbgBNRJQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 12:09:16 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2020 09:09:15 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,441,1574150400"; 
-   d="scan'208";a="223073823"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by orsmga007.jf.intel.com with ESMTP; 14 Feb 2020 09:09:14 -0800
-Date:   Fri, 14 Feb 2020 09:09:14 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Xiaoyao Li <xiaoyao.li@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 26/61] KVM: x86: Introduce cpuid_entry_{get,has}()
- accessors
-Message-ID: <20200214170914.GC20690@linux.intel.com>
-References: <20200201185218.24473-1-sean.j.christopherson@intel.com>
- <20200201185218.24473-27-sean.j.christopherson@intel.com>
- <1f918bcf-d36d-f759-5796-2acb2a514888@intel.com>
+        id S2394586AbgBNRJv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 12:09:51 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 0E82B80E7;
+        Fri, 14 Feb 2020 17:10:33 +0000 (UTC)
+Date:   Fri, 14 Feb 2020 09:09:46 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        "Arthur D ." <spinal.by@gmail.com>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Merlijn Wajer <merlijn@wizzup.org>, Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH] ASoC: ti: Allocate dais dynamically for TDM and audio
+ graph card
+Message-ID: <20200214170946.GB64767@atomide.com>
+References: <20200211171645.41990-1-tony@atomide.com>
+ <cd46c6ec-80e3-332f-4922-e58a3acbfc61@ti.com>
+ <20200212143543.GI64767@atomide.com>
+ <20200214003452.xuadnylj2udqyljs@earth.universe>
+ <20200214013454.GX64767@atomide.com>
+ <20200214130428.gkhmr55ptmi2bh2x@earth.universe>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1f918bcf-d36d-f759-5796-2acb2a514888@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20200214130428.gkhmr55ptmi2bh2x@earth.universe>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 05:44:41PM +0800, Xiaoyao Li wrote:
-> On 2/2/2020 2:51 AM, Sean Christopherson wrote:
-> >@@ -387,7 +388,7 @@ static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry)
-> >  		entry->ebx |= F(TSC_ADJUST);
-> >  		entry->ecx &= kvm_cpuid_7_0_ecx_x86_features;
-> >-		f_la57 = entry->ecx & F(LA57);
-> >+		f_la57 = cpuid_entry_get(entry, X86_FEATURE_LA57);
-
-Note, cpuid_entry_get() is used here.
-
-> >  		cpuid_mask(&entry->ecx, CPUID_7_ECX);
-> >  		/* Set LA57 based on hardware capability. */
-> >  		entry->ecx |= f_la57;
-> >diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
-> >index 72a79bdfed6b..64e96e4086e2 100644
-> >--- a/arch/x86/kvm/cpuid.h
-> >+++ b/arch/x86/kvm/cpuid.h
-> >@@ -95,16 +95,10 @@ static __always_inline struct cpuid_reg x86_feature_cpuid(unsigned x86_feature)
-> >  	return reverse_cpuid[x86_leaf];
-> >  }
-> >-static __always_inline u32 *guest_cpuid_get_register(struct kvm_vcpu *vcpu, unsigned x86_feature)
-> >+static __always_inline u32 *__cpuid_entry_get_reg(struct kvm_cpuid_entry2 *entry,
-> >+						  const struct cpuid_reg *cpuid)
-> >  {
-> >-	struct kvm_cpuid_entry2 *entry;
-> >-	const struct cpuid_reg cpuid = x86_feature_cpuid(x86_feature);
-> >-
-> >-	entry = kvm_find_cpuid_entry(vcpu, cpuid.function, cpuid.index);
-> >-	if (!entry)
-> >-		return NULL;
-> >-
-> >-	switch (cpuid.reg) {
-> >+	switch (cpuid->reg) {
-> >  	case CPUID_EAX:
-> >  		return &entry->eax;
-> >  	case CPUID_EBX:
-> >@@ -119,6 +113,40 @@ static __always_inline u32 *guest_cpuid_get_register(struct kvm_vcpu *vcpu, unsi
-> >  	}
-> >  }
-> >+static __always_inline u32 *cpuid_entry_get_reg(struct kvm_cpuid_entry2 *entry,
-> >+						unsigned x86_feature)
-> >+{
-> >+	const struct cpuid_reg cpuid = x86_feature_cpuid(x86_feature);
-> >+
-> >+	return __cpuid_entry_get_reg(entry, &cpuid);
-> >+}
-> >+
-> >+static __always_inline u32 cpuid_entry_get(struct kvm_cpuid_entry2 *entry,
-> >+					   unsigned x86_feature)
-> >+{
-> >+	u32 *reg = cpuid_entry_get_reg(entry, x86_feature);
-> >+
-> >+	return *reg & __feature_bit(x86_feature);
-> >+}
-> >+
+* Sebastian Reichel <sre@kernel.org> [200214 13:05]:
+> On Thu, Feb 13, 2020 at 05:34:54PM -0800, Tony Lindgren wrote:
+> > And bluetooth would be similar to cpcap_audio and mot_mdm6600_audio
+> > above.
 > 
-> This helper function is unnecessary. There is only one user throughout this
-> series, i.e., cpuid_entry_has() below.
+> My understanding is, that CPU is not involved for calls (except for
+> setting up cpcap registers correctly). Basically McBSP3 should
+> remain idle for a call and data goes directly from modem to cpcap.
+> The same should work for modem <-> BT, except that CPCAP seems to
+> always provide the clock. That would imply a direct link between
+> modem and codec / BT?
 
-And the LA57 case above.
+Yes the direct link is i2s. I'm ot sure if mcbsp can be idle during
+voice call though, I guess it should be doable since mcbsp is not
+the clock master :)
 
-> And I cannot image other possible use case of it.
-
-The LA57 case, which admittedly goes away soon, was subtle enough (OR in
-the flag instead of querying yes/no) that I wanted keep the accessor around
-in case a similar case popped up in the future.
-
-> >+static __always_inline bool cpuid_entry_has(struct kvm_cpuid_entry2 *entry,
-> >+					    unsigned x86_feature)
-> >+{
-> >+	return cpuid_entry_get(entry, x86_feature);
-> >+}
-> >+
-> >+static __always_inline int *guest_cpuid_get_register(struct kvm_vcpu *vcpu, unsigned x86_feature)
->                           ^
-> Should be                 u32
-> otherwise, previous patch will be unhappy. :)
-
-Doh, thanks!
- 
-> >+{
-> >+	struct kvm_cpuid_entry2 *entry;
-> >+	const struct cpuid_reg cpuid = x86_feature_cpuid(x86_feature);
-> >+
-> >+	entry = kvm_find_cpuid_entry(vcpu, cpuid.function, cpuid.index);
-> >+	if (!entry)
-> >+		return NULL;
-> >+
-> >+	return __cpuid_entry_get_reg(entry, &cpuid);
-> >+}
-> >+
-> >  static __always_inline bool guest_cpuid_has(struct kvm_vcpu *vcpu, unsigned x86_feature)
-> >  {
-> >  	u32 *reg;
-> >
+> > My guess is that only cpcap registers and clock rate needs to be
+> > changed for bluetooth audio BTW, so if somebody havs a bluetooth
+> > headset just do the following in Android:
+> > 
+> > # cpcaprw --all > /tmp/before
+> > configure bluetooth headset for audio in android and start
+> > playing some music or make a phone call
+> > ...
+> > # cpcaprw --all > /tmp/after
+> > stop playing music or phone call
+> > ...
+> > diff -u /tmp/before /tmp/after
+> > 
+> > The registers will be different for a bluetooth phone call and
+> > playing music.
 > 
+> I can provider register values once I find some time.
+
+OK great.
+
+Regards,
+
+Tony
+
