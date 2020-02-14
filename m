@@ -2,163 +2,317 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3FED15F9D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 23:43:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5F0F15F9E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 23:43:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbgBNWnP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 17:43:15 -0500
-Received: from mail-pg1-f201.google.com ([209.85.215.201]:55780 "EHLO
-        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727566AbgBNWnP (ORCPT
+        id S1727918AbgBNWn3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 17:43:29 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:46671 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727838AbgBNWn2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 17:43:15 -0500
-Received: by mail-pg1-f201.google.com with SMTP id v30so6929108pga.22
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 14:43:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=uHN7vdUXj9zg5j6BFSm9FeBemrt4Oks3aUAhhkdikgA=;
-        b=IeXW9Ek8IIWzbRkroTSuaubhFbW+FB8nYXCtlIy26K7MVDvhCdpSfLETg8Si9wMve2
-         UiHxMDhpjR9Dl0QaCK8Ds1kdIqYaTlWqA+xmfPOpbrCMXauCY5Y+ai7GExkl/HfSa311
-         KOX/CueF5MxQbOZroE0U02KBQDrTdv15TAd1Cm8PjniDcK3eEOBwOAQzYCvT4NDKSpR3
-         1eH+b20qtF0OAJKVSaBsZzr3MynnY33jR1dntOVJntwWWxuPUHmeL01TxDRViqbSGhcV
-         HE1vNcxhg8Ou9tkWYURTl9jJ9ebB3ZbnuSa6UJMll1dgr5TlVS7BNVkDGlpGTQR+l1cq
-         ndAg==
+        Fri, 14 Feb 2020 17:43:28 -0500
+Received: by mail-ot1-f66.google.com with SMTP id g64so10656592otb.13;
+        Fri, 14 Feb 2020 14:43:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=uHN7vdUXj9zg5j6BFSm9FeBemrt4Oks3aUAhhkdikgA=;
-        b=jHeqMhQYG0SMTzipbI2LLI/QhFRjmV+HImnOB0ckdVs81Gn3fX1h+H+J0o1MoMQhMp
-         mOvU9AS/eeOcm6NShRWKHeCUAe3sxbTa8Bq7EE87wZ0NgjDqXn24YAF6UuH43zOCpyPH
-         MoRIR9dvVUezeK1fPmqIwC/DzygvUvqW3HSaueXpwx8XJOtL85Lkcpw6TWI+uGeUxRSn
-         sKqz8oj7mqMR4WfP6sdxGw/ZEmomCV5vctjW+nA9TxpQ6GohQlwbnaaGBJoEWBLjx93D
-         HwVkUyI7Zf902q9hEZ7sAtyjnlu2/da6cPFVxF2gCgnygEVJO4uaL0hY/SjHmEI8FvuS
-         7+0A==
-X-Gm-Message-State: APjAAAXIW9CsukY0Gb1jjljHHRjo7p11OrgTkQdfdHTfn+mU3UL645m3
-        ALFybCDibOYqqfx155jl86RquaLOgGJ2
-X-Google-Smtp-Source: APXvYqyByT20Xf2cS83FQR4XFLJ7Tfrbx1N29R/vELEta1kYPJIR+JGWxOYQELvfk6vRtBTB8wdqez/C4cDs
-X-Received: by 2002:a63:2254:: with SMTP id t20mr5909022pgm.423.1581720194053;
- Fri, 14 Feb 2020 14:43:14 -0800 (PST)
-Date:   Fri, 14 Feb 2020 14:43:02 -0800
-Message-Id: <20200214224302.229920-1-brianvv@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
-Subject: [PATCH bpf] bpf: Do not grab the bucket spinlock by default on htab
- batch ops
-From:   Brian Vazquez <brianvv@google.com>
-To:     Brian Vazquez <brianvv.kernel@gmail.com>,
-        Brian Vazquez <brianvv@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "David S . Miller" <davem@davemloft.net>
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, Yonghong Song <yhs@fb.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=rEnB5+kU+FjhvIdO5SQl7ydF6Vj7dX77BsiIjtiVufU=;
+        b=A80G/xETcsCrQoRQvPMZLRZod47UrkhUS/d7J8fmEfoyGhoFd9JNbF7yHPhvpICNG2
+         IdQV9TelRim7MPYRCLy/2dOmPf5CYXjcfIeU4iPrsJQk4qZOcLx1CJ4LSCoS70jzGQfb
+         iLjyb72HZbsGQWh57Wu5njvmMtCkBH9r3H7IbrcypVS2ynRecQ1xSlgmz0v/onVQRcYJ
+         7ojYwtF5HOJp75Sz4ZmpXbCJ0UHRTenGFgCD/92WOmTCSV7/KOcAjE+0tUmMBulHvTYv
+         86FpEnSD+Wjw/wrxV0X/MsKg5bLh9mi529yjII5+KgLSrlA++9QFKOULECCRijAwggCM
+         dK6g==
+X-Gm-Message-State: APjAAAUozaBDodr0HSQSkzaZhc0aW35qXLx3Vc/DQDEb9Cp8ndHHKtwJ
+        cbYAbMX/EVRN/MFWJ/h7zXTZFBE=
+X-Google-Smtp-Source: APXvYqy5SwntOtr1CzPuatwaYlGx9mBbjcZbXp6MOXwEDNH/Uw68ZFD5Up2zlZRyFWflVldIKSAeEA==
+X-Received: by 2002:a9d:3b09:: with SMTP id z9mr4087034otb.195.1581720205444;
+        Fri, 14 Feb 2020 14:43:25 -0800 (PST)
+Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.googlemail.com with ESMTPSA id m69sm2453167otc.78.2020.02.14.14.43.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2020 14:43:24 -0800 (PST)
+From:   Rob Herring <robh@kernel.org>
+To:     devicetree@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Christoph Hellwig <hch@lst.de>, Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Simek <monstr@monstr.eu>,
+        Paul Mackerras <paulus@samba.org>
+Subject: [PATCH 1/7] of/address: Move range parser code out of CONFIG_PCI
+Date:   Fri, 14 Feb 2020 16:43:16 -0600
+Message-Id: <20200214224322.20030-2-robh@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200214224322.20030-1-robh@kernel.org>
+References: <20200214224322.20030-1-robh@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Grabbing the spinlock for every bucket even if it's empty, was causing
-significant perfomance cost when traversing htab maps that have only a
-few entries. This patch addresses the issue by checking first the
-bucket_cnt, if the bucket has some entries then we go and grab the
-spinlock and proceed with the batching.
+In preparation to make the range parsing code work for non-PCI buses,
+move the parsing functions out from the CONFIG_PCI #ifdef.
 
-Tested with a htab of size 50K and different value of populated entries.
-
-Before:
-  Benchmark             Time(ns)        CPU(ns)
-  ---------------------------------------------
-  BM_DumpHashMap/1       2759655        2752033
-  BM_DumpHashMap/10      2933722        2930825
-  BM_DumpHashMap/200     3171680        3170265
-  BM_DumpHashMap/500     3639607        3635511
-  BM_DumpHashMap/1000    4369008        4364981
-  BM_DumpHashMap/5k     11171919       11134028
-  BM_DumpHashMap/20k    69150080       69033496
-  BM_DumpHashMap/39k   190501036      190226162
-
-After:
-  Benchmark             Time(ns)        CPU(ns)
-  ---------------------------------------------
-  BM_DumpHashMap/1        202707         200109
-  BM_DumpHashMap/10       213441         210569
-  BM_DumpHashMap/200      478641         472350
-  BM_DumpHashMap/500      980061         967102
-  BM_DumpHashMap/1000    1863835        1839575
-  BM_DumpHashMap/5k      8961836        8902540
-  BM_DumpHashMap/20k    69761497       69322756
-  BM_DumpHashMap/39k   187437830      186551111
-
-Fixes: 057996380a42 ("bpf: Add batch ops to all htab bpf map")
-Cc: Yonghong Song <yhs@fb.com>
-Signed-off-by: Brian Vazquez <brianvv@google.com>
+Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- kernel/bpf/hashtab.c | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+ drivers/of/address.c | 215 ++++++++++++++++++++++---------------------
+ 1 file changed, 109 insertions(+), 106 deletions(-)
 
-diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
-index 2d182c4ee9d99..fdbde28b0fe06 100644
---- a/kernel/bpf/hashtab.c
-+++ b/kernel/bpf/hashtab.c
-@@ -1260,6 +1260,7 @@ __htab_map_lookup_and_delete_batch(struct bpf_map *map,
- 	struct hlist_nulls_head *head;
- 	struct hlist_nulls_node *n;
- 	unsigned long flags;
-+	bool locked = false;
- 	struct htab_elem *l;
- 	struct bucket *b;
- 	int ret = 0;
-@@ -1319,15 +1320,25 @@ __htab_map_lookup_and_delete_batch(struct bpf_map *map,
- 	dst_val = values;
- 	b = &htab->buckets[batch];
- 	head = &b->head;
--	raw_spin_lock_irqsave(&b->lock, flags);
-+	/* do not grab the lock unless need it (bucket_cnt > 0). */
-+	if (locked)
-+		raw_spin_lock_irqsave(&b->lock, flags);
+diff --git a/drivers/of/address.c b/drivers/of/address.c
+index e8a39c3ec4d4..846045a48395 100644
+--- a/drivers/of/address.c
++++ b/drivers/of/address.c
+@@ -100,6 +100,28 @@ static unsigned int of_bus_default_get_flags(const __be32 *addr)
+ 	return IORESOURCE_MEM;
+ }
  
- 	bucket_cnt = 0;
- 	hlist_nulls_for_each_entry_rcu(l, n, head, hash_node)
- 		bucket_cnt++;
++static unsigned int of_bus_pci_get_flags(const __be32 *addr)
++{
++	unsigned int flags = 0;
++	u32 w = be32_to_cpup(addr);
++
++	if (!IS_ENABLED(CONFIG_PCI))
++		return 0;
++
++	switch((w >> 24) & 0x03) {
++	case 0x01:
++		flags |= IORESOURCE_IO;
++		break;
++	case 0x02: /* 32 bits */
++	case 0x03: /* 64 bits */
++		flags |= IORESOURCE_MEM;
++		break;
++	}
++	if (w & 0x40000000)
++		flags |= IORESOURCE_PREFETCH;
++	return flags;
++}
++
+ #ifdef CONFIG_PCI
+ /*
+  * PCI bus specific translator
+@@ -125,25 +147,6 @@ static void of_bus_pci_count_cells(struct device_node *np,
+ 		*sizec = 2;
+ }
  
-+	if (bucket_cnt && !locked) {
-+		locked = true;
-+		goto again_nocopy;
+-static unsigned int of_bus_pci_get_flags(const __be32 *addr)
+-{
+-	unsigned int flags = 0;
+-	u32 w = be32_to_cpup(addr);
+-
+-	switch((w >> 24) & 0x03) {
+-	case 0x01:
+-		flags |= IORESOURCE_IO;
+-		break;
+-	case 0x02: /* 32 bits */
+-	case 0x03: /* 64 bits */
+-		flags |= IORESOURCE_MEM;
+-		break;
+-	}
+-	if (w & 0x40000000)
+-		flags |= IORESOURCE_PREFETCH;
+-	return flags;
+-}
+-
+ static u64 of_bus_pci_map(__be32 *addr, const __be32 *range, int na, int ns,
+ 		int pna)
+ {
+@@ -234,93 +237,6 @@ int of_pci_address_to_resource(struct device_node *dev, int bar,
+ }
+ EXPORT_SYMBOL_GPL(of_pci_address_to_resource);
+ 
+-static int parser_init(struct of_pci_range_parser *parser,
+-			struct device_node *node, const char *name)
+-{
+-	const int na = 3, ns = 2;
+-	int rlen;
+-
+-	parser->node = node;
+-	parser->pna = of_n_addr_cells(node);
+-	parser->np = parser->pna + na + ns;
+-	parser->dma = !strcmp(name, "dma-ranges");
+-
+-	parser->range = of_get_property(node, name, &rlen);
+-	if (parser->range == NULL)
+-		return -ENOENT;
+-
+-	parser->end = parser->range + rlen / sizeof(__be32);
+-
+-	return 0;
+-}
+-
+-int of_pci_range_parser_init(struct of_pci_range_parser *parser,
+-				struct device_node *node)
+-{
+-	return parser_init(parser, node, "ranges");
+-}
+-EXPORT_SYMBOL_GPL(of_pci_range_parser_init);
+-
+-int of_pci_dma_range_parser_init(struct of_pci_range_parser *parser,
+-				struct device_node *node)
+-{
+-	return parser_init(parser, node, "dma-ranges");
+-}
+-EXPORT_SYMBOL_GPL(of_pci_dma_range_parser_init);
+-
+-struct of_pci_range *of_pci_range_parser_one(struct of_pci_range_parser *parser,
+-						struct of_pci_range *range)
+-{
+-	const int na = 3, ns = 2;
+-
+-	if (!range)
+-		return NULL;
+-
+-	if (!parser->range || parser->range + parser->np > parser->end)
+-		return NULL;
+-
+-	range->pci_space = be32_to_cpup(parser->range);
+-	range->flags = of_bus_pci_get_flags(parser->range);
+-	range->pci_addr = of_read_number(parser->range + 1, ns);
+-	if (parser->dma)
+-		range->cpu_addr = of_translate_dma_address(parser->node,
+-				parser->range + na);
+-	else
+-		range->cpu_addr = of_translate_address(parser->node,
+-				parser->range + na);
+-	range->size = of_read_number(parser->range + parser->pna + na, ns);
+-
+-	parser->range += parser->np;
+-
+-	/* Now consume following elements while they are contiguous */
+-	while (parser->range + parser->np <= parser->end) {
+-		u32 flags;
+-		u64 pci_addr, cpu_addr, size;
+-
+-		flags = of_bus_pci_get_flags(parser->range);
+-		pci_addr = of_read_number(parser->range + 1, ns);
+-		if (parser->dma)
+-			cpu_addr = of_translate_dma_address(parser->node,
+-					parser->range + na);
+-		else
+-			cpu_addr = of_translate_address(parser->node,
+-					parser->range + na);
+-		size = of_read_number(parser->range + parser->pna + na, ns);
+-
+-		if (flags != range->flags)
+-			break;
+-		if (pci_addr != range->pci_addr + range->size ||
+-		    cpu_addr != range->cpu_addr + range->size)
+-			break;
+-
+-		range->size += size;
+-		parser->range += parser->np;
+-	}
+-
+-	return range;
+-}
+-EXPORT_SYMBOL_GPL(of_pci_range_parser_one);
+-
+ /*
+  * of_pci_range_to_resource - Create a resource from an of_pci_range
+  * @range:	the PCI range that describes the resource
+@@ -775,6 +691,93 @@ const __be32 *of_get_address(struct device_node *dev, int index, u64 *size,
+ }
+ EXPORT_SYMBOL(of_get_address);
+ 
++static int parser_init(struct of_pci_range_parser *parser,
++			struct device_node *node, const char *name)
++{
++	const int na = 3, ns = 2;
++	int rlen;
++
++	parser->node = node;
++	parser->pna = of_n_addr_cells(node);
++	parser->np = parser->pna + na + ns;
++	parser->dma = !strcmp(name, "dma-ranges");
++
++	parser->range = of_get_property(node, name, &rlen);
++	if (parser->range == NULL)
++		return -ENOENT;
++
++	parser->end = parser->range + rlen / sizeof(__be32);
++
++	return 0;
++}
++
++int of_pci_range_parser_init(struct of_pci_range_parser *parser,
++				struct device_node *node)
++{
++	return parser_init(parser, node, "ranges");
++}
++EXPORT_SYMBOL_GPL(of_pci_range_parser_init);
++
++int of_pci_dma_range_parser_init(struct of_pci_range_parser *parser,
++				struct device_node *node)
++{
++	return parser_init(parser, node, "dma-ranges");
++}
++EXPORT_SYMBOL_GPL(of_pci_dma_range_parser_init);
++
++struct of_pci_range *of_pci_range_parser_one(struct of_pci_range_parser *parser,
++						struct of_pci_range *range)
++{
++	const int na = 3, ns = 2;
++
++	if (!range)
++		return NULL;
++
++	if (!parser->range || parser->range + parser->np > parser->end)
++		return NULL;
++
++	range->pci_space = be32_to_cpup(parser->range);
++	range->flags = of_bus_pci_get_flags(parser->range);
++	range->pci_addr = of_read_number(parser->range + 1, ns);
++	if (parser->dma)
++		range->cpu_addr = of_translate_dma_address(parser->node,
++				parser->range + na);
++	else
++		range->cpu_addr = of_translate_address(parser->node,
++				parser->range + na);
++	range->size = of_read_number(parser->range + parser->pna + na, ns);
++
++	parser->range += parser->np;
++
++	/* Now consume following elements while they are contiguous */
++	while (parser->range + parser->np <= parser->end) {
++		u32 flags;
++		u64 pci_addr, cpu_addr, size;
++
++		flags = of_bus_pci_get_flags(parser->range);
++		pci_addr = of_read_number(parser->range + 1, ns);
++		if (parser->dma)
++			cpu_addr = of_translate_dma_address(parser->node,
++					parser->range + na);
++		else
++			cpu_addr = of_translate_address(parser->node,
++					parser->range + na);
++		size = of_read_number(parser->range + parser->pna + na, ns);
++
++		if (flags != range->flags)
++			break;
++		if (pci_addr != range->pci_addr + range->size ||
++		    cpu_addr != range->cpu_addr + range->size)
++			break;
++
++		range->size += size;
++		parser->range += parser->np;
 +	}
 +
- 	if (bucket_cnt > (max_count - total)) {
- 		if (total == 0)
- 			ret = -ENOSPC;
-+		/* Note that since bucket_cnt > 0 here, it is implicit
-+		 * that the locked was grabbed, so release it.
-+		 */
- 		raw_spin_unlock_irqrestore(&b->lock, flags);
- 		rcu_read_unlock();
- 		this_cpu_dec(bpf_prog_active);
-@@ -1337,6 +1348,9 @@ __htab_map_lookup_and_delete_batch(struct bpf_map *map,
- 
- 	if (bucket_cnt > bucket_size) {
- 		bucket_size = bucket_cnt;
-+		/* Note that since bucket_cnt > 0 here, it is implicit
-+		 * that the locked was grabbed, so release it.
-+		 */
- 		raw_spin_unlock_irqrestore(&b->lock, flags);
- 		rcu_read_unlock();
- 		this_cpu_dec(bpf_prog_active);
-@@ -1379,7 +1393,10 @@ __htab_map_lookup_and_delete_batch(struct bpf_map *map,
- 		dst_val += value_size;
- 	}
- 
--	raw_spin_unlock_irqrestore(&b->lock, flags);
-+	if (locked) {
-+		raw_spin_unlock_irqrestore(&b->lock, flags);
-+		locked = false;
-+	}
- 	/* If we are not copying data, we can go to next bucket and avoid
- 	 * unlocking the rcu.
- 	 */
++	return range;
++}
++EXPORT_SYMBOL_GPL(of_pci_range_parser_one);
++
+ static u64 of_translate_ioport(struct device_node *dev, const __be32 *in_addr,
+ 			u64 size)
+ {
 -- 
-2.25.0.265.gbab2e86ba0-goog
+2.20.1
 
