@@ -2,162 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BFDD15E997
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:08:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F16515EA02
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:11:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404187AbgBNRIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:08:02 -0500
-Received: from mga04.intel.com ([192.55.52.120]:14682 "EHLO mga04.intel.com"
+        id S2404020AbgBNRKu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:10:50 -0500
+Received: from mout.gmx.net ([212.227.17.22]:60863 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403971AbgBNRIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 12:08:00 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2020 09:07:59 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,441,1574150400"; 
-   d="scan'208";a="433080978"
-Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
-  by fmsmga005.fm.intel.com with ESMTP; 14 Feb 2020 09:07:59 -0800
-Received: from fmsmsx154.amr.corp.intel.com (10.18.116.70) by
- FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Fri, 14 Feb 2020 09:07:59 -0800
-Received: from FMSEDG001.ED.cps.intel.com (10.1.192.133) by
- FMSMSX154.amr.corp.intel.com (10.18.116.70) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Fri, 14 Feb 2020 09:07:59 -0800
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.168)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server (TLS) id
- 14.3.439.0; Fri, 14 Feb 2020 09:07:59 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KGntPuBmFitJWKjARpiVzgaVScefjbSP7pybJuxf42dRSJD1d0l2UWkFLWYOBA0/YGnryss+KAd1KidZ0LjJii8mhnWVRejn0qLAX0uoW+EVCQpC0KaC3SNffRiM819HcmHZE8HMJNc7c1qhhXodu/QLj0zm9WJFwyI/gFu3I7Ko4RE8JIcZ2h/UlS1NMWevBNzPvd3aI/g8Z6BXSX0pxpBCg2W4z9NyILGAYSBtJXWCiXHwgIjh/0EffZAEwBelJ2arQtGennCagRDpIBlAIfWbPULMSoI2ZE4/seuGzCNC0D77tIEkeBLTJIoCDKL3Qd/oG0bHZSAIaPHh/oI7Ig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZEZ8spLu7lD7q0/82UEsCt/f9GgWoYbpYbRFgi3x4sg=;
- b=nBlq67HmABcP8wWBg8Fq2kZRO6uZ8CxiboP5tVaAQLHUQHc7ZZCbKzZQFcLlseqr6bZTrY4HHjtClxJ770SnEjeDTICM9UODOpt2e9QKfgDkHGXxU/jkmmf3N8PYFPFD/0vXXRaIlkvLP0Vk5j84DH85eGZ/kTCUi89FItlmzVUDbmmqdrh+jGWHNvCTGmSb+wMhzaX95OvHT8+RQ9hhdCkQZ20lCnx/x66gQ/JbWKEr2x1doR0jzXAHNUyEAhwHeIUPtLbvgWCizpTAMt53ZbSVUgOvFrK31j4Vw0QdaxfHjLaf0X84qPBXXrwfGjUYSrrhrDgoe2Kn5+Gt07w0/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=intel.onmicrosoft.com;
- s=selector2-intel-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZEZ8spLu7lD7q0/82UEsCt/f9GgWoYbpYbRFgi3x4sg=;
- b=krPqs5fbr+nBF0zTLm70U5phTNVqhEKf8RrLzGA6AezGtqOJ6rkmRWDJo1/0756aCRFhUIFjie3QjBvTbBQpH4kHVXGdhVzR53sB6ACv/BKUAyiqg8uIExVmSOcEuAbo3AGlxgJtIEjlwqck3GdtUFXnLGNnC4LKR5zXZh8fBfE=
-Received: from BL0PR11MB2946.namprd11.prod.outlook.com (20.177.204.15) by
- BL0PR11MB3140.namprd11.prod.outlook.com (20.177.147.218) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2729.25; Fri, 14 Feb 2020 17:07:54 +0000
-Received: from BL0PR11MB2946.namprd11.prod.outlook.com
- ([fe80::38d7:a675:2790:563d]) by BL0PR11MB2946.namprd11.prod.outlook.com
- ([fe80::38d7:a675:2790:563d%7]) with mapi id 15.20.2729.025; Fri, 14 Feb 2020
- 17:07:54 +0000
-From:   "Kaneda, Erik" <erik.kaneda@intel.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-CC:     "lenb@kernel.org" <lenb@kernel.org>,
-        "Moore, Robert" <robert.moore@intel.com>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "devel@acpica.org" <devel@acpica.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH] ACPICA: Fix a typo in acuuid.h
-Thread-Topic: [PATCH] ACPICA: Fix a typo in acuuid.h
-Thread-Index: AQHV4wBKlXQSDH021EqG6SYoIQmOdagadaCAgAB2gdA=
-Date:   Fri, 14 Feb 2020 17:07:53 +0000
-Message-ID: <BL0PR11MB29466C25466F5A88B4D4F5B9F0150@BL0PR11MB2946.namprd11.prod.outlook.com>
-References: <20200214063003.29741-1-christophe.jaillet@wanadoo.fr>
- <2712088.SaWAGPlJqS@kreacher>
-In-Reply-To: <2712088.SaWAGPlJqS@kreacher>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiM2ZkMjYzOTktMmRlOS00ZGYyLWFkMTEtNTlmMzc4ZTBhYjVlIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiOCsxbldrMEtsbkZCS2N6c2o4dXpvQ2ZWYXBERkdvb3hzTFRjeFwvdERKK1lnZjNESmZcLzNoZ29ObUt4emhYK0hQIn0=
-dlp-version: 11.2.0.6
-dlp-product: dlpe-windows
-x-ctpclassification: CTP_NT
-dlp-reaction: no-action
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=erik.kaneda@intel.com; 
-x-originating-ip: [134.134.136.216]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 4e34d774-fe52-424d-14d2-08d7b1706e55
-x-ms-traffictypediagnostic: BL0PR11MB3140:
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BL0PR11MB3140271898AA50F2DCAF4ACBF0150@BL0PR11MB3140.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5797;
-x-forefront-prvs: 03137AC81E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(376002)(136003)(39860400002)(346002)(199004)(189003)(5660300002)(2906002)(8936002)(52536014)(55016002)(81166006)(81156014)(8676002)(9686003)(4326008)(478600001)(316002)(76116006)(66476007)(66556008)(66446008)(86362001)(110136005)(53546011)(6506007)(54906003)(7696005)(26005)(186003)(33656002)(66946007)(71200400001)(64756008);DIR:OUT;SFP:1102;SCL:1;SRVR:BL0PR11MB3140;H:BL0PR11MB2946.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: FFkLlVRiS2mqdsm/kBimBhGAxdiKO6ziUYt3eD3K/46u1xTkmM+lCskNZAP4J3If8zJ4tLFMWCWBVmhlt0Pyh4XHk5j2QGmQIcboeIYPDMFGJxpg0bKeMkGlEyKc6ZTrMloknxRKBpQXWs2k6eroiOieJDiLEBhx/VFykj6iTu27VENd4S84Nunqyj5TUKZmyNy3NEC5qT7v8cWK39rI6u+YtANvQkq9YyuXzN3fDPILd5D26emeFA3mXyNVEv5gRb0zXGMG0PJkaAPCqF8Mha6WHgVFvWuBBiR1sjXwgDeh+viGQLrz8MhrwdWVi4fJsO2AR8jVg2xg1P0IAKZXLXJrz/R/JdvsqnqTq7pAxMGHfzHEES7f1DNBCgndx80Ii1Y89ZKmhy7n3sNxsOKsXWZwdVU65+ZtJablgwjgP/GXzMXrxrzD8JiuYjesHHrH
-x-ms-exchange-antispam-messagedata: Oy0XSLpY41RHjoXKJ3lSm8zjb+jPTVFFBmj+OKkJRL17U3WlGBDmC0RGPMBgWXbeYQ0v2BPM0Dorijm0U7X37aeB3c1KgyP8tpMhBBklY/M+xLRLzY/ec47DS1Xc1ZXlYTknNyEMgkYy6C+S7oMORA==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S2392184AbgBNRKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 12:10:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1581700214;
+        bh=QfMZZZE8iLkRO6Le7/kgk0wJeDUjLtxhHfOGmKp7fCw=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=agqCWkLb1dEAG66G+kGI2CqpcZG4HBlJEzVK6IcHnJJWuIk1qKVe2W8rPteYdsY83
+         nv7GPYEIdOmSOlJx5gqlR5wZgXrh6BxClx3yaTvQy8y2L+JDeE5SlOv3neeAABh8zO
+         y9eYWfcOOVRr5puSLzhN0KS/nTeSD2L4jRr/9MO4=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from longitude ([37.201.214.12]) by mail.gmx.com (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M5QFB-1j1p8F0485-001NGO; Fri, 14
+ Feb 2020 18:10:14 +0100
+From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     linux-mtd@lists.infradead.org
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Richard Weinberger <richard@nod.at>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
+        Jaskaran Singh <jaskaransingh7654321@gmail.com>,
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        "Tobin C. Harding" <tobin@kernel.org>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 1/4] MAINTAINERS: Add ubifs-authentication.rst to UBIFS
+Date:   Fri, 14 Feb 2020 18:08:04 +0100
+Message-Id: <20200214170833.25803-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e34d774-fe52-424d-14d2-08d7b1706e55
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Feb 2020 17:07:53.9728
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: q7m/16jxu82V2txTI6HkzWro7/x0iW27iDe0VrGxWBETkE/8YyL4u8h3BA3zjJ/P9gkGDoS6zHApBCvFdxSkXw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR11MB3140
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:4MCcuiTA+4OPSM3Khcu3EL2aDxPAp3zTVupIPjC90X9RQGUkVOs
+ uMI+525Oc9Wtnd4Y7RZqaPb3me46yb5oYGh92ughm/Ef0GzNXL9mslena/+M5vp++nMqu0n
+ yOb8j4bdQ5BeKrXbUsV5nz2n+ptNfGMleCVTiRLWw9nTSapl8gA03Q6FQUo5MzxyGYv2TEF
+ l0jVAUdvAXkq7LEraBCOg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:3MsNYlqPH8I=:IlWg6t7ydMVoc840+QnQk+
+ lx/V9JCMLQnGkjg/lldasehdjtn6/4ZJHE5kweFmd3qhJM54o19eDjEn3xFB4nAg3/OAHfsfb
+ QuuqD3YuL8xXlyey1Huhulkor98HIiS2Bf/4q8rE4nUndc3kEDiMhfAk7iSdmj3GOO1gdFZ/t
+ qiDRoNusmmPHTZkB7oqtelDINg6x0sY5b22YVte39ZWjM0t1MbkIZzKA+8r/VsFCRZLKyIhoI
+ k56F3oOjse18f55Op8q9oLHrfH7VHODqOnvlVMfoJOQoCuc4maBRBrHEFLgcCyrz5m4cHUycC
+ f3jh6TZPI1r5l/XpEr64sVi5yrHeMaLTYvJW29E2OO3OTbWvtvhY1DS369m/ZAvH6/8A6DkNU
+ +52zRX2SSpM64CdFUn2lMr/wpog5xlJb/rLz3yYiF5jJVcG2U/ysPa/pryVYWPjJibl3c2HpW
+ 3csgZ4VANY7YJxHrviVCw54qNDrkWYUjIuz4/drVcl1fgB17fd8sxBK/ORLyBb4q8mOFLHLQe
+ AHBFzCg5qdm/gf1FHrk18RuQxlcgZjuHrDbSGEoAB9BsQ46eoiBUzMWif1OtROJ83MKHATPcb
+ OBaoUlp+0yrH7L8xOdmgpH5Bb8MWCVehFZXLfxZ0Mivdt2NoeWS4o9JxeO5EbsqB2FOdNOHOR
+ x0KE37ANBy0m+vIvZtspCo8ZDxLfzWJFWnHfsNx11JXlMB4HjN9Uj4cxzWiUpexBSNhnO/UQy
+ zLHRYQ6Z99SaWud4gqK2K0tv/mEIwF9KTnq9597IXXkJT4zuB9k2MwIkIjWN6i6uy33ohR0ph
+ qWkyKw0WktL2OnySMiWBtqCg6cIQIg4is/C/TlMwnWzApvGHXnNMsL4OYLUPLoW1Br3jeo2Q4
+ xi4tddyopzJnkylLqHXNqIkqFJhdznpioeZQmi4mY6EuLLyyasf4vK6QPMKAteJ3wuk7i3/i5
+ bFavD4D/9rgqmbTayhfzWDq/UAgPx6qXlwppkXu2szRo42AzWThiOL54IiSlFxzRzp4feIm1i
+ 9RXLSFZnHnMshDRvFfvsMRIgwUDeD4axfPya5SNs6TBdCOnZ8McUKXt/no4tYi5aWzYVnxQDz
+ h0netnFFqnCeTCNwWDGqTU+/PZeqEdIT99LePdxK0LIWZtZx+ODrHqloF09nCJhWKknAZ/dOz
+ GWK49YVh9CbhHvxREHneX2H7r/uSXNWUWZams4848oFrfVFN5tj2OQQnVG+/1jfBsyPr6QUCZ
+ TKjaaORLz+ayZWEmB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+=2D--
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 38fe2f3f7b6f..6a5365f10aa5 100644
+=2D-- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17047,6 +17047,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/g=
+it/rw/ubifs.git fixes
+ W:	http://www.linux-mtd.infradead.org/doc/ubifs.html
+ S:	Supported
+ F:	Documentation/filesystems/ubifs.txt
++F:	Documentation/filesystems/ubifs-authentication.rst
+ F:	fs/ubifs/
 
-> -----Original Message-----
-> From: linux-acpi-owner@vger.kernel.org <linux-acpi-
-> owner@vger.kernel.org> On Behalf Of Rafael J. Wysocki
-> Sent: Friday, February 14, 2020 2:02 AM
-> To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>; Kaneda, Erik
-> <erik.kaneda@intel.com>
-> Cc: lenb@kernel.org; Moore, Robert <robert.moore@intel.com>; linux-
-> acpi@vger.kernel.org; devel@acpica.org; linux-kernel@vger.kernel.org;
-> kernel-janitors@vger.kernel.org
-> Subject: Re: [PATCH] ACPICA: Fix a typo in acuuid.h
->=20
-> On Friday, February 14, 2020 7:30:03 AM CET Christophe JAILLET wrote:
-> > The comment related to the ending of the include guard should be
-> > related to __ACUUID_H__, not __AUUID_H__ (i.e. 'C' is missing).
-> >
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->=20
-> Erik, please route this through the upstream.
-
-Thanks for your patch!
-
-I'll add it to our next release (in March)
-
-Erik
->=20
-> Thanks!
->=20
-> > ---
-> >  include/acpi/acuuid.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/include/acpi/acuuid.h b/include/acpi/acuuid.h index
-> > 9dd4689a39cf..9e1367b19069 100644
-> > --- a/include/acpi/acuuid.h
-> > +++ b/include/acpi/acuuid.h
-> > @@ -57,4 +57,4 @@
-> >  #define UUID_THERMAL_EXTENSIONS         "14d399cd-7a27-4b18-8fb4-
-> 7cb7b9f4e500"
-> >  #define UUID_DEVICE_PROPERTIES          "daffd814-6eba-4d8c-8a91-
-> bc9bbf4aa301"
-> >
-> > -#endif				/* __AUUID_H__ */
-> > +#endif				/* __ACUUID_H__ */
-> >
->=20
->=20
->=20
+ UCLINUX (M68KNOMMU AND COLDFIRE)
+=2D-
+2.20.1
 
