@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7072C15EF16
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:45:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF71E15EF35
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:46:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389396AbgBNQCf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:02:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48590 "EHLO mail.kernel.org"
+        id S2389460AbgBNRqY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:46:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389315AbgBNQCU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:02:20 -0500
+        id S2389347AbgBNQC0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:02:26 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84AE724654;
-        Fri, 14 Feb 2020 16:02:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 17BE1206CC;
+        Fri, 14 Feb 2020 16:02:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696139;
-        bh=l0hZUeH00gU3OBzjLve5jeLfpNyZ2VtodXzuUbsTYv8=;
+        s=default; t=1581696146;
+        bh=MkrSzaUpyiXGWZsDILQOUpHYbqHimewf164Sb99xzcI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fs9yzkMJyqRtTFIYG91Pg369PFRar4DqMrr/8JBVNV6w65msbdfgBPipygNM6Loqq
-         sVo/kYlX9hsDXAj9gyS9qcwozE4Kv9SHNh7aXeExW2wReuDQPb8iMVuGXmBX5YaGG/
-         F9uwt0lMkaGseaGxC76Ce8TGx+z6kICXSiVcDakc=
+        b=ab8ZJ8WrZ5zWSksCifvpH7fuJ2WhEcRvv16/soVuXlnKKlWgc1tpHoyBFFs231e41
+         gt+OzOlKvAw+HvjIqb1qfrM7cHKX2re+xosQjDiqjZoqxUB82+ii96V6nPC1BUDlns
+         inEQfBlHUj6ghDlsq1O4IddpbConUognLMxocZeI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 021/459] brcmfmac: Fix use after free in brcmf_sdio_readframes()
-Date:   Fri, 14 Feb 2020 10:54:31 -0500
-Message-Id: <20200214160149.11681-21-sashal@kernel.org>
+Cc:     Ritesh Harjani <riteshh@linux.ibm.com>, Jan Kara <jack@suse.cz>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Theodore Ts'o <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>,
+        linux-ext4@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 026/459] ext4: fix ext4_dax_read/write inode locking sequence for IOCB_NOWAIT
+Date:   Fri, 14 Feb 2020 10:54:36 -0500
+Message-Id: <20200214160149.11681-26-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -47,39 +45,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Ritesh Harjani <riteshh@linux.ibm.com>
 
-[ Upstream commit 216b44000ada87a63891a8214c347e05a4aea8fe ]
+[ Upstream commit f629afe3369e9885fd6e9cc7a4f514b6a65cf9e9 ]
 
-The brcmu_pkt_buf_free_skb() function frees "pkt" so it leads to a
-static checker warning:
+Apparently our current rwsem code doesn't like doing the trylock, then
+lock for real scheme.  So change our dax read/write methods to just do the
+trylock for the RWF_NOWAIT case.
+This seems to fix AIM7 regression in some scalable filesystems upto ~25%
+in some cases. Claimed in commit 942491c9e6d6 ("xfs: fix AIM7 regression")
 
-    drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c:1974 brcmf_sdio_readframes()
-    error: dereferencing freed memory 'pkt'
-
-It looks like there was supposed to be a continue after we free "pkt".
-
-Fixes: 4754fceeb9a6 ("brcmfmac: streamline SDIO read frame routine")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Franky Lin <franky.lin@broadcom.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Tested-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
+Link: https://lore.kernel.org/r/20191212055557.11151-2-riteshh@linux.ibm.com
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/ext4/file.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-index 264ad63232f87..1dea0178832ea 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-@@ -1935,6 +1935,7 @@ static uint brcmf_sdio_readframes(struct brcmf_sdio *bus, uint maxframes)
- 					       BRCMF_SDIO_FT_NORMAL)) {
- 				rd->len = 0;
- 				brcmu_pkt_buf_free_skb(pkt);
-+				continue;
- 			}
- 			bus->sdcnt.rx_readahead_cnt++;
- 			if (rd->len != roundup(rd_new.len, 16)) {
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index 8d2bbcc2d8133..fd7ce3573a00a 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -40,9 +40,10 @@ static ssize_t ext4_dax_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	struct inode *inode = file_inode(iocb->ki_filp);
+ 	ssize_t ret;
+ 
+-	if (!inode_trylock_shared(inode)) {
+-		if (iocb->ki_flags & IOCB_NOWAIT)
++	if (iocb->ki_flags & IOCB_NOWAIT) {
++		if (!inode_trylock_shared(inode))
+ 			return -EAGAIN;
++	} else {
+ 		inode_lock_shared(inode);
+ 	}
+ 	/*
+@@ -190,9 +191,10 @@ ext4_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	struct inode *inode = file_inode(iocb->ki_filp);
+ 	ssize_t ret;
+ 
+-	if (!inode_trylock(inode)) {
+-		if (iocb->ki_flags & IOCB_NOWAIT)
++	if (iocb->ki_flags & IOCB_NOWAIT) {
++		if (!inode_trylock(inode))
+ 			return -EAGAIN;
++	} else {
+ 		inode_lock(inode);
+ 	}
+ 	ret = ext4_write_checks(iocb, from);
 -- 
 2.20.1
 
