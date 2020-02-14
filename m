@@ -2,36 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B68415E915
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:05:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3231715E89B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:01:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404261AbgBNREp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:04:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45532 "EHLO mail.kernel.org"
+        id S2392585AbgBNQQZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:16:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45610 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404121AbgBNQPX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:15:23 -0500
+        id S2403904AbgBNQPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:15:25 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20CB5246EC;
-        Fri, 14 Feb 2020 16:15:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DF94246ED;
+        Fri, 14 Feb 2020 16:15:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696922;
-        bh=a19AocT5OwzaL6SK3b8YY7n+RaCFIPhwOtHuy0P9eXw=;
+        s=default; t=1581696925;
+        bh=YIGZT7Mw55e964DtErPouRe21GxqEoy89dkTezE1Oy8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tY/jyqsHV70Fhhd1JXKUU3mA6ZihgaVRSx1oeA/aoki/ptr0ZY5H3wzYodc/hax8a
-         SV584q0q5mTjEdXRMUjWWVoattrxSC+eEOyU2kdbjYh3cFBfKAg2tnVubkqF63yNEM
-         kJqDIfkFnVzmMCrgE1rOAGY+p7xOdxpL5v1b9oGc=
+        b=Puq/pAZQuwHp3YxZWZDikmu7SUefVZBtKy4bsrmQjAkFoWxoPHDMcMcLsz9TpCJ9c
+         h8wudm0KikOOAcEyYjVOQyOC0ZzRdGfaPxVtyHiAPGYPkbOtcpoVL0UG7+Cg+snMOl
+         lZ9mYmPXwkJNW6kFYeO2t0Jo1MWRHo68op7LbblU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     YueHaibing <yuehaibing@huawei.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Sasha Levin <sashal@kernel.org>,
+Cc:     Ben Skeggs <bskeggs@redhat.com>, Sasha Levin <sashal@kernel.org>,
         dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 170/252] drm/nouveau: Fix copy-paste error in nouveau_fence_wait_uevent_handler
-Date:   Fri, 14 Feb 2020 11:10:25 -0500
-Message-Id: <20200214161147.15842-170-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 172/252] drm/nouveau/fault/gv100-: fix memory leak on module unload
+Date:   Fri, 14 Feb 2020 11:10:27 -0500
+Message-Id: <20200214161147.15842-172-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -44,34 +42,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Ben Skeggs <bskeggs@redhat.com>
 
-[ Upstream commit 1eb013473bff5f95b6fe1ca4dd7deda47257b9c2 ]
+[ Upstream commit 633cc9beeb6f9b5fa2f17a2a9d0e2790cb6c3de7 ]
 
-Like other cases, it should use rcu protected 'chan' rather
-than 'fence->channel' in nouveau_fence_wait_uevent_handler.
-
-Fixes: 0ec5f02f0e2c ("drm/nouveau: prevent stale fence->channel pointers, and protect with rcu")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/nouveau/nouveau_fence.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/nouveau/nvkm/subdev/fault/base.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.c b/drivers/gpu/drm/nouveau/nouveau_fence.c
-index 412d49bc6e560..ba3883aed4567 100644
---- a/drivers/gpu/drm/nouveau/nouveau_fence.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_fence.c
-@@ -157,7 +157,7 @@ nouveau_fence_wait_uevent_handler(struct nvif_notify *notify)
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/fault/base.c b/drivers/gpu/drm/nouveau/nvkm/subdev/fault/base.c
+index 16ad91c91a7be..f18ce6ff5b7ed 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/fault/base.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/fault/base.c
+@@ -150,6 +150,7 @@ nvkm_fault_dtor(struct nvkm_subdev *subdev)
+ 	struct nvkm_fault *fault = nvkm_fault(subdev);
+ 	int i;
  
- 		fence = list_entry(fctx->pending.next, typeof(*fence), head);
- 		chan = rcu_dereference_protected(fence->channel, lockdep_is_held(&fctx->lock));
--		if (nouveau_fence_update(fence->channel, fctx))
-+		if (nouveau_fence_update(chan, fctx))
- 			ret = NVIF_NOTIFY_DROP;
- 	}
- 	spin_unlock_irqrestore(&fctx->lock, flags);
++	nvkm_notify_fini(&fault->nrpfb);
+ 	nvkm_event_fini(&fault->event);
+ 
+ 	for (i = 0; i < fault->buffer_nr; i++) {
 -- 
 2.20.1
 
