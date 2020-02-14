@@ -2,106 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1389115F853
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 21:59:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A94A315F892
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 22:17:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388053AbgBNU7S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 15:59:18 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:43710 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726191AbgBNU7S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 15:59:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581713957;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         references:references; bh=xlGrvI1xaS/R+PG6hF0vkvw8F7V03CIoauMXv5nvLHg=;
-        b=MwPOXPqspMVHF3nvjOggH+o338KiNVKPuTbnp0hJnNXSFAznMWXCHkQUmO238IAP9E17dj
-        WnukqwIS4qU7FZx4R/SQwRI7OI5dkZy9e4DI4yORCkeFtGdNWxnsbgRfNhXx33ZgHzgU2V
-        umalY155zfM3tLm03rWIpDrFUkPjIP8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-115-GvUqMV_VNn-dvokEBCfy1w-1; Fri, 14 Feb 2020 15:59:13 -0500
-X-MC-Unique: GvUqMV_VNn-dvokEBCfy1w-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2389139AbgBNVRC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 16:17:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50868 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728123AbgBNVRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 16:17:02 -0500
+Received: from localhost (unknown [65.119.211.164])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2F188100550E;
-        Fri, 14 Feb 2020 20:59:11 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id EA2628AC42;
-        Fri, 14 Feb 2020 20:59:09 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH v2 1/4] mm/memremap_pages: Introduce memremap_compat_align()
-References: <158155489850.3343782.2687127373754434980.stgit@dwillia2-desk3.amr.corp.intel.com>
-        <158155490379.3343782.10305190793306743949.stgit@dwillia2-desk3.amr.corp.intel.com>
-        <x498sl677cf.fsf@segfault.boston.devel.redhat.com>
-        <CAPcyv4i8xNEsdX=8c2+ehf24U2AFcc-sKmAPS9UoVvm8z0aRng@mail.gmail.com>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Fri, 14 Feb 2020 15:59:08 -0500
-Message-ID: <x49k14odgwz.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C2ED217F4;
+        Fri, 14 Feb 2020 21:17:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581715021;
+        bh=BfealBM6LSQ9+L9BIzxBQnxqU7jdKmkvRz0UMK4kwHM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zWX5D07Gb1jxpv4IXJ4BPqyHcvICOiP0zEImHLneuFL57tCUH73/fPJWhej4DucYg
+         awalMAyOeCGpAcneB5unXDDY9Iljyv7abKcEfPLFBwj5kS/JPg8wlydlMu2IGXpiWu
+         m3bJ+oCh4U293zdo/P2kRMjm7IWGxipSuRGgniU0=
+Date:   Fri, 14 Feb 2020 15:41:56 -0500
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Borislav Petkov <bp@alien8.de>, stable@vger.kernel.org,
+        X86 ML <x86@kernel.org>, Yazen Ghannam <Yazen.Ghannam@amd.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/mce/amd: Fix kobject lifetime
+Message-ID: <20200214204156.GA4086224@kroah.com>
+References: <20200214082801.13836-1-bp@alien8.de>
+ <20200214083230.GA13395@zn.tnic>
+ <20200214151727.GA3959278@kroah.com>
+ <20200214201143.GQ13395@zn.tnic>
+ <87a75kud8o.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87a75kud8o.fsf@nanos.tec.linutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dan Williams <dan.j.williams@intel.com> writes:
+On Fri, Feb 14, 2020 at 09:26:31PM +0100, Thomas Gleixner wrote:
+> Borislav Petkov <bp@alien8.de> writes:
+> 
+> > On Fri, Feb 14, 2020 at 07:17:27AM -0800, Greg KH wrote:
+> >> Does not bother me at all, it's fine to see stuff come by that will end
+> >> up in future trees, it's not noise at all.  So no need to suppress
+> >> stable@vger if you don't want to.
+> >
+> > Ok, but what about your formletter which you send to people explaining
+> > this is not how you should send a patch to stable?
+> >
+> > Like this, for example:
+> >
+> > https://lkml.kernel.org/r/20200116100925.GA157179@kroah.com
+> 
+> This once Cc'ed stable but lacked a Cc: stable tag in the changelog.
 
-> On Thu, Feb 13, 2020 at 8:58 AM Jeff Moyer <jmoyer@redhat.com> wrote:
-
->> I have just a couple of questions.
->>
->> First, can you please add a comment above the generic implementation of
->> memremap_compat_align describing its purpose, and why a platform might
->> want to override it?
->
-> Sure, how about:
->
-> /*
->  * The memremap() and memremap_pages() interfaces are alternately used
->  * to map persistent memory namespaces. These interfaces place different
->  * constraints on the alignment and size of the mapping (namespace).
->  * memremap() can map individual PAGE_SIZE pages. memremap_pages() can
->  * only map subsections (2MB), and at least one architecture (PowerPC)
->  * the minimum mapping granularity of memremap_pages() is 16MB.
->  *
->  * The role of memremap_compat_align() is to communicate the minimum
->  * arch supported alignment of a namespace such that it can freely
->  * switch modes without violating the arch constraint. Namely, do not
->  * allow a namespace to be PAGE_SIZE aligned since that namespace may be
->  * reconfigured into a mode that requires SUBSECTION_SIZE alignment.
->  */
-
-Well, if we modify the x86 variant to be PAGE_SIZE, I think that text
-won't work.  How about:
-
-/*
- * memremap_compat_align should return the minimum alignment for
- * mapping memory via memremap() and memremap_pages().  For x86, this
- * is the system PAGE_SIZE.  Other architectures may impose different
- * restrictions, as is seen on powerpc where the minimum alignment is
- * tied to the linear mapping page size.
- *
- * When creating persistent memory namespaces, the alignment is forced
- * to the least common denominator (MEMREMAP_COMPAT_ALIGN_MAX,
- * currently 16MB).  However, older kernels did not enforce this
- * behavior, so we allow mapping namespaces with smaller alignments,
- * so long as the platform supports it.  See nvdimm_namespace_common_probe.
- */
-
--Jeff
-
+Exactly :)
