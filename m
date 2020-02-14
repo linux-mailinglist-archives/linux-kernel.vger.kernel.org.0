@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B63915DB1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:37:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 043DD15DB19
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:37:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387681AbgBNPhB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:37:01 -0500
-Received: from foss.arm.com ([217.140.110.172]:34796 "EHLO foss.arm.com"
+        id S2387671AbgBNPgx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:36:53 -0500
+Received: from foss.arm.com ([217.140.110.172]:34802 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387458AbgBNPgg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:36:36 -0500
+        id S2387524AbgBNPgh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:36:37 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6ECF7101E;
-        Fri, 14 Feb 2020 07:36:35 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A271C113E;
+        Fri, 14 Feb 2020 07:36:36 -0800 (PST)
 Received: from e120937-lin.cambridge.arm.com (e120937-lin.cambridge.arm.com [10.1.197.50])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6EAB83F68E;
-        Fri, 14 Feb 2020 07:36:34 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A29B03F68E;
+        Fri, 14 Feb 2020 07:36:35 -0800 (PST)
 From:   Cristian Marussi <cristian.marussi@arm.com>
 To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     sudeep.holla@arm.com, lukasz.luba@arm.com,
         james.quinlan@broadcom.com, Jonathan.Cameron@Huawei.com,
         cristian.marussi@arm.com
-Subject: [RFC PATCH v2 08/13] firmware: arm_scmi: Enable notification core
-Date:   Fri, 14 Feb 2020 15:35:30 +0000
-Message-Id: <20200214153535.32046-9-cristian.marussi@arm.com>
+Subject: [RFC PATCH v2 09/13] firmware: arm_scmi: Add Power notifications support
+Date:   Fri, 14 Feb 2020 15:35:31 +0000
+Message-Id: <20200214153535.32046-10-cristian.marussi@arm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200214153535.32046-1-cristian.marussi@arm.com>
 References: <20200214153535.32046-1-cristian.marussi@arm.com>
@@ -33,109 +33,222 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Initialize and enable SCMI Notifications core support during bus/driver
-init and probe phases, so that protocols can start registering their
-supported events during their initialization, and later users can start
-enrolling their callbacks for the subset of events their interested in.
+Make SCMI Power protocol register with the notification core.
 
 Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 ---
 V1 --> V2
-- added timestamping
-- moved notification init/exit and using devres
+- simplified .set_notify_enabled() implementation moving the ALL_SRCIDs
+  logic out of protocol. ALL_SRCIDs logic is now in charge of the
+  notification core, together with proper reference counting of enables
+- switched to devres protocol-registration
 ---
- drivers/firmware/arm_scmi/bus.c    | 11 +++++++++++
- drivers/firmware/arm_scmi/driver.c | 10 ++++++++++
- 2 files changed, 21 insertions(+)
+ drivers/firmware/arm_scmi/power.c | 127 +++++++++++++++++++++++++++++-
+ include/linux/scmi_protocol.h     |  15 ++++
+ 2 files changed, 141 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/firmware/arm_scmi/bus.c b/drivers/firmware/arm_scmi/bus.c
-index db55c43a2cbd..0761f306982f 100644
---- a/drivers/firmware/arm_scmi/bus.c
-+++ b/drivers/firmware/arm_scmi/bus.c
-@@ -14,6 +14,7 @@
- #include <linux/device.h>
+diff --git a/drivers/firmware/arm_scmi/power.c b/drivers/firmware/arm_scmi/power.c
+index cf7f0312381b..8bd073bcdf1c 100644
+--- a/drivers/firmware/arm_scmi/power.c
++++ b/drivers/firmware/arm_scmi/power.c
+@@ -6,6 +6,7 @@
+  */
  
  #include "common.h"
 +#include "notify.h"
  
- static DEFINE_IDA(scmi_bus_id);
- static DEFINE_IDR(scmi_protocols);
-@@ -90,11 +91,21 @@ static int scmi_dev_probe(struct device *dev)
- 	return scmi_drv->probe(scmi_dev);
- }
+ enum scmi_power_protocol_cmd {
+ 	POWER_DOMAIN_ATTRIBUTES = 0x3,
+@@ -48,6 +49,12 @@ struct scmi_power_state_notify {
+ 	__le32 notify_enable;
+ };
  
-+static inline void scmi_protocol_events_cleanup(struct scmi_device *scmi_dev)
++struct scmi_power_state_notify_payld {
++	__le32 agent_id;
++	__le32 domain_id;
++	__le32 power_state;
++};
++
+ struct power_dom_info {
+ 	bool state_set_sync;
+ 	bool state_set_async;
+@@ -61,6 +68,14 @@ struct scmi_power_info {
+ 	u64 stats_addr;
+ 	u32 stats_size;
+ 	struct power_dom_info *dom_info;
++	const struct scmi_handle *handle;
++};
++
++static struct scmi_power_info *pinfo;
++
++static enum scmi_power_protocol_cmd evt_2_cmd[] = {
++	POWER_STATE_NOTIFY,
++	POWER_STATE_CHANGE_REQUESTED_NOTIFY,
+ };
+ 
+ static int scmi_power_attributes_get(const struct scmi_handle *handle,
+@@ -186,11 +201,114 @@ static struct scmi_power_ops power_ops = {
+ 	.state_get = scmi_power_state_get,
+ };
+ 
++static int scmi_power_request_notify(const struct scmi_handle *handle,
++				     u32 domain, int message_id, bool enable)
 +{
-+	if (scmi_stop_and_flush_protocol_events(scmi_dev->protocol_id))
-+		scmi_unregister_protocol_events(scmi_dev->handle->dev,
-+						scmi_dev->protocol_id);
++	int ret;
++	struct scmi_xfer *t;
++	struct scmi_power_state_notify *notify;
++
++	ret = scmi_xfer_get_init(handle, message_id, SCMI_PROTOCOL_POWER,
++				 sizeof(*notify), 0, &t);
++	if (ret)
++		return ret;
++
++	notify = t->tx.buf;
++	notify->domain = cpu_to_le32(domain);
++	notify->notify_enable = enable ? cpu_to_le32(BIT(0)) : 0;
++
++	ret = scmi_do_xfer(handle, t);
++
++	scmi_xfer_put(handle, t);
++	return ret;
 +}
 +
- static int scmi_dev_remove(struct device *dev)
++static bool scmi_power_set_notify_enabled(u8 evt_id, u32 src_id, bool enable)
++{
++	int ret, cmd_id;
++
++	cmd_id = MAP_EVT_TO_ENABLE_CMD(evt_id, evt_2_cmd);
++	if (cmd_id < 0)
++		return false;
++
++	ret = scmi_power_request_notify(pinfo->handle, src_id, cmd_id, enable);
++	if (ret)
++		pr_warn("SCMI Notifications - Proto:%X - FAIL_ENABLE - evt[%X] dom[%d] - ret:%d\n",
++				SCMI_PROTOCOL_POWER, evt_id, src_id, ret);
++
++	return !ret ? true : false;
++}
++
++static void *scmi_power_fill_custom_report(u8 evt_id, u64 timestamp,
++					   const void *payld, size_t payld_sz,
++					   void *report, u32 *src_id)
++{
++	void *rep = NULL;
++
++	switch (evt_id) {
++	case POWER_STATE_CHANGED:
++	{
++		const struct scmi_power_state_notify_payld *p = payld;
++		struct scmi_power_state_changed_report *r = report;
++
++		if (sizeof(*p) != payld_sz)
++			break;
++
++		r->timestamp = timestamp;
++		r->agent_id = le32_to_cpu(p->agent_id);
++		r->domain_id = le32_to_cpu(p->domain_id);
++		r->power_state = le32_to_cpu(p->power_state);
++		*src_id = r->domain_id;
++		rep = r;
++		break;
++	}
++	case POWER_STATE_CHANGE_REQUESTED:
++	{
++		const struct scmi_power_state_notify_payld *p = payld;
++		struct scmi_power_state_change_requested_report *r = report;
++
++		if (sizeof(*p) != payld_sz)
++			break;
++
++		r->timestamp = timestamp;
++		r->agent_id = le32_to_cpu(p->agent_id);
++		r->domain_id = le32_to_cpu(p->domain_id);
++		r->power_state = le32_to_cpu(p->power_state);
++		*src_id = r->domain_id;
++		rep = r;
++		break;
++	}
++	default:
++		break;
++	}
++
++	return rep;
++}
++
++static const struct scmi_event power_events[] = {
++	{
++		.evt_id = POWER_STATE_CHANGED,
++		.max_payld_sz = 12,
++		.max_report_sz =
++			sizeof(struct scmi_power_state_changed_report),
++	},
++	{
++		.evt_id = POWER_STATE_CHANGE_REQUESTED,
++		.max_payld_sz = 12,
++		.max_report_sz =
++			sizeof(struct scmi_power_state_change_requested_report),
++	},
++};
++
++static const struct scmi_protocol_event_ops power_event_ops = {
++	.set_notify_enabled = scmi_power_set_notify_enabled,
++	.fill_custom_report = scmi_power_fill_custom_report,
++};
++
+ static int scmi_power_protocol_init(struct scmi_handle *handle)
  {
- 	struct scmi_driver *scmi_drv = to_scmi_driver(dev->driver);
- 	struct scmi_device *scmi_dev = to_scmi_dev(dev);
+ 	int domain;
+ 	u32 version;
+-	struct scmi_power_info *pinfo;
  
-+	/* Release events resources allocated by scmi_protocol_init() */
-+	scmi_protocol_events_cleanup(scmi_dev);
+ 	scmi_version_get(handle, SCMI_PROTOCOL_POWER, &version);
+ 
+@@ -214,7 +332,14 @@ static int scmi_power_protocol_init(struct scmi_handle *handle)
+ 		scmi_power_domain_attributes_get(handle, domain, dom);
+ 	}
+ 
++	scmi_register_protocol_events(handle->dev,
++				      SCMI_PROTOCOL_POWER, PAGE_SIZE,
++				      &power_event_ops, power_events,
++				      ARRAY_SIZE(power_events),
++				      pinfo->num_domains);
 +
- 	if (scmi_drv->remove)
- 		scmi_drv->remove(scmi_dev);
+ 	pinfo->version = version;
++	pinfo->handle = handle;
+ 	handle->power_ops = &power_ops;
+ 	handle->power_priv = pinfo;
  
-diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-index 868cc36a07c9..dc93d608c43c 100644
---- a/drivers/firmware/arm_scmi/driver.c
-+++ b/drivers/firmware/arm_scmi/driver.c
-@@ -26,6 +26,7 @@
- #include <linux/slab.h>
+diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
+index f675f2aa7d87..3ec9f1ffa1bf 100644
+--- a/include/linux/scmi_protocol.h
++++ b/include/linux/scmi_protocol.h
+@@ -9,6 +9,7 @@
+ #define _LINUX_SCMI_PROTOCOL_H
  
- #include "common.h"
-+#include "notify.h"
+ #include <linux/device.h>
++#include <linux/ktime.h>
+ #include <linux/notifier.h>
+ #include <linux/types.h>
  
- #define CREATE_TRACE_POINTS
- #include <trace/events/scmi.h>
-@@ -204,11 +205,13 @@ __scmi_xfer_put(struct scmi_xfers_info *minfo, struct scmi_xfer *xfer)
+@@ -381,4 +382,18 @@ int scmi_register_event_notifier(u8 proto_id, u8 evt_id, u32 *src_id,
+ int scmi_unregister_event_notifier(u8 proto_id, u8 evt_id, u32 *src_id,
+ 				   struct notifier_block *nb);
  
- static void scmi_handle_notification(struct scmi_chan_info *cinfo, u32 msg_hdr)
- {
-+	u64 ts;
- 	struct scmi_xfer *xfer;
- 	struct device *dev = cinfo->dev;
- 	struct scmi_info *info = handle_to_scmi_info(cinfo->handle);
- 	struct scmi_xfers_info *minfo = &info->rx_minfo;
- 
-+	ts = ktime_get_boottime_ns();
- 	xfer = scmi_xfer_get(cinfo->handle, minfo);
- 	if (IS_ERR(xfer)) {
- 		dev_err(dev, "failed to get free message slot (%ld)\n",
-@@ -221,6 +224,8 @@ static void scmi_handle_notification(struct scmi_chan_info *cinfo, u32 msg_hdr)
- 	scmi_dump_header_dbg(dev, &xfer->hdr);
- 	info->desc->ops->fetch_notification(cinfo, info->desc->max_msg_size,
- 					    xfer);
-+	scmi_notify(xfer->hdr.protocol_id, xfer->hdr.id, xfer->rx.buf,
-+		    xfer->rx.len, ts);
- 
- 	trace_scmi_rx_done(xfer->transfer_id, xfer->hdr.id,
- 			   xfer->hdr.protocol_id, xfer->hdr.seq,
-@@ -771,6 +776,9 @@ static int scmi_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	if (scmi_notification_init(handle))
-+		dev_err(dev, "SCMI Notifications NOT available.\n");
++struct scmi_power_state_changed_report {
++	ktime_t	timestamp;
++	u32	agent_id;
++	u32	domain_id;
++	u32	power_state;
++};
 +
- 	ret = scmi_base_protocol_init(handle);
- 	if (ret) {
- 		dev_err(dev, "unable to communicate with SCMI(%d)\n", ret);
-@@ -813,6 +821,8 @@ static int scmi_remove(struct platform_device *pdev)
- 	struct scmi_info *info = platform_get_drvdata(pdev);
- 	struct idr *idr = &info->tx_idr;
- 
-+	scmi_notification_exit();
++struct scmi_power_state_change_requested_report {
++	ktime_t	timestamp;
++	u32	agent_id;
++	u32	domain_id;
++	u32	power_state;
++};
 +
- 	mutex_lock(&scmi_list_mutex);
- 	if (info->users)
- 		ret = -EBUSY;
+ #endif /* _LINUX_SCMI_PROTOCOL_H */
 -- 
 2.17.1
 
