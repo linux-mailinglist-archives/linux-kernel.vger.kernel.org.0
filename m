@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9084515F683
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 20:13:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 109B015F684
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 20:13:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388577AbgBNTLv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 14:11:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49424 "EHLO mail.kernel.org"
+        id S2388613AbgBNTLz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 14:11:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49510 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388461AbgBNTLq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 14:11:46 -0500
+        id S2388569AbgBNTLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 14:11:51 -0500
 Received: from quaco.ghostprotocols.net (187-26-102-114.3g.claro.net.br [187.26.102.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A2EB2467D;
-        Fri, 14 Feb 2020 19:11:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3369E24649;
+        Fri, 14 Feb 2020 19:11:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581707505;
-        bh=WziOVSwWR4FoClBBJCxOlpUCWVSlY61qo9leXE8POe8=;
+        s=default; t=1581707510;
+        bh=uK35ZTwq4k6rLlBzroXkaU+H4RGKwPs5OwU7tbvQRPw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CdZf4x1pKTQViE8p1IhDskHpkmZx9TeUPlbmX4d/vnWxAMFdRiAWZ36KLCs4cxVIv
-         nWrUOoXvDuRFmv1snDgZ1SfJ4KzeUl/z6uS2WcAxylmLylXCaDePB2Jy9+vkuchPrB
-         XVrMOG7JhvJoznqeU5G8+ncj45xA1q1xmVq66O5Y=
+        b=fekAc02FM8g/ipUxCcPkAcwoqfVzd4VMyAoW9n2nLUbU+dal8mINQ2TwWO8ejjQll
+         /6DrmUg69o3lI/PixH7johHOJlTHayFgOh/6f4XuYXHxubNa6NzB5SIASbYH5cp71U
+         eidsEqvSuM6YYkTXN0Y7mU66YuXxx6zx99ZnvZi8=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -35,9 +35,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Michael Petlan <mpetlan@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 07/23] perf maps: Fix map__clone() for struct kmap
-Date:   Fri, 14 Feb 2020 16:10:41 -0300
-Message-Id: <20200214191057.26266-8-acme@kernel.org>
+Subject: [PATCH 08/23] perf maps: Move kmap::kmaps setup to maps__insert()
+Date:   Fri, 14 Feb 2020 16:10:42 -0300
+Message-Id: <20200214191057.26266-9-acme@kernel.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200214191057.26266-1-acme@kernel.org>
 References: <20200214191057.26266-1-acme@kernel.org>
@@ -50,8 +50,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jiri Olsa <jolsa@kernel.org>
 
-The map__clone() function can be called on kernel maps as well, so it
-needs to duplicate the whole kmap data.
+So the kmaps pointer setup is centralized and we do not need to update
+it in all those places (2 current places and few more missing) after
+calling maps__insert().
 
 Reported-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
@@ -61,31 +62,72 @@ Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Michael Petlan <mpetlan@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lore.kernel.org/lkml/20200210143218.24948-4-jolsa@kernel.org
+Link: http://lore.kernel.org/lkml/20200210143218.24948-5-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/map.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ tools/perf/util/machine.c | 13 +------------
+ tools/perf/util/map.c     | 10 ++++++++++
+ 2 files changed, 11 insertions(+), 12 deletions(-)
 
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 0ad026561c7f..fb5c2cd44d30 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -981,7 +981,6 @@ int machine__create_extra_kernel_map(struct machine *machine,
+ 
+ 	kmap = map__kmap(map);
+ 
+-	kmap->kmaps = &machine->kmaps;
+ 	strlcpy(kmap->name, xm->name, KMAP_NAME_LEN);
+ 
+ 	maps__insert(&machine->kmaps, map);
+@@ -1091,9 +1090,6 @@ int __weak machine__create_extra_kernel_maps(struct machine *machine __maybe_unu
+ static int
+ __machine__create_kernel_maps(struct machine *machine, struct dso *kernel)
+ {
+-	struct kmap *kmap;
+-	struct map *map;
+-
+ 	/* In case of renewal the kernel map, destroy previous one */
+ 	machine__destroy_kernel_maps(machine);
+ 
+@@ -1102,14 +1098,7 @@ __machine__create_kernel_maps(struct machine *machine, struct dso *kernel)
+ 		return -1;
+ 
+ 	machine->vmlinux_map->map_ip = machine->vmlinux_map->unmap_ip = identity__map_ip;
+-	map = machine__kernel_map(machine);
+-	kmap = map__kmap(map);
+-	if (!kmap)
+-		return -1;
+-
+-	kmap->kmaps = &machine->kmaps;
+-	maps__insert(&machine->kmaps, map);
+-
++	maps__insert(&machine->kmaps, machine->vmlinux_map);
+ 	return 0;
+ }
+ 
 diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index f67960bedebb..cea05fc9595c 100644
+index cea05fc9595c..a08ca276098e 100644
 --- a/tools/perf/util/map.c
 +++ b/tools/perf/util/map.c
-@@ -375,8 +375,13 @@ struct symbol *map__find_symbol_by_name(struct map *map, const char *name)
+@@ -543,6 +543,16 @@ void maps__insert(struct maps *maps, struct map *map)
+ 	__maps__insert(maps, map);
+ 	++maps->nr_maps;
  
- struct map *map__clone(struct map *from)
- {
--	struct map *map = memdup(from, sizeof(*map));
-+	size_t size = sizeof(struct map);
-+	struct map *map;
++	if (map->dso && map->dso->kernel) {
++		struct kmap *kmap = map__kmap(map);
 +
-+	if (from->dso && from->dso->kernel)
-+		size += sizeof(struct kmap);
- 
-+	map = memdup(from, size);
- 	if (map != NULL) {
- 		refcount_set(&map->refcnt, 1);
- 		RB_CLEAR_NODE(&map->rb_node);
++		if (kmap)
++			kmap->kmaps = maps;
++		else
++			pr_err("Internal error: kernel dso with non kernel map\n");
++	}
++
++
+ 	/*
+ 	 * If we already performed some search by name, then we need to add the just
+ 	 * inserted map and resort.
 -- 
 2.21.1
 
