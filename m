@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7762615E1CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:20:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7979415E1D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:20:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392878AbgBNQUm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:20:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52852 "EHLO mail.kernel.org"
+        id S2392775AbgBNQUx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:20:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405037AbgBNQTl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:19:41 -0500
+        id S2392826AbgBNQTt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:19:49 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D22BA24706;
-        Fri, 14 Feb 2020 16:19:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E9DC124718;
+        Fri, 14 Feb 2020 16:19:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697180;
-        bh=60wDpPFn61IGgirDpObDN+GtIav6ew+mgPwLMFb64XY=;
+        s=default; t=1581697188;
+        bh=WslAfIa6kh4Qg5x4GYIkJ0a9Jvm/LHDo4JeViWDefCc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DEnMXb+e638ZwfYjul/wdRjG4PGQJuJD33fjJdHuWob+60Ft0LhXb/r98gpuULyHK
-         ukpfjZY1gJ1EQtcba6mKc1MHF/jGU71qSOdeDLUvTDPTxiijzpfDuCXK5fWvzIQFov
-         BgfQQzBg0mIILzCx2FFYJj9YrHsM0wNhySxMFidU=
+        b=bTYd8PQx8KtOOQX3I3SdR9IMGldUTjYL7RBh85mXB+XqOE+qHYS9i5ZKEmalJDPQp
+         HFpdIAHr/7A58vdq1LnT++aCAh6owVJIjWmv5UsK1pNrbRzOBRoMgs3KSL4eseQVPi
+         NmH+vYFjM0DmefMEcn1m1Ju3MaV/u8fKrxeNr8t8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        =?UTF-8?q?Karl=20Rudb=C3=A6k=20Olsen?= <karl@micro-technic.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 112/186] ARM: dts: at91: sama5d3: define clock rate range for tcb1
-Date:   Fri, 14 Feb 2020 11:16:01 -0500
-Message-Id: <20200214161715.18113-112-sashal@kernel.org>
+Cc:     Logan Gunthorpe <logang@deltatee.com>, Kit Chow <kchow@gigaio.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 118/186] PCI: Don't disable bridge BARs when assigning bus resources
+Date:   Fri, 14 Feb 2020 11:16:07 -0500
+Message-Id: <20200214161715.18113-118-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161715.18113-1-sashal@kernel.org>
 References: <20200214161715.18113-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -45,34 +43,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Logan Gunthorpe <logang@deltatee.com>
 
-[ Upstream commit a7e0f3fc01df4b1b7077df777c37feae8c9e8b6d ]
+[ Upstream commit 9db8dc6d0785225c42a37be7b44d1b07b31b8957 ]
 
-The clock rate range for the TCB1 clock is missing. define it in the device
-tree.
+Some PCI bridges implement BARs in addition to bridge windows.  For
+example, here's a PLX switch:
 
-Reported-by: Karl Rudbæk Olsen <karl@micro-technic.com>
-Fixes: d2e8190b7916 ("ARM: at91/dt: define sama5d3 clocks")
-Link: https://lore.kernel.org/r/20200110172007.1253659-2-alexandre.belloni@bootlin.com
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+  04:00.0 PCI bridge: PLX Technology, Inc. PEX 8724 24-Lane, 6-Port PCI
+            Express Gen 3 (8 GT/s) Switch, 19 x 19mm FCBGA (rev ca)
+	    (prog-if 00 [Normal decode])
+      Flags: bus master, fast devsel, latency 0, IRQ 30, NUMA node 0
+      Memory at 90a00000 (32-bit, non-prefetchable) [size=256K]
+      Bus: primary=04, secondary=05, subordinate=0a, sec-latency=0
+      I/O behind bridge: 00002000-00003fff
+      Memory behind bridge: 90000000-909fffff
+      Prefetchable memory behind bridge: 0000380000800000-0000380000bfffff
+
+Previously, when the kernel assigned resource addresses (with the
+pci=realloc command line parameter, for example) it could clear the struct
+resource corresponding to the BAR.  When this happened, lspci would report
+this BAR as "ignored":
+
+   Region 0: Memory at <ignored> (32-bit, non-prefetchable) [size=256K]
+
+This is because the kernel reports a zero start address and zero flags
+in the corresponding sysfs resource file and in /proc/bus/pci/devices.
+Investigation with 'lspci -x', however, shows the BIOS-assigned address
+will still be programmed in the device's BAR registers.
+
+It's clearly a bug that the kernel lost track of the BAR value, but in most
+cases, this still won't result in a visible issue because nothing uses the
+memory, so nothing is affected.  However, when an IOMMU is in use, it will
+not reserve this space in the IOVA because the kernel no longer thinks the
+range is valid.  (See dmar_init_reserved_ranges() for the Intel
+implementation of this.)
+
+Without the proper reserved range, a DMA mapping may allocate an IOVA that
+matches a bridge BAR, which results in DMA accesses going to the BAR
+instead of the intended RAM.
+
+The problem was in pci_assign_unassigned_root_bus_resources().  When any
+resource from a bridge device fails to get assigned, the code set the
+resource's flags to zero.  This makes sense for bridge windows, as they
+will be re-enabled later, but for regular BARs, it makes the kernel
+permanently lose track of the fact that they decode address space.
+
+Change pci_assign_unassigned_root_bus_resources() and
+pci_assign_unassigned_bridge_resources() so they only clear "res->flags"
+for bridge *windows*, not bridge BARs.
+
+Fixes: da7822e5ad71 ("PCI: update bridge resources to get more big ranges when allocating space (again)")
+Link: https://lore.kernel.org/r/20200108213208.4612-1-logang@deltatee.com
+[bhelgaas: commit log, check for pci_is_bridge()]
+Reported-by: Kit Chow <kchow@gigaio.com>
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/sama5d3_tcb1.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pci/setup-bus.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sama5d3_tcb1.dtsi b/arch/arm/boot/dts/sama5d3_tcb1.dtsi
-index 801f9745e82f1..b80dbc45a3c20 100644
---- a/arch/arm/boot/dts/sama5d3_tcb1.dtsi
-+++ b/arch/arm/boot/dts/sama5d3_tcb1.dtsi
-@@ -23,6 +23,7 @@
- 					tcb1_clk: tcb1_clk {
- 						#clock-cells = <0>;
- 						reg = <27>;
-+						atmel,clk-output-range = <0 166000000>;
- 					};
- 				};
- 			};
+diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+index 958da7db90331..fb73e975d22b5 100644
+--- a/drivers/pci/setup-bus.c
++++ b/drivers/pci/setup-bus.c
+@@ -1824,12 +1824,18 @@ void pci_assign_unassigned_root_bus_resources(struct pci_bus *bus)
+ 	/* restore size and flags */
+ 	list_for_each_entry(fail_res, &fail_head, list) {
+ 		struct resource *res = fail_res->res;
++		int idx;
+ 
+ 		res->start = fail_res->start;
+ 		res->end = fail_res->end;
+ 		res->flags = fail_res->flags;
+-		if (fail_res->dev->subordinate)
+-			res->flags = 0;
++
++		if (pci_is_bridge(fail_res->dev)) {
++			idx = res - &fail_res->dev->resource[0];
++			if (idx >= PCI_BRIDGE_RESOURCES &&
++			    idx <= PCI_BRIDGE_RESOURCE_END)
++				res->flags = 0;
++		}
+ 	}
+ 	free_list(&fail_head);
+ 
+@@ -1895,12 +1901,18 @@ void pci_assign_unassigned_bridge_resources(struct pci_dev *bridge)
+ 	/* restore size and flags */
+ 	list_for_each_entry(fail_res, &fail_head, list) {
+ 		struct resource *res = fail_res->res;
++		int idx;
+ 
+ 		res->start = fail_res->start;
+ 		res->end = fail_res->end;
+ 		res->flags = fail_res->flags;
+-		if (fail_res->dev->subordinate)
+-			res->flags = 0;
++
++		if (pci_is_bridge(fail_res->dev)) {
++			idx = res - &fail_res->dev->resource[0];
++			if (idx >= PCI_BRIDGE_RESOURCES &&
++			    idx <= PCI_BRIDGE_RESOURCE_END)
++				res->flags = 0;
++		}
+ 	}
+ 	free_list(&fail_head);
+ 
 -- 
 2.20.1
 
