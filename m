@@ -2,104 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7567415D308
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 08:43:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B96A15D30F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 08:44:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728988AbgBNHnb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 02:43:31 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:40232 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728799AbgBNHnb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 02:43:31 -0500
-Received: by mail-lj1-f194.google.com with SMTP id n18so9611482ljo.7
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 23:43:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cvJYH2MyEwOmoRDTW33GT1X1UiFAr3wzvG5eLryUgnQ=;
-        b=pYshfHHXjrzDrzndltn8xGCx7SnafQI6R+CZmDK8RJ1YjHSuOujJ22SyvJtwo+x3tr
-         VZDEZw3Lo4/q9SZ+yDhUa/BBM35jZpf5K3SSno7BMf7lctmjyRJt3w4bye8FlVKGG/zl
-         r+fKJG4wtwTtxBvYHKhC23ztBvMrOOpjt7caTUdByAUsN99AczzI72rH/TiEYgHjrOGI
-         DbQhumjej7KxGN14riV0eqflX1N9CW6I4XPe8rBsPq3CULTC5BoYvzixcQcFkhfOZZAm
-         1KzfPshq6gx+naYwkNYmdST896DdcM+ETp4+pVxrSeUioPlQM3Jvga1YHZaPMVp8NArY
-         xHOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cvJYH2MyEwOmoRDTW33GT1X1UiFAr3wzvG5eLryUgnQ=;
-        b=K9gCjztEePWAGDbvEwcNkjRHWwlRjHl+3B3BoE6ar2xizqS+JLXc2qnUycLxSRMZhT
-         9f2T6kPPncUJ+iCi8hHKlCPbZBjxxYCqfUF2NmJZN59OwEC8hCGD2ESnmdl2t5uLYvCj
-         fCzIKm7oJmalOI0/6SWN9QrHEy4yHqTo4a+FyrixLX7rFzl+L2p9DUDmWaWWJlduIvc7
-         1r2axfoSqMTXtM7hW5AiCYTqSPly9Dzg3eOHc3895t+QMDnvrpFrSIh+gixXsTBMQU4B
-         54aZmEV2pkE3WC1xtMmo39anPu11UiiV4jeQU3M5Pb3eDC9sXtKtpQI+0gb/qNSY0CcP
-         lo2w==
-X-Gm-Message-State: APjAAAVdqD+ToPkJhC4RQqcecadcuJ8Jr2Th2vH10d8aQwymNXVZd0nh
-        x+nJR7pw82msnHPI1xeoVz23vIOf2fjKVmsal9Uqf+yrnGk=
-X-Google-Smtp-Source: APXvYqwI6CpdrrFSyFeDih+wFFIqfBA88OW4d98kr0AHi+c1sN/Uks74G/afERWgfkYNqEGaQedcUMI+/Haw9uc3IgY=
-X-Received: by 2002:a2e:909a:: with SMTP id l26mr1135486ljg.209.1581666209033;
- Thu, 13 Feb 2020 23:43:29 -0800 (PST)
+        id S1729016AbgBNHoI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 02:44:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53084 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729007AbgBNHoI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 02:44:08 -0500
+Received: from localhost.localdomain (unknown [106.201.58.38])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01D28217F4;
+        Fri, 14 Feb 2020 07:44:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581666247;
+        bh=r9zsX8XEd5qvEkHa91w0t4J/RKl8sONWqH+tDi0ymqs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=GcEmMQZylBRtSRVfyitzOcTSaKFgAMjy26oQgjgyR6KDKSD9fgHWi8755hIlKRE0S
+         JEQhB1aVVBhfeUq33cr1ojO0MKYXvmJ0ZYvf5oGs9LAkZF1eg04ot5NaczXyb+vUxS
+         XhA55DgrGY5B9e2c7tNFwKf1bP7g9DUXuMzsOJTc=
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Yuji Sasaki <sasakiy@chromium.org>,
+        Andy Gross <agross@kernel.org>, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH] spi: qup: call spi_qup_pm_resume_runtime before suspending
+Date:   Fri, 14 Feb 2020 13:13:40 +0530
+Message-Id: <20200214074340.2286170-1-vkoul@kernel.org>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-References: <20200211174651.10330-1-vincent.guittot@linaro.org>
- <20200211174651.10330-4-vincent.guittot@linaro.org> <20200213173602.GQ14897@hirez.programming.kicks-ass.net>
-In-Reply-To: <20200213173602.GQ14897@hirez.programming.kicks-ass.net>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Fri, 14 Feb 2020 08:43:16 +0100
-Message-ID: <CAKfTPtC+Es88ocmUcNveN6bpHAOdZ3s9Zbmtf0zmHiQFA+H+rw@mail.gmail.com>
-Subject: Re: [RFC 3/4] sched/fair: replace runnable load average by runnable average
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Phil Auld <pauld@redhat.com>, Parth Shah <parth@linux.ibm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Feb 2020 at 18:36, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Tue, Feb 11, 2020 at 06:46:50PM +0100, Vincent Guittot wrote:
-> > @@ -367,6 +367,14 @@ struct util_est {
-> >   * For cfs_rq, it is the aggregated load_avg of all runnable and
-> >   * blocked sched_entities.
-> >   *
-> > + * [runnable_avg definition]
-> > + *
-> > + *   runnable_avg = runnable%
->
->                                  * SCHED_CAPACITY_SCALE
->
-> right, just like we have for util_avg.
->
-> > + *
-> > + * where runnable% is the time ratio that a sched_entity is runnable.
-> > + * For cfs_rq, it is the aggregated runnable_avg of all runnable and
-> > + * blocked sched_entities.
->
-> Which is a verbatim repeat of the runnable% definition for load_avg,
-> right? Perhaps re-arrange the text such that we only have a single
-> definition for each symbol?
+From: Yuji Sasaki <sasakiy@chromium.org>
 
-yes . will do
+spi_qup_suspend() will cause synchronous external abort when
+runtime suspend is enabled and applied, as it tries to
+access SPI controller register while clock is already disabled
+in spi_qup_pm_suspend_runtime().
 
->
-> > + *
-> >   * [util_avg definition]
-> >   *
-> >   *   util_avg = running% * SCHED_CAPACITY_SCALE
->
-> Can you please split this patch in two? First remove everything
-> runnable_load_avg, and then introduce runnable_avg.
+Signed-off-by: Yuji sasaki <sasakiy@chromium.org>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+---
+ drivers/spi/spi-qup.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-ok.
+diff --git a/drivers/spi/spi-qup.c b/drivers/spi/spi-qup.c
+index dd3434a407ea..a364b99497e2 100644
+--- a/drivers/spi/spi-qup.c
++++ b/drivers/spi/spi-qup.c
+@@ -1217,6 +1217,11 @@ static int spi_qup_suspend(struct device *device)
+ 	struct spi_qup *controller = spi_master_get_devdata(master);
+ 	int ret;
+ 
++	if (pm_runtime_suspended(device)) {
++		ret = spi_qup_pm_resume_runtime(device);
++		if (ret)
++			return ret;
++	}
+ 	ret = spi_master_suspend(master);
+ 	if (ret)
+ 		return ret;
+@@ -1225,10 +1230,8 @@ static int spi_qup_suspend(struct device *device)
+ 	if (ret)
+ 		return ret;
+ 
+-	if (!pm_runtime_suspended(device)) {
+-		clk_disable_unprepare(controller->cclk);
+-		clk_disable_unprepare(controller->iclk);
+-	}
++	clk_disable_unprepare(controller->cclk);
++	clk_disable_unprepare(controller->iclk);
+ 	return 0;
+ }
+ 
+-- 
+2.24.1
 
->
-> I didn't quickly spot anything off, and you're right that runnable vs
-> util is an interesting signal.
