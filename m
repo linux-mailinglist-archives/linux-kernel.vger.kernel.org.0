@@ -2,320 +2,279 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03A4415E9E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:10:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97B2915E8B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:02:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403909AbgBNQNm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:13:42 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:35884 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392081AbgBNQNB (ORCPT
+        id S2393322AbgBNRCG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:02:06 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:46394 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404351AbgBNRCE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:13:01 -0500
-Received: by mail-il1-f193.google.com with SMTP id b15so8516092iln.3;
-        Fri, 14 Feb 2020 08:13:01 -0800 (PST)
+        Fri, 14 Feb 2020 12:02:04 -0500
+Received: by mail-pl1-f196.google.com with SMTP id y8so3929005pll.13
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 09:02:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tru5BVtvUUHwF9L4n2LzvkBikf8TVB+wPmv1il/Kbiw=;
-        b=YtDHcyQ7/drC81j189K+7GmxipiqS58b042hM9wqUEX3aiKE7zS4ar/e+IDo7KplnD
-         pASzM99itx4iIfzVW0mnnaEIwBKmu+fDmJOkv3tcOBzJu2a4L9XhvI3gjFfQtfjATHq0
-         Sx0IzSCYyAkN8A1sgKHvU7dPDL6zcSaI9Mn68TokhPGLnOdsles0vmeFgnANYd4QswjZ
-         uUhQR2jTBVnZuFdtJoIyC9ep8KY7d1ZLP+k/olJum6kcWXFXYamE8y7ciNNnH8suRGqu
-         HsjZdGXD94Xjt7if5lKFcYpOVx3qJSUr6U2jehBu67EqaUU80SC1tpSDxLETv02l4EO+
-         GPow==
+        d=android.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=eQMCLCitCBgW+nUQwERh59LYuS3FD7JnGTeRMLVO3yE=;
+        b=HsMVJKX+TsCB8vRptMuZI9iqkJTJ93iT7A6V7HVyYi5F78QR7DL2BOjHhfQ1X6AFGU
+         gUuJo7X605z89k9n8gVycPsnnqPwjcnELj5XVvwLZoxP03lgzMVqYgI0nOlOUMLcNRz1
+         2cwxqzNEnGvsB6/OBiVecHqJpWwmo5IV++c9ssD9tgoavU8iYBzFZ4Gn8tfMIe9FMHqc
+         ucpAlW3pOHM7BUY4fr/am2Ik6HSmsy7GZ5gTOGAHieyXtkzTVqeuDoXmI5PPxMB02i2k
+         C0opPeue77rlI+RURKKdklz5UsEY88cxY35PeqWuo6gY2lchedKvE+lPCGcXD9xUTcpW
+         LDUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tru5BVtvUUHwF9L4n2LzvkBikf8TVB+wPmv1il/Kbiw=;
-        b=InXHRFszGN36rP955gNy0VA0LpWc2m5VBEXgD9K80hAMs3qyIUuT7SB+qBXPI2ntZ9
-         CgX24W6+7E0fyLlqiI8ROu+ucESSrjhmrBSeT9fuS8Tj7ty+zvemKT1NeJCjJCy10rYF
-         6406lRL7cWbbcWbvNdn7M1OmQRBez65+ZH0H0D0sJtxw0SRWTy89LQu2VsWJwSmKq7Qe
-         srWMPTRMR0frFYpaP+fkryGUH2RDReIk+XasIDOYWj+7L00SBcQpBm7oVb2I/MgyQwkR
-         7x46GfUIldALY8Lc0hQmcjVGgxPgGqfFfcKDZGYC8fsQBBXb6YJPHxVF7QtgN9FZyjo9
-         m2EQ==
-X-Gm-Message-State: APjAAAXdPwbJVRoNg3c5RVcF06llNaPNzcVv5/LBV41qEyyfuZ633X9t
-        9akHJOYrRf7/BXj3Tbd+jMx0F2is8sjLXVXbnfbvcf1x3xc=
-X-Google-Smtp-Source: APXvYqywcHOcSxacA5FXFO+W3pBMQq+b0476sXTpYu0Qio+kD495JaPBlcmn7DsRtWkYV98V0oDQR3iyI0gWyhPJbTQ=
-X-Received: by 2002:a92:ccd0:: with SMTP id u16mr3444298ilq.215.1581696780580;
- Fri, 14 Feb 2020 08:13:00 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=eQMCLCitCBgW+nUQwERh59LYuS3FD7JnGTeRMLVO3yE=;
+        b=aNq0W8w2iQWFGEGvxsI4xhn68SBnGee929KHPoyFVpDxOALTbc7R/35Vg8UI2rm5z3
+         ojKeM3hpbGIRRY9Rbj75ChyOPMM8/L6n9Fyew1CUWmYlEoO0RLAnWy1BcUwYH9I3Dujv
+         hTfUpiLHPBDDJRNbK/e/xDyRu/JeJYbz2a3qKHtMk/wu2pWSoozkWYG7kj5TJbhVJGVN
+         Xv6Rm4g1YVNkhN+bwxcv1BpiEcvIQm9CJA/lj9G8nYjscwQ/Dz4az/vxZj89LZq3zwsD
+         surF7V9g8HC0HVMMLpCwcUkeOtqmxSY98zY2a1RzxhwrHpLYOw6Xg0yNNWQyRu1k9y9T
+         4xMQ==
+X-Gm-Message-State: APjAAAWiblqvPq15KMnYFivrRuIyJBCYv2/yC0TyUYOxeMO9iDCTUZy6
+        Bbco9fPYW3F11Z14lyIDM0H0hQ==
+X-Google-Smtp-Source: APXvYqz70QHKlVjm0A8o/GWzCn0Jr19dsNsYc+llFQ9O+wM3OL4DCg/Mj/6Ctuzwx9L1J1I3eZwGUg==
+X-Received: by 2002:a17:90a:c708:: with SMTP id o8mr4850919pjt.104.1581699722793;
+        Fri, 14 Feb 2020 09:02:02 -0800 (PST)
+Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:5404:91ba:59dc:9400])
+        by smtp.googlemail.com with ESMTPSA id g2sm4693484pgj.45.2020.02.14.09.02.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Feb 2020 09:02:02 -0800 (PST)
+Subject: Re: [PATCH] random: add rng-seed= command line option
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+        kernel-team@android.com, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Potapenko <glider@google.com>
+References: <20200207150809.19329-1-salyzyn@android.com>
+ <20200207155828.GB122530@mit.edu>
+ <d35bacd4-ba3f-335d-85c4-57e87abd8e9a@android.com>
+ <20200208004922.GE122530@mit.edu> <20200207195326.0344ef82@oasis.local.home>
+ <20200213202454.f1bb0e65ccc429bde039111b@kernel.org>
+ <20200214000343.a3b49deb2f0455568b371d0e@kernel.org>
+ <2dc50225-10e2-01dc-c376-6f9e73087242@android.com>
+ <20200214101630.0bad4830bec186c26d894caa@kernel.org>
+From:   Mark Salyzyn <salyzyn@android.com>
+Message-ID: <5753e4f0-147c-45ad-692b-413e60df47a7@android.com>
+Date:   Fri, 14 Feb 2020 09:02:01 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-References: <20200214154854.6746-1-sashal@kernel.org> <20200214154854.6746-487-sashal@kernel.org>
-In-Reply-To: <20200214154854.6746-487-sashal@kernel.org>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Fri, 14 Feb 2020 17:13:21 +0100
-Message-ID: <CAOi1vP9h-Wx16AuUp4AZaF1THnFan0VFFQhx_r05+2CcyDyKAQ@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 5.5 487/542] ceph: remove the extra slashes in the
- server path
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
-        Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
-        Ceph Development <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200214101630.0bad4830bec186c26d894caa@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 4:59 PM Sasha Levin <sashal@kernel.org> wrote:
+On 2/13/20 5:16 PM, Masami Hiramatsu wrote:
+> Hi Mark,
 >
-> From: Xiubo Li <xiubli@redhat.com>
+> On Thu, 13 Feb 2020 10:44:59 -0800
+> Mark Salyzyn <salyzyn@android.com> wrote:
 >
-> [ Upstream commit 4fbc0c711b2464ee1551850b85002faae0b775d5 ]
+>> On 2/13/20 7:03 AM, Masami Hiramatsu wrote:
+>>> On Thu, 13 Feb 2020 20:24:54 +0900
+>>> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+>>>
+>>>>>> My preference would be to pass in the random seed *not* on the
+>>>>>> command-line at all, but as a separate parameter which is passed to
+>>>>>> the bootloader, just as we pass in the device-tree, the initrd and the
+>>>>>> command-line as separate things.  The problem is that how we pass in
+>>>>>> extra boot parameters is architecture specific, and how we might do it
+>>>>>> for x86 is different than for arm64.  So yeah, it's a bit more
+>>>>>> inconvenient to do things that way; but I think it's also much
+>>>>>> cleaner.
+>>>>> Hmm, if the boot loader could add on to the bootconfig that Masami just
+>>>>> added, then it could add some "random" seed for each boot! The
+>>>>> bootconfig is just an appended file at the end of the initrd.
+>>>> Yeah, it is easy to add bootconfig support to a bootloader. It can add
+>>>> a entropy number as "rng.seed=XXX" text after initrd image with size
+>>>> and checksum. That is architecutre independent way to pass such hidden
+>>>> parameter.
+>>>> (hidden key must be filtered out when printing out the /proc/bootconfig,
+>>>> but that is very easy too, just need a strncmp)
+>>>>
+>>> And here is the patch to support "random.rng_seed = XXX" option by
+>>> bootconfig. Now you can focus on what you want to do. No need to
+>>> modify command line strings.
+>> LGTM, our virtualized emulator (cuttlefish) folks believe they can do it
+>> this way. Albeit keep in mind that there are _thousands_ of embedded
+>> bootloaders out there that are comfortable updating DT and kernel
+>> command line, but few that add boot configs, so this may add complexity.
+> I see, since the bootconfig is a new feature, it will take a time to
+> be supported widely. Even though, maybe they can use DT for that
+> purpose.
+No for cuttlefish and KVM, there is no DT. WE will backport to 4.19 and 
+5.4 Android kernels to grab bootconfig.
 >
-> It's possible to pass the mount helper a server path that has more
-> than one contiguous slash character. For example:
+>> For our use case that caused us to need this, the cuttlefish Android
+>> emulated device, not a problem though.
+>>
+>> However, the entropy _data_ has not been added (see below)
+> Oh, I missed that.
 >
->   $ mount -t ceph 192.168.195.165:40176:/// /mnt/cephfs/
->
-> In the MDS server side the extra slashes of the server path will be
-> treated as snap dir, and then we can get the following debug logs:
->
->   ceph:  mount opening path //
->   ceph:  open_root_inode opening '//'
->   ceph:  fill_trace 0000000059b8a3bc is_dentry 0 is_target 1
->   ceph:  alloc_inode 00000000dc4ca00b
->   ceph:  get_inode created new inode 00000000dc4ca00b 1.ffffffffffffffff ino 1
->   ceph:  get_inode on 1=1.ffffffffffffffff got 00000000dc4ca00b
->
-> And then when creating any new file or directory under the mount
-> point, we can hit the following BUG_ON in ceph_fill_trace():
->
->   BUG_ON(ceph_snap(dir) != dvino.snap);
->
-> Have the client ignore the extra slashes in the server path when
-> mounting. This will also canonicalize the path, so that identical mounts
-> can be consilidated.
->
-> 1) "//mydir1///mydir//"
-> 2) "/mydir1/mydir"
-> 3) "/mydir1/mydir/"
->
-> Regardless of the internal treatment of these paths, the kernel still
-> stores the original string including the leading '/' for presentation
-> to userland.
->
-> URL: https://tracker.ceph.com/issues/42771
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  fs/ceph/super.c | 122 ++++++++++++++++++++++++++++++++++++++++--------
->  1 file changed, 102 insertions(+), 20 deletions(-)
->
-> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> index 430dcf329723a..112927dbd2f20 100644
-> --- a/fs/ceph/super.c
-> +++ b/fs/ceph/super.c
-> @@ -107,7 +107,6 @@ static int ceph_statfs(struct dentry *dentry, struct kstatfs *buf)
->         return 0;
->  }
->
-> -
->  static int ceph_sync_fs(struct super_block *sb, int wait)
->  {
->         struct ceph_fs_client *fsc = ceph_sb_to_client(sb);
-> @@ -211,7 +210,6 @@ struct ceph_parse_opts_ctx {
->
->  /*
->   * Parse the source parameter.  Distinguish the server list from the path.
-> - * Internally we do not include the leading '/' in the path.
->   *
->   * The source will look like:
->   *     <server_spec>[,<server_spec>...]:[<path>]
-> @@ -232,12 +230,15 @@ static int ceph_parse_source(struct fs_parameter *param, struct fs_context *fc)
->
->         dev_name_end = strchr(dev_name, '/');
->         if (dev_name_end) {
-> -               if (strlen(dev_name_end) > 1) {
-> -                       kfree(fsopt->server_path);
-> -                       fsopt->server_path = kstrdup(dev_name_end, GFP_KERNEL);
-> -                       if (!fsopt->server_path)
-> -                               return -ENOMEM;
-> -               }
-> +               kfree(fsopt->server_path);
-> +
-> +               /*
-> +                * The server_path will include the whole chars from userland
-> +                * including the leading '/'.
-> +                */
-> +               fsopt->server_path = kstrdup(dev_name_end, GFP_KERNEL);
-> +               if (!fsopt->server_path)
-> +                       return -ENOMEM;
->         } else {
->                 dev_name_end = dev_name + strlen(dev_name);
->         }
-> @@ -461,6 +462,73 @@ static int strcmp_null(const char *s1, const char *s2)
->         return strcmp(s1, s2);
->  }
->
-> +/**
-> + * path_remove_extra_slash - Remove the extra slashes in the server path
-> + * @server_path: the server path and could be NULL
-> + *
-> + * Return NULL if the path is NULL or only consists of "/", or a string
-> + * without any extra slashes including the leading slash(es) and the
-> + * slash(es) at the end of the server path, such as:
-> + * "//dir1////dir2///" --> "dir1/dir2"
-> + */
-> +static char *path_remove_extra_slash(const char *server_path)
-> +{
-> +       const char *path = server_path;
-> +       const char *cur, *end;
-> +       char *buf, *p;
-> +       int len;
-> +
-> +       /* if the server path is omitted */
-> +       if (!path)
-> +               return NULL;
-> +
-> +       /* remove all the leading slashes */
-> +       while (*path == '/')
-> +               path++;
-> +
-> +       /* if the server path only consists of slashes */
-> +       if (*path == '\0')
-> +               return NULL;
-> +
-> +       len = strlen(path);
-> +
-> +       buf = kmalloc(len + 1, GFP_KERNEL);
-> +       if (!buf)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       end = path + len;
-> +       p = buf;
-> +       do {
-> +               cur = strchr(path, '/');
-> +               if (!cur)
-> +                       cur = end;
-> +
-> +               len = cur - path;
-> +
-> +               /* including one '/' */
-> +               if (cur != end)
-> +                       len += 1;
-> +
-> +               memcpy(p, path, len);
-> +               p += len;
-> +
-> +               while (cur <= end && *cur == '/')
-> +                       cur++;
-> +               path = cur;
-> +       } while (path < end);
-> +
-> +       *p = '\0';
-> +
-> +       /*
-> +        * remove the last slash if there has and just to make sure that
-> +        * we will get something like "dir1/dir2"
-> +        */
-> +       if (*(--p) == '/')
-> +               *p = '\0';
-> +
-> +       return buf;
-> +}
-> +
->  static int compare_mount_options(struct ceph_mount_options *new_fsopt,
->                                  struct ceph_options *new_opt,
->                                  struct ceph_fs_client *fsc)
-> @@ -468,6 +536,7 @@ static int compare_mount_options(struct ceph_mount_options *new_fsopt,
->         struct ceph_mount_options *fsopt1 = new_fsopt;
->         struct ceph_mount_options *fsopt2 = fsc->mount_options;
->         int ofs = offsetof(struct ceph_mount_options, snapdir_name);
-> +       char *p1, *p2;
->         int ret;
->
->         ret = memcmp(fsopt1, fsopt2, ofs);
-> @@ -480,9 +549,21 @@ static int compare_mount_options(struct ceph_mount_options *new_fsopt,
->         ret = strcmp_null(fsopt1->mds_namespace, fsopt2->mds_namespace);
->         if (ret)
->                 return ret;
-> -       ret = strcmp_null(fsopt1->server_path, fsopt2->server_path);
-> +
-> +       p1 = path_remove_extra_slash(fsopt1->server_path);
-> +       if (IS_ERR(p1))
-> +               return PTR_ERR(p1);
-> +       p2 = path_remove_extra_slash(fsopt2->server_path);
-> +       if (IS_ERR(p2)) {
-> +               kfree(p1);
-> +               return PTR_ERR(p2);
-> +       }
-> +       ret = strcmp_null(p1, p2);
-> +       kfree(p1);
-> +       kfree(p2);
->         if (ret)
->                 return ret;
-> +
->         ret = strcmp_null(fsopt1->fscache_uniq, fsopt2->fscache_uniq);
->         if (ret)
->                 return ret;
-> @@ -788,7 +869,6 @@ static void destroy_caches(void)
->         ceph_fscache_unregister();
->  }
->
-> -
->  /*
->   * ceph_umount_begin - initiate forced umount.  Tear down down the
->   * mount, skipping steps that may hang while waiting for server(s).
-> @@ -868,9 +948,6 @@ static struct dentry *open_root_dentry(struct ceph_fs_client *fsc,
->         return root;
->  }
->
-> -
-> -
-> -
->  /*
->   * mount: join the ceph cluster, and open root directory.
->   */
-> @@ -885,7 +962,7 @@ static struct dentry *ceph_real_mount(struct ceph_fs_client *fsc,
->         mutex_lock(&fsc->client->mount_mutex);
->
->         if (!fsc->sb->s_root) {
-> -               const char *path;
-> +               const char *path, *p;
->                 err = __ceph_open_session(fsc->client, started);
->                 if (err < 0)
->                         goto out;
-> @@ -897,17 +974,22 @@ static struct dentry *ceph_real_mount(struct ceph_fs_client *fsc,
->                                 goto out;
->                 }
->
-> -               if (!fsc->mount_options->server_path) {
-> -                       path = "";
-> -                       dout("mount opening path \\t\n");
-> -               } else {
-> -                       path = fsc->mount_options->server_path + 1;
-> -                       dout("mount opening path %s\n", path);
-> +               p = path_remove_extra_slash(fsc->mount_options->server_path);
-> +               if (IS_ERR(p)) {
-> +                       err = PTR_ERR(p);
-> +                       goto out;
->                 }
-> +               /* if the server path is omitted or just consists of '/' */
-> +               if (!p)
-> +                       path = "";
-> +               else
-> +                       path = p;
-> +               dout("mount opening path '%s'\n", path);
->
->                 ceph_fs_debugfs_init(fsc);
->
->                 root = open_root_dentry(fsc, path, started);
-> +               kfree(p);
->                 if (IS_ERR(root)) {
->                         err = PTR_ERR(root);
->                         goto out;
+>> Could you please formally re-submit your patch mhiramet@ with a change
+>> to push the _data_ as well to the entropy?
+> Yes, I'll do.
 
-Hi Sasha,
+Thanks!
 
-This commit is buggy, the fix should land in 5.6-rc2.  Please drop it
-for now -- it would need to be taken together with "ceph: canonicalize
-server path in place" or not backported at all.
+>
+>> -- Mark
+>>
+>>> BTW, if you think you need to pass UTF-8 code as a data, I'm happy to
+>>> update the bootconfig to support it. Just for the safeness, I have
+>>> limited it by isprint() || isspace().
+>>>
+>>> Thank you,
+>>>
+>>> diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
+>>> index 26956c006987..43fbbd307204 100644
+>>> --- a/drivers/char/Kconfig
+>>> +++ b/drivers/char/Kconfig
+>>> @@ -554,6 +554,7 @@ config RANDOM_TRUST_CPU
+>>>    
+>>>    config RANDOM_TRUST_BOOTLOADER
+>>>    	bool "Trust the bootloader to initialize Linux's CRNG"
+>>> +	select BOOT_CONFIG
+>>>    	help
+>>>    	Some bootloaders can provide entropy to increase the kernel's initial
+>>>    	device randomness. Say Y here to assume the entropy provided by the
+>>> diff --git a/drivers/char/random.c b/drivers/char/random.c
+>>> index c7f9584de2c8..0ae33bbbd338 100644
+>>> --- a/drivers/char/random.c
+>>> +++ b/drivers/char/random.c
+>>> @@ -2311,3 +2311,11 @@ void add_bootloader_randomness(const void *buf, unsigned int size)
+>>>    		add_device_randomness(buf, size);
+>>>    }
+>>>    EXPORT_SYMBOL_GPL(add_bootloader_randomness);
+>>> +
+>>> +#if defined(CONFIG_RANDOM_TRUST_BOOTLOADER)
+>>> +/* caller called add_device_randomness, but it is from a trusted source */
+>>> +void __init credit_trusted_entropy_bits(unsigned int nbits)
+>>> +{
+>>> +	credit_entropy_bits(&input_pool, nbits);
+>>> +}
+>>> +#endif
+>>> diff --git a/fs/proc/bootconfig.c b/fs/proc/bootconfig.c
+>>> index 9955d75c0585..aace466c56ed 100644
+>>> --- a/fs/proc/bootconfig.c
+>>> +++ b/fs/proc/bootconfig.c
+>>> @@ -36,6 +36,9 @@ static int __init copy_xbc_key_value_list(char *dst, size_t size)
+>>>    		ret = xbc_node_compose_key(leaf, key, XBC_KEYLEN_MAX);
+>>>    		if (ret < 0)
+>>>    			break;
+>>> +		/* For keeping security reason, remove randomness key */
+>>> +		if (!strcmp(key, RANDOM_SEED_XBC_KEY))
+>>> +			continue;
+>>>    		ret = snprintf(dst, rest(dst, end), "%s = ", key);
+>>>    		if (ret < 0)
+>>>    			break;
+>>> diff --git a/include/linux/random.h b/include/linux/random.h
+>>> index d319f9a1e429..c8f41ab4f342 100644
+>>> --- a/include/linux/random.h
+>>> +++ b/include/linux/random.h
+>>> @@ -20,6 +20,13 @@ struct random_ready_callback {
+>>>    
+>>>    extern void add_device_randomness(const void *, unsigned int);
+>>>    extern void add_bootloader_randomness(const void *, unsigned int);
+>>> +#if defined(CONFIG_RANDOM_TRUST_BOOTLOADER)
+>>> +extern void __init credit_trusted_entropy_bits(unsigned int nbits);
+>>> +#else
+>>> +static inline void credit_trusted_entropy_bits(unsigned int nbits) {}
+>>> +#endif
+>>> +
+>>> +#define RANDOM_SEED_XBC_KEY "random.rng_seed"
+>>>    
+>>>    #if defined(LATENT_ENTROPY_PLUGIN) && !defined(__CHECKER__)
+>>>    static inline void add_latent_entropy(void)
+>>> diff --git a/init/main.c b/init/main.c
+>>> index f95b014a5479..6c3f51bc76d5 100644
+>>> --- a/init/main.c
+>>> +++ b/init/main.c
+>>> @@ -776,6 +776,32 @@ void __init __weak arch_call_rest_init(void)
+>>>    	rest_init();
+>>>    }
+>>>    
+>>> +static __always_inline void __init collect_entropy(const char *command_line)
+>>> +{
+>>> +	/*
+>>> +	 * For best initial stack canary entropy, prepare it after:
+>>> +	 * - setup_arch() for any UEFI RNG entropy and boot cmdline access
+>>> +	 * - timekeeping_init() for ktime entropy used in rand_initialize()
+>>> +	 * - rand_initialize() to get any arch-specific entropy like RDRAND
+>>> +	 * - add_latent_entropy() to get any latent entropy
+>>> +	 * - adding command line entropy
+>>> +	 */
+>>> +	rand_initialize();
+>>> +	add_latent_entropy();
+>>> +	add_device_randomness(command_line, strlen(command_line));
+>>> +	if (IS_BUILTIN(CONFIG_RANDOM_TRUST_BOOTLOADER)) {
+>>> +		/*
+>>> +		 * Added bootconfig device randomness above,
+>> This part is incorrect, the rng_seed collected below was _not_ added to
+>> the device_randomness.
+>>
+>> add_device_randomness(rng_seed, strlen(rng_seed)) needs to be pushed
+>> below along with the credit.
+> OK, as same as above command_line, I'll add that.
+>
+> Thank you,
+>
+>>> +		 * now add entropy credit for just random.rng_seed=<data>
+>>> +		 */
+>>> +		const char *rng_seed = xbc_find_value(RANDOM_SEED_XBC_KEY, NULL);
+>>> +
+>>> +		if (rng_seed)
+>>> +			credit_trusted_entropy_bits(strlen(rng_seed) * 6);
+>>> +	}
+>>> +	boot_init_stack_canary();
+>>> +}
+>>> +
+>>>    asmlinkage __visible void __init start_kernel(void)
+>>>    {
+>>>    	char *command_line;
+>>> @@ -887,18 +913,7 @@ asmlinkage __visible void __init start_kernel(void)
+>>>    	softirq_init();
+>>>    	timekeeping_init();
+>>>    
+>>> -	/*
+>>> -	 * For best initial stack canary entropy, prepare it after:
+>>> -	 * - setup_arch() for any UEFI RNG entropy and boot cmdline access
+>>> -	 * - timekeeping_init() for ktime entropy used in rand_initialize()
+>>> -	 * - rand_initialize() to get any arch-specific entropy like RDRAND
+>>> -	 * - add_latent_entropy() to get any latent entropy
+>>> -	 * - adding command line entropy
+>>> -	 */
+>>> -	rand_initialize();
+>>> -	add_latent_entropy();
+>>> -	add_device_randomness(command_line, strlen(command_line));
+>>> -	boot_init_stack_canary();
+>>> +	collect_entropy(command_line);
+>>>    
+>>>    	time_init();
+>>>    	printk_safe_init();
+>>>
+>
+-- MArk
 
-Thanks,
-
-                Ilya
