@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E538415E908
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:05:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFBC515E90A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:05:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404135AbgBNQP1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:15:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44260 "EHLO mail.kernel.org"
+        id S2392199AbgBNQPa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:15:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392066AbgBNQOi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:14:38 -0500
+        id S2404030AbgBNQOj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:14:39 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB7F8246D8;
-        Fri, 14 Feb 2020 16:14:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A34B246CF;
+        Fri, 14 Feb 2020 16:14:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696877;
-        bh=GrMvaoHiW8mqPaedW80LgmLZTHUhiLrqAUih5cuG+FQ=;
+        s=default; t=1581696879;
+        bh=k4MAyLiQvbkcRfoaIpeTeeZXxVI0Sn7O1+qJM6lHONc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1J9siBH/fZsT4Qml6hK4ZyfnlN0v7g25mciwRDFtdNJOam3OMweJ+VukYPupn0+kJ
-         bJWajfaS/fVTho8kFfedIJwsyNXbfdzlMcQW+YoJubHmJnD6ttmpgJeAEpPV2AIqYo
-         uTx4k8cKvNbLb/lfMSjWxcPKRUdF3qwPdQsk9qPY=
+        b=m2W2O6GML+mVVMqtgq3g77n+Z1ooW8bU8AzqoWQZ/bzA01+u0Bm1eV65WUMZa+loT
+         3j2tl3rmgNX0wApQ/8DmlyRyTbWqEGmTPx+63zJKDinqYiFaSpnoME3Neap/Guiybe
+         VkDl+5VWLP71P0WDC1v1PCzku5evyLuShjUFPWec=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jason Ekstrand <jason@jlekstrand.net>,
-        Hans de Goede <hdegoede@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 133/252] ACPI: button: Add DMI quirk for Razer Blade Stealth 13 late 2019 lid switch
-Date:   Fri, 14 Feb 2020 11:09:48 -0500
-Message-Id: <20200214161147.15842-133-sashal@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Adhemerval Zanella <adhemerval.zanella@linaro.org>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 134/252] mlx5: work around high stack usage with gcc
+Date:   Fri, 14 Feb 2020 11:09:49 -0500
+Message-Id: <20200214161147.15842-134-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -44,44 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Ekstrand <jason@jlekstrand.net>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 0528904926aab19bffb2068879aa44db166c6d5f ]
+[ Upstream commit 42ae1a5c76691928ed217c7e40269db27f5225e9 ]
 
-Running evemu-record on the lid switch event shows that the lid reports
-the first "close" but then never reports an "open".  This causes systemd
-to continuously re-suspend the laptop every 30s.  Resetting the _LID to
-"open" fixes the issue.
+In some configurations, gcc tries too hard to optimize this code:
 
-Signed-off-by: Jason Ekstrand <jason@jlekstrand.net>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+drivers/net/ethernet/mellanox/mlx5/core/en_stats.c: In function 'mlx5e_grp_sw_update_stats':
+drivers/net/ethernet/mellanox/mlx5/core/en_stats.c:302:1: error: the frame size of 1336 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
+
+As was stated in the bug report, the reason is that gcc runs into a corner
+case in the register allocator that is rather hard to fix in a good way.
+
+As there is an easy way to work around it, just add a comment and the
+barrier that stops gcc from trying to overoptimize the function.
+
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=92657
+Cc: Adhemerval Zanella <adhemerval.zanella@linaro.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/button.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/net/ethernet/mellanox/mlx5/core/en_stats.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/acpi/button.c b/drivers/acpi/button.c
-index a25d77b3a16ad..d5c19e25ddf59 100644
---- a/drivers/acpi/button.c
-+++ b/drivers/acpi/button.c
-@@ -102,6 +102,17 @@ static const struct dmi_system_id lid_blacklst[] = {
- 		},
- 		.driver_data = (void *)(long)ACPI_BUTTON_LID_INIT_OPEN,
- 	},
-+	{
-+		/*
-+		 * Razer Blade Stealth 13 late 2019, notification of the LID device
-+		 * only happens on close, not on open and _LID always returns closed.
-+		 */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Razer"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Razer Blade Stealth 13 Late 2019"),
-+		},
-+		.driver_data = (void *)(long)ACPI_BUTTON_LID_INIT_OPEN,
-+	},
- 	{}
- };
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_stats.c b/drivers/net/ethernet/mellanox/mlx5/core/en_stats.c
+index 8255d797ea943..9a68dee588c1a 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_stats.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_stats.c
+@@ -211,6 +211,9 @@ void mlx5e_grp_sw_update_stats(struct mlx5e_priv *priv)
+ 			s->tx_tls_resync_bytes	+= sq_stats->tls_resync_bytes;
+ #endif
+ 			s->tx_cqes		+= sq_stats->cqes;
++
++			/* https://gcc.gnu.org/bugzilla/show_bug.cgi?id=92657 */
++			barrier();
+ 		}
+ 	}
  
 -- 
 2.20.1
