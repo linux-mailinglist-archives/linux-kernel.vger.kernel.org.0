@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CB2715E43F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:35:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9520B15E43B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:35:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393632AbgBNQe7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:34:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33888 "EHLO mail.kernel.org"
+        id S2406150AbgBNQer (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:34:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393233AbgBNQYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:24:55 -0500
+        id S2406016AbgBNQZA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:25:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80C91247A4;
-        Fri, 14 Feb 2020 16:24:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51AB6247B8;
+        Fri, 14 Feb 2020 16:24:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697495;
-        bh=HFLC+Yo0x9wSQm87FrCxRKv1d02a88A9cGmqneDWLKI=;
+        s=default; t=1581697500;
+        bh=TC/KpPcIPU52VDqpKV9ZMspVLevk1JgSEAKgRSDF0mk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CP9V/I7kRauVjJgK0utNl3VcWWMTIOTNdfmnHCApyhdnNRlc/Wxf6nXLeTlop4Lpy
-         fjKL1Ymkkl2Wa6vmw29CdazRyImAqUZUU347zzg55T3rUD5LaxoDJt1Frl6pipZlva
-         JgzEjIrtg4iU2zeKkZJcvxTWkoAj2PdTgG9s512Q=
+        b=dbj+ji974hm+jcAaF0Y7imyCI+gzXZ8/ZLHDmWU5z/bU/2ybzbBQGS7LdQZp2GvOJ
+         2+9qgh1gCHOW3TS+ASa4OrUBcsANQZBIz/FvTArHdqLM/tEEJcs7u9dzfkx6xbLy0p
+         53CYIC5aTnPp8E1reU7DFhZAaN52hcpW6eHYdYV8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     yu kuai <yukuai3@huawei.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+Cc:     zhengbin <zhengbin13@huawei.com>, Hulk Robot <hulkci@huawei.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Sasha Levin <sashal@kernel.org>,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.4 024/100] drm/amdgpu: remove always false comparison in 'amdgpu_atombios_i2c_process_i2c_ch'
-Date:   Fri, 14 Feb 2020 11:23:08 -0500
-Message-Id: <20200214162425.21071-24-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 028/100] drm/gma500: remove set but not used variable 'error'
+Date:   Fri, 14 Feb 2020 11:23:12 -0500
+Message-Id: <20200214162425.21071-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214162425.21071-1-sashal@kernel.org>
 References: <20200214162425.21071-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -45,44 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: yu kuai <yukuai3@huawei.com>
+From: zhengbin <zhengbin13@huawei.com>
 
-[ Upstream commit 220ac8d1444054ade07ce14498fcda266410f90e ]
+[ Upstream commit a5eb29a9d2fc03d07af7d02f6c2e7ae1e6d985f9 ]
 
-Fixes gcc '-Wtype-limits' warning:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-drivers/gpu/drm/amd/amdgpu/atombios_i2c.c: In function
-‘amdgpu_atombios_i2c_process_i2c_ch’:
-drivers/gpu/drm/amd/amdgpu/atombios_i2c.c:79:11: warning: comparison is
-always false due to limited range of data type [-Wtype-limits]
+drivers/gpu/drm/gma500/psb_irq.c: In function psb_sgx_interrupt:
+drivers/gpu/drm/gma500/psb_irq.c:210:6: warning: variable error set but not used [-Wunused-but-set-variable]
 
-'num' is 'u8', so it will never be greater than 'TOM_MAX_HW_I2C_READ',
-which is defined as 255. Therefore, the comparison can be removed.
+It is introduced by commit 64a4aff283ac ("drm/gma500:
+Add support for SGX interrupts"), but never used, so remove it.
 
-Fixes: d38ceaf99ed0 ("drm/amdgpu: add core driver (v4)")
-Signed-off-by: yu kuai <yukuai3@huawei.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: zhengbin <zhengbin13@huawei.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/1573828027-122323-3-git-send-email-zhengbin13@huawei.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/atombios_i2c.c | 5 -----
- 1 file changed, 5 deletions(-)
+ drivers/gpu/drm/gma500/psb_irq.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/atombios_i2c.c b/drivers/gpu/drm/amd/amdgpu/atombios_i2c.c
-index 13cdb01e9b450..59fd674128540 100644
---- a/drivers/gpu/drm/amd/amdgpu/atombios_i2c.c
-+++ b/drivers/gpu/drm/amd/amdgpu/atombios_i2c.c
-@@ -68,11 +68,6 @@ static int amdgpu_atombios_i2c_process_i2c_ch(struct amdgpu_i2c_chan *chan,
- 			memcpy(&out, &buf[1], num);
- 		args.lpI2CDataOut = cpu_to_le16(out);
- 	} else {
--		if (num > ATOM_MAX_HW_I2C_READ) {
--			DRM_ERROR("hw i2c: tried to read too many bytes (%d vs 255)\n", num);
--			r = -EINVAL;
--			goto done;
--		}
- 		args.ucRegIndex = 0;
- 		args.lpI2CDataOut = 0;
+diff --git a/drivers/gpu/drm/gma500/psb_irq.c b/drivers/gpu/drm/gma500/psb_irq.c
+index 78eb109028091..f75f199c84311 100644
+--- a/drivers/gpu/drm/gma500/psb_irq.c
++++ b/drivers/gpu/drm/gma500/psb_irq.c
+@@ -207,7 +207,6 @@ static void psb_sgx_interrupt(struct drm_device *dev, u32 stat_1, u32 stat_2)
+ {
+ 	struct drm_psb_private *dev_priv = dev->dev_private;
+ 	u32 val, addr;
+-	int error = false;
+ 
+ 	if (stat_1 & _PSB_CE_TWOD_COMPLETE)
+ 		val = PSB_RSGX32(PSB_CR_2D_BLIT_STATUS);
+@@ -242,7 +241,6 @@ static void psb_sgx_interrupt(struct drm_device *dev, u32 stat_1, u32 stat_2)
+ 
+ 			DRM_ERROR("\tMMU failing address is 0x%08x.\n",
+ 				  (unsigned int)addr);
+-			error = true;
+ 		}
  	}
+ 
 -- 
 2.20.1
 
