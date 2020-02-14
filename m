@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 235AF15E38B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:31:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E57F015E497
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:36:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406303AbgBNQ0H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:26:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60626 "EHLO mail.kernel.org"
+        id S2393746AbgBNQgx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:36:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405790AbgBNQYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:24:03 -0500
+        id S2405809AbgBNQYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:24:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0DF7524787;
-        Fri, 14 Feb 2020 16:24:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BF562477F;
+        Fri, 14 Feb 2020 16:24:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697442;
-        bh=SONkKqbwf5JAh6hTaH2JVn6iDfa5NTZtilJALl4Cgsw=;
+        s=default; t=1581697446;
+        bh=BdlkV4m/ydm7xhD5IRtDvesmAsLhifXiarptBB8b99Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OjoANu1nmTwJhOYrn5Jk9eVa+2z17D2to7I7ZfqPyZ8gh2daM/qRRCSP/h3egjkvN
-         9lj3WJwdPH501CqxdOB3b0HuxZFSM+o1BlZGoDF6hj0344F8sIDSSVWtxUXJoHv4aA
-         fOH4B5Z06GPPVjbGsreFpN2dG1kucwlKNqqSQ+/Q=
+        b=fk2T9VxLMoYU71g9xMGZA2qdh3cU6srIeCWmEgewKW9ZgzSv0pWnz6M1EQQBXlj28
+         YJAvWlVyEiJuIF1U0R5eu73+Bzsc4F/9PcXExDLMByKilj/Ob4XtGrIhnL33Oxca5M
+         qX3nfQhr+sdGfZVCCrFuu3JB3m5pNV7kvZTwJE/4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
-        Jean Delvare <jdelvare@suse.de>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <sashal@kernel.org>, linux-i2c@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 128/141] docs: i2c: writing-clients: properly name the stop condition
-Date:   Fri, 14 Feb 2020 11:21:08 -0500
-Message-Id: <20200214162122.19794-128-sashal@kernel.org>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.9 131/141] radeon: insert 10ms sleep in dce5_crtc_load_lut
+Date:   Fri, 14 Feb 2020 11:21:11 -0500
+Message-Id: <20200214162122.19794-131-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214162122.19794-1-sashal@kernel.org>
 References: <20200214162122.19794-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -44,39 +47,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luca Ceresoli <luca@lucaceresoli.net>
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-[ Upstream commit 4fcb445ec688a62da9c864ab05a4bd39b0307cdc ]
+[ Upstream commit ec3d65082d7dabad6fa8f66a8ef166f2d522d6b2 ]
 
-In I2C there is no such thing as a "stop bit". Use the proper naming: "stop
-condition".
+Per at least one tester this is enough magic to recover the regression
+introduced for some people (but not all) in
 
-Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-Reported-by: Jean Delvare <jdelvare@suse.de>
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+commit b8e2b0199cc377617dc238f5106352c06dcd3fa2
+Author: Peter Rosin <peda@axentia.se>
+Date:   Tue Jul 4 12:36:57 2017 +0200
+
+    drm/fb-helper: factor out pseudo-palette
+
+which for radeon had the side-effect of refactoring out a seemingly
+redudant writing of the color palette.
+
+10ms in a fairly slow modeset path feels like an acceptable form of
+duct-tape, so maybe worth a shot and see what sticks.
+
+Cc: Alex Deucher <alexander.deucher@amd.com>
+Cc: Michel Dänzer <michel.daenzer@amd.com>
+References: https://bugzilla.kernel.org/show_bug.cgi?id=198123
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/i2c/writing-clients | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/radeon/radeon_display.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/i2c/writing-clients b/Documentation/i2c/writing-clients
-index a755b141fa4a8..8b0de4334ae90 100644
---- a/Documentation/i2c/writing-clients
-+++ b/Documentation/i2c/writing-clients
-@@ -339,9 +339,9 @@ read/written.
+diff --git a/drivers/gpu/drm/radeon/radeon_display.c b/drivers/gpu/drm/radeon/radeon_display.c
+index 59d62275a659d..c8820cd893d49 100644
+--- a/drivers/gpu/drm/radeon/radeon_display.c
++++ b/drivers/gpu/drm/radeon/radeon_display.c
+@@ -110,6 +110,8 @@ static void dce5_crtc_load_lut(struct drm_crtc *crtc)
  
- This sends a series of messages. Each message can be a read or write,
- and they can be mixed in any way. The transactions are combined: no
--stop bit is sent between transaction. The i2c_msg structure contains
--for each message the client address, the number of bytes of the message
--and the message data itself.
-+stop condition is issued between transaction. The i2c_msg structure
-+contains for each message the client address, the number of bytes of the
-+message and the message data itself.
+ 	DRM_DEBUG_KMS("%d\n", radeon_crtc->crtc_id);
  
- You can read the file `i2c-protocol' for more information about the
- actual I2C protocol.
++	msleep(10);
++
+ 	WREG32(NI_INPUT_CSC_CONTROL + radeon_crtc->crtc_offset,
+ 	       (NI_INPUT_CSC_GRPH_MODE(NI_INPUT_CSC_BYPASS) |
+ 		NI_INPUT_CSC_OVL_MODE(NI_INPUT_CSC_BYPASS)));
 -- 
 2.20.1
 
