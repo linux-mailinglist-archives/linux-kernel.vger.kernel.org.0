@@ -2,146 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA9A915EB25
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:19:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 230A115EBB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:22:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392120AbgBNRTB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:19:01 -0500
-Received: from gateway23.websitewelcome.com ([192.185.50.129]:12295 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2394364AbgBNRS5 (ORCPT
+        id S2404012AbgBNRWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:22:20 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:42658 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390454AbgBNRWQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 12:18:57 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id 29425104E4
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 11:18:56 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 2ecCjOytrSl8q2ecCj76Rv; Fri, 14 Feb 2020 11:18:56 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=DwN0tYLKM1RUE+OhsFgDl42NF0xbevkKouk6StKQIoA=; b=VwgtKhOrt6SRVJsSNhvt9/B1du
-        IE+tq+o28zw53WJfJDjyVUW433o7aCjpfOOH/vKQudVYLGhbO/KGOa/fAkmDoGBigzC7hcpfXVzwr
-        wRpD/Rkg6U54x4GxK5QFFV+GnkwWYpNHY3m7yJco/gMbtzuk1wVzNx2RADn5lo73uyVuf9rlTei/A
-        rvAITyy9oQftWRXCiaiqga7E/2SfjWZ9sAl/Gw8PzOn3njQYIxas3moOzQOMPhAYm4gk4FpDLaeWm
-        KjFHoSo6Alta92+erukFnQ3S05vczLZDDdbYa9S0aFSsb+ecuYquIfGf8OtIDExTrFa3IJpcJNhdI
-        4GK7cfSg==;
-Received: from [200.68.140.137] (port=27873 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j2ecA-003i82-Kw; Fri, 14 Feb 2020 11:18:54 -0600
-Date:   Fri, 14 Feb 2020 11:21:32 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] Input: cyapa - replace zero-length array with flexible-array
- member
-Message-ID: <20200214172132.GA28389@embeddedor>
+        Fri, 14 Feb 2020 12:22:16 -0500
+Received: by mail-io1-f66.google.com with SMTP id z1so10773508iom.9
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 09:22:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xv17a45pi5NucetgPC6cMwzW5Vj6j3Q1UdEccsF87iI=;
+        b=jdkH5PaG1H+2nkU3l9wXveH84Du4g4JPLe3p08esY/8YFJ54sSW20xmuXMNZuEdGXv
+         oplq+b/lfm9egkj7LuYMxQ8bJ6oBD/rGnBL+Ep43i0dgfs34aOJeeo/BekoVdQGl1xyH
+         61cgMmjI5k08v96putoK2ty0W7x0iSRkgmVyGo+/IrOTRHF0v66Cy8vJbXt73GL4ijDn
+         6RAW+PifPqEORYEqm43APpyAPqzRvTEInCFBs8NCy3ErMv1DQT8qUSuRig62bqsUv7mN
+         /aPMdW990kBDVRD9r1Mbe9LaF/zd4ojApPMkioKtmZdRLxYfFS0q/r5wKYnNY6vILx67
+         YfFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xv17a45pi5NucetgPC6cMwzW5Vj6j3Q1UdEccsF87iI=;
+        b=iXgVZKvOSKQOFFLBHMloEVwE4AsBdf06A7r547/IjKYxkpVBIHkX7CPGFWkK2V5fnZ
+         xoUEf/3Y44ZIAUuERQpPmCaVn3DtbruRCGgM2HpT7qK5U16fltD+jlyAq3eri+9y8a5u
+         0dG7wE6i9tZVIyKHhyDMirTCTyTqxsYF3xV6K16jL4K0SoBlxkhwd0JRMIHyAxC0fDJD
+         hRFiAn85gztpw/nqq3SnjkW91jFnLCwMDYHo3wUDLYMOmfnJ2FtnfoWlwFFYnHyMTM24
+         Vjlz3g8Gl16dU/DaFdA+VsvaaLGDmgsnaNMZjSAcWRicBBtxab506/4qIjTiv5LlE8FT
+         bTAg==
+X-Gm-Message-State: APjAAAXMD9nVz6BCPwlpBIVzhKmhsyhXHuQEq04MOLEKFFu7EtL/yOxw
+        VGl9DiBIk8R62M8E1KCILGkTvalCq1nPGJJWcxT2ew==
+X-Google-Smtp-Source: APXvYqypSbqZ4jw/jzA7yD97cGOuUK73KMvRHZK3KHww9cRWf4lUdMOs3QJI2H26Auomb9rUQ87gBjcB9xIRLzsGHZY=
+X-Received: by 2002:a05:6638:44a:: with SMTP id r10mr3354681jap.36.1581700935651;
+ Fri, 14 Feb 2020 09:22:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.68.140.137
-X-Source-L: No
-X-Exim-ID: 1j2ecA-003i82-Kw
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.137]:27873
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 32
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20200212211251.32091-1-mathieu.poirier@linaro.org>
+ <20200212211251.32091-2-mathieu.poirier@linaro.org> <034dcb0b-e305-aab9-f52b-5f725856480f@st.com>
+In-Reply-To: <034dcb0b-e305-aab9-f52b-5f725856480f@st.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Fri, 14 Feb 2020 10:22:04 -0700
+Message-ID: <CANLsYkxfavBjbtkOco59xatvW82+uoDAsos5Js_M9_55F_a_Pg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] rpmsg: core: Add wildcard match for name service
+To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>, Suman Anna <s-anna@ti.com>,
+        Xiang Xiao <xiaoxiang@xiaomi.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Loic PALLARDY <loic.pallardy@st.com>,
+        remoteproc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On Thu, 13 Feb 2020 at 06:56, Arnaud POULIQUEN <arnaud.pouliquen@st.com> wrote:
+>
+> Hi Mathieu,
+>
+> Simple and elegant :)
+> I tested it with my rpmsg_tty client which defines several IDs: work fine.
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+Perfect - many thanks for giving this a spin.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+>
+> Just a question regarding the comment else
+> Acked-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+>
+>
+> On 2/12/20 10:12 PM, Mathieu Poirier wrote:
+> > Adding the capability to supplement the base definition published
+> > by an rpmsg_driver with a postfix description so that it is possible
+> > for several entity to use the same service.
+> >
+> > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > ---
+> >  drivers/rpmsg/rpmsg_core.c | 20 +++++++++++++++++++-
+> >  1 file changed, 19 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> > index e330ec4dfc33..bfd25978fa35 100644
+> > --- a/drivers/rpmsg/rpmsg_core.c
+> > +++ b/drivers/rpmsg/rpmsg_core.c
+> > @@ -399,7 +399,25 @@ ATTRIBUTE_GROUPS(rpmsg_dev);
+> >  static inline int rpmsg_id_match(const struct rpmsg_device *rpdev,
+> >                                 const struct rpmsg_device_id *id)
+> >  {
+> > -     return strncmp(id->name, rpdev->id.name, RPMSG_NAME_SIZE) == 0;
+> > +     size_t len = min_t(size_t, strlen(id->name), RPMSG_NAME_SIZE);
+> > +
+> > +     /*
+> > +      * Allow for wildcard matches.  For example if rpmsg_driver::id_table
+> > +      * is:
+> > +      *
+> > +      * static struct rpmsg_device_id rpmsg_driver_sample_id_table[] = {
+> > +      *      { .name = "rpmsg-client-sample" },
+> > +      *      { },
+> > +      * }
+> > +      *
+> > +      * Then it is possible to support "rpmsg-client-sample*", i.e:
+> > +      *      rpmsg-client-sample
+> > +      *      rpmsg-client-sample_instance0
+> > +      *      rpmsg-client-sample_instance1
+> > +      *      ...
+> > +      *      rpmsg-client-sample_instanceX
+> > +      */
+> What about adding this as function documentation? i don't know if it makes sense
+> for a static volatile function...
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+It didn't cross my mind because (and as you pointed out) it is a
+static function.  Let me know if you're keen on seeing this corrected
+and I'll go for a respin.
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
+Mathieu
 
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/input/mouse/cyapa_gen5.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/input/mouse/cyapa_gen5.c b/drivers/input/mouse/cyapa_gen5.c
-index 14239fbd72cf..7f012bfa2658 100644
---- a/drivers/input/mouse/cyapa_gen5.c
-+++ b/drivers/input/mouse/cyapa_gen5.c
-@@ -250,7 +250,7 @@ struct cyapa_tsg_bin_image_data_record {
- 
- struct cyapa_tsg_bin_image {
- 	struct cyapa_tsg_bin_image_head image_head;
--	struct cyapa_tsg_bin_image_data_record records[0];
-+	struct cyapa_tsg_bin_image_data_record records[];
- } __packed;
- 
- struct pip_bl_packet_start {
-@@ -271,7 +271,7 @@ struct pip_bl_cmd_head {
- 	u8 report_id;  /* Bootloader output report id, must be 40h */
- 	u8 rsvd;  /* Reserved, must be 0 */
- 	struct pip_bl_packet_start packet_start;
--	u8 data[0];  /* Command data variable based on commands */
-+	u8 data[];  /* Command data variable based on commands */
- } __packed;
- 
- /* Initiate bootload command data structure. */
-@@ -300,7 +300,7 @@ struct tsg_bl_metadata_row_params {
- struct tsg_bl_flash_row_head {
- 	u8 flash_array_id;
- 	__le16 flash_row_id;
--	u8 flash_data[0];
-+	u8 flash_data[];
- } __packed;
- 
- struct pip_app_cmd_head {
-@@ -314,7 +314,7 @@ struct pip_app_cmd_head {
- 	 * Bit 6-0: command code.
- 	 */
- 	u8 cmd_code;
--	u8 parameter_data[0];  /* Parameter data variable based on cmd_code */
-+	u8 parameter_data[];  /* Parameter data variable based on cmd_code */
- } __packed;
- 
- /* Application get/set parameter command data structure */
--- 
-2.25.0
-
+>
+> Regards
+> Arnaud
+>
+> > +     return strncmp(id->name, rpdev->id.name, len) == 0;
+> >  }
+> >
+> >  /* match rpmsg channel and rpmsg driver */
+> >
