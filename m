@@ -2,131 +2,205 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 277B115FA7A
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 00:26:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7553F15FA80
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 00:26:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728253AbgBNXZt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 18:25:49 -0500
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:57242 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728022AbgBNXZt (ORCPT
+        id S1728299AbgBNX0V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 18:26:21 -0500
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:17774 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727620AbgBNX0V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 18:25:49 -0500
-Received: from mr2.cc.vt.edu (mr2.cc.ipv6.vt.edu [IPv6:2607:b400:92:8400:0:90:e077:bf22])
-        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id 01ENPlBQ012921
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 18:25:47 -0500
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-        by mr2.cc.vt.edu (8.14.7/8.14.7) with ESMTP id 01ENPgRE015669
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 18:25:47 -0500
-Received: by mail-qk1-f200.google.com with SMTP id v2so7322440qkf.4
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 15:25:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-transfer-encoding:date:message-id;
-        bh=kVVJJc06uXlAboQIV2VK0QKZoPIKTMKcPo6lweP/h3E=;
-        b=jdcW0xK1CPan3dVJBMLK7Fiku7cAFDf/zFohUhoGH50ApFAGtHM23Md+Bxmn+HrZRp
-         lMfEBKzi0FxCIHJz2UMmHKRjzEvQ4dyhkwo3F/ckAKiM11YELds+WFDwJn20GQ5NsPui
-         mBabb1E2e9VQswNk1LvH3eAZ14ktgwiMVlIrWxr+5ACWSCdINKuB1/h7LzhRCjkEENAP
-         OXVI1AliBRDh/ORuUmiI6eAud8a/LcYwExq/rYug0IBxTCZq4F8DP754hhPfnZTWTvfS
-         Y96PadMwpIugtRBQM4fSys293tVNv4ilM+0APwt7pYPrSoChteRugB0YHpGvwLAHYWis
-         5lyw==
-X-Gm-Message-State: APjAAAVCtSvbJB531p+ffGEPNN7R9AreUu5GHQXsHIzYL1z4GolphP8t
-        LwS31ro8IO71Fp+QsuPFIOzRuCvpU5DsMpFO3I/y5yDOg5VaWTNz4gkISJP0Vlz/4UyyEhUSkp3
-        juVoTfSnjAs5dTgvpn6vYlX0J7/w6WiRTRrA=
-X-Received: by 2002:ac8:607:: with SMTP id d7mr4528920qth.271.1581722742402;
-        Fri, 14 Feb 2020 15:25:42 -0800 (PST)
-X-Google-Smtp-Source: APXvYqz1OE/nxm2Js8pfbIZcNF3j9fwwMaytLqhXDFRgrEOoAA7rmVH/ZQz4xkH3QAk0MZ+37+biWA==
-X-Received: by 2002:ac8:607:: with SMTP id d7mr4528903qth.271.1581722742018;
-        Fri, 14 Feb 2020 15:25:42 -0800 (PST)
-Received: from turing-police ([2601:5c0:c001:c9e1::359])
-        by smtp.gmail.com with ESMTPSA id m204sm4343144qke.35.2020.02.14.15.25.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2020 15:25:40 -0800 (PST)
-From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
-X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
-To:     Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-Cc:     Sasha Levin <sashal@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
-In-Reply-To: <20200214224357.yv2lwyusi3gwolp3@pali>
-References: <20190829233506.GT5281@sasha-vm> <20190830075647.wvhrx4asnkrfkkwk@pali> <20191016140353.4hrncxa5wkx47oau@pali> <20191016143113.GS31224@sasha-vm> <20191016160349.pwghlg566hh2o7id@pali> <20191016203317.GU31224@sasha-vm> <20191017075008.2uqgdimo3hrktj3i@pali> <20200213000656.hx5wdofkcpg7aoyo@pali> <20200213211847.GA1734@sasha-vm> <86151.1581718578@turing-police>
- <20200214224357.yv2lwyusi3gwolp3@pali>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1581722738_27211P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 14 Feb 2020 18:25:38 -0500
-Message-ID: <89492.1581722738@turing-police>
+        Fri, 14 Feb 2020 18:26:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1581722781; x=1613258781;
+  h=date:from:to:subject:message-id:references:mime-version:
+   in-reply-to;
+  bh=FFWPXgIVAXjgcT115sJOuzax8nToCuuiY/HaQ9mneTM=;
+  b=c2gPM2ccrXe+xF0iWXQu0K+fje3b041XaBdFv36ipfHd9xfIscKOqOiD
+   kQWJ9KR1kql/pa0JYwAURnWhmspWkaDvIMgGN9pr+mi056EJYe2WRx3gc
+   yyJZg6UKGb9xE1r96ewDXS+Hqpoa/lcw/DMpnbGJsirx0mpJgGYoz5Y1i
+   o=;
+IronPort-SDR: HuP4SSd2cYzUs+cM+RhoYVn7umcRvOl9TOTmD8HMurf/Mfr4/l1GvqltmzwCu2MsYaJQvZr5nv
+ dr8D5uHlcrXQ==
+X-IronPort-AV: E=Sophos;i="5.70,442,1574121600"; 
+   d="scan'208";a="25192188"
+Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1e-27fb8269.us-east-1.amazon.com) ([10.47.23.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 14 Feb 2020 23:26:19 +0000
+Received: from EX13MTAUEE002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
+        by email-inbound-relay-1e-27fb8269.us-east-1.amazon.com (Postfix) with ESMTPS id A91A5A2774;
+        Fri, 14 Feb 2020 23:26:11 +0000 (UTC)
+Received: from EX13D08UEE001.ant.amazon.com (10.43.62.126) by
+ EX13MTAUEE002.ant.amazon.com (10.43.62.24) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 14 Feb 2020 23:25:52 +0000
+Received: from EX13MTAUEE002.ant.amazon.com (10.43.62.24) by
+ EX13D08UEE001.ant.amazon.com (10.43.62.126) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 14 Feb 2020 23:25:51 +0000
+Received: from dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com
+ (172.22.96.68) by mail-relay.amazon.com (10.43.62.224) with Microsoft SMTP
+ Server id 15.0.1367.3 via Frontend Transport; Fri, 14 Feb 2020 23:25:51 +0000
+Received: by dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com (Postfix, from userid 4335130)
+        id ED1114028E; Fri, 14 Feb 2020 23:25:50 +0000 (UTC)
+Date:   Fri, 14 Feb 2020 23:25:50 +0000
+From:   Anchal Agarwal <anchalag@amazon.com>
+To:     <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+        <hpa@zytor.com>, <x86@kernel.org>, <boris.ostrovsky@oracle.com>,
+        <jgross@suse.com>, <linux-pm@vger.kernel.org>,
+        <linux-mm@kvack.org>, <kamatam@amazon.com>,
+        <sstabellini@kernel.org>, <konrad.wilk@oracle.com>,
+        <roger.pau@citrix.com>, <axboe@kernel.dk>, <davem@davemloft.net>,
+        <rjw@rjwysocki.net>, <len.brown@intel.com>, <pavel@ucw.cz>,
+        <peterz@infradead.org>, <eduval@amazon.com>, <sblbir@amazon.com>,
+        <anchalag@amazon.com>, <xen-devel@lists.xenproject.org>,
+        <vkuznets@redhat.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <dwmw@amazon.co.uk>,
+        <fllinden@amaozn.com>, <benh@kernel.crashing.org>
+Subject: [RFC PATCH v3 07/12] genirq: Shutdown irq chips in suspend/resume
+ during hibernation
+Message-ID: <e782c510916c8c05dc95ace151aba4eced207b31.1581721799.git.anchalag@amazon.com>
+References: <cover.1581721799.git.anchalag@amazon.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <cover.1581721799.git.anchalag@amazon.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---==_Exmh_1581722738_27211P
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+There are no pm handlers for the legacy devices, so during tear down
+stale event channel <> IRQ mapping may still remain in the image and
+resume may fail. To avoid adding much code by implementing handlers for
+legacy devices, add a new irq_chip flag IRQCHIP_SHUTDOWN_ON_SUSPEND which
+when enabled on an irq-chip e.g xen-pirq, it will let core suspend/resume
+irq code to shutdown and restart the active irqs. PM suspend/hibernation
+code will rely on this.
+Without this, in PM hibernation, information about the event channel
+remains in hibernation image, but there is no guarantee that the same
+event channel numbers are assigned to the devices when restoring the
+system. This may cause conflict like the following and prevent some
+devices from being restored correctly.
 
+Signed-off-by: Anchal Agarwal <anchalag@amazon.com>
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ drivers/xen/events/events_base.c |  1 +
+ include/linux/irq.h              |  2 ++
+ kernel/irq/chip.c                |  2 +-
+ kernel/irq/internals.h           |  1 +
+ kernel/irq/pm.c                  | 31 ++++++++++++++++++++++---------
+ 5 files changed, 27 insertions(+), 10 deletions(-)
 
-> Idea is simple. Expects that we have a clean filesystem in correct
-> state. We load primary/active/main FAT table (just call it FAT1) and al=
-l
-> changes to filesystem would be done via second non-active FAT table
-> (FAT2). At unmount or sync or flush buffer times, FAT2 would be copied
-> back to the FAT1 and filesystem would be back in clean state.
+diff --git a/drivers/xen/events/events_base.c b/drivers/xen/events/events_base.c
+index 6c8843968a52..e44f27b45bef 100644
+--- a/drivers/xen/events/events_base.c
++++ b/drivers/xen/events/events_base.c
+@@ -1620,6 +1620,7 @@ static struct irq_chip xen_pirq_chip __read_mostly = {
+ 	.irq_set_affinity	= set_affinity_irq,
+ 
+ 	.irq_retrigger		= retrigger_dynirq,
++	.flags                  = IRQCHIP_SHUTDOWN_ON_SUSPEND,
+ };
+ 
+ static struct irq_chip xen_percpu_chip __read_mostly = {
+diff --git a/include/linux/irq.h b/include/linux/irq.h
+index fb301cf29148..2873a579fd9d 100644
+--- a/include/linux/irq.h
++++ b/include/linux/irq.h
+@@ -511,6 +511,7 @@ struct irq_chip {
+  * IRQCHIP_EOI_THREADED:	Chip requires eoi() on unmask in threaded mode
+  * IRQCHIP_SUPPORTS_LEVEL_MSI	Chip can provide two doorbells for Level MSIs
+  * IRQCHIP_SUPPORTS_NMI:	Chip can deliver NMIs, only for root irqchips
++ * IRQCHIP_SHUTDOWN_ON_SUSPEND: Shutdown non wake irqs in the suspend path
+  */
+ enum {
+ 	IRQCHIP_SET_TYPE_MASKED		= (1 <<  0),
+@@ -522,6 +523,7 @@ enum {
+ 	IRQCHIP_EOI_THREADED		= (1 <<  6),
+ 	IRQCHIP_SUPPORTS_LEVEL_MSI	= (1 <<  7),
+ 	IRQCHIP_SUPPORTS_NMI		= (1 <<  8),
++	IRQCHIP_SHUTDOWN_ON_SUSPEND     = (1 <<  9),
+ };
+ 
+ #include <linux/irqdesc.h>
+diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+index b76703b2c0af..a1e8df5193ba 100644
+--- a/kernel/irq/chip.c
++++ b/kernel/irq/chip.c
+@@ -233,7 +233,7 @@ __irq_startup_managed(struct irq_desc *desc, struct cpumask *aff, bool force)
+ }
+ #endif
+ 
+-static int __irq_startup(struct irq_desc *desc)
++int __irq_startup(struct irq_desc *desc)
+ {
+ 	struct irq_data *d = irq_desc_get_irq_data(desc);
+ 	int ret = 0;
+diff --git a/kernel/irq/internals.h b/kernel/irq/internals.h
+index 3924fbe829d4..11c7c55bda63 100644
+--- a/kernel/irq/internals.h
++++ b/kernel/irq/internals.h
+@@ -80,6 +80,7 @@ extern void __enable_irq(struct irq_desc *desc);
+ extern int irq_activate(struct irq_desc *desc);
+ extern int irq_activate_and_startup(struct irq_desc *desc, bool resend);
+ extern int irq_startup(struct irq_desc *desc, bool resend, bool force);
++extern int __irq_startup(struct irq_desc *desc);
+ 
+ extern void irq_shutdown(struct irq_desc *desc);
+ extern void irq_shutdown_and_deactivate(struct irq_desc *desc);
+diff --git a/kernel/irq/pm.c b/kernel/irq/pm.c
+index 8f557fa1f4fe..dc48a25f1756 100644
+--- a/kernel/irq/pm.c
++++ b/kernel/irq/pm.c
+@@ -85,16 +85,25 @@ static bool suspend_device_irq(struct irq_desc *desc)
+ 	}
+ 
+ 	desc->istate |= IRQS_SUSPENDED;
+-	__disable_irq(desc);
+-
+ 	/*
+-	 * Hardware which has no wakeup source configuration facility
+-	 * requires that the non wakeup interrupts are masked at the
+-	 * chip level. The chip implementation indicates that with
+-	 * IRQCHIP_MASK_ON_SUSPEND.
++	 * Some irq chips (e.g. XEN PIRQ) require a full shutdown on suspend
++	 * as some of the legacy drivers(e.g. floppy) do nothing during the
++	 * suspend path
+ 	 */
+-	if (irq_desc_get_chip(desc)->flags & IRQCHIP_MASK_ON_SUSPEND)
+-		mask_irq(desc);
++	if (irq_desc_get_chip(desc)->flags & IRQCHIP_SHUTDOWN_ON_SUSPEND) {
++		irq_shutdown(desc);
++	} else {
++		__disable_irq(desc);
++
++	       /*
++		* Hardware which has no wakeup source configuration facility
++		* requires that the non wakeup interrupts are masked at the
++		* chip level. The chip implementation indicates that with
++		* IRQCHIP_MASK_ON_SUSPEND.
++		*/
++		if (irq_desc_get_chip(desc)->flags & IRQCHIP_MASK_ON_SUSPEND)
++			mask_irq(desc);
++	}
+ 	return true;
+ }
+ 
+@@ -152,7 +161,11 @@ static void resume_irq(struct irq_desc *desc)
+ 	irq_state_set_masked(desc);
+ resume:
+ 	desc->istate &= ~IRQS_SUSPENDED;
+-	__enable_irq(desc);
++
++	if (irq_desc_get_chip(desc)->flags & IRQCHIP_SHUTDOWN_ON_SUSPEND)
++		__irq_startup(desc);
++	else
++		__enable_irq(desc);
+ }
+ 
+ static void resume_irqs(bool want_early)
+-- 
+2.24.1.AMZN
 
-Somehow, scribbling on the non-active table for actual changes sounds lik=
-e a
-bad idea waiting to happen (partly because if you do that and crash, afte=
-r the
-reboot you remount, and it starts up with the now-stale FAT1 because you =
-never
-flagged that FAT as stale.
-
-That means that if we started using the secondary FAT, we'd change the
-ActiveFAT variable to indicate that.  And if we do that, we need to also =
-set
-num_fat to 2 because num_fat 1 and ActiveFAT pointing at the second FAT i=
-s
-*definitely* bogus.
-
-And that could result in us crashing and leaving the device with a header=
- that
-says 'num_fat =3D=3D 2', ActiveFAT =3D=3D second, and the dirty bit set -=
- and the user
-next uses the  filesystem on a system/device that hard-codes that there's=
- only 1 FAT,
-so it blindly goes on its merry way using a FAT that's stale and never re=
-alizing it.
-
-And that's actually the same failure mode as in the first paragraph - you=
- start
-off using FAT1 because you don't see an indication that it's stale.
-
---==_Exmh_1581722738_27211P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.9.0 11/07/2018
-
-iQIVAwUBXkcscgdmEQWDXROgAQIXsxAAnwJ6P42Kc48EOFVYv1sqnEgmMGQ91vRL
-Y4QiUeK8AT/sRAa3s4MlvKBFZtI4+qytCf009UgdY9XWnZe4LymHel/ZQxerVllS
-pRYWycRCy7RxlRMYycD3gpOR1zOh3W/ijHthSZSeMjwLhFoyypfVXXoj/4e8N/Jw
-3jtKbikQWPBi7/agoPu9rLczip/xZlpIDp2guQ0QwJEPxWjneEkDp8K5TAQxxQqR
-/EHNgP3YNarPwo8dp+J6IzIDZBLi9VKf+z+zrkmvKW30nCFEVvly3Eoaxwo04mVH
-5ElA1VWqnC13rfE2A4CJKHgAKW46Jw9XDhHt3mk4lqzeLoB6s4crjpa94o+SOle7
-n6XM45HAuVUhyIzAnRbr+tMmejYZhs6qIf6O89L6LFk+b4Qh9MuIS1PtuZe8964o
-EAJlOpGgC8m2Cszz7ZZVisvLUkMiEkqWCWb/84hbv2f6V5EHSHDuRXPa/cSnwTYK
-g39oJXDS0vr4coX3L+A9P1v38/dD+Dz13lB3XW+C9BFHaychrSVDBLmYpWf2mrbx
-GN185jBn1QXSSJCElS/BDI2gWey4/ro/WpJ1kuZoqCiNcy5pqnd2LOVHxpeX3qNW
-PWyZTsFZHwQIgvpqvcAPx+KHCAuAONW2ZQaAcl2/XKgFJp5DtOl0yrycWBRUA8bC
-stu0iNTBrxY=
-=VpDW
------END PGP SIGNATURE-----
-
---==_Exmh_1581722738_27211P--
