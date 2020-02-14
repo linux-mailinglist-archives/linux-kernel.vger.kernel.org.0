@@ -2,34 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D93C215EB4C
+	by mail.lfdr.de (Postfix) with ESMTP id 6F7BA15EB4B
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:20:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403893AbgBNRTa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:19:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36800 "EHLO mail.kernel.org"
+        id S2404466AbgBNRT1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:19:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391633AbgBNQKw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2390874AbgBNQKw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 14 Feb 2020 11:10:52 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC82424680;
-        Fri, 14 Feb 2020 16:10:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 115142469B;
+        Fri, 14 Feb 2020 16:10:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696648;
-        bh=J82JkTofHDDCykmw5UKeVbFfNcfQzl+TMlBOTvHz5nY=;
+        s=default; t=1581696650;
+        bh=H1Pl5C7u+IIKGTxmcgLvipyZTnbCfoWKS0ajJ064jvg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TmN7Vr7fyn96HXBojKa01moiqeWJVUyTtsAacJPj2Xa7kn56Zr5vUcQDb68QZH9cG
-         4N5O3B2GW2x9E1tWPrCZ4T63wdOGW1sixx7WXT3/FVtlw/QPZrZKwkX6Mj4k7K5Wrx
-         /t5ujHEqdbor49oJa/hCAFoql+KbLNhwS3fYscHg=
+        b=eLHAhSg0tot9fINKKCHcm9jJHWfyxup/pB2wFkadS3CtPAVvUDpKzEPwGBvMcMvI+
+         ntlMnQggLaMvAGoRzlnSQK7uq/i2c67MkqWILoCaJTVHy2Vj6LpA6TM/FhS9KwP1JZ
+         8fNPiNmNcCAuB0/iaPDBmCPYYh6eQo7xKlyjZTh4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ben Skeggs <bskeggs@redhat.com>, Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.4 424/459] drm/nouveau/disp/nv50-: prevent oops when no channel method map provided
-Date:   Fri, 14 Feb 2020 11:01:14 -0500
-Message-Id: <20200214160149.11681-424-sashal@kernel.org>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 426/459] char: hpet: Fix out-of-bounds read bug
+Date:   Fri, 14 Feb 2020 11:01:16 -0500
+Message-Id: <20200214160149.11681-426-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -42,38 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Skeggs <bskeggs@redhat.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-[ Upstream commit 0e6176c6d286316e9431b4f695940cfac4ffe6c2 ]
+[ Upstream commit 98c49f1746ac44ccc164e914b9a44183fad09f51 ]
 
-The implementations for most channel types contains a map of methods to
-priv registers in order to provide debugging info when a disp exception
-has been raised.
+Currently, there is an out-of-bounds read on array hpetp->hp_dev
+in the following for loop:
 
-This info is missing from the implementation of PIO channels as they're
-rather simplistic already, however, if an exception is raised by one of
-them, we'd end up triggering a NULL-pointer deref.  Not ideal...
+870         for (i = 0; i < hdp->hd_nirqs; i++)
+871                 hpetp->hp_dev[i].hd_hdwirq = hdp->hd_irq[i];
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=206299
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+This is due to the recent change from one-element array to
+flexible-array member in struct hpets:
+
+104 struct hpets {
+	...
+113         struct hpet_dev hp_dev[];
+114 };
+
+This change affected the total size of the dynamic memory
+allocation, decreasing it by one time the size of struct hpet_dev.
+
+Fix this by adjusting the allocation size when calling
+struct_size().
+
+Fixes: 987f028b8637c ("char: hpet: Use flexible-array member")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Acked-by: Eric Biggers <ebiggers@kernel.org>
+Link: https://lore.kernel.org/r/20200129022613.GA24281@embeddedor.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/char/hpet.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c b/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
-index bcf32d92ee5a9..50e3539f33d22 100644
---- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
-@@ -74,6 +74,8 @@ nv50_disp_chan_mthd(struct nv50_disp_chan *chan, int debug)
+diff --git a/drivers/char/hpet.c b/drivers/char/hpet.c
+index aed2c45f7968c..ed3b7dab678db 100644
+--- a/drivers/char/hpet.c
++++ b/drivers/char/hpet.c
+@@ -855,7 +855,7 @@ int hpet_alloc(struct hpet_data *hdp)
+ 		return 0;
+ 	}
  
- 	if (debug > subdev->debug)
- 		return;
-+	if (!mthd)
-+		return;
+-	hpetp = kzalloc(struct_size(hpetp, hp_dev, hdp->hd_nirqs - 1),
++	hpetp = kzalloc(struct_size(hpetp, hp_dev, hdp->hd_nirqs),
+ 			GFP_KERNEL);
  
- 	for (i = 0; (list = mthd->data[i].mthd) != NULL; i++) {
- 		u32 base = chan->head * mthd->addr;
+ 	if (!hpetp)
 -- 
 2.20.1
 
