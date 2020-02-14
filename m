@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CE0215EC04
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:24:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86D6F15EBDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:23:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391829AbgBNRYF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:24:05 -0500
+        id S2391287AbgBNQJa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:09:30 -0500
 Received: from mail.kernel.org ([198.145.29.99]:33538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390681AbgBNQJO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:09:14 -0500
+        id S2391230AbgBNQJS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:09:18 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C38CB24681;
-        Fri, 14 Feb 2020 16:09:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 737F82187F;
+        Fri, 14 Feb 2020 16:09:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696554;
-        bh=ipx4Td6141LujbD+iqs7ftTylfFP+MA6LuFhN97F7WA=;
+        s=default; t=1581696557;
+        bh=DNXbfFKO/OJJVt3Rd4Z4hn6sSESh5IbhWZq9Ff4YVxM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R6FqUO4AZqHCUMWuCSfjiQTZfWynTojRN2qY86G1UZaHE4ETuEC9Z560SyKu+Fd63
-         EXNpKDmlm2LUVp0Tp6pP2TVw65lQViku9GSqrRxb+fr1ZbCECu5d7cdCp3twwCokts
-         H9cUu0FldBHJ+vmKFKorreytyWwt+BT3DgXW5RZ0=
+        b=h3zi3G0aIgF7IATOSi7CP1Zi3X0Np2jJxZhcQ01jUIYf03Xcjnl7Zg0mITqze97Gm
+         01+mNcN3zkNd7nl7ENh1Qyk5KvTdJpY5IsFNQccVuLvZpvnxuDQITsCzqQZo57UvfF
+         TpvPQtakvTbC3+WnPKZtpp3x+GrzYo6Be5z9mMk0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Robert Richter <rrichter@marvell.com>,
+Cc:     Marco Elver <elver@google.com>, Qian Cai <cai@lca.pw>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.4 346/459] watchdog/softlockup: Enforce that timestamp is valid on boot
-Date:   Fri, 14 Feb 2020 10:59:56 -0500
-Message-Id: <20200214160149.11681-346-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 348/459] debugobjects: Fix various data races
+Date:   Fri, 14 Feb 2020 10:59:58 -0500
+Message-Id: <20200214160149.11681-348-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -43,79 +43,236 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Marco Elver <elver@google.com>
 
-[ Upstream commit 11e31f608b499f044f24b20be73f1dcab3e43f8a ]
+[ Upstream commit 35fd7a637c42bb54ba4608f4d40ae6e55fc88781 ]
 
-Robert reported that during boot the watchdog timestamp is set to 0 for one
-second which is the indicator for a watchdog reset.
+The counters obj_pool_free, and obj_nr_tofree, and the flag obj_freeing are
+read locklessly outside the pool_lock critical sections. If read with plain
+accesses, this would result in data races.
 
-The reason for this is that the timestamp is in seconds and the time is
-taken from sched clock and divided by ~1e9. sched clock starts at 0 which
-means that for the first second during boot the watchdog timestamp is 0,
-i.e. reset.
+This is addressed as follows:
 
-Use ULONG_MAX as the reset indicator value so the watchdog works correctly
-right from the start. ULONG_MAX would only conflict with a real timestamp
-if the system reaches an uptime of 136 years on 32bit and almost eternity
-on 64bit.
+ * reads outside critical sections become READ_ONCE()s (pairing with
+   WRITE_ONCE()s added);
 
-Reported-by: Robert Richter <rrichter@marvell.com>
+ * writes become WRITE_ONCE()s (pairing with READ_ONCE()s added); since
+   writes happen inside critical sections, only the write and not the read
+   of RMWs needs to be atomic, thus WRITE_ONCE(var, var +/- X) is
+   sufficient.
+
+The data races were reported by KCSAN:
+
+  BUG: KCSAN: data-race in __free_object / fill_pool
+
+  write to 0xffffffff8beb04f8 of 4 bytes by interrupt on cpu 1:
+   __free_object+0x1ee/0x8e0 lib/debugobjects.c:404
+   __debug_check_no_obj_freed+0x199/0x330 lib/debugobjects.c:969
+   debug_check_no_obj_freed+0x3c/0x44 lib/debugobjects.c:994
+   slab_free_hook mm/slub.c:1422 [inline]
+
+  read to 0xffffffff8beb04f8 of 4 bytes by task 1 on cpu 2:
+   fill_pool+0x3d/0x520 lib/debugobjects.c:135
+   __debug_object_init+0x3c/0x810 lib/debugobjects.c:536
+   debug_object_init lib/debugobjects.c:591 [inline]
+   debug_object_activate+0x228/0x320 lib/debugobjects.c:677
+   debug_rcu_head_queue kernel/rcu/rcu.h:176 [inline]
+
+  BUG: KCSAN: data-race in __debug_object_init / fill_pool
+
+  read to 0xffffffff8beb04f8 of 4 bytes by task 10 on cpu 6:
+   fill_pool+0x3d/0x520 lib/debugobjects.c:135
+   __debug_object_init+0x3c/0x810 lib/debugobjects.c:536
+   debug_object_init_on_stack+0x39/0x50 lib/debugobjects.c:606
+   init_timer_on_stack_key kernel/time/timer.c:742 [inline]
+
+  write to 0xffffffff8beb04f8 of 4 bytes by task 1 on cpu 3:
+   alloc_object lib/debugobjects.c:258 [inline]
+   __debug_object_init+0x717/0x810 lib/debugobjects.c:544
+   debug_object_init lib/debugobjects.c:591 [inline]
+   debug_object_activate+0x228/0x320 lib/debugobjects.c:677
+   debug_rcu_head_queue kernel/rcu/rcu.h:176 [inline]
+
+  BUG: KCSAN: data-race in free_obj_work / free_object
+
+  read to 0xffffffff9140c190 of 4 bytes by task 10 on cpu 6:
+   free_object+0x4b/0xd0 lib/debugobjects.c:426
+   debug_object_free+0x190/0x210 lib/debugobjects.c:824
+   destroy_timer_on_stack kernel/time/timer.c:749 [inline]
+
+  write to 0xffffffff9140c190 of 4 bytes by task 93 on cpu 1:
+   free_obj_work+0x24f/0x480 lib/debugobjects.c:313
+   process_one_work+0x454/0x8d0 kernel/workqueue.c:2264
+   worker_thread+0x9a/0x780 kernel/workqueue.c:2410
+
+Reported-by: Qian Cai <cai@lca.pw>
+Signed-off-by: Marco Elver <elver@google.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/r/87o8v3uuzl.fsf@nanos.tec.linutronix.de
+Link: https://lore.kernel.org/r/20200116185529.11026-1-elver@google.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/watchdog.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ lib/debugobjects.c | 46 +++++++++++++++++++++++++---------------------
+ 1 file changed, 25 insertions(+), 21 deletions(-)
 
-diff --git a/kernel/watchdog.c b/kernel/watchdog.c
-index f41334ef09713..cbd3cf503c904 100644
---- a/kernel/watchdog.c
-+++ b/kernel/watchdog.c
-@@ -161,6 +161,8 @@ static void lockup_detector_update_enable(void)
+diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+index 61261195f5b60..48054dbf1b51f 100644
+--- a/lib/debugobjects.c
++++ b/lib/debugobjects.c
+@@ -132,14 +132,18 @@ static void fill_pool(void)
+ 	struct debug_obj *obj;
+ 	unsigned long flags;
  
- #ifdef CONFIG_SOFTLOCKUP_DETECTOR
+-	if (likely(obj_pool_free >= debug_objects_pool_min_level))
++	if (likely(READ_ONCE(obj_pool_free) >= debug_objects_pool_min_level))
+ 		return;
  
-+#define SOFTLOCKUP_RESET	ULONG_MAX
-+
- /* Global variables, exported for sysctl */
- unsigned int __read_mostly softlockup_panic =
- 			CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC_VALUE;
-@@ -274,7 +276,7 @@ notrace void touch_softlockup_watchdog_sched(void)
- 	 * Preemption can be enabled.  It doesn't matter which CPU's timestamp
- 	 * gets zeroed here, so use the raw_ operation.
+ 	/*
+ 	 * Reuse objs from the global free list; they will be reinitialized
+ 	 * when allocating.
++	 *
++	 * Both obj_nr_tofree and obj_pool_free are checked locklessly; the
++	 * READ_ONCE()s pair with the WRITE_ONCE()s in pool_lock critical
++	 * sections.
  	 */
--	raw_cpu_write(watchdog_touch_ts, 0);
-+	raw_cpu_write(watchdog_touch_ts, SOFTLOCKUP_RESET);
- }
+-	while (obj_nr_tofree && (obj_pool_free < obj_pool_min_free)) {
++	while (READ_ONCE(obj_nr_tofree) && (READ_ONCE(obj_pool_free) < obj_pool_min_free)) {
+ 		raw_spin_lock_irqsave(&pool_lock, flags);
+ 		/*
+ 		 * Recheck with the lock held as the worker thread might have
+@@ -148,9 +152,9 @@ static void fill_pool(void)
+ 		while (obj_nr_tofree && (obj_pool_free < obj_pool_min_free)) {
+ 			obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
+ 			hlist_del(&obj->node);
+-			obj_nr_tofree--;
++			WRITE_ONCE(obj_nr_tofree, obj_nr_tofree - 1);
+ 			hlist_add_head(&obj->node, &obj_pool);
+-			obj_pool_free++;
++			WRITE_ONCE(obj_pool_free, obj_pool_free + 1);
+ 		}
+ 		raw_spin_unlock_irqrestore(&pool_lock, flags);
+ 	}
+@@ -158,7 +162,7 @@ static void fill_pool(void)
+ 	if (unlikely(!obj_cache))
+ 		return;
  
- notrace void touch_softlockup_watchdog(void)
-@@ -298,14 +300,14 @@ void touch_all_softlockup_watchdogs(void)
- 	 * the softlockup check.
- 	 */
- 	for_each_cpu(cpu, &watchdog_allowed_mask)
--		per_cpu(watchdog_touch_ts, cpu) = 0;
-+		per_cpu(watchdog_touch_ts, cpu) = SOFTLOCKUP_RESET;
- 	wq_watchdog_touch(-1);
- }
+-	while (obj_pool_free < debug_objects_pool_min_level) {
++	while (READ_ONCE(obj_pool_free) < debug_objects_pool_min_level) {
+ 		struct debug_obj *new[ODEBUG_BATCH_SIZE];
+ 		int cnt;
  
- void touch_softlockup_watchdog_sync(void)
+@@ -174,7 +178,7 @@ static void fill_pool(void)
+ 		while (cnt) {
+ 			hlist_add_head(&new[--cnt]->node, &obj_pool);
+ 			debug_objects_allocated++;
+-			obj_pool_free++;
++			WRITE_ONCE(obj_pool_free, obj_pool_free + 1);
+ 		}
+ 		raw_spin_unlock_irqrestore(&pool_lock, flags);
+ 	}
+@@ -236,7 +240,7 @@ alloc_object(void *addr, struct debug_bucket *b, struct debug_obj_descr *descr)
+ 	obj = __alloc_object(&obj_pool);
+ 	if (obj) {
+ 		obj_pool_used++;
+-		obj_pool_free--;
++		WRITE_ONCE(obj_pool_free, obj_pool_free - 1);
+ 
+ 		/*
+ 		 * Looking ahead, allocate one batch of debug objects and
+@@ -255,7 +259,7 @@ alloc_object(void *addr, struct debug_bucket *b, struct debug_obj_descr *descr)
+ 					       &percpu_pool->free_objs);
+ 				percpu_pool->obj_free++;
+ 				obj_pool_used++;
+-				obj_pool_free--;
++				WRITE_ONCE(obj_pool_free, obj_pool_free - 1);
+ 			}
+ 		}
+ 
+@@ -309,8 +313,8 @@ static void free_obj_work(struct work_struct *work)
+ 		obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
+ 		hlist_del(&obj->node);
+ 		hlist_add_head(&obj->node, &obj_pool);
+-		obj_pool_free++;
+-		obj_nr_tofree--;
++		WRITE_ONCE(obj_pool_free, obj_pool_free + 1);
++		WRITE_ONCE(obj_nr_tofree, obj_nr_tofree - 1);
+ 	}
+ 	raw_spin_unlock_irqrestore(&pool_lock, flags);
+ 	return;
+@@ -324,7 +328,7 @@ static void free_obj_work(struct work_struct *work)
+ 	if (obj_nr_tofree) {
+ 		hlist_move_list(&obj_to_free, &tofree);
+ 		debug_objects_freed += obj_nr_tofree;
+-		obj_nr_tofree = 0;
++		WRITE_ONCE(obj_nr_tofree, 0);
+ 	}
+ 	raw_spin_unlock_irqrestore(&pool_lock, flags);
+ 
+@@ -375,10 +379,10 @@ static void __free_object(struct debug_obj *obj)
+ 	obj_pool_used--;
+ 
+ 	if (work) {
+-		obj_nr_tofree++;
++		WRITE_ONCE(obj_nr_tofree, obj_nr_tofree + 1);
+ 		hlist_add_head(&obj->node, &obj_to_free);
+ 		if (lookahead_count) {
+-			obj_nr_tofree += lookahead_count;
++			WRITE_ONCE(obj_nr_tofree, obj_nr_tofree + lookahead_count);
+ 			obj_pool_used -= lookahead_count;
+ 			while (lookahead_count) {
+ 				hlist_add_head(&objs[--lookahead_count]->node,
+@@ -396,15 +400,15 @@ static void __free_object(struct debug_obj *obj)
+ 			for (i = 0; i < ODEBUG_BATCH_SIZE; i++) {
+ 				obj = __alloc_object(&obj_pool);
+ 				hlist_add_head(&obj->node, &obj_to_free);
+-				obj_pool_free--;
+-				obj_nr_tofree++;
++				WRITE_ONCE(obj_pool_free, obj_pool_free - 1);
++				WRITE_ONCE(obj_nr_tofree, obj_nr_tofree + 1);
+ 			}
+ 		}
+ 	} else {
+-		obj_pool_free++;
++		WRITE_ONCE(obj_pool_free, obj_pool_free + 1);
+ 		hlist_add_head(&obj->node, &obj_pool);
+ 		if (lookahead_count) {
+-			obj_pool_free += lookahead_count;
++			WRITE_ONCE(obj_pool_free, obj_pool_free + lookahead_count);
+ 			obj_pool_used -= lookahead_count;
+ 			while (lookahead_count) {
+ 				hlist_add_head(&objs[--lookahead_count]->node,
+@@ -423,7 +427,7 @@ static void __free_object(struct debug_obj *obj)
+ static void free_object(struct debug_obj *obj)
  {
- 	__this_cpu_write(softlockup_touch_sync, true);
--	__this_cpu_write(watchdog_touch_ts, 0);
-+	__this_cpu_write(watchdog_touch_ts, SOFTLOCKUP_RESET);
- }
+ 	__free_object(obj);
+-	if (!obj_freeing && obj_nr_tofree) {
++	if (!READ_ONCE(obj_freeing) && READ_ONCE(obj_nr_tofree)) {
+ 		WRITE_ONCE(obj_freeing, true);
+ 		schedule_delayed_work(&debug_obj_work, ODEBUG_FREE_WORK_DELAY);
+ 	}
+@@ -982,7 +986,7 @@ static void __debug_check_no_obj_freed(const void *address, unsigned long size)
+ 		debug_objects_maxchecked = objs_checked;
  
- static int is_softlockup(unsigned long touch_ts)
-@@ -383,7 +385,7 @@ static enum hrtimer_restart watchdog_timer_fn(struct hrtimer *hrtimer)
- 	/* .. and repeat */
- 	hrtimer_forward_now(hrtimer, ns_to_ktime(sample_period));
- 
--	if (touch_ts == 0) {
-+	if (touch_ts == SOFTLOCKUP_RESET) {
- 		if (unlikely(__this_cpu_read(softlockup_touch_sync))) {
- 			/*
- 			 * If the time stamp was touched atomically
+ 	/* Schedule work to actually kmem_cache_free() objects */
+-	if (!obj_freeing && obj_nr_tofree) {
++	if (!READ_ONCE(obj_freeing) && READ_ONCE(obj_nr_tofree)) {
+ 		WRITE_ONCE(obj_freeing, true);
+ 		schedule_delayed_work(&debug_obj_work, ODEBUG_FREE_WORK_DELAY);
+ 	}
+@@ -1008,12 +1012,12 @@ static int debug_stats_show(struct seq_file *m, void *v)
+ 	seq_printf(m, "max_checked   :%d\n", debug_objects_maxchecked);
+ 	seq_printf(m, "warnings      :%d\n", debug_objects_warnings);
+ 	seq_printf(m, "fixups        :%d\n", debug_objects_fixups);
+-	seq_printf(m, "pool_free     :%d\n", obj_pool_free + obj_percpu_free);
++	seq_printf(m, "pool_free     :%d\n", READ_ONCE(obj_pool_free) + obj_percpu_free);
+ 	seq_printf(m, "pool_pcp_free :%d\n", obj_percpu_free);
+ 	seq_printf(m, "pool_min_free :%d\n", obj_pool_min_free);
+ 	seq_printf(m, "pool_used     :%d\n", obj_pool_used - obj_percpu_free);
+ 	seq_printf(m, "pool_max_used :%d\n", obj_pool_max_used);
+-	seq_printf(m, "on_free_list  :%d\n", obj_nr_tofree);
++	seq_printf(m, "on_free_list  :%d\n", READ_ONCE(obj_nr_tofree));
+ 	seq_printf(m, "objs_allocated:%d\n", debug_objects_allocated);
+ 	seq_printf(m, "objs_freed    :%d\n", debug_objects_freed);
+ 	return 0;
 -- 
 2.20.1
 
