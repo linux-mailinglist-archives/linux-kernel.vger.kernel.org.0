@@ -2,94 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E59015EAD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:17:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CFC815EC46
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:27:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392039AbgBNRQx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:16:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38406 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389970AbgBNQLc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:11:32 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74863246A2;
-        Fri, 14 Feb 2020 16:11:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696692;
-        bh=xMt+/WZJ7JX4l2wXXyGzZfDgtpkGtXEWwqSlZvxiJAE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jojdr3C0RJHungcyCFUyt8EVTkohOha+y1F3DkP07+fq92M/F39TpNRYr48Wxt4MI
-         ah2/KV+d5N8AMgKmHdT6jKgVNBt4Xdp7ezJIgrJqUsSi8CXqzGK8Or2Os0uZkrFgLn
-         JT2WYk+oB96M+/7dbQa/GIBRAaGF82kfol8xAzNM=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        Xiao Yang <ice_yangxiao@163.com>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 458/459] fuse: don't overflow LLONG_MAX with end offset
-Date:   Fri, 14 Feb 2020 11:01:48 -0500
-Message-Id: <20200214160149.11681-458-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
-References: <20200214160149.11681-1-sashal@kernel.org>
+        id S2390983AbgBNQIb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:08:31 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.165]:10762 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390768AbgBNQHt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:07:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1581696467;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=QeKv3h6vRqJ4wCD4+A7gbij8dajmVYg9hOuzCvCzqmo=;
+        b=nuijQscJhPn8JCg+cNCVkD3gDvPqs3lQTxvPAmAk/HBZkedfnBTtckAwF5XDylUt5p
+        w+WQ/brEVOSKOYVNVzkThCcJ9Rrbqu/BrSEQwj6dePmJvpDDiTucXAkqUgWQppPrPcwC
+        DlUolY0z4lg5xdibIM30BNbgkMaNXcQIaGIPaXfmQfc7kXtmBu+h2fAeunVaBVc4e1d4
+        G7ndPSVbGV2g/1Qcvj/yOZk77fZH9q7jZ9KnzTjHnku246EBZmwJ1NdmPhGWrsydNg0f
+        CNNzamnDsEmaA/wiHWVBd51Ewlt/3nar96MZGzp1X65S6WbOfIWocGtOKNvhs4Cs0B+1
+        x32g==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1OAA2UNf2M7OMfsfQx3"
+X-RZG-CLASS-ID: mo00
+Received: from iMac.fritz.box
+        by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
+        with ESMTPSA id U06217w1EG7ZFkL
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Fri, 14 Feb 2020 17:07:35 +0100 (CET)
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+To:     Andrew Lunn <andrew@lunn.ch>, Paul Cercueil <paul@crapouillou.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>,
+        Richard Fontana <rfontana@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Heiner Kallweit <hkallweit1@gmail.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        letux-kernel@openphoenux.org, kernel@pyra-handheld.com,
+        "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: [PATCH v2] net: davicom: dm9000: allow to pass MAC address through mac_addr module parameter
+Date:   Fri, 14 Feb 2020 17:07:35 +0100
+Message-Id: <0d6b4d383bb29ed5d4710e9706e5ad6c7f92d9da.1581696454.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+The MIPS Ingenic CI20 board is shipped with a quite old u-boot
+(ci20-v2013.10 see https://elinux.org/CI20_Dev_Zone). This passes
+the MAC address through dm9000.mac_addr=xx:xx:xx:xx:xx:xx
+kernel module parameter to give the board a fixed MAC address.
 
-[ Upstream commit 2f1398291bf35fe027914ae7a9610d8e601fbfde ]
+This is not processed by the dm9000 driver which assigns a random
+MAC address on each boot, making DHCP assign a new IP address
+each time.
 
-Handle the special case of fuse_readpages() wanting to read the last page
-of a hugest file possible and overflowing the end offset in the process.
+So we add a check for the mac_addr module parameter as a last
+resort before assigning a random one. This mechanism can also
+be used outside of u-boot to provide a value through modprobe
+config.
 
-This is basically to unbreak xfstests:generic/525 and prevent filesystems
-from doing bad things with an overflowing offset.
+To parse the MAC address in a new function get_mac_addr() we
+use an copy adapted from the ksz884x.c driver which provides
+the same functionality.
 
-Reported-by: Xiao Yang <ice_yangxiao@163.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- fs/fuse/file.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/net/ethernet/davicom/dm9000.c | 42 +++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 695369f46f92d..3dd37a998ea93 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -803,6 +803,10 @@ static int fuse_do_readpage(struct file *file, struct page *page)
+diff --git a/drivers/net/ethernet/davicom/dm9000.c b/drivers/net/ethernet/davicom/dm9000.c
+index 1ea3372775e6..7402030b0352 100644
+--- a/drivers/net/ethernet/davicom/dm9000.c
++++ b/drivers/net/ethernet/davicom/dm9000.c
+@@ -1409,6 +1409,43 @@ static struct dm9000_plat_data *dm9000_parse_dt(struct device *dev)
+ 	return pdata;
+ }
  
- 	attr_ver = fuse_get_attr_version(fc);
- 
-+	/* Don't overflow end offset */
-+	if (pos + (desc.length - 1) == LLONG_MAX)
-+		desc.length--;
++static char *mac_addr = ":";
++module_param(mac_addr, charp, 0);
++MODULE_PARM_DESC(mac_addr, "MAC address");
 +
- 	fuse_read_args_fill(&ia, file, pos, desc.length, FUSE_READ);
- 	res = fuse_simple_request(fc, &ia.ap.args);
- 	if (res < 0)
-@@ -888,6 +892,14 @@ static void fuse_send_readpages(struct fuse_io_args *ia, struct file *file)
- 	ap->args.out_pages = true;
- 	ap->args.page_zeroing = true;
- 	ap->args.page_replace = true;
++static void get_mac_addr(struct net_device *ndev, char *macaddr)
++{
++	int i = 0;
++	int j = 0;
++	int got_num = 0;
++	int num = 0;
 +
-+	/* Don't overflow end offset */
-+	if (pos + (count - 1) == LLONG_MAX) {
-+		count--;
-+		ap->descs[ap->num_pages - 1].length--;
++	while (j < ETH_ALEN) {
++		if (macaddr[i]) {
++			int digit;
++
++			got_num = 1;
++			digit = hex_to_bin(macaddr[i]);
++			if (digit >= 0)
++				num = num * 16 + digit;
++			else if (':' == macaddr[i])
++				got_num = 2;
++			else
++				break;
++		} else if (got_num) {
++			got_num = 2;
++		} else {
++			break;
++		}
++		if (got_num == 2) {
++			ndev->dev_addr[j++] = (u8)num;
++			num = 0;
++			got_num = 0;
++		}
++		i++;
 +	}
-+	WARN_ON((loff_t) (pos + count) < 0);
++}
 +
- 	fuse_read_args_fill(ia, file, pos, count, FUSE_READ);
- 	ia->read.attr_ver = fuse_get_attr_version(fc);
- 	if (fc->async_read) {
+ /*
+  * Search DM9000 board, allocate space and register it
+  */
+@@ -1679,6 +1716,11 @@ dm9000_probe(struct platform_device *pdev)
+ 			ndev->dev_addr[i] = ior(db, i+DM9000_PAR);
+ 	}
+ 
++	if (!is_valid_ether_addr(ndev->dev_addr)) {
++		mac_src = "param";
++		get_mac_addr(ndev, mac_addr);
++	}
++
+ 	if (!is_valid_ether_addr(ndev->dev_addr)) {
+ 		inv_mac_addr = true;
+ 		eth_hw_addr_random(ndev);
 -- 
-2.20.1
+2.23.0
 
