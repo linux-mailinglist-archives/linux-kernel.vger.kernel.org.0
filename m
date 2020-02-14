@@ -2,119 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B01A15EACF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:17:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF6CE15EA80
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:14:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394308AbgBNRQK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:16:10 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:37524 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390425AbgBNRQH (ORCPT
+        id S2394433AbgBNROZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:14:25 -0500
+Received: from gateway33.websitewelcome.com ([192.185.146.80]:41786 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388420AbgBNROW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 12:16:07 -0500
-Received: by mail-ed1-f68.google.com with SMTP id t7so381808edr.4;
-        Fri, 14 Feb 2020 09:16:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+TQaiejN2oJWkvYEyn08fAwxJfSRMe4srFaIp4RWV5Q=;
-        b=oYLPl5qBYmO1vBuRlYsixTkkJW6FWJLFmxAwB1o1VnXY4DHfk8GvEarNEbfMQ/uszw
-         djdSQyjEQJOYpzwAt7k3HF0QZ2zI7Ks5n3/V4QuCzu/Ryhi4Zk0VY8QdGS3+s0aEPtmG
-         MvN22umgGn+1FoZaMcAM5UyXHsSRC4rJ54VmXrQ1PxbXHBsE+5dLMs/exSoFF4azmK+Q
-         tTbyyyJsk0nxgukBQ9lhC9pSiwK6KlqnjSywLkz0lP+b9qxbQen2bnhGmVfP6S3XBgwj
-         o4WtWsomcFn/CoyRIRnVUFQSqhSxn/8KBtEpuCAx0S0GWM6BxO6UWIzeBDhiJDNWJ0Ai
-         lT5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+TQaiejN2oJWkvYEyn08fAwxJfSRMe4srFaIp4RWV5Q=;
-        b=Or4zPsXH1xG6r6qIW1tZVbarxQBgnlNkDiM4/M5dDiMawbIYTmAes0V5kMfkmdQqZw
-         MM193Lupx5cqEJrmlaOyLsqvXkmGsTHJbude6+s4mrtuGHXyWcPkYzVjp8TPW3P9QqgO
-         JyMCfMHqKeN9iDWYy9xAgEwb09boYoFFzeekkxHa0lN7z2XiAqK21A1kkGrbDYbz3zEu
-         crFZmEB9b/qs8ToTWcU/omSgv2GN/nCf49DbkdDWBxp7SwjQejl2wfOLiQJI77GT27Q1
-         GiGMXXVeGco1H4d1RLlFIfc/cAYKzFauVncKpRzaUpmqmMwvARiPI0hAAx3uly+SDj+A
-         Zq8A==
-X-Gm-Message-State: APjAAAXIo+62TbCk/rjzTqFq/Sb3NqKBw8bZ8tj9ay6/Bn9+Q6ObBwEg
-        9rFHWtBWCsjQ0InJ7GzYzJv1b46uQ9knmBtzfo2T1En4
-X-Google-Smtp-Source: APXvYqycb3Z4H8Wemp8qMTqfZ0sCEaV8Lc9arsL+tB8jQfxNHQ9YsIhHn5tU9xN5JGvOrWZ6wh8W8hVtPo/Osi4IerA=
-X-Received: by 2002:aa7:d3cb:: with SMTP id o11mr3715602edr.145.1581700565704;
- Fri, 14 Feb 2020 09:16:05 -0800 (PST)
+        Fri, 14 Feb 2020 12:14:22 -0500
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 7532554346C
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 11:14:21 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 2eXljIrEKEfyq2eXljS3Ky; Fri, 14 Feb 2020 11:14:21 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=k+QU65CHLZoLG7AfwTnQ5YtDbA20JGLnCMfo7U4sik4=; b=OpQNwq3cCqz8SZD6hAvLref+Y6
+        lMllw7ioVUPsYynpCRVpJGfyWvhnsmOA+BrGswNXwTMNRi7yD6i0AXXYikW7kjcOIlx5A39W9SSMP
+        5Q5VGYluBnUMY5C7vzBaU2Ep6ryr74VmdSO+sQutg4Tlc/ouI/YHh6XAvTXxYmqZBinqu7r5HmVbZ
+        iFQM8+f+Qhgj/1HAzMYj8rRSONhIBxAkUJniCHe6TVCNwU1OpEg8p3p5SWuU9bW6SQG3/r9o4KUDO
+        cJOKrMw5ZVqS45ItrIgxaucsN8gWZwmimFtkfRR9SKyu+uS3p/gJoAB9HBlKSoStWvHif21BAvKIL
+        7zOktwHQ==;
+Received: from [200.68.140.137] (port=25415 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j2eXj-003fsi-RY; Fri, 14 Feb 2020 11:14:20 -0600
+Date:   Fri, 14 Feb 2020 11:16:57 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] dmaengine: tegra210-adma: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200214171657.GA25663@embeddedor>
 MIME-Version: 1.0
-References: <20200213191015.7150-1-f.fainelli@gmail.com> <CA+h21hqVWc6Tis12oJsfgXtsW2mJr0qUFu28G3qjMf-sOJWAwg@mail.gmail.com>
- <ab4e0ce1-dd48-8c1b-8753-a400dfcb38ec@gmail.com>
-In-Reply-To: <ab4e0ce1-dd48-8c1b-8753-a400dfcb38ec@gmail.com>
-From:   Vladimir Oltean <olteanv@gmail.com>
-Date:   Fri, 14 Feb 2020 19:15:54 +0200
-Message-ID: <CA+h21hr5U-E9En+R1C7bhh2+DpS9i0qTBHsnAk=pLeamcqTHMg@mail.gmail.com>
-Subject: Re: [PATCH net] net: dsa: b53: Ensure the default VID is untagged
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     netdev <netdev@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.68.140.137
+X-Source-L: No
+X-Exim-ID: 1j2eXj-003fsi-RY
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [200.68.140.137]:25415
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 23
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 14 Feb 2020 at 19:08, Florian Fainelli <f.fainelli@gmail.com> wrote:
->
->
->
-> On 2/14/2020 2:36 AM, Vladimir Oltean wrote:
-> > Hi Florian,
-> >
-> > On Thu, 13 Feb 2020 at 21:10, Florian Fainelli <f.fainelli@gmail.com> wrote:
-> >>
-> >> We need to ensure that the default VID is untagged otherwise the switch
-> >> will be sending frames tagged frames and the results can be problematic.
-> >> This is especially true with b53 switches that use VID 0 as their
-> >> default VLAN since VID 0 has a special meaning.
-> >>
-> >> Fixes: fea83353177a ("net: dsa: b53: Fix default VLAN ID")
-> >> Fixes: 061f6a505ac3 ("net: dsa: Add ndo_vlan_rx_{add, kill}_vid implementation")
-> >> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> >> ---
-> >>  drivers/net/dsa/b53/b53_common.c | 3 +++
-> >>  1 file changed, 3 insertions(+)
-> >>
-> >> diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53_common.c
-> >> index 449a22172e07..f25c43b300d4 100644
-> >> --- a/drivers/net/dsa/b53/b53_common.c
-> >> +++ b/drivers/net/dsa/b53/b53_common.c
-> >> @@ -1366,6 +1366,9 @@ void b53_vlan_add(struct dsa_switch *ds, int port,
-> >>
-> >>                 b53_get_vlan_entry(dev, vid, vl);
-> >>
-> >> +               if (vid == b53_default_pvid(dev))
-> >> +                       untagged = true;
-> >> +
-> >>                 vl->members |= BIT(port);
-> >>                 if (untagged && !dsa_is_cpu_port(ds, port))
-> >>                         vl->untag |= BIT(port);
-> >> --
-> >> 2.17.1
-> >>
-> >
-> > Don't you mean to force untagged egress only for the pvid value of 0?
->
-> The default VID (0 for most switches, 1 for 5325/65) is configured as
-> pvid during b53_configure_vlan() so when we get a call to port_vlan_add
-> with VID == 0 this is coming exclusively from
-> dsa_slave_vlan_rx_add_vid() since the bridge will never program a VID <
-> 1. When dsa_slave_vlan_rx_add_vid() calls us, we do not have any VLAN
-> flags set in the object.
-> --
-> Florian
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-Exactly. So the only case you need to guard against is when vid == 0
-&& vid == b53_default_pvid(dev) - basically the 8021q module messing
-with your untagged (pvid-tagged) traffic. So both have to be zero in
-order to interfere. If vid is 0 but the b53_default_pvid is 1 - no
-problem. If vid is 1 and the b53_default_pvid is 1, again no problem.
-At least that's what you described in the previous patch. No?
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
--Vladimir
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
+
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
+
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
+
+This issue was found with the help of Coccinelle.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/dma/tegra210-adma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+index 6e1268552f74..c4ce5dfb149b 100644
+--- a/drivers/dma/tegra210-adma.c
++++ b/drivers/dma/tegra210-adma.c
+@@ -164,7 +164,7 @@ struct tegra_adma {
+ 	const struct tegra_adma_chip_data *cdata;
+ 
+ 	/* Last member of the structure */
+-	struct tegra_adma_chan		channels[0];
++	struct tegra_adma_chan		channels[];
+ };
+ 
+ static inline void tdma_write(struct tegra_adma *tdma, u32 reg, u32 val)
+-- 
+2.25.0
+
