@@ -2,123 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38F3F15D299
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 08:14:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0D1915D27B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 08:02:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728849AbgBNHOl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 02:14:41 -0500
-Received: from gateway30.websitewelcome.com ([192.185.196.18]:24538 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726181AbgBNHOl (ORCPT
+        id S1728764AbgBNHCx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 02:02:53 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:46757 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726048AbgBNHCx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 02:14:41 -0500
-X-Greylist: delayed 1482 seconds by postgrey-1.27 at vger.kernel.org; Fri, 14 Feb 2020 02:14:40 EST
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id E7FD92350
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 00:49:57 -0600 (CST)
-Received: from br164.hostgator.com.br ([192.185.176.180])
-        by cmsmtp with SMTP
-        id 2UnVjc5DLvBMd2UnVjaSIR; Fri, 14 Feb 2020 00:49:57 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=castello.eng.br; s=default; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=x3HqSZrL9+fZXJMxZEHFm+rcw99J7Dz8a7+GnuEr4Rw=; b=TWNAS05Xry4K2p0yjDxEBDZAdf
-        O+NW/uoIPWMBCYQ9zxRTDOiPqhpISuK/+8j+L6rXQsKVl2JnM8Y6ocp/5An1eVoUG1wfb8eNBHQzI
-        olaFwqqhcKEYYEpZe0Q51CAllGtlBBYqFY6GQXQ8izA3zJhbWR1P8f6hVzNk2Om57+VcsCSJNqhiK
-        ysFxY9waAt23Wq9yFOH60UX8rJmvNf8cT07h9Euqt8vNvJLPhDIoz12olW5hmQh2KB3NRWz//J0Bt
-        0mE9yfynqz83Xt/aFV28uFpUX5tP4tAs/bKcmthIhlj+bPxwrntu8OnrizHaDtlf64BdgnWgOSHzx
-        x2pd0Ggw==;
-Received: from [191.31.199.191] (port=34918 helo=castello.castello)
-        by br164.hostgator.com.br with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        Fri, 14 Feb 2020 02:02:53 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
-        (envelope-from <matheus@castello.eng.br>)
-        id 1j2UnV-0014Dq-4o; Fri, 14 Feb 2020 03:49:57 -0300
-From:   Matheus Castello <matheus@castello.eng.br>
-To:     afaerber@suse.de, manivannan.sadhasivam@linaro.org
-Cc:     daniel.lezcano@linaro.org, tglx@linutronix.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Matheus Castello <matheus@castello.eng.br>
-Subject: [PATCH] clocksource: owl: Improve owl_timer_init fail messages
-Date:   Fri, 14 Feb 2020 03:49:23 -0300
-Message-Id: <20200214064923.190035-1-matheus@castello.eng.br>
-X-Mailer: git-send-email 2.25.0
+        (envelope-from <ukl@pengutronix.de>)
+        id 1j2Uzz-0000Rz-2W; Fri, 14 Feb 2020 08:02:51 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1j2Uzv-000751-2u; Fri, 14 Feb 2020 08:02:47 +0100
+Date:   Fri, 14 Feb 2020 08:02:47 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] ARM: dts: imx6sx: Add missing uart mux function
+Message-ID: <20200214070247.wrh6yaccyqiwlezh@pengutronix.de>
+References: <1581576189-20490-1-git-send-email-Anson.Huang@nxp.com>
+ <20200213072710.4snwbo3i7vfbroqy@pengutronix.de>
+ <DB3PR0402MB39163A56BF6AA37E3C691964F51A0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <20200213095119.f6obrdqb6ql76qqy@pengutronix.de>
+ <DB3PR0402MB391620CB6FA1C3E86AD5C163F5150@DB3PR0402MB3916.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - br164.hostgator.com.br
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - castello.eng.br
-X-BWhitelist: no
-X-Source-IP: 191.31.199.191
-X-Source-L: No
-X-Exim-ID: 1j2UnV-0014Dq-4o
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (castello.castello) [191.31.199.191]:34918
-X-Source-Auth: matheus@castello.eng.br
-X-Email-Count: 1
-X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
-X-Local-Domain: yes
+In-Reply-To: <DB3PR0402MB391620CB6FA1C3E86AD5C163F5150@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding error messages, in case of not having a defined clock property
-and in case of an error in clocksource_mmio_init, which may not be
-fatal, so just adding a pr_err to notify that it failed.
+Hello Anson,
 
-Signed-off-by: Matheus Castello <matheus@castello.eng.br>
----
+On Fri, Feb 14, 2020 at 05:11:11AM +0000, Anson Huang wrote:
+> >  - rename existing imx6sx symbols to contain DTE or DCE
+> >    (introducing defines that map the old name to the new)
+> 
+> Is the introducing defines that map to old name to the new mainly for
+> NOT breaking bisect? As pinfunc.h is changed in a separate patch other than dts files. 
 
-Tested on my Caninos Labrador s500 based board. If the clock property is not
-set this message would help debug:
+It's also for not breaking out-of-tree dts files. I'd put them at the
+bottom of the file with a comment that these are not supposed to be used
+any more and remove them after a bit of bitrotting there.
 
-...
-[    0.000000] Failed to get OF clock for clocksource
-[    0.000000] Failed to initialize '/soc/timer@b0168000': -2
-[    0.000000] timer_probe: no matching timers found
-...
+Best regards
+Uwe
 
- drivers/clocksource/timer-owl.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clocksource/timer-owl.c b/drivers/clocksource/timer-owl.c
-index 900fe736145d..f53596f9e86c 100644
---- a/drivers/clocksource/timer-owl.c
-+++ b/drivers/clocksource/timer-owl.c
-@@ -135,8 +135,10 @@ static int __init owl_timer_init(struct device_node *node)
- 	}
-
- 	clk = of_clk_get(node, 0);
--	if (IS_ERR(clk))
-+	if (IS_ERR(clk)) {
-+		pr_err("Failed to get OF clock for clocksource\n");
- 		return PTR_ERR(clk);
-+	}
-
- 	rate = clk_get_rate(clk);
-
-@@ -144,8 +146,11 @@ static int __init owl_timer_init(struct device_node *node)
- 	owl_timer_set_enabled(owl_clksrc_base, true);
-
- 	sched_clock_register(owl_timer_sched_read, 32, rate);
--	clocksource_mmio_init(owl_clksrc_base + OWL_Tx_VAL, node->name,
--			      rate, 200, 32, clocksource_mmio_readl_up);
-+	ret = clocksource_mmio_init(owl_clksrc_base + OWL_Tx_VAL, node->name,
-+				    rate, 200, 32, clocksource_mmio_readl_up);
-+
-+	if (ret)
-+		pr_err("Failed to register clocksource %d\n", ret);
-
- 	owl_timer_reset(owl_clkevt_base);
-
---
-2.25.0
-
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
