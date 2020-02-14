@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 310F915F1C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:08:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53BFB15F205
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:09:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731762AbgBNPzZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:55:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36000 "EHLO mail.kernel.org"
+        id S2388739AbgBNSFs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:05:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731711AbgBNPzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:55:11 -0500
+        id S1731714AbgBNPzN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:55:13 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4146224684;
-        Fri, 14 Feb 2020 15:55:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B50F24676;
+        Fri, 14 Feb 2020 15:55:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695711;
-        bh=e6hZLrdtLccx63LlzwcLe3onLTHlCbLuO+s10UC2pWg=;
+        s=default; t=1581695712;
+        bh=dQlmWmfJYqyzHqxjP0GJKiHLOyZv9MPDy5qO2NfH+s8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KY5bWO79Vkgw36TTqTe1AP+o1Es+zFbqzK4CWL5yAYQLkiecyaCmQ6mQzXVW7NODu
-         zKXWccGivyXE8Wh8Pc0sOQmuWeLcNaUiivfbqdFDl/vSwGJowNkORW82kYqerb+G93
-         uCEe4Neb4PF4i/NokRyovWPPgurAFLX8cPkx+k38=
+        b=EnkrT3GqIh3gUKKk9twdzvzUkQNTEgtM0of7X6txbKnw2wSRJPtISm9iYzmlNQmK8
+         FWwdFpvD3C8LuUqmpy6HVueuN3gamX3ojcseYceDxbHibMzyiDgIW8o4P61zAC9NUJ
+         KLCPFeGmU86LQGhdcYI4O4tRr4hmVGrr8WdSWFS4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jason Ekstrand <jason@jlekstrand.net>,
-        Hans de Goede <hdegoede@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 290/542] ACPI: button: Add DMI quirk for Razer Blade Stealth 13 late 2019 lid switch
-Date:   Fri, 14 Feb 2020 10:44:42 -0500
-Message-Id: <20200214154854.6746-290-sashal@kernel.org>
+Cc:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Sasha Levin <sashal@kernel.org>,
+        iommu@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 5.5 291/542] iommu/vt-d: Match CPU and IOMMU paging mode
+Date:   Fri, 14 Feb 2020 10:44:43 -0500
+Message-Id: <20200214154854.6746-291-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -44,45 +46,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Ekstrand <jason@jlekstrand.net>
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
 
-[ Upstream commit 0528904926aab19bffb2068879aa44db166c6d5f ]
+[ Upstream commit 79db7e1b4cf2a006f556099c13de3b12970fc6e3 ]
 
-Running evemu-record on the lid switch event shows that the lid reports
-the first "close" but then never reports an "open".  This causes systemd
-to continuously re-suspend the laptop every 30s.  Resetting the _LID to
-"open" fixes the issue.
+When setting up first level page tables for sharing with CPU, we need
+to ensure IOMMU can support no less than the levels supported by the
+CPU.
 
-Signed-off-by: Jason Ekstrand <jason@jlekstrand.net>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+It is not adequate, as in the current code, to set up 5-level paging
+in PASID entry First Level Paging Mode(FLPM) solely based on CPU.
+
+Currently, intel_pasid_setup_first_level() is only used by native SVM
+code which already checks paging mode matches. However, future use of
+this helper function may not be limited to native SVM.
+https://lkml.org/lkml/2019/11/18/1037
+
+Fixes: 437f35e1cd4c8 ("iommu/vt-d: Add first level page table interface")
+Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/button.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/iommu/intel-pasid.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/acpi/button.c b/drivers/acpi/button.c
-index b758b45737f50..f6925f16c4a2a 100644
---- a/drivers/acpi/button.c
-+++ b/drivers/acpi/button.c
-@@ -122,6 +122,17 @@ static const struct dmi_system_id dmi_lid_quirks[] = {
- 		},
- 		.driver_data = (void *)(long)ACPI_BUTTON_LID_INIT_OPEN,
- 	},
-+	{
-+		/*
-+		 * Razer Blade Stealth 13 late 2019, notification of the LID device
-+		 * only happens on close, not on open and _LID always returns closed.
-+		 */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Razer"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Razer Blade Stealth 13 Late 2019"),
-+		},
-+		.driver_data = (void *)(long)ACPI_BUTTON_LID_INIT_OPEN,
-+	},
- 	{}
- };
+diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
+index 040a445be3009..e7cb0b8a73327 100644
+--- a/drivers/iommu/intel-pasid.c
++++ b/drivers/iommu/intel-pasid.c
+@@ -499,8 +499,16 @@ int intel_pasid_setup_first_level(struct intel_iommu *iommu,
+ 	}
  
+ #ifdef CONFIG_X86
+-	if (cpu_feature_enabled(X86_FEATURE_LA57))
+-		pasid_set_flpm(pte, 1);
++	/* Both CPU and IOMMU paging mode need to match */
++	if (cpu_feature_enabled(X86_FEATURE_LA57)) {
++		if (cap_5lp_support(iommu->cap)) {
++			pasid_set_flpm(pte, 1);
++		} else {
++			pr_err("VT-d has no 5-level paging support for CPU\n");
++			pasid_clear_entry(pte);
++			return -EINVAL;
++		}
++	}
+ #endif /* CONFIG_X86 */
+ 
+ 	pasid_set_domain_id(pte, did);
 -- 
 2.20.1
 
