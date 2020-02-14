@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 226B915F011
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:52:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FAB815F04D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:54:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388635AbgBNP6g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:58:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42020 "EHLO mail.kernel.org"
+        id S2391093AbgBNRxd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:53:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387905AbgBNP6Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:58:16 -0500
+        id S2387719AbgBNP6T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:58:19 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5697922314;
-        Fri, 14 Feb 2020 15:58:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C499B2082F;
+        Fri, 14 Feb 2020 15:58:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695896;
-        bh=1xCCUDJRyOV29jDvyw2qulGXTvVC0OZvGv+a2Mz9d4o=;
+        s=default; t=1581695898;
+        bh=AxKfZmAdFXCPVhMsF/7rjFQ7ZLiEFxpynnsIU06lQ8s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M7QUz6EuMsCluA+o5M+c8CohyhWMERLUuBUHSK+R6s9xLPMdo0lBG3aHUfCr9XoPk
-         tvfqFODvAbO3TRqQebyJsSpDIi446u71VTaPLK9fcMo7r5pgSl/kbcCrdIOcMM9ix7
-         kcfqEqEG4F358uF1eRMNnpe1V+brQiaqLUvyBzr4=
+        b=oTQw5aEAVAqm1QXaMStiKGgHwm/UPkxv+1RQYb3ZutfsByh0wenE8niiDYqiaotTT
+         4Gvdc95kBmF3+7aoG56gknHE/xd7rKwWOnbCQBXP6geRJdmM8ezbkWBZGW/Yl9GNCl
+         eY3WAbGQSa1y2B3qRyamK9GvAplaf626MlNkayKM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chris Down <chris@chrisdown.name>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Sasha Levin <sashal@kernel.org>, linux-kbuild@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 438/542] bpf, btf: Always output invariant hit in pahole DWARF to BTF transform
-Date:   Fri, 14 Feb 2020 10:47:10 -0500
-Message-Id: <20200214154854.6746-438-sashal@kernel.org>
+Cc:     Trond Myklebust <trondmy@gmail.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        "J . Bruce Fields" <bfields@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 440/542] sunrpc: Fix potential leaks in sunrpc_cache_unhash()
+Date:   Fri, 14 Feb 2020 10:47:12 -0500
+Message-Id: <20200214154854.6746-440-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -45,58 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Down <chris@chrisdown.name>
+From: Trond Myklebust <trondmy@gmail.com>
 
-[ Upstream commit 2a67a6ccb01f21b854715d86ff6432a18b97adb3 ]
+[ Upstream commit 1d82163714c16ebe09c7a8c9cd3cef7abcc16208 ]
 
-When trying to compile with CONFIG_DEBUG_INFO_BTF enabled, I got this
-error:
+When we unhash the cache entry, we need to handle any pending upcalls
+by calling cache_fresh_unlocked().
 
-    % make -s
-    Failed to generate BTF for vmlinux
-    Try to disable CONFIG_DEBUG_INFO_BTF
-    make[3]: *** [vmlinux] Error 1
-
-Compiling again without -s shows the true error (that pahole is
-missing), but since this is fatal, we should show the error
-unconditionally on stderr as well, not silence it using the `info`
-function. With this patch:
-
-    % make -s
-    BTF: .tmp_vmlinux.btf: pahole (pahole) is not available
-    Failed to generate BTF for vmlinux
-    Try to disable CONFIG_DEBUG_INFO_BTF
-    make[3]: *** [vmlinux] Error 1
-
-Signed-off-by: Chris Down <chris@chrisdown.name>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Andrii Nakryiko <andriin@fb.com>
-Link: https://lore.kernel.org/bpf/20200122000110.GA310073@chrisdown.name
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/link-vmlinux.sh | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/sunrpc/cache.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-index 4363799403561..408b5c0b99b1b 100755
---- a/scripts/link-vmlinux.sh
-+++ b/scripts/link-vmlinux.sh
-@@ -108,13 +108,13 @@ gen_btf()
- 	local bin_arch
- 
- 	if ! [ -x "$(command -v ${PAHOLE})" ]; then
--		info "BTF" "${1}: pahole (${PAHOLE}) is not available"
-+		echo >&2 "BTF: ${1}: pahole (${PAHOLE}) is not available"
- 		return 1
- 	fi
- 
- 	pahole_ver=$(${PAHOLE} --version | sed -E 's/v([0-9]+)\.([0-9]+)/\1\2/')
- 	if [ "${pahole_ver}" -lt "113" ]; then
--		info "BTF" "${1}: pahole version $(${PAHOLE} --version) is too old, need at least v1.13"
-+		echo >&2 "BTF: ${1}: pahole version $(${PAHOLE} --version) is too old, need at least v1.13"
- 		return 1
- 	fi
- 
+diff --git a/net/sunrpc/cache.c b/net/sunrpc/cache.c
+index f740cb51802af..7ede1e52fd812 100644
+--- a/net/sunrpc/cache.c
++++ b/net/sunrpc/cache.c
+@@ -1888,7 +1888,9 @@ void sunrpc_cache_unhash(struct cache_detail *cd, struct cache_head *h)
+ 	if (!hlist_unhashed(&h->cache_list)){
+ 		hlist_del_init_rcu(&h->cache_list);
+ 		cd->entries--;
++		set_bit(CACHE_CLEANED, &h->flags);
+ 		spin_unlock(&cd->hash_lock);
++		cache_fresh_unlocked(h, cd);
+ 		cache_put(h, cd);
+ 	} else
+ 		spin_unlock(&cd->hash_lock);
 -- 
 2.20.1
 
