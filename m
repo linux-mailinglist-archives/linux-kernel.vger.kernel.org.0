@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3FC615D398
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 09:13:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1A1D15D391
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 09:13:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729031AbgBNINt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 03:13:49 -0500
-Received: from outbound-smtp40.blacknight.com ([46.22.139.223]:48361 "EHLO
-        outbound-smtp40.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726080AbgBNIN2 (ORCPT
+        id S1729100AbgBNIN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 03:13:28 -0500
+Received: from outbound-smtp28.blacknight.com ([81.17.249.11]:40321 "EHLO
+        outbound-smtp28.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728239AbgBNIN2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 14 Feb 2020 03:13:28 -0500
 Received: from mail.blacknight.com (unknown [81.17.255.152])
-        by outbound-smtp40.blacknight.com (Postfix) with ESMTPS id AEE631C2F17
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 08:13:25 +0000 (GMT)
-Received: (qmail 4645 invoked from network); 14 Feb 2020 08:13:25 -0000
+        by outbound-smtp28.blacknight.com (Postfix) with ESMTPS id 69166D0350
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 08:13:26 +0000 (GMT)
+Received: (qmail 4690 invoked from network); 14 Feb 2020 08:13:26 -0000
 Received: from unknown (HELO stampy.112glenside.lan) (mgorman@techsingularity.net@[84.203.18.57])
-  by 81.17.254.9 with ESMTPA; 14 Feb 2020 08:13:25 -0000
+  by 81.17.254.9 with ESMTPA; 14 Feb 2020 08:13:26 -0000
 From:   Mel Gorman <mgorman@techsingularity.net>
 To:     Vincent Guittot <vincent.guittot@linaro.org>
 Cc:     Ingo Molnar <mingo@kernel.org>,
@@ -30,197 +30,200 @@ Cc:     Ingo Molnar <mingo@kernel.org>,
         Phil Auld <pauld@redhat.com>, Hillf Danton <hdanton@sina.com>,
         LKML <linux-kernel@vger.kernel.org>,
         Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 00/12] Reconcile NUMA balancing decisions with the load balancer v2 (resend)
-Date:   Fri, 14 Feb 2020 08:13:12 +0000
-Message-Id: <20200214081324.26859-1-mgorman@techsingularity.net>
+Subject: [PATCH 01/12] sched/fair: Allow a per-CPU kthread waking a task to stack on the same CPU, to fix XFS performance regression
+Date:   Fri, 14 Feb 2020 08:13:13 +0000
+Message-Id: <20200214081324.26859-2-mgorman@techsingularity.net>
 X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20200214081324.26859-1-mgorman@techsingularity.net>
+References: <20200214081324.26859-1-mgorman@techsingularity.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry for the resend. The first sending got partially rejected by my
-upstream SMTP.
+The following XFS commit:
 
-Changelog since V1:
-o Rebase on top of Vincent's series and rework
+  8ab39f11d974 ("xfs: prevent CIL push holdoff in log recovery")
 
-Note: The baseline for this series is tip/sched/core as of February
-	12th rebased on top of v5.6-rc1. The series includes patches from
-	Vincent as I needed to add a fix and build on top of it. Vincent's
-	patches may change based on feedback (split request from Peter,
-	Valentin has suggestions). However, I do not expect a collision
-	if Vincent's patches change as the patches are based on top.
+changed the logic from using bound workqueues to using unbound
+workqueues. Functionally this makes sense but it was observed at the
+time that the dbench performance dropped quite a lot and CPU migrations
+were increased.
 
-The NUMA balancer makes placement decisions on tasks that partially
-take the load balancer into account and vice versa but there are
-inconsistencies. This can result in placement decisions that override
-each other leading to unnecessary migrations -- both task placement
-and page placement. This series reconciles many of the decisions --
-partially Vincent's work with some fixes and optimisations on top to
-merge our two series.
+The current pattern of the task migration is straight-forward. With XFS,
+an IO issuer delegates work to xlog_cil_push_work ()on an unbound kworker.
+This runs on a nearby CPU and on completion, dbench wakes up on its old CPU
+as it is still idle and no migration occurs. dbench then queues the real
+IO on the blk_mq_requeue_work() work item which runs on a bound kworker
+which is forced to run on the same CPU as dbench. When IO completes,
+the bound kworker wakes dbench but as the kworker is a bound but,
+real task, the CPU is not considered idle and dbench gets migrated by
+select_idle_sibling() to a new CPU. dbench may ping-pong between two CPUs
+for a while but ultimately it starts a round-robin of all CPUs sharing
+the same LLC. High-frequency migration on each IO completion has poor
+performance overall. It has negative implications both in commication
+costs and power management. mpstat confirmed that at low thread counts
+that all CPUs sharing an LLC has low level of activity.
 
-The first patch is unrelated. It's picked up by tip but was not present in
-the tree at the time of the fork. I'm including it here because I tested
-with it.
+Note that even if the CIL patch was reverted, there still would
+be migrations but the impact is less noticeable. It turns out that
+individually the scheduler, XFS, blk-mq and workqueues all made sensible
+decisions but in combination, the overall effect was sub-optimal.
 
-The second and third patches are tracing only and was needed to get
-sensible data out of ftrace with respect to task placement for NUMA
-balancing. The NUMA balancer is *far* easier to analyse with the
-patches and informed how the series should be developed.
+This patch special cases the IO issue/completion pattern and allows
+a bound kworker waker and a task wakee to stack on the same CPU if
+there is a strong chance they are directly related. The expectation
+is that the kworker is likely going back to sleep shortly. This is not
+guaranteed as the IO could be queued asynchronously but there is a very
+strong relationship between the task and kworker in this case that would
+justify stacking on the same CPU instead of migrating. There should be
+few concerns about kworker starvation given that the special casing is
+only when the kworker is the waker.
 
-Patches 4-5 are Vincent's and use very similar code patterns and logic
-between NUMA and load balancer. Patch 6 is a fix to Vincent's work that
-is necessary to avoid serious imbalances being introduced by the NUMA
-balancer. Patches 7-8 are also Vincents (wanted to keep the fix close)
-and I have not reviewed them personally but Peter and Valentin have. If
-Vincent's patches change due to review, I'm not expecting further
-collisions.
+DBench on XFS
+MMTests config: io-dbench4-async modified to run on a fresh XFS filesystem
 
-The rest of the series are a mix of optimisations and improvements, one
-of which stops the NUMA balancer fighting with itself.
+UMA machine with 8 cores sharing LLC
+                          5.5.0-rc7              5.5.0-rc7
+                  tipsched-20200124           kworkerstack
+Amean     1        22.63 (   0.00%)       20.54 *   9.23%*
+Amean     2        25.56 (   0.00%)       23.40 *   8.44%*
+Amean     4        28.63 (   0.00%)       27.85 *   2.70%*
+Amean     8        37.66 (   0.00%)       37.68 (  -0.05%)
+Amean     64      469.47 (   0.00%)      468.26 (   0.26%)
+Stddev    1         1.00 (   0.00%)        0.72 (  28.12%)
+Stddev    2         1.62 (   0.00%)        1.97 ( -21.54%)
+Stddev    4         2.53 (   0.00%)        3.58 ( -41.19%)
+Stddev    8         5.30 (   0.00%)        5.20 (   1.92%)
+Stddev    64       86.36 (   0.00%)       94.53 (  -9.46%)
 
-Note that this is not necessarily a universal performance win although
-performance results are generally ok (small gains/losses depending on
-the machine and workload). However, task migrations, page migrations,
-variability and overall overhead are generally reduced.
+NUMA machine, 48 CPUs total, 24 CPUs share cache
+                           5.5.0-rc7              5.5.0-rc7
+                   tipsched-20200124      kworkerstack-v1r2
+Amean     1         58.69 (   0.00%)       30.21 *  48.53%*
+Amean     2         60.90 (   0.00%)       35.29 *  42.05%*
+Amean     4         66.77 (   0.00%)       46.55 *  30.28%*
+Amean     8         81.41 (   0.00%)       68.46 *  15.91%*
+Amean     16       113.29 (   0.00%)      107.79 *   4.85%*
+Amean     32       199.10 (   0.00%)      198.22 *   0.44%*
+Amean     64       478.99 (   0.00%)      477.06 *   0.40%*
+Amean     128     1345.26 (   0.00%)     1372.64 *  -2.04%*
+Stddev    1          2.64 (   0.00%)        4.17 ( -58.08%)
+Stddev    2          4.35 (   0.00%)        5.38 ( -23.73%)
+Stddev    4          6.77 (   0.00%)        6.56 (   3.00%)
+Stddev    8         11.61 (   0.00%)       10.91 (   6.04%)
+Stddev    16        18.63 (   0.00%)       19.19 (  -3.01%)
+Stddev    32        38.71 (   0.00%)       38.30 (   1.06%)
+Stddev    64       100.28 (   0.00%)       91.24 (   9.02%)
+Stddev    128      186.87 (   0.00%)      160.34 (  14.20%)
 
-Tests are still running and take quite a long time so I do not have a
-full picture. The main reference workload I used was specjbb running one
-JVM per node which typically would be expected to split evenly. It's
-an interesting workload because the number of "warehouses" does not
-linearly related to the number of running tasks due to the creation of
-GC threads and other interfering activity. The mmtests configuration used
-is jvm-specjbb2005-multi with two runs -- one with ftrace enabling
-relevant scheduler tracepoints.
+Dbench has been modified to report the time to complete a single "load
+file". This is a more meaningful metric for dbench that a throughput
+metric as the benchmark makes many different system calls that are not
+throughput-related
 
-The headline performance of the series looks like
+Patch shows a 9.23% and 48.53% reduction in the time to process a load
+file with the difference partially explained by the number of CPUs sharing
+a LLC. In a separate run, task migrations were almost eliminated by the
+patch for low client counts. In case people have issue with the metric
+used for the benchmark, this is a comparison of the throughputs as
+reported by dbench on the NUMA machine.
 
-			     baseline-v1          stopsearch-v2
-Hmean     tput-1     39748.93 (   0.00%)    37855.19 (  -4.76%)
-Hmean     tput-2     88648.59 (   0.00%)    89706.93 (   1.19%)
-Hmean     tput-3    136285.01 (   0.00%)   138279.68 (   1.46%)
-Hmean     tput-4    181312.69 (   0.00%)   183341.22 (   1.12%)
-Hmean     tput-5    228725.85 (   0.00%)   230540.83 (   0.79%)
-Hmean     tput-6    273246.83 (   0.00%)   273741.82 (   0.18%)
-Hmean     tput-7    317708.89 (   0.00%)   319298.84 (   0.50%)
-Hmean     tput-8    362378.08 (   0.00%)   364753.29 (   0.66%)
-Hmean     tput-9    403792.00 (   0.00%)   410765.39 (   1.73%)
-Hmean     tput-10   446000.88 (   0.00%)   453180.73 (   1.61%)
-Hmean     tput-11   486188.58 (   0.00%)   494345.95 (   1.68%)
-Hmean     tput-12   522288.84 (   0.00%)   524459.25 (   0.42%)
-Hmean     tput-13   532394.06 (   0.00%)   534592.16 (   0.41%)
-Hmean     tput-14   539440.66 (   0.00%)   541280.93 (   0.34%)
-Hmean     tput-15   541843.50 (   0.00%)   548813.57 (   1.29%)
-Hmean     tput-16   546510.71 (   0.00%)   552708.10 (   1.13%)
-Hmean     tput-17   544501.21 (   0.00%)   553142.46 (   1.59%)
-Hmean     tput-18   544802.98 (   0.00%)   552455.01 (   1.40%)
-Hmean     tput-19   545265.27 (   0.00%)   550940.90 (   1.04%)
-Hmean     tput-20   543284.33 (   0.00%)   546843.99 (   0.66%)
-Hmean     tput-21   543375.11 (   0.00%)   545722.53 (   0.43%)
-Hmean     tput-22   542536.60 (   0.00%)   542321.44 (  -0.04%)
-Hmean     tput-23   536402.28 (   0.00%)   536480.37 (   0.01%)
-Hmean     tput-24   532307.76 (   0.00%)   532388.47 (   0.02%)
-Stddev    tput-1      1426.23 (   0.00%)     1193.60 (  16.31%)
-Stddev    tput-2      4437.10 (   0.00%)      438.41 (  90.12%)
-Stddev    tput-3      3021.47 (   0.00%)     3103.49 (  -2.71%)
-Stddev    tput-4      4098.39 (   0.00%)     2165.16 (  47.17%)
-Stddev    tput-5      3524.22 (   0.00%)     1998.99 (  43.28%)
-Stddev    tput-6      3237.13 (   0.00%)     2529.32 (  21.87%)
-Stddev    tput-7      2534.27 (   0.00%)     3405.43 ( -34.38%)
-Stddev    tput-8      3847.37 (   0.00%)     1854.03 (  51.81%)
-Stddev    tput-9      5278.55 (   0.00%)     3961.92 (  24.94%)
-Stddev    tput-10     5311.08 (   0.00%)     3467.65 (  34.71%)
-Stddev    tput-11     7537.76 (   0.00%)     1424.11 (  81.11%)
-Stddev    tput-12     5023.29 (   0.00%)     2231.63 (  55.57%)
-Stddev    tput-13     3852.32 (   0.00%)     2602.86 (  32.43%)
-Stddev    tput-14    11859.59 (   0.00%)     6292.54 (  46.94%)
-Stddev    tput-15    16298.10 (   0.00%)     1254.41 (  92.30%)
-Stddev    tput-16     9041.77 (   0.00%)      665.39 (  92.64%)
-Stddev    tput-17     9322.50 (   0.00%)     2362.44 (  74.66%)
-Stddev    tput-18    16040.01 (   0.00%)     1965.05 (  87.75%)
-Stddev    tput-19     8814.09 (   0.00%)     1846.96 (  79.05%)
-Stddev    tput-20     7812.82 (   0.00%)     1658.17 (  78.78%)
-Stddev    tput-21     6584.58 (   0.00%)     3459.87 (  47.45%)
-Stddev    tput-22     8294.36 (   0.00%)     3616.85 (  56.39%)
-Stddev    tput-23     6887.93 (   0.00%)     2765.49 (  59.85%)
-Stddev    tput-24     6081.83 (   0.00%)      173.24 (  97.15%)
+dbench4 Throughput (misleading but traditional)
+                           5.5.0-rc7              5.5.0-rc7
+                   tipsched-20200124      kworkerstack-v1r2
+Hmean     1        321.41 (   0.00%)      617.82 *  92.22%*
+Hmean     2        622.87 (   0.00%)     1066.80 *  71.27%*
+Hmean     4       1134.56 (   0.00%)     1623.74 *  43.12%*
+Hmean     8       1869.96 (   0.00%)     2212.67 *  18.33%*
+Hmean     16      2673.11 (   0.00%)     2806.13 *   4.98%*
+Hmean     32      3032.74 (   0.00%)     3039.54 (   0.22%)
+Hmean     64      2514.25 (   0.00%)     2498.96 *  -0.61%*
+Hmean     128     1778.49 (   0.00%)     1746.05 *  -1.82%*
 
-This is showing a small gain in performance with much less variability.
-The high-level NUMA stats from /proc/vmstat look like this
+Note that this is somewhat specific to XFS and ext4 shows no performance
+difference as it does not rely on kworkers in the same way. No major
+problem was observed running other workloads on different machines although
+not all tests have completed yet.
 
-Ops NUMA base-page range updates     2564863.00     1962764.00
-Ops NUMA PTE updates                 1172223.00     1030924.00
-Ops NUMA PMD updates                    2720.00        1820.00
-Ops NUMA hint faults                  997432.00      875869.00
-Ops NUMA hint local faults %          922859.00      795995.00
-Ops NUMA hint local percent               92.52          90.88
-Ops NUMA pages migrated                30286.00       36589.00
-Ops AutoNUMA cost                       5005.69        4393.78
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/20200128154006.GD3466@techsingularity.net
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/sched/core.c  | 11 -----------
+ kernel/sched/fair.c  | 14 ++++++++++++++
+ kernel/sched/sched.h | 13 +++++++++++++
+ 3 files changed, 27 insertions(+), 11 deletions(-)
 
-The percentage of local hits is similar in absolute terms but note
-that fewer PTEs were marked for hinting and fewer faults were
-trapped. There is generally some degree of variability with this
-workload.
-
-A separate run gathered information from ftrace and analysed it
-offline.
-
-                                             5.6.0-rc1       5.6.0-rc1
-                                           baseline-v2   stopsearch-v2
-Ops Migrate failed no CPU                      1871.00          689.00
-Ops Migrate failed move to   idle                 0.00            0.00
-Ops Migrate failed swap task fail               872.00          568.00
-Ops Task Migrated swapped                      6702.00         3344.00
-Ops Task Migrated swapped local NID               0.00            0.00
-Ops Task Migrated swapped within group         1094.00          124.00
-Ops Task Migrated idle CPU                    14409.00        14610.00
-Ops Task Migrated idle CPU local NID              0.00            0.00
-Ops Task Migrate retry                         2355.00         1074.00
-Ops Task Migrate retry success                    0.00            0.00
-Ops Task Migrate retry failed                  2355.00         1074.00
-Ops Load Balance cross NUMA                 1248401.00      1261853.00
-
-"Migrate failed no CPU" is the times when NUMA balancing did not
-find a suitable page on a preferred node. This is increased because
-the series avoids making decisions that the LB would override.
-
-"Migrate failed swap task fail" is when migrate_swap fails and it
-can fail for a lot of reasons.
-
-"Task Migrated swapped" is lower which would would be a concern but in
-this test, locality was higher unlike the test with tracing disabled.
-This event triggers when two tasks are swapped to keep load neutral or
-improved from the perspective of the load balancer. The series attempts
-to swap tasks that both move to their preferred node.
-
-"Task Migrated idle CPU" is similar and while the the series does try to
-avoid NUMA Balancer and LB fighting each other, it also continues to
-obey overall CPU load balancer.
-
-"Task Migrate retry failed" happens when NUMA balancing makes multiple
-attempts to place a task on a preferred node. It is slightly reduced here
-but it would generally be expected to happen to maintain CPU load balance.
-
-In general, for this workload it varies quite a bit between machines. This
-machine was generally good. A more modern 2-socket machine showed similar
-with less performance gains and mixed variability but higher locality and less
-PTE scanning. A 4 socket machine showed gains generally, more variability at
-low utilisation and less variability (up to 91%) at higher utilisation.
-
-Very broadly speaking, performance is moved. There is room for improvement
-by allowing a larger degree of imbalance between NUMA nodes but that would
-be enough of a regression magnet that it should be treated separately.
-
- include/linux/sched.h        |  17 +-
- include/trace/events/sched.h |  49 ++--
- kernel/sched/core.c          |  13 -
- kernel/sched/debug.c         |  17 +-
- kernel/sched/fair.c          | 598 ++++++++++++++++++++++++++++---------------
- kernel/sched/pelt.c          |  45 ++--
- kernel/sched/sched.h         |  42 ++-
- 7 files changed, 499 insertions(+), 282 deletions(-)
-
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 377ec26e9159..e94819d573be 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1447,17 +1447,6 @@ void check_preempt_curr(struct rq *rq, struct task_struct *p, int flags)
+ 
+ #ifdef CONFIG_SMP
+ 
+-static inline bool is_per_cpu_kthread(struct task_struct *p)
+-{
+-	if (!(p->flags & PF_KTHREAD))
+-		return false;
+-
+-	if (p->nr_cpus_allowed != 1)
+-		return false;
+-
+-	return true;
+-}
+-
+ /*
+  * Per-CPU kthreads are allowed to run on !active && online CPUs, see
+  * __set_cpus_allowed_ptr() and select_fallback_rq().
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index a7e11b1bb64c..ef3eb36ba5c4 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5970,6 +5970,20 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+ 	    (available_idle_cpu(prev) || sched_idle_cpu(prev)))
+ 		return prev;
+ 
++	/*
++	 * Allow a per-cpu kthread to stack with the wakee if the
++	 * kworker thread and the tasks previous CPUs are the same.
++	 * The assumption is that the wakee queued work for the
++	 * per-cpu kthread that is now complete and the wakeup is
++	 * essentially a sync wakeup. An obvious example of this
++	 * pattern is IO completions.
++	 */
++	if (is_per_cpu_kthread(current) &&
++	    prev == smp_processor_id() &&
++	    this_rq()->nr_running <= 1) {
++		return prev;
++	}
++
+ 	/* Check a recently used CPU as a potential idle candidate: */
+ 	recent_used_cpu = p->recent_used_cpu;
+ 	if (recent_used_cpu != prev &&
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 878910e8b299..2be96f9e5b1e 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -2484,3 +2484,16 @@ static inline void membarrier_switch_mm(struct rq *rq,
+ {
+ }
+ #endif
++
++#ifdef CONFIG_SMP
++static inline bool is_per_cpu_kthread(struct task_struct *p)
++{
++	if (!(p->flags & PF_KTHREAD))
++		return false;
++
++	if (p->nr_cpus_allowed != 1)
++		return false;
++
++	return true;
++}
++#endif
 -- 
 2.16.4
 
