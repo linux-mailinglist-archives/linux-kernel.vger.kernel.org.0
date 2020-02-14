@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01C0215E31E
+	by mail.lfdr.de (Postfix) with ESMTP id 6CE4A15E31F
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:27:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406186AbgBNQ1K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:27:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34530 "EHLO mail.kernel.org"
+        id S2406587AbgBNQ1O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:27:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393377AbgBNQZO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:25:14 -0500
+        id S2406042AbgBNQZS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:25:18 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9A49247AA;
-        Fri, 14 Feb 2020 16:25:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1749247B1;
+        Fri, 14 Feb 2020 16:25:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697513;
-        bh=fobOvtTsBlnfM82O2ukhKTEbN7D6+EJ5BS1Y8mr+I0s=;
+        s=default; t=1581697517;
+        bh=ReZmYkg/prqMorqUqyrtzUfOZklO5ccW/CxxVmBonHc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u7Ny9QzHbuwOzxXmRYlgsStvYykNgh3Jeit20viP/Za0FltA/ks+bLR6IZo5iszO1
-         2LM5jqExPDSgt7uwax9E4qcTN9ZOnYknBICN0To8xLmrswlOabmbdnpetvVjBf3k78
-         O5I/mIkjyaHbOTP5vB5v4yFrskMe8f8dPxuKgtc4=
+        b=USy2cNse9NQZo2wqbAOMv5tHzbJWI8sAWEHCslVJ+3uEEouTNHnqb4vZWDyFDsyW5
+         fURQNGfVPt48Dj6Os8XF7D3MEyTdO1YYVJc7Ixiobv62PrJPdowvMvSWYeTznJ/eZF
+         TSdv67z5MKiHUbibqB7Ur5OF8Z4Ij7E1kAG81apA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        linux-crypto@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 039/100] padata: always acquire cpu_hotplug_lock before pinst->lock
-Date:   Fri, 14 Feb 2020 11:23:23 -0500
-Message-Id: <20200214162425.21071-39-sashal@kernel.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>,
+        alsa-devel@alsa-project.org, clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 4.4 042/100] ALSA: usx2y: Adjust indentation in snd_usX2Y_hwdep_dsp_status
+Date:   Fri, 14 Feb 2020 11:23:26 -0500
+Message-Id: <20200214162425.21071-42-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214162425.21071-1-sashal@kernel.org>
 References: <20200214162425.21071-1-sashal@kernel.org>
@@ -45,69 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Jordan <daniel.m.jordan@oracle.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 38228e8848cd7dd86ccb90406af32de0cad24be3 ]
+[ Upstream commit df4654bd6e42125d9b85ce3a26eaca2935290b98 ]
 
-lockdep complains when padata's paths to update cpumasks via CPU hotplug
-and sysfs are both taken:
+Clang warns:
 
-  # echo 0 > /sys/devices/system/cpu/cpu1/online
-  # echo ff > /sys/kernel/pcrypt/pencrypt/parallel_cpumask
+../sound/usb/usx2y/usX2Yhwdep.c:122:3: warning: misleading indentation;
+statement is not part of the previous 'if' [-Wmisleading-indentation]
+        info->version = USX2Y_DRIVER_VERSION;
+        ^
+../sound/usb/usx2y/usX2Yhwdep.c:120:2: note: previous statement is here
+        if (us428->chip_status & USX2Y_STAT_CHIP_INIT)
+        ^
+1 warning generated.
 
-  ======================================================
-  WARNING: possible circular locking dependency detected
-  5.4.0-rc8-padata-cpuhp-v3+ #1 Not tainted
-  ------------------------------------------------------
-  bash/205 is trying to acquire lock:
-  ffffffff8286bcd0 (cpu_hotplug_lock.rw_sem){++++}, at: padata_set_cpumask+0x2b/0x120
+This warning occurs because there is a space before the tab on this
+line. Remove it so that the indentation is consistent with the Linux
+kernel coding style and clang no longer warns.
 
-  but task is already holding lock:
-  ffff8880001abfa0 (&pinst->lock){+.+.}, at: padata_set_cpumask+0x26/0x120
+This was introduced before the beginning of git history so no fixes tag.
 
-  which lock already depends on the new lock.
-
-padata doesn't take cpu_hotplug_lock and pinst->lock in a consistent
-order.  Which should be first?  CPU hotplug calls into padata with
-cpu_hotplug_lock already held, so it should have priority.
-
-Fixes: 6751fb3c0e0c ("padata: Use get_online_cpus/put_online_cpus")
-Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc: Eric Biggers <ebiggers@kernel.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Link: https://github.com/ClangBuiltLinux/linux/issues/831
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Link: https://lore.kernel.org/r/20191218034257.54535-1-natechancellor@gmail.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/padata.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/usb/usx2y/usX2Yhwdep.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/padata.c b/kernel/padata.c
-index 282b489a286db..2b30113fd3f44 100644
---- a/kernel/padata.c
-+++ b/kernel/padata.c
-@@ -661,8 +661,8 @@ int padata_set_cpumask(struct padata_instance *pinst, int cpumask_type,
- 	struct cpumask *serial_mask, *parallel_mask;
- 	int err = -EINVAL;
- 
--	mutex_lock(&pinst->lock);
- 	get_online_cpus();
-+	mutex_lock(&pinst->lock);
- 
- 	switch (cpumask_type) {
- 	case PADATA_CPU_PARALLEL:
-@@ -680,8 +680,8 @@ int padata_set_cpumask(struct padata_instance *pinst, int cpumask_type,
- 	err =  __padata_set_cpumasks(pinst, parallel_mask, serial_mask);
- 
- out:
--	put_online_cpus();
- 	mutex_unlock(&pinst->lock);
-+	put_online_cpus();
- 
- 	return err;
+diff --git a/sound/usb/usx2y/usX2Yhwdep.c b/sound/usb/usx2y/usX2Yhwdep.c
+index 0b34dbc8f3020..7dcb33d3886bc 100644
+--- a/sound/usb/usx2y/usX2Yhwdep.c
++++ b/sound/usb/usx2y/usX2Yhwdep.c
+@@ -132,7 +132,7 @@ static int snd_usX2Y_hwdep_dsp_status(struct snd_hwdep *hw,
+ 	info->num_dsps = 2;		// 0: Prepad Data, 1: FPGA Code
+ 	if (us428->chip_status & USX2Y_STAT_CHIP_INIT)
+ 		info->chip_ready = 1;
+- 	info->version = USX2Y_DRIVER_VERSION; 
++	info->version = USX2Y_DRIVER_VERSION;
+ 	return 0;
  }
+ 
 -- 
 2.20.1
 
