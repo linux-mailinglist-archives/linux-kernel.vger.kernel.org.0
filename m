@@ -2,156 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C3BB15D68B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 12:30:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4509115D6BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 12:46:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728384AbgBNLaf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 06:30:35 -0500
-Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:47895 "EHLO
-        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727652AbgBNLaf (ORCPT
+        id S1728822AbgBNLqc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 06:46:32 -0500
+Received: from mail27.static.mailgun.info ([104.130.122.27]:34757 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728596AbgBNLqb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 06:30:35 -0500
-Received: from [IPv6:2001:983:e9a7:1:bd23:d5c7:5f0e:7bef]
- ([IPv6:2001:983:e9a7:1:bd23:d5c7:5f0e:7bef])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id 2ZAzjN1DMP9a92ZB0jGUkq; Fri, 14 Feb 2020 12:30:32 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
-        t=1581679832; bh=MS6C5N4u23BO/oIpgceyI7lXYW2eDvQuIBO/ULD7dCc=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=XiMsMystTf+S2CGk47dCYqe0Min8Iq3UYq5nhorHJVmUDetogdC6w7d48SknpOMaw
-         mOtDhgouUDpl3nsdpZzIZHu7g0l8qPxiLiqkOEFgHfI2RXbQGvmQGeIpnT71y9nw9/
-         FnF7p/K6DF38pX5e0hR3jljnL2vXGKLrR0BVSpuNRwOsZZ7eEP4aqNyq++PbwuG4q+
-         4EbOQCKgwWMKUq9YB5r7RD0PRi5IVutFbmZqPkfSNYEQrNrveU/36yvFQk5AX62IbI
-         fUGKIsy/j1WiEcA3voTs/pcvGvXA7pjErwqkDMlnjmXODdzOzLkbST8duDcSBFvZ5k
-         o4UHrTvYZp9Ug==
-Subject: Re: [PATCH] media: usbvision: Fix a use after free in v4l2_release()
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        syzbot <syzbot+75287f75e2fedd69d680@syzkaller.appspotmail.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Souptick Joarder <jrdr.linux@gmail.com>, andreyknvl@google.com,
-        bnvandana@gmail.com, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
-        mchehab@kernel.org, syzkaller-bugs@googlegroups.com
-References: <20200124141356.365bgzg2lp3tjedm@kili.mountain>
- <d8663b81-e920-3e1d-11d0-f636ea52c6ef@xs4all.nl>
- <20200214112239.GC4831@pendragon.ideasonboard.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <b1d071e2-0428-a08c-392d-3ca5d4a7e710@xs4all.nl>
-Date:   Fri, 14 Feb 2020 12:30:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
-MIME-Version: 1.0
-In-Reply-To: <20200214112239.GC4831@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfAaOfoH6UqgTQdQdpWGQMI7AIsyH5gOX2jNxzLEjy1s7a/Uck5os1npguU8fsBBOoCDhOUCTVbsar9GPlRf+eq+DiXkye9c9rGOUVDCq56+/8hzAjuyC
- BTCaO+jKnRCg+91kivRgU1CEHdyVh93yIBRGDCrImByYkO1QgDIfmMczSEkjXuQexuJtyF4B0Ng2LaEzyAtFsDTDzgtqA82uiwKn4aINneXnZuBgbgShQ7+U
- CePAWUMDUoB7ZNuKt0Jmqd0FtnD5DCGhdMvU/NhxLlPH6qqOb2dr9n8rn//iUpgNC55i3uLIdzoQunBWezD0mBHHiTrFT+tUABvjTYn/FmswXmctr+JkNgB/
- 4coHkVHEZ+tVPVul6gVJUMjCa7t7kDlLTb2fkWo9Dg7Y2hVf46vqfEEJ51Yge5wsoK4wIe4WhGNxJvvmpnlIDdb3rtIX/stXUKtC80IvyfbOn4SrCZnQDuok
- 1/BR5Lho1Amf43Ad6ndL7t+4DZE4N9YysIzKf2R1C2n8slxZ82qtEHhvUF1NC0r46W+kZPt28KOviNRQpBAnOdF0ZXdBoI9d9vlO7SERkXOkGpq7Z/MMD/cU
- 4gYqFz87qViN4u9FN232hWa9ahf50NBp/Qp4jszX5jadZ651BhnmdLrkhWSGCUy2qIMUwU5SQNNRgFidn3G5MJJodMo/HjUDezi7o3gBXIJlfIOCHdO0fS0p
- rXJjLHrOinp/EaAx+IftYcBU16OGuQuxxJud55JtW997ibw85++bWKUxs0z7SdLGtj/Xz1wS8kd7900dx//fzwIifrBb1kjPgqg9RHCxbTVVXxe4+0s/JA==
+        Fri, 14 Feb 2020 06:46:31 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1581680791; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=9jTfW1XPQOwc4d0N/VsPbHurk/PVtrMK9dryJbaZjb4=; b=skmTZ6djYhsyHGL6Dk72v5nwcsRvVGOsnMIARO4Enyk/DhtNHeUcP/opbhYpjjdqyGbhRhBi
+ RYXUeFKNi1yuz5djWfb5ovcRIp3Ibax511OQttiSgyZ/5lGTh3wifkd+YKzdq3LZu/+YwI+u
+ bsA37HfQWELLzBbNlQ1/V+9asHY=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e468896.7efdb8b75ab0-smtp-out-n01;
+ Fri, 14 Feb 2020 11:46:30 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 6B1FCC447A0; Fri, 14 Feb 2020 11:46:29 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from vbadigan-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vbadigan)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B3352C433A2;
+        Fri, 14 Feb 2020 11:46:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B3352C433A2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=vbadigan@codeaurora.org
+From:   Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+To:     ulf.hansson@linaro.org, robh+dt@kernel.org
+Cc:     asutoshd@codeaurora.org, stummala@codeaurora.org,
+        sayalil@codeaurora.org, cang@codeaurora.org,
+        rampraka@codeaurora.org, dianders@google.com,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Veerabhadrarao Badiganti <vbadigan@codeaurora.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS)
+Subject: [PATCH V2] dt-bindings: mmc: sdhci-msm: Add CQE reg map
+Date:   Fri, 14 Feb 2020 17:15:52 +0530
+Message-Id: <1581680753-9067-1-git-send-email-vbadigan@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1581434955-11087-1-git-send-email-vbadigan@codeaurora.org>
+References: <1581434955-11087-1-git-send-email-vbadigan@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/14/20 12:22 PM, Laurent Pinchart wrote:
-> Hi Hans,
-> 
-> On Fri, Feb 14, 2020 at 11:06:36AM +0100, Hans Verkuil wrote:
->> On 1/24/20 3:13 PM, Dan Carpenter wrote:
->>> Syzbot triggered a use after free in v5.5-rc6:
->>>
->>> BUG: KASAN: use-after-free in v4l2_release+0x2f1/0x390 drivers/media/v4l2-core/v4l2-dev.c:459
->>>
->>> Allocated by task 94:
->>>  usbvision_alloc drivers/media/usb/usbvision/usbvision-video.c:1315 [inline]
->>>  usbvision_probe.cold+0x5c5/0x1f21 drivers/media/usb/usbvision/usbvision-video.c:1469
->>>
->>> Freed by task 1913:
->>>  kfree+0xd5/0x300 mm/slub.c:3957
->>>  usbvision_release+0x181/0x1c0 drivers/media/usb/usbvision/usbvision-video.c:1364
->>>  usbvision_radio_close.cold+0x2b/0x74 drivers/media/usb/usbvision/usbvision-video.c:1130
->>>  v4l2_release+0x2e7/0x390 drivers/media/v4l2-core/v4l2-dev.c:455
->>>
->>> The problem is that the v4l2_release() calls usbvision_release() which
->>> frees "usbvision" but v4l2_release() still wants to use
->>> "usbvision->vdev".  One solution is to make this devm_ allocated memory
->>> so the memory isn't freed until later.
->>
->> devm_ allocated memory is freed after disconnect, so I doubt this will help, or at
->> best it will just move the problem elsewhere.
-> 
-> Yes, devm_*alloc is evil :-( It has spread to many drivers and is used
-> incorrectly in most cases.
-> 
->> The right approach would be to use the release() callback from struct v4l2_device:
->> that's called when the very last open filehandle is closed.
-> 
-> Hillf Danton has sent a patch to do so in the "Re: KASAN: use-after-free
-> Read in v4l2_release (3)" thread. Have you seen it ?
+CQE feature has been enabled on sdhci-msm. Add CQE reg map
+that needs to be supplied for supporting CQE feature.
 
-Ah, that was never mailed to linux-media, so never ended up in patchwork. And
-if it ain't in patchwork, then I don't know about it :-)
+Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+---
 
-Hillf, if you want your patch to be merged, then make sure it is CC-ed to
-linux-media as well.
+Changes since V1:
+	- Updated description for more clarity & Fixed typos.
+---
+ Documentation/devicetree/bindings/mmc/sdhci-msm.txt | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Regards,
-
-	Hans
-
-> 
->> But I'm not sure if it is worth the effort. The usbvision driver is a mess and
->> personally I think it should be deprecated.
-> 
-> I agree.
-> 
->>> Reported-by: syzbot+75287f75e2fedd69d680@syzkaller.appspotmail.com
->>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>> ---
->>> I copied this idea from a different driver, but I haven't tested it.
->>> I wanted to try the #syz fix command to see if it works.
->>>
->>>  drivers/media/usb/usbvision/usbvision-video.c | 4 +---
->>>  1 file changed, 1 insertion(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/media/usb/usbvision/usbvision-video.c b/drivers/media/usb/usbvision/usbvision-video.c
->>> index 93d36aab824f..07b4763062c4 100644
->>> --- a/drivers/media/usb/usbvision/usbvision-video.c
->>> +++ b/drivers/media/usb/usbvision/usbvision-video.c
->>> @@ -1312,7 +1312,7 @@ static struct usb_usbvision *usbvision_alloc(struct usb_device *dev,
->>>  {
->>>  	struct usb_usbvision *usbvision;
->>>  
->>> -	usbvision = kzalloc(sizeof(*usbvision), GFP_KERNEL);
->>> +	usbvision = devm_kzalloc(&dev->dev, sizeof(*usbvision), GFP_KERNEL);
->>>  	if (!usbvision)
->>>  		return NULL;
->>>  
->>> @@ -1336,7 +1336,6 @@ static struct usb_usbvision *usbvision_alloc(struct usb_device *dev,
->>>  	v4l2_ctrl_handler_free(&usbvision->hdl);
->>>  	v4l2_device_unregister(&usbvision->v4l2_dev);
->>>  err_free:
->>> -	kfree(usbvision);
->>>  	return NULL;
->>>  }
->>>  
->>> @@ -1361,7 +1360,6 @@ static void usbvision_release(struct usb_usbvision *usbvision)
->>>  
->>>  	v4l2_ctrl_handler_free(&usbvision->hdl);
->>>  	v4l2_device_unregister(&usbvision->v4l2_dev);
->>> -	kfree(usbvision);
->>>  
->>>  	PDEBUG(DBG_PROBE, "success");
->>>  }
-> 
-
+diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+index 7ee639b..ad0ee83 100644
+--- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
++++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+@@ -26,7 +26,13 @@ Required properties:
+ 
+ - reg: Base address and length of the register in the following order:
+ 	- Host controller register map (required)
+-	- SD Core register map (required for msm-v4 and below)
++	- SD Core register map (required for controllers earlier than msm-v5)
++	- CQE register map (Optional, CQE support is present on SDHC instance meant
++	                    for eMMC and version v4.2 and above)
++- reg-names: When CQE register map is supplied, below reg-names are required
++	- "hc_mem" for Host controller register map
++	- "core_mem" for SD core register map
++	- "cqhci_mem" for CQE register map
+ - interrupts: Should contain an interrupt-specifiers for the interrupts:
+ 	- Host controller interrupt (required)
+ - pinctrl-names: Should contain only one value - "default".
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc., is a member of Code Aurora Forum, a Linux Foundation Collaborative Project
