@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D12115F208
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:09:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 310F915F1C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:08:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391726AbgBNSF4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:05:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35894 "EHLO mail.kernel.org"
+        id S1731762AbgBNPzZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:55:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731703AbgBNPzH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:55:07 -0500
+        id S1731711AbgBNPzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:55:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 752592465D;
-        Fri, 14 Feb 2020 15:55:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4146224684;
+        Fri, 14 Feb 2020 15:55:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695707;
-        bh=IL0DlRLZwPFnTOfxoGC0+a/kYVgGNy0nkZp7u869IZc=;
+        s=default; t=1581695711;
+        bh=e6hZLrdtLccx63LlzwcLe3onLTHlCbLuO+s10UC2pWg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xbBf/tYXsGTBAY4Gw5KyaKZZYex2frGUBKEa1mlE2fYqDP+ROdE9VxXahjdFB/lM3
-         Hc4wMQWr5u4f563W3/dPnOXqMEi9KRdQX0klkAoadU36xa8+OYjmasippN4MWYJGnV
-         SD0GyWa+ka9KnKykUSy7BCd2ip9StdXaIyCg5FBE=
+        b=KY5bWO79Vkgw36TTqTe1AP+o1Es+zFbqzK4CWL5yAYQLkiecyaCmQ6mQzXVW7NODu
+         zKXWccGivyXE8Wh8Pc0sOQmuWeLcNaUiivfbqdFDl/vSwGJowNkORW82kYqerb+G93
+         uCEe4Neb4PF4i/NokRyovWPPgurAFLX8cPkx+k38=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 287/542] vfio/spapr/nvlink2: Skip unpinning pages on error exit
-Date:   Fri, 14 Feb 2020 10:44:39 -0500
-Message-Id: <20200214154854.6746-287-sashal@kernel.org>
+Cc:     Jason Ekstrand <jason@jlekstrand.net>,
+        Hans de Goede <hdegoede@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 290/542] ACPI: button: Add DMI quirk for Razer Blade Stealth 13 late 2019 lid switch
+Date:   Fri, 14 Feb 2020 10:44:42 -0500
+Message-Id: <20200214154854.6746-290-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -43,47 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexey Kardashevskiy <aik@ozlabs.ru>
+From: Jason Ekstrand <jason@jlekstrand.net>
 
-[ Upstream commit 338b4e10f939a71194d8ecef7ece205a942cec05 ]
+[ Upstream commit 0528904926aab19bffb2068879aa44db166c6d5f ]
 
-The nvlink2 subdriver for IBM Witherspoon machines preregisters
-GPU memory in the IOMMI API so KVM TCE code can map this memory
-for DMA as well. This is done by mm_iommu_newdev() called from
-vfio_pci_nvgpu_regops::mmap.
+Running evemu-record on the lid switch event shows that the lid reports
+the first "close" but then never reports an "open".  This causes systemd
+to continuously re-suspend the laptop every 30s.  Resetting the _LID to
+"open" fixes the issue.
 
-In an unlikely event of failure the data->mem remains NULL and
-since mm_iommu_put() (which unregisters the region and unpins memory
-if that was regular memory) does not expect mem=NULL, it should not be
-called.
-
-This adds a check to only call mm_iommu_put() for a valid data->mem.
-
-Fixes: 7f92891778df ("vfio_pci: Add NVIDIA GV100GL [Tesla V100 SXM2] subdriver")
-Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Jason Ekstrand <jason@jlekstrand.net>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/vfio/pci/vfio_pci_nvlink2.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/acpi/button.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/vfio/pci/vfio_pci_nvlink2.c b/drivers/vfio/pci/vfio_pci_nvlink2.c
-index f2983f0f84bea..3f5f8198a6bb1 100644
---- a/drivers/vfio/pci/vfio_pci_nvlink2.c
-+++ b/drivers/vfio/pci/vfio_pci_nvlink2.c
-@@ -97,8 +97,10 @@ static void vfio_pci_nvgpu_release(struct vfio_pci_device *vdev,
+diff --git a/drivers/acpi/button.c b/drivers/acpi/button.c
+index b758b45737f50..f6925f16c4a2a 100644
+--- a/drivers/acpi/button.c
++++ b/drivers/acpi/button.c
+@@ -122,6 +122,17 @@ static const struct dmi_system_id dmi_lid_quirks[] = {
+ 		},
+ 		.driver_data = (void *)(long)ACPI_BUTTON_LID_INIT_OPEN,
+ 	},
++	{
++		/*
++		 * Razer Blade Stealth 13 late 2019, notification of the LID device
++		 * only happens on close, not on open and _LID always returns closed.
++		 */
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Razer"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Razer Blade Stealth 13 Late 2019"),
++		},
++		.driver_data = (void *)(long)ACPI_BUTTON_LID_INIT_OPEN,
++	},
+ 	{}
+ };
  
- 	/* If there were any mappings at all... */
- 	if (data->mm) {
--		ret = mm_iommu_put(data->mm, data->mem);
--		WARN_ON(ret);
-+		if (data->mem) {
-+			ret = mm_iommu_put(data->mm, data->mem);
-+			WARN_ON(ret);
-+		}
- 
- 		mmdrop(data->mm);
- 	}
 -- 
 2.20.1
 
