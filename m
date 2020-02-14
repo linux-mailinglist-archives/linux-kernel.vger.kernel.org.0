@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 430B615F073
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:55:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7782015F06F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:55:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389427AbgBNRyq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:54:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41494 "EHLO mail.kernel.org"
+        id S2389172AbgBNRyh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:54:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388410AbgBNP56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:57:58 -0500
+        id S2388430AbgBNP6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:58:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55B39206D7;
-        Fri, 14 Feb 2020 15:57:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 693C3206D7;
+        Fri, 14 Feb 2020 15:57:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695877;
-        bh=LUbkeXlPtCA6S3i2O8c+vGXGoIF16WvHwsz2W6tdzrE=;
+        s=default; t=1581695880;
+        bh=F7yV7B9cZ2IEW8ez9zw43MwkFZxqGIZ/+JFHLnfbauw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I3lul6hxVfW/LzsdMzcJjSaFjkEOVjjmjoaPLtW6V8z9o2N7Q4cigphzAxGyMmqVw
-         PNMYA3tQhHHLDsm2oMGbSMPu63BBy9UccMFu3D9QK+P2gmOK6IRKC6tSQl+Yqj2GTK
-         tWZFFDjol/wA5cNeS+ikPXz3XAIvACte+6LThsuY=
+        b=mA95CccIbGV+GR3VZwB+Uq7Iqcu7UQ+yqSWp/NSjKuviZXxyVwZezt7snONzSdL3d
+         3v93TTvLRNr18yL8Xkz91qm6+sqkN4GRBExr0buP3f59psfTp0rZQLfao2ziRsvEQ+
+         LMgOvaV3eQhrGU5INOom23iWGhm5o9iW0zJdV7Ls=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jessica Yu <jeyu@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.5 422/542] module: avoid setting info->name early in case we can fall back to info->mod->name
-Date:   Fri, 14 Feb 2020 10:46:54 -0500
-Message-Id: <20200214154854.6746-422-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.5 424/542] regulator: core: Fix exported symbols to the exported GPL version
+Date:   Fri, 14 Feb 2020 10:46:56 -0500
+Message-Id: <20200214154854.6746-424-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -42,58 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jessica Yu <jeyu@kernel.org>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
-[ Upstream commit 708e0ada1916be765b7faa58854062f2bc620bbf ]
+[ Upstream commit 3d7610e8da993539346dce6f7c909fd3d56bf4d5 ]
 
-In setup_load_info(), info->name (which contains the name of the module,
-mostly used for early logging purposes before the module gets set up)
-gets unconditionally assigned if .modinfo is missing despite the fact
-that there is an if (!info->name) check near the end of the function.
-Avoid assigning a placeholder string to info->name if .modinfo doesn't
-exist, so that we can fall back to info->mod->name later on.
+Change the exported symbols introduced by commit e9153311491da
+("regulator: vctrl-regulator: Avoid deadlock getting and setting the voltage")
+from EXPORT_SYMBOL() to EXPORT_SYMBOL_GPL(), like is used for all the core
+parts.
 
-Fixes: 5fdc7db6448a ("module: setup load info before module_sig_check()")
-Reviewed-by: Miroslav Benes <mbenes@suse.cz>
-Signed-off-by: Jessica Yu <jeyu@kernel.org>
+Fixes: e9153311491da ("regulator: vctrl-regulator: Avoid deadlock getting and setting the voltage")
+Reported-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Link: https://lore.kernel.org/r/20200120123921.1204339-1-enric.balletbo@collabora.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/module.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/regulator/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/module.c b/kernel/module.c
-index d83edc3a41a33..4810ce0fbbca3 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -3059,9 +3059,7 @@ static int setup_load_info(struct load_info *info, int flags)
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index e7d167ce326cb..d015d99cb59d9 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -3470,7 +3470,7 @@ int regulator_set_voltage_rdev(struct regulator_dev *rdev, int min_uV,
+ out:
+ 	return ret;
+ }
+-EXPORT_SYMBOL(regulator_set_voltage_rdev);
++EXPORT_SYMBOL_GPL(regulator_set_voltage_rdev);
  
- 	/* Try to find a name early so we can log errors with a module name */
- 	info->index.info = find_sec(info, ".modinfo");
--	if (!info->index.info)
--		info->name = "(missing .modinfo section)";
--	else
-+	if (info->index.info)
- 		info->name = get_modinfo(info, "name");
+ static int regulator_limit_voltage_step(struct regulator_dev *rdev,
+ 					int *current_uV, int *min_uV)
+@@ -4035,7 +4035,7 @@ int regulator_get_voltage_rdev(struct regulator_dev *rdev)
+ 		return ret;
+ 	return ret - rdev->constraints->uV_offset;
+ }
+-EXPORT_SYMBOL(regulator_get_voltage_rdev);
++EXPORT_SYMBOL_GPL(regulator_get_voltage_rdev);
  
- 	/* Find internal symbols and strings. */
-@@ -3076,14 +3074,15 @@ static int setup_load_info(struct load_info *info, int flags)
- 	}
- 
- 	if (info->index.sym == 0) {
--		pr_warn("%s: module has no symbols (stripped?)\n", info->name);
-+		pr_warn("%s: module has no symbols (stripped?)\n",
-+			info->name ?: "(missing .modinfo section or name field)");
- 		return -ENOEXEC;
- 	}
- 
- 	info->index.mod = find_sec(info, ".gnu.linkonce.this_module");
- 	if (!info->index.mod) {
- 		pr_warn("%s: No module found in object\n",
--			info->name ?: "(missing .modinfo name field)");
-+			info->name ?: "(missing .modinfo section or name field)");
- 		return -ENOEXEC;
- 	}
- 	/* This is temporary: point mod into copy of data. */
+ /**
+  * regulator_get_voltage - get regulator output voltage
 -- 
 2.20.1
 
