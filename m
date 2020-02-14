@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D235415E966
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:07:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE96C15E9A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:08:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392362AbgBNQOl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:14:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43306 "EHLO mail.kernel.org"
+        id S2394561AbgBNRIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:08:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392239AbgBNQOF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:14:05 -0500
+        id S2391762AbgBNQOI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:14:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 13B30246CA;
-        Fri, 14 Feb 2020 16:14:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61841246CD;
+        Fri, 14 Feb 2020 16:14:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696844;
-        bh=3gwgFUqvJ8N/VlvUVeaLWqEWpiO5LJUZARXPEDPwzPU=;
+        s=default; t=1581696847;
+        bh=DTqunv8oRVLUnoy5wabbzu7qresB0vPHaJz+kkP3hBQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G/Rcoy0uhAzY/INZxvqTjt1JrRxa7sd/MlU/xb7qmwb2cixDlo1ZOcDgBJanHwVeD
-         1FsR/R3RsMtP6QEL5+/9LXUx3CORiublaXNQYbRo2QF9i1/ko54BTZShZUOfLFtds0
-         pktpZXKviI4AOEYifNecfauneVFF0lBTfByk7Cmo=
+        b=hGCPvDhTHgE3Ro0kprwJBuRrdeOo9L712H8ZrUtXTt3uS9w1f/MQpdqFJF0I4jxQK
+         eu93H1GL/WxpL9wviYtFYLy87zgvUytgEPOp2Y2+VewTC0WX3kmSnupt9SwXXiQ1uc
+         7fRvTp03e3XE16avteVHw+y7Ghf1EA3mr/Z9oI8U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     yu kuai <yukuai3@huawei.com>, Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>, linux-wireless@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 107/252] bcma: remove set but not used variable 'sizel'
-Date:   Fri, 14 Feb 2020 11:09:22 -0500
-Message-Id: <20200214161147.15842-107-sashal@kernel.org>
+Cc:     Erik Kaneda <erik.kaneda@intel.com>,
+        Elia Geretto <elia.f.geretto@gmail.com>,
+        Bob Moore <robert.moore@intel.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org,
+        devel@acpica.org
+Subject: [PATCH AUTOSEL 4.19 109/252] ACPICA: Disassembler: create buffer fields in ACPI_PARSE_LOAD_PASS1
+Date:   Fri, 14 Feb 2020 11:09:24 -0500
+Message-Id: <20200214161147.15842-109-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -43,54 +46,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: yu kuai <yukuai3@huawei.com>
+From: Erik Kaneda <erik.kaneda@intel.com>
 
-[ Upstream commit f427939391f290cbeabe0231eb8a116429d823f0 ]
+[ Upstream commit 5ddbd77181dfca61b16d2e2222382ea65637f1b9 ]
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+ACPICA commit 29cc8dbc5463a93625bed87d7550a8bed8913bf4
 
-drivers/bcma/scan.c: In function ‘bcma_erom_get_addr_desc’:
+create_buffer_field is a deferred op that is typically processed in
+load pass 2. However, disassembly of control method contents walk the
+parse tree with ACPI_PARSE_LOAD_PASS1 and AML_CREATE operators are
+processed in a later walk. This is a problem when there is a control
+method that has the same name as the AML_CREATE object. In this case,
+any use of the name segment will be detected as a method call rather
+than a reference to a buffer field. If this is detected as a method
+call, it can result in a mal-formed parse tree if the control methods
+have parameters.
 
-drivers/bcma/scan.c:222:20: warning: variable ‘sizel’ set but
-not used [-Wunused-but-set-variable]
+This change in processing AML_CREATE ops earlier solves this issue by
+inserting the named object in the ACPI namespace so that references
+to this name would be detected as a name string rather than a method
+call.
 
-It is never used, and so can be removed.
-
-Fixes: 8369ae33b705 ("bcma: add Broadcom specific AMBA bus driver")
-Signed-off-by: yu kuai <yukuai3@huawei.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Link: https://github.com/acpica/acpica/commit/29cc8dbc
+Reported-by: Elia Geretto <elia.f.geretto@gmail.com>
+Tested-by: Elia Geretto <elia.f.geretto@gmail.com>
+Signed-off-by: Bob Moore <robert.moore@intel.com>
+Signed-off-by: Erik Kaneda <erik.kaneda@intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/bcma/scan.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/acpi/acpica/dsfield.c |  2 +-
+ drivers/acpi/acpica/dswload.c | 21 +++++++++++++++++++++
+ 2 files changed, 22 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/bcma/scan.c b/drivers/bcma/scan.c
-index 4a2d1b235fb5a..1f2de714b4017 100644
---- a/drivers/bcma/scan.c
-+++ b/drivers/bcma/scan.c
-@@ -219,7 +219,7 @@ static s32 bcma_erom_get_mst_port(struct bcma_bus *bus, u32 __iomem **eromptr)
- static u32 bcma_erom_get_addr_desc(struct bcma_bus *bus, u32 __iomem **eromptr,
- 				  u32 type, u8 port)
- {
--	u32 addrl, addrh, sizel, sizeh = 0;
-+	u32 addrl, addrh, sizeh = 0;
- 	u32 size;
+diff --git a/drivers/acpi/acpica/dsfield.c b/drivers/acpi/acpica/dsfield.c
+index 30fe89545d6ab..bcc6a7acc5762 100644
+--- a/drivers/acpi/acpica/dsfield.c
++++ b/drivers/acpi/acpica/dsfield.c
+@@ -244,7 +244,7 @@ acpi_ds_create_buffer_field(union acpi_parse_object *op,
+  * FUNCTION:    acpi_ds_get_field_names
+  *
+  * PARAMETERS:  info            - create_field info structure
+- *  `           walk_state      - Current method state
++ *              walk_state      - Current method state
+  *              arg             - First parser arg for the field name list
+  *
+  * RETURN:      Status
+diff --git a/drivers/acpi/acpica/dswload.c b/drivers/acpi/acpica/dswload.c
+index d06c414462822..ba53662f12179 100644
+--- a/drivers/acpi/acpica/dswload.c
++++ b/drivers/acpi/acpica/dswload.c
+@@ -412,6 +412,27 @@ acpi_status acpi_ds_load1_end_op(struct acpi_walk_state *walk_state)
+ 	ACPI_DEBUG_PRINT((ACPI_DB_DISPATCH, "Op=%p State=%p\n", op,
+ 			  walk_state));
  
- 	u32 ent = bcma_erom_get_ent(bus, eromptr);
-@@ -239,12 +239,9 @@ static u32 bcma_erom_get_addr_desc(struct bcma_bus *bus, u32 __iomem **eromptr,
- 
- 	if ((ent & SCAN_ADDR_SZ) == SCAN_ADDR_SZ_SZD) {
- 		size = bcma_erom_get_ent(bus, eromptr);
--		sizel = size & SCAN_SIZE_SZ;
- 		if (size & SCAN_SIZE_SG32)
- 			sizeh = bcma_erom_get_ent(bus, eromptr);
--	} else
--		sizel = SCAN_ADDR_SZ_BASE <<
--				((ent & SCAN_ADDR_SZ) >> SCAN_ADDR_SZ_SHIFT);
++	/*
++	 * Disassembler: handle create field operators here.
++	 *
++	 * create_buffer_field is a deferred op that is typically processed in load
++	 * pass 2. However, disassembly of control method contents walk the parse
++	 * tree with ACPI_PARSE_LOAD_PASS1 and AML_CREATE operators are processed
++	 * in a later walk. This is a problem when there is a control method that
++	 * has the same name as the AML_CREATE object. In this case, any use of the
++	 * name segment will be detected as a method call rather than a reference
++	 * to a buffer field.
++	 *
++	 * This earlier creation during disassembly solves this issue by inserting
++	 * the named object in the ACPI namespace so that references to this name
++	 * would be a name string rather than a method call.
++	 */
++	if ((walk_state->parse_flags & ACPI_PARSE_DISASSEMBLE) &&
++	    (walk_state->op_info->flags & AML_CREATE)) {
++		status = acpi_ds_create_buffer_field(op, walk_state);
++		return_ACPI_STATUS(status);
 +	}
++
+ 	/* We are only interested in opcodes that have an associated name */
  
- 	return addrl;
- }
+ 	if (!(walk_state->op_info->flags & (AML_NAMED | AML_FIELD))) {
 -- 
 2.20.1
 
