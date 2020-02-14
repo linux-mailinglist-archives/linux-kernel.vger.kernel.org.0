@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F15215DB7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:49:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0160415DBA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:51:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729675AbgBNPtC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:49:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51292 "EHLO mail.kernel.org"
+        id S1729771AbgBNPtJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:49:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51610 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729626AbgBNPtA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:49:00 -0500
+        id S1729661AbgBNPtH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:49:07 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 15BB0217F4;
-        Fri, 14 Feb 2020 15:48:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96B2024680;
+        Fri, 14 Feb 2020 15:49:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695340;
-        bh=QMlfEDdx30p0dC5zoeW0s2ObL8tfzyH+ZQLZg5secJQ=;
+        s=default; t=1581695347;
+        bh=H3LKj47Yqut0p8cQXZtywNFL074vZu1UaiH+k7PfGpE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RKyGreHFrkibAqFG4x9PFm7fEB2HFPDtU/EOuOS9cvbb/b8q1CzNPUur90jsWVEHt
-         clbAN3OqdKPmCCtYvGErZ9NI7UGXZB7vv/AGkq8joJmF7pb3VctXMXV/784tsv+BCK
-         C35J8Ij37Q7SaV8R50fERXLdYRuoKFr2lecmGIws=
+        b=Yoyc7IV8csEtVlJ0usJIJBD2u5GkGQ3Ulw8WMRA0nTSnnBr50CkMqixo9V+XLLeYp
+         loS/S+T/4BL6QnPEArdXKl22X0qUfz5zzVn08WvhzPeVXml/TWMIR3kEYAiW19UVN7
+         yXLUs8Rrw9WkWfEk5VFe4AhARdGSUVD1qbVi+lxQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 004/542] ath10k: Fix qmi init error handling
-Date:   Fri, 14 Feb 2020 10:39:56 -0500
-Message-Id: <20200214154854.6746-4-sashal@kernel.org>
+Cc:     Stefan Reiter <stefan@pimaker.at>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, rcu@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 010/542] rcu/nocb: Fix dump_tree hierarchy print always active
+Date:   Fri, 14 Feb 2020 10:40:02 -0500
+Message-Id: <20200214154854.6746-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -44,47 +43,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+From: Stefan Reiter <stefan@pimaker.at>
 
-[ Upstream commit f8a595a87e93a33a10879f4b856be818d2f53c84 ]
+[ Upstream commit 610dea36d3083a977e4f156206cbe1eaa2a532f0 ]
 
-When ath10k_qmi_init() fails, the error handling does not free the irq
-resources, which causes an issue if we EPROBE_DEFER as we'll attempt to
-(re-)register irqs which are already registered.
+Commit 18cd8c93e69e ("rcu/nocb: Print gp/cb kthread hierarchy if
+dump_tree") added print statements to rcu_organize_nocb_kthreads for
+debugging, but incorrectly guarded them, causing the function to always
+spew out its message.
 
-Fix this by doing a power off since we just powered on the hardware, and
-freeing the irqs as error handling.
+This patch fixes it by guarding both pr_alert statements with dump_tree,
+while also changing the second pr_alert to a pr_cont, to print the
+hierarchy in a single line (assuming that's how it was supposed to
+work).
 
-Fixes: ba94c753ccb4 ("ath10k: add QMI message handshake for wcn3990 client")
-Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: 18cd8c93e69e ("rcu/nocb: Print gp/cb kthread hierarchy if dump_tree")
+Signed-off-by: Stefan Reiter <stefan@pimaker.at>
+[ paulmck: Make single-nocbs-CPU GP kthreads look less erroneous. ]
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/snoc.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ kernel/rcu/tree_plugin.h | 22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/snoc.c b/drivers/net/wireless/ath/ath10k/snoc.c
-index 16177497bba76..7e85c4916e7f5 100644
---- a/drivers/net/wireless/ath/ath10k/snoc.c
-+++ b/drivers/net/wireless/ath/ath10k/snoc.c
-@@ -1563,13 +1563,16 @@ static int ath10k_snoc_probe(struct platform_device *pdev)
- 	ret = ath10k_qmi_init(ar, msa_size);
- 	if (ret) {
- 		ath10k_warn(ar, "failed to register wlfw qmi client: %d\n", ret);
--		goto err_core_destroy;
-+		goto err_power_off;
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index f849e7429816f..f7118842a2b88 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -2322,6 +2322,8 @@ static void __init rcu_organize_nocb_kthreads(void)
+ {
+ 	int cpu;
+ 	bool firsttime = true;
++	bool gotnocbs = false;
++	bool gotnocbscbs = true;
+ 	int ls = rcu_nocb_gp_stride;
+ 	int nl = 0;  /* Next GP kthread. */
+ 	struct rcu_data *rdp;
+@@ -2344,21 +2346,31 @@ static void __init rcu_organize_nocb_kthreads(void)
+ 		rdp = per_cpu_ptr(&rcu_data, cpu);
+ 		if (rdp->cpu >= nl) {
+ 			/* New GP kthread, set up for CBs & next GP. */
++			gotnocbs = true;
+ 			nl = DIV_ROUND_UP(rdp->cpu + 1, ls) * ls;
+ 			rdp->nocb_gp_rdp = rdp;
+ 			rdp_gp = rdp;
+-			if (!firsttime && dump_tree)
+-				pr_cont("\n");
+-			firsttime = false;
+-			pr_alert("%s: No-CB GP kthread CPU %d:", __func__, cpu);
++			if (dump_tree) {
++				if (!firsttime)
++					pr_cont("%s\n", gotnocbscbs
++							? "" : " (self only)");
++				gotnocbscbs = false;
++				firsttime = false;
++				pr_alert("%s: No-CB GP kthread CPU %d:",
++					 __func__, cpu);
++			}
+ 		} else {
+ 			/* Another CB kthread, link to previous GP kthread. */
++			gotnocbscbs = true;
+ 			rdp->nocb_gp_rdp = rdp_gp;
+ 			rdp_prev->nocb_next_cb_rdp = rdp;
+-			pr_alert(" %d", cpu);
++			if (dump_tree)
++				pr_cont(" %d", cpu);
+ 		}
+ 		rdp_prev = rdp;
  	}
++	if (gotnocbs && dump_tree)
++		pr_cont("%s\n", gotnocbscbs ? "" : " (self only)");
+ }
  
- 	ath10k_dbg(ar, ATH10K_DBG_SNOC, "snoc probe\n");
- 
- 	return 0;
- 
-+err_power_off:
-+	ath10k_hw_power_off(ar);
-+
- err_free_irq:
- 	ath10k_snoc_free_irq(ar);
- 
+ /*
 -- 
 2.20.1
 
