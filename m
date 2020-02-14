@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAC8C15E675
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:49:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE6FD15E70E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:51:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405233AbgBNQUi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:20:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52752 "EHLO mail.kernel.org"
+        id S2394186AbgBNQvx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:51:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405016AbgBNQTg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:19:36 -0500
+        id S2405020AbgBNQTh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:19:37 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C966B24725;
-        Fri, 14 Feb 2020 16:19:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E69D32470C;
+        Fri, 14 Feb 2020 16:19:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697175;
-        bh=6KFPRYNs9j7SGj61oncc2JMQtP4aYc1E5EHXmwPPavc=;
+        s=default; t=1581697176;
+        bh=rbYXY9x2U94T3ywVds9Mzo2LH017Iuuc5FYAlCQQUHU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XtiQm5ZL5Bxd3fneJVTRhM0tHK7jwF/1Q2lS3K5Vpk1wGZN398HYgxgIvCZ3Ubhpx
-         0f7YaHv11DwCWRMZpSk72ndJmQSsP0EXvuepsTdIpLfBWqRESrNI28y72WBtWZ9GCA
-         ftcvqqF+MT+4utQuFIyoOn+9cb4yHn39obVTED+w=
+        b=jflTV+Y8Sa+YQSX+fukvRH9T+vmIN2pclijbikuWX7/y/Ex1MZkY6chTnRRXLBz+w
+         L+IdKST2EkjSZbGiI9O9M8PsOQkIbCIJRL4lbx81Jev4A9rt6jrAfoIUv4YtcmVE7R
+         /VRLNsqe+ZuzxkVxkV8Fb/x8XmhFLsbQ5R64lUns=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jan Kara <jack@suse.cz>,
-        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 108/186] udf: Fix free space reporting for metadata and virtual partitions
-Date:   Fri, 14 Feb 2020 11:15:57 -0500
-Message-Id: <20200214161715.18113-108-sashal@kernel.org>
+Cc:     Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Kaike Wan <kaike.wan@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 109/186] IB/hfi1: Add software counter for ctxt0 seq drop
+Date:   Fri, 14 Feb 2020 11:15:58 -0500
+Message-Id: <20200214161715.18113-109-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161715.18113-1-sashal@kernel.org>
 References: <20200214161715.18113-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -44,71 +45,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kara <jack@suse.cz>
+From: Mike Marciniszyn <mike.marciniszyn@intel.com>
 
-[ Upstream commit a4a8b99ec819ca60b49dc582a4287ef03411f117 ]
+[ Upstream commit 5ffd048698ea5139743acd45e8ab388a683642b8 ]
 
-Free space on filesystems with metadata or virtual partition maps
-currently gets misreported. This is because these partitions are just
-remapped onto underlying real partitions from which keep track of free
-blocks. Take this remapping into account when counting free blocks as
-well.
+All other code paths increment some form of drop counter.
 
-Reviewed-by: Pali Rohár <pali.rohar@gmail.com>
-Reported-by: Pali Rohár <pali.rohar@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
+This was missed in the original implementation.
+
+Fixes: 82c2611daaf0 ("staging/rdma/hfi1: Handle packets with invalid RHF on context 0")
+Link: https://lore.kernel.org/r/20200106134228.119356.96828.stgit@awfm-01.aw.intel.com
+Reviewed-by: Kaike Wan <kaike.wan@intel.com>
+Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/udf/super.c | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+ drivers/infiniband/hw/hfi1/chip.c   | 10 ++++++++++
+ drivers/infiniband/hw/hfi1/chip.h   |  1 +
+ drivers/infiniband/hw/hfi1/driver.c |  1 +
+ drivers/infiniband/hw/hfi1/hfi.h    |  2 ++
+ 4 files changed, 14 insertions(+)
 
-diff --git a/fs/udf/super.c b/fs/udf/super.c
-index 242d960df9a17..51de27685e185 100644
---- a/fs/udf/super.c
-+++ b/fs/udf/super.c
-@@ -2467,17 +2467,29 @@ static unsigned int udf_count_free_table(struct super_block *sb,
- static unsigned int udf_count_free(struct super_block *sb)
- {
- 	unsigned int accum = 0;
--	struct udf_sb_info *sbi;
-+	struct udf_sb_info *sbi = UDF_SB(sb);
- 	struct udf_part_map *map;
-+	unsigned int part = sbi->s_partition;
-+	int ptype = sbi->s_partmaps[part].s_partition_type;
+diff --git a/drivers/infiniband/hw/hfi1/chip.c b/drivers/infiniband/hw/hfi1/chip.c
+index 4a0b7c0034771..cb5785dda524e 100644
+--- a/drivers/infiniband/hw/hfi1/chip.c
++++ b/drivers/infiniband/hw/hfi1/chip.c
+@@ -1686,6 +1686,14 @@ static u64 access_sw_pio_drain(const struct cntr_entry *entry,
+ 	return dd->verbs_dev.n_piodrain;
+ }
+ 
++static u64 access_sw_ctx0_seq_drop(const struct cntr_entry *entry,
++				   void *context, int vl, int mode, u64 data)
++{
++	struct hfi1_devdata *dd = context;
 +
-+	if (ptype == UDF_METADATA_MAP25) {
-+		part = sbi->s_partmaps[part].s_type_specific.s_metadata.
-+							s_phys_partition_ref;
-+	} else if (ptype == UDF_VIRTUAL_MAP15 || ptype == UDF_VIRTUAL_MAP20) {
-+		/*
-+		 * Filesystems with VAT are append-only and we cannot write to
-+ 		 * them. Let's just report 0 here.
-+		 */
-+		return 0;
-+	}
++	return dd->ctx0_seq_drop;
++}
++
+ static u64 access_sw_vtx_wait(const struct cntr_entry *entry,
+ 			      void *context, int vl, int mode, u64 data)
+ {
+@@ -4246,6 +4254,8 @@ static struct cntr_entry dev_cntrs[DEV_CNTR_LAST] = {
+ 			    access_sw_cpu_intr),
+ [C_SW_CPU_RCV_LIM] = CNTR_ELEM("RcvLimit", 0, 0, CNTR_NORMAL,
+ 			    access_sw_cpu_rcv_limit),
++[C_SW_CTX0_SEQ_DROP] = CNTR_ELEM("SeqDrop0", 0, 0, CNTR_NORMAL,
++			    access_sw_ctx0_seq_drop),
+ [C_SW_VTX_WAIT] = CNTR_ELEM("vTxWait", 0, 0, CNTR_NORMAL,
+ 			    access_sw_vtx_wait),
+ [C_SW_PIO_WAIT] = CNTR_ELEM("PioWait", 0, 0, CNTR_NORMAL,
+diff --git a/drivers/infiniband/hw/hfi1/chip.h b/drivers/infiniband/hw/hfi1/chip.h
+index 50b8645d0b876..a88ef2433cea2 100644
+--- a/drivers/infiniband/hw/hfi1/chip.h
++++ b/drivers/infiniband/hw/hfi1/chip.h
+@@ -864,6 +864,7 @@ enum {
+ 	C_DC_PG_STS_TX_MBE_CNT,
+ 	C_SW_CPU_INTR,
+ 	C_SW_CPU_RCV_LIM,
++	C_SW_CTX0_SEQ_DROP,
+ 	C_SW_VTX_WAIT,
+ 	C_SW_PIO_WAIT,
+ 	C_SW_PIO_DRAIN,
+diff --git a/drivers/infiniband/hw/hfi1/driver.c b/drivers/infiniband/hw/hfi1/driver.c
+index 72c836b826ca8..7aa1aabb7a43c 100644
+--- a/drivers/infiniband/hw/hfi1/driver.c
++++ b/drivers/infiniband/hw/hfi1/driver.c
+@@ -710,6 +710,7 @@ static noinline int skip_rcv_packet(struct hfi1_packet *packet, int thread)
+ {
+ 	int ret;
  
--	sbi = UDF_SB(sb);
- 	if (sbi->s_lvid_bh) {
- 		struct logicalVolIntegrityDesc *lvid =
- 			(struct logicalVolIntegrityDesc *)
- 			sbi->s_lvid_bh->b_data;
--		if (le32_to_cpu(lvid->numOfPartitions) > sbi->s_partition) {
-+		if (le32_to_cpu(lvid->numOfPartitions) > part) {
- 			accum = le32_to_cpu(
--					lvid->freeSpaceTable[sbi->s_partition]);
-+					lvid->freeSpaceTable[part]);
- 			if (accum == 0xFFFFFFFF)
- 				accum = 0;
- 		}
-@@ -2486,7 +2498,7 @@ static unsigned int udf_count_free(struct super_block *sb)
- 	if (accum)
- 		return accum;
++	packet->rcd->dd->ctx0_seq_drop++;
+ 	/* Set up for the next packet */
+ 	packet->rhqoff += packet->rsize;
+ 	if (packet->rhqoff >= packet->maxcnt)
+diff --git a/drivers/infiniband/hw/hfi1/hfi.h b/drivers/infiniband/hw/hfi1/hfi.h
+index af550c1767e31..c9a93f468f14a 100644
+--- a/drivers/infiniband/hw/hfi1/hfi.h
++++ b/drivers/infiniband/hw/hfi1/hfi.h
+@@ -1043,6 +1043,8 @@ struct hfi1_devdata {
  
--	map = &sbi->s_partmaps[sbi->s_partition];
-+	map = &sbi->s_partmaps[part];
- 	if (map->s_partition_flags & UDF_PART_FLAG_UNALLOC_BITMAP) {
- 		accum += udf_count_free_bitmap(sb,
- 					       map->s_uspace.s_bitmap);
+ 	char *boardname; /* human readable board info */
+ 
++	u64 ctx0_seq_drop;
++
+ 	/* reset value */
+ 	u64 z_int_counter;
+ 	u64 z_rcv_limit;
 -- 
 2.20.1
 
