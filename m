@@ -2,110 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDAF915D251
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 07:42:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C87D15D261
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 07:49:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727212AbgBNGmu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 01:42:50 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:44554 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725828AbgBNGmu (ORCPT
+        id S1728804AbgBNGtO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 01:49:14 -0500
+Received: from mailgw01.mediatek.com ([216.200.240.184]:43858 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725845AbgBNGtN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 01:42:50 -0500
-Received: by mail-ot1-f68.google.com with SMTP id h9so8133833otj.11;
-        Thu, 13 Feb 2020 22:42:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YK5ShLRmBFVIyNa+AVJi5WDxNZ4pgm/RjqjDGl1K0Lo=;
-        b=YMQDTlFeh4hva6rNIzVXBqVTm1c39bdUSXB8ryOhtsvHgeuKjEedWyVnRSY2rRX0C2
-         9Lu9Jj1Tq/Wdbi+rKZ2XkPrBRgGwdowBRXdaDfHratiEwgUkyNcGaO55hunh4zm3L8TI
-         b6Fd0mL+Cr3Rpjziy1NejI/xA10rUt4OEj9YCuC+F/6gJL8DfIZ5N84Zx5vFZ6+Kb8st
-         ON+kJXIJhVlPmD4gOOKAEkInrwMJKy5oZ7SpssOQa/3/ug9ZfrhQ3gGopWg0yIqy23cY
-         FxlEjvVEEKKvg5hjBTTPozb12KHYRJC59VqsGVart6+EvjSivnza2/o4/HYE+ZB+PC3X
-         K+rQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YK5ShLRmBFVIyNa+AVJi5WDxNZ4pgm/RjqjDGl1K0Lo=;
-        b=mfgMP5xbzP+06I1dda5+6APAr9zaPWbWRUhBDBNyQRnQEcMzSMq452kt3eo37bRdZp
-         fc3HfaTXgTsjPMzEMy1F1uy5Tba6wWZnBGHHz+KczBZTzwUj2AOlxE+A8nmPQ1T7tusi
-         kHVGVtVvgKyfYUqCRDwFoYpWZQ7945cXlOs/XLxPrHCcAjhjM0lu+FvHRfBlrqECLdXK
-         CFSv/Z2u7NWL74urF8Z6jKMcv28qnpC1um4S0KSZMPWhjWO92OQzxzledFZ0B7UuD0Sj
-         2zDeUtCgj+U+umy3qnopkOKVeZkbD4bZKUbrjzb4uom7M9KKqShfFjrLWpmjMBJg/kJD
-         Xg8Q==
-X-Gm-Message-State: APjAAAXA9JIsW6R62hG4axj6x9GYKol2A1Yv692aANgwF7Zt0JhDLFqw
-        3MWzo6KPlHqOMRI0G+k6XZ0=
-X-Google-Smtp-Source: APXvYqxPcNZsS+ISpqHnhAKW0nNYtz5xPmotvlSYx1s8wc7rEhBhVszFUhInp2/iUgw2zb53roGb/g==
-X-Received: by 2002:a05:6830:1e37:: with SMTP id t23mr1143253otr.16.1581662568064;
-        Thu, 13 Feb 2020 22:42:48 -0800 (PST)
-Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id m2sm1514544oim.13.2020.02.13.22.42.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 22:42:47 -0800 (PST)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] s390/mm: Explicitly compare PAGE_DEFAULT_KEY against zero in storage_key_init_range
-Date:   Thu, 13 Feb 2020 23:42:07 -0700
-Message-Id: <20200214064207.10381-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.25.0
+        Fri, 14 Feb 2020 01:49:13 -0500
+X-UUID: 591c4716f1504125897deed0562d9a34-20200213
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=/ImEYpFQVkvneIwZfKMDBwsxecrbwupV35NVM4pulYY=;
+        b=mTrMVMpkOfAblSD1+TYcE3jGCbNOEi5xgT/mzHXJEukclG3+tfWD4YGIjuvXNRuTn/Oci+hL0NTxTx6dAVwkMw6gQvDEC/2Gk3HBrWSz9WigdGUDip3tadfkrGzKcSsVcjVszgUHDLehkMazQIpSTJ7I9DMT0URVbDhm2ApnVIg=;
+X-UUID: 591c4716f1504125897deed0562d9a34-20200213
+Received: from mtkcas66.mediatek.inc [(172.29.193.44)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (musrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 2143336691; Thu, 13 Feb 2020 22:49:09 -0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ MTKMBS62N1.mediatek.inc (172.29.193.41) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 13 Feb 2020 22:43:12 -0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 14 Feb 2020 14:42:56 +0800
+Message-ID: <1581662577.17949.3.camel@mtksdaap41>
+Subject: Re: [PATCH v7 01/13] dt-bindings: arm: move mmsys description to
+ display
+From:   CK Hu <ck.hu@mediatek.com>
+To:     <matthias.bgg@kernel.org>
+CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <p.zabel@pengutronix.de>, <airlied@linux.ie>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <ulrich.hecht+renesas@gmail.com>,
+        <laurent.pinchart@ideasonboard.com>,
+        <enric.balletbo@collabora.com>, <devicetree@vger.kernel.org>,
+        <drinkcat@chromium.org>, <frank-w@public-files.de>,
+        <sean.wang@mediatek.com>, <linux-kernel@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <wens@csie.org>,
+        <linux-mediatek@lists.infradead.org>, <rdunlap@infradead.org>,
+        <hsinyi@chromium.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-media@vger.kernel.org>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        mtk01761 <wendell.lin@mediatek.com>
+Date:   Fri, 14 Feb 2020 14:42:57 +0800
+In-Reply-To: <20200213201953.15268-2-matthias.bgg@kernel.org>
+References: <20200213201953.15268-1-matthias.bgg@kernel.org>
+         <20200213201953.15268-2-matthias.bgg@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns:
-
- In file included from ../arch/s390/purgatory/purgatory.c:10:
- In file included from ../include/linux/kexec.h:18:
- In file included from ../include/linux/crash_core.h:6:
- In file included from ../include/linux/elfcore.h:5:
- In file included from ../include/linux/user.h:1:
- In file included from ../arch/s390/include/asm/user.h:11:
- ../arch/s390/include/asm/page.h:45:6: warning: converting the result of
- '<<' to a boolean always evaluates to false
- [-Wtautological-constant-compare]
-         if (PAGE_DEFAULT_KEY)
-            ^
- ../arch/s390/include/asm/page.h:23:44: note: expanded from macro
- 'PAGE_DEFAULT_KEY'
- #define PAGE_DEFAULT_KEY        (PAGE_DEFAULT_ACC << 4)
-                                                  ^
- 1 warning generated.
-
-Explicitly compare this against zero to silence the warning as it is
-intended to be used in a boolean context.
-
-Fixes: de3fa841e429 ("s390/mm: fix compile for PAGE_DEFAULT_KEY != 0")
-Link: https://github.com/ClangBuiltLinux/linux/issues/860
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- arch/s390/include/asm/page.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/s390/include/asm/page.h b/arch/s390/include/asm/page.h
-index 85e944f04c70..1019efd85b9d 100644
---- a/arch/s390/include/asm/page.h
-+++ b/arch/s390/include/asm/page.h
-@@ -42,7 +42,7 @@ void __storage_key_init_range(unsigned long start, unsigned long end);
- 
- static inline void storage_key_init_range(unsigned long start, unsigned long end)
- {
--	if (PAGE_DEFAULT_KEY)
-+	if (PAGE_DEFAULT_KEY != 0)
- 		__storage_key_init_range(start, end);
- }
- 
--- 
-2.25.0
+SGksIE1hdHRoaWFzOg0KDQpPbiBUaHUsIDIwMjAtMDItMTMgYXQgMjE6MTkgKzAxMDAsIG1hdHRo
+aWFzLmJnZ0BrZXJuZWwub3JnIHdyb3RlOg0KPiBGcm9tOiBNYXR0aGlhcyBCcnVnZ2VyIDxtYnJ1
+Z2dlckBzdXNlLmNvbT4NCj4gDQo+IFRoZSBtbXN5cyBibG9jayBwcm92aWRlcyByZWdpc3RlcnMg
+YW5kIGNsb2NrcyBmb3IgdGhlIGRpc3BsYXkNCj4gc3Vic3lzdGVtLiBUaGUgYmluZGluZyBkZXNj
+cmlwdGlvbiBzaG91bGQgdGhlcmVmb3JlIGxpdmUgdG9nZXRoZXIgd2l0aA0KPiB0aGUgcmVzdCBv
+ZiB0aGUgZGlzcGxheSBkZXNjcmlwdGlvbnMuIE1vdmUgaXQgdG8gZGlzcGxheS9tZWRpYXRlay4N
+Cj4gDQoNClllcywgZm9yIHRoZSB1cHN0cmVhbWVkIGRyaXZlciwgb25seSBkaXNwbGF5IChEUk0p
+IHVzZSBtbXN5cyBjbG9jay4gRm9yDQpzb21lIE1EUCBwYXRjaGVzIFsxXSBpbiBwcm9ncmVzcywg
+TURQIGFsc28gdXNlIG1tc3lzIGNsb2NrLiBTbyB3ZSBqdXN0DQpjb25zaWRlciB3aGF0J3MgdXBz
+dHJlYW1lZCBub3c/DQoNClsxXSBodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzEx
+MTQwNzQ3Lw0KDQpSZWdhcmRzLA0KQ0sNCg0KPiBTaWduZWQtb2ZmLWJ5OiBNYXR0aGlhcyBCcnVn
+Z2VyIDxtYnJ1Z2dlckBzdXNlLmNvbT4NCj4gDQo+IC0tLQ0KPiANCj4gQ2hhbmdlcyBpbiB2NzoN
+Cj4gLSBtb3ZlIHRoZSBiaW5kaW5nIGRlc2NyaXB0aW9uDQo+IA0KPiBDaGFuZ2VzIGluIHY2OiBO
+b25lDQo+IENoYW5nZXMgaW4gdjU6IE5vbmUNCj4gQ2hhbmdlcyBpbiB2NDogTm9uZQ0KPiBDaGFu
+Z2VzIGluIHYzOiBOb25lDQo+IENoYW5nZXMgaW4gdjI6IE5vbmUNCj4gDQo+ICAuLi4vYmluZGlu
+Z3Mve2FybSA9PiBkaXNwbGF5fS9tZWRpYXRlay9tZWRpYXRlayxtbXN5cy50eHQgICAgICAgICB8
+IDANCj4gIDEgZmlsZSBjaGFuZ2VkLCAwIGluc2VydGlvbnMoKyksIDAgZGVsZXRpb25zKC0pDQo+
+ICByZW5hbWUgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3thcm0gPT4gZGlzcGxh
+eX0vbWVkaWF0ZWsvbWVkaWF0ZWssbW1zeXMudHh0ICgxMDAlKQ0KPiANCj4gZGlmZiAtLWdpdCBh
+L0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vbWVkaWF0ZWsvbWVkaWF0ZWss
+bW1zeXMudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvbWVk
+aWF0ZWsvbWVkaWF0ZWssbW1zeXMudHh0DQo+IHNpbWlsYXJpdHkgaW5kZXggMTAwJQ0KPiByZW5h
+bWUgZnJvbSBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL21lZGlhdGVrL21l
+ZGlhdGVrLG1tc3lzLnR4dA0KPiByZW5hbWUgdG8gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
+bmRpbmdzL2Rpc3BsYXkvbWVkaWF0ZWsvbWVkaWF0ZWssbW1zeXMudHh0DQoNCg==
 
