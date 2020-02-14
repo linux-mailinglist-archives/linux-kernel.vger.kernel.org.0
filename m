@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89E1E15E114
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:17:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94B0115E125
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:17:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392693AbgBNQQz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:16:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46564 "EHLO mail.kernel.org"
+        id S2404355AbgBNQRB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:17:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404192AbgBNQQA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:16:00 -0500
+        id S2404216AbgBNQQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:16:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BECF1246EA;
-        Fri, 14 Feb 2020 16:15:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F48B246E1;
+        Fri, 14 Feb 2020 16:16:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696959;
-        bh=gSIXnvYSzb1E5aXmOOPxu2e/NXExAykLWXKDEtJ6b8o=;
+        s=default; t=1581696965;
+        bh=cF1ZhSgj1uFdLMJQbYjeVeg4+j2VvQJSgVqJXoxH8Kg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zrMz+6P9PEL0/3f8sJMvPnfcpF/QIGRigAw/Udjf0U3wsDoz58zgHOUNpiO2Uz+O2
-         NG5T75CCPt51r3pbGMxfetN9dmJZqSg1AGMkdSglci/28b0y+1K7Z4pIonSKgmOpJI
-         3K6WZTjox1Fb3q5a6IJOlpVfLit94gQ296YEnqxc=
+        b=eBSrakbCPaOJc7TYyfeuN95dkUW8dp0E1sKEPzpqzbFJq1yAYlA5Xjlhhy6Dxmrcp
+         KwmlMTiyfvKFrc2N3XIYm8XwaGfKCdUGWbeJ22qmb9OrcAmqfndJkfKENWiegAogxq
+         /D+qA7Pv7TsWy1Re4LoysgOVS/9+DLxvhK3RniBs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     John Garry <john.garry@huawei.com>, Marc Zyngier <maz@kernel.org>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 199/252] irqchip/mbigen: Set driver .suppress_bind_attrs to avoid remove problems
-Date:   Fri, 14 Feb 2020 11:10:54 -0500
-Message-Id: <20200214161147.15842-199-sashal@kernel.org>
+Cc:     Vasily Gorbik <gor@linux.ibm.com>,
+        Sven Schnelle <sven.schnelle@ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 204/252] s390/ftrace: generate traced function stack frame
+Date:   Fri, 14 Feb 2020 11:10:59 -0500
+Message-Id: <20200214161147.15842-204-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -43,124 +44,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Garry <john.garry@huawei.com>
+From: Vasily Gorbik <gor@linux.ibm.com>
 
-[ Upstream commit d6152e6ec9e2171280436f7b31a571509b9287e1 ]
+[ Upstream commit 45f7a0da600d3c409b5ad8d5ddddacd98ddc8840 ]
 
-The following crash can be seen for setting
-CONFIG_DEBUG_TEST_DRIVER_REMOVE=y for DT FW (which some people still use):
+Currently backtrace from ftraced function does not contain ftraced
+function itself. e.g. for "path_openat":
 
-Hisilicon MBIGEN-V2 60080000.interrupt-controller: Failed to create mbi-gen irqdomain
-Hisilicon MBIGEN-V2: probe of 60080000.interrupt-controller failed with error -12
+arch_stack_walk+0x15c/0x2d8
+stack_trace_save+0x50/0x68
+stack_trace_call+0x15e/0x3d8
+ftrace_graph_caller+0x0/0x1c <-- ftrace code
+do_filp_open+0x7c/0xe8 <-- ftraced function caller
+do_open_execat+0x76/0x1b8
+open_exec+0x52/0x78
+load_elf_binary+0x180/0x1160
+search_binary_handler+0x8e/0x288
+load_script+0x2a8/0x2b8
+search_binary_handler+0x8e/0x288
+__do_execve_file.isra.39+0x6fa/0xb40
+__s390x_sys_execve+0x56/0x68
+system_call+0xdc/0x2d8
 
-[...]
+Ftraced function is expected in the backtrace by ftrace kselftests, which
+are now failing. It would also be nice to have it for clarity reasons.
 
-Unable to handle kernel paging request at virtual address 0000000000005008
- Mem abort info:
-   ESR = 0x96000004
-   EC = 0x25: DABT (current EL), IL = 32 bits
-   SET = 0, FnV = 0
-   EA = 0, S1PTW = 0
- Data abort info:
-   ISV = 0, ISS = 0x00000004
-   CM = 0, WnR = 0
- user pgtable: 4k pages, 48-bit VAs, pgdp=0000041fb9990000
- [0000000000005008] pgd=0000000000000000
- Internal error: Oops: 96000004 [#1] PREEMPT SMP
- Modules linked in:
- CPU: 7 PID: 1 Comm: swapper/0 Not tainted 5.5.0-rc6-00002-g3fc42638a506-dirty #1622
- Hardware name: Huawei Taishan 2280 /D05, BIOS Hisilicon D05 IT21 Nemo 2.0 RC0 04/18/2018
- pstate: 40000085 (nZcv daIf -PAN -UAO)
- pc : mbigen_set_type+0x38/0x60
- lr : __irq_set_trigger+0x6c/0x188
- sp : ffff800014b4b400
- x29: ffff800014b4b400 x28: 0000000000000007
- x27: 0000000000000000 x26: 0000000000000000
- x25: ffff041fd83bd0d4 x24: ffff041fd83bd188
- x23: 0000000000000000 x22: ffff80001193ce00
- x21: 0000000000000004 x20: 0000000000000000
- x19: ffff041fd83bd000 x18: ffffffffffffffff
- x17: 0000000000000000 x16: 0000000000000000
- x15: ffff8000119098c8 x14: ffff041fb94ec91c
- x13: ffff041fb94ec1a1 x12: 0000000000000030
- x11: 0101010101010101 x10: 0000000000000040
- x9 : 0000000000000000 x8 : ffff041fb98c6680
- x7 : ffff800014b4b380 x6 : ffff041fd81636c8
- x5 : 0000000000000000 x4 : 000000000000025f
- x3 : 0000000000005000 x2 : 0000000000005008
- x1 : 0000000000000004 x0 : 0000000080000000
- Call trace:
-  mbigen_set_type+0x38/0x60
-  __setup_irq+0x744/0x900
-  request_threaded_irq+0xe0/0x198
-  pcie_pme_probe+0x98/0x118
-  pcie_port_probe_service+0x38/0x78
-  really_probe+0xa0/0x3e0
-  driver_probe_device+0x58/0x100
-  __device_attach_driver+0x90/0xb0
-  bus_for_each_drv+0x64/0xc8
-  __device_attach+0xd8/0x138
-  device_initial_probe+0x10/0x18
-  bus_probe_device+0x90/0x98
-  device_add+0x4c4/0x770
-  device_register+0x1c/0x28
-  pcie_port_device_register+0x1e4/0x4f0
-  pcie_portdrv_probe+0x34/0xd8
-  local_pci_probe+0x3c/0xa0
-  pci_device_probe+0x128/0x1c0
-  really_probe+0xa0/0x3e0
-  driver_probe_device+0x58/0x100
-  __device_attach_driver+0x90/0xb0
-  bus_for_each_drv+0x64/0xc8
-  __device_attach+0xd8/0x138
-  device_attach+0x10/0x18
-  pci_bus_add_device+0x4c/0xb8
-  pci_bus_add_devices+0x38/0x88
-  pci_host_probe+0x3c/0xc0
-  pci_host_common_probe+0xf0/0x208
-  hisi_pcie_almost_ecam_probe+0x24/0x30
-  platform_drv_probe+0x50/0xa0
-  really_probe+0xa0/0x3e0
-  driver_probe_device+0x58/0x100
-  device_driver_attach+0x6c/0x90
-  __driver_attach+0x84/0xc8
-  bus_for_each_dev+0x74/0xc8
-  driver_attach+0x20/0x28
-  bus_add_driver+0x148/0x1f0
-  driver_register+0x60/0x110
-  __platform_driver_register+0x40/0x48
-  hisi_pcie_almost_ecam_driver_init+0x1c/0x24
+"ftrace_caller" itself is called without stack frame allocated for it
+and does not store its caller (ftraced function). Instead it simply
+allocates a stack frame for "ftrace_trace_function" and sets backchain
+to point to ftraced function stack frame (which contains ftraced function
+caller in saved r14).
 
-The specific problem here is that the mbigen driver real probe has failed
-as the mbigen_of_create_domain()->of_platform_device_create() call fails,
-the reason for that being that we never destroyed the platform device
-created during the remove test dry run and there is some conflict.
+To fix this issue make "ftrace_caller" allocate a stack frame
+for itself just to store ftraced function for the stack unwinder.
+As a result backtrace looks like the following:
 
-Since we generally would never want to unbind this driver, and to save
-adding a driver tear down path for that, just set the driver
-.suppress_bind_attrs member to avoid this possibility.
+arch_stack_walk+0x15c/0x2d8
+stack_trace_save+0x50/0x68
+stack_trace_call+0x15e/0x3d8
+ftrace_graph_caller+0x0/0x1c <-- ftrace code
+path_openat+0x6/0xd60  <-- ftraced function
+do_filp_open+0x7c/0xe8 <-- ftraced function caller
+do_open_execat+0x76/0x1b8
+open_exec+0x52/0x78
+load_elf_binary+0x180/0x1160
+search_binary_handler+0x8e/0x288
+load_script+0x2a8/0x2b8
+search_binary_handler+0x8e/0x288
+__do_execve_file.isra.39+0x6fa/0xb40
+__s390x_sys_execve+0x56/0x68
+system_call+0xdc/0x2d8
 
-Signed-off-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Reviewed-by: Hanjun Guo <guohanjun@huawei.com>
-Link: https://lore.kernel.org/r/1579196323-180137-1-git-send-email-john.garry@huawei.com
+Reported-by: Sven Schnelle <sven.schnelle@ibm.com>
+Tested-by: Sven Schnelle <sven.schnelle@ibm.com>
+Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/irqchip/irq-mbigen.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/s390/kernel/mcount.S | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/irq-mbigen.c b/drivers/irqchip/irq-mbigen.c
-index 98b6e1d4b1a68..f7fdbf5d183b9 100644
---- a/drivers/irqchip/irq-mbigen.c
-+++ b/drivers/irqchip/irq-mbigen.c
-@@ -381,6 +381,7 @@ static struct platform_driver mbigen_platform_driver = {
- 		.name		= "Hisilicon MBIGEN-V2",
- 		.of_match_table	= mbigen_of_match,
- 		.acpi_match_table = ACPI_PTR(mbigen_acpi_match),
-+		.suppress_bind_attrs = true,
- 	},
- 	.probe			= mbigen_device_probe,
- };
+diff --git a/arch/s390/kernel/mcount.S b/arch/s390/kernel/mcount.S
+index e93fbf02490cf..83afd5b78e16a 100644
+--- a/arch/s390/kernel/mcount.S
++++ b/arch/s390/kernel/mcount.S
+@@ -25,6 +25,12 @@ ENTRY(ftrace_stub)
+ #define STACK_PTREGS	  (STACK_FRAME_OVERHEAD)
+ #define STACK_PTREGS_GPRS (STACK_PTREGS + __PT_GPRS)
+ #define STACK_PTREGS_PSW  (STACK_PTREGS + __PT_PSW)
++#ifdef __PACK_STACK
++/* allocate just enough for r14, r15 and backchain */
++#define TRACED_FUNC_FRAME_SIZE	24
++#else
++#define TRACED_FUNC_FRAME_SIZE	STACK_FRAME_OVERHEAD
++#endif
+ 
+ ENTRY(_mcount)
+ 	BR_EX	%r14
+@@ -38,9 +44,16 @@ ENTRY(ftrace_caller)
+ #if !(defined(CC_USING_HOTPATCH) || defined(CC_USING_NOP_MCOUNT))
+ 	aghi	%r0,MCOUNT_RETURN_FIXUP
+ #endif
+-	aghi	%r15,-STACK_FRAME_SIZE
++	# allocate stack frame for ftrace_caller to contain traced function
++	aghi	%r15,-TRACED_FUNC_FRAME_SIZE
+ 	stg	%r1,__SF_BACKCHAIN(%r15)
++	stg	%r0,(__SF_GPRS+8*8)(%r15)
++	stg	%r15,(__SF_GPRS+9*8)(%r15)
++	# allocate pt_regs and stack frame for ftrace_trace_function
++	aghi	%r15,-STACK_FRAME_SIZE
+ 	stg	%r1,(STACK_PTREGS_GPRS+15*8)(%r15)
++	aghi	%r1,-TRACED_FUNC_FRAME_SIZE
++	stg	%r1,__SF_BACKCHAIN(%r15)
+ 	stg	%r0,(STACK_PTREGS_PSW+8)(%r15)
+ 	stmg	%r2,%r14,(STACK_PTREGS_GPRS+2*8)(%r15)
+ #ifdef CONFIG_HAVE_MARCH_Z196_FEATURES
 -- 
 2.20.1
 
