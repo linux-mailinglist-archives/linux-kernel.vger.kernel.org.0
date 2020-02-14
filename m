@@ -2,105 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C89C515F399
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:22:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3B9715F3CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:22:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393473AbgBNSNW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:13:22 -0500
-Received: from foss.arm.com ([217.140.110.172]:42788 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393441AbgBNSNT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 13:13:19 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3D5F6328;
-        Fri, 14 Feb 2020 10:13:19 -0800 (PST)
-Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B62A53F68E;
-        Fri, 14 Feb 2020 10:13:16 -0800 (PST)
-Subject: Re: [PATCH v7 11/11] arm64: scs: add shadow stacks for SDEI
-To:     Sami Tolvanen <samitolvanen@google.com>
-Cc:     Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jann Horn <jannh@google.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20191018161033.261971-1-samitolvanen@google.com>
- <20200128184934.77625-1-samitolvanen@google.com>
- <20200128184934.77625-12-samitolvanen@google.com>
- <dbb090ae-d1ec-cb1a-0710-e1d3cfe762b9@arm.com>
- <CABCJKudpeTDa4Ro1aCsCJ-=x97SG0qu5LGpj9ywj1aLOtboNkQ@mail.gmail.com>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <a0ca5766-fb76-a498-ab2f-3015f1335fe9@arm.com>
-Date:   Fri, 14 Feb 2020 18:13:15 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2404529AbgBNSPO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:15:14 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:44261 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725838AbgBNSPI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 13:15:08 -0500
+Received: by mail-il1-f193.google.com with SMTP id s85so8803898ill.11
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 10:15:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8xaqocqI7n6rLhfdsAfsTQaAIhwnxm1qjzL1SYx1WFE=;
+        b=hj1rflza0N0ahI/+Gib5Me4e1hJXe20b4t9CabubbAWx1ea4PGEDoBKz1g/sTDSHVh
+         BkrKDWptx3Iw26vTATPAmfUJDeuVBDraF8++mKvznG20mbE6Pice1TDSOeV6+MqN3YEb
+         3nbpfkMNy8ZmiUOCpbFFVmtuXK1tpbmsYgTLY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8xaqocqI7n6rLhfdsAfsTQaAIhwnxm1qjzL1SYx1WFE=;
+        b=CW2M8Hbl0GfGcpYbIQ4MpVdIGrfHTTxBmVG45qMOXUSTnEykx1wCSXzNu9HxuP2OO9
+         5ECQPxmZnWJtApXjfKEMk54Iu6L7/JjvExgBOr74mQiOpw9wD+5YWTzsKT6ET4o+F4OM
+         Q0r48zbNccGszu7FfgHZE1ZoX63A/wYx8UykMF+FcGZo6kYVGcpzU7tQh1N0/9urr7Ar
+         epyiQJ0cso7OGauHHeW4jSJMieCbKdLRbWfe5qo9NdYl6+A7ap3ddkPvJBz84FWBCQOk
+         rsrZd2zxAbxmxxrPCxalSjztmMVBImWMialTf0Ng54qxsIvI8tKcFiqOrlqqQvtggT/Z
+         jMHw==
+X-Gm-Message-State: APjAAAVA6cVYnSq8Nm7j+41Kdj1F94fpUS+O4RYuz7VsJUvtWT04Swrp
+        6MejT1j26yS2bcaeleRpfrlgmalf9XAM5rhTBiorsA==
+X-Google-Smtp-Source: APXvYqyfILAtOIqub0HXb6q5FysHf639kfwZQi9NKsp0iDgHRaBKzXR2uoGVpx/vHgvyqNQMw/PayKSHtXU1wqjJCF8=
+X-Received: by 2002:a92:af8e:: with SMTP id v14mr4049827ill.150.1581704108241;
+ Fri, 14 Feb 2020 10:15:08 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CABCJKudpeTDa4Ro1aCsCJ-=x97SG0qu5LGpj9ywj1aLOtboNkQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <158166060044.9887.549561499483343724.stgit@devnote2> <158166062748.9887.15284887096084339722.stgit@devnote2>
+In-Reply-To: <158166062748.9887.15284887096084339722.stgit@devnote2>
+From:   Hsin-Yi Wang <hsinyi@chromium.org>
+Date:   Sat, 15 Feb 2020 02:14:42 +0800
+Message-ID: <CAJMQK-hZAgCPjgdRE70QrkSKvJAgYPwmCHB9pjLUn3tQ6p_2YA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] random: rng-seed source is utf-8
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>, kernel-team@android.com,
+        Mark Salyzyn <salyzyn@android.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Potapenko <glider@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Juergen Gross <jgross@suse.com>, Rob Herring <robh@kernel.org>,
+        linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sami,
+On Fri, Feb 14, 2020 at 2:10 PM Masami Hiramatsu <mhiramat@kernel.org> wrote:
+>
+> From: Mark Salyzyn <salyzyn@android.com>
+>
+> commit 428826f5358c922dc378830a1717b682c0823160
+> ("fdt: add support for rng-seed") makes the assumption that the data
+> in rng-seed is binary, when it is typically constructed of utf-8
+> characters which has a bitness of roughly 6 to give appropriate
+> credit due for the entropy.
+>
+> Fixes: 428826f5358c ("fdt: add support for rng-seed")
+> Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: kernel-team@android.com
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Theodore Y. Ts'o <tytso@mit.edu>
+> ---
+>  drivers/char/random.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/char/random.c b/drivers/char/random.c
+> index c7f9584de2c8..ee21a6a584b1 100644
+> --- a/drivers/char/random.c
+> +++ b/drivers/char/random.c
+> @@ -2306,7 +2306,7 @@ EXPORT_SYMBOL_GPL(add_hwgenerator_randomness);
+>  void add_bootloader_randomness(const void *buf, unsigned int size)
+>  {
+>         if (IS_ENABLED(CONFIG_RANDOM_TRUST_BOOTLOADER))
+> -               add_hwgenerator_randomness(buf, size, size * 8);
+> +               add_hwgenerator_randomness(buf, size, size * 6);
+Hi,
 
-On 12/02/2020 20:59, Sami Tolvanen wrote:
-> On Tue, Feb 11, 2020 at 5:57 AM James Morse <james.morse@arm.com> wrote:
->> On 28/01/2020 18:49, Sami Tolvanen wrote:
->>> This change adds per-CPU shadow call stacks for the SDEI handler.
->>> Similarly to how the kernel stacks are handled, we add separate shadow
->>> stacks for normal and critical events.
->>
->> Reviewed-by: James Morse <james.morse@arm.com>
->> Tested-by: James Morse <james.morse@arm.com>
+In the next patch, entropy is added by
++                       add_device_randomness(rng_seed, strlen(rng_seed));
++                       credit_trusted_entropy_bits(strlen(rng_seed) * 6);
 
->>> diff --git a/arch/arm64/kernel/scs.c b/arch/arm64/kernel/scs.c
->>> index eaadf5430baa..dddb7c56518b 100644
->>> --- a/arch/arm64/kernel/scs.c
->>> +++ b/arch/arm64/kernel/scs.c
->>
->>> +static int scs_alloc_percpu(unsigned long * __percpu *ptr, int cpu)
->>> +{
->>> +     unsigned long *p;
->>> +
->>> +     p = __vmalloc_node_range(PAGE_SIZE, SCS_SIZE,
->>> +                              VMALLOC_START, VMALLOC_END,
->>> +                              GFP_SCS, PAGE_KERNEL,
->>> +                              0, cpu_to_node(cpu),
->>> +                              __builtin_return_address(0));
->>
->> (What makes this arch specific? arm64 has its own calls like this for the regular vmap
->> stacks because it plays tricks with the alignment. Here the alignment requirement comes
->> from the core SCS code... Would another architecture implement these
->> scs_alloc_percpu()/scs_free_percpu() differently?)
-> 
-> You are correct, these aren't necessarily specific to arm64. However,
-> right now, we are not allocating per-CPU shadow stacks anywhere else,
-> so this was a natural place for the helper functions.
+If the add_bootloader_randomness() function is only used for dt, do we
+need to shorten the credit bits?
 
-Fair enough,
+In dt-schema[1] we stated that this is a uint8 array, and dt is able
+to generate this. It doesn't need to avoid using space for parameter
+splitting.
 
+For some device, asking for random number is time consuming. Shorten
+the credit length makes it have to generate longer seed for dt to meet
+the CRNG_INIT_CNT_THRESH threshold.
 
-> Would you prefer me to move these to kernel/scs.c instead?
+[1] https://github.com/devicetree-org/dt-schema/blob/master/schemas/chosen.yaml#L55
 
-I have no preference, as long as they don't get duplicated later!
-
-
-Thanks,
-
-James
+Thanks
