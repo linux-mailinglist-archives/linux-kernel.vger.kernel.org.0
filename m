@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABE7015EE0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:38:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 376BF15EE06
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:38:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390052AbgBNQFA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:05:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52528 "EHLO mail.kernel.org"
+        id S2390064AbgBNQFF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:05:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52636 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389933AbgBNQEZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:04:25 -0500
+        id S2389946AbgBNQE2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:04:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F117E217F4;
-        Fri, 14 Feb 2020 16:04:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC47E2467E;
+        Fri, 14 Feb 2020 16:04:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696265;
-        bh=SYE3yJqfnWDO+mHY0on2ygwYVmlJGg/lCtQgcN/jUmY=;
+        s=default; t=1581696267;
+        bh=bIUhgvbENbjbfeGT1NXqOge+ohLg9lrTyqs72y8flXg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DDjWpqoNpr+FlPNObWdPb7lXy0nr9oY6m6zm/XsoU+NDXOq7V5itDGI31wGparWz7
-         /jdeKrGeOpTse5Be++bH2JCa4Y63UYu8D8VXl6U5mSkup/SPWkN4kwEw8LrLneYQZW
-         ezofFruerOh7hpxxMa5NPoBV6V3TdF7dtX6mzR9g=
+        b=a7YX6u7hElJPZx+N8d/xjB/NajAs22g4yRbOvxOAEAbspJfs9K4HgFaVw4ZTYc+gj
+         AU2U/dqQEkDREInK1xVX50xc6s3UcSf/SIfGUmugbN+Ulh+0S71Lp5+GpTAHhOpaO2
+         TdDdsihdNVgBGe4kuODUB2sm0uzMihzbbDSQfhhw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Martin KaFai Lau <kafai@fb.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 117/459] bpf: Improve bucket_log calculation logic
-Date:   Fri, 14 Feb 2020 10:56:07 -0500
-Message-Id: <20200214160149.11681-117-sashal@kernel.org>
+Cc:     yu kuai <yukuai3@huawei.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.4 119/459] drm/amdgpu: remove 4 set but not used variable in amdgpu_atombios_get_connector_info_from_object_table
+Date:   Fri, 14 Feb 2020 10:56:09 -0500
+Message-Id: <20200214160149.11681-119-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -47,67 +44,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin KaFai Lau <kafai@fb.com>
+From: yu kuai <yukuai3@huawei.com>
 
-[ Upstream commit 88d6f130e5632bbf419a2e184ec7adcbe241260b ]
+[ Upstream commit bae028e3e521e8cb8caf2cc16a455ce4c55f2332 ]
 
-It was reported that the max_t, ilog2, and roundup_pow_of_two macros have
-exponential effects on the number of states in the sparse checker.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-This patch breaks them up by calculating the "nbuckets" first so that the
-"bucket_log" only needs to take ilog2().
+drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c: In function
+'amdgpu_atombios_get_connector_info_from_object_table':
+drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c:376:26: warning: variable
+'grph_obj_num' set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c:376:13: warning: variable
+'grph_obj_id' set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c:341:37: warning: variable
+'con_obj_type' set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c:341:24: warning: variable
+'con_obj_num' set but not used [-Wunused-but-set-variable]
 
-In addition, Linus mentioned:
+They are never used, so can be removed.
 
-  Patch looks good, but I'd like to point out that it's not just sparse.
-
-  You can see it with a simple
-
-    make net/core/bpf_sk_storage.i
-    grep 'smap->bucket_log = ' net/core/bpf_sk_storage.i | wc
-
-  and see the end result:
-
-      1  365071 2686974
-
-  That's one line (the assignment line) that is 2,686,974 characters in
-  length.
-
-  Now, sparse does happen to react particularly badly to that (I didn't
-  look to why, but I suspect it's just that evaluating all the types
-  that don't actually ever end up getting used ends up being much more
-  expensive than it should be), but I bet it's not good for gcc either.
-
-Fixes: 6ac99e8f23d4 ("bpf: Introduce bpf sk local storage")
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Reported-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Martin KaFai Lau <kafai@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Reviewed-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Link: https://lore.kernel.org/bpf/20200207081810.3918919-1-kafai@fb.com
+Fixes: d38ceaf99ed0 ("drm/amdgpu: add core driver (v4)")
+Signed-off-by: yu kuai <yukuai3@huawei.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/bpf_sk_storage.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c | 19 ++-----------------
+ 1 file changed, 2 insertions(+), 17 deletions(-)
 
-diff --git a/net/core/bpf_sk_storage.c b/net/core/bpf_sk_storage.c
-index da5639a5bd3b9..0147b26f585a3 100644
---- a/net/core/bpf_sk_storage.c
-+++ b/net/core/bpf_sk_storage.c
-@@ -643,9 +643,10 @@ static struct bpf_map *bpf_sk_storage_map_alloc(union bpf_attr *attr)
- 		return ERR_PTR(-ENOMEM);
- 	bpf_map_init_from_attr(&smap->map, attr);
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c
+index 1c9d40f97a9b2..f2f40f05fa5c7 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c
+@@ -338,17 +338,9 @@ bool amdgpu_atombios_get_connector_info_from_object_table(struct amdgpu_device *
+ 		path_size += le16_to_cpu(path->usSize);
  
-+	nbuckets = roundup_pow_of_two(num_possible_cpus());
- 	/* Use at least 2 buckets, select_bucket() is undefined behavior with 1 bucket */
--	smap->bucket_log = max_t(u32, 1, ilog2(roundup_pow_of_two(num_possible_cpus())));
--	nbuckets = 1U << smap->bucket_log;
-+	nbuckets = max_t(u32, 2, nbuckets);
-+	smap->bucket_log = ilog2(nbuckets);
- 	cost = sizeof(*smap->buckets) * nbuckets + sizeof(*smap);
+ 		if (device_support & le16_to_cpu(path->usDeviceTag)) {
+-			uint8_t con_obj_id, con_obj_num, con_obj_type;
+-
+-			con_obj_id =
++			uint8_t con_obj_id =
+ 			    (le16_to_cpu(path->usConnObjectId) & OBJECT_ID_MASK)
+ 			    >> OBJECT_ID_SHIFT;
+-			con_obj_num =
+-			    (le16_to_cpu(path->usConnObjectId) & ENUM_ID_MASK)
+-			    >> ENUM_ID_SHIFT;
+-			con_obj_type =
+-			    (le16_to_cpu(path->usConnObjectId) &
+-			     OBJECT_TYPE_MASK) >> OBJECT_TYPE_SHIFT;
  
- 	ret = bpf_map_charge_init(&smap->map.memory, cost);
+ 			/* Skip TV/CV support */
+ 			if ((le16_to_cpu(path->usDeviceTag) ==
+@@ -373,14 +365,7 @@ bool amdgpu_atombios_get_connector_info_from_object_table(struct amdgpu_device *
+ 			router.ddc_valid = false;
+ 			router.cd_valid = false;
+ 			for (j = 0; j < ((le16_to_cpu(path->usSize) - 8) / 2); j++) {
+-				uint8_t grph_obj_id, grph_obj_num, grph_obj_type;
+-
+-				grph_obj_id =
+-				    (le16_to_cpu(path->usGraphicObjIds[j]) &
+-				     OBJECT_ID_MASK) >> OBJECT_ID_SHIFT;
+-				grph_obj_num =
+-				    (le16_to_cpu(path->usGraphicObjIds[j]) &
+-				     ENUM_ID_MASK) >> ENUM_ID_SHIFT;
++				uint8_t grph_obj_type=
+ 				grph_obj_type =
+ 				    (le16_to_cpu(path->usGraphicObjIds[j]) &
+ 				     OBJECT_TYPE_MASK) >> OBJECT_TYPE_SHIFT;
 -- 
 2.20.1
 
