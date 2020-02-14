@@ -2,127 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07F1515F9E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 23:43:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6DE515F9E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 23:44:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728009AbgBNWnk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 17:43:40 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:43094 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727951AbgBNWnd (ORCPT
+        id S1728062AbgBNWoC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 17:44:02 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52771 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726164AbgBNWoC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 17:43:33 -0500
-Received: by mail-oi1-f195.google.com with SMTP id p125so10951895oif.10;
-        Fri, 14 Feb 2020 14:43:32 -0800 (PST)
+        Fri, 14 Feb 2020 17:44:02 -0500
+Received: by mail-wm1-f65.google.com with SMTP id p9so11598836wmc.2;
+        Fri, 14 Feb 2020 14:43:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=7ou4aOAtQiWLqJ4BD11jAAJu/G6iXaCmGHQ4xMX1mZc=;
+        b=EWrkNsNFuBSv2T7Ug3sOFKpxbnEFoWPO4wB1PewNRYvThfXw+P63jriKZc0yFIIpEt
+         eeAQMUtyixpe005EKZAJ9sXaZLWSFbEt8DxhLqO9PPEtWmqQEIEeuwOwrbIzseeS4rzz
+         fEorloHt+3aLt47aYCKq1fcjVhL1t5vNeIHC//I0oHlyvX92g7wPTAUoFM6bt+UXW4Mc
+         rSS3k2gy4AGmTv3dbWbgtwEc7/XyttadMKKpXjr0gAhXQhJbsuWDpsaxJ7ztvfwFzXfC
+         FbOCQShWuJk+Z3kZqWjVTOyrYgJCnGeZY1nCHxqtO9rVNVyzxcZGHgMJP4ss8WCM/ySt
+         uk6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=RRK+etse5GdhzRRMSbN0AsTFv8NtL6Mf75PwYVcJU44=;
-        b=ufV4By3kONxEZnyPWsfuV2Gp6foK6U9A7tSQdfSdzAel/6TDFgZw+/8/HBKXxffZd1
-         VSXS6wlcC5Vy3zpTHZVjrJN9R0R5VcUuErrWkvkORdP1gFCIltpDwTt0FeBF4NKSIm5e
-         jCwbS+hrkea14hx1vctyT1k32qmWR65sRNuP9/oxQwxNDWSaHpD7HVJt71ZH/uZndGfn
-         7YIpH+TAofUj3kKsjTNErV1o6ZVG8pq4RuHml7rDUybEroKiC1fskapyJvlmWXbj697e
-         oaPjFj6ykMoFCux0u9FDbtjN+0b7skh0K0gx2npo/sHvIqTEfKfGGwLDEPflr32EdaM1
-         1m9A==
-X-Gm-Message-State: APjAAAUk4xspchTzZNmxV0SMxD8P/pHscfcMpVtUrTKKHysPGLTjSols
-        2aZtRNnbRA80nYy5ZAyPNEERqDA=
-X-Google-Smtp-Source: APXvYqz909Fzl/Mv16+lZxspbsDGyoBiYnJJXHR2kdCOGJNisRMIBPTjbnRMOa+Vuf4buMe01/NvvA==
-X-Received: by 2002:aca:f0b:: with SMTP id 11mr3564215oip.34.1581720212297;
-        Fri, 14 Feb 2020 14:43:32 -0800 (PST)
-Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id m69sm2453167otc.78.2020.02.14.14.43.31
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=7ou4aOAtQiWLqJ4BD11jAAJu/G6iXaCmGHQ4xMX1mZc=;
+        b=aWhBMeQ0xQ9nsVFoL10U5U9BnJc8VBjXuHB+Dih5GSQbMtkHzBm1qD5FEposoctsg6
+         /Sv/4aTYOuZ4w6MjnNVR1xR1kGC+3lC+wOQgckiw39ryxWwR7ryY2V5EY3iDDAejvxHJ
+         MyYUtnvpFKEyap6JZPHSYx+K8Yy2HFmCLoYfq/Ry7zeNW5eDFd0YhN3AX6PCIrBLxuHQ
+         OZncKNsQaHUC0x2I+ZCsuE4jCITfn9AmE9/mE9iM8GzqdZTcE/cFsaMLBgmd01DvCPaP
+         Vt09oT5wjHTOM2ifC2WeNI28ukpuoktm6pXJD4XjpsNbR4Y+1GFTl34RSv5Iu1upUZmw
+         0Etw==
+X-Gm-Message-State: APjAAAWl6qGtM1YMR0NyPxQYgzfOwu3sabGd5+1XlLnSpmZXBezuawEJ
+        F6jT51CatVimYl8CPmlErjU=
+X-Google-Smtp-Source: APXvYqxuofMzAee/uD415SRlDInENfVScPrDk1BAWi9A+092bRg0tqff+ZLt5NEMkOGe5ol6SbOyMw==
+X-Received: by 2002:a7b:c4c5:: with SMTP id g5mr7026842wmk.85.1581720239259;
+        Fri, 14 Feb 2020 14:43:59 -0800 (PST)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id q10sm9192364wme.16.2020.02.14.14.43.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2020 14:43:31 -0800 (PST)
-From:   Rob Herring <robh@kernel.org>
-To:     devicetree@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Christoph Hellwig <hch@lst.de>, Arnd Bergmann <arnd@arndb.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Simek <monstr@monstr.eu>,
-        Paul Mackerras <paulus@samba.org>
-Subject: [PATCH 7/7] of/address: Support multiple 'dma-ranges' entries
-Date:   Fri, 14 Feb 2020 16:43:22 -0600
-Message-Id: <20200214224322.20030-8-robh@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214224322.20030-1-robh@kernel.org>
-References: <20200214224322.20030-1-robh@kernel.org>
+        Fri, 14 Feb 2020 14:43:58 -0800 (PST)
+Date:   Fri, 14 Feb 2020 23:43:57 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>
+Cc:     Sasha Levin <sashal@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
+Message-ID: <20200214224357.yv2lwyusi3gwolp3@pali>
+References: <20190829233506.GT5281@sasha-vm>
+ <20190830075647.wvhrx4asnkrfkkwk@pali>
+ <20191016140353.4hrncxa5wkx47oau@pali>
+ <20191016143113.GS31224@sasha-vm>
+ <20191016160349.pwghlg566hh2o7id@pali>
+ <20191016203317.GU31224@sasha-vm>
+ <20191017075008.2uqgdimo3hrktj3i@pali>
+ <20200213000656.hx5wdofkcpg7aoyo@pali>
+ <20200213211847.GA1734@sasha-vm>
+ <86151.1581718578@turing-police>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <86151.1581718578@turing-police>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, the DMA offset and mask for a device are set based only on the
-first 'dma-ranges' entry. We should really be using all the entries. The
-kernel doesn't yet support multiple offsets and sizes, so the best we can
-do is to find the biggest size for a single offset. The algorithm is
-copied from acpi_dma_get_range().
+On Friday 14 February 2020 17:16:18 Valdis Klētnieks wrote:
+> On Thu, 13 Feb 2020 16:18:47 -0500, Sasha Levin said:
+> 
+> > >> I was hoping that it would be possible to easily use secondary FAT table
+> > >> (from TexFAT extension) for redundancy without need to implement full
+> > >> TexFAT, which could be also backward compatible with systems which do
+> > >> not implement TexFAT extension at all. Similarly like using FAT32 disk
+> > >> with two FAT tables is possible also on system which use first FAT
+> > >> table.
+> 
+> OK.. maybe I'm not sufficiently caffeinated, but how do you use 2 FAT tables on
+> a physical device and expect it to work properly on a system that uses just the
+> first FAT table, if the device is set to "use second table" when you mount it?
+> That sounds just too much like the failure modes of running fsck on a mounted
+> filesystem....
 
-If there's different offsets from the first entry, then we warn and
-continue. It really should be an error, but this will likely break
-existing DTs.
+Idea is simple. Expects that we have a clean filesystem in correct
+state. We load primary/active/main FAT table (just call it FAT1) and all
+changes to filesystem would be done via second non-active FAT table
+(FAT2). At unmount or sync or flush buffer times, FAT2 would be copied
+back to the FAT1 and filesystem would be back in clean state.
 
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- drivers/of/address.c | 28 ++++++++++++++++++++++++----
- 1 file changed, 24 insertions(+), 4 deletions(-)
+So this should not break support for implementations which use just
+FAT1. And if above implementation which use both FAT1 and FAT2 "crash"
+during write operations to FAT2 it may be possible to reconstruct and
+repair some parts of filesystem from FAT1 (as it would contain previous
+state of some filesystem parts).
 
-diff --git a/drivers/of/address.c b/drivers/of/address.c
-index a2c45812a50e..8eea3f6e29a4 100644
---- a/drivers/of/address.c
-+++ b/drivers/of/address.c
-@@ -944,6 +944,7 @@ int of_dma_get_range(struct device_node *np, u64 *dma_addr, u64 *paddr, u64 *siz
- 	bool found_dma_ranges = false;
- 	struct of_range_parser parser;
- 	struct of_range range;
-+	u64 dma_start = U64_MAX, dma_end = 0, dma_offset = 0;
- 
- 	while (node) {
- 		ranges = of_get_property(node, "dma-ranges", &len);
-@@ -974,14 +975,33 @@ int of_dma_get_range(struct device_node *np, u64 *dma_addr, u64 *paddr, u64 *siz
- 		pr_debug("dma_addr(%llx) cpu_addr(%llx) size(%llx)\n",
- 			 range.bus_addr, range.cpu_addr, range.size);
- 
--		*dma_addr = range.bus_addr;
--		*paddr = range.cpu_addr;
--		*size = range.size;
-+		if (dma_offset && range.cpu_addr - range.bus_addr != dma_offset) {
-+			pr_warn("Can't handle multiple dma-ranges with different offsets on node(%pOF)\n", node);
-+			/* Don't error out as we'd break some existing DTs */
-+			continue;
-+		}
-+		dma_offset = range.cpu_addr - range.bus_addr;
-+
-+		/* Take lower and upper limits */
-+		if (range.bus_addr < dma_start)
-+			dma_start = range.bus_addr;
-+		if (range.bus_addr + range.size > dma_end)
-+			dma_end = range.bus_addr + range.size;
-+	}
- 
-+	if (dma_start >= dma_end) {
-+		ret = -EINVAL;
-+		pr_debug("Invalid DMA ranges configuration on node(%pOF)\n",
-+			 node);
- 		goto out;
- 	}
- 
--	pr_err("translation of DMA ranges failed on node(%pOF)\n", np);
-+	*dma_addr = dma_start;
-+	*size = dma_end - dma_start;
-+	*paddr = dma_start + dma_offset;
-+
-+	pr_debug("final: dma_addr(%llx) cpu_addr(%llx) size(%llx)\n",
-+		 *dma_addr, *paddr, *size);
- 
- out:
- 	of_node_put(node);
+Via dirty bit can be detected if proper unmount occurred or not, and
+fsck implementation could do use this fact and try to do repairing
+(possible by asking user what should do).
+
+Of course if implementation use only FAT1 we cannot use FAT2 for
+repairing and therefore fsck should really ask user if it should use
+FAT2 for repair or not.
+
+If implementation use only FAT1, does not crash and let filesystem in
+clean/correct state then there should not be any problem for
+implementation which can use both FATs as it reads main state from FAT1.
+Therefore these two implementations should be compatible and problem can
+happen only if they let filesystem in inconsistent state. (But if they
+let it in inconsistent state, then any implementation may have troubles
+and fsck is needed).
+
+I hope that it is more clear now...
+
+> > >By the chance, is there any possibility to release TexFAT specification?
+> > >Usage of more FAT tables (even for Linux) could help with data recovery.
+> >
+> > This would be a major pain in the arse to pull off (even more that
+> > releasing exFAT itself) because TexFAT is effectively dead and no one
+> > here cares about it. It's not even the case that there are devices which
+> > are now left unsupported, the whole TexFAT scheme is just dead and gone.
+> >
+> > Could I point you to the TexFAT patent instead
+> > (https://patents.google.com/patent/US7613738B2/en)? It describes well
+> > how TexFAT used to work.
+> 
+> I don't think anybody wants the full TexFAT support - but having a backup copy
+> of the FAT would be nice in some circumstances.
+
+Main problem is that we do not know what "full TexFAT support" means as
+currently it is secret.
+
+My original question for TexFAT was also because of NumberOfFats set to
+2 is according to released exFAT specification possible only for TexFAT
+volumes.
+
+And from reading whole exFAT specification I see that better data
+recovery can be achieved only by having backup copy of FAT table (and
+allocation bitmap), which is limited to (currently undocumented) TexFAT
+extension.
+
 -- 
-2.20.1
-
+Pali Rohár
+pali.rohar@gmail.com
