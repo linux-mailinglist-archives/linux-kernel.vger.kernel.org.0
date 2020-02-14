@@ -2,111 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BAF315DB0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:36:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5E8715DB2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:39:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729486AbgBNPgX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:36:23 -0500
-Received: from mail.netline.ch ([148.251.143.178]:57912 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729260AbgBNPgX (ORCPT
+        id S1729530AbgBNPju (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:39:50 -0500
+Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:39577 "EHLO
+        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729416AbgBNPju (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:36:23 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id C35892A6046;
-        Fri, 14 Feb 2020 16:36:19 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
-Received: from netline-mail3.netline.ch ([127.0.0.1])
-        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id hkjvpc2T5O5o; Fri, 14 Feb 2020 16:36:19 +0100 (CET)
-Received: from thor (252.80.76.83.dynamic.wline.res.cust.swisscom.ch [83.76.80.252])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 2BE0F2A6045;
-        Fri, 14 Feb 2020 16:36:19 +0100 (CET)
-Received: from localhost ([::1])
-        by thor with esmtp (Exim 4.93)
-        (envelope-from <michel@daenzer.net>)
-        id 1j2d0r-000ACQ-Qm; Fri, 14 Feb 2020 16:36:17 +0100
-Subject: Re: [PATCH] drm/i915: Cast remain to unsigned long in eb_relocate_vma
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc:     intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, clang-built-linux@googlegroups.com
-References: <20200214054706.33870-1-natechancellor@gmail.com>
- <87v9o965gg.fsf@intel.com>
- <158166913989.4660.10674824117292988120@skylake-alporthouse-com>
- <87o8u1wfqs.fsf@intel.com>
-From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Message-ID: <ff302c03-d012-a80d-b818-b7feababb86b@daenzer.net>
-Date:   Fri, 14 Feb 2020 16:36:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        Fri, 14 Feb 2020 10:39:50 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.west.internal (Postfix) with ESMTP id A94775BC;
+        Fri, 14 Feb 2020 10:39:48 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Fri, 14 Feb 2020 10:39:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=Xn6bkCq3IHWbARqSJQRu/yjMZ3m
+        Wx6T6bFlYS9wLQ0g=; b=EjQN9ZidI4L2P/uzDEPEfpSrVu58fuXU/cNTz6HGCUq
+        zOO3yJkXhVQzr1Te1yUSIWkJ5U/WenrFP5tQSqMFgNgVpB/ADeXlAH2252SL4ftP
+        ginDkMxfI+fov4ksbZ1xJ6U2MotLoS6ZlFMdfgWHWskpdoUQb2xuaxqcRwkvHc14
+        gDWvzgwawsyZ8DPHRCi6u3tvWQ58SvkSQCGv/8DGfVx86oBytLyPSw5JO2ZeEJ2b
+        ICAGghp/y8ipq8AS9NRVpjRtYrqcCwHrg3KdMxk7QMkzXTAVcJ7+RtR4AortJLP3
+        n9c6zR8j/ViYr4kH5fig1+k9dSz7HKiEzwefQizHasQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=Xn6bkC
+        q3IHWbARqSJQRu/yjMZ3mWx6T6bFlYS9wLQ0g=; b=hPFiBqbM1cTH51+JkdrSzL
+        4x1MD/COSmhFILC2dxRKhT8SomRNj8VKCHIHeNQ9jWzeT14SzY8Pf2I43ewjVfVf
+        mbSg7yvJKdkK1XgeicpQRWQWUsQYDfMEse4ZXMZa7KvF/1gic/iN821bVNTi/vLA
+        MtT62N6VYVPcElkBvpf5Gj0RZwAM9bZKpVvRLzwc4/0fAdLqVAJwXS8cDGfIQ9s0
+        EBxB018QngOdLEJOGVhjVRc5Db3fFIz7ng0cipl+DmB5WuKMgquxW1J6oz8Kdnld
+        3oljHxkYHLd/ON4v6ewJYLJb+gV+7B1lZI5duZb3MqXHvcDaePNnBwion6fI2BXA
+        ==
+X-ME-Sender: <xms:Q79GXlrwVuJre4U8kqRDtOCMd3GQqOdo50VDur0dbWWaU7Kv7ZSBng>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrjedtgdektdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucfkphepledtrd
+    ekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
+    fhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:Q79GXr4nErsL___eL0NgPQTNn5Wez-0o-f1vu0Edj6iVWn6vE0knsQ>
+    <xmx:Q79GXtOMQh9JBLRulso3Qz6JjPUqZEP8tEtJXy0oHU1Q_7-km5zeZQ>
+    <xmx:Q79GXlORXvW7AQAy35c7eFPZF_y7J4zmXhqYJo_EOVCVXEk_IbHtug>
+    <xmx:RL9GXia6RsTIyfeJd9GKeGgx-NnxNXsLZ_FlO1JJsAS2mIKXJ9vfKg>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 0A3C2328005A;
+        Fri, 14 Feb 2020 10:39:46 -0500 (EST)
+Date:   Fri, 14 Feb 2020 16:39:45 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4/4] drm/sun4i: dsi: Remove incorrect use of runtime PM
+Message-ID: <20200214153945.f5z42fovcitvdlcr@gilmour.lan>
+References: <20200211072858.30784-1-samuel@sholland.org>
+ <20200211072858.30784-4-samuel@sholland.org>
 MIME-Version: 1.0
-In-Reply-To: <87o8u1wfqs.fsf@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rtmrzd3owfcaeil6"
+Content-Disposition: inline
+In-Reply-To: <20200211072858.30784-4-samuel@sholland.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-02-14 12:49 p.m., Jani Nikula wrote:
-> On Fri, 14 Feb 2020, Chris Wilson <chris@chris-wilson.co.uk> wrote:
->> Quoting Jani Nikula (2020-02-14 06:36:15)
->>> On Thu, 13 Feb 2020, Nathan Chancellor <natechancellor@gmail.com> wrote:
->>>> A recent commit in clang added -Wtautological-compare to -Wall, which is
->>>> enabled for i915 after -Wtautological-compare is disabled for the rest
->>>> of the kernel so we see the following warning on x86_64:
->>>>
->>>>  ../drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c:1433:22: warning:
->>>>  result of comparison of constant 576460752303423487 with expression of
->>>>  type 'unsigned int' is always false
->>>>  [-Wtautological-constant-out-of-range-compare]
->>>>          if (unlikely(remain > N_RELOC(ULONG_MAX)))
->>>>             ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
->>>>  ../include/linux/compiler.h:78:42: note: expanded from macro 'unlikely'
->>>>  # define unlikely(x)    __builtin_expect(!!(x), 0)
->>>>                                             ^
->>>>  1 warning generated.
->>>>
->>>> It is not wrong in the case where ULONG_MAX > UINT_MAX but it does not
->>>> account for the case where this file is built for 32-bit x86, where
->>>> ULONG_MAX == UINT_MAX and this check is still relevant.
->>>>
->>>> Cast remain to unsigned long, which keeps the generated code the same
->>>> (verified with clang-11 on x86_64 and GCC 9.2.0 on x86 and x86_64) and
->>>> the warning is silenced so we can catch more potential issues in the
->>>> future.
->>>>
->>>> Link: https://github.com/ClangBuiltLinux/linux/issues/778
->>>> Suggested-by: Michel Dänzer <michel@daenzer.net>
->>>> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
->>>
->>> Works for me as a workaround,
->>
->> But the whole point was that the compiler could see that it was
->> impossible and not emit the code. Doesn't this break that?
-> 
-> It seems that goal and the warning are fundamentally incompatible.
 
-Not really:
+--rtmrzd3owfcaeil6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-    if (sizeof(remain) >= sizeof(unsigned long) &&
-	unlikely(remain > N_RELOC(ULONG_MAX)))
-             return -EINVAL;
+On Tue, Feb 11, 2020 at 01:28:58AM -0600, Samuel Holland wrote:
+> The driver currently uses runtime PM to perform some of the module
+> initialization and cleanup. This has three problems:
+>
+> 1) There is no Kconfig dependency on CONFIG_PM, so if runtime PM is
+>    disabled, the driver will not work at all, since the module will
+>    never be initialized.
+>
+> 2) The driver does not ensure that the device is suspended when
+>    sun6i_dsi_probe() fails or when sun6i_dsi_remove() is called. It
+>    simply disables runtime PM. From the docs of pm_runtime_disable():
+>
+>       The device can be either active or suspended after its runtime PM
+>       has been disabled.
+>
+>    And indeed, the device will likely still be active if sun6i_dsi_probe
+>    fails. For example, if the panel driver is not yet loaded, we have
+>    the following sequence:
+>
+>    sun6i_dsi_probe()
+>       pm_runtime_enable()
+>       mipi_dsi_host_register()
+>          of_mipi_dsi_device_add(child)
+>             ...device_add()...
+>                __device_attach()
+>                  pm_runtime_get_sync(dev->parent) -> Causes resume
+>                  bus_for_each_drv()
+>                     __device_attach_driver() -> No match for panel
+>                  pm_runtime_put(dev->parent) -> Async idle request
+>       component_add()
+>          __component_add()
+>             try_to_bring_up_masters()
+>                try_to_bring_up_master()
+>                   sun4i_drv_bind()
+>                      component_bind_all()
+>                         component_bind()
+>                            sun6i_dsi_bind() -> Fails with -EPROBE_DEFER
+>       mipi_dsi_host_unregister()
+>       pm_runtime_disable()
+>          __pm_runtime_disable()
+>             __pm_runtime_barrier() -> Idle request is still pending
+>                cancel_work_sync()  -> DSI host is *not* suspended!
+>
+>    Since the device is not suspended, the clock and regulator are never
+>    disabled. The imbalance causes a WARN at devres free time.
+>
+> 3) The driver relies on being suspended when sun6i_dsi_encoder_enable()
+>    is called. The resume callback has a comment that says:
+>
+>       Some part of it can only be done once we get a number of
+>       lanes, see sun6i_dsi_inst_init
+>
+>    And then part of the resume callback only runs if dsi->device is not
+>    NULL (that is, if sun6i_dsi_attach() has been called). However, as
+>    the above call graph shows, the resume callback is guaranteed to be
+>    called before sun6i_dsi_attach(); it is called before child devices
+>    get their drivers attached.
+>
+>    Therefore, part of the controller initialization will only run if the
+>    device is suspended between the calls to mipi_dsi_host_register() and
+>    component_add() (which ends up calling sun6i_dsi_encoder_enable()).
+>    Again, as shown by the above call graph, this is not the case. It
+>    appears that the controller happens to work because it is still
+>    initialized by the bootloader.
+>
+>    Because the connector is hardcoded to always be connected, the
+>    device's runtime PM reference is not dropped until system suspend,
+>    when sun4i_drv_drm_sys_suspend() ends up calling
+>    sun6i_dsi_encoder_disable(). However, that is done as a system sleep
+>    PM hook, and at that point the system PM core has already taken
+>    another runtime PM reference, so sun6i_dsi_runtime_suspend() is
+>    not called. Likewise, by the time the PM core releases its reference,
+>    sun4i_drv_drm_sys_resume() has already re-enabled the encoder.
+>
+>    So after system suspend and resume, we have *still never called*
+>    sun6i_dsi_inst_init(), and now that the rest of the display pipeline
+>    has been reset, the DSI host is unable to communicate with the panel,
+>    causing VBLANK timeouts.
+>
+> Fix all of these issues by inlining the runtime PM hooks into the
+> encoder enable/disable functions, which are guaranteed to run after a
+> panel is attached. This allows sun6i_dsi_inst_init() to be called
+> unconditionally. Furthermore, this causes the hardware to be turned off
+> during system suspend and reinitialized on resume, which was not
+> happening before.
+>
+> Fixes: 133add5b5ad4 ("drm/sun4i: Add Allwinner A31 MIPI-DSI controller support")
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
 
-In contrast to the cast, this doesn't generate any machine code on 64-bit:
+Applied all 4 patches.
 
-https://godbolt.org/z/GmUE4S
+This one failed to apply for some reason (even though the context
+looks similar) so I fixed the conflict by hand, you might want to
+double check.
 
-but still generates the same code on 32-bit:
+Thanks!
+Maxime
 
-https://godbolt.org/z/hAoz8L
+--rtmrzd3owfcaeil6
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Earthling Michel Dänzer               |               https://redhat.com
-Libre software enthusiast             |             Mesa and X developer
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXka/QQAKCRDj7w1vZxhR
+xROhAP9xJDyQFSRI0tejwko7eZz6nzw0YOPs5uKx1NWyOEkIhAD/cUcrgex7M7Gq
+jRQ9ouveV4eRA7LCI3o94CXtO5B3kwY=
+=2318
+-----END PGP SIGNATURE-----
+
+--rtmrzd3owfcaeil6--
