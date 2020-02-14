@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C28FE15DFDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:11:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0907D15DFDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:11:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391628AbgBNQKs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:10:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35486 "EHLO mail.kernel.org"
+        id S2391671AbgBNQK5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:10:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35550 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391409AbgBNQKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:10:08 -0500
+        id S2390030AbgBNQKK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:10:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8ECB924697;
-        Fri, 14 Feb 2020 16:10:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B7E724691;
+        Fri, 14 Feb 2020 16:10:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696607;
-        bh=NOc4DC9vNXQC8GD7WUYY8GdbGnW8gByx+18TxkurOPI=;
+        s=default; t=1581696609;
+        bh=zeO2gN9HmtarUY0K21o0oXGxEFJGkTaJbEhO3lDmMKU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IpdC7br9DNN1lHquGGHYjZEp96SszzrUTE7+oRwMPMR2v/l5f1ClR3qC5nT2Z7oCE
-         eCJu6Azmklq1DJcOHUkKCUTggIxSkoUUiwj4TQ74w+0jSq4OoWsauKe0A7rjGY6l9D
-         r8sRzf4HxdNnvHHHtL38Gcc+s70TFVeMdQYUTbkk=
+        b=fpgpeVwVRzjaAwQME6ivWBFRnE+uh3SHkr5feeX5/EMvQD+wGjQYfLWX0F4idmAzl
+         q5ZSsnWBlU7s0IkooRMM5IJroVOwbptzITg0fLun+OpqbHRSCORO28x6+h1xk6G1Ke
+         I7udZM17AeAj9gjmM2+oKIYl1DTNTcYg4zh68GQ4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Coly Li <colyli@suse.de>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-bcache@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 391/459] bcache: fix use-after-free in register_bcache()
-Date:   Fri, 14 Feb 2020 11:00:41 -0500
-Message-Id: <20200214160149.11681-391-sashal@kernel.org>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 393/459] char: hpet: Use flexible-array member
+Date:   Fri, 14 Feb 2020 11:00:43 -0500
+Message-Id: <20200214160149.11681-393-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -43,51 +43,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Coly Li <colyli@suse.de>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-[ Upstream commit ae3cd299919af6eb670d5af0bc9d7ba14086bd8e ]
+[ Upstream commit 987f028b8637cfa7658aa456ae73f8f21a7a7f6f ]
 
-The patch "bcache: rework error unwinding in register_bcache" introduces
-a use-after-free regression in register_bcache(). Here are current code,
-	2510 out_free_path:
-	2511         kfree(path);
-	2512 out_module_put:
-	2513         module_put(THIS_MODULE);
-	2514 out:
-	2515         pr_info("error %s: %s", path, err);
-	2516         return ret;
-If some error happens and the above code path is executed, at line 2511
-path is released, but referenced at line 2515. Then KASAN reports a use-
-after-free error message.
+Old code in the kernel uses 1-byte and 0-byte arrays to indicate the
+presence of a "variable length array":
 
-This patch changes line 2515 in the following way to fix the problem,
-	2515         pr_info("error %s: %s", path?path:"", err);
+struct something {
+    int length;
+    u8 data[1];
+};
 
-Signed-off-by: Coly Li <colyli@suse.de>
-Cc: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+struct something *instance;
+
+instance = kmalloc(sizeof(*instance) + size, GFP_KERNEL);
+instance->length = size;
+memcpy(instance->data, source, size);
+
+There is also 0-byte arrays. Both cases pose confusion for things like
+sizeof(), CONFIG_FORTIFY_SOURCE, etc.[1] Instead, the preferred mechanism
+to declare variable-length types such as the one above is a flexible array
+member[2] which need to be the last member of a structure and empty-sized:
+
+struct something {
+        int stuff;
+        u8 data[];
+};
+
+Also, by making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+unadvertenly introduced[3] to the codebase from now on.
+
+[1] https://github.com/KSPP/linux/issues/21
+[2] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Link: https://lore.kernel.org/r/20200120235326.GA29231@embeddedor.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/bcache/super.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/char/hpet.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 86f7e09d31516..485ebc2b2144c 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -2472,10 +2472,11 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
- 	kfree(sb);
- out_free_path:
- 	kfree(path);
-+	path = NULL;
- out_module_put:
- 	module_put(THIS_MODULE);
- out:
--	pr_info("error %s: %s", path, err);
-+	pr_info("error %s: %s", path?path:"", err);
- 	return ret;
- }
+diff --git a/drivers/char/hpet.c b/drivers/char/hpet.c
+index 9ac6671bb5141..aed2c45f7968c 100644
+--- a/drivers/char/hpet.c
++++ b/drivers/char/hpet.c
+@@ -110,7 +110,7 @@ struct hpets {
+ 	unsigned long hp_delta;
+ 	unsigned int hp_ntimer;
+ 	unsigned int hp_which;
+-	struct hpet_dev hp_dev[1];
++	struct hpet_dev hp_dev[];
+ };
  
+ static struct hpets *hpets;
 -- 
 2.20.1
 
