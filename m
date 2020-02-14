@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 689A315F392
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:22:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0910015F331
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:21:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404361AbgBNSNH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:13:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59996 "EHLO mail.kernel.org"
+        id S1731187AbgBNPxU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:53:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730730AbgBNPw4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:52:56 -0500
+        id S1731105AbgBNPxA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:53:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 016FE222C4;
-        Fri, 14 Feb 2020 15:52:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BDDF4222C4;
+        Fri, 14 Feb 2020 15:52:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695575;
-        bh=pkzmAGkgONH4rFn4Kchybr1EOFbP5fb3Z/OEklRicnc=;
+        s=default; t=1581695579;
+        bh=itLd9JKqF/R9iI9reR0IzU5iyER+GtE4XjmRdA9VPJ8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KRUKB4jmr64Z+q6aVIRtv3Y6pWxNrMo+q78hvU6mDQjxH8+6HE0FDn/4m8hoYDvYw
-         MINXk66iCVWyZaPWxOjOc/wINc9YdhoMx1Dh6ZI1EmrXsR9SYvaIFNkZ1oftoV4glu
-         0i9wqef8rOW+xABZwRfaRKiCv7RBtCLzcUbfxmwQ=
+        b=LuoWoXiFWyd4DkrtejxB359Bn8zEuQQuiq/f6cO4H100PmIpJWjm/FinhlzqpZWsr
+         AV1yJFLLiK8cRYyWiiyoRlp0HHJs7FpL9cbU8VT52oimQfozmqr0zJLmoDlMD2/Ezr
+         c0wQaJho+YYdoaORh0XIcv8hM+tjt6ZyRYN1uB3s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 186/542] opp: Free static OPPs on errors while adding them
-Date:   Fri, 14 Feb 2020 10:42:58 -0500
-Message-Id: <20200214154854.6746-186-sashal@kernel.org>
+Cc:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 189/542] arm64: dts: qcom: msm8998: Fix tcsr syscon size
+Date:   Fri, 14 Feb 2020 10:43:01 -0500
+Message-Id: <20200214154854.6746-189-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -42,76 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+From: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
 
-[ Upstream commit ba0033192145cbd4e70ef64552958b13d597eb9e ]
+[ Upstream commit 05caa5bf9cab9983dd7a50428c46b7e617ba20d6 ]
 
-The static OPPs aren't getting freed properly, if errors occur while
-adding them. Fix that by calling _put_opp_list_kref() and putting their
-reference on failures.
+The tcsr syscon region is really 0x40000 in size.  We need access to the
+full region so that we can access the axi resets when managing the
+modem subsystem.
 
-Fixes: 11e1a1648298 ("opp: Don't decrement uninitialized list_kref")
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Fixes: c7833949564e ("arm64: dts: qcom: msm8998: Add smem related nodes")
+Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Link: https://lore.kernel.org/r/20191107045948.4341-1-jeffrey.l.hugo@gmail.com
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/opp/of.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/qcom/msm8998.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-index 1cbb58240b801..1e5fcdee043c4 100644
---- a/drivers/opp/of.c
-+++ b/drivers/opp/of.c
-@@ -678,15 +678,17 @@ static int _of_add_opp_table_v2(struct device *dev, struct opp_table *opp_table)
- 			dev_err(dev, "%s: Failed to add OPP, %d\n", __func__,
- 				ret);
- 			of_node_put(np);
--			return ret;
-+			goto put_list_kref;
- 		} else if (opp) {
- 			count++;
- 		}
- 	}
+diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+index fc7838ea9a010..385b46686194a 100644
+--- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+@@ -987,7 +987,7 @@
  
- 	/* There should be one of more OPP defined */
--	if (WARN_ON(!count))
--		return -ENOENT;
-+	if (WARN_ON(!count)) {
-+		ret = -ENOENT;
-+		goto put_list_kref;
-+	}
+ 		tcsr_mutex_regs: syscon@1f40000 {
+ 			compatible = "syscon";
+-			reg = <0x01f40000 0x20000>;
++			reg = <0x01f40000 0x40000>;
+ 		};
  
- 	list_for_each_entry(opp, &opp_table->opp_list, node)
- 		pstate_count += !!opp->pstate;
-@@ -695,7 +697,8 @@ static int _of_add_opp_table_v2(struct device *dev, struct opp_table *opp_table)
- 	if (pstate_count && pstate_count != count) {
- 		dev_err(dev, "Not all nodes have performance state set (%d: %d)\n",
- 			count, pstate_count);
--		return -ENOENT;
-+		ret = -ENOENT;
-+		goto put_list_kref;
- 	}
- 
- 	if (pstate_count)
-@@ -704,6 +707,11 @@ static int _of_add_opp_table_v2(struct device *dev, struct opp_table *opp_table)
- 	opp_table->parsed_static_opps = true;
- 
- 	return 0;
-+
-+put_list_kref:
-+	_put_opp_list_kref(opp_table);
-+
-+	return ret;
- }
- 
- /* Initializes OPP tables based on old-deprecated bindings */
-@@ -738,6 +746,7 @@ static int _of_add_opp_table_v1(struct device *dev, struct opp_table *opp_table)
- 		if (ret) {
- 			dev_err(dev, "%s: Failed to add OPP %ld (%d)\n",
- 				__func__, freq, ret);
-+			_put_opp_list_kref(opp_table);
- 			return ret;
- 		}
- 		nr -= 2;
+ 		tlmm: pinctrl@3400000 {
 -- 
 2.20.1
 
