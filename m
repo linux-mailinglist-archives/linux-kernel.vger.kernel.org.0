@@ -2,108 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 147D915F3CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:22:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 292C615F404
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:23:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393597AbgBNSPb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:15:31 -0500
-Received: from foss.arm.com ([217.140.110.172]:42868 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389512AbgBNSP3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 13:15:29 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5531C328;
-        Fri, 14 Feb 2020 10:15:29 -0800 (PST)
-Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6F09B3F68E;
-        Fri, 14 Feb 2020 10:15:28 -0800 (PST)
-Subject: Re: RPI4: fail too boot with an initrd
-To:     LABBE Corentin <clabbe@baylibre.com>
-References: <20200214132748.GA23276@Red>
-Cc:     u-boot@lists.denx.de, nsaenzjulienne@suse.de,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From:   James Morse <james.morse@arm.com>
-Message-ID: <b726290c-1038-3771-5187-6ac370bc92c9@arm.com>
-Date:   Fri, 14 Feb 2020 18:15:27 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2405145AbgBNSRT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:17:19 -0500
+Received: from smtprelay0076.hostedemail.com ([216.40.44.76]:51244 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2405119AbgBNSRS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 13:17:18 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id AB4161822451B;
+        Fri, 14 Feb 2020 18:17:16 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:2:41:355:379:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1437:1515:1516:1518:1535:1593:1594:1605:1606:1730:1747:1777:1792:2393:2553:2559:2562:2828:2897:3138:3139:3140:3141:3142:3653:3865:3866:3867:3868:4321:4605:5007:6119:8603:8957:9010:10004:10848:11026:11473:11658:11914:12043:12296:12297:12438:12555:12760:12986:13439:14394:14659:14664:21080:21433:21451:21627:21939:30054:30070:30080:30090,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: north37_224944e309a50
+X-Filterd-Recvd-Size: 5967
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf17.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 14 Feb 2020 18:17:15 +0000 (UTC)
+Message-ID: <60559197a1af9e0af7f329cc3427989e5756846f.camel@perches.com>
+Subject: [PATCH] usb-storage: Use const to reduce object data size
+From:   Joe Perches <joe@perches.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Fri, 14 Feb 2020 10:15:57 -0800
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-In-Reply-To: <20200214132748.GA23276@Red>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Corentin,
+Make structs const to reduce data size ~20KB.
 
-On 14/02/2020 13:27, LABBE Corentin wrote:
-> Since the inclusion of the "enable network support in RPi4 config" serie on uboot, I
-> have started to work on adding the rpi4 in kernelCI.
-> But I fail to succeed in using a kernel/dtb/ramdisk downloaded via tftp.
-> 
-> Using booti I hit:
-> [    0.000000] Linux version 5.6.0-rc1-next-20200212 (clabbe@build2-bionic-1804) (gcc version 7.4.1 20181213 [linaro-7.4-2019.02 revision 56ec6f6b99cc167ff0c2f8e1a2eed33b1edc85d4] (Linaro    GCC 7.4-2019.02)) #66 SMP PREEMPT Wed Feb 12 10:14:20 UTC 2020
-> [    0.000000] Machine model: Raspberry Pi 4 Model B
-> [    0.000000] earlycon: uart0 at MMIO32 0x00000000fe215040 (options '')
-> [    0.000000] printk: bootconsole [uart0] enabled
-> [    0.000000] efi: Getting EFI parameters from FDT:
-> [    0.000000] efi: UEFI not found.
+Change function arguments and prototypes as necessary to compile.
 
-So no EFI,
+$ size (x86-64 defconfig pre)
+   text	   data	    bss	    dec	    hex	filename
+  12281	  10948	    480	  23709	   5c9d	./drivers/usb/storage/usb.o
+    111	  10528	      8	  10647	   2997	./drivers/usb/storage/usual-tables.o
 
-> [    0.000000] OF: reserved mem: failed to allocate memory for node 'linux,cma'
+$ size (x86-64 defconfig post)
+   text	   data	    bss	    dec	    hex	filename
+  22809	    420	    480	  23709	   5c9d	drivers/usb/storage/usb.o
+  10551	      0	      0	  10551	   2937	drivers/usb/storage/usual-tables.o
 
-Out of memory.
+Signed-off-by: Joe Perches <joe@perches.com>
+---
 
-> [    0.000000] cma: Failed to reserve 32 MiB
-> [    0.000000] Kernel panic - not syncing: Failed to allocate page table page
+compile tested only
 
-Out of memory...
+ drivers/usb/storage/usb.c          | 10 +++++-----
+ drivers/usb/storage/usb.h          |  5 +++--
+ drivers/usb/storage/usual-tables.c |  6 +++---
+ include/linux/usb_usual.h          |  2 +-
+ 4 files changed, 12 insertions(+), 11 deletions(-)
 
-> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 5.6.0-rc1-next-20200212 #66
-> [    0.000000] Hardware name: Raspberry Pi 4 Model B (DT)
-> [    0.000000] Call trace:
-> [    0.000000]  dump_backtrace+0x0/0x1a0
-> [    0.000000]  show_stack+0x14/0x20
-> [    0.000000]  dump_stack+0xbc/0x104
-> [    0.000000]  panic+0x16c/0x37c
-> [    0.000000]  early_pgtable_alloc+0x30/0xa0
+diff --git a/drivers/usb/storage/usb.c b/drivers/usb/storage/usb.c
+index 9a79cd..94a6472 100644
+--- a/drivers/usb/storage/usb.c
++++ b/drivers/usb/storage/usb.c
+@@ -121,12 +121,12 @@ MODULE_PARM_DESC(quirks, "supplemental list of
+device IDs and their quirks");
+ 	.initFunction = init_function,	\
+ }
+ 
+-static struct us_unusual_dev us_unusual_dev_list[] = {
++static const struct us_unusual_dev us_unusual_dev_list[] = {
+ #	include "unusual_devs.h"
+ 	{ }		/* Terminating entry */
+ };
+ 
+-static struct us_unusual_dev for_dynamic_ids =
++static const struct us_unusual_dev for_dynamic_ids =
+ 		USUAL_DEV(USB_SC_SCSI, USB_PR_BULK);
+ 
+ #undef UNUSUAL_DEV
+@@ -583,7 +583,7 @@ EXPORT_SYMBOL_GPL(usb_stor_adjust_quirks);
+ 
+ /* Get the unusual_devs entries and the string descriptors */
+ static int get_device_info(struct us_data *us, const struct
+usb_device_id *id,
+-		struct us_unusual_dev *unusual_dev)
++		const struct us_unusual_dev *unusual_dev)
+ {
+ 	struct usb_device *dev = us->pusb_dev;
+ 	struct usb_interface_descriptor *idesc =
+@@ -933,7 +933,7 @@ static unsigned int usb_stor_sg_tablesize(struct
+usb_interface *intf)
+ int usb_stor_probe1(struct us_data **pus,
+ 		struct usb_interface *intf,
+ 		const struct usb_device_id *id,
+-		struct us_unusual_dev *unusual_dev,
++		const struct us_unusual_dev *unusual_dev,
+ 		struct scsi_host_template *sht)
+ {
+ 	struct Scsi_Host *host;
+@@ -1092,7 +1092,7 @@ static struct scsi_host_template
+usb_stor_host_template;
+ static int storage_probe(struct usb_interface *intf,
+ 			 const struct usb_device_id *id)
+ {
+-	struct us_unusual_dev *unusual_dev;
++	const struct us_unusual_dev *unusual_dev;
+ 	struct us_data *us;
+ 	int result;
+ 	int size;
+diff --git a/drivers/usb/storage/usb.h b/drivers/usb/storage/usb.h
+index 85052c..5850d62 100644
+--- a/drivers/usb/storage/usb.h
++++ b/drivers/usb/storage/usb.h
+@@ -93,7 +93,8 @@ struct us_data {
+ 	struct mutex		dev_mutex;	 /* protect pusb_dev */
+ 	struct usb_device	*pusb_dev;	 /* this usb_device */
+ 	struct usb_interface	*pusb_intf;	 /* this interface */
+-	struct us_unusual_dev   *unusual_dev;	 /* device-filter
+entry     */
++	const struct us_unusual_dev   *unusual_dev;
++						/* device-filter
+entry     */
+ 	unsigned long		fflags;		 /* fixed flags from
+filter */
+ 	unsigned long		dflags;		 /* dynamic atomic
+bitflags */
+ 	unsigned int		send_bulk_pipe;	 /* cached pipe values
+*/
+@@ -185,7 +186,7 @@ extern int usb_stor_post_reset(struct usb_interface
+*iface);
+ extern int usb_stor_probe1(struct us_data **pus,
+ 		struct usb_interface *intf,
+ 		const struct usb_device_id *id,
+-		struct us_unusual_dev *unusual_dev,
++		const struct us_unusual_dev *unusual_dev,
+ 		struct scsi_host_template *sht);
+ extern int usb_stor_probe2(struct us_data *us);
+ extern void usb_stor_disconnect(struct usb_interface *intf);
+diff --git a/drivers/usb/storage/usual-tables.c
+b/drivers/usb/storage/usual-tables.c
+index cfd12e5..529512 100644
+--- a/drivers/usb/storage/usual-tables.c
++++ b/drivers/usb/storage/usual-tables.c
+@@ -40,7 +40,7 @@
+ 	.driver_info = (flags) \
+ }
+ 
+-struct usb_device_id usb_storage_usb_ids[] = {
++const struct usb_device_id usb_storage_usb_ids[] = {
+ #	include "unusual_devs.h"
+ 	{ }		/* Terminating entry */
+ };
+@@ -68,7 +68,7 @@ struct ignore_entry {
+ 	.bcdmax = bcdDeviceMax,		\
+ }
+ 
+-static struct ignore_entry ignore_ids[] = {
++static const struct ignore_entry ignore_ids[] = {
+ #	include "unusual_alauda.h"
+ #	include "unusual_cypress.h"
+ #	include "unusual_datafab.h"
+@@ -92,7 +92,7 @@ int usb_usual_ignore_device(struct usb_interface
+*intf)
+ {
+ 	struct usb_device *udev;
+ 	unsigned vid, pid, bcd;
+-	struct ignore_entry *p;
++	const struct ignore_entry *p;
+ 
+ 	udev = interface_to_usbdev(intf);
+ 	vid = le16_to_cpu(udev->descriptor.idVendor);
+diff --git a/include/linux/usb_usual.h b/include/linux/usb_usual.h
+index 000a595..4a19ac3 100644
+--- a/include/linux/usb_usual.h
++++ b/include/linux/usb_usual.h
+@@ -92,6 +92,6 @@ enum { US_DO_ALL_FLAGS };
+ #include <linux/usb/storage.h>
+ 
+ extern int usb_usual_ignore_device(struct usb_interface *intf);
+-extern struct usb_device_id usb_storage_usb_ids[];
++extern const struct usb_device_id usb_storage_usb_ids[];
+ 
+ #endif /* __LINUX_USB_USUAL_H */
 
-... really early!
 
-> [    0.000000]  __create_pgd_mapping+0x36c/0x588
-> [    0.000000]  map_kernel_segment+0x70/0xa4
-> [    0.000000]  paging_init+0xf4/0x528
-> [    0.000000]  setup_arch+0x250/0x5d8
-> [    0.000000]  start_kernel+0x90/0x6d8
-> 
->  
-> Since the same kernel boot with bootefi and that bootefi lack ramdisk address,
-
-Booting with EFI will cause linux to use the EFI memory map.
-
-Does your DT have a memory node? (or does it expect EFI to provide the information)
-
-
-> I tried to add the address in the dtb via:
-> fdt addr 0x02400000; fdt resize; fdt set /chosen linux,initrd-start 0x02700000; fdt set /chosen linux,initrd-end 0x10000000; bootefi 0x00080000 0x02400000
-> But with that, I get:
-> initrd not fully accessible via the linear mapping -- please check your bootloader ...
-
-So this one is an EFI boot, but you can't find where to put the initramfs such that the
-kernel agrees its in memory.
-
-If you boot with 'efi=debug', linux will print the EFI memory map. Could you compare that
-to where U-Boot thinks memory is?
-
-(it sounds like your DT memory node is missing, and your EFI memory map is surprisingly small)
-
-
-Thanks,
-
-James
