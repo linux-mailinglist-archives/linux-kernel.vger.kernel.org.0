@@ -2,66 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B7F115F95F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 23:26:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E5C515F9BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 23:29:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727613AbgBNW0r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 17:26:47 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:42702 "EHLO inva021.nxp.com"
+        id S1727902AbgBNW2h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 17:28:37 -0500
+Received: from mga05.intel.com ([192.55.52.43]:5118 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725838AbgBNW0q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 17:26:46 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 40D4B20AC81;
-        Fri, 14 Feb 2020 23:26:45 +0100 (CET)
-Received: from smtp.na-rdc02.nxp.com (usphx01srsp001v.us-phx01.nxp.com [134.27.49.11])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0388A20AC7D;
-        Fri, 14 Feb 2020 23:26:45 +0100 (CET)
-Received: from right.am.freescale.net (right.am.freescale.net [10.81.116.70])
-        by usphx01srsp001v.us-phx01.nxp.com (Postfix) with ESMTP id 2B20640A63;
-        Fri, 14 Feb 2020 15:26:44 -0700 (MST)
-From:   Li Yang <leoyang.li@nxp.com>
-To:     Will Deacon <will.deacon@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>
-Cc:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Li Yang <leoyang.li@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] iommu/arm-smmu: fix module name for parameters
-Date:   Fri, 14 Feb 2020 16:26:27 -0600
-Message-Id: <1581719188-8682-1-git-send-email-leoyang.li@nxp.com>
-X-Mailer: git-send-email 1.9.0
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727928AbgBNW1W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 17:27:22 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2020 14:27:21 -0800
+X-IronPort-AV: E=Sophos;i="5.70,442,1574150400"; 
+   d="scan'208";a="227756426"
+Received: from agluck-desk2.sc.intel.com ([10.3.52.68])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2020 14:27:21 -0800
+From:   Tony Luck <tony.luck@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Tony Luck <tony.luck@intel.com>, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/7] New way to track mce notifier chain actions
+Date:   Fri, 14 Feb 2020 14:27:13 -0800
+Message-Id: <20200214222720.13168-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.21.1
+In-Reply-To: <20200212204652.1489-1-tony.luck@intel.com>
+References: <20200212204652.1489-1-tony.luck@intel.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit cd221bd24ff5 ("iommu/arm-smmu: Allow building as a module")
-introduced a side effect that changed the module name from arm-smmu to
-arm-smmu-mod.  This breaks the users of kernel parameters for the driver
-(e.g. arm-smmu.disable_bypass).  This patch changes the module name for
-parameters back to arm-smmu to be consistent with older kernel.
+Parts 1 & 2 are just cleanup.  CEC should follow the same rules
+as everyone else who wants to be on the mce notifier chain. No
+real reason for it to have direct hooks into mce/core.c
+	[No substantive change since RFC version 1, but note that
+	 I have kept the change to make CEC a "normal" user of
+	 the mce notifier chain. Result is a few checks for
+	 if (mce->kflags & MCE_HANDLED_CEC) in EDAC etc. drivers.]
 
-Signed-off-by: Li Yang <leoyang.li@nxp.com>
----
- drivers/iommu/arm-smmu.c | 2 ++
- 1 file changed, 2 insertions(+)
+Part 3 adds a field to struct mce, and defines the BIT fields
+for each class of notifier. All EDAC drivers share the same BIT
+since only one of them should be active.
+	[Boris: Changed name of new field to "kflags" and made
+	        it __u64, so plenty of space for possible future
+		other uses]
 
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 16c4b87af42b..8d5a19bfde5c 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -58,6 +58,8 @@
- #define MSI_IOVA_BASE			0x8000000
- #define MSI_IOVA_LENGTH			0x100000
- 
-+#undef MODULE_PARAM_PREFIX
-+#define MODULE_PARAM_PREFIX "arm-smmu."
- static int force_stage;
- module_param(force_stage, int, S_IRUGO);
- MODULE_PARM_DESC(force_stage,
+Part 4 Re-done since draft based on Luto and Tglx comments that
+	we should kill of all usage of NOTIFY_STOP. This patch
+	now gets rid of all but one.  That's an AMD case where
+	it looks like they don't want to decode some particular
+	errors on a specific platform.  The right fix for that
+	is to take Luto's advice and filter out before that item
+	gets to the notifier chain. We even already have a filter
+	function (filter_mce) to do that! But that change needs
+	to be handled by someone with the appropriate h/w.
+
+Part 5	Now just checks for mce->kflags in the default handler at
+	the end of the chain to decide whether to print.
+
+Part 6	NEW - add mce=print_all option to override default and
+	print everything to the console. Intended for debug, or
+	desperation scenarios where other logs are lost.
+
+Part 7	NEW - Delete the code that tries to make sure only one
+	out of acpi_extlog and the current loaded EDAC driver
+	deals with an error.
+
+
+Tony Luck (7):
+  x86/mce: Rename "first" function as "early"
+  x86/mce: Convert corrected error collector to use mce notifier
+  x86/mce: Add new "kflags" field to "struct mce"
+  x86/mce: Fix all mce notifiers to update the mce->kflags bitmask
+  x86/mce: Change default mce logger to check mce->kflags
+  x86/mce: Add mce=print_all option
+  x86/mce: Drop the EDAC report status checks
+
+ arch/x86/include/asm/mce.h           | 15 +++----
+ arch/x86/include/uapi/asm/mce.h      |  9 ++++
+ arch/x86/kernel/cpu/mce/core.c       | 58 ++++++++------------------
+ arch/x86/kernel/cpu/mce/dev-mcelog.c |  5 +++
+ arch/x86/kernel/cpu/mce/internal.h   |  1 +
+ drivers/acpi/acpi_extlog.c           | 19 ++-------
+ drivers/acpi/nfit/mce.c              |  1 +
+ drivers/edac/edac_mc.c               | 61 ----------------------------
+ drivers/edac/i7core_edac.c           |  5 ++-
+ drivers/edac/mce_amd.c               |  9 +++-
+ drivers/edac/pnd2_edac.c             |  8 ++--
+ drivers/edac/sb_edac.c               |  7 ++--
+ drivers/edac/skx_common.c            |  3 +-
+ drivers/ras/cec.c                    | 29 +++++++++++++
+ include/linux/edac.h                 |  8 ----
+ 15 files changed, 91 insertions(+), 147 deletions(-)
+
+
+base-commit: b19e8c68470385dd2c5440876591fddb02c8c402
 -- 
-2.17.1
+2.21.1
 
