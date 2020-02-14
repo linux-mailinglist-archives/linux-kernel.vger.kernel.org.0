@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B48315E41D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:34:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AE2315E41B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:34:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393509AbgBNQeK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:34:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34610 "EHLO mail.kernel.org"
+        id S2389669AbgBNQdv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:33:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404944AbgBNQZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:25:16 -0500
+        id S2406080AbgBNQZX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:25:23 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3955E2472B;
-        Fri, 14 Feb 2020 16:25:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE114247AA;
+        Fri, 14 Feb 2020 16:25:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697516;
-        bh=lhYkUkKhNIN5XzZ3oL3+l7aoO6QBE7b9lZ90yaiKQ40=;
+        s=default; t=1581697522;
+        bh=rf9OCO+/Y/gVf7sZOSmty7rFAOlbnIYHgMVm+PmNGJ8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=STO9CIIMOVoPnPXx9jLxjr2QVgHhC+fM7gfAcbJxKertaF37Q+baKr42kjRtU5lZZ
-         l/rUtyA2WGSw78FhABR+Ksux1z6oIlRXZAKIcxrT2tEvVwg0mOj37bYlQaBNiNVQVI
-         y8+T8LxoAaxZNVOsgWgaIxFyiJGo63kVI0+7gkxA=
+        b=mHwWqi71DJmjSTCA+ttw1CG4lBWtYgkOIYRqR8omLBycQz6DwLt0Tx00NPW2fdvOo
+         3xi+I7jI5pJLlylDHnprRrFDtezOGTPjuGvFnuFS1QszMRsdjpviTxTjS0+rRIIsct
+         Me4tqipff/rtJAkSyWzdt4z2Ua2px+xYGTNpJrzo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>, kbuild test robot <lkp@intel.com>,
-        "kernelci . org bot" <bot@kernelci.org>,
-        Olof's autobuilder <build@lixom.net>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 041/100] isdn: don't mark kcapi_proc_exit as __exit
-Date:   Fri, 14 Feb 2020 11:23:25 -0500
-Message-Id: <20200214162425.21071-41-sashal@kernel.org>
+Cc:     Phong Tran <tranmanphong@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 046/100] rtlwifi: rtl_pci: Fix -Wcast-function-type
+Date:   Fri, 14 Feb 2020 11:23:30 -0500
+Message-Id: <20200214162425.21071-46-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214162425.21071-1-sashal@kernel.org>
 References: <20200214162425.21071-1-sashal@kernel.org>
@@ -46,47 +45,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Phong Tran <tranmanphong@gmail.com>
 
-[ Upstream commit b33bdf8020c94438269becc6dace9ed49257c4ba ]
+[ Upstream commit cb775c88da5d48a85d99d95219f637b6fad2e0e9 ]
 
-As everybody pointed out by now, my patch to clean up CAPI introduced
-a link time warning, as the two parts of the capi driver are now in
-one module and the exit function may need to be called in the error
-path of the init function:
+correct usage prototype of callback in tasklet_init().
+Report by https://github.com/KSPP/linux/issues/20
 
->> WARNING: drivers/isdn/capi/kernelcapi.o(.text+0xea4): Section mismatch in reference from the function kcapi_exit() to the function .exit.text:kcapi_proc_exit()
-   The function kcapi_exit() references a function in an exit section.
-   Often the function kcapi_proc_exit() has valid usage outside the exit section
-   and the fix is to remove the __exit annotation of kcapi_proc_exit.
-
-Remove the incorrect __exit annotation.
-
-Reported-by: kbuild test robot <lkp@intel.com>
-Reported-by: kernelci.org bot <bot@kernelci.org>
-Reported-by: Olof's autobuilder <build@lixom.net>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Link: https://lore.kernel.org/r/20191216194909.1983639-1-arnd@arndb.de
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Phong Tran <tranmanphong@gmail.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/isdn/capi/kcapi_proc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/realtek/rtlwifi/pci.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/isdn/capi/kcapi_proc.c b/drivers/isdn/capi/kcapi_proc.c
-index 68db3c5a10636..d6ca626219c93 100644
---- a/drivers/isdn/capi/kcapi_proc.c
-+++ b/drivers/isdn/capi/kcapi_proc.c
-@@ -309,7 +309,7 @@ kcapi_proc_init(void)
- 	proc_create("capi/driver",       0, NULL, &proc_driver_ops);
+diff --git a/drivers/net/wireless/realtek/rtlwifi/pci.c b/drivers/net/wireless/realtek/rtlwifi/pci.c
+index b51815eccdb3b..17a07d6b961c7 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/pci.c
++++ b/drivers/net/wireless/realtek/rtlwifi/pci.c
+@@ -1096,13 +1096,15 @@ static irqreturn_t _rtl_pci_interrupt(int irq, void *dev_id)
+ 	return ret;
  }
  
--void __exit
-+void
- kcapi_proc_exit(void)
+-static void _rtl_pci_irq_tasklet(struct ieee80211_hw *hw)
++static void _rtl_pci_irq_tasklet(unsigned long data)
  {
- 	remove_proc_entry("capi/driver",       NULL);
++	struct ieee80211_hw *hw = (struct ieee80211_hw *)data;
+ 	_rtl_pci_tx_chk_waitq(hw);
+ }
+ 
+-static void _rtl_pci_prepare_bcn_tasklet(struct ieee80211_hw *hw)
++static void _rtl_pci_prepare_bcn_tasklet(unsigned long data)
+ {
++	struct ieee80211_hw *hw = (struct ieee80211_hw *)data;
+ 	struct rtl_priv *rtlpriv = rtl_priv(hw);
+ 	struct rtl_pci *rtlpci = rtl_pcidev(rtl_pcipriv(hw));
+ 	struct rtl_mac *mac = rtl_mac(rtl_priv(hw));
+@@ -1223,10 +1225,10 @@ static void _rtl_pci_init_struct(struct ieee80211_hw *hw,
+ 
+ 	/*task */
+ 	tasklet_init(&rtlpriv->works.irq_tasklet,
+-		     (void (*)(unsigned long))_rtl_pci_irq_tasklet,
++		     _rtl_pci_irq_tasklet,
+ 		     (unsigned long)hw);
+ 	tasklet_init(&rtlpriv->works.irq_prepare_bcn_tasklet,
+-		     (void (*)(unsigned long))_rtl_pci_prepare_bcn_tasklet,
++		     _rtl_pci_prepare_bcn_tasklet,
+ 		     (unsigned long)hw);
+ 	INIT_WORK(&rtlpriv->works.lps_change_work,
+ 		  rtl_lps_change_work_callback);
 -- 
 2.20.1
 
