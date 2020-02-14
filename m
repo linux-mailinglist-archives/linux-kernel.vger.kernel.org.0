@@ -2,413 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C13315D30C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 08:44:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C64915D317
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 08:46:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728999AbgBNHoF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 02:44:05 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34058 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728799AbgBNHoE (ORCPT
+        id S1728976AbgBNHqD convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 14 Feb 2020 02:46:03 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:40094 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725897AbgBNHqC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 02:44:04 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01E7dt6D010799
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 02:44:01 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2y4j8amawf-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 02:44:00 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Fri, 14 Feb 2020 07:43:59 -0000
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 14 Feb 2020 07:43:55 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01E7hsks47186316
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 14 Feb 2020 07:43:54 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 42C2AA405B;
-        Fri, 14 Feb 2020 07:43:54 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D4C78A4054;
-        Fri, 14 Feb 2020 07:43:53 +0000 (GMT)
-Received: from oc7455500831.ibm.com (unknown [9.152.224.211])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 14 Feb 2020 07:43:53 +0000 (GMT)
-Subject: Re: vhost changes (batched) in linux-next after 12/13 trigger random
- crashes in KVM guests after reboot
-To:     Eugenio Perez Martin <eperezma@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>
-References: <20200107042401-mutt-send-email-mst@kernel.org>
- <20200206171349-mutt-send-email-mst@kernel.org>
- <5c860fa1-cef5-b389-4ebf-99a62afa0fe8@de.ibm.com>
- <20200207025806-mutt-send-email-mst@kernel.org>
- <97c93d38-ef07-e321-d133-18483d54c0c0@de.ibm.com>
- <CAJaqyWfngzP4d01B6+Sqt8FXN6jX7kGegjx8ie4no_1Er3igQA@mail.gmail.com>
- <43a5dbaa-9129-e220-8483-45c60a82c945@de.ibm.com>
- <e299afca8e22044916abbf9fbbd0bff6b0ee9e13.camel@redhat.com>
- <4c3f70b7-723a-8b0f-ac49-babef1bcc180@de.ibm.com>
- <50a79c3491ac483583c97df2fac29e2c3248fdea.camel@redhat.com>
- <8fbbfb49-99d1-7fee-e713-d6d5790fe866@de.ibm.com>
- <2364d0728c3bb4bcc0c13b591f774109a9274a30.camel@redhat.com>
- <bb9fb726-306c-5330-05aa-a86bd1b18097@de.ibm.com>
- <468983fad50a5e74a739f71487f0ea11e8d4dfd1.camel@redhat.com>
- <2dc1df65-1431-3917-40e5-c2b12096e2a7@de.ibm.com>
- <bd9c9b4d99abd20d5420583af5a4954ea1cf4618.camel@redhat.com>
- <e11ba53c-a5fa-0518-2e06-9296897ed529@de.ibm.com>
- <CAJaqyWfJFArAdpOwehTn5ci-frqai+pazGgcn2VvQSebqGRVtg@mail.gmail.com>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- nS4h0HDFPrrp1C2EMVYIQrMokWvlFZbCpsdYbBI=
-Date:   Fri, 14 Feb 2020 08:43:53 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <CAJaqyWfJFArAdpOwehTn5ci-frqai+pazGgcn2VvQSebqGRVtg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20021407-0020-0000-0000-000003AA03D2
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20021407-0021-0000-0000-00002201F177
-Message-Id: <80520391-d90d-e10d-a107-7a18f2810900@de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-14_01:2020-02-12,2020-02-14 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
- clxscore=1015 phishscore=0 bulkscore=0 priorityscore=1501 malwarescore=0
- suspectscore=2 lowpriorityscore=0 spamscore=0 mlxscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002140062
+        Fri, 14 Feb 2020 02:46:02 -0500
+Received: from marcel-macbook.fritz.box (p4FEFC5A7.dip0.t-ipconnect.de [79.239.197.167])
+        by mail.holtmann.org (Postfix) with ESMTPSA id CDD81CECE1;
+        Fri, 14 Feb 2020 08:55:23 +0100 (CET)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
+Subject: Re: [Bluez PATCH v4] bluetooth: secure bluetooth stack from bluedump
+ attack
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20200214134922.Bluez.v4.1.Ia71869d2f3e19a76a6a352c61088a085a1d41ba6@changeid>
+Date:   Fri, 14 Feb 2020 08:45:59 +0100
+Cc:     Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        chromeos-bluetooth-upstreaming@chromium.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <54398306-13C8-47C2-A37D-946C757A0C3D@holtmann.org>
+References: <20200214134922.Bluez.v4.1.Ia71869d2f3e19a76a6a352c61088a085a1d41ba6@changeid>
+To:     Howard Chung <howardchung@google.com>
+X-Mailer: Apple Mail (2.3608.60.0.2.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Howard,
 
-
-On 14.02.20 08:40, Eugenio Perez Martin wrote:
-> Hi.
+> Attack scenario:
+> 1. A Chromebook (let's call this device A) is paired to a legitimate
+>   Bluetooth classic device (e.g. a speaker) (let's call this device
+>   B).
+> 2. A malicious device (let's call this device C) pretends to be the
+>   Bluetooth speaker by using the same BT address.
+> 3. If device A is not currently connected to device B, device A will
+>   be ready to accept connection from device B in the background
+>   (technically, doing Page Scan).
+> 4. Therefore, device C can initiate connection to device A
+>   (because device A is doing Page Scan) and device A will accept the
+>   connection because device A trusts device C's address which is the
+>   same as device B's address.
+> 5. Device C won't be able to communicate at any high level Bluetooth
+>   profile with device A because device A enforces that device C is
+>   encrypted with their common Link Key, which device C doesn't have.
+>   But device C can initiate pairing with device A with just-works
+>   model without requiring user interaction (there is only pairing
+>   notification). After pairing, device A now trusts device C with a
+>   new different link key, common between device A and C.
+> 6. From now on, device A trusts device C, so device C can at anytime
+>   connect to device A to do any kind of high-level hijacking, e.g.
+>   speaker hijack or mouse/keyboard hijack.
 > 
-> Were the vhost and vhost_net modules loaded with dyndbg='+plt'? I miss
-> all the others regular debug traces on that one.
-
-I did 
-
- echo -n 'file drivers/vhost/vhost.c +plt' > control
-and
-echo -n 'file drivers/vhost/net.c +plt'  > control
-
-but apparently it did not work...me hates dynamic debug.
-
+> Since we don't know whether the repairing is legitimate or not,
+> leave the decision to user space if all the conditions below are met.
+> - the pairing is initialized by peer
+> - the authorization method is just-work
+> - host already had the link key to the peer
 > 
-> Thanks!
+> Signed-off-by: Howard Chung <howardchung@google.com>
+> ---
 > 
-> On Fri, Feb 14, 2020 at 8:34 AM Christian Borntraeger
-> <borntraeger@de.ibm.com> wrote:
->>
->> I did
->> ping -c 20 -f ... ; reboot
->> twice
->>
->> The ping after the first reboot showed .......E
->>
->> this was on the host console
->>
->> [   55.951885] CPU: 34 PID: 1908 Comm: CPU 0/KVM Not tainted 5.5.0+ #21
->> [   55.951891] Hardware name: IBM 3906 M04 704 (LPAR)
->> [   55.951892] Call Trace:
->> [   55.951902]  [<0000001ede114132>] show_stack+0x8a/0xd0
->> [   55.951906]  [<0000001edeb0672a>] dump_stack+0x8a/0xb8
->> [   55.951915]  [<000003ff803736a6>] vhost_vring_ioctl+0x6fe/0x858 [vhost]
->> [   55.951919]  [<000003ff8042a608>] vhost_net_ioctl+0x510/0x570 [vhost_net]
->> [   55.951924]  [<0000001ede3c4dd8>] do_vfs_ioctl+0x430/0x6f8
->> [   55.951926]  [<0000001ede3c5124>] ksys_ioctl+0x84/0xb0
->> [   55.951927]  [<0000001ede3c51ba>] __s390x_sys_ioctl+0x2a/0x38
->> [   55.951931]  [<0000001edeb27f72>] system_call+0x2a6/0x2c8
->> [   55.951949] CPU: 34 PID: 1908 Comm: CPU 0/KVM Not tainted 5.5.0+ #21
->> [   55.951950] Hardware name: IBM 3906 M04 704 (LPAR)
->> [   55.951951] Call Trace:
->> [   55.951952]  [<0000001ede114132>] show_stack+0x8a/0xd0
->> [   55.951954]  [<0000001edeb0672a>] dump_stack+0x8a/0xb8
->> [   55.951956]  [<000003ff803736a6>] vhost_vring_ioctl+0x6fe/0x858 [vhost]
->> [   55.951958]  [<000003ff8042a608>] vhost_net_ioctl+0x510/0x570 [vhost_net]
->> [   55.951959]  [<0000001ede3c4dd8>] do_vfs_ioctl+0x430/0x6f8
->> [   55.951961]  [<0000001ede3c5124>] ksys_ioctl+0x84/0xb0
->> [   55.951962]  [<0000001ede3c51ba>] __s390x_sys_ioctl+0x2a/0x38
->> [   55.951964]  [<0000001edeb27f72>] system_call+0x2a6/0x2c8
->> [   55.951997] Guest moved vq 0000000063d896c6 used index from 44 to 0
->> [   56.609831] unexpected descriptor format for RX: out 0, in 0
->> [   86.540460] CPU: 6 PID: 1908 Comm: CPU 0/KVM Not tainted 5.5.0+ #21
->> [   86.540464] Hardware name: IBM 3906 M04 704 (LPAR)
->> [   86.540466] Call Trace:
->> [   86.540473]  [<0000001ede114132>] show_stack+0x8a/0xd0
->> [   86.540477]  [<0000001edeb0672a>] dump_stack+0x8a/0xb8
->> [   86.540486]  [<000003ff803736a6>] vhost_vring_ioctl+0x6fe/0x858 [vhost]
->> [   86.540490]  [<000003ff8042a608>] vhost_net_ioctl+0x510/0x570 [vhost_net]
->> [   86.540494]  [<0000001ede3c4dd8>] do_vfs_ioctl+0x430/0x6f8
->> [   86.540496]  [<0000001ede3c5124>] ksys_ioctl+0x84/0xb0
->> [   86.540498]  [<0000001ede3c51ba>] __s390x_sys_ioctl+0x2a/0x38
->> [   86.540501]  [<0000001edeb27f72>] system_call+0x2a6/0x2c8
->> [   86.540524] CPU: 6 PID: 1908 Comm: CPU 0/KVM Not tainted 5.5.0+ #21
->> [   86.540525] Hardware name: IBM 3906 M04 704 (LPAR)
->> [   86.540526] Call Trace:
->> [   86.540527]  [<0000001ede114132>] show_stack+0x8a/0xd0
->> [   86.540528]  [<0000001edeb0672a>] dump_stack+0x8a/0xb8
->> [   86.540531]  [<000003ff803736a6>] vhost_vring_ioctl+0x6fe/0x858 [vhost]
->> [   86.540532]  [<000003ff8042a608>] vhost_net_ioctl+0x510/0x570 [vhost_net]
->> [   86.540534]  [<0000001ede3c4dd8>] do_vfs_ioctl+0x430/0x6f8
->> [   86.540536]  [<0000001ede3c5124>] ksys_ioctl+0x84/0xb0
->> [   86.540537]  [<0000001ede3c51ba>] __s390x_sys_ioctl+0x2a/0x38
->> [   86.540538]  [<0000001edeb27f72>] system_call+0x2a6/0x2c8
->> [   86.540570] unexpected descriptor format for RX: out 0, in 0
->> [   86.540577] Unexpected header len for TX: 0 expected 0
->>
->>
->> On 14.02.20 08:06, Eugenio Pérez wrote:
->>> Hi Christian.
->>>
->>> Sorry, that was meant to be applied over previous debug patch.
->>>
->>> Here I inline the one meant to be applied over eccb852f1fe6bede630e2e4f1a121a81e34354ab.
->>>
->>> Thanks!
->>>
->>> From d978ace99e4844b49b794d768385db3d128a4cc0 Mon Sep 17 00:00:00 2001
->>> From: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
->>> Date: Fri, 14 Feb 2020 08:02:26 +0100
->>> Subject: [PATCH] vhost: disable all features and trace last_avail_idx and
->>>  ioctl calls
->>>
->>> ---
->>>  drivers/vhost/net.c   | 20 +++++++++++++++++---
->>>  drivers/vhost/vhost.c | 25 +++++++++++++++++++++++--
->>>  drivers/vhost/vhost.h | 10 +++++-----
->>>  3 files changed, 45 insertions(+), 10 deletions(-)
->>>
->>> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
->>> index e158159671fa..e4d5f843f9c0 100644
->>> --- a/drivers/vhost/net.c
->>> +++ b/drivers/vhost/net.c
->>> @@ -1505,10 +1505,13 @@ static long vhost_net_set_backend(struct vhost_net *n, unsigned index, int fd)
->>>
->>>       mutex_lock(&n->dev.mutex);
->>>       r = vhost_dev_check_owner(&n->dev);
->>> -     if (r)
->>> +     if (r) {
->>> +             pr_debug("vhost_dev_check_owner index=%u fd=%d rc r=%d", index, fd, r);
->>>               goto err;
->>> +     }
->>>
->>>       if (index >= VHOST_NET_VQ_MAX) {
->>> +             pr_debug("vhost_dev_check_owner index=%u fd=%d MAX=%d", index, fd, VHOST_NET_VQ_MAX);
->>>               r = -ENOBUFS;
->>>               goto err;
->>>       }
->>> @@ -1518,22 +1521,26 @@ static long vhost_net_set_backend(struct vhost_net *n, unsigned index, int fd)
->>>
->>>       /* Verify that ring has been setup correctly. */
->>>       if (!vhost_vq_access_ok(vq)) {
->>> +             pr_debug("vhost_net_set_backend index=%u fd=%d !vhost_vq_access_ok", index, fd);
->>>               r = -EFAULT;
->>>               goto err_vq;
->>>       }
->>>       sock = get_socket(fd);
->>>       if (IS_ERR(sock)) {
->>>               r = PTR_ERR(sock);
->>> +             pr_debug("vhost_net_set_backend index=%u fd=%d get_socket err r=%d", index, fd, r);
->>>               goto err_vq;
->>>       }
->>>
->>>       /* start polling new socket */
->>>       oldsock = vq->private_data;
->>>       if (sock != oldsock) {
->>> +             pr_debug("sock=%p != oldsock=%p index=%u fd=%d vq=%p", sock, oldsock, index, fd, vq);
->>>               ubufs = vhost_net_ubuf_alloc(vq,
->>>                                            sock && vhost_sock_zcopy(sock));
->>>               if (IS_ERR(ubufs)) {
->>>                       r = PTR_ERR(ubufs);
->>> +                     pr_debug("ubufs index=%u fd=%d err r=%d vq=%p", index, fd, r, vq);
->>>                       goto err_ubufs;
->>>               }
->>>
->>> @@ -1541,11 +1548,15 @@ static long vhost_net_set_backend(struct vhost_net *n, unsigned index, int fd)
->>>               vq->private_data = sock;
->>>               vhost_net_buf_unproduce(nvq);
->>>               r = vhost_vq_init_access(vq);
->>> -             if (r)
->>> +             if (r) {
->>> +                     pr_debug("init_access index=%u fd=%d r=%d vq=%p", index, fd, r, vq);
->>>                       goto err_used;
->>> +             }
->>>               r = vhost_net_enable_vq(n, vq);
->>> -             if (r)
->>> +             if (r) {
->>> +                     pr_debug("enable_vq index=%u fd=%d r=%d vq=%p", index, fd, r, vq);
->>>                       goto err_used;
->>> +             }
->>>               if (index == VHOST_NET_VQ_RX)
->>>                       nvq->rx_ring = get_tap_ptr_ring(fd);
->>>
->>> @@ -1559,6 +1570,8 @@ static long vhost_net_set_backend(struct vhost_net *n, unsigned index, int fd)
->>>
->>>       mutex_unlock(&vq->mutex);
->>>
->>> +     pr_debug("sock=%p", sock);
->>> +
->>>       if (oldubufs) {
->>>               vhost_net_ubuf_put_wait_and_free(oldubufs);
->>>               mutex_lock(&vq->mutex);
->>> @@ -1710,6 +1723,7 @@ static long vhost_net_ioctl(struct file *f, unsigned int ioctl,
->>>
->>>       switch (ioctl) {
->>>       case VHOST_NET_SET_BACKEND:
->>> +             pr_debug("VHOST_NET_SET_BACKEND");
->>>               if (copy_from_user(&backend, argp, sizeof backend))
->>>                       return -EFAULT;
->>>               return vhost_net_set_backend(n, backend.index, backend.fd);
->>> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
->>> index b5a51b1f2e79..ec25ba32fe81 100644
->>> --- a/drivers/vhost/vhost.c
->>> +++ b/drivers/vhost/vhost.c
->>> @@ -1642,15 +1642,30 @@ long vhost_vring_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *arg
->>>                       r = -EINVAL;
->>>                       break;
->>>               }
->>> +
->>> +             if (vq->last_avail_idx || vq->avail_idx) {
->>> +                     pr_debug(
->>> +                             "strange VHOST_SET_VRING_BASE [vq=%p][s.index=%u][s.num=%u]",
->>> +                             vq, s.index, s.num);
->>> +                     dump_stack();
->>> +                     r = 0;
->>> +                     break;
->>> +             }
->>>               vq->last_avail_idx = s.num;
->>>               /* Forget the cached index value. */
->>>               vq->avail_idx = vq->last_avail_idx;
->>> +             pr_debug(
->>> +                     "VHOST_SET_VRING_BASE [vq=%p][vq->last_avail_idx=%u][vq->avail_idx=%u][s.index=%u][s.num=%u]",
->>> +                     vq, vq->last_avail_idx, vq->avail_idx, s.index, s.num);
->>>               break;
->>>       case VHOST_GET_VRING_BASE:
->>>               s.index = idx;
->>>               s.num = vq->last_avail_idx;
->>>               if (copy_to_user(argp, &s, sizeof s))
->>>                       r = -EFAULT;
->>> +             pr_debug(
->>> +                     "VHOST_GET_VRING_BASE [vq=%p][vq->last_avail_idx=%u][vq->avail_idx=%u][s.index=%u][s.num=%u]",
->>> +                     vq, vq->last_avail_idx, vq->avail_idx, s.index, s.num);
->>>               break;
->>>       case VHOST_SET_VRING_KICK:
->>>               if (copy_from_user(&f, argp, sizeof f)) {
->>> @@ -2239,8 +2254,8 @@ static int fetch_buf(struct vhost_virtqueue *vq)
->>>               vq->avail_idx = vhost16_to_cpu(vq, avail_idx);
->>>
->>>               if (unlikely((u16)(vq->avail_idx - last_avail_idx) > vq->num)) {
->>> -                     vq_err(vq, "Guest moved used index from %u to %u",
->>> -                             last_avail_idx, vq->avail_idx);
->>> +                     vq_err(vq, "Guest moved vq %p used index from %u to %u",
->>> +                             vq, last_avail_idx, vq->avail_idx);
->>>                       return -EFAULT;
->>>               }
->>>
->>> @@ -2316,6 +2331,9 @@ static int fetch_buf(struct vhost_virtqueue *vq)
->>>       BUG_ON(!(vq->used_flags & VRING_USED_F_NO_NOTIFY));
->>>
->>>       /* On success, increment avail index. */
->>> +     pr_debug(
->>> +             "[vq=%p][vq->last_avail_idx=%u][vq->avail_idx=%u][vq->ndescs=%d][vq->first_desc=%d]",
->>> +             vq, vq->last_avail_idx, vq->avail_idx, vq->ndescs, vq->first_desc);
->>>       vq->last_avail_idx++;
->>>
->>>       return 0;
->>> @@ -2432,6 +2450,9 @@ EXPORT_SYMBOL_GPL(vhost_get_vq_desc);
->>>  /* Reverse the effect of vhost_get_vq_desc. Useful for error handling. */
->>>  void vhost_discard_vq_desc(struct vhost_virtqueue *vq, int n)
->>>  {
->>> +     pr_debug(
->>> +             "DISCARD [vq=%p][vq->last_avail_idx=%u][vq->avail_idx=%u][n=%d]",
->>> +             vq, vq->last_avail_idx, vq->avail_idx, n);
->>>       vq->last_avail_idx -= n;
->>>  }
->>>  EXPORT_SYMBOL_GPL(vhost_discard_vq_desc);
->>> diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
->>> index 661088ae6dc7..08f6d2ccb697 100644
->>> --- a/drivers/vhost/vhost.h
->>> +++ b/drivers/vhost/vhost.h
->>> @@ -250,11 +250,11 @@ int vhost_init_device_iotlb(struct vhost_dev *d, bool enabled);
->>>       } while (0)
->>>
->>>  enum {
->>> -     VHOST_FEATURES = (1ULL << VIRTIO_F_NOTIFY_ON_EMPTY) |
->>> -                      (1ULL << VIRTIO_RING_F_INDIRECT_DESC) |
->>> -                      (1ULL << VIRTIO_RING_F_EVENT_IDX) |
->>> -                      (1ULL << VHOST_F_LOG_ALL) |
->>> -                      (1ULL << VIRTIO_F_ANY_LAYOUT) |
->>> +     VHOST_FEATURES = /* (1ULL << VIRTIO_F_NOTIFY_ON_EMPTY) | */
->>> +                      /* (1ULL << VIRTIO_RING_F_INDIRECT_DESC) | */
->>> +                      /* (1ULL << VIRTIO_RING_F_EVENT_IDX) | */
->>> +                      /* (1ULL << VHOST_F_LOG_ALL) | */
->>> +                      /* (1ULL << VIRTIO_F_ANY_LAYOUT) | */
->>>                        (1ULL << VIRTIO_F_VERSION_1)
->>>  };
->>>
->>>
->>
+> Changes in v4:
+> - optimise the check in smp.c.
 > 
+> Changes in v3:
+> - Change confirm_hint from 2 to 1
+> - Fix coding style (declaration order)
+> 
+> Changes in v2:
+> - Remove the HCI_PERMIT_JUST_WORK_REPAIR debugfs option
+> - Fix the added code in classic
+> - Add a similar fix for LE
+> 
+> net/bluetooth/hci_event.c | 10 ++++++++++
+> net/bluetooth/smp.c       | 19 +++++++++++++++++++
+> 2 files changed, 29 insertions(+)
+> 
+> diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+> index 2c833dae9366..e6982f4f51ea 100644
+> --- a/net/bluetooth/hci_event.c
+> +++ b/net/bluetooth/hci_event.c
+> @@ -4571,6 +4571,16 @@ static void hci_user_confirm_request_evt(struct hci_dev *hdev,
+> 			goto confirm;
+> 		}
+> 
+> +		/* If there already exists link key in local host, leave the
+> +		 * decision to user space since the remote device could be
+> +		 * legitimate or malicious.
+> +		 */
+> +		if (hci_find_link_key(hdev, &ev->bdaddr)) {
+> +			bt_dev_warn(hdev, "Local host already has link key");
+
+I would turn this into bt_dev_dbg actually.
+
+> +			confirm_hint = 1;
+> +			goto confirm;
+> +		}
+> +
+> 		BT_DBG("Auto-accept of user confirmation with %ums delay",
+> 		       hdev->auto_accept_delay);
+> 
+> diff --git a/net/bluetooth/smp.c b/net/bluetooth/smp.c
+> index 2cba6e07c02b..bea64071bdd1 100644
+> --- a/net/bluetooth/smp.c
+> +++ b/net/bluetooth/smp.c
+> @@ -2192,6 +2192,25 @@ static u8 smp_cmd_pairing_random(struct l2cap_conn *conn, struct sk_buff *skb)
+> 		smp_send_cmd(conn, SMP_CMD_PAIRING_RANDOM, sizeof(smp->prnd),
+> 			     smp->prnd);
+> 		SMP_ALLOW_CMD(smp, SMP_CMD_DHKEY_CHECK);
+> +
+> +		/* May need further confirmation for Just-Works pairing  */
+
+This comment is misleading and has two spaces at the end. My proposal would be this:
+
+		/* Only Just-Works pairing requires extra checks */
+> +		if (smp->method != JUST_WORKS)
+> +			goto mackey_and_ltk;
+> +
+
+> +		/* If there already exists link key in local host, leave the
+> +		 * decision to user space since the remote device could be
+> +		 * legitimate or malicious.
+> +		 */
+> +		if (hci_find_ltk(hcon->hdev, &hcon->dst, hcon->dst_type,
+> +				 hcon->role)) {
+> +			err = mgmt_user_confirm_request(hcon->hdev, &hcon->dst,
+> +							hcon->type,
+> +							hcon->dst_type, passkey,
+> +							1);
+> +			if (err)
+> +				return SMP_UNSPECIFIED;
+> +			set_bit(SMP_FLAG_WAIT_USER, &smp->flags);
+> +		}
+> 	}
+
+Rest looks good. Either you send me a v5 or tell me to fix it up before applying the patch.
+
+Regards
+
+Marcel
 
