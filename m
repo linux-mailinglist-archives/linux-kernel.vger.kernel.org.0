@@ -2,138 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCB6215D08D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 04:32:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA31C15D094
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 04:33:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728554AbgBNDbs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 22:31:48 -0500
-Received: from mx06.melco.co.jp ([192.218.140.146]:57418 "EHLO
-        mx06.melco.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728089AbgBNDbs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 22:31:48 -0500
-Received: from mr06.melco.co.jp (mr06 [133.141.98.164])
-        by mx06.melco.co.jp (Postfix) with ESMTP id 6008B3A4051;
-        Fri, 14 Feb 2020 12:31:46 +0900 (JST)
-Received: from mr06.melco.co.jp (unknown [127.0.0.1])
-        by mr06.imss (Postfix) with ESMTP id 48Jf7Q1ybhzRk9N;
-        Fri, 14 Feb 2020 12:31:46 +0900 (JST)
-Received: from mf04_second.melco.co.jp (unknown [192.168.20.184])
-        by mr06.melco.co.jp (Postfix) with ESMTP id 48Jf7Q1fK2zRjjs;
-        Fri, 14 Feb 2020 12:31:46 +0900 (JST)
-Received: from mf04.melco.co.jp (unknown [133.141.98.184])
-        by mf04_second.melco.co.jp (Postfix) with ESMTP id 48Jf7Q1hdXzRk8c;
-        Fri, 14 Feb 2020 12:31:46 +0900 (JST)
-Received: from tux532.tad.melco.co.jp (unknown [133.141.243.226])
-        by mf04.melco.co.jp (Postfix) with ESMTP id 48Jf7Q1DV4zRk6b;
-        Fri, 14 Feb 2020 12:31:46 +0900 (JST)
-Received:  from tux532.tad.melco.co.jp
-        by tux532.tad.melco.co.jp (unknown) with ESMTP id 01E3VjP2017636;
-        Fri, 14 Feb 2020 12:31:46 +0900
-Received: from tux390.tad.melco.co.jp (tux390.tad.melco.co.jp [127.0.0.1])
-        by postfix.imss70 (Postfix) with ESMTP id D2D3617E075;
-        Fri, 14 Feb 2020 12:31:45 +0900 (JST)
-Received: from tux554.tad.melco.co.jp (mailgw1.tad.melco.co.jp [10.168.7.223])
-        by tux390.tad.melco.co.jp (Postfix) with ESMTP id BC6FD17E073;
-        Fri, 14 Feb 2020 12:31:45 +0900 (JST)
-Received: from tux554.tad.melco.co.jp
-        by tux554.tad.melco.co.jp (unknown) with ESMTP id 01E3VjHL015652;
-        Fri, 14 Feb 2020 12:31:45 +0900
-From:   Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-To:     Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Cc:     Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp,
-        Mori.Takahiro@ab.MitsubishiElectric.co.jp,
-        motai.hirotaka@aj.mitsubishielectric.co.jp
-Subject: [PATCH v2 2/2] staging: exfat: dedicate count_entries() to sub-dir counting.
-Date:   Fri, 14 Feb 2020 12:31:40 +0900
-Message-Id: <20200214033140.72339-2-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200214033140.72339-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-References: <20200214033140.72339-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+        id S1728569AbgBNDc6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 22:32:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49178 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728052AbgBNDc5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 22:32:57 -0500
+Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22493217F4;
+        Fri, 14 Feb 2020 03:32:56 +0000 (UTC)
+Date:   Thu, 13 Feb 2020 22:32:54 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org, joel@joelfernandes.org,
+        gregkh@linuxfoundation.org, gustavo@embeddedor.com,
+        tglx@linutronix.de, paulmck@kernel.org, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com
+Subject: Re: [PATCH v2 9/9] perf,tracing: Allow function tracing when !RCU
+Message-ID: <20200213223254.668a340d@oasis.local.home>
+In-Reply-To: <20200214024244.GH36551@google.com>
+References: <20200212210139.382424693@infradead.org>
+        <20200212210750.312024711@infradead.org>
+        <20200214022839.GG36551@google.com>
+        <20200214024244.GH36551@google.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-count_entries() function is only used to count sub-dirs.
-Clarify the role and rename to count_dir_entries().
+On Fri, 14 Feb 2020 11:42:45 +0900
+Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
 
-Signed-off-by: Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
----
-Changes in v2:
-- Rebase to linux-next-next-20200213.
+> > > +++ b/kernel/trace/trace_event_perf.c
+> > > @@ -477,7 +477,7 @@ static int perf_ftrace_function_register
+> > >  {
+> > >  	struct ftrace_ops *ops = &event->ftrace_ops;
+> > >  
+> > > -	ops->flags   = FTRACE_OPS_FL_RCU;
+> > > +	ops->flags   = 0;  
+> > 
+> > FTRACE_OPS_FL_ENABLED?  
+> 
+> No, never mind.
 
- drivers/staging/exfat/exfat.h       | 2 +-
- drivers/staging/exfat/exfat_core.c  | 8 ++------
- drivers/staging/exfat/exfat_super.c | 4 ++--
- 3 files changed, 5 insertions(+), 9 deletions(-)
+:-)
 
-diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
-index 79eb20068dce..36ce23951be0 100644
---- a/drivers/staging/exfat/exfat.h
-+++ b/drivers/staging/exfat/exfat.h
-@@ -683,7 +683,7 @@ struct entry_set_cache_t *get_entry_set_in_dir(struct super_block *sb,
- 					       u32 type,
- 					       struct dentry_t **file_ep);
- void release_entry_set(struct entry_set_cache_t *es);
--s32 count_entries(struct super_block *sb, struct chain_t *p_dir, u32 type);
-+s32 count_dir_entries(struct super_block *sb, struct chain_t *p_dir);
- void update_dir_checksum(struct super_block *sb, struct chain_t *p_dir,
- 			 s32 entry);
- void update_dir_checksum_with_entry_set(struct super_block *sb,
-diff --git a/drivers/staging/exfat/exfat_core.c b/drivers/staging/exfat/exfat_core.c
-index 94a10c5984ac..7308e50c0aaf 100644
---- a/drivers/staging/exfat/exfat_core.c
-+++ b/drivers/staging/exfat/exfat_core.c
-@@ -1850,7 +1850,7 @@ s32 exfat_count_ext_entries(struct super_block *sb, struct chain_t *p_dir,
- 	return count;
- }
- 
--s32 count_entries(struct super_block *sb, struct chain_t *p_dir, u32 type)
-+s32 count_dir_entries(struct super_block *sb, struct chain_t *p_dir)
- {
- 	int i, count = 0;
- 	s32 dentries_per_clu;
-@@ -1881,11 +1881,7 @@ s32 count_entries(struct super_block *sb, struct chain_t *p_dir, u32 type)
- 
- 			if (entry_type == TYPE_UNUSED)
- 				return count;
--			if (!(type & TYPE_CRITICAL_PRI) &&
--			    !(type & TYPE_BENIGN_PRI))
--				continue;
--
--			if ((type == TYPE_ALL) || (type == entry_type))
-+			if (entry_type == TYPE_DIR)
- 				count++;
- 		}
- 
-diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
-index ce9eb75258f8..b80a2c886d61 100644
---- a/drivers/staging/exfat/exfat_super.c
-+++ b/drivers/staging/exfat/exfat_super.c
-@@ -1468,7 +1468,7 @@ static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
- 						p_fs->cluster_size_bits;
- 			}
- 
--			count = count_entries(sb, &dir, TYPE_DIR);
-+			count = count_dir_entries(sb, &dir);
- 			if (count < 0) {
- 				ret = count; /* propagate error upward */
- 				goto out;
-@@ -1535,7 +1535,7 @@ static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
- 			info->Size = (u64)count_num_clusters(sb, &dir) <<
- 					p_fs->cluster_size_bits;
- 
--		count = count_entries(sb, &dir, TYPE_DIR);
-+		count = count_dir_entries(sb, &dir);
- 		if (count < 0) {
- 			ret = count; /* propagate error upward */
- 			goto out;
--- 
-2.25.0
-
+-- Steve
