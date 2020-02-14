@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B000B15DD3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:57:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2612A15DD3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:58:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388152AbgBNP5I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:57:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39106 "EHLO mail.kernel.org"
+        id S2388169AbgBNP5L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:57:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39206 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388022AbgBNP4x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:56:53 -0500
+        id S2388040AbgBNP45 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:56:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 701C42067D;
-        Fri, 14 Feb 2020 15:56:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 79EED24676;
+        Fri, 14 Feb 2020 15:56:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695813;
-        bh=1rEREmuUihtXcVVSX2bzp7bwvtbz9D5X+fmfAb9h+MU=;
+        s=default; t=1581695816;
+        bh=XVTS8iskw9/jLuaj5w3Q2gsSEKn4f5Cc5TOrqbKxMuk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ssaNg2DhBl8kjkzDohC0F5jrfxAqf88hojCbY8Jhlo01s1dfs9jvtCOZX8K5euE5p
-         v08dvCtYSD6D6uPIBEKZaPEl8zLwog4AWbt2z7DQiab2X5qGBc4MEcb2W7UMlBqM2I
-         73rF2fYZ2wtOzRvLYoSNV9Gn7PREuxns8+L4LDCM=
+        b=oVrTI2dAHHzVufEQk3R88CSRvElGclcQUJr3kSce/KfIRzzz6d79q8asT1Tl7QqXs
+         EWmj0o0+bsvYztzxJk8z4951VSgpdUQZKCyvR2z6GIDwA3yM7HFK87R56PdCiszQeJ
+         x8mMvh3z6s5vfXYFELJ5ZabtCRFD2AE8BqHIBOhk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>,
-        alsa-devel@alsa-project.org
-Subject: [PATCH AUTOSEL 5.5 371/542] ALSA: usb-audio: unlock on error in probe
-Date:   Fri, 14 Feb 2020 10:46:03 -0500
-Message-Id: <20200214154854.6746-371-sashal@kernel.org>
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 5.5 373/542] f2fs: set I_LINKABLE early to avoid wrong access by vfs
+Date:   Fri, 14 Feb 2020 10:46:05 -0500
+Message-Id: <20200214154854.6746-373-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -43,34 +42,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-[ Upstream commit a3afa29942b84b4e2548beacccc3a68b8d77e3dc ]
+[ Upstream commit 5b1dbb082f196278f82b6a15a13848efacb9ff11 ]
 
-We need to unlock before we returning on this error path.
+This patch moves setting I_LINKABLE early in rename2(whiteout) to avoid the
+below warning.
 
-Fixes: 73ac9f5e5b43 ("ALSA: usb-audio: Add boot quirk for MOTU M Series")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Link: https://lore.kernel.org/r/20200115174604.rhanfgy4j3uc65cx@kili.mountain
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+[ 3189.163385] WARNING: CPU: 3 PID: 59523 at fs/inode.c:358 inc_nlink+0x32/0x40
+[ 3189.246979] Call Trace:
+[ 3189.248707]  f2fs_init_inode_metadata+0x2d6/0x440 [f2fs]
+[ 3189.251399]  f2fs_add_inline_entry+0x162/0x8c0 [f2fs]
+[ 3189.254010]  f2fs_add_dentry+0x69/0xe0 [f2fs]
+[ 3189.256353]  f2fs_do_add_link+0xc5/0x100 [f2fs]
+[ 3189.258774]  f2fs_rename2+0xabf/0x1010 [f2fs]
+[ 3189.261079]  vfs_rename+0x3f8/0xaa0
+[ 3189.263056]  ? tomoyo_path_rename+0x44/0x60
+[ 3189.265283]  ? do_renameat2+0x49b/0x550
+[ 3189.267324]  do_renameat2+0x49b/0x550
+[ 3189.269316]  __x64_sys_renameat2+0x20/0x30
+[ 3189.271441]  do_syscall_64+0x5a/0x230
+[ 3189.273410]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[ 3189.275848] RIP: 0033:0x7f270b4d9a49
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/usb/card.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/namei.c | 27 +++++++++++++--------------
+ 1 file changed, 13 insertions(+), 14 deletions(-)
 
-diff --git a/sound/usb/card.c b/sound/usb/card.c
-index 2f582ac7cf789..827fb0bc8b561 100644
---- a/sound/usb/card.c
-+++ b/sound/usb/card.c
-@@ -602,7 +602,7 @@ static int usb_audio_probe(struct usb_interface *intf,
- 	if (! chip) {
- 		err = snd_usb_apply_boot_quirk_once(dev, intf, quirk, id);
- 		if (err < 0)
--			return err;
-+			goto __error;
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index a1c507b0b4ac4..5d9584281935f 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -797,6 +797,7 @@ static int __f2fs_tmpfile(struct inode *dir, struct dentry *dentry,
  
- 		/* it's a fresh one.
- 		 * now look for an empty slot and create a new card instance
+ 	if (whiteout) {
+ 		f2fs_i_links_write(inode, false);
++		inode->i_state |= I_LINKABLE;
+ 		*whiteout = inode;
+ 	} else {
+ 		d_tmpfile(dentry, inode);
+@@ -867,6 +868,12 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 			F2FS_I(old_dentry->d_inode)->i_projid)))
+ 		return -EXDEV;
+ 
++	if (flags & RENAME_WHITEOUT) {
++		err = f2fs_create_whiteout(old_dir, &whiteout);
++		if (err)
++			return err;
++	}
++
+ 	err = dquot_initialize(old_dir);
+ 	if (err)
+ 		goto out;
+@@ -898,17 +905,11 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 		}
+ 	}
+ 
+-	if (flags & RENAME_WHITEOUT) {
+-		err = f2fs_create_whiteout(old_dir, &whiteout);
+-		if (err)
+-			goto out_dir;
+-	}
+-
+ 	if (new_inode) {
+ 
+ 		err = -ENOTEMPTY;
+ 		if (old_dir_entry && !f2fs_empty_dir(new_inode))
+-			goto out_whiteout;
++			goto out_dir;
+ 
+ 		err = -ENOENT;
+ 		new_entry = f2fs_find_entry(new_dir, &new_dentry->d_name,
+@@ -916,7 +917,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 		if (!new_entry) {
+ 			if (IS_ERR(new_page))
+ 				err = PTR_ERR(new_page);
+-			goto out_whiteout;
++			goto out_dir;
+ 		}
+ 
+ 		f2fs_balance_fs(sbi, true);
+@@ -948,7 +949,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 		err = f2fs_add_link(new_dentry, old_inode);
+ 		if (err) {
+ 			f2fs_unlock_op(sbi);
+-			goto out_whiteout;
++			goto out_dir;
+ 		}
+ 
+ 		if (old_dir_entry)
+@@ -972,7 +973,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 				if (IS_ERR(old_page))
+ 					err = PTR_ERR(old_page);
+ 				f2fs_unlock_op(sbi);
+-				goto out_whiteout;
++				goto out_dir;
+ 			}
+ 		}
+ 	}
+@@ -991,7 +992,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	f2fs_delete_entry(old_entry, old_page, old_dir, NULL);
+ 
+ 	if (whiteout) {
+-		whiteout->i_state |= I_LINKABLE;
+ 		set_inode_flag(whiteout, FI_INC_LINK);
+ 		err = f2fs_add_link(old_dentry, whiteout);
+ 		if (err)
+@@ -1027,15 +1027,14 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	f2fs_unlock_op(sbi);
+ 	if (new_page)
+ 		f2fs_put_page(new_page, 0);
+-out_whiteout:
+-	if (whiteout)
+-		iput(whiteout);
+ out_dir:
+ 	if (old_dir_entry)
+ 		f2fs_put_page(old_dir_page, 0);
+ out_old:
+ 	f2fs_put_page(old_page, 0);
+ out:
++	if (whiteout)
++		iput(whiteout);
+ 	return err;
+ }
+ 
 -- 
 2.20.1
 
