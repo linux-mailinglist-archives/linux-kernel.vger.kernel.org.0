@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A75915DD54
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:58:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AFA115DD6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:59:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387965AbgBNP6C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:58:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41152 "EHLO mail.kernel.org"
+        id S2388514AbgBNP6M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:58:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41518 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388352AbgBNP5q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:57:46 -0500
+        id S2388033AbgBNP57 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:57:59 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C07B24690;
-        Fri, 14 Feb 2020 15:57:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 531E122314;
+        Fri, 14 Feb 2020 15:57:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695864;
-        bh=GiqdFSZEoNy8iXjcP7SuRT0i4X8ZFZZeuCykkBIh0EQ=;
+        s=default; t=1581695879;
+        bh=hJpTG0cA0Qyjfs8Wam/B6OJISPBTcrtGIB1DwmrP8Kw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nvo5LUK2RCyz69UYS+F+91OMbW3UdL7+fnK9KqUAYK4TdZ/67KKzFnq/lV+pWVpma
-         HThGM9/iWDQOvGGMTMCcz567pqM6nBPaRg3ndKZLeVEkkKOUKEGdlqK98HZ4kDbBH9
-         /uxIFpucdnHMznrKOJcf8uSoXWurJp9Yr0rPg7AU=
+        b=MN5FC6hHORC5PlLUBxQzVxlFZaG774/3epf/oZxrRFLnS9PyS3VRgbZXjqiGvV1c/
+         WE3qN1LaFhlQkK1EQsZ0aa4Cp6VdADchUqevfnssPkUzZVOdVHW3dpRuDT8yzQhQvc
+         F5JAnL01XDhbCYOd6oabMEafHkDW3VFltBQPGb90=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ard Biesheuvel <ardb@kernel.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-efi@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 411/542] efi/arm: Defer probe of PCIe backed efifb on DT systems
-Date:   Fri, 14 Feb 2020 10:46:43 -0500
-Message-Id: <20200214154854.6746-411-sashal@kernel.org>
+Cc:     Brandon Maier <brandon.maier@rockwellcollins.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-remoteproc@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 423/542] remoteproc: Initialize rproc_class before use
+Date:   Fri, 14 Feb 2020 10:46:55 -0500
+Message-Id: <20200214154854.6746-423-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -44,166 +44,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ardb@kernel.org>
+From: Brandon Maier <brandon.maier@rockwellcollins.com>
 
-[ Upstream commit 64c8a0cd0a535891d5905c3a1651150f0f141439 ]
+[ Upstream commit a8f40111d184098cd2b3dc0c7170c42250a5fa09 ]
 
-The new of_devlink support breaks PCIe probing on ARM platforms booting
-via UEFI if the firmware exposes a EFI framebuffer that is backed by a
-PCI device. The reason is that the probing order gets reversed,
-resulting in a resource conflict on the framebuffer memory window when
-the PCIe probes last, causing it to give up entirely.
+The remoteproc_core and remoteproc drivers all initialize with module_init().
+However remoteproc drivers need the rproc_class during their probe. If one of
+the remoteproc drivers runs init and gets through probe before
+remoteproc_init() runs, a NULL pointer access of rproc_class's `glue_dirs`
+spinlock occurs.
 
-Given that we rely on PCI quirks to deal with EFI framebuffers that get
-moved around in memory, we cannot simply drop the memory reservation, so
-instead, let's use the device link infrastructure to register this
-dependency, and force the probing to occur in the expected order.
+> Unable to handle kernel NULL pointer dereference at virtual address 000000dc
+> pgd = c0004000
+> [000000dc] *pgd=00000000
+> Internal error: Oops: 5 [#1] PREEMPT ARM
+> Modules linked in:
+> CPU: 0 PID: 1 Comm: swapper Tainted: G        W       4.14.106-rt56 #1
+> Hardware name: Generic OMAP36xx (Flattened Device Tree)
+> task: c6050000 task.stack: c604a000
+> PC is at rt_spin_lock+0x40/0x6c
+> LR is at rt_spin_lock+0x28/0x6c
+> pc : [<c0523c90>]    lr : [<c0523c78>]    psr: 60000013
+> sp : c604bdc0  ip : 00000000  fp : 00000000
+> r10: 00000000  r9 : c61c7c10  r8 : c6269c20
+> r7 : c0905888  r6 : c6269c20  r5 : 00000000  r4 : 000000d4
+> r3 : 000000dc  r2 : c6050000  r1 : 00000002  r0 : 000000d4
+> Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+...
+> [<c0523c90>] (rt_spin_lock) from [<c03b65a4>] (get_device_parent+0x54/0x17c)
+> [<c03b65a4>] (get_device_parent) from [<c03b6bec>] (device_add+0xe0/0x5b4)
+> [<c03b6bec>] (device_add) from [<c042adf4>] (rproc_add+0x18/0xd8)
+> [<c042adf4>] (rproc_add) from [<c01110e4>] (my_rproc_probe+0x158/0x204)
+> [<c01110e4>] (my_rproc_probe) from [<c03bb6b8>] (platform_drv_probe+0x34/0x70)
+> [<c03bb6b8>] (platform_drv_probe) from [<c03b9dd4>] (driver_probe_device+0x2c8/0x420)
+> [<c03b9dd4>] (driver_probe_device) from [<c03ba02c>] (__driver_attach+0x100/0x11c)
+> [<c03ba02c>] (__driver_attach) from [<c03b7d08>] (bus_for_each_dev+0x7c/0xc0)
+> [<c03b7d08>] (bus_for_each_dev) from [<c03b910c>] (bus_add_driver+0x1cc/0x264)
+> [<c03b910c>] (bus_add_driver) from [<c03ba714>] (driver_register+0x78/0xf8)
+> [<c03ba714>] (driver_register) from [<c010181c>] (do_one_initcall+0x100/0x190)
+> [<c010181c>] (do_one_initcall) from [<c0800de8>] (kernel_init_freeable+0x130/0x1d0)
+> [<c0800de8>] (kernel_init_freeable) from [<c051eee8>] (kernel_init+0x8/0x114)
+> [<c051eee8>] (kernel_init) from [<c01175b0>] (ret_from_fork+0x14/0x24)
+> Code: e2843008 e3c2203f f5d3f000 e5922010 (e193cf9f)
+> ---[ end trace 0000000000000002 ]---
 
-Co-developed-by: Saravana Kannan <saravanak@google.com>
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Saravana Kannan <saravanak@google.com>
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/20200113172245.27925-9-ardb@kernel.org
+Signed-off-by: Brandon Maier <brandon.maier@rockwellcollins.com>
+Link: https://lore.kernel.org/r/20190530225223.136420-1-brandon.maier@rockwellcollins.com
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/firmware/efi/arm-init.c | 107 ++++++++++++++++++++++++++++++--
- 1 file changed, 103 insertions(+), 4 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/firmware/efi/arm-init.c b/drivers/firmware/efi/arm-init.c
-index 904fa09e6a6b0..d99f5b0c8a090 100644
---- a/drivers/firmware/efi/arm-init.c
-+++ b/drivers/firmware/efi/arm-init.c
-@@ -10,10 +10,12 @@
- #define pr_fmt(fmt)	"efi: " fmt
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 307df98347ba2..8115f945151b3 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -2223,7 +2223,7 @@ static int __init remoteproc_init(void)
  
- #include <linux/efi.h>
-+#include <linux/fwnode.h>
- #include <linux/init.h>
- #include <linux/memblock.h>
- #include <linux/mm_types.h>
- #include <linux/of.h>
-+#include <linux/of_address.h>
- #include <linux/of_fdt.h>
- #include <linux/platform_device.h>
- #include <linux/screen_info.h>
-@@ -276,15 +278,112 @@ void __init efi_init(void)
- 		efi_memmap_unmap();
+ 	return 0;
  }
+-module_init(remoteproc_init);
++subsys_initcall(remoteproc_init);
  
-+static bool efifb_overlaps_pci_range(const struct of_pci_range *range)
-+{
-+	u64 fb_base = screen_info.lfb_base;
-+
-+	if (screen_info.capabilities & VIDEO_CAPABILITY_64BIT_BASE)
-+		fb_base |= (u64)(unsigned long)screen_info.ext_lfb_base << 32;
-+
-+	return fb_base >= range->cpu_addr &&
-+	       fb_base < (range->cpu_addr + range->size);
-+}
-+
-+static struct device_node *find_pci_overlap_node(void)
-+{
-+	struct device_node *np;
-+
-+	for_each_node_by_type(np, "pci") {
-+		struct of_pci_range_parser parser;
-+		struct of_pci_range range;
-+		int err;
-+
-+		err = of_pci_range_parser_init(&parser, np);
-+		if (err) {
-+			pr_warn("of_pci_range_parser_init() failed: %d\n", err);
-+			continue;
-+		}
-+
-+		for_each_of_pci_range(&parser, &range)
-+			if (efifb_overlaps_pci_range(&range))
-+				return np;
-+	}
-+	return NULL;
-+}
-+
-+/*
-+ * If the efifb framebuffer is backed by a PCI graphics controller, we have
-+ * to ensure that this relation is expressed using a device link when
-+ * running in DT mode, or the probe order may be reversed, resulting in a
-+ * resource reservation conflict on the memory window that the efifb
-+ * framebuffer steals from the PCIe host bridge.
-+ */
-+static int efifb_add_links(const struct fwnode_handle *fwnode,
-+			   struct device *dev)
-+{
-+	struct device_node *sup_np;
-+	struct device *sup_dev;
-+
-+	sup_np = find_pci_overlap_node();
-+
-+	/*
-+	 * If there's no PCI graphics controller backing the efifb, we are
-+	 * done here.
-+	 */
-+	if (!sup_np)
-+		return 0;
-+
-+	sup_dev = get_dev_from_fwnode(&sup_np->fwnode);
-+	of_node_put(sup_np);
-+
-+	/*
-+	 * Return -ENODEV if the PCI graphics controller device hasn't been
-+	 * registered yet.  This ensures that efifb isn't allowed to probe
-+	 * and this function is retried again when new devices are
-+	 * registered.
-+	 */
-+	if (!sup_dev)
-+		return -ENODEV;
-+
-+	/*
-+	 * If this fails, retrying this function at a later point won't
-+	 * change anything. So, don't return an error after this.
-+	 */
-+	if (!device_link_add(dev, sup_dev, 0))
-+		dev_warn(dev, "device_link_add() failed\n");
-+
-+	put_device(sup_dev);
-+
-+	return 0;
-+}
-+
-+static const struct fwnode_operations efifb_fwnode_ops = {
-+	.add_links = efifb_add_links,
-+};
-+
-+static struct fwnode_handle efifb_fwnode = {
-+	.ops = &efifb_fwnode_ops,
-+};
-+
- static int __init register_gop_device(void)
+ static void __exit remoteproc_exit(void)
  {
--	void *pd;
-+	struct platform_device *pd;
-+	int err;
- 
- 	if (screen_info.orig_video_isVGA != VIDEO_TYPE_EFI)
- 		return 0;
- 
--	pd = platform_device_register_data(NULL, "efi-framebuffer", 0,
--					   &screen_info, sizeof(screen_info));
--	return PTR_ERR_OR_ZERO(pd);
-+	pd = platform_device_alloc("efi-framebuffer", 0);
-+	if (!pd)
-+		return -ENOMEM;
-+
-+	if (IS_ENABLED(CONFIG_PCI))
-+		pd->dev.fwnode = &efifb_fwnode;
-+
-+	err = platform_device_add_data(pd, &screen_info, sizeof(screen_info));
-+	if (err)
-+		return err;
-+
-+	return platform_device_add(pd);
- }
- subsys_initcall(register_gop_device);
 -- 
 2.20.1
 
