@@ -2,89 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01CE315DBCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:51:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BBEB215DB39
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:41:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729766AbgBNPu1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:50:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54220 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730411AbgBNPuR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:50:17 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83BFA24686;
-        Fri, 14 Feb 2020 15:50:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695416;
-        bh=jgO7SE6s7cXMkkAGgKa4jsbN+HPX3s6CS37fMH/wceY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CPhhrXYt+Ba+mpLc/jTNqtM82v9qKEKbc2uOS11oE8Y/4XfsXPY2IHY9Xh6dai4wI
-         ai4vJV+gh+14TDCnK0xh0LAvO40ULnmUBwhFYP9DPnybf+sToDBbtxAsixhXJkQRbw
-         UXN3JxRJHiIufGcGqKgU5fgxAVHTol2vHFrpvlhg=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marcel Ziswiler <marcel@ziswiler.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 062/542] PCI: tegra: Fix afi_pex2_ctrl reg offset for Tegra30
-Date:   Fri, 14 Feb 2020 10:40:54 -0500
-Message-Id: <20200214154854.6746-62-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
-References: <20200214154854.6746-1-sashal@kernel.org>
+        id S1729586AbgBNPlC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:41:02 -0500
+Received: from mail-qv1-f67.google.com ([209.85.219.67]:43446 "EHLO
+        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729439AbgBNPlB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:41:01 -0500
+Received: by mail-qv1-f67.google.com with SMTP id p2so4450713qvo.10;
+        Fri, 14 Feb 2020 07:41:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=PUP4np+G4VE7PuRhOk6undkvvxru+QNxEyvlFdHRy8M=;
+        b=ZbT6gpBkKjiYBwLqeSqmGvHliwzu3GiTDD1TN6F1csmbHvQf5zew22ys7x8sByZCFB
+         q48R1dqd6gb7760yQUKvX4ZNOKbkvtwgVXPFolXQrQXFKuoaSdlGKyGE+fp8z//c61Hd
+         9aFr16nzHuax9MVICJO+adiLztmf99s8R7h4dW7aDkTdvIDlLGhEAskwkWWFDaMuKHh+
+         EBqbHa95IoXx+rusv2pI09ldunnEOGJq3Ra9uXfWr3ii4cIPUeeLkQmcWl2DMBT4FrBk
+         hTj1LXm+1GQmksx8ne1jW4r0o3tNzCKAJvVd/3eOw9vI5C/TQEWBf3N/WArbWsU/bI6K
+         f3iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=PUP4np+G4VE7PuRhOk6undkvvxru+QNxEyvlFdHRy8M=;
+        b=P05Di6E8QV69jFzp/Z7wTXS5j8uMQGfMbSjkfPT+n/pQTnZUe8us3U1W/HfaJjcRQU
+         cVlxEcOoeLtBU55vo/qA2GPiEluUJLnilgMje3oaDpq7xejUBc6MeHQcunA3zvipQ6M5
+         ILE5Cxhjwg8G3MAqLpJRMcp+v5BA/sLgCmG1SZt6PkLp9u/FoO4zxKB8GiyOqkICCxqN
+         Qks81Es2gD7dOmcglDN1grirVnWwhXXP9MOBmhP9bVOSRvovh0UzrlRmFeUDtzBpp+gZ
+         6LJ8q1NEd4BOm7fjrtlPX+P3Pw1PYA/7uKj1mqzTvwuf3jUcvAIXggYL+yV51uESRz8I
+         4Qvw==
+X-Gm-Message-State: APjAAAXeGbv5fc/lhDmGjBCPJ1nsm/X8YzA4U7vKtpO1dh36ASTUAjLj
+        UVR9e2JRGRgUaI1x3LXEofZqxFDFGzQ=
+X-Google-Smtp-Source: APXvYqxdW4fylNswjll7xxYrCS6rXZrMDa0xELAOaKYQie0LHhRSG3Il+FkHWaO6Oesbu4IpntutBQ==
+X-Received: by 2002:a0c:e408:: with SMTP id o8mr2707981qvl.236.1581694860207;
+        Fri, 14 Feb 2020 07:41:00 -0800 (PST)
+Received: from localhost ([71.172.127.161])
+        by smtp.gmail.com with ESMTPSA id s22sm3440963qke.19.2020.02.14.07.40.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2020 07:40:59 -0800 (PST)
+Date:   Fri, 14 Feb 2020 10:40:57 -0500
+From:   Tejun Heo <tj@kernel.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH v2 3/3] mm: memcontrol: recursive memory.low protection
+Message-ID: <20200214154057.GM88887@mtj.thefacebook.com>
+References: <20200212170826.GC180867@cmpxchg.org>
+ <20200213074049.GA31689@dhcp22.suse.cz>
+ <20200213135348.GF88887@mtj.thefacebook.com>
+ <20200213154731.GE31689@dhcp22.suse.cz>
+ <20200213155249.GI88887@mtj.thefacebook.com>
+ <20200213163636.GH31689@dhcp22.suse.cz>
+ <20200213165711.GJ88887@mtj.thefacebook.com>
+ <20200214071537.GL31689@dhcp22.suse.cz>
+ <20200214135728.GK88887@mtj.thefacebook.com>
+ <20200214151318.GC31689@dhcp22.suse.cz>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200214151318.GC31689@dhcp22.suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcel Ziswiler <marcel@ziswiler.com>
+Hello,
 
-[ Upstream commit 21a92676e1fe292acb077b13106b08c22ed36b14 ]
+On Fri, Feb 14, 2020 at 04:13:18PM +0100, Michal Hocko wrote:
+> On Fri 14-02-20 08:57:28, Tejun Heo wrote:
+> > But that doesn't work for other controllers at all. I'm having a
+> > difficult time imagining how making this one control mechanism work
+> > that way makes sense. Memory protection has to be configured together
+> > with IO protection to be actually effective.
+> 
+> Please be more specific. If the protected workload is mostly in-memory,
+> I do not really see how IO controller is relevant. See the example of
+> the DB setup I've mentioned elsewhere.
 
-Fix AFI_PEX2_CTRL reg offset for Tegra30 by moving it from the Tegra20
-SoC struct where it erroneously got added. This fixes the AFI_PEX2_CTRL
-reg offset being uninitialised subsequently failing to bring up the
-third PCIe port.
+Most applications, even the ones which don't use explicit IOs much,
+don't have set memory footprint which is uniformly accessed and there
+needs to be some level of reclaim activity for the working set to be
+established and maintained. Without IO control, memory protection
+isn't enough in protecting the workload.
 
-Fixes: adb2653b3d2e ("PCI: tegra: Add AFI_PEX2_CTRL reg offset as part of SoC struct")
-Signed-off-by: Marcel Ziswiler <marcel@ziswiler.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Reviewed-by: Andrew Murray <andrew.murray@arm.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/pci/controller/pci-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Even if we narrow down the discussion to something like memcache which
+has fixed memory footprint with almost uniform access pattern, real
+world applications don't exist in vacuum - they compete on CPU, have
+to do logging, pulls in metric ton of libraries which implicitly
+accesses stuff and so on. If somebody else is pummeling the filesystem
+and there's no IO isolation set up, it'll stall noticeably every once
+in a while.
 
-diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-index 090b632965e21..ac93f5a0398e4 100644
---- a/drivers/pci/controller/pci-tegra.c
-+++ b/drivers/pci/controller/pci-tegra.c
-@@ -2499,7 +2499,6 @@ static const struct tegra_pcie_soc tegra20_pcie = {
- 	.num_ports = 2,
- 	.ports = tegra20_pcie_ports,
- 	.msi_base_shift = 0,
--	.afi_pex2_ctrl = 0x128,
- 	.pads_pll_ctl = PADS_PLL_CTL_TEGRA20,
- 	.tx_ref_sel = PADS_PLL_CTL_TXCLKREF_DIV10,
- 	.pads_refclk_cfg0 = 0xfa5cfa5c,
-@@ -2528,6 +2527,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
- 	.num_ports = 3,
- 	.ports = tegra30_pcie_ports,
- 	.msi_base_shift = 8,
-+	.afi_pex2_ctrl = 0x128,
- 	.pads_pll_ctl = PADS_PLL_CTL_TEGRA30,
- 	.tx_ref_sel = PADS_PLL_CTL_TXCLKREF_BUF_EN,
- 	.pads_refclk_cfg0 = 0xfa5cfa5c,
+> > As for cgroup hierarchy being unrelated to how controllers behave, it
+> > frankly reminds me of cgroup1 memcg flat hierarchy thing I'm not sure
+> > how that would actually work in terms of resource isolation. Also, I'm
+> > not sure how systemd forces such configurations and I'd think systemd
+> > folks would be happy to fix them if there are such problems. Is the
+> > point you're trying to make "because of systemd, we have to contort
+> > how memory controller behaves"?
+> 
+> No, I am just saying and as explained in reply to Johannes, there are
+> practical cases where the cgroup hierarchy reflects organizational
+> structure as well.
+
+Oh I see. If cgroup hierarchy isn't set up for resource control,
+resource control not working well seems par for the course. I mean, no
+other controllers would work anyway, so I'm having a hard time to see
+what the point is. What we ultimately want is cgroup actually being
+useful for its primary purpose of resource control while supporting
+other organizational use cases and while the established usages aren't
+there yet I haven't seen anything fundamentally blocking that.
+
+Thanks.
+
 -- 
-2.20.1
-
+tejun
