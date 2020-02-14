@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 173BA15EC44
+	by mail.lfdr.de (Postfix) with ESMTP id 8C7FF15EC45
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:27:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390964AbgBNQI2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:08:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59422 "EHLO mail.kernel.org"
+        id S2390974AbgBNQI3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:08:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390762AbgBNQHq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:07:46 -0500
+        id S2390041AbgBNQHt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:07:49 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A10A624687;
-        Fri, 14 Feb 2020 16:07:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 173B32187F;
+        Fri, 14 Feb 2020 16:07:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696466;
-        bh=iW0pG2/jtj3T1OIrSI9apWm9rnCO1tmNfqWZdpAN9to=;
+        s=default; t=1581696468;
+        bh=9e/FhVFKz7yVFUP/sk2xKVY1v7EsAFpJTgAFW/oS4Aw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RusiVCsoh8ThyAOVYKPceutVXZYxuNAq5EzNTfMBMdqmZZZmz+nnIIqy8y6s2U+Hz
-         srvTiXrcOEw3gSr87J6LtyR1BwJQn/6UoEKKCYvDikmQG87qVcxHgu72H3Ks4uz475
-         oWPMa6IhVlfPb6MsK+mHJEi0wtszJLBtGZ7azgMg=
+        b=Eis0HaD6jAHUMuoUPMVWAtDKsKdXmT3VAWgUEW8HpGmQrJQ366pz2dCfCR1DztLkV
+         LZlF4rAczlORPctZ+skONntBEXPpAWkmYENoZRbj6gP/dkdsajpYCJ86Ko0zUk9tr7
+         hJ+RXm0UnuWGw0+TSeZ/Egr/lnc1TzPeBObtOPq4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 276/459] soc/tegra: fuse: Correct straps' address for older Tegra124 device trees
-Date:   Fri, 14 Feb 2020 10:58:46 -0500
-Message-Id: <20200214160149.11681-276-sashal@kernel.org>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        =?UTF-8?q?Karl=20Rudb=C3=A6k=20Olsen?= <karl@micro-technic.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 278/459] ARM: dts: at91: sama5d3: define clock rate range for tcb1
+Date:   Fri, 14 Feb 2020 10:58:48 -0500
+Message-Id: <20200214160149.11681-278-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -43,35 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit 2d9ea1934f8ef0dfb862d103389562cc28b4fc03 ]
+[ Upstream commit a7e0f3fc01df4b1b7077df777c37feae8c9e8b6d ]
 
-Trying to read out Chip ID before APBMISC registers are mapped won't
-succeed, in a result Tegra124 gets a wrong address for the HW straps
-register if machine uses an old outdated device tree.
+The clock rate range for the TCB1 clock is missing. define it in the device
+tree.
 
-Fixes: 297c4f3dcbff ("soc/tegra: fuse: Restrict legacy code to 32-bit ARM")
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Reported-by: Karl Rudbæk Olsen <karl@micro-technic.com>
+Fixes: d2e8190b7916 ("ARM: at91/dt: define sama5d3 clocks")
+Link: https://lore.kernel.org/r/20200110172007.1253659-2-alexandre.belloni@bootlin.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soc/tegra/fuse/tegra-apbmisc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/sama5d3_tcb1.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-index df76778af601e..f8b9c4058926b 100644
---- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
-+++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-@@ -123,7 +123,7 @@ void __init tegra_init_apbmisc(void)
- 			apbmisc.flags = IORESOURCE_MEM;
- 
- 			/* strapping options */
--			if (tegra_get_chip_id() == TEGRA124) {
-+			if (of_machine_is_compatible("nvidia,tegra124")) {
- 				straps.start = 0x7000e864;
- 				straps.end = 0x7000e867;
- 			} else {
+diff --git a/arch/arm/boot/dts/sama5d3_tcb1.dtsi b/arch/arm/boot/dts/sama5d3_tcb1.dtsi
+index 1584035daf515..215802b8db301 100644
+--- a/arch/arm/boot/dts/sama5d3_tcb1.dtsi
++++ b/arch/arm/boot/dts/sama5d3_tcb1.dtsi
+@@ -22,6 +22,7 @@
+ 					tcb1_clk: tcb1_clk {
+ 						#clock-cells = <0>;
+ 						reg = <27>;
++						atmel,clk-output-range = <0 166000000>;
+ 					};
+ 				};
+ 			};
 -- 
 2.20.1
 
