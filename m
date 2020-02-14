@@ -2,113 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E92F15E91B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:05:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8B2515EB58
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:20:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404897AbgBNRFC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:05:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45328 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392427AbgBNQPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:15:13 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B74D7246C3;
-        Fri, 14 Feb 2020 16:15:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696913;
-        bh=RJwtUpJBdRYkUiccppQNybQRCLhpCuqZmZrx0SpYbAQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wtA+RpeOIdKefn46K4rpvbqJCKHKYg7CWNdDn5dR+tzbNqsNGNmXNT1LfjCMWgbGz
-         TOMypI3IHm3tDwbAKO02wdmz9lJo78VPPM4nFdxmk1ahgNSxXXkXXYne9pt1zNwUMx
-         wZoz9gV256ohMHUjKLhgiDDRNj2AF98/Q15mXVWs=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Simon Schwartz <kern.simon@theschwartz.xyz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 162/252] driver core: platform: Prevent resouce overflow from causing infinite loops
-Date:   Fri, 14 Feb 2020 11:10:17 -0500
-Message-Id: <20200214161147.15842-162-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
-References: <20200214161147.15842-1-sashal@kernel.org>
+        id S2391746AbgBNRUD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:20:03 -0500
+Received: from mo4-p03-ob.smtp.rzone.de ([85.215.255.100]:20192 "EHLO
+        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391580AbgBNQKs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:10:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1581696639;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=cdtWi0dhoJeubPtopSlxh3ft1BkG0fFo1XEndBc8rHg=;
+        b=kAZoX6gOqm49JQsx2lOz2TTDj2NTy7G4Y/ILAulFoIMCrFwwCVLlYs0guR7G0sNzme
+        Lv2UMd4KGScVXi/nYdD4PJ2Ra2UI5GfIFTkpErAdaWIex6jb41VEEtLZEhfLG5G80BOZ
+        ka82BJ+69/sSpYsDaxl7/2TdV+ACDiAOfaW9Alx2yIlxiMWACiZjgnK4yhHhlwzpGWZI
+        ld9FLyDB7v087Gjx1440u4UP+7qvDUelg5TJOpiWR1ovHkEFpFMMH6lxB7RL+JRPoBdk
+        fkhxShPCFaeW+Nbb58m9QlVz1xhjSr0qUeYlhlCCs2e73CVPiEjlS5WQfB2OL3dJnCIj
+        nsnA==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1OAA2UNf2M7OMfsfQx3"
+X-RZG-CLASS-ID: mo00
+Received: from iMac.fritz.box
+        by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
+        with ESMTPSA id U06217w1EGATFl0
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Fri, 14 Feb 2020 17:10:29 +0100 (CET)
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+To:     Paul Boddie <paul@boddie.org.uk>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        letux-kernel@openphoenux.org, kernel@pyra-handheld.com
+Subject: [PATCH v2 05/12] MIPS: DTS: CI20: fix PMU definitions for ACT8600
+Date:   Fri, 14 Feb 2020 17:10:17 +0100
+Message-Id: <a583bde8332f8adb2ee97d775a36ef9dcf9b6419.1581696624.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <cover.1581696624.git.hns@goldelico.com>
+References: <cover.1581696624.git.hns@goldelico.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Simon Schwartz <kern.simon@theschwartz.xyz>
+There is a ACT8600 on the CI20 board and the bindings of the
+ACT8865 driver have changed without updating the CI20 device
+tree. Therefore the PMU can not be probed successfully and
+is running in power-on reset state.
 
-[ Upstream commit 39cc539f90d035a293240c9443af50be55ee81b8 ]
+Fix DT to match the latest act8865-regulator bindings.
 
-num_resources in the platform_device struct is declared as a u32.  The
-for loops that iterate over num_resources use an int as the counter,
-which can cause infinite loops on architectures with smaller ints.
-Change the loop counters to u32.
-
-Signed-off-by: Simon Schwartz <kern.simon@theschwartz.xyz>
-Link: https://lore.kernel.org/r/2201ce63a2a171ffd2ed14e867875316efcf71db.camel@theschwartz.xyz
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 73f2b940474d ("MIPS: CI20: DTS: Add I2C nodes")
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- drivers/base/platform.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ arch/mips/boot/dts/ingenic/ci20.dts | 48 ++++++++++++++++++++---------
+ 1 file changed, 33 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index e9be1f56929af..1d3a50ac21664 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -27,6 +27,7 @@
- #include <linux/limits.h>
- #include <linux/property.h>
- #include <linux/kmemleak.h>
-+#include <linux/types.h>
+diff --git a/arch/mips/boot/dts/ingenic/ci20.dts b/arch/mips/boot/dts/ingenic/ci20.dts
+index 37b93166bf22..e02a19db7ef1 100644
+--- a/arch/mips/boot/dts/ingenic/ci20.dts
++++ b/arch/mips/boot/dts/ingenic/ci20.dts
+@@ -148,6 +148,8 @@
+ 	pinctrl-0 = <&pins_uart4>;
+ };
  
- #include "base.h"
- #include "power/power.h"
-@@ -67,7 +68,7 @@ void __weak arch_setup_pdev_archdata(struct platform_device *pdev)
- struct resource *platform_get_resource(struct platform_device *dev,
- 				       unsigned int type, unsigned int num)
- {
--	int i;
-+	u32 i;
++#include <dt-bindings/regulator/active-semi,8865-regulator.h>
++
+ &i2c0 {
+ 	status = "okay";
  
- 	for (i = 0; i < dev->num_resources; i++) {
- 		struct resource *r = &dev->resource[i];
-@@ -162,7 +163,7 @@ struct resource *platform_get_resource_byname(struct platform_device *dev,
- 					      unsigned int type,
- 					      const char *name)
- {
--	int i;
-+	u32 i;
+@@ -161,65 +163,81 @@
+ 		reg = <0x5a>;
+ 		status = "okay";
  
- 	for (i = 0; i < dev->num_resources; i++) {
- 		struct resource *r = &dev->resource[i];
-@@ -359,7 +360,8 @@ EXPORT_SYMBOL_GPL(platform_device_add_properties);
-  */
- int platform_device_add(struct platform_device *pdev)
- {
--	int i, ret;
-+	u32 i;
-+	int ret;
- 
- 	if (!pdev)
- 		return -EINVAL;
-@@ -446,7 +448,7 @@ EXPORT_SYMBOL_GPL(platform_device_add);
-  */
- void platform_device_del(struct platform_device *pdev)
- {
--	int i;
-+	u32 i;
- 
- 	if (pdev) {
- 		device_remove_properties(&pdev->dev);
++/*
++Optional input supply properties:
++- for act8600:
++  - vp1-supply: The input supply for DCDC_REG1
++  - vp2-supply: The input supply for DCDC_REG2
++  - vp3-supply: The input supply for DCDC_REG3
++  - inl-supply: The input supply for LDO_REG5, LDO_REG6, LDO_REG7 and LDO_REG8
++  SUDCDC_REG4, LDO_REG9 and LDO_REG10 do not have separate supplies.
++*/
++
+ 		regulators {
+ 			vddcore: SUDCDC1 {
+-				regulator-name = "VDDCORE";
++				regulator-name = "DCDC_REG1";
+ 				regulator-min-microvolt = <1100000>;
+ 				regulator-max-microvolt = <1100000>;
+ 				regulator-always-on;
+ 			};
+ 			vddmem: SUDCDC2 {
+-				regulator-name = "VDDMEM";
++				regulator-name = "DCDC_REG2";
+ 				regulator-min-microvolt = <1500000>;
+ 				regulator-max-microvolt = <1500000>;
+ 				regulator-always-on;
+ 			};
+ 			vcc_33: SUDCDC3 {
+-				regulator-name = "VCC33";
++				regulator-name = "DCDC_REG3";
+ 				regulator-min-microvolt = <3300000>;
+ 				regulator-max-microvolt = <3300000>;
+ 				regulator-always-on;
+ 			};
+ 			vcc_50: SUDCDC4 {
+-				regulator-name = "VCC50";
++				regulator-name = "SUDCDC_REG4";
+ 				regulator-min-microvolt = <5000000>;
+ 				regulator-max-microvolt = <5000000>;
+ 				regulator-always-on;
+ 			};
+ 			vcc_25: LDO_REG5 {
+-				regulator-name = "VCC25";
++				regulator-name = "LDO_REG5";
+ 				regulator-min-microvolt = <2500000>;
+ 				regulator-max-microvolt = <2500000>;
+ 				regulator-always-on;
+ 			};
+ 			wifi_io: LDO_REG6 {
+-				regulator-name = "WIFIIO";
++				regulator-name = "LDO_REG6";
+ 				regulator-min-microvolt = <2500000>;
+ 				regulator-max-microvolt = <2500000>;
+ 				regulator-always-on;
+ 			};
+ 			vcc_28: LDO_REG7 {
+-				regulator-name = "VCC28";
++				regulator-name = "LDO_REG7";
+ 				regulator-min-microvolt = <2800000>;
+ 				regulator-max-microvolt = <2800000>;
+ 				regulator-always-on;
+ 			};
+ 			vcc_15: LDO_REG8 {
+-				regulator-name = "VCC15";
++				regulator-name = "LDO_REG8";
+ 				regulator-min-microvolt = <1500000>;
+ 				regulator-max-microvolt = <1500000>;
+ 				regulator-always-on;
+ 			};
+-			vcc_18: LDO_REG9 {
+-				regulator-name = "VCC18";
+-				regulator-min-microvolt = <1800000>;
+-				regulator-max-microvolt = <1800000>;
++			vrtc_18: LDO_REG9 {
++				regulator-name = "LDO_REG9";
++				/* Despite the datasheet stating 3.3V for REG9 and
++				   driver expecting that, REG9 outputs 1.8V.
++				   Likely the CI20 uses a chip variant.
++				   Since it is a simple on/off LDO the exact values
++				   do not matter.
++				*/
++				regulator-min-microvolt = <3300000>;
++				regulator-max-microvolt = <3300000>;
+ 				regulator-always-on;
+ 			};
+ 			vcc_11: LDO_REG10 {
+-				regulator-name = "VCC11";
+-				regulator-min-microvolt = <1100000>;
+-				regulator-max-microvolt = <1100000>;
++				regulator-name = "LDO_REG10";
++				regulator-min-microvolt = <1200000>;
++				regulator-max-microvolt = <1200000>;
+ 				regulator-always-on;
+ 			};
+ 		};
 -- 
-2.20.1
+2.23.0
 
