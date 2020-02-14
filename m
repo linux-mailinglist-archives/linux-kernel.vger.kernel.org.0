@@ -2,100 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F4E515E504
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:39:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A73F15E4CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:38:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405426AbgBNQjR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:39:17 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:32719 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2393908AbgBNQjO (ORCPT
+        id S2390516AbgBNQiM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:38:12 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:44602 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393822AbgBNQiH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:39:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581698354;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=ejjWyNnsQ4fYjfK0i4jU0/WTc3mIEUoKR3OpTBufYKo=;
-        b=QqS0dDHD0pEfbFzWJLJMnX8zw0RFJy6FodLvpnGfeh+ztt9TZfH2aHVPjGUa6Q9lqsIKrS
-        xZqKJeprTRjBMBbZ5Z8uR+QzrNuYTOktDOCyZpn/0NOdZPphQCCWk0miZTo+T6OLND4UnU
-        joSrFay8jc4mXedP6T9HIr94yMx5tqE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-426-vWas1kg9MGecCh9FP-ZwqQ-1; Fri, 14 Feb 2020 11:39:09 -0500
-X-MC-Unique: vWas1kg9MGecCh9FP-ZwqQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8F49F18B9FC2;
-        Fri, 14 Feb 2020 16:39:08 +0000 (UTC)
-Received: from treble.redhat.com (ovpn-121-12.rdu2.redhat.com [10.10.121.12])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 739ED10021B2;
-        Fri, 14 Feb 2020 16:39:07 +0000 (UTC)
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] pinctrl: ingenic: Make unreachable path more robust
-Date:   Fri, 14 Feb 2020 10:37:40 -0600
-Message-Id: <73f0c9915473d9e4b3681fb5cc55144291a43192.1581698101.git.jpoimboe@redhat.com>
+        Fri, 14 Feb 2020 11:38:07 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01EGVRU9177974;
+        Fri, 14 Feb 2020 16:37:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=q7LK0zVHD6kckSz3zHVmf2SZkUr5cu8r6SR5IXnD0kA=;
+ b=qX70sO0Gr9p+AflLX+hORJrXc7RNqSWSNezzJKw5GgwEj5RP37gxO55L3hCYUbxN0trR
+ TOZ7mgOsFqd8x/Tjgt5g6ZEooKuUjt6KuqG10uG8eB2n8Fag9oWiui/mUWqs5Ed6vlx2
+ vykicqj+OMKDLqY8Mpo77qzRIr2RL0ubuzmHzSZT5OJkSXvv4u4FJFC/p9Dfae0kfDWv
+ o8IwC7UbX/dYIXheOAj14fFyRvFl64t5HmBw6+TNFQrXx9GGkbxlo47W32ldbqNYZ/R2
+ kdvmQLRV1pSK09zNxst28Q9JBLHwzG1GLYTmzKFkhzbI4wxU4E3zg+hk+5mpmI3XK4PT EQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2y2p3t29d8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 14 Feb 2020 16:37:46 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01EGbUei097455;
+        Fri, 14 Feb 2020 16:37:45 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2y4k3dasps-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 14 Feb 2020 16:37:45 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01EGbhxs006002;
+        Fri, 14 Feb 2020 16:37:43 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 14 Feb 2020 08:37:42 -0800
+Date:   Fri, 14 Feb 2020 11:37:58 -0500
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Yang Yingliang <yangyingliang@huawei.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Steffen Klassert <steffen.klassert@secunet.com>
+Subject: Re: [PATCH 4.19 091/195] padata: Remove broken queue flushing
+Message-ID: <20200214163758.455gqh73dhzvbvtv@ca-dmjordan1.us.oracle.com>
+References: <20200210122305.731206734@linuxfoundation.org>
+ <20200210122314.217904406@linuxfoundation.org>
+ <5E4674BB.4020900@huawei.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5E4674BB.4020900@huawei.com>
+User-Agent: NeoMutt/20180716
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9531 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999 adultscore=0
+ bulkscore=0 malwarescore=0 phishscore=0 suspectscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002140127
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9531 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 malwarescore=0
+ suspectscore=0 mlxlogscore=999 priorityscore=1501 clxscore=1011
+ impostorscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002140126
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the second loop of ingenic_pinconf_set(), it annotates the switch
-default case as unreachable().  The annotation is technically correct,
-because that same case would have resulted in an early return in the
-previous loop.
+Hello Yang,
 
-However, if a bug were to get introduced later, for example if an
-additional case were added to the first loop without adjusting the
-second loop, it would result in nasty undefined behavior: most likely
-the function's generated code would fall through to the next function.
+On Fri, Feb 14, 2020 at 06:21:47PM +0800, Yang Yingliang wrote:
+> On 2020/2/10 20:32, Greg Kroah-Hartman wrote:
+> > @@ -501,8 +509,7 @@ static struct parallel_data *padata_alloc_pd(struct padata_instance *pinst,
+> >   	timer_setup(&pd->timer, padata_reorder_timer, 0);
+> >   	atomic_set(&pd->seq_nr, -1);
+> >   	atomic_set(&pd->reorder_objects, 0);
+> > -	atomic_set(&pd->refcnt, 0);
+> > -	pd->pinst = pinst;
+> This patch remove this assignment, it's cause a null-ptr-deref when using
+> pd->pinst in padata_reorder().
 
-Another issue is that, while objtool normally understands unreachable()
-annotations, there's one special case where it doesn't: when the
-annotation occurs immediately after a 'ret' instruction.  That happens
-to be the case here because unreachable() is immediately before the
-return.
+Thanks for reporting.  This change is based on an enhancement in mainline that
+moved this assignment but isn't in 4.19:
 
-So change the unreachable() to BUG() so that the unreachable code, if
-ever executed, would panic instead of introducing undefined behavior.
-This also makes objtool happy.
+  bfde23ce200e ("padata: unbind parallel jobs from specific CPUs")
 
-This fixes the following objtool warning:
+A version of _this_ patch (i.e. remove broken queue flushing) has been posted
+for 4.14, 4.9, and 4.4, all of which would likely result in the same issue, so
+let's hold off on merging those until I can post fixed versions.
 
-  drivers/pinctrl/pinctrl-ingenic.o: warning: objtool: ingenic_pinconf_se=
-t() falls through to next function ingenic_pinconf_group_set()
-
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
----
- drivers/pinctrl/pinctrl-ingenic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-=
-ingenic.c
-index 96f04d121ebd..6b61ac6cd4d2 100644
---- a/drivers/pinctrl/pinctrl-ingenic.c
-+++ b/drivers/pinctrl/pinctrl-ingenic.c
-@@ -2158,7 +2158,7 @@ static int ingenic_pinconf_set(struct pinctrl_dev *=
-pctldev, unsigned int pin,
- 			break;
-=20
- 		default:
--			unreachable();
-+			BUG();
- 		}
- 	}
-=20
---=20
-2.21.1
-
+I'll start working on the 4.19 fix now.
