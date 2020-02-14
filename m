@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED1F015EE29
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:39:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59B9515EDF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:37:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390331AbgBNRix (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:38:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53142 "EHLO mail.kernel.org"
+        id S2390109AbgBNQFO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:05:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389979AbgBNQEj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:04:39 -0500
+        id S2389985AbgBNQEk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:04:40 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 433E0217F4;
-        Fri, 14 Feb 2020 16:04:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70F762467E;
+        Fri, 14 Feb 2020 16:04:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696279;
-        bh=od+SI3t3l/h/t9vQefa9qz4b6qpFO7CWkN6xczo4vyk=;
+        s=default; t=1581696280;
+        bh=teQ3VhKRiQx4ZQR6KWHa0rIxyTGDKcRpRbGx2fbYElA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wOFttAOsO3TdhF0RPZTWSkyfdUzvybeefadJMlAW0zmM3RszCmgnPvQEQ8TeL+ZJb
-         73xKxR3cL9zbhbqZ2fiaIZaH4ltMoXxoyZLaiPvrL7+CysgcRY5Y2bd7vQqsHg36U2
-         XpPSKG1k+u8Relvtymk+gcUVkRxqdhqHGjG4jHJU=
+        b=Pi5VWJ1sLsJ1cLaa94k7erxGCrTRlt9LGst8t7j2v26+7CKkvBYzlFsRgLpZL2pYQ
+         PKrioY5MqDTDMBpaMGWqRs1GRG63vv56G59UwaYK+gYEw40NzyCieDuqqo+G9kFlF3
+         E8ClhZ0JZEs9/K+VZRjfxj+38eFvlbW4Ta5v/NlQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     yu kuai <yukuai3@huawei.com>,
         Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.4 128/459] drm/amdgpu: remove set but not used variable 'count'
-Date:   Fri, 14 Feb 2020 10:56:18 -0500
-Message-Id: <20200214160149.11681-128-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 129/459] drm/amdgpu: remove set but not used variable 'invalid'
+Date:   Fri, 14 Feb 2020 10:56:19 -0500
+Message-Id: <20200214160149.11681-129-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -47,48 +47,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: yu kuai <yukuai3@huawei.com>
 
-[ Upstream commit a1bd079fca6219e18bb0892f0a7228a76dd6292c ]
+[ Upstream commit 9e089a29c696d86d26e79737bafbce94738fb462 ]
 
 Fixes gcc '-Wunused-but-set-variable' warning:
 
-drivers/gpu/drm/amd/amdkfd/kfd_device.c: In function
-‘kgd2kfd_post_reset’:
-drivers/gpu/drm/amd/amdkfd/kfd_device.c:745:11: warning:
-variable ‘count’ set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c: In function
+‘amdgpu_amdkfd_evict_userptr’:
+drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c:1665:6: warning:
+variable ‘invalid’ set but not used [-Wunused-but-set-variable]
 
-'count' is never used, so can be removed. Thus 'atomic_dec_return'
-can be replaced as 'atomic_dec'
+'invalid' is never used, so can be removed. Thus 'atomic_inc_return'
+can be replaced as 'atomic_inc'
 
-Fixes: e42051d2133b ("drm/amdkfd: Implement GPU reset handlers in KFD")
+Fixes: 5ae0283e831a ("drm/amdgpu: Add userptr support for KFD")
 Signed-off-by: yu kuai <yukuai3@huawei.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdkfd/kfd_device.c | 4 ++--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device.c b/drivers/gpu/drm/amd/amdkfd/kfd_device.c
-index 0dc1084b5e829..2e744fa3adb6a 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_device.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_device.c
-@@ -766,7 +766,7 @@ int kgd2kfd_pre_reset(struct kfd_dev *kfd)
- 
- int kgd2kfd_post_reset(struct kfd_dev *kfd)
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
+index 6d021ecc8d598..77e5dcecb4612 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
+@@ -1657,10 +1657,10 @@ int amdgpu_amdkfd_evict_userptr(struct kgd_mem *mem,
+ 				struct mm_struct *mm)
  {
--	int ret, count;
-+	int ret;
+ 	struct amdkfd_process_info *process_info = mem->process_info;
+-	int invalid, evicted_bos;
++	int evicted_bos;
+ 	int r = 0;
  
- 	if (!kfd->init_complete)
- 		return 0;
-@@ -776,7 +776,7 @@ int kgd2kfd_post_reset(struct kfd_dev *kfd)
- 	ret = kfd_resume(kfd);
- 	if (ret)
- 		return ret;
--	count = atomic_dec_return(&kfd_locked);
-+	atomic_dec(&kfd_locked);
- 
- 	atomic_set(&kfd->sram_ecc_flag, 0);
- 
+-	invalid = atomic_inc_return(&mem->invalid);
++	atomic_inc(&mem->invalid);
+ 	evicted_bos = atomic_inc_return(&process_info->evicted_bos);
+ 	if (evicted_bos == 1) {
+ 		/* First eviction, stop the queues */
 -- 
 2.20.1
 
