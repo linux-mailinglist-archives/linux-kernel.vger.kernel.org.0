@@ -2,63 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F358815DB69
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:46:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA35115E245
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:23:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729739AbgBNPqF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:46:05 -0500
-Received: from mga11.intel.com ([192.55.52.93]:47493 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725955AbgBNPqE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:46:04 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2020 07:46:04 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,441,1574150400"; 
-   d="scan'208";a="433053824"
-Received: from marshy.an.intel.com ([10.122.105.159])
-  by fmsmga005.fm.intel.com with ESMTP; 14 Feb 2020 07:46:03 -0800
-From:   richard.gong@linux.intel.com
-To:     gregkh@linuxfoundation.org, mdf@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, dinguyen@kernel.org
-Cc:     linux-fpga@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, richard.gong@linux.intel.com,
-        Richard Gong <richard.gong@intel.com>
-Subject: [PATCHv1 7/7] firmware: intel_stratix10_service: add depend on agilex
-Date:   Fri, 14 Feb 2020 10:00:52 -0600
-Message-Id: <1581696052-11540-8-git-send-email-richard.gong@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1581696052-11540-1-git-send-email-richard.gong@linux.intel.com>
-References: <1581696052-11540-1-git-send-email-richard.gong@linux.intel.com>
+        id S2405527AbgBNQWo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:22:44 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:55566 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392998AbgBNQVe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:21:34 -0500
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1j2diC-0003I9-Ou; Fri, 14 Feb 2020 17:21:04 +0100
+Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 6B4A1101DF3;
+        Fri, 14 Feb 2020 17:21:04 +0100 (CET)
+Message-Id: <20200214161503.289763704@linutronix.de>
+User-Agent: quilt/0.65
+Date:   Fri, 14 Feb 2020 14:39:21 +0100
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     David Miller <davem@davemloft.net>, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Sebastian Sewior <bigeasy@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Clark Williams <williams@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [RFC patch 04/19] bpf/tracing: Remove redundant preempt_disable() in __bpf_trace_run()
+References: <20200214133917.304937432@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Richard Gong <richard.gong@intel.com>
+__bpf_trace_run() disables preemption around the BPF_PROG_RUN() invocation.
 
-Add depend on Agilex for Intel Agilex SoC platform.
+This is redundant because __bpf_trace_run() is invoked from a trace point
+via __DO_TRACE() which already disables preemption _before_ invoking any of
+the functions which are attached to a trace point.
 
-Signed-off-by: Richard Gong <richard.gong@intel.com>
+Remove it.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- drivers/firmware/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/trace/bpf_trace.c |    2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
-index ea869ad..8007d4a 100644
---- a/drivers/firmware/Kconfig
-+++ b/drivers/firmware/Kconfig
-@@ -206,7 +206,7 @@ config FW_CFG_SYSFS_CMDLINE
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -1476,9 +1476,7 @@ static __always_inline
+ void __bpf_trace_run(struct bpf_prog *prog, u64 *args)
+ {
+ 	rcu_read_lock();
+-	preempt_disable();
+ 	(void) BPF_PROG_RUN(prog, args);
+-	preempt_enable();
+ 	rcu_read_unlock();
+ }
  
- config INTEL_STRATIX10_SERVICE
- 	tristate "Intel Stratix10 Service Layer"
--	depends on ARCH_STRATIX10 && HAVE_ARM_SMCCC
-+	depends on (ARCH_STRATIX10 || ARCH_AGILEX) && HAVE_ARM_SMCCC
- 	default n
- 	help
- 	  Intel Stratix10 service layer runs at privileged exception level,
--- 
-2.7.4
 
