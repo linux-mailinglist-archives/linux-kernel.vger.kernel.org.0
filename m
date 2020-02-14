@@ -2,254 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C26C315F9A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 23:28:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87B1C15F9CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 23:33:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727884AbgBNW2O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 17:28:14 -0500
-Received: from mga05.intel.com ([192.55.52.43]:5118 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727961AbgBNW1Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 17:27:24 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2020 14:27:23 -0800
-X-IronPort-AV: E=Sophos;i="5.70,442,1574150400"; 
-   d="scan'208";a="227756449"
-Received: from agluck-desk2.sc.intel.com ([10.3.52.68])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2020 14:27:23 -0800
-From:   Tony Luck <tony.luck@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Tony Luck <tony.luck@intel.com>, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 7/7] x86/mce: Drop the EDAC report status checks
-Date:   Fri, 14 Feb 2020 14:27:20 -0800
-Message-Id: <20200214222720.13168-8-tony.luck@intel.com>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200214222720.13168-1-tony.luck@intel.com>
-References: <20200212204652.1489-1-tony.luck@intel.com>
- <20200214222720.13168-1-tony.luck@intel.com>
+        id S1727775AbgBNWds (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 17:33:48 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:12164 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725838AbgBNWds (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 17:33:48 -0500
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01EMXeh2027295;
+        Fri, 14 Feb 2020 14:33:42 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
+ subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=facebook; bh=NJTCcEwcFzO2aUI9k9ewb64Ri1G+6mIFbjLWtFbHefE=;
+ b=LEH1TER7gEPZ07wjd/1jpte9TS9BerO184Mky1raPY0w0WpvcshvHMApqlghotUF+dmS
+ +JSJ6VUUnmW9jIDZwNbvraKzBNpmHxH3IJuGm+PD+AFvGSw/gYhCK3fr/ojcp16Ku5fs
+ PtA0fxqanoZylMg90AAQNoNilYmmUeVH+zM= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com with ESMTP id 2y57e405uy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Fri, 14 Feb 2020 14:33:42 -0800
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (100.104.98.9) by
+ o365-in.thefacebook.com (100.104.94.228) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Fri, 14 Feb 2020 14:33:22 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WEDodpe4uW/P+Z9d7hdf6KsY6VcNXuAOU9jckm6afr/N/77Wmgrayk+5XG/BKdrdTOF/3sI1J0+ZGSTrs46tQ+LsHcgLifjwp6/dm+dEIp241eJttisN26WwKyrM5koZkbA1cvQgWPiMAe4myQtQYrnv3ZjDY+FVNUBJmbtNKVK7nufTBal8JPLbEEWBEPRkKR4lAFwzcaTsgYtmn+mtEbwKKP98x8UXNY5hXeY6nlSxuKc/MlRqcrZ+R/FK0sYdQOnm7dLpqwHRmub9z8Qv7tKcy+z2P+02LgNMX2D4Hn7vMV7401OnIgKE1D4U+Ullyg+L97/ZHvhZUaj4LR5IDg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NJTCcEwcFzO2aUI9k9ewb64Ri1G+6mIFbjLWtFbHefE=;
+ b=DRxABSisIpMHuHV720M4Y0AQHuw/fmuYxmFpJ0Kqiz9R96RAH4VNSZVvRsmSnncy+cmpBKv2gfu/JhAcUMP60PJVRW3YyHUjc1C5oGBlVQ5DGyb46YV2uH1gfYOO/2AKL0V+WbGUc9nY2KUeRL3asv+FRw4jUcitHDF4TlN8YynVxxonM2UG8ZYdCe7DA4Srdv6hZW4ZVpScwZrGE5c7po84SQ5Biq6wRs2md1h/vEciuD4L3cjxmxe1a0H/ICH+gDbU12GqpKlmno8di7MWnVOAIeNSW+8d+mUWjDaotjn5Qz0airED2Aqge1rGNUuUXYxBbYdPEJs01hs2w3NOBQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NJTCcEwcFzO2aUI9k9ewb64Ri1G+6mIFbjLWtFbHefE=;
+ b=S8dvvSHw8lHN+K+Bqn0GhMTW6NrU8NEgLAn/Fj1UcJx8z9xQcAKppgwd/GuXfAhygC/whWhO0eELEqSzf8Je9MF708mN/Lgs1uITc0+5vPtdfaBxFUoNBq0+Ixh+7gC/peUmEwVPvolixkcWjwYAzQjyTvBzUF0SQ3f5rGUrULM=
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com (20.179.155.147) by
+ BYAPR15MB3478.namprd15.prod.outlook.com (20.179.56.22) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2729.23; Fri, 14 Feb 2020 22:33:07 +0000
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::ccb6:a331:77d8:d308]) by BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::ccb6:a331:77d8:d308%7]) with mapi id 15.20.2707.031; Fri, 14 Feb 2020
+ 22:33:07 +0000
+Date:   Fri, 14 Feb 2020 14:33:03 -0800
+From:   Roman Gushchin <guro@fb.com>
+To:     Shakeel Butt <shakeelb@google.com>
+CC:     Johannes Weiner <hannes@cmpxchg.org>,
+        Eric Dumazet <edumazet@google.com>, Tejun Heo <tj@kernel.org>,
+        Greg Thelen <gthelen@google.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        <cgroups@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] cgroup: memcg: net: do not associate sock with
+ unrelated cgroup
+Message-ID: <20200214223303.GA60585@carbon.dhcp.thefacebook.com>
+References: <20200214222415.181467-1-shakeelb@google.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200214222415.181467-1-shakeelb@google.com>
+X-ClientProxiedBy: CO1PR15CA0054.namprd15.prod.outlook.com
+ (2603:10b6:101:1f::22) To BYAPR15MB2631.namprd15.prod.outlook.com
+ (2603:10b6:a03:150::19)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: from carbon.dhcp.thefacebook.com (2620:10d:c090:500::4:56a4) by CO1PR15CA0054.namprd15.prod.outlook.com (2603:10b6:101:1f::22) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2729.22 via Frontend Transport; Fri, 14 Feb 2020 22:33:06 +0000
+X-Originating-IP: [2620:10d:c090:500::4:56a4]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 0b0335d3-503d-4297-0554-08d7b19ddcea
+X-MS-TrafficTypeDiagnostic: BYAPR15MB3478:
+X-Microsoft-Antispam-PRVS: <BYAPR15MB347885D7ECEF1D5159BF03FEBE150@BYAPR15MB3478.namprd15.prod.outlook.com>
+X-FB-Source: Internal
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-Forefront-PRVS: 03137AC81E
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(366004)(136003)(396003)(376002)(189003)(199004)(1076003)(52116002)(7696005)(86362001)(16526019)(478600001)(5660300002)(6506007)(54906003)(6666004)(186003)(66476007)(81166006)(8676002)(2906002)(55016002)(9686003)(66556008)(6916009)(4326008)(81156014)(8936002)(33656002)(7416002)(66946007)(316002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB3478;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: iMje0lagG2hqWp9JgRNAuW8PFM+eKdiLn8Xrf+QNttk0irvfSqDqIhYKDwstZ9cqwPUo64p7/GNRhW0Bo/rcazjoRO12tsrIL2SO6vSOuyiEtEf+iSVk8oSEUzVAVfEAGohimuw6nuJ3zNv3LqI9MEpTBzYdyl8fvLF0SOt08lQOwYYYAe0VRkPekRwJ7O3idR6MMkyoVVWdpTJwAulII9KNiRELrpx7WxzxIZmVKonT2VGtbCssp/2MAtklwjHrSeQtg9bFmicDVZZ4IOO4KhIRS489GkKWZV6J9wvgk60himIdPckY/hyNrCEbpxsxLzexmqeJnxvAzW3yL1oczsXBL8/3ve4bYYIbIdjT6EuzYosUcc03a/z50jyFPI/uEj90gE/U2igo0ax+YhBxGYWsRGsF09NIU0umRtAUnVH+jcBdk8V9M6zfpUCrFliV
+X-MS-Exchange-AntiSpam-MessageData: 8hCXHACHN/8RaO0x7NaTo/PjtUrFRKAPvGtwqMSHnBY0JIDTWIPmosmerkMgNbT1kQAjAUVfwWcsI32GP/DI5ctZID1G3hMMtsOHD8Sn+KPaqEJImaukeEXyT7py1xlHAA5XHnqgu13XdJvdtuawy430jyrQdmYHV3z2nOHbWSPWVnRIjeGXbbHTAe30FgPR
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0b0335d3-503d-4297-0554-08d7b19ddcea
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2020 22:33:07.1470
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DC1uEX4/5ox90tesRLBtLjXOIuhfROh8jrdE+ewxwC5gTAZELyiFMYzZ2R1+bru0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB3478
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-14_08:2020-02-14,2020-02-14 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 impostorscore=0
+ mlxlogscore=999 suspectscore=1 mlxscore=0 bulkscore=0 lowpriorityscore=0
+ spamscore=0 priorityscore=1501 phishscore=0 adultscore=0 clxscore=1015
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002140167
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we added acpi_extlog we were worried that the same error
-would be reported more than once by different subsystems. But
-in the ensuing years I've seen complaints that people could not
-find an error log (because this mechanism suppressed the log
-they were looking for).
+On Fri, Feb 14, 2020 at 02:24:15PM -0800, Shakeel Butt wrote:
+> We are testing network memory accounting in our setup and noticed
+> inconsistent network memory usage and often unrelated cgroups network
+> usage correlates with testing workload. On further inspection, it
+> seems like mem_cgroup_sk_alloc() and cgroup_sk_alloc() are broken in
+> irq context specially for cgroup v1.
+> 
+> mem_cgroup_sk_alloc() and cgroup_sk_alloc() can be called in irq context
+> and kind of assumes that this can only happen from sk_clone_lock()
+> and the source sock object has already associated cgroup. However in
+> cgroup v1, where network memory accounting is opt-in, the source sock
+> can be unassociated with any cgroup and the new cloned sock can get
+> associated with unrelated interrupted cgroup.
+> 
+> Cgroup v2 can also suffer if the source sock object was created by
+> process in the root cgroup or if sk_alloc() is called in irq context.
+> The fix is to just do nothing in interrupt.
+> 
+> Fixes: 2d7580738345 ("mm: memcontrol: consolidate cgroup socket tracking")
+> Fixes: d979a39d7242 ("cgroup: duplicate cgroup reference when cloning sockets")
+> Signed-off-by: Shakeel Butt <shakeelb@google.com>
+> ---
+> 
+> Changes since v1:
+> - Fix cgroup_sk_alloc() too.
+> 
+>  kernel/cgroup/cgroup.c | 4 ++++
+>  mm/memcontrol.c        | 4 ++++
+>  2 files changed, 8 insertions(+)
+> 
+> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+> index 9a8a5ded3c48..46e5f5518fba 100644
+> --- a/kernel/cgroup/cgroup.c
+> +++ b/kernel/cgroup/cgroup.c
+> @@ -6449,6 +6449,10 @@ void cgroup_sk_alloc(struct sock_cgroup_data *skcd)
+>  		return;
+>  	}
+>  
+> +	/* Do not associate the sock with unrelated interrupted task's memcg. */
+                                                                       ^^^^^
+								       cgroup?
+> +	if (in_interrupt())
+> +		return;
+> +
+>  	rcu_read_lock();
+>  
+>  	while (true) {
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 63bb6a2aab81..f500da82bfe8 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -6697,6 +6697,10 @@ void mem_cgroup_sk_alloc(struct sock *sk)
+>  		return;
+>  	}
 
-Rip it all out.  People are smart enough to notice the same
-address from different reporting mechanisms.
+Can you, please, include the stacktrace into the commit log?
+Except a minor typo (see above),
+Reviewed-by: Roman Gushchin <guro@fb.com>
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
----
- drivers/acpi/acpi_extlog.c | 14 ---------
- drivers/edac/edac_mc.c     | 61 --------------------------------------
- drivers/edac/pnd2_edac.c   |  3 --
- drivers/edac/sb_edac.c     |  4 ---
- drivers/edac/skx_common.c  |  3 --
- include/linux/edac.h       |  8 -----
- 6 files changed, 93 deletions(-)
+A really good catch.
 
-diff --git a/drivers/acpi/acpi_extlog.c b/drivers/acpi/acpi_extlog.c
-index 9cc3c1f92db5..f138e12b7b82 100644
---- a/drivers/acpi/acpi_extlog.c
-+++ b/drivers/acpi/acpi_extlog.c
-@@ -42,8 +42,6 @@ struct extlog_l1_head {
- 	u8  rev1[12];
- };
- 
--static int old_edac_report_status;
--
- static u8 extlog_dsm_uuid[] __initdata = "663E35AF-CC10-41A4-88EA-5470AF055295";
- 
- /* L1 table related physical address */
-@@ -229,11 +227,6 @@ static int __init extlog_init(void)
- 	if (!(cap & MCG_ELOG_P) || !extlog_get_l1addr())
- 		return -ENODEV;
- 
--	if (edac_get_report_status() == EDAC_REPORTING_FORCE) {
--		pr_warn("Not loading eMCA, error reporting force-enabled through EDAC.\n");
--		return -EPERM;
--	}
--
- 	rc = -EINVAL;
- 	/* get L1 header to fetch necessary information */
- 	l1_hdr_size = sizeof(struct extlog_l1_head);
-@@ -281,12 +274,6 @@ static int __init extlog_init(void)
- 	if (elog_buf == NULL)
- 		goto err_release_elog;
- 
--	/*
--	 * eMCA event report method has higher priority than EDAC method,
--	 * unless EDAC event report method is mandatory.
--	 */
--	old_edac_report_status = edac_get_report_status();
--	edac_set_report_status(EDAC_REPORTING_DISABLED);
- 	mce_register_decode_chain(&extlog_mce_dec);
- 	/* enable OS to be involved to take over management from BIOS */
- 	((struct extlog_l1_head *)extlog_l1_addr)->flags |= FLAG_OS_OPTIN;
-@@ -308,7 +295,6 @@ static int __init extlog_init(void)
- 
- static void __exit extlog_exit(void)
- {
--	edac_set_report_status(old_edac_report_status);
- 	mce_unregister_decode_chain(&extlog_mce_dec);
- 	((struct extlog_l1_head *)extlog_l1_addr)->flags &= ~FLAG_OS_OPTIN;
- 	if (extlog_l1_addr)
-diff --git a/drivers/edac/edac_mc.c b/drivers/edac/edac_mc.c
-index 7243b88f81d8..288ba9e0c26d 100644
---- a/drivers/edac/edac_mc.c
-+++ b/drivers/edac/edac_mc.c
-@@ -43,8 +43,6 @@
- int edac_op_state = EDAC_OPSTATE_INVAL;
- EXPORT_SYMBOL_GPL(edac_op_state);
- 
--static int edac_report = EDAC_REPORTING_ENABLED;
--
- /* lock to memory controller's control array */
- static DEFINE_MUTEX(mem_ctls_mutex);
- static LIST_HEAD(mc_devices);
-@@ -55,65 +53,6 @@ static LIST_HEAD(mc_devices);
-  */
- static const char *edac_mc_owner;
- 
--int edac_get_report_status(void)
--{
--	return edac_report;
--}
--EXPORT_SYMBOL_GPL(edac_get_report_status);
--
--void edac_set_report_status(int new)
--{
--	if (new == EDAC_REPORTING_ENABLED ||
--	    new == EDAC_REPORTING_DISABLED ||
--	    new == EDAC_REPORTING_FORCE)
--		edac_report = new;
--}
--EXPORT_SYMBOL_GPL(edac_set_report_status);
--
--static int edac_report_set(const char *str, const struct kernel_param *kp)
--{
--	if (!str)
--		return -EINVAL;
--
--	if (!strncmp(str, "on", 2))
--		edac_report = EDAC_REPORTING_ENABLED;
--	else if (!strncmp(str, "off", 3))
--		edac_report = EDAC_REPORTING_DISABLED;
--	else if (!strncmp(str, "force", 5))
--		edac_report = EDAC_REPORTING_FORCE;
--
--	return 0;
--}
--
--static int edac_report_get(char *buffer, const struct kernel_param *kp)
--{
--	int ret = 0;
--
--	switch (edac_report) {
--	case EDAC_REPORTING_ENABLED:
--		ret = sprintf(buffer, "on");
--		break;
--	case EDAC_REPORTING_DISABLED:
--		ret = sprintf(buffer, "off");
--		break;
--	case EDAC_REPORTING_FORCE:
--		ret = sprintf(buffer, "force");
--		break;
--	default:
--		ret = -EINVAL;
--		break;
--	}
--
--	return ret;
--}
--
--static const struct kernel_param_ops edac_report_ops = {
--	.set = edac_report_set,
--	.get = edac_report_get,
--};
--
--module_param_cb(edac_report, &edac_report_ops, &edac_report, 0644);
--
- unsigned int edac_dimm_info_location(struct dimm_info *dimm, char *buf,
- 				     unsigned int len)
- {
-diff --git a/drivers/edac/pnd2_edac.c b/drivers/edac/pnd2_edac.c
-index 77ad315c7e8d..bfb6c88ebb28 100644
---- a/drivers/edac/pnd2_edac.c
-+++ b/drivers/edac/pnd2_edac.c
-@@ -1396,9 +1396,6 @@ static int pnd2_mce_check_error(struct notifier_block *nb, unsigned long val, vo
- 	struct dram_addr daddr;
- 	char *type;
- 
--	if (edac_get_report_status() == EDAC_REPORTING_DISABLED)
--		return NOTIFY_DONE;
--
- 	mci = pnd2_mci;
- 	if (!mci || (mce->kflags & MCE_HANDLED_CEC))
- 		return NOTIFY_DONE;
-diff --git a/drivers/edac/sb_edac.c b/drivers/edac/sb_edac.c
-index 6e17f601ea63..898f567d5d89 100644
---- a/drivers/edac/sb_edac.c
-+++ b/drivers/edac/sb_edac.c
-@@ -3134,8 +3134,6 @@ static int sbridge_mce_check_error(struct notifier_block *nb, unsigned long val,
- 	struct mem_ctl_info *mci;
- 	char *type;
- 
--	if (edac_get_report_status() == EDAC_REPORTING_DISABLED)
--		return NOTIFY_DONE;
- 	if (mce->kflags & MCE_HANDLED_CEC)
- 		return NOTIFY_DONE;
- 
-@@ -3526,8 +3524,6 @@ static int __init sbridge_init(void)
- 
- 	if (rc >= 0) {
- 		mce_register_decode_chain(&sbridge_mce_dec);
--		if (edac_get_report_status() == EDAC_REPORTING_DISABLED)
--			sbridge_printk(KERN_WARNING, "Loading driver, error reporting disabled.\n");
- 		return 0;
- 	}
- 
-diff --git a/drivers/edac/skx_common.c b/drivers/edac/skx_common.c
-index 6f08a12f6b11..423d33aef54f 100644
---- a/drivers/edac/skx_common.c
-+++ b/drivers/edac/skx_common.c
-@@ -574,9 +574,6 @@ int skx_mce_check_error(struct notifier_block *nb, unsigned long val,
- 	struct mem_ctl_info *mci;
- 	char *type;
- 
--	if (edac_get_report_status() == EDAC_REPORTING_DISABLED)
--		return NOTIFY_DONE;
--
- 	if (mce->kflags & MCE_HANDLED_CEC)
- 		return NOTIFY_DONE;
- 
-diff --git a/include/linux/edac.h b/include/linux/edac.h
-index cc31b9742684..bd770e31ced6 100644
---- a/include/linux/edac.h
-+++ b/include/linux/edac.h
-@@ -31,14 +31,6 @@ struct device;
- extern int edac_op_state;
- 
- struct bus_type *edac_get_sysfs_subsys(void);
--int edac_get_report_status(void);
--void edac_set_report_status(int new);
--
--enum {
--	EDAC_REPORTING_ENABLED,
--	EDAC_REPORTING_DISABLED,
--	EDAC_REPORTING_FORCE
--};
- 
- static inline void opstate_init(void)
- {
--- 
-2.21.1
-
+Thank you!
