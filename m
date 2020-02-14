@@ -2,117 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9920A15D3B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 09:22:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD31A15D3C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 09:26:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387406AbgBNIWz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 03:22:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34052 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726173AbgBNIWz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 03:22:55 -0500
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20B2920873;
-        Fri, 14 Feb 2020 08:22:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581668574;
-        bh=CAUDYOHAxpzgSk4dH9LzDgYMj7W1GehoHR0osfY9APc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Uk6/mwLUR5W3/ud1sldmbeb45MCd1Fl1CKUbldrD04IuPHH/ZLbl0ppw0R9yZv9i3
-         MYqeaD/5+8egtscadO1SPGl/hZpVw1cY2a51NMNUShHbEwXuB+xJCTyuTSZT50As+W
-         UIn6gudlpV7virbsQwzApZbRkQ4X2GpOfTmh0J8s=
-Received: by mail-lf1-f47.google.com with SMTP id 9so6167767lfq.10;
-        Fri, 14 Feb 2020 00:22:54 -0800 (PST)
-X-Gm-Message-State: APjAAAVnV8Yl5Acq7FO76omW5xjrxrgJQbYQ0y0cvXstucjEZE4toDv5
-        StjkevlJyZDv2Kpil0DbWF+HU/h8cjioxfdYEjk=
-X-Google-Smtp-Source: APXvYqygz595VZtIB1bmK9QpUmp9Hrm9Q60QrKMX39CEshybGg+QqX1q6wv8aokUdidPVihrSFK5z3hncXqLvwv2OHU=
-X-Received: by 2002:a19:becc:: with SMTP id o195mr1090646lff.17.1581668572226;
- Fri, 14 Feb 2020 00:22:52 -0800 (PST)
-MIME-Version: 1.0
-References: <CGME20200213180724eucas1p1bb96993e9d0300cddf348d5d442f43aa@eucas1p1.samsung.com>
- <20200213172130.GA13395@embeddedor> <546155af-e766-1d13-013d-b8b073e262b5@samsung.com>
-In-Reply-To: <546155af-e766-1d13-013d-b8b073e262b5@samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Fri, 14 Feb 2020 09:22:40 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPeCF7be5xNO3uMmrJ1VC4MK61RxxhuAve6zi56rR1TZ=A@mail.gmail.com>
-Message-ID: <CAJKOXPeCF7be5xNO3uMmrJ1VC4MK61RxxhuAve6zi56rR1TZ=A@mail.gmail.com>
-Subject: Re: [PATCH] crypto: s5p-sss - Replace zero-length array with
- flexible-array member
-To:     Kamil Konieczny <k.konieczny@samsung.com>
-Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1729024AbgBNIZu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 03:25:50 -0500
+Received: from alexa-out-blr-01.qualcomm.com ([103.229.18.197]:45291 "EHLO
+        alexa-out-blr-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728859AbgBNIZp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 03:25:45 -0500
+Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
+  by alexa-out-blr-01.qualcomm.com with ESMTP/TLS/AES256-SHA; 14 Feb 2020 13:55:34 +0530
+Received: from c-sanm-linux.qualcomm.com ([10.206.25.31])
+  by ironmsg01-blr.qualcomm.com with ESMTP; 14 Feb 2020 13:55:05 +0530
+Received: by c-sanm-linux.qualcomm.com (Postfix, from userid 2343233)
+        id 6474F25BF; Fri, 14 Feb 2020 13:55:04 +0530 (IST)
+From:   Sandeep Maheswaram <sanm@codeaurora.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Manu Gautam <mgautam@codeaurora.org>,
+        Chandana Kishori Chiluveru <cchiluve@codeaurora.org>,
+        Sandeep Maheswaram <sanm@codeaurora.org>
+Subject: [PATCH v5 0/3] ADD interconnect support for Qualcomm DWC3 driver
+Date:   Fri, 14 Feb 2020 13:54:41 +0530
+Message-Id: <1581668684-4182-1-git-send-email-sanm@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 14 Feb 2020 at 08:09, Kamil Konieczny <k.konieczny@samsung.com> wrote:
->
-> On 13.02.2020 18:21, Gustavo A. R. Silva wrote:
-> > The current codebase makes use of the zero-length array language
-> > extension to the C90 standard, but the preferred mechanism to declare
-> > variable-length types such as these ones is a flexible array member[1][2],
-> > introduced in C99:
-> >
-> > struct foo {
-> >         int stuff;
-> >         struct boo array[];
-> > };
-> >
-> > By making use of the mechanism above, we will get a compiler warning
-> > in case the flexible array does not occur last in the structure, which
-> > will help us prevent some kind of undefined behavior bugs from being
-> > inadvertently introduced[3] to the codebase from now on.
-> >
-> > Also, notice that, dynamic memory allocations won't be affected by
-> > this change:
-> >
-> > "Flexible array members have incomplete type, and so the sizeof operator
-> > may not be applied. As a quirk of the original implementation of
-> > zero-length arrays, sizeof evaluates to zero."[1]
-> >
-> > This issue was found with the help of Coccinelle.
-> >
-> > [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-> > [2] https://protect2.fireeye.com/url?k=7fbec6f4-22720d30-7fbf4dbb-0cc47a314e9a-2a4d03985644c7ed&u=https://github.com/KSPP/linux/issues/21
-> > [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-> >
-> > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> > ---
-> >  drivers/crypto/s5p-sss.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-> > index d66e20a2f54c..2a16800d2579 100644
-> > --- a/drivers/crypto/s5p-sss.c
-> > +++ b/drivers/crypto/s5p-sss.c
-> > @@ -369,7 +369,7 @@ struct s5p_hash_reqctx {
-> >       bool                    error;
-> >
-> >       u32                     bufcnt;
-> > -     u8                      buffer[0];
-> > +     u8                      buffer[];
-> >  };
-> >
-> >  /**
-> >
->
-> Looks good to me.
->
-> Acked-by: Kamil Konieczny <k.konieczny@samsung.com>
+This path series aims to add interconnect support in
+dwc3-qcom driver on SDM845 SoCs.
 
-Why not making it simple/obvious u8 *buffer? Or fixed length (BUFLEN length)?
+Changes from v4 -> v5
+  > [PATCH 1/3] Added the interconnect properties in yaml. This patch depends
+    on series https://patchwork.kernel.org/cover/11372641/.
+  > [PATCH 2/3] Fixed review comments from Matthias in DWC3 driver.
+  > [PATCH 3/3] Modified as per the new interconnect nodes in sdm845. Depends
+    on series https://patchwork.kernel.org/cover/11372211/. 
 
-Best regards,
-Krzysztof
+
+Changes from v3 -> v4
+  > Fixed review comments from Matthias
+  > [PATCH 1/3] and [PATCH 3/3] remains unchanged
+
+Changes from v2 -> v3
+  > Fixed review comments from Matthias and Manu
+  > changed the functions prefix from usb_* to dwc3_qcom_*
+
+Changes since V1:
+  > Comments by Georgi Djakov on "[PATCH 2/3]" addressed
+  > [PATCH 1/3] and [PATCH 3/3] remains unchanged
+
+Sandeep Maheswaram (3):
+  dt-bindings: usb: qcom,dwc3: Introduce interconnect properties for
+    Qualcomm DWC3 driver
+  usb: dwc3: qcom: Add interconnect support in dwc3 driver
+  arm64: dts: sdm845: Add interconnect properties for USB
+
+ .../devicetree/bindings/usb/qcom,dwc3.yaml         |  16 +++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi               |  12 ++
+ drivers/usb/dwc3/dwc3-qcom.c                       | 135 ++++++++++++++++++++-
+ 3 files changed, 161 insertions(+), 2 deletions(-)
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
+
