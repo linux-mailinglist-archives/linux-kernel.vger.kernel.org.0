@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9995115DE9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:05:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D6AF15DEA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:05:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389863AbgBNQEI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:04:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51714 "EHLO mail.kernel.org"
+        id S2389899AbgBNQET (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:04:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389820AbgBNQEA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:04:00 -0500
+        id S2389841AbgBNQEF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:04:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 604BE2467E;
-        Fri, 14 Feb 2020 16:03:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C614F24676;
+        Fri, 14 Feb 2020 16:04:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696239;
-        bh=UqdYGeT1iRgYAILlaBy3iyBXTZws2wXAzGt+0B3DafM=;
+        s=default; t=1581696244;
+        bh=amYH3ceF7CJnpOkXmLfBOhz0UF9g7Vo4PvHExPucgLQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=msYQvqSAy9Dgc5udRrI4Fbews6NMnhHE1SSDtUSDXVwMSeRCBoqkp8taO0uBnQy2e
-         7UX1SrwOXkOKzjE4mhHRpNLw6MZ4Y3h5E/3aq0T/Mh5aBSrFP8Cg4tOhG/A1gBVJlf
-         KO5VrcL1ediftIvnUj+RosP3FvITWxq8hxZHjHZc=
+        b=fo60p2OdVQkdaJU5HcwGRGyvBtNuwhaM8Vl6I4STAUIzxGjCtTx5j4Ts2s/RFwWB4
+         9JT/LscJyblTh36Di89a6egCzIa+vGqgrt1k8rZGbYF7okXuRyLCbURmjCxkXYfka6
+         0J+YJz9DkTJq0yS9wYjCkTCN7N/PFVykMAgaRLw8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 098/459] watchdog: qcom: Use platform_get_irq_optional() for bark irq
-Date:   Fri, 14 Feb 2020 10:55:48 -0500
-Message-Id: <20200214160149.11681-98-sashal@kernel.org>
+Cc:     Artemy Kovalyov <artemyko@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Gal Pressman <galpress@amazon.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 102/459] RDMA/umem: Fix ib_umem_find_best_pgsz()
+Date:   Fri, 14 Feb 2020 10:55:52 -0500
+Message-Id: <20200214160149.11681-102-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -47,45 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+From: Artemy Kovalyov <artemyko@mellanox.com>
 
-[ Upstream commit e0b4f4e0cf7fa9d62628d4249c765ec18dffd143 ]
+[ Upstream commit 36798d5ae1af62e830c5e045b2e41ce038690c61 ]
 
-platform_get_irq() prints an error message when the interrupt
-is not available. So on platforms where bark interrupt is
-not specified, following error message is observed on SDM845.
+Except for the last entry, the ending iova alignment sets the maximum
+possible page size as the low bits of the iova must be zero when starting
+the next chunk.
 
-[    2.975888] qcom_wdt 17980000.watchdog: IRQ index 0 not found
-
-This is also seen on SC7180, SM8150 SoCs as well.
-Fix this by using platform_get_irq_optional() instead.
-
-Fixes: 36375491a4395654 ("watchdog: qcom: support pre-timeout when the bark irq is available")
-Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-Link: https://lore.kernel.org/r/20191213064934.4112-1-saiprakash.ranjan@codeaurora.org
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Fixes: 4a35339958f1 ("RDMA/umem: Add API to find best driver supported page size in an MR")
+Link: https://lore.kernel.org/r/20200128135612.174820-1-leon@kernel.org
+Signed-off-by: Artemy Kovalyov <artemyko@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Tested-by: Gal Pressman <galpress@amazon.com>
+Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/watchdog/qcom-wdt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/core/umem.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/watchdog/qcom-wdt.c b/drivers/watchdog/qcom-wdt.c
-index a494543d3ae1b..eb47fe5ed2805 100644
---- a/drivers/watchdog/qcom-wdt.c
-+++ b/drivers/watchdog/qcom-wdt.c
-@@ -246,7 +246,7 @@ static int qcom_wdt_probe(struct platform_device *pdev)
+diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
+index 24244a2f68cc5..0d42ba8c0b696 100644
+--- a/drivers/infiniband/core/umem.c
++++ b/drivers/infiniband/core/umem.c
+@@ -166,10 +166,13 @@ unsigned long ib_umem_find_best_pgsz(struct ib_umem *umem,
+ 		 * for any address.
+ 		 */
+ 		mask |= (sg_dma_address(sg) + pgoff) ^ va;
+-		if (i && i != (umem->nmap - 1))
+-			/* restrict by length as well for interior SGEs */
+-			mask |= sg_dma_len(sg);
+ 		va += sg_dma_len(sg) - pgoff;
++		/* Except for the last entry, the ending iova alignment sets
++		 * the maximum possible page size as the low bits of the iova
++		 * must be zero when starting the next chunk.
++		 */
++		if (i != (umem->nmap - 1))
++			mask |= va;
+ 		pgoff = 0;
  	}
- 
- 	/* check if there is pretimeout support */
--	irq = platform_get_irq(pdev, 0);
-+	irq = platform_get_irq_optional(pdev, 0);
- 	if (irq > 0) {
- 		ret = devm_request_irq(dev, irq, qcom_wdt_isr,
- 				       IRQF_TRIGGER_RISING,
+ 	best_pg_bit = rdma_find_pg_bit(mask, pgsz_bitmap);
 -- 
 2.20.1
 
