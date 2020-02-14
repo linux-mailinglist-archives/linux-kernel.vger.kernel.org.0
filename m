@@ -2,190 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A8B715CFA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 03:02:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C99C415CFAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 03:06:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728280AbgBNCCm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 21:02:42 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:35624 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728052AbgBNCCl (ORCPT
+        id S1728296AbgBNCGf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 21:06:35 -0500
+Received: from smtprelay0174.hostedemail.com ([216.40.44.174]:60624 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727955AbgBNCGe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 21:02:41 -0500
-Received: by mail-io1-f68.google.com with SMTP id h8so8860177iob.2;
-        Thu, 13 Feb 2020 18:02:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yWoUBz+C7vm0A7bAhVVGXf9KuwG1nz4uADeDv9msL44=;
-        b=sIP6gtVCerCIVpXLAoh50FbLG8VrPOSk/ScVTqjURLSSRW3frQUPSxY4R2mh+84mZl
-         ig1XEQT6dIy3NXDMHrF0YZ4fimDlVaHEvCFjyOE0/DIHrMb99k8S6e+RoJyTBIso5Ql8
-         dDeyickdIRmtWR7boXdp+0eqi1LXl0EMKvCJ7K04AtJPgP08lPS22w1VJFQAf8MJHaq4
-         7ucv73YRCGmkEQg3CcjLQp/aA6FdRZXKCdgYyBnQL6zbvXyg2Fg6qZJBPOFzcz/ncLDI
-         vXkd2Uj23tpEW7DsXmEBtnbGQ6m1mJGnKKAODnt45fRssk3gp9KGs1o9w0FtXUQ21PF0
-         x+Gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yWoUBz+C7vm0A7bAhVVGXf9KuwG1nz4uADeDv9msL44=;
-        b=J2Wnz/Ji1XZT/4CvKkDd190YRfwq0abUmcEN9v5mZBe1bJR+0Uz6SUcyrfbd2Ndym1
-         iGUhs/AhrWTpgsrwq8qDOmIVc1vE3cvC0fQ11+LB9XfB/iKIoieyZKMyij5Qy8tis6MB
-         VdFZ6WseWqICD4f5RMsJbyk4Qqc+d1zCm34Z4ot2PgRiuxR5O/xMaEQIBVGa/hq4Bi70
-         NJFVtqhWY8qXUoktW9yRsTQ55Mxk2GwoXUysgprQM/N3COKGjSi4hxtBsx9yULaaOXV8
-         2J3jqTP8diS3wTQ0RZ++dp4rzd31neyzIUlKgoHOa6OwfnO66etrHf7hWXfLAUS0vUsP
-         FhwQ==
-X-Gm-Message-State: APjAAAXqyvLEgYQ0//0vzOHpS2MWDmhYQ9EKyXEvQB5UMjXdz6lWUMxD
-        MfodvkjX1zusvfNgPeLcV5TXmWOZ+mj66gfs5JKRcA==
-X-Google-Smtp-Source: APXvYqyXqlharYXwxORkT7JzKk16r7h+7iSeiE0668V+RrlfSMv6jmg5byz682eRCj8akm4FqF3Kg8rxuMx0y/zcLgU=
-X-Received: by 2002:a6b:f214:: with SMTP id q20mr447063ioh.137.1581645760858;
- Thu, 13 Feb 2020 18:02:40 -0800 (PST)
+        Thu, 13 Feb 2020 21:06:34 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id CD9F01802297C;
+        Fri, 14 Feb 2020 02:06:33 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::,RULES_HIT:41:355:379:599:960:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1461:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:3874:4321:4605:5007:6119:7904:9040:10004:10400:10848:11026:11232:11658:11914:12043:12296:12297:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21080:21451:21611:21627:21740:21939:21990:30025:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: trees78_905cfe3f6200e
+X-Filterd-Recvd-Size: 3084
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf20.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 14 Feb 2020 02:06:31 +0000 (UTC)
+Message-ID: <cb37f342635b045639d877034c9f6d175b5d80cd.camel@perches.com>
+Subject: Re: [PATCH] sched/fair: Replace zero-length array with
+ flexible-array member
+From:   Joe Perches <joe@perches.com>
+To:     Valentin Schneider <valentin.schneider@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 13 Feb 2020 18:05:13 -0800
+In-Reply-To: <1d420ee4-7078-26d9-83ad-eb5f12106116@arm.com>
+References: <20200213151951.GA32363@embeddedor>
+         <20200213164518.GI14914@hirez.programming.kicks-ass.net>
+         <9d516501-2624-f915-32be-13ba6f881019@embeddedor.com>
+         <20200213170639.GK14914@hirez.programming.kicks-ass.net>
+         <c7df22d3f248c784e8960841c79fe2836d7ea8ab.camel@perches.com>
+         <1d420ee4-7078-26d9-83ad-eb5f12106116@arm.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-References: <20200211175507.178100-1-hannes@cmpxchg.org> <CALOAHbC3Bx3E7fwt35zuiHfuC8YyhVWA1tDh2KP+gQJoMtED3w@mail.gmail.com>
- <20200212164235.GB180867@cmpxchg.org> <CALOAHbCiBqdZzZVC7_c3Um_vDUu9ECsDYUebOL4+=MP9owA_Og@mail.gmail.com>
- <20200213134627.GB208501@cmpxchg.org>
-In-Reply-To: <20200213134627.GB208501@cmpxchg.org>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Fri, 14 Feb 2020 10:02:04 +0800
-Message-ID: <CALOAHbD3FQWMN1q-O0Va+hk3Uo2gHnB1-OF870rCpiKPEk8otQ@mail.gmail.com>
-Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker LRU
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Kernel Team <kernel-team@fb.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 9:46 PM Johannes Weiner <hannes@cmpxchg.org> wrote:
->
-> On Thu, Feb 13, 2020 at 09:47:29AM +0800, Yafang Shao wrote:
-> > On Thu, Feb 13, 2020 at 12:42 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
-> > >
-> > > On Wed, Feb 12, 2020 at 08:25:45PM +0800, Yafang Shao wrote:
-> > > > On Wed, Feb 12, 2020 at 1:55 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
-> > > > > Another variant of this problem was recently observed, where the
-> > > > > kernel violates cgroups' memory.low protection settings and reclaims
-> > > > > page cache way beyond the configured thresholds. It was followed by a
-> > > > > proposal of a modified form of the reverted commit above, that
-> > > > > implements memory.low-sensitive shrinker skipping over populated
-> > > > > inodes on the LRU [1]. However, this proposal continues to run the
-> > > > > risk of attracting disproportionate reclaim pressure to a pool of
-> > > > > still-used inodes,
-> > > >
-> > > > Hi Johannes,
-> > > >
-> > > > If you really think that is a risk, what about bellow additional patch
-> > > > to fix this risk ?
-> > > >
-> > > > diff --git a/fs/inode.c b/fs/inode.c
-> > > > index 80dddbc..61862d9 100644
-> > > > --- a/fs/inode.c
-> > > > +++ b/fs/inode.c
-> > > > @@ -760,7 +760,7 @@ static bool memcg_can_reclaim_inode(struct inode *inode,
-> > > >                 goto out;
-> > > >
-> > > >         cgroup_size = mem_cgroup_size(memcg);
-> > > > -       if (inode->i_data.nrpages + protection >= cgroup_size)
-> > > > +       if (inode->i_data.nrpages)
-> > > >                 reclaimable = false;
-> > > >
-> > > >  out:
-> > > >
-> > > > With this additional patch, we skip all inodes in this memcg until all
-> > > > its page cache pages are reclaimed.
-> > >
-> > > Well that's something we've tried and had to revert because it caused
-> > > issues in slab reclaim. See the History part of my changelog.
-> >
-> > You misuderstood it.
-> > The reverted patch skips all inodes in the system, while this patch
-> > only works when you turn on memcg.{min, low} protection.
-> > IOW, that is not a default behavior, while it only works when you want
-> > it and only effect your targeted memcg rather than the whole system.
->
-> I understand perfectly well.
->
-> Keeping unreclaimable inodes on the shrinker LRU causes the shrinker
-> to build up excessive pressure on all VFS objects. This is a
-> bug. Making it cgroup-specific doesn't make it less of a bug, it just
-> means you only hit the bug when you use cgroup memory protection.
->
+On Fri, 2020-02-14 at 00:25 +0000, Valentin Schneider wrote:
+> On 13/02/2020 22:02, Joe Perches wrote:
+> > That might be a somewhat difficult thing to add to checkpatch
+> > as it is effectively a per-line scanner:
+> > 
+> > Try something like:
+> > 
+> > $ git grep -P -A1 '^\s*(?!return)(\w+\s+){1,3}\w+\[0\];' -- '*.[ch]'
+> > 
+> > and look at the results.
+> > 
+> > In checkpatch that could be something like:
+> > 
+> > 	if ($line =~ /^.\s*$Type\s+$Ident\s*\[\s*0\s*\]\s*;/) {
+> > 		warn...
+> > 	}
+> > 
+> 
+> So FWIW I felt like doing some coccinelle and ended up with this:
+> 
+> This patches up valid ZLAs:
+>   $ spatch -D patch zero_length_array.cocci kernel/sched/fair.c
+> 
+> This prints out the location of invalid ZLAs:
+>   $ spatch -D report zero_length_array.cocci kernel/sched/fair.c
+> 
+> ---
+> virtual patch
+> virtual report
+> 
+> @valid_zla depends on patch@
+> identifier struct_name;
+> type T;
+> identifier zla;
+> position pos;
+> @@
+> struct struct_name {
+>        ...
+>        T zla@pos
+> - [0];
+> + [];
+> };
+> 
+> @invalid_zla depends on report@
+> identifier struct_name;
+> type T1;
+> identifier zla;
+> type T2;
+> identifier tail;
+> position pos;
+> @@
+> struct struct_name {
+>        ...
+>        T1 zla[0]@pos;
+>        T2 tail;
+>        ...
+> };
+> 
+> @script:python depends on invalid_zla@
+> pos << invalid_zla.pos;
+> @@
+> coccilib.report.print_report(pos[0], "Invalid ZLA!");
+> ---
 
-What I mean to fix is really a cgroup-specific issue, but this issue
-may be different with what you're meaning to fix.
-(I will explain it bellow)
-Considering the excessive pressure the protected inodes may give to
-the shrinker, the protected page cache pages will give much more
-pressure on the reclaimer. If you mean to remove the protecrted inodes
-from the shrinker LRU, why not removing the protected page cache pages
-from the page cache LRU as well ? Well, what I really to mean is, that
-is how the memcg proctection works.
+Nice.
+It would miss a few forms like:
 
-> > > > > while not addressing the more generic reclaim
-> > > > > inversion problem outside of a very specific cgroup application.
-> > > > >
-> > > >
-> > > > But I have a different understanding.  This method works like a
-> > > > knob. If you really care about your workingset (data), you should
-> > > > turn it on (i.e. by using memcg protection to protect them), while
-> > > > if you don't care about your workingset (data) then you'd better
-> > > > turn it off. That would be more flexible.  Regaring your case in the
-> > > > commit log, why not protect your linux git tree with memcg
-> > > > protection ?
-> > >
-> > > I can't imagine a scenario where I *wouldn't* care about my
-> > > workingset, though. Why should it be opt-in, not the default?
-> >
-> > Because the default behavior has caused the XFS performace hit.
->
-> That means that with your proposal you cannot use cgroup memory
-> protection for workloads that run on xfs.
->
+	typedef struct tagfoo {
+		...
+		type t[0];
+	} foo;
 
-Well, if you set memory.min to protect your workload inside a specific
-memcg, it means that you already know these memroy can't be used by
-your workload outside the memcg. That means, the performace of the
-workload outside the memcg may not as good as before. Then you should
-adjust your SLA or migrating this protected memcgs to other host or
-just killing this protected memcg.
-IOW, the result is *expected*.
+and
 
-> (And if I remember the bug report correctly, this wasn't just xfs. It
-> also caused metadata caches on other filesystems to get trashed. xfs
-> was just more pronounced because it does sync inode flushing from the
-> shrinker, adding write stalls to the mix of metadata cache misses.)
->
-> What I'm proposing is an implementation that protects hot page cache
-> without causing excessive shrinker pressure and rotations.
+	struct {
+		...
+		type t[0];
+	} foo;
 
-That's the different between your issue and my issue.
-You're trying to fix the issue around the hot  page cache, but what I
-want to fix may be cold page cache and it really is a memcg protection
-specific issue.
-Becuase the memcg protection can protect all page cache pages, even if
-the page cache pages are cold and the inodes are cold (in the tail of
-the list lru) as well.  That is one of the reasons why memcg protect
-exist. (I know you are the author of memcg protection, but I have to
-clarify what memcg protect is.)
+and
 
-Regarding your issue around the hot page cache  pages, I have another
-question. If the page cache pages are hot, why are the inode of these
-page cahe pages cold (in the tail of the list lru) ?  Per my
-understanding, if the page cache pages are hot, the inodes of them
-should be hot (not in the tail of the list lur) as well. That should
-be how the LRU works.
+	struct foo {
+		...
+		type t[0];
+	} *foo;
 
-Well, that doesn't mean I object to your patch.  What I really want to
-clarify is that our issues are really different.
+etc...
 
-Thanks
-Yafang
+
