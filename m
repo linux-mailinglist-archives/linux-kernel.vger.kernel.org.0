@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDAE315D80E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 14:14:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CEC115D818
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 14:14:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729156AbgBNNN4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 08:13:56 -0500
-Received: from mail-wm1-f50.google.com ([209.85.128.50]:38410 "EHLO
-        mail-wm1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbgBNNNz (ORCPT
+        id S1729309AbgBNNOC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 08:14:02 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:47012 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729235AbgBNNN6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 08:13:55 -0500
-Received: by mail-wm1-f50.google.com with SMTP id a9so10565197wmj.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 05:13:54 -0800 (PST)
+        Fri, 14 Feb 2020 08:13:58 -0500
+Received: by mail-wr1-f66.google.com with SMTP id z7so10841531wrl.13
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 05:13:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PW8/MFA25Yi0C3bZ2cfWgw/DrG/iUCeikTSgqslBDz4=;
-        b=Ojr2smqtOcE2tiGWdkJkVrM8jprAy8ZrA45J7yJTTR0JYIlhUNuAjNTTgU7r9js9z5
-         9nQvxeKuXjOuu0/zlcK0axQHQFev8E4ELS6Mayaiqq2FvjFCQduKkHEWJoyAj4eeMlYX
-         JPKjYtYrG4/eyGS7cpUFK+aimGFrpvfKRUV3Wxl24NllRAS+KlME/o2RQt18uJrA3UUf
-         ODUL/Mx8HvZBi5N5fRmIYr2yom0Qkigl/NKe/X6M2NGNaTvANIls34mf7yVlcOXPnv56
-         BWn5HapyDaM8VZO9E2CP1k87jYzSIOsCUBeU7+QJqTWVb/Xk9FPODgYq9X9ECGqwT9SJ
-         AhTg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Sx2gKjAQJal87pQJbLzDoMa1/1VjjJ5Q248YqNAOaeA=;
+        b=N422ErcPs9NI0qQ9oVh8hQQl5TMjeSe4c4P3iVWsbGe1Ufj2jDDOuRWEMhjjZ5QFpe
+         AW8ZMdjeYX9cnNx+/7/qRXb5L45+g8ASci1nw7zmvrlk3df/JnQngoeanBhgKfDzlbdt
+         JgdO9SIL0WD1fwHAZ1n5HSGa2Yj0h9ZHHRufJAYNcS9RdvaXcBfMaN7tt3VqKGaxIb22
+         mVlPU0P6tatHNqV8k7eV4JGfwBXs+89328BCQ6tknbNxUDMu/+Erxbxp3y2A3HM7rFwo
+         +Cc+jXo5o42RwZP4LJwOp1MTVua74Jb1c+KQwCJuTngywi6ZWtXTDP0MhI5wqnUHvAcZ
+         mKBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PW8/MFA25Yi0C3bZ2cfWgw/DrG/iUCeikTSgqslBDz4=;
-        b=SQ8D/7de3sblMQT+lNq1Rk4Q8eGm+5ncqxkm/3tpxT1L8pRB0fHoUqRrXinIWZWUrN
-         cltrqSMItPzGm4Ig7ldM/44O11+fOZE5/4EloGTfjmmWUy2KtyVDmG2Ip0G3VHp7lqrF
-         Rzrznfmw/7X491evgLEtuue4WxdKWTqjjTHYzPYNXDu7DCKruzrIWe9J27iWMjDEYe+j
-         EsRwTXwVX+gHXe7FVLi2vS8Ox9oh9CmP7pp7kWCUsreEGKOEU+1d48azdDSRZP6vU5k+
-         D3+i6+wENTeXMfZ3lRkcpnqcrwbJDzbItCXVt3fWKE1qLWhnzQb34HPenbfxzry0hZJ6
-         QroQ==
-X-Gm-Message-State: APjAAAWRA2DDF5+0GVOInhbryzq5JrTi8zOE19oVZL7NmHU2qoALarRa
-        OFNEaY+FBNR9XpneaZQh+a4BXQ==
-X-Google-Smtp-Source: APXvYqwx+bxS3TpNkZTl/KLprFFaUaOiA9hlk/SssmWwqsVF/2MHHrh1D96KkZ02p9gnpylN0HxuRQ==
-X-Received: by 2002:a05:600c:21da:: with SMTP id x26mr4684621wmj.4.1581686033984;
-        Fri, 14 Feb 2020 05:13:53 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Sx2gKjAQJal87pQJbLzDoMa1/1VjjJ5Q248YqNAOaeA=;
+        b=CE4usVA0y/dvmqQe1eBIv3yUYL/sO4zqHAzk1Lbwge148BI+tHxNeEb0Zq/Lwhq0/U
+         5MKPU2OqJLNWtHmoLjrEQQIC4Ll+HrHif467nmBxQ7RecQzNCJFi6OFrdJy4Ksmyrq9o
+         JB0KM20e6i6p/Vjiww8K2LneOEfOUeRiEd4yRoEzLETMFr31uoG9WA1E8ozmUPY0p702
+         wBt3LNKJNXmm6dZN/6vjg/pwCL/cfI098KEwAMAUJKDlOxAwwdlpKBPH6j7QMf1B8fiQ
+         qjmSZPAfbOK3mtILAyHuiHdLbi0jAbPdpqvgLDdUaV2Pqi4zOaknhm6pz+pai1EFKxbD
+         Pbtw==
+X-Gm-Message-State: APjAAAWCXSmvvgIekCaA1rXO3gbf6M7YtGgnAxxkT2vbIn+JoLTMXpgk
+        PD+qu+fExoWd65nRw6lYpEwZOw==
+X-Google-Smtp-Source: APXvYqwPovlBw5L+IhhgUPCRfLNltnNqjwAk6wy8BfWcbw70VU71jYxmICvuD2qHagjj9wv+rO5uBA==
+X-Received: by 2002:a05:6000:124b:: with SMTP id j11mr3718396wrx.285.1581686035381;
+        Fri, 14 Feb 2020 05:13:55 -0800 (PST)
 Received: from starbuck.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id w7sm6760792wmi.9.2020.02.14.05.13.53
+        by smtp.googlemail.com with ESMTPSA id w7sm6760792wmi.9.2020.02.14.05.13.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2020 05:13:53 -0800 (PST)
+        Fri, 14 Feb 2020 05:13:54 -0800 (PST)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Mark Brown <broonie@kernel.org>,
         Liam Girdwood <lgirdwood@gmail.com>
@@ -52,10 +52,12 @@ Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-amlogic@lists.infradead.org,
         Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH 0/5] ASoC: meson: aiu: fixups
-Date:   Fri, 14 Feb 2020 14:13:45 +0100
-Message-Id: <20200214131350.337968-1-jbrunet@baylibre.com>
+Subject: [PATCH 1/5] ASoC: meson: aiu: remove unused encoder structure
+Date:   Fri, 14 Feb 2020 14:13:46 +0100
+Message-Id: <20200214131350.337968-2-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200214131350.337968-1-jbrunet@baylibre.com>
+References: <20200214131350.337968-1-jbrunet@baylibre.com>
 MIME-Version: 1.0
 X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
@@ -64,25 +66,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset fixes some mistakes which slipped through my initial
-submission.
+Remove an unused structure definition which slipped through the initial
+driver submission.
 
-Most of these issues have been reported by coccinelle and sparse.
+Fixes: 6ae9ca9ce986 ("ASoC: meson: aiu: add i2s and spdif support")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ sound/soc/meson/aiu-encoder-i2s.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-Jerome Brunet (5):
-  ASoC: meson: aiu: remove unused encoder structure
-  ASoC: meson: aiu: fix clk bulk size allocation
-  ASoC: meson: aiu: fix irq registration
-  ASoC: meson: aiu: fix acodec dai input name init
-  ASoC: meson: codec-glue: fix pcm format cast warning
-
- sound/soc/meson/aiu-acodec-ctrl.c  |  1 -
- sound/soc/meson/aiu-encoder-i2s.c  |  7 -------
- sound/soc/meson/aiu.c              | 10 +++-------
- sound/soc/meson/aiu.h              |  2 +-
- sound/soc/meson/meson-codec-glue.c |  2 +-
- 5 files changed, 5 insertions(+), 17 deletions(-)
-
+diff --git a/sound/soc/meson/aiu-encoder-i2s.c b/sound/soc/meson/aiu-encoder-i2s.c
+index 13bf029086a9..4900e38e7e49 100644
+--- a/sound/soc/meson/aiu-encoder-i2s.c
++++ b/sound/soc/meson/aiu-encoder-i2s.c
+@@ -28,13 +28,6 @@
+ #define AIU_CLK_CTRL_MORE_I2S_DIV	GENMASK(5, 0)
+ #define AIU_CODEC_DAC_LRCLK_CTRL_DIV	GENMASK(11, 0)
+ 
+-struct aiu_encoder_i2s {
+-	struct clk *aoclk;
+-	struct clk *mclk;
+-	struct clk *mixer;
+-	struct clk *pclk;
+-};
+-
+ static void aiu_encoder_i2s_divider_enable(struct snd_soc_component *component,
+ 					   bool enable)
+ {
 -- 
 2.24.1
 
