@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FAC215EA7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:14:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5560B15EA10
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:11:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392738AbgBNROG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:14:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40306 "EHLO mail.kernel.org"
+        id S2403886AbgBNQN3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:13:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392030AbgBNQMj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:12:39 -0500
+        id S2391674AbgBNQMm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:12:42 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C777A246A4;
-        Fri, 14 Feb 2020 16:12:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 566292469F;
+        Fri, 14 Feb 2020 16:12:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696758;
-        bh=qYgXaaotD3UAIdYCci+5NEMLI+F4Ma0EUyRocg3aj+Y=;
+        s=default; t=1581696762;
+        bh=BU4zdI+Om8I7i8HgMQTLxfaZ1cBg4dQ+Il+MUW2HDJU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AZcLLGzj98aa6wtwqlq2n+DTU2dEK6cTypI//dQd91ndndtOhI6ooWhoxUIaR7D5d
-         /b6k68YoYOG4CpmnkU/LQCBmmztXwta5X76M855wsFqCciFWAG56zFeR81jrj8b0Cv
-         0ie8zpggyp6Ka4ABhMNjBsUGT/a+ZhiSkF/ziwzo=
+        b=gJbjqAJOG+qrteCBXln7G347hoHx2MPEpFRSXY0KWqyN8lAoRxd30oKe0t3u8mBbE
+         F29YUbolRaN9xPLsAXyZ9bBss5x6yP9hLDFShGRn7L3TWTsF+kTyCTjXHxUdQKUCrr
+         T9C+w/gEvc+hxRbBTSSR84hYc0bFcareaBJbAxtM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Frederic Barrat <fbarrat@linux.ibm.com>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.19 039/252] powerpc/powernv/ioda: Fix ref count for devices with their own PE
-Date:   Fri, 14 Feb 2020 11:08:14 -0500
-Message-Id: <20200214161147.15842-39-sashal@kernel.org>
+Cc:     "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Luis Henriques <luis.henriques@canonical.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 042/252] tracing: Fix very unlikely race of registering two stat tracers
+Date:   Fri, 14 Feb 2020 11:08:17 -0500
+Message-Id: <20200214161147.15842-42-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -44,93 +43,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frederic Barrat <fbarrat@linux.ibm.com>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-[ Upstream commit 05dd7da76986937fb288b4213b1fa10dbe0d1b33 ]
+[ Upstream commit dfb6cd1e654315168e36d947471bd2a0ccd834ae ]
 
-The pci_dn structure used to store a pointer to the struct pci_dev, so
-taking a reference on the device was required. However, the pci_dev
-pointer was later removed from the pci_dn structure, but the reference
-was kept for the npu device.
-See commit 902bdc57451c ("powerpc/powernv/idoa: Remove unnecessary
-pcidev from pci_dn").
+Looking through old emails in my INBOX, I came across a patch from Luis
+Henriques that attempted to fix a race of two stat tracers registering the
+same stat trace (extremely unlikely, as this is done in the kernel, and
+probably doesn't even exist). The submitted patch wasn't quite right as it
+needed to deal with clean up a bit better (if two stat tracers were the
+same, it would have the same files).
 
-We don't need to take a reference on the device when assigning the PE
-as the struct pnv_ioda_pe is cleaned up at the same time as
-the (physical) device is released. Doing so prevents the device from
-being released, which is a problem for opencapi devices, since we want
-to be able to remove them through PCI hotplug.
+But to make the code cleaner, all we needed to do is to keep the
+all_stat_sessions_mutex held for most of the registering function.
 
-Now the ugly part: nvlink npu devices are not meant to be
-released. Because of the above, we've always leaked a reference and
-simply removing it now is dangerous and would likely require more
-work. There's currently no release device callback for nvlink devices
-for example. So to be safe, this patch leaks a reference on the npu
-device, but only for nvlink and not opencapi.
+Link: http://lkml.kernel.org/r/1410299375-20068-1-git-send-email-luis.henriques@canonical.com
 
-Signed-off-by: Frederic Barrat <fbarrat@linux.ibm.com>
-Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20191121134918.7155-2-fbarrat@linux.ibm.com
+Fixes: 002bb86d8d42f ("tracing/ftrace: separate events tracing and stats tracing engine")
+Reported-by: Luis Henriques <luis.henriques@canonical.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/platforms/powernv/pci-ioda.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ kernel/trace/trace_stat.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
 
-diff --git a/arch/powerpc/platforms/powernv/pci-ioda.c b/arch/powerpc/platforms/powernv/pci-ioda.c
-index 28adfe4dd04c5..e47ff05c5996f 100644
---- a/arch/powerpc/platforms/powernv/pci-ioda.c
-+++ b/arch/powerpc/platforms/powernv/pci-ioda.c
-@@ -1071,14 +1071,13 @@ static struct pnv_ioda_pe *pnv_ioda_setup_dev_PE(struct pci_dev *dev)
- 		return NULL;
+diff --git a/kernel/trace/trace_stat.c b/kernel/trace/trace_stat.c
+index bf68af63538b4..92b76f9e25edd 100644
+--- a/kernel/trace/trace_stat.c
++++ b/kernel/trace/trace_stat.c
+@@ -306,7 +306,7 @@ static int init_stat_file(struct stat_session *session)
+ int register_stat_tracer(struct tracer_stat *trace)
+ {
+ 	struct stat_session *session, *node;
+-	int ret;
++	int ret = -EINVAL;
+ 
+ 	if (!trace)
+ 		return -EINVAL;
+@@ -317,17 +317,15 @@ int register_stat_tracer(struct tracer_stat *trace)
+ 	/* Already registered? */
+ 	mutex_lock(&all_stat_sessions_mutex);
+ 	list_for_each_entry(node, &all_stat_sessions, session_list) {
+-		if (node->ts == trace) {
+-			mutex_unlock(&all_stat_sessions_mutex);
+-			return -EINVAL;
+-		}
++		if (node->ts == trace)
++			goto out;
+ 	}
+-	mutex_unlock(&all_stat_sessions_mutex);
+ 
++	ret = -ENOMEM;
+ 	/* Init the session */
+ 	session = kzalloc(sizeof(*session), GFP_KERNEL);
+ 	if (!session)
+-		return -ENOMEM;
++		goto out;
+ 
+ 	session->ts = trace;
+ 	INIT_LIST_HEAD(&session->session_list);
+@@ -336,15 +334,16 @@ int register_stat_tracer(struct tracer_stat *trace)
+ 	ret = init_stat_file(session);
+ 	if (ret) {
+ 		destroy_session(session);
+-		return ret;
++		goto out;
  	}
  
--	/* NOTE: We get only one ref to the pci_dev for the pdn, not for the
--	 * pointer in the PE data structure, both should be destroyed at the
--	 * same time. However, this needs to be looked at more closely again
--	 * once we actually start removing things (Hotplug, SR-IOV, ...)
-+	/* NOTE: We don't get a reference for the pointer in the PE
-+	 * data structure, both the device and PE structures should be
-+	 * destroyed at the same time. However, removing nvlink
-+	 * devices will need some work.
- 	 *
- 	 * At some point we want to remove the PDN completely anyways
- 	 */
--	pci_dev_get(dev);
- 	pdn->pe_number = pe->pe_number;
- 	pe->flags = PNV_IODA_PE_DEV;
- 	pe->pdev = dev;
-@@ -1093,7 +1092,6 @@ static struct pnv_ioda_pe *pnv_ioda_setup_dev_PE(struct pci_dev *dev)
- 		pnv_ioda_free_pe(pe);
- 		pdn->pe_number = IODA_INVALID_PE;
- 		pe->pdev = NULL;
--		pci_dev_put(dev);
- 		return NULL;
- 	}
++	ret = 0;
+ 	/* Register */
+-	mutex_lock(&all_stat_sessions_mutex);
+ 	list_add_tail(&session->session_list, &all_stat_sessions);
++ out:
+ 	mutex_unlock(&all_stat_sessions_mutex);
  
-@@ -1213,6 +1211,14 @@ static struct pnv_ioda_pe *pnv_ioda_setup_npu_PE(struct pci_dev *npu_pdev)
- 	struct pci_controller *hose = pci_bus_to_host(npu_pdev->bus);
- 	struct pnv_phb *phb = hose->private_data;
+-	return 0;
++	return ret;
+ }
  
-+	/*
-+	 * Intentionally leak a reference on the npu device (for
-+	 * nvlink only; this is not an opencapi path) to make sure it
-+	 * never goes away, as it's been the case all along and some
-+	 * work is needed otherwise.
-+	 */
-+	pci_dev_get(npu_pdev);
-+
- 	/*
- 	 * Due to a hardware errata PE#0 on the NPU is reserved for
- 	 * error handling. This means we only have three PEs remaining
-@@ -1236,7 +1242,6 @@ static struct pnv_ioda_pe *pnv_ioda_setup_npu_PE(struct pci_dev *npu_pdev)
- 			 */
- 			dev_info(&npu_pdev->dev,
- 				"Associating to existing PE %x\n", pe_num);
--			pci_dev_get(npu_pdev);
- 			npu_pdn = pci_get_pdn(npu_pdev);
- 			rid = npu_pdev->bus->number << 8 | npu_pdn->devfn;
- 			npu_pdn->pe_number = pe_num;
+ void unregister_stat_tracer(struct tracer_stat *trace)
 -- 
 2.20.1
 
