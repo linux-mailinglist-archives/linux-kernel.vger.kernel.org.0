@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 049D615EC6D
+	by mail.lfdr.de (Postfix) with ESMTP id 6F1B015EC6E
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:28:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390910AbgBNQIU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:08:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59120 "EHLO mail.kernel.org"
+        id S2390921AbgBNQIX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:08:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390723AbgBNQHi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:07:38 -0500
+        id S2390727AbgBNQHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:07:40 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2F3224654;
-        Fri, 14 Feb 2020 16:07:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61021206D7;
+        Fri, 14 Feb 2020 16:07:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696457;
-        bh=veonelLyHYVdZEaWEmcvfnbE3w0QTXWIx3ruw3NtQm4=;
+        s=default; t=1581696460;
+        bh=B4hsJd84MGsALojLjJWgnNZLBKF6xB1oL1k8gRdTYlE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OO289xAiajvRJbb28W2ZNR5SQEZTUCidRJgPvaqW4OrUtSiTgMTP+9LxlT02t6OS1
-         maCFEc/g7dpoLd7gyidBhjbdALUbp7478zl0xgRvFfTQuwtA+8F5P0j04xf3vuP9dU
-         B0dPMWlmWvrSn8kvbfVnQIykNO0dRt7FMm5qwKt4=
+        b=j8fELqIbOqfsWeLmyu6/ZDrlA+5x70TiaLSo2hWaSmuyu7QZymXQTjSGVMRJqJbCY
+         kzIQuBpSi2pkRe0+kGELxp7DvV353TV/zQb4Fm5791KAsLRrXwmQrk+bW1HbC7TX+f
+         tHQdMzfs6RaFed/jUwAaHkFlVIHH2eokOeSG0FkY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jan Kara <jack@suse.cz>,
-        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.4 269/459] udf: Fix free space reporting for metadata and virtual partitions
-Date:   Fri, 14 Feb 2020 10:58:39 -0500
-Message-Id: <20200214160149.11681-269-sashal@kernel.org>
+Cc:     Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 5.4 271/459] iommu/arm-smmu-v3: Populate VMID field for CMDQ_OP_TLBI_NH_VA
+Date:   Fri, 14 Feb 2020 10:58:41 -0500
+Message-Id: <20200214160149.11681-271-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -44,71 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kara <jack@suse.cz>
+From: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
 
-[ Upstream commit a4a8b99ec819ca60b49dc582a4287ef03411f117 ]
+[ Upstream commit 935d43ba272e0001f8ef446a3eff15d8175cb11b ]
 
-Free space on filesystems with metadata or virtual partition maps
-currently gets misreported. This is because these partitions are just
-remapped onto underlying real partitions from which keep track of free
-blocks. Take this remapping into account when counting free blocks as
-well.
+CMDQ_OP_TLBI_NH_VA requires VMID and this was missing since
+commit 1c27df1c0a82 ("iommu/arm-smmu: Use correct address mask
+for CMD_TLBI_S2_IPA"). Add it back.
 
-Reviewed-by: Pali Rohár <pali.rohar@gmail.com>
-Reported-by: Pali Rohár <pali.rohar@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
+Fixes: 1c27df1c0a82 ("iommu/arm-smmu: Use correct address mask for CMD_TLBI_S2_IPA")
+Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/udf/super.c | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+ drivers/iommu/arm-smmu-v3.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/udf/super.c b/fs/udf/super.c
-index 008bf96b1732d..4baa1ca91e9be 100644
---- a/fs/udf/super.c
-+++ b/fs/udf/super.c
-@@ -2491,17 +2491,29 @@ static unsigned int udf_count_free_table(struct super_block *sb,
- static unsigned int udf_count_free(struct super_block *sb)
- {
- 	unsigned int accum = 0;
--	struct udf_sb_info *sbi;
-+	struct udf_sb_info *sbi = UDF_SB(sb);
- 	struct udf_part_map *map;
-+	unsigned int part = sbi->s_partition;
-+	int ptype = sbi->s_partmaps[part].s_partition_type;
-+
-+	if (ptype == UDF_METADATA_MAP25) {
-+		part = sbi->s_partmaps[part].s_type_specific.s_metadata.
-+							s_phys_partition_ref;
-+	} else if (ptype == UDF_VIRTUAL_MAP15 || ptype == UDF_VIRTUAL_MAP20) {
-+		/*
-+		 * Filesystems with VAT are append-only and we cannot write to
-+ 		 * them. Let's just report 0 here.
-+		 */
-+		return 0;
-+	}
- 
--	sbi = UDF_SB(sb);
- 	if (sbi->s_lvid_bh) {
- 		struct logicalVolIntegrityDesc *lvid =
- 			(struct logicalVolIntegrityDesc *)
- 			sbi->s_lvid_bh->b_data;
--		if (le32_to_cpu(lvid->numOfPartitions) > sbi->s_partition) {
-+		if (le32_to_cpu(lvid->numOfPartitions) > part) {
- 			accum = le32_to_cpu(
--					lvid->freeSpaceTable[sbi->s_partition]);
-+					lvid->freeSpaceTable[part]);
- 			if (accum == 0xFFFFFFFF)
- 				accum = 0;
- 		}
-@@ -2510,7 +2522,7 @@ static unsigned int udf_count_free(struct super_block *sb)
- 	if (accum)
- 		return accum;
- 
--	map = &sbi->s_partmaps[sbi->s_partition];
-+	map = &sbi->s_partmaps[part];
- 	if (map->s_partition_flags & UDF_PART_FLAG_UNALLOC_BITMAP) {
- 		accum += udf_count_free_bitmap(sb,
- 					       map->s_uspace.s_bitmap);
+diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+index ed90361b84dc7..ee8d48d863e16 100644
+--- a/drivers/iommu/arm-smmu-v3.c
++++ b/drivers/iommu/arm-smmu-v3.c
+@@ -856,6 +856,7 @@ static int arm_smmu_cmdq_build_cmd(u64 *cmd, struct arm_smmu_cmdq_ent *ent)
+ 		cmd[1] |= FIELD_PREP(CMDQ_CFGI_1_RANGE, 31);
+ 		break;
+ 	case CMDQ_OP_TLBI_NH_VA:
++		cmd[0] |= FIELD_PREP(CMDQ_TLBI_0_VMID, ent->tlbi.vmid);
+ 		cmd[0] |= FIELD_PREP(CMDQ_TLBI_0_ASID, ent->tlbi.asid);
+ 		cmd[1] |= FIELD_PREP(CMDQ_TLBI_1_LEAF, ent->tlbi.leaf);
+ 		cmd[1] |= ent->tlbi.addr & CMDQ_TLBI_1_VA_MASK;
 -- 
 2.20.1
 
