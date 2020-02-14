@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0933915F3EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:22:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9005615F3EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:22:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404962AbgBNSQl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:16:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56478 "EHLO mail.kernel.org"
+        id S2404929AbgBNSQ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:16:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730776AbgBNPv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:51:29 -0500
+        id S1730802AbgBNPve (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:51:34 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C885B24676;
-        Fri, 14 Feb 2020 15:51:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7EF224688;
+        Fri, 14 Feb 2020 15:51:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695488;
-        bh=9/bnzQ+ER74MOe91Hzqc8GaIE8a7Ubr1rTd8soxdpJY=;
+        s=default; t=1581695493;
+        bh=pnCToD4ejXqmCSEfYgdkO9vs0Zi7wt1AqjYvKxi4kFY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UFrAZbTVwp+7GoYz4Q/QqMoWRSNcrZp1N6+ugxMakJ6J26pmnbcOUggeXnzmqX6mo
-         5f6+kQ8eXSXOyIZegKfbBgpeKOvXMGkOmeson7AFA6Z1gLaA1h6eGVynATTK1jtUF+
-         Tz4WuRcqxPHTzAak6l/a3XowXqnzdjIfjMmYublQ=
+        b=MXpxqSZMVbriUiIPgs8WVrPNXwZYPyAOY1AO4c2gWdl0BM1fqs8/axoGLYRfrlm3C
+         z0t1ty+yW+8cNnLRPlryxczwcuIy3sZLJeB2EhWs5PAOvclFb+BufgVTyUNL34vTF/
+         kk7JN8lanfT4xjPU9617nh+uB/rqxsGvKoQ3+2r4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Artemy Kovalyov <artemyko@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Gal Pressman <galpress@amazon.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 118/542] RDMA/umem: Fix ib_umem_find_best_pgsz()
-Date:   Fri, 14 Feb 2020 10:41:50 -0500
-Message-Id: <20200214154854.6746-118-sashal@kernel.org>
+Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Julian Wiedmann <jwi@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Thomas Huth <thuth@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 122/542] KVM: s390: ENOTSUPP -> EOPNOTSUPP fixups
+Date:   Fri, 14 Feb 2020 10:41:54 -0500
+Message-Id: <20200214154854.6746-122-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -45,47 +46,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Artemy Kovalyov <artemyko@mellanox.com>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
 
-[ Upstream commit 36798d5ae1af62e830c5e045b2e41ce038690c61 ]
+[ Upstream commit c611990844c28c61ca4b35ff69d3a2ae95ccd486 ]
 
-Except for the last entry, the ending iova alignment sets the maximum
-possible page size as the low bits of the iova must be zero when starting
-the next chunk.
+There is no ENOTSUPP for userspace.
 
-Fixes: 4a35339958f1 ("RDMA/umem: Add API to find best driver supported page size in an MR")
-Link: https://lore.kernel.org/r/20200128135612.174820-1-leon@kernel.org
-Signed-off-by: Artemy Kovalyov <artemyko@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Tested-by: Gal Pressman <galpress@amazon.com>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Reported-by: Julian Wiedmann <jwi@linux.ibm.com>
+Fixes: 519783935451 ("KVM: s390: introduce ais mode modify function")
+Fixes: 2c1a48f2e5ed ("KVM: S390: add new group for flic")
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+Reviewed-by: Thomas Huth <thuth@redhat.com>
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/core/umem.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ arch/s390/kvm/interrupt.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
-index 7a3b99597eada..40cadb889114f 100644
---- a/drivers/infiniband/core/umem.c
-+++ b/drivers/infiniband/core/umem.c
-@@ -166,10 +166,13 @@ unsigned long ib_umem_find_best_pgsz(struct ib_umem *umem,
- 		 * for any address.
- 		 */
- 		mask |= (sg_dma_address(sg) + pgoff) ^ va;
--		if (i && i != (umem->nmap - 1))
--			/* restrict by length as well for interior SGEs */
--			mask |= sg_dma_len(sg);
- 		va += sg_dma_len(sg) - pgoff;
-+		/* Except for the last entry, the ending iova alignment sets
-+		 * the maximum possible page size as the low bits of the iova
-+		 * must be zero when starting the next chunk.
-+		 */
-+		if (i != (umem->nmap - 1))
-+			mask |= va;
- 		pgoff = 0;
- 	}
- 	best_pg_bit = rdma_find_pg_bit(mask, pgsz_bitmap);
+diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
+index 165dea4c7f193..c06c89d370a73 100644
+--- a/arch/s390/kvm/interrupt.c
++++ b/arch/s390/kvm/interrupt.c
+@@ -2190,7 +2190,7 @@ static int flic_ais_mode_get_all(struct kvm *kvm, struct kvm_device_attr *attr)
+ 		return -EINVAL;
+ 
+ 	if (!test_kvm_facility(kvm, 72))
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
+ 
+ 	mutex_lock(&fi->ais_lock);
+ 	ais.simm = fi->simm;
+@@ -2499,7 +2499,7 @@ static int modify_ais_mode(struct kvm *kvm, struct kvm_device_attr *attr)
+ 	int ret = 0;
+ 
+ 	if (!test_kvm_facility(kvm, 72))
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
+ 
+ 	if (copy_from_user(&req, (void __user *)attr->addr, sizeof(req)))
+ 		return -EFAULT;
+@@ -2579,7 +2579,7 @@ static int flic_ais_mode_set_all(struct kvm *kvm, struct kvm_device_attr *attr)
+ 	struct kvm_s390_ais_all ais;
+ 
+ 	if (!test_kvm_facility(kvm, 72))
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
+ 
+ 	if (copy_from_user(&ais, (void __user *)attr->addr, sizeof(ais)))
+ 		return -EFAULT;
 -- 
 2.20.1
 
