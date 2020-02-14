@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C79015E306
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:26:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1070E15E308
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:26:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406351AbgBNQ0O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:26:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60876 "EHLO mail.kernel.org"
+        id S2393325AbgBNQ0U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:26:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405818AbgBNQYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:24:11 -0500
+        id S2405846AbgBNQYS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:24:18 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 978D124794;
-        Fri, 14 Feb 2020 16:24:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AAA1524799;
+        Fri, 14 Feb 2020 16:24:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697450;
-        bh=XuVLhXNZHPeJbyGhkNR8+oC6FyGsCGr10fM/qb0PYjg=;
+        s=default; t=1581697456;
+        bh=HmgcdBfpLCYwWs0WNfXH3KGRuc+or5T24nV7akRuSHU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nGsgfDinQxVUo/Rwl3xx2TQZuNC47Yw2hl8TDWHVDwsDXVS97J7hhkWeTYJwLrBP2
-         T1bkhfBOFPkd2wvQ+EWndvbZr7NWSMPUvz7vsatY14EY8x9GEp9oo+I3b6J/OhxISw
-         07+n4OttQb3XGXmcpY76LExXYDg49FAEme1kSrpc=
+        b=yupn/ew5uAzSh4211iEl5CjWNogzDtdnEbyjVmS1XP2npJyxmJwLEL15Ujtt628YG
+         xYEiJ2I/RNA0Bx925zBxgWaTyFcC5JEh9sSiTn8LArCwwxvjBKfsj8XgZbE9+KpPik
+         XaSj+blD9iFe+Tnlx3tvBlj7LuFeB2W42waHaMII=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yunfeng Ye <yeyunfeng@huawei.com>,
-        zhengbin <zhengbin13@huawei.com>,
-        Hu Shiyuan <hushiyuan@huawei.com>,
-        Feilong Lin <linfeilong@huawei.com>, Jan Kara <jack@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, reiserfs-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 134/141] reiserfs: prevent NULL pointer dereference in reiserfs_insert_item()
-Date:   Fri, 14 Feb 2020 11:21:14 -0500
-Message-Id: <20200214162122.19794-134-sashal@kernel.org>
+Cc:     Zhiqiang Liu <liuzhiqiang26@huawei.com>,
+        Bob Liu <bob.liu@oracle.com>, Ming Lei <ming.lei@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 139/141] brd: check and limit max_part par
+Date:   Fri, 14 Feb 2020 11:21:19 -0500
+Message-Id: <20200214162122.19794-139-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214162122.19794-1-sashal@kernel.org>
 References: <20200214162122.19794-1-sashal@kernel.org>
@@ -47,42 +44,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunfeng Ye <yeyunfeng@huawei.com>
+From: Zhiqiang Liu <liuzhiqiang26@huawei.com>
 
-[ Upstream commit aacee5446a2a1aa35d0a49dab289552578657fb4 ]
+[ Upstream commit c8ab422553c81a0eb070329c63725df1cd1425bc ]
 
-The variable inode may be NULL in reiserfs_insert_item(), but there is
-no check before accessing the member of inode.
+In brd_init func, rd_nr num of brd_device are firstly allocated
+and add in brd_devices, then brd_devices are traversed to add each
+brd_device by calling add_disk func. When allocating brd_device,
+the disk->first_minor is set to i * max_part, if rd_nr * max_part
+is larger than MINORMASK, two different brd_device may have the same
+devt, then only one of them can be successfully added.
+when rmmod brd.ko, it will cause oops when calling brd_exit.
 
-Fix this by adding NULL pointer check before calling reiserfs_debug().
+Follow those steps:
+  # modprobe brd rd_nr=3 rd_size=102400 max_part=1048576
+  # rmmod brd
+then, the oops will appear.
 
-Link: http://lkml.kernel.org/r/79c5135d-ff25-1cc9-4e99-9f572b88cc00@huawei.com
-Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
-Cc: zhengbin <zhengbin13@huawei.com>
-Cc: Hu Shiyuan <hushiyuan@huawei.com>
-Cc: Feilong Lin <linfeilong@huawei.com>
-Cc: Jan Kara <jack@suse.cz>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Oops log:
+[  726.613722] Call trace:
+[  726.614175]  kernfs_find_ns+0x24/0x130
+[  726.614852]  kernfs_find_and_get_ns+0x44/0x68
+[  726.615749]  sysfs_remove_group+0x38/0xb0
+[  726.616520]  blk_trace_remove_sysfs+0x1c/0x28
+[  726.617320]  blk_unregister_queue+0x98/0x100
+[  726.618105]  del_gendisk+0x144/0x2b8
+[  726.618759]  brd_exit+0x68/0x560 [brd]
+[  726.619501]  __arm64_sys_delete_module+0x19c/0x2a0
+[  726.620384]  el0_svc_common+0x78/0x130
+[  726.621057]  el0_svc_handler+0x38/0x78
+[  726.621738]  el0_svc+0x8/0xc
+[  726.622259] Code: aa0203f6 aa0103f7 aa1e03e0 d503201f (7940e260)
+
+Here, we add brd_check_and_reset_par func to check and limit max_part par.
+
+--
+V5->V6:
+ - remove useless code
+
+V4->V5:(suggested by Ming Lei)
+ - make sure max_part is not larger than DISK_MAX_PARTS
+
+V3->V4:(suggested by Ming Lei)
+ - remove useless change
+ - add one limit of max_part
+
+V2->V3: (suggested by Ming Lei)
+ - clear .minors when running out of consecutive minor space in brd_alloc
+ - remove limit of rd_nr
+
+V1->V2:
+ - add more checks in brd_check_par_valid as suggested by Ming Lei.
+
+Signed-off-by: Zhiqiang Liu <liuzhiqiang26@huawei.com>
+Reviewed-by: Bob Liu <bob.liu@oracle.com>
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/reiserfs/stree.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/block/brd.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
-diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
-index a97e352d05d3b..5f5fff0688776 100644
---- a/fs/reiserfs/stree.c
-+++ b/fs/reiserfs/stree.c
-@@ -2249,7 +2249,8 @@ int reiserfs_insert_item(struct reiserfs_transaction_handle *th,
- 	/* also releases the path */
- 	unfix_nodes(&s_ins_balance);
- #ifdef REISERQUOTA_DEBUG
--	reiserfs_debug(th->t_super, REISERFS_DEBUG_CODE,
-+	if (inode)
-+		reiserfs_debug(th->t_super, REISERFS_DEBUG_CODE,
- 		       "reiserquota insert_item(): freeing %u id=%u type=%c",
- 		       quota_bytes, inode->i_uid, head2type(ih));
- #endif
+diff --git a/drivers/block/brd.c b/drivers/block/brd.c
+index 0c76d4016eebe..7e35574a17dfc 100644
+--- a/drivers/block/brd.c
++++ b/drivers/block/brd.c
+@@ -581,6 +581,25 @@ static struct kobject *brd_probe(dev_t dev, int *part, void *data)
+ 	return kobj;
+ }
+ 
++static inline void brd_check_and_reset_par(void)
++{
++	if (unlikely(!max_part))
++		max_part = 1;
++
++	/*
++	 * make sure 'max_part' can be divided exactly by (1U << MINORBITS),
++	 * otherwise, it is possiable to get same dev_t when adding partitions.
++	 */
++	if ((1U << MINORBITS) % max_part != 0)
++		max_part = 1UL << fls(max_part);
++
++	if (max_part > DISK_MAX_PARTS) {
++		pr_info("brd: max_part can't be larger than %d, reset max_part = %d.\n",
++			DISK_MAX_PARTS, DISK_MAX_PARTS);
++		max_part = DISK_MAX_PARTS;
++	}
++}
++
+ static int __init brd_init(void)
+ {
+ 	struct brd_device *brd, *next;
+@@ -604,8 +623,7 @@ static int __init brd_init(void)
+ 	if (register_blkdev(RAMDISK_MAJOR, "ramdisk"))
+ 		return -EIO;
+ 
+-	if (unlikely(!max_part))
+-		max_part = 1;
++	brd_check_and_reset_par();
+ 
+ 	for (i = 0; i < rd_nr; i++) {
+ 		brd = brd_alloc(i);
 -- 
 2.20.1
 
