@@ -2,85 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F399D15D4EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 10:46:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BF0B15D4FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 10:49:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729110AbgBNJqK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 04:46:10 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:10178 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728807AbgBNJqK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 04:46:10 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id F33C2703F484B2A39113;
-        Fri, 14 Feb 2020 17:46:07 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 14 Feb 2020 17:45:59 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 2/2] f2fs: fix to wait all node page writeback
-Date:   Fri, 14 Feb 2020 17:45:12 +0800
-Message-ID: <20200214094512.13035-2-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
-In-Reply-To: <20200214094512.13035-1-yuchao0@huawei.com>
-References: <20200214094512.13035-1-yuchao0@huawei.com>
+        id S1729069AbgBNJs7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 04:48:59 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:54133 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728522AbgBNJs6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 04:48:58 -0500
+Received: from localhost ([127.0.0.1] helo=vostro.local)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <john.ogness@linutronix.de>)
+        id 1j2Xae-0002qg-U4; Fri, 14 Feb 2020 10:48:53 +0100
+From:   John Ogness <john.ogness@linutronix.de>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] printk: use the lockless ringbuffer
+References: <20200128161948.8524-1-john.ogness@linutronix.de>
+        <20200128161948.8524-3-john.ogness@linutronix.de>
+        <20200213090757.GA36551@google.com> <87v9oarfg4.fsf@linutronix.de>
+        <20200213115957.GC36551@google.com> <87pneiyv12.fsf@linutronix.de>
+        <20200214014113.GE36551@google.com>
+Date:   Fri, 14 Feb 2020 10:48:51 +0100
+In-Reply-To: <20200214014113.GE36551@google.com> (Sergey Senozhatsky's message
+        of "Fri, 14 Feb 2020 10:41:13 +0900")
+Message-ID: <87r1yxh530.fsf@linutronix.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a race condition that we may miss to wait for all node pages
-writeback, fix it.
+On 2020-02-14, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
+>>> cat /dev/kmsg
+>>> cat: /dev/kmsg: Broken pipe
+>>
+>> In mainline you can have this "problem" as well. Once the ringbuffer
+>> has wrapped, any read to a newly opened /dev/kmsg when a new message
+>> arrived will result in an EPIPE. This happens quite easily once the
+>> ringbuffer has wrapped because each new message is overwriting the
+>> oldest message.
+>
+> Hmm. Something doesn't add up.
+>
+> Looking at the numbers, both r->info->seq and prb_first_seq(prb)
+> do increase, so there are new messages in the ring buffer
+>
+>                            u->seq    r->seq    prb_first_seq
+> [..]
+> cat: devkmsg_read() error 1981080   1982633   1981080
+> cat: devkmsg_read() error 1981080   1982633   1981080
+> cat: devkmsg_read() error 1981095   1982652   1981095
+> cat: devkmsg_read() error 1981095   1982652   1981095
+> cat: devkmsg_read() error 1981095   1982652   1981095
+> [..]
+>
+> but 'cat' still wouldn't read anything from the logbuf - EPIPE.
+>
+> NOTE: I don't run 'cat /dev/kmsg' during the test. I run the test
+> first, then I run 'cat /dev/kmsg', after the test, when
+> printk-pressure is gone.
 
-- fsync()				- shrink
- - f2fs_do_sync_file
-					 - __write_node_page
-					  - set_page_writeback(page#0)
-					  : remove DIRTY/TOWRITE flag
-  - f2fs_fsync_node_pages
-  : won't find page #0 as TOWRITE flag was removeD
-  - f2fs_wait_on_node_pages_writeback
-  : wont' wait page #0 writeback as it was not in fsync_node_list list.
-					   - f2fs_add_fsync_node_entry
+Sure. The problem is not the printk-pressure. The problem is you have
+data-less records in your ringbuffer (from your previous
+printk-pressure). If you used your own program that continued to read
+after EPIPE, then you would see the sequence numbers jumping over the
+data-less records.
 
-Fixes: 50fa53eccf9f ("f2fs: fix to avoid broken of dnode block list")
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/node.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+> I can't reproduce it with current logbuf. 'cat' reads from /dev/kmsg
+> after heavy printk-pressure test. So chances are some loggers can also
+> experience problems. This might be a regression.
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 332cebc2033c..9824f055a5bc 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1561,15 +1561,16 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
- 	if (atomic && !test_opt(sbi, NOBARRIER))
- 		fio.op_flags |= REQ_PREFLUSH | REQ_FUA;
- 
--	set_page_writeback(page);
--	ClearPageError(page);
--
-+	/* should add to global list before clearing PAGECACHE status */
- 	if (f2fs_in_warm_node_list(sbi, page)) {
- 		seq = f2fs_add_fsync_node_entry(sbi, page);
- 		if (seq_id)
- 			*seq_id = seq;
- 	}
- 
-+	set_page_writeback(page);
-+	ClearPageError(page);
-+
- 	fio.old_blkaddr = ni.blk_addr;
- 	f2fs_do_write_node_page(nid, &fio);
- 	set_node_addr(sbi, &ni, fio.new_blkaddr, is_fsync_dnode(page));
--- 
-2.18.0.rc1
+Mainline doesn't have data-less records. In mainline such failed
+printk's are silently ignored (after attepting truncation). So for
+mainline you can only reproduce the overflow case.
 
+1. Boot 5.6.0-rc1 (without any console= slowing down printk)
+
+2. Fill the ringbuffer and let it overflow with:
+
+   $ while true; do echo filling buffer > /dev/kmsg; done &
+
+3. Once you can see the ringbuffer has overflowed (and continues to
+   overflow), try to read from /dev/kmsg
+
+   $ strace head /dev/kmsg
+
+In most cases you will see:
+
+read(3, 0x7f7307ac1000, 4096)           = -1 EPIPE (Broken pipe)
+
+Current readers need to be able to handle EPIPE. cat(1) does not and so
+(unfortunately) is not a good candidate for reading the ringbuffer.
+
+>>> ...
+>>> systemd-journal: devkmsg_read() error 1979281 1982465 1980933
+>>> systemd-journal: corrected seq 1982465 1982465
+>>> cat: devkmsg_read() error 1980987 1982531 1980987
+>>> cat: corrected seq 1982531 1982531
+>>> cat: devkmsg_read() error 1981015 1982563 1981015
+>>> cat: corrected seq 1982563 1982563
+>>
+>> The situation with a data-less record is the same as when the ringbuffer
+>> wraps: cat is hitting that EPIPE. But re-opening the file descriptor is
+>> not going to help because it will not be able to get past that data-less
+>> record.
+>
+> So maybe this is the case with broken 'cat' on my system?
+
+I think it is appropriate for an application to close the descriptor
+after an EPIPE. /dev/kmsg is special because the reader should continue
+reading anyway.
+
+>> We could implement it such that devkmsg_read() will skip over data-less
+>> records instead of issuing an EPIPE. (That is what dmesg does.) But then
+>> do we need EPIPE at all? The reader can see that is has missed records
+>> by tracking the sequence number, so could we just get rid of EPIPE? Then
+>> cat(1) would be a great tool to view the raw ringbuffer. Please share
+>> your thoughts on this.
+>
+> Looking at systemd/src/journal/journald-kmsg.c :
+> server_read_dev_kmsg() -EPIPE is just one of the erronos they handle,
+> nothing special.
+
+Yes, but what does systemd-journald do when the EPIPE is _not_ returned
+and instead there is a jump in the sequence number? Looking at
+dev_kmsg_record(), systemd actually does it the way I would hope. It
+tracks the sequence number correctly.
+
+    /* Did we lose any? */
+    if (serial > *s->kernel_seqnum)
+         server_driver_message(s, 0,
+                               "MESSAGE_ID="
+                               SD_MESSAGE_JOURNAL_MISSED_STR,
+                               LOG_MESSAGE("Missed %"PRIu64" kernel messages",
+                               serial - *s->kernel_seqnum),
+                               NULL);
+
+> Could it be the case that some other loggers would have special
+> handling for EPIPE?  I'm not sure, let's look around.
+>
+> I'd say that EPIPE removal looks OK to me. But before we do that, I'm
+> not sure that we have clear understanding of 'cat /dev/kmsg' behaviour
+> change.
+
+In mainline, with regard to /dev/kmsg, sequence numbers will never
+jump. If there would be a jump (due to lost messages) then EPIPE is
+issued. The reader can either:
+
+1. continue reading and see the jump
+
+2. reopen the file descriptor, possibly having missed a ton more
+   messages due to reopening, and then start from the oldest available
+   message
+
+With my series, #2 is no longer an option because the lost messages
+could exist in a part of the ringbuffer not yet overwritten.
+
+If we remove EPIPE, then readers will need to track the sequence number
+to identify jumps. systemd-journald does this already. And tools like
+cat(1) would "just work" because cat does not care if messages were
+lost.
+
+John Ogness
