@@ -2,39 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8406415F38C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:22:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C89C515F399
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:22:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393367AbgBNSMu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:12:50 -0500
-Received: from foss.arm.com ([217.140.110.172]:42760 "EHLO foss.arm.com"
+        id S2393473AbgBNSNW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:13:22 -0500
+Received: from foss.arm.com ([217.140.110.172]:42788 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389702AbgBNSMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 13:12:46 -0500
+        id S2393441AbgBNSNT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 13:13:19 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 92AB4328;
-        Fri, 14 Feb 2020 10:12:45 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3D5F6328;
+        Fri, 14 Feb 2020 10:13:19 -0800 (PST)
 Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 917163F68E;
-        Fri, 14 Feb 2020 10:12:44 -0800 (PST)
-Subject: Re: [PATCH] x86/resctrl: Preserve CDP enable over cpuhp
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>
-References: <20200212185359.163111-1-james.morse@arm.com>
- <8aab67d7-c13e-19f1-9bec-85b7cca55146@intel.com>
- <720c9253-d590-82d5-2338-7f577a71b791@arm.com>
- <1e1ee570-8deb-688e-1875-94b84eef7641@intel.com>
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B62A53F68E;
+        Fri, 14 Feb 2020 10:13:16 -0800 (PST)
+Subject: Re: [PATCH v7 11/11] arm64: scs: add shadow stacks for SDEI
+To:     Sami Tolvanen <samitolvanen@google.com>
+Cc:     Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jann Horn <jannh@google.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20191018161033.261971-1-samitolvanen@google.com>
+ <20200128184934.77625-1-samitolvanen@google.com>
+ <20200128184934.77625-12-samitolvanen@google.com>
+ <dbb090ae-d1ec-cb1a-0710-e1d3cfe762b9@arm.com>
+ <CABCJKudpeTDa4Ro1aCsCJ-=x97SG0qu5LGpj9ywj1aLOtboNkQ@mail.gmail.com>
 From:   James Morse <james.morse@arm.com>
-Message-ID: <75bcb664-d840-96ed-c49f-34eefa010143@arm.com>
-Date:   Fri, 14 Feb 2020 18:12:43 +0000
+Message-ID: <a0ca5766-fb76-a498-ab2f-3015f1335fe9@arm.com>
+Date:   Fri, 14 Feb 2020 18:13:15 +0000
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <1e1ee570-8deb-688e-1875-94b84eef7641@intel.com>
+In-Reply-To: <CABCJKudpeTDa4Ro1aCsCJ-=x97SG0qu5LGpj9ywj1aLOtboNkQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
@@ -43,58 +57,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Reinette,
+Hi Sami,
 
-On 13/02/2020 19:45, Reinette Chatre wrote:
-> On 2/13/2020 9:42 AM, James Morse wrote:
->> On 12/02/2020 22:53, Reinette Chatre wrote:
->>> On 2/12/2020 10:53 AM, James Morse wrote:
->>>> mounted, and that cpus remember their CDP-enabled state over cpu
->>>> hotplug.
->>>>
->>>> This goes wrong when resctrl's CDP-enabled state changes while all
->>>> the cpus in a domain are offline.
->>>>
->>>> When a domain comes online, enable (or disable!) CDP to match resctrl's
->>>> current setting.
+On 12/02/2020 20:59, Sami Tolvanen wrote:
+> On Tue, Feb 11, 2020 at 5:57 AM James Morse <james.morse@arm.com> wrote:
+>> On 28/01/2020 18:49, Sami Tolvanen wrote:
+>>> This change adds per-CPU shadow call stacks for the SDEI handler.
+>>> Similarly to how the kernel stacks are handled, we add separate shadow
+>>> stacks for normal and critical events.
+>>
+>> Reviewed-by: James Morse <james.morse@arm.com>
+>> Tested-by: James Morse <james.morse@arm.com>
 
->> ... I think you're describing adding:
-
-[...]
-
->> to rdtgroup.c and using that from core.c?
+>>> diff --git a/arch/arm64/kernel/scs.c b/arch/arm64/kernel/scs.c
+>>> index eaadf5430baa..dddb7c56518b 100644
+>>> --- a/arch/arm64/kernel/scs.c
+>>> +++ b/arch/arm64/kernel/scs.c
+>>
+>>> +static int scs_alloc_percpu(unsigned long * __percpu *ptr, int cpu)
+>>> +{
+>>> +     unsigned long *p;
+>>> +
+>>> +     p = __vmalloc_node_range(PAGE_SIZE, SCS_SIZE,
+>>> +                              VMALLOC_START, VMALLOC_END,
+>>> +                              GFP_SCS, PAGE_KERNEL,
+>>> +                              0, cpu_to_node(cpu),
+>>> +                              __builtin_return_address(0));
+>>
+>> (What makes this arch specific? arm64 has its own calls like this for the regular vmap
+>> stacks because it plays tricks with the alignment. Here the alignment requirement comes
+>> from the core SCS code... Would another architecture implement these
+>> scs_alloc_percpu()/scs_free_percpu() differently?)
 > 
-> If I understand this correctly the CDP configuration will be done twice
-> for each CDP resource, and four times for each CDP resource on a system
-> supporting both L2 and L3 CDP. I think it is possible to do
-> configuration once for each. Also take care on systems that support MBA
-> that would not be caught by the first if statement. A system supporting
-> MBA and CDP may thus attempt the configuration even more. It should be
-> possible to use the resource parameter for a positive test and then just
-> let the other resources fall through? Considering this, what do you
-> think of something like below?
-> 
-> void rdt_domain_reconfigure_cdp(struct rdt_resource *r)
-> {
-> 	if (!r->alloc_capable)
-> 		return;
-> 
-> 	if (r == &rdt_resources_all[RDT_RESOURCE_L2DATA])
-> 		l2_qos_cfg_update(&r->alloc_enabled);
-> 
-> 	if (r == &rdt_resources_all[RDT_RESOURCE_L3DATA])
-> 		l3_qos_cfg_update(&r->alloc_enabled);
-> }
+> You are correct, these aren't necessarily specific to arm64. However,
+> right now, we are not allocating per-CPU shadow stacks anywhere else,
+> so this was a natural place for the helper functions.
 
-Sold!
+Fair enough,
 
-(the !r->alloc_capable are already filtered out by the caller, but checking is the
-least-surprise option)
 
-I'll send a v2 shortly with your suggested-by. I'd like to keep the lockdep annotations as
-the MPAM tree tries to stop the arch code taking the rdtgroup_mutex. Those patches
-changing these annotations makes it nice and clear what is going on.
+> Would you prefer me to move these to kernel/scs.c instead?
 
+I have no preference, as long as they don't get duplicated later!
 
 
 Thanks,
