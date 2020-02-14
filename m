@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9220715F9DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 23:43:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BFB115F9E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 23:43:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727989AbgBNWnh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 17:43:37 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:39725 "EHLO
+        id S1728031AbgBNWnq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 17:43:46 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:42955 "EHLO
         mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727926AbgBNWnb (ORCPT
+        with ESMTP id S1727953AbgBNWnd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 17:43:31 -0500
-Received: by mail-ot1-f65.google.com with SMTP id 77so10686041oty.6;
-        Fri, 14 Feb 2020 14:43:30 -0800 (PST)
+        Fri, 14 Feb 2020 17:43:33 -0500
+Received: by mail-ot1-f65.google.com with SMTP id 66so10674736otd.9;
+        Fri, 14 Feb 2020 14:43:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=o/fB8IpN2HvJy1SWgbzx0N4XyHZ1oSMpdaP9MXF/We8=;
-        b=RK1TyN3fB6GW1cLpYPRBi93AfJMcq8xrUS9hZyv6EKleeGDt8Q/GvWQ+YDjdy1TA80
-         bsTKHoVRF0XIMY1mJYa+BNTJy9dOMVXd2svStB/iBbYWdQwUimh7vpvHu93ayxMRQoce
-         8OwgaTHkPZCwiXwHbtJKP8s0L/I8+7vaVox+4QtmJhRSrl4uwrE5cFebwk2tUkT7wAkx
-         xK8o7HQacoIhrcazmX0CQpvbPj+1eM3yGPEkCiZfICsdXQ2/RKXx8uZV/yYHS70a+Opn
-         FVORabNMtT0mLHkQCgdxe2YjM1VqM2pIO+nLSKFM3iahvlIVDXn2Zg/GbHSAi1I+UR7L
-         Bmkg==
-X-Gm-Message-State: APjAAAWSfiPVKVM17xdfrvCDWDJbEeWDzb87gAeGtVQnAdlalXK2iOb1
-        v37AFluJcvD73l3o4d5aKjcDn+o=
-X-Google-Smtp-Source: APXvYqxPb7eZ0ET0dBpwWANxrcTfk4nicz/9JegOP1idWSuzHFEIGRzPBmcfQgcoYGCJ+bNZJYwQnw==
-X-Received: by 2002:a9d:649a:: with SMTP id g26mr3937088otl.15.1581720210006;
-        Fri, 14 Feb 2020 14:43:30 -0800 (PST)
+        bh=pxqrTmSWehNrZNpQ90LT3R+yI3An6tFPJHq9Cs6TvSY=;
+        b=O2oIHRQOgC/RyyoVqyUHnBlXqNO8XeUKzLO5VBx7Lqo0Bjb4bTdWhu7yRLxHglZ2k7
+         uDcAiVpHAD5+TXcZn+FVX4C2k4Ef2JGqso9GKoWmIyFqYl0yxJcU50cQt5fwXMGatFxf
+         rD70SVy6fwgggMXWW1ro3WaT1KbRQpsPdIApn66Yj+dPR/LJ8RDeJMdYXKQZjTANtuaa
+         /i3i1aW234SVTWXsJA4kbn8SzOGR8NNIKEkLStvlkU+AQupzWhDSj1lmEditDz02BgXY
+         KjyXcjm+am6cZsdcF2o0FV1X6disavHLyr/tUVxT+KfOnrNaETN1v6TuG+5XMG/EO8dm
+         Qszg==
+X-Gm-Message-State: APjAAAW8m46zMAYpL6I079eKaQY5MPDldy9Xjs5HRH/Nw0b++WaFEEoi
+        y7l6EavD3zQV+okX8+uWqOsARAQ=
+X-Google-Smtp-Source: APXvYqzRyruX6jzkcJBQ4Ol9aSCzNcGPj4+4pT7mi4zsBVbfgiMtU6G60aL26K2rvdNgbEenPv9cKg==
+X-Received: by 2002:a05:6830:1049:: with SMTP id b9mr4276236otp.100.1581720211206;
+        Fri, 14 Feb 2020 14:43:31 -0800 (PST)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id m69sm2453167otc.78.2020.02.14.14.43.29
+        by smtp.googlemail.com with ESMTPSA id m69sm2453167otc.78.2020.02.14.14.43.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2020 14:43:29 -0800 (PST)
+        Fri, 14 Feb 2020 14:43:30 -0800 (PST)
 From:   Rob Herring <robh@kernel.org>
 To:     devicetree@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>
 Cc:     linux-kernel@vger.kernel.org,
@@ -45,9 +45,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Michael Ellerman <mpe@ellerman.id.au>,
         Michal Simek <monstr@monstr.eu>,
         Paul Mackerras <paulus@samba.org>
-Subject: [PATCH 5/7] of/address: Rework of_pci_range parsing for non-PCI buses
-Date:   Fri, 14 Feb 2020 16:43:20 -0600
-Message-Id: <20200214224322.20030-6-robh@kernel.org>
+Subject: [PATCH 6/7] of/address: use range parser for of_dma_get_range
+Date:   Fri, 14 Feb 2020 16:43:21 -0600
+Message-Id: <20200214224322.20030-7-robh@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214224322.20030-1-robh@kernel.org>
 References: <20200214224322.20030-1-robh@kernel.org>
@@ -58,141 +58,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The only PCI specific part of of_pci_range_parser_one() is the handling
-of the 3rd address cell. Rework it to work on regular 1 and 2 cell
-addresses.
+of_dma_get_range() does the same ranges parsing as
+of_pci_range_parser_one(), so let's refactor of_dma_get_range() to use
+it instead.
 
-Use defines and a union to avoid a treewide renaming of the parsing
-helpers and struct.
+This commit is no functional change. Subsequent commits will parse more
+than the 1st dma-ranges entry.
 
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- drivers/of/address.c       | 33 +++++++++++++++++++++------------
- include/linux/of_address.h | 12 +++++++++---
- 2 files changed, 30 insertions(+), 15 deletions(-)
+ drivers/of/address.c | 38 +++++++++++++-------------------------
+ 1 file changed, 13 insertions(+), 25 deletions(-)
 
 diff --git a/drivers/of/address.c b/drivers/of/address.c
-index 5d608d7c10d6..6d33f849f114 100644
+index 6d33f849f114..a2c45812a50e 100644
 --- a/drivers/of/address.c
 +++ b/drivers/of/address.c
-@@ -694,12 +694,12 @@ EXPORT_SYMBOL(of_get_address);
- static int parser_init(struct of_pci_range_parser *parser,
- 			struct device_node *node, const char *name)
+@@ -939,10 +939,11 @@ int of_dma_get_range(struct device_node *np, u64 *dma_addr, u64 *paddr, u64 *siz
  {
--	const int na = 3, ns = 2;
- 	int rlen;
+ 	struct device_node *node = of_node_get(np);
+ 	const __be32 *ranges = NULL;
+-	int len, naddr, nsize, pna;
++	int len;
+ 	int ret = 0;
+ 	bool found_dma_ranges = false;
+-	u64 dmaaddr;
++	struct of_range_parser parser;
++	struct of_range range;
  
- 	parser->node = node;
- 	parser->pna = of_n_addr_cells(node);
--	parser->np = parser->pna + na + ns;
-+	parser->na = of_bus_n_addr_cells(node);
-+	parser->ns = of_bus_n_size_cells(node);
- 	parser->dma = !strcmp(name, "dma-ranges");
- 
- 	parser->range = of_get_property(node, name, &rlen);
-@@ -724,20 +724,28 @@ int of_pci_dma_range_parser_init(struct of_pci_range_parser *parser,
- 	return parser_init(parser, node, "dma-ranges");
- }
- EXPORT_SYMBOL_GPL(of_pci_dma_range_parser_init);
-+#define of_dma_range_parser_init of_pci_dma_range_parser_init
- 
- struct of_pci_range *of_pci_range_parser_one(struct of_pci_range_parser *parser,
- 						struct of_pci_range *range)
- {
--	const int na = 3, ns = 2;
-+	int na = parser->na;
-+	int ns = parser->ns;
-+	int np = parser->pna + na + ns;
- 
- 	if (!range)
- 		return NULL;
- 
--	if (!parser->range || parser->range + parser->np > parser->end)
-+	if (!parser->range || parser->range + np > parser->end)
- 		return NULL;
- 
--	range->flags = of_bus_pci_get_flags(parser->range);
--	range->pci_addr = of_read_number(parser->range + 1, ns);
-+	if (parser->na == 3)
-+		range->flags = of_bus_pci_get_flags(parser->range);
-+	else
-+		range->flags = 0;
-+
-+	range->pci_addr = of_read_number(parser->range, na);
-+
- 	if (parser->dma)
- 		range->cpu_addr = of_translate_dma_address(parser->node,
- 				parser->range + na);
-@@ -746,15 +754,16 @@ struct of_pci_range *of_pci_range_parser_one(struct of_pci_range_parser *parser,
- 				parser->range + na);
- 	range->size = of_read_number(parser->range + parser->pna + na, ns);
- 
--	parser->range += parser->np;
-+	parser->range += np;
- 
- 	/* Now consume following elements while they are contiguous */
--	while (parser->range + parser->np <= parser->end) {
--		u32 flags;
-+	while (parser->range + np <= parser->end) {
-+		u32 flags = 0;
- 		u64 pci_addr, cpu_addr, size;
- 
--		flags = of_bus_pci_get_flags(parser->range);
--		pci_addr = of_read_number(parser->range + 1, ns);
-+		if (parser->na == 3)
-+			flags = of_bus_pci_get_flags(parser->range);
-+		pci_addr = of_read_number(parser->range, na);
- 		if (parser->dma)
- 			cpu_addr = of_translate_dma_address(parser->node,
- 					parser->range + na);
-@@ -770,7 +779,7 @@ struct of_pci_range *of_pci_range_parser_one(struct of_pci_range_parser *parser,
- 			break;
- 
- 		range->size += size;
--		parser->range += parser->np;
-+		parser->range += np;
+ 	while (node) {
+ 		ranges = of_get_property(node, "dma-ranges", &len);
+@@ -967,33 +968,20 @@ int of_dma_get_range(struct device_node *np, u64 *dma_addr, u64 *paddr, u64 *siz
+ 		goto out;
  	}
  
- 	return range;
-diff --git a/include/linux/of_address.h b/include/linux/of_address.h
-index 8d12bf18e80b..763022ed3456 100644
---- a/include/linux/of_address.h
-+++ b/include/linux/of_address.h
-@@ -10,20 +10,27 @@ struct of_pci_range_parser {
- 	struct device_node *node;
- 	const __be32 *range;
- 	const __be32 *end;
--	int np;
-+	int na;
-+	int ns;
- 	int pna;
- 	bool dma;
- };
-+#define of_range_parser of_pci_range_parser
+-	naddr = of_bus_n_addr_cells(node);
+-	nsize = of_bus_n_size_cells(node);
+-	pna = of_n_addr_cells(node);
+-	if ((len / sizeof(__be32)) % (pna + naddr + nsize)) {
+-		ret = -EINVAL;
+-		goto out;
+-	}
++	of_dma_range_parser_init(&parser, node);
++
++	for_each_of_range(&parser, &range) {
++		pr_debug("dma_addr(%llx) cpu_addr(%llx) size(%llx)\n",
++			 range.bus_addr, range.cpu_addr, range.size);
++
++		*dma_addr = range.bus_addr;
++		*paddr = range.cpu_addr;
++		*size = range.size;
  
- struct of_pci_range {
--	u64 pci_addr;
-+	union {
-+		u64 pci_addr;
-+		u64 bus_addr;
-+	};
- 	u64 cpu_addr;
- 	u64 size;
- 	u32 flags;
- };
-+#define of_range of_pci_range
- 
- #define for_each_of_pci_range(parser, range) \
- 	for (; of_pci_range_parser_one(parser, range);)
-+#define for_each_of_range for_each_of_pci_range
- 
- /* Translate a DMA address from device space to CPU space */
- extern u64 of_translate_dma_address(struct device_node *dev,
-@@ -142,4 +149,3 @@ static inline int of_pci_range_to_resource(struct of_pci_range *range,
- #endif /* CONFIG_OF_ADDRESS && CONFIG_PCI */
- 
- #endif /* __OF_ADDRESS_H */
+-	/* dma-ranges format:
+-	 * DMA addr	: naddr cells
+-	 * CPU addr	: pna cells
+-	 * size		: nsize cells
+-	 */
+-	dmaaddr = of_read_number(ranges, naddr);
+-	*paddr = of_translate_dma_address(node, ranges + naddr);
+-	if (*paddr == OF_BAD_ADDR) {
+-		pr_err("translation of DMA address(%llx) to CPU address failed node(%pOF)\n",
+-		       dmaaddr, np);
+-		ret = -EINVAL;
+ 		goto out;
+ 	}
+-	*dma_addr = dmaaddr;
 -
+-	*size = of_read_number(ranges + naddr + pna, nsize);
+ 
+-	pr_debug("dma_addr(%llx) cpu_addr(%llx) size(%llx)\n",
+-		 *dma_addr, *paddr, *size);
++	pr_err("translation of DMA ranges failed on node(%pOF)\n", np);
+ 
+ out:
+ 	of_node_put(node);
 -- 
 2.20.1
 
