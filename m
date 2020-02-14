@@ -2,90 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C36615F003
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:52:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EB9815ECE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:31:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389032AbgBNRwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:52:05 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:50744 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388661AbgBNP6m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:58:42 -0500
-Received: by mail-pj1-f66.google.com with SMTP id r67so4053483pjb.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 07:58:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rajagiritech-edu-in.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=cISYdBXk2YHE0Hv5QeEUFIegtZb+aZP3D0K2PcFOxv0=;
-        b=Wm9qOazSsBZqOW7bBRLJEkqORGDUsQVeYt23qm28055nc0seZE/6WvXTJ4ukn44RRS
-         4sSlU44l7wArk/bgum3DqF5VvVRIzFSECMBntydVeAEtu9Wrj9Vqw0qnFJ5ngo+/u6IE
-         wY3Q3qkaW6DOsmktiKfHxZSFzB54Z36SD8n+bQu88+CVA9TMr8q+gI5KNQSiE/CDWHew
-         FO/GChYLjoOevw9YhiDOlQKk9r4cchbIe4BHKZuOBoXBKzOJPxdtLFfU3Q0XhJVe9hXT
-         KUJNehz7NNMcSIqxbYBlqhBX2lXhwW4btQqe5UA9eB41aXFQ9iisFJNMM/dW7fvUET3o
-         4BXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=cISYdBXk2YHE0Hv5QeEUFIegtZb+aZP3D0K2PcFOxv0=;
-        b=IXP0pPfYjCQwl5sF2x7GE/uz5cnT5Ey5Er8S6/PQMYe4J4oRNB3MOMtCTb5A2oQF+h
-         /KU3LwSZpFsSd8yEN0K0egvufl6jv6ZzMKhnlQnc6sdcihGzxSi1CK7LQqnS5oBM/94n
-         3WQvsPhqGC79W0yDJuFg90yC/yzCTvN3Zm6YMln+Rj8objLbmh472CDzy/u89LLZwrHa
-         C2noMfDQAvqeIm7xJosqdxvAzBG4dUegAzwK9Ywq9S0M4kIr/pMT6Qro24bLL3hzOztO
-         wZl3nWCw6rSWa6k57bH0cGRF1oMGXjuDv+frzttnyQJSb3wMsDHjsyXPheQPdJgXvDTX
-         Oaqw==
-X-Gm-Message-State: APjAAAVrZrZM2MnfGwiQmf3CRVOsZLP/4Uje0YO1zjAdFgS36Sm88MBK
-        DoLQz3OA3zPlkV3liVQas1Vt+w==
-X-Google-Smtp-Source: APXvYqxwlJ0m6uM/kOjvrdm0keDywJW1dC1Cj1dLQ436kTE9gW8qeoO/r+EEjwjLZXI4sbqhe3ZUFg==
-X-Received: by 2002:a17:902:7c02:: with SMTP id x2mr4126952pll.60.1581695921762;
-        Fri, 14 Feb 2020 07:58:41 -0800 (PST)
-Received: from debian ([122.164.201.151])
-        by smtp.gmail.com with ESMTPSA id t11sm7016598pjo.21.2020.02.14.07.58.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2020 07:58:41 -0800 (PST)
-Date:   Fri, 14 Feb 2020 21:28:34 +0530
-From:   Jeffrin Jose <jeffrin@rajagiritech.edu.in>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org,
-        jeffrin@rajagiritech.edu.in
-Subject: Re: [PATCH 5.5 000/120] 5.5.4-stable review
-Message-ID: <20200214155834.GA6389@debian>
-References: <20200213151901.039700531@linuxfoundation.org>
+        id S2392300AbgBNRaP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:30:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59082 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390712AbgBNQHg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:07:36 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8677A2467E;
+        Fri, 14 Feb 2020 16:07:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581696455;
+        bh=ScsIUI1jhlemcbd0HtcfRdTTAt1Fs26SJj8CgwW/VZ0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=0duWHp31wHHiK4aOtyfGzLjxVAfWqWjBQwV0MKt0QOknjdZKnEBN14zdLeBCMPGDf
+         vJ6/qhtvfmbEIcazs0AStyaTbA8kUE5AeyMOCZrwU2lt7dZS0AxuQMB98b3Q798BPP
+         JeSqWPht4usZMhfii9qaYK0/LQk+xgfCTw81gPrs=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Benjamin Gaignard <benjamin.gaignard@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 267/459] ARM: dts: stm32: Add power-supply for DSI panel on stm32f469-disco
+Date:   Fri, 14 Feb 2020 10:58:37 -0500
+Message-Id: <20200214160149.11681-267-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
+References: <20200214160149.11681-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200213151901.039700531@linuxfoundation.org>
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 07:19:56AM -0800, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.5.4 release.
-> There are 120 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 15 Feb 2020 15:16:41 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.5.4-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.5.y
-> and the diffstat can be found below.
-> 
+From: Benjamin Gaignard <benjamin.gaignard@st.com>
 
-hello,
+[ Upstream commit 0ff15a86d0c5a3f004fee2e92d65b88e56a3bc58 ]
 
-compiled and booted 5.5.4-rc1+ . No new errors according to "dmesg -l err"
+Add a fixed regulator and use it as power supply for DSI panel.
 
+Fixes: 18c8866266 ("ARM: dts: stm32: Add display support on stm32f469-disco")
 
---
-software engineer
-rajagiri school of engineering and technology
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arm/boot/dts/stm32f469-disco.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/arm/boot/dts/stm32f469-disco.dts b/arch/arm/boot/dts/stm32f469-disco.dts
+index a3ff04940aec1..c6dc6d1a051b0 100644
+--- a/arch/arm/boot/dts/stm32f469-disco.dts
++++ b/arch/arm/boot/dts/stm32f469-disco.dts
+@@ -76,6 +76,13 @@
+ 		regulator-max-microvolt = <3300000>;
+ 	};
+ 
++	vdd_dsi: vdd-dsi {
++		compatible = "regulator-fixed";
++		regulator-name = "vdd_dsi";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++	};
++
+ 	soc {
+ 		dma-ranges = <0xc0000000 0x0 0x10000000>;
+ 	};
+@@ -155,6 +162,7 @@
+ 		compatible = "orisetech,otm8009a";
+ 		reg = <0>; /* dsi virtual channel (0..3) */
+ 		reset-gpios = <&gpioh 7 GPIO_ACTIVE_LOW>;
++		power-supply = <&vdd_dsi>;
+ 		status = "okay";
+ 
+ 		port {
+-- 
+2.20.1
+
