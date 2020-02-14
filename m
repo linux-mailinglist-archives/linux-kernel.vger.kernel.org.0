@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0613715DF3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:08:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BA0115DF41
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:08:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390705AbgBNQHe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:07:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57590 "EHLO mail.kernel.org"
+        id S2390777AbgBNQHs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:07:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390525AbgBNQGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:06:53 -0500
+        id S2390577AbgBNQHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:07:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F0AD2467E;
-        Fri, 14 Feb 2020 16:06:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B46AF222C2;
+        Fri, 14 Feb 2020 16:07:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696412;
-        bh=BkeCDCXnKVwTip7iyTt+FfDyu2ATkf6VOlxlRQIttG0=;
+        s=default; t=1581696426;
+        bh=XXuW7JzIbkyZH1HN0+8zkHQTFS+HQMpPRX/xz57n+ic=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z6qjOyJTeIbPkD10qRuxHFeaZR+lr28/EiXCG1tqLHHabW12o04J7fVxwMAWOSJt0
-         VD+Gck6z7ndsNRTxDz0Z1/p083nJBSI0oNRCpuA+yIMRlaRekj+A/u5bRsgNy1X1hZ
-         IQ7KGvkSuj/uYsveVLvAvozBSHhDXwftzZXGcvQQ=
+        b=0jXyYpM7t0zH8pLhFgk2rDfK0ZqDT2zieW/3LWgX6YpF5NR0EYHiGBmRfzygm68CK
+         tH6xXEfjLJJNZPbx0eTc6JVASEBgNkshNFiUoLzf+wiDHjyM7+dknbQzrKZpZV1Mas
+         4p97Busyh4lRVHF7/kToWB2cSkHlf5moHmByKfv4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Manasi Navare <manasi.d.navare@intel.com>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>, Dave Airlie <airlied@redhat.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.4 234/459] drm/fbdev: Fallback to non tiled mode if all tiles not present
-Date:   Fri, 14 Feb 2020 10:58:04 -0500
-Message-Id: <20200214160149.11681-234-sashal@kernel.org>
+Cc:     Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>,
+        alsa-devel@alsa-project.org
+Subject: [PATCH AUTOSEL 5.4 246/459] ALSA: sh: Fix compile warning wrt const
+Date:   Fri, 14 Feb 2020 10:58:16 -0500
+Message-Id: <20200214160149.11681-246-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -46,164 +42,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Manasi Navare <manasi.d.navare@intel.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit f25c7a006cd1c07254780e3406e45cee4842b933 ]
+[ Upstream commit f1dd4795b1523fbca7ab4344dd5a8bb439cc770d ]
 
-In case of tiled displays, if we hotplug just one connector,
-fbcon currently just selects the preferred mode and if it is
-tiled mode then that becomes a problem if rest of the tiles are
-not present.
-So in the fbdev driver on hotplug when we probe the client modeset,
-if we dont find all the connectors for all tiles, then on a connector
-with one tile, just fallback to the first available non tiled mode
-to display over a single connector.
-On the hotplug of the consecutive tiled connectors, if the tiled mode
-no longer exists because of fbcon size limitation, then return
-no modes for consecutive tiles but retain the non tiled mode
-on the 0th tile.
-Use the same logic in case of connected boot case as well.
-This has been tested with Dell UP328K tiled monitor.
+A long-standing compile warning was seen during build test:
+  sound/sh/aica.c: In function 'load_aica_firmware':
+  sound/sh/aica.c:521:25: warning: passing argument 2 of 'spu_memload' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
 
-v2:
-* Set the modes on consecutive hotplugged tiles to no mode
-if tiled mode is pruned (Dave)
-v1:
-* Just handle the 1st connector hotplug case
-* v1 Reviewed-by: Dave Airlie <airlied@redhat.com>
-
-Suggested-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Suggested-by: Dave Airlie <airlied@redhat.com>
-Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Cc: Dave Airlie <airlied@redhat.com>
-Signed-off-by: Manasi Navare <manasi.d.navare@intel.com>
-Reviewed-by: Dave Airlie <airlied@redhat.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20191113222952.9231-1-manasi.d.navare@intel.com
+Fixes: 198de43d758c ("[ALSA] Add ALSA support for the SEGA Dreamcast PCM device")
+Link: https://lore.kernel.org/r/20200105144823.29547-69-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_client_modeset.c | 72 ++++++++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
+ sound/sh/aica.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_client_modeset.c
-index c8922b7cac091..12e748b202d6f 100644
---- a/drivers/gpu/drm/drm_client_modeset.c
-+++ b/drivers/gpu/drm/drm_client_modeset.c
-@@ -114,6 +114,33 @@ drm_client_find_modeset(struct drm_client_dev *client, struct drm_crtc *crtc)
- 	return NULL;
+diff --git a/sound/sh/aica.c b/sound/sh/aica.c
+index 52e9cfb4f8197..8421b2f9c9f38 100644
+--- a/sound/sh/aica.c
++++ b/sound/sh/aica.c
+@@ -101,10 +101,10 @@ static void spu_memset(u32 toi, u32 what, int length)
  }
  
-+static struct drm_display_mode *
-+drm_connector_get_tiled_mode(struct drm_connector *connector)
-+{
-+	struct drm_display_mode *mode;
-+
-+	list_for_each_entry(mode, &connector->modes, head) {
-+		if (mode->hdisplay == connector->tile_h_size &&
-+		    mode->vdisplay == connector->tile_v_size)
-+			return mode;
-+	}
-+	return NULL;
-+}
-+
-+static struct drm_display_mode *
-+drm_connector_fallback_non_tiled_mode(struct drm_connector *connector)
-+{
-+	struct drm_display_mode *mode;
-+
-+	list_for_each_entry(mode, &connector->modes, head) {
-+		if (mode->hdisplay == connector->tile_h_size &&
-+		    mode->vdisplay == connector->tile_v_size)
-+			continue;
-+		return mode;
-+	}
-+	return NULL;
-+}
-+
- static struct drm_display_mode *
- drm_connector_has_preferred_mode(struct drm_connector *connector, int width, int height)
+ /* spu_memload - write to SPU address space */
+-static void spu_memload(u32 toi, void *from, int length)
++static void spu_memload(u32 toi, const void *from, int length)
  {
-@@ -348,8 +375,15 @@ static bool drm_client_target_preferred(struct drm_connector **connectors,
- 	struct drm_connector *connector;
- 	u64 conn_configured = 0;
- 	int tile_pass = 0;
-+	int num_tiled_conns = 0;
+ 	unsigned long flags;
+-	u32 *froml = from;
++	const u32 *froml = from;
+ 	u32 __iomem *to = (u32 __iomem *) (SPU_MEMORY_BASE + toi);
  	int i;
- 
-+	for (i = 0; i < connector_count; i++) {
-+		if (connectors[i]->has_tile &&
-+		    connectors[i]->status == connector_status_connected)
-+			num_tiled_conns++;
-+	}
-+
- retry:
- 	for (i = 0; i < connector_count; i++) {
- 		connector = connectors[i];
-@@ -399,6 +433,28 @@ static bool drm_client_target_preferred(struct drm_connector **connectors,
- 			list_for_each_entry(modes[i], &connector->modes, head)
- 				break;
- 		}
-+		/*
-+		 * In case of tiled mode if all tiles not present fallback to
-+		 * first available non tiled mode.
-+		 * After all tiles are present, try to find the tiled mode
-+		 * for all and if tiled mode not present due to fbcon size
-+		 * limitations, use first non tiled mode only for
-+		 * tile 0,0 and set to no mode for all other tiles.
-+		 */
-+		if (connector->has_tile) {
-+			if (num_tiled_conns <
-+			    connector->num_h_tile * connector->num_v_tile ||
-+			    (connector->tile_h_loc == 0 &&
-+			     connector->tile_v_loc == 0 &&
-+			     !drm_connector_get_tiled_mode(connector))) {
-+				DRM_DEBUG_KMS("Falling back to non tiled mode on Connector %d\n",
-+					      connector->base.id);
-+				modes[i] = drm_connector_fallback_non_tiled_mode(connector);
-+			} else {
-+				modes[i] = drm_connector_get_tiled_mode(connector);
-+			}
-+		}
-+
- 		DRM_DEBUG_KMS("found mode %s\n", modes[i] ? modes[i]->name :
- 			  "none");
- 		conn_configured |= BIT_ULL(i);
-@@ -516,6 +572,7 @@ static bool drm_client_firmware_config(struct drm_client_dev *client,
- 	bool fallback = true, ret = true;
- 	int num_connectors_enabled = 0;
- 	int num_connectors_detected = 0;
-+	int num_tiled_conns = 0;
- 	struct drm_modeset_acquire_ctx ctx;
- 
- 	if (!drm_drv_uses_atomic_modeset(dev))
-@@ -533,6 +590,11 @@ static bool drm_client_firmware_config(struct drm_client_dev *client,
- 	memcpy(save_enabled, enabled, count);
- 	mask = GENMASK(count - 1, 0);
- 	conn_configured = 0;
-+	for (i = 0; i < count; i++) {
-+		if (connectors[i]->has_tile &&
-+		    connectors[i]->status == connector_status_connected)
-+			num_tiled_conns++;
-+	}
- retry:
- 	conn_seq = conn_configured;
- 	for (i = 0; i < count; i++) {
-@@ -632,6 +694,16 @@ static bool drm_client_firmware_config(struct drm_client_dev *client,
- 				      connector->name);
- 			modes[i] = &connector->state->crtc->mode;
- 		}
-+		/*
-+		 * In case of tiled modes, if all tiles are not present
-+		 * then fallback to a non tiled mode.
-+		 */
-+		if (connector->has_tile &&
-+		    num_tiled_conns < connector->num_h_tile * connector->num_v_tile) {
-+			DRM_DEBUG_KMS("Falling back to non tiled mode on Connector %d\n",
-+				      connector->base.id);
-+			modes[i] = drm_connector_fallback_non_tiled_mode(connector);
-+		}
- 		crtcs[i] = new_crtc;
- 
- 		DRM_DEBUG_KMS("connector %s on [CRTC:%d:%s]: %dx%d%s\n",
+ 	u32 val;
 -- 
 2.20.1
 
