@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4090215F322
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:21:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B362E15F3A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:22:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731134AbgBNPxE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:53:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59160 "EHLO mail.kernel.org"
+        id S2393610AbgBNSN7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:13:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731012AbgBNPwj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:52:39 -0500
+        id S1731025AbgBNPwk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:52:40 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93B1324688;
-        Fri, 14 Feb 2020 15:52:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B955E24676;
+        Fri, 14 Feb 2020 15:52:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695558;
-        bh=P6ka74hq+S9cWlwpKuE4fkuQlUl5IcnNTOP1eCnSy9s=;
+        s=default; t=1581695559;
+        bh=Xtj/2LP1zyfjNHngLDdDkOuIo8CJqF67tevzFrepR9M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aInGn3vRGXHIKL///8TfW2z0m9HNP9SSuukkbF8uiZraCHsxi8wu2Q9RpcO4RWDjb
-         wlObP0a5F4TlkajdsPrm8iGdxWQQW5YR/yxyjzqPQC63bQMcaBQG1mW9hrfRtTKMYM
-         4mHbkF5qNk6hEqmvWi/VJhe6uSu+sTYMaSZT4aIY=
+        b=wDNBQyVJWy3BOFIAoS3PZJD8vbaSVy0PdikejYpQHmvyUvfOGpFW0FA5wl3nVvPL1
+         M+y8EHOIxkFDtQ7fnbyxjR0+1pAXgh6Vsqkln5HCCmnHMmqvuIbVXhPBWPViefY89K
+         J4A8jSg80N4aRsUMeswziPZz2d/85cF7exVAFdG8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Russell King <rmk+kernel@armlinux.org.uk>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 172/542] arm64: dts: uDPU: fix broken ethernet
-Date:   Fri, 14 Feb 2020 10:42:44 -0500
-Message-Id: <20200214154854.6746-172-sashal@kernel.org>
+Cc:     Sathyanarayana Nujella <sathyanarayana.nujella@intel.com>,
+        Jairaj Arava <jairaj.arava@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, alsa-devel@alsa-project.org
+Subject: [PATCH AUTOSEL 5.5 173/542] ASoC: intel: sof_rt5682: Add quirk for number of HDMI DAI's
+Date:   Fri, 14 Feb 2020 10:42:45 -0500
+Message-Id: <20200214154854.6746-173-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -44,52 +45,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Sathyanarayana Nujella <sathyanarayana.nujella@intel.com>
 
-[ Upstream commit 1eebac0240580b531954b02c05068051df41142a ]
+[ Upstream commit c68e07970eca79106b0c35b88a12298569590081 ]
 
-The uDPU uses both ethernet controllers, which ties up COMPHY 0 for
-eth1 and COMPHY 1 for eth0, with no USB3 comphy.  The addition of
-COMPHY support made the kernel override the setup by the boot loader
-breaking this platform by assuming that COMPHY 0 was always used for
-USB3.  Delete the USB3 COMPHY definition at platform level, and add
-phy specifications for the ethernet channels.
+TGL supports one more HDMI DAI than previous models.
+So add quirk support for number of HDMI DAI's.
 
-Fixes: bd3d25b07342 ("arm64: dts: marvell: armada-37xx: link USB hosts with their PHYs")
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Signed-off-by: Sathyanarayana Nujella <sathyanarayana.nujella@intel.com>
+Signed-off-by: Jairaj Arava <jairaj.arava@intel.com>
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Link: https://lore.kernel.org/r/20191126143205.21987-2-pierre-louis.bossart@linux.intel.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/marvell/armada-3720-uDPU.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+ sound/soc/intel/boards/sof_rt5682.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-3720-uDPU.dts b/arch/arm64/boot/dts/marvell/armada-3720-uDPU.dts
-index bd4aab6092e0f..e31813a4f9722 100644
---- a/arch/arm64/boot/dts/marvell/armada-3720-uDPU.dts
-+++ b/arch/arm64/boot/dts/marvell/armada-3720-uDPU.dts
-@@ -143,6 +143,7 @@
- 	phy-mode = "sgmii";
- 	status = "okay";
- 	managed = "in-band-status";
-+	phys = <&comphy1 0>;
- 	sfp = <&sfp_eth0>;
- };
+diff --git a/sound/soc/intel/boards/sof_rt5682.c b/sound/soc/intel/boards/sof_rt5682.c
+index 751b8ea6ae1f5..57adadacbf436 100644
+--- a/sound/soc/intel/boards/sof_rt5682.c
++++ b/sound/soc/intel/boards/sof_rt5682.c
+@@ -35,6 +35,10 @@
+ #define SOF_RT5682_SSP_AMP(quirk)	\
+ 	(((quirk) << SOF_RT5682_SSP_AMP_SHIFT) & SOF_RT5682_SSP_AMP_MASK)
+ #define SOF_RT5682_MCLK_BYTCHT_EN		BIT(9)
++#define SOF_RT5682_NUM_HDMIDEV_SHIFT		10
++#define SOF_RT5682_NUM_HDMIDEV_MASK		(GENMASK(12, 10))
++#define SOF_RT5682_NUM_HDMIDEV(quirk)	\
++	((quirk << SOF_RT5682_NUM_HDMIDEV_SHIFT) & SOF_RT5682_NUM_HDMIDEV_MASK)
  
-@@ -150,11 +151,14 @@
- 	phy-mode = "sgmii";
- 	status = "okay";
- 	managed = "in-band-status";
-+	phys = <&comphy0 1>;
- 	sfp = <&sfp_eth1>;
- };
+ /* Default: MCLK on, MCLK 19.2M, SSP0  */
+ static unsigned long sof_rt5682_quirk = SOF_RT5682_MCLK_EN |
+@@ -594,6 +598,8 @@ static int sof_audio_probe(struct platform_device *pdev)
+ 	if (!ctx)
+ 		return -ENOMEM;
  
- &usb3 {
- 	status = "okay";
-+	phys = <&usb2_utmi_otg_phy>;
-+	phy-names = "usb2-utmi-otg-phy";
- };
++	dmi_check_system(sof_rt5682_quirk_table);
++
+ 	if (soc_intel_is_byt() || soc_intel_is_cht()) {
+ 		is_legacy_cpu = 1;
+ 		dmic_be_num = 0;
+@@ -604,11 +610,13 @@ static int sof_audio_probe(struct platform_device *pdev)
+ 						SOF_RT5682_SSP_CODEC(2);
+ 	} else {
+ 		dmic_be_num = 2;
+-		hdmi_num = 3;
++		hdmi_num = (sof_rt5682_quirk & SOF_RT5682_NUM_HDMIDEV_MASK) >>
++			 SOF_RT5682_NUM_HDMIDEV_SHIFT;
++		/* default number of HDMI DAI's */
++		if (!hdmi_num)
++			hdmi_num = 3;
+ 	}
  
- &uart0 {
+-	dmi_check_system(sof_rt5682_quirk_table);
+-
+ 	/* need to get main clock from pmc */
+ 	if (sof_rt5682_quirk & SOF_RT5682_MCLK_BYTCHT_EN) {
+ 		ctx->mclk = devm_clk_get(&pdev->dev, "pmc_plt_clk_3");
 -- 
 2.20.1
 
