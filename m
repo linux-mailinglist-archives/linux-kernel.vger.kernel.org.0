@@ -2,86 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB38F15F8E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 22:45:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0D4815F920
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 22:55:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387603AbgBNVp0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 16:45:26 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42390 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729102AbgBNVpZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 16:45:25 -0500
-Received: by mail-pg1-f196.google.com with SMTP id w21so5579859pgl.9
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 13:45:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=X3k++zPE+sJUaSkRsR90u7Z+waK86MTRLdYHtDYo8Qc=;
-        b=TGx6y5fUThAzKiGPPrR1HboWlMJPoX8PWImpJR2kFuB1x16oearTlMiGq9UDt+pzef
-         cpJ62eFdDnZww/gDwXGJx8uAQ7rHWPRcmgBGdVwwLWLCkbI6cW6rgD8Rid8XMTKfsKu8
-         sjAwaKbDNN7PitVT+CfYr7pBMcCIBhvEJLL5s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=X3k++zPE+sJUaSkRsR90u7Z+waK86MTRLdYHtDYo8Qc=;
-        b=cd/PQJpzkzoPAMjcDbdKEHi0h7wrbbu0X3IB1ShWPP9YOiJoR+G7CkRVzOenKNdLfh
-         eXY2e5c5ODXVLl84FW0jLp2IYIHLluVlWBgmRntsjfn+y+EEK6/nEXJ6eaazxAvxaSd2
-         SWhICVG4APNDwBmO0KHJ9p1dI0cZqCyY6TReoAfbT6OZeJDjhrjgt/ydK94wB59YHT5t
-         18rWdUC/+Sd04Lr8iiLE8pwhQj+lamaH8NLP4Ykr9qaFDAf7UnOQfqwY6PXW3ZEtcMBk
-         DUQlWGo3JCx7+IslpO56W0nkPl/EgoLZ0QF84t8Bl+Iz6DAvO5o2CaVYMq+ZWLZWBpVZ
-         ARTA==
-X-Gm-Message-State: APjAAAW0zvWoTFNtvJZ2uhMV6foKesJ5SlcYeS7ojNm6z4w/mxgBitSr
-        7I4megTeW6rcwsT9UkWfLxG9+Q==
-X-Google-Smtp-Source: APXvYqyzZJJFq1c38QhMNLslqHWYMOZuNFRjjazVVBYOiWk75QGD9U6hjRqAr9JRahny+PHXEzOwww==
-X-Received: by 2002:a62:16d0:: with SMTP id 199mr5436500pfw.96.1581716723255;
-        Fri, 14 Feb 2020 13:45:23 -0800 (PST)
-Received: from [10.136.13.65] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id m128sm8165821pfm.183.2020.02.14.13.45.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2020 13:45:22 -0800 (PST)
-Subject: Re: [PATCH] net: phy: restore mdio regs in the iproc mdio driver
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>
-Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Arun Parameswaran <arun.parameswaran@broadcom.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-arm-kernel@lists.infradead.org
-References: <20200214194858.8528-1-scott.branden@broadcom.com>
- <20200214203310.GQ31084@lunn.ch>
- <2b0ef4fc-c3a1-9aeb-2e86-31e9de7a19eb@gmail.com>
-From:   Scott Branden <scott.branden@broadcom.com>
-Message-ID: <5ce01f06-c116-06f1-d60b-549024cc8864@broadcom.com>
-Date:   Fri, 14 Feb 2020 13:45:20 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S2389346AbgBNVzH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 16:55:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59432 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730578AbgBNVyb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 16:54:31 -0500
+Received: from localhost (unknown [65.119.211.164])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 648D32081E;
+        Fri, 14 Feb 2020 21:54:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581717270;
+        bh=KC2EqCX36rIaa4NQzM328X7fLfPVUdGEtFfLUuvTpbw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BW+jrXjButL3uDsrITGfSweEsGLI98mjkB4OM1FQXUSDM3aCqWYAq0SBqTkJW/MJG
+         0gu6XycEZYffr55KhFzmj+dhPoEi3A+VsBhG4Dm0sc9BTfpC1n8tdc4GX8ul13Jd8k
+         AIejd/6ZF/UKNaL4U0pDDpoWOIzaMQYMul/eXRl4=
+Date:   Fri, 14 Feb 2020 16:46:00 -0500
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, yu kuai <yukuai3@huawei.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-pwm@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 5.5 418/542] pwm: Remove set but not set variable
+ 'pwm'
+Message-ID: <20200214214600.GB4193448@kroah.com>
+References: <20200214154854.6746-1-sashal@kernel.org>
+ <20200214154854.6746-418-sashal@kernel.org>
+ <20200214174014.lfnhsl6d7nyfkfbm@pengutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <2b0ef4fc-c3a1-9aeb-2e86-31e9de7a19eb@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <20200214174014.lfnhsl6d7nyfkfbm@pengutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 14, 2020 at 06:40:14PM +0100, Uwe Kleine-König wrote:
+> Hello Sasha,
+> 
+> On Fri, Feb 14, 2020 at 10:46:50AM -0500, Sasha Levin wrote:
+> > From: yu kuai <yukuai3@huawei.com>
+> > 
+> > [ Upstream commit 9871abffc81048e20f02e15d6aa4558a44ad53ea ]
+> > 
+> > Fixes gcc '-Wunused-but-set-variable' warning:
+> > 
+> > 	drivers/pwm/pwm-pca9685.c: In function ‘pca9685_pwm_gpio_free’:
+> > 	drivers/pwm/pwm-pca9685.c:162:21: warning: variable ‘pwm’ set but not used [-Wunused-but-set-variable]
+> > 
+> > It is never used, and so can be removed. In that case, hold and release
+> > the lock 'pca->lock' can be removed since nothing will be done between
+> > them.
+> > 
+> > Fixes: e926b12c611c ("pwm: Clear chip_data in pwm_put()")
+> > Signed-off-by: yu kuai <yukuai3@huawei.com>
+> > Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> > Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
+> > Signed-off-by: Sasha Levin <sashal@kernel.org>
+> > ---
+> >  drivers/pwm/pwm-pca9685.c | 4 ----
+> >  1 file changed, 4 deletions(-)
+> > 
+> > diff --git a/drivers/pwm/pwm-pca9685.c b/drivers/pwm/pwm-pca9685.c
+> > index 168684b02ebce..b07bdca3d510d 100644
+> > --- a/drivers/pwm/pwm-pca9685.c
+> > +++ b/drivers/pwm/pwm-pca9685.c
+> > @@ -159,13 +159,9 @@ static void pca9685_pwm_gpio_set(struct gpio_chip *gpio, unsigned int offset,
+> >  static void pca9685_pwm_gpio_free(struct gpio_chip *gpio, unsigned int offset)
+> >  {
+> >  	struct pca9685 *pca = gpiochip_get_data(gpio);
+> > -	struct pwm_device *pwm;
+> >  
+> >  	pca9685_pwm_gpio_set(gpio, offset, 0);
+> >  	pm_runtime_put(pca->chip.dev);
+> > -	mutex_lock(&pca->lock);
+> > -	pwm = &pca->chip.pwms[offset];
+> > -	mutex_unlock(&pca->lock);
+> 
+> Even though I bet this change won't introduce a regression, it only
+> fixes a harmless warning. So I wonder if it objectively qualifies to be
+> applied for stable.
 
+See my response to another one of these types of patches.  In order
+words, I agree, these aren't needed unless they are prereqs for other
+real fixes.
 
-On 2020-02-14 12:37 p.m., Florian Fainelli wrote:
-> On 2/14/20 12:33 PM, Andrew Lunn wrote:
->> On Fri, Feb 14, 2020 at 11:48:58AM -0800, Scott Branden wrote:
->>> From: Arun Parameswaran <arun.parameswaran@broadcom.com>
->>>
->>> The mii management register in iproc mdio block
->>> does not have a reention register so it is lost on suspend.
->> reention?
-> Retention presumably.
-Yes, typo.  Will fix commit message.
+thanks,
 
+greg k-h
