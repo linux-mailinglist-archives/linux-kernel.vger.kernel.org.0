@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C386015F418
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:23:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD23215F416
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:23:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394137AbgBNSS1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:18:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55254 "EHLO mail.kernel.org"
+        id S2404563AbgBNSSS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:18:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730593AbgBNPus (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:50:48 -0500
+        id S1730567AbgBNPuv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:50:51 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5432324682;
-        Fri, 14 Feb 2020 15:50:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E751F24650;
+        Fri, 14 Feb 2020 15:50:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695447;
-        bh=idBDqzu2y3o0QPiMY39TEUWKHEZlHWZnr1qSgzMQ1lU=;
+        s=default; t=1581695450;
+        bh=WuG/B6lmBEnh3GUKDiqWFqR3zitCFb14UJnbGdNR6mY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oKZNVOKk4cZao0KPbvYt1ITi5Zk1FXEmpI9W/vvi/j757dbzgFJu6L/iUiDx431+k
-         Jm8k026AXdNBK5z4K8nHFB8Kg+63nnIgTVlgR7XQPKVJv+v3qGgMJGvIrLkZwNGJ2r
-         esyX+8QtTOXGPYAvxV0Z3Ryoa44E2HDztN3t6DYM=
+        b=daLgdDO6JEOx4JHVBBwIXPJ0xIWxggThVpiVKOWlHBgdDTA9Q0C7S+qSb6lzcYyla
+         uO6zw6Mj52kqjyVlQjzMmYUprVY0c1O4E4krkiBKCdS2RMfAG8JymSyaAOk8H98J9X
+         ydcvAsPi449ZF21ks2X2uaQOKGV0ksD9on0NLT8U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jan Kara <jack@suse.cz>,
-        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.5 088/542] udf: Allow writing to 'Rewritable' partitions
-Date:   Fri, 14 Feb 2020 10:41:20 -0500
-Message-Id: <20200214154854.6746-88-sashal@kernel.org>
+Cc:     Chen Zhou <chenzhou10@huawei.com>, Peng Ma <peng.ma@nxp.com>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        dmaengine@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 090/542] dmaengine: fsl-qdma: fix duplicated argument to &&
+Date:   Fri, 14 Feb 2020 10:41:22 -0500
+Message-Id: <20200214154854.6746-90-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -44,55 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kara <jack@suse.cz>
+From: Chen Zhou <chenzhou10@huawei.com>
 
-[ Upstream commit 15fb05fd286ac57a0802d71624daeb5c1c2d5b07 ]
+[ Upstream commit 4b048178854da11656596d36a107577d66fd1e08 ]
 
-UDF 2.60 standard states in section 2.2.14.2:
+There is duplicated argument to && in function fsl_qdma_free_chan_resources,
+which looks like a typo, pointer fsl_queue->desc_pool also needs NULL check,
+fix it.
+Detected with coccinelle.
 
-    A partition with Access Type 3 (rewritable) shall define a Freed
-    Space Bitmap or a Freed Space Table, see 2.3.3. All other partitions
-    shall not define a Freed Space Bitmap or a Freed Space Table.
-
-    Rewritable partitions are used on media that require some form of
-    preprocessing before re-writing data (for example legacy MO). Such
-    partitions shall use Access Type 3.
-
-    Overwritable partitions are used on media that do not require
-    preprocessing before overwriting data (for example: CD-RW, DVD-RW,
-    DVD+RW, DVD-RAM, BD-RE, HD DVD-Rewritable). Such partitions shall
-    use Access Type 4.
-
-however older versions of the standard didn't have this wording and
-there are tools out there that create UDF filesystems with rewritable
-partitions but that don't contain a Freed Space Bitmap or a Freed Space
-Table on media that does not require pre-processing before overwriting a
-block. So instead of forcing media with rewritable partition read-only,
-base this decision on presence of a Freed Space Bitmap or a Freed Space
-Table.
-
-Reported-by: Pali Rohár <pali.rohar@gmail.com>
-Reviewed-by: Pali Rohár <pali.rohar@gmail.com>
-Fixes: b085fbe2ef7f ("udf: Fix crash during mount")
-Link: https://lore.kernel.org/linux-fsdevel/20200112144735.hj2emsoy4uwsouxz@pali
-Signed-off-by: Jan Kara <jack@suse.cz>
+Fixes: b092529e0aa0 ("dmaengine: fsl-qdma: Add qDMA controller driver for Layerscape SoCs")
+Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+Reviewed-by: Peng Ma <peng.ma@nxp.com>
+Tested-by: Peng Ma <peng.ma@nxp.com>
+Link: https://lore.kernel.org/r/20200120125843.34398-1-chenzhou10@huawei.com
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/udf/super.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/dma/fsl-qdma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/udf/super.c b/fs/udf/super.c
-index 8c28e93e9b730..008bf96b1732d 100644
---- a/fs/udf/super.c
-+++ b/fs/udf/super.c
-@@ -1035,7 +1035,6 @@ static int check_partition_desc(struct super_block *sb,
- 	switch (le32_to_cpu(p->accessType)) {
- 	case PD_ACCESS_TYPE_READ_ONLY:
- 	case PD_ACCESS_TYPE_WRITE_ONCE:
--	case PD_ACCESS_TYPE_REWRITABLE:
- 	case PD_ACCESS_TYPE_NONE:
- 		goto force_ro;
- 	}
+diff --git a/drivers/dma/fsl-qdma.c b/drivers/dma/fsl-qdma.c
+index 89792083d62c5..95cc0256b3878 100644
+--- a/drivers/dma/fsl-qdma.c
++++ b/drivers/dma/fsl-qdma.c
+@@ -304,7 +304,7 @@ static void fsl_qdma_free_chan_resources(struct dma_chan *chan)
+ 
+ 	vchan_dma_desc_free_list(&fsl_chan->vchan, &head);
+ 
+-	if (!fsl_queue->comp_pool && !fsl_queue->comp_pool)
++	if (!fsl_queue->comp_pool && !fsl_queue->desc_pool)
+ 		return;
+ 
+ 	list_for_each_entry_safe(comp_temp, _comp_temp,
 -- 
 2.20.1
 
