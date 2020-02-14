@@ -2,39 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 918B315DC7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:53:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 078C715DC7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:53:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730797AbgBNPxd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:53:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60568 "EHLO mail.kernel.org"
+        id S1731297AbgBNPxg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:53:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730533AbgBNPxM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:53:12 -0500
+        id S1731206AbgBNPxT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:53:19 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0923E2465D;
-        Fri, 14 Feb 2020 15:53:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B58CC2465D;
+        Fri, 14 Feb 2020 15:53:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695592;
-        bh=wEbTmDAFGEJyYKw5bAkSrdfMG8SVFgSc3UHab2BPGXw=;
+        s=default; t=1581695598;
+        bh=Ximt0gbK7xTVxkrTv+3W+qrzUdNxPeqPaVwbPCy6Kys=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ODnbLo4/+hqez5iqxe2pm9eSkzcZ8cXDGClBccjVkYOboJ7ZNLxZ/aG/7hMUJc4vx
-         G6eVN3h+m1dm7lU+lEcXeS3gAo2NXdeiJ+SdU2NyAi+NrrfC8QRo5d5oYJoldD2+/O
-         PzJXRO0d+/dyQ8kNFisO9qLxJfJ2ejdDnBjZnQR8=
+        b=o2Q4WEdBoyXTjtStPew36kGCAFAh4pSrR8YfY8RU58f5OG80M8h9v3WkawHM242KH
+         pEOwnj8Bp5Z7kyRAo8ABYk6KuZ62OEQh7JYS04JI0NxKyVCj12WYq0nhapTSAygQ5Q
+         WND88bb58+s+a0yhittlLP8kyib4JFvzXU4PjxkE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 198/542] ARM: dts: imx6: rdu2: Disable WP for USDHC2 and USDHC3
-Date:   Fri, 14 Feb 2020 10:43:10 -0500
-Message-Id: <20200214154854.6746-198-sashal@kernel.org>
+Cc:     Wei Liu <wei.liu@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.5 203/542] PCI: iproc: Apply quirk_paxc_bridge() for module as well as built-in
+Date:   Fri, 14 Feb 2020 10:43:15 -0500
+Message-Id: <20200214154854.6746-203-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -47,67 +43,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
+From: Wei Liu <wei.liu@kernel.org>
 
-[ Upstream commit cd58a174e58649426fb43d7456e5f7d7eab58af1 ]
+[ Upstream commit 574f29036fce385e28617547955dd6911d375025 ]
 
-RDU2 production units come with resistor connecting WP pin to
-correpsonding GPIO DNPed for both SD card slots. Drop any WP related
-configuration and mark both slots with "disable-wp".
+Previously quirk_paxc_bridge() was applied when the iproc driver was
+built-in, but not when it was compiled as a module.
 
-Reported-by: Chris Healy <cphealy@gmail.com>
-Reviewed-by: Chris Healy <cphealy@gmail.com>
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+This happened because it was under #ifdef CONFIG_PCIE_IPROC_PLATFORM:
+PCIE_IPROC_PLATFORM=y causes CONFIG_PCIE_IPROC_PLATFORM to be defined, but
+PCIE_IPROC_PLATFORM=m causes CONFIG_PCIE_IPROC_PLATFORM_MODULE to be
+defined.
+
+Move quirk_paxc_bridge() to pcie-iproc.c and drop the #ifdef so the quirk
+is always applied, whether iproc is built-in or a module.
+
+[bhelgaas: commit log, move to pcie-iproc.c, not pcie-iproc-platform.c]
+Link: https://lore.kernel.org/r/20191211174511.89713-1-wei.liu@kernel.org
+Signed-off-by: Wei Liu <wei.liu@kernel.org>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/pci/controller/pcie-iproc.c | 24 ++++++++++++++++++++++++
+ drivers/pci/quirks.c                | 26 --------------------------
+ 2 files changed, 24 insertions(+), 26 deletions(-)
 
-diff --git a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
-index a2a4f33a3e3ef..4ec9fb332610e 100644
---- a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
-@@ -629,7 +629,7 @@
- 	pinctrl-0 = <&pinctrl_usdhc2>;
- 	bus-width = <4>;
- 	cd-gpios = <&gpio2 2 GPIO_ACTIVE_LOW>;
--	wp-gpios = <&gpio2 3 GPIO_ACTIVE_HIGH>;
-+	disable-wp;
- 	vmmc-supply = <&reg_3p3v_sd>;
- 	vqmmc-supply = <&reg_3p3v>;
- 	no-1-8-v;
-@@ -642,7 +642,7 @@
- 	pinctrl-0 = <&pinctrl_usdhc3>;
- 	bus-width = <4>;
- 	cd-gpios = <&gpio2 0 GPIO_ACTIVE_LOW>;
--	wp-gpios = <&gpio2 1 GPIO_ACTIVE_HIGH>;
-+	disable-wp;
- 	vmmc-supply = <&reg_3p3v_sd>;
- 	vqmmc-supply = <&reg_3p3v>;
- 	no-1-8-v;
-@@ -1056,7 +1056,6 @@
- 			MX6QDL_PAD_SD2_DAT1__SD2_DATA1		0x17059
- 			MX6QDL_PAD_SD2_DAT2__SD2_DATA2		0x17059
- 			MX6QDL_PAD_SD2_DAT3__SD2_DATA3		0x17059
--			MX6QDL_PAD_NANDF_D3__GPIO2_IO03		0x40010040
- 			MX6QDL_PAD_NANDF_D2__GPIO2_IO02		0x40010040
- 		>;
- 	};
-@@ -1069,7 +1068,6 @@
- 			MX6QDL_PAD_SD3_DAT1__SD3_DATA1		0x17059
- 			MX6QDL_PAD_SD3_DAT2__SD3_DATA2		0x17059
- 			MX6QDL_PAD_SD3_DAT3__SD3_DATA3		0x17059
--			MX6QDL_PAD_NANDF_D1__GPIO2_IO01		0x40010040
- 			MX6QDL_PAD_NANDF_D0__GPIO2_IO00		0x40010040
+diff --git a/drivers/pci/controller/pcie-iproc.c b/drivers/pci/controller/pcie-iproc.c
+index 0a468c73bae38..8c7f875acf7fa 100644
+--- a/drivers/pci/controller/pcie-iproc.c
++++ b/drivers/pci/controller/pcie-iproc.c
+@@ -1588,6 +1588,30 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd802,
+ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd804,
+ 			quirk_paxc_disable_msi_parsing);
  
- 		>;
++static void quirk_paxc_bridge(struct pci_dev *pdev)
++{
++	/*
++	 * The PCI config space is shared with the PAXC root port and the first
++	 * Ethernet device.  So, we need to workaround this by telling the PCI
++	 * code that the bridge is not an Ethernet device.
++	 */
++	if (pdev->hdr_type == PCI_HEADER_TYPE_BRIDGE)
++		pdev->class = PCI_CLASS_BRIDGE_PCI << 8;
++
++	/*
++	 * MPSS is not being set properly (as it is currently 0).  This is
++	 * because that area of the PCI config space is hard coded to zero, and
++	 * is not modifiable by firmware.  Set this to 2 (e.g., 512 byte MPS)
++	 * so that the MPS can be set to the real max value.
++	 */
++	pdev->pcie_mpss = 2;
++}
++DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0x16cd, quirk_paxc_bridge);
++DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0x16f0, quirk_paxc_bridge);
++DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd750, quirk_paxc_bridge);
++DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd802, quirk_paxc_bridge);
++DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd804, quirk_paxc_bridge);
++
+ MODULE_AUTHOR("Ray Jui <rjui@broadcom.com>");
+ MODULE_DESCRIPTION("Broadcom iPROC PCIe common driver");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+index fbeb9f73ef280..5cd6a77ddefff 100644
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -2381,32 +2381,6 @@ DECLARE_PCI_FIXUP_ENABLE(PCI_VENDOR_ID_BROADCOM,
+ 			 PCI_DEVICE_ID_TIGON3_5719,
+ 			 quirk_brcm_5719_limit_mrrs);
+ 
+-#ifdef CONFIG_PCIE_IPROC_PLATFORM
+-static void quirk_paxc_bridge(struct pci_dev *pdev)
+-{
+-	/*
+-	 * The PCI config space is shared with the PAXC root port and the first
+-	 * Ethernet device.  So, we need to workaround this by telling the PCI
+-	 * code that the bridge is not an Ethernet device.
+-	 */
+-	if (pdev->hdr_type == PCI_HEADER_TYPE_BRIDGE)
+-		pdev->class = PCI_CLASS_BRIDGE_PCI << 8;
+-
+-	/*
+-	 * MPSS is not being set properly (as it is currently 0).  This is
+-	 * because that area of the PCI config space is hard coded to zero, and
+-	 * is not modifiable by firmware.  Set this to 2 (e.g., 512 byte MPS)
+-	 * so that the MPS can be set to the real max value.
+-	 */
+-	pdev->pcie_mpss = 2;
+-}
+-DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0x16cd, quirk_paxc_bridge);
+-DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0x16f0, quirk_paxc_bridge);
+-DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd750, quirk_paxc_bridge);
+-DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd802, quirk_paxc_bridge);
+-DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd804, quirk_paxc_bridge);
+-#endif
+-
+ /*
+  * Originally in EDAC sources for i82875P: Intel tells BIOS developers to
+  * hide device 6 which configures the overflow device access containing the
 -- 
 2.20.1
 
