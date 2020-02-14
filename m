@@ -2,66 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B70015D360
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 09:08:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D70915D351
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 09:00:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728891AbgBNIH6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 03:07:58 -0500
-Received: from mga11.intel.com ([192.55.52.93]:51351 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725897AbgBNIH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 03:07:58 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2020 00:07:57 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,439,1574150400"; 
-   d="scan'208";a="227519464"
-Received: from unknown (HELO lftan) ([10.226.248.101])
-  by orsmga008.jf.intel.com with SMTP; 14 Feb 2020 00:07:54 -0800
-Received: by lftan (sSMTP sendmail emulation); Fri, 14 Feb 2020 02:00:28 +0800
-From:   Ley Foon Tan <ley.foon.tan@intel.com>
-To:     Dinh Nguyen <dinguyen@kernel.org>
-Cc:     Chin Liang See <chin.liang.see@intel.com>,
-        Tien Fong Chee <tien.fong.chee@intel.com>,
-        linux-kernel@vger.kernel.org, Ley Foon Tan <lftan.linux@gmail.com>,
-        Ley Foon Tan <ley.foon.tan@intel.com>
-Subject: [PATCH] ARM: dts: socfpga: arria10: Increase boot partition size for NAND
-Date:   Fri, 14 Feb 2020 02:00:27 +0800
-Message-Id: <20200213180027.9239-1-ley.foon.tan@intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1728921AbgBNIAz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 03:00:55 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:44720 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728239AbgBNIAy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 03:00:54 -0500
+Received: by mail-lj1-f194.google.com with SMTP id q8so9619287ljj.11
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 00:00:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ntCZaBsMrzqa5Pcjo865ox0f/FJUUehyZXzmR3FEBlc=;
+        b=AIyE3NgmZsK4cm2YpyethNE4ypvl/1LFMdnClKswWaNJVNMoA5sEc9XNdCXCPgm+8n
+         2dBLwigR7gH8vR1iBBfclVbdOSV/JwsOGypLeJOarnWHPH5rpEHOu94Kst4Y7kAsHb/5
+         wl8gXX9oMJwkuFjCYm58qxp383PaQj+G7lLROfdfXbIE5f+ED1nJKYpOn49hT6fnvb/f
+         qVKeFeqlITKOQt6obiCx+to4w4505nkyfU760eVnB22Lq/NbuSlNxQvegDmkQf9/GlrO
+         xlZ3dvVxfwkj/KM6QKucKwxUlTsaBzW7qao8FebrJLzRTVIbRUVtomWj0TdWCjbRar6T
+         AQsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ntCZaBsMrzqa5Pcjo865ox0f/FJUUehyZXzmR3FEBlc=;
+        b=scl82hiKyGOKnzoUiqDPWcyFEacA52kBDSSUCgn4RuRFxBVtHHqbv+RZ7/Os0IBWVb
+         mfyJeeYNsMkqT4rH0LMe+xTz3nfDFDezHCc3R8EpdzAqydn7rnAX3cY0+oG5qcGzSEiN
+         JCQzl1hmIwLGojnpYkJtHTESFNM+tIAZFe8RxRkhqQeAV4zZVk2V/cUEDhI4eQAwtnnJ
+         czctZeodmrV8c9psJS5wemjU/c8p1YQ18/eeY8XttPrHEHevQkLNGY1Yc0tppvlsqsbR
+         +idzvtopXEalTMnBCPf2gd5XcCUGxylTR298a0QYZ3G0wKezy5Rvkn1P8j/Vdvkotlzb
+         VHsg==
+X-Gm-Message-State: APjAAAVMycQNNj8DXAspRnLC8A+Fk257hkZyUKRW99y66JIoN0R4iVLu
+        MyusQHQNs5ePAc66yWrII+O6ThJuj7D/Yg==
+X-Google-Smtp-Source: APXvYqy9FHHb0Opg6Sksf2GOu5P9zoiGi/EMgpEFOI2LsKVccVqMz8BHaEb+ouXpGTOvJd7U8y5bGQ==
+X-Received: by 2002:a2e:a361:: with SMTP id i1mr1228389ljn.29.1581667252389;
+        Fri, 14 Feb 2020 00:00:52 -0800 (PST)
+Received: from ?IPv6:2a00:1fa0:83e:95a1:50fe:6694:662:5f22? ([2a00:1fa0:83e:95a1:50fe:6694:662:5f22])
+        by smtp.gmail.com with ESMTPSA id f19sm3070356ljj.50.2020.02.14.00.00.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Feb 2020 00:00:51 -0800 (PST)
+Subject: Re: [PATCH net] net: dsa: b53: Ensure the default VID is untagged
+To:     Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org
+Cc:     olteanv@gmail.com, Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20200213191015.7150-1-f.fainelli@gmail.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <f045f75b-0e8e-7143-04e9-b0d4894571c2@cogentembedded.com>
+Date:   Fri, 14 Feb 2020 11:00:41 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
+MIME-Version: 1.0
+In-Reply-To: <20200213191015.7150-1-f.fainelli@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Increase boot partition size to 32MB to support bigger size kernel image
-and FPGA bitstream.
+Hello!
 
-Signed-off-by: Ley Foon Tan <ley.foon.tan@intel.com>
----
- arch/arm/boot/dts/socfpga_arria10_socdk_nand.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 13.02.2020 22:10, Florian Fainelli wrote:
 
-diff --git a/arch/arm/boot/dts/socfpga_arria10_socdk_nand.dts b/arch/arm/boot/dts/socfpga_arria10_socdk_nand.dts
-index 9bd9e04c7361..9aa897b79544 100644
---- a/arch/arm/boot/dts/socfpga_arria10_socdk_nand.dts
-+++ b/arch/arm/boot/dts/socfpga_arria10_socdk_nand.dts
-@@ -16,11 +16,11 @@
- 
- 		partition@0 {
- 			label = "Boot and fpga data";
--			reg = <0x0 0x1C00000>;
-+			reg = <0x0 0x02000000>;
- 		};
- 		partition@1c00000 {
- 			label = "Root Filesystem - JFFS2";
--			reg = <0x1C00000 0x6400000>;
-+			reg = <0x02000000 0x06000000>;
- 		};
- 	};
- };
--- 
-2.19.0
+> We need to ensure that the default VID is untagged otherwise the switch
+> will be sending frames tagged frames and the results can be problematic.
+                   ^^^^^^^^^^^^^^^^^^^^
+
+   Perhaps just "tagged frames"?
+
+> This is especially true with b53 switches that use VID 0 as their
+> default VLAN since VID 0 has a special meaning.
+> 
+> Fixes: fea83353177a ("net: dsa: b53: Fix default VLAN ID")
+> Fixes: 061f6a505ac3 ("net: dsa: Add ndo_vlan_rx_{add, kill}_vid implementation")
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+[...]
+
+MBR, Sergei
 
