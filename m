@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C75715ED5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:33:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C18215ED50
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:33:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390506AbgBNRdk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:33:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56842 "EHLO mail.kernel.org"
+        id S2390783AbgBNRdZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:33:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390027AbgBNQGW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:06:22 -0500
+        id S2390427AbgBNQG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:06:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 479E824650;
-        Fri, 14 Feb 2020 16:06:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FAC422314;
+        Fri, 14 Feb 2020 16:06:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696382;
-        bh=SCVRKuEAGMM0bp7RoFRaC32vJKNwWSfFNJc+9Rx3xMw=;
+        s=default; t=1581696387;
+        bh=RJz+RrkbU4lgmkToGa+2MO6GD3Qh7Gga30b3H8XRPnw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TL34ghD8jrpg7JABNu1VPSUql/ah7ZuteY8fD11MXLADwqZ4WK+m5nlAx1f5Zfaj0
-         P7KfBYaLA77xI0hbcWm6hj3gDrqUyO4/tF328Had3LjL2NdvIDlRD8qqB0/AC7Q2K1
-         ru0XlCBF1iiVnaOD4vip4sH7HY/etWT/WZmqgv5c=
+        b=UZtykO0lZFsU7RMEqyEZXCH4CpX0wqZ1bhMnBbMQSPIaqsw2OVeo7rs1Q8Orm5pE8
+         Dv7GTU1HufrO0ygDeYMbEZT9ky5Uv9r2NLhhx9Htq0awh81TLArMwLIN8Ep9RaOGfc
+         JZknTJ/Jx0I8kjQUo9DOddee3GEIfx11oRA+qwbU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chen Zhou <chenzhou10@huawei.com>, Hulk Robot <hulkci@huawei.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 209/459] scsi: ibmvscsi_tgt: remove set but not used variables 'iue' and 'sd'
-Date:   Fri, 14 Feb 2020 10:57:39 -0500
-Message-Id: <20200214160149.11681-209-sashal@kernel.org>
+Cc:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 213/459] clk: renesas: rcar-gen3: Allow changing the RPC[D2] clocks
+Date:   Fri, 14 Feb 2020 10:57:43 -0500
+Message-Id: <20200214160149.11681-213-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -44,63 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen Zhou <chenzhou10@huawei.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-[ Upstream commit 4aca8fe7716669e39f7857b2e1fc5dfd4475b7e5 ]
+[ Upstream commit 0d67c0340a60829c5c1b7d09629d23bbd67696f3 ]
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+I was unable to get clk_set_rate() setting a lower RPC-IF clock frequency
+and that issue boiled down to me not passing CLK_SET_RATE_PARENT flag to
+clk_register_composite() when registering the RPC[D2] clocks...
 
-drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c: In function ibmvscsis_send_messages:
-drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:1888:19: warning: variable iue set but not used [-Wunused-but-set-variable]
-drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c: In function ibmvscsis_queue_data_in:
-drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:3806:8: warning: variable sd set but not used [-Wunused-but-set-variable]
-
-Link: https://lore.kernel.org/r/20191213064042.161840-1-chenzhou10@huawei.com
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: db4a0073cc82 ("clk: renesas: rcar-gen3: Add RPC clocks")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Link: https://lore.kernel.org/r/be27a344-d8bf-9e0c-8950-2d1b48498496@cogentembedded.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c | 5 -----
- 1 file changed, 5 deletions(-)
+ drivers/clk/renesas/rcar-gen3-cpg.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
-index a929fe76102b0..db2df02214d43 100644
---- a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
-+++ b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
-@@ -1877,7 +1877,6 @@ static void ibmvscsis_send_messages(struct scsi_info *vscsi)
- 	 */
- 	struct viosrp_crq *crq = (struct viosrp_crq *)&msg_hi;
- 	struct ibmvscsis_cmd *cmd, *nxt;
--	struct iu_entry *iue;
- 	long rc = ADAPT_SUCCESS;
- 	bool retry = false;
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index d25c8ba00a656..532626946b8d2 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -464,7 +464,8 @@ static struct clk * __init cpg_rpc_clk_register(const char *name,
  
-@@ -1931,8 +1930,6 @@ static void ibmvscsis_send_messages(struct scsi_info *vscsi)
- 					 */
- 					vscsi->credit += 1;
- 				} else {
--					iue = cmd->iue;
--
- 					crq->valid = VALID_CMD_RESP_EL;
- 					crq->format = cmd->rsp.format;
+ 	clk = clk_register_composite(NULL, name, &parent_name, 1, NULL, NULL,
+ 				     &rpc->div.hw,  &clk_divider_ops,
+-				     &rpc->gate.hw, &clk_gate_ops, 0);
++				     &rpc->gate.hw, &clk_gate_ops,
++				     CLK_SET_RATE_PARENT);
+ 	if (IS_ERR(clk)) {
+ 		kfree(rpc);
+ 		return clk;
+@@ -500,7 +501,8 @@ static struct clk * __init cpg_rpcd2_clk_register(const char *name,
  
-@@ -3797,7 +3794,6 @@ static int ibmvscsis_queue_data_in(struct se_cmd *se_cmd)
- 						 se_cmd);
- 	struct iu_entry *iue = cmd->iue;
- 	struct scsi_info *vscsi = cmd->adapter;
--	char *sd;
- 	uint len = 0;
- 	int rc;
+ 	clk = clk_register_composite(NULL, name, &parent_name, 1, NULL, NULL,
+ 				     &rpcd2->fixed.hw, &clk_fixed_factor_ops,
+-				     &rpcd2->gate.hw, &clk_gate_ops, 0);
++				     &rpcd2->gate.hw, &clk_gate_ops,
++				     CLK_SET_RATE_PARENT);
+ 	if (IS_ERR(clk))
+ 		kfree(rpcd2);
  
-@@ -3805,7 +3801,6 @@ static int ibmvscsis_queue_data_in(struct se_cmd *se_cmd)
- 			       1);
- 	if (rc) {
- 		dev_err(&vscsi->dev, "srp_transfer_data failed: %d\n", rc);
--		sd = se_cmd->sense_buffer;
- 		se_cmd->scsi_sense_length = 18;
- 		memset(se_cmd->sense_buffer, 0, se_cmd->scsi_sense_length);
- 		/* Logical Unit Communication Time-out asc/ascq = 0x0801 */
 -- 
 2.20.1
 
