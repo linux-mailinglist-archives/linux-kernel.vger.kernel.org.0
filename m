@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66F9B15DF4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:08:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA9A015DF6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:09:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390868AbgBNQIK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:08:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58834 "EHLO mail.kernel.org"
+        id S2390897AbgBNQIQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:08:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390678AbgBNQH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:07:27 -0500
+        id S2390707AbgBNQHe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:07:34 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 261FC24654;
-        Fri, 14 Feb 2020 16:07:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 308EF22314;
+        Fri, 14 Feb 2020 16:07:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696447;
-        bh=jkH9pWg94cm9T1Q+S+xwhjrfK4jGO8fl3b9h2Vti3GA=;
+        s=default; t=1581696454;
+        bh=VoQBGjb/JsFJM3BKoLOX/WXeB1JAJ+3TWYgmREkaBvI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JMZM/OV1xPEAhzBkaJBnxz0o7Upl6gjYSl+COn3W5evKI5eQ56D/GrON+OCCXiySE
-         6mvBaNcBT100a765WmdWi2Ry9sadXU4qK+ASh61I+p77xL/7X/K40IBlAHm6LiCaIr
-         cViwxIFkHJSc7KfsOkekWwGahNDZk8WqZAR7NTMg=
+        b=ScHNUIFwPw91M2zibAW4rCFtMcsFZqrxl3sOyj4DeyIxWQJQ/fqLjokuOVx51qzsu
+         CGqH3vG4Wp0RAYE5xCACohTae5aqHtFAim8g37MpnjHUKpGWLIVPNrxtWylYRoJUTJ
+         zl/asxQL0sj8M9Z3IIcnk7mbi5j0wjPPZioZawiA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 261/459] ARM: dts: meson8: use the actual frequency for the GPU's 182.1MHz OPP
-Date:   Fri, 14 Feb 2020 10:58:31 -0500
-Message-Id: <20200214160149.11681-261-sashal@kernel.org>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 266/459] usb: dwc3: use proper initializers for property entries
+Date:   Fri, 14 Feb 2020 10:58:36 -0500
+Message-Id: <20200214160149.11681-266-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -45,40 +46,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-[ Upstream commit fe634a7a9a57fb736e39fb71aa9adc6448a90f94 ]
+[ Upstream commit 5eb5afb07853d6e90d3a2b230c825e028e948f79 ]
 
-The clock setup on Meson8 cannot achieve a Mali frequency of exactly
-182.15MHz. The vendor driver uses "FCLK_DIV7 / 2" for this frequency,
-which translates to 2550MHz / 7 / 2 = 182142857Hz.
-Update the GPU operating point to that specific frequency to not confuse
-myself when comparing the frequency from the .dts with the actual clock
-rate on the system.
+We should not be reaching into property entries and initialize them by
+hand, but rather use proper initializer macros. This way we can alter
+internal representation of property entries with no visible changes to
+their users.
 
-Fixes: 7d3f6b536e72c9 ("ARM: dts: meson8: add the Mali-450 MP6 GPU")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Acked-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Felipe Balbi <balbi@kernel.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/meson8.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/dwc3/host.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/meson8.dtsi b/arch/arm/boot/dts/meson8.dtsi
-index 3c534cd50ee3b..db2033f674c67 100644
---- a/arch/arm/boot/dts/meson8.dtsi
-+++ b/arch/arm/boot/dts/meson8.dtsi
-@@ -129,8 +129,8 @@
- 	gpu_opp_table: gpu-opp-table {
- 		compatible = "operating-points-v2";
+diff --git a/drivers/usb/dwc3/host.c b/drivers/usb/dwc3/host.c
+index 5567ed2cddbec..fa252870c926f 100644
+--- a/drivers/usb/dwc3/host.c
++++ b/drivers/usb/dwc3/host.c
+@@ -88,10 +88,10 @@ int dwc3_host_init(struct dwc3 *dwc)
+ 	memset(props, 0, sizeof(struct property_entry) * ARRAY_SIZE(props));
  
--		opp-182150000 {
--			opp-hz = /bits/ 64 <182150000>;
-+		opp-182142857 {
-+			opp-hz = /bits/ 64 <182142857>;
- 			opp-microvolt = <1150000>;
- 		};
- 		opp-318750000 {
+ 	if (dwc->usb3_lpm_capable)
+-		props[prop_idx++].name = "usb3-lpm-capable";
++		props[prop_idx++] = PROPERTY_ENTRY_BOOL("usb3-lpm-capable");
+ 
+ 	if (dwc->usb2_lpm_disable)
+-		props[prop_idx++].name = "usb2-lpm-disable";
++		props[prop_idx++] = PROPERTY_ENTRY_BOOL("usb2-lpm-disable");
+ 
+ 	/**
+ 	 * WORKAROUND: dwc3 revisions <=3.00a have a limitation
+@@ -103,7 +103,7 @@ int dwc3_host_init(struct dwc3 *dwc)
+ 	 * This following flag tells XHCI to do just that.
+ 	 */
+ 	if (dwc->revision <= DWC3_REVISION_300A)
+-		props[prop_idx++].name = "quirk-broken-port-ped";
++		props[prop_idx++] = PROPERTY_ENTRY_BOOL("quirk-broken-port-ped");
+ 
+ 	if (prop_idx) {
+ 		ret = platform_device_add_properties(xhci, props);
 -- 
 2.20.1
 
