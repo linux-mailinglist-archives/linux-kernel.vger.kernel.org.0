@@ -2,233 +2,360 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38A9515D7CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 13:56:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBEEE15D7BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 13:55:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729269AbgBNMzu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 07:55:50 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:53239 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728036AbgBNMzr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 07:55:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581684946;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-        bh=vfouwP8TcamNpMbxHNP6dn1gS+edKVT/FDKZ0j5xkf4=;
-        b=MXWso3GvlkUwlb2eIqBRf6uiFPGcKrVT6VJqr8BhLtKNg7vOlriJyyhKCmCgFanZmBMhNf
-        joYMzgksZqWiE0TukxVr9D2PZbKOqf/6QEsZrvcKcXIRGH1xFRLoH71R9Zvzvf+MDoZ6Gx
-        /48uRTFl1Jwtw9usT090yicpx+ufZTM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-330-L4uG9_CPOjipUjdS1oGkdg-1; Fri, 14 Feb 2020 07:55:42 -0500
-X-MC-Unique: L4uG9_CPOjipUjdS1oGkdg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1728748AbgBNMzm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 07:55:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40210 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728036AbgBNMzm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 07:55:42 -0500
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 051E6107ACCD;
-        Fri, 14 Feb 2020 12:55:41 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-117-39.ams2.redhat.com [10.36.117.39])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6E12E8AC44;
-        Fri, 14 Feb 2020 12:55:40 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 4400131FEE; Fri, 14 Feb 2020 13:55:36 +0100 (CET)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     gurchetansingh@chromium.org, olvaffe@gmail.com,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 6/6] drm/virtio: move remaining virtio_gpu_notify calls
-Date:   Fri, 14 Feb 2020 13:55:35 +0100
-Message-Id: <20200214125535.26349-7-kraxel@redhat.com>
-In-Reply-To: <20200214125535.26349-1-kraxel@redhat.com>
-References: <20200214125535.26349-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+        by mail.kernel.org (Postfix) with ESMTPSA id 93D9F2168B;
+        Fri, 14 Feb 2020 12:55:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581684940;
+        bh=1GEtlZcPusHgpheYjO6eXta3ti5O2KH72iMqwMv+C94=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=tYA3Be3jqULTel0Z6w4tubVMtQIuDtwYfvywgH5azavkaCycrdU4EgwSTfBkINbbd
+         GyZBupqgcMw5J78g0FExBCpIvEIsJg+BUD5c2uOyUAJIF6kkDfhhIsx0+qLIa0SKCQ
+         hEupABNd+FnfS9JcNBn9OvwJWEwGJBRR9PW4kpqE=
+Date:   Fri, 14 Feb 2020 12:55:35 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Andreas Kemnade <andreas@kemnade.info>
+Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        lee.jones@linaro.org, b.galvani@gmail.com,
+        linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
+        linux-iio@vger.kernel.org, phh@phh.me, stefan@agner.ch,
+        letux-kernel@openphoenux.org, martin.blumenstingl@googlemail.com
+Subject: Re: [PATCH v2 1/3] iio: adc: rn5t618: Add ADC driver for
+ RN5T618/RC5T619
+Message-ID: <20200214125535.211efa0d@archlinux>
+In-Reply-To: <20200211172033.6094878c@kemnade.info>
+References: <20200120212056.28806-1-andreas@kemnade.info>
+        <20200120212056.28806-2-andreas@kemnade.info>
+        <20200202173355.1b949a37@archlinux>
+        <20200211172033.6094878c@kemnade.info>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move all remaining virtio_gpu_notify() calls from virtio_gpu_cmd_*
-to the callers, for consistency reasons.
+On Tue, 11 Feb 2020 17:24:50 +0100
+Andreas Kemnade <andreas@kemnade.info> wrote:
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- drivers/gpu/drm/virtio/virtgpu_gem.c    | 2 ++
- drivers/gpu/drm/virtio/virtgpu_ioctl.c  | 3 +++
- drivers/gpu/drm/virtio/virtgpu_kms.c    | 3 +++
- drivers/gpu/drm/virtio/virtgpu_object.c | 1 +
- drivers/gpu/drm/virtio/virtgpu_vq.c     | 9 ---------
- 5 files changed, 9 insertions(+), 9 deletions(-)
+> On Sun, 2 Feb 2020 17:33:55 +0000
+> Jonathan Cameron <jic23@kernel.org> wrote:
+> 
+> > On Mon, 20 Jan 2020 22:20:54 +0100
+> > Andreas Kemnade <andreas@kemnade.info> wrote:
+> >   
+> > > Both chips have an A/D converter capable of measuring
+> > > things like VBAT, VUSB and analog inputs.
+> > > 
+> > > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>    
+> > Sorry I missed one bigger thing in here around PROCESSED vs RAW.
+> > See inline.
+> > 
+> > Thanks,
+> > 
+> > Jonathan
+> >   
+> > > ---
+> > > Changes in v2:
+> > > - enum for channels
+> > > - bulk read instead of single byte read for conversion
+> > >   result
+> > > - fix get_virq error handling
+> > > - use devm for registering device and requesting IRQ
+> > > 
+> > >  drivers/iio/adc/Kconfig       |  10 ++
+> > >  drivers/iio/adc/Makefile      |   1 +
+> > >  drivers/iio/adc/rn5t618-adc.c | 253 ++++++++++++++++++++++++++++++++++++++++++
+> > >  3 files changed, 264 insertions(+)
+> > >  create mode 100644 drivers/iio/adc/rn5t618-adc.c
+> > > 
+> > > diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> > > index f0af3a42f53c..9ea9489e3f0a 100644
+> > > --- a/drivers/iio/adc/Kconfig
+> > > +++ b/drivers/iio/adc/Kconfig
+> > > @@ -735,6 +735,16 @@ config RCAR_GYRO_ADC
+> > >  	  To compile this driver as a module, choose M here: the
+> > >  	  module will be called rcar-gyroadc.
+> > >  
+> > > +config RN5T618_ADC
+> > > +	tristate "ADC for the RN5T618/RC5T619 family of chips"
+> > > +	depends on MFD_RN5T618
+> > > +	help
+> > > +	  Say yes here to build support for the integrated ADC inside the
+> > > +	  RN5T618/619 series PMICs:    
+> > Why :?  
+> > > +
+> > > +	  This driver can also be built as a module. If so, the module
+> > > +	  will be called rn5t618-adc.
+> > > +
+> > >  config ROCKCHIP_SARADC
+> > >  	tristate "Rockchip SARADC driver"
+> > >  	depends on ARCH_ROCKCHIP || (ARM && COMPILE_TEST)
+> > > diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
+> > > index ef9cc485fb67..2aea70556ed0 100644
+> > > --- a/drivers/iio/adc/Makefile
+> > > +++ b/drivers/iio/adc/Makefile
+> > > @@ -69,6 +69,7 @@ obj-$(CONFIG_QCOM_VADC_COMMON) += qcom-vadc-common.o
+> > >  obj-$(CONFIG_QCOM_SPMI_VADC) += qcom-spmi-vadc.o
+> > >  obj-$(CONFIG_QCOM_PM8XXX_XOADC) += qcom-pm8xxx-xoadc.o
+> > >  obj-$(CONFIG_RCAR_GYRO_ADC) += rcar-gyroadc.o
+> > > +obj-$(CONFIG_RN5T618_ADC) += rn5t618-adc.o
+> > >  obj-$(CONFIG_ROCKCHIP_SARADC) += rockchip_saradc.o
+> > >  obj-$(CONFIG_SC27XX_ADC) += sc27xx_adc.o
+> > >  obj-$(CONFIG_SPEAR_ADC) += spear_adc.o
+> > > diff --git a/drivers/iio/adc/rn5t618-adc.c b/drivers/iio/adc/rn5t618-adc.c
+> > > new file mode 100644
+> > > index 000000000000..667bd814569d
+> > > --- /dev/null
+> > > +++ b/drivers/iio/adc/rn5t618-adc.c
+> > > @@ -0,0 +1,253 @@
+> > > +// SPDX-License-Identifier: GPL-2.0+
+> > > +/*
+> > > + * ADC driver for the RICOH RN5T618 power management chip family
+> > > + *
+> > > + * Copyright (C) 2019 Andreas Kemnade
+> > > + */
+> > > +
+> > > +#include <linux/kernel.h>
+> > > +#include <linux/device.h>
+> > > +#include <linux/errno.h>
+> > > +#include <linux/interrupt.h>
+> > > +#include <linux/init.h>
+> > > +#include <linux/module.h>
+> > > +#include <linux/mfd/rn5t618.h>
+> > > +#include <linux/platform_device.h>
+> > > +#include <linux/completion.h>
+> > > +#include <linux/regmap.h>
+> > > +#include <linux/iio/iio.h>
+> > > +#include <linux/slab.h>
+> > > +#include <linux/irqdomain.h>    
+> > I may be missing something, but I'm not immediately seeing any irq_domain*
+> > calls?  I suspect the only call is via stuff buried in regmap so we probably
+> > don't need the header here.
+> >   
+> > > +
+> > > +#define RN5T618_ADC_CONVERSION_TIMEOUT   (msecs_to_jiffies(500))
+> > > +#define REFERENCE_VOLT 2500    
+> > 
+> > Please prefix these defines
+> > RN5T618_* 
+> >   
+> Does that also apply for the defines below?
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_gem.c b/drivers/gpu/drm/virtio/virtgpu_gem.c
-index 0a2b62279647..0d6152c99a27 100644
---- a/drivers/gpu/drm/virtio/virtgpu_gem.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_gem.c
-@@ -123,6 +123,7 @@ int virtio_gpu_gem_object_open(struct drm_gem_object *obj,
- 
- 	virtio_gpu_cmd_context_attach_resource(vgdev, vfpriv->ctx_id,
- 					       objs);
-+	virtio_gpu_notify(vgdev);
- 	return 0;
- }
- 
-@@ -143,6 +144,7 @@ void virtio_gpu_gem_object_close(struct drm_gem_object *obj,
- 
- 	virtio_gpu_cmd_context_detach_resource(vgdev, vfpriv->ctx_id,
- 					       objs);
-+	virtio_gpu_notify(vgdev);
- }
- 
- struct virtio_gpu_object_array *virtio_gpu_array_alloc(u32 nents)
-diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-index 467649733d24..bbc31aef51f1 100644
---- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-@@ -158,6 +158,7 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
- 
- 	virtio_gpu_cmd_submit(vgdev, buf, exbuf->size,
- 			      vfpriv->ctx_id, buflist, out_fence);
-+	virtio_gpu_notify(vgdev);
- 	return 0;
- 
- out_unresv:
-@@ -314,6 +315,7 @@ static int virtio_gpu_transfer_from_host_ioctl(struct drm_device *dev,
- 		(vgdev, vfpriv->ctx_id, offset, args->level,
- 		 &args->box, objs, fence);
- 	dma_fence_put(&fence->f);
-+	virtio_gpu_notify(vgdev);
- 	return 0;
- 
- err_unlock:
-@@ -446,6 +448,7 @@ static int virtio_gpu_get_caps_ioctl(struct drm_device *dev,
- 	/* not in cache - need to talk to hw */
- 	virtio_gpu_cmd_get_capset(vgdev, found_valid, args->cap_set_ver,
- 				  &cache_ent);
-+	virtio_gpu_notify(vgdev);
- 
- copy_exit:
- 	ret = wait_event_timeout(vgdev->resp_wq,
-diff --git a/drivers/gpu/drm/virtio/virtgpu_kms.c b/drivers/gpu/drm/virtio/virtgpu_kms.c
-index 8fd7acef960f..ad3b673f5796 100644
---- a/drivers/gpu/drm/virtio/virtgpu_kms.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_kms.c
-@@ -61,6 +61,7 @@ static int virtio_gpu_context_create(struct virtio_gpu_device *vgdev,
- 		return handle;
- 	handle += 1;
- 	virtio_gpu_cmd_context_create(vgdev, handle, nlen, name);
-+	virtio_gpu_notify(vgdev);
- 	return handle;
- }
- 
-@@ -68,6 +69,7 @@ static void virtio_gpu_context_destroy(struct virtio_gpu_device *vgdev,
- 				      uint32_t ctx_id)
- {
- 	virtio_gpu_cmd_context_destroy(vgdev, ctx_id);
-+	virtio_gpu_notify(vgdev);
- 	ida_free(&vgdev->ctx_id_ida, ctx_id - 1);
- }
- 
-@@ -93,6 +95,7 @@ static void virtio_gpu_get_capsets(struct virtio_gpu_device *vgdev,
- 	}
- 	for (i = 0; i < num_capsets; i++) {
- 		virtio_gpu_cmd_get_capset_info(vgdev, i);
-+		virtio_gpu_notify(vgdev);
- 		ret = wait_event_timeout(vgdev->resp_wq,
- 					 vgdev->capsets[i].id > 0, 5 * HZ);
- 		if (ret == 0) {
-diff --git a/drivers/gpu/drm/virtio/virtgpu_object.c b/drivers/gpu/drm/virtio/virtgpu_object.c
-index 65d6834d3c74..3d2a6d489bfc 100644
---- a/drivers/gpu/drm/virtio/virtgpu_object.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_object.c
-@@ -88,6 +88,7 @@ static void virtio_gpu_free_object(struct drm_gem_object *obj)
- 
- 	if (bo->created) {
- 		virtio_gpu_cmd_unref_resource(vgdev, bo);
-+		virtio_gpu_notify(vgdev);
- 		/* completion handler calls virtio_gpu_cleanup_object() */
- 		return;
- 	}
-diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
-index 2e108b426244..5e2375e0f7bb 100644
---- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-@@ -544,7 +544,6 @@ void virtio_gpu_cmd_unref_resource(struct virtio_gpu_device *vgdev,
- 
- 	vbuf->resp_cb_data = bo;
- 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
--	virtio_gpu_notify(vgdev);
- }
- 
- void virtio_gpu_cmd_set_scanout(struct virtio_gpu_device *vgdev,
-@@ -798,7 +797,6 @@ int virtio_gpu_cmd_get_capset_info(struct virtio_gpu_device *vgdev, int idx)
- 	cmd_p->hdr.type = cpu_to_le32(VIRTIO_GPU_CMD_GET_CAPSET_INFO);
- 	cmd_p->capset_index = cpu_to_le32(idx);
- 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
--	virtio_gpu_notify(vgdev);
- 	return 0;
- }
- 
-@@ -874,7 +872,6 @@ int virtio_gpu_cmd_get_capset(struct virtio_gpu_device *vgdev,
- 	cmd_p->capset_version = cpu_to_le32(version);
- 	*cache_p = cache_ent;
- 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
--	virtio_gpu_notify(vgdev);
- 
- 	return 0;
- }
-@@ -922,7 +919,6 @@ void virtio_gpu_cmd_context_create(struct virtio_gpu_device *vgdev, uint32_t id,
- 	strncpy(cmd_p->debug_name, name, sizeof(cmd_p->debug_name) - 1);
- 	cmd_p->debug_name[sizeof(cmd_p->debug_name) - 1] = 0;
- 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
--	virtio_gpu_notify(vgdev);
- }
- 
- void virtio_gpu_cmd_context_destroy(struct virtio_gpu_device *vgdev,
-@@ -937,7 +933,6 @@ void virtio_gpu_cmd_context_destroy(struct virtio_gpu_device *vgdev,
- 	cmd_p->hdr.type = cpu_to_le32(VIRTIO_GPU_CMD_CTX_DESTROY);
- 	cmd_p->hdr.ctx_id = cpu_to_le32(id);
- 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
--	virtio_gpu_notify(vgdev);
- }
- 
- void virtio_gpu_cmd_context_attach_resource(struct virtio_gpu_device *vgdev,
-@@ -956,7 +951,6 @@ void virtio_gpu_cmd_context_attach_resource(struct virtio_gpu_device *vgdev,
- 	cmd_p->hdr.ctx_id = cpu_to_le32(ctx_id);
- 	cmd_p->resource_id = cpu_to_le32(bo->hw_res_handle);
- 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
--	virtio_gpu_notify(vgdev);
- }
- 
- void virtio_gpu_cmd_context_detach_resource(struct virtio_gpu_device *vgdev,
-@@ -975,7 +969,6 @@ void virtio_gpu_cmd_context_detach_resource(struct virtio_gpu_device *vgdev,
- 	cmd_p->hdr.ctx_id = cpu_to_le32(ctx_id);
- 	cmd_p->resource_id = cpu_to_le32(bo->hw_res_handle);
- 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
--	virtio_gpu_notify(vgdev);
- }
- 
- void
-@@ -1067,7 +1060,6 @@ void virtio_gpu_cmd_transfer_from_host_3d(struct virtio_gpu_device *vgdev,
- 	cmd_p->level = cpu_to_le32(level);
- 
- 	virtio_gpu_queue_fenced_ctrl_buffer(vgdev, vbuf, fence);
--	virtio_gpu_notify(vgdev);
- }
- 
- void virtio_gpu_cmd_submit(struct virtio_gpu_device *vgdev,
-@@ -1091,7 +1083,6 @@ void virtio_gpu_cmd_submit(struct virtio_gpu_device *vgdev,
- 	cmd_p->size = cpu_to_le32(data_size);
- 
- 	virtio_gpu_queue_fenced_ctrl_buffer(vgdev, vbuf, fence);
--	virtio_gpu_notify(vgdev);
- }
- 
- int virtio_gpu_object_attach(struct virtio_gpu_device *vgdev,
--- 
-2.18.2
+yes. It's easier to just prefix all driver specific defines than think
+carefully about which ones might 'clash' and which ones are very unlikely
+to do so.
+
+> 
+> > It avoids potential clashes in future with things defined in headers.
+> >   
+> > > +
+> > > +/* mask for selecting channels for single conversion */
+> > > +#define ADCCNT3_CHANNEL_MASK 0x7
+> > > +/* average 4-time conversion mode */
+> > > +#define ADCCNT3_AVG BIT(3)
+> > > +/* set for starting a single conversion, gets cleared by hw when done */
+> > > +#define ADCCNT3_GODONE BIT(4)
+> > > +/* automatic conversion, period is in ADCCNT2, selected channels are
+> > > + * in ADCCNT1
+> > > + */
+> > > +#define ADCCNT3_AUTO BIT(5)
+> > > +#define ADCEND_IRQ BIT(0)
+> > > +
+> > > +struct rn5t618_adc_data {
+> > > +	struct device *dev;
+> > > +	struct rn5t618 *rn5t618;
+> > > +	struct completion conv_completion;
+> > > +	int irq;
+> > > +};
+> > > +
+> > > +struct rn5t618_channel_ratios {
+> > > +	u16 numerator;
+> > > +	u16 denominator;
+> > > +};
+> > > +
+> > > +enum rn5t618_channels {
+> > > +	LIMMON = 0,
+> > > +	VBAT,
+> > > +	VADP,
+> > > +	VUSB,
+> > > +	VSYS,
+> > > +	VTHM,
+> > > +	AIN1,
+> > > +	AIN0
+> > > +};
+> > > +
+> > > +static const struct rn5t618_channel_ratios rn5t618_ratios[8] = {
+> > > +	[LIMMON] = {50, 32}, /* measured across 20mOhm, amplified by 32 */
+> > > +	[VBAT] = {2, 1},
+> > > +	[VADP] = {3, 1},
+> > > +	[VUSB] = {3, 1},
+> > > +	[VSYS] = {3, 1},
+> > > +	[VTHM] = {1, 1},
+> > > +	[AIN1] = {1, 1},
+> > > +	[AIN0] = {1, 1},
+> > > +};
+> > > +
+> > > +static int rn5t618_read_adc_reg(struct rn5t618 *rn5t618, int reg, u16 *val)
+> > > +{
+> > > +	u8 data[2];
+> > > +	int ret;
+> > > +
+> > > +	ret = regmap_bulk_read(rn5t618->regmap, reg, data, sizeof(data));
+> > > +	if (ret < 0)
+> > > +		return ret;
+> > > +
+> > > +	*val = (data[0] << 4) | (data[1] & 0xF);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static irqreturn_t rn5t618_adc_irq(int irq, void *data)
+> > > +{
+> > > +	struct rn5t618_adc_data *adc = data;
+> > > +	unsigned int r = 0;
+> > > +	int ret;
+> > > +
+> > > +	/* clear low & high threshold irqs */
+> > > +	regmap_write(adc->rn5t618->regmap, RN5T618_IR_ADC1, 0);
+> > > +	regmap_write(adc->rn5t618->regmap, RN5T618_IR_ADC2, 0);
+> > > +
+> > > +	ret = regmap_read(adc->rn5t618->regmap, RN5T618_IR_ADC3, &r);
+> > > +	if (ret < 0)
+> > > +		dev_err(adc->dev, "failed to read IRQ status: %d\n", ret);
+> > > +
+> > > +	regmap_write(adc->rn5t618->regmap, RN5T618_IR_ADC3, 0);
+> > > +
+> > > +	if (r & ADCEND_IRQ)
+> > > +		complete(&adc->conv_completion);
+> > > +
+> > > +	return IRQ_HANDLED;
+> > > +}
+> > > +
+> > > +static int rn5t618_adc_read(struct iio_dev *iio_dev,
+> > > +			    const struct iio_chan_spec *chan,
+> > > +			    int *val, int *val2, long mask)
+> > > +{
+> > > +	struct rn5t618_adc_data *adc = iio_priv(iio_dev);
+> > > +	u16 raw;
+> > > +	int ret;
+> > > +
+> > > +	/* select channel */
+> > > +	ret = regmap_update_bits(adc->rn5t618->regmap, RN5T618_ADCCNT3,
+> > > +				 ADCCNT3_CHANNEL_MASK,
+> > > +				 chan->channel);
+> > > +	if (ret < 0)
+> > > +		return ret;
+> > > +
+> > > +	ret = regmap_write(adc->rn5t618->regmap, RN5T618_EN_ADCIR3, ADCEND_IRQ);
+> > > +	if (ret < 0)
+> > > +		return ret;
+> > > +
+> > > +	ret = regmap_update_bits(adc->rn5t618->regmap, RN5T618_ADCCNT3,
+> > > +				 ADCCNT3_AVG,
+> > > +				 mask == IIO_CHAN_INFO_AVERAGE_RAW ?
+> > > +				 ADCCNT3_AVG : 0);
+> > > +	if (ret < 0)
+> > > +		return ret;
+> > > +
+> > > +	init_completion(&adc->conv_completion);
+> > > +	/* single conversion */
+> > > +	ret = regmap_update_bits(adc->rn5t618->regmap, RN5T618_ADCCNT3,
+> > > +				 ADCCNT3_GODONE, ADCCNT3_GODONE);
+> > > +	if (ret < 0)
+> > > +		return ret;
+> > > +
+> > > +	ret = wait_for_completion_timeout(&adc->conv_completion,
+> > > +					  RN5T618_ADC_CONVERSION_TIMEOUT);
+> > > +	if (ret == 0) {
+> > > +		dev_warn(adc->dev, "timeout waiting for adc result\n");
+> > > +		return -ETIMEDOUT;
+> > > +	}
+> > > +
+> > > +	ret = rn5t618_read_adc_reg(adc->rn5t618,
+> > > +				   RN5T618_ILIMDATAH + 2 * chan->channel,
+> > > +				   &raw);
+> > > +	if (ret < 0)
+> > > +		return ret;
+> > > +
+> > > +	*val = raw;
+> > > +	if (mask == IIO_CHAN_INFO_PROCESSED)
+> > > +		*val = *val * REFERENCE_VOLT *
+> > > +		       rn5t618_ratios[chan->channel].numerator /
+> > > +		       rn5t618_ratios[chan->channel].denominator / 4095;    
+> > 
+> > This info should be provided as scale so that userspace can do the maths if
+> > it wants to rather than handling it in kernel.
+> >   
+> can do as has to do? So I guess any simple shell script then cannot simply
+> read out values from sysfs.
+
+Takes a little more complexity if you want them in base units, but
+not much.  The reason for this preference for just _raw where possible
+is to align with what gets packed into the buffers when using
+the chrdev route.  In that case you want tight packing and that is
+normally much easier if you stick to whatever format the data came
+off the device in.
+
+
+
+> Hmm, how is scale defined here?
+> processed in mV = raw * scale (which can be IIO_VAL_FRACTIONAL)?
+Yes.  Should all be documented in the ABI docs.
+
+Documentation/ABI/testing/sysfs-bus-iio*
+
+> 
+> > > +
+> > > +	return IIO_VAL_INT;
+> > > +}
+> > > +
+> > > +static const struct iio_info rn5t618_adc_iio_info = {
+> > > +	.read_raw = &rn5t618_adc_read,
+> > > +};
+> > > +
+> > > +#define RN5T618_ADC_CHANNEL(_channel, _type, _name) { \
+> > > +	.type = _type, \
+> > > +	.channel = _channel, \
+> > > +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) | \
+> > > +			      BIT(IIO_CHAN_INFO_AVERAGE_RAW) | \
+> > > +			      BIT(IIO_CHAN_INFO_PROCESSED), \    
+> > 
+> > Sorry, I missed this before. 
+> > 
+> > As a general rule it makes no sense to expose both RAW and PROCESSED values.
+> > It should be possible to work one out from the other if the relationship is
+> > linear and scale is provided.
+> >   
+> hmm, the other adc drivers, I get in touch with, expose both RAW and PROCESSED.
+> like twl4030_madc. So you want to not have that for new drivers and from the
+> previous comment you prefer to have PROCESSED dropped here?
+
+We can't drop it for existing drivers and normally there is some history
+to how we ended up with both.  Most commonly it is because the conversion
+is non linear so we don't have a good way to represent it (often odd
+calibration stuff that was added after the initial driver).  Sometimes
+it was just something we missed in review, particularly in older drivers.
+
+We can't fix it there because there may be custom userspace code relying on
+it.  All the remotely standard code will happily take either option.
+
+Jonathan
+
+> 
+> Regards,
+> Andreas
 
