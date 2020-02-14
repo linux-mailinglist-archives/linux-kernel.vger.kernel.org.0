@@ -2,102 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00C7D15E24A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:23:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1282E15DDB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:01:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393268AbgBNQWx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:22:53 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:55571 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393004AbgBNQVg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:21:36 -0500
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1j2diO-0003Qi-Lp; Fri, 14 Feb 2020 17:21:16 +0100
-Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id A892B101DFA;
-        Fri, 14 Feb 2020 17:21:07 +0100 (CET)
-Message-Id: <20200214161504.827359174@linutronix.de>
-User-Agent: quilt/0.65
-Date:   Fri, 14 Feb 2020 14:39:36 +0100
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     David Miller <davem@davemloft.net>, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Sebastian Sewior <bigeasy@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Clark Williams <williams@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [RFC patch 19/19] bpf/stackmap: Dont trylock mmap_sem with PREEMPT_RT and interrupts disabled
-References: <20200214133917.304937432@linutronix.de>
+        id S2389041AbgBNP77 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:59:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44928 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389009AbgBNP7x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:59:53 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D48462468E;
+        Fri, 14 Feb 2020 15:59:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581695992;
+        bh=4MDVES3THZ/HyptygoMnFX/brvs0LcNdsxCNUjLPTbk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ZqMkTI2GFfMh+17ej4I4Bfs+fbMjhdpC90+LA4B5fyRHiLYXDqkNn5PMuZwfSCRsB
+         Z5yJomCeKQVzkWXDv6HhWHBnanIFLEQQlyMuB//iEbI6DQsdoiozaTVEh3kJI239in
+         Da4Xgnmo71LSFLwCnnZZVy/zGstWOs0Er8aK0mqE=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Amol Grover <frextrite@gmail.com>,
+        kbuild test robot <lkp@intel.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Keith Busch <kbusch@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.5 513/542] nvmet: Pass lockdep expression to RCU lists
+Date:   Fri, 14 Feb 2020 10:48:25 -0500
+Message-Id: <20200214154854.6746-513-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
+References: <20200214154854.6746-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Miller <davem@davemloft.net>
+From: Amol Grover <frextrite@gmail.com>
 
-In a RT kernel down_read_trylock() cannot be used from NMI context and
-up_read_non_owner() is another problematic issue.
+[ Upstream commit 4ac76436a6d07dec1c3c766f234aa787a16e8f65 ]
 
-So in such a configuration, simply elide the annotated stackmap and
-just report the raw IPs.
+ctrl->subsys->namespaces and subsys->namespaces are traversed with
+list_for_each_entry_rcu outside an RCU read-side critical section but
+under the protection of ctrl->subsys->lock and subsys->lock respectively.
 
-In the longer term, it might be possible to provide a atomic friendly
-versions of the page cache traversal which will at least provide the info
-if the pages are resident and don't need to be paged in.
+Hence, add the corresponding lockdep expression to the list traversal
+primitive to silence false-positive lockdep warnings, and harden RCU
+lists.
 
-[ tglx: Use IS_ENABLED() to avoid the #ifdeffery, fixup the irq work
-  	callback and add a comment ]
-
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-
+Reported-by: kbuild test robot <lkp@intel.com>
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Signed-off-by: Amol Grover <frextrite@gmail.com>
+Signed-off-by: Keith Busch <kbusch@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/stackmap.c |   18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ drivers/nvme/target/core.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/kernel/bpf/stackmap.c
-+++ b/kernel/bpf/stackmap.c
-@@ -40,6 +40,9 @@ static void do_up_read(struct irq_work *
- {
- 	struct stack_map_irq_work *work;
+diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
+index 28438b833c1b0..35810a0a8d212 100644
+--- a/drivers/nvme/target/core.c
++++ b/drivers/nvme/target/core.c
+@@ -555,7 +555,8 @@ int nvmet_ns_enable(struct nvmet_ns *ns)
+ 	} else {
+ 		struct nvmet_ns *old;
  
-+	if (WARN_ON_ONCE(IS_ENABLED(CONFIG_PREEMPT_RT)))
-+		return;
-+
- 	work = container_of(entry, struct stack_map_irq_work, irq_work);
- 	up_read_non_owner(work->sem);
- 	work->sem = NULL;
-@@ -288,10 +291,19 @@ static void stack_map_get_build_id_offse
- 	struct stack_map_irq_work *work = NULL;
+-		list_for_each_entry_rcu(old, &subsys->namespaces, dev_link) {
++		list_for_each_entry_rcu(old, &subsys->namespaces, dev_link,
++					lockdep_is_held(&subsys->lock)) {
+ 			BUG_ON(ns->nsid == old->nsid);
+ 			if (ns->nsid < old->nsid)
+ 				break;
+@@ -1172,7 +1173,8 @@ static void nvmet_setup_p2p_ns_map(struct nvmet_ctrl *ctrl,
  
- 	if (irqs_disabled()) {
--		work = this_cpu_ptr(&up_read_work);
--		if (atomic_read(&work->irq_work.flags) & IRQ_WORK_BUSY)
--			/* cannot queue more up_read, fallback */
-+		if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
-+			work = this_cpu_ptr(&up_read_work);
-+			if (atomic_read(&work->irq_work.flags) & IRQ_WORK_BUSY) {
-+				/* cannot queue more up_read, fallback */
-+				irq_work_busy = true;
-+			}
-+		} else {
-+			/*
-+			 * PREEMPT_RT does not allow to trylock mmap sem in
-+			 * interrupt disabled context. Force the fallback code.
-+			 */
- 			irq_work_busy = true;
-+		}
- 	}
+ 	ctrl->p2p_client = get_device(req->p2p_client);
  
- 	/*
+-	list_for_each_entry_rcu(ns, &ctrl->subsys->namespaces, dev_link)
++	list_for_each_entry_rcu(ns, &ctrl->subsys->namespaces, dev_link,
++				lockdep_is_held(&ctrl->subsys->lock))
+ 		nvmet_p2pmem_ns_add_p2p(ctrl, ns);
+ }
+ 
+-- 
+2.20.1
 
