@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF0E915E98E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:08:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4713515E921
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:05:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394540AbgBNRHs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:07:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43782 "EHLO mail.kernel.org"
+        id S2392423AbgBNQPB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:15:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392292AbgBNQOS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:14:18 -0500
+        id S2388741AbgBNQOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:14:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6CE04246D6;
-        Fri, 14 Feb 2020 16:14:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8D34246BF;
+        Fri, 14 Feb 2020 16:14:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696858;
-        bh=GRvpBHdwaRmGyhqFV9SutAkddtjGkMHJbBSngALE17A=;
+        s=default; t=1581696860;
+        bh=p+DwLs2tKWnYLYuHR1Dc7sSD64Mu6NYtKotHuozV5y0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BCk8NFs6s9+VnZ72u+Vf6H2Hg8btTRXSNUAc6xcZh/B2bsipvvAE748NTWqIoyV79
-         E/dBYPUxAtDWCbBXHgPhbuYfjZW5MetjY1BdgFqcdyoowXVcX53reOvAoHYLjbI02b
-         zM8LyS2/QzNlvmGgL3pbLsVC4tnAjH50js6nft2M=
+        b=n1aLGKSfV6IH22FBeuhPQLFcSLCkqN4ypVY1LvXtgOnoSE43RDntQKSeTWV2H5RoE
+         HXrBSFnK80I4G/WvIyRvn1OlSh86Bk1ZE31Za6DqUH9rsVRvYK+/vxBfiU5ohtxd5v
+         bISKXmxf4s9FEiJ7/A2cKRv6OWbZuoyNtEiyszuQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
-        Robin Gong <yibin.gong@nxp.com>, Vinod Koul <vkoul@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, dmaengine@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 118/252] dmaengine: imx-sdma: Fix memory leak
-Date:   Fri, 14 Feb 2020 11:09:33 -0500
-Message-Id: <20200214161147.15842-118-sashal@kernel.org>
+Cc:     Chen Zhou <chenzhou10@huawei.com>, Hulk Robot <hulkci@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.19 120/252] net/wan/fsl_ucc_hdlc: remove set but not used variables 'ut_info' and 'ret'
+Date:   Fri, 14 Feb 2020 11:09:35 -0500
+Message-Id: <20200214161147.15842-120-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -44,76 +44,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sascha Hauer <s.hauer@pengutronix.de>
+From: Chen Zhou <chenzhou10@huawei.com>
 
-[ Upstream commit 02939cd167095f16328a1bd5cab5a90b550606df ]
+[ Upstream commit 270fe2ceda66b6964d4c6f261d7f562a02c1c786 ]
 
-The current descriptor is not on any list of the virtual DMA channel.
-Once sdma_terminate_all() is called when a descriptor is currently
-in flight then this one is forgotten to be freed. We have to call
-vchan_terminate_vdesc() on this descriptor to re-add it to the lists.
-Now that we also free the currently running descriptor we can (and
-actually have to) remove the current descriptor from its list also
-for the cyclic case.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-Reviewed-by: Robin Gong <yibin.gong@nxp.com>
-Tested-by: Robin Gong <yibin.gong@nxp.com>
-Link: https://lore.kernel.org/r/20191216105328.15198-10-s.hauer@pengutronix.de
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+drivers/net/wan/fsl_ucc_hdlc.c: In function ucc_hdlc_irq_handler:
+drivers/net/wan/fsl_ucc_hdlc.c:643:23:
+	warning: variable ut_info set but not used [-Wunused-but-set-variable]
+drivers/net/wan/fsl_ucc_hdlc.c: In function uhdlc_suspend:
+drivers/net/wan/fsl_ucc_hdlc.c:880:23:
+	warning: variable ut_info set but not used [-Wunused-but-set-variable]
+drivers/net/wan/fsl_ucc_hdlc.c: In function uhdlc_resume:
+drivers/net/wan/fsl_ucc_hdlc.c:925:6:
+	warning: variable ret set but not used [-Wunused-but-set-variable]
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/imx-sdma.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+ drivers/net/wan/fsl_ucc_hdlc.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-index ceb82e74f5b4e..d66a7fdff898e 100644
---- a/drivers/dma/imx-sdma.c
-+++ b/drivers/dma/imx-sdma.c
-@@ -738,12 +738,8 @@ static void sdma_start_desc(struct sdma_channel *sdmac)
- 		return;
- 	}
- 	sdmac->desc = desc = to_sdma_desc(&vd->tx);
--	/*
--	 * Do not delete the node in desc_issued list in cyclic mode, otherwise
--	 * the desc allocated will never be freed in vchan_dma_desc_free_list
--	 */
--	if (!(sdmac->flags & IMX_DMA_SG_LOOP))
--		list_del(&vd->node);
-+
-+	list_del(&vd->node);
+diff --git a/drivers/net/wan/fsl_ucc_hdlc.c b/drivers/net/wan/fsl_ucc_hdlc.c
+index 9ab04ef532f34..bb560f1d9a48c 100644
+--- a/drivers/net/wan/fsl_ucc_hdlc.c
++++ b/drivers/net/wan/fsl_ucc_hdlc.c
+@@ -591,11 +591,9 @@ static irqreturn_t ucc_hdlc_irq_handler(int irq, void *dev_id)
+ 	struct ucc_hdlc_private *priv = (struct ucc_hdlc_private *)dev_id;
+ 	struct net_device *dev = priv->ndev;
+ 	struct ucc_fast_private *uccf;
+-	struct ucc_tdm_info *ut_info;
+ 	u32 ucce;
+ 	u32 uccm;
  
- 	sdma->channel_control[channel].base_bd_ptr = desc->bd_phys;
- 	sdma->channel_control[channel].current_bd_ptr = desc->bd_phys;
-@@ -1044,7 +1040,6 @@ static void sdma_channel_terminate_work(struct work_struct *work)
+-	ut_info = priv->ut_info;
+ 	uccf = priv->uccf;
  
- 	spin_lock_irqsave(&sdmac->vc.lock, flags);
- 	vchan_get_all_descriptors(&sdmac->vc, &head);
--	sdmac->desc = NULL;
- 	spin_unlock_irqrestore(&sdmac->vc.lock, flags);
- 	vchan_dma_desc_free_list(&sdmac->vc, &head);
- }
-@@ -1052,11 +1047,19 @@ static void sdma_channel_terminate_work(struct work_struct *work)
- static int sdma_disable_channel_async(struct dma_chan *chan)
+ 	ucce = ioread32be(uccf->p_ucce);
+@@ -825,7 +823,6 @@ static void resume_clk_config(struct ucc_hdlc_private *priv)
+ static int uhdlc_suspend(struct device *dev)
  {
- 	struct sdma_channel *sdmac = to_sdma_chan(chan);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&sdmac->vc.lock, flags);
+ 	struct ucc_hdlc_private *priv = dev_get_drvdata(dev);
+-	struct ucc_tdm_info *ut_info;
+ 	struct ucc_fast __iomem *uf_regs;
  
- 	sdma_disable_channel(chan);
+ 	if (!priv)
+@@ -837,7 +834,6 @@ static int uhdlc_suspend(struct device *dev)
+ 	netif_device_detach(priv->ndev);
+ 	napi_disable(&priv->napi);
  
--	if (sdmac->desc)
-+	if (sdmac->desc) {
-+		vchan_terminate_vdesc(&sdmac->desc->vd);
-+		sdmac->desc = NULL;
- 		schedule_work(&sdmac->terminate_worker);
-+	}
-+
-+	spin_unlock_irqrestore(&sdmac->vc.lock, flags);
+-	ut_info = priv->ut_info;
+ 	uf_regs = priv->uf_regs;
  
- 	return 0;
- }
+ 	/* backup gumr guemr*/
+@@ -870,7 +866,7 @@ static int uhdlc_resume(struct device *dev)
+ 	struct ucc_fast __iomem *uf_regs;
+ 	struct ucc_fast_private *uccf;
+ 	struct ucc_fast_info *uf_info;
+-	int ret, i;
++	int i;
+ 	u32 cecr_subblock;
+ 	u16 bd_status;
+ 
+@@ -915,16 +911,16 @@ static int uhdlc_resume(struct device *dev)
+ 
+ 	/* Write to QE CECR, UCCx channel to Stop Transmission */
+ 	cecr_subblock = ucc_fast_get_qe_cr_subblock(uf_info->ucc_num);
+-	ret = qe_issue_cmd(QE_STOP_TX, cecr_subblock,
+-			   (u8)QE_CR_PROTOCOL_UNSPECIFIED, 0);
++	qe_issue_cmd(QE_STOP_TX, cecr_subblock,
++		     (u8)QE_CR_PROTOCOL_UNSPECIFIED, 0);
+ 
+ 	/* Set UPSMR normal mode */
+ 	iowrite32be(0, &uf_regs->upsmr);
+ 
+ 	/* init parameter base */
+ 	cecr_subblock = ucc_fast_get_qe_cr_subblock(uf_info->ucc_num);
+-	ret = qe_issue_cmd(QE_ASSIGN_PAGE_TO_DEVICE, cecr_subblock,
+-			   QE_CR_PROTOCOL_UNSPECIFIED, priv->ucc_pram_offset);
++	qe_issue_cmd(QE_ASSIGN_PAGE_TO_DEVICE, cecr_subblock,
++		     QE_CR_PROTOCOL_UNSPECIFIED, priv->ucc_pram_offset);
+ 
+ 	priv->ucc_pram = (struct ucc_hdlc_param __iomem *)
+ 				qe_muram_addr(priv->ucc_pram_offset);
 -- 
 2.20.1
 
