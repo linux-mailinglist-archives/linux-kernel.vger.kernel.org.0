@@ -2,112 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 156AE15F867
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 22:03:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 221CF15F86B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 22:04:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388219AbgBNVCx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 16:02:53 -0500
-Received: from lists.gateworks.com ([108.161.130.12]:38389 "EHLO
-        lists.gateworks.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728173AbgBNVCw (ORCPT
+        id S1730443AbgBNVDx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 16:03:53 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:57531 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726191AbgBNVDx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 16:02:52 -0500
-Received: from 68-189-91-139.static.snlo.ca.charter.com ([68.189.91.139] helo=rjones.pdc.gateworks.com)
-        by lists.gateworks.com with esmtp (Exim 4.82)
-        (envelope-from <rjones@gateworks.com>)
-        id 1j2i7Y-0007HC-Tm; Fri, 14 Feb 2020 21:03:33 +0000
-From:   Robert Jones <rjones@gateworks.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Cc:     Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Robert Jones <rjones@gateworks.com>
-Subject: [PATCH v2] ARM: dts: imx6qdl-gw553x.dtsi: add lsm9ds1 iio imu/magn support
-Date:   Fri, 14 Feb 2020 13:02:41 -0800
-Message-Id: <20200214210241.32611-1-rjones@gateworks.com>
-X-Mailer: git-send-email 2.25.0
+        Fri, 14 Feb 2020 16:03:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581714232;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=aaA9LekCmNuBy6+PZz+0QRYJRt8cF6I6ybrh5R8vzNo=;
+        b=EladvbE7WnFLQCOaGgXansYhASsp4WPR4ynPGUKIyC7ClKEVjt1C4osHwHR89HHWpa5ZiV
+        kCWv4I/8X8QBQXjJ2DZbyQawgT+wBe+N81yG4vio0eUAtUIxLmMD/nt8PBO/rR85gpZZ8g
+        Gn1UOt5svj3OrfLH6KR2jOxBjTTjX5w=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-142-dd6hp9UGPKSx7KxtkKukFA-1; Fri, 14 Feb 2020 16:03:50 -0500
+X-MC-Unique: dd6hp9UGPKSx7KxtkKukFA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9773318C43C8;
+        Fri, 14 Feb 2020 21:03:48 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B4B628AC4D;
+        Fri, 14 Feb 2020 21:03:47 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-nvdimm@lists.01.org, Oliver O'Halloran <oohall@gmail.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v2 0/4] libnvdimm: Cross-arch compatible namespace alignment
+References: <158155489850.3343782.2687127373754434980.stgit@dwillia2-desk3.amr.corp.intel.com>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Fri, 14 Feb 2020 16:03:47 -0500
+In-Reply-To: <158155489850.3343782.2687127373754434980.stgit@dwillia2-desk3.amr.corp.intel.com>
+        (Dan Williams's message of "Wed, 12 Feb 2020 16:48:18 -0800")
+Message-ID: <x49blq0dgp8.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add one node for the accel/gyro i2c device and another for the separate
-magnetometer device in the lsm9ds1.
+Dan Williams <dan.j.williams@intel.com> writes:
 
-Signed-off-by: Robert Jones <rjones@gateworks.com>
----
+> ---
+>
+> Explicit review requests, but any other feedback is of course
+> appreciated:
+>
+> Patch1 needs an ack from ppc arch maintainers, and I'd like a tested-by
+> from Aneesh that this still works to solve the ppc issue. Jeff, does
+> this look good to you?
 
-Changes in v2:
- - Use generic node names
- - alphabetize pinctrl entries
- - shorten patch title prefix
+OK, I've reviewed everything.  Testing looks good with the change I
+mentioned (memremap_compat_align returning PAGE_SIZE).  I made sure a
+4k-aligned namespace created under an unpatched kernel would be
+accessible under a patched kernel.  I also made sure that manually
+setting align would allow for creating of poorly aligned namespaces, and
+that those namespaces were then accessible on the unpatched kernel.
 
- arch/arm/boot/dts/imx6qdl-gw553x.dtsi | 31 +++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+Thanks, Dan!
 
-diff --git a/arch/arm/boot/dts/imx6qdl-gw553x.dtsi b/arch/arm/boot/dts/imx6qdl-gw553x.dtsi
-index a1066897be18..ee85031c3916 100644
---- a/arch/arm/boot/dts/imx6qdl-gw553x.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-gw553x.dtsi
-@@ -173,6 +173,25 @@ &i2c2 {
- 	pinctrl-0 = <&pinctrl_i2c2>;
- 	status = "okay";
- 
-+	magn@1c {
-+		compatible = "st,lsm9ds1-magn";
-+		reg = <0x1c>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_mag>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <2 IRQ_TYPE_EDGE_RISING>;
-+	};
-+
-+	imu@6a {
-+		compatible = "st,lsm9ds1-imu";
-+		reg = <0x6a>;
-+		st,drdy-int-pin = <1>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_imu>;
-+		interrupt-parent = <&gpio7>;
-+		interrupts = <13 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
- 	ltc3676: pmic@3c {
- 		compatible = "lltc,ltc3676";
- 		reg = <0x3c>;
-@@ -426,6 +445,12 @@ MX6QDL_PAD_GPIO_6__I2C3_SDA		0x4001b8b1
- 		>;
- 	};
- 
-+	pinctrl_imu: imugrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_GPIO_18__GPIO7_IO13		0x1b0b0
-+		>;
-+	};
-+
- 	pinctrl_ipu1_csi0: ipu1csi0grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_CSI0_DAT12__IPU1_CSI0_DATA12    0x1b0b0
-@@ -449,6 +474,12 @@ MX6QDL_PAD_KEY_ROW2__GPIO4_IO11		0x1b0b0
- 		>;
- 	};
- 
-+	pinctrl_mag: maggrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_GPIO_2__GPIO1_IO02		0x1b0b0
-+		>;
-+	};
-+
- 	pinctrl_pcie: pciegrp {
- 		fsl,pins = <
- 			MX6QDL_PAD_GPIO_0__GPIO1_IO00		0x1b0b0
--- 
-2.25.0
+-Jeff
 
