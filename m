@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3EA815E1BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:20:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7739E15E1BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:20:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405103AbgBNQUD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:20:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52066 "EHLO mail.kernel.org"
+        id S2405152AbgBNQUM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:20:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404433AbgBNQTF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:19:05 -0500
+        id S2392769AbgBNQTK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:19:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 594C624712;
-        Fri, 14 Feb 2020 16:19:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9609724712;
+        Fri, 14 Feb 2020 16:19:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697144;
-        bh=yeiinYy8/oYoFOzhnRQJqP1ogz6RwTKcKCi2FWoXwhw=;
+        s=default; t=1581697149;
+        bh=mOOtcuYefSa15nfqQ9Wq3br9lXDGL6dSNLWXObe5bYM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aQEm0O3+T5VmEdmThtkhe2E+47k2NBry9R4VVr3ZAI2aLrm4NJ+qBQEheFPbJ4bZF
-         gVHmn+7LVu/KOWuXX3Okq6y28bd0BqNzSdImmXusz2UQe5fhvjZf61CA5TnJlCLJ/I
-         SlHx+Y+Xj42WVsVnDK6Itk8w4Q384tY0U0RGoXn8=
+        b=AO8OCh2RZWCrutY9nfZgt8FKxy6ICqIabyE6cXiQ7ElVScbJCn1cFlG0/2RiMgvv+
+         wWxvHL2W1PUfJYSrtP5GvLofTaZDChKlWb3pwWGwuMk7KhtdwL0HRvbUY8ZEriLm0E
+         6Kv9oyODJbAlXKmQHnUt6MKik4sNu2J3pWQ4lrhI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Erik Kaneda <erik.kaneda@intel.com>,
-        Elia Geretto <elia.f.geretto@gmail.com>,
-        Bob Moore <robert.moore@intel.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org,
-        devel@acpica.org
-Subject: [PATCH AUTOSEL 4.14 084/186] ACPICA: Disassembler: create buffer fields in ACPI_PARSE_LOAD_PASS1
-Date:   Fri, 14 Feb 2020 11:15:33 -0500
-Message-Id: <20200214161715.18113-84-sashal@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 088/186] ARM: dts: r8a7779: Add device node for ARM global timer
+Date:   Fri, 14 Feb 2020 11:15:37 -0500
+Message-Id: <20200214161715.18113-88-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161715.18113-1-sashal@kernel.org>
 References: <20200214161715.18113-1-sashal@kernel.org>
@@ -46,84 +43,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Erik Kaneda <erik.kaneda@intel.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 5ddbd77181dfca61b16d2e2222382ea65637f1b9 ]
+[ Upstream commit 8443ffd1bbd5be74e9b12db234746d12e8ea93e2 ]
 
-ACPICA commit 29cc8dbc5463a93625bed87d7550a8bed8913bf4
+Add a device node for the global timer, which is part of the Cortex-A9
+MPCore.
 
-create_buffer_field is a deferred op that is typically processed in
-load pass 2. However, disassembly of control method contents walk the
-parse tree with ACPI_PARSE_LOAD_PASS1 and AML_CREATE operators are
-processed in a later walk. This is a problem when there is a control
-method that has the same name as the AML_CREATE object. In this case,
-any use of the name segment will be detected as a method call rather
-than a reference to a buffer field. If this is detected as a method
-call, it can result in a mal-formed parse tree if the control methods
-have parameters.
+The global timer can serve as an accurate (4 ns) clock source for
+scheduling and delay loops.
 
-This change in processing AML_CREATE ops earlier solves this issue by
-inserting the named object in the ACPI namespace so that references
-to this name would be detected as a name string rather than a method
-call.
-
-Link: https://github.com/acpica/acpica/commit/29cc8dbc
-Reported-by: Elia Geretto <elia.f.geretto@gmail.com>
-Tested-by: Elia Geretto <elia.f.geretto@gmail.com>
-Signed-off-by: Bob Moore <robert.moore@intel.com>
-Signed-off-by: Erik Kaneda <erik.kaneda@intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20191211135222.26770-4-geert+renesas@glider.be
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/acpica/dsfield.c |  2 +-
- drivers/acpi/acpica/dswload.c | 21 +++++++++++++++++++++
- 2 files changed, 22 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7779.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/acpi/acpica/dsfield.c b/drivers/acpi/acpica/dsfield.c
-index 7bcf5f5ea0297..8df4a49a99a6b 100644
---- a/drivers/acpi/acpica/dsfield.c
-+++ b/drivers/acpi/acpica/dsfield.c
-@@ -273,7 +273,7 @@ acpi_ds_create_buffer_field(union acpi_parse_object *op,
-  * FUNCTION:    acpi_ds_get_field_names
-  *
-  * PARAMETERS:  info            - create_field info structure
-- *  `           walk_state      - Current method state
-+ *              walk_state      - Current method state
-  *              arg             - First parser arg for the field name list
-  *
-  * RETURN:      Status
-diff --git a/drivers/acpi/acpica/dswload.c b/drivers/acpi/acpica/dswload.c
-index eaa859a89702a..1d82e1419397e 100644
---- a/drivers/acpi/acpica/dswload.c
-+++ b/drivers/acpi/acpica/dswload.c
-@@ -444,6 +444,27 @@ acpi_status acpi_ds_load1_end_op(struct acpi_walk_state *walk_state)
- 	ACPI_DEBUG_PRINT((ACPI_DB_DISPATCH, "Op=%p State=%p\n", op,
- 			  walk_state));
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index 8ee0b2ca5d39a..2face089d65b9 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -67,6 +67,14 @@
+ 		      <0xf0000100 0x100>;
+ 	};
  
-+	/*
-+	 * Disassembler: handle create field operators here.
-+	 *
-+	 * create_buffer_field is a deferred op that is typically processed in load
-+	 * pass 2. However, disassembly of control method contents walk the parse
-+	 * tree with ACPI_PARSE_LOAD_PASS1 and AML_CREATE operators are processed
-+	 * in a later walk. This is a problem when there is a control method that
-+	 * has the same name as the AML_CREATE object. In this case, any use of the
-+	 * name segment will be detected as a method call rather than a reference
-+	 * to a buffer field.
-+	 *
-+	 * This earlier creation during disassembly solves this issue by inserting
-+	 * the named object in the ACPI namespace so that references to this name
-+	 * would be a name string rather than a method call.
-+	 */
-+	if ((walk_state->parse_flags & ACPI_PARSE_DISASSEMBLE) &&
-+	    (walk_state->op_info->flags & AML_CREATE)) {
-+		status = acpi_ds_create_buffer_field(op, walk_state);
-+		return_ACPI_STATUS(status);
-+	}
++	timer@f0000200 {
++		compatible = "arm,cortex-a9-global-timer";
++		reg = <0xf0000200 0x100>;
++		interrupts = <GIC_PPI 11
++			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_EDGE_RISING)>;
++		clocks = <&cpg_clocks R8A7779_CLK_ZS>;
++	};
 +
- 	/* We are only interested in opcodes that have an associated name */
- 
- 	if (!(walk_state->op_info->flags & (AML_NAMED | AML_FIELD))) {
+ 	timer@f0000600 {
+ 		compatible = "arm,cortex-a9-twd-timer";
+ 		reg = <0xf0000600 0x20>;
 -- 
 2.20.1
 
