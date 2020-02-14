@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEF1D15E730
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:52:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C732815E72A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:52:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392836AbgBNQwf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:52:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52354 "EHLO mail.kernel.org"
+        id S2406562AbgBNQw3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:52:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404967AbgBNQTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:19:19 -0500
+        id S2389164AbgBNQTX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:19:23 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C96424712;
-        Fri, 14 Feb 2020 16:19:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E90924713;
+        Fri, 14 Feb 2020 16:19:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697159;
-        bh=h21jDjk2H0/a9rRsPntXF0nJgP2UuDLNmtc3OLrc6Vg=;
+        s=default; t=1581697162;
+        bh=+Ts59TTOA1rvaRdu5/xxg8OWUnAZMchTrOzvI7sDYtg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qaXDtQQ5wHx6oL2+slWTbLouygXum8eyuNBXTggLUuX/PZncLmTsVBrJJbHgSIFR0
-         WgMFtoQ7tXGydgnpGgngTE49bDQzvVn2lYdf5GTP3hbKDKmPqkK2AVoEVmSKQUvccP
-         fAS/AouyWNktyc0SJ1GL0Aq5DqJL9FXpV0QyQzgw=
+        b=VjFG9OTfKMBohdQJQfCvCEoLUdSCrcn5be+oZaNEgCF+qP7TXuMLQLNytHvLXoyDK
+         HKHDAGyN+IFEDAPj44gvpvrMyBpM2qcnPQ7Xylupd0qABkah7dZWLBLTGwYHZM0QuQ
+         Wwp0uNoixPWl+azYlHYvU9Ubc9ZvVZhlGtIhogZk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jiewei Ke <kejiewei.cn@gmail.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 096/186] RDMA/rxe: Fix error type of mmap_offset
-Date:   Fri, 14 Feb 2020 11:15:45 -0500
-Message-Id: <20200214161715.18113-96-sashal@kernel.org>
+Cc:     Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>,
+        alsa-devel@alsa-project.org
+Subject: [PATCH AUTOSEL 4.14 099/186] ALSA: sh: Fix compile warning wrt const
+Date:   Fri, 14 Feb 2020 11:15:48 -0500
+Message-Id: <20200214161715.18113-99-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161715.18113-1-sashal@kernel.org>
 References: <20200214161715.18113-1-sashal@kernel.org>
@@ -43,36 +42,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiewei Ke <kejiewei.cn@gmail.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 6ca18d8927d468c763571f78c9a7387a69ffa020 ]
+[ Upstream commit f1dd4795b1523fbca7ab4344dd5a8bb439cc770d ]
 
-The type of mmap_offset should be u64 instead of int to match the type of
-mminfo.offset. If otherwise, after we create several thousands of CQs, it
-will run into overflow issues.
+A long-standing compile warning was seen during build test:
+  sound/sh/aica.c: In function 'load_aica_firmware':
+  sound/sh/aica.c:521:25: warning: passing argument 2 of 'spu_memload' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
 
-Link: https://lore.kernel.org/r/20191227113613.5020-1-kejiewei.cn@gmail.com
-Signed-off-by: Jiewei Ke <kejiewei.cn@gmail.com>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: 198de43d758c ("[ALSA] Add ALSA support for the SEGA Dreamcast PCM device")
+Link: https://lore.kernel.org/r/20200105144823.29547-69-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/sw/rxe/rxe_verbs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/sh/aica.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
-index d1cc89f6f2e33..46c8a66731e6c 100644
---- a/drivers/infiniband/sw/rxe/rxe_verbs.h
-+++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
-@@ -408,7 +408,7 @@ struct rxe_dev {
- 	struct list_head	pending_mmaps;
+diff --git a/sound/sh/aica.c b/sound/sh/aica.c
+index fdc680ae8aa09..d9acf551a8985 100644
+--- a/sound/sh/aica.c
++++ b/sound/sh/aica.c
+@@ -117,10 +117,10 @@ static void spu_memset(u32 toi, u32 what, int length)
+ }
  
- 	spinlock_t		mmap_offset_lock; /* guard mmap_offset */
--	int			mmap_offset;
-+	u64			mmap_offset;
- 
- 	atomic64_t		stats_counters[RXE_NUM_OF_COUNTERS];
- 
+ /* spu_memload - write to SPU address space */
+-static void spu_memload(u32 toi, void *from, int length)
++static void spu_memload(u32 toi, const void *from, int length)
+ {
+ 	unsigned long flags;
+-	u32 *froml = from;
++	const u32 *froml = from;
+ 	u32 __iomem *to = (u32 __iomem *) (SPU_MEMORY_BASE + toi);
+ 	int i;
+ 	u32 val;
 -- 
 2.20.1
 
