@@ -2,94 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F8D115D01C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 03:42:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98F4415D021
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 03:43:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728483AbgBNCms (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 21:42:48 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39023 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728004AbgBNCms (ORCPT
+        id S1728551AbgBNCnG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 21:43:06 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:37294 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727879AbgBNCnG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 21:42:48 -0500
-Received: by mail-pf1-f196.google.com with SMTP id 84so4109721pfy.6;
-        Thu, 13 Feb 2020 18:42:48 -0800 (PST)
+        Thu, 13 Feb 2020 21:43:06 -0500
+Received: by mail-pl1-f194.google.com with SMTP id c23so3143737plz.4
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 18:43:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=CZDOMDG2RZUfkNh7l0YIqZzEpJOX/xGLD5t790ic9jk=;
-        b=G7Qu3tSHrt5GVgh3YVSDD9xMrSt+jM7YQ6RLz5t0b2v40G9oII/7JxcKUwx56HouiB
-         xjyrSR+ow9cK56CEqz+D6Fd+5emgib05c3zyELt/GdW0PsoPNv+1KXMWqRFdhZuTrVpj
-         +kRz4UwZjAjPVmssI/TXAla7Q2z/olRUeg4QQXWlQ2TvsjcWgC5T9nzcs5VYC+qspb86
-         qeeZkBPSXAmbJtqvUHQHyP0NniyGCZyzR8+Bh088BsCe/eJaJxBYhdeshDyM/k4xkWwj
-         f7jPoU/n0VUoh+ybreYjjXeIryGU6bKsyfqeOGqYXOOrxKtxbCWRJKTBBkit5JBwDTTm
-         DFIQ==
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:in-reply-to:references
+         :subject:from:cc:to:date:message-id:user-agent;
+        bh=uhAnaYBibh71jLGyT/MAQHtwtB/q365HXNevkI1NHmw=;
+        b=bqza2qpu0iMia0lDRZcLlw1hsj7t4HxHSBGtkrUkfecnRtXkQV9k9Hr+P3fXTdeYwG
+         WIGaXJCtnBYGIvhfHG2pUPZuZW0jCLv5UTd5aIQk7vLOBWUsvdfPeteI55NNImnKObNd
+         2+6JO7ErmbVY4W9L1QidUq0BRuc7LOtlUUygs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CZDOMDG2RZUfkNh7l0YIqZzEpJOX/xGLD5t790ic9jk=;
-        b=YFwuaUzeA0qDY2hpvrhJRDYCPglzTZZe/X0x5mdkIiCBW2ABulYwPZEi1LGXkxmivJ
-         kfZleBK1Cw/97tpnnz64PL8Vs3gm5SaIis6ZKtGwmhnhnSPaYRf5r+DCgFtAmE6S2hom
-         Qh2VQVE3VgpjCkNF5cTIGDhuDKzYwKFmfcV/I9G+4Sx3FXtZJfmpSEVHkbskXVD1ZqAl
-         GAAHvW61d7r3DbtKqz0exhZLHP7sZNBM4g3ZRnOx1HBq8DqAy4QDOjDFjOaki8CcLiHg
-         NbMDsB41/56uWMvnnu9hUe/wnVVezV8MXbomCK1yZOQgztBBVZuW2TPAhEAAF/hmIn9T
-         4BdQ==
-X-Gm-Message-State: APjAAAUyaxL4xaF6OF613mftApyf579Ja/w83j72BkOguxAwuF8W48GE
-        WEit8+pLGXj0f3KjxFtLNtOwUZr0
-X-Google-Smtp-Source: APXvYqzUcvIPqYHtwkzQFMd3TRZUQFeZfOgdy6PXX1AKHwaoEchoy9nBhZrFaPduBFTVz3qS3UkshA==
-X-Received: by 2002:a63:ff05:: with SMTP id k5mr1020851pgi.185.1581648167823;
-        Thu, 13 Feb 2020 18:42:47 -0800 (PST)
-Received: from localhost ([2401:fa00:8f:203:5bbb:c872:f2b1:f53b])
-        by smtp.gmail.com with ESMTPSA id j14sm4584373pgs.57.2020.02.13.18.42.46
+        h=x-gm-message-state:mime-version:content-transfer-encoding
+         :in-reply-to:references:subject:from:cc:to:date:message-id
+         :user-agent;
+        bh=uhAnaYBibh71jLGyT/MAQHtwtB/q365HXNevkI1NHmw=;
+        b=ucPst9Lm86W9u4kAnN0M/O/sUKRxoJEgYVAuM3nmVrny3dtk4e5EwA6IVMEp1pygLT
+         K68diBLYBd22cRS49hwizplxGQF+7uIXgdgxYZFVU3NXi1TMsfotR3ZorRiQs75vkZMJ
+         1dInzfeL6nhRiWJZoRw+ELD1CyEMGKWwaNsxLHabFbmouIWJOgtful0bQ/SPNry+7jyj
+         q7oV21nlKgOpLBeWGoKM9vKhUm87U6jMQ8gFbMT+8dDF5lTNKLa+yUoq5au9fqRIGAUo
+         VrI9TSQUebyosDbNIEQ2m+SXt6KerYWe8Z51XrWzLKhVyh7Soo0vPrF5axcXW3TE7vNP
+         HAqw==
+X-Gm-Message-State: APjAAAVGm1ilm2t6KFXf3+w2EL+c3S4jnRo2RDtczYN5HCgP3L5LIlW1
+        jTk6TKjs2Sp6XJcGT3+VzjtH9A==
+X-Google-Smtp-Source: APXvYqyieuX93wS+pYXvIYep4RXo0jartYxK5/w/PiWzurnNWGvHpO1ykyoIhsad7KiPH8fJQYxXTA==
+X-Received: by 2002:a17:90a:8001:: with SMTP id b1mr745812pjn.39.1581648185439;
+        Thu, 13 Feb 2020 18:43:05 -0800 (PST)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id t66sm4628079pgb.91.2020.02.13.18.43.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 18:42:47 -0800 (PST)
-Date:   Fri, 14 Feb 2020 11:42:45 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        rostedt@goodmis.org, mingo@kernel.org, joel@joelfernandes.org,
-        gregkh@linuxfoundation.org, gustavo@embeddedor.com,
-        tglx@linutronix.de, paulmck@kernel.org, josh@joshtriplett.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        sergey.senozhatsky.work@gmail.com
-Subject: Re: [PATCH v2 9/9] perf,tracing: Allow function tracing when !RCU
-Message-ID: <20200214024244.GH36551@google.com>
-References: <20200212210139.382424693@infradead.org>
- <20200212210750.312024711@infradead.org>
- <20200214022839.GG36551@google.com>
+        Thu, 13 Feb 2020 18:43:05 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200214022839.GG36551@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200211005059.1377279-9-bjorn.andersson@linaro.org>
+References: <20200211005059.1377279-1-bjorn.andersson@linaro.org> <20200211005059.1377279-9-bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v3 8/8] remoteproc: qcom: Introduce panic handler for PAS and ADSP
+From:   Stephen Boyd <swboyd@chromium.org>
+Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Rishabh Bhatnagar <rishabhb@codeaurora.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>
+Date:   Thu, 13 Feb 2020 18:43:04 -0800
+Message-ID: <158164818421.184098.5580195556346218701@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (20/02/14 11:28), Sergey Senozhatsky wrote:
-> On (20/02/12 22:01), Peter Zijlstra wrote:
-> > Since perf is now able to deal with !rcu_is_watching() contexts,
-> > remove the restraint.
-> > 
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > ---
-> >  kernel/trace/trace_event_perf.c |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > --- a/kernel/trace/trace_event_perf.c
-> > +++ b/kernel/trace/trace_event_perf.c
-> > @@ -477,7 +477,7 @@ static int perf_ftrace_function_register
-> >  {
-> >  	struct ftrace_ops *ops = &event->ftrace_ops;
-> >  
-> > -	ops->flags   = FTRACE_OPS_FL_RCU;
-> > +	ops->flags   = 0;
-> 
-> FTRACE_OPS_FL_ENABLED?
+Quoting Bjorn Andersson (2020-02-10 16:50:59)
+> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qco=
+m_q6v5_adsp.c
+> index 19f784adf91c..822881534d37 100644
+> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
+> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+> @@ -291,12 +291,20 @@ static void *adsp_da_to_va(struct rproc *rproc, u64=
+ da, int len)
+>         return adsp->mem_region + offset;
+>  }
+> =20
+> +static unsigned int adsp_panic(struct rproc *rproc)
+> +{
+> +       struct qcom_adsp *adsp =3D (struct qcom_adsp *)rproc->priv;
 
-No, never mind.
+We don't need to cast from void. Please drop the cast.
 
-	-ss
+> +
+> +       return qcom_q6v5_panic(&adsp->q6v5);
+> +}
+> +
+>  static const struct rproc_ops adsp_ops =3D {
+>         .start =3D adsp_start,
+>         .stop =3D adsp_stop,
+>         .da_to_va =3D adsp_da_to_va,
+>         .parse_fw =3D qcom_register_dump_segments,
+>         .load =3D adsp_load,
+> +       .panic =3D adsp_panic,
+>  };
+> =20
+>  static int adsp_init_clock(struct qcom_adsp *adsp, const char **clk_ids)
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom=
+_q6v5_pas.c
+> index d20ce3c62256..ac38624fb14d 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -242,12 +242,20 @@ static void *adsp_da_to_va(struct rproc *rproc, u64=
+ da, int len)
+>         return adsp->mem_region + offset;
+>  }
+> =20
+> +static unsigned int adsp_panic(struct rproc *rproc)
+> +{
+> +       struct qcom_adsp *adsp =3D (struct qcom_adsp *)rproc->priv;
+
+Same.
+
+> +
+> +       return qcom_q6v5_panic(&adsp->q6v5);
+> +}
