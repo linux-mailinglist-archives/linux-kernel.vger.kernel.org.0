@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7C7D15E99A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:08:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 079D615E93F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:05:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394548AbgBNRIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:08:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43470 "EHLO mail.kernel.org"
+        id S2392409AbgBNQOy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:14:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391959AbgBNQOL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:14:11 -0500
+        id S2392274AbgBNQOO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:14:14 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6287F246CD;
-        Fri, 14 Feb 2020 16:14:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2B3D246C3;
+        Fri, 14 Feb 2020 16:14:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696851;
-        bh=7kdgymCTe3z+kDx0t23a5tS8Fgh/KOpwizHQDgLdcc4=;
+        s=default; t=1581696853;
+        bh=6HKEoRuBusvKcuT8Fuw5jbBQs7MAmC6gXzaQukErTvA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BQScVPL2OPG6iy+l2S/eRW1pepPjunbU/aIJSPixJnnfGPy4lEDGFpwRacaW9I+gm
-         eJkPVoSG9bXN36OUVNSbRtYY4eOQe6es3j9wspAn9PDT0mv3EUXtE/TwY7usqLaX9D
-         Okq5JvGtFjIU/I2J+4vZStZI8vKHEx0D6H8jjOi4=
+        b=GqNZjh9j886ug/VZU6AOL7X4+0/4uDVH/bR0zqDknSwxG3FChW8MlZ8xQnp/YMloQ
+         DRQTVFVj7vvVidgIbSgjKh1+b9jclQTAz3B4LhtkqrqrIPOX8ygHdWG4CVVfHhBm3V
+         FBqP/JvA0zUI+VjcNrT6AGj+1pL1WvtHtJoi4zDs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.19 112/252] scsi: aic7xxx: Adjust indentation in ahc_find_syncrate
-Date:   Fri, 14 Feb 2020 11:09:27 -0500
-Message-Id: <20200214161147.15842-112-sashal@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 114/252] ARM: dts: r8a7779: Add device node for ARM global timer
+Date:   Fri, 14 Feb 2020 11:09:29 -0500
+Message-Id: <20200214161147.15842-114-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -44,52 +43,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 4dbc96ad65c45cdd4e895ed7ae4c151b780790c5 ]
+[ Upstream commit 8443ffd1bbd5be74e9b12db234746d12e8ea93e2 ]
 
-Clang warns:
+Add a device node for the global timer, which is part of the Cortex-A9
+MPCore.
 
-../drivers/scsi/aic7xxx/aic7xxx_core.c:2317:5: warning: misleading
-indentation; statement is not part of the previous 'if'
-[-Wmisleading-indentation]
-                        if ((syncrate->sxfr_u2 & ST_SXFR) != 0)
-                        ^
-../drivers/scsi/aic7xxx/aic7xxx_core.c:2310:4: note: previous statement
-is here
-                        if (syncrate == &ahc_syncrates[maxsync])
-                        ^
-1 warning generated.
+The global timer can serve as an accurate (4 ns) clock source for
+scheduling and delay loops.
 
-This warning occurs because there is a space amongst the tabs on this
-line. Remove it so that the indentation is consistent with the Linux kernel
-coding style and clang no longer warns.
-
-This has been a problem since the beginning of git history hence no fixes
-tag.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/817
-Link: https://lore.kernel.org/r/20191218014220.52746-1-natechancellor@gmail.com
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20191211135222.26770-4-geert+renesas@glider.be
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/aic7xxx/aic7xxx_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7779.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/scsi/aic7xxx/aic7xxx_core.c b/drivers/scsi/aic7xxx/aic7xxx_core.c
-index 915a34f141e4f..49e02e8745533 100644
---- a/drivers/scsi/aic7xxx/aic7xxx_core.c
-+++ b/drivers/scsi/aic7xxx/aic7xxx_core.c
-@@ -2321,7 +2321,7 @@ ahc_find_syncrate(struct ahc_softc *ahc, u_int *period,
- 			 * At some speeds, we only support
- 			 * ST transfers.
- 			 */
--		 	if ((syncrate->sxfr_u2 & ST_SXFR) != 0)
-+			if ((syncrate->sxfr_u2 & ST_SXFR) != 0)
- 				*ppr_options &= ~MSG_EXT_PPR_DT_REQ;
- 			break;
- 		}
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index 03919714645ae..f1c9b2bc542c5 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -68,6 +68,14 @@
+ 		      <0xf0000100 0x100>;
+ 	};
+ 
++	timer@f0000200 {
++		compatible = "arm,cortex-a9-global-timer";
++		reg = <0xf0000200 0x100>;
++		interrupts = <GIC_PPI 11
++			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_EDGE_RISING)>;
++		clocks = <&cpg_clocks R8A7779_CLK_ZS>;
++	};
++
+ 	timer@f0000600 {
+ 		compatible = "arm,cortex-a9-twd-timer";
+ 		reg = <0xf0000600 0x20>;
 -- 
 2.20.1
 
