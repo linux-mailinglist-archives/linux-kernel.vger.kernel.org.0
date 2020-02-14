@@ -2,172 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47B4815D981
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 15:30:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 088AF15D994
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 15:33:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729463AbgBNOag (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 09:30:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59198 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387455AbgBNOaf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 09:30:35 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 619C32168B;
-        Fri, 14 Feb 2020 14:30:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581690634;
-        bh=4tilaeWlKQDBKJP96290eZxsvddH5ioUkOgaUqE9bdM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=NnRlYLJ7Scf8P23QjejSDYY3EcgbXZFbFgkW4+rFAki86+81ya4tBKjkRBNBKE1v7
-         hZ9vJ2j9VlLsuvq9Obkr9UFF5ljNPYZuhHmLU+93Vc62UX5VSafvMOuSw6zfkosnZS
-         yO7vE4LNuB7GnwUTCTvbTqddVkDP+uGgDqN+xev0=
-Date:   Fri, 14 Feb 2020 14:30:29 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <nuno.sa@analog.com>
-Subject: Re: [PATCH v2 3/9] iio: gyro: adis16136: initialize adis_data
- statically
-Message-ID: <20200214143029.33ec16b4@archlinux>
-In-Reply-To: <20200210132606.9315-3-alexandru.ardelean@analog.com>
-References: <20200210132606.9315-1-alexandru.ardelean@analog.com>
-        <20200210132606.9315-3-alexandru.ardelean@analog.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1729438AbgBNOdX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 09:33:23 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35154 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726191AbgBNOdX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 09:33:23 -0500
+Received: by mail-wm1-f68.google.com with SMTP id b17so10863628wmb.0;
+        Fri, 14 Feb 2020 06:33:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=I7FmDXyfboRLEPAe8bo8K3mXwXolpPNpCrODWfL+mak=;
+        b=gAGGyVySMmr2ATay53+kqMswj1tPiJDsz3jS4++s3wXWDQlHnkpWf2HL70eWdJ+fsv
+         CQvQV1BddgIFW0e4KztZJD7K4semtYzzKwObmrXtXYQ/cxD8Qzy6aTxMTRNqh6cRubpF
+         r1mn7IPnxTtShGYjCl7ka+xqU3DkAAl59gyDCf6L/mYm7eFQ7XNxMEWhLhC5inUVRkjG
+         b3lWZWNLQKotrlB26P93uU+wUAvI9uiOrpPMGRWGQwTatskOO7SGxBeGQoOg8tiuvbvj
+         b02BwS2WnHhy3I04PFR9L9ZP6j0IWJ9ssjt+UJS+QH/c2pmOi3Ohh3JE9B08BgCSKO/U
+         JhWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=I7FmDXyfboRLEPAe8bo8K3mXwXolpPNpCrODWfL+mak=;
+        b=GpmBROZNhghhymDlmg1EU/EIZhu3Mej5TqB08f5v71VF2Ro8vbA1VtM0McNRTtaeeu
+         FxsXBKVs1iy5fV275QDcOztFwuNSIW5tUnhuvxVeBHr2LDlTlH7nUMfqyW2ioTTTkg9w
+         gqL9qLXEhM/+q9qL5w+LuENpCCrSqFXf9RuI69V0RiJtMlBzqK6xrRiNw+qjxcKEiV8k
+         w+MCdC5hxtWUoZ4ush5onATQzGEIjgIzCw+345Zn+9u8jyTQTAjE7NGdxPnCyiYhd7J0
+         Ea+b1Rl35cDMW4zsbQjvZHwkfKyp+DfZqwP6njRsoU0+zxNntW585wgvnhJy18FLRIUo
+         GwDA==
+X-Gm-Message-State: APjAAAXiMstNfoeoc7ap6jGDRIX2AOI1ixK8Gl8bC37zMkKpx5mCaPIi
+        tI4wuW63ZRlgxJcZppHchOAx2snMNgiWjQ==
+X-Google-Smtp-Source: APXvYqx1QmY2R3J7t7fyqRZrLDCCPv+AondDOF0VmfUJgnj3oPdg3EMRb9Zs6jCDFFBEg13lUluE9g==
+X-Received: by 2002:a7b:cf12:: with SMTP id l18mr5265928wmg.66.1581690799833;
+        Fri, 14 Feb 2020 06:33:19 -0800 (PST)
+Received: from t1700.criteois.lan ([91.199.242.236])
+        by smtp.gmail.com with ESMTPSA id w13sm7511520wru.38.2020.02.14.06.33.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2020 06:33:19 -0800 (PST)
+From:   Erwan Velu <erwanaliasr1@gmail.com>
+X-Google-Original-From: Erwan Velu <e.velu@criteo.com>
+Cc:     Erwan Velu <e.velu@criteo.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] kvm: x86: Print "disabled by bios" only once per host
+Date:   Fri, 14 Feb 2020 15:30:35 +0100
+Message-Id: <20200214143035.607115-1-e.velu@criteo.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Feb 2020 15:26:00 +0200
-Alexandru Ardelean <alexandru.ardelean@analog.com> wrote:
+The current behavior is to print a "disabled by bios" message per CPU thread.
+As modern CPUs can have up to 64 cores, 128 on a dual socket, and turns this
+printk to be a pretty noisy by showing up to 256 times the same line in a row.
 
-> This change overrides commit 380b107bbf944 ("iio: adis: Introduce timeouts
-> structure"). It removes the memory allocation and moves the 'adis_data'
-> information to be static on the chip_info struct.
-> 
-> This also adds a timeout structure to ADIS16334, since it was initially
-> omitted. This was omitted (by accident) when the change was done.
-> 
-> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Applied.  Thanks,
+This patch offer to only print the message once per host considering the BIOS will
+disabled the feature for all sockets/cores at once and not on a per core basis.
 
-Jonathan
+Signed-off-by: Erwan Velu <e.velu@criteo.com>
+---
+ arch/x86/kvm/x86.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  drivers/iio/gyro/adis16136.c | 61 +++++++++++++-----------------------
->  1 file changed, 21 insertions(+), 40 deletions(-)
-> 
-> diff --git a/drivers/iio/gyro/adis16136.c b/drivers/iio/gyro/adis16136.c
-> index d5e03a406d4a..1db1131e5c67 100644
-> --- a/drivers/iio/gyro/adis16136.c
-> +++ b/drivers/iio/gyro/adis16136.c
-> @@ -59,7 +59,7 @@
->  struct adis16136_chip_info {
->  	unsigned int precision;
->  	unsigned int fullscale;
-> -	const struct adis_timeout *timeouts;
-> +	const struct adis_data adis_data;
->  };
->  
->  struct adis16136 {
-> @@ -466,22 +466,21 @@ static const char * const adis16136_status_error_msgs[] = {
->  	[ADIS16136_DIAG_STAT_FLASH_CHKSUM_FAIL] = "Flash checksum error",
->  };
->  
-> -static const struct adis_data adis16136_data = {
-> -	.diag_stat_reg = ADIS16136_REG_DIAG_STAT,
-> -	.glob_cmd_reg = ADIS16136_REG_GLOB_CMD,
-> -	.msc_ctrl_reg = ADIS16136_REG_MSC_CTRL,
-> -
-> -	.self_test_mask = ADIS16136_MSC_CTRL_SELF_TEST,
-> -
-> -	.read_delay = 10,
-> -	.write_delay = 10,
-> -
-> -	.status_error_msgs = adis16136_status_error_msgs,
-> -	.status_error_mask = BIT(ADIS16136_DIAG_STAT_FLASH_UPDATE_FAIL) |
-> -		BIT(ADIS16136_DIAG_STAT_SPI_FAIL) |
-> -		BIT(ADIS16136_DIAG_STAT_SELF_TEST_FAIL) |
-> -		BIT(ADIS16136_DIAG_STAT_FLASH_CHKSUM_FAIL),
-> -};
-> +#define ADIS16136_DATA(_timeouts)					\
-> +{									\
-> +	.diag_stat_reg = ADIS16136_REG_DIAG_STAT,			\
-> +	.glob_cmd_reg = ADIS16136_REG_GLOB_CMD,				\
-> +	.msc_ctrl_reg = ADIS16136_REG_MSC_CTRL,				\
-> +	.self_test_mask = ADIS16136_MSC_CTRL_SELF_TEST,			\
-> +	.read_delay = 10,						\
-> +	.write_delay = 10,						\
-> +	.status_error_msgs = adis16136_status_error_msgs,		\
-> +	.status_error_mask = BIT(ADIS16136_DIAG_STAT_FLASH_UPDATE_FAIL) |	\
-> +		BIT(ADIS16136_DIAG_STAT_SPI_FAIL) |			\
-> +		BIT(ADIS16136_DIAG_STAT_SELF_TEST_FAIL) |		\
-> +		BIT(ADIS16136_DIAG_STAT_FLASH_CHKSUM_FAIL),		\
-> +	.timeouts = (_timeouts),					\
-> +}
->  
->  enum adis16136_id {
->  	ID_ADIS16133,
-> @@ -506,41 +505,25 @@ static const struct adis16136_chip_info adis16136_chip_info[] = {
->  	[ID_ADIS16133] = {
->  		.precision = IIO_DEGREE_TO_RAD(1200),
->  		.fullscale = 24000,
-> -		.timeouts = &adis16133_timeouts,
-> +		.adis_data = ADIS16136_DATA(&adis16133_timeouts),
->  	},
->  	[ID_ADIS16135] = {
->  		.precision = IIO_DEGREE_TO_RAD(300),
->  		.fullscale = 24000,
-> -		.timeouts = &adis16133_timeouts,
-> +		.adis_data = ADIS16136_DATA(&adis16133_timeouts),
->  	},
->  	[ID_ADIS16136] = {
->  		.precision = IIO_DEGREE_TO_RAD(450),
->  		.fullscale = 24623,
-> -		.timeouts = &adis16136_timeouts,
-> +		.adis_data = ADIS16136_DATA(&adis16136_timeouts),
->  	},
->  	[ID_ADIS16137] = {
->  		.precision = IIO_DEGREE_TO_RAD(1000),
->  		.fullscale = 24609,
-> -		.timeouts = &adis16136_timeouts,
-> +		.adis_data = ADIS16136_DATA(&adis16136_timeouts),
->  	},
->  };
->  
-> -static struct adis_data *adis16136_adis_data_alloc(struct adis16136 *st,
-> -						   struct device *dev)
-> -{
-> -	struct adis_data *data;
-> -
-> -	data = devm_kmalloc(dev, sizeof(struct adis_data), GFP_KERNEL);
-> -	if (!data)
-> -		return ERR_PTR(-ENOMEM);
-> -
-> -	memcpy(data, &adis16136_data, sizeof(*data));
-> -
-> -	data->timeouts = st->chip_info->timeouts;
-> -
-> -	return data;
-> -}
-> -
->  static int adis16136_probe(struct spi_device *spi)
->  {
->  	const struct spi_device_id *id = spi_get_device_id(spi);
-> @@ -565,9 +548,7 @@ static int adis16136_probe(struct spi_device *spi)
->  	indio_dev->info = &adis16136_info;
->  	indio_dev->modes = INDIO_DIRECT_MODE;
->  
-> -	adis16136_data = adis16136_adis_data_alloc(adis16136, &spi->dev);
-> -	if (IS_ERR(adis16136_data))
-> -		return PTR_ERR(adis16136_data);
-> +	adis16136_data = &adis16136->chip_info->adis_data;
->  
->  	ret = adis_init(&adis16136->adis, indio_dev, spi, adis16136_data);
->  	if (ret)
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index fbabb2f06273..8f0d7a09d453 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -7300,7 +7300,7 @@ int kvm_arch_init(void *opaque)
+ 		goto out;
+ 	}
+ 	if (ops->disabled_by_bios()) {
+-		printk(KERN_ERR "kvm: disabled by bios\n");
++		printk_once(KERN_ERR "kvm: disabled by bios\n");
+ 		r = -EOPNOTSUPP;
+ 		goto out;
+ 	}
+-- 
+2.24.1
 
