@@ -2,63 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2212115F7FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 21:48:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BF2215F82B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 21:50:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387573AbgBNUsj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 15:48:39 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39302 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727742AbgBNUsh (ORCPT
+        id S2387746AbgBNUsl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 15:48:41 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40139 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730428AbgBNUsi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 15:48:37 -0500
-Received: by mail-wm1-f66.google.com with SMTP id c84so12167780wme.4;
-        Fri, 14 Feb 2020 12:48:35 -0800 (PST)
+        Fri, 14 Feb 2020 15:48:38 -0500
+Received: by mail-wm1-f65.google.com with SMTP id t14so12148666wmi.5
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 12:48:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=XQbKLQ9ukje1bT/FheNFvSXPv2JzfMKZr476ojL2Is0=;
-        b=O5ir4u/aNTfUulqZgaK74Gu8mBBzIqrjfADgTPMzLTzu1KAaf5QhfiF7kasEvy5r4K
-         ErG2wMyrU7UIe0OHtzQefP/ASrTS2xW6pdSXgvPTDid60F1YgIP5XLH4vSUw/PECCgGv
-         Pa4cg3cKyKakJj7xVxQ0ei/Rp6Od561Ee9nLUyaY5bPJGHcMYlszGui/5WsNIo3AiOp1
-         8chcGs06TgYmRm4OU+BMsaiPP3+fjTxtzTIDU6vJLXvT8YZ9sTd+TmxgjbbvPUsJaof9
-         8qPho5ezQRvGRyFcOCnQK+B6YW4RPQhq9zuSANGmyzBFVnDjnlJ6D97CHQo2DeXk/VHs
-         Lxlg==
+        bh=bs4/bf84KxBp5/3poh+gEqXOl2zy3ub1/mKAWorwRIA=;
+        b=NI93lBS7foSOICH/i6FnoY1Z5JYyX+EOlYr53ZqS9bz7YRxq1HPVtoNdtH6fEOtdQy
+         W2a8rnBp72IOANP6gV3abM2WRAaXb2rtkYd6apcvVhBix2UkkR6jOmqio6k3dvNrA2vM
+         QP0X6kiWAWBrkhQBhPLaazQ4ewO0y1oSoUC8NVcoUY3nNSWU924P8WJBkky3HzTl+gZ0
+         aKttciIYEo1BLqZ9cdWC653TkY+Uk3MvquTu+dZ9NeAA8KcPGhbh3+t30jYAR7ELxI97
+         3t+rgkpzyrMOmt4fQiLVbwvOJ5HwqQQSueCw5gSTG5U6QSRmlx2CgL9Noctb4hbxEwuK
+         QxEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=XQbKLQ9ukje1bT/FheNFvSXPv2JzfMKZr476ojL2Is0=;
-        b=FQnrB4MbinrfrYJadZtraXZWNFWyaHoKFzzcVMUiQC3t7AnEIfnRfJMrDccbCV4ngk
-         jtn96ISMli6pLbMpBtcKj5jINrCbDxP9SYaVqxf0pKRUsINKN4WzFf5BSy2jU4LmoMbP
-         xymaaHXQg9+KjI85pBS+xmGBJHS8IIW1QCAcr2urtnJwJ99v7oQ5yV8yaielFhkPDS7s
-         R4XTad31ppC6XFM2A0n05hO6DmkRxuqkjt70gPOlRqt+XmR0rBa9WxOd6Rr0efBWCHaY
-         UCX7VQACMf0ZOzBaL93YLKoT4vPBc6oCKXvwqnWMHKzMxQln1mEzMPknMZ11P+k1T2nA
-         idNQ==
-X-Gm-Message-State: APjAAAX/1pJC27sDAtChonmsAQu0cMWN6gEJis6IKu3mlPJt2o76v++k
-        FIfaokMR1Jq4+BwFKpIhbC53BD9bX5QS
-X-Google-Smtp-Source: APXvYqzDv6V1/vR7pqSlQ0ZZe6UVzBWl6YQ5gh8Uk6kepa8dWWi2wm55mdwrZhSCm7+OaCMs66lDZA==
-X-Received: by 2002:a7b:c759:: with SMTP id w25mr6358657wmk.15.1581713314492;
-        Fri, 14 Feb 2020 12:48:34 -0800 (PST)
+        bh=bs4/bf84KxBp5/3poh+gEqXOl2zy3ub1/mKAWorwRIA=;
+        b=bDk6fZa1wZTeH0Ncy94rRxx9LWCELAAeqFkP6fAPUGA3Lk+wp4YU0/QrXIi9mvqayz
+         huqiJ3RRM9p62C1jB1sBUQ0HJZ0qhWC2aCnEFUbrvxdGgyS40tyMm7SVCNo5NBrdmKjk
+         jkwnGmOXFJzylNIB/eAPuiVJMgkOQsg0D8s1nC8qFACygMjyp5r+wLcEMZ2E7xg4LPIL
+         uXWFmcknOX5tQ1UwKxYr9uHPIbdLRYVn8A6IojIJ//40dXg+y7PujL+tfFmtNAGSfZh1
+         StosGa6/zkHmfcQxBbpI1rfcsPojMqUcc80jY/PNP5hHUdsAP/+T4jSWGmKpDKPpZMRM
+         VrOw==
+X-Gm-Message-State: APjAAAX/6xYPonrbxYng/2yChgQh3NYnI5ND8ZOtFxJwOA8b1v61bfVr
+        O3hzPhDr4b1pk0j54AGiJVwrRDAizRYs
+X-Google-Smtp-Source: APXvYqxddI/rx1H/gt7+BYJb7sy1tT+1CI0Zml46G1dOyf9pi32VG/CVm3wL/lgpJ4KOEVBi2OQw8g==
+X-Received: by 2002:a1c:988c:: with SMTP id a134mr6194261wme.163.1581713316795;
+        Fri, 14 Feb 2020 12:48:36 -0800 (PST)
 Received: from ninjahost.lan (host-2-102-13-223.as13285.net. [2.102.13.223])
-        by smtp.googlemail.com with ESMTPSA id y12sm8660782wmj.6.2020.02.14.12.48.33
+        by smtp.googlemail.com with ESMTPSA id y12sm8660782wmj.6.2020.02.14.12.48.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2020 12:48:34 -0800 (PST)
+        Fri, 14 Feb 2020 12:48:36 -0800 (PST)
 From:   Jules Irenge <jbi.octave@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     boqun.feng@gmail.com, Jules Irenge <jbi.octave@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        cgroups@vger.kernel.org (open list:CONTROL GROUP - MEMORY RESOURCE
-        CONTROLLER (MEMCG)),
-        linux-mm@kvack.org (open list:CONTROL GROUP - MEMORY RESOURCE
-        CONTROLLER (MEMCG))
-Subject: [PATCH 04/30] mm/memcontrol: Add missing annotation for lock_page_lru()
-Date:   Fri, 14 Feb 2020 20:47:15 +0000
-Message-Id: <20200214204741.94112-5-jbi.octave@gmail.com>
+        linux-mm@kvack.org (open list:MEMORY MANAGEMENT)
+Subject: [PATCH 05/30] mm/compaction: Add missing annotation for compact_lock_irqsave
+Date:   Fri, 14 Feb 2020 20:47:16 +0000
+Message-Id: <20200214204741.94112-6-jbi.octave@gmail.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200214204741.94112-1-jbi.octave@gmail.com>
 References: <0/30>
@@ -70,30 +64,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sparse reports warning at lock_page_lry()
+Sparse reports a warning at compact_lock_irqsave()
 
-warning: context imbalance in lock_page_lru() - wrong count at exit
+warning: context imbalance in compact_lock_irqsave() - wrong count at exit
 
-The root cause is the missing annotation at lock_page_lru()
-Add the missing __acquires(&pgdat->lru_lock)
+The root cause is the missing annotation at compact_lock_irqsave()
+Add the missing __acquires(lock) annotation.
 
 Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
 ---
- mm/memcontrol.c | 1 +
+ mm/compaction.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 22ddd557a69b..67dc9f1af0bf 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -2571,6 +2571,7 @@ static void cancel_charge(struct mem_cgroup *memcg, unsigned int nr_pages)
- }
- 
- static void lock_page_lru(struct page *page, int *isolated)
-+	__acquires(&pgdat->lru_lock)
+diff --git a/mm/compaction.c b/mm/compaction.c
+index 672d3c78c6ab..81190fe22200 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -481,6 +481,7 @@ static bool test_and_set_skip(struct compact_control *cc, struct page *page,
+  */
+ static bool compact_lock_irqsave(spinlock_t *lock, unsigned long *flags,
+ 						struct compact_control *cc)
++	__acquires(lock)
  {
- 	pg_data_t *pgdat = page_pgdat(page);
- 
+ 	/* Track if the lock is contended in async mode */
+ 	if (cc->mode == MIGRATE_ASYNC && !cc->contended) {
 -- 
 2.24.1
 
