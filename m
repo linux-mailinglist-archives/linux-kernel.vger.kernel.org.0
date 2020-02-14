@@ -2,92 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88ED915F221
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:09:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF62215F381
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:22:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392121AbgBNSGz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:06:55 -0500
-Received: from 15.mo4.mail-out.ovh.net ([91.121.62.11]:36643 "EHLO
-        15.mo4.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392088AbgBNSGw (ORCPT
+        id S2393264AbgBNSMR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:12:17 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:32993 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393208AbgBNSMN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 13:06:52 -0500
-Received: from player798.ha.ovh.net (unknown [10.108.57.211])
-        by mo4.mail-out.ovh.net (Postfix) with ESMTP id 327952232F8
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 18:27:50 +0100 (CET)
-Received: from sk2.org (cre33-1_migr-88-122-126-116.fbx.proxad.net [88.122.126.116])
-        (Authenticated sender: steve@sk2.org)
-        by player798.ha.ovh.net (Postfix) with ESMTPSA id 96C63F80209B;
-        Fri, 14 Feb 2020 17:27:38 +0000 (UTC)
-From:   Stephen Kitt <steve@sk2.org>
-To:     Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        linux-s390@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Stephen Kitt <steve@sk2.org>
-Subject: [PATCH] s390: remove obsolete ieee_emulation_warnings
-Date:   Fri, 14 Feb 2020 18:26:28 +0100
-Message-Id: <20200214172628.3598516-1-steve@sk2.org>
-X-Mailer: git-send-email 2.24.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 15606661560320675101
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedugedrjedtgddutddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefuthgvphhhvghnucfmihhtthcuoehsthgvvhgvsehskhdvrdhorhhgqeenucfkpheptddrtddrtddrtddpkeekrdduvddvrdduvdeirdduudeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpqdhouhhtpdhhvghlohepphhlrgihvghrjeelkedrhhgrrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpehsthgvvhgvsehskhdvrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+        Fri, 14 Feb 2020 13:12:13 -0500
+Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1j2fD2-0005g2-9K; Fri, 14 Feb 2020 17:57:01 +0000
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+To:     jani.nikula@linux.intel.com, ville.syrjala@linux.intel.com,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com
+Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        =?UTF-8?q?Jos=C3=A9=20Roberto=20de=20Souza?= <jose.souza@intel.com>,
+        Lucas De Marchi <lucas.demarchi@intel.com>,
+        Imre Deak <imre.deak@intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Manasi Navare <manasi.d.navare@intel.com>,
+        Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>,
+        Matt Roper <matthew.d.roper@intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Ramalingam C <ramalingam.c@intel.com>,
+        Uma Shankar <uma.shankar@intel.com>,
+        intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v4] drm/i915: Init lspcon after HPD in intel_dp_detect()
+Date:   Sat, 15 Feb 2020 01:56:27 +0800
+Message-Id: <20200214175646.25532-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-s390 math emulation was removed with commit 5a79859ae0f3 ("s390:
-remove 31 bit support"), rendering ieee_emulation_warnings useless.
-The code still built because it was protected by CONFIG_MATHEMU, which
-was no longer selectable.
+On HP 800 G4 DM, if HDMI cable isn't plugged before boot, the HDMI port
+becomes useless and never responds to cable hotplugging:
+[    3.031904] [drm:lspcon_init [i915]] *ERROR* Failed to probe lspcon
+[    3.031945] [drm:intel_ddi_init [i915]] *ERROR* LSPCON init failed on port D
 
-This patch removes the sysctl_ieee_emulation_warnings declaration and
-the sysctl entry declaration.
+Seems like the lspcon chip on the system in question only gets powered
+after the cable is plugged.
 
-Signed-off-by: Stephen Kitt <steve@sk2.org>
+So let's call lspcon_init() dynamically to properly initialize the
+lspcon chip and make HDMI port work.
+
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 ---
- arch/s390/include/asm/processor.h | 1 -
- kernel/sysctl.c                   | 9 ---------
- 2 files changed, 10 deletions(-)
+v4:
+ - Trust VBT in intel_infoframe_init().
+ - Init lspcon in intel_dp_detect().
 
-diff --git a/arch/s390/include/asm/processor.h b/arch/s390/include/asm/processor.h
-index 361ef5eda468..aadb3d0e2adc 100644
---- a/arch/s390/include/asm/processor.h
-+++ b/arch/s390/include/asm/processor.h
-@@ -84,7 +84,6 @@ void s390_update_cpu_mhz(void);
- void cpu_detect_mhz_feature(void);
- 
- extern const struct seq_operations cpuinfo_op;
--extern int sysctl_ieee_emulation_warnings;
- extern void execve_tail(void);
- extern void __bpon(void);
- 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index d396aaaf19a3..ad5b88a53c5a 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -805,15 +805,6 @@ static struct ctl_table kern_table[] = {
- 		.extra2		= &maxolduid,
- 	},
- #ifdef CONFIG_S390
--#ifdef CONFIG_MATHEMU
--	{
--		.procname	= "ieee_emulation_warnings",
--		.data		= &sysctl_ieee_emulation_warnings,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
--	},
--#endif
- 	{
- 		.procname	= "userprocess_debug",
- 		.data		= &show_unhandled_signals,
+v3:
+ - Make sure it's handled under long HPD case.
 
-base-commit: 359c92c02bfae1a6f1e8e37c298e518fd256642c
+v2: 
+ - Move lspcon_init() inside of intel_dp_hpd_pulse().
+
+ drivers/gpu/drm/i915/display/intel_ddi.c  | 17 +----------------
+ drivers/gpu/drm/i915/display/intel_dp.c   | 13 ++++++++++++-
+ drivers/gpu/drm/i915/display/intel_hdmi.c |  2 +-
+ 3 files changed, 14 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/display/intel_ddi.c b/drivers/gpu/drm/i915/display/intel_ddi.c
+index 33f1dc3d7c1a..ca717434b406 100644
+--- a/drivers/gpu/drm/i915/display/intel_ddi.c
++++ b/drivers/gpu/drm/i915/display/intel_ddi.c
+@@ -4741,7 +4741,7 @@ void intel_ddi_init(struct drm_i915_private *dev_priv, enum port port)
+ 		&dev_priv->vbt.ddi_port_info[port];
+ 	struct intel_digital_port *intel_dig_port;
+ 	struct intel_encoder *encoder;
+-	bool init_hdmi, init_dp, init_lspcon = false;
++	bool init_hdmi, init_dp;
+ 	enum phy phy = intel_port_to_phy(dev_priv, port);
+ 
+ 	init_hdmi = port_info->supports_dvi || port_info->supports_hdmi;
+@@ -4754,7 +4754,6 @@ void intel_ddi_init(struct drm_i915_private *dev_priv, enum port port)
+ 		 * is initialized before lspcon.
+ 		 */
+ 		init_dp = true;
+-		init_lspcon = true;
+ 		init_hdmi = false;
+ 		DRM_DEBUG_KMS("VBT says port %c has lspcon\n", port_name(port));
+ 	}
+@@ -4833,20 +4832,6 @@ void intel_ddi_init(struct drm_i915_private *dev_priv, enum port port)
+ 			goto err;
+ 	}
+ 
+-	if (init_lspcon) {
+-		if (lspcon_init(intel_dig_port))
+-			/* TODO: handle hdmi info frame part */
+-			DRM_DEBUG_KMS("LSPCON init success on port %c\n",
+-				port_name(port));
+-		else
+-			/*
+-			 * LSPCON init faied, but DP init was success, so
+-			 * lets try to drive as DP++ port.
+-			 */
+-			DRM_ERROR("LSPCON init failed on port %c\n",
+-				port_name(port));
+-	}
+-
+ 	intel_infoframe_init(intel_dig_port);
+ 
+ 	return;
+diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
+index c7424e2a04a3..43117aa86292 100644
+--- a/drivers/gpu/drm/i915/display/intel_dp.c
++++ b/drivers/gpu/drm/i915/display/intel_dp.c
+@@ -5663,8 +5663,19 @@ intel_dp_detect(struct drm_connector *connector,
+ 	/* Can't disconnect eDP */
+ 	if (intel_dp_is_edp(intel_dp))
+ 		status = edp_detect(intel_dp);
+-	else if (intel_digital_port_connected(encoder))
++	else if (intel_digital_port_connected(encoder)) {
++		if (intel_bios_is_lspcon_present(dev_priv, dig_port->base.port) &&
++		    !dig_port->lspcon.active) {
++			if (lspcon_init(dig_port))
++				DRM_DEBUG_KMS("LSPCON init success on port %c\n",
++					      port_name(dig_port->base.port));
++			else
++				DRM_DEBUG_KMS("LSPCON init failed on port %c\n",
++					      port_name(dig_port->base.port));
++		}
++
+ 		status = intel_dp_detect_dpcd(intel_dp);
++	}
+ 	else
+ 		status = connector_status_disconnected;
+ 
+diff --git a/drivers/gpu/drm/i915/display/intel_hdmi.c b/drivers/gpu/drm/i915/display/intel_hdmi.c
+index 93ac0f296852..27a5aa8cefc9 100644
+--- a/drivers/gpu/drm/i915/display/intel_hdmi.c
++++ b/drivers/gpu/drm/i915/display/intel_hdmi.c
+@@ -3100,7 +3100,7 @@ void intel_infoframe_init(struct intel_digital_port *intel_dig_port)
+ 		intel_dig_port->set_infoframes = g4x_set_infoframes;
+ 		intel_dig_port->infoframes_enabled = g4x_infoframes_enabled;
+ 	} else if (HAS_DDI(dev_priv)) {
+-		if (intel_dig_port->lspcon.active) {
++		if (intel_bios_is_lspcon_present(dev_priv, intel_dig_port->base.port)) {
+ 			intel_dig_port->write_infoframe = lspcon_write_infoframe;
+ 			intel_dig_port->read_infoframe = lspcon_read_infoframe;
+ 			intel_dig_port->set_infoframes = lspcon_set_infoframes;
 -- 
-2.24.1
+2.17.1
 
