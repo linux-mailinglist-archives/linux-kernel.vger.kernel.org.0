@@ -2,87 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 194B415DD9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:59:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 406F215DB74
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:49:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389015AbgBNP7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:59:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44770 "EHLO mail.kernel.org"
+        id S1729512AbgBNPsw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:48:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388991AbgBNP7r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:59:47 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728859AbgBNPsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:48:51 -0500
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DDB1206D7;
-        Fri, 14 Feb 2020 15:59:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8B592086A;
+        Fri, 14 Feb 2020 15:48:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695986;
-        bh=X+eG9iyexQDwe4U+7lu+mRy9Zg8j10lWrXnxXR+W9FU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ozsG58Wk8lgPtlpf8NVSxmUh5UdLYM/Amk5NXM0ZI3/bx1eRlTwI8k1GvWr45DbxE
-         GPytSKKp+Q+CglC/UcCIlz14IvSsY22KMRp4bc0wT+mB6TI8ZJIq1FUDuYfC4340X7
-         tlkI1uCiEf2SipgAoPup3pCM/XYE8zIrA/O/Ilfs=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yunfeng Ye <yeyunfeng@huawei.com>,
-        zhengbin <zhengbin13@huawei.com>,
-        Hu Shiyuan <hushiyuan@huawei.com>,
-        Feilong Lin <linfeilong@huawei.com>, Jan Kara <jack@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, reiserfs-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 508/542] reiserfs: prevent NULL pointer dereference in reiserfs_insert_item()
-Date:   Fri, 14 Feb 2020 10:48:20 -0500
-Message-Id: <20200214154854.6746-508-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
-References: <20200214154854.6746-1-sashal@kernel.org>
+        s=default; t=1581695331;
+        bh=uGCGLRGoU3g45VCxwnCAPerREcE8t/lFXtzjEKoahHE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=jonSeFxLGd0GwMK9iCwlLlOh1yN0kH4R4m90Co623DJqk3q0eFf/6WppwgzJ+fUyc
+         +yrgcrwF7dABE8ZQ+qdH4LndsJySmLCHQ4zOttAzWo6zwh5MqpTyXxZgi2OekSEpDG
+         hxwbtErh+Zky5v1/qa4IBY7ctbZYS3mrJATDgLQs=
+Date:   Fri, 14 Feb 2020 15:48:46 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Alexandru Tachici <alexandru.tachici@analog.com>
+Cc:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/5] staging: iio: adc: ad7192: removed spi_device_id
+Message-ID: <20200214154846.7daf946c@archlinux>
+In-Reply-To: <20200212161721.16200-4-alexandru.tachici@analog.com>
+References: <20200212161721.16200-1-alexandru.tachici@analog.com>
+        <20200212161721.16200-4-alexandru.tachici@analog.com>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunfeng Ye <yeyunfeng@huawei.com>
+On Wed, 12 Feb 2020 18:17:19 +0200
+Alexandru Tachici <alexandru.tachici@analog.com> wrote:
 
-[ Upstream commit aacee5446a2a1aa35d0a49dab289552578657fb4 ]
+> This patch removes spi_device_id table and moves the
+> init data (id of the chip) in the .data field
+> of of_device_id table.
+> 
+> Signed-off-by: Alexandru Tachici <alexandru.tachici@analog.com>
+Applied
 
-The variable inode may be NULL in reiserfs_insert_item(), but there is
-no check before accessing the member of inode.
+Thanks,
 
-Fix this by adding NULL pointer check before calling reiserfs_debug().
+Jonathan
 
-Link: http://lkml.kernel.org/r/79c5135d-ff25-1cc9-4e99-9f572b88cc00@huawei.com
-Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
-Cc: zhengbin <zhengbin13@huawei.com>
-Cc: Hu Shiyuan <hushiyuan@huawei.com>
-Cc: Feilong Lin <linfeilong@huawei.com>
-Cc: Jan Kara <jack@suse.cz>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/reiserfs/stree.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
-index da9ebe33882b7..bb4973aefbb18 100644
---- a/fs/reiserfs/stree.c
-+++ b/fs/reiserfs/stree.c
-@@ -2246,7 +2246,8 @@ int reiserfs_insert_item(struct reiserfs_transaction_handle *th,
- 	/* also releases the path */
- 	unfix_nodes(&s_ins_balance);
- #ifdef REISERQUOTA_DEBUG
--	reiserfs_debug(th->t_super, REISERFS_DEBUG_CODE,
-+	if (inode)
-+		reiserfs_debug(th->t_super, REISERFS_DEBUG_CODE,
- 		       "reiserquota insert_item(): freeing %u id=%u type=%c",
- 		       quota_bytes, inode->i_uid, head2type(ih));
- #endif
--- 
-2.20.1
+> ---
+>  drivers/staging/iio/adc/ad7192.c | 33 +++++++++++---------------------
+>  1 file changed, 11 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/staging/iio/adc/ad7192.c b/drivers/staging/iio/adc/ad7192.c
+> index 8fca8915543d..8ec28aa8fa8a 100644
+> --- a/drivers/staging/iio/adc/ad7192.c
+> +++ b/drivers/staging/iio/adc/ad7192.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/err.h>
+>  #include <linux/sched.h>
+>  #include <linux/delay.h>
+> +#include <linux/of_device.h>
+>  
+>  #include <linux/iio/iio.h>
+>  #include <linux/iio/sysfs.h>
+> @@ -876,6 +877,15 @@ static int ad7192_channels_config(struct iio_dev *indio_dev)
+>  	return 0;
+>  }
+>  
+> +static const struct of_device_id ad7192_of_match[] = {
+> +	{ .compatible = "adi,ad7190", .data = (void *)ID_AD7190 },
+> +	{ .compatible = "adi,ad7192", .data = (void *)ID_AD7192 },
+> +	{ .compatible = "adi,ad7193", .data = (void *)ID_AD7193 },
+> +	{ .compatible = "adi,ad7195", .data = (void *)ID_AD7195 },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, ad7192_of_match);
+> +
+>  static int ad7192_probe(struct spi_device *spi)
+>  {
+>  	struct ad7192_state *st;
+> @@ -928,7 +938,7 @@ static int ad7192_probe(struct spi_device *spi)
+>  	}
+>  
+>  	spi_set_drvdata(spi, indio_dev);
+> -	st->devid = spi_get_device_id(spi)->driver_data;
+> +	st->devid = (unsigned long)of_device_get_match_data(&spi->dev);
+>  	indio_dev->dev.parent = &spi->dev;
+>  	indio_dev->name = spi_get_device_id(spi)->name;
+>  	indio_dev->modes = INDIO_DIRECT_MODE;
+> @@ -1009,26 +1019,6 @@ static int ad7192_remove(struct spi_device *spi)
+>  	return 0;
+>  }
+>  
+> -static const struct spi_device_id ad7192_id[] = {
+> -	{"ad7190", ID_AD7190},
+> -	{"ad7192", ID_AD7192},
+> -	{"ad7193", ID_AD7193},
+> -	{"ad7195", ID_AD7195},
+> -	{}
+> -};
+> -
+> -MODULE_DEVICE_TABLE(spi, ad7192_id);
+> -
+> -static const struct of_device_id ad7192_of_match[] = {
+> -	{ .compatible = "adi,ad7190" },
+> -	{ .compatible = "adi,ad7192" },
+> -	{ .compatible = "adi,ad7193" },
+> -	{ .compatible = "adi,ad7195" },
+> -	{}
+> -};
+> -
+> -MODULE_DEVICE_TABLE(of, ad7192_of_match);
+> -
+>  static struct spi_driver ad7192_driver = {
+>  	.driver = {
+>  		.name	= "ad7192",
+> @@ -1036,7 +1026,6 @@ static struct spi_driver ad7192_driver = {
+>  	},
+>  	.probe		= ad7192_probe,
+>  	.remove		= ad7192_remove,
+> -	.id_table	= ad7192_id,
+>  };
+>  module_spi_driver(ad7192_driver);
+>  
 
