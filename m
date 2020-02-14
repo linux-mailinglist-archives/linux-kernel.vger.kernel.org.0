@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80AD315EECA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:43:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B948715EEEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:44:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390119AbgBNRnB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:43:01 -0500
-Received: from mout.gmx.net ([212.227.15.18]:34609 "EHLO mout.gmx.net"
+        id S2388922AbgBNRod (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:44:33 -0500
+Received: from mout.gmx.net ([212.227.15.19]:43989 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389575AbgBNRm6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 12:42:58 -0500
+        id S2387409AbgBNRoT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 12:44:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1581702152;
-        bh=RCA6UUkRvRQKX/W3+Nf4MvfQ3fR1SNVJKv9DdO0f6dE=;
+        s=badeba3b8450; t=1581702236;
+        bh=lGf0qyKg4mLkRKB3FW1N8BhdqnF6UEjDvbhUyHfJNb0=;
         h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=izvS66sz8Xk6x4rzvWbaiEWJvIDQqlIQlMZNE95EGq2eWsrc3UlvcGIH4UBWj1T12
-         HRA/y/qMAwR5b42I1JwMIYwwvfI6ZV/vjlek6s4v1ufFTRzMGdqSMFhPzXVOzqISnm
-         3dGAexbi1jYyj6CF4GR/V9V9fSnDQfabujgYdnnI=
+        b=gvUIhLZMl6OGym334cDzWdjtf8jEQIkxgbvt56LvCJ4OONBxPZub7zdesrf3k+U5M
+         uSNcUCGNukOF7qYBGaMHrB5hc3UtelGju/htzXsxpRPeTgI8kvVJ7G13kedpZnvqPr
+         wnQftC9TssVZEbaHlqNPzAgb1w4vho4VQhg9mqDE=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
 Received: from longitude ([37.201.214.12]) by mail.gmx.com (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N3bSj-1jScEV1aUN-010ex1; Fri, 14
- Feb 2020 18:42:32 +0100
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1M2f5Z-1j3TXU31TT-004Axw; Fri, 14
+ Feb 2020 18:43:03 +0100
 From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
 To:     linux-doc@vger.kernel.org
 Cc:     Jonathan Corbet <corbet@lwn.net>,
@@ -35,90 +35,105 @@ Cc:     Jonathan Corbet <corbet@lwn.net>,
         Thomas Gleixner <tglx@linutronix.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jason Gunthorpe <jgg@ziepe.ca>, Harald Seiler <hws@denx.de>,
-        linux-kernel@vger.kernel.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: [PATCH 2/4] docs: admin-guide: Move edid.rst from driver-api
-Date:   Fri, 14 Feb 2020 18:41:33 +0100
-Message-Id: <20200214174139.16101-2-j.neuschaefer@gmx.net>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 3/4] tools/edid: Move EDID data sets from Documentation/
+Date:   Fri, 14 Feb 2020 18:41:34 +0100
+Message-Id: <20200214174139.16101-3-j.neuschaefer@gmx.net>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214174139.16101-1-j.neuschaefer@gmx.net>
 References: <20200214174139.16101-1-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:s7MMSLzyHmYzrat2fYjH1Bs86acNt01IDnYncPmnMQxP6f1WPpX
- Ss21PQUDRcOX3U8Pxk36pA6fEdJ6qMmn84Biz1XCYX4bFG+bHZWSkx8ZEpYijf5r29Occ1q
- qdUMQ/0RxVLDNZOqOGB7j9cMN3cMRLUXD3zzBCCVA+f2mmDdiIxTzOkCFBGGmk/3rX2E5P/
- NkjxKWtSoy5Ep+4eO7tfQ==
+X-Provags-ID: V03:K1:9u/8yfjqU+MPy0rTeFm8Na1uAqTaUDS8ZZ9aXgl6ZY2Eqe8wMvd
+ 3jsXEOKJVCzhPcv0dBgj9GmiwZcdyTPB1lqh15U+PCzzE83fCuAotIH595Q1lDMgBIBQdzl
+ Gy1TKyjnwr3hMFv/E3vT0mLt08esmAR3VU01WvRrcG3ht4DPpYOFkO3P4s3noVPh69EaAS+
+ Or6BypbZisYlfXt3IuwaA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:N/mhQWw0YIk=:aXBT2XuYWlMY1v6d64VYGe
- msMwy/cfKahE6MW2wokhnZObdO9P29nRaLopbUpys3pWv8xHQGxzQ28QShWtpsNrY9KQH2o4D
- QnHnLqV5VXPjG0YfdqsBL0Q5MX7ygjQlUzNnuwwXQ+hBWszOG3IHIMXHvpTOLuR47Fg8kkvUv
- f41fZkOuA34J1yE38KSbNC+E7kwv3h7MDliEhVOqOvweEIAyGuRCJGQdDsB7BOak4JiR4NuxO
- 0x3sDWYU+/VZocMPj7X1aaz61D5rOT12nxvApdfngYNy67UgMb++V3yMDX3IeFLBvjvjyPrTP
- BKO2We+Ec1l8ixj/v2zFh1T9MwOJvUmnk9PdQV6RdEyuCNdKYaZGSuybzybcy6So/bYaZW/1K
- OEzfD6UDrskhhJJiVK9x5aH12HID3QelrtU7nNAT8LfJ+x4f0OuDQSrXUoV4F73bzfz4k5AIp
- MLMRjL/kRQ4K8s0MXsOewgcj4oNtvL4qYvlCpMORboLcLprtCp9WJr8ODN//0cAl8ip5crlc0
- ZphJxeK2rope3uo3hbZKdUCU9InLDucKr15Z6ORY3NR/reWhWyaKBtOdq+2yt9kj3bqwFNsjM
- 2LMZ1R4Q9X66YKMTqZedjDjpUvnImARvGyjWwb9IaDi3udYXjqatUBZTsQUDX1mARTtWLy4Q2
- b5iRZob1qgseNueQAkCHkN91lrW2AbEZihOxDAxmC6XAvyiLGThgMFxggnflk01IbAZBT5eTW
- 3GoTOkB1e42uKIVBD1xXzXkZ/u7F1OHN8dL0jG8Ao4J3QLhf5QONpxLww6ITvqYqiv6T7vzCi
- C2GY5xm5qm6sk/d9zE21aWuKulrcMT1lUfeAfr4cM/vzF+/BiK1CsEcJM++BEHRZNbtMobUa7
- kzzEO/nG2cjd2Ywz29vczo4J2i82W9993nkIB5UYfUKCvU2NNs8l4yr6jUKudoq1FB73z2wr6
- 2GdzjqeE0b901a1cms5fP+U0vG15+jP+NoVqUKadwCF/STYCCMVhnTpDgdPHUjzDlHn4qeXwr
- XRJ/gzBeCovqmpJlJX+uvdOsztbwZsMSxK9C9Jpb5vIlunp9FuQlq//TmN8CL2XpbaJxtisG3
- 6z8DqMhGjoizE4HinWWsJh0PJlZ+Ki279LAuDVDcy3M35W5geUywf/PVcNL3SIwO3KRbZ0fBl
- 4PKquzbqaygvL1+LcyCRxvm0+N/lKfQv9r0M6GF1tyTEyf3Mso5me1ak1TEzVo5k8jmZ4LPb+
- UkudcAh2xQYeiDkgh
+X-UI-Out-Filterresults: notjunk:1;V03:K0:YOzTuLVAwZg=:hhaUO+WlkvrF46SojV4DzY
+ 4pLvOILkCwcqRJmTtyHjn2cGcJYuAWp8Fo99abkZJHKzIQT+mTkinMNQYpSZDbzfp7DAhUQb9
+ Y2tlW0VIfiNvbR1MUxCeZVe42taID0I+ufnw4OMEkJA2TyVcThiipwcLRUdQnQ3/JAi8sgJ6l
+ cxY9lXWI65qQH0ldWg2ynb9DdPQQMr2YlzUHk2yOwb6b4bF2j34mCG767UVIrsQiKwsVcLaWr
+ 608YME7NYRLFz4wn+i3pfyRvfaEMXvXpnAiCyM5Dn+pcaNE4KsmqygTfuPZ1+7/gGVttwf5K6
+ StGsHHGVxWaSUsO4kA6362hFDZTknOmHLwv4PTkkaoeD5qqXeLqu9rl0nbMGFbq5cKHCTPIpb
+ VUH9J/TO2/cJ4bSH1qCO4rnfhXJMZoqGd2i4gplIZ1NvBkg6KYWLZKvYMJMaKmSe0ZPGBGjBw
+ rMyTBeMuwu+ACcJYYdcpCLTdvOA7MwR3qhw8XR4jOWjbGVSVxhNg3UHxlXkjfkXlmSUv4vouI
+ UG0LEiuzt55mqzf6WhghhtQa7zmDftcr8WQB6sCHnj/Rcc/dfsiYLcDc4bVg2UJD3AGsonDMe
+ 7Z6o3HXPfNRTaxo1tyvQ5YyIXq5hRSreOgUXqPl7AUQWmlcYqj5UxGxGtOQt3cU8hzIN+7/yl
+ ASuCX486EE4JD0s/smBPqIfmamzJGZOq7K2a1NSX6gLvbPMVR1jfgfWhG10KgEedEB4wIjxIP
+ n3Hc9IRYJk6tsm9tQRDpkyKQMB/3dhp5NAs7DvlB1GDbJNGq2B+W+Nw155OjwUc6rY7sNo/om
+ Ze+wFD78dncaYQHOesW5x7CCCKrZ4gc25aFxM3EcWGAsGyDpHFW16yHTB9sz8rBlCT92vVESS
+ LpjNhuNsIzY882c1Grl7lRpS1DcawUImg5LctkD1aKOuONQtYQjaeZh7n46pTJlK5NMLd9OmY
+ cwspTY/7WGG/HwNBJYScwW5riJWjPKAqGl92LORtjwJ/kb6aiFx8XmiFJBft3LfhJHEIWgq9Q
+ vr2Mg1e8xgPVuHLBpjruy03U9ZlQxnL2CeZoqjAxJ5gXhAcClhAoPMwWwhHnEiFZAu1oUkuIK
+ GgStn1U5aS1VGw9JK4rHi+tUNIkc4mRCueak7UCLcJ9Y0jId5rJ3CiiB5oTBvXyRlwVxpa2iR
+ sal2DtVil87WvPfzyr+222GmNuyNxQbK5VLRCqjd3ULGtSDK1jHkIpu3fP/qeXWb8zaYDB77c
+ Pwk3b6YjVGyl84d7m
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This document describes actions that an admin can do, rather than
-interfaces available to driver developers, so admin-guide seems to
-be a more appropriate place for it.
+The EDID files are not really documentation.
 
 Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
 =2D--
- Documentation/{driver-api =3D> admin-guide}/edid.rst | 0
- Documentation/admin-guide/index.rst                | 1 +
- Documentation/driver-api/index.rst                 | 1 -
- 3 files changed, 1 insertion(+), 1 deletion(-)
- rename Documentation/{driver-api =3D> admin-guide}/edid.rst (100%)
+ {Documentation/EDID =3D> tools/edid}/1024x768.S  | 0
+ {Documentation/EDID =3D> tools/edid}/1280x1024.S | 0
+ {Documentation/EDID =3D> tools/edid}/1600x1200.S | 0
+ {Documentation/EDID =3D> tools/edid}/1680x1050.S | 0
+ {Documentation/EDID =3D> tools/edid}/1920x1080.S | 0
+ {Documentation/EDID =3D> tools/edid}/800x600.S   | 0
+ {Documentation/EDID =3D> tools/edid}/Makefile    | 0
+ {Documentation/EDID =3D> tools/edid}/edid.S      | 0
+ {Documentation/EDID =3D> tools/edid}/hex         | 0
+ 9 files changed, 0 insertions(+), 0 deletions(-)
+ rename {Documentation/EDID =3D> tools/edid}/1024x768.S (100%)
+ rename {Documentation/EDID =3D> tools/edid}/1280x1024.S (100%)
+ rename {Documentation/EDID =3D> tools/edid}/1600x1200.S (100%)
+ rename {Documentation/EDID =3D> tools/edid}/1680x1050.S (100%)
+ rename {Documentation/EDID =3D> tools/edid}/1920x1080.S (100%)
+ rename {Documentation/EDID =3D> tools/edid}/800x600.S (100%)
+ rename {Documentation/EDID =3D> tools/edid}/Makefile (100%)
+ rename {Documentation/EDID =3D> tools/edid}/edid.S (100%)
+ rename {Documentation/EDID =3D> tools/edid}/hex (100%)
 
-diff --git a/Documentation/driver-api/edid.rst b/Documentation/admin-guide=
-/edid.rst
+diff --git a/Documentation/EDID/1024x768.S b/tools/edid/1024x768.S
 similarity index 100%
-rename from Documentation/driver-api/edid.rst
-rename to Documentation/admin-guide/edid.rst
-diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-gui=
-de/index.rst
-index f1d0ccffbe72..5a6269fb8593 100644
-=2D-- a/Documentation/admin-guide/index.rst
-+++ b/Documentation/admin-guide/index.rst
-@@ -75,6 +75,7 @@ configure specific aspects of kernel behavior to your li=
-king.
-    cputopology
-    dell_rbu
-    device-mapper/index
-+   edid
-    efi-stub
-    ext4
-    nfs/index
-diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api=
-/index.rst
-index 0ebe205efd0c..ea3003b3c5e5 100644
-=2D-- a/Documentation/driver-api/index.rst
-+++ b/Documentation/driver-api/index.rst
-@@ -74,7 +74,6 @@ available subsections can be seen below.
-    connector
-    console
-    dcdbas
--   edid
-    eisa
-    ipmb
-    isa
+rename from Documentation/EDID/1024x768.S
+rename to tools/edid/1024x768.S
+diff --git a/Documentation/EDID/1280x1024.S b/tools/edid/1280x1024.S
+similarity index 100%
+rename from Documentation/EDID/1280x1024.S
+rename to tools/edid/1280x1024.S
+diff --git a/Documentation/EDID/1600x1200.S b/tools/edid/1600x1200.S
+similarity index 100%
+rename from Documentation/EDID/1600x1200.S
+rename to tools/edid/1600x1200.S
+diff --git a/Documentation/EDID/1680x1050.S b/tools/edid/1680x1050.S
+similarity index 100%
+rename from Documentation/EDID/1680x1050.S
+rename to tools/edid/1680x1050.S
+diff --git a/Documentation/EDID/1920x1080.S b/tools/edid/1920x1080.S
+similarity index 100%
+rename from Documentation/EDID/1920x1080.S
+rename to tools/edid/1920x1080.S
+diff --git a/Documentation/EDID/800x600.S b/tools/edid/800x600.S
+similarity index 100%
+rename from Documentation/EDID/800x600.S
+rename to tools/edid/800x600.S
+diff --git a/Documentation/EDID/Makefile b/tools/edid/Makefile
+similarity index 100%
+rename from Documentation/EDID/Makefile
+rename to tools/edid/Makefile
+diff --git a/Documentation/EDID/edid.S b/tools/edid/edid.S
+similarity index 100%
+rename from Documentation/EDID/edid.S
+rename to tools/edid/edid.S
+diff --git a/Documentation/EDID/hex b/tools/edid/hex
+similarity index 100%
+rename from Documentation/EDID/hex
+rename to tools/edid/hex
 =2D-
 2.20.1
 
