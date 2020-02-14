@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AD5315DE46
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:03:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CB9E15DE4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:03:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389646AbgBNQD3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:03:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50010 "EHLO mail.kernel.org"
+        id S2389710AbgBNQDj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:03:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50704 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389560AbgBNQDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:03:09 -0500
+        id S2389652AbgBNQDb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:03:31 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E171F2082F;
-        Fri, 14 Feb 2020 16:03:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F32E82067D;
+        Fri, 14 Feb 2020 16:03:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696188;
-        bh=2CYUFLmW3i6C3O1A7jOCWSZXO8Q6293Ys7QB2+bTlbo=;
+        s=default; t=1581696210;
+        bh=KBb0SdUC0ZXoTdzjUeomddn5cDalwKuc/F+moiwCcbc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kyOeTUU5fu3+XRFccygbp5FsqipGJncv/UxIy7DtS43L0i9gtWkkx7nY2CzgSG/YW
-         +03w83CX1UTNKG+KtXHt8m0KtQyNd4kirAMVcO4GZYPtGWtuJIN2HThWXZtfp5GTuy
-         jEe/orTHkp/TlTlw8Vn20UpOj8zpY5AHR5pcNq9A=
+        b=l69wYUs/q37EPc5UWn++8OS33mXZRWujihSB9zOfVL0PoXj3ofQZTBpVOf9jJjYkj
+         VgVUDyOHwnW0r71nqdmr4ec3B9iHpI3jlf5l0tduU1aJNPSTDIi7rKGX5frOSgUML5
+         gTQO8JQwyP/WjiUGsDL/ZJ634F4enMaSGIUjGA0M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, sparclinux@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 057/459] sparc: Add .exit.data section.
-Date:   Fri, 14 Feb 2020 10:55:07 -0500
-Message-Id: <20200214160149.11681-57-sashal@kernel.org>
+Cc:     Grygorii Strashko <grygorii.strashko@ti.com>,
+        Tero Kristo <t-kristo@ti.com>, Sasha Levin <sashal@kernel.org>,
+        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 075/459] clk: ti: dra7: fix parent for gmac_clkctrl
+Date:   Fri, 14 Feb 2020 10:55:25 -0500
+Message-Id: <20200214160149.11681-75-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -42,41 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "David S. Miller" <davem@davemloft.net>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
 
-[ Upstream commit 548f0b9a5f4cffa0cecf62eb12aa8db682e4eee6 ]
+[ Upstream commit 69e300283796dae7e8c2e6acdabcd31336c0c93e ]
 
-This fixes build errors of all sorts.
+The parent clk for gmac clk ctrl has to be gmac_main_clk (125MHz) instead
+of dpll_gmac_ck (1GHz). This is caused incorrect CPSW MDIO operation.
+Hence, fix it.
 
-Also, emit .exit.text unconditionally.
-
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: dffa9051d546 ('clk: ti: dra7: add new clkctrl data')
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/sparc/kernel/vmlinux.lds.S | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/clk/ti/clk-7xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/sparc/kernel/vmlinux.lds.S b/arch/sparc/kernel/vmlinux.lds.S
-index 61afd787bd0c7..59b6df13ddead 100644
---- a/arch/sparc/kernel/vmlinux.lds.S
-+++ b/arch/sparc/kernel/vmlinux.lds.S
-@@ -172,12 +172,14 @@ SECTIONS
- 	}
- 	PERCPU_SECTION(SMP_CACHE_BYTES)
+diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
+index 9dd6185a4b4e2..66e4b2b9ec600 100644
+--- a/drivers/clk/ti/clk-7xx.c
++++ b/drivers/clk/ti/clk-7xx.c
+@@ -405,7 +405,7 @@ static const struct omap_clkctrl_bit_data dra7_gmac_bit_data[] __initconst = {
+ };
  
--#ifdef CONFIG_JUMP_LABEL
- 	. = ALIGN(PAGE_SIZE);
- 	.exit.text : {
- 		EXIT_TEXT
- 	}
--#endif
-+
-+	.exit.data : {
-+		EXIT_DATA
-+	}
+ static const struct omap_clkctrl_reg_data dra7_gmac_clkctrl_regs[] __initconst = {
+-	{ DRA7_GMAC_GMAC_CLKCTRL, dra7_gmac_bit_data, CLKF_SW_SUP, "dpll_gmac_ck" },
++	{ DRA7_GMAC_GMAC_CLKCTRL, dra7_gmac_bit_data, CLKF_SW_SUP, "gmac_main_clk" },
+ 	{ 0 },
+ };
  
- 	. = ALIGN(PAGE_SIZE);
- 	__init_end = .;
 -- 
 2.20.1
 
