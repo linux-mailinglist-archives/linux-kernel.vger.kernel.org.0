@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A3F515E1F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:21:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C23F15E1FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:22:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392983AbgBNQVc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:21:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53790 "EHLO mail.kernel.org"
+        id S2393040AbgBNQVi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:21:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405154AbgBNQUM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:20:12 -0500
+        id S2404796AbgBNQUP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:20:15 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0A2324734;
-        Fri, 14 Feb 2020 16:20:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DFB282473A;
+        Fri, 14 Feb 2020 16:20:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697212;
-        bh=ktw/8vWmhlyri67P+/GtRvdmnVuBAzKZu4c6pyxsfdo=;
+        s=default; t=1581697214;
+        bh=OjlB9AVcPer6GvN/IsZeDID4gRoeRc0i8+HUSWT00wc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gpqml6si6Xz6IQJLscVEik3SNfQellt/iMshd8aBbRNFWVIdv2uHu3v+K5p57JU3C
-         mscBKt6KGLi93Bd6pA0xP7B+wSTmzk8A8UpZiGs93Q/OA1P3peIn8V7CX/IvaGLoUK
-         ibUHOPXezS4hMPdJoS7SZtJjsGJ7BvqJ7EmZ3zpE=
+        b=zwKKq5qeAXoMKrX2OlDi/7/7ZA9VXmbP6GpFNgdUc3DjpRUVUHSpjWOSWiGOwM7P1
+         Jsbc07QsxkrtQM0SvHwidiB9UfW1883hukIPgeZ8VQHyvcPS19LDQtiaIgMguXhCc6
+         RFsQXEBwqkyLYnt3F3EGmG2b6jzzWzS9jx1QpeDE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.14 137/186] f2fs: fix memleak of kobject
-Date:   Fri, 14 Feb 2020 11:16:26 -0500
-Message-Id: <20200214161715.18113-137-sashal@kernel.org>
+Cc:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pwm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 139/186] pwm: omap-dmtimer: Remove PWM chip in .remove before making it unfunctional
+Date:   Fri, 14 Feb 2020 11:16:28 -0500
+Message-Id: <20200214161715.18113-139-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161715.18113-1-sashal@kernel.org>
 References: <20200214161715.18113-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -43,52 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-[ Upstream commit fe396ad8e7526f059f7b8c7290d33a1b84adacab ]
+[ Upstream commit 43efdc8f0e6d7088ec61bd55a73bf853f002d043 ]
 
-If kobject_init_and_add() failed, caller needs to invoke kobject_put()
-to release kobject explicitly.
+In the old code (e.g.) mutex_destroy() was called before
+pwmchip_remove(). Between these two calls it is possible that a PWM
+callback is used which tries to grab the mutex.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Fixes: 6604c6556db9 ("pwm: Add PWM driver for OMAP using dual-mode timers")
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/sysfs.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/pwm/pwm-omap-dmtimer.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 79e45e760c20b..a55919eec0351 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -507,10 +507,12 @@ int __init f2fs_init_sysfs(void)
+diff --git a/drivers/pwm/pwm-omap-dmtimer.c b/drivers/pwm/pwm-omap-dmtimer.c
+index 5ad42f33e70c1..2e15acf13893d 100644
+--- a/drivers/pwm/pwm-omap-dmtimer.c
++++ b/drivers/pwm/pwm-omap-dmtimer.c
+@@ -337,6 +337,11 @@ static int pwm_omap_dmtimer_probe(struct platform_device *pdev)
+ static int pwm_omap_dmtimer_remove(struct platform_device *pdev)
+ {
+ 	struct pwm_omap_dmtimer_chip *omap = platform_get_drvdata(pdev);
++	int ret;
++
++	ret = pwmchip_remove(&omap->chip);
++	if (ret)
++		return ret;
  
- 	ret = kobject_init_and_add(&f2fs_feat, &f2fs_feat_ktype,
- 				   NULL, "features");
--	if (ret)
-+	if (ret) {
-+		kobject_put(&f2fs_feat);
- 		kset_unregister(&f2fs_kset);
--	else
-+	} else {
- 		f2fs_proc_root = proc_mkdir("fs/f2fs", NULL);
-+	}
- 	return ret;
+ 	if (pm_runtime_active(&omap->dm_timer_pdev->dev))
+ 		omap->pdata->stop(omap->dm_timer);
+@@ -345,7 +350,7 @@ static int pwm_omap_dmtimer_remove(struct platform_device *pdev)
+ 
+ 	mutex_destroy(&omap->mutex);
+ 
+-	return pwmchip_remove(&omap->chip);
++	return 0;
  }
  
-@@ -531,8 +533,11 @@ int f2fs_register_sysfs(struct f2fs_sb_info *sbi)
- 	init_completion(&sbi->s_kobj_unregister);
- 	err = kobject_init_and_add(&sbi->s_kobj, &f2fs_sb_ktype, NULL,
- 				"%s", sb->s_id);
--	if (err)
-+	if (err) {
-+		kobject_put(&sbi->s_kobj);
-+		wait_for_completion(&sbi->s_kobj_unregister);
- 		return err;
-+	}
- 
- 	if (f2fs_proc_root)
- 		sbi->s_proc = proc_mkdir(sb->s_id, f2fs_proc_root);
+ static const struct of_device_id pwm_omap_dmtimer_of_match[] = {
 -- 
 2.20.1
 
