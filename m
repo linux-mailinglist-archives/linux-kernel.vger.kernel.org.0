@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03D9D15E005
+	by mail.lfdr.de (Postfix) with ESMTP id 914E615E006
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:12:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390311AbgBNQLb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:11:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36350 "EHLO mail.kernel.org"
+        id S2391819AbgBNQLd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:11:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391555AbgBNQKg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:10:36 -0500
+        id S2391574AbgBNQKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:10:41 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FFC1222C2;
-        Fri, 14 Feb 2020 16:10:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B18F2468F;
+        Fri, 14 Feb 2020 16:10:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696635;
-        bh=w9IgFlICa2EHlmwlhKdA8RQ5CI3yH209H/WY6Ko/ox8=;
+        s=default; t=1581696639;
+        bh=KHdrEN3OtqPPD6L5YgBi2g1IZzGbO2eK07lEomwDnVc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b/sCiocrTL8DNrdGar4fFTiLuBizPjp2Crk+fegHlofhe0zzGAEDXm5/zVSC9zikD
-         qBEulP9lJuOWN65ahw7tnZPiRIUVhrRXOMgJ0AegFcSJ/uT54XuW944WZvnJGgkm3s
-         tHmN7AJ4MLUnDAggpNGNzA6ePCIUkSpBlj0eXPSM=
+        b=v+KC2F+2RKB9SQgU3d7TZ8ILC8+Dx4tULKuidMaXuFYll/pF+U6s67X6Q1n7mE2TH
+         3ZR7Bd94SoZZmrsSBLs6+t/zYJ/nY1Es+xnLD+lMRJPSEXcyOrORGpHpaqf7NkkBEq
+         dkwh8pC48v9MJtPKEypQ4iTYh6eXObUX77O8NtUw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Paulo Alcantara (SUSE)" <pc@cjr.nz>,
-        Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>,
-        Steve French <stfrench@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org
-Subject: [PATCH AUTOSEL 5.4 413/459] cifs: Fix mount options set in automount
-Date:   Fri, 14 Feb 2020 11:01:03 -0500
-Message-Id: <20200214160149.11681-413-sashal@kernel.org>
+Cc:     Qing Xu <m1s5p6688@gmail.com>, Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 417/459] mwifiex: Fix possible buffer overflows in mwifiex_ret_wmm_get_status()
+Date:   Fri, 14 Feb 2020 11:01:07 -0500
+Message-Id: <20200214160149.11681-417-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -45,213 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Paulo Alcantara (SUSE)" <pc@cjr.nz>
+From: Qing Xu <m1s5p6688@gmail.com>
 
-[ Upstream commit 5739375ee4230980166807d347cc21c305532bbc ]
+[ Upstream commit 3a9b153c5591548612c3955c9600a98150c81875 ]
 
-Starting from 4a367dc04435, we must set the mount options based on the
-DFS full path rather than the resolved target, that is, cifs_mount()
-will be responsible for resolving the DFS link (cached) as well as
-performing failover to any other targets in the referral.
+mwifiex_ret_wmm_get_status() calls memcpy() without checking the
+destination size.Since the source is given from remote AP which
+contains illegal wmm elements , this may trigger a heap buffer
+overflow.
+Fix it by putting the length check before calling memcpy().
 
-Signed-off-by: Paulo Alcantara (SUSE) <pc@cjr.nz>
-Reported-by: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
-Fixes: 4a367dc04435 ("cifs: Add support for failover in cifs_mount()")
-Link: https://lore.kernel.org/linux-cifs/39643d7d-2abb-14d3-ced6-c394fab9a777@prodrive-technologies.com
-Tested-by: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Qing Xu <m1s5p6688@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/cifs_dfs_ref.c | 97 +++++++++++++++++++-----------------------
- 1 file changed, 43 insertions(+), 54 deletions(-)
+ drivers/net/wireless/marvell/mwifiex/wmm.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/fs/cifs/cifs_dfs_ref.c b/fs/cifs/cifs_dfs_ref.c
-index 41957b82d7960..606f26d862dc1 100644
---- a/fs/cifs/cifs_dfs_ref.c
-+++ b/fs/cifs/cifs_dfs_ref.c
-@@ -120,17 +120,17 @@ cifs_build_devname(char *nodename, const char *prepath)
+diff --git a/drivers/net/wireless/marvell/mwifiex/wmm.c b/drivers/net/wireless/marvell/mwifiex/wmm.c
+index 41f0231376c01..132f9e8ed68c1 100644
+--- a/drivers/net/wireless/marvell/mwifiex/wmm.c
++++ b/drivers/net/wireless/marvell/mwifiex/wmm.c
+@@ -970,6 +970,10 @@ int mwifiex_ret_wmm_get_status(struct mwifiex_private *priv,
+ 				    "WMM Parameter Set Count: %d\n",
+ 				    wmm_param_ie->qos_info_bitmap & mask);
  
- 
- /**
-- * cifs_compose_mount_options	-	creates mount options for refferral
-+ * cifs_compose_mount_options	-	creates mount options for referral
-  * @sb_mountdata:	parent/root DFS mount options (template)
-  * @fullpath:		full path in UNC format
-- * @ref:		server's referral
-+ * @ref:		optional server's referral
-  * @devname:		optional pointer for saving device name
-  *
-  * creates mount options for submount based on template options sb_mountdata
-  * and replacing unc,ip,prefixpath options with ones we've got form ref_unc.
-  *
-  * Returns: pointer to new mount options or ERR_PTR.
-- * Caller is responcible for freeing retunrned value if it is not error.
-+ * Caller is responsible for freeing returned value if it is not error.
-  */
- char *cifs_compose_mount_options(const char *sb_mountdata,
- 				   const char *fullpath,
-@@ -150,18 +150,27 @@ char *cifs_compose_mount_options(const char *sb_mountdata,
- 	if (sb_mountdata == NULL)
- 		return ERR_PTR(-EINVAL);
- 
--	if (strlen(fullpath) - ref->path_consumed) {
--		prepath = fullpath + ref->path_consumed;
--		/* skip initial delimiter */
--		if (*prepath == '/' || *prepath == '\\')
--			prepath++;
--	}
-+	if (ref) {
-+		if (strlen(fullpath) - ref->path_consumed) {
-+			prepath = fullpath + ref->path_consumed;
-+			/* skip initial delimiter */
-+			if (*prepath == '/' || *prepath == '\\')
-+				prepath++;
-+		}
- 
--	name = cifs_build_devname(ref->node_name, prepath);
--	if (IS_ERR(name)) {
--		rc = PTR_ERR(name);
--		name = NULL;
--		goto compose_mount_options_err;
-+		name = cifs_build_devname(ref->node_name, prepath);
-+		if (IS_ERR(name)) {
-+			rc = PTR_ERR(name);
-+			name = NULL;
-+			goto compose_mount_options_err;
-+		}
-+	} else {
-+		name = cifs_build_devname((char *)fullpath, NULL);
-+		if (IS_ERR(name)) {
-+			rc = PTR_ERR(name);
-+			name = NULL;
-+			goto compose_mount_options_err;
-+		}
- 	}
- 
- 	rc = dns_resolve_server_name_to_ip(name, &srvIP);
-@@ -225,6 +234,8 @@ char *cifs_compose_mount_options(const char *sb_mountdata,
- 
- 	if (devname)
- 		*devname = name;
-+	else
-+		kfree(name);
- 
- 	/*cifs_dbg(FYI, "%s: parent mountdata: %s\n", __func__, sb_mountdata);*/
- 	/*cifs_dbg(FYI, "%s: submount mountdata: %s\n", __func__, mountdata );*/
-@@ -241,23 +252,23 @@ char *cifs_compose_mount_options(const char *sb_mountdata,
- }
- 
- /**
-- * cifs_dfs_do_refmount - mounts specified path using provided refferal
-+ * cifs_dfs_do_mount - mounts specified path using DFS full path
-+ *
-+ * Always pass down @fullpath to smb3_do_mount() so we can use the root server
-+ * to perform failover in case we failed to connect to the first target in the
-+ * referral.
-+ *
-  * @cifs_sb:		parent/root superblock
-  * @fullpath:		full path in UNC format
-- * @ref:		server's referral
-  */
--static struct vfsmount *cifs_dfs_do_refmount(struct dentry *mntpt,
--		struct cifs_sb_info *cifs_sb,
--		const char *fullpath, const struct dfs_info3_param *ref)
-+static struct vfsmount *cifs_dfs_do_mount(struct dentry *mntpt,
-+					  struct cifs_sb_info *cifs_sb,
-+					  const char *fullpath)
- {
- 	struct vfsmount *mnt;
- 	char *mountdata;
- 	char *devname;
- 
--	/*
--	 * Always pass down the DFS full path to smb3_do_mount() so we
--	 * can use it later for failover.
--	 */
- 	devname = kstrndup(fullpath, strlen(fullpath), GFP_KERNEL);
- 	if (!devname)
- 		return ERR_PTR(-ENOMEM);
-@@ -266,7 +277,7 @@ static struct vfsmount *cifs_dfs_do_refmount(struct dentry *mntpt,
- 
- 	/* strip first '\' from fullpath */
- 	mountdata = cifs_compose_mount_options(cifs_sb->mountdata,
--					       fullpath + 1, ref, NULL);
-+					       fullpath + 1, NULL, NULL);
- 	if (IS_ERR(mountdata)) {
- 		kfree(devname);
- 		return (struct vfsmount *)mountdata;
-@@ -278,28 +289,16 @@ static struct vfsmount *cifs_dfs_do_refmount(struct dentry *mntpt,
- 	return mnt;
- }
- 
--static void dump_referral(const struct dfs_info3_param *ref)
--{
--	cifs_dbg(FYI, "DFS: ref path: %s\n", ref->path_name);
--	cifs_dbg(FYI, "DFS: node path: %s\n", ref->node_name);
--	cifs_dbg(FYI, "DFS: fl: %d, srv_type: %d\n",
--		 ref->flags, ref->server_type);
--	cifs_dbg(FYI, "DFS: ref_flags: %d, path_consumed: %d\n",
--		 ref->ref_flag, ref->path_consumed);
--}
--
- /*
-  * Create a vfsmount that we can automount
-  */
- static struct vfsmount *cifs_dfs_do_automount(struct dentry *mntpt)
- {
--	struct dfs_info3_param referral = {0};
- 	struct cifs_sb_info *cifs_sb;
- 	struct cifs_ses *ses;
- 	struct cifs_tcon *tcon;
- 	char *full_path, *root_path;
- 	unsigned int xid;
--	int len;
- 	int rc;
- 	struct vfsmount *mnt;
- 
-@@ -357,7 +356,7 @@ static struct vfsmount *cifs_dfs_do_automount(struct dentry *mntpt)
- 	if (!rc) {
- 		rc = dfs_cache_find(xid, ses, cifs_sb->local_nls,
- 				    cifs_remap(cifs_sb), full_path + 1,
--				    &referral, NULL);
-+				    NULL, NULL);
- 	}
- 
- 	free_xid(xid);
-@@ -366,26 +365,16 @@ static struct vfsmount *cifs_dfs_do_automount(struct dentry *mntpt)
- 		mnt = ERR_PTR(rc);
- 		goto free_root_path;
- 	}
--
--	dump_referral(&referral);
--
--	len = strlen(referral.node_name);
--	if (len < 2) {
--		cifs_dbg(VFS, "%s: Net Address path too short: %s\n",
--			 __func__, referral.node_name);
--		mnt = ERR_PTR(-EINVAL);
--		goto free_dfs_ref;
--	}
- 	/*
--	 * cifs_mount() will retry every available node server in case
--	 * of failures.
-+	 * OK - we were able to get and cache a referral for @full_path.
-+	 *
-+	 * Now, pass it down to cifs_mount() and it will retry every available
-+	 * node server in case of failures - no need to do it here.
- 	 */
--	mnt = cifs_dfs_do_refmount(mntpt, cifs_sb, full_path, &referral);
--	cifs_dbg(FYI, "%s: cifs_dfs_do_refmount:%s , mnt:%p\n", __func__,
--		 referral.node_name, mnt);
-+	mnt = cifs_dfs_do_mount(mntpt, cifs_sb, full_path);
-+	cifs_dbg(FYI, "%s: cifs_dfs_do_mount:%s , mnt:%p\n", __func__,
-+		 full_path + 1, mnt);
- 
--free_dfs_ref:
--	free_dfs_info_param(&referral);
- free_root_path:
- 	kfree(root_path);
- free_full_path:
++			if (wmm_param_ie->vend_hdr.len + 2 >
++				sizeof(struct ieee_types_wmm_parameter))
++				break;
++
+ 			memcpy((u8 *) &priv->curr_bss_params.bss_descriptor.
+ 			       wmm_ie, wmm_param_ie,
+ 			       wmm_param_ie->vend_hdr.len + 2);
 -- 
 2.20.1
 
