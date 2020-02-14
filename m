@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6EAE15E9CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:10:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DF3815E9CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:09:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403946AbgBNQNs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:13:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41362 "EHLO mail.kernel.org"
+        id S2392219AbgBNQNv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:13:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41420 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392136AbgBNQNO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:13:14 -0500
+        id S2392141AbgBNQNP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:13:15 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58C9B24696;
-        Fri, 14 Feb 2020 16:13:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B25FF246AA;
+        Fri, 14 Feb 2020 16:13:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696793;
-        bh=7lG+dWiKK0SAsQ/9MpxIx6tL6YFcunMBoZY+JdjCtaE=;
+        s=default; t=1581696794;
+        bh=zb5iKiLOof2fYfafncsGc6i0Zgwp4WIdC+iMX46+kds=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sLj5lC2bBEhx+yRPj+kyw2IblsZM/7reWF1u8OlMogSgZqiuUfHKHUqn24+NWbzae
-         PwBmPIjdzylv1/e/JeJUBTmzO8S38QnNDIcrgXrLAFJuvBzRdkwFrHjZTMgA310gfx
-         CYPTe439sl/6qKdczjokXYAM724GvtrpD/QIhroM=
+        b=ANvIyMrpNCXjfp8vZ5oMio1bddaH+woGlTUfCDIbxKbKYDpDwirsEYS6mv2vK6ZwS
+         ZAlNxNS3hudbtcF/hFiYDq+FMxvPDwke6FtxHLXuwG8gaiu3GcuG1SwBzATOSEZ9W7
+         3X+JerNkuJwkSXsxmi+M1aa4oAH7BZITCS7HaVSA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     zhengbin <zhengbin13@huawei.com>,
@@ -31,9 +31,9 @@ Cc:     zhengbin <zhengbin13@huawei.com>,
         Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 067/252] drm/amd/display: remove set but not used variable 'bp' in bios_parser2.c
-Date:   Fri, 14 Feb 2020 11:08:42 -0500
-Message-Id: <20200214161147.15842-67-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 068/252] drm/amd/display: remove set but not used variable 'bp' in bios_parser.c
+Date:   Fri, 14 Feb 2020 11:08:43 -0500
+Message-Id: <20200214161147.15842-68-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -48,12 +48,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: zhengbin <zhengbin13@huawei.com>
 
-[ Upstream commit 589d8d282ebe1eab2dd8b1fba3e60322787a50e6 ]
+[ Upstream commit 7e30402bed151fc6222baafe5aa1abe3e65c3065 ]
 
 Fixes gcc '-Wunused-but-set-variable' warning:
 
-drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c: In function bios_get_board_layout_info:
-drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c:1826:22: warning: variable bp set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/amd/display/dc/bios/bios_parser.c: In function bios_get_board_layout_info:
+drivers/gpu/drm/amd/display/dc/bios/bios_parser.c:2743:22: warning: variable bp set but not used [-Wunused-but-set-variable]
 
 It is introduced by commit 1eeedbcc20d6 ("drm/amd/display:
 get board layout for edid emulation"), but never used,
@@ -65,14 +65,14 @@ Signed-off-by: zhengbin <zhengbin13@huawei.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c | 2 --
+ drivers/gpu/drm/amd/display/dc/bios/bios_parser.c | 2 --
  1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c b/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
-index eab007e1793c2..9ee6814e80c7c 100644
---- a/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
-+++ b/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
-@@ -2029,7 +2029,6 @@ static enum bp_result bios_get_board_layout_info(
+diff --git a/drivers/gpu/drm/amd/display/dc/bios/bios_parser.c b/drivers/gpu/drm/amd/display/dc/bios/bios_parser.c
+index be8a2494355a4..b92756b1e545c 100644
+--- a/drivers/gpu/drm/amd/display/dc/bios/bios_parser.c
++++ b/drivers/gpu/drm/amd/display/dc/bios/bios_parser.c
+@@ -3917,7 +3917,6 @@ static enum bp_result bios_get_board_layout_info(
  	struct board_layout_info *board_layout_info)
  {
  	unsigned int i;
@@ -80,7 +80,7 @@ index eab007e1793c2..9ee6814e80c7c 100644
  	enum bp_result record_result;
  
  	const unsigned int slot_index_to_vbios_id[MAX_BOARD_SLOTS] = {
-@@ -2038,7 +2037,6 @@ static enum bp_result bios_get_board_layout_info(
+@@ -3926,7 +3925,6 @@ static enum bp_result bios_get_board_layout_info(
  		0, 0
  	};
  
