@@ -2,206 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9858215D4E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 10:45:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AECCF15D4E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 10:45:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729186AbgBNJpR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 04:45:17 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:39976 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729166AbgBNJpP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 04:45:15 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 23EBED497044317487E6;
-        Fri, 14 Feb 2020 17:45:11 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 14 Feb 2020 17:45:00 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 4/4] f2fs: clean up bggc mount option
-Date:   Fri, 14 Feb 2020 17:44:13 +0800
-Message-ID: <20200214094413.12784-4-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
-In-Reply-To: <20200214094413.12784-1-yuchao0@huawei.com>
-References: <20200214094413.12784-1-yuchao0@huawei.com>
+        id S1729107AbgBNJor (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 04:44:47 -0500
+Received: from mga05.intel.com ([192.55.52.43]:21000 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728479AbgBNJoq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 04:44:46 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2020 01:44:46 -0800
+X-IronPort-AV: E=Sophos;i="5.70,440,1574150400"; 
+   d="scan'208";a="227543457"
+Received: from xiaoyaol-mobl.ccr.corp.intel.com (HELO [10.255.30.123]) ([10.255.30.123])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 14 Feb 2020 01:44:43 -0800
+Subject: Re: [PATCH 26/61] KVM: x86: Introduce cpuid_entry_{get,has}()
+ accessors
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200201185218.24473-1-sean.j.christopherson@intel.com>
+ <20200201185218.24473-27-sean.j.christopherson@intel.com>
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+Message-ID: <1f918bcf-d36d-f759-5796-2acb2a514888@intel.com>
+Date:   Fri, 14 Feb 2020 17:44:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20200201185218.24473-27-sean.j.christopherson@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are three status for background gc: on, off and sync, it's
-a little bit confused to use test_opt(BG_GC) and test_opt(FORCE_FG_GC)
-combinations to indicate status of background gc.
+On 2/2/2020 2:51 AM, Sean Christopherson wrote:
+> Introduce accessors to retrieve feature bits from CPUID entries and use
+> the new accessors where applicable.  Using the accessors eliminates the
+> need to manually specify the register to be queried at no extra cost
+> (binary output is identical) and will allow adding runtime consistency
+> checks on the function and index in a future patch.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>   arch/x86/kvm/cpuid.c |  9 +++++----
+>   arch/x86/kvm/cpuid.h | 46 +++++++++++++++++++++++++++++++++++---------
+>   2 files changed, 42 insertions(+), 13 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index e3026fe638aa..3316963dad3d 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -68,7 +68,7 @@ int kvm_update_cpuid(struct kvm_vcpu *vcpu)
+>   		best->edx |= F(APIC);
+>   
+>   	if (apic) {
+> -		if (best->ecx & F(TSC_DEADLINE_TIMER))
+> +		if (cpuid_entry_has(best, X86_FEATURE_TSC_DEADLINE_TIMER))
+>   			apic->lapic_timer.timer_mode_mask = 3 << 17;
+>   		else
+>   			apic->lapic_timer.timer_mode_mask = 1 << 17;
+> @@ -96,7 +96,8 @@ int kvm_update_cpuid(struct kvm_vcpu *vcpu)
+>   	}
+>   
+>   	best = kvm_find_cpuid_entry(vcpu, 0xD, 1);
+> -	if (best && (best->eax & (F(XSAVES) | F(XSAVEC))))
+> +	if (best && (cpuid_entry_has(best, X86_FEATURE_XSAVES) ||
+> +		     cpuid_entry_has(best, X86_FEATURE_XSAVEC)))
+>   		best->ebx = xstate_required_size(vcpu->arch.xcr0, true);
+>   
+>   	/*
+> @@ -155,7 +156,7 @@ static void cpuid_fix_nx_cap(struct kvm_vcpu *vcpu)
+>   			break;
+>   		}
+>   	}
+> -	if (entry && (entry->edx & F(NX)) && !is_efer_nx()) {
+> +	if (entry && cpuid_entry_has(entry, X86_FEATURE_NX) && !is_efer_nx()) {
+>   		entry->edx &= ~F(NX);
+>   		printk(KERN_INFO "kvm: guest NX capability removed\n");
+>   	}
+> @@ -387,7 +388,7 @@ static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry)
+>   		entry->ebx |= F(TSC_ADJUST);
+>   
+>   		entry->ecx &= kvm_cpuid_7_0_ecx_x86_features;
+> -		f_la57 = entry->ecx & F(LA57);
+> +		f_la57 = cpuid_entry_get(entry, X86_FEATURE_LA57);
+>   		cpuid_mask(&entry->ecx, CPUID_7_ECX);
+>   		/* Set LA57 based on hardware capability. */
+>   		entry->ecx |= f_la57;
+> diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
+> index 72a79bdfed6b..64e96e4086e2 100644
+> --- a/arch/x86/kvm/cpuid.h
+> +++ b/arch/x86/kvm/cpuid.h
+> @@ -95,16 +95,10 @@ static __always_inline struct cpuid_reg x86_feature_cpuid(unsigned x86_feature)
+>   	return reverse_cpuid[x86_leaf];
+>   }
+>   
+> -static __always_inline u32 *guest_cpuid_get_register(struct kvm_vcpu *vcpu, unsigned x86_feature)
+> +static __always_inline u32 *__cpuid_entry_get_reg(struct kvm_cpuid_entry2 *entry,
+> +						  const struct cpuid_reg *cpuid)
+>   {
+> -	struct kvm_cpuid_entry2 *entry;
+> -	const struct cpuid_reg cpuid = x86_feature_cpuid(x86_feature);
+> -
+> -	entry = kvm_find_cpuid_entry(vcpu, cpuid.function, cpuid.index);
+> -	if (!entry)
+> -		return NULL;
+> -
+> -	switch (cpuid.reg) {
+> +	switch (cpuid->reg) {
+>   	case CPUID_EAX:
+>   		return &entry->eax;
+>   	case CPUID_EBX:
+> @@ -119,6 +113,40 @@ static __always_inline u32 *guest_cpuid_get_register(struct kvm_vcpu *vcpu, unsi
+>   	}
+>   }
+>   
+> +static __always_inline u32 *cpuid_entry_get_reg(struct kvm_cpuid_entry2 *entry,
+> +						unsigned x86_feature)
+> +{
+> +	const struct cpuid_reg cpuid = x86_feature_cpuid(x86_feature);
+> +
+> +	return __cpuid_entry_get_reg(entry, &cpuid);
+> +}
+> +
+> +static __always_inline u32 cpuid_entry_get(struct kvm_cpuid_entry2 *entry,
+> +					   unsigned x86_feature)
+> +{
+> +	u32 *reg = cpuid_entry_get_reg(entry, x86_feature);
+> +
+> +	return *reg & __feature_bit(x86_feature);
+> +}
+> +
 
-So let's remove F2FS_MOUNT_BG_GC and F2FS_MOUNT_FORCE_FG_GC mount
-options, and add F2FS_OPTION().bggc_mode with below three status
-to clean up codes and enhance bggc mode's scalability.
+This helper function is unnecessary. There is only one user throughout 
+this series, i.e., cpuid_entry_has() below.
 
-enum {
-	BGGC_MODE_ON,		/* background gc is on */
-	BGGC_MODE_OFF,		/* background gc is off */
-	BGGC_MODE_SYNC,		/*
-				 * background gc is on, migrating blocks
-				 * like foreground gc
-				 */
-};
+And I cannot image other possible use case of it.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/f2fs.h  | 12 ++++++++++--
- fs/f2fs/gc.c    |  6 +++++-
- fs/f2fs/super.c | 29 +++++++++++++----------------
- 3 files changed, 28 insertions(+), 19 deletions(-)
+> +static __always_inline bool cpuid_entry_has(struct kvm_cpuid_entry2 *entry,
+> +					    unsigned x86_feature)
+> +{
+> +	return cpuid_entry_get(entry, x86_feature);
+> +}
+> +
+> +static __always_inline int *guest_cpuid_get_register(struct kvm_vcpu *vcpu, unsigned x86_feature)
+                           ^
+Should be                 u32
+otherwise, previous patch will be unhappy. :)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index d2d50827772c..9f65ba8057ad 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -74,7 +74,6 @@ extern const char *f2fs_fault_name[FAULT_MAX];
- /*
-  * For mount options
-  */
--#define F2FS_MOUNT_BG_GC		0x00000001
- #define F2FS_MOUNT_DISABLE_ROLL_FORWARD	0x00000002
- #define F2FS_MOUNT_DISCARD		0x00000004
- #define F2FS_MOUNT_NOHEAP		0x00000008
-@@ -88,7 +87,6 @@ extern const char *f2fs_fault_name[FAULT_MAX];
- #define F2FS_MOUNT_NOBARRIER		0x00000800
- #define F2FS_MOUNT_FASTBOOT		0x00001000
- #define F2FS_MOUNT_EXTENT_CACHE		0x00002000
--#define F2FS_MOUNT_FORCE_FG_GC		0x00004000
- #define F2FS_MOUNT_DATA_FLUSH		0x00008000
- #define F2FS_MOUNT_FAULT_INJECTION	0x00010000
- #define F2FS_MOUNT_USRQUOTA		0x00080000
-@@ -137,6 +135,7 @@ struct f2fs_mount_info {
- 	int alloc_mode;			/* segment allocation policy */
- 	int fsync_mode;			/* fsync policy */
- 	int fs_mode;			/* fs mode: LFS or ADAPTIVE */
-+	int bggc_mode;			/* bggc mode: off, on or sync */
- 	bool test_dummy_encryption;	/* test dummy encryption */
- 	block_t unusable_cap;		/* Amount of space allowed to be
- 					 * unusable when disabling checkpoint
-@@ -1170,6 +1169,15 @@ enum {
- 	GC_URGENT,
- };
- 
-+enum {
-+	BGGC_MODE_ON,		/* background gc is on */
-+	BGGC_MODE_OFF,		/* background gc is off */
-+	BGGC_MODE_SYNC,		/*
-+				 * background gc is on, migrating blocks
-+				 * like foreground gc
-+				 */
-+};
-+
- enum {
- 	FS_MODE_ADAPTIVE,	/* use both lfs/ssr allocation */
- 	FS_MODE_LFS,		/* use lfs allocation only */
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 8aebe2b9c655..897de003e423 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -31,6 +31,8 @@ static int gc_thread_func(void *data)
- 
- 	set_freezable();
- 	do {
-+		bool sync_mode;
-+
- 		wait_event_interruptible_timeout(*wq,
- 				kthread_should_stop() || freezing(current) ||
- 				gc_th->gc_wake,
-@@ -101,8 +103,10 @@ static int gc_thread_func(void *data)
- do_gc:
- 		stat_inc_bggc_count(sbi->stat_info);
- 
-+		sync_mode = F2FS_OPTION(sbi).bggc_mode == BGGC_MODE_SYNC;
-+
- 		/* if return value is not zero, no victim was selected */
--		if (f2fs_gc(sbi, test_opt(sbi, FORCE_FG_GC), true, NULL_SEGNO))
-+		if (f2fs_gc(sbi, sync_mode, true, NULL_SEGNO))
- 			wait_ms = gc_th->no_gc_sleep_time;
- 
- 		trace_f2fs_background_gc(sbi->sb, wait_ms,
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 427409eff354..4ef7e6eb37da 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -427,14 +427,11 @@ static int parse_options(struct super_block *sb, char *options)
- 			if (!name)
- 				return -ENOMEM;
- 			if (strlen(name) == 2 && !strncmp(name, "on", 2)) {
--				set_opt(sbi, BG_GC);
--				clear_opt(sbi, FORCE_FG_GC);
-+				F2FS_OPTION(sbi).bggc_mode = BGGC_MODE_ON;
- 			} else if (strlen(name) == 3 && !strncmp(name, "off", 3)) {
--				clear_opt(sbi, BG_GC);
--				clear_opt(sbi, FORCE_FG_GC);
-+				F2FS_OPTION(sbi).bggc_mode = BGGC_MODE_OFF;
- 			} else if (strlen(name) == 4 && !strncmp(name, "sync", 4)) {
--				set_opt(sbi, BG_GC);
--				set_opt(sbi, FORCE_FG_GC);
-+				F2FS_OPTION(sbi).bggc_mode = BGGC_MODE_SYNC;
- 			} else {
- 				kvfree(name);
- 				return -EINVAL;
-@@ -1436,14 +1433,13 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(root->d_sb);
- 
--	if (!f2fs_readonly(sbi->sb) && test_opt(sbi, BG_GC)) {
--		if (test_opt(sbi, FORCE_FG_GC))
--			seq_printf(seq, ",background_gc=%s", "sync");
--		else
--			seq_printf(seq, ",background_gc=%s", "on");
--	} else {
-+	if (F2FS_OPTION(sbi).bggc_mode == BGGC_MODE_SYNC)
-+		seq_printf(seq, ",background_gc=%s", "sync");
-+	else if (F2FS_OPTION(sbi).bggc_mode == BGGC_MODE_ON)
-+		seq_printf(seq, ",background_gc=%s", "on");
-+	else if (F2FS_OPTION(sbi).bggc_mode == BGGC_MODE_OFF)
- 		seq_printf(seq, ",background_gc=%s", "off");
--	}
-+
- 	if (test_opt(sbi, DISABLE_ROLL_FORWARD))
- 		seq_puts(seq, ",disable_roll_forward");
- 	if (test_opt(sbi, DISCARD))
-@@ -1573,8 +1569,8 @@ static void default_options(struct f2fs_sb_info *sbi)
- 	F2FS_OPTION(sbi).compress_algorithm = COMPRESS_LZO;
- 	F2FS_OPTION(sbi).compress_log_size = MIN_COMPRESS_LOG_SIZE;
- 	F2FS_OPTION(sbi).compress_ext_cnt = 0;
-+	F2FS_OPTION(sbi).bggc_mode = BGGC_MODE_ON;
- 
--	set_opt(sbi, BG_GC);
- 	set_opt(sbi, INLINE_XATTR);
- 	set_opt(sbi, INLINE_DATA);
- 	set_opt(sbi, INLINE_DENTRY);
-@@ -1780,7 +1776,8 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	 * or if background_gc = off is passed in mount
- 	 * option. Also sync the filesystem.
- 	 */
--	if ((*flags & SB_RDONLY) || !test_opt(sbi, BG_GC)) {
-+	if ((*flags & SB_RDONLY) ||
-+			F2FS_OPTION(sbi).bggc_mode == BGGC_MODE_OFF) {
- 		if (sbi->gc_thread) {
- 			f2fs_stop_gc_thread(sbi);
- 			need_restart_gc = true;
-@@ -3664,7 +3661,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	 * If filesystem is not mounted as read-only then
- 	 * do start the gc_thread.
- 	 */
--	if (test_opt(sbi, BG_GC) && !f2fs_readonly(sb)) {
-+	if (F2FS_OPTION(sbi).bggc_mode != BGGC_MODE_OFF && !f2fs_readonly(sb)) {
- 		/* After POR, we can run background GC thread.*/
- 		err = f2fs_start_gc_thread(sbi);
- 		if (err)
--- 
-2.18.0.rc1
+> +{
+> +	struct kvm_cpuid_entry2 *entry;
+> +	const struct cpuid_reg cpuid = x86_feature_cpuid(x86_feature);
+> +
+> +	entry = kvm_find_cpuid_entry(vcpu, cpuid.function, cpuid.index);
+> +	if (!entry)
+> +		return NULL;
+> +
+> +	return __cpuid_entry_get_reg(entry, &cpuid);
+> +}
+> +
+>   static __always_inline bool guest_cpuid_has(struct kvm_vcpu *vcpu, unsigned x86_feature)
+>   {
+>   	u32 *reg;
+> 
 
