@@ -2,93 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5284E15F811
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 21:49:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7964215F835
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 21:53:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389546AbgBNUt0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 15:49:26 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45273 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389194AbgBNUtX (ORCPT
+        id S2388689AbgBNUvq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 15:51:46 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:44475 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387852AbgBNUvp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 15:49:23 -0500
-Received: by mail-wr1-f66.google.com with SMTP id g3so12447617wrs.12
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 12:49:22 -0800 (PST)
+        Fri, 14 Feb 2020 15:51:45 -0500
+Received: by mail-oi1-f195.google.com with SMTP id d62so10671144oia.11
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 12:51:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=BG/k+1n242XmQ392+l/+QM8WpV3CVNW+mSgRrXUNaOk=;
-        b=SarBqj+oUxptfwZyuPnoE9f5TdNLgDfCHQUMJ/hlsyT34Ix7OOciJH7CP+Ir3b2GzM
-         9zb3YRPgjRMX5OrfVnsaU+NWX65BwvyfNy/jlvmnZvXwHmUhKJyKKN4i2ekuDyB+AUaN
-         m0OvEgnVfVGPMiW73eqXyVcabZ6/knDSWdzPA=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=OUZEy9409pppSXljzrVzSPjPdAQw80MGvX16nfBY0dg=;
+        b=XC8kv3Wy0OyQoREJOWp1L8cEyQ1FThdUzVe8SxPcm6z+yNRZQ+w+96qmHNRFnE0zFg
+         0hrWiuwrQwnBJGouFTTXBqkYyEhKJxCYJDtYNeEe9OWB3N1pVH0I00UjWuZYf2/Znysx
+         SPzGijZ1p4bQOVDd742sL44fHmIGY83rZEZ2IxU9hePz7S6GslxhIsa+CXggRmpc3fmn
+         /IDtI1izIrcvu5l6OVgLMW7UONPNSOyuf+GFqyD3aH8X8c4RM4ZrT35d2x1EPfZD/4g4
+         KCBAVALHP9sq7Szy9JydAPABAeA6ts9S2QwivSYQFWXMO/vdM6Vhmxc63Y0/zub5qTZN
+         5B0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=BG/k+1n242XmQ392+l/+QM8WpV3CVNW+mSgRrXUNaOk=;
-        b=hLeet7lD6XA72Wc6iNtlnuemNFUCRjlh/ax3cryln5IOVaqk/peEW0YpWITgxNvf3G
-         Y0cNRIYNRhOVominKJh2uXiEESUk8rijX2VZedTv4rMpzsWp6+kHEEmxOOMPL79vK9CN
-         okl6HW7O86WWPqZE4Zv2hZGFn3VzfCQl9mLFEUpIucqvIMDtuSNopmj7A6c7eik66x5y
-         j4GXzPyWu2Dj/VGIjC+TJ1KNVuTOxN86FNr+w3cFNeeWMyviX1MQF8M0b7G6cjnTu/9P
-         TMTuCEQnjCc7SZ5NinBFCbySqTKbCyj2PEBNOnsrzWp4eUDSdoZ9igW8tm4Nf+38exAb
-         SHsQ==
-X-Gm-Message-State: APjAAAW7UiMgY89Wox6ER8kMlUhVAP1IBo/BBWole/iy97FiGFy4a6so
-        US73WtvbZyTBbB4kD0CL4YwvDg==
-X-Google-Smtp-Source: APXvYqxncTdduvArrIOwd2nDXfNPYclGCAutEyIXX9NPCJWgKiNMBPvLCR/gffpuMOaRVYxDiBFUkg==
-X-Received: by 2002:adf:e74a:: with SMTP id c10mr6152109wrn.254.1581713361497;
-        Fri, 14 Feb 2020 12:49:21 -0800 (PST)
-Received: from [192.168.1.149] (ip-5-186-115-54.cgn.fibianet.dk. [5.186.115.54])
-        by smtp.gmail.com with ESMTPSA id r6sm8400054wrp.95.2020.02.14.12.49.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2020 12:49:20 -0800 (PST)
-Subject: Re: [PATCH AUTOSEL 4.9 003/141] soc: fsl: qe: change return type of
- cpm_muram_alloc() to s32
-To:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Cc:     Timur Tabi <timur@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org,
-        Christophe Leroy <christophe.leroy@c-s.fr>
-References: <20200214162122.19794-1-sashal@kernel.org>
- <20200214162122.19794-3-sashal@kernel.org>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <a920b57f-ad9e-5c25-3981-0462febd952a@rasmusvillemoes.dk>
-Date:   Fri, 14 Feb 2020 21:49:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=OUZEy9409pppSXljzrVzSPjPdAQw80MGvX16nfBY0dg=;
+        b=MtU0RaRWMrIaLGZuoy8sR4l+WahldqoKwdN0u1u/HBX53OET1RmTRz/JK5nVA2p/fy
+         kwY5uC6IThTbaOEh30ta+tj+m4mv2ON1mPFBMiAXsqlheSVq3BBvxoGE6/Q/Bz7DuqMG
+         6bHkmdP0esg4BcptziBLeHaxf8YCpdENtpRYn64u82SKETniKSd2gSWsmYAG8fzKoXsq
+         1o2pBJD2jKIeSyDz3zX6e0ryFEii0j/yJmX4/3ERKOAWxjeS+unGdTk5zVEvixt7iGNJ
+         1N7pvYBuwJ2uo870fNpe6jOuztqJxqHwjBFkKetIJCgS0sK/7vqn1spRiNvwmrkMcc1G
+         ZDdQ==
+X-Gm-Message-State: APjAAAXWAwMQyMPCJtys+8S+SoDGwujGmbJSXOEMOYQekflIGQLF3n92
+        hnOnQeW6G4twJ+trEl7U6PlFK5yRTOFSrURHqLyb2Q==
+X-Google-Smtp-Source: APXvYqzu3C9V7D+AKDrsqCeye+pwVxWPDK+1pbaapoGpynmu2dpDODFT4oXrbdidRtdJXmKi1nMiF5ljl7HP+schbaM=
+X-Received: by 2002:a54:4086:: with SMTP id i6mr3197997oii.65.1581713504693;
+ Fri, 14 Feb 2020 12:51:44 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200214162122.19794-3-sashal@kernel.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200214062647.A2Mb_X-mP%akpm@linux-foundation.org>
+ <8e1e8f6e-0da1-e9e0-fa1b-bfd792256604@infradead.org> <7ff9e944-1c6c-f7c1-d812-e12817c7a317@oracle.com>
+In-Reply-To: <7ff9e944-1c6c-f7c1-d812-e12817c7a317@oracle.com>
+From:   Mina Almasry <almasrymina@google.com>
+Date:   Fri, 14 Feb 2020 12:51:33 -0800
+Message-ID: <CAHS8izMhJ-2Bf+BBtXothR9nsLz9A5jJiv_tVRKUb9DwLKiN3g@mail.gmail.com>
+Subject: Re: mmotm 2020-02-13-22-26 uploaded (mm/hugetlb.c)
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
+        "open list:FILESYSTEMS (VFS and infrastructure)" 
+        <linux-fsdevel@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/02/2020 17.19, Sasha Levin wrote:
-> From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> 
-> [ Upstream commit 800cd6fb76f0ec7711deb72a86c924db1ae42648 ]
+On Fri, Feb 14, 2020 at 9:18 AM Mike Kravetz <mike.kravetz@oracle.com> wrot=
+e:
+>
+> + Mina
+>
+> Andrew, you might want to remove those hugetlb cgroup patches from mmotm
+> as they are not yet fully reviewed and have some build issues.
+>
+> --
+> Mike Kravetz
 
-Hmm. Please note that these two autosel patches were part of a giant
-48-patch series. While not all depending on each other, there are
-definitely some dependencies, and between 800cd6fb76f0 and 148587a59f6b
-there is e.g. be2e9415f8b3 which changes the type used to store the
-return value from cpm_muram_alloc(), and a whole lot of other
-cpm_muram_alloc() refactorings and cleanups - one of which
-(b6231ea2b3c6) caused a regression on ppc 8xx.
+Up to you guys but I just sent you a patch ("hugetlb: fix
+CONFIG_CGROUP_HUGETLB ifdefs") that should fix this build issue.
 
-So I think taking just these two might not work as expected, but taking
-even more from that series is quite error-prone. Unless someone speaks
-up and explicitly points out and verifies some specific subset of the
-patches for a specific stable tree, I think they should not be added to
-any -stable kernel.
-
-[FWIW, we use the whole series backported to 4.19.y on both arm and ppc
-platforms, but as the b6231ea2b3c6 case showed, that doesn't really
-prove there are no problems cherry-picking these].
-
-Rasmus
+>
+> On 2/14/20 8:29 AM, Randy Dunlap wrote:
+> > On 2/13/20 10:26 PM, Andrew Morton wrote:
+> >> The mm-of-the-moment snapshot 2020-02-13-22-26 has been uploaded to
+> >>
+> >>    http://www.ozlabs.org/~akpm/mmotm/
+> >>
+> >> mmotm-readme.txt says
+> >>
+> >> README for mm-of-the-moment:
+> >>
+> >> http://www.ozlabs.org/~akpm/mmotm/
+> >>
+> >> This is a snapshot of my -mm patch queue.  Uploaded at random hopefull=
+y
+> >> more than once a week.
+> >>
+> >
+> > on x86_64:
+> >
+> >   CC      mm/hugetlb.o
+> > In file included from ../include/linux/kernel.h:15:0,
+> >                  from ../include/linux/list.h:9,
+> >                  from ../mm/hugetlb.c:6:
+> > ../mm/hugetlb.c: In function =E2=80=98dump_resv_map=E2=80=99:
+> > ../mm/hugetlb.c:301:30: error: =E2=80=98struct file_region=E2=80=99 has=
+ no member named =E2=80=98reservation_counter=E2=80=99
+> >           rg->from, rg->to, rg->reservation_counter, rg->css);
+> >                               ^
+> > ../include/linux/printk.h:304:33: note: in definition of macro =E2=80=
+=98pr_err=E2=80=99
+> >   printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+> >                                  ^~~~~~~~~~~
+> > ../mm/hugetlb.c:301:55: error: =E2=80=98struct file_region=E2=80=99 has=
+ no member named =E2=80=98css=E2=80=99
+> >           rg->from, rg->to, rg->reservation_counter, rg->css);
+> >                                                        ^
+> > ../include/linux/printk.h:304:33: note: in definition of macro =E2=80=
+=98pr_err=E2=80=99
+> >   printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+> >                                  ^~~~~~~~~~~
+> > ../mm/hugetlb.c: In function =E2=80=98check_coalesce_bug=E2=80=99:
+> > ../mm/hugetlb.c:320:10: error: =E2=80=98struct file_region=E2=80=99 has=
+ no member named =E2=80=98reservation_counter=E2=80=99
+> >    if (nrg->reservation_counter && nrg->from =3D=3D rg->to &&
+> >           ^~
+> > ../mm/hugetlb.c:321:10: error: =E2=80=98struct file_region=E2=80=99 has=
+ no member named =E2=80=98reservation_counter=E2=80=99
+> >        nrg->reservation_counter =3D=3D rg->reservation_counter &&
+> >           ^~
+> > ../mm/hugetlb.c:321:37: error: =E2=80=98struct file_region=E2=80=99 has=
+ no member named =E2=80=98reservation_counter=E2=80=99
+> >        nrg->reservation_counter =3D=3D rg->reservation_counter &&
+> >                                      ^~
+> > ../mm/hugetlb.c:322:10: error: =E2=80=98struct file_region=E2=80=99 has=
+ no member named =E2=80=98css=E2=80=99
+> >        nrg->css =3D=3D rg->css) {
+> >           ^~
+> > ../mm/hugetlb.c:322:21: error: =E2=80=98struct file_region=E2=80=99 has=
+ no member named =E2=80=98css=E2=80=99
+> >        nrg->css =3D=3D rg->css) {
+> >                      ^~
+> >
+> >
+> > Full randconfig file is attached.
+> >
