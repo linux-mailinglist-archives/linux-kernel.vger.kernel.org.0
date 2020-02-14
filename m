@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2D0F15F819
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 21:50:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0189C15F808
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 21:49:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389093AbgBNUtG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 15:49:06 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54524 "EHLO
+        id S2389142AbgBNUtH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 15:49:07 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55948 "EHLO
         mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388570AbgBNUs4 (ORCPT
+        with ESMTP id S2388596AbgBNUs4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 14 Feb 2020 15:48:56 -0500
-Received: by mail-wm1-f67.google.com with SMTP id g1so11325607wmh.4
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 12:48:54 -0800 (PST)
+Received: by mail-wm1-f67.google.com with SMTP id q9so11330731wmj.5
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 12:48:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=qDX7xlEByvANKkjxM9Lv4JgW0Vs/V0JakfLRr2ITPLY=;
-        b=UE6/SgkKeuTAsuXRIfdruwtL4gLAHWdQHQuDPd5zsch1GyoZc10regB3JX4ooDZQek
-         F+O+w+/DnzDQLYkzk75nu2DfPcfeYKIHxpIqcJ9HJyZuD/QNCL/jtjeQTXZ1F6uEFTdE
-         tieHtFiUclWWr8cHAxB0SroTyBhIdLMvdhML687x/jU75l3+8mxbXGVRTH92hEgVQbbb
-         5xEl+rIoIcN+pM3bZoUuu4Zze1bzlTIOrqthuQ13+ktnHrCRsSPvMIfV/gBbIycUQtaB
-         4vPx346JrOGgjPT1cA4jkoicTH3xDxL8loA6N/RN5p3RJZuYDDK8eGSPk27IRxzGPs4r
-         mQoQ==
+        bh=U8NBJe69fGI1riovNIettjUorcdU8nc30mS07YUFc+Q=;
+        b=L7Q3sJJgTi67bsfEROf03AhhrNUs8bKrCtifQ97H2IMCMaBhlIo45AtMXXm9P8xUiB
+         Yus7lWPx+SprZUUuQoUOGgAsfnaOQvF+KJ/Wtp75d/2jXYN9KdnXyJ+e2J4OYKunHPGy
+         czwn4jEKR369e4HdeMxBHM+OJlEH9Li7MPSC1YGvOSBumFT9omybY+xpF5I32Ou9V2nJ
+         4lQ3qSDQ4nhMI9FsVp14jI62FaNnKh6WbwXHHz7+slPQhbm3RUjjEmCdk//Ms2xLPsrk
+         w4VjtAbthr1GoTWyCP32qatj929l9wgVTYfmbuinZXf+llXzOPeIJTd3FSpQDivyne9c
+         cWGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qDX7xlEByvANKkjxM9Lv4JgW0Vs/V0JakfLRr2ITPLY=;
-        b=qAXTRr1smkMp6HijC9JkNjFSSqQhxrSCDNf6CljQwaws43fSiednyYmPmMJa+isClD
-         MqbdREvUw2QjKEPhFusaJ3QpAtJFbFgUtRhJ4KUCXZRm1e2BSbdC9TbLT4N+T+jePLer
-         KfuvOUqDKg+ZaNYu6HVYkaJTfQR89p8LPosd91BFYqstqaNLkf+hn8KIItxvj7852Wwf
-         E9F9qLW+mrM8GHDeFPeW9rRmG3wK6rSgC3YOo5B/o6ssgdck7znmfp/5Rkd/0mMvV9mK
-         b48/kLvQUOKrRjnF9VvFLG1cl9yvsnoMecl0M3W55nOTAyMHGvkXh5vnb4RYNeNGWIeH
-         eA5A==
-X-Gm-Message-State: APjAAAUr7CSr9I7FSmXUGqDErBIUdbxZp2gY3L6jR+nJ+U5jMcucMAC7
-        6NDitqn+Plja7vxR7kZM6imN5h9fNM9u
-X-Google-Smtp-Source: APXvYqzoXyb89xSgE4kE0RZDERiRBX6lyzBCQyNYCuxlS2s9u42T5r477l4I+M6THkYEvsH3vBRzAQ==
-X-Received: by 2002:a7b:c4c3:: with SMTP id g3mr6300205wmk.131.1581713333906;
-        Fri, 14 Feb 2020 12:48:53 -0800 (PST)
+        bh=U8NBJe69fGI1riovNIettjUorcdU8nc30mS07YUFc+Q=;
+        b=I2zBpWOmwVYdg8/1P3N+HeooVKLs7X6aJ0fJdUGBeMQpPprknOIdKaHbc3LgzkKV62
+         38v8Qrd60+pswo0B6LsWODSNpERP4ViFSZDAvWOHiQxYeOoMmprf3GyTp05LZnTIHuWi
+         i3hAb4epOSVept8bJ5iBNcEkgI1RyH7Rac5OlAvuk9D5MPMr4NSuKbaUx57swlJghLJq
+         6ljQoVGuwbvysQ2yzvvPWMyf5KS4E2z+fG+8O+PCecKepkZRQLMNgvwLWCPE/VZieCI1
+         yGK39p60U+o2/B+dGo+KbiBosBT2CJzj9cyVLcQVnTPvTziiUXYB95VBtLODJiATs7Oc
+         E6zg==
+X-Gm-Message-State: APjAAAX/XsBzkWzT1raRlSSLU3UPrUwm5VM6s8Mqp4oL8to5++p6AdkV
+        bm9EtlFoX1zVhrg7GsAYMq2o7U3Dvrxe
+X-Google-Smtp-Source: APXvYqyNQCIWcW+YKuUv1Jqg7zsAZrA5qsYk/Q0dPZFfec7OuCC1amJ598hrOFPcFg1GFZIYir5puQ==
+X-Received: by 2002:a1c:9ed7:: with SMTP id h206mr6357549wme.67.1581713334947;
+        Fri, 14 Feb 2020 12:48:54 -0800 (PST)
 Received: from ninjahost.lan (host-2-102-13-223.as13285.net. [2.102.13.223])
-        by smtp.googlemail.com with ESMTPSA id y12sm8660782wmj.6.2020.02.14.12.48.53
+        by smtp.googlemail.com with ESMTPSA id y12sm8660782wmj.6.2020.02.14.12.48.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2020 12:48:53 -0800 (PST)
+        Fri, 14 Feb 2020 12:48:54 -0800 (PST)
 From:   Jules Irenge <jbi.octave@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     boqun.feng@gmail.com, Jules Irenge <jbi.octave@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: [PATCH 18/30] driver core: Add missing annotation for device_links_write_lock()
-Date:   Fri, 14 Feb 2020 20:47:29 +0000
-Message-Id: <20200214204741.94112-19-jbi.octave@gmail.com>
+Subject: [PATCH 19/30] driver core: Add missing annotation for device_links_read_lock()
+Date:   Fri, 14 Feb 2020 20:47:30 +0000
+Message-Id: <20200214204741.94112-20-jbi.octave@gmail.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200214204741.94112-1-jbi.octave@gmail.com>
 References: <0/30>
@@ -64,13 +64,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sparse reports a warning at device_links_write_lock()
+Sparse reports a warning at device_links_read_unlock()
 
-warning: context imbalance in evice_links_write_lock()
-	 - wrong count at exit
+warning:  warning: context imbalance in device_links_read_unlock()
+	 - unexpected unlock
 
-The root cause is the missing annotation at device_links_write_lock()
-Add the missing __acquires(&device_links_srcu) annotation
+The root cause is the missing annotation at device_links_read_unlock()
+Add the missing __releases(&device_links_srcu) annotation
 
 Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
 ---
@@ -78,17 +78,17 @@ Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 42a672456432..fc7f1b8746da 100644
+index fc7f1b8746da..3a7e72840740 100644
 --- a/drivers/base/core.c
 +++ b/drivers/base/core.c
-@@ -64,7 +64,7 @@ static inline void device_links_write_unlock(void)
- 	mutex_unlock(&device_links_lock);
+@@ -69,7 +69,7 @@ int device_links_read_lock(void) __acquires(&device_links_srcu)
+ 	return srcu_read_lock(&device_links_srcu);
  }
  
--int device_links_read_lock(void)
-+int device_links_read_lock(void) __acquires(&device_links_srcu)
+-void device_links_read_unlock(int idx)
++void device_links_read_unlock(int idx) __releases(&device_links_srcu)
  {
- 	return srcu_read_lock(&device_links_srcu);
+ 	srcu_read_unlock(&device_links_srcu, idx);
  }
 -- 
 2.24.1
