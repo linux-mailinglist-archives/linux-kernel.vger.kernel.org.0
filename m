@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0A3015EAA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:15:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A478C15EAA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:15:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392573AbgBNRPV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:15:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39664 "EHLO mail.kernel.org"
+        id S2403965AbgBNRPI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:15:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391950AbgBNQMR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:12:17 -0500
+        id S2391978AbgBNQMW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:12:22 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42374246AA;
-        Fri, 14 Feb 2020 16:12:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 850F8246AD;
+        Fri, 14 Feb 2020 16:12:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696737;
-        bh=cDiexPInADw27bWzF75BYpemo7Fx1QdHbtTM10EHw+w=;
+        s=default; t=1581696741;
+        bh=KNL8q96VW054YfXBZfeHGlfLCZJ5LleWzR+KoB/9j4w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0WDR4HQu7WDoS+y2XGsN4YWkwjOuy35GWvMkF0qGFiSVpRgTCg4pPz2pe2ZpjXUze
-         fZOj3RZ6NrDLzS/o3U6/DIdqfJg6gnRSddIQxriM/TwJBoFMKzI8Yp2U6wwb7jYaqt
-         RDuM88vtcjaCRO/qS7QYgHSL36LS6u2CajVSZbZE=
+        b=JP+i+K7FIY27LRRPQM/NXX2a5dQXLLVUimHUFPdpYZsh3s02DfzlENgMm7+jAuVRq
+         mY8NUBBVVgWzwXxSZ0hCHTY5FIa2vN7BI6KKElSlwc1brCpniQL2lrrGV/Ox7464i6
+         0q73Tt/Hqs3+ttIWwpjUDNDtq7fwXC2lzZggWbRY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Logan Gunthorpe <logang@deltatee.com>,
-        Doug Meyer <dmeyer@gigaio.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 022/252] PCI/switchtec: Fix vep_vector_number ioread width
-Date:   Fri, 14 Feb 2020 11:07:57 -0500
-Message-Id: <20200214161147.15842-22-sashal@kernel.org>
+Cc:     Tiezhu Yang <yangtiezhu@loongson.cn>,
+        Paul Burton <paulburton@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Huacai Chen <chenhc@lemote.com>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        linux-mips@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 025/252] MIPS: Loongson: Fix potential NULL dereference in loongson3_platform_init()
+Date:   Fri, 14 Feb 2020 11:08:00 -0500
+Message-Id: <20200214161147.15842-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -44,36 +46,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Logan Gunthorpe <logang@deltatee.com>
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
 
-[ Upstream commit 9375646b4cf03aee81bc6c305aa18cc80b682796 ]
+[ Upstream commit 72d052e28d1d2363f9107be63ef3a3afdea6143c ]
 
-vep_vector_number is actually a 16 bit register which should be read with
-ioread16() instead of ioread32().
+If kzalloc fails, it should return -ENOMEM, otherwise may trigger a NULL
+pointer dereference.
 
-Fixes: 080b47def5e5 ("MicroSemi Switchtec management interface driver")
-Link: https://lore.kernel.org/r/20200106190337.2428-3-logang@deltatee.com
-Reported-by: Doug Meyer <dmeyer@gigaio.com>
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Fixes: 3adeb2566b9b ("MIPS: Loongson: Improve LEFI firmware interface")
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+Signed-off-by: Paul Burton <paulburton@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Huacai Chen <chenhc@lemote.com>
+Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/switch/switchtec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/mips/loongson64/loongson-3/platform.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
-index ceb7ab3ba3d09..43431816412c1 100644
---- a/drivers/pci/switch/switchtec.c
-+++ b/drivers/pci/switch/switchtec.c
-@@ -1186,7 +1186,7 @@ static int switchtec_init_isr(struct switchtec_dev *stdev)
- 	if (nvecs < 0)
- 		return nvecs;
+diff --git a/arch/mips/loongson64/loongson-3/platform.c b/arch/mips/loongson64/loongson-3/platform.c
+index 25a97cc0ee336..0db4cc3196ebd 100644
+--- a/arch/mips/loongson64/loongson-3/platform.c
++++ b/arch/mips/loongson64/loongson-3/platform.c
+@@ -31,6 +31,9 @@ static int __init loongson3_platform_init(void)
+ 			continue;
  
--	event_irq = ioread32(&stdev->mmio_part_cfg->vep_vector_number);
-+	event_irq = ioread16(&stdev->mmio_part_cfg->vep_vector_number);
- 	if (event_irq < 0 || event_irq >= nvecs)
- 		return -EFAULT;
- 
+ 		pdev = kzalloc(sizeof(struct platform_device), GFP_KERNEL);
++		if (!pdev)
++			return -ENOMEM;
++
+ 		pdev->name = loongson_sysconf.sensors[i].name;
+ 		pdev->id = loongson_sysconf.sensors[i].id;
+ 		pdev->dev.platform_data = &loongson_sysconf.sensors[i];
 -- 
 2.20.1
 
