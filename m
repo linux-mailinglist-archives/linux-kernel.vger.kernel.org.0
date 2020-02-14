@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08E3215F1CE
+	by mail.lfdr.de (Postfix) with ESMTP id 7316415F1CF
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:08:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731803AbgBNPzg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:55:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36384 "EHLO mail.kernel.org"
+        id S2387433AbgBNPzi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:55:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731744AbgBNPzX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:55:23 -0500
+        id S1731757AbgBNPzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:55:24 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC7FF24676;
-        Fri, 14 Feb 2020 15:55:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 16E18222C4;
+        Fri, 14 Feb 2020 15:55:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695722;
-        bh=qylBH5YcfQTK+S1FKPcZxOPzCVgqwh/KiSNuFJFHugE=;
+        s=default; t=1581695723;
+        bh=jkH9pWg94cm9T1Q+S+xwhjrfK4jGO8fl3b9h2Vti3GA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YkFPZnNsQe3Hfz2gPdhTWleK3RlOHQEUPQ4htquRLvZ1Elc9GQgvwFRAz9wxCUMOB
-         /NMZQNNX/VYn641mJzty0SzJ+AU0EYkOQe6uo1hXQ//sz4Bu4r88ltLgEHvke2IajA
-         rJVzYPugr1kNtScRZnxOLy73Gg2wyA7X9bWKKHvA=
+        b=RC7ueCvNi/ZknvDDBx04F+fji8EsZWmYa3D0R72iLGIm5Kmc4tfpplxeaiGOADwX4
+         Du/v+FcIJC7uTERSFZ5XezLDjWSf75yP7gt9LVOHQU5/I/KXonFWU9VF+BHbkYFWx4
+         VQ0XfxPzdZ2gQrnjfmxlmTD46dbE1yasDiMwV/lM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chen Zhou <chenzhou10@huawei.com>, Hulk Robot <hulkci@huawei.com>,
-        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.5 299/542] drm/gma500: remove set but not used variables 'hist_reg'
-Date:   Fri, 14 Feb 2020 10:44:51 -0500
-Message-Id: <20200214154854.6746-299-sashal@kernel.org>
+Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.5 300/542] ARM: dts: meson8: use the actual frequency for the GPU's 182.1MHz OPP
+Date:   Fri, 14 Feb 2020 10:44:52 -0500
+Message-Id: <20200214154854.6746-300-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -44,43 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen Zhou <chenzhou10@huawei.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-[ Upstream commit 72f775611daf3ce20358388facbaf11f22899fa2 ]
+[ Upstream commit fe634a7a9a57fb736e39fb71aa9adc6448a90f94 ]
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+The clock setup on Meson8 cannot achieve a Mali frequency of exactly
+182.15MHz. The vendor driver uses "FCLK_DIV7 / 2" for this frequency,
+which translates to 2550MHz / 7 / 2 = 182142857Hz.
+Update the GPU operating point to that specific frequency to not confuse
+myself when comparing the frequency from the .dts with the actual clock
+rate on the system.
 
-drivers/gpu/drm/gma500/psb_irq.c: In function psb_irq_turn_off_dpst:
-drivers/gpu/drm/gma500/psb_irq.c:473:6:
-	warning: variable hist_reg set but not used [-Wunused-but-set-variable]
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
-Signed-off-by: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20191227114811.14907-1-chenzhou10@huawei.com
+Fixes: 7d3f6b536e72c9 ("ARM: dts: meson8: add the Mali-450 MP6 GPU")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/gma500/psb_irq.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm/boot/dts/meson8.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/gma500/psb_irq.c b/drivers/gpu/drm/gma500/psb_irq.c
-index dc6a73ab9777c..f29061061debf 100644
---- a/drivers/gpu/drm/gma500/psb_irq.c
-+++ b/drivers/gpu/drm/gma500/psb_irq.c
-@@ -458,12 +458,11 @@ void psb_irq_turn_off_dpst(struct drm_device *dev)
- {
- 	struct drm_psb_private *dev_priv =
- 	    (struct drm_psb_private *) dev->dev_private;
--	u32 hist_reg;
- 	u32 pwm_reg;
+diff --git a/arch/arm/boot/dts/meson8.dtsi b/arch/arm/boot/dts/meson8.dtsi
+index 3c534cd50ee3b..db2033f674c67 100644
+--- a/arch/arm/boot/dts/meson8.dtsi
++++ b/arch/arm/boot/dts/meson8.dtsi
+@@ -129,8 +129,8 @@
+ 	gpu_opp_table: gpu-opp-table {
+ 		compatible = "operating-points-v2";
  
- 	if (gma_power_begin(dev, false)) {
- 		PSB_WVDC32(0x00000000, HISTOGRAM_INT_CONTROL);
--		hist_reg = PSB_RVDC32(HISTOGRAM_INT_CONTROL);
-+		PSB_RVDC32(HISTOGRAM_INT_CONTROL);
- 
- 		psb_disable_pipestat(dev_priv, 0, PIPE_DPST_EVENT_ENABLE);
- 
+-		opp-182150000 {
+-			opp-hz = /bits/ 64 <182150000>;
++		opp-182142857 {
++			opp-hz = /bits/ 64 <182142857>;
+ 			opp-microvolt = <1150000>;
+ 		};
+ 		opp-318750000 {
 -- 
 2.20.1
 
