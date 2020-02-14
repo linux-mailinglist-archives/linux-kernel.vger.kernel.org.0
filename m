@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFA7915E12A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:17:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC51B15E12D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:17:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404424AbgBNQRR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:17:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47134 "EHLO mail.kernel.org"
+        id S2392356AbgBNQRV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:17:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47164 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392571AbgBNQQW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:16:22 -0500
+        id S2392577AbgBNQQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:16:24 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 431BE24682;
-        Fri, 14 Feb 2020 16:16:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D79A24670;
+        Fri, 14 Feb 2020 16:16:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696982;
-        bh=61KVnLfdNCBRTqllf7fHtuq32lvkJ3ubBKpfsel+Xms=;
+        s=default; t=1581696983;
+        bh=VGDAlP3RtFMHWJDcKGxfLqujW6lRsl11UQT7VBU8K5M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kHsMdSLpzgkkMrK0l1p4nvuD9JVEctE9vbWhmTGdFdr76bVSICClQ+RJiVw7lB28Q
-         bpczFl6N2M6yhA4kikTChXMXQrp4HhqMtmR33OgfarxHS0oKACVNtfA04XEV4l15Uy
-         BtOq4xNJOK9VjTV+828ODIU3ED5lc0tOKugdNRWs=
+        b=sEtnBdnwbefn4CH5mDrgKjyi9B7XYgdyxGZAlMjoUguso4wjMuyGsC0xRhly7UnLK
+         9PEd7ocJCejcF1TyZUBi9Oai3Y/Z5PeZmEkF8bWt99UWSkB/axzVk5w7sOAaSvJ+1Y
+         vT1Fgr7fdlO04qZ3bp0KrP6dixtzjNBAITmmjHVM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 218/252] ARM: 8951/1: Fix Kexec compilation issue.
-Date:   Fri, 14 Feb 2020 11:11:13 -0500
-Message-Id: <20200214161147.15842-218-sashal@kernel.org>
+Cc:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 219/252] ath10k: pci: Only dump ATH10K_MEM_REGION_TYPE_IOREG when safe
+Date:   Fri, 14 Feb 2020 11:11:14 -0500
+Message-Id: <20200214161147.15842-219-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -45,48 +44,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
-[ Upstream commit 76950f7162cad51d2200ebd22c620c14af38f718 ]
+[ Upstream commit d239380196c4e27a26fa4bea73d2bf994c14ec2d ]
 
-To perform the reserve_crashkernel() operation kexec uses SECTION_SIZE to
-find a memblock in a range.
-SECTION_SIZE is not defined for nommu systems. Trying to compile kexec in
-these conditions results in a build error:
+ath10k_pci_dump_memory_reg() will try to access memory of type
+ATH10K_MEM_REGION_TYPE_IOREG however, if a hardware restart is in progress
+this can crash a system.
 
-  linux/arch/arm/kernel/setup.c: In function ‘reserve_crashkernel’:
-  linux/arch/arm/kernel/setup.c:1016:25: error: ‘SECTION_SIZE’ undeclared
-     (first use in this function); did you mean ‘SECTIONS_WIDTH’?
-             crash_size, SECTION_SIZE);
-                         ^~~~~~~~~~~~
-                         SECTIONS_WIDTH
-  linux/arch/arm/kernel/setup.c:1016:25: note: each undeclared identifier
-     is reported only once for each function it appears in
-  linux/scripts/Makefile.build:265: recipe for target 'arch/arm/kernel/setup.o'
-     failed
+Individual ioread32() time has been observed to jump from 15-20 ticks to >
+80k ticks followed by a secure-watchdog bite and a system reset.
 
-Make KEXEC depend on MMU to fix the compilation issue.
+Work around this corner case by only issuing the read transaction when the
+driver state is ATH10K_STATE_ON.
 
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Tested-on: QCA9988 PCI 10.4-3.9.0.2-00044
+
+Fixes: 219cc084c6706 ("ath10k: add memory dump support QCA9984")
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath10k/pci.c | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 9f03befdfbf06..e2f7c50dbace5 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -2008,7 +2008,7 @@ config XIP_DEFLATED_DATA
- config KEXEC
- 	bool "Kexec system call (EXPERIMENTAL)"
- 	depends on (!SMP || PM_SLEEP_SMP)
--	depends on !CPU_V7M
-+	depends on MMU
- 	select KEXEC_CORE
- 	help
- 	  kexec is a system call that implements the ability to shutdown your
+diff --git a/drivers/net/wireless/ath/ath10k/pci.c b/drivers/net/wireless/ath/ath10k/pci.c
+index 2a503aacf0c64..caece8339a50a 100644
+--- a/drivers/net/wireless/ath/ath10k/pci.c
++++ b/drivers/net/wireless/ath/ath10k/pci.c
+@@ -1613,11 +1613,22 @@ static int ath10k_pci_dump_memory_reg(struct ath10k *ar,
+ {
+ 	struct ath10k_pci *ar_pci = ath10k_pci_priv(ar);
+ 	u32 i;
++	int ret;
++
++	mutex_lock(&ar->conf_mutex);
++	if (ar->state != ATH10K_STATE_ON) {
++		ath10k_warn(ar, "Skipping pci_dump_memory_reg invalid state\n");
++		ret = -EIO;
++		goto done;
++	}
+ 
+ 	for (i = 0; i < region->len; i += 4)
+ 		*(u32 *)(buf + i) = ioread32(ar_pci->mem + region->start + i);
+ 
+-	return region->len;
++	ret = region->len;
++done:
++	mutex_unlock(&ar->conf_mutex);
++	return ret;
+ }
+ 
+ /* if an error happened returns < 0, otherwise the length */
+@@ -1713,7 +1724,11 @@ static void ath10k_pci_dump_memory(struct ath10k *ar,
+ 			count = ath10k_pci_dump_memory_sram(ar, current_region, buf);
+ 			break;
+ 		case ATH10K_MEM_REGION_TYPE_IOREG:
+-			count = ath10k_pci_dump_memory_reg(ar, current_region, buf);
++			ret = ath10k_pci_dump_memory_reg(ar, current_region, buf);
++			if (ret < 0)
++				break;
++
++			count = ret;
+ 			break;
+ 		default:
+ 			ret = ath10k_pci_dump_memory_generic(ar, current_region, buf);
 -- 
 2.20.1
 
