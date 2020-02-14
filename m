@@ -2,104 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 645BE15F80D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 21:49:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5284E15F811
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 21:49:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389422AbgBNUtP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 15:49:15 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34676 "EHLO
+        id S2389546AbgBNUt0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 15:49:26 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45273 "EHLO
         mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389261AbgBNUtM (ORCPT
+        with ESMTP id S2389194AbgBNUtX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 15:49:12 -0500
-Received: by mail-wr1-f66.google.com with SMTP id n10so10520928wrm.1;
-        Fri, 14 Feb 2020 12:49:10 -0800 (PST)
+        Fri, 14 Feb 2020 15:49:23 -0500
+Received: by mail-wr1-f66.google.com with SMTP id g3so12447617wrs.12
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 12:49:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=zokGFmAQnm/AR6cG+S2XrobvXP1EFlLQZdpuCKio4jQ=;
-        b=Lw4tti9xRk8JkoGG5TkFM+3GVDA+Hs/nJVQ0QLEq6GNCHfOgD/m+pdKocFQ9N9JPs1
-         cDzD2ViHTBbAYiJ6mUJMzeYdfQLeKulhWIzulJ6Si5ifzKDE0AT9E9S56PwqH2hPbsOO
-         7qd4Z1ZC/vClCtHAv5YxP69YbyngFpkeNphiUKi5ped/4i1KY/TOGnhgBAebfH8NKMkK
-         Mxye4gCG5hDoB08qUIYIONrP+ndkN8pfe6dZuhx6AU8k5O5bttu5JBxiBRtElTi606Wy
-         tTp+ZfxIuP8v4sz16wHfh5j1hZzZQp0TVRPlKkaL0tOUCTsOeVn7RiyivE+tHyoIy3Z4
-         G94Q==
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=BG/k+1n242XmQ392+l/+QM8WpV3CVNW+mSgRrXUNaOk=;
+        b=SarBqj+oUxptfwZyuPnoE9f5TdNLgDfCHQUMJ/hlsyT34Ix7OOciJH7CP+Ir3b2GzM
+         9zb3YRPgjRMX5OrfVnsaU+NWX65BwvyfNy/jlvmnZvXwHmUhKJyKKN4i2ekuDyB+AUaN
+         m0OvEgnVfVGPMiW73eqXyVcabZ6/knDSWdzPA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=zokGFmAQnm/AR6cG+S2XrobvXP1EFlLQZdpuCKio4jQ=;
-        b=LWOVd7GlYSxxqM0icyzp1FVLq4X1pw58TY1aSx3nhlNTOzlX2nwutNTNc2pBkHTVrD
-         OkOK0zWGoEVyrXktlFEEsvbYuWQksj04EeMQefvEGYd+mZCzpih68RP4990/9XpYre9r
-         dY5MHlM1udzzIJNFh5MC5UyYZMDCVu0fIpZ6/Iu5Evr4qsvGpKoIGOaE4Y6E5bL9o+ib
-         JDdurl30TLQBCbGcDVhliITplVxXFOu31Y9nUMyQWWzRXl5z2OFHak6Q68l4ilUQfSFC
-         JxLX6bz7mP2BYG7uWBl3yzWVy6JurPCfkMe3Nb0d8uOXTf9CcC6F0yiAL1onOs6IO/aI
-         R9pQ==
-X-Gm-Message-State: APjAAAUmZbX1vEFAUu8bTUrdCo3jZAbxReW+aKQFypgHq7vJWm56UjE2
-        RoYO4W3PWlQtTDkKZHmHHwdUaA/KRpDn
-X-Google-Smtp-Source: APXvYqzLgpp/QKTGfIyFd6Dn18j27VDyJT0VjPC+uNJm4uZUYJas215kLN3BotUyZmh8IsKtbFJOxQ==
-X-Received: by 2002:adf:f103:: with SMTP id r3mr5807536wro.295.1581713349761;
-        Fri, 14 Feb 2020 12:49:09 -0800 (PST)
-Received: from ninjahost.lan (host-2-102-13-223.as13285.net. [2.102.13.223])
-        by smtp.googlemail.com with ESMTPSA id y12sm8660782wmj.6.2020.02.14.12.49.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2020 12:49:09 -0800 (PST)
-From:   Jules Irenge <jbi.octave@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     boqun.feng@gmail.com, Jules Irenge <jbi.octave@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Taehee Yoo <ap420073@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Patrick Talbert <ptalbert@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Li RongQing <lirongqing@baidu.com>,
-        netdev@vger.kernel.org (open list:NETWORKING [GENERAL])
-Subject: [PATCH 30/30] net: Add missing annotation for netlink_walk_stop()
-Date:   Fri, 14 Feb 2020 20:47:41 +0000
-Message-Id: <20200214204741.94112-31-jbi.octave@gmail.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200214204741.94112-1-jbi.octave@gmail.com>
-References: <0/30>
- <20200214204741.94112-1-jbi.octave@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=BG/k+1n242XmQ392+l/+QM8WpV3CVNW+mSgRrXUNaOk=;
+        b=hLeet7lD6XA72Wc6iNtlnuemNFUCRjlh/ax3cryln5IOVaqk/peEW0YpWITgxNvf3G
+         Y0cNRIYNRhOVominKJh2uXiEESUk8rijX2VZedTv4rMpzsWp6+kHEEmxOOMPL79vK9CN
+         okl6HW7O86WWPqZE4Zv2hZGFn3VzfCQl9mLFEUpIucqvIMDtuSNopmj7A6c7eik66x5y
+         j4GXzPyWu2Dj/VGIjC+TJ1KNVuTOxN86FNr+w3cFNeeWMyviX1MQF8M0b7G6cjnTu/9P
+         TMTuCEQnjCc7SZ5NinBFCbySqTKbCyj2PEBNOnsrzWp4eUDSdoZ9igW8tm4Nf+38exAb
+         SHsQ==
+X-Gm-Message-State: APjAAAW7UiMgY89Wox6ER8kMlUhVAP1IBo/BBWole/iy97FiGFy4a6so
+        US73WtvbZyTBbB4kD0CL4YwvDg==
+X-Google-Smtp-Source: APXvYqxncTdduvArrIOwd2nDXfNPYclGCAutEyIXX9NPCJWgKiNMBPvLCR/gffpuMOaRVYxDiBFUkg==
+X-Received: by 2002:adf:e74a:: with SMTP id c10mr6152109wrn.254.1581713361497;
+        Fri, 14 Feb 2020 12:49:21 -0800 (PST)
+Received: from [192.168.1.149] (ip-5-186-115-54.cgn.fibianet.dk. [5.186.115.54])
+        by smtp.gmail.com with ESMTPSA id r6sm8400054wrp.95.2020.02.14.12.49.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Feb 2020 12:49:20 -0800 (PST)
+Subject: Re: [PATCH AUTOSEL 4.9 003/141] soc: fsl: qe: change return type of
+ cpm_muram_alloc() to s32
+To:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Cc:     Timur Tabi <timur@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org,
+        Christophe Leroy <christophe.leroy@c-s.fr>
+References: <20200214162122.19794-1-sashal@kernel.org>
+ <20200214162122.19794-3-sashal@kernel.org>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <a920b57f-ad9e-5c25-3981-0462febd952a@rasmusvillemoes.dk>
+Date:   Fri, 14 Feb 2020 21:49:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200214162122.19794-3-sashal@kernel.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sparse reports a warning at netlink_walk_stop()
+On 14/02/2020 17.19, Sasha Levin wrote:
+> From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> 
+> [ Upstream commit 800cd6fb76f0ec7711deb72a86c924db1ae42648 ]
 
-warning: context imbalance in netlink_walk_stop()
-	 - unexpected unlock
+Hmm. Please note that these two autosel patches were part of a giant
+48-patch series. While not all depending on each other, there are
+definitely some dependencies, and between 800cd6fb76f0 and 148587a59f6b
+there is e.g. be2e9415f8b3 which changes the type used to store the
+return value from cpm_muram_alloc(), and a whole lot of other
+cpm_muram_alloc() refactorings and cleanups - one of which
+(b6231ea2b3c6) caused a regression on ppc 8xx.
 
-The root cause is the missing annotation at netlink_walk_stop()
-A close look at rhashtable_walk_stop()
-shows that an __releases(RCU) is needed here
-Add the missing __releases(RCU) annotation
+So I think taking just these two might not work as expected, but taking
+even more from that series is quite error-prone. Unless someone speaks
+up and explicitly points out and verifies some specific subset of the
+patches for a specific stable tree, I think they should not be added to
+any -stable kernel.
 
-Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
----
- net/netlink/af_netlink.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[FWIW, we use the whole series backported to 4.19.y on both arm and ppc
+platforms, but as the b6231ea2b3c6 case showed, that doesn't really
+prove there are no problems cherry-picking these].
 
-diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
-index a3fddc845538..7a287dc73f63 100644
---- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -2545,7 +2545,7 @@ static void netlink_walk_start(struct nl_seq_iter *iter) __acquires(RCU)
- 	rhashtable_walk_start(&iter->hti);
- }
- 
--static void netlink_walk_stop(struct nl_seq_iter *iter)
-+static void netlink_walk_stop(struct nl_seq_iter *iter) __releases(RCU)
- {
- 	rhashtable_walk_stop(&iter->hti);
- 	rhashtable_walk_exit(&iter->hti);
--- 
-2.24.1
-
+Rasmus
