@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B01F315E310
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:26:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2686115E311
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:26:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393391AbgBNQ0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:26:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33578 "EHLO mail.kernel.org"
+        id S2406479AbgBNQ0j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:26:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405961AbgBNQYp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:24:45 -0500
+        id S2405974AbgBNQYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:24:47 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6ADE2479D;
-        Fri, 14 Feb 2020 16:24:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24568247AC;
+        Fri, 14 Feb 2020 16:24:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697484;
-        bh=JoCCHp+Oo9DIYYiUUOIt7GKJVu3JosOMHbk1X7wJer8=;
+        s=default; t=1581697486;
+        bh=cfIgvVj7qHISRaX4GDxNbcsuJ+CNHbeT9hRhvwyQMEo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jNNYV3d8CYpfPgCpAPeVVIUw27idrpM4efkDhXXQELVlnqT4b7m1HtNcPSn4SIUdf
-         o286j51vT6/q8+ikTeD/6SqEf03AXBFaWCpEvr4yJtzPFBsBTuxtjZNgdB+sPjsAm0
-         GquVFaWWoos6SaSyP25eu+lVAFTM9Zzx7nTob1mE=
+        b=cp0dqvMyeAGBYWfQF7n+JsG/wHk6h8xviWfacRQ8W3pqA4J5WmXoaHgfKJdgSpJe8
+         WVi3nuac6LSrHkYuHOUIGW2uNh8Ab7M7kRckw0DtEPp+y8dLy8LFgK3eopT0rvtTN1
+         4GLokVjQnL1EqCNuDtLj7NTZx+1Mp8TS19nE5Evw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Luis Henriques <luis.henriques@canonical.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 015/100] tracing: Fix very unlikely race of registering two stat tracers
-Date:   Fri, 14 Feb 2020 11:22:59 -0500
-Message-Id: <20200214162425.21071-15-sashal@kernel.org>
+Cc:     Nicolai Stange <nstange@suse.de>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 017/100] libertas: don't exit from lbs_ibss_join_existing() with RCU read lock held
+Date:   Fri, 14 Feb 2020 11:23:01 -0500
+Message-Id: <20200214162425.21071-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214162425.21071-1-sashal@kernel.org>
 References: <20200214162425.21071-1-sashal@kernel.org>
@@ -43,85 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+From: Nicolai Stange <nstange@suse.de>
 
-[ Upstream commit dfb6cd1e654315168e36d947471bd2a0ccd834ae ]
+[ Upstream commit c7bf1fb7ddca331780b9a733ae308737b39f1ad4 ]
 
-Looking through old emails in my INBOX, I came across a patch from Luis
-Henriques that attempted to fix a race of two stat tracers registering the
-same stat trace (extremely unlikely, as this is done in the kernel, and
-probably doesn't even exist). The submitted patch wasn't quite right as it
-needed to deal with clean up a bit better (if two stat tracers were the
-same, it would have the same files).
+Commit e5e884b42639 ("libertas: Fix two buffer overflows at parsing bss
+descriptor") introduced a bounds check on the number of supplied rates to
+lbs_ibss_join_existing().
 
-But to make the code cleaner, all we needed to do is to keep the
-all_stat_sessions_mutex held for most of the registering function.
+Unfortunately, it introduced a return path from within a RCU read side
+critical section without a corresponding rcu_read_unlock(). Fix this.
 
-Link: http://lkml.kernel.org/r/1410299375-20068-1-git-send-email-luis.henriques@canonical.com
-
-Fixes: 002bb86d8d42f ("tracing/ftrace: separate events tracing and stats tracing engine")
-Reported-by: Luis Henriques <luis.henriques@canonical.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Fixes: e5e884b42639 ("libertas: Fix two buffer overflows at parsing bss descriptor")
+Signed-off-by: Nicolai Stange <nstange@suse.de>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/trace/trace_stat.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+ drivers/net/wireless/libertas/cfg.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/trace/trace_stat.c b/kernel/trace/trace_stat.c
-index 6cf9353167696..a2081a7f0c2cd 100644
---- a/kernel/trace/trace_stat.c
-+++ b/kernel/trace/trace_stat.c
-@@ -302,7 +302,7 @@ static int init_stat_file(struct stat_session *session)
- int register_stat_tracer(struct tracer_stat *trace)
- {
- 	struct stat_session *session, *node;
--	int ret;
-+	int ret = -EINVAL;
- 
- 	if (!trace)
- 		return -EINVAL;
-@@ -313,17 +313,15 @@ int register_stat_tracer(struct tracer_stat *trace)
- 	/* Already registered? */
- 	mutex_lock(&all_stat_sessions_mutex);
- 	list_for_each_entry(node, &all_stat_sessions, session_list) {
--		if (node->ts == trace) {
--			mutex_unlock(&all_stat_sessions_mutex);
--			return -EINVAL;
--		}
-+		if (node->ts == trace)
-+			goto out;
- 	}
--	mutex_unlock(&all_stat_sessions_mutex);
- 
-+	ret = -ENOMEM;
- 	/* Init the session */
- 	session = kzalloc(sizeof(*session), GFP_KERNEL);
- 	if (!session)
--		return -ENOMEM;
-+		goto out;
- 
- 	session->ts = trace;
- 	INIT_LIST_HEAD(&session->session_list);
-@@ -332,15 +330,16 @@ int register_stat_tracer(struct tracer_stat *trace)
- 	ret = init_stat_file(session);
- 	if (ret) {
- 		destroy_session(session);
--		return ret;
-+		goto out;
- 	}
- 
-+	ret = 0;
- 	/* Register */
--	mutex_lock(&all_stat_sessions_mutex);
- 	list_add_tail(&session->session_list, &all_stat_sessions);
-+ out:
- 	mutex_unlock(&all_stat_sessions_mutex);
- 
--	return 0;
-+	return ret;
- }
- 
- void unregister_stat_tracer(struct tracer_stat *trace)
+diff --git a/drivers/net/wireless/libertas/cfg.c b/drivers/net/wireless/libertas/cfg.c
+index 0824697c3dca0..803684eed142c 100644
+--- a/drivers/net/wireless/libertas/cfg.c
++++ b/drivers/net/wireless/libertas/cfg.c
+@@ -1853,6 +1853,7 @@ static int lbs_ibss_join_existing(struct lbs_private *priv,
+ 		rates_max = rates_eid[1];
+ 		if (rates_max > MAX_RATES) {
+ 			lbs_deb_join("invalid rates");
++			rcu_read_unlock();
+ 			goto out;
+ 		}
+ 		rates = cmd.bss.rates;
 -- 
 2.20.1
 
