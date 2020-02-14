@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83E7E15E23E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:23:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03BE215E23F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:23:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393190AbgBNQWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:22:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55558 "EHLO mail.kernel.org"
+        id S2405443AbgBNQW0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:22:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405329AbgBNQVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:21:10 -0500
+        id S2405340AbgBNQVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:21:13 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A9E72469F;
-        Fri, 14 Feb 2020 16:21:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A16272469F;
+        Fri, 14 Feb 2020 16:21:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697269;
-        bh=fppwK7igpAZIBIAafKhiw59ppIZh6j8Uu3lCEEW1frI=;
+        s=default; t=1581697273;
+        bh=P7PcwhEQKc9dJYLWA5Sy97y0Q0hHiop6lLN4kdBC4fw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NZ9FraCkz2P3tMMKQuPqS4ypo45h4zMlbfxmit45nhhbViwqkTC//NsdvA3YfwexB
-         MTtt64+pIHMMNapseoo3YmbKS5IayfJzR80Rsls5+ZhPBzDHR7kWkmDtLGnzqyMFCg
-         Ex+JDl1AsgPlo8BfTpmtlLfG8FXCg/g3SquvzJbM=
+        b=zLjd52hxrLCKxIrJ+0kKyfM1QSI4Mz1G4FziT7HLgRbTu+TyiDFrE0co9cVvAr0hC
+         Hj6MDxkfdoKBiahU1oHWY+zM6bt89hzxLa+wW3jdfCm9LvZgd3NG/L6pC3x+Pj3uAO
+         Kvu0Sl7Tm3sC26Z4EFHfNsU/lgMZ+Nmq2jNsDGw0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Robert Milkowski <rmilkowski@gmail.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 183/186] NFSv4: try lease recovery on NFS4ERR_EXPIRED
-Date:   Fri, 14 Feb 2020 11:17:12 -0500
-Message-Id: <20200214161715.18113-183-sashal@kernel.org>
+Cc:     Ido Schimmel <idosch@mellanox.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 186/186] mlxsw: spectrum_dpipe: Add missing error path
+Date:   Fri, 14 Feb 2020 11:17:15 -0500
+Message-Id: <20200214161715.18113-186-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161715.18113-1-sashal@kernel.org>
 References: <20200214161715.18113-1-sashal@kernel.org>
@@ -44,38 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Robert Milkowski <rmilkowski@gmail.com>
+From: Ido Schimmel <idosch@mellanox.com>
 
-[ Upstream commit 924491f2e476f7234d722b24171a4daff61bbe13 ]
+[ Upstream commit 3a99cbb6fa7bca1995586ec2dc21b0368aad4937 ]
 
-Currently, if an nfs server returns NFS4ERR_EXPIRED to open(),
-we return EIO to applications without even trying to recover.
+In case devlink_dpipe_entry_ctx_prepare() failed, release RTNL that was
+previously taken and free the memory allocated by
+mlxsw_sp_erif_entry_prepare().
 
-Fixes: 272289a3df72 ("NFSv4: nfs4_do_handle_exception() handle revoke/expiry of a single stateid")
-Signed-off-by: Robert Milkowski <rmilkowski@gmail.com>
-Reviewed-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Fixes: 2ba5999f009d ("mlxsw: spectrum: Add Support for erif table entries access")
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/nfs4proc.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_dpipe.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index 3dd403943b07f..4d45786738ab4 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -2923,6 +2923,11 @@ static struct nfs4_state *nfs4_do_open(struct inode *dir,
- 			exception.retry = 1;
- 			continue;
- 		}
-+		if (status == -NFS4ERR_EXPIRED) {
-+			nfs4_schedule_lease_recovery(server->nfs_client);
-+			exception.retry = 1;
-+			continue;
-+		}
- 		if (status == -EAGAIN) {
- 			/* We must have found a delegation */
- 			exception.retry = 1;
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_dpipe.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_dpipe.c
+index 51e6846da72bc..3c04f3d5de2dc 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_dpipe.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_dpipe.c
+@@ -225,7 +225,7 @@ mlxsw_sp_dpipe_table_erif_entries_dump(void *priv, bool counters_enabled,
+ start_again:
+ 	err = devlink_dpipe_entry_ctx_prepare(dump_ctx);
+ 	if (err)
+-		return err;
++		goto err_ctx_prepare;
+ 	j = 0;
+ 	for (; i < rif_count; i++) {
+ 		struct mlxsw_sp_rif *rif = mlxsw_sp_rif_by_index(mlxsw_sp, i);
+@@ -257,6 +257,7 @@ mlxsw_sp_dpipe_table_erif_entries_dump(void *priv, bool counters_enabled,
+ 	return 0;
+ err_entry_append:
+ err_entry_get:
++err_ctx_prepare:
+ 	rtnl_unlock();
+ 	devlink_dpipe_entry_clear(&entry);
+ 	return err;
 -- 
 2.20.1
 
