@@ -2,35 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEC2615DBA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:51:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EAD015DBA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:51:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729850AbgBNPtR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:49:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51914 "EHLO mail.kernel.org"
+        id S1729880AbgBNPtT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:49:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729804AbgBNPtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:49:15 -0500
+        id S1729864AbgBNPtS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:49:18 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 935EF217F4;
-        Fri, 14 Feb 2020 15:49:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E45824650;
+        Fri, 14 Feb 2020 15:49:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695355;
-        bh=iZIRaUEUsPfVHTOn9MDUDIfCsp4dj78qw/0Z1aF2xFQ=;
+        s=default; t=1581695358;
+        bh=SQblWGVK85RDtDCmFxEN7dIQuhlIWlI9a6GM+Gje28U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y4ohYkayTz73jdjs7vrkuy064rP84Hsd0zgj7WsTZtsqB38K/rdegVvjdeRqz3dIJ
-         XHHGiTSt07ejORAtPRPTokmumx/nbHHpRv3pZy1/RgcbJ7aVxHXe1g3BAW2mUCw0tW
-         6c3pW52yiC2slniDvzgxmcNcGVYDyhK1Lvk3rTMY=
+        b=OOI/+e1OyOa6tD/1Yk5ZAhmAgKcdpGF0zDc9jf/bIH+QkxhKbvoQuM7ruhd4Dy93H
+         kFMNhQtExBf0JdSn7CoXN8PA+CebiEDNXgWMEBPDlWJKVxxenvu/CIqV5WdY8J0TRh
+         H7HohKbEwv4NWgHvO0S5LMS6DIck+uaRkKE2E3YE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 5.5 016/542] f2fs: call f2fs_balance_fs outside of locked page
-Date:   Fri, 14 Feb 2020 10:40:08 -0500
-Message-Id: <20200214154854.6746-16-sashal@kernel.org>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 5.5 018/542] media: i2c: adv748x: Fix unsafe macros
+Date:   Fri, 14 Feb 2020 10:40:10 -0500
+Message-Id: <20200214154854.6746-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -43,66 +47,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-[ Upstream commit bdf03299248916640a835a05d32841bb3d31912d ]
+[ Upstream commit 0d962e061abcf1b9105f88fb850158b5887fbca3 ]
 
-Otherwise, we can hit deadlock by waiting for the locked page in
-move_data_block in GC.
+Enclose multiple macro parameters in parentheses in order to
+make such macros safer and fix the Clang warning below:
 
- Thread A                     Thread B
- - do_page_mkwrite
-  - f2fs_vm_page_mkwrite
-   - lock_page
-                              - f2fs_balance_fs
-                                  - mutex_lock(gc_mutex)
-                               - f2fs_gc
-                                - do_garbage_collect
-                                 - ra_data_block
-                                  - grab_cache_page
-   - f2fs_balance_fs
-    - mutex_lock(gc_mutex)
+drivers/media/i2c/adv748x/adv748x-afe.c:452:12: warning: operator '?:'
+has lower precedence than '|'; '|' will be evaluated first
+[-Wbitwise-conditional-parentheses]
 
-Fixes: 39a8695824510 ("f2fs: refactor ->page_mkwrite() flow")
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+ret = sdp_clrset(state, ADV748X_SDP_FRP, ADV748X_SDP_FRP_MASK, enable
+? ctrl->val - 1 : 0);
+
+Fixes: 3e89586a64df ("media: i2c: adv748x: add adv748x driver")
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/file.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/media/i2c/adv748x/adv748x.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 33c412d178f0f..6c4436a5ce797 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -50,7 +50,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
- 	struct page *page = vmf->page;
- 	struct inode *inode = file_inode(vmf->vma->vm_file);
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--	struct dnode_of_data dn = { .node_changed = false };
-+	struct dnode_of_data dn;
- 	int err;
+diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
+index 5042f9e94aee2..fccb388ce179f 100644
+--- a/drivers/media/i2c/adv748x/adv748x.h
++++ b/drivers/media/i2c/adv748x/adv748x.h
+@@ -394,10 +394,10 @@ int adv748x_write_block(struct adv748x_state *state, int client_page,
  
- 	if (unlikely(f2fs_cp_error(sbi))) {
-@@ -63,6 +63,9 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
- 		goto err;
- 	}
+ #define io_read(s, r) adv748x_read(s, ADV748X_PAGE_IO, r)
+ #define io_write(s, r, v) adv748x_write(s, ADV748X_PAGE_IO, r, v)
+-#define io_clrset(s, r, m, v) io_write(s, r, (io_read(s, r) & ~m) | v)
++#define io_clrset(s, r, m, v) io_write(s, r, (io_read(s, r) & ~(m)) | (v))
  
-+	/* should do out of any locked page */
-+	f2fs_balance_fs(sbi, true);
-+
- 	sb_start_pagefault(inode->i_sb);
+ #define hdmi_read(s, r) adv748x_read(s, ADV748X_PAGE_HDMI, r)
+-#define hdmi_read16(s, r, m) (((hdmi_read(s, r) << 8) | hdmi_read(s, r+1)) & m)
++#define hdmi_read16(s, r, m) (((hdmi_read(s, r) << 8) | hdmi_read(s, (r)+1)) & (m))
+ #define hdmi_write(s, r, v) adv748x_write(s, ADV748X_PAGE_HDMI, r, v)
  
- 	f2fs_bug_on(sbi, f2fs_has_inline_data(inode));
-@@ -120,8 +123,6 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
- out_sem:
- 	up_read(&F2FS_I(inode)->i_mmap_sem);
+ #define repeater_read(s, r) adv748x_read(s, ADV748X_PAGE_REPEATER, r)
+@@ -405,11 +405,11 @@ int adv748x_write_block(struct adv748x_state *state, int client_page,
  
--	f2fs_balance_fs(sbi, dn.node_changed);
--
- 	sb_end_pagefault(inode->i_sb);
- err:
- 	return block_page_mkwrite_return(err);
+ #define sdp_read(s, r) adv748x_read(s, ADV748X_PAGE_SDP, r)
+ #define sdp_write(s, r, v) adv748x_write(s, ADV748X_PAGE_SDP, r, v)
+-#define sdp_clrset(s, r, m, v) sdp_write(s, r, (sdp_read(s, r) & ~m) | v)
++#define sdp_clrset(s, r, m, v) sdp_write(s, r, (sdp_read(s, r) & ~(m)) | (v))
+ 
+ #define cp_read(s, r) adv748x_read(s, ADV748X_PAGE_CP, r)
+ #define cp_write(s, r, v) adv748x_write(s, ADV748X_PAGE_CP, r, v)
+-#define cp_clrset(s, r, m, v) cp_write(s, r, (cp_read(s, r) & ~m) | v)
++#define cp_clrset(s, r, m, v) cp_write(s, r, (cp_read(s, r) & ~(m)) | (v))
+ 
+ #define tx_read(t, r) adv748x_read(t->state, t->page, r)
+ #define tx_write(t, r, v) adv748x_write(t->state, t->page, r, v)
 -- 
 2.20.1
 
