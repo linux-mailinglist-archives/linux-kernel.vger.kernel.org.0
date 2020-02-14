@@ -2,37 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BE1115E0CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:15:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2040A15E0CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:15:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403878AbgBNQPU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:15:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44086 "EHLO mail.kernel.org"
+        id S2404125AbgBNQP0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:15:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392329AbgBNQOc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:14:32 -0500
+        id S2391621AbgBNQOf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:14:35 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7520246C3;
-        Fri, 14 Feb 2020 16:14:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B2EB246D5;
+        Fri, 14 Feb 2020 16:14:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696871;
-        bh=Ag7cfjgAZDTtorJGvLhjabkF2VDVmnJ8PY2cP1WcwfE=;
+        s=default; t=1581696875;
+        bh=+PkrT4iG1T7Rl6JWmdEM27E+WQtpZRSY2P7dpNAA9Wc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xY6Q47yeeXz5lr26XpoykRzf8NJPNe3TrjFSVu8grCiybgGuRpn7xp6gG5v9rhAXq
-         ZHxbrczpCqABdyB7ACchkkoKB74LKWIGBnNRsVRoxwEDSbEVQpIabWDMZ6QUI7/Xph
-         opN8zs8SbORvU0Cacd5A64AE8Usg/ZdAQhqjf32o=
+        b=PfAFHCrMBFJFB9CJcWxW+fgFWax0XA2UUEqpQ/Qb2HtggCS76YXuoaxiKuBou0FCC
+         twU0dLb3wbkHwKX/aq/a00FhZ+dQbkui3lBdbDhFvCjTnZthhFiMX6uCgI5T5ZFMfz
+         ZpRJo8HcaXYu6fZGicnQZCGmasffR31z4EZCx+WI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 129/252] clk: uniphier: Add SCSSI clock gate for each channel
-Date:   Fri, 14 Feb 2020 11:09:44 -0500
-Message-Id: <20200214161147.15842-129-sashal@kernel.org>
+Cc:     Andrey Zhizhikin <andrey.z@gmail.com>,
+        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>,
+        Petr Mladek <pmladek@suse.com>, Jiri Olsa <jolsa@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        bpf@vger.kernel.org, netdev@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 131/252] tools lib api fs: Fix gcc9 stringop-truncation compilation error
+Date:   Fri, 14 Feb 2020 11:09:46 -0500
+Message-Id: <20200214161147.15842-131-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -45,61 +53,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+From: Andrey Zhizhikin <andrey.z@gmail.com>
 
-[ Upstream commit 1ec09a2ec67a0baa46a3ccac041dbcdbc6db2cb9 ]
+[ Upstream commit 6794200fa3c9c3e6759dae099145f23e4310f4f7 ]
 
-SCSSI has clock gates for each channel in the SoCs newer than Pro4,
-so this adds missing clock gates for channel 1, 2 and 3. And more, this
-moves MCSSI clock ID after SCSSI.
+GCC9 introduced string hardening mechanisms, which exhibits the error
+during fs api compilation:
 
-Fixes: ff388ee36516 ("clk: uniphier: add clock frequency support for SPI")
-Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Link: https://lkml.kernel.org/r/1577410925-22021-1-git-send-email-hayashi.kunihiko@socionext.com
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+error: '__builtin_strncpy' specified bound 4096 equals destination size
+[-Werror=stringop-truncation]
+
+This comes when the length of copy passed to strncpy is is equal to
+destination size, which could potentially lead to buffer overflow.
+
+There is a need to mitigate this potential issue by limiting the size of
+destination by 1 and explicitly terminate the destination with NULL.
+
+Signed-off-by: Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Andrii Nakryiko <andriin@fb.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
+Cc: Martin KaFai Lau <kafai@fb.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Song Liu <songliubraving@fb.com>
+Cc: Yonghong Song <yhs@fb.com>
+Cc: bpf@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Link: http://lore.kernel.org/lkml/20191211080109.18765-1-andrey.zhizhikin@leica-geosystems.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/uniphier/clk-uniphier-peri.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ tools/lib/api/fs/fs.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/uniphier/clk-uniphier-peri.c b/drivers/clk/uniphier/clk-uniphier-peri.c
-index 89b3ac378b3f9..8b75dc116a98c 100644
---- a/drivers/clk/uniphier/clk-uniphier-peri.c
-+++ b/drivers/clk/uniphier/clk-uniphier-peri.c
-@@ -27,8 +27,8 @@
- #define UNIPHIER_PERI_CLK_FI2C(idx, ch)					\
- 	UNIPHIER_CLK_GATE("i2c" #ch, (idx), "i2c", 0x24, 24 + (ch))
+diff --git a/tools/lib/api/fs/fs.c b/tools/lib/api/fs/fs.c
+index 7aba8243a0e7c..bd021a0eeef8c 100644
+--- a/tools/lib/api/fs/fs.c
++++ b/tools/lib/api/fs/fs.c
+@@ -210,6 +210,7 @@ static bool fs__env_override(struct fs *fs)
+ 	size_t name_len = strlen(fs->name);
+ 	/* name + "_PATH" + '\0' */
+ 	char upper_name[name_len + 5 + 1];
++
+ 	memcpy(upper_name, fs->name, name_len);
+ 	mem_toupper(upper_name, name_len);
+ 	strcpy(&upper_name[name_len], "_PATH");
+@@ -219,7 +220,8 @@ static bool fs__env_override(struct fs *fs)
+ 		return false;
  
--#define UNIPHIER_PERI_CLK_SCSSI(idx)					\
--	UNIPHIER_CLK_GATE("scssi", (idx), "spi", 0x20, 17)
-+#define UNIPHIER_PERI_CLK_SCSSI(idx, ch)				\
-+	UNIPHIER_CLK_GATE("scssi" #ch, (idx), "spi", 0x20, 17 + (ch))
+ 	fs->found = true;
+-	strncpy(fs->path, override_path, sizeof(fs->path));
++	strncpy(fs->path, override_path, sizeof(fs->path) - 1);
++	fs->path[sizeof(fs->path) - 1] = '\0';
+ 	return true;
+ }
  
- #define UNIPHIER_PERI_CLK_MCSSI(idx)					\
- 	UNIPHIER_CLK_GATE("mcssi", (idx), "spi", 0x24, 14)
-@@ -44,7 +44,7 @@ const struct uniphier_clk_data uniphier_ld4_peri_clk_data[] = {
- 	UNIPHIER_PERI_CLK_I2C(6, 2),
- 	UNIPHIER_PERI_CLK_I2C(7, 3),
- 	UNIPHIER_PERI_CLK_I2C(8, 4),
--	UNIPHIER_PERI_CLK_SCSSI(11),
-+	UNIPHIER_PERI_CLK_SCSSI(11, 0),
- 	{ /* sentinel */ }
- };
- 
-@@ -60,7 +60,10 @@ const struct uniphier_clk_data uniphier_pro4_peri_clk_data[] = {
- 	UNIPHIER_PERI_CLK_FI2C(8, 4),
- 	UNIPHIER_PERI_CLK_FI2C(9, 5),
- 	UNIPHIER_PERI_CLK_FI2C(10, 6),
--	UNIPHIER_PERI_CLK_SCSSI(11),
--	UNIPHIER_PERI_CLK_MCSSI(12),
-+	UNIPHIER_PERI_CLK_SCSSI(11, 0),
-+	UNIPHIER_PERI_CLK_SCSSI(12, 1),
-+	UNIPHIER_PERI_CLK_SCSSI(13, 2),
-+	UNIPHIER_PERI_CLK_SCSSI(14, 3),
-+	UNIPHIER_PERI_CLK_MCSSI(15),
- 	{ /* sentinel */ }
- };
 -- 
 2.20.1
 
