@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64B6815EABF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:16:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B918A15EA4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:13:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392118AbgBNRQG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:16:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39180 "EHLO mail.kernel.org"
+        id S2391913AbgBNQM7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:12:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390425AbgBNQMA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:12:00 -0500
+        id S2391922AbgBNQMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:12:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98CE1246A4;
-        Fri, 14 Feb 2020 16:11:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 960FC246A1;
+        Fri, 14 Feb 2020 16:12:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696720;
-        bh=TWYKJH7EdXk4lvXiINzi24/zw7SjtOiQoX3rzjP6BGw=;
+        s=default; t=1581696724;
+        bh=HFXyLgZOluO4xGPVuMxvzsLOr5aDlIyiQMNmxVT5tgk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=onQso5oakTYtS0b9H5Jk7tb10+20fFuo09lgGId7489T9Yl/cyX+Vw+vRmJffciam
-         kx4ywbLo+JqnzjnvSMdcxEQQeWlMVdkb6m9oeY++oAKJQ1jtKqrS04xSAqp+x2z+lb
-         RNbMHCohw8pfG8NUKl5SemicBMxYZdl5eJcsbggw=
+        b=JVP8GyY/JtWwy+4b1XrOcuj87oYhKSQQLcMxtI8TiEZ5KOmKZ7YBfcAyBmt8iFD0o
+         cv0MYdCfQUaIY0uTa++EaX+V36bxrYTmcRAEFApoen3h8F3BqB5nKCdFdC1I3Gt9pA
+         ccVAjbe8m/bcjGWizi0+Z43f8w5Bb4Je1mha7OlQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Zahari Petkov <zahari@balena.io>, Pavel Machek <pavel@ucw.cz>,
-        Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 009/252] leds: pca963x: Fix open-drain initialization
-Date:   Fri, 14 Feb 2020 11:07:44 -0500
-Message-Id: <20200214161147.15842-9-sashal@kernel.org>
+Cc:     Vladimir Oltean <olteanv@gmail.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 012/252] gianfar: Fix TX timestamping with a stacked DSA driver
+Date:   Fri, 14 Feb 2020 11:07:47 -0500
+Message-Id: <20200214161147.15842-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -42,67 +44,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zahari Petkov <zahari@balena.io>
+From: Vladimir Oltean <olteanv@gmail.com>
 
-[ Upstream commit 697529091ac7a0a90ca349b914bb30641c13c753 ]
+[ Upstream commit c26a2c2ddc0115eb088873f5c309cf46b982f522 ]
 
-Before commit bb29b9cccd95 ("leds: pca963x: Add bindings to invert
-polarity") Mode register 2 was initialized directly with either 0x01
-or 0x05 for open-drain or totem pole (push-pull) configuration.
+The driver wrongly assumes that it is the only entity that can set the
+SKBTX_IN_PROGRESS bit of the current skb. Therefore, in the
+gfar_clean_tx_ring function, where the TX timestamp is collected if
+necessary, the aforementioned bit is used to discriminate whether or not
+the TX timestamp should be delivered to the socket's error queue.
 
-Afterwards, MODE2 initialization started using bitwise operations on
-top of the default MODE2 register value (0x05). Using bitwise OR for
-setting OUTDRV with 0x01 and 0x05 does not produce correct results.
-When open-drain is used, instead of setting OUTDRV to 0, the driver
-keeps it as 1:
+But a stacked driver such as a DSA switch can also set the
+SKBTX_IN_PROGRESS bit, which is actually exactly what it should do in
+order to denote that the hardware timestamping process is undergoing.
 
-Open-drain: 0x05 | 0x01 -> 0x05 (0b101 - incorrect)
-Totem pole: 0x05 | 0x05 -> 0x05 (0b101 - correct but still wrong)
+Therefore, gianfar would misinterpret the "in progress" bit as being its
+own, and deliver a second skb clone in the socket's error queue,
+completely throwing off a PTP process which is not expecting to receive
+it, _even though_ TX timestamping is not enabled for gianfar.
 
-Now OUTDRV setting uses correct bitwise operations for initialization:
+There have been discussions [0] as to whether non-MAC drivers need or
+not to set SKBTX_IN_PROGRESS at all (whose purpose is to avoid sending 2
+timestamps, a sw and a hw one, to applications which only expect one).
+But as of this patch, there are at least 2 PTP drivers that would break
+in conjunction with gianfar: the sja1105 DSA switch and the felix
+switch, by way of its ocelot core driver.
 
-Open-drain: 0x05 & ~0x04 -> 0x01 (0b001 - correct)
-Totem pole: 0x05 | 0x04 -> 0x05 (0b101 - correct)
+So regardless of that conclusion, fix the gianfar driver to not do stuff
+based on flags set by others and not intended for it.
 
-Additional MODE2 register definitions are introduced now as well.
+[0]: https://www.spinics.net/lists/netdev/msg619699.html
 
-Fixes: bb29b9cccd95 ("leds: pca963x: Add bindings to invert polarity")
-Signed-off-by: Zahari Petkov <zahari@balena.io>
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
+Fixes: f0ee7acfcdd4 ("gianfar: Add hardware TX timestamping support")
+Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
+Acked-by: Richard Cochran <richardcochran@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/leds/leds-pca963x.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/freescale/gianfar.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
-index 5c0908113e388..bbcde13b77f16 100644
---- a/drivers/leds/leds-pca963x.c
-+++ b/drivers/leds/leds-pca963x.c
-@@ -43,6 +43,8 @@
- #define PCA963X_LED_PWM		0x2	/* Controlled through PWM */
- #define PCA963X_LED_GRP_PWM	0x3	/* Controlled through PWM/GRPPWM */
+diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/ethernet/freescale/gianfar.c
+index c97c4edfa31bc..cf2d1e846a692 100644
+--- a/drivers/net/ethernet/freescale/gianfar.c
++++ b/drivers/net/ethernet/freescale/gianfar.c
+@@ -2685,13 +2685,17 @@ static void gfar_clean_tx_ring(struct gfar_priv_tx_q *tx_queue)
+ 	skb_dirtytx = tx_queue->skb_dirtytx;
  
-+#define PCA963X_MODE2_OUTDRV	0x04	/* Open-drain or totem pole */
-+#define PCA963X_MODE2_INVRT	0x10	/* Normal or inverted direction */
- #define PCA963X_MODE2_DMBLNK	0x20	/* Enable blinking */
+ 	while ((skb = tx_queue->tx_skbuff[skb_dirtytx])) {
++		bool do_tstamp;
++
++		do_tstamp = (skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) &&
++			    priv->hwts_tx_en;
  
- #define PCA963X_MODE1		0x00
-@@ -462,12 +464,12 @@ static int pca963x_probe(struct i2c_client *client,
- 						    PCA963X_MODE2);
- 		/* Configure output: open-drain or totem pole (push-pull) */
- 		if (pdata->outdrv == PCA963X_OPEN_DRAIN)
--			mode2 |= 0x01;
-+			mode2 &= ~PCA963X_MODE2_OUTDRV;
+ 		frags = skb_shinfo(skb)->nr_frags;
+ 
+ 		/* When time stamping, one additional TxBD must be freed.
+ 		 * Also, we need to dma_unmap_single() the TxPAL.
+ 		 */
+-		if (unlikely(skb_shinfo(skb)->tx_flags & SKBTX_IN_PROGRESS))
++		if (unlikely(do_tstamp))
+ 			nr_txbds = frags + 2;
  		else
--			mode2 |= 0x05;
-+			mode2 |= PCA963X_MODE2_OUTDRV;
- 		/* Configure direction: normal or inverted */
- 		if (pdata->dir == PCA963X_INVERTED)
--			mode2 |= 0x10;
-+			mode2 |= PCA963X_MODE2_INVRT;
- 		i2c_smbus_write_byte_data(pca963x->chip->client, PCA963X_MODE2,
- 					  mode2);
- 	}
+ 			nr_txbds = frags + 1;
+@@ -2705,7 +2709,7 @@ static void gfar_clean_tx_ring(struct gfar_priv_tx_q *tx_queue)
+ 		    (lstatus & BD_LENGTH_MASK))
+ 			break;
+ 
+-		if (unlikely(skb_shinfo(skb)->tx_flags & SKBTX_IN_PROGRESS)) {
++		if (unlikely(do_tstamp)) {
+ 			next = next_txbd(bdp, base, tx_ring_size);
+ 			buflen = be16_to_cpu(next->length) +
+ 				 GMAC_FCB_LEN + GMAC_TXPAL_LEN;
+@@ -2715,7 +2719,7 @@ static void gfar_clean_tx_ring(struct gfar_priv_tx_q *tx_queue)
+ 		dma_unmap_single(priv->dev, be32_to_cpu(bdp->bufPtr),
+ 				 buflen, DMA_TO_DEVICE);
+ 
+-		if (unlikely(skb_shinfo(skb)->tx_flags & SKBTX_IN_PROGRESS)) {
++		if (unlikely(do_tstamp)) {
+ 			struct skb_shared_hwtstamps shhwtstamps;
+ 			u64 *ns = (u64 *)(((uintptr_t)skb->data + 0x10) &
+ 					  ~0x7UL);
 -- 
 2.20.1
 
