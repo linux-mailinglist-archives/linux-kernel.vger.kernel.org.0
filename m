@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12A5015DCB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:56:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E08F15DCAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:56:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731469AbgBNPyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:54:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33992 "EHLO mail.kernel.org"
+        id S1731457AbgBNPyP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:54:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34022 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731435AbgBNPyL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:54:11 -0500
+        id S1730420AbgBNPyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:54:12 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8FE8024685;
-        Fri, 14 Feb 2020 15:54:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 064432465D;
+        Fri, 14 Feb 2020 15:54:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695650;
-        bh=jVYpPF/XTTCfs3ewKAAQahe25GceYAwTatt+NUdKAOw=;
+        s=default; t=1581695651;
+        bh=PmSwVnLnt3cJ4U+UruM16hK1h4H5offVO0oNSU133H8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hGm368M/BR+nWloL+ZuV+RjwzKCXMgsKiw57ZoEalCZyuZOl3cN2h0uqJEikT4lDu
-         jrUMUmxDp+E8T7U8J2Nzqnocz2viSRa+TQxBuXyY42eY0XmPSFcasdk/tOlRZ0IhO6
-         x0f/UpYpfeoKgMQfj6Bk0XFzCe9dLSVJce9SUR4k=
+        b=0VQzzkGJpuIAZSwJYDZFDJB4/UX4zS7dA+r39QxmR6c/w/jAxlhYAcelOOp4qZ5GW
+         tccc1rjMZ+Mjc76twNZCPkj6wMdNxzG2zl8dIPOrHRhM/DCzBtLdCloxf4bAe6SmOe
+         dEMZ07DtCZfryzIl2jcNbiB82MfvN00BKpUeGshY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Brendan Higgins <brendanhiggins@google.com>,
-        Corentin Labbe <clabbe@baylibre.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org,
-        linux-amlogic@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.5 243/542] crypto: amlogic - add unspecified HAS_IOMEM dependency
-Date:   Fri, 14 Feb 2020 10:43:55 -0500
-Message-Id: <20200214154854.6746-243-sashal@kernel.org>
+Cc:     Bibby Hsieh <bibby.hsieh@mediatek.com>, CK Hu <ck.hu@mediatek.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.5 244/542] drm/mediatek: handle events when enabling/disabling crtc
+Date:   Fri, 14 Feb 2020 10:43:56 -0500
+Message-Id: <20200214154854.6746-244-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -45,39 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brendan Higgins <brendanhiggins@google.com>
+From: Bibby Hsieh <bibby.hsieh@mediatek.com>
 
-[ Upstream commit 7d07de2c18abd95f72efb28f78a4825e0fc1aa6a ]
+[ Upstream commit 411f5c1eacfebb1f6e40b653d29447cdfe7282aa ]
 
-Currently CONFIG_CRYPTO_DEV_AMLOGIC_GXL=y implicitly depends on
-CONFIG_HAS_IOMEM=y; consequently, on architectures without IOMEM we get
-the following build error:
+The driver currently handles vblank events only when updating planes on
+an already enabled CRTC. The atomic update API however allows requesting
+an event when enabling or disabling a CRTC. This currently leads to
+event objects being leaked in the kernel and to events not being sent
+out. Fix it.
 
-ld: drivers/crypto/amlogic/amlogic-gxl-core.o: in function `meson_crypto_probe':
-drivers/crypto/amlogic/amlogic-gxl-core.c:240: undefined reference to `devm_platform_ioremap_resource'
-
-Fix the build error by adding the unspecified dependency.
-
-Reported-by: Brendan Higgins <brendanhiggins@google.com>
-Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-Acked-by: Corentin Labbe <clabbe@baylibre.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+Signed-off-by: CK Hu <ck.hu@mediatek.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/amlogic/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/crypto/amlogic/Kconfig b/drivers/crypto/amlogic/Kconfig
-index b90850d18965f..cf95476026708 100644
---- a/drivers/crypto/amlogic/Kconfig
-+++ b/drivers/crypto/amlogic/Kconfig
-@@ -1,5 +1,6 @@
- config CRYPTO_DEV_AMLOGIC_GXL
- 	tristate "Support for amlogic cryptographic offloader"
-+	depends on HAS_IOMEM
- 	default y if ARCH_MESON
- 	select CRYPTO_SKCIPHER
- 	select CRYPTO_ENGINE
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+index 3305a94fc9305..4132cd114a037 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+@@ -328,6 +328,7 @@ static int mtk_crtc_ddp_hw_init(struct mtk_drm_crtc *mtk_crtc)
+ static void mtk_crtc_ddp_hw_fini(struct mtk_drm_crtc *mtk_crtc)
+ {
+ 	struct drm_device *drm = mtk_crtc->base.dev;
++	struct drm_crtc *crtc = &mtk_crtc->base;
+ 	int i;
+ 
+ 	DRM_DEBUG_DRIVER("%s\n", __func__);
+@@ -353,6 +354,13 @@ static void mtk_crtc_ddp_hw_fini(struct mtk_drm_crtc *mtk_crtc)
+ 	mtk_disp_mutex_unprepare(mtk_crtc->mutex);
+ 
+ 	pm_runtime_put(drm->dev);
++
++	if (crtc->state->event && !crtc->state->active) {
++		spin_lock_irq(&crtc->dev->event_lock);
++		drm_crtc_send_vblank_event(crtc, crtc->state->event);
++		crtc->state->event = NULL;
++		spin_unlock_irq(&crtc->dev->event_lock);
++	}
+ }
+ 
+ static void mtk_crtc_ddp_config(struct drm_crtc *crtc)
 -- 
 2.20.1
 
