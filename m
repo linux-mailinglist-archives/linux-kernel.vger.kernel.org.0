@@ -2,170 +2,271 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE89F15E79B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:55:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA85615E7C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:56:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730147AbgBNQy4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:54:56 -0500
-Received: from mail.efficios.com ([167.114.26.124]:59858 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404925AbgBNQyx (ORCPT
+        id S2404695AbgBNQzj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:55:39 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:30174 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2394268AbgBNQzh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:54:53 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.efficios.com (Postfix) with ESMTP id B00CE23ACB5;
-        Fri, 14 Feb 2020 11:54:50 -0500 (EST)
-Received: from mail.efficios.com ([127.0.0.1])
-        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id b0oj3fE8KmnK; Fri, 14 Feb 2020 11:54:50 -0500 (EST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.efficios.com (Postfix) with ESMTP id 3FDA723A8FB;
-        Fri, 14 Feb 2020 11:54:50 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 3FDA723A8FB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1581699290;
-        bh=NiKdD4GMaJ2MLkmF5uW6TCLm7+mQJ4RNezaFecTBBrc=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=lmZfsuR8mMqnn/jkQx05Bu1jbK8vDIOmqGJaHkWup/0MlxAA/1gicJaDAkdKhB944
-         GhMWtw7u4HFvMPw+aOfPYDhGY8fYj94hJSqomzcvUQBEeMBMUqkjAspJwK+hPPzp0v
-         Yh3RwAaRgapqzNq2bhTAaE0Db8eNkjVBhTOlh7UHB8u3yN1mKoay4Ml35xHH1SAGRi
-         vFcltsNIlMjLtOyiKmpk1D6uXX1lq+u61akr0QrigKoV9FgAuzxw+kC6GOFwsAtBFd
-         5iW9l5E9ypdtJkwRrprv6leD3FA/K+deK8lIBVdDd1NFl5tzr+2MrrxQAZQUO15PkR
-         TYhq6aPXyutGQ==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([127.0.0.1])
-        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id a7LVwWYzJImk; Fri, 14 Feb 2020 11:54:50 -0500 (EST)
-Received: from mail03.efficios.com (mail03.efficios.com [167.114.26.124])
-        by mail.efficios.com (Postfix) with ESMTP id 2291D23AF8E;
-        Fri, 14 Feb 2020 11:54:50 -0500 (EST)
-Date:   Fri, 14 Feb 2020 11:54:50 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     "H. Peter Anvin" <hpa@zytor.com>, Chris Lameter <cl@linux.com>,
-        Jann Horn <jannh@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Watson <davejwatson@fb.com>,
-        Will Deacon <will.deacon@arm.com>, shuah <shuah@kernel.org>,
-        Andi Kleen <andi@firstfloor.org>,
-        linux-kselftest <linux-kselftest@vger.kernel.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Paul <paulmck@linux.vnet.ibm.com>, Paul Turner <pjt@google.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        rostedt <rostedt@goodmis.org>, Ben Maurer <bmaurer@fb.com>,
-        linux-api <linux-api@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>
-Message-ID: <1713146428.2610.1581699290029.JavaMail.zimbra@efficios.com>
-In-Reply-To: <87blql5hfb.fsf@oldenburg2.str.redhat.com>
-References: <20200121160312.26545-1-mathieu.desnoyers@efficios.com> <2049164886.596497.1579641536619.JavaMail.zimbra@efficios.com> <alpine.DEB.2.21.2001212141590.1231@www.lameter.com> <1648013936.596672.1579655468604.JavaMail.zimbra@efficios.com> <ead7a565-9a23-a7d7-904d-c4860f63952a@zytor.com> <87a76efuux.fsf@oldenburg2.str.redhat.com> <134428560.600911.1580153955842.JavaMail.zimbra@efficios.com> <87blql5hfb.fsf@oldenburg2.str.redhat.com>
-Subject: Re: [RFC PATCH v1] pin_on_cpu: Introduce thread CPU pinning system
- call
+        Fri, 14 Feb 2020 11:55:37 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01EGnPed052733
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 11:55:37 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2y5x3hkc7x-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 11:55:37 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
+        Fri, 14 Feb 2020 16:55:34 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 14 Feb 2020 16:55:32 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01EGtV7W27656442
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 14 Feb 2020 16:55:31 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 52E7711C05C;
+        Fri, 14 Feb 2020 16:55:31 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C111711C04A;
+        Fri, 14 Feb 2020 16:55:29 +0000 (GMT)
+Received: from [9.85.93.41] (unknown [9.85.93.41])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 14 Feb 2020 16:55:29 +0000 (GMT)
+Subject: Re: [PATCH v2 2/4] libnvdimm/namespace: Enforce
+ memremap_compat_align()
+To:     Jeff Moyer <jmoyer@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+References: <158155489850.3343782.2687127373754434980.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <158155490897.3343782.14216276134794923581.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <x49k14q5ezs.fsf@segfault.boston.devel.redhat.com>
+ <CAPcyv4hQouRNBcJ4uZ2mysr_aKstLhvUf66gRQ_3QoQNyOy72g@mail.gmail.com>
+ <x49h7ztdsp5.fsf@segfault.boston.devel.redhat.com>
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Date:   Fri, 14 Feb 2020 22:25:28 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <x49h7ztdsp5.fsf@segfault.boston.devel.redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.26.124]
-X-Mailer: Zimbra 8.8.15_GA_3899 (ZimbraWebClient - FF72 (Linux)/8.8.15_GA_3895)
-Thread-Topic: pin_on_cpu: Introduce thread CPU pinning system call
-Thread-Index: cTvqdrvCQudYKnfodFshnn5ecRABXA==
+X-TM-AS-GCONF: 00
+x-cbid: 20021416-0028-0000-0000-000003DB0464
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20021416-0029-0000-0000-000024A0047E
+Message-Id: <0843d8bf-c9e4-37c9-d9c2-ba4407daae21@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-14_05:2020-02-12,2020-02-14 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
+ clxscore=1015 adultscore=0 mlxlogscore=999 priorityscore=1501 spamscore=0
+ bulkscore=0 mlxscore=0 impostorscore=0 suspectscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002140127
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jan 30, 2020, at 6:10 AM, Florian Weimer fweimer@redhat.com wrote:
-
-> * Mathieu Desnoyers:
+On 2/14/20 10:14 PM, Jeff Moyer wrote:
+> Dan Williams <dan.j.williams@intel.com> writes:
 > 
->> It brings an interesting idea to the table though. Let's assume for now that
->> the only intended use of pin_on_cpu(2) would be to allow rseq(2) critical
->> sections to update per-cpu data on specific cpu number targets. In fact,
->> considering that userspace can be preempted at any point, we still need a
->> mechanism to guarantee atomicity with respect to other threads running on
->> the same runqueue, which rseq(2) provides. Therefore, that assumption does
->> not appear too far-fetched.
+>> On Thu, Feb 13, 2020 at 1:55 PM Jeff Moyer <jmoyer@redhat.com> wrote:
+>>>
+>>> Dan Williams <dan.j.williams@intel.com> writes:
+>>>
+>>>> The pmem driver on PowerPC crashes with the following signature when
+>>>> instantiating misaligned namespaces that map their capacity via
+>>>> memremap_pages().
+>>>>
+>>>>      BUG: Unable to handle kernel data access at 0xc001000406000000
+>>>>      Faulting instruction address: 0xc000000000090790
+>>>>      NIP [c000000000090790] arch_add_memory+0xc0/0x130
+>>>>      LR [c000000000090744] arch_add_memory+0x74/0x130
+>>>>      Call Trace:
+>>>>       arch_add_memory+0x74/0x130 (unreliable)
+>>>>       memremap_pages+0x74c/0xa30
+>>>>       devm_memremap_pages+0x3c/0xa0
+>>>>       pmem_attach_disk+0x188/0x770
+>>>>       nvdimm_bus_probe+0xd8/0x470
+>>>>
+>>>> With the assumption that only memremap_pages() has alignment
+>>>> constraints, enforce memremap_compat_align() for
+>>>> pmem_should_map_pages(), nd_pfn, or nd_dax cases.
+>>>>
+>>>> Reported-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+>>>> Cc: Jeff Moyer <jmoyer@redhat.com>
+>>>> Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+>>>> Link: https://lore.kernel.org/r/158041477336.3889308.4581652885008605170.stgit@dwillia2-desk3.amr.corp.intel.com
+>>>> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+>>>> ---
+>>>>   drivers/nvdimm/namespace_devs.c |   10 ++++++++++
+>>>>   1 file changed, 10 insertions(+)
+>>>>
+>>>> diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
+>>>> index 032dc61725ff..aff1f32fdb4f 100644
+>>>> --- a/drivers/nvdimm/namespace_devs.c
+>>>> +++ b/drivers/nvdimm/namespace_devs.c
+>>>> @@ -1739,6 +1739,16 @@ struct nd_namespace_common *nvdimm_namespace_common_probe(struct device *dev)
+>>>>                return ERR_PTR(-ENODEV);
+>>>>        }
+>>>>
+>>>> +     if (pmem_should_map_pages(dev) || nd_pfn || nd_dax) {
+>>>> +             struct nd_namespace_io *nsio = to_nd_namespace_io(&ndns->dev);
+>>>> +             resource_size_t start = nsio->res.start;
+>>>> +
+>>>> +             if (!IS_ALIGNED(start | size, memremap_compat_align())) {
+>>>> +                     dev_dbg(&ndns->dev, "misaligned, unable to map\n");
+>>>> +                     return ERR_PTR(-EOPNOTSUPP);
+>>>> +             }
+>>>> +     }
+>>>> +
+>>>>        if (is_namespace_pmem(&ndns->dev)) {
+>>>>                struct nd_namespace_pmem *nspm;
+>>>>
+>>>
+>>> Actually, I take back my ack.  :) This prevents a previously working
+>>> namespace from being successfully probed/setup.
 >>
->> There are 2 scenarios we need to consider here:
->>
->> A) pin_on_cpu(2) targets a CPU which is not part of the affinity mask.
->>
->> This case is easy: pin_on_cpu can return an error, and the caller needs to act
->> accordingly (e.g. figure out that this is a design error and report it, or
->> decide that it really did not want to touch that per-cpu data that badly and
->> make the entire process fall-back to a mechanism which does not use per-cpu
->> data at all from that point onwards)
+>> Do you have a test case handy? I can see a potential gap with a
+>> namespace that used internal padding to fix up the alignment.
 > 
-> Affinity masks currently are not like process memory: there is an
-> expectation that they can be altered from outside the process.
-
-Yes, that's my main issue.
-
-> Given that the caller may not have any ways to recover from the
-> suggested pin_on_cpu behavior, that seems problematic.
-
-Indeed.
-
+> # ndctl list -v -n namespace0.0
+> [
+>    {
+>      "dev":"namespace0.0",
+>      "mode":"fsdax",
+>      "map":"dev",
+>      "size":52846133248,
+>      "uuid":"b99f6f6a-2909-4189-9bfa-6eeebd95d40e",
+>      "raw_uuid":"aff43777-015b-493f-bbf9-7c7b0fe33519",
+>      "sector_size":512,
+>      "align":4096,
+>      "blockdev":"pmem0",
+>      "numa_node":0
+>    }
+> ]
 > 
-> What I would expect is that if pin_on_cpu cannot achieve implied
-> exclusion by running on the associated CPU, it acquires a lock that
-> prevents others pin_on_cpu calls from entering the critical section, and
-> tasks in the same task group from running on that CPU (if the CPU
-> becomes available to the task group).  The second part should maintain
-> exclusion of rseq sequences even if their fast path is not changed.
+> # cat /sys/bus/nd/devices/region0/mappings
+> 6
+> 
+> # grep namespace0.0 /proc/iomem
+>    1860000000-24e0003fff : namespace0.0
+> 
+>> The goal of this check is to catch cases that are just going to fail
+>> devm_memremap_pages(), and the expectation is that it could not have
+>> worked before unless it was ported from another platform, or someone
+>> flipped the page-size switch on PowerPC.
+> 
+> On x86, creation and probing of the namespace worked fine before this
+> patch.  What *doesn't* work is creating another fsdax namespace after
+> this one.  sector mode namespaces can still be created, though:
+> 
+> [
+>    {
+>      "dev":"namespace0.1",
+>      "mode":"sector",
+>      "size":53270768640,
+>      "uuid":"67ea2c74-d4b1-4fc9-9c1a-a7d2a6c2a4a7",
+>      "sector_size":512,
+>      "blockdev":"pmem0.1s"
+>    },
+> 
+> # grep namespace0.1 /proc/iomem
+>    24e0004000-3160007fff : namespace0.1
+> 
+>>> I thought we were only going to enforce the alignment for a newly
+>>> created namespace?  This should only check whether the alignment
+>>> works for the current platform.
+>>
+>> The model is a new default 16MB alignment is enforced at creation
+>> time, but if you need to support previously created namespaces then
+>> you can manually trim that alignment requirement to no less than
+>> memremap_compat_align() because that's the point at which
+>> devm_memremap_pages() will start failing or crashing.
+> 
+> The problem is that older kernels did not enforce alignment to
+> SUBSECTION_SIZE.  We shouldn't prevent those namespaces from being
+> accessed.  The probe itself will not cause the WARN_ON to trigger.
+> Creating new namespaces at misaligned addresses could, but you've
+> altered the free space allocation such that we won't hit that anymore.
+> 
+> If I drop this patch, the probe will still work, and allocating new
+> namespaces will also work:
+> 
+> # ndctl list
+> [
+>    {
+>      "dev":"namespace0.1",
+>      "mode":"sector",
+>      "size":53270768640,
+>      "uuid":"67ea2c74-d4b1-4fc9-9c1a-a7d2a6c2a4a7",
+>      "sector_size":512,
+>      "blockdev":"pmem0.1s"
+>    },
+>    {
+>      "dev":"namespace0.0",
+>      "mode":"fsdax",
+>      "map":"dev",
+>      "size":52846133248,
+>      "uuid":"b99f6f6a-2909-4189-9bfa-6eeebd95d40e",
+>      "sector_size":512,
+>      "align":4096,
+>      "blockdev":"pmem0"
+>    }
+> ]
+>   ndctl create-namespace -m fsdax -s 36g -r 0
+> {
+>    "dev":"namespace0.2",
+>    "mode":"fsdax",
+>    "map":"dev",
+>    "size":"35.44 GiB (38.05 GB)",
+>    "uuid":"7893264c-c7ef-4cbe-95e1-ccf2aff041fb",
+>    "sector_size":512,
+>    "align":2097152,
+>    "blockdev":"pmem0.2"
+> }
+> 
+> proc/iomem:
+> 
+> 1860000000-d55fffffff : Persistent Memory
+>    1860000000-24e0003fff : namespace0.0
+>    24e0004000-3160007fff : namespace0.1
+>    3162000000-3a61ffffff : namespace0.2
+> 
+> So, maybe the right thing is to make memremap_compat_align return
+> PAGE_SIZE for x86 instead of SUBSECTION_SIZE?
+> 
 
-I try to avoid mutual exclusion over shared memory as rseq fallback whenever
-I can, so we can use rseq from lock-free algorithms without losing lock-freedom.
 
-> (On the other hand, I'm worried that per-CPU data structures are a dead
-> end for user space unless we get containerized affinity masks, so that
-> contains only see resources that are actually available to them.)
+I did that as part of 
+https://lore.kernel.org/linux-nvdimm/20200120140749.69549-2-aneesh.kumar@linux.ibm.com 
+and applied the subsection details only when creating new namespace
 
-I'm currently implementing a prototype of the following ideas, and I'm curious to
-read your thoughts on those:
+https://lore.kernel.org/linux-nvdimm/20200120140749.69549-4-aneesh.kumar@linux.ibm.com
 
-I'm adding a "affinity_pinned" flag to the task struct of each thread. It can
-be set and cleared only by the owner thread through pin_on_cpu syscall commands.
-When the affinity is pinned by a thread, trying to change its affinity (from an
-external thread, or possibly from itself) will fail.
 
-Whenever a thread would (temporarily) pin itself on a specific CPU, it would
-also pin its affinity mask as a side-effect. When a thread unpins from a CPU,
-the affinity mask stays pinned. The purpose of keeping this affinity pinned
-state per-thread is to ensure we don't end up with tiny race windows where
-changing the thread's affinity mask "typically" works, but fails once in a
-while because it's done concurrently with a 1ms long cpu pinning. This would
-lead to flaky code, and I try hard to avoid that.
+But I do agree with the approach that in-order to create a compatible 
+namespace we need enforce max possible align value across all supported 
+architectures.
 
-How changing this affinity should fail (from sched_setaffinity and cpusets) is a
-big unanswered question. I see two major alternatives so far:
 
-1) We deliver a signal to the target thread (SIGKILL ? SIGSEGV ?), considering
-   that failure to be able to change its affinity mask means we need to send a
-   signal. How exactly would the killed application recover (or if it should)
-   is still unclear.
-
-2) Return an error to the sched_setaffinity or cpusets caller, and let it deal
-   with the error as it sees fit: ignore it, log it, or send a signal.
-
-I think option (2) provides the most flexiblity, and moves policy outside of
-the kernel, which is a good thing. However, looking at how cpusets seems to
-simply ignore errors when setting a task's cpumask, I wonder if asking from
-cpusets to handle any kind of error is asking too much. :-/
-
-Thanks,
-
-Mathieu
+On POWER we should still be able to enforce SUBSECTION_SIZE 
+restrictions. We did put that as document w.r.t. distributions like Suse 
+https://www.suse.com/support/kb/doc/?id=7024300
 
 
 
+-aneesh
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
