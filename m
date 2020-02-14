@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60DA415E436
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:34:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B09915E432
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:34:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389912AbgBNQeb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:34:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34258 "EHLO mail.kernel.org"
+        id S2393604AbgBNQeX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:34:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393322AbgBNQZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:25:06 -0500
+        id S2393370AbgBNQZN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:25:13 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BFC02479C;
-        Fri, 14 Feb 2020 16:25:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2DC0247A5;
+        Fri, 14 Feb 2020 16:25:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697506;
-        bh=yFT/HfqTv96zbqzm723myqHdTunLNrOuSTQ4e9ESzqQ=;
+        s=default; t=1581697512;
+        bh=azyiPdDBdQLKWqvIW8+yA4aTJcpbSiRnzzlzZGQROnA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jP3YhyCf02FyQ9FO2GTI05z5dLPTnHrGI0VPgS0lYgZlv++6PLydR8bwHak+6F5Zg
-         +c0VrUHgTq/gRCzA+4Dw6g4E+2FO6JXRLouxH/FT5fWSb9/YIEp523RF+WvyWkby9p
-         nB59UYeFdGgYKi8rOseYL0BjqXMDrUnDQ0kAUHi4=
+        b=DE0FSaFuESsXyrCukxgkJKeWVya3IiBQp0f8hxaVncY9kXouj7veu32AUBgKkRSRG
+         r9bcnOhiISbqn0cKXKX4Mwa9yz8XPWDF2+mJQgivhPnHVfnS/ELi6ca/a7JLjqEQVC
+         R49/KdARho1Mlak1fAGQVzCFCJx5z9Kln8pKskZY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     zhengbin <zhengbin13@huawei.com>, Hulk Robot <hulkci@huawei.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.4 033/100] drm/radeon: remove set but not used variable 'radeon_connector'
-Date:   Fri, 14 Feb 2020 11:23:17 -0500
-Message-Id: <20200214162425.21071-33-sashal@kernel.org>
+Cc:     Xiongfeng Wang <wangxiongfeng2@huawei.com>,
+        Hulk Robot <hulkci@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 038/100] tty: omap-serial: remove set but unused variable
+Date:   Fri, 14 Feb 2020 11:23:22 -0500
+Message-Id: <20200214162425.21071-38-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214162425.21071-1-sashal@kernel.org>
 References: <20200214162425.21071-1-sashal@kernel.org>
@@ -44,46 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhengbin <zhengbin13@huawei.com>
+From: Xiongfeng Wang <wangxiongfeng2@huawei.com>
 
-[ Upstream commit 5952c48993375a9da2de39be30df475cf590b0ce ]
+[ Upstream commit e83c6587c47caa2278aa3bd603b5a85eddc4cec9 ]
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Fix the following warning:
+drivers/tty/serial/omap-serial.c: In function serial_omap_rlsi:
+drivers/tty/serial/omap-serial.c:496:16: warning: variable ch set but not used [-Wunused-but-set-variable]
 
-drivers/gpu/drm/radeon/radeon_display.c: In function radeon_crtc_scaling_mode_fixup:
-drivers/gpu/drm/radeon/radeon_display.c:1685:27: warning: variable radeon_connector set but not used [-Wunused-but-set-variable]
-
-It is not used since commit 377bd8a98d7d ("drm/radeon:
-use a fetch function to get the edid")
+The character read is useless according to the table 23-246 of the omap4
+TRM. So we can drop it.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: zhengbin <zhengbin13@huawei.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
+Link: https://lore.kernel.org/r/1575617863-32484-1-git-send-email-wangxiongfeng2@huawei.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/radeon/radeon_display.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/tty/serial/omap-serial.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/radeon/radeon_display.c b/drivers/gpu/drm/radeon/radeon_display.c
-index 446d990623069..b26e4eae7ac54 100644
---- a/drivers/gpu/drm/radeon/radeon_display.c
-+++ b/drivers/gpu/drm/radeon/radeon_display.c
-@@ -1736,7 +1736,6 @@ bool radeon_crtc_scaling_mode_fixup(struct drm_crtc *crtc,
- 	struct radeon_crtc *radeon_crtc = to_radeon_crtc(crtc);
- 	struct radeon_encoder *radeon_encoder;
- 	struct drm_connector *connector;
--	struct radeon_connector *radeon_connector;
- 	bool first = true;
- 	u32 src_v = 1, dst_v = 1;
- 	u32 src_h = 1, dst_h = 1;
-@@ -1749,7 +1748,6 @@ bool radeon_crtc_scaling_mode_fixup(struct drm_crtc *crtc,
- 			continue;
- 		radeon_encoder = to_radeon_encoder(encoder);
- 		connector = radeon_get_connector_for_encoder(encoder);
--		radeon_connector = to_radeon_connector(connector);
+diff --git a/drivers/tty/serial/omap-serial.c b/drivers/tty/serial/omap-serial.c
+index 21fc9b3a27cfa..debd2c93ca3c9 100644
+--- a/drivers/tty/serial/omap-serial.c
++++ b/drivers/tty/serial/omap-serial.c
+@@ -497,10 +497,13 @@ static unsigned int check_modem_status(struct uart_omap_port *up)
+ static void serial_omap_rlsi(struct uart_omap_port *up, unsigned int lsr)
+ {
+ 	unsigned int flag;
+-	unsigned char ch = 0;
  
- 		if (first) {
- 			/* set scaling */
++	/*
++	 * Read one data character out to avoid stalling the receiver according
++	 * to the table 23-246 of the omap4 TRM.
++	 */
+ 	if (likely(lsr & UART_LSR_DR))
+-		ch = serial_in(up, UART_RX);
++		serial_in(up, UART_RX);
+ 
+ 	up->port.icount.rx++;
+ 	flag = TTY_NORMAL;
 -- 
 2.20.1
 
