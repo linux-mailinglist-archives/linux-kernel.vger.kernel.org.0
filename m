@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23E7215F0F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:59:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBD1615F0F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:59:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388823AbgBNR66 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:58:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39152 "EHLO mail.kernel.org"
+        id S2388050AbgBNR6v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:58:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388019AbgBNP4z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:56:55 -0500
+        id S2388048AbgBNP45 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:56:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFB092086A;
-        Fri, 14 Feb 2020 15:56:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A1ED2067D;
+        Fri, 14 Feb 2020 15:56:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695814;
-        bh=hJczrfq4NJKGpubcEvXSXTXvYRR3QAEZ6ENaMdbMA0s=;
+        s=default; t=1581695817;
+        bh=C/86LdAUnf6DSfPmYMylVq8bsdHu+MbWX9X+ufmRigQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PJ+vawhykcraPPXM7k2ZPZx6L4M7KXaSu0feD+U44T209NyqofjS6Uju4RH5ZBXw6
-         DMY6uZD+aQgzlX/bup91h7RikRzyLMCLqeDsR3IenAO/acYeqpPlG4TnyMXF7ckbL/
-         VzbtC5WAzcwOYBfLaJS91SYWNuElKck3BFQDpSqk=
+        b=gN2QL8mZFmg1j9O+aQ6naJYONGWRdlAaY03DxWu65qHo4eEOmLRnD+7bmfME/6ApR
+         GCCN5FXQrPg2TuOAm12qTNprHmwjjwpZNaS52fLXWzoKTzQVzEjIugGJqZYLcthUbk
+         2iInh6RQwkkyp3PJClmCSPm4cqdZAYZ0Xa04ZNRY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sergey Gorenko <sergeygo@mellanox.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 372/542] IB/srp: Never use immediate data if it is disabled by a user
-Date:   Fri, 14 Feb 2020 10:46:04 -0500
-Message-Id: <20200214154854.6746-372-sashal@kernel.org>
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 5.5 374/542] f2fs: free sysfs kobject
+Date:   Fri, 14 Feb 2020 10:46:06 -0500
+Message-Id: <20200214154854.6746-374-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -44,50 +43,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sergey Gorenko <sergeygo@mellanox.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-[ Upstream commit 0fbb37dd82998b5c83355997b3bdba2806968ac7 ]
+[ Upstream commit 820d366736c949ffe698d3b3fe1266a91da1766d ]
 
-Some SRP targets that do not support specification SRP-2, put the garbage
-to the reserved bits of the SRP login response.  The problem was not
-detected for a long time because the SRP initiator ignored those bits. But
-now one of them is used as SRP_LOGIN_RSP_IMMED_SUPP. And it causes a
-critical error on the target when the initiator sends immediate data.
+Detected kmemleak.
 
-The ib_srp module has a use_imm_date parameter to enable or disable
-immediate data manually. But it does not help in the above case, because
-use_imm_date is ignored at handling the SRP login response. The problem is
-definitely caused by a bug on the target side, but the initiator's
-behavior also does not look correct.  The initiator should not use
-immediate data if use_imm_date is disabled by a user.
-
-This commit adds an additional checking of use_imm_date at the handling of
-SRP login response to avoid unexpected use of immediate data.
-
-Fixes: 882981f4a411 ("RDMA/srp: Add support for immediate data")
-Link: https://lore.kernel.org/r/20200115133055.30232-1-sergeygo@mellanox.com
-Signed-off-by: Sergey Gorenko <sergeygo@mellanox.com>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/ulp/srp/ib_srp.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/f2fs/sysfs.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/infiniband/ulp/srp/ib_srp.c b/drivers/infiniband/ulp/srp/ib_srp.c
-index b7f7a5f7bd986..cd1181c39ed29 100644
---- a/drivers/infiniband/ulp/srp/ib_srp.c
-+++ b/drivers/infiniband/ulp/srp/ib_srp.c
-@@ -2546,7 +2546,8 @@ static void srp_cm_rep_handler(struct ib_cm_id *cm_id,
- 	if (lrsp->opcode == SRP_LOGIN_RSP) {
- 		ch->max_ti_iu_len = be32_to_cpu(lrsp->max_ti_iu_len);
- 		ch->req_lim       = be32_to_cpu(lrsp->req_lim_delta);
--		ch->use_imm_data  = lrsp->rsp_flags & SRP_LOGIN_RSP_IMMED_SUPP;
-+		ch->use_imm_data  = srp_use_imm_data &&
-+			(lrsp->rsp_flags & SRP_LOGIN_RSP_IMMED_SUPP);
- 		ch->max_it_iu_len = srp_max_it_iu_len(target->cmd_sg_cnt,
- 						      ch->use_imm_data,
- 						      target->max_it_iu_size);
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 70945ceb9c0ca..5963316f391a5 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -786,4 +786,5 @@ void f2fs_unregister_sysfs(struct f2fs_sb_info *sbi)
+ 		remove_proc_entry(sbi->sb->s_id, f2fs_proc_root);
+ 	}
+ 	kobject_del(&sbi->s_kobj);
++	kobject_put(&sbi->s_kobj);
+ }
 -- 
 2.20.1
 
