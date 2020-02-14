@@ -2,231 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A08C515E5FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:45:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F10B015E609
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:46:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393900AbgBNQoy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:44:54 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:27817 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2393959AbgBNQov (ORCPT
+        id S2394104AbgBNQpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:45:11 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:37774 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389082AbgBNQpJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:44:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581698689;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=o1A1SrX1zBsASGrayq0vRC5S/HwSS0PwydKpbfc/Bgo=;
-        b=cTyOZDifK7ptB8oV6x2zEn7XURBRyQiAp5dpZ9TSzHw0LMD48pEfAqA7jk9IpRgpeMRfvC
-        814jUdNU5mrhrOBSNknSYgjC9AfdmCQ6wpAU+U4LzhqDCLeMD+bMLN+bVOyAxaUqNKn7uk
-        jkgyGBQR7jhggogKeqDePeqL2YhoDLw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-278-pBJfwSSoOaanm1qLVXdpgA-1; Fri, 14 Feb 2020 11:44:41 -0500
-X-MC-Unique: pBJfwSSoOaanm1qLVXdpgA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4BEA4DB62;
-        Fri, 14 Feb 2020 16:44:40 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 67C5B19C4F;
-        Fri, 14 Feb 2020 16:44:39 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH v2 2/4] libnvdimm/namespace: Enforce memremap_compat_align()
-References: <158155489850.3343782.2687127373754434980.stgit@dwillia2-desk3.amr.corp.intel.com>
-        <158155490897.3343782.14216276134794923581.stgit@dwillia2-desk3.amr.corp.intel.com>
-        <x49k14q5ezs.fsf@segfault.boston.devel.redhat.com>
-        <CAPcyv4hQouRNBcJ4uZ2mysr_aKstLhvUf66gRQ_3QoQNyOy72g@mail.gmail.com>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Fri, 14 Feb 2020 11:44:38 -0500
-In-Reply-To: <CAPcyv4hQouRNBcJ4uZ2mysr_aKstLhvUf66gRQ_3QoQNyOy72g@mail.gmail.com>
-        (Dan Williams's message of "Thu, 13 Feb 2020 14:43:28 -0800")
-Message-ID: <x49h7ztdsp5.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+        Fri, 14 Feb 2020 11:45:09 -0500
+Received: by mail-pj1-f68.google.com with SMTP id m13so4162708pjb.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 08:45:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=CPoNQ+Sf1fHspzF09NwteMM4WEWx0QsGsv6flTB39KM=;
+        b=rdWN8LwnE+yDBw0Yxnm8NrLJssyO0EPhZNDWZzVwZO3XCtHtou5Zh6h6hWv9EeCVTm
+         NpQHMImVRfOWB+7cIlNmX3PVT70LSzerCvNl2ceieb0MbKTzz5+oVv3w0AxQ149colJu
+         j2bV8cnIygPKg25FmMzM7VE31g2FdG6sf+UcF9ZnDO0+O9TM3/BKCO+zYpkYh1EeTSf4
+         kKruPVlp0XUX0WvUoMHQCtrahnz0rjYUMU6YIyMQcdY2aGcdIJb+CvwJqVLGYBIF4nCj
+         U298WiHSPB/vWH9hYfwXSm8IIndleNTKsUe/kbwAeOWybMbhwe9z8ls91081fzWjMTVe
+         1xxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=CPoNQ+Sf1fHspzF09NwteMM4WEWx0QsGsv6flTB39KM=;
+        b=K21GSiM6/B0kGTGww6a449hCKmzFcHRyf5E1yXZToYDpyr964VNbNgKgHot7K55grW
+         AeKUl5k5ZS4+3MO/dZ/qrbBAby3PbR8M4/0ZZqrndgvmKByd0POtJwNRoZEm2tr1RknN
+         XnbonI2pMXGyYxylOxcT7Cu0xs23rMSX0lxYzYamtM4NAxE95NtuMzt9TTJgB7huVIQ+
+         F3Cqnc3/Ku4mltAKP1emGZeCmyyvSlRx356R8KA0KJpV1jC4f+FKDWjO9GxkSY8eDSEP
+         WEzNN3UZbIE7I+834FIHSeUWMFrn7ijRhuhiH7xbqAzaO5iRf+Oh0C0Sk5lFcLGLm8Fk
+         gaNw==
+X-Gm-Message-State: APjAAAUjLkqg1rhZi9f3dbLUcxTFPnrR/qBoXgTGdjowWwOJEny7k27i
+        B07BlOHuq/+XKwVkm+2nzQ==
+X-Google-Smtp-Source: APXvYqxge33YQRmBtTCmBNT7WE1SwgFIMCYS29+b4FN3wZu5vaLM1r03WPyC7m/WSeA+ON98qNlyjw==
+X-Received: by 2002:a17:90a:102:: with SMTP id b2mr4673412pjb.64.1581698708825;
+        Fri, 14 Feb 2020 08:45:08 -0800 (PST)
+Received: from madhuparna-HP-Notebook.nitk.ac.in ([2409:4071:2305:77c6:fc5b:5bfd:1ab4:4848])
+        by smtp.gmail.com with ESMTPSA id 200sm7474682pfz.121.2020.02.14.08.45.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2020 08:45:08 -0800 (PST)
+From:   madhuparnabhowmik10@gmail.com
+To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        mark.rutland@arm.com
+Cc:     linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        joel@joelfernandes.org, frextrite@gmail.com,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+Subject: [PATCH RESEND] events:core.c: Use built-in RCU list checking
+Date:   Fri, 14 Feb 2020 22:14:54 +0530
+Message-Id: <20200214164454.19942-1-madhuparnabhowmik10@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dan Williams <dan.j.williams@intel.com> writes:
+From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
 
-> On Thu, Feb 13, 2020 at 1:55 PM Jeff Moyer <jmoyer@redhat.com> wrote:
->>
->> Dan Williams <dan.j.williams@intel.com> writes:
->>
->> > The pmem driver on PowerPC crashes with the following signature when
->> > instantiating misaligned namespaces that map their capacity via
->> > memremap_pages().
->> >
->> >     BUG: Unable to handle kernel data access at 0xc001000406000000
->> >     Faulting instruction address: 0xc000000000090790
->> >     NIP [c000000000090790] arch_add_memory+0xc0/0x130
->> >     LR [c000000000090744] arch_add_memory+0x74/0x130
->> >     Call Trace:
->> >      arch_add_memory+0x74/0x130 (unreliable)
->> >      memremap_pages+0x74c/0xa30
->> >      devm_memremap_pages+0x3c/0xa0
->> >      pmem_attach_disk+0x188/0x770
->> >      nvdimm_bus_probe+0xd8/0x470
->> >
->> > With the assumption that only memremap_pages() has alignment
->> > constraints, enforce memremap_compat_align() for
->> > pmem_should_map_pages(), nd_pfn, or nd_dax cases.
->> >
->> > Reported-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
->> > Cc: Jeff Moyer <jmoyer@redhat.com>
->> > Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
->> > Link: https://lore.kernel.org/r/158041477336.3889308.4581652885008605170.stgit@dwillia2-desk3.amr.corp.intel.com
->> > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
->> > ---
->> >  drivers/nvdimm/namespace_devs.c |   10 ++++++++++
->> >  1 file changed, 10 insertions(+)
->> >
->> > diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
->> > index 032dc61725ff..aff1f32fdb4f 100644
->> > --- a/drivers/nvdimm/namespace_devs.c
->> > +++ b/drivers/nvdimm/namespace_devs.c
->> > @@ -1739,6 +1739,16 @@ struct nd_namespace_common *nvdimm_namespace_common_probe(struct device *dev)
->> >               return ERR_PTR(-ENODEV);
->> >       }
->> >
->> > +     if (pmem_should_map_pages(dev) || nd_pfn || nd_dax) {
->> > +             struct nd_namespace_io *nsio = to_nd_namespace_io(&ndns->dev);
->> > +             resource_size_t start = nsio->res.start;
->> > +
->> > +             if (!IS_ALIGNED(start | size, memremap_compat_align())) {
->> > +                     dev_dbg(&ndns->dev, "misaligned, unable to map\n");
->> > +                     return ERR_PTR(-EOPNOTSUPP);
->> > +             }
->> > +     }
->> > +
->> >       if (is_namespace_pmem(&ndns->dev)) {
->> >               struct nd_namespace_pmem *nspm;
->> >
->>
->> Actually, I take back my ack.  :) This prevents a previously working
->> namespace from being successfully probed/setup.
->
-> Do you have a test case handy? I can see a potential gap with a
-> namespace that used internal padding to fix up the alignment.
+list_for_each_entry_rcu has built-in RCU and lock checking.
 
-# ndctl list -v -n namespace0.0
-[
-  {
-    "dev":"namespace0.0",
-    "mode":"fsdax",
-    "map":"dev",
-    "size":52846133248,
-    "uuid":"b99f6f6a-2909-4189-9bfa-6eeebd95d40e",
-    "raw_uuid":"aff43777-015b-493f-bbf9-7c7b0fe33519",
-    "sector_size":512,
-    "align":4096,
-    "blockdev":"pmem0",
-    "numa_node":0
-  }
-]
+Pass cond argument to list_for_each_entry_rcu() to silence
+false lockdep warning when CONFIG_PROVE_RCU_LIST is enabled
+by default.
 
-# cat /sys/bus/nd/devices/region0/mappings
-6
+Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+---
+ kernel/events/core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-# grep namespace0.0 /proc/iomem
-  1860000000-24e0003fff : namespace0.0
-
-> The goal of this check is to catch cases that are just going to fail
-> devm_memremap_pages(), and the expectation is that it could not have
-> worked before unless it was ported from another platform, or someone
-> flipped the page-size switch on PowerPC.
-
-On x86, creation and probing of the namespace worked fine before this
-patch.  What *doesn't* work is creating another fsdax namespace after
-this one.  sector mode namespaces can still be created, though:
-
-[
-  {
-    "dev":"namespace0.1",
-    "mode":"sector",
-    "size":53270768640,
-    "uuid":"67ea2c74-d4b1-4fc9-9c1a-a7d2a6c2a4a7",
-    "sector_size":512,
-    "blockdev":"pmem0.1s"
-  },
-
-# grep namespace0.1 /proc/iomem
-  24e0004000-3160007fff : namespace0.1
-
->> I thought we were only going to enforce the alignment for a newly
->> created namespace?  This should only check whether the alignment
->> works for the current platform.
->
-> The model is a new default 16MB alignment is enforced at creation
-> time, but if you need to support previously created namespaces then
-> you can manually trim that alignment requirement to no less than
-> memremap_compat_align() because that's the point at which
-> devm_memremap_pages() will start failing or crashing.
-
-The problem is that older kernels did not enforce alignment to
-SUBSECTION_SIZE.  We shouldn't prevent those namespaces from being
-accessed.  The probe itself will not cause the WARN_ON to trigger.
-Creating new namespaces at misaligned addresses could, but you've
-altered the free space allocation such that we won't hit that anymore.
-
-If I drop this patch, the probe will still work, and allocating new
-namespaces will also work:
-
-# ndctl list
-[
-  {
-    "dev":"namespace0.1",
-    "mode":"sector",
-    "size":53270768640,
-    "uuid":"67ea2c74-d4b1-4fc9-9c1a-a7d2a6c2a4a7",
-    "sector_size":512,
-    "blockdev":"pmem0.1s"
-  },
-  {
-    "dev":"namespace0.0",
-    "mode":"fsdax",
-    "map":"dev",
-    "size":52846133248,
-    "uuid":"b99f6f6a-2909-4189-9bfa-6eeebd95d40e",
-    "sector_size":512,
-    "align":4096,
-    "blockdev":"pmem0"
-  }
-]
- ndctl create-namespace -m fsdax -s 36g -r 0
-{
-  "dev":"namespace0.2",
-  "mode":"fsdax",
-  "map":"dev",
-  "size":"35.44 GiB (38.05 GB)",
-  "uuid":"7893264c-c7ef-4cbe-95e1-ccf2aff041fb",
-  "sector_size":512,
-  "align":2097152,
-  "blockdev":"pmem0.2"
-}
-
-proc/iomem:
-
-1860000000-d55fffffff : Persistent Memory
-  1860000000-24e0003fff : namespace0.0
-  24e0004000-3160007fff : namespace0.1
-  3162000000-3a61ffffff : namespace0.2
-
-So, maybe the right thing is to make memremap_compat_align return
-PAGE_SIZE for x86 instead of SUBSECTION_SIZE?
-
--Jeff
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 4ff86d57f9e5..04d28f3eb8df 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -3760,7 +3760,8 @@ static void perf_adjust_freq_unthr_context(struct perf_event_context *ctx,
+ 	raw_spin_lock(&ctx->lock);
+ 	perf_pmu_disable(ctx->pmu);
+ 
+-	list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
++	list_for_each_entry_rcu(event, &ctx->event_list, event_entry,
++				lockdep_is_held(&ctx->lock)) {
+ 		if (event->state != PERF_EVENT_STATE_ACTIVE)
+ 			continue;
+ 
+-- 
+2.17.1
 
