@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E81B15F151
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:03:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91DA515F12C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:03:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389358AbgBNSBa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:01:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37746 "EHLO mail.kernel.org"
+        id S2387728AbgBNP4R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:56:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37808 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731843AbgBNP4K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:56:10 -0500
+        id S2387689AbgBNP4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:56:13 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 872462086A;
-        Fri, 14 Feb 2020 15:56:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 424642082F;
+        Fri, 14 Feb 2020 15:56:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695770;
-        bh=abcxH2FDkY67ywKz9OWa3xtvSrEUbS2mzMluiL1bXfE=;
+        s=default; t=1581695773;
+        bh=ab0ALA7QeyFFt8xfeX1sv16lhosGZFNhWcq5ie5xykg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gy2I3QzMmn7ZMpyXRsQj8CbZFDydmVIUDh6fagBdSvKkEryCsrkYm6TrijOdhAbO5
-         uVHRum4XnKFC8hskrzffT5EDiV6Sewe6+SI23ZEQvNpPy2t7ruQXj8jVIS+8CKCyl2
-         eKEchITBYEUMWz0erKoUBzDsXPhdEyjULGGuGduA=
+        b=t4yNxxr24iIUR2JOQjzKnwK9IDxLmB7x34u8eQg8PTuLTtDeTUkfKDg7A8UnO6lvK
+         ZllLSPGFbCVBZhtzNPgvbQOawvMHUq4zUztNxJNkj46MYXoM8+6BchDTSbUHBhJOk8
+         hTjvqi2w8IMfcQCIULqXvE2KXLh1fm23pEE8NaRs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chen Zhou <chenzhou10@huawei.com>, Hulk Robot <hulkci@huawei.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, alsa-devel@alsa-project.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.5 336/542] ASoC: atmel: fix build error with CONFIG_SND_ATMEL_SOC_DMA=m
-Date:   Fri, 14 Feb 2020 10:45:28 -0500
-Message-Id: <20200214154854.6746-336-sashal@kernel.org>
+Cc:     Zhengyuan Liu <liuzhengyuan@kylinos.cn>,
+        Song Liu <songliubraving@fb.com>,
+        Sasha Levin <sashal@kernel.org>, linux-raid@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 338/542] raid6/test: fix a compilation warning
+Date:   Fri, 14 Feb 2020 10:45:30 -0500
+Message-Id: <20200214154854.6746-338-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -44,41 +43,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen Zhou <chenzhou10@huawei.com>
+From: Zhengyuan Liu <liuzhengyuan@kylinos.cn>
 
-[ Upstream commit 8fea78029f5e6ed734ae1957bef23cfda1af4354 ]
+[ Upstream commit 5e5ac01c2b8802921fee680518a986011cb59820 ]
 
-If CONFIG_SND_ATMEL_SOC_DMA=m, build error:
+The compilation warning is redefination showed as following:
 
-sound/soc/atmel/atmel_ssc_dai.o: In function `atmel_ssc_set_audio':
-(.text+0x7cd): undefined reference to `atmel_pcm_dma_platform_register'
+        In file included from tables.c:2:
+        ../../../include/linux/export.h:180: warning: "EXPORT_SYMBOL" redefined
+         #define EXPORT_SYMBOL(sym)  __EXPORT_SYMBOL(sym, "")
 
-Function atmel_pcm_dma_platform_register is defined under
-CONFIG SND_ATMEL_SOC_DMA, so select SND_ATMEL_SOC_DMA in
-CONFIG SND_ATMEL_SOC_SSC, same to CONFIG_SND_ATMEL_SOC_PDC.
+        In file included from tables.c:1:
+        ../../../include/linux/raid/pq.h:61: note: this is the location of the previous definition
+         #define EXPORT_SYMBOL(sym)
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
-Link: https://lore.kernel.org/r/20200113133242.144550-1-chenzhou10@huawei.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 69a94abb82ee ("export.h, genksyms: do not make genksyms calculate CRC of trimmed symbols")
+Signed-off-by: Zhengyuan Liu <liuzhengyuan@kylinos.cn>
+Signed-off-by: Song Liu <songliubraving@fb.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/atmel/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ include/linux/raid/pq.h | 2 ++
+ lib/raid6/mktables.c    | 2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/atmel/Kconfig b/sound/soc/atmel/Kconfig
-index f118c229ed829..d1dc8e6366dcb 100644
---- a/sound/soc/atmel/Kconfig
-+++ b/sound/soc/atmel/Kconfig
-@@ -19,6 +19,8 @@ config SND_ATMEL_SOC_DMA
+diff --git a/include/linux/raid/pq.h b/include/linux/raid/pq.h
+index 0b6e7ad9cd2a8..e0ddb47f44020 100644
+--- a/include/linux/raid/pq.h
++++ b/include/linux/raid/pq.h
+@@ -58,7 +58,9 @@ extern const char raid6_empty_zero_page[PAGE_SIZE];
+ #define enable_kernel_altivec()
+ #define disable_kernel_altivec()
  
- config SND_ATMEL_SOC_SSC
- 	tristate
-+	select SND_ATMEL_SOC_DMA
-+	select SND_ATMEL_SOC_PDC
++#undef	EXPORT_SYMBOL
+ #define EXPORT_SYMBOL(sym)
++#undef	EXPORT_SYMBOL_GPL
+ #define EXPORT_SYMBOL_GPL(sym)
+ #define MODULE_LICENSE(licence)
+ #define MODULE_DESCRIPTION(desc)
+diff --git a/lib/raid6/mktables.c b/lib/raid6/mktables.c
+index 9c485df1308fb..f02e10fa62381 100644
+--- a/lib/raid6/mktables.c
++++ b/lib/raid6/mktables.c
+@@ -56,8 +56,8 @@ int main(int argc, char *argv[])
+ 	uint8_t v;
+ 	uint8_t exptbl[256], invtbl[256];
  
- config SND_ATMEL_SOC_SSC_PDC
- 	tristate "SoC PCM DAI support for AT91 SSC controller using PDC"
+-	printf("#include <linux/raid/pq.h>\n");
+ 	printf("#include <linux/export.h>\n");
++	printf("#include <linux/raid/pq.h>\n");
+ 
+ 	/* Compute multiplication table */
+ 	printf("\nconst u8  __attribute__((aligned(256)))\n"
 -- 
 2.20.1
 
