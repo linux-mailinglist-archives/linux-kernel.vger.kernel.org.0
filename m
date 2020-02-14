@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E746015E9EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:10:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1837215EA37
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:12:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403921AbgBNQNo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:13:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41048 "EHLO mail.kernel.org"
+        id S2394490AbgBNRMX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:12:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392104AbgBNQNF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:13:05 -0500
+        id S2392106AbgBNQNG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:13:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5308246A4;
-        Fri, 14 Feb 2020 16:13:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D6DE2469F;
+        Fri, 14 Feb 2020 16:13:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696784;
-        bh=CzjAbN0XKQeBrgO/A8BIBteoB3pvZMtiDwAODdAw5Rg=;
+        s=default; t=1581696785;
+        bh=oXto1Jy1Hz0pYiNQMzQhCG7uLEsa9omy0lSjRgjVriw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vJnl+fSfXEhE+wPHyjklSDiNgj3C9AngXWCJxF3wF24CXIDGPk4Uu7kK+bwIa4bfy
-         ezpBLvBCVkagWhG4LLDGe9CY6CuJhrJ65ghUE56fdlXwfC30j26a7QccnQCilIknE2
-         ZtvZmaI7uMMDKKl6e4tAOeEsfP3i7YVy3Eko5cNg=
+        b=U6Hf+rfHJgTbd8jGwAplXNyr1/gVmo6TQncG9cZPjCoN/PsmmdNBt9SYLm7HdiscA
+         teAgsXbAWb0lfhksW9+XD3QCOiHqI+Y0mzCeSCQdlaEM+3e+CCzyM+MPRPjSQS/8Hm
+         DFIAo99TXrzUWbXC5S9KzaFujmaFYcCXkeNLG+GQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     yu kuai <yukuai3@huawei.com>,
         Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 060/252] drm/amdgpu: remove set but not used variable 'amdgpu_connector'
-Date:   Fri, 14 Feb 2020 11:08:35 -0500
-Message-Id: <20200214161147.15842-60-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 061/252] drm/amdgpu: remove set but not used variable 'invalid'
+Date:   Fri, 14 Feb 2020 11:08:36 -0500
+Message-Id: <20200214161147.15842-61-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -47,43 +47,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: yu kuai <yukuai3@huawei.com>
 
-[ Upstream commit 4f2922d12d6c63d0f4aa4e859ad95aee6d0d4ea0 ]
+[ Upstream commit 9e089a29c696d86d26e79737bafbce94738fb462 ]
 
 Fixes gcc '-Wunused-but-set-variable' warning:
 
-drivers/gpu/drm/amd/amdgpu/amdgpu_display.c: In function
-‘amdgpu_display_crtc_scaling_mode_fixup’:
-drivers/gpu/drm/amd/amdgpu/amdgpu_display.c:693:27: warning: variable
-‘amdgpu_connector’ set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c: In function
+‘amdgpu_amdkfd_evict_userptr’:
+drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c:1665:6: warning:
+variable ‘invalid’ set but not used [-Wunused-but-set-variable]
 
-Fixes: d38ceaf99ed0 ("drm/amdgpu: add core driver (v4)")
+'invalid' is never used, so can be removed. Thus 'atomic_inc_return'
+can be replaced as 'atomic_inc'
+
+Fixes: 5ae0283e831a ("drm/amdgpu: Add userptr support for KFD")
 Signed-off-by: yu kuai <yukuai3@huawei.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_display.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-index 686a26de50f91..a49767e60af04 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-@@ -667,7 +667,6 @@ bool amdgpu_display_crtc_scaling_mode_fixup(struct drm_crtc *crtc,
- 	struct amdgpu_crtc *amdgpu_crtc = to_amdgpu_crtc(crtc);
- 	struct amdgpu_encoder *amdgpu_encoder;
- 	struct drm_connector *connector;
--	struct amdgpu_connector *amdgpu_connector;
- 	u32 src_v = 1, dst_v = 1;
- 	u32 src_h = 1, dst_h = 1;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
+index f92597c292fe5..370bdf5087291 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
+@@ -1639,10 +1639,10 @@ int amdgpu_amdkfd_evict_userptr(struct kgd_mem *mem,
+ 				struct mm_struct *mm)
+ {
+ 	struct amdkfd_process_info *process_info = mem->process_info;
+-	int invalid, evicted_bos;
++	int evicted_bos;
+ 	int r = 0;
  
-@@ -679,7 +678,6 @@ bool amdgpu_display_crtc_scaling_mode_fixup(struct drm_crtc *crtc,
- 			continue;
- 		amdgpu_encoder = to_amdgpu_encoder(encoder);
- 		connector = amdgpu_get_connector_for_encoder(encoder);
--		amdgpu_connector = to_amdgpu_connector(connector);
- 
- 		/* set scaling */
- 		if (amdgpu_encoder->rmx_type == RMX_OFF)
+-	invalid = atomic_inc_return(&mem->invalid);
++	atomic_inc(&mem->invalid);
+ 	evicted_bos = atomic_inc_return(&process_info->evicted_bos);
+ 	if (evicted_bos == 1) {
+ 		/* First eviction, stop the queues */
 -- 
 2.20.1
 
