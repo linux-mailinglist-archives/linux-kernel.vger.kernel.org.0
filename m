@@ -2,53 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C323D15CFC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 03:16:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ECF415CFDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 03:19:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728553AbgBNCQc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 21:16:32 -0500
-Received: from gentwo.org ([3.19.106.255]:41500 "EHLO gentwo.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728052AbgBNCQc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 21:16:32 -0500
-Received: by gentwo.org (Postfix, from userid 1002)
-        id 94F033EC23; Fri, 14 Feb 2020 02:16:31 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by gentwo.org (Postfix) with ESMTP id 942983E871;
-        Fri, 14 Feb 2020 02:16:31 +0000 (UTC)
-Date:   Fri, 14 Feb 2020 02:16:31 +0000 (UTC)
-From:   Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@www.lameter.com
-To:     Andrew Morton <akpm@linux-foundation.org>
-cc:     Wen Yang <wenyang@linux.alibaba.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Xunlei Pang <xlpang@linux.alibaba.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/slub: Detach node lock from counting free objects
-In-Reply-To: <20200212145615.3518e29ec90d580817c14dc8@linux-foundation.org>
-Message-ID: <alpine.DEB.2.21.2002140214480.4786@www.lameter.com>
-References: <20200201031502.92218-1-wenyang@linux.alibaba.com> <5373ce28-c369-4e40-11dd-b269e4d2cb24@linux.alibaba.com> <alpine.DEB.2.21.2002082138070.21534@www.lameter.com> <20200212145615.3518e29ec90d580817c14dc8@linux-foundation.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1728300AbgBNCT2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 21:19:28 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:47078 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728173AbgBNCT2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 21:19:28 -0500
+Received: by mail-pg1-f194.google.com with SMTP id b35so4003981pgm.13
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 18:19:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=4I810uUcCa94O8o1UlAKbQD3L4Wlk5QU1lNCuTSmZdI=;
+        b=HNlgbyRHlY/ab/PWmEWgT4cNJuYfK/UrcM4xAUz5DHiHl3iEKComJXj9/oidVspEIA
+         DCMF2HH+XEZSU19biMDPrjfDXICuX+k+4RGkdhw9sClXrrpIXtatlhQ4JuKp4STV4cBh
+         P+nqcdDN4PnPTZ4rMxUk3lyf14hiUjEfOKCiOfiQrvk+8XTJ7+Yp+EP//dnTurvXygIp
+         oOcmpzUF4ZcP+c/6a5evHAVrBXlbqLmmieiPrpx0IxaPuE71GnFVcXPvnJgrIoE2Yt52
+         zrlMw4aHRj13k+9w9oK1ETtBGpJwPHQCiXsyOO2Gm1wb/DOVZWpRHdW2miis96BzxbaG
+         KaVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=4I810uUcCa94O8o1UlAKbQD3L4Wlk5QU1lNCuTSmZdI=;
+        b=imSLhY/8xNzC+E/0zxvdo668OHnUz0D9VvZBvD53jIIgc5hjfZuIvlyPT5qUe7b8fv
+         3cxmuNKY0QY5s3ztG3pPXHTKMl+0puV/jO75xm/cX4ml5n5uilQmZXeqFZuYZS39gHZk
+         4h0lMPPoMSbbNaRgdXcENt6qb7JeneUf3QIi33H7+kObwCHjprrgj4fPO4ZnDFosM8Qv
+         L2nkvcgRnjBriDOJZ1Afi3UikFr6Jr5Wv/5lycgOR6R5M8Kq+O5IED05/hP7fEoNei8w
+         yJxIxSCusEWtZlUHgsXT8UAr7CvNnq/n4qQH1+nGypPwg9HIjKOD3IVZh7dyoJr+kzTS
+         X6Fw==
+X-Gm-Message-State: APjAAAX4Ohi+eXxHVqfdSkyUNmKAFUjP6djxyweqThmsIzZje4gmJQkk
+        XWN2v55amHlEDqjcAwz5t4vViQ==
+X-Google-Smtp-Source: APXvYqxl5UE4iFmjPVhmfPoYKTGz0wrRqKh1H2y/RNSHDp/d25/zZFyvCC8AfTu43QLdADGSD1EBzw==
+X-Received: by 2002:aa7:84cd:: with SMTP id x13mr1014993pfn.130.1581646766063;
+        Thu, 13 Feb 2020 18:19:26 -0800 (PST)
+Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id b18sm4698863pfb.116.2020.02.13.18.19.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2020 18:19:25 -0800 (PST)
+Date:   Thu, 13 Feb 2020 18:19:22 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Alexander Graf <agraf@suse.de>, Rob Herring <robh@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Todd Kjos <tkjos@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pm@vger.kernel.org
+Subject: Re: [RFC][PATCH] driver core: Extend returning EPROBE_DEFER for two
+ minutes after late_initcall
+Message-ID: <20200214021922.GO1443@yoga>
+References: <20200214004413.12450-1-john.stultz@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200214004413.12450-1-john.stultz@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Feb 2020, Andrew Morton wrote:
+On Thu 13 Feb 16:44 PST 2020, John Stultz wrote:
 
-> : reading "/proc/slabinfo" can possibly block the slab allocation on
-> : another CPU for a while, 200ms in extreme cases
->
-> That was bad of us.  It would be good to stop doing this.
+> Due to commit e01afc3250255 ("PM / Domains: Stop deferring probe
+> at the end of initcall"), along with commit 25b4e70dcce9
+> ("driver core: allow stopping deferred probe after init") after
+> late_initcall, drivers will stop getting EPROBE_DEFER, and
+> instead see an error causing the driver to fail to load.
+> 
+> That change causes trouble when trying to use many clk drivers
+> as modules, as the clk modules may not load until much later
+> after init has started. If a dependent driver loads and gets an
+> error instead of EPROBE_DEFER, it won't try to reload later when
+> the dependency is met, and will thus fail to load.
+> 
+> Instead of reverting that patch, this patch tries to extend the
+> time that EPROBE_DEFER is retruned by two minutes, to (hopefully)
+> ensure that everything has had a chance to load.
+> 
+> Specifically, on db845c, this change allows us to set
+> SDM_GPUCC_845, QCOM_CLK_RPMH and COMMON_CLK_QCOM as modules and
+> get a working system, where as without it the display will fail
+> to load.
 
-The count is not needed for any operations. Just for the slabinfo output.
-The value has no operational value for the allocator itself. So why use
-extra logic to track it in potentially performance critical paths?
+The purpose of 25b4e70dcce9 ("driver core: allow stopping deferred probe
+after init") is to ensure that when the kernel boots with a DeviceTree
+blob that references a resource (power-domain in this case) that either
+hasn't been compiled in, or simply doesn't exist yet, it should continue
+to boot - under the assumption that these resources probably aren't
+needed to provide a functional system.
 
-One could estimate the number of objects from the number of allocated
-slabs instead?
+I don't think your patch maintains this behavior, because when userspace
+kicks in and load kernel modules during the first two minutes they will
+all end up in the probe deferral list. Past two minutes any event that
+registers a new driver (i.e. manual intervention) will kick of a new
+wave of probing, which will now continue as expected, ignoring any
+power-domains that is yet to be probed (either because they don't exist
+or they are further down the probe deferral list).
 
+You can improve the situation somewhat by calling
+driver_deferred_probe_trigger() in your
+deferred_initcall_done_work_func(), to remove the need for human
+intervention. But the outcome will still depend on the order in
+deferred_probe_active_list.
+
+
+
+That said, your patch does resolve an important problem for me!
+
+We have a number of drivers providing power-domains that are registered
+subject to timing in interaction with co-processors. So with a
+sufficiently small kernel (e.g. heavy use of kernel modules) it's likely
+that these are registered past late_initcall.
+
+Your extension of this to two minutes past late_initcall will for sure
+be sufficient to avoid this issue.
+
+Regards,
+Bjorn
+
+> 
+> Cc: Alexander Graf <agraf@suse.de>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Kevin Hilman <khilman@kernel.org>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Len Brown <len.brown@intel.com>
+> Cc: Todd Kjos <tkjos@google.com>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: linux-pm@vger.kernel.org
+> Fixes: e01afc3250255 ("PM / Domains: Stop deferring probe at the end of initcall")
+> Fixes: 25b4e70dcce9 ("driver core: allow stopping deferred probe after init")
+> Signed-off-by: John Stultz <john.stultz@linaro.org>
+> ---
+>  drivers/base/dd.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> index b25bcab2a26b..35ebae8b65be 100644
+> --- a/drivers/base/dd.c
+> +++ b/drivers/base/dd.c
+> @@ -311,6 +311,12 @@ static void deferred_probe_timeout_work_func(struct work_struct *work)
+>  }
+>  static DECLARE_DELAYED_WORK(deferred_probe_timeout_work, deferred_probe_timeout_work_func);
+>  
+> +static void deferred_initcall_done_work_func(struct work_struct *work)
+> +{
+> +	initcalls_done = true;
+> +}
+> +static DECLARE_DELAYED_WORK(deferred_initcall_done_work, deferred_initcall_done_work_func);
+> +
+>  /**
+>   * deferred_probe_initcall() - Enable probing of deferred devices
+>   *
+> @@ -327,7 +333,7 @@ static int deferred_probe_initcall(void)
+>  	driver_deferred_probe_trigger();
+>  	/* Sort as many dependencies as possible before exiting initcalls */
+>  	flush_work(&deferred_probe_work);
+> -	initcalls_done = true;
+> +	schedule_delayed_work(&deferred_initcall_done_work, 120 * HZ);
+>  
+>  	/*
+>  	 * Trigger deferred probe again, this time we won't defer anything
+> -- 
+> 2.17.1
+> 
