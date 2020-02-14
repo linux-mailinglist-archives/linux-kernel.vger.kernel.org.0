@@ -2,45 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CC5D15E1CC
+	by mail.lfdr.de (Postfix) with ESMTP id 9699515E1CD
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:20:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405230AbgBNQUd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:20:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52510 "EHLO mail.kernel.org"
+        id S2392870AbgBNQUg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:20:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392798AbgBNQT1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:19:27 -0500
+        id S2404993AbgBNQT3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:19:29 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42E1224718;
-        Fri, 14 Feb 2020 16:19:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B8372470B;
+        Fri, 14 Feb 2020 16:19:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697166;
-        bh=MER3F+zK08+jgmeAuCAce7UgS5Ekz7pQQqRlzv2/Bb4=;
+        s=default; t=1581697168;
+        bh=IBGB+xDX7Tk9f82+ViaLQcfskmpjmicN/oxDPAoTq6I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wl1QegLbgbHPTK4UeYP1Ln+kWl3aFK1FyW9H4cYHtLagv5ORNCkHR0+h27utsz92g
-         WrmCxHxTajBwZL8DjOL7FG727lh7B9UJc9WMeWrZg5poLOcUSjSzcokmO90qSLfRSN
-         +q17JG/r1P+Suq8aBmRPAm9mxUnK3DVvFMOFMdoM=
+        b=B3YW+iOn1bt7w0FlbjjQihtN3ne6dWQPCCF/ftYvS9gfQJP6tgICqe6i70+FYwp5q
+         6DYqLUtsVnnQzL24yZz9FkghiTfgJwP/YupEV+UxqQh/2U11rGYwO9hEsYuQbEmeKF
+         qRq0NS1dEyzMh5qfcNu5Yca8pNZYazEpGS9V7TpQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Shile Zhang <shile.zhang@linux.alibaba.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Borislav Petkov <bp@alien8.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 101/186] x86/unwind/orc: Fix !CONFIG_MODULES build warning
-Date:   Fri, 14 Feb 2020 11:15:50 -0500
-Message-Id: <20200214161715.18113-101-sashal@kernel.org>
+Cc:     Chen Zhou <chenzhou10@huawei.com>, Hulk Robot <hulkci@huawei.com>,
+        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.14 103/186] drm/gma500: remove set but not used variables 'hist_reg'
+Date:   Fri, 14 Feb 2020 11:15:52 -0500
+Message-Id: <20200214161715.18113-103-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161715.18113-1-sashal@kernel.org>
 References: <20200214161715.18113-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -49,50 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shile Zhang <shile.zhang@linux.alibaba.com>
+From: Chen Zhou <chenzhou10@huawei.com>
 
-[ Upstream commit 22a7fa8848c5e881d87ef2f7f3c2ea77b286e6f9 ]
+[ Upstream commit 72f775611daf3ce20358388facbaf11f22899fa2 ]
 
-To fix follwowing warning due to ORC sort moved to build time:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-  arch/x86/kernel/unwind_orc.c:210:12: warning: ‘orc_sort_cmp’ defined but not used [-Wunused-function]
-  arch/x86/kernel/unwind_orc.c:190:13: warning: ‘orc_sort_swap’ defined but not used [-Wunused-function]
+drivers/gpu/drm/gma500/psb_irq.c: In function psb_irq_turn_off_dpst:
+drivers/gpu/drm/gma500/psb_irq.c:473:6:
+	warning: variable hist_reg set but not used [-Wunused-but-set-variable]
 
-Signed-off-by: Shile Zhang <shile.zhang@linux.alibaba.com>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/c9c81536-2afc-c8aa-c5f8-c7618ecd4f54@linux.alibaba.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+Signed-off-by: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20191227114811.14907-1-chenzhou10@huawei.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/unwind_orc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/gma500/psb_irq.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/unwind_orc.c b/arch/x86/kernel/unwind_orc.c
-index 3bbb399f7ead3..5ac0e0359b668 100644
---- a/arch/x86/kernel/unwind_orc.c
-+++ b/arch/x86/kernel/unwind_orc.c
-@@ -131,6 +131,8 @@ static struct orc_entry *orc_find(unsigned long ip)
- 	return orc_module_find(ip);
- }
- 
-+#ifdef CONFIG_MODULES
-+
- static void orc_sort_swap(void *_a, void *_b, int size)
+diff --git a/drivers/gpu/drm/gma500/psb_irq.c b/drivers/gpu/drm/gma500/psb_irq.c
+index f75f199c84311..518d7b4456bf1 100644
+--- a/drivers/gpu/drm/gma500/psb_irq.c
++++ b/drivers/gpu/drm/gma500/psb_irq.c
+@@ -471,12 +471,11 @@ void psb_irq_turn_off_dpst(struct drm_device *dev)
  {
- 	struct orc_entry *orc_a, *orc_b;
-@@ -173,7 +175,6 @@ static int orc_sort_cmp(const void *_a, const void *_b)
- 	return orc_a->sp_reg == ORC_REG_UNDEFINED ? -1 : 1;
- }
+ 	struct drm_psb_private *dev_priv =
+ 	    (struct drm_psb_private *) dev->dev_private;
+-	u32 hist_reg;
+ 	u32 pwm_reg;
  
--#ifdef CONFIG_MODULES
- void unwind_module_init(struct module *mod, void *_orc_ip, size_t orc_ip_size,
- 			void *_orc, size_t orc_size)
- {
+ 	if (gma_power_begin(dev, false)) {
+ 		PSB_WVDC32(0x00000000, HISTOGRAM_INT_CONTROL);
+-		hist_reg = PSB_RVDC32(HISTOGRAM_INT_CONTROL);
++		PSB_RVDC32(HISTOGRAM_INT_CONTROL);
+ 
+ 		psb_disable_pipestat(dev_priv, 0, PIPE_DPST_EVENT_ENABLE);
+ 
 -- 
 2.20.1
 
