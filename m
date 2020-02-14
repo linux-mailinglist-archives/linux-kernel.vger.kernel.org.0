@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C771715EEF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:45:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00D4015EF22
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:46:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389472AbgBNQCu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:02:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48834 "EHLO mail.kernel.org"
+        id S2389469AbgBNRqF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:46:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389376AbgBNQCb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:02:31 -0500
+        id S2389383AbgBNQCc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:02:32 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4711222C2;
-        Fri, 14 Feb 2020 16:02:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E8F12067D;
+        Fri, 14 Feb 2020 16:02:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696150;
-        bh=rFOELsaO4yvZI6+IqnVAnJzFvKetvArBL8zQbNS0zxA=;
+        s=default; t=1581696151;
+        bh=XVGy6iK7CadxPsP1+MFoAhGr6E5YoTKUWdF1RoQobYU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Mle2Pvt7xXplMmDeyOloduhphXBSLy7kCgnS5wwTi0CAMvpU3zmbQovEK6vobu9Gt
-         StffAbKJL3XffjB9E3YxnSVkUF7QOtSzRX4+jBzvqJ26o7rFuV0HK84GjFtETzCSv/
-         1frnSvS+8DO8A+rsqYYcnSgGON4fysgfwMbVhX/A=
+        b=UqmTaKr/UTGz7pKqAeYzoqg+Y922tMLLqhYDwp9I+A+/C4mNYslLifUqfEDNBmucH
+         Wtn6uTI1BxI0WlkTPrbYl4b2/hKG7Ft/Xe+ovuUUsbKy0YqO/9ofP6d0MmY7h4KE4N
+         gutnu0hEgS1eoswg8h6Zm5K7zbwcWCLXxu9Jl+RQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     John Ogness <john.ogness@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Petr Mladek <pmladek@suse.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.4 030/459] printk: fix exclusive_console replaying
-Date:   Fri, 14 Feb 2020 10:54:40 -0500
-Message-Id: <20200214160149.11681-30-sashal@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.4 031/459] drm/mipi_dbi: Fix off-by-one bugs in mipi_dbi_blank()
+Date:   Fri, 14 Feb 2020 10:54:41 -0500
+Message-Id: <20200214160149.11681-31-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -44,56 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Ogness <john.ogness@linutronix.de>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit def97da136515cb289a14729292c193e0a93bc64 ]
+[ Upstream commit 2ce18249af5a28031b3f909cfafccc88ea966c9d ]
 
-Commit f92b070f2dc8 ("printk: Do not miss new messages when replaying
-the log") introduced a new variable @exclusive_console_stop_seq to
-store when an exclusive console should stop printing. It should be
-set to the @console_seq value at registration. However, @console_seq
-is previously set to @syslog_seq so that the exclusive console knows
-where to begin. This results in the exclusive console immediately
-reactivating all the other consoles and thus repeating the messages
-for those consoles.
+When configuring the frame memory window, the last column and row
+numbers are written to the column resp. page address registers.  These
+numbers are thus one less than the actual window width resp. height.
 
-Set @console_seq after @exclusive_console_stop_seq has stored the
-current @console_seq value.
+While this is handled correctly in mipi_dbi_fb_dirty() since commit
+03ceb1c8dfd1e293 ("drm/tinydrm: Fix setting of the column/page end
+addresses."), it is not in mipi_dbi_blank().  The latter still forgets
+to subtract one when calculating the most significant bytes of the
+column and row numbers, thus programming wrong values when the display
+width or height is a multiple of 256.
 
-Fixes: f92b070f2dc8 ("printk: Do not miss new messages when replaying the log")
-Link: http://lkml.kernel.org/r/20191219115322.31160-1-john.ogness@linutronix.de
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: John Ogness <john.ogness@linutronix.de>
-Acked-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
+Fixes: 02dd95fe31693626 ("drm/tinydrm: Add MIPI DBI support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Noralf Trønnes <noralf@tronnes.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20191230130604.31006-1-geert+renesas@glider.be
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/printk/printk.c | 4 ++--
+ drivers/gpu/drm/drm_mipi_dbi.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index ca65327a6de8c..c0a5b56aea4e8 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -2770,8 +2770,6 @@ void register_console(struct console *newcon)
- 		 * for us.
- 		 */
- 		logbuf_lock_irqsave(flags);
--		console_seq = syslog_seq;
--		console_idx = syslog_idx;
- 		/*
- 		 * We're about to replay the log buffer.  Only do this to the
- 		 * just-registered console to avoid excessive message spam to
-@@ -2783,6 +2781,8 @@ void register_console(struct console *newcon)
- 		 */
- 		exclusive_console = newcon;
- 		exclusive_console_stop_seq = console_seq;
-+		console_seq = syslog_seq;
-+		console_idx = syslog_idx;
- 		logbuf_unlock_irqrestore(flags);
- 	}
- 	console_unlock();
+diff --git a/drivers/gpu/drm/drm_mipi_dbi.c b/drivers/gpu/drm/drm_mipi_dbi.c
+index f8154316a3b0d..a05e64e3d80bb 100644
+--- a/drivers/gpu/drm/drm_mipi_dbi.c
++++ b/drivers/gpu/drm/drm_mipi_dbi.c
+@@ -367,9 +367,9 @@ static void mipi_dbi_blank(struct mipi_dbi_dev *dbidev)
+ 	memset(dbidev->tx_buf, 0, len);
+ 
+ 	mipi_dbi_command(dbi, MIPI_DCS_SET_COLUMN_ADDRESS, 0, 0,
+-			 (width >> 8) & 0xFF, (width - 1) & 0xFF);
++			 ((width - 1) >> 8) & 0xFF, (width - 1) & 0xFF);
+ 	mipi_dbi_command(dbi, MIPI_DCS_SET_PAGE_ADDRESS, 0, 0,
+-			 (height >> 8) & 0xFF, (height - 1) & 0xFF);
++			 ((height - 1) >> 8) & 0xFF, (height - 1) & 0xFF);
+ 	mipi_dbi_command_buf(dbi, MIPI_DCS_WRITE_MEMORY_START,
+ 			     (u8 *)dbidev->tx_buf, len);
+ 
 -- 
 2.20.1
 
