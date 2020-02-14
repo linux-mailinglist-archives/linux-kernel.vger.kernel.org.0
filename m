@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87F3B15DC61
+	by mail.lfdr.de (Postfix) with ESMTP id F299E15DC62
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:53:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731054AbgBNPwq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:52:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58278 "EHLO mail.kernel.org"
+        id S1731064AbgBNPwr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:52:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730964AbgBNPwT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:52:19 -0500
+        id S1729856AbgBNPwX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:52:23 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3BE424682;
-        Fri, 14 Feb 2020 15:52:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 531C22465D;
+        Fri, 14 Feb 2020 15:52:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695539;
-        bh=zsP7PGh0xVfpR4Zq5yvH8KqdUq1JIvLUMLqbWKUc114=;
+        s=default; t=1581695543;
+        bh=HgKQeKWb+GCFsDDznzsjcy/sSDQxBonJiUZijKIJNp8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2OFB3HcvBu5sMPRgP7SqnWqogCnrj05w0XWUdfuri3D6gxgblvYyiFM+LhgWeXDgp
-         6gXbZSmYXPgaGTXK7vPlYiWguXxhZ1opMpomUdzKEvFsSSUYo5S11MlOjtN0iuqQeN
-         jAA+mXgtK7/5V9wr5Yix6z89OZ8Uc3iQUkzuwhUY=
+        b=T/CFRVVyRyeihluxDZamgqlu3kkvhgo+0ziGXhuHh/GzVh+6J3msW8zmDqI56I9CY
+         abf1J/Sdxor/xXhj7bsn9mjt0Tg9CQQd8/3ar0BCC3SI4wyLXDcubAz4TfqkfivF1/
+         NiMSvuDo9PXBQkuyOoKDrhuYiHg3ye3IesBq5neE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     zhengbin <zhengbin13@huawei.com>,
+Cc:     Chris Wilson <chris@chris-wilson.co.uk>,
         Harry Wentland <harry.wentland@amd.com>,
-        Hulk Robot <hulkci@huawei.com>,
+        Jean Delvare <jdelvare@suse.de>,
         Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.5 157/542] drm/amd/display: remove set but not used variable 'bp' in bios_parser2.c
-Date:   Fri, 14 Feb 2020 10:42:29 -0500
-Message-Id: <20200214154854.6746-157-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.5 160/542] drm/amdgpu/dm: Do not throw an error for a display with no audio
+Date:   Fri, 14 Feb 2020 10:42:32 -0500
+Message-Id: <20200214154854.6746-160-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -46,48 +46,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhengbin <zhengbin13@huawei.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-[ Upstream commit 589d8d282ebe1eab2dd8b1fba3e60322787a50e6 ]
+[ Upstream commit 852a91d627e9ce849d68df9d3f5336689003bdc7 ]
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+An old display with no audio may not have an EDID with a CEA block, or
+it may simply be too old to support audio. This is not a driver error,
+so don't flag it as such.
 
-drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c: In function bios_get_board_layout_info:
-drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c:1826:22: warning: variable bp set but not used [-Wunused-but-set-variable]
-
-It is introduced by commit 1eeedbcc20d6 ("drm/amd/display:
-get board layout for edid emulation"), but never used,
-so remove it.
-
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=112140
+References: ae2a3495973e ("drm/amd: be quiet when no SAD block is found")
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Harry Wentland <harry.wentland@amd.com>
+Cc: Jean Delvare <jdelvare@suse.de>
+Cc: Alex Deucher <alexander.deucher@amd.com>
 Reviewed-by: Harry Wentland <harry.wentland@amd.com>
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: zhengbin <zhengbin13@huawei.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c | 2 --
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c | 2 --
  1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c b/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
-index 5c3fcaa474109..3ef6a44cc271b 100644
---- a/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
-+++ b/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
-@@ -1826,7 +1826,6 @@ static enum bp_result bios_get_board_layout_info(
- 	struct board_layout_info *board_layout_info)
- {
- 	unsigned int i;
--	struct bios_parser *bp;
- 	enum bp_result record_result;
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
+index 0b401dfbe98a9..34f483ac36ca4 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
+@@ -97,8 +97,6 @@ enum dc_edid_status dm_helpers_parse_edid_caps(
+ 			(struct edid *) edid->raw_edid);
  
- 	const unsigned int slot_index_to_vbios_id[MAX_BOARD_SLOTS] = {
-@@ -1835,7 +1834,6 @@ static enum bp_result bios_get_board_layout_info(
- 		0, 0
- 	};
+ 	sad_count = drm_edid_to_sad((struct edid *) edid->raw_edid, &sads);
+-	if (sad_count < 0)
+-		DRM_ERROR("Couldn't read SADs: %d\n", sad_count);
+ 	if (sad_count <= 0)
+ 		return result;
  
--	bp = BP_FROM_DCB(dcb);
- 	if (board_layout_info == NULL) {
- 		DC_LOG_DETECTION_EDID_PARSER("Invalid board_layout_info\n");
- 		return BP_RESULT_BADINPUT;
 -- 
 2.20.1
 
