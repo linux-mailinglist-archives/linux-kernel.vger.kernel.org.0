@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 267D515E45E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:35:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 352CB15E445
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:35:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405956AbgBNQYm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:24:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58782 "EHLO mail.kernel.org"
+        id S2405976AbgBNQYr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:24:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393004AbgBNQWy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:22:54 -0500
+        id S2393289AbgBNQW5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:22:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1604224764;
-        Fri, 14 Feb 2020 16:22:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E646924768;
+        Fri, 14 Feb 2020 16:22:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697374;
-        bh=MLyC7p5DCKqMmpilfaOF4DuT3roGEBIotitr0W0Cwvo=;
+        s=default; t=1581697376;
+        bh=fsw8bX3AiW/+z9HUZPwx9bSyI1oArS/BAj87FAOnCEw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GeYiI3sq78bvCQFIlAAJ6dM05ed1kGH6DyZb9r8vwHdD+4Bag/NgVTBaH3JahPqQ+
-         QHSZNFq5erVl6uxwIRyh3hBh6leNBgXFbERvXtY4vliHOKYRyvR/WFO2dDEs6vtrXb
-         NZY+hqtlYSbCGz+k9CegW/96mmmXN1J+lft87mLs=
+        b=lARSIb4sZG64xltn/HFUJ8kGIliT0RRtyqYe+o5oKSry326GcXTAP7SshGcgh9F72
+         QNfoundoHG7tggKOhkpe8eEKw3ctsWU1m1S7bPGf80DNoqBPbVhVNwVTu7gZmHMDl8
+         t+J8N/Y2Nr0I84zD3eWESKj+XH4d0evQJrxHaMMg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chen Zhou <chenzhou10@huawei.com>, Hulk Robot <hulkci@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.9 072/141] net/wan/fsl_ucc_hdlc: remove set but not used variables 'ut_info' and 'ret'
-Date:   Fri, 14 Feb 2020 11:20:12 -0500
-Message-Id: <20200214162122.19794-72-sashal@kernel.org>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        kbuild test robot <lkp@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 074/141] PM / devfreq: rk3399_dmc: Add COMPILE_TEST and HAVE_ARM_SMCCC dependency
+Date:   Fri, 14 Feb 2020 11:20:14 -0500
+Message-Id: <20200214162122.19794-74-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214162122.19794-1-sashal@kernel.org>
 References: <20200214162122.19794-1-sashal@kernel.org>
@@ -44,92 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen Zhou <chenzhou10@huawei.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
 
-[ Upstream commit 270fe2ceda66b6964d4c6f261d7f562a02c1c786 ]
+[ Upstream commit eff5d31f7407fa9d31fb840106f1593399457298 ]
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+To build test, add COMPILE_TEST depedency to both ARM_RK3399_DMC_DEVFREQ
+and DEVFREQ_EVENT_ROCKCHIP_DFI configuration. And ARM_RK3399_DMC_DEVFREQ
+used the SMCCC interface so that add HAVE_ARM_SMCCC dependency to prevent
+the build break.
 
-drivers/net/wan/fsl_ucc_hdlc.c: In function ucc_hdlc_irq_handler:
-drivers/net/wan/fsl_ucc_hdlc.c:643:23:
-	warning: variable ut_info set but not used [-Wunused-but-set-variable]
-drivers/net/wan/fsl_ucc_hdlc.c: In function uhdlc_suspend:
-drivers/net/wan/fsl_ucc_hdlc.c:880:23:
-	warning: variable ut_info set but not used [-Wunused-but-set-variable]
-drivers/net/wan/fsl_ucc_hdlc.c: In function uhdlc_resume:
-drivers/net/wan/fsl_ucc_hdlc.c:925:6:
-	warning: variable ret set but not used [-Wunused-but-set-variable]
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wan/fsl_ucc_hdlc.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+ drivers/devfreq/Kconfig       | 3 ++-
+ drivers/devfreq/event/Kconfig | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wan/fsl_ucc_hdlc.c b/drivers/net/wan/fsl_ucc_hdlc.c
-index 87bf05a81db50..7c4a30391f746 100644
---- a/drivers/net/wan/fsl_ucc_hdlc.c
-+++ b/drivers/net/wan/fsl_ucc_hdlc.c
-@@ -591,11 +591,9 @@ static irqreturn_t ucc_hdlc_irq_handler(int irq, void *dev_id)
- 	struct ucc_hdlc_private *priv = (struct ucc_hdlc_private *)dev_id;
- 	struct net_device *dev = priv->ndev;
- 	struct ucc_fast_private *uccf;
--	struct ucc_tdm_info *ut_info;
- 	u32 ucce;
- 	u32 uccm;
+diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
+index 41254e702f1e9..2ce7cc94d78b1 100644
+--- a/drivers/devfreq/Kconfig
++++ b/drivers/devfreq/Kconfig
+@@ -102,7 +102,8 @@ config ARM_TEGRA_DEVFREQ
  
--	ut_info = priv->ut_info;
- 	uccf = priv->uccf;
+ config ARM_RK3399_DMC_DEVFREQ
+ 	tristate "ARM RK3399 DMC DEVFREQ Driver"
+-	depends on ARCH_ROCKCHIP
++	depends on (ARCH_ROCKCHIP && HAVE_ARM_SMCCC) || \
++		(COMPILE_TEST && HAVE_ARM_SMCCC)
+ 	select DEVFREQ_EVENT_ROCKCHIP_DFI
+ 	select DEVFREQ_GOV_SIMPLE_ONDEMAND
+ 	select PM_DEVFREQ_EVENT
+diff --git a/drivers/devfreq/event/Kconfig b/drivers/devfreq/event/Kconfig
+index cd949800eed96..8851bc4e8e3e1 100644
+--- a/drivers/devfreq/event/Kconfig
++++ b/drivers/devfreq/event/Kconfig
+@@ -33,7 +33,7 @@ config DEVFREQ_EVENT_EXYNOS_PPMU
  
- 	ucce = ioread32be(uccf->p_ucce);
-@@ -826,7 +824,6 @@ static void resume_clk_config(struct ucc_hdlc_private *priv)
- static int uhdlc_suspend(struct device *dev)
- {
- 	struct ucc_hdlc_private *priv = dev_get_drvdata(dev);
--	struct ucc_tdm_info *ut_info;
- 	struct ucc_fast __iomem *uf_regs;
- 
- 	if (!priv)
-@@ -838,7 +835,6 @@ static int uhdlc_suspend(struct device *dev)
- 	netif_device_detach(priv->ndev);
- 	napi_disable(&priv->napi);
- 
--	ut_info = priv->ut_info;
- 	uf_regs = priv->uf_regs;
- 
- 	/* backup gumr guemr*/
-@@ -872,7 +868,7 @@ static int uhdlc_resume(struct device *dev)
- 	struct ucc_fast __iomem *uf_regs;
- 	struct ucc_fast_private *uccf;
- 	struct ucc_fast_info *uf_info;
--	int ret, i;
-+	int i;
- 	u32 cecr_subblock;
- 	u16 bd_status;
- 
-@@ -917,16 +913,16 @@ static int uhdlc_resume(struct device *dev)
- 
- 	/* Write to QE CECR, UCCx channel to Stop Transmission */
- 	cecr_subblock = ucc_fast_get_qe_cr_subblock(uf_info->ucc_num);
--	ret = qe_issue_cmd(QE_STOP_TX, cecr_subblock,
--			   (u8)QE_CR_PROTOCOL_UNSPECIFIED, 0);
-+	qe_issue_cmd(QE_STOP_TX, cecr_subblock,
-+		     (u8)QE_CR_PROTOCOL_UNSPECIFIED, 0);
- 
- 	/* Set UPSMR normal mode */
- 	iowrite32be(0, &uf_regs->upsmr);
- 
- 	/* init parameter base */
- 	cecr_subblock = ucc_fast_get_qe_cr_subblock(uf_info->ucc_num);
--	ret = qe_issue_cmd(QE_ASSIGN_PAGE_TO_DEVICE, cecr_subblock,
--			   QE_CR_PROTOCOL_UNSPECIFIED, priv->ucc_pram_offset);
-+	qe_issue_cmd(QE_ASSIGN_PAGE_TO_DEVICE, cecr_subblock,
-+		     QE_CR_PROTOCOL_UNSPECIFIED, priv->ucc_pram_offset);
- 
- 	priv->ucc_pram = (struct ucc_hdlc_param __iomem *)
- 				qe_muram_addr(priv->ucc_pram_offset);
+ config DEVFREQ_EVENT_ROCKCHIP_DFI
+ 	tristate "ROCKCHIP DFI DEVFREQ event Driver"
+-	depends on ARCH_ROCKCHIP
++	depends on ARCH_ROCKCHIP || COMPILE_TEST
+ 	help
+ 	  This add the devfreq-event driver for Rockchip SoC. It provides DFI
+ 	  (DDR Monitor Module) driver to count ddr load.
 -- 
 2.20.1
 
