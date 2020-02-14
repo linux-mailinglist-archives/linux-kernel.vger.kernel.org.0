@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 185BB15F1B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:08:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFC9215F215
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:09:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731672AbgBNPzC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:55:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35342 "EHLO mail.kernel.org"
+        id S2391954AbgBNSG0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:06:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731654AbgBNPyw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:54:52 -0500
+        id S1731231AbgBNPyy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:54:54 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB60E24649;
-        Fri, 14 Feb 2020 15:54:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0700222C4;
+        Fri, 14 Feb 2020 15:54:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695691;
-        bh=TKNR1RggkVSKFIYabLZR0PfqLGHp4WwX0Rzzf+yWMoQ=;
+        s=default; t=1581695694;
+        bh=qj+b2RpW9TJz60O6E8Om1vFFC0f3M1Zglp4/l4ocLbg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rWwya4HotxnZ1nOhQn+2FAtCct9ZmyHDC0TX0GTbfigQwAPpGjdOa6BNcTibbvre1
-         c6ZOCRSdsSXeQNOT4f3bmwZz9rC18WLu9Q0dxobOMcEbQejsGQ8GwPnxvMl1HslVLM
-         pkHl/I8SjhM4Sg00PnHBV9W2f38AsLFtMMQ8c6Ps=
+        b=xMFWI48WVlJrb5mmIDBQXChl+BElITRLXGkoRDwMEn0h45QCG/+VPfTyP+I38yCjW
+         gx7CZfndXEzJpwT0M4ukQDWfkhE3ctZT4bmHNMUqqmy/BNcg1VCBn93q7z6WcoSrFl
+         2f95LE/ppDA1l1Y0iC8IN8CFdq1goDkX0484naNU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, alsa-devel@alsa-project.org
-Subject: [PATCH AUTOSEL 5.5 275/542] ASoC: soc-topology: fix endianness issues
-Date:   Fri, 14 Feb 2020 10:44:27 -0500
-Message-Id: <20200214154854.6746-275-sashal@kernel.org>
+Cc:     Jiewei Ke <kejiewei.cn@gmail.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 277/542] RDMA/rxe: Fix error type of mmap_offset
+Date:   Fri, 14 Feb 2020 10:44:29 -0500
+Message-Id: <20200214154854.6746-277-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -43,142 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+From: Jiewei Ke <kejiewei.cn@gmail.com>
 
-[ Upstream commit 72bbeda0222bcd382ee33b3aff71346074410c21 ]
+[ Upstream commit 6ca18d8927d468c763571f78c9a7387a69ffa020 ]
 
-Sparse complains about a series of easy warnings, fix.
+The type of mmap_offset should be u64 instead of int to match the type of
+mminfo.offset. If otherwise, after we create several thousands of CQs, it
+will run into overflow issues.
 
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Link: https://lore.kernel.org/r/20200102195952.9465-3-pierre-louis.bossart@linux.intel.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Link: https://lore.kernel.org/r/20191227113613.5020-1-kejiewei.cn@gmail.com
+Signed-off-by: Jiewei Ke <kejiewei.cn@gmail.com>
+Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/soc-topology.c | 42 +++++++++++++++++++++-------------------
- 1 file changed, 22 insertions(+), 20 deletions(-)
+ drivers/infiniband/sw/rxe/rxe_verbs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
-index 4e1fe623c3908..0119f07cece6f 100644
---- a/sound/soc/soc-topology.c
-+++ b/sound/soc/soc-topology.c
-@@ -604,9 +604,11 @@ static int soc_tplg_kcontrol_bind_io(struct snd_soc_tplg_ctl_hdr *hdr,
- 		ext_ops = tplg->bytes_ext_ops;
- 		num_ops = tplg->bytes_ext_ops_count;
- 		for (i = 0; i < num_ops; i++) {
--			if (!sbe->put && ext_ops[i].id == be->ext_ops.put)
-+			if (!sbe->put &&
-+			    ext_ops[i].id == le32_to_cpu(be->ext_ops.put))
- 				sbe->put = ext_ops[i].put;
--			if (!sbe->get && ext_ops[i].id == be->ext_ops.get)
-+			if (!sbe->get &&
-+			    ext_ops[i].id == le32_to_cpu(be->ext_ops.get))
- 				sbe->get = ext_ops[i].get;
- 		}
+diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
+index 95834206c80c3..92de39c4a7c1e 100644
+--- a/drivers/infiniband/sw/rxe/rxe_verbs.h
++++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
+@@ -408,7 +408,7 @@ struct rxe_dev {
+ 	struct list_head	pending_mmaps;
  
-@@ -621,11 +623,11 @@ static int soc_tplg_kcontrol_bind_io(struct snd_soc_tplg_ctl_hdr *hdr,
- 	num_ops = tplg->io_ops_count;
- 	for (i = 0; i < num_ops; i++) {
+ 	spinlock_t		mmap_offset_lock; /* guard mmap_offset */
+-	int			mmap_offset;
++	u64			mmap_offset;
  
--		if (k->put == NULL && ops[i].id == hdr->ops.put)
-+		if (k->put == NULL && ops[i].id == le32_to_cpu(hdr->ops.put))
- 			k->put = ops[i].put;
--		if (k->get == NULL && ops[i].id == hdr->ops.get)
-+		if (k->get == NULL && ops[i].id == le32_to_cpu(hdr->ops.get))
- 			k->get = ops[i].get;
--		if (k->info == NULL && ops[i].id == hdr->ops.info)
-+		if (k->info == NULL && ops[i].id == le32_to_cpu(hdr->ops.info))
- 			k->info = ops[i].info;
- 	}
+ 	atomic64_t		stats_counters[RXE_NUM_OF_COUNTERS];
  
-@@ -638,11 +640,11 @@ static int soc_tplg_kcontrol_bind_io(struct snd_soc_tplg_ctl_hdr *hdr,
- 	num_ops = ARRAY_SIZE(io_ops);
- 	for (i = 0; i < num_ops; i++) {
- 
--		if (k->put == NULL && ops[i].id == hdr->ops.put)
-+		if (k->put == NULL && ops[i].id == le32_to_cpu(hdr->ops.put))
- 			k->put = ops[i].put;
--		if (k->get == NULL && ops[i].id == hdr->ops.get)
-+		if (k->get == NULL && ops[i].id == le32_to_cpu(hdr->ops.get))
- 			k->get = ops[i].get;
--		if (k->info == NULL && ops[i].id == hdr->ops.info)
-+		if (k->info == NULL && ops[i].id == le32_to_cpu(hdr->ops.info))
- 			k->info = ops[i].info;
- 	}
- 
-@@ -931,7 +933,7 @@ static int soc_tplg_denum_create_texts(struct soc_enum *se,
- 	if (se->dobj.control.dtexts == NULL)
- 		return -ENOMEM;
- 
--	for (i = 0; i < ec->items; i++) {
-+	for (i = 0; i < le32_to_cpu(ec->items); i++) {
- 
- 		if (strnlen(ec->texts[i], SNDRV_CTL_ELEM_ID_NAME_MAXLEN) ==
- 			SNDRV_CTL_ELEM_ID_NAME_MAXLEN) {
-@@ -1325,7 +1327,7 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_dmixer_create(
- 		if (kc[i].name == NULL)
- 			goto err_sm;
- 		kc[i].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
--		kc[i].access = mc->hdr.access;
-+		kc[i].access = le32_to_cpu(mc->hdr.access);
- 
- 		/* we only support FL/FR channel mapping atm */
- 		sm->reg = tplc_chan_get_reg(tplg, mc->channel,
-@@ -1337,10 +1339,10 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_dmixer_create(
- 		sm->rshift = tplc_chan_get_shift(tplg, mc->channel,
- 			SNDRV_CHMAP_FR);
- 
--		sm->max = mc->max;
--		sm->min = mc->min;
--		sm->invert = mc->invert;
--		sm->platform_max = mc->platform_max;
-+		sm->max = le32_to_cpu(mc->max);
-+		sm->min = le32_to_cpu(mc->min);
-+		sm->invert = le32_to_cpu(mc->invert);
-+		sm->platform_max = le32_to_cpu(mc->platform_max);
- 		sm->dobj.index = tplg->index;
- 		INIT_LIST_HEAD(&sm->dobj.list);
- 
-@@ -1401,7 +1403,7 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_denum_create(
- 			goto err_se;
- 
- 		tplg->pos += (sizeof(struct snd_soc_tplg_enum_control) +
--				ec->priv.size);
-+			      le32_to_cpu(ec->priv.size));
- 
- 		dev_dbg(tplg->dev, " adding DAPM widget enum control %s\n",
- 			ec->hdr.name);
-@@ -1411,7 +1413,7 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_denum_create(
- 		if (kc[i].name == NULL)
- 			goto err_se;
- 		kc[i].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
--		kc[i].access = ec->hdr.access;
-+		kc[i].access = le32_to_cpu(ec->hdr.access);
- 
- 		/* we only support FL/FR channel mapping atm */
- 		se->reg = tplc_chan_get_reg(tplg, ec->channel, SNDRV_CHMAP_FL);
-@@ -1420,8 +1422,8 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_denum_create(
- 		se->shift_r = tplc_chan_get_shift(tplg, ec->channel,
- 						  SNDRV_CHMAP_FR);
- 
--		se->items = ec->items;
--		se->mask = ec->mask;
-+		se->items = le32_to_cpu(ec->items);
-+		se->mask = le32_to_cpu(ec->mask);
- 		se->dobj.index = tplg->index;
- 
- 		switch (le32_to_cpu(ec->hdr.ops.info)) {
-@@ -1523,9 +1525,9 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_dbytes_create(
- 		if (kc[i].name == NULL)
- 			goto err_sbe;
- 		kc[i].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
--		kc[i].access = be->hdr.access;
-+		kc[i].access = le32_to_cpu(be->hdr.access);
- 
--		sbe->max = be->max;
-+		sbe->max = le32_to_cpu(be->max);
- 		INIT_LIST_HEAD(&sbe->dobj.list);
- 
- 		/* map standard io handlers and check for external handlers */
 -- 
 2.20.1
 
