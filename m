@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77C8915F3D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:22:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEEEB15F302
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:21:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394604AbgBNSPo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:15:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57064 "EHLO mail.kernel.org"
+        id S1730940AbgBNPwK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:52:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730860AbgBNPvt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:51:49 -0500
+        id S1730878AbgBNPvw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:51:52 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A2D5222C4;
-        Fri, 14 Feb 2020 15:51:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1495A2465D;
+        Fri, 14 Feb 2020 15:51:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695509;
-        bh=JrHjtwzZrIE4QpB3v0AizW6puXMwCqlkDOToOFzYGYM=;
+        s=default; t=1581695512;
+        bh=Ff9aojnCxvJNKh/uQrHeECcEeScxqOiWDzlfY4OG+x8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GxigJgjfb3D51Jkjy+gZjeLiyjHX1/UqMVMVKWIkohKhk4M4GmAoua9bi17npNsq6
-         CKcapLI0h1saFEkdBD1F013g3reOcD7Mpg2rupIjBNVZhV4UBVrFNKyLCR7XqgVgzt
-         xP9+aJcH/4YQt8mU2F4yOUXclUbv/b4RZp3mpS7A=
+        b=pP/cZCgOXDKB5DYJH45SRukx5ZBMnC69Yhi2v9WcS4wC5/dJuD432BItKq7ApAjEB
+         tSPy4fGkdDezFx2Ujhird/sTer0qCBHrwgttiRUTkKtsx0bFeRAOWlyUKOJdUG2rI/
+         qkWxxwADLtd9pokIhXL2SYosVerfMBIEFysVuVlQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jakub Sitnicki <jakub@cloudflare.com>,
+Cc:     Martin KaFai Lau <kafai@fb.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
-        John Fastabend <john.fastabend@gmail.com>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
         bpf@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 134/542] bpf, sockhash: Synchronize_rcu before free'ing map
-Date:   Fri, 14 Feb 2020 10:42:06 -0500
-Message-Id: <20200214154854.6746-134-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.5 136/542] bpf: Improve bucket_log calculation logic
+Date:   Fri, 14 Feb 2020 10:42:08 -0500
+Message-Id: <20200214154854.6746-136-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -45,50 +47,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jakub Sitnicki <jakub@cloudflare.com>
+From: Martin KaFai Lau <kafai@fb.com>
 
-[ Upstream commit 0b2dc83906cf1e694e48003eae5df8fa63f76fd9 ]
+[ Upstream commit 88d6f130e5632bbf419a2e184ec7adcbe241260b ]
 
-We need to have a synchronize_rcu before free'ing the sockhash because any
-outstanding psock references will have a pointer to the map and when they
-use it, this could trigger a use after free.
+It was reported that the max_t, ilog2, and roundup_pow_of_two macros have
+exponential effects on the number of states in the sparse checker.
 
-This is a sister fix for sockhash, following commit 2bb90e5cc90e ("bpf:
-sockmap, synchronize_rcu before free'ing map") which addressed sockmap,
-which comes from a manual audit.
+This patch breaks them up by calculating the "nbuckets" first so that the
+"bucket_log" only needs to take ilog2().
 
-Fixes: 604326b41a6fb ("bpf, sockmap: convert to generic sk_msg interface")
-Signed-off-by: Jakub Sitnicki <jakub@cloudflare.com>
+In addition, Linus mentioned:
+
+  Patch looks good, but I'd like to point out that it's not just sparse.
+
+  You can see it with a simple
+
+    make net/core/bpf_sk_storage.i
+    grep 'smap->bucket_log = ' net/core/bpf_sk_storage.i | wc
+
+  and see the end result:
+
+      1  365071 2686974
+
+  That's one line (the assignment line) that is 2,686,974 characters in
+  length.
+
+  Now, sparse does happen to react particularly badly to that (I didn't
+  look to why, but I suspect it's just that evaluating all the types
+  that don't actually ever end up getting used ends up being much more
+  expensive than it should be), but I bet it's not good for gcc either.
+
+Fixes: 6ac99e8f23d4 ("bpf: Introduce bpf sk local storage")
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Reported-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Martin KaFai Lau <kafai@fb.com>
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: John Fastabend <john.fastabend@gmail.com>
-Link: https://lore.kernel.org/bpf/20200206111652.694507-3-jakub@cloudflare.com
+Reviewed-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Link: https://lore.kernel.org/bpf/20200207081810.3918919-1-kafai@fb.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/sock_map.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ net/core/bpf_sk_storage.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/net/core/sock_map.c b/net/core/sock_map.c
-index 8998e356f4232..058422b932607 100644
---- a/net/core/sock_map.c
-+++ b/net/core/sock_map.c
-@@ -250,6 +250,7 @@ static void sock_map_free(struct bpf_map *map)
- 	raw_spin_unlock_bh(&stab->lock);
- 	rcu_read_unlock();
+diff --git a/net/core/bpf_sk_storage.c b/net/core/bpf_sk_storage.c
+index 458be6b3eda97..3ab23f698221c 100644
+--- a/net/core/bpf_sk_storage.c
++++ b/net/core/bpf_sk_storage.c
+@@ -643,9 +643,10 @@ static struct bpf_map *bpf_sk_storage_map_alloc(union bpf_attr *attr)
+ 		return ERR_PTR(-ENOMEM);
+ 	bpf_map_init_from_attr(&smap->map, attr);
  
-+	/* wait for psock readers accessing its map link */
- 	synchronize_rcu();
++	nbuckets = roundup_pow_of_two(num_possible_cpus());
+ 	/* Use at least 2 buckets, select_bucket() is undefined behavior with 1 bucket */
+-	smap->bucket_log = max_t(u32, 1, ilog2(roundup_pow_of_two(num_possible_cpus())));
+-	nbuckets = 1U << smap->bucket_log;
++	nbuckets = max_t(u32, 2, nbuckets);
++	smap->bucket_log = ilog2(nbuckets);
+ 	cost = sizeof(*smap->buckets) * nbuckets + sizeof(*smap);
  
- 	bpf_map_area_free(stab->sks);
-@@ -873,6 +874,9 @@ static void sock_hash_free(struct bpf_map *map)
- 	}
- 	rcu_read_unlock();
- 
-+	/* wait for psock readers accessing its map link */
-+	synchronize_rcu();
-+
- 	bpf_map_area_free(htab->buckets);
- 	kfree(htab);
- }
+ 	ret = bpf_map_charge_init(&smap->map.memory, cost);
 -- 
 2.20.1
 
