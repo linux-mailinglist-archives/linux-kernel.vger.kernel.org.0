@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5008015E9F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:11:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C289815EA33
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:12:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394629AbgBNRK3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:10:29 -0500
-Received: from gateway36.websitewelcome.com ([192.185.194.2]:34163 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390252AbgBNRK1 (ORCPT
+        id S2404497AbgBNRMK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:12:10 -0500
+Received: from gateway31.websitewelcome.com ([192.185.144.28]:22799 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390094AbgBNRMA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 12:10:27 -0500
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id 3E62A400D4744
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 10:24:35 -0600 (CST)
+        Fri, 14 Feb 2020 12:12:00 -0500
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id B46D52B5E
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 11:11:59 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id 2eTxjhCWb8vkB2eTxjengd; Fri, 14 Feb 2020 11:10:25 -0600
+        id 2eVTjsnGiAGTX2eVTj4bfG; Fri, 14 Feb 2020 11:11:59 -0600
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
@@ -25,25 +25,25 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=BuEqONPSEjbS6nR+nsgUPfM1v5+Y+62xNXlUsAnUd/c=; b=H6W/Fiysye58hDJxiiYBMewzcd
-        VBQLgnSAN28NP/JizT+q1WA/GLkUQjzDs71ZQcSDWPJUJqAbUNFgGTYDntMRyHou+3dCqT14qCXC1
-        PV27mRIl/oku9JMFvMq9eND7VNgLR6LBjVIw/Bse2pmxb84plypHp+xPIw9Ud2kHzlcCKobwbEBAq
-        NYTs04MyY8ZSjljzrOCrBd3dMLne3zhsOKcySI0/KQTemQmjT4hT8qBufqJOqJ50JWsU5HhLEIVRr
-        KT3SBt059LMfSFeiQEbZWgaHOdC6z8m5x3/Y/to+zL8qH1SXjaYVnEXSlNl4XfRwI1E6NiP+Y+WTa
-        fhWfo0oA==;
-Received: from [200.68.140.137] (port=41921 helo=embeddedor)
+        bh=0ZVD8rkyaK3hLNfOdpk0wuANy7TapkEfNgzpEqlIIX8=; b=EQ0WnNgENNRvu42vmFVTkkjxra
+        aU9dZ0FLeIiApEBe20GAA+bqXNt5Gx+GGsHRdXxlQ4rwFgULaFQxxSb2IPmd7MVy+OBiWiL/GWjGT
+        /lcfERtd3WshTyA5hQ9gVMa/GEQNjVKVGqrFUtWCqYR79/mw4J4jbkILUxZcy0RBWHe8DHUVwjd0f
+        TmFPvcmiFcYZl6VjMpvHWiDtOKQALXcnxsMFtOpMAxuQn86PvOYAc6OHnF82tYENwBtlSAbcrIWA0
+        L9RqF0TiUyzvJbAQdOFPRlzuK0xnM7ahjSw03nn1QZAH/gEJeM/kH671VxUaMFl33y/rHNLmuhTus
+        +cBgopCg==;
+Received: from [200.68.140.137] (port=41751 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.92)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1j2eTw-003don-BC; Fri, 14 Feb 2020 11:10:24 -0600
-Date:   Fri, 14 Feb 2020 11:13:02 -0600
+        id 1j2eVR-003eZL-TZ; Fri, 14 Feb 2020 11:11:58 -0600
+Date:   Fri, 14 Feb 2020 11:14:35 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vkoul@kernel.org>
 Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] dmanegine: ioat/dca: Replace zero-length array with
+Subject: [PATCH] dmaengine: sa11x0: Replace zero-length array with
  flexible-array member
-Message-ID: <20200214171302.GA20586@embeddedor>
+Message-ID: <20200214171435.GA22930@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -56,13 +56,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 200.68.140.137
 X-Source-L: No
-X-Exim-ID: 1j2eTw-003don-BC
+X-Exim-ID: 1j2eVR-003eZL-TZ
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.137]:41921
+X-Source-Sender: (embeddedor) [200.68.140.137]:41751
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
+X-Email-Count: 8
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -100,22 +100,22 @@ This issue was found with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/dma/ioat/dca.c | 2 +-
+ drivers/dma/sa11x0-dma.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/ioat/dca.c b/drivers/dma/ioat/dca.c
-index be61c32a876f..0be385587c4c 100644
---- a/drivers/dma/ioat/dca.c
-+++ b/drivers/dma/ioat/dca.c
-@@ -102,7 +102,7 @@ struct ioat_dca_priv {
- 	int			 max_requesters;
- 	int			 requester_count;
- 	u8			 tag_map[IOAT_TAG_MAP_LEN];
--	struct ioat_dca_slot 	 req_slots[0];
-+	struct ioat_dca_slot	 req_slots[];
+diff --git a/drivers/dma/sa11x0-dma.c b/drivers/dma/sa11x0-dma.c
+index afb68055ed1b..0fa7f14a65a1 100644
+--- a/drivers/dma/sa11x0-dma.c
++++ b/drivers/dma/sa11x0-dma.c
+@@ -78,7 +78,7 @@ struct sa11x0_dma_desc {
+ 	bool			cyclic;
+ 
+ 	unsigned		sglen;
+-	struct sa11x0_dma_sg	sg[0];
++	struct sa11x0_dma_sg	sg[];
  };
  
- static int ioat_dca_dev_managed(struct dca_provider *dca,
+ struct sa11x0_dma_phy;
 -- 
 2.25.0
 
