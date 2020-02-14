@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFBC515E90A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:05:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64B1D15E963
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:07:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392199AbgBNQPa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:15:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44302 "EHLO mail.kernel.org"
+        id S2389184AbgBNRGz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:06:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404030AbgBNQOj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:14:39 -0500
+        id S2392372AbgBNQOq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:14:46 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A34B246CF;
-        Fri, 14 Feb 2020 16:14:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3446246D1;
+        Fri, 14 Feb 2020 16:14:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696879;
-        bh=k4MAyLiQvbkcRfoaIpeTeeZXxVI0Sn7O1+qJM6lHONc=;
+        s=default; t=1581696885;
+        bh=IfYo5GkUeVfcL4RXB4WcxTzZDrn3bEBNAepBs8eLd9s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m2W2O6GML+mVVMqtgq3g77n+Z1ooW8bU8AzqoWQZ/bzA01+u0Bm1eV65WUMZa+loT
-         3j2tl3rmgNX0wApQ/8DmlyRyTbWqEGmTPx+63zJKDinqYiFaSpnoME3Neap/Guiybe
-         VkDl+5VWLP71P0WDC1v1PCzku5evyLuShjUFPWec=
+        b=wnvP+A9gBkSDekrajdkmddNjILaFH0cXlzZ3FRtALqKDHsoSNbhZIBGbiZ0Kso/jX
+         mF5idyLazO9UrNum2pPkFZcQb9egRuHd1GydDMLVLbzePYnUIVkBLohPw7mjVVD+9H
+         e1GQ5EU6C0iNRJBZZi/YcoXFX1WxzGXW4qqtH8Cs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Adhemerval Zanella <adhemerval.zanella@linaro.org>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 134/252] mlx5: work around high stack usage with gcc
-Date:   Fri, 14 Feb 2020 11:09:49 -0500
-Message-Id: <20200214161147.15842-134-sashal@kernel.org>
+Cc:     Eric Biggers <ebiggers@google.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 139/252] crypto: atmel-sha - fix error handling when setting hmac key
+Date:   Fri, 14 Feb 2020 11:09:54 -0500
+Message-Id: <20200214161147.15842-139-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -45,44 +48,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Eric Biggers <ebiggers@google.com>
 
-[ Upstream commit 42ae1a5c76691928ed217c7e40269db27f5225e9 ]
+[ Upstream commit b529f1983b2dcc46354f311feda92e07b6e9e2da ]
 
-In some configurations, gcc tries too hard to optimize this code:
+HMAC keys can be of any length, and atmel_sha_hmac_key_set() can only
+fail due to -ENOMEM.  But atmel_sha_hmac_setkey() incorrectly treated
+any error as a "bad key length" error.  Fix it to correctly propagate
+the -ENOMEM error code and not set any tfm result flags.
 
-drivers/net/ethernet/mellanox/mlx5/core/en_stats.c: In function 'mlx5e_grp_sw_update_stats':
-drivers/net/ethernet/mellanox/mlx5/core/en_stats.c:302:1: error: the frame size of 1336 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
-
-As was stated in the bug report, the reason is that gcc runs into a corner
-case in the register allocator that is rather hard to fix in a good way.
-
-As there is an easy way to work around it, just add a comment and the
-barrier that stops gcc from trying to overoptimize the function.
-
-Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=92657
-Cc: Adhemerval Zanella <adhemerval.zanella@linaro.org>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Fixes: 81d8750b2b59 ("crypto: atmel-sha - add support to hmac(shaX)")
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Ludovic Desroches <ludovic.desroches@microchip.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Reviewed-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_stats.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/crypto/atmel-sha.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_stats.c b/drivers/net/ethernet/mellanox/mlx5/core/en_stats.c
-index 8255d797ea943..9a68dee588c1a 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_stats.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_stats.c
-@@ -211,6 +211,9 @@ void mlx5e_grp_sw_update_stats(struct mlx5e_priv *priv)
- 			s->tx_tls_resync_bytes	+= sq_stats->tls_resync_bytes;
- #endif
- 			s->tx_cqes		+= sq_stats->cqes;
-+
-+			/* https://gcc.gnu.org/bugzilla/show_bug.cgi?id=92657 */
-+			barrier();
- 		}
- 	}
+diff --git a/drivers/crypto/atmel-sha.c b/drivers/crypto/atmel-sha.c
+index ef125d4be8fc4..cb548a0506c54 100644
+--- a/drivers/crypto/atmel-sha.c
++++ b/drivers/crypto/atmel-sha.c
+@@ -1921,12 +1921,7 @@ static int atmel_sha_hmac_setkey(struct crypto_ahash *tfm, const u8 *key,
+ {
+ 	struct atmel_sha_hmac_ctx *hmac = crypto_ahash_ctx(tfm);
  
+-	if (atmel_sha_hmac_key_set(&hmac->hkey, key, keylen)) {
+-		crypto_ahash_set_flags(tfm, CRYPTO_TFM_RES_BAD_KEY_LEN);
+-		return -EINVAL;
+-	}
+-
+-	return 0;
++	return atmel_sha_hmac_key_set(&hmac->hkey, key, keylen);
+ }
+ 
+ static int atmel_sha_hmac_init(struct ahash_request *req)
 -- 
 2.20.1
 
