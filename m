@@ -2,141 +2,347 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C77315F536
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:39:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82BB915F544
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:39:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394979AbgBNSZb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 13:25:31 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:42736 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388295AbgBNSZV (ORCPT
+        id S2390790AbgBNS14 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:27:56 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:34839 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387718AbgBNS1z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 13:25:21 -0500
-Received: by mail-qk1-f193.google.com with SMTP id o28so8765282qkj.9;
-        Fri, 14 Feb 2020 10:25:20 -0800 (PST)
+        Fri, 14 Feb 2020 13:27:55 -0500
+Received: by mail-yb1-f194.google.com with SMTP id p123so5218888ybp.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 10:27:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:message-id:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-disposition:content-transfer-encoding;
-        bh=BKp7G1122CfiCTZzfKgQoDAhSZdALPY4roih/emwM7c=;
-        b=prrtIsUiDVqvdF4xDl1ND2r5obgn9RUw515rlFE0kjWd+YyVr2091ZkRsPbQBZvzlN
-         7t07v33i4auW8vuyG9QPQM9/IgqvoLNmuaAflylZq1LtSOMiBMnFf9RR1yNLyRydhnvp
-         btk0GjPd0JuNvxceyTOMaUrY5poDxU9wqpHEVYlGqcob38dO6uJL9G9UhmqXedNOr1f5
-         QN8AOtj2znUhjQSNkDu1kmrxQC+PV8J6Ouuxh/kSaccHcFntp5qJFV9pLUPlGkvK/Hmy
-         g6auiM0OMpQ24TGtINvm+v0PvHqU7jtVxdE3NmzHPAe5SCHiHqA72sMrl/tOHwOTurXq
-         nHXw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=dcOJjxaZ8eAebUXV7qCQ8ppzsCxpKw2fPR4+UDnC62M=;
+        b=sGW/rDPCG/ADv3Q3bAgL1DTlmS/eqOWy93JDOoJRp1HyEb4IhV2IavwsCW540SG+uZ
+         /PeyyjPZvwn9PknDgH0yLgoXcMHKraOZR9OHQD+zX8cfnUXnkJUJAFvZt2wOfXfdSNI7
+         9AwA5ec/+cxKsyQNG/sgx5E+01T6NlOB1ELxfmmWJ5nbwQRh3TKmIPU6jLUIGoyivJg6
+         BGtue6+hjyxke299ZIaI7hg8r9vnrteSe0pPamwCjXZTT6aIV/rK7pS832AJi13ESm0Z
+         Mxw7ArFBaIEPqdMzOCGm3S5UoB+5dM+UCuRnH9FtuvqNACotjGmV23L3h4hCUE8Ak5DK
+         NoIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:from:to:cc:subject:in-reply-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding;
-        bh=BKp7G1122CfiCTZzfKgQoDAhSZdALPY4roih/emwM7c=;
-        b=SyacTwWZ+ZATpEC0Np5Fsd3h1v6gWa3/c+ZbfpqU/huVFizL0g8aGCoeUP7VlPtUVa
-         a6GmGGpR4yH9P/NGBPsxBkZL/NOq6ye9BEu2zu08MellLf0WIhy7jVcnQ9ilERBR32rX
-         /1Cs+ndI1vQ1HOoCj/EOZ0kis9ierd8NqepGyxhEfkLwbEfAdGtH+rmSCQeRP2kRac8w
-         XTqoNyHnnznLCuZsRIMfg9rzjJc3nc/+klCWhlyyoW5r58e/ADiF2QmmzIpovoDAKtkW
-         7o12xNpjGPVdmhTEx6QPP2q0Zq8GyzLSoe9H2vs50jHTftgjLqfOxkubyMmNQXhZ2RH4
-         Tb8g==
-X-Gm-Message-State: APjAAAX9VYmMrFfNjW03cxWafR/NGkszm39/uJt+UaANfr4rvWFlRFSh
-        t0MrVtL6/Gd9KVonxQc35d3+XpoV2A0=
-X-Google-Smtp-Source: APXvYqwBkx0OeDyCpL06Vsr+OP80p1tO6EzNW08bbylQO2m38OsDi47j9ZiVaG3KtK89UbiDjk1FTg==
-X-Received: by 2002:a37:4a95:: with SMTP id x143mr3500590qka.23.1581704720045;
-        Fri, 14 Feb 2020 10:25:20 -0800 (PST)
-Received: from localhost (modemcable249.105-163-184.mc.videotron.ca. [184.163.105.249])
-        by smtp.gmail.com with ESMTPSA id f59sm3723372qtb.75.2020.02.14.10.25.19
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dcOJjxaZ8eAebUXV7qCQ8ppzsCxpKw2fPR4+UDnC62M=;
+        b=Zx6YgbGiPcLc5JhELZEwkZe0+r2GCu4bBlxRY0+qN4cJK0uKF6j6fDBP1y3Zu9g6k7
+         bezZeysu7QMHP/Cz2StskYl19xG++vAzTyrSuFwQSM6bkiGDQGCVIUXvCdvwRmikDzMe
+         zME6QT1w99rFqR/uy8YZyBEjXtsz+4QRlZh99TElkwGcjxk83WxrvvUmpe045okRAolx
+         vGf4BAaGQkwHVUqz+tZm180lWe8C2x2Piq/DICi8LLJoR2Xf5jpGg38zjUy/hiE+t0P4
+         mnklkSeUZ/qmChciohGxl9JYB+/B0GMRPmFapSkpOQMDjrfg6rtzUfQ/Nrj5U8GlG0lo
+         EfEA==
+X-Gm-Message-State: APjAAAV+AxV+TVT7Iuszbj3PSTCqaPQj8EIa2pAJzPqxvnvjmC+Yh1Zv
+        S+PITcTMhWNdjuqpK764q+TlsA==
+X-Google-Smtp-Source: APXvYqz04f1oxbuK4CtcdOtjfrO+wNbhZBq18EK91Jxp1mrxMxlDFtA6rWb0Usl1k5lAQA3cRy1PfA==
+X-Received: by 2002:a25:8801:: with SMTP id c1mr4223300ybl.262.1581704874746;
+        Fri, 14 Feb 2020 10:27:54 -0800 (PST)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id z14sm2735967ywc.53.2020.02.14.10.27.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2020 10:25:19 -0800 (PST)
-Date:   Fri, 14 Feb 2020 13:25:18 -0500
-Message-ID: <20200214132518.GC1625342@t480s.localdomain>
-From:   Vivien Didelot <vivien.didelot@gmail.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     netdev@vger.kernel.org, olteanv@gmail.com, hkallweit1@gmail.com,
-        michal.vokac@ysoft.com, Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net] net: dsa: Treat VLAN ID 0 as PVID untagged
-In-Reply-To: <20200212200555.2393-1-f.fainelli@gmail.com>
-References: <20200212200555.2393-1-f.fainelli@gmail.com>
+        Fri, 14 Feb 2020 10:27:54 -0800 (PST)
+Date:   Fri, 14 Feb 2020 11:27:52 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org,
+        Tan Xiaojun <tanxiaojun@huawei.com>,
+        Wei Li <liwei391@huawei.com>
+Subject: Re: [PATCH 5/5] perf auxtrace: Add auxtrace_record__read_finish()
+Message-ID: <20200214182752.GB7746@xps15>
+References: <20200214132654.20395-1-adrian.hunter@intel.com>
+ <20200214132654.20395-6-adrian.hunter@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200214132654.20395-6-adrian.hunter@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Florian,
-
-On Wed, 12 Feb 2020 12:05:55 -0800, Florian Fainelli <f.fainelli@gmail.com> wrote:
-> VLAN ID 0 is special by all kinds and is really meant to be the default
-> ingress and egress untagged VLAN. We were not configuring it that way
-> and so we would be ingress untagged but egress tagged.
+On Fri, Feb 14, 2020 at 03:26:54PM +0200, Adrian Hunter wrote:
+> All ->read_finish() implementations are doing the same thing. Add a
+> helper function so that they can share the same implementation.
 > 
-> When our devices are interfaced with other link partners such as switch
-> devices, the results would be entirely equipment dependent. Some
-> switches are completely fine with accepting an egress tagged frame with
-> VLAN ID 0 and would send their responses untagged, so everything works,
-> but other devices are not so tolerant and would typically reject a VLAN
-> ID 0 tagged frame.
-> 
-> Fixes: 061f6a505ac3 ("net: dsa: Add ndo_vlan_rx_{add, kill}_vid implementation")
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 > ---
-> Hi all,
+>  tools/perf/arch/arm/util/cs-etm.c    | 21 ++-------------------
+>  tools/perf/arch/arm64/util/arm-spe.c | 20 ++------------------
+>  tools/perf/arch/x86/util/intel-bts.c | 20 ++------------------
+>  tools/perf/arch/x86/util/intel-pt.c  | 20 ++------------------
+>  tools/perf/util/auxtrace.c           | 22 +++++++++++++++++++++-
+>  tools/perf/util/auxtrace.h           |  6 ++++++
+>  6 files changed, 35 insertions(+), 74 deletions(-)
 > 
-> After looking at all DSA drivers and how they implement port_vlan_add()
-> I think this is the right change to do, but would appreciate if you
-> could test this on your respective platforms to ensure this is not
-> problematic.
-> 
-> Thank you
-> 
-> 
->  net/dsa/slave.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/net/dsa/slave.c b/net/dsa/slave.c
-> index 088c886e609e..d3a2782eb94d 100644
-> --- a/net/dsa/slave.c
-> +++ b/net/dsa/slave.c
-> @@ -1100,6 +1100,7 @@ static int dsa_slave_vlan_rx_add_vid(struct net_device *dev, __be16 proto,
->  {
->  	struct dsa_port *dp = dsa_slave_to_port(dev);
->  	struct bridge_vlan_info info;
-> +	u16 flags = 0;
->  	int ret;
+> diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
+> index 60141c3007a9..00126e7df465 100644
+> --- a/tools/perf/arch/arm/util/cs-etm.c
+> +++ b/tools/perf/arch/arm/util/cs-etm.c
+> @@ -858,24 +858,6 @@ static void cs_etm_recording_free(struct auxtrace_record *itr)
+>  	free(ptr);
+>  }
 >  
->  	/* Check for a possible bridge VLAN entry now since there is no
-> @@ -1118,7 +1119,13 @@ static int dsa_slave_vlan_rx_add_vid(struct net_device *dev, __be16 proto,
->  			return -EBUSY;
+> -static int cs_etm_read_finish(struct auxtrace_record *itr, int idx)
+> -{
+> -	struct cs_etm_recording *ptr =
+> -			container_of(itr, struct cs_etm_recording, itr);
+> -	struct evsel *evsel;
+> -
+> -	evlist__for_each_entry(ptr->evlist, evsel) {
+> -		if (evsel->core.attr.type == ptr->cs_etm_pmu->type) {
+> -			if (evsel->disabled)
+> -				return 0;
+> -			return perf_evlist__enable_event_idx(ptr->evlist,
+> -							     evsel, idx);
+> -		}
+> -	}
+> -
+> -	return -EINVAL;
+> -}
+> -
+>  struct auxtrace_record *cs_etm_record_init(int *err)
+>  {
+>  	struct perf_pmu *cs_etm_pmu;
+> @@ -895,6 +877,7 @@ struct auxtrace_record *cs_etm_record_init(int *err)
 >  	}
 >  
-> -	ret = dsa_port_vid_add(dp, vid, 0);
-> +	/* VLAN ID 0 is special and should be the default egress and ingress
-> +	 * untagged VLAN, make sure it gets programmed as such.
-> +	 */
-> +	if (vid == 0)
-> +		flags = BRIDGE_VLAN_INFO_PVID | BRIDGE_VLAN_INFO_UNTAGGED;
+>  	ptr->cs_etm_pmu			= cs_etm_pmu;
+> +	ptr->itr.cs_etm_pmu		= cs_etm_pmu;
+
+As Leo pointed out this won't compile.  With this fixed and for cs-etm.c:
+
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+
+>  	ptr->itr.parse_snapshot_options	= cs_etm_parse_snapshot_options;
+>  	ptr->itr.recording_options	= cs_etm_recording_options;
+>  	ptr->itr.info_priv_size		= cs_etm_info_priv_size;
+> @@ -904,7 +887,7 @@ struct auxtrace_record *cs_etm_record_init(int *err)
+>  	ptr->itr.snapshot_finish	= cs_etm_snapshot_finish;
+>  	ptr->itr.reference		= cs_etm_reference;
+>  	ptr->itr.free			= cs_etm_recording_free;
+> -	ptr->itr.read_finish		= cs_etm_read_finish;
+> +	ptr->itr.read_finish		= auxtrace_record__read_finish;
+>  
+>  	*err = 0;
+>  	return &ptr->itr;
+> diff --git a/tools/perf/arch/arm64/util/arm-spe.c b/tools/perf/arch/arm64/util/arm-spe.c
+> index 1d993c27242b..8d6821d9c3f6 100644
+> --- a/tools/perf/arch/arm64/util/arm-spe.c
+> +++ b/tools/perf/arch/arm64/util/arm-spe.c
+> @@ -158,23 +158,6 @@ static void arm_spe_recording_free(struct auxtrace_record *itr)
+>  	free(sper);
+>  }
+>  
+> -static int arm_spe_read_finish(struct auxtrace_record *itr, int idx)
+> -{
+> -	struct arm_spe_recording *sper =
+> -			container_of(itr, struct arm_spe_recording, itr);
+> -	struct evsel *evsel;
+> -
+> -	evlist__for_each_entry(sper->evlist, evsel) {
+> -		if (evsel->core.attr.type == sper->arm_spe_pmu->type) {
+> -			if (evsel->disabled)
+> -				return 0;
+> -			return perf_evlist__enable_event_idx(sper->evlist,
+> -							     evsel, idx);
+> -		}
+> -	}
+> -	return -EINVAL;
+> -}
+> -
+>  struct auxtrace_record *arm_spe_recording_init(int *err,
+>  					       struct perf_pmu *arm_spe_pmu)
+>  {
+> @@ -192,12 +175,13 @@ struct auxtrace_record *arm_spe_recording_init(int *err,
+>  	}
+>  
+>  	sper->arm_spe_pmu = arm_spe_pmu;
+> +	sper->itr.pmu = arm_spe_pmu;
+>  	sper->itr.recording_options = arm_spe_recording_options;
+>  	sper->itr.info_priv_size = arm_spe_info_priv_size;
+>  	sper->itr.info_fill = arm_spe_info_fill;
+>  	sper->itr.free = arm_spe_recording_free;
+>  	sper->itr.reference = arm_spe_reference;
+> -	sper->itr.read_finish = arm_spe_read_finish;
+> +	sper->itr.read_finish = auxtrace_record__read_finish;
+>  	sper->itr.alignment = 0;
+>  
+>  	*err = 0;
+> diff --git a/tools/perf/arch/x86/util/intel-bts.c b/tools/perf/arch/x86/util/intel-bts.c
+> index 39e363151ad7..26cee1052179 100644
+> --- a/tools/perf/arch/x86/util/intel-bts.c
+> +++ b/tools/perf/arch/x86/util/intel-bts.c
+> @@ -413,23 +413,6 @@ static int intel_bts_find_snapshot(struct auxtrace_record *itr, int idx,
+>  	return err;
+>  }
+>  
+> -static int intel_bts_read_finish(struct auxtrace_record *itr, int idx)
+> -{
+> -	struct intel_bts_recording *btsr =
+> -			container_of(itr, struct intel_bts_recording, itr);
+> -	struct evsel *evsel;
+> -
+> -	evlist__for_each_entry(btsr->evlist, evsel) {
+> -		if (evsel->core.attr.type == btsr->intel_bts_pmu->type) {
+> -			if (evsel->disabled)
+> -				return 0;
+> -			return perf_evlist__enable_event_idx(btsr->evlist,
+> -							     evsel, idx);
+> -		}
+> -	}
+> -	return -EINVAL;
+> -}
+> -
+>  struct auxtrace_record *intel_bts_recording_init(int *err)
+>  {
+>  	struct perf_pmu *intel_bts_pmu = perf_pmu__find(INTEL_BTS_PMU_NAME);
+> @@ -450,6 +433,7 @@ struct auxtrace_record *intel_bts_recording_init(int *err)
+>  	}
+>  
+>  	btsr->intel_bts_pmu = intel_bts_pmu;
+> +	btsr->itr.pmu = intel_bts_pmu;
+>  	btsr->itr.recording_options = intel_bts_recording_options;
+>  	btsr->itr.info_priv_size = intel_bts_info_priv_size;
+>  	btsr->itr.info_fill = intel_bts_info_fill;
+> @@ -459,7 +443,7 @@ struct auxtrace_record *intel_bts_recording_init(int *err)
+>  	btsr->itr.find_snapshot = intel_bts_find_snapshot;
+>  	btsr->itr.parse_snapshot_options = intel_bts_parse_snapshot_options;
+>  	btsr->itr.reference = intel_bts_reference;
+> -	btsr->itr.read_finish = intel_bts_read_finish;
+> +	btsr->itr.read_finish = auxtrace_record__read_finish;
+>  	btsr->itr.alignment = sizeof(struct branch);
+>  	return &btsr->itr;
+>  }
+> diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
+> index 2f0a0832907f..acadaa10c65d 100644
+> --- a/tools/perf/arch/x86/util/intel-pt.c
+> +++ b/tools/perf/arch/x86/util/intel-pt.c
+> @@ -1170,23 +1170,6 @@ static u64 intel_pt_reference(struct auxtrace_record *itr __maybe_unused)
+>  	return rdtsc();
+>  }
+>  
+> -static int intel_pt_read_finish(struct auxtrace_record *itr, int idx)
+> -{
+> -	struct intel_pt_recording *ptr =
+> -			container_of(itr, struct intel_pt_recording, itr);
+> -	struct evsel *evsel;
+> -
+> -	evlist__for_each_entry(ptr->evlist, evsel) {
+> -		if (evsel->core.attr.type == ptr->intel_pt_pmu->type) {
+> -			if (evsel->disabled)
+> -				return 0;
+> -			return perf_evlist__enable_event_idx(ptr->evlist, evsel,
+> -							     idx);
+> -		}
+> -	}
+> -	return -EINVAL;
+> -}
+> -
+>  struct auxtrace_record *intel_pt_recording_init(int *err)
+>  {
+>  	struct perf_pmu *intel_pt_pmu = perf_pmu__find(INTEL_PT_PMU_NAME);
+> @@ -1207,6 +1190,7 @@ struct auxtrace_record *intel_pt_recording_init(int *err)
+>  	}
+>  
+>  	ptr->intel_pt_pmu = intel_pt_pmu;
+> +	ptr->itr.pmu = intel_pt_pmu;
+>  	ptr->itr.recording_options = intel_pt_recording_options;
+>  	ptr->itr.info_priv_size = intel_pt_info_priv_size;
+>  	ptr->itr.info_fill = intel_pt_info_fill;
+> @@ -1216,7 +1200,7 @@ struct auxtrace_record *intel_pt_recording_init(int *err)
+>  	ptr->itr.find_snapshot = intel_pt_find_snapshot;
+>  	ptr->itr.parse_snapshot_options = intel_pt_parse_snapshot_options;
+>  	ptr->itr.reference = intel_pt_reference;
+> -	ptr->itr.read_finish = intel_pt_read_finish;
+> +	ptr->itr.read_finish = auxtrace_record__read_finish;
+>  	/*
+>  	 * Decoding starts at a PSB packet. Minimum PSB period is 2K so 4K
+>  	 * should give at least 1 PSB per sample.
+> diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+> index eb087e7df6f4..3571ce72ca28 100644
+> --- a/tools/perf/util/auxtrace.c
+> +++ b/tools/perf/util/auxtrace.c
+> @@ -629,8 +629,10 @@ int auxtrace_record__options(struct auxtrace_record *itr,
+>  			     struct evlist *evlist,
+>  			     struct record_opts *opts)
+>  {
+> -	if (itr)
+> +	if (itr) {
+> +		itr->evlist = evlist;
+>  		return itr->recording_options(itr, evlist, opts);
+> +	}
+>  	return 0;
+>  }
+>  
+> @@ -664,6 +666,24 @@ int auxtrace_parse_snapshot_options(struct auxtrace_record *itr,
+>  	return -EINVAL;
+>  }
+>  
+> +int auxtrace_record__read_finish(struct auxtrace_record *itr, int idx)
+> +{
+> +	struct evsel *evsel;
 > +
-> +	ret = dsa_port_vid_add(dp, vid, flags);
->  	if (ret)
->  		return ret;
-
-If a frame tagged with VID 0 ingresses a Marvell port with 802.1Q enabled,
-the VID assigned will be the port's default VID.
-
-That being said, the hardware shouldn't prevent us from programming a port's
-default VID as 0 or adding an entry for VID 0 in the VLAN table, but AFAICT
-we are rejecting the latter for some reasons (it might have no effect, idk).
-
-With this change we will be overriding the port's default VID with 0 in
-addition to attempting to program a VLAN entry for the null VID (mv88e6xxx
-would still return -EOPNOTSUPP at the moment for both anyway). Am I correct?
-
-
-Thank you,
-
-	Vivien
+> +	if (!itr->evlist || !itr->pmu)
+> +		return -EINVAL;
+> +
+> +	evlist__for_each_entry(itr->evlist, evsel) {
+> +		if (evsel->core.attr.type == itr->pmu->type) {
+> +			if (evsel->disabled)
+> +				return 0;
+> +			return perf_evlist__enable_event_idx(itr->evlist, evsel,
+> +							     idx);
+> +		}
+> +	}
+> +	return -EINVAL;
+> +}
+> +
+>  /*
+>   * Event record size is 16-bit which results in a maximum size of about 64KiB.
+>   * Allow about 4KiB for the rest of the sample record, to give a maximum
+> diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
+> index 749d72cd9c7b..e58ef160b599 100644
+> --- a/tools/perf/util/auxtrace.h
+> +++ b/tools/perf/util/auxtrace.h
+> @@ -29,6 +29,7 @@ struct record_opts;
+>  struct perf_record_auxtrace_error;
+>  struct perf_record_auxtrace_info;
+>  struct events_stats;
+> +struct perf_pmu;
+>  
+>  enum auxtrace_error_type {
+>         PERF_AUXTRACE_ERROR_ITRACE  = 1,
+> @@ -322,6 +323,8 @@ struct auxtrace_mmap_params {
+>   * @read_finish: called after reading from an auxtrace mmap
+>   * @alignment: alignment (if any) for AUX area data
+>   * @default_aux_sample_size: default sample size for --aux sample option
+> + * @pmu: associated pmu
+> + * @evlist: selected events list
+>   */
+>  struct auxtrace_record {
+>  	int (*recording_options)(struct auxtrace_record *itr,
+> @@ -346,6 +349,8 @@ struct auxtrace_record {
+>  	int (*read_finish)(struct auxtrace_record *itr, int idx);
+>  	unsigned int alignment;
+>  	unsigned int default_aux_sample_size;
+> +	struct perf_pmu *pmu;
+> +	struct evlist *evlist;
+>  };
+>  
+>  /**
+> @@ -537,6 +542,7 @@ int auxtrace_record__find_snapshot(struct auxtrace_record *itr, int idx,
+>  				   struct auxtrace_mmap *mm,
+>  				   unsigned char *data, u64 *head, u64 *old);
+>  u64 auxtrace_record__reference(struct auxtrace_record *itr);
+> +int auxtrace_record__read_finish(struct auxtrace_record *itr, int idx);
+>  
+>  int auxtrace_index__auxtrace_event(struct list_head *head, union perf_event *event,
+>  				   off_t file_offset);
+> -- 
+> 2.17.1
+> 
