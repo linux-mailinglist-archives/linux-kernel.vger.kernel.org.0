@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A3D515E328
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:27:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E9FC15E32E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:28:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406703AbgBNQ1m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:27:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35674 "EHLO mail.kernel.org"
+        id S2406711AbgBNQ1p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:27:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406197AbgBNQZp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:25:45 -0500
+        id S2406210AbgBNQZs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:25:48 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 423AB247D0;
-        Fri, 14 Feb 2020 16:25:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADCE6247C8;
+        Fri, 14 Feb 2020 16:25:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697545;
-        bh=T1ZKD43Hoi0VlEAm4qsLbLuTAyNG1fwLV0FTSp5WMTQ=;
+        s=default; t=1581697547;
+        bh=IxJhJMPN/OwtHe3aahbDjabfp0JXfPEO+U/lhktaBeA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zFhJTgmuketWb8/eBZ+nELYOaPL7ct6LZqdv3nRPFMtGtB+iTaUJLnyDbGTxv4aTU
-         Hm9NT1dqBlCO9ir3KbSqxi0w0Kf8qGB55oYoPB63tLkFhzfbPcM/Urys1EGFMdObY8
-         YVZzssrNq+JCExmaTit6N0IW5ooTyo8VGLL9dcgg=
+        b=U9SBcQ8wjOl6OB1Fz4KS5w0HgN2bft0xb5hh/zbZ2aW4b2bgIuWpuNjqKNTAHnE/L
+         hmZK000zs1Hlfu/kOGzApKJlpHxoeOntycPL35p5mvRkvaGixpZRSiZcy1VuIRNcpY
+         uLlgaUUcLBuSi2hclaYOqFNb+A1Y/ZFEvjBmQdjc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 064/100] Input: edt-ft5x06 - work around first register access error
-Date:   Fri, 14 Feb 2020 11:23:48 -0500
-Message-Id: <20200214162425.21071-64-sashal@kernel.org>
+Cc:     Chen Zhou <chenzhou10@huawei.com>, Hulk Robot <hulkci@huawei.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, alsa-devel@alsa-project.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.4 066/100] ASoC: atmel: fix build error with CONFIG_SND_ATMEL_SOC_DMA=m
+Date:   Fri, 14 Feb 2020 11:23:50 -0500
+Message-Id: <20200214162425.21071-66-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214162425.21071-1-sashal@kernel.org>
 References: <20200214162425.21071-1-sashal@kernel.org>
@@ -45,53 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Philipp Zabel <p.zabel@pengutronix.de>
+From: Chen Zhou <chenzhou10@huawei.com>
 
-[ Upstream commit e112324cc0422c046f1cf54c56f333d34fa20885 ]
+[ Upstream commit 8fea78029f5e6ed734ae1957bef23cfda1af4354 ]
 
-The EP0700MLP1 returns bogus data on the first register read access
-(reading the threshold parameter from register 0x00):
+If CONFIG_SND_ATMEL_SOC_DMA=m, build error:
 
-    edt_ft5x06 2-0038: crc error: 0xfc expected, got 0x40
+sound/soc/atmel/atmel_ssc_dai.o: In function `atmel_ssc_set_audio':
+(.text+0x7cd): undefined reference to `atmel_pcm_dma_platform_register'
 
-It ignores writes until then. This patch adds a dummy read after which
-the number of sensors and parameter read/writes work correctly.
+Function atmel_pcm_dma_platform_register is defined under
+CONFIG SND_ATMEL_SOC_DMA, so select SND_ATMEL_SOC_DMA in
+CONFIG SND_ATMEL_SOC_SSC, same to CONFIG_SND_ATMEL_SOC_PDC.
 
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+Link: https://lore.kernel.org/r/20200113133242.144550-1-chenzhou10@huawei.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/touchscreen/edt-ft5x06.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ sound/soc/atmel/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
-index 0b0f8c17f3f7e..a9d97d577a7e9 100644
---- a/drivers/input/touchscreen/edt-ft5x06.c
-+++ b/drivers/input/touchscreen/edt-ft5x06.c
-@@ -880,6 +880,7 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client,
- {
- 	const struct edt_i2c_chip_data *chip_data;
- 	struct edt_ft5x06_ts_data *tsdata;
-+	u8 buf[2] = { 0xfc, 0x00 };
- 	struct input_dev *input;
- 	unsigned long irq_flags;
- 	int error;
-@@ -949,6 +950,12 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client,
- 		return error;
- 	}
+diff --git a/sound/soc/atmel/Kconfig b/sound/soc/atmel/Kconfig
+index 2d30464b81cef..d7b471c69f4fb 100644
+--- a/sound/soc/atmel/Kconfig
++++ b/sound/soc/atmel/Kconfig
+@@ -24,6 +24,8 @@ config SND_ATMEL_SOC_DMA
  
-+	/*
-+	 * Dummy read access. EP0700MLP1 returns bogus data on the first
-+	 * register read access and ignores writes.
-+	 */
-+	edt_ft5x06_ts_readwrite(tsdata->client, 2, buf, 2, buf);
-+
- 	edt_ft5x06_ts_set_regs(tsdata);
- 	edt_ft5x06_ts_get_defaults(&client->dev, tsdata);
- 	edt_ft5x06_ts_get_parameters(tsdata);
+ config SND_ATMEL_SOC_SSC_DMA
+ 	tristate
++	select SND_ATMEL_SOC_DMA
++	select SND_ATMEL_SOC_PDC
+ 
+ config SND_ATMEL_SOC_SSC
+ 	tristate
 -- 
 2.20.1
 
