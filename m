@@ -2,77 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE70415ED0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:32:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 135D315EFF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:52:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391388AbgBNRbk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:31:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57858 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387585AbgBNQG7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:06:59 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB0E0222C2;
-        Fri, 14 Feb 2020 16:06:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696419;
-        bh=J/hOnjw0i23XoypiLhJtK1LFTicuZDTfM0VzYi6zdjY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mN6P7Ur/0d+/BtSu4XOxhRimbMDBZW+B7WJ+lnpYptmtnvJpR+fiBkq62wNdhJzSE
-         FwKDq49cdUSXfIRoA1+fh8T2M1Pdjnel+QE/Sd7Lk3YUbL9DHTTYT2lsdL7cKBTd57
-         cA1uRHkUrsbiJ2uRWhgMavWtru7css7Utq+rj9lU=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jiewei Ke <kejiewei.cn@gmail.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 240/459] RDMA/rxe: Fix error type of mmap_offset
-Date:   Fri, 14 Feb 2020 10:58:10 -0500
-Message-Id: <20200214160149.11681-240-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
-References: <20200214160149.11681-1-sashal@kernel.org>
+        id S2388664AbgBNP6n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:58:43 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:46915 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387854AbgBNP6Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:58:25 -0500
+Received: by mail-ot1-f67.google.com with SMTP id g64so9551637otb.13
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 07:58:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7bOcfoQZl3F8fqHPhjMMAa503NpXfsD6HMvBw5tSP8s=;
+        b=kX2dO2lu3E8rOEoTVvCGYM8nPGoKdlDT8ZvHPHxRs3BzVhUSkxcCw6K24Y5aTtU5si
+         +Ux5zL5Msjyx4lSZ/GeC2SApmABaIF5o7Wc2sn5Qi37BFA3bS/8cI9O/dAX9zoVOw6Rk
+         tP7Ie6F3omocpszOy7JJPoqv8s7Mr+IYE6Wtf30DD3zw87++2OcYkknPGZLTjz6pIeyc
+         jWc2ZI6heV1WH6u0CHC2nW2yYe1YZ/yK4yHg2FP1KqVlCiLhi1MXjQlr6h4I0ICE9pM2
+         8I357YnqPF2jqYz8P+jqGhFPLOfuRB8FXsCmq4Xm+moi+nt0eu0jnuhQMyhQeELq3wWP
+         GUfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7bOcfoQZl3F8fqHPhjMMAa503NpXfsD6HMvBw5tSP8s=;
+        b=BMDqB6nx/2LIsEKDDkkCXY6iePLWQjeyUUsxjdND8njtU5aMqSPNlCqB/7QmSwhds7
+         JOtYflerzb/b5sJh84SQNAkIIjUgdgXQBFFzkpdhOQzXvE8vlBNRRTTx7qpn5VwwwK7V
+         uZ5vqlRGv7V7wPkpU+YmYM/Vx9P+ozLuQk23JoHoLfmK1xwmWl6JhuntgOYROZqyxLwU
+         m87zo1uhVRaCrVZ+odWdIDh7iXciIl62cRPuU2YCDXu/oB4/bK5duPlIeNQiZJ+KDBhr
+         bwMyTkaPiERPiFrh6pEQXyZk+n0VKgskQKyGagKRA862aEwxkyOUAUvtcgAeNMWGyQMN
+         H3lQ==
+X-Gm-Message-State: APjAAAUwQYJWWA2axRAT+hNOJbfAENUW+40dw06sQG1R1uLNxcLkqkY2
+        1nzBxQpeMKD2G/5ljsx9NsUH0AiaghVYM0vUNCUgRQ==
+X-Google-Smtp-Source: APXvYqx/d2a81Pp+Cm6kjutLv1Fu5WDfEbx7fVbqijNpFcOhTEbMgyI36CNkD4gkBX+WP0IRrYbqgpVyWl7QA1EJGT0=
+X-Received: by 2002:a05:6830:13d3:: with SMTP id e19mr2830279otq.135.1581695904754;
+ Fri, 14 Feb 2020 07:58:24 -0800 (PST)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <1580215149-21492-1-git-send-email-anshuman.khandual@arm.com> <45ce930c-81b3-3161-ced6-34a8c8623ac8@arm.com>
+In-Reply-To: <45ce930c-81b3-3161-ced6-34a8c8623ac8@arm.com>
+From:   Peter Maydell <peter.maydell@linaro.org>
+Date:   Fri, 14 Feb 2020 15:58:13 +0000
+Message-ID: <CAFEAcA_yZ55rOD1x+FE9wYO8HXx9seK72ZCmnWjtDVr_95-whg@mail.gmail.com>
+Subject: Re: [PATCH 0/6] Introduce ID_PFR2 and other CPU feature changes
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     arm-mail-list <linux-arm-kernel@lists.infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+        kvmarm@lists.cs.columbia.edu
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiewei Ke <kejiewei.cn@gmail.com>
+On Fri, 14 Feb 2020 at 04:23, Anshuman Khandual
+<anshuman.khandual@arm.com> wrote:
+>
+>
+>
+> On 01/28/2020 06:09 PM, Anshuman Khandual wrote:
+> > This series is primarily motivated from an adhoc list from Mark Rutland
+> > during our ID_ISAR6 discussion [1]. Besides, it also includes a patch
+> > which does macro replacement for various open bits shift encodings in
+> > various CPU ID registers. This series is based on linux-next 20200124.
+> >
+> > [1] https://patchwork.kernel.org/patch/11287805/
+> >
+> > Is there anything else apart from these changes which can be accommodated
+> > in this series, please do let me know. Thank you.
+>
+> Just a gentle ping. Any updates, does this series looks okay ? Is there
+> anything else related to CPU ID register feature bits, which can be added
+> up here. FWIW, the series still applies on v5.6-rc1.
 
-[ Upstream commit 6ca18d8927d468c763571f78c9a7387a69ffa020 ]
+I just ran into some "32-bit KVM doesn't expose all the ID
+registers to userspace via the ONE_REG API" issues today.
+I don't know if they'd be reasonable as something to include
+in this patchset or if they're unrelated.
 
-The type of mmap_offset should be u64 instead of int to match the type of
-mminfo.offset. If otherwise, after we create several thousands of CQs, it
-will run into overflow issues.
+Anyway, missing stuff I have noticed specifically:
+ * MVFR2
+ * ID_MMFR4
+ * ID_ISAR6
 
-Link: https://lore.kernel.org/r/20191227113613.5020-1-kejiewei.cn@gmail.com
-Signed-off-by: Jiewei Ke <kejiewei.cn@gmail.com>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/infiniband/sw/rxe/rxe_verbs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+More generally I would have expected all these 32-bit registers
+to exist and read-as-zero for the purpose of the ONE_REG APIs,
+because that's what the architecture says is supposed to happen
+and it means we have compatibility and QEMU doesn't gradually
+build up lots of "kernel doesn't support this yet" conditionals...
+I think we get this right for 64-bit KVM, but can we do it for
+32-bit as well?
 
-diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
-index 5c4b2239129cc..b0a02d4c8b933 100644
---- a/drivers/infiniband/sw/rxe/rxe_verbs.h
-+++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
-@@ -407,7 +407,7 @@ struct rxe_dev {
- 	struct list_head	pending_mmaps;
- 
- 	spinlock_t		mmap_offset_lock; /* guard mmap_offset */
--	int			mmap_offset;
-+	u64			mmap_offset;
- 
- 	atomic64_t		stats_counters[RXE_NUM_OF_COUNTERS];
- 
--- 
-2.20.1
-
+thanks
+-- PMM
