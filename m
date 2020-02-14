@@ -2,95 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6D8015DCE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:56:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07CE115DB57
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:45:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731659AbgBNP4F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:56:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37436 "EHLO mail.kernel.org"
+        id S1729663AbgBNPpa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:45:30 -0500
+Received: from foss.arm.com ([217.140.110.172]:35094 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730958AbgBNP4A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:56:00 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 461F524689;
-        Fri, 14 Feb 2020 15:55:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695759;
-        bh=zAa2uEgQbd2JoS7G+0gTzPTd/qwhQJyo3d9rW0gWzZU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ymxWoFPRfiJbiWQ/3uiGYs7RSruMccRfE+UyYiw7tQePLEDBEE+Y6GXvud5kV3K6f
-         kznUsYrTv5VxUvN0sRZpYRUWt8NXh3Az77GyNjO5PKJF5ncUoK7NmfNE/urze2UN5X
-         kvUmVPJ++jQb57/XU1SPh9ttyGkkN/fi/buqOisw=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sekhar Nori <nsekhar@ti.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.5 328/542] clocksource: davinci: only enable clockevents once tim34 is initialized
-Date:   Fri, 14 Feb 2020 10:45:20 -0500
-Message-Id: <20200214154854.6746-328-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
-References: <20200214154854.6746-1-sashal@kernel.org>
+        id S1729627AbgBNPp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:45:27 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CA4AC328;
+        Fri, 14 Feb 2020 07:45:26 -0800 (PST)
+Received: from localhost (e108754-lin.cambridge.arm.com [10.1.198.52])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B5D83F68E;
+        Fri, 14 Feb 2020 07:45:26 -0800 (PST)
+Date:   Fri, 14 Feb 2020 15:45:25 +0000
+From:   Ionela Voinescu <ionela.voinescu@arm.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com,
+        maz@kernel.org, suzuki.poulose@arm.com, sudeep.holla@arm.com,
+        lukasz.luba@arm.com, valentin.schneider@arm.com, rjw@rjwysocki.net,
+        peterz@infradead.org, mingo@redhat.com, vincent.guittot@linaro.org,
+        viresh.kumar@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v3 7/7] clocksource/drivers/arm_arch_timer: validate
+ arch_timer_rate
+Message-ID: <20200214154525.GA21875@arm.com>
+References: <20200211184542.29585-1-ionela.voinescu@arm.com>
+ <20200211184542.29585-8-ionela.voinescu@arm.com>
+ <87mu9mgg41.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <87mu9mgg41.fsf@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Hi Thomas,
 
-[ Upstream commit cea931c25104e6bddc42eb067f58193f355dbdd7 ]
+On Friday 14 Feb 2020 at 01:35:58 (+0100), Thomas Gleixner wrote:
+> Ionela Voinescu <ionela.voinescu@arm.com> writes:
+> 
+> > From: Valentin Schneider <valentin.schneider@arm.com>
+> >
+> > Using an arch timer with a frequency of less than 1MHz can result in an
+> > incorrect functionality of the system which assumes a reasonable rate.
+> >
+> > One example is the use of activity monitors for frequency invariance
+> > which uses the rate of the arch timer as the known rate of the constant
+> > cycle counter in computing its ratio compared to the maximum frequency
+> > of a CPU. For arch timer frequencies less than 1MHz this ratio could
+> > end up being 0 which is an invalid value for its use.
+> >
+> > Therefore, warn if the arch timer rate is below 1MHz which contravenes
+> > the recommended architecture interval of 1 to 50MHz.
+> >
+> > Signed-off-by: Ionela Voinescu <ionela.voinescu@arm.com>
+> 
+> So this patch is from Valentin. Where is his Signed-off-by?
+> 
 
-The DM365 platform has a strange quirk (only present when using ancient
-u-boot - mainline u-boot v2013.01 and later works fine) where if we
-enable the second half of the timer in periodic mode before we do its
-initialization - the time won't start flowing and we can't boot.
+Yes, sorry about this. This was based on a diff that Valentin provided
+in v2. I'll change the author as agreed at:
+https://lore.kernel.org/lkml/20200212103249.GA19041@arm.com/
 
-When using more recent u-boot, we can enable the timer, then reinitialize
-it and all works fine.
+> >  
+> > +static int validate_timer_rate(void)
+> > +{
+> > +	if (!arch_timer_rate)
+> > +		return -EINVAL;
+> > +
+> > +	/* Arch timer frequency < 1MHz can cause trouble */
+> > +	WARN_ON(arch_timer_rate < 1000000);
+> 
+> This does not make sense to me. If the rate is out of bounds then why
+> warn an just continue instead of making it fail?
+> 
 
-To work around this issue only enable clockevents once tim34 is
-initialized i.e. move clockevents_config_and_register() below tim34
-initialization.
+Because it's not a hard restriction, it's just atypical for the rate to
+be below 1Mhz. The spec only mentions a typical range of 1 to 50MHz and
+the warning is only here to flag a potentially problematic rate, below
+what is assumed typical in the spec.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Signed-off-by: Sekhar Nori <nsekhar@ti.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clocksource/timer-davinci.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+In [1], where I'm actually relying on arch_timer_rate being higher than
+than 1/SCHED_CAPACITY_SCALE² of the maximum frequency, I am making it
+fail, as, for that scenario, it is a hard restriction.
 
-diff --git a/drivers/clocksource/timer-davinci.c b/drivers/clocksource/timer-davinci.c
-index 62745c9620498..e421946a91c5a 100644
---- a/drivers/clocksource/timer-davinci.c
-+++ b/drivers/clocksource/timer-davinci.c
-@@ -302,10 +302,6 @@ int __init davinci_timer_register(struct clk *clk,
- 		return rv;
- 	}
- 
--	clockevents_config_and_register(&clockevent->dev, tick_rate,
--					DAVINCI_TIMER_MIN_DELTA,
--					DAVINCI_TIMER_MAX_DELTA);
--
- 	davinci_clocksource.dev.rating = 300;
- 	davinci_clocksource.dev.read = davinci_clocksource_read;
- 	davinci_clocksource.dev.mask =
-@@ -323,6 +319,10 @@ int __init davinci_timer_register(struct clk *clk,
- 		davinci_clocksource_init_tim34(base);
- 	}
- 
-+	clockevents_config_and_register(&clockevent->dev, tick_rate,
-+					DAVINCI_TIMER_MIN_DELTA,
-+					DAVINCI_TIMER_MAX_DELTA);
+
++	 * We use a factor of 2 * SCHED_CAPACITY_SHIFT -> SCHED_CAPACITY_SCALE²
++	 * in order to ensure a good resolution for arch_max_freq_scale for
++	 * very low arch timer frequencies (up to the KHz range which should be
++	 * unlikely).
++	 */
++	ratio = (u64)arch_timer_get_rate() << (2 * SCHED_CAPACITY_SHIFT);
++	ratio = div64_u64(ratio, max_freq_hz);
++	if (!ratio) {
++		pr_err("System timer frequency too low.\n");
++		return -EINVAL;
++	}
 +
- 	rv = clocksource_register_hz(&davinci_clocksource.dev, tick_rate);
- 	if (rv) {
- 		pr_err("Unable to register clocksource");
--- 
-2.20.1
 
+[1] https://lore.kernel.org/lkml/89339501-5ee4-e871-3076-c8b02c6fbf6e@arm.com/
+
+Thanks,
+Ionela.
+
+> Thanks,
+> 
+>         tglx
