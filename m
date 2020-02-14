@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 282B415E0FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:16:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35B8715E105
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:16:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392569AbgBNQQW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:16:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45596 "EHLO mail.kernel.org"
+        id S2404291AbgBNQQg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:16:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404124AbgBNQPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:15:24 -0500
+        id S2392475AbgBNQPj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:15:39 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 511F5246D6;
-        Fri, 14 Feb 2020 16:15:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E60C246F2;
+        Fri, 14 Feb 2020 16:15:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696924;
-        bh=m/otNxC3zvJZKrphncMYDqdLByu/oTw6h9f5kpSGpsU=;
+        s=default; t=1581696939;
+        bh=yzoiKmt3nAhRVtfsDr9a8b1lx8fMEShoEFhjBaCQzqo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gMMMYzczZflooo1LncFT8nZlGOYvroNP/OdOm0/WMUuUgMqZiMErABLkuwYx6KERs
-         h4IwAgToKOwxEP0M1tcREdlZa7LSEvg36x6nfdm0ZLQKoOmCYvX63KtM9YVGvRvZu3
-         SApByovQ346lKyoZzwKdTUSzpqqhmYtIiUjT3iiE=
+        b=EiYQZ+no92DsJUaJqDmI+k5PTnBNU4JWikS9ySV2BtzGVPKk5lC2nZnM5kO50YMZj
+         64ils+SW8zaIi8o9g4qH1fL24sbtt0EwQ/NwFnt3CN/CxYYK2/DieGxo/Y0PV2O9X8
+         4lMkHONjBnYuz/A61i5TLW2DaAt7aOrjCnLysvyw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     YueHaibing <yuehaibing@huawei.com>, Hulk Robot <hulkci@huawei.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 171/252] drm/nouveau/drm/ttm: Remove set but not used variable 'mem'
-Date:   Fri, 14 Feb 2020 11:10:26 -0500
-Message-Id: <20200214161147.15842-171-sashal@kernel.org>
+Cc:     Jun Lei <Jun.Lei@amd.com>, Anthony Koo <Anthony.Koo@amd.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.19 182/252] drm/amd/display: fixup DML dependencies
+Date:   Fri, 14 Feb 2020 11:10:37 -0500
+Message-Id: <20200214161147.15842-182-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -44,56 +46,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Jun Lei <Jun.Lei@amd.com>
 
-[ Upstream commit 2e4534a22794746b11a794b2229b8d58797eccce ]
+[ Upstream commit 34ad0230062c39cdcba564d16d122c0fb467a7d6 ]
 
-drivers/gpu/drm/nouveau/nouveau_ttm.c: In function nouveau_vram_manager_new:
-drivers/gpu/drm/nouveau/nouveau_ttm.c:66:22: warning: variable mem set but not used [-Wunused-but-set-variable]
-drivers/gpu/drm/nouveau/nouveau_ttm.c: In function nouveau_gart_manager_new:
-drivers/gpu/drm/nouveau/nouveau_ttm.c:106:22: warning: variable mem set but not used [-Wunused-but-set-variable]
+[why]
+Need to fix DML portability issues to enable SW unit testing around DML
 
-They are not used any more, so remove it.
+[how]
+Move calcs into dc include folder since multiple components reference it
+Remove relative paths to external dependencies
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Signed-off-by: Jun Lei <Jun.Lei@amd.com>
+Reviewed-by: Anthony Koo <Anthony.Koo@amd.com>
+Acked-by: Harry Wentland <harry.wentland@amd.com>
+Acked-by: Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/nouveau/nouveau_ttm.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/gpu/drm/amd/display/dc/dml/dml_common_defs.c          | 2 +-
+ drivers/gpu/drm/amd/display/dc/dml/dml_inline_defs.h          | 2 +-
+ drivers/gpu/drm/amd/display/dc/{calcs => inc}/dcn_calc_math.h | 0
+ 3 files changed, 2 insertions(+), 2 deletions(-)
+ rename drivers/gpu/drm/amd/display/dc/{calcs => inc}/dcn_calc_math.h (100%)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_ttm.c b/drivers/gpu/drm/nouveau/nouveau_ttm.c
-index e4b977cc84528..37715a2a2f3f9 100644
---- a/drivers/gpu/drm/nouveau/nouveau_ttm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_ttm.c
-@@ -63,14 +63,12 @@ nouveau_vram_manager_new(struct ttm_mem_type_manager *man,
- {
- 	struct nouveau_bo *nvbo = nouveau_bo(bo);
- 	struct nouveau_drm *drm = nouveau_bdev(bo->bdev);
--	struct nouveau_mem *mem;
- 	int ret;
+diff --git a/drivers/gpu/drm/amd/display/dc/dml/dml_common_defs.c b/drivers/gpu/drm/amd/display/dc/dml/dml_common_defs.c
+index b953b02a15121..723af0b2dda04 100644
+--- a/drivers/gpu/drm/amd/display/dc/dml/dml_common_defs.c
++++ b/drivers/gpu/drm/amd/display/dc/dml/dml_common_defs.c
+@@ -24,7 +24,7 @@
+  */
  
- 	if (drm->client.device.info.ram_size == 0)
- 		return -ENOMEM;
+ #include "dml_common_defs.h"
+-#include "../calcs/dcn_calc_math.h"
++#include "dcn_calc_math.h"
  
- 	ret = nouveau_mem_new(&drm->master, nvbo->kind, nvbo->comp, reg);
--	mem = nouveau_mem(reg);
- 	if (ret)
- 		return ret;
+ #include "dml_inline_defs.h"
  
-@@ -103,11 +101,9 @@ nouveau_gart_manager_new(struct ttm_mem_type_manager *man,
- {
- 	struct nouveau_bo *nvbo = nouveau_bo(bo);
- 	struct nouveau_drm *drm = nouveau_bdev(bo->bdev);
--	struct nouveau_mem *mem;
- 	int ret;
+diff --git a/drivers/gpu/drm/amd/display/dc/dml/dml_inline_defs.h b/drivers/gpu/drm/amd/display/dc/dml/dml_inline_defs.h
+index e8ce08567cd8e..e4f595a3038c4 100644
+--- a/drivers/gpu/drm/amd/display/dc/dml/dml_inline_defs.h
++++ b/drivers/gpu/drm/amd/display/dc/dml/dml_inline_defs.h
+@@ -27,7 +27,7 @@
+ #define __DML_INLINE_DEFS_H__
  
- 	ret = nouveau_mem_new(&drm->master, nvbo->kind, nvbo->comp, reg);
--	mem = nouveau_mem(reg);
- 	if (ret)
- 		return ret;
+ #include "dml_common_defs.h"
+-#include "../calcs/dcn_calc_math.h"
++#include "dcn_calc_math.h"
+ #include "dml_logger.h"
  
+ static inline double dml_min(double a, double b)
+diff --git a/drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_math.h b/drivers/gpu/drm/amd/display/dc/inc/dcn_calc_math.h
+similarity index 100%
+rename from drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_math.h
+rename to drivers/gpu/drm/amd/display/dc/inc/dcn_calc_math.h
 -- 
 2.20.1
 
