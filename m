@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B713415E06E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:14:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9882D15E070
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:14:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391841AbgBNQNb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:13:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40422 "EHLO mail.kernel.org"
+        id S2392185AbgBNQNe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:13:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40622 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392049AbgBNQMo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:12:44 -0500
+        id S2392069AbgBNQMu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:12:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 695E42469B;
-        Fri, 14 Feb 2020 16:12:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92B14246BD;
+        Fri, 14 Feb 2020 16:12:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696763;
-        bh=pbVzIndI7U2QKW7IP8oF3dBRt7hGnqAhaZiECsdUCfk=;
+        s=default; t=1581696769;
+        bh=laid7J5sQfr4zc5dfFYayIFp5SqBhYxHplp0Qg+Sfbc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BmpIe9OTvkn7BR6owNLTk0RHtrWH00RFSL3QEf4l4+kcVHO2fMEOJBzSJb4/u7xGO
-         w2EO366ulVDoCSMChVHwaMzpM+SrT1dYzc7kOHJU0Zhv/SyhwDLeUmatVedXraY63r
-         MCnXXFTDyKIOIrDbtcaGLuwhLxI+5yWMUH9lAVtQ=
+        b=IUMLRwzzBlkO3dzlfeLsJAIl+zYXXqBnf8vBirZdNPIfyfWoPdqO+3YiiGLtrSs5v
+         foLMZ7QFN1T5X3I4LlerShCFapJI5/My7apoPkUhuqnTibcjnTSlg1IDysV9zHItX7
+         Bj6KtSFpFHQjH2MN9DXWp6uOZ99T39ECWOgOmIB4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        Tyrel Datwyler <tyreld@linux.ibm.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.19 043/252] powerpc/pseries/vio: Fix iommu_table use-after-free refcount warning
-Date:   Fri, 14 Feb 2020 11:08:18 -0500
-Message-Id: <20200214161147.15842-43-sashal@kernel.org>
+Cc:     Nicolai Stange <nstange@suse.de>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 048/252] libertas: make lbs_ibss_join_existing() return error code on rates overflow
+Date:   Fri, 14 Feb 2020 11:08:23 -0500
+Message-Id: <20200214161147.15842-48-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -45,64 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+From: Nicolai Stange <nstange@suse.de>
 
-[ Upstream commit aff8c8242bc638ba57247ae1ec5f272ac3ed3b92 ]
+[ Upstream commit 1754c4f60aaf1e17d886afefee97e94d7f27b4cb ]
 
-Commit e5afdf9dd515 ("powerpc/vfio_spapr_tce: Add reference counting to
-iommu_table") missed an iommu_table allocation in the pseries vio code.
-The iommu_table is allocated with kzalloc and as a result the associated
-kref gets a value of zero. This has the side effect that during a DLPAR
-remove of the associated virtual IOA the iommu_tce_table_put() triggers
-a use-after-free underflow warning.
+Commit e5e884b42639 ("libertas: Fix two buffer overflows at parsing bss
+descriptor") introduced a bounds check on the number of supplied rates to
+lbs_ibss_join_existing() and made it to return on overflow.
 
-Call Trace:
-[c0000002879e39f0] [c00000000071ecb4] refcount_warn_saturate+0x184/0x190
-(unreliable)
-[c0000002879e3a50] [c0000000000500ac] iommu_tce_table_put+0x9c/0xb0
-[c0000002879e3a70] [c0000000000f54e4] vio_dev_release+0x34/0x70
-[c0000002879e3aa0] [c00000000087cfa4] device_release+0x54/0xf0
-[c0000002879e3b10] [c000000000d64c84] kobject_cleanup+0xa4/0x240
-[c0000002879e3b90] [c00000000087d358] put_device+0x28/0x40
-[c0000002879e3bb0] [c0000000007a328c] dlpar_remove_slot+0x15c/0x250
-[c0000002879e3c50] [c0000000007a348c] remove_slot_store+0xac/0xf0
-[c0000002879e3cd0] [c000000000d64220] kobj_attr_store+0x30/0x60
-[c0000002879e3cf0] [c0000000004ff13c] sysfs_kf_write+0x6c/0xa0
-[c0000002879e3d10] [c0000000004fde4c] kernfs_fop_write+0x18c/0x260
-[c0000002879e3d60] [c000000000410f3c] __vfs_write+0x3c/0x70
-[c0000002879e3d80] [c000000000415408] vfs_write+0xc8/0x250
-[c0000002879e3dd0] [c0000000004157dc] ksys_write+0x7c/0x120
-[c0000002879e3e20] [c00000000000b278] system_call+0x5c/0x68
+However, the aforementioned commit doesn't set the return value accordingly
+and thus, lbs_ibss_join_existing() would return with zero even though it
+failed.
 
-Further, since the refcount was always zero the iommu_tce_table_put()
-fails to call the iommu_table release function resulting in a leak.
+Make lbs_ibss_join_existing return -EINVAL in case the bounds check on the
+number of supplied rates fails.
 
-Fix this issue be initilizing the iommu_table kref immediately after
-allocation.
-
-Fixes: e5afdf9dd515 ("powerpc/vfio_spapr_tce: Add reference counting to iommu_table")
-Signed-off-by: Tyrel Datwyler <tyreld@linux.ibm.com>
-Reviewed-by: Alexey Kardashevskiy <aik@ozlabs.ru>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/1579558202-26052-1-git-send-email-tyreld@linux.ibm.com
+Fixes: e5e884b42639 ("libertas: Fix two buffer overflows at parsing bss descriptor")
+Signed-off-by: Nicolai Stange <nstange@suse.de>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/platforms/pseries/vio.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/wireless/marvell/libertas/cfg.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/powerpc/platforms/pseries/vio.c b/arch/powerpc/platforms/pseries/vio.c
-index 49e04ec19238a..0e7778be4c490 100644
---- a/arch/powerpc/platforms/pseries/vio.c
-+++ b/arch/powerpc/platforms/pseries/vio.c
-@@ -1195,6 +1195,8 @@ static struct iommu_table *vio_build_iommu_table(struct vio_dev *dev)
- 	if (tbl == NULL)
- 		return NULL;
- 
-+	kref_init(&tbl->it_kref);
-+
- 	of_parse_dma_window(dev->dev.of_node, dma_window,
- 			    &tbl->it_index, &offset, &size);
- 
+diff --git a/drivers/net/wireless/marvell/libertas/cfg.c b/drivers/net/wireless/marvell/libertas/cfg.c
+index 68985d7663491..4e3de684928bf 100644
+--- a/drivers/net/wireless/marvell/libertas/cfg.c
++++ b/drivers/net/wireless/marvell/libertas/cfg.c
+@@ -1786,6 +1786,7 @@ static int lbs_ibss_join_existing(struct lbs_private *priv,
+ 		if (rates_max > MAX_RATES) {
+ 			lbs_deb_join("invalid rates");
+ 			rcu_read_unlock();
++			ret = -EINVAL;
+ 			goto out;
+ 		}
+ 		rates = cmd.bss.rates;
 -- 
 2.20.1
 
