@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D37115F469
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:23:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ADFC15F472
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 19:23:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729686AbgBNPtz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:49:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53214 "EHLO mail.kernel.org"
+        id S2394860AbgBNSVL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 13:21:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730224AbgBNPtt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:49:49 -0500
+        id S1730236AbgBNPtv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:49:51 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20A7524688;
-        Fri, 14 Feb 2020 15:49:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 859B824684;
+        Fri, 14 Feb 2020 15:49:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695389;
-        bh=c7JCE0FUS+3bdwXpx4DK8SQXjElF8rXBOwR4c3H51RI=;
+        s=default; t=1581695390;
+        bh=B57KRccJ758jF0xN74+wxNnwCOVOgwAYcSyGiizN5Pg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qu4HvSnEVZiqRK9LldFY76EkFhojh0eGRDbPM8MGALlRqcRnCHn5ocNTss5WO4YSL
-         4Cx2U78A0XCuqmMSqFN8X/jkscN2rijoTC7hj8+EZS27lHeyhrpFjVhu3PWph+Etk5
-         wkFVgy6/Y4LiaIKPgzGz6oB1ErDCKS6AYaGWelSQ=
+        b=vqq2TmAjXjUtP/FovRlWLuH3fstmwyv6yUFJULiR0qvmyBqP7fRu76ebMcSXVz9PU
+         kBq/+7ev9O5wuTvjeCCN6qyGwe6u0fm8uAyZJzuKi3vARy96MEs8KeKFuPN512774Q
+         0Guyk4wWWgdjl1htNGrQeeTq7cmw83Y0f1rkegWY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Eugen Hristev <eugen.hristev@microchip.com>,
-        Wenyou Yang <wenyou.yang@microchip.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+Cc:     Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <mripard@kernel.org>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 042/542] media: i2c: mt9v032: fix enum mbus codes and frame sizes
-Date:   Fri, 14 Feb 2020 10:40:34 -0500
-Message-Id: <20200214154854.6746-42-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.5 043/542] media: sun4i-csi: Deal with DRAM offset
+Date:   Fri, 14 Feb 2020 10:40:35 -0500
+Message-Id: <20200214154854.6746-43-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -46,61 +45,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugen Hristev <eugen.hristev@microchip.com>
+From: Chen-Yu Tsai <wens@csie.org>
 
-[ Upstream commit 1451d5ae351d938a0ab1677498c893f17b9ee21d ]
+[ Upstream commit 249b286171fa9c358e8d5c825b48c4ebea97c498 ]
 
-This driver supports both the mt9v032 (color) and the mt9v022 (mono)
-sensors. Depending on which sensor is used, the format from the sensor is
-different. The format.code inside the dev struct holds this information.
-The enum mbus and enum frame sizes need to take into account both type of
-sensors, not just the color one. To solve this, use the format.code in
-these functions instead of the hardcoded bayer color format (which is only
-used for mt9v032).
+On Allwinner SoCs, some high memory bandwidth devices do DMA directly
+over the memory bus (called MBUS), instead of the system bus. These
+devices include the CSI camera sensor interface, video (codec) engine,
+display subsystem, etc.. The memory bus has a different addressing
+scheme without the DRAM starting offset.
 
-[Sakari Ailus: rewrapped commit message]
+Deal with this using the "interconnects" property from the device tree,
+or if that is not available, set dev->dma_pfn_offset to PHYS_PFN_OFFSET.
 
-Suggested-by: Wenyou Yang <wenyou.yang@microchip.com>
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Fixes: 577bbf23b758 ("media: sunxi: Add A10 CSI driver")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/mt9v032.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ .../platform/sunxi/sun4i-csi/sun4i_csi.c      | 22 +++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/drivers/media/i2c/mt9v032.c b/drivers/media/i2c/mt9v032.c
-index 4b9b98cf6674c..5bd3ae82992f3 100644
---- a/drivers/media/i2c/mt9v032.c
-+++ b/drivers/media/i2c/mt9v032.c
-@@ -428,10 +428,12 @@ static int mt9v032_enum_mbus_code(struct v4l2_subdev *subdev,
- 				  struct v4l2_subdev_pad_config *cfg,
- 				  struct v4l2_subdev_mbus_code_enum *code)
- {
-+	struct mt9v032 *mt9v032 = to_mt9v032(subdev);
+diff --git a/drivers/media/platform/sunxi/sun4i-csi/sun4i_csi.c b/drivers/media/platform/sunxi/sun4i-csi/sun4i_csi.c
+index f36dc6258900e..b8b07c1de2a8e 100644
+--- a/drivers/media/platform/sunxi/sun4i-csi/sun4i_csi.c
++++ b/drivers/media/platform/sunxi/sun4i-csi/sun4i_csi.c
+@@ -11,6 +11,7 @@
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/of.h>
++#include <linux/of_device.h>
+ #include <linux/of_graph.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+@@ -155,6 +156,27 @@ static int sun4i_csi_probe(struct platform_device *pdev)
+ 	subdev = &csi->subdev;
+ 	vdev = &csi->vdev;
+ 
++	/*
++	 * On Allwinner SoCs, some high memory bandwidth devices do DMA
++	 * directly over the memory bus (called MBUS), instead of the
++	 * system bus. The memory bus has a different addressing scheme
++	 * without the DRAM starting offset.
++	 *
++	 * In some cases this can be described by an interconnect in
++	 * the device tree. In other cases where the hardware is not
++	 * fully understood and the interconnect is left out of the
++	 * device tree, fall back to a default offset.
++	 */
++	if (of_find_property(csi->dev->of_node, "interconnects", NULL)) {
++		ret = of_dma_configure(csi->dev, csi->dev->of_node, true);
++		if (ret)
++			return ret;
++	} else {
++#ifdef PHYS_PFN_OFFSET
++		csi->dev->dma_pfn_offset = PHYS_PFN_OFFSET;
++#endif
++	}
 +
- 	if (code->index > 0)
- 		return -EINVAL;
- 
--	code->code = MEDIA_BUS_FMT_SGRBG10_1X10;
-+	code->code = mt9v032->format.code;
- 	return 0;
- }
- 
-@@ -439,7 +441,11 @@ static int mt9v032_enum_frame_size(struct v4l2_subdev *subdev,
- 				   struct v4l2_subdev_pad_config *cfg,
- 				   struct v4l2_subdev_frame_size_enum *fse)
- {
--	if (fse->index >= 3 || fse->code != MEDIA_BUS_FMT_SGRBG10_1X10)
-+	struct mt9v032 *mt9v032 = to_mt9v032(subdev);
-+
-+	if (fse->index >= 3)
-+		return -EINVAL;
-+	if (mt9v032->format.code != fse->code)
- 		return -EINVAL;
- 
- 	fse->min_width = MT9V032_WINDOW_WIDTH_DEF / (1 << fse->index);
+ 	csi->mdev.dev = csi->dev;
+ 	strscpy(csi->mdev.model, "Allwinner Video Capture Device",
+ 		sizeof(csi->mdev.model));
 -- 
 2.20.1
 
