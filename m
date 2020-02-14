@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 476D115DCEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:56:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 916C015DCEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 16:56:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387768AbgBNP4W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 10:56:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37948 "EHLO mail.kernel.org"
+        id S2387849AbgBNP4b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 10:56:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38184 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387704AbgBNP4P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:56:15 -0500
+        id S2387776AbgBNP4X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:56:23 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9153A222C4;
-        Fri, 14 Feb 2020 15:56:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 872482187F;
+        Fri, 14 Feb 2020 15:56:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695775;
-        bh=GxeaPn+Hi8p0/CIxFlRsxVrH5otHDsR5tXjDQcI6rFI=;
+        s=default; t=1581695783;
+        bh=LXbfIfF8CgqKhgJwGP25Eq5JnnzHgEojWUNMKLKkmb4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UqMmhbrWbUihAkbviT8rwku1FW5zDZclg1gfxAYXLLS+NyM6xTIXXBXbI/wCQF6BH
-         2IvKqeGP0sH+fG0VHVdFvt2URvSXutS3EVUfHGoRd8GQBNKE0/Lqz5chT+USgDlf4R
-         WXKXpefrM4++YLIWQOAAYNUobcopzDa2F+/yBYEE=
+        b=aNTuWhFkUu3fLHdkQ0agZkt0meJHfQvPDs+7uH0Ue/Ofh+OQ0VdRIJWpMSoDK5q4G
+         KFiV5oXjDW8eQKBYeawCqEj6dDpAgXqtpoLS8K3823lMpQJE/eftktSlBYtTpDS+Ye
+         j0GkIk4Iwf5mMTN2h8V/zJjTaB5wazKomM8jxyZU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 5.5 340/542] tty: synclinkmp: Adjust indentation in several functions
-Date:   Fri, 14 Feb 2020 10:45:32 -0500
-Message-Id: <20200214154854.6746-340-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.5 347/542] driver core: Print device when resources present in really_probe()
+Date:   Fri, 14 Feb 2020 10:45:39 -0500
+Message-Id: <20200214154854.6746-347-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -44,157 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 1feedf61e7265128244f6993f23421f33dd93dbc ]
+[ Upstream commit 7c35e699c88bd60734277b26962783c60e04b494 ]
 
-Clang warns:
+If a device already has devres items attached before probing, a warning
+backtrace is printed.  However, this backtrace does not reveal the
+offending device, leaving the user uninformed.  Furthermore, using
+WARN_ON() causes systems with panic-on-warn to reboot.
 
-../drivers/tty/synclinkmp.c:1456:3: warning: misleading indentation;
-statement is not part of the previous 'if' [-Wmisleading-indentation]
-        if (C_CRTSCTS(tty)) {
-        ^
-../drivers/tty/synclinkmp.c:1453:2: note: previous statement is here
-        if (I_IXOFF(tty))
-        ^
-../drivers/tty/synclinkmp.c:2473:8: warning: misleading indentation;
-statement is not part of the previous 'if' [-Wmisleading-indentation]
-                                                info->port.tty->hw_stopped = 0;
-                                                ^
-../drivers/tty/synclinkmp.c:2471:7: note: previous statement is here
-                                                if ( debug_level >= DEBUG_LEVEL_ISR )
-                                                ^
-../drivers/tty/synclinkmp.c:2482:8: warning: misleading indentation;
-statement is not part of the previous 'if' [-Wmisleading-indentation]
-                                                info->port.tty->hw_stopped = 1;
-                                                ^
-../drivers/tty/synclinkmp.c:2480:7: note: previous statement is here
-                                                if ( debug_level >= DEBUG_LEVEL_ISR )
-                                                ^
-../drivers/tty/synclinkmp.c:2809:3: warning: misleading indentation;
-statement is not part of the previous 'if' [-Wmisleading-indentation]
-        if (I_BRKINT(info->port.tty) || I_PARMRK(info->port.tty))
-        ^
-../drivers/tty/synclinkmp.c:2807:2: note: previous statement is here
-        if (I_INPCK(info->port.tty))
-        ^
-../drivers/tty/synclinkmp.c:3246:3: warning: misleading indentation;
-statement is not part of the previous 'else' [-Wmisleading-indentation]
-        set_signals(info);
-        ^
-../drivers/tty/synclinkmp.c:3244:2: note: previous statement is here
-        else
-        ^
-5 warnings generated.
+Fix this by replacing the WARN_ON() by a dev_crit() message.
+Abort probing the device, to prevent doing more damage to the device's
+resources.
 
-The indentation on these lines is not at all consistent, tabs and spaces
-are mixed together. Convert to just using tabs to be consistent with the
-Linux kernel coding style and eliminate these warnings from clang.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/823
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Link: https://lore.kernel.org/r/20191218024720.3528-1-natechancellor@gmail.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20191206132219.28908-1-geert+renesas@glider.be
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/synclinkmp.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ drivers/base/dd.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/tty/synclinkmp.c b/drivers/tty/synclinkmp.c
-index fcb91bf7a15ba..54b897a646d02 100644
---- a/drivers/tty/synclinkmp.c
-+++ b/drivers/tty/synclinkmp.c
-@@ -1453,10 +1453,10 @@ static void throttle(struct tty_struct * tty)
- 	if (I_IXOFF(tty))
- 		send_xchar(tty, STOP_CHAR(tty));
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index d811e60610d33..b25bcab2a26bd 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -516,7 +516,10 @@ static int really_probe(struct device *dev, struct device_driver *drv)
+ 	atomic_inc(&probe_count);
+ 	pr_debug("bus: '%s': %s: probing driver %s with device %s\n",
+ 		 drv->bus->name, __func__, drv->name, dev_name(dev));
+-	WARN_ON(!list_empty(&dev->devres_head));
++	if (!list_empty(&dev->devres_head)) {
++		dev_crit(dev, "Resources present before probing\n");
++		return -EBUSY;
++	}
  
-- 	if (C_CRTSCTS(tty)) {
-+	if (C_CRTSCTS(tty)) {
- 		spin_lock_irqsave(&info->lock,flags);
- 		info->serial_signals &= ~SerialSignal_RTS;
--	 	set_signals(info);
-+		set_signals(info);
- 		spin_unlock_irqrestore(&info->lock,flags);
- 	}
- }
-@@ -1482,10 +1482,10 @@ static void unthrottle(struct tty_struct * tty)
- 			send_xchar(tty, START_CHAR(tty));
- 	}
- 
-- 	if (C_CRTSCTS(tty)) {
-+	if (C_CRTSCTS(tty)) {
- 		spin_lock_irqsave(&info->lock,flags);
- 		info->serial_signals |= SerialSignal_RTS;
--	 	set_signals(info);
-+		set_signals(info);
- 		spin_unlock_irqrestore(&info->lock,flags);
- 	}
- }
-@@ -2470,7 +2470,7 @@ static void isr_io_pin( SLMP_INFO *info, u16 status )
- 					if (status & SerialSignal_CTS) {
- 						if ( debug_level >= DEBUG_LEVEL_ISR )
- 							printk("CTS tx start...");
--			 			info->port.tty->hw_stopped = 0;
-+						info->port.tty->hw_stopped = 0;
- 						tx_start(info);
- 						info->pending_bh |= BH_TRANSMIT;
- 						return;
-@@ -2479,7 +2479,7 @@ static void isr_io_pin( SLMP_INFO *info, u16 status )
- 					if (!(status & SerialSignal_CTS)) {
- 						if ( debug_level >= DEBUG_LEVEL_ISR )
- 							printk("CTS tx stop...");
--			 			info->port.tty->hw_stopped = 1;
-+						info->port.tty->hw_stopped = 1;
- 						tx_stop(info);
- 					}
- 				}
-@@ -2806,8 +2806,8 @@ static void change_params(SLMP_INFO *info)
- 	info->read_status_mask2 = OVRN;
- 	if (I_INPCK(info->port.tty))
- 		info->read_status_mask2 |= PE | FRME;
-- 	if (I_BRKINT(info->port.tty) || I_PARMRK(info->port.tty))
-- 		info->read_status_mask1 |= BRKD;
-+	if (I_BRKINT(info->port.tty) || I_PARMRK(info->port.tty))
-+		info->read_status_mask1 |= BRKD;
- 	if (I_IGNPAR(info->port.tty))
- 		info->ignore_status_mask2 |= PE | FRME;
- 	if (I_IGNBRK(info->port.tty)) {
-@@ -3177,7 +3177,7 @@ static int tiocmget(struct tty_struct *tty)
-  	unsigned long flags;
- 
- 	spin_lock_irqsave(&info->lock,flags);
-- 	get_signals(info);
-+	get_signals(info);
- 	spin_unlock_irqrestore(&info->lock,flags);
- 
- 	result = ((info->serial_signals & SerialSignal_RTS) ? TIOCM_RTS : 0) |
-@@ -3215,7 +3215,7 @@ static int tiocmset(struct tty_struct *tty,
- 		info->serial_signals &= ~SerialSignal_DTR;
- 
- 	spin_lock_irqsave(&info->lock,flags);
-- 	set_signals(info);
-+	set_signals(info);
- 	spin_unlock_irqrestore(&info->lock,flags);
- 
- 	return 0;
-@@ -3227,7 +3227,7 @@ static int carrier_raised(struct tty_port *port)
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&info->lock,flags);
-- 	get_signals(info);
-+	get_signals(info);
- 	spin_unlock_irqrestore(&info->lock,flags);
- 
- 	return (info->serial_signals & SerialSignal_DCD) ? 1 : 0;
-@@ -3243,7 +3243,7 @@ static void dtr_rts(struct tty_port *port, int on)
- 		info->serial_signals |= SerialSignal_RTS | SerialSignal_DTR;
- 	else
- 		info->serial_signals &= ~(SerialSignal_RTS | SerialSignal_DTR);
-- 	set_signals(info);
-+	set_signals(info);
- 	spin_unlock_irqrestore(&info->lock,flags);
- }
- 
+ re_probe:
+ 	dev->driver = drv;
 -- 
 2.20.1
 
