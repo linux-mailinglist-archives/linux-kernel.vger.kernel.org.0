@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB7FF15E3D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:32:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9170615E3D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:32:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406864AbgBNQcl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:32:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35724 "EHLO mail.kernel.org"
+        id S2406860AbgBNQc2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:32:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406201AbgBNQZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:25:46 -0500
+        id S2406223AbgBNQZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:25:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F1EF247E4;
-        Fri, 14 Feb 2020 16:25:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C0E6247C9;
+        Fri, 14 Feb 2020 16:25:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697546;
-        bh=wVAFLn1OyiGv+jbPEipLto9iRXEUfr6/MkA/lc67GIc=;
+        s=default; t=1581697549;
+        bh=/i28I5l9CjhJyTMqi7+ktb0Hpgo8pvI7roct7FTl+uM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L3a1xBtsLAPvS3fYsd3q2vuI4Sryjr4vcl0OdgSxlLawvtRizQfe1c1XZzWg/fbYr
-         yXKJ5rg2wKqVMJH/ifG10kpkjh2zLoOWKhs69AUlKDtNS1hojckw3vA17WNANZ+hTi
-         VRgw43Yi5bI3rS89e7FB41pXjS9usZazT6xN5aJ4=
+        b=1Og8xCedid7mjBa1dtKS44K/oTBkXHMdjzbQwiosFyu4gYvQEylYm7DKJpJFIzG7k
+         8x1viL2IE6GWufQ6+DICmoTvjEj6/KY5dDjSviYZq4DJxsdXw+ycc6xY53sA1UpdnE
+         Gz4d66GGrISPAG5+eENpAlk+KM2kHVqy1xlZXkcU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 065/100] wan: ixp4xx_hss: fix compile-testing on 64-bit
-Date:   Fri, 14 Feb 2020 11:23:49 -0500
-Message-Id: <20200214162425.21071-65-sashal@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 068/100] driver core: Print device when resources present in really_probe()
+Date:   Fri, 14 Feb 2020 11:23:52 -0500
+Message-Id: <20200214162425.21071-68-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214162425.21071-1-sashal@kernel.org>
 References: <20200214162425.21071-1-sashal@kernel.org>
@@ -44,52 +43,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 504c28c853ec5c626900b914b5833daf0581a344 ]
+[ Upstream commit 7c35e699c88bd60734277b26962783c60e04b494 ]
 
-Change the driver to use portable integer types to avoid
-warnings during compile testing:
+If a device already has devres items attached before probing, a warning
+backtrace is printed.  However, this backtrace does not reveal the
+offending device, leaving the user uninformed.  Furthermore, using
+WARN_ON() causes systems with panic-on-warn to reboot.
 
-drivers/net/wan/ixp4xx_hss.c:863:21: error: cast to 'u32 *' (aka 'unsigned int *') from smaller integer type 'int' [-Werror,-Wint-to-pointer-cast]
-        memcpy_swab32(mem, (u32 *)((int)skb->data & ~3), bytes / 4);
-                           ^
-drivers/net/wan/ixp4xx_hss.c:979:12: error: incompatible pointer types passing 'u32 *' (aka 'unsigned int *') to parameter of type 'dma_addr_t *' (aka 'unsigned long long *') [-Werror,-Wincompatible-pointer-types]
-                                              &port->desc_tab_phys)))
-                                              ^~~~~~~~~~~~~~~~~~~~
-include/linux/dmapool.h:27:20: note: passing argument to parameter 'handle' here
-                     dma_addr_t *handle);
-                                 ^
+Fix this by replacing the WARN_ON() by a dev_crit() message.
+Abort probing the device, to prevent doing more damage to the device's
+resources.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20191206132219.28908-1-geert+renesas@glider.be
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wan/ixp4xx_hss.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/base/dd.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wan/ixp4xx_hss.c b/drivers/net/wan/ixp4xx_hss.c
-index e7bbdb7af53ac..97968e6a6a4eb 100644
---- a/drivers/net/wan/ixp4xx_hss.c
-+++ b/drivers/net/wan/ixp4xx_hss.c
-@@ -261,7 +261,7 @@ struct port {
- 	struct hss_plat_info *plat;
- 	buffer_t *rx_buff_tab[RX_DESCS], *tx_buff_tab[TX_DESCS];
- 	struct desc *desc_tab;	/* coherent */
--	u32 desc_tab_phys;
-+	dma_addr_t desc_tab_phys;
- 	unsigned int id;
- 	unsigned int clock_type, clock_rate, loopback;
- 	unsigned int initialized, carrier;
-@@ -861,7 +861,7 @@ static int hss_hdlc_xmit(struct sk_buff *skb, struct net_device *dev)
- 		dev->stats.tx_dropped++;
- 		return NETDEV_TX_OK;
- 	}
--	memcpy_swab32(mem, (u32 *)((int)skb->data & ~3), bytes / 4);
-+	memcpy_swab32(mem, (u32 *)((uintptr_t)skb->data & ~3), bytes / 4);
- 	dev_kfree_skb(skb);
- #endif
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index 1dffb018a7feb..04a923186081f 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -283,7 +283,10 @@ static int really_probe(struct device *dev, struct device_driver *drv)
+ 	atomic_inc(&probe_count);
+ 	pr_debug("bus: '%s': %s: probing driver %s with device %s\n",
+ 		 drv->bus->name, __func__, drv->name, dev_name(dev));
+-	WARN_ON(!list_empty(&dev->devres_head));
++	if (!list_empty(&dev->devres_head)) {
++		dev_crit(dev, "Resources present before probing\n");
++		return -EBUSY;
++	}
+ 
+ 	dev->driver = drv;
  
 -- 
 2.20.1
