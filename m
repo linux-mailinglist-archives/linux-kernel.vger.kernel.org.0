@@ -2,158 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 956CA15E0F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:16:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F70D15E00B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:12:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404217AbgBNQQF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:16:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45242 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392122AbgBNQPK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:15:10 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70FCB246C3;
-        Fri, 14 Feb 2020 16:15:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696910;
-        bh=48rndanHeY2dcGba9Bsm/+w3uG3i86oxuqKXUO1c+oc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rELDrSVkxUj04V4zl4/kxpv+HMwoDReLWe2aL+Wq12J2RZ82wBcfwEo7GwB8UgWYp
-         Psr3sFjJ/yMFcBzUfVxJ7tG/Am2h/whyNoi6q7bEzp/IQvvWuKMu4obrx0kBG35GMM
-         cWnI2GgnEPJgK5gNpa7WvG4OWae662YUX21YlpE4=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.19 159/252] tty: synclink_gt: Adjust indentation in several functions
-Date:   Fri, 14 Feb 2020 11:10:14 -0500
-Message-Id: <20200214161147.15842-159-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
-References: <20200214161147.15842-1-sashal@kernel.org>
+        id S2391430AbgBNQLu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:11:50 -0500
+Received: from mo4-p03-ob.smtp.rzone.de ([85.215.255.104]:28077 "EHLO
+        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391581AbgBNQKr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:10:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1581696639;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=tc4xhvDjnfG1jLVOTwuj+X2pkCzFOljdsKLqfh9DWVg=;
+        b=oWm214Xciqg4X4MwO7KqdW3b7GCDSw3THNLui/B9XqlsU3E12OOGgJzABsaYIs/wGI
+        eq/fw/hTAgisEnWxo3wfV2SgeEsw4c0KSE1fPuivG4Lt6TlTqD7+LKmdz1yhvi25IuLn
+        bJGMBg8d1qDRXMtQj3+O06ZjFgpwS/1A3TVuOjM5ZwJKOrimjknpItQXmTc2l3wFA+DW
+        P45AVTjtnTWdyU1izvQ6TkE81bCEfekHQfBhoVQa2kr3riLZAjqjbtlzwfCAVWddwFaS
+        s9NJN/JQ+sOGhgjsy8Zpy+fjmpDqITu6sZr39NqtWV02Nkgpbre/40Hh08aXm3Bl2oIA
+        cXDA==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1OAA2UNf2M7OMfsfQx3"
+X-RZG-CLASS-ID: mo00
+Received: from iMac.fritz.box
+        by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
+        with ESMTPSA id U06217w1EGASFkz
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Fri, 14 Feb 2020 17:10:28 +0100 (CET)
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+To:     Paul Boddie <paul@boddie.org.uk>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        letux-kernel@openphoenux.org, kernel@pyra-handheld.com
+Subject: [PATCH v2 04/12] MIPS: CI20: defconfig: compile leds-gpio driver into the kernel and configure for LED triggers
+Date:   Fri, 14 Feb 2020 17:10:16 +0100
+Message-Id: <4a4e7f7a7d3cbb7a65134091e9f64aab6ff10482.1581696624.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <cover.1581696624.git.hns@goldelico.com>
+References: <cover.1581696624.git.hns@goldelico.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+DTS has been augmented to add some gpio-leds. We need the leds-gpio driver
+and enable the triggers.
 
-[ Upstream commit 446e76873b5e4e70bdee5db2f2a894d5b4a7d081 ]
-
-Clang warns:
-
-../drivers/tty/synclink_gt.c:1337:3: warning: misleading indentation;
-statement is not part of the previous 'if' [-Wmisleading-indentation]
-        if (C_CRTSCTS(tty)) {
-        ^
-../drivers/tty/synclink_gt.c:1335:2: note: previous statement is here
-        if (I_IXOFF(tty))
-        ^
-../drivers/tty/synclink_gt.c:2563:3: warning: misleading indentation;
-statement is not part of the previous 'if' [-Wmisleading-indentation]
-        if (I_BRKINT(info->port.tty) || I_PARMRK(info->port.tty))
-        ^
-../drivers/tty/synclink_gt.c:2561:2: note: previous statement is here
-        if (I_INPCK(info->port.tty))
-        ^
-../drivers/tty/synclink_gt.c:3221:3: warning: misleading indentation;
-statement is not part of the previous 'else' [-Wmisleading-indentation]
-        set_signals(info);
-        ^
-../drivers/tty/synclink_gt.c:3219:2: note: previous statement is here
-        else
-        ^
-3 warnings generated.
-
-The indentation on these lines is not at all consistent, tabs and spaces
-are mixed together. Convert to just using tabs to be consistent with the
-Linux kernel coding style and eliminate these warnings from clang.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/822
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Link: https://lore.kernel.org/r/20191218023912.13827-1-natechancellor@gmail.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- drivers/tty/synclink_gt.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ arch/mips/configs/ci20_defconfig | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/tty/synclink_gt.c b/drivers/tty/synclink_gt.c
-index b88ecf102764e..e9779b03ee565 100644
---- a/drivers/tty/synclink_gt.c
-+++ b/drivers/tty/synclink_gt.c
-@@ -1335,10 +1335,10 @@ static void throttle(struct tty_struct * tty)
- 	DBGINFO(("%s throttle\n", info->device_name));
- 	if (I_IXOFF(tty))
- 		send_xchar(tty, STOP_CHAR(tty));
-- 	if (C_CRTSCTS(tty)) {
-+	if (C_CRTSCTS(tty)) {
- 		spin_lock_irqsave(&info->lock,flags);
- 		info->signals &= ~SerialSignal_RTS;
--	 	set_signals(info);
-+		set_signals(info);
- 		spin_unlock_irqrestore(&info->lock,flags);
- 	}
- }
-@@ -1360,10 +1360,10 @@ static void unthrottle(struct tty_struct * tty)
- 		else
- 			send_xchar(tty, START_CHAR(tty));
- 	}
-- 	if (C_CRTSCTS(tty)) {
-+	if (C_CRTSCTS(tty)) {
- 		spin_lock_irqsave(&info->lock,flags);
- 		info->signals |= SerialSignal_RTS;
--	 	set_signals(info);
-+		set_signals(info);
- 		spin_unlock_irqrestore(&info->lock,flags);
- 	}
- }
-@@ -2561,8 +2561,8 @@ static void change_params(struct slgt_info *info)
- 	info->read_status_mask = IRQ_RXOVER;
- 	if (I_INPCK(info->port.tty))
- 		info->read_status_mask |= MASK_PARITY | MASK_FRAMING;
-- 	if (I_BRKINT(info->port.tty) || I_PARMRK(info->port.tty))
-- 		info->read_status_mask |= MASK_BREAK;
-+	if (I_BRKINT(info->port.tty) || I_PARMRK(info->port.tty))
-+		info->read_status_mask |= MASK_BREAK;
- 	if (I_IGNPAR(info->port.tty))
- 		info->ignore_status_mask |= MASK_PARITY | MASK_FRAMING;
- 	if (I_IGNBRK(info->port.tty)) {
-@@ -3193,7 +3193,7 @@ static int tiocmset(struct tty_struct *tty,
- 		info->signals &= ~SerialSignal_DTR;
- 
- 	spin_lock_irqsave(&info->lock,flags);
-- 	set_signals(info);
-+	set_signals(info);
- 	spin_unlock_irqrestore(&info->lock,flags);
- 	return 0;
- }
-@@ -3204,7 +3204,7 @@ static int carrier_raised(struct tty_port *port)
- 	struct slgt_info *info = container_of(port, struct slgt_info, port);
- 
- 	spin_lock_irqsave(&info->lock,flags);
-- 	get_signals(info);
-+	get_signals(info);
- 	spin_unlock_irqrestore(&info->lock,flags);
- 	return (info->signals & SerialSignal_DCD) ? 1 : 0;
- }
-@@ -3219,7 +3219,7 @@ static void dtr_rts(struct tty_port *port, int on)
- 		info->signals |= SerialSignal_RTS | SerialSignal_DTR;
- 	else
- 		info->signals &= ~(SerialSignal_RTS | SerialSignal_DTR);
-- 	set_signals(info);
-+	set_signals(info);
- 	spin_unlock_irqrestore(&info->lock,flags);
- }
- 
+diff --git a/arch/mips/configs/ci20_defconfig b/arch/mips/configs/ci20_defconfig
+index e0d3c9d4c2ae..30a47a7a2994 100644
+--- a/arch/mips/configs/ci20_defconfig
++++ b/arch/mips/configs/ci20_defconfig
+@@ -167,3 +167,16 @@ CONFIG_STACKTRACE=y
+ # CONFIG_FTRACE is not set
+ CONFIG_CMDLINE_BOOL=y
+ CONFIG_CMDLINE="earlycon console=ttyS4,115200 clk_ignore_unused"
++CONFIG_LEDS_CLASS=y
++CONFIG_LEDS_GPIO=y
++CONFIG_LEDS_TRIGGERS=y
++CONFIG_LEDS_TRIGGER_MTD=y
++CONFIG_LEDS_TRIGGER_TIMER=y
++CONFIG_LEDS_TRIGGER_ONESHOT=y
++CONFIG_LEDS_TRIGGER_ONESHOT=y
++CONFIG_LEDS_TRIGGER_HEARTBEAT=y
++CONFIG_LEDS_TRIGGER_BACKLIGHT=m
++CONFIG_LEDS_TRIGGER_CPU=y
++CONFIG_LEDS_TRIGGER_DEFAULT_ON=y
++CONFIG_LEDS_TRIGGER_TRANSIENT=y
++CONFIG_LEDS_TRIGGER_CAMERA=m
 -- 
-2.20.1
+2.23.0
 
