@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D17E15ECF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:31:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29CC915ECF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 18:31:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390761AbgBNRa5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 12:30:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58520 "EHLO mail.kernel.org"
+        id S2390825AbgBNRas (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 12:30:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390631AbgBNQHS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:07:18 -0500
+        id S2390096AbgBNQHW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:07:22 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC03B206D7;
-        Fri, 14 Feb 2020 16:07:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3B4124676;
+        Fri, 14 Feb 2020 16:07:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696438;
-        bh=bxhyd2uGL6csS55UfWR1JBrMopyybW97a+Q4pm8a5Do=;
+        s=default; t=1581696441;
+        bh=ZMzivYDnpaZYdtbLeJqLb2sqgxAkm92n6yx/iyLIL4I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FMnm+dc/SYh1z3Wv94xj1DTx0S95QFm6OCy34IqtIMPhvYnC1Et4t5XujGOI4wfYT
-         URpp9hmPhgRh+TRReWZgJ8A3fZBj+30RTID9ZhIbnYpDDBlEh0gaOFVhZv4tq+4zGU
-         TvqI69hesm5188vJDGBPaDTx11gMFBv0hDUAYZNQ=
+        b=nCtaR44n0UejoMnIBLB85m5KBfAenB6d5aNjwrCGjvSDMXNFcp1Jr/pCBfsjr9yJG
+         bYLoEZeaWUicmKtjkQ1Fl6IMWPYnVwIJ8Goanvv1gwGKKVbLOwzhluHI18DvEh0Zga
+         JVgRRHdGKYuk6svkpsL8PV3aH9ORQ06/sLNfC6G4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 5.4 254/459] iommu/vt-d: Avoid sending invalid page response
-Date:   Fri, 14 Feb 2020 10:58:24 -0500
-Message-Id: <20200214160149.11681-254-sashal@kernel.org>
+Cc:     Wenpeng Liang <liangwenpeng@huawei.com>,
+        Weihang Li <liweihang@huawei.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 257/459] RDMA/hns: Avoid printing address of mtt page
+Date:   Fri, 14 Feb 2020 10:58:27 -0500
+Message-Id: <20200214160149.11681-257-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -46,43 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+From: Wenpeng Liang <liangwenpeng@huawei.com>
 
-[ Upstream commit 5f75585e19cc7018bf2016aa771632081ee2f313 ]
+[ Upstream commit eca44507c3e908b7362696a4d6a11d90371334c6 ]
 
-Page responses should only be sent when last page in group (LPIG) or
-private data is present in the page request. This patch avoids sending
-invalid descriptors.
+Address of a page shouldn't be printed in case of security issues.
 
-Fixes: 5d308fc1ecf53 ("iommu/vt-d: Add 256-bit invalidation descriptor support")
-Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Link: https://lore.kernel.org/r/1578313276-29080-2-git-send-email-liweihang@huawei.com
+Signed-off-by: Wenpeng Liang <liangwenpeng@huawei.com>
+Signed-off-by: Weihang Li <liweihang@huawei.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/intel-svm.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/infiniband/hw/hns/hns_roce_mr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-index ff7a3f9add325..518d0b2d12afd 100644
---- a/drivers/iommu/intel-svm.c
-+++ b/drivers/iommu/intel-svm.c
-@@ -654,11 +654,10 @@ static irqreturn_t prq_event_thread(int irq, void *d)
- 			if (req->priv_data_present)
- 				memcpy(&resp.qw2, req->priv_data,
- 				       sizeof(req->priv_data));
-+			resp.qw2 = 0;
-+			resp.qw3 = 0;
-+			qi_submit_sync(&resp, iommu);
- 		}
--		resp.qw2 = 0;
--		resp.qw3 = 0;
--		qi_submit_sync(&resp, iommu);
--
- 		head = (head + sizeof(*req)) & PRQ_RING_MASK;
- 	}
- 
+diff --git a/drivers/infiniband/hw/hns/hns_roce_mr.c b/drivers/infiniband/hw/hns/hns_roce_mr.c
+index 5f8416ba09a94..702b59f0dab91 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_mr.c
++++ b/drivers/infiniband/hw/hns/hns_roce_mr.c
+@@ -1062,8 +1062,8 @@ int hns_roce_ib_umem_write_mtt(struct hns_roce_dev *hr_dev,
+ 		if (!(npage % (1 << (mtt->page_shift - PAGE_SHIFT)))) {
+ 			if (page_addr & ((1 << mtt->page_shift) - 1)) {
+ 				dev_err(dev,
+-					"page_addr 0x%llx is not page_shift %d alignment!\n",
+-					page_addr, mtt->page_shift);
++					"page_addr is not page_shift %d alignment!\n",
++					mtt->page_shift);
+ 				ret = -EINVAL;
+ 				goto out;
+ 			}
 -- 
 2.20.1
 
