@@ -2,39 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 997AC15E0A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:15:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1933715E0A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 17:15:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392308AbgBNQOW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 11:14:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42594 "EHLO mail.kernel.org"
+        id S2404025AbgBNQOZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 11:14:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403902AbgBNQNn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:13:43 -0500
+        id S2392226AbgBNQNw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:13:52 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 15259246CD;
-        Fri, 14 Feb 2020 16:13:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 145AB246D4;
+        Fri, 14 Feb 2020 16:13:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696822;
-        bh=EmHy02QxIAceinsrla6/OOJZSbxSoVsrW2LFm6TIsi0=;
+        s=default; t=1581696831;
+        bh=m9ywS9W5sFzIk8yj1UQGFY10lpinxn5x/nVWAjNi0g8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D6BdMld1TjSF+DIYeQYluhf0P7VN8SmoquWG97L55MlEBdw0TQUkpObYTusdguRzF
-         LCc9Ln+RkY2m28GSuH0w3Q5u2qKBtGC2HpK/dHsEcd8U7XhZKhjMd9lZSJUbYMd9jX
-         PNwZgoI6GWZ8cip149cnhEYpgeXnOv0jO0TGqjtg=
+        b=pHdp8z+A4XT2NjB+e5rmjreaUT7IqVSpJnPG7fmjgzRaDUZgzrHFWMcOb3SqbrH/5
+         uwTyBiG/Krv7CXCuFbElzKwsndemO+0PEdeniPCafSlvVGCHPgIZru3kmwxYEoQ+qR
+         weF8fuA5eA/2mAl7KV6hJWuNNi5atjzQ89jq16eQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 089/252] ARM: dts: imx6: rdu2: Limit USBH1 to Full Speed
-Date:   Fri, 14 Feb 2020 11:09:04 -0500
-Message-Id: <20200214161147.15842-89-sashal@kernel.org>
+Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 097/252] r8169: check that Realtek PHY driver module is loaded
+Date:   Fri, 14 Feb 2020 11:09:12 -0500
+Message-Id: <20200214161147.15842-97-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -47,41 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
 
-[ Upstream commit 6bb1e09c4c375db29770444f689f35f5cbe696bc ]
+[ Upstream commit f325937735498afb054a0195291bbf68d0b60be5 ]
 
-Cabling used to connect devices to USBH1 on RDU2 does not meet USB
-spec cable quality and cable length requirements to operate at High
-Speed, so limit the port to Full Speed only.
+Some users complained about problems with r8169 and it turned out that
+the generic PHY driver was used instead instead of the dedicated one.
+In all cases reason was that r8169.ko was in initramfs, but realtek.ko
+not. Manually adding realtek.ko to initramfs fixed the issues.
+Root cause seems to be that tools like dracut and genkernel don't
+consider softdeps. Add a check for loaded Realtek PHY driver module
+and provide the user with a hint if it's not loaded.
 
-Reported-by: Chris Healy <cphealy@gmail.com>
-Reviewed-by: Chris Healy <cphealy@gmail.com>
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/realtek/r8169.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
-index 56d6e82b75337..bc5f2de02d433 100644
---- a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
-@@ -804,6 +804,7 @@
- &usbh1 {
- 	vbus-supply = <&reg_5p0v_main>;
- 	disable-over-current;
-+	maximum-speed = "full-speed";
- 	status = "okay";
- };
+diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
+index 4ab87fe845427..6ea43e48d5f97 100644
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -7433,6 +7433,15 @@ static int rtl_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	int chipset, region, i;
+ 	int jumbo_max, rc;
  
++	/* Some tools for creating an initramfs don't consider softdeps, then
++	 * r8169.ko may be in initramfs, but realtek.ko not. Then the generic
++	 * PHY driver is used that doesn't work with most chip versions.
++	 */
++	if (!driver_find("RTL8201CP Ethernet", &mdio_bus_type)) {
++		dev_err(&pdev->dev, "realtek.ko not loaded, maybe it needs to be added to initramfs?\n");
++		return -ENOENT;
++	}
++
+ 	dev = devm_alloc_etherdev(&pdev->dev, sizeof (*tp));
+ 	if (!dev)
+ 		return -ENOMEM;
 -- 
 2.20.1
 
