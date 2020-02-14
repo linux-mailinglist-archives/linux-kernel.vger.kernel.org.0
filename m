@@ -2,139 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 306B015CFAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 03:05:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3836215CFAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2020 03:09:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728304AbgBNCFD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Feb 2020 21:05:03 -0500
-Received: from mga04.intel.com ([192.55.52.120]:62741 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727955AbgBNCFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Feb 2020 21:05:02 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2020 18:05:02 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,438,1574150400"; 
-   d="scan'208";a="434638612"
-Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
-  by fmsmga006.fm.intel.com with ESMTP; 13 Feb 2020 18:05:00 -0800
-Date:   Fri, 14 Feb 2020 10:05:15 +0800
-From:   Wei Yang <richardw.yang@linux.intel.com>
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Wei Yang <richardw.yang@linux.intel.com>,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, shakeelb@google.com,
-        yang.shi@linux.alibaba.com
-Subject: Re: [RFC Patch] mm/vmscan.c: not inherit classzone_idx from previous
- reclaim
-Message-ID: <20200214020515.GC20833@richard>
-Reply-To: Wei Yang <richardw.yang@linux.intel.com>
-References: <20200209074145.31389-1-richardw.yang@linux.intel.com>
- <20200211104223.GL3466@techsingularity.net>
- <20200212022554.GA7855@richard>
- <20200212074333.GM3466@techsingularity.net>
+        id S1728271AbgBNCJj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Feb 2020 21:09:39 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:39311 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727955AbgBNCJi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Feb 2020 21:09:38 -0500
+Received: by mail-pl1-f193.google.com with SMTP id g6so3110461plp.6
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2020 18:09:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=r2TroXA0yUI8fmWitO9N7P1hbpfN+w2qKJ2a2K3uBEs=;
+        b=sru0PbvOJAEZZXTDaGXULSnWwdXKguUxzS3d4INf7nRpZZNUJEw5pvsk3qe8a91kCY
+         nCAGD3OVgkkMTpr1uW0SUvWgqW9ITpkjgeiXedjFqp30lJJbk/r1MSqzhS1T47/3kY5S
+         aoNi0r+WCHSGznV5AGXG5lUPuwYXUx5iGdxBXJDRlEB+G/1haaG5PJGu4eWauH52YXiy
+         wi4ou8UWvSxxoeRDOU3VqM5wNn5V3oJUwFWX6pcZPLcKFLIDco12qSB84VBJmyNBHAri
+         rub5CShxxQ0j4TA8hZQgxi+uIvjjUbSCfDGX7j9XQzSsTQ/XFmRmjpQwHF93JMyE2hP4
+         YT3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=r2TroXA0yUI8fmWitO9N7P1hbpfN+w2qKJ2a2K3uBEs=;
+        b=FHV5KdeahOHz/mzIFIHnbciTlacnh+SQQVoBN/NaZIRv1kIb7ZshfgbT6GbER4HYbp
+         reWBMGlULUZ9HIH4L9hua64U0VlrhpCZTV4AM034Fg2QemZTUDEO/2kWs/e8a4D3ew9i
+         SaKfI21DLEQGOjYjjW9fq4F7W5E6he8K6eCkP8kML4sHOntQpgKkHyAHpOXHQbq+w1hi
+         Axli94TBDPvnkOjEKWlFBi0hqtHv9j2+wSfNVf+L0RnRNpwI30bpKHC5Pu150s4KkKcP
+         Aty/zEb1yy8ToePY+Lthfm+4bnl6Tmmn+Rq0DSqZGBlVQrEO0ndMJ1Rdl81SnTMHDU1z
+         STFg==
+X-Gm-Message-State: APjAAAWyl5hUHmqeqeRdubTAmq4bgPtsvMDghJpa1M8RrcPnXAxd7zFV
+        4HF6lp0KffYUVuVrIp4MU7A=
+X-Google-Smtp-Source: APXvYqxXhys7hv2UAeS14KIOC/GApmukghj6i/r05NQrkHj9Q9QVNPxHcHkih0LuhLdWFJm4o+0HTA==
+X-Received: by 2002:a17:90b:1245:: with SMTP id gx5mr593150pjb.105.1581646178190;
+        Thu, 13 Feb 2020 18:09:38 -0800 (PST)
+Received: from localhost ([2401:fa00:8f:203:5bbb:c872:f2b1:f53b])
+        by smtp.gmail.com with ESMTPSA id 72sm4835507pfw.7.2020.02.13.18.09.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2020 18:09:37 -0800 (PST)
+Date:   Fri, 14 Feb 2020 11:09:35 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     John Ogness <john.ogness@linutronix.de>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: [PATCH 2/2] printk: use the lockless ringbuffer
+Message-ID: <20200214020935.GF36551@google.com>
+References: <20200128161948.8524-1-john.ogness@linutronix.de>
+ <20200128161948.8524-3-john.ogness@linutronix.de>
+ <20200213090757.GA36551@google.com>
+ <87v9oarfg4.fsf@linutronix.de>
+ <20200213115957.GC36551@google.com>
+ <87pneiyv12.fsf@linutronix.de>
+ <20200214014113.GE36551@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200212074333.GM3466@techsingularity.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200214014113.GE36551@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 07:43:33AM +0000, Mel Gorman wrote:
->On Wed, Feb 12, 2020 at 10:25:55AM +0800, Wei Yang wrote:
->> On Tue, Feb 11, 2020 at 10:42:23AM +0000, Mel Gorman wrote:
->> >On Sun, Feb 09, 2020 at 03:41:45PM +0800, Wei Yang wrote:
->> >> Before commit e716f2eb24de ("mm, vmscan: prevent kswapd sleeping
->> >> prematurely due to mismatched classzone_idx"), classzone_idx could have
->> >> two possibilities on a new loop based on whether there is a wakeup
->> >> during reclaiming:
->> >> 
->> >>   * 0 if no wakeup
->> >>   * the classzone_idx request by wakeup
->> >> 
->> >> As described in the changelog, this commit is willing to change the
->> >> first case to (MAX_NR_ZONES - 1) to avoid some premature sleep. But it
->> >> does not achieve the goal.
->> >> 
->> >> There are two versions of kswapd_classzone_idx() since this change:
->> >> 
->> >>   * commit e716f2eb24de ("mm, vmscan: prevent kswapd sleeping
->> >>     prematurely due to mismatched classzone_idx")
->> >>   * commit dffcac2cb88e ("mm/vmscan.c: prevent useless kswapd loops")
->> >> 
->> >> Both of them would return the classzone_idx we passed as the 2nd
->> >> parameter when (pgdat->kswapd_classzone_idx == MAX_NR_ZONES). This
->> >> means if there is no wakeup during reclaiming, we would use
->> >> classzone_idx in previous round to sleep.
->> >> 
->> >
->> >This is somewhat intended.
->> >
->> >> This patch fixes the logic by using (MAX_NR_ZONES - 1) for the first
->> >> case.
->> >> 
->> >
->> >Ok, what is the user-visible impact that is fixed by this patch or is
->> >this based on code review only? Please describe the test case exactly
->> >and the before and after results. I ask because this area is a magnet for
->> >regressions and intuitive ideas often lead to counter-intuitive results.
->> >
->> 
->> This is based on code review only. I know your concern. This is an area more
->> like art then engineering :-)
->> 
->
->Then I'm afraid that until there is a corner case identified and a
->description of the impact it's
->
->Nacked-by: Mel Gorman <mgorman@techsingularity.net>
->
+On (20/02/14 10:41), Sergey Senozhatsky wrote:
+> On (20/02/13 23:36), John Ogness wrote:
+[..]
+> > We could implement it such that devkmsg_read() will skip over data-less
+> > records instead of issuing an EPIPE. (That is what dmesg does.) But then
+> > do we need EPIPE at all? The reader can see that is has missed records
+> > by tracking the sequence number, so could we just get rid of EPIPE? Then
+> > cat(1) would be a great tool to view the raw ringbuffer. Please share
+> > your thoughts on this.
+> 
+> Looking at systemd/src/journal/journald-kmsg.c : server_read_dev_kmsg()
+> -EPIPE is just one of the erronos they handle, nothing special. Could it
+> be the case that some other loggers would have special handling for EPIPE?
+> I'm not sure, let's look around.
 
-Yep, no problem. I am glad if I could get some idea from you.
+rsyslog
 
->> Would you mind sharing some idea why we intend to inherit the classzone_idx?
->> And for kswapd_order, we would restart at 0 if no wakeup during reclaim.
->> 
->
->Broadly speaking it was driven by cases whereby kswapd either a) fell
->asleep prematurely and there were many stalls in direct reclaim before
->kswapd recovered, b) stalls in direct reclaim immediately after kswapd went
->to sleep or c) kswapd reclaimed for lower zones and went to sleep while
->parallel tasks were direct reclaiming in higher zones or higher orders.
->
+static void
+readkmsg(void)
+{
+	int i;
+	uchar pRcv[8192+1];
+	char errmsg[2048];
 
-Thanks for your explanation. I am trying to understand the connection between
-those cases and the behavior of kswapd.
+	for (;;) {
+		dbgprintf("imkmsg waiting for kernel log line\n");
 
-In summary, all three cases are related to direct reclaim, while happens in
-three different timing of kswapd:
+		/* every read() from the opened device node receives one record of the printk buffer */
+		i = read(fklog, pRcv, 8192);
 
-   a) premature sleep
-   b) full sleep
-   c) full sleep after reclaim lower zone
+		if (i > 0) {
+			/* successful read of message of nonzero length */
+			pRcv[i] = '\0';
+		} else if (i == -EPIPE) {
+			imkmsgLogIntMsg(LOG_WARNING,
+					"imkmsg: some messages in circular buffer got overwritten");
+			continue;
+		} else {
+			/* something went wrong - error or zero length message */
+			if (i < 0 && errno != EINTR && errno != EAGAIN) {
+				/* error occured */
+				imkmsgLogIntMsg(LOG_ERR,
+				       "imkmsg: error reading kernel log - shutting down: %s",
+					rs_strerror_r(errno, errmsg, sizeof(errmsg)));
+				fklog = -1;
+			}
+			break;
+		}
 
-Hmm... I am not sure the difference between b) and c). Looks both face direct
-reclaim when kswapd is sleeping.
+		submitSyslog(pRcv);
+	}
+}
 
-If I am correct, direct reclaim here is performed by function
-__perform_reclaim(). Its scan order and zone_idx is retrieved from allocation
-parameters, so it doesn't affect pgdat{.kswapd_order, .kswapd_classzone_idx} if
-I am correct.
 
-Direct reclaim do affect the pgdat status. After reclaiming, we may have more
-available pages. But I am stuck in the connection between direct reclaim and
-kswapd. Would you mind sharing more light on this part?
+So EPIPE errno better stay around.
 
->-- 
->Mel Gorman
->SUSE Labs
-
--- 
-Wei Yang
-Help you, Help me
+	-ss
