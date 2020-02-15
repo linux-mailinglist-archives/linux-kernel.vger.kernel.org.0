@@ -2,153 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49BC915FF1A
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 16:53:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 530AC15FF1E
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 17:06:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726389AbgBOPxA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Feb 2020 10:53:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46164 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726143AbgBOPxA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Feb 2020 10:53:00 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6CC22083B;
-        Sat, 15 Feb 2020 15:52:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581781979;
-        bh=TAXvayYY4AFI9mCqCYeVyufEpRoG+dC0pVYBSFHCvfQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=BEK/Lft1pdCLuujKHdRzrnDS38AlteL1Fz34eq2jRcY7oNrIfdGnJ97n+NnV5jGiv
-         sjktTEUCh43c7ngm7Jhu/RBUexAHH5vuueG8EgtCiY7pBxTfwKg86qaBlPRjyrVqvF
-         QRW6+TjNJDOz2iHYHue7cJFnzwTpo/3F2o0eDqjo=
-Date:   Sat, 15 Feb 2020 15:52:55 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Alexandru Tachici <alexandru.tachici@analog.com>
-Cc:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/5] iio: accel: adxl372: Add support for FIFO peak mode
-Message-ID: <20200215155255.5902fe3c@archlinux>
-In-Reply-To: <20200214092919.24351-2-alexandru.tachici@analog.com>
-References: <20200214092919.24351-1-alexandru.tachici@analog.com>
-        <20200214092919.24351-2-alexandru.tachici@analog.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726340AbgBOQGL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Feb 2020 11:06:11 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35042 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726273AbgBOQGL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Feb 2020 11:06:11 -0500
+Received: by mail-pg1-f196.google.com with SMTP id v23so3342073pgk.2
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2020 08:06:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=jYBeVUO8d/2xAXOgMvAxTx0pUDPvEJO2n/2MAmSDINQ=;
+        b=E7N52NaPIT0+3RZ/AaN+gFBP5MGqnZorK0wEmxH3GYd7/9yxTuugSPNfhv/HFdxt4b
+         JvfKHegH+BNqCf9kFpB26pZ358Kpa0wHRaqvDpMdqFCRIT/yY+V3XHY08y6FXhwFKpNn
+         nsdFkrZg9amSdtCo1I0qKa8WmtVg4DAI9PsDhu0ppzrAkjfr3W/CoTrka2fLOyj2rUBv
+         CIpyeYysTftSACip1gsX+ktUqCRhMTSY2/WzlTXJSKiDf8DXxfkZQMCz0RRP2gfuCPS0
+         h2x72uHTvkU1q2Rupy/OGyWpYZXEbWfbkhlnWfn8x7btO47KISasBWgkc96Hgyj3SFXY
+         9WYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=jYBeVUO8d/2xAXOgMvAxTx0pUDPvEJO2n/2MAmSDINQ=;
+        b=Ht/himKwLGj73iaJSzn1EeBogSj3XC8aaC/orL7TNJAUYcYbaYS4bk/zYy44zidv3m
+         k4Y6YxvRyIoNC3B29kAjUuiJWlv0PpgXeNtfdN4YBPauiaJXTvZxpkdVgXiQh/FWHiLn
+         VL2xD/5Wl3QyIyKpnnqyWPfTsuMb8koUkvSb+pR/33Ox6u4rcieI3wSqp0lARnUiOgVX
+         yiFqAka1bTFZXyUK6aj40C+PEy62BNemF0YeZnwT6OnMU1g9bPEhHeKIPM6yKuoiKBe2
+         TxHApOn3yX6J43dv0QrG9coUDx6aQ0fRlbwj+eHXvm3BTPIFLYHms7Tw7tnGaU9OiGUQ
+         bWYw==
+X-Gm-Message-State: APjAAAUyc3Ixs4kUkAbUvJTIvvM0PmZXgGpieXQ+tI05KKS4ggyLCfIQ
+        fkjFM66/No+t4lWpJ3QgTY1i5/aobN1GdXft4nw=
+X-Google-Smtp-Source: APXvYqyIMMJ9IIcj5RfUkkTgn6y8g1BYDYol3lEDbc1fkerfH+ezCfXX3FfLeO1chiYVBmtQHhqlvlWOc2AMh/ru5WE=
+X-Received: by 2002:a63:cf14:: with SMTP id j20mr8985965pgg.67.1581782770612;
+ Sat, 15 Feb 2020 08:06:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a17:90a:9b15:0:0:0:0 with HTTP; Sat, 15 Feb 2020 08:06:09
+ -0800 (PST)
+Reply-To: bankbess@gmail.com
+From:   Michel Koffi Dorkenoo <asareakuffo91@gmail.com>
+Date:   Sat, 15 Feb 2020 16:06:09 +0000
+Message-ID: <CAEcMVKoAS3oa52KZyNM=LJy_m+K5Edo8CgzNUMWU-E-FjaE10g@mail.gmail.com>
+Subject: URGENT MESSAGE
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 14 Feb 2020 11:29:15 +0200
-Alexandru Tachici <alexandru.tachici@analog.com> wrote:
+Attention:
 
-> From: Stefan Popa <stefan.popa@analog.com>
-> 
-> By default, if all three channels (x, y, z) are enabled, sample sets of
-> concurrent 3-axis data is stored in the FIFO. This patch adds the option
-> to configure the FIFO to store peak acceleration (x, y and z) of every
-> over-threshold event. Since we cannot store 1 or 2 axis peak acceleration
-> data in the FIFO, then all three axis need to be enabled in order for this
-> mode to work.
-> 
-> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
-I've left comments on the interface until the documentation patch.
-A few other bits in here.
+I have something very important to discuss with you about inheritance
+fund left in my bank with a late customer who worked with shell
+development company here in my Country and died along with his family
+while on vacation in September 19,2017 Earthquake in Central Mexico
+that killed over 370 people leaving the sum of (USD$14 Million United
+States Dollars) behind in our Bank.
 
-Thanks,
+I write to you because he has the same last name with you which I do
+not know if he is a member of your family.I am Michel Koffi Dorkenoo a
+banker and the director of operation of the said bank where the fund
+was deposited. I will like you to contact me so we can talk more about
+this because from the bank record I understand that someone has
+contacted you because of the fund in the past and try to cheat on you
+that is why I stopped the transfer for some months now but am ready to
+work directly with you on trust and understanding I promise to
+transfer the fund to you through  ATM-VISA-CARD  or bank to bank
+online transfer direct to your account in your country only if you can
+work with me as I will advice you on what you need to do to receive
+the fund and the share ratio.
 
-Jonathan
+I will wait for your urgent response direct t me email (
+bankbess@gmail.com ) or you can add me on whatsapp number
+(+228-9688-6703) for more details.
 
-> ---
->  drivers/iio/accel/adxl372.c | 37 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 37 insertions(+)
-> 
-> diff --git a/drivers/iio/accel/adxl372.c b/drivers/iio/accel/adxl372.c
-> index 67b8817995c0..bb6c2bf1a457 100644
-> --- a/drivers/iio/accel/adxl372.c
-> +++ b/drivers/iio/accel/adxl372.c
-> @@ -264,6 +264,7 @@ struct adxl372_state {
->  	u8				int2_bitmask;
->  	u16				watermark;
->  	__be16				fifo_buf[ADXL372_FIFO_SIZE];
-> +	bool				peak_fifo_mode_en;
->  };
->  
->  static const unsigned long adxl372_channel_masks[] = {
-> @@ -722,6 +723,36 @@ static int adxl372_write_raw(struct iio_dev *indio_dev,
->  	}
->  }
->  
-> +static ssize_t adxl372_peak_fifo_en_get(struct device *dev,
-> +					struct device_attribute *attr,
-> +					char *buf)
-> +{
-> +	struct adxl372_state *st = iio_priv(dev_to_iio_dev(dev));
-> +
-> +	return sprintf(buf, "%d\n", st->peak_fifo_mode_en);
-> +}
-> +
-> +static ssize_t adxl372_peak_fifo_en_set(struct device *dev,
-> +					struct device_attribute *attr,
-> +					const char *buf, size_t len)
-> +{
-> +	struct adxl372_state *st = iio_priv(dev_to_iio_dev(dev));
-> +	bool val;
-> +	int ret;
-> +
-> +	ret = kstrtobool(buf, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	st->peak_fifo_mode_en = val;
-
-Should reject the attempt if the buffer is already enabled.  Otherwise
-the userspace interface will be rather confusing as you'll read back that
-it is enabled, but not see it working.
-
-> +
-> +	return len;
-> +}
-> +
-> +static IIO_DEVICE_ATTR(peak_fifo_mode_enable, 0644,
-> +		       adxl372_peak_fifo_en_get,
-> +		       adxl372_peak_fifo_en_set, 0);
-> +
->  static ssize_t adxl372_show_filter_freq_avail(struct device *dev,
->  					      struct device_attribute *attr,
->  					      char *buf)
-> @@ -817,11 +848,16 @@ static int adxl372_buffer_postenable(struct iio_dev *indio_dev)
->  	st->fifo_format = adxl372_axis_lookup_table[i].fifo_format;
->  	st->fifo_set_size = bitmap_weight(indio_dev->active_scan_mask,
->  					  indio_dev->masklength);
-> +
-> +	/* Configure the FIFO to store sets of impact event peak. */
-> +	if (st->fifo_set_size == 3 && st->peak_fifo_mode_en)
-> +		st->fifo_format = ADXL372_XYZ_PEAK_FIFO;
-
-We could perhaps make this more intuitive by always enabling the 3 axis
-if peak mode is on and filtering the data on it's way to the
-push_to_buffer to reflect only channels enabled.
-
-If not, perhaps a warning message?
-
->  	/*
->  	 * The 512 FIFO samples can be allotted in several ways, such as:
->  	 * 170 sample sets of concurrent 3-axis data
->  	 * 256 sample sets of concurrent 2-axis data (user selectable)
->  	 * 512 sample sets of single-axis data
-> +	 * 170 sets of impact event peak (x, y, z)
->  	 */
->  	if ((st->watermark * st->fifo_set_size) > ADXL372_FIFO_SIZE)
->  		st->watermark = (ADXL372_FIFO_SIZE  / st->fifo_set_size);
-> @@ -894,6 +930,7 @@ static IIO_DEVICE_ATTR(in_accel_filter_low_pass_3db_frequency_available,
->  static struct attribute *adxl372_attributes[] = {
->  	&iio_const_attr_sampling_frequency_available.dev_attr.attr,
->  	&iio_dev_attr_in_accel_filter_low_pass_3db_frequency_available.dev_attr.attr,
-> +	&iio_dev_attr_peak_fifo_mode_enable.dev_attr.attr,
->  	NULL,
->  };
->  
-
+Mr Michael Koffi Dorkenoo
+Director Of Operation
+GOD BLESS YOU
+MOBILE/WHATSAPP: +228 9688-6703
