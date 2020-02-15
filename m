@@ -2,110 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C74415FE23
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 12:32:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5371E15FE3A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 12:50:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726254AbgBOLco (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Feb 2020 06:32:44 -0500
-Received: from mout.gmx.net ([212.227.15.19]:39455 "EHLO mout.gmx.net"
+        id S1726233AbgBOLua (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Feb 2020 06:50:30 -0500
+Received: from mout.web.de ([217.72.192.78]:38289 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725965AbgBOLcn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Feb 2020 06:32:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1581766354;
-        bh=pOPA4vdkKum60vU2Sw008KD8mzmXUtj1ve/fnDeNt4o=;
-        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=Qf0utu9Er9uCdJjAwIzlzWlVbbgyK77QXdz28zP1NE6MmoSGyV4BTiZDEAUycMdKC
-         ChVzDBXeqTF3HN0gASznRlZucFRzgNYRHRFa/nHVwUQU1UUixmYr11MGwpE5pFWC4n
-         5sKGsOezwDtIFumElWLBjjs4JNIjnGKo7MAag2eM=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from longitude ([146.60.76.54]) by mail.gmx.com (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MFsUv-1jGQM11c2p-00HKFQ; Sat, 15
- Feb 2020 12:32:34 +0100
-Date:   Sat, 15 Feb 2020 12:32:31 +0100
-From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     David Gow <davidgow@google.com>
-Cc:     brendanhiggins@google.com, skhan@linuxfoundation.org,
-        corbet@lwn.net, kunit-dev@googlegroups.com,
-        linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, frowand.list@gmail.com,
-        Tim.Bird@sony.com
-Subject: Re: [PATCH v3] Documentation: kunit: Make the KUnit documentation
- less UML-specific
-Message-ID: <20200215113231.GB2031@latitude>
-References: <20200214235723.254228-1-davidgow@google.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="VrqPEDrXMn8OVzN4"
-Content-Disposition: inline
-In-Reply-To: <20200214235723.254228-1-davidgow@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Provags-ID: V03:K1:rGamt5ZN+2JamTtxWa+949Bwc4ai74Nlldylw7ATa7hNww9D7BE
- /bziJu0IK7eIOEiblDQYdQvIiKXW/z+dRk/GH/2ESakG545IBuzDzYU1R9YY3ttXbj9r2P7
- IYOjeUjc2quFYT6rlom6QWid4LXtrAm8OSawzbeqiKK46W2hYLkL3Lu/UzlqENMmcY/rN7S
- DPjN9jGvI6ZMj+Hdd62OA==
+        id S1725965AbgBOLua (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Feb 2020 06:50:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1581767417;
+        bh=HU/2N3E0qmqDHC4/1OMZ5qn9O2Ez51tN26IGhSevr3M=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=PDz5Oa4PiERxkVzv96xh+knfppMi1Cf3D9GGAnaZdW2ITeYcxcGdmL0TszUC9w/Vg
+         qNp2BIXF1oBCzOn88VEiozXLEvva8VgJ/SYGGsX8cUBjbPgeak9Mic9wnaYYcvgWKt
+         C3PBkr2GhuWtlo0aqVO1aA2aNk1kb29rEh7BhHIY=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from md1f2u6c.ww002.siemens.net ([95.157.55.156]) by smtp.web.de
+ (mrweb102 [213.165.67.124]) with ESMTPSA (Nemesis) id
+ 0Lx7Mz-1jZSWu15vV-016f2Q; Sat, 15 Feb 2020 12:50:17 +0100
+From:   Jan Kiszka <jan.kiszka@web.de>
+To:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-riscv@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] riscv: mem= support, ioremap exec fix
+Date:   Sat, 15 Feb 2020 12:49:41 +0100
+Message-Id: <cover.1581767384.git.jan.kiszka@web.de>
+X-Mailer: git-send-email 2.16.4
+X-Provags-ID: V03:K1:7utcmur/a9lyoiDKqs9p1IE04ltxLb90ysWQyFgCriS97NlAzPA
+ Yk6v8Ulh60rxlwB9pv0HgnieWdheINYRY2hSInFjZGXe16xoWO4bRMYyiFHhOzXKJkBusYM
+ 1jcuD+XKDqH0WGwbYcYAPjC+69r5RC+RgMURZ13FyFU3v+3ayZBrm6GEeBEAf9GZiVjqgxE
+ pRm7/SyTavYd2QIi5H47Q==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:l56jit/555c=:OJcEhGVVIC44B/SxTchbcX
- Fr8/OnlUjSULPzJDoaXWtq33lqaLjHW3/2u8N7nVjjkVNOZoyw4ryZtXv7ezG8lbiDk1F5e2b
- mNExcqwEkFKiGjtnTyHU1icDXMbf/D2OSsTi20uBf0zNGBW3/p/gX+vwzeZZ/+rBbd+XG3XbN
- btjhXaZPCqQQSKSpz4+kAR52llMT7pw3jkYlBaKSo391QF+qDQdX6qLFJip+Ss1OtuF2bHzAz
- 7Uylg6+/4Y+mDNl6HpwHnQyYtbqvAe4BJD9Dfof2CQNL3pGrhMZxw9A0CdY6i0VQ/vigo4w5j
- 2qZIIQCeSZBvvmFmTwHeSCZHErUSGFWFKoRAFEebxz1sW6aYS9Q9boOakVKf3OP2Y/o7wSJrA
- gvjPQW/4Ptz3LmkfnzqNDyuVzPBw1XoJrmKcBbE3ZAFgndf0IGPU46SykodQ9nSNuL0X9BMlh
- PeRDhtWBRu1VKOyh3E4wmMjoExvS8nsykk07VmioJpZIJBVou+IW0KEfhf+fZWBh+vd/ajGuR
- N8tyx7flL1sSZKhc6YBzUnyY1FZzpEzo1O3x9ws6zI/dxLL3JpesUZ6tMyyhUMaUuI3ghPBgc
- /qiBS5Zaj392Vot3z0oyKGLFQTAogoxKGVz2d0SakOSIy8tS8VV+2wV89sjFmkl2VrLHERI14
- 3123MROhEXUYAlnl794FwZWXMmRJD5uRI3TqaCtghfhjtC8ByYR5pRBTseUdD0EGP1AJxRk1P
- mmvrF/ldCS1zzWQ97X7t8hjeBV3cCHzg7ODv/U3YWCtfxKmMi0YfFXuOCFm8pahxg9wy121Eq
- wXL1iG3dlT/im9vzNj3zLMjA3AbhkPM3xrXjD9WllZBd2WxG//uNI3FdX4MgEDzYkI/Dg0rP2
- jxeM800TA1zyISpGmKTtUo30Sup1bzhYAnYTRDcp/j/Hqdqx6cAcya4mD/7EPhXAg4Bkr3m60
- sHx4MeYL3LRg+nNNWfJRuCNKVqOJjTEbcB3zDvMYWcsbDfr9xLsCKrJZVIrn5lMM59zGOGVDY
- FJmbACqTT3wdV7mDfuSGCDnRZJOGQMv6dQMZF1NnEmRMghHEWKOnDAzulZhIbMbIv5M6EN/9s
- mocio8OP8kgpsfFziQOu35hb3rLIJy60Bwr9yLJqCykRsgCPjEKyswx/2PwVDiMolJ146pf/T
- bFxILHzLeHppk5AVvPys5F1rs21pULO/v0ZQCuseO9SehJf/MxXRW2npjTp8d67Yigt589/ry
- 2XUOug4X8C71RUIpp
+X-UI-Out-Filterresults: notjunk:1;V03:K0:50/pyn/MMEs=:ZuphJuz5BEBSGWUrIOgDFn
+ 6rIjomYXqEvNwi8rTGEbHs15C/j4o7WD9z0Otu+aOhJLk7A1BPAwYDRLZ81hcEDmySTR14roO
+ M1AuQmnSpnc3pE8/mNWksQ4MTXQ6TpUvipISPAoiFahqG2me3qdvEeSjI7rgOZDvCuixFa6Y0
+ /dgUR6CdbyzlL7K37bbUY80b54fDn9blYtQMQLgSFklEHXzttBUENh3Eyc/jPW0uHjBX4tgPl
+ EBVGZR6isYyLgvgdjr+GJ8oqWin1hbsiQfqYy8drt/wu3RyC4vX1zSKAC3/Ep2hWYjNCT0BcQ
+ vKZvRhxvkK7EdlSlpdcneKsQllHi+4OVeAO2v7sMlmjgTMKyGFqbQyuaVmB9MR9jxW1E/vtie
+ pUEyrRGjr1ssUzVgXpM0GJHyufLkfKU0LWeqff6WuqU+XST+QhKsRQ4cKseglRrf85iloZzly
+ tvY+EsZ09pdFKE7e08dZQgFq/y1iROqd7PwORUkjxmQM/BUcSap4Xzn6vraRVYR7f3QVCBoXK
+ cB6JtZ4B3M3oVE2I2Fv1e9yH1almw9k+mZol0wnqaHk7GNpAcVmNDNk3rtFOZivk8nI2XF1IK
+ Yy/fseeFscysayZq++7tp4eT3NtQhS0r7hQaHMYDxW/BMQhVppf0QqBblc3F8GvHTOvICj3IT
+ QeB75/JKQ3d0fgcZY8udbHhTD3O+Y2NUhK2Kq2ZngT1y3A4x63J6AGgwHWjFF4dRsWn6W3J6w
+ uiOYQrLBv3LBLnFjlZcwddUgb7mzsdLl/4Nyglz21SJoueK4j4DruhL/nefl0eGQHKeWh1jqG
+ S37t4m8KtNjGQXNn6/Gh8QkOli0Y8LX6fPCr6qcU5MIvw3FrsIbjnsOXCyMFu8tJBUpL0Qlws
+ GEYdHvsqgAOOY4EDF74HvKV+5SwTKQSo5kHr9RG6WB6bVp4W3GSaxr2qS0nIsi+6kfRvdafqo
+ xaE4HzjT7UlPaGKYTQskgZr8GTTB+Oh6q85PzU6+o8T2NgWdTv40nCoYTpDb2DZjQStcD3fgB
+ wtsSpD+oC6jhWGTxDe9l2oVmsCpSRs6palS5yghLRiWbnF/r8UaAnX8H/fODmZrFlH8dVhZoP
+ 3vZEOQxmjh/M2MrdT3D82JFUhzCSmEEqCxYiKjo1FgYl/1h6g34hkj1XZ3rL6FhM4LXyptkTw
+ +MObyQWUIemIQ4MyivNbuNFmoqLMxkda1z+BdKmQTU3ENfnvO/8EY7jylcJEdOKPod+qpkoq+
+ R58kJwlkFCCE6+6GD
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Patch 1 was already sent separately. This improves it by calling
+memblock_enforce_memory_limit in order to call set_max_mapnr with the
+correct memory size.
 
---VrqPEDrXMn8OVzN4
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There are two more patches in this series. One is a micro-optimization,
+the other enables ioremap of executable memory. The latter will be
+needed to enable the Jailhouse hypervisor on RISC-V.
 
-Hi,
+Jan
 
-On Fri, Feb 14, 2020 at 03:57:23PM -0800, David Gow wrote:
-[...]
-> +To make running these tests (and reading the results) easier, KUnit offs=
-ers
+Jan Kiszka (3):
+  riscv: Add support for mem=3D
+  riscv: End kernel region search in setup_bootmem earlier
+  riscv: Fix crash when flushing executable ioremap regions
 
-There's a typo here: s/offsers/offers/
+ arch/riscv/mm/cacheflush.c |  3 ++-
+ arch/riscv/mm/init.c       | 21 +++++++++++++++++++++
+ 2 files changed, 23 insertions(+), 1 deletion(-)
 
+=2D-
+2.16.4
 
-Thanks,
-Jonathan Neusch=C3=A4fer
-
---VrqPEDrXMn8OVzN4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAl5H1sgACgkQCDBEmo7z
-X9vbGA//YSsL2+AzYJ+tyrjnjNWwnhgSigy7m6uufz/KqC0eU8Sfs6UXO+GwwnvD
-SoqCqelP5QF7zyeGZT3mCFfl7XbfcIzK1xTfyxEEr9MBvCQRKDvXjxQbNS0rahAm
-2V0YppxFHu05UNrc/FNpEsCvHoYQwd/91N8iJkIIknAPn/lcMdrJQIjqXuuuyCQd
-QmawN8LZOh7dZwAxjIGCXFlP5ip7gHcLKzi+my0gtCs2z7yYrUm9jBNZfyut2Lfd
-VUVOP7sYqXzMc0P0WpAd/5f5ivwKortWo6J2wK++trbpEIXjMvqx2dR1DA9n6SKb
-eGYhCDzEdxhlw7bU9DPdT75yo36zk8HlWmFxvC7Cg5TSoqbJEHHSQDRUd2VSoNVb
-ACRLtvGtpOhd4s0aaR9uPt1Q6Fs2c6vqAh3hPSEM8684rB+71A8R3U+KcSj3Zjus
-b8KnOsIGIV8Vwt1/q99AXXMrGrQ2ggya9i692yD8VvCBWygA96CZ42bdUwMKSbjn
-dcWIe3bL16ZXDRrf3CeNDNOQ3znkixw1J4aaRJ31PxuvKZGX+q9RerhwVf2ICtut
-5Aop/DS1pULN6D5Mcm3FPDk3Ank6c4h/pTtgsVXj3PjB74WNr5Iyt45VqBd0UqqG
-FqmVBpkZb6MKSepIXWBc7kz9RwPmW4hVngIwt9a/KRXBZCmwshQ=
-=awkR
------END PGP SIGNATURE-----
-
---VrqPEDrXMn8OVzN4--
