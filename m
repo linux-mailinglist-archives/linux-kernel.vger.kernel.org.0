@@ -2,81 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D61BC15FFA0
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 19:09:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F269C15FFB0
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 19:34:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727362AbgBOSJi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Feb 2020 13:09:38 -0500
-Received: from mx2.freebsd.org ([96.47.72.81]:27467 "EHLO mx2.freebsd.org"
+        id S1726702AbgBOSed (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Feb 2020 13:34:33 -0500
+Received: from wind.enjellic.com ([76.10.64.91]:57132 "EHLO wind.enjellic.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726682AbgBOSJg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Feb 2020 13:09:36 -0500
-Received: from mx1.freebsd.org (mx1.freebsd.org [96.47.72.80])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (Client CN "mx1.freebsd.org", Issuer "Let's Encrypt Authority X3" (verified OK))
-        by mx2.freebsd.org (Postfix) with ESMTPS id 3BD8497832;
-        Sat, 15 Feb 2020 18:09:35 +0000 (UTC)
-        (envelope-from manu@FreeBSD.org)
-Received: from smtp.freebsd.org (smtp.freebsd.org [IPv6:2610:1c1:1:606c::24b:4])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         server-signature RSA-PSS (4096 bits)
-         client-signature RSA-PSS (4096 bits) client-digest SHA256)
-        (Client CN "smtp.freebsd.org", Issuer "Let's Encrypt Authority X3" (verified OK))
-        by mx1.freebsd.org (Postfix) with ESMTPS id 48KdYq05H1z4WyC;
-        Sat, 15 Feb 2020 18:09:35 +0000 (UTC)
-        (envelope-from manu@FreeBSD.org)
-Received: from skull.home.blih.net (lfbn-idf2-1-900-181.w86-238.abo.wanadoo.fr [86.238.131.181])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: manu)
-        by smtp.freebsd.org (Postfix) with ESMTPSA id 95E5D197EF;
-        Sat, 15 Feb 2020 18:09:33 +0000 (UTC)
-        (envelope-from manu@FreeBSD.org)
-From:   Emmanuel Vadot <manu@FreeBSD.org>
-To:     maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        airlied@linux.ie, daniel@ffwll.ch, jani.nikula@intel.com,
-        efremov@linux.com, tzimmermann@suse.de, noralf@tronnes.org,
-        sam@ravnborg.org, chris@chris-wilson.co.uk, kraxel@redhat.com,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc:     Emmanuel Vadot <manu@FreeBSD.Org>,
-        Emmanuel Vadot <manu@FreeBSD.org>
-Subject: [PATCH v2 2/2] drm/format_helper: Dual licence the file in GPL 2 and MIT
-Date:   Sat, 15 Feb 2020 19:09:11 +0100
-Message-Id: <20200215180911.18299-3-manu@FreeBSD.org>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200215180911.18299-1-manu@FreeBSD.org>
-References: <20200215180911.18299-1-manu@FreeBSD.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1726299AbgBOSed (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Feb 2020 13:34:33 -0500
+X-Greylist: delayed 1678 seconds by postgrey-1.27 at vger.kernel.org; Sat, 15 Feb 2020 13:34:32 EST
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 01FI5tpD026045;
+        Sat, 15 Feb 2020 12:05:55 -0600
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 01FI5sx3026044;
+        Sat, 15 Feb 2020 12:05:54 -0600
+Date:   Sat, 15 Feb 2020 12:05:54 -0600
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
+        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
+        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
+        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
+        rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
+        linux-security-module@vger.kernel.org,
+        Haitao Huang <haitao.huang@linux.intel.com>
+Subject: Re: [PATCH v26 10/22] x86/sgx: Linux Enclave Driver
+Message-ID: <20200215180554.GA25482@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20200209212609.7928-1-jarkko.sakkinen@linux.intel.com> <20200209212609.7928-11-jarkko.sakkinen@linux.intel.com> <d17c50a7-6900-731b-43a2-d6e49b8eb44d@fortanix.com> <20200213180737.GC18610@linux.intel.com> <a4d9a58d-6984-5894-f6c8-73f2b2b466aa@fortanix.com> <20200214171146.GD20690@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200214171146.GD20690@linux.intel.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Sat, 15 Feb 2020 12:05:55 -0600 (CST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Emmanuel Vadot <manu@FreeBSD.Org>
+On Fri, Feb 14, 2020 at 09:11:46AM -0800, Sean Christopherson wrote:
 
-Contributors for this file are :
-Gerd Hoffmann <kraxel@redhat.com>
-Maxime Ripard <mripard@kernel.org>
-Noralf Trønnes <noralf@tronnes.org>
+Good morning to everyone, I hope the weekend is going well.
 
-Signed-off-by: Emmanuel Vadot <manu@FreeBSD.org>
----
- drivers/gpu/drm/drm_format_helper.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On Fri, Feb 14, 2020 at 10:24:10AM +0100, Jethro Beekman wrote:
+> > On 2020-02-13 19:07, Sean Christopherson wrote:
+> > > On Thu, Feb 13, 2020 at 02:59:52PM +0100, Jethro Beekman wrote:
+> > >> On 2020-02-09 22:25, Jarkko Sakkinen wrote:
+> > >>> +/**
+> > >>> + * struct sgx_enclave_add_pages - parameter structure for the
+> > >>> + *                                %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
+> > >>> + * @src:	start address for the page data
+> > >>> + * @offset:	starting page offset
+> > >>> + * @length:	length of the data (multiple of the page size)
+> > >>> + * @secinfo:	address for the SECINFO data
+> > >>> + * @flags:	page control flags
+> > >>> + * @count:	number of bytes added (multiple of the page size)
+> > >>> + */
+> > >>> +struct sgx_enclave_add_pages {
+> > >>> +	__u64	src;
+> > >>> +	__u64	offset;
+> > >>> +	__u64	length;
+> > >>> +	__u64	secinfo;
+> > >>> +	__u64	flags;
+> > >>> +	__u64	count;
+> > >>> +};
+> > >>
+> > >> Compared to the last time I looked at the patch set, this API
+> > >> removes the ability to measure individual pages chunks. That is
+> > >> not acceptable.
+> > >
+> > > Why is it not acceptable?  E.g. what specific use case do you
+> > > have that _requires_ on measuring partial 4k pages of an
+> > > enclave?
+> >
+> > The use case is someone gives me an enclave and I want to load
+> > it. If I don't load it exactly as the enclave author specified,
+> > the enclave hash will be different, and it won't work.
 
-diff --git a/drivers/gpu/drm/drm_format_helper.c b/drivers/gpu/drm/drm_format_helper.c
-index 0897cb9aeaff..3b818f2b2392 100644
---- a/drivers/gpu/drm/drm_format_helper.c
-+++ b/drivers/gpu/drm/drm_format_helper.c
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: GPL-2.0 */
-+// SPDX-License-Identifier: GPL-2.0 or MIT
- /*
-  * Copyright (C) 2016 Noralf Trønnes
-  *
--- 
-2.25.0
+> And if our ABI says "thou shall measure in 4k chunks", then it's an
+> invalid enclave if its author generated MRENCLAVE using a different
+> granularity.
 
+The enclave isn't invalid with respect to the hardware ISA or a
+potential application or business case need.  It is only invalid with
+respect to how a small group of kernel developers have decided that
+runtime/application developers, and ultimately their users, should use
+hardware that they have purchased and own.
+
+Interestingly, the very antithesis of what started the open source
+movement.
+
+If Jethro/Fortanix have a business case for measuring partial pages,
+which incidentally he may not be able to divulge at this time, it
+seems the driver should support it if the hardware does.
+
+An interesting phenomenon is evolving with respect to Linux.  With
+secure boot, kernel module signing, and now the lockdown patches; the
+major Linux vendors are in a position to use cryptographic constraints
+to limit what the general Linux user community has available to it,
+and particularly in the case of SGX, how the Linux application
+eco-system can evolve.
+
+I find this situation particularly fascinating.
+
+Intel has choreographed 30+ million dollars of capital investment in
+Fortanix in order to advance the development of an SGX software
+eco-system.  Given who is authoring the driver, one would think that
+the Fortanix engineering desires/needs would be given careful
+consideration before the hardware capabilities are limited by the
+driver ABI, an ABI that will be subsequently cryptographically
+constrained from innovation.
+
+My apologies in advance for any intended or perceived indelicacies on
+these issues.
+
+Have a good weekend.
+
+Dr. Greg
+
+As always,
+Dr. Greg Wettstein, Ph.D, Worker
+IDfusion, LLC               SGX secured infrastructure and
+4206 N. 19th Ave.           autonomously self-defensive platforms.
+Fargo, ND  58102
+PH: 701-281-1686            EMAIL: greg@idfusion.net
+------------------------------------------------------------------------------
+"Snow removal teaches all the important elements of succesful corporate
+ politics:  1.) Be the first one to work.  2.) Always signal your
+ intentions before moving.  3.) Be damn sure you're driving something
+ big enough to deal with anything that decides not to get out of your way."
+                                -- Dr. G.W. Wettstein
+                                   Guerrilla Tactics for Corporate Survival
