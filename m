@@ -2,113 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1662315FE15
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 12:10:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C74415FE23
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 12:32:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726141AbgBOLKA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Feb 2020 06:10:00 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:34757 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725965AbgBOLKA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Feb 2020 06:10:00 -0500
-Received: by mail-qt1-f195.google.com with SMTP id l16so4131408qtq.1;
-        Sat, 15 Feb 2020 03:09:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4tgIqByN7XK24vWrC6nkP1j06yZWkabnWcaD6QHevAA=;
-        b=OAnsRZrxLzsePOUoefhvykzJyy66wrA75NeIrIfjFZTRg3RKuu5aOgNnPeqlCUP1Bv
-         qFASsLHEhn4nJLU+sK68+mJ2j07Te5eKuxE77kA80A75zRIPJaoJf+qBZ/EeLMpTjZVI
-         rfOHqBGUqKX9doHA0ZkY2LuwSfJMoN4+vRR5CHRAOLQj8PSaGjatNLTaij/zU4hwz8wS
-         N3SXAm5BUGYzwK9Y8Ef4dGlCSOQOE4koHK7ej8k2sE/OzcduCVmrX5miIlAy2F/BDx89
-         kSLX+N62WhmqGRzQMYJCKaxp8hcjH8evy5SGtwGydSGRetb0fgHH/WuO9wTXaOB3f6IC
-         2dUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4tgIqByN7XK24vWrC6nkP1j06yZWkabnWcaD6QHevAA=;
-        b=dbMSFnonE3WYN4F6bjXh/MJ/0uvPD50BIanmzEhV95x6VMF7ClZ4VoRqrNW/+4Y4bb
-         8DG9jAKVlOhpSFSor9n9viVgYMha3MPm8uXLkFHTHoELR4izx1KhtDPTJuptTeV342FE
-         K5oUkhUa8a1rl5NQjVHtFRPPoTkP/Zyup/pV0/1ciXvnmJs9zSDLc+q9ek4XAV8LuN7Q
-         WiWmMZbtufoSE3PKF3l5tDpxCRR/gbRtXHicm3JVul2g4WdaAXf+okDSBfLRO67mnM6y
-         F2kmngw8oVqAIjcxDXPTZDeskeQHH2vgdHBxXRa4G1uW0q5yI/aINt6riYUW4PZz18LR
-         juBg==
-X-Gm-Message-State: APjAAAVS6JJZmALOBs7Rz1mbzNHG3NknUcBF9DZeeMP2ui4KFGd7zWnC
-        gsOhvSnFZGbUFYvGeWwHPEM=
-X-Google-Smtp-Source: APXvYqzz16+gBcXj4y+ZQg7aGlsiLozUDN4iATmw4hS0hkhb6CjY9rVl3mR9MVzy1KZvZoURGFE3qg==
-X-Received: by 2002:ac8:6697:: with SMTP id d23mr6000567qtp.235.1581764999481;
-        Sat, 15 Feb 2020 03:09:59 -0800 (PST)
-Received: from prism.localdomain (ip72-195-144-14.ri.ri.cox.net. [72.195.144.14])
-        by smtp.gmail.com with ESMTPSA id m54sm5279735qtf.67.2020.02.15.03.09.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Feb 2020 03:09:58 -0800 (PST)
-From:   Alexander Koskovich <zvnexus@gmail.com>
-X-Google-Original-From: Alexander Koskovich <zvnexus@outlook.com>
-To:     arjan@linux.intel.com, jacob.jun.pan@linux.intel.com
-Cc:     zvnexus@gmail.com, Alexander Koskovich <zvnexus@outlook.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] thermal/intel_powerclamp: Don't report an error for AMD CPUs
-Date:   Sat, 15 Feb 2020 11:09:37 -0500
-Message-Id: <20200215160938.1025-1-zvnexus@outlook.com>
-X-Mailer: git-send-email 2.25.0
+        id S1726254AbgBOLco (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Feb 2020 06:32:44 -0500
+Received: from mout.gmx.net ([212.227.15.19]:39455 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725965AbgBOLcn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Feb 2020 06:32:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1581766354;
+        bh=pOPA4vdkKum60vU2Sw008KD8mzmXUtj1ve/fnDeNt4o=;
+        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=Qf0utu9Er9uCdJjAwIzlzWlVbbgyK77QXdz28zP1NE6MmoSGyV4BTiZDEAUycMdKC
+         ChVzDBXeqTF3HN0gASznRlZucFRzgNYRHRFa/nHVwUQU1UUixmYr11MGwpE5pFWC4n
+         5sKGsOezwDtIFumElWLBjjs4JNIjnGKo7MAag2eM=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from longitude ([146.60.76.54]) by mail.gmx.com (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MFsUv-1jGQM11c2p-00HKFQ; Sat, 15
+ Feb 2020 12:32:34 +0100
+Date:   Sat, 15 Feb 2020 12:32:31 +0100
+From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     David Gow <davidgow@google.com>
+Cc:     brendanhiggins@google.com, skhan@linuxfoundation.org,
+        corbet@lwn.net, kunit-dev@googlegroups.com,
+        linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, frowand.list@gmail.com,
+        Tim.Bird@sony.com
+Subject: Re: [PATCH v3] Documentation: kunit: Make the KUnit documentation
+ less UML-specific
+Message-ID: <20200215113231.GB2031@latitude>
+References: <20200214235723.254228-1-davidgow@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="VrqPEDrXMn8OVzN4"
+Content-Disposition: inline
+In-Reply-To: <20200214235723.254228-1-davidgow@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Provags-ID: V03:K1:rGamt5ZN+2JamTtxWa+949Bwc4ai74Nlldylw7ATa7hNww9D7BE
+ /bziJu0IK7eIOEiblDQYdQvIiKXW/z+dRk/GH/2ESakG545IBuzDzYU1R9YY3ttXbj9r2P7
+ IYOjeUjc2quFYT6rlom6QWid4LXtrAm8OSawzbeqiKK46W2hYLkL3Lu/UzlqENMmcY/rN7S
+ DPjN9jGvI6ZMj+Hdd62OA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:l56jit/555c=:OJcEhGVVIC44B/SxTchbcX
+ Fr8/OnlUjSULPzJDoaXWtq33lqaLjHW3/2u8N7nVjjkVNOZoyw4ryZtXv7ezG8lbiDk1F5e2b
+ mNExcqwEkFKiGjtnTyHU1icDXMbf/D2OSsTi20uBf0zNGBW3/p/gX+vwzeZZ/+rBbd+XG3XbN
+ btjhXaZPCqQQSKSpz4+kAR52llMT7pw3jkYlBaKSo391QF+qDQdX6qLFJip+Ss1OtuF2bHzAz
+ 7Uylg6+/4Y+mDNl6HpwHnQyYtbqvAe4BJD9Dfof2CQNL3pGrhMZxw9A0CdY6i0VQ/vigo4w5j
+ 2qZIIQCeSZBvvmFmTwHeSCZHErUSGFWFKoRAFEebxz1sW6aYS9Q9boOakVKf3OP2Y/o7wSJrA
+ gvjPQW/4Ptz3LmkfnzqNDyuVzPBw1XoJrmKcBbE3ZAFgndf0IGPU46SykodQ9nSNuL0X9BMlh
+ PeRDhtWBRu1VKOyh3E4wmMjoExvS8nsykk07VmioJpZIJBVou+IW0KEfhf+fZWBh+vd/ajGuR
+ N8tyx7flL1sSZKhc6YBzUnyY1FZzpEzo1O3x9ws6zI/dxLL3JpesUZ6tMyyhUMaUuI3ghPBgc
+ /qiBS5Zaj392Vot3z0oyKGLFQTAogoxKGVz2d0SakOSIy8tS8VV+2wV89sjFmkl2VrLHERI14
+ 3123MROhEXUYAlnl794FwZWXMmRJD5uRI3TqaCtghfhjtC8ByYR5pRBTseUdD0EGP1AJxRk1P
+ mmvrF/ldCS1zzWQ97X7t8hjeBV3cCHzg7ODv/U3YWCtfxKmMi0YfFXuOCFm8pahxg9wy121Eq
+ wXL1iG3dlT/im9vzNj3zLMjA3AbhkPM3xrXjD9WllZBd2WxG//uNI3FdX4MgEDzYkI/Dg0rP2
+ jxeM800TA1zyISpGmKTtUo30Sup1bzhYAnYTRDcp/j/Hqdqx6cAcya4mD/7EPhXAg4Bkr3m60
+ sHx4MeYL3LRg+nNNWfJRuCNKVqOJjTEbcB3zDvMYWcsbDfr9xLsCKrJZVIrn5lMM59zGOGVDY
+ FJmbACqTT3wdV7mDfuSGCDnRZJOGQMv6dQMZF1NnEmRMghHEWKOnDAzulZhIbMbIv5M6EN/9s
+ mocio8OP8kgpsfFziQOu35hb3rLIJy60Bwr9yLJqCykRsgCPjEKyswx/2PwVDiMolJ146pf/T
+ bFxILHzLeHppk5AVvPys5F1rs21pULO/v0ZQCuseO9SehJf/MxXRW2npjTp8d67Yigt589/ry
+ 2XUOug4X8C71RUIpp
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Resolves dmesg error "intel_powerclamp: CPU does not support MWAIT".
 
-The error that is outputted in dmesg prior to this patch
-is innacurate, AMD Ryzen CPUs do support MWAIT. We could
-also add the AMD vendor to the MWAIT check, but even though
-AMD CPUs do support MWAIT, they fail the C-state package
-check so it's better just to bail out in the beginning.
+--VrqPEDrXMn8OVzN4
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Alexander Koskovich <zvnexus@outlook.com>
----
- drivers/thermal/intel/intel_powerclamp.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Hi,
 
-diff --git a/drivers/thermal/intel/intel_powerclamp.c b/drivers/thermal/intel/intel_powerclamp.c
-index 53216dcbe173..3c5b25bfa596 100644
---- a/drivers/thermal/intel/intel_powerclamp.c
-+++ b/drivers/thermal/intel/intel_powerclamp.c
-@@ -650,6 +650,11 @@ static struct thermal_cooling_device_ops powerclamp_cooling_ops = {
- 	.set_cur_state = powerclamp_set_cur_state,
- };
- 
-+static const struct x86_cpu_id amd_cpu[] = {
-+	{ X86_VENDOR_AMD },
-+	{},
-+};
-+
- static const struct x86_cpu_id __initconst intel_powerclamp_ids[] = {
- 	{ X86_VENDOR_INTEL, X86_FAMILY_ANY, X86_MODEL_ANY, X86_FEATURE_MWAIT },
- 	{}
-@@ -659,6 +664,11 @@ MODULE_DEVICE_TABLE(x86cpu, intel_powerclamp_ids);
- static int __init powerclamp_probe(void)
- {
- 
-+	if (x86_match_cpu(amd_cpu)) {
-+		pr_info("Intel PowerClamp does not support AMD CPUs\n");
-+		return -ENODEV;
-+	}
-+
- 	if (!x86_match_cpu(intel_powerclamp_ids)) {
- 		pr_err("CPU does not support MWAIT\n");
- 		return -ENODEV;
--- 
-2.25.0
+On Fri, Feb 14, 2020 at 03:57:23PM -0800, David Gow wrote:
+[...]
+> +To make running these tests (and reading the results) easier, KUnit offs=
+ers
 
+There's a typo here: s/offsers/offers/
+
+
+Thanks,
+Jonathan Neusch=C3=A4fer
+
+--VrqPEDrXMn8OVzN4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAl5H1sgACgkQCDBEmo7z
+X9vbGA//YSsL2+AzYJ+tyrjnjNWwnhgSigy7m6uufz/KqC0eU8Sfs6UXO+GwwnvD
+SoqCqelP5QF7zyeGZT3mCFfl7XbfcIzK1xTfyxEEr9MBvCQRKDvXjxQbNS0rahAm
+2V0YppxFHu05UNrc/FNpEsCvHoYQwd/91N8iJkIIknAPn/lcMdrJQIjqXuuuyCQd
+QmawN8LZOh7dZwAxjIGCXFlP5ip7gHcLKzi+my0gtCs2z7yYrUm9jBNZfyut2Lfd
+VUVOP7sYqXzMc0P0WpAd/5f5ivwKortWo6J2wK++trbpEIXjMvqx2dR1DA9n6SKb
+eGYhCDzEdxhlw7bU9DPdT75yo36zk8HlWmFxvC7Cg5TSoqbJEHHSQDRUd2VSoNVb
+ACRLtvGtpOhd4s0aaR9uPt1Q6Fs2c6vqAh3hPSEM8684rB+71A8R3U+KcSj3Zjus
+b8KnOsIGIV8Vwt1/q99AXXMrGrQ2ggya9i692yD8VvCBWygA96CZ42bdUwMKSbjn
+dcWIe3bL16ZXDRrf3CeNDNOQ3znkixw1J4aaRJ31PxuvKZGX+q9RerhwVf2ICtut
+5Aop/DS1pULN6D5Mcm3FPDk3Ank6c4h/pTtgsVXj3PjB74WNr5Iyt45VqBd0UqqG
+FqmVBpkZb6MKSepIXWBc7kz9RwPmW4hVngIwt9a/KRXBZCmwshQ=
+=awkR
+-----END PGP SIGNATURE-----
+
+--VrqPEDrXMn8OVzN4--
