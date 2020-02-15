@@ -2,86 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 530AC15FF1E
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 17:06:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C79CB15FF20
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 17:08:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726340AbgBOQGL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Feb 2020 11:06:11 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35042 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726273AbgBOQGL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Feb 2020 11:06:11 -0500
-Received: by mail-pg1-f196.google.com with SMTP id v23so3342073pgk.2
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2020 08:06:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=jYBeVUO8d/2xAXOgMvAxTx0pUDPvEJO2n/2MAmSDINQ=;
-        b=E7N52NaPIT0+3RZ/AaN+gFBP5MGqnZorK0wEmxH3GYd7/9yxTuugSPNfhv/HFdxt4b
-         JvfKHegH+BNqCf9kFpB26pZ358Kpa0wHRaqvDpMdqFCRIT/yY+V3XHY08y6FXhwFKpNn
-         nsdFkrZg9amSdtCo1I0qKa8WmtVg4DAI9PsDhu0ppzrAkjfr3W/CoTrka2fLOyj2rUBv
-         CIpyeYysTftSACip1gsX+ktUqCRhMTSY2/WzlTXJSKiDf8DXxfkZQMCz0RRP2gfuCPS0
-         h2x72uHTvkU1q2Rupy/OGyWpYZXEbWfbkhlnWfn8x7btO47KISasBWgkc96Hgyj3SFXY
-         9WYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=jYBeVUO8d/2xAXOgMvAxTx0pUDPvEJO2n/2MAmSDINQ=;
-        b=Ht/himKwLGj73iaJSzn1EeBogSj3XC8aaC/orL7TNJAUYcYbaYS4bk/zYy44zidv3m
-         k4Y6YxvRyIoNC3B29kAjUuiJWlv0PpgXeNtfdN4YBPauiaJXTvZxpkdVgXiQh/FWHiLn
-         VL2xD/5Wl3QyIyKpnnqyWPfTsuMb8koUkvSb+pR/33Ox6u4rcieI3wSqp0lARnUiOgVX
-         yiFqAka1bTFZXyUK6aj40C+PEy62BNemF0YeZnwT6OnMU1g9bPEhHeKIPM6yKuoiKBe2
-         TxHApOn3yX6J43dv0QrG9coUDx6aQ0fRlbwj+eHXvm3BTPIFLYHms7Tw7tnGaU9OiGUQ
-         bWYw==
-X-Gm-Message-State: APjAAAUyc3Ixs4kUkAbUvJTIvvM0PmZXgGpieXQ+tI05KKS4ggyLCfIQ
-        fkjFM66/No+t4lWpJ3QgTY1i5/aobN1GdXft4nw=
-X-Google-Smtp-Source: APXvYqyIMMJ9IIcj5RfUkkTgn6y8g1BYDYol3lEDbc1fkerfH+ezCfXX3FfLeO1chiYVBmtQHhqlvlWOc2AMh/ru5WE=
-X-Received: by 2002:a63:cf14:: with SMTP id j20mr8985965pgg.67.1581782770612;
- Sat, 15 Feb 2020 08:06:10 -0800 (PST)
+        id S1726477AbgBOQIR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Feb 2020 11:08:17 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:47816 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726273AbgBOQIQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Feb 2020 11:08:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=/MAL/dS9+xaImPqMBu7AglUJ2inc+yODBpvhLTi/OhU=; b=m2YCxJblWgvBUHgjEiI109YDcF
+        dhnr9hZ2ojkZyF0wmbpsAD3oW1RP2dSDKreR5bioSR+sDiWn/zoQ52SclqLQE07hx6MX/jyRm46b4
+        AbVTeiCNcjC7LxUcU7btf4A9e2RbC8BxfGJcOOFEpEjzE77YAq3ieKd+yUmvvj0+5BAo=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
+        (envelope-from <andrew@lunn.ch>)
+        id 1j2zzE-0004ju-B4; Sat, 15 Feb 2020 17:08:08 +0100
+Date:   Sat, 15 Feb 2020 17:08:08 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     netdev@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 2/3] net: phy: broadcom: Have
+ bcm54xx_adjust_rxrefclk() check for flags
+Message-ID: <20200215160808.GA8924@lunn.ch>
+References: <20200214233853.27217-1-f.fainelli@gmail.com>
+ <20200214233853.27217-3-f.fainelli@gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:9b15:0:0:0:0 with HTTP; Sat, 15 Feb 2020 08:06:09
- -0800 (PST)
-Reply-To: bankbess@gmail.com
-From:   Michel Koffi Dorkenoo <asareakuffo91@gmail.com>
-Date:   Sat, 15 Feb 2020 16:06:09 +0000
-Message-ID: <CAEcMVKoAS3oa52KZyNM=LJy_m+K5Edo8CgzNUMWU-E-FjaE10g@mail.gmail.com>
-Subject: URGENT MESSAGE
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200214233853.27217-3-f.fainelli@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Attention:
+On Fri, Feb 14, 2020 at 03:38:52PM -0800, Florian Fainelli wrote:
+> bcm54xx_adjust_rxrefclk() already checks for the flags and will
+> correctly reacting to the 3 different flags it check, allow it to be
+> unconditionally called.
+> 
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+>  drivers/net/phy/broadcom.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/drivers/net/phy/broadcom.c b/drivers/net/phy/broadcom.c
+> index 4ad2128cc454..b4eae84a9195 100644
+> --- a/drivers/net/phy/broadcom.c
+> +++ b/drivers/net/phy/broadcom.c
+> @@ -273,10 +273,7 @@ static int bcm54xx_config_init(struct phy_device *phydev)
+>  	    (phydev->dev_flags & PHY_BRCM_CLEAR_RGMII_MODE))
+>  		bcm_phy_write_shadow(phydev, BCM54XX_SHD_RGMII_MODE, 0);
+>  
+> -	if ((phydev->dev_flags & PHY_BRCM_RX_REFCLK_UNUSED) ||
+> -	    (phydev->dev_flags & PHY_BRCM_DIS_TXCRXC_NOENRGY) ||
+> -	    (phydev->dev_flags & PHY_BRCM_AUTO_PWRDWN_ENABLE))
+> -		bcm54xx_adjust_rxrefclk(phydev);
+> +	bcm54xx_adjust_rxrefclk(phydev);
 
-I have something very important to discuss with you about inheritance
-fund left in my bank with a late customer who worked with shell
-development company here in my Country and died along with his family
-while on vacation in September 19,2017 Earthquake in Central Mexico
-that killed over 370 people leaving the sum of (USD$14 Million United
-States Dollars) behind in our Bank.
+Hi Florian
 
-I write to you because he has the same last name with you which I do
-not know if he is a member of your family.I am Michel Koffi Dorkenoo a
-banker and the director of operation of the said bank where the fund
-was deposited. I will like you to contact me so we can talk more about
-this because from the bank record I understand that someone has
-contacted you because of the fund in the past and try to cheat on you
-that is why I stopped the transfer for some months now but am ready to
-work directly with you on trust and understanding I promise to
-transfer the fund to you through  ATM-VISA-CARD  or bank to bank
-online transfer direct to your account in your country only if you can
-work with me as I will advice you on what you need to do to receive
-the fund and the share ratio.
+PHY_BRCM_RX_REFCLK_UNUSED is not unconditionally checked in
+bcm54xx_adjust_rxrefclk(), where as here it is. I assume this is O.K?
+The same is tree for PHY_BRCM_AUTO_PWRDWN_ENABLE.  Maybe worth a
+comment in the commit message if you need to respin.
 
-I will wait for your urgent response direct t me email (
-bankbess@gmail.com ) or you can add me on whatsapp number
-(+228-9688-6703) for more details.
-
-Mr Michael Koffi Dorkenoo
-Director Of Operation
-GOD BLESS YOU
-MOBILE/WHATSAPP: +228 9688-6703
+      Andrew
