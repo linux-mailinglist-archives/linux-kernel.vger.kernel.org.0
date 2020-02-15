@@ -2,74 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB53716000F
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 20:41:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2C70160011
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 20:41:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbgBOTWH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Feb 2020 14:22:07 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:39868 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726233AbgBOTWH (ORCPT
+        id S1726700AbgBOTls (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Feb 2020 14:41:48 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:43012 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726340AbgBOTlr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Feb 2020 14:22:07 -0500
-Received: by mail-vk1-f196.google.com with SMTP id t129so3523110vkg.6
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2020 11:22:06 -0800 (PST)
+        Sat, 15 Feb 2020 14:41:47 -0500
+Received: by mail-pl1-f194.google.com with SMTP id p11so5129011plq.10;
+        Sat, 15 Feb 2020 11:41:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=Kbbnv60CfWxgRg5wTEu9bUbikEEvzaVlAw8+XVehg38=;
-        b=V8AQoM1Z9z0IWvrf2CghL2Gn0PiyQBNFtBZNb10r8GXSMQX1MvBwFEpZwsPVcYkV7o
-         qLjI6A6gQ5e6rVwoxbAjlvQUWMXUFK6LYPySZ/fEtAyMBJQ3gg5WVZ+ojHJfhwHLmWD7
-         v7vnke17PDlLi2PEI0cD+T2BjLh97mSNgxeC9LWUZudLOExXXQC//8yKvG0a8SELa2+b
-         2EaRoE3hWqlpBv8vjW6THAy0SW5Id1n6cU+LNk2m8hafImSaZEdnqBCDck1pYLYIeHlu
-         v8mVA0QeXdYM+LKOucru1FzT8cRxckJiFkjZWSxUq61Zoh02yKrK5a+4vp0I0aOPuYbR
-         srDQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=qD7p9omT3ZqLHQdscsqkNZErSP6L23JqC4boqGiD0ds=;
+        b=p5KiWRSowO/6u32QdyYfJ5yyQFaKgUISB2YGGY7oCcluRXj+MNEUd4h9e9b3JsCGll
+         NS6XKq9O7lWsE7CECeQLIfHWJt0qYt1AB4+SeDBk9qYX35VfsteWw12J3tUXpCyvujdv
+         QIXSZltmC6ana0ehKkrKWrwkL8/VYp115YluWHwHKWjnIHEJAwc7UZlLFRZZBruDuVAg
+         1Q0lDNbZvEC4Q3wqTa6qDEDRHi7YnL9ZqgsWfEquUqoOF0lCnP4W8j4QO2QSwx5JNwlY
+         4gbfDfc8jjifYlC+wT/na2tnV5kdIe5xDUaYV+1vKWUmd6haYCLVJhMe8c4k4+Dsbx2H
+         rsSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=Kbbnv60CfWxgRg5wTEu9bUbikEEvzaVlAw8+XVehg38=;
-        b=gjyKv/ioCxXXcf6TJ0Rc6AW2ChFevTrc/gQpC5tsMCbHYw+xVFF759Ly7xhgPDIxVP
-         rOORbY+3I0ow0ECufwrpraSa/9QNNLqtg+Q5z21zHkakJORcBnVSTykxKAQ26cUZsbEH
-         62itWspI2tX3OlwcKUA8mAIw7QzsJmX+tptzLmm9I2k7hrt5xhGRF0wmX13uUJAyXJV4
-         GY4VB4AoRBx/K/uEr7pgr8LBv5PplcjsN9qX4eoGoLEC3xmvMwhOc3Tgq1KjrVgX34k6
-         8h6kLqkYh4JD2Z9s4BNhtMQ96f3HmkkpwFCuKhJiEw2qBh4qOIFsHjp+D2QghKeQWJxM
-         5Hpg==
-X-Gm-Message-State: APjAAAXOv+rWjz+SxlXITWu8x2YDmY22DKjQ44hWy9USPtrdhXMKxBXw
-        5Ge+mjHNfgwWXyhiiVGmyPI9cHBPujuTOh5WTDc=
-X-Google-Smtp-Source: APXvYqzoCrs/Wwy4F1AvYNrNFrUcjpwMBKC32kAjqgpUyHPM4e5KtZ3O95LNtHv+ePlTIE3CHNYbvYQI97fXt3A5880=
-X-Received: by 2002:a1f:328a:: with SMTP id y132mr2403935vky.60.1581794526326;
- Sat, 15 Feb 2020 11:22:06 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:ab0:6a:0:0:0:0:0 with HTTP; Sat, 15 Feb 2020 11:22:05 -0800 (PST)
-Reply-To: brianjesse343@gmail.com
-From:   brianjesse <westernu218@gmail.com>
-Date:   Sat, 15 Feb 2020 19:22:05 +0000
-Message-ID: <CAHpQcU7opA1-7j8axi6px2Zb2CG_pNMX0dj6yXQDs3JuEPJtVQ@mail.gmail.com>
-Subject: Hl
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=qD7p9omT3ZqLHQdscsqkNZErSP6L23JqC4boqGiD0ds=;
+        b=efohZYsrP3K28qfmHjKsCZXpXrFBhDBAhH64pANKZotfc7fN79TtbPFsUxqUMFY7Qt
+         X55Zq0l5Mf+vq+j1umYJ9fqWQpvB8wDQFwNbrkotOvexL2JQVaZkcWY/mBpMcrx0rQQy
+         8dyiFG1rQwpdE+W2oEN79wy+5srudcpju7h8HqrY4OKrctiETLlWxiOo/ESxiqwVgHPk
+         4dbrCo0jtEU/Et5DQCk8Hc9Cl837XdJUN6xQcGUuJJsrPVVsHMru8UcjMhcyf8kGaYZw
+         BHQD7jIZInOXrnXLqEqOe2Iwm+54TDdr7HveY5DwqWl2BpLf76eWq28EtX4QLkYvQwmg
+         ga1g==
+X-Gm-Message-State: APjAAAXq+Td2P1LcWkbEFdcMJ+hjcSF2uOdFWUBrQLnKWZVnXLP3IdRw
+        OQFWFBvIguLHcJmmVjmJAcQVL4xWDk8=
+X-Google-Smtp-Source: APXvYqx1UNOFEF981/5DjEL2KCCokmkGTRXof8tt88zvZJE6QH8INHw+Aur0m8x1jRinDEn2qTQLrg==
+X-Received: by 2002:a17:90a:b311:: with SMTP id d17mr11239396pjr.17.1581795706570;
+        Sat, 15 Feb 2020 11:41:46 -0800 (PST)
+Received: from majic.sklembedded.com (c-73-202-231-77.hsd1.ca.comcast.net. [73.202.231.77])
+        by smtp.googlemail.com with ESMTPSA id q4sm11802751pfl.175.2020.02.15.11.41.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Feb 2020 11:41:46 -0800 (PST)
+From:   Steve Longerbeam <slongerbeam@gmail.com>
+To:     linux-media@vger.kernel.org
+Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [RESEND PATCH v3 01/17] media: entity: Pass entity to get_fwnode_pad operation
+Date:   Sat, 15 Feb 2020 11:41:20 -0800
+Message-Id: <20200215194136.10131-2-slongerbeam@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200215194136.10131-1-slongerbeam@gmail.com>
+References: <20200215194136.10131-1-slongerbeam@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hallo, bitte seien Sie informiert, dass diese E-Mail, die an Ihre
-Mailbox kam, nicht ist
-ein Fehler, der jedoch speziell an Sie gerichtet wurde. ich
-Ich habe einen Vorschlag von ($ 7.500.000.00) von meinem verstorbenen
-Kunden Engineer Carlos hinterlassen
-der bei Ihnen den gleichen Namen tr=C3=A4gt, der hier in Lom=C3=A9 gearbeit=
-et
-und gelebt hat
-Gehen. Mein verstorbener Kunde und meine Familie waren in einen
-Autounfall verwickelt
-Ihr Leben. Ich kontaktiere Sie als n=C3=A4chsten Angeh=C3=B6rigen des
-Verstorbenen, also Sie
-k=C3=B6nnte die Mittel auf Anspr=C3=BCche erhalten. Auf Ihre schnelle Antwo=
-rt werde ich
-Informieren Sie mich =C3=BCber die Art und Weise der Ausf=C3=BChrung dieses
-Bundes. Kontaktieren Sie mich diesbez=C3=BCglich
-E-Mails (brianjesse343@gmail.com)
+Add a missing pointer to the entity in the media_entity operation
+get_fwnode_pad. There are no implementers of this op yet, but a future
+entity that does so will almost certainly need a reference to itself
+to carry out the work.
+
+Fixes: ae45cd5efc120 ("[media] media: entity: Add get_fwnode_pad entity
+operation")
+Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+---
+ drivers/media/mc/mc-entity.c | 2 +-
+ include/media/media-entity.h | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/mc/mc-entity.c b/drivers/media/mc/mc-entity.c
+index 7c429ce98bae..c333320f790a 100644
+--- a/drivers/media/mc/mc-entity.c
++++ b/drivers/media/mc/mc-entity.c
+@@ -386,7 +386,7 @@ int media_entity_get_fwnode_pad(struct media_entity *entity,
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = entity->ops->get_fwnode_pad(&endpoint);
++	ret = entity->ops->get_fwnode_pad(entity, &endpoint);
+ 	if (ret < 0)
+ 		return ret;
+ 
+diff --git a/include/media/media-entity.h b/include/media/media-entity.h
+index 8cb2c504a05c..cde80ad029b7 100644
+--- a/include/media/media-entity.h
++++ b/include/media/media-entity.h
+@@ -212,7 +212,8 @@ struct media_pad {
+  *    mutex held.
+  */
+ struct media_entity_operations {
+-	int (*get_fwnode_pad)(struct fwnode_endpoint *endpoint);
++	int (*get_fwnode_pad)(struct media_entity *entity,
++			      struct fwnode_endpoint *endpoint);
+ 	int (*link_setup)(struct media_entity *entity,
+ 			  const struct media_pad *local,
+ 			  const struct media_pad *remote, u32 flags);
+-- 
+2.17.1
+
