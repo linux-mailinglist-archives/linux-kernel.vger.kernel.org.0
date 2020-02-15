@@ -2,284 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5D8615FED0
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 15:17:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A3C415FEDA
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 15:30:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726439AbgBOORA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Feb 2020 09:17:00 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:60576 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725965AbgBOORA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Feb 2020 09:17:00 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01FEGteH097047;
-        Sat, 15 Feb 2020 08:16:55 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1581776215;
-        bh=aiNADbOqpFOMzKnqhqzWB0l4JMsEuoMhtl9wafu7Hug=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=wtuoAqeS+MG1DKgdQQWpzeSNtb4xSbTxC7Lmg+ry4iCXnPSF4dfjc+zdEovqSXwC1
-         c1UUpLsUMQZ8cQAze3uK38IWKPdEQJiu+R22wwz3thf9jjGYWSDYFCZd/1wDUc+t7N
-         Y7Lo4CPg1OZNIJfBI1ZlSzUksmbthi0Y156vr6PI=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01FEGtl6077676
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 15 Feb 2020 08:16:55 -0600
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Sat, 15
- Feb 2020 08:16:55 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Sat, 15 Feb 2020 08:16:55 -0600
-Received: from a0132425.dhcp.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01FEGjP7004147;
-        Sat, 15 Feb 2020 08:16:52 -0600
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>
-CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <t-kristo@ti.com>
-Subject: [PATCH v3 2/2] clk: keystone: Add new driver to handle syscon based clocks
-Date:   Sat, 15 Feb 2020 19:47:24 +0530
-Message-ID: <20200215141724.32291-3-vigneshr@ti.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200215141724.32291-1-vigneshr@ti.com>
-References: <20200215141724.32291-1-vigneshr@ti.com>
+        id S1726338AbgBOO1L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Feb 2020 09:27:11 -0500
+Received: from mout.web.de ([212.227.15.3]:50529 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726111AbgBOO1L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Feb 2020 09:27:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1581776620;
+        bh=+IsS2bFBZiIpX31dAAhhhaGIroM/ypljk2P1XOPGPYI=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=DPrn0GIxjtuEzcJ0799clUcaCqcY8ig/WiPGbC7V9sICZ8TSgacuRJ6OZ3edSJg5n
+         VoO71BRcNDu/BzBdWzTj6V4BhaIZQlu9GqxNHkd5m49VzO9RfqXzQsZ4hm4sXQ4vDI
+         ggWqKn14fDhChtS2QSAwBVKjCKGYdz1ibInuF8CQ=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [167.87.37.157] ([95.157.55.156]) by smtp.web.de (mrweb004
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MTuQz-1itnOE30Ur-00QiAG; Sat, 15
+ Feb 2020 15:23:39 +0100
+Subject: Re: [PATCH v2 1/3] riscv: Add support for mem=
+To:     Nikolay Borisov <nborisov@suse.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-riscv@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org
+References: <cover.1581767384.git.jan.kiszka@web.de>
+ <617f75f4eaacb02cd9d0a7044434e3e9b65e9e8b.1581767384.git.jan.kiszka@web.de>
+ <24bf6fae-27f4-dbdc-fcc5-6c3b65733ae6@suse.com>
+From:   Jan Kiszka <jan.kiszka@web.de>
+Message-ID: <0848ebec-3283-bb78-ace4-fd15360b41fe@web.de>
+Date:   Sat, 15 Feb 2020 15:23:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <24bf6fae-27f4-dbdc-fcc5-6c3b65733ae6@suse.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:fpm+FTunoennvKmEhkKqsmWdYkI9FYpf+Rt9Y43H5GVqEoVLTof
+ dD4zMclz6SGsLhdvpnBVCl7Mh1Sqb4W9bmFSxi1CAUv/blKfXteB3Jp5B8cD2Y4MpvO5waG
+ PTU4LWo7AoFvWSoQy/qYM10rzCVJzW/s21ABSPalow+IA/i3YEXmH5a0nUue7DOAnrCe8ky
+ f7xHEA6yOGhrmP8p86rWw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:32RsqgmBv5U=:ZN1deSqh2tESCvEIZnshLz
+ GPMF7mx23OAZQ72p6gfmSGdG1WEDMQOSd1x2bHDJUIKjeOVsJsbaf1Ja70cqk0hbUEz4hGruY
+ gedS/cSuyWnEgKgAVIs3W1Pf3afdcx0lwrGTRP2hk5P7teeQoBwLZ3KuOQUM4ZyzePCokvdPJ
+ Hp+L/xTia1Okk9LsVOvgzs6tAhVvYcHhifDKEP/SN3fUf/d/acCu/bSTckuFzNvgRVtnMdOs8
+ wL7vHRq9G8Q/8zGKXs2MGcLUpC+yFQY+ZHDFXnsrkWpAuVqF7669Q6egV53iM09oOfLWMjVtw
+ T1nV4TMwJnpGHbjuyhfWYiPaJU0m0ZdqJNsqEPJnk96AG2A4IYdsqur09/+ckeKUjTjsMu/ZQ
+ g6omVa7tAP0GgjdVvnC/gr1izyyXlXN9u/DcW0tnEippE3WweXqL4sBn1GVhoAWOVSaHspH9K
+ 9Nt7YUR8RpRaOOpUEU5WUFoW3d48WRGcegg3GmGIQbivpgaJM0DUTY/sTBB+XGVukV6p7mZqY
+ zDWolbukJIY02phLOZxoHe6dfo5o9TmXC3IXb+Tu+PSjTsNCVJBZuZxC8jJvDDFxYzz7A0rKi
+ 8lKG30uftTmbvHBXpk51g71HzhOjXLQn6ASHxQJjAckON947J0M9O7pi4GjGrM+tRV7kzjDSZ
+ e8GffjkLuUgQAtWfg1FFJnpMoekhGqdSohg4LnFhzqdyZP6z+VD7oHHHvRU/d4fvUKHWp4D6a
+ kkWyCvv9Jx5c+DyBTfuk4Wk1rFwTH5lLoJJKwA1LiinihZbD0UuzbbW8ChZNv/x1afJ3OqcOb
+ jVn9vMjPBQYlCRnMiPm+YXWK8MkLNl/gJ/uhLRTa1aq9DjqjNfHD0LH/3JhSVTFqeZ9IoKg+R
+ Rwz6OGS3vvkNPNC4xEvQzXy1cSWz6UOrhJ98538dya919SLIJFk7Zp5+W+t8Vl0wHvxr8yfVu
+ NrX6Qbzho1GrSvYT2Gnd34R8hb0aG6m4xsTx0HFyMtM1PbohEYYB3/oKomMaOy8WsdzVRIGbo
+ DAVVXwaSX8LyRg7SgP1fjz5ZHUYvXFnjgUk9UYPWYCqY3FEOG/L9KQcEcfiyGM9hgi2bns+pd
+ nqjwzyLsAUqCcemCzJlwZrn3m+T6si2Pjpea3sXu2Dx2J2eA9gK2RKLTXEQ1QR8A0VXPaPVPE
+ zJVkBcOy67ImkClaiVZchqv2m6v9YaFuZa0BN9A+C+JIdsIj26W0wZfMIgTovIDN4jEXckEG6
+ VhDtCGchvT5f3ynHH
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On TI's AM654/J721e SoCs, certain clocks can be gatemld/ungated by setting a
-single bit in SoC's System Control Module registers. Sometime more than
-one clock control can be in the same register.
-Add a driver to support such clocks using syscon framework.
-Driver currently supports controlling EHRPWM's TimeBase clock(TBCLK) for
-AM654 SoC.
+On 15.02.20 14:44, Nikolay Borisov wrote:
+>
+>
+> On 15.02.20 =D0=B3. 13:49 =D1=87., Jan Kiszka wrote:
+>> From: Jan Kiszka <jan.kiszka@siemens.com>
+>>
+>> This sets a memory limit provided via mem=3D3D on the command line,
+>> analogously to many other architectures.
+>>
+>> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+>> =3D2D--
+>>   arch/riscv/mm/init.c | 19 +++++++++++++++++++
+>>   1 file changed, 19 insertions(+)
+>>
+>> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+>> index 965a8cf4829c..aec39a56d6cf 100644
+>> =3D2D-- a/arch/riscv/mm/init.c
+>> +++ b/arch/riscv/mm/init.c
+>> @@ -118,6 +118,23 @@ static void __init setup_initrd(void)
+>>   }
+>>   #endif /* CONFIG_BLK_DEV_INITRD */
+>>
+>> +static phys_addr_t memory_limit =3D3D PHYS_ADDR_MAX;
+>
+> 3d is the ascii code for =3D, meaning your client is somehow br0ken?
 
-Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
----
- drivers/clk/keystone/Kconfig      |   8 ++
- drivers/clk/keystone/Makefile     |   1 +
- drivers/clk/keystone/syscon-clk.c | 172 ++++++++++++++++++++++++++++++
- 3 files changed, 181 insertions(+)
- create mode 100644 drivers/clk/keystone/syscon-clk.c
+The client is called git send-email, and I just checked what was passed
+to it - all fine. It must be my beloved freemail provider that enables
+quoted-printable encoding for this series (interestingly not for another
+one I sent to a different community today). I've resent the same patch
+files to both corporate and private providers, and only the latter shows
+this behavior. Sigh.
 
-diff --git a/drivers/clk/keystone/Kconfig b/drivers/clk/keystone/Kconfig
-index 38aeefb1e808..6ba809c59bb2 100644
---- a/drivers/clk/keystone/Kconfig
-+++ b/drivers/clk/keystone/Kconfig
-@@ -26,3 +26,11 @@ config TI_SCI_CLK_PROBE_FROM_FW
- 	  This is mostly only useful for debugging purposes, and will
- 	  increase the boot time of the device. If you want the clocks probed
- 	  from firmware, say Y. Otherwise, say N.
-+
-+config TI_SYSCON_CLK
-+	tristate "Syscon based clock driver for K2/K3 SoCs"
-+	depends on ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST
-+	default (ARCH_KEYSTONE || ARCH_K3)
-+	help
-+	  This adds clock driver support for syscon based gate
-+	  clocks on TI's K2 and K3 SoCs.
-diff --git a/drivers/clk/keystone/Makefile b/drivers/clk/keystone/Makefile
-index d044de6f965c..0e426e648f7c 100644
---- a/drivers/clk/keystone/Makefile
-+++ b/drivers/clk/keystone/Makefile
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
- obj-$(CONFIG_COMMON_CLK_KEYSTONE)	+= pll.o gate.o
- obj-$(CONFIG_TI_SCI_CLK)		+= sci-clk.o
-+obj-$(CONFIG_TI_SYSCON_CLK)		+= syscon-clk.o
-diff --git a/drivers/clk/keystone/syscon-clk.c b/drivers/clk/keystone/syscon-clk.c
-new file mode 100644
-index 000000000000..8d7dbea3bd30
---- /dev/null
-+++ b/drivers/clk/keystone/syscon-clk.c
-@@ -0,0 +1,172 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2020 Texas Instruments Incorporated - http://www.ti.com/
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+struct ti_syscon_gate_clk_priv {
-+	struct clk_hw hw;
-+	struct regmap *regmap;
-+	u32 reg;
-+	u32 idx;
-+};
-+
-+struct ti_syscon_gate_clk_data {
-+	char *name;
-+	u32 offset;
-+	u32 bit_idx;
-+};
-+
-+static struct
-+ti_syscon_gate_clk_priv *to_ti_syscon_gate_clk_priv(struct clk_hw *hw)
-+{
-+	return container_of(hw, struct ti_syscon_gate_clk_priv, hw);
-+}
-+
-+static int ti_syscon_gate_clk_enable(struct clk_hw *hw)
-+{
-+	struct ti_syscon_gate_clk_priv *priv = to_ti_syscon_gate_clk_priv(hw);
-+
-+	return regmap_write_bits(priv->regmap, priv->reg, priv->idx,
-+				 priv->idx);
-+}
-+
-+static void ti_syscon_gate_clk_disable(struct clk_hw *hw)
-+{
-+	struct ti_syscon_gate_clk_priv *priv = to_ti_syscon_gate_clk_priv(hw);
-+
-+	regmap_write_bits(priv->regmap, priv->reg, priv->idx, 0);
-+}
-+
-+static int ti_syscon_gate_clk_is_enabled(struct clk_hw *hw)
-+{
-+	unsigned int val;
-+	struct ti_syscon_gate_clk_priv *priv = to_ti_syscon_gate_clk_priv(hw);
-+
-+	regmap_read(priv->regmap, priv->reg, &val);
-+
-+	return !!(val & priv->idx);
-+}
-+
-+static const struct clk_ops ti_syscon_gate_clk_ops = {
-+	.enable		= ti_syscon_gate_clk_enable,
-+	.disable	= ti_syscon_gate_clk_disable,
-+	.is_enabled	= ti_syscon_gate_clk_is_enabled,
-+};
-+
-+static struct clk_hw
-+*ti_syscon_gate_clk_register(struct device *dev, struct regmap *regmap,
-+			     const struct ti_syscon_gate_clk_data *data)
-+{
-+	struct ti_syscon_gate_clk_priv *priv;
-+	struct clk_init_data init;
-+	int ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = data->name;
-+	init.ops = &ti_syscon_gate_clk_ops;
-+	init.parent_names = NULL;
-+	init.num_parents = 0;
-+	init.flags = 0;
-+
-+	priv->regmap = regmap;
-+	priv->reg = data->offset;
-+	priv->idx = BIT(data->bit_idx);
-+	priv->hw.init = &init;
-+
-+	ret = devm_clk_hw_register(dev, &priv->hw);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return &priv->hw;
-+}
-+
-+static int ti_syscon_gate_clk_probe(struct platform_device *pdev)
-+{
-+	const struct ti_syscon_gate_clk_data *data, *p;
-+	struct clk_hw_onecell_data *hw_data;
-+	struct device *dev = &pdev->dev;
-+	struct regmap *regmap;
-+	int num_clks, i;
-+
-+	data = device_get_match_data(dev);
-+	if (!data)
-+		return -EINVAL;
-+
-+	regmap = syscon_node_to_regmap(dev->of_node);
-+	if (IS_ERR(regmap)) {
-+		if (PTR_ERR(regmap) == -EPROBE_DEFER)
-+			return -EPROBE_DEFER;
-+		dev_err(dev, "failed to find parent regmap\n");
-+		return PTR_ERR(regmap);
-+	}
-+
-+	num_clks = 0;
-+	for (p = data; p->name; p++)
-+		num_clks++;
-+
-+	hw_data = devm_kzalloc(dev, struct_size(hw_data, hws, num_clks),
-+			       GFP_KERNEL);
-+	if (!hw_data)
-+		return -ENOMEM;
-+
-+	hw_data->num = num_clks;
-+
-+	for (i = 0; i < num_clks; i++) {
-+		hw_data->hws[i] = ti_syscon_gate_clk_register(dev, regmap,
-+							      &data[i]);
-+		if (IS_ERR(hw_data->hws[i]))
-+			dev_warn(dev, "failed to register %s\n",
-+				 data[i].name);
-+	}
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+					   hw_data);
-+}
-+
-+#define TI_SYSCON_CLK_GATE(_name, _offset, _bit_idx)	\
-+	{						\
-+		.name = _name,				\
-+		.offset = (_offset),			\
-+		.bit_idx = (_bit_idx),			\
-+	}
-+
-+static const struct ti_syscon_gate_clk_data am654_clk_data[] = {
-+	TI_SYSCON_CLK_GATE("ehrpwm_tbclk0", 0x0, 0),
-+	TI_SYSCON_CLK_GATE("ehrpwm_tbclk1", 0x4, 0),
-+	TI_SYSCON_CLK_GATE("ehrpwm_tbclk2", 0x8, 0),
-+	TI_SYSCON_CLK_GATE("ehrpwm_tbclk3", 0xc, 0),
-+	TI_SYSCON_CLK_GATE("ehrpwm_tbclk4", 0x10, 0),
-+	TI_SYSCON_CLK_GATE("ehrpwm_tbclk5", 0x14, 0),
-+	{ /* Sentinel */ },
-+};
-+
-+static const struct of_device_id ti_syscon_gate_clk_ids[] = {
-+	{
-+		.compatible = "ti,am654-ehrpwm-tbclk",
-+		.data = &am654_clk_data,
-+	},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, ti_syscon_gate_clk_ids);
-+
-+static struct platform_driver ti_syscon_gate_clk_driver = {
-+	.probe = ti_syscon_gate_clk_probe,
-+	.driver = {
-+		.name = "ti-syscon-gate-clk",
-+		.of_match_table = ti_syscon_gate_clk_ids,
-+	},
-+};
-+module_platform_driver(ti_syscon_gate_clk_driver);
-+
-+MODULE_AUTHOR("Vignesh Raghavendra <vigneshr@ti.com>");
-+MODULE_DESCRIPTION("Syscon backed gate-clock driver");
-+MODULE_LICENSE("GPL");
--- 
-2.25.0
+IIRC, git am processes this correctly, but I can resent via the
+corporate server as well, whatever is preferred.
 
+Thanks,
+Jan
