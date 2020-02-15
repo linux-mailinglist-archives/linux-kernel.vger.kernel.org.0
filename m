@@ -2,84 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C8BF15FB9B
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 01:43:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8F4415FB78
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 01:32:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727894AbgBOAn1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 19:43:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49686 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727567AbgBOAn1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 19:43:27 -0500
-Received: from localhost (unknown [38.98.37.142])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BBBE2206CC;
-        Sat, 15 Feb 2020 00:43:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581727406;
-        bh=n6C+XIf/lyMg45xZwpa1Z0/jdjqPoKgJmPJKvllOVUA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bbec4k4QJ+/R5/1/51+pxAbRNaT7gXuJc2Z6YvAWwm9f/+Z8khItpYP1e09K0+7WG
-         tOQ7oLR+uWzZY3zIqswcVkQU29KAvHTlAKk6ywep8desuYFROSRafpujca5Y4IfnPb
-         5TNF5zZIMkU9txujwR7X+f2yRlc9+gdEBVRQzPYQ=
-Date:   Fri, 14 Feb 2020 19:05:00 -0500
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
-        linux-kernel@vger.kernel.org,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        vkoul@kernel.org, broonie@kernel.org,
-        srinivas.kandagatla@linaro.org, jank@cadence.com,
-        slawomir.blauciak@intel.com,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>
-Subject: Re: [alsa-devel] [RFC PATCH 0/2] soundwire: add master_device/driver
- support
-Message-ID: <20200215000500.GB5524@kroah.com>
-References: <20200201042011.5781-1-pierre-louis.bossart@linux.intel.com>
- <20200214164919.GB4016987@kroah.com>
- <0ec41a5b-6132-6940-f1b3-bac1724b70a4@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0ec41a5b-6132-6940-f1b3-bac1724b70a4@linux.intel.com>
+        id S1727777AbgBOAce (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 19:32:34 -0500
+Received: from mail-pl1-f176.google.com ([209.85.214.176]:46846 "EHLO
+        mail-pl1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727529AbgBOAce (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 19:32:34 -0500
+Received: by mail-pl1-f176.google.com with SMTP id y8so4308241pll.13;
+        Fri, 14 Feb 2020 16:32:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=gjic0RXEfrgy7QbCi6Q0Q7dhAgvAaIHlh+rIMSyFpZE=;
+        b=qyrC+9400c0WVFWtbhDvFVpEmlOkA7XXHFMMqFG93m2if7P86f5TAD/evJQBjAuFx1
+         GcrqI0pgw3OXgsmF2a+nKBJaxwFATBI5BAXuGkn32LMkcd2PcwlxTv6EaEIM4SiSKQ9i
+         HcqbFbdbULumwTR4iCdbZucSJ8GAqdwgN3JgyBA7OhKb4hwayPoM/m8KGd53loKGk/an
+         J2ul6FzSatcJECfNTvi2BOqvYf/8ZHpDKROIE4q/p4Jj++qSz57oZ+A2bebB9cvRTV43
+         5YRDRm/iZEafus96x5oliNv20UDK2KbJ36k401o0R1WImwbsWYWykmTAuz9vmnhxBiXt
+         s4fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=gjic0RXEfrgy7QbCi6Q0Q7dhAgvAaIHlh+rIMSyFpZE=;
+        b=dotSXTAzL/z845HhJlw/dMjT5DZfHwCJKGo4WEZBuMAn85vLPi83N0XENu7ks53ehU
+         YAlv6IFXpvzIpwKnAgQpgxrKvbUo+eiY4qGg9vEZmWxloxezNbzlxIpT33/ihXDt/uJj
+         mcPLFwJM5vOuV+wO2YXK+Hasv35OdDGUCRZ3S6/stjv+DA9Q9sFFRh+Bd2Uab01FRlOH
+         dnT4Z9MYKcIq49ZcFbE4nmN7R0m2CDg44M1kDcOPBlRSj582WjGgqAjw0+7xeonwin34
+         sWMK4MNZ9War8WNXKNdSAa9WBy7mx8y5vG9pGAH7snVjxf52Nz+j3hAH5Y6PMM8kkFJ8
+         bbLQ==
+X-Gm-Message-State: APjAAAUnFJ3LnZQAqtYvS3aYDfPm8CXgE3h+YnFYcy/HiWDSp7o6VK/J
+        ILnhTOdl0SVLLPFe8Fr4uSRkMMNn
+X-Google-Smtp-Source: APXvYqx/tNo0wVmaj9SiEm72H8hoxYD+DFdYzKicSjwNCWV/yThe4AOzJFCu2qM29jDMpUebt0b7nQ==
+X-Received: by 2002:a17:90a:d103:: with SMTP id l3mr6943730pju.116.1581726752408;
+        Fri, 14 Feb 2020 16:32:32 -0800 (PST)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id b21sm8622622pfp.0.2020.02.14.16.32.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2020 16:32:31 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next] net: dsa: bcm_sf2: Also configure Port 5 for 2Gb/sec on 7278
+Date:   Fri, 14 Feb 2020 16:32:29 -0800
+Message-Id: <20200215003230.27181-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 05:34:40PM -0600, Pierre-Louis Bossart wrote:
-> 
-> My preference in terms of integration in drivers/soundwire would be
-> 
-> 1. Intel DAI cleanup (only one kfree missing, will resubmit v3 today)
-> 
-> 2. [PATCH 00/10] soundwire: bus: fix race conditions, add suspend-resume
-> this series solves a lot of issues and should go first.
-> 
-> 3. ASoC/SOF integration (still with platform devices)
-> I narrowed this down to 6 patches, that would help me submit the rest of the
-> ASoC/SOF patches in Mark Brown's tree. That would be Intel specific. This
-> step would be the first where everything SoundWire-related can be enabled in
-> a build, and while we've caught a lot of cross-compilation issues it's
-> likely some bots will find corner cases to keep us busy.
-> 
-> 4. master_device/driver transition: these updated patches removing platform
-> devices + sysfs support + Qualcomm support (the last point would depend on
-> the workload/support of Qualcomm/Linaro folks, I don't want to commit on
-> their behalf).
-> 
-> 5. New SoundWire functionality for Intel platforms (clock-stop/restart and
-> synchronized links). The code would be only located in drivers/soundwire and
-> be easier to handle. For the synchronized links we still have a bit of
-> validation work to do so it should really come last.
-> 
-> Would this work for everyone?
+Either port 5 or port 8 can be used on a 7278 device, make sure that
+port 5 also gets configured properly for 2Gb/sec in that case.
 
-Sounds reasonable to me, but patches would show it best to see if there
-are any issues :)
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/net/dsa/bcm_sf2.c      | 3 +++
+ drivers/net/dsa/bcm_sf2_regs.h | 1 +
+ 2 files changed, 4 insertions(+)
 
-thanks,
+diff --git a/drivers/net/dsa/bcm_sf2.c b/drivers/net/dsa/bcm_sf2.c
+index d1955543acd1..6feaf8cb0809 100644
+--- a/drivers/net/dsa/bcm_sf2.c
++++ b/drivers/net/dsa/bcm_sf2.c
+@@ -616,6 +616,9 @@ static void bcm_sf2_sw_mac_config(struct dsa_switch *ds, int port,
+ 	if (state->duplex == DUPLEX_FULL)
+ 		reg |= DUPLX_MODE;
+ 
++	if (priv->type == BCM7278_DEVICE_ID && dsa_is_cpu_port(ds, port))
++		reg |= GMIIP_SPEED_UP_2G;
++
+ 	core_writel(priv, reg, offset);
+ }
+ 
+diff --git a/drivers/net/dsa/bcm_sf2_regs.h b/drivers/net/dsa/bcm_sf2_regs.h
+index d8a5e6269c0e..784478176335 100644
+--- a/drivers/net/dsa/bcm_sf2_regs.h
++++ b/drivers/net/dsa/bcm_sf2_regs.h
+@@ -178,6 +178,7 @@ enum bcm_sf2_reg_offs {
+ #define  RXFLOW_CNTL			(1 << 4)
+ #define  TXFLOW_CNTL			(1 << 5)
+ #define  SW_OVERRIDE			(1 << 6)
++#define  GMIIP_SPEED_UP_2G		(1 << 7)
+ 
+ #define CORE_WATCHDOG_CTRL		0x001e4
+ #define  SOFTWARE_RESET			(1 << 7)
+-- 
+2.17.1
 
-greg k-h
