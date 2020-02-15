@@ -2,107 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5F2B15FF63
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 18:01:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0711E15FF8A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 18:48:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726641AbgBORAj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Feb 2020 12:00:39 -0500
-Received: from a80-127-99-228.adsl.xs4all.nl ([80.127.99.228]:45180 "EHLO
-        hetgrotebos.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726143AbgBORAe (ORCPT
+        id S1726510AbgBORsf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Feb 2020 12:48:35 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:45234 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726318AbgBORse (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Feb 2020 12:00:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=wizzup.org;
-         s=mail; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=5mloNwlHrXdn4IwVWhbhGXhiCRauDyoDgJnxMxS8A3Y=; b=ONIshqSGcrrUtCYNbDJGk63TWb
-        FSLz2TT8D24qgDUtIGDPmVXp9BxfwjjprtJXuZZPOL+4uSrSFWijbiHMao5rScoEfvNkI631I8w6S
-        +eQtNwMg0WfBM9nTe1V9V1IkE/l9MFObWuiVtJfZpMMVMdzQT78Znc/QaavJd38moOGzyIZy4PJUM
-        +SzifJhAL4Vy78nBHWuFYDwSWmAFokD7K7Bt4wArYXWZt83viyKbe5gnu59dwks1Adla/Nkv1lZCk
-        Dc+4JlmVOOZCFd+ZjLeNcqmQJZ/8CVD0an2XxZPdMRxaEYPxir0xaDpRXVI6seNnLwKpHZejhKoBd
-        7sX48b7w==;
-Received: from kgpe-d16.fritz.box ([192.168.178.22])
-        by hetgrotebos.org with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <merlijn@wizzup.org>)
-        id 1j30nj-00037p-C4; Sat, 15 Feb 2020 17:00:19 +0000
-From:   Merlijn Wajer <merlijn@wizzup.org>
-Cc:     Merlijn Wajer <merlijn@wizzup.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Mattias Jacobsson <2pi@mok.nu>,
-        "Darren Hart (VMware)" <dvhart@infradead.org>,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: [PATCH 2/2] ARM: dts: n900: remove mmc1 card detect gpio
-Date:   Sat, 15 Feb 2020 18:02:15 +0100
-Message-Id: <20200215170216.14397-3-merlijn@wizzup.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20200215170216.14397-1-merlijn@wizzup.org>
-References: <20200215170216.14397-1-merlijn@wizzup.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+        Sat, 15 Feb 2020 12:48:34 -0500
+Received: by mail-pl1-f193.google.com with SMTP id b22so5072529pls.12;
+        Sat, 15 Feb 2020 09:48:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=i2NDDgAdUuAw5YVXyPfzY9L+iTThjwMB3K1n+T+kYKU=;
+        b=bx8IMrHVWahtQZo6X9CEw/bd3uwyxztC3+SPHdWOI8UoeeoRJDTRKfu2Cx8F4KB7nH
+         xyIXXXR3UxHzAzKc4AwpM8rt4z5JyBd9dNeQUIBbap1QbvyZXl9bSg+5SFCcMBgfup+P
+         pNYMd2E0hzuzREBE3ZB8QZxBp83SiE0x07ZceOUYPRnfRljMRFOQPBGGQgo1yOJjc8ky
+         R//oUIVhmp1/csVnqi1BZcu7LXcDzwlHdEiou8M8r7nH1PoirHLmFVs42H6D2ExKICCw
+         PAMB/W2JeDrcUED0um1SPtZR3NBC7UcBgnwQseYTdbTwPyakIKgebfLJfjNbXATzWLb5
+         rn4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=i2NDDgAdUuAw5YVXyPfzY9L+iTThjwMB3K1n+T+kYKU=;
+        b=MM6uLb6MBhXU9VmoxB11+svxBp2oHI/HCzFrPEbZu5sERXWU4jmKDKM3vXt9srPyng
+         NzYtgLWKfVRjMRygzQfuyD6rlbB6laCBq2FkSsPRpA0p+YryQtBUlvwqSgVadI3XYyEn
+         jU4hHpUP90GS9fyKYpQ5pthoW3S1iDkvnTlzJlAJfOhr2i9YyyTT/w89K5d63JZKtaKV
+         lmYlJzaxjJOAVN7y32rwK0ai8/2Ji3B9+Uar4XzIG66k+l33bZXJKfxpF4fwBGEqvlbZ
+         Ytg/hRHOpMZ+ra7LHRTwbZD5DiQbNT4+9PCV79Z9BWTaC46mrqOYa3kqY9mlrbt1C2sd
+         +JXQ==
+X-Gm-Message-State: APjAAAXglGUusNoRdxlMIs7CQJ6Az/ecljb7AZ16eQx+QDROYd03+Dae
+        aN8zTlRx0kJqFTPc9CfyOMZSBNJP
+X-Google-Smtp-Source: APXvYqzUCAXv6kO7oY6Fctgd/EXfsNHidTC213Rvj0zuOViXTFfPLgbk6Z6zKHtAxV7VP1Ma17Y9xQ==
+X-Received: by 2002:a17:902:528:: with SMTP id 37mr9160092plf.322.1581788913908;
+        Sat, 15 Feb 2020 09:48:33 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id g9sm11201338pfm.150.2020.02.15.09.48.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 15 Feb 2020 09:48:33 -0800 (PST)
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hwmon fixes for v5.6-rc2
+Date:   Sat, 15 Feb 2020 09:48:32 -0800
+Message-Id: <20200215174832.26950-1-linux@roeck-us.net>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead, expose the key via the input framework, as SW_MACHINE_COVER
+Hi Linus,
 
-The chip-detect GPIO is actually detecting if the cover is closed.
-Technically it's possible to use the SD card with open cover. The
-only downside is risk of battery falling out and user being able
-to physically remove the card.
+Please pull hwmon fixes for Linux v5.6-rc2 from signed tag:
 
-The behaviour of SD card not being available when the device is
-open is unexpected and creates more problems than it solves. There
-is a high chance, that more people accidently break their rootfs
-by opening the case without physically removing the card.
+    git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-v5.6-rc2
 
-Signed-off-by: Merlijn Wajer <merlijn@wizzup.org>
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
- arch/arm/boot/dts/omap3-n900.dts | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+Thanks,
+Guenter
+------
 
-diff --git a/arch/arm/boot/dts/omap3-n900.dts b/arch/arm/boot/dts/omap3-n900.dts
-index 7028a7cb2849..ed773e1609a5 100644
---- a/arch/arm/boot/dts/omap3-n900.dts
-+++ b/arch/arm/boot/dts/omap3-n900.dts
-@@ -108,6 +108,14 @@
- 			linux,code = <SW_FRONT_PROXIMITY>;
- 			linux,can-disable;
- 		};
-+
-+		machine_cover {
-+			label = "Machine Cover";
-+			gpios = <&gpio6 0 GPIO_ACTIVE_LOW>; /* 160 */
-+			linux,input-type = <EV_SW>;
-+			linux,code = <SW_MACHINE_COVER>;
-+			linux,can-disable;
-+		};
- 	};
- 
- 	isp1707: isp1707 {
-@@ -805,10 +813,6 @@
- 	pinctrl-0 = <&mmc1_pins>;
- 	vmmc-supply = <&vmmc1>;
- 	bus-width = <4>;
--	/* For debugging, it is often good idea to remove this GPIO.
--	   It means you can remove back cover (to reboot by removing
--	   battery) and still use the MMC card. */
--	cd-gpios = <&gpio6 0 GPIO_ACTIVE_LOW>; /* 160 */
- };
- 
- /* most boards use vaux3, only some old versions use vmmc2 instead */
--- 
-2.23.0
+The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
 
+  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git tags/hwmon-for-v5.6-rc2
+
+for you to fetch changes up to 205447fa9e0a44cc42a74788eb2f6c96f91d5cd6:
+
+  hwmon: (pmbus/xdpe12284) fix typo in compatible strings (2020-02-12 12:43:01 -0800)
+
+----------------------------------------------------------------
+hwmon fixes for v5.6-rc2
+
+Fix compatible string typos in the xdpe12284 driver, and a wrong
+bit value in the ltc2978 driver.
+
+----------------------------------------------------------------
+Johan Hovold (1):
+      hwmon: (pmbus/xdpe12284) fix typo in compatible strings
+
+Mike Jones (1):
+      hwmon: (pmbus/ltc2978) Fix PMBus polling of MFR_COMMON definitions.
+
+ drivers/hwmon/pmbus/ltc2978.c   | 4 ++--
+ drivers/hwmon/pmbus/xdpe12284.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
