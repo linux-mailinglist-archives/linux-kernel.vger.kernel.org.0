@@ -2,206 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99AE815FD84
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 09:36:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B6CA15FDA4
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 09:43:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725953AbgBOIgu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Feb 2020 03:36:50 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45263 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725839AbgBOIgt (ORCPT
+        id S1727799AbgBOIm0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Feb 2020 03:42:26 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:56857 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726682AbgBOImN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Feb 2020 03:36:49 -0500
-Received: by mail-wr1-f68.google.com with SMTP id g3so13639689wrs.12;
-        Sat, 15 Feb 2020 00:36:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hIiBM6fc+qhC2xLT+fsiSDcQnNPDxc99lzcYg1EoS4Q=;
-        b=WPySjz8It8buTPoZ2LRVey7kEvgym9vorbG48DWwwAzORHUHdbksqJW2yoqffMShr5
-         iae7+7s0uuuAjkhfT4GuAfVXiShtIhAsjkwcDMYfaO4xOT6RJ3uRcEDkUzGQy37UvMz7
-         NDBN/4radbD1nIsyokLw/YbhN8RNNQ9Hk2P8T1zMUQfNXoZN6E5LlxgEmaGCRkaQW0Yc
-         FF63cFwtWcbx7Aml1KPHJXvnlz9vpNAYI/O3XhxebpMGTFHmTRAqbn7jmHIEaCLwxMtg
-         FhCsBjsEUEMTjw3gloSyj9OcP0//91Bd3yyZgvjJ2BLMzoUOqqAqXyhJsRXf3yraVBJD
-         gQ1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hIiBM6fc+qhC2xLT+fsiSDcQnNPDxc99lzcYg1EoS4Q=;
-        b=RfsRuHy+nLYddzeY4Skp72uVa0yDdzpTRfdBLNd2hOOfOJ3fOZBAo2Oghgw2QZqg7K
-         RutqP0uAz8+H5hHNfdx8pEDRhRiuonUOtXkFZVKyv2O8CsSAEwUTLoRq9dij9xWQj5AD
-         8eDOoVIgPFI4fSYSunw0+FWk09yuiON7UE2/cc+JOx99HUbQeyrjbfbXV9qNvc7NnSs2
-         ufvUWqR18Agos/xlVwORSrCyEpOeZEylBdEsjur4GMrK8xmRmgX28+S6z9rGK/MjSMHD
-         oxrQ7NKJW5guphLqVcWbTBEFVmnQMl3XPuZDE9lwUDqBXKwwuXKhw6Ci44LfL2fgVeYN
-         2HGA==
-X-Gm-Message-State: APjAAAWJ+OSqYg4eJ8s8gj/vYVJwJGKTaUsuqSx3gnccCcmRVJGCPfQX
-        PAjK2bQH1tW3CxlwEv5KVA8=
-X-Google-Smtp-Source: APXvYqwy2aWaM/tumAZwvWzur/4AI+1Y5fKEjnCTIFNJ/Mr1cqkUtBMmeHz4s8ktL/PZ8l4+58fIFg==
-X-Received: by 2002:a5d:5742:: with SMTP id q2mr4873533wrw.145.1581755806629;
-        Sat, 15 Feb 2020 00:36:46 -0800 (PST)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id p5sm10250789wrt.79.2020.02.15.00.36.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Feb 2020 00:36:46 -0800 (PST)
-Date:   Sat, 15 Feb 2020 09:36:43 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>,
+        Sat, 15 Feb 2020 03:42:13 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1j2t1E-0005C0-NW; Sat, 15 Feb 2020 09:41:44 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2077C1C2019;
+        Sat, 15 Feb 2020 09:41:44 +0100 (CET)
+Date:   Sat, 15 Feb 2020 08:41:43 -0000
+From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/urgent] perf llvm: Fix script used to obtain kernel make
+ directives to work with new kbuild
+Cc:     Thomas Richter <tmricht@linux.ibm.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        He Kuang <hekuang@huawei.com>, Jiri Olsa <jolsa@kernel.org>,
+        Masahiro Yamada <masahiroy@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        John Garry <john.garry@huawei.com>,
-        Kim Phillips <kim.phillips@amd.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [GIT PULL] perf/urgent improvements and fixes
-Message-ID: <20200215083643.GA59911@gmail.com>
-References: <20200214191057.26266-1-acme@kernel.org>
+        Sumanth Korikkar <sumanthk@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Wang Nan <wangnan0@huawei.com>, Zefan Li <lizefan@huawei.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200214191057.26266-1-acme@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Message-ID: <158175610361.13786.10260519734785923475.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The following commit has been merged into the perf/urgent branch of tip:
 
-* Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+Commit-ID:     62765941155e487b351a72479078bd6fec973563
+Gitweb:        https://git.kernel.org/tip/62765941155e487b351a72479078bd6fec973563
+Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate:    Fri, 14 Feb 2020 09:34:43 -03:00
+Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitterDate: Fri, 14 Feb 2020 10:06:00 -03:00
 
-> Hi Ingo/Thomas,
-> 
-> 	Please consider pulling,
-> 
-> Best regards,
-> 
-> - Arnaldo
-> 
-> Test results at the end of this message, as usual.
-> 
-> The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
-> 
->   Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-urgent-for-mingo-5.6-20200214
-> 
-> for you to fetch changes up to 62765941155e487b351a72479078bd6fec973563:
-> 
->   perf llvm: Fix script used to obtain kernel make directives to work with new kbuild (2020-02-14 10:06:00 -0300)
-> 
-> ----------------------------------------------------------------
-> perf/urgent fixes:
-> 
-> BPF:
-> 
->   Arnaldo Carvalho de Melo:
-> 
->   - Fix script used to obtain kernel make directives to work with new kbuild
->     used for building BPF programs.
-> 
-> maps:
-> 
->   Jiri Olsa:
-> 
->   - Fixup kmap->kmaps backpointer in kernel maps.
-> 
-> arm64:
-> 
->   John Garry:
-> 
->   - Add arm64 version of get_cpuid() to get proper, arm64 specific output from
->     'perf list' and other tools.
-> 
-> perf top:
-> 
->   Kim Phillips:
-> 
->   - Update kernel idle symbols so that output in AMD systems is in line with
->     other systems.
-> 
-> perf stat:
-> 
->   Kim Phillips:
-> 
->   - Don't report a null stalled cycles per insn metric.
-> 
-> tools headers:
-> 
->   Arnaldo Carvalho de Melo:
-> 
->   - Sync tools/ headers with the kernel sources to get things like syscall
->     numbers and new arguments so that 'perf trace' can decode and use them in
->     tracepoint filters, e.g. prctl's new PR_{G,S}ET_IO_FLUSHER options.
-> 
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> ----------------------------------------------------------------
-> Arnaldo Carvalho de Melo (15):
->       tools include UAPI: Sync x86's syscalls_64.tbl, generic unistd.h and fcntl.h to pick up openat2 and pidfd_getfd
->       tools headers UAPI: Sync copy of arm64's asm/unistd.h with the kernel sources
->       tools headers UAPI: Sync prctl.h with the kernel sources
->       perf beauty prctl: Export the 'options' strarray
->       perf trace: Resolve prctl's 'option' arg strings to numbers
->       tools headers UAPI: Sync sched.h with the kernel
->       tools headers uapi: Sync linux/fscrypt.h with the kernel sources
->       tools headers UAPI: Sync drm/i915_drm.h with the kernel sources
->       tools headers UAPI: Sync asm-generic/mman-common.h with the kernel
->       tools include UAPI: Sync sound/asound.h copy
->       tools headers x86: Sync disabled-features.h
->       tools arch x86: Sync asm/cpufeatures.h with the kernel sources
->       tools headers kvm: Sync kvm headers with the kernel sources
->       tools headers kvm: Sync linux/kvm.h with the kernel sources
->       perf llvm: Fix script used to obtain kernel make directives to work with new kbuild
-> 
-> Jiri Olsa (4):
->       perf maps: Mark module DSOs with kernel type
->       perf maps: Mark ksymbol DSOs with kernel type
->       perf maps: Fix map__clone() for struct kmap
->       perf maps: Move kmap::kmaps setup to maps__insert()
-> 
-> John Garry (1):
->       perf tools: Add arm64 version of get_cpuid()
-> 
-> Kim Phillips (3):
->       perf stat: Don't report a null stalled cycles per insn metric
->       perf symbols: Update the list of kernel idle symbols
->       perf symbols: Convert symbol__is_idle() to use strlist
-> 
->  tools/arch/arm64/include/uapi/asm/kvm.h           |  12 +-
->  tools/arch/arm64/include/uapi/asm/unistd.h        |   1 +
->  tools/arch/x86/include/asm/cpufeatures.h          |   2 +
->  tools/arch/x86/include/asm/disabled-features.h    |   8 +-
->  tools/include/uapi/asm-generic/mman-common.h      |   2 +
->  tools/include/uapi/asm-generic/unistd.h           |   7 +-
->  tools/include/uapi/drm/i915_drm.h                 |  32 +++++
->  tools/include/uapi/linux/fcntl.h                  |   2 +-
->  tools/include/uapi/linux/fscrypt.h                |  14 +-
->  tools/include/uapi/linux/kvm.h                    |   5 +
->  tools/include/uapi/linux/openat2.h                |  39 ++++++
->  tools/include/uapi/linux/prctl.h                  |   4 +
->  tools/include/uapi/linux/sched.h                  |   6 +
->  tools/include/uapi/sound/asound.h                 | 155 ++++++++++++++++++----
->  tools/perf/arch/arm64/util/header.c               |  63 ++++++---
->  tools/perf/arch/x86/entry/syscalls/syscall_64.tbl |   2 +
->  tools/perf/builtin-trace.c                        |   4 +-
->  tools/perf/check-headers.sh                       |   1 +
->  tools/perf/trace/beauty/beauty.h                  |   2 +
->  tools/perf/trace/beauty/prctl.c                   |   3 +-
->  tools/perf/util/llvm-utils.c                      |   1 +
->  tools/perf/util/machine.c                         |  26 ++--
->  tools/perf/util/map.c                             |  17 ++-
->  tools/perf/util/stat-shadow.c                     |   6 -
->  tools/perf/util/symbol.c                          |  17 ++-
->  25 files changed, 353 insertions(+), 78 deletions(-)
->  create mode 100644 tools/include/uapi/linux/openat2.h
+perf llvm: Fix script used to obtain kernel make directives to work with new kbuild
 
-Pulled, thanks a lot Arnaldo!
+Before this patch:
 
-	Ingo
+  # ./perf test 39 41
+  39: LLVM search and compile                               :
+  39.1: Basic BPF llvm compile                              : Ok
+  39.2: kbuild searching                                    : FAILED!
+  39.3: Compile source for BPF prologue generation          : Skip
+  39.4: Compile source for BPF relocation                   : Skip
+  41: BPF filter                                            :
+  41.1: Basic BPF filtering                                 : Ok
+  41.2: BPF pinning                                         : Ok
+  41.3: BPF prologue generation                             : FAILED!
+  41.4: BPF relocation checker                              : Skip
+  #
+
+Using 'perf test -v' for these tests shows that it is not finding
+uapi/linux/fs.h, which ends up being because we don't setup the right header
+path. Fix it.
+
+After this patch:
+
+  # perf test 39 41
+  39: LLVM search and compile                               :
+  39.1: Basic BPF llvm compile                              : Ok
+  39.2: kbuild searching                                    : Ok
+  39.3: Compile source for BPF prologue generation          : Ok
+  39.4: Compile source for BPF relocation                   : Ok
+  41: BPF filter                                            :
+  41.1: Basic BPF filtering                                 : Ok
+  41.2: BPF pinning                                         : Ok
+  41.3: BPF prologue generation                             : Ok
+  41.4: BPF relocation checker                              : Ok
+  #
+
+Longer description:
+
+In llvm-utils.c we use some techniques to obtain the kbuild make
+directives and that recently stopped working as now 'ar' gets called and
+expects to find the dummy.o used to echo these variables:
+
+  $(NOSTDINC_FLAGS) $(LINUXINCLUDE) $(EXTRA_CFLAGS)
+
+Add the $(CC) line to satisfy that, making sure this works with all
+kernels, i.e. preserving the temp directory and files in it used for
+this technique we can see that it works everywhere:
+
+  # make -s -C /lib/modules/5.4.18-100.fc30.x86_64/build M=/tmp/tmp.qgaFHgxjZ4/ clean
+  # ls -la /tmp/tmp.qgaFHgxjZ4/
+  total 4
+  drwx------.  2 root root   80 Feb 14 09:42 .
+  drwxrwxrwt. 47 root root 1200 Feb 14 09:42 ..
+  -rw-r--r--.  1 root root    0 Feb 13 17:14 dummy.c
+  -rw-r--r--.  1 root root  121 Feb 13 17:14 Makefile
+  #
+  # cat /tmp/tmp.qgaFHgxjZ4/Makefile
+  obj-y := dummy.o
+  $(obj)/%.o: $(src)/%.c
+          @echo -n "$(NOSTDINC_FLAGS) $(LINUXINCLUDE) $(EXTRA_CFLAGS)"
+          $(CC) -c -o $@ $<
+  #
+
+Then build with an old kernel Makefile:
+
+  # make -s -C /lib/modules/5.4.18-100.fc30.x86_64/build M=/tmp/tmp.qgaFHgxjZ4/ dummy.o
+  -nostdinc -isystem /usr/lib/gcc/x86_64-redhat-linux/9/include -I./arch/x86/include -I./arch/x86/include/generated  -I./include -I./arch/x86/include/uapi -I./arch/x86/include/generated/uapi -I./include/uapi -I./include/generated/uapi -include ./include/linux/kconfig.h
+  #
+  # ls -la /tmp/tmp.qgaFHgxjZ4/
+  total 8
+  drwx------.  2 root root  100 Feb 14 09:43 .
+  drwxrwxrwt. 47 root root 1200 Feb 14 09:43 ..
+  -rw-r--r--.  1 root root    0 Feb 13 17:14 dummy.c
+  -rw-r--r--.  1 root root  936 Feb 14 09:43 dummy.o
+  -rw-r--r--.  1 root root  121 Feb 13 17:14 Makefile
+  #
+
+And a new one:
+
+  # make -s -C /lib/modules/5.4.18-100.fc30.x86_64/build M=/tmp/tmp.qgaFHgxjZ4/ clean
+  # ls -la /tmp/tmp.qgaFHgxjZ4/
+  total 4
+  drwx------.  2 root root   80 Feb 14 09:43 .
+  drwxrwxrwt. 47 root root 1200 Feb 14 09:43 ..
+  -rw-r--r--.  1 root root    0 Feb 13 17:14 dummy.c
+  -rw-r--r--.  1 root root  121 Feb 13 17:14 Makefile
+  # make -s -C /lib/modules/5.6.0-rc1+/build M=/tmp/tmp.qgaFHgxjZ4/ dummy.o
+   -nostdinc -isystem /usr/lib/gcc/x86_64-redhat-linux/9/include -I/home/acme/git/linux/arch/x86/include -I./arch/x86/include/generated -I/home/acme/git/linux/include -I./include -I/home/acme/git/linux/arch/x86/include/uapi -I./arch/x86/include/generated/uapi -I/home/acme/git/linux/include/uapi -I./include/generated/uapi -include /home/acme/git/linux/include/linux/kconfig.h
+  #
+  # ls -la /tmp/tmp.qgaFHgxjZ4/
+  total 16
+  drwx------.  2 root root  160 Feb 14 09:44 .
+  drwxrwxrwt. 47 root root 1200 Feb 14 09:44 ..
+  -rw-r--r--.  1 root root  158 Feb 14 09:44 built-in.a
+  -rw-r--r--.  1 root root  149 Feb 14 09:44 .built-in.a.cmd
+  -rw-r--r--.  1 root root    0 Feb 13 17:14 dummy.c
+  -rw-r--r--.  1 root root  936 Feb 14 09:44 dummy.o
+  -rw-r--r--.  1 root root  121 Feb 13 17:14 Makefile
+  -rw-r--r--.  1 root root    0 Feb 14 09:44 modules.order
+  #
+
+Reported-by: Thomas Richter <tmricht@linux.ibm.com>
+Tested-by: Thomas Richter <tmricht@linux.ibm.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: He Kuang <hekuang@huawei.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Sumanth Korikkar <sumanthk@linux.ibm.com>
+Cc: Vasily Gorbik <gor@linux.ibm.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Cc: Zefan Li <lizefan@huawei.com>
+Link: https://www.spinics.net/lists/linux-perf-users/msg10600.html
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/llvm-utils.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tools/perf/util/llvm-utils.c b/tools/perf/util/llvm-utils.c
+index eae47c2..b5af680 100644
+--- a/tools/perf/util/llvm-utils.c
++++ b/tools/perf/util/llvm-utils.c
+@@ -288,6 +288,7 @@ static const char *kinc_fetch_script =
+ "obj-y := dummy.o\n"
+ "\\$(obj)/%.o: \\$(src)/%.c\n"
+ "\t@echo -n \"\\$(NOSTDINC_FLAGS) \\$(LINUXINCLUDE) \\$(EXTRA_CFLAGS)\"\n"
++"\t\\$(CC) -c -o \\$@ \\$<\n"
+ "EOF\n"
+ "touch $TMPDIR/dummy.c\n"
+ "make -s -C $KBUILD_DIR M=$TMPDIR $KBUILD_OPTS dummy.o 2>/dev/null\n"
