@@ -2,124 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C79FA15FBF8
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 02:21:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34B5015FC05
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 02:27:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727833AbgBOBU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 20:20:58 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:39486 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727649AbgBOBU5 (ORCPT
+        id S1727849AbgBOB1t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 20:27:49 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:51476 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727649AbgBOB1t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 20:20:57 -0500
-Received: by mail-pg1-f195.google.com with SMTP id j15so5797717pgm.6
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2020 17:20:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Kq5+zg+BjWYmBTuTOQDyEJGh1pC/f5gJH8KP9SmE9fg=;
-        b=XpYT65RR0Fi4QsHUQLu3MF7Hoh1ULvt2aa9HhPIww9v/ulAN+5OD5QeZsoRNTQKRVu
-         pptPtLqwblpNiw0bFy8+N3Ka+gpX1rEnvjFaSjFJfYh3BH+iECY9n3LFtt0FHLvmQu0R
-         rdqP2WfinfVvWWsSVaZMDWwd+FVhOAeMQkwwTJvGtAd26aII1GBSWjcR28K3oN1mVi1w
-         XYNccYp6c9hCBG+4nIcKpczRRlFWgGGcv3zWIL3t4abUSNedJTn24AALa/IPQNYmOgGv
-         1pAqwpKqU4zZ0pyQBFoDY1NG44ExZTKzs51eseFiC7/S228ehhCOB7GmJerLdycMWqp7
-         XThw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Kq5+zg+BjWYmBTuTOQDyEJGh1pC/f5gJH8KP9SmE9fg=;
-        b=Jth+rA9BxGlHO1jUNqCbVRG5rpiO7qT1LDMSCPb2fcxFa5Zwqn3sZqh0A51ya5gy7T
-         2AwKwOJD0yC4Q5XxcDUxmjBpeL6UiIwdvaOWC0uXoM37RPtlzAdsvHzMXMF09cpaYbh6
-         DI8+yNTukTFn4t3E6pri9kaumajMUhdsZByztRGvwMu08WN/GBsrmNDqEAhGPRGb5fWw
-         EpV9b1Fv3vLOsWmNNn/subSeLi8vvP1x11VCDkTNRh831Xi+iUvYxUleDbRWZeqYN078
-         O66u2Q+r7nweKc5eMNby8TeBC79UynwBhxeiNWhEe69IpLUeK8kVezwknKwTaEgxQSIL
-         Yr3w==
-X-Gm-Message-State: APjAAAU0zty8DK0+TjxFB44Op+KexYteFxDF+GI9dHddpPzIDCCBp2wi
-        fMYEaBO6OAmFi5bfxFOJoh+UNTV2GsY=
-X-Google-Smtp-Source: APXvYqzL/dVBWz2L9E/f9zq7JCtYavJdmzKMwmTGXxYnq9BfNcmSMoYZ/kGg/y4DyOxFXOqZ60EMRg==
-X-Received: by 2002:a63:d04c:: with SMTP id s12mr6373035pgi.105.1581729655556;
-        Fri, 14 Feb 2020 17:20:55 -0800 (PST)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id p3sm8492017pfg.184.2020.02.14.17.20.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2020 17:20:55 -0800 (PST)
-Subject: Re: [GIT PULL] io_uring fixes for 5.6-rc2
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <d72d51a9-488d-c75b-4daf-bb74960c7531@kernel.dk>
- <CAHk-=wixEw+wKJzwfEFnBYLNt5zU6zA2kpNVu_36e33_zsawKA@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ba8f3ef7-a696-0e47-eadb-7772e6aba725@kernel.dk>
-Date:   Fri, 14 Feb 2020 18:20:53 -0700
+        Fri, 14 Feb 2020 20:27:49 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01F1NFfC033261;
+        Sat, 15 Feb 2020 01:27:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=c25DV/PWTqDQtmzKwshNZ8aSa23KEScWw4d7ve/5NJo=;
+ b=OKBBBUD9klBKnQJPAy1l96os99u0TJPrIDcVjhk4lbLvt3KprfUhWhgGr+FS9n6/JAxg
+ 2mieSPv7cApr2dOfIAt57zcjnFDpyiqXZaBS45Ina3pMnzwMh6e1MbKzTlRP/x5Tmr7Y
+ XMPZ78oB/138uxSXwoWAwogpCMLCw1FYzKO1VbhLrE6NL28kbfH09iSPr4WqXJgJFQz3
+ yEjcXLzp+8IRl+BT22PoFC+PGHpdLpvRJpZfKzp4D6cPfnx+P7CEFFy2Ez+BJHl2ZrnT
+ M2/Hjfz7iMDQKP0+3dpqhVgFI005GmvQUV/fi0iLDojmp5bMogQ2qdhLe90oWmSX570V tw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2y2jx6vkf6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 15 Feb 2020 01:27:43 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01F1ReMH006504;
+        Sat, 15 Feb 2020 01:27:43 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2y4k3fm7yx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 15 Feb 2020 01:27:43 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01F1Rgq5008495;
+        Sat, 15 Feb 2020 01:27:42 GMT
+Received: from [192.168.1.206] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 14 Feb 2020 17:27:42 -0800
+Subject: Re: [PATCH v12 4/9] hugetlb: disable region_add file_region
+ coalescing
+To:     Mina Almasry <almasrymina@google.com>
+Cc:     shuah@kernel.org, rientjes@google.com, shakeelb@google.com,
+        gthelen@google.com, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, cgroups@vger.kernel.org
+References: <20200211213128.73302-1-almasrymina@google.com>
+ <20200211213128.73302-4-almasrymina@google.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <21db60be-221d-339c-412a-6bb2509c4262@oracle.com>
+Date:   Fri, 14 Feb 2020 17:27:40 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wixEw+wKJzwfEFnBYLNt5zU6zA2kpNVu_36e33_zsawKA@mail.gmail.com>
+In-Reply-To: <20200211213128.73302-4-almasrymina@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9531 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=872 adultscore=0
+ bulkscore=0 malwarescore=0 phishscore=0 suspectscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002150008
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9531 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=905 malwarescore=0
+ priorityscore=1501 adultscore=0 phishscore=0 impostorscore=0 spamscore=0
+ bulkscore=0 lowpriorityscore=0 mlxscore=0 suspectscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002150008
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/14/20 3:07 PM, Linus Torvalds wrote:
-> On Fri, Feb 14, 2020 at 8:45 AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> Here's a set of fixes for io_uring that should go into this release.
+On 2/11/20 1:31 PM, Mina Almasry wrote:
+> A follow up patch in this series adds hugetlb cgroup uncharge info the
+> file_region entries in resv->regions. The cgroup uncharge info may
+> differ for different regions, so they can no longer be coalesced at
+> region_add time. So, disable region coalescing in region_add in this
+> patch.
 > 
-> Whaa?
+> Behavior change:
 > 
->           for_each_node(node) {
-> +                if (!node_online(node))
-> +                        continue;
+> Say a resv_map exists like this [0->1], [2->3], and [5->6].
 > 
-> that's just silly.
+> Then a region_chg/add call comes in region_chg/add(f=0, t=5).
 > 
-> We have 'for_each_online_node()' for this.
+> Old code would generate resv->regions: [0->5], [5->6].
+> New code would generate resv->regions: [0->1], [1->2], [2->3], [3->5],
+> [5->6].
 > 
-> There's something like four patterns of that pointless thing.
-
-Sorry, that definitely should have been for_each_online_node() for
-those, guess I didn't think of that when making the change.
-
-> And in io_wq_create(), do you really want to allocate that wqe for
-> nodes that aren't online? Right now you _allocate_ the node data for
-> them (using a non-node-specific allocation), but then you won't
-> actually create the thread for them io_wq_manager().
-
-I was thinking about this a bit, and as far as I know there's no good
-way to get notified of nodes coming and going. And I'd really like
-to avoid having to add that to the fast path.
-
-So this seemed like the lesser of evils, we setup the wqe just in
-case the node does come online, and then rely on the manager
-creating the thread when we need it. Not sure what setup was run
-to create it, I haven't come across any boxes where we have nodes
-that are present but not online.
-
-> Plus if the node online status changes, it looks like you'll mess up
-> _anyway_, in that  io_wq_manager() will first create the workers on
-> one set of nodes, but then perhaps set the state flags for a
-> completely different set of nodes if some onlining/offlining has
-> happened.
-
-We'll look into making this more clear and bullet proof.
-
-> I've pulled this, but Jens, you need to be more careful. This all
-> looks like completely random state that nobody spent any time thinking
-> about.
+> Special care needs to be taken to handle the resv->adds_in_progress
+> variable correctly. In the past, only 1 region would be added for every
+> region_chg and region_add call. But now, each call may add multiple
+> regions, so we can no longer increment adds_in_progress by 1 in region_chg,
+> or decrement adds_in_progress by 1 after region_add or region_abort. Instead,
+> region_chg calls add_reservation_in_range() to count the number of regions
+> needed and allocates those, and that info is passed to region_add and
+> region_abort to decrement adds_in_progress correctly.
 > 
-> Seriously, this "io_uring FIXES ONLY" needs to be stricter than what
-> you seem to be doing here. This "fix" is opening up a lot of new
-> possibilities for inconsistencies in the data structures.
+> We've also modified the assumption that region_add after region_chg
+> never fails. region_chg now pre-allocates at least 1 region for
+> region_add. If region_add needs more regions than region_chg has
+> allocated for it, then it may fail.
+> 
+> Signed-off-by: Mina Almasry <almasrymina@google.com>
+> 
 
-We'll get it sorted for 5.6. Thanks for pulling.
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
 
--- 
-Jens Axboe
+My reason for previously asking my Reviewed-by be removed is because I did
+not realize the suboptimal behavior for private mappings would be addressed
+in a subsequent patch.  That should be OK as nobody should be using just
+part of this series.  If we need to respin, it might be worth noting this in
+the commit message.  Something like:
+With file_region coalescing disabled, private mappings will have one
+file_region for each page in the mapping.  This suboptimal behavior will
+be addressed in a later patch in this series.
 
+> ---
+> 
+> Changes in v12:
+> - Removed Mike's Reviewed-by until coalescing is reviewed per his
+> request.
+> - Added VM_BUG_ON that was mistakingly in a follow up patch.
