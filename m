@@ -2,84 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA92815FB3E
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 01:00:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D3DC15FB42
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 01:02:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728202AbgBNX7w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 18:59:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38312 "EHLO mail.kernel.org"
+        id S1728264AbgBOAAe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Feb 2020 19:00:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727935AbgBNX7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 18:59:51 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        id S1727804AbgBOAAe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 19:00:34 -0500
+Received: from paulmck-ThinkPad-P72.home (unknown [62.84.152.189])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 039B2206B6;
-        Fri, 14 Feb 2020 23:59:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 533EE2072D;
+        Sat, 15 Feb 2020 00:00:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581724791;
-        bh=kdcvtJLmnTtzWUQS0+tFQbmbizzUANyG9omQMu4DSRo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=raLSWtEZHlFlaXAJTM8RqjpN+mb5UJy42NT1cOjfH8kY9ByeF2ZLivS+3qfWn8S9q
-         QZJEkNTe/0RXnJJI8sUxzmXpTLb0DbZPpn5i+ONXTK7FNmWA5EMb4rJh5GzSaG2AZf
-         Qf0F5A52NVjAD/3qlr5/TB+G9r9XeaIed7r6V9SM=
-Date:   Fri, 14 Feb 2020 18:59:49 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        zhengbin <zhengbin13@huawei.com>, Hulk Robot <hulkci@huawei.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH AUTOSEL 5.5 155/542] drm/amdkfd: remove set but not used
- variable 'top_dev'
-Message-ID: <20200214235949.GG1734@sasha-vm>
-References: <20200214154854.6746-1-sashal@kernel.org>
- <20200214154854.6746-155-sashal@kernel.org>
- <20200214214429.GA4193448@kroah.com>
+        s=default; t=1581724833;
+        bh=8A+lUFd9vw/q9Wo++mR8OA9LMasIZj70bS7RBZE1bws=;
+        h=Date:From:To:Cc:Subject:Reply-To:From;
+        b=s7n2f3+0WpxTwMES/RiBb3VOHGivLspaJ4RCzKZJOThRaSyz6bcgElfiyDqxCmECf
+         7nVlcamN+IzG/aTVOv9t/mZWzLwFYMQrj+CE0EMRfw04xSbZubNrTJxawuS4f6EZ4a
+         X/dRUXx1eZd6iAg5hkvDWdwdhMRql+ryOPnzWeVU=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id CD9BD3520D46; Fri, 14 Feb 2020 16:00:31 -0800 (PST)
+Date:   Fri, 14 Feb 2020 16:00:31 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     rcu@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org
+Subject: [PATCH tip/core/rcu 0/2] kfree_rcu() updates for v5.7
+Message-ID: <20200215000031.GA14315@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200214214429.GA4193448@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 04:44:29PM -0500, Greg KH wrote:
->On Fri, Feb 14, 2020 at 10:42:27AM -0500, Sasha Levin wrote:
->> From: zhengbin <zhengbin13@huawei.com>
->>
->> [ Upstream commit d191bd678153307573d615bb42da4fcca19fe477 ]
->>
->> Fixes gcc '-Wunused-but-set-variable' warning:
->>
->> drivers/gpu/drm/amd/amdkfd/kfd_iommu.c: In function kfd_iommu_device_init:
->> drivers/gpu/drm/amd/amdkfd/kfd_iommu.c:65:30: warning: variable top_dev set but not used [-Wunused-but-set-variable]
->>
->> Reported-by: Hulk Robot <hulkci@huawei.com>
->> Fixes: 1ae99eab34f9 ("drm/amdkfd: Initialize HSA_CAP_ATS_PRESENT capability in topology codes")
->> Signed-off-by: zhengbin <zhengbin13@huawei.com>
->> Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
->> Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
->> Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
->> Signed-off-by: Sasha Levin <sashal@kernel.org>
->> ---
->>  drivers/gpu/drm/amd/amdkfd/kfd_iommu.c | 3 ---
->>  1 file changed, 3 deletions(-)
->
->Unless all of these "unused bt set variable" patches are needed for
->"real" fixes, there's no need to add them here as we are NOT building
->the kernel with that option enabled any time soon from what I can tell.
->
->So you can drop a ton of these patches from all of these AUTOSEL
->branches please.
+Hello!
 
-Sigh, I confused the -Wno-unused-but-set-variable flag we pass in the
-makefile with -Wunused-but-set-variable. Sorry about all this noise,
-I'll drop it.
+This series provides kfree_rcu() updates, all courtesy of Uladzislau
+Rezki.
 
--- 
-Thanks,
-Sasha
+1.	Support kfree_bulk() interface in kfree_rcu().
+
+2.	Add a trace event for kfree_rcu() use of kfree_bulk().
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+ include/trace/events/rcu.h |   28 ++++++
+ kernel/rcu/tree.c          |  207 +++++++++++++++++++++++++++++++++++++--------
+ 2 files changed, 200 insertions(+), 35 deletions(-)
