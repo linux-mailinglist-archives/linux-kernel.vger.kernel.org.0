@@ -2,95 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A60415FE3C
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 12:50:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A6ED15FE42
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 12:56:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726428AbgBOLuc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Feb 2020 06:50:32 -0500
-Received: from mout.web.de ([217.72.192.78]:56481 "EHLO mout.web.de"
+        id S1726276AbgBOL43 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Feb 2020 06:56:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725965AbgBOLub (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Feb 2020 06:50:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1581767418;
-        bh=AKoI1ErJ1F/3SpqbaXivBShhVSF+4DVb1UPwPn9K9xA=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References:
-         In-Reply-To:References;
-        b=mJKgCbiZ6DsG9pBjmp7Q/rVR1rt+ZjyUt4bwBodh29xfJDK95Hf8fOWZ8V8r1/D/D
-         946137HXeT5QJiUdRyX0Y6wU6z4SJ7eloxGf9Z4hlu2mnrBH29k/ZCsurRKceJ3R3d
-         LASFjszsZAHIzYwQdfkUVh82xOKaMRoU4Nrs4jLE=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from md1f2u6c.ww002.siemens.net ([95.157.55.156]) by smtp.web.de
- (mrweb102 [213.165.67.124]) with ESMTPSA (Nemesis) id
- 0MgO8g-1io06e15Py-00NgBR; Sat, 15 Feb 2020 12:50:18 +0100
-From:   Jan Kiszka <jan.kiszka@web.de>
-To:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-riscv@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] riscv: Fix crash when flushing executable ioremap regions
-Date:   Sat, 15 Feb 2020 12:49:44 +0100
-Message-Id: <8a555b0b0934f0ba134de92f6cf9db8b1744316c.1581767384.git.jan.kiszka@web.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <cover.1581767384.git.jan.kiszka@web.de>
-References: <cover.1581767384.git.jan.kiszka@web.de>
-In-Reply-To: <cover.1581767384.git.jan.kiszka@web.de>
-References: <cover.1581767384.git.jan.kiszka@web.de>
-X-Provags-ID: V03:K1:3afGuyjXHZCaYg9y6mqcxZGBFQUaKdU7SqI4fBIhgjLUotUcjdu
- VuaSdTlCtsF3UnKqxPCCuX3NSTqYet+hsYgyVjRvAtcglfc77wGgfKg+q7l0b+vgEzSXcNM
- CiUzO8c4RrB3QFdyLZ+qc7PDN/+V1/qFsrrpPM56toO4IU9MQKuZcZYGhSJu63JCbKnsU7S
- ZlR79w+tspHae7bOSXjzA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:+JySpZD7Yok=:62+NnABRoebGkDXmyK+Xd0
- eIJzRv8R5y2HGLiph7dktdAh0js3t0mQv4c2wcwhvcmveAgBoNukvjArwWPZ1xJizFVJSnpMA
- T3RUtWXubYB/CYg5SHFgKRGYO8kTC75cQJaYw+oBcwlpmV2yQiDH6PdhAQTv2bPn6AkLWfYjK
- GU26KrfV5KMVSaVaufxWdY3bi99mEUq8hXTHCXUh8OfKs/NBUOUW3KFjUzncjXh7Ma6mNvSiy
- lv6sWnRtg4Qi8LnQcsI3NpGtbZGsOC60A11lgT5qj71vAlzawDn+u69zhg0WLvEfCdT/2yGHU
- aHnGP9/660kNYKEk9c4Pkwph32RGBzxYJjJOP3Bx238unJ2wV4f0K+WZwz8lCjdO7PTA28Qol
- vgFFah1+fg+aCriLfS7xuW7C6PgBAD/I7APg7Gb4N4ZOAysN/JI/Yfz8j3QlR6ljh1jBkkwjC
- QY1hyt0n/Qs+VluYFX08NJ3PNxcXiT6xLZ+dK/NRyRBGio0DrsWe41Uqghs7sVF+w2l5lck2F
- 8DsI1A7BRs2MsRgSWgVHIB/UjhePROJOHNx2Wb08qblh9aODzTVOGiuj0E/NXWHZm6vlrOsOm
- e/ylsWEdqfuFKzLEuweXpenDl2TS1ZePSQY8dMvxg/kbD4FEZo0pAcNnJ44re6chXxgmUMw7j
- pyg3ubd9Lc1lMdFVzsp/bJe8LdMvAFDecJbuti4Q7zUOaOd+IYXBjYSLAzpMbaY3TZuU6pmrB
- n+52WvX0fvou7EHsREhNu3GyLkDjCTfXzEm/Mlw69mD0SXd14nyhKG/uzHTrcPqMBZDP7J0Q+
- 4iVMRbrN3FV6h+nfYMSz3uRXd0zETqklRNxTKx17xU4nXt5NWCijmijRpf4f/AyaWfFNBp3bL
- LtncCTLT/I7qQiZnMPX2L+GRblBVV76VcrRmalGL4LI1tOm3gEJZNCxsDwKLSwt/oaxDMfcMS
- GUoeUQfkBWDgzNNocWAgBXSuoD73Z/Iev5BHmUT1vmhlnDjrOSdAwfJcMo6sj5U0ppwO5lPjf
- MALXxYkWxyEbSflZGkm4CyRibJAi04OzvUx3hWG3Y20yo/FYzktlMa6rItC0XGD2VdDwnewcw
- I0GqOgNfqJ9eM04gNnTxnw52AkI+NWe/HTdAjDHheGoKPX+oIlVB5OY7eYiI324KrPPOQ8byj
- PE4SKupY9fqqQYl4CwUV7f02ljqg01s5bW86QGrwBrd09KzWfqJ6BJ2gz/CIEAKGLY+oNlxPq
- gqLhcti884KhbRp+y
-Content-Transfer-Encoding: quoted-printable
+        id S1725965AbgBOL42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Feb 2020 06:56:28 -0500
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F105E2072D;
+        Sat, 15 Feb 2020 11:56:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581767788;
+        bh=NaAHvFuU+ylYPII07/Q0dVeLaamkxwl2owLhdZmF30s=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=c/I4lBS0EkFioir+ydtfPPjtntwsQIPJ7gsuAA3lo46+qwOcC4aMnOKMd0Z3INdXb
+         +XXx9hsOBFemgKcDam3c13z6zdZPka+UYQI4oclDwsHzdHpDY/hsKWrKryaYlalWJW
+         y8S7mdF0AnUzkD5yhE5BODnxSJSI/dNdTVzG8774=
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1j2w3e-005RK7-1L; Sat, 15 Feb 2020 11:56:26 +0000
+Date:   Sat, 15 Feb 2020 11:56:24 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Paul Elliott <paul.elliott@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Amit Kachhap <amit.kachhap@arm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        "H . J . Lu " <hjl.tools@gmail.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Kristina =?UTF-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Florian Weimer <fweimer@redhat.com>,
+        Sudakshina Das <sudi.das@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Dave Martin <Dave.Martin@arm.com>
+Subject: Re: [PATCH v6 10/11] KVM: arm64: BTI: Reset BTYPE when skipping
+ emulated instructions
+Message-ID: <20200215115624.2afbf55c@why>
+In-Reply-To: <20200212192906.53366-11-broonie@kernel.org>
+References: <20200212192906.53366-1-broonie@kernel.org>
+        <20200212192906.53366-11-broonie@kernel.org>
+Organization: Approximate
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, viro@zeniv.linux.org.uk, paul.elliott@arm.com, peterz@infradead.org, yu-cheng.yu@intel.com, amit.kachhap@arm.com, vincenzo.frascino@arm.com, esyr@redhat.com, szabolcs.nagy@arm.com, hjl.tools@gmail.com, drjones@redhat.com, keescook@chromium.org, arnd@arndb.de, jannh@google.com, richard.henderson@linaro.org, kristina.martsenko@arm.com, tglx@linutronix.de, fweimer@redhat.com, sudi.das@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org, Dave.Martin@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+On Wed, 12 Feb 2020 19:29:05 +0000
+Mark Brown <broonie@kernel.org> wrote:
 
-Those are not backed by page structs, and pte_page is returning an
-invalid pointer.
+> From: Dave Martin <Dave.Martin@arm.com>
+> 
+> Since normal execution of any non-branch instruction resets the
+> PSTATE BTYPE field to 0, so do the same thing when emulating a
+> trapped instruction.
+> 
+> Branches don't trap directly, so we should never need to assign a
+> non-zero value to BTYPE here.
+> 
+> Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-=2D--
- arch/riscv/mm/cacheflush.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Acked-by: Marc Zyngier <maz@kernel.org>
 
-diff --git a/arch/riscv/mm/cacheflush.c b/arch/riscv/mm/cacheflush.c
-index 8930ab7278e6..9ee2c1a387cc 100644
-=2D-- a/arch/riscv/mm/cacheflush.c
-+++ b/arch/riscv/mm/cacheflush.c
-@@ -84,7 +84,8 @@ void flush_icache_pte(pte_t pte)
- {
- 	struct page *page =3D pte_page(pte);
-
--	if (!test_and_set_bit(PG_dcache_clean, &page->flags))
-+	if (!pfn_valid(pte_pfn(pte)) ||
-+	    !test_and_set_bit(PG_dcache_clean, &page->flags))
- 		flush_icache_all();
- }
- #endif /* CONFIG_MMU */
-=2D-
-2.16.4
-
+	M.
+-- 
+Jazz is not dead. It just smells funny...
