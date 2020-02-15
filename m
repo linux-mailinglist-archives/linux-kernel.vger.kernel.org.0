@@ -2,74 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ECE315FD1D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 07:29:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C181215FD22
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 07:34:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726137AbgBOG3d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Feb 2020 01:29:33 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:56508 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbgBOG3c (ORCPT
+        id S1725912AbgBOGeY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Feb 2020 01:34:24 -0500
+Received: from conuserg-08.nifty.com ([210.131.2.75]:26901 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725797AbgBOGeX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Feb 2020 01:29:32 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j2qxG-00D47H-OY; Sat, 15 Feb 2020 06:29:30 +0000
-Date:   Sat, 15 Feb 2020 06:29:30 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Atul Gupta <atul.gupta@chelsio.com>
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH] almost certain bug in
- drivers/crypto/chelsio/chcr_algo.c:create_authenc_wr()
-Message-ID: <20200215062930.GA23230@ZenIV.linux.org.uk>
-References: <20200215061416.GZ23230@ZenIV.linux.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200215061416.GZ23230@ZenIV.linux.org.uk>
+        Sat, 15 Feb 2020 01:34:23 -0500
+Received: from grover.flets-west.jp (softbank126093102113.bbtec.net [126.93.102.113]) (authenticated)
+        by conuserg-08.nifty.com with ESMTP id 01F6Wg5o007887;
+        Sat, 15 Feb 2020 15:32:42 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com 01F6Wg5o007887
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1581748363;
+        bh=IclY7pROq2vL2OPH7mncc6pGGCJbmdt+12gMSec8nfM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=G/jnWQ3E4CPiO6bvR7qoHSfhff73tadYBRObpOcc21iDxFvK4F42pAk3eHLPR3PxF
+         Plpk55qyb/NTKUdOpehQ2mTWpVaIu4qHjYNE1HGbH1WGs09Ysm2QDoctVUHUn7qyJx
+         2c60wRzQtdFxvbDOPzzmsDlJdAZLQ7b6gQksV0mRAzkJgnERsbXFufcAG9fVbbkFcS
+         jg7Zs0qKPdH5zgVbPLQW6hm9AV4NP0P5Sklygin9LFGGQPib4VFW4DKMPDOr2Lyv0T
+         XKNcXchalVU/u1I5TGcub7MTFuxOjTpdKwLkWMPcXhbMF0pU26AA+vo74NV16LcPDQ
+         51v0o00whMcUQ==
+X-Nifty-SrcIP: [126.93.102.113]
+From:   Masahiro Yamada <masahiroy@kernel.org>
+To:     x86@kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>
+Cc:     Masahiro Yamada <masahiroy@kernel.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Bruce Ashfield <bruce.ashfield@gmail.com>,
+        Daniel Kiper <daniel.kiper@oracle.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Ross Burton <ross.burton@intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/boot/build: add cpustr.h to targets and remove clean-files
+Date:   Sat, 15 Feb 2020 15:32:41 +0900
+Message-Id: <20200215063241.7437-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-	Another fairly bug in there (this time in
-drivers/crypto/chelsio/chtls/chtls_io.c):
+Files in $(targets) are always cleaned up.
 
-/* Read TLS header to find content type and data length */
-static int tls_header_read(struct tls_hdr *thdr, struct iov_iter *from)  
-{
-        if (copy_from_iter(thdr, sizeof(*thdr), from) != sizeof(*thdr))
-                return -EFAULT;
-        return (__force int)cpu_to_be16(thdr->length);
-}
+Move the 'targets' assignment out of the ifdef and remove 'clean-files'.
 
-For one thing, that kind of force-casts is pretty much always wrong.
-This one clearly says "should've used be16_to_cpu()".  And that includes
-annotating tls_hdr ->length as __be16; no idea about the other field
-in there (->version, that is).
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
 
-For another, the only caller is
-                        recordsz = tls_header_read(&hdr, &msg->msg_iter);
-                        size -= TLS_HEADER_LENGTH;
-                        copied += TLS_HEADER_LENGTH;
-                        csk->tlshws.txleft = recordsz;
-                        csk->tlshws.type = hdr.type;
-                        if (skb)
-                                ULP_SKB_CB(skb)->ulp.tls.type = hdr.type;
-which doesn't look like something that'll work if you get -EFAULT out of
-that function.  If anything, that smells like we want
-                        recordsz = tls_header_read(&hdr, &msg->msg_iter);
-			if (recordsz < 0)
-				goto do_fault;
-			...
+ arch/x86/boot/Makefile | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-What's more, we do *not* want a header that has faulted halfway through
-to be consumed.  IOW, we want copy_from_iter_full():
+diff --git a/arch/x86/boot/Makefile b/arch/x86/boot/Makefile
+index 012b82fc8617..050164ba3def 100644
+--- a/arch/x86/boot/Makefile
++++ b/arch/x86/boot/Makefile
+@@ -57,11 +57,10 @@ $(obj)/cpu.o: $(obj)/cpustr.h
+ 
+ quiet_cmd_cpustr = CPUSTR  $@
+       cmd_cpustr = $(obj)/mkcpustr > $@
+-targets += cpustr.h
+ $(obj)/cpustr.h: $(obj)/mkcpustr FORCE
+ 	$(call if_changed,cpustr)
+ endif
+-clean-files += cpustr.h
++targets += cpustr.h
+ 
+ # ---------------------------------------------------------------------------
+ 
+-- 
+2.17.1
 
-static int tls_header_read(struct tls_hdr *thdr, struct iov_iter *from)  
-{
-        if (!copy_from_iter_full(thdr, sizeof(*thdr), from))
-                return -EFAULT;
-        return be16_to_cpu(thdr->length);
-}
-
-in addition to that missing check in the caller...
