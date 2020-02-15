@@ -2,35 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CBBA15FBDA
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 01:59:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 209D415FBFE
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 02:25:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728002AbgBOA7L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Feb 2020 19:59:11 -0500
-Received: from oxu.publicvm.com ([31.7.62.117]:54654 "EHLO oxu.publicvm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727529AbgBOA7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Feb 2020 19:59:11 -0500
-Received: from WIN-L6QNEL5022Q (localhost.localdomain [127.0.0.1])
-        by oxu.publicvm.com (8.14.4/8.14.4) with ESMTP id 01F18m6l031936
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2020 04:08:48 +0300
-Message-ID: <03d91082-43875-f7e27077413889@win-l6qnel5022q>
-Reply-To: "Nelson Corey" <n.corey@usafglobal.org>
-From:   "Nelson Corey" <info@oxu.publicvm.com>
-To:     linux-kernel@vger.kernel.org
-Subject: Is this your linux-kernel@vger.kernel.org still active ??
-Date:   Fri, 14 Feb 2020 16:58:09 -0800
+        id S1727815AbgBOBZN convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 14 Feb 2020 20:25:13 -0500
+Received: from l37-192-35-170.novotelecom.ru ([37.192.35.170]:61623 "EHLO
+        glpak.ru" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727658AbgBOBZN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Feb 2020 20:25:13 -0500
+X-Greylist: delayed 724 seconds by postgrey-1.27 at vger.kernel.org; Fri, 14 Feb 2020 20:25:12 EST
+Received: from alex.glpak.ru (localhost [127.0.0.1])
+        by glpak.ru (Postfix) with ESMTP id 2D17AA3D86F
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2020 08:09:58 +0700 (NOVT)
+X-Virus-Scanned: amavisd-new at glpak.ru
+Received: from glpak.ru ([127.0.0.1])
+        by alex.glpak.ru (glpak.ru [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id zpNl+41Eherx for <linux-kernel@vger.kernel.org>;
+        Sat, 15 Feb 2020 08:09:58 +0700 (NOVT)
+Received: from [192.168.88.250] (unknown [185.248.13.181])
+        by glpak.ru (Postfix) with ESMTPA id B4FDAA3CBA2
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2020 08:09:23 +0700 (NOVT)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: zionitld3@gmail.com
+To:     linux-kernel@vger.kernel.org
+From:   anna@glpak.ru
+Date:   Fri, 14 Feb 2020 17:11:08 -0800
+Reply-To: zionitld3@gmail.com
+X-Antivirus: Avast (VPS 200214-0, 02/14/2020), Outbound message
+X-Antivirus-Status: Clean
+Message-Id: <20200215010958.2D17AA3D86F@glpak.ru>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I have tried to reach you on this linux-kernel@vger.kernel.org mail account severally but I have gotten no response from you, Please get back to me at your earliest convenience if you have received my email this time. 
-
-Sincerely,
-Nelson C.
-
+Hello, We from Zion Finance Group currently offers loans to customers at a low interest rate of 3%. This is an opportunity that you cannot miss. We have a few questions to ask; Do you have debts? Do you want to pay off your debts? Do you want to be financially equipped? If so, request a loan today from Zion Finance Group. Interested, customers are expected to contact zionitld3@gmail.com for more information. We wish to assist you with a loan. Greetings, Mr. Bernard.
