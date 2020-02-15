@@ -2,99 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CA4315FFAD
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 19:32:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00EF215FFAC
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2020 19:32:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726641AbgBOScy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Feb 2020 13:32:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34232 "EHLO mail.kernel.org"
+        id S1726462AbgBOSco convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 15 Feb 2020 13:32:44 -0500
+Received: from mga11.intel.com ([192.55.52.93]:17492 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726254AbgBOScy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Feb 2020 13:32:54 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79CB9206D6;
-        Sat, 15 Feb 2020 18:32:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581791573;
-        bh=oWWck7KB0e4Af9mropzJLU6Ld44VOn2Nw7on6P3iCFA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=NTrCsKlPkxjw5JnVxHqeZFbM4XX8+0Nkhw4OwdFgwxpEvBgBFeS0qX8bQoi7qHxty
-         V1pI15EWyqZrMX0jpwXhSZDh1F+lXFkIrlSoFv6gqTvXzIMGN9Y/pe1EHOQ0iUZLqz
-         qoP6JSMa2KqjXkZSn2DtxUGdnZQGyayPtL6UYekk=
-Date:   Sat, 15 Feb 2020 18:32:49 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Peter Rosin <peda@axentia.se>, od@zcrc.me,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] iio: afe: rescale: Implement write_raw
-Message-ID: <20200215183249.2100b6e9@archlinux>
-In-Reply-To: <20200210225438.112660-2-paul@crapouillou.net>
-References: <20200210225438.112660-1-paul@crapouillou.net>
-        <20200210225438.112660-2-paul@crapouillou.net>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726254AbgBOScn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Feb 2020 13:32:43 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Feb 2020 10:32:43 -0800
+X-IronPort-AV: E=Sophos;i="5.70,445,1574150400"; 
+   d="scan'208";a="227966402"
+Received: from aboethex-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.51.253])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Feb 2020 10:32:38 -0800
+From:   Jani Nikula <jani.nikula@intel.com>
+To:     Emmanuel Vadot <manu@FreeBSD.org>,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        airlied@linux.ie, daniel@ffwll.ch, efremov@linux.com,
+        tzimmermann@suse.de, noralf@tronnes.org, sam@ravnborg.org,
+        chris@chris-wilson.co.uk, kraxel@redhat.com,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc:     Emmanuel Vadot <manu@FreeBSD.Org>,
+        Emmanuel Vadot <manu@FreeBSD.org>
+Subject: Re: [PATCH v2 1/2] drm/client: Dual licence the file in GPL-2 and MIT
+In-Reply-To: <20200215180911.18299-2-manu@FreeBSD.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20200215180911.18299-1-manu@FreeBSD.org> <20200215180911.18299-2-manu@FreeBSD.org>
+Date:   Sat, 15 Feb 2020 20:33:09 +0200
+Message-ID: <877e0n66qi.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Feb 2020 19:54:38 -0300
-Paul Cercueil <paul@crapouillou.net> wrote:
+On Sat, 15 Feb 2020, Emmanuel Vadot <manu@FreeBSD.org> wrote:
+> From: Emmanuel Vadot <manu@FreeBSD.Org>
+>
+> Contributors for this file are :
+> Chris Wilson <chris@chris-wilson.co.uk>
+> Denis Efremov <efremov@linux.com>
+> Jani Nikula <jani.nikula@intel.com>
+> Maxime Ripard <mripard@kernel.org>
+> Noralf Trønnes <noralf@tronnes.org>
+> Sam Ravnborg <sam@ravnborg.org>
+> Thomas Zimmermann <tzimmermann@suse.de>
+>
+> Signed-off-by: Emmanuel Vadot <manu@FreeBSD.org>
 
-> Implement write_raw by converting the value if writing the scale, or
-> just calling the managed channel driver's write_raw otherwise.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+I've only converted some logging.
+
+Acked-by: Jani Nikula <jani.nikula@intel.com>
+
 > ---
->  drivers/iio/afe/iio-rescale.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/drivers/iio/afe/iio-rescale.c b/drivers/iio/afe/iio-rescale.c
-> index 95802d9ee25e..a48f6af9316d 100644
-> --- a/drivers/iio/afe/iio-rescale.c
-> +++ b/drivers/iio/afe/iio-rescale.c
-> @@ -35,6 +35,27 @@ struct rescale {
->  	int *scale_data;
->  };
->  
-> +static int rescale_write_raw(struct iio_dev *indio_dev,
-> +			     struct iio_chan_spec const *chan,
-> +			     int val, int val2, long mask)
-> +{
-> +	struct rescale *rescale = iio_priv(indio_dev);
-> +	unsigned long long tmp;
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_SCALE:
-> +		tmp = val * 1000000000LL;
-> +		do_div(tmp, rescale->numerator);
-> +		tmp *= rescale->denominator;
-> +		do_div(tmp, 1000000000LL);
-> +		return iio_write_channel_attribute(rescale->source, tmp, 0,
-> +						   IIO_CHAN_INFO_SCALE);
+>  drivers/gpu/drm/drm_client.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/drm_client.c b/drivers/gpu/drm/drm_client.c
+> index b031b45aa8ef..6b0c6ef8b9b3 100644
+> --- a/drivers/gpu/drm/drm_client.c
+> +++ b/drivers/gpu/drm/drm_client.c
+> @@ -1,4 +1,4 @@
+> -// SPDX-License-Identifier: GPL-2.0
+> +// SPDX-License-Identifier: GPL-2.0 or MIT
+>  /*
+>   * Copyright 2018 Noralf Trønnes
+>   */
 
-Why is val2 always 0?  Won't that only work if the backend device
-has integer scales?
-
-> +	default:
-> +		return iio_write_channel_attribute(rescale->source,
-> +						   val, val2, mask);
-> +	}
-> +}
-> +
->  static int rescale_convert(struct rescale *rescale, int type,
->  			   const int val, const int val2,
->  			   int *val_out, int *val2_out)
-> @@ -110,6 +131,7 @@ static int rescale_read_avail(struct iio_dev *indio_dev,
->  }
->  
->  static const struct iio_info rescale_info = {
-> +	.write_raw = rescale_write_raw,
->  	.read_raw = rescale_read_raw,
->  	.read_avail = rescale_read_avail,
->  };
-
+-- 
+Jani Nikula, Intel Open Source Graphics Center
