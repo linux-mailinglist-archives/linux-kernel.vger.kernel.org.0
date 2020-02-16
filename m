@@ -2,97 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D61A1601E5
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 06:43:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4A141601E8
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 06:43:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726009AbgBPF2g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 00:28:36 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:46293 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725208AbgBPF2f (ORCPT
+        id S1726069AbgBPFnv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 00:43:51 -0500
+Received: from mail-qv1-f66.google.com ([209.85.219.66]:42329 "EHLO
+        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725858AbgBPFnv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 00:28:35 -0500
-Received: by mail-vs1-f68.google.com with SMTP id t12so8376179vso.13
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2020 21:28:35 -0800 (PST)
+        Sun, 16 Feb 2020 00:43:51 -0500
+Received: by mail-qv1-f66.google.com with SMTP id dc14so6217047qvb.9;
+        Sat, 15 Feb 2020 21:43:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=QltcrwnTWhn1oLr2yXvWiMYc7uPvSK7mvdxjKEbUYTk=;
-        b=m0p1Cus5CAaQc3g2JhURq82LKT291n76qyxdzsJC4zV4gVsKga7jLaxbmDi5ppntT/
-         ieOOxfIFE6D+4sl31fSsQibrsg2GHyihQ+kEe9Lbr9wXnMj3nAeF14sMDmB5BD0o0tO7
-         vgGung6WZb70fEnkuP45aipiOVZpc5ChT7Cp2oGpMXgFILtwn013xZicWEmYTbxUIdJV
-         DeEpdh3rAgM6q22KYr0/PodG/4ZR3OBQFNcuaQJzodAGyipwRCyIpltdZcanuufhvDD5
-         rUU5My0KHt34bMDwrdWX1Vbx01XvltuOY7xwMoNGFiY0hRNg1DJQYAcbu5KBOpEElEzg
-         zXTQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=PAEIL2OSy7fVYAw+2opLQp645UQcZziDpgahnhOwtXQ=;
+        b=pvRjD1vVR/ISbqNCAblwPNkm+pD0nOqcKQa/wR5MXir/iIcfu2ns/TctiW6ZudEmPW
+         ADg37+6zsBqirBfsJXO9TA0ePCZ9uCZbT6zEBsYb7qsIjro3BM6EPu/gTxcqQ7e5n6xf
+         giIj7t7wJaJvyDpUeRdClXrvEmII3L0M+TjNq94llNATIYUaa+vGnYVfgGO79ccCoqiv
+         0lXd76RkNvzTJYOFKbqykxGYl6tlU4Uje7HvW3DUKfDabTMc8tDe+NiTfR6XAyARwurT
+         sjWh+kOWeYr2D319Kms8AG4TEnxf13+F6gjWeQ157bGvYnXGR6zUNuTW0aLtHlMF5HkY
+         L2Mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=QltcrwnTWhn1oLr2yXvWiMYc7uPvSK7mvdxjKEbUYTk=;
-        b=g7A+N+m6PSG3wkUs+1xwS/415eZBKct1O6jP/nBH70bk1+49PQhB5PvPi7VVa462w3
-         8sQ408Uif+Zqr/VvJFW2lGBL+QK/ZxiJwcGUx+gsHnqhcrDpSlDKwJntKYfEPYxxkrby
-         HFgSkPERDSTLxIZqz89FtLeX0F+p081MmtkcaLv3109o3nYkiLxjID393x8MxDNMYKfS
-         tbgRxLskg11NNshPS6VpHZ+HCjuqdZgbl/uSmk9XhtOKs6SdHwOsbuE8oMhIDJmgNcuc
-         CsrEq6PhoNY3BHVFNDShB3GHkUyrsBeGFfLJGyNq/Xg88EpUXwr8fAwpIGTxGMWGm8O9
-         mEvg==
-X-Gm-Message-State: APjAAAVE2a1iof2QwVer+dekmsPo+nwduvYd8HOsmxDQuu1LOYCcHzu4
-        cghMUId85dXVgq02RDaGDMLVwB2uv3lMfFvwdcE=
-X-Google-Smtp-Source: APXvYqxV92ZMNZLPpUlcGXofnxORxJf4hudoZcMgyhhpbBPBnX507fnZnEX1Ax9+jTz5zfVCOB/0Q7jPKHO/7Hgma1c=
-X-Received: by 2002:a05:6102:3235:: with SMTP id x21mr5254093vsf.8.1581830914721;
- Sat, 15 Feb 2020 21:28:34 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=PAEIL2OSy7fVYAw+2opLQp645UQcZziDpgahnhOwtXQ=;
+        b=cyoS77LvVMv5NTjbHAFnTSSP/khj44CAOb23psYU3qbcl7ws7xGc+L3Qq9ZppKjSci
+         fzH5qOIqzqPIzU0BBKK2FxKzRw84G7Lavd8Mdov6sfU3EOILLGhY559xO7ctl56bp5i8
+         KNDqTIVCOeNugvpjUR2xrHVjkHpdo7THEL5L1pIg5BqcGADojN6vog8ch6/XD0HcT9Q5
+         72H4npS6LHgnu0yd8ndYCbOVO0gxuP7uNm6fUO1jvGHxMdi8oYezdohAABA6xJgHlf0+
+         xUff0BIB1CNjDklGtUrMxHgsWnp/OnTEiBwMc0r+2ZEQ2a1QUb6eC1b6lLk18jGdJeaU
+         5z9w==
+X-Gm-Message-State: APjAAAVH8GCi0HO3RrvqBanh/ePNJm2r8kqhS6jwbuWTFoylYClrSXLr
+        dhFHS80rEQgcNYp28iwN6vA=
+X-Google-Smtp-Source: APXvYqz8xvP8XXFvXqq43AZ4+ENh4hmQ4W+38NwcHKK8ef5peZ6uwVkQVIX6Y5KWQ+KctdaXH9Eszg==
+X-Received: by 2002:ad4:42aa:: with SMTP id e10mr8261865qvr.92.1581831829747;
+        Sat, 15 Feb 2020 21:43:49 -0800 (PST)
+Received: from auth2-smtp.messagingengine.com (auth2-smtp.messagingengine.com. [66.111.4.228])
+        by smtp.gmail.com with ESMTPSA id x126sm6838714qkc.42.2020.02.15.21.43.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 15 Feb 2020 21:43:49 -0800 (PST)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailauth.nyi.internal (Postfix) with ESMTP id 20D6C20FBE;
+        Sun, 16 Feb 2020 00:43:48 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Sun, 16 Feb 2020 00:43:48 -0500
+X-ME-Sender: <xms:ktZIXuX9D4QnXWKOQROUChDwslj1o68uwYnerou-XV6_H8k_EJIAwA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrjeefgdeklecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhunhcu
+    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucffohhmrghinh
+    epkhgvrhhnvghlrdhorhhgpdhgihhthhhusgdrtghomhdpuggvfhdrshhonecukfhppeeh
+    vddrudehhedrudduuddrjedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihht
+    hidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrg
+    hilhdrtghomhesfhhigihmvgdrnhgrmhgv
+X-ME-Proxy: <xmx:k9ZIXt3ghHKGf1mmzeCe6cgLdRMfYUnjddm1AKD947pe1iOW8fzo0A>
+    <xmx:k9ZIXr3PIP82z987qSa5ASWasGWiTN_qxxnTuBcJ88Zf0y-q_rEm-Q>
+    <xmx:k9ZIXg-9Oe742Zx_0lGk9nyLNDaF1Zb6HWoLGDKEmMEwWmsHSGqbcQ>
+    <xmx:lNZIXiWJKAOl1BI37pevq8gxRHdljNO_E68eJBv8LL9kA1QuSx1BgtUr0Ow>
+Received: from localhost (unknown [52.155.111.71])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 8D3E5328005D;
+        Sun, 16 Feb 2020 00:43:46 -0500 (EST)
+Date:   Sun, 16 Feb 2020 13:43:45 +0800
+From:   Boqun Feng <boqun.feng@gmail.com>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        linux-kernel@vger.kernel.org,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-arch@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [RFC 0/3] tools/memory-model: Add litmus tests for atomic APIs
+Message-ID: <20200216054345.GA69864@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
+References: <20200214040132.91934-1-boqun.feng@gmail.com>
+ <Pine.LNX.4.44L0.2002141024141.1579-100000@iolanthe.rowland.org>
+ <20200215152550.GA13636@paulmck-ThinkPad-P72>
 MIME-Version: 1.0
-Received: by 2002:a67:eac1:0:0:0:0:0 with HTTP; Sat, 15 Feb 2020 21:28:33
- -0800 (PST)
-From:   NESTOR EDE Esq <mohammedkhalil1950@gmail.com>
-Date:   Sun, 16 Feb 2020 05:28:33 +0000
-Message-ID: <CAPsDyVeA38m1bjoV3Ht7LCxLzNRuDwDurRhDyVRFndAKHmTsLw@mail.gmail.com>
-Subject: Dringende Antworten bitte
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200215152550.GA13636@paulmck-ThinkPad-P72>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Guten Morgen,
+On Sat, Feb 15, 2020 at 07:25:50AM -0800, Paul E. McKenney wrote:
+> On Fri, Feb 14, 2020 at 10:27:44AM -0500, Alan Stern wrote:
+> > On Fri, 14 Feb 2020, Boqun Feng wrote:
+> > 
+> > > A recent discussion raises up the requirement for having test cases for
+> > > atomic APIs:
+> > > 
+> > > 	https://lore.kernel.org/lkml/20200213085849.GL14897@hirez.programming.kicks-ass.net/
+> > > 
+> > > , and since we already have a way to generate a test module from a
+> > > litmus test with klitmus[1]. It makes sense that we add more litmus
+> > > tests for atomic APIs into memory-model.
+> > 
+> > It might be worth discussing this point a little more fully.  The 
+> > set of tests in tools/memory-model/litmus-tests/ is deliberately rather 
+> > limited.  Paul has a vastly more expansive set of litmus tests in a 
+> > GitHub repository, and I am doubtful about how many new tests we want 
+> > to keep in the kernel source.
+> 
+> Indeed, the current view is that the litmus tests in the kernel source
+> tree are intended to provide examples of C-litmus-test-language features
+> and functions, as opposed to exercising the full cross-product of
+> Linux-kernel synchronization primitives.
+> 
+> For a semi-reasonable subset of that cross-product, as Alan says, please
+> see https://github.com/paulmckrcu/litmus.
+> 
+> For a list of the Linux-kernel synchronization primitives currently
+> supported by LKMM, please see tools/memory-model/linux-kernel.def.
+> 
 
-Es tut mir leid, Sie in dieser Angelegenheit ohne Ihre vorherige
-Zustimmung zu kontaktieren. Es war wegen der Dringlichkeit der
-Angelegenheit.
+So how about I put those atomic API tests into a separate directory, say
+Documentation/atomic/ ?
 
-Ich bin Nestor EDE, ein Rechtsanwalt, und der pers=C3=B6nliche Anwalt von
-ein verstorbener Kunde aus Ihrem Land. Ich w=C3=BCrde gerne wissen, ob wir
-zusammenarbeiten k=C3=B6nnen?
+The problem I want to solve here is that people (usually who implements
+the atomic APIs for new archs) may want some examples, which can help
+them understand the API requirements and test the implementation. And
+litmus tests are the perfect tool here (given that them can be
+translated to test modules with klitmus). And I personally really think
+this is something the LKMM group should maintain, that's why I put them
+in the tools/memory-model/litmus-tests/. But I'm OK if we end up
+deciding those should be put outside that directory.
 
-Seit dem Tod meines Mandanten ruht sein Fonds im Wert von in der Bank
-meines Landes. Die Bank hat mir eine Mitteilung gemacht, um die
-n=C3=A4chsten Angeh=C3=B6rigen f=C3=BCr die Forderung der Fonds zu pr=C3=A4=
-sentieren,
-andernfalls werden die Gelder beschlagnahmt.
+Regards,
+Boqun
 
-Der Verstorbene starb bei einem Autounfall mit seiner ganzen Familie.
-Ich habe mich mit Ihnen in Verbindung gesetzt, weil Sie den gleichen
-Familiennamen wie der Verstorbene haben, daher k=C3=B6nnen Sie als mein
-verstorbener Kunde dem n=C3=A4chsten Angeh=C3=B6rigen vorgestellt werden. M=
-it
-meiner Unterst=C3=BCtzung als der verstorbene pers=C3=B6nliche Anwalt, k=C3=
-=B6nnen
-Sie von der Bank genehmigt
-werden und das Geld wird Ihnen freigegeben werden.
-
-Ich freue mich auf Ihre Antwort, wenn Sie interessiert sind und ich
-werde Ihnen weitere Details senden.
-
-Sie k=C3=B6nnen mich =C3=BCber meine private E-Mail-Adresse kontaktieren F=
-=C3=BCr
-mehr Klarheit:
-
-nestorede1958@lawyer.com
-
-Mit freundlichen Gr=C3=BC=C3=9Fen,
-
-Nestor EDE,Esq.
-nestorede1958@lawyer.com
-Mobile:  00228-91520365
+> > Perhaps it makes sense to have tests corresponding to all the examples
+> > in Documentation/, perhaps not.  How do people feel about this?
+> 
+> Agreed, we don't want to say that the set of litmus tests in the kernel
+> source tree is limited for all time to the set currently present, but
+> rather that the justification for adding more would involve useful and
+> educational examples of litmus-test features and techniques rather than
+> being a full-up LKMM test suite.
+> 
+> I would guess that there are litmus-test tricks that could usefully
+> be added to tools/memory-model/litmus-tests.  Any nomination?  Perhaps
+> handling CAS loops while maintaining finite state space?  Something else?
+> 
+> 							Thanx, Paul
