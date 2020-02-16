@@ -2,102 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29382160418
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 14:09:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A687A16041E
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 14:12:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728194AbgBPNJT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 08:09:19 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46258 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728009AbgBPNJT (ORCPT
+        id S1728243AbgBPNME (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 08:12:04 -0500
+Received: from mail27.static.mailgun.info ([104.130.122.27]:21690 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728103AbgBPNMD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 08:09:19 -0500
-Received: by mail-wr1-f65.google.com with SMTP id z7so16361104wrl.13;
-        Sun, 16 Feb 2020 05:09:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=tvEL8XnoDDDhJQlXis+I/7w3i0GDb/4zBR+iz8nChnM=;
-        b=ANCfJbi3lxVWxfXdaHspdZaflNulvt7zkwgyAowutB2HsQvuU0nsGoh5Wqx+vRWPja
-         kwfDa8w0uJAx9KlP8c6HjNPXWh+d5hJ/F0oyUkPbUkwXMyiLUjcHO0WRD1Qzw4SYdmbQ
-         joIPP+2RopZRPNnYWKojDLP0+vLxwyaFuwDJ2KySU0UaYLy4b3hBwMzDOVX44lHqYBgj
-         QDUbGfbUl4NaVRK+XbzRSifmEgn0yIKeC2XGr5IeDo3G+Jvd7uAJUjNY5UpOeD5nNE1B
-         qcMuFvjPkDbA3N/nj9PHB1RQTg3t1L5OzdkU43ZxOJAJnlCu+GxEzF7RAVm8PoO9fjAG
-         pueA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=tvEL8XnoDDDhJQlXis+I/7w3i0GDb/4zBR+iz8nChnM=;
-        b=BpC0JVd1nDXf5+YWihoFbg5JizttWomoCiifAIlFKnpUtJnrLpDw5AsqyqvYBS2wFB
-         OeV1xUeNutyQwlzCciS92RY8UgbuWmOPyXHQ3UDXzlnK0IuAoVwZBaWAHpSZZjgMQ5fy
-         BM8uHtzQzIifS/p3P8lo6OK0ZtGJ76daW78H1jzANljM+7xnQAzYwCTAJvWdae0zR0WD
-         nzETtDeB2O3FItNS07SJaFHPihxSQ/0LTilkWrwNcVI97aWWUeNMbhNn/aJlPEP1MxqW
-         bz3puuCLwQJ6uPJ0tg38v+xki/i6QqTKjMaKp8opkQGJp9WPNgXCZ6HSBiOCmGgvYAv9
-         OqoA==
-X-Gm-Message-State: APjAAAVk1D8+IOYXAw3Y0BYXiBAtgzbhHsMVv3r69tKTXzzXpOGFE7aB
-        7Tb0fnJJlk+tAza7kKbIYuA=
-X-Google-Smtp-Source: APXvYqziHWt5hYUHIy4pUIFjT8JvtyU6AKXR/9w0NkI9dxoCdNmyzFFsR2OMMhFcHeJGw4h9m/JRIw==
-X-Received: by 2002:a5d:54c1:: with SMTP id x1mr15424575wrv.240.1581858555439;
-        Sun, 16 Feb 2020 05:09:15 -0800 (PST)
-Received: from felia.fritz.box ([2001:16b8:3868:8500:68a0:3d5f:3add:6e47])
-        by smtp.gmail.com with ESMTPSA id x6sm15747748wrr.6.2020.02.16.05.09.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Feb 2020 05:09:14 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Rob Herring <robh@kernel.org>
-Cc:     Alexandre Torgue <alexandre.torgue@st.com>,
-        Joe Perches <joe@perches.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: adjust to stm32 timer dt-bindings conversion
-Date:   Sun, 16 Feb 2020 14:08:41 +0100
-Message-Id: <20200216130841.4187-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Sun, 16 Feb 2020 08:12:03 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1581858722; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=A5ZI/g7WWcSZehWepKEyAPPOsuiaR/FmCfcQVi4vYPQ=; b=iHPFy/hlBBgewZ/ol6Z3sKwvIy+od3ZVIYlotcVpRKR8NXBsFt3LcnNSacdBQSBTQk356A43
+ nIkBkFBk/fvPZG3KgwrFnfIgIWmEFr7OiXiRe5M3NzCUrNMLyxiHBim9LduGor6LC0AaQWaP
+ nPqj56OkzH2qI5tzRrhtwW+PLls=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e493f9e.7f63ed18d5e0-smtp-out-n01;
+ Sun, 16 Feb 2020 13:11:58 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 370FDC4479C; Sun, 16 Feb 2020 13:11:58 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from [192.168.0.100] (unknown [103.140.231.108])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: akdwived)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C2E0AC43383;
+        Sun, 16 Feb 2020 13:11:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C2E0AC43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=akdwived@codeaurora.org
+Subject: Re: [PATCH v4 1/2] dt-bindings: Documentation for qcom,eud
+To:     Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, ckadabi@codeaurora.org,
+        tsoni@codeaurora.org, bryanh@codeaurora.org,
+        psodagud@codeaurora.org, rnayak@codeaurora.org,
+        satyap@codeaurora.org, pheragu@codeaurora.org
+References: <1580445811-15948-1-git-send-email-akdwived@codeaurora.org>
+ <1580445811-15948-2-git-send-email-akdwived@codeaurora.org>
+ <9483dfa0-15ea-e9ed-79ee-3dcf97e98136@nexus-software.ie>
+From:   "Dwivedi, Avaneesh Kumar (avani)" <akdwived@codeaurora.org>
+Message-ID: <4f19fe93-3af2-1050-4d80-ed568865d825@codeaurora.org>
+Date:   Sun, 16 Feb 2020 18:41:30 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
+MIME-Version: 1.0
+In-Reply-To: <9483dfa0-15ea-e9ed-79ee-3dcf97e98136@nexus-software.ie>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The commit 56fb34d86e87 ("dt-bindings: mfd: Convert stm32 timers bindings
-to json-schema") and commit b88091f5d84a ("dt-bindings: mfd: Convert stm32
-low power timers bindings to json-schema") converted some files from txt to
-yaml format in ./Documentation/devicetree/bindings/, but they missed to
-adjust MAINTAINERS.
+Thank you very much Bryan for your review comments, will be working on 
+your and other maintainers comment on this patchset and will be posting 
+new patchset soon.
 
-Since then, ./scripts/get_maintainer.pl --self-test complains:
-
-  no file matches F: Documentation/devicetree/bindings/*/stm32-*timer*
-  no file matches F: Documentation/devicetree/bindings/pwm/pwm-stm32*
-
-So, repair the MAINTAINERS entry now.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Benjamin, Fabrice, please ack.
-Rob, please pick this patch.
-applies cleanly on current master and on next-20200214
-
- MAINTAINERS | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a0d86490c2c6..9175b59e2b4c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15923,8 +15923,7 @@ F:	drivers/*/stm32-*timer*
- F:	drivers/pwm/pwm-stm32*
- F:	include/linux/*/stm32-*tim*
- F:	Documentation/ABI/testing/*timer-stm32
--F:	Documentation/devicetree/bindings/*/stm32-*timer*
--F:	Documentation/devicetree/bindings/pwm/pwm-stm32*
-+F:	Documentation/devicetree/bindings/mfd/st,stm32-*timer*.yaml
- 
- STMMAC ETHERNET DRIVER
- M:	Giuseppe Cavallaro <peppe.cavallaro@st.com>
+On 2/4/2020 8:21 AM, Bryan O'Donoghue wrote:
+> On 31/01/2020 04:43, Avaneesh Kumar Dwivedi wrote:
+>> Documentation for Embedded USB Debugger (EUD) device tree bindings.
+>>
+>> Signed-off-by: Satya Durga Srinivasu Prabhala <satyap@codeaurora.org>
+>> Signed-off-by: Prakruthi Deepak Heragu <pheragu@codeaurora.org>
+>> Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+>> ---
+>>   .../devicetree/bindings/soc/qcom/qcom,msm-eud.txt  | 43 
+>> ++++++++++++++++++++++
+>>   1 file changed, 43 insertions(+)
+>>   create mode 100644 
+>> Documentation/devicetree/bindings/soc/qcom/qcom,msm-eud.txt
+>>
+>> diff --git 
+>> a/Documentation/devicetree/bindings/soc/qcom/qcom,msm-eud.txt 
+>> b/Documentation/devicetree/bindings/soc/qcom/qcom,msm-eud.txt
+>> new file mode 100644
+>> index 0000000..57476ce
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,msm-eud.txt
+>> @@ -0,0 +1,43 @@
+>> +* Qualcomm Technologies Inc Embedded USB Debugger (EUD)
+>> +
+>> +The EUD (Embedded USB Debugger) is a mini-USB hub implemented
+>> +on chip to support the USB-based debug and trace capabilities.
+>
+> on chip to support USB-based debug and trace capabilities.
+OK
+>
+>> +
+>> +Required properties:
+>> +
+>> + - compatible:  Should be "qcom,msm-eud"
+>> + - interrupts:  Interrupt number
+>> + - reg: Should be address and size of EUD register space
+>> +
+>> +EUD notifies clients for VBUS attach/detach and charger enable/disable
+>> +events. The link between event consumer(i.e.USB controller for vbus
+> missing space
+> consumer (i.e.
+Ok
+>
+>> +attach/detach event) and EUD is established via a directed graph. EUD
+>> +act 
+> The EUD acts
+OK
+>
+>> as an output link and clients of EUD as input link of this directed
+>> +graph. Events flows through the directed graph only during debug mode.
+>
+> Probably this is a very obvious question but, you mean debug and trace 
+> events or do you mean VBUS/charger events?
+Directed graph is to show VBUS and charger events flow.
+>
+>> +
+>> +An example for EUD device node:
+>> +
+>> +    eud: qcom,msm-eud@88e0000 {
+>> +        compatible = "qcom,msm-eud";
+>> +        interrupts = <GIC_SPI 492 IRQ_TYPE_LEVEL_HIGH>;
+>> +        reg = <0x88e0000 0x4000>;
+>> +        usb_con: connector {
+>> +            compatible = "usb-c-connector";
+>> +            label = "USB-C";
+>> +            port {
+>> +                eud_usb_output: endpoint {
+>> +                    remote-endpoint = <&eud_usb3_input>;
+>> +                };
+>> +            };
+>> +        };
+>> +    };
+>> +
+>> +An example for EUD client:
+>> +
+>> +    usb3 {
+>> +        port {
+>> +            eud_usb3_input: endpoint {
+>> +                remote-endpoint = <&eud_usb_output>;
+>> +            };
+>> +        };
+>> +    };
+>>
 -- 
-2.17.1
-
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
