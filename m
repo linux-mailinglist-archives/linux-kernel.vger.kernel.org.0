@@ -2,197 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A4CC1603BE
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 11:57:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D0D11603C7
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 12:06:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728022AbgBPK5O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 05:57:14 -0500
-Received: from mail-il1-f199.google.com ([209.85.166.199]:43322 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727800AbgBPK5N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 05:57:13 -0500
-Received: by mail-il1-f199.google.com with SMTP id o13so11838054ilf.10
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2020 02:57:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=khkdmIgyKVi3BQRKte6m+fUbFSqCcRxt9OmDYtfZNBY=;
-        b=d3JwHFRWbNcAJISNgIRa/cSNOyWwkQly/t16SVl0ezQAQGWLR58WKrruFZiSug0w3E
-         fQBPr7qddmBvEaikJNcm3CibUHHWgPxhLZfhzmiA/4gl3Sw1gW1597e/KINSjUEv7lMN
-         tpzESF5cYSNdgQXMhPmwhAHZ0HMZKXh/psiVPER4uixC6vbClOxai/X+mMRRvhFqMh2X
-         YvsrBCoCdFuIPs1ro9zsx9+MddtK5IZ+ICNyvAgRh++6lKXiqG9u+k2Rmar/ebqqKc5i
-         wSbvKgLXSf+goFa70iiyXYvC+1Tdaot8dRo3mDok2+eKXM90u/hgr7HpkAYVILNP2bLj
-         ZtRg==
-X-Gm-Message-State: APjAAAVAqYS4sqsw7E81aH8tus6Cq64TO3+7bcI0W3RGwDURvT5lE9o+
-        5cHvO59K0bm31tId/lOl78Df9QI2lg+jjB075sk5DX5so/44
-X-Google-Smtp-Source: APXvYqz/uhApDy8BHsTOMV0Ax4nS1NjL5q1etw2OxJWRdFvNTWSg41CD5+DRw3LUFazwsjxHOVI2b8Yuzph7xFvJnFvRpaMDOXt+
+        id S1728060AbgBPLGN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 06:06:13 -0500
+Received: from mga11.intel.com ([192.55.52.93]:5921 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727943AbgBPLGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Feb 2020 06:06:12 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Feb 2020 03:06:10 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,448,1574150400"; 
+   d="scan'208";a="238811844"
+Received: from lxy-clx-4s.sh.intel.com ([10.239.43.60])
+  by orsmga006.jf.intel.com with ESMTP; 16 Feb 2020 03:06:06 -0800
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Cc:     Xiaoyao Li <xiaoyao.li@intel.com>, x86@kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] KVM: VMX: Add VMX_FEATURE_USR_WAIT_PAUSE
+Date:   Sun, 16 Feb 2020 18:48:57 +0800
+Message-Id: <20200216104858.109955-1-xiaoyao.li@intel.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-X-Received: by 2002:a92:5c8a:: with SMTP id d10mr10921125ilg.137.1581850632480;
- Sun, 16 Feb 2020 02:57:12 -0800 (PST)
-Date:   Sun, 16 Feb 2020 02:57:12 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000973ee059eaf4de6@google.com>
-Subject: possible deadlock in bpf_lru_push_free
-From:   syzbot <syzbot+122b5421d14e68f29cd1@syzkaller.appspotmail.com>
-To:     andriin@fb.com, ast@kernel.org, bpf@vger.kernel.org,
-        daniel@iogearbox.net, kafai@fb.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, songliubraving@fb.com,
-        syzkaller-bugs@googlegroups.com, yhs@fb.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Commit 159348784ff0 ("x86/vmx: Introduce VMX_FEATURES_*") missed
+bit 26 (enable user wait and pause) of Secondary Processor-based
+VM-Execution Controls.
 
-syzbot found the following crash on:
+Add VMX_FEATURE_USR_WAIT_PAUSE flag and use it to define
+SECONDARY_EXEC_ENABLE_USR_WAIT_PAUSE to make them uniformly.
 
-HEAD commit:    2019fc96 Merge git://git.kernel.org/pub/scm/linux/kernel/g..
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=13aa0229e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=735296e4dd620b10
-dashboard link: https://syzkaller.appspot.com/bug?extid=122b5421d14e68f29cd1
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+122b5421d14e68f29cd1@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-5.6.0-rc1-syzkaller #0 Not tainted
-------------------------------------------------------
-syz-executor.3/16820 is trying to acquire lock:
-ffffe8ffffccc040 (&loc_l->lock){....}, at: bpf_common_lru_push_free kernel/bpf/bpf_lru_list.c:516 [inline]
-ffffe8ffffccc040 (&loc_l->lock){....}, at: bpf_lru_push_free+0x250/0x5b0 kernel/bpf/bpf_lru_list.c:555
-
-but task is already holding lock:
-ffff88808ceda560 (&htab->buckets[i].lock#2){....}, at: __htab_map_lookup_and_delete_batch+0x617/0x1540 kernel/bpf/hashtab.c:1322
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (&htab->buckets[i].lock#2){....}:
-       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-       _raw_spin_lock_irqsave+0x95/0xcd kernel/locking/spinlock.c:159
-       htab_lru_map_delete_node+0xce/0x2f0 kernel/bpf/hashtab.c:593
-       __bpf_lru_list_shrink_inactive kernel/bpf/bpf_lru_list.c:220 [inline]
-       __bpf_lru_list_shrink+0xf9/0x470 kernel/bpf/bpf_lru_list.c:266
-       bpf_lru_list_pop_free_to_local kernel/bpf/bpf_lru_list.c:340 [inline]
-       bpf_common_lru_pop_free kernel/bpf/bpf_lru_list.c:447 [inline]
-       bpf_lru_pop_free+0x87c/0x1670 kernel/bpf/bpf_lru_list.c:499
-       prealloc_lru_pop+0x2c/0xa0 kernel/bpf/hashtab.c:132
-       __htab_lru_percpu_map_update_elem+0x67e/0xa90 kernel/bpf/hashtab.c:1069
-       bpf_percpu_hash_update+0x16e/0x210 kernel/bpf/hashtab.c:1585
-       bpf_map_update_value.isra.0+0x2d7/0x8e0 kernel/bpf/syscall.c:181
-       generic_map_update_batch+0x41f/0x610 kernel/bpf/syscall.c:1319
-       bpf_map_do_batch+0x3f5/0x510 kernel/bpf/syscall.c:3348
-       __do_sys_bpf+0x9b7/0x41e0 kernel/bpf/syscall.c:3460
-       __se_sys_bpf kernel/bpf/syscall.c:3355 [inline]
-       __x64_sys_bpf+0x73/0xb0 kernel/bpf/syscall.c:3355
-       do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-       entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #1 (&l->lock){....}:
-       __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-       _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:151
-       bpf_lru_list_pop_free_to_local kernel/bpf/bpf_lru_list.c:325 [inline]
-       bpf_common_lru_pop_free kernel/bpf/bpf_lru_list.c:447 [inline]
-       bpf_lru_pop_free+0x67f/0x1670 kernel/bpf/bpf_lru_list.c:499
-       prealloc_lru_pop+0x2c/0xa0 kernel/bpf/hashtab.c:132
-       htab_lru_map_update_elem+0x65b/0xba0 kernel/bpf/hashtab.c:950
-       bpf_map_update_value.isra.0+0x61b/0x8e0 kernel/bpf/syscall.c:206
-       map_update_elem kernel/bpf/syscall.c:1089 [inline]
-       __do_sys_bpf+0x3163/0x41e0 kernel/bpf/syscall.c:3384
-       __se_sys_bpf kernel/bpf/syscall.c:3355 [inline]
-       __x64_sys_bpf+0x73/0xb0 kernel/bpf/syscall.c:3355
-       do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-       entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #0 (&loc_l->lock){....}:
-       check_prev_add kernel/locking/lockdep.c:2475 [inline]
-       check_prevs_add kernel/locking/lockdep.c:2580 [inline]
-       validate_chain kernel/locking/lockdep.c:2970 [inline]
-       __lock_acquire+0x2596/0x4a00 kernel/locking/lockdep.c:3954
-       lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4484
-       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-       _raw_spin_lock_irqsave+0x95/0xcd kernel/locking/spinlock.c:159
-       bpf_common_lru_push_free kernel/bpf/bpf_lru_list.c:516 [inline]
-       bpf_lru_push_free+0x250/0x5b0 kernel/bpf/bpf_lru_list.c:555
-       __htab_map_lookup_and_delete_batch+0x8d4/0x1540 kernel/bpf/hashtab.c:1374
-       htab_lru_map_lookup_and_delete_batch+0x34/0x40 kernel/bpf/hashtab.c:1491
-       bpf_map_do_batch+0x3f5/0x510 kernel/bpf/syscall.c:3348
-       __do_sys_bpf+0x1f7d/0x41e0 kernel/bpf/syscall.c:3456
-       __se_sys_bpf kernel/bpf/syscall.c:3355 [inline]
-       __x64_sys_bpf+0x73/0xb0 kernel/bpf/syscall.c:3355
-       do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-       entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-other info that might help us debug this:
-
-Chain exists of:
-  &loc_l->lock --> &l->lock --> &htab->buckets[i].lock#2
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&htab->buckets[i].lock#2);
-                               lock(&l->lock);
-                               lock(&htab->buckets[i].lock#2);
-  lock(&loc_l->lock);
-
- *** DEADLOCK ***
-
-2 locks held by syz-executor.3/16820:
- #0: ffffffff89bac240 (rcu_read_lock){....}, at: __htab_map_lookup_and_delete_batch+0x54b/0x1540 kernel/bpf/hashtab.c:1308
- #1: ffff88808ceda560 (&htab->buckets[i].lock#2){....}, at: __htab_map_lookup_and_delete_batch+0x617/0x1540 kernel/bpf/hashtab.c:1322
-
-stack backtrace:
-CPU: 0 PID: 16820 Comm: syz-executor.3 Not tainted 5.6.0-rc1-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x197/0x210 lib/dump_stack.c:118
- print_circular_bug.isra.0.cold+0x163/0x172 kernel/locking/lockdep.c:1684
- check_noncircular+0x32e/0x3e0 kernel/locking/lockdep.c:1808
- check_prev_add kernel/locking/lockdep.c:2475 [inline]
- check_prevs_add kernel/locking/lockdep.c:2580 [inline]
- validate_chain kernel/locking/lockdep.c:2970 [inline]
- __lock_acquire+0x2596/0x4a00 kernel/locking/lockdep.c:3954
- lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4484
- __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
- _raw_spin_lock_irqsave+0x95/0xcd kernel/locking/spinlock.c:159
- bpf_common_lru_push_free kernel/bpf/bpf_lru_list.c:516 [inline]
- bpf_lru_push_free+0x250/0x5b0 kernel/bpf/bpf_lru_list.c:555
- __htab_map_lookup_and_delete_batch+0x8d4/0x1540 kernel/bpf/hashtab.c:1374
- htab_lru_map_lookup_and_delete_batch+0x34/0x40 kernel/bpf/hashtab.c:1491
- bpf_map_do_batch+0x3f5/0x510 kernel/bpf/syscall.c:3348
- __do_sys_bpf+0x1f7d/0x41e0 kernel/bpf/syscall.c:3456
- __se_sys_bpf kernel/bpf/syscall.c:3355 [inline]
- __x64_sys_bpf+0x73/0xb0 kernel/bpf/syscall.c:3355
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45c6c9
-Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007efeedbcdc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00007efeedbce6d4 RCX: 000000000045c6c9
-RDX: 0000000000000038 RSI: 00000000200001c0 RDI: 0000000000000019
-RBP: 000000000076bf20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 0000000000000060 R14: 00000000004c2e9b R15: 000000000076bf2c
-
-
+Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ arch/x86/include/asm/vmx.h         | 2 +-
+ arch/x86/include/asm/vmxfeatures.h | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
+index 2a85287b3685..8521af3fef27 100644
+--- a/arch/x86/include/asm/vmx.h
++++ b/arch/x86/include/asm/vmx.h
+@@ -72,7 +72,7 @@
+ #define SECONDARY_EXEC_MODE_BASED_EPT_EXEC	VMCS_CONTROL_BIT(MODE_BASED_EPT_EXEC)
+ #define SECONDARY_EXEC_PT_USE_GPA		VMCS_CONTROL_BIT(PT_USE_GPA)
+ #define SECONDARY_EXEC_TSC_SCALING              VMCS_CONTROL_BIT(TSC_SCALING)
+-#define SECONDARY_EXEC_ENABLE_USR_WAIT_PAUSE	0x04000000
++#define SECONDARY_EXEC_ENABLE_USR_WAIT_PAUSE	VMCS_CONTROL_BIT(USR_WAIT_PAUSE)
+ 
+ #define PIN_BASED_EXT_INTR_MASK                 VMCS_CONTROL_BIT(INTR_EXITING)
+ #define PIN_BASED_NMI_EXITING                   VMCS_CONTROL_BIT(NMI_EXITING)
+diff --git a/arch/x86/include/asm/vmxfeatures.h b/arch/x86/include/asm/vmxfeatures.h
+index a50e4a0de315..1408f526bd90 100644
+--- a/arch/x86/include/asm/vmxfeatures.h
++++ b/arch/x86/include/asm/vmxfeatures.h
+@@ -81,6 +81,7 @@
+ #define VMX_FEATURE_MODE_BASED_EPT_EXEC	( 2*32+ 22) /* "ept_mode_based_exec" Enable separate EPT EXEC bits for supervisor vs. user */
+ #define VMX_FEATURE_PT_USE_GPA		( 2*32+ 24) /* "" Processor Trace logs GPAs */
+ #define VMX_FEATURE_TSC_SCALING		( 2*32+ 25) /* Scale hardware TSC when read in guest */
++#define VMX_FEATURE_USR_WAIT_PAUSE	( 2*32+ 26) /* "" Enable TPAUSE, UMONITOR, UMWATI in guest */
+ #define VMX_FEATURE_ENCLV_EXITING	( 2*32+ 28) /* "" VM-Exit on ENCLV (leaf dependent) */
+ 
+ #endif /* _ASM_X86_VMXFEATURES_H */
+-- 
+2.19.1
+
