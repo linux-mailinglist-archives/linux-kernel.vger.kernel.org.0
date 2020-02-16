@@ -2,56 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EB7216063B
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 21:21:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11AA9160646
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 21:21:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727922AbgBPUVL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 15:21:11 -0500
-Received: from mo4-p03-ob.smtp.rzone.de ([85.215.255.104]:30257 "EHLO
-        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726020AbgBPUVL (ORCPT
+        id S1728205AbgBPUV3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 15:21:29 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:41717 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728054AbgBPUV0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 15:21:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1581884468;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=dOonmpmRBGw9AJdjMOawfKlXYNxdn0SnFz/txP/bL+s=;
-        b=Mp+eYrDvLEaHHTBpkg5rNFZkAv3nwp+ADZ+6ADSbj7MrIjpH983vPPdNtphJn5QBM6
-        iMeXAlaCDW+tOlPrNqgGN1AQQ/pLpbAgcmVLp7BCa4cTvSnCCQCUgF9l/lKbpAsNPtwx
-        g89OBFfcjccU1WrAPFj/hzgRXvzY7zJ/vsvN27U6e5Cpqqlht/ACBFtFG80SXEZsmkKX
-        RDrciwSn9VHvid9ky0NDLjYIXTHKtzVcnmtjqnJjrXVcrOh1RTjomjrqpnwHeld8KvHY
-        ablKAzrMnDOHIKCAqCeg445GMQEN/htO0voPup2/txv0bUuFFqJLd+f6JQ6KkqpK4QVA
-        9QVQ==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1OAA2UNf2M0OoPPevMB"
-X-RZG-CLASS-ID: mo00
-Received: from iMac.fritz.box
-        by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
-        with ESMTPSA id U06217w1GKL6Jr6
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Sun, 16 Feb 2020 21:21:06 +0100 (CET)
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-To:     Paul Boddie <paul@boddie.org.uk>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paulburton@kernel.org>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
-        kernel@pyra-handheld.com
-Subject: [PATCH v3 6/6] MIPS: CI20: defconfig: multiple improvements
-Date:   Sun, 16 Feb 2020 21:21:00 +0100
-Message-Id: <aa7259fbcf0f89ec4ab0639ee67fc03d1c492829.1581884459.git.hns@goldelico.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <cover.1581884459.git.hns@goldelico.com>
-References: <cover.1581884459.git.hns@goldelico.com>
+        Sun, 16 Feb 2020 15:21:26 -0500
+Received: by mail-pg1-f195.google.com with SMTP id 70so7911210pgf.8;
+        Sun, 16 Feb 2020 12:21:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=z3zfUADPk/oUyuzJ7VgI1Juwrp+2x57KXXaZ+inluLQ=;
+        b=FfX3pzUBHrAj8jkxvad38rERLbzrfN6+fcK0HplUj8CLnl7DtX87kPUDbcoasbyS82
+         pQ9uEpb/xIrz/MpMfylFu9z6L8g6whgnCiUxq23GL/a6EihKQsLBTMhTmqA3SR80+h3C
+         TOvZGwwM3Ko2e3npVE/d9dI4cNkAaL7Qxbt8OrLFDQIX/f+OmLSd0W5/RWKSV4VcC9Wv
+         vXPCJGyEPhvzo8tY6cuI+5EwhTPJxkYVb0HlES2oO/AUQ9Y5ytzRHlLfZX8frnnwgg1N
+         gYKdezI67yJAV59FQoRuM3NVQtL6Fp6/jKR2Wuin3KONqeeE4YATVM6KqbQBaSRCOdJQ
+         hb2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=z3zfUADPk/oUyuzJ7VgI1Juwrp+2x57KXXaZ+inluLQ=;
+        b=XA8ipsank3fZA1zpRZIOjy//fBpAOsU3fg/woqj1FIxWoVFGuXh4hg11FftQFzTtYa
+         uRLq8LDN8rpIhJi8Xm3w/XGJhBTg13Z28j9j+lrCqWlmUcLED6+hazU/A/ZqTRF4thEm
+         HiTkD/K8psitlN1eL8BtZzKMLMKMb1W3hyaKRKiHflYPfkYwE43mdYmWMftF2uHkmUN8
+         DVA6Eqj1KtluwYAkrEhPATmGjFk/7DU3bUdhNhrit4gv6AHeHUjy/DDSG4oEz7p3UFLG
+         Cw175o+n2unw+rrIUWqPxTDCpFttNoxHI8lS/yWNzznwCqytYgtavOVZqpCraUZxeAg4
+         2jvg==
+X-Gm-Message-State: APjAAAVhZst2VugebkT4xsWE5sR/uEegtRU58D1LI0XscGge45H7Xde6
+        sDw4h6e5DMg87AfR314mT88=
+X-Google-Smtp-Source: APXvYqyt1ki5Ed6SRzWgLcOn7teb9PcdZLafsaTmcNNnAg3NTxCIsHfcmSjKmDh3o1T8Dzjfc5dRxA==
+X-Received: by 2002:a63:9dcd:: with SMTP id i196mr14159101pgd.93.1581884485869;
+        Sun, 16 Feb 2020 12:21:25 -0800 (PST)
+Received: from localhost.localdomain ([103.51.74.127])
+        by smtp.gmail.com with ESMTPSA id l69sm14424750pgd.1.2020.02.16.12.21.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Feb 2020 12:21:25 -0800 (PST)
+From:   Anand Moon <linux.amoon@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH] arm64: dts: amlogic: odroid-n2: set usb-pwr-en regulator always on
+Date:   Sun, 16 Feb 2020 20:21:01 +0000
+Message-Id: <20200216202101.2810-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,82 +64,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-a) configure for supporting modules
+usb-pwr-en regulator is getting disable after booting, setting
+regulator-alway-on help enable the regulator after booting.
 
-Not all drivers need to be compiled into the kernel.
-Support building and loading of kernel modules.
+[   31.766097] USB_PWR_EN: disabling
 
-b) compile leds-gpio driver into the kernel and configure for LED triggers
-
-DTS has been augmented to add some gpio-leds. We need the leds-gpio driver
-and enable the triggers.
-
-c) configure CONFIG_REGULATOR_ACT8865 for PMU
-
-The PMU on the CI20 board is an ACT8600 using the ACT8865 driver.
-Since it is not compiled, the PMU and the CI20 board is running in
-power-on reset state of the PMU.
-
-d) compile gpio-ir driver
-
-The CI20 board has a gpio based IR receiver.
-
-e) configure for CONFIG_KEYBOARD_GPIO=m
-
-The SW1 button is hooked up to send input events.
-
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+Fixes: c35f6dc5c377 (arm64: dts: meson: Add minimal support for Odroid-N2)
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 ---
- arch/mips/configs/ci20_defconfig | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Patch generated on top of my earier patch.
+[0] https://patchwork.kernel.org/patch/11384531/
+[1] https://patchwork.kernel.org/patch/11384533/
 
-diff --git a/arch/mips/configs/ci20_defconfig b/arch/mips/configs/ci20_defconfig
-index be41df2a81fb..0db0088bbc1c 100644
---- a/arch/mips/configs/ci20_defconfig
-+++ b/arch/mips/configs/ci20_defconfig
-@@ -1,4 +1,5 @@
- # CONFIG_LOCALVERSION_AUTO is not set
-+CONFIG_MODULES=y
- CONFIG_KERNEL_XZ=y
- CONFIG_SYSVIPC=y
- CONFIG_POSIX_MQUEUE=y
-@@ -88,12 +89,14 @@ CONFIG_I2C_JZ4780=y
- CONFIG_SPI=y
- CONFIG_SPI_GPIO=y
- CONFIG_GPIO_SYSFS=y
-+CONFIG_KEYBOARD_GPIO=m
- # CONFIG_HWMON is not set
- CONFIG_WATCHDOG=y
- CONFIG_JZ4740_WDT=y
- CONFIG_REGULATOR=y
- CONFIG_REGULATOR_DEBUG=y
- CONFIG_REGULATOR_FIXED_VOLTAGE=y
-+CONFIG_REGULATOR_ACT8865=y
- # CONFIG_VGA_CONSOLE is not set
- # CONFIG_HID is not set
- # CONFIG_USB_SUPPORT is not set
-@@ -166,3 +169,21 @@ CONFIG_STACKTRACE=y
- # CONFIG_FTRACE is not set
- CONFIG_CMDLINE_BOOL=y
- CONFIG_CMDLINE="earlycon console=ttyS4,115200 clk_ignore_unused"
-+CONFIG_LEDS_CLASS=y
-+CONFIG_LEDS_GPIO=y
-+CONFIG_LEDS_TRIGGERS=y
-+CONFIG_LEDS_TRIGGER_MTD=y
-+CONFIG_LEDS_TRIGGER_TIMER=y
-+CONFIG_LEDS_TRIGGER_ONESHOT=y
-+CONFIG_LEDS_TRIGGER_ONESHOT=y
-+CONFIG_LEDS_TRIGGER_HEARTBEAT=y
-+CONFIG_LEDS_TRIGGER_BACKLIGHT=m
-+CONFIG_LEDS_TRIGGER_CPU=y
-+CONFIG_LEDS_TRIGGER_DEFAULT_ON=y
-+CONFIG_LEDS_TRIGGER_TRANSIENT=y
-+CONFIG_LEDS_TRIGGER_CAMERA=m
-+CONFIG_LIRC=y
-+CONFIG_MEDIA_SUPPORT=m
-+CONFIG_RC_DEVICES=y
-+CONFIG_IR_GPIO_CIR=m
-+CONFIG_IR_GPIO_TX=m
+Before
+[root@alarm ~]# cat /sys/kernel/debug/regulator/regulator_summary | grep USB
+       USB_PWR_EN                 0    1      0 unknown  5000mV     0mA  5000mV  5000mV
+After
+[root@alarm ~]# cat /sys/kernel/debug/regulator/regulator_summary | grep USB
+       USB_PWR_EN                 1    1      0 unknown  5000mV     0mA  5000mV  5000mV
+---
+ arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
+index 23eddff85fe5..938a9e15adfc 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
+@@ -177,6 +177,7 @@ usb_pwr_en: regulator-usb_pwr_en {
+ 		regulator-min-microvolt = <5000000>;
+ 		regulator-max-microvolt = <5000000>;
+ 		vin-supply = <&vcc_5v>;
++		regulator-always-on;
+ 
+ 		/* Connected to the microUSB port power enable */
+ 		gpio = <&gpio GPIOH_6 GPIO_ACTIVE_HIGH>;
 -- 
-2.23.0
+2.25.0
 
