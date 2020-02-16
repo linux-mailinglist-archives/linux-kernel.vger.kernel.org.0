@@ -2,120 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7286716025D
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 08:47:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63575160260
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 08:47:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726358AbgBPHqm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 02:46:42 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:33940 "EHLO
+        id S1726645AbgBPHri (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 02:47:38 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:38222 "EHLO
         mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725866AbgBPHqm (ORCPT
+        with ESMTP id S1726298AbgBPHri (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 02:46:42 -0500
-Received: by mail-ot1-f66.google.com with SMTP id j16so13210005otl.1
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2020 23:46:41 -0800 (PST)
+        Sun, 16 Feb 2020 02:47:38 -0500
+Received: by mail-ot1-f66.google.com with SMTP id z9so13193611oth.5
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2020 23:47:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=kj2lE0jHDBa2FxapHGg1DD4EY4FRFGnToV7pEuklTd8=;
-        b=gAbgxHflRHUuYX0gda/X4GBGNO18szIyG2edr2LCaYV9RI6DV21LkOssLzSyMwigHr
-         BXP2pfCii1hxN7/51ejAASwSZYPQB0soT1F5EMKnIFsH58o7QY8ai1Qz3UQW9CgpEiNI
-         3I+0TSYtLyrdn8sWC2q9weHCV9zCTXNMRKUpl6LBKpfPbMcVded9dyffSg0Wg568BttQ
-         L56dCKagXUd2NI9tgrpaJH9W7hxOlttZGvIvHfeJF/cNKF4xKwQY7d00z77afIhQlrIV
-         5mY4f/KOyDXwD8yTwbEbm4gOvHZZuWHj59ovFI+PA4K8q3kbOmtlceH6UQRgNFssl+Wh
-         dixg==
+        bh=t9s1T3eocQw5dgvxMojafgwpl5YoO6h8bjzIOUjQhy0=;
+        b=nSbdy3samj8+Q2RYYBRWCqRbVnOhlmAZZ6uKOE0piU2F+J+fZInogaPDpv/bPEP+Rx
+         enpcDPGp34/pDt/gCIMaw93qHfUVwMpyzZWK9IxerKmxbX3BpgJHTlZgIz8YyXgqxyEP
+         MBy3BsVXjttnDwZut+ioMf5cii/6mPZmC4SXZt1me+crv+QLKExXgeBX0U/kqSeH9uwI
+         Tb9HkLHr4WWlqCY3aoVDj3jN8Mt6jtr69MVVRLg4BY8L3N/Ri1CCo7uQ/Ut8k2gWsmQZ
+         TROVQpamxHgNd0NrAPlnSA0p7kgk4I0i0vhQUWVws42L/JKqlUpKo11dNGcMjfrZs7R4
+         v3bA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=kj2lE0jHDBa2FxapHGg1DD4EY4FRFGnToV7pEuklTd8=;
-        b=Y/ZjE58mYDS4nuNWocQuKCuFVslGIZxJqVchEcUpG5d6ZoBuT3P1YN0CMy98ZDE7xv
-         xBBw9ZKQ29Re9j1jIgJA5eCf9B2tAOfgzAzF2SAIPbAg1GxMV6VxY6EKIRPBK3fEWbt5
-         n5/WnQDWBwTHG4mfPUwnWmTaRt/UIzqLmLr2j6OlfHyBJJhXhuqmofRYGaL3VSBn0TVj
-         7rskU6DDHV2cHpDSqjIdqPvexWTPOaDlaQbeC52Nde8kQZFYxbKK/os1iHoagjDYKk1j
-         P7qmaqqg+BnEOFXHfcr+JLca/ezwsdvHLdJLSm7DWVwyI9y4g5BjB7VFn4iVPy1TshgX
-         8Ymw==
-X-Gm-Message-State: APjAAAUMfHcSoUpJSycu9nt0+SQg/7R8iA6yynCNDHbNft+CtFSeK6pe
-        piFsSFR8tbIPkf+XqJ2C4gGfYzFs
-X-Google-Smtp-Source: APXvYqyEJ55CSatcdJZKGpRX/SkBTQMott4Gv5M5GnWG+srfHaPgcFgbJNha6HQb6sr2fZYtNew5Rg==
-X-Received: by 2002:a9d:6415:: with SMTP id h21mr8611393otl.152.1581839201169;
-        Sat, 15 Feb 2020 23:46:41 -0800 (PST)
+        bh=t9s1T3eocQw5dgvxMojafgwpl5YoO6h8bjzIOUjQhy0=;
+        b=dflvjd3c9uPQaQGUsupAYAHWbWQ2yloDc1ArId60W2r1/S1ULBkK8/gIfn/mI3GQRV
+         4O+t+PPJ2/1P1WVacV5FwdhbadKcj59XHZMIY3eoI2SAVvcfsLj9ptfF8hfwviOsDqHK
+         q/zSdr27XoGMzl3dGthtqFYxUIXcAfX23+L5fm9/evjcm1MLBTHnFG6mDnNLqynaji0/
+         /JiSrUViTb1l9ZM+Nl6W5frnefCef09Dd5vZB6wzstOXBQdw/+vGzflI8SVW+geGkAwt
+         j6XnRpTr58CyHPyxp9R/rk3We5g/whxG5PwlpKsohOtqXbh99g8iCc/u7eeJmVk9talo
+         j7GA==
+X-Gm-Message-State: APjAAAWSQ3ssCoGgNZIibQXqMF/wIH1yk8RHW4TkFoeO9Bnw83zCjki7
+        DC+FNmJ6e8Lawhoo9qTSRq8=
+X-Google-Smtp-Source: APXvYqyGXk/eH31o+eRMhSWi4j55/TFMgC4INohI2TEWVKX6QqF4IaWaliKAoNttXJo4HRL6zUsCfg==
+X-Received: by 2002:a9d:6d1a:: with SMTP id o26mr7860793otp.141.1581839257856;
+        Sat, 15 Feb 2020 23:47:37 -0800 (PST)
 Received: from ubuntu-m2-xlarge-x86 ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id c7sm4178864otn.81.2020.02.15.23.46.40
+        by smtp.gmail.com with ESMTPSA id p184sm3601382oic.40.2020.02.15.23.47.37
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 15 Feb 2020 23:46:40 -0800 (PST)
-Date:   Sun, 16 Feb 2020 00:46:39 -0700
+        Sat, 15 Feb 2020 23:47:37 -0800 (PST)
+Date:   Sun, 16 Feb 2020 00:47:35 -0700
 From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     virtualization@lists.linux-foundation.org,
-        "Michael S. Tsirkin" <mst@redhat.com>,
+To:     David Hildenbrand <david@redhat.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
         Jason Wang <jasowang@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Hildenbrand <david@redhat.com>
-Subject: Re: [PATCH] virtio_balloon: Fix unused label warning
-Message-ID: <20200216074639.GA25292@ubuntu-m2-xlarge-x86>
-References: <20200210093328.15349-1-bp@alien8.de>
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+Subject: Re: [PATCH] virtio_balloon: Adjust label in virtballoon_probe
+Message-ID: <20200216074735.GA4717@ubuntu-m2-xlarge-x86>
+References: <20200216004039.23464-1-natechancellor@gmail.com>
+ <67FCAE69-05CF-4588-A7BC-664267D14BAF@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200210093328.15349-1-bp@alien8.de>
+In-Reply-To: <67FCAE69-05CF-4588-A7BC-664267D14BAF@redhat.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 10:33:28AM +0100, Borislav Petkov wrote:
-> From: Borislav Petkov <bp@suse.de>
+On Sun, Feb 16, 2020 at 08:36:45AM +0100, David Hildenbrand wrote:
 > 
-> Fix
 > 
->   drivers/virtio/virtio_balloon.c: In function ‘virtballoon_probe’:
->   drivers/virtio/virtio_balloon.c:963:1: warning: label ‘out_del_vqs’ defined but not used [-Wunused-label]
->     963 | out_del_vqs:
->         | ^~
+> > Am 16.02.2020 um 01:41 schrieb Nathan Chancellor <natechancellor@gmail.com>:
+> > 
+> > ﻿Clang warns when CONFIG_BALLOON_COMPACTION is unset:
+> > 
+> > ../drivers/virtio/virtio_balloon.c:963:1: warning: unused label
+> > 'out_del_vqs' [-Wunused-label]
+> > out_del_vqs:
+> > ^~~~~~~~~~~~
+> > 1 warning generated.
+> > 
 > 
-> The CONFIG_BALLOON_COMPACTION ifdeffery should enclose it too.
+> Thanks, there is already „ [PATCH] virtio_balloon: Fix unused label warning“ from Boris on the list.
 > 
-> Signed-off-by: Borislav Petkov <bp@suse.de>
-> Cc: David Hildenbrand <david@redhat.com>
-> ---
->  drivers/virtio/virtio_balloon.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Cheers!
 > 
-> diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
-> index 7bfe365d9372..b6ed5f8bccb1 100644
-> --- a/drivers/virtio/virtio_balloon.c
-> +++ b/drivers/virtio/virtio_balloon.c
-> @@ -959,9 +959,9 @@ static int virtballoon_probe(struct virtio_device *vdev)
->  	iput(vb->vb_dev_info.inode);
->  out_kern_unmount:
->  	kern_unmount(balloon_mnt);
-> -#endif
->  out_del_vqs:
->  	vdev->config->del_vqs(vdev);
-> +#endif
 
-I noticed the same issue and sent an almost identical patch [1] but I
-kept the call to del_vqs outside of the CONFIG_BALLOON_COMPACTION guard
-since it seems like that should still be called when that config is
-unset, as that was the case before commit 1ad6f58ea936 ("virtio_balloon:
-Fix memory leaks on errors in virtballoon_probe()"). Is this patch fully
-correct? I am not a virtio expert at all, just noticing from a brief
-reading of this function.
-
-[1]: https://lore.kernel.org/lkml/20200216004039.23464-1-natechancellor@gmail.com/
+Sorry for the noise, I thought I did a search for duplicate patches but
+seems I missed it :/ I've commented on that patch.
 
 Cheers,
 Nathan
-
->  out_free_vb:
->  	kfree(vb);
->  out:
-> -- 
-> 2.21.0
-> 
