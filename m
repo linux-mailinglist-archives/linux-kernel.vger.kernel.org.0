@@ -2,54 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E01016072D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 00:21:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8DE2160728
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 00:21:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728194AbgBPXVX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 18:21:23 -0500
-Received: from wout4-smtp.messagingengine.com ([64.147.123.20]:46127 "EHLO
+        id S1728011AbgBPXVT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 18:21:19 -0500
+Received: from wout4-smtp.messagingengine.com ([64.147.123.20]:48339 "EHLO
         wout4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726036AbgBPXVT (ORCPT
+        by vger.kernel.org with ESMTP id S1726142AbgBPXVT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 16 Feb 2020 18:21:19 -0500
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id 90DDB35C;
+        by mailout.west.internal (Postfix) with ESMTP id 926583ED;
         Sun, 16 Feb 2020 18:21:17 -0500 (EST)
 Received: from mailfrontend2 ([10.202.2.163])
   by compute5.internal (MEProxy); Sun, 16 Feb 2020 18:21:18 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=fm2; bh=UZCtLu13K7pBoKdVcBGA3CuNTA
-        Yit6KVzt20iCDpYH0=; b=tS+a52Lzt8lez+wz+VZKEn2pZ92WHEMq6WNhjawLwv
-        JRhCVQVegKYgRq+1f2dRHfeqYMCVrVDU+gXTjUaxsyCjt9w+ruuwQFBC8FZ+FtFP
-        +CURfUzo1BNwuUXT3M8277kymerNlHfIPm61Mzs+i7DeqSJ/YF6oN+TgjIUK36zu
-        uCdQXysoBCFxWfGZvws9l+7vS4sGrjpQ1qYiYR/sGSW47xb2Mgu/n0SUKsQt8JUg
-        /h6StKufrUAtLIuaxGdcj+z2uRKD+0KBEM9J7RDP38TseM+DXdlQxJj8SfKRki9O
-        1dLCxvWmdS5coxV2gfvnhEfaZfGd2u1P4RK76vz/NkvA==
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=fm2; bh=lg4xMnuc1aQMn
+        CJVr5pn09+HdQOYg51ajabWpTDNX7k=; b=n2bli2ideoE4TeousfRQ7BNk2DVZ6
+        B/5VgICZYjrwlTdWEs4h31BgJQjgWSpMz7qT4bcfzOHZiyJzv59uteMMB7yqy6Ce
+        9d45zS6OY/dhoTwhye/Reu86ffDzPe34LIRoEcGll0ZSMt3xXMB43DzfSbwNGXoB
+        X5K4OXH5hnLS/Qqo9MEiwH/AgG6eYEc/epAJsCYhu0nDnqpJDqJf57WxX4B90mZf
+        hkzlSdKBam3t+bVCGDeNkU/UBVICpj5laMReKvkPcg4DaMI/kspTrCmZ4ssy+bdl
+        lDH3P+rzZc2JwXKMjKm4H5/8x3eE2LviyByd1XNxRw/CHbNGTfNLwJa4Q==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=UZCtLu13K7pBoKdVc
-        BGA3CuNTAYit6KVzt20iCDpYH0=; b=UmrVFZU3AZC5/PYk4L3RbIKCh5JAca09X
-        d/68g6BnItC0FgkrfSzqNvrOf2spm3mjiy7du2AH01ceEqnv6UEX9y7hkT9Taaar
-        CUsMlAVr/ampvNsb6E/buB/GcRcOW7y4ifQ5U8PkTvGcdkz/e+in+eok3vwLELYq
-        iZ20pPX3PIcxS3wOJQ2XuG1LfVsshtcWm9xNrtkwoTDuIsPsxQO3ExkgK1OJ0Cen
-        fOMdBMGF1pJquHF4YOsTfFoAsrm3ibPQX9IdyfnmsDjL0XJIOyYrMPZ++y1Bkhyq
-        YbXxcDUd1AyVyLx3ungkPikwDnJ3+lHvTMLrYFu6jS3y2G9dVGp7A==
-X-ME-Sender: <xms:a85JXvWwLdOqHYCMGfaKmBk-F9AMJNPL1OAnCJpSBQkA5tpGxTdqCA>
+        :in-reply-to:message-id:mime-version:references:subject:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm2; bh=lg4xMnuc1aQMnCJVr5pn09+HdQOYg51ajabWpTDNX7k=; b=OOuAmCk6
+        GDRVBM18gSPL5uePw+HPhkkHgn3bKeSVwoEFnyBJ9sSFgTEHL93bceGqU2ThVrC9
+        TDpErPOkEZxIuWyr59e9KHkBCoJljc/KUnYVAe2JLF4Ijd+VFa/XP71e3h8Ev5Db
+        rAxhdTcNL+Ft3mGqvxRicSO3zwksfR9cMEDnOnLFkT+Z/pFls+CbAfiJxcyQeL8s
+        QsDsF2OukBXsSFqEP87WFN7qmOsPdgyCiRzGNgXlRCmCo46sxtOZ+RoCjJ3rZqdV
+        4ukl9WLoebLHmn4bd8a6kleOY2r9wDDz/cWwNxF7doaKGiW3bjftC2c6QwK1Fffq
+        /n7RCPZ9I6Nt/A==
+X-ME-Sender: <xms:bM5JXlmekSwgkn1UpGD-z3oV11Te2Y4ouvzAQJawdo2ennMY1S6kyg>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrjeehgddtkecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepufgrmhhuvghlucfj
-    ohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecukfhppeejtd
-    drudefhedrudegkedrudehudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhep
-    mhgrihhlfhhrohhmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
-X-ME-Proxy: <xmx:a85JXnQ4xxjUMIjDMeOMQkxvdO7buS0jc2zsh6hnBgd0kBeMTIkutQ>
-    <xmx:a85JXnDH844wNKDEJz_b33AdDsFlzdYP7YdhwtC4hP5F_fRQr0hu_w>
-    <xmx:a85JXmLOiNVu-IcHyC-OrU3cEVdYbTtpmjN6RWQ0BEaVzteE5o8qtA>
-    <xmx:bc5JXsGOl72sBSAFWPqUg6yNNOirTVCo-ebGjAS3aV0CyzbV0joaxA>
+    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepufgrmhhuvghl
+    ucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecukfhppe
+    ejtddrudefhedrudegkedrudehudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgr
+    mhepmhgrihhlfhhrohhmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
+X-ME-Proxy: <xmx:bM5JXlFXdZcjcc0sqE0B6GQAyq3kT3_NuXxPNn7FF_390c50vkkOhQ>
+    <xmx:bM5JXmrgv2cNSxPa7fLFgX33opSgUc9G0xzGswacMy2vbgHlcwKfjQ>
+    <xmx:bM5JXp7SCG0NfBPfR45ZT4cKXChZIvsTBnVIH4NDCChTu8ZkVogadQ>
+    <xmx:bc5JXgs2fvZVNxal1LPS6YspRbO-OMklAsQJDm9j15rAVMmVmUyOpg>
 Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 6DD2F3060D1A;
+        by mail.messagingengine.com (Postfix) with ESMTPA id DB8293060C21;
         Sun, 16 Feb 2020 18:21:15 -0500 (EST)
 From:   Samuel Holland <samuel@sholland.org>
 To:     Liam Girdwood <lgirdwood@gmail.com>,
@@ -60,10 +61,12 @@ To:     Liam Girdwood <lgirdwood@gmail.com>,
         Jerome Brunet <jbrunet@baylibre.com>
 Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         linux-doc@vger.kernel.org, Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v2 0/3] simple-audio-card codec2codec support
-Date:   Sun, 16 Feb 2020 17:21:11 -0600
-Message-Id: <20200216232114.15742-1-samuel@sholland.org>
+Subject: [PATCH v2 1/3] ALSA: pcm: Add a non-runtime version of snd_pcm_limit_hw_rates
+Date:   Sun, 16 Feb 2020 17:21:12 -0600
+Message-Id: <20200216232114.15742-2-samuel@sholland.org>
 X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200216232114.15742-1-samuel@sholland.org>
+References: <20200216232114.15742-1-samuel@sholland.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -71,38 +74,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We are currently using simple-audio-card on the Allwinner A64 SoC.
-The digital audio codec there (sun8i-codec) has 3 AIFs, one each for the
-CPU, the modem, and Bluetooth. Adding support for the secondary AIFs
-requires adding codec2codec DAI links.
+It can be useful to derive min/max rates of a snd_pcm_hardware without
+having a snd_pcm_runtime, such as before constructing an ASoC DAI link.
 
-Since the modem and bt-sco codec DAI drivers only have one set of
-possible PCM parameters (namely, 8kHz mono S16LE), there's no real
-need for a machine driver to specify the DAI link configuration. The
-parameters for these "simple" DAI links can be chosen automatically.
+Create a new helper that takes a pointer to a snd_pcm_hardware directly,
+and refactor the original function as a wrapper around it, to avoid
+needing to update any call sites.
 
-This series adds codec2codec DAI link support to simple-audio-card.
-Codec to codec links are automatically detected when DAIs in the link
-belong to codec components.
+Signed-off-by: Samuel Holland <samuel@sholland.org>
+---
+ include/sound/pcm.h   |  9 ++++++++-
+ sound/core/pcm_misc.c | 18 +++++++++---------
+ 2 files changed, 17 insertions(+), 10 deletions(-)
 
-I tried to reuse as much code as possible, so the first two patches
-refactor a couple of helper functions to be more generic.
-
-The last patch adds the new feature and its documentation.
-
-Samuel Holland (3):
-  ALSA: pcm: Add a non-runtime version of snd_pcm_limit_hw_rates
-  ASoC: pcm: Export parameter intersection logic
-  ASoC: simple-card: Add support for codec to codec DAI links
-
- Documentation/sound/soc/codec-to-codec.rst |  9 +++-
- include/sound/pcm.h                        |  9 +++-
- include/sound/soc.h                        |  3 ++
- sound/core/pcm_misc.c                      | 18 +++----
- sound/soc/generic/simple-card-utils.c      | 50 ++++++++++++++++++++
- sound/soc/soc-pcm.c                        | 55 +++++++++++++++-------
- 6 files changed, 116 insertions(+), 28 deletions(-)
-
+diff --git a/include/sound/pcm.h b/include/sound/pcm.h
+index 8a89fa6fdd5e..a05202cf9448 100644
+--- a/include/sound/pcm.h
++++ b/include/sound/pcm.h
+@@ -1121,7 +1121,14 @@ snd_pcm_kernel_readv(struct snd_pcm_substream *substream,
+ 	return __snd_pcm_lib_xfer(substream, bufs, false, frames, true);
+ }
+ 
+-int snd_pcm_limit_hw_rates(struct snd_pcm_runtime *runtime);
++int snd_pcm_hw_limit_rates(struct snd_pcm_hardware *hw);
++
++static inline int
++snd_pcm_limit_hw_rates(struct snd_pcm_runtime *runtime)
++{
++	return snd_pcm_hw_limit_rates(&runtime->hw);
++}
++
+ unsigned int snd_pcm_rate_to_rate_bit(unsigned int rate);
+ unsigned int snd_pcm_rate_bit_to_rate(unsigned int rate_bit);
+ unsigned int snd_pcm_rate_mask_intersect(unsigned int rates_a,
+diff --git a/sound/core/pcm_misc.c b/sound/core/pcm_misc.c
+index c4eb561d2008..ebcf820ab5ce 100644
+--- a/sound/core/pcm_misc.c
++++ b/sound/core/pcm_misc.c
+@@ -473,32 +473,32 @@ int snd_pcm_format_set_silence(snd_pcm_format_t format, void *data, unsigned int
+ EXPORT_SYMBOL(snd_pcm_format_set_silence);
+ 
+ /**
+- * snd_pcm_limit_hw_rates - determine rate_min/rate_max fields
+- * @runtime: the runtime instance
++ * snd_pcm_hw_limit_rates - determine rate_min/rate_max fields
++ * @hw: the pcm hw instance
+  *
+  * Determines the rate_min and rate_max fields from the rates bits of
+- * the given runtime->hw.
++ * the given hw.
+  *
+  * Return: Zero if successful.
+  */
+-int snd_pcm_limit_hw_rates(struct snd_pcm_runtime *runtime)
++int snd_pcm_hw_limit_rates(struct snd_pcm_hardware *hw)
+ {
+ 	int i;
+ 	for (i = 0; i < (int)snd_pcm_known_rates.count; i++) {
+-		if (runtime->hw.rates & (1 << i)) {
+-			runtime->hw.rate_min = snd_pcm_known_rates.list[i];
++		if (hw->rates & (1 << i)) {
++			hw->rate_min = snd_pcm_known_rates.list[i];
+ 			break;
+ 		}
+ 	}
+ 	for (i = (int)snd_pcm_known_rates.count - 1; i >= 0; i--) {
+-		if (runtime->hw.rates & (1 << i)) {
+-			runtime->hw.rate_max = snd_pcm_known_rates.list[i];
++		if (hw->rates & (1 << i)) {
++			hw->rate_max = snd_pcm_known_rates.list[i];
+ 			break;
+ 		}
+ 	}
+ 	return 0;
+ }
+-EXPORT_SYMBOL(snd_pcm_limit_hw_rates);
++EXPORT_SYMBOL(snd_pcm_hw_limit_rates);
+ 
+ /**
+  * snd_pcm_rate_to_rate_bit - converts sample rate to SNDRV_PCM_RATE_xxx bit
 -- 
 2.24.1
 
