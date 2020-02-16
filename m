@@ -2,118 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 917F81604E5
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 17:55:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D617C1604EB
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 18:01:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728501AbgBPQz5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 11:55:57 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:48536 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728370AbgBPQz5 (ORCPT
+        id S1728508AbgBPRBP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 12:01:15 -0500
+Received: from netrider.rowland.org ([192.131.102.5]:46015 "HELO
+        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1728370AbgBPRBP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 11:55:57 -0500
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j3NCh-0001oq-38; Sun, 16 Feb 2020 16:55:35 +0000
-Date:   Sun, 16 Feb 2020 17:55:33 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Stephen Barber <smbarber@chromium.org>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Phil Estes <estesp@gmail.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH v2 04/28] fsuidgid: add fsid mapping helpers
-Message-ID: <20200216165533.z2n2fjs3onlna526@wittgenstein>
-References: <20200214183554.1133805-1-christian.brauner@ubuntu.com>
- <20200214183554.1133805-5-christian.brauner@ubuntu.com>
- <CAG48ez2o81ZwwL9muYyheN9vY69vJR5sB9LsLh=nk6wB4iuUgw@mail.gmail.com>
+        Sun, 16 Feb 2020 12:01:15 -0500
+Received: (qmail 781 invoked by uid 500); 16 Feb 2020 12:01:14 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 16 Feb 2020 12:01:14 -0500
+Date:   Sun, 16 Feb 2020 12:01:14 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@netrider.rowland.org
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+cc:     linux-kernel@vger.kernel.org, <linux-arch@vger.kernel.org>,
+        <kernel-team@fb.com>, <mingo@kernel.org>, <parri.andrea@gmail.com>,
+        <will@kernel.org>, <peterz@infradead.org>, <boqun.feng@gmail.com>,
+        <npiggin@gmail.com>, <dhowells@redhat.com>, <j.alglave@ucl.ac.uk>,
+        <luc.maranget@inria.fr>, <akiyks@gmail.com>
+Subject: Re: [PATCH memory-model] Add recent references
+In-Reply-To: <20200214233139.GA12521@paulmck-ThinkPad-P72>
+Message-ID: <Pine.LNX.4.44L0.2002161158140.30459-100000@netrider.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAG48ez2o81ZwwL9muYyheN9vY69vJR5sB9LsLh=nk6wB4iuUgw@mail.gmail.com>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 08:11:36PM +0100, Jann Horn wrote:
-> On Fri, Feb 14, 2020 at 7:37 PM Christian Brauner
-> <christian.brauner@ubuntu.com> wrote:
-> > This adds a set of helpers to translate between kfsuid/kfsgid and their
-> > userspace fsuid/fsgid counter parts relative to a given user namespace.
-> >
-> > - kuid_t make_kfsuid(struct user_namespace *from, uid_t fsuid)
-> >   Maps a user-namespace fsuid pair into a kfsuid.
-> >   If no fsuid mappings have been written it behaves identical to calling
-> >   make_kuid(). This ensures backwards compatibility for workloads unaware
-> >   or not in need of fsid mappings.
-> [...]
-> > +#ifdef CONFIG_USER_NS_FSID
-> > +/**
-> > + *     make_kfsuid - Map a user-namespace fsuid pair into a kuid.
-> > + *     @ns:  User namespace that the fsuid is in
-> > + *     @fsuid: User identifier
-> > + *
-> > + *     Maps a user-namespace fsuid pair into a kernel internal kfsuid,
-> > + *     and returns that kfsuid.
-> > + *
-> > + *     When there is no mapping defined for the user-namespace kfsuid
-> > + *     pair INVALID_UID is returned.  Callers are expected to test
-> > + *     for and handle INVALID_UID being returned.  INVALID_UID
-> > + *     may be tested for using uid_valid().
-> > + */
-> > +kuid_t make_kfsuid(struct user_namespace *ns, uid_t fsuid)
-> > +{
-> > +       unsigned extents = ns->fsuid_map.nr_extents;
-> > +       smp_rmb();
-> > +
-> > +       /* Map the fsuid to a global kernel fsuid */
-> > +       if (extents == 0)
-> > +               return KUIDT_INIT(map_id_down(&ns->uid_map, fsuid));
-> > +
-> > +       return KUIDT_INIT(map_id_down(&ns->fsuid_map, fsuid));
-> > +}
-> > +EXPORT_SYMBOL(make_kfsuid);
-> 
-> What effect is this fallback going to have for nested namespaces?
-> 
-> Let's say we have an outer namespace N1 with this uid_map:
-> 
->     0 100000 65535
-> 
-> and with this fsuid_map:
-> 
->     0 300000 65535
-> 
-> Now from in there, a process that is not aware of the existence of
-> fsuid mappings creates a new user namespace N2 with the following
-> uid_map:
-> 
->     0 1000 1
-> 
-> At this point, if a process in N2 does chown("foo", 0, 0), is that
-> going to make "foo" owned by kuid 101000, which isn't even mapped in
-> N1?
+On Fri, 14 Feb 2020, Paul E. McKenney wrote:
 
-So Jann just made a clever suggestion that would solve this problem fsid
-maps can only be written if the corresponding id mapping has been
-written and fsid mappings will only have an effect once the
-corresponding id mapping has been written. That sounds rather sane to
-me.
+> This commit updates the list of LKMM-related publications in
+> Documentation/references.txt.
+> 
+> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 
-Christian
+>  o	Paul E. McKenney, Ulrich Weigand, Andrea Parri, and Boqun
+> -	Feng. 2016. "Linux-Kernel Memory Model". (6 June 2016).
+> -	http://open-std.org/JTC1/SC22/WG21/docs/papers/2016/p0124r2.html.
+> +	Feng. 2018. "Linux-Kernel Memory Model". (27 September 2018).
+> +	http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0124r6.html.
+
+Even though this is an update, the new version referenced here is
+already out-of-date (in particular, with regard to its discussions of 
+the ordering properties of unlock-lock sequences as viewed by threads 
+not holding the lock).  And it contains a few typos scattered 
+throughout.
+
+Alan
+
