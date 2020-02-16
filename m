@@ -2,86 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04A5A16045A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 15:42:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FCA316045E
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 15:42:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728240AbgBPOlQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 09:41:16 -0500
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:38011 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728128AbgBPOlQ (ORCPT
+        id S1728310AbgBPOmx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 09:42:53 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:30875 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728258AbgBPOmw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 09:41:16 -0500
-X-Originating-IP: 79.86.19.127
-Received: from [192.168.0.12] (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id A84D120003;
-        Sun, 16 Feb 2020 14:41:11 +0000 (UTC)
-Subject: Re: [PATCH v2 3/3] riscv: Fix crash when flushing executable ioremap
- regions
-To:     Jan Kiszka <jan.kiszka@web.de>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-riscv@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org
-References: <cover.1581767384.git.jan.kiszka@web.de>
- <8a555b0b0934f0ba134de92f6cf9db8b1744316c.1581767384.git.jan.kiszka@web.de>
-From:   Alex Ghiti <alex@ghiti.fr>
-Message-ID: <e721c440-2baf-d962-62ef-41a4f3b1333b@ghiti.fr>
-Date:   Sun, 16 Feb 2020 09:41:11 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Sun, 16 Feb 2020 09:42:52 -0500
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id 01GEgP9S010513;
+        Sun, 16 Feb 2020 23:42:26 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com 01GEgP9S010513
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1581864146;
+        bh=UoXPiVZxlWkvCqFNMcjAUwJQCoq8GSwZbx8UAZFUf+g=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=nQTrfunf3CEK7lzn82MaJMNvJWBlL3QKKGT7DWcph3+bEq24Zk2LPGStO1ShFxlBH
+         JY9bGiSr7SbvjnA+cdNoymfbVtTVqTrCRo/hU25CSwn+PzFGjn4M/CQoK5JrHHmq6t
+         I7JqXPc6ZkHqEIMD2vcn7ip94m6nVAkCJdIy0tQJ8hTgsD2fa6gScFcgmgi88jMii+
+         qgyxWnxrBZBdaJd/ijFAxlE20PfANCXoukWg3e9dVP0FZhbk4cX/VLiueK73qDpHXl
+         1uABnQZ16STKEouuynUnhP60/UoP9HH/a62wF7Cu6Dx41tF8itrEBM7ioEsg0TW1mX
+         cUAZlQ3GRVJoA==
+X-Nifty-SrcIP: [209.85.217.53]
+Received: by mail-vs1-f53.google.com with SMTP id x18so9108396vsq.4;
+        Sun, 16 Feb 2020 06:42:26 -0800 (PST)
+X-Gm-Message-State: APjAAAVGtXW7wfL6jc1dWWJOzatAZCqKuOtADvwF0mJI+tHV0+elWCnD
+        MxMqHrx4x0/ABBUzjeAyE2G5g0DD8UI+DIrFp+8=
+X-Google-Smtp-Source: APXvYqwW5HVWUuzDn0HmhcW/DFcMylTWOtCMGEgW2Ijo9vm/IhTP/HsMT4VTAuXnu2z7SG0GRxtxwnZsRfNlStQW5AY=
+X-Received: by 2002:a67:6485:: with SMTP id y127mr6263902vsb.54.1581864145392;
+ Sun, 16 Feb 2020 06:42:25 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <8a555b0b0934f0ba134de92f6cf9db8b1744316c.1581767384.git.jan.kiszka@web.de>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <a06194f0-3713-cc04-1673-c05b35c03242@infradead.org>
+In-Reply-To: <a06194f0-3713-cc04-1673-c05b35c03242@infradead.org>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Sun, 16 Feb 2020 23:41:49 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATQowM6w5TmHiqCeY7yae8j-qV==e9yw3HYD9=fABxjtg@mail.gmail.com>
+Message-ID: <CAK7LNATQowM6w5TmHiqCeY7yae8j-qV==e9yw3HYD9=fABxjtg@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: add comment for V=2 mode
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jan,
+On Thu, Feb 13, 2020 at 1:41 PM Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+> From: Randy Dunlap <rdunlap@infradead.org>
+>
+> Complete the comments for valid values of KBUILD_VERBOSE,
+> specifically for KBUILD_VERBOSE=2.
+>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 
-On 2/15/20 6:49 AM, Jan Kiszka wrote:
-> From: Jan Kiszka <jan.kiszka@siemens.com>
-> 
-> Those are not backed by page structs, and pte_page is returning an
-> invalid pointer.
-> 
-> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> =2D--
->   arch/riscv/mm/cacheflush.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/riscv/mm/cacheflush.c b/arch/riscv/mm/cacheflush.c
-> index 8930ab7278e6..9ee2c1a387cc 100644
-> =2D-- a/arch/riscv/mm/cacheflush.c
-> +++ b/arch/riscv/mm/cacheflush.c
-> @@ -84,7 +84,8 @@ void flush_icache_pte(pte_t pte)
->   {
->   	struct page *page =3D pte_page(pte);
-> 
-> -	if (!test_and_set_bit(PG_dcache_clean, &page->flags))
-> +	if (!pfn_valid(pte_pfn(pte)) ||
-> +	    !test_and_set_bit(PG_dcache_clean, &page->flags))
->   		flush_icache_all();
->   }
->   #endif /* CONFIG_MMU */
-> =2D-
-> 2.16.4
-> 
-> 
 
-When did you encounter such a situation ? i.e. executable code that is 
-not backed by struct page ?
+Applied to linux-kbuild. Thanks.
 
-Riscv uses the generic implementation of ioremap and the way 
-_PAGE_IOREMAP is defined does not allow to map executable memory region 
-using ioremap, so I'm interested to understand how we end up in 
-flush_icache_pte for an executable region not backed by any struct page.
 
-Thanks,
 
-Alex
+> ---
+>  Makefile |    1 +
+>  1 file changed, 1 insertion(+)
+>
+> --- linux-next-20200206.orig/Makefile
+> +++ linux-next-20200206/Makefile
+> @@ -68,6 +68,7 @@ unexport GREP_OPTIONS
+>  #
+>  # If KBUILD_VERBOSE equals 0 then the above command will be hidden.
+>  # If KBUILD_VERBOSE equals 1 then the above command is displayed.
+> +# If KBUILD_VERBOSE equals 2 then give the reason why each target is rebuilt.
+>  #
+>  # To put more focus on warnings, be less verbose as default
+>  # Use 'make V=1' to see the full commands
+>
+
+
+-- 
+Best Regards
+Masahiro Yamada
