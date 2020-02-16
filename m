@@ -2,105 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11AA9160646
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 21:21:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4298160656
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 21:22:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728205AbgBPUV3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 15:21:29 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:41717 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728054AbgBPUV0 (ORCPT
+        id S1728260AbgBPUWI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 15:22:08 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:52958 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726036AbgBPUWI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 15:21:26 -0500
-Received: by mail-pg1-f195.google.com with SMTP id 70so7911210pgf.8;
-        Sun, 16 Feb 2020 12:21:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=z3zfUADPk/oUyuzJ7VgI1Juwrp+2x57KXXaZ+inluLQ=;
-        b=FfX3pzUBHrAj8jkxvad38rERLbzrfN6+fcK0HplUj8CLnl7DtX87kPUDbcoasbyS82
-         pQ9uEpb/xIrz/MpMfylFu9z6L8g6whgnCiUxq23GL/a6EihKQsLBTMhTmqA3SR80+h3C
-         TOvZGwwM3Ko2e3npVE/d9dI4cNkAaL7Qxbt8OrLFDQIX/f+OmLSd0W5/RWKSV4VcC9Wv
-         vXPCJGyEPhvzo8tY6cuI+5EwhTPJxkYVb0HlES2oO/AUQ9Y5ytzRHlLfZX8frnnwgg1N
-         gYKdezI67yJAV59FQoRuM3NVQtL6Fp6/jKR2Wuin3KONqeeE4YATVM6KqbQBaSRCOdJQ
-         hb2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=z3zfUADPk/oUyuzJ7VgI1Juwrp+2x57KXXaZ+inluLQ=;
-        b=XA8ipsank3fZA1zpRZIOjy//fBpAOsU3fg/woqj1FIxWoVFGuXh4hg11FftQFzTtYa
-         uRLq8LDN8rpIhJi8Xm3w/XGJhBTg13Z28j9j+lrCqWlmUcLED6+hazU/A/ZqTRF4thEm
-         HiTkD/K8psitlN1eL8BtZzKMLMKMb1W3hyaKRKiHflYPfkYwE43mdYmWMftF2uHkmUN8
-         DVA6Eqj1KtluwYAkrEhPATmGjFk/7DU3bUdhNhrit4gv6AHeHUjy/DDSG4oEz7p3UFLG
-         Cw175o+n2unw+rrIUWqPxTDCpFttNoxHI8lS/yWNzznwCqytYgtavOVZqpCraUZxeAg4
-         2jvg==
-X-Gm-Message-State: APjAAAVhZst2VugebkT4xsWE5sR/uEegtRU58D1LI0XscGge45H7Xde6
-        sDw4h6e5DMg87AfR314mT88=
-X-Google-Smtp-Source: APXvYqyt1ki5Ed6SRzWgLcOn7teb9PcdZLafsaTmcNNnAg3NTxCIsHfcmSjKmDh3o1T8Dzjfc5dRxA==
-X-Received: by 2002:a63:9dcd:: with SMTP id i196mr14159101pgd.93.1581884485869;
-        Sun, 16 Feb 2020 12:21:25 -0800 (PST)
-Received: from localhost.localdomain ([103.51.74.127])
-        by smtp.gmail.com with ESMTPSA id l69sm14424750pgd.1.2020.02.16.12.21.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Feb 2020 12:21:25 -0800 (PST)
-From:   Anand Moon <linux.amoon@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH] arm64: dts: amlogic: odroid-n2: set usb-pwr-en regulator always on
-Date:   Sun, 16 Feb 2020 20:21:01 +0000
-Message-Id: <20200216202101.2810-1-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.25.0
+        Sun, 16 Feb 2020 15:22:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581884527;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=sbT3FCffiIBi/DwGATrYZPj6EK1+jbLuMonpxYejB40=;
+        b=Rp6fce5TQU2hIObIYqiqlERox6j/ywSu5Ht+sgZZn3KYm/ZF48IrIppf7HIl1NsExbc2Jt
+        xCvM8sYiysFOWUFn4WQeVWZ1HN6FweI26HMEbdJiKnTCGRk3HNgAxgXgYBMTMul4teA13C
+        IwZ/huVPeqyN9tCHPaAggGZEQz4snQ8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-424-guAgGHl2MxiS5RN3-k0Lzw-1; Sun, 16 Feb 2020 15:22:00 -0500
+X-MC-Unique: guAgGHl2MxiS5RN3-k0Lzw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D821313E4;
+        Sun, 16 Feb 2020 20:21:58 +0000 (UTC)
+Received: from krava (ovpn-204-28.brq.redhat.com [10.40.204.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 750A319488;
+        Sun, 16 Feb 2020 20:21:48 +0000 (UTC)
+Date:   Sun, 16 Feb 2020 21:21:43 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Kajol Jain <kjain@linux.ibm.com>
+Cc:     acme@kernel.org, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Subject: Re: [PATCH v4] tools/perf/metricgroup: Fix printing event names of
+ metric group with multiple events incase of overlapping events
+Message-ID: <20200216202143.GA145986@krava>
+References: <20200212054102.9259-1-kjain@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200212054102.9259-1-kjain@linux.ibm.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-usb-pwr-en regulator is getting disable after booting, setting
-regulator-alway-on help enable the regulator after booting.
+On Wed, Feb 12, 2020 at 11:11:02AM +0530, Kajol Jain wrote:
 
-[   31.766097] USB_PWR_EN: disabling
+SNIP
 
-Fixes: c35f6dc5c377 (arm64: dts: meson: Add minimal support for Odroid-N2)
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-Patch generated on top of my earier patch.
-[0] https://patchwork.kernel.org/patch/11384531/
-[1] https://patchwork.kernel.org/patch/11384533/
+> =20
+>  	return metric_events[0];
+> @@ -160,6 +161,14 @@ static int metricgroup__setup_events(struct list_h=
+ead *groups,
+>  	int ret =3D 0;
+>  	struct egroup *eg;
+>  	struct evsel *evsel;
+> +	bool *evlist_used;
+> +
+> +	evlist_used =3D (bool *)calloc(perf_evlist->core.nr_entries,
+> +				     sizeof(bool));
+> +	if (!evlist_used) {
+> +		ret =3D -ENOMEM;
+> +		break;
 
-Before
-[root@alarm ~]# cat /sys/kernel/debug/regulator/regulator_summary | grep USB
-       USB_PWR_EN                 0    1      0 unknown  5000mV     0mA  5000mV  5000mV
-After
-[root@alarm ~]# cat /sys/kernel/debug/regulator/regulator_summary | grep USB
-       USB_PWR_EN                 1    1      0 unknown  5000mV     0mA  5000mV  5000mV
----
- arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts | 1 +
- 1 file changed, 1 insertion(+)
+hum, how did this compile for you? ;-)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-index 23eddff85fe5..938a9e15adfc 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-@@ -177,6 +177,7 @@ usb_pwr_en: regulator-usb_pwr_en {
- 		regulator-min-microvolt = <5000000>;
- 		regulator-max-microvolt = <5000000>;
- 		vin-supply = <&vcc_5v>;
-+		regulator-always-on;
- 
- 		/* Connected to the microUSB port power enable */
- 		gpio = <&gpio GPIOH_6 GPIO_ACTIVE_HIGH>;
--- 
-2.25.0
+util/metricgroup.c: In function =E2=80=98metricgroup__setup_events=E2=80=99=
+:
+util/metricgroup.c:170:3: error: break statement not within loop or switc=
+h
+  170 |   break;
+
+
+jirka
 
