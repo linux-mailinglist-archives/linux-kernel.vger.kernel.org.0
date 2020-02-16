@@ -2,119 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F313B1607E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 02:55:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 936E3160802
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 03:19:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbgBQBzb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 20:55:31 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:34605 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726551AbgBQBza (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 20:55:30 -0500
-Received: by mail-qt1-f195.google.com with SMTP id l16so6388772qtq.1;
-        Sun, 16 Feb 2020 17:55:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/qDOmCXFTgruSYsln27jvW69b87aN/svbpuiBXSYyss=;
-        b=fGMnmElS8wotL0yxqURfAcjh9g48StpNQichZx9J6ytEfLAWg+yn2Ps/V9HpduoOPM
-         fEY7USeLncQDj4SAvHyhCrHSxuqHPM3qBHpZ2VHXYdPqPJDgsQp+NBHSJw9PsVfWzeUI
-         JkHl4xnILKYj3qKt0Br6v2WHKlFWrtGrxxuC6ZfwhfPJB2N1RUPY82uCGjoAr6OAVsO7
-         SGOaE02pKi57j7Rv9/FDX2vCg5pLFYYMi/4jGDiwHZywLZf3rbzUPmrs3T+wI87XNK12
-         RF41cHCDGjB60WxIsWPbcRrWnETTIoM5cU0fxM/JriptNyujA6NsjUOmF/kIB6A5T2R4
-         3OAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/qDOmCXFTgruSYsln27jvW69b87aN/svbpuiBXSYyss=;
-        b=kavsNIzLC8IwyPRyH8azIAuZpcr9mUbgFXv2Yw6jyU6zi/Pryz0f/JOeS7Tbd87dWM
-         wffPETGDVKygkbOcTc1IhmYdYH+CsasEUm1Mt6DTLwdRuKpgAsHiHdZpY6bMDothyfYm
-         /J5q02Tx4qJ3fQkjgOLPnplJyVIq1ZqU2j6GhKD8tyO1ifRQuZ9z/L74j+EbAb/XSNCx
-         u0pV68Tvs/eyUR4dPwWChBQJtbvnFJcmy92dIjtcQgiY28p2wdizSiGQnQpXRVXBObG6
-         l/YBrQB2FGfZdgc2OcAYTiFKVIlDL81VhT5It0v8q43gLmk2RQK4qIsOvqSPEwkJ+6s+
-         QBRw==
-X-Gm-Message-State: APjAAAV+pid8DDfrWIMmjLVxqwa01Jn77u2vblq1MlvUZBY/xi1obGnX
-        Yp/rCoTbzOu/q27ev35vbcaoUONqnTKun0YR5qrwKn4+
-X-Google-Smtp-Source: APXvYqyv1gfJ0LbH1O5DNLLzXVZ1UT0EvQ8/jiCTwYsJeHfOHBmflFZOAM9c+S7Rcw7de1oOMCwZt+0N0BkRe6umPCk=
-X-Received: by 2002:aed:2202:: with SMTP id n2mr11926482qtc.4.1581904529345;
- Sun, 16 Feb 2020 17:55:29 -0800 (PST)
+        id S1727980AbgBQCSs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 21:18:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45766 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727857AbgBQCSg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Feb 2020 21:18:36 -0500
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92BFE208C4;
+        Mon, 17 Feb 2020 02:18:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581905915;
+        bh=9wMvhzIojzb0NLzzASUWqtH8HA2/a9hA696DFOy+lBA=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=kUDquShC/5Shul1w7vjQYLPrufu5NT9UVsFbIfGvRYX9DZEBLdlKJheSnsJRt2Zu+
+         wSkShkZ2TYrfnm/GCrcxiNubpLQt8x5VJwBCeua3LFIaczl2JuQAk96cPLbWMOmjOW
+         7BqylrJ6yAw96sPsyFZGRBLhh1zV7KUtLd0rG8oM=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 0144E3520D7D; Sun, 16 Feb 2020 05:51:34 -0800 (PST)
+Date:   Sun, 16 Feb 2020 05:51:34 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Andrea Parri <parri.andrea@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        kernel-team@fb.com, mingo@kernel.org, stern@rowland.harvard.edu,
+        will@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
+        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, akiyks@gmail.com
+Subject: Re: [PATCH memory-model] Add recent references
+Message-ID: <20200216135134.GI2935@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20200214233139.GA12521@paulmck-ThinkPad-P72>
+ <20200216005801.GA3581@andrea>
 MIME-Version: 1.0
-References: <20200214171536.GA24077@embeddedor>
-In-Reply-To: <20200214171536.GA24077@embeddedor>
-From:   Baolin Wang <baolin.wang7@gmail.com>
-Date:   Mon, 17 Feb 2020 09:55:17 +0800
-Message-ID: <CADBw62qTu2dGL+dGgC6WzsSusVfDKxUdd57f_1jn_A-Vf1-rrQ@mail.gmail.com>
-Subject: Re: [PATCH] dmaengine: sprd: Replace zero-length array with
- flexible-array member
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        dmaengine@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200216005801.GA3581@andrea>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Sun, Feb 16, 2020 at 01:58:01AM +0100, Andrea Parri wrote:
+> On Fri, Feb 14, 2020 at 03:31:39PM -0800, Paul E. McKenney wrote:
+> > This commit updates the list of LKMM-related publications in
+> > Documentation/references.txt.
+> > 
+> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> 
+> Acked-by: Andrea Parri <parri.andrea@gmail.com>
 
-On Sat, Feb 15, 2020 at 2:04 AM Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
->
-> The current codebase makes use of the zero-length array language
-> extension to the C90 standard, but the preferred mechanism to declare
-> variable-length types such as these ones is a flexible array member[1][2],
-> introduced in C99:
->
-> struct foo {
->         int stuff;
->         struct boo array[];
-> };
->
-> By making use of the mechanism above, we will get a compiler warning
-> in case the flexible array does not occur last in the structure, which
-> will help us prevent some kind of undefined behavior bugs from being
-> inadvertently introduced[3] to the codebase from now on.
->
-> Also, notice that, dynamic memory allocations won't be affected by
-> this change:
->
-> "Flexible array members have incomplete type, and so the sizeof operator
-> may not be applied. As a quirk of the original implementation of
-> zero-length arrays, sizeof evaluates to zero."[1]
->
-> This issue was found with the help of Coccinelle.
->
-> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-> [2] https://github.com/KSPP/linux/issues/21
-> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+Applied and queued for v5.7, thank you!
 
-Looks good to me. Thanks.
-Reviewed-by: Baolin Wang <baolin.wang7@gmail.com>
+							Thanx, Paul
 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/dma/sprd-dma.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/dma/sprd-dma.c b/drivers/dma/sprd-dma.c
-> index 9a31a315dbef..954eff32cc05 100644
-> --- a/drivers/dma/sprd-dma.c
-> +++ b/drivers/dma/sprd-dma.c
-> @@ -212,7 +212,7 @@ struct sprd_dma_dev {
->         struct clk              *ashb_clk;
->         int                     irq;
->         u32                     total_chns;
-> -       struct sprd_dma_chn     channels[0];
-> +       struct sprd_dma_chn     channels[];
->  };
->
->  static void sprd_dma_free_desc(struct virt_dma_desc *vd);
-> --
-> 2.25.0
->
+> Thanks,
+>   Andrea
+> 
+> 
+> > 
+> > diff --git a/tools/memory-model/Documentation/references.txt b/tools/memory-model/Documentation/references.txt
+> > index b177f3e..ecbbaa5 100644
+> > --- a/tools/memory-model/Documentation/references.txt
+> > +++ b/tools/memory-model/Documentation/references.txt
+> > @@ -73,6 +73,18 @@ o	Christopher Pulte, Shaked Flur, Will Deacon, Jon French,
+> >  Linux-kernel memory model
+> >  =========================
+> >  
+> > +o	Jade Alglave, Will Deacon, Boqun Feng, David Howells, Daniel
+> > +	Lustig, Luc Maranget, Paul E. McKenney, Andrea Parri, Nicholas
+> > +	Piggin, Alan Stern, Akira Yokosawa, and Peter Zijlstra.
+> > +	2019. "Calibrating your fear of big bad optimizing compilers"
+> > +	Linux Weekly News.  https://lwn.net/Articles/799218/
+> > +
+> > +o	Jade Alglave, Will Deacon, Boqun Feng, David Howells, Daniel
+> > +	Lustig, Luc Maranget, Paul E. McKenney, Andrea Parri, Nicholas
+> > +	Piggin, Alan Stern, Akira Yokosawa, and Peter Zijlstra.
+> > +	2019. "Who's afraid of a big bad optimizing compiler?"
+> > +	Linux Weekly News.  https://lwn.net/Articles/793253/
+> > +
+> >  o	Jade Alglave, Luc Maranget, Paul E. McKenney, Andrea Parri, and
+> >  	Alan Stern.  2018. "Frightening small children and disconcerting
+> >  	grown-ups: Concurrency in the Linux kernel". In Proceedings of
+> > @@ -88,6 +100,11 @@ o	Jade Alglave, Luc Maranget, Paul E. McKenney, Andrea Parri, and
+> >  	Alan Stern.  2017.  "A formal kernel memory-ordering model (part 2)"
+> >  	Linux Weekly News.  https://lwn.net/Articles/720550/
+> >  
+> > +o	Jade Alglave, Luc Maranget, Paul E. McKenney, Andrea Parri, and
+> > +	Alan Stern.  2017-2019.  "A Formal Model of Linux-Kernel Memory
+> > +	Ordering" (backup material for the LWN articles)
+> > +	https://mirrors.edge.kernel.org/pub/linux/kernel/people/paulmck/LWNLinuxMM/
+> > +
+> >  
+> >  Memory-model tooling
+> >  ====================
+> > @@ -110,5 +127,5 @@ Memory-model comparisons
+> >  ========================
+> >  
+> >  o	Paul E. McKenney, Ulrich Weigand, Andrea Parri, and Boqun
+> > -	Feng. 2016. "Linux-Kernel Memory Model". (6 June 2016).
+> > -	http://open-std.org/JTC1/SC22/WG21/docs/papers/2016/p0124r2.html.
+> > +	Feng. 2018. "Linux-Kernel Memory Model". (27 September 2018).
+> > +	http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0124r6.html.
