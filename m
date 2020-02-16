@@ -2,103 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 593A5160411
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 13:42:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7204D16041B
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 14:10:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728054AbgBPMmp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 07:42:45 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:17402 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728128AbgBPMmp (ORCPT
+        id S1728216AbgBPNKi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 08:10:38 -0500
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:55202 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728009AbgBPNKi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 07:42:45 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01GCYuBH006641
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2020 07:42:44 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y6adps6pd-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2020 07:42:44 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Sun, 16 Feb 2020 12:42:42 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 16 Feb 2020 12:42:38 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01GCgb0P48889918
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 16 Feb 2020 12:42:37 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A6A42A4054;
-        Sun, 16 Feb 2020 12:42:37 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B8881A405B;
-        Sun, 16 Feb 2020 12:42:36 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.138.53])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun, 16 Feb 2020 12:42:36 +0000 (GMT)
-Subject: Re: [PATCH v4 2/3]  IMA: Add log statements for failure conditions
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>, joe@perches.com,
-        skhan@linuxfoundation.org, linux-integrity@vger.kernel.org
-Cc:     sashal@kernel.org, nramas@linux.microsoft.com,
+        Sun, 16 Feb 2020 08:10:38 -0500
+X-Greylist: delayed 362 seconds by postgrey-1.27 at vger.kernel.org; Sun, 16 Feb 2020 08:10:38 EST
+X-Halon-ID: d9ace9aa-50bc-11ea-aa6d-005056917f90
+Authorized-sender: niklas@soderlund.pp.se
+Received: from bismarck.berto.se (p4fca2392.dip0.t-ipconnect.de [79.202.35.146])
+        by bin-vsp-out-02.atm.binero.net (Halon) with ESMTPA
+        id d9ace9aa-50bc-11ea-aa6d-005056917f90;
+        Sun, 16 Feb 2020 14:04:31 +0100 (CET)
+From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Sun, 16 Feb 2020 07:42:36 -0500
-In-Reply-To: <20200215014709.3006-3-tusharsu@linux.microsoft.com>
-References: <20200215014709.3006-1-tusharsu@linux.microsoft.com>
-         <20200215014709.3006-3-tusharsu@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20021612-4275-0000-0000-000003A277FF
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20021612-4276-0000-0000-000038B67A0A
-Message-Id: <1581856956.8515.170.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-16_02:2020-02-14,2020-02-16 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=2 priorityscore=1501 adultscore=0 mlxlogscore=999
- malwarescore=0 phishscore=0 spamscore=0 bulkscore=0 clxscore=1015
- mlxscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002160115
+Cc:     =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH] MAINTAINERS: Add entry for Renesas R-Car thermal drivers
+Date:   Sun, 16 Feb 2020 14:02:52 +0100
+Message-Id: <20200216130252.125100-1-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.25.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2020-02-14 at 17:47 -0800, Tushar Sugandhi wrote:
-> process_buffer_measurement() does not have log messages for failure
-> conditions.
-> 
-> This change adds a log statement in the above function. 
-> 
-> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-> Suggested-by: Joe Perches <joe@perches.com>
+Add an entry to make myself a maintainer of the Renesas R-Car thermal
+drivers.
 
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ MAINTAINERS | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-> ---
->  security/integrity/ima/ima_main.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 9fe949c6a530..aac1c44fb11b 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -757,6 +757,9 @@ void process_buffer_measurement(const void *buf, int size,
->  		ima_free_template_entry(entry);
->  
->  out:
-> +	if (ret < 0)
-> +		pr_devel("%s: failed, result: %d\n", __func__, ret);
-> +
->  	return;
->  }
->  
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 38fe2f3f7b6f290e..713e4fd8efb4f60d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14206,6 +14206,15 @@ F:	Documentation/devicetree/bindings/i2c/renesas,iic.txt
+ F:	drivers/i2c/busses/i2c-rcar.c
+ F:	drivers/i2c/busses/i2c-sh_mobile.c
+ 
++RENESAS R-CAR THERMAL DRIVERS
++M:	Niklas Söderlund <niklas.soderlund@ragnatech.se>
++L:	linux-renesas-soc@vger.kernel.org
++S:	Supported
++F:	Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
++F:	Documentation/devicetree/bindings/thermal/rcar-thermal.txt
++F:	drivers/thermal/rcar_gen3_thermal.c
++F:	drivers/thermal/rcar_thermal.c
++
+ RENESAS RIIC DRIVER
+ M:	Chris Brandt <chris.brandt@renesas.com>
+ S:	Supported
+-- 
+2.25.0
 
