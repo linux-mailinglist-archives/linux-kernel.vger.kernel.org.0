@@ -2,148 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E07761603A9
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 11:46:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24E841603B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 11:49:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727979AbgBPKqP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 05:46:15 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:16289 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725951AbgBPKqO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 05:46:14 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 48L3gh69Lpz9tyMB;
-        Sun, 16 Feb 2020 11:46:08 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=RMQrDTHX; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 0F5rpVhkSbpS; Sun, 16 Feb 2020 11:46:08 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 48L3gh3dBjz9tyM9;
-        Sun, 16 Feb 2020 11:46:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1581849968; bh=puEVphfmlLbrWTO3mdDB17WkluHf49q+nkCLHU1WEPk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=RMQrDTHXiSIvSNdSJIUAuTLTwTBfKbldAHrwtZjJ0BW+ZG7c0EUq537f7BNPK+LIN
-         e+qzSqPhQUdW5m9f0ovUN5sc2R9fpgjJRx6JMSfOyIGDK3OikFgbqf4WNmfnjBWb14
-         Yj8xq1+79SXISvpVp+Jg6Y8NZ4c+QrYGyIAwuT0U=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 63ADD8B784;
-        Sun, 16 Feb 2020 11:46:10 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id GYiIMEW0V5j7; Sun, 16 Feb 2020 11:46:10 +0100 (CET)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 992958B755;
-        Sun, 16 Feb 2020 11:45:59 +0100 (CET)
-Subject: Re: [PATCH v2 00/13] mm: remove __ARCH_HAS_5LEVEL_HACK
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Mike Rapoport <rppt@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Brian Cain <bcain@codeaurora.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Guan Xuetao <gxt@pku.edu.cn>,
-        James Morse <james.morse@arm.com>,
-        Jonas Bonn <jonas@southpole.se>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Ley Foon Tan <ley.foon.tan@intel.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Rich Felker <dalias@libc.org>,
-        Stafford Horne <shorne@gmail.com>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Tony Luck <tony.luck@intel.com>, Will Deacon <will@kernel.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        kvmarm@lists.cs.columbia.edu, kvm-ppc@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
-        linux-sh@vger.kernel.org, nios2-dev@lists.rocketboards.org,
-        openrisc@lists.librecores.org,
-        uclinux-h8-devel@lists.sourceforge.jp,
-        Mike Rapoport <rppt@linux.ibm.com>
-References: <20200216081843.28670-1-rppt@kernel.org>
- <20200216082230.GV25745@shell.armlinux.org.uk>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <d6691709-30ce-4d28-0b7b-34f1fa3b4e6f@c-s.fr>
-Date:   Sun, 16 Feb 2020 11:45:59 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1728066AbgBPKtU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 05:49:20 -0500
+Received: from mail-il1-f199.google.com ([209.85.166.199]:51708 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728030AbgBPKtS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Feb 2020 05:49:18 -0500
+Received: by mail-il1-f199.google.com with SMTP id c12so11779904ilr.18
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2020 02:49:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=q5a8VE4zmrILT9Zd6ZOG8HN54En4RuDTP286P2Roc7U=;
+        b=qnJVdR9Z7YdY9LJStKz/rpaRtRQUBkUD0dogJsg9CnNPcJxxaQjR0jUIB8wuK9tzUE
+         vD0EhBNM97p/do8Pb+1+1uWSfrlStBo8CGN6mMt7uUnK4LrEEVx4oNvXnM18pA6sLhGm
+         EaTFjLhepjjf+SU2VvCoPxVrUZa98Wip+jshuJuLMefPkAOkXds7uxvyRzeRD1/zZQNt
+         U2if57LKR4hwvBjEciteQfZTWv0vRgyn1rkzhZyg4KK79W3Pg1Yi6tCrMG53/CWbv/Zx
+         Qb3yYXQZq2+u7WR9BOXYllshPnc5z7laxBYejFHLckYdsHQcZKSf7GuP48ER2gDiORrx
+         OuBw==
+X-Gm-Message-State: APjAAAUm7GYVLBaHde/Lphv1fmHQh5PDv7CviRS4/2z2XzJq4Rhp5yAN
+        9+sbmxE33Kk2JnRhLmYouNV+J+YdiIrvllquxMoKaZpxhu46
+X-Google-Smtp-Source: APXvYqwnPunf5eeriBqcDJxJCkf825bEgxHuah8alwu8Kwntpvi0bZkQBtMEx+T6PUCFzwI7A83eTm2H1J3ZDIB5txDXfuVxRcYQ
 MIME-Version: 1.0
-In-Reply-To: <20200216082230.GV25745@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:901:: with SMTP id y1mr9975443ilg.274.1581850156729;
+ Sun, 16 Feb 2020 02:49:16 -0800 (PST)
+Date:   Sun, 16 Feb 2020 02:49:16 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ae0b2a059eaf303f@google.com>
+Subject: INFO: rcu detected stall in mrp_join_timer (2)
+From:   syzbot <syzbot+67edf33871a80247d3c0@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, gregkh@linuxfoundation.org, info@metux.net,
+        keescook@chromium.org, kuba@kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        pankaj.laxminarayan.bharadiya@intel.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
+
+syzbot found the following crash on:
+
+HEAD commit:    0a679e13 Merge branch 'for-5.6-fixes' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11471395e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=735296e4dd620b10
+dashboard link: https://syzkaller.appspot.com/bug?extid=67edf33871a80247d3c0
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+67edf33871a80247d3c0@syzkaller.appspotmail.com
+
+rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+	(detected by 0, t=10502 jiffies, g=460357, q=845)
+rcu: All QSes seen, last rcu_preempt kthread activity 10503 (4295191828-4295181325), jiffies_till_next_fqs=1, root ->qsmask 0x0
+syz-executor.2  R  running task    25896 28853   9849 0x80004008
+Call Trace:
+ <IRQ>
+ sched_show_task kernel/sched/core.c:5954 [inline]
+ sched_show_task.cold+0x2ee/0x35d kernel/sched/core.c:5929
+ print_other_cpu_stall kernel/rcu/tree_stall.h:430 [inline]
+ check_cpu_stall kernel/rcu/tree_stall.h:558 [inline]
+ rcu_pending kernel/rcu/tree.c:3030 [inline]
+ rcu_sched_clock_irq.cold+0xb23/0xc37 kernel/rcu/tree.c:2276
+ update_process_times+0x2d/0x70 kernel/time/timer.c:1726
+ tick_sched_handle+0xa2/0x190 kernel/time/tick-sched.c:171
+ tick_sched_timer+0x53/0x140 kernel/time/tick-sched.c:1314
+ __run_hrtimer kernel/time/hrtimer.c:1517 [inline]
+ __hrtimer_run_queues+0x364/0xe40 kernel/time/hrtimer.c:1579
+ hrtimer_interrupt+0x314/0x770 kernel/time/hrtimer.c:1641
+ local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1119 [inline]
+ smp_apic_timer_interrupt+0x160/0x610 arch/x86/kernel/apic/apic.c:1144
+ apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
+RIP: 0010:debug_spin_lock_before kernel/locking/spinlock_debug.c:85 [inline]
+RIP: 0010:do_raw_spin_lock+0x10e/0x2f0 kernel/locking/spinlock_debug.c:112
+Code: ea 48 c1 ea 03 0f b6 14 02 4c 89 e8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 85 01 00 00 41 8b 54 24 08 65 8b 05 e2 97 a5 7e <39> c2 0f 84 50 01 00 00 4c 89 e7 be 04 00 00 00 41 c7 47 c0 00 00
+RSP: 0018:ffffc90000007c28 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+RAX: 0000000000000000 RBX: 1ffff92000000f86 RCX: 0000000000000000
+RDX: 00000000ffffffff RSI: 0000000000000008 RDI: ffff88808e65f0a4
+RBP: ffffc90000007cb8 R08: 00000000000077e3 R09: fffffbfff16a3386
+R10: ffff8880326e4e28 R11: ffff8880326e4540 R12: ffff88808e65f0a0
+R13: ffff88808e65f0a8 R14: ffff88808e65f0b0 R15: ffffc90000007c90
+ __raw_spin_lock include/linux/spinlock_api_smp.h:143 [inline]
+ _raw_spin_lock+0x37/0x40 kernel/locking/spinlock.c:151
+ spin_lock include/linux/spinlock.h:338 [inline]
+ mrp_join_timer+0x2b/0x80 net/802/mrp.c:590
+ call_timer_fn+0x1ac/0x780 kernel/time/timer.c:1404
+ expire_timers kernel/time/timer.c:1449 [inline]
+ __run_timers kernel/time/timer.c:1773 [inline]
+ __run_timers kernel/time/timer.c:1740 [inline]
+ run_timer_softirq+0x6c3/0x1790 kernel/time/timer.c:1786
+ __do_softirq+0x262/0x98c kernel/softirq.c:292
+ invoke_softirq kernel/softirq.c:373 [inline]
+ irq_exit+0x19b/0x1e0 kernel/softirq.c:413
+ exiting_irq arch/x86/include/asm/apic.h:546 [inline]
+ smp_apic_timer_interrupt+0x1a3/0x610 arch/x86/kernel/apic/apic.c:1146
+ apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
+ </IRQ>
+RIP: 0010:__read_once_size include/linux/compiler.h:199 [inline]
+RIP: 0010:check_kcov_mode kernel/kcov.c:155 [inline]
+RIP: 0010:write_comp_data+0x17/0x70 kernel/kcov.c:208
+Code: c2 01 48 39 d0 76 07 48 89 34 d1 48 89 11 5d c3 0f 1f 00 65 4c 8b 04 25 c0 1e 02 00 65 8b 05 28 90 8c 7e a9 00 01 1f 00 75 51 <41> 8b 80 80 13 00 00 83 f8 03 75 45 49 8b 80 88 13 00 00 45 8b 80
+RSP: 0018:ffffc900059f7728 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+RAX: 0000000080000001 RBX: 00007fe19bff2000 RCX: ffffffff81a39e42
+RDX: 00fffe0000000000 RSI: ffffffffffffffff RDI: 0000000000000007
+RBP: ffffc900059f7730 R08: ffff8880326e4540 R09: ffff8880326e4dd0
+R10: fffffbfff154b438 R11: ffffffff8aa5a1c7 R12: 00fffe0000000000
+R13: ffff8880349a1f88 R14: dffffc0000000000 R15: ffffea0001737340
+ PageSlab include/linux/page-flags.h:325 [inline]
+ page_mapcount include/linux/mm.h:694 [inline]
+ zap_pte_range mm/memory.c:1081 [inline]
+ zap_pmd_range mm/memory.c:1184 [inline]
+ zap_pud_range mm/memory.c:1213 [inline]
+ zap_p4d_range mm/memory.c:1234 [inline]
+ unmap_page_range+0xe52/0x28d0 mm/memory.c:1255
+ unmap_single_vma+0x19d/0x300 mm/memory.c:1300
+ unmap_vmas+0x184/0x2f0 mm/memory.c:1332
+ exit_mmap+0x2ba/0x530 mm/mmap.c:3130
+ __mmput kernel/fork.c:1082 [inline]
+ mmput+0x179/0x4d0 kernel/fork.c:1103
+ exit_mm kernel/exit.c:485 [inline]
+ do_exit+0xac2/0x2f50 kernel/exit.c:788
+ do_group_exit+0x135/0x360 kernel/exit.c:899
+ get_signal+0x47c/0x24f0 kernel/signal.c:2734
+ do_signal+0x87/0x1700 arch/x86/kernel/signal.c:813
+ exit_to_usermode_loop+0x286/0x380 arch/x86/entry/common.c:160
+ prepare_exit_to_usermode arch/x86/entry/common.c:195 [inline]
+ syscall_return_slowpath arch/x86/entry/common.c:278 [inline]
+ do_syscall_64+0x676/0x790 arch/x86/entry/common.c:304
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x45b3b9
+Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fe19b07fcf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: fffffffffffffe00 RBX: 000000000075bf28 RCX: 000000000045b3b9
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 000000000075bf28
+RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 000000000075bf2c
+R13: 0000000000c6fb7f R14: 00007fe19b0809c0 R15: 000000000075bf2c
+rcu: rcu_preempt kthread starved for 10572 jiffies! g460357 f0x2 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=0
+rcu: RCU grace-period kthread stack dump:
+rcu_preempt     R  running task    29264    10      2 0x80004000
+Call Trace:
+ context_switch kernel/sched/core.c:3386 [inline]
+ __schedule+0x934/0x1f90 kernel/sched/core.c:4082
+ schedule+0xdc/0x2b0 kernel/sched/core.c:4156
+ schedule_timeout+0x486/0xc50 kernel/time/timer.c:1895
+ rcu_gp_fqs_loop kernel/rcu/tree.c:1658 [inline]
+ rcu_gp_kthread+0xa10/0x1940 kernel/rcu/tree.c:1818
+ kthread+0x361/0x430 kernel/kthread.c:255
+ ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
 
 
-Le 16/02/2020 à 09:22, Russell King - ARM Linux admin a écrit :
-> On Sun, Feb 16, 2020 at 10:18:30AM +0200, Mike Rapoport wrote:
->> From: Mike Rapoport <rppt@linux.ibm.com>
->>
->> Hi,
->>
->> These patches convert several architectures to use page table folding and
->> remove __ARCH_HAS_5LEVEL_HACK along with include/asm-generic/5level-fixup.h.
->>
->> The changes are mostly about mechanical replacement of pgd accessors with p4d
->> ones and the addition of higher levels to page table traversals.
->>
->> All the patches were sent separately to the respective arch lists and
->> maintainers hence the "v2" prefix.
-> 
-> You fail to explain why this change which adds 488 additional lines of
-> code is desirable.
-> 
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-The purpose of the series, ie droping a HACK, is worth it.
-
-However looking at the powerpc patch I have the feeling that this series 
-goes behind its purpose.
-
-The number additional lines could be deeply reduced I think if we limit 
-the patches to the strict minimum, ie just do things like below instead 
-of adding lots of handling of useless levels.
-
-Instead of doing things like:
-
--	pud = NULL;
-+	p4d = NULL;
-  	if (pgd_present(*pgd))
--		pud = pud_offset(pgd, gpa);
-+		p4d = p4d_offset(pgd, gpa);
-+	else
-+		new_p4d = p4d_alloc_one(kvm->mm, gpa);
-+
-+	pud = NULL;
-+	if (p4d_present(*p4d))
-+		pud = pud_offset(p4d, gpa);
-  	else
-  		new_pud = pud_alloc_one(kvm->mm, gpa);
-
-It could be limited to:
-
-  	if (pgd_present(*pgd))
--		pud = pud_offset(pgd, gpa);
-+		pud = pud_offset(p4d_offset(pgd, gpa), gpa);
-  	else
-  		new_pud = pud_alloc_one(kvm->mm, gpa);
-
-
-Christophe
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
