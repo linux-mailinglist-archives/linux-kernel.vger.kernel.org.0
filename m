@@ -2,212 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B3A31601B6
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 06:09:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D61A1601E5
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 06:43:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725989AbgBPFJv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 00:09:51 -0500
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:40890 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725208AbgBPFJu (ORCPT
+        id S1726009AbgBPF2g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 00:28:36 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:46293 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725208AbgBPF2f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 00:09:50 -0500
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id 01G59UFa010966;
-        Sun, 16 Feb 2020 14:09:30 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com 01G59UFa010966
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1581829771;
-        bh=rbqePs9IMaIcm8x3+kZKs+EYOftnr7m5qjep5xY5fxg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=iHwjX/+WCWjcDYod62PLrTAzcNoFWuxwh19HzVxrmayKtiJqNXexO6eakZPuuuusa
-         Hwb+sjrCHDPw7OFwmqaU/vTSglOS1gm/+I1DwLS+88mjkV6PrF5LZtwtPMdZqKxh1o
-         jDL+iXgvYJYNE5gXxSifLyRjXMzMbqwe0AX+xtQAFSpLfl7gPwj8tNbbonx8f3drdt
-         wOf46QJ9kdjZhSYl/iLIAhCDo/vzMq9covm8pM9RgloCwXt0yC+/4i1R4l5OyuBQVd
-         +w4iW2FBsLIwvSyessEQuE98HFAgF4iCF8YP17nXZ2/F3YD/TsmI/AASF30DKzznSi
-         FuoflP37LkpPA==
-X-Nifty-SrcIP: [209.85.217.45]
-Received: by mail-vs1-f45.google.com with SMTP id a2so8719747vso.3;
-        Sat, 15 Feb 2020 21:09:30 -0800 (PST)
-X-Gm-Message-State: APjAAAWnfe57S+e+eO43BfrUbOfWINl7NodOgxyXY3F69txGm8mn12Iz
-        fERCumsv9WXyXXNM2DEoOWq2AKq10ZS81puHvIg=
-X-Google-Smtp-Source: APXvYqxBxTQIoI2VevLx1VLO3Y65QF4At1ZpLqEtvYMB0XvZ6WuTKop6V1O+rjOZsFgyrDYUrhIkJ3+PeQaqZ0Dysc4=
-X-Received: by 2002:a67:6485:: with SMTP id y127mr5539788vsb.54.1581829769328;
- Sat, 15 Feb 2020 21:09:29 -0800 (PST)
+        Sun, 16 Feb 2020 00:28:35 -0500
+Received: by mail-vs1-f68.google.com with SMTP id t12so8376179vso.13
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2020 21:28:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=QltcrwnTWhn1oLr2yXvWiMYc7uPvSK7mvdxjKEbUYTk=;
+        b=m0p1Cus5CAaQc3g2JhURq82LKT291n76qyxdzsJC4zV4gVsKga7jLaxbmDi5ppntT/
+         ieOOxfIFE6D+4sl31fSsQibrsg2GHyihQ+kEe9Lbr9wXnMj3nAeF14sMDmB5BD0o0tO7
+         vgGung6WZb70fEnkuP45aipiOVZpc5ChT7Cp2oGpMXgFILtwn013xZicWEmYTbxUIdJV
+         DeEpdh3rAgM6q22KYr0/PodG/4ZR3OBQFNcuaQJzodAGyipwRCyIpltdZcanuufhvDD5
+         rUU5My0KHt34bMDwrdWX1Vbx01XvltuOY7xwMoNGFiY0hRNg1DJQYAcbu5KBOpEElEzg
+         zXTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=QltcrwnTWhn1oLr2yXvWiMYc7uPvSK7mvdxjKEbUYTk=;
+        b=g7A+N+m6PSG3wkUs+1xwS/415eZBKct1O6jP/nBH70bk1+49PQhB5PvPi7VVa462w3
+         8sQ408Uif+Zqr/VvJFW2lGBL+QK/ZxiJwcGUx+gsHnqhcrDpSlDKwJntKYfEPYxxkrby
+         HFgSkPERDSTLxIZqz89FtLeX0F+p081MmtkcaLv3109o3nYkiLxjID393x8MxDNMYKfS
+         tbgRxLskg11NNshPS6VpHZ+HCjuqdZgbl/uSmk9XhtOKs6SdHwOsbuE8oMhIDJmgNcuc
+         CsrEq6PhoNY3BHVFNDShB3GHkUyrsBeGFfLJGyNq/Xg88EpUXwr8fAwpIGTxGMWGm8O9
+         mEvg==
+X-Gm-Message-State: APjAAAVE2a1iof2QwVer+dekmsPo+nwduvYd8HOsmxDQuu1LOYCcHzu4
+        cghMUId85dXVgq02RDaGDMLVwB2uv3lMfFvwdcE=
+X-Google-Smtp-Source: APXvYqxV92ZMNZLPpUlcGXofnxORxJf4hudoZcMgyhhpbBPBnX507fnZnEX1Ax9+jTz5zfVCOB/0Q7jPKHO/7Hgma1c=
+X-Received: by 2002:a05:6102:3235:: with SMTP id x21mr5254093vsf.8.1581830914721;
+ Sat, 15 Feb 2020 21:28:34 -0800 (PST)
 MIME-Version: 1.0
-References: <20200130162314.31449-1-e5ten.arch@gmail.com>
-In-Reply-To: <20200130162314.31449-1-e5ten.arch@gmail.com>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Sun, 16 Feb 2020 14:08:53 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASxZ9_doDB_t6vFfgVUvh4hpi9RK7_QFU65az+j+JU84A@mail.gmail.com>
-Message-ID: <CAK7LNASxZ9_doDB_t6vFfgVUvh4hpi9RK7_QFU65az+j+JU84A@mail.gmail.com>
-Subject: Re: [PATCH] make yacc usage POSIX-compliant
-To:     Ethan Sommer <e5ten.arch@gmail.com>
-Cc:     Michal Marek <michal.lkml@markovi.net>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Received: by 2002:a67:eac1:0:0:0:0:0 with HTTP; Sat, 15 Feb 2020 21:28:33
+ -0800 (PST)
+From:   NESTOR EDE Esq <mohammedkhalil1950@gmail.com>
+Date:   Sun, 16 Feb 2020 05:28:33 +0000
+Message-ID: <CAPsDyVeA38m1bjoV3Ht7LCxLzNRuDwDurRhDyVRFndAKHmTsLw@mail.gmail.com>
+Subject: Dringende Antworten bitte
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ethan,
+Guten Morgen,
 
-On Fri, Jan 31, 2020 at 1:23 AM Ethan Sommer <e5ten.arch@gmail.com> wrote:
->
-> use -b and -d to generate correctly named source and header files,
-> instead of bison-specific --defines and non-POSIX -o
-> check that YACC command is found in path or is an executable file,
-> instead of using bison-specific --version flag to display an error when
-> it is missing
-> explicitly define yyltype in scripts/genksyms/lex.l, instead of relying
-> on bison automatically defining it
-> replace bison-specific %destructor use in scripts/kconfig/parser.y
-> dtc's yacc usage is not covered here, as its use of bison-specific
-> features is much greater, and it is only built on certain architectures,
-> unlike kconfig and genksyms
+Es tut mir leid, Sie in dieser Angelegenheit ohne Ihre vorherige
+Zustimmung zu kontaktieren. Es war wegen der Dringlichkeit der
+Angelegenheit.
 
-Please start each sentence with a capital letter,
-and end with a period.
+Ich bin Nestor EDE, ein Rechtsanwalt, und der pers=C3=B6nliche Anwalt von
+ein verstorbener Kunde aus Ihrem Land. Ich w=C3=BCrde gerne wissen, ob wir
+zusammenarbeiten k=C3=B6nnen?
 
->
-> Signed-off-by: Ethan Sommer <e5ten.arch@gmail.com>
-> ---
->  scripts/Makefile.host     |  2 +-
->  scripts/genksyms/Makefile |  6 ++++--
->  scripts/genksyms/lex.l    |  2 ++
->  scripts/kconfig/parser.y  | 14 +++++++-------
->  4 files changed, 14 insertions(+), 10 deletions(-)
->
-> diff --git a/scripts/Makefile.host b/scripts/Makefile.host
-> index 4c51c95d40f4..64e98e1d4825 100644
-> --- a/scripts/Makefile.host
-> +++ b/scripts/Makefile.host
-> @@ -11,7 +11,7 @@ $(obj)/%.lex.c: $(src)/%.l FORCE
->  # YACC
->  # ---------------------------------------------------------------------------
->  quiet_cmd_bison = YACC    $(basename $@).[ch]
-> -      cmd_bison = $(YACC) -o $(basename $@).c --defines=$(basename $@).h -t -l $<
-> +      cmd_bison = $(YACC) -b $(basename $(basename $@)) -d -t -l $<
->
->  $(obj)/%.tab.c $(obj)/%.tab.h: $(src)/%.y FORCE
->         $(call if_changed,bison)
-> diff --git a/scripts/genksyms/Makefile b/scripts/genksyms/Makefile
-> index 78629f515e78..1e120328fa88 100644
-> --- a/scripts/genksyms/Makefile
-> +++ b/scripts/genksyms/Makefile
-> @@ -14,9 +14,11 @@ genksyms-objs        := genksyms.o parse.tab.o lex.lex.o
->  # so that 'bison: not found' will be displayed if it is missing.
->  ifeq ($(findstring 1,$(KBUILD_EXTRA_WARN)),)
->
-> +ifeq ($(shell command -v $(YACC) || [ -x $(YACC) ] && echo y),)
-> +  $(error command not found: $(YACC))
-> +endif
+Seit dem Tod meines Mandanten ruht sein Fonds im Wert von in der Bank
+meines Landes. Die Bank hat mir eine Mitteilung gemacht, um die
+n=C3=A4chsten Angeh=C3=B6rigen f=C3=BCr die Forderung der Fonds zu pr=C3=A4=
+sentieren,
+andernfalls werden die Gelder beschlagnahmt.
 
+Der Verstorbene starb bei einem Autounfall mit seiner ganzen Familie.
+Ich habe mich mit Ihnen in Verbindung gesetzt, weil Sie den gleichen
+Familiennamen wie der Verstorbene haben, daher k=C3=B6nnen Sie als mein
+verstorbener Kunde dem n=C3=A4chsten Angeh=C3=B6rigen vorgestellt werden. M=
+it
+meiner Unterst=C3=BCtzung als der verstorbene pers=C3=B6nliche Anwalt, k=C3=
+=B6nnen
+Sie von der Bank genehmigt
+werden und das Geld wird Ihnen freigegeben werden.
 
-Please do not check the presence of $(YACC)
-in the parse stage of Makefile.
+Ich freue mich auf Ihre Antwort, wenn Sie interessiert sind und ich
+werde Ihnen weitere Details senden.
 
-You would not be able to run 'make mrproper' or 'make distclean'
-without $(YACC), which is odd.
+Sie k=C3=B6nnen mich =C3=BCber meine private E-Mail-Adresse kontaktieren F=
+=C3=BCr
+mehr Klarheit:
 
+nestorede1958@lawyer.com
 
->  quiet_cmd_bison_no_warn = $(quiet_cmd_bison)
-> -      cmd_bison_no_warn = $(YACC) --version >/dev/null; \
-> -                         $(cmd_bison) 2>/dev/null
-> +      cmd_bison_no_warn = $(cmd_bison) 2>/dev/null
->
->  $(obj)/pars%.tab.c $(obj)/pars%.tab.h: $(src)/pars%.y FORCE
->         $(call if_changed,bison_no_warn)
-> diff --git a/scripts/genksyms/lex.l b/scripts/genksyms/lex.l
-> index e265c5d96861..0580c088527f 100644
-> --- a/scripts/genksyms/lex.l
-> +++ b/scripts/genksyms/lex.l
-> @@ -19,6 +19,8 @@
->  #include "genksyms.h"
->  #include "parse.tab.h"
->
-> +extern YYSTYPE yylval;
-> +
->  /* We've got a two-level lexer here.  We let flex do basic tokenization
->     and then we categorize those basic tokens in the second stage.  */
->  #define YY_DECL                static int yylex1(void)
-> diff --git a/scripts/kconfig/parser.y b/scripts/kconfig/parser.y
-> index b3eff9613cf8..9eb9a94a68e0 100644
-> --- a/scripts/kconfig/parser.y
-> +++ b/scripts/kconfig/parser.y
-> @@ -20,6 +20,8 @@
->
->  int cdebug = PRINTD;
->
-> +int yynerrs = 0;
-> +
+Mit freundlichen Gr=C3=BC=C3=9Fen,
 
-Isn't yynerrs POSIX-compiliant?
-
-Both bison and byacc worked for me without this change.
-
-
-This patch is stricter than
-your previous 'make it work for byacc as well'.
-
-If this is a desired change,
-how can I test if the code is POSIX-compliant?
-
-
-
-But, I am still not convinced with this part:
-
-"dtc's yacc usage is not covered here, as its use of bison-specific
-features is much greater, and it is only built on certain architectures,
-unlike kconfig and genksyms"
-
-
-If DTC remains as an exceptional case that is bison-specific code,
-I do not get the point of merging this change.
-
-
-
-
-
->  static void yyerror(const char *err);
->  static void zconfprint(const char *err, ...);
->  static void zconf_error(const char *err, ...);
-> @@ -101,13 +103,6 @@ static struct menu *current_menu, *current_entry;
->  %type <string> word_opt assign_val
->  %type <flavor> assign_op
->
-> -%destructor {
-> -       fprintf(stderr, "%s:%d: missing end statement for this entry\n",
-> -               $$->file->name, $$->lineno);
-> -       if (current_menu == $$)
-> -               menu_end_menu();
-> -} if_entry menu_entry choice_entry
-> -
->  %%
->  input: mainmenu_stmt stmt_list | stmt_list;
->
-> @@ -529,6 +524,11 @@ static bool zconf_endtoken(const char *tokenname,
->         if (strcmp(tokenname, expected_tokenname)) {
->                 zconf_error("unexpected '%s' within %s block",
->                             tokenname, expected_tokenname);
-> +               if (!strcmp(tokenname, "if") || !strcmp(tokenname, "menu") ||
-> +                       !strcmp(tokenname, "choice"))
-> +                       fprintf(stderr, "%s:%d: missing end statement for this entry\n",
-> +                               current_menu->file->name, current_menu->lineno);
-> +               menu_end_menu();
->                 yynerrs++;
->                 return false;
->         }
-> --
-> 2.25.0
->
-
-
---
-Best Regards
-Masahiro Yamada
+Nestor EDE,Esq.
+nestorede1958@lawyer.com
+Mobile:  00228-91520365
