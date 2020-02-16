@@ -2,244 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBAD9160637
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 21:17:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C36C2160623
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 21:09:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728093AbgBPURV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 15:17:21 -0500
-Received: from mga04.intel.com ([192.55.52.120]:62295 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726020AbgBPURV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 15:17:21 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Feb 2020 12:17:20 -0800
-X-IronPort-AV: E=Sophos;i="5.70,450,1574150400"; 
-   d="scan'208";a="433597837"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Feb 2020 12:17:20 -0800
-Subject: [PATCH v5 6/6] libnvdimm/e820: Retrieve and populate correct
- 'target_node' info
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     linux-nvdimm@lists.01.org
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Christoph Hellwig <hch@lst.de>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Date:   Sun, 16 Feb 2020 12:01:16 -0800
-Message-ID: <158188327614.894464.13122730362187722603.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <158188324272.894464.5941332130956525504.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <158188324272.894464.5941332130956525504.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-3-g996c
+        id S1726652AbgBPUJH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 15:09:07 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:57988 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbgBPUJH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Feb 2020 15:09:07 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1j3QDr-0006Z4-CS; Sun, 16 Feb 2020 21:08:59 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C32E01C208C;
+        Sun, 16 Feb 2020 21:08:57 +0100 (CET)
+Date:   Sun, 16 Feb 2020 20:08:57 -0000
+From:   "tip-bot2 for Martin Molnar" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cleanups] x86: Fix a handful of typos
+Cc:     Martin Molnar <martin.molnar.programming@gmail.com>,
+        Borislav Petkov <bp@suse.de>,
+        Randy Dunlap <rdunlap@infradead.org>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <0819a044-c360-44a4-f0b6-3f5bafe2d35c@gmail.com>
+References: <0819a044-c360-44a4-f0b6-3f5bafe2d35c@gmail.com>
 MIME-Version: 1.0
+Message-ID: <158188373741.13786.11592756723123695998.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the new phys_to_target_node() and numa_map_to_online_node() helpers
-to retrieve the correct id for the 'numa_node' ("local" / online
-initiator node) and 'target_node' (offline target memory node) sysfs
-attributes.
+The following commit has been merged into the x86/cleanups branch of tip:
 
-Below is an example from a 4 NUMA node system where all the memory on
-node2 is pmem / reserved. It should be noted that with the arrival of
-the ACPI HMAT table and EFI Specific Purpose Memory the kernel will
-start to see more platforms with reserved / performance differentiated
-memory in its own NUMA node. Hence all the stakeholders on the Cc for
-what is ostensibly a libnvdimm local patch.
+Commit-ID:     4d1d0977a2156a1dafe8f1cd890ab918c803485b
+Gitweb:        https://git.kernel.org/tip/4d1d0977a2156a1dafe8f1cd890ab918c803485b
+Author:        Martin Molnar <martin.molnar.programming@gmail.com>
+AuthorDate:    Sun, 16 Feb 2020 16:17:39 +01:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Sun, 16 Feb 2020 20:58:06 +01:00
 
-=== Before ===
+x86: Fix a handful of typos
 
-/* Notice no online memory on node2 at start */
+Fix a couple of typos in code comments.
 
-# numactl --hardware
-available: 3 nodes (0-1,3)
-node 0 cpus: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
-node 0 size: 3958 MB
-node 0 free: 3708 MB
-node 1 cpus: 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39
-node 1 size: 4027 MB
-node 1 free: 3871 MB
-node 3 cpus:
-node 3 size: 3994 MB
-node 3 free: 3971 MB
-node distances:
-node   0   1   3
-  0:  10  21  21
-  1:  21  10  21
-  3:  21  21  10
+ [ bp: While at it: s/IRQ's/IRQs/. ]
 
-/*
- * Put the pmem namespace into devdax mode so it can be assigned to the
- * kmem driver
- */
-
-# ndctl create-namespace -e namespace0.0 -m devdax -f
-{
-  "dev":"namespace0.0",
-  "mode":"devdax",
-  "map":"dev",
-  "size":"3.94 GiB (4.23 GB)",
-  "uuid":"1650af9b-9ba3-4704-acd6-10178399d9a3",
-  [..]
-}
-
-/* Online Persistent Memory as System RAM */
-
-# daxctl reconfigure-device --mode=system-ram dax0.0
-libdaxctl: memblock_in_dev: dax0.0: memory0: Unable to determine phys_index: Success
-libdaxctl: memblock_in_dev: dax0.0: memory0: Unable to determine phys_index: Success
-libdaxctl: memblock_in_dev: dax0.0: memory0: Unable to determine phys_index: Success
-libdaxctl: memblock_in_dev: dax0.0: memory0: Unable to determine phys_index: Success
-[
-  {
-    "chardev":"dax0.0",
-    "size":4225761280,
-    "target_node":0,
-    "mode":"system-ram"
-  }
-]
-reconfigured 1 device
-
-/* Note that the memory is onlined by default to the wrong node, node0 */
-
-# numactl --hardware
-available: 3 nodes (0-1,3)
-node 0 cpus: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
-node 0 size: 7926 MB
-node 0 free: 7655 MB
-node 1 cpus: 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39
-node 1 size: 4027 MB
-node 1 free: 3871 MB
-node 3 cpus:
-node 3 size: 3994 MB
-node 3 free: 3971 MB
-node distances:
-node   0   1   3
-  0:  10  21  21
-  1:  21  10  21
-  3:  21  21  10
-
-
-=== After ===
-
-/* Notice that the "phys_index" error messages are gone */
-
-# daxctl reconfigure-device --mode=system-ram dax0.0
-[
-  {
-    "chardev":"dax0.0",
-    "size":4225761280,
-    "target_node":2,
-    "mode":"system-ram"
-  }
-]
-reconfigured 1 device
-
-/* Notice that node2 is now correctly populated */
-
-# numactl --hardware
-available: 4 nodes (0-3)
-node 0 cpus: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
-node 0 size: 3958 MB
-node 0 free: 3793 MB
-node 1 cpus: 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39
-node 1 size: 4027 MB
-node 1 free: 3851 MB
-node 2 cpus:
-node 2 size: 3968 MB
-node 2 free: 3968 MB
-node 3 cpus:
-node 3 size: 3994 MB
-node 3 free: 3908 MB
-node distances:
-node   0   1   2   3
-  0:  10  21  21  21
-  1:  21  10  21  21
-  2:  21  21  10  21
-  3:  21  21  21  10
-
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Ira Weiny <ira.weiny@intel.com>
-Cc: Vishal Verma <vishal.l.verma@intel.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Martin Molnar <martin.molnar.programming@gmail.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+Link: https://lkml.kernel.org/r/0819a044-c360-44a4-f0b6-3f5bafe2d35c@gmail.com
 ---
- arch/x86/Kconfig      |    1 +
- drivers/nvdimm/e820.c |   18 ++++--------------
- 2 files changed, 5 insertions(+), 14 deletions(-)
+ arch/x86/kernel/irqinit.c  | 2 +-
+ arch/x86/kernel/nmi.c      | 4 ++--
+ arch/x86/kernel/reboot.c   | 2 +-
+ arch/x86/kernel/smpboot.c  | 2 +-
+ arch/x86/kernel/tsc.c      | 2 +-
+ arch/x86/kernel/tsc_sync.c | 2 +-
+ 6 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index beea77046f9b..d4e446daf457 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1664,6 +1664,7 @@ config X86_PMEM_LEGACY
- 	depends on PHYS_ADDR_T_64BIT
- 	depends on BLK_DEV
- 	select X86_PMEM_LEGACY_DEVICE
-+	select NUMA_KEEP_MEMINFO if NUMA
- 	select LIBNVDIMM
- 	help
- 	  Treat memory marked using the non-standard e820 type of 12 as used
-diff --git a/drivers/nvdimm/e820.c b/drivers/nvdimm/e820.c
-index e02f60ad6c99..4cd18be9d0e9 100644
---- a/drivers/nvdimm/e820.c
-+++ b/drivers/nvdimm/e820.c
-@@ -7,6 +7,7 @@
- #include <linux/memory_hotplug.h>
- #include <linux/libnvdimm.h>
- #include <linux/module.h>
-+#include <linux/numa.h>
+diff --git a/arch/x86/kernel/irqinit.c b/arch/x86/kernel/irqinit.c
+index 16919a9..1e5ad12 100644
+--- a/arch/x86/kernel/irqinit.c
++++ b/arch/x86/kernel/irqinit.c
+@@ -84,7 +84,7 @@ void __init init_IRQ(void)
+ 	 * On cpu 0, Assign ISA_IRQ_VECTOR(irq) to IRQ 0..15.
+ 	 * If these IRQ's are handled by legacy interrupt-controllers like PIC,
+ 	 * then this configuration will likely be static after the boot. If
+-	 * these IRQ's are handled by more mordern controllers like IO-APIC,
++	 * these IRQs are handled by more modern controllers like IO-APIC,
+ 	 * then this vector space can be freed and re-used dynamically as the
+ 	 * irq's migrate etc.
+ 	 */
+diff --git a/arch/x86/kernel/nmi.c b/arch/x86/kernel/nmi.c
+index 54c21d6..6407ea2 100644
+--- a/arch/x86/kernel/nmi.c
++++ b/arch/x86/kernel/nmi.c
+@@ -403,9 +403,9 @@ static void default_do_nmi(struct pt_regs *regs)
+ 	 * a 'real' unknown NMI.  For example, while processing
+ 	 * a perf NMI another perf NMI comes in along with a
+ 	 * 'real' unknown NMI.  These two NMIs get combined into
+-	 * one (as descibed above).  When the next NMI gets
++	 * one (as described above).  When the next NMI gets
+ 	 * processed, it will be flagged by perf as handled, but
+-	 * noone will know that there was a 'real' unknown NMI sent
++	 * no one will know that there was a 'real' unknown NMI sent
+ 	 * also.  As a result it gets swallowed.  Or if the first
+ 	 * perf NMI returns two events handled then the second
+ 	 * NMI will get eaten by the logic below, again losing a
+diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
+index 0cc7c0b..3ca43be 100644
+--- a/arch/x86/kernel/reboot.c
++++ b/arch/x86/kernel/reboot.c
+@@ -531,7 +531,7 @@ static void emergency_vmx_disable_all(void)
  
- static int e820_pmem_remove(struct platform_device *pdev)
+ 	/*
+ 	 * We need to disable VMX on all CPUs before rebooting, otherwise
+-	 * we risk hanging up the machine, because the CPU ignore INIT
++	 * we risk hanging up the machine, because the CPU ignores INIT
+ 	 * signals when VMX is enabled.
+ 	 *
+ 	 * We can't take any locks and we may be on an inconsistent
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index 69881b2..3feaeee 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -1434,7 +1434,7 @@ early_param("possible_cpus", _setup_possible_cpus);
+ /*
+  * cpu_possible_mask should be static, it cannot change as cpu's
+  * are onlined, or offlined. The reason is per-cpu data-structures
+- * are allocated by some modules at init time, and dont expect to
++ * are allocated by some modules at init time, and don't expect to
+  * do this dynamically on cpu arrival/departure.
+  * cpu_present_mask on the other hand can change dynamically.
+  * In case when cpu_hotplug is not compiled, then we resort to current
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index 7e322e2..0109b9d 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -477,7 +477,7 @@ static unsigned long pit_calibrate_tsc(u32 latch, unsigned long ms, int loopmin)
+  * transition from one expected value to another with a fairly
+  * high accuracy, and we didn't miss any events. We can thus
+  * use the TSC value at the transitions to calculate a pretty
+- * good value for the TSC frequencty.
++ * good value for the TSC frequency.
+  */
+ static inline int pit_verify_msb(unsigned char val)
  {
-@@ -16,27 +17,16 @@ static int e820_pmem_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--#ifdef CONFIG_MEMORY_HOTPLUG
--static int e820_range_to_nid(resource_size_t addr)
--{
--	return memory_add_physaddr_to_nid(addr);
--}
--#else
--static int e820_range_to_nid(resource_size_t addr)
--{
--	return NUMA_NO_NODE;
--}
--#endif
--
- static int e820_register_one(struct resource *res, void *data)
+diff --git a/arch/x86/kernel/tsc_sync.c b/arch/x86/kernel/tsc_sync.c
+index 32a8187..3d3c761 100644
+--- a/arch/x86/kernel/tsc_sync.c
++++ b/arch/x86/kernel/tsc_sync.c
+@@ -295,7 +295,7 @@ static cycles_t check_tsc_warp(unsigned int timeout)
+  * But as the TSC is per-logical CPU and can potentially be modified wrongly
+  * by the bios, TSC sync test for smaller duration should be able
+  * to catch such errors. Also this will catch the condition where all the
+- * cores in the socket doesn't get reset at the same time.
++ * cores in the socket don't get reset at the same time.
+  */
+ static inline unsigned int loop_timeout(int cpu)
  {
- 	struct nd_region_desc ndr_desc;
- 	struct nvdimm_bus *nvdimm_bus = data;
-+	int nid = phys_to_target_node(res->start);
- 
- 	memset(&ndr_desc, 0, sizeof(ndr_desc));
- 	ndr_desc.res = res;
--	ndr_desc.numa_node = e820_range_to_nid(res->start);
--	ndr_desc.target_node = ndr_desc.numa_node;
-+	ndr_desc.numa_node = numa_map_to_online_node(nid);
-+	ndr_desc.target_node = nid;
- 	set_bit(ND_REGION_PAGEMAP, &ndr_desc.flags);
- 	if (!nvdimm_pmem_region_create(nvdimm_bus, &ndr_desc))
- 		return -ENXIO;
-
