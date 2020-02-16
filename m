@@ -2,63 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5A51160600
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 20:40:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25666160608
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 20:50:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726742AbgBPTkA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 14:40:00 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:35320 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726009AbgBPTj7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 14:39:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1581881998; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:references; bh=xOd8vpBAcGa3BeTpj1bp17aeuVAAbyNS4ZEySTi8Lrw=;
-        b=et0F/S1dj/H3xCe0U+YJsOx2C5vzFMgvGS4AAnJinGfSAsINFPGAsAwtT6bftHGvYVDGVh
-        G3gBqX67JXg0VSN0MNm8HutitVL+/wOTE/JLfa+b4mtsC6x/w4lOdfrEVw5xd2LRv/JfsL
-        J4EufEuPiub6Ga2l0f/PZutHY1yk6sE=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     "David S . Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>,
-        "H . Nikolaus Schaller" <hns@goldelico.com>,
-        Mathieu Malaterre <malat@debian.org>
-Subject: [PATCH] net: ethernet: dm9000: Handle -EPROBE_DEFER in dm9000_parse_dt()
-Date:   Sun, 16 Feb 2020 16:39:43 -0300
-Message-Id: <20200216193943.81134-1-paul@crapouillou.net>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726701AbgBPTuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 14:50:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45704 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726009AbgBPTuT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Feb 2020 14:50:19 -0500
+Subject: Re: [GIT PULL] ext4 bug fixes for 5.6-rc2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581882618;
+        bh=WKQi7KUTHW18qnotC/iBi1/osnN5kFcWzVplBEWyJTE=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=MByUNTGxMW68v1jryVA9dxxuPvVph3I/b/CPgtmmFHfBTsJU1mPWPotRHVQAyv2xu
+         DEepOJAuoiyfD9igKZYHlYRCoG0Wc7qbtJF6U9sk1/27BLulzubE6598Qp16tAn1F+
+         MxL2uGmXKoJ9zxprVBBE+yI0ExkyJpf22SOEDnMQ=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20200216025822.GA721338@mit.edu>
+References: <20200216025822.GA721338@mit.edu>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20200216025822.GA721338@mit.edu>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git
+ tags/ext4_for_linus_stable
+X-PR-Tracked-Commit-Id: d65d87a07476aa17df2dcb3ad18c22c154315bec
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 8a8b80967b421218d89c1af61e759c54ab94fdb6
+Message-Id: <158188261850.7458.819464209091406484.pr-tracker-bot@kernel.org>
+Date:   Sun, 16 Feb 2020 19:50:18 +0000
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     torvalds@linux-foundation.org, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The call to of_get_mac_address() can return -EPROBE_DEFER, for instance
-when the MAC address is read from a NVMEM driver that did not probe yet.
+The pull request you sent on Sat, 15 Feb 2020 21:58:22 -0500:
 
-Cc: H. Nikolaus Schaller <hns@goldelico.com>
-Cc: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- drivers/net/ethernet/davicom/dm9000.c | 2 ++
- 1 file changed, 2 insertions(+)
+> git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git tags/ext4_for_linus_stable
 
-diff --git a/drivers/net/ethernet/davicom/dm9000.c b/drivers/net/ethernet/davicom/dm9000.c
-index 1ea3372775e6..e94ae9b94dbf 100644
---- a/drivers/net/ethernet/davicom/dm9000.c
-+++ b/drivers/net/ethernet/davicom/dm9000.c
-@@ -1405,6 +1405,8 @@ static struct dm9000_plat_data *dm9000_parse_dt(struct device *dev)
- 	mac_addr = of_get_mac_address(np);
- 	if (!IS_ERR(mac_addr))
- 		ether_addr_copy(pdata->dev_addr, mac_addr);
-+	else if (PTR_ERR(mac_addr) == -EPROBE_DEFER)
-+		return ERR_CAST(mac_addr);
- 
- 	return pdata;
- }
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/8a8b80967b421218d89c1af61e759c54ab94fdb6
+
+Thank you!
+
 -- 
-2.25.0
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
