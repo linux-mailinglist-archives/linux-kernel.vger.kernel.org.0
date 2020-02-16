@@ -2,114 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ED1E1603FC
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 13:20:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 089491603E9
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 13:06:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728157AbgBPMUT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 07:20:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54612 "EHLO mail.kernel.org"
+        id S1728108AbgBPMDk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 07:03:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53322 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726651AbgBPMUT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 07:20:19 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1728009AbgBPMDk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Feb 2020 07:03:40 -0500
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C246E2084E;
-        Sun, 16 Feb 2020 12:20:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D4B5820857;
+        Sun, 16 Feb 2020 12:03:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581855618;
-        bh=PHE098dmEFXu6oYKRN+BUb6ZDWnNqCSxtkdjvGF2pTo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rLB4k6d5m716NQ/OnptZFHwuDttAwPI5QM5iXZt/PFVxpU9IuVtZr1BpdVnH+/2S/
-         fCGJbSX4O4LkA5jjwca8DDCoj4/edZOOOW9vL2KcChpkh/W9ahYgUb8Pf7bhDifY3l
-         GzmT3SHkFhHgNH3Q7kf3XpjCLyXkZjJ1LKc+bHhw=
-Date:   Sun, 16 Feb 2020 08:21:11 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Benjamin GAIGNARD <benjamin.gaignard@st.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Grant Likely <grant.likely@arm.com>,
-        "robh@kernel.org" <robh@kernel.org>,
-        Loic PALLARDY <loic.pallardy@st.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "system-dt@lists.openampproject.org" 
-        <system-dt@lists.openampproject.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "lkml@metux.net" <lkml@metux.net>,
-        "linux-imx@nxp.com" <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "fabio.estevam@nxp.com" <fabio.estevam@nxp.com>,
-        "stefano.stabellini@xilinx.com" <stefano.stabellini@xilinx.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 2/7] bus: Introduce firewall controller framework
-Message-ID: <20200216072111.GA14598@kroah.com>
-References: <20200128165712.GA3667596@kroah.com>
- <62b38576-0e1a-e30e-a954-a8b6a7d8d897@st.com>
- <CACRpkdY427EzpAt7f5wwqHpRS_SHM8Fvm+cFrwY8op0E_J+D9Q@mail.gmail.com>
- <20200129095240.GA3852081@kroah.com>
- <20200129111717.GA3928@sirena.org.uk>
- <0b109c05-24cf-a1c4-6072-9af8a61f45b2@st.com>
- <20200131090650.GA2267325@kroah.com>
- <CACRpkdajhivkOkZ63v-hr7+6ObhTffYOx5uZP0P-MYvuVnyweA@mail.gmail.com>
- <20200214214051.GA4192967@kroah.com>
- <409eb745-aab2-86a7-bd3a-9e8e05bed057@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <409eb745-aab2-86a7-bd3a-9e8e05bed057@st.com>
+        s=default; t=1581854620;
+        bh=lj7ZTxv/npbHV4KVzblAHdNDotXt560iH11Zbuy9Z6A=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=LZ1FDdnM30i3Q5YKwt/DoUotiLpQaPAn2jIh/wtCEGKRsI+i4MG1glYufqsMHguLV
+         5mICwHAGUqtCowcCr6QIteAoFz6KYn/0DtTinanK9TvPYCwLcuRwo0s8+aDTkaRrmP
+         7XMeV84cBiYzggNpRDNOE5lxDgf1nUE74PnMUNRQ=
+Date:   Sun, 16 Feb 2020 21:03:33 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Qiujun Huang <hqjagain@gmail.com>
+Cc:     akpm@linux-foundation.org, mhiramat@kernel.org,
+        rostedt@goodmis.org, keescook@chromium.org, rppt@linux.ibm.com,
+        linux@dominikbrodowski.net, nivedita@alum.mit.edu,
+        nadav.amit@gmail.com, glider@google.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] init/main.c: mark boot_config_checksum static
+Message-Id: <20200216210333.b5e911feafb3acfae4a1b89b@kernel.org>
+In-Reply-To: <1581852511-14163-1-git-send-email-hqjagain@gmail.com>
+References: <1581852511-14163-1-git-send-email-hqjagain@gmail.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 15, 2020 at 12:41:07PM +0000, Benjamin GAIGNARD wrote:
+On Sun, 16 Feb 2020 19:28:31 +0800
+Qiujun Huang <hqjagain@gmail.com> wrote:
+
+> In fact, this function is only used in this file, so mark it with 'static'.
+
+Good catch!
+
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+
+Thank you!
+
 > 
-> On 2/14/20 10:40 PM, Greg KH wrote:
-> > On Fri, Feb 14, 2020 at 05:05:07PM +0100, Linus Walleij wrote:
-> >> On Fri, Jan 31, 2020 at 10:06 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >>
-> >>> Why do people want to abuse the platform bus so much?  If a device is on
-> >>> a bus that can have such a controller, then it is on a real bus, use it!
-> >> I'm not saying it is a good thing, but the reason why it is (ab)used so
-> >> much can be found in:
-> >> drivers/of/platform.c
-> >>
-> >> TL;DR: struct platform_device is the Device McDeviceFace and
-> >> platform bus the Bus McBusFace used by the device tree parser since
-> >> it is slightly to completely unaware of what devices it is actually
-> >> spawning.
-> > <snip>
-> >
-> > Yeah, great explaination, and I understand.  DT stuff really is ok to be
-> > on a platform bus, as that's what almost all of them are.
-> >
-> > But, when you try to start messing around with things like this
-> > "firewall" says it is doing, it's then obvious that this really isn't a
-> > DT like thing, but rather you do have a bus involved with a controller
-> > so that should be used instead.
+> Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
+> ---
+>  init/main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Ok but how put in place a new bus while keeping the devices on platform
-> bus to avoid changing all the drivers ?
-
-You don't, you put them all on your real bus, as that is what you now
-have.
-
-> > Or just filter away the DT stuff so that the kernel never even sees
-> > those devices, which might just be simplest :)
+> diff --git a/init/main.c b/init/main.c
+> index f95b014..534589f 100644
+> --- a/init/main.c
+> +++ b/init/main.c
+> @@ -335,7 +335,7 @@ static char * __init xbc_make_cmdline(const char *key)
+>  	return new_cmdline;
+>  }
+>  
+> -u32 boot_config_checksum(unsigned char *p, u32 size)
+> +static u32 boot_config_checksum(unsigned char *p, u32 size)
+>  {
+>  	u32 ret = 0;
+>  
+> -- 
+> 1.8.3.1
 > 
-> yes but we lost the possibility to change the firewall configuration at
-> run time. I do expect to be able to describe in the DT firewall configuration
-> and to use them at run time. That could allow, for example, to handover
-> a HW block to the coprocessor when the main core is going to be suspended
-> to save power.
 
-Then use a real bus :)
 
-thanks,
-
-greg k-h
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
