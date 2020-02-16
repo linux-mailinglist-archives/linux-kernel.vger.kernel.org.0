@@ -2,177 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F167E1601A2
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 05:20:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E01D1601A6
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 05:29:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727691AbgBPEP7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Feb 2020 23:15:59 -0500
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:40752 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726634AbgBPEP7 (ORCPT
+        id S1727778AbgBPE2I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Feb 2020 23:28:08 -0500
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:30329 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726651AbgBPE2H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Feb 2020 23:15:59 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R811e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04428;MF=wenyang@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0Tq3BIwr_1581826554;
-Received: from IT-C02W23QPG8WN.local(mailfrom:wenyang@linux.alibaba.com fp:SMTPD_---0Tq3BIwr_1581826554)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sun, 16 Feb 2020 12:15:55 +0800
-Subject: Re: [PATCH] mm/slub: Detach node lock from counting free objects
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Xunlei Pang <xlpang@linux.alibaba.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20200201031502.92218-1-wenyang@linux.alibaba.com>
- <20200212145247.bf89431272038de53dd9d975@linux-foundation.org>
-From:   Wen Yang <wenyang@linux.alibaba.com>
-Message-ID: <b42f7daa-4aea-1cf8-5bbb-2cd5d48b4e9a@linux.alibaba.com>
-Date:   Sun, 16 Feb 2020 12:15:54 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
- Gecko/20100101 Thunderbird/68.1.1
+        Sat, 15 Feb 2020 23:28:07 -0500
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id 01G4RuqS019081;
+        Sun, 16 Feb 2020 13:27:57 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com 01G4RuqS019081
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1581827277;
+        bh=W2C/jmuxMmam57+9aJUIVpRDw8p3eH2qNzl48a8ilKs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=fulvgh9XRLhWMSKUekKh+FrHtD0r6bQftEikx9aHvCgYrVC8ZzAhS9992eDjrLkT2
+         2iyzIsMIkU92G0v6WMymP4fFGc/Gql34m/XeIC8s45afXGDOMWKZdToZUowXcstajO
+         Saq31bpejwxoumUyACseGCYCHGY7mgqHiuTR2X7DJuqrk5mAHqUIWPN7VGFfuStzLy
+         4w14yur6QnneOpyyPdf23kaf3tc/3ZSHi+S98y7GYvYDGDlJsjgU7T7MjOHX1ljK7g
+         ngimSlcqwhvpJ5s6+P0eh+SPI4t58zmm9XJaKw4HDZkWhd7hObCpXz7NpRqEhtXrT7
+         D1iHOFMxrT9VA==
+X-Nifty-SrcIP: [209.85.222.45]
+Received: by mail-ua1-f45.google.com with SMTP id y23so5012139ual.2;
+        Sat, 15 Feb 2020 20:27:57 -0800 (PST)
+X-Gm-Message-State: APjAAAU4pb9KrozsefVsplUGoqWQpwV+HZQ4sqA2LSByUGXosebqvwsP
+        zS27qKQAZsoW3HEGZ+um9QjHGKTZxRK5jnm93xY=
+X-Google-Smtp-Source: APXvYqxigRJ5eLrgiz9xEj+lkD8K4QDoRqbdKRp/dv91nqDiBN03PCGMBXWIwCKeCSI9wfkPGFVGWPfNqwSr+c0ldvk=
+X-Received: by 2002:ab0:45c7:: with SMTP id u65mr4868962uau.109.1581827276241;
+ Sat, 15 Feb 2020 20:27:56 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200212145247.bf89431272038de53dd9d975@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20200210131925.145463-1-samitolvanen@google.com>
+ <CAK7LNAS7UchtP_+2m4AB-hJ=nMwsM-qpkJ+VHU1JGJrn8K1KPg@mail.gmail.com> <CABCJKuemBAeySJQY6yxhzbxK=XGBtVSt+6J6WXpO=RoiVXH7GQ@mail.gmail.com>
+In-Reply-To: <CABCJKuemBAeySJQY6yxhzbxK=XGBtVSt+6J6WXpO=RoiVXH7GQ@mail.gmail.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Sun, 16 Feb 2020 13:27:20 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARyYqmSByD3jQr+TPe1RHEj9CxqRE880AqxA5SU3yUk5A@mail.gmail.com>
+Message-ID: <CAK7LNARyYqmSByD3jQr+TPe1RHEj9CxqRE880AqxA5SU3yUk5A@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: remove duplicate dependencies from .mod files
+To:     Sami Tolvanen <samitolvanen@google.com>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Sami,
+
+On Thu, Feb 13, 2020 at 2:13 AM Sami Tolvanen <samitolvanen@google.com> wrote:
+>
+> On Wed, Feb 12, 2020 at 5:23 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> > In which case are undefined symbols duplicated?
+>
+> When a module consists of multiple compilation units, which depend on
+> the same external symbols. In Android, we ran into this when adding
+> hardening features that all depend on an external error handler
+> function with a rather long name. When CONFIG_TRIM_UNUSED_SYMS was
+> later enabled, we ran into this:
+>
+> $ llvm-nm drivers/gpu/drm/nouveau/nouveau.o | sed -n 's/^  *U //p' |
+> xargs echo | wc
+>       2    9136  168660
+>
+> xargs defaults to 128kiB limit for command line size, so the output
+> was split into two lines, which means some of the dependencies were
+> dropped and we ran into modpost errors. One method of fixing this is
+> to increase the limit:
+>
+> $ llvm-nm drivers/gpu/drm/nouveau/nouveau.o | sed -n 's/^  *U //p' |
+> xargs -s 262144 echo | wc
+>       1    9136  168660
+>
+> But it seems removing duplicates is a better solution as the length of
+> the dependency list is reduced significantly:
+>
+> $ llvm-nm drivers/gpu/drm/nouveau/nouveau.o | sed -n 's/^  *U //p' |
+> sort -u | xargs echo | wc
+>       1    2716   50461
 
 
-On 2020/2/13 6:52 上午, Andrew Morton wrote:
-> On Sat,  1 Feb 2020 11:15:02 +0800 Wen Yang <wenyang@linux.alibaba.com> wrote:
-> 
->> The lock, protecting the node partial list, is taken when couting the free
->> objects resident in that list. It introduces locking contention when the
->> page(s) is moved between CPU and node partial lists in allocation path
->> on another CPU. So reading "/proc/slabinfo" can possibily block the slab
->> allocation on another CPU for a while, 200ms in extreme cases. If the
->> slab object is to carry network packet, targeting the far-end disk array,
->> it causes block IO jitter issue.
->>
->> This fixes the block IO jitter issue by caching the total inuse objects in
->> the node in advance. The value is retrieved without taking the node partial
->> list lock on reading "/proc/slabinfo".
->>
->> ...
->>
->> @@ -1768,7 +1774,9 @@ static void free_slab(struct kmem_cache *s, struct page *page)
->>   
->>   static void discard_slab(struct kmem_cache *s, struct page *page)
->>   {
->> -	dec_slabs_node(s, page_to_nid(page), page->objects);
->> +	int inuse = page->objects;
->> +
->> +	dec_slabs_node(s, page_to_nid(page), page->objects, inuse);
-> 
-> Is this right?  dec_slabs_node(..., page->objects, page->objects)?
-> 
-> If no, we could simply pass the page* to inc_slabs_node/dec_slabs_node
-> and save a function argument.
-> 
-> If yes then why?
-> 
+At least, I am unable to reproduce this in upstream.
 
-Thanks for your comments.
-We are happy to improve this patch based on your suggestions.
+This is my result for x86 allmodconfig builds.
+
+masahiro@grover:~/workspace/linux-kbuild$ nm
+drivers/gpu/drm/nouveau/nouveau.o | sed -n 's/^  *U //p' | wc
+    572     572   11478
+masahiro@grover:~/workspace/linux-kbuild$ nm
+drivers/gpu/drm/nouveau/nouveau.o | sed -n 's/^  *U //p' | sort -u |
+wc
+    572     572   11478
 
 
-When the user reads /proc/slabinfo, in order to obtain the active_objs 
-information, the kernel traverses all slabs and executes the following 
-code snippet:
-static unsigned long count_partial(struct kmem_cache_node *n,
-                                         int (*get_count)(struct page *))
-{
-         unsigned long flags;
-         unsigned long x = 0;
-         struct page *page;
-
-         spin_lock_irqsave(&n->list_lock, flags);
-         list_for_each_entry(page, &n->partial, slab_list)
-                 x += get_count(page);
-         spin_unlock_irqrestore(&n->list_lock, flags);
-         return x;
-}
-
-It may cause performance issues.
-
-Christoph suggested "you could cache the value in the userspace 
-application? Why is this value read continually?", But reading the 
-/proc/slabinfo is initiated by the user program. As a cloud provider, we 
-cannot control user behavior. If a user program inadvertently executes 
-cat /proc/slabinfo, it may affect other user programs.
-
-As Christoph said: "The count is not needed for any operations. Just for 
-the slabinfo output. The value has no operational value for the 
-allocator itself. So why use extra logic to track it in potentially 
-performance critical paths?"
-
-In this way, could we show the approximate value of active_objs in the 
-/proc/slabinfo?
-
-Based on the following information:
-In the discard_slab() function, page->inuse is equal to page->total_objects;
-In the allocate_slab() function, page->inuse is also equal to 
-page->total_objects (with one exception: for kmem_cache_node, page-> 
-inuse equals 1);
-page->inuse will only change continuously when the obj is constantly 
-allocated or released. (This should be the performance critical path 
-emphasized by Christoph)
-
-When users query the global slabinfo information, we may use 
-total_objects to approximate active_objs.
-
-In this way, the modified patch is as follows:
-
-diff --git a/mm/slub.c b/mm/slub.c
-index a0b335d..ef0e6ac 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -5900,17 +5900,15 @@ void get_slabinfo(struct kmem_cache *s, struct 
-slabinfo *sinfo)
-  {
-         unsigned long nr_slabs = 0;
-         unsigned long nr_objs = 0;
--       unsigned long nr_free = 0;
-         int node;
-         struct kmem_cache_node *n;
-
-         for_each_kmem_cache_node(s, node, n) {
-                 nr_slabs += node_nr_slabs(n);
-                 nr_objs += node_nr_objs(n);
--               nr_free += count_partial(n, count_free);
-         }
-
--       sinfo->active_objs = nr_objs - nr_free;
-+       sinfo->active_objs = nr_objs;
-         sinfo->num_objs = nr_objs;
-         sinfo->active_slabs = nr_slabs;
-         sinfo->num_slabs = nr_slabs;
+I see no difference with/without 'sort -u'.
 
 
-In addition, when the user really needs to view the precise active_obj 
-value of a slab, he can query this single slab info through an interface 
-similar to the following, which avoids traversing all the slabs.
-
-# cat /sys/kernel/slab/kmalloc-512/total_objects
-1472 N0=1472
-# cat /sys/kernel/slab/kmalloc-512/objects
-1311 N0=1311
-
-or
-# cat /sys/kernel/slab/kmalloc-8k/total_objects
-60 N0=60
-# cat /sys/kernel/slab/kmalloc-8k/objects
-60 N0=60
+I also tried llvm-nm instead of GNU nm,
+but the result is the same.
 
 
-Best wishes,
-Wen
+masahiro@grover:~/workspace/linux-kbuild$ llvm-nm
+drivers/gpu/drm/nouveau/nouveau.o | sed -n 's/^  *U //p' | wc
+    572     572   11478
+masahiro@grover:~/workspace/linux-kbuild$ llvm-nm
+drivers/gpu/drm/nouveau/nouveau.o | sed -n 's/^  *U //p' | sort -u |
+wc
+    572     572   11478
 
->>   	free_slab(s, page);
->>   }
->>   
+
+
+
+> > Do you have a .config to reproduce it?
+>
+> I can currently reproduce this on an Android kernel that has
+> Control-Flow Integrity (CFI) enabled. While this feature is not
+> upstreamed yet, there's nothing that would prevent us from hitting the
+> command line limit with sufficiently large modules otherwise as well.
+
+
+Does ACK do this differently?
+
+I think it would be strange
+if $(NM) duplicated undefined symbols.
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
