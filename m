@@ -2,67 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB77A1604AB
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 17:02:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ADB71604AF
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 17:06:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728396AbgBPQCN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 11:02:13 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:42572 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728293AbgBPQCN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 11:02:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=cWzOpiOu7VlYjJzjka/uz4Y9eKUv0MO2UGlQ+F9pXEg=; b=LYzJjga0YcaHKF6XPZepjCtZ38
-        dhiVAEks0WShzXhYlaM/A1Iz8WQgtfujRfXxn5Oob1gZsp84rhBVs0u8Bfh30DshXhtvN9TGpeHk/
-        p1HFg9+cIjx/2d6+TTauS4/GBYKLXI+GaJwfyEkDLR4oJGdbo0YwWJ7c6ubEtJIijejvFEEw0/naP
-        6hw3SnC1YNrQclZK1qeRbDYefSX9/NPwCjiVxZLJ6I7SBOyCvPwrMG+MF8cconRoaxt1a5ORVea6g
-        kQbnTkHybVVU7Tm7qoPuJMC5O79/bgu0DQ0lZr6ITT2KQrJFgBHXZSA3YaVAo0fKxx1CUB/YpmrDL
-        oTF8ffDQ==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j3MN3-0005FL-1O; Sun, 16 Feb 2020 16:02:13 +0000
-Subject: Re: x86: Fix a handful of typos
-To:     Martin Molnar <martin.molnar.programming@gmail.com>, x86@kernel.org
+        id S1728414AbgBPQGJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 11:06:09 -0500
+Received: from mout.web.de ([212.227.15.3]:60155 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728293AbgBPQGI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Feb 2020 11:06:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1581869156;
+        bh=MZlY5jXxovnVpKhXenFIH3sYVC3V8sCSqoLKnbMBfrg=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=KMyaulILEc0ViK1SjeBPOF9a98z71AIW87x+3leMPx3lnAgzGJ9l/h1G3DMapurvr
+         DP0fHiGoXftlHgzqMeJjBBp2nCeoHTTy5j84XSqavLH9x4nW/bmzLVuGh/I0ILEMN3
+         ZzpNoX3i3CC8Gi5AazB9hKuvNtHe78hcPBeGEQ/g=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.10] ([95.157.55.156]) by smtp.web.de (mrweb004
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0M4lkz-1jO4FN2tjh-00ywOb; Sun, 16
+ Feb 2020 17:05:56 +0100
+Subject: Re: [PATCH v2 3/3] riscv: Fix crash when flushing executable ioremap
+ regions
+To:     Alex Ghiti <alex@ghiti.fr>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-riscv@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org
-References: <0819a044-c360-44a4-f0b6-3f5bafe2d35c@gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <d311681b-3481-b808-71e4-258bfc01c788@infradead.org>
-Date:   Sun, 16 Feb 2020 08:02:11 -0800
+References: <cover.1581767384.git.jan.kiszka@web.de>
+ <8a555b0b0934f0ba134de92f6cf9db8b1744316c.1581767384.git.jan.kiszka@web.de>
+ <e721c440-2baf-d962-62ef-41a4f3b1333b@ghiti.fr>
+From:   Jan Kiszka <jan.kiszka@web.de>
+Message-ID: <b63e5945-0e31-940f-5ff7-6754ef5c034f@web.de>
+Date:   Sun, 16 Feb 2020 17:05:55 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <0819a044-c360-44a4-f0b6-3f5bafe2d35c@gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <e721c440-2baf-d962-62ef-41a4f3b1333b@ghiti.fr>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:4IYkYoTip6rhKbBbR3p45GwgeQBDPssEbOY75DgUV5s0zWnKyf0
+ /xbkS6vPCX50+OITwD3eb3uAo87TZJvAW3LpnZXgsALeRQfWGvJHoU6LUBLgJI7bjbzFoSv
+ qVOUmoJr7OI59ePFab4bMeymQ8p/fZFDG9pIq0dzd5fCPpVrjlxo8RQHkbaMl7cRTaApIvn
+ ggBPQKU+Rd9hUusHBcXYA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:+wWHqJLZyLs=:6QTPINZQciCeoWt1mjpoif
+ U0g4M0oP+tuEm0imgfgwvi+9PJsPduQv1+os4sPFys5GYlx22fgSjghLYtewimO19gTUj++Ze
+ vFYGKdCMmh8c0CwowbhJ6vv5kxVRObsvoWdGJ2v/0dO6Wxtf8136fOtSNd6gPJbQz3vheannA
+ s31KAgPiF8M5LSKv/4vkiIgpANe08i2+JOFHS+X1XfZX9HLe3bQrnRnns2H6zVBzaH0vl1X/F
+ IegofJz+Y/WqBsDLVT95hyGVBrkuhotjHpTfOEWFU2o5DxmEMG/k0NgmlIDaub4pdBGVX8i8d
+ Kaq471l4qrlCoRdU/gBWWbM863QsnaK/IsVZRrmN18fz+SBdxZzCDiErkkMqFq7jca8vL8OXf
+ aSs/o9OcxNGsFDgRzMDFv0H/2Ke7Z0mSVSZ4thoPOMSX6JlFpfw62kbIfUJCinAXVhn4Kv4gq
+ bFdl5KVmDZuteLEsWKSYaqEQJk8yjYYsu6jW9cJ+j3yHF+Q+7OF8+Nx7ABQqZMISdpjBhS6NE
+ ZxTQQCs17ET6UnHjfwm98cG3xh1MOJC6CBuDJvKP71Z57fQ95eDvPgH8o0M5v8CChWIAm61fZ
+ vb8S3Yw6iXamhgDyafgIX9omDeih/OpJ9OWLeXi1jLQrKR01vOe7plN/S91ypR3/HCE56piJZ
+ y0UKbMnmkwqS72OmAvNKnE6uJMteWfvngp74RhMHbrMZ/+jLGRM+pyiWpeBtTs+Fe0q3oGv21
+ BIegb++mAf141DNIW5MJ7RnfSLrXSBScbFjGN/9g/9uaXy8di2NoNZ03v7mWaxzQtrh2dnwhs
+ //bFXJud+4U6AKZiouQmQzZ/PRqr8Ylj6/FgieoD3jLIILgtCc2uaUxxqertGOXccCIQkRoJH
+ mwB9RnCfTrgodaU8yaLD0ulKHtRE94MA32Zp4JBkZnCyU7oaqnjZY5fZWrzcDJ58p5X1eJmbK
+ giJsp0ramTrp08SE7Zda26mRnSaNTOsDT/yoYlUuCS+gH4JFUniGmUOHhh2gObTcldodWc9R6
+ GADiM9NJwBKXXqhaQ5ia4DgyPuti30oR5xQ9KHNFz3Waz+J6fbmgdjlh341pMkKJQk3GK52mw
+ /3odEAfk2fq+7XNl+Wn/ubLONRXgYr6zIScH+0GmKWds49hS1AJq5WMHRbk8xo2sxZertduj1
+ hvuouF+o6zXkCAXdLGopYaW4G5EiWZ9u+HJze6eeCxdaMgcVYrSYz0svCU4XUtXwgUulSIX3g
+ c/wzbauloWjIWvmENOgeFVFIDCIlfzxtT5rHtvgMmrzUWW1s0JDuVQ4OGfwgwbddQdSTdYiw3
+ Gs0R5gAf3MVoK7jf4pPxEoAB9uFtirYWuJzI5yJ7xUn9qDi2yJpPO904u0E+i7ww/ELI/pAu
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/16/20 7:17 AM, Martin Molnar wrote:
-> Please find a couple of typos fixed in the patch below. Let me know if I should do anything else.
-> 
->      Martin Molnar
-> 
-> Signed-off-by: Martin Molnar <martin.molnar.programming@gmail.com>
+On 16.02.20 15:41, Alex Ghiti wrote:
+> Hi Jan,
+>
+> On 2/15/20 6:49 AM, Jan Kiszka wrote:
+>> From: Jan Kiszka <jan.kiszka@siemens.com>
+>>
+>> Those are not backed by page structs, and pte_page is returning an
+>> invalid pointer.
+>>
+>> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+>> =3D2D--
+>> =A0 arch/riscv/mm/cacheflush.c | 3 ++-
+>> =A0 1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/riscv/mm/cacheflush.c b/arch/riscv/mm/cacheflush.c
+>> index 8930ab7278e6..9ee2c1a387cc 100644
+>> =3D2D-- a/arch/riscv/mm/cacheflush.c
+>> +++ b/arch/riscv/mm/cacheflush.c
+>> @@ -84,7 +84,8 @@ void flush_icache_pte(pte_t pte)
+>> =A0 {
+>> =A0=A0=A0=A0=A0 struct page *page =3D3D pte_page(pte);
+>>
+>> -=A0=A0=A0 if (!test_and_set_bit(PG_dcache_clean, &page->flags))
+>> +=A0=A0=A0 if (!pfn_valid(pte_pfn(pte)) ||
+>> +=A0=A0=A0=A0=A0=A0=A0 !test_and_set_bit(PG_dcache_clean, &page->flags)=
+)
+>> =A0=A0=A0=A0=A0=A0=A0=A0=A0 flush_icache_all();
+>> =A0 }
+>> =A0 #endif /* CONFIG_MMU */
+>> =3D2D-
+>> 2.16.4
+>>
+>>
+>
+> When did you encounter such a situation ? i.e. executable code that is
+> not backed by struct page ?
+>
+> Riscv uses the generic implementation of ioremap and the way
+> _PAGE_IOREMAP is defined does not allow to map executable memory region
+> using ioremap, so I'm interested to understand how we end up in
+> flush_icache_pte for an executable region not backed by any struct page.
 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+You can create executable mappings of memory that Linux does not
+initially consider as RAM via ioremap_prot or ioremap_page_range. We are
+using that in Jailhouse to load the hypervisor code into reserved memory
+that is ioremapped for the purpose. Works fine on x86, arm and arm64.
 
-> ---
->  arch/x86/kernel/irqinit.c  | 2 +-
->  arch/x86/kernel/nmi.c      | 4 ++--
->  arch/x86/kernel/reboot.c   | 2 +-
->  arch/x86/kernel/smpboot.c  | 2 +-
->  arch/x86/kernel/tsc.c      | 2 +-
->  arch/x86/kernel/tsc_sync.c | 2 +-
->  6 files changed, 7 insertions(+), 7 deletions(-)
-
-Thanks.
--- 
-~Randy
-
+Jan
