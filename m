@@ -2,93 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16E48160534
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 19:11:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CD5216054C
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2020 19:23:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726171AbgBPSLP convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 16 Feb 2020 13:11:15 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:43101 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725993AbgBPSLO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 13:11:14 -0500
-Received: from mail-qv1-f52.google.com ([209.85.219.52]) by
- mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MC2wN-1jAr2z21oT-00CPB6; Sun, 16 Feb 2020 19:11:12 +0100
-Received: by mail-qv1-f52.google.com with SMTP id p2so6627875qvo.10;
-        Sun, 16 Feb 2020 10:11:12 -0800 (PST)
-X-Gm-Message-State: APjAAAVdAhhTXGBVMxgMhlinMFl8qxvoz+FGEi4vwpbT8vMIN8Hait9+
-        smgBddOrmaIFqF1v5j8umdU+g1E335ROqP2UhmE=
-X-Google-Smtp-Source: APXvYqzvtOyO80NGJ0NQzbdKQvJf1lkKW8T220YClkzb69MFsE4nIeROks8Hz90TjXKc5YYn+5v58NnqAVTN3OLIhHE=
-X-Received: by 2002:a05:6214:524:: with SMTP id x4mr10124633qvw.4.1581876671327;
- Sun, 16 Feb 2020 10:11:11 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1577111363.git.christophe.leroy@c-s.fr> <bd4557a7-9715-59aa-5d8e-488c5e516a98@c-s.fr>
- <20200109200733.GS3191@gate.crashing.org> <77a8bf25-6615-6c0a-56d4-eae7aa8a8f09@c-s.fr>
- <20200111113328.GX3191@gate.crashing.org>
-In-Reply-To: <20200111113328.GX3191@gate.crashing.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Sun, 16 Feb 2020 19:10:55 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a11wX1zJ+TAacDTkYsrzvfdVmNrcB6OC23aFvCxF57opQ@mail.gmail.com>
-Message-ID: <CAK8P3a11wX1zJ+TAacDTkYsrzvfdVmNrcB6OC23aFvCxF57opQ@mail.gmail.com>
-Subject: Re: Surprising code generated for vdso_read_begin()
-To:     Segher Boessenkool <segher@kernel.crashing.org>
-Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:HLqAkIdoPfiPyFHDmbvrtr7n5xYGZph2jMmE62iSDBEnJFcP4Qc
- /SnGSw2icyqhgyrplUKr8475IJrVw8nnHseRauGk4BEdX1ZxxVYn7cydGBYeWj3jBAax9Hb
- WkLyZIbs6QouruTACgn8W6ljRDG3ctdYHnqdTmww8WpSgBHO4GPc4LxGGMxhj5qA7mqGVoK
- MmLLeVohRb/RD/yXVbwOw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:TogwV+iRtEQ=:cU9tZONLF1toHxisqha2Fb
- KzA/Yaf3sW5bq2jYKfVL9Dg6sef78hInu/lOHeohFGLDnfLlOi67PvhWEzDXQ8ljDc3o/mRKC
- rHSMe7X08knS3o6SHgg46AQ/RIocNdco1Nr+RE4zM5AKNK3ZjfCgs0aGFl3oUBp8/bWCfv/Rz
- sPxbdMf1KmoOnXyzm6n+XijtBDA991owf073r/xmk14kgK+FYKLGGWB7lxFCZp7Uwcs981Ud3
- g60zYQ8RicLHPwwiMlUDlZ6B1F5fsyncH36B1dtR0NYcuKuAf8e3vNKcWdRIUHNkNrlXEz6Q1
- Sf/xlFDheBhryTBIW+xcGfB51Ze6u4qrMkVf6GJ6mwmIu29kwUnM8xJ5m0CNwo2frkfgaqrJ4
- Bbh09sG0X9+gwAi5MeEqXciInTnz77zYSOSdK95G4O/n0cASKkHaCICLnQSkLajpQEpQVK5yc
- DZ+4Tzv2t/lmOdd8KsF3Tq5z2GZww7Zi/2YeCGv1tdQXx5a34KiLltsNIauHIvf9fPYG3uj0R
- KvzWtc//q6opalb2/MWhlq/vDcVI8B6qnUUBJgNnQHm8q2wpXMXxAAUIz9LFM3vpd+f8S2x8S
- feak26XmKB8ofpLlQareojXGbbdUmKkxETNxvWG3mrabe070PyDSKuE5j7kQwDpQHIA2OIhgy
- Ie0m9k86ZBM9BuAQ8puc3ciPng5G+QrpOIPoU9hrK8RDw6JFE6FdX7Y8U6aytk6JMIrN2WVhG
- GPycFqA1LqgXc0P1zcDj1/ci6mBYmkt+Q9RaQwpsoRPvL3cNwmL8vF4zNbIdDf260+x0dvvZg
- zaYgIbCTw2Xo2mDM6n/GhN3Thk0jde791M+5ND5VRc+X4PIw5M=
+        id S1726560AbgBPSXr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 13:23:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32894 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725989AbgBPSXr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Feb 2020 13:23:47 -0500
+Received: from e123331-lin.home (amontpellier-657-1-18-247.w109-210.abo.wanadoo.fr [109.210.65.247])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2722E206D6;
+        Sun, 16 Feb 2020 18:23:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581877426;
+        bh=Y0lM0H5P6IdWgTvgZ+96YnGiA1Mtavj5RNAg7nRDo34=;
+        h=From:To:Cc:Subject:Date:From;
+        b=SBasNHQLKJwTXUEuGcsnKD+CjiS6C6L/ai8u/F8JLdpGjO+ryNfzhRgaUFpMQF3IC
+         6OIvu+Fnqx2LbZrG3/0D/1rXtJxtkDf4nlRmfUS3tinqUI7owxNeJYnhBnSigg6ztp
+         S+7RJsIEy4iBImVCHid4ggFqd4+ULRkwhXp4jnq4=
+From:   Ard Biesheuvel <ardb@kernel.org>
+To:     linux-efi@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ardb@kernel.org>, nivedita@alum.mit.edu,
+        x86@kernel.org
+Subject: [PATCH 00/18] efi: clean up contents of struct efi
+Date:   Sun, 16 Feb 2020 19:23:16 +0100
+Message-Id: <20200216182334.8121-1-ardb@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 11, 2020 at 12:33 PM Segher Boessenkool
-<segher@kernel.crashing.org> wrote:
->
-> On Fri, Jan 10, 2020 at 07:45:44AM +0100, Christophe Leroy wrote:
-> > Le 09/01/2020 à 21:07, Segher Boessenkool a écrit :
-> > >It looks like the compiler did loop peeling.  What GCC version is this?
-> > >Please try current trunk (to become GCC 10), or at least GCC 9?
-> >
-> > It is with GCC 5.5
-> >
-> > https://mirrors.edge.kernel.org/pub/tools/crosstool/ doesn't have more
-> > recent than 8.1
->
-> Arnd, can you update the tools?  We are at 8.3 and 9.2 now :-)  Or is
-> this hard and/or painful to do?
+The generic r/w singleton object 'struct efi efi' is currently being used
+as a dumping ground for memory addresses of firmware tables that only have
+significance for a single architecture, or only at boot time [whereas
+struct efi is an object with indefinite lifetime, and which is exported
+to modules]
 
-To follow up on this older thread, I have now uploaded 6.5, 7.5, 8.3 and 9.2
-binaries, as well as a recent 10.0 snapshot.
+Since we're expecting a new arrival that does affect all architectures,
+which will need to be added to struct efi as well, let's do a cleanup
+pass, and move out all the per-arch pieces and other stuff that does not
+need to live in a global r/w struct.
 
-I hope these work, let me know if there are problems.
+As a side effect, I ran into some other things that can be refactored
+so that more code is shared between architectures, or made x86 specific
+if it is something that should maybe not have existed in the first place,
+and x86 is the only architecture where we cannot remove it for compatibility
+reasons.
 
-       Arnd
+Finally, we get rid of the struct efi::systab member, which we only need
+at runtime to get at the 'runtime' pointer, so let's store that instead.
+This allows us to drop some ugly handling of the remapped systab address,
+which we cannot discover as easily as the remapped 'runtime' pointer.
+
+Cc: nivedita@alum.mit.edu
+Cc: x86@kernel.org
+
+Ard Biesheuvel (18):
+  efi: drop handling of 'boot_info' configuration table
+  efi/ia64: move HCDP and MPS table handling into IA64 arch code
+  efi: move UGA and PROP table handling to x86 code
+  efi: make rng_seed table handling local to efi.c
+  efi: move mem_attr_table out of struct efi
+  efi: make memreserve table handling local to efi.c
+  efi: merge EFI system table revision and vendor checks
+  efi/ia64: use existing helpers to locate ESI table
+  efi/ia64: use local variable for EFI system table address
+  efi/ia64: switch to efi_config_parse_tables()
+  efi: make efi_config_init() x86 only
+  efi: clean up config_parse_tables()
+  efi/x86: remove runtime table address from kexec EFI setup data
+  efi/x86: make fw_vendor, config_table and runtime sysfs nodes x86
+    specific
+  efi/x86: merge assignments of efi.runtime_version
+  efi: add 'runtime' pointer to struct efi
+  efi/arm: drop unnecessary references to efi.systab
+  efi/x86: drop 'systab' member from struct efi
+
+ arch/ia64/kernel/efi.c                  |  55 ++--
+ arch/ia64/kernel/esi.c                  |  21 +-
+ arch/x86/include/asm/efi.h              |   6 +-
+ arch/x86/kernel/asm-offsets_32.c        |   5 +
+ arch/x86/kernel/kexec-bzimage64.c       |   5 +-
+ arch/x86/platform/efi/efi.c             | 262 ++++++++++----------
+ arch/x86/platform/efi/efi_32.c          |  13 +-
+ arch/x86/platform/efi/efi_64.c          |  14 +-
+ arch/x86/platform/efi/efi_stub_32.S     |  21 +-
+ arch/x86/platform/efi/quirks.c          |   2 +-
+ drivers/firmware/efi/arm-init.c         |  68 ++---
+ drivers/firmware/efi/arm-runtime.c      |  18 --
+ drivers/firmware/efi/efi.c              | 237 ++++++++----------
+ drivers/firmware/efi/memattr.c          |  13 +-
+ drivers/firmware/efi/runtime-wrappers.c |   4 +-
+ drivers/firmware/pcdp.c                 |   8 +-
+ include/linux/efi.h                     |  76 +++---
+ 17 files changed, 379 insertions(+), 449 deletions(-)
+
+-- 
+2.17.1
+
