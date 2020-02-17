@@ -2,339 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30AA616143C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 15:11:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0C65161435
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 15:10:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728937AbgBQOLg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 09:11:36 -0500
-Received: from mail-db8eur05on2111.outbound.protection.outlook.com ([40.107.20.111]:6208
-        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726873AbgBQOLe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 09:11:34 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XeNPMb9CIe/0e0nY6QMjxyFJKasjOZH4AhoGnUziZPwk3vHhnVM6ovretEA6J8UBCU6JtTovzHsg6oA6alB3HlUHoQdbRrnCI0cyCqR5hLMDEkoSZh3lnoh2FzSk/I2iVX0FgqFixelxL+4dQB+lmfU8dXUCo7TU4sY+qH3Ap+06JC8eBIdQJLc9GNX06bZyeUW0HNQWVQrb4HUQbCYOWfLsnCS+tyaLMsPyKwjH0n7v705vYzSzUwKvhL5s/HRhJtzB+lSZsryHDcurNCDd6RkKOYpOKQujLw0HEcuK1z6bj5iSSK8iGvhACQ5rNZV3FFrccyjMBPD3xugl+YGM2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2g6idMDSr+/6Eot15j7rYNzN7Irz/osm4vncPtl9y2E=;
- b=ghcUmW7j5j6PEgo43QgjHrsANJQBLwq/8bJ9STFgysaG8kVqnzpGyI2WIutfx5P8jpc/sfk9a+1k8BikmEoRIjNYpYgYFE5LQ3PHqdQxqoCV4H45QN81RK2eQWSoOwOSYBvTliekG7X+NRj+amoIKJ8iLHK+7NXVzvX9/1Q35tXEwXxDHzyDvaHREaJEirauiEitFyoFLR3rON/mbIz0JLEKFCvGyyoWmd809RNIrWGtyUxOrYwCFFC675s+HUs0YCoRfR51EQt5oN0TTRqFMAOXQVZvf9mHALWWrLK04sdgWB8ZM1DViPrsdVz17+mZ+/Jf7A6CiIUl2ThfsWt22A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nokia.com; dmarc=pass action=none header.from=nokia.com;
- dkim=pass header.d=nokia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
- s=selector1-nokia-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2g6idMDSr+/6Eot15j7rYNzN7Irz/osm4vncPtl9y2E=;
- b=vPuVLZ89833MM4kOm9TfC/wzBMGeZY8qdAOiOBEicb6ZZzhOsEwneZl+Vywe+uQR+Njb7CUyUTSbAWxIFfqVu2C89VDtx3U7CTtcuEhSdzxAq+6jkwERsxFIDT7kVLUcW3qFexcu7p+m5qBDcjPMbhPTUxUWecg7GQuOua6aVq4=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=alexander.sverdlin@nokia.com; 
-Received: from VI1PR07MB5040.eurprd07.prod.outlook.com (20.177.203.20) by
- VI1PR07MB5056.eurprd07.prod.outlook.com (20.177.203.80) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2750.12; Mon, 17 Feb 2020 14:11:27 +0000
-Received: from VI1PR07MB5040.eurprd07.prod.outlook.com
- ([fe80::20c4:7ce8:f735:316e]) by VI1PR07MB5040.eurprd07.prod.outlook.com
- ([fe80::20c4:7ce8:f735:316e%2]) with mapi id 15.20.2750.010; Mon, 17 Feb 2020
- 14:11:27 +0000
-From:   Alexander X Sverdlin <alexander.sverdlin@nokia.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Alexander Sverdlin <alexander.sverdlin@nokia.com>,
-        linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH v6 2/2] ARM: ftrace: Add MODULE_PLTS support
-Date:   Mon, 17 Feb 2020 15:09:55 +0100
-Message-Id: <20200217140955.211661-3-alexander.sverdlin@nokia.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200217140955.211661-1-alexander.sverdlin@nokia.com>
-References: <20200217140955.211661-1-alexander.sverdlin@nokia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: HE1P191CA0004.EURP191.PROD.OUTLOOK.COM (2603:10a6:3:cf::14)
- To VI1PR07MB5040.eurprd07.prod.outlook.com (2603:10a6:803:9c::20)
+        id S1728841AbgBQOKp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 09:10:45 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:15000 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727739AbgBQOKp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 09:10:45 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01HE5RuM134777;
+        Mon, 17 Feb 2020 09:10:17 -0500
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2y6bp07ywf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Feb 2020 09:10:17 -0500
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 01HEA8uk008753;
+        Mon, 17 Feb 2020 14:10:16 GMT
+Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
+        by ppma02dal.us.ibm.com with ESMTP id 2y68966pky-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Feb 2020 14:10:15 +0000
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01HEAEcS27263320
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Feb 2020 14:10:14 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A667CBE054;
+        Mon, 17 Feb 2020 14:10:14 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4AFB1BE051;
+        Mon, 17 Feb 2020 14:10:13 +0000 (GMT)
+Received: from leobras.br.ibm.com (unknown [9.18.235.152])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 17 Feb 2020 14:10:13 +0000 (GMT)
+Message-ID: <423702075b0dcb129dca83ae3a98b090d58ad0e7.camel@linux.ibm.com>
+Subject: Re: [PATCH] powerpc/8xx: Fix clearing of bits 20-23 in ITLB miss
+From:   Leonardo Bras <leonardo@linux.ibm.com>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Date:   Mon, 17 Feb 2020 11:10:09 -0300
+In-Reply-To: <1d6a53ab-ea72-7452-ea5f-43dd70b223c9@c-s.fr>
+References: <4f70c2778163affce8508a210f65d140e84524b4.1581272050.git.christophe.leroy@c-s.fr>
+         <546ce4737f308a4ba99a53f550de5b44abc06444.camel@linux.ibm.com>
+         <1d6a53ab-ea72-7452-ea5f-43dd70b223c9@c-s.fr>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-VzmBVc8/yToR3dI4YbK+"
+User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from ulegcpsvdell.emea.nsn-net.net (131.228.32.181) by HE1P191CA0004.EURP191.PROD.OUTLOOK.COM (2603:10a6:3:cf::14) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2729.24 via Frontend Transport; Mon, 17 Feb 2020 14:11:26 +0000
-X-Mailer: git-send-email 2.24.0
-X-Originating-IP: [131.228.32.181]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: bc84eef7-e7aa-4167-ef83-08d7b3b34715
-X-MS-TrafficTypeDiagnostic: VI1PR07MB5056:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <VI1PR07MB505663B213CE5DC95DB0C69D88160@VI1PR07MB5056.eurprd07.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:751;
-X-Forefront-PRVS: 0316567485
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(4636009)(396003)(136003)(376002)(366004)(346002)(39860400002)(189003)(199004)(26005)(6506007)(6666004)(4326008)(86362001)(2616005)(6916009)(52116002)(1076003)(956004)(478600001)(54906003)(186003)(6486002)(8936002)(8676002)(2906002)(81166006)(66946007)(81156014)(66476007)(5660300002)(66556008)(6512007)(36756003)(16526019)(316002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR07MB5056;H:VI1PR07MB5040.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: nokia.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: J3SFLmv6NPbHx6iETxxurtJdY/Nx1cNWxBqQruEpUuSP1fHQLEPNgcnp8ZyM4zgQMtPPB+hyKgP8YXqwCMVQ4KHwQ8f2L7jHSD8Oa3qijvs00ModJW21r+UT8mdphD0NT8oSJo/ZdwSCQ5mmrbCgQircaR5Us2icVKqL+umDced73HGAgNIShznzzQhQ5DX/pJuTdO63YBZzeQ0XdmjNZjHJ/h8V+5bLHSjVyprv4KCdBYAaXaZH2Spx/69/Tzeu4Y6NYjWPUw1ro+bZgqCursMmvQ7La9v3emNClNg4FOY2YqUauLO6oH+SMo4tAUGrwfI607ieZM01xZQ4xp4t0L5F7Z/q7s6irUBHo3Zpyfs1UDXpwsoOd/mafqKxZ/cj9Xhm7n1CcuiT3uQumpH6mb5tqfq0/aCd4irANK0RjDkF7jKhLw4nMWDy8icEj9fM
-X-MS-Exchange-AntiSpam-MessageData: +GeGbF2ZuZrzqo0oOO6RsSIrI2EZDcJVQGp/TCgWAlst1701OrDhq+Cplrq+fnTN9XWPCqQGBn8rkMCcDrbkrTkzNjpPZ1xClklny+lEbd428JQ8wWd6U/VMhHQEiZttm5AJHLDUnsbGq7LoZbu60Q==
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bc84eef7-e7aa-4167-ef83-08d7b3b34715
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2020 14:11:27.0551
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gzQ3U1e2tBEdvOowLxvPtgVyNzyUakbzkhSOijZoUUwIXXEHnzrWr4/ko2xfoMpGgXHrOTIlEc08R5qgOBeEDnnVt/WX0y1lmPxnh0hdW48=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR07MB5056
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-17_08:2020-02-17,2020-02-17 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ spamscore=0 clxscore=1015 lowpriorityscore=0 impostorscore=0
+ malwarescore=0 phishscore=0 mlxlogscore=999 adultscore=0 mlxscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002170117
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Sverdlin <alexander.sverdlin@nokia.com>
 
-Teach ftrace_make_call() and ftrace_make_nop() about PLTs.
-Teach PLT code about FTRACE and all its callbacks.
-Otherwise the following might happen:
+--=-VzmBVc8/yToR3dI4YbK+
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-------------[ cut here ]------------
-WARNING: CPU: 14 PID: 2265 at .../arch/arm/kernel/insn.c:14 __arm_gen_branch+0x83/0x8c()
-...
-Hardware name: LSI Axxia AXM55XX
-[<c0314a49>] (unwind_backtrace) from [<c03115e9>] (show_stack+0x11/0x14)
-[<c03115e9>] (show_stack) from [<c0519f51>] (dump_stack+0x81/0xa8)
-[<c0519f51>] (dump_stack) from [<c032185d>] (warn_slowpath_common+0x69/0x90)
-[<c032185d>] (warn_slowpath_common) from [<c03218f3>] (warn_slowpath_null+0x17/0x1c)
-[<c03218f3>] (warn_slowpath_null) from [<c03143cf>] (__arm_gen_branch+0x83/0x8c)
-[<c03143cf>] (__arm_gen_branch) from [<c0314337>] (ftrace_make_nop+0xf/0x24)
-[<c0314337>] (ftrace_make_nop) from [<c038ebcb>] (ftrace_process_locs+0x27b/0x3e8)
-[<c038ebcb>] (ftrace_process_locs) from [<c0378d79>] (load_module+0x11e9/0x1a44)
-[<c0378d79>] (load_module) from [<c037974d>] (SyS_finit_module+0x59/0x84)
-[<c037974d>] (SyS_finit_module) from [<c030e981>] (ret_fast_syscall+0x1/0x18)
----[ end trace e1b64ced7a89adcc ]---
-------------[ cut here ]------------
-WARNING: CPU: 14 PID: 2265 at .../kernel/trace/ftrace.c:1979 ftrace_bug+0x1b1/0x234()
-...
-Hardware name: LSI Axxia AXM55XX
-[<c0314a49>] (unwind_backtrace) from [<c03115e9>] (show_stack+0x11/0x14)
-[<c03115e9>] (show_stack) from [<c0519f51>] (dump_stack+0x81/0xa8)
-[<c0519f51>] (dump_stack) from [<c032185d>] (warn_slowpath_common+0x69/0x90)
-[<c032185d>] (warn_slowpath_common) from [<c03218f3>] (warn_slowpath_null+0x17/0x1c)
-[<c03218f3>] (warn_slowpath_null) from [<c038e87d>] (ftrace_bug+0x1b1/0x234)
-[<c038e87d>] (ftrace_bug) from [<c038ebd5>] (ftrace_process_locs+0x285/0x3e8)
-[<c038ebd5>] (ftrace_process_locs) from [<c0378d79>] (load_module+0x11e9/0x1a44)
-[<c0378d79>] (load_module) from [<c037974d>] (SyS_finit_module+0x59/0x84)
-[<c037974d>] (SyS_finit_module) from [<c030e981>] (ret_fast_syscall+0x1/0x18)
----[ end trace e1b64ced7a89adcd ]---
-ftrace failed to modify [<e9ef7006>] 0xe9ef7006
-actual: 02:f0:3b:fa
-ftrace record flags: 0
-(0) expected tramp: c0314265
+On Sat, 2020-02-15 at 11:17 +0100, Christophe Leroy wrote:
+>=20
+> Le 15/02/2020 =C3=A0 07:28, Leonardo Bras a =C3=A9crit :
+> > On Sun, 2020-02-09 at 18:14 +0000, Christophe Leroy wrote:
+> > > In ITLB miss handled the line supposed to clear bits 20-23 on the
+> > > L2 ITLB entry is buggy and does indeed nothing, leading to undefined
+> > > value which could allow execution when it shouldn't.
+> > >=20
+> > > Properly do the clearing with the relevant instruction.
+> > >=20
+> > > Fixes: 74fabcadfd43 ("powerpc/8xx: don't use r12/SPRN_SPRG_SCRATCH2 i=
+n TLB Miss handlers")
+> > > Cc: stable@vger.kernel.org
+> > > Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> > > ---
+> > >   arch/powerpc/kernel/head_8xx.S | 2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/hea=
+d_8xx.S
+> > > index 9922306ae512..073a651787df 100644
+> > > --- a/arch/powerpc/kernel/head_8xx.S
+> > > +++ b/arch/powerpc/kernel/head_8xx.S
+> > > @@ -256,7 +256,7 @@ InstructionTLBMiss:
+> > >   	 * set.  All other Linux PTE bits control the behavior
+> > >   	 * of the MMU.
+> > >   	 */
+> > > -	rlwimi	r10, r10, 0, 0x0f00	/* Clear bits 20-23 */
+> > > +	rlwinm	r10, r10, 0, ~0x0f00	/* Clear bits 20-23 */
+> > >   	rlwimi	r10, r10, 4, 0x0400	/* Copy _PAGE_EXEC into bit 21 */
+> > >   	ori	r10, r10, RPN_PATTERN | 0x200 /* Set 22 and 24-27 */
+> > >   	mtspr	SPRN_MI_RPN, r10	/* Update TLB entry */
+> >=20
+> > Looks a valid change.
+> > rlwimi  r10, r10, 0, 0x0f00 means:
+> > r10 =3D ((r10 << 0) & 0x0f00) | (r10 & ~0x0f00) which ends up being
+> > r10 =3D r10
+> >=20
+> > On ISA, rlwinm is recommended for clearing high order bits.
+> > rlwinm  r10, r10, 0, ~0x0f00 means:
+> > r10 =3D (r10 << 0) & ~0x0f00
+> >=20
+> > Which does exactly what the comments suggests.
+> >=20
+> > FWIW:
+> > Reviwed-by: Leonardo Bras <leonardo@linux.ibm.com>
+> >=20
+>=20
+> I guess you mean
+>=20
+> Reviewed-by: Leonardo Bras <leonardo@linux.ibm.com>
 
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
----
- arch/arm/include/asm/ftrace.h |  3 +++
- arch/arm/include/asm/module.h |  1 +
- arch/arm/kernel/ftrace.c      | 46 +++++++++++++++++++++++++++++++++++++++++--
- arch/arm/kernel/module-plts.c | 44 +++++++++++++++++++++++++++++++++++++----
- 4 files changed, 88 insertions(+), 6 deletions(-)
+Yes, sorry for the typo.
 
-diff --git a/arch/arm/include/asm/ftrace.h b/arch/arm/include/asm/ftrace.h
-index 48ec1d0..a4dbac0 100644
---- a/arch/arm/include/asm/ftrace.h
-+++ b/arch/arm/include/asm/ftrace.h
-@@ -15,6 +15,9 @@ extern void __gnu_mcount_nc(void);
- 
- #ifdef CONFIG_DYNAMIC_FTRACE
- struct dyn_arch_ftrace {
-+#ifdef CONFIG_ARM_MODULE_PLTS
-+	struct module *mod;
-+#endif
- };
- 
- static inline unsigned long ftrace_call_adjust(unsigned long addr)
-diff --git a/arch/arm/include/asm/module.h b/arch/arm/include/asm/module.h
-index 78e4c16..961fedb 100644
---- a/arch/arm/include/asm/module.h
-+++ b/arch/arm/include/asm/module.h
-@@ -30,6 +30,7 @@ struct plt_entries {
- 
- struct mod_plt_sec {
- 	struct elf32_shdr	*plt;
-+	struct plt_entries	*plt_ent;
- 	int			plt_count;
- };
- 
-diff --git a/arch/arm/kernel/ftrace.c b/arch/arm/kernel/ftrace.c
-index 10499d4..75830e5 100644
---- a/arch/arm/kernel/ftrace.c
-+++ b/arch/arm/kernel/ftrace.c
-@@ -70,6 +70,19 @@ int ftrace_arch_code_modify_post_process(void)
- 
- static unsigned long ftrace_call_replace(unsigned long pc, unsigned long addr)
- {
-+	s32 offset = addr - pc;
-+	s32 blim = 0xfe000008;
-+	s32 flim = 0x02000004;
-+
-+	if (IS_ENABLED(CONFIG_THUMB2_KERNEL)) {
-+		blim = 0xff000004;
-+		flim = 0x01000002;
-+	}
-+
-+	if (IS_ENABLED(CONFIG_ARM_MODULE_PLTS) &&
-+	    (offset < blim || offset > flim))
-+		return 0;
-+
- 	return arm_gen_branch_link(pc, addr);
- }
- 
-@@ -123,10 +136,22 @@ int ftrace_make_call(struct dyn_ftrace *rec, unsigned long addr)
- {
- 	unsigned long new, old;
- 	unsigned long ip = rec->ip;
-+	unsigned long aaddr = adjust_address(rec, addr);
- 
- 	old = ftrace_nop_replace(rec);
- 
--	new = ftrace_call_replace(ip, adjust_address(rec, addr));
-+	new = ftrace_call_replace(ip, aaddr);
-+
-+#ifdef CONFIG_ARM_MODULE_PLTS
-+	if (!new) {
-+		struct module *mod = rec->arch.mod;
-+
-+		if (mod) {
-+			aaddr = get_module_plt(mod, ip, aaddr);
-+			new = ftrace_call_replace(ip, aaddr);
-+		}
-+	}
-+#endif
- 
- 	return ftrace_modify_code(rec->ip, old, new, true);
- }
-@@ -151,12 +176,29 @@ int ftrace_modify_call(struct dyn_ftrace *rec, unsigned long old_addr,
- int ftrace_make_nop(struct module *mod,
- 		    struct dyn_ftrace *rec, unsigned long addr)
- {
-+	unsigned long aaddr = adjust_address(rec, addr);
- 	unsigned long ip = rec->ip;
- 	unsigned long old;
- 	unsigned long new;
- 	int ret;
- 
--	old = ftrace_call_replace(ip, adjust_address(rec, addr));
-+#ifdef CONFIG_ARM_MODULE_PLTS
-+	/* mod is only supplied during module loading */
-+	if (!mod)
-+		mod = rec->arch.mod;
-+	else
-+		rec->arch.mod = mod;
-+#endif
-+
-+	old = ftrace_call_replace(ip, aaddr);
-+
-+#ifdef CONFIG_ARM_MODULE_PLTS
-+	if (!old && mod) {
-+		aaddr = get_module_plt(mod, ip, aaddr);
-+		old = ftrace_call_replace(ip, aaddr);
-+	}
-+#endif
-+
- 	new = ftrace_nop_replace(rec);
- 	ret = ftrace_modify_code(ip, old, new, true);
- 
-diff --git a/arch/arm/kernel/module-plts.c b/arch/arm/kernel/module-plts.c
-index d330e9e..a0524ad 100644
---- a/arch/arm/kernel/module-plts.c
-+++ b/arch/arm/kernel/module-plts.c
-@@ -4,6 +4,7 @@
-  */
- 
- #include <linux/elf.h>
-+#include <linux/ftrace.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/sort.h>
-@@ -20,19 +21,52 @@
- 						    (PLT_ENT_STRIDE - 8))
- #endif
- 
-+static const u32 fixed_plts[] = {
-+#ifdef CONFIG_FUNCTION_TRACER
-+	FTRACE_ADDR,
-+	MCOUNT_ADDR,
-+#endif
-+};
-+
- static bool in_init(const struct module *mod, unsigned long loc)
- {
- 	return loc - (u32)mod->init_layout.base < mod->init_layout.size;
- }
- 
-+static void prealloc_fixed(struct mod_plt_sec *pltsec, struct plt_entries *plt)
-+{
-+	int i;
-+
-+	if (!ARRAY_SIZE(fixed_plts) || pltsec->plt_count)
-+		return;
-+	pltsec->plt_count = ARRAY_SIZE(fixed_plts);
-+
-+	for (i = 0; i < ARRAY_SIZE(plt->ldr); ++i)
-+		plt->ldr[i] = PLT_ENT_LDR;
-+
-+	BUILD_BUG_ON(sizeof(fixed_plts) > sizeof(plt->lit));
-+	memcpy(plt->lit, fixed_plts, sizeof(fixed_plts));
-+}
-+
- u32 get_module_plt(struct module *mod, unsigned long loc, Elf32_Addr val)
- {
- 	struct mod_plt_sec *pltsec = !in_init(mod, loc) ? &mod->arch.core :
- 							  &mod->arch.init;
-+	struct plt_entries *plt;
-+	int idx;
-+
-+	/* cache the address, ELF header is available only during module load */
-+	if (!pltsec->plt_ent)
-+		pltsec->plt_ent = (struct plt_entries *)pltsec->plt->sh_addr;
-+	plt = pltsec->plt_ent;
- 
--	struct plt_entries *plt = (struct plt_entries *)pltsec->plt->sh_addr;
--	int idx = 0;
-+	prealloc_fixed(pltsec, plt);
-+
-+	for (idx = 0; idx < ARRAY_SIZE(fixed_plts); ++idx)
-+		if (plt->lit[idx] == val)
-+			return (u32)&plt->ldr[idx];
- 
-+	idx = 0;
- 	/*
- 	 * Look for an existing entry pointing to 'val'. Given that the
- 	 * relocations are sorted, this will be the last entry we allocated.
-@@ -180,8 +214,8 @@ static unsigned int count_plts(const Elf32_Sym *syms, Elf32_Addr base,
- int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
- 			      char *secstrings, struct module *mod)
- {
--	unsigned long core_plts = 0;
--	unsigned long init_plts = 0;
-+	unsigned long core_plts = ARRAY_SIZE(fixed_plts);
-+	unsigned long init_plts = ARRAY_SIZE(fixed_plts);
- 	Elf32_Shdr *s, *sechdrs_end = sechdrs + ehdr->e_shnum;
- 	Elf32_Sym *syms = NULL;
- 
-@@ -236,6 +270,7 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
- 	mod->arch.core.plt->sh_size = round_up(core_plts * PLT_ENT_SIZE,
- 					       sizeof(struct plt_entries));
- 	mod->arch.core.plt_count = 0;
-+	mod->arch.core.plt_ent = NULL;
- 
- 	mod->arch.init.plt->sh_type = SHT_NOBITS;
- 	mod->arch.init.plt->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
-@@ -243,6 +278,7 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
- 	mod->arch.init.plt->sh_size = round_up(init_plts * PLT_ENT_SIZE,
- 					       sizeof(struct plt_entries));
- 	mod->arch.init.plt_count = 0;
-+	mod->arch.init.plt_ent = NULL;
- 
- 	pr_debug("%s: plt=%x, init.plt=%x\n", __func__,
- 		 mod->arch.core.plt->sh_size, mod->arch.init.plt->sh_size);
--- 
-2.4.6
+--=-VzmBVc8/yToR3dI4YbK+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEMdeUgIzgjf6YmUyOlQYWtz9SttQFAl5KnsEACgkQlQYWtz9S
+ttSWQw//Qk881kecmznRJws7Dniga+I79I0aWy8xbXeMV7u8p7eLeom2HeZydUo0
+Jg/DFMiNnoMj77138Ht07KdADYV8fdE59DW66YufBfEevltanJ6tS8Zj/MV0js5H
+H5OphYNon2NWw5fCRpYGRlQJi+BsM7c6s/fpVW0xsEWg6MvRekLSOCs/gtEwFWDn
+Rxj9jY7+gvDJyMYR59cMJH07F9Ob7Bbu4PSUM8YbPNwgFtjR49WSAGsV0VCfN9L8
+Kz+52aOj9m48kA2PG5XiejC56+Tp06vGbo4ODjZY/5+b+OcG9O5P9qM7x4TCPfL3
+BsJKBBbj4nyWUSCfYkHOSP3PenZ1g/ZUffUZA2WiDC/ia7UTG+4PWlnqchPg5kz7
+liFfO34RKPnZSjVKTjpxcRERu5azbc8LryKEW6QI4nb1Ol59JLK0HItnmPG+YW4d
+trrjOfrj/0jP6HI8HzGMDoEbMFD6lfuf81oNQV8p26U+3x02PK2dEfeilgb6QFMv
+BRvFzwj2GGuNI+vOIWm5DsdLin3KaqAFZ2CZGt/VYWH1AAil6umwsSAcQRz84tvW
+UblRqtrV5tUaA7aKzgvyuu/mSrF0URrzA75eWjneM4MljkY77cHIAZ6RpByJ/Iim
+OBUhPODqgdGdwC0R9YwRB5KX6NbEx6y/wmqsmsivWTYTecp73QM=
+=LUct
+-----END PGP SIGNATURE-----
+
+--=-VzmBVc8/yToR3dI4YbK+--
 
