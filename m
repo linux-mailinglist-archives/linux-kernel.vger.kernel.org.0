@@ -2,203 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D540416113B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 12:39:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BAC9E161146
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 12:41:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728792AbgBQLj5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 06:39:57 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:52001 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728695AbgBQLj5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 06:39:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581939596;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=QRFmFOmaNTRD1QIBloTftoDjLg6oNQM+MmQJYi2gh5g=;
-        b=NHtd9IgIft2sjFXLaWaqox+eT4qMFT8/6nH7EBBjd9GPnPkitMEE7lKIBxNozdNt4gBpYV
-        mCFtfVDP62lMhpZfC3oL/noIcae/fIrq0hT/AnTpgkLbC55NxeT+NPg7uTMQCD+2txbDt9
-        iMOiJ1gMUXYjLI4Ej9xSBklm1wC8Kak=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-256-ScVkbmUePv6MEPIA-4YlaQ-1; Mon, 17 Feb 2020 06:39:54 -0500
-X-MC-Unique: ScVkbmUePv6MEPIA-4YlaQ-1
-Received: by mail-wm1-f70.google.com with SMTP id n17so6127923wmk.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 03:39:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QRFmFOmaNTRD1QIBloTftoDjLg6oNQM+MmQJYi2gh5g=;
-        b=pRrbP63PCwFkorwSAPc34qYDdc9x++RJMP0Fg7LfNaGt6LoOW6qV/5XL3j5yOSApM5
-         hRBTzNSrChsX2+v3xexWf+jG/vmdLc33ohrZsYbKAUno/ONfIVqvAT+ORQ1chWmSCLDW
-         qQuLeYWRJo5LlUw1dG2c093G2BTLgmy25Zt/lIEKUpwauLNe63hiOF5wNJbGty+nAxQn
-         Jck1CGBqvJ9XlhmbjH8Rt4VMCbwrrM4+g+eIylXCZtGvAPzQ6y/ZcuOkfEjlVV4EjPPC
-         VnXGTnOtBR+y0DBm1izpQeuZuhYDMCpbn4hd8evTPGrI2Mr6+DOP5r2Kdx5hqQSqjacJ
-         P0gA==
-X-Gm-Message-State: APjAAAXFRj5dw41f3lxH9R+gm2Uj2fIRysTiPa0PQ1Sp00uqzYdW2NGw
-        h1TOsSBLvK836DknE5aCybOekYHD2VQ/qnQzrlTzT7CegRS1ycR4hK3F3Bfd5vANNkjDJgXCsZq
-        xdup1RCyxIPTP1NyUu61stnRp
-X-Received: by 2002:a5d:4d0a:: with SMTP id z10mr21650608wrt.253.1581939592325;
-        Mon, 17 Feb 2020 03:39:52 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwN2okTJcojI/z4Sv+jYqgvwukj9C5eNn7FosG40Fd5mXfN5sJbwb9Yjzx0ib+Co8jWunrSPw==
-X-Received: by 2002:a5d:4d0a:: with SMTP id z10mr21650582wrt.253.1581939592064;
-        Mon, 17 Feb 2020 03:39:52 -0800 (PST)
-Received: from minerva.redhat.com ([2a01:c50f:ab80:6700:527f:85b3:5615:ff0b])
-        by smtp.gmail.com with ESMTPSA id y6sm620529wrl.17.2020.02.17.03.39.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2020 03:39:51 -0800 (PST)
-From:   Javier Martinez Canillas <javierm@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-efi@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Eric Richter <erichte@linux.ibm.com>,
-        James Morris <jmorris@namei.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        linux-security-module@vger.kernel.org
-Subject: [RESEND PATCH v2] efi: Only print errors about failing to get certs if EFI vars are found
-Date:   Mon, 17 Feb 2020 12:39:47 +0100
-Message-Id: <20200217113947.2070436-1-javierm@redhat.com>
-X-Mailer: git-send-email 2.24.1
+        id S1728948AbgBQLk5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 06:40:57 -0500
+Received: from mga12.intel.com ([192.55.52.136]:37639 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728687AbgBQLk5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 06:40:57 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Feb 2020 03:40:57 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,452,1574150400"; 
+   d="scan'208";a="435525438"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.167]) ([10.237.72.167])
+  by fmsmga006.fm.intel.com with ESMTP; 17 Feb 2020 03:40:52 -0800
+Subject: Re: [PATCH v4 3/4] perf report: Add SPE options to --itrace argument
+To:     James Clark <james.clark@arm.com>, jolsa@redhat.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     nd@arm.com, Tan Xiaojun <tanxiaojun@huawei.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Al Grant <al.grant@arm.com>, Namhyung Kim <namhyung@kernel.org>
+References: <20200210122509.GA2005279@krava>
+ <20200211140445.21986-1-james.clark@arm.com>
+ <20200211140445.21986-4-james.clark@arm.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <768a33f2-8694-270e-d3e8-3da4c65e96b3@intel.com>
+Date:   Mon, 17 Feb 2020 13:39:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200211140445.21986-4-james.clark@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CONFIG_LOAD_UEFI_KEYS is enabled, the kernel attempts to load the certs
-from the db, dbx and MokListRT EFI variables into the appropriate keyrings.
+On 11/02/20 4:04 pm, James Clark wrote:
+> From: Tan Xiaojun <tanxiaojun@huawei.com>
+> 
+> The previous patch added support in "perf report" for some arm-spe
+> events(llc-miss, tlb-miss, branch-miss, remote_access). This patch
+> adds their help instructions.
+> 
+> Signed-off-by: Tan Xiaojun <tanxiaojun@huawei.com>
+> Tested-by: Qi Liu <liuqi115@hisilicon.com>
+> Signed-off-by: James Clark <james.clark@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Jiri Olsa <jolsa@redhat.com>
+> Cc: Tan Xiaojun <tanxiaojun@huawei.com>
+> Cc: Al Grant <al.grant@arm.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
 
-But it just assumes that the variables will be present and prints an error
-if the certs can't be loaded, even when is possible that the variables may
-not exist. For example the MokListRT variable will only be present if shim
-is used.
+There is also ITRACE_HELP in tools/perf/util/auxtrace.h
 
-So only print an error message about failing to get the certs list from an
-EFI variable if this is found. Otherwise these printed errors just pollute
-the kernel log ring buffer with confusing messages like the following:
+Otherwise for auxtrace:
 
-[    5.427251] Couldn't get size: 0x800000000000000e
-[    5.427261] MODSIGN: Couldn't get UEFI db list
-[    5.428012] Couldn't get size: 0x800000000000000e
-[    5.428023] Couldn't get UEFI MokListRT
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-Reported-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-Tested-by: Hans de Goede <hdegoede@redhat.com>
-
----
-
-Changes in v2:
-- Fix flaws in the logic, that caused the signature list was parsed if
-  the return code was EFI_NOT_FOUND that pointed out Hans de Goede.
-- Print debug messages if the variables are not found.
-
- security/integrity/platform_certs/load_uefi.c | 40 ++++++++++++-------
- 1 file changed, 26 insertions(+), 14 deletions(-)
-
-diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
-index 111898aad56..f0c90824196 100644
---- a/security/integrity/platform_certs/load_uefi.c
-+++ b/security/integrity/platform_certs/load_uefi.c
-@@ -35,16 +35,18 @@ static __init bool uefi_check_ignore_db(void)
-  * Get a certificate list blob from the named EFI variable.
-  */
- static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
--				  unsigned long *size)
-+				  unsigned long *size, efi_status_t *status)
- {
--	efi_status_t status;
- 	unsigned long lsize = 4;
- 	unsigned long tmpdb[4];
- 	void *db;
- 
--	status = efi.get_variable(name, guid, NULL, &lsize, &tmpdb);
--	if (status != EFI_BUFFER_TOO_SMALL) {
--		pr_err("Couldn't get size: 0x%lx\n", status);
-+	*status = efi.get_variable(name, guid, NULL, &lsize, &tmpdb);
-+	if (*status == EFI_NOT_FOUND)
-+		return NULL;
-+
-+	if (*status != EFI_BUFFER_TOO_SMALL) {
-+		pr_err("Couldn't get size: 0x%lx\n", *status);
- 		return NULL;
- 	}
- 
-@@ -52,10 +54,10 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
- 	if (!db)
- 		return NULL;
- 
--	status = efi.get_variable(name, guid, NULL, &lsize, db);
--	if (status != EFI_SUCCESS) {
-+	*status = efi.get_variable(name, guid, NULL, &lsize, db);
-+	if (*status != EFI_SUCCESS) {
- 		kfree(db);
--		pr_err("Error reading db var: 0x%lx\n", status);
-+		pr_err("Error reading db var: 0x%lx\n", *status);
- 		return NULL;
- 	}
- 
-@@ -74,6 +76,7 @@ static int __init load_uefi_certs(void)
- 	efi_guid_t mok_var = EFI_SHIM_LOCK_GUID;
- 	void *db = NULL, *dbx = NULL, *mok = NULL;
- 	unsigned long dbsize = 0, dbxsize = 0, moksize = 0;
-+	efi_status_t status;
- 	int rc = 0;
- 
- 	if (!efi.get_variable)
-@@ -83,9 +86,12 @@ static int __init load_uefi_certs(void)
- 	 * an error if we can't get them.
- 	 */
- 	if (!uefi_check_ignore_db()) {
--		db = get_cert_list(L"db", &secure_var, &dbsize);
-+		db = get_cert_list(L"db", &secure_var, &dbsize, &status);
- 		if (!db) {
--			pr_err("MODSIGN: Couldn't get UEFI db list\n");
-+			if (status == EFI_NOT_FOUND)
-+				pr_debug("MODSIGN: db variable wasn't found\n");
-+			else
-+				pr_err("MODSIGN: Couldn't get UEFI db list\n");
- 		} else {
- 			rc = parse_efi_signature_list("UEFI:db",
- 					db, dbsize, get_handler_for_db);
-@@ -96,9 +102,12 @@ static int __init load_uefi_certs(void)
- 		}
- 	}
- 
--	mok = get_cert_list(L"MokListRT", &mok_var, &moksize);
-+	mok = get_cert_list(L"MokListRT", &mok_var, &moksize, &status);
- 	if (!mok) {
--		pr_info("Couldn't get UEFI MokListRT\n");
-+		if (status == EFI_NOT_FOUND)
-+			pr_debug("MokListRT variable wasn't found\n");
-+		else
-+			pr_info("Couldn't get UEFI MokListRT\n");
- 	} else {
- 		rc = parse_efi_signature_list("UEFI:MokListRT",
- 					      mok, moksize, get_handler_for_db);
-@@ -107,9 +116,12 @@ static int __init load_uefi_certs(void)
- 		kfree(mok);
- 	}
- 
--	dbx = get_cert_list(L"dbx", &secure_var, &dbxsize);
-+	dbx = get_cert_list(L"dbx", &secure_var, &dbxsize, &status);
- 	if (!dbx) {
--		pr_info("Couldn't get UEFI dbx list\n");
-+		if (status == EFI_NOT_FOUND)
-+			pr_debug("dbx variable wasn't found\n");
-+		else
-+			pr_info("Couldn't get UEFI dbx list\n");
- 	} else {
- 		rc = parse_efi_signature_list("UEFI:dbx",
- 					      dbx, dbxsize,
--- 
-2.24.1
+> ---
+>  tools/perf/Documentation/itrace.txt | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/Documentation/itrace.txt b/tools/perf/Documentation/itrace.txt
+> index 82ff7dad40c2..8e1488de1fb3 100644
+> --- a/tools/perf/Documentation/itrace.txt
+> +++ b/tools/perf/Documentation/itrace.txt
+> @@ -1,5 +1,5 @@
+>  		i	synthesize instructions events
+> -		b	synthesize branches events
+> +		b	synthesize branches events (branch misses on Arm)
+>  		c	synthesize branches events (calls only)
+>  		r	synthesize branches events (returns only)
+>  		x	synthesize transactions events
+> @@ -12,6 +12,9 @@
+>  		g	synthesize a call chain (use with i or x)
+>  		l	synthesize last branch entries (use with i or x)
+>  		s       skip initial number of events
+> +		m	synthesize LLC miss events
+> +		t	synthesize TLB miss events
+> +		a	synthesize remote access events
+>  
+>  	The default is all events i.e. the same as --itrace=ibxwpe,
+>  	except for perf script where it is --itrace=ce
+> 
 
