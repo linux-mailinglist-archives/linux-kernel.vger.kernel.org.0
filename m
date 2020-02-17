@@ -2,68 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70E3916084E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 03:48:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CB60160848
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 03:44:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbgBQCsC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 21:48:02 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:56462 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726251AbgBQCsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 21:48:01 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 24A73200E5D;
-        Mon, 17 Feb 2020 03:48:00 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6FDDC200044;
-        Mon, 17 Feb 2020 03:47:54 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 5EBEE402DD;
-        Mon, 17 Feb 2020 10:47:47 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     dmitry.torokhov@gmail.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        mojha@codeaurora.org, swboyd@chromium.org,
-        linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        id S1726786AbgBQCoo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 21:44:44 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:47922 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726256AbgBQCoo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Feb 2020 21:44:44 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id CA20B153C695C;
+        Sun, 16 Feb 2020 18:44:43 -0800 (PST)
+Date:   Sun, 16 Feb 2020 18:44:43 -0800 (PST)
+Message-Id: <20200216.184443.782357344949548902.davem@davemloft.net>
+To:     danielwa@cisco.com
+Cc:     zbr@ioremap.net, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] input: keyboard: imx_keypad: Remove unused includes
-Date:   Mon, 17 Feb 2020 10:42:13 +0800
-Message-Id: <1581907333-11493-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+Subject: Re: [PATCH] drivers: connector: cn_proc: allow limiting certain
+ messages
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20200212192901.6402-1-danielwa@cisco.com>
+References: <20200212192901.6402-1-danielwa@cisco.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 16 Feb 2020 18:44:44 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is nothing in use from device.h/slab.h, remove them.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/input/keyboard/imx_keypad.c | 2 --
- 1 file changed, 2 deletions(-)
+This is a netlink based facility, therefore please you should add filtering
+capabilities to the netlink configuration and communications path.
 
-diff --git a/drivers/input/keyboard/imx_keypad.c b/drivers/input/keyboard/imx_keypad.c
-index 5a46d11..ba4bf80 100644
---- a/drivers/input/keyboard/imx_keypad.c
-+++ b/drivers/input/keyboard/imx_keypad.c
-@@ -5,7 +5,6 @@
- 
- #include <linux/clk.h>
- #include <linux/delay.h>
--#include <linux/device.h>
- #include <linux/err.h>
- #include <linux/input/matrix_keypad.h>
- #include <linux/interrupt.h>
-@@ -15,7 +14,6 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
--#include <linux/slab.h>
- #include <linux/timer.h>
- 
- /*
--- 
-2.7.4
-
+Module parameters are quite verboten.
