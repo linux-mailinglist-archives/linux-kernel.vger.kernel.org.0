@@ -2,155 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69E13160F8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 11:07:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 704A9160FBF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 11:16:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729164AbgBQKHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 05:07:42 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:54340 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729118AbgBQKHl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 05:07:41 -0500
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200217100739epoutp03a8bfc0bf22d2c479e67c02bafb258694~0KKVDI4JM3059830598epoutp03C
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 10:07:39 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200217100739epoutp03a8bfc0bf22d2c479e67c02bafb258694~0KKVDI4JM3059830598epoutp03C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1581934059;
-        bh=zXnDl0nu3nzOsArCKYWW31gJGbSZ8lFSvU3DpzQ8ljI=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=VlmioPnHHeQvcm0bn2qg7fZEVHhyoTZBsYRh74qJU6L23zHrGL5eYnmtkCpZm5R1I
-         YrOMGH/c3P54hWxmoBFb/ruObLNpQy3enDyxmGZMaocpbH8T2XgHoznDmq0xO17pIq
-         qOZ8jSB0v+rYyl9kM14/Pv3Cs0WIxS5tcn59b9LU=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200217100738epcas1p18bec8aa260f9c99c4ccbca6fe4efe876~0KKUR_kTM2400024000epcas1p1W;
-        Mon, 17 Feb 2020 10:07:38 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.152]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 48Lfml5SZNzMqYkZ; Mon, 17 Feb
-        2020 10:07:35 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        57.4C.57028.7E56A4E5; Mon, 17 Feb 2020 19:07:35 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200217100735epcas1p2d3f17024084cc5bd6d131cf270cecd4e~0KKQ-7kDj1780717807epcas1p2K;
-        Mon, 17 Feb 2020 10:07:35 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200217100735epsmtrp1d666fd81aed6c627ad17e736e24f85bc~0KKQ-R5TX2988229882epsmtrp1V;
-        Mon, 17 Feb 2020 10:07:35 +0000 (GMT)
-X-AuditID: b6c32a35-50bff7000001dec4-02-5e4a65e7b559
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        69.94.06569.6E56A4E5; Mon, 17 Feb 2020 19:07:34 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200217100734epsmtip2c7a38ee4f8e4680a3c11645784faa226~0KKQ20JsQ2348823488epsmtip2n;
-        Mon, 17 Feb 2020 10:07:34 +0000 (GMT)
-Subject: Re: [PATCH] extcon: palmas: hide error messages if gpio returns
- -EPROBE_DEFER
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc:     linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
-        kernel@pyra-handheld.com, linux-omap@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <b9fe52e9-0340-4204-ee85-44b6c1ea7f3b@samsung.com>
-Date:   Mon, 17 Feb 2020 19:15:42 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        id S1729084AbgBQKQi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 05:16:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33696 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728698AbgBQKQh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 05:16:37 -0500
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE50824655
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 10:16:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581934597;
+        bh=4cLlQS6dh3TII+e63aZc4SI9thiBfzKMd7Iu5QCGWjs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Eq5UfpApFfSqgahMtWpRHuyClv3jPdyyd6PVRbQT2PcAXEEpHt8JYkGsEBXaLUR3v
+         yxJfKOj8zQKAAWslqWAgPnGkbIgTkaVY05SWCFX3Pd+3Z/SEFcQhj2cEaKl35qQJv3
+         QGWBAbZxg7TlwdUTdJuvsq13UzOI6Ya/rYQgLfwE=
+Received: by mail-wm1-f49.google.com with SMTP id m10so7015985wmc.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 02:16:36 -0800 (PST)
+X-Gm-Message-State: APjAAAWDg/l9F5AcF3EuwKrMf6rI/KhNF4soPgGo+9rKm8/QBmVqBz33
+        dwY1ZOQMbIqLhREOv33wsxNWwOaiu05YjsKcafHVkg==
+X-Google-Smtp-Source: APXvYqzqZNxl118rnsQ1j1OXjhkx9vVcOI+aj/V8YvXdxCexJjSRKnmYAijbWYByC/Tq0yzU4F9Fp8tfyDdGHA9vZD0=
+X-Received: by 2002:a1c:b603:: with SMTP id g3mr22636081wmf.133.1581934595070;
+ Mon, 17 Feb 2020 02:16:35 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <f65ad0ef2866e7d5b6743e13579c1efe8c572b4f.1581929741.git.hns@goldelico.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDJsWRmVeSWpSXmKPExsWy7bCmnu7zVK84g/kHNS1+bPvKZHHpa43F
-        1j+X2Cwu75rDZjF7ST+Lxe3GFWwObB5r3p9i9miZtIvd40tLM7NH35ZVjB6fN8kFsEZl22Sk
-        JqakFimk5iXnp2TmpdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYAHaCkUJaYUwoU
-        CkgsLlbSt7Mpyi8tSVXIyC8usVVKLUjJKbAs0CtOzC0uzUvXS87PtTI0MDAyBSpMyM7oePqW
-        peAVT8XU9oIGxh1cXYycHBICJhLfN15hAbGFBHYwSiyZ4d3FyAVkf2KUOPJyHRNE4hujRNcB
-        T5iGjn2n2SCK9jJK9M26zwzhvAfqWN/IDlIlLBAh0Xn3ClCCg0NEIFLi6BcjkDCzQJnE12ub
-        mEFsNgEtif0vbrCB2PwCihJXfzxmBLF5Bewkps1+xgpiswioSjxasAysXlQgTOLkthaoGkGJ
-        kzOfgF3NCbTqw5EuRoj54hK3nsxngrDlJba/nQN2m4TAYzaJW6+PsUF84CIx4+5DRghbWOLV
-        8S3sELaUxMv+Nii7WmLlySNsEM0djBJb9l9ghUgYS+xfOpkJ5DFmAU2J9bv0IcKKEjt/z4U6
-        gk/i3dceVpASCQFeiY42IYgSZYnLD+4yQdiSEovbO9kmMCrNQvLOLCQvzELywiyEZQsYWVYx
-        iqUWFOempxYbFhgiR/UmRnDK1DLdwTjlnM8hRgEORiUe3heBnnFCrIllxZW5hxglOJiVRHi9
-        xb3ihHhTEiurUovy44tKc1KLDzGaAkN7IrOUaHI+MJ3nlcQbmhoZGxtbmBiamRoaKonzPozU
-        jBMSSE8sSc1OTS1ILYLpY+LglGpgTCtolXv44fXNAw7Zs9yWz/e+pGD73FZzft5TtUcpJ9k6
-        bcObrlx4EvHcu+/iSYEZC/NM6m7mnPvfdpyFQyRGcu6dlZNXWkWU879vvCjkurPSMu131f5P
-        23xmfPGT0fg2NZ7LeJIkg/DdiVLSKs11D3TMm05arFDbr9i++ZqT2JYMnc3Hb/NJKLEUZyQa
-        ajEXFScCAGzGtyuvAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkkeLIzCtJLcpLzFFi42LZdlhJXvdZqlecwZwtNhY/tn1lsrj0tcZi
-        659LbBaXd81hs5i9pJ/F4nbjCjYHNo81708xe7RM2sXu8aWlmdmjb8sqRo/Pm+QCWKO4bFJS
-        czLLUov07RK4MjqevmUpeMVTMbW9oIFxB1cXIyeHhICJRMe+02xdjFwcQgK7GSX6G5qYIRKS
-        EtMuHgWyOYBsYYnDh4shat4ySsyaf5IdpEZYIEKi8+4VsHoRgUiJSwtfgsWZBcokznWcZ4Ro
-        WM0ocWLHKkaQBJuAlsT+FzfYQGx+AUWJqz8eg8V5Bewkps1+xgpiswioSjxasAxsqKhAmMTO
-        JY+ZIGoEJU7OfMICYnMCLf5wpIsRYpm6xJ95l5ghbHGJW0/mM0HY8hLb385hnsAoPAtJ+ywk
-        LbOQtMxC0rKAkWUVo2RqQXFuem6xYYFRXmq5XnFibnFpXrpecn7uJkZwBGlp7WA8cSL+EKMA
-        B6MSD69DiGecEGtiWXFl7iFGCQ5mJRFeb3GvOCHelMTKqtSi/Pii0pzU4kOM0hwsSuK88vnH
-        IoUE0hNLUrNTUwtSi2CyTBycUg2MUiHFzLU7TfVs9qasDDtwwG9HZKLXQse57rIsAkb8K1gr
-        RQ+2qyQc2FolsWR3uOUxPt13s+okJr2cuktRco+jcWTFR67/bFLhu5u3eTK+knc2dFH1vnH5
-        5zEvRcXzp96We4U5CHvIHfhgwvtr9i230xv8L+Yv2xPxpv4gg+B0q6crBdJbZYqUWIozEg21
-        mIuKEwGejteJnAIAAA==
-X-CMS-MailID: 20200217100735epcas1p2d3f17024084cc5bd6d131cf270cecd4e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200217085551epcas1p49113220d034155f8a78dc5e0767637a5
-References: <CGME20200217085551epcas1p49113220d034155f8a78dc5e0767637a5@epcas1p4.samsung.com>
-        <f65ad0ef2866e7d5b6743e13579c1efe8c572b4f.1581929741.git.hns@goldelico.com>
+References: <20191218162402.45610-1-steven.price@arm.com> <20191218162402.45610-22-steven.price@arm.com>
+ <CAKv+Gu8Hed9jGiqdgaqJ93JhErJA5OfGRpiarU=YKXb6vQUyMQ@mail.gmail.com> <ee4f53ec-601b-3698-1479-f7aeaada38ad@arm.com>
+In-Reply-To: <ee4f53ec-601b-3698-1479-f7aeaada38ad@arm.com>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Mon, 17 Feb 2020 11:16:23 +0100
+X-Gmail-Original-Message-ID: <CAKv+Gu-iLwjZvavQud9o+5nTB0ORAAn32qKMScxYHJ64k7HExA@mail.gmail.com>
+Message-ID: <CAKv+Gu-iLwjZvavQud9o+5nTB0ORAAn32qKMScxYHJ64k7HExA@mail.gmail.com>
+Subject: Re: [PATCH v17 21/23] arm64: mm: Convert mm/dump.c to use walk_page_range()
+To:     Steven Price <steven.price@arm.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux-MM <linux-mm@kvack.org>, Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <Catalin.Marinas@arm.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Morse <James.Morse@arm.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will@kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        "Liang, Kan" <kan.liang@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, 17 Feb 2020 at 11:01, Steven Price <steven.price@arm.com> wrote:
+>
+> On 16/02/2020 16:25, Ard Biesheuvel wrote:
+> > On Wed, 18 Dec 2019 at 17:25, Steven Price <steven.price@arm.com> wrote:
+> >>
+> >> Now walk_page_range() can walk kernel page tables, we can switch the
+> >> arm64 ptdump code over to using it, simplifying the code.
+> >>
+> >> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+> >> Signed-off-by: Steven Price <steven.price@arm.com>
+> >
+> > I did not realize this at the time, but this patch removes the ability
+> > to dump the EFI page tables on 32-bit ARM. Was that intentional?
+>
+> No that wasn't intentional, but I can't instantly see how this change
+> affects 32-bit ARM.
+>
+> <snip (files in arch/arm64)>
+> >> diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/arm-runtime.c
+> >> index 899b803842bb..9dda2602c862 100644
+> >> --- a/drivers/firmware/efi/arm-runtime.c
+> >> +++ b/drivers/firmware/efi/arm-runtime.c
+> >> @@ -27,7 +27,7 @@
+> >>
+> >>  extern u64 efi_system_table;
+> >>
+> >> -#ifdef CONFIG_ARM64_PTDUMP_DEBUGFS
+> >> +#if defined(CONFIG_PTDUMP_DEBUGFS) && defined(CONFIG_ARM64)
+>
+> The previous define was *ARM64* so should never have been true when
+> building for arm. The new condition should be equivalent (arm64 &&
+> ptdump enabled).
+>
+> Am I missing something?
+>
 
-On 2/17/20 5:55 PM, H. Nikolaus Schaller wrote:
-> If the gpios are probed after this driver (e.g. if they
-> come from an i2c expander) there is no need to print an
-> error message.
-> 
-> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-> ---
->  drivers/extcon/extcon-palmas.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/extcon/extcon-palmas.c b/drivers/extcon/extcon-palmas.c
-> index edc5016f46f1..9c6254c0531c 100644
-> --- a/drivers/extcon/extcon-palmas.c
-> +++ b/drivers/extcon/extcon-palmas.c
-> @@ -206,14 +206,16 @@ static int palmas_usb_probe(struct platform_device *pdev)
->  	palmas_usb->id_gpiod = devm_gpiod_get_optional(&pdev->dev, "id",
->  							GPIOD_IN);
->  	if (IS_ERR(palmas_usb->id_gpiod)) {
-> -		dev_err(&pdev->dev, "failed to get id gpio\n");
-> +		if (PTR_ERR(palmas_usb->id_gpiod) != -EPROBE_DEFER)
-> +			dev_err(&pdev->dev, "failed to get id gpio\n");
->  		return PTR_ERR(palmas_usb->id_gpiod);
->  	}
->  
->  	palmas_usb->vbus_gpiod = devm_gpiod_get_optional(&pdev->dev, "vbus",
->  							GPIOD_IN);
->  	if (IS_ERR(palmas_usb->vbus_gpiod)) {
-> -		dev_err(&pdev->dev, "failed to get vbus gpio\n");
-> +		if (PTR_ERR(palmas_usb->vbus_gpiod) != -EPROBE_DEFER)
-> +			dev_err(&pdev->dev, "failed to get vbus gpio\n");
->  		return PTR_ERR(palmas_usb->vbus_gpiod);
->  	}
->  
-> 
+Not at all, I just got confused.
 
-Usually, gpio driver like pinctrl is very early probed
-because almost device drivers should use gpio.
-So, I have not any experience about this situation.
-Do you meet this situation on any h/w board?
+IIRC we did have support for dumping the EFI pages tables on 32-bit
+ARM at *some* point, but it obviously wasn't your patch that removed
+it.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Apologies for the noise.
