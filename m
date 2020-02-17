@@ -2,147 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 729151613F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 14:52:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 337C6161411
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 14:58:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728744AbgBQNwe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 08:52:34 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:60064 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726710AbgBQNwe (ORCPT
+        id S1728761AbgBQN6V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 08:58:21 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.53]:12455 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726528AbgBQN6U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 08:52:34 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01HDqCYC046134;
-        Mon, 17 Feb 2020 07:52:12 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1581947532;
-        bh=+byLAupfUW+GTMI0YH08CXSZf3dS/A6iBoU8mYL7Bjs=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=HURDfCsN2H10t7joYw6Uc17TbFSzb3Bapj1w2k5EsFytBbtFsNE9Ny8ytRK5p2oF+
-         nktDfWEC01tDiWJfk602k506HngSFs22HRsrfGjm16bvB3ZbUYwepME7vLxUSYHmzQ
-         16vYOXQYxGv0LZT4rKidGd0bxJb6KgY4O1fDvNi8=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01HDqCNK060998
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 17 Feb 2020 07:52:12 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 17
- Feb 2020 07:52:11 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 17 Feb 2020 07:52:11 -0600
-Received: from [172.24.190.4] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01HDq6xY041711;
-        Mon, 17 Feb 2020 07:52:07 -0600
-Subject: Re: [PATCH 1/3] dt-bindings: net: can: m_can: Add Documentation for
- stb-gpios
-To:     Rob Herring <robh@kernel.org>
-CC:     Dan Murphy <dmurphy@ti.com>, Sekhar Nori <nsekhar@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-can@vger.kernel.org>,
-        <catalin.marinas@arm.com>, <mark.rutland@arm.com>,
-        <davem@davemloft.net>, <mkl@pengutronix.de>, <wg@grandegger.com>,
-        <sriram.dash@samsung.com>, <nm@ti.com>, <t-kristo@ti.com>
-References: <20200122080310.24653-1-faiz_abbas@ti.com>
- <20200122080310.24653-2-faiz_abbas@ti.com>
- <c3b0eeb8-bd78-aa96-4783-62dc93f03bfe@ti.com>
- <8fc7c343-267d-c91c-0381-60990cfc35e8@ti.com>
- <f834087b-da1c-88a0-93fe-bc72c8ac71ff@ti.com>
- <57baeedc-9f51-7b92-f190-c0bbd8525a16@ti.com> <20200203120610.GA9303@bogus>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <15ae4d0e-10cf-7b4b-6487-8b64f885f184@ti.com>
-Date:   Mon, 17 Feb 2020 19:23:52 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200203120610.GA9303@bogus>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Mon, 17 Feb 2020 08:58:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1581947898;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=gtMTPVIhIXUeH0xdkSwv3qku1/SwM+IetmGopOl+iV8=;
+        b=l9FBQzosiiQ2IMm95p+UXyhqg17xAjy7up+qcJswNgEi/w4wH1/b20lBkq3beQPOnQ
+        +aqnv8weFB2Q4DISUYCBehYkIhiqj0ZuyiDLsmDACcEZOedw+4BvabVFf2ObfVJPvkM1
+        O8XEv1Xnc6PjlWrH3vMJztLzu2AuReydamCF5mXnQGjCSpIOXPnUsep4Gq/8XFcfN/ye
+        uGqpYI1QQAP7L9oFd58KZTBME28KKi0pqqmQKDCs+huUMUqcFx4r+I2MKwhbHsv2z4ut
+        4ayh2JnAorfSArO19nEXOkfKP5QG16ZY1meVwzmSz7j9E2WwyP+RXqbvgOD5Ze6Hrsfe
+        x1xQ==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj5Qpw97WFDVCaXA0OXQ=="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
+        with ESMTPSA id U06217w1HDwFNp5
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+        (Client did not present a certificate);
+        Mon, 17 Feb 2020 14:58:15 +0100 (CET)
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH v3] extcon: palmas: hide error messages if gpio returns -EPROBE_DEFER
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <d5c2826a5f00fcaee62f00662ae2a44dc4a5395d.1581946695.git.hns@goldelico.com>
+Date:   Mon, 17 Feb 2020 14:58:14 +0100
+Cc:     linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com, linux-omap@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <C3D9F783-EE45-4681-93D9-C1407284CB59@goldelico.com>
+References: <d5c2826a5f00fcaee62f00662ae2a44dc4a5395d.1581946695.git.hns@goldelico.com>
+To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rob,
 
-On 03/02/20 5:36 pm, Rob Herring wrote:
-> On Thu, Jan 23, 2020 at 01:09:41PM +0530, Faiz Abbas wrote:
->> Hi,
->>
->> On 22/01/20 8:04 pm, Dan Murphy wrote:
->>> Sekhar
->>>
->>> On 1/22/20 8:24 AM, Sekhar Nori wrote:
->>>> On 22/01/20 7:05 PM, Dan Murphy wrote:
->>>>> Faiz
->>>>>
->>>>> On 1/22/20 2:03 AM, Faiz Abbas wrote:
->>>>>> The CAN transceiver on some boards has an STB pin which is
->>>>>> used to control its standby mode. Add an optional property
->>>>>> stb-gpios to toggle the same.
->>>>>>
->>>>>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
->>>>>> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
->>>>>> ---
->>>>>>    Documentation/devicetree/bindings/net/can/m_can.txt | 2 ++
->>>>>>    1 file changed, 2 insertions(+)
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/net/can/m_can.txt
->>>>>> b/Documentation/devicetree/bindings/net/can/m_can.txt
->>>>>> index ed614383af9c..cc8ba3f7a2aa 100644
->>>>>> --- a/Documentation/devicetree/bindings/net/can/m_can.txt
->>>>>> +++ b/Documentation/devicetree/bindings/net/can/m_can.txt
->>>>>> @@ -48,6 +48,8 @@ Optional Subnode:
->>>>>>                  that can be used for CAN/CAN-FD modes. See
->>>>>>                
->>>>>> Documentation/devicetree/bindings/net/can/can-transceiver.txt
->>>>>>                  for details.
->>>>>> +stb-gpios        : gpio node to toggle the STB (standby) signal on
->>>>>> the transceiver
->>>>>> +
->>>>> The m_can.txt is for the m_can framework.  If this is specific to the
->>>>> platform then it really does not belong here.
->>>>>
->>>>> If the platform has specific nodes then maybe we need a
->>>>> m_can_platform.txt binding for specific platform nodes.  But I leave
->>>>> that decision to Rob.
->>>> Since this is transceiver enable, should this not be in
->>>> Documentation/devicetree/bindings/net/can/can-transceiver.txt?
->>>
->>
->> The transceiver node is just a node without an associated device. I had
->> tried to convert it to a phy implementation but that idea got shot down
->> here:
->>
->> https://lore.kernel.org/patchwork/patch/1006238/
-> 
-> Nodes and drivers are not a 1-1 thing. Is the transceiver a separate h/w 
-> device? If so, then it should be a separate node and properties of that 
-> device go in its node. 
+> Am 17.02.2020 um 14:38 schrieb H. Nikolaus Schaller =
+<hns@goldelico.com>:
+>=20
+> If the gpios are probed after this driver (e.g. if they
+> come from an i2c expander) there is no need to print an
+> error message.
+>=20
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+> ---
+> drivers/extcon/extcon-palmas.c | 8 ++++++--
+> 1 file changed, 6 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/extcon/extcon-palmas.c =
+b/drivers/extcon/extcon-palmas.c
+> index edc5016f46f1..cea58d0cb457 100644
+> --- a/drivers/extcon/extcon-palmas.c
+> +++ b/drivers/extcon/extcon-palmas.c
+> @@ -205,14 +205,18 @@ static int palmas_usb_probe(struct =
+platform_device *pdev)
+>=20
+> 	palmas_usb->id_gpiod =3D devm_gpiod_get_optional(&pdev->dev, =
+"id",
+> 							GPIOD_IN);
+> -	if (IS_ERR(palmas_usb->id_gpiod)) {
+> +	if (PTR_ERR(palmas_usb->id_gpiod) =3D=3D -EPROBE_DEFER) {
+> +		return -EPROBE_DEFER;
+> +	} else if (IS_ERR(palmas_usb->id_gpiod)) {
 
-The transceiver is indeed a separate device.
+Hm.
 
-Also, nothing is stopping you from using the PHY
-> binding without using the kernel's PHY framework.
+While looking again at that: why do we need the "{" and "} else "?
 
-The phy framework seemed like the best code reuse to implement it.
+It should be sufficient to have
 
-> 
-> As to whether it should be a separate phy driver, I think probably the 
-> wrong decision was made. We always seem to start out with no PHY on 
-> these things and the complexity just grows until we need one. 
-> 
+> 	palmas_usb->id_gpiod =3D devm_gpiod_get_optional(&pdev->dev, =
+"id",
+> 							GPIOD_IN);
+> +	if (PTR_ERR(palmas_usb->id_gpiod) =3D=3D -EPROBE_DEFER)
+> +		return -EPROBE_DEFER;
+> 	if (IS_ERR(palmas_usb->id_gpiod)) {
 
-We should be able to handle two properties (one max-datarate and the
-other regulator node) for now. If we have to add more complex parts then
-maybe we can think about the driver. I am just adding a xceiver
-regulator for now.
+What do you think is better coding style here?
 
-Thanks,
-Faiz
+BR,
+Nikolaus Schaller=
