@@ -2,57 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A9B7160DF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 10:04:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B2C5160E00
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 10:06:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728686AbgBQJEd convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 17 Feb 2020 04:04:33 -0500
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:47779 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728272AbgBQJEc (ORCPT
+        id S1728727AbgBQJFn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 04:05:43 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:54642 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728272AbgBQJFm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 04:04:32 -0500
-X-Originating-IP: 90.76.211.102
-Received: from xps13 (lfbn-tou-1-1151-102.w90-76.abo.wanadoo.fr [90.76.211.102])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id C25D3FF805;
-        Mon, 17 Feb 2020 09:04:30 +0000 (UTC)
-Date:   Mon, 17 Feb 2020 10:04:30 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Yoshio Furuyama <ytc-mb-yfuruyama7@kioxia.com>
-Cc:     vigneshr@ti.com, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org
-Subject: Re: [PATCH] mtd: spinand: toshiba: Support for new Kioxia Serial
- NAND
-Message-ID: <20200217100430.420142a3@xps13>
-In-Reply-To: <1581907305-3606-1-git-send-email-ytc-mb-yfuruyama7@kioxia.com>
-References: <1581907305-3606-1-git-send-email-ytc-mb-yfuruyama7@kioxia.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 17 Feb 2020 04:05:42 -0500
+X-UUID: 277c51c42f2745b5b5fc1ebce71bacee-20200217
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=TH2Ce9vmxpcBg+uja+1cRFMB0hG0JtrMLOaW8Iql/R8=;
+        b=lOV+nQz2bpgM8/GGsBM1mzyYU3/NmoBU0CFGxj+pQEJGnN5JRYwG8MMci60p1P+M1GnzODIQr0I00u6XRc9zWn5B9weLakOt37YI2rv9Z6bTKeozmVqszuhPpDktg4NcHRdtTcnwnpbvFxe2yxBxnYyu51ZY0v6463vKZRDhC/Y=;
+X-UUID: 277c51c42f2745b5b5fc1ebce71bacee-20200217
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <bibby.hsieh@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 296785312; Mon, 17 Feb 2020 17:05:35 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs05n2.mediatek.inc (172.21.101.140) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 17 Feb 2020 17:04:41 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 17 Feb 2020 17:03:35 +0800
+From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
+To:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, CK HU <ck.hu@mediatek.com>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Bibby Hsieh <bibby.hsieh@mediatek.com>
+Subject: [PATCH v1 0/3] Remove atomic_exec
+Date:   Mon, 17 Feb 2020 17:05:29 +0800
+Message-ID: <20200217090532.16019-1-bibby.hsieh@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yoshio,
+VGhlIGF0b21pY19leGVjIHdhcyBkZXNpZ25lZCBmb3IgcHJvY2Vzc2luZyBjb250aW51b3VzDQpw
+YWNrZXRzIG9mIGNvbW1hbmRzIGluIGF0b21pYyB3YXkgZm9yIE1lZGlhdGVrIERSTSBkcml2ZXIu
+DQoNCkFmdGVyIHdlIGltcGxlbWVudCBmbHVzaCBmdW5jdGlvbiwgTWVkaWF0ZWsgRFJNIGRyaXZl
+cg0KZG9lc24ndCBuZWVkIGF0b21pY19leGVjLCB0aGUgcHJpbWFyeSBjb25jZXB0IGlzIHRvIGxl
+dA0KTWVkaWF0ZWsgRFJNIGRyaXZlciBjYW4gbWFrZSBzdXJlIHByZXZpb3VzIG1lc3NhZ2UgZG9u
+ZSBvcg0KYmUgYWJvcnRlZCAoaWYgdGhlIG1lc3NhZ2UgaGFzIG5vdCBzdGFydGVkIHlldCkgYmVm
+b3JlIHRoZXkNCnNlbmQgbmV4dCBtZXNzYWdlLg0KDQpDaGFuZ2VzIHNpbmNlIHYwOg0KIC0gbW92
+ZSB0aGUgYmluZGluZyBjaGFuZ2VzIHRvIGZpcnN0DQogLSByZW1vdmUgdW5uZWNlc3NhcnkgY2hh
+bmdlcw0KDQpCaWJieSBIc2llaCAoMyk6DQogIGR0LWJpbmRpbmc6IGdjZTogcmVtb3ZlIGF0b21p
+Y19leGVjIGluIG1ib3hlcyBwcm9wZXJ0eQ0KICBtYWlsYm94OiBtZWRpYXRlazogaW1wbGVtZW50
+IGZsdXNoIGZ1bmN0aW9uDQogIG1haWxib3g6IG1lZGlhdGVrOiByZW1vdmUgaW1wbGVtZW50YXRp
+b24gcmVsYXRlZCB0byBhdG9taWNfZXhlYw0KDQogLi4uL2RldmljZXRyZWUvYmluZGluZ3MvbWFp
+bGJveC9tdGstZ2NlLnR4dCAgIHwgIDEwICstDQogZHJpdmVycy9tYWlsYm94L210ay1jbWRxLW1h
+aWxib3guYyAgICAgICAgICAgIHwgMTI4ICsrKysrKysrLS0tLS0tLS0tLQ0KIDIgZmlsZXMgY2hh
+bmdlZCwgNjQgaW5zZXJ0aW9ucygrKSwgNzQgZGVsZXRpb25zKC0pDQoNCi0tIA0KMi4xOC4wDQo=
 
-Yoshio Furuyama <ytc-mb-yfuruyama7@kioxia.com> wrote on Mon, 17 Feb
-2020 11:41:45 +0900:
-
-> From: Yoshio Furuyama <tmcmc-mb-yfuruyama7@ml.toshiba.co.jp>
-> 
-> Add support for new Kioxia products.
-> The new Kioxia products support program load x4 command, and have HOLD_D bit
-> which is equivalent to QE bit.
-> Also, generalize prefix names of structures and functions.
-
-Would you mind splitting this patch?
-
-1/ Rename the current functions (and explain why)
-2/ Add new Kioxia parts support.
-
-Thanks,
-Miquèl
