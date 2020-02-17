@@ -2,103 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 384031617E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 17:29:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FCD01617F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 17:31:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728899AbgBQQ3t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 11:29:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37604 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726866AbgBQQ3t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 11:29:49 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F594214D8;
-        Mon, 17 Feb 2020 16:29:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581956987;
-        bh=EsYyewiCgEfKwPRCUKZl1Kg4p+gbDyMv0r1YSwvRpKY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PYKA5FNITPtJeMhzm8IO0pT/LVtgCldu3tksSLOAZcrCpmeIWD6T63T/gqXQZMMne
-         czK8ZiLeFZFExOehdR2b7Vo6BnQxx6qfZEKbhPcLvTDQ0RS/HW1Uy+l0D7grVkH9vH
-         DTrsRbr6TvyBz9ccxbwp91u+JClv3t/oPfk93C4g=
-Date:   Mon, 17 Feb 2020 17:29:45 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Timur Tabi <timur@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Anton Vorontsov <avorontsov@ru.mvista.com>,
-        kbuild test robot <lkp@intel.com>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>
-Subject: Re: [PATCH] usb: host: fhci-hcd: annotate PIPE_CONTROL switch case
- with fallthrough
-Message-ID: <20200217162945.GC1502885@kroah.com>
-References: <20200213085401.27862-1-linux@rasmusvillemoes.dk>
- <20200213125659.GB3325929@kroah.com>
- <6ab68169-dde6-b5ba-0909-fa685bd24aac@rasmusvillemoes.dk>
- <20200217093836.GA37937@kroah.com>
- <a1f0f024-c1e5-8ff5-f717-f5098b4eb78d@rasmusvillemoes.dk>
- <20200217141831.GA1123892@kroah.com>
- <298629e3-40bb-9530-8292-7e2a9432cd4a@embeddedor.com>
+        id S1728923AbgBQQb1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 11:31:27 -0500
+Received: from mout.kundenserver.de ([217.72.192.73]:37337 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727922AbgBQQb1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 11:31:27 -0500
+Received: from mail-qt1-f182.google.com ([209.85.160.182]) by
+ mrelayeu.kundenserver.de (mreue109 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MNssA-1ioNCn26ki-00OGAh for <linux-kernel@vger.kernel.org>; Mon, 17 Feb
+ 2020 17:31:25 +0100
+Received: by mail-qt1-f182.google.com with SMTP id w47so12417235qtk.4
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 08:31:25 -0800 (PST)
+X-Gm-Message-State: APjAAAUjqE8ZK/SN6o5Z9Vwz/rFItc27vaWW0eZoZ3lOuZkJqNe/r0Z9
+        hSH9G1D7KSlusg1cR2HdeuBy+nN2uWUiIZhx21k=
+X-Google-Smtp-Source: APXvYqyGebgskD9DJnggAXDAzLcpUd37EudJOxUPk6hTCsINePQmNXOJ6CgjR7jrFr4TGbNM4fkWp15166EEI9MfXls=
+X-Received: by 2002:ac8:1977:: with SMTP id g52mr13579716qtk.18.1581957084396;
+ Mon, 17 Feb 2020 08:31:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <298629e3-40bb-9530-8292-7e2a9432cd4a@embeddedor.com>
+References: <cover.1580299067.git.vitor.soares@synopsys.com>
+ <20200217155141.08e87b3f@collabora.com> <CAK8P3a0jAbevb6mjy7Q=C-TFGn7uHRvshHNEO8XrDPRvRoAiTA@mail.gmail.com>
+ <20200217163622.6c78fa3f@collabora.com> <CH2PR12MB42166ED8E84503B53340F80DAE160@CH2PR12MB4216.namprd12.prod.outlook.com>
+ <20200217172309.26697082@collabora.com>
+In-Reply-To: <20200217172309.26697082@collabora.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 17 Feb 2020 17:31:08 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a2O23=Jjmj0xTQC7pePnwHBrcJ1YeRAKp-1hVf1GNmA5w@mail.gmail.com>
+Message-ID: <CAK8P3a2O23=Jjmj0xTQC7pePnwHBrcJ1YeRAKp-1hVf1GNmA5w@mail.gmail.com>
+Subject: Re: [RFC v2 0/4] Introduce i3c device userspace interface
+To:     Boris Brezillon <boris.brezillon@collabora.com>
+Cc:     Vitor Soares <Vitor.Soares@synopsys.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:suRVh0DMABCHF5Y/93HhEREtRKP8lcCsn+LHExbJBwq7R4md+Li
+ HHoh69xbA9blE0gVsDJXJo1qtH1ax6GmWFNh426kqFbDc54MI3t1FHo49OTpL1jwg4MU//M
+ 0LDjKfbEUN5EXDdM/KXUUtH0kf/9klqkiEOcPmTSZW8d0nhHfPNQjjTLcvXUsVjPo8Y9rgS
+ s18GkeKDEbKgeAhqIg01g==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:QaOfZ6+nneo=:CtVg9+w01Zr7Szb/WEToFo
+ la9+Ve7WHuwaWjJo4/0nG/A3Uj8lutCs6mPkJuGRuz4g0KkK02ZI1/XdfbG1uO6i0ssH7Ji3I
+ ABeA08O/vO6xSzQsk3aV5pVNeJtEyOA3eZJySDl3U8Vgarsfjzak2cTJIJX9kiQrE0PAJ/q65
+ wsjySo1x1NUEt9BEy0l324P9tT+guLdHnKfVNtGGtPQuczLpdM8/uWd6G8Yyo4eJDJy+wndbj
+ ftbniz+0NvEGj2sdSYTXGWIooLVJuHoLXCvT5slsTayprrPNmADEIEa5qwCOhF89lEPwrcFtZ
+ 3ObDrVIlcAQHbMaY+2rqatV+xEPBeNI98vAYR+VtnFljuvJb2cVF8qtJ1ZiC80CYiGqVhqABL
+ zjHRPZ8IRUNlkLFbgGKdLAXr0RJnhUVgVgv6Hzbo/8pmd8AHQKYo7omMkwp44SchmrAd6aiBb
+ NKZYvqNDsSSYvPS9Z+zlv0pfAAz0ci0Qz3MTZCCyepXWL+Scn5F4e8OVJRwNMU+E+bCFqWCcI
+ FNpGTfFINS2zIovMftyvC6RrbqS5r0Ki7mtTB5JTGvbuP0ohtNl+yyYmxeO130eRePgpJ/w9t
+ tZYCHu0VQaGXXjL2HiQ9QI8XOYrxHgLeBvIIqyC0hj120+uuieDJI5WYVT1S/6xAEWH5n0wg1
+ wZWjp5u+2W/PMQml+aCp/ITGSWkfPfxzQf9e+chxHbKVwJ5Je0aynlqmhkNI9jIaqkWXxsN4A
+ 5Sis6K/jXBLkqmACy6MU/HagIxHH+HMma4lsEs4c4GmHKKO5UEbkOyCSxgUDYLzcabhmY6cw9
+ fK3PhTPlHzQWQ2A+Wz0yPcXt7/WdZ41HiQQZu4FR3jOa7YlK/U=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 17, 2020 at 10:15:09AM -0600, Gustavo A. R. Silva wrote:
-> Hi!
-> 
-> Sorry for the late reply. I wasn't aware of this thread until now.
-> 
-> Please, see my comments below...
-> 
-> On 2/17/20 08:18, Greg Kroah-Hartman wrote:
-> > On Mon, Feb 17, 2020 at 03:12:21PM +0100, Rasmus Villemoes wrote:
-> >> On 17/02/2020 10.38, Greg Kroah-Hartman wrote:
-> >>> On Thu, Feb 13, 2020 at 02:35:18PM +0100, Rasmus Villemoes wrote:
-> >>>> On 13/02/2020 13.56, Greg Kroah-Hartman wrote:
-> >>>>
-> >>>>> Shouldn't this be /* fall through */ instead?
-> >>>>>
-> >>>>> Gustavo, what's the best practice here, I count only a few
-> >>>>> "fallthrough;" instances in the kernel, although one is in our coding
-> >>>>> style document, and thousands of the /* */ version.
-> >>>>
-> >>>> Yes, I went with the attribute/macro due to that, and the history is
-> >>>> that Linus applied Joe's patches directly
-> >>>> (https://lore.kernel.org/lkml/CAHk-=whOF8heTGz5tfzYUBp_UQQzSWNJ_50M7-ECXkfFRDQWFA@mail.gmail.com/),
-> >>>> so I assumed that meant the Penguin decided that the attribute/macro is
-> >>>> the right thing to do for new code, while existing comment annotations
-> >>>> can be left alone or changed piecemeal as code gets refactored anyway.
-> >>>
-> >>> But, to be fair, Gustavo went and fixed up thousands of these, with the
-> >>> /* */ version, not the attribute.
-> >>>
-> >>> Gustavo, can coverity notice the "fallthrough;" attribute properly?  I
-> >>> don't want to start adding things that end up triggering
-> >>> false-positives.
-> >>
-> >> I'm not Gustavo, and I don't know the answer, but 1.5 years ago some guy
-> >> named greg k-h suggested that coverity does grok the fallthrough attribute:
-> >>
-> >> https://patchwork.kernel.org/cover/10651357/#22279095
-> > 
-> > I wouldn't trust anything that bum says :)
-> > 
-> > Ok, I don't remember saying that at all, but I'll wait a day or two to
-> > get Gustavo's opinion befor applying the patch.
-> > 
-> 
-> We are good to go with the 'fallthrough' pseudo keyword. Linus is OK with
-> that.
-> 
-> The comment annotations will eventually be transformed to "fallthrough;"
+On Mon, Feb 17, 2020 at 5:23 PM Boris Brezillon
+<boris.brezillon@collabora.com> wrote:
+> On Mon, 17 Feb 2020 15:55:08 +0000 Vitor Soares <Vitor.Soares@synopsys.com> wrote:
+>
+> Okay, I have clearly not read the code carefully enough. I thought you
+> were declaring a new i3c_device_driver and were manually binding all
+> orphan devices to this driver. Looks like the solution is more subtle
+> than that, and i3cdevs are actually subdevices that are automatically
+> created/removed when the I3C device is unbound/bound. That means the
+> 'on-demand driver loading' logic is not impacted by this new layer. I'm
+> still not convinced this is needed (I expect i3cdev to be used mostly
+> for experiment, and in that case, having a udev rule, or manually
+> binding the device to the i3cdev driver shouldn't be a problem).
 
-Ok, thanks for the confirmation, will queue this up.
+I'm fairly sure it's not needed, other approaches could be used to
+provide user space access, but it's not clear if any other way is
+better either. It also took me a while to figure out what is going on
+when I read the code.
 
-greg k-h
+One thought that I had was that this could be better integrated into
+the core, with user space being there implicitly through sysfs rather
+than a /dev file.
+
+> I'm also not sure what happens if the device is still used when
+> i3cdev_detach() is called, can transfers still be done after the device
+> is attached to its in-kernel driver?
+
+I think this is still an open issue that I also pointed out. The driver
+binding/unbinding and user space access definitely needs to
+be properly serialized, whichever method is used to implement the
+user access.
+
+       Arnd
