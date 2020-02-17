@@ -2,60 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21B2C160A11
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 06:29:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C86521609D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 06:21:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726185AbgBQF3M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 00:29:12 -0500
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:57349 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725855AbgBQF3M (ORCPT
+        id S1726327AbgBQFVW convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 17 Feb 2020 00:21:22 -0500
+Received: from london.pserver.ru ([80.85.152.124]:57237 "EHLO
+        schneider-international.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725784AbgBQFVW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 00:29:12 -0500
-X-Originating-IP: 79.86.19.127
-Received: from debian.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id CEF6D20002;
-        Mon, 17 Feb 2020 05:28:48 +0000 (UTC)
-From:   Alexandre Ghiti <alex@ghiti.fr>
-To:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>
-Cc:     Anup Patel <anup@brainfault.org>, Jan Kiszka <jan.kiszka@web.de>,
-        stable@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH] riscv: Fix range looking for kernel image memblock
-Date:   Mon, 17 Feb 2020 00:28:47 -0500
-Message-Id: <20200217052847.3174-1-alex@ghiti.fr>
-X-Mailer: git-send-email 2.20.1
+        Mon, 17 Feb 2020 00:21:22 -0500
+From:   sales <anfragen@schneider-international.net>
+To:     linux-kernel@vger.kernel.org
+Subject: Original drawing for Production...DWG
+Date:   17 Feb 2020 05:21:19 -0800
+Message-ID: <20200217052119.279D5A6ACF417248@schneider-international.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When looking for the memblock where the kernel lives, we should check
-that the memory range associated to the memblock entirely comprises the
-kernel image and not only intersects with it.
+Dear linux-kernel
 
-Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
----
- arch/riscv/mm/init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please find the attached Original Drawing online for your review.
+this time production has to be exactly as shown
 
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index 965a8cf4829c..fab855963c73 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -131,7 +131,7 @@ void __init setup_bootmem(void)
- 	for_each_memblock(memory, reg) {
- 		phys_addr_t end = reg->base + reg->size;
- 
--		if (reg->base <= vmlinux_end && vmlinux_end <= end) {
-+		if (reg->base <= vmlinux_start && vmlinux_end <= end) {
- 			mem_size = min(reg->size, (phys_addr_t)-PAGE_OFFSET);
- 
- 			/*
--- 
-2.20.1
+They revised first drawing because of  mistake.
 
+https://apps.mypurecloud.com/s/#/1/ggskzt6grrfqzbjkppe2bxkpru
+
+
+
+
+
+Best wishes & regards
+
+
+
+Kazuhisa Hikita
+
+
+
+Shneider Electric(S) PTE LTD
+
+Formerly known as AJR Trading & Industries (S) Pte Ltd
+
+69 Ubi Road 1 #07-30 Oxley Bizhub Singapore 408731
+
+609966. Tel: (65) 68979126,Fax(65) 68979127
