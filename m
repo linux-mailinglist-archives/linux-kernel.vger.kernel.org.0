@@ -2,49 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3138A16093A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 04:49:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A2F9160938
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 04:49:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727898AbgBQDtH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 22:49:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50022 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726485AbgBQDtG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 22:49:06 -0500
-Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F6B3206E2;
-        Mon, 17 Feb 2020 03:49:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581911346;
-        bh=I9tH1uPwP9k8hna9VlZsQhTYgToiCLium69V90L8L94=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qauHQ8NQsKt8i2lcBxEMdERol6YlVgubroXNjstrgtkz85l0pswccPislTilvoHDR
-         VOS1y9vJPnmO2TqxHTNpIHYstlDBLRT37wTRRjMjd1KaiWpxKMhK5kUGlxVxMQJMhU
-         R3iDumt6HSeg1FlS1J714fO4RuM2XFinYrp0R4Mw=
-Date:   Mon, 17 Feb 2020 11:48:59 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Martin Kaiser <martin@kaiser.cx>
-Cc:     kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM: dts: imx25-pinfunc: add another cspi3 config
-Message-ID: <20200217034858.GA5395@dragon>
-References: <20200204215229.32485-1-martin@kaiser.cx>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200204215229.32485-1-martin@kaiser.cx>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1727822AbgBQDtD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 22:49:03 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:48462 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726485AbgBQDtD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Feb 2020 22:49:03 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id ADF51157D8A42;
+        Sun, 16 Feb 2020 19:49:02 -0800 (PST)
+Date:   Sun, 16 Feb 2020 19:49:02 -0800 (PST)
+Message-Id: <20200216.194902.108594610616498832.davem@davemloft.net>
+To:     fthain@telegraphics.com.au
+Cc:     tsbogend@alpha.franken.de, chris@zankel.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 0/7] Improvements for SONIC ethernet drivers
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <cover.1581800613.git.fthain@telegraphics.com.au>
+References: <cover.1581800613.git.fthain@telegraphics.com.au>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 16 Feb 2020 19:49:02 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 04, 2020 at 10:52:29PM +0100, Martin Kaiser wrote:
-> This patch adds defines for another cspi3 configuration.
-> The defines have been tested on an out-of-tree board.
-> 
-> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+From: Finn Thain <fthain@telegraphics.com.au>
+Date: Sun, 16 Feb 2020 08:03:32 +1100
 
-Applied, thanks.
+> Now that the necessary sonic driver fixes have been merged, and the merge
+> window has closed again, I'm sending the remainder of my sonic driver
+> patch queue.
+> 
+> A couple of these patches will have to be applied in sequence to avoid
+> 'git am' rejects. The others are independent and could have been submitted
+> individually. Please let me know if I should do that.
+> 
+> The complete sonic driver patch queue was tested on National Semiconductor
+> hardware (macsonic), qemu-system-m68k (macsonic) and qemu-system-mips64el
+> (jazzsonic).
+
+Series applied, thanks.
