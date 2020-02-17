@@ -2,98 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ACCE161C49
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 21:25:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FF67161C62
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 21:40:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729861AbgBQUZ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 15:25:26 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:18951 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727300AbgBQUZ0 (ORCPT
+        id S1729730AbgBQUkS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 15:40:18 -0500
+Received: from gateway36.websitewelcome.com ([192.185.184.18]:32225 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727332AbgBQUkS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 15:25:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1581971122;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=6k8gkstrNDEzvbYLrt4RKW9bgDvp9rSQ7Q9t/JrNADI=;
-        b=FoqUDXbUGz0MgMKGoEhbWjJx3jgoA9g+W6TF9mx5qNzr5x82zTYLw+LX9eATBX0B46
-        d9w8uJ3WHvylxWqNZ2fSqi28WzvhuUvm4el3M7UBS9FXDF2dxJcrybXIuXPvkSuJkWMC
-        idopXzKOlRVq47s+3KgOKF8Kxb9S0rXxM5CMDbYHnTqAbDHQbgO2MEqtUjhcm+CK2GCb
-        0Q0VnHJGHp/kUpNK80cQ1Mf2HxnvwluBfbXgUhzYF8Y55/Wq1ma+eAFY5DYAcHYyRzB6
-        dGyLXoW3Y1vGlKVkBGHByrGUAcy+ZskafaZDpGjtJYQz2kZjZ+ddeWLFOTB16BBcYZj9
-        gO4A==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj5Qpw97WFDVCaXA0OXQ=="
-X-RZG-CLASS-ID: mo00
-Received: from mbp-13-nikolaus.fritz.box
-        by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
-        with ESMTPSA id U06217w1HKPDPPb
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-        (Client did not present a certificate);
-        Mon, 17 Feb 2020 21:25:13 +0100 (CET)
-Subject: Re: [PATCH v3] extcon: palmas: hide error messages if gpio returns -EPROBE_DEFER
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+        Mon, 17 Feb 2020 15:40:18 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 8A21540FA075B
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 13:06:14 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 3mQsjo8weRP4z3mQsjEkvy; Mon, 17 Feb 2020 13:51:54 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=fs6PYRX24xfRohVEXUr8oWq2yWMbC09iZHVjQRC+Gwo=; b=PLnsB5f6nrXVqy94cZgjLGOLoQ
+        EN3T8hGVFqNQU0nxwTRyHD+UOqojMqN9wzdy2kN++YxRJ6os4xaXXarsN/IHVuWlY6zZaaWOpK15S
+        J4EE5Wz8Fzsxa6xdO1p0P8n3e2kho+UMnYH8DBSBQZMHRPLchAYvbSOPJFZk6SgSYs5chnR6PUBBu
+        UQ3bypf8pVK05RPJAtjlmAa5jk2+ZZWvqFFaUGLuwvsljc8Q2SfFb0EMFVqiAnQQNrRnkf1Qi8VU2
+        bCkdG4Vv7IEbQ6cFkFE+kpNIbO3jIkSLaCpRkmUeHGY8ruS79w9f/umSizvq1wqQv/vfLOJyQT13C
+        O4f4+e3g==;
+Received: from [200.68.140.26] (port=27288 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j3mQr-000JUr-20; Mon, 17 Feb 2020 13:51:53 -0600
+Date:   Mon, 17 Feb 2020 13:54:34 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Boris Pismenny <borisp@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH][next] net/mlx5: IPsec, Replace zero-length array with
+ flexible-array member
+Message-ID: <20200217195434.GA1166@embeddedor>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20200217201911.GA168683@lenoch>
-Date:   Mon, 17 Feb 2020 21:25:32 +0100
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
-        kernel@pyra-handheld.com, linux-omap@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <CEE4951F-085A-4D9C-AD15-F63C80D958EB@goldelico.com>
-References: <d5c2826a5f00fcaee62f00662ae2a44dc4a5395d.1581946695.git.hns@goldelico.com> <C3D9F783-EE45-4681-93D9-C1407284CB59@goldelico.com> <20200217182906.GA140676@lenoch> <012228CC-2B49-4AAE-B574-92E44621F0D6@goldelico.com> <20200217190745.GA147152@lenoch> <017C406F-0DD9-478F-8AD5-D950A4000305@goldelico.com> <20200217201911.GA168683@lenoch>
-To:     Ladislav Michl <ladis@linux-mips.org>
-X-Mailer: Apple Mail (2.3124)
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.68.140.26
+X-Source-L: No
+X-Exim-ID: 1j3mQr-000JUr-20
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [200.68.140.26]:27288
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 8
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ladis,
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-> Am 17.02.2020 um 21:19 schrieb Ladislav Michl <ladis@linux-mips.org>:
->=20
-> Hi Nikolaus,
->=20
-> On Mon, Feb 17, 2020 at 08:33:52PM +0100, H. Nikolaus Schaller wrote:
->> Hi Ladis,
->>=20
->>> Am 17.02.2020 um 20:07 schrieb Ladislav Michl =
-<ladis@linux-mips.org>:
->>> Linux kernel prints so many lines on bootup and only few of them are
->>> valuable. Lets improve it by printing error value to give a clue
->>> why it failed.
->>=20
->> Hm. The upstream code does already print the error. This feature is =
-not removed.
->> But it is also printing an error in the EPROBE_DEFER case as well, =
-where it is
->> not needed or not an error.
->=20
-> It seems you missed I'm printing also error _value_.
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-Indeed.
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
-Well, usually there is no error so adding the error number is not of =
-much
-use (except for debugging)... The most likely one seems to be =
--EPROBE_DEFER.
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
 
-On the omap5 boards where I have seen the error message being printed =
-they were
-EPROBE_DEFER.
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
 
-So your proposal changes the subject (which has a very small focus).
+This issue was found with the help of Coccinelle.
 
-> The rest of discussion
-> would need disassembly and I'll do it once I'll be waiting for yet =
-another
-> long run recompile.
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
 
-:)
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-BR and thanks,
-Nikolaus
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c b/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
+index 4c61d25d2e88..b794888fa3ba 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
+@@ -57,7 +57,7 @@ struct mlx5_fpga_ipsec_cmd_context {
+ 	struct completion complete;
+ 	struct mlx5_fpga_device *dev;
+ 	struct list_head list; /* Item in pending_cmds */
+-	u8 command[0];
++	u8 command[];
+ };
+ 
+ struct mlx5_fpga_esp_xfrm;
+-- 
+2.25.0
 
