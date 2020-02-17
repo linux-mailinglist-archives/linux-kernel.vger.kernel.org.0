@@ -2,114 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0F061615E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 16:15:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 757201615A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 16:11:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728602AbgBQPPu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 10:15:50 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:43576 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726833AbgBQPPu (ORCPT
+        id S1727815AbgBQPLr convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 17 Feb 2020 10:11:47 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:46670 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726808AbgBQPLr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 10:15:50 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01HFFTk5125091;
-        Mon, 17 Feb 2020 09:15:29 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1581952529;
-        bh=sesL32PDsZi01y0X5NncQMWx/LULUnsHSmLX5Wya1Xc=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=gCgf3hT+IcPMAv4XKF0sDStZbR0mz80E4QENsSIj7d/a/S0T9abzOcR9XKl/l4VRP
-         2SmDJfX6EVy8ENek08jsvgB0YRJuZdn2JrQ2R1I74ByocsVYcggHmzoqhPB3jhe/ry
-         f8Pk6FCS1OW8+2L6kaPAZzzqZsr6mp6T8TUrhg6o=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01HFFTfv119247
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 17 Feb 2020 09:15:29 -0600
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 17
- Feb 2020 09:15:28 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 17 Feb 2020 09:15:28 -0600
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01HFFSIB067034;
-        Mon, 17 Feb 2020 09:15:28 -0600
-Subject: Re: [PATCH v2 2/3] can: m_can: m_can_platform: Add support for
- enabling transceiver
-To:     Faiz Abbas <faiz_abbas@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-can@vger.kernel.org>
-CC:     <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <catalin.marinas@arm.com>, <mark.rutland@arm.com>,
-        <robh+dt@kernel.org>, <mkl@pengutronix.de>, <wg@grandegger.com>,
-        <sriram.dash@samsung.com>
-References: <20200217142836.23702-1-faiz_abbas@ti.com>
- <20200217142836.23702-3-faiz_abbas@ti.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <250f905a-33c3-dd17-15c9-e282299dd742@ti.com>
-Date:   Mon, 17 Feb 2020 09:10:47 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Mon, 17 Feb 2020 10:11:47 -0500
+Received: by mail-ot1-f65.google.com with SMTP id g64so16342174otb.13;
+        Mon, 17 Feb 2020 07:11:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=qYxmdX29YG/UHJJMk5zm+QwT+5Rwjs67+eLlDKSKlyA=;
+        b=T7NCFb0JFNodBKg9BIxyfN3Bh8+qs0SUOwJj050pFIg7C3HGwy7gXV7PFL3WQ5OBmW
+         6DjqGGihLKPkYMpKtnigEWO+pafBmo8zMZQNgaJ+rePCrtP/iZJPdlpF5Zo3l/Cp4WOV
+         3gXqgFhJWOYhlj0kaZEywzSbm7LvXomu3KDUHNVsCsn2UUvH52/tiwVb9rbvcOmra7Te
+         9psbnk/KX83xzEW2eur3WTV8fC9AmiQ36tRMEGETXa8UBPOi+0ilmUKoiYEjo8/aYpf+
+         QlDVA47TJa8pjEHjEwMThuf0rtmdwy6Hi1THBTl8A7gzVFkF18dEYadpRIcmKJ2bTrLv
+         q+6Q==
+X-Gm-Message-State: APjAAAVmjlX/dEtnWsiZ430C+NcwpowqUNUhrzr2hwP7qZTIpGgg+WcG
+        jez0MIe0jWc4DqSd45MZ93s1pKZo5Osi0rTAp94=
+X-Google-Smtp-Source: APXvYqxSZHc5RwRSQVBTkVl6ulYXJeWISH1t7KfDBpAV5RYWaXG9c2NoeJ3If5p7QepcD8irCbCNrQTmrjGoASq3g6o=
+X-Received: by 2002:a9d:7984:: with SMTP id h4mr12668875otm.297.1581952306334;
+ Mon, 17 Feb 2020 07:11:46 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200217142836.23702-3-faiz_abbas@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20200107092922.18408-1-ktouil@baylibre.com> <20200107092922.18408-3-ktouil@baylibre.com>
+ <CAMuHMdVv+FRnf6fvjEeu50W5PB-Gh2V8Th1h__vt6guMwk2xNQ@mail.gmail.com> <CAMRc=Mf0-gQJH8Se4sFBCkRNE=b4ww=SWges-7GPD2jsivrv1Q@mail.gmail.com>
+In-Reply-To: <CAMRc=Mf0-gQJH8Se4sFBCkRNE=b4ww=SWges-7GPD2jsivrv1Q@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 17 Feb 2020 16:11:35 +0100
+Message-ID: <CAMuHMdWrJ9LmDqBQYvNVs7yY78Po0sTGc=MUu9+tau2frJ9Ytw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/5] nvmem: add support for the write-protect pin
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Khouloud Touil <ktouil@baylibre.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        baylibre-upstreaming@groups.io,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Faiz
+Hi Bartosz,
 
-On 2/17/20 8:28 AM, Faiz Abbas wrote:
-> CAN transceivers on some boards have a standby line which can be
-> toggled to enable/disable the transceiver. Model this as an optional
-> fixed xceiver regulator.
+On Mon, Feb 17, 2020 at 3:34 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> czw., 30 sty 2020 o 09:06 Geert Uytterhoeven <geert@linux-m68k.org> napisał(a):
+> > On Tue, Jan 7, 2020 at 10:30 AM Khouloud Touil <ktouil@baylibre.com> wrote:
+> > > The write-protect pin handling looks like a standard property that
+> > > could benefit other users if available in the core nvmem framework.
+> > >
+> > > Instead of modifying all the memory drivers to check this pin, make
+> > > the NVMEM subsystem check if the write-protect GPIO being passed
+> > > through the nvmem_config or defined in the device tree and pull it
+> > > low whenever writing to the memory.
+> > >
+> > > There was a suggestion for introducing the gpiodesc from pdata, but
+> > > as pdata is already removed it could be replaced by adding it to
+> > > nvmem_config.
+> > >
+> > > Reference: https://lists.96boards.org/pipermail/dev/2018-August/001056.html
+> > >
+> > > Signed-off-by: Khouloud Touil <ktouil@baylibre.com>
+> > > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> > > Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> >
+> > Thanks for your patch!
+> >
+> > > --- a/drivers/nvmem/core.c
+> > > +++ b/drivers/nvmem/core.c
+> > > @@ -15,6 +15,7 @@
+> > >  #include <linux/module.h>
+> > >  #include <linux/nvmem-consumer.h>
+> > >  #include <linux/nvmem-provider.h>
+> > > +#include <linux/gpio/consumer.h>
+> > >  #include <linux/of.h>
+> > >  #include <linux/slab.h>
+> > >  #include "nvmem.h"
+> > > @@ -54,8 +55,14 @@ static int nvmem_reg_read(struct nvmem_device *nvmem, unsigned int offset,
+> > >  static int nvmem_reg_write(struct nvmem_device *nvmem, unsigned int offset,
+> > >                            void *val, size_t bytes)
+> > >  {
+> > > -       if (nvmem->reg_write)
+> > > -               return nvmem->reg_write(nvmem->priv, offset, val, bytes);
+> > > +       int ret;
+> > > +
+> > > +       if (nvmem->reg_write) {
+> > > +               gpiod_set_value_cansleep(nvmem->wp_gpio, 0);
+> > > +               ret = nvmem->reg_write(nvmem->priv, offset, val, bytes);
+> > > +               gpiod_set_value_cansleep(nvmem->wp_gpio, 1);
+> > > +               return ret;
+> > > +       }
+> > >
+> > >         return -EINVAL;
+> > >  }
+> > > @@ -338,6 +345,14 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
+> > >                 kfree(nvmem);
+> > >                 return ERR_PTR(rval);
+> > >         }
+> > > +       if (config->wp_gpio)
+> > > +               nvmem->wp_gpio = config->wp_gpio;
+> > > +       else
+> > > +               nvmem->wp_gpio = gpiod_get_optional(config->dev, "wp",
+> > > +                                                   GPIOD_OUT_HIGH);
+> >
+> > Shouldn't this GPIO be released in nvmem_release(), by calling gpiod_put()?
+> >
 >
-> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-> Acked-by: Sriram Dash <sriram.dash@samsung.com>
-> ---
->   drivers/net/can/m_can/m_can_platform.c | 6 ++++++
->   1 file changed, 6 insertions(+)
+> Hi Geert,
 >
-> diff --git a/drivers/net/can/m_can/m_can_platform.c b/drivers/net/can/m_can/m_can_platform.c
-> index 38ea5e600fb8..719468fab507 100644
-> --- a/drivers/net/can/m_can/m_can_platform.c
-> +++ b/drivers/net/can/m_can/m_can_platform.c
-> @@ -6,6 +6,7 @@
->   // Copyright (C) 2018-19 Texas Instruments Incorporated - http://www.ti.com/
->   
->   #include <linux/platform_device.h>
-> +#include <linux/regulator/consumer.h>
->   
->   #include "m_can.h"
->   
-> @@ -57,6 +58,7 @@ static int m_can_plat_probe(struct platform_device *pdev)
->   {
->   	struct m_can_classdev *mcan_class;
->   	struct m_can_plat_priv *priv;
-> +	struct regulator *reg_xceiver;
->   	struct resource *res;
->   	void __iomem *addr;
->   	void __iomem *mram_addr;
-> @@ -111,6 +113,10 @@ static int m_can_plat_probe(struct platform_device *pdev)
->   
->   	m_can_init_ram(mcan_class);
->   
-> +	reg_xceiver = devm_regulator_get_optional(&pdev->dev, "xceiver");
-> +	if (PTR_ERR(reg_xceiver) == -EPROBE_DEFER)
-> +		return -EPROBE_DEFER;
-> +
+> Khouloud already sent out a patch but I think it still doesn't fix all
+> the problems.
+>
+> While we should call gpiod_put() for the descs we request - we must
+> not do it for the desc we get over the config structure. Unless... we
 
-Where is this regulator enabled?
+That's true.
 
-Shouldn't the regulator be managed by runtime PM as well?
+> make descs reference counted with kref and add gpiod_ref() helper.
+> That way we could increase the reference counter in the upper branch
+> of the if and not do it in the lower. Calling gpiod_put() would
+> internally call kref_put(). Does it make sense? I think that a
+> function that's called gpiod_put() but doesn't really use reference
+> counting is misleading anyway.
 
-Dan
+Yep.
 
+> > Once that's implemented, I assume it will be auto-released on registration
+> > failure by the call to put_device()?
+>
+> No, I think this is another leak - why would put_device() lead to
+> freeing any resources? Am I missing something?
+
+Sorry, I don't remember why I wrote that part...
+
+Anyway, requested GPIOs should be released on failure, and on
+unregistration.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
