@@ -2,121 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEB7B160D6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 09:33:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27DD0160D6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 09:33:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728441AbgBQIcy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 03:32:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38502 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728217AbgBQIcx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 03:32:53 -0500
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B89220725
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 08:32:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581928372;
-        bh=OwgMBsjVSCrvbV4TA2D+tr7AeyhpUQsV01Ho7eUVod0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=1Qsi15U7hTxkN1xdFFORkwVFajZ/gVGeHxiOLjCR1d1WrYJ9ngmW56hFGfLcG/vY1
-         yFRc7dkoBHwkAs70yIqaRDY9Vu0PEbjZQ8KREpRR1jIe9ShqQQ8YZsxqi0qc6UGTsy
-         AQfPaISrmT2i+Qx8knFGeMyJCWj2aw4n+uLS5irs=
-Received: by mail-wm1-f45.google.com with SMTP id s10so16186256wmh.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 00:32:52 -0800 (PST)
-X-Gm-Message-State: APjAAAUUG4eb7AxYqGd2QbGhwcySHbZWECfQYwx6OiKU7r/UT45sxuua
-        V2q3/+g5RWpOo5zjtaa9ttz3vqsJKZVbrY7ZU8HCwA==
-X-Google-Smtp-Source: APXvYqyziBIaciYe96AavE0XzNcCSVkKBWen9F5MoO0KrZzjOxjQc0rgfFEuNAV7fOW971/GLufC9iE3EI+E9zbFjKU=
-X-Received: by 2002:a1c:bc46:: with SMTP id m67mr20313635wmf.40.1581928370477;
- Mon, 17 Feb 2020 00:32:50 -0800 (PST)
+        id S1728469AbgBQIdM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 03:33:12 -0500
+Received: from mail-lj1-f182.google.com ([209.85.208.182]:45521 "EHLO
+        mail-lj1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726397AbgBQIdM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 03:33:12 -0500
+Received: by mail-lj1-f182.google.com with SMTP id e18so17762022ljn.12
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 00:33:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=4o9MpvCnaW7UNrMoDadTvPllbR5hSCdTM1cZtcwAvo8=;
+        b=xr36KzVxOPwuOahqFncxjhK4K8zSR2lKO39Cxagp19vpsh2qOcTiJybYRRe7pI/5bk
+         3w/XGkmLQjqV3+cwsJlYWlggupIrqmMkzIGJUwGWgZOAR9d7suw7tMrylO3nmBWcc/VR
+         qsFb5SzdiVdfppdjWADry9ZGJEUCL9vM5oTQY5woMoZ4u7ENul/znHVmDUPOdzIMW3Qz
+         8de77iKP6QtAHDal2JrdZb9FC0nElwJJVG64ZiA03jlZwvrx7TiIZeVWKfK6J0Ltn/xw
+         FDNz99SqqBemyvnYIc39cJLNv//6MUgZZuCuw/CQhlQ45AJOSVff8mXvbiKxV8nt/W2o
+         JKlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=4o9MpvCnaW7UNrMoDadTvPllbR5hSCdTM1cZtcwAvo8=;
+        b=cne1lttEImvSiWELx0+fUPp0uUSWqPVheXNxZrVO0GVUINb+KH4AGeXByhF8fAx2gY
+         gbODiByjjYmY7pZxnrX2SJZVpMrLQ2nVlAiRvkwd8eRdGYm4Aq21S0QmW8v0VO7CdnyS
+         wXccc00dVti/awmLEzp9VlHLIUi4DE4gA+VK77fhGBdX2m/K6xoWVTDLbPwKuhCaxJfY
+         nhNIVT0w4orIMOq8RSm9USk8wr8MA7IxjM/zEJ4JUPVnGF8OP0svNMfuQN8HR5PyelKt
+         dPJOdkn5M1xELJs4DCJyFePGgbEJ18LVY2n4ku+ZnKEh7l/JWffZbTn14MGy/vTCtqvu
+         CgsA==
+X-Gm-Message-State: APjAAAVCqFaJF2l2VB62K+6ONzIp9Lv8dK+oCqeUeIOfSJGPJjmCpVJD
+        JbQd+XjfXmmbqSCUtCAvMlMUwr99Ug13ov5K4s3y0g==
+X-Google-Smtp-Source: APXvYqx2ueaC/hV8qPE0R05PmQXt8c2Pct9mXAV2SSmrSlMEmO1pjbXcsPd0W1wVCc9TriZVLyqVp/ChAvVZSmdRB38=
+X-Received: by 2002:a2e:9008:: with SMTP id h8mr9245027ljg.217.1581928390302;
+ Mon, 17 Feb 2020 00:33:10 -0800 (PST)
 MIME-Version: 1.0
-References: <20200216182334.8121-1-ardb@kernel.org> <20200216182334.8121-13-ardb@kernel.org>
- <20200216191219.GA589207@rani.riverdale.lan>
-In-Reply-To: <20200216191219.GA589207@rani.riverdale.lan>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Mon, 17 Feb 2020 09:32:39 +0100
-X-Gmail-Original-Message-ID: <CAKv+Gu_NEuPAnEjFtk1MOs6xqcH-WNK2+6uP_EQ203vhjHzDaw@mail.gmail.com>
-Message-ID: <CAKv+Gu_NEuPAnEjFtk1MOs6xqcH-WNK2+6uP_EQ203vhjHzDaw@mail.gmail.com>
-Subject: Re: [PATCH 12/18] efi: clean up config_parse_tables()
-To:     Arvind Sankar <nivedita@alum.mit.edu>
-Cc:     linux-efi <linux-efi@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Mon, 17 Feb 2020 14:02:57 +0530
+Message-ID: <CA+G9fYtnwFVPQxgHOU2Bi9y5+q4sSsww47yxK+_3ZAQ9=kyhUg@mail.gmail.com>
+Subject: msm_hsusb 78d9000.usb: failed to create device link to ci_hdrc.0.ulpi
+To:     linux-usb@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter.Chen@nxp.com, lkft-triage@lists.linaro.org,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 16 Feb 2020 at 20:12, Arvind Sankar <nivedita@alum.mit.edu> wrote:
->
-> On Sun, Feb 16, 2020 at 07:23:28PM +0100, Ard Biesheuvel wrote:
-> > config_parse_tables() is a jumble of pointer arithmetic, due to the
-> > fact that on x86, we may be dealing with firmware whose native word
-> > size differs from the kernel's.
-> >
-> > This is not a concern on other architectures, and doesn't quite
-> > justify the state of the code, so let's clean it up by adding a
-> > non-x86 code path, constifying statically allocated tables and
-> > replacing preprocessor conditionals with IS_ENABLED() checks.
-> >
-> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> > ---
-> >  arch/ia64/kernel/efi.c          |  3 +-
-> >  arch/x86/platform/efi/efi.c     |  6 +--
-> >  drivers/firmware/efi/arm-init.c |  5 +--
-> >  drivers/firmware/efi/efi.c      | 47 ++++++++++----------
-> >  include/linux/efi.h             |  5 ++-
-> >  5 files changed, 32 insertions(+), 34 deletions(-)
-> >
-...
-       if (!retval)
-> > diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-> > index 2bfd6c0806ce..db1fe765380f 100644
-> > --- a/drivers/firmware/efi/efi.c
-> > +++ b/drivers/firmware/efi/efi.c
-...
-> > @@ -498,39 +498,38 @@ static __init int match_config_table(efi_guid_t *guid,
-> >       return 0;
-> >  }
-> >
-> > -int __init efi_config_parse_tables(void *config_tables, int count, int sz,
-> > -                                efi_config_table_type_t *arch_tables)
-> > +int __init efi_config_parse_tables(const efi_config_table_t *config_tables,
-> > +                                int count,
-> > +                                const efi_config_table_type_t *arch_tables)
-> >  {
-> > -     void *tablep;
-> > +     const efi_config_table_64_t *tbl64 = (void *)config_tables;
-> > +     const efi_config_table_32_t *tbl32 = (void *)config_tables;
-> > +     const efi_guid_t *guid;
-> > +     unsigned long table;
-> >       int i;
-> >
-> > -     tablep = config_tables;
-> >       pr_info("");
-> >       for (i = 0; i < count; i++) {
-> > -             efi_guid_t guid;
-> > -             unsigned long table;
-> > -
-> > -             if (efi_enabled(EFI_64BIT)) {
-> > -                     u64 table64;
-> > -                     guid = ((efi_config_table_64_t *)tablep)->guid;
-> > -                     table64 = ((efi_config_table_64_t *)tablep)->table;
-> > -                     table = table64;
-> > -#ifndef CONFIG_64BIT
-> > -                     if (table64 >> 32) {
-> > +             if (!IS_ENABLED(CONFIG_X86)) {
-> > +                     guid = &config_tables[i].guid;
-> > +                     table = (unsigned long)config_tables[i].table;
-> > +             } else if (efi_enabled(EFI_64BIT)) {
-> > +                     guid = &tbl64[i].guid;
-> > +                     table = tbl64[i].table;
-> > +
-> > +                     if (IS_ENABLED(CONFIG_X64_32) &&
->                                               ^^^ typo, should be X86
->
+arm64 APQ 8016 SBC ( Dragonboard 410c)  device running Linux next boot
+failed due to below error.
 
-Noted, thanks for spotting that.
+[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd030]
+[    0.000000] Linux version 5.6.0-rc2-next-20200217 (oe-user@oe-host)
+(gcc version 7.3.0 (GCC)) #1 SMP PREEMPT Mon Feb 17 04:27:31 UTC 2020
+[    0.000000] Machine model: Qualcomm Technologies, Inc. APQ 8016 SBC
+<>
+[    4.439291] msm_hsusb 78d9000.usb: failed to create device link to
+ci_hdrc.0.ulpi
+[    4.448891] msm_hsusb 78d9000.usb: failed to create device link to
+ci_hdrc.0.ulpi
+[    4.457879] msm_hsusb 78d9000.usb: failed to create device link to
+ci_hdrc.0.ulpi
+[    4.467331] msm_hsusb 78d9000.usb: failed to create device link to
+ci_hdrc.0.ulpi
+[    4.475636] mmc0: new HS200 MMC card at address 0001
+[    4.478895] mmcblk0: mmc0:0001 DS2008 7.28 GiB
+[    4.480629] mmcblk0boot0: mmc0:0001 DS2008 partition 1 4.00 MiB
+[    4.484719] mmcblk0boot1: mmc0:0001 DS2008 partition 2 4.00 MiB
+[    4.492247] msm_hsusb 78d9000.usb: failed to create device link to
+ci_hdrc.0.ulpi
+[    4.502611] mmcblk0rpmb: mmc0:0001 DS2008 partition 3 4.00 MiB,
+chardev (234:0)
+[    4.506949] msm_hsusb 78d9000.usb: failed to create device link to
+ci_hdrc.0.ulpi
+[    4.517901] random: fast init done
+[    4.521420] mmc1: new ultra high speed SDR104 SDHC card at address aaaa
+[    4.523400] mmcblk1: mmc1:aaaa SL16G 14.8 GiB
+[    4.532843] msm_hsusb 78d9000.usb: failed to create device link to
+ci_hdrc.0.ulpi
+[    4.539131]  mmcblk0: p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14
+[    4.542309]  mmcblk1: p1
+[    4.561843] msm_hsusb 78d9000.usb: failed to create device link to
+ci_hdrc.0.ulpi
+[    4.573481] msm_hsusb 78d9000.usb: failed to create device link to
+ci_hdrc.0.ulpi
+[    4.585283] msm_hsusb 78d9000.usb: failed to create device link to
+ci_hdrc.0.ulpi
+[    4.592622] msm_hsusb 78d9000.usb: failed to create device link to
+ci_hdrc.0.ulpi
+[    4.600074] msm_hsusb 78d9000.usb: failed to create device link to
+ci_hdrc.0.ulpi
+[    4.607204] msm_hsusb 78d9000.usb: failed to create device link to
+ci_hdrc.0.ulpi
+[    4.614679] msm_hsusb 78d9000.usb: failed to create device link to
+ci_hdrc.0.ulpi
+
+metadata:
+  git branch: master
+  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+  git commit: c25a951c50dca1da4a449a985a9debd82dc18573
+  git describe: next-20200217
+  make_kernelversion: 5.6.0-rc2
+  kernel-config:
+http://snapshots.linaro.org/openembedded/lkft/lkft/sumo/dragonboard-410c/lkft/linux-next/705/config
+  build-location:
+http://snapshots.linaro.org/openembedded/lkft/lkft/sumo/dragonboard-410c/lkft/linux-next/705
+
+ref:
+https://qa-reports.linaro.org/lkft/linux-next-oe/build/next-20200217/testrun/1223296/log
+https://qa-reports.linaro.org/lkft/linux-next-oe/build/next-20200217/testrun/1223301/log
+https://qa-reports.linaro.org/lkft/linux-next-oe/build/next-20200217/testrun/1223310/log
+https://qa-reports.linaro.org/lkft/linux-next-oe/build/next-20200217/testrun/1223308/log
