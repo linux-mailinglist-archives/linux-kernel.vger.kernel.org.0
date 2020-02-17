@@ -2,86 +2,272 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BD3E1609CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 06:08:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 587021609E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 06:25:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725985AbgBQFIi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 00:08:38 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36193 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725280AbgBQFIi (ORCPT
+        id S1726294AbgBQFZY convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 17 Feb 2020 00:25:24 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:33257 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725855AbgBQFZY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 00:08:38 -0500
-Received: by mail-lj1-f195.google.com with SMTP id r19so17268414ljg.3
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2020 21:08:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qcgi3kuYWT+F97MMSY9Af1xrTLZcSD8KEgx4I86REZQ=;
-        b=V0CNo2wKtLMflqcZ3QN5b6cM5ItqRqI6/fRPOVs31VlDzbS/0QsFhAC1QURo5bQx5e
-         pW2VLt3NagHcaRjpB1KmFY9gqBoy0kvZhm6PhTgwrOHIEgVxZWmnWmqvtCGkTmqt22gH
-         q6oCMSYvx/Fg1m9ZdMSXVb/eP5Q/SmH5SrBtw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qcgi3kuYWT+F97MMSY9Af1xrTLZcSD8KEgx4I86REZQ=;
-        b=m+GxHJ0NIt53q5af9mdxvcVmJedNHR8DI4Gd4Ya4YNHm0FuzlwPPTeomUVjlD5RpiH
-         fnUAmd+vbNedu2hWtKQqVpCtVHREZCojB4MlhfCdl6ssdep//7fNJuMkgo3aslBe1+2D
-         qid5oOXc5qqFYJAK7NMdii54mCo0hSnAWu8qiAvPOk+dlJF9K7WHscCwgfkgdy1LYJGW
-         hRRGyGmat0UTke0CQ4Qd0e9DUjnLJ3kVVePo+sMXoDgaKrqDtmBerjJ2GJhT9omW3hAz
-         ubs9jAT0iOlGEa/5fdL7uzBY+deAiyt1FRpxgGtRubgtDLBVDWrHkNCB09HfZjrOt9bL
-         H51g==
-X-Gm-Message-State: APjAAAWYLt+NhrVD2lZ08u6NabB3lT+0xZjgksGRys6IfxE5yzs8mB9+
-        bYqtkHxBihvxSSIcIIBBcoY3ZFi6F6M=
-X-Google-Smtp-Source: APXvYqwTLapBAj4AoKSVPBYxRHwqvQy+XNXURF+4rq4ZbRwxYARh5tiGXfgwZSL2qxPP9FUyTNSIiw==
-X-Received: by 2002:a2e:3619:: with SMTP id d25mr8579383lja.231.1581916115569;
-        Sun, 16 Feb 2020 21:08:35 -0800 (PST)
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
-        by smtp.gmail.com with ESMTPSA id f9sm7812881ljp.62.2020.02.16.21.08.34
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Feb 2020 21:08:34 -0800 (PST)
-Received: by mail-lj1-f181.google.com with SMTP id d10so17285378ljl.9
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2020 21:08:34 -0800 (PST)
-X-Received: by 2002:a2e:909a:: with SMTP id l26mr8503500ljg.209.1581916114301;
- Sun, 16 Feb 2020 21:08:34 -0800 (PST)
-MIME-Version: 1.0
-References: <CAHk-=wgqwiBLGvwTqU2kJEPNmafPpPe_K0XgBU-A58M+mkwpgQ@mail.gmail.com>
- <20200217020840.GA24821@codemonkey.org.uk> <CAHk-=wg5AkQk-9By-QeyT+5H_t6DLZD=25uOz-ujnV8oEv1Y5Q@mail.gmail.com>
- <8025e1bf-4834-83c6-d12c-4e817f875776@toxicpanda.com>
-In-Reply-To: <8025e1bf-4834-83c6-d12c-4e817f875776@toxicpanda.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 16 Feb 2020 21:08:18 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiG+wjLjuDDNiqfL3iLW25yqsMK_gNEWomyMH=8kxOLwQ@mail.gmail.com>
-Message-ID: <CAHk-=wiG+wjLjuDDNiqfL3iLW25yqsMK_gNEWomyMH=8kxOLwQ@mail.gmail.com>
-Subject: Re: Linux 5.6-rc2
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     Dave Jones <davej@codemonkey.org.uk>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 17 Feb 2020 00:25:24 -0500
+Date:   17 Feb 2020 14:25:22 +0900
+X-IronPort-AV: E=Sophos;i="5.70,451,1574089200"; 
+   d="scan'208";a="39471410"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 17 Feb 2020 14:25:22 +0900
+Received: from mercury.renesas.com (unknown [10.166.252.133])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7A35F400754F;
+        Mon, 17 Feb 2020 14:25:22 +0900 (JST)
+Message-ID: <87h7zpaiq7.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc:     Tony Lindgren <tony@atomide.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        "Arthur D ." <spinal.by@gmail.com>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Merlijn Wajer <merlijn@wizzup.org>,
+        Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>
+Subject: Re: [PATCH] ASoC: ti: Allocate dais dynamically for TDM and audio graph card
+In-Reply-To: <87eeuuat85.wl-kuninori.morimoto.gx@renesas.com>
+References: <20200211171645.41990-1-tony@atomide.com>
+        <cd46c6ec-80e3-332f-4922-e58a3acbfc61@ti.com>
+        <20200212143543.GI64767@atomide.com>
+        <346dfd2b-23f8-87e0-6f45-27a5099b1066@ti.com>
+        <20200214170322.GZ64767@atomide.com>
+        <87eeuuat85.wl-kuninori.morimoto.gx@renesas.com>
+User-Agent: Wanderlust/2.15.9 Emacs/25.2 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 16, 2020 at 7:02 PM Josef Bacik <josef@toxicpanda.com> wrote:
->
-> I assume Filipe wrote this based on my patch here
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/josef/btrfs-next.git/commit/?id=c821555d2b9733d8f483c9e79481c7209e1c1fb0
->
-> which makes it so we can allocate safely in this context, but that patch hasn't
-> made it's way to you yet.  Do you want it now?  It was prep for a much less safe
-> patchset, but is fine by itself.  Thanks,
 
-I assume it's either that, or revert 28553fa992cb and do it differently..
+Hi
 
-I'll leave that whole decision to the btrfs people who actually know
-the code and the situations and what the alternative would look
-like...
+> I confirmed attached patch on my local platform (= Renesas ULCB + KF board),
+> and it works well for me on at least v5.5 kernel.
 
-               Linus
+Maybe my DT patch was not good for port vs endpoint.
+I attached new one.
+
+--------------------------
+From a222375f826f650d1181646cc79b8b89b364da2a Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Fri, 14 Dec 2018 09:47:47 +0900
+Subject: [PATCH 1/2] Local v5.4: ulcb-kf: add TDM Split support
+
+	CPU0 ------ ak4613
+	CPU1 ------ PCM3168A-p	/* 1ch/2ch */
+	CPU2 --/		/* 3ch/4ch */
+	CPU3 --/		/* 5ch/6ch */
+	CPU4 --/		/* 7ch/8ch */
+	CPU5 ------ PCM3168A-c	/* 1ch/2ch */
+	CPU6 --/		/* 3ch/4ch */
+	CPU7 --/		/* 5ch/6ch */
+
+aplay   -D plughw:0,0 xxx.wav // ak4613
+aplay   -D plughw:0,1 xxx.wav // PCM3168A playback 1ch/2ch
+aplay   -D plughw:0,2 xxx.wav // PCM3168A playback 3ch/4ch
+aplay   -D plughw:0,3 xxx.wav // PCM3168A playback 5ch/6ch
+aplay   -D plughw:0,4 xxx.wav // PCM3168A playback 7ch/8ch
+arecord -D plughw:0,5 xxx     // PCM8168A capture  1ch/2ch
+arecord -D plughw:0,6 xxx     // PCM8168A capture  3ch/4ch
+arecord -D plughw:0,7 xxx     // PCM8168A capture  5ch/6ch
+
+It seems 1 sound card DAI number is limited by SNDRV_MINOR().
+Because of this size limit, total 8 DAI seems maximam.
+So, this patch removes HDMI so far.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+---
+ arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 116 ++++++++++++++++++++---
+ 1 file changed, 105 insertions(+), 11 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+index 202177706cde..2c3bd62d13ff 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+@@ -115,18 +115,39 @@
+ 					#size-cells = <0>;
+ 					mclk-fs = <512>;
+ 					port@0 {
++						prefix = "pcm3168a";
++						convert-channels = <8>; /* TDM Split */
+ 						reg = <0>;
+-						pcm3168a_endpoint_p: endpoint {
++						pcm3168a_endpoint_p: endpoint@0 {
+ 							remote-endpoint = <&rsnd_for_pcm3168a_play>;
+ 							clocks = <&clksndsel>;
+ 						};
++						pcm3168a_endpoint_p2: endpoint@1 {
++							remote-endpoint = <&rsnd_for_pcm3168a_play2>;
++						};
++						pcm3168a_endpoint_p3: endpoint@2 {
++							remote-endpoint = <&rsnd_for_pcm3168a_play3>;
++						};
++						pcm3168a_endpoint_p4: endpoint@3 {
++							remote-endpoint = <&rsnd_for_pcm3168a_play4>;
++						};
+ 					};
+ 					port@1 {
++						prefix = "pcm3168a";
++						convert-channels = <6>; /* TDM Split */
+ 						reg = <1>;
+-						pcm3168a_endpoint_c: endpoint {
++						pcm3168a_endpoint_c: endpoint@0 {
+ 							remote-endpoint = <&rsnd_for_pcm3168a_capture>;
+ 							clocks = <&clksndsel>;
+ 						};
++						pcm3168a_endpoint_c2: endpoint@1 {
++							remote-endpoint = <&rsnd_for_pcm3168a_capture2>;
++							clocks = <&clksndsel>;
++						};
++						pcm3168a_endpoint_c3: endpoint@2 {
++							remote-endpoint = <&rsnd_for_pcm3168a_capture3>;
++							clocks = <&clksndsel>;
++						};
+ 					};
+ 				};
+ 			};
+@@ -299,28 +320,86 @@
+ 		/* rsnd_port0/1 are on salvator-common */
+ 		rsnd_port2: port@2 {
+ 			reg = <2>;
+-			rsnd_for_pcm3168a_play: endpoint {
++			rsnd_for_pcm3168a_play: endpoint@2 {
+ 				remote-endpoint = <&pcm3168a_endpoint_p>;
+ 
+ 				dai-format = "i2s";
+ 				bitclock-master = <&rsnd_for_pcm3168a_play>;
+ 				frame-master = <&rsnd_for_pcm3168a_play>;
+-				dai-tdm-slot-num = <8>;
+ 
+-				playback = <&ssi3>;
++				playback = <&ssiu30 &ssi3>;
+ 			};
+ 		};
+ 		rsnd_port3: port@3 {
+ 			reg = <3>;
+-			rsnd_for_pcm3168a_capture: endpoint {
++			rsnd_for_pcm3168a_play2: endpoint@3 {
++				remote-endpoint = <&pcm3168a_endpoint_p2>;
++
++				dai-format = "i2s";
++				bitclock-master = <&rsnd_for_pcm3168a_play2>;
++				frame-master = <&rsnd_for_pcm3168a_play2>;
++
++				playback = <&ssiu31 &ssi3>;
++			};
++		};
++		rsnd_port4: port@4 {
++			reg = <4>;
++			rsnd_for_pcm3168a_play3: endpoint@4 {
++				remote-endpoint = <&pcm3168a_endpoint_p3>;
++
++				dai-format = "i2s";
++				bitclock-master = <&rsnd_for_pcm3168a_play3>;
++				frame-master = <&rsnd_for_pcm3168a_play3>;
++
++				playback = <&ssiu32 &ssi3>;
++			};
++		};
++		rsnd_port5: port@5 {
++			reg = <5>;
++			rsnd_for_pcm3168a_play4: endpoint@5 {
++				remote-endpoint = <&pcm3168a_endpoint_p4>;
++
++				dai-format = "i2s";
++				bitclock-master = <&rsnd_for_pcm3168a_play4>;
++				frame-master = <&rsnd_for_pcm3168a_play4>;
++
++				playback = <&ssiu33 &ssi3>;
++			};
++		};
++		rsnd_port6: port@6 {
++			reg = <6>;
++			rsnd_for_pcm3168a_capture: endpoint@6 {
+ 				remote-endpoint = <&pcm3168a_endpoint_c>;
+ 
+ 				dai-format = "i2s";
+ 				bitclock-master = <&rsnd_for_pcm3168a_capture>;
+ 				frame-master = <&rsnd_for_pcm3168a_capture>;
+-				dai-tdm-slot-num = <6>;
+ 
+-				capture  = <&ssi4>;
++				capture  = <&ssiu40 &ssi4>;
++			};
++		};
++		rsnd_port7: port@7 {
++			reg = <7>;
++			rsnd_for_pcm3168a_capture2: endpoint@7 {
++				remote-endpoint = <&pcm3168a_endpoint_c2>;
++
++				dai-format = "i2s";
++				bitclock-master = <&rsnd_for_pcm3168a_capture2>;
++				frame-master = <&rsnd_for_pcm3168a_capture2>;
++
++				capture  = <&ssiu41 &ssi4>;
++			};
++		};
++		rsnd_port8: port@8 {
++			reg = <8>;
++			rsnd_for_pcm3168a_capture3: endpoint@8 {
++				remote-endpoint = <&pcm3168a_endpoint_c3>;
++
++				dai-format = "i2s";
++				bitclock-master = <&rsnd_for_pcm3168a_capture3>;
++				frame-master = <&rsnd_for_pcm3168a_capture3>;
++
++				capture  = <&ssiu42 &ssi4>;
+ 			};
+ 		};
+ 	};
+@@ -359,10 +438,25 @@
+ };
+ 
+ &sound_card {
++	compatible = "audio-graph-scu-card";
++
++	routing =	"pcm3168a Playback", "DAI2 Playback",
++			"pcm3168a Playback", "DAI3 Playback",
++			"pcm3168a Playback", "DAI4 Playback",
++			"pcm3168a Playback", "DAI5 Playback",
++			"DAI6 Capture", "pcm3168a Capture",
++			"DAI7 Capture", "pcm3168a Capture",
++			"DAI8 Capture", "pcm3168a Capture";
++
+ 	dais = <&rsnd_port0	/* ak4613 */
+-		&rsnd_port1	/* HDMI0  */
+-		&rsnd_port2	/* pcm3168a playback */
+-		&rsnd_port3	/* pcm3168a capture  */
++//		&rsnd_port1	/* HDMI0  */
++		&rsnd_port2	/* pcm3168a playback	1ch/2ch */
++		&rsnd_port3	/*			3ch/4ch */
++		&rsnd_port4	/*			5ch/6ch */
++		&rsnd_port5	/*			7ch/8ch */
++		&rsnd_port6	/* pcm3168a capture	1ch/2ch */
++		&rsnd_port7	/*			3ch/4ch */
++		&rsnd_port8	/*			5ch/6ch */
+ 		>;
+ };
+ 
+-- 
+2.17.1
+
+
+
+Thank you for your help !!
+Best regards
+---
+Kuninori Morimoto
