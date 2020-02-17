@@ -2,83 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9D271615C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 16:12:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D31C1615C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 16:12:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728430AbgBQPM0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 10:12:26 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:59966 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729468AbgBQPME (ORCPT
+        id S1729056AbgBQPMx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 10:12:53 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:41898 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727976AbgBQPMv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 10:12:04 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1j3i40-0007gn-Rb; Mon, 17 Feb 2020 16:12:00 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 634841C20AC;
-        Mon, 17 Feb 2020 16:12:00 +0100 (CET)
-Date:   Mon, 17 Feb 2020 15:12:00 -0000
-From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] x86/vdso: Mark the TSC clocksource path likely
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200207124402.328922847@linutronix.de>
-References: <20200207124402.328922847@linutronix.de>
+        Mon, 17 Feb 2020 10:12:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=f+3OGTXOU6Agins356Z5AqkAfZFQT+Vwt5LSeJBahwY=; b=Yhzn7389uoyG2+7V8Fg9PmlgDb
+        5bYbLZ/YhuQkPbtChlCW9wTPERlwg3vWvvg1jtDb+bt2j66rhlb4ufs7Gjri/eY031IdSgjJcal+f
+        qqsAVPoj1+HJlTuPgNagW5d8nfIatiUiKzzKoUpGKhnCLFhIUuB+QwR39vFKUXKIywH4yMXqAauBi
+        kle3ZaZDoDbvzy/N7U69zqKn0ZXGkpV2EinV+sTF0qKeFNMACG9rdpCqwRRet55sCmCJ+5TboAv7G
+        EBk0cuKHtDcYPh0NettgFQxFVGR+kJgX5GHYl3NmnXJaUHhueLo9wvyw/j9RH/dWZ+7yU59CmmH6b
+        r2OLORXA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j3i4m-0004bd-1D; Mon, 17 Feb 2020 15:12:48 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 93254304D2C;
+        Mon, 17 Feb 2020 16:10:54 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 147682B910502; Mon, 17 Feb 2020 16:12:46 +0100 (CET)
+Date:   Mon, 17 Feb 2020 16:12:46 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Amol Grover <frextrite@gmail.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>
+Subject: Re: [PATCH RESEND] lockdep: Pass lockdep expression to RCU lists
+Message-ID: <20200217151246.GS14897@hirez.programming.kicks-ass.net>
+References: <20200216074636.GB14025@workstation-portable>
 MIME-Version: 1.0
-Message-ID: <158195232016.13786.8518739445057683116.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200216074636.GB14025@workstation-portable>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the timers/core branch of tip:
+On Sun, Feb 16, 2020 at 01:16:36PM +0530, Amol Grover wrote:
+> Data is traversed using hlist_for_each_entry_rcu outside an
+> RCU read-side critical section but under the protection
+> of either lockdep_lock or with irqs disabled.
+> 
+> Hence, add corresponding lockdep expression to silence false-positive
+> lockdep warnings, and harden RCU lists. Also add macro for
+> corresponding lockdep expression.
+> 
+> Two things to note:
+> - RCU traversals protected under both, irqs disabled and
+> graph lock, have both the checks in the lockdep expression.
+> - RCU traversals under the protection of just disabled irqs
+> don't have a corresponding lockdep expression as it is implicitly
+> checked for.
+> 
+> Signed-off-by: Amol Grover <frextrite@gmail.com>
+> ---
+>  kernel/locking/lockdep.c | 21 +++++++++++++--------
+>  1 file changed, 13 insertions(+), 8 deletions(-)
+> 
+> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+> index 32282e7112d3..696ad5d4daed 100644
+> --- a/kernel/locking/lockdep.c
+> +++ b/kernel/locking/lockdep.c
+> @@ -85,6 +85,8 @@ module_param(lock_stat, int, 0644);
+>   * code to recurse back into the lockdep code...
+>   */
+>  static arch_spinlock_t lockdep_lock = (arch_spinlock_t)__ARCH_SPIN_LOCK_UNLOCKED;
+> +#define graph_lock_held() \
+> +	arch_spin_is_locked(&lockdep_lock)
+>  static struct task_struct *lockdep_selftest_task_struct;
+>  
+>  static int graph_lock(void)
+> @@ -1009,7 +1011,7 @@ static bool __check_data_structures(void)
+>  	/* Check the chain_key of all lock chains. */
+>  	for (i = 0; i < ARRAY_SIZE(chainhash_table); i++) {
+>  		head = chainhash_table + i;
+> -		hlist_for_each_entry_rcu(chain, head, entry) {
+> +		hlist_for_each_entry_rcu(chain, head, entry, graph_lock_held()) {
+>  			if (!check_lock_chain_key(chain))
+>  				return false;
+>  		}
 
-Commit-ID:     50e818715821b89c7abac90a97721f106e893d83
-Gitweb:        https://git.kernel.org/tip/50e818715821b89c7abac90a97721f106e893d83
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Fri, 07 Feb 2020 13:38:48 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 17 Feb 2020 14:40:19 +01:00
+URGH.. this patch combines two horribles to create a horrific :/
 
-x86/vdso: Mark the TSC clocksource path likely
+ - spin_is_locked() is an abomination
+ - this RCU list stuff is just plain annoying
 
-Jumping out of line for the TSC clcoksource read is creating awful
-code. TSC is likely to be the clocksource at least on bare metal and the PV
-interfaces are sufficiently more work that the jump over the TSC read is
-just in the noise.
+I'm tempted to do something like:
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Link: https://lkml.kernel.org/r/20200207124402.328922847@linutronix.de
+#define STFU (true)
 
----
- arch/x86/include/asm/vdso/gettimeofday.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+	hlist_for_each_entry_rcu(chain, head, entry, STFU) {
 
-diff --git a/arch/x86/include/asm/vdso/gettimeofday.h b/arch/x86/include/asm/vdso/gettimeofday.h
-index 6ee1f7d..264d4fd 100644
---- a/arch/x86/include/asm/vdso/gettimeofday.h
-+++ b/arch/x86/include/asm/vdso/gettimeofday.h
-@@ -243,7 +243,7 @@ static u64 vread_hvclock(void)
- 
- static inline u64 __arch_get_hw_counter(s32 clock_mode)
- {
--	if (clock_mode == VCLOCK_TSC)
-+	if (likely(clock_mode == VCLOCK_TSC))
- 		return (u64)rdtsc_ordered();
- 	/*
- 	 * For any memory-mapped vclock type, we need to make sure that gcc
+Paul, are we going a little over-board with this stuff? Do we really
+have to annotate all of this?
