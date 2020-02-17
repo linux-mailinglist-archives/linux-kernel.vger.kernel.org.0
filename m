@@ -2,76 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 773E7161C05
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 20:56:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5A8F161C08
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 20:57:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729403AbgBQT44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 14:56:56 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:33847 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728543AbgBQT44 (ORCPT
+        id S1729739AbgBQT5H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 14:57:07 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:40745 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727332AbgBQT5G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 14:56:56 -0500
-Received: by mail-il1-f196.google.com with SMTP id l4so15285222ilj.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 11:56:55 -0800 (PST)
+        Mon, 17 Feb 2020 14:57:06 -0500
+Received: by mail-io1-f66.google.com with SMTP id x1so8282518iop.7
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 11:57:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=indeed.com; s=google;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=anZc7OW31U8MO5ygkvDDyIY0GQBGMdLs3iSe01Jj7l0=;
-        b=sGkUgr2hS2qh3wTv0ktQzRELdeLNVOJRw8PZLR83DdUf9jRoBChFnzmLtAXvRX0ad9
-         C4Vpbg4AjpwXtzZGSDBzumuHuXBm77L3DHxhhI4bCkVQkbZZHcIkB0lMVmzQJM/WKLFk
-         YOMXm8H4OMQC1q+U1UmngJUHT7IGElm9QTtHI=
+         :cc:content-transfer-encoding;
+        bh=TkZflMcROFsesKUNZV7osOthh1cZ+d/gpsuqXa9C5l8=;
+        b=IomMbbbRUB6peFoBopVRcXZLp+v3pwqHiFwJ+zz3CgTCHpx/ai31KvJpxUqNFwEDFA
+         bnw2mKddqNteZD0xJFZhKEhKqOUEI8hZ/f5A1qNkzC4McjYBmk4xSXsiafGysyUT1uz7
+         4Zoy9khoSb8MKmU8VUUQUvpBwTn8voe//r0Lnt/GCwfaaqGQeQh5N15h24UyKQ9ThfKL
+         nAyJa3Vlu/E10SAXcfE4FLVgij+VgoHwNytOQM+DUDqiMw37E7wHDMHS0xonbidfmDAu
+         Me0t2Q6/lytOjYIvf5Q7gzefC/3D/szDoZh2yQvlXvLEL6R7pRLuQuXzN0kZDZG2KGiu
+         E7ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=anZc7OW31U8MO5ygkvDDyIY0GQBGMdLs3iSe01Jj7l0=;
-        b=WFQgnfKXhhzxCADD3Soaq2PL3MZ2gijnC2Ly0o91zz+r8Y+hiugCdnq2Ue7zyQpYGE
-         MN/LAWeWFl+z/vrMU4gbxKYJzVdD4/b4saFPwdPlFqVAum7ZDGEjlsiVUoY9KpePqykg
-         VO9NkWGO5ZSkNAUC2y3TyU/LAgbbFdxd1Y6Ch7mcKdJF1JaW6D/wvhaBJEackoOwAXFx
-         5R1wAqI42ywTcE2VfgUUwAf7oqOgIP1WJOel2LHTpBMPYrV+Ps8zcqFz03AtkwCz6XNY
-         CEoj5eI9rP2yDNm1aaOn7kH4sHbLKV+Sjxi85flj1YBFhm+nphcDAho7y26/hlDxVuX2
-         YxrA==
-X-Gm-Message-State: APjAAAU4D8Y9g8QOGfR8v7dvHUNQbgr9N3q3ZjbhFxgeSjMsyKzRHm0n
-        AlRhb5PTQYPa1iJSyQ8ucF1AaXijv/Mh7xCf15hWzQ==
-X-Google-Smtp-Source: APXvYqwBzoyntxTeoQ1/iTsKDa+b39U1AxBVdktu7QkWK/jPttX+KkBytSdqwTI1f4OywKIQ1y1o8mbNHj/TDBXsYEw=
-X-Received: by 2002:a92:9c52:: with SMTP id h79mr15265830ili.213.1581969415072;
- Mon, 17 Feb 2020 11:56:55 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=TkZflMcROFsesKUNZV7osOthh1cZ+d/gpsuqXa9C5l8=;
+        b=lwTNfSYvsjigCi8DfayB42tDIlDuul0GMz96zSuD6uiMGswBoqfOe9Ox0OWQT43Ako
+         UU3zg+gAw69q0bj9fr8aT2uzqD7aoFIhvEC2QQZTFTL5yf6E0z/XwgqWA8dsPzxPR4j7
+         GrY5jlhmTPtKwCgCgqkrlk4/Nn+apCsU3XFmJfI1zqTpPjU9QG/uev//dFhnn/ycUd87
+         i9tFiJhRb5FRShk1D24vwgGat0FQHfpEELONNBNuwKViHVItUZnLf/9GS8x1debY4NGi
+         U/o0SJHaZuI/zL6pHqICUQlV8ZY9w1zMXsr75SbsM+2U5jzUgwhhBEAm/4QoPsNhwquc
+         OwUA==
+X-Gm-Message-State: APjAAAXG4pFVrdlzsBxsIc9AhEVoP0QoY3P5QoxQbSJ6hQh2huOHg3Pf
+        h4kPkR3P8teVHCFCubxQyO6raQbWkYDtGikenJIiDA==
+X-Google-Smtp-Source: APXvYqyM5+ZjQIP+Frd5tM0WY4D/8hw6MGjHQa/KvLPV8uqeUFW+t2W0F8RWioJmZyZM3fbUApvoNSAkAqqp6HvNLv4=
+X-Received: by 2002:a05:6602:2352:: with SMTP id r18mr12638053iot.220.1581969425784;
+ Mon, 17 Feb 2020 11:57:05 -0800 (PST)
 MIME-Version: 1.0
-References: <157476581065.5793.4518979877345136813.stgit@buzz>
- <CAC=E7cU8TeNHDRnrHiFxmiHUKviVU9KaDvMq-U16VRgcohg6-w@mail.gmail.com> <xm268sl5uhgo.fsf@bsegall-linux.svl.corp.google.com>
-In-Reply-To: <xm268sl5uhgo.fsf@bsegall-linux.svl.corp.google.com>
-From:   Dave Chiluk <chiluk+linux@indeed.com>
-Date:   Mon, 17 Feb 2020 13:56:29 -0600
-Message-ID: <CAC=E7cUgALi4g19GsDZQemHafQfaSpjY1XUo3Swrv_g1PaWejQ@mail.gmail.com>
-Subject: Re: [PATCH v2] sched/fair: add burst to cgroup cpu bandwidth controller
-To:     Ben Segall <bsegall@google.com>
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Peter Zijlstra <peterz@infradead.org>, cgroups@vger.kernel.org,
+References: <20200217195435.9309-1-brgl@bgdev.pl>
+In-Reply-To: <20200217195435.9309-1-brgl@bgdev.pl>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 17 Feb 2020 20:56:55 +0100
+Message-ID: <CAMRc=Md-gw5ViK7qhH2pZ8RWf-V_7TPgJ2rnb=v6AC5wcxLdog@mail.gmail.com>
+Subject: Re: [PATCH 0/6] nvmem/gpio: fix resource management
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Khouloud Touil <ktouil@baylibre.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 12:55 PM <bsegall@google.com> wrote:
-> I'm not sure that starting with full burst runtime is best, though it
-> definitely seems likely to be one of those things where sometimes it's
-> what you want and sometimes it's not.
+pon., 17 lut 2020 o 20:54 Bartosz Golaszewski <brgl@bgdev.pl> napisa=C5=82(=
+a):
+>
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> This series addresses a couple problems with memory management in nvmem
+> core. We fix an earlier memory leak in error path in patch 2/6. Patches
+> 1/6, 5/6 & 6/6 add reference counting to gpio_desc structure and use it
+> to correctly free the write-protect GPIO. Patches 3/6 & 4/6 fix newline
+> problems.
+>
+> Bartosz Golaszewski (5):
+>   gpiolib: use kref in gpio_desc
+>   nvmem: fix memory leak in error path
+>   nvmem: remove a stray newline in nvmem_register()
+>   nvmem: add a newline for readability
+>   nvmem: increase the reference count of a gpio passed over config
+>
+> Khouloud Touil (1):
+>   nvmem: release the write-protect pin
+>
+>  drivers/gpio/gpiolib.c        | 26 +++++++++++++++++++++++---
+>  drivers/gpio/gpiolib.h        |  1 +
+>  drivers/nvmem/core.c          | 14 ++++++++++----
+>  include/linux/gpio/consumer.h |  1 +
+>  4 files changed, 35 insertions(+), 7 deletions(-)
+>
+> --
+> 2.25.0
+>
 
-We (Indeed) definitely want to start with a full burst bank in most
-cases, as this would help with slow/throttled start-up times for our
-Jitted and interpreter-based language applications.  I agree that it
-would be nice to have it be configurable.
+Cc'ing Geert - sorry I forgot you when submitting this.
 
-Dave.
-fyi.  Unfortunately, this e-mail may be temporarily turned off for the
-next few weeks, I apologize in advance for any bounced messages to me.
+Bartosz
