@@ -2,73 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F90A1608EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 04:29:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94D22160963
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 05:00:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727926AbgBQD33 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 22:29:29 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:48272 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726672AbgBQD33 (ORCPT
+        id S1727980AbgBQEAO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 23:00:14 -0500
+Received: from mail1.windriver.com ([147.11.146.13]:61478 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726672AbgBQEAO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 22:29:29 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id D5A69157413F9;
-        Sun, 16 Feb 2020 19:29:28 -0800 (PST)
-Date:   Sun, 16 Feb 2020 19:29:28 -0800 (PST)
-Message-Id: <20200216.192928.1291469951934245769.davem@davemloft.net>
-To:     mkubecek@suse.cz
-Cc:     kuba@kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] ethtool: fix application of verbose no_mask bitset
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200215005553.4D202E03D6@unicorn.suse.cz>
-References: <20200215005553.4D202E03D6@unicorn.suse.cz>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Sun, 16 Feb 2020 23:00:14 -0500
+X-Greylist: delayed 5719 seconds by postgrey-1.27 at vger.kernel.org; Sun, 16 Feb 2020 23:00:09 EST
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail1.windriver.com (8.15.2/8.15.2) with ESMTPS id 01H2OWAR013176
+        (version=TLSv1 cipher=AES256-SHA bits=256 verify=FAIL);
+        Sun, 16 Feb 2020 18:24:32 -0800 (PST)
+Received: from [128.224.162.175] (128.224.162.175) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.468.0; Sun, 16 Feb
+ 2020 18:24:31 -0800
+Subject: Re: [PATCH 1/2] perf: Be compatible with all python versions when
+ fetching ldflags
+To:     Jiri Olsa <jolsa@redhat.com>
+CC:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+        <mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
+        <namhyung@kernel.org>, <linux-kernel@vger.kernel.org>,
+        Sam Lunt <samueljlunt@gmail.com>
+References: <1581618066-187262-1-git-send-email-zhe.he@windriver.com>
+ <20200216222148.GA161771@krava>
+From:   He Zhe <zhe.he@windriver.com>
+Message-ID: <8cc46abf-208d-4aa4-8d0d-4922106bee6e@windriver.com>
+Date:   Mon, 17 Feb 2020 10:24:27 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <20200216222148.GA161771@krava>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 16 Feb 2020 19:29:29 -0800 (PST)
+Content-Language: en-US
+X-Originating-IP: [128.224.162.175]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Kubecek <mkubecek@suse.cz>
-Date: Sat, 15 Feb 2020 01:55:53 +0100 (CET)
 
-> A bitset without mask in a _SET request means we want exactly the bits in
-> the bitset to be set. This works correctly for compact format but when
-> verbose format is parsed, ethnl_update_bitset32_verbose() only sets the
-> bits present in the request bitset but does not clear the rest. This can
-> cause incorrect results like
-> 
->   lion:~ # ethtool eth0 | grep Wake
->           Supports Wake-on: pumbg
->           Wake-on: g
->   lion:~ # ethtool -s eth0 wol u
->   lion:~ # ethtool eth0 | grep Wake
->           Supports Wake-on: pumbg
->           Wake-on: ug
-> 
-> when the second ethtool command issues request
-> 
-> ETHTOOL_MSG_WOL_SET
->     ETHTOOL_A_WOL_HEADER
->         ETHTOOL_A_HEADER_DEV_NAME = "eth0"
->     ETHTOOL_A_WOL_MODES
->         ETHTOOL_A_BITSET_NOMASK
->         ETHTOOL_A_BITSET_BITS
->             ETHTOOL_A_BITSET_BITS_BIT
->                 ETHTOOL_BITSET_BIT_INDEX = 1
-> 
-> Fix the logic by clearing the whole target bitmap before we start iterating
-> through the request bits.
-> 
-> Fixes: 10b518d4e6dd ("ethtool: netlink bitset handling")
-> Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
 
-Applied, thanks Michal.
+On 2/17/20 6:22 AM, Jiri Olsa wrote:
+> On Fri, Feb 14, 2020 at 02:21:05AM +0800, zhe.he@windriver.com wrote:
+>> From: He Zhe <zhe.he@windriver.com>
+>>
+>> Since Python v3.8.0, with the following commit
+>> 0a8e57248b91 ("bpo-36721: Add --embed option to python-config (GH-13500)"),
+> we got similar change recently.. might have not been picked up yet
+>
+>   https://lore.kernel.org/lkml/20200131181123.tmamivhq4b7uqasr@gmail.com/
+
+Thanks for pointing out.
+
+Zhe
+
+>
+> jirka
+>
+>> --embed option must be passed to "python3-config --ldflags --embed" or
+>> "python3-config --libs --embed" to get "-lpython3.8".
+>>
+>> To make it compatible with all Python versons, according to the suggestion
+>> in the commit log, we try with --embed first and then witout it if fails.
+>>
+>> Signed-off-by: He Zhe <zhe.he@windriver.com>
+>> ---
+>>  tools/perf/Makefile.config | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+>> index 80e55e7..b2eabcf 100644
+>> --- a/tools/perf/Makefile.config
+>> +++ b/tools/perf/Makefile.config
+>> @@ -229,7 +229,7 @@ strip-libs  = $(filter-out -l%,$(1))
+>>  PYTHON_CONFIG_SQ := $(call shell-sq,$(PYTHON_CONFIG))
+>>  
+>>  ifdef PYTHON_CONFIG
+>> -  PYTHON_EMBED_LDOPTS := $(shell $(PYTHON_CONFIG_SQ) --ldflags 2>/dev/null)
+>> +  PYTHON_EMBED_LDOPTS := $(shell $(PYTHON_CONFIG_SQ) --ldflags --embed 2>/dev/null || $(PYTHON_CONFIG_SQ) --ldflags 2>/dev/null)
+>>    PYTHON_EMBED_LDFLAGS := $(call strip-libs,$(PYTHON_EMBED_LDOPTS))
+>>    PYTHON_EMBED_LIBADD := $(call grep-libs,$(PYTHON_EMBED_LDOPTS)) -lutil
+>>    PYTHON_EMBED_CCOPTS := $(shell $(PYTHON_CONFIG_SQ) --includes 2>/dev/null)
+>> -- 
+>> 2.7.4
+>>
+
