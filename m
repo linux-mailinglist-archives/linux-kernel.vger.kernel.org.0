@@ -2,131 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6702F16189C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 18:14:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 914481618A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 18:16:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729612AbgBQRNz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 12:13:55 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:19986 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729594AbgBQRNy (ORCPT
+        id S1729623AbgBQRQE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 12:16:04 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:47122 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729226AbgBQRQD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 12:13:54 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01HH8re4138020
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 12:13:53 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y6e1gmvbb-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 12:13:53 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <gor@linux.ibm.com>;
-        Mon, 17 Feb 2020 17:13:51 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 17 Feb 2020 17:13:47 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01HHDkK636503712
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Feb 2020 17:13:46 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 65D8D42047;
-        Mon, 17 Feb 2020 17:13:46 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2133E4203F;
-        Mon, 17 Feb 2020 17:13:46 +0000 (GMT)
-Received: from localhost (unknown [9.152.212.204])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 17 Feb 2020 17:13:46 +0000 (GMT)
-Date:   Mon, 17 Feb 2020 18:13:44 +0100
-From:   Vasily Gorbik <gor@linux.ibm.com>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Joe Perches <joe@perches.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: Re: [PATCH] s390/kaslr: Fix casts in get_random
-References: <20200208141052.48476-1-natechancellor@gmail.com>
- <ba371a74412c07c30eeb26fa25c94c25468599a9.camel@perches.com>
- <20200214064628.GA14336@ubuntu-m2-xlarge-x86>
+        Mon, 17 Feb 2020 12:16:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581959762;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=f1LZGD5WNqtz5rIbXI6TpBQUDWxl65cn90/dkNdr5mw=;
+        b=caBRZNFG1aqX4qT113JEMHNGhurmwcSgHEweio/J/V60wI+DDEaKht8EnES11gxhj9CNKr
+        RdrcpOFM+RLrqNgejsHMCqWqp5VYWezp8uziJ8Axjor0i+Uv9FkKmEX3bSLpHltJZaSLb9
+        qvRR7GPGAh5pUuQRXsShJS6nqJt1Lxs=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-104-KmuWz23nPE2RUzjFfuLwnA-1; Mon, 17 Feb 2020 12:14:48 -0500
+X-MC-Unique: KmuWz23nPE2RUzjFfuLwnA-1
+Received: by mail-wr1-f72.google.com with SMTP id 50so9305301wrc.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 09:14:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=f1LZGD5WNqtz5rIbXI6TpBQUDWxl65cn90/dkNdr5mw=;
+        b=q0D0qGJ8hi5BQIpedaIfARHIHvMSHhLjhB6REVHA+P0NHLpJFZpOt0v9lLpPcdtBnW
+         pQms5CDWEEnIYXLrdgWdZzsSwRX4RNZ1W5dy5KcbPUNKC5dOOeVqP7BryevWm8DZPyMi
+         PrZ27s0po1eRB6W7kfqkvlUiH8vedEJwOCcIaPaycau+4mpmxrkasgobNidB6aL8V8ep
+         YZqtyw1X8CWgJgO0iZGTlPdnclyoYWqq3zhSViXePD10syDz4UjqEqBIbUHx2wNGCWdw
+         AxND7XwfANZhWeqWCjjiykQHtBxUFF/70ls7rrsMevV61DA/wn7AV5s3o8Kq+9Uq0hVM
+         wmUw==
+X-Gm-Message-State: APjAAAXokSS/q2PNeg7sPYd9mnUG5QhI6FZbmx2Xh99g7PatJl4lPxor
+        g6glqZj8ip0J7pvMAJrkoVGZfPfV6fd6Kg1xdxbmljOBgBJHjQ6MOXC2WJcaLTRR82B2+/CF/EU
+        gINwFQtLCs8mAv0TtCQypJSpT
+X-Received: by 2002:adf:f1c6:: with SMTP id z6mr22198754wro.279.1581959687161;
+        Mon, 17 Feb 2020 09:14:47 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzMdCEUTe/MyuDEjjJD3/8S3SMGQhBkx3p/6bMu4ZJG7y/qDDJMFMEHco03lwFK/cDS7ORBrg==
+X-Received: by 2002:adf:f1c6:: with SMTP id z6mr22198735wro.279.1581959686973;
+        Mon, 17 Feb 2020 09:14:46 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:59c7:c3ee:2dec:d2b4? ([2001:b07:6468:f312:59c7:c3ee:2dec:d2b4])
+        by smtp.gmail.com with ESMTPSA id u62sm117423wmu.17.2020.02.17.09.14.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Feb 2020 09:14:46 -0800 (PST)
+Subject: Re: [PATCH] KVM: VMX: Add VMX_FEATURE_USR_WAIT_PAUSE
+To:     Xiaoyao Li <xiaoyao.li@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>
+References: <20200216104858.109955-1-xiaoyao.li@intel.com>
+ <87r1ytbnor.fsf@vitty.brq.redhat.com>
+ <bb0302e1-c946-2695-8468-d08c3b146b76@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <aea2c71a-b4b8-14f4-c55a-2498fc09986e@redhat.com>
+Date:   Mon, 17 Feb 2020 18:14:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
+In-Reply-To: <bb0302e1-c946-2695-8468-d08c3b146b76@intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200214064628.GA14336@ubuntu-m2-xlarge-x86>
-X-TM-AS-GCONF: 00
-x-cbid: 20021717-4275-0000-0000-000003A2DB4B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20021717-4276-0000-0000-000038B6E05F
-Message-Id: <your-ad-here.call-01581959624-ext-8482@work.hours>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-17_11:2020-02-17,2020-02-17 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 priorityscore=1501 spamscore=0 adultscore=0 mlxscore=0
- impostorscore=0 malwarescore=0 phishscore=0 suspectscore=0 mlxlogscore=999
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002170140
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 11:46:28PM -0700, Nathan Chancellor wrote:
-> On Sat, Feb 08, 2020 at 12:17:20PM -0800, Joe Perches wrote:
-> > On Sat, 2020-02-08 at 07:10 -0700, Nathan Chancellor wrote:
-> > > Clang warns:
-> > > 
-> > > ../arch/s390/boot/kaslr.c:78:25: warning: passing 'char *' to parameter
-> > > of type 'const u8 *' (aka 'const unsigned char *') converts between
-> > > pointers to integer
-> > > types with different sign [-Wpointer-sign]
-> > >                                   (char *) entropy, (char *) entropy,
-> > >                                                     ^~~~~~~~~~~~~~~~
-> > > ../arch/s390/include/asm/cpacf.h:280:28: note: passing argument to
-> > > parameter 'src' here
-> > >                             u8 *dest, const u8 *src, long src_len)
-> > >                                                 ^
-> > > 2 warnings generated.
-> > > 
-> > > Fix the cast to match what else is done in this function.
-> > > 
-> > > Fixes: b2d24b97b2a9 ("s390/kernel: add support for kernel address space layout randomization (KASLR)")
-> > > Link: https://github.com/ClangBuiltLinux/linux/issues/862
-> > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > > ---
-> > >  arch/s390/boot/kaslr.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/arch/s390/boot/kaslr.c b/arch/s390/boot/kaslr.c
-> > > index 5d12352545c5..5591243d673e 100644
-> > > --- a/arch/s390/boot/kaslr.c
-> > > +++ b/arch/s390/boot/kaslr.c
-> > > @@ -75,7 +75,7 @@ static unsigned long get_random(unsigned long limit)
-> > >  		*(unsigned long *) prng.parm_block ^= seed;
-> > >  		for (i = 0; i < 16; i++) {
-> > >  			cpacf_kmc(CPACF_KMC_PRNG, prng.parm_block,
-> > > -				  (char *) entropy, (char *) entropy,
-> > > +				  (u8 *) entropy, (u8 *) entropy,
-> > 
-> > Why not change the function to take void *?
-> > 
-> > static inline int cpacf_kmc(unsigned long func, void *param,
-> > 			    u8 *dest, const u8 *src, long src_len)
-> > 
-> > vs:
-> > 
-> > static inline int cpacf_kmc(unsigned long func, void *param,
-> > 			    void *dest, const void *src, long src_len)
-> > 
-> > and remove the casts?
-> 
-> I can certainly do that if the maintainers prefer it.
-> 
-> Cheers,
-> Nathan
-KBUILD_CFLAGS contains -Wno-pointer-sign but special arch/s390/boot code
-has a separate set of build flags. Anyhow the change makes sense as it is.
-Applied to fixes, thanks
+On 17/02/20 09:57, Xiaoyao Li wrote:
+> What an uncareful typo. Thanks!
+
+No problem, queued.
+
+Paolo
+
+>>>   #define VMX_FEATURE_ENCLV_EXITING    ( 2*32+ 28) /* "" VM-Exit on
+>>> ENCLV (leaf dependent) */
+>>>     #endif /* _ASM_X86_VMXFEATURES_H */
+>>
+>> With the typo fixed (likely upon commit),
+>>
+>> Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+>>
 
