@@ -2,218 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D623161BAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 20:34:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B34E161BB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 20:36:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728899AbgBQTeM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 14:34:12 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.50]:16468 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728667AbgBQTeM (ORCPT
+        id S1729221AbgBQTgR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 14:36:17 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:35581 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726781AbgBQTgQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 14:34:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1581968048;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=JE80blxQI6VLYnGi9efV9cXY2ZbMPR7Lde/gcX39Kqg=;
-        b=p3M1KHTTjPj/dfKLxeVGY6uvx3tyfSxu3kKQhZGe1QQ5rF3bJSxnH9NevxhTBQoYFy
-        +gQbjFBBy774Vs7ThujEOpa5n5e81kS2Gw6WXJeIV7FakwlkoEUDcuN+C+FiTigPWIeF
-        bog9A25/cpuv5dQc3kEQg854Ug9EuosekKZxK7ScGH+6h62d6s+aA+yHoqQxh7ZBPl4N
-        eMNiBaiEWoYTpxsJRr/dwgf2YlMu35qmxxIoL402Gk8PJq9DwPBPmZpJlKQf43ILf4U9
-        i/fT44yNFGwnFdop2ifBKmuO5GS4N7fHKbRHkyBF+osfT1lC6Zgpg6hYU+kIzz1h+9Vt
-        FMog==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj5Qpw97WFDVCaXA0OXQ=="
-X-RZG-CLASS-ID: mo00
-Received: from imac.fritz.box
-        by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
-        with ESMTPSA id U06217w1HJXrPJ4
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-        (Client did not present a certificate);
-        Mon, 17 Feb 2020 20:33:53 +0100 (CET)
-Content-Type: text/plain; charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [PATCH v3] extcon: palmas: hide error messages if gpio returns -EPROBE_DEFER
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20200217190745.GA147152@lenoch>
-Date:   Mon, 17 Feb 2020 20:33:52 +0100
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
-        kernel@pyra-handheld.com, linux-omap@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <017C406F-0DD9-478F-8AD5-D950A4000305@goldelico.com>
-References: <d5c2826a5f00fcaee62f00662ae2a44dc4a5395d.1581946695.git.hns@goldelico.com> <C3D9F783-EE45-4681-93D9-C1407284CB59@goldelico.com> <20200217182906.GA140676@lenoch> <012228CC-2B49-4AAE-B574-92E44621F0D6@goldelico.com> <20200217190745.GA147152@lenoch>
-To:     Ladislav Michl <ladis@linux-mips.org>
-X-Mailer: Apple Mail (2.3124)
+        Mon, 17 Feb 2020 14:36:16 -0500
+Received: by mail-il1-f193.google.com with SMTP id g12so15239429ild.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 11:36:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=GdG37Fau00oTVKmW6BzgExzV9qbFfqB9ZIZw4LCMePs=;
+        b=ejRhgTyOxDl59P7kpjmX728ddC+gMxtNJvy403sbt4CemeIaovy0BKXcnjLbDb26s2
+         k1fYxqvJObMVQpojERHlNIvFWsZ3+abi1c7+/n5YlANyeaRF8+tw+eKLlecSYx8ascdX
+         pCrl2S6PnbQ1D5w1V6q2NUwgYj/nWczT/WpQpv68i/HBIP03uFgmVkcIIyurk0qiPtiU
+         r2oVx33JFDywK95bGh+o6rIKcjk9luknV9BLUjVWYiCKhFN8KFGToRSB/y1rlxuB9HCG
+         ckGfSaEXDsYM+tTMJvEj7HKVU5uXPs32fiKGE2dmPF9kqF8uNiutSEy9lij4O36qbX5N
+         jj8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=GdG37Fau00oTVKmW6BzgExzV9qbFfqB9ZIZw4LCMePs=;
+        b=aFLE5/yoExoPkP8I88fectjlfCsRGn9GoJ7bnGMHXhIaZDY6GWLlsSzXHOrnqsGIG1
+         0OicVSc4upZP4bzv0d6IG0nLMxPSBt84zSq/dKQYeTsglAA94VbaSOy77ZRhL77CfKgT
+         D+UCW5tGC6khWuuo924visJc8sVz9Gd0GXJ7gvBoAVu3M7IEs+hdY7VZYmRx5QMvqDt8
+         nK/NGjakkMvbu/dFFGGsqveB9SIyNslv/tpsgQT5GQvXxV38obQShzpZG/DnZYmAbBDM
+         1ZT+icRKiuhG6fmH2s5Sa6qxBEYMQRuy/Hy4fntieAHCrW8i+MjzE7Q1e/RvFj2oOSws
+         uiwg==
+X-Gm-Message-State: APjAAAXj9e5wDUKDRKlfcA6G7DwIqXg1QPUcSQJQGE+PNsGfWiO3NTrq
+        8EJsbf4/GaeBtMGjL55MpY3qYWmnEBZNIDVgZS8=
+X-Google-Smtp-Source: APXvYqz54m+FK0xGAW39/ZRG6Oeneka+lhU1KN0fASqfRA+LDKwVQePCgjn2o4kwyXKaTGop3ZsUD2qv0eanw77QKQk=
+X-Received: by 2002:a92:914a:: with SMTP id t71mr16680207ild.293.1581968175946;
+ Mon, 17 Feb 2020 11:36:15 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:a05:6622:2f6:0:0:0:0 with HTTP; Mon, 17 Feb 2020 11:36:15
+ -0800 (PST)
+Reply-To: asita.hussain0@gmail.com
+From:   "Mr.Asita.Hussain" <spagnolorosalin1@gmail.com>
+Date:   Mon, 17 Feb 2020 11:36:15 -0800
+Message-ID: <CAGMOgv5Mqu_adPUZByMgfkb4Y3XvgJ5ONaTUEXHuzdJqtQE9ng@mail.gmail.com>
+Subject: Hello my good friend,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ladis,
-
-> Am 17.02.2020 um 20:07 schrieb Ladislav Michl <ladis@linux-mips.org>:
->=20
-> On Mon, Feb 17, 2020 at 07:38:16PM +0100, H. Nikolaus Schaller wrote:
->> Hi,
->>=20
->>> Am 17.02.2020 um 19:29 schrieb Ladislav Michl =
-<ladis@linux-mips.org>:
->>>=20
->>> On Mon, Feb 17, 2020 at 02:58:14PM +0100, H. Nikolaus Schaller =
-wrote:
->>>>=20
->>>>> Am 17.02.2020 um 14:38 schrieb H. Nikolaus Schaller =
-<hns@goldelico.com>:
->>>>>=20
->>>>> If the gpios are probed after this driver (e.g. if they
->>>>> come from an i2c expander) there is no need to print an
->>>>> error message.
->>>>>=20
->>>>> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
->>>>> ---
->>>>> drivers/extcon/extcon-palmas.c | 8 ++++++--
->>>>> 1 file changed, 6 insertions(+), 2 deletions(-)
->>>>>=20
->>>>> diff --git a/drivers/extcon/extcon-palmas.c =
-b/drivers/extcon/extcon-palmas.c
->>>>> index edc5016f46f1..cea58d0cb457 100644
->>>>> --- a/drivers/extcon/extcon-palmas.c
->>>>> +++ b/drivers/extcon/extcon-palmas.c
->>>>> @@ -205,14 +205,18 @@ static int palmas_usb_probe(struct =
-platform_device *pdev)
->>>>>=20
->>>>> 	palmas_usb->id_gpiod =3D devm_gpiod_get_optional(&pdev->dev, =
-"id",
->>>>> 							GPIOD_IN);
->>>>> -	if (IS_ERR(palmas_usb->id_gpiod)) {
->>>>> +	if (PTR_ERR(palmas_usb->id_gpiod) =3D=3D -EPROBE_DEFER) {
->>>>> +		return -EPROBE_DEFER;
->>>>> +	} else if (IS_ERR(palmas_usb->id_gpiod)) {
->>>>=20
->>>> Hm.
->>>>=20
->>>> While looking again at that: why do we need the "{" and "} else "?
->>>>=20
->>>> It should be sufficient to have
->>>>=20
->>>>> 	palmas_usb->id_gpiod =3D devm_gpiod_get_optional(&pdev->dev, =
-"id",
->>>>> 							GPIOD_IN);
->>>>> +	if (PTR_ERR(palmas_usb->id_gpiod) =3D=3D -EPROBE_DEFER)
->>>>> +		return -EPROBE_DEFER;
->>>>> 	if (IS_ERR(palmas_usb->id_gpiod)) {
->>>>=20
->>>> What do you think is better coding style here?
->>>=20
->>> How about something like this? (just an idea with some work left for =
-you ;-))
->>>=20
->>> --- a/drivers/extcon/extcon-palmas.c
->>> +++ b/drivers/extcon/extcon-palmas.c
->>> @@ -206,8 +206,10 @@ static int palmas_usb_probe(struct =
-platform_device *pdev)
->>> 	palmas_usb->id_gpiod =3D devm_gpiod_get_optional(&pdev->dev, =
-"id",
->>> 							GPIOD_IN);
->>> 	if (IS_ERR(palmas_usb->id_gpiod)) {
->>> -		dev_err(&pdev->dev, "failed to get id gpio\n");
->>> -		return PTR_ERR(palmas_usb->id_gpiod);
->>> +		status =3D PTR_ERR(palmas_usb->id_gpiod);
->>> +		if (status !=3D -EPROBE_DEFER)
->>> +			dev_err(&pdev->dev, "failed to get id gpio: =
-%d\n", status);
->>> +		return status;
->>> 	}
->>=20
->> Well, what would be the improvement?
->=20
-> Linux kernel prints so many lines on bootup and only few of them are
-> valuable. Lets improve it by printing error value to give a clue
-> why it failed.
-
-Hm. The upstream code does already print the error. This feature is not =
-removed.
-But it is also printing an error in the EPROBE_DEFER case as well, where =
-it is
-not needed or not an error.
-
-And that is the whole purpose of this patch to get rid of it in the =
-EPROBE_DEFER
-case.
-
-My question meant: what your proposal does improve over previous =
-versions of
-this patch. My first one was:
-
-https://lkml.org/lkml/2020/2/17/220
-
-which is very similar except not using an explicit temporary variable =
-(which I
-think is something every modern compiler will introduce). So the =
-assembler
-code is likely the same.
-
->=20
->> It needs an additional variable and makes the change more complex.
->=20
-> That additional variable is already there...
-
-Or a register assigned by the compiler.
-
->=20
->> The main suggestion by Chanwoo Choi was to move the check for =
-EPROBE_DEFER
->> outside of the IS_ERR() because checking this first and then for =
-EPROBE_DEFER
->> is not necessary.
->=20
-> True, but there are two checks either way and this is slow path.
-
-Well, it depends on likelihood of each code path... That is quite
-difficult to assess.
-
->=20
->> If acceptable I'd prefer my last proposal. It just adds 2 LOC before
->> and without touching the existing if (IS_ERR(...)).
->=20
-> I have no strong opinion. I was just waiting for project to compile
-> so, consider my reply as product of boredom :)
-
-Yes, compile times have increased significantly over the years :)
-
-> (However, I do not like "let's touch only minimal number of lines"
-> argument. End result should still matter more)
-
-I would have been happy with my first proposal, but review suggested
-to change it.
-
-There is also some discussion for using IS_ERR() and PTR_ERR() =3D=3D =
--Esomething
-first or second: https://lore.kernel.org/patchwork/patch/999602/
-
-Well, about the end-result: this code path is run only once during
-probe time. And that makes a difference in the sub-=C2=B5s range. So I =
-don't
-mind about the likelyhood. More concern is to have the code correct
-and not introduce regressions.
-
-And there the lines of code rule comes in: the less I change the less
-I can break.
-
-(Yes my compiler is also busy making me wait for result... so that
-I can formulate such fundamental statements :).
-
->=20
->> If the compiler is clever it can cache palmas_usb->id_gpiod in a =
-register
->> which serves the same purpose as the status variable.
->=20
-> I'm not trying to outsmart compiler, but note status variable is =
-needed
-> three times.
-
-BR and thanks,
-Nikolaus
-
+Hello,
+From Mr. Asita Hussain
+This message might meet you in utmost surprise.
+I am a banker by profession in Burkina-Faso, West Africa and currently
+holding the post of manager in account and auditing department in our
+bank. I have the opportunity of transferring the left over funds ($
+25.5 Million Dollars 15 kilos of Gold bar) belonging to our deceased
+customer who died along with his entire family in a bomb attack.
+Please indicate your willingness by sending the below information for
+more clarification and easy communication.
+Please Contact me with the following information's for more details.
+(1) YOUR FULL NAME.......................
+(2) YOUR AGE AND SEX......................
+(3) YOUR CONTACT ADDRESS...............
+(4) YOUR PRIVATE PHONE N0..........
+(5) FAX NUMBER..............
+(6) YOUR COUNTRY OF ORIGIN.................
+(7) YOUR OCCUPATION.................... .....
+ Please Contact me for more details in this E-mail address
+(asita.hussain0@gmail.com)
+Trusting to hear from you immediately.
+Thanks & Best Regards,
+From Mr. Asita Hussain
