@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF550160FE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 11:26:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 519E0160FEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 11:27:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729236AbgBQK0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 05:26:53 -0500
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:37844 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729100AbgBQK0x (ORCPT
+        id S1729169AbgBQK1F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 05:27:05 -0500
+Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:12786 "EHLO
+        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729267AbgBQK1D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 05:26:53 -0500
+        Mon, 17 Feb 2020 05:27:03 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1581935211; x=1613471211;
+  t=1581935223; x=1613471223;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version;
-  bh=5tSdLQU1csS1GDh89l5Yxz9zW7p2GIVbHfo3C6tuh8Q=;
-  b=EfAojXUtFPf8GN6vCkQLtrXRrC+PQRQObnbHtdyVWBTiKPpaz24usQ4z
-   5QKpCjxzkSAZkdzVfMFL9EJGJ8va/C2acjtKITxa2X0bIti1+1mrt0JQJ
-   gdW3Dqvc6i6qB6gztwye1r2XIGPpuFHAFSBmPS97nvHz4DgN4z9RegGvL
-   k=;
-IronPort-SDR: ZZaFFuDrcAo8fWHKb9rNWL4CAY4wN1mm55cWhGK024H104CUiPgP8Aa22HjfGEo5naPuig9Ov4
- /sL0ZX62lkXA==
+  bh=HQ9SNscXPAG5ex+O+AHC+jdfEtu9KpmX1gBzL7Va3Gg=;
+  b=sVvN/6dZqXHUEKz0WeXk4ezaaZpEhaISgOv7Mfj5Gjeo82C1f+pct+Za
+   J59P0YYKkwKfs5/pUEqKXQIWg+VNILxbqFxo/G20Wo9mZjpPBdqusAAWP
+   c4OR9/asRsa0lsT/XMro5AoEX/9/7tN5O6Qqh7IY3SI83SwUTd0eTOgUK
+   0=;
+IronPort-SDR: 6uVMgtTsacghzMRPbMFygm86vD98fXJCL6QzPhLfXQn8wRN9Yvesr5VdDhSRqm3loW5sBBXNrP
+ pWkUTZGR2enw==
 X-IronPort-AV: E=Sophos;i="5.70,452,1574121600"; 
-   d="scan'208";a="26833756"
-Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-2b-4ff6265a.us-west-2.amazon.com) ([10.47.23.38])
-  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP; 17 Feb 2020 10:26:50 +0000
+   d="scan'208";a="17073296"
+Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-2c-6f38efd9.us-west-2.amazon.com) ([10.47.23.38])
+  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP; 17 Feb 2020 10:27:01 +0000
 Received: from EX13MTAUEA002.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
-        by email-inbound-relay-2b-4ff6265a.us-west-2.amazon.com (Postfix) with ESMTPS id 17096A26D0;
-        Mon, 17 Feb 2020 10:26:49 +0000 (UTC)
+        by email-inbound-relay-2c-6f38efd9.us-west-2.amazon.com (Postfix) with ESMTPS id 8721BA06AC;
+        Mon, 17 Feb 2020 10:26:59 +0000 (UTC)
 Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
  EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
- id 15.0.1236.3; Mon, 17 Feb 2020 10:26:48 +0000
+ id 15.0.1236.3; Mon, 17 Feb 2020 10:26:59 +0000
 Received: from u886c93fd17d25d.ant.amazon.com (10.43.161.214) by
  EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 17 Feb 2020 10:26:38 +0000
+ id 15.0.1367.3; Mon, 17 Feb 2020 10:26:49 +0000
 From:   SeongJae Park <sjpark@amazon.com>
 To:     <akpm@linux-foundation.org>
 CC:     SeongJae Park <sjpark@amazon.de>, <acme@kernel.org>,
@@ -50,9 +50,9 @@ CC:     SeongJae Park <sjpark@amazon.de>, <acme@kernel.org>,
         <sj38.park@gmail.com>, <vdavydov.dev@gmail.com>,
         <linux-mm@kvack.org>, <linux-doc@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 03/14] mm/damon: Adaptively adjust regions
-Date:   Mon, 17 Feb 2020 11:25:33 +0100
-Message-ID: <20200217102544.29012-4-sjpark@amazon.com>
+Subject: [PATCH v5 04/14] mm/damon: Apply dynamic memory mapping changes
+Date:   Mon, 17 Feb 2020 11:25:34 +0100
+Message-ID: <20200217102544.29012-5-sjpark@amazon.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200217102544.29012-1-sjpark@amazon.com>
 References: <20200217102544.29012-1-sjpark@amazon.com>
@@ -68,248 +68,173 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: SeongJae Park <sjpark@amazon.de>
 
-At the beginning of the monitoring, DAMON constructs the initial regions
-by evenly splitting the memory mapped address space of the process into
-the user-specified minimal number of regions.  In this initial state,
-the assumption of the regions (pages in same region have similar access
-frequencies) is normally not kept and thus the monitoring quality could
-be low.  To keep the assumption as much as possible, DAMON adaptively
-merges and splits each region.
-
-For each ``aggregation interval``, it compares the access frequencies of
-adjacent regions and merges those if the frequency difference is small.
-Then, after it reports and clears the aggregated access frequency of
-each region, it splits each region into two regions if the total number
-of regions is smaller than the half of the user-specified maximum number
-of regions.
-
-In this way, DAMON provides its best-effort quality and minimal overhead
-while keeping the bounds users set for their trade-off.
+Only a number of parts in the virtual address space of the processes is
+mapped to physical memory and accessed.  Thus, tracking the unmapped
+address regions is just wasteful.  However, tracking every memory
+mapping change might incur an overhead.  For the reason, DAMON applies
+the dynamic memory mapping changes to the tracking regions only for each
+of a user-specified time interval (``regions update interval``).
 
 Signed-off-by: SeongJae Park <sjpark@amazon.de>
 ---
- mm/damon.c | 151 ++++++++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 144 insertions(+), 7 deletions(-)
+ mm/damon.c | 99 +++++++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 95 insertions(+), 4 deletions(-)
 
 diff --git a/mm/damon.c b/mm/damon.c
-index ca21a617b5ff..8bd9b989aeb2 100644
+index 8bd9b989aeb2..56725faca51f 100644
 --- a/mm/damon.c
 +++ b/mm/damon.c
-@@ -67,6 +67,7 @@ struct damon_ctx {
+@@ -59,17 +59,22 @@ struct damon_task {
+ /*
+  * For each 'sample_interval', DAMON checks whether each region is accessed or
+  * not.  It aggregates and keeps the access information (number of accesses to
+- * each region) for each 'aggr_interval' time.
++ * each region) for each 'aggr_interval' time.  And for each
++ * 'regions_update_interval', damon checks whether the memory mapping of the
++ * target tasks has changed (e.g., by mmap() calls from the applications) and
++ * applies the changes.
+  *
+  * All time intervals are in micro-seconds.
+  */
+ struct damon_ctx {
  	unsigned long sample_interval;
  	unsigned long aggr_interval;
++	unsigned long regions_update_interval;
  	unsigned long min_nr_regions;
-+	unsigned long max_nr_regions;
+ 	unsigned long max_nr_regions;
  
  	struct timespec64 last_aggregation;
++	struct timespec64 last_regions_update;
  
-@@ -389,9 +390,12 @@ static int damon_three_regions_of(struct damon_task *t,
-  * regions is wasteful.  That said, because we can deal with small noises,
-  * tracking every mapping is not strictly required but could even incur a high
-  * overhead if the mapping frequently changes or the number of mappings is
-- * high.  Nonetheless, this may seems very weird.  DAMON's dynamic regions
-- * adjustment mechanism, which will be implemented with following commit will
-- * make this more sense.
-+ * high.  The adaptive regions adjustment mechanism will further help to deal
-+ * with the noises by simply identifying the unmapped areas as a region that
-+ * has no access.  Moreover, applying the real mappings that would have many
-+ * unmapped areas inside will make the adaptive mechanism quite complex.  That
-+ * said, too huge unmapped areas inside the monitoring target should be removed
-+ * to not take the time for the adaptive mechanism.
-  *
-  * For the reason, we convert the complex mappings to three distinct regions
-  * that cover every mapped areas of the address space.  Also the two gaps
-@@ -550,6 +554,123 @@ static void kdamond_flush_aggregated(struct damon_ctx *c)
- 	}
+ 	struct task_struct *kdamond;
+ 	bool kdamond_stop;
+@@ -671,6 +676,87 @@ static void kdamond_split_regions(struct damon_ctx *ctx)
+ 		damon_split_regions_of(ctx, t);
  }
  
-+#define sz_damon_region(r) (r->vm_end - r->vm_start)
-+
 +/*
-+ * Merge two adjacent regions into one region
++ * Check whether it is time to check and apply the dynamic mmap changes
++ *
++ * Returns true if it is.
 + */
-+static void damon_merge_two_regions(struct damon_region *l,
-+				struct damon_region *r)
++static bool kdamond_need_update_regions(struct damon_ctx *ctx)
 +{
-+	l->nr_accesses = (l->nr_accesses * sz_damon_region(l) +
-+			r->nr_accesses * sz_damon_region(r)) /
-+			(sz_damon_region(l) + sz_damon_region(r));
-+	l->vm_end = r->vm_end;
-+	damon_destroy_region(r);
++	return damon_check_reset_time_interval(&ctx->last_regions_update,
++			ctx->regions_update_interval);
 +}
 +
-+#define diff_of(a, b) (a > b ? a - b : b - a)
-+
-+/*
-+ * Merge adjacent regions having similar access frequencies
-+ *
-+ * t		task that merge operation will make change
-+ * thres	merge regions having '->nr_accesses' diff smaller than this
-+ */
-+static void damon_merge_regions_of(struct damon_task *t, unsigned int thres)
++static bool damon_intersect(struct damon_region *r, struct region *re)
 +{
-+	struct damon_region *r, *prev = NULL, *next;
-+
-+	damon_for_each_region_safe(r, next, t) {
-+		if (!prev || prev->vm_end != r->vm_start)
-+			goto next;
-+		if (diff_of(prev->nr_accesses, r->nr_accesses) > thres)
-+			goto next;
-+		damon_merge_two_regions(prev, r);
-+		continue;
-+next:
-+		prev = r;
-+	}
++	return !(r->vm_end <= re->start || re->end <= r->vm_start);
 +}
 +
 +/*
-+ * Merge adjacent regions having similar access frequencies
++ * Update damon regions for the three big regions of the given task
 + *
-+ * threshold	merge regions havind nr_accesses diff larger than this
-+ *
-+ * This function merges monitoring target regions which are adjacent and their
-+ * access frequencies are similar.  This is for minimizing the monitoring
-+ * overhead under the dynamically changeable access pattern.  If a merge was
-+ * unnecessarily made, later 'kdamond_split_regions()' will revert it.
++ * t		the given task
++ * bregions	the three big regions of the task
 + */
-+static void kdamond_merge_regions(struct damon_ctx *c, unsigned int threshold)
-+{
-+	struct damon_task *t;
-+
-+	damon_for_each_task(c, t)
-+		damon_merge_regions_of(t, threshold);
-+}
-+
-+/*
-+ * Split a region into two small regions
-+ *
-+ * r		the region to be split
-+ * sz_r		size of the first sub-region that will be made
-+ */
-+static void damon_split_region_at(struct damon_ctx *ctx,
-+		struct damon_region *r, unsigned long sz_r)
-+{
-+	struct damon_region *new;
-+
-+	new = damon_new_region(ctx, r->vm_start + sz_r, r->vm_end);
-+	r->vm_end = new->vm_start;
-+
-+	damon_add_region(new, r, damon_next_region(r));
-+}
-+
-+static void damon_split_regions_of(struct damon_ctx *ctx, struct damon_task *t)
++static void damon_apply_three_regions(struct damon_ctx *ctx,
++		struct damon_task *t, struct region bregions[3])
 +{
 +	struct damon_region *r, *next;
-+	unsigned long sz_left_region;
++	unsigned int i = 0;
 +
++	/* Remove regions which isn't in the three big regions now */
 +	damon_for_each_region_safe(r, next, t) {
-+		/*
-+		 * Randomly select size of left sub-region to be at least
-+		 * 10 percent and at most 90% of original region
-+		 */
-+		sz_left_region = (prandom_u32_state(&ctx->rndseed) % 9 + 1) *
-+			(r->vm_end - r->vm_start) / 10;
-+		/* Do not allow blank region */
-+		if (sz_left_region == 0)
-+			continue;
-+		damon_split_region_at(ctx, r, sz_left_region);
++		for (i = 0; i < 3; i++) {
++			if (damon_intersect(r, &bregions[i]))
++				break;
++		}
++		if (i == 3)
++			damon_destroy_region(r);
++	}
++
++	/* Adjust intersecting regions to fit with the threee big regions */
++	for (i = 0; i < 3; i++) {
++		struct damon_region *first = NULL, *last;
++		struct damon_region *newr;
++		struct region *br;
++
++		br = &bregions[i];
++		/* Get the first and last regions which intersects with br */
++		damon_for_each_region(r, t) {
++			if (damon_intersect(r, br)) {
++				if (!first)
++					first = r;
++				last = r;
++			}
++			if (r->vm_start >= br->end)
++				break;
++		}
++		if (!first) {
++			/* no damon_region intersects with this big region */
++			newr = damon_new_region(ctx, br->start, br->end);
++			damon_add_region(newr, damon_prev_region(r), r);
++		} else {
++			first->vm_start = br->start;
++			last->vm_end = br->end;
++		}
 +	}
 +}
 +
 +/*
-+ * splits every target regions into two randomly-sized regions
-+ *
-+ * This function splits every target regions into two random-sized regions if
-+ * current total number of the regions is smaller than the half of the
-+ * user-specified maximum number of regions.  This is for maximizing the
-+ * monitoring accuracy under the dynamically changeable access patterns.  If a
-+ * split was unnecessarily made, later 'kdamond_merge_regions()' will revert
-+ * it.
++ * Update regions for current memory mappings
 + */
-+static void kdamond_split_regions(struct damon_ctx *ctx)
++static void kdamond_update_regions(struct damon_ctx *ctx)
 +{
++	struct region three_regions[3];
 +	struct damon_task *t;
-+	unsigned int nr_regions = 0;
 +
-+	damon_for_each_task(ctx, t)
-+		nr_regions += nr_damon_regions(t);
-+	if (nr_regions > ctx->max_nr_regions / 2)
-+		return;
-+
-+	damon_for_each_task(ctx, t)
-+		damon_split_regions_of(ctx, t);
++	damon_for_each_task(ctx, t) {
++		if (damon_three_regions_of(t, three_regions))
++			continue;
++		damon_apply_three_regions(ctx, t, three_regions);
++	}
 +}
 +
  /*
   * Check whether current monitoring should be stopped
   *
-@@ -590,21 +711,29 @@ static int kdamond_fn(void *data)
- 	struct damon_task *t;
- 	struct damon_region *r, *next;
- 	struct mm_struct *mm;
-+	unsigned long max_nr_accesses;
- 
- 	pr_info("kdamond (%d) starts\n", ctx->kdamond->pid);
- 	kdamond_init_regions(ctx);
- 	while (!kdamond_need_stop(ctx)) {
-+		max_nr_accesses = 0;
- 		damon_for_each_task(ctx, t) {
- 			mm = damon_get_mm(t);
- 			if (!mm)
- 				continue;
--			damon_for_each_region(r, t)
-+			damon_for_each_region(r, t) {
- 				kdamond_check_access(ctx, mm, r);
-+				if (r->nr_accesses > max_nr_accesses)
-+					max_nr_accesses = r->nr_accesses;
-+			}
- 			mmput(mm);
+@@ -735,6 +821,9 @@ static int kdamond_fn(void *data)
+ 			kdamond_split_regions(ctx);
  		}
  
--		if (kdamond_aggregate_interval_passed(ctx))
-+		if (kdamond_aggregate_interval_passed(ctx)) {
-+			kdamond_merge_regions(ctx, max_nr_accesses / 10);
- 			kdamond_flush_aggregated(ctx);
-+			kdamond_split_regions(ctx);
-+		}
- 
++		if (kdamond_need_update_regions(ctx))
++			kdamond_update_regions(ctx);
++
  		usleep_range(ctx->sample_interval, ctx->sample_interval + 1);
  	}
-@@ -692,24 +821,32 @@ static int damon_set_pids(struct damon_ctx *ctx,
+ 	damon_for_each_task(ctx, t) {
+@@ -820,6 +909,7 @@ static int damon_set_pids(struct damon_ctx *ctx,
+  *
   * sample_int		time interval between samplings
   * aggr_int		time interval between aggregations
++ * regions_update_int	time interval between vma update checks
   * min_nr_reg		minimal number of regions
-+ * max_nr_reg		maximum number of regions
+  * max_nr_reg		maximum number of regions
   *
-  * This function should not be called while the kdamond is running.
-  * Every time interval is in micro-seconds.
+@@ -828,9 +918,9 @@ static int damon_set_pids(struct damon_ctx *ctx,
   *
   * Returns 0 on success, negative error code otherwise.
   */
--static int damon_set_attrs(struct damon_ctx *ctx, unsigned long sample_int,
--		unsigned long aggr_int, unsigned long min_nr_reg)
-+static int damon_set_attrs(struct damon_ctx *ctx,
-+			unsigned long sample_int, unsigned long aggr_int,
-+			unsigned long min_nr_reg, unsigned long max_nr_reg)
+-static int damon_set_attrs(struct damon_ctx *ctx,
+-			unsigned long sample_int, unsigned long aggr_int,
+-			unsigned long min_nr_reg, unsigned long max_nr_reg)
++static int damon_set_attrs(struct damon_ctx *ctx, unsigned long sample_int,
++		unsigned long aggr_int, unsigned long regions_update_int,
++		unsigned long min_nr_reg, unsigned long max_nr_reg)
  {
  	if (min_nr_reg < 3) {
  		pr_err("min_nr_regions (%lu) should be bigger than 2\n",
- 				min_nr_reg);
- 		return -EINVAL;
- 	}
-+	if (min_nr_reg >= ctx->max_nr_regions) {
-+		pr_err("invalid nr_regions.  min (%lu) >= max (%lu)\n",
-+				min_nr_reg, max_nr_reg);
-+		return -EINVAL;
-+	}
+@@ -845,6 +935,7 @@ static int damon_set_attrs(struct damon_ctx *ctx,
  
  	ctx->sample_interval = sample_int;
  	ctx->aggr_interval = aggr_int;
++	ctx->regions_update_interval = regions_update_int;
  	ctx->min_nr_regions = min_nr_reg;
-+	ctx->max_nr_regions = max_nr_reg;
+ 	ctx->max_nr_regions = max_nr_reg;
  	return 0;
- }
- 
 -- 
 2.17.1
 
