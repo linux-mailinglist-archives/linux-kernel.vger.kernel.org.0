@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A58D160D7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 09:36:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84659160D84
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 09:36:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728352AbgBQIgF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 03:36:05 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:59739 "EHLO
+        id S1728409AbgBQIgr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 03:36:47 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:37851 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728243AbgBQIgE (ORCPT
+        with ESMTP id S1728273AbgBQIgr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 03:36:04 -0500
+        Mon, 17 Feb 2020 03:36:47 -0500
 Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
         by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1j3bsk-0006Rp-QC; Mon, 17 Feb 2020 09:35:58 +0100
+        id 1j3btR-0006cU-28; Mon, 17 Feb 2020 09:36:41 +0100
 Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
         (envelope-from <ukl@pengutronix.de>)
-        id 1j3bsk-0007Zl-CU; Mon, 17 Feb 2020 09:35:58 +0100
-Date:   Mon, 17 Feb 2020 09:35:58 +0100
+        id 1j3btQ-0007aI-KM; Mon, 17 Feb 2020 09:36:40 +0100
+Date:   Mon, 17 Feb 2020 09:36:40 +0100
 From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
         <u.kleine-koenig@pengutronix.de>
 To:     Anson Huang <Anson.Huang@nxp.com>
@@ -28,16 +28,16 @@ Cc:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
         s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, Linux-imx@nxp.com
-Subject: Re: [PATCH V2 4/7] ARM: dts: imx6sx-sabreauto: Use new pin names
- with DCE/DTE for UART pins
-Message-ID: <20200217083558.k5cpg6fokuo35ztv@pengutronix.de>
+Subject: Re: [PATCH V2 5/7] ARM: dts: imx6sx-sdb: Use new pin names with
+ DCE/DTE for UART pins
+Message-ID: <20200217083640.53qitjfnox2ishjq@pengutronix.de>
 References: <1581743758-4475-1-git-send-email-Anson.Huang@nxp.com>
- <1581743758-4475-5-git-send-email-Anson.Huang@nxp.com>
+ <1581743758-4475-6-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1581743758-4475-5-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1581743758-4475-6-git-send-email-Anson.Huang@nxp.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
 X-SA-Exim-Mail-From: ukl@pengutronix.de
@@ -48,30 +48,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 15, 2020 at 01:15:55PM +0800, Anson Huang wrote:
+On Sat, Feb 15, 2020 at 01:15:56PM +0800, Anson Huang wrote:
 > Use new pin names containing DCE/DTE for UART RX/TX/RTS/CTS pins, this
 > is to distinguish the DCE/DTE functions.
 > 
 > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
->  arch/arm/boot/dts/imx6sx-sabreauto.dts | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/imx6sx-sabreauto.dts b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-> index 315044c..8259244 100644
-> --- a/arch/arm/boot/dts/imx6sx-sabreauto.dts
-> +++ b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-> @@ -229,8 +229,8 @@
->  
->  	pinctrl_uart1: uart1grp {
->  		fsl,pins = <
-> -			MX6SX_PAD_GPIO1_IO04__UART1_TX		0x1b0b1
-> -			MX6SX_PAD_GPIO1_IO05__UART1_RX		0x1b0b1
-> +			MX6SX_PAD_GPIO1_IO04__UART1_DCE_TX		0x1b0b1
-> +			MX6SX_PAD_GPIO1_IO05__UART1_DCE_RX		0x1b0b1
-
 Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-
 
 -- 
 Pengutronix e.K.                           | Uwe Kleine-König            |
