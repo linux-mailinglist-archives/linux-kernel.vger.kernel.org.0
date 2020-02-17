@@ -2,84 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BD06160C38
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 09:06:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5555160C3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 09:07:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbgBQIGd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 03:06:33 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:36561 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726932AbgBQIGc (ORCPT
+        id S1727544AbgBQIG4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 03:06:56 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:40984 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727259AbgBQIGy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 03:06:32 -0500
-Received: by mail-io1-f65.google.com with SMTP id d15so17472631iog.3;
-        Mon, 17 Feb 2020 00:06:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=p4iErZEeHdLP/k4A9lJOInup/YFd9m5dp1K6FqMWj0s=;
-        b=r4lTZKFkelyQbz679rc7YQ8WGMITje3bKOmCHvs+Q5j/Rr1HBfh2kI1MHWyR+CSksT
-         IzanKGI/HDGMH/3l958t+tHn+BQykhIVokans18248p9ouurocRZvMjmq/5G3NPDWjOc
-         /K8JsCM4NbwFk8b7noddTFElZkQzGmDwdkdZFrY0/EDZTKKKXYdU67HPoh9P6Hux+qEJ
-         a+36sUjN7ghK+0IiDs3yLD6ytmWt5JvLIm4OdaBEOGjpLihhDYEq6XqKjEBba+aRNRcv
-         2J6D8scwACDFLfbvZrWxyDnYNrR23/PpbqLou5NNRQ6gZEKsHyfiXjnrT3Bljd3LAL22
-         jbfA==
+        Mon, 17 Feb 2020 03:06:54 -0500
+Received: by mail-ed1-f68.google.com with SMTP id c26so19606356eds.8;
+        Mon, 17 Feb 2020 00:06:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=p4iErZEeHdLP/k4A9lJOInup/YFd9m5dp1K6FqMWj0s=;
-        b=ApXwxZctJ2Z8glSiReqllK0GdQ5aB6fBk0EcDD+J8i4uycKkmK7aHCxHY7FpHTYMaL
-         fp2BU6x1WZU1uqXYkY/SxNE7NjDmTY5J0nzMix/Yk/YJFUfrNDeimra+7FShJWZfYKVy
-         rN1o0Ril+9+Z4QPVdIHh0qS4Qd1uSvH0LEMI1B2wQKS25+TrRA+PkkcmCl48cQNtdLl8
-         lqyGKtmILK+0fluKaPvP04tDucFFDn7p2h1kmABrjWQATVvRsrgmHUkXORE69zvPOOwJ
-         lBfvmEw95FmnBvTzZQJUoCs+ht3Cf3gnJDOnMrMFvtHJiPbH41T6oBWwVbGblkNOIYzj
-         d6qA==
-X-Gm-Message-State: APjAAAXjZFacqicJ+NubGpP11z0X7d83y56nfoCoD2w/zDKbADCtPBwa
-        +WnWSMJoEzwsDhsWHsAs6a8Mxgv3TQELVaMIGeE=
-X-Google-Smtp-Source: APXvYqwT6KOGaK3oTFNEspTWDTqsYMPcRLQVAN6wvSFTTlhryrCpMH7JZXDt+Ot+X/F8lBhIHH9/d+si6uF0Ts+z/C4=
-X-Received: by 2002:a05:6638:1a3:: with SMTP id b3mr11936540jaq.84.1581926791843;
- Mon, 17 Feb 2020 00:06:31 -0800 (PST)
+        bh=H7HNmg9K88memoV4mQIdFTzsV1B2vI42lPI0r8PIbeg=;
+        b=dL8b1/I9N18AwkXpOjnUyzKOq+IVYoMmhzFajQZOyfD4oLYirOk3kg3DPaOqJczuaR
+         avKv7set26LKlMqmhlUFB3SONJZ9hLWrMDy4SJudTcWPOtcKQLjKEd3+R8KJ0YuS3csb
+         5sUlOk1trZ0jGFbdEdkQx4ZJrQdSJd+TJQQkGefGn/Jk/OWUG5QdPyNj63ab3/36maKX
+         PrF479Z/v3tWmiVIA6giL04eb3HsgNwKi1qnWBAlWSRDlgPyKQTlWrNJwxkyJPxcmRwI
+         6Z6CE45ZXgVrArhr3yCYnPNgUBPuE4+s52FqqStj+/YZZZLnbq4DShdWtNQmH9mcqMwW
+         2SGw==
+X-Gm-Message-State: APjAAAXgvKJmE+j3RsMjFa2z25GRcu35IK5M+vEjheUI6QBziQmQ7hE8
+        T+sb9oAqpVjmG1WYeK94R8aM1g2qtcw=
+X-Google-Smtp-Source: APXvYqzNwaq0yuvhJm5GWsQg1Xyaym5Z/x3W5k4Nu6x8N9admJqi8HPwKL3bZP5pepMOXs98idtb2A==
+X-Received: by 2002:a17:906:a444:: with SMTP id cb4mr13414956ejb.42.1581926811793;
+        Mon, 17 Feb 2020 00:06:51 -0800 (PST)
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com. [209.85.128.47])
+        by smtp.gmail.com with ESMTPSA id m27sm425467eda.96.2020.02.17.00.06.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Feb 2020 00:06:51 -0800 (PST)
+Received: by mail-wm1-f47.google.com with SMTP id g1so16093850wmh.4;
+        Mon, 17 Feb 2020 00:06:51 -0800 (PST)
+X-Received: by 2002:a1c:dc85:: with SMTP id t127mr22204730wmg.16.1581926810934;
+ Mon, 17 Feb 2020 00:06:50 -0800 (PST)
 MIME-Version: 1.0
-References: <20200216202101.2810-1-linux.amoon@gmail.com> <1jpnedzmr2.fsf@starbuckisacylon.baylibre.com>
-In-Reply-To: <1jpnedzmr2.fsf@starbuckisacylon.baylibre.com>
-From:   Anand Moon <linux.amoon@gmail.com>
-Date:   Mon, 17 Feb 2020 13:36:21 +0530
-Message-ID: <CANAwSgR918Q3wGtJN_u9tjM+t1ZMod+PpZzJcBLT5jyqYEnP6g@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: amlogic: odroid-n2: set usb-pwr-en regulator
- always on
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
+References: <20200217064250.15516-1-samuel@sholland.org> <20200217064250.15516-13-samuel@sholland.org>
+In-Reply-To: <20200217064250.15516-13-samuel@sholland.org>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Mon, 17 Feb 2020 16:06:40 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65e3dwji4cwRh6uTryjXq=0qmeggEjrMgL9KtB+JTWCVg@mail.gmail.com>
+Message-ID: <CAGb2v65e3dwji4cwRh6uTryjXq=0qmeggEjrMgL9KtB+JTWCVg@mail.gmail.com>
+Subject: Re: [RFC PATCH 12/34] ASoC: sun8i-codec: Fix AIF1 MODCLK widget name
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
         devicetree <devicetree@vger.kernel.org>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-amlogic@lists.infradead.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jerome,
+On Mon, Feb 17, 2020 at 2:43 PM Samuel Holland <samuel@sholland.org> wrote:
+>
+> It should be "AIF1", not "AFI1".
+>
+> Fixes: 36c684936fae ("ASoC: Add sun8i digital audio codec")
+> Fixes: eda85d1fee05 ("ASoC: sun8i-codec: Add ADC support for a33")
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
 
-On Mon, 17 Feb 2020 at 13:08, Jerome Brunet <jbrunet@baylibre.com> wrote:
->
->
-> On Sun 16 Feb 2020 at 21:21, Anand Moon <linux.amoon@gmail.com> wrote:
->
-> > usb-pwr-en regulator is getting disable after booting, setting
-> > regulator-alway-on help enable the regulator after booting.
->
-> This explains what your patch does, not why it needs to be done.
-> Why does this regulator need be on at all time ? What device needs it
-> and cannot claim it properly ?
->
-
-I missed this node is for micro usb, plz discard this patch.
-I am relay sorry for this, sorry for the noise.
-
--Anand
+Acked-by: Chen-Yu Tsai <wens@csie.org>
