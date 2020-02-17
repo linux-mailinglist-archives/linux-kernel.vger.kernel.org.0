@@ -2,118 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09677160787
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 01:37:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B17916078B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 01:38:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726650AbgBQAgO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 19:36:14 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:33725 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726560AbgBQAgN (ORCPT
+        id S1726591AbgBQAiD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 19:38:03 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:26321 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726177AbgBQAiB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 19:36:13 -0500
-Received: by mail-qk1-f196.google.com with SMTP id h4so14725083qkm.0
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2020 16:36:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=PAiDoNcDSsPnNj5W4mWsQjtsAOyOXebI5Rn/LeRO4A0=;
-        b=jtpOapbHFVjp/wJYElpr+0+UN+bnlIm8e5HSRL2u+Y9QkgTx8DY8UMOMNuycHEMJca
-         Y4FkUIHdZPwmPx1cJYizjiP458SAypboQ6RKWnROZb8xEEagkFUFAmmJ4gDJzZ5qmwf1
-         dM039k0juLOOeE1Bg699rDYhNyGIoPHBHYIGZgiQ9RVTXp6TFbiirga3jYjVWEN0FuUf
-         HzrS/XUtO3uRp67ScZMRUVlbcNDCoUIag9WreZ+KXOIaQ7gO/vb1dMcLVf8EOc6mq67D
-         DnnGURL6m+33HicB+cg1TApImTExGruhDQE3mqo3kwVwc0Q/pgFUZW1adIWKhpNeRX4U
-         fWMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=PAiDoNcDSsPnNj5W4mWsQjtsAOyOXebI5Rn/LeRO4A0=;
-        b=lfYqAEDoUZ++m3S6ouWp0pDND231MHi/yBQv9iCxjXmOY2UjaYmZCGxD6WDRro0IG0
-         CmfGDyV/MDhjmrtpRabB1yFtwCDZR02pctB7PMlLDn1cv+DjU6LnNFlXFPb/kAdGM6WI
-         5BYvMP60EZ2jJjF2vnGWXI/PVmKwlpkvrgC7zFMV5dPcyS5M47MIKrREoLFa38pdTwIO
-         92J0ZjqUZZCVSmtBFvaXUg86sI/qrmsfBlnxulPe210o2g7S72+vKLGjt1wEO8bXWE5/
-         Oor8rq79scW95DJgEsG3+OIs+QQpoVMA2K00wUJtZZH7m7XJRJNgvS1aniP33Jtkxzzu
-         t/kQ==
-X-Gm-Message-State: APjAAAUNuIeWAGMNc1P8xl64e9WYZMfxgjdNDCu6LVXRSiungkGYcwz+
-        FNml/htwTjSBLy8KL03KwnA6qA==
-X-Google-Smtp-Source: APXvYqxeQ1g+jpqlNityj8TgopMrjNmz4CclX96hSYDzY9HRLgVtbwu71aVJTN32smWAWDoy73fOQw==
-X-Received: by 2002:a37:6690:: with SMTP id a138mr9654539qkc.475.1581899772343;
-        Sun, 16 Feb 2020 16:36:12 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
-        by smtp.gmail.com with ESMTPSA id h13sm7852610qtu.23.2020.02.16.16.36.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 16 Feb 2020 16:36:11 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1j3UOQ-0003Nj-Fg; Sun, 16 Feb 2020 20:36:10 -0400
-Date:   Sun, 16 Feb 2020 20:36:10 -0400
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Maxim Mikityanskiy <maximmi@mellanox.com>
-Cc:     Alexander Lobakin <alobakin@dlink.ru>,
-        Leon Romanovsky <leon@kernel.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH rdma] IB/mlx5: Fix linkage failure on 32-bit arches
-Message-ID: <20200217003610.GC31668@ziepe.ca>
-References: <20200214191309.155654-1-alobakin@dlink.ru>
- <20200214192410.GW31668@ziepe.ca>
- <6f7c270fef9ec5bae2dcb780dee3f49f@dlink.ru>
- <3c70c7da-60aa-10ec-767f-5e519357b8e6@mellanox.com>
+        Sun, 16 Feb 2020 19:38:01 -0500
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200217003757epoutp010d546461a715f30b2ba96fbdb3114f03~0CY7F30CA1513215132epoutp01W
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 00:37:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200217003757epoutp010d546461a715f30b2ba96fbdb3114f03~0CY7F30CA1513215132epoutp01W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1581899877;
+        bh=NfSYzOZrDfPikqsu0krg/aS0e7+5iK66tJfBtsMoaE8=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=jJfN4ChdjRrsQilTSUCykap0gRguEDe5JTvdGOeXE9Vodn+Aj1BIdnL4r4P6+zm51
+         jjR9cMEulmLRI2OH5reA0Al5pV5tY50BsTgIxHBoUE77ysxIbRcfmmgM5H8mbfPpo8
+         /5jCUJka1bL4wpggP7Lb2I348rh5+qkum9tBfkGA=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20200217003757epcas1p41ac1f5e16d9c11a5b02df864d3e8506b~0CY6nxvOC0792707927epcas1p4D;
+        Mon, 17 Feb 2020 00:37:57 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.160]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 48LQ7S2lN4zMqYkr; Mon, 17 Feb
+        2020 00:37:56 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A4.4C.48019.460E94E5; Mon, 17 Feb 2020 09:37:56 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20200217003756epcas1p30946199dd3cc6ba1055699f48105f038~0CY5XJDYY1356213562epcas1p3L;
+        Mon, 17 Feb 2020 00:37:56 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200217003756epsmtrp2a4db0fae17c50f7c926b490537764ce1~0CY5WYIXq2536725367epsmtrp2n;
+        Mon, 17 Feb 2020 00:37:56 +0000 (GMT)
+X-AuditID: b6c32a38-23fff7000001bb93-65-5e49e064d749
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        3C.52.06569.360E94E5; Mon, 17 Feb 2020 09:37:56 +0900 (KST)
+Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200217003755epsmtip2302aae121c4563c094cb538c3ce752e7~0CY5MSbND2197021970epsmtip2d;
+        Mon, 17 Feb 2020 00:37:55 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     =?windows-1257?Q?'Valdis_Kl=E7tnieks'?= <valdis.kletnieks@vt.edu>
+Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <gregkh@linuxfoundation.org>, <hch@lst.de>,
+        <sj1557.seo@samsung.com>, <pali.rohar@gmail.com>, <arnd@arndb.de>,
+        <viro@zeniv.linux.org.uk>, "'Namjae Jeon'" <linkinjeon@gmail.com>,
+        "'Sasha Levin'" <sashal@kernel.org>
+In-Reply-To: <89603.1581722921@turing-police>
+Subject: RE: [PATCH] exfat: tighten down num_fats check
+Date:   Mon, 17 Feb 2020 09:37:55 +0900
+Message-ID: <001b01d5e52a$7f029340$7d07b9c0$@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3c70c7da-60aa-10ec-767f-5e519357b8e6@mellanox.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset="windows-1257"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQEsiKNbA3f6Ud8ZBzvjODngDpGbQQJ4Yw3zqV1wpoA=
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNJsWRmVeSWpSXmKPExsWy7bCmvm7KA884gzVtYhZ/Jx1jt2hevJ7N
+        YuXqo0wW1+/eYrbYs/cki8XlXXPYLCae/s1ksWnNNTaLLf+OsFpcev+BxeL83+OsDtwev39N
+        YvTYOesuu8emVZ1sHvvnrmH32H2zgc2jb8sqRo/Pm+Q8Dm1/w+ax6clbpgDOqBybjNTElNQi
+        hdS85PyUzLx0WyXv4HjneFMzA0NdQ0sLcyWFvMTcVFslF58AXbfMHKBzlRTKEnNKgUIBicXF
+        Svp2NkX5pSWpChn5xSW2SqkFKTkFhgYFesWJucWleel6yfm5VoYGBkamQJUJORnzfzewFLzg
+        quh7VN/AuI2ji5GTQ0LAROL154tMXYxcHEICOxgl2ldvYIZwPjFKXDp6C8r5xiix/PZrNpiW
+        KatXs0Ak9jJKHDy8hBXCecko8fB2EzNIFZuArsS/P/vBOkQEXCXmtjUzghQxCyxgknhy4xZ7
+        FyMHBydQ0c6jMSA1wgLmErvm7GABsVkEVCVOf77NBFLCK2ApceJVGUiYV0BQ4uTMJ2AlzAIG
+        EgfOLGWEsOUltr+dwwxxnILEz6fLWEFaRQSsJD5/CIcoEZGY3dkG9oyEwDp2ibc3LjCD1EgI
+        uEgcXSkD0Sos8er4FnYIW0ri87u9bBAl1RIf90NN72CUePHdFsI2lri5fgMrhK0osfP3XKhr
+        +CTefe1hhWjllehoE4IoUZXou3SYCcKWluhq/8A+gVFpFpK/ZiH5axaSv2YheWABI8sqRrHU
+        guLc9NRiwwIT5KjexAhOyFoWOxj3nPM5xCjAwajEw/si0DNOiDWxrLgy9xCjBAezkgjvYUW3
+        OCHelMTKqtSi/Pii0pzU4kOMpsBgn8gsJZqcD8wWeSXxhqZGxsbGFiZm5mamxkrivA8jNeOE
+        BNITS1KzU1MLUotg+pg4OKUaGH3CLn63lBZdduKz+ofY9hhn1YJTMw9e+rbucVn8o507Mpxy
+        4udb8S849ONKcJB5gzTrze+L1sR2r2rMyph3UOrGjnd5TqfUF+399CP1fdFu+9thDKayE3pE
+        je/mHiqL5LyQW8XJuGf3v8t5WeITCjetf1y+yO5j1JZ88wf/d82a092081Jmf4YSS3FGoqEW
+        c1FxIgD7myRf3gMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMIsWRmVeSWpSXmKPExsWy7bCSvG7KA884g281Fn8nHWO3aF68ns1i
+        5eqjTBbX795ittiz9ySLxeVdc9gsJp7+zWSxac01Nost/46wWlx6/4HF4vzf46wO3B6/f01i
+        9Ng56y67x6ZVnWwe++euYffYfbOBzaNvyypGj8+b5DwObX/D5rHpyVumAM4oLpuU1JzMstQi
+        fbsEroz5vxtYCl5wVfQ9qm9g3MbRxcjJISFgIjFl9WqWLkYuDiGB3YwSzxpus0MkpCWOnTjD
+        3MXIAWQLSxw+XAxR85xR4uXnp2wgNWwCuhL//uwHs0UEXCXmtjUzghQxC6xhklj45z0TSEJI
+        oE5iU+MDJpBBnEANO4/GgISFBcwlds3ZwQJiswioSpz+fBushFfAUuLEqzKQMK+AoMTJmU/A
+        SpgFjCQmdUJMZBaQl9j+dg4zxJkKEj+fLmMFaRURsJL4/CEcokREYnZnG/MERuFZSCbNQjJp
+        FpJJs5C0LGBkWcUomVpQnJueW2xYYJSXWq5XnJhbXJqXrpecn7uJERyVWlo7GE+ciD/EKMDB
+        qMTD6xDiGSfEmlhWXJl7iFGCg1lJhPewolucEG9KYmVValF+fFFpTmrxIUZpDhYlcV75/GOR
+        QgLpiSWp2ampBalFMFkmDk6pBsZ5V+dm6n8TLPB4+qS/4+bhe73MfX9ZGq6/4lzyz00vesY7
+        WwvXa3Y7Lsdd+WXz+NKW3QtOL5u3st94Q0JWstju09fU4p4eW3Xgi+2LZ8dy2UrWzdwkkXpn
+        1v2jO90qLR21T/KytPVX/F4hdVxke4j0zYaI9rsrPbOMH0Ue49X/+n3PWc6dOZc7lFiKMxIN
+        tZiLihMBaGKNbcYCAAA=
+X-CMS-MailID: 20200217003756epcas1p30946199dd3cc6ba1055699f48105f038
+X-Msg-Generator: CA
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200214232853epcas1p241e47cdc4e0b9b5c603cc6eaa6182360
+References: <CGME20200214232853epcas1p241e47cdc4e0b9b5c603cc6eaa6182360@epcas1p2.samsung.com>
+        <89603.1581722921@turing-police>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 16, 2020 at 01:53:50PM +0200, Maxim Mikityanskiy wrote:
-> On 2020-02-14 21:44, Alexander Lobakin wrote:
-> > Jason Gunthorpe wrote 14.02.2020 22:24:
-> > > On Fri, Feb 14, 2020 at 10:13:09PM +0300, Alexander Lobakin wrote:
-> > > > Commit f164be8c0366 ("IB/mlx5: Extend caps stage to handle VAR
-> > > > capabilities") introduced a straight "/" division of the u64
-> > > > variable "bar_size", which emits an __udivdi3() libgcc call on
-> > > > 32-bit arches and certain GCC versions:
-> > > > 
-> > > > error: "__udivdi3" [drivers/infiniband/hw/mlx5/mlx5_ib.ko]
-> > > > undefined! [1]
-> > > > 
-> > > > Replace it with the corresponding div_u64() call.
-> > > > Compile-tested on ARCH=mips 32r2el_defconfig BOARDS=ocelot.
-> > > > 
-> > > > [1] https://lore.kernel.org/linux-mips/CAMuHMdXM9S1VkFMZ8eDAyZR6EE4WkJY215Lcn2qdOaPeadF+EQ@mail.gmail.com/
-> > > > 
-> > > > 
-> > > > Fixes: f164be8c0366 ("IB/mlx5: Extend caps stage to handle VAR
-> > > > capabilities")
-> > > > Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
-> > > >  drivers/infiniband/hw/mlx5/main.c | 3 ++-
-> > > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > > 
-> > > Randy beat you too it..
-> > > 
-> > > https://lore.kernel.org/linux-rdma/20200206143201.GF25297@ziepe.ca/
-> > 
-> > Ah, OK. Sorry for missing this one. I didn't see any fix over
-> > git.kernel.org and thought it doesn't exist yet.
-> > 
-> > > But it seems patchwork missed this somehow.
-> > > 
-> > > Applied now at least
+> Change the test for num_fats from != 0 to a check for specifically 1.
 > 
-> Jason, I think Alexander's patch is more correct. It uses div_u64, while
-> yours uses div64_u64. The divider is 32-bit, so div_u64 would be more
-> optimized on most 32-bit architectures.
+> Although it's theoretically possible that num_fats == 2 for a TexFAT
+> volume (or an implementation that doesn't do the full TexFAT but does
+> support 2 FAT tables), the rest of the code doesn't currently DTRT if it's
+> 2 (in particular, not handling the case of ActiveFat pointing at the
+> second FAT area), so we'll disallow that as well, as well as dealing with
+> corrupted images that have a trash non-zero value.
+> 
+> Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+> 
+> --- a/fs/exfat/super.c	2020-02-14 17:45:02.262274632 -0500
+> +++ b/fs/exfat/super.c	2020-02-14 17:46:37.200343723 -0500
+> @@ -450,7 +450,7 @@ static int __exfat_fill_super(struct sup
+>  	}
+> 
+>  	p_bpb = (struct pbr64 *)p_pbr;
+> -	if (!p_bpb->bsx.num_fats) {
+> +	if (p_bpb->bsx.num_fats  != 1) {
+>  		exfat_msg(sb, KERN_ERR, "bogus number of FAT structure");
+Could you please update error message for the reason why num_fats is allowed
+only 1?
+>  		ret = -EINVAL;
+>  		goto free_bh;
+Let's remove exfat_mirror_bh(), FAT2_start_sector variable and the below
+related codes together.
 
-Seems so, but it is already done. You can send a followup to fix it
+sbi->FAT2_start_sector = p_bpb->bsx.num_fats == 1 ?
+                sbi->FAT1_start_sector :
+                        sbi->FAT1_start_sector + sbi->num_FAT_sectors;
 
-Jason
+Thanks for your patch!
+> 
+> 
+> 
+> 
+
+
