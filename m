@@ -2,79 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FC34161558
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 16:01:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90F4016157C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 16:04:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729381AbgBQPBH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 10:01:07 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10632 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729315AbgBQPBH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 10:01:07 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id A2B23B6A8D864C6AB5DD;
-        Mon, 17 Feb 2020 23:01:01 +0800 (CST)
-Received: from huawei.com (10.175.105.18) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Mon, 17 Feb 2020
- 23:00:53 +0800
-From:   linmiaohe <linmiaohe@huawei.com>
-To:     <pbonzini@redhat.com>, <rkrcmar@redhat.com>,
-        <sean.j.christopherson@intel.com>, <vkuznets@redhat.com>,
-        <wanpengli@tencent.com>, <jmattson@google.com>, <joro@8bytes.org>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-        <hpa@zytor.com>
-CC:     <linmiaohe@huawei.com>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <x86@kernel.org>
-Subject: [PATCH v2] KVM: VMX: Add 'else' to split mutually exclusive case
-Date:   Mon, 17 Feb 2020 23:02:30 +0800
-Message-ID: <1581951750-17854-1-git-send-email-linmiaohe@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1729417AbgBQPEq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 10:04:46 -0500
+Received: from foss.arm.com ([217.140.110.172]:36962 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729319AbgBQPEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 10:04:45 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D586B30E;
+        Mon, 17 Feb 2020 07:04:44 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 599683F703;
+        Mon, 17 Feb 2020 07:04:44 -0800 (PST)
+Date:   Mon, 17 Feb 2020 15:04:42 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        =?iso-8859-1?Q?Myl=E8ne?= Josserand 
+        <mylene.josserand@free-electrons.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 04/34] ASoC: sun8i-codec: Remove unused dev from
+ codec struct
+Message-ID: <20200217150442.GH9304@sirena.org.uk>
+References: <20200217064250.15516-1-samuel@sholland.org>
+ <20200217064250.15516-5-samuel@sholland.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.105.18]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="zhtSGe8h3+lMyY1M"
+Content-Disposition: inline
+In-Reply-To: <20200217064250.15516-5-samuel@sholland.org>
+X-Cookie: There was a phone call for you.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miaohe Lin <linmiaohe@huawei.com>
 
-Each if branch in handle_external_interrupt_irqoff() is mutually
-exclusive. Add 'else' to make it clear and also avoid some unnecessary
-check.
+--zhtSGe8h3+lMyY1M
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
----
-v1->v2:
-add braces to all if branches
----
- arch/x86/kvm/vmx/vmx.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+On Mon, Feb 17, 2020 at 12:42:20AM -0600, Samuel Holland wrote:
+> This field is not used anywhere in the driver, so remove it.
 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 9a6664886f2e..a13368b2719c 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -6176,15 +6176,13 @@ static void handle_exception_nmi_irqoff(struct vcpu_vmx *vmx)
- 	vmx->exit_intr_info = vmcs_read32(VM_EXIT_INTR_INFO);
- 
- 	/* if exit due to PF check for async PF */
--	if (is_page_fault(vmx->exit_intr_info))
-+	if (is_page_fault(vmx->exit_intr_info)) {
- 		vmx->vcpu.arch.apf.host_apf_reason = kvm_read_and_reset_pf_reason();
--
- 	/* Handle machine checks before interrupts are enabled */
--	if (is_machine_check(vmx->exit_intr_info))
-+	} else if (is_machine_check(vmx->exit_intr_info)) {
- 		kvm_machine_check();
--
- 	/* We need to handle NMIs before interrupts are enabled */
--	if (is_nmi(vmx->exit_intr_info)) {
-+	} else if (is_nmi(vmx->exit_intr_info)) {
- 		kvm_before_interrupt(&vmx->vcpu);
- 		asm("int $2");
- 		kvm_after_interrupt(&vmx->vcpu);
--- 
-2.19.1
+> Fixes: 36c684936fae ("ASoC: Add sun8i digital audio codec")
 
+This is in no way a bug fix, it's a random cleanup.  This means that the
+Fixes tag isn't really appropriate and it should be done after the
+subsequent changes in the series that fix real bugs.  You should always
+put bug fixes first so that they don't have any unneeded depenencies on
+other things and can be merged without them.
+
+--zhtSGe8h3+lMyY1M
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5Kq4oACgkQJNaLcl1U
+h9A9Vgf9HMozS/Ywu0JGI1L5GM/qN7H8wiz+zVCv1G3I0c+5ZQ+1uicI8yt2ECLS
+IBLZEnRacg0QqjVmh9Ht3Ar/Z1j8ZWEFHKW/633TvvKsd+sCGUxhdruB9h54TAuP
+Zp+7hjdRerC9Qwm9mZUohiIL/SYarUiuw7rOuaky+K9uhQTfq9XRtQX7AebIuXNh
+Zrg/+DrbfQriYkwAvLcS7Adk8LrJ1bDw4WGmBP1zhDFwLCXQ6E2abkf4NltY+TeY
+9F481r+90owgmj4x8/yFy+oD0HPgqU3fRXVgXB6H3P4L4HJylgrfjwLXwr3Sg6ln
+SR4qJz3ixLII+/p8RcAUkach3NRrww==
+=RpUW
+-----END PGP SIGNATURE-----
+
+--zhtSGe8h3+lMyY1M--
