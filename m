@@ -2,113 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44B42161677
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 16:45:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2025816162E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 16:30:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729315AbgBQPo4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 10:44:56 -0500
-Received: from www149.your-server.de ([78.47.15.70]:59824 "EHLO
-        www149.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726528AbgBQPoz (ORCPT
+        id S1728564AbgBQPa3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 10:30:29 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:32812 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728441AbgBQPa3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 10:44:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hanno.de;
-         s=default1911; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:References:To:From:Subject:Sender:Reply-To:Cc:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=wcHYCgvIc1V4L4eqgKkfizJKSrtKfmAWPhFBpvyI6bQ=; b=CfA7MMRTU9iH7WaHpY+SpuuLuS
-        wTXycQngxf33BvZiH7nz/WRHkiRUmkZEaSSOzK3Vg82OuD0KXbwIMIono5wT4BCW3bDLmCzcnIWn6
-        Hw8gmHBlnkak3TwCNcC8bJrVwGhNqakK0nhRHer79drJ0t/2tRGH5Bt3GyzGdO5zOt1x2mM0GYYst
-        qE72AZnmmqGYewTYW1oj/KDOj7mvQdOuO+m7FrCXxBXlIbah6fLIShjejJFIiYNVmb8vtAxfNe2l6
-        4HGb7wkdGdZT+ovAJbFGOf4coUJ58T4Mb+gG8zy67Gc93LU8YVi/f/NshVFmKVKhHIct4gDsp+R8f
-        f3MstsZQ==;
-Received: from sslproxy06.your-server.de ([78.46.172.3])
-        by www149.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92.3)
-        (envelope-from <abos@hanno.de>)
-        id 1j3iJJ-0004sF-OY; Mon, 17 Feb 2020 16:27:49 +0100
-Received: from [62.96.7.134] (helo=[10.1.0.41])
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <abos@hanno.de>)
-        id 1j3iJJ-000GeY-Jh; Mon, 17 Feb 2020 16:27:49 +0100
-Subject: [PATCH 3/3] HID: hid-bigbenff: fix race condition for scheduled work
- during removal
-From:   Hanno Zulla <abos@hanno.de>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <ae5eee33-9dfc-0609-1bf8-33fd773b9bd5@hanno.de>
- <798ec119-ce24-e1e3-17c9-b6018b04d75f@hanno.de>
- <1c355bbe-c0fb-395c-9050-346f87eb324c@hanno.de>
-Message-ID: <782af9b1-b648-bd21-b0f0-b0db22b8c0b7@hanno.de>
-Date:   Mon, 17 Feb 2020 16:27:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Mon, 17 Feb 2020 10:30:29 -0500
+Received: by mail-wm1-f67.google.com with SMTP id m10so155395wmc.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 07:30:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xLlxKzyyWAgwu5oWmWZ61hqmpwUHLeY8xWAp5SqH8Fk=;
+        b=S+zAvmD2yQ1EwqGwVy0jNbBc/JnoNJtkB7V+I0iY30+puKcRQ3ibMXnxTnI79NBIPE
+         PLm14M2VSI6EuVv7CGUCMbgYGg9aIm5S7xF4Lk0eegbEUVAsYTCKV9JcR+V+DNmr3cy6
+         iwGrFgpx7er8cqaKL7Dt7x7Lhss8M8PtD74WBQV3mV90uZhRfGIesDOTk1PtcEnDZNSp
+         zjqAhvujcP5bT+MYRei5SqUF+TopSAO0XMC2CaO08i49zKAcBSiCnfPLGL6wXozD+7hF
+         Wp4l4kYz1X4RvhVrO3Im3P5kC7zPp4RNiQV3iODXhVppVxoaxO0VwdWJw1d8wtgM3WSS
+         /WiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xLlxKzyyWAgwu5oWmWZ61hqmpwUHLeY8xWAp5SqH8Fk=;
+        b=pbX9z2hF/fn0up92xZsp0qwcv+KaLgAo3A7eBw8T0PEZG4pqW1Qnpyvol6naMLEGix
+         pdYRaRYXb4KNiGjgMM7R8OgEPJV3bumfOUVozs/mQ1PY0IJBEoVmoAl3lpwd+hqBialw
+         4DQUC4GHR2EWAfYpvy9QxmeBl187xQfaabhT3kzDxtc5i08SAvyeYiA/zahCeJr7AaXo
+         bNwSKO/8qk8UO9GR99Vdfye9ZyBD/ae9jRpIV6EwrXYWcgGu9o7J6c2TGrfpHbRKLmfT
+         SzC8qyQtJco9J2yP6gDCiTZ7Kw013csnzEwbBI8h8SSt0WUPGGg6+B7rR4f5fYYLyEKm
+         NS2A==
+X-Gm-Message-State: APjAAAUYH81u8+toyDxGyj3YYSUSz+JyDWWQbt/R9JvgdHQH1hNJFim5
+        L/vZx6p5XX4BgI9q0eapF3F8LQ==
+X-Google-Smtp-Source: APXvYqxFsYONLB2eCep9N5wM8fW7Ek2DFoknrAl5SFMesGmI/IiJ1wKNf+3vSFg32VOkzIHYOamlhg==
+X-Received: by 2002:a1c:9d07:: with SMTP id g7mr22547282wme.130.1581953427019;
+        Mon, 17 Feb 2020 07:30:27 -0800 (PST)
+Received: from google.com ([2a00:79e0:d:110:d6cc:2030:37c1:9964])
+        by smtp.gmail.com with ESMTPSA id y12sm1436973wrw.88.2020.02.17.07.30.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2020 07:30:26 -0800 (PST)
+Date:   Mon, 17 Feb 2020 15:30:23 +0000
+From:   Quentin Perret <qperret@google.com>
+To:     Matthias Maennich <maennich@google.com>
+Cc:     masahiroy@kernel.org, nico@fluxnic.net,
+        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        kernel-team@android.com, jeyu@kernel.org, hch@infradead.org
+Subject: Re: [PATCH v4 1/3] kbuild: allow symbol whitelisting with
+ TRIM_UNUSED_KSYMS
+Message-ID: <20200217153023.GA71210@google.com>
+References: <20200212202140.138092-1-qperret@google.com>
+ <20200212202140.138092-2-qperret@google.com>
+ <20200217152201.GA48466@google.com>
 MIME-Version: 1.0
-In-Reply-To: <1c355bbe-c0fb-395c-9050-346f87eb324c@hanno.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: abos@hanno.de
-X-Virus-Scanned: Clear (ClamAV 0.102.1/25726/Mon Feb 17 15:01:07 2020)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200217152201.GA48466@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HID: hid-bigbenff: fix race condition for scheduled work during removal
+On Monday 17 Feb 2020 at 15:22:01 (+0000), Matthias Maennich wrote:
+> In case the whitelist file can't be found, the error message is
+> 
+>  cat: path/to/file: file not found
+> 
+> I wonder whether we can make this error message a bit more specific by
+> telling the user that the KSYMS_WHITELIST is missing.
 
-It's possible that there is scheduled work left while the device is
-already being removed, which can cause a kernel crash. Adding a flag
-will avoid this.
++1, that'd be really useful. I'll check the file existence in v5 (in a
+POSIX-compliant way, I promise).
 
-Signed-off-by: Hanno Zulla <kontakt@hanno.de>
----
- drivers/hid/hid-bigbenff.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+> With the above addressed (and your amend for the absolute path test),
+> please feel free to add
+> 
+> Tested-by: Matthias Maennich <maennich@google.com>
+> Reviewed-by: Matthias Maennich <maennich@google.com>
 
-diff --git a/drivers/hid/hid-bigbenff.c b/drivers/hid/hid-bigbenff.c
-index f8c552b64a89..db6da21ade06 100644
---- a/drivers/hid/hid-bigbenff.c
-+++ b/drivers/hid/hid-bigbenff.c
-@@ -174,6 +174,7 @@ static __u8 pid0902_rdesc_fixed[] = {
- struct bigben_device {
- 	struct hid_device *hid;
- 	struct hid_report *report;
-+	bool removed;
- 	u8 led_state;         /* LED1 = 1 .. LED4 = 8 */
- 	u8 right_motor_on;    /* right motor off/on 0/1 */
- 	u8 left_motor_force;  /* left motor force 0-255 */
-@@ -190,6 +191,9 @@ static void bigben_worker(struct work_struct *work)
- 		struct bigben_device, worker);
- 	struct hid_field *report_field = bigben->report->field[0];
- 
-+	if (bigben->removed)
-+		return;
-+
- 	if (bigben->work_led) {
- 		bigben->work_led = false;
- 		report_field->value[0] = 0x01; /* 1 = led message */
-@@ -304,6 +308,7 @@ static void bigben_remove(struct hid_device *hid)
- {
- 	struct bigben_device *bigben = hid_get_drvdata(hid);
- 
-+	bigben->removed = true;
- 	cancel_work_sync(&bigben->worker);
- 	hid_hw_stop(hid);
- }
-@@ -324,6 +329,7 @@ static int bigben_probe(struct hid_device *hid,
- 		return -ENOMEM;
- 	hid_set_drvdata(hid, bigben);
- 	bigben->hid = hid;
-+	bigben->removed = false;
- 
- 	error = hid_parse(hid);
- 	if (error) {
--- 
-2.20.1
-
-
+Thanks!
+Quentin
