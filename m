@@ -2,157 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FA511607FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 03:18:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0E831607E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 03:00:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727943AbgBQCSm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 21:18:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45762 "EHLO mail.kernel.org"
+        id S1726560AbgBQCAt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 21:00:49 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:44663 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727858AbgBQCSg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 21:18:36 -0500
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726251AbgBQCAt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Feb 2020 21:00:49 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91D102086A;
-        Mon, 17 Feb 2020 02:18:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581905915;
-        bh=DOkpBroRKhNueQVg6NXq73R0x8BJgCfT3j7Fl+cG0Yo=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=RLDWUDCwO9PyGREb/JfPQGLT28deo72GJeAwzSyfOWELuq9r6D7zj79uJ2qxlDD1t
-         QCh5kz1ya3m7GmkbOCdbyXHHeyzQuCaKntUpFRK9MWAbvd/3vOZzFR/SCykp5uXNSz
-         59VqTwHWKXOEMivDKdQY5JjcUlv5CVc6pFpRQ6u4=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id AD97435226F4; Sun, 16 Feb 2020 06:11:51 -0800 (PST)
-Date:   Sun, 16 Feb 2020 06:11:51 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Giuseppe Scrivano <gscrivan@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-        ebiederm@xmission.com
-Subject: Re: [PATCH] ipc: use a work queue to free_ipc
-Message-ID: <20200216141151.GJ2935@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20200211162408.2194037-1-gscrivan@redhat.com>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48LRz31XH1z9sP7;
+        Mon, 17 Feb 2020 13:00:47 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1581904847;
+        bh=BD3CVoBvvToP7p9M+qnDvxZwxrPMfBiQ40P737FK+R0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=C2RLmbDdjy64zyQXEi3kVnA4Eg2tdLpfHAXGYcikrrhCR9wwuF/skfGrs9GwvJpnj
+         H79YCZSpum2U4s9k6SWlqKXgBfvqW+N8u97DvnK0fUbAAG1+kUGQJdt89e415y0hcM
+         o6/x7enk1g6iZcx2DgQ1iWCErXVtLsXnePkk3RE9+KLmu32IpPUT9mqatX7BtgZtZc
+         EyUONuQNPya7bTHeqHHazalHFhxkvXZf9o48IHO0QRYywDx3qGzLDoDha4hs80W1R3
+         Gj1GsaNBFaTccLk12EFXX9kGyVcUkQXn7iZgo5t7XvCTgvT8sNDah7op8pnmNVXINb
+         C0fcBK0hQWkeA==
+Date:   Mon, 17 Feb 2020 13:00:46 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mina Almasry <almasrymina@google.com>
+Subject: linux-next: build warning after merge of the akpm-current tree
+Message-ID: <20200217130046.4c042590@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200211162408.2194037-1-gscrivan@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/signed; boundary="Sig_/xGnHHwAOcQg/yGRlWW5yS2.";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 05:24:08PM +0100, Giuseppe Scrivano wrote:
-> it avoids blocking on synchronize_rcu() in kern_umount().
-> 
-> the code:
-> 
-> \#define _GNU_SOURCE
-> \#include <sched.h>
-> \#include <error.h>
-> \#include <errno.h>
-> \#include <stdlib.h>
-> int main()
-> {
->   int i;
->   for (i  = 0; i < 1000; i++)
->     if (unshare (CLONE_NEWIPC) < 0)
->       error (EXIT_FAILURE, errno, "unshare");
-> }
-> 
-> gets from:
-> 
-> 	Command being timed: "./ipc-namespace"
-> 	User time (seconds): 0.00
-> 	System time (seconds): 0.06
-> 	Percent of CPU this job got: 0%
-> 	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:08.05
-> 
-> to:
-> 
-> 	Command being timed: "./ipc-namespace"
-> 	User time (seconds): 0.00
-> 	System time (seconds): 0.02
-> 	Percent of CPU this job got: 96%
-> 	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.03
+--Sig_/xGnHHwAOcQg/yGRlWW5yS2.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Nice speedup!
+Hi all,
 
-However, I am not convinced that the code shown below is safe.
+[Also earlier reported by Randy Dunlap]
 
-I believe that you need either a synchronize_rcu() in your free_ipc()
-function or that you need to pass free_ipc() to queue_rcu_work() instead
-of directly schedule_work().  As things are, I would expect you to see
-free_ipc_ns() being invoke too soon on heavily loaded CONFIG_PREEMPT=y
-kernels.  Which can be quite a pain to debug!
+After merging the akpm-current tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-Or am I missing something?
+In file included from mm/migrate.c:39:
+include/linux/hugetlb_cgroup.h:146:21: warning: 'struct file_region' declar=
+ed inside parameter list will not be visible outside of this definition or =
+declaration
+  146 |              struct file_region *rg,
+      |                     ^~~~~~~~~~~
+include/linux/hugetlb_cgroup.h:145:63: warning: 'struct resv_map' declared =
+inside parameter list will not be visible outside of this definition or dec=
+laration
+  145 | static inline void hugetlb_cgroup_uncharge_file_region(struct resv_=
+map *resv,
+      |                                                               ^~~~~=
+~~~
+include/linux/hugetlb_cgroup.h:233:59: warning: 'struct resv_map' declared =
+inside parameter list will not be visible outside of this definition or dec=
+laration
+  233 | static inline void hugetlb_cgroup_uncharge_counter(struct resv_map =
+*resv,
+      |                                                           ^~~~~~~~
 
-							Thanx, Paul
+Introduced by commits
 
-> Signed-off-by: Giuseppe Scrivano <gscrivan@redhat.com>
-> ---
->  include/linux/ipc_namespace.h |  2 ++
->  ipc/namespace.c               | 17 +++++++++++++++--
->  2 files changed, 17 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/ipc_namespace.h b/include/linux/ipc_namespace.h
-> index c309f43bde45..a06a78c67f19 100644
-> --- a/include/linux/ipc_namespace.h
-> +++ b/include/linux/ipc_namespace.h
-> @@ -68,6 +68,8 @@ struct ipc_namespace {
->  	struct user_namespace *user_ns;
->  	struct ucounts *ucounts;
->  
-> +	struct llist_node mnt_llist;
-> +
->  	struct ns_common ns;
->  } __randomize_layout;
->  
-> diff --git a/ipc/namespace.c b/ipc/namespace.c
-> index b3ca1476ca51..37d27e1b807a 100644
-> --- a/ipc/namespace.c
-> +++ b/ipc/namespace.c
-> @@ -117,6 +117,7 @@ void free_ipcs(struct ipc_namespace *ns, struct ipc_ids *ids,
->  
->  static void free_ipc_ns(struct ipc_namespace *ns)
->  {
-> +	mq_put_mnt(ns);
->  	sem_exit_ns(ns);
->  	msg_exit_ns(ns);
->  	shm_exit_ns(ns);
-> @@ -127,6 +128,17 @@ static void free_ipc_ns(struct ipc_namespace *ns)
->  	kfree(ns);
->  }
->  
-> +static LLIST_HEAD(free_ipc_list);
-> +static void free_ipc(struct work_struct *unused)
-> +{
-> +	struct llist_node *node = llist_del_all(&free_ipc_list);
-> +	struct ipc_namespace *n, *t;
-> +
-> +	llist_for_each_entry_safe(n, t, node, mnt_llist)
-> +		free_ipc_ns(n);
-> +}
-> +static DECLARE_WORK(free_ipc_work, free_ipc);
-> +
->  /*
->   * put_ipc_ns - drop a reference to an ipc namespace.
->   * @ns: the namespace to put
-> @@ -148,8 +160,9 @@ void put_ipc_ns(struct ipc_namespace *ns)
->  	if (refcount_dec_and_lock(&ns->count, &mq_lock)) {
->  		mq_clear_sbinfo(ns);
->  		spin_unlock(&mq_lock);
-> -		mq_put_mnt(ns);
-> -		free_ipc_ns(ns);
-> +
-> +		if (llist_add(&ns->mnt_llist, &free_ipc_list))
-> +			schedule_work(&free_ipc_work);
->  	}
->  }
->  
-> -- 
-> 2.24.1
-> 
+  0b42cb2e47b6 ("hugetlb_cgroup: add reservation accounting for private map=
+pings")
+  881818698361 ("hugetlb_cgroup: add accounting for shared mappings")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/xGnHHwAOcQg/yGRlWW5yS2.
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5J884ACgkQAVBC80lX
+0GwBFQgAkpukfhtP6i55Zh8+aplTtAf8K6TLlawkke/4Vi/c0AVUlUA+kGG1M7yS
+rn2pqMo2M95bKf10XmtdAKRsqAyvb+KSpTsmGmvD/gjhFnwuRCxfczd4E3pOAz9G
+YzJvsepPhn2ykZJFuWnfHEUxVo8FonWeFknXz6b3a+kv+E123kpWFoCtULqR1OYu
+HmiRHdmn1uaRZm1UdQb3cHktCi8dyfSoRZLiY9QBhOay2oioOxppnaFU1Mzah3mB
+L4MLQzUJQejWpGME1+jlL4vFSjWGxBNI0sm9/QwDAKhyXqYq72c2DakXpKOs+UTg
+1/pM+xDa8nMOpGmQf5L4/UJuY3CYmQ==
+=3Wf8
+-----END PGP SIGNATURE-----
+
+--Sig_/xGnHHwAOcQg/yGRlWW5yS2.--
