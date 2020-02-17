@@ -2,84 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60C2516148E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 15:27:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBC751614B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 15:29:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728977AbgBQO1W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 09:27:22 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:41508 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728797AbgBQO1V (ORCPT
+        id S1728991AbgBQO3k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 09:29:40 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:46663 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728054AbgBQO3k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 09:27:21 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01HER8p6041844;
-        Mon, 17 Feb 2020 08:27:08 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1581949628;
-        bh=x20XuJyDG5O2+c37QkvjXakZ6PsI56wqgW7J8Vp8Wo8=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=tgRDFPOqdqWFak0bU8cCloDasY+dLYgWOyjBs0QQyqJ3140cTUTkJaX5KkmLCrIg5
-         KkvdprNLDmi8wXZYwipdidm10AHKmToy0B7tJGY9lr1Si0T23BGaFcatFS84hpDm/z
-         ZoJzxIyoN8+ryGgjlZ2FS8uItpsY/ctan70MOBmw=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01HER86Q065030;
-        Mon, 17 Feb 2020 08:27:08 -0600
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 17
- Feb 2020 08:27:08 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 17 Feb 2020 08:27:08 -0600
-Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01HEQoJO033875;
-        Mon, 17 Feb 2020 08:27:04 -0600
-From:   Faiz Abbas <faiz_abbas@ti.com>
-To:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-can@vger.kernel.org>
-CC:     <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <catalin.marinas@arm.com>, <mark.rutland@arm.com>,
-        <robh+dt@kernel.org>, <mkl@pengutronix.de>, <wg@grandegger.com>,
-        <sriram.dash@samsung.com>, <dmurphy@ti.com>, <faiz_abbas@ti.com>
-Subject: [PATCH v2 3/3] arm64: defconfig: Add Support for Bosch M_CAN controllers
-Date:   Mon, 17 Feb 2020 19:58:36 +0530
-Message-ID: <20200217142836.23702-4-faiz_abbas@ti.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20200217142836.23702-1-faiz_abbas@ti.com>
-References: <20200217142836.23702-1-faiz_abbas@ti.com>
+        Mon, 17 Feb 2020 09:29:40 -0500
+Received: by mail-qk1-f195.google.com with SMTP id u124so15814039qkh.13;
+        Mon, 17 Feb 2020 06:29:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ifhvgKgI6cTWHXPEnaAyEUDSTCBWJ+KZaGmCrBza/1c=;
+        b=C1c9Ac3dO4qTNAxrehHi5Lee1eIVFDCiei2+1u8WVmCTxz3+U0Hsq3ay+xNSl8pMrS
+         J2VuTVV9mR5kCb8QXP6HX9EM00EkseoO78/ijG1qDu29USrGHRPnUFfYgvDUl1kEywAm
+         op+qplXMh4i34wjCpUlAgzuRFl5m3gfVGYwnHeCQK/oOE3vsz9XJtSxLBvJXkxYCdvJ9
+         oUvMCUYRihGZ70hNrAvUEpbmVRn6C8ulkqRAu3c5bo+8XpcL03btqRICOrMshb7mEx50
+         3czipOu3udEuoZ3QfU6WAc/IVIgAE51iwpfhfDiZW77skX7D6Fkfver0nn5SR+dHsbDa
+         yPlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ifhvgKgI6cTWHXPEnaAyEUDSTCBWJ+KZaGmCrBza/1c=;
+        b=Z7WFxjPxtgbi23SzaEUikJe4E2q56q+7nzwy8YZU87YNj2RcAqz7laTqjRDNG3JbZ1
+         BRD5dtNXWIojO18hjkKbVYl8qLM0FLQ5Fjx7dOlz/1mGCeo/6PE9R1gnRj0FFsxYVeCy
+         vzN2vrA8wQ5YkCFdxtjkUsxTUf9h706661kNBzEdDCPSCg9o0zmvFMz/+Wl3Kw9t5uoL
+         9GfQncskXS9x2r8T8eIg0LruQ0TfVds4ntMhuHIcSg7xky6dCrNLVMMeD7VEi8O9gXJ6
+         RecUihYye0nerBI0NBOfcQfTv5tF4h6pR2v/zXE9Veow8I5WlIdD2esR126ujc2T1K/y
+         mxpQ==
+X-Gm-Message-State: APjAAAUeuA+XCoJbK6K6LagAUKdVCkrbRFiqeKGb+kZLKD7SNhiScGYx
+        fireGP8UpsLuqMedIa4Ydks=
+X-Google-Smtp-Source: APXvYqxL8R5m+lUaiW+Gfj0/xS6u9e5XVjk4kxV1EJh+wvOWiiTkELaDtZP/RTMFsR/zU/ndTOVs2Q==
+X-Received: by 2002:a37:652:: with SMTP id 79mr14604728qkg.464.1581949778766;
+        Mon, 17 Feb 2020 06:29:38 -0800 (PST)
+Received: from quaco.ghostprotocols.net ([179.97.37.151])
+        by smtp.gmail.com with ESMTPSA id n189sm291877qke.9.2020.02.17.06.29.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2020 06:29:37 -0800 (PST)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id B7F57403AD; Mon, 17 Feb 2020 11:29:35 -0300 (-03)
+Date:   Mon, 17 Feb 2020 11:29:35 -0300
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Thomas Richter <tmricht@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        gor@linux.ibm.com, sumanthk@linux.ibm.com,
+        heiko.carstens@de.ibm.com
+Subject: Re: [PATCH v4] perf test: Fix test trace+probe_vfs_getname.sh on s390
+Message-ID: <20200217142935.GA19953@kernel.org>
+References: <20200217102111.61137-1-tmricht@linux.ibm.com>
+ <20200217211010.fa9c643c517c110abaa5b554@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200217211010.fa9c643c517c110abaa5b554@kernel.org>
+X-Url:  http://acmel.wordpress.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable configs for supporting Bosch M_CAN controllers.
+Em Mon, Feb 17, 2020 at 09:10:10PM +0900, Masami Hiramatsu escreveu:
+> On Mon, 17 Feb 2020 11:21:11 +0100
+> Thomas Richter <tmricht@linux.ibm.com> wrote:
+> 
+> > This test places a kprobe to function getname_flags() in the kernel
+> > which has the following prototype:
+> > 
+> >   struct filename *
+> >   getname_flags(const char __user *filename, int flags, int *empty)
+> > 
+> > Variable filename points to a filename located in user space memory.
+> > Looking at
+> > commit 88903c464321c ("tracing/probe: Add ustring type for user-space string")
+> > the kprobe should indicate that user space memory is accessed.
+> > 
+> > Output before:
+> >    [root@m35lp76 perf]# ./perf test  66 67
+> >    66: Use vfs_getname probe to get syscall args filenames   : FAILED!
+> >    67: Check open filename arg using perf trace + vfs_getname: FAILED!
+> >    [root@m35lp76 perf]#
+> > 
+> > Output after:
+> >    [root@m35lp76 perf]# ./perf test  66 67
+> >    66: Use vfs_getname probe to get syscall args filenames   : Ok
+> >    67: Check open filename arg using perf trace + vfs_getname: Ok
+> >    [root@m35lp76 perf]#
+> > 
+> > Comments from Masami Hiramatsu:
+> > This bug doesn't happen on x86 or other archs on which user-address
+> > space and kernel address space is same. On some arch (ppc64 in this case?)
+> > user-address space is partially or completely same as kernel address space.
+> > (Yes, they switch the world when running into the kernel) In this case,
+> > we need to use different data access functions for each spaces.
+> > That is why I introduced "ustring" type for kprobe event.
+> > As far as I can see, Thomas's patch is sane. Thomas, could you show us
+> > your result on your test environment?
+> > Thank you
+> > 
+> > Comments from Thomas Richter:
+> > Test results included above.
+> > 
+> > Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+> 
+> Looks good to me.
+> 
+> Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
 
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
----
- arch/arm64/configs/defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+Thanks, I tested it successfully on x86-64, applying.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 905109f6814f..b25bbcf691b6 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -161,6 +161,9 @@ CONFIG_QRTR=m
- CONFIG_QRTR_SMD=m
- CONFIG_QRTR_TUN=m
- CONFIG_BPF_JIT=y
-+CONFIG_CAN=m
-+CONFIG_CAN_M_CAN=m
-+CONFIG_CAN_M_CAN_PLATFORM=m
- CONFIG_BT=m
- CONFIG_BT_HIDP=m
- # CONFIG_BT_HS is not set
--- 
-2.19.2
-
+- Arnaldo
