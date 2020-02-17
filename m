@@ -2,140 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E880C160CC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 09:19:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E08D160CC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 09:20:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728028AbgBQITA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 03:19:00 -0500
-Received: from mga14.intel.com ([192.55.52.115]:33550 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726932AbgBQITA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 03:19:00 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Feb 2020 00:18:59 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,451,1574150400"; 
-   d="scan'208";a="314711143"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga001.jf.intel.com with ESMTP; 17 Feb 2020 00:18:59 -0800
-Received: from [10.125.252.180] (abudanko-mobl.ccr.corp.intel.com [10.125.252.180])
-        by linux.intel.com (Postfix) with ESMTP id 0359858052E;
-        Mon, 17 Feb 2020 00:18:56 -0800 (PST)
-To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Cc:     linux-man@vger.kernel.org, James Morris <jmorris@namei.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH v1] perf_event_open.2: update the man page with CAP_PERFMON
- related information
-Organization: Intel Corp.
-Message-ID: <18d1083d-efe5-f5f8-c531-d142c0e5c1a8@linux.intel.com>
-Date:   Mon, 17 Feb 2020 11:18:55 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1728087AbgBQIUB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 03:20:01 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:6024 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726932AbgBQIT7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 03:19:59 -0500
+X-UUID: ff7f0e148cd24634a7b15f226d40318f-20200217
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:To:From; bh=CNjl2hI20d68vxiX1u56Xsi7CnowTCfuliL82LhhtjI=;
+        b=GxMEtP+yMSdYfaEG+zQl7drojz7GwZx6v5XDzZta5sC2zPXw0IXexSNaBSRXusjMZ7EtspKGhyT6fo39F9a/H7LqFGif3XXJdtS/VIapnAhbLM8B4Leq4hfeptFuIVuA8Wyt25RNiq+hciLOP02XjIxjYwm2AfXJq9lTbJczNUM=;
+X-UUID: ff7f0e148cd24634a7b15f226d40318f-20200217
+Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <yong.liang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 449462894; Mon, 17 Feb 2020 16:19:47 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ MTKMBS31N2.mediatek.inc (172.27.4.87) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 17 Feb 2020 16:18:14 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 17 Feb 2020 16:19:20 +0800
+From:   Yong Liang <yong.liang@mediatek.com>
+To:     <yong.liang@mediatek.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <matthias.bgg@gmail.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/1] Add watchdog device node
+Date:   Mon, 17 Feb 2020 16:19:21 +0800
+Message-ID: <20200217081922.22544-1-yong.liang@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <Add watchdog device node>
+References: <Add watchdog device node>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-TM-SNTS-SMTP: AA4A247E4141285BF863CB3E3630B1908C7C738F9C63F62CDE6CC0D77BA2CC8E2000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Extend perf_event_open 2 man page with the information about
-CAP_PERFMON capability designed to secure performance monitoring
-and observability operation in a system according to the principle
-of least privilege [1] (POSIX IEEE 1003.1e, 2.2.2.39).
-
-[1] https://sites.google.com/site/fullycapable/, posix_1003.1e-990310.pdf
-
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
- man2/perf_event_open.2 | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
-
-diff --git a/man2/perf_event_open.2 b/man2/perf_event_open.2
-index 89d267c02..e9aab2ca1 100644
---- a/man2/perf_event_open.2
-+++ b/man2/perf_event_open.2
-@@ -98,6 +98,8 @@ when running on the specified CPU.
- .BR "pid == \-1" " and " "cpu >= 0"
- This measures all processes/threads on the specified CPU.
- This requires
-+.B CAP_PERFMON
-+or
- .B CAP_SYS_ADMIN
- capability or a
- .I /proc/sys/kernel/perf_event_paranoid
-@@ -2920,6 +2922,8 @@ to hold the result.
- This allows attaching a Berkeley Packet Filter (BPF)
- program to an existing kprobe tracepoint event.
- You need
-+.B CAP_PERFMON
-+or
- .B CAP_SYS_ADMIN
- privileges to use this ioctl.
- .IP
-@@ -2962,6 +2966,8 @@ have multiple events attached to a tracepoint.
- Querying this value on one tracepoint event returns the id
- of all BPF programs in all events attached to the tracepoint.
- You need
-+.B CAP_PERFMON
-+or
- .B CAP_SYS_ADMIN
- privileges to use this ioctl.
- .IP
-@@ -3170,6 +3176,8 @@ it was expecting.
- .TP
- .B EACCES
- Returned when the requested event requires
-+.B CAP_PERFMON
-+or
- .B CAP_SYS_ADMIN
- permissions (or a more permissive perf_event paranoid setting).
- Some common cases where an unprivileged process
-@@ -3291,6 +3299,8 @@ setting is specified.
- It can also happen, as with
- .BR EACCES ,
- when the requested event requires
-+.B CAP_PERFMON
-+or
- .B CAP_SYS_ADMIN
- permissions (or a more permissive perf_event paranoid setting).
- This includes setting a breakpoint on a kernel address,
-@@ -3321,6 +3331,23 @@ The official way of knowing if
- support is enabled is checking
- for the existence of the file
- .IR /proc/sys/kernel/perf_event_paranoid .
-+.PP
-+.B CAP_PERFMON
-+capability (since Linux X.Y) provides secure approach to
-+performance monitoring and observability operations in a system
-+according to the principal of least privilege (POSIX IEEE 1003.1e).
-+Accessing system performance monitoring and observability operations
-+using
-+.B CAP_PERFMON
-+capability singly, without the rest of
-+.B CAP_SYS_ADMIN
-+credentials, excludes chances to misuse the credentials and makes
-+the operations more secure.
-+.B CAP_SYS_ADMIN
-+usage for secure system performance monitoring and observability
-+is discouraged with respect to
-+.B CAP_PERFMON
-+capability.
- .SH BUGS
- The
- .B F_SETOWN_EX
--- 
-2.20.1
+RnJvbTogInlvbmcubGlhbmciIDx5b25nLmxpYW5nQG1lZGlhdGVrLmNvbT4NCg0KQWRkIHdhdGNo
+ZG9nIGRldmljZSBub2RlDQoNCnlvbmcubGlhbmcgKDEpOg0KICBhbXI2NDogZHRzOiBtb2RpZnkg
+bXQ4MTgzLmR0c2kNCg0KIGFyY2gvYXJtNjQvYm9vdC9kdHMvbWVkaWF0ZWsvbXQ4MTgzLmR0c2kg
+fCA3ICsrKysrKysNCiAxIGZpbGUgY2hhbmdlZCwgNyBpbnNlcnRpb25zKCspDQoNCi0tIA0KMi4x
+OC4wDQo=
 
