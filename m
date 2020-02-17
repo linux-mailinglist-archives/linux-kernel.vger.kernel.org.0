@@ -2,344 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4080B160F68
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 10:59:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1F16160F73
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 11:01:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729052AbgBQJ7q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 04:59:46 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46959 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726397AbgBQJ7q (ORCPT
+        id S1729066AbgBQKBs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 05:01:48 -0500
+Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:22344 "EHLO
+        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726397AbgBQKBr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 04:59:46 -0500
-Received: by mail-wr1-f67.google.com with SMTP id z7so18853266wrl.13;
-        Mon, 17 Feb 2020 01:59:43 -0800 (PST)
+        Mon, 17 Feb 2020 05:01:47 -0500
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+        by mx0b-0016f401.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01H9v07K012051;
+        Mon, 17 Feb 2020 02:01:09 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=date : from : to :
+ cc : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=pfpt0818; bh=NuwKRN4OmdJZGjIO2uVXLEr9jFygoWVGQrxrz8GCASw=;
+ b=UD0aZZwOYjqeDCinRQgHaqQT6iSuYMHleFevOXQU/W//LGPPstQohpyZ2xxhavezEiDV
+ gw9wBcgrK7RBlKtkCtxfUSStSbApGQu6nq+bnGl2nKKxmn8viA5iYTTxSnNjUX16sUp7
+ zWTOurIALXZz0gvHhWdT7ox9JSlTGE3Gk1CPQhp7Y1H6ud+JgoudXbN8gbOenxQgWj4m
+ rRYhXUIG3bc/cC+P8p2lypA8hK7jwQ03BfelvcRPBG/msa2+Iqp01cqgOpYGSokqBr/P
+ bfCjTHSEiESaMtFXhUukszBEwBM5+aLloyg2wwC+NqRPau8Kgao8tg4ONMJ81qcURII0 Ig== 
+Received: from sc-exch03.marvell.com ([199.233.58.183])
+        by mx0b-0016f401.pphosted.com with ESMTP id 2y6h1sxhxu-3
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 17 Feb 2020 02:01:09 -0800
+Received: from DC5-EXCH02.marvell.com (10.69.176.39) by SC-EXCH03.marvell.com
+ (10.93.176.83) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 17 Feb
+ 2020 02:01:07 -0800
+Received: from SC-EXCH01.marvell.com (10.93.176.81) by DC5-EXCH02.marvell.com
+ (10.69.176.39) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 17 Feb
+ 2020 02:01:07 -0800
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.175)
+ by SC-EXCH01.marvell.com (10.93.176.81) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2 via Frontend Transport; Mon, 17 Feb 2020 02:01:06 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Q5Vz/sGmuG/xzSs/K/0vfwMe9IneG004UfvHxOELR6z7b2BDwcnGgrItu+7R9bTA9MBjbqALo36tfjRsulhc3rljsyaZMzU2hZilFbUbh/Kt3gsXc3Zjj8qpz9PvAESNGrQaDh2x2T1AN4/k2wI9/MqHgc4X891p01DCU/+4RhHpTcdbHDYxYS6ox9CYy2x0cRBm35ubA0MjpnqUS3ddgD7PR5PUdRuemAi+wXd9VszwebKhbeQGw+nuy76eYZe7woHP5jmTGjGF/qEvejf7FkjHTzteoJKIhWcx0VZcFNsCYSid0rmYiaLsh3G4ApaupQFRY5/BfZ8L0WKfBu1CDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NuwKRN4OmdJZGjIO2uVXLEr9jFygoWVGQrxrz8GCASw=;
+ b=f2NapgGTQGNiFOSVgYE3MjYtReDjhd4cLXsrIUXIziSr8UkbfxXCyWmDnS5abNkNoe2rda7U5Zsq/A2rr0bZbVSfydjluHO1PBoGnBAX+C0pAr3tabycvpg3pP2nzoTVO+3djf5hf9vnfuVzqy/2dXxNgu0k4S6DPiJB9G4aR2eSTaCx1TXKXc/mJy+SSv2jXZ6TEoXRAekArXIHPKLrVwWbV/2UvR/vbktQtGrJ34FtvaeVA9q/nnrzH9ctstIglzclIIcEmb9vR6ak1P/CDgGhdTjaG+HNMfVIxi1yqjRc5R6ib9qfbcUQUoVsthJLL5s9Z32on9IRIZZeZTUifA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6LsDD6VfGGagS7TPpKNVXlbvsUZ9z2mrLEYc2zCvGdg=;
-        b=M0G8OK4YeCT2vAOyAjc/iICuoKXJuGSx57GI09j45MdzQd4YuTc+JtGAJCRq9/aUrB
-         y/+lSP9kPNMOQs0XxNt0elJbZkUV03g1PkgI5oLAxH2r/A6Ga411PSM7WkN7ayZa2v/e
-         iBI0p+F04FR6fanwiTFnJtXVkXaRa2r4Iwr0ZSNCfPi8gI33eokiQXmXB9iNs1IJZ1Y7
-         tn3b6Lj0BMZJLMBXPg62aRUhE9CCVn2kwARUrNzkQAllR172fpkdS6Q4KUquBbosKTfm
-         YM85r+ikD8NfQ9hJ6tz8ZhUyBo9WgLt9kDzI6rWw4v3M4JBLA1EGBrKVrgEVwzFEycy1
-         7PeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6LsDD6VfGGagS7TPpKNVXlbvsUZ9z2mrLEYc2zCvGdg=;
-        b=Ccl5Y/1a8XJdgqMS4AIzT5MDBkj2RlQ2ns1iZ9WLenm61LVyKgYKtMuzFESmkbs0VO
-         OmmMvFVY8O0cdECXc61BbhdI5kQq0XBH58LhnVNQy52XdDtQ/fn80ck/OOToeRQa0JB5
-         5Utmo/kLri65G/dS0B76EIvOjux90g6KI6AqBk5fGEc8m+r+W7xTkUcDW24NtT+fSEaq
-         jDwhG5QP7phrhk6to3Sd67Tn+lOwIM0psKuYsekZgTbU0zlCEyHg2Up1mov7J9fQoh//
-         9yzzpBeKnTfZ14lhMKsGZC4c2HZ9glFw2SfAn71p9/VG0XHtuZ6Mz50TW0+zcCHsswv4
-         oaEw==
-X-Gm-Message-State: APjAAAVqiBagXDntr2tiw7NCytHA+ZjIdxu669L86O1Efu2GKER0ZoZi
-        5eXZDT569IEQQhLMhd4tSfE=
-X-Google-Smtp-Source: APXvYqy359x//pMyjXZHaHqt72OxK1OLtYzltVoQ2nFyIcag8uVKIBxaaE/oewEqxUVLj6VXpGwaJg==
-X-Received: by 2002:a5d:51c9:: with SMTP id n9mr21543994wrv.334.1581933582489;
-        Mon, 17 Feb 2020 01:59:42 -0800 (PST)
-Received: from localhost (p2E5BEF3F.dip0.t-ipconnect.de. [46.91.239.63])
-        by smtp.gmail.com with ESMTPSA id b21sm21112048wmd.37.2020.02.17.01.59.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2020 01:59:41 -0800 (PST)
-Date:   Mon, 17 Feb 2020 10:59:40 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com,
-        perex@perex.cz, tiwai@suse.com, digetx@gmail.com,
-        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
-        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com,
-        josephl@nvidia.com, daniel.lezcano@linaro.org,
-        mmaddireddy@nvidia.com, markz@nvidia.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 00/22] Move PMC clocks into Tegra PMC driver
-Message-ID: <20200217095940.GE1345979@ulmo>
-References: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wchHw8dVAp53YPj8"
+ d=marvell.onmicrosoft.com; s=selector1-marvell-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NuwKRN4OmdJZGjIO2uVXLEr9jFygoWVGQrxrz8GCASw=;
+ b=IaFtapNoVVAdNmyMymJPBXAki2lSLLWd+PyvtlPFgkwuuhGGgO+2KIWVPaW7nNxBjZFi5L4suwK3JVDCdyOj+8DZ3BLzl/zLN4RNuPLbLXhvUg5CidQogLcDtNyzqFZP0qnW/xknOHGspScK8Av5f08+X4tnC0j4wEygdTqiKSA=
+Received: from MN2PR18MB3408.namprd18.prod.outlook.com (10.255.237.10) by
+ MN2PR18MB3040.namprd18.prod.outlook.com (20.179.84.14) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2729.29; Mon, 17 Feb 2020 10:01:04 +0000
+Received: from MN2PR18MB3408.namprd18.prod.outlook.com
+ ([fe80::30c4:52fe:fdf8:faff]) by MN2PR18MB3408.namprd18.prod.outlook.com
+ ([fe80::30c4:52fe:fdf8:faff%7]) with mapi id 15.20.2729.032; Mon, 17 Feb 2020
+ 10:01:04 +0000
+Date:   Mon, 17 Feb 2020 11:00:57 +0100
+From:   Robert Richter <rrichter@marvell.com>
+To:     Luca Ceresoli <luca@lucaceresoli.net>
+CC:     Wolfram Sang <wsa@the-dreams.de>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        <linux-i2c@vger.kernel.org>,
+        "Benjamin Tissoires" <benjamin.tissoires@redhat.com>,
+        Phil Reid <preid@electromag.com.au>,
+        Jean Delvare <jdelvare@suse.com>,
+        George Cherian <gcherian@marvell.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] i2c: convert SMBus alert setup function to return an
+ ERRPTR
+Message-ID: <20200217100056.di54osv76xlcnhdj@rric.localdomain>
+References: <20200210172929.6001-1-wsa+renesas@sang-engineering.com>
+ <20200210172929.6001-2-wsa+renesas@sang-engineering.com>
+ <20200217075837.2agub5deqdpet3ce@rric.localdomain>
+ <20200217081758.GA2814@ninjato>
+ <64a14944-ed27-9f4f-6d1b-e31508c92692@lucaceresoli.net>
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
-User-Agent: Mutt/1.13.1 (2019-12-14)
+In-Reply-To: <64a14944-ed27-9f4f-6d1b-e31508c92692@lucaceresoli.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-ClientProxiedBy: HE1PR0701CA0076.eurprd07.prod.outlook.com
+ (2603:10a6:3:64::20) To MN2PR18MB3408.namprd18.prod.outlook.com
+ (2603:10b6:208:165::10)
+MIME-Version: 1.0
+Received: from rric.localdomain (31.208.96.227) by HE1PR0701CA0076.eurprd07.prod.outlook.com (2603:10a6:3:64::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2750.8 via Frontend Transport; Mon, 17 Feb 2020 10:01:02 +0000
+X-Originating-IP: [31.208.96.227]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 2fae5329-6107-49be-03a6-08d7b3904cd0
+X-MS-TrafficTypeDiagnostic: MN2PR18MB3040:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <MN2PR18MB3040290F1BB8A9D4BA66F37FD9160@MN2PR18MB3040.namprd18.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-Forefront-PRVS: 0316567485
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(346002)(136003)(396003)(39860400002)(376002)(199004)(189003)(7696005)(86362001)(52116002)(6916009)(54906003)(316002)(956004)(1076003)(53546011)(6506007)(5660300002)(478600001)(186003)(16526019)(2906002)(15650500001)(81166006)(8936002)(66556008)(81156014)(66946007)(66476007)(9686003)(6666004)(55016002)(8676002)(4326008)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR18MB3040;H:MN2PR18MB3408.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: marvell.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 9ozb8iYjEnmbHPTJoZDonWC6LyYEus7zYYjOc+2pUYSM2qe9I06kAOSsarmdqy76aykWuPahrkvJfvrsC+XVR0bWIFH3aVPES86SKtg6r6NVv/X4M9KSpc/DRFTM6J0IxiOUPq33udjI6kpdt2ceaUuyZJl8Psh7PsvtCy/ZA4+F9tM4Vf5qtxNY8cFTPN/MXQrkZH1ORZ2CBKclxCOj1V39ZQpwvcn7JS/FqseNhFZuTOevhxeeghWHncuLswefL8RXleYqnzo0l7WRF4XgQN8adoYX6n9N+9AaIyrVGAm9VxG0EQ+qkFQIRc546p+aRQg+yBr5lFGO/r1gsGXT5Il8vPAhJIXSx3EKpwSsVAuH2kPmm28gqWNR7BPUWVTofVxn8E911lHtuBgePtCxAzUURRmabwLDv8AFYhBQ1mf3FRrtUcly5naWfuH5zrHr
+X-MS-Exchange-AntiSpam-MessageData: LV9zAUn7e0ZfFzGDKt4sv4KTsQtnWRYkzKT1z5nmcAzhKS7wxUxrd2zqKqwCPwGxGu4rMh8jl0rr0/SBNPhbQ+9vxnYMQk3mjExiBChtvpzIXT8cRUDUt+sz28RUACWtvQKzAlRtzkUqBxY6TP1/HQ==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2fae5329-6107-49be-03a6-08d7b3904cd0
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2020 10:01:04.5415
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EKhZNtobrcmxXaj7fM9ezUE8NptNzhuAUDkvHlieL8dharlzCzg++IRezB6OvmBavG9dpW8nyeNetLmH7wzwsA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB3040
+X-OriginatorOrg: marvell.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-17_05:2020-02-14,2020-02-17 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 17.02.20 10:14:52, Luca Ceresoli wrote:
+> Hi,
+> 
+> On 17/02/20 09:17, Wolfram Sang wrote:
+> > 
+> >>> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >>
+> >>> -struct i2c_client *i2c_setup_smbus_alert(struct i2c_adapter *adapter,
+> >>> +struct i2c_client *i2c_install_smbus_alert(struct i2c_adapter *adapter,
+> >>>  					 struct i2c_smbus_alert_setup *setup);
+> >>
+> >> This function naming is a bit odd. It creates a struct i2c_client.
+> >> Then, there is also i2c_new_client_device() and i2c_new_device(). For
+> >> i2c_new_client_device() there are no users at all outside of
+> >> i2c-core-base.c (except for Falcon NIC), it is only a wrapper.
+> > 
+> > i2c_new_device (and friends) returned NULL on error. I am currently
+> > converting all i2c_new_* functions to return an ERRPTR. So,
+> > i2c_new_client_device is the new function, i2c_new_device is deprecated.
+> > If you check v5.6-rc1, you will find many more users. Similarily,
+> > i2c_new_dummy is deprecated (and removed already), i2c_new_dummy_device
+> > is the new thing.
+> > 
+> >> So how about reducing the interface to those both only to:?
+> >>
+> >>  i2c_new_device()
+> >>  i2c_new_device_smbus()
+> > 
+> > Given the above, it would be:
+> > 
+> > 	i2c_new_client_device()
+> > 	i2c_new_smbus_device()
+> > 
+> > Yet, I think this is too vague. Maybe
+> > 
+> > 	i2c_new_smbus_alert_device()
+> 
+> I always found the function naming a bit messy in the linux i2c
+> implementation. Among the names proposed in this thread,
+> i2c_new_smbus_alert_device() is the only one that makes sense to me for
+> the new function: it is not vague, and it is coherent with other names
+> of recently introduced functions (i2c_new_*_device()). Of course the
+> "alert device" is not a real device, but it looks like it is as it has
+> its own "slave" address. So I vote for this name...
 
---wchHw8dVAp53YPj8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, better fix the naming now that the i/f is new. As all these
+function create a i2c_client struct, the whole set of functions could
+be also named i2c_client_create*() with specialized functions such as
+i2c_client_create_smbus() or so. It will be clear it is a subset.
 
-On Mon, Jan 13, 2020 at 11:24:05PM -0800, Sowjanya Komatineni wrote:
-> This patch series moves Tegra PMC clocks from clock driver to pmc driver
-> along with the device trees changes and audio driver which uses one of
-> the pmc clock for audio mclk.
->=20
-> Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls which
-> are currently registered by Tegra clock driver using clk_regiser_mux and
-> clk_register_gate which performs direct Tegra PMC register access.
->=20
-> When Tegra PMC is in secure mode, any access from non-secure world will
-> not go through.
->=20
-> This patch series adds these Tegra PMC clocks and blink controls to Tegra
-> PMC driver with PMC as clock provider and removes them from Tegra clock
-> driver.
->=20
-> PMC clock clk_out_1 is dedicated for audio mclk from Tegra30 thru Tegra210
-> and clock driver does inital parent configuration for it and enables them.
-> But this clock should be taken care by audio driver as there is no need
-> to have this clock pre enabled.
->=20
-> So, this series also includes patch that updates ASoC utils to take
-> care of parent configuration for mclk if device tree don't specify
-> initial parent configuration using assigned-clock-parents and enable
-> audio mclk during utils init.
->=20
-> DTs are also updated to use clk_out_1 as audio mclk rather than extern1.
->=20
-> This series also includes a patch for mclk fallback to extern1 when
-> retrieving mclk fails to have this backward compatible of new DT with
-> old kernels.
->=20
-> [v8]:	Changes between v7 and v8 are
-> 	- v7 minor feedback
->=20
-> 	- Audio mclk is needed only for audio, but there is some unknown
-> 	  dependency of audio mclk and suspend-resume on Tegra30 where when
-> 	  mclk is disable, suspend-resume doesn't work.
-> 	  So v8 undoes v7 change of mclk enable and disable during machine
-> 	  startup and shutdown and keeps audio mclk enabled in ASoC driver
-> 	  tegra_asoc_utils_init.
->=20
-> 	- change in the patches order.
->=20
-> 	  Note:
-> 	  - Patches 1 thru 5 are to change CLK_M_DIV clocks to OSC_DIV clocks.
-> 	    OSC_DIV clocks uses same ID as CLK_M_DIV clocks during the
-> 	    transition to replace CLK_M_DIV with OSC_DIV.
-> 	  - Patches 8 and 10 registers pmc clocks as pmc_clk_out_1/2/3, and
-> 	    pmc_blink to avoid using same clock names as pmc clocks from
-> 	    tegra_car provider to have them functionally work with all the
-> 	    transition patches.
-> 	  - Patch 11 adds audio mclk fallback to extern1 to have new DT work
-> 	    with old kernels. This patch need to be back-ported.
-> 	  - Patch 18 adds audio mclk parent configuration when DT doesn't
-> 	    specify parent configs. This patch retrieves pmc_clk_out_1 as audio
-> 	    mclk so added this patch after all DT updates to use pmc clocks
-> 	    from tegra_pmc.
-> 	  - Patch 19 does audio mclk enable during utils init to have it
-> 	    enabled all the time.
-> 	  - Patch 20 and 21 removes PMC clocks from clock driver and their IDs
-> 	    at the end of PMC clocks transition to tegra_pmc.
-> =09
->=20
-> [v7]:	Changes between v6 and v7 are
-> 	- v6 minor feedback
-> 	- Added DT id for Tegra OSC to use in device tree for pmc clock
-> 	  parent.
->=20
-> [v6]:	Changes between v5 and v6 are
-> 	- v5 feedback
-> 	- Added ASoC machine startup and shutdown callbacks to control audio
-> 	  mclk enable/disable and removed default mclk enable from clock driver.
-> 	- Updated tegra_asoc_utils_set_rate to disable mclk only during PLLA
-> 	  rate change and removed disabling PLLA as its already taken care by
-> 	  pll clock driver.
-> 	- Removed tegra_asoc_utils_set_rate call from utils_init as set_rate
-> 	  is set during machine hw_params and during utils_init mclk is
-> 	  already in disabled state and this causes warning during mclk disable
-> 	  in utils_set_rate.
->=20
-> [v5]:	Changes between v4 and v5 are
-> 	- v4 feedback
-> 	- updated dt-binding pmc YAML schema with more description on power
-> 	  gate nodes and pad configuration state nodes.
-> 	- update tegra_asoc_utils_set_rate to disable audio mclk only if
-> 	  its in enable state.
->=20
-> [v4]:	Changes between v3 and v4 are
-> 	- v3 Feedback
-> 	- Updated clocks clk_m_div2 and clk_m_div4 as osc_div2 and osc_div4.
-> 	  Tegra don't have clk_m_div2, clk_m_div4 and they should actually
-> 	  be osc_div2 and osc_div4 clocks from osc pads.
-> 	- Fixed PMC clock parents to use osc, osc_div2, osc_div4.
-> 	  This is not a functional bug fix but correction to use proper parent
-> 	  name.
-> 	- Register each PMC clock as single clock rather than separate
-> 	  mux and gate clocks.
-> 	- Update ASoC utils to use resource managed APIs rather than
-> 	  using clk_get and clk_put.
-> 	- Updated device tree and ASoC driver to use clk_out_1 instead of
-> 	  clk_out_1_mux as PMC clocks are registered as single clock.
-> 	- Update clock driver init_table to not enable audio related clocks
-> 	  as ASoC utils will do audio clock enables.
->=20
-> [v3]:	Changes between v2 and v3 are
-> 	- Removes set parent of clk_out_1_mux to extern1 and enabling
-> 	  extern1 from the clock driver.
-> 	- Doesn't enable clk_out_1 and blink by default in pmc driver
-> 	- Updates ASoC driver to take care of audio mclk parent
-> 	  configuration incase if device tree don't specify assigned
-> 	  clock parent properties and enables mclk using both clk_out_1
-> 	  and extern1.
-> 	- updates all device trees using extern1 as mclk in sound node
-> 	  to use clk_out_1 from pmc.
-> 	- patch for YAML format pmc dt-binding
-> 	- Includes v2 feedback
->=20
-> [v2]:	Changes between v1 and v2 are
-> 	- v2 includes patches for adding clk_out_1, clk_out_2, clk_out_3,
-> 	  blink controls to Tegra PMC driver and removing clk-tegra-pmc.
-> 	- feedback related to pmc clocks in Tegra PMC driver from v1
-> 	- Removed patches for WB0 PLLM overrides and PLLE IDDQ PMC programming
-> 	  by the clock driver using helper functions from Tegra PMC.
->=20
->  	  Note:
-> 	  To use helper functions from PMC driver, PMC early init need to
-> 	  happen prior to using helper functions and these helper functions are
-> 	  for PLLM Override and PLLE IDDQ programming in PMC during PLLM/PLLE
-> 	  clock registration which happen in clock_init prior to Tegra PMC
-> 	  probe.
-> 	  Moving PLLM/PLLE clocks registration to happen after Tegra PMC
-> 	  impacts other clocks EMC, MC and corresponding tegra_emc_init and
-> 	  tegra_mc_init.
-> 	  This implementation of configuring PMC registers thru helper
-> 	  functions in clock driver needs proper changes across PMC, Clock,
-> 	  EMC and MC inits to have it work across all Tegra platforms.
->=20
-> 	  Currently PLLM Override is not enabled in the bootloader so proper
-> 	  patches for this fix will be taken care separately.
->=20
-> [v1]:	v1 includes patches for below fixes.
-> 	- adding clk_out_1, clk_out_2, clk_out_3, blink controls to Tegra PMC
-> 	  driver and removing clk-tegra-pmc.
-> 	- updated clock provider from tegra_car to pmc in the device tree
-> 	  tegra210-smaug.dts that uses clk_out_2.
-> 	- Added helper functions in PMC driver for WB0 PLLM overrides and PLLE
-> 	  IDDQ programming to use by clock driver and updated clock driver to
-> 	  use these helper functions and removed direct PMC access from clock
-> 	  driver and all pmc base address references in clock driver.
->=20
-> Sowjanya Komatineni (22):
->   dt-bindings: clock: tegra: Add IDs for OSC clocks
->   clk: tegra: Add support for OSC_DIV fixed clocks
->   clk: tegra: Add Tegra OSC to clock lookup
->   clk: tegra: Fix Tegra PMC clock out parents
->   clk: tegra: Remove CLK_M_DIV fixed clocks
->   dt-bindings: tegra: Convert Tegra PMC bindings to YAML
->   dt-bindings: soc: tegra-pmc: Add Tegra PMC clock bindings
->   soc: tegra: Add Tegra PMC clocks registration into PMC driver
->   dt-bindings: soc: tegra-pmc: Add id for Tegra PMC 32KHz blink clock
->   soc: tegra: Add support for 32KHz blink clock
->   ASoC: tegra: Add fallback implementation for audio mclk
->   ASoC: tegra: Use device managed resource APIs to get the clock
->   ARM: dts: tegra: Add clock-cells property to pmc
->   arm64: tegra: Add clock-cells property to Tegra PMC node
->   ARM: tegra: Update sound node clocks in device tree
->   arm64: tegra: smaug: Change clk_out_2 provider to pmc
->   ASoC: nau8825: change Tegra clk_out_2 provider to tegra_pmc
->   ASoC: tegra: Add audio mclk parent configuration
->   ASoC: tegra: Enable audio mclk during tegra_asoc_utils_init
->   clk: tegra: Remove tegra_pmc_clk_init along with clk ids
->   dt-bindings: clock: tegra: Remove pmc clock ids from clock dt-bindings
->   clk: tegra: Remove audio clocks configuration from clock driver
->=20
->  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 300 ---------------=
---
->  .../bindings/arm/tegra/nvidia,tegra20-pmc.yaml     | 354 +++++++++++++++=
-++++++
->  .../devicetree/bindings/sound/nau8825.txt          |   2 +-
->  arch/arm/boot/dts/tegra114-dalmore.dts             |   8 +-
->  arch/arm/boot/dts/tegra114.dtsi                    |   4 +-
->  arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi        |   8 +-
->  arch/arm/boot/dts/tegra124-apalis.dtsi             |   8 +-
->  arch/arm/boot/dts/tegra124-jetson-tk1.dts          |   8 +-
->  arch/arm/boot/dts/tegra124-nyan.dtsi               |   8 +-
->  arch/arm/boot/dts/tegra124-venice2.dts             |   8 +-
->  arch/arm/boot/dts/tegra124.dtsi                    |   4 +-
->  arch/arm/boot/dts/tegra20.dtsi                     |   4 +-
->  arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi         |   8 +-
->  arch/arm/boot/dts/tegra30-apalis.dtsi              |   8 +-
->  arch/arm/boot/dts/tegra30-beaver.dts               |   8 +-
->  arch/arm/boot/dts/tegra30-cardhu.dtsi              |   8 +-
->  arch/arm/boot/dts/tegra30-colibri.dtsi             |   8 +-
->  arch/arm/boot/dts/tegra30.dtsi                     |   4 +-
->  arch/arm64/boot/dts/nvidia/tegra132.dtsi           |   4 +-
->  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      |   2 +-
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   6 +-
->  drivers/clk/tegra/Makefile                         |   1 -
->  drivers/clk/tegra/clk-id.h                         |  12 +-
->  drivers/clk/tegra/clk-tegra-fixed.c                |  37 ++-
->  drivers/clk/tegra/clk-tegra-pmc.c                  | 122 -------
->  drivers/clk/tegra/clk-tegra114.c                   |  43 +--
->  drivers/clk/tegra/clk-tegra124.c                   |  48 ++-
->  drivers/clk/tegra/clk-tegra20.c                    |   9 +-
->  drivers/clk/tegra/clk-tegra210.c                   |  32 +-
->  drivers/clk/tegra/clk-tegra30.c                    |  33 +-
->  drivers/clk/tegra/clk.h                            |   1 -
->  drivers/soc/tegra/pmc.c                            | 354 +++++++++++++++=
-++++++
->  include/dt-bindings/clock/tegra114-car.h           |  18 +-
->  include/dt-bindings/clock/tegra124-car-common.h    |  18 +-
->  include/dt-bindings/clock/tegra20-car.h            |   2 +-
->  include/dt-bindings/clock/tegra210-car.h           |  18 +-
->  include/dt-bindings/clock/tegra30-car.h            |  18 +-
->  include/dt-bindings/soc/tegra-pmc.h                |  16 +
->  sound/soc/tegra/tegra_alc5632.c                    |   7 +-
->  sound/soc/tegra/tegra_asoc_utils.c                 | 126 ++++----
->  sound/soc/tegra/tegra_asoc_utils.h                 |   1 -
->  sound/soc/tegra/tegra_max98090.c                   |  22 +-
->  sound/soc/tegra/tegra_rt5640.c                     |  22 +-
->  sound/soc/tegra/tegra_rt5677.c                     |   7 +-
->  sound/soc/tegra/tegra_sgtl5000.c                   |   7 +-
->  sound/soc/tegra/tegra_wm8753.c                     |  22 +-
->  sound/soc/tegra/tegra_wm8903.c                     |  22 +-
->  sound/soc/tegra/tegra_wm9712.c                     |   8 +-
->  sound/soc/tegra/trimslice.c                        |  18 +-
->  49 files changed, 1041 insertions(+), 775 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,te=
-gra20-pmc.txt
->  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,te=
-gra20-pmc.yaml
->  delete mode 100644 drivers/clk/tegra/clk-tegra-pmc.c
->  create mode 100644 include/dt-bindings/soc/tegra-pmc.h
+Anyway, it's just a function name, but while reading the code it was
+not obvious to me that i2c_install_smbus_alert() is actually a subset
+of i2c_new_client_device(). That said, I like the i2c_client_create*()
+variants.
 
-I've applied patches 1-10 and 13-16 to the Tegra tree, but I think it
-should be fine for Mark to pick up the ASoC patches into his tree,
-right?
-
-As I mentioned in my reply to patch 20, I think we need to hold off on
-applying patches 20-22 until all the rest have been merged, otherwise
-we'll regress.
-
-Thierry
-
---wchHw8dVAp53YPj8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5KZAwACgkQ3SOs138+
-s6EtPA//WlKCJp6iSrpXtnq9QSZ7yU90y9yxGjpfDbkNCG0RJ53Fw3+IfpOSfjP4
-X3h/u/L12SbStAWrlvwurmf9LOBTyFXz8e3+9atTuPaLTMRhFX9OE89Ljfrtrqfz
-OiO0x7hny0089t+28157aB/BZbvcSEJRoC6HJiTlK5nvNXjOhPMAXGwhaWtvWxWC
-4sgRJkq0emgZ5B+a/vNXBczzLB+LkMPel/YxqTPe64bfVEzIdp2zwxvvlloxGw/Z
-RpUizvJJJSP/QU4aGEMwGrwkIUaOECC5XN4HqgCROI0ZGPJEiZI0WncmOcuHTatO
-xbGchH1vlFWKmkiUdK6NkRCvtrVa3Rn8aop0psjYp3AnJIxbWZKu6H0uOlc5yt79
-tgj6jhU1rs2ljrEL54wm80ftIVuuXMWE98CxIxikVKDgCBVQye1NvEO/3V+buv2k
-tVBzbhfSppWHCEklI1ZhgeRDLTcQBs4B06FRuAhanrN18bcPdLLiJRMnWk1qH4yI
-t4qQ49pVK9/s/N4bzMy8MjKDHUS4uz7+WOeqt8NQkAoHXi3YgFqZpR7UsasIaixp
-5J0c2ZcxH8hBK+X0eFL/ixaixqtq1RhLzuFeQ/Uy2CBxr5MMTVW1vOLWd1WSlevu
-lzs1M+RO55w8uAWxlDX7AJdiOOBwJO4p8fHeK8mcK4cw0WvOBuQ=
-=1p3J
------END PGP SIGNATURE-----
-
---wchHw8dVAp53YPj8--
+-Robert
