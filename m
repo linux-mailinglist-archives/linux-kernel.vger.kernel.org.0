@@ -2,88 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1006416162C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 16:30:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD83F161676
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 16:44:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728424AbgBQPa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 10:30:26 -0500
-Received: from foss.arm.com ([217.140.110.172]:37370 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726397AbgBQPa0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 10:30:26 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CCCDE30E;
-        Mon, 17 Feb 2020 07:30:25 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4E50E3F703;
-        Mon, 17 Feb 2020 07:30:25 -0800 (PST)
-Date:   Mon, 17 Feb 2020 15:30:23 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Samuel Holland <samuel@sholland.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        =?iso-8859-1?Q?Myl=E8ne?= Josserand 
-        <mylene.josserand@free-electrons.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, stable@kernel.org
-Subject: Re: [RFC PATCH 10/34] ASoC: sun8i-codec: Advertise only
- hardware-supported rates
-Message-ID: <20200217153023.GL9304@sirena.org.uk>
-References: <20200217064250.15516-1-samuel@sholland.org>
- <20200217064250.15516-11-samuel@sholland.org>
+        id S1729157AbgBQPoy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 10:44:54 -0500
+Received: from www149.your-server.de ([78.47.15.70]:59744 "EHLO
+        www149.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726528AbgBQPox (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 10:44:53 -0500
+X-Greylist: delayed 1207 seconds by postgrey-1.27 at vger.kernel.org; Mon, 17 Feb 2020 10:44:53 EST
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hanno.de;
+         s=default1911; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+        Message-ID:Subject:From:To:Sender:Reply-To:Cc:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=kwxIYXO9ZQLxZYLWCibVPzyp30EQ5TPRFr5H4jfiVTI=; b=JLTbFHMrzb0U/YZo+Q2GX34SRM
+        8/DeFYvH+bgrA6GDjZ/ATzJ4wnXfrdOX6I2m6tOZxCJa7T+NPbUuO94BICoBeAHETxx65yfJYoj1S
+        BiwmYZ7ieysCJvj+xcJMeuA9z/qHajM7rv4ZaTRgRxl0y9YU/StytnAGklintSrSUHkl+Pj/yYXnC
+        mR/WYuIoOPOqUw/SKF2JPCawaTdoQso/OpT/OUK33SDznwQNilxi+EqzOatiYfTJ68ohBgN0j1FLi
+        nMbkYK68SRiR55Vl/qmTtYL5ee7m4uPLRbLVIzqfK8FVC0gbKyL9H0z38ZccAhkxApE0k4fGLfUU3
+        N3J+0pGQ==;
+Received: from sslproxy06.your-server.de ([78.46.172.3])
+        by www149.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92.3)
+        (envelope-from <abos@hanno.de>)
+        id 1j3iGH-0004g8-J2; Mon, 17 Feb 2020 16:24:41 +0100
+Received: from [62.96.7.134] (helo=[10.1.0.41])
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <abos@hanno.de>)
+        id 1j3iGH-0002Cx-Fs; Mon, 17 Feb 2020 16:24:41 +0100
+To:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Hanno Zulla <abos@hanno.de>
+Subject: [PATCH 0/3] HID: hid-bigbenff: fixing three crash bugs in a gamepad
+ driver
+Message-ID: <ae5eee33-9dfc-0609-1bf8-33fd773b9bd5@hanno.de>
+Date:   Mon, 17 Feb 2020 16:24:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="0qVF/w3MHQqLSynd"
-Content-Disposition: inline
-In-Reply-To: <20200217064250.15516-11-samuel@sholland.org>
-X-Cookie: There was a phone call for you.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: abos@hanno.de
+X-Virus-Scanned: Clear (ClamAV 0.102.1/25726/Mon Feb 17 15:01:07 2020)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi there,
 
---0qVF/w3MHQqLSynd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+the hid-bigbenff.c had three bugs causing possible kernel crashes.
 
-On Mon, Feb 17, 2020 at 12:42:26AM -0600, Samuel Holland wrote:
-> The hardware does not support 64kHz, 88.2kHz, or 176.4kHz sample rates,
-> so the driver should not advertise them. The hardware can handle two
-> additional non-standard sample rates: 12kHz and 24kHz, so declare
-> support for them via SNDRV_PCM_RATE_KNOT.
->=20
-> Cc: stable@kernel.org
-> Fixes: 36c684936fae ("ASoC: Add sun8i digital audio codec")
-> Fixes: eda85d1fee05 ("ASoC: sun8i-codec: Add ADC support for a33")
-> Signed-off-by: Samuel Holland <samuel@sholland.org>
+The first patch fixes a double free during device removal, which was 
+caused by a wrong use of input_ff_create_memless(). The 
+"driver-specific data to be passed into play_effect" parameter of 
+input_ff_create_memless() would later be freed automatically when the ff 
+device is removed. Since the driver also uses the managed resource API, 
+it would automatically free the memory of this parameter twice, causing 
+a general protection fault moments later.
 
-The new sample rates are new functionality, they are definitely not
-stable material.   For the sample rates you are removing do we
-understand why they were added - do they work for people, are they
-perhaps supported for some users and not others for example?
+The second patch fixes the error path after hid_hw_start(), as a call 
+to hid_hw_stop() is required in case of an error.
 
---0qVF/w3MHQqLSynd
-Content-Type: application/pgp-signature; name="signature.asc"
+The second patch also removes the hid_hw_close() call during device 
+removal, as several other hid device drivers don't call this routine, 
+either.
 
------BEGIN PGP SIGNATURE-----
+The third patch adds a flag to avoid a race condition when there is 
+still scheduled work left (or newly being scheduled) during or after 
+device removal, which could cause a kernel crash.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5KsY8ACgkQJNaLcl1U
-h9DgKwf/RkeIHeM2sJ2RgbLTXWX8YZmWkvlMjMbuWBeFxHTz/Hdo+gM34z7glK5D
-vTsYnMg6wYSVtkRJzw6JOjJE/YqT+KFTmpqMHlhJkHhh+0Ce33hnN5vhPWAOyDLX
-ajN4NNYMR/RvlHVhAD8YVCjWKy65hpslCTajh+74Pn5GNtXao1z2mH6vDaVOntZj
-KsuP3g6wxqKicdi4lrAYDS80cpUVlOD4OkMk49MT5h1U78w3hblZkKULqFjOt3BL
-jgdv2os2/zg+/7OxQCcAlJfrfd4m4kBHbI9HF+0IMV9CIt+pR7Kmy7H+zcliwi9L
-1zUYINK1EWJvcb+4lIeZcMRp0sH7aQ==
-=ZBtq
------END PGP SIGNATURE-----
+Thanks in advance for your review & kind regards,
 
---0qVF/w3MHQqLSynd--
+Hanno
