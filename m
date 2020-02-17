@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AB67161C13
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 21:02:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8555161C19
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 21:04:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729529AbgBQUCW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 15:02:22 -0500
-Received: from gateway22.websitewelcome.com ([192.185.47.109]:26552 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728254AbgBQUCW (ORCPT
+        id S1729659AbgBQUEk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 15:04:40 -0500
+Received: from gateway24.websitewelcome.com ([192.185.51.253]:45122 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727241AbgBQUEk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 15:02:22 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id B756C7410
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 14:02:20 -0600 (CST)
+        Mon, 17 Feb 2020 15:04:40 -0500
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id 3350821BC
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 14:04:39 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id 3mayjPa9OSl8q3mayj6f7s; Mon, 17 Feb 2020 14:02:20 -0600
+        id 3mdDju8cIAGTX3mdDj5IPC; Mon, 17 Feb 2020 14:04:39 -0600
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
@@ -25,30 +25,25 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Ecty6MerGyd7wX45GYrcBWDuJacrGQZzyDnGictr5cU=; b=gHGlMLhH/8NwV+4WcyPOTRykq/
-        Habr4VE/lVhtlFHsYItOo+hL9NTTW56IU2lJ8eGl1qfEf86QE6sJhsb1LUT+k7QS5FBgH/tJAPzIo
-        Px0tsesC+EQj8bcXjlR+XbKKH9KmMUEv+6W5gSg/ydaU+W7A+FKL4R+4E6v3iHUZsYOSiAkXCJ/54
-        Ule61XOWKpBeAkgzX1D0TpNShvbRdycWsUB0j1fyw/Oaei+VE9ecNQSUgIjTbCspp9+mXKU3kZhXF
-        5NJoeeilulftg49oTqYf9IqAeOCUVeRc0Zmwivo4/6O+aaMo/E5JdzL5g42onE87HssaHFRBC0CWM
-        B1TpV0jg==;
-Received: from [200.68.140.26] (port=23900 helo=embeddedor)
+        bh=5z9m63kd28Ot+M5QQVB7v0R9bZGcWNPML78KZuOVhHU=; b=cuFQS8U3qeUC4Djbx+zGs37Pr6
+        a6QknbdqGQS1I4hszFnbzNrGV0t5zPRF0NHMDUsRQnHOqts4uTW71TxoA6e0HQyBkC3inbZ+oxLeO
+        qOGXpPkJs/pHKLXnA7YjmecF86foEzfQvCQVBeeyYRNPOjzGd6SotNfBzjNTsKrEquXAPK/Hssw9Z
+        ZF5v187TuqQPACLBd9HvcqDdnvqY10kOhskoIkymvgvPq/Ep7/7YLPgtIXv600YSuqRWLWQYEbJpW
+        tUXSlkzIWsxPxXJbm6G436s06MjdLe2/uX4+SvZrjT3XLmNa+ga/tv6W50B+QOe1dwz4XQqhFFiWK
+        yha1BMFA==;
+Received: from [200.68.140.26] (port=27988 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.92)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1j3max-000Q8w-00; Mon, 17 Feb 2020 14:02:19 -0600
-Date:   Mon, 17 Feb 2020 14:05:00 -0600
+        id 1j3mdB-000RJy-Mc; Mon, 17 Feb 2020 14:04:37 -0600
+Date:   Mon, 17 Feb 2020 14:07:19 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
+To:     "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>
-Cc:     linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] svcrdma: Replace zero-length array with flexible-array
- member
-Message-ID: <20200217200500.GA7628@embeddedor>
+Subject: [PATCH][next] net: netlink: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200217200719.GA8545@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -61,13 +56,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 200.68.140.26
 X-Source-L: No
-X-Exim-ID: 1j3max-000Q8w-00
+X-Exim-ID: 1j3mdB-000RJy-Mc
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.26]:23900
+X-Source-Sender: (embeddedor) [200.68.140.26]:27988
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 9
+X-Email-Count: 13
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -105,22 +100,22 @@ This issue was found with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- net/sunrpc/xprtrdma/svc_rdma_rw.c | 2 +-
+ net/netlink/af_netlink.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/sunrpc/xprtrdma/svc_rdma_rw.c b/net/sunrpc/xprtrdma/svc_rdma_rw.c
-index 48fe3b16b0d9..003610ce00bc 100644
---- a/net/sunrpc/xprtrdma/svc_rdma_rw.c
-+++ b/net/sunrpc/xprtrdma/svc_rdma_rw.c
-@@ -41,7 +41,7 @@ struct svc_rdma_rw_ctxt {
- 	struct rdma_rw_ctx	rw_ctx;
- 	int			rw_nents;
- 	struct sg_table		rw_sg_table;
--	struct scatterlist	rw_first_sgl[0];
-+	struct scatterlist	rw_first_sgl[];
+diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
+index 4e31721e7293..bced11032681 100644
+--- a/net/netlink/af_netlink.c
++++ b/net/netlink/af_netlink.c
+@@ -71,7 +71,7 @@
+ 
+ struct listeners {
+ 	struct rcu_head		rcu;
+-	unsigned long		masks[0];
++	unsigned long		masks[];
  };
  
- static inline struct svc_rdma_rw_ctxt *
+ /* state bits */
 -- 
 2.25.0
 
