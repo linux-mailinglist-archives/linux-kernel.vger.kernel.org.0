@@ -2,73 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86775160903
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 04:35:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BAD2E16090F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 04:36:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727780AbgBQDe7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 22:34:59 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:48326 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726498AbgBQDe6 (ORCPT
+        id S1728178AbgBQDgK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 22:36:10 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:21995 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726498AbgBQDfi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 22:34:58 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id DD3FC1574C457;
-        Sun, 16 Feb 2020 19:34:57 -0800 (PST)
-Date:   Sun, 16 Feb 2020 19:34:57 -0800 (PST)
-Message-Id: <20200216.193457.413155281457804366.davem@davemloft.net>
-To:     mcroce@redhat.com
-Cc:     netdev@vger.kernel.org, dev@openvswitch.org,
-        linux-kernel@vger.kernel.org, pshelar@ovn.org,
-        bindiyakurle@gmail.com, simon.horman@netronome.com, blp@ovn.org,
-        nikolay@cumulusnetworks.com, nicolas.dichtel@6wind.com,
-        jgh@redhat.com
-Subject: Re: [PATCH net-next v5] openvswitch: add TTL decrement action
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200215132056.42124-1-mcroce@redhat.com>
-References: <20200215132056.42124-1-mcroce@redhat.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 16 Feb 2020 19:34:58 -0800 (PST)
+        Sun, 16 Feb 2020 22:35:38 -0500
+X-UUID: 1c32d7a49e83477284ef5fb075c91cae-20200217
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=d38kig+Zusa5V6aoIvUBBHX1aAbt63Db2pgRYqg7t0k=;
+        b=GL06Y6kd8pL1HQSDEPE1OZWJymXU5+r0Dce5ILiEuU2l46sP3mb/Egh9RI2oWcGis1rkE1o8OgOlfrOaVn6+ftfzOQizwmM0cIYxPK5Vo3NF2sOQp88PiDFmEppH/jPrjDP7rKo6E/ufFXLioZBGP64CY80+KnfyM64ymiuH8WY=;
+X-UUID: 1c32d7a49e83477284ef5fb075c91cae-20200217
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1028839163; Mon, 17 Feb 2020 11:35:31 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 17 Feb 2020 11:33:03 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 17 Feb 2020 11:35:07 +0800
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>
+CC:     James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: [PATCH v12 00/10] Mediatek MT8183 scpsys support
+Date:   Mon, 17 Feb 2020 11:35:17 +0800
+Message-ID: <1581910527-1636-1-git-send-email-weiyi.lu@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
+MIME-Version: 1.0
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 785D55F3EA22E4D6C03FE494E98FA6AC1A19E1A6762D691285BCAD124FF076B82000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matteo Croce <mcroce@redhat.com>
-Date: Sat, 15 Feb 2020 14:20:56 +0100
+VGhpcyBzZXJpZXMgaXMgYmFzZWQgb24gdjUuNS1yYzENCg0KY2hhbmdlcyBzaW5jZSB2MTE6DQot
+IHJlLW9yZGVyIHBhdGNoZXMgIlJlbW92ZSBpbmZyYWNmZyBtaXNjIGRyaXZlciBzdXBwb3J0IiBh
+bmQgIkFkZCBtdWx0aXBsZSBzdGVwIGJ1cyBwcm90ZWN0aW9uIg0KLSBhZGQgY2FwIE1US19TQ1BE
+X1NSQU1fSVNPIGZvciBleHRyYSBzcmFtIGNvbnRyb2wNCi0gbWlub3IgY29kaW5nIHN5dGxlIGZp
+eGVzIGFuZCByZXdvcmQgY29tbWl0IG1lc3NhZ2VzDQoNCmNoYW5nZXMgc2luY2UgdjEwOg0KLSBz
+cXVhc2ggUEFUQ0ggMDQgYW5kIFBBVENIIDA2IGluIHY5IGludG8gaXRzIHByZXZpb3VzIHBhdGNo
+DQotIGFkZCAiaWdub3JlX2Nscl9hY2siIGZvciBtdWx0aXBsZSBzdGVwIGJ1cyBwcm90ZWN0aW9u
+IGNvbnRyb2wgdG8gaGF2ZSBhIGNsZWFuIGRlZmluaXRpb24gb2YgcG93ZXIgZG9tYWluIGRhdGEN
+Ci0ga2VlcCB0aGUgbWFzayByZWdpc3RlciBiaXQgZGVmaW5pdGlvbnMgYW5kIGRvIHRoZSBzYW1l
+IGZvciBNVDgxODMNCg0KY2hhbmdlcyBzaW5jZSB2OToNCi0gYWRkIG5ldyBQQVRDSCAwNCBhbmQg
+UEFUQ0ggMDYgdG8gcmVwbGFjZSBieSBuZXcgbWV0aG9kIGZvciBhbGwgY29tcGF0aWJsZXMNCi0g
+YWRkIG5ldyBQQVRDSCAwNyB0byByZW1vdmUgaW5mcmFjZmcgbWlzYyBkcml2ZXINCi0gbWlub3Ig
+Y29kaW5nIHN5dGxlIGZpeA0KDQpjaGFuZ2VzIHNpbmNlIHY3Og0KLSByZXdvcmQgaW4gYmluZGlu
+ZyBkb2N1bWVudCBbUEFUQ0ggMDIvMTRdDQotIGZpeCBlcnJvciByZXR1cm4gY2hlY2tpbmcgYnVn
+IGluIHN1YnN5cyBjbG9jayBjb250cm9sIFtQQVRDSCAxMC8xNF0NCi0gYWRkIHBvd2VyIGRvbWFp
+bnMgcHJvcGVyaXR5IHRvIG1mZ2NmZyBwYXRjaCBbUEFUQ0ggMTQvMTRdIGZyb20NCiAgaHR0cHM6
+Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8xMTEyNjE5OS8NCg0KY2hhbmdlcyBzaW5jZSB2
+NjoNCi0gcmVtb3ZlIHRoZSBwYXRjaCBvZiBTUERYIGxpY2Vuc2UgaWRlbnRpZmllciBiZWNhdXNl
+IGl0J3MgYWxyZWFkeSBmaXhlZA0KDQpjaGFuZ2VzIHNpbmNlIHY1Og0KLSBmaXggZG9jdW1lbnRh
+dGlvbiBpbiBbUEFUQ0ggMDQvMTRdDQotIHJlbW92ZSB1c2VsZXNzIHZhcmlhYmxlIGNoZWNraW5n
+IGFuZCByZXVzZSBBUEkgb2YgY2xvY2sgY29udHJvbCBpbiBbUEFUQ0ggMDYvMTRdDQotIGNvZGlu
+ZyBzdHlsZSBmaXggb2YgYnVzIHByb3RlY3Rpb24gY29udHJvbCBpbiBbUEFUQ0ggMDgvMTRdDQot
+IGZpeCBuYW1pbmcgb2YgbmV3IGFkZGVkIGRhdGEgaW4gW1BBVENIIDA5LzE0XQ0KLSBzbWFsbCBy
+ZWZhY3RvciBvZiBtdWx0aXBsZSBzdGVwIGJ1cyBwcm90ZWN0aW9uIGNvbnRyb2wgaW4gW1BBVENI
+IDEwLzE0XQ0KDQpjaGFuZ2VzIHNpbmNlIHY0Og0KLSBhZGQgcHJvcGVydHkgdG8gbXQ4MTgzIHNt
+aS1jb21tb24NCi0gc2VwZXJhdGUgcmVmYWN0b3IgcGF0Y2hlcyBhbmQgbmV3IGFkZCBmdW5jdGlv
+bg0KLSBhZGQgcG93ZXIgY29udHJvbGxlciBkZXZpY2Ugbm9kZQ0KDQoNCldlaXlpIEx1ICgxMCk6
+DQogIGR0LWJpbmRpbmdzOiBtZWRpYXRlazogQWRkIHByb3BlcnR5IHRvIG10ODE4MyBzbWktY29t
+bW9uDQogIGR0LWJpbmRpbmdzOiBzb2M6IEFkZCBNVDgxODMgcG93ZXIgZHQtYmluZGluZ3MNCiAg
+c29jOiBtZWRpYXRlazogQWRkIGJhc2ljX2Nsa19uYW1lIHRvIHNjcF9wb3dlcl9kYXRhDQogIHNv
+YzogbWVkaWF0ZWs6IFJlbW92ZSBpbmZyYWNmZyBtaXNjIGRyaXZlciBzdXBwb3J0DQogIHNvYzog
+bWVkaWF0ZWs6IEFkZCBtdWx0aXBsZSBzdGVwIGJ1cyBwcm90ZWN0aW9uIGNvbnRyb2wNCiAgc29j
+OiBtZWRpYXRlazogQWRkIHN1YnN5cyBjbG9jayBjb250cm9sIGZvciBidXMgcHJvdGVjdGlvbg0K
+ICBzb2M6IG1lZGlhdGVrOiBBZGQgZXh0cmEgc3JhbSBjb250cm9sDQogIHNvYzogbWVkaWF0ZWs6
+IEFkZCBNVDgxODMgc2Nwc3lzIHN1cHBvcnQNCiAgYXJtNjQ6IGR0czogQWRkIHBvd2VyIGNvbnRy
+b2xsZXIgZGV2aWNlIG5vZGUgb2YgTVQ4MTgzDQogIGFybTY0OiBkdHM6IEFkZCBwb3dlci1kb21h
+aW5zIHByb3BlcnR5IHRvIG1mZ2NmZw0KDQogLi4uL21lZGlhdGVrLHNtaS1jb21tb24udHh0ICAg
+ICAgICAgICAgICAgICAgIHwgICAyICstDQogLi4uL2JpbmRpbmdzL3NvYy9tZWRpYXRlay9zY3Bz
+eXMudHh0ICAgICAgICAgIHwgIDIwICstDQogYXJjaC9hcm02NC9ib290L2R0cy9tZWRpYXRlay9t
+dDgxODMuZHRzaSAgICAgIHwgIDYzICsrDQogZHJpdmVycy9zb2MvbWVkaWF0ZWsvS2NvbmZpZyAg
+ICAgICAgICAgICAgICAgIHwgIDEwIC0NCiBkcml2ZXJzL3NvYy9tZWRpYXRlay9NYWtlZmlsZSAg
+ICAgICAgICAgICAgICAgfCAgIDEgLQ0KIGRyaXZlcnMvc29jL21lZGlhdGVrL210ay1pbmZyYWNm
+Zy5jICAgICAgICAgICB8ICA3OSAtLS0NCiBkcml2ZXJzL3NvYy9tZWRpYXRlay9tdGstc2Nwc3lz
+LmMgICAgICAgICAgICAgfCA2NTQgKysrKysrKysrKysrKystLS0tDQogZHJpdmVycy9zb2MvbWVk
+aWF0ZWsvc2Nwc3lzLmggICAgICAgICAgICAgICAgIHwgIDkwICsrKw0KIGluY2x1ZGUvZHQtYmlu
+ZGluZ3MvcG93ZXIvbXQ4MTgzLXBvd2VyLmggICAgICB8ICAyNiArDQogaW5jbHVkZS9saW51eC9z
+b2MvbWVkaWF0ZWsvaW5mcmFjZmcuaCAgICAgICAgIHwgIDM5IC0tDQogMTAgZmlsZXMgY2hhbmdl
+ZCwgNzA3IGluc2VydGlvbnMoKyksIDI3NyBkZWxldGlvbnMoLSkNCiBkZWxldGUgbW9kZSAxMDA2
+NDQgZHJpdmVycy9zb2MvbWVkaWF0ZWsvbXRrLWluZnJhY2ZnLmMNCiBjcmVhdGUgbW9kZSAxMDA2
+NDQgZHJpdmVycy9zb2MvbWVkaWF0ZWsvc2Nwc3lzLmgNCiBjcmVhdGUgbW9kZSAxMDA2NDQgaW5j
+bHVkZS9kdC1iaW5kaW5ncy9wb3dlci9tdDgxODMtcG93ZXIuaA0KIGRlbGV0ZSBtb2RlIDEwMDY0
+NCBpbmNsdWRlL2xpbnV4L3NvYy9tZWRpYXRlay9pbmZyYWNmZy5oDQo=
 
-> New action to decrement TTL instead of setting it to a fixed value.
-> This action will decrement the TTL and, in case of expired TTL, drop it
-> or execute an action passed via a nested attribute.
-> The default TTL expired action is to drop the packet.
-> 
-> Supports both IPv4 and IPv6 via the ttl and hop_limit fields, respectively.
-> 
-> Tested with a corresponding change in the userspace:
-> 
->     # ovs-dpctl dump-flows
->     in_port(2),eth(),eth_type(0x0800), packets:0, bytes:0, used:never, actions:dec_ttl{ttl<=1 action:(drop)},1
->     in_port(1),eth(),eth_type(0x0800), packets:0, bytes:0, used:never, actions:dec_ttl{ttl<=1 action:(drop)},2
->     in_port(1),eth(),eth_type(0x0806), packets:0, bytes:0, used:never, actions:2
->     in_port(2),eth(),eth_type(0x0806), packets:0, bytes:0, used:never, actions:1
-> 
->     # ping -c1 192.168.0.2 -t 42
->     IP (tos 0x0, ttl 41, id 61647, offset 0, flags [DF], proto ICMP (1), length 84)
->         192.168.0.1 > 192.168.0.2: ICMP echo request, id 386, seq 1, length 64
->     # ping -c1 192.168.0.2 -t 120
->     IP (tos 0x0, ttl 119, id 62070, offset 0, flags [DF], proto ICMP (1), length 84)
->         192.168.0.1 > 192.168.0.2: ICMP echo request, id 388, seq 1, length 64
->     # ping -c1 192.168.0.2 -t 1
->     #
-> 
-> Co-developed-by: Bindiya Kurle <bindiyakurle@gmail.com>
-> Signed-off-by: Bindiya Kurle <bindiyakurle@gmail.com>
-> Signed-off-by: Matteo Croce <mcroce@redhat.com>
-
-Applied.
