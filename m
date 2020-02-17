@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7E8E161BCA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 20:39:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43F4B161BBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 20:39:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729529AbgBQTjJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 14:39:09 -0500
-Received: from 8bytes.org ([81.169.241.247]:54508 "EHLO theia.8bytes.org"
+        id S1729673AbgBQTjK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 14:39:10 -0500
+Received: from 8bytes.org ([81.169.241.247]:54514 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726781AbgBQTjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 14:39:08 -0500
+        id S1729301AbgBQTjJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 14:39:09 -0500
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id BE1CF28C; Mon, 17 Feb 2020 20:39:06 +0100 (CET)
+        id DFC6C542; Mon, 17 Feb 2020 20:39:06 +0100 (CET)
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Lu Baolu <baolu.lu@linux.intel.com>,
         David Woodhouse <dwmw2@infradead.org>
 Cc:     Joerg Roedel <joro@8bytes.org>, jroedel@suse.de,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/5] iommu/vt-d: Add attach_deferred() helper
-Date:   Mon, 17 Feb 2020 20:38:54 +0100
-Message-Id: <20200217193858.26990-2-joro@8bytes.org>
+Subject: [PATCH 2/5] iommu/vt-d: Move deferred device attachment into helper function
+Date:   Mon, 17 Feb 2020 20:38:55 +0100
+Message-Id: <20200217193858.26990-3-joro@8bytes.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200217193858.26990-1-joro@8bytes.org>
 References: <20200217193858.26990-1-joro@8bytes.org>
@@ -31,58 +31,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Implement a helper function to check whether a device's attach process
-is deferred.
+Move the code that does the deferred device attachment into a separate
+helper function.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- drivers/iommu/intel-iommu.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/iommu/intel-iommu.c | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 9dc37672bf89..80f2332a5466 100644
+index 80f2332a5466..42cdcce1602e 100644
 --- a/drivers/iommu/intel-iommu.c
 +++ b/drivers/iommu/intel-iommu.c
-@@ -762,6 +762,11 @@ static int iommu_dummy(struct device *dev)
- 	return dev->archdata.iommu == DUMMY_DEVICE_DOMAIN_INFO;
+@@ -2529,16 +2529,20 @@ struct dmar_domain *find_domain(struct device *dev)
+ 	return NULL;
  }
  
-+static bool attach_deferred(struct device *dev)
-+{
-+	return dev->archdata.iommu == DEFER_DEVICE_DOMAIN_INFO;
+-static struct dmar_domain *deferred_attach_domain(struct device *dev)
++static void do_deferred_attach(struct device *dev)
+ {
+-	if (unlikely(attach_deferred(dev))) {
+-		struct iommu_domain *domain;
++	struct iommu_domain *domain;
+ 
+-		dev->archdata.iommu = NULL;
+-		domain = iommu_get_domain_for_dev(dev);
+-		if (domain)
+-			intel_iommu_attach_device(domain, dev);
+-	}
++	dev->archdata.iommu = NULL;
++	domain = iommu_get_domain_for_dev(dev);
++	if (domain)
++		intel_iommu_attach_device(domain, dev);
 +}
 +
- /**
-  * is_downstream_to_pci_bridge - test if a device belongs to the PCI
-  *				 sub-hierarchy of a candidate PCI-PCI bridge
-@@ -2510,8 +2515,7 @@ struct dmar_domain *find_domain(struct device *dev)
- {
- 	struct device_domain_info *info;
++static struct dmar_domain *deferred_attach_domain(struct device *dev)
++{
++	if (unlikely(attach_deferred(dev)))
++		do_deferred_attach(dev);
  
--	if (unlikely(dev->archdata.iommu == DEFER_DEVICE_DOMAIN_INFO ||
--		     dev->archdata.iommu == DUMMY_DEVICE_DOMAIN_INFO))
-+	if (unlikely(attach_deferred(dev) || iommu_dummy(dev)))
- 		return NULL;
- 
- 	if (dev_is_pci(dev))
-@@ -2527,7 +2531,7 @@ struct dmar_domain *find_domain(struct device *dev)
- 
- static struct dmar_domain *deferred_attach_domain(struct device *dev)
- {
--	if (unlikely(dev->archdata.iommu == DEFER_DEVICE_DOMAIN_INFO)) {
-+	if (unlikely(attach_deferred(dev))) {
- 		struct iommu_domain *domain;
- 
- 		dev->archdata.iommu = NULL;
-@@ -6133,7 +6137,7 @@ intel_iommu_aux_get_pasid(struct iommu_domain *domain, struct device *dev)
- static bool intel_iommu_is_attach_deferred(struct iommu_domain *domain,
- 					   struct device *dev)
- {
--	return dev->archdata.iommu == DEFER_DEVICE_DOMAIN_INFO;
-+	return attach_deferred(dev);
+ 	return find_domain(dev);
  }
- 
- static int
 -- 
 2.17.1
 
