@@ -2,265 +2,579 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BC10160FD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 11:22:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E490160FE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 11:26:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729206AbgBQKWW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 05:22:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35524 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729045AbgBQKWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 05:22:22 -0500
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69418222D9
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 10:22:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581934940;
-        bh=FUjf9GMM5bYNMdqW0EEu086wDGI935Eaue4FXllc6P8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=C3tUPolGmi4u4OZJoYOdynjgDLw3rv9+LtJLDtwPIfU7P5rs1Wh9Y+b1c4iQOXkXv
-         AnLfTFtkYEgdF8LO0Je3Q4VeGtj7fPQKJ7NnNGZ4HyZwbkH5fRzcsi2HDBtEpKKwD8
-         0FWXJhL5Oohk1WNjM9VN6JRSPBC2tvQZrbRAlwhM=
-Received: by mail-wm1-f52.google.com with SMTP id c84so17823953wme.4
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 02:22:20 -0800 (PST)
-X-Gm-Message-State: APjAAAW4qcL2kOmnnYP6+Pn3L/eMM9op1bfk0FQ3Sy38ufkJcDVNqUH6
-        XnnmTcFcQGjXQknoPauBACEDqwgA92DWZ+QZhi9Ryg==
-X-Google-Smtp-Source: APXvYqwwkF+c0FUerp1kIaBRtENAy8VTts+RWB6Dfu/2huDMOEOqCjBirvMJIWNc998VgcOlSd/hI/wUajJ+2s6NQKk=
-X-Received: by 2002:a05:600c:248:: with SMTP id 8mr21340370wmj.1.1581934938588;
- Mon, 17 Feb 2020 02:22:18 -0800 (PST)
+        id S1729211AbgBQK0S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 05:26:18 -0500
+Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:37517 "EHLO
+        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729100AbgBQK0S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 05:26:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1581935175; x=1613471175;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=933eVuvQS+wwXuRostN3P+VtYYyrjq7wzLBvWIjxh/w=;
+  b=B13gf55Ms2LRpfM++x7G04iryznaPX0tM01m8LcqMr8MFfnzcNqLW0gn
+   G7Rl9kUz/INpRwMnJJckE53a5jOMQbLv20rrzdEOOlQBFmqzy0dk/yO7v
+   BTAV6BH7RVzVv/Dy/qZrn2JnehFiTxflBugCbP6rfekbrtnXE6eyXi5LY
+   I=;
+IronPort-SDR: YfDXr5oB/uta6CPEetflBc5LEfRnD2rdtDKwDiPRAXiGBhvcbMB3jITVgnnCl84FcO3TtriZff
+ eybPR+2ft0aQ==
+X-IronPort-AV: E=Sophos;i="5.70,452,1574121600"; 
+   d="scan'208";a="26833501"
+Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-2a-6e2fc477.us-west-2.amazon.com) ([10.47.23.38])
+  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP; 17 Feb 2020 10:26:13 +0000
+Received: from EX13MTAUEA002.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
+        by email-inbound-relay-2a-6e2fc477.us-west-2.amazon.com (Postfix) with ESMTPS id 54B4CA24B4;
+        Mon, 17 Feb 2020 10:26:10 +0000 (UTC)
+Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
+ EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
+ id 15.0.1236.3; Mon, 17 Feb 2020 10:26:10 +0000
+Received: from u886c93fd17d25d.ant.amazon.com (10.43.161.214) by
+ EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 17 Feb 2020 10:26:00 +0000
+From:   SeongJae Park <sjpark@amazon.com>
+To:     <akpm@linux-foundation.org>
+CC:     SeongJae Park <sjpark@amazon.de>, <acme@kernel.org>,
+        <alexander.shishkin@linux.intel.com>, <amit@kernel.org>,
+        <brendan.d.gregg@gmail.com>, <brendanhiggins@google.com>,
+        <cai@lca.pw>, <colin.king@canonical.com>, <corbet@lwn.net>,
+        <dwmw@amazon.com>, <jolsa@redhat.com>, <kirill@shutemov.name>,
+        <mark.rutland@arm.com>, <mgorman@suse.de>, <minchan@kernel.org>,
+        <mingo@redhat.com>, <namhyung@kernel.org>, <peterz@infradead.org>,
+        <rdunlap@infradead.org>, <rostedt@goodmis.org>, <shuah@kernel.org>,
+        <sj38.park@gmail.com>, <vdavydov.dev@gmail.com>,
+        <linux-mm@kvack.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v5 00/14] Introduce Data Access MONitor (DAMON)
+Date:   Mon, 17 Feb 2020 11:25:30 +0100
+Message-ID: <20200217102544.29012-1-sjpark@amazon.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20200216141104.21477-1-ardb@kernel.org> <20200216141104.21477-3-ardb@kernel.org>
- <4e427366-4141-e360-b1da-c5cb37f8092b@redhat.com> <CAKv+Gu8h17EdfEW_DDE9S_drLTJ3e3pVzJG29uij5DoGGMXpxA@mail.gmail.com>
-In-Reply-To: <CAKv+Gu8h17EdfEW_DDE9S_drLTJ3e3pVzJG29uij5DoGGMXpxA@mail.gmail.com>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Mon, 17 Feb 2020 11:22:07 +0100
-X-Gmail-Original-Message-ID: <CAKv+Gu8LEBFiXOXWv6nbKFpKvT8whaLr3-DkcHSNzW3BRTi8iQ@mail.gmail.com>
-Message-ID: <CAKv+Gu8LEBFiXOXWv6nbKFpKvT8whaLr3-DkcHSNzW3BRTi8iQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] efi/libstub: Add support for loading the initrd
- from a device path
-To:     Laszlo Ersek <lersek@redhat.com>
-Cc:     linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Leif Lindholm <leif@nuviainc.com>,
-        Peter Jones <pjones@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Alexander Graf <agraf@csgraf.de>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        Heinrich Schuchardt <xypron.glpk@gmx.de>,
-        Daniel Kiper <daniel.kiper@oracle.com>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Lukas Wunner <lukas@wunner.de>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.43.161.214]
+X-ClientProxiedBy: EX13D30UWB004.ant.amazon.com (10.43.161.51) To
+ EX13D31EUA001.ant.amazon.com (10.43.165.15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Feb 2020 at 10:23, Ard Biesheuvel <ardb@kernel.org> wrote:
->
-> On Mon, 17 Feb 2020 at 10:15, Laszlo Ersek <lersek@redhat.com> wrote:
-> >
-> > On 02/16/20 15:11, Ard Biesheuvel wrote:
-> > > There are currently two ways to specify the initrd to be passed to the
-> > > Linux kernel when booting via the EFI stub:
-> > > - it can be passed as a initrd= command line option when doing a pure PE
-> > >   boot (as opposed to the EFI handover protocol that exists for x86)
-> > > - otherwise, the bootloader or firmware can load the initrd into memory,
-> > >   and pass the address and size via the bootparams struct (x86) or
-> > >   device tree (ARM)
-> > >
-> > > In the first case, we are limited to loading from the same file system
-> > > that the kernel was loaded from, and it is also problematic in a trusted
-> > > boot context, given that we cannot easily protect the command line from
-> > > tampering without either adding complicated white/blacklisting of boot
-> > > arguments or locking down the command line altogether.
-> > >
-> > > In the second case, we force the bootloader to duplicate knowledge about
-> > > the boot protocol which is already encoded in the stub, and which may be
-> > > subject to change over time, e.g., bootparams struct definitions, memory
-> > > allocation/alignment requirements for the placement of the initrd etc etc.
-> > > In the ARM case, it also requires the bootloader to modify the hardware
-> > > description provided by the firmware, as it is passed in the same file.
-> > > On systems where the initrd is measured after loading, it creates a time
-> > > window where the initrd contents might be manipulated in memory before
-> > > handing over to the kernel.
-> > >
-> > > Address these concerns by adding support for loading the initrd into
-> > > memory by invoking the EFI LoadFile2 protocol installed on a vendor
-> > > GUIDed device path that specifically designates a Linux initrd.
-> > > This addresses the above concerns, by putting the EFI stub in charge of
-> > > placement in memory and of passing the base and size to the kernel proper
-> > > (via whatever means it desires) while still leaving it up to the firmware
-> > > or bootloader to obtain the file contents, potentially from other file
-> > > systems than the one the kernel itself was loaded from. On platforms that
-> > > implement measured boot, it permits the firmware to take the measurement
-> > > right before the kernel actually consumes the contents.
-> > >
-> > > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> > > ---
-> > >  drivers/firmware/efi/libstub/arm-stub.c        | 15 +++-
-> > >  drivers/firmware/efi/libstub/efi-stub-helper.c | 82 ++++++++++++++++++++
-> > >  drivers/firmware/efi/libstub/efistub.h         |  4 +
-> > >  drivers/firmware/efi/libstub/x86-stub.c        | 23 ++++++
-> > >  include/linux/efi.h                            |  1 +
-> > >  5 files changed, 122 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/drivers/firmware/efi/libstub/arm-stub.c b/drivers/firmware/efi/libstub/arm-stub.c
-> > > index 2edc673ea06c..4bae620b95b9 100644
-> > > --- a/drivers/firmware/efi/libstub/arm-stub.c
-> > > +++ b/drivers/firmware/efi/libstub/arm-stub.c
-> > > @@ -160,6 +160,7 @@ unsigned long efi_entry(void *handle, efi_system_table_t *sys_table_arg,
-> > >       enum efi_secureboot_mode secure_boot;
-> > >       struct screen_info *si;
-> > >       efi_properties_table_t *prop_tbl;
-> > > +     unsigned long max_addr;
-> > >
-> > >       sys_table = sys_table_arg;
-> > >
-> > > @@ -258,10 +259,18 @@ unsigned long efi_entry(void *handle, efi_system_table_t *sys_table_arg,
-> > >       if (!fdt_addr)
-> > >               pr_efi("Generating empty DTB\n");
-> > >
-> > > -     status = efi_load_initrd(image, &initrd_addr, &initrd_size, ULONG_MAX,
-> > > -                              efi_get_max_initrd_addr(dram_base, *image_addr));
-> > > +     max_addr = efi_get_max_initrd_addr(dram_base, *image_addr);
-> > > +     status = efi_load_initrd_dev_path(&initrd_addr, &initrd_size, max_addr);
-> > > +     if (status == EFI_SUCCESS) {
-> > > +             pr_efi("Loaded initrd from LINUX_EFI_INITRD_MEDIA_GUID device path\n");
-> > > +     } else if (status == EFI_NOT_FOUND) {
-> > > +             status = efi_load_initrd(image, &initrd_addr, &initrd_size,
-> > > +                                      ULONG_MAX, max_addr);
-> > > +             if (status == EFI_SUCCESS)
-> > > +                     pr_efi("Loaded initrd from command line option\n");
-> > > +     }
-> > >       if (status != EFI_SUCCESS)
-> > > -             pr_efi_err("Failed initrd from command line!\n");
-> > > +             pr_efi_err("Failed to load initrd!\n");
-> > >
-> > >       efi_random_get_seed();
-> > >
-> > > diff --git a/drivers/firmware/efi/libstub/efi-stub-helper.c b/drivers/firmware/efi/libstub/efi-stub-helper.c
-> > > index 49008ac88b63..e37afe2c752e 100644
-> > > --- a/drivers/firmware/efi/libstub/efi-stub-helper.c
-> > > +++ b/drivers/firmware/efi/libstub/efi-stub-helper.c
-> > > @@ -299,3 +299,85 @@ void efi_char16_printk(efi_char16_t *str)
-> > >       efi_call_proto(efi_table_attr(efi_system_table(), con_out),
-> > >                      output_string, str);
-> > >  }
-> > > +
-> > > +/*
-> > > + * The LINUX_EFI_INITRD_MEDIA_GUID vendor media device path below provides a way
-> > > + * for the firmware or bootloader to expose the initrd data directly to the stub
-> > > + * via the trivial LoadFile2 protocol, which is defined in the UEFI spec, and is
-> > > + * very easy to implement. It is a simple Linux initrd specific conduit between
-> > > + * kernel and firmware, allowing us to put the EFI stub (being part of the
-> > > + * kernel) in charge of where and when to load the initrd, while leaving it up
-> > > + * to the firmware to decide whether it needs to expose its filesystem hierarchy
-> > > + * via EFI protocols.
-> > > + */
-> > > +static const struct {
-> > > +     struct efi_vendor_dev_path      vendor;
-> > > +     struct efi_generic_dev_path     end;
-> > > +} __packed initrd_dev_path = {
-> > > +     {
-> > > +             EFI_DEV_MEDIA,
-> > > +             EFI_DEV_MEDIA_VENDOR,
-> > > +             sizeof(struct efi_vendor_dev_path),
-> > > +             LINUX_EFI_INITRD_MEDIA_GUID
-> > > +     }, {
-> > > +             EFI_DEV_END_PATH,
-> > > +             EFI_DEV_END_ENTIRE,
-> > > +             sizeof(struct efi_generic_dev_path)
-> > > +     }
-> > > +};
-> > > +
-> > > +/**
-> > > + * efi_load_initrd_dev_path - load the initrd from the Linux initrd device path
-> > > + * @load_addr:       pointer to store the address where the initrd was loaded
-> > > + * @load_size:       pointer to store the size of the loaded initrd
-> > > + * @max:     upper limit for the initrd memory allocation
-> > > + * @return:  %EFI_SUCCESS if the initrd was loaded successfully, in which case
-> > > + *           @load_addr and @load_size are assigned accordingly
-> > > + *           %EFI_NOT_FOUND if no LoadFile2 protocol exists on the initrd
-> > > + *           device path
-> > > + *           %EFI_LOAD_ERROR in all other cases
-> >
-> > [*]
-> >
-> > > + */
-> > > +efi_status_t efi_load_initrd_dev_path(unsigned long *load_addr,
-> > > +                                   unsigned long *load_size,
-> > > +                                   unsigned long max)
-> > > +{
-> > > +     efi_guid_t lf2_proto_guid = EFI_LOAD_FILE2_PROTOCOL_GUID;
-> > > +     efi_device_path_protocol_t *dp;
-> > > +     efi_load_file2_protocol_t *lf2;
-> > > +     unsigned long initrd_addr;
-> > > +     unsigned long initrd_size;
-> > > +     efi_handle_t handle;
-> > > +     efi_status_t status;
-> > > +
-> > > +     if (!load_addr || !load_size)
-> > > +             return EFI_INVALID_PARAMETER;
-> >
-> > Doesn't return EFI_LOAD_ERROR.
-> >
-> > > +
-> > > +     dp = (efi_device_path_protocol_t *)&initrd_dev_path;
-> > > +     status = efi_bs_call(locate_device_path, &lf2_proto_guid, &dp, &handle);
-> > > +     if (status != EFI_SUCCESS)
-> > > +             return status;
-> >
-> > Seems safe (the only plausible error could be EFI_NOT_FOUND).
-> >
-> > > +
-> > > +     status = efi_bs_call(handle_protocol, handle, &lf2_proto_guid,
-> > > +                          (void **)&lf2);
-> > > +     if (status != EFI_SUCCESS)
-> > > +             return status;
-> >
-> > Interesting case; this should never fail... but note, if it does, it
-> > returns EFI_UNSUPPORTED, not EFI_NOT_FOUND (if the protocol is missing
-> > from the handle).
-> >
-> > > +
-> > > +     status = efi_call_proto(lf2, load_file, dp, false, &initrd_size, NULL);
-> > > +     if (status != EFI_BUFFER_TOO_SMALL)
-> > > +             return EFI_LOAD_ERROR;
-> > > +
-> > > +     status = efi_allocate_pages(initrd_size, &initrd_addr, max);
-> > > +     if (status != EFI_SUCCESS)
-> > > +             return status;
-> >
-> > Not sure about the efi_allocate_pages() wrapper (?); the UEFI service
-> > could return EFI_OUT_OF_RESOURCES.
-> >
->
-> Hmm, guess I was a bit sloppy with the return codes. The important
-> thing is that EFI_NOT_FOUND is only returned in the one specifically
-> defined case.
->
+From: SeongJae Park <sjpark@amazon.de>
 
-For the record [in case no respin+resend is needed for other reasons],
-I intend to update the comment block as below, and keep the code as
-is:
+Introduction
+============
+
+Memory management decisions can be improved if finer data access information is
+available.  However, because such finer information usually comes with higher
+overhead, most systems including Linux forgives the potential improvement and
+rely on only coarse information or some light-weight heuristics.  The
+pseudo-LRU and the aggressive THP promotions are such examples.
+
+A number of experimental data access pattern awared memory management
+optimizations (refer to 'Appendix A' for more details) say the sacrifices are
+huge.  However, none of those has successfully adopted to Linux kernel mainly
+due to the absence of a scalable and efficient data access monitoring
+mechanism.  Refer to 'Appendix B' to see the limitations of existing memory
+monitoring mechanisms.
+
+DAMON is a data access monitoring subsystem for the problem.  It is 1) accurate
+enough to be used for the DRAM level memory management (a straightforward
+DAMON-based optimization achieved up to 2.55x speedup), 2) light-weight enough
+to be applied online (compared to a straightforward access monitoring scheme,
+DAMON is up to 94.242.42x lighter) and 3) keeps predefined upper-bound overhead
+regardless of the size of target workloads (thus scalable).  Refer to 'Appendix
+C' if you interested in how it is possible.
+
+DAMON has mainly designed for the kernel's memory management mechanisms.
+However, because it is implemented as a standalone kernel module and provides
+several interfaces, it can be used by a wide range of users including kernel
+space programs, user space programs, programmers, and administrators.  DAMON
+is now supporting the monitoring only, but it will also provide simple and
+convenient data access pattern awared memory managements by itself.  Refer to
+'Appendix D' for more detailed expected usages of DAMON.
 
 
-  * @load_addr: pointer to store the address where the initrd was loaded
-  * @load_size: pointer to store the size of the loaded initrd
-  * @max:       upper limit for the initrd memory allocation
-- * @return:    %EFI_SUCCESS if the initrd was loaded successfully, in
-which case
-- *             @load_addr and @load_size are assigned accordingly
-- *             %EFI_NOT_FOUND if no LoadFile2 protocol exists on the initrd
-- *             device path
-+ * @return:    %EFI_SUCCESS if the initrd was loaded successfully, in which
-+ *             case @load_addr and @load_size are assigned accordingly
-+ *             %EFI_NOT_FOUND if no LoadFile2 protocol exists on the initrd
-+ *             device path
-+ *             %EFI_INVALID_PARAMETER if load_addr == NULL or load_size == NULL
-+ *             %EFI_OUT_OF_RESOURCES if memory allocation failed
-  *             %EFI_LOAD_ERROR in all other cases
+Frequently Asked Questions
+==========================
+
+Q: Why DAMON is not integrated with perf?
+A: From the perspective of perf like profilers, DAMON can be thought of as a
+data source in kernel, like the tracepoints, the pressure stall information
+(psi), or the idle page tracking.  Thus, it is easy to integrate DAMON with the
+profilers.  However, this patchset doesn't provide a fancy perf integration
+because current step of DAMON development is focused on its core logic only.
+That said, DAMON already provides two interfaces for user space programs, which
+based on debugfs and tracepoint, respectively.  Using the tracepoint interface,
+you can use DAMON with perf.  This patchset also provides a debugfs interface
+based user space tool for DAMON.  It can be used to record, visualize, and
+analyze data access patterns of target processes in a convenient way.
+
+Q: Why a new module, instead of extending perf or other tools?
+A: First, DAMON aims to be used by other programs including the kernel.
+Therefore, having dependency to specific tools like perf is not desirable.
+Second, because it need to be lightweight as much as possible so that it can be
+used online, any unnecessary overhead such as kernel - user space context
+switching cost should be avoided.  These are the two most biggest reasons why
+DAMON is implemented in the kernel space.  The idle page tracking subsystem
+would be the kernel module that most seems similar to DAMON.  However, its own
+interface is not compatible with DAMON.  Also, the internal implementation of
+it has no common part to be reused by DAMON.
+
+Q: Can 'perf mem' provide the data required for DAMON?
+A: On the systems supporting 'perf mem', yes.  DAMON is using the PTE Accessed
+bits in low level.  Other H/W or S/W features that can be used for the purpose
+could be used.  However, as explained with above question, DAMON need to be
+implemented in the kernel space.
+
+
+Evaluations
+===========
+
+A prototype of DAMON has evaluated on an Intel Xeon E7-8837 machine using 20
+benchmarks that picked from SPEC CPU 2006, NAS, Tensorflow Benchmark,
+SPLASH-2X, and PARSEC 3 benchmark suite.  Nonethless, this section provides
+only summary of the results.  For more detail, please refer to the slides used
+for the introduction of DAMON at the Linux Plumbers Conference 2019[1] or the
+MIDDLEWARE'19 industrial track paper[2].
+
+
+Quality
+-------
+
+We first traced and visualized the data access pattern of each workload.  We
+were able to confirm that the visualized results are reasonably accurate by
+manually comparing those with the source code of the workloads.
+
+To see the usefulness of the monitoring, we optimized 9 memory intensive
+workloads among them for memory pressure situations using the DAMON outputs.
+In detail, we identified frequently accessed memory regions in each workload
+based on the DAMON results and protected them with ``mlock()`` system calls.
+The optimized versions consistently show speedup (2.55x in best case, 1.65x in
+average) under memory pressure.
+
+
+Overhead
+--------
+
+We also measured the overhead of DAMON.  It was not only under the upperbound
+we set, but was much lower (0.6 percent of the bound in best case, 13.288
+percent of the bound in average).  This reduction of the overhead is mainly
+resulted from its core mechanism called adaptive regions adjustment.  Refer to
+'Appendix D' for more detail about the mechanism.  We also compared the
+overhead of DAMON with that of a straightforward periodic access check-based
+monitoring.  DAMON's overhead was smaller than it by 94,242.42x in best case,
+3,159.61x in average.
+
+
+References
+==========
+
+Prototypes of DAMON have introduced by an LPC kernel summit track talk[1] and
+two academic papers[2,3].  Please refer to those for more detailed information,
+especially the evaluations.
+
+[1] SeongJae Park, Tracing Data Access Pattern with Bounded Overhead and
+    Best-effort Accuracy. In The Linux Kernel Summit, September 2019.
+    https://linuxplumbersconf.org/event/4/contributions/548/
+[2] SeongJae Park, Yunjae Lee, Heon Y. Yeom, Profiling Dynamic Data Access
+    Patterns with Controlled Overhead and Quality. In 20th ACM/IFIP
+    International Middleware Conference Industry, December 2019.
+    https://dl.acm.org/doi/10.1145/3366626.3368125
+[3] SeongJae Park, Yunjae Lee, Yunhee Kim, Heon Y. Yeom, Profiling Dynamic Data
+    Access Patterns with Bounded Overhead and Accuracy. In IEEE International
+    Workshop on Foundations and Applications of Self- Systems (FAS 2019), June
+    2019.
+
+
+Sequence Of Patches
+===================
+
+The patches are organized in the following sequence.  The first patch
+introduces DAMON module, it's data structures, and data structure related
+common functions.  Following three patches (2nd to 4th) implement the core
+logics of DAMON, namely regions based sampling, adaptive regions adjustment,
+and dynamic memory mapping chage adoption, one by one.
+
+Following five patches are for low level users of DAMON.  The 5th patch
+implements callbacks for each of monitoring steps so that users can do whatever
+they want with the access patterns.  The 6th one implements recording of access
+patterns in DAMON for better convenience and efficiency.  Each of next three
+patches (7th to 9th) respectively adds a programmable interface for other
+kernel code, a debugfs interface for privileged people and/or programs in user
+space, and a tracepoint for other tracepoints supporting tracers such as perf.
+
+Two patches for high level users of DAMON follows.  To provide a minimal
+reference to the debugfs interface and for high level use/tests of the DAMON,
+the next patch (10th) implements an user space tool.  The 11th patch adds a
+document for administrators of DAMON.
+
+Next two patches are for tests.  The 12th and 13th patches provide unit tests
+(based on kunit) and user space tests (based on kselftest) respectively.
+
+Finally, the last patch (14th) updates the MAINTAINERS file.
+
+The patches are based on the v5.5.  You can also clone the complete git
+tree:
+
+    $ git clone git://github.com/sjp38/linux -b damon/patches/v5
+
+The web is also available:
+https://github.com/sjp38/linux/releases/tag/damon/patches/v5
+
+
+Patch History
+=============
+
+Changes from v4
+(https://lore.kernel.org/linux-mm/20200210144812.26845-1-sjpark@amazon.com/)
+ - Add 'Reviewed-by' for the kunit tests patch (Brendan Higgins)
+ - Make the unit tests to depedn on 'DAMON=y' (Randy Dunlap and kbuild bot)
+   Reported-by: kbuild test robot <lkp@intel.com>
+ - Fix m68k module build issue
+   Reported-by: kbuild test robot <lkp@intel.com>
+ - Add selftests
+ - Seperate patches for low level users from core logics for better reading
+ - Clean up debugfs interface
+
+Changes from v3
+(https://lore.kernel.org/linux-mm/20200204062312.19913-1-sj38.park@gmail.com/)
+ - Fix i386 build issue
+   Reported-by: kbuild test robot <lkp@intel.com>
+ - Increase the default size of the monitoring result buffer to 1 MiB
+ - Fix misc bugs in debugfs interface
+
+Changes from v2
+(https://lore.kernel.org/linux-mm/20200128085742.14566-1-sjpark@amazon.com/)
+ - Move MAINTAINERS changes to last commit (Brendan Higgins)
+ - Add descriptions for kunittest: why not only entire mappings and what the 4
+   input sets are trying to test (Brendan Higgins)
+ - Remove 'kdamond_need_stop()' test (Brendan Higgins)
+ - Discuss about the 'perf mem' and DAMON (Peter Zijlstra)
+ - Make CV clearly say what it actually does (Peter Zijlstra)
+ - Answer why new module (Qian Cai)
+ - Diable DAMON by default (Randy Dunlap)
+ - Change the interface: Seperate recording attributes
+   (attrs, record, rules) and allow multiple kdamond instances
+ - Implement kernel API interface
+
+Changes from v1
+(https://lore.kernel.org/linux-mm/20200120162757.32375-1-sjpark@amazon.com/)
+ - Rebase on v5.5
+ - Add a tracepoint for integration with other tracers (Kirill A. Shutemov)
+ - document: Add more description for the user space tool (Brendan Higgins)
+ - unittest: Improve readability (Brendan Higgins)
+ - unittest: Use consistent name and helpers function (Brendan Higgins)
+ - Update PG_Young to avoid reclaim logic interference (Yunjae Lee)
+
+Changes from RFC
+(https://lore.kernel.org/linux-mm/20200110131522.29964-1-sjpark@amazon.com/)
+ - Specify an ambiguous plan of access pattern based mm optimizations
+ - Support loadable module build
+ - Cleanup code
+
+SeongJae Park (14):
+  mm: Introduce Data Access MONitor (DAMON)
+  mm/damon: Implement region based sampling
+  mm/damon: Adaptively adjust regions
+  mm/damon: Apply dynamic memory mapping changes
+  mm/damon: Implement callbacks
+  mm/damon: Implement access pattern recording
+  mm/damon: Implement kernel space API
+  mm/damon: Add debugfs interface
+  mm/damon: Add a tracepoint for result writing
+  tools: Add a minimal user-space tool for DAMON
+  Documentation/admin-guide/mm: Add a document for DAMON
+  mm/damon: Add kunit tests
+  mm/damon: Add user selftests
+  MAINTAINERS: Update for DAMON
+
+ .../admin-guide/mm/data_access_monitor.rst    |  414 +++++
+ Documentation/admin-guide/mm/index.rst        |    1 +
+ MAINTAINERS                                   |   12 +
+ include/linux/damon.h                         |   71 +
+ include/trace/events/damon.h                  |   32 +
+ mm/Kconfig                                    |   23 +
+ mm/Makefile                                   |    1 +
+ mm/damon-test.h                               |  604 +++++++
+ mm/damon.c                                    | 1424 +++++++++++++++++
+ mm/page_ext.c                                 |    1 +
+ tools/damon/.gitignore                        |    1 +
+ tools/damon/_dist.py                          |   35 +
+ tools/damon/bin2txt.py                        |   64 +
+ tools/damon/damo                              |   37 +
+ tools/damon/heats.py                          |  358 +++++
+ tools/damon/nr_regions.py                     |   88 +
+ tools/damon/record.py                         |  219 +++
+ tools/damon/report.py                         |   45 +
+ tools/damon/wss.py                            |   94 ++
+ tools/testing/selftests/damon/Makefile        |    7 +
+ .../selftests/damon/_chk_dependency.sh        |   28 +
+ tools/testing/selftests/damon/_chk_record.py  |   89 ++
+ .../testing/selftests/damon/debugfs_attrs.sh  |  107 ++
+ .../testing/selftests/damon/debugfs_record.sh |   50 +
+ 24 files changed, 3805 insertions(+)
+ create mode 100644 Documentation/admin-guide/mm/data_access_monitor.rst
+ create mode 100644 include/linux/damon.h
+ create mode 100644 include/trace/events/damon.h
+ create mode 100644 mm/damon-test.h
+ create mode 100644 mm/damon.c
+ create mode 100644 tools/damon/.gitignore
+ create mode 100644 tools/damon/_dist.py
+ create mode 100644 tools/damon/bin2txt.py
+ create mode 100755 tools/damon/damo
+ create mode 100644 tools/damon/heats.py
+ create mode 100644 tools/damon/nr_regions.py
+ create mode 100644 tools/damon/record.py
+ create mode 100644 tools/damon/report.py
+ create mode 100644 tools/damon/wss.py
+ create mode 100644 tools/testing/selftests/damon/Makefile
+ create mode 100644 tools/testing/selftests/damon/_chk_dependency.sh
+ create mode 100644 tools/testing/selftests/damon/_chk_record.py
+ create mode 100755 tools/testing/selftests/damon/debugfs_attrs.sh
+ create mode 100755 tools/testing/selftests/damon/debugfs_record.sh
+
+
+base-commit: d5226fa6dbae0569ee43ecfc08bdcd6770fc4755
+-- 
+2.17.1
+
+================================= >8 ========================================
+
+Appendix A: Related Works
+=========================
+
+There are a number of researches[1,2,3,4,5,6] optimizing memory management
+mechanisms based on the actual memory access patterns that shows impressive
+results.  However, most of those has no deep consideration about the monitoring
+of the accesses itself.  Some of those focused on the overhead of the
+monitoring, but does not consider the accuracy scalability[6] or has additional
+dependencies[7].  Indeed, one recent research[5] about the proactive
+reclamation has also proposed[8] to the kernel community but the monitoring
+overhead was considered a main problem.
+
+[1] Subramanya R Dulloor, Amitabha Roy, Zheguang Zhao, Narayanan Sundaram,
+    Nadathur Satish, Rajesh Sankaran, Jeff Jackson, and Karsten Schwan. 2016.
+    Data tiering in heterogeneous memory systems. In Proceedings of the 11th
+    European Conference on Computer Systems (EuroSys). ACM, 15.
+[2] Youngjin Kwon, Hangchen Yu, Simon Peter, Christopher J Rossbach, and Emmett
+    Witchel. 2016. Coordinated and efficient huge page management with ingens.
+    In 12th USENIX Symposium on Operating Systems Design and Implementation
+    (OSDI).  705–721.
+[3] Harald Servat, Antonio J Peña, Germán Llort, Estanislao Mercadal,
+    HansChristian Hoppe, and Jesús Labarta. 2017. Automating the application
+    data placement in hybrid memory systems. In 2017 IEEE International
+    Conference on Cluster Computing (CLUSTER). IEEE, 126–136.
+[4] Vlad Nitu, Boris Teabe, Alain Tchana, Canturk Isci, and Daniel Hagimont.
+    2018. Welcome to zombieland: practical and energy-efficient memory
+    disaggregation in a datacenter. In Proceedings of the 13th European
+    Conference on Computer Systems (EuroSys). ACM, 16.
+[5] Andres Lagar-Cavilla, Junwhan Ahn, Suleiman Souhlal, Neha Agarwal, Radoslaw
+    Burny, Shakeel Butt, Jichuan Chang, Ashwin Chaugule, Nan Deng, Junaid
+    Shahid, Greg Thelen, Kamil Adam Yurtsever, Yu Zhao, and Parthasarathy
+    Ranganathan.  2019. Software-Defined Far Memory in Warehouse-Scale
+    Computers.  In Proceedings of the 24th International Conference on
+    Architectural Support for Programming Languages and Operating Systems
+    (ASPLOS).  ACM, New York, NY, USA, 317–330.
+    DOI:https://doi.org/10.1145/3297858.3304053
+[6] Carl Waldspurger, Trausti Saemundsson, Irfan Ahmad, and Nohhyun Park.
+    2017. Cache Modeling and Optimization using Miniature Simulations. In 2017
+    USENIX Annual Technical Conference (ATC). USENIX Association, Santa
+    Clara, CA, 487–498.
+    https://www.usenix.org/conference/atc17/technical-sessions/
+[7] Haojie Wang, Jidong Zhai, Xiongchao Tang, Bowen Yu, Xiaosong Ma, and
+    Wenguang Chen. 2018. Spindle: Informed Memory Access Monitoring. In 2018
+    USENIX Annual Technical Conference (ATC). USENIX Association, Boston, MA,
+    561–574.  https://www.usenix.org/conference/atc18/presentation/wang-haojie
+[8] Jonathan Corbet. 2019. Proactively reclaiming idle memory. (2019).
+    https://lwn.net/Articles/787611/.
+
+
+Appendix B: Limitations of Other Access Monitoring Techniques
+=============================================================
+
+The memory access instrumentation techniques which are applied to
+many tools such as Intel PIN is essential for correctness required cases such
+as memory access bug detections or cache level optimizations.  However, those
+usually incur exceptionally high overhead which is unacceptable.
+
+Periodic access checks based on access counting features (e.g., PTE Accessed
+bits or PG_Idle flags) can reduce the overhead.  It sacrifies some of the
+quality but it's still ok to many of this domain.  However, the overhead
+arbitrarily increase as the size of the target workload grows.  Miniature-like
+static region based sampling can set the upperbound of the overhead, but it
+will now decrease the quality of the output as the size of the workload grows.
+
+DAMON is another solution that overcomes the limitations.  It is 1) accurate
+enough for this domain, 2) light-weight so that it can be applied online, and
+3) allow users to set the upper-bound of the overhead, regardless of the size
+of target workloads.  It is implemented as a simple and small kernel module to
+support various users in both of the user space and the kernel space.  Refer to
+'Evaluations' section below for detailed performance of DAMON.
+
+For the goals, DAMON utilizes its two core mechanisms, which allows lightweight
+overhead and high quality of output, repectively.  To show how DAMON promises
+those, refer to 'Mechanisms of DAMON' section below.
+
+
+Appendix C: Mechanisms of DAMON
+===============================
+
+
+Basic Access Check
+------------------
+
+DAMON basically reports what pages are how frequently accessed.  The report is
+passed to users in binary format via a ``result file`` which users can set it's
+path.  Note that the frequency is not an absolute number of accesses, but a
+relative frequency among the pages of the target workloads.
+
+Users can also control the resolution of the reports by setting two time
+intervals, ``sampling interval`` and ``aggregation interval``.  In detail,
+DAMON checks access to each page per ``sampling interval``, aggregates the
+results (counts the number of the accesses to each page), and reports the
+aggregated results per ``aggregation interval``.  For the access check of each
+page, DAMON uses the Accessed bits of PTEs.
+
+This is thus similar to the previously mentioned periodic access checks based
+mechanisms, which overhead is increasing as the size of the target process
+grows.
+
+
+Region Based Sampling
+---------------------
+
+To avoid the unbounded increase of the overhead, DAMON groups a number of
+adjacent pages that assumed to have same access frequencies into a region.  As
+long as the assumption (pages in a region have same access frequencies) is
+kept, only one page in the region is required to be checked.  Thus, for each
+``sampling interval``, DAMON randomly picks one page in each region and clears
+its Accessed bit.  After one more ``sampling interval``, DAMON reads the
+Accessed bit of the page and increases the access frequency of the region if
+the bit has set meanwhile.  Therefore, the monitoring overhead is controllable
+by setting the number of regions.  DAMON allows users to set the minimal and
+maximum number of regions for the trade-off.
+
+Except the assumption, this is almost same with the above-mentioned
+miniature-like static region based sampling.  In other words, this scheme
+cannot preserve the quality of the output if the assumption is not guaranteed.
+
+
+Adaptive Regions Adjustment
+---------------------------
+
+At the beginning of the monitoring, DAMON constructs the initial regions by
+evenly splitting the memory mapped address space of the process into the
+user-specified minimal number of regions.  In this initial state, the
+assumption is normally not kept and thus the quality could be low.  To keep the
+assumption as much as possible, DAMON adaptively merges and splits each region.
+For each ``aggregation interval``, it compares the access frequencies of
+adjacent regions and merges those if the frequency difference is small.  Then,
+after it reports and clears the aggregated access frequency of each region, it
+splits each region into two regions if the total number of regions is smaller
+than the half of the user-specified maximum number of regions.
+
+In this way, DAMON provides its best-effort quality and minimal overhead while
+keeping the bounds users set for their trade-off.
+
+
+Applying Dynamic Memory Mappings
+--------------------------------
+
+Only a number of small parts in the super-huge virtual address space of the
+processes is mapped to physical memory and accessed.  Thus, tracking the
+unmapped address regions is just wasteful.  However, tracking every memory
+mapping change might incur an overhead.  For the reason, DAMON applies the
+dynamic memory mapping changes to the tracking regions only for each of an
+user-specified time interval (``regions update interval``).
+
+
+Appendix D: Expected Use-cases
+==============================
+
+A straightforward usecase of DAMON would be the program behavior analysis.
+With the DAMON output, users can confirm whether the program is running as
+intended or not.  This will be useful for debuggings and tests of design
+points.
+
+The monitored results can also be useful for counting the dynamic working set
+size of workloads.  For the administration of memory overcommitted systems or
+selection of the environments (e.g., containers providing different amount of
+memory) for your workloads, this will be useful.
+
+If you are a programmer, you can optimize your program by managing the memory
+based on the actual data access pattern.  For example, you can identify the
+dynamic hotness of your data using DAMON and call ``mlock()`` to keep your hot
+data in DRAM, or call ``madvise()`` with ``MADV_PAGEOUT`` to proactively
+reclaim cold data.  Even though your program is guaranteed to not encounter
+memory pressure, you can still improve the performance by applying the DAMON
+outputs for call of ``MADV_HUGEPAGE`` and ``MADV_NOHUGEPAGE``.  More creative
+optimizations would be possible.  Our evaluations of DAMON includes a
+straightforward optimization using the ``mlock()``.  Please refer to the below
+Evaluation section for more detail.
+
+As DAMON incurs very low overhead, such optimizations can be applied not only
+offline, but also online.  Also, there is no reason to limit such optimizations
+to the user space.  Several parts of the kernel's memory management mechanisms
+could be also optimized using DAMON. The reclamation, the THP (de)promotion
+decisions, and the compaction would be such a candidates.  DAMON will continue
+its development to be highly optimized for the online/in-kernel uses.
+
+
+A Future Plan: Data Access Monitoring-based Operation Schemes
+-------------------------------------------------------------
+
+As described in the above section, DAMON could be helpful for actual access
+based memory management optimizations.  Nevertheless, users who want to do such
+optimizations should run DAMON, read the traced data (either online or
+offline), analyze it, plan a new memory management scheme, and apply the new
+scheme by themselves.  It must be easier than the past, but could still require
+some level of efforts.  In its next development stage, DAMON will reduce some
+of such efforts by allowing users to specify some access based memory
+management rules for their specific processes.
+
+Because this is just a plan, the specific interface is not fixed yet, but for
+example, users will be allowed to write their desired memory management rules
+to a special file in a DAMON specific format.  The rules will be something like
+'if a memory region of size in a range is keeping a range of hotness for more
+than a duration, apply specific memory management rule using madvise() or
+mlock() to the region'.  For example, we can imagine rules like below:
+
+    # format is: <min/max size> <min/max frequency (0-99)> <duration> <action>
+
+    # if a region of a size keeps a very high access frequency for more than
+    # 100ms, lock the region in the main memory (call mlock()). But, if the
+    # region is larger than 500 MiB, skip it. The exception might be helpful
+    # if the system has only, say, 600 MiB of DRAM, a region of size larger
+    # than 600 MiB cannot be locked in the DRAM at all.
+    na 500M 90 99 100ms mlock
+
+    # if a region keeps a high access frequency for more than 100ms, put the
+    # region on the head of the LRU list (call madvise() with MADV_WILLNEED).
+    na na 80 90 100ms madv_willneed
+
+    # if a region keeps a low access frequency for more than 100ms, put the
+    # region on the tail of the LRU list (call madvise() with MADV_COLD).
+    na na 10 20 100ms madv_cold
+
+    # if a region keeps a very low access frequency for more than 100ms, swap
+    # out the region immediately (call madvise() with MADV_PAGEOUT).
+    na na 0 10 100ms madv_pageout
+
+    # if a region of a size bigger than 2MB keeps a very high access frequency
+    # for more than 100ms, let the region to use huge pages (call madvise()
+    # with MADV_HUGEPAGE).
+    2M na 90 99 100ms madv_hugepage
+
+    # If a regions of a size bigger than > 2MB keeps no high access frequency
+    # for more than 100ms, avoid the region from using huge pages (call
+    # madvise() with MADV_NOHUGEPAGE).
+    2M na 0 25 100ms madv_nohugepage
+
+An RFC patchset for this is already available:
+https://lore.kernel.org/linux-mm/20200210150921.32482-1-sjpark@amazon.com/
