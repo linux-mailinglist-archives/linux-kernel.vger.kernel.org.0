@@ -2,136 +2,244 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F50C161034
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 11:38:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E419D161013
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 11:30:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729259AbgBQKhz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 05:37:55 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:43766 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726403AbgBQKhz (ORCPT
+        id S1729282AbgBQKas (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 05:30:48 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:47994 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729266AbgBQKaq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 05:37:55 -0500
-Received: by mail-oi1-f194.google.com with SMTP id p125so16209610oif.10;
-        Mon, 17 Feb 2020 02:37:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=k8BSp0O0KfBeVprk778t84qb07TP/hfwso06rDN0yGc=;
-        b=XltBufQfP7wpwCaNj3e2sGKjeJdqeCFagWjLEArZeghTwlgQn7jnZ/rCVwGXc+spcI
-         GPND8ggd8u9g3YV/+UTlF28LLPC7SJXtT6k3e54xDfkWHJMcqJkzxpIAY0PeoIVvOjsD
-         3F42Be7kyt/JCWZ5oF/8cJofMIJwXPgLAfv4oNCixaLgbCjwq3t2HoGyFmtoSq3Ua4vJ
-         wN1BGhcyrqivi+J9AdRuHJNe3fEvUMBqLyK9u1PrgbOPH1z6ozTSZ7VJVkKNby57b8EM
-         5KrPb5MaPkfT5H336GfRnPEZx+r0nXv8Bd8Jr+kbJ6ZL7uAsTIIDpKpYXAp8xHRzzTsM
-         1O7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=k8BSp0O0KfBeVprk778t84qb07TP/hfwso06rDN0yGc=;
-        b=SMOzQqIfub+NHS5fSuiwWrv2J9pb6/DVYDBzt/tdR6BwmyIXMT9IzGueP8/sXujdfM
-         VdLDjCA9qeW6/ZEarb3SDudL+RPEdPAJF56mGfvRssNctkf03RjvoDu7xaGskc6fKx5j
-         BxGsUPZMjqjScG3gPwURqtxI5YUtTVPDW235B+SvsFBn08J5fRqagTlYyoRpOhPPX/oo
-         +1DxpUtCycBn58kEL8VV4VcOsXu2/Fbc7kuWLqGNBdHLri+D50VCJaedwC+MG4mQv3Bs
-         eT+CHn+9yO4JnLRliCvyYtP6rTpI8Eao9u1XODyccNc1PCo3B+YC5R8c7tOz5apiEngg
-         1oPQ==
-X-Gm-Message-State: APjAAAXRiisXytfZ6JhSuakkTnBqFjc+/wJlLUqXpxEzz012Xog0K09c
-        3BT6Cvab1Zsmx8wH4LH3JxYsGYvs912JpC5y0RRGwFj47xEbIQ==
-X-Google-Smtp-Source: APXvYqxDjBYcTjQcr5nocEiOj7Htq4tDWpJtbNMIsIoV6egKz/W1ZjwiadRqjn1/jSJ5/DdLuvCwUa09BsVcra6xkbo=
-X-Received: by 2002:aca:8d5:: with SMTP id 204mr9150053oii.141.1581935873942;
- Mon, 17 Feb 2020 02:37:53 -0800 (PST)
+        Mon, 17 Feb 2020 05:30:46 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200217103044epoutp029b896deba22460022c70d3a06cec91a1~0Kee-NXbM1532015320epoutp02B
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 10:30:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200217103044epoutp029b896deba22460022c70d3a06cec91a1~0Kee-NXbM1532015320epoutp02B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1581935444;
+        bh=ok8t0QdvH7qfzEnAkZnpXw8pVEVjZqhNypJEm+sb/n4=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=QLq6KXnI1hAF0m0Kk8LZDvz/9PrENMXD3K78VIq0iZqcYBhPwpjEkOsmumvpA6ERp
+         yxex3FEgCkWUZTqgufu2BXQNCSFbKz1t9rUECk7BrTH7OM/rePEMIZTZ8Dwg4ikTcg
+         R364hqhshY8SN1CnwZD7WLVWrUDUnCbPFuTWKWFA=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200217103043epcas1p216ba466affb25f0e308e316d11fc5758~0Ked883Pw2223622236epcas1p2I;
+        Mon, 17 Feb 2020 10:30:43 +0000 (GMT)
+Received: from epsmges1p5.samsung.com (unknown [182.195.40.153]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 48LgHN0sz8zMqYkb; Mon, 17 Feb
+        2020 10:30:40 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        66.03.51241.05B6A4E5; Mon, 17 Feb 2020 19:30:40 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20200217103039epcas1p476015a1db4eef89cffde9711260369f9~0KeaWoS5b2166621666epcas1p4-;
+        Mon, 17 Feb 2020 10:30:39 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200217103039epsmtrp123c5c5a84eb1aa0934ac2df5d8074d82~0KeaTIGml0839908399epsmtrp1N;
+        Mon, 17 Feb 2020 10:30:39 +0000 (GMT)
+X-AuditID: b6c32a39-163ff7000001c829-f2-5e4a6b50e24b
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        AA.E5.06569.F4B6A4E5; Mon, 17 Feb 2020 19:30:39 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200217103039epsmtip2cae87a1ca501eca058d7510fd7b7e399~0KeaGTJmy3000030000epsmtip2j;
+        Mon, 17 Feb 2020 10:30:39 +0000 (GMT)
+Subject: Re: [PATCH v4] dt-bindings: extcon: usbc-cros-ec: convert
+ extcon-usbc-cros-ec.txt to yaml format
+To:     Dafna Hirschfeld <dafna.hirschfeld@collabora.com>,
+        devicetree@vger.kernel.org
+Cc:     myungjoo.ham@samsung.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        bleung@chromium.org, enric.balletbo@collabora.com,
+        groeck@chromium.org, linux-kernel@vger.kernel.org,
+        helen.koike@collabora.com, ezequiel@collabora.com,
+        kernel@collabora.com, dafna3@gmail.com
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <a1bc262f-d8af-9590-105b-1db0b16f2861@samsung.com>
+Date:   Mon, 17 Feb 2020 19:38:46 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Mon, 17 Feb 2020 18:37:43 +0800
-Message-ID: <CANRm+Cx2ifbbQWk0yAm=W5Us69GybSdtO8uLYXx-qe9F=jNeeQ@mail.gmail.com>
-Subject: [PATCH v3 2/2] KVM: nVMX: Hold KVM's srcu lock when syncing vmcs12->shadow
-To:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200213123934.10841-1-dafna.hirschfeld@collabora.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHJsWRmVeSWpSXmKPExsWy7bCmrm5AtlecwamtrBbTn1xmsTi57g2L
+        xYUVN5gt5h85x2qx5vYhRoudG76wW5x6tYzZ4lT3O3aLzed6WC0u75rDZrH0+kUmi9uNK9gs
+        WvceYXfg9Vgzbw2jx+yGiyweO+4uYfTYOesuu8emVZ1sHn1bVjF6fN4kF8AelW2TkZqYklqk
+        kJqXnJ+SmZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA3SukkJZYk4pUCggsbhY
+        Sd/Opii/tCRVISO/uMRWKbUgJafAskCvODG3uDQvXS85P9fK0MDAyBSoMCE7Y83rT6wFX1Qr
+        pk9LbmDcItfFyMkhIWAicf1HL1sXIxeHkMAORon3Rz4yQzifGCUO9Dxkh3C+MUpcfLSaCaZl
+        4fqDLBCJvYwSL9e9ZoJw3jNKXDh1ng2kSlggW6L3xFUwW0QgWGLanr+sIEXMAr1MEgffXmQE
+        SbAJaEnsf3EDrIhfQFHi6o/HYHFeATuJTc93MIPYLAKqEicfvQGzRQXCJE5ua4GqEZQ4OfMJ
+        C4jNKeAiMX/WfzCbWUBc4taT+UwQtrzE9rdzwB6SENjELvHm4AWoH1wk+i61sEDYwhKvjm9h
+        h7ClJF72t0HZ1RIrTx5hg2juYJTYsv8CK0TCWGL/0slAgziANmhKrN+lDxFWlNj5ey4jxGI+
+        iXdfe1hBSiQEeCU62oQgSpQlLj+4C3WCpMTi9k62CYxKs5C8MwvJC7OQvDALYdkCRpZVjGKp
+        BcW56anFhgWmyNG9iRGclrUsdzAeO+dziFGAg1GJh/dFoGecEGtiWXFl7iFGCQ5mJRFeb3Gv
+        OCHelMTKqtSi/Pii0pzU4kOMpsDQnsgsJZqcD8wZeSXxhqZGxsbGFiaGZqaGhkrivA8jNeOE
+        BNITS1KzU1MLUotg+pg4OKUaGP2s7mw/9LbMUW2Du/zcmkP8H/Rdrl1Me8w3Q/ZGnd4veTvJ
+        4L3xXwPCnMp2bqj+Ur3v/R/h5R3f1Pf+uslx9AV/4YZZ141qRUuqLx67/Sj8K+8cV86eOarS
+        h34c37A58sRdWVFWlaLVcom2fcmpNmW9/185bFvYXnJavHZ1ulHY0a659Q2bo5VYijMSDbWY
+        i4oTASwwhFfhAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBIsWRmVeSWpSXmKPExsWy7bCSvK5/tlecwZLPohbTn1xmsTi57g2L
+        xYUVN5gt5h85x2qx5vYhRoudG76wW5x6tYzZ4lT3O3aLzed6WC0u75rDZrH0+kUmi9uNK9gs
+        WvceYXfg9Vgzbw2jx+yGiyweO+4uYfTYOesuu8emVZ1sHn1bVjF6fN4kF8AexWWTkpqTWZZa
+        pG+XwJWx5vUn1oIvqhXTpyU3MG6R62Lk5JAQMJFYuP4gSxcjF4eQwG5GiU8fv7JAJCQlpl08
+        ytzFyAFkC0scPlwMUfOWUWLfpzZ2kBphgWyJ3hNX2UBsEYFgiVd72sAGMQv0Mkk8br7KDNEx
+        nVFi+vmXTCBVbAJaEvtf3ADr4BdQlLj64zEjiM0rYCex6fkOZhCbRUBV4uSjN2C2qECYxM4l
+        j5kgagQlTs58AnYdp4CLxPxZ/8FsZgF1iT/zLjFD2OISt57MZ4Kw5SW2v53DPIFReBaS9llI
+        WmYhaZmFpGUBI8sqRsnUguLc9NxiwwKjvNRyveLE3OLSvHS95PzcTYzg+NTS2sF44kT8IUYB
+        DkYlHl6HEM84IdbEsuLK3EOMEhzMSiK83uJecUK8KYmVValF+fFFpTmpxYcYpTlYlMR55fOP
+        RQoJpCeWpGanphakFsFkmTg4pRoY5bj9ows+rak6f/vA4pw7Gc7P19kdbI2c+F184emtLzN2
+        Cv9yrovK4MmdF/bWLXu59Oa3QjtnLunxsl06Ozb0/6nNQYbfP+2yfnB76e/zB/UaDT49SspZ
+        dHDjSu6q2a+OS6744ncpt2RW8dJvutezWu6+OTmlvc/s5qUbikapX6XD1kyMN3SxPKXEUpyR
+        aKjFXFScCABgb6HJywIAAA==
+X-CMS-MailID: 20200217103039epcas1p476015a1db4eef89cffde9711260369f9
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200213123953epcas1p45c39830a9ec6bd535f5370702f603806
+References: <CGME20200213123953epcas1p45c39830a9ec6bd535f5370702f603806@epcas1p4.samsung.com>
+        <20200213123934.10841-1-dafna.hirschfeld@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: wanpeng li <wanpengli@tencent.com>
+On 2/13/20 9:39 PM, Dafna Hirschfeld wrote:
+> convert the binding file extcon-usbc-cros-ec.txt to
+> yaml format extcon-usbc-cros-ec.yaml
+> 
+> This was tested and verified on ARM with:
+> make dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.yaml
+> make dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.yaml
+> 
+> Signed-off-by: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
+> Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
+> Changes since v1:
+> 1 - changing the license to (GPL-2.0-only OR BSD-2-Clause)
+> 2 - changing the maintainers
+> 3 - changing the google,usb-port-id property to have minimum 0 and maximum 255
+> 
+> Changes since v2:
+> 1 - Changing the patch subject to start with "dt-bindings: extcon: usbc-cros-ec:"
+> 2 - In the example, adding a parent isp node, a reg field to cros-ec@0
+> and adding nodes 'extcon0/1' instead of one node 'extcon'.
+> 
+> Changes since v3:
+> in the example, changing the node isp1 to spi0
+> 
+>  .../bindings/extcon/extcon-usbc-cros-ec.txt   | 24 --------
+>  .../bindings/extcon/extcon-usbc-cros-ec.yaml  | 56 +++++++++++++++++++
+>  2 files changed, 56 insertions(+), 24 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.txt
+>  create mode 100644 Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.txt b/Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.txt
+> deleted file mode 100644
+> index 8e8625c00dfa..000000000000
+> --- a/Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.txt
+> +++ /dev/null
+> @@ -1,24 +0,0 @@
+> -ChromeOS EC USB Type-C cable and accessories detection
+> -
+> -On ChromeOS systems with USB Type C ports, the ChromeOS Embedded Controller is
+> -able to detect the state of external accessories such as display adapters
+> -or USB devices when said accessories are attached or detached.
+> -
+> -The node for this device must be under a cros-ec node like google,cros-ec-spi
+> -or google,cros-ec-i2c.
+> -
+> -Required properties:
+> -- compatible:		Should be "google,extcon-usbc-cros-ec".
+> -- google,usb-port-id:	Specifies the USB port ID to use.
+> -
+> -Example:
+> -	cros-ec@0 {
+> -		compatible = "google,cros-ec-i2c";
+> -
+> -		...
+> -
+> -		extcon {
+> -			compatible = "google,extcon-usbc-cros-ec";
+> -			google,usb-port-id = <0>;
+> -		};
+> -	}
+> diff --git a/Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.yaml b/Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.yaml
+> new file mode 100644
+> index 000000000000..9c5849b341ea
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.yaml
+> @@ -0,0 +1,56 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: https://protect2.fireeye.com/url?k=d3c63a24-8e5dc647-d3c7b16b-0cc47a31cdbc-e8d8e2b7806aed8e&u=http://devicetree.org/schemas/extcon/extcon-usbc-cros-ec.yaml#
+> +$schema: https://protect2.fireeye.com/url?k=04f78247-596c7e24-04f60908-0cc47a31cdbc-1b9a3937c161a4b6&u=http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: ChromeOS EC USB Type-C cable and accessories detection
+> +
+> +maintainers:
+> +  - Benson Leung <bleung@chromium.org>
+> +  - Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> +
+> +description: |
+> +  On ChromeOS systems with USB Type C ports, the ChromeOS Embedded Controller is
+> +  able to detect the state of external accessories such as display adapters
+> +  or USB devices when said accessories are attached or detached.
+> +  The node for this device must be under a cros-ec node like google,cros-ec-spi
+> +  or google,cros-ec-i2c.
+> +
+> +properties:
+> +  compatible:
+> +    const: google,extcon-usbc-cros-ec
+> +
+> +  google,usb-port-id:
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: the port id
+> +    minimum: 0
+> +    maximum: 255
+> +
+> +required:
+> +  - compatible
+> +  - google,usb-port-id
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    spi0 {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        cros-ec@0 {
+> +            compatible = "google,cros-ec-spi";
+> +            reg = <0>;
+> +
+> +            usbc_extcon0: extcon0 {
+> +                compatible = "google,extcon-usbc-cros-ec";
+> +                google,usb-port-id = <0>;
+> +            };
+> +
+> +            usbc_extcon1: extcon1 {
+> +                compatible = "google,extcon-usbc-cros-ec";
+> +                google,usb-port-id = <1>;
+> +            };
+> +        };
+> +    };
+> 
 
-For the duration of mapping eVMCS, it derefences ->memslots without holding
-->srcu or ->slots_lock when accessing hv assist page. This patch fixes it by
-moving nested_sync_vmcs12_to_shadow to prepare_guest_switch, where the SRCU
-is already taken.
+Applied it. Thanks.
 
-It can be reproduced by running kvm's evmcs_test selftest.
-
-  =============================
-  warning: suspicious rcu usage
-  5.6.0-rc1+ #53 tainted: g        w ioe
-  -----------------------------
-  ./include/linux/kvm_host.h:623 suspicious rcu_dereference_check() usage!
-
-  other info that might help us debug this:
-
-   rcu_scheduler_active = 2, debug_locks = 1
-  1 lock held by evmcs_test/8507:
-   #0: ffff9ddd156d00d0 (&vcpu->mutex){+.+.}, at:
-kvm_vcpu_ioctl+0x85/0x680 [kvm]
-
-  stack backtrace:
-  cpu: 6 pid: 8507 comm: evmcs_test tainted: g        w ioe     5.6.0-rc1+ #53
-  hardware name: dell inc. optiplex 7040/0jctf8, bios 1.4.9 09/12/2016
-  call trace:
-   dump_stack+0x68/0x9b
-   kvm_read_guest_cached+0x11d/0x150 [kvm]
-   kvm_hv_get_assist_page+0x33/0x40 [kvm]
-   nested_enlightened_vmentry+0x2c/0x60 [kvm_intel]
-   nested_vmx_handle_enlightened_vmptrld.part.52+0x32/0x1c0 [kvm_intel]
-   nested_sync_vmcs12_to_shadow+0x439/0x680 [kvm_intel]
-   vmx_vcpu_run+0x67a/0xe60 [kvm_intel]
-   vcpu_enter_guest+0x35e/0x1bc0 [kvm]
-   kvm_arch_vcpu_ioctl_run+0x40b/0x670 [kvm]
-   kvm_vcpu_ioctl+0x370/0x680 [kvm]
-   ksys_ioctl+0x235/0x850
-   __x64_sys_ioctl+0x16/0x20
-   do_syscall_64+0x77/0x780
-   entry_syscall_64_after_hwframe+0x49/0xbe
-
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
-v1 -> v2:
- * update Subject
- * move the check above
- * add the WARN_ON_ONCE
-
- arch/x86/kvm/vmx/vmx.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 3be25ec..9a6797f 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -1175,6 +1175,10 @@ void vmx_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
-                        vmx->guest_msrs[i].mask);
-
-     }
-+
-+    if (vmx->nested.need_vmcs12_to_shadow_sync)
-+        nested_sync_vmcs12_to_shadow(vcpu);
-+
-     if (vmx->guest_state_loaded)
-         return;
-
-@@ -6482,8 +6486,7 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
-         vmcs_write32(PLE_WINDOW, vmx->ple_window);
-     }
-
--    if (vmx->nested.need_vmcs12_to_shadow_sync)
--        nested_sync_vmcs12_to_shadow(vcpu);
-+    WARN_ON_ONCE(vmx->nested.need_vmcs12_to_shadow_sync);
-
-     if (kvm_register_is_dirty(vcpu, VCPU_REGS_RSP))
-         vmcs_writel(GUEST_RSP, vcpu->arch.regs[VCPU_REGS_RSP]);
---
-2.7.4
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
