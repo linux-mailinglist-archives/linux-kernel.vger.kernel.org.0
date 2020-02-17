@@ -2,507 +2,305 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C89001610B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 12:09:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4C451610C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 12:12:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728653AbgBQLJx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 06:09:53 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45193 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728620AbgBQLJx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 06:09:53 -0500
-Received: by mail-lj1-f193.google.com with SMTP id e18so18304577ljn.12
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 03:09:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=K+Slen4xhmtfaCNkGSCSHXA3H8W0EZ5SSdSM2Dl+tek=;
-        b=CFNNGDVEkrYqJHIXtO6EMWv3fNAn9W/lC3KlkmeQ188+3C/7JvHM8kNs4W7zJ3P9KU
-         i9dEOJjmwFP220YRvdpVL2+4864EDUXA5u+VkWDtxeH/9aSbCS6pHTx4RI4LhlZM0Tk7
-         HHR7RKXDjG3JHIVkaeQs4xx9spt9itABcVZqdbI8cy1DK2oSkU019pEJYDRkwwID25Sg
-         QGh6ky+KFZbuf9878dgTllMwZCgZgLTcfAmC6yLzP6oWMwAU2P3xmTdf4YoUdq2yyc2z
-         R19JNSq316VLJYrduOwRuGnGqRR+qEWPFTbytDzJ/U5Jw0yJIznz0v4O/08ZX7szbLmN
-         wfXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=K+Slen4xhmtfaCNkGSCSHXA3H8W0EZ5SSdSM2Dl+tek=;
-        b=oZtC+sl76bAHfXsv36v5Lw+Tw4fjdGuAclIz5cbIL6RaiohZ+DjJ1+/zSs7iLIV6he
-         M8qBHYrfoF0ZRZPYF2C4pAR1gcm/kuxUqCO24ZBffEGc4HULZD67PmagTG+pLNd5zo8F
-         tCqOYwgB+ElcpIo0qio95yEsbBFmpZ4id7ZfBOiFwUAIrwS9AvLXRfvFUOJ1LJEffstY
-         aXOR6/xw8NywTKj9la3kZyUfszTsWarrdzJZtBTa/twNXUPfTb0WZjYZOwaojVlX/R9l
-         r45THR2FlZRSMvkX5R4bhEdUnQWqNMrBDiem9iseXL9nIq5+piTaWZ3yZpnGesokm47O
-         QVWw==
-X-Gm-Message-State: APjAAAUQqqRd4n9kCEewXKl88fAVOFgBPh07DnC0yjElDhSfqlyC6LkP
-        zyglka/y8QIPi6j4bXxIKsmQPbBbEB0vyBUp2lJnGw==
-X-Google-Smtp-Source: APXvYqzi2l8Ty4l6P89JW5M1EZQffTsb3/ZlYROkdWfJRI99uu3vJZewfWTmSxrqMn1OHNCV3h6PK1a5ibVtjZAI+Qo=
-X-Received: by 2002:a05:651c:1072:: with SMTP id y18mr9784211ljm.243.1581937788810;
- Mon, 17 Feb 2020 03:09:48 -0800 (PST)
+        id S1729151AbgBQLMP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 06:12:15 -0500
+Received: from foss.arm.com ([217.140.110.172]:34054 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728028AbgBQLMP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 06:12:15 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3A5F030E;
+        Mon, 17 Feb 2020 03:12:14 -0800 (PST)
+Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E050F3F6CF;
+        Mon, 17 Feb 2020 03:12:11 -0800 (PST)
+Subject: Re: [patch V2 14/17] lib/vdso: Move VCLOCK_TIMENS to vdso_clock_modes
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     x86@kernel.org, John Stultz <john.stultz@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        James Hogan <jhogan@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marc Zyngier <maz@kernel.org>, Andrei Vagin <avagin@gmail.com>
+References: <20200207123847.339896630@linutronix.de>
+ <20200207124403.656097274@linutronix.de>
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+X-Pep-Version: 2.0
+Message-ID: <9f4502af-ba64-2493-c2ce-b885cf611d39@arm.com>
+Date:   Mon, 17 Feb 2020 11:12:10 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Mon, 17 Feb 2020 16:39:37 +0530
-Message-ID: <CA+G9fYu3682XJ2Kw2ZvQdUT80epKc9DWWXgDT1-D_65ajSXNTw@mail.gmail.com>
-Subject: selftests: Linux Kernel Dump Test Module output
-To:     "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, Shuah Khan <shuah@kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Anders Roxell <anders.roxell@linaro.org>,
-        lkft-triage@lists.linaro.org,
-        open list <linux-kernel@vger.kernel.org>, ankita@in.ibm.com,
-        Will Deacon <will@kernel.org>, ardb@kernel.org,
-        "Guohanjun (Hanjun Guo)" <guohanjun@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200207124403.656097274@linutronix.de>
+Content-Type: multipart/mixed;
+ boundary="------------D261C3FC90278C8931FDF21E"
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The selftest lkdtm test failed on x86_64 and arm64.
-am I missing any pre-requisite?
+This is a multi-part message in MIME format.
+--------------D261C3FC90278C8931FDF21E
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Boot log:
-[    3.297812] lkdtm: No crash points registered, enable through debugfs
+On 07/02/2020 12:39, Thomas Gleixner wrote:
+> From: Thomas Gleixner <tglx@linutronix.de>
+>=20
+> Move the time namespace indicator clock mode to the other ones for
+> consistency sake.
+>=20
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+>=20
 
-Test output log,
---------------------
-# selftests lkdtm PANIC.sh
-lkdtm: PANIC.sh_ #
-# Skipping PANIC crashes entire system
-PANIC: crashes_entire #
-[SKIP] 1 selftests lkdtm PANIC.sh # SKIP
-selftests: lkdtm_PANIC.sh [SKIP]
-# selftests lkdtm BUG.sh
-lkdtm: BUG.sh_ #
-# BUG missing 'kernel BUG at' [FAIL]
-missing: 'kernel_BUG #
-[FAIL] 2 selftests lkdtm BUG.sh # exit=1
-selftests: lkdtm_BUG.sh [FAIL]
-# selftests lkdtm WARNING.sh
-lkdtm: WARNING.sh_ #
-# WARNING missing 'WARNING' [FAIL]
-missing: 'WARNING'_[FAIL] #
-[FAIL] 3 selftests lkdtm WARNING.sh # exit=1
-selftests: lkdtm_WARNING.sh [FAIL]
-# selftests lkdtm WARNING_MESSAGE.sh
-lkdtm: WARNING_MESSAGE.sh_ #
-# WARNING_MESSAGE missing 'message trigger' [FAIL]
-missing: 'message_trigger' #
-[FAIL] 4 selftests lkdtm WARNING_MESSAGE.sh # exit=1
-selftests: lkdtm_WARNING_MESSAGE.sh [FAIL]
-# selftests lkdtm EXCEPTION.sh
-lkdtm: EXCEPTION.sh_ #
-# EXCEPTION missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 5 selftests lkdtm EXCEPTION.sh # exit=1
-selftests: lkdtm_EXCEPTION.sh [FAIL]
-# selftests lkdtm LOOP.sh
-lkdtm: LOOP.sh_ #
-# Skipping LOOP Hangs the system
-LOOP: Hangs_the #
-[SKIP] 6 selftests lkdtm LOOP.sh # SKIP
-selftests: lkdtm_LOOP.sh [SKIP]
-# selftests lkdtm EXHAUST_STACK.sh
-lkdtm: EXHAUST_STACK.sh_ #
-# Skipping EXHAUST_STACK Corrupts memory on failure
-EXHAUST_STACK: Corrupts_memory #
-[SKIP] 7 selftests lkdtm EXHAUST_STACK.sh # SKIP
-selftests: lkdtm_EXHAUST_STACK.sh [SKIP]
-# selftests lkdtm CORRUPT_STACK.sh
-lkdtm: CORRUPT_STACK.sh_ #
-# Skipping CORRUPT_STACK Crashes entire system on success
-CORRUPT_STACK: Crashes_entire #
-[SKIP] 8 selftests lkdtm CORRUPT_STACK.sh # SKIP
-selftests: lkdtm_CORRUPT_STACK.sh [SKIP]
-# selftests lkdtm CORRUPT_STACK_STRONG.sh
-lkdtm: CORRUPT_STACK_STRONG.sh_ #
-# Skipping CORRUPT_STACK_STRONG Crashes entire system on success
-CORRUPT_STACK_STRONG: Crashes_entire #
-[SKIP] 9 selftests lkdtm CORRUPT_STACK_STRONG.sh # SKIP
-selftests: lkdtm_CORRUPT_STACK_STRONG.sh [SKIP]
-# selftests lkdtm CORRUPT_LIST_ADD.sh
-lkdtm: CORRUPT_LIST_ADD.sh_ #
-# CORRUPT_LIST_ADD missing 'list_add corruption' [FAIL]
-missing: 'list_add_corruption' #
-[FAIL] 10 selftests lkdtm CORRUPT_LIST_ADD.sh # exit=1
-selftests: lkdtm_CORRUPT_LIST_ADD.sh [FAIL]
-# selftests lkdtm CORRUPT_LIST_DEL.sh
-lkdtm: CORRUPT_LIST_DEL.sh_ #
-# CORRUPT_LIST_DEL missing 'list_del corruption' [FAIL]
-missing: 'list_del_corruption' #
-[FAIL] 11 selftests lkdtm CORRUPT_LIST_DEL.sh # exit=1
-selftests: lkdtm_CORRUPT_LIST_DEL.sh [FAIL]
-# selftests lkdtm CORRUPT_USER_DS.sh
-lkdtm: CORRUPT_USER_DS.sh_ #
-# CORRUPT_USER_DS missing 'Invalid address limit on user-mode return' [FAIL]
-missing: 'Invalid_address #
-[FAIL] 12 selftests lkdtm CORRUPT_USER_DS.sh # exit=1
-selftests: lkdtm_CORRUPT_USER_DS.sh [FAIL]
-# selftests lkdtm STACK_GUARD_PAGE_LEADING.sh
-lkdtm: STACK_GUARD_PAGE_LEADING.sh_ #
-# STACK_GUARD_PAGE_LEADING missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 13 selftests lkdtm STACK_GUARD_PAGE_LEADING.sh # exit=1
-selftests: lkdtm_STACK_GUARD_PAGE_LEADING.sh [FAIL]
-# selftests lkdtm STACK_GUARD_PAGE_TRAILING.sh
-lkdtm: STACK_GUARD_PAGE_TRAILING.sh_ #
-# STACK_GUARD_PAGE_TRAILING missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 14 selftests lkdtm STACK_GUARD_PAGE_TRAILING.sh # exit=1
-selftests: lkdtm_STACK_GUARD_PAGE_TRAILING.sh [FAIL]
-# selftests lkdtm UNSET_SMEP.sh
-lkdtm: UNSET_SMEP.sh_ #
-# UNSET_SMEP missing 'CR4 bits went missing' [FAIL]
-missing: 'CR4_bits #
-[FAIL] 15 selftests lkdtm UNSET_SMEP.sh # exit=1
-selftests: lkdtm_UNSET_SMEP.sh [FAIL]
-# selftests lkdtm DOUBLE_FAULT.sh
-lkdtm: DOUBLE_FAULT.sh_ #
-# Skipped test 'DOUBLE_FAULT' missing in /sys/kernel/debug/provoke-crash/DIRECT!
-test: 'DOUBLE_FAULT'_missing #
-[SKIP] 16 selftests lkdtm DOUBLE_FAULT.sh # SKIP
-selftests: lkdtm_DOUBLE_FAULT.sh [SKIP]
-# selftests lkdtm UNALIGNED_LOAD_STORE_WRITE.sh
-lkdtm: UNALIGNED_LOAD_STORE_WRITE.sh_ #
-# UNALIGNED_LOAD_STORE_WRITE missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 17 selftests lkdtm UNALIGNED_LOAD_STORE_WRITE.sh # exit=1
-selftests: lkdtm_UNALIGNED_LOAD_STORE_WRITE.sh [FAIL]
-# selftests lkdtm OVERWRITE_ALLOCATION.sh
-lkdtm: OVERWRITE_ALLOCATION.sh_ #
-# Skipping OVERWRITE_ALLOCATION Corrupts memory on failure
-OVERWRITE_ALLOCATION: Corrupts_memory #
-[SKIP] 18 selftests lkdtm OVERWRITE_ALLOCATION.sh # SKIP
-selftests: lkdtm_OVERWRITE_ALLOCATION.sh [SKIP]
-# selftests lkdtm WRITE_AFTER_FREE.sh
-lkdtm: WRITE_AFTER_FREE.sh_ #
-# Skipping WRITE_AFTER_FREE Corrupts memory on failure
-WRITE_AFTER_FREE: Corrupts_memory #
-[SKIP] 19 selftests lkdtm WRITE_AFTER_FREE.sh # SKIP
-selftests: lkdtm_WRITE_AFTER_FREE.sh [SKIP]
-# selftests lkdtm READ_AFTER_FREE.sh
-lkdtm: READ_AFTER_FREE.sh_ #
-# READ_AFTER_FREE missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 20 selftests lkdtm READ_AFTER_FREE.sh # exit=1
-selftests: lkdtm_READ_AFTER_FREE.sh [FAIL]
-# selftests lkdtm WRITE_BUDDY_AFTER_FREE.sh
-lkdtm: WRITE_BUDDY_AFTER_FREE.sh_ #
-# Skipping WRITE_BUDDY_AFTER_FREE Corrupts memory on failure
-WRITE_BUDDY_AFTER_FREE: Corrupts_memory #
-[SKIP] 21 selftests lkdtm WRITE_BUDDY_AFTER_FREE.sh # SKIP
-selftests: lkdtm_WRITE_BUDDY_AFTER_FREE.sh [SKIP]
-# selftests lkdtm READ_BUDDY_AFTER_FREE.sh
-lkdtm: READ_BUDDY_AFTER_FREE.sh_ #
-# READ_BUDDY_AFTER_FREE missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 22 selftests lkdtm READ_BUDDY_AFTER_FREE.sh # exit=1
-selftests: lkdtm_READ_BUDDY_AFTER_FREE.sh [FAIL]
-# selftests lkdtm SLAB_FREE_DOUBLE.sh
-lkdtm: SLAB_FREE_DOUBLE.sh_ #
-# SLAB_FREE_DOUBLE missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 23 selftests lkdtm SLAB_FREE_DOUBLE.sh # exit=1
-selftests: lkdtm_SLAB_FREE_DOUBLE.sh [FAIL]
-# selftests lkdtm SLAB_FREE_CROSS.sh
-lkdtm: SLAB_FREE_CROSS.sh_ #
-# SLAB_FREE_CROSS missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 24 selftests lkdtm SLAB_FREE_CROSS.sh # exit=1
-selftests: lkdtm_SLAB_FREE_CROSS.sh [FAIL]
-# selftests lkdtm SLAB_FREE_PAGE.sh
-lkdtm: SLAB_FREE_PAGE.sh_ #
-# SLAB_FREE_PAGE missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 25 selftests lkdtm SLAB_FREE_PAGE.sh # exit=1
-selftests: lkdtm_SLAB_FREE_PAGE.sh [FAIL]
-# selftests lkdtm SOFTLOCKUP.sh
-lkdtm: SOFTLOCKUP.sh_ #
-# Skipping SOFTLOCKUP Hangs the system
-SOFTLOCKUP: Hangs_the #
-[SKIP] 26 selftests lkdtm SOFTLOCKUP.sh # SKIP
-selftests: lkdtm_SOFTLOCKUP.sh [SKIP]
-# selftests lkdtm HARDLOCKUP.sh
-lkdtm: HARDLOCKUP.sh_ #
-# Skipping HARDLOCKUP Hangs the system
-HARDLOCKUP: Hangs_the #
-[SKIP] 27 selftests lkdtm HARDLOCKUP.sh # SKIP
-selftests: lkdtm_HARDLOCKUP.sh [SKIP]
-# selftests lkdtm SPINLOCKUP.sh
-lkdtm: SPINLOCKUP.sh_ #
-# Skipping SPINLOCKUP Hangs the system
-SPINLOCKUP: Hangs_the #
-[SKIP] 28 selftests lkdtm SPINLOCKUP.sh # SKIP
-selftests: lkdtm_SPINLOCKUP.sh [SKIP]
-# selftests lkdtm HUNG_TASK.sh
-lkdtm: HUNG_TASK.sh_ #
-# Skipping HUNG_TASK Hangs the system
-HUNG_TASK: Hangs_the #
-[SKIP] 29 selftests lkdtm HUNG_TASK.sh # SKIP
-selftests: lkdtm_HUNG_TASK.sh [SKIP]
-# selftests lkdtm EXEC_DATA.sh
-lkdtm: EXEC_DATA.sh_ #
-# EXEC_DATA missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 30 selftests lkdtm EXEC_DATA.sh # exit=1
-selftests: lkdtm_EXEC_DATA.sh [FAIL]
-# selftests lkdtm EXEC_STACK.sh
-lkdtm: EXEC_STACK.sh_ #
-# EXEC_STACK missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 31 selftests lkdtm EXEC_STACK.sh # exit=1
-selftests: lkdtm_EXEC_STACK.sh [FAIL]
-# selftests lkdtm EXEC_KMALLOC.sh
-lkdtm: EXEC_KMALLOC.sh_ #
-# EXEC_KMALLOC missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 32 selftests lkdtm EXEC_KMALLOC.sh # exit=1
-selftests: lkdtm_EXEC_KMALLOC.sh [FAIL]
-# selftests lkdtm EXEC_VMALLOC.sh
-lkdtm: EXEC_VMALLOC.sh_ #
-# EXEC_VMALLOC missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 33 selftests lkdtm EXEC_VMALLOC.sh # exit=1
-selftests: lkdtm_EXEC_VMALLOC.sh [FAIL]
-# selftests lkdtm EXEC_RODATA.sh
-lkdtm: EXEC_RODATA.sh_ #
-# EXEC_RODATA missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 34 selftests lkdtm EXEC_RODATA.sh # exit=1
-selftests: lkdtm_EXEC_RODATA.sh [FAIL]
-# selftests lkdtm EXEC_USERSPACE.sh
-lkdtm: EXEC_USERSPACE.sh_ #
-# EXEC_USERSPACE missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 35 selftests lkdtm EXEC_USERSPACE.sh # exit=1
-selftests: lkdtm_EXEC_USERSPACE.sh [FAIL]
-# selftests lkdtm EXEC_NULL.sh
-lkdtm: EXEC_NULL.sh_ #
-# EXEC_NULL missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 36 selftests lkdtm EXEC_NULL.sh # exit=1
-selftests: lkdtm_EXEC_NULL.sh [FAIL]
-# selftests lkdtm ACCESS_USERSPACE.sh
-lkdtm: ACCESS_USERSPACE.sh_ #
-# ACCESS_USERSPACE missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 37 selftests lkdtm ACCESS_USERSPACE.sh # exit=1
-selftests: lkdtm_ACCESS_USERSPACE.sh [FAIL]
-# selftests lkdtm ACCESS_NULL.sh
-lkdtm: ACCESS_NULL.sh_ #
-# ACCESS_NULL missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 38 selftests lkdtm ACCESS_NULL.sh # exit=1
-selftests: lkdtm_ACCESS_NULL.sh [FAIL]
-# selftests lkdtm WRITE_RO.sh
-lkdtm: WRITE_RO.sh_ #
-# WRITE_RO missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 39 selftests lkdtm WRITE_RO.sh # exit=1
-selftests: lkdtm_WRITE_RO.sh [FAIL]
-# selftests lkdtm WRITE_RO_AFTER_INIT.sh
-lkdtm: WRITE_RO_AFTER_INIT.sh_ #
-# WRITE_RO_AFTER_INIT missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 40 selftests lkdtm WRITE_RO_AFTER_INIT.sh # exit=1
-selftests: lkdtm_WRITE_RO_AFTER_INIT.sh [FAIL]
-# selftests lkdtm WRITE_KERN.sh
-lkdtm: WRITE_KERN.sh_ #
-# WRITE_KERN missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 41 selftests lkdtm WRITE_KERN.sh # exit=1
-selftests: lkdtm_WRITE_KERN.sh [FAIL]
-# selftests lkdtm REFCOUNT_INC_OVERFLOW.sh
-lkdtm: REFCOUNT_INC_OVERFLOW.sh_ #
-# REFCOUNT_INC_OVERFLOW missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 42 selftests lkdtm REFCOUNT_INC_OVERFLOW.sh # exit=1
-selftests: lkdtm_REFCOUNT_INC_OVERFLOW.sh [FAIL]
-# selftests lkdtm REFCOUNT_ADD_OVERFLOW.sh
-lkdtm: REFCOUNT_ADD_OVERFLOW.sh_ #
-# REFCOUNT_ADD_OVERFLOW missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 43 selftests lkdtm REFCOUNT_ADD_OVERFLOW.sh # exit=1
-selftests: lkdtm_REFCOUNT_ADD_OVERFLOW.sh [FAIL]
-# selftests lkdtm REFCOUNT_INC_NOT_ZERO_OVERFLOW.sh
-lkdtm: REFCOUNT_INC_NOT_ZERO_OVERFLOW.sh_ #
-# REFCOUNT_INC_NOT_ZERO_OVERFLOW missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 44 selftests lkdtm REFCOUNT_INC_NOT_ZERO_OVERFLOW.sh # exit=1
-selftests: lkdtm_REFCOUNT_INC_NOT_ZERO_OVERFLOW.sh [FAIL]
-# selftests lkdtm REFCOUNT_ADD_NOT_ZERO_OVERFLOW.sh
-lkdtm: REFCOUNT_ADD_NOT_ZERO_OVERFLOW.sh_ #
-# REFCOUNT_ADD_NOT_ZERO_OVERFLOW missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 45 selftests lkdtm REFCOUNT_ADD_NOT_ZERO_OVERFLOW.sh # exit=1
-selftests: lkdtm_REFCOUNT_ADD_NOT_ZERO_OVERFLOW.sh [FAIL]
-# selftests lkdtm REFCOUNT_DEC_ZERO.sh
-lkdtm: REFCOUNT_DEC_ZERO.sh_ #
-# REFCOUNT_DEC_ZERO missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 46 selftests lkdtm REFCOUNT_DEC_ZERO.sh # exit=1
-selftests: lkdtm_REFCOUNT_DEC_ZERO.sh [FAIL]
-# selftests lkdtm REFCOUNT_DEC_NEGATIVE.sh
-lkdtm: REFCOUNT_DEC_NEGATIVE.sh_ #
-# REFCOUNT_DEC_NEGATIVE missing 'Negative detected saturated' [FAIL]
-missing: 'Negative_detected #
-[FAIL] 47 selftests lkdtm REFCOUNT_DEC_NEGATIVE.sh # exit=1
-selftests: lkdtm_REFCOUNT_DEC_NEGATIVE.sh [FAIL]
-# selftests lkdtm REFCOUNT_DEC_AND_TEST_NEGATIVE.sh
-lkdtm: REFCOUNT_DEC_AND_TEST_NEGATIVE.sh_ #
-# REFCOUNT_DEC_AND_TEST_NEGATIVE missing 'Negative detected saturated' [FAIL]
-missing: 'Negative_detected #
-[  360.222897] kselftest: Running tests in membarrier
-[FAIL] 48 selftests lkdtm REFCOUNT_DEC_AND_TEST_NEGATIVE.sh # exit=1
-selftests: lkdtm_REFCOUNT_DEC_AND_TEST_NEGATIVE.sh [FAIL]
-# selftests lkdtm REFCOUNT_SUB_AND_TEST_NEGATIVE.sh
-lkdtm: REFCOUNT_SUB_AND_TEST_NEGATIVE.sh_ [  360.455095] kselftest:
-Running tests in memfd
-#
-# REFCOUNT_SUB_AND_TEST_NEGATIVE missing 'Negative detected saturated' [FAIL]
-missing: 'Negative_detected #
-[FAIL] 49 selftests lkdtm REFCOUNT_SUB_AND_TEST_NEGATIVE.sh # exit=1
-selftests: lkdtm_REFCOUNT_SUB_AND_TEST_NEGATIVE.sh [FAIL]
-# selftests lkdtm REFCOUNT_INC_ZERO.sh
-lkdtm: REFCOUNT_INC_ZERO.sh_ #
-# REFCOUNT_INC_ZERO missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 50 selftests lkdtm REFCOUNT_INC_ZERO.sh # exit=1
-selftests: lkdtm_REFCOUNT_INC_ZERO.sh [FAIL]
-# selftests lkdtm REFCOUNT_ADD_ZERO.sh
-lkdtm: REFCOUNT_ADD_ZERO.sh_ #
-# REFCOUNT_ADD_ZERO missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 51 selftests lkdtm REFCOUNT_ADD_ZERO.sh # exit=1
-selftests: lkdtm_REFCOUNT_ADD_ZERO.sh [FAIL]
-# selftests lkdtm REFCOUNT_INC_SATURATED.sh
-lkdtm: REFCOUNT_INC_SATURATED.sh_ #
-# REFCOUNT_INC_SATURATED missing 'Saturation detected still saturated' [FAIL]
-missing: 'Saturation_detected #
-[FAIL] 52 selftests lkdtm REFCOUNT_INC_SATURATED.sh # exit=1
-selftests: lkdtm_REFCOUNT_INC_SATURATED.sh [FAIL]
-# selftests lkdtm REFCOUNT_DEC_SATURATED.sh
-lkdtm: REFCOUNT_DEC_SATURATED.sh_ #
-# REFCOUNT_DEC_SATURATED missing 'Saturation detected still saturated' [FAIL]
-missing: 'Saturation_detected #
-[FAIL] 53 selftests lkdtm REFCOUNT_DEC_SATURATED.sh # exit=1
-selftests: lkdtm_REFCOUNT_DEC_SATURATED.sh [FAIL]
-# selftests lkdtm REFCOUNT_ADD_SATURATED.sh
-lkdtm: REFCOUNT_ADD_SATURATED.sh_ #
-# REFCOUNT_ADD_SATURATED missing 'Saturation detected still saturated' [FAIL]
-missing: 'Saturation_detected #
-[FAIL] 54 selftests lkdtm REFCOUNT_ADD_SATURATED.sh # exit=1
-selftests: lkdtm_REFCOUNT_ADD_SATURATED.sh [FAIL]
-# selftests lkdtm REFCOUNT_INC_NOT_ZERO_SATURATED.sh
-lkdtm: REFCOUNT_INC_NOT_ZERO_SATURATED.sh_ #
-# REFCOUNT_INC_NOT_ZERO_SATURATED missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 55 selftests lkdtm REFCOUNT_INC_NOT_ZERO_SATURATED.sh # exit=1
-selftests: lkdtm_REFCOUNT_INC_NOT_ZERO_SATURATED.sh [FAIL]
-# selftests lkdtm REFCOUNT_ADD_NOT_ZERO_SATURATED.sh
-lkdtm: REFCOUNT_ADD_NOT_ZERO_SATURATED.sh_ #
-# REFCOUNT_ADD_NOT_ZERO_SATURATED missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 56 selftests lkdtm REFCOUNT_ADD_NOT_ZERO_SATURATED.sh # exit=1
-selftests: lkdtm_REFCOUNT_ADD_NOT_ZERO_SATURATED.sh [FAIL]
-# selftests lkdtm REFCOUNT_DEC_AND_TEST_SATURATED.sh
-lkdtm: REFCOUNT_DEC_AND_TEST_SATURATED.sh_ #
-# REFCOUNT_DEC_AND_TEST_SATURATED missing 'Saturation detected still
-saturated' [FAIL]
-missing: 'Saturation_detected #
-[FAIL] 57 selftests lkdtm REFCOUNT_DEC_AND_TEST_SATURATED.sh # exit=1
-selftests: lkdtm_REFCOUNT_DEC_AND_TEST_SATURATED.sh [FAIL]
-# selftests lkdtm REFCOUNT_SUB_AND_TEST_SATURATED.sh
-lkdtm: REFCOUNT_SUB_AND_TEST_SATURATED.sh_ #
-# REFCOUNT_SUB_AND_TEST_SATURATED missing 'Saturation detected still
-saturated' [FAIL]
-missing: 'Saturation_detected #
-[FAIL] 58 selftests lkdtm REFCOUNT_SUB_AND_TEST_SATURATED.sh # exit=1
-selftests: lkdtm_REFCOUNT_SUB_AND_TEST_SATURATED.sh [FAIL]
-# selftests lkdtm REFCOUNT_TIMING.sh
-lkdtm: REFCOUNT_TIMING.sh_ #
-# Skipping REFCOUNT_TIMING timing only
-REFCOUNT_TIMING: timing_only #
-[SKIP] 59 selftests lkdtm REFCOUNT_TIMING.sh # SKIP
-selftests: lkdtm_REFCOUNT_TIMING.sh [SKIP]
-# selftests lkdtm ATOMIC_TIMING.sh
-lkdtm: ATOMIC_TIMING.sh_ #
-# Skipping ATOMIC_TIMING timing only
-ATOMIC_TIMING: timing_only #
-[SKIP] 60 selftests lkdtm ATOMIC_TIMING.sh # SKIP
-selftests: lkdtm_ATOMIC_TIMING.sh [SKIP]
-# selftests lkdtm USERCOPY_HEAP_SIZE_TO.sh
-lkdtm: USERCOPY_HEAP_SIZE_TO.sh_ #
-# USERCOPY_HEAP_SIZE_TO missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 61 selftests lkdtm USERCOPY_HEAP_SIZE_TO.sh # exit=1
-selftests: lkdtm_USERCOPY_HEAP_SIZE_TO.sh [FAIL]
-# selftests lkdtm USERCOPY_HEAP_SIZE_FROM.sh
-lkdtm: USERCOPY_HEAP_SIZE_FROM.sh_ #
-# USERCOPY_HEAP_SIZE_FROM missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 62 selftests lkdtm USERCOPY_HEAP_SIZE_FROM.sh # exit=1
-selftests: lkdtm_USERCOPY_HEAP_SIZE_FROM.sh [FAIL]
-# selftests lkdtm USERCOPY_HEAP_WHITELIST_TO.sh
-lkdtm: USERCOPY_HEAP_WHITELIST_TO.sh_ #
-# USERCOPY_HEAP_WHITELIST_TO missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 63 selftests lkdtm USERCOPY_HEAP_WHITELIST_TO.sh # exit=1
-selftests: lkdtm_USERCOPY_HEAP_WHITELIST_TO.sh [FAIL]
-# selftests lkdtm USERCOPY_HEAP_WHITELIST_FROM.sh
-lkdtm: USERCOPY_HEAP_WHITELIST_FROM.sh_ #
-# USERCOPY_HEAP_WHITELIST_FROM missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 64 selftests lkdtm USERCOPY_HEAP_WHITELIST_FROM.sh # exit=1
-selftests: lkdtm_USERCOPY_HEAP_WHITELIST_FROM.sh [FAIL]
-# selftests lkdtm USERCOPY_STACK_FRAME_TO.sh
-lkdtm: USERCOPY_STACK_FRAME_TO.sh_ #
-# USERCOPY_STACK_FRAME_TO missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 65 selftests lkdtm USERCOPY_STACK_FRAME_TO.sh # exit=1
-selftests: lkdtm_USERCOPY_STACK_FRAME_TO.sh [FAIL]
-# selftests lkdtm USERCOPY_STACK_FRAME_FROM.sh
-lkdtm: USERCOPY_STACK_FRAME_FROM.sh_ #
-# USERCOPY_STACK_FRAME_FROM missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 66 selftests lkdtm USERCOPY_STACK_FRAME_FROM.sh # exit=1
-selftests: lkdtm_USERCOPY_STACK_FRAME_FROM.sh [FAIL]
-# selftests lkdtm USERCOPY_STACK_BEYOND.sh
-lkdtm: USERCOPY_STACK_BEYOND.sh_ #
-# USERCOPY_STACK_BEYOND missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 67 selftests lkdtm USERCOPY_STACK_BEYOND.sh # exit=1
-selftests: lkdtm_USERCOPY_STACK_BEYOND.sh [FAIL]
-# selftests lkdtm USERCOPY_KERNEL.sh
-lkdtm: USERCOPY_KERNEL.sh_ #
-# USERCOPY_KERNEL missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 68 selftests lkdtm USERCOPY_KERNEL.sh # exit=1
-selftests: lkdtm_USERCOPY_KERNEL.sh [FAIL]
-# selftests lkdtm USERCOPY_KERNEL_DS.sh
-lkdtm: USERCOPY_KERNEL_DS.sh_ #
-# USERCOPY_KERNEL_DS missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 69 selftests lkdtm USERCOPY_KERNEL_DS.sh # exit=1
-selftests: lkdtm_USERCOPY_KERNEL_DS.sh [FAIL]
-# selftests lkdtm STACKLEAK_ERASING.sh
-lkdtm: STACKLEAK_ERASING.sh_ #
-# STACKLEAK_ERASING missing 'OK the rest of the thread stack is
-properly erased' [FAIL]
-missing: 'OK_the #
-[FAIL] 70 selftests lkdtm STACKLEAK_ERASING.sh # exit=1
-selftests: lkdtm_STACKLEAK_ERASING.sh [FAIL]
-# selftests lkdtm CFI_FORWARD_PROTO.sh
-lkdtm: CFI_FORWARD_PROTO.sh_ #
-# CFI_FORWARD_PROTO missing 'call trace' [FAIL]
-missing: 'call_trace' #
-[FAIL] 71 selftests lkdtm CFI_FORWARD_PROTO.sh # exit=1
-selftests: lkdtm_CFI_FORWARD_PROTO.sh [FAIL]
+Reviewed-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 
-ref:
-https://qa-reports.linaro.org/lkft/linux-mainline-oe/build/v5.6-rc1-19-g359c92c02bfa/testrun/1212254/log
-https://qa-reports.linaro.org/lkft/linux-mainline-oe/build/v5.5-11440-gd1ea35f4cdd4/testrun/1202720/log
+[...]
 
---
-Linaro LKFT
-https://lkft.linaro.org
+--=20
+Regards,
+Vincenzo
+
+--------------D261C3FC90278C8931FDF21E
+Content-Type: application/pgp-keys;
+ name="pEpkey.asc"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: attachment;
+ filename="pEpkey.asc"
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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
+OYXvLNoskiekAsw77EBPeBrrsMg88G/AtWUvyT3i2x0mIlbTDESk0WiL2ksdzcRW
+AtZuC/55Ix7zMb0NrMC0eaLaP93+FSAnTiX7kUMQSbz9iAHak4xbzJNEg4+fNh63
+vFvWNazfnnSKXMlZ0exYWZGUswxdqsg/p+zRcFwrKp2IrLxMXBTRMB5Pdtr9PvOI
+TFa3jV1SfFp6CUCY1yOBG3Jvwxx7yUTis4Ap3qaTy0uQNgHbXvlP5CW0xL5GpBw0
+W6gUwBeHtnquzJwO203qds37uq3V+U2jR4Zs0KcTBFpMRPBX+kwm2gwR8tkRpqtQ
+zMgwjvz9VM+1pUoufUG3Gy/UBZRCamw84zKxkZS5/yIWQiTm7IMPUofgMe6P8Zk0
+1pyna1ld4iURBrXlpfUaOn3sjmt6C2WOmud+WJMBeYmJHAF0Th0GQ0uijxM6sEGV
+/8FYGnjWs8pFYNM4NcKJAjMEEAEKAB0WIQSf1RxT4LVjGP2VnD0j0NC60T16QwUC
+XW0xNgAKCRAj0NC60T16Q/TDEADEKTdkGD+bR752abN0raUI6UZwH1D2sXIwiZhE
+ezrwDoIe3ETAsV7Jh05yPOunWTBkDcjd3Xrf0ILwfIa76QWu1599AXl4nR62IBzM
+4gkRcdNV5lzRrBLkG/e6drB36DTATUxgmDy6fCEjuhSMfHApi/9k1CcU/h+tCEES
+sA/aS8TRbWbxSZb6MgUI1gNrAKzyEs/L8imvPbKR0JNc7IaK9oYSkhM4CXb6c+cx
+/iNehNegf2LaOBBvmjbHXsT8HEnqU3QWSiV3JXDjZCvwkXOD4uJGbbGNpWj0/EJj
+WC1c6FmzcXXq/6cnHNC6FlR0i8Au0eNEgDOUWPPL9hGv0Co3mT4++9QJwVtMY995
+/DKBdgVFlvZ9w3RwUjKkzCQV6AsI3dTS3c7YEE/rjdQacZ28X5hJ3ySHYoMuQktI
+72LluzC3YsHdfpgt4O6rtn1AE+oyVPRT2/3A8Axnd3PPEabIi4g2ROcU4fYjISh5
+iP3hrl7F7jPe05NdfJ/Rn4dSWdrapdzbnuDY4wV9dTCVjXYHZLGeFc0TeamafUJQ
+HOswZSorU2wt94/HGLb+Ps9PMpO1YD+TGwGWnJoGRwrXCpuxxDUB63twLyHU+zq6
+PSq0MMza6Ssq5qHT96xbyED+MDJER5Lbtc7bTPbeb1xKzwlrUHHDYXOkrT1rpV13
+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
+GrFxzNOCDuNG1w=3D=3D
+=3DVSiF
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------D261C3FC90278C8931FDF21E--
