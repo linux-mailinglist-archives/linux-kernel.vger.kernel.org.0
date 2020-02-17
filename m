@@ -2,176 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9503D161DF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 00:46:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE998161E04
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 00:47:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726108AbgBQXpy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 18:45:54 -0500
-Received: from foss.arm.com ([217.140.110.172]:42850 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725987AbgBQXpy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 18:45:54 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A7A3F30E;
-        Mon, 17 Feb 2020 15:45:53 -0800 (PST)
-Received: from e107158-lin (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 551EA3F703;
-        Mon, 17 Feb 2020 15:45:52 -0800 (PST)
-Date:   Mon, 17 Feb 2020 23:45:49 +0000
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] sched/rt: cpupri_find: implement fallback mechanism
- for !fit case
-Message-ID: <20200217234549.rpv3ns7bd7l6twqu@e107158-lin>
-References: <20200214163949.27850-1-qais.yousef@arm.com>
- <20200214163949.27850-2-qais.yousef@arm.com>
- <c0772fca-0a4b-c88d-fdf2-5715fcf8447b@arm.com>
+        id S1726427AbgBQXrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 18:47:06 -0500
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:48784 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726240AbgBQXrE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 18:47:04 -0500
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 292FD8011F;
+        Tue, 18 Feb 2020 12:47:00 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1581983220;
+        bh=0R6R7PVq0Qu2V5eKj0tD6Mbe1Yvls1XnEy30npEBeps=;
+        h=From:To:Cc:Subject:Date;
+        b=xogI8KfrGDK8zkp0K0f1Lz1oGY4wIMBDRNbv74vN6Jx3ZMawiQjJ/kxEc86K5IUKO
+         xDtMZ5x4qabQQfzH2TdcPi88HFzjAgY7KFska7D1o2SBgY+NVkMSwwOUqZ4jVWOJSr
+         bk21ytfJqeXyazCq3WMpK/KEdp+dx2RZVV8R/QAx0XYd49I5i5IRx+m4CHWMyJuicJ
+         tsFo9RwqH/4ow3dsKLuIGrrpuPIn8hk6TC0/U0h49ORT0mKGVOg/5N5BFIWvMyb5my
+         AZ8tY4vVpv/lLvQk//ok5jHW8pcL+r2/8X5FYfB3VYFuH5lGGzUjdNSK+UyCpvdUU2
+         4+5t2N3miGqXw==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5e4b25f30000>; Tue, 18 Feb 2020 12:46:59 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.20])
+        by smtp (Postfix) with ESMTP id 5969713EED4;
+        Tue, 18 Feb 2020 12:46:59 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id C66B728006C; Tue, 18 Feb 2020 12:46:59 +1300 (NZDT)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     jdelvare@suse.com, linux@roeck-us.net, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     logan.shaw@alliedtelesis.co.nz, linux-hwmon@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH 0/5] hwmon: (adt7475) attenuator bypass and pwm invert
+Date:   Tue, 18 Feb 2020 12:46:52 +1300
+Message-Id: <20200217234657.9413-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c0772fca-0a4b-c88d-fdf2-5715fcf8447b@arm.com>
-User-Agent: NeoMutt/20171215
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/17/20 20:09, Dietmar Eggemann wrote:
-> On 14/02/2020 17:39, Qais Yousef wrote:
-> 
-> [...]
-> 
-> >  /**
-> >   * cpupri_find - find the best (lowest-pri) CPU in the system
-> >   * @cp: The cpupri context
-> > @@ -62,80 +115,72 @@ int cpupri_find(struct cpupri *cp, struct task_struct *p,
-> >  		struct cpumask *lowest_mask,
-> >  		bool (*fitness_fn)(struct task_struct *p, int cpu))
-> >  {
-> > -	int idx = 0;
-> >  	int task_pri = convert_prio(p->prio);
-> > +	int best_unfit_idx = -1;
-> > +	int idx = 0, cpu;
-> >  
-> >  	BUG_ON(task_pri >= CPUPRI_NR_PRIORITIES);
-> >  
-> >  	for (idx = 0; idx < task_pri; idx++) {
-> > -		struct cpupri_vec *vec  = &cp->pri_to_cpu[idx];
-> > -		int skip = 0;
-> >  
-> > -		if (!atomic_read(&(vec)->count))
-> > -			skip = 1;
-> > -		/*
-> > -		 * When looking at the vector, we need to read the counter,
-> > -		 * do a memory barrier, then read the mask.
-> > -		 *
-> > -		 * Note: This is still all racey, but we can deal with it.
-> > -		 *  Ideally, we only want to look at masks that are set.
-> > -		 *
-> > -		 *  If a mask is not set, then the only thing wrong is that we
-> > -		 *  did a little more work than necessary.
-> > -		 *
-> > -		 *  If we read a zero count but the mask is set, because of the
-> > -		 *  memory barriers, that can only happen when the highest prio
-> > -		 *  task for a run queue has left the run queue, in which case,
-> > -		 *  it will be followed by a pull. If the task we are processing
-> > -		 *  fails to find a proper place to go, that pull request will
-> > -		 *  pull this task if the run queue is running at a lower
-> > -		 *  priority.
-> > -		 */
-> > -		smp_rmb();
-> > -
-> > -		/* Need to do the rmb for every iteration */
-> > -		if (skip)
-> > -			continue;
-> > -
-> > -		if (cpumask_any_and(p->cpus_ptr, vec->mask) >= nr_cpu_ids)
-> > +		if (!__cpupri_find(cp, p, lowest_mask, idx))
-> >  			continue;
-> >  
-> > -		if (lowest_mask) {
-> > -			int cpu;
-> 
-> Shouldn't we add an extra condition here?
-> 
-> +               if (!static_branch_unlikely(&sched_asym_cpucapacity))
-> +                       return 1;
-> +
-> 
-> Otherwise non-heterogeneous systems have to got through this
-> for_each_cpu(cpu, lowest_mask) further below for no good reason.
+I've picked up Logan's changes[1] and am combining them with an old serie=
+s of
+mine[2] to hopefully get them both over the line.
 
-Hmm below is the best solution I can think of at the moment. Works for you?
+This series updates the binding documentation for the adt7475 and adds tw=
+o new
+sets of properties.
 
-It's independent of what this patch tries to fix, so I'll add as a separate
-patch to the series in the next update.
+[1] - https://lore.kernel.org/linux-hwmon/20191219033213.30364-1-logan.sh=
+aw@alliedtelesis.co.nz/
+[2] - https://lore.kernel.org/linux-hwmon/20181107040010.27436-1-chris.pa=
+ckham@alliedtelesis.co.nz/
 
-Thanks
+Chris Packham (2):
+  dt-bindings: hwmon: Document adt7475 invert-pwm property
+  hwmon: (adt7475) Add support for inverting pwm output
 
---
-Qais Yousef
+Logan Shaw (3):
+  dt-bindings: hwmon: Document adt7475 binding
+  dt-bindings: hwmon: Document adt7475 bypass-attenuator property
+  hwmon: (adt7475) Add attenuator bypass support
 
----
+ .../devicetree/bindings/hwmon/adt7475.yaml    |  82 ++++++++++++++
+ .../devicetree/bindings/trivial-devices.yaml  |   8 --
+ drivers/hwmon/adt7475.c                       | 100 +++++++++++++++++-
+ 3 files changed, 179 insertions(+), 11 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/adt7475.yaml
 
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 5ea235f2cfe8..5f2eaf3affde 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -14,6 +14,8 @@ static int do_sched_rt_period_timer(struct rt_bandwidth *rt_b, int overrun);
+--=20
+2.25.0
 
- struct rt_bandwidth def_rt_bandwidth;
-
-+typedef bool (*fitness_fn_t)(struct task_struct *p, int cpu);
-+
- static enum hrtimer_restart sched_rt_period_timer(struct hrtimer *timer)
- {
-        struct rt_bandwidth *rt_b =
-@@ -1708,6 +1710,7 @@ static int find_lowest_rq(struct task_struct *task)
-        struct cpumask *lowest_mask = this_cpu_cpumask_var_ptr(local_cpu_mask);
-        int this_cpu = smp_processor_id();
-        int cpu      = task_cpu(task);
-+       fitness_fn_t fitness_fn;
-
-        /* Make sure the mask is initialized first */
-        if (unlikely(!lowest_mask))
-@@ -1716,8 +1719,17 @@ static int find_lowest_rq(struct task_struct *task)
-        if (task->nr_cpus_allowed == 1)
-                return -1; /* No other targets possible */
-
-+       /*
-+        * Help cpupri_find avoid the cost of looking for a fitting CPU when
-+        * not really needed.
-+        */
-+       if (static_branch_unlikely(&sched_asym_cpucapacity))
-+               fitness_fn = rt_task_fits_capacity;
-+       else
-+               fitness_fn = NULL;
-+
-        if (!cpupri_find(&task_rq(task)->rd->cpupri, task, lowest_mask,
--                        rt_task_fits_capacity))
-+                        fitness_fn))
-                return -1; /* No targets found */
-
-        /*
-
-
-> 
-> > +		if (!lowest_mask || !fitness_fn)
-> > +			return 1;
-> >  
-> > -			cpumask_and(lowest_mask, p->cpus_ptr, vec->mask);
-> > +		/* Ensure the capacity of the CPUs fit the task */
-> > +		for_each_cpu(cpu, lowest_mask) {
-> > +			if (!fitness_fn(p, cpu))
-> > +				cpumask_clear_cpu(cpu, lowest_mask);
-> > +		}
-> 
-> [...]
