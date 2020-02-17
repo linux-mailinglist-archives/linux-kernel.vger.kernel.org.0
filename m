@@ -2,173 +2,225 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D3A51612EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 14:16:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFB0D16130C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 14:16:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729128AbgBQNPQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 08:15:16 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46243 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729043AbgBQNPM (ORCPT
+        id S1729324AbgBQNQB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 08:16:01 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:35679 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726779AbgBQNQA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 08:15:12 -0500
-Received: by mail-wr1-f66.google.com with SMTP id z7so19653058wrl.13
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 05:15:11 -0800 (PST)
+        Mon, 17 Feb 2020 08:16:00 -0500
+Received: by mail-ot1-f66.google.com with SMTP id r16so16042430otd.2;
+        Mon, 17 Feb 2020 05:15:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=drss39w0znhLtWEMxoMFTDQiwBKNc2/yMB0OGM4BPBE=;
-        b=tlefjaaWWdG9709HEt7hX/znNS9f06BoJtUQMXV+DvbSFVfB9w0VsPTQpTO9AkwusO
-         cYgCC65QPxMSAqE/OCeShx1oAnszOJahFgalVSPTikQ3Ok5bVK591WZhjh8R1hHIQExC
-         vJvdziJ++yrH36+IKbWPkzjPHSZ/xbhFPKm+LHfvh+5jiBMl2uDFX19Fc94DPKyq5Ecf
-         FqcTmjbQ+CSQPOJ46p3qQqbQ23NRsxCr87FMK26Rsvvsnr5GEoMOt4GzzBQeEzfcIqAh
-         ZYpQ/ubRB8szSuib819Udar6gAP5TmqJdWOHqmYljkFJ1c6VeHXxAaRZsB+oIh9D9IFe
-         /PeQ==
+         :cc;
+        bh=9L+xGkQdZskmDmVK8EKNQvHsZDgIYop6ATmqu+ddc+g=;
+        b=PnAWHY350QaNmKuFFhoAVSzIc0h+RgcosNi5BhzC9J4EQxoQ32bI0zgLSQ0LqCstEv
+         s7oXUDto8+QWTqDt3XkRgZADOZXW6ve8obI1GWcqEojb6/iDltqh+1DPSewPQsnHYWZQ
+         MKYThuoqE74f16QHhxQFti9QJ21eS3/8DLlo6zIa0BAEwIKrwX+9E47TNuOUgEsQnrh8
+         /sq20etq+JIqTua/AtmEJMBjdHcS/mrnfnVj3uL7VLQcQscuI2iX+UihnIeT2xSJ5520
+         JwuTBC8LP+DP0WLH+ol3khD2KiUnOXwKUKADjFF1o+ceogfrZZT3Bz8aKHbEU0EbdpFM
+         zPUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=drss39w0znhLtWEMxoMFTDQiwBKNc2/yMB0OGM4BPBE=;
-        b=WnEGsZOgKsYWtVv4/PYisberb0sOQl9pYQgpbHrfq636MWSripgnvVVXmx9LwbfNWK
-         M7bqojahIKPPjXz90EpcwwZf8E0/9Twyne0dhyJsaXvVixzRcH7YRmo2mlSAA80IG+4K
-         xMcl3aDtBMvV0JoKvGA+Vou84VNAEDQyBm3VN7fTFMRfWW/DI0ZWTLSTAorpcIpPANFJ
-         19VMq7B07JvjMQpITRKkQ4Ak2YcM+a0Gwl9kFpXOtffPQy0CcBNK6+iCDlquhatoOY1N
-         0uL1nhicMuO+uH+Xc6W/rm7/KlsHzdwfLhTUW0XBmcc4lEQnaqUfmaVaLytHYUlbFRX1
-         RFBQ==
-X-Gm-Message-State: APjAAAXdWvMRTFL6zSHArbBZKq96981H8cIU89TRVC+UbIkjPFTzXV/u
-        wZ3fsTfvAaGgnEr3cQqAB+0CVvWMTfLJvEkPyhbe0GlEd4A=
-X-Google-Smtp-Source: APXvYqxej90xsjchpzV4UDgecT0jeLmM99BF9yJ9BtoVfchl2OABBjKypdZ5nHop/NJ9drP294akxGMbMC/cIwVKEJk=
-X-Received: by 2002:adf:f401:: with SMTP id g1mr21799460wro.129.1581945310491;
- Mon, 17 Feb 2020 05:15:10 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=9L+xGkQdZskmDmVK8EKNQvHsZDgIYop6ATmqu+ddc+g=;
+        b=MaN/Td2JEH4x6A2AMqmRNwgaZAb17NN0KPhiA3JcaAMFKSUh9mIgT2bgI1ntv/NUIG
+         eL3JeqlEC6At4uTIlIqpnk92iExMj984gFSTD8VAk9qQmE9QqvGA3+mewPZdHmDT+PuS
+         r4H/xQz4IpOE5Dys7/+0QdJHTAaIzdC0uTiEnMfetq3oL/YDB9S2fxrXYtjK7LTOpd8k
+         MvMPfbs8rZ3SfiEdxgEBbZvFk750gOgpYxT7fz8dQb0CJn6kqkfE/tgQD+03VVNoAuhU
+         LCZaYJlNecZ6VplTmDmc/WykuzYwAQDbQJDckXzQ3FcgSDeoY3Rr/z1Et+cIOeYcnhM+
+         pxHw==
+X-Gm-Message-State: APjAAAWmCSRcr/HJyO1yKpwXCqyYm7ykvmqlCO/0G40ryp3P4dKdp8oj
+        /H6ELFC6cycPdeQJJMRWbl3BJsjwbrvPH0Hkatw=
+X-Google-Smtp-Source: APXvYqz+LmHgmc5fI/HHeeGukyXH2hP16gHVdtW8CTvtEdHY+pJIsV7t/B9I2jzRptznDsmHLuyCUZo/NGcFMOrWSkk=
+X-Received: by 2002:a9d:7653:: with SMTP id o19mr11658462otl.118.1581945359278;
+ Mon, 17 Feb 2020 05:15:59 -0800 (PST)
 MIME-Version: 1.0
-References: <20200107092922.18408-1-ktouil@baylibre.com> <20200107092922.18408-3-ktouil@baylibre.com>
- <CAMuHMdVv+FRnf6fvjEeu50W5PB-Gh2V8Th1h__vt6guMwk2xNQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdVv+FRnf6fvjEeu50W5PB-Gh2V8Th1h__vt6guMwk2xNQ@mail.gmail.com>
-From:   Khouloud Touil <ktouil@baylibre.com>
-Date:   Mon, 17 Feb 2020 14:14:59 +0100
-Message-ID: <CALL1Z1z4450depX-X5VC=r3J7fRkTCkFP5re_ULHiS6O1KQ3rA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/5] nvmem: add support for the write-protect pin
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        baylibre-upstreaming@groups.io,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
+References: <CANRm+CxGOeGQ0vV9ueBgjUDvkzH29EQWLe4GQGDvOhm3idM6NQ@mail.gmail.com>
+ <871rqtbcve.fsf@vitty.brq.redhat.com>
+In-Reply-To: <871rqtbcve.fsf@vitty.brq.redhat.com>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Mon, 17 Feb 2020 21:15:48 +0800
+Message-ID: <CANRm+Cz_gskKwa0SU0PUhtacj3Ovm_MmBASDJHOECsnYz=jxkg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] KVM: Pre-allocate 1 cpumask variable per cpu for
+ both pv tlb and pv ipis
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le jeu. 30 janv. 2020 =C3=A0 09:06, Geert Uytterhoeven
-<geert@linux-m68k.org> a =C3=A9crit :
+On Mon, 17 Feb 2020 at 20:46, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
 >
-> Hi Khouloud,
+> Wanpeng Li <kernellwp@gmail.com> writes:
 >
-> On Tue, Jan 7, 2020 at 10:30 AM Khouloud Touil <ktouil@baylibre.com> wrot=
-e:
-> > The write-protect pin handling looks like a standard property that
-> > could benefit other users if available in the core nvmem framework.
+> > From: Wanpeng Li <wanpengli@tencent.com>
 > >
-> > Instead of modifying all the memory drivers to check this pin, make
-> > the NVMEM subsystem check if the write-protect GPIO being passed
-> > through the nvmem_config or defined in the device tree and pull it
-> > low whenever writing to the memory.
+> > Nick Desaulniers Reported:
 > >
-> > There was a suggestion for introducing the gpiodesc from pdata, but
-> > as pdata is already removed it could be replaced by adding it to
-> > nvmem_config.
+> >   When building with:
+> >   $ make CC=clang arch/x86/ CFLAGS=-Wframe-larger-than=1000
+> >   The following warning is observed:
+> >   arch/x86/kernel/kvm.c:494:13: warning: stack frame size of 1064 bytes in
+> >   function 'kvm_send_ipi_mask_allbutself' [-Wframe-larger-than=]
+> >   static void kvm_send_ipi_mask_allbutself(const struct cpumask *mask, int
+> >   vector)
+> >               ^
+> >   Debugging with:
+> >   https://github.com/ClangBuiltLinux/frame-larger-than
+> >   via:
+> >   $ python3 frame_larger_than.py arch/x86/kernel/kvm.o \
+> >     kvm_send_ipi_mask_allbutself
+> >   points to the stack allocated `struct cpumask newmask` in
+> >   `kvm_send_ipi_mask_allbutself`. The size of a `struct cpumask` is
+> >   potentially large, as it's CONFIG_NR_CPUS divided by BITS_PER_LONG for
+> >   the target architecture. CONFIG_NR_CPUS for X86_64 can be as high as
+> >   8192, making a single instance of a `struct cpumask` 1024 B.
 > >
-> > Reference: https://lists.96boards.org/pipermail/dev/2018-August/001056.=
-html
+> > This patch fixes it by pre-allocate 1 cpumask variable per cpu and use it for
+> > both pv tlb and pv ipis..
 > >
-> > Signed-off-by: Khouloud Touil <ktouil@baylibre.com>
-> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> > Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->
-> Thanks for your patch!
->
-> > --- a/drivers/nvmem/core.c
-> > +++ b/drivers/nvmem/core.c
-> > @@ -15,6 +15,7 @@
-> >  #include <linux/module.h>
-> >  #include <linux/nvmem-consumer.h>
-> >  #include <linux/nvmem-provider.h>
-> > +#include <linux/gpio/consumer.h>
-> >  #include <linux/of.h>
-> >  #include <linux/slab.h>
-> >  #include "nvmem.h"
-> > @@ -54,8 +55,14 @@ static int nvmem_reg_read(struct nvmem_device *nvmem=
-, unsigned int offset,
-> >  static int nvmem_reg_write(struct nvmem_device *nvmem, unsigned int of=
-fset,
-> >                            void *val, size_t bytes)
-> >  {
-> > -       if (nvmem->reg_write)
-> > -               return nvmem->reg_write(nvmem->priv, offset, val, bytes=
-);
-> > +       int ret;
-> > +
-> > +       if (nvmem->reg_write) {
-> > +               gpiod_set_value_cansleep(nvmem->wp_gpio, 0);
-> > +               ret =3D nvmem->reg_write(nvmem->priv, offset, val, byte=
-s);
-> > +               gpiod_set_value_cansleep(nvmem->wp_gpio, 1);
-> > +               return ret;
-> > +       }
+> > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> > Acked-by: Nick Desaulniers <ndesaulniers@google.com>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Nick Desaulniers <ndesaulniers@google.com>
+> > Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> > ---
+> > v1 -> v2:
+> >  * remove '!alloc' check
+> >  * use new pv check helpers
 > >
-> >         return -EINVAL;
+> >  arch/x86/kernel/kvm.c | 33 +++++++++++++++++++++------------
+> >  1 file changed, 21 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+> > index 76ea8c4..377b224 100644
+> > --- a/arch/x86/kernel/kvm.c
+> > +++ b/arch/x86/kernel/kvm.c
+> > @@ -432,6 +432,8 @@ static bool pv_tlb_flush_supported(void)
+> >          kvm_para_has_feature(KVM_FEATURE_STEAL_TIME));
 > >  }
-> > @@ -338,6 +345,14 @@ struct nvmem_device *nvmem_register(const struct n=
-vmem_config *config)
-> >                 kfree(nvmem);
-> >                 return ERR_PTR(rval);
-> >         }
-> > +       if (config->wp_gpio)
-> > +               nvmem->wp_gpio =3D config->wp_gpio;
-> > +       else
-> > +               nvmem->wp_gpio =3D gpiod_get_optional(config->dev, "wp"=
-,
-> > +                                                   GPIOD_OUT_HIGH);
->
-> Shouldn't this GPIO be released in nvmem_release(), by calling gpiod_put(=
-)?
->
-> Once that's implemented, I assume it will be auto-released on registratio=
-n
-> failure by the call to put_device()?
-
-Hello Geert,
-
-Thanks for your review.
-Yes you are right, I will add that
-
-Khouloud,
->
-> > +       if (IS_ERR(nvmem->wp_gpio))
-> > +               return PTR_ERR(nvmem->wp_gpio);
-> > +
 > >
-> >         kref_init(&nvmem->refcnt);
-> >         INIT_LIST_HEAD(&nvmem->cells);
+> > +static DEFINE_PER_CPU(cpumask_var_t, __pv_cpu_mask);
+> > +
+> >  #ifdef CONFIG_SMP
+> >
+> >  static bool pv_ipi_supported(void)
+> > @@ -510,12 +512,12 @@ static void kvm_send_ipi_mask(const struct
+> > cpumask *mask, int vector)
+> >  static void kvm_send_ipi_mask_allbutself(const struct cpumask *mask,
+> > int vector)
+> >  {
+> >      unsigned int this_cpu = smp_processor_id();
+> > -    struct cpumask new_mask;
+> > +    struct cpumask *new_mask = this_cpu_cpumask_var_ptr(__pv_cpu_mask);
+> >      const struct cpumask *local_mask;
+> >
+> > -    cpumask_copy(&new_mask, mask);
+> > -    cpumask_clear_cpu(this_cpu, &new_mask);
+> > -    local_mask = &new_mask;
+> > +    cpumask_copy(new_mask, mask);
+> > +    cpumask_clear_cpu(this_cpu, new_mask);
+> > +    local_mask = new_mask;
+> >      __send_ipi_mask(local_mask, vector);
+> >  }
+> >
+> > @@ -595,7 +597,6 @@ static void __init kvm_apf_trap_init(void)
+> >      update_intr_gate(X86_TRAP_PF, async_page_fault);
+> >  }
+> >
+> > -static DEFINE_PER_CPU(cpumask_var_t, __pv_tlb_mask);
+> >
+> >  static void kvm_flush_tlb_others(const struct cpumask *cpumask,
+> >              const struct flush_tlb_info *info)
+> > @@ -603,7 +604,7 @@ static void kvm_flush_tlb_others(const struct
+> > cpumask *cpumask,
+> >      u8 state;
+> >      int cpu;
+> >      struct kvm_steal_time *src;
+> > -    struct cpumask *flushmask = this_cpu_cpumask_var_ptr(__pv_tlb_mask);
+> > +    struct cpumask *flushmask = this_cpu_cpumask_var_ptr(__pv_cpu_mask);
+> >
+> >      cpumask_copy(flushmask, cpumask);
+> >      /*
+> > @@ -642,6 +643,7 @@ static void __init kvm_guest_init(void)
+> >      if (pv_tlb_flush_supported()) {
+> >          pv_ops.mmu.flush_tlb_others = kvm_flush_tlb_others;
+> >          pv_ops.mmu.tlb_remove_table = tlb_remove_table;
+> > +        pr_info("KVM setup pv remote TLB flush\n");
 >
-> Gr{oetje,eeting}s,
+> Nit: to be consistent with __send_ipi_mask() the message should be
+> somthing like
 >
->                         Geert
+> "KVM: switch to using PV TLB flush"
+
+There is a lot of native ops we replace by pv ops in kvm.c, I use "KVM
+setup xxx" there, like pv ipis, pv tlb flush, pv sched yield, should
+we keep consistent as before?
+
+    Wanpeng
+
+>
+> >      }
+> >
+> >      if (kvm_para_has_feature(KVM_FEATURE_PV_EOI))
+> > @@ -748,24 +750,31 @@ static __init int activate_jump_labels(void)
+> >  }
+> >  arch_initcall(activate_jump_labels);
+> >
+> > -static __init int kvm_setup_pv_tlb_flush(void)
+> > +static __init int kvm_alloc_cpumask(void)
+> >  {
+> >      int cpu;
+> > +    bool alloc = false;
+> >
+> >      if (!kvm_para_available() || nopv)
+> >          return 0;
+> >
+> > -    if (pv_tlb_flush_supported()) {
+> > +    if (pv_tlb_flush_supported())
+> > +        alloc = true;
+> > +
+> > +#if defined(CONFIG_SMP)
+> > +    if (pv_ipi_supported())
+> > +        alloc = true;
+> > +#endif
+> > +
+> > +    if (alloc)
+> >          for_each_possible_cpu(cpu) {
+> > -            zalloc_cpumask_var_node(per_cpu_ptr(&__pv_tlb_mask, cpu),
+> > +            zalloc_cpumask_var_node(per_cpu_ptr(&__pv_cpu_mask, cpu),
+> >                  GFP_KERNEL, cpu_to_node(cpu));
+> >          }
+> > -        pr_info("KVM setup pv remote TLB flush\n");
+> > -    }
+> >
+> >      return 0;
+> >  }
+> > -arch_initcall(kvm_setup_pv_tlb_flush);
+> > +arch_initcall(kvm_alloc_cpumask);
+> >
+> >  #ifdef CONFIG_PARAVIRT_SPINLOCKS
+> >
+> > --
+> > 2.7.4
+> >
+>
+> Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 >
 > --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
+> Vitaly
 >
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
