@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2725E1608C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 04:26:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7810C1608CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 04:27:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbgBQD0g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 22:26:36 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:48928 "EHLO inva021.nxp.com"
+        id S1727974AbgBQD0j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 22:26:39 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:46074 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726742AbgBQD0g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 22:26:36 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3AE5C201E36;
-        Mon, 17 Feb 2020 04:26:34 +0100 (CET)
+        id S1727078AbgBQD0h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Feb 2020 22:26:37 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B025A1A1F4B;
+        Mon, 17 Feb 2020 04:26:35 +0100 (CET)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 72A7D200EBF;
-        Mon, 17 Feb 2020 04:26:24 +0100 (CET)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id ED05F1A1F30;
+        Mon, 17 Feb 2020 04:26:25 +0100 (CET)
 Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id AC27F402A7;
-        Mon, 17 Feb 2020 11:26:12 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 41A8F402ED;
+        Mon, 17 Feb 2020 11:26:14 +0800 (SGT)
 From:   Joakim Zhang <qiangqing.zhang@nxp.com>
 To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
         mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de
@@ -30,39 +30,40 @@ Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org,
         Joakim Zhang <qiangqing.zhang@nxp.com>
-Subject: [PATCH 0/7] Add FlexCAN support on i.MX8QXP
-Date:   Mon, 17 Feb 2020 11:19:14 +0800
-Message-Id: <1581909561-12058-1-git-send-email-qiangqing.zhang@nxp.com>
+Subject: [PATCH 1/7] firmware: imx: scu-pd: add power domain for I2C and INTMUX in CM40 SS
+Date:   Mon, 17 Feb 2020 11:19:15 +0800
+Message-Id: <1581909561-12058-2-git-send-email-qiangqing.zhang@nxp.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1581909561-12058-1-git-send-email-qiangqing.zhang@nxp.com>
+References: <1581909561-12058-1-git-send-email-qiangqing.zhang@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add FlexCAN support on i.MX8QXP.
+Add power domain for I2C and INTMUX in CM40 SS.
 
-Joakim Zhang (7):
-  firmware: imx: scu-pd: add power domain for I2C and INTMUX in CM40 SS
-  clk: imx8: Add SCU and LPCG clocks for I2C in CM40 SS
-  bindings: clock: imx8qxp: add "fsl,imx8qxp-lpcg-cm40" compatible
-    string
-  clk: imx: imx8qxp: Enable SCU and LPCG clocks for I2C in CM40 SS
-  arch: arm64: dts: imx8qxp: add device node for I2C and INTMUX in CM40
-    SS
-  clk: imx: imx8qxp: add LPCG clock for FlexCAN in ADMA SS
-  arch: arm64: dts: imx8qxp: add device node for CAN in ADMA SS
+Signed-off-by: Joakim Zhang <qiangqing.zhang@nxp.com>
+---
+ drivers/firmware/imx/scu-pd.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- .../bindings/clock/imx8qxp-lpcg.txt           |   1 +
- arch/arm64/boot/dts/freescale/imx8qxp-mek.dts |  74 ++++++++++++
- arch/arm64/boot/dts/freescale/imx8qxp.dtsi    | 106 ++++++++++++++++++
- drivers/clk/imx/clk-imx8qxp-lpcg.c            |  15 +++
- drivers/clk/imx/clk-imx8qxp-lpcg.h            |   3 +
- drivers/clk/imx/clk-imx8qxp.c                 |   4 +
- drivers/firmware/imx/scu-pd.c                 |   4 +
- include/dt-bindings/clock/imx8-clock.h        |  13 ++-
- 8 files changed, 219 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/firmware/imx/scu-pd.c b/drivers/firmware/imx/scu-pd.c
+index b556612207e5..e803dcf60d14 100644
+--- a/drivers/firmware/imx/scu-pd.c
++++ b/drivers/firmware/imx/scu-pd.c
+@@ -158,6 +158,10 @@ static const struct imx_sc_pd_range imx8qxp_scu_pd_ranges[] = {
+ 	/* DC SS */
+ 	{ "dc0", IMX_SC_R_DC_0, 1, false, 0 },
+ 	{ "dc0-pll", IMX_SC_R_DC_0_PLL_0, 2, true, 0 },
++
++	/* CM40 SS */
++	{ "cm40_i2c", IMX_SC_R_M4_0_I2C, 1, 0 },
++	{ "cm40_intmux", IMX_SC_R_M4_0_INTMUX, 1, 0 },
+ };
+ 
+ static const struct imx_sc_pd_soc imx8qxp_scu_pd = {
 -- 
 2.17.1
 
