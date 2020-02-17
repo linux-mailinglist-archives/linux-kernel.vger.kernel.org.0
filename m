@@ -2,50 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AF85161ADE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 19:51:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A766161B08
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 19:51:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730234AbgBQSso (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 13:48:44 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:50272 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729854AbgBQSsl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 13:48:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=CZVbSaaYtwj3qyeImu1P+lH7PMVYW2dlgJQfIOhuLwI=; b=InMWRejZjziZ327gXZfH6Mbvr/
-        C/eVJoLnvVckDeDyzrV7y7TgMN7L2n+c2kuawbG4CvlvTAyha1SY+K1dMvV+M/KVndPm9QVAOhiYo
-        8o2+LVPKCXFmpk2cJIMtPz+PQe7MPFwlTqgCeHeus+DzjLHeMVZ2Zdtsj+MACIwCrSrxvG8dTTtZW
-        IsGstqnGLWUQSUdZyALt6muTXBeoQ265Lj7NA7RwwyS1WYlqOrdhFvczcsXEHghUSOEddnFA/bh3o
-        rlYzYW3LI/v4mBl1+4g7qezJwwaoolJXkQhuMF6EOe7aVsuIM/2l1RZhxe9liukxnsF/LosclOFnG
-        HdvYL2KA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j3lRh-0006jH-1W; Mon, 17 Feb 2020 18:48:41 +0000
-Date:   Mon, 17 Feb 2020 10:48:40 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, ocfs2-devel@oss.oracle.com,
-        linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v6 00/19] Change readahead API
-Message-ID: <20200217184840.GL7778@bombadil.infradead.org>
-References: <20200217184613.19668-1-willy@infradead.org>
+        id S1729606AbgBQSus (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 13:50:48 -0500
+Received: from mga12.intel.com ([192.55.52.136]:64776 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726781AbgBQSur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 13:50:47 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Feb 2020 10:50:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,453,1574150400"; 
+   d="scan'208";a="258347540"
+Received: from aottaski-mobl.ger.corp.intel.com (HELO localhost) ([10.251.85.113])
+  by fmsmga004.fm.intel.com with ESMTP; 17 Feb 2020 10:50:44 -0800
+Date:   Mon, 17 Feb 2020 20:50:44 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        jmorris@namei.org
+Subject: [GIT PULL] tpmdd updates for Linux v5.6-rc3
+Message-ID: <20200217185044.GA7180@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200217184613.19668-1-willy@infradead.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 17, 2020 at 10:45:41AM -0800, Matthew Wilcox wrote:
-> This series adds a readahead address_space operation to eventually
+Two bug fixes.
 
-*sigh*.  Clearly I forgot to rm -rf an earlier version.  Please disregard
-any patches labelled n/16.  I can send a v7 if this is too much hassle.
+/Jarkko
+
+The following changes since commit 11a48a5a18c63fd7621bb050228cebf13566e4d8:
+
+  Linux 5.6-rc2 (2020-02-16 13:16:59 -0800)
+
+are available in the Git repository at:
+
+  git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20200217
+
+for you to fetch changes up to dc10e4181c05a2315ddc375e963b7c763b5ee0df:
+
+  tpm: Initialize crypto_id of allocated_banks to HASH_ALGO__LAST (2020-02-17 20:47:06 +0200)
+
+----------------------------------------------------------------
+tpmdd updates for Linux v5.6-rc3
+
+----------------------------------------------------------------
+Jarkko Sakkinen (1):
+      tpm: Revert tpm_tis_spi_mod.ko to tpm_tis_spi.ko.
+
+Roberto Sassu (1):
+      tpm: Initialize crypto_id of allocated_banks to HASH_ALGO__LAST
+
+ drivers/char/tpm/Makefile                              | 8 +++++---
+ drivers/char/tpm/tpm2-cmd.c                            | 2 ++
+ drivers/char/tpm/{tpm_tis_spi.c => tpm_tis_spi_main.c} | 0
+ 3 files changed, 7 insertions(+), 3 deletions(-)
+ rename drivers/char/tpm/{tpm_tis_spi.c => tpm_tis_spi_main.c} (100%)
