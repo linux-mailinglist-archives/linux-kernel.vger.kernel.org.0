@@ -2,181 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 282D6160DC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 09:49:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06E34160DCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 09:51:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728606AbgBQItu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 03:49:50 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:18362 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728355AbgBQItu (ORCPT
+        id S1728617AbgBQIvm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 03:51:42 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:39678 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728217AbgBQIvl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 03:49:50 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01H8nZFs135725
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 03:49:49 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y6bukxa08-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 03:49:48 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <fbarrat@linux.ibm.com>;
-        Mon, 17 Feb 2020 08:49:46 -0000
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 17 Feb 2020 08:49:42 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01H8mk9O48431508
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Feb 2020 08:48:46 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E48D6AE045;
-        Mon, 17 Feb 2020 08:49:41 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A8A6FAE051;
-        Mon, 17 Feb 2020 08:49:41 +0000 (GMT)
-Received: from pic2.home (unknown [9.145.20.186])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 17 Feb 2020 08:49:41 +0000 (GMT)
-Subject: Re: [PATCH AUTOSEL 5.5 096/542] powerpc/powernv/ioda: Fix ref count
- for devices with their own PE
-To:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Cc:     Andrew Donnellan <ajd@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org
-References: <20200214154854.6746-1-sashal@kernel.org>
- <20200214154854.6746-96-sashal@kernel.org>
-From:   Frederic Barrat <fbarrat@linux.ibm.com>
-Date:   Mon, 17 Feb 2020 09:49:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Mon, 17 Feb 2020 03:51:41 -0500
+Received: by mail-io1-f65.google.com with SMTP id c16so17582228ioh.6;
+        Mon, 17 Feb 2020 00:51:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uHHGohWk9p+/nxk2GPpS7E9E1pqxMJMjyjsNhyVbaiU=;
+        b=FykBzbYJMaN5c0YR2MF11eN63iW/0xfMqkMCO+S5HgLkR7Obiw/ot8yvZ0h49GIxZL
+         S2+l6ayaFj2+5LRym2fXDwxpcqjaElQsUS/UwVeCnhxxXm8EUvPBt6YOb/PtxvOtG0Ny
+         kD0XSHCBlYjcdIV+RbJcHbc6cEEgyGr/F4IZxKK1SNSk0PaWVCtgUP+EUXvPSgFYlTnC
+         Zj30ph73zv2TbaGG1B2sygm90a1s0C5lJlJoNhibYSHoPJSkbE0Xi9OGa13S6xfzY87b
+         HUOk4REAF/Nrz6QKXPhgktczj9FXPVYlo+bSXu/p3aohZPrYogUJznmim5SX21H6LjMm
+         kn4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uHHGohWk9p+/nxk2GPpS7E9E1pqxMJMjyjsNhyVbaiU=;
+        b=ZOkJPxZFKE83ZyGiuRoQPlHaqryz3TIWVKcVqBphPtLIKYF8ubisHoBN+d1qaW9rpC
+         g76//XJ8vvHqikkwQxAbMtbDVsts5Ecibp9b9fAXgeSl3xbLZtwD7OPPstS+s/qFDi5P
+         I0KoS1sCjPqmqTaj3mDqKZjm+YdCE2cMCqBk/I6UXwtXI9Xs80VrweSBnrFp6zFJyzwy
+         DxPEG7ZGPxKO7hxVa2XOT/C6ddnZCH3DPUymJvknsicGEIs3kMLu+5xJsmWKXOvixcKE
+         lI/1P/huP99xyMsS+AL3zwfH4lv6OY06i7O8CU9XCdOkFkR4feFtcdpO9noDpaFg5pvr
+         XjGA==
+X-Gm-Message-State: APjAAAUgY1Cvo5ogopojFesFrduXcnEpRcRWaYRhwzGNkePMK5J1P6ms
+        EPFuV5jWVz1XEzlKEB7dq9u4ZSLZwnoHNJKlilA=
+X-Google-Smtp-Source: APXvYqy5Ao2fzvMvprdx/tvfqqCXbZoPO8C3N/gOUkzZph4zPWsllY1/gyAqJmaFDd+k4b6XjT7ZZp9Nv1LrIGgjhzQ=
+X-Received: by 2002:a5e:aa18:: with SMTP id s24mr10775126ioe.221.1581929499729;
+ Mon, 17 Feb 2020 00:51:39 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200214154854.6746-96-sashal@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20021708-0016-0000-0000-000002E78497
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20021708-0017-0000-0000-0000334A92CE
-Message-Id: <0867167a-73b8-0735-78ce-0d984f7a80b5@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-17_04:2020-02-14,2020-02-17 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- adultscore=0 suspectscore=0 mlxlogscore=761 lowpriorityscore=0
- priorityscore=1501 clxscore=1031 phishscore=0 mlxscore=0 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002170079
+References: <20200216173446.1823-1-linux.amoon@gmail.com> <20200216173446.1823-4-linux.amoon@gmail.com>
+ <1jmu9hzlo2.fsf@starbuckisacylon.baylibre.com>
+In-Reply-To: <1jmu9hzlo2.fsf@starbuckisacylon.baylibre.com>
+From:   Anand Moon <linux.amoon@gmail.com>
+Date:   Mon, 17 Feb 2020 14:21:29 +0530
+Message-ID: <CANAwSgRurj6Mfkqq6OfW_ZORCj_UhQN24kx-tj+sUWfuqn_uoQ@mail.gmail.com>
+Subject: Re: [PATCHv1 3/3] clk: meson: g12a: set cpu clock divider flags too CLK_IS_CRITICAL
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-amlogic@lists.infradead.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jerome,
 
+Thanks for your review comments.
 
-Le 14/02/2020 à 16:41, Sasha Levin a écrit :
-> From: Frederic Barrat <fbarrat@linux.ibm.com>
-> 
-> [ Upstream commit 05dd7da76986937fb288b4213b1fa10dbe0d1b33 ]
+On Mon, 17 Feb 2020 at 13:32, Jerome Brunet <jbrunet@baylibre.com> wrote:
+>
+>
+> On Sun 16 Feb 2020 at 18:34, Anand Moon <linux.amoon@gmail.com> wrote:
+>
+> > Odroid N2 would fail to boot using microSD unless we set
+> > cpu freq clk divider flags to CLK_IS_CRITICAL to avoid stalling of
+> > cpu when booting, most likely because of PWM module linked to
+>
+> Where did you see a PWM ?
+>
+> > the CPU for DVFS is getting disabled in between the late_init call,
+>
+> between the late_init call and what ?
+>
+> > so gaiting the clock source shuts down the power to the codes.
+>
+> what code ?
+>
+> > Setting clk divider flags to CLK_IS_CRITICAL help resolve the issue.
+> >
+> > Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> > Cc: Jerome Brunet <jbrunet@baylibre.com>
+> > Cc: Neil Armstrong <narmstrong@baylibre.com>
+> > Suggested-by: Neil Armstrong <narmstrong@baylibre.com>
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > ---
+> >
+> > Following Neil's suggestion, I have prepared this patch.
+> > https://patchwork.kernel.org/patch/11177441/#22964889
+> > ---
+> >  drivers/clk/meson/g12a.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+> > index d2760a021301..accae3695fe5 100644
+> > --- a/drivers/clk/meson/g12a.c
+> > +++ b/drivers/clk/meson/g12a.c
+> > @@ -283,6 +283,7 @@ static struct clk_fixed_factor g12a_fclk_div2_div = {
+> >               .ops = &clk_fixed_factor_ops,
+> >               .parent_hws = (const struct clk_hw *[]) { &g12a_fixed_pll.hw },
+> >               .num_parents = 1,
+> > +             .flags = CLK_IS_CRITICAL,
+>
+> This makes no sense for because:
+> * This clock cannot gate and none of its parents can either. IOW, the
+> output of this clock is never disabled.
+> * I cannot guess the relation between fdiv2 and the commit description
+>
+> >       },
+> >  };
+> >
+> > @@ -681,7 +682,7 @@ static struct clk_regmap g12b_cpub_clk = {
+> >                       &g12a_sys_pll.hw
+> >               },
+> >               .num_parents = 2,
+> > -             .flags = CLK_SET_RATE_PARENT,
+> > +             .flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+>
+> Why not. Neil what do you think of this ?
+> If nothing is claiming this clock and enabling it then I suppose it
+> could make sense.
+>
+>
+> >       },
+> >  };
+>
 
+Sorry for the noise, I should not have send this patch in first place.
 
-Hi,
-
-Upstream commit 05dd7da76986937fb288b4213b1fa10dbe0d1b33 doesn't really 
-need to go to stable (any of 4.19, 5.4 and 5.5). While it's probably 
-safe, the patch replaces a refcount leak by another one, which makes 
-sense as part of the full series merged in 5.6-rc1, but isn't terribly 
-useful standalone on the current stable branches.
-
-   Fred
-
-
-
-> The pci_dn structure used to store a pointer to the struct pci_dev, so
-> taking a reference on the device was required. However, the pci_dev
-> pointer was later removed from the pci_dn structure, but the reference
-> was kept for the npu device.
-> See commit 902bdc57451c ("powerpc/powernv/idoa: Remove unnecessary
-> pcidev from pci_dn").
-> 
-> We don't need to take a reference on the device when assigning the PE
-> as the struct pnv_ioda_pe is cleaned up at the same time as
-> the (physical) device is released. Doing so prevents the device from
-> being released, which is a problem for opencapi devices, since we want
-> to be able to remove them through PCI hotplug.
-> 
-> Now the ugly part: nvlink npu devices are not meant to be
-> released. Because of the above, we've always leaked a reference and
-> simply removing it now is dangerous and would likely require more
-> work. There's currently no release device callback for nvlink devices
-> for example. So to be safe, this patch leaks a reference on the npu
-> device, but only for nvlink and not opencapi.
-> 
-> Signed-off-by: Frederic Barrat <fbarrat@linux.ibm.com>
-> Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
-> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-> Link: https://lore.kernel.org/r/20191121134918.7155-2-fbarrat@linux.ibm.com
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->   arch/powerpc/platforms/powernv/pci-ioda.c | 19 ++++++++++++-------
->   1 file changed, 12 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/powerpc/platforms/powernv/pci-ioda.c b/arch/powerpc/platforms/powernv/pci-ioda.c
-> index 4374836b033b4..67b836f102402 100644
-> --- a/arch/powerpc/platforms/powernv/pci-ioda.c
-> +++ b/arch/powerpc/platforms/powernv/pci-ioda.c
-> @@ -1062,14 +1062,13 @@ static struct pnv_ioda_pe *pnv_ioda_setup_dev_PE(struct pci_dev *dev)
->   		return NULL;
->   	}
->   
-> -	/* NOTE: We get only one ref to the pci_dev for the pdn, not for the
-> -	 * pointer in the PE data structure, both should be destroyed at the
-> -	 * same time. However, this needs to be looked at more closely again
-> -	 * once we actually start removing things (Hotplug, SR-IOV, ...)
-> +	/* NOTE: We don't get a reference for the pointer in the PE
-> +	 * data structure, both the device and PE structures should be
-> +	 * destroyed at the same time. However, removing nvlink
-> +	 * devices will need some work.
->   	 *
->   	 * At some point we want to remove the PDN completely anyways
->   	 */
-> -	pci_dev_get(dev);
->   	pdn->pe_number = pe->pe_number;
->   	pe->flags = PNV_IODA_PE_DEV;
->   	pe->pdev = dev;
-> @@ -1084,7 +1083,6 @@ static struct pnv_ioda_pe *pnv_ioda_setup_dev_PE(struct pci_dev *dev)
->   		pnv_ioda_free_pe(pe);
->   		pdn->pe_number = IODA_INVALID_PE;
->   		pe->pdev = NULL;
-> -		pci_dev_put(dev);
->   		return NULL;
->   	}
->   
-> @@ -1205,6 +1203,14 @@ static struct pnv_ioda_pe *pnv_ioda_setup_npu_PE(struct pci_dev *npu_pdev)
->   	struct pci_controller *hose = pci_bus_to_host(npu_pdev->bus);
->   	struct pnv_phb *phb = hose->private_data;
->   
-> +	/*
-> +	 * Intentionally leak a reference on the npu device (for
-> +	 * nvlink only; this is not an opencapi path) to make sure it
-> +	 * never goes away, as it's been the case all along and some
-> +	 * work is needed otherwise.
-> +	 */
-> +	pci_dev_get(npu_pdev);
-> +
->   	/*
->   	 * Due to a hardware errata PE#0 on the NPU is reserved for
->   	 * error handling. This means we only have three PEs remaining
-> @@ -1228,7 +1234,6 @@ static struct pnv_ioda_pe *pnv_ioda_setup_npu_PE(struct pci_dev *npu_pdev)
->   			 */
->   			dev_info(&npu_pdev->dev,
->   				"Associating to existing PE %x\n", pe_num);
-> -			pci_dev_get(npu_pdev);
->   			npu_pdn = pci_get_pdn(npu_pdev);
->   			rid = npu_pdev->bus->number << 8 | npu_pdn->devfn;
->   			npu_pdn->pe_number = pe_num;
-> 
-
+-Anand
