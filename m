@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 567191612D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 14:15:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 166A01612DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 14:15:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728880AbgBQNO5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 08:14:57 -0500
-Received: from mga17.intel.com ([192.55.52.151]:16068 "EHLO mga17.intel.com"
+        id S1728998AbgBQNPG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 08:15:06 -0500
+Received: from mga06.intel.com ([134.134.136.31]:31120 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728827AbgBQNOz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 08:14:55 -0500
+        id S1728843AbgBQNO4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 08:14:56 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Feb 2020 05:14:55 -0800
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Feb 2020 05:14:55 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,452,1574150400"; 
-   d="scan'208";a="258264461"
+   d="scan'208";a="253413959"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga004.fm.intel.com with ESMTP; 17 Feb 2020 05:14:51 -0800
+  by orsmga002.jf.intel.com with ESMTP; 17 Feb 2020 05:14:51 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 9775919C; Mon, 17 Feb 2020 15:14:46 +0200 (EET)
+        id B6C10464; Mon, 17 Feb 2020 15:14:46 +0200 (EET)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Darren Hart <dvhart@infradead.org>,
@@ -37,9 +37,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Wim Van Sebroeck <wim@linux-watchdog.org>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 05/19] platform/x86: intel_mid_powerbtn: Convert to use new SCU IPC API
-Date:   Mon, 17 Feb 2020 16:14:32 +0300
-Message-Id: <20200217131446.32818-6-mika.westerberg@linux.intel.com>
+Subject: [PATCH v6 06/19] watchdog: intel-mid_wdt: Convert to use new SCU IPC API
+Date:   Mon, 17 Feb 2020 16:14:33 +0300
+Message-Id: <20200217131446.32818-7-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200217131446.32818-1-mika.westerberg@linux.intel.com>
 References: <20200217131446.32818-1-mika.westerberg@linux.intel.com>
@@ -50,67 +50,144 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This converts the power button driver to use the new SCU IPC API where
-the SCU IPC instance is passed to the functions.
+This converts the Intel MID watchdog driver over the new SCU IPC API
+where the SCU IPC instance is passed to the functions.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Acked-by: Guenter Roeck <linux@roeck-us.net>
 Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/platform/x86/intel_mid_powerbtn.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ drivers/watchdog/intel-mid_wdt.c | 53 ++++++++++++++++++++++----------
+ 1 file changed, 37 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/platform/x86/intel_mid_powerbtn.c b/drivers/platform/x86/intel_mid_powerbtn.c
-index 6f436836fe50..1fdcdef1d89f 100644
---- a/drivers/platform/x86/intel_mid_powerbtn.c
-+++ b/drivers/platform/x86/intel_mid_powerbtn.c
-@@ -46,6 +46,7 @@ struct mid_pb_ddata {
- 	unsigned short mirqlvl1_addr;
- 	unsigned short pbstat_addr;
- 	u8 pbstat_mask;
-+	struct intel_scu_ipc_dev *scu;
- 	int (*setup)(struct mid_pb_ddata *ddata);
+diff --git a/drivers/watchdog/intel-mid_wdt.c b/drivers/watchdog/intel-mid_wdt.c
+index 470213abfd3d..1ae03b64ef8b 100644
+--- a/drivers/watchdog/intel-mid_wdt.c
++++ b/drivers/watchdog/intel-mid_wdt.c
+@@ -33,14 +33,24 @@ enum {
+ 	SCU_WATCHDOG_KEEPALIVE,
  };
  
-@@ -55,7 +56,8 @@ static int mid_pbstat(struct mid_pb_ddata *ddata, int *value)
- 	int ret;
- 	u8 pbstat;
+-static inline int wdt_command(int sub, u32 *in, int inlen)
++struct mid_wdt {
++	struct watchdog_device wd;
++	struct device *dev;
++	struct intel_scu_ipc_dev *scu;
++};
++
++static inline int
++wdt_command(struct mid_wdt *mid, int sub, const void *in, size_t inlen, size_t size)
+ {
+-	return intel_scu_ipc_command(IPC_WATCHDOG, sub, in, inlen, NULL, 0);
++	struct intel_scu_ipc_dev *scu = mid->scu;
++
++	return intel_scu_ipc_dev_command_with_size(scu, IPC_WATCHDOG, sub, in,
++						   inlen, size, NULL, 0);
+ }
  
--	ret = intel_scu_ipc_ioread8(ddata->pbstat_addr, &pbstat);
-+	ret = intel_scu_ipc_dev_ioread8(ddata->scu, ddata->pbstat_addr,
-+					&pbstat);
+ static int wdt_start(struct watchdog_device *wd)
+ {
+-	struct device *dev = watchdog_get_drvdata(wd);
++	struct mid_wdt *mid = watchdog_get_drvdata(wd);
+ 	int ret, in_size;
+ 	int timeout = wd->timeout;
+ 	struct ipc_wd_start {
+@@ -49,38 +59,41 @@ static int wdt_start(struct watchdog_device *wd)
+ 	} ipc_wd_start = { timeout - MID_WDT_PRETIMEOUT, timeout };
+ 
+ 	/*
+-	 * SCU expects the input size for watchdog IPC to
+-	 * be based on 4 bytes
++	 * SCU expects the input size for watchdog IPC to be 2 which is the
++	 * size of the structure in dwords. SCU IPC normally takes bytes
++	 * but this is a special case where we specify size to be different
++	 * than inlen.
+ 	 */
+ 	in_size = DIV_ROUND_UP(sizeof(ipc_wd_start), 4);
+ 
+-	ret = wdt_command(SCU_WATCHDOG_START, (u32 *)&ipc_wd_start, in_size);
++	ret = wdt_command(mid, SCU_WATCHDOG_START, &ipc_wd_start,
++			  sizeof(ipc_wd_start), in_size);
  	if (ret)
- 		return ret;
+-		dev_crit(dev, "error starting watchdog: %d\n", ret);
++		dev_crit(mid->dev, "error starting watchdog: %d\n", ret);
  
-@@ -67,14 +69,15 @@ static int mid_pbstat(struct mid_pb_ddata *ddata, int *value)
- 
- static int mid_irq_ack(struct mid_pb_ddata *ddata)
- {
--	return intel_scu_ipc_update_register(ddata->mirqlvl1_addr, 0, MSIC_PWRBTNM);
-+	return intel_scu_ipc_dev_update(ddata->scu, ddata->mirqlvl1_addr, 0,
-+					MSIC_PWRBTNM);
+ 	return ret;
  }
  
- static int mrfld_setup(struct mid_pb_ddata *ddata)
+ static int wdt_ping(struct watchdog_device *wd)
  {
- 	/* Unmask the PBIRQ and MPBIRQ on Tangier */
--	intel_scu_ipc_update_register(BCOVE_PBIRQ, 0, MSIC_PWRBTNM);
--	intel_scu_ipc_update_register(BCOVE_PBIRQMASK, 0, MSIC_PWRBTNM);
-+	intel_scu_ipc_dev_update(ddata->scu, BCOVE_PBIRQ, 0, MSIC_PWRBTNM);
-+	intel_scu_ipc_dev_update(ddata->scu, BCOVE_PBIRQMASK, 0, MSIC_PWRBTNM);
+-	struct device *dev = watchdog_get_drvdata(wd);
++	struct mid_wdt *mid = watchdog_get_drvdata(wd);
+ 	int ret;
  
- 	return 0;
+-	ret = wdt_command(SCU_WATCHDOG_KEEPALIVE, NULL, 0);
++	ret = wdt_command(mid, SCU_WATCHDOG_KEEPALIVE, NULL, 0, 0);
+ 	if (ret)
+-		dev_crit(dev, "Error executing keepalive: %d\n", ret);
++		dev_crit(mid->dev, "Error executing keepalive: %d\n", ret);
+ 
+ 	return ret;
  }
-@@ -161,6 +164,10 @@ static int mid_pb_probe(struct platform_device *pdev)
- 			return error;
+ 
+ static int wdt_stop(struct watchdog_device *wd)
+ {
+-	struct device *dev = watchdog_get_drvdata(wd);
++	struct mid_wdt *mid = watchdog_get_drvdata(wd);
+ 	int ret;
+ 
+-	ret = wdt_command(SCU_WATCHDOG_STOP, NULL, 0);
++	ret = wdt_command(mid, SCU_WATCHDOG_STOP, NULL, 0, 0);
+ 	if (ret)
+-		dev_crit(dev, "Error stopping watchdog: %d\n", ret);
++		dev_crit(mid->dev, "Error stopping watchdog: %d\n", ret);
+ 
+ 	return ret;
+ }
+@@ -110,6 +123,7 @@ static int mid_wdt_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct watchdog_device *wdt_dev;
+ 	struct intel_mid_wdt_pdata *pdata = dev->platform_data;
++	struct mid_wdt *mid;
+ 	int ret;
+ 
+ 	if (!pdata) {
+@@ -123,10 +137,13 @@ static int mid_wdt_probe(struct platform_device *pdev)
+ 			return ret;
  	}
  
-+	ddata->scu = devm_intel_scu_ipc_dev_get(&pdev->dev);
-+	if (!ddata->scu)
+-	wdt_dev = devm_kzalloc(dev, sizeof(*wdt_dev), GFP_KERNEL);
+-	if (!wdt_dev)
++	mid = devm_kzalloc(dev, sizeof(*mid), GFP_KERNEL);
++	if (!mid)
+ 		return -ENOMEM;
+ 
++	mid->dev = dev;
++	wdt_dev = &mid->wd;
++
+ 	wdt_dev->info = &mid_wdt_info;
+ 	wdt_dev->ops = &mid_wdt_ops;
+ 	wdt_dev->min_timeout = MID_WDT_TIMEOUT_MIN;
+@@ -135,7 +152,7 @@ static int mid_wdt_probe(struct platform_device *pdev)
+ 	wdt_dev->parent = dev;
+ 
+ 	watchdog_set_nowayout(wdt_dev, WATCHDOG_NOWAYOUT);
+-	watchdog_set_drvdata(wdt_dev, dev);
++	watchdog_set_drvdata(wdt_dev, mid);
+ 
+ 	ret = devm_request_irq(dev, pdata->irq, mid_wdt_irq,
+ 			       IRQF_SHARED | IRQF_NO_SUSPEND, "watchdog",
+@@ -145,6 +162,10 @@ static int mid_wdt_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
++	mid->scu = devm_intel_scu_ipc_dev_get(dev);
++	if (!mid->scu)
 +		return -EPROBE_DEFER;
 +
- 	error = devm_request_threaded_irq(&pdev->dev, irq, NULL, mid_pb_isr,
- 					  IRQF_ONESHOT, DRIVER_NAME, ddata);
- 	if (error) {
+ 	/*
+ 	 * The firmware followed by U-Boot leaves the watchdog running
+ 	 * with the default threshold which may vary. When we get here
 -- 
 2.25.0
 
