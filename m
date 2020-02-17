@@ -2,140 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 108ED1613E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 14:49:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D6461613FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 14:53:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728574AbgBQNt0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 08:49:26 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:35332 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726707AbgBQNt0 (ORCPT
+        id S1728778AbgBQNx1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 08:53:27 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52982 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727448AbgBQNx0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 08:49:26 -0500
-Received: by mail-lj1-f196.google.com with SMTP id q8so18932666ljb.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 05:49:25 -0800 (PST)
+        Mon, 17 Feb 2020 08:53:26 -0500
+Received: by mail-wm1-f65.google.com with SMTP id p9so17235079wmc.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 05:53:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aPeCiuS7ZbSixVVMpcUOXJcL6b0Z3O8EuHVbhuAi9x8=;
-        b=rmgon99TU84behd3dIxMn9nFFLqqVOIRLelCjfxfeKhaniI4cKcQC+fmrmPPfHy70v
-         fzNdoIPSHrb1gNBTA/d1X46JYMG5NCx9akEigo6AJURvZQwyftF94j7q8/rQA6j0TO1T
-         zLrwz3SVq9CbbubvAvOWaWswd1RKMQRcWrG63hOWuhpoGx/iN0nWzb0NzSf0m691kEcg
-         ztyTGxFEK1b6gVyyhb2mY7VoKWpie2/ioEklqMfEQLnNg2sGg0q2jhXaTG2ulQbijR16
-         lt96yxXrjHORCPGZX8brmzptoil2xqFGq9JnnAs8QmXHxvC7AWBswgYEOwOrMHCoPlZ3
-         6l+Q==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=PI0LvpGjO/OZvCQU1PxswC2EPMei884/nsAkhdkaeP8=;
+        b=w5VjHmzvIVp/HsTMrnc9z5s2CtLUjUztbi2kHK96i4oWzwnIcHTP+GtIBtBQuzpl9Z
+         cHu9MWaFp5qHlb8kvQ4/DWJEH5/ae4IjXLtSOQ4d3aWf6XlAHs7VZCA/X1WGMKrxRIke
+         C/2tHs+TtOyiPtB6ebp9jT2B4ob1Qzc16UUd75HXx5cW5XhDZ5F/y+0lieIgjHAYu6tT
+         bGoFdaetxAV2vCp7/kz3sVG+/nurOi1uhP2inSsg76f5uw7QT0Aoy+iDHkbOGMi6dpgS
+         7dmtKchlMlSX2v0/4oS5hqVVSNLwOYUsHlLB0R8Pp6lVxQpiEVTTl9UNhE0eyZbWVYRE
+         dbew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aPeCiuS7ZbSixVVMpcUOXJcL6b0Z3O8EuHVbhuAi9x8=;
-        b=r2wSByGshXDKDHSdgmrtMniVRTFz+UnOhNMNn8Svemu41q5SvHwTJ0O2fgNspRE5AI
-         9vTj/ame8VRw2ncda9A/+7G91IB16Ve825xvGg+nF3bAzGKbWYMi2+INq40M2lTfOr1A
-         2NDDj0ENXtGehTG2scE1PCWjbqoSlldgTb05t+tMKfR2Y1mz0dYO4jfff8gmA6xwB9rj
-         F2ZKjC3g6/rmgZY2QryWcomQQCy03VK2eXT7vqnAFIOcYhQcOueX/NyHlunDMK4z2KQE
-         zaEBtcrFVed7WdKYH8NEPoaSYExdYk66bKF7dpEaArwfOgloJngwhdW1p1XJ/B/Zr4/r
-         YNgA==
-X-Gm-Message-State: APjAAAV/50kohyV67O2zKhJJ0V/e8BYfpWoQN2kxLMws/TWy5TsldBdq
-        ta2ejIvCMYqpbQtZ9pZNzKNDUOp13b9f46jAWdGc3w==
-X-Google-Smtp-Source: APXvYqy3NeiDsZo0vf6kcWdGCkWJSDEQA8cHXcSYVuQsH4XZOhkoN7hvrRUGieGg61evCmPpec62DLOWo0/Kw0hVhww=
-X-Received: by 2002:a2e:80cc:: with SMTP id r12mr9478240ljg.154.1581947364621;
- Mon, 17 Feb 2020 05:49:24 -0800 (PST)
-MIME-Version: 1.0
-References: <20200217104402.11643-1-mgorman@techsingularity.net>
-In-Reply-To: <20200217104402.11643-1-mgorman@techsingularity.net>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Mon, 17 Feb 2020 14:49:11 +0100
-Message-ID: <CAKfTPtBfV1QGi2utnmnR21MapKw1g2mTFA_aRxOxXvpWTRX+wA@mail.gmail.com>
-Subject: Re: [PATCH 00/13] Reconcile NUMA balancing decisions with the load
- balancer v3
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Phil Auld <pauld@redhat.com>, Hillf Danton <hdanton@sina.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=PI0LvpGjO/OZvCQU1PxswC2EPMei884/nsAkhdkaeP8=;
+        b=dkqiNjrOsFx6HJQAIZnl3sGyKC6tySeMuET4pC49pGWNScfo4jzJelDhMAxRuQVyWG
+         WbqnuyqOG6gd+ivH17SJ96yLAY9zTyqlEXlYk0WAuGgwSZY/Myka5yU7Ak8J6RcPbTT2
+         3kGY0C1XmyzxXaUToMhc4QqxuyAGQZ7Cm3myV3+nZioNlwcWd9IQz79rZccTaFJmm1Rj
+         vvgQuTqT1H7cslDv581pQ1TpYkcQxHzg+MA6M6kZRf/ibuHBptqQHqFNfk4wwM3gbixX
+         XV6QRW7NJtSgC1F6NUyuUuqa/zPZZBUeG2omKb2iXLxqKc+Da9YyWUgCLaVwA8gQ32p4
+         wLTA==
+X-Gm-Message-State: APjAAAWlrOZRXSlxGqjKmCSiqEz1qBGpb+Z8wdhJIQJJ50RhRfgYVwld
+        wAdtyGSJ1B49bdRExiTvZKabbA==
+X-Google-Smtp-Source: APXvYqyFEEWXOUljD2Qt5ltg3BSPgA/LaJUjjNfVWfAHFDf2JNWYuLuHTbsUCcGPvL1qQzYV+3TzoA==
+X-Received: by 2002:a7b:cbc9:: with SMTP id n9mr22664934wmi.89.1581947605445;
+        Mon, 17 Feb 2020 05:53:25 -0800 (PST)
+Received: from khouloud-ThinkPad-T470p.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id o4sm1131010wrx.25.2020.02.17.05.53.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2020 05:53:25 -0800 (PST)
+From:   Khouloud Touil <ktouil@baylibre.com>
+To:     srinivas.kandagatla@linaro.org, bgolaszewski@baylibre.com
+Cc:     linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
+        geert@linux-m68k.org, baylibre-upstreaming@groups.io,
+        Khouloud Touil <ktouil@baylibre.com>
+Subject: [PATCH] nvmem: release the write-protect pin
+Date:   Mon, 17 Feb 2020 14:52:45 +0100
+Message-Id: <20200217135245.29195-1-ktouil@baylibre.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Feb 2020 at 11:44, Mel Gorman <mgorman@techsingularity.net> wrote:
->
-> Changelog since V2:
-> o Rebase on top of Vincent's series again
-> o Fix a missed rcu_read_unlock
-> o Reduce overhead of tracepoint
->
-> Changelog since V1:
-> o Rebase on top of Vincent's series and rework
->
-> Note: The baseline for this series is tip/sched/core as of February
->         12th rebased on top of v5.6-rc1. The series includes patches from
->         Vincent as I needed to add a fix and build on top of it. Vincent's
->         series on its own introduces performance regressions for *some*
->         but not *all* machines so it's easily missed. This series overall
->         is close to performance-neutral with some gains depending on the
->         machine. However, the end result does less work on NUMA balancing
->         and the fact that both the NUMA balancer and load balancer uses
->         similar logic makes it much easier to understand.
->
-> The NUMA balancer makes placement decisions on tasks that partially
-> take the load balancer into account and vice versa but there are
-> inconsistencies. This can result in placement decisions that override
-> each other leading to unnecessary migrations -- both task placement
-> and page placement. This series reconciles many of the decisions --
-> partially Vincent's work with some fixes and optimisations on top to
-> merge our two series.
->
-> The first patch is unrelated. It's picked up by tip but was not present in
-> the tree at the time of the fork. I'm including it here because I tested
-> with it.
->
-> The second and third patches are tracing only and was needed to get
-> sensible data out of ftrace with respect to task placement for NUMA
-> balancing. The NUMA balancer is *far* easier to analyse with the
-> patches and informed how the series should be developed.
->
-> Patches 4-5 are Vincent's and use very similar code patterns and logic
-> between NUMA and load balancer. Patch 6 is a fix to Vincent's work that
-> is necessary to avoid serious imbalances being introduced by the NUMA
+Implement the auto-release of the write-protect pin that when the
+registration fails, it's auto-released.
 
-Yes the test added in load_too_imbalanced() by patch 5 doesn't seem to
-be a good choice.
-I haven't remove it as it was done by your patch 6 but it might worth
-removing it directly if a new version is needed
+Fixes: 2a127da461a9 ("nvmem: add support for the write-protect pin")
+Reported-by: geert@linux-m68k.org
+Signed-off-by: Khouloud Touil <ktouil@baylibre.com>
+---
+ drivers/nvmem/core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> balancer. Patches 7-8 are also Vincents and while I have not reviewed
-> them closely myself, others have.
->
-> The rest of the series are a mix of optimisations and improvements, one
-> of which stops the NUMA balancer fighting with itself.
->
-> Note that this is not necessarily a universal performance win although
-> performance results are generally ok (small gains/losses depending on
-> the machine and workload). However, task migrations, page migrations,
-> variability and overall overhead are generally reduced.
->
-> The main reference workload I used was specjbb running one JVM per node
-> which typically would be expected to split evenly. It's an interesting
-> workload because the number of "warehouses" does not linearly related
-> to the number of running tasks due to the creation of GC threads
-> and other interfering activity. The mmtests configuration used is
-> jvm-specjbb2005-multi with two runs -- one with ftrace enabling relevant
-> scheduler tracepoints.
->
-> An example of the headline performance of the series is below and the
-> tested kernels are
->
-> baseline-v3r1   Patches 1-3 for the tracing
-> loadavg-v3      Patches 1-5 (Add half of Vincent's work)
-> lbidle-v3       Patches 1-6 Vincent's work with a fix on top
-> classify-v3     Patches 1-8 Rest of Vincent's work
-> stopsearch-v3   All patches
->
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index ef326f243f36..5f1988498d75 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -72,6 +72,7 @@ static void nvmem_release(struct device *dev)
+ 	struct nvmem_device *nvmem = to_nvmem_device(dev);
+ 
+ 	ida_simple_remove(&nvmem_ida, nvmem->id);
++	gpiod_put(nvmem->wp_gpio);
+ 	kfree(nvmem);
+ }
+ 
+-- 
+2.17.1
+
