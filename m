@@ -2,79 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B98A160CC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 09:20:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B90BE160CCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 09:21:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728077AbgBQIT7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 03:19:59 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:32995 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727789AbgBQIT6 (ORCPT
+        id S1728111AbgBQIUw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 03:20:52 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:41755 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727545AbgBQIUw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 03:19:58 -0500
-Received: by mail-ed1-f65.google.com with SMTP id r21so19685824edq.0;
-        Mon, 17 Feb 2020 00:19:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ATnQLLigNnNp+3vrMMUywd96YC/sdkp/YQzir+b0HgQ=;
-        b=G242rs+PDBmmgooaB2XqYB1dGRNvDnJOs03wZzB8y9bJpR4Cd3LDMuZ9k4DvNLEdd7
-         Ey3bwblhwnKeQmCkNetL1kpwSHZdLfCqfb3Qo4XlsMmgmHsUPEjfptPqMvhxJx8Z5eYj
-         bd51hx63y1M63ZQIH6mJTneVZqI4tyqxLm6t9dfaj6IbHkqpDTdRC41PxoI/Uh5GEuN7
-         pb8JfGGphWNyvyVGJ7A+PiSCd/rHpqpmy5+8DnLyhx65laWvajKWBqhh9v2rQUf57zXL
-         cDRCrP+Pmfff6goRcRReCSQzs53NHQG3Mo/k0tyIqeQRSQDM+VtNSzM8dmUV6KOjLvyB
-         /mkg==
-X-Gm-Message-State: APjAAAXbwIYYq/LfvuIHxr7xi6isa/UG63vXKjeThAHlW0zUeV/IH+Vr
-        4zSH20qodyrY57Ct6NM4yaoHPmv/8kY=
-X-Google-Smtp-Source: APXvYqxslzR90ipQN6pVb+aQ+bJiil+U8VHigr94WA1ReDW3LRyk/OLB84bRFXvmlID7e+zGSSsnHA==
-X-Received: by 2002:a05:6402:1764:: with SMTP id da4mr13492458edb.24.1581927595038;
-        Mon, 17 Feb 2020 00:19:55 -0800 (PST)
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com. [209.85.128.45])
-        by smtp.gmail.com with ESMTPSA id m7sm445260edq.37.2020.02.17.00.19.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Feb 2020 00:19:54 -0800 (PST)
-Received: by mail-wm1-f45.google.com with SMTP id s144so6786815wme.1;
-        Mon, 17 Feb 2020 00:19:54 -0800 (PST)
-X-Received: by 2002:a05:600c:34d:: with SMTP id u13mr21454590wmd.77.1581927594021;
- Mon, 17 Feb 2020 00:19:54 -0800 (PST)
+        Mon, 17 Feb 2020 03:20:52 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1j3be4-0003zu-Ea; Mon, 17 Feb 2020 09:20:48 +0100
+Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1j3be3-00025k-IT; Mon, 17 Feb 2020 09:20:47 +0100
+Date:   Mon, 17 Feb 2020 09:20:47 +0100
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     Alifer Moraes <alifer.wsdm@gmail.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, peng.fan@nxp.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, linux-kernel@vger.kernel.org,
+        linux-imx@nxp.com, kernel@pengutronix.de, leonard.crestez@nxp.com,
+        festevam@gmail.com
+Subject: Re: [PATCH 1/2] arm64: dts: imx8mm-evk: add phy-reset-gpios for fec1
+Message-ID: <20200217082047.nzxxo7mpejq5yj65@pengutronix.de>
+References: <20200214192750.20845-1-alifer.wsdm@gmail.com>
 MIME-Version: 1.0
-References: <20200217064250.15516-1-samuel@sholland.org> <20200217064250.15516-6-samuel@sholland.org>
-In-Reply-To: <20200217064250.15516-6-samuel@sholland.org>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Mon, 17 Feb 2020 16:19:43 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64p9QEhni1sAQWA9eOtGYDcc2_VnUd92sUxK7M_doHZJA@mail.gmail.com>
-Message-ID: <CAGb2v64p9QEhni1sAQWA9eOtGYDcc2_VnUd92sUxK7M_doHZJA@mail.gmail.com>
-Subject: Re: [RFC PATCH 05/34] ASoC: sun8i-codec: Remove incorrect SND_SOC_DAIFMT_DSP_B
-To:     Samuel Holland <samuel@sholland.org>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, stable@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200214192750.20845-1-alifer.wsdm@gmail.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 09:19:43 up 93 days, 23:38, 104 users,  load average: 0.30, 0.22,
+ 0.09
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 17, 2020 at 2:43 PM Samuel Holland <samuel@sholland.org> wrote:
->
-> DSP_A and DSP_B are not interchangeable. The timing used by the codec in
-> DSP mode is consistent with DSP_A. This is verified with an EG25-G modem
-> connected to AIF2, as well as by comparing with the BSP driver.
->
-> Remove the DSP_B option, as it is not supported by the hardware.
->
-> Cc: stable@kernel.org
-> Fixes: 36c684936fae ("ASoC: Add sun8i digital audio codec")
-> Signed-off-by: Samuel Holland <samuel@sholland.org>
+Hi,
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+On 20-02-14 16:27, Alifer Moraes wrote:
+> imx8mm-evk has a GPIO connected to AR8031 Ethernet PHY's reset pin.
+> 
+> Describe it in the device tree, following phy's datasheet reset duration of 10ms.
+> 
+> Tested booting via NFS.
+> 
+> Signed-off-by: Alifer Moraes <alifer.wsdm@gmail.com>
+> ---
+> 
+> Originally sent by Peng Fan <peng.fan@nxp.com>
+> 
+> Back then CONFIG_AT803X_PHY was set as "m" in defconfig so the boot process hung
+> at nfs boot, now that CONFIG_AT803X_PHY is set as "y" by default, the patch works
+> correctly.
+> 
+> Peng's original patch missed to pass the phy-reset-duration, according to the AR8031
+> datasheet the reset GPIO needs to stay low for 10ms.
+> 
+> Original thread: https://lkml.org/lkml/2019/10/21/347
+> 
+>  arch/arm64/boot/dts/freescale/imx8mm-evk.dts | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
+> index 28ab17a277bb..11903ca86f0e 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
+> @@ -82,6 +82,8 @@
+>  	pinctrl-0 = <&pinctrl_fec1>;
+>  	phy-mode = "rgmii-id";
+>  	phy-handle = <&ethphy0>;
+> +	phy-reset-gpios = <&gpio4 22 GPIO_ACTIVE_LOW>;
+
+Where is this gpio muxed?
+
+Regards,
+  Marco
+
+> +	phy-reset-duration = <10>;
+>  	fsl,magic-packet;
+>  	status = "okay";
+>  
+> -- 
+> 2.17.1
+> 
+> 
+> 
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
