@@ -2,65 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BCF3160F2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 10:48:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CEE7160F0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 10:44:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729011AbgBQJso (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 04:48:44 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:39958 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726397AbgBQJsn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 04:48:43 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1DD311A03D5;
-        Mon, 17 Feb 2020 10:48:42 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D20DD1A03B2;
-        Mon, 17 Feb 2020 10:48:36 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 46132402A7;
-        Mon, 17 Feb 2020 17:48:30 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     rjw@rjwysocki.net, viresh.kumar@linaro.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] cpufreq: imx-cpufreq-dt: Add "cpu-supply" property check
-Date:   Mon, 17 Feb 2020 17:42:55 +0800
-Message-Id: <1581932575-13177-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1728961AbgBQJov (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 04:44:51 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:36669 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728849AbgBQJov (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 04:44:51 -0500
+Received: by mail-ed1-f66.google.com with SMTP id j17so19932474edp.3;
+        Mon, 17 Feb 2020 01:44:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=z5Mm0UcTlrataEbH992JlC3fdkxaoZqbYWxeVKMRIWw=;
+        b=jWgfccxGpx5X99Jdq1GPF+lR7GDPHUCstjwpezl8tQiBesecEdNEvEYY8glKK9c621
+         oEt/mg7E2cGNshJdEDTKhM6Zct/8CrKpkXPdVS1UlchSIeUScrQdQbFR2sIPpgL9HuU0
+         dEzYF3b72/nBCtcBZPog1idY8wQh448bHzqXpZnvyZE6t3vj/2IeM+XjoRF8RZZ2qKCb
+         WbOSz+AKIjufiuDmd9V8WQz51gPhGgiEOgf7pKMUn0b6FM+c6cFHCrAMOyAHaI45iIm6
+         JwEw2nvmvNooWJqRBSFowtL+zyik0/10nFDfaiM3/y3fqzCROlobSpM6DpcfIZV78jgZ
+         FeDw==
+X-Gm-Message-State: APjAAAX2R92PBw/SYd6E8Rylf0kTEjdYlhHcqNKOX5waykrBDBAzXH11
+        zevkJt9N0hRDEOxYI9LFpm7bYyDNG50=
+X-Google-Smtp-Source: APXvYqy7Yl1wsueKhXtMs7/CsRvCCTNOODw03MGDEoUVCQwRihqNzfAEgymQefn7DKym6QnxmTD+OA==
+X-Received: by 2002:a05:6402:c08:: with SMTP id co8mr13971476edb.197.1581932688791;
+        Mon, 17 Feb 2020 01:44:48 -0800 (PST)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com. [209.85.128.52])
+        by smtp.gmail.com with ESMTPSA id qw15sm840177ejb.92.2020.02.17.01.44.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Feb 2020 01:44:47 -0800 (PST)
+Received: by mail-wm1-f52.google.com with SMTP id g1so16403668wmh.4;
+        Mon, 17 Feb 2020 01:44:47 -0800 (PST)
+X-Received: by 2002:a05:600c:34d:: with SMTP id u13mr21930702wmd.77.1581932686942;
+ Mon, 17 Feb 2020 01:44:46 -0800 (PST)
+MIME-Version: 1.0
+References: <20200217064250.15516-1-samuel@sholland.org> <20200217091423.y2muniz3hosquho6@gilmour.lan>
+In-Reply-To: <20200217091423.y2muniz3hosquho6@gilmour.lan>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Mon, 17 Feb 2020 17:44:36 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65GuwLdJ3Rkt1cyU6EroWZ6pim7-sGry5jYBoi=mubpUg@mail.gmail.com>
+Message-ID: <CAGb2v65GuwLdJ3Rkt1cyU6EroWZ6pim7-sGry5jYBoi=mubpUg@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/34] sun8i-codec fixes and new features
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Samuel Holland <samuel@sholland.org>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        =?UTF-8?Q?Myl=C3=A8ne_Josserand?= 
+        <mylene.josserand@free-electrons.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The cpufreq-dt driver allows cpufreq driver enabled without valid
-regulator assigned, however, all i.MX platforms using cpufreq-dt
-driver now require valid regulator, add "cpu-supply" property check
-to avoid i.MX platforms' cpufreq enabled without valid regulator
-and lead to system unstable.
+On Mon, Feb 17, 2020 at 5:14 PM Maxime Ripard <maxime@cerno.tech> wrote:
+>
+> Hi,
+>
+> On Mon, Feb 17, 2020 at 12:42:16AM -0600, Samuel Holland wrote:
+> > The sun8i-codec driver, as used in the Allwinner A33 and A64, currently
+> > only exposes a small subset of the available hardware features. In order
+> > to use the A64 in a smartphone (the PinePhone), I've added the necessary
+> > functionality to the driver:
+> >   * The full set of supported DAI format options
+> >   * Support for AIF2 and AIF3
+> >   * Additional routing knobs
+> >   * Additional volume controls
+> >
+> > Unfortunately, due to preexisting issues with the driver, there are some
+> > breaking changes, as explained further in the commit messages:
+> >   * The LRCK inversion issue means we need a new compatible for the A64.
+> >   * Some controls are named inaccurately, so they are renamed.
+> >   * Likewise, the DAPM widgets used in device trees were either named
+> >     wrong, or the device trees were using the wrong widgets in the first
+> >     place. (Specifically, the links between the analog codec and digital
+> >     codec happen at the ADC and DAC, not AIF1.)
+> >
+> > I tended to take the philosophy of "while I'm breaking things, I might
+> > as well do them right", so I've probably made a few more changes than
+> > absolutely necessary. I'm not sure about where all of the policy
+> > boundaries are, about how far I should go to maintain compatibility. For
+> > example, for the DT widget usage, I could:
+> >   * Rename everything and update the DTS files (which is what I did)
+> >   * Keep the old (misleading/wrong) name for the widgets, but repurpose
+> >     them to work correctly
+> >       (i.e. "ADC Left" would be named "AIF1 Slot 0 Left ADC", but it
+> >        would work just like "ADC Left" does in this patchset)
+> >   * Keep the old widgets around as a compatibility layer, but add new
+> >     widgets and update the in-tree DTS files to use them
+> >       (i.e. "ADC Left" would have a path from "AIF1 Slot 0 Left ADC",
+> >        but "AIF1 Slot 0 Left ADC" would be a no-op widget)
+> >   * Something else entirely
+>
+> I'm not sure this is really a concern here. We need to maintain the
+> compatibility with old DT's, but those will have an A33 compatible
+> too, and as far as I can see, you're not changing anything for that
+> compatible, so we're in the clear?
+>
+> If not, then the third option would probably be the best, especially
+> since it's only a couple of them.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/cpufreq/imx-cpufreq-dt.c | 3 +++
- 1 file changed, 3 insertions(+)
+Unfortunately the description for both chips are shared, and they're wrong.
+So we probably need a new compatible (or a new driver)... or like options
+2 or 3, keep the DT visible endpoints (but deprecate them), and route them
+to a new set of proper widgets.
 
-diff --git a/drivers/cpufreq/imx-cpufreq-dt.c b/drivers/cpufreq/imx-cpufreq-dt.c
-index 6cb8193..0e29d88 100644
---- a/drivers/cpufreq/imx-cpufreq-dt.c
-+++ b/drivers/cpufreq/imx-cpufreq-dt.c
-@@ -31,6 +31,9 @@ static int imx_cpufreq_dt_probe(struct platform_device *pdev)
- 	int speed_grade, mkt_segment;
- 	int ret;
- 
-+	if (!of_find_property(cpu_dev->of_node, "cpu-supply", NULL))
-+		return -ENODEV;
-+
- 	ret = nvmem_cell_read_u32(cpu_dev, "speed_grade", &cell_value);
- 	if (ret)
- 		return ret;
--- 
-2.7.4
-
+ChenYu
