@@ -2,102 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B536916103D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 11:40:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3ADF8161045
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 11:42:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729268AbgBQKkc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 05:40:32 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:41325 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725972AbgBQKkb (ORCPT
+        id S1729297AbgBQKmF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 05:42:05 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34258 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725972AbgBQKmF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 05:40:31 -0500
-Received: by mail-ot1-f65.google.com with SMTP id r27so15590136otc.8;
-        Mon, 17 Feb 2020 02:40:31 -0800 (PST)
+        Mon, 17 Feb 2020 05:42:05 -0500
+Received: by mail-wr1-f66.google.com with SMTP id n10so17127320wrm.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 02:42:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aLCSyvqx9dWHy5GEPaxx29DRb8rkFCZA7J7ME/KDLu0=;
-        b=PieRkGbUt/Wz4EfWwgt8K4tWyVEowiDBImfFcjY5FUasEFi5vSfPpBAxy45M3QMNfU
-         JDCR1e2RGPwKt4LvANHVDgWhmhe2s1xn4zSCOAyqVW3WViRYNkvP8mrpxDW9Z9PNQTHQ
-         BhKxe/AZW3S111ACGT7FE13PJwuerLzPjZJ7UkksDkv12LxpvBwSPFEpFA8nNzlpq186
-         6U4OjECgKV+IZ/aEVgOZjDP3ER1eSJO9W7WaKrRH5TzIEkTVTQllgTcsFymHfJ3npOR6
-         JIaJuw4cLnIno0EtyzksaVyZwpfy+IbaSyBcblIWZH81xayIt/GHHAMxcHcoMIv++O0U
-         xvrQ==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=xK9gSeKjuTrA7UchFgBVdfbmk8btUEWvMGPvHLQD5JM=;
+        b=QAYDuPa2ckyNKNs+uc/7kOYnDiCDyG5wPtjvhR59Myh+YznC8GYiN2AG06cTLVRObo
+         ROlADqWcNe98jyG2/zOJx0GmEUb7kEPIEArlZgxJWwNRv6pJs1YlzY3L+ke9BHkM2j7B
+         aeGz8B3EMSISeSPkbZNLZUTPgNCoEY5OjtpOX9CuwfzGD6qJdvOaxPi5UPWqYvGqaNar
+         O4UT3VEF0GINCmmv6ibsepv9zdV9oM0/spTfYAhPLEwt03h0sQN//Tqp5MDrjEBICiV2
+         dsGRIvt/baD8UMoaXtSA+m1K4rbKEYJv3mL7g6+jkeeZXV876uqoD2GDYmEfhrkqwPqN
+         Vvrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aLCSyvqx9dWHy5GEPaxx29DRb8rkFCZA7J7ME/KDLu0=;
-        b=J1Erw8G5YK43ovGMElFvurMw/+Wv1x4J7J/Iuxb2V+xSds6IOpPey7Q9CXV2km1KOI
-         ceyZ/AEB+/gNaTLuJwsLoLNmzkfrxVOPDMkBnZR8SZOGAY4Ewwf4hLPd/Q18XM9L1/7b
-         j4TufpNbIm+pIe4NydUPNH2mksXJ+zBRejseW8ec1bcZFrHoi3i7BQqnOmErw4t1LRfP
-         yvbYiVtYXODJuFvzryLbRGxFDhniKEM7fuzdNUzz3ewY2Bt4L2Kc0hCheUlSbJ2Lq7f4
-         gGUfcbQPuFsaqi4MIfBgkpkOcwMPiZByN9uCg7WQi1XNTzMzq+Fd6ImxZihgJwi3KDAc
-         ZLog==
-X-Gm-Message-State: APjAAAV6dE6iu7bFSt5A89i3GOf0eX+FDeGxuVZ4m7m57GqL+sDlXyYG
-        UFMK+2m2rsfY1GcGvh2JHWyt5OSHeljRXkzk4CEgOyJ1LhI=
-X-Google-Smtp-Source: APXvYqzQx6BFLfD+A6DxAo9HQy4ir9xWeRlnUntL7X6kVB/QZdVHZcETH9qZ13FfwD6aq1WmYIzuS00tqpq3O6clOGQ=
-X-Received: by 2002:a9d:7ccd:: with SMTP id r13mr11248022otn.56.1581936030747;
- Mon, 17 Feb 2020 02:40:30 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=xK9gSeKjuTrA7UchFgBVdfbmk8btUEWvMGPvHLQD5JM=;
+        b=ovRRBBBc8OcHs+TuSFYPRkk8QQTu5N5JErmgbo+lj5b/oHLWpcA/JKYRaYNzjaRwJz
+         gDbaT+PZEf2IlONdB8QVI5R+NHviRunJ8Kozk0G0Q4n1h0TLT/M/7tdviqArmfrSC6oS
+         V/VXeX3TYj7YcRTXV4FmGTPvEcydeSHvi/eV7SAIRiMxW+i2nt3H6S77ch++qWInE5KR
+         8HRN9PxN0/h3xMsFMMvGWO6rTi/m2xDjpbYspQXkpoM3JVQguuYuByjaPBFmWNCiZgH4
+         HIzrgpnTZNHY6m3tk0oaKlLfLc4ifYpylNGTOVnYk5RDgSrr4i3aZFlM6ryb3hlDoUVF
+         uiIQ==
+X-Gm-Message-State: APjAAAWmXVnutWKoIygmb0EcQDvRMB/xXZO7vKCPbmyATmooCpAOZkks
+        9gunHb0sa1mpDp4b8bylGtzX5RLAtJI=
+X-Google-Smtp-Source: APXvYqwWfS50fnch4zgS7Kfh2jKt9qZFo/AadUs19hGjKsVCFf3nDddgafWbzS4NxIxJ7cdTWz6aCw==
+X-Received: by 2002:adf:ea85:: with SMTP id s5mr21086636wrm.75.1581936123145;
+        Mon, 17 Feb 2020 02:42:03 -0800 (PST)
+Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id m3sm332833wrs.53.2020.02.17.02.42.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Feb 2020 02:42:02 -0800 (PST)
+Subject: Re: [PATCH] nvmem: imx: ocotp: add i.MX8MP support
+To:     Peng Fan <peng.fan@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>
+Cc:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1579231433-14201-1-git-send-email-peng.fan@nxp.com>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <05b29ecf-3873-067c-c480-ed32c388333b@linaro.org>
+Date:   Mon, 17 Feb 2020 10:42:01 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <CANRm+Cz6Es1TLFdGxz_65i-4osE6=67J=noqWC6n09TeXSJ5SA@mail.gmail.com>
-In-Reply-To: <CANRm+Cz6Es1TLFdGxz_65i-4osE6=67J=noqWC6n09TeXSJ5SA@mail.gmail.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Mon, 17 Feb 2020 18:40:19 +0800
-Message-ID: <CANRm+CwQ2pCpdts_wao9Qy1EBqhOnO0PQQWX6ZU3brt2oeUTzw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] KVM: X86: Less kvmclock sync induced vmexits after
- VM boots
-To:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1579231433-14201-1-git-send-email-peng.fan@nxp.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Feb 2020 at 18:36, Wanpeng Li <kernellwp@gmail.com> wrote:
->
-> From: Wanpeng Li <wanpengli@tencent.com>
->
-> In the progress of vCPUs creation, it queues a kvmclock sync worker to
-> the global
-> workqueue before each vCPU creation completes. Each worker will be scheduled
-> after 300 * HZ delay and request a kvmclock update for all vCPUs and kick them
-> out. This is especially worse when scaling to large VMs due to a lot of vmexits.
-> Just one worker as a leader to trigger the kvmclock sync request for
-> all vCPUs is
-> enough.
 
-Sorry for the alignment.
 
->
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+On 17/01/2020 03:28, Peng Fan wrote:
+> From: Peng Fan<peng.fan@nxp.com>
+> 
+> i.MX8MP has 96 banks with each bank 4 words. And it has different
+> ctrl register layout, so add new macros for that.
+> 
+> Signed-off-by: Peng Fan<peng.fan@nxp.com>
 > ---
->  arch/x86/kvm/x86.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index fb5d64e..d0ba2d4 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -9390,8 +9390,9 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
->      if (!kvmclock_periodic_sync)
->          return;
->
-> -    schedule_delayed_work(&kvm->arch.kvmclock_sync_work,
-> -                    KVMCLOCK_SYNC_PERIOD);
-> +    if (kvm->created_vcpus == 1)
-> +        schedule_delayed_work(&kvm->arch.kvmclock_sync_work,
-> +                        KVMCLOCK_SYNC_PERIOD);
->  }
->
->  void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu)
-> --
-> 2.7.4
+> 
+> dt-bindings doc has been posted by Anson Huang
+> 
+>   drivers/nvmem/imx-ocotp.c | 21 +++++++++++++++++++++
+>   1 file changed, 21 insertions(+)
+
+Applied Thanks,
+
+--srini
