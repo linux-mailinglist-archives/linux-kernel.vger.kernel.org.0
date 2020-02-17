@@ -2,123 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1B2C161667
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 16:40:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E63E716166D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 16:43:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729288AbgBQPky (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 10:40:54 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:60067 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729163AbgBQPkx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 10:40:53 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1j3iVt-0000DK-Al; Mon, 17 Feb 2020 16:40:49 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id ED0B31C20B0;
-        Mon, 17 Feb 2020 16:40:48 +0100 (CET)
-Date:   Mon, 17 Feb 2020 15:40:48 -0000
-From:   "tip-bot2 for Alexander Popov" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] timer: Improve the comment describing schedule_timeout()
-Cc:     Alexander Popov <alex.popov@linux.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200117225900.16340-1-alex.popov@linux.com>
-References: <20200117225900.16340-1-alex.popov@linux.com>
+        id S1729337AbgBQPnE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 10:43:04 -0500
+Received: from foss.arm.com ([217.140.110.172]:37644 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728000AbgBQPnD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 10:43:03 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1F72C30E;
+        Mon, 17 Feb 2020 07:43:03 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 982983F703;
+        Mon, 17 Feb 2020 07:43:02 -0800 (PST)
+Date:   Mon, 17 Feb 2020 15:43:01 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Stephan Gerhold <stephan@gerhold.net>
+Cc:     Sameer Pujar <spujar@nvidia.com>, tiwai@suse.com, perex@perex.cz,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: Re: [alsa-devel] [RFC] ASoC: soc-pcm: crash in snd_soc_dapm_new_dai
+Message-ID: <20200217154301.GN9304@sirena.org.uk>
+References: <1579443563-12287-1-git-send-email-spujar@nvidia.com>
+ <20200217144120.GA243254@gerhold.net>
 MIME-Version: 1.0
-Message-ID: <158195404873.13786.15386976838867455888.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="b1ERR0FXR0PvNIRE"
+Content-Disposition: inline
+In-Reply-To: <20200217144120.GA243254@gerhold.net>
+X-Cookie: There was a phone call for you.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     1b8020618b8922b9128b3015224221d0f869b471
-Gitweb:        https://git.kernel.org/tip/1b8020618b8922b9128b3015224221d0f869b471
-Author:        Alexander Popov <alex.popov@linux.com>
-AuthorDate:    Sat, 18 Jan 2020 01:59:00 +03:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 17 Feb 2020 16:36:05 +01:00
+--b1ERR0FXR0PvNIRE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-timer: Improve the comment describing schedule_timeout()
+On Mon, Feb 17, 2020 at 03:41:20PM +0100, Stephan Gerhold wrote:
 
-When working commit 6dcd5d7a7a29c1e, a mistake was noticed by Linus:
-schedule_timeout() was called without setting the task state to anything
-particular.
+> I'm a bit confused about this patch, isn't SNDRV_PCM_STREAM_PLAYBACK
+> used for both cpu_dai and codec_dai in the playback case?
 
-It calls the scheduler, but doesn't delay anything, because the task stays
-runnable. That happens because sched_submit_work() does nothing for tasks
-in TASK_RUNNING state.
+It is in the normal case, but with a CODEC<->CODEC link (which was what
+this was targeting) we need to bodge things by swapping playback and
+capture on one end of the link.
 
-That turned out to be the intended behavior. Adding a WARN() is not useful
-as the task could be woken up right after setting the state and before
-reaching schedule_timeout().
+--b1ERR0FXR0PvNIRE
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Improve the comment about schedule_timeout() and describe that more
-explicitly.
+-----BEGIN PGP SIGNATURE-----
 
-Signed-off-by: Alexander Popov <alex.popov@linux.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20200117225900.16340-1-alex.popov@linux.com
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5KtIQACgkQJNaLcl1U
+h9ARMgf+NQDaYx839skXXMcRLyATLepufKGk9l1m2+rsQ1ajEhuvgD8/e4YhVxcE
+kbFp40QlkXHOJVhDmDdTzdGQAVw4bZUk4++qr0sv9wbyPE/vnN1eL1g86TN2jYYR
+p6N2CzZLf6bqK10PNGgBxKu7ybsFm745FxIhEcPkYEAKUF3H9PANqu8hLvwmTNdW
+YRUBomA6kOqU+odw/XwK8ztCS5cruwTjaAHZP6QsiHuGWFovmomqXJRNZhcpWXRU
+HJnA40MLOI6wqd1eKDL+sZsIh26xr5hapqLdLYBwvXCh8gzup+ECt59LHEm/7hdQ
+OePPOr10MHw9LA7a4ByEiuvTidCFUw==
+=44+D
+-----END PGP SIGNATURE-----
 
----
- kernel/time/timer.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
-
-diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-index 4820823..cb34fac 100644
---- a/kernel/time/timer.c
-+++ b/kernel/time/timer.c
-@@ -1828,21 +1828,23 @@ static void process_timeout(struct timer_list *t)
-  * schedule_timeout - sleep until timeout
-  * @timeout: timeout value in jiffies
-  *
-- * Make the current task sleep until @timeout jiffies have
-- * elapsed. The routine will return immediately unless
-- * the current task state has been set (see set_current_state()).
-+ * Make the current task sleep until @timeout jiffies have elapsed.
-+ * The function behavior depends on the current task state
-+ * (see also set_current_state() description):
-  *
-- * You can set the task state as follows -
-+ * %TASK_RUNNING - the scheduler is called, but the task does not sleep
-+ * at all. That happens because sched_submit_work() does nothing for
-+ * tasks in %TASK_RUNNING state.
-  *
-  * %TASK_UNINTERRUPTIBLE - at least @timeout jiffies are guaranteed to
-  * pass before the routine returns unless the current task is explicitly
-- * woken up, (e.g. by wake_up_process())".
-+ * woken up, (e.g. by wake_up_process()).
-  *
-  * %TASK_INTERRUPTIBLE - the routine may return early if a signal is
-  * delivered to the current task or the current task is explicitly woken
-  * up.
-  *
-- * The current task state is guaranteed to be TASK_RUNNING when this
-+ * The current task state is guaranteed to be %TASK_RUNNING when this
-  * routine returns.
-  *
-  * Specifying a @timeout value of %MAX_SCHEDULE_TIMEOUT will schedule
-@@ -1850,7 +1852,7 @@ static void process_timeout(struct timer_list *t)
-  * value will be %MAX_SCHEDULE_TIMEOUT.
-  *
-  * Returns 0 when the timer has expired otherwise the remaining time in
-- * jiffies will be returned.  In all cases the return value is guaranteed
-+ * jiffies will be returned. In all cases the return value is guaranteed
-  * to be non-negative.
-  */
- signed long __sched schedule_timeout(signed long timeout)
+--b1ERR0FXR0PvNIRE--
