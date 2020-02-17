@@ -2,171 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 735A9161835
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 17:46:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60622161839
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 17:48:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729249AbgBQQqS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 11:46:18 -0500
-Received: from foss.arm.com ([217.140.110.172]:38390 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728821AbgBQQqR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 11:46:17 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A6FF430E;
-        Mon, 17 Feb 2020 08:46:16 -0800 (PST)
-Received: from [10.1.196.37] (e121345-lin.cambridge.arm.com [10.1.196.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AD2853F68F;
-        Mon, 17 Feb 2020 08:46:15 -0800 (PST)
-Subject: Re: [RFC PATCH] iommu/iova: Support limiting IOVA alignment
-To:     Liam Mark <lmark@codeaurora.org>, Joerg Roedel <joro@8bytes.org>
-Cc:     "Isaac J. Manjarres" <isaacm@codeaurora.org>,
-        Pratik Patel <pratikp@codeaurora.org>,
-        iommu@lists.linux-foundation.org, kernel-team@android.com,
-        linux-kernel@vger.kernel.org
-References: <alpine.DEB.2.10.2002141223510.27047@lmark-linux.qualcomm.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <e9ae618c-58d4-d245-be80-e62fbde4f907@arm.com>
-Date:   Mon, 17 Feb 2020 16:46:14 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1729312AbgBQQsE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 11:48:04 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:43272 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728024AbgBQQsD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 11:48:03 -0500
+Received: by mail-pg1-f195.google.com with SMTP id u12so9120098pgb.10
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 08:48:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+dYalRSbOahcygIG/bZllcSeh3ymAP3k2AyUse0dYCI=;
+        b=mII34r67/bufhqQd9dQqCetitoqHTrrbW8vRZnRPg1PwUkd8tJ+8Mr9084zNVxlzib
+         3eua/qF0W6iJnkf8IokoO56nKIcoKjslAX9TSz5rfujDwzvMlTseZms//itB13ofLcD3
+         gL0Dp869sIiemJpyWxNXuX29oPqTYwUI3cKdOe61cmflx30o1nNgxDBvbsbfdUGqTZPB
+         Nfik4yKH5vQA0JpniYGamAhEIzL74N6Jzkw/EPnT0elR5oLnt8gx35VUnFNEiRDpZQJe
+         kObADUG9G7Zf+mudNN4VvOfvQW5u6eiA9TQFXxT7Zjt/wW3+whiNuUBf5NKoD2Sbkbuh
+         OClQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+dYalRSbOahcygIG/bZllcSeh3ymAP3k2AyUse0dYCI=;
+        b=ZB63owvxhIprz42Z1EzIEV9W9NFd5TbtrkXX852MdRIZANmvfsCY+XnxmgTnknp1Hm
+         FlDaXMBvMNUpVptRoqsryEtD8xThgdAlcnWVWivsO03IBgcsIyRsie1HRmzoDTROmeXI
+         MBnTaY+4bmd8G9dh4lOIFf85dnpSOtuNLXbrJBScH66TE1SAke9KKt8FDzpg+3DKa90K
+         sVaIyv7oDFhF5nNNq1uz2FAyOnk9w0MxmGLfpvDwK/y8ElHxqy+cjHpF0XlPM24A0kUX
+         puTI58o9YhpARU29D4SMVPg6m6ZO1OUllevbwNCQcziwcE8RsqQ41M2cRLz2SyUFIMPe
+         GvPQ==
+X-Gm-Message-State: APjAAAWAI8IfQUEMIZmMVgFCq6k8YD/6o7saIP3SaRRaSnZ1zuW+28vD
+        Qz3/zH2CWgkIlF1MZWx81trD
+X-Google-Smtp-Source: APXvYqww9hFwhQhDFppuNnetXE1spR5nHeV2J6H2V98O42q2hVUMGmmNA52WaqDLYhTNvRfQi+jCEA==
+X-Received: by 2002:a17:90a:30e8:: with SMTP id h95mr21154101pjb.30.1581958081234;
+        Mon, 17 Feb 2020 08:48:01 -0800 (PST)
+Received: from Mani-XPS-13-9360 ([2409:4072:48d:3349:2df9:3778:ccac:a356])
+        by smtp.gmail.com with ESMTPSA id ev5sm19278pjb.4.2020.02.17.08.47.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Feb 2020 08:48:00 -0800 (PST)
+Date:   Mon, 17 Feb 2020 22:17:51 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     gregkh <gregkh@linuxfoundation.org>, smohanad@codeaurora.org,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        hemantk@codeaurora.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 11/16] bus: mhi: core: Add support for data transfer
+Message-ID: <20200217164751.GA7305@Mani-XPS-13-9360>
+References: <20200131135009.31477-1-manivannan.sadhasivam@linaro.org>
+ <20200131135009.31477-12-manivannan.sadhasivam@linaro.org>
+ <CAK8P3a1DOta5Uj3dNFWVqwgyPKs0cQsoymXE7svcOZoPiY+YGw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.10.2002141223510.27047@lmark-linux.qualcomm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a1DOta5Uj3dNFWVqwgyPKs0cQsoymXE7svcOZoPiY+YGw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/02/2020 8:30 pm, Liam Mark wrote:
+Hi Arnd,
+
+On Mon, Feb 17, 2020 at 05:13:37PM +0100, Arnd Bergmann wrote:
+> On Fri, Jan 31, 2020 at 2:51 PM Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
 > 
-> When the IOVA framework applies IOVA alignment it aligns all
-> IOVAs to the smallest PAGE_SIZE order which is greater than or
-> equal to the requested IOVA size.
+> > @@ -648,6 +715,31 @@ static int parse_ch_cfg(struct mhi_controller *mhi_cntrl,
+> >                 mhi_chan->db_cfg.pollcfg = ch_cfg->pollcfg;
+> >                 mhi_chan->xfer_type = ch_cfg->data_type;
+> >
+> > +               switch (mhi_chan->xfer_type) {
+> > +               case MHI_BUF_RAW:
+> > +                       mhi_chan->gen_tre = mhi_gen_tre;
+> > +                       mhi_chan->queue_xfer = mhi_queue_buf;
+> > +                       break;
+> > +               case MHI_BUF_SKB:
+> > +                       mhi_chan->queue_xfer = mhi_queue_skb;
+> > +                       break;
+> > +               case MHI_BUF_SCLIST:
+> > +                       mhi_chan->gen_tre = mhi_gen_tre;
+> > +                       mhi_chan->queue_xfer = mhi_queue_sclist;
+> > +                       break;
+> > +               case MHI_BUF_NOP:
+> > +                       mhi_chan->queue_xfer = mhi_queue_nop;
+> > +                       break;
+> > +               case MHI_BUF_DMA:
+> > +               case MHI_BUF_RSC_DMA:
+> > +                       mhi_chan->queue_xfer = mhi_queue_dma;
+> > +                       break;
+> > +               default:
+> > +                       dev_err(mhi_cntrl->dev,
+> > +                               "Channel datatype not supported\n");
+> > +                       goto error_chan_cfg;
+> > +               }
+> > +
 > 
-> We support use cases that requires large buffers (> 64 MB in
-> size) to be allocated and mapped in their stage 1 page tables.
-> However, with this alignment scheme we find ourselves running
-> out of IOVA space for 32 bit devices, so we are proposing this
-> config, along the similar vein as CONFIG_CMA_ALIGNMENT for CMA
-> allocations.
-
-As per [1], I'd really like to better understand the allocation patterns 
-that lead to such a sparsely-occupied address space to begin with, given 
-that the rbtree allocator is supposed to try to maintain locality as far 
-as possible, and the rcaches should further improve on that. Are you 
-also frequently cycling intermediate-sized buffers which are smaller 
-than 64MB but still too big to be cached?  Are there a lot of 
-non-power-of-two allocations?
-
-> Add CONFIG_IOMMU_LIMIT_IOVA_ALIGNMENT to limit the alignment of
-> IOVAs to some desired PAGE_SIZE order, specified by
-> CONFIG_IOMMU_IOVA_ALIGNMENT. This helps reduce the impact of
-> fragmentation caused by the current IOVA alignment scheme, and
-> gives better IOVA space utilization.
-
-Even if the general change did prove reasonable, this IOVA allocator is 
-not owned by the DMA API, so entirely removing the option of strict 
-size-alignment feels a bit uncomfortable. Personally I'd replace the 
-bool argument with an actual alignment value to at least hand the 
-authority out to individual callers.
-
-Furthermore, even in DMA API terms, is anyone really ever going to 
-bother tuning that config? Since iommu-dma is supposed to be a 
-transparent layer, arguably it shouldn't behave unnecessarily 
-differently from CMA, so simply piggy-backing off CONFIG_CMA_ALIGNMENT 
-would seem logical.
-
-Robin.
-
-[1] 
-https://lore.kernel.org/linux-iommu/1581721602-17010-1-git-send-email-isaacm@codeaurora.org/
-
-> Signed-off-by: Liam Mark <lmark@codeaurora.org>
-> ---
->   drivers/iommu/Kconfig | 31 +++++++++++++++++++++++++++++++
->   drivers/iommu/iova.c  | 20 +++++++++++++++++++-
->   2 files changed, 50 insertions(+), 1 deletion(-)
+> While looking through the driver to see how the DMA gets handled, I came
+> across the multitude of mhi_queue_* functions, which seems like a
+> layering violation to me, given that they are all implemented by the
+> core code as well, and the client driver needs to be aware of
+> which one to call. Are you able to lift these out of the common interface
+> and make the client driver call these directly, or maybe provide a direct
+> interface based on mhi_buf_info to replace these?
 > 
-> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-> index d2fade984999..9684a153cc72 100644
-> --- a/drivers/iommu/Kconfig
-> +++ b/drivers/iommu/Kconfig
-> @@ -3,6 +3,37 @@
->   config IOMMU_IOVA
->   	tristate
->   
-> +if IOMMU_IOVA
-> +
-> +config IOMMU_LIMIT_IOVA_ALIGNMENT
-> +	bool "Limit IOVA alignment"
-> +	help
-> +	  When the IOVA framework applies IOVA alignment it aligns all
-> +	  IOVAs to the smallest PAGE_SIZE order which is greater than or
-> +	  equal to the requested IOVA size. This works fine for sizes up
-> +	  to several MiB, but for larger sizes it results in address
-> +	  space wastage and fragmentation. For example drivers with a 4
-> +	  GiB IOVA space might run out of IOVA space when allocating
-> +	  buffers great than 64 MiB.
-> +
-> +	  Enable this option to impose a limit on the alignment of IOVAs.
-> +
-> +	  If unsure, say N.
-> +
-> +config IOMMU_IOVA_ALIGNMENT
-> +	int "Maximum PAGE_SIZE order of alignment for IOVAs"
-> +	depends on IOMMU_LIMIT_IOVA_ALIGNMENT
-> +	range 4 9
-> +	default 9
-> +	help
-> +	  With this parameter you can specify the maximum PAGE_SIZE order for
-> +	  IOVAs. Larger IOVAs will be aligned only to this specified order.
-> +	  The order is expressed a power of two multiplied by the PAGE_SIZE.
-> +
-> +	  If unsure, leave the default value "9".
-> +
-> +endif
-> +
->   # The IOASID library may also be used by non-IOMMU_API users
->   config IOASID
->   	tristate
-> diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
-> index 0e6a9536eca6..259884c8dbd1 100644
-> --- a/drivers/iommu/iova.c
-> +++ b/drivers/iommu/iova.c
-> @@ -177,6 +177,24 @@ int init_iova_flush_queue(struct iova_domain *iovad,
->   	rb_insert_color(&iova->node, root);
->   }
->   
-> +#ifdef CONFIG_IOMMU_LIMIT_IOVA_ALIGNMENT
-> +static unsigned long limit_align_shift(struct iova_domain *iovad,
-> +				       unsigned long shift)
-> +{
-> +	unsigned long max_align_shift;
-> +
-> +	max_align_shift = CONFIG_IOMMU_IOVA_ALIGNMENT + PAGE_SHIFT
-> +			- iova_shift(iovad);
-> +	return min_t(unsigned long, max_align_shift, shift);
-> +}
-> +#else
-> +static unsigned long limit_align_shift(struct iova_domain *iovad,
-> +				       unsigned long shift)
-> +{
-> +	return shift;
-> +}
-> +#endif
-> +
->   static int __alloc_and_insert_iova_range(struct iova_domain *iovad,
->   		unsigned long size, unsigned long limit_pfn,
->   			struct iova *new, bool size_aligned)
-> @@ -188,7 +206,7 @@ static int __alloc_and_insert_iova_range(struct iova_domain *iovad,
->   	unsigned long align_mask = ~0UL;
->   
->   	if (size_aligned)
-> -		align_mask <<= fls_long(size - 1);
-> +		align_mask <<= limit_align_shift(iovad, fls_long(size - 1));
->   
->   	/* Walk the tree backwards */
->   	spin_lock_irqsave(&iovad->iova_rbtree_lock, flags);
-> 
+
+It sounds reasonable to me. Let me discuss this internally with Qcom guys to
+see if they have any objections.
+
+Thanks,
+Mani
+
+>       Arnd
