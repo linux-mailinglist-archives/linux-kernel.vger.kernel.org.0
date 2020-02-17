@@ -2,62 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67AC0161CBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 22:20:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B46CF161CC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 22:26:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729953AbgBQVUr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 16:20:47 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:37591 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728254AbgBQVUr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 16:20:47 -0500
-Received: by mail-lj1-f194.google.com with SMTP id q23so4361106ljm.4
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 13:20:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=udxvjk/3f801oiHIjlXs33vrkAUOXT/VVtYKhiHosbA=;
-        b=WcQxzpj1Ur2pyqMPFrqi4wkJlXAMrMPJOaoeFhccxC0Ki8Ms89kihm6E1yACkpuwbf
-         DbgQ3rXZYL0Zv+p8ZF747ormJh0UsDz2YmKD1q4dL7o9yvF90HjGMjb/mk/5EI9RnCK5
-         WF8cHHUnPUgpke3w0BcXO0kwz0FyyfcVKpvL4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=udxvjk/3f801oiHIjlXs33vrkAUOXT/VVtYKhiHosbA=;
-        b=GYl0GubHcMU02+BKPzAyCc0qJDjIpJWmTOQ/uw7mGrBTuw9D4fez23xaqx4aDpVhvX
-         zB6iLJZD56HeJ7WsJXu8stEkLU1QCUfJRmhiPD0Edz834PM+daNR+cmp3jKBP4Q7/JcG
-         OE6LE7vvk1iLNQRZhxA745YydcFj3gBmvXzMFqRiqnf6KO67tXVeitihEgjeHNqZ+3mB
-         evCxGp0UL8FWpxsGMH2hWbm75jIOeLiwt4hddU7pAgQ+s/iOif5sFwN/pvWhmJjXblR2
-         rEpvFNkOyWHNVNgCrkpLRMN+HnVIkgGMVMM9Bhue6wubBINE/9qjXhHy5OnJ92f0vGmB
-         LVHg==
-X-Gm-Message-State: APjAAAWiVtEQxl1MKGLKZZ7dAWLwcZ2xzr0N8jSx3/YERj3Qc8VfsVuX
-        q+Cg/g44H/oL1JbpsR4Hz4+zVfdZnZ4=
-X-Google-Smtp-Source: APXvYqx1AwYmR2Bi4ZqRtdsLqYxFg6+C402pFT2g1k43D7GzNePXenrQ6qMXesp0d7/OwSG/JudpKw==
-X-Received: by 2002:a2e:99c5:: with SMTP id l5mr10701218ljj.88.1581974444546;
-        Mon, 17 Feb 2020 13:20:44 -0800 (PST)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id g27sm924747lfh.57.2020.02.17.13.20.44
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Feb 2020 13:20:44 -0800 (PST)
-Received: by mail-lf1-f43.google.com with SMTP id 203so12851250lfa.12
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 13:20:44 -0800 (PST)
-X-Received: by 2002:ac2:4839:: with SMTP id 25mr8678032lft.192.1581974442759;
- Mon, 17 Feb 2020 13:20:42 -0800 (PST)
+        id S1729906AbgBQV0A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 16:26:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39408 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729676AbgBQVZ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 16:25:59 -0500
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27EB2207FD
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 21:25:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581974759;
+        bh=l0dOy2UpBtryST2iZLUusaGeXO0CcQ2p8oMEQoFeVKI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Vbp6SrXM29IkGlb9ZpFUPS1enfgo1NxT11uUwLYyeA5OEpR0Yok7iQMZ3bqVdAgM7
+         5p4mtShysT/cSued0BEY/WS1s3g4Wtm42pe0JX4B1cUrXwYIHsd101fKfpJCgRlftn
+         /kmykk0mexaqiIT0i87kZ5hiGSPwy9Oq/ge17KQM=
+Received: by mail-wm1-f47.google.com with SMTP id q9so718103wmj.5
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 13:25:59 -0800 (PST)
+X-Gm-Message-State: APjAAAW4RN7rEaU5peAlHSWsZrcZnLInjsNx6dooAhEpjsX1C+GoQQaR
+        luDc1jwdHTghiK4B6zPfoEN6W6o8EkoplYIjtTqy6A==
+X-Google-Smtp-Source: APXvYqz4ckzSLSn80+EGpOONKPp+2jjUqj+eeWcBoPgxAti+TmJLW8eu5TALGjuu2ktF7TcJP3e4JE/+OlwHGNPCWbM=
+X-Received: by 2002:a1c:b603:: with SMTP id g3mr927700wmf.133.1581974757521;
+ Mon, 17 Feb 2020 13:25:57 -0800 (PST)
 MIME-Version: 1.0
-References: <CAHk-=wgqwiBLGvwTqU2kJEPNmafPpPe_K0XgBU-A58M+mkwpgQ@mail.gmail.com>
- <158195649797.19707.10238097810752281104@skylake-alporthouse-com>
-In-Reply-To: <158195649797.19707.10238097810752281104@skylake-alporthouse-com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 17 Feb 2020 13:20:27 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wik6C7uCyPZ_qwv0M29uVUdgrpOdubfaVHF8FVBAsCivA@mail.gmail.com>
-Message-ID: <CAHk-=wik6C7uCyPZ_qwv0M29uVUdgrpOdubfaVHF8FVBAsCivA@mail.gmail.com>
-Subject: Re: Linux 5.6-rc2
-To:     Chris Wilson <chris@chris-wilson.co.uk>
-Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+References: <20200217211323.4878-1-xypron.glpk@gmx.de>
+In-Reply-To: <20200217211323.4878-1-xypron.glpk@gmx.de>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Mon, 17 Feb 2020 22:25:46 +0100
+X-Gmail-Original-Message-ID: <CAKv+Gu9fxdag7Fmevd0Nxhwt-qNYcCg0YaBoq0LzsjyOu2z0mQ@mail.gmail.com>
+Message-ID: <CAKv+Gu9fxdag7Fmevd0Nxhwt-qNYcCg0YaBoq0LzsjyOu2z0mQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] efi/libstub: describe memory functions
+To:     Heinrich Schuchardt <xypron.glpk@gmx.de>
+Cc:     linux-efi <linux-efi@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -65,30 +47,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 17, 2020 at 8:22 AM Chris Wilson <chris@chris-wilson.co.uk> wrote:
+On Mon, 17 Feb 2020 at 22:14, Heinrich Schuchardt <xypron.glpk@gmx.de> wrote:
 >
-> Quoting Linus Torvalds (2020-02-16 21:32:32)
-> > Rafael J. Wysocki (4):
-> >       ACPI: EC: Fix flushing of pending work
-> >       ACPI: PM: s2idle: Avoid possible race related to the EC GPE
-> >       ACPICA: Introduce acpi_any_gpe_status_set()
-> >       ACPI: PM: s2idle: Prevent spurious SCIs from waking up the system
+> Provide descriptions of:
 >
-> Our S0 testing broke on all platforms, so we've reverted
-> e3728b50cd9b ("ACPI: PM: s2idle: Avoid possible race related to the EC GPE")
-> fdde0ff8590b ("ACPI: PM: s2idle: Prevent spurious SCIs from waking up the system")
+> * efi_get_memory_map()
+> * efi_low_alloc_above()
+> * efi_free()
 >
-> There wasn't much in the logs, for example,
-> https://intel-gfx-ci.01.org/tree/drm-tip/IGT_5445/fi-kbl-7500u/igt@gem_exec_suspend@basic-s0.html
+> Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
 
-So the machine suspends, but never comes back?
+Thanks Heinrich. One comment below.
 
-Do you need to revert both for it to work for you? Or is the revert of
-fdde0ff8590b just to avoid the conflict?
+> ---
+>  drivers/firmware/efi/libstub/mem.c | 31 ++++++++++++++++++++++++++++--
+>  1 file changed, 29 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/firmware/efi/libstub/mem.c b/drivers/firmware/efi/libstub/mem.c
+> index c25fd9174b74..be24c062115f 100644
+> --- a/drivers/firmware/efi/libstub/mem.c
+> +++ b/drivers/firmware/efi/libstub/mem.c
+> @@ -16,6 +16,15 @@ static inline bool mmap_has_headroom(unsigned long buff_size,
+>         return slack / desc_size >= EFI_MMAP_NR_SLACK_SLOTS;
+>  }
+>
+> +/**
+> + * efi_get_memory_map() - get memory map
+> + * @map                on return pointer to memory map
+> + *
+> + * Retrieve the UEFI memory map. The allocated memory leaves room for
+> + * up to EFI_MMAP_NR_SLACK_SLOTS additional memory map entries.
+> + *
+> + * Return:     status code
+> + */
+>  efi_status_t efi_get_memory_map(struct efi_boot_memmap *map)
+>  {
+>         efi_memory_desc_t *m = NULL;
+> @@ -109,8 +118,20 @@ efi_status_t efi_allocate_pages(unsigned long size, unsigned long *addr,
+>         }
+>         return EFI_SUCCESS;
+>  }
+> -/*
+> - * Allocate at the lowest possible address that is not below 'min'.
+> +/**
+> + * efi_low_alloc_above() - allocate pages at or above given address
+> + * @size:      size of the memory area to allocate
+> + * @align:     minimum alignment of the allocated memory area. It should
+> + *             a power of two.
+> + * @addr:      on exit the address of the allocated memory
+> + * @min:       minimum address to used for the memory allocation
+> + *
+> + * Allocate at the lowest possible address that is not below 'min' as
+> + * EFI_LOADER_DATA. The allocated pages are aligned according to 'align' but at
+> + * least EFI_ALLOC_ALIGN. The first allocated page will not below the address
+> + * given by 'min'.
+> + *
+> + * Return:     status code
+>   */
+>  efi_status_t efi_low_alloc_above(unsigned long size, unsigned long align,
+>                                  unsigned long *addr, unsigned long min)
+> @@ -187,6 +208,12 @@ efi_status_t efi_low_alloc_above(unsigned long size, unsigned long align,
+>         return status;
+>  }
+>
+> +/**
+> + * efi_free() - free memory pages
+> + * @size       size of the memory area to free in bytes
+> + * @addr       start of the memory area to free (must be EFI_PAGE_SIZE
+> + *             aligned)
+> + */
 
-I'm assuming you bisected this, and the bisect indicated e3728b50cd9b,
-and then to revert it you reverted the other commit too..
+It may be good to mention here that the allocation is rounded up to
+EFI_ALLOC_ALIGN again, so it should only be used for allocation that
+were made using efi_allocate_pages() or efi_low_alloc_above().
 
-Or what?
 
-                     Linus
+>  void efi_free(unsigned long size, unsigned long addr)
+>  {
+>         unsigned long nr_pages;
+> --
+> 2.25.0
+>
