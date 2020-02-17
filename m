@@ -2,110 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15F26160BCB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 08:42:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F664160BC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 08:41:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbgBQHlz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 02:41:55 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:21802 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726788AbgBQHly (ORCPT
+        id S1726729AbgBQHlk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 02:41:40 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:52811 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726289AbgBQHlk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 02:41:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581925313;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=hqMNovNPLBTkcDZOPcJd85GoyTDK28xkZ5YRxHDZcBM=;
-        b=ehZecdFbhkDmpuogn/fGY4Hn7cl2Mq+ft82DOojzr8RiU2EyV3LVGsa31VVQ2w/OnqcI7f
-        ei9tOexGAoMJnjy5S8EXAokTScG1mr7MtqWPPmPYwdnatQCbHb+J3673J7H+kZE6FhXu8K
-        LCLgl7kyKdVTrcKKjBRCOv7QIhBgjp8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-216-tvWotQ_rP52F4XbMwzS7ew-1; Mon, 17 Feb 2020 02:41:50 -0500
-X-MC-Unique: tvWotQ_rP52F4XbMwzS7ew-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 94405800D53;
-        Mon, 17 Feb 2020 07:41:47 +0000 (UTC)
-Received: from carbon (ovpn-200-41.brq.redhat.com [10.40.200.41])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 299292CC39;
-        Mon, 17 Feb 2020 07:41:35 +0000 (UTC)
-Date:   Mon, 17 Feb 2020 08:41:33 +0100
-From:   Jesper Dangaard Brouer <brouer@redhat.com>
-To:     Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Cc:     brouer@redhat.com, netdev@vger.kernel.org,
-        jonathan.lemon@gmail.com, lorenzo@kernel.org, toke@redhat.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
-Subject: Re: [PATCH net-next v2] net: page_pool: API cleanup and comments
-Message-ID: <20200217084133.1a67ae63@carbon>
-In-Reply-To: <20200217062850.133121-1-ilias.apalodimas@linaro.org>
-References: <20200217062850.133121-1-ilias.apalodimas@linaro.org>
+        Mon, 17 Feb 2020 02:41:40 -0500
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=localhost.discworld.emantor.de)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <r.czerwinski@pengutronix.de>)
+        id 1j3b2B-0007Cj-4F; Mon, 17 Feb 2020 08:41:39 +0100
+Message-ID: <d7298ea03ab71c414aabc7cac13a7a7511e00ceb.camel@pengutronix.de>
+Subject: Re: [PATCH] ARM: imx: build v7_cpu_resume() unconditionally
+From:   Rouven Czerwinski <r.czerwinski@pengutronix.de>
+To:     s.hauer@pengutronix.de, shawnguo@kernel.org
+Cc:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        linux-kernel@vger.kernel.org, linux-imx@nxp.com,
+        kernel@pengutronix.de, festevam@gmail.com,
+        linux-arm-kernel@lists.infradead.org,
+        Lucas Stach <l.stach@pengutronix.de>
+Date:   Mon, 17 Feb 2020 08:41:37 +0100
+In-Reply-To: <20200116141849.73955-1-r.czerwinski@pengutronix.de>
+References: <20200116141849.73955-1-r.czerwinski@pengutronix.de>
+Organization: Pengutronix e.K.
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.3 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: r.czerwinski@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Feb 2020 08:28:49 +0200
-Ilias Apalodimas <ilias.apalodimas@linaro.org> wrote:
+Hi Shawn,
 
-> diff --git a/include/net/page_pool.h b/include/net/page_pool.h
-> index cfbed00ba7ee..7c1f23930035 100644
-> --- a/include/net/page_pool.h
-> +++ b/include/net/page_pool.h
-> @@ -162,39 +162,33 @@ static inline void page_pool_use_xdp_mem(struct page_pool *pool,
->  }
->  #endif
->  
-> -/* Never call this directly, use helpers below */
-> -void __page_pool_put_page(struct page_pool *pool, struct page *page,
-> -			  unsigned int dma_sync_size, bool allow_direct);
-> +void page_pool_release_page(struct page_pool *pool, struct page *page);
->  
-> -static inline void page_pool_put_page(struct page_pool *pool,
-> -				      struct page *page, bool allow_direct)
-> +/* If the page refcnt == 1, this will try to recycle the page.
-> + * if PP_FLAG_DMA_SYNC_DEV is set, it will try to sync the DMA area for
-> + * the configured size min(dma_sync_size, pool->max_len).
-> + * If the page refcnt != page will be returned
+On Thu, 2020-01-16 at 15:18 +0100, Rouven Czerwinski wrote:
+> From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+> 
+> This function is not only needed by the platform suspend code, but is
+> also
+> reused as the CPU resume function when the ARM cores can be powered
+> down
+> completely in deep idle, which is the case on i.MX6SX and i.MX6UL(L).
+> 
+> Providing the static inline stub whenever CONFIG_SUSPEND is disabled
+> means
+> that those platforms will hang on resume from cpuidle if suspend is
+> disabled.
+> 
+> So there are two problems:
+> 
+>   - The static inline stub masks the linker error
+>   - The function is not available where needed
+> 
+> Fix both by just building the function unconditionally, when
+> CONFIG_SOC_IMX6 is enabled. The actual code is three instructions
+> long,
+> so it's arguably ok to just leave it in for all i.MX6 kernel
+> configurations.
+> 
+> Fixes: 05136f0897b5 ("ARM: imx: support arm power off in cpuidle for
+> i.mx6sx")
+> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+> Signed-off-by: Rouven Czerwinski <r.czerwinski@pengutronix.de>
+> ---
+>  arch/arm/mach-imx/Makefile       |  2 ++
+>  arch/arm/mach-imx/common.h       |  4 ++--
+>  arch/arm/mach-imx/resume-imx6.S  | 24 ++++++++++++++++++++++++
+>  arch/arm/mach-imx/suspend-imx6.S | 14 --------------
+>  4 files changed, 28 insertions(+), 16 deletions(-)
+>  create mode 100644 arch/arm/mach-imx/resume-imx6.S
 
-Is this last comment line fully formed?
+Gentle ping.
 
+Can be found on patchwork: https://patchwork.kernel.org/patch/11337147/
 
-> + */
-> +void page_pool_put_page(struct page_pool *pool, struct page *page,
-> +			unsigned int dma_sync_size, bool allow_direct);
-> +
-> +/* Same as above but will try to sync the entire area pool->max_len */
-> +static inline void page_pool_put_full_page(struct page_pool *pool,
-> +					   struct page *page, bool allow_direct)
-
-
-
--- 
-Best regards,
-  Jesper Dangaard Brouer
-  MSc.CS, Principal Kernel Engineer at Red Hat
-  LinkedIn: http://www.linkedin.com/in/brouer
+Thanks,
+Rouven Czerwinski
 
