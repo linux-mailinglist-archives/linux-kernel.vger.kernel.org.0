@@ -2,80 +2,259 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE03016177C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 17:14:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3352B16179D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 17:16:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728595AbgBQQO2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 11:14:28 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:60203 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728138AbgBQQO2 (ORCPT
+        id S1729479AbgBQQPp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 11:15:45 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:49197 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726707AbgBQQOq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 11:14:28 -0500
-Received: from localhost ([127.0.0.1] helo=vostro.local)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <john.ogness@linutronix.de>)
-        id 1j3j2N-0001Hx-Sj; Mon, 17 Feb 2020 17:14:23 +0100
-From:   John Ogness <john.ogness@linutronix.de>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     lijiang <lijiang@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mon, 17 Feb 2020 11:14:46 -0500
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1j3j2f-0003Cp-DZ; Mon, 17 Feb 2020 16:14:41 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     "David S. Miller" <davem@davemloft.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: crashdump: Re: [PATCH 2/2] printk: use the lockless ringbuffer
-References: <20200128161948.8524-1-john.ogness@linutronix.de>
-        <20200128161948.8524-3-john.ogness@linutronix.de>
-        <ccbe1383-a4a4-41f8-3330-972f03c97429@redhat.com>
-        <87zhdle0s5.fsf@linutronix.de>
-        <20200217154026.7x2xyrklprgql4if@pathway.suse.cz>
-Date:   Mon, 17 Feb 2020 17:14:22 +0100
-In-Reply-To: <20200217154026.7x2xyrklprgql4if@pathway.suse.cz> (Petr Mladek's
-        message of "Mon, 17 Feb 2020 16:40:26 +0100")
-Message-ID: <87zhdh9oo1.fsf@linutronix.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, Jakub Kicinski <kuba@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        linux-pm@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH net-next v2 00/10] net: fix sysfs permssions when device changes network
+Date:   Mon, 17 Feb 2020 17:14:26 +0100
+Message-Id: <20200217161436.1748598-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-02-17, Petr Mladek <pmladek@suse.com> wrote:
->>> Should the "prb"(printk tb static) symbol be exported into
->>> vmcoreinfo?  Otherwise, do you happen to know how to walk through
->>> the log_buf and get all kernel logs from vmcore?
->> 
->> You are correct. This will need to be exported as well so that the
->> descriptors can be accessed. (log_buf is only the pure human-readable
->> text.) I am currently hacking the crash tool to see exactly what
->> needs to be made available in order to access all the data of the
->> ringbuffer.
->
-> I am not sure which parts you are working on. Are you going to provide
-> also patch for makedumpfile, please?
+Hey everyone,
 
-I'm working on crash first. makedumpfile is on my list as well.
+This is v2 with fixes based on Greg's and Rafael's review.
 
-> I get the following failure when creating the crashdump using:
->
->     echo c >/proc/sysrq-trigger
->
->
-> The kernel version is not supported.
-> The makedumpfile operation may be incomplete.
-> dump_dmesg: Can't find variable-length record symbols
-> makedumpfile Failed.
-> Running makedumpfile --dump-dmesg /proc/vmcore failed (1).
+(I've tagged this with net-next since it's triggered by a bug for
+ network device files but it also touches driver core aspects so it's
+ not clear-cut. I can of course split this series into separate
+ patchsets.) 
+We have been struggling with a bug surrounding the ownership of network
+device sysfs files when moving network devices between network
+namespaces owned by different user namespaces reported by multiple
+users.
 
-Yes, the symbols have changed (and some are missing). I will get this
-sorted out for v2. And I will provide some heavily hacked code for crash
-and makedumpfile to show that the necessary symbols are there and it
-works.
+Currently, when moving network devices between network namespaces the
+ownership of the corresponding sysfs entries is not changed. This leads
+to problems when tools try to operate on the corresponding sysfs files.
 
-John Ogness
+I also causes a bug when creating a network device in a network
+namespaces owned by a user namespace and moving that network device back
+to the host network namespaces. Because when a network device is created
+in a network namespaces it will be owned by the root user of the user
+namespace and all its associated sysfs files will also be owned by the
+root user of the corresponding user namespace.
+If such a network device has to be moved back to the host network
+namespace the permissions will still be set to the root user of the
+owning user namespaces of the originating network namespace. This means
+unprivileged users can e.g. re-trigger uevents for such incorrectly
+owned devices on the host or in other network namespaces. They can also
+modify the settings of the device itself through sysfs when they
+wouldn't be able to do the same through netlink. Both of these things
+are unwanted.
+
+For example, quite a few workloads will create network devices in the
+host network namespace. Other tools will then proceed to move such
+devices between network namespaces owner by other user namespaces. While
+the ownership of the device itself is updated in
+net/core/net-sysfs.c:dev_change_net_namespace() the corresponding sysfs
+entry for the device is not. Below you'll find that moving a network
+device (here a veth device) from a network namespace into another
+network namespaces owned by a different user namespace with a different
+id mapping. As you can see the permissions are wrong even though it is
+owned by the userns root user after it has been moved and can be
+interacted with through netlink: 
+
+drwxr-xr-x 5 nobody nobody    0 Jan 25 18:08 .
+drwxr-xr-x 9 nobody nobody    0 Jan 25 18:08 ..
+-r--r--r-- 1 nobody nobody 4096 Jan 25 18:09 addr_assign_type
+-r--r--r-- 1 nobody nobody 4096 Jan 25 18:09 addr_len
+-r--r--r-- 1 nobody nobody 4096 Jan 25 18:09 address
+-r--r--r-- 1 nobody nobody 4096 Jan 25 18:09 broadcast
+-rw-r--r-- 1 nobody nobody 4096 Jan 25 18:09 carrier
+-r--r--r-- 1 nobody nobody 4096 Jan 25 18:09 carrier_changes
+-r--r--r-- 1 nobody nobody 4096 Jan 25 18:09 carrier_down_count
+-r--r--r-- 1 nobody nobody 4096 Jan 25 18:09 carrier_up_count
+-r--r--r-- 1 nobody nobody 4096 Jan 25 18:09 dev_id
+-r--r--r-- 1 nobody nobody 4096 Jan 25 18:09 dev_port
+-r--r--r-- 1 nobody nobody 4096 Jan 25 18:09 dormant
+-r--r--r-- 1 nobody nobody 4096 Jan 25 18:09 duplex
+-rw-r--r-- 1 nobody nobody 4096 Jan 25 18:09 flags
+-rw-r--r-- 1 nobody nobody 4096 Jan 25 18:09 gro_flush_timeout
+-rw-r--r-- 1 nobody nobody 4096 Jan 25 18:09 ifalias
+-r--r--r-- 1 nobody nobody 4096 Jan 25 18:09 ifindex
+-r--r--r-- 1 nobody nobody 4096 Jan 25 18:09 iflink
+-r--r--r-- 1 nobody nobody 4096 Jan 25 18:09 link_mode
+-rw-r--r-- 1 nobody nobody 4096 Jan 25 18:09 mtu
+-r--r--r-- 1 nobody nobody 4096 Jan 25 18:09 name_assign_type
+-rw-r--r-- 1 nobody nobody 4096 Jan 25 18:09 netdev_group
+-r--r--r-- 1 nobody nobody 4096 Jan 25 18:09 operstate
+-r--r--r-- 1 nobody nobody 4096 Jan 25 18:09 phys_port_id
+-r--r--r-- 1 nobody nobody 4096 Jan 25 18:09 phys_port_name
+-r--r--r-- 1 nobody nobody 4096 Jan 25 18:09 phys_switch_id
+drwxr-xr-x 2 nobody nobody    0 Jan 25 18:09 power
+-rw-r--r-- 1 nobody nobody 4096 Jan 25 18:09 proto_down
+drwxr-xr-x 4 nobody nobody    0 Jan 25 18:09 queues
+-r--r--r-- 1 nobody nobody 4096 Jan 25 18:09 speed
+drwxr-xr-x 2 nobody nobody    0 Jan 25 18:09 statistics
+lrwxrwxrwx 1 nobody nobody    0 Jan 25 18:08 subsystem -> ../../../../class/net
+-rw-r--r-- 1 nobody nobody 4096 Jan 25 18:09 tx_queue_len
+-r--r--r-- 1 nobody nobody 4096 Jan 25 18:09 type
+-rw-r--r-- 1 nobody nobody 4096 Jan 25 18:08 uevent
+
+Constrast this with creating a device of the same type in the network
+namespace directly. In this case the device's sysfs permissions will be
+correctly updated.
+(Please also note, that in a lot of workloads this strategy of creating
+ the network device directly in the network device to workaround this
+ issue can not be used. Either because the network device is dedicated
+ after it has been created or because it used by a process that is
+ heavily sandboxed and couldn't create network devices itself.):
+
+drwxr-xr-x 5 root   root      0 Jan 25 18:12 .
+drwxr-xr-x 9 nobody nobody    0 Jan 25 18:08 ..
+-r--r--r-- 1 root   root   4096 Jan 25 18:12 addr_assign_type
+-r--r--r-- 1 root   root   4096 Jan 25 18:12 addr_len
+-r--r--r-- 1 root   root   4096 Jan 25 18:12 address
+-r--r--r-- 1 root   root   4096 Jan 25 18:12 broadcast
+-rw-r--r-- 1 root   root   4096 Jan 25 18:12 carrier
+-r--r--r-- 1 root   root   4096 Jan 25 18:12 carrier_changes
+-r--r--r-- 1 root   root   4096 Jan 25 18:12 carrier_down_count
+-r--r--r-- 1 root   root   4096 Jan 25 18:12 carrier_up_count
+-r--r--r-- 1 root   root   4096 Jan 25 18:12 dev_id
+-r--r--r-- 1 root   root   4096 Jan 25 18:12 dev_port
+-r--r--r-- 1 root   root   4096 Jan 25 18:12 dormant
+-r--r--r-- 1 root   root   4096 Jan 25 18:12 duplex
+-rw-r--r-- 1 root   root   4096 Jan 25 18:12 flags
+-rw-r--r-- 1 root   root   4096 Jan 25 18:12 gro_flush_timeout
+-rw-r--r-- 1 root   root   4096 Jan 25 18:12 ifalias
+-r--r--r-- 1 root   root   4096 Jan 25 18:12 ifindex
+-r--r--r-- 1 root   root   4096 Jan 25 18:12 iflink
+-r--r--r-- 1 root   root   4096 Jan 25 18:12 link_mode
+-rw-r--r-- 1 root   root   4096 Jan 25 18:12 mtu
+-r--r--r-- 1 root   root   4096 Jan 25 18:12 name_assign_type
+-rw-r--r-- 1 root   root   4096 Jan 25 18:12 netdev_group
+-r--r--r-- 1 root   root   4096 Jan 25 18:12 operstate
+-r--r--r-- 1 root   root   4096 Jan 25 18:12 phys_port_id
+-r--r--r-- 1 root   root   4096 Jan 25 18:12 phys_port_name
+-r--r--r-- 1 root   root   4096 Jan 25 18:12 phys_switch_id
+drwxr-xr-x 2 root   root      0 Jan 25 18:12 power
+-rw-r--r-- 1 root   root   4096 Jan 25 18:12 proto_down
+drwxr-xr-x 4 root   root      0 Jan 25 18:12 queues
+-r--r--r-- 1 root   root   4096 Jan 25 18:12 speed
+drwxr-xr-x 2 root   root      0 Jan 25 18:12 statistics
+lrwxrwxrwx 1 nobody nobody    0 Jan 25 18:12 subsystem -> ../../../../class/net
+-rw-r--r-- 1 root   root   4096 Jan 25 18:12 tx_queue_len
+-r--r--r-- 1 root   root   4096 Jan 25 18:12 type
+-rw-r--r-- 1 root   root   4096 Jan 25 18:12 uevent
+
+Now, when creating a network device in a network namespace owned by a
+user namespace and moving it to the host the permissions will be set to
+the id that the user namespace root user has been mapped to on the host
+leading to all sorts of permission issues mentioned above:
+
+458752
+drwxr-xr-x 5 458752 458752      0 Jan 25 18:12 .
+drwxr-xr-x 9 root   root        0 Jan 25 18:08 ..
+-r--r--r-- 1 458752 458752   4096 Jan 25 18:12 addr_assign_type
+-r--r--r-- 1 458752 458752   4096 Jan 25 18:12 addr_len
+-r--r--r-- 1 458752 458752   4096 Jan 25 18:12 address
+-r--r--r-- 1 458752 458752   4096 Jan 25 18:12 broadcast
+-rw-r--r-- 1 458752 458752   4096 Jan 25 18:12 carrier
+-r--r--r-- 1 458752 458752   4096 Jan 25 18:12 carrier_changes
+-r--r--r-- 1 458752 458752   4096 Jan 25 18:12 carrier_down_count
+-r--r--r-- 1 458752 458752   4096 Jan 25 18:12 carrier_up_count
+-r--r--r-- 1 458752 458752   4096 Jan 25 18:12 dev_id
+-r--r--r-- 1 458752 458752   4096 Jan 25 18:12 dev_port
+-r--r--r-- 1 458752 458752   4096 Jan 25 18:12 dormant
+-r--r--r-- 1 458752 458752   4096 Jan 25 18:12 duplex
+-rw-r--r-- 1 458752 458752   4096 Jan 25 18:12 flags
+-rw-r--r-- 1 458752 458752   4096 Jan 25 18:12 gro_flush_timeout
+-rw-r--r-- 1 458752 458752   4096 Jan 25 18:12 ifalias
+-r--r--r-- 1 458752 458752   4096 Jan 25 18:12 ifindex
+-r--r--r-- 1 458752 458752   4096 Jan 25 18:12 iflink
+-r--r--r-- 1 458752 458752   4096 Jan 25 18:12 link_mode
+-rw-r--r-- 1 458752 458752   4096 Jan 25 18:12 mtu
+-r--r--r-- 1 458752 458752   4096 Jan 25 18:12 name_assign_type
+-rw-r--r-- 1 458752 458752   4096 Jan 25 18:12 netdev_group
+-r--r--r-- 1 458752 458752   4096 Jan 25 18:12 operstate
+-r--r--r-- 1 458752 458752   4096 Jan 25 18:12 phys_port_id
+-r--r--r-- 1 458752 458752   4096 Jan 25 18:12 phys_port_name
+-r--r--r-- 1 458752 458752   4096 Jan 25 18:12 phys_switch_id
+drwxr-xr-x 2 458752 458752      0 Jan 25 18:12 power
+-rw-r--r-- 1 458752 458752   4096 Jan 25 18:12 proto_down
+drwxr-xr-x 4 458752 458752      0 Jan 25 18:12 queues
+-r--r--r-- 1 458752 458752   4096 Jan 25 18:12 speed
+drwxr-xr-x 2 458752 458752      0 Jan 25 18:12 statistics
+lrwxrwxrwx 1 root   root        0 Jan 25 18:12 subsystem -> ../../../../class/net
+-rw-r--r-- 1 458752 458752   4096 Jan 25 18:12 tx_queue_len
+-r--r--r-- 1 458752 458752   4096 Jan 25 18:12 type
+-rw-r--r-- 1 458752 458752   4096 Jan 25 18:12 uevent
+
+Fix this by changing the basic sysfs files associated with network
+devices when moving them between network namespaces. To this end we add
+some infrastructure to sysfs.
+
+The patchset takes care to only do this when the owning user namespaces
+changes and the kids differ. So there's only a performance overhead,
+when the owning user namespace of the network namespace is different
+__and__ the kid mappings for the root user are different for the two
+user namespaces:
+Assume we have a netdev eth0 which we create in netns1 owned by userns1.
+userns1 has an id mapping of 0 100000 100000. Now we move eth0 into
+netns2 which is owned by userns2 which also defines an id mapping of 0
+100000 100000. In this case sysfs doesn't need updating. The patch will
+handle this case and not do any needless work. Now assume eth0 is moved
+into netns3 which is owned by userns3 which defines an id mapping of 0
+123456 65536. In this case the root user in each namespace corresponds
+to different kid and sysfs needs updating.
+
+Thanks!
+Christian
+
+Christian Brauner (10):
+  sysfs: add sysfs_file_change_owner{_by_name}()
+  sysfs: add sysfs_link_change_owner()
+  sysfs: add sysfs_group_change_owner()
+  sysfs: add sysfs_groups_change_owner()
+  sysfs: add sysfs_change_owner()
+  device: add device_change_owner()
+  drivers/base/power: add dpm_sysfs_change_owner()
+  net-sysfs: add netdev_change_owner()
+  net-sysfs: add queue_change_owner()
+  net: fix sysfs permssions when device changes network namespace
+
+ drivers/base/core.c        |  77 +++++++++++++++++
+ drivers/base/power/power.h |   2 +
+ drivers/base/power/sysfs.c |  40 +++++++++
+ fs/sysfs/file.c            | 171 +++++++++++++++++++++++++++++++++++++
+ fs/sysfs/group.c           | 129 ++++++++++++++++++++++++++++
+ include/linux/device.h     |   1 +
+ include/linux/sysfs.h      |  45 ++++++++++
+ net/core/dev.c             |   9 +-
+ net/core/net-sysfs.c       | 128 +++++++++++++++++++++++++++
+ net/core/net-sysfs.h       |   2 +
+ 10 files changed, 603 insertions(+), 1 deletion(-)
+
+
+base-commit: bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9
+-- 
+2.25.0
+
