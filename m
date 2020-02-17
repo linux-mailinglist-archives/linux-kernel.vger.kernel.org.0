@@ -2,64 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 932F11616B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 16:54:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 829161616B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 16:54:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729575AbgBQPyI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 10:54:08 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:60092 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729541AbgBQPyH (ORCPT
+        id S1729630AbgBQPyQ convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 17 Feb 2020 10:54:16 -0500
+Received: from skedge03.snt-world.com ([91.208.41.68]:38736 "EHLO
+        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729612AbgBQPyP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 10:54:07 -0500
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1j3iig-0000cX-MB; Mon, 17 Feb 2020 16:54:02 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 48519103A00; Mon, 17 Feb 2020 16:54:02 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        Jan Kratochvil <jan.kratochvil@redhat.com>,
-        Pedro Alves <palves@redhat.com>, Peter Anvin <hpa@zytor.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>
-Subject: Re: [PATCH v2 0/4] x86: fix get_nr_restart_syscall()
-In-Reply-To: <CALCETrWJ8PLbxvX6yuP7Q3kz_=dZinacUd-3-OqUkZNSMCE34g@mail.gmail.com>
-References: <20191126110659.GA14042@redhat.com> <20191203141239.GA30688@redhat.com> <20191218151904.GA3127@redhat.com> <CAHk-=whNhwFigBDSnyrfJYxr-uAe6PHiWTcHcZzPW+vZ3eWAXw@mail.gmail.com> <CALCETrWJ8PLbxvX6yuP7Q3kz_=dZinacUd-3-OqUkZNSMCE34g@mail.gmail.com>
-Date:   Mon, 17 Feb 2020 16:54:02 +0100
-Message-ID: <87v9o5nrad.fsf@nanos.tec.linutronix.de>
+        Mon, 17 Feb 2020 10:54:15 -0500
+Received: from sntmail11s.snt-is.com (unknown [10.203.32.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by skedge03.snt-world.com (Postfix) with ESMTPS id EABA767AB40;
+        Mon, 17 Feb 2020 16:54:12 +0100 (CET)
+Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail11s.snt-is.com
+ (10.203.32.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1913.5; Mon, 17 Feb
+ 2020 16:54:12 +0100
+Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
+ sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
+ 15.01.1913.005; Mon, 17 Feb 2020 16:54:12 +0100
+From:   Schrempf Frieder <frieder.schrempf@kontron.de>
+To:     Boris Brezillon <bbrezillon@kernel.org>,
+        Schrempf Frieder <frieder.schrempf@kontron.de>,
+        Jeff Kletsky <git-commits@allycomm.com>,
+        liaoweixiong <liaoweixiong@allwinnertech.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+CC:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "Richard Weinberger" <richard@nod.at>
+Subject: [PATCH v2 3/3] mtd: spinand: Don not erase the block before writing a
+ bad block marker
+Thread-Topic: [PATCH v2 3/3] mtd: spinand: Don not erase the block before
+ writing a bad block marker
+Thread-Index: AQHV5ap/saRAn1//VEmaJshNaD42IA==
+Date:   Mon, 17 Feb 2020 15:54:12 +0000
+Message-ID: <20200217155213.5594-4-frieder.schrempf@kontron.de>
+References: <20200217155213.5594-1-frieder.schrempf@kontron.de>
+In-Reply-To: <20200217155213.5594-1-frieder.schrempf@kontron.de>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.17.1
+x-originating-ip: [172.25.9.193]
+x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain
+X-SnT-MailScanner-Information: Please contact the ISP for more information
+X-SnT-MailScanner-ID: EABA767AB40.A1FAB
+X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
+X-SnT-MailScanner-SpamCheck: 
+X-SnT-MailScanner-From: frieder.schrempf@kontron.de
+X-SnT-MailScanner-To: bbrezillon@kernel.org, git-commits@allycomm.com,
+        liaoweixiong@allwinnertech.com, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, miquel.raynal@bootlin.com,
+        richard@nod.at, stable@vger.kernel.org
+X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andy Lutomirski <luto@kernel.org> writes:
+From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-> On Wed, Dec 18, 2019 at 12:02 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->>
->> On Wed, Dec 18, 2019 at 7:19 AM Oleg Nesterov <oleg@redhat.com> wrote:
->> >
->> > Andy, Linus, do you have any objections?
->>
->> It's ok by me, no objections. I still don't love your "hide the bit in
->> thread flags over return to user space", and would still prefer it in
->> the restart block, but I don't care _that_ deeply.
->>
->
-> I'd rather stick it in restart_block.  I'd also like to see the kernel
-> *verify* that the variant of restart_syscall() that's invoked is the
-> same as the variant that should be invoked.  In my mind, very few
-> syscalls say "I can't believe there are no major bugs in here" like
-> restart_syscall(), and being conservative is nice.
+Currently when marking a block, we use spinand_erase_op() to erase
+the block before writing the marker to the OOB area. Doing so without
+waiting for the operation to finish can lead to the marking failing
+silently and no bad block marker being written to the flash.
 
-Just mopping up my backlog. What happened to this?
+In fact we don't need to do an erase at all before writing the BBM.
+The ECC is disabled for the raw access to the OOB data and we don't
+need to work around any issues with chips reporting ECC errors as it
+is known to be the case for raw NAND.
+
+Fixes: 7529df465248 ("mtd: nand: Add core infrastructure to support SPI NANDs")
+Cc: stable@vger.kernel.org
+Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+---
+Changes in v2:
+ * Instead of waiting for the erase operation to finish, just don't
+   do an erase at all, as it is not needed.
+ * Update the commit message
+---
+ drivers/mtd/nand/spi/core.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
+index a94287884453..8dda51bbdd11 100644
+--- a/drivers/mtd/nand/spi/core.c
++++ b/drivers/mtd/nand/spi/core.c
+@@ -613,7 +613,6 @@ static int spinand_markbad(struct nand_device *nand, const struct nand_pos *pos)
+ 	};
+ 	int ret;
+ 
+-	/* Erase block before marking it bad. */
+ 	ret = spinand_select_target(spinand, pos->target);
+ 	if (ret)
+ 		return ret;
+@@ -622,8 +621,6 @@ static int spinand_markbad(struct nand_device *nand, const struct nand_pos *pos)
+ 	if (ret)
+ 		return ret;
+ 
+-	spinand_erase_op(spinand, pos);
+-
+ 	return spinand_write_page(spinand, &req);
+ }
+ 
+-- 
+2.17.1
