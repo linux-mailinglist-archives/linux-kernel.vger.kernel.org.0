@@ -2,71 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C363C160FA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 11:11:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14A21160FB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 11:15:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729192AbgBQKLV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 05:11:21 -0500
-Received: from mga12.intel.com ([192.55.52.136]:55528 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729126AbgBQKLU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 05:11:20 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Feb 2020 02:11:18 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,452,1574150400"; 
-   d="scan'208";a="229155040"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga008.fm.intel.com with ESMTP; 17 Feb 2020 02:11:18 -0800
-Received: from [10.226.38.21] (unknown [10.226.38.21])
-        by linux.intel.com (Postfix) with ESMTP id EEE77580270;
-        Mon, 17 Feb 2020 02:11:15 -0800 (PST)
-Subject: Re: [PATCH v9 0/2] spi: cadence-quadpsi: Add support for the Cadence
- QSPI controller
-To:     Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Vignesh R <vigneshr@ti.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, dan.carpenter@oracle.com,
-        cheol.yong.kim@intel.com, qi-ming.wu@intel.com
-References: <20200214114618.29704-1-vadivel.muruganx.ramuthevar@linux.intel.com>
- <CAAh8qsxnRSwonuEPrriuS=gUMTjt8ddUVy5HxegmoCk-FoE4qg@mail.gmail.com>
-From:   "Ramuthevar, Vadivel MuruganX" 
-        <vadivel.muruganx.ramuthevar@linux.intel.com>
-Message-ID: <48e60c06-62d5-4965-97d1-51577da3bbcf@linux.intel.com>
-Date:   Mon, 17 Feb 2020 18:11:14 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1729179AbgBQKPY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 05:15:24 -0500
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:59774 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728942AbgBQKPX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 05:15:23 -0500
+X-UUID: 42c1b312a6e94496981f5328d2733f1a-20200217
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=ABI0N2j/Jh+drizYMIhvk5l8R+23rLL1RNKJu4e6TbI=;
+        b=G+b/IfdwcG3M8LNEPiHJAT5OhXWEJsTb08T16n0eZiJnYalDcqUirVFDMgpUxjL4aOVuSxItbkeWmV8Br9pdESUwUaPsik++imSBJfsgqJK9wCrYYj1hs9dM/+QJU0k1Xc4jQ7RVZxjKwKA+3uFKqkZgovD92Nv2XIbHxHBbvM4=;
+X-UUID: 42c1b312a6e94496981f5328d2733f1a-20200217
+Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        (envelope-from <yong.liang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1977825806; Mon, 17 Feb 2020 18:15:15 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33DR.mediatek.inc
+ (172.27.6.106) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 17 Feb
+ 2020 18:11:01 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 17 Feb 2020 18:14:35 +0800
+Message-ID: <1581934493.27500.4.camel@mhfsdcap03>
+Subject: Re: [PATCH 1/1] amr64: dts: modify mt8183.dtsi
+From:   Yong Liang <yong.liang@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Mon, 17 Feb 2020 18:14:53 +0800
+In-Reply-To: <b0345cfc-0e7c-65a8-5ff3-ea064b6c8905@gmail.com>
+References: <Add watchdog device node>
+         <20200217081922.22544-1-yong.liang@mediatek.com>
+         <20200217081922.22544-2-yong.liang@mediatek.com>
+         <b0345cfc-0e7c-65a8-5ff3-ea064b6c8905@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-In-Reply-To: <CAAh8qsxnRSwonuEPrriuS=gUMTjt8ddUVy5HxegmoCk-FoE4qg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+X-TM-SNTS-SMTP: C869A12EC30298FAB5FD83CF057EFEA45400B4271D34EE09E02F69FD808CD1172000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Simon,
+T24gTW9uLCAyMDIwLTAyLTE3IGF0IDE4OjA1ICswODAwLCBNYXR0aGlhcyBCcnVnZ2VyIHdyb3Rl
+Og0KPiANCj4gT24gMTcvMDIvMjAyMCAwOToxOSwgWW9uZyBMaWFuZyB3cm90ZToNCj4gPiBGcm9t
+OiAieW9uZy5saWFuZyIgPHlvbmcubGlhbmdAbWVkaWF0ZWsuY29tPg0KPiA+IA0KPiA+IEFkZCB3
+YXRjaGRvZyBkZXZpY2Ugbm9kZQ0KPiA+IERvY3VtZW50IGJhc2Ugb24gaHR0cDovL2xpc3RzLmlu
+ZnJhZGVhZC5vcmcvcGlwZXJtYWlsL2xpbnV4LW1lZGlhdGVrLzIwMjAtSmFudWFyeS8wMjY0MTUu
+aHRtbA0KPiA+IA0KPiANCj4gQ29tbWl0IG1lc3NhZ2Ugc2hvdWxkbid0IGNvbnRhaW4gbGlua3Mg
+dG8gdGhlIG1haWxpbmdsaXN0IHRoaXMgaXMgYWRkaXRpb25hbA0KPiBpbmZvcm1hdGlvbiBqdXN0
+IGZvciByZXZpZXcgYW5kIHNob3VsZCBnbyBhZnRlciAnLS0tJw0KPiANCj4gDQo+ID4gU2lnbmVk
+LW9mZi1ieTogeW9uZy5saWFuZyA8eW9uZy5saWFuZ0BtZWRpYXRlay5jb20+DQo+ID4gLS0tDQo+
+IA0KPiBOZXh0IHRpbWUgcGxlYXNlIHB1dCByZWZlcmVuY2UgdG8gc2VyaWVzIHlvdXIgcGF0Y2hl
+cyBhcmUgYmFzZWQgb24gaGVyZSA6KQ0KPiANCj4gSSBmaXhlZCB0aGUgY29tbWl0IG1lc3NhZ2Ug
+KHRoZSBzdWJqZWN0IHdhc24ndCByZWFsbHkgdXNlZnVsbCwgSSBmaXhlZCB0aGF0IHRvbykNCj4g
+YW5kIHB1c2hlZCBpdCB0byB2NS42LW5leHQvZHRzNjQNCj4gDQo+IFRoYW5rcywNCj4gTWF0dGhp
+YXMNCg0KICBIaSBNYXR0aGlhczoNCiAgICAgU28gdGhpcyBwYXRjaCBjb25maXJtZCB0byBiZSBt
+ZXJnZWQ/DQogICAgIFRoYW5zayB5b3UgdmVyeSBtdWNoIQ0KPiANCj4gPiAgYXJjaC9hcm02NC9i
+b290L2R0cy9tZWRpYXRlay9tdDgxODMuZHRzaSB8IDcgKysrKysrKw0KPiA+ICAxIGZpbGUgY2hh
+bmdlZCwgNyBpbnNlcnRpb25zKCspDQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQv
+Ym9vdC9kdHMvbWVkaWF0ZWsvbXQ4MTgzLmR0c2kgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL21lZGlh
+dGVrL210ODE4My5kdHNpDQo+ID4gaW5kZXggMTBiMzI0NzFiYzdiLi44YjU5ZTBlYmEyZWIgMTAw
+NjQ0DQo+ID4gLS0tIGEvYXJjaC9hcm02NC9ib290L2R0cy9tZWRpYXRlay9tdDgxODMuZHRzaQ0K
+PiA+ICsrKyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvbWVkaWF0ZWsvbXQ4MTgzLmR0c2kNCj4gPiBA
+QCAtMjUzLDYgKzI1MywxMyBAQA0KPiA+ICAJCQkjaW50ZXJydXB0LWNlbGxzID0gPDI+Ow0KPiA+
+ICAJCX07DQo+ID4gIA0KPiA+ICsJCXdhdGNoZG9nOiB3YXRjaGRvZ0AxMDAwNzAwMCB7DQo+ID4g
+KwkJCWNvbXBhdGlibGUgPSAibWVkaWF0ZWssbXQ4MTgzLXdkdCIsDQo+ID4gKwkJCQkgICAgICJt
+ZWRpYXRlayxtdDY1ODktd2R0IjsNCj4gPiArCQkJcmVnID0gPDAgMHgxMDAwNzAwMCAwIDB4MTAw
+PjsNCj4gPiArCQkJI3Jlc2V0LWNlbGxzID0gPDE+Ow0KPiA+ICsJCX07DQo+ID4gKw0KPiA+ICAJ
+CWFwbWl4ZWRzeXM6IHN5c2NvbkAxMDAwYzAwMCB7DQo+ID4gIAkJCWNvbXBhdGlibGUgPSAibWVk
+aWF0ZWssbXQ4MTgzLWFwbWl4ZWRzeXMiLCAic3lzY29uIjsNCj4gPiAgCQkJcmVnID0gPDAgMHgx
+MDAwYzAwMCAwIDB4MTAwMD47DQo+ID4gDQoNCg==
 
-On 14/2/2020 8:02 PM, Simon Goldschmidt wrote:
-> On Fri, Feb 14, 2020 at 12:46 PM Ramuthevar,Vadivel MuruganX
-> <vadivel.muruganx.ramuthevar@linux.intel.com> wrote:
->> Add support for the Cadence QSPI controller. This controller is
->> present in the Intel Lightning Mountain(LGM) SoCs, Altera and TI SoCs.
->> This driver has been tested on the Intel LGM SoCs.
-> This is v9 and still, none of the altera maintainers are on CC?
-> How will it be ensured that this doesn't break altera if it is merged?
-Thanks for reminded me, sorry, next send time will add them in CC.
-
-Regards
-Vadivel
->
-> Regards,
-> Simon
->
