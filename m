@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42A5B161B82
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 20:19:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27920161B79
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 20:19:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729894AbgBQTTT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 14:19:19 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:34640 "EHLO
+        id S1729800AbgBQTSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 14:18:54 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:34649 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727241AbgBQTSv (ORCPT
+        with ESMTP id S1729756AbgBQTSw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 14:18:51 -0500
+        Mon, 17 Feb 2020 14:18:52 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1j3luq-0006CE-7u; Mon, 17 Feb 2020 20:18:48 +0100
+        id 1j3lur-0006DH-6h; Mon, 17 Feb 2020 20:18:49 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id DCBE41C20B8;
-        Mon, 17 Feb 2020 20:18:47 +0100 (CET)
-Date:   Mon, 17 Feb 2020 19:18:47 -0000
-From:   "tip-bot2 for Christophe Leroy" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id D060F1C20B8;
+        Mon, 17 Feb 2020 20:18:48 +0100 (CET)
+Date:   Mon, 17 Feb 2020 19:18:48 -0000
+From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] lib/vdso: Allow fixed clock mode
-Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Thomas Gleixner <tglx@linutronix.de>,
+Subject: [tip: timers/core] lib/vdso: Avoid highres update if clocksource is
+ not VDSO capable
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Vincenzo Frascino <vincenzo.frascino@arm.com>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200207124403.748756829@linutronix.de>
-References: <20200207124403.748756829@linutronix.de>
+In-Reply-To: <20200207124403.563379423@linutronix.de>
+References: <20200207124403.563379423@linutronix.de>
 MIME-Version: 1.0
-Message-ID: <158196712757.13786.8896334064344185928.tip-bot2@tip-bot2>
+Message-ID: <158196712861.13786.9777024048543338540.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,69 +48,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     ae12e08539de6717502c2f9f83bd60df939b5c08
-Gitweb:        https://git.kernel.org/tip/ae12e08539de6717502c2f9f83bd60df939b5c08
-Author:        Christophe Leroy <christophe.leroy@c-s.fr>
-AuthorDate:    Fri, 07 Feb 2020 13:39:02 +01:00
+Commit-ID:     c7a18100bdffdff440c7291db6e80863fab0461e
+Gitweb:        https://git.kernel.org/tip/c7a18100bdffdff440c7291db6e80863fab0461e
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Fri, 07 Feb 2020 13:39:00 +01:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 17 Feb 2020 20:12:18 +01:00
+CommitterDate: Mon, 17 Feb 2020 20:12:17 +01:00
 
-lib/vdso: Allow fixed clock mode
+lib/vdso: Avoid highres update if clocksource is not VDSO capable
 
-Some architectures have a fixed clocksource which is known at compile time
-and cannot be replaced or disabled at runtime, e.g. timebase on
-PowerPC. For such cases the clock mode check in the VDSO code is pointless.
+If the current clocksource is not VDSO capable there is no point in
+updating the high resolution parts of the VDSO data.
 
-Move the check for a VDSO capable clocksource into an inline function and
-allow architectures to redefine it via a macro.
+Replace the architecture specific check with a check for a VDSO capable
+clocksource and skip the update if there is none.
 
-[ tglx: Removed the #ifdef mess ]
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Tested-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 Reviewed-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Link: https://lkml.kernel.org/r/20200207124403.748756829@linutronix.de
-
+Link: https://lkml.kernel.org/r/20200207124403.563379423@linutronix.de
 
 
 ---
- lib/vdso/gettimeofday.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ arch/arm/include/asm/vdso/vsyscall.h | 7 -------
+ include/asm-generic/vdso/vsyscall.h  | 7 -------
+ kernel/time/vsyscall.c               | 6 +++---
+ 3 files changed, 3 insertions(+), 17 deletions(-)
 
-diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
-index a76ac8d..8eb6d1e 100644
---- a/lib/vdso/gettimeofday.c
-+++ b/lib/vdso/gettimeofday.c
-@@ -46,6 +46,13 @@ static inline bool __arch_vdso_hres_capable(void)
+diff --git a/arch/arm/include/asm/vdso/vsyscall.h b/arch/arm/include/asm/vdso/vsyscall.h
+index 002f9ed..47e41ae 100644
+--- a/arch/arm/include/asm/vdso/vsyscall.h
++++ b/arch/arm/include/asm/vdso/vsyscall.h
+@@ -22,13 +22,6 @@ struct vdso_data *__arm_get_k_vdso_data(void)
+ #define __arch_get_k_vdso_data __arm_get_k_vdso_data
+ 
+ static __always_inline
+-bool __arm_update_vdso_data(void)
+-{
+-	return cntvct_ok;
+-}
+-#define __arch_update_vdso_data __arm_update_vdso_data
+-
+-static __always_inline
+ void __arm_sync_vdso_data(struct vdso_data *vdata)
+ {
+ 	flush_dcache_page(virt_to_page(vdata));
+diff --git a/include/asm-generic/vdso/vsyscall.h b/include/asm-generic/vdso/vsyscall.h
+index 4a28797..c835607 100644
+--- a/include/asm-generic/vdso/vsyscall.h
++++ b/include/asm-generic/vdso/vsyscall.h
+@@ -11,13 +11,6 @@ static __always_inline struct vdso_data *__arch_get_k_vdso_data(void)
  }
- #endif
+ #endif /* __arch_get_k_vdso_data */
  
-+#ifndef vdso_clocksource_ok
-+static inline bool vdso_clocksource_ok(const struct vdso_data *vd)
-+{
-+	return vd->clock_mode != VDSO_CLOCKMODE_NONE;
-+}
-+#endif
-+
- #ifdef CONFIG_TIME_NS
- static int do_hres_timens(const struct vdso_data *vdns, clockid_t clk,
- 			  struct __kernel_timespec *ts)
-@@ -66,7 +73,7 @@ static int do_hres_timens(const struct vdso_data *vdns, clockid_t clk,
- 	do {
- 		seq = vdso_read_begin(vd);
+-#ifndef __arch_update_vdso_data
+-static __always_inline bool __arch_update_vdso_data(void)
+-{
+-	return true;
+-}
+-#endif /* __arch_update_vdso_data */
+-
+ #ifndef __arch_update_vsyscall
+ static __always_inline void __arch_update_vsyscall(struct vdso_data *vdata,
+ 						   struct timekeeper *tk)
+diff --git a/kernel/time/vsyscall.c b/kernel/time/vsyscall.c
+index d31a5ef..54ce6eb 100644
+--- a/kernel/time/vsyscall.c
++++ b/kernel/time/vsyscall.c
+@@ -105,10 +105,10 @@ void update_vsyscall(struct timekeeper *tk)
+ 	WRITE_ONCE(vdata[CS_HRES_COARSE].hrtimer_res, hrtimer_resolution);
  
--		if (unlikely(vd->clock_mode == VDSO_CLOCKMODE_NONE))
-+		if (unlikely(!vdso_clocksource_ok(vd)))
- 			return -1;
+ 	/*
+-	 * Architectures can opt out of updating the high resolution part
+-	 * of the VDSO.
++	 * If the current clocksource is not VDSO capable, then spare the
++	 * update of the high reolution parts.
+ 	 */
+-	if (__arch_update_vdso_data())
++	if (clock_mode != VDSO_CLOCKMODE_NONE)
+ 		update_vdso_data(vdata, tk);
  
- 		cycles = __arch_get_hw_counter(vd->clock_mode);
-@@ -134,7 +141,7 @@ static __always_inline int do_hres(const struct vdso_data *vd, clockid_t clk,
- 		}
- 		smp_rmb();
- 
--		if (unlikely(vd->clock_mode == VDSO_CLOCKMODE_NONE))
-+		if (unlikely(!vdso_clocksource_ok(vd)))
- 			return -1;
- 
- 		cycles = __arch_get_hw_counter(vd->clock_mode);
+ 	__arch_update_vsyscall(vdata, tk);
