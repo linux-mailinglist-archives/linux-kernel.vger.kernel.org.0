@@ -2,123 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23A7D161C61
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 21:40:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B44E161C52
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 21:33:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729047AbgBQUkS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 15:40:18 -0500
-Received: from gateway36.websitewelcome.com ([192.185.184.18]:49153 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727300AbgBQUkR (ORCPT
+        id S1729334AbgBQUdX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 15:33:23 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:11384 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726704AbgBQUdW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 15:40:17 -0500
-X-Greylist: delayed 1498 seconds by postgrey-1.27 at vger.kernel.org; Mon, 17 Feb 2020 15:40:17 EST
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id B0EA54168ED98
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 13:08:18 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 3mSsjK3ZzEfyq3mSsjSNKU; Mon, 17 Feb 2020 13:53:58 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=T8z5QYXnAQEN7lbfmiVGan9I1EcAx8pV7rR/RAUlDkQ=; b=bCExp6HCcpbj1gliJ3cAr/vt2B
-        LeZIB94qmGODnHArewPyJx+3rzrGP3HEZLWaq89OhIWOI2MdxZz2l90OQGWloaGbh3Bvu33CmKVcM
-        tVvRMQDGMEsNu2+HkitVtBPlBmmrOrK1xu1m3WbAP79F5R5KF0YzII9SNVThD8/zwNBLOR0EJxDA4
-        qHOAachIzWN8HTPXdUmd8lCzb1x9uxDv8W3BUKSSm38uar4GgOruEQaxCBQhrl46gW+aJkqFWyPyW
-        6UHJ43P4IyLW1kdQsjqtEN4s5R1l9pjPIPS4XIaIh6tUv++GOz5toBis7/k+3mH5RkP4IIMr7aVo2
-        kyZoCs8g==;
-Received: from [200.68.140.26] (port=23194 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j3mSr-000KUA-7N; Mon, 17 Feb 2020 13:53:57 -0600
-Date:   Mon, 17 Feb 2020 13:56:39 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Saeed Mahameed <saeedm@mellanox.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] net/mlx5/fs_counters: Replace zero-length array with
- flexible-array member
-Message-ID: <20200217195639.GA2097@embeddedor>
+        Mon, 17 Feb 2020 15:33:22 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01HKUCgs037248;
+        Mon, 17 Feb 2020 15:32:41 -0500
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2y6dnt08fx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Feb 2020 15:32:41 -0500
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 01HKUJ43038101;
+        Mon, 17 Feb 2020 15:32:41 -0500
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2y6dnt08fc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Feb 2020 15:32:41 -0500
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 01HKPSse024151;
+        Mon, 17 Feb 2020 20:32:40 GMT
+Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
+        by ppma03wdc.us.ibm.com with ESMTP id 2y68964j7v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Feb 2020 20:32:40 +0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01HKWeOV7406178
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Feb 2020 20:32:40 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1A311AE05C;
+        Mon, 17 Feb 2020 20:32:40 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0A18AAE05F;
+        Mon, 17 Feb 2020 20:32:37 +0000 (GMT)
+Received: from leobras.br.ibm.com (unknown [9.18.235.152])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 17 Feb 2020 20:32:36 +0000 (GMT)
+Message-ID: <e09b8921d1aade7b9d2aace43fc357bdcd1001bd.camel@linux.ibm.com>
+Subject: Re: [PATCH v6 03/11] powerpc/mm: Adds arch-specificic functions to
+ track lockless pgtable walks
+From:   Leonardo Bras <leonardo@linux.ibm.com>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Steven Price <steven.price@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Reza Arbab <arbab@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michal Suchanek <msuchanek@suse.de>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        kvm-ppc@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-mm@kvack.org
+Date:   Mon, 17 Feb 2020 17:32:33 -0300
+In-Reply-To: <efcf780cee767d0f4b06b56e216725c6bd8d60d4.camel@linux.ibm.com>
+References: <20200206030900.147032-1-leonardo@linux.ibm.com>
+         <20200206030900.147032-4-leonardo@linux.ibm.com>
+         <1311ce1c-7e5a-f7c4-2ab2-c03e124ca1c1@c-s.fr>
+         <efcf780cee767d0f4b06b56e216725c6bd8d60d4.camel@linux.ibm.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-rjDDfaEpQyTkTpCEQ2uL"
+User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.68.140.26
-X-Source-L: No
-X-Exim-ID: 1j3mSr-000KUA-7N
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.26]:23194
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 14
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-17_12:2020-02-17,2020-02-17 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1015
+ malwarescore=0 impostorscore=0 lowpriorityscore=0 bulkscore=0 spamscore=0
+ adultscore=0 suspectscore=0 mlxscore=0 phishscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002170168
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+--=-rjDDfaEpQyTkTpCEQ2uL
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+On Fri, 2020-02-07 at 01:38 -0300, Leonardo Bras wrote:
+> > Why not make them static inline just like the generic ones ?
+> >=20
+>=20
+> Sure, can be done.  It would save some function calls.
+> For that I will define the per-cpu variable in .c and declare it in .h
+> All new function can be moved to .h, while changing adding the inline
+> modifier.
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+Just tried doing that, but percpu stuff relies in paca definitions, and
+this ends up creating some cyclic dependencies.
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
+I could try to change that, but the amount of change is big and
+probably should be dealt in another patchset.
 
-This issue was found with the help of Coccinelle.
+--=-rjDDfaEpQyTkTpCEQ2uL
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+-----BEGIN PGP SIGNATURE-----
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/ethernet/mellanox/mlx5/core/fs_counters.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+iQIzBAABCAAdFiEEMdeUgIzgjf6YmUyOlQYWtz9SttQFAl5K+GEACgkQlQYWtz9S
+ttRsOg//QbdkYtnYqYavQzv828W7A3KiHEHqK77HtlTbJXOE5Vj9aU05HPZJp9XT
+ck/HXYupAIcMq+qJ8tNQKbu0zHCHxQ4dk7BPRM8RP4dp/bDOGGXqmvJG0toVtumX
+mTiJKUSaq7JeacS8xsx7hNZvLvHea/zagFha49BvLj6QajY+GU+CrpMJoaX1o/pc
+2mWKJfpLvacLQBQGfKC+t81VKHZC2K2BWpGyS7/MLEw120/n+KQHqaekMcgSaqVU
+lngRVDm4dHEZUZbOXjM3tyceMCTp5xTNv9+pS2friqkfXTomMS5ZuSW1O0i/A28m
+0TBWXC+kcQq+Bi1IxIqEPYQ3xab6/Xoba11GWD1qzBiUwd/3Xg30bAB9LYJXMwiD
+outVyh5BO6w8oSp1q5iHmt3raJLNTYYlG/SZzZCsCKXHr3EALNZvByETJ2j/oGdJ
+dbpPDOxmE2jbWMtIBhdjRFBmfmAGCTgRLpCq0hngNPm2sdQTmr9+B5UcWNzJjuks
+j1lDiMHOle78bT7GTYifJjVZrgBiB/JuToqBVzBIEgOBcGXiUXGUaDHgpNjKtH9d
+MtbmDODl9st9czyK/edN39eHlz4jfK+Z87ZJQVZz93bEjaRI6pRbqgiTVudWGdMN
+TISNtFVMgBbLWmgi8HOfs0zz4naMfcorqOhsTIi95qM8ygfs98s=
+=rEX5
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/fs_counters.c b/drivers/net/ethernet/mellanox/mlx5/core/fs_counters.c
-index ab69effb056d..f43caefd07a1 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/fs_counters.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_counters.c
-@@ -470,7 +470,7 @@ struct mlx5_fc_bulk {
- 	u32 base_id;
- 	int bulk_len;
- 	unsigned long *bitmask;
--	struct mlx5_fc fcs[0];
-+	struct mlx5_fc fcs[];
- };
- 
- static void mlx5_fc_init(struct mlx5_fc *counter, struct mlx5_fc_bulk *bulk,
--- 
-2.25.0
+--=-rjDDfaEpQyTkTpCEQ2uL--
 
