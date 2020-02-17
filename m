@@ -2,147 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D573F160FF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 11:27:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 813D7161009
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 11:29:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729332AbgBQK1l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 05:27:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37924 "EHLO mail.kernel.org"
+        id S1729258AbgBQK3C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 05:29:02 -0500
+Received: from ozlabs.org ([203.11.71.1]:35505 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728956AbgBQK1k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 05:27:40 -0500
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728698AbgBQK3B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 05:29:01 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F147020702;
-        Mon, 17 Feb 2020 10:27:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581935260;
-        bh=kNO1qKrVAPwz29d+xMtZD0Np2dGwp7T8QGZKGJRjlK4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=EOKE7bV8II4d/UwdcdMfXKYf/Rt3ZweWcR1ndGd4cJzyyfeuaIiKKPvCii6gxtipC
-         fh/Ug97XBfCs9jCRnfOLMuUw1B9f/qKMY4XI5lfMi+hA2M04ZMGTQjpKVvdBu/OFpK
-         iqNojxITZFDjVausH+Hfg0220qwuXrSIAoZ/45V0=
-Date:   Mon, 17 Feb 2020 19:27:35 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        stable@kernel.vger.org,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH] powerpc/kprobes: Fix trap address when trap happened in
- real mode
-Message-Id: <20200217192735.5070f0925c4159ccffa4e465@kernel.org>
-In-Reply-To: <baee8186-549a-f6cf-3619-884b6d708185@c-s.fr>
-References: <b1451438f7148ad0e03306a1f1409f4ad1d6ec7c.1581684263.git.christophe.leroy@c-s.fr>
-        <20200214225434.464ec467ad9094961abb8ddc@kernel.org>
-        <e09d3c42-542e-48c1-2f1e-cfe605b05bec@c-s.fr>
-        <20200216213411.824295a321d8fa979dedbbbe@kernel.org>
-        <baee8186-549a-f6cf-3619-884b6d708185@c-s.fr>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48LgFQ6rZlz9sRJ;
+        Mon, 17 Feb 2020 21:28:58 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
+        s=201909; t=1581935339;
+        bh=nEmdpQuucobTW6rpdULzizRAsoI2rsTmZ9yAx2qGur4=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=NyHWaVkSyuF7cTzcZbwuW426SYGM0A8R3gWMojjCaz5LjwOgg7Rj3F1/oC7p/ONiy
+         fVOHT7y6qbWC1pZwURPjZjLVjYLufuM/MOBJjUcpFyZfZK6JinutuyMOw1UqFEftec
+         61qlu07DPFeSjZlL/reQfz30XSDIFdJtQ0XGzxqT5TOZgDC1+hNegOvEblHtkQ4pB7
+         nyISu8uHKRuOpfitYFzzCM9YwRrIAaLgrO8j+USQi57ZnbZWagEoPHlZFgY8kU4/km
+         cRciaA89kOerKA7VsFcU4egklotTxSym5pOge5YOCKwWSTj2xhz0CekhhPruKJuUFk
+         NUFzbkw0aJTdg==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Subject: Re: install is no longer PHONY?
+In-Reply-To: <CAK7LNASePHZ78O6fnScU_fVHkDOKJEgT+B+OC7NPxkW+tb7q1Q@mail.gmail.com>
+References: <874kvz10rx.fsf@mpe.ellerman.id.au> <CAK7LNASePHZ78O6fnScU_fVHkDOKJEgT+B+OC7NPxkW+tb7q1Q@mail.gmail.com>
+Date:   Mon, 17 Feb 2020 21:28:55 +1100
+Message-ID: <87d0adfqxk.fsf@mpe.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Feb 2020 10:03:22 +0100
-Christophe Leroy <christophe.leroy@c-s.fr> wrote:
+Masahiro Yamada <masahiroy@kernel.org> writes:
+> Hi Michael,
+>
+> On Mon, Feb 10, 2020 at 2:15 PM Michael Ellerman <mpe@ellerman.id.au> wrote:
+>>
+>> Hi Masahiro,
+>>
+>> I noticed that "install" seems to be no longer PHONY, or at least if I
+>> have a file/directory called install then the build doesn't run.
+>>
+>> eg:
+>>   $ touch install
+>>   $ make install
+>>   make: 'install' is up to date.
+>>   $ rm install
+>>   $ make install
+>>     LDS     arch/powerpc/boot/zImage.lds
+>>     WRAP    arch/powerpc/boot/zImage.pseries
+>>     WRAP    arch/powerpc/boot/zImage.epapr
+>
+>
+> I think the reason is
+> 'install' is not specified as a phony target.
+>
+> You can add 'PHONY += install' to fix it.
+>
+>
+> PHONY += install    # please add this!
+> install:
+>         $(Q)$(MAKE) $(build)=$(boot) install
+>
+>
+> Please do so in both arch/powerpc/Makefile and
+> arch/powerpc/boot/Makefile.
 
-> 
-> 
-> Le 16/02/2020 à 13:34, Masami Hiramatsu a écrit :
-> > On Sat, 15 Feb 2020 11:28:49 +0100
-> > Christophe Leroy <christophe.leroy@c-s.fr> wrote:
-> > 
-> >> Hi,
-> >>
-> >> Le 14/02/2020 à 14:54, Masami Hiramatsu a écrit :
-> >>> Hi,
-> >>>
-> >>> On Fri, 14 Feb 2020 12:47:49 +0000 (UTC)
-> >>> Christophe Leroy <christophe.leroy@c-s.fr> wrote:
-> >>>
-> >>>> When a program check exception happens while MMU translation is
-> >>>> disabled, following Oops happens in kprobe_handler() in the following
-> >>>> test:
-> >>>>
-> >>>> 		} else if (*addr != BREAKPOINT_INSTRUCTION) {
-> >>>
-> >>> Thanks for the report and patch. I'm not so sure about powerpc implementation
-> >>> but at where the MMU translation is disabled, can the handler work correctly?
-> >>> (And where did you put the probe on?)
-> >>>
-> >>> Your fix may fix this Oops, but if the handler needs special care, it is an
-> >>> option to blacklist such place (if possible).
-> >>
-> >> I guess that's another story. Here we are not talking about a place
-> >> where kprobe has been illegitimately activated, but a place where there
-> >> is a valid trap, which generated a valid 'program check exception'. And
-> >> kprobe was off at that time.
-> > 
-> > Ah, I got it. It is not a kprobe breakpoint, but to check that correctly,
-> > it has to know the address where the breakpoint happens. OK.
-> > 
-> >>
-> >> As any 'program check exception' due to a trap (ie a BUG_ON, a WARN_ON,
-> >> a debugger breakpoint, a perf breakpoint, etc...) calls
-> >> kprobe_handler(), kprobe_handler() must be prepared to handle the case
-> >> where the MMU translation is disabled, even if probes are not supposed
-> >> to be set for functions running with MMU translation disabled.
-> > 
-> > Can't we check the MMU is disabled there (as same as checking the exception
-> > happened in user space or not)?
-> > 
-> 
-> What do you mean by 'there' ? At the entry of kprobe_handler() ?
-> 
-> That's what my patch does, it checks whether MMU is disabled or not. If 
-> it is, it converts the address to a virtual address.
-> 
-> Do you mean kprobe_handler() should bail out early as it does when the 
-> trap happens in user mode ?
-
-Yes, that is what I meant.
-
-> Of course we can do that, I don't know 
-> enough about kprobe to know if kprobe_handler() should manage events 
-> that happened in real-mode or just ignore them. But I tested adding an 
-> event on a function that runs in real-mode, and it (now) works.
-> 
-> So, what should we do really ?
-
-I'm not sure how the powerpc kernel runs in real mode.
-But clearly, at least kprobe event can not handle that case because
-it tries to access memory by probe_kernel_read(). Unless that function
-correctly handles the address translation, I want to prohibit kprobes
-on such address.
-
-So what I would like to see is, something like below.
-
-diff --git a/arch/powerpc/kernel/kprobes.c b/arch/powerpc/kernel/kprobes.c
-index 2d27ec4feee4..4771be152416 100644
---- a/arch/powerpc/kernel/kprobes.c
-+++ b/arch/powerpc/kernel/kprobes.c
-@@ -261,7 +261,7 @@ int kprobe_handler(struct pt_regs *regs)
-        unsigned int *addr = (unsigned int *)regs->nip;
-        struct kprobe_ctlblk *kcb;
- 
--       if (user_mode(regs))
-+       if (user_mode(regs) || !(regs->msr & MSR_IR))
-                return 0;
- 
-        /*
+Oh lol, sorry I didn't realise install was in the arch Makefile.
 
 
-Thank you,
+>> In the past the presence of an install file/directory didn't have any
+>> affect.
+>>
+>> It seems this changed in:
+>>   d79424137a73 ("kbuild: do not update config when running install targets")
+>>
+>> Was that expected?
+>>
+>> cheers
+>
+>
+> I do not think commit is related.
+>
+> Prior to this commit, I still see the same issue.
+>
+>
+> $ git checkout d7942413^
+> $ touch install
+> $ make -s ARCH=powerpc allnoconfig
+> $ make  ARCH=powerpc install
+> make: 'install' is up to date.
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Hmm weird. I did bisect it:
+
+  # bad: [d79424137a7312d381d131d707a462440c0e8df9] kbuild: do not update config when running install targets
+  git bisect bad d79424137a7312d381d131d707a462440c0e8df9
+  # good: [9c2af1c7377a8a6ef86e5cabf80978f3dbbb25c0] kbuild: add .DELETE_ON_ERROR special target
+  git bisect good 9c2af1c7377a8a6ef86e5cabf80978f3dbbb25c0
+  # first bad commit: [d79424137a7312d381d131d707a462440c0e8df9] kbuild: do not update config when running install targets
+
+But you're right. I must have messed something up while bisecting.
+
+Sorry for the noise.
+
+cheers
