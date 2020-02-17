@@ -2,139 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D23721616C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 16:55:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D68F81616C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 16:55:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729672AbgBQPzM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 10:55:12 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:41908 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729283AbgBQPzL (ORCPT
+        id S1729696AbgBQPzR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 10:55:17 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:39664 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729686AbgBQPzP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 10:55:11 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 81C99293E2F
-Subject: Re: [PATCH] platform/chrome: cros_ec_rpmsg: Fix race with host event.
-To:     Pi-Hsun Shih <pihsun@chromium.org>
-Cc:     Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        open list <linux-kernel@vger.kernel.org>, ohad@wizery.com,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-remoteproc@vger.kernel.org
-References: <20200214082638.92070-1-pihsun@chromium.org>
- <83b03af1-5518-599a-3f82-ee204992edbf@collabora.com>
- <CANdKZ0fuK1Nm_fPNKAss29pqghCcwjN3acYHi6Ez5==envgKgA@mail.gmail.com>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <84a66ac1-c36a-fa72-a406-9c3396c1bdf2@collabora.com>
-Date:   Mon, 17 Feb 2020 16:55:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
-MIME-Version: 1.0
-In-Reply-To: <CANdKZ0fuK1Nm_fPNKAss29pqghCcwjN3acYHi6Ez5==envgKgA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 17 Feb 2020 10:55:15 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200217155513euoutp01a4c4a028b5b7823e329fd641b24a6c3d~0O5zWhBwq2549925499euoutp016
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 15:55:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200217155513euoutp01a4c4a028b5b7823e329fd641b24a6c3d~0O5zWhBwq2549925499euoutp016
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1581954913;
+        bh=/MCPIp7JR90nH/q9PqMYouhBTbhTCPX9OW6qy3nNNL8=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=N4pq87+bP6H3f2TnlO5D+v6w+CsW/H4/J94Klxzeh4WMv3udRqM21sH74Nc+Gha3y
+         J131scv+fUUc9hWP7L2pRs6VAA2/ClBOQ++GkzTv5QZs/9iJjlrsK7pkYQ+1S3Luab
+         VG68oHDAaMnKYGHi+ShTNrV/UBQUqg73oxdBCH88=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200217155513eucas1p18f1c83e6f03d828c0261131b26580bd2~0O5zKznIM2953229532eucas1p1e;
+        Mon, 17 Feb 2020 15:55:13 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 62.65.60679.167BA4E5; Mon, 17
+        Feb 2020 15:55:13 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200217155513eucas1p2f97cb31428fd50181a4fe16682322d8f~0O5y1JRIm0042400424eucas1p2E;
+        Mon, 17 Feb 2020 15:55:13 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200217155513eusmtrp1b168aa000ee729f1d2adae6b6a64e790~0O5y0gCum0829708297eusmtrp1a;
+        Mon, 17 Feb 2020 15:55:13 +0000 (GMT)
+X-AuditID: cbfec7f4-0e5ff7000001ed07-c2-5e4ab761cb96
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id C2.17.08375.167BA4E5; Mon, 17
+        Feb 2020 15:55:13 +0000 (GMT)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200217155512eusmtip2bd7766ba51e8169a7dde89d471308b11~0O5ye6Uz32743127431eusmtip2N;
+        Mon, 17 Feb 2020 15:55:12 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Subject: [PATCH v2] ARM: bcm2835_defconfig: add support for Raspberry Pi4
+Date:   Mon, 17 Feb 2020 16:55:06 +0100
+Message-Id: <20200217155506.5245-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCIsWRmVeSWpSXmKPExsWy7djPc7qJ273iDPrnalhsenyN1eLyrjls
+        FhNvb2C3WHvkLrvFtlnL2Sw2rbjB5sDmsfWWqcfmJfUefVtWMXpsPl3t8XmTXABrFJdNSmpO
+        Zllqkb5dAlfGvDmnWAuaOSo+HHrO2MDYyN7FyMEhIWAi0Xnfp4uRi0NIYAWjxJ+u1SwQzhdG
+        iWNL3rBBOJ8ZJY5v/Q3kcIJ1nNl1iQkisRyo6vkiZriWj1f3MYNUsQkYSnS97WID2SEikCex
+        9lMySJhZoItR4ncbN0hYWMBT4uY6aZAwi4CqxPldnWCdvAI2Eq+mfWaC2CUvsXrDAWYI+wyb
+        xOY9QhC2i8SGu91QcWGJV8e3sEPYMhKnJ/eAfSAh0Mwo8fDcWnYIp4dR4nLTDEaIKmuJO+d+
+        gd3GLKApsX6XPkTYUaJp6hFWSLDwSdx4KwhxMp/EpG3TmSHCvBIdbVAnqEnMOr4Obu3BC5eg
+        zvGQWPZ8FziohARiJX5+2Mg6gVFuFsKuBYyMqxjFU0uLc9NTi43yUsv1ihNzi0vz0vWS83M3
+        MQLj/vS/4192MO76k3SIUYCDUYmHN6DPK06INbGsuDL3EKMEB7OSCK+3OFCINyWxsiq1KD++
+        qDQntfgQozQHi5I4r/Gil7FCAumJJanZqakFqUUwWSYOTqkGRq11+68/64/dJKRb71+fwnDP
+        u90oeE9m8LmzKuet2I+EffX8weKbaWbdu5zvgeBX1tcrPqQIXvmrtT6mIXESz5qkc98C+uyb
+        vu5h2BN4g+XenbMmdpfzPjw8tktAijeo6e6Z2QeYxQS5t6aGTiravtdeaUNl1qF6neuXvq4N
+        +f5wxaxv73vN9yuxFGckGmoxFxUnAgCiDBhp9wIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLLMWRmVeSWpSXmKPExsVy+t/xe7qJ273iDH7NELHY9Pgaq8XlXXPY
+        LCbe3sBusfbIXXaLbbOWs1lsWnGDzYHNY+stU4/NS+o9+rasYvTYfLra4/MmuQDWKD2bovzS
+        klSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27BL2MeXNOsRY0c1R8
+        OPScsYGxkb2LkZNDQsBE4syuS0xdjFwcQgJLGSV2fbvGCJGQkTg5rYEVwhaW+HOtiw2i6BOj
+        xMeju8CK2AQMJbregiQ4OUQECiROfvnGClLELNDDKHHqyDugsRwcwgKeEjfXSYPUsAioSpzf
+        1ckMYvMK2Ei8mvaZCWKBvMTqDQeYJzDyLGBkWMUoklpanJueW2yoV5yYW1yal66XnJ+7iREY
+        dNuO/dy8g/HSxuBDjAIcjEo8vAF9XnFCrIllxZW5hxglOJiVRHi9xYFCvCmJlVWpRfnxRaU5
+        qcWHGE2Blk9klhJNzgdGRF5JvKGpobmFpaG5sbmxmYWSOG+HwMEYIYH0xJLU7NTUgtQimD4m
+        Dk6pBkbnEp8v/LfKHp8v8KstkT4nuK7+7SmPa83Czzkllqz775kxsTBx4bFr9X+nijtqcjNM
+        ODSrk2GGgnndtccRbM0HVPILDDb97T2amfko0qHzb/HERyFPX81bFfu8TqVaP6797vEQ/Zst
+        22+/2HNTh19ekEHxE3ddZMqRz8LM4Zke9avPSK++4K7EUpyRaKjFXFScCAA+XfO+UAIAAA==
+X-CMS-MailID: 20200217155513eucas1p2f97cb31428fd50181a4fe16682322d8f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200217155513eucas1p2f97cb31428fd50181a4fe16682322d8f
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200217155513eucas1p2f97cb31428fd50181a4fe16682322d8f
+References: <CGME20200217155513eucas1p2f97cb31428fd50181a4fe16682322d8f@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear remoteproc experts,
+Add drivers needed to boot Raspberry Pi4 board.
 
-cc'ing you for if we can have your feedback on this change.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+v2:
+- added BCM2711_THERMAL
+---
+ arch/arm/configs/bcm2835_defconfig | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Thanks Pi-Hsun, for your quick answer, makes sense but I'm still feeling that I
-miss something (probably because I'm not a remoteproc expert), so I added the
-Remoteproc people for if they can comment this patch. We have time as we're in
-rc2 only, so I'd like to wait a bit in case they can take a look.
+diff --git a/arch/arm/configs/bcm2835_defconfig b/arch/arm/configs/bcm2835_defconfig
+index 519ff58e67b3..38437541ea76 100644
+--- a/arch/arm/configs/bcm2835_defconfig
++++ b/arch/arm/configs/bcm2835_defconfig
+@@ -72,6 +72,7 @@ CONFIG_BLK_DEV_SD=y
+ CONFIG_SCSI_CONSTANTS=y
+ CONFIG_SCSI_SCAN_ASYNC=y
+ CONFIG_NETDEVICES=y
++CONFIG_BCMGENET=y
+ CONFIG_USB_LAN78XX=y
+ CONFIG_USB_USBNET=y
+ CONFIG_USB_NET_SMSC95XX=y
+@@ -96,9 +97,13 @@ CONFIG_SPI_BCM2835AUX=y
+ CONFIG_GPIO_SYSFS=y
+ CONFIG_SENSORS_RASPBERRYPI_HWMON=m
+ CONFIG_THERMAL=y
++CONFIG_BCM2711_THERMAL=y
+ CONFIG_BCM2835_THERMAL=y
+ CONFIG_WATCHDOG=y
+ CONFIG_BCM2835_WDT=y
++CONFIG_MFD_SYSCON=y
++CONFIG_REGULATOR=y
++CONFIG_REGULATOR_GPIO=y
+ CONFIG_MEDIA_SUPPORT=y
+ CONFIG_MEDIA_CAMERA_SUPPORT=y
+ CONFIG_DRM=y
+-- 
+2.17.1
 
-If no answer is received I'll take a second look and apply the patch.
-
-Thanks,
- Enric
-
-On 15/2/20 4:56, Pi-Hsun Shih wrote:
-> Hi Enric,
-> 
-> On Fri, Feb 14, 2020 at 11:10 PM Enric Balletbo i Serra
-> <enric.balletbo@collabora.com> wrote:
->>
->> Hi Pi-Hsun,
->>
->> On 14/2/20 9:26, Pi-Hsun Shih wrote:
->>> Host event can be sent by remoteproc by any time, and
->>> cros_ec_rpmsg_callback would be called after cros_ec_rpmsg_create_ept.
->>> But the cros_ec_device is initialized after that, which cause host event
->>> handler to use cros_ec_device that are not initialized properly yet.
->>>
->>
->> I don't have the hardware to test but, can't we call first cros_ec_register and
->> then cros_ec_rpmsg_create_ept?
->>
->> Start receiving driver callbacks before finishing to probe the drivers itself
->> sounds weird to me.
->>
->> Thanks,
->>  Enric
-> 
-> Since cros_ec_register calls cros_ec_query_all, which sends message to
-> remoteproc using cros_ec_pkt_xfer_rpmsg (to query protocol version),
-> the ec_rpmsg->ept need to be ready before calling cros_ec_register.
-> 
->>
->>> Fix this by don't schedule host event handler before cros_ec_register
->>> returns. Instead, remember that we have a pending host event, and
->>> schedule host event handler after cros_ec_register.
->>>
->>> Fixes: 71cddb7097e2 ("platform/chrome: cros_ec_rpmsg: Fix race with host command when probe failed.")
->>> Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
->>> ---
->>>  drivers/platform/chrome/cros_ec_rpmsg.c | 16 +++++++++++++++-
->>>  1 file changed, 15 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/platform/chrome/cros_ec_rpmsg.c b/drivers/platform/chrome/cros_ec_rpmsg.c
->>> index dbc3f5523b83..7e8629e3db74 100644
->>> --- a/drivers/platform/chrome/cros_ec_rpmsg.c
->>> +++ b/drivers/platform/chrome/cros_ec_rpmsg.c
->>> @@ -44,6 +44,8 @@ struct cros_ec_rpmsg {
->>>       struct completion xfer_ack;
->>>       struct work_struct host_event_work;
->>>       struct rpmsg_endpoint *ept;
->>> +     bool has_pending_host_event;
->>> +     bool probe_done;
->>>  };
->>>
->>>  /**
->>> @@ -177,7 +179,14 @@ static int cros_ec_rpmsg_callback(struct rpmsg_device *rpdev, void *data,
->>>               memcpy(ec_dev->din, resp->data, len);
->>>               complete(&ec_rpmsg->xfer_ack);
->>>       } else if (resp->type == HOST_EVENT_MARK) {
->>> -             schedule_work(&ec_rpmsg->host_event_work);
->>> +             /*
->>> +              * If the host event is sent before cros_ec_register is
->>> +              * finished, queue the host event.
->>> +              */
->>> +             if (ec_rpmsg->probe_done)
->>> +                     schedule_work(&ec_rpmsg->host_event_work);
->>> +             else
->>> +                     ec_rpmsg->has_pending_host_event = true;
->>>       } else {
->>>               dev_warn(ec_dev->dev, "rpmsg received invalid type = %d",
->>>                        resp->type);
->>> @@ -240,6 +249,11 @@ static int cros_ec_rpmsg_probe(struct rpmsg_device *rpdev)
->>>               return ret;
->>>       }
->>>
->>> +     ec_rpmsg->probe_done = true;
->>> +
->>> +     if (ec_rpmsg->has_pending_host_event)
->>> +             schedule_work(&ec_rpmsg->host_event_work);
->>> +
->>>       return 0;
->>>  }
->>>
->>>
->>> base-commit: b19e8c68470385dd2c5440876591fddb02c8c402
->>>
