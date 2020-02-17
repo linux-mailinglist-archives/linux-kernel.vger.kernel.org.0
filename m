@@ -2,67 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72D60160908
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 04:35:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5F40160922
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 04:44:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728022AbgBQDfn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 22:35:43 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:21995 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727932AbgBQDfl (ORCPT
+        id S1727789AbgBQDoS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 22:44:18 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:34694 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726485AbgBQDoS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 22:35:41 -0500
-X-UUID: 60396274efae42e5a2fd949d0c3d4c92-20200217
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=w0ylST3FqEhsbu+OA+d/keVP7ShflwEdRkXk/cSo+EM=;
-        b=SrVf1wZHk58IgJ7s2lfX7sb5j/Yazk/n8hHw4OJpydiDzhOHbHnVDcmVO7E5FNobzFQV54CRX/WbVNaBG7g+UXx48op4u6l90QamPF4ABUfiq1Ym0kFMk0XwDPnBBrdTNp3iT6PWecpfyD3XH5/e5mHOUD4KPWqKbyrJdRvlFew=;
-X-UUID: 60396274efae42e5a2fd949d0c3d4c92-20200217
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
-        (envelope-from <weiyi.lu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1923449685; Mon, 17 Feb 2020 11:35:32 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 17 Feb 2020 11:34:41 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 17 Feb 2020 11:35:08 +0800
-From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Rob Herring <robh@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>
-CC:     James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [PATCH v12 10/10] arm64: dts: Add power-domains property to mfgcfg
-Date:   Mon, 17 Feb 2020 11:35:27 +0800
-Message-ID: <1581910527-1636-11-git-send-email-weiyi.lu@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-In-Reply-To: <1581910527-1636-1-git-send-email-weiyi.lu@mediatek.com>
-References: <1581910527-1636-1-git-send-email-weiyi.lu@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+        Sun, 16 Feb 2020 22:44:18 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1581911057; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=oLwBoEwcv3fRTqQTxsGwQy5RClyVuVnp1M8eCRgAIbM=; b=rhzuMNwPF+L1V1OzdH+H2vxVM4RaDsKJEXNMi39S4Q5SJUTqQUD+mYfErn2i6AMpl4/i4xIt
+ QYmXj+RwLJFVAw069/P1D9bJ3HhVHLhVIUWyJ52k18NA0h+XgkHex9BlDPKeB0uO5xzpB5KE
+ tmyQ4sEd430EwBdxdSj+iYTM4ck=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e4a0c00.7fb06baf0688-smtp-out-n01;
+ Mon, 17 Feb 2020 03:44:00 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 1271EC4479D; Mon, 17 Feb 2020 03:44:00 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from codeaurora.org (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: stummala)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4E334C43383;
+        Mon, 17 Feb 2020 03:43:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4E334C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
+From:   Sahitya Tummala <stummala@codeaurora.org>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     Sahitya Tummala <stummala@codeaurora.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH V2] f2fs: fix the panic in do_checkpoint()
+Date:   Mon, 17 Feb 2020 09:13:44 +0530
+Message-Id: <1581911024-23660-1-git-send-email-stummala@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-bWZnY2ZnIGNsb2NrIGlzIHVuZGVyIE1GR19BU1lOQyBwb3dlciBkb21haW4NCg0KU2lnbmVkLW9m
-Zi1ieTogV2VpeWkgTHUgPHdlaXlpLmx1QG1lZGlhdGVrLmNvbT4NCi0tLQ0KIGFyY2gvYXJtNjQv
-Ym9vdC9kdHMvbWVkaWF0ZWsvbXQ4MTgzLmR0c2kgfCAxICsNCiAxIGZpbGUgY2hhbmdlZCwgMSBp
-bnNlcnRpb24oKykNCg0KZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvbWVkaWF0ZWsv
-bXQ4MTgzLmR0c2kgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL21lZGlhdGVrL210ODE4My5kdHNpDQpp
-bmRleCBjZWYyMjM2Li4wMzhlNmUxIDEwMDY0NA0KLS0tIGEvYXJjaC9hcm02NC9ib290L2R0cy9t
-ZWRpYXRlay9tdDgxODMuZHRzaQ0KKysrIGIvYXJjaC9hcm02NC9ib290L2R0cy9tZWRpYXRlay9t
-dDgxODMuZHRzaQ0KQEAgLTY0Myw2ICs2NDMsNyBAQA0KIAkJCWNvbXBhdGlibGUgPSAibWVkaWF0
-ZWssbXQ4MTgzLW1mZ2NmZyIsICJzeXNjb24iOw0KIAkJCXJlZyA9IDwwIDB4MTMwMDAwMDAgMCAw
-eDEwMDA+Ow0KIAkJCSNjbG9jay1jZWxscyA9IDwxPjsNCisJCQlwb3dlci1kb21haW5zID0gPCZz
-Y3BzeXMgTVQ4MTgzX1BPV0VSX0RPTUFJTl9NRkdfQVNZTkM+Ow0KIAkJfTsNCiANCiAJCW1tc3lz
-OiBzeXNjb25AMTQwMDAwMDAgew0KLS0gDQoxLjguMS4xLmRpcnR5DQo=
+There could be a scenario where f2fs_sync_meta_pages() will not
+ensure that all F2FS_DIRTY_META pages are submitted for IO. Thus,
+resulting in the below panic in do_checkpoint() -
 
+f2fs_bug_on(sbi, get_pages(sbi, F2FS_DIRTY_META) &&
+				!f2fs_cp_error(sbi));
+
+This can happen in a low-memory condition, where shrinker could
+also be doing the writepage operation (stack shown below)
+at the same time when checkpoint is running on another core.
+
+schedule
+down_write
+f2fs_submit_page_write -> by this time, this page in page cache is tagged
+			as PAGECACHE_TAG_WRITEBACK and PAGECACHE_TAG_DIRTY
+			is cleared, due to which f2fs_sync_meta_pages()
+			cannot sync this page in do_checkpoint() path.
+f2fs_do_write_meta_page
+__f2fs_write_meta_page
+f2fs_write_meta_page
+shrink_page_list
+shrink_inactive_list
+shrink_node_memcg
+shrink_node
+kswapd
+
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+---
+v2:
+- changed the io_schedule_timeout to HZ/50.
+
+ fs/f2fs/checkpoint.c | 18 +++++++++---------
+ fs/f2fs/f2fs.h       |  2 +-
+ fs/f2fs/super.c      |  2 +-
+ 3 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index ffdaba0..d5601cc 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1250,20 +1250,20 @@ static void unblock_operations(struct f2fs_sb_info *sbi)
+ 	f2fs_unlock_all(sbi);
+ }
+ 
+-void f2fs_wait_on_all_pages_writeback(struct f2fs_sb_info *sbi)
++void f2fs_wait_on_all_pages(struct f2fs_sb_info *sbi, int type)
+ {
+ 	DEFINE_WAIT(wait);
+ 
+ 	for (;;) {
+ 		prepare_to_wait(&sbi->cp_wait, &wait, TASK_UNINTERRUPTIBLE);
+ 
+-		if (!get_pages(sbi, F2FS_WB_CP_DATA))
++		if (!get_pages(sbi, type))
+ 			break;
+ 
+ 		if (unlikely(f2fs_cp_error(sbi)))
+ 			break;
+ 
+-		io_schedule_timeout(5*HZ);
++		io_schedule_timeout(HZ/50);
+ 	}
+ 	finish_wait(&sbi->cp_wait, &wait);
+ }
+@@ -1384,8 +1384,8 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 
+ 	/* Flush all the NAT/SIT pages */
+ 	f2fs_sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
+-	f2fs_bug_on(sbi, get_pages(sbi, F2FS_DIRTY_META) &&
+-					!f2fs_cp_error(sbi));
++	/* Wait for all dirty meta pages to be submitted for IO */
++	f2fs_wait_on_all_pages(sbi, F2FS_DIRTY_META);
+ 
+ 	/*
+ 	 * modify checkpoint
+@@ -1493,11 +1493,11 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 
+ 	/* Here, we have one bio having CP pack except cp pack 2 page */
+ 	f2fs_sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
+-	f2fs_bug_on(sbi, get_pages(sbi, F2FS_DIRTY_META) &&
+-					!f2fs_cp_error(sbi));
++	/* Wait for all dirty meta pages to be submitted for IO */
++	f2fs_wait_on_all_pages(sbi, F2FS_DIRTY_META);
+ 
+ 	/* wait for previous submitted meta pages writeback */
+-	f2fs_wait_on_all_pages_writeback(sbi);
++	f2fs_wait_on_all_pages(sbi, F2FS_WB_CP_DATA);
+ 
+ 	/* flush all device cache */
+ 	err = f2fs_flush_device_cache(sbi);
+@@ -1506,7 +1506,7 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 
+ 	/* barrier and flush checkpoint cp pack 2 page if it can */
+ 	commit_checkpoint(sbi, ckpt, start_blk);
+-	f2fs_wait_on_all_pages_writeback(sbi);
++	f2fs_wait_on_all_pages(sbi, F2FS_WB_CP_DATA);
+ 
+ 	/*
+ 	 * invalidate intermediate page cache borrowed from meta inode
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 5a888a0..b0e0535 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3196,7 +3196,7 @@ bool f2fs_is_dirty_device(struct f2fs_sb_info *sbi, nid_t ino,
+ void f2fs_update_dirty_page(struct inode *inode, struct page *page);
+ void f2fs_remove_dirty_inode(struct inode *inode);
+ int f2fs_sync_dirty_inodes(struct f2fs_sb_info *sbi, enum inode_type type);
+-void f2fs_wait_on_all_pages_writeback(struct f2fs_sb_info *sbi);
++void f2fs_wait_on_all_pages(struct f2fs_sb_info *sbi, int type);
+ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc);
+ void f2fs_init_ino_entry_info(struct f2fs_sb_info *sbi);
+ int __init f2fs_create_checkpoint_caches(void);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 5111e1f..084633b 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1105,7 +1105,7 @@ static void f2fs_put_super(struct super_block *sb)
+ 	/* our cp_error case, we can wait for any writeback page */
+ 	f2fs_flush_merged_writes(sbi);
+ 
+-	f2fs_wait_on_all_pages_writeback(sbi);
++	f2fs_wait_on_all_pages(sbi, F2FS_WB_CP_DATA);
+ 
+ 	f2fs_bug_on(sbi, sbi->fsync_node_num);
+ 
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
