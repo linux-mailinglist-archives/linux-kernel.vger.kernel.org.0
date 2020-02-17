@@ -2,95 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB6601616F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 17:05:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C76611616F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 17:05:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729638AbgBQQE4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 11:04:56 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:50355 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726420AbgBQQE4 (ORCPT
+        id S1729667AbgBQQFL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 11:05:11 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:59565 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726420AbgBQQFL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 11:04:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581955495;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=eAsJ8NbGL2b46wcgIaUPisLZoLcRYPJb7lJ/X2bzICo=;
-        b=GvV1LaHtF5HhYl5PL6QkOpk1iFOHCBXL5qPIBCFzTvYxDVaRoxQqscSldqTmo0X13V84wg
-        ISwp/1RjpghrTEB5MiaLYHwci57MJz0ggupjk/T14CMWBiSyZQ334bhty/dQDL1g9NU484
-        vq3R3o3oKPQSlwuLJB760QLuSFex6Ag=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-137-_qXqvEkoPxynwadeA9dmTQ-1; Mon, 17 Feb 2020 11:04:52 -0500
-X-MC-Unique: _qXqvEkoPxynwadeA9dmTQ-1
-Received: by mail-qt1-f199.google.com with SMTP id z25so10884827qto.8
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 08:04:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=eAsJ8NbGL2b46wcgIaUPisLZoLcRYPJb7lJ/X2bzICo=;
-        b=dHW4NWbm0JFywGuCpuzkoWQCPr3MGlOgkpQZRIRHPm+aTxMFgFGLnhFAIW77Vesk7g
-         ZF8SdcUVvGNQ8/TRTlCWQjTs79uSjSmxy7Iecb4dNkqE2EROIIYEBpqBKxjISoV/9Ext
-         q7/WDBP/aMYOyL7+yWR6Tx1ISetRyiGfvRLGkjxOn5DE/iu4TwrMNAKGrVn0Di/xzPI5
-         UzemB0cV2XlK4tgE6j9ZG6z+KuUl3Vkn8onhiiFRimAusNfWPInA6ELX8blMuWtku4qo
-         WS1pRuEsliBC5c4CE/7Q6YZPM0DrGZ5C9sPY4/g8KE+Pk9KRUSaj+hFevszZtmF41SB3
-         is5w==
-X-Gm-Message-State: APjAAAUjgZOD/lQEejF1TJT70BQ3LFEA5DvbKbAViedlCLz2ZQMD+lkZ
-        +3iCNV0wGGciQOpcSVJm8EEnHGPWy1A1C/yYUoaDNQLYM2i0dv3vKu+I+13noZFSRTVqZfJeCel
-        mNBm1MbaMdenpP0wmVG2iA55M
-X-Received: by 2002:a37:40c:: with SMTP id 12mr15009206qke.212.1581955492226;
-        Mon, 17 Feb 2020 08:04:52 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzvsAEaJRLANfo3ZUdT+LbldOTKe/PahIREpXyxHHS2i9rY7g2U7F193H8KoyGmAenNGyQhpg==
-X-Received: by 2002:a37:40c:: with SMTP id 12mr15009189qke.212.1581955492019;
-        Mon, 17 Feb 2020 08:04:52 -0800 (PST)
-Received: from xz-x1 (CPEf81d0fb19163-CMf81d0fb19160.cpe.net.fido.ca. [72.137.123.47])
-        by smtp.gmail.com with ESMTPSA id z21sm408837qka.122.2020.02.17.08.04.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2020 08:04:51 -0800 (PST)
-Date:   Mon, 17 Feb 2020 11:04:49 -0500
-From:   Peter Xu <peterx@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v2 0/3] smp: Allow smp_call_function_single_async() to
- insert locked csd
-Message-ID: <20200217160449.GA1309280@xz-x1>
-References: <20191216213125.9536-1-peterx@redhat.com>
+        Mon, 17 Feb 2020 11:05:11 -0500
+Received: from mail-qt1-f178.google.com ([209.85.160.178]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1Mow06-1joHJD2KlS-00qT1W; Mon, 17 Feb 2020 17:05:09 +0100
+Received: by mail-qt1-f178.google.com with SMTP id d9so12334823qte.12;
+        Mon, 17 Feb 2020 08:05:09 -0800 (PST)
+X-Gm-Message-State: APjAAAUoQQwJMf2dXaaZYP93Gx2Ancv6n/rct8kYpzn8ZcHu/7IvS++x
+        tv3G4cxeX7TujOwecoAtRCGlxuo5Oh7uOMbN4XQ=
+X-Google-Smtp-Source: APXvYqxR24d1UtkEhBOIjI9aHRGcs1xpyahscZCl+fB1o0U8N/KlSf87IhKTr7k/p9r//9AkSP/9yAzwmpTx4NajwIA=
+X-Received: by 2002:ac8:3a27:: with SMTP id w36mr13631805qte.204.1581955508158;
+ Mon, 17 Feb 2020 08:05:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191216213125.9536-1-peterx@redhat.com>
+References: <20200206165755.GB3894455@kroah.com> <20200211184130.GA11908@Mani-XPS-13-9360>
+ <20200211192055.GA1962867@kroah.com> <20200213152013.GB15010@mani>
+ <20200213153418.GA3623121@kroah.com> <20200213154809.GA26953@mani>
+ <20200213155302.GA3635465@kroah.com> <20200217052743.GA4809@Mani-XPS-13-9360>
+ <20200217115930.GA218071@kroah.com> <20200217130419.GA13993@Mani-XPS-13-9360> <20200217141503.GA1110972@kroah.com>
+In-Reply-To: <20200217141503.GA1110972@kroah.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 17 Feb 2020 17:04:52 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a28cZzOD7NfjBR=g6fADGgqwE7PFgOJrh6fph3QmDhKGQ@mail.gmail.com>
+Message-ID: <CAK8P3a28cZzOD7NfjBR=g6fADGgqwE7PFgOJrh6fph3QmDhKGQ@mail.gmail.com>
+Subject: Re: [PATCH v2 02/16] bus: mhi: core: Add support for registering MHI controllers
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        smohanad@codeaurora.org, Jeffrey Hugo <jhugo@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        hemantk@codeaurora.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:GvetXQ1OAzDvj5SppjdPFV439MHs3fEPj9TeHxR24yoiKphxOX2
+ uHGdyqyI5bLLcHmRqNGAxXX6RzeVtYJiMbT8YhKNpxrtMUlRyLL5OmM6vrzFcbNURakv59l
+ 9krdacVpdGMz/w1+Aixbvu1bRVk9ObqstejLWHqvfAgkZF6irhJLQIkzr8l1Mrv3hUYZt2P
+ 74X5aymaVfF8LGIWUgKgQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:n1DQm7201AY=:N5S/ucW8WbB14HphQWJRNn
+ jvfBvMZbFdh4xbiOqjuvMVRAA//XwYwTO3l4uflqGdn4Q3ZSQD8bZcO2wTHPLdac2QRnYEXut
+ k44OvEEjS3c6aq0eWAd8tiBVWFpMNyl1OY/shQVpWMG7mmz8nomTZ/XzItexzEArhpzuwAaWA
+ n9oXoKYbRDP3KmkCDZ1R/jK3I/lhz+UXCtWKiMKELSoLurAm+qnd7TuUjyPKbeuhTaM0Zj2O8
+ mi2Mv3u4GHTAIKulNBQjsHWhJ1rjgwyi7nVN5NOvQbYn15ruQVriMwGILqrOZwRPNBrkuaPaQ
+ WpRxeEGBFGvZm44OJmJq7BTfsfIYv+pYYCe3uL14sIn3IRPW3TV6KdtM73M+Zj2dx6OfWrRWU
+ fDmN0vKzYM41lxIHkJA6oXune3WR8HzuemmaBWTwS9uoVoTOCcPGy21nVveWJo/D8KG772Jc6
+ 39q8I7W2z30Da0i/EnACNGgt5GBeRu6RUODxXbV8+vQ7wVx6c+wwGw124rHZIj04Th+HxkfuE
+ r2loZgHtofv5BQWWSs+z6+XqU/aYuan/98Wd9Z/zQeAc43cDzlcTY0okjbvtSgT0gHasV/2o2
+ iAAWA26cYM38fKD3ew/6CYTLFhBOMrhoG6mUQdGilUE4Vgf93704/P1lXeE9SMRCm99rFB4w3
+ imB7KKYpaclouM+xua1PLBYUZq9yc7j5DhiwnB9KSANffZkNOOlF+nAr8g0zUA1bxKbLw//1A
+ 5FtX4G8S0jaOKUXDKFrgqsZA0pQD//aGEs1Brl7vPSy/wUKP77dE+KqfHdHRyXPCVeeA/Gqma
+ vG0Kbn6p3LOt3HlkusN22cpPjH7l7YqFY45fIW2k2X+a5hcZYE=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 04:31:22PM -0500, Peter Xu wrote:
-> This v2 introduced two more patches to let mips/kernel/smp.c and
-> kernel/sched/core.c to start using the new feature, then we can drop
-> the customized implementations.
-> 
-> One thing to mention is that cpuidle_coupled_poke_pending is another
-> candidate that we can consider, however that cpumask is special in
-> that it's not only used for singleton test of the per-vcpu csd when
-> injecting new calls, but also in cpuidle_coupled_any_pokes_pending()
-> or so to check whether there's any pending pokes.  In that sense it
-> should be good to still keep the mask because it could be faster than
-> looping over each per-cpu csd.
-> 
-> Patch 1 is the same as v1, no change.  Patch 2-3 are new ones.
-> 
-> Smoke tested on x86_64 only.
-> 
-> Please review, thanks.
+On Mon, Feb 17, 2020 at 3:15 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> On Mon, Feb 17, 2020 at 06:34:19PM +0530, Manivannan Sadhasivam wrote:
+> > On Mon, Feb 17, 2020 at 12:59:30PM +0100, Greg KH wrote:
+> > ```
+> > struct mhi_device *mhi_alloc_device(struct mhi_controller *mhi_cntrl)
+> > {
+> > ...
+> > dev->parent = mhi_cntrl->dev;
+> > ...
+> > ```
+> >
+> > Hence, having the parent dev pointer really helps.
+>
+> Yes, saving the parent device is fine, but you should be doing your own
+> dma calls using _your_ device, not the parents.  Only mess with the
+> parent pointer if you need to do something "normal" for a parent.
 
-Ping?
+The MHI device is not involved in DMA at all, as it is not a DMA master,
+and has no knowledge of the memory management or whether there
+is any DMA at all. I think it is the right abstraction for an MHI driver to
+pass kernel pointers into the subsystem interfaces, which then get
+mapped by the bus driver that owns the DMA master.
 
--- 
-Peter Xu
+This is similar to how e.g. USB drivers pass data into the USB core
+interfaces, which then get the HCI driver to map/unmap it into the
+DMA masters.
 
+      Arnd
