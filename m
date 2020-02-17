@@ -2,79 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 293FA161821
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 17:45:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0026C161834
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 17:46:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729019AbgBQQpg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 11:45:36 -0500
-Received: from scorn.kernelslacker.org ([45.56.101.199]:52550 "EHLO
-        scorn.kernelslacker.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726866AbgBQQpg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 11:45:36 -0500
-Received: from [2601:196:4600:6634:ae9e:17ff:feb7:72ca] (helo=wopr.kernelslacker.org)
-        by scorn.kernelslacker.org with esmtp (Exim 4.92)
-        (envelope-from <davej@codemonkey.org.uk>)
-        id 1j3jWX-00008K-7h; Mon, 17 Feb 2020 11:45:33 -0500
-Received: by wopr.kernelslacker.org (Postfix, from userid 1026)
-        id EBA8E56027C; Mon, 17 Feb 2020 11:45:32 -0500 (EST)
-Date:   Mon, 17 Feb 2020 11:45:32 -0500
-From:   Dave Jones <davej@codemonkey.org.uk>
-To:     dsterba@suse.cz, Linus Torvalds <torvalds@linux-foundation.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Linux 5.6-rc2
-Message-ID: <20200217164532.GA3765@codemonkey.org.uk>
-Mail-Followup-To: Dave Jones <davej@codemonkey.org.uk>, dsterba@suse.cz,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Filipe Manana <fdmanana@suse.com>, David Sterba <dsterba@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <CAHk-=wgqwiBLGvwTqU2kJEPNmafPpPe_K0XgBU-A58M+mkwpgQ@mail.gmail.com>
- <20200217020840.GA24821@codemonkey.org.uk>
- <CAHk-=wg5AkQk-9By-QeyT+5H_t6DLZD=25uOz-ujnV8oEv1Y5Q@mail.gmail.com>
- <8025e1bf-4834-83c6-d12c-4e817f875776@toxicpanda.com>
- <CAHk-=wiG+wjLjuDDNiqfL3iLW25yqsMK_gNEWomyMH=8kxOLwQ@mail.gmail.com>
- <20200217123054.GH2902@twin.jikos.cz>
+        id S1729147AbgBQQqR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 11:46:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41174 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728736AbgBQQqR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 11:46:17 -0500
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5D1C214D8;
+        Mon, 17 Feb 2020 16:46:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581957976;
+        bh=/DaX8+TZSwBPiTZVH9FgOz76O3KL16JyFS/ijkhuk44=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XKRFlaKp1IYIDGXDUJvH5mH8wXq/PXWxby8tJqhb0Gldfy+UFk8+5flsOaGzmHdfo
+         HlDNAYeeQrm/bDaFOCjFhUdWXO6SEKGWsxUiE0Of4uCTM0915fDbv4hNzC3UL8lKqY
+         xrdgGSn1GXDrxC+bKBaQ4bujFS0dC8o+hjZV23us=
+Date:   Mon, 17 Feb 2020 16:46:09 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        linux-arch@vger.kernel.org, ndesaulniers@google.com,
+        0x7f454c46@gmail.com, avagin@openvz.org, arnd@arndb.de,
+        sboyd@kernel.org, catalin.marinas@arm.com, x86@kernel.org,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, clang-built-linux@googlegroups.com,
+        paul.burton@mips.com, mingo@redhat.com, bp@alien8.de,
+        luto@kernel.org, linux@armlinux.org.uk, tglx@linutronix.de,
+        salyzyn@android.com, pcc@google.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 19/19] arm64: vdso32: Enable Clang Compilation
+Message-ID: <20200217164608.GA2708@willie-the-truck>
+References: <20200213161614.23246-1-vincenzo.frascino@arm.com>
+ <20200213161614.23246-20-vincenzo.frascino@arm.com>
+ <20200213184454.GA4663@ubuntu-m2-xlarge-x86>
+ <0cee3707-d526-3766-3dde-543c8dbd8e68@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200217123054.GH2902@twin.jikos.cz>
+In-Reply-To: <0cee3707-d526-3766-3dde-543c8dbd8e68@arm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Spam-Note: SpamAssassin invocation failed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 17, 2020 at 01:30:54PM +0100, David Sterba wrote:
- > On Sun, Feb 16, 2020 at 09:08:18PM -0800, Linus Torvalds wrote:
- > > On Sun, Feb 16, 2020 at 7:02 PM Josef Bacik <josef@toxicpanda.com> wrote:
- > > >
- > > > I assume Filipe wrote this based on my patch here
- > > >
- > > > https://git.kernel.org/pub/scm/linux/kernel/git/josef/btrfs-next.git/commit/?id=c821555d2b9733d8f483c9e79481c7209e1c1fb0
- > > >
- > > > which makes it so we can allocate safely in this context, but that patch hasn't
- > > > made it's way to you yet.  Do you want it now?  It was prep for a much less safe
- > > > patchset, but is fine by itself.  Thanks,
- > > 
- > > I assume it's either that, or revert 28553fa992cb and do it differently..
- > > 
- > > I'll leave that whole decision to the btrfs people who actually know
- > > the code and the situations and what the alternative would look
- > > like...
- > 
- > I'll send a pull request with fix today. The fixes get cherry-picked
- > from development branch to current rc branch and sometimes affect each
- > other. I do test the rc branch independently before sending but I
- > haven't seen the bug Dave reported.
+On Mon, Feb 17, 2020 at 12:26:16PM +0000, Vincenzo Frascino wrote:
+> On 13/02/2020 18:44, Nathan Chancellor wrote:
+> > On Thu, Feb 13, 2020 at 04:16:14PM +0000, Vincenzo Frascino wrote:
+> >> Enable Clang Compilation for the vdso32 library.
+> 
+> [...]
+> 
+> >> +LD_COMPAT ?= $(CROSS_COMPILE_COMPAT)gcc
+> > 
+> > Well this is unfortunate :/
+> > 
+> > It looks like adding the --target flag to VDSO_LDFLAGS allows
+> > clang to link the vDSO just fine although it does warn that -nostdinc
+> > is unused:
+> > 
+> > clang-11: warning: argument unused during compilation: '-nostdinc'
+> > [-Wunused-command-line-argument]
+> >
+> 
+> This is why ended up in this "unfortunate" situation :) I wanted to avoid the
+> warning.
+> 
+> > It would be nice if the logic of commit fe00e50b2db8 ("ARM: 8858/1:
+> > vdso: use $(LD) instead of $(CC) to link VDSO") could be adopted here
+> > but I get that this Makefile is its own beast :) at the very least, I
+> > think that the --target flag should be added to VDSO_LDFLAGS so that gcc
+> > is not a requirement for this but I am curious if you tried that already
+> > and noticed any issues with it.
+> > 
+> 
+> --target is my preferred way as well, I can try to play another little bit with
+> the flags and see what I can come up with in the next version.
 
-After rebooting, it didn't reproduce, so it did seem to be dependent on
-exactly which files rsync was moving around.  Given it doesn't happen
-all the time, little surprise it slipped through I guess.
+Yes, please. I'd even prefer the warning rather than silently assuming that
+a cross gcc is kicking around on the path.
 
-	Dave
-
+Will
