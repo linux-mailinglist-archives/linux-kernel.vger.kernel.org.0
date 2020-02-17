@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 086DE161C03
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 20:55:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D18F4161C07
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 20:57:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729814AbgBQTzi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 14:55:38 -0500
-Received: from gateway34.websitewelcome.com ([192.185.148.214]:27369 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728736AbgBQTzh (ORCPT
+        id S1729646AbgBQT5F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 14:57:05 -0500
+Received: from gateway20.websitewelcome.com ([192.185.47.18]:22222 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727332AbgBQT5F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 14:55:37 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id 5E8A948636
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 13:55:36 -0600 (CST)
+        Mon, 17 Feb 2020 14:57:05 -0500
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id 6F578400C4D30
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 12:43:10 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id 3mUSjV9bcXVkQ3mUSjsFbv; Mon, 17 Feb 2020 13:55:36 -0600
+        id 3mVqjoq8VvBMd3mVqjmTpF; Mon, 17 Feb 2020 13:57:02 -0600
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
@@ -25,25 +25,25 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=crsZaVbHNmz9iNAH8JjIvtOy8euRMhiayEMBT2tKPSA=; b=rNPCQnyoGNxrnnhTyp1ahn8zhf
-        Fl6T1a8oHvVIdwFb4MkmEDJDTOpGcxPI3NsgLLtu+lwnbvJ/9mCYT1kBZ7rD2Rfm6pM8DHmkc2HX/
-        ffYzv/JaQKCKt4//9bSAuOQM9IrId4qWzgUT+PGBrFeNfdv4c5QHWxFR+WT/DE4BgC4ErlhHqYwFZ
-        cxKsOCeFrLAK8hC8QUdu170I46KcFfddFaSl76R122Cq/xU49oliP3yBT2iH07pq3ktvIL7c8BAec
-        QoOYasX33PJgk1g2S244DK3NKewDmtRx2SHSHFzZmPcQx1Q1bCoQzIeZma7o31mVxJcqLn3OIEIQY
-        7mSu22lg==;
-Received: from [200.68.140.26] (port=23204 helo=embeddedor)
+        bh=U5j5JjUT1wR0ACP8avoI3u3hIQKd9AKATCUKsr5GwxY=; b=Dii2NsaNAK9wC+TKhoxbXCZjH6
+        LitnOIltLZ5bHHbahmi1+Yl2Oy6iXZQzSjdmlmq8s5xN7sXR6WYuaDgr4kBWyhRvc92Pu0is49ocL
+        Dh8Px1ntK+HLqnIalGoJrhUwkBcOurnN/NXY6+/DMpkedHSHbBLuCTgSlWaVIkOxb9eh1Td75YUfI
+        nFu1vtmyckn3mdl5LqseLWTdLkcjSfDKG3poRJvHRt6d3cNiFpyrILO34aMbytfDVrv7wcrpwOPJK
+        AfusQUXUeT09DQONQJVyZ8Oq6l0ZqiC1R4oAvp5Rv9ivgqnStkfJhumQDuCOvezbMIVSbI5xyKTqi
+        PZeWYhsA==;
+Received: from [200.68.140.26] (port=2720 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.92)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1j3mUQ-000LJn-QK; Mon, 17 Feb 2020 13:55:34 -0600
-Date:   Mon, 17 Feb 2020 13:58:16 -0600
+        id 1j3mVo-000Lzv-1P; Mon, 17 Feb 2020 13:57:00 -0600
+Date:   Mon, 17 Feb 2020 13:59:41 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+To:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH net-next] net: usb: cdc-phonet: Replace zero-length array
- with flexible-array member
-Message-ID: <20200217195816.GA3306@embeddedor>
+Subject: [PATCH][next] NFC: digital: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200217195941.GA4272@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -56,13 +56,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 200.68.140.26
 X-Source-L: No
-X-Exim-ID: 1j3mUQ-000LJn-QK
+X-Exim-ID: 1j3mVo-000Lzv-1P
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.26]:23204
+X-Source-Sender: (embeddedor) [200.68.140.26]:2720
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 18
+X-Email-Count: 22
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -100,22 +100,31 @@ This issue was found with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/net/usb/cdc-phonet.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/nfc/digital_dep.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/usb/cdc-phonet.c b/drivers/net/usb/cdc-phonet.c
-index bcabd39d136a..9bdbd7b472a0 100644
---- a/drivers/net/usb/cdc-phonet.c
-+++ b/drivers/net/usb/cdc-phonet.c
-@@ -36,7 +36,7 @@ struct usbpn_dev {
+diff --git a/net/nfc/digital_dep.c b/net/nfc/digital_dep.c
+index 65aaa9d7c813..304b1a9bb18a 100644
+--- a/net/nfc/digital_dep.c
++++ b/net/nfc/digital_dep.c
+@@ -71,7 +71,7 @@ struct digital_atr_req {
+ 	u8 bs;
+ 	u8 br;
+ 	u8 pp;
+-	u8 gb[0];
++	u8 gb[];
+ } __packed;
  
- 	spinlock_t		rx_lock;
- 	struct sk_buff		*rx_skb;
--	struct urb		*urbs[0];
-+	struct urb		*urbs[];
- };
+ struct digital_atr_res {
+@@ -83,7 +83,7 @@ struct digital_atr_res {
+ 	u8 br;
+ 	u8 to;
+ 	u8 pp;
+-	u8 gb[0];
++	u8 gb[];
+ } __packed;
  
- static void tx_complete(struct urb *req);
+ struct digital_psl_req {
 -- 
 2.25.0
 
