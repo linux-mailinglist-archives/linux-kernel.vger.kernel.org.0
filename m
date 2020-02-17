@@ -2,67 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3129160841
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 03:41:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CEE416083C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 03:37:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbgBQClW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 21:41:22 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:38262 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726183AbgBQClW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 21:41:22 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A94631A1E30;
-        Mon, 17 Feb 2020 03:41:20 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3EE1C1A1E64;
-        Mon, 17 Feb 2020 03:41:17 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id B7FEC402A7;
-        Mon, 17 Feb 2020 10:41:12 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     dmitry.torokhov@gmail.com, swboyd@chromium.org, robin@protonic.nl,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] input: keyboard: snvs_pwrkey: Remove unused includes
-Date:   Mon, 17 Feb 2020 10:35:39 +0800
-Message-Id: <1581906939-26163-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726787AbgBQChd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 21:37:33 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:47850 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726656AbgBQChc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Feb 2020 21:37:32 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id A80BE15383A6E;
+        Sun, 16 Feb 2020 18:37:31 -0800 (PST)
+Date:   Sun, 16 Feb 2020 18:37:31 -0800 (PST)
+Message-Id: <20200216.183731.2157450869886971370.davem@davemloft.net>
+To:     jhubbard@nvidia.com
+Cc:     akpm@linux-foundation.org, santosh.shilimkar@oracle.com,
+        hans.westgaard.ry@oracle.com, leonro@mellanox.com, kuba@kernel.org,
+        netdev@vger.kernel.org, rds-devel@oss.oracle.com,
+        linux-rdma@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] net/rds: Track user mapped pages through special
+ API
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20200212030355.1600749-2-jhubbard@nvidia.com>
+References: <20200212030355.1600749-1-jhubbard@nvidia.com>
+        <20200212030355.1600749-2-jhubbard@nvidia.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 16 Feb 2020 18:37:32 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is nothing in use from device.h/init.h/of_address.h, remove them.
+From: John Hubbard <jhubbard@nvidia.com>
+Date: Tue, 11 Feb 2020 19:03:55 -0800
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/input/keyboard/snvs_pwrkey.c | 3 ---
- 1 file changed, 3 deletions(-)
+> From: Leon Romanovsky <leonro@mellanox.com>
+> 
+> Convert net/rds to use the newly introduces pin_user_pages() API,
+> which properly sets FOLL_PIN. Setting FOLL_PIN is now required for
+> code that requires tracking of pinned pages.
+> 
+> Note that this effectively changes the code's behavior: it now
+> ultimately calls set_page_dirty_lock(), instead of set_page_dirty().
+> This is probably more accurate.
+> 
+> As Christoph Hellwig put it, "set_page_dirty() is only safe if we are
+> dealing with a file backed page where we have reference on the inode it
+> hangs off." [1]
+> 
+> [1] https://lore.kernel.org/r/20190723153640.GB720@lst.de
+> 
+> Cc: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>
+> Cc: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+> Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 
-diff --git a/drivers/input/keyboard/snvs_pwrkey.c b/drivers/input/keyboard/snvs_pwrkey.c
-index 2f5e3ab..9e1e855 100644
---- a/drivers/input/keyboard/snvs_pwrkey.c
-+++ b/drivers/input/keyboard/snvs_pwrkey.c
-@@ -3,9 +3,7 @@
- // Driver for the IMX SNVS ON/OFF Power Key
- // Copyright (C) 2015 Freescale Semiconductor, Inc. All Rights Reserved.
- 
--#include <linux/device.h>
- #include <linux/err.h>
--#include <linux/init.h>
- #include <linux/input.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
-@@ -13,7 +11,6 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/of.h>
--#include <linux/of_address.h>
- #include <linux/platform_device.h>
- #include <linux/pm_wakeirq.h>
- #include <linux/mfd/syscon.h>
--- 
-2.7.4
-
+Applied, thank you.
