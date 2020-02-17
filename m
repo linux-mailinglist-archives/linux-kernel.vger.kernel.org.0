@@ -2,112 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FA461618A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 18:16:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6020D1618A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 18:20:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729019AbgBQRPy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 12:15:54 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:42548 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727976AbgBQRPy (ORCPT
+        id S1728676AbgBQRUD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 12:20:03 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.166]:12303 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726397AbgBQRUD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 12:15:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581959753;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=So9XPv62WRRlQlobfjbv7DGM07vzxCapcWtJuCnxFtQ=;
-        b=J/gdLYXDrdFqP63s11JHB+M+yMo+e7jPxmfqR55S1v5ki5pSbp1ML+ta68HhwPEObA+uyq
-        nbhAF3IqPPVk+uQkNBtUW90dkad8aIscVtz/fbv30A3qSqY5j33oIDKrksk9nttdf4qfYN
-        AY18T3Ts7Nq6aDy2tkgokkiY0y9VS5E=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-287-6UqmIXZEOUWgqSpYkW69TQ-1; Mon, 17 Feb 2020 12:15:51 -0500
-X-MC-Unique: 6UqmIXZEOUWgqSpYkW69TQ-1
-Received: by mail-wr1-f69.google.com with SMTP id a12so9265103wrn.19
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 09:15:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=So9XPv62WRRlQlobfjbv7DGM07vzxCapcWtJuCnxFtQ=;
-        b=oDqq9O2GORn1NP0Txr3fXYAQugbvLrFlfrZLvlVS5ofgAqMG9fA3Byde4BbyQy5xd1
-         coO1eoDOuhohVFL3Jd1yFvb4MxEh+l+7ctUa5MQTlHo/SoZcjPwXAxQz9svZMqxMgkpO
-         mYqCDs6okkJ59/bl4x4ZvZFuKJqfZ7W6G3KMcpqEU6dgqo9Pn9MleoXmkheGGywqbT94
-         K+zqTos9xnAuDz8h0mcof/NwRZk77ITjja7qs8C6qb4Jtv/6GF0zUGbRSTBtnMwJUsvD
-         fos4dNBXE3jjei2lKZ5CSubwn5tqUJlWT5zhwSnU/eJ3ZWxxDH1Fzf5GSShQiMQKRe1D
-         ZkIA==
-X-Gm-Message-State: APjAAAXnjsvRyrVXdSf/9XCKrEtponO8HYSOZHuZbPvVhEBZmqaTPSiX
-        micKX4rNjHcnT/jaIBwahGkcTwgsyUqBeOQVeCLA1g1IUWbNUzkuWEUjTfWibqR2lk17QJpa0OY
-        ohqmHFXiYZJnOx33oeE3CUDr4
-X-Received: by 2002:a1c:9646:: with SMTP id y67mr73762wmd.42.1581959750544;
-        Mon, 17 Feb 2020 09:15:50 -0800 (PST)
-X-Google-Smtp-Source: APXvYqz7y8IWxspRQy16pPYhFQi9maKhxPLla3Ezv35ZwrJ/KCJ6PiM5kALcG5Usi+8wrJWxGKchZQ==
-X-Received: by 2002:a1c:9646:: with SMTP id y67mr73732wmd.42.1581959750239;
-        Mon, 17 Feb 2020 09:15:50 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:59c7:c3ee:2dec:d2b4? ([2001:b07:6468:f312:59c7:c3ee:2dec:d2b4])
-        by smtp.gmail.com with ESMTPSA id x17sm1883439wrt.74.2020.02.17.09.15.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Feb 2020 09:15:49 -0800 (PST)
-Subject: Re: [PATCH] KVM: Add the check and free to avoid unknown errors.
-To:     Haiwei Li <lihaiwei.kernel@gmail.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <aaac4289-f6b9-4ee5-eba3-5fe6a4b72645@gmail.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <33cd2fda-f863-82be-5711-8c9e4eaa7971@redhat.com>
-Date:   Mon, 17 Feb 2020 18:15:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Mon, 17 Feb 2020 12:20:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1581960000;
+        s=strato-dkim-0002; d=gerhold.net;
+        h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=AuhDO2rUbeYJG2tjJ1Rhw+bMLutKYj518pI95sS326Y=;
+        b=FbL97z+CmrsRH2lQHdZVMmdOcbrtVYlQG34cd+9V7d/OZAihiG3YkgdemfgXf+LNHs
+        mfH/fyrMmPjkq92YOgmAP0OWwZeUg0Ft3MqUflbXKADoYMHdXdOADQkwwpc8mjHUG2pS
+        Rp1HplNtaRJhhnHeBlizqhYD+BffoXMcF5jrTCxDIBMQ5VZkMxcwXjQVnZmOxFECDtxn
+        7xLxMezykGmstIrci2a/ii7M/TBdIwQDSrLZ55iyEuUzzBVRWZf0JrlQBy/d9Z5D9hJ6
+        6Uhzhdf0FKXvlgjLOu/kbR3+mBI54zNuaHOYoyoAoIog5WMy7WH/9sJpGVlSnmeLVo0v
+        N8Zg==
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u266EZF6ORJKBk/pyQ=="
+X-RZG-CLASS-ID: mo00
+Received: from gerhold.net
+        by smtp.strato.de (RZmta 46.1.12 AUTH)
+        with ESMTPSA id a01fe9w1HHJxeYR
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Mon, 17 Feb 2020 18:19:59 +0100 (CET)
+Date:   Mon, 17 Feb 2020 18:19:47 +0100
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Sameer Pujar <spujar@nvidia.com>, tiwai@suse.com, perex@perex.cz,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [alsa-devel] [RFC] ASoC: soc-pcm: crash in snd_soc_dapm_new_dai
+Message-ID: <20200217171947.GA24287@gerhold.net>
+References: <1579443563-12287-1-git-send-email-spujar@nvidia.com>
+ <20200217144120.GA243254@gerhold.net>
+ <20200217154301.GN9304@sirena.org.uk>
+ <20200217171245.GA881@gerhold.net>
 MIME-Version: 1.0
-In-Reply-To: <aaac4289-f6b9-4ee5-eba3-5fe6a4b72645@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200217171245.GA881@gerhold.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/02/20 22:02, Haiwei Li wrote:
-> From: Haiwei Li <lihaiwei@tencent.com>
+On Mon, Feb 17, 2020 at 06:12:53PM +0100, Stephan Gerhold wrote:
+> On Mon, Feb 17, 2020 at 03:43:01PM +0000, Mark Brown wrote:
+> > On Mon, Feb 17, 2020 at 03:41:20PM +0100, Stephan Gerhold wrote:
+> > 
+> > > I'm a bit confused about this patch, isn't SNDRV_PCM_STREAM_PLAYBACK
+> > > used for both cpu_dai and codec_dai in the playback case?
+> > 
+> > It is in the normal case, but with a CODEC<->CODEC link (which was what
+> > this was targeting) we need to bodge things by swapping playback and
+> > capture on one end of the link.
 > 
-> If 'kvm_create_vm_debugfs()' fails in 'kzalloc(sizeof(*stat_data), ...)',
-> 'kvm_destroy_vm_debugfs()' will be called by the final fput(file) in
-> 'kvm_dev_ioctl_create_vm()'.
+> I see. Looking at the code again I'm guessing the cause of the crash
+> "fixed" by this patch is commit a342031cdd08 ("ASoC: create pcm for
+> codec2codec links as well") where the codec2codec case was sort of
+> patched in. This is what we had before this patch:
+> 
+> 		/* Adapt stream for codec2codec links */
+> 		struct snd_soc_pcm_stream *cpu_capture = rtd->dai_link->params ?
+> 			&cpu_dai->driver->playback : &cpu_dai->driver->capture;
+> 		struct snd_soc_pcm_stream *cpu_playback = rtd->dai_link->params ?
+> 			&cpu_dai->driver->capture : &cpu_dai->driver->playback;
+> 
+> This does the swapping you mentioned, so I guess rtd->dai_link->params
+> is only set for the codec2codec case?
+> 
+> 		for_each_rtd_codec_dai(rtd, i, codec_dai) {
+> 			if (snd_soc_dai_stream_valid(codec_dai, SNDRV_PCM_STREAM_PLAYBACK) &&
+> 			    snd_soc_dai_stream_valid(cpu_dai,   SNDRV_PCM_STREAM_PLAYBACK))
+> 				playback = 1;
+> 			if (snd_soc_dai_stream_valid(codec_dai, SNDRV_PCM_STREAM_CAPTURE) &&
+> 			    snd_soc_dai_stream_valid(cpu_dai,   SNDRV_PCM_STREAM_CAPTURE))
+> 				capture = 1;
+> 		}
+> 
+> 		capture = capture && cpu_capture->channels_min;
+> 		playback = playback && cpu_playback->channels_min;
+> 
+> And this does a part of the check in snd_soc_dai_stream_valid(),
+> but without the NULL check of cpu_capture/cpu_playback.
+> (Maybe that is the cause of the crash.)
 
-Can you explain better?  It is okay to pass NULL to kfree.
+Uh, no, I am completely wrong here. :)
+cpu_capture/cpu_playback cannot actually be NULL...
+I should have looked more carefully at snd_soc_dai_stream_valid()...
 
-Paolo
+But I still wonder if the approach below would be easier?
 
-> Add the check and free to avoid unknown errors.
 > 
-> Signed-off-by: Haiwei Li <lihaiwei@tencent.com>
-> ---
->  virt/kvm/kvm_main.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+> From my limited understanding, I would say that a much simpler way to
+> implement this would be:
 > 
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 67ae2d5..18a32e1 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -617,8 +617,11 @@ static void kvm_destroy_vm_debugfs(struct kvm *kvm)
->      debugfs_remove_recursive(kvm->debugfs_dentry);
+> 	/* Adapt stream for codec2codec links */
+> 	int cpu_capture = rtd->dai_link->params ?
+> 		SNDRV_PCM_STREAM_PLAYBACK : SNDRV_PCM_STREAM_CAPTURE;
+> 	int cpu_playback = rtd->dai_link->params ?
+> 		SNDRV_PCM_STREAM_CAPTURE : SNDRV_PCM_STREAM_PLAYBACK;
 > 
->      if (kvm->debugfs_stat_data) {
-> -        for (i = 0; i < kvm_debugfs_num_entries; i++)
-> +        for (i = 0; i < kvm_debugfs_num_entries; i++) {
-> +            if (!kvm->debugfs_stat_data[i])
-> +                break;
->              kfree(kvm->debugfs_stat_data[i]);
-> +        }
->          kfree(kvm->debugfs_stat_data);
->      }
->  }
-> -- 
-> 1.8.3.1
+> 	for_each_rtd_codec_dai(rtd, i, codec_dai) {
+> 		if (snd_soc_dai_stream_valid(codec_dai, SNDRV_PCM_STREAM_PLAYBACK) &&
+> 		    snd_soc_dai_stream_valid(cpu_dai,   cpu_playback))
+> 			playback = 1;
+> 		if (snd_soc_dai_stream_valid(codec_dai, SNDRV_PCM_STREAM_CAPTURE) &&
+> 		    snd_soc_dai_stream_valid(cpu_dai,   cpu_capture))
+> 			capture = 1;
+> 	}
 > 
-
+> since snd_soc_dai_stream_valid() does both the NULL-check and the 
+> "channels_min" check.
+> 
+> But I'm really not familar with the codec2codec case and am unable to
+> test it :) What do you think?
+> 
+> Thanks,
+> Stephan
