@@ -2,88 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC4B016165D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 16:40:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D132161661
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 16:40:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729052AbgBQPk3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 10:40:29 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37328 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728292AbgBQPk3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 10:40:29 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 7242BADD9;
-        Mon, 17 Feb 2020 15:40:27 +0000 (UTC)
-Date:   Mon, 17 Feb 2020 16:40:26 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     John Ogness <john.ogness@linutronix.de>
-Cc:     lijiang <lijiang@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: crashdump: Re: [PATCH 2/2] printk: use the lockless ringbuffer
-Message-ID: <20200217154026.7x2xyrklprgql4if@pathway.suse.cz>
-References: <20200128161948.8524-1-john.ogness@linutronix.de>
- <20200128161948.8524-3-john.ogness@linutronix.de>
- <ccbe1383-a4a4-41f8-3330-972f03c97429@redhat.com>
- <87zhdle0s5.fsf@linutronix.de>
+        id S1729142AbgBQPkt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 10:40:49 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41252 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728873AbgBQPkt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 10:40:49 -0500
+Received: by mail-lj1-f195.google.com with SMTP id h23so19367651ljc.8;
+        Mon, 17 Feb 2020 07:40:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=DmHRbSfYnROEk3VeGAYDLtIxVXsHmUQrnBynpnBcksc=;
+        b=gMm3Jgv0dC1nadTdp4j/enGN1SkcWoOzaGpub+EEQyUCg9ILDMF+2VimeBAVXOK5wo
+         HoVzuKVdTMqXXSLaE5GX09blQXNCQlQkVJRnWpSpFLs6urRoN0Xwd3qNwymLKcb7yTGX
+         YczzHSoPJ9+OwCNOiN13KcaNdao0Wg3r7aZdOQcIU+ERtQxUBpRLpIXr8eUlB7hMrqFD
+         tv5b42BPrbI+LdtcQSJV8IKf5zA1mHh3miS1kc4h+w+Kj3fIggmFVfUSz5/YUkNDpBIp
+         tCs0rEQQ5yReTUHjL1Ps3vBlugs36d72R6hzkQv9stUg8Fb9M5Qq7PUlPAXmngs8KJ9H
+         6tfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=DmHRbSfYnROEk3VeGAYDLtIxVXsHmUQrnBynpnBcksc=;
+        b=NaqjU42seA8WHm1nU/NAsRmlfEqOhb7JIt6zFyy2NwUee0MGAFad7P+a7gwJJ46HGn
+         QVPSGamZ3JNRRALouXkyPznEydeV3D8fd7oX0GJ0Nn67SpFwySyNUwvK7Wo6/DsiO1wc
+         vIoSz0EPfxzxw5T09m9oEcI//tkxPVdbpLuYfGm4tkyOGH77t1czJwxjVqUQGPhrfea1
+         Ab/JVpsYUsHuPrMvnTwTBDSBzoT7DW1Nu7WWxrmKjy0gLLToUC4uJOdKlAq9Y1v1ZuAf
+         UobCBEw2hCFuwYy9OL+Ik7DcInR1tvRMeGb4vt95j8gT5y5Me1rRQIO6qEhTnHrFdy8V
+         0qtQ==
+X-Gm-Message-State: APjAAAV49noq1XbHy3IJiDkKrN10/Zq4r8R+ScHomvY34EIF2uKz9Smn
+        Lsuo5MXWzsZsv71f17rFNOnQVSqsTarGCA==
+X-Google-Smtp-Source: APXvYqyoqdt/GCnJHizzHYjlCSWEoPWya636QQ/jufRGIJYvOViPfLzBy6t0vY0d9nK8E/SZ70qVkA==
+X-Received: by 2002:a2e:b80e:: with SMTP id u14mr10622676ljo.17.1581954046569;
+        Mon, 17 Feb 2020 07:40:46 -0800 (PST)
+Received: from [172.31.190.83] ([86.57.146.226])
+        by smtp.gmail.com with ESMTPSA id w3sm632876ljo.66.2020.02.17.07.40.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Feb 2020 07:40:46 -0800 (PST)
+Subject: Re: [PATCH v2 3/3] io_uring: add splice(2) support
+To:     Stefan Metzmacher <metze@samba.org>, Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1581802973.git.asml.silence@gmail.com>
+ <b33d7315f266225237dfd10f483162c51c2ed5bc.1581802973.git.asml.silence@gmail.com>
+ <6d803558-ab09-1850-2c38-38848b8ddf27@samba.org>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Message-ID: <b44a4692-f43c-e625-3eb7-cc4e12041f48@gmail.com>
+Date:   Mon, 17 Feb 2020 18:40:44 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87zhdle0s5.fsf@linutronix.de>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <6d803558-ab09-1850-2c38-38848b8ddf27@samba.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 2020-02-14 14:50:02, John Ogness wrote:
-> Hi Lianbo,
+On 2/17/2020 6:18 PM, Stefan Metzmacher wrote:
+> Hi Pavel,
 > 
-> On 2020-02-14, lijiang <lijiang@redhat.com> wrote:
-> >> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> >> index 1ef6f75d92f1..d0d24ee1d1f4 100644
-> >> --- a/kernel/printk/printk.c
-> >> +++ b/kernel/printk/printk.c
-> >> @@ -1062,21 +928,16 @@ void log_buf_vmcoreinfo_setup(void)
-> >>  {
-> >>  	VMCOREINFO_SYMBOL(log_buf);
-> >>  	VMCOREINFO_SYMBOL(log_buf_len);
-> >
-> > I notice that the "prb"(printk tb static) symbol is not exported into
-> > vmcoreinfo as follows:
-> >
-> > +	VMCOREINFO_SYMBOL(prb);
-> >
-> > Should the "prb"(printk tb static) symbol be exported into vmcoreinfo?
-> > Otherwise, do you happen to know how to walk through the log_buf and
-> > get all kernel logs from vmcore?
+>> +static int io_splice_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>> +{
+>> +	struct io_splice* sp = &req->splice;
+>> +	unsigned int valid_flags = SPLICE_F_FD_IN_FIXED | SPLICE_F_ALL;
+>> +	int ret;
+>> +
+>> +	if (req->flags & REQ_F_NEED_CLEANUP)
+>> +		return 0;
+>> +
+>> +	sp->file_in = NULL;
+>> +	sp->off_in = READ_ONCE(sqe->off_in);
+>> +	sp->off_out = READ_ONCE(sqe->off);
+>> +	sp->len = READ_ONCE(sqe->len);
+>> +	sp->flags = READ_ONCE(sqe->splice_flags);
+>> +
+>> +	if (unlikely(READ_ONCE(sqe->ioprio) || (sp->flags & ~valid_flags)))
+>> +		return -EINVAL;
 > 
-> You are correct. This will need to be exported as well so that the
-> descriptors can be accessed. (log_buf is only the pure human-readable
-> text.) I am currently hacking the crash tool to see exactly what needs
-> to be made available in order to access all the data of the ringbuffer.
+> Why is ioprio not supported?
 
-I am not sure which parts you are working on. Are you going to provide
-also patch for makedumpfile, please? I get the following failure when
-creating the crashdump using:
+Because there is no way to set it without changing much of splice code.
+It may be added later
 
-    echo c >/proc/sysrq-trigger
+BTW, it seems, only opcodes cares about ioprio are read*/write*.
+recv*() and send*() don't reject it, but never use.
 
-
-The kernel version is not supported.
-The makedumpfile operation may be incomplete.
-dump_dmesg: Can't find variable-length record symbols
-makedumpfile Failed.
-Running makedumpfile --dump-dmesg /proc/vmcore failed (1).
-
-
-Best Regards,
-Petr
+-- 
+Pavel Begunkov
