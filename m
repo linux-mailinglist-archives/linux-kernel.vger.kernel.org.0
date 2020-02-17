@@ -2,143 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18478161199
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 13:07:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BD141611A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 13:08:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729495AbgBQMH1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 07:07:27 -0500
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:42025 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728898AbgBQMH1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 07:07:27 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 96E596236;
-        Mon, 17 Feb 2020 07:07:23 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Mon, 17 Feb 2020 07:07:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=OfVcrpQMKRGKOHNjrwVqsjy8koy
-        mmEYoZqQ/abqkNZs=; b=hbZg1DwrBLR7Fxkybgrro4ghvaganK+nfseQbao7P95
-        3/Fso0j5h2tmYF5iSVA9O2HTDr/d0rgU5iKlwZiQjiPvsmajO8Z/TfJ5KUVAglF2
-        eGGjrPydIjJ7vHfzSsdd3qhyYAUNc+GzitSrklhsFxGuWSK3l4ECJPRuRHa1eLAg
-        CDldNsuUugcQndJh/8HeaONp4JAErrKwo9EU06202FCe5JD8/03YTgk2OhOaBLrC
-        yJamIb8rEHovs/nMigGPKwKDZR36N+0ixrNKKk2xtJFI22At18n0aQPkwYZ012Bb
-        zn85pcqiPpEGAD7KhrlwFCVeDibds9z3wNpIkM9KZyQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=OfVcrp
-        QMKRGKOHNjrwVqsjy8koymmEYoZqQ/abqkNZs=; b=HBggl4cvfnASYd+UHHqOiH
-        v/X0LFDNyy7SFDqGL5FM8i01+wnzi6ZCR4sK8bAFVQmog2fsL8xebknqsLOH5zw2
-        ueBd3Am7Rn1VZ/kGhkE1o+uZhHDXRAxSAI2oKN4tlsha1ICpo0UkwlK4hD6X2s2c
-        hrq57E+AF1wEUi4VnFPfUBKHGh3CbEuQR09jsldZXly8fnxK8HUryYDjHFZm8Iad
-        KwyHdS1S2m2rYB1WssmxBLXrKNoE6zboBOwaiH+TDKUHjb4qpl20R4+1dRkMzxwo
-        F7eBzN0W7AiZNUn/bEIy81LN/ChQtB/E/4pfhR61rKchke6V7d+TrdN0sKK4Bo0w
-        ==
-X-ME-Sender: <xms:-YFKXvGjcrlpeKMR2Ifly1NEdveEMxYgTiHaOk4T6_07YDvo4bswXA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrjeeigdefiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucfkphepledtrd
-    ekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
-    fhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:-YFKXoOTA169LQhENRmuCrYtsyXVtoyJw3yureR7siGD5PHh7t1IJg>
-    <xmx:-YFKXp-RrUaS9DQIyViu7xfFOEBeb5DlaSab2YWdlIabx3gW9EmW-w>
-    <xmx:-YFKXl4tGPgYB97zKpFnxNujRiNBMMllGfXG8FoeOyN_pgY05nYY2w>
-    <xmx:-4FKXhndzg31ChpHDy_zKvIUdThLVL5L015pzpSHXtVq77pPj-PMCg>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id BE8373280063;
-        Mon, 17 Feb 2020 07:07:20 -0500 (EST)
-Date:   Mon, 17 Feb 2020 13:07:19 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Samuel Holland <samuel@sholland.org>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        =?utf-8?Q?Myl=C3=A8ne?= Josserand 
-        <mylene.josserand@free-electrons.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 00/34] sun8i-codec fixes and new features
-Message-ID: <20200217120719.m37dldhe5fshcw27@gilmour.lan>
-References: <20200217064250.15516-1-samuel@sholland.org>
- <20200217091423.y2muniz3hosquho6@gilmour.lan>
- <CAGb2v65GuwLdJ3Rkt1cyU6EroWZ6pim7-sGry5jYBoi=mubpUg@mail.gmail.com>
+        id S1729042AbgBQMIw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 07:08:52 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2431 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728927AbgBQMIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 07:08:51 -0500
+Received: from LHREML710-CAH.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 5A01FB48AA3C8B00CA05;
+        Mon, 17 Feb 2020 12:08:50 +0000 (GMT)
+Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
+ LHREML710-CAH.china.huawei.com (10.201.108.33) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 17 Feb 2020 12:08:50 +0000
+Received: from [127.0.0.1] (10.202.226.45) by lhreml724-chm.china.huawei.com
+ (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5; Mon, 17 Feb
+ 2020 12:08:49 +0000
+Subject: Re: arm64 iommu groups issue
+To:     Robin Murphy <robin.murphy@arm.com>, Marc Zyngier <maz@kernel.org>,
+        "Will Deacon" <will@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        "Guohanjun (Hanjun Guo)" <guohanjun@huawei.com>
+CC:     iommu <iommu@lists.linux-foundation.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linuxarm <linuxarm@huawei.com>,
+        Shameerali Kolothum Thodi 
+        <shameerali.kolothum.thodi@huawei.com>,
+        "Alex Williamson" <alex.williamson@redhat.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Saravana Kannan" <saravanak@google.com>
+References: <9625faf4-48ef-2dd3-d82f-931d9cf26976@huawei.com>
+ <4768c541-ebf4-61d5-0c5e-77dee83f8f94@arm.com>
+ <a18b7f26-9713-a5c7-507e-ed70e40bc007@huawei.com>
+ <ddc7eaff-c3f9-4304-9b4e-75eff2c66cd5@huawei.com>
+ <be464e2a-03d5-0b2e-24ee-96d0d14fd739@arm.com>
+ <35fc8d13-b1c1-6a9e-4242-284da7f00764@huawei.com>
+ <68643b18-c920-f997-a6d4-a5d9177c0f4e@arm.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <828ec7b3-27af-f0b9-b4a6-0886b0c24b5a@huawei.com>
+Date:   Mon, 17 Feb 2020 12:08:48 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGb2v65GuwLdJ3Rkt1cyU6EroWZ6pim7-sGry5jYBoi=mubpUg@mail.gmail.com>
+In-Reply-To: <68643b18-c920-f997-a6d4-a5d9177c0f4e@arm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.45]
+X-ClientProxiedBy: lhreml703-chm.china.huawei.com (10.201.108.52) To
+ lhreml724-chm.china.huawei.com (10.201.108.75)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 17, 2020 at 05:44:36PM +0800, Chen-Yu Tsai wrote:
-> On Mon, Feb 17, 2020 at 5:14 PM Maxime Ripard <maxime@cerno.tech> wrote:
-> >
-> > Hi,
-> >
-> > On Mon, Feb 17, 2020 at 12:42:16AM -0600, Samuel Holland wrote:
-> > > The sun8i-codec driver, as used in the Allwinner A33 and A64, currently
-> > > only exposes a small subset of the available hardware features. In order
-> > > to use the A64 in a smartphone (the PinePhone), I've added the necessary
-> > > functionality to the driver:
-> > >   * The full set of supported DAI format options
-> > >   * Support for AIF2 and AIF3
-> > >   * Additional routing knobs
-> > >   * Additional volume controls
-> > >
-> > > Unfortunately, due to preexisting issues with the driver, there are some
-> > > breaking changes, as explained further in the commit messages:
-> > >   * The LRCK inversion issue means we need a new compatible for the A64.
-> > >   * Some controls are named inaccurately, so they are renamed.
-> > >   * Likewise, the DAPM widgets used in device trees were either named
-> > >     wrong, or the device trees were using the wrong widgets in the first
-> > >     place. (Specifically, the links between the analog codec and digital
-> > >     codec happen at the ADC and DAC, not AIF1.)
-> > >
-> > > I tended to take the philosophy of "while I'm breaking things, I might
-> > > as well do them right", so I've probably made a few more changes than
-> > > absolutely necessary. I'm not sure about where all of the policy
-> > > boundaries are, about how far I should go to maintain compatibility. For
-> > > example, for the DT widget usage, I could:
-> > >   * Rename everything and update the DTS files (which is what I did)
-> > >   * Keep the old (misleading/wrong) name for the widgets, but repurpose
-> > >     them to work correctly
-> > >       (i.e. "ADC Left" would be named "AIF1 Slot 0 Left ADC", but it
-> > >        would work just like "ADC Left" does in this patchset)
-> > >   * Keep the old widgets around as a compatibility layer, but add new
-> > >     widgets and update the in-tree DTS files to use them
-> > >       (i.e. "ADC Left" would have a path from "AIF1 Slot 0 Left ADC",
-> > >        but "AIF1 Slot 0 Left ADC" would be a no-op widget)
-> > >   * Something else entirely
-> >
-> > I'm not sure this is really a concern here. We need to maintain the
-> > compatibility with old DT's, but those will have an A33 compatible
-> > too, and as far as I can see, you're not changing anything for that
-> > compatible, so we're in the clear?
-> >
-> > If not, then the third option would probably be the best, especially
-> > since it's only a couple of them.
->
-> Unfortunately the description for both chips are shared, and they're wrong.
-> So we probably need a new compatible (or a new driver)... or like options
-> 2 or 3, keep the DT visible endpoints (but deprecate them), and route them
-> to a new set of proper widgets.
+>>
+>> Right, and even worse is that it relies on the port driver even 
+>> existing at all.
+>>
+>> All this iommu group assignment should be taken outside device driver 
+>> probe paths.
+>>
+>> However we could still consider device links for sync'ing the SMMU and 
+>> each device probing.
+> 
+> Yes, we should get that for DT now thanks to the of_devlink stuff, but 
+> cooking up some equivalent for IORT might be worthwhile.
 
-And hmm, it might be a bit wild, but since it's basically just a sed
-on a string in DT, can't we leverage the dynamic DT stuff to rewrite
-the property if we find the old one at probe? That would keep the
-driver clean.
+It doesn't solve this problem, but at least we could remove the 
+iommu_ops check in iort_iommu_xlate().
 
-Maxime
+We would need to carve out a path from pci_device_add() or even 
+device_add() to solve all cases.
+
+> 
+>>> Another thought that crosses my mind is that when pci_device_group()
+>>> walks up to the point of ACS isolation and doesn't find an existing
+>>> group, it can still infer that everything it walked past *should* be put
+>>> in the same group it's then eventually going to return. Unfortunately I
+>>> can't see an obvious way for it to act on that knowledge, though, since
+>>> recursive iommu_probe_device() is unlikely to end well.
+>>
+
+[...]
+
+>> And this looks to be the reason for which current 
+>> iommu_bus_init()->bus_for_each_device(..., add_iommu_group) fails also.
+> 
+> Of course, just adding a 'correct' add_device replay without the 
+> of_xlate process doesn't help at all. No wonder this looked suspiciously 
+> simpler than where the first idea left off...
+> 
+> (on reflection, the core of this idea seems to be recycling the existing 
+> iommu_bus_init walk rather than building up a separate "waiting list", 
+> while forgetting that that wasn't the difficult part of the original 
+> idea anyway)
+
+We could still use a bus walk to add the group per iommu, but we would 
+need an additional check to ensure the device is associated with the IOMMU.
+
+> 
+>> On this current code mentioned, the principle of this seems wrong to 
+>> me - we call bus_for_each_device(..., add_iommu_group) for the first 
+>> SMMU in the system which probes, but we attempt to add_iommu_group() 
+>> for all devices on the bus, even though the SMMU for that device may 
+>> yet to have probed.
+> 
+> Yes, iommu_bus_init() is one of the places still holding a 
+> deeply-ingrained assumption that the ops go live for all IOMMU instances 
+> at once, which is what warranted the further replay in 
+> of_iommu_configure() originally. Moving that out of 
+> of_platform_device_create() to support probe deferral is where the 
+> trouble really started.
+
+I'm not too familiar with the history here, but could this be reverted 
+now with the introduction of of_devlink stuff?
+
+Cheers,
+John
