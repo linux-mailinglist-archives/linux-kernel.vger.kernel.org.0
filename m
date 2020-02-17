@@ -2,109 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 526C5160C08
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 08:59:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51DB9160C0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 08:59:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727006AbgBQH7j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 02:59:39 -0500
-Received: from mga11.intel.com ([192.55.52.93]:16751 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726267AbgBQH7i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 02:59:38 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Feb 2020 23:59:38 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,451,1574150400"; 
-   d="scan'208";a="229120141"
-Received: from zhouy1-mobl1.ccr.corp.intel.com ([10.249.169.88])
-  by fmsmga008.fm.intel.com with ESMTP; 16 Feb 2020 23:59:35 -0800
-Message-ID: <19d5aad060442ca4917046286b82e723199d4088.camel@intel.com>
-Subject: Re: [PATCH] thermal/intel_powerclamp: Don't report an error for AMD
- CPUs
-From:   Zhang Rui <rui.zhang@intel.com>
-To:     Alexander Koskovich <zvnexus@gmail.com>, arjan@linux.intel.com,
-        jacob.jun.pan@linux.intel.com
-Cc:     Alexander Koskovich <zvnexus@outlook.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 17 Feb 2020 15:59:34 +0800
-In-Reply-To: <20200215160938.1025-1-zvnexus@outlook.com>
-References: <20200215160938.1025-1-zvnexus@outlook.com>
+        id S1727193AbgBQH7v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 02:59:51 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:41730 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726267AbgBQH7u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 02:59:50 -0500
+Received: by mail-ed1-f67.google.com with SMTP id c26so19584044eds.8;
+        Sun, 16 Feb 2020 23:59:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Diza8Cc5Cpy+OVsRi4P0IsWcjJ4gPjcUytSTU6gocRQ=;
+        b=KGMb3bNcO9hOcceVAIUGqw3i5hbeuG/1h/5jxiXZ3O398psl0ubUJBpG+Og1O/8lOe
+         dsCfD8LGuc+kyItDVy4/5TErrfZZqjW6pZozhxzCMmaYXRF4uXqO5D2+Fs2U7auUxcGP
+         zagrDYljhC+yvXXuE+D1ZMSASnAdq+8itgDbHvvwMrQBQQ98C00me0jZwQxfpiF0RNUU
+         8lkARqkGi7eRZiXwpvAMglZH00JmrJzNHC2DCaqa+0C1VxuvcQpmw41ILcP8EaDy3+TY
+         2JCLbKD8kvjt2KWxYZo5ZxERu+y4/D5v/0N/X88zRwIMeX4JAARHlQK1smfxu9rPqvYS
+         L1PQ==
+X-Gm-Message-State: APjAAAUnLqm4Sk35EWNa63C9IZYp6p/36BBPYbTpjSFuUtXVsvSt1wmP
+        gFzPE1t3lSUvgkfUKbzr2Aqea4IPP1s=
+X-Google-Smtp-Source: APXvYqy0dTf5QvJVnKsSHwIf/s4bt+LCzibbUo2tiw91NAparwrHkETsTw+HDY+DhXHVnw60N/BdnA==
+X-Received: by 2002:a05:6402:b2e:: with SMTP id bo14mr13577541edb.13.1581926388311;
+        Sun, 16 Feb 2020 23:59:48 -0800 (PST)
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com. [209.85.221.41])
+        by smtp.gmail.com with ESMTPSA id cf2sm484135edb.2.2020.02.16.23.59.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 16 Feb 2020 23:59:47 -0800 (PST)
+Received: by mail-wr1-f41.google.com with SMTP id w12so18407721wrt.2;
+        Sun, 16 Feb 2020 23:59:47 -0800 (PST)
+X-Received: by 2002:a5d:484f:: with SMTP id n15mr20431084wrs.365.1581926387451;
+ Sun, 16 Feb 2020 23:59:47 -0800 (PST)
+MIME-Version: 1.0
+References: <20200217064250.15516-1-samuel@sholland.org> <20200217064250.15516-18-samuel@sholland.org>
+In-Reply-To: <20200217064250.15516-18-samuel@sholland.org>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Mon, 17 Feb 2020 15:59:37 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65jWNCss88961zXT5is4LQQFh=Hcxx9ydn_bGqR7Sig8A@mail.gmail.com>
+Message-ID: <CAGb2v65jWNCss88961zXT5is4LQQFh=Hcxx9ydn_bGqR7Sig8A@mail.gmail.com>
+Subject: Re: [RFC PATCH 17/34] ASoC: sun8i-codec: Sort masks in a consistent order
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2020-02-15 at 11:09 -0500, Alexander Koskovich wrote:
-> Resolves dmesg error "intel_powerclamp: CPU does not support MWAIT".
-> 
-> The error that is outputted in dmesg prior to this patch
-> is innacurate, AMD Ryzen CPUs do support MWAIT. We could
-> also add the AMD vendor to the MWAIT check, but even though
-> AMD CPUs do support MWAIT, they fail the C-state package
-> check so it's better just to bail out in the beginning.
-> 
-> Signed-off-by: Alexander Koskovich <zvnexus@outlook.com>
+On Mon, Feb 17, 2020 at 2:43 PM Samuel Holland <samuel@sholland.org> wrote:
+>
+> All other definitions are sorted from largest to smallest bit number.
+> This makes the AIF1CLK_CTRL mask constants consistent with them.
+>
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
 
-I think you're resending the same patch.
-
-As intel_powerclamp_ids already checks for Intel CPUs, so we don't need
-the check for AMD CPU, but instead, just remove the following line
-
-"pr_err("CPU does not support MWAIT\n");"
-
-when intel_powerclamp driver fails to probe.
-
-thanks,
-rui
-
-> ---
->  drivers/thermal/intel/intel_powerclamp.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/drivers/thermal/intel/intel_powerclamp.c
-> b/drivers/thermal/intel/intel_powerclamp.c
-> index 53216dcbe173..3c5b25bfa596 100644
-> --- a/drivers/thermal/intel/intel_powerclamp.c
-> +++ b/drivers/thermal/intel/intel_powerclamp.c
-> @@ -650,6 +650,11 @@ static struct thermal_cooling_device_ops
-> powerclamp_cooling_ops = {
->  	.set_cur_state = powerclamp_set_cur_state,
->  };
->  
-> +static const struct x86_cpu_id amd_cpu[] = {
-> +	{ X86_VENDOR_AMD },
-> +	{},
-> +};
-> +
->  static const struct x86_cpu_id __initconst intel_powerclamp_ids[] =
-> {
->  	{ X86_VENDOR_INTEL, X86_FAMILY_ANY, X86_MODEL_ANY,
-> X86_FEATURE_MWAIT },
->  	{}
-> @@ -659,6 +664,11 @@ MODULE_DEVICE_TABLE(x86cpu,
-> intel_powerclamp_ids);
->  static int __init powerclamp_probe(void)
->  {
->  
-> +	if (x86_match_cpu(amd_cpu)) {
-> +		pr_info("Intel PowerClamp does not support AMD
-> CPUs\n");
-> +		return -ENODEV;
-> +	}
-> +
->  	if (!x86_match_cpu(intel_powerclamp_ids)) {
->  		pr_err("CPU does not support MWAIT\n");
->  		return -ENODEV;
-
+Acked-by: Chen-Yu Tsai <wens@csie.org>
