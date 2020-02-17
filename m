@@ -2,155 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7D3F161B1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 19:56:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 548F0161B27
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 20:02:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728728AbgBQS4h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 13:56:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33022 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726646AbgBQS4g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 13:56:36 -0500
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F09E207FD;
-        Mon, 17 Feb 2020 18:56:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581965795;
-        bh=Y5XPeknM9kpAq8Cs6H20pbtSbfxKBTXkBhirH4D3Has=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=tYV0pj4asd2GjlU4rZjxLsVGCFYVqqOH1zRif3QCsNB5fnMSzrlpndxDZ5ZGa6HK6
-         IfnxrxgL8BqHwc7KMx8Lfj5txZHPQO48G0Yys8Gpy9bbubWlBknPQytpbFT9jhlK/b
-         XonASwmMb0CqNq0s1uqqUs7dn7Zb7eiSvIvJ6Puw=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 070EF352273C; Mon, 17 Feb 2020 10:56:35 -0800 (PST)
-Date:   Mon, 17 Feb 2020 10:56:35 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Giuseppe Scrivano <gscrivan@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-        ebiederm@xmission.com, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v2] ipc: use a work queue to free_ipc
-Message-ID: <20200217185634.GT2935@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20200217183627.4099690-1-gscrivan@redhat.com>
+        id S1729301AbgBQTCU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 14:02:20 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:43516 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728728AbgBQTCT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 14:02:19 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: krisman)
+        with ESMTPSA id A833F292457
+From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+To:     Daniel Rosenberg <drosen@google.com>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fscrypt@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kernel-team@android.com
+Subject: Re: [PATCH v7 1/8] unicode: Add utf8_casefold_iter
+Organization: Collabora
+References: <20200208013552.241832-1-drosen@google.com>
+        <20200208013552.241832-2-drosen@google.com>
+        <20200212033800.GC870@sol.localdomain>
+        <CA+PiJmT_8EzyFO283_E62+UC6vtCGOJXKHAFqnH3QM9LA+PHAw@mail.gmail.com>
+Date:   Mon, 17 Feb 2020 14:02:10 -0500
+In-Reply-To: <CA+PiJmT_8EzyFO283_E62+UC6vtCGOJXKHAFqnH3QM9LA+PHAw@mail.gmail.com>
+        (Daniel Rosenberg's message of "Fri, 14 Feb 2020 13:47:37 -0800")
+Message-ID: <8536b95971.fsf@collabora.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200217183627.4099690-1-gscrivan@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 17, 2020 at 07:36:27PM +0100, Giuseppe Scrivano wrote:
-> it avoids blocking on synchronize_rcu() in kern_umount().
-> 
-> the code:
-> 
-> \#define _GNU_SOURCE
-> \#include <sched.h>
-> \#include <error.h>
-> \#include <errno.h>
-> \#include <stdlib.h>
-> int main()
-> {
->   int i;
->   for (i  = 0; i < 1000; i++)
->     if (unshare (CLONE_NEWIPC) < 0)
->       error (EXIT_FAILURE, errno, "unshare");
-> }
-> 
-> gets from:
-> 
-> 	Command being timed: "./ipc-namespace"
-> 	User time (seconds): 0.00
-> 	System time (seconds): 0.06
-> 	Percent of CPU this job got: 0%
-> 	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:08.05
-> 
-> to:
-> 
-> 	Command being timed: "./ipc-namespace"
-> 	User time (seconds): 0.00
-> 	System time (seconds): 0.02
-> 	Percent of CPU this job got: 96%
-> 	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.03
-> 
-> Signed-off-by: Giuseppe Scrivano <gscrivan@redhat.com>
-> ---
-> v2:
-> - comment added in free_ipc_ns()
+Daniel Rosenberg <drosen@google.com> writes:
 
-Much better, thank you!
+> On Tue, Feb 11, 2020 at 7:38 PM Eric Biggers <ebiggers@kernel.org> wrote:
+>>
+>> Indirect function calls are expensive these days for various reasons, including
+>> Spectre mitigations and CFI.  Are you sure it's okay from a performance
+>> perspective to make an indirect call for every byte of the pathname?
+>>
+>> > +typedef int (*utf8_itr_actor_t)(struct utf8_itr_context *, int byte, int pos);
+>>
+>> The byte argument probably should be 'u8', to avoid confusion about whether it's
+>> a byte or a Unicode codepoint.
+>>
 
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+just for the record, we use int utf8byte because it can fail
+error codes, but that is not the case here.  It should be u8.
 
-> v1: https://lkml.org/lkml/2020/2/11/692
-> 
->  include/linux/ipc_namespace.h |  2 ++
->  ipc/namespace.c               | 20 ++++++++++++++++++--
->  2 files changed, 20 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/ipc_namespace.h b/include/linux/ipc_namespace.h
-> index c309f43bde45..a06a78c67f19 100644
-> --- a/include/linux/ipc_namespace.h
-> +++ b/include/linux/ipc_namespace.h
-> @@ -68,6 +68,8 @@ struct ipc_namespace {
->  	struct user_namespace *user_ns;
->  	struct ucounts *ucounts;
->  
-> +	struct llist_node mnt_llist;
-> +
->  	struct ns_common ns;
->  } __randomize_layout;
->  
-> diff --git a/ipc/namespace.c b/ipc/namespace.c
-> index b3ca1476ca51..7b9922244891 100644
-> --- a/ipc/namespace.c
-> +++ b/ipc/namespace.c
-> @@ -117,6 +117,10 @@ void free_ipcs(struct ipc_namespace *ns, struct ipc_ids *ids,
->  
->  static void free_ipc_ns(struct ipc_namespace *ns)
->  {
-> +	/* mq_put_mnt() waits for a grace period as kern_unmount()
-> +	 * uses synchronize_rcu().
-> +	 */
-> +	mq_put_mnt(ns);
->  	sem_exit_ns(ns);
->  	msg_exit_ns(ns);
->  	shm_exit_ns(ns);
-> @@ -127,6 +131,17 @@ static void free_ipc_ns(struct ipc_namespace *ns)
->  	kfree(ns);
->  }
->  
-> +static LLIST_HEAD(free_ipc_list);
-> +static void free_ipc(struct work_struct *unused)
-> +{
-> +	struct llist_node *node = llist_del_all(&free_ipc_list);
-> +	struct ipc_namespace *n, *t;
-> +
-> +	llist_for_each_entry_safe(n, t, node, mnt_llist)
-> +		free_ipc_ns(n);
-> +}
-> +static DECLARE_WORK(free_ipc_work, free_ipc);
-> +
->  /*
->   * put_ipc_ns - drop a reference to an ipc namespace.
->   * @ns: the namespace to put
-> @@ -148,8 +163,9 @@ void put_ipc_ns(struct ipc_namespace *ns)
->  	if (refcount_dec_and_lock(&ns->count, &mq_lock)) {
->  		mq_clear_sbinfo(ns);
->  		spin_unlock(&mq_lock);
-> -		mq_put_mnt(ns);
-> -		free_ipc_ns(ns);
-> +
-> +		if (llist_add(&ns->mnt_llist, &free_ipc_list))
-> +			schedule_work(&free_ipc_work);
->  	}
->  }
->  
-> -- 
-> 2.24.1
-> 
+>
+> Gabriel, what do you think here? I could change it to either exposing
+> the things necessary to do the hashing in libfs, or instead of the
+> general purpose iterator, just have a hash function inside of unicode
+> that will compute the hash given a seed value.
+
+Sorry for the delay, I'm away on a long vacation and intentionally
+staying away from my laptop :)
+
+Eric has a very good point, if not prohibitively, it is unnecessarily
+expensive for a hot path.  Why not expose utf8ncursor and utf8byte to
+libfs and implement the hash in libfs?
+
+-- 
+Gabriel Krisman Bertazi
