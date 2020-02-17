@@ -2,87 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C531161BF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 20:55:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 773E7161C05
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 20:56:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729837AbgBQTy5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 14:54:57 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:32021 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729798AbgBQTyz (ORCPT
+        id S1729403AbgBQT44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 14:56:56 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:33847 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728543AbgBQT44 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 14:54:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581969294;
-        h=from:from:reply-to:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:in-reply-to:in-reply-to:  references:references;
-        bh=k22V0NI2T+CODElUbt4W6m1o0DIF8IGREqO+FIqkD2A=;
-        b=BsWuDXKCihuL6/LYVwnidfuXHPaAPR4h70oX4lu2gKoqMqBJ2rVu5KUsDZyP9Tl5gcX7id
-        jl+h3gN5twDfi2WkQ8fEJIkNrvoIHG3JliZR7aPAfZuhuWoUpfSuQHSY7xTifVt738WvUw
-        bxA1+f+945VqtAmcrzJ8qe/8/h87NTQ=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-19-R-4SOanxPcWGYd4fm1Tm_g-1; Mon, 17 Feb 2020 14:54:52 -0500
-X-MC-Unique: R-4SOanxPcWGYd4fm1Tm_g-1
-Received: by mail-qv1-f71.google.com with SMTP id e26so10924280qvb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 11:54:52 -0800 (PST)
+        Mon, 17 Feb 2020 14:56:56 -0500
+Received: by mail-il1-f196.google.com with SMTP id l4so15285222ilj.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 11:56:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=indeed.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=anZc7OW31U8MO5ygkvDDyIY0GQBGMdLs3iSe01Jj7l0=;
+        b=sGkUgr2hS2qh3wTv0ktQzRELdeLNVOJRw8PZLR83DdUf9jRoBChFnzmLtAXvRX0ad9
+         C4Vpbg4AjpwXtzZGSDBzumuHuXBm77L3DHxhhI4bCkVQkbZZHcIkB0lMVmzQJM/WKLFk
+         YOMXm8H4OMQC1q+U1UmngJUHT7IGElm9QTtHI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to;
-        bh=k22V0NI2T+CODElUbt4W6m1o0DIF8IGREqO+FIqkD2A=;
-        b=nXtX+ELWR4QYkBnfbv4N/NQyg0eGbe24M6cBhXH4qUm5d4Wdqj5hFpEs79gtrw7qw7
-         CJFL62dbpyRvnLBD/VIzqkDj79tv+ZjS4ZE2OenXSOASfBdzF12B6hLL071uQ6O95fw9
-         ju1OJMItQy9cSzzlVweW76etF+Ut5NRLS7x10PXcpRvGefxEGBmVBwYZJDfrXzxeuL79
-         +r4fbUGMwlp50GgtMrlXuJdoc+/Y/9fgC/Pw2R+F2zZi+NCvpDjsJYYUas1uxhmQyWdX
-         xI9KFnKtgrpKzV7HXUHvgkw6glEUx0rJyoYzh/fJsKWqejqLrvkLQHmC0j3yltNQV5Sf
-         N3gg==
-X-Gm-Message-State: APjAAAXQURknxlorUtQwurQi8dTAYbkw4pe5QE26DRaDJ/ZIoVQeDsdU
-        gFBDztcYRKI/BnjYrNTcUwR9YcsDyS9V/z+y1ByTRiddzFqh55qmGKJS2b15lrU20K2Jr1FwFl8
-        YAIUQbmPqsxLML1b9X8ru/Hxr
-X-Received: by 2002:ac8:530c:: with SMTP id t12mr13720560qtn.83.1581969292524;
-        Mon, 17 Feb 2020 11:54:52 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxz6/8kkWYoZceed2fKmMhPAZIXHW8axo8YLZkRnosQXVJIt3ilwzbKaFZnDXltOQklmiye5A==
-X-Received: by 2002:ac8:530c:: with SMTP id t12mr13720547qtn.83.1581969292343;
-        Mon, 17 Feb 2020 11:54:52 -0800 (PST)
-Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
-        by smtp.gmail.com with ESMTPSA id f7sm678488qtj.92.2020.02.17.11.54.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2020 11:54:51 -0800 (PST)
-Date:   Mon, 17 Feb 2020 12:54:50 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, jroedel@suse.de,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] iommu/vt-d: Simplify check in identity_mapping()
-Message-ID: <20200217195450.hpk5mtxzbhy5p72a@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: Joerg Roedel <joro@8bytes.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, jroedel@suse.de,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-References: <20200217193858.26990-1-joro@8bytes.org>
- <20200217193858.26990-6-joro@8bytes.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=anZc7OW31U8MO5ygkvDDyIY0GQBGMdLs3iSe01Jj7l0=;
+        b=WFQgnfKXhhzxCADD3Soaq2PL3MZ2gijnC2Ly0o91zz+r8Y+hiugCdnq2Ue7zyQpYGE
+         MN/LAWeWFl+z/vrMU4gbxKYJzVdD4/b4saFPwdPlFqVAum7ZDGEjlsiVUoY9KpePqykg
+         VO9NkWGO5ZSkNAUC2y3TyU/LAgbbFdxd1Y6Ch7mcKdJF1JaW6D/wvhaBJEackoOwAXFx
+         5R1wAqI42ywTcE2VfgUUwAf7oqOgIP1WJOel2LHTpBMPYrV+Ps8zcqFz03AtkwCz6XNY
+         CEoj5eI9rP2yDNm1aaOn7kH4sHbLKV+Sjxi85flj1YBFhm+nphcDAho7y26/hlDxVuX2
+         YxrA==
+X-Gm-Message-State: APjAAAU4D8Y9g8QOGfR8v7dvHUNQbgr9N3q3ZjbhFxgeSjMsyKzRHm0n
+        AlRhb5PTQYPa1iJSyQ8ucF1AaXijv/Mh7xCf15hWzQ==
+X-Google-Smtp-Source: APXvYqwBzoyntxTeoQ1/iTsKDa+b39U1AxBVdktu7QkWK/jPttX+KkBytSdqwTI1f4OywKIQ1y1o8mbNHj/TDBXsYEw=
+X-Received: by 2002:a92:9c52:: with SMTP id h79mr15265830ili.213.1581969415072;
+ Mon, 17 Feb 2020 11:56:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20200217193858.26990-6-joro@8bytes.org>
+References: <157476581065.5793.4518979877345136813.stgit@buzz>
+ <CAC=E7cU8TeNHDRnrHiFxmiHUKviVU9KaDvMq-U16VRgcohg6-w@mail.gmail.com> <xm268sl5uhgo.fsf@bsegall-linux.svl.corp.google.com>
+In-Reply-To: <xm268sl5uhgo.fsf@bsegall-linux.svl.corp.google.com>
+From:   Dave Chiluk <chiluk+linux@indeed.com>
+Date:   Mon, 17 Feb 2020 13:56:29 -0600
+Message-ID: <CAC=E7cUgALi4g19GsDZQemHafQfaSpjY1XUo3Swrv_g1PaWejQ@mail.gmail.com>
+Subject: Re: [PATCH v2] sched/fair: add burst to cgroup cpu bandwidth controller
+To:     Ben Segall <bsegall@google.com>
+Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Peter Zijlstra <peterz@infradead.org>, cgroups@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon Feb 17 20, Joerg Roedel wrote:
->From: Joerg Roedel <jroedel@suse.de>
->
->The function only has one call-site and there it is never called with
->dummy or deferred devices. Simplify the check in the function to
->account for that.
->
->Signed-off-by: Joerg Roedel <jroedel@suse.de>
+On Fri, Feb 14, 2020 at 12:55 PM <bsegall@google.com> wrote:
+> I'm not sure that starting with full burst runtime is best, though it
+> definitely seems likely to be one of those things where sometimes it's
+> what you want and sometimes it's not.
 
-Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+We (Indeed) definitely want to start with a full burst bank in most
+cases, as this would help with slow/throttled start-up times for our
+Jitted and interpreter-based language applications.  I agree that it
+would be nice to have it be configurable.
 
+Dave.
+fyi.  Unfortunately, this e-mail may be temporarily turned off for the
+next few weeks, I apologize in advance for any bounced messages to me.
