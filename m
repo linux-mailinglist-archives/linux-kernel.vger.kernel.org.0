@@ -2,70 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBA89160EBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 10:37:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFA16160EDE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 10:38:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728972AbgBQJhE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 04:37:04 -0500
-Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:44127 "EHLO
-        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728904AbgBQJhE (ORCPT
+        id S1729090AbgBQJhk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 04:37:40 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:28416 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729005AbgBQJhR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 04:37:04 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R411e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0Tq9WTV2_1581932218;
-Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0Tq9WTV2_1581932218)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 17 Feb 2020 17:36:58 +0800
-From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-To:     herbert@gondor.apana.org.au, davem@davemloft.net,
-        jarkko.sakkinen@linux.intel.com, zohar@linux.ibm.com,
-        ebiggers@kernel.org, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com
-Cc:     linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] ima: add sm3 algorithm to hash algorithm configuration list
-Date:   Mon, 17 Feb 2020 17:36:49 +0800
-Message-Id: <20200217093649.97938-3-tianjia.zhang@linux.alibaba.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200217093649.97938-1-tianjia.zhang@linux.alibaba.com>
-References: <20200217093649.97938-1-tianjia.zhang@linux.alibaba.com>
+        Mon, 17 Feb 2020 04:37:17 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1581932237; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=4CNshD0mMpQN0gvohEbak0pxOwTgkDq4jEBZ/deNQBI=; b=UcbBfG1TkHM/4d9cxtD10CV0cqCmw+ASu/iD6/d3eAn4VUwjz9Aoe2rKRaHUIsShJLTkV+Ef
+ Syz2vOxttbgOsAZ6feRXxyXCvxIFrInwTCnYzaIgGai7ot73J+ZAGhEI8t20FsFBEoDRBa2J
+ C1ABcJ3+1bLOszE10sOFhcrAM70=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e4a5ecc.7fb8060fc8b8-smtp-out-n03;
+ Mon, 17 Feb 2020 09:37:16 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 5F077C447A0; Mon, 17 Feb 2020 09:37:16 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from akashast-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: akashast)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5221DC433A2;
+        Mon, 17 Feb 2020 09:37:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5221DC433A2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=akashast@codeaurora.org
+From:   Akash Asthana <akashast@codeaurora.org>
+To:     robh+dt@kernel.org, agross@kernel.org, mark.rutland@arm.com
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mgautam@codeaurora.org,
+        rojay@codeaurora.org, skakit@codeaurora.org, swboyd@chromium.org,
+        Akash Asthana <akashast@codeaurora.org>
+Subject: [PATCH V4 0/3] Convert QUP bindings to YAML and add ICC, pin swap doc
+Date:   Mon, 17 Feb 2020 15:06:49 +0530
+Message-Id: <1581932212-19469-1-git-send-email-akashast@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sm3 has been supported by the ima hash algorithm, but it is not
-yet in the Kconfig configuration list. After adding, both ima and tpm2
-can support sm3 well.
+Changes in V4:
+ - Add interconnect binding patch.
+ - Add UART pin swap binding patch.
 
-Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
----
- security/integrity/ima/Kconfig | 5 +++++
- 1 file changed, 5 insertions(+)
+Akash Asthana (3):
+  dt-bindings: geni-se: Convert QUP geni-se bindings to YAML
+  dt-bindings: geni-se: Add interconnect binding for GENI QUP
+  dt-bindings: geni-se: Add binding for UART pin swap
 
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index 711ff10fa36e..3f3ee4e2eb0d 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -112,6 +112,10 @@ choice
- 	config IMA_DEFAULT_HASH_WP512
- 		bool "WP512"
- 		depends on CRYPTO_WP512=y && !IMA_TEMPLATE
-+
-+	config IMA_DEFAULT_HASH_SM3
-+		bool "SM3"
-+		depends on CRYPTO_SM3=y && !IMA_TEMPLATE
- endchoice
- 
- config IMA_DEFAULT_HASH
-@@ -121,6 +125,7 @@ config IMA_DEFAULT_HASH
- 	default "sha256" if IMA_DEFAULT_HASH_SHA256
- 	default "sha512" if IMA_DEFAULT_HASH_SHA512
- 	default "wp512" if IMA_DEFAULT_HASH_WP512
-+	default "sm3" if IMA_DEFAULT_HASH_SM3
- 
- config IMA_WRITE_POLICY
- 	bool "Enable multiple writes to the IMA policy"
+ .../devicetree/bindings/soc/qcom/qcom,geni-se.txt  |  94 ---------
+ .../devicetree/bindings/soc/qcom/qcom,geni-se.yaml | 227 +++++++++++++++++++++
+ 2 files changed, 227 insertions(+), 94 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.yaml
+
 -- 
-2.17.1
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,\na Linux Foundation Collaborative Project
