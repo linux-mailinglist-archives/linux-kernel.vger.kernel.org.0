@@ -2,75 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0BEC1607EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 03:11:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 311E5160808
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 03:19:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbgBQCLq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 21:11:46 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10624 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726251AbgBQCLq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 21:11:46 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id BB6A29D15348A178E034;
-        Mon, 17 Feb 2020 10:11:24 +0800 (CST)
-Received: from [127.0.0.1] (10.133.205.80) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Mon, 17 Feb 2020
- 10:11:23 +0800
-Subject: Re: [PATCH for 4.19-stable] padata: fix null pointer deref of
- pd->pinst
-To:     Sasha Levin <sashal@kernel.org>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-References: <20200214182821.337706-1-daniel.m.jordan@oracle.com>
- <20200215150118.B22262084E@mail.kernel.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-From:   Yang Yingliang <yangyingliang@huawei.com>
-Message-ID: <5E49F64A.2070904@huawei.com>
-Date:   Mon, 17 Feb 2020 10:11:22 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
-MIME-Version: 1.0
-In-Reply-To: <20200215150118.B22262084E@mail.kernel.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.133.205.80]
-X-CFilter-Loop: Reflected
+        id S1726703AbgBQCTo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 21:19:44 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:42300 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726183AbgBQCTo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Feb 2020 21:19:44 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5EC701A1E03;
+        Mon, 17 Feb 2020 03:19:42 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 2240C1A0018;
+        Mon, 17 Feb 2020 03:19:37 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 8AF0B402AB;
+        Mon, 17 Feb 2020 10:19:30 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     dmitry.torokhov@gmail.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        robh@kernel.org, linux-input@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] input: keyboard: imx_sc_key: Remove unused includes
+Date:   Mon, 17 Feb 2020 10:13:56 +0800
+Message-Id: <1581905636-25830-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+There is nothing in use from device.h/init.h/property.h, remove them.
 
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/input/keyboard/imx_sc_key.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-On 2020/2/15 23:01, Sasha Levin wrote:
-> Hi,
->
-> [This is an automated email]
->
-> This commit has been processed because it contains a "Fixes:" tag,
-> fixing commit: dc34710a7aba ("padata: Remove broken queue flushing").
->
-> The bot has tested the following trees: v5.5.3, v5.4.19, v4.19.103.
->
-> v5.5.3: Build failed! Errors:
->      kernel/padata.c:460:4: error: ‘struct parallel_data’ has no member named ‘pinst’
->
-> v5.4.19: Build failed! Errors:
->      kernel/padata.c:460:4: error: ‘struct parallel_data’ has no member named ‘pinst’
->
-> v4.19.103: Build OK!
->
-> NOTE: The patch will not be queued to stable trees until it is upstream.
->
-> How should we proceed with this patch?
-The commit bbefa1dd6a6d ("crypto: pcrypt - Avoid deadlock by using 
-per-instance padata queues") that merged
-on linux-5.4.y and linux-5.5.y changes struct parallel_data, so this 
-patch it's only needed on linux-4.19.y.
->
-
+diff --git a/drivers/input/keyboard/imx_sc_key.c b/drivers/input/keyboard/imx_sc_key.c
+index 5379952..193c534 100644
+--- a/drivers/input/keyboard/imx_sc_key.c
++++ b/drivers/input/keyboard/imx_sc_key.c
+@@ -4,9 +4,7 @@
+  */
+ 
+ #include <linux/err.h>
+-#include <linux/device.h>
+ #include <linux/firmware/imx/sci.h>
+-#include <linux/init.h>
+ #include <linux/input.h>
+ #include <linux/interrupt.h>
+ #include <linux/jiffies.h>
+@@ -14,7 +12,6 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+-#include <linux/property.h>
+ 
+ #define DEBOUNCE_TIME				30
+ #define REPEAT_INTERVAL				60
+-- 
+2.7.4
 
