@@ -2,139 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDAEA1607F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 03:18:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07D32160814
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 03:22:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbgBQCS0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Feb 2020 21:18:26 -0500
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:51393 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726719AbgBQCSX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Feb 2020 21:18:23 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 988936D76;
-        Sun, 16 Feb 2020 21:18:19 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Sun, 16 Feb 2020 21:18:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=rZE5jshbl3oVN
-        3i0+/l30LzdznQBowgsQ8ja5ppeVIc=; b=hoqWU1muNZelcwgOlCbeT9L4n5rCR
-        Ohn1r90wQHvmG4wDlzgpczd0md0Pwm9dHAPiQV2BuD0SiycaA413v+HO3QKSqAKy
-        hlTYHE+m2O6GBxKNOEYQr251XqvKer1UHiv03MpnHKrK4CnGrOSnKTyuBr/lZmRV
-        nPpOdauXzU/sh8fmFnnHSqLR1OmhhDMlPs/p7n8UjbhVQU3gsjJasTrdruVgxEDd
-        ajCxtbww+OQXWwa0XiTln0wMjQMo1f5aIgvj7cksVGfej7WjT6ZW/nd7IUhSAiEF
-        rk4CBlitRt8AoMBDWs1jlEeENppd/4x/toflXgpc9I59jI3dlJh3oCjJA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=rZE5jshbl3oVN3i0+/l30LzdznQBowgsQ8ja5ppeVIc=; b=EJW1BZoO
-        h6QEndVtxj+KipqxkP5LB2i+xZXU+csYOMU7pLw4gWR6y2qCQnaMo02MHh4a35Xx
-        VJEZ2TmTQnkvBcI4APVJRdlAyYOkHZrhUWM9nRi6d+R3nKSVt3gjfoAII49oooxB
-        yO9Ag4N72/N18llH+eDZBrsxPcDDWurQ712XV+vTGQsRPP/FaSJUU3i1G/APX4np
-        wgzMDCRtNyyJIPqpCnfz91MMQVj1zVM60o+H8gULcs5TjpY5ysre9iOkV/AHkStk
-        FqEMw8PiAzMKycsTQzwubQSfUpae05WNEVc0bc9CoUnAixRLTMGAAoUMK1aYWZEE
-        LMmqI7v85YKh2A==
-X-ME-Sender: <xms:6vdJXtHTavFPOASuajjgaeRzrmiPyVksByFLs3BLSWfEM-5qfr1pkQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrjeehgdegfecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepufgrmhhuvghl
-    ucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecukfhppe
-    ejtddrudefhedrudegkedrudehudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgr
-    mhepmhgrihhlfhhrohhmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
-X-ME-Proxy: <xmx:6vdJXj4zJHrwOcMTT9QfePBqGmtiI8bYduxZJX7O1libaHFgk7zS-A>
-    <xmx:6vdJXuYbJs8SoOA6Hr9_NJChDEJ_ewwTb-ipByL5u9agWLeS3bJo-A>
-    <xmx:6vdJXphWUccKgvbt3VlAQfzNK0xJnAxsTNfpLsEDzfv84Xv3vuAnUQ>
-    <xmx:6_dJXowvWCjWFhD4mWQWfWL_iRpqfjXm5T86dNUGM9pa0U-ftZK7SQ>
-Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 2B0FC3060FE0;
-        Sun, 16 Feb 2020 21:18:18 -0500 (EST)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Luca Weiss <luca@z3ntu.xyz>
-Cc:     alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Samuel Holland <samuel@sholland.org>
-Subject: [PATCH 8/8] ASoC: sun50i-codec-analog: Enable DAPM for earpiece switch
-Date:   Sun, 16 Feb 2020 20:18:13 -0600
-Message-Id: <20200217021813.53266-9-samuel@sholland.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200217021813.53266-1-samuel@sholland.org>
-References: <20200217021813.53266-1-samuel@sholland.org>
+        id S1726560AbgBQCWa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Feb 2020 21:22:30 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:50006 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726183AbgBQCWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Feb 2020 21:22:30 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 39052640039451A6E54E;
+        Mon, 17 Feb 2020 10:22:28 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 17 Feb
+ 2020 10:22:23 +0800
+Subject: Re: [f2fs-dev] [PATCH 3/3] f2fs: skip migration only when BG_GC is
+ called
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20200214185855.217360-1-jaegeuk@kernel.org>
+ <20200214185855.217360-3-jaegeuk@kernel.org>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <9c497f3e-3399-e4a6-f81c-6c4a1f35e5bb@huawei.com>
+Date:   Mon, 17 Feb 2020 10:22:22 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200214185855.217360-3-jaegeuk@kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By including the earpiece mute switch in the DAPM graph, both the
-earpiece amplifier and the Mixer/DAC inputs can be powered off when
-the earpiece is muted.
+On 2020/2/15 2:58, Jaegeuk Kim wrote:
+> FG_GC needs to move entire section more quickly.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/gc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index bbf4db3f6bb4..1676eebc8c8b 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -1203,7 +1203,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+>  
+>  		if (get_valid_blocks(sbi, segno, false) == 0)
+>  			goto freed;
+> -		if (__is_large_section(sbi) &&
+> +		if (gc_type == BG_GC && __is_large_section(sbi) &&
+>  				migrated >= sbi->migration_granularity)
 
-The mute switch is between the source selection and the amplifier,
-as per the diagram in the SoC manual.
+I knew migrating one large section is a more efficient way, but this can
+increase long-tail latency of f2fs_balance_fs() occasionally, especially in
+extreme fragmented space.
 
-Signed-off-by: Samuel Holland <samuel@sholland.org>
----
- sound/soc/sunxi/sun50i-codec-analog.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+Thanks,
 
-diff --git a/sound/soc/sunxi/sun50i-codec-analog.c b/sound/soc/sunxi/sun50i-codec-analog.c
-index 84bb76cad74f..6c89b0716bbd 100644
---- a/sound/soc/sunxi/sun50i-codec-analog.c
-+++ b/sound/soc/sunxi/sun50i-codec-analog.c
-@@ -232,11 +232,6 @@ static const struct snd_kcontrol_new sun50i_a64_codec_controls[] = {
- 		       SUN50I_ADDA_EARPIECE_CTRL1,
- 		       SUN50I_ADDA_EARPIECE_CTRL1_ESP_VOL, 0x1f, 0,
- 		       sun50i_codec_earpiece_vol_scale),
--
--	SOC_SINGLE("Earpiece Playback Switch",
--		   SUN50I_ADDA_EARPIECE_CTRL1,
--		   SUN50I_ADDA_EARPIECE_CTRL1_ESPPA_MUTE, 1, 0),
--
- };
- 
- static const char * const sun50i_codec_hp_src_enum_text[] = {
-@@ -295,6 +290,11 @@ static const struct snd_kcontrol_new sun50i_codec_earpiece_src[] = {
- 		      sun50i_codec_earpiece_src_enum),
- };
- 
-+static const struct snd_kcontrol_new sun50i_codec_earpiece_switch =
-+	SOC_DAPM_SINGLE("Playback Switch",
-+			SUN50I_ADDA_EARPIECE_CTRL1,
-+			SUN50I_ADDA_EARPIECE_CTRL1_ESPPA_MUTE, 1, 0);
-+
- static const struct snd_soc_dapm_widget sun50i_a64_codec_widgets[] = {
- 	/* DAC */
- 	SND_SOC_DAPM_DAC("Left DAC", NULL, SUN50I_ADDA_MIX_DAC_CTRL,
-@@ -341,6 +341,8 @@ static const struct snd_soc_dapm_widget sun50i_a64_codec_widgets[] = {
- 
- 	SND_SOC_DAPM_MUX("Earpiece Source Playback Route",
- 			 SND_SOC_NOPM, 0, 0, sun50i_codec_earpiece_src),
-+	SND_SOC_DAPM_SWITCH("Earpiece",
-+			    SND_SOC_NOPM, 0, 0, &sun50i_codec_earpiece_switch),
- 	SND_SOC_DAPM_OUT_DRV("Earpiece Amp", SUN50I_ADDA_EARPIECE_CTRL1,
- 			     SUN50I_ADDA_EARPIECE_CTRL1_ESPPA_EN, 0, NULL, 0),
- 	SND_SOC_DAPM_OUTPUT("EARPIECE"),
-@@ -462,7 +464,8 @@ static const struct snd_soc_dapm_route sun50i_a64_codec_routes[] = {
- 	{ "Earpiece Source Playback Route", "DACR", "Right DAC" },
- 	{ "Earpiece Source Playback Route", "Left Mixer", "Left Mixer" },
- 	{ "Earpiece Source Playback Route", "Right Mixer", "Right Mixer" },
--	{ "Earpiece Amp", NULL, "Earpiece Source Playback Route" },
-+	{ "Earpiece", "Playback Switch", "Earpiece Source Playback Route" },
-+	{ "Earpiece Amp", NULL, "Earpiece" },
- 	{ "EARPIECE", NULL, "Earpiece Amp" },
- };
- 
--- 
-2.24.1
-
+>  			goto skip;
+>  		if (!PageUptodate(sum_page) || unlikely(f2fs_cp_error(sbi)))
+> 
