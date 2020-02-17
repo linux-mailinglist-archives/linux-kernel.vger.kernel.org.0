@@ -2,95 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CF90161636
+	by mail.lfdr.de (Postfix) with ESMTP id 314DA161635
 	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 16:31:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728864AbgBQPbO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 10:31:14 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:38132 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726528AbgBQPbO (ORCPT
+        id S1728774AbgBQPbK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 10:31:10 -0500
+Received: from outbound-smtp33.blacknight.com ([81.17.249.66]:35716 "EHLO
+        outbound-smtp33.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726528AbgBQPbK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 10:31:14 -0500
-Received: by mail-qt1-f193.google.com with SMTP id i23so2125042qtr.5
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 07:31:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=H44Dq1iyOa9lIeDq8Fjbn2xBgEZ/RfgwiE5O0myRxMY=;
-        b=svQmUgZ/l1fZZZUwgQbjPvIm/hmPGUR8QOq+oNqwoTqEQrSU5eI66nUSxm8YbdDeCM
-         nFVCc4jRCh4hxYRYM2sElMG3aglsUfrKA+rH82tlcqjv74x59Wms/ElBT1pm697kYfqN
-         /FqoKK046fFlLxn7h66NmOwKHGmA1z+vlBONltdNSIqB+0ovRJ7/mIK1yswoLsVuAXGS
-         wJVInSm8zoDsBY5A/1/lhecz1Tll2+Rptc63ZCfF2+Ul58h0WEC0zVNZVdM39pkAeKpR
-         /WyQ1/xOdE9/Jdpc+z6LWkJBg4RjoyV/7XwYbSIyjGbtCO1ulvagjjWuiYirDRFF21q+
-         8GDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=H44Dq1iyOa9lIeDq8Fjbn2xBgEZ/RfgwiE5O0myRxMY=;
-        b=V5xNf249q9frqTr9pmYUkehPCn/VFwiCE6g31w48bkXuQPAD8RFqBTgbvxxpcpps5a
-         4FdrhBBm0gH4MkJX0exns3AnZMrR3l/hPvGQvKwKvFz87OLJrkNymmTiAWiLKrIPVgL5
-         RS2v6dZMbW9yThsZTBIrKC/pZXS4bW7IAlLR2rrniyeN8shvzq5sixZOfoLePf0ZML1q
-         39T1FUpzQOqPUw3l6pVOQkB/oy/gG1Bwta+dvyqduYy3GPmhDig2jPTWA/985J4tl6P5
-         NzVIIZmqf4Z5aj3ZzrLNI7yjcIuj9Al8DyXhmuDk1dtXBBuaq2JZPQYCtjddKVU++kUY
-         wqNQ==
-X-Gm-Message-State: APjAAAWempjmWOEiICYwej7Xedrt5h0KzEu/5GOkvnYF7NmVPFQHbNk3
-        4g7Yr6ATsHLviuUeU4m4o4+wXfNukfo=
-X-Google-Smtp-Source: APXvYqw08zLlS+PNFVz7Zav9IXLuAmIoWLiKJ0KmxRgWf3vfWJ2X0a2/x7gyDSi1Puf58C88lh5rnQ==
-X-Received: by 2002:ac8:1385:: with SMTP id h5mr13257067qtj.59.1581953472159;
-        Mon, 17 Feb 2020 07:31:12 -0800 (PST)
-Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id p19sm339399qte.81.2020.02.17.07.31.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Feb 2020 07:31:11 -0800 (PST)
-From:   Qian Cai <cai@lca.pw>
-To:     akpm@linux-foundation.org
-Cc:     almasrymina@google.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
-Subject: [PATCH -next] mm/hugetlb_cgroup: fix a -Wunused-but-set-variable
-Date:   Mon, 17 Feb 2020 10:30:54 -0500
-Message-Id: <1581953454-10671-1-git-send-email-cai@lca.pw>
-X-Mailer: git-send-email 1.8.3.1
+        Mon, 17 Feb 2020 10:31:10 -0500
+Received: from mail.blacknight.com (unknown [81.17.254.10])
+        by outbound-smtp33.blacknight.com (Postfix) with ESMTPS id 76BEFD038A
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 15:31:08 +0000 (GMT)
+Received: (qmail 8451 invoked from network); 17 Feb 2020 15:31:08 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 17 Feb 2020 15:31:08 -0000
+Date:   Mon, 17 Feb 2020 15:31:06 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Phil Auld <pauld@redhat.com>, Hillf Danton <hdanton@sina.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 00/13] Reconcile NUMA balancing decisions with the load
+ balancer v3
+Message-ID: <20200217153106.GL3466@techsingularity.net>
+References: <20200217104402.11643-1-mgorman@techsingularity.net>
+ <CAKfTPtBfV1QGi2utnmnR21MapKw1g2mTFA_aRxOxXvpWTRX+wA@mail.gmail.com>
+ <20200217145216.GR14897@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20200217145216.GR14897@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The commit c32300516047 ("hugetlb_cgroup: add interface for
-charge/uncharge hugetlb reservations") forgot to remove an unused
-variable,
+On Mon, Feb 17, 2020 at 03:52:16PM +0100, Peter Zijlstra wrote:
+> On Mon, Feb 17, 2020 at 02:49:11PM +0100, Vincent Guittot wrote:
+> > > Patches 4-5 are Vincent's and use very similar code patterns and logic
+> > > between NUMA and load balancer. Patch 6 is a fix to Vincent's work that
+> > > is necessary to avoid serious imbalances being introduced by the NUMA
+> > 
+> > Yes the test added in load_too_imbalanced() by patch 5 doesn't seem to
+> > be a good choice.
+> > I haven't remove it as it was done by your patch 6 but it might worth
+> > removing it directly if a new version is needed
+> 
+> Aside of that, Vincent's patches look good to me.
 
-mm/hugetlb_cgroup.c: In function 'hugetlb_cgroup_migrate':
-mm/hugetlb_cgroup.c:777:25: warning: variable 'h_cg' set but not used
-[-Wunused-but-set-variable]
-  struct hugetlb_cgroup *h_cg;
-                         ^~~~
+Fully agreed, I think it's now much easier to understand the two balancers
+when put side by side in addition to getting some performance gains.
+Even if a regression is found, I think it'll be due to a workload seeing
+an advantage when NUMA balancer constantly overrides the load balancer.
+If that happens, the imbalance can be governed by adjust_numa_balance so
+that the two balancers avoid fighting each other again.
 
-Signed-off-by: Qian Cai <cai@lca.pw>
----
- mm/hugetlb_cgroup.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/mm/hugetlb_cgroup.c b/mm/hugetlb_cgroup.c
-index ad777fecad28..8a86a2b62bef 100644
---- a/mm/hugetlb_cgroup.c
-+++ b/mm/hugetlb_cgroup.c
-@@ -774,7 +774,6 @@ void __init hugetlb_cgroup_file_init(void)
-  */
- void hugetlb_cgroup_migrate(struct page *oldhpage, struct page *newhpage)
- {
--	struct hugetlb_cgroup *h_cg;
- 	struct hugetlb_cgroup *h_cg_rsvd;
- 	struct hstate *h = page_hstate(oldhpage);
- 
-@@ -783,7 +782,6 @@ void hugetlb_cgroup_migrate(struct page *oldhpage, struct page *newhpage)
- 
- 	VM_BUG_ON_PAGE(!PageHuge(oldhpage), oldhpage);
- 	spin_lock(&hugetlb_lock);
--	h_cg = hugetlb_cgroup_from_page(oldhpage);
- 	h_cg_rsvd = hugetlb_cgroup_from_page_rsvd(oldhpage);
- 	set_hugetlb_cgroup(oldhpage, NULL);
- 
 -- 
-1.8.3.1
-
+Mel Gorman
+SUSE Labs
