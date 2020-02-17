@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D73E8161BF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 20:54:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 094D3161BFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 20:55:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729756AbgBQTyu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 14:54:50 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42397 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729602AbgBQTyo (ORCPT
+        id S1729849AbgBQTzF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 14:55:05 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42403 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729659AbgBQTyq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 14:54:44 -0500
-Received: by mail-wr1-f66.google.com with SMTP id k11so21184965wrd.9
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 11:54:43 -0800 (PST)
+        Mon, 17 Feb 2020 14:54:46 -0500
+Received: by mail-wr1-f67.google.com with SMTP id k11so21185049wrd.9
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 11:54:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=vEpSrHnokxwmZhdlJaP1Fdj4KHCY0aOhXmKsmIiSb2c=;
-        b=C5yJlQ0zN1DNoCE7vAWDdzDh2oF7j6+dHO2XT/eCYXi5m1+IVxogqmWGWqAIkmMr6c
-         xLaTQXqKC38T1ujrVcOPc0yJ4T/o/jeILhkKJF+Yo4RVk06ZRRlBjZuZBofXxN7NWhNY
-         qpvtrLYWbrJXIN0eIwevBaYdSJClurdxLzTVDg0Hyj30k+GG9YkpiA9oGsHEJL4jeQ64
-         x9T0DGwG7EahJlYYqbUbeTkglnXadRnup3TzBOI5MOgliIQDip85hI9rT2Y2h62PrxoQ
-         bdI3q7CEUGk9wGzK2GcYWqGuBvSmrWWO05nhc3BghDKd0Jn0z9PYh3hXVfQyVHKDsUOZ
-         DGlQ==
+        bh=Ibj9ygukPb9JYTU3mvyTkp2n0e9w9M7BBgYCc3RsiE0=;
+        b=AfUrW2gbRewzH09iwIz4mOgbGI6xRBf9V9DBjRYX99k7rC43NLrIJeL6iJOtP29bzB
+         XCOotyERZgjri2cgQbwB4/Xo+gvADjygCIZtn+ulJDnkKEj4NAwMK5r1IX0RYRQSwLve
+         7kxRgQI6sHIb0PzQ5N8S/BuHDaQ4vkSwMm5wASgU/fuzdt7pY6b52pbEA92AZc/sI+0A
+         mcwUlZB5A/LUknqRjE0c/UFaDX4boKsYsSjzLplgC/LBi17NNk5lWG11u5m0oBrTCoe4
+         WLUWqiiC1tiNhiMhs3bf0+mvd9Hd6ZQemDM8+sGDb5uKBs9miGLRl065Hzb1zNdfuAIY
+         XrwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=vEpSrHnokxwmZhdlJaP1Fdj4KHCY0aOhXmKsmIiSb2c=;
-        b=DGrEfzVOlYYpc6QV5rpgdFRmdPotzhDZmgm/rUvuDePdayYNT+qTqiLYz5pKxEDTCg
-         Bscvcz2EjxbYpepiGzk9KPOT9XNe5r95Lnx/dl9buFOxry9VHETtNhLoD70yk/4gEgtm
-         TQDNle/7LTsm92uk9Ou2R2Z6x0Fameo32jSXMTwcpsqSK5lrX+GQvavMgxajc4j2Citn
-         iy2kC94OYKu5Pu/6bA+FYxTtBvu+Au2A158ucn0Pew1fuP5JiSp/TL/K7ss7H1tFg+hU
-         hrcsg1b8lISkXhdf+KhrlcXV9Op9Ye/7OHnpj4pXiaFis08wlf7fPfxsYct3lOUI0mlb
-         e6mQ==
-X-Gm-Message-State: APjAAAUWXkoEn8V2edPvjbh5UthiDfge/on2aQ82oHgW5awHb4rUuYTM
-        Hy+Tk6e+tU86Ozoc8r/dORTMIRGUbis=
-X-Google-Smtp-Source: APXvYqy8+uEI+AwlMQIFLWh4NY+e2ujZPYaJBH3XEz62f0FrxkWwIiIuYgEVBfnvWw1JglwM/pIyJw==
-X-Received: by 2002:a5d:610c:: with SMTP id v12mr22642217wrt.88.1581969283249;
-        Mon, 17 Feb 2020 11:54:43 -0800 (PST)
+        bh=Ibj9ygukPb9JYTU3mvyTkp2n0e9w9M7BBgYCc3RsiE0=;
+        b=I2i61wF/Olno9BC3JTqTpDFIJ/8ArMTheG+NSZXkO+6/HmeDlLB1VKhKOo4OsRNtaC
+         H4CKqibtB6wsHH/SrPXtoqhF+SUw6AH7KYaBTvC/PkJWXZWBEJa+DdFfHpx6eQ/G84aV
+         MSjhaHMdF8hxVqO+1xb3GT1/EvJfPKs6BZxTFY7EaprO8WHkw8o/1wdZ8uW4wgXmMbDL
+         GNzQM9jyR2xMpx8+hOOiLhr9QRLYMEKGnULs3vS0H3xmMbXqidbyJmz/HnpYqSzUj8lx
+         4HVRm9zH6LX2QNZ6RJKuNV3g9qY5iQEjM3IhhEScOOVCRibFYRy7Y+GHZpEVVCPC+4v/
+         0Sfw==
+X-Gm-Message-State: APjAAAX2OPbhfL40XllWuqENEq1+vT174Nd+AbO/qwszeAsAftu1qYAZ
+        hfFgtKjJ0AsUnd/UBfNDi4/v4w==
+X-Google-Smtp-Source: APXvYqwlWIo4hBNxAnsgARfbUQqYYsyWocS3dL48hvcsR9M5AfzTmKuPqXmaiVFdJ0j+MGV16uBXqg==
+X-Received: by 2002:adf:93c1:: with SMTP id 59mr24275455wrp.399.1581969284441;
+        Mon, 17 Feb 2020 11:54:44 -0800 (PST)
 Received: from debian-brgl.local (8.165.185.81.rev.sfr.net. [81.185.165.8])
-        by smtp.gmail.com with ESMTPSA id v5sm2679469wrv.86.2020.02.17.11.54.42
+        by smtp.gmail.com with ESMTPSA id v5sm2679469wrv.86.2020.02.17.11.54.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2020 11:54:42 -0800 (PST)
+        Mon, 17 Feb 2020 11:54:43 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         Khouloud Touil <ktouil@baylibre.com>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 3/6] nvmem: remove a stray newline in nvmem_register()
-Date:   Mon, 17 Feb 2020 20:54:32 +0100
-Message-Id: <20200217195435.9309-4-brgl@bgdev.pl>
+Subject: [PATCH 4/6] nvmem: add a newline for readability
+Date:   Mon, 17 Feb 2020 20:54:33 +0100
+Message-Id: <20200217195435.9309-5-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200217195435.9309-1-brgl@bgdev.pl>
 References: <20200217195435.9309-1-brgl@bgdev.pl>
@@ -66,25 +66,26 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Two newlines are unnecessary - remove one.
+Visibly separate the GPIO request from the previous operation in the
+code with a newline.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/nvmem/core.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/nvmem/core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index b0be03d5f240..12e2991cdeef 100644
+index 12e2991cdeef..07af9edea9cf 100644
 --- a/drivers/nvmem/core.c
 +++ b/drivers/nvmem/core.c
-@@ -355,7 +355,6 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
- 	if (IS_ERR(nvmem->wp_gpio))
- 		goto err_ida_remove;
- 
--
- 	kref_init(&nvmem->refcnt);
- 	INIT_LIST_HEAD(&nvmem->cells);
- 
+@@ -347,6 +347,7 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
+ 		kfree(nvmem);
+ 		return ERR_PTR(rval);
+ 	}
++
+ 	if (config->wp_gpio)
+ 		nvmem->wp_gpio = config->wp_gpio;
+ 	else
 -- 
 2.25.0
 
