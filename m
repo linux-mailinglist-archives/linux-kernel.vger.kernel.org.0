@@ -2,103 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7954C16154F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 15:59:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB7B5161563
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 16:02:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729371AbgBQO7X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 09:59:23 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:41364 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729206AbgBQO7X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 09:59:23 -0500
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 356FA27636B;
-        Mon, 17 Feb 2020 14:59:21 +0000 (GMT)
-Date:   Mon, 17 Feb 2020 15:59:17 +0100
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     Vitor Soares <Vitor.Soares@synopsys.com>
-Cc:     linux-kernel@vger.kernel.org, linux-i3c@lists.infradead.org,
-        Joao.Pinto@synopsys.com, Jose.Abreu@synopsys.com,
-        bbrezillon@kernel.org, gregkh@linuxfoundation.org,
-        wsa@the-dreams.de, arnd@arndb.de, broonie@kernel.org
-Subject: Re: [RFC v2 1/4] i3c: master: export i3c_masterdev_type
-Message-ID: <20200217155917.592e8ded@collabora.com>
-In-Reply-To: <20200217155623.13a94802@collabora.com>
-References: <cover.1580299067.git.vitor.soares@synopsys.com>
-        <7c742fba6c488b29f6fb15a5b910e799d50c5051.1580299067.git.vitor.soares@synopsys.com>
-        <20200217155623.13a94802@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1729405AbgBQPCL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 10:02:11 -0500
+Received: from foss.arm.com ([217.140.110.172]:36896 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729315AbgBQPCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 10:02:11 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8CD3730E;
+        Mon, 17 Feb 2020 07:02:10 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0FF8C3F703;
+        Mon, 17 Feb 2020 07:02:09 -0800 (PST)
+Date:   Mon, 17 Feb 2020 15:02:08 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        =?iso-8859-1?Q?Myl=E8ne?= Josserand 
+        <mylene.josserand@free-electrons.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, stable@kernel.org
+Subject: Re: [RFC PATCH 05/34] ASoC: sun8i-codec: Remove incorrect
+ SND_SOC_DAIFMT_DSP_B
+Message-ID: <20200217150208.GG9304@sirena.org.uk>
+References: <20200217064250.15516-1-samuel@sholland.org>
+ <20200217064250.15516-6-samuel@sholland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="xjyYRNSh/RebjC6o"
+Content-Disposition: inline
+In-Reply-To: <20200217064250.15516-6-samuel@sholland.org>
+X-Cookie: There was a phone call for you.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Feb 2020 15:56:23 +0100
-Boris Brezillon <boris.brezillon@collabora.com> wrote:
 
-> On Wed, 29 Jan 2020 13:17:32 +0100
-> Vitor Soares <Vitor.Soares@synopsys.com> wrote:
-> 
-> > Exporte i3c_masterdev_type so i3cdev module can verify if an i3c device
-> > is a master.
-> > 
-> > Signed-off-by: Vitor Soares <vitor.soares@synopsys.com>
-> > ---
-> >  drivers/i3c/internals.h | 1 +
-> >  drivers/i3c/master.c    | 3 ++-
-> >  2 files changed, 3 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/i3c/internals.h b/drivers/i3c/internals.h
-> > index 86b7b44..bc062e8 100644
-> > --- a/drivers/i3c/internals.h
-> > +++ b/drivers/i3c/internals.h
-> > @@ -11,6 +11,7 @@
-> >  #include <linux/i3c/master.h>
-> >  
-> >  extern struct bus_type i3c_bus_type;
-> > +extern const struct device_type i3c_masterdev_type;
-> >  
-> >  void i3c_bus_normaluse_lock(struct i3c_bus *bus);
-> >  void i3c_bus_normaluse_unlock(struct i3c_bus *bus);
-> > diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-> > index 7f8f896..8a0ba34 100644
-> > --- a/drivers/i3c/master.c
-> > +++ b/drivers/i3c/master.c
-> > @@ -523,9 +523,10 @@ static void i3c_masterdev_release(struct device *dev)
-> >  	of_node_put(dev->of_node);
-> >  }
-> >  
-> > -static const struct device_type i3c_masterdev_type = {
-> > +const struct device_type i3c_masterdev_type = {
-> >  	.groups	= i3c_masterdev_groups,
-> >  };
-> > +EXPORT_SYMBOL_GPL(i3c_masterdev_type);  
-> 
-> No need to export the symbol, removing the static and adding the
-> definition to internal.h should work just fine (i3c.o contains
-> both master.o and device.o).
+--xjyYRNSh/RebjC6o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hm, my bad. Looks like i3cdev is a separate module/driver. If that's
-the case, it should not have direct access to internals.h. I see 2
-options here:
+On Mon, Feb 17, 2020 at 12:42:21AM -0600, Samuel Holland wrote:
+> DSP_A and DSP_B are not interchangeable. The timing used by the codec in
+> DSP mode is consistent with DSP_A. This is verified with an EG25-G modem
+> connected to AIF2, as well as by comparing with the BSP driver.
+>=20
+> Remove the DSP_B option, as it is not supported by the hardware.
+>=20
+> Cc: stable@kernel.org
+> Fixes: 36c684936fae ("ASoC: Add sun8i digital audio codec")
 
-1/ make the i3cdev logic part of the core
-2/ provide helpers to find devices by type
+This can only break things for existing systems using stable, if they
+haven't noticed a problem with DSP B they'll certainly notice failing to
+set up the DAI at all without it.
 
-But maybe none of that is needed if you let userspace bind i3c devices
-to the i3cdev driver.
+--xjyYRNSh/RebjC6o
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
-> >  
-> >  static int i3c_bus_set_mode(struct i3c_bus *i3cbus, enum i3c_bus_mode mode,
-> >  			    unsigned long max_i2c_scl_rate)  
-> 
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5Kqu8ACgkQJNaLcl1U
+h9BrrQf8Cpji+kb3X7isTpniyau/SbCQwZlUb8Csww/ottxImXAngZtFxVJ223Tb
+sRxaUEFcUFbKuAx1BOMaW70RQ6qQskiNlrtvd2GxnKYNpGcSk6TsMHY185iiTu2s
+EeozYIThsqRXhDCrv0hRArGLf5kBFM1OaSm9idhJJgfY8gjO+aBsPJqz8mp0gxWN
+3jGVVLz7aNTaOxwTl6CcTvMm+7xj4f1tsYTkC7jYTysRVrf6rXkV9KBL7euDjMrg
+JTa3RdwK0VAKZus8KiAecYZfI5K+F8Kj8Stk4R9GtMpIbVDR4Sxy5giVnrY+XVoF
+hq2TJ94ZfIBzhexsmd+tDPsvUDHHtQ==
+=eNti
+-----END PGP SIGNATURE-----
+
+--xjyYRNSh/RebjC6o--
