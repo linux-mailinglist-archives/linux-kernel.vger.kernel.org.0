@@ -2,125 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3482160DD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 09:52:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89345160DD8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 09:55:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728572AbgBQIwm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 03:52:42 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:33803 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728217AbgBQIwm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 03:52:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581929560;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=9G4eC97MKUgP+cXhellYbHRQe5FYP3q5I9qDq+0E3so=;
-        b=fnFhKVwJfpsTU6aEnEURFeaGiI0axXg8LgEog+hYHm7UtB3PWcP9mKdABUMPCfzmukoxGk
-        3Wdmb19TV9pfe8EIxM3vGEgHvQjEGUku1LyOXGpVXUcDyYLcdqf/eVzroMucml0vx4hNpj
-        z4ZaBuW/YgQMFzMuCMt+jB5ao2mIAbs=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-64-7BZlheS2N2SsK4ZwsBfASw-1; Mon, 17 Feb 2020 03:52:39 -0500
-X-MC-Unique: 7BZlheS2N2SsK4ZwsBfASw-1
-Received: by mail-wm1-f72.google.com with SMTP id y125so2368757wmg.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 00:52:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=9G4eC97MKUgP+cXhellYbHRQe5FYP3q5I9qDq+0E3so=;
-        b=iSUL7ySC/sYL2uMX2cFAZM5Wd1C7v45qNyONcicXhls+uYri0D0lOIy3yxmULy3x4a
-         KFRxyABeQ1A+Zmp0iyLkK0JfTvNY6Z7xwSYHN4YjiYm94J/QCFJsztWuqEJKUcfJJgPR
-         QgLQEu2zpUaUGYXstiGolb3Z/NUbCBtqYHTRCBMkdjUvbL2Sq6JVWoxpHOE4d1MXeVJ5
-         AYEZKrbC0nRYCuSJGhUk/mzfCniiTZU6PuRBx1vRZX4vB2L2MBpUnkjlOI6GDSZnb+iF
-         1Keyy9Cg+jghcqGjwxPIxc1VLyYLEtaz5SkIseWJpiuoegLsPOJhIo2MXAVZxxm8Ivu9
-         13Xg==
-X-Gm-Message-State: APjAAAV8rj8wt0scohpk4tqtkZjavMunKu4bDD+Rx0DktVKWofoEwcKR
-        Uh6l+NTiBrXEp6/j4oD20qt/j9xfPOk4HSnIKwWvsjZc+njbVbG7QU6QVjFZ6tpBjbKChg9VmN5
-        Ojxn4oLY9MLaXb92QOmN/1SVi
-X-Received: by 2002:a05:600c:2c01:: with SMTP id q1mr20672139wmg.179.1581929557588;
-        Mon, 17 Feb 2020 00:52:37 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyMpzIPVEU5r46mv5Dyf9+hTP7Dzsi4UbPKOlvpGkJxEH57K69N/xQw0jEso6nxioT5dTqnvg==
-X-Received: by 2002:a05:600c:2c01:: with SMTP id q1mr20672122wmg.179.1581929557376;
-        Mon, 17 Feb 2020 00:52:37 -0800 (PST)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id h13sm21908626wrw.54.2020.02.17.00.52.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2020 00:52:36 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Xiaoyao Li <xiaoyao.li@intel.com>
-Cc:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH] KVM: VMX: Add VMX_FEATURE_USR_WAIT_PAUSE
-In-Reply-To: <20200216104858.109955-1-xiaoyao.li@intel.com>
-References: <20200216104858.109955-1-xiaoyao.li@intel.com>
-Date:   Mon, 17 Feb 2020 09:52:36 +0100
-Message-ID: <87r1ytbnor.fsf@vitty.brq.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1728601AbgBQIz1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 03:55:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46902 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728217AbgBQIz0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 03:55:26 -0500
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C331520718;
+        Mon, 17 Feb 2020 08:55:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581929725;
+        bh=LiD0wpeLuAZLFDhqBJDQhakw+QOv6Ro2nF6g7+1ShYI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=T7j5g6BqDf63jH2rOMD76ozsTApstwhm6WAn6KxHSeOYJd1va3x3KizirWGUirv4T
+         1V9pPbHndMu/++4cKBFG9hQXRiLTr6nfYWL7plWP3SmZLT8n05+EoTzIH33ry2rx8V
+         h1n1wdA2B9OiI9W004ewtnR6ggjG8CLQ3LH0wxiE=
+Date:   Mon, 17 Feb 2020 17:55:19 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     paulmck@kernel.org
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org, gregkh@linuxfoundation.org,
+        gustavo@embeddedor.com, tglx@linutronix.de, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com
+Subject: Re: [PATCH v2 3/9] rcu,tracing: Create trace_rcu_{enter,exit}()
+Message-Id: <20200217175519.12a694a969c1a8fb2e49905e@kernel.org>
+In-Reply-To: <20200215145934.GD2935@paulmck-ThinkPad-P72>
+References: <20200213164031.GH14914@hirez.programming.kicks-ass.net>
+        <20200213185612.GG2935@paulmck-ThinkPad-P72>
+        <20200213204444.GA94647@google.com>
+        <20200213205442.GK2935@paulmck-ThinkPad-P72>
+        <20200213211930.GG170680@google.com>
+        <20200213163800.5c51a5f1@gandalf.local.home>
+        <20200213215004.GM2935@paulmck-ThinkPad-P72>
+        <20200213170451.690c4e5c@gandalf.local.home>
+        <20200213223918.GN2935@paulmck-ThinkPad-P72>
+        <20200214151906.b1354a7ed6b01fc3bf2de862@kernel.org>
+        <20200215145934.GD2935@paulmck-ThinkPad-P72>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Xiaoyao Li <xiaoyao.li@intel.com> writes:
+On Sat, 15 Feb 2020 06:59:34 -0800
+"Paul E. McKenney" <paulmck@kernel.org> wrote:
 
-> Commit 159348784ff0 ("x86/vmx: Introduce VMX_FEATURES_*") missed
-> bit 26 (enable user wait and pause) of Secondary Processor-based
-> VM-Execution Controls.
->
-> Add VMX_FEATURE_USR_WAIT_PAUSE flag and use it to define
-> SECONDARY_EXEC_ENABLE_USR_WAIT_PAUSE to make them uniformly.
->
-> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
-> ---
->  arch/x86/include/asm/vmx.h         | 2 +-
->  arch/x86/include/asm/vmxfeatures.h | 1 +
->  2 files changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
-> index 2a85287b3685..8521af3fef27 100644
-> --- a/arch/x86/include/asm/vmx.h
-> +++ b/arch/x86/include/asm/vmx.h
-> @@ -72,7 +72,7 @@
->  #define SECONDARY_EXEC_MODE_BASED_EPT_EXEC	VMCS_CONTROL_BIT(MODE_BASED_EPT_EXEC)
->  #define SECONDARY_EXEC_PT_USE_GPA		VMCS_CONTROL_BIT(PT_USE_GPA)
->  #define SECONDARY_EXEC_TSC_SCALING              VMCS_CONTROL_BIT(TSC_SCALING)
-> -#define SECONDARY_EXEC_ENABLE_USR_WAIT_PAUSE	0x04000000
-> +#define SECONDARY_EXEC_ENABLE_USR_WAIT_PAUSE	VMCS_CONTROL_BIT(USR_WAIT_PAUSE)
+> On Fri, Feb 14, 2020 at 03:19:06PM +0900, Masami Hiramatsu wrote:
+> > On Thu, 13 Feb 2020 14:39:18 -0800
+> > "Paul E. McKenney" <paulmck@kernel.org> wrote:
+> > 
+> > > On Thu, Feb 13, 2020 at 05:04:51PM -0500, Steven Rostedt wrote:
+> > > > On Thu, 13 Feb 2020 13:50:04 -0800
+> > > > "Paul E. McKenney" <paulmck@kernel.org> wrote:
+> > > > 
+> > > > > On Thu, Feb 13, 2020 at 04:38:25PM -0500, Steven Rostedt wrote:
+> > > > > > [ Added Masami ]
+> > > > > > 
+> > > > > > On Thu, 13 Feb 2020 16:19:30 -0500
+> > > > > > Joel Fernandes <joel@joelfernandes.org> wrote:
+> > > > > >   
+> > > > > > > On Thu, Feb 13, 2020 at 12:54:42PM -0800, Paul E. McKenney wrote:  
+> > > > > > > > On Thu, Feb 13, 2020 at 03:44:44PM -0500, Joel Fernandes wrote:    
+> > > > > > > > > On Thu, Feb 13, 2020 at 10:56:12AM -0800, Paul E. McKenney wrote:
+> > > > > > > > > [...]     
+> > > > > > > > > > > > It might well be that I could make these functions be NMI-safe, but
+> > > > > > > > > > > > rcu_prepare_for_idle() in particular would be a bit ugly at best.
+> > > > > > > > > > > > So, before looking into that, I have a question.  Given these proposed
+> > > > > > > > > > > > changes, will rcu_nmi_exit_common() and rcu_nmi_enter_common() be able
+> > > > > > > > > > > > to just use in_nmi()?    
+> > > > > > > > > > > 
+> > > > > > > > > > > That _should_ already be the case today. That is, if we end up in a
+> > > > > > > > > > > tracer and in_nmi() is unreliable we're already screwed anyway.    
+> > > > > > > > > > 
+> > > > > > > > > > So something like this, then?  This is untested, probably doesn't even
+> > > > > > > > > > build, and could use some careful review from both Peter and Steve,
+> > > > > > > > > > at least.  As in the below is the second version of the patch, the first
+> > > > > > > > > > having been missing a couple of important "!" characters.    
+> > > > > > > > > 
+> > > > > > > > > I removed the static from rcu_nmi_enter()/exit() as it is called from
+> > > > > > > > > outside, that makes it build now. Updated below is Paul's diff. I also added
+> > > > > > > > > NOKPROBE_SYMBOL() to rcu_nmi_exit() to match rcu_nmi_enter() since it seemed
+> > > > > > > > > asymmetric.    
+> > > > > > > > 
+> > > > > > > > My compiler complained about the static and the __always_inline, so I
+> > > > > > > > fixed those.  But please help me out on adding the NOKPROBE_SYMBOL()
+> > > > > > > > to rcu_nmi_exit().  What bad thing happens if we leave this on only
+> > > > > > > > rcu_nmi_enter()?    
+> > > > > > > 
+> > > > > > > It seemed odd to me we were not allowing kprobe on the rcu_nmi_enter() but
+> > > > > > > allowing it on exit (from a code reading standpoint) so my reaction was to
+> > > > > > > add it to both, but we could probably keep that as a separate
+> > > > > > > patch/discussion since it is slightly unrelated to the patch.. Sorry to
+> > > > > > > confuse the topic.
+> > > > > > >  
+> > > > > > 
+> > > > > > rcu_nmi_enter() was marked NOKPROBE or other reasons. See commit
+> > > > > > c13324a505c77 ("x86/kprobes: Prohibit probing on functions before
+> > > > > > kprobe_int3_handler()")
+> > > > > > 
+> > > > > > The issue was that we must not allow anything in do_int3() call kprobe
+> > > > > > code before kprobe_int3_handler() is called. Because ist_enter() (in
+> > > > > > do_int3()) calls rcu_nmi_enter() it had to be marked NOKPROBE. It had
+> > > > > > nothing to do with it being RCU nor NMI, but because it was simply
+> > > > > > called in do_int3().
+> > > > > > 
+> > > > > > Thus, there's no reason to make rcu_nmi_exit() NOKPROBE. But a commont
+> > > > > > to why rcu_nmi_enter() would probably be useful, like below:  
+> > > > > 
+> > > > > Thank you, Steve!  Could I please have your Signed-off-by for this?
+> > > > 
+> > > > Sure, but it was untested ;-)
+> > > 
+> > > No problem!  I will fire up rcutorture on it.  ;-)
+> > > 
+> > > But experience indicates that you cannot even make a joke around here.
+> > > There is probably already someone out there somewhere building a
+> > > comment-checker based on deep semantic analysis and machine learning.  :-/
+> > > 
+> > > > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > > > 
+> > > > I'd like a Reviewed-by from Masami though.
+> > > 
+> > > Sounds good!  Masami, would you be willing to review?
+> > 
+> > Yes, the functions before calling kprobe_int3_handler() must not
+> > be kprobed. It can cause an infinite recursive int3 trapping.
+> > 
+> > Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+> 
+> Thank you both!
+> 
+> Like this?
+> 
+> 							Thanx, Paul
+> 
+
+This is good to me.
+BTW, if you consider the x86 specific code is in the generic file,
+we can move NOKPROBE_SYMBOL() in arch/x86/kernel/traps.c.
+(Sorry, I've hit this idea right now)
+
+Thank you,
+
+> ------------------------------------------------------------------------
+> 
+> commit 1817fdc8f4e4bd18c76305c9b937fb0dccbb1583
+> Author: Steven Rostedt <rostedt@goodmis.org>
+> Date:   Sat Feb 15 06:54:50 2020 -0800
+> 
+>     rcu: Provide comment for NOKPROBE() on rcu_nmi_enter()
+>     
+>     The rcu_nmi_enter() function was marked NOKPROBE() by commit
+>     c13324a505c77 ("x86/kprobes: Prohibit probing on functions before
+>     kprobe_int3_handler()") because the do_int3() call kprobe code must
+>     not be invoked before kprobe_int3_handler() is called.  It turns out
+>     that ist_enter() (in do_int3()) calls rcu_nmi_enter(), hence the
+>     marking NOKPROBE() being added to rcu_nmi_enter().
+>     
+>     This commit therefore adds a comment documenting this line of reasoning.
+>     
+>     Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
+>     Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+>     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> 
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index 132b53e..4a885af 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -835,6 +835,12 @@ void rcu_nmi_enter(void)
+>  		   rdp->dynticks_nmi_nesting + incby);
+>  	barrier();
+>  }
+> +/*
+> + * On x86, All functions in do_int3() must be marked NOKPROBE before
+> + * kprobe_int3_handler() is called. ist_enter() which is called in do_int3()
+> + * before kprobe_int3_handle() happens to call rcu_nmi_enter() which means
+> + * that rcu_nmi_enter() must be marked NOKRPOBE.
+> + */
+>  NOKPROBE_SYMBOL(rcu_nmi_enter);
 >  
->  #define PIN_BASED_EXT_INTR_MASK                 VMCS_CONTROL_BIT(INTR_EXITING)
->  #define PIN_BASED_NMI_EXITING                   VMCS_CONTROL_BIT(NMI_EXITING)
-> diff --git a/arch/x86/include/asm/vmxfeatures.h b/arch/x86/include/asm/vmxfeatures.h
-> index a50e4a0de315..1408f526bd90 100644
-> --- a/arch/x86/include/asm/vmxfeatures.h
-> +++ b/arch/x86/include/asm/vmxfeatures.h
-> @@ -81,6 +81,7 @@
->  #define VMX_FEATURE_MODE_BASED_EPT_EXEC	( 2*32+ 22) /* "ept_mode_based_exec" Enable separate EPT EXEC bits for supervisor vs. user */
->  #define VMX_FEATURE_PT_USE_GPA		( 2*32+ 24) /* "" Processor Trace logs GPAs */
->  #define VMX_FEATURE_TSC_SCALING		( 2*32+ 25) /* Scale hardware TSC when read in guest */
-> +#define VMX_FEATURE_USR_WAIT_PAUSE	( 2*32+ 26) /* "" Enable TPAUSE, UMONITOR, UMWATI in guest */
+>  /**
 
-"UMWAIT"
-
->  #define VMX_FEATURE_ENCLV_EXITING	( 2*32+ 28) /* "" VM-Exit on ENCLV (leaf dependent) */
->  
->  #endif /* _ASM_X86_VMXFEATURES_H */
-
-With the typo fixed (likely upon commit),
-
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 
 -- 
-Vitaly
-
+Masami Hiramatsu <mhiramat@kernel.org>
