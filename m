@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73D5A1612E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 14:16:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45C5C16130D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 14:16:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728902AbgBQNO6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 08:14:58 -0500
-Received: from mga17.intel.com ([192.55.52.151]:16058 "EHLO mga17.intel.com"
+        id S1729361AbgBQNQD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 08:16:03 -0500
+Received: from mga06.intel.com ([134.134.136.31]:31132 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728821AbgBQNOz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 08:14:55 -0500
+        id S1728844AbgBQNO4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 08:14:56 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Feb 2020 05:14:55 -0800
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Feb 2020 05:14:56 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,452,1574150400"; 
-   d="scan'208";a="268408500"
+   d="scan'208";a="314777002"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga002.fm.intel.com with ESMTP; 17 Feb 2020 05:14:51 -0800
+  by orsmga001.jf.intel.com with ESMTP; 17 Feb 2020 05:14:51 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id C35204C7; Mon, 17 Feb 2020 15:14:46 +0200 (EET)
+        id CFDDB5BA; Mon, 17 Feb 2020 15:14:46 +0200 (EET)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Darren Hart <dvhart@infradead.org>,
@@ -37,9 +37,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Wim Van Sebroeck <wim@linux-watchdog.org>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 07/19] platform/x86: intel_scu_ipcutil: Convert to use new SCU IPC API
-Date:   Mon, 17 Feb 2020 16:14:34 +0300
-Message-Id: <20200217131446.32818-8-mika.westerberg@linux.intel.com>
+Subject: [PATCH v6 08/19] platform/x86: intel_scu_ipc: Add managed function to register SCU IPC
+Date:   Mon, 17 Feb 2020 16:14:35 +0300
+Message-Id: <20200217131446.32818-9-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200217131446.32818-1-mika.westerberg@linux.intel.com>
 References: <20200217131446.32818-1-mika.westerberg@linux.intel.com>
@@ -50,87 +50,115 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the IPC util to use the new SCU IPC API where the SCU IPC
-instance is passed to the functions.
+Drivers such as intel_pmc_ipc.c can be unloaded as well so in order to
+support those in this driver add a new function that can be called to
+unregister the SCU IPC when it is not needed anymore.
+
+We also add a managed version of the intel_scu_ipc_register() that takes
+care of calling intel_scu_ipc_unregister() automatically when the driver
+is unbound.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/platform/x86/intel_scu_ipcutil.c | 43 +++++++++++++++++++++---
- 1 file changed, 39 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/intel_scu_ipc.h | 10 +++++
+ drivers/platform/x86/intel_scu_ipc.c | 62 ++++++++++++++++++++++++++++
+ 2 files changed, 72 insertions(+)
 
-diff --git a/drivers/platform/x86/intel_scu_ipcutil.c b/drivers/platform/x86/intel_scu_ipcutil.c
-index 8afe6fa06d7b..b7c10c15a3d6 100644
---- a/drivers/platform/x86/intel_scu_ipcutil.c
-+++ b/drivers/platform/x86/intel_scu_ipcutil.c
-@@ -22,6 +22,9 @@
+diff --git a/arch/x86/include/asm/intel_scu_ipc.h b/arch/x86/include/asm/intel_scu_ipc.h
+index 27041fe999e9..2463ff5cad5b 100644
+--- a/arch/x86/include/asm/intel_scu_ipc.h
++++ b/arch/x86/include/asm/intel_scu_ipc.h
+@@ -25,6 +25,16 @@ __intel_scu_ipc_register(struct device *parent,
+ #define intel_scu_ipc_register(parent, pdata)  \
+ 	__intel_scu_ipc_register(parent, pdata, THIS_MODULE)
  
- static int major;
- 
-+struct intel_scu_ipc_dev *scu;
-+static DEFINE_MUTEX(scu_lock);
++void intel_scu_ipc_unregister(struct intel_scu_ipc_dev *scu);
 +
- /* IOCTL commands */
- #define	INTE_SCU_IPC_REGISTER_READ	0
- #define INTE_SCU_IPC_REGISTER_WRITE	1
-@@ -52,12 +55,12 @@ static int scu_reg_access(u32 cmd, struct scu_ipc_data  *data)
- 
- 	switch (cmd) {
- 	case INTE_SCU_IPC_REGISTER_READ:
--		return intel_scu_ipc_readv(data->addr, data->data, count);
-+		return intel_scu_ipc_dev_readv(scu, data->addr, data->data, count);
- 	case INTE_SCU_IPC_REGISTER_WRITE:
--		return intel_scu_ipc_writev(data->addr, data->data, count);
-+		return intel_scu_ipc_dev_writev(scu, data->addr, data->data, count);
- 	case INTE_SCU_IPC_REGISTER_UPDATE:
--		return intel_scu_ipc_update_register(data->addr[0],
--						    data->data[0], data->mask);
-+		return intel_scu_ipc_dev_update(scu, data->addr[0], data->data[0],
-+						data->mask);
- 	default:
- 		return -ENOTTY;
- 	}
-@@ -91,8 +94,40 @@ static long scu_ipc_ioctl(struct file *fp, unsigned int cmd,
- 	return 0;
++struct intel_scu_ipc_dev *
++__devm_intel_scu_ipc_register(struct device *parent,
++			      const struct intel_scu_ipc_pdata *pdata,
++			      struct module *owner);
++
++#define devm_intel_scu_ipc_register(parent, pdata)  \
++	__devm_intel_scu_ipc_register(parent, pdata, THIS_MODULE)
++
+ struct intel_scu_ipc_dev *intel_scu_ipc_dev_get(void);
+ void intel_scu_ipc_dev_put(struct intel_scu_ipc_dev *scu);
+ struct intel_scu_ipc_dev *devm_intel_scu_ipc_dev_get(struct device *dev);
+diff --git a/drivers/platform/x86/intel_scu_ipc.c b/drivers/platform/x86/intel_scu_ipc.c
+index a2f05b4dd2b9..896c65727a29 100644
+--- a/drivers/platform/x86/intel_scu_ipc.c
++++ b/drivers/platform/x86/intel_scu_ipc.c
+@@ -637,6 +637,68 @@ __intel_scu_ipc_register(struct device *parent,
  }
+ EXPORT_SYMBOL_GPL(__intel_scu_ipc_register);
  
-+static int scu_ipc_open(struct inode *inode, struct file *file)
++/**
++ * intel_scu_ipc_unregister() - Unregister SCU IPC
++ * @scu: SCU IPC handle
++ *
++ * This unregisters the SCU IPC device and releases the acquired
++ * resources once the refcount goes to zero.
++ */
++void intel_scu_ipc_unregister(struct intel_scu_ipc_dev *scu)
 +{
-+	int ret = 0;
++	mutex_lock(&ipclock);
++	if (!WARN_ON(!ipcdev)) {
++		ipcdev = NULL;
++		device_unregister(&scu->dev);
++	}
++	mutex_unlock(&ipclock);
++}
++EXPORT_SYMBOL_GPL(intel_scu_ipc_unregister);
 +
-+	/* Only single open at the time */
-+	mutex_lock(&scu_lock);
-+	if (scu) {
-+		ret = -EBUSY;
-+		goto unlock;
++static void devm_intel_scu_ipc_unregister(struct device *dev, void *res)
++{
++	struct intel_scu_ipc_devres *dr = res;
++	struct intel_scu_ipc_dev *scu = dr->scu;
++
++	intel_scu_ipc_unregister(scu);
++}
++
++/**
++ * __devm_intel_scu_ipc_register() - Register managed SCU IPC device
++ * @parent: Parent device
++ * @pdata: Platform specific data
++ * @owner: Module registering the SCU IPC device
++ *
++ * Call this function to register managed SCU IPC mechanism under
++ * @parent. Returns pointer to the new SCU IPC device or ERR_PTR() in
++ * case of failure. The caller may use the returned instance if it needs
++ * to do SCU IPC calls itself.
++ */
++struct intel_scu_ipc_dev *
++__devm_intel_scu_ipc_register(struct device *parent,
++			      const struct intel_scu_ipc_pdata *pdata,
++			      struct module *owner)
++{
++	struct intel_scu_ipc_devres *dr;
++	struct intel_scu_ipc_dev *scu;
++
++	dr = devres_alloc(devm_intel_scu_ipc_unregister, sizeof(*dr), GFP_KERNEL);
++	if (!dr)
++		return NULL;
++
++	scu = __intel_scu_ipc_register(parent, pdata, owner);
++	if (IS_ERR(scu)) {
++		devres_free(dr);
++		return scu;
 +	}
 +
-+	scu = intel_scu_ipc_dev_get();
-+	if (!scu)
-+		ret = -ENODEV;
++	dr->scu = scu;
++	devres_add(parent, dr);
 +
-+unlock:
-+	mutex_unlock(&scu_lock);
-+	return ret;
++	return scu;
 +}
++EXPORT_SYMBOL_GPL(__devm_intel_scu_ipc_register);
 +
-+static int scu_ipc_release(struct inode *inode, struct file *file)
-+{
-+	mutex_lock(&scu_lock);
-+	intel_scu_ipc_dev_put(scu);
-+	scu = NULL;
-+	mutex_unlock(&scu_lock);
-+
-+	return 0;
-+}
-+
- static const struct file_operations scu_ipc_fops = {
- 	.unlocked_ioctl = scu_ipc_ioctl,
-+	.open = scu_ipc_open,
-+	.release = scu_ipc_release,
- };
- 
- static int __init ipc_module_init(void)
+ static int __init intel_scu_ipc_init(void)
+ {
+ 	return class_register(&intel_scu_ipc_class);
 -- 
 2.25.0
 
