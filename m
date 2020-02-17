@@ -2,90 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67801161701
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 17:09:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F0D916170B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2020 17:12:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729668AbgBQQJO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 11:09:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56240 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729517AbgBQQJO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 11:09:14 -0500
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38B1A208C4
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 16:09:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581955753;
-        bh=129E5dpmonhuuGEqnPt7lC4zi2JhO3hBLFhawtF68g8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=D7vrYwkxOHuGMGxpy8vxqUAzzyFdky71rujHi2ETx2aWgfObizKm4McHDc+XBkQFf
-         wH1ZBgS7Q5puIj+WPFpIrWKqAGjObq9gRrnaeKGFsjdkPSAy3ED+jNdKi8laHvMHI5
-         RPSdwjK20D23cT18FAAze5dTkfX4Ehwf3jbEe7mY=
-Received: by mail-wr1-f42.google.com with SMTP id w15so20417295wru.4
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2020 08:09:13 -0800 (PST)
-X-Gm-Message-State: APjAAAUtq2XHj/RIh4TCgukhFdSMGnlGp9KZSLtUUEAvHyVBfqIaDP0F
-        A/Vx3/i8elAEsGkNAbllN8Fyna6M4/ZmWDinFv3XTg==
-X-Google-Smtp-Source: APXvYqw5V6wRzlQYZ+HZnck9ioKlAk3ziBoyHmTxXATFE0s6yyi28HtHtkIKgIeickLp1e3NsQkfzzX5U8CDh+7OhxY=
-X-Received: by 2002:adf:fd8d:: with SMTP id d13mr23175166wrr.208.1581955751662;
- Mon, 17 Feb 2020 08:09:11 -0800 (PST)
+        id S1729201AbgBQQMU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 11:12:20 -0500
+Received: from mail-sh.amlogic.com ([58.32.228.43]:22542 "EHLO
+        mail-sh.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728776AbgBQQMU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 11:12:20 -0500
+Received: from droid13.amlogic.com (116.236.93.172) by mail-sh.amlogic.com
+ (10.18.11.5) with Microsoft SMTP Server id 15.1.1591.10; Tue, 18 Feb 2020
+ 00:12:41 +0800
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+To:     Kevin Hilman <khilman@baylibre.com>,
+        <linux-amlogic@lists.infradead.org>
+CC:     Jianxin Pan <jianxin.pan@amlogic.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Xingyu Chen <xingyu.chen@amlogic.com>
+Subject: [PATCH] soc: amlogic: fix compile failure with MESON_SECURE_PM_DOMAINS & !MESON_SM
+Date:   Tue, 18 Feb 2020 00:12:13 +0800
+Message-ID: <1581955933-69832-1-git-send-email-jianxin.pan@amlogic.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <20200217123354.21140-1-Jason@zx2c4.com> <CAKv+Gu83dOKGbYU1t3_KZevB_rn-ktoropFrjASjsv3DozrV1A@mail.gmail.com>
- <20200217155402.GB1461852@kroah.com>
-In-Reply-To: <20200217155402.GB1461852@kroah.com>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Mon, 17 Feb 2020 17:09:00 +0100
-X-Gmail-Original-Message-ID: <CAKv+Gu_uQvONH=vAcckPEn+HWOOsiQdt_Dsscw2Y3KEUObafxA@mail.gmail.com>
-Message-ID: <CAKv+Gu_uQvONH=vAcckPEn+HWOOsiQdt_Dsscw2Y3KEUObafxA@mail.gmail.com>
-Subject: Re: [PATCH] efi: READ_ONCE rng seed size before munmap
-To:     Greg KH <greg@kroah.com>
-Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [116.236.93.172]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Feb 2020 at 16:54, Greg KH <greg@kroah.com> wrote:
->
-> On Mon, Feb 17, 2020 at 04:23:03PM +0100, Ard Biesheuvel wrote:
-> > On Mon, 17 Feb 2020 at 13:34, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> > >
-> > > This function is consistent with using size instead of seed->size
-> > > (except for one place that this patch fixes), but it reads seed->size
-> > > without using READ_ONCE, which means the compiler might still do
-> > > something unwanted. So, this commit simply adds the READ_ONCE
-> > > wrapper.
-> > >
-> > > Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
-> > > Cc: Ard Biesheuvel <ardb@kernel.org>
-> > > Cc: stable@vger.kernel.org
-> >
-> > Thanks Jason
-> >
-> > I've queued this in efi/urgent with a fixes: tag rather than a cc:
-> > stable, since it only applies clean to v5.4 and later.
->
-> Why do that?  That just makes it harder for me to know to pick it up for
-> 5.4 and newer.
->
-> > We'll need a
-> > backport to 4.14 and 4.19 as well, which has a trivial conflict
-> > (s/add_bootloader_randomness/add_device_randomness/) but we'll need to
-> > wait for this patch to hit Linus's tree first.
->
-> Ok, if you are going to send it on to me for stable, that's fine, but
-> usually you can just wait for the rejection notices for older kernels
-> before having to worry about this.  In other words, you are doing more
-> work than you have to here :)
->
+When MESON_SECURE_PM_DOMAINS & !MESON_SM, there will be compile failure:
+.../meson-secure-pwrc.o: In function `meson_secure_pwrc_on':
+.../meson-secure-pwrc.c:76: undefined reference to `meson_sm_call'
 
-So just
+Fix this by adding depends on MESON_SM for MESON_SECURE_PM_DOMAINS.
 
-Cc: <stable@vger.kernel.org>
+Fixes: b3dde5013e13 ("soc: amlogic: Add support for Secure power domains controller")
 
-without any context is your preferred method?
+Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: patchwork-bot+linux-amlogic<patchwork-bot+linux-amlogic@kernel.org>
+Reported-by: Stephen Rothwell<sfr@canb.auug.org.au>
+Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+---
+ drivers/soc/amlogic/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/soc/amlogic/Kconfig b/drivers/soc/amlogic/Kconfig
+index 6cb06e7..321c5e2 100644
+--- a/drivers/soc/amlogic/Kconfig
++++ b/drivers/soc/amlogic/Kconfig
+@@ -50,7 +50,7 @@ config MESON_EE_PM_DOMAINS
+ 
+ config MESON_SECURE_PM_DOMAINS
+ 	bool "Amlogic Meson Secure Power Domains driver"
+-	depends on ARCH_MESON || COMPILE_TEST
++	depends on (ARCH_MESON || COMPILE_TEST) && MESON_SM
+ 	depends on PM && OF
+ 	depends on HAVE_ARM_SMCCC
+ 	default ARCH_MESON
+-- 
+2.7.4
+
