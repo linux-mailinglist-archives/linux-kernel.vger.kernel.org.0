@@ -2,79 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2897E162E50
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 19:20:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54E9E162E5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 19:22:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726650AbgBRSUn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 13:20:43 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:38420 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726225AbgBRSUm (ORCPT
+        id S1726634AbgBRSVp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 13:21:45 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:56327 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726515AbgBRSVp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 13:20:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=kldAGFAqkRNUcVcPcSVMxxc7zBAYVzPEee6iqrr/A2A=; b=M0Ix6aBhlR1JL9Jh4Codgz5/lz
-        S5/eJYeeX78FIYgjw5xujOQCO6P5kq5RoK2lDnmGYua4mp5/tAzii3lSRua7FyMpVeAxd+cEg6cCn
-        iLJtVD35w65dXNe2drF/A//h0VJMBwD8zgwCmCs9yMWjnfFw78g4gt0EaGeWPVBtm2xjAMeMCycsE
-        b8vrVCp0wCVGkTcnxAkU/LILRtRdDqcWT4HcIA/iwrkJYUUNFcFKAwpI9OM2Wr6MmJQKMwzIn2m21
-        N+qdq7BgcC5MOD7Q+y33WAu3G+oCt9UNdhT1C2fLNn4E5DoSc0kJWPSaKFVdgNY1U27K+P/SXyLRr
-        c7jqJuJQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j47U9-0003c6-Cb; Tue, 18 Feb 2020 18:20:41 +0000
-Date:   Tue, 18 Feb 2020 10:20:41 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrei Vagin <avagin@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH AUTOSEL 5.5 542/542] pipe: use exclusive waits when
- reading or writing
-Message-ID: <20200218182041.GB24185@bombadil.infradead.org>
-References: <20200214154854.6746-1-sashal@kernel.org>
- <20200214154854.6746-542-sashal@kernel.org>
- <CANaxB-zjYecWpjMoX6dXY3B5HtVu8+G9npRnaX2FnTvp9XucTw@mail.gmail.com>
- <CAHk-=wjd6BKXEpU0MfEaHuOEK-StRToEcYuu6NpVfR0tR5d6xw@mail.gmail.com>
- <CAHk-=wgs8E4JYVJHaRV2hMn3dxUnM8i0Kn2mA1SjzJdsbB9tXw@mail.gmail.com>
- <CAHk-=wiaDvYHBt8oyZGOp2XwJW4wNXVAchqTFuVBvASTFx_KfA@mail.gmail.com>
+        Tue, 18 Feb 2020 13:21:45 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1582050104; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=PByvNvUejMgA8YdPUEQ84Jkgung4Y3EMULErG7G/60c=; b=ik0aU/tb18Bfox+Pzpsw3JzDYNcS60eTA+GcBVO/wtqwE9Eeg/aBPnBOBv7BwpKmT0GRbEuT
+ kAfvxlZ8G3Qv+jLpErsiqhZiyi1MxrNFU0GFg2GBN41DmyYy7jxFWSscCtcHJIpSNCFZSBTk
+ cRSpwdIzxTkQ76HHOr7HHJiK6uM=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e4c2b37.7f6e36ebcf48-smtp-out-n01;
+ Tue, 18 Feb 2020 18:21:43 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 81817C4479F; Tue, 18 Feb 2020 18:21:42 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from [192.168.0.107] (unknown [183.83.146.168])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 316FAC4479C;
+        Tue, 18 Feb 2020 18:21:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 316FAC4479C
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v3 2/3] dt-bindings: clock: Introduce QCOM Modem clock
+ bindings
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, robh+dt@kernel.org
+References: <1580357923-19783-1-git-send-email-tdas@codeaurora.org>
+ <1580357923-19783-3-git-send-email-tdas@codeaurora.org>
+ <20200130180915.E025D20CC7@mail.kernel.org>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <e4177a21-7a6f-8077-af62-15b6253845a6@codeaurora.org>
+Date:   Tue, 18 Feb 2020 23:51:33 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiaDvYHBt8oyZGOp2XwJW4wNXVAchqTFuVBvASTFx_KfA@mail.gmail.com>
+In-Reply-To: <20200130180915.E025D20CC7@mail.kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 10:17:30AM -0800, Linus Torvalds wrote:
-> @@ -722,9 +722,10 @@ pipe_release(struct inode *inode, struct file *file)
->  	if (file->f_mode & FMODE_WRITE)
->  		pipe->writers--;
->  
-> -	if (pipe->readers || pipe->writers) {
-> -		wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM | EPOLLERR | EPOLLHUP);
-> -		wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM | EPOLLERR | EPOLLHUP);
-> +	/* Was that the last reader or writer, but not the other side? */
-> +	if (!pipe->readers != !pipe->writers) {
-> +		wake_up_interruptible_all(&pipe->rd_wait);
-> +		wake_up_interruptible_all(&pipe->wr_wait);
->  		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
->  		kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
->  	}
-> @@ -1026,8 +1027,8 @@ static int wait_for_partner(struct pipe_inode_info *pipe, unsigned int *cnt)
->  
->  static void wake_up_partner(struct pipe_inode_info *pipe)
->  {
-> -	wake_up_interruptible(&pipe->rd_wait);
-> -	wake_up_interruptible(&pipe->wr_wait);
-> +	wake_up_interruptible_all(&pipe->rd_wait);
-> +	wake_up_interruptible_all(&pipe->wr_wait);
->  }
 
-You don't want to move wake_up_partner() up and call it from pipe_release()?
 
+On 1/30/2020 11:39 PM, Stephen Boyd wrote:
+> Quoting Taniya Das (2020-01-29 20:18:42)
+>> Add device tree bindings for modem clock controller for
+>> Qualcomm Technology Inc's SC7180 SoCs.
+>>
+>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+>> ---
+>>   include/dt-bindings/clock/qcom,gcc-sc7180.h |  5 +++++
+>>   include/dt-bindings/clock/qcom,mss-sc7180.h | 12 ++++++++++++
+> 
+> Split this into two as well.
+> 
+
+I have taken care of this in the next patch series.
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
