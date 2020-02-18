@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A1BB163208
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:06:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D17A01631E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:06:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728933AbgBRUEd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 15:04:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44618 "EHLO mail.kernel.org"
+        id S1729110AbgBRUDd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 15:03:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728262AbgBRUDX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 15:03:23 -0500
+        id S1726539AbgBRUDZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 15:03:25 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A40424670;
-        Tue, 18 Feb 2020 20:03:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA38824670;
+        Tue, 18 Feb 2020 20:03:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582056202;
-        bh=nqHU8jXhun/Vp7ATeVmn5fPoMWew8sVRoYGpt1T47a4=;
+        s=default; t=1582056205;
+        bh=H4Ew2aAUupScSkFrN5Wkm/NovnKlteYwH0KQ/xlpASU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ui4i0N7XLvaUhS4WaRsk2INEp5bC2Vw02/ISVo2w+TzFHrHEcsT6YcTHCcy4w9yoL
-         giNEJWJTXYE8motqUzP9TnBk29MlsZQ/iPJDy+vPMSI4LUZ7urjS2fKDSpNm2nvLgX
-         eMS2YGAg8bYtRmjTSnXen3Ogfs4RGtK7hImmPED8=
+        b=vXJPDhziwn0gcbF20foHroFI4jeoiK0gXgvrMj8558aGGiSHVCHHTaOef7jiHKyxe
+         LXXihx1+bmN4Wr1R/DDIfcfHZKs0fvd6wqHBJGPi91vYJL2oJrC9SBJoUR83ykN6tf
+         owrVIbcTzvQAH4mTavlI4R2YFRkmKzZQ9cjEbAJY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Babu Moger <babu.moger@amd.com>,
-        Kim Phillips <kim.phillips@amd.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 5.5 37/80] perf/x86/amd: Add missing L2 misses event spec to AMD Family 17hs event map
-Date:   Tue, 18 Feb 2020 20:54:58 +0100
-Message-Id: <20200218190435.970207368@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Christian Rund <RUNDC@de.ibm.com>,
+        Ingo Franzki <ifranzki@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+Subject: [PATCH 5.5 38/80] s390/pkey: fix missing length of protected key on return
+Date:   Tue, 18 Feb 2020 20:54:59 +0100
+Message-Id: <20200218190436.045686429@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200218190432.043414522@linuxfoundation.org>
 References: <20200218190432.043414522@linuxfoundation.org>
@@ -45,74 +46,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kim Phillips <kim.phillips@amd.com>
+From: Harald Freudenberger <freude@linux.ibm.com>
 
-commit 25d387287cf0330abf2aad761ce6eee67326a355 upstream.
+commit aab73d278d49c718b722ff5052e16c9cddf144d4 upstream.
 
-Commit 3fe3331bb285 ("perf/x86/amd: Add event map for AMD Family 17h"),
-claimed L2 misses were unsupported, due to them not being found in its
-referenced documentation, whose link has now moved [1].
+The pkey ioctl call PKEY_SEC2PROTK updates a struct pkey_protkey
+on return. The protected key is stored in, the protected key type
+is stored in but the len information was not updated. This patch
+now fixes this and so the len field gets an update to refrect
+the actual size of the protected key value returned.
 
-That old documentation listed PMCx064 unit mask bit 3 as:
-
-    "LsRdBlkC: LS Read Block C S L X Change to X Miss."
-
-and bit 0 as:
-
-    "IcFillMiss: IC Fill Miss"
-
-We now have new public documentation [2] with improved descriptions, that
-clearly indicate what events those unit mask bits represent:
-
-Bit 3 now clearly states:
-
-    "LsRdBlkC: Data Cache Req Miss in L2 (all types)"
-
-and bit 0 is:
-
-    "IcFillMiss: Instruction Cache Req Miss in L2."
-
-So we can now add support for L2 misses in perf's genericised events as
-PMCx064 with both the above unit masks.
-
-[1] The commit's original documentation reference, "Processor Programming
-    Reference (PPR) for AMD Family 17h Model 01h, Revision B1 Processors",
-    originally available here:
-
-        https://www.amd.com/system/files/TechDocs/54945_PPR_Family_17h_Models_00h-0Fh.pdf
-
-    is now available here:
-
-        https://developer.amd.com/wordpress/media/2017/11/54945_PPR_Family_17h_Models_00h-0Fh.pdf
-
-[2] "Processor Programming Reference (PPR) for Family 17h Model 31h,
-    Revision B0 Processors", available here:
-
-	https://developer.amd.com/wp-content/resources/55803_0.54-PUB.pdf
-
-Fixes: 3fe3331bb285 ("perf/x86/amd: Add event map for AMD Family 17h")
-Reported-by: Babu Moger <babu.moger@amd.com>
-Signed-off-by: Kim Phillips <kim.phillips@amd.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Tested-by: Babu Moger <babu.moger@amd.com>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20200121171232.28839-1-kim.phillips@amd.com
+Fixes: efc598e6c8a9 ("s390/zcrypt: move cca misc functions to new code file")
+Cc: Stable <stable@vger.kernel.org>
+Signed-off-by: Harald Freudenberger <freude@linux.ibm.com>
+Reported-by: Christian Rund <RUNDC@de.ibm.com>
+Suggested-by: Ingo Franzki <ifranzki@linux.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/events/amd/core.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/s390/crypto/pkey_api.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/events/amd/core.c
-+++ b/arch/x86/events/amd/core.c
-@@ -246,6 +246,7 @@ static const u64 amd_f17h_perfmon_event_
- 	[PERF_COUNT_HW_CPU_CYCLES]		= 0x0076,
- 	[PERF_COUNT_HW_INSTRUCTIONS]		= 0x00c0,
- 	[PERF_COUNT_HW_CACHE_REFERENCES]	= 0xff60,
-+	[PERF_COUNT_HW_CACHE_MISSES]		= 0x0964,
- 	[PERF_COUNT_HW_BRANCH_INSTRUCTIONS]	= 0x00c2,
- 	[PERF_COUNT_HW_BRANCH_MISSES]		= 0x00c3,
- 	[PERF_COUNT_HW_STALLED_CYCLES_FRONTEND]	= 0x0287,
+--- a/drivers/s390/crypto/pkey_api.c
++++ b/drivers/s390/crypto/pkey_api.c
+@@ -774,7 +774,7 @@ static long pkey_unlocked_ioctl(struct f
+ 			return -EFAULT;
+ 		rc = cca_sec2protkey(ksp.cardnr, ksp.domain,
+ 				     ksp.seckey.seckey, ksp.protkey.protkey,
+-				     NULL, &ksp.protkey.type);
++				     &ksp.protkey.len, &ksp.protkey.type);
+ 		DEBUG_DBG("%s cca_sec2protkey()=%d\n", __func__, rc);
+ 		if (rc)
+ 			break;
 
 
