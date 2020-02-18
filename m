@@ -2,174 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 965751627E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 15:16:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 206DB1627EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 15:17:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726713AbgBROQM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 09:16:12 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44197 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726546AbgBROQL (ORCPT
+        id S1726715AbgBRORW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 09:17:22 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:35032 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726445AbgBRORV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 09:16:11 -0500
-Received: by mail-lj1-f195.google.com with SMTP id q8so23076923ljj.11
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 06:16:08 -0800 (PST)
+        Tue, 18 Feb 2020 09:17:21 -0500
+Received: by mail-lf1-f65.google.com with SMTP id z18so14647100lfe.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 06:17:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=DrqryinCHE3R7/2tc3p+dbFE1V3J/tIWBiDcCxcBwPc=;
-        b=rvM+uTtYcGhHZ+WHLx8oGBbpf1TICugbYiei2nvci6ZwQkMA9VZjYDMEfliNiJ7eb4
-         2/VmsxdyYR1TPgRwPNKxJ9gj17sc1Fvn61NEBh7rzlOaCxPCCSgfVos8wJ/nsBmzS/i6
-         JMTCQbN4wS3+XoSTG8Q+XlSxjfzXnSKAb68Rq1M8KMx+YI+5G4kPuw6FuM+CSscyjYgS
-         AmMEz3Ow/16C/zWTxJV+MOSpHNgbXVKmIeBKyhrNBdtpAJTpC2kaYtjUkLKIpAZv3pm3
-         gyuBowbTttkFmf9D0Ug45JowMXsEdT/gcWQfw5+Oq1YqVTo5uT85Z7PZY6YfAakSyiAq
-         V3tw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bcfw/WtwA7TkxKO8UeI2AZjb5CE4kKKsLOYA3/v/NYk=;
+        b=y0R0X22df9E5JDDebI/9+dhuUi+bCGARz+i3v9UCdAhzDaXbHdRNxwb6JV8PhHO0QC
+         Z2ZXb4yvZ+JMqwsdcwSk/UeEh3UPWQuLo8Q4yzKNIcOGPD3HzC593vmoYsP4UP+TcvaG
+         OZ4I4gpTv077Xf7SZspcYtnivCbQXGd/M4i++NPG0eM2KqjywO/ZNS7eoZoWLyhx/cCa
+         XkbqLx7AnNVJvPv9aZKa5FEcnROzYKbOCh5nO/Arlb6EE9i8rzb0TPNh8zCJl9QfB1Fo
+         idU3bZirDKoJc1qk3OZNRkpeYSRKl4SIKeVv4ty3blHsqWOG+CTI67LLvIvZHMZzgi6k
+         LYrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=DrqryinCHE3R7/2tc3p+dbFE1V3J/tIWBiDcCxcBwPc=;
-        b=SGfqebUvtLH1Gu5NSnhg8Xw5RY7MXPT4mAQwDmamz083T1HEpLU6pb82f1CZhNU/+t
-         oRWBxVHenjKVJbjq2yAp140V0eNUUUoXqC+RdFR/fKrjIeWKzpJTq5nPfZwT+NsTuata
-         9xaqcTCBkv+k1+k16TjLHnhKkX0gfLcl5u+CkWAnMPJb/8nH8dAi7jlw36Tft/qtkdTu
-         kMNXvP95QcA+LG/nArdewygC1FaEcV7d1rAFdncIArjj5JSxKai/EtTRMZYtR26yQWmP
-         v/HeQI2AQ1TSyBzx7047hdrQYZv0CFNcknMLti91Y8D0xnQK+V0Ohl5XQYROjgtV+bDp
-         vh4w==
-X-Gm-Message-State: APjAAAXYeI/yMNjWB3pWPHx/pFpbtQoHDFDEIoMupe7+nypzu6QUJ1Tb
-        1vV/5Y/jpDgA3ws3AkQkyILtlthyYfI=
-X-Google-Smtp-Source: APXvYqzjNYwKgBp80JN3m6/5g5w6xv2WayWUy4GM1ntmp8uClVmyjfzC/fK+c2QkCKfLr3TMKpLlNw==
-X-Received: by 2002:a2e:1459:: with SMTP id 25mr13376746lju.189.1582035367727;
-        Tue, 18 Feb 2020 06:16:07 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id o19sm2978073lji.54.2020.02.18.06.16.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2020 06:16:06 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 22631100FA3; Tue, 18 Feb 2020 17:16:34 +0300 (+03)
-Date:   Tue, 18 Feb 2020 17:16:34 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 13/25] fs: Add zero_user_large
-Message-ID: <20200218141634.zhhjgtv44ux23l3l@box>
-References: <20200212041845.25879-1-willy@infradead.org>
- <20200212041845.25879-14-willy@infradead.org>
- <20200214135248.zqcqx3erb4pnlvmu@box>
- <20200214160342.GA7778@bombadil.infradead.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bcfw/WtwA7TkxKO8UeI2AZjb5CE4kKKsLOYA3/v/NYk=;
+        b=UwA0giGMRlv16fn7OM+fPfYyoJ046zlPP8607uYHl2mFBZyc9RYpNb2gUUZjmSDxyh
+         XET6ZELNavraF2gDA1u66omWVe5fnR8PF1AYP39pLceeW1ucLFi37ASpvOxImuffrekU
+         Lpv4pYKg+P693N5YmVVEPVp3yOk4S5Qao/4W8SNYeeM6t0Ue7UvCb+IBATfQJbLtN9L9
+         O9PdhvWdrGZAXl5jT4bp+nuSKxPubP8KjcupNVY+M4MLGvP5RQ+/qxsCFrNyMB+PESBN
+         gRpX9GwufQdBsEHtlFxWYrH71XFZcROXM7/qTvtsawjsmxsMq2J9tAre2RtSKRqstWZY
+         ov4g==
+X-Gm-Message-State: APjAAAW4z3pXIfqhCzEMcytMlWEamOKzSLbFkj3phtj7agNZvGgeRA3O
+        cuZjUHoikBVD5KcI47SGKEVs7zqHmkCzv6B06UGhNg==
+X-Google-Smtp-Source: APXvYqyYM5aKaTIZbnjBJk7cvPf+hh1cDE8hbWKUFZnrNneTz6TIGYoJTE/iNm2P4no4DHhhMAjH2fz/RxCQHopvh0Q=
+X-Received: by 2002:ac2:5e9b:: with SMTP id b27mr10933970lfq.184.1582035439659;
+ Tue, 18 Feb 2020 06:17:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200214160342.GA7778@bombadil.infradead.org>
+References: <20200214152729.6059-1-vincent.guittot@linaro.org>
+ <20200214152729.6059-3-vincent.guittot@linaro.org> <ecbf5317-e6cf-fc20-9871-4ea06a987952@arm.com>
+ <20200218135059.GE3420@suse.de>
+In-Reply-To: <20200218135059.GE3420@suse.de>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Tue, 18 Feb 2020 15:17:08 +0100
+Message-ID: <CAKfTPtA9yOoPRMYgE1V22FJMpo+jr=VS1kQHqYrArG-GXMN18g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] sched/numa: Replace runnable_load_avg by load_avg
+To:     Mel Gorman <mgorman@suse.de>
+Cc:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Phil Auld <pauld@redhat.com>, Parth Shah <parth@linux.ibm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Hillf Danton <hdanton@sina.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 08:03:42AM -0800, Matthew Wilcox wrote:
-> On Fri, Feb 14, 2020 at 04:52:48PM +0300, Kirill A. Shutemov wrote:
-> > On Tue, Feb 11, 2020 at 08:18:33PM -0800, Matthew Wilcox wrote:
-> > > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> > > 
-> > > We can't kmap() a THP, so add a wrapper around zero_user() for large
-> > > pages.
-> > 
-> > I would rather address it closer to the root: make zero_user_segments()
-> > handle compound pages.
-> 
-> Hah.  I ended up doing that, but hadn't sent it out.  I don't like
-> how ugly it is:
-> 
-> @@ -219,18 +219,57 @@ static inline void zero_user_segments(struct page *page,
->         unsigned start1, unsigned end1,
->         unsigned start2, unsigned end2)
->  {
-> -       void *kaddr = kmap_atomic(page);
-> -
-> -       BUG_ON(end1 > PAGE_SIZE || end2 > PAGE_SIZE);
-> -
-> -       if (end1 > start1)
-> -               memset(kaddr + start1, 0, end1 - start1);
-> -
-> -       if (end2 > start2)
-> -               memset(kaddr + start2, 0, end2 - start2);
-> -
-> -       kunmap_atomic(kaddr);
-> -       flush_dcache_page(page);
-> +       unsigned int i;
-> +
-> +       BUG_ON(end1 > thp_size(page) || end2 > thp_size(page));
-> +
-> +       for (i = 0; i < hpage_nr_pages(page); i++) {
-> +               void *kaddr;
-> +               unsigned this_end;
-> +
-> +               if (end1 == 0 && start2 >= PAGE_SIZE) {
-> +                       start2 -= PAGE_SIZE;
-> +                       end2 -= PAGE_SIZE;
-> +                       continue;
-> +               }
-> +
-> +               if (start1 >= PAGE_SIZE) {
-> +                       start1 -= PAGE_SIZE;
-> +                       end1 -= PAGE_SIZE;
-> +                       if (start2) {
-> +                               start2 -= PAGE_SIZE;
-> +                               end2 -= PAGE_SIZE;
-> +                       }
+On Tue, 18 Feb 2020 at 14:51, Mel Gorman <mgorman@suse.de> wrote:
+>
+> On Tue, Feb 18, 2020 at 01:37:45PM +0100, Dietmar Eggemann wrote:
+> > On 14/02/2020 16:27, Vincent Guittot wrote:
+> >
+> > [...]
+> >
+> > >     /*
+> > >      * The load is corrected for the CPU capacity available on each node.
+> > >      *
+> > > @@ -1788,10 +1831,10 @@ static int task_numa_migrate(struct task_struct *p)
+> > >     dist = env.dist = node_distance(env.src_nid, env.dst_nid);
+> > >     taskweight = task_weight(p, env.src_nid, dist);
+> > >     groupweight = group_weight(p, env.src_nid, dist);
+> > > -   update_numa_stats(&env.src_stats, env.src_nid);
+> > > +   update_numa_stats(&env, &env.src_stats, env.src_nid);
+> >
+> > This looks strange. Can you do:
+> >
+> > -static void update_numa_stats(struct task_numa_env *env,
+> > +static void update_numa_stats(unsigned int imbalance_pct,
+> >                               struct numa_stats *ns, int nid)
+> >
+> > -    update_numa_stats(&env, &env.src_stats, env.src_nid);
+> > +    update_numa_stats(env.imbalance_pct, &env.src_stats, env.src_nid);
+> >
+>
+> You'd also have to pass in env->p and while it could be done, I do not
+> think its worthwhile.
 
-You assume start2/end2 is always after start1/end1 in the page.
-Is it always true? If so, I would add BUG_ON() for it.
+I agree
 
-Otherwise, looks good.
-
-> +                       continue;
-> +               }
-> +
-> +               kaddr = kmap_atomic(page + i);
-> +
-> +               this_end = min_t(unsigned, end1, PAGE_SIZE);
-> +               if (end1 > start1)
-> +                       memset(kaddr + start1, 0, this_end - start1);
-> +               end1 -= this_end;
-> +               start1 = 0;
-> +
-> +               if (start2 >= PAGE_SIZE) {
-> +                       start2 -= PAGE_SIZE;
-> +                       end2 -= PAGE_SIZE;
-> +               } else {
-> +                       this_end = min_t(unsigned, end2, PAGE_SIZE);
-> +                       if (end2 > start2)
-> +                               memset(kaddr + start2, 0, this_end - start2);
-> +                       end2 -= this_end;
-> +                       start2 = 0;
-> +               }
-> +
-> +               kunmap_atomic(kaddr);
-> +               flush_dcache_page(page + i);
-> +
-> +               if (!end1 && !end2)
-> +                       break;
-> +       }
-> +
-> +       BUG_ON((start1 | start2 | end1 | end2) != 0);
->  }
-> 
-> I think at this point it has to move out-of-line too.
-> 
-> > > +static inline void zero_user_large(struct page *page,
-> > > +		unsigned start, unsigned size)
+>
+> > [...]
+> >
+> > > +static unsigned long cpu_runnable_load(struct rq *rq)
 > > > +{
-> > > +	unsigned int i;
+> > > +   return cfs_rq_runnable_load_avg(&rq->cfs);
+> > > +}
 > > > +
-> > > +	for (i = 0; i < thp_order(page); i++) {
-> > > +		if (start > PAGE_SIZE) {
-> > 
-> > Off-by-one? >= ?
-> 
-> Good catch; I'd also noticed that when I came to redo the zero_user_segments().
-> 
+> >
+> > Why not remove cpu_runnable_load() in this patch rather moving it?
+> >
+> > kernel/sched/fair.c:5492:22: warning: ???cpu_runnable_load??? defined but
+> > not used [-Wunused-function]
+> >  static unsigned long cpu_runnable_load(struct rq *rq)
+> >
+>
+> I took the liberty of addressing that when I picked up Vincent's patches
+> for "Reconcile NUMA balancing decisions with the load balancer v3" to fix
+> a build warning. I did not highlight it when I posted because it was such
+> a trivial change.
 
--- 
- Kirill A. Shutemov
+yes I have noticed that.
+Thanks
+
+>
+> --
+> Mel Gorman
+> SUSE Labs
