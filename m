@@ -2,96 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59C7B162ED5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 19:41:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 629B3162EE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 19:43:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726691AbgBRSl3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 13:41:29 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:43475 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726291AbgBRSl2 (ORCPT
+        id S1726751AbgBRSmo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 13:42:44 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44827 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726391AbgBRSmo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 13:41:28 -0500
-Received: by mail-qt1-f193.google.com with SMTP id d18so15261993qtj.10
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 10:41:28 -0800 (PST)
+        Tue, 18 Feb 2020 13:42:44 -0500
+Received: by mail-pf1-f195.google.com with SMTP id y5so11076972pfb.11;
+        Tue, 18 Feb 2020 10:42:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+8trNULk0p7YTqlS76VkwaHxCoBJjgc3YSZwDVrMPcc=;
-        b=h6M6HrVl/s5ivPkO5Z1ae1j41oRDK/YZ/CMQeyTHeCm70Xf8uzH3NUd2U1TEIBQctu
-         zaEPJnigmUn3fvfj0Sa0Vtkti5inbKWVcYrGvzz2Z9j3tAywKdkucVFFz9PkvyoLP6wY
-         /5mIIY9IuOmrH7z2JMau9X++QuLwtDTXvMskap9MpzjyVWX//o0rQmGkyGijHqEUft0+
-         AU7HWAlmw783ySPgijXZvqNYfdh2o/ASnQ85K/RkvHNBsduuWv8f5kxmfZKVXm30kVa7
-         V0121A5vUilpN8Q72rXVxAfFiad3uPlDcFp8JTCASh2TMuKUxiBf1gGHBdEe1Hb0xtjP
-         zpcQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=FRPijcKo7kcY7YCcx2mnm2XntT5PXC3jc8cYZD9bnvc=;
+        b=STSEWAj2mLLdHZrKCoSsV8S5dtobBUHz7/MKp0aKP2JnTSV18tnQhlLbjjBD5wAsyk
+         ePvAISX8FcYTeBxh36DpesEK5H9hLIyHXPCaI53agF7h6zTrNhh3MO1631cf4QqufW42
+         QQkE6llrFzaX0E7sDPbCe7F1FpDG8zHWxqNSBvWm8MucYpATLWu79qFmG5UWT7kRbWSj
+         ltd36F12euAfNFEi+OdRHdpdTBNOQ/c0HHX+mvTuxDbggM8hbFsAOPnqU/edC1lHjvVR
+         12Dux0Qg5EpOjGIdANsYT0hynAY00NrxXqpcQImu6orXAs/FBnK8po4uRFlIkNTmvl5m
+         J4Jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+8trNULk0p7YTqlS76VkwaHxCoBJjgc3YSZwDVrMPcc=;
-        b=gr5wWMrrlKZiw4eIQzfSGIR2vm/ekKAOAjrRfebiGh6ObSZnbdjTkAXirA3dhtvs7q
-         QQLMAE5ir0GaBWEcvx4XJQ4o+b0dbkLH3Y17aIzD8Enpi7J8Rcw2k4JPdXwZ3YQ1edz6
-         jcmRlVpeDgkxPhF3HlpmUUr9eMqf3u/N+4C6I2SxtP/NKiuL3eFvoJ5hBwfHNRNfvb9h
-         d8j0NDQ85m+CwKUgk+BqWdPux78iU2K2Cxtli2OXpUgiBo9hpOehmchll14rFc+G4CO8
-         8HQkhwvLDyc+2aXqpNFhoqBrjloYxAKZ4jS9zi+bBw7FN0wy9mrMtye5KYpvziirDJl9
-         brZw==
-X-Gm-Message-State: APjAAAVI/TyKNsrLBYoJT/HWiK5CDvMs/Pjy8ROIevHTgJFioEehamkd
-        l+pKtUia2of1VLRxolowAUWoRPT9Zskbmwl5c10aJA==
-X-Google-Smtp-Source: APXvYqwNn+oeDOLhVeJz9u7cgOo+LDlda9ul4xQGNdm+tuTn6q87++mwk68MeqHh4jfoH64EprmRSvnltHAJHxaIXcI=
-X-Received: by 2002:ac8:2ffa:: with SMTP id m55mr18764287qta.189.1582051287712;
- Tue, 18 Feb 2020 10:41:27 -0800 (PST)
-MIME-Version: 1.0
-References: <20191227063204.5813-1-xiyou.wangcong@gmail.com>
-In-Reply-To: <20191227063204.5813-1-xiyou.wangcong@gmail.com>
-From:   Chenbo Feng <fengc@google.com>
-Date:   Tue, 18 Feb 2020 10:41:16 -0800
-Message-ID: <CAMOXUJ=mvh0Aj-==wmPGh6x3dz0K3YTfaSw+osMwU=rgQv+Qkw@mail.gmail.com>
-Subject: Re: [PATCH] dma-buf: free dmabuf->name in dma_buf_release()
-To:     Cong Wang <xiyou.wangcong@gmail.com>
-Cc:     DRI mailing list <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org,
-        syzbot+b2098bc44728a4efb3e9@syzkaller.appspotmail.com,
-        Greg Hackmann <ghackmann@google.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=FRPijcKo7kcY7YCcx2mnm2XntT5PXC3jc8cYZD9bnvc=;
+        b=FvcCwn/jIRk/66QWFCKye09gc+rn1z6cBtVyLonAqASFQlQu4hmm1muddWvNM7Q/Er
+         TvVhCcyDig43j99JyZ5mgDsoziJsgQZWNF8Zt+OY3kBRFnly1iU06a7/k52V02ae2oIS
+         Kvk1fIX3/ZrsZ2orYYT8ylSZ0h5us1QjVygUqlGQ4HkVzzyfaK/8wPvfbnWmQvzqiIy7
+         ZSWjkFYulDlnkb+skB9cjUayTP/47K6OP+PpQLqAYZOxAhHO2eygFX0EdZ9O/IRJk4Aq
+         8eOiccY3IRz4+HJc5FUsds7kciWNu7j3bkgw6hK+Bc6tth5QXjcJf7cMkwgaBgvcnnQO
+         r9Pw==
+X-Gm-Message-State: APjAAAVDWLQxc0yM3UBtvI19rxxyn91pO81XfrvuC/ZQUjxb3/dJjyKD
+        Hb81gGNcaSaOl2ibVp0tNg==
+X-Google-Smtp-Source: APXvYqwl800bbQ26s9xKJZDhrO9PdZlbIcrYNVvwauRbeX7NJfuXFF1uGmSM7zo9LH4rJfVnnVed0w==
+X-Received: by 2002:a63:515d:: with SMTP id r29mr23493038pgl.265.1582051363462;
+        Tue, 18 Feb 2020 10:42:43 -0800 (PST)
+Received: from madhuparna-HP-Notebook.nitk.ac.in ([2402:3a80:54c:a276:f869:e1e5:121e:cdbf])
+        by smtp.gmail.com with ESMTPSA id v5sm5526791pgc.11.2020.02.18.10.42.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2020 10:42:42 -0800 (PST)
+From:   madhuparnabhowmik10@gmail.com
+To:     paul@paul-moore.com, davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, joel@joelfernandes.org,
+        frextrite@gmail.com,
+        linux-kernel-mentees@lists.linuxfoundation.org, paulmck@kernel.org,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+Subject: [PATCH] netlabel_domainhash.c: Use built-in RCU list checking
+Date:   Wed, 19 Feb 2020 00:11:32 +0530
+Message-Id: <20200218184132.20363-1-madhuparnabhowmik10@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Acked-by: Chenbo Feng <fengc@google.com>
+From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
 
+list_for_each_entry_rcu() has built-in RCU and lock checking.
 
-On Thu, Dec 26, 2019 at 10:32 PM Cong Wang <xiyou.wangcong@gmail.com> wrote:
->
-> dma-buff name can be set via DMA_BUF_SET_NAME ioctl, but once set
-> it never gets freed.
->
-> Free it in dma_buf_release().
->
-> Fixes: bb2bb9030425 ("dma-buf: add DMA_BUF_SET_NAME ioctls")
-> Reported-by: syzbot+b2098bc44728a4efb3e9@syzkaller.appspotmail.com
-> Cc: Greg Hackmann <ghackmann@google.com>
-> Cc: Chenbo Feng <fengc@google.com>
-> Cc: Sumit Semwal <sumit.semwal@linaro.org>
-> Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-> ---
->  drivers/dma-buf/dma-buf.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-> index ce41cd9b758a..2427398ff22a 100644
-> --- a/drivers/dma-buf/dma-buf.c
-> +++ b/drivers/dma-buf/dma-buf.c
-> @@ -108,6 +108,7 @@ static int dma_buf_release(struct inode *inode, struct file *file)
->                 dma_resv_fini(dmabuf->resv);
->
->         module_put(dmabuf->owner);
-> +       kfree(dmabuf->name);
->         kfree(dmabuf);
->         return 0;
->  }
-> --
-> 2.21.0
->
+Pass cond argument to list_for_each_entry_rcu() to silence
+false lockdep warning when CONFIG_PROVE_RCU_LIST is enabled
+by default.
+
+Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+---
+ net/netlabel/netlabel_domainhash.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/net/netlabel/netlabel_domainhash.c b/net/netlabel/netlabel_domainhash.c
+index f5d34da0646e..a1f2320ecc16 100644
+--- a/net/netlabel/netlabel_domainhash.c
++++ b/net/netlabel/netlabel_domainhash.c
+@@ -143,7 +143,8 @@ static struct netlbl_dom_map *netlbl_domhsh_search(const char *domain,
+ 	if (domain != NULL) {
+ 		bkt = netlbl_domhsh_hash(domain);
+ 		bkt_list = &netlbl_domhsh_rcu_deref(netlbl_domhsh)->tbl[bkt];
+-		list_for_each_entry_rcu(iter, bkt_list, list)
++		list_for_each_entry_rcu(iter, bkt_list, list,
++					lockdep_is_held(&netlbl_domhsh_lock))
+ 			if (iter->valid &&
+ 			    netlbl_family_match(iter->family, family) &&
+ 			    strcmp(iter->domain, domain) == 0)
+-- 
+2.17.1
+
