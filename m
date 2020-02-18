@@ -2,77 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFAFE1628B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 15:42:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D81D71628CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 15:45:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbgBROmM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 09:42:12 -0500
-Received: from foss.arm.com ([217.140.110.172]:53570 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726116AbgBROmM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 09:42:12 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8C9EA1FB;
-        Tue, 18 Feb 2020 06:42:11 -0800 (PST)
-Received: from [192.168.0.7] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC79E3F6CF;
-        Tue, 18 Feb 2020 06:42:09 -0800 (PST)
-Subject: Re: [PATCH v2 2/5] sched/numa: Replace runnable_load_avg by load_avg
-To:     Vincent Guittot <vincent.guittot@linaro.org>,
-        Mel Gorman <mgorman@suse.de>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Phil Auld <pauld@redhat.com>, Parth Shah <parth@linux.ibm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Hillf Danton <hdanton@sina.com>
-References: <20200214152729.6059-1-vincent.guittot@linaro.org>
- <20200214152729.6059-3-vincent.guittot@linaro.org>
- <ecbf5317-e6cf-fc20-9871-4ea06a987952@arm.com>
- <20200218135059.GE3420@suse.de>
- <CAKfTPtA9yOoPRMYgE1V22FJMpo+jr=VS1kQHqYrArG-GXMN18g@mail.gmail.com>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <1f820379-c58e-05fb-1745-28f2ed62d5ed@arm.com>
-Date:   Tue, 18 Feb 2020 15:42:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <CAKfTPtA9yOoPRMYgE1V22FJMpo+jr=VS1kQHqYrArG-GXMN18g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726750AbgBROpm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 09:45:42 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38976 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726605AbgBROpl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 09:45:41 -0500
+Received: by mail-wm1-f67.google.com with SMTP id c84so3194604wme.4
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 06:45:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=Dm++KgiZmzIoz3O/C9MxSRIxwKL4qLi+n4zUp5aZGPM=;
+        b=tlAxlN0uE3ErB+aHj6HDUmSorZ6GTEcYOSTRfREJ9NPzN/JtBw3VrIuhIWcvn9aIc5
+         rYTGyf5vaECjfXgPAwe/W/Z5SPM6HhQyL5iRxb2ZHrgFlB1ZKBqfNvfK7EcGqnsA56qh
+         c2PRR+Duh7ToLWIJCVpZQ1kWb25v2Ej09txlDt1ScetF14xJWp27TafGJKZV7aX8cbZ0
+         ONEquH+aYOn00n2Z30wzCNQKT+1jYf6PJQWSXJNxkrgzW0/eqTJZi3oP2qF1RSXPGK1J
+         eqZC+swo0TJREb8U2eDr6daPLf+R+eh0WRPtO1USgY/Mb1RnmbZdjNMuO4xs+YMaNpLx
+         N55w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Dm++KgiZmzIoz3O/C9MxSRIxwKL4qLi+n4zUp5aZGPM=;
+        b=p0wPTA+x0NlhnO7qRRALf4fSQqVXXcTsXRmILxTikM31jC95JOtvLfEuDhfa9mTamE
+         kLZVbdiDOxyTfNEFGIDlutStjcv+uU5pzVgWHBtq77RZLNyfy7PVNrqV/YC2BjxSL1o+
+         IYz154wv/ZoxPoeINjd9PPM1Ic/GLOW33I8D8wOgkTp2/k4pHp31PVngJAu/ScNDWT8m
+         GJa1bGUsjhy3rY66Aou82W0RmDmxOpS1z1GAC5KdBsxkrNboG8PWuXyWQTxf89Rk8HWQ
+         B183KyB2DDDfFhXpEZt3y5fjMG/kyGcECG6ldVqsFHhz3jJaGjMD9+3Fm84mK9geA7xo
+         eIkQ==
+X-Gm-Message-State: APjAAAXbNiJPIQX5Wuje0cXj5ermprcz/bQUIFEHlEdEkXRzI11AUcR2
+        /WgJAEe9RzxiQAhNHO8GU1djbg==
+X-Google-Smtp-Source: APXvYqxVcuws4XNX5QjelEIrPDX/Rf+PsiA49bwcLDSPaFaWv4tMW/RuBzCfCO5LFtCHH8DJJ+KCCw==
+X-Received: by 2002:a05:600c:2c44:: with SMTP id r4mr3498992wmg.140.1582037138175;
+        Tue, 18 Feb 2020 06:45:38 -0800 (PST)
+Received: from localhost.localdomain ([2a01:e0a:f:6020:b988:85d8:294:141d])
+        by smtp.gmail.com with ESMTPSA id o7sm3705403wmh.11.2020.02.18.06.45.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2020 06:45:36 -0800 (PST)
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+To:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        mgorman@suse.de, linux-kernel@vger.kernel.org
+Cc:     pauld@redhat.com, parth@linux.ibm.com, valentin.schneider@arm.com,
+        hdanton@sina.com, quentin.perret@arm.com,
+        srikar@linux.vnet.ibm.com, riel@surriel.com,
+        Morten.Rasmussen@arm.com,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Subject: [PATCH] sched/fair: fix statistics for find_idlest_group()
+Date:   Tue, 18 Feb 2020 15:45:34 +0100
+Message-Id: <20200218144534.4564-1-vincent.guittot@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/02/2020 15:17, Vincent Guittot wrote:
-> On Tue, 18 Feb 2020 at 14:51, Mel Gorman <mgorman@suse.de> wrote:
->>
->> On Tue, Feb 18, 2020 at 01:37:45PM +0100, Dietmar Eggemann wrote:
->>> On 14/02/2020 16:27, Vincent Guittot wrote:
+sgs->group_weight is not set while gathering statistics in
+update_sg_wakeup_stats(). This means that a group can be classified as
+fully busy with 0 running tasks if utilization is high enough.
 
-[...]
+This path is mainly used for fork and exec.
 
->>> -static void update_numa_stats(struct task_numa_env *env,
->>> +static void update_numa_stats(unsigned int imbalance_pct,
->>>                               struct numa_stats *ns, int nid)
->>>
->>> -    update_numa_stats(&env, &env.src_stats, env.src_nid);
->>> +    update_numa_stats(env.imbalance_pct, &env.src_stats, env.src_nid);
->>>
->>
->> You'd also have to pass in env->p and while it could be done, I do not
->> think its worthwhile.
-> 
-> I agree
+Fixes: 57abff067a08 ("sched/fair: Rework find_idlest_group()")
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+---
+ kernel/sched/fair.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Ah, another patch in Mel's patch-set:
-https://lore.kernel.org/r/20200217104402.11643-11-mgorman@techsingularity.net
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index a7e11b1bb64c..643ed6d8b8ff 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -8354,6 +8354,8 @@ static inline void update_sg_wakeup_stats(struct sched_domain *sd,
+ 
+ 	sgs->group_capacity = group->sgc->capacity;
+ 
++	sgs->group_weight = group->group_weight;
++
+ 	sgs->group_type = group_classify(sd->imbalance_pct, group, sgs);
+ 
+ 	/*
+-- 
+2.17.1
 
-I see.
-
-[...]
