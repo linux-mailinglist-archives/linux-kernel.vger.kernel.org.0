@@ -2,121 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CF1A16377B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 00:51:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E955163782
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 00:51:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbgBRXvA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 18:51:00 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:35564 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726716AbgBRXu7 (ORCPT
+        id S1727656AbgBRXvM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 18:51:12 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:34826 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727171AbgBRXvM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 18:50:59 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id CECF68EE367;
-        Tue, 18 Feb 2020 15:50:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1582069858;
-        bh=uAmYYHSWRiJ7Jt65f/eBWdihBlK1KFIAAWXVc9m7yt0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=KhPrEaLpdk5FFgsYKEuwFY/rqCQlUMnKPGm2py/twY0ZtW2iIguWNWc8WFKNn2a8s
-         5anURAu22KldxiQZCLKx46Rfz58z1zsxEFuyiy1CPDao4Ru/8YS+lSURC0sO/oUk7S
-         yIehdox1DGMePvRq0uPTOqchbx7i1wAEhSQw2u0U=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id ilGQnuwfvJXX; Tue, 18 Feb 2020 15:50:58 -0800 (PST)
-Received: from jarvis.ext.hansenpartnership.com (jarvis.ext.hansenpartnership.com [153.66.160.226])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 73D138EE0D5;
-        Tue, 18 Feb 2020 15:50:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1582069858;
-        bh=uAmYYHSWRiJ7Jt65f/eBWdihBlK1KFIAAWXVc9m7yt0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=KhPrEaLpdk5FFgsYKEuwFY/rqCQlUMnKPGm2py/twY0ZtW2iIguWNWc8WFKNn2a8s
-         5anURAu22KldxiQZCLKx46Rfz58z1zsxEFuyiy1CPDao4Ru/8YS+lSURC0sO/oUk7S
-         yIehdox1DGMePvRq0uPTOqchbx7i1wAEhSQw2u0U=
-Message-ID: <1582069856.16681.59.camel@HansenPartnership.com>
-Subject: Re: [PATCH v3 00/25] user_namespace: introduce fsid mappings
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>,
-        =?ISO-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, smbarber@chromium.org,
-        Seth Forshee <seth.forshee@canonical.com>,
-        linux-security-module@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>
-Date:   Tue, 18 Feb 2020 15:50:56 -0800
-In-Reply-To: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
-References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 18 Feb 2020 18:51:12 -0500
+Received: by mail-pj1-f68.google.com with SMTP id q39so1709473pjc.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 15:51:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=H9Vy91VcgS2dfjojUgyTLRgs44OJ1u3F7tZb9F/g2s4=;
+        b=XtjY32moCVDQQioAXHxahEf5oYVhgz+Ms4AFWGGTaFP4778HtoUNBVCZbW/C2qLolT
+         kDIi0JZqXC7NMPPKTviR9qMq/uEd/2YzpTjSe9IaITXu8Pl4JEDP9qbdg7sIIRVZ//1i
+         KtiroPgJmXpywPRGIY+tRmnl8PQ6+OMwaraP1VH0SOJ5WbBohMTNLRPRezZYc2qxq/sa
+         2W6kvsh9Fs6Fpve+mm0yDRQIeZ7choax1gRTSiFCOkog4mfLEzJV9OH+KkcYvUUFNjHX
+         S+Hc+3xvGjLdqBzUhHT2TzNGdEjWroRfLHHYpwd/TbZj2sO/pVmhcBrNVgTGZQBeSp5j
+         XUIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=H9Vy91VcgS2dfjojUgyTLRgs44OJ1u3F7tZb9F/g2s4=;
+        b=t5r86UabGsFBt1GT/lDXCtWtR5L7mjN/SM5GkJ6C6LNSsAyFhvZgzWnnagaVdagqNJ
+         4bM35RGiGJRnP9oXPWEnaiPAJW9fmDpLAZH9Ifl0A/f+i4sXyGRvEshAcgk9EK8lXFqm
+         G7WqkHPoN9HpzaWkd02Q5fuA9gjtLVXAEbCdyVyi2C3Rjaearu0f4J9j7UZCLYCGaEO/
+         cYoG4JiPQYBktnWlzms07H+9ntKKUfCzmLya5dCpzSRz7Wjg4NgIGKGps6oemOIaVguk
+         S0X1rCXZrlqcolzixgTkDiHTURgP2oUl9f0JHZUO64WAjU8TfLn+hzX7ZEmRLygKomOJ
+         rK7w==
+X-Gm-Message-State: APjAAAWN6ju81e/K7oiII+YOX1kEz6zkJuNejPvbmlSrr4Lt4ruzA+N3
+        AlvlCwTBHTRATLPFI3CW9b+Z6Rpf9e4=
+X-Google-Smtp-Source: APXvYqxZ65WQ76i7D3Y4yE+ieYshnEw5upVN5/4FZ5xFsoWgY9MsPSPIm9vhiPRL+clNxV3M8q/PVw==
+X-Received: by 2002:a17:90b:1256:: with SMTP id gx22mr5711887pjb.94.1582069871497;
+        Tue, 18 Feb 2020 15:51:11 -0800 (PST)
+Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
+        by smtp.gmail.com with ESMTPSA id b1sm88455pgs.27.2020.02.18.15.51.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2020 15:51:10 -0800 (PST)
+From:   John Stultz <john.stultz@linaro.org>
+To:     lkml <linux-kernel@vger.kernel.org>
+Cc:     Pratham Pratap <prathampratap@codeaurora.org>,
+        Felipe Balbi <balbi@kernel.org>, Yang Fei <fei.yang@intel.com>,
+        Thinh Nguyen <thinhn@synopsys.com>,
+        Tejas Joglekar <tejas.joglekar@synopsys.com>,
+        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
+        Jack Pham <jackp@codeaurora.org>, Todd Kjos <tkjos@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        John Stultz <john.stultz@linaro.org>
+Subject: [PATCH] usb: dwc3: gadget: Update chain bit correctly when using sg list
+Date:   Tue, 18 Feb 2020 23:51:04 +0000
+Message-Id: <20200218235104.112323-1-john.stultz@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2020-02-18 at 15:33 +0100, Christian Brauner wrote:
-> In the usual case of running an unprivileged container we will have
-> setup an id mapping, e.g. 0 100000 100000. The on-disk mapping will
-> correspond to this id mapping, i.e. all files which we want to appear
-> as 0:0 inside the user namespace will be chowned to 100000:100000 on
-> the host. This works, because whenever the kernel needs to do a
-> filesystem access it will lookup the corresponding uid and gid in the
-> idmapping tables of the container. Now think about the case where we
-> want to have an id mapping of 0 100000 100000 but an on-disk mapping
-> of 0 300000 100000 which is needed to e.g. share a single on-disk
-> mapping with multiple containers that all have different id mappings.
-> This will be problematic. Whenever a filesystem access is requested,
-> the kernel will now try to lookup a mapping for 300000 in the id
-> mapping tables of the user namespace but since there is none the
-> files will appear to be owned by the overflow id, i.e. usually
-> 65534:65534 or nobody:nogroup.
-> 
-> With fsid mappings we can solve this by writing an id mapping of 0
-> 100000 100000 and an fsid mapping of 0 300000 100000. On filesystem
-> access the kernel will now lookup the mapping for 300000 in the fsid
-> mapping tables of the user namespace. And since such a mapping
-> exists, the corresponding files will have correct ownership.
+From: Pratham Pratap <prathampratap@codeaurora.org>
 
-So I did compile this up in order to run the shiftfs tests over it to
-see how it coped with the various corner cases.  However, what I find
-is it simply fails the fsid reverse mapping in the setup.  Trying to
-use a simple uid of 0 100000 1000 and a fsid of 100000 0 1000 fails the
-entry setuid(0) call because of this code:
+If scatter-gather operation is allowed, a large USB request is split
+into multiple TRBs. For preparing TRBs for sg list, driver iterates
+over the list and creates TRB for each sg and mark the chain bit to
+false for the last sg. The current IOMMU driver is clubbing the list
+of sgs which shares a page boundary into one and giving it to USB driver.
+With this the number of sgs mapped it not equal to the the number of sgs
+passed. Because of this USB driver is not marking the chain bit to false
+since it couldn't iterate to the last sg. This patch addresses this issue
+by marking the chain bit to false if it is the last mapped sg.
 
-long __sys_setuid(uid_t uid)
-{
-	struct user_namespace *ns =
-current_user_ns();
-	const struct cred *old;
-	struct cred *new;
-	int
-retval;
-	kuid_t kuid;
-	kuid_t kfsuid;
+At a practical level, this patch resolves USB transfer stalls
+seen with adb on dwc3 based db845c, pixel3 and other qcom
+hardware after functionfs gadget added scatter-gather support
+around v4.20.
 
-	kuid = make_kuid(ns, uid);
-	if
-(!uid_valid(kuid))
-		return -EINVAL;
+Credit also to Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
+who implemented a very similar fix to this issue.
 
-	kfsuid = make_kfsuid(ns, uid);
-	if
-(!uid_valid(kfsuid))
-		return -EINVAL;
+Cc: Felipe Balbi <balbi@kernel.org>
+Cc: Yang Fei <fei.yang@intel.com>
+Cc: Thinh Nguyen <thinhn@synopsys.com>
+Cc: Tejas Joglekar <tejas.joglekar@synopsys.com>
+Cc: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Cc: Jack Pham <jackp@codeaurora.org>
+Cc: Todd Kjos <tkjos@google.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Linux USB List <linux-usb@vger.kernel.org>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Pratham Pratap <prathampratap@codeaurora.org>
+[jstultz: Slight tweak to remove sg_is_last() usage, reworked
+          commit message, minor comment tweak]
+Signed-off-by: John Stultz <john.stultz@linaro.org>
+---
+ drivers/usb/dwc3/gadget.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-which means you can't have a fsid mapping that doesn't have the same
-domain as the uid mapping, meaning a reverse mapping isn't possible
-because the range and domain have to be inverse and disjoint.
-
-James
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index 1b8014ab0b25..10aa511051e8 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -1071,7 +1071,14 @@ static void dwc3_prepare_one_trb_sg(struct dwc3_ep *dep,
+ 		unsigned int rem = length % maxp;
+ 		unsigned chain = true;
+ 
+-		if (sg_is_last(s))
++		/*
++		 * IOMMU driver is coalescing the list of sgs which shares a
++		 * page boundary into one and giving it to USB driver. With
++		 * this the number of sgs mapped it not equal to the the number
++		 * of sgs passed. Mark the chain bit to false if it is the last
++		 * mapped sg.
++		 */
++		if ((i == remaining - 1))
+ 			chain = false;
+ 
+ 		if (rem && usb_endpoint_dir_out(dep->endpoint.desc) && !chain) {
+-- 
+2.17.1
 
