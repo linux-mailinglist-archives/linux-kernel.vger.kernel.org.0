@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDD6B163154
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:01:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 819A316322D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:06:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726719AbgBRT7b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 14:59:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38146 "EHLO mail.kernel.org"
+        id S1727691AbgBRUG0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 15:06:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39766 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728426AbgBRT73 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:59:29 -0500
+        id S1728608AbgBRUAa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 15:00:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41F542465A;
-        Tue, 18 Feb 2020 19:59:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D4FB2467A;
+        Tue, 18 Feb 2020 20:00:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582055968;
-        bh=AQXNCwSq4Z50V5yHlLV51EKDB3lSCNe9jOBAJff5fh4=;
+        s=default; t=1582056029;
+        bh=3b9VvVgLrBfHjmC5JQTafY86LlzAo3TP0X+fFvFXBiI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ajPgpnQt/Gmkd5PUiUhHexmQc5m12GuBH4UwRhurzlSF6TupROZba/H7WeWuVsMyM
-         Ro+r3aho14tAMjgWZrzsssfij0OeVatJNQBTuAKzSAJENu+3ZbUIiNsPoyqxgATRXa
-         wWzvYrWoLB/CO7sD+yNbe6CGwdBH5trjpNms0QMY=
+        b=iGL/XaxCmjTvRSDh0cle41b+sfADz7d428sSU2PWiHp9TWLwFpTitrqHiYd9zmlmB
+         1cLJYQ6GUfAto2XzDViKD6fCRXYpkTIwd/UtsRIUjdC+bVaMdGxRuORDy8FNU8H+Qy
+         Tnyf3fmOWOw4bR1Aui1kfZvZsj8QyahAfCAGTdOU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Vasily Gorbik <gor@linux.ibm.com>
-Subject: [PATCH 5.4 49/66] s390/time: Fix clk type in get_tod_clock
-Date:   Tue, 18 Feb 2020 20:55:16 +0100
-Message-Id: <20200218190432.572394728@linuxfoundation.org>
+        stable@vger.kernel.org, Qais Yousef <qais.yousef@arm.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 5.4 50/66] sched/uclamp: Reject negative values in cpu_uclamp_write()
+Date:   Tue, 18 Feb 2020 20:55:17 +0100
+Message-Id: <20200218190432.661930025@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200218190428.035153861@linuxfoundation.org>
 References: <20200218190428.035153861@linuxfoundation.org>
@@ -44,54 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Qais Yousef <qais.yousef@arm.com>
 
-commit 0f8a206df7c920150d2aa45574fba0ab7ff6be4f upstream.
+commit b562d140649966d4daedd0483a8fe59ad3bb465a upstream.
 
-Clang warns:
+The check to ensure that the new written value into cpu.uclamp.{min,max}
+is within range, [0:100], wasn't working because of the signed
+comparison
 
-In file included from ../arch/s390/boot/startup.c:3:
-In file included from ../include/linux/elf.h:5:
-In file included from ../arch/s390/include/asm/elf.h:132:
-In file included from ../include/linux/compat.h:10:
-In file included from ../include/linux/time.h:74:
-In file included from ../include/linux/time32.h:13:
-In file included from ../include/linux/timex.h:65:
-../arch/s390/include/asm/timex.h:160:20: warning: passing 'unsigned char
-[16]' to parameter of type 'char *' converts between pointers to integer
-types with different sign [-Wpointer-sign]
-        get_tod_clock_ext(clk);
-                          ^~~
-../arch/s390/include/asm/timex.h:149:44: note: passing argument to
-parameter 'clk' here
-static inline void get_tod_clock_ext(char *clk)
-                                           ^
+ 7301                 if (req.percent > UCLAMP_PERCENT_SCALE) {
+ 7302                         req.ret = -ERANGE;
+ 7303                         return req;
+ 7304                 }
 
-Change clk's type to just be char so that it matches what happens in
-get_tod_clock_ext.
+	# echo -1 > cpu.uclamp.min
+	# cat cpu.uclamp.min
+	42949671.96
 
-Fixes: 57b28f66316d ("[S390] s390_hypfs: Add new attributes")
-Link: https://github.com/ClangBuiltLinux/linux/issues/861
-Link: http://lkml.kernel.org/r/20200208140858.47970-1-natechancellor@gmail.com
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Cast req.percent into u64 to force the comparison to be unsigned and
+work as intended in capacity_from_percent().
+
+	# echo -1 > cpu.uclamp.min
+	sh: write error: Numerical result out of range
+
+Fixes: 2480c093130f ("sched/uclamp: Extend CPU's cgroup controller")
+Signed-off-by: Qais Yousef <qais.yousef@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lkml.kernel.org/r/20200114210947.14083-1-qais.yousef@arm.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/include/asm/timex.h |    2 +-
+ kernel/sched/core.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/s390/include/asm/timex.h
-+++ b/arch/s390/include/asm/timex.h
-@@ -155,7 +155,7 @@ static inline void get_tod_clock_ext(cha
- 
- static inline unsigned long long get_tod_clock(void)
- {
--	unsigned char clk[STORE_CLOCK_EXT_SIZE];
-+	char clk[STORE_CLOCK_EXT_SIZE];
- 
- 	get_tod_clock_ext(clk);
- 	return *((unsigned long long *)&clk[1]);
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -7250,7 +7250,7 @@ capacity_from_percent(char *buf)
+ 					     &req.percent);
+ 		if (req.ret)
+ 			return req;
+-		if (req.percent > UCLAMP_PERCENT_SCALE) {
++		if ((u64)req.percent > UCLAMP_PERCENT_SCALE) {
+ 			req.ret = -ERANGE;
+ 			return req;
+ 		}
 
 
