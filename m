@@ -2,87 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4F99163015
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:33:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ACD716304C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:38:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbgBRTdh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 14:33:37 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39944 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726811AbgBRTdf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:33:35 -0500
-Received: by mail-wr1-f68.google.com with SMTP id t3so25386515wru.7
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 11:33:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=9BZxWx02OP4buIGB38mrXrqxMYCE34rX+OIKJheO44A=;
-        b=vHu2+iekn6Oz45OTWnDlijL1xIyW4xkjqGKkztYOlh+VqZjEXxOUZogmPjm0uhL3/V
-         gJav+pFLI7bnwITiXHYBTJOQCt1H18pQPE3Ji7+43gVecfGmcg27f+q5JhGAiwl9bXgb
-         Qxll7KGR+q+tUJ9rBM2IMx6DMbSMEDNR4z+B4NQh9q+qvRk1d3gwZ0gN43pQkfCocdWP
-         kSqpMOKEQC/fKZQ3XDc7jWmKUngekWsp8nTHflds91EXP+wpw1qdJg9DedOwHzg8ttPs
-         6skwhW9aMZq16dU+dI+RSXH0UUh+6C3E1q1QvVPxYFSptHKzp4O6B0vVsRRgsjuOdTXG
-         2hDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=9BZxWx02OP4buIGB38mrXrqxMYCE34rX+OIKJheO44A=;
-        b=asFWoVfrmt3+izG6mRtmPnAXHqCDkWSJ88iGP/i7Kkj67wvpstw2PfMpR9RNjXpjS4
-         RKdzhBEpUmE7JhR3tsBi9npi0snHpaAbDpZanmooHSFHuUtOSUek1ua/1QB3mYXswyBv
-         lN8UzK5u5pRK4prBFVcwXc9qZnu5Xi9zTxwFYXU0lL2QJmz6kzNt6mkB/S+FfKXeA1WG
-         4ZAi/5Tm+qyalIRdYRRiZWwdp8VTCQSSVEKMR3nzqm5NWYbWst0zPHVmJLKdBqO6BsST
-         R3m9yx+ubag3DbWO00pNJVsX3Vz7fqZvDNe+T83Or0Jp+ugplOcYc27LDPvnyjEaMX2C
-         ecwQ==
-X-Gm-Message-State: APjAAAUobkxnkooXRZfQvhk4hYNNQXX+cHGBGo78m+/owJ9VHRdtSQy8
-        8DpoZ/oOxzktEXXKKw9NZwf+nSNwu7I=
-X-Google-Smtp-Source: APXvYqxAXsDdhHT9Ljp22hJpRE2F0hVTr7iFO7n0ITXn4kLzmd5GWP72gHNUHkKcm9jzsYtEYezbWw==
-X-Received: by 2002:adf:fe43:: with SMTP id m3mr32460635wrs.213.1582054413698;
-        Tue, 18 Feb 2020 11:33:33 -0800 (PST)
-Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id k16sm7649266wru.0.2020.02.18.11.33.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 18 Feb 2020 11:33:33 -0800 (PST)
-From:   Corentin Labbe <clabbe@baylibre.com>
-To:     alexandre.belloni@bootlin.com, b-liu@ti.com, balbi@kernel.org,
-        gregkh@linuxfoundation.org, ludovic.desroches@microchip.com,
-        mathias.nyman@intel.com, nicolas.ferre@microchip.com,
-        slemieux.tyco@gmail.com, stern@rowland.harvard.edu, vz@mleia.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH 20/20] usb: musb: core: remove useless cast for driver.name
-Date:   Tue, 18 Feb 2020 19:33:03 +0000
-Message-Id: <1582054383-35760-21-git-send-email-clabbe@baylibre.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1582054383-35760-1-git-send-email-clabbe@baylibre.com>
-References: <1582054383-35760-1-git-send-email-clabbe@baylibre.com>
+        id S1726439AbgBRTh1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 14:37:27 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:5911 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726339AbgBRTh1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 14:37:27 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 48MWMn1qp9z9v2j1;
+        Tue, 18 Feb 2020 20:37:25 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=Mj+l2GEo; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id zQZUrf2UH4df; Tue, 18 Feb 2020 20:37:25 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 48MWMn03Qbz9v2j0;
+        Tue, 18 Feb 2020 20:37:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1582054645; bh=rDkFBI9EQ3YlGUxegyfl0jM+87QhL18Ffk+2vHpA/Ls=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Mj+l2GEolgrsp5KbT0g9NAKpX9c6SY36I/vGr6g+qWl0H/tWJuwDL1Aw8PLfE+Doh
+         lctFGcKZYselqrJ1AJ+524m8CUet+YPbrH9cIozelu/kIOzJIxe+yCCOmvvFwG2V2C
+         SjLxqbF8GqKu987psU6WnZrtfBNGsXjajmSR1sB8=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id E53938B81D;
+        Tue, 18 Feb 2020 20:37:24 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id wGrNy4FbrMXz; Tue, 18 Feb 2020 20:37:24 +0100 (CET)
+Received: from [192.168.4.90] (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 033178B80C;
+        Tue, 18 Feb 2020 20:37:23 +0100 (CET)
+Subject: Re: [PATCH v2] powerpc/kprobes: Fix trap address when trap happened
+ in real mode
+To:     "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        stable@kernel.vger.org
+References: <0cd6647dae57894f77ceb7d5a48d52fac6c10ca5.1582036047.git.christophe.leroy@c-s.fr>
+ <1582037375.4mkd6m1m5m.naveen@linux.ibm.com>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <54419d86-3cd9-f20a-4aa0-85aac5bbe846@c-s.fr>
+Date:   Tue, 18 Feb 2020 20:37:23 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
+MIME-Version: 1.0
+In-Reply-To: <1582037375.4mkd6m1m5m.naveen@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-device_driver name is const char pointer, so it not useful to cast
-xx_driver_name (which is already const char).
 
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
----
- drivers/usb/musb/musb_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/musb/musb_core.c b/drivers/usb/musb/musb_core.c
-index f616fb489542..d590110539ab 100644
---- a/drivers/usb/musb/musb_core.c
-+++ b/drivers/usb/musb/musb_core.c
-@@ -2945,7 +2945,7 @@ static const struct dev_pm_ops musb_dev_pm_ops = {
- 
- static struct platform_driver musb_driver = {
- 	.driver = {
--		.name		= (char *)musb_driver_name,
-+		.name		= musb_driver_name,
- 		.bus		= &platform_bus_type,
- 		.pm		= MUSB_DEV_PM_OPS,
- 		.dev_groups	= musb_groups,
--- 
-2.24.1
+Le 18/02/2020 à 15:55, Naveen N. Rao a écrit :
+> Christophe Leroy wrote:
+>> When a program check exception happens while MMU translation is
+>> disabled, following Oops happens in kprobe_handler() in the following
+>> code:
+>>
+>>         } else if (*addr != BREAKPOINT_INSTRUCTION) {
+>>
+>> [   33.098554] BUG: Unable to handle kernel data access on read at 
+>> 0x0000e268
+>> [   33.105091] Faulting instruction address: 0xc000ec34
+>> [   33.110010] Oops: Kernel access of bad area, sig: 11 [#1]
+>> [   33.115348] BE PAGE_SIZE=16K PREEMPT CMPC885
+>> [   33.119540] Modules linked in:
+>> [   33.122591] CPU: 0 PID: 429 Comm: cat Not tainted 
+>> 5.6.0-rc1-s3k-dev-00824-g84195dc6c58a #3267
+>> [   33.131005] NIP:  c000ec34 LR: c000ecd8 CTR: c019cab8
+>> [   33.136002] REGS: ca4d3b58 TRAP: 0300   Not tainted  
+>> (5.6.0-rc1-s3k-dev-00824-g84195dc6c58a)
+>> [   33.144324] MSR:  00001032 <ME,IR,DR,RI>  CR: 2a4d3c52  XER: 00000000
+>> [   33.150699] DAR: 0000e268 DSISR: c0000000
+>> [   33.150699] GPR00: c000b09c ca4d3c10 c66d0620 00000000 ca4d3c60 
+>> 00000000 00009032 00000000
+>> [   33.150699] GPR08: 00020000 00000000 c087de44 c000afe0 c66d0ad0 
+>> 100d3dd6 fffffff3 00000000
+>> [   33.150699] GPR16: 00000000 00000041 00000000 ca4d3d70 00000000 
+>> 00000000 0000416d 00000000
+>> [   33.150699] GPR24: 00000004 c53b6128 00000000 0000e268 00000000 
+>> c07c0000 c07bb6fc ca4d3c60
+>> [   33.188015] NIP [c000ec34] kprobe_handler+0x128/0x290
+>> [   33.192989] LR [c000ecd8] kprobe_handler+0x1cc/0x290
+>> [   33.197854] Call Trace:
+>> [   33.200340] [ca4d3c30] [c000b09c] program_check_exception+0xbc/0x6fc
+>> [   33.206590] [ca4d3c50] [c000e43c] ret_from_except_full+0x0/0x4
+>> [   33.212392] --- interrupt: 700 at 0xe268
+>> [   33.270401] Instruction dump:
+>> [   33.273335] 913e0008 81220000 38600001 3929ffff 91220000 80010024 
+>> bb410008 7c0803a6
+>> [   33.280992] 38210020 4e800020 38600000 4e800020 <813b0000> 6d2a7fe0 
+>> 2f8a0008 419e0154
+>> [   33.288841] ---[ end trace 5b9152d4cdadd06d ]---
+>>
+>> kprobe is not prepared to handle events in real mode and functions
+>> running in real mode should have been blacklisted, so kprobe_handler()
+>> can safely bail out telling 'this trap is not mine' for any trap that
+>> happened while in real-mode.
+>>
+>> If the trap happened with MSR_IR cleared, return 0 immediately.
+>>
+>> Reported-by: Larry Finger <Larry.Finger@lwfinger.net>
+>> Fixes: 6cc89bad60a6 ("powerpc/kprobes: Invoke handlers directly")
+>> Cc: stable@vger.kernel.org
+>> Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+>> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>>
+>> ---
+>> v2: bailing out instead of converting real-time address to virtual and 
+>> continuing.
+>>
+>> The bug might have existed even before that commit from Naveen.
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> ---
+>>  arch/powerpc/kernel/kprobes.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/arch/powerpc/kernel/kprobes.c 
+>> b/arch/powerpc/kernel/kprobes.c
+>> index 2d27ec4feee4..673f349662e8 100644
+>> --- a/arch/powerpc/kernel/kprobes.c
+>> +++ b/arch/powerpc/kernel/kprobes.c
+>> @@ -264,6 +264,9 @@ int kprobe_handler(struct pt_regs *regs)
+>>      if (user_mode(regs))
+>>          return 0;
+>>
+>> +    if (!(regs->msr & MSR_IR))
+>> +        return 0;
+>> +
+> 
+> Should we also check for MSR_DR? Are there scenarios with ppc32 where 
+> MSR_IR is on, but MSR_DR is off?
 
+Yes indeed.
+
+Christophe
