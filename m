@@ -2,64 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27F83161FDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 05:47:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71B3C161FE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 05:48:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726340AbgBRErg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 23:47:36 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:33849 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726261AbgBRErf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 23:47:35 -0500
-Received: from dread.disaster.area (pa49-179-138-28.pa.nsw.optusnet.com.au [49.179.138.28])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id D76033A19D6;
-        Tue, 18 Feb 2020 15:47:31 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1j3unC-0005hw-70; Tue, 18 Feb 2020 15:47:30 +1100
-Date:   Tue, 18 Feb 2020 15:47:30 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v6 01/19] mm: Return void from various readahead functions
-Message-ID: <20200218044730.GF10776@dread.disaster.area>
-References: <20200217184613.19668-1-willy@infradead.org>
- <20200217184613.19668-2-willy@infradead.org>
+        id S1726402AbgBREsF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 23:48:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56574 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726323AbgBREsE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 23:48:04 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 687CA20722;
+        Tue, 18 Feb 2020 04:48:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582001282;
+        bh=IBqutbhtZToy71xdjspXrNCtyphaRbou9lIOOc3XX5Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RuzdEIMOKt1UMm3T4IoAJZOo0GRUP/lrLMmXo7+TdBbIeDlVEbgOj7d3ujk6RpEkJ
+         VAG7Kc0hDqDHgdknrIH8HFWRU4DQ9fjLh2UXOzuxgERWczdfZa2J6qT880U/xVRckE
+         Spoc5SAG+XGAanDmPHWIHaHL/Uxq7w9rEBR29Yiw=
+Date:   Tue, 18 Feb 2020 05:48:00 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc:     Sasha Levin <sashal@kernel.org>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        linux-kernel@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v2 4.14] padata: Remove broken queue flushing
+Message-ID: <20200218044800.GA2048254@kroah.com>
+References: <20200213151948.275124464@linuxfoundation.org>
+ <20200214194651.442848-1-daniel.m.jordan@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200217184613.19668-2-willy@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=LYdCFQXi c=1 sm=1 tr=0
-        a=zAxSp4fFY/GQY8/esVNjqw==:117 a=zAxSp4fFY/GQY8/esVNjqw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
-        a=JfrnYn6hAAAA:8 a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8 a=XMwvCbM7UuQ64GsG45gA:9
-        a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20200214194651.442848-1-daniel.m.jordan@oracle.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 17, 2020 at 10:45:42AM -0800, Matthew Wilcox wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+On Fri, Feb 14, 2020 at 02:46:51PM -0500, Daniel Jordan wrote:
+> From: Herbert Xu <herbert@gondor.apana.org.au>
 > 
-> ondemand_readahead has two callers, neither of which use the return value.
-> That means that both ra_submit and __do_page_cache_readahead() can return
-> void, and we don't need to worry that a present page in the readahead
-> window causes us to return a smaller nr_pages than we ought to have.
+> [ Upstream commit 07928d9bfc81640bab36f5190e8725894d93b659 ]
 > 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> The function padata_flush_queues is fundamentally broken because
+> it cannot force padata users to complete the request that is
+> underway.  IOW padata has to passively wait for the completion
+> of any outstanding work.
+> 
+> As it stands flushing is used in two places.  Its use in padata_stop
+> is simply unnecessary because nothing depends on the queues to
+> be flushed afterwards.
+> 
+> The other use in padata_replace is more substantial as we depend
+> on it to free the old pd structure.  This patch instead uses the
+> pd->refcnt to dynamically free the pd structure once all requests
+> are complete.
+> 
+> Fixes: 2b73b07ab8a4 ("padata: Flush the padata queues actively")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+> Reviewed-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+> [dj: leave "pd->pinst = pinst" assignment in padata_alloc_pd()]
+> Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
 
-Looks good.
+Thanks, all 3 backports now queued up.
 
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
-
--- 
-Dave Chinner
-david@fromorbit.com
+greg k-h
