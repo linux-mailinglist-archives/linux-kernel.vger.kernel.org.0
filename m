@@ -2,244 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8B5E1625E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 13:04:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 605B31625EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 13:11:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726446AbgBRMEv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 07:04:51 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:11502 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726292AbgBRMEu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 07:04:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1582027485;
-        s=strato-dkim-0002; d=gerhold.net;
-        h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=t6s1JpY0LmHtLoGSSFIvNKDRe/OMQyYcfkfK21lWzo8=;
-        b=K7NSLiclt2FxAmn6ZriCNOjn7Hg+h331JE+5KX8P4JTZ/iCbsWI8x3vZdVgGyk40yu
-        rXTd5GZ97zwF5u9JOb96+D99itEdCh+ePtrJNIvjc2go4tFUCFU4lOCSJdAUP3+Ufbd3
-        fL08vOOXt2GjUMIZd/ieGVjhZwZ4pVfVOlV/BMZIZYr22EPolYnQzRQRzIig+Z5D8HT/
-        tRgBa4YNFUuKTlT+y9S3W4BruIomzFTin9cl1THci7ZvSBIpP+x3jm/Vk43Df81dizoK
-        HxmBeKBnpBJfEYKsmHVLqX/yJuNWeYFQVdHuKn0vWTWQ/OMbu4PdILgx2Oyw2FegNW7Q
-        9wUg==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u26zEodhPgRDZ8b7Ic/NaIo="
-X-RZG-CLASS-ID: mo00
-Received: from gerhold.net
-        by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
-        with ESMTPSA id a01fe9w1IC4eieC
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Tue, 18 Feb 2020 13:04:40 +0100 (CET)
-Date:   Tue, 18 Feb 2020 13:04:35 +0100
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Brian Masney <masneyb@onstation.org>, robdclark@gmail.com,
-        bjorn.andersson@linaro.org, joro@8bytes.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        j.neuschaefer@gmx.net, iommu@lists.linux-foundation.org,
-        agross@kernel.org, Naresh Kamboju <naresh.kamboju@linaro.org>
-Subject: Re: [PATCH v2] iommu/qcom: fix NULL pointer dereference during probe
- deferral
-Message-ID: <20200218120435.GA152723@gerhold.net>
-References: <20200104002024.37335-1-masneyb@onstation.org>
- <fc055443-8716-4a0e-b4d5-311517d71ea0@arm.com>
+        id S1726548AbgBRMKw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 07:10:52 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10208 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726043AbgBRMKv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 07:10:51 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id E589135BE54F3A0B3135;
+        Tue, 18 Feb 2020 20:10:47 +0800 (CST)
+Received: from localhost (10.177.246.209) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Tue, 18 Feb 2020
+ 20:10:39 +0800
+From:   "Longpeng(Mike)" <longpeng2@huawei.com>
+To:     <mike.kravetz@oracle.com>, <akpm@linux-foundation.org>
+CC:     <longpeng2@huawei.com>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <arei.gonglei@huawei.com>,
+        <weidong.huang@huawei.com>, <weifuqiang@huawei.com>,
+        <kvm@vger.kernel.org>
+Subject: [PATCH] mm/hugetlb: avoid get wrong ptep caused by race
+Date:   Tue, 18 Feb 2020 20:10:25 +0800
+Message-ID: <1582027825-112728-1-git-send-email-longpeng2@huawei.com>
+X-Mailer: git-send-email 1.8.4.msysgit.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fc055443-8716-4a0e-b4d5-311517d71ea0@arm.com>
+Content-Type: text/plain
+X-Originating-IP: [10.177.246.209]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+Our machine encountered a panic after run for a long time and
+the calltrace is:
+RIP: 0010:[<ffffffff9dff0587>]  [<ffffffff9dff0587>] hugetlb_fault+0x307/0xbe0
+RSP: 0018:ffff9567fc27f808  EFLAGS: 00010286
+RAX: e800c03ff1258d48 RBX: ffffd3bb003b69c0 RCX: e800c03ff1258d48
+RDX: 17ff3fc00eda72b7 RSI: 00003ffffffff000 RDI: e800c03ff1258d48
+RBP: ffff9567fc27f8c8 R08: e800c03ff1258d48 R09: 0000000000000080
+R10: ffffaba0704c22a8 R11: 0000000000000001 R12: ffff95c87b4b60d8
+R13: 00005fff00000000 R14: 0000000000000000 R15: ffff9567face8074
+FS:  00007fe2d9ffb700(0000) GS:ffff956900e40000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffd3bb003b69c0 CR3: 000000be67374000 CR4: 00000000003627e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ [<ffffffff9df9b71b>] ? unlock_page+0x2b/0x30
+ [<ffffffff9dff04a2>] ? hugetlb_fault+0x222/0xbe0
+ [<ffffffff9dff1405>] follow_hugetlb_page+0x175/0x540
+ [<ffffffff9e15b825>] ? cpumask_next_and+0x35/0x50
+ [<ffffffff9dfc7230>] __get_user_pages+0x2a0/0x7e0
+ [<ffffffff9dfc648d>] __get_user_pages_unlocked+0x15d/0x210
+ [<ffffffffc068cfc5>] __gfn_to_pfn_memslot+0x3c5/0x460 [kvm]
+ [<ffffffffc06b28be>] try_async_pf+0x6e/0x2a0 [kvm]
+ [<ffffffffc06b4b41>] tdp_page_fault+0x151/0x2d0 [kvm]
+ [<ffffffffc075731c>] ? vmx_vcpu_run+0x2ec/0xc80 [kvm_intel]
+ [<ffffffffc0757328>] ? vmx_vcpu_run+0x2f8/0xc80 [kvm_intel]
+ [<ffffffffc06abc11>] kvm_mmu_page_fault+0x31/0x140 [kvm]
+ [<ffffffffc074d1ae>] handle_ept_violation+0x9e/0x170 [kvm_intel]
+ [<ffffffffc075579c>] vmx_handle_exit+0x2bc/0xc70 [kvm_intel]
+ [<ffffffffc074f1a0>] ? __vmx_complete_interrupts.part.73+0x80/0xd0 [kvm_intel]
+ [<ffffffffc07574c0>] ? vmx_vcpu_run+0x490/0xc80 [kvm_intel]
+ [<ffffffffc069f3be>] vcpu_enter_guest+0x7be/0x13a0 [kvm]
+ [<ffffffffc06cf53e>] ? kvm_check_async_pf_completion+0x8e/0xb0 [kvm]
+ [<ffffffffc06a6f90>] kvm_arch_vcpu_ioctl_run+0x330/0x490 [kvm]
+ [<ffffffffc068d919>] kvm_vcpu_ioctl+0x309/0x6d0 [kvm]
+ [<ffffffff9deaa8c2>] ? dequeue_signal+0x32/0x180
+ [<ffffffff9deae34d>] ? do_sigtimedwait+0xcd/0x230
+ [<ffffffff9e03aed0>] do_vfs_ioctl+0x3f0/0x540
+ [<ffffffff9e03b0c1>] SyS_ioctl+0xa1/0xc0
+ [<ffffffff9e53879b>] system_call_fastpath+0x22/0x27
 
-On Mon, Jan 06, 2020 at 01:26:58PM +0000, Robin Murphy wrote:
-> On 04/01/2020 12:20 am, Brian Masney wrote:
-> > When attempting to load the qcom-iommu driver, and an -EPROBE_DEFER
-> > error occurs, the following attempted NULL pointer deference occurs:
-> > 
-> >      Unable to handle kernel NULL pointer dereference at virtual address 00000014
-> >      pgd = (ptrval)
-> >      [00000014] *pgd=00000000
-> >      Internal error: Oops: 5 [#1] PREEMPT SMP ARM
-> >      Modules linked in:
-> >      CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.5.0-rc2-next-20191220-00010-gfb6b8e8bced6-dirty #3
-> >      Hardware name: Generic DT based system
-> >      PC is at qcom_iommu_domain_free (include/linux/pm_runtime.h:226
-> >        drivers/iommu/qcom_iommu.c:358)
-> >      LR is at release_iommu_mapping (arch/arm/mm/dma-mapping.c:2141)
-> >      pc : lr : psr: 60000013
-> >      sp : ee89dc48  ip : 00000000  fp : c13a6684
-> >      r10: c13a661c  r9 : 00000000  r8 : c13a1240
-> >      r7 : fffffdfb  r6 : 00000000  r5 : edc32f00  r4 : edc32f1c
-> >      r3 : 00000000  r2 : 00000001  r1 : 00000004  r0 : edc32f1c
-> >      Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-> >      Control: 10c5787d  Table: 0020406a  DAC: 00000051
-> >      Process swapper/0 (pid: 1, stack limit = 0x(ptrval))
-> >      Stack: (0xee89dc48 to 0xee89e000)
-> >      dc40:                   edc3d010 edc37020 00000000 c0316af8 edc3d010 edc37000
-> >      dc60: 00000000 c0319684 c14341ac edc3d010 00000000 c083bd88 edc3d010 c13a1240
-> >      dc80: c083c2e8 c13a6684 c13a661c c13a6508 c13a661c c083c134 c13a1240 ee89dcec
-> >      dca0: edc3d010 00000000 ee89dcec c083c2e8 c13a6684 c13a661c c13a6508 c13a661c
-> >      dcc0: c13a6684 c083a31c c13a6684 ee82a86c edc327b8 c1304e48 edc3d010 00000001
-> >      dce0: edc3d054 c083bc08 ee82a880 edc3d010 00000001 c1304e48 edc3d010 edc3d010
-> >      dd00: c13a69e8 c083b010 edc3d010 00000000 eea1fc10 c0837aac 00000200 00000000
-> >      dd20: 00000000 00000000 00000000 c1304e48 00000000 edc3d000 eea1fc10 00000000
-> >      dd40: 00000000 eeff42f4 00000000 00000001 00000000 c09e96e0 eeff42a4 00000000
-> >      dd60: 00000000 00000000 eea1fc10 c09e98bc 00000001 eea1fc10 00000000 eea1fc10
-> >      dd80: edc32c00 c1391580 eea1fc10 00000001 eea1fc10 c0850f90 c2706dec c14368c0
-> >      dda0: 60000013 c1304e48 00000106 eeff42a4 eeff3fa0 00000000 00000000 eea1fc10
-> >      ddc0: 00000001 c1248900 00000106 c09e9bd0 00000001 c0c2ee64 eea1fc00 eea1fc10
-> >      dde0: eea1fc10 00000000 c13a5b70 00000000 c1248900 c081496c c1023d84 00000000
-> >      de00: eeff3fa0 c2706e48 c2706e48 c1304e48 00000001 00000000 eea1fc10 c13a5b70
-> >      de20: 00000000 c13a5b70 00000000 c1248900 00000106 c083dfb8 c14341ac eea1fc10
-> >      de40: 00000000 c083be58 eea1fc10 c13a5b70 c13a5b70 c13a69e8 c12003ec c123a854
-> >      de60: c1248900 c083c134 c1248900 c09e6f3c c0d8d514 eea1fc10 00000000 c13a5b70
-> >      de80: c13a69e8 c12003ec c123a854 c1248900 00000106 c083c3e0 00000000 c13a5b70
-> >      dea0: eea1fc10 c083c440 00000000 c13a5b70 c083c3e8 c083a23c 00000106 ee82a858
-> >      dec0: eea052b4 c1304e48 c13a5b70 edc32b80 00000000 c083b270 c1043084 c121d1d8
-> >      dee0: ffffe000 c13a5b70 c121d1d8 ffffe000 00000000 c083cfcc c13ece60 c121d1d8
-> >      df00: ffffe000 c0302f90 00000106 c034407c 00000000 c10e3a00 c1044dd0 c12003ec
-> >      df20: 00000000 00000006 00000006 c0fbecac c0fada88 c0fada3c 00000000 efffcbf8
-> >      df40: efffcc0d c1304e48 00000000 00000006 c13f9500 c1304e48 c123a830 00000007
-> >      df60: c13f9500 c13f9500 c123a834 c1200f64 00000006 00000006 00000000 c12003ec
-> >      df80: c0c28194 00000000 c0c28194 00000000 00000000 00000000 00000000 00000000
-> >      dfa0: 00000000 c0c2819c 00000000 c03010e8 00000000 00000000 00000000 00000000
-> >      dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-> >      dfe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
-> >      (qcom_iommu_domain_free) from release_iommu_mapping
-> >        (arch/arm/mm/dma-mapping.c:2141)
-> >      (release_iommu_mapping) from arch_teardown_dma_ops
-> >        (include/linux/dma-mapping.h:271 arch/arm/mm/dma-mapping.c:2335)
-> >      (arch_teardown_dma_ops) from really_probe (drivers/base/dd.c:607)
-> >      (really_probe) from driver_probe_device (drivers/base/dd.c:721)
-> >      (driver_probe_device) from bus_for_each_drv (drivers/base/bus.c:431)
-> >      (bus_for_each_drv) from __device_attach (drivers/base/dd.c:896)
-> >      (__device_attach) from bus_probe_device (drivers/base/bus.c:491)
-> >      (bus_probe_device) from device_add (drivers/base/core.c:2488)
-> >      (device_add) from of_platform_device_create_pdata
-> >        (drivers/of/platform.c:189)
-> >      (of_platform_device_create_pdata) from of_platform_bus_create
-> >        (drivers/of/platform.c:393 drivers/of/platform.c:346)
-> >      (of_platform_bus_create) from of_platform_populate
-> >        (drivers/of/platform.c:486)
-> >      (of_platform_populate) from msm_pdev_probe
-> >        (drivers/gpu/drm/msm/msm_drv.c:1197 drivers/gpu/drm/msm/msm_drv.c:1281)
-> >      (msm_pdev_probe) from platform_drv_probe (drivers/base/platform.c:726)
-> >      (platform_drv_probe) from really_probe (drivers/base/dd.c:553)
-> >      (really_probe) from driver_probe_device (drivers/base/dd.c:721)
-> >      (driver_probe_device) from device_driver_attach (drivers/base/dd.c:995)
-> >      (device_driver_attach) from __driver_attach (drivers/base/dd.c:1074)
-> >      (__driver_attach) from bus_for_each_dev (drivers/base/bus.c:304)
-> >      (bus_for_each_dev) from bus_add_driver (drivers/base/bus.c:623)
-> >      (bus_add_driver) from driver_register (drivers/base/driver.c:172)
-> >      (driver_register) from do_one_initcall (include/linux/compiler.h:232
-> >        include/linux/jump_label.h:254 include/linux/jump_label.h:264
-> >        include/trace/events/initcall.h:48 init/main.c:941)
-> >      (do_one_initcall) from kernel_init_freeable (init/main.c:1013
-> >        init/main.c:1022 init/main.c:1039 init/main.c:1231)
-> >      (kernel_init_freeable) from kernel_init (init/main.c:1127)
-> >      (kernel_init) from ret_from_fork (arch/arm/kernel/entry-common.S:156)
-> > 
-> > qcom_iommu_domain_free() has a WARN_ON() that checks to see if the value
-> > of iommu is NULL and returns early, so iommu->dev will always be NULL.
-> > qcom_iommu_detach_dev() is called prior to freeing the IOMMU domain and
-> > is what sets the iommu member to NULL.
-> > 
-> > Let's fix this by adding the 'struct dev' pointer to the
-> > qcom_iommu_domain struct.
-> 
-> Actually, it looks like the qcom_domain->iommu logic is fundamentally broken
-> anyway - this sequence of calls is perfectly valid, but AFAICS will make
-> qcom-iommu go horribly wrong:
-> 
-> 	dom = iommu_domain_alloc(...);
-> 	iommu_attach_device(dom, dev1);
-> 	iommu_attach_device(dom, dev2);
-> 	iommu_detach_device(dom, dev2);
-> 	// dev1 still attached but dom->iommu now NULL
-> 
-> Furthermore, even this should technically be valid:
-> 
-> 	dom = iommu_domain_alloc(...);
-> 	iommu_attach_device(dom, dev);
-> 	iommu_map(dom, addr, ...);
-> 	iommu_detach_device(dom, dev);
-> 	iommu_unmap(dom, addr, ...); // oops, dereferences NULL again
-> 
-> Does something like the diff below work?
-> 
-> Robin.
+( The kernel we used is older, but we think the latest kernel also has this
+  bug after dig into this problem. )
 
-Are you going to send a patch for the diff below?
-AFAICT this problem still exists in 5.6-rc2.
+For 1G hugepages, huge_pte_offset() wants to return NULL or pudp, but it
+may return a wrong 'pmdp' if there is a race. Please look at the following
+code snippet:
+    ...
+    pud = pud_offset(p4d, addr);
+    if (sz != PUD_SIZE && pud_none(*pud))
+        return NULL;
+    /* hugepage or swap? */
+    if (pud_huge(*pud) || !pud_present(*pud))
+        return (pte_t *)pud;
 
-Your patch also seems to fix a warning during probe deferral on arm64
-that has been around for quite a while. (At least for me...)
+    pmd = pmd_offset(pud, addr);
+    if (sz != PMD_SIZE && pmd_none(*pmd))
+        return NULL;
+    /* hugepage or swap? */
+    if (pmd_huge(*pmd) || !pmd_present(*pmd))
+        return (pte_t *)pmd;
+    ...
 
-(See https://lore.kernel.org/linux-iommu/CA+G9fYtScOpkLvx=__gP903uJ2v87RwZgkAuL6RpF9_DTDs9Zw@mail.gmail.com/)
+The following sequence would trigger this bug:
+1. CPU0: sz = PUD_SIZE and *pud = 0 , continue
+1. CPU0: "pud_huge(*pud)" is false
+2. CPU1: calling hugetlb_no_page and set *pud to xxxx8e7(PRESENT)
+3. CPU0: "!pud_present(*pud)" is false, continue
+4. CPU0: pmd = pmd_offset(pud, addr) and maybe return a wrong pmdp
+However, we want CPU0 to return NULL or pudp.
 
-Thanks,
-Stephan
+We can avoid this race by read the pud only once.
 
-> 
-> ----->8-----
-> diff --git a/drivers/iommu/qcom_iommu.c b/drivers/iommu/qcom_iommu.c
-> index c31e7bc4ccbe..af6ee4bf1712 100644
-> --- a/drivers/iommu/qcom_iommu.c
-> +++ b/drivers/iommu/qcom_iommu.c
-> @@ -345,21 +345,20 @@ static void qcom_iommu_domain_free(struct iommu_domain
-> *domain)
->  {
->  	struct qcom_iommu_domain *qcom_domain = to_qcom_iommu_domain(domain);
-> 
-> -	if (WARN_ON(qcom_domain->iommu))    /* forgot to detach? */
-> -		return;
-> -
->  	iommu_put_dma_cookie(domain);
-> 
-> -	/* NOTE: unmap can be called after client device is powered off,
-> -	 * for example, with GPUs or anything involving dma-buf.  So we
-> -	 * cannot rely on the device_link.  Make sure the IOMMU is on to
-> -	 * avoid unclocked accesses in the TLB inv path:
-> -	 */
-> -	pm_runtime_get_sync(qcom_domain->iommu->dev);
-> +	if (qcom_domain->iommu) {
-> +		/* NOTE: unmap can be called after client device is powered off,
-> +		 * for example, with GPUs or anything involving dma-buf.  So we
-> +		 * cannot rely on the device_link.  Make sure the IOMMU is on to
-> +		 * avoid unclocked accesses in the TLB inv path:
-> +		 */
-> +		pm_runtime_get_sync(qcom_domain->iommu->dev);
-> 
-> -	free_io_pgtable_ops(qcom_domain->pgtbl_ops);
-> +		free_io_pgtable_ops(qcom_domain->pgtbl_ops);
-> 
-> -	pm_runtime_put_sync(qcom_domain->iommu->dev);
-> +		pm_runtime_put_sync(qcom_domain->iommu->dev);
-> +	}
-> 
->  	kfree(qcom_domain);
->  }
-> @@ -405,7 +404,7 @@ static void qcom_iommu_detach_dev(struct iommu_domain
-> *domain, struct device *de
->  	struct qcom_iommu_domain *qcom_domain = to_qcom_iommu_domain(domain);
->  	unsigned i;
-> 
-> -	if (!qcom_domain->iommu)
-> +	if (WARN_ON(!qcom_domain->iommu))
->  		return;
-> 
->  	pm_runtime_get_sync(qcom_iommu->dev);
-> @@ -418,8 +417,6 @@ static void qcom_iommu_detach_dev(struct iommu_domain
-> *domain, struct device *de
->  		ctx->domain = NULL;
->  	}
->  	pm_runtime_put_sync(qcom_iommu->dev);
-> -
-> -	qcom_domain->iommu = NULL;
->  }
-> 
->  static int qcom_iommu_map(struct iommu_domain *domain, unsigned long iova,
+Signed-off-by: Longpeng(Mike) <longpeng2@huawei.com>
+---
+ mm/hugetlb.c | 34 ++++++++++++++++++----------------
+ 1 file changed, 18 insertions(+), 16 deletions(-)
+
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index dd8737a..3bde229 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -4908,31 +4908,33 @@ pte_t *huge_pte_alloc(struct mm_struct *mm,
+ pte_t *huge_pte_offset(struct mm_struct *mm,
+ 		       unsigned long addr, unsigned long sz)
+ {
+-	pgd_t *pgd;
+-	p4d_t *p4d;
+-	pud_t *pud;
+-	pmd_t *pmd;
++	pgd_t *pgdp;
++	p4d_t *p4dp;
++	pud_t *pudp, pud;
++	pmd_t *pmdp, pmd;
+ 
+-	pgd = pgd_offset(mm, addr);
+-	if (!pgd_present(*pgd))
++	pgdp = pgd_offset(mm, addr);
++	if (!pgd_present(*pgdp))
+ 		return NULL;
+-	p4d = p4d_offset(pgd, addr);
+-	if (!p4d_present(*p4d))
++	p4dp = p4d_offset(pgdp, addr);
++	if (!p4d_present(*p4dp))
+ 		return NULL;
+ 
+-	pud = pud_offset(p4d, addr);
+-	if (sz != PUD_SIZE && pud_none(*pud))
++	pudp = pud_offset(p4dp, addr);
++	pud = READ_ONCE(*pudp);
++	if (sz != PUD_SIZE && pud_none(pud))
+ 		return NULL;
+ 	/* hugepage or swap? */
+-	if (pud_huge(*pud) || !pud_present(*pud))
+-		return (pte_t *)pud;
++	if (pud_huge(pud) || !pud_present(pud))
++		return (pte_t *)pudp;
+ 
+-	pmd = pmd_offset(pud, addr);
+-	if (sz != PMD_SIZE && pmd_none(*pmd))
++	pmdp = pmd_offset(pudp, addr);
++	pmd = READ_ONCE(*pmdp);
++	if (sz != PMD_SIZE && pmd_none(pmd))
+ 		return NULL;
+ 	/* hugepage or swap? */
+-	if (pmd_huge(*pmd) || !pmd_present(*pmd))
+-		return (pte_t *)pmd;
++	if (pmd_huge(pmd) || !pmd_present(pmd))
++		return (pte_t *)pmdp;
+ 
+ 	return NULL;
+ }
+-- 
+1.8.3.1
+
+
