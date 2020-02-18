@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C03E51622CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 09:54:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B50B51622CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 09:54:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726330AbgBRIyI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 03:54:08 -0500
-Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:54565 "EHLO
-        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726186AbgBRIyH (ORCPT
+        id S1726403AbgBRIyR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 03:54:17 -0500
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:27021 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726127AbgBRIyR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 03:54:07 -0500
+        Tue, 18 Feb 2020 03:54:17 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1582016047; x=1613552047;
-  h=from:to:cc:subject:date:message-id:mime-version;
-  bh=NnW2Xr8n2sakcn0GkM6yWrfHpG7o7KnOOXlAkm455jQ=;
-  b=jbcW526jyUKrYooZLiAUc5vtKdqCXacswRQNmqygXS7OU+k9djj1u0Nt
-   zik1PCSIUbRnqEoDWne1vJAXS0VTvKjEQhg2w/ibkxnuGq1bi1mIfchIz
-   LcRzXpqTFLUo1Rgfl3Oa8Q0OyrCiOEI87CyyABroqRhaod3MgM1/7U6Sf
-   s=;
-IronPort-SDR: FmDtL19JW7d/b3j2oxTQxS8bXSA147s6EJaknLC5r+QsXeNCFkOIvfTlVRqyctoKFo3Dodlsbx
- 3rEYBVmnz57g==
-X-IronPort-AV: E=Sophos;i="5.70,455,1574121600"; 
-   d="scan'208";a="17440540"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1d-9ec21598.us-east-1.amazon.com) ([10.43.8.6])
-  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP; 18 Feb 2020 08:53:54 +0000
-Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1d-9ec21598.us-east-1.amazon.com (Postfix) with ESMTPS id 0A533A2103;
-        Tue, 18 Feb 2020 08:53:46 +0000 (UTC)
+  t=1582016056; x=1613552056;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version;
+  bh=kAdTeVn39NF6MtyWxbSfFrMuEluavNfxQ8uqZzEFpes=;
+  b=qeBuXNojWCRUNrG8QTE2trrb2KmSzw/aIgvJ+SxUacaPLvyNiX9kiJSP
+   +CKhBrG+Hcai5VUrvNromg1GOuLsHixwfuLacRjh3ySPS9zJlcfPO1IGg
+   he3ZN48e2zXz4PkuEsHoeDFWpRe2UylVoT36fjSSYnetDvoH3ChD2oMAN
+   4=;
+IronPort-SDR: Pb82G17sW4eGRVbXOfAxd5GeDDF8+bHfbeUvAjRbHWBmyYBUQ4VQ1EY4aFZgLXXnxzxqyNxvvG
+ tWGVo+pHZmeg==
+X-IronPort-AV: E=Sophos;i="5.70,456,1574121600"; 
+   d="scan'208";a="16791750"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1a-16acd5e0.us-east-1.amazon.com) ([10.43.8.6])
+  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP; 18 Feb 2020 08:54:04 +0000
+Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1a-16acd5e0.us-east-1.amazon.com (Postfix) with ESMTPS id 52519A259C;
+        Tue, 18 Feb 2020 08:53:55 +0000 (UTC)
 Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
  EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
- id 15.0.1236.3; Tue, 18 Feb 2020 08:53:46 +0000
+ id 15.0.1236.3; Tue, 18 Feb 2020 08:53:55 +0000
 Received: from u886c93fd17d25d.ant.amazon.com (10.43.160.108) by
  EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Tue, 18 Feb 2020 08:53:35 +0000
+ id 15.0.1367.3; Tue, 18 Feb 2020 08:53:45 +0000
 From:   SeongJae Park <sjpark@amazon.com>
 To:     <akpm@linux-foundation.org>
 CC:     SeongJae Park <sjpark@amazon.de>, <acme@kernel.org>,
@@ -49,10 +50,12 @@ CC:     SeongJae Park <sjpark@amazon.de>, <acme@kernel.org>,
         <sj38.park@gmail.com>, <vdavydov.dev@gmail.com>,
         <linux-mm@kvack.org>, <linux-doc@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [RFC v2 0/4] Implement Data Access Monitoring-based Memory Operation Schemes
-Date:   Tue, 18 Feb 2020 09:53:05 +0100
-Message-ID: <20200218085309.18346-1-sjpark@amazon.com>
+Subject: [RFC v2 1/4] mm/madvise: Export madvise_common() to mm internal code
+Date:   Tue, 18 Feb 2020 09:53:06 +0100
+Message-ID: <20200218085309.18346-2-sjpark@amazon.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200218085309.18346-1-sjpark@amazon.com>
+References: <20200218085309.18346-1-sjpark@amazon.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.43.160.108]
@@ -65,66 +68,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: SeongJae Park <sjpark@amazon.de>
 
-DAMON[1] can be used as a primitive for data access awared memory management
-optimizations.  That said, users who want such optimizations should run DAMON,
-read the monitoring results, analyze it, plan a new memory management scheme,
-and apply the new scheme by themselves.  Such efforts will be inevitable for
-some complicated optimizations.
+This commit exports ``madvise_common()`` to ``mm/`` code for future
+reuse.
 
-However, in many other cases, the users would just want the system to apply an
-memory management action to a memory region of a specific size having a
-specific access frequency for a specific time.  For example, "page out a memory
-region larger than 100 MiB keeping only rare accesses more than 10 minutes", or
-"Use THP for a memory region larger than 2 MiB maintaing frequent accesses for
-more than 5 seconds".
+Signed-off-by: SeongJae Park <sjpark@amazon.de>
+---
+ mm/internal.h | 4 ++++
+ mm/madvise.c  | 3 ++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-This RFC patchset makes DAMON to handle such data access monitoring-based
-operation schemes.  With this change, users can do the data access awared
-optimizations by simply specifying their schemes to DAMON.
-
-
-Sequence Of Patches
-===================
-
-The patches are based on the v5.5 plus v5 DAMON patchset[1] and Minchan's
-``madvise()`` factor-out patch[2].  Minchan's patch was necessary for reuse of
-``madvise()`` code in DAMON.  You can also clone the complete git tree:
-
-    $ git clone git://github.com/sjp38/linux -b damos/rfc/v2
-
-The web is also available:
-https://github.com/sjp38/linux/releases/tag/damos/rfc/v2
-
-The first patch allows DAMON to reuse ``madvise()`` code for the actions.  The
-second patch accounts age of each region.  Third patch implements the handling
-of the schemes in DAMON and exports a kernel space programming interface for
-it.  Finally, the fourth patch implements a debugfs interface for privileged
-people and programs.
-
-[1] https://lore.kernel.org/linux-mm/20200217103110.30817-1-sjpark@amazon.com/
-[2] https://lore.kernel.org/linux-mm/20200128001641.5086-2-minchan@kernel.org/
-
-
-Patch History
-=============
-
-Changes from RFC v1
-(https://lore.kernel.org/linux-mm/20200210150921.32482-1-sjpark@amazon.com/)
- - Properly adjust age accounting related properties after splitting, merging,
-   and action applying
-
-SeongJae Park (4):
-  mm/madvise: Export madvise_common() to mm internal code
-  mm/damon: Account age of target regions
-  mm/damon: Implement data access monitoring-based operation schemes
-  mm/damon/schemes: Implement a debugfs interface
-
- include/linux/damon.h |  29 ++++
- mm/damon.c            | 360 +++++++++++++++++++++++++++++++++++++++++-
- mm/internal.h         |   4 +
- mm/madvise.c          |   3 +-
- 4 files changed, 388 insertions(+), 8 deletions(-)
-
+diff --git a/mm/internal.h b/mm/internal.h
+index 3cf20ab3ca01..dcdfe00e02ff 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -576,4 +576,8 @@ static inline bool is_migrate_highatomic_page(struct page *page)
+ 
+ void setup_zone_pageset(struct zone *zone);
+ extern struct page *alloc_new_node_page(struct page *page, unsigned long node);
++
++
++int madvise_common(struct task_struct *task, struct mm_struct *mm,
++			unsigned long start, size_t len_in, int behavior);
+ #endif	/* __MM_INTERNAL_H */
+diff --git a/mm/madvise.c b/mm/madvise.c
+index 0c901de531e4..4fa9dfc770bc 100644
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -1005,7 +1005,7 @@ madvise_behavior_valid(int behavior)
+  * @task could be a zombie leader if it calls sys_exit so accessing mm_struct
+  * via task->mm is prohibited. Please use @mm instead of task->mm.
+  */
+-static int madvise_common(struct task_struct *task, struct mm_struct *mm,
++int madvise_common(struct task_struct *task, struct mm_struct *mm,
+ 			unsigned long start, size_t len_in, int behavior)
+ {
+ 	unsigned long end, tmp;
+@@ -1103,6 +1103,7 @@ static int madvise_common(struct task_struct *task, struct mm_struct *mm,
+ 
+ 	return error;
+ }
++EXPORT_SYMBOL_GPL(madvise_common);
+ 
+ /*
+  * The madvise(2) system call.
 -- 
 2.17.1
 
