@@ -2,193 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7988D16213E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 08:01:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15617162146
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 08:02:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726291AbgBRHBH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 02:01:07 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:49720 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726072AbgBRHBG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 02:01:06 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 4669D921C802E35843D2;
-        Tue, 18 Feb 2020 15:01:03 +0800 (CST)
-Received: from [127.0.0.1] (10.173.222.27) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Tue, 18 Feb 2020
- 15:00:55 +0800
-Subject: Re: [PATCH v4 08/20] irqchip/gic-v4.1: Plumb get/set_irqchip_state
- SGI callbacks
-To:     Marc Zyngier <maz@kernel.org>,
+        id S1726360AbgBRHCs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 02:02:48 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:42207 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726104AbgBRHCr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 02:02:47 -0500
+X-UUID: 08be96ec4594481da63ab274ea77ebbb-20200218
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=SfQLOOesViht8zuhVZth6gVEBbimYGDRoLRh1mE3SdQ=;
+        b=hGs1vrG84S+Pz2nTgA2P2nTRze0MIZaTGrFJUASFtwVira+GpWynxZrNlUhlyzdyX37T1sNlrykeNd83BAhFNIDWiBaoMaA4M91p+CZ402Oj3EKvMgJoLfqxKtKJVhpoNA6lWhW7M6QYf1SzhCOovGtJjlL4XfbgyytIJ7ssWVY=;
+X-UUID: 08be96ec4594481da63ab274ea77ebbb-20200218
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <stanley.chu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 265033743; Tue, 18 Feb 2020 15:02:41 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 18 Feb 2020 15:00:11 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 18 Feb 2020 15:02:11 +0800
+Message-ID: <1582009359.26304.29.camel@mtksdccf07>
+Subject: Re: [PATCH v3 1/2] scsi: ufs: pass device information to
+ apply_dev_quirks
+From:   Stanley Chu <stanley.chu@mediatek.com>
+To:     Can Guo <cang@codeaurora.org>
+CC:     <linux-scsi@vger.kernel.org>, <martin.petersen@oracle.com>,
+        <avri.altman@wdc.com>, <alim.akhtar@samsung.com>,
+        <jejb@linux.ibm.com>, <beanhuo@micron.com>,
+        <asutoshd@codeaurora.org>, <matthias.bgg@gmail.com>,
+        <bvanassche@acm.org>, <linux-mediatek@lists.infradead.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <kvmarm@lists.cs.columbia.edu>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Robert Richter <rrichter@marvell.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        Eric Auger <eric.auger@redhat.com>,
-        "James Morse" <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-References: <20200214145736.18550-1-maz@kernel.org>
- <20200214145736.18550-9-maz@kernel.org>
-From:   Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <4b7f71f1-5e7f-e6af-f47d-7ed0d3a8739f@huawei.com>
-Date:   Tue, 18 Feb 2020 15:00:54 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.0
+        <linux-kernel@vger.kernel.org>, <kuohong.wang@mediatek.com>,
+        <peter.wang@mediatek.com>, <chun-hung.wu@mediatek.com>,
+        <andy.teng@mediatek.com>
+Date:   Tue, 18 Feb 2020 15:02:39 +0800
+In-Reply-To: <2a8fc44914b7ed8777a4a99ba6b8647a@codeaurora.org>
+References: <1578726707-6596-1-git-send-email-stanley.chu@mediatek.com>
+         <1578726707-6596-2-git-send-email-stanley.chu@mediatek.com>
+         <2a8fc44914b7ed8777a4a99ba6b8647a@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 MIME-Version: 1.0
-In-Reply-To: <20200214145736.18550-9-maz@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.173.222.27]
-X-CFilter-Loop: Reflected
+X-TM-SNTS-SMTP: 73E60B1B862E9A9A7A34435771FBADD9483B4202554A334657B8DC4403A419B82000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
-
-On 2020/2/14 22:57, Marc Zyngier wrote:
-> To implement the get/set_irqchip_state callbacks (limited to the
-> PENDING state), we have to use a particular set of hacks:
-> 
-> - Reading the pending state is done by using a pair of new redistributor
->    registers (GICR_VSGIR, GICR_VSGIPENDR), which allow the 16 interrupts
->    state to be retrieved.
-> - Setting the pending state is done by generating it as we'd otherwise do
->    for a guest (writing to GITS_SGIR)
-> - Clearing the pending state is done by emiting a VSGI command with the
->    "clear" bit set.
-> 
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> ---
->   drivers/irqchip/irq-gic-v3-its.c   | 56 ++++++++++++++++++++++++++++++
->   include/linux/irqchip/arm-gic-v3.h | 14 ++++++++
->   2 files changed, 70 insertions(+)
-> 
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> index 1e448d9a16ea..a9753435c4ff 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -3915,11 +3915,67 @@ static int its_sgi_set_affinity(struct irq_data *d,
->   	return -EINVAL;
->   }
->   
-> +static int its_sgi_set_irqchip_state(struct irq_data *d,
-> +				     enum irqchip_irq_state which,
-> +				     bool state)
-> +{
-> +	if (which != IRQCHIP_STATE_PENDING)
-> +		return -EINVAL;
-> +
-> +	if (state) {
-> +		struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
-> +		struct its_node *its = find_4_1_its();
-> +		u64 val;
-> +
-> +		val  = FIELD_PREP(GITS_SGIR_VPEID, vpe->vpe_id);
-> +		val |= FIELD_PREP(GITS_SGIR_VINTID, d->hwirq);
-> +		writeq_relaxed(val, its->sgir_base + GITS_SGIR - SZ_128K);
-> +	} else {
-> +		its_configure_sgi(d, true);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int its_sgi_get_irqchip_state(struct irq_data *d,
-> +				     enum irqchip_irq_state which, bool *val)
-> +{
-> +	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
-> +	void __iomem *base = gic_data_rdist_cpu(vpe->col_idx)->rd_base + SZ_128K;
-
-There might be a race on reading the 'vpe->col_idx' against a concurrent
-vPE schedule (col_idx will be modified in its_vpe_set_affinity)? Will we
-end up accessing the GICR_VSGI* registers of the old redistributor,
-while the vPE is now resident on the new one? Or is it harmful?
-
-The same question for direct_lpi_inv(), where 'vpe->col_idx' will be
-used in irq_to_cpuid().
-
-> +	u32 count = 1000000;	/* 1s! */
-> +	u32 status;
-> +
-> +	if (which != IRQCHIP_STATE_PENDING)
-> +		return -EINVAL;
-> +
-> +	writel_relaxed(vpe->vpe_id, base + GICR_VSGIR);
-> +	do {
-> +		status = readl_relaxed(base + GICR_VSGIPENDR);
-> +		if (!(status & GICR_VSGIPENDR_BUSY))
-> +			goto out;
-> +
-> +		count--;
-> +		if (!count) {
-> +			pr_err_ratelimited("Unable to get SGI status\n");
-> +			goto out;
-> +		}
-> +		cpu_relax();
-> +		udelay(1);
-> +	} while(count);
-> +
-> +out:
-> +	*val = !!(status & (1 << d->hwirq));
-> +
-> +	return 0;
-> +}
-> +
->   static struct irq_chip its_sgi_irq_chip = {
->   	.name			= "GICv4.1-sgi",
->   	.irq_mask		= its_sgi_mask_irq,
->   	.irq_unmask		= its_sgi_unmask_irq,
->   	.irq_set_affinity	= its_sgi_set_affinity,
-> +	.irq_set_irqchip_state	= its_sgi_set_irqchip_state,
-> +	.irq_get_irqchip_state	= its_sgi_get_irqchip_state,
->   };
->   
->   static int its_sgi_irq_domain_alloc(struct irq_domain *domain,
-> diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
-> index a89578884263..64da945486ac 100644
-> --- a/include/linux/irqchip/arm-gic-v3.h
-> +++ b/include/linux/irqchip/arm-gic-v3.h
-> @@ -345,6 +345,15 @@
->   #define GICR_VPENDBASER_4_1_VGRP1EN	(1ULL << 58)
->   #define GICR_VPENDBASER_4_1_VPEID	GENMASK_ULL(15, 0)
->   
-> +#define GICR_VSGIR			0x0080
-> +
-> +#define GICR_VSGIR_VPEID		GENMASK(15, 0)
-> +
-> +#define GICR_VSGIPENDR			0x0088
-> +
-> +#define GICR_VSGIPENDR_BUSY		(1U << 31)
-> +#define GICR_VSGIPENDR_PENDING		GENMASK(15, 0)
-> +
->   /*
->    * ITS registers, offsets from ITS_base
->    */
-> @@ -368,6 +377,11 @@
->   
->   #define GITS_TRANSLATER			0x10040
->   
-> +#define GITS_SGIR			0x20020
-> +
-> +#define GITS_SGIR_VPEID			GENMASK_ULL(47, 32)
-> +#define GITS_SGIR_VINTID		GENMASK_ULL(7, 0)
-
-The spec says vINTID field is [3:0] of the GITS_SGIR.
-
-
-Thanks,
-Zenghui
-
-> +
->   #define GITS_CTLR_ENABLE		(1U << 0)
->   #define GITS_CTLR_ImDe			(1U << 1)
->   #define	GITS_CTLR_ITS_NUMBER_SHIFT	4
-> 
+SGkgQ2FuLA0KDQoNCj4gSGkgU3RhbmxleSwNCj4gDQo+IElzIHRoaXMgc2VyaWVzIG1lcmdlZD8g
+SWYgbm8sIHdvdWxkIHlvdSBtaW5kIG1vdmluZw0KPiB1ZnNoY2Rfdm9wc19hcHBseV9kZXZfcXVp
+cmtzKGhiYSwgY2FyZCk7IGEgbGl0dGxlIGJpdD8gTGlrZSBiZWxvdy4NCj4gDQo+IEBAIC02ODUy
+LDE0ICs2ODUyLDE0IEBAIHN0YXRpYyB2b2lkIHVmc2hjZF90dW5lX3VuaXByb19wYXJhbXMoc3Ry
+dWN0IA0KPiB1ZnNfaGJhICpoYmEpDQo+ICAgICAgICAgICAgICAgICAgdWZzaGNkX3R1bmVfcGFf
+aGliZXJuOHRpbWUoaGJhKTsNCj4gICAgICAgICAgfQ0KPiANCj4gKyAgICAgICB1ZnNoY2Rfdm9w
+c19hcHBseV9kZXZfcXVpcmtzKGhiYSwgY2FyZCk7DQo+ICsNCj4gICAgICAgICAgaWYgKGhiYS0+
+ZGV2X3F1aXJrcyAmIFVGU19ERVZJQ0VfUVVJUktfUEFfVEFDVElWQVRFKQ0KPiAgICAgICAgICAg
+ICAgICAgIC8qIHNldCAxbXMgdGltZW91dCBmb3IgUEFfVEFDVElWQVRFICovDQo+ICAgICAgICAg
+ICAgICAgICAgdWZzaGNkX2RtZV9zZXQoaGJhLCBVSUNfQVJHX01JQihQQV9UQUNUSVZBVEUpLCAx
+MCk7DQo+IA0KPiBJbiB0aGlzIHdheSwgdmVuZG9yIGNvZGVzIGhhdmUgYSBjaGFuY2UgdG8gbW9k
+aWZ5IHRoZSBkZXZfcXVpcmtzDQo+IGJlZm9yZSB1ZnNoY2RfdHVuZV91bmlwcm9fcGFyYW1zKCkg
+ZG9lcyB0aGUgcmVzdCBvZiBpdHMgam9iLg0KPiANCg0KVGhpcyBwYXRjaCBoYXMgYmVlbiBtZXJn
+ZWQgdG8gNS42LXJjMS4NCg0KQmFzaWNhbGx5IEkgYW0gZmluZSB3aXRoIHlvdXIgcHJvcG9zYWwu
+IEJ1dCBpZiB5b3UgbmVlZCB0byBtb3ZlIGl0IHRvDQpuZXcgbWVudGlvbmVkIHBvc2l0aW9uLCBv
+dXIgYXBwbHlfZGV2X3F1aXJrcyBjYWxsYmFjayBhbHNvIG5lZWQNCmNvcnJlc3BvbmRpbmcgY2hh
+bmdlIHNvIGl0IG1pZ2h0IG5lZWQgb3VyIGNvLXdvcmtzIDogKQ0KDQpGb3IgZXhhbXBsZSwgeW91
+IGNvdWxkIGp1c3QgcG9zdCB5b3VyIHByb3Bvc2VkIGNoYW5nZXMgYW5kIHRoZW4gd2Ugd291bGQN
+CnByb3ZpZGUgY29ycmVzcG9uZGluZyBjaGFuZ2UgYXMgc29vbiBhcyBwb3NzaWJsZT8NCg0KQmVz
+aWRlcywgSSB3b3VsZCBsaWtlIHRvIHJlbWluZCB0aGF0IGFsbG93aW5nIHZlbmRvciB0byAiZml4
+IiBkZXZpY2UNCnF1aXJrcyBpbiBhZHZhbmNlIGltcGx5IHRoYXQgY3VycmVudCBjb21tb24gZGV2
+aWNlIHF1aXJrcyBoYXZlIHNvbWUNCnByb2JsZW1zPyBJZiBzbywgd291bGQgeW91IGNvbnNpZGVy
+IHRvIGZpeCBjb21tb24gZGV2aWNlIHF1aXJrcyBpbnN0ZWFkPw0KDQoNCj4gVGhhbmtzLA0KPiBD
+YW4gR3VvLg0KDQpUaGFua3MsDQpTdGFubGV5IENodQ0KDQoNCg==
 
