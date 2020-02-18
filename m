@@ -2,125 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE60716243C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 11:06:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDDB316244B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 11:10:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726707AbgBRKF6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 05:05:58 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:45441 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726682AbgBRKF5 (ORCPT
+        id S1726582AbgBRKKZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 05:10:25 -0500
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:16086 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726293AbgBRKKY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 05:05:57 -0500
-Received: by mail-il1-f194.google.com with SMTP id p8so16777094iln.12
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 02:05:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=bo6pwHsMO3Fl7f+CYI2NiFOFstRv2BITpPEO1O08RVU=;
-        b=OX2lL6mUGKvWsONNxNeQhgNsEMx4tDkhQEeAE9Ee8qhkCh0DbNwjGmW7IIk9/AhWBk
-         TklebYtsegUDb9Bz8k5n/C99gUKH8OJQkpQUScJeKddcOft8KyABgVEc5OqX2k9aTUY5
-         vZjeK34uEmbHAFBdAPPgIl44hRRO559slOre0K9NWGFZuUY+mwMwERxliDSZehVUC3c9
-         Ax3+i0lgRnuQTXoqsvy0sboRLyX4koir7/Y3FUJc3OyoyVtMt2EJzFci9+CD1qHiBgux
-         TPOY2Nt3bXKARZ9f7t1hq55i8KJ4eoqcF58DekNoNQhWh9y2+wMkc2bZx78sQMg9gZUp
-         qPAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=bo6pwHsMO3Fl7f+CYI2NiFOFstRv2BITpPEO1O08RVU=;
-        b=ODWA8bcns8+lv5Nyc1hwCYcA7vTr6X0581RyFkdKd/tF3OwRxtmOHlz4h+SSpq0k1J
-         pef39fSxQJPES8RP11mgUG0i/b9oMVl6NzPl4O8JN4pg653KuYIhtjfXJ0imzRhNW2Ew
-         HbnYXDb5np52g+i8KmCjl88m/v0UBDIukD+HV8IY9Ng6D/PWphVjOIVNBJ/MK112MCJ8
-         1y9wrV0QCCXf+mCS8gPz0f6FZzx8+Ux0SynX66AARr6znRn08NbhRvzv2FcVnz5iamtQ
-         wUzyMKm4TeuYmULdrYDP0MX6mXbxUrmIQ37AQHWmk4V40EuEF3Z2eXKYht6H9LxS21Qx
-         HoFw==
-X-Gm-Message-State: APjAAAU/d4UleIUsNGnGUSvdrd891ibcfMmNeFy0wPTDgdQpo0dfCl4P
-        s66IzKjKux+rWe4FJvOGGB83/BsDIlaCKH0/ySFpTQ==
-X-Google-Smtp-Source: APXvYqyvg6eg+RWs9twX0IINEiLja6rLNo4SBxl81c/FgUf2jd9o+d8pwNRyTCdZ3WeeLlF4te4mreFEWoS6vKlfcGk=
-X-Received: by 2002:a92:9c1c:: with SMTP id h28mr17741163ili.189.1582020355566;
- Tue, 18 Feb 2020 02:05:55 -0800 (PST)
-MIME-Version: 1.0
-References: <20200218094234.23896-1-brgl@bgdev.pl> <20200218094234.23896-3-brgl@bgdev.pl>
- <6e7a5df7-6ded-7777-5552-879934c185ad@linaro.org>
-In-Reply-To: <6e7a5df7-6ded-7777-5552-879934c185ad@linaro.org>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 18 Feb 2020 11:05:44 +0100
-Message-ID: <CAMRc=McQ4ESq4g82QGjZiM0+NWUBrjUv71Be7UXzZpSsa9xAig@mail.gmail.com>
-Subject: Re: [PATCH v2 2/7] nvmem: fix another memory leak in error path
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Khouloud Touil <ktouil@baylibre.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Tue, 18 Feb 2020 05:10:24 -0500
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01IA1LFv008454;
+        Tue, 18 Feb 2020 04:10:01 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=PODMain02222019;
+ bh=7C3WqxU7agsBY/SV9N06VqS8zd5zedsNtq9mPxpHcVo=;
+ b=N9GN9QtlEK4wicayZdVMUNi3AzFIrZEiwzXLlzxOfuI7yaunRJtaiDTj71aamKf0fMn9
+ SBT+eoCLOwGin1aqqFH/lhDajXtSBGd9U5vtcX5+FTmmONpA6hGImOxWEagV6ySjDB1t
+ o/+ybKPiLpKYvWB351lzv1ASF5LRLFsX/LsCLPfkwSyuS8cl7dvn9o3RpwRE+UJ9cieK
+ o7K8TWg7+mWl/AArcQMtA2FWQZNzBcThXQNCusPnvfKHF3c01OmxAznpFKZDZ6T377X9
+ Y3fkEMJZ1r34jYZjF5cle1gts1wGdAk5SalgdPfONXO42assPqdAJJSsNLxUZWmna4RC 4Q== 
+Authentication-Results: ppops.net;
+        spf=pass smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from ediex02.ad.cirrus.com ([5.172.152.52])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2y6dxw3vru-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Tue, 18 Feb 2020 04:10:00 -0600
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Tue, 18 Feb
+ 2020 10:09:59 +0000
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Tue, 18 Feb 2020 10:09:59 +0000
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 500272AB;
+        Tue, 18 Feb 2020 10:09:59 +0000 (UTC)
+Date:   Tue, 18 Feb 2020 10:09:59 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+CC:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        moderated for non-subscribers <alsa-devel@alsa-project.org>,
+        Mark Brown <broonie@kernel.org>,
+        <patches@opensource.cirrus.com>, <geert@linux-m68k.org>
+Subject: Re: linux-next: Tree for Feb 18 (sound/soc/codecs/wm5110.c)
+Message-ID: <20200218100959.GD108283@ediswmail.ad.cirrus.com>
+References: <20200218152853.67e2482a@canb.auug.org.au>
+ <89ef264f-12c9-ccb0-5cdd-ee5f70a469dd@infradead.org>
+ <c2273472-18af-e206-c942-fd460e0d192c@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <c2273472-18af-e206-c942-fd460e0d192c@infradead.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-SPF-Result: pass
+X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
+ ip4:5.172.152.52 -all
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 impostorscore=0
+ bulkscore=0 spamscore=0 clxscore=1011 adultscore=0 phishscore=0
+ suspectscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002180080
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wt., 18 lut 2020 o 10:56 Srinivas Kandagatla
-<srinivas.kandagatla@linaro.org> napisa=C5=82(a):
->
->
->
-> On 18/02/2020 09:42, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > The nvmem struct is only freed on the first error check after its
-> > allocation and leaked after that. Fix it with a new label.
-> >
-> > Cc: <stable@vger.kernel.org>
-> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > ---
-> >   drivers/nvmem/core.c | 8 ++++----
-> >   1 file changed, 4 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-> > index b0be03d5f240..c9b3f4047154 100644
-> > --- a/drivers/nvmem/core.c
-> > +++ b/drivers/nvmem/core.c
-> > @@ -343,10 +343,8 @@ struct nvmem_device *nvmem_register(const struct n=
-vmem_config *config)
-> >               return ERR_PTR(-ENOMEM);
-> >
-> >       rval  =3D ida_simple_get(&nvmem_ida, 0, 0, GFP_KERNEL);
-> > -     if (rval < 0) {
-> > -             kfree(nvmem);
-> > -             return ERR_PTR(rval);
-> > -     }
-> > +     if (rval < 0)
-> > +             goto err_free_nvmem;
-> >       if (config->wp_gpio)
-> >               nvmem->wp_gpio =3D config->wp_gpio;
-> >       else
-> > @@ -432,6 +430,8 @@ struct nvmem_device *nvmem_register(const struct nv=
-mem_config *config)
-> >       put_device(&nvmem->dev);
-> >   err_ida_remove:
-> >       ida_simple_remove(&nvmem_ida, nvmem->id);
-> > +err_free_nvmem:
-> > +     kfree(nvmem);
->
-> This is not correct fix to start with, if the device has already been
-> intialized before jumping here then nvmem would be freed as part of
-> nvmem_release().
->
-> So the bug was actually introduced by adding err_ida_remove label.
->
-> You can free nvmem at that point but not at any point after that as
-> device core would be holding a reference to it.
->
+On Mon, Feb 17, 2020 at 11:05:49PM -0800, Randy Dunlap wrote:
+> [resending to broonie@kernel.org; other email address got message too big for mailbox]
+> 
 
-OK I see - I missed the release() callback assignment. Frankly: I find
-this split of resource management responsibility confusing. Since the
-users are expected to call nvmem_unregister() anyway - wouldn't it be
-more clear to just free all resources there? What is the advantage of
-defining the release() callback for device type here?
+Will have a word with our IT guys, Mark's
+opensource.wolfsonmicro.com account certainly shouldn't still be
+accepting email.
 
-Bartosz
+> 
+> On 2/17/20 11:04 PM, Randy Dunlap wrote:
+> > On 2/17/20 8:28 PM, Stephen Rothwell wrote:
+> >> Hi all,
+> >>
+> >> Changes since 20200217:
+> >>
+> > 
+> > on x86_64:
+> > 
+> > WARNING: unmet direct dependencies detected for SND_SOC_WM5110
+> >   Depends on [n]: SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && MFD_WM5110 [=n]
+> >   Selected by [y]:
+> >   - SND_SOC_BELLS [=y] && SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && SND_SOC_SAMSUNG [=y] && MFD_ARIZONA [=y] && I2C [=y] && SPI_MASTER [=y] && (MACH_WLF_CRAGG_6410 || COMPILE_TEST [=y])
+> >   - SND_SOC_SAMSUNG_TM2_WM5110 [=y] && SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && SND_SOC_SAMSUNG [=y] && MFD_ARIZONA [=y] && I2C [=y] && SPI_MASTER [=y] && (GPIOLIB [=y] || COMPILE_TEST [=y])
+> > 
+> > 
+> > Full randconfig file is attached.
+> > 
+> 
+
+This looks like it comes from these two patches:
+
+ea00d95200d0 ("ASoC: Use imply for SND_SOC_ALL_CODECS")
+d8dd3f92a6ba ("ASoC: Fix SND_SOC_ALL_CODECS imply misc fallout")
+
+What is happening is the machine drivers still select these
+symbols but this doesn't take account of the dependencies, which
+are now added by the second of those patches.
+
+I guess there are a couple of options:
+
+1) We could update the machine drivers to do an imply as well,
+like the changes to SND_SOC_ALL_CODECS. I think this will
+generally work but doesn't really feel right as you can end up with
+the machine driver built without the CODEC.
+
+2) We could update the machine drivers to a depends on and make
+the CODEC symbols manually selectable. I guess this also has the
+advantages that it would be necessary for the simple card stuff
+that seems to be everyones first choice for machine drivers these
+days.
+
+Mark do you have any strong feelings on this I am leaning towards
+2?
+
+Thanks,
+Charles
