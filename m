@@ -2,194 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4EF01620B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 07:15:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 937FC1620CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 07:21:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726193AbgBRGPG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 01:15:06 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:55597 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726017AbgBRGPG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 01:15:06 -0500
-Received: from dread.disaster.area (pa49-179-138-28.pa.nsw.optusnet.com.au [49.179.138.28])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id ABD677E9E5B;
-        Tue, 18 Feb 2020 17:15:00 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1j3w9r-0006E2-AR; Tue, 18 Feb 2020 17:14:59 +1100
-Date:   Tue, 18 Feb 2020 17:14:59 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v6 07/19] mm: Put readahead pages in cache earlier
-Message-ID: <20200218061459.GM10776@dread.disaster.area>
-References: <20200217184613.19668-1-willy@infradead.org>
- <20200217184613.19668-12-willy@infradead.org>
+        id S1726338AbgBRGU5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 01:20:57 -0500
+Received: from mail.andi.de1.cc ([85.214.55.253]:58056 "EHLO mail.andi.de1.cc"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726186AbgBRGUu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 01:20:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=h/IV/F0QbpAv18eUQXLvrag9HkoF0+s99aXrVmJuJcM=; b=GyI7KtpTnFwbMICTIDc1ZNYBqT
+        hWpZ05DyIzCXTYGv1Gc0iIV7ClCJyNHWuEHhJ5xl9mLGhIW8Y23IBi8cCV4MsPPKn0CxmGwsm2ahy
+        RyS4evkGeqZf3BhW4tjFaoSBiy51xrpR1cYXgzySX3Su3wJF5+Spv+edv0xrku5Ez6nA=;
+Received: from [77.247.85.102] (helo=localhost)
+        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1j3wFN-0000ov-Sx; Tue, 18 Feb 2020 07:20:42 +0100
+Received: from andi by localhost with local (Exim 4.92)
+        (envelope-from <andreas@kemnade.info>)
+        id 1j3wEr-0005rD-VQ; Tue, 18 Feb 2020 07:20:09 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        lee.jones@linaro.org, b.galvani@gmail.com,
+        linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
+        linux-iio@vger.kernel.org, phh@phh.me, stefan@agner.ch,
+        letux-kernel@openphoenux.org, martin.blumenstingl@googlemail.com,
+        jic23@kernel.org
+Cc:     Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH v3 0/4] mfd: rn5t618: add ADC support
+Date:   Tue, 18 Feb 2020 07:17:21 +0100
+Message-Id: <20200218061725.22420-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200217184613.19668-12-willy@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
-        a=zAxSp4fFY/GQY8/esVNjqw==:117 a=zAxSp4fFY/GQY8/esVNjqw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
-        a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8 a=6Sg7X3AK5n0gSZn-CawA:9
-        a=XfLjuTNYxNuElQ0I:21 a=atnrvcmCVHYDzj7Q:21 a=CjuIK1q_8ugA:10
-        a=1CNFftbPRP8L7MoqJWF3:22 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -1.0 (-)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 17, 2020 at 10:45:52AM -0800, Matthew Wilcox wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> 
-> At allocation time, put the pages in the cache unless we're using
-> ->readpages.  Add the readahead_for_each() iterator for the benefit of
-> the ->readpage fallback.  This iterator supports huge pages, even though
-> none of the filesystems to be converted do yet.
+mfd: rn5t618: add ADC support
 
-This could be better written - took me some time to get my head
-around it and the code.
+This series adds support for the ADC in the RN5T618/RC5T619.
+It depends on the IRQ support added in the RTC support series here:
+https://lore.kernel.org/lkml/20191220122416.31881-1-andreas@kemnade.info/
 
-"When populating the page cache for readahead, mappings that don't
-use ->readpages need to have their pages added to the page cache
-before ->readpage is called. Do this insertion earlier so that the
-pages can be looked up immediately prior to ->readpage calls rather
-than passing them on a linked list. This early insert functionality
-is also required by the upcoming ->readahead method that will
-replace ->readpages.
+I tested the driver only with the RC5T619 but it should work with the with 
+the RN5T618 as well based on these facts:
+- The corresponding register definitions originally went into the kernel
+  for the RN5T618
+- Public datasheet sections about the ADC look same.
+- Out-of-tree code for these chips look same regarding to ADC
 
-Optimise and simplify the readpage loop by adding a
-readahead_for_each() iterator to provide the pages we need to read.
-This iterator also supports huge pages, even though none of the
-filesystems have been converted to use them yet."
+But due to missing hardware I cannot test the patches 2/3 and 3/3 which
+add support for the RN5T618 ADC.
+I marked these untested patches as RFC, and IMHO they require a Tested-By.
+Feel free to ignore them if the whole series would be delayed just because
+of missing Tested-By for those.
 
-> +static inline struct page *readahead_page(struct readahead_control *rac)
-> +{
-> +	struct page *page;
-> +
-> +	if (!rac->_nr_pages)
-> +		return NULL;
+Changes in v3:
+- re-included former 2/5 of these patches, since it was not applied
 
-Hmmmm.
+Changes in v2:
+- got an "Applied, thanks" message for the first two, so I do not include
+  them anymore
+- some cleanups for the ADC driver itself
 
-> +
-> +	page = xa_load(&rac->mapping->i_pages, rac->_start);
-> +	VM_BUG_ON_PAGE(!PageLocked(page), page);
-> +	rac->_batch_count = hpage_nr_pages(page);
+Andreas Kemnade (4):
+  mfd: rn5t618: add ADC subdevice for RC5T619
+  iio: adc: rn5t618: Add ADC driver for RN5T618/RC5T619
+  mfd: rn5t618: add IRQ definitions for RN5T618
+  mfd: rn5t618: add ADC subdevice for RN5T618
 
-So we could have rac->_nr_pages = 2, and then we get an order 2
-large page returned, and so rac->_batch_count = 4.
-> +
-> +	return page;
-> +}
-> +
-> +static inline void readahead_next(struct readahead_control *rac)
-> +{
-> +	rac->_nr_pages -= rac->_batch_count;
-> +	rac->_start += rac->_batch_count;
+ drivers/iio/adc/Kconfig       |  10 ++
+ drivers/iio/adc/Makefile      |   1 +
+ drivers/iio/adc/rn5t618-adc.c | 258 ++++++++++++++++++++++++++++++++++
+ drivers/mfd/rn5t618.c         |  48 ++++++-
+ 4 files changed, 315 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/iio/adc/rn5t618-adc.c
 
-This results in rac->_nr_pages = -2 (or a huge positive number).
-That means that readahead_page() will not terminate when it should,
-and potentially will panic if it doesn't find the page that it
-thinks should be there at rac->_start + 4...
-
-> +#define readahead_for_each(rac, page)					\
-> +	for (; (page = readahead_page(rac)); readahead_next(rac))
-> +
->  /* The number of pages in this readahead block */
->  static inline unsigned int readahead_count(struct readahead_control *rac)
->  {
-> diff --git a/mm/readahead.c b/mm/readahead.c
-> index bdc5759000d3..9e430daae42f 100644
-> --- a/mm/readahead.c
-> +++ b/mm/readahead.c
-> @@ -113,12 +113,11 @@ int read_cache_pages(struct address_space *mapping, struct list_head *pages,
->  
->  EXPORT_SYMBOL(read_cache_pages);
->  
-> -static void read_pages(struct readahead_control *rac, struct list_head *pages,
-> -		gfp_t gfp)
-> +static void read_pages(struct readahead_control *rac, struct list_head *pages)
->  {
->  	const struct address_space_operations *aops = rac->mapping->a_ops;
-> +	struct page *page;
->  	struct blk_plug plug;
-> -	unsigned page_idx;
->  
->  	blk_start_plug(&plug);
->  
-> @@ -127,19 +126,13 @@ static void read_pages(struct readahead_control *rac, struct list_head *pages,
->  				readahead_count(rac));
->  		/* Clean up the remaining pages */
->  		put_pages_list(pages);
-> -		goto out;
-> -	}
-> -
-> -	for (page_idx = 0; page_idx < readahead_count(rac); page_idx++) {
-> -		struct page *page = lru_to_page(pages);
-> -		list_del(&page->lru);
-> -		if (!add_to_page_cache_lru(page, rac->mapping, page->index,
-> -				gfp))
-> +	} else {
-> +		readahead_for_each(rac, page) {
->  			aops->readpage(rac->file, page);
-> -		put_page(page);
-> +			put_page(page);
-> +		}
->  	}
-
-Nice simplification and gets rid of the need for rac->mapping, but I
-still find the aops variable weird.
-
-> -out:
->  	blk_finish_plug(&plug);
->  }
->  
-> @@ -159,6 +152,7 @@ void __do_page_cache_readahead(struct address_space *mapping,
->  	unsigned long i;
->  	loff_t isize = i_size_read(inode);
->  	gfp_t gfp_mask = readahead_gfp_mask(mapping);
-> +	bool use_list = mapping->a_ops->readpages;
->  	struct readahead_control rac = {
->  		.mapping = mapping,
->  		.file = filp,
-
-[ I do find these unstructured mixes of declarations and
-initialisations dense and difficult to read.... ]
-
-> @@ -196,8 +190,14 @@ void __do_page_cache_readahead(struct address_space *mapping,
->  		page = __page_cache_alloc(gfp_mask);
->  		if (!page)
->  			break;
-> -		page->index = offset;
-> -		list_add(&page->lru, &page_pool);
-> +		if (use_list) {
-> +			page->index = offset;
-> +			list_add(&page->lru, &page_pool);
-> +		} else if (add_to_page_cache_lru(page, mapping, offset,
-> +					gfp_mask) < 0) {
-> +			put_page(page);
-> +			goto read;
-> +		}
-
-Ok, so that's why you put read code at the end of the loop. To turn
-the code into spaghetti :/
-
-How much does this simplify down when we get rid of ->readpages and
-can restructure the loop? This really seems like you're trying to
-flatten two nested loops into one by the use of goto....
-
-Cheers,
-
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+2.20.1
+
