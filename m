@@ -2,61 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FCA6162E34
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 19:16:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB421162E3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 19:17:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726779AbgBRSQh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 13:16:37 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:38862 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726551AbgBRSQg (ORCPT
+        id S1726558AbgBRSRu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 13:17:50 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:34773 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726225AbgBRSRt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 13:16:36 -0500
-Received: by mail-lj1-f193.google.com with SMTP id w1so24088717ljh.5
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 10:16:35 -0800 (PST)
+        Tue, 18 Feb 2020 13:17:49 -0500
+Received: by mail-pj1-f66.google.com with SMTP id f2so848770pjq.1;
+        Tue, 18 Feb 2020 10:17:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=Y0vxtZlN/J7IlSBkZXy64KvLq5Mn0rUc2AI2RFE7g4s=;
-        b=RqQ88DU60wPTeAD5/HCxhI7MC5Mfwb0tOjOICVpQ5rfbqlLF3UX5mYwXsEw4Roc+E5
-         LNJE74q8Wk/EXjPIOt4jErROXLT0SJV04EEezx6NiHW+K5ogt2ZZoQaV3y6xYtVb4P40
-         KRYga+P2lobR1xSwV4i3lBRRD7ddqKEKCFtaY5cftIathUjl8L6qluqXJwHx5MJSx5n7
-         21+z4w4/4PlMKp0gaVuUkKYlLdHnQ3bd2dpMcObDWe9RsLT5EQeHc1ElMow7TWLrvCij
-         pr3Vth8rYpz5tJC/USAZn5mELXhiSzSXF/TH1tMSQx25V9FW+FeK10CpPkkXLCYq5V++
-         8+qQ==
+        h=from:to:cc:subject:date:message-id;
+        bh=tw386GnWn7lj+7DS5UVonCjIBe7s4kOvANVaGw+hVzg=;
+        b=YhOhNOGMg32OFt9+hY8OakRL4DmVH0jPNRRNE/E6tkW/9ccBR09BQA7dCQUs2MkmUu
+         mARR3uHwAkKSOVX+kcW1sZFEihdGg6YcfHt4rgk3uekBDYLocuAG+oOBDcBhvv6BsqXJ
+         dyy0x6j8c8aQy6Jqv4YLREsxGD1wl7U/nD+ADGhKoWCDJcETad+RpMrhLuuK565r68VM
+         Irhn27ZhTQ/t/CZGbPPj4qvukPMUzUZO3UAYtopsVf+MDqOh9vs86Kummox/0AfpMKaX
+         CEPGdzAzvbMiar11LAE1NX7bNRqXtJKzzgSyrUXJ00luH0kGWCXk5u9z6qaC70WAs3BD
+         XClw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=Y0vxtZlN/J7IlSBkZXy64KvLq5Mn0rUc2AI2RFE7g4s=;
-        b=kmnfDtyllZAZXAuEe0eDS9+vVgEYiJPfmByzDnL5wwtXyObh+CPKCOQyUdgr6/QG/X
-         jb1ztLJnrUItgp5bw/8/4P9Hv6H8QToxBIVs28fZP3yUR/jKFm9cdPIHKLThB8nJSrPh
-         2shuKhmy+eGelT5r52j5JY9jHkE+tP7o6407KO5rXuqFR1BAG6NdVCC/hv31s6hwgHHL
-         S/NgwA0sQwo+X2G/SYVG7j5tYvjs7G2ktahanvnWF15LL7HZ+d0OlHnSc/s9GPCOKtoC
-         RITYWP8YlG85zt7nxRAD+FIhIIuq3fTKeFLnXt7tabnisciIR1EVIf+NkGR81/Pnm+EF
-         Zl0g==
-X-Gm-Message-State: APjAAAXILKxPwjVghsig8ChIbLqTI2xXAi2OnqekG3gSYSrdlHzRVWQ3
-        //KJUCMMOqUWz1XqeHSFte2CjTOfpP1mIcBl+48=
-X-Google-Smtp-Source: APXvYqxhR1j5KtaJ/zFhzUgxzco80DGLn7kpuE/de9dbBYjPKrDXgOIlh46IqiJqB3CVeobkC0gWSqjxRn/QniLQcLw=
-X-Received: by 2002:a2e:b6ce:: with SMTP id m14mr12670197ljo.99.1582049795050;
- Tue, 18 Feb 2020 10:16:35 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:a2e:9f50:0:0:0:0:0 with HTTP; Tue, 18 Feb 2020 10:16:34
- -0800 (PST)
-Reply-To: morgansuwa@gmail.com
-From:   Morgan Suwaba <johnsonnanapattaego@gmail.com>
-Date:   Tue, 18 Feb 2020 10:16:34 -0800
-Message-ID: <CAEqrqwjLTu+E=KU5jkixwPfZaA_HAixBwEAsn2KEdJ1FGKudLA@mail.gmail.com>
-Subject: Hello.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=tw386GnWn7lj+7DS5UVonCjIBe7s4kOvANVaGw+hVzg=;
+        b=t+qbaIKr+b4l+dtXyD4yHfa7HWzNylev7z6ONoJwGjWHpu9ehU5cMRPyfTOzAv81pB
+         l2blZSs7TUsSq298V1olIe5e8NRysfIPrP+HuvRPhVBNgrU4qgNYt0yfjhKMBnivMzeU
+         MN+SsTIbJAPxOH7bEvjsvRqu3AVMdz85q6MwlD2gnl0C90jlOEcgQvxzDIuunrnlpBzV
+         Txbmycx5v7hRLjRjMTBkxEi/S4uzm8aYNZS0j3JWWuqknJkgcHEvqoQwDTHrkPvBGiKU
+         zG9SFrPDzzN7aHVsm8wcYFY4IPKGp2samVU5R4pm9KE7m42ovHM5O33BC0ygiR4DYZcZ
+         Z5eA==
+X-Gm-Message-State: APjAAAW7xdUe1qKZrd8ADOKZT8E43lJTSCeE6vnmWYIrYRvdbzojIh3s
+        L4tDWZxU2GwSTjW6GWQOtQ==
+X-Google-Smtp-Source: APXvYqwOgUC5exI24u36RZ9dseIdpW0+8p5dXgCQ/NuN3Ou6YZrerHkWr3LK9lWM9jlF1o9vCDlFuw==
+X-Received: by 2002:a17:902:b68c:: with SMTP id c12mr21462103pls.160.1582049869131;
+        Tue, 18 Feb 2020 10:17:49 -0800 (PST)
+Received: from madhuparna-HP-Notebook.nitk.ac.in ([2402:3a80:54c:a276:f869:e1e5:121e:cdbf])
+        by smtp.gmail.com with ESMTPSA id f3sm5474950pga.38.2020.02.18.10.17.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2020 10:17:48 -0800 (PST)
+From:   madhuparnabhowmik10@gmail.com
+To:     paul@paul-moore.com, davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, joel@joelfernandes.org,
+        frextrite@gmail.com,
+        linux-kernel-mentees@lists.linuxfoundation.org, paulmck@kernel.org,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+Subject: [PATCH] net: netlabel: Use built-in RCU list checking
+Date:   Tue, 18 Feb 2020 23:47:18 +0530
+Message-Id: <20200218181718.7258-1-madhuparnabhowmik10@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Sir/Madam,
+From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
 
-I sent you a letter a month ago, but I'm not sure if you got it, I
-have not heard from you, and this is the reason why i repeat this
-again.
+list_for_each_entry_rcu() has built-in RCU and lock checking.
+
+Pass cond argument to list_for_each_entry_rcu() to silence
+false lockdep warning when CONFIG_PROVE_RCU_LIST is enabled
+by default.
+
+Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+---
+ net/netlabel/netlabel_unlabeled.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
+index d2e4ab8d1cb1..77bb1bb22c3b 100644
+--- a/net/netlabel/netlabel_unlabeled.c
++++ b/net/netlabel/netlabel_unlabeled.c
+@@ -207,7 +207,8 @@ static struct netlbl_unlhsh_iface *netlbl_unlhsh_search_iface(int ifindex)
+ 
+ 	bkt = netlbl_unlhsh_hash(ifindex);
+ 	bkt_list = &netlbl_unlhsh_rcu_deref(netlbl_unlhsh)->tbl[bkt];
+-	list_for_each_entry_rcu(iter, bkt_list, list)
++	list_for_each_entry_rcu(iter, bkt_list, list,
++				lockdep_is_held(&netlbl_unlhsh_lock))
+ 		if (iter->valid && iter->ifindex == ifindex)
+ 			return iter;
+ 
+-- 
+2.17.1
+
