@@ -2,94 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BE9E162644
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 13:40:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F35BC162660
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 13:45:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726634AbgBRMkJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 07:40:09 -0500
-Received: from mail-qk1-f176.google.com ([209.85.222.176]:43859 "EHLO
-        mail-qk1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726363AbgBRMkJ (ORCPT
+        id S1726680AbgBRMpf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 07:45:35 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:35646 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726512AbgBRMpf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 07:40:09 -0500
-Received: by mail-qk1-f176.google.com with SMTP id p7so19290537qkh.10
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 04:40:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=LWli3K53CEX1HNi+Tv/g1jNkXhayZEjclQo7y9gNLIg=;
-        b=GB/rqqA7hJJg58RQqIcDEtDMUPNqc/+XnLUPmx/2fCLTZN+/K/5yEloHg1bvKV9zlC
-         AA/KMkY98nxFljPtm17Vm0ox83jDH5DsVGWLqwHhwrVbmI9/KQST8UGrV0H7CQQSvPzi
-         7tzCdVtXXWD7ONqp6UnggxilWwkOnD++koYl+FbVKiIM+aeH3Jz8GZNzDFOzBopfQQjR
-         Y6UpifbOccA1y2UyL1AmVasK4x3ljvvSdCyux4ACz7XKr1W7xlC49rEpOFEKbwrRvkyX
-         DMDRmLEOb4xW6cPwTKzM1Q8sUsyAOdhjk3xDaaFRCoHn2NLSLMwa9GRDQCosW3n+2tHH
-         Ym1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=LWli3K53CEX1HNi+Tv/g1jNkXhayZEjclQo7y9gNLIg=;
-        b=bZ72aR9UVvEOm1KxcTbIr0GpiCjs+ssefMuTW1P++k9WNrDFRTewOPw1bfard2oH41
-         eT99kEnfFpv1Lsz1QkyjyNqCNF8sX4F0+rx8Nf/cepsInFCzuSNLRhfBpVvO7mNLMlTZ
-         K9d/5A1BkvDkLJ51yM6IYa1BzSFRifvPJ4FshgRSWO/o6gWzyu0gWbQLOkrSzln5TnuD
-         zWnHIt1L6KMZ9S25zqJ1xa5uKFtU1JPEKz1Ou2wVFA2dq+5RVt7wyE85/4yLAKgGlYtP
-         TCDJI5g4wtWOKlMShGTfcuHPtJsrgaRngkae9U+faCf4Ix2yKbEEVoSklLvl6nm7czVl
-         ceGA==
-X-Gm-Message-State: APjAAAVEtgI3muzfF4q4Trm8g+bbMX4pxWIIFF710osCIvWJ17+qyMr3
-        x9o+/WfgiQGPQlGED68xj3FHiWfTcl/3lA==
-X-Google-Smtp-Source: APXvYqyd3eazdTC7HD2pIOmHzLCRMhVj8/vlWUZ0zIP2gj/268N8Yf0idWhkqlXqQcmCRcrvbt+AHA==
-X-Received: by 2002:a05:620a:4cc:: with SMTP id 12mr18079991qks.153.1582029608059;
-        Tue, 18 Feb 2020 04:40:08 -0800 (PST)
-Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id p18sm1846908qkp.47.2020.02.18.04.40.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2020 04:40:07 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH -next] fork: annotate a data race in vm_area_dup()
-Date:   Tue, 18 Feb 2020 07:40:06 -0500
-Message-Id: <93E6B243-9A0F-410C-8EE4-9D57E28AF5AF@lca.pw>
-References: <20200218103002.6rtjreyqjepo3yxe@box>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, elver@google.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        peterz@infradead.org,
-        syzbot+c034966b0b02f94f7f34@syzkaller.appspotmail.com,
-        syzkaller-bugs@googlegroups.com
-In-Reply-To: <20200218103002.6rtjreyqjepo3yxe@box>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-X-Mailer: iPhone Mail (17D50)
+        Tue, 18 Feb 2020 07:45:35 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01ICjWYi016830;
+        Tue, 18 Feb 2020 06:45:32 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582029932;
+        bh=dnj//0zodylv9fY/4CtvgSGPpRwAJebJFvfHLzBPTps=;
+        h=Subject:To:References:From:Date:In-Reply-To;
+        b=JlE5VakpR0OdmB4shdFN3EWxwhlCOJoulkANYy7LEK5CJTHTiD69QQgKbQ2jUddYD
+         +JN7iKis/erPEMvbJS/BW1yw5v0kmO4SFHcb+rHZA3/q1eF8CWNkHilyAOBY7GMZyO
+         Vhts56Zja29C6c2repuXsHzPIz/M4eL+Kb/XXGZA=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01ICjWgK027105;
+        Tue, 18 Feb 2020 06:45:32 -0600
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 18
+ Feb 2020 06:45:31 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 18 Feb 2020 06:45:31 -0600
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01ICjVsd034966;
+        Tue, 18 Feb 2020 06:45:31 -0600
+Subject: Re: [PATCH 1/3] dt-bindings: Document shiji vendor-prefix
+To:     Nicolas Belin <nbelin@baylibre.com>,
+        <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>,
+        <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+References: <1582018657-5720-1-git-send-email-nbelin@baylibre.com>
+ <1582018657-5720-2-git-send-email-nbelin@baylibre.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <455c5db0-7190-8874-bdbc-dc0985905162@ti.com>
+Date:   Tue, 18 Feb 2020 06:40:49 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <1582018657-5720-2-git-send-email-nbelin@baylibre.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Nicolas
 
+On 2/18/20 3:37 AM, Nicolas Belin wrote:
+> Shenzhen Shiji Lighting Co.,Ltd is a LED manufacturer.
+>
+> Signed-off-by: Nicolas Belin <nbelin@baylibre.com>
+> ---
 
-> On Feb 18, 2020, at 5:29 AM, Kirill A. Shutemov <kirill@shutemov.name> wro=
-te:
->=20
-> I think I've got this:
->=20
-> vm_area_dup() blindly copies all fields of orignal VMA to the new one.
-> This includes coping vm_area_struct::shared.rb which is normally protected=
+You need to add the devicetree mailing list and Rob Herring to this for 
+their review of the dt bindings patches
 
-> by i_mmap_lock. But this is fine because the read value will be
-> overwritten on the following __vma_link_file() under proper protectection.=
+Dan
 
-
-Right, multiple processes could share the same file-based address space wher=
-e those vma have been linked into address_space::i_mmap via vm_area_struct::=
-shared.rb. Thus, the reader could see its shared.rb linkage pointers got upd=
-ated by other processes.
-
->=20
-> So the fix is correct, but justificaiton is lacking.
->=20
-> Also, I would like to more fine-grained annotation: marking with
-> data_race() 200 bytes copy may hide other issues.
-
-That is the harder part where I don=E2=80=99t think we have anything for tha=
-t today. Macro, any suggestions? ASSERT_IGNORE_FIELD()?=
