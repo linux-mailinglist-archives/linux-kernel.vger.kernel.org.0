@@ -2,213 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFED1163769
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 00:44:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CA6716377D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 00:51:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbgBRXod (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 18:44:33 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:8792 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726641AbgBRXod (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 18:44:33 -0500
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01INhn28184196
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 18:44:32 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y6cbb2s76-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 18:44:32 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
-        Tue, 18 Feb 2020 23:44:29 -0000
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 18 Feb 2020 23:44:21 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01INiKuw32571890
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 Feb 2020 23:44:21 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DE065A405B;
-        Tue, 18 Feb 2020 23:44:20 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3B470A4054;
-        Tue, 18 Feb 2020 23:44:20 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 18 Feb 2020 23:44:20 +0000 (GMT)
-Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
-        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id A1042A00DF;
-        Wed, 19 Feb 2020 10:44:15 +1100 (AEDT)
-Subject: Re: [PATCH v2 05/27] powerpc: Map & release OpenCAPI LPC memory
-From:   "Alastair D'Silva" <alastair@au1.ibm.com>
-To:     Frederic Barrat <fbarrat@linux.ibm.com>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Anton Blanchard <anton@ozlabs.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        =?ISO-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kurz <groug@kaod.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org
-Date:   Wed, 19 Feb 2020 10:44:18 +1100
-In-Reply-To: <85e5a3d4-bac2-a8fc-8fc7-865be539dc3c@linux.ibm.com>
-References: <20191203034655.51561-1-alastair@au1.ibm.com>
-         <20191203034655.51561-6-alastair@au1.ibm.com>
-         <85e5a3d4-bac2-a8fc-8fc7-865be539dc3c@linux.ibm.com>
-Organization: IBM Australia
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20021823-0016-0000-0000-000002E8165D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20021823-0017-0000-0000-0000334B2C77
-Message-Id: <91440c75bacf29ac7423e67b71199695ebf636d0.camel@au1.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-18_08:2020-02-18,2020-02-18 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- priorityscore=1501 suspectscore=2 impostorscore=0 adultscore=0
- lowpriorityscore=0 bulkscore=0 malwarescore=0 clxscore=1015 phishscore=0
- mlxscore=0 mlxlogscore=667 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002180161
+        id S1727463AbgBRXvB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 18:51:01 -0500
+Received: from smtp.uniroma2.it ([160.80.6.23]:40390 "EHLO smtp.uniroma2.it"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726691AbgBRXvA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 18:51:00 -0500
+Received: from utente-Aspire-V3-572G (wireless-130-133.net.uniroma2.it [160.80.133.130])
+        by smtp-2015.uniroma2.it (8.14.4/8.14.4/Debian-8) with SMTP id 01INo6DF032331;
+        Wed, 19 Feb 2020 00:50:11 +0100
+Date:   Wed, 19 Feb 2020 00:50:07 +0100
+From:   Carmine Scarpitta <carmine.scarpitta@uniroma2.it>
+To:     David Ahern <dsahern@gmail.com>
+Cc:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        kuba@kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ahmed.abdelsalam@gssi.it,
+        dav.lebrun@gmail.com, andrea.mayer@uniroma2.it,
+        paolo.lungaroni@cnit.it
+Subject: Re: [net-next 1/2] Perform IPv4 FIB lookup in a predefined FIB
+ table
+Message-Id: <20200219005007.23d724b7f717ef89ad3d75e5@uniroma2.it>
+In-Reply-To: <7302c1f7-b6d1-90b7-5df1-3e5e0ba98f53@gmail.com>
+References: <20200213010932.11817-1-carmine.scarpitta@uniroma2.it>
+        <20200213010932.11817-2-carmine.scarpitta@uniroma2.it>
+        <7302c1f7-b6d1-90b7-5df1-3e5e0ba98f53@gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-unknown-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.100.0 at smtp-2015
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2020-02-14 at 12:09 +0100, Frederic Barrat wrote:
+Hi David, 
+Thanks for the review and sorry for the late reply 
+
+Indeed both call fib_table_lookup and rt_dst_alloc are exported for modules. 
+However, several functions defined in route.c are not exported:
+- the two functions rt_cache_valid and rt_cache_route required to handle the routing cache
+- find_exception, required to support fib exceptions.
+This would require duplicating a lot of the IPv4 routing code. 
+The reason behind this change is really to reuse the IPv4 routing code instead of doing a duplication. 
+
+For the fi member of the struct fib_result, we will fix it by initializing before "if (!tbl_known)"
+
+Thanks, 
+Carmine 
+
+
+On Sat, 15 Feb 2020 11:06:43 -0700
+David Ahern <dsahern@gmail.com> wrote:
+
+> On 2/12/20 6:09 PM, Carmine Scarpitta wrote:
+> > In IPv4, the routing subsystem is invoked by calling ip_route_input_rcu()
+> > which performs the recognition logic and calls ip_route_input_slow().
+> > 
+> > ip_route_input_slow() initialises both "fi" and "table" members
+> > of the fib_result structure to null before calling fib_lookup().
+> > 
+> > fib_lookup() performs fib lookup in the routing table configured
+> > by the policy routing rules.
+> > 
+> > In this patch, we allow invoking the ip4 routing subsystem
+> > with known routing table. This is useful for use-cases implementing
+> > a separate routing table per tenant.
+> > 
+> > The patch introduces a new flag named "tbl_known" to the definition of
+> > ip_route_input_rcu() and ip_route_input_slow().
+> > 
+> > When the flag is set, ip_route_input_slow() will call fib_table_lookup()
+> > using the defined table instead of using fib_lookup().
 > 
-> Le 03/12/2019 à 04:46, Alastair D'Silva a écrit :
-> > From: Alastair D'Silva <alastair@d-silva.org>
+> I do not like this change. If you want a specific table lookup, then why
+> just call fib_table_lookup directly? Both it and rt_dst_alloc are
+> exported for modules. Your next patch already does a fib table lookup.
+> 
+> 
 > > 
-> > This patch adds platform support to map & release LPC memory.
-> > 
-> > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> > Signed-off-by: Carmine Scarpitta <carmine.scarpitta@uniroma2.it>
+> > Acked-by: Ahmed Abdelsalam <ahmed.abdelsalam@gssi.it>
+> > Acked-by: Andrea Mayer <andrea.mayer@uniroma2.it>
+> > Acked-by: Paolo Lungaroni <paolo.lungaroni@cnit.it>
 > > ---
-> >   arch/powerpc/include/asm/pnv-ocxl.h   |  2 ++
-> >   arch/powerpc/platforms/powernv/ocxl.c | 42
-> > +++++++++++++++++++++++++++
-> >   2 files changed, 44 insertions(+)
+> >  include/net/route.h |  2 +-
+> >  net/ipv4/route.c    | 22 ++++++++++++++--------
+> >  2 files changed, 15 insertions(+), 9 deletions(-)
 > > 
-> > diff --git a/arch/powerpc/include/asm/pnv-ocxl.h
-> > b/arch/powerpc/include/asm/pnv-ocxl.h
-> > index 7de82647e761..f8f8ffb48aa8 100644
-> > --- a/arch/powerpc/include/asm/pnv-ocxl.h
-> > +++ b/arch/powerpc/include/asm/pnv-ocxl.h
-> > @@ -32,5 +32,7 @@ extern int pnv_ocxl_spa_remove_pe_from_cache(void
-> > *platform_data, int pe_handle)
-> >   
-> >   extern int pnv_ocxl_alloc_xive_irq(u32 *irq, u64 *trigger_addr);
-> >   extern void pnv_ocxl_free_xive_irq(u32 irq);
-> > +extern u64 pnv_ocxl_platform_lpc_setup(struct pci_dev *pdev, u64
-> > size);
-> > +extern void pnv_ocxl_platform_lpc_release(struct pci_dev *pdev);
-> >   
-> >   #endif /* _ASM_PNV_OCXL_H */
-> > diff --git a/arch/powerpc/platforms/powernv/ocxl.c
-> > b/arch/powerpc/platforms/powernv/ocxl.c
-> > index 8c65aacda9c8..b56a48daf48c 100644
-> > --- a/arch/powerpc/platforms/powernv/ocxl.c
-> > +++ b/arch/powerpc/platforms/powernv/ocxl.c
-> > @@ -475,6 +475,48 @@ void pnv_ocxl_spa_release(void *platform_data)
-> >   }
-> >   EXPORT_SYMBOL_GPL(pnv_ocxl_spa_release);
-> >   
-> > +u64 pnv_ocxl_platform_lpc_setup(struct pci_dev *pdev, u64 size)
-> > +{
-> > +	struct pci_controller *hose = pci_bus_to_host(pdev->bus);
-> > +	struct pnv_phb *phb = hose->private_data;
-> > +	u32 bdfn = pci_dev_id(pdev);
-> > +	__be64 base_addr_be64;
-> > +	u64 base_addr;
-> > +	int rc;
-> > +
-> > +	rc = opal_npu_mem_alloc(phb->opal_id, bdfn, size,
-> > &base_addr_be64);
-> > +	if (rc) {
-> > +		dev_warn(&pdev->dev,
-> > +			 "OPAL could not allocate LPC memory, rc=%d\n",
-> > rc);
-> > +		return 0;
-> > +	}
-> > +
-> > +	base_addr = be64_to_cpu(base_addr_be64);
-> > +
-> > +	rc = check_hotplug_memory_addressable(base_addr >> PAGE_SHIFT,
-> > +					      size >> PAGE_SHIFT);
+> > diff --git a/include/net/route.h b/include/net/route.h
+> > index a9c60fc68e36..4ff977bd7029 100644
+> > --- a/include/net/route.h
+> > +++ b/include/net/route.h
+> > @@ -183,7 +183,7 @@ int ip_route_input_noref(struct sk_buff *skb, __be32 dst, __be32 src,
+> >  			 u8 tos, struct net_device *devin);
+> >  int ip_route_input_rcu(struct sk_buff *skb, __be32 dst, __be32 src,
+> >  		       u8 tos, struct net_device *devin,
+> > -		       struct fib_result *res);
+> > +		       struct fib_result *res, bool tbl_known);
+> >  
+> >  int ip_route_use_hint(struct sk_buff *skb, __be32 dst, __be32 src,
+> >  		      u8 tos, struct net_device *devin,
+> > diff --git a/net/ipv4/route.c b/net/ipv4/route.c
+> > index d5c57b3f77d5..39cec9883d6f 100644
+> > --- a/net/ipv4/route.c
+> > +++ b/net/ipv4/route.c
+> > @@ -2077,7 +2077,7 @@ int ip_route_use_hint(struct sk_buff *skb, __be32 daddr, __be32 saddr,
+> >  
+> >  static int ip_route_input_slow(struct sk_buff *skb, __be32 daddr, __be32 saddr,
+> >  			       u8 tos, struct net_device *dev,
+> > -			       struct fib_result *res)
+> > +			       struct fib_result *res, bool tbl_known)
+> >  {
+> >  	struct in_device *in_dev = __in_dev_get_rcu(dev);
+> >  	struct flow_keys *flkeys = NULL, _flkeys;
+> > @@ -2109,8 +2109,6 @@ static int ip_route_input_slow(struct sk_buff *skb, __be32 daddr, __be32 saddr,
+> >  	if (ipv4_is_multicast(saddr) || ipv4_is_lbcast(saddr))
+> >  		goto martian_source;
+> >  
+> > -	res->fi = NULL;
+> > -	res->table = NULL;
+> >  	if (ipv4_is_lbcast(daddr) || (saddr == 0 && daddr == 0))
+> >  		goto brd_input;
 > 
-> check_hotplug_memory_addressable() is only declared if 
-> CONFIG_MEMORY_HOTPLUG_SPARSE is selected.
-> I think we also need a #ifdef here.
+> I believe this also introduces a potential bug. You remove the fi
+> initialization yet do not cover the goto case.
+> 
 > 
 
-Agreed. I think that since any actual use of the memory is going to be
-dependant on both hotplug & sparse, moving the ifdef to wrap the
-functions & declarations makes sense.
 
-
->    Fred
-> 
-> 
-> > +	if (rc)
-> > +		return 0;
-> > +
-> > +	return base_addr;
-> > +}
-> > +EXPORT_SYMBOL_GPL(pnv_ocxl_platform_lpc_setup);
-> > +
-> > +void pnv_ocxl_platform_lpc_release(struct pci_dev *pdev)
-> > +{
-> > +	struct pci_controller *hose = pci_bus_to_host(pdev->bus);
-> > +	struct pnv_phb *phb = hose->private_data;
-> > +	u32 bdfn = pci_dev_id(pdev);
-> > +	int rc;
-> > +
-> > +	rc = opal_npu_mem_release(phb->opal_id, bdfn);
-> > +	if (rc)
-> > +		dev_warn(&pdev->dev,
-> > +			 "OPAL reported rc=%d when releasing LPC
-> > memory\n", rc);
-> > +}
-> > +EXPORT_SYMBOL_GPL(pnv_ocxl_platform_lpc_release);
-> > +
-> > +
-> >   int pnv_ocxl_spa_remove_pe_from_cache(void *platform_data, int
-> > pe_handle)
-> >   {
-> >   	struct spa_data *data = (struct spa_data *) platform_data;
-> > 
 -- 
-Alastair D'Silva
-Open Source Developer
-Linux Technology Centre, IBM Australia
-mob: 0423 762 819
-
+Carmine Scarpitta <carmine.scarpitta@uniroma2.it>
