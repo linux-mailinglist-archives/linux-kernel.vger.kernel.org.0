@@ -2,83 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CC5C1621A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 08:46:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F12771621D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 08:57:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726323AbgBRHqq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 02:46:46 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:41981 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726127AbgBRHqp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 02:46:45 -0500
-X-UUID: 729695ee8e884b638f224bd5a485de69-20200218
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=g5TmMK5xtaVwCyccKk6B3PT0J4POGsB8eAQQZd7hA8o=;
-        b=HD7TFrvS6QC6Drlf77grZ51MNyFDbKjPzyk/JZWI7CRHiSbSg7oCO6b/oSx4fJoCbx0bk/AlUNiQyynHV+uoluE2iLBPc3LQp6P/N53YrOxpoGQ1dAAIy1Gb4munRdwCCMWiubHm07o1ARpMbctJt76bjdpObTDYTjfxy8IP++I=;
-X-UUID: 729695ee8e884b638f224bd5a485de69-20200218
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 108004550; Tue, 18 Feb 2020 15:46:38 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 18 Feb 2020 15:45:47 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 18 Feb 2020 15:46:14 +0800
-Message-ID: <1582011997.15399.1.camel@mtksdaap41>
-Subject: Re: [PATCH 2/2] drm/mediatek: add fb swap in async_update
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
-CC:     David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        YT Shen <yt.shen@mediatek.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>, <tfiga@chromium.org>,
-        <drinkcat@chromium.org>, <linux-kernel@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>
-Date:   Tue, 18 Feb 2020 15:46:37 +0800
-In-Reply-To: <1581566763.12071.1.camel@mtksdaap41>
-References: <20200213012353.26815-1-bibby.hsieh@mediatek.com>
-         <20200213012353.26815-2-bibby.hsieh@mediatek.com>
-         <1581566763.12071.1.camel@mtksdaap41>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+        id S1726347AbgBRH5f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 02:57:35 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:52936 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726114AbgBRH5e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 02:57:34 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E1CFE1A0D40;
+        Tue, 18 Feb 2020 08:57:32 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 95E001A055D;
+        Tue, 18 Feb 2020 08:57:25 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 04B8040245;
+        Tue, 18 Feb 2020 15:57:16 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
+        stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V4 1/4] dt-bindings: pinctrl: Convert i.MX8MQ to json-schema
+Date:   Tue, 18 Feb 2020 15:51:37 +0800
+Message-Id: <1582012300-30260-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIEJpYmJ5Og0KDQpPbiBUaHUsIDIwMjAtMDItMTMgYXQgMTI6MDYgKzA4MDAsIENLIEh1IHdy
-b3RlOg0KPiBIaSwgQmliYnk6DQo+IA0KPiBPbiBUaHUsIDIwMjAtMDItMTMgYXQgMDk6MjMgKzA4
-MDAsIEJpYmJ5IEhzaWVoIHdyb3RlOg0KPiA+IEJlc2lkZXMgeCwgeSBwb3NpdGlvbiwgd2lkdGgg
-YW5kIGhlaWdodCwNCj4gPiBmYiBhbHNvIG5lZWQgdXBkYXRpbmcgaW4gYXN5bmMgdXBkYXRlLg0K
-PiA+IA0KPiANCj4gUmV2aWV3ZWQtYnk6IENLIEh1IDxjay5odUBtZWRpYXRlay5jb20+DQo+IA0K
-DQpBcHBsaWVkIHRvIG1lZGlhdGVrLWRybS1maXhlcy01LjYgWzFdLCB0aGFua3MuDQoNClsxXQ0K
-aHR0cHM6Ly9naXRodWIuY29tL2NraHUtbWVkaWF0ZWsvbGludXguZ2l0LXRhZ3MvY29tbWl0cy9t
-ZWRpYXRlay1kcm0tZml4ZXMtNS42DQoNClJlZ2FyZHMsDQpDSw0KDQo+ID4gRml4ZXM6IDkyMGZm
-ZmNjODkxMiAoImRybS9tZWRpYXRlazogdXBkYXRlIGN1cnNvcnMgYnkgdXNpbmcgYXN5bmMgYXRv
-bWljIHVwZGF0ZSIpDQo+ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTogQmliYnkgSHNpZWggPGJpYmJ5
-LmhzaWVoQG1lZGlhdGVrLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9ncHUvZHJtL21lZGlh
-dGVrL210a19kcm1fcGxhbmUuYyB8IDEgKw0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRp
-b24oKykNCj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210
-a19kcm1fcGxhbmUuYyBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX3BsYW5lLmMN
-Cj4gPiBpbmRleCBkMzJiNDk0ZmYxZGUuLmUwODRjMzZmZGQ4YSAxMDA2NDQNCj4gPiAtLS0gYS9k
-cml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9wbGFuZS5jDQo+ID4gKysrIGIvZHJpdmVy
-cy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fcGxhbmUuYw0KPiA+IEBAIC0xMjIsNiArMTIyLDcg
-QEAgc3RhdGljIHZvaWQgbXRrX3BsYW5lX2F0b21pY19hc3luY191cGRhdGUoc3RydWN0IGRybV9w
-bGFuZSAqcGxhbmUsDQo+ID4gIAlwbGFuZS0+c3RhdGUtPnNyY195ID0gbmV3X3N0YXRlLT5zcmNf
-eTsNCj4gPiAgCXBsYW5lLT5zdGF0ZS0+c3JjX2ggPSBuZXdfc3RhdGUtPnNyY19oOw0KPiA+ICAJ
-cGxhbmUtPnN0YXRlLT5zcmNfdyA9IG5ld19zdGF0ZS0+c3JjX3c7DQo+ID4gKwlzd2FwKHBsYW5l
-LT5zdGF0ZS0+ZmIsIG5ld19zdGF0ZS0+ZmIpOw0KPiA+ICAJc3RhdGUtPnBlbmRpbmcuYXN5bmNf
-ZGlydHkgPSB0cnVlOw0KPiA+ICANCj4gPiAgCW10a19kcm1fY3J0Y19hc3luY191cGRhdGUobmV3
-X3N0YXRlLT5jcnRjLCBwbGFuZSwgbmV3X3N0YXRlKTsNCj4gDQoNCg==
+Convert the i.MX8MQ pinctrl binding to DT schema format using json-schema
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+Changes since V3:
+	- use uint32-matrix instead of uint32-array for fsl,pins.
+---
+ .../bindings/pinctrl/fsl,imx8mq-pinctrl.txt        | 36 ----------
+ .../bindings/pinctrl/fsl,imx8mq-pinctrl.yaml       | 82 ++++++++++++++++++++++
+ 2 files changed, 82 insertions(+), 36 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.yaml
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt
+deleted file mode 100644
+index 66de750..0000000
+--- a/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt
++++ /dev/null
+@@ -1,36 +0,0 @@
+-* Freescale IMX8MQ IOMUX Controller
+-
+-Please refer to fsl,imx-pinctrl.txt and pinctrl-bindings.txt in this directory
+-for common binding part and usage.
+-
+-Required properties:
+-- compatible: "fsl,imx8mq-iomuxc"
+-- reg: should contain the base physical address and size of the iomuxc
+-  registers.
+-
+-Required properties in sub-nodes:
+-- fsl,pins: each entry consists of 6 integers and represents the mux and config
+-  setting for one pin.  The first 5 integers <mux_reg conf_reg input_reg mux_val
+-  input_val> are specified using a PIN_FUNC_ID macro, which can be found in
+-  imx8mq-pinfunc.h under device tree source folder.  The last integer CONFIG is
+-  the pad setting value like pull-up on this pin.  Please refer to i.MX8M Quad
+-  Reference Manual for detailed CONFIG settings.
+-
+-Examples:
+-
+-&uart1 {
+-       pinctrl-names = "default";
+-       pinctrl-0 = <&pinctrl_uart1>;
+-};
+-
+-iomuxc: pinctrl@30330000 {
+-        compatible = "fsl,imx8mq-iomuxc";
+-        reg = <0x0 0x30330000 0x0 0x10000>;
+-
+-        pinctrl_uart1: uart1grp {
+-                fsl,pins = <
+-                        MX8MQ_IOMUXC_UART1_RXD_UART1_DCE_RX             0x49
+-                        MX8MQ_IOMUXC_UART1_TXD_UART1_DCE_TX             0x49
+-                >;
+-        };
+-};
+diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.yaml
+new file mode 100644
+index 0000000..b30c704
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.yaml
+@@ -0,0 +1,82 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/fsl,imx8mq-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Freescale IMX8MQ IOMUX Controller
++
++maintainers:
++  - Anson Huang <Anson.Huang@nxp.com>
++
++description:
++  Please refer to fsl,imx-pinctrl.txt and pinctrl-bindings.txt in this directory
++  for common binding part and usage.
++
++properties:
++  compatible:
++    const: fsl,imx8mq-iomuxc
++
++  reg:
++    maxItems: 1
++
++# Client device subnode's properties
++patternProperties:
++  'grp$':
++    type: object
++    description:
++      Pinctrl node's client devices use subnodes for desired pin configuration.
++      Client device subnodes use below standard properties.
++
++    properties:
++      fsl,pins:
++        description:
++          each entry consists of 6 integers and represents the mux and config
++          setting for one pin. The first 5 integers <mux_reg conf_reg input_reg
++          mux_val input_val> are specified using a PIN_FUNC_ID macro, which can
++          be found in <arch/arm64/boot/dts/freescale/imx8mq-pinfunc.h>. The last
++          integer CONFIG is the pad setting value like pull-up on this pin. Please
++          refer to i.MX8M Quad Reference Manual for detailed CONFIG settings.
++        allOf:
++          - $ref: /schemas/types.yaml#/definitions/uint32-matrix
++          - items:
++              items:
++                - description: |
++                    "mux_reg" indicates the offset of mux register.
++                - description: |
++                    "conf_reg" indicates the offset of pad configuration register.
++                - description: |
++                    "input_reg" indicates the offset of select input register.
++                - description: |
++                    "mux_val" indicates the mux value to be applied.
++                - description: |
++                    "input_val" indicates the select input value to be applied.
++                - description: |
++                    "pad_setting" indicates the pad configuration value to be applied.
++
++    required:
++      - fsl,pins
++
++    additionalProperties: false
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  # Pinmux controller node
++  - |
++    iomuxc: pinctrl@30330000 {
++        compatible = "fsl,imx8mq-iomuxc";
++        reg = <0x30330000 0x10000>;
++
++        pinctrl_uart1: uart1grp {
++            fsl,pins =
++                <0x234 0x49C 0x4F4 0x0 0x0	0x49>,
++                <0x238 0x4A0 0x4F4 0x0 0x0	0x49>;
++        };
++    };
++
++...
+-- 
+2.7.4
 
