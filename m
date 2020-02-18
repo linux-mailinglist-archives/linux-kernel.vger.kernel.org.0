@@ -2,83 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5416D16348D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 22:13:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8452A163495
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 22:15:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727274AbgBRVNv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 16:13:51 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:39649 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726339AbgBRVNv (ORCPT
+        id S1726821AbgBRVPG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 16:15:06 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:55866 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726339AbgBRVPG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 16:13:51 -0500
-Received: by mail-oi1-f196.google.com with SMTP id z2so21610187oih.6;
-        Tue, 18 Feb 2020 13:13:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Wsp21LIcG4NslijziS7uyMDJScAYzOtQaO+9/p80IQ4=;
-        b=Gn4kmXJu9n+uXGhlbfM9KPlbi5ycH4xKUSLbngI4euPIE/5WlodKz25tj2XHe1BQO8
-         xNzavCIzz50qIB4nBht9+qyPoznu+UM5iZJpOPhWXkcCefa11U9uAvyp9KX4x7RHosXu
-         ShT7FMEoKFxuF6MvwgiDECAgw0JFNbMTsZLKuTFWydWxE2kxBscJDniJI1iEWC7KZNbz
-         FvwBxrIX/2PTtvmP1PgWhGZaBZ0OXkhhn7NxL+Us5Ynp9mw5uBTRK98RjrHd9HiKj7NN
-         /+5SDiP3j1Y6qdoO9BWRQqw7Ss4OaWpcXRfVBSTBiUWAQHExlu6cGNtvL4SUmm8mWgOz
-         QBKA==
-X-Gm-Message-State: APjAAAWWY1wTEeRHNyBSUA2BVamo+lEiKfdwaABl5FjrZE7d5F4kIiIr
-        RJ330liDWIbi5LpjPN7Ciw==
-X-Google-Smtp-Source: APXvYqzV9oocyBJZGvkp1bADAbLS2xQl21KF+EyRyietsBdKoEM/3HRmoC9kQcpKj2d8Pz3raOUtlA==
-X-Received: by 2002:aca:3542:: with SMTP id c63mr2575156oia.135.1582060430256;
-        Tue, 18 Feb 2020 13:13:50 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id m185sm13530oia.26.2020.02.18.13.13.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2020 13:13:49 -0800 (PST)
-Received: (nullmailer pid 15304 invoked by uid 1000);
-        Tue, 18 Feb 2020 21:13:48 -0000
-Date:   Tue, 18 Feb 2020 15:13:48 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Lad Prabhakar <prabhakar.csengg@gmail.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        Andrew Murray <andrew.murray@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 4/6] dt-bindings: PCI: rcar: Add bindings for R-Car
- PCIe  endpoint controller
-Message-ID: <20200218211348.GA15246@bogus>
-References: <20200208183641.6674-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20200208183641.6674-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Tue, 18 Feb 2020 16:15:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=YDNpfjFJzeSvSEEYP1Omf0hCUn2a1ROqATNsqQ7lTVk=; b=rpQz5E6qJ4lt2sGkm4aZKuH9H8
+        TEu6LIuhR0NWAZb0cdbQhciRfVqBPxFQKKQG1btjdMx1LJ2iL8ikrd4CWajT8yBZisocYc9YaReKC
+        7o6v5wB5Phuz7MnWqaE81vXhLMJuGOIPx/FP+jMZE9tTQo8yCmSQJXjEBpmK7BsPTnmDRHtBUaEOa
+        1BnrkMYxk5S3tZQPHxrOqZVKNjbyPbTpZQVC3n8D2575M2dAdpyZ4bpgCfZhxtN/w2RmC7oWoXJGv
+        BriB3w6IDDu0yIqje7dwBCeRb5qrKeIkUMBdy26jZh/LCRv3gfe/I4PCPB+U4OEXBUw6REwlvAi8b
+        L/WSAseQ==;
+Received: from [199.255.44.128] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j4ACv-0000gY-Lf; Tue, 18 Feb 2020 21:15:05 +0000
+Date:   Tue, 18 Feb 2020 13:15:00 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
+Subject: [GIT PULL] dma-mapping updates for 5.6
+Message-ID: <20200218211500.GA41556@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200208183641.6674-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat,  8 Feb 2020 18:36:39 +0000, Lad Prabhakar wrote:
-> This patch adds the bindings for the R-Car PCIe endpoint driver.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  .../devicetree/bindings/pci/rcar-pci-ep.yaml       | 76 ++++++++++++++++++++++
->  1 file changed, 76 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml
-> 
+The following changes since commit d5226fa6dbae0569ee43ecfc08bdcd6770fc4755:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+  Linux 5.5 (2020-01-26 16:23:03 -0800)
+
+are available in the Git repository at:
+
+  git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-5.6
+
+for you to fetch changes up to 75467ee48a5e04cf3ae3cb39aea6adee73aeff91:
+
+  dma-direct: improve DMA mask overflow reporting (2020-02-05 18:53:41 +0100)
+
+----------------------------------------------------------------
+dma-mapping fixes for 5.6
+
+ - give command line cma= precedence over the CONFIG_ option
+   (Nicolas Saenz Julienne)
+ - always allow 32-bit DMA, even for weirdly placed ZONE_DMA
+ - improve the debug printks when memory is not addressable, to help
+   find problems with swiotlb initialization
+
+----------------------------------------------------------------
+Christoph Hellwig (3):
+      dma-direct: relax addressability checks in dma_direct_supported
+      dma-direct: improve swiotlb error reporting
+      dma-direct: improve DMA mask overflow reporting
+
+Nicolas Saenz Julienne (1):
+      dma-contiguous: CMA: give precedence to cmdline
+
+ include/linux/swiotlb.h | 11 +++------
+ kernel/dma/contiguous.c |  9 +++++++-
+ kernel/dma/direct.c     | 61 ++++++++++++++++++++-----------------------------
+ kernel/dma/swiotlb.c    | 42 +++++++++++++++++++---------------
+ 4 files changed, 59 insertions(+), 64 deletions(-)
