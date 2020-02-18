@@ -2,74 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A5871627FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 15:20:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F364D162793
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 15:00:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726700AbgBROU0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 09:20:26 -0500
-Received: from 9.mo68.mail-out.ovh.net ([46.105.78.111]:39382 "EHLO
-        9.mo68.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726442AbgBROUZ (ORCPT
+        id S1726716AbgBROAu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 09:00:50 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40484 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726672AbgBROAu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 09:20:25 -0500
-X-Greylist: delayed 3599 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Feb 2020 09:20:25 EST
-Received: from player779.ha.ovh.net (unknown [10.110.208.89])
-        by mo68.mail-out.ovh.net (Postfix) with ESMTP id CC2AA159157
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 14:01:09 +0100 (CET)
-Received: from sk2.org (cre33-1_migr-88-122-126-116.fbx.proxad.net [88.122.126.116])
-        (Authenticated sender: steve@sk2.org)
-        by player779.ha.ovh.net (Postfix) with ESMTPSA id 35FCDF77769C;
-        Tue, 18 Feb 2020 13:00:57 +0000 (UTC)
-From:   Stephen Kitt <steve@sk2.org>
-To:     Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-doc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Stephen Kitt <steve@sk2.org>
-Subject: [PATCH v2 8/8] docs: sysctl/kernel: remove rtsig entries
-Date:   Tue, 18 Feb 2020 13:59:23 +0100
-Message-Id: <20200218125923.685-9-steve@sk2.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200218125923.685-1-steve@sk2.org>
-References: <20200218125923.685-1-steve@sk2.org>
+        Tue, 18 Feb 2020 09:00:50 -0500
+Received: by mail-pg1-f193.google.com with SMTP id z7so10989878pgk.7
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 06:00:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=P4bes5n6/gbjuUv9oMzNslpRGSsSzzsqrIpzgdKjxVU=;
+        b=dQ1TkPAMBlzicPt30U9ud0Kqlk7x17I4QGF11maRUlo55WmPAI4fp8sV0sgmfqlHEF
+         Yu+NBaBYOa86gLfzHQcoPxXPFFhf+/2jdIDZSajQTjnRSgO/RH7FvgcpiiFq4BPzbrTa
+         nAcYVbIU99Df3ZO8NIdJmdoDAYp0/gJkqwDTxBu2t0+eEN4JuQSFAS0lVkDW64x/d/hz
+         VM7cc9a9cvvzOpJ44L+Dv3zSORIYkPVdbYnepYMMlyhnCtB+h5pKkNba/W66dFHfLUSE
+         tUAvahRffMN+GeNvt4ydEDtPMXF7ZMj6vS2e1QtHHpiTneQPRXfagCXRjNiD2tB/M97u
+         Z1aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=P4bes5n6/gbjuUv9oMzNslpRGSsSzzsqrIpzgdKjxVU=;
+        b=HCjKa3xfXHsYSEMDPa1vAE+dGvqlw0029EuJ4/OpibYUyQdPhFxHcY7XlGOqIJXV25
+         rdG9rCSQVaEmHjg/Rubj2fZ1VvoPs9I88oC+lycjovkTEV9O4gFF6Qlsq9u2yrOL58wZ
+         j33CV4pOBJ3zA/qfsPyE9tLcXrKJTIPYVNGmQMtReEpyI2GP7W+L6rGIgLVNLG5hHSBW
+         l5turs8D3aVyFZs4/YcdK/R+eKE85zvE0J7z2M6Q9yScmoFoVJVQcBi3WTosZlli0dOp
+         j78Mby2Wn0tDJH9aiKXhD9/jrnj+Pz636mX/PHWI9Np2zmR69/ioQ2omUBDERKAqxjaT
+         yRkA==
+X-Gm-Message-State: APjAAAVyPhc2/hkfLQJ2PF8TD1pqJJ1qPCl3n/lT9LLbTPiMStCs7h8i
+        x5H6auUygxP/M+oLxxGHYJA=
+X-Google-Smtp-Source: APXvYqyCUVbRSU+kBGt8P7InnXqQ/jb1KZ0qtw+DqRtTl3Iexpq1KtmYdeGLKia+QGQMsLsMEuqjxQ==
+X-Received: by 2002:a63:7311:: with SMTP id o17mr2203755pgc.377.1582034449383;
+        Tue, 18 Feb 2020 06:00:49 -0800 (PST)
+Received: from gnu-cfl-2.localdomain (c-73-93-86-59.hsd1.ca.comcast.net. [73.93.86.59])
+        by smtp.gmail.com with ESMTPSA id 13sm4888541pgo.13.2020.02.18.06.00.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2020 06:00:48 -0800 (PST)
+Received: from gnu-cfl-2.hsd1.ca.comcast.net (localhost [IPv6:::1])
+        by gnu-cfl-2.localdomain (Postfix) with ESMTP id 99699C03CF;
+        Tue, 18 Feb 2020 06:00:45 -0800 (PST)
+From:   "H.J. Lu" <hjl.tools@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>
+Subject: [PATCH] x86: Don't declare __force_order in kaslr_64.c
+Date:   Tue, 18 Feb 2020 06:00:45 -0800
+Message-Id: <20200218140045.155642-1-hjl.tools@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 16146812041506475397
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedugedrjeekgdegkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepufhtvghphhgvnhcumfhithhtuceoshhtvghvvgesshhkvddrohhrgheqnecukfhppedtrddtrddtrddtpdekkedruddvvddruddviedrudduieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphdqohhuthdphhgvlhhopehplhgrhigvrhejjeelrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshhtvghvvgesshhkvddrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These have no corresponding code in the kernel.
+GCC 10 changed the default to -fno-common, which leads to
 
-Signed-off-by: Stephen Kitt <steve@sk2.org>
+  LD      arch/x86/boot/compressed/vmlinux
+ld: arch/x86/boot/compressed/pgtable_64.o:(.bss+0x0): multiple definition of `__force_order'; arch/x86/boot/compressed/kaslr_64.o:(.bss+0x0): first defined here
+make[2]: *** [arch/x86/boot/compressed/Makefile:119: arch/x86/boot/compressed/vmlinux] Error 1
+
+Since __force_order is already provided in pgtable_64.c, there is no
+need to declare __force_order in kaslr_64.c.
+
+Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
 ---
- Documentation/admin-guide/sysctl/kernel.rst | 10 ----------
- 1 file changed, 10 deletions(-)
+ arch/x86/boot/compressed/kaslr_64.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index 3d21e076aea4..ba4b51bb1f3e 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -902,16 +902,6 @@ ROM/Flash boot loader. Maybe to tell it what to do after
- rebooting. ???
+diff --git a/arch/x86/boot/compressed/kaslr_64.c b/arch/x86/boot/compressed/kaslr_64.c
+index 748456c365f4..9557c5a15b91 100644
+--- a/arch/x86/boot/compressed/kaslr_64.c
++++ b/arch/x86/boot/compressed/kaslr_64.c
+@@ -29,9 +29,6 @@
+ #define __PAGE_OFFSET __PAGE_OFFSET_BASE
+ #include "../../mm/ident_map.c"
  
- 
--rtsig-max & rtsig-nr
--====================
+-/* Used by pgtable.h asm code to force instruction serialization. */
+-unsigned long __force_order;
 -
--The file rtsig-max can be used to tune the maximum number
--of POSIX realtime (queued) signals that can be outstanding
--in the system.
--
--rtsig-nr shows the number of RT signals currently queued.
--
--
- sched_energy_aware
- ==================
- 
+ /* Used to track our page table allocation area. */
+ struct alloc_pgt_data {
+ 	unsigned char *pgt_buf;
 -- 
-2.20.1
+2.24.1
 
