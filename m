@@ -2,79 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC27A162613
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 13:25:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC8FA16261A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 13:27:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726623AbgBRMZv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 07:25:51 -0500
-Received: from mga07.intel.com ([134.134.136.100]:36582 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726403AbgBRMZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 07:25:50 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2020 04:25:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,456,1574150400"; 
-   d="scan'208";a="348688175"
-Received: from kuha.fi.intel.com ([10.237.72.53])
-  by fmsmga001.fm.intel.com with SMTP; 18 Feb 2020 04:25:46 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 18 Feb 2020 14:25:45 +0200
-Date:   Tue, 18 Feb 2020 14:25:45 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Peter Chen <peter.chen@nxp.com>
-Cc:     Felipe Balbi <balbi@kernel.org>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Bin Liu <b-liu@ti.com>, Benson Leung <bleung@chromium.org>,
-        Prashant Malani <pmalani@chromium.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
-Subject: Re: [PATCH 5/9] usb: roles: Provide the switch drivers handle to the
- switch in the API
-Message-ID: <20200218122545.GF28776@kuha.fi.intel.com>
-References: <20200213132428.53374-1-heikki.krogerus@linux.intel.com>
- <20200213132428.53374-6-heikki.krogerus@linux.intel.com>
- <20200213133239.GN1498@kuha.fi.intel.com>
- <20200218072341.GA30350@b29397-desktop>
+        id S1726613AbgBRM1U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 07:27:20 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:28669 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726422AbgBRM1T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 07:27:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582028838;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=IJoYrV36o0Jp2itIALA0xT10zJEIaPxDyqdHnxgNlsI=;
+        b=BOtFE2ti4zsOkDdm4Qko+k0VjlSgbdS3gZ5vfgbNnaP4GE87mmy40caQM3hg9F/Td0iUi3
+        qJo8uGcQLzEFfz2Bi2Ebi86oauA+gElIuFij9tKmPwqk8lZwIlWV9V7rMKxp6cairjHxBm
+        YM+yoHdOaGj3T4pOheFK/+ANDpXk+Hc=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-103-7VyYlDBEM9az-bePlO0GEA-1; Tue, 18 Feb 2020 07:27:14 -0500
+X-MC-Unique: 7VyYlDBEM9az-bePlO0GEA-1
+Received: by mail-wr1-f70.google.com with SMTP id s13so10728523wrb.21
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 04:27:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=IJoYrV36o0Jp2itIALA0xT10zJEIaPxDyqdHnxgNlsI=;
+        b=He5HszYvr2nMjeKOymuVrrSoKXLMFD6ss7+RwM5i6/J4TVCF9rVDOo38hUzv7kk5p6
+         kwRbIDaOD446DRm4MgA8KGUUtsqLfbPiOywGq/+ooEXm+hfESV0rujkiTePsI4ttt/+n
+         kXCEtlSjk/O3Hs+t9j2q/Uy7ysY8idEFiOWqIay/RiRpRL8mUB07aC+zCsYaZvLADGFI
+         NXXwYgpKyFA34yhOrEkBqj5Rfe0dh7S18timkRPty2T/HF+6W6Pa8B0OiPjoC8HObp09
+         68BJLoewLFXn1mRT7Qn+kQHrhmxC0jQxRi9MjUcjKS78fcJvXHYa9o1IATeaMw6zX3AE
+         sLcg==
+X-Gm-Message-State: APjAAAXMcI9X2pQ28fJLnz8jvmLIlERPhHkGZG61Gt2Dol5lSIw9MDTt
+        iYRr22uS8wibwPITSJHW3nRQnE7xR0IGSczD9rjNujqAfwalaCOl7srGMcVcSSrW+kYnf7SAXji
+        iA63G3SnwJkomwZ+cRd35Gl1K
+X-Received: by 2002:a05:600c:3d1:: with SMTP id z17mr3076983wmd.90.1582028833190;
+        Tue, 18 Feb 2020 04:27:13 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxvdlcchraOkrSBJTxKY095h9HvMXtDI0WHiTHKtLH8hgQpaECMShQ1zGl1NVLObBHJBUIQjA==
+X-Received: by 2002:a05:600c:3d1:: with SMTP id z17mr3076948wmd.90.1582028832898;
+        Tue, 18 Feb 2020 04:27:12 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id b67sm3315284wmc.38.2020.02.18.04.27.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2020 04:27:12 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     linmiaohe <linmiaohe@huawei.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
+        pbonzini@redhat.com, sean.j.christopherson@intel.com,
+        wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com
+Subject: Re: [PATCH] KVM: apic: rename apic_lvt_vector and apic_lvt_enabled
+In-Reply-To: <1581995825-11239-1-git-send-email-linmiaohe@huawei.com>
+References: <1581995825-11239-1-git-send-email-linmiaohe@huawei.com>
+Date:   Tue, 18 Feb 2020 13:27:11 +0100
+Message-ID: <87tv3o84io.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200218072341.GA30350@b29397-desktop>
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+linmiaohe <linmiaohe@huawei.com> writes:
 
-On Tue, Feb 18, 2020 at 07:23:41AM +0000, Peter Chen wrote:
-> > > @@ -1118,6 +1119,7 @@ static int ci_hdrc_probe(struct platform_device *pdev)
-> > >  	}
-> > >  
-> > >  	if (ci_role_switch.fwnode) {
-> > > +		ci_role_switch.driver_data = ci;
-> > >  		ci->role_switch = usb_role_switch_register(dev,
-> > >  					&ci_role_switch);
-> 
-> Why the struct usb_role_switch_desc needs drvdata, the struct
-> usb_role_switch has already one?
+> From: Miaohe Lin <linmiaohe@huawei.com>
+>
+> As the func apic_lvt_enabled() is only used once with APIC_LVTT as the
+> second argument, we can eliminate the argument and hardcode lvt_type as
+> APIC_LVTT. And also rename apic_lvt_enabled() to apic_lvtt_enabled() to
+> indicates it's used for APIC_LVTT only. Similar as apic_lvt_vector().
+>
+> Suggested-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
+> Suggested-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+> ---
+>  arch/x86/kvm/lapic.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
+>
+> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+> index eafc631d305c..4f14ec7525f6 100644
+> --- a/arch/x86/kvm/lapic.c
+> +++ b/arch/x86/kvm/lapic.c
+> @@ -289,14 +289,14 @@ static inline void kvm_apic_set_x2apic_id(struct kvm_lapic *apic, u32 id)
+>  	recalculate_apic_map(apic->vcpu->kvm);
+>  }
+>  
+> -static inline int apic_lvt_enabled(struct kvm_lapic *apic, int lvt_type)
+> +static inline int apic_lvtt_enabled(struct kvm_lapic *apic)
+>  {
+> -	return !(kvm_lapic_get_reg(apic, lvt_type) & APIC_LVT_MASKED);
+> +	return !(kvm_lapic_get_reg(apic, APIC_LVTT) & APIC_LVT_MASKED);
+>  }
+>  
+> -static inline int apic_lvt_vector(struct kvm_lapic *apic, int lvt_type)
+> +static inline int apic_lvtt_vector(struct kvm_lapic *apic)
+>  {
+> -	return kvm_lapic_get_reg(apic, lvt_type) & APIC_VECTOR_MASK;
+> +	return kvm_lapic_get_reg(apic, APIC_LVTT) & APIC_VECTOR_MASK;
+>  }
+>  
+>  static inline int apic_lvtt_oneshot(struct kvm_lapic *apic)
+> @@ -1475,10 +1475,9 @@ static void apic_update_lvtt(struct kvm_lapic *apic)
+>  static bool lapic_timer_int_injected(struct kvm_vcpu *vcpu)
+>  {
+>  	struct kvm_lapic *apic = vcpu->arch.apic;
+> -	u32 reg = kvm_lapic_get_reg(apic, APIC_LVTT);
+>  
+>  	if (kvm_apic_hw_enabled(apic)) {
+> -		int vec = reg & APIC_VECTOR_MASK;
+> +		int vec = apic_lvtt_vector(apic);
+>  		void *bitmap = apic->regs + APIC_ISR;
+>  
+>  		if (vcpu->arch.apicv_active)
+> @@ -2278,7 +2277,7 @@ int apic_has_pending_timer(struct kvm_vcpu *vcpu)
+>  {
+>  	struct kvm_lapic *apic = vcpu->arch.apic;
+>  
+> -	if (apic_enabled(apic) && apic_lvt_enabled(apic, APIC_LVTT))
+> +	if (apic_enabled(apic) && apic_lvtt_enabled(apic))
+>  		return atomic_read(&apic->lapic_timer.pending);
+>  
+>  	return 0;
 
-I'm assuming that you are asking why not just register the switch,
-and then call usb_role_switch_set_drvdata(), right?
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-That may create a race condition where the switch is accessed before
-the driver data is available. That can happen for example if the
-switch is exposed to the user space.
-
-To play it safe, supplying the driver data as part of the descriptor.
-That way we can be sure that the driver data is always available
-the moment the switch is registered.
-
-thanks,
+Thanks!
 
 -- 
-heikki
+Vitaly
+
