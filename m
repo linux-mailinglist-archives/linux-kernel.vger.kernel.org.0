@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A77D163181
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:01:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE075163158
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:01:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728726AbgBRUBK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 15:01:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40514 "EHLO mail.kernel.org"
+        id S1728436AbgBRT7h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 14:59:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728230AbgBRUBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 15:01:03 -0500
+        id S1727976AbgBRT7e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 14:59:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD6CB24670;
-        Tue, 18 Feb 2020 20:01:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3BB9420659;
+        Tue, 18 Feb 2020 19:59:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582056063;
-        bh=kGdLVHL/THTjJhhpqr03GaJod5K4yM68dteKfBWbwVw=;
+        s=default; t=1582055973;
+        bh=TQmI2Xi+jSe1xvgDZog4lmUKoHRkgibmTGpmbV6sHn4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WNheNY/crsjKq/W8a7qs4p2ccH+WZz/FBX3OpqvtdoyFL4Lp6p/eaYMJNDYGTcW9m
-         KkmfIaJ5Gx8SR8pOmPqIGkdS6Yh6wzDmRRdpnNiljHvDDNTKZF08ySJCiaNuiWrUVz
-         AFwfGCt7i4bKAFOa10oecBn2UZzlxW/Rmnj4/+L4=
+        b=UjC2lSJELTUhYUDXbL8s1Xy6eUJsH1BINZPznLm7dQnPH2fQoo9u+tiZvfuhuGG81
+         gRgfydxDyxRL6lGm2h6lA998lkr7trugYaYEg4i/45/clDvDOg5O6E7aKSQbByOu9R
+         cSS2P1ftQNE8cjQSqPfSAPxvdNe3+qv6H06jdANY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        stable@kernel.org
-Subject: [PATCH 5.5 20/80] ext4: improve explanation of a mount failure caused by a misconfigured kernel
-Date:   Tue, 18 Feb 2020 20:54:41 +0100
-Message-Id: <20200218190434.192702260@linuxfoundation.org>
+        stable@vger.kernel.org, Herbert Poetzl <herbert@13thfloor.at>,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 5.4 15/66] ext4: fix support for inode sizes > 1024 bytes
+Date:   Tue, 18 Feb 2020 20:54:42 +0100
+Message-Id: <20200218190429.495896795@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200218190432.043414522@linuxfoundation.org>
-References: <20200218190432.043414522@linuxfoundation.org>
+In-Reply-To: <20200218190428.035153861@linuxfoundation.org>
+References: <20200218190428.035153861@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,53 +45,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Theodore Ts'o <tytso@mit.edu>
 
-commit d65d87a07476aa17df2dcb3ad18c22c154315bec upstream.
+commit 4f97a68192bd33b9963b400759cef0ca5963af00 upstream.
 
-If CONFIG_QFMT_V2 is not enabled, but CONFIG_QUOTA is enabled, when a
-user tries to mount a file system with the quota or project quota
-enabled, the kernel will emit a very confusing messsage:
+A recent commit, 9803387c55f7 ("ext4: validate the
+debug_want_extra_isize mount option at parse time"), moved mount-time
+checks around.  One of those changes moved the inode size check before
+the blocksize variable was set to the blocksize of the file system.
+After 9803387c55f7 was set to the minimum allowable blocksize, which
+in practice on most systems would be 1024 bytes.  This cuased file
+systems with inode sizes larger than 1024 bytes to be rejected with a
+message:
 
-    EXT4-fs warning (device vdc): ext4_enable_quotas:5914: Failed to enable quota tracking (type=0, err=-3). Please run e2fsck to fix.
-    EXT4-fs (vdc): mount failed
+EXT4-fs (sdXX): unsupported inode size: 4096
 
-We will now report an explanatory message indicating which kernel
-configuration options have to be enabled, to avoid customer/sysadmin
-confusion.
-
-Link: https://lore.kernel.org/r/20200215012738.565735-1-tytso@mit.edu
-Google-Bug-Id: 149093531
-Fixes: 7c319d328505b778 ("ext4: make quota as first class supported feature")
+Fixes: 9803387c55f7 ("ext4: validate the debug_want_extra_isize mount option at parse time")
+Link: https://lore.kernel.org/r/20200206225252.GA3673@mit.edu
+Reported-by: Herbert Poetzl <herbert@13thfloor.at>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/super.c |   14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+ fs/ext4/super.c |   18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
 --- a/fs/ext4/super.c
 +++ b/fs/ext4/super.c
-@@ -2964,17 +2964,11 @@ static int ext4_feature_set_ok(struct su
- 		return 0;
- 	}
+@@ -3765,6 +3765,15 @@ static int ext4_fill_super(struct super_
+ 	 */
+ 	sbi->s_li_wait_mult = EXT4_DEF_LI_WAIT_MULT;
  
--#ifndef CONFIG_QUOTA
--	if (ext4_has_feature_quota(sb) && !readonly) {
-+#if !defined(CONFIG_QUOTA) || !defined(CONFIG_QFMT_V2)
-+	if (!readonly && (ext4_has_feature_quota(sb) ||
-+			  ext4_has_feature_project(sb))) {
- 		ext4_msg(sb, KERN_ERR,
--			 "Filesystem with quota feature cannot be mounted RDWR "
--			 "without CONFIG_QUOTA");
--		return 0;
--	}
--	if (ext4_has_feature_project(sb) && !readonly) {
++	blocksize = BLOCK_SIZE << le32_to_cpu(es->s_log_block_size);
++	if (blocksize < EXT4_MIN_BLOCK_SIZE ||
++	    blocksize > EXT4_MAX_BLOCK_SIZE) {
++		ext4_msg(sb, KERN_ERR,
++		       "Unsupported filesystem blocksize %d (%d log_block_size)",
++			 blocksize, le32_to_cpu(es->s_log_block_size));
++		goto failed_mount;
++	}
++
+ 	if (le32_to_cpu(es->s_rev_level) == EXT4_GOOD_OLD_REV) {
+ 		sbi->s_inode_size = EXT4_GOOD_OLD_INODE_SIZE;
+ 		sbi->s_first_ino = EXT4_GOOD_OLD_FIRST_INO;
+@@ -3782,6 +3791,7 @@ static int ext4_fill_super(struct super_
+ 			ext4_msg(sb, KERN_ERR,
+ 			       "unsupported inode size: %d",
+ 			       sbi->s_inode_size);
++			ext4_msg(sb, KERN_ERR, "blocksize: %d", blocksize);
+ 			goto failed_mount;
+ 		}
+ 		/*
+@@ -3985,14 +3995,6 @@ static int ext4_fill_super(struct super_
+ 	if (!ext4_feature_set_ok(sb, (sb_rdonly(sb))))
+ 		goto failed_mount;
+ 
+-	blocksize = BLOCK_SIZE << le32_to_cpu(es->s_log_block_size);
+-	if (blocksize < EXT4_MIN_BLOCK_SIZE ||
+-	    blocksize > EXT4_MAX_BLOCK_SIZE) {
 -		ext4_msg(sb, KERN_ERR,
--			 "Filesystem with project quota feature cannot be mounted RDWR "
--			 "without CONFIG_QUOTA");
-+			 "The kernel was not built with CONFIG_QUOTA and CONFIG_QFMT_V2");
- 		return 0;
- 	}
- #endif  /* CONFIG_QUOTA */
+-		       "Unsupported filesystem blocksize %d (%d log_block_size)",
+-			 blocksize, le32_to_cpu(es->s_log_block_size));
+-		goto failed_mount;
+-	}
+ 	if (le32_to_cpu(es->s_log_block_size) >
+ 	    (EXT4_MAX_BLOCK_LOG_SIZE - EXT4_MIN_BLOCK_LOG_SIZE)) {
+ 		ext4_msg(sb, KERN_ERR,
 
 
