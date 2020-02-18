@@ -2,165 +2,209 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2BEB162928
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 16:16:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0D4C16293F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 16:19:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbgBRPQS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 10:16:18 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:55782 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726666AbgBRPQS (ORCPT
+        id S1727438AbgBRPSj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 10:18:39 -0500
+Received: from laurent.telenet-ops.be ([195.130.137.89]:39534 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727295AbgBRPSf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 10:16:18 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01IFFmX6090741;
-        Tue, 18 Feb 2020 09:15:48 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1582038948;
-        bh=g7CZ22E9Atxx53T54UZaa8VzKxWPPc31ojdRcNza8bc=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=zJ9PC+saejh46Of6QW2dFH2redqRaK99p/OiX29Vdpq2bwpD+bHlq+E3Fh8yopM99
-         I/26yU3sNuM0HI+54L04lAYpSpW/EcebdbbpnYSFjq8ocZPAFnrgffwUIOYmM5gpUu
-         Uep1knp/sByK6quH10wI4ngBFPboc5v2sPld0XM4=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01IFFmUB055288
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 18 Feb 2020 09:15:48 -0600
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 18
- Feb 2020 09:15:47 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 18 Feb 2020 09:15:47 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01IFFi7U067542;
-        Tue, 18 Feb 2020 09:15:44 -0600
-Subject: Re: [PATCH] ASoC: cpcap: Implement set_tdm_slot for voice call
- support
-To:     Tony Lindgren <tony@atomide.com>
-CC:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        "Arthur D ." <spinal.by@gmail.com>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sre@kernel.org>,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>
-References: <20200211181005.54008-1-tony@atomide.com>
- <ae2b7d9e-d05e-54ac-4f18-27cc8c4e81a0@ti.com>
- <20200212144620.GJ64767@atomide.com>
- <9a060430-5a3e-61e1-3d2c-f89819d9436f@ti.com>
- <20200217232325.GD35972@atomide.com>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <8fc1dded-6d28-f5cd-f2f9-3a6810571119@ti.com>
-Date:   Tue, 18 Feb 2020 17:15:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20200217232325.GD35972@atomide.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Tue, 18 Feb 2020 10:18:35 -0500
+Received: from ramsan ([84.195.182.253])
+        by laurent.telenet-ops.be with bizsmtp
+        id 4FJD2200y5USYZQ01FJEv4; Tue, 18 Feb 2020 16:18:34 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1j44dZ-0006yA-Pa; Tue, 18 Feb 2020 16:18:13 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1j44dZ-00022u-MX; Tue, 18 Feb 2020 16:18:13 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Harish Jenny K N <harish_kandiga@mentor.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>
+Cc:     Alexander Graf <graf@amazon.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Phil Reid <preid@electromag.com.au>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        qemu-devel@nongnu.org, Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v5 0/5] gpio: Add GPIO Aggregator
+Date:   Tue, 18 Feb 2020 16:18:07 +0100
+Message-Id: <20200218151812.7816-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tony,
+	Hi all,
 
-On 18/02/2020 1.23, Tony Lindgren wrote:
-> * Peter Ujfalusi <peter.ujfalusi@ti.com> [200214 13:30]:
->> Hi Tony,
->>
->> On 12/02/2020 16.46, Tony Lindgren wrote:
->>> * Peter Ujfalusi <peter.ujfalusi@ti.com> [200212 09:18]:
->>>> On 11/02/2020 20.10, Tony Lindgren wrote:
->>>>> +static int cpcap_voice_set_tdm_slot(struct snd_soc_dai *dai,
->>>>> +				    unsigned int tx_mask, unsigned int rx_mask,
->>>>> +				    int slots, int slot_width)
->>>>> +{
->>>>> +	struct snd_soc_component *component = dai->component;
->>>>> +	struct cpcap_audio *cpcap = snd_soc_component_get_drvdata(component);
->>>>> +	int err, ts_mask, mask;
->>>>> +	bool voice_call;
->>>>> +
->>>>> +	/*
->>>>> +	 * Primitive test for voice call, probably needs more checks
->>>>> +	 * later on for 16-bit calls detected, Bluetooth headset etc.
->>>>> +	 */
->>>>> +	if (tx_mask == 0 && rx_mask == 1 && slot_width == 8)
->>>>> +		voice_call = true;
->>>>> +	else
->>>>> +		voice_call = false;
->>>>
->>>> You only have voice call if only rx slot0 is in use?
->>>
->>> Yeah so it seems. Then there's the modem to wlcore bluetooth path that
->>> I have not looked at. But presumably that's again just configuring some
->>> tdm slot on the PMIC.
->>>
->>>> If you record mono on the voice DAI, then rx_mask is also 1, no?
->>>
->>> It is above :) But maybe I don't follow what you're asking here
->>
->> If you arecrod -Dvoice_pcm -c1 -fS8 > /dev/null
->> then it is reasonable that the machine driver will set rx_mask = 1
->>
->>> and maybe you have some better check in mind.
->>
->> Not sure, but relying on set_tdm_slots to decide if we are in a call
->> case does not sound right.
-> 
-> OK yeah seems at least bluetooth would need to be also handled
-> in the set_tdm_slots.
+GPIO controllers are exported to userspace using /dev/gpiochip*
+character devices.  Access control to these devices is provided by
+standard UNIX file system permissions, on an all-or-nothing basis:
+either a GPIO controller is accessible for a user, or it is not.
+Currently no mechanism exists to control access to individual GPIOs.
 
-set_tdm_slots() is for setting how the TDM slots supposed to be used by
-the component and not really for things to configure different operating
-modes.
+Hence this adds a GPIO driver to aggregate existing GPIOs, and expose
+them as a new gpiochip.  This is useful for implementing access control,
+and assigning a set of GPIOs to a specific user.  Furthermore, this
+simplifies and hardens exporting GPIOs to a virtual machine, as the VM
+can just grab the full GPIO controller, and no longer needs to care
+about which GPIOs to grab and which not, reducing the attack surface.
 
-If you hardwire things in set_tdm_slots() for the droid4 then how the
-codec driver can be reused in other setups?
+Recently, other use cases have been discovered[1]:
+  - Describing simple GPIO-operated devices in DT, and using the GPIO
+    Aggregator as a generic GPIO driver for userspace, which is useful
+    for industrial control.
 
->>>> You will also set the sampling rate for voice in
->>>> cpcap_voice_hw_params(), but that is for normal playback/capture, right?
->>>
->>> Yeah so normal playback/capture is already working with cpcap codec driver
->>> with mainline Linux. The voice call needs to set rate to 8000.
->>
->> But if you have a voice call initiated should not the rate be set by the
->> set_sysclk()?
-> 
-> Hmm does set_sysclk called from modem codec know that cpcap codec
-> is the clock master based on bitclock-master and set the rate
-> for cpcap codec?
+Changes compared to v4[2]:
+  - Add Reviewed-by, Tested-by,
+  - Fix inconsistent indentation in documentation.
 
-Neither component should call set_sysclk, set_tdm_slots. The machine
-driver should as it is the only one who know how things are wired...
+Changes compared to v3[3] (more details in the individual patches):
+  - Drop controversial GPIO repeater,
+  - Drop support for legacy sysfs interface based name matching,
+  - Drop applied "gpiolib: Add GPIOCHIP_NAME definition",
+  - Documentation improvements,
+  - Lots of small cleanups.
 
-> 
->>>> It feels like that these should be done via DAPM with codec to codec route?
->>>
->>> Sure if you have some better way of doing it :) Do you have an example to
->>> point me to?
->>
->> Something along the lines of:
->> https://mailman.alsa-project.org/pipermail/alsa-devel/2020-February/162915.html
->>
->> The it is a matter of building and connecting the DAPM routes between
->> the two codec and with a flip of the switch you would have audio flowing
->> between them.
-> 
-> Sounds good to me.
-> 
-> Tony
-> 
+Changes compared to v2[4] (more details in the individual patches):
+  - Integrate GPIO Repeater functionality,
+  - Absorb GPIO forwarder library, as the Aggregator and Repeater are
+    now a single driver,
+  - Use the aggregator parameters to create a GPIO lookup table instead
+    of an array of GPIO descriptors,
+  - Add documentation,
+  - New patches:
+      - "gpiolib: Add GPIOCHIP_NAME definition",
+      - "gpiolib: Add support for gpiochipN-based table lookup",
+      - "gpiolib: Add support for GPIO line table lookup",
+      - "dt-bindings: gpio: Add gpio-repeater bindings",
+      - "docs: gpio: Add GPIO Aggregator/Repeater documentation",
+      - "MAINTAINERS: Add GPIO Aggregator/Repeater section".
+  - Dropped patches:
+      - "gpio: Export gpiod_{request,free}() to modular GPIO code",
+      - "gpio: Export gpiochip_get_desc() to modular GPIO code",
+      - "gpio: Export gpio_name_to_desc() to modular GPIO code",
+      - "gpio: Add GPIO Forwarder Helper".
 
-- Péter
+Changes compared to v1[5]:
+  - Drop "virtual", rename to gpio-aggregator,
+  - Create and use new GPIO Forwarder Helper, to allow sharing code with
+    the GPIO inverter,
+  - Lift limit on the maximum number of GPIOs,
+  - Improve parsing of GPIO specifiers,
+  - Fix modular build.
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Aggregating GPIOs and exposing them as a new gpiochip was suggested in
+response to my proof-of-concept for GPIO virtualization with QEMU[6][7].
+
+For the first use case, aggregated GPIO controllers are instantiated and
+destroyed by writing to atribute files in sysfs.
+Sample session on the Renesas Koelsch development board:
+
+  - Unbind LEDs from leds-gpio driver:
+
+        echo leds > /sys/bus/platform/drivers/leds-gpio/unbind
+
+  - Create aggregators:
+
+    $ echo e6052000.gpio 19,20 \
+        > /sys/bus/platform/drivers/gpio-aggregator/new_device
+
+    gpio-aggregator gpio-aggregator.0: gpio 0 => gpio-953 (gpio-aggregator.0)
+    gpio-aggregator gpio-aggregator.0: gpio 1 => gpio-954 (gpio-aggregator.0)
+    gpiochip_find_base: found new base at 778
+    gpio gpiochip8: (gpio-aggregator.0): added GPIO chardev (254:8)
+    gpiochip_setup_dev: registered GPIOs 778 to 779 on device: gpiochip8 (gpio-aggregator.0)
+
+    $ echo e6052000.gpio 21 e6050000.gpio 20-22 \
+        > /sys/bus/platform/drivers/gpio-aggregator/new_device
+
+    gpio-aggregator gpio-aggregator.1: gpio 0 => gpio-955 (gpio-aggregator.1)
+    gpio-aggregator gpio-aggregator.1: gpio 1 => gpio-1012 (gpio-aggregator.1)
+    gpio-aggregator gpio-aggregator.1: gpio 2 => gpio-1013 (gpio-aggregator.1)
+    gpio-aggregator gpio-aggregator.1: gpio 3 => gpio-1014 (gpio-aggregator.1)
+    gpiochip_find_base: found new base at 774
+    gpio gpiochip9: (gpio-aggregator.1): added GPIO chardev (254:9)
+    gpiochip_setup_dev: registered GPIOs 774 to 777 on device: gpiochip9 (gpio-aggregator.1)
+
+  - Adjust permissions on /dev/gpiochip[89] (optional)
+
+  - Control LEDs:
+
+    $ gpioset gpiochip8 0=0 1=1 # LED6 OFF, LED7 ON
+    $ gpioset gpiochip8 0=1 1=0 # LED6 ON, LED7 OFF
+    $ gpioset gpiochip9 0=0     # LED8 OFF
+    $ gpioset gpiochip9 0=1     # LED8 ON
+
+  - Destroy aggregators:
+
+    $ echo gpio-aggregator.0 \
+            > /sys/bus/platform/drivers/gpio-aggregator/delete_device
+    $ echo gpio-aggregator.1 \
+            > /sys/bus/platform/drivers/gpio-aggregator/delete_device
+
+Thanks!
+
+References:
+  [1] "[PATCH V4 2/2] gpio: inverter: document the inverter bindings"
+      (https://lore.kernel.org/r/1561699236-18620-3-git-send-email-harish_kandiga@mentor.com/)
+  [2] "[PATCH v4 0/5] gpio: Add GPIO Aggregator"
+      (https://lore.kernel.org/r/20200115181523.23556-1-geert+renesas@glider.be)
+  [3] "[PATCH v3 0/7] gpio: Add GPIO Aggregator/Repeater"
+      (https://lore.kernel.org/r/20191127084253.16356-1-geert+renesas@glider.be/)
+  [4] "[PATCH/RFC v2 0/5] gpio: Add GPIO Aggregator Driver"
+      (https://lore.kernel.org/r/20190911143858.13024-1-geert+renesas@glider.be/)
+  [5] "[PATCH RFC] gpio: Add Virtual Aggregator GPIO Driver"
+      (https://lore.kernel.org/r/20190705160536.12047-1-geert+renesas@glider.be/)
+  [6] "[PATCH QEMU POC] Add a GPIO backend"
+      (https://lore.kernel.org/r/20181003152521.23144-1-geert+renesas@glider.be/)
+  [7] "Getting To Blinky: Virt Edition / Making device pass-through
+       work on embedded ARM"
+      (https://fosdem.org/2019/schedule/event/vai_getting_to_blinky/)
+
+Geert Uytterhoeven (5):
+  gpiolib: Add support for gpiochipN-based table lookup
+  gpiolib: Add support for GPIO line table lookup
+  gpio: Add GPIO Aggregator
+  docs: gpio: Add GPIO Aggregator documentation
+  MAINTAINERS: Add GPIO Aggregator section
+
+ .../admin-guide/gpio/gpio-aggregator.rst      | 102 ++++
+ Documentation/admin-guide/gpio/index.rst      |   1 +
+ MAINTAINERS                                   |   7 +
+ drivers/gpio/Kconfig                          |  12 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-aggregator.c                | 574 ++++++++++++++++++
+ drivers/gpio/gpiolib.c                        |  33 +-
+ include/linux/gpio/machine.h                  |  15 +-
+ 8 files changed, 732 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/admin-guide/gpio/gpio-aggregator.rst
+ create mode 100644 drivers/gpio/gpio-aggregator.c
+
+-- 
+2.17.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
