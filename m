@@ -2,83 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2A401627D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 15:15:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C81171627DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 15:15:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726567AbgBROO6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 09:14:58 -0500
-Received: from muru.com ([72.249.23.125]:55842 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726373AbgBROO5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 09:14:57 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 0EB0C8043;
-        Tue, 18 Feb 2020 14:15:39 +0000 (UTC)
-Date:   Tue, 18 Feb 2020 06:14:52 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Pavel Machek <pavel@ucw.cz>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, sre@kernel.org, nekit1000@gmail.com,
-        mpartap@gmx.net, merlijn@wizzup.org, martin_rysavy@centrum.cz,
-        agx@sigxcpu.org, daniel.thompson@linaro.org, jingoohan1@gmail.com,
-        dri-devel@lists.freedesktop.org, tomi.valkeinen@ti.com,
-        jjhiblot@ti.com
-Subject: Re: LED backlight on Droid 4 and others
-Message-ID: <20200218141452.GF35972@atomide.com>
-References: <20200105183202.GA17784@duo.ucw.cz>
- <20200106084549.GA14821@dell>
- <20200211172900.GH64767@atomide.com>
- <20200212201638.GB20085@amd>
- <20200218135219.GC3494@dell>
+        id S1726683AbgBROPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 09:15:36 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43319 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726373AbgBROPf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 09:15:35 -0500
+Received: by mail-lj1-f193.google.com with SMTP id a13so23141260ljm.10
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 06:15:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=e/I96XjCy45FrSiOOSIP4LbktmpEXlMTBIVpcEP7eY4=;
+        b=WvIOoKWdR3yhpJT8DTNT3yzKoIzfOYLSRNYg0Sj4Wfq9Nxv6caTGv2ew5IEi+yDuXO
+         pKGEgTqEkYwnVlyxt9zBUBpxvYyZKVmmPgXQ0xcRHPRt0GHzD+tpuEb1tm9BMKWClUsy
+         8zxNdvD/COqAhRQ+25hf1eLEaTvHP5DVrvel0YAZkczYZKmt8Pdhe8DptvCetcW5yfyc
+         8v6Xhf396Iv0kGJCQqsF/f5+YAbJPPUFxAxVG3tByf6+k9ZiLYy/sCEL8V/uSPGFruyo
+         9iTWlZRtga168ec/jNIJHTqWPmd36pUQtkacJspWlnp30FO7R3EgD8zUexWaNuc2Yc7F
+         3SaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e/I96XjCy45FrSiOOSIP4LbktmpEXlMTBIVpcEP7eY4=;
+        b=UKnl7RmEtdgZ00aOzk0cg+eQ/s5wCvPXJp+HcCyg9wgO/qceFBeNW8yBv4KTQO/D5t
+         9rvlxfqgiQPHGHHd+c+UmdXzGgsmkt7aK+NPx3lX45KWmQMashag/C7YAQZ4jQzhnq9C
+         //0N/OM8UU7Uqjvswc1RYMjXugg5WrmSsLu2eDlWHjayMNCZIE75yD9BngsWviqZ6Jpe
+         /bZOfdmS6gMwenUJURip8jWnlzAFBfxHb1QbTcmUhKYKmQlqkW+IoxQ9BABmTG78NeU9
+         PC4yrP1pXd4WuPM4Ur/R+LrZgA6C10WQE3abQtiROGys3yGL+4aFvNH9AZhGWbyhtsZ0
+         8I4A==
+X-Gm-Message-State: APjAAAUZ3czj3Bd5Ugbaq5Cbsd+cHNzyWg8Z3LJnixtUATYqOsQJPb+s
+        QuMw6BpivUWE4xTHlrF4rEQw51cAqU4dtZSv1FJJNQ==
+X-Google-Smtp-Source: APXvYqz/+XveCSZtSXBY98DPZIClc6Sfarsw73hzrv5HUNrJkZn98HSENcCk60dPkH2DMRTpj3jlVt8ACTyy7fLj9OA=
+X-Received: by 2002:a2e:80cc:: with SMTP id r12mr12317715ljg.154.1582035333487;
+ Tue, 18 Feb 2020 06:15:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200218135219.GC3494@dell>
+References: <20200214152729.6059-1-vincent.guittot@linaro.org>
+ <20200214152729.6059-2-vincent.guittot@linaro.org> <ee38d205-b356-9474-785e-e514d81b7d7f@arm.com>
+ <20200218132203.GB14914@hirez.programming.kicks-ass.net>
+In-Reply-To: <20200218132203.GB14914@hirez.programming.kicks-ass.net>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Tue, 18 Feb 2020 15:15:22 +0100
+Message-ID: <CAKfTPtB3qudK8aMq2cx==4RW8t1pz6ymz1Ti0r8oO4TefWzMRw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] sched/fair: Reorder enqueue/dequeue_task_fair path
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Phil Auld <pauld@redhat.com>, Parth Shah <parth@linux.ibm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Hillf Danton <hdanton@sina.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Lee Jones <lee.jones@linaro.org> [200218 13:52]:
-> On Wed, 12 Feb 2020, Pavel Machek wrote:
-> 
-> > Hi!
-> > 
-> > > > > It would be good to get LED backlight to work in clean way for 5.6
-> > > > > kernel.
-> > > ...
-> > > > > [If you have an idea what else is needed, it would be welcome; it
-> > > > > works for me in development tree but not in tree I'd like to
-> > > > > upstream.]
-> > > > > 
-> > > > > Lee, would you be willing to take "backlight: add led-backlight
-> > > > > driver"? Would it help if I got "leds: Add managed API to get a LED
-> > > > > from a device driver" and "leds: Add of_led_get() and led_put()" into
-> > > > > for_next tree of the LED subsystem?
-> > > > 
-> > > > It looks like you have an open question from Tony on v10.
-> > > > 
-> > > > Is that patch orthogonal, or are there depend{ants,encies}?
-> > > 
-> > > Uhh looks like we messed up a bit with integration. Now droid4
-> > > LCD backlight can no longer be enabled at all manually in v5.6-rc1
-> > > without the "add led-backlight driver" patch.. Should we just
-> > > merge it to fix it rather than start scrambling with other
-> > > temporary hacks?
-> > 
-> > We should just merge the "add led-backlight driver". Everything should
-> > be ready for it. I'm sorry if I broke something working, I was not
-> > aware it worked at all.
-> > 
-> > Unfortunately, this is backlight code, not LED, so I can't just merge it.
-> 
-> Please go ahead.  Apply my Acked-by and merge away ASAP.
-> 
-> Acked-by: Lee Jones <lee.jones@linaro.org>
+On Tue, 18 Feb 2020 at 14:22, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Tue, Feb 18, 2020 at 01:37:37PM +0100, Dietmar Eggemann wrote:
+> > On 14/02/2020 16:27, Vincent Guittot wrote:
+> > > The walk through the cgroup hierarchy during the enqueue/dequeue of a task
+> > > is split in 2 distinct parts for throttled cfs_rq without any added value
+> > > but making code less readable.
+> > >
+> > > Change the code ordering such that everything related to a cfs_rq
+> > > (throttled or not) will be done in the same loop.
+> > >
+> > > In addition, the same steps ordering is used when updating a cfs_rq:
+> > > - update_load_avg
+> > > - update_cfs_group
+> > > - update *h_nr_running
+> >
+> > Is this code change really necessary? You pay with two extra goto's. We
+> > still have the two for_each_sched_entity(se)'s because of 'if
+> > (se->on_rq); break;'.
+>
+> IIRC he relies on the presented ordering in patch #5 -- adding the
+> running_avg metric.
 
-OK best to merge the driver via the LED tree:
-
-Acked-by: Tony Lindgren <tony@atomide.com>
-Tested-by: Tony Lindgren <tony@atomide.com>
+Yes, that's the main reason, updating load_avg before h_nr_running
