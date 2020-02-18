@@ -2,159 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 462A41633F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 22:08:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF862163458
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 22:09:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727811AbgBRVH6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 16:07:58 -0500
-Received: from mga07.intel.com ([134.134.136.100]:6399 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727624AbgBRVHx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 16:07:53 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2020 13:07:47 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,457,1574150400"; 
-   d="scan'208";a="253856472"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
-  by orsmga002.jf.intel.com with ESMTP; 18 Feb 2020 13:07:47 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Paul Mackerras <paulus@ozlabs.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, Marc Zyngier <maz@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-mips@vger.kernel.org, kvm@vger.kernel.org,
-        kvm-ppc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Peter Xu <peterx@redhat.com>,
-        =?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <f4bug@amsat.org>
-Subject: [PATCH v6 22/22] KVM: x86/mmu: Consolidate open coded variants of memslot TLB flushes
-Date:   Tue, 18 Feb 2020 13:07:36 -0800
-Message-Id: <20200218210736.16432-23-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200218210736.16432-1-sean.j.christopherson@intel.com>
-References: <20200218210736.16432-1-sean.j.christopherson@intel.com>
+        id S1728074AbgBRVJp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 16:09:45 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:55028 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727916AbgBRVJn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 16:09:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582060182;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=E9mRKEIAjKB1Xq/wMpY1paNLH79mcLaPS2RPUKkvMDQ=;
+        b=PIKIBcXXV5icRXnBUto48WVeEz7JlejGzH9QixoY2on11Zwy4OnlJMUM3PdphJm69+L+qM
+        kmgGnu7omAxZY8QDPP+v2oZFiD4hdwC48TfAucvhtlnBvntR7AAkapQ70lB4Z7IR59UYD1
+        gZzs7OMMTv5YmAfzUPF1vSmCahJGUoY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-218-D5lFg6opNpGvWSZgTdsX6A-1; Tue, 18 Feb 2020 16:09:34 -0500
+X-MC-Unique: D5lFg6opNpGvWSZgTdsX6A-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9EA32DBA3;
+        Tue, 18 Feb 2020 21:09:32 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A890060BE1;
+        Tue, 18 Feb 2020 21:09:31 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Murphy Zhou <jencce.kernel@gmail.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Jia He <justin.he@arm.com>, Linux MM <linux-mm@kvack.org>,
+        "Shutemov\, Kirill" <kirill.shutemov@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm: get rid of WARN if failed to cow user pages
+References: <20191225054227.gii6ctjkuddjnprs@xzhoux.usersys.redhat.com>
+        <CAPcyv4hMPh0C+_OV+vuiYQikb8ZvRanna4vXfKN=10yrAyCjDA@mail.gmail.com>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Tue, 18 Feb 2020 16:09:30 -0500
+In-Reply-To: <CAPcyv4hMPh0C+_OV+vuiYQikb8ZvRanna4vXfKN=10yrAyCjDA@mail.gmail.com>
+        (Dan Williams's message of "Tue, 14 Jan 2020 22:02:34 -0800")
+Message-ID: <x49imk3bo1h.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace open coded instances of kvm_arch_flush_remote_tlbs_memslot()'s
-functionality with calls to the aforementioned function.  Update the
-comment in kvm_arch_flush_remote_tlbs_memslot() to elaborate on how it
-is used and why it asserts that slots_lock is held.
+Dan Williams <dan.j.williams@intel.com> writes:
 
-No functional change intended.
+> [ drop Ross, add Kirill, linux-mm, and lkml ]
+>
+> On Tue, Dec 24, 2019 at 9:42 PM Murphy Zhou <jencce.kernel@gmail.com> wrote:
+>>
+>> By running xfstests with fsdax enabled, generic/437 always hits this
+>> warning[1] since this commit:
+>>
+>> commit 83d116c53058d505ddef051e90ab27f57015b025
+>> Author: Jia He <justin.he@arm.com>
+>> Date:   Fri Oct 11 22:09:39 2019 +0800
+>>
+>>     mm: fix double page fault on arm64 if PTE_AF is cleared
+>>
+>> Looking at the test program[2] generic/437 uses, it's pretty easy
+>> to hit this warning. Remove this WARN as it seems not necessary.
+>
+> This is not sufficient justification. Does this same test fail without
+> DAX? If not, why not? At a minimum you need to explain why this is not
+> indicating a problem.
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/kvm/mmu/mmu.c | 34 +++++++++-------------------------
- 1 file changed, 9 insertions(+), 25 deletions(-)
+I ran into this, too, and Kirill has posted a patch[1] to fix the issue.
+Note that it's a potential data corrupter, so just removing the warning
+is NOT the right approach.  :)
 
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 8a6516ce2983..1eb8654cc9d0 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -5870,13 +5870,6 @@ void kvm_mmu_slot_remove_write_access(struct kvm *kvm,
- 				      false);
- 	spin_unlock(&kvm->mmu_lock);
- 
--	/*
--	 * kvm_mmu_slot_remove_write_access() and kvm_vm_ioctl_get_dirty_log()
--	 * which do tlb flush out of mmu-lock should be serialized by
--	 * kvm->slots_lock otherwise tlb flush would be missed.
--	 */
--	lockdep_assert_held(&kvm->slots_lock);
--
- 	/*
- 	 * We can flush all the TLBs out of the mmu lock without TLB
- 	 * corruption since we just change the spte from writable to
-@@ -5889,8 +5882,7 @@ void kvm_mmu_slot_remove_write_access(struct kvm *kvm,
- 	 * on PT_WRITABLE_MASK anymore.
- 	 */
- 	if (flush)
--		kvm_flush_remote_tlbs_with_address(kvm, memslot->base_gfn,
--			memslot->npages);
-+		kvm_arch_flush_remote_tlbs_memslot(kvm, memslot);
- }
- 
- static bool kvm_mmu_zap_collapsible_spte(struct kvm *kvm,
-@@ -5946,8 +5938,11 @@ void kvm_arch_flush_remote_tlbs_memslot(struct kvm *kvm,
- 					struct kvm_memory_slot *memslot)
- {
- 	/*
--	 * All the TLBs can be flushed out of mmu lock, see the comments in
--	 * kvm_mmu_slot_remove_write_access().
-+	 * All current use cases for flushing the TLBs for a specific memslot
-+	 * are related to dirty logging, and do the TLB flush out of mmu_lock.
-+	 * The interaction between the various operations on memslot must be
-+	 * serialized by slots_locks to ensure the TLB flush from one operation
-+	 * is observed by any other operation on the same memslot.
- 	 */
- 	lockdep_assert_held(&kvm->slots_lock);
- 	kvm_flush_remote_tlbs_with_address(kvm, memslot->base_gfn,
-@@ -5963,8 +5958,6 @@ void kvm_mmu_slot_leaf_clear_dirty(struct kvm *kvm,
- 	flush = slot_handle_leaf(kvm, memslot, __rmap_clear_dirty, false);
- 	spin_unlock(&kvm->mmu_lock);
- 
--	lockdep_assert_held(&kvm->slots_lock);
--
- 	/*
- 	 * It's also safe to flush TLBs out of mmu lock here as currently this
- 	 * function is only used for dirty logging, in which case flushing TLB
-@@ -5972,8 +5965,7 @@ void kvm_mmu_slot_leaf_clear_dirty(struct kvm *kvm,
- 	 * dirty_bitmap.
- 	 */
- 	if (flush)
--		kvm_flush_remote_tlbs_with_address(kvm, memslot->base_gfn,
--				memslot->npages);
-+		kvm_arch_flush_remote_tlbs_memslot(kvm, memslot);
- }
- EXPORT_SYMBOL_GPL(kvm_mmu_slot_leaf_clear_dirty);
- 
-@@ -5987,12 +5979,8 @@ void kvm_mmu_slot_largepage_remove_write_access(struct kvm *kvm,
- 					false);
- 	spin_unlock(&kvm->mmu_lock);
- 
--	/* see kvm_mmu_slot_remove_write_access */
--	lockdep_assert_held(&kvm->slots_lock);
--
- 	if (flush)
--		kvm_flush_remote_tlbs_with_address(kvm, memslot->base_gfn,
--				memslot->npages);
-+		kvm_arch_flush_remote_tlbs_memslot(kvm, memslot);
- }
- EXPORT_SYMBOL_GPL(kvm_mmu_slot_largepage_remove_write_access);
- 
-@@ -6005,12 +5993,8 @@ void kvm_mmu_slot_set_dirty(struct kvm *kvm,
- 	flush = slot_handle_all_level(kvm, memslot, __rmap_set_dirty, false);
- 	spin_unlock(&kvm->mmu_lock);
- 
--	lockdep_assert_held(&kvm->slots_lock);
--
--	/* see kvm_mmu_slot_leaf_clear_dirty */
- 	if (flush)
--		kvm_flush_remote_tlbs_with_address(kvm, memslot->base_gfn,
--				memslot->npages);
-+		kvm_arch_flush_remote_tlbs_memslot(kvm, memslot);
- }
- EXPORT_SYMBOL_GPL(kvm_mmu_slot_set_dirty);
- 
--- 
-2.24.1
+-Jeff
+
+[1] https://lore.kernel.org/linux-mm/20200218154151.13349-1-kirill.shutemov@linux.intel.com/T/#u
 
