@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B369161F0C
+	by mail.lfdr.de (Postfix) with ESMTP id D54B6161F0D
 	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 03:41:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbgBRCln (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 21:41:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54056 "EHLO mail.kernel.org"
+        id S1726427AbgBRClq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 21:41:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726171AbgBRClm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 21:41:42 -0500
+        id S1726171AbgBRClo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 21:41:44 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53E26206D5;
-        Tue, 18 Feb 2020 02:41:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8D1C2176D;
+        Tue, 18 Feb 2020 02:41:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581993702;
-        bh=XH5iB9f1dmERpE6xdcPaepbwbKEyA9Sq6atMt4Jc9js=;
-        h=From:To:Cc:Subject:Date:From;
-        b=UnY/+E4Ldu8G9sVcA6fZyfX+dYMIySUwAKeiVaVF6gDNz3FdmCLBjd/xgpKLsIJQ4
-         zRR0cftWN/TBKIJDT5zSJi/MtQyq9cle3iRO9n7dwz4RtAlC241tW9jpOPZzhU0qaT
-         vLMtFekaazLY+MJMG/oY6MFeORvQwsfnnDx2yFb8=
+        s=default; t=1581993703;
+        bh=gyswfYZtdXPqF+LXQGoN3Io3M6E6chIV97t2MjFPJR0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=KjEPAfaio/kyLqE8KajiFeFGWcfAfhZAghtE0izK2L8l6evUqT1atzBlQZqihotWJ
+         yFlMU2cropKesXfoZOghMcvKQtQpOCbb9ofR4Ajk3sgGDbx7bgFUCRF7MtxTJVnJ7i
+         w/S9UK5GRhbJGvrCugIVR8PKSPQMiOIdDDag4a3U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     mingo@kernel.org, peterz@infradead.org
 Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, jolsa@redhat.com,
         alexey.budankov@linux.intel.com, songliubraving@fb.com,
         acme@redhat.com, allison@lohutok.net,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 00/11] Fix up liblockdep for 5.6-rc
-Date:   Mon, 17 Feb 2020 21:41:22 -0500
-Message-Id: <20200218024133.5059-1-sashal@kernel.org>
+Subject: [PATCH 01/11] tools headers: Add kprobes.h header
+Date:   Mon, 17 Feb 2020 21:41:23 -0500
+Message-Id: <20200218024133.5059-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200218024133.5059-1-sashal@kernel.org>
+References: <20200218024133.5059-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -40,52 +42,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ingo,
+This is now needed by liblockdep as a result of 2f43c6022d84 ("kprobes:
+Prohibit probing on lockdep functions").
 
-I'm sorry for taking so long on this.
-
-This series fixes up most of liblockdep to work with the recent kernel
-changes. There is another failure with threaded lockup detection that
-I'll work on fixing this week.
-
-Also available via git-pull:
-
-The following changes since commit 11a48a5a18c63fd7621bb050228cebf13566e4d8:
-
-  Linux 5.6-rc2 (2020-02-16 13:16:59 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/sashal/linux.git liblockdep-fixes
-
-Sasha Levin (11):
-  tools headers: Add kprobes.h header
-  tools headers: Add rcupdate.h header
-  tools/kernel.h: extend with dummy RCU functions
-  tools bitmap: add bitmap_andnot definition
-  tools/lib/lockdep: add definition required for IRQ flag tracing
-  tools/kernel.h: add BUILD_BUG_ON_NOT_POWER_OF_2 macro
-  tools bitmap: add bitmap_clear definition
-  tools/lib/lockdep: Hook up vsprintf, find_bit, hweight libraries
-  tools/lib/lockdep: Enable building with CONFIG_TRACE_IRQFLAGS
-  tools/lib/lockdep: New stacktrace API
-  tools/lib/lockdep: call lockdep_init_task on init
-
- tools/include/linux/bitmap.h     | 10 +++++++++
- tools/include/linux/kernel.h     | 13 ++++++++++++
- tools/include/linux/kprobes.h    |  7 +++++++
- tools/include/linux/lockdep.h    |  8 ++++++++
- tools/include/linux/rcupdate.h   | 12 +++++++++++
- tools/include/linux/stacktrace.h |  8 ++++++++
- tools/lib/bitmap.c               | 35 ++++++++++++++++++++++++++++++++
- tools/lib/lockdep/Build          |  2 +-
- tools/lib/lockdep/Makefile       |  2 +-
- tools/lib/lockdep/lockdep.c      |  4 ++--
- tools/lib/lockdep/preload.c      |  4 ++++
- 11 files changed, 101 insertions(+), 4 deletions(-)
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ tools/include/linux/kprobes.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
  create mode 100644 tools/include/linux/kprobes.h
- create mode 100644 tools/include/linux/rcupdate.h
 
+diff --git a/tools/include/linux/kprobes.h b/tools/include/linux/kprobes.h
+new file mode 100644
+index 0000000000000..f665725ea4d59
+--- /dev/null
++++ b/tools/include/linux/kprobes.h
+@@ -0,0 +1,7 @@
++#ifndef _TOOLS_LINUX_KPROBES_H_
++#define _TOOLS_LINUX_KPROBES_H_
++
++#define NOKPROBE_SYMBOL(x)
++#define nokprobe_inline
++
++#endif
 -- 
 2.20.1
 
