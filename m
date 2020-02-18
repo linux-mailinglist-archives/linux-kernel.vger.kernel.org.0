@@ -2,55 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54B6E162388
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 10:38:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10454162390
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 10:40:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726612AbgBRJi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 04:38:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44080 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726539AbgBRJiY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 04:38:24 -0500
-Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D56C5206E2;
-        Tue, 18 Feb 2020 09:38:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582018704;
-        bh=wN2JB0HJOjbQl/J39ymDQJ32DK1gzowbEoZAxeaoJwU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=v4LNxdHGj6cz++0BF3KqsO5JRRU1gQlsjgXrZU7ucabAD+RqnMFycvRl/BcYq+mq2
-         rysMF5EGJHzDWOBCz86+gzh4xy/U1Mb6TlcOPWVesLec18RlkuDGblYKKe6qpbPYe2
-         psdXLMcbgHHAh4VECtx9w7vBrxcT0Za20fPIAH7s=
-Date:   Tue, 18 Feb 2020 17:38:18 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>
-Subject: Re: linux-next: build failure after merge of the imx-mxs tree
-Message-ID: <20200218093817.GD6075@dragon>
-References: <20200218130859.3deb3404@canb.auug.org.au>
- <AM0PR04MB4481EE01C21245B588A9EDAD88110@AM0PR04MB4481.eurprd04.prod.outlook.com>
+        id S1726464AbgBRJjy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 04:39:54 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:41089 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726193AbgBRJjx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 04:39:53 -0500
+Received: by mail-ed1-f68.google.com with SMTP id c26so24046463eds.8
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 01:39:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ri50rwS+DwKS+xdiT/P+5HE1fXClWtkp9WTD/LVC98k=;
+        b=KI/aHslK/e7VD/qZEsqk3jaN/3BOu1yhytDSreqQtdWbJRTqjVSjc3qM6Tzuh2zz5i
+         R0fsIro52A0NGmibGj/wVghzgz+NwLLd0gALlAjAbYQyCiuK2d7msEHAJ1X2oH8k3yVt
+         hqbO0jgTLMFp5c0SjbWvorIk/GMYAFoFN96yxpqkblV70wtKw/JLy+beQnJAti3FCimP
+         FQiop4PsagBP/+xGrTI7n7O87WubWDGxR0VZKa2C+jYUYXpjlq7DLCeLZiyW+ncm1Zjc
+         7DIEK47AM4nw4BMDt0ynD4NJjvrOnzfoe6h+gQPROuNdcbx5BSJiOlpnTx2ozKfE4Oq9
+         x8GA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ri50rwS+DwKS+xdiT/P+5HE1fXClWtkp9WTD/LVC98k=;
+        b=SQPgZ5DRauBf7BJ2DNx7vPZaa/RaoW+wfx5u/2+wgXmZu7Kq9kR32mgG2B2ss00hai
+         0tuQykZOFG0TOtn/R7zeaps1b8kZQbFUC+kP7FyOr90TbVpXKcQdW829jFQtckfDEqP4
+         yowMcyfz5NAP3+3VZ1FnmKyP15AGPW6BanKknRfKbkM0+DXfhkYDe/d4DsGcHB49pxB6
+         yHquj+GnHvuVubBGyp1uPyVFosQmOq2nDfJSa5szt/eSERQPKFChaGTLh7RXGpRuz4hJ
+         1oLYK2f4N3kLAQL26hzLbTfB/tWFR3REPLaPhjbp4nlPJakL7MHoISWOzGm3LC507nCt
+         igJQ==
+X-Gm-Message-State: APjAAAXG9BYedrGvhaLv1nEQ7gxBPiXbaSFF3M2mGYSV75hSA+ToDJGX
+        HS7Ie5CH3lFCIp7TKrbgAwq/xwV9Xd1EKaoZk2O45A==
+X-Google-Smtp-Source: APXvYqwPmrjtbUt3H2+QDBo0aopxeSgvwYExYKpjl0BM4dpOEKo5xW+lYJ2BY7xMzI3AGGcvU+8a7WhntIWppVfJuzU=
+X-Received: by 2002:aa7:c2cb:: with SMTP id m11mr18480901edp.89.1582018791471;
+ Tue, 18 Feb 2020 01:39:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM0PR04MB4481EE01C21245B588A9EDAD88110@AM0PR04MB4481.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200218005659.91318-1-lrizzo@google.com> <20200218165529.39e761c4be828285cc060279@kernel.org>
+In-Reply-To: <20200218165529.39e761c4be828285cc060279@kernel.org>
+From:   Luigi Rizzo <lrizzo@google.com>
+Date:   Tue, 18 Feb 2020 01:39:40 -0800
+Message-ID: <CAMOZA0L14CjA97UHj7V1tPuOtesrUykYPj3_vgbF3JQWS3bcaw@mail.gmail.com>
+Subject: Re: [PATCH v3] kretprobe: percpu support
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, naveen.n.rao@linux.ibm.com,
+        anil.s.keshavamurthy@intel.com, David Miller <davem@davemloft.net>,
+        gregkh@linuxfoundation.org, Ingo Molnar <mingo@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 02:18:00AM +0000, Peng Fan wrote:
-> 
-> > Subject: linux-next: build failure after merge of the imx-mxs tree
-> 
-> Sorry for this. I'll fix it. It should be the functions not defined when
-> IMX_SCU not defined.
+On Mon, Feb 17, 2020 at 11:55 PM Masami Hiramatsu <mhiramat@kernel.org> wrote:
+>
+> Hi Luigi,
+>
+> On Mon, 17 Feb 2020 16:56:59 -0800
+> Luigi Rizzo <lrizzo@google.com> wrote:
+>
+> > kretprobe uses a list protected by a single lock to allocate a
+> > kretprobe_instance in pre_handler_kretprobe(). This works poorly with
+> > concurrent calls.
+>
+> Yes, there are several potential performance issue and the recycle
+> instance is one of them. However, I think this spinlock is not so racy,
+> but noisy (especially on many core machine) right?
 
-I'm dropping the patch from my branch for now.
+correct, it is especially painful on 2+ sockets and many-core systems
+when attaching kretprobes on otherwise uncontended paths.
 
-Shawn
+>
+> Racy lock is the kretprobe_hash_lock(), I would like to replace it
+> with ftrace's per-task shadow stack. But that will be available
+> only if CONFIG_FUNCTION_GRAPH_TRACER=y (and instance has no own
+> payload).
+>
+> > This patch offers a simplified fix: the percpu_instance flag indicates
+> > that we allocate one instance per CPU, and the allocation is contention
+> > free, but we allow only have one pending entry per CPU (this could be
+> > extended to a small constant number without much trouble).
+>
+> OK, the percpu instance idea is good to me, and I think it should be
+> default option. Unless user specifies the number of instances, it should
+> choose percpu instance by default.
+
+That was my initial implementation, which would not even need the
+percpu_instance
+flag in struct kretprobe. However, I felt that changing the default
+would have subtle
+side effects (e.g., only one outstanding call per CPU) so I thought it
+would be better
+to leave the default unchanged and make the flag explicit.
+
+> Moreover, this makes things a bit complicated, can you add per-cpu
+> instance array? If it is there, we can remove the old recycle rp insn
+> code.
+
+Can you clarify what you mean by "per-cpu instance array" ?
+Do you mean allowing multiple outstanding entries per cpu?
+
+I will address your code comments in an updated patch.
+
+thanks
+luigi
