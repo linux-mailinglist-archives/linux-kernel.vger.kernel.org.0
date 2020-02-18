@@ -2,89 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94DF71630E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:58:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 039A41630F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:58:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727894AbgBRT5W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 14:57:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34480 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726557AbgBRT5K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:57:10 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA24124676;
-        Tue, 18 Feb 2020 19:57:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582055830;
-        bh=68U/xLqyVjRfkOsGOYbz9f1hYAYIM2awf/NeUB1Psm0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VvWcUzBTYVLq2vDNSmPbJr/yMfonQS3shdv0PL8eDq6ZMlHbB9RlvTf7UC8dDiN/N
-         yMbEU/E8kSTurs51IXjU14cXtgX/EAzPLy0Hl+s1F7nGdW7QDALqZxtGdNG1T0BTVj
-         ojbAKJCJ0lde6ict7CBAZ2gOdqHSHfCMpkNPc7Uk=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 38/38] KVM: x86/mmu: Fix struct guest_walker arrays for 5-level paging
-Date:   Tue, 18 Feb 2020 20:55:24 +0100
-Message-Id: <20200218190422.917834466@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200218190418.536430858@linuxfoundation.org>
-References: <20200218190418.536430858@linuxfoundation.org>
-User-Agent: quilt/0.66
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1728103AbgBRT6B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 14:58:01 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35893 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728069AbgBRT5z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 14:57:55 -0500
+Received: by mail-pg1-f196.google.com with SMTP id d9so11474644pgu.3;
+        Tue, 18 Feb 2020 11:57:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=93cUwvRz5DcbF2nQaz+gagk6IvPBCJp98CU5NTDjQMY=;
+        b=UQ+9pXbDMmbdwA6F96Qv1VTxfWIz+JpDgMRfBgEwsI2/DxQA8d1YYv3LhqeSWvFyG3
+         KySMupXsPLTKR8WIfSgIj374RP/tpNY6rn9kI85B2bdUZKNIAI4bBtweOJJkv+UufbfL
+         OsHJC1WfHbmkTo4aTz0APkZDFAdFavuyyZd6ZXl1OwPo93zeo/bz8FthImtkeCMnvSFS
+         vLhtX0zbw3wAuwNmOtJU6nw6SWTGmqPVqAubM0XpVuoS5kogsoQOXzF6YzD7MGj+PfLU
+         FaP2WqUchlHEnqt0TtGb4plEPa9QcyJBK/mJcXAwrN+vzxkqCENzHeZu0Lh3Yb+lIkhs
+         cIYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=93cUwvRz5DcbF2nQaz+gagk6IvPBCJp98CU5NTDjQMY=;
+        b=cYlMuMhrcfgSz2BGEQzzP4rIBh/JWzSMJWAFl2NOwz5cFro5p8S9qevRLJkz4RCloF
+         fNkvN+BH2TlZZXNlE6eluVKuhT+9TOflH9vBzMs/4tJi5z1x/ZxAPRuFH0r1SrUzptSu
+         DPx04XDFfW2bP2m6TXditXD9K4JbOf+oW3pfNdMweybhWXwyh9rRdoSI1Ki1MO2TpRgd
+         mMZSlgpzF0NoxjAq0Ex3qvcIIkE2DYg00MwGFxQb/3JN3KEwWa8Gk5niJDuW14zD9QZ9
+         5XYxqLzwWxIPdrzRusJmAdY8kA2tFV4NVPsynM3vGKBzmtVecSFj3/EB44yYtvE8hnKR
+         TgOw==
+X-Gm-Message-State: APjAAAXcKQwQP8a4ZfLFuQbaTJFZA17la3xeGg/oQycnPzo+BT2V/pGC
+        Y1JXOcZ/hFw6r3KmLtplaQ==
+X-Google-Smtp-Source: APXvYqzmmai+702KiOlcfbcc3ZFX7jmIWdGXi8fVhYaR8Nc3GJgeHndI1Pldb3SlGbLRf31qGdaxsA==
+X-Received: by 2002:a63:4525:: with SMTP id s37mr24073227pga.418.1582055875098;
+        Tue, 18 Feb 2020 11:57:55 -0800 (PST)
+Received: from madhuparna-HP-Notebook.nitk.ac.in ([2402:3a80:1ee3:ff08:f869:e1e5:121e:cdbf])
+        by smtp.gmail.com with ESMTPSA id d4sm4038413pjz.12.2020.02.18.11.57.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2020 11:57:54 -0800 (PST)
+From:   madhuparnabhowmik10@gmail.com
+To:     pshelar@ovn.org, davem@davemloft.net
+Cc:     netdev@vger.kernel.org, dev@openvswitch.org,
+        linux-kernel@vger.kernel.org, joel@joelfernandes.org,
+        frextrite@gmail.com,
+        linux-kernel-mentees@lists.linuxfoundation.org, paulmck@kernel.org,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+Subject: [PATCH 2/4] vport.c: Use built-in RCU list checking
+Date:   Wed, 19 Feb 2020 01:27:42 +0530
+Message-Id: <20200218195742.2636-1-madhuparnabhowmik10@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
 
-[ Upstream commit f6ab0107a4942dbf9a5cf0cca3f37e184870a360 ]
+hlist_for_each_entry_rcu() has built-in RCU and lock checking.
 
-Define PT_MAX_FULL_LEVELS as PT64_ROOT_MAX_LEVEL, i.e. 5, to fix shadow
-paging for 5-level guest page tables.  PT_MAX_FULL_LEVELS is used to
-size the arrays that track guest pages table information, i.e. using a
-"max levels" of 4 causes KVM to access garbage beyond the end of an
-array when querying state for level 5 entries.  E.g. FNAME(gpte_changed)
-will read garbage and most likely return %true for a level 5 entry,
-soft-hanging the guest because FNAME(fetch) will restart the guest
-instead of creating SPTEs because it thinks the guest PTE has changed.
+Pass cond argument to list_for_each_entry_rcu() to silence
+false lockdep warning when CONFIG_PROVE_RCU_LIST is enabled
+by default.
 
-Note, KVM doesn't yet support 5-level nested EPT, so PT_MAX_FULL_LEVELS
-gets to stay "4" for the PTTYPE_EPT case.
-
-Fixes: 855feb673640 ("KVM: MMU: Add 5 level EPT & Shadow page table support.")
-Cc: stable@vger.kernel.org
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
 ---
- arch/x86/kvm/paging_tmpl.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/openvswitch/vport.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kvm/paging_tmpl.h b/arch/x86/kvm/paging_tmpl.h
-index 100ae4fabf170..61f10a4fd8074 100644
---- a/arch/x86/kvm/paging_tmpl.h
-+++ b/arch/x86/kvm/paging_tmpl.h
-@@ -36,7 +36,7 @@
- 	#define PT_GUEST_ACCESSED_SHIFT PT_ACCESSED_SHIFT
- 	#define PT_HAVE_ACCESSED_DIRTY(mmu) true
- 	#ifdef CONFIG_X86_64
--	#define PT_MAX_FULL_LEVELS 4
-+	#define PT_MAX_FULL_LEVELS PT64_ROOT_MAX_LEVEL
- 	#define CMPXCHG cmpxchg
- 	#else
- 	#define CMPXCHG cmpxchg64
+diff --git a/net/openvswitch/vport.c b/net/openvswitch/vport.c
+index 5da9392b03d6..47febb4504f0 100644
+--- a/net/openvswitch/vport.c
++++ b/net/openvswitch/vport.c
+@@ -96,7 +96,8 @@ struct vport *ovs_vport_locate(const struct net *net, const char *name)
+ 	struct hlist_head *bucket = hash_bucket(net, name);
+ 	struct vport *vport;
+ 
+-	hlist_for_each_entry_rcu(vport, bucket, hash_node)
++	hlist_for_each_entry_rcu(vport, bucket, hash_node,
++				lockdep_ovsl_is_held())
+ 		if (!strcmp(name, ovs_vport_name(vport)) &&
+ 		    net_eq(ovs_dp_get_net(vport->dp), net))
+ 			return vport;
 -- 
-2.20.1
-
-
+2.17.1
 
