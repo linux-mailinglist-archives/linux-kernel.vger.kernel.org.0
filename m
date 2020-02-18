@@ -2,175 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3F1E16337A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:52:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70815163318
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:31:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726439AbgBRUwZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 15:52:25 -0500
-Received: from gateway30.websitewelcome.com ([192.185.160.12]:31362 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726383AbgBRUwY (ORCPT
+        id S1727082AbgBRUbz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 15:31:55 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:37102 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbgBRUby (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 15:52:24 -0500
-X-Greylist: delayed 1428 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Feb 2020 15:52:23 EST
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id A32688460
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 14:28:34 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 49Tuj8m168vkB49Tuj5WY8; Tue, 18 Feb 2020 14:28:34 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=yNvO5nQCXupbNxiTPEhF0b9Zhr1y/1EPEHY68gcTols=; b=HVA6K5DSwDnJ2wcNKVGN3ndT0+
-        xc5xOSjwtCEZsZmQQmmjETJfq6qMBzKdcBIHg1zljNkFqd2mZseSt4k+zQXolEkMVY29c3MeUEBkC
-        yMTuTU/+H3c4SkQ53ncAIHJtGWAQESRUWY7DkvbzKzob8Xbnzo9NxQF8EfuXNGQoX4X4biy5S5JJl
-        jYSNVYBo8dW1FM2POANAJb9sA3mTH5eKNrBPtgplqR/O39q+vuJtyBpnZHhpaOfSXxhv3T5GGNL1U
-        tWjfBQbKDQdmrsbEhyDxiVQJWAkI4KOzvLpVvr3MvJPQTGHnhLd1PSD6Qv/Dyv3vHajRiCb5rgi6A
-        tq/Gkl9g==;
-Received: from [200.68.140.26] (port=8034 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j49Tr-000H4c-J9; Tue, 18 Feb 2020 14:28:31 -0600
-Date:   Tue, 18 Feb 2020 14:31:14 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Saeed Mahameed <saeedm@mellanox.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Boris Pismenny <borisp@mellanox.com>
-Cc:     netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] net/mlx5e: Replace zero-length array with
- flexible-array member
-Message-ID: <20200218203114.GA27096@embeddedor>
+        Tue, 18 Feb 2020 15:31:54 -0500
+Received: by mail-oi1-f195.google.com with SMTP id q84so21512439oic.4;
+        Tue, 18 Feb 2020 12:31:54 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=J/VxJ3xiwdS6/BWNfUPWpgIlaLG5DINnCPtjKZgxKdM=;
+        b=to4rJbzvx2eabws6ZIqorBVPxeBvz1PRGBHQrRNnzrPBYB9b8OtUIAGxg4nWCQvMh7
+         Rt8zwcB1IjXcMtjJOkSvnwixmoP5lXTe7dnq6PgDXuv7UdXa9/lHhejQ7syN7BJY7FN4
+         BQ/ToBs3tzaw3CDnjWyBmxo7RJy2dMPsy3gFcDMgwKDHoxvQ2gOya3UH3ZKHQcN+kqDp
+         /qJuZ9B/itpHUcm9eeJ+NtPRyW4kzjukHbbK+T75Ng53AQoI0hfmvlDRZfTVa+vkFisz
+         X+LUEYdfRF0GNjrAYSmSg+GKKD07IAPNE83gX4L/aemV4gCsQBYAeP7lLPYB9aA5QTuO
+         MzKg==
+X-Gm-Message-State: APjAAAUgxRk/6MgwUq8bRHtb/oAIeiVFfzzXXo76aoBpC+h/oR0Q2abI
+        KFJw2OG2osp5nhOJRgaXtQ==
+X-Google-Smtp-Source: APXvYqz4+tMO0xRMFlD+Nj7EMFcqW+z3eblcWmDWok4aK303S3lbrgXPLQt5ovOmoCv1EkypuhWhDA==
+X-Received: by 2002:aca:af50:: with SMTP id y77mr2515745oie.8.1582057913671;
+        Tue, 18 Feb 2020 12:31:53 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id y25sm1716518oto.27.2020.02.18.12.31.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2020 12:31:52 -0800 (PST)
+Received: (nullmailer pid 19094 invoked by uid 1000);
+        Tue, 18 Feb 2020 20:31:51 -0000
+Date:   Tue, 18 Feb 2020 14:31:51 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     matthias.bgg@kernel.org
+Cc:     mark.rutland@arm.com, ck.hu@mediatek.com, p.zabel@pengutronix.de,
+        airlied@linux.ie, mturquette@baylibre.com, sboyd@kernel.org,
+        ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
+        enric.balletbo@collabora.com, devicetree@vger.kernel.org,
+        drinkcat@chromium.org, frank-w@public-files.de,
+        sean.wang@mediatek.com, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, wens@csie.org,
+        linux-mediatek@lists.infradead.org, rdunlap@infradead.org,
+        hsinyi@chromium.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        Matthias Brugger <mbrugger@suse.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: [PATCH v7 02/13] dt-bindings: display: mediatek: Add mmsys
+ binding description
+Message-ID: <20200218203151.GA15948@bogus>
+References: <20200213201953.15268-1-matthias.bgg@kernel.org>
+ <20200213201953.15268-3-matthias.bgg@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.68.140.26
-X-Source-L: No
-X-Exim-ID: 1j49Tr-000H4c-J9
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.26]:8034
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 14
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20200213201953.15268-3-matthias.bgg@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On Thu, Feb 13, 2020 at 09:19:42PM +0100, matthias.bgg@kernel.org wrote:
+> From: Matthias Brugger <mbrugger@suse.com>
+> 
+> The MediaTek DRM has a block called mmsys, which sets
+> the routing and enables the different blocks.
+> This patch adds one line for the mmsys bindings description and changes
+> the mmsys description to use the generic form of referring to a specific
+> Soc.
+> 
+> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+> 
+> ---
+> 
+> Changes in v7:
+> - add hint to the mmsys binding document
+> - make mmsys description generic
+> - fix typo in commit message
+> 
+> Changes in v6: None
+> Changes in v5: None
+> Changes in v4: None
+> Changes in v3: None
+> Changes in v2: None
+> 
+>  .../bindings/display/mediatek/mediatek,disp.txt          | 3 +++
+>  .../bindings/display/mediatek/mediatek,mmsys.txt         | 9 +--------
+>  2 files changed, 4 insertions(+), 8 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+> index b91e709db7a4..8e453026ef78 100644
+> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+> @@ -24,6 +24,7 @@ connected to.
+>  For a description of the display interface sink function blocks, see
+>  Documentation/devicetree/bindings/display/mediatek/mediatek,dsi.txt and
+>  Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.txt.
+> +Documentation/devicetree/bindings/display/mediatek/mediatek,mmsys.txt.
+>  
+>  Required properties (all function blocks):
+>  - compatible: "mediatek,<chip>-disp-<function>", one of
+> @@ -43,7 +44,9 @@ Required properties (all function blocks):
+>  	"mediatek,<chip>-dpi"        		- DPI controller, see mediatek,dpi.txt
+>  	"mediatek,<chip>-disp-mutex" 		- display mutex
+>  	"mediatek,<chip>-disp-od"    		- overdrive
+> +	"mediatek,<chip>-mmsys", "syscon"	- provide clocks and components management
+>    the supported chips are mt2701, mt2712 and mt8173.
+> +
+>  - reg: Physical base address and length of the function block register space
+>  - interrupts: The interrupt signal from the function block (required, except for
+>    merge and split function blocks).
+> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/display/mediatek/mediatek,mmsys.txt
+> index 301eefbe1618..7bbadee820e3 100644
+> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,mmsys.txt
+> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,mmsys.txt
+> @@ -5,14 +5,7 @@ The Mediatek mmsys controller provides various clocks to the system.
+>  
+>  Required Properties:
+>  
+> -- compatible: Should be one of:
+> -	- "mediatek,mt2701-mmsys", "syscon"
+> -	- "mediatek,mt2712-mmsys", "syscon"
+> -	- "mediatek,mt6779-mmsys", "syscon"
+> -	- "mediatek,mt6797-mmsys", "syscon"
+> -	- "mediatek,mt7623-mmsys", "mediatek,mt2701-mmsys", "syscon"
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+You've lost this information about the fallback...
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+> -	- "mediatek,mt8173-mmsys", "syscon"
+> -	- "mediatek,mt8183-mmsys", "syscon"
+> +- compatible: "mediatek,<chip>-mmsys"
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+You are just going to have to add these all back when this is converted 
+to schema.
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/ethernet/mellanox/mlx5/core/en.h          | 2 +-
- drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c  | 2 +-
- drivers/net/ethernet/mellanox/mlx5/core/fs_counters.c | 2 +-
- drivers/net/ethernet/mellanox/mlx5/core/ipoib/ipoib.h | 4 ++--
- 4 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en.h b/drivers/net/ethernet/mellanox/mlx5/core/en.h
-index 220ef9f06f84..a960099cd7aa 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en.h
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en.h
-@@ -204,7 +204,7 @@ struct mlx5e_tx_wqe {
- 
- struct mlx5e_rx_wqe_ll {
- 	struct mlx5_wqe_srq_next_seg  next;
--	struct mlx5_wqe_data_seg      data[0];
-+	struct mlx5_wqe_data_seg      data[];
- };
- 
- struct mlx5e_rx_wqe_cyc {
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c b/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
-index 4c61d25d2e88..b794888fa3ba 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
-@@ -57,7 +57,7 @@ struct mlx5_fpga_ipsec_cmd_context {
- 	struct completion complete;
- 	struct mlx5_fpga_device *dev;
- 	struct list_head list; /* Item in pending_cmds */
--	u8 command[0];
-+	u8 command[];
- };
- 
- struct mlx5_fpga_esp_xfrm;
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/fs_counters.c b/drivers/net/ethernet/mellanox/mlx5/core/fs_counters.c
-index ab69effb056d..f43caefd07a1 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/fs_counters.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_counters.c
-@@ -470,7 +470,7 @@ struct mlx5_fc_bulk {
- 	u32 base_id;
- 	int bulk_len;
- 	unsigned long *bitmask;
--	struct mlx5_fc fcs[0];
-+	struct mlx5_fc fcs[];
- };
- 
- static void mlx5_fc_init(struct mlx5_fc *counter, struct mlx5_fc_bulk *bulk,
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/ipoib/ipoib.h b/drivers/net/ethernet/mellanox/mlx5/core/ipoib/ipoib.h
-index c87962cab921..de7e01a027bb 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/ipoib/ipoib.h
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/ipoib/ipoib.h
-@@ -56,7 +56,7 @@ struct mlx5i_priv {
- 	u32    qkey;
- 	u16    pkey_index;
- 	struct mlx5i_pkey_qpn_ht *qpn_htbl;
--	char  *mlx5e_priv[0];
-+	char  *mlx5e_priv[];
- };
- 
- int mlx5i_create_tis(struct mlx5_core_dev *mdev, u32 underlay_qpn, u32 *tisn);
-@@ -107,7 +107,7 @@ struct mlx5i_tx_wqe {
- 	struct mlx5_wqe_datagram_seg datagram;
- 	struct mlx5_wqe_eth_pad      pad;
- 	struct mlx5_wqe_eth_seg      eth;
--	struct mlx5_wqe_data_seg     data[0];
-+	struct mlx5_wqe_data_seg     data[];
- };
- 
- static inline void mlx5i_sq_fetch_wqe(struct mlx5e_txqsq *sq,
--- 
-2.25.0
-
+Rob
