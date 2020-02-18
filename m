@@ -2,287 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DCD916338A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:54:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DF75163396
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:57:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726556AbgBRUyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 15:54:25 -0500
-Received: from gateway22.websitewelcome.com ([192.185.47.100]:42468 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726380AbgBRUyZ (ORCPT
+        id S1726634AbgBRU5h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 15:57:37 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:39386 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726352AbgBRU5h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 15:54:25 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 53931777A
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 14:54:24 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 49sujw4FTXVkQ49sujIwyh; Tue, 18 Feb 2020 14:54:24 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=m4fWlpkqGiGuCYq5elOi8k6r3NJ/jeu5oJZInYcenKg=; b=CbuBpuY1RBhmt3aSkHVvglrEFB
-        NWBgDXbzUc+YN0NGI+uFQenAPZE0fBuTDXDRIAPZa2Cf7edonY7fc59bQOA3e+hUzZtShQC3QzRxO
-        GkteRxVCqTi1LMT56/4A45lovmPF2p8lPOfdqx0o7Hu6un4mfBBVmq7Tuh9Vb0cD4x9QBe2WnJLoc
-        DWgv/NPykULMwwCFMWeiZuokAiOeAG1Pati6ViMkSBMQ0oRWG2Z/5lkaRcs/ZctK7cfGRR9LbRwCB
-        MtNBLAwZq0mB0XkwwuUFkZNPa6EY4pEf21tPwkOLnmTbpTjR9ErMFR78LQWZECp5jmYXwHcAGQ/tZ
-        +lY7NUyg==;
-Received: from [200.68.140.26] (port=12800 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j49ss-000Tu7-TY; Tue, 18 Feb 2020 14:54:23 -0600
-Date:   Tue, 18 Feb 2020 14:57:05 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] mlxsw: Replace zero-length array with flexible-array
- member
-Message-ID: <20200218205705.GA29805@embeddedor>
+        Tue, 18 Feb 2020 15:57:37 -0500
+Received: by mail-oi1-f193.google.com with SMTP id z2so21562559oih.6;
+        Tue, 18 Feb 2020 12:57:36 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8v/Yv2bBz+JS6zS39M7KIp7wfnBe7kSHb1JqlCwBB7A=;
+        b=izN4sOPI5RTmoYowViMX16iWSXL6V+/fK8GhoXMvNb9RcvY29tzUG7qWhFEm/MK2/E
+         X5cQns97EKomPYVnddEpyGAJDB1QbGFWskLJH6W2l5aPCViwUf1UJArHvbXFf1QGi83t
+         7yU60G2kD67fbfQMvUDifOoiIeHKgGF+z+5qPuR+pPYCKH5/yL+7XFrJ1LIFrqf9/2Vw
+         wW2TqaGZPr4yvQVRKGmIP9icSuePzJE5eLlQq444HWMKqeTVYMT2UCZH50oEDRlAwfdA
+         Qdt/lGN+j/zo2nyHW13aAm4u1dMRO22jtYxraisI6XhWv5AI2E5O/e9vVOorMJQa6aSK
+         I5Cw==
+X-Gm-Message-State: APjAAAVQkMk3MOK7UzKqLgH9nNHUOpzO4FXFR8+CR8cMsqtQ0ooyLAQJ
+        ej12xn8xMyzzBhe3iCnh0LVH45k=
+X-Google-Smtp-Source: APXvYqwyCWaIWb/EOivdLe4KzOnlqcCXN5vxUwSFdJZrurWk2pYTTDOa2XCxMjJdbIXHWkszEGMnqA==
+X-Received: by 2002:a54:4106:: with SMTP id l6mr2449018oic.76.1582059456098;
+        Tue, 18 Feb 2020 12:57:36 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id d131sm1582039oia.36.2020.02.18.12.57.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2020 12:57:35 -0800 (PST)
+Received: (nullmailer pid 24025 invoked by uid 1000);
+        Tue, 18 Feb 2020 20:57:35 -0000
+Date:   Tue, 18 Feb 2020 14:57:35 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Joe Perches <joe@perches.com>, Sam Ravnborg <sam@ravnborg.org>
+Cc:     devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: checkpatch - "DT binding docs and includes should be a separate
+ patch"
+Message-ID: <20200218205735.GA9953@bogus>
+References: <20200209081931.GA5321@ravnborg.org>
+ <0d0c4ad9e15ce696ad4b470d724fb0d1423f26c0.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.68.140.26
-X-Source-L: No
-X-Exim-ID: 1j49ss-000Tu7-TY
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.26]:12800
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 19
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <0d0c4ad9e15ce696ad4b470d724fb0d1423f26c0.camel@perches.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On Sun, Feb 09, 2020 at 12:35:26AM -0800, Joe Perches wrote:
+> On Sun, 2020-02-09 at 09:19 +0100, Sam Ravnborg wrote:
+> > Hi Joe.
+> > 
+> > The following warnings triggers on the patch below:
+> > 
+> > c55d0a554843 (HEAD -> drm-misc-next) dt-bindings: panel: Convert orisetech,otm8009a to json-schema
+> > -:15: WARNING:FILE_PATH_CHANGES: added, moved or deleted file(s), does MAINTAINERS need updating?
+> > #15:
+> > deleted file mode 100644
+> > 
+> > -:18: WARNING:DT_SPLIT_BINDING_PATCH: DT binding docs and includes should be a separate patch. See: Documentation/devicetree/bindings/submitting-patches.txt
+> > 
+> > -:43: WARNING:DT_SPLIT_BINDING_PATCH: DT binding docs and includes should be a separate patch. See: Documentation/devicetree/bindings/submitting-patches.txt
+> > 
+> > total: 0 errors, 3 warnings, 0 checks, 53 lines checked
+> > 
+> > 1)
+> > yaml files include maintainer information in the file.
+> > I dunno if this replaces/overrules MAINTAINERS - so first warning may be
+> > OK. Also because we delete a file it seems semi relevant.
+> > 
+> > 2)
+> > As the patch only touches files in Documentation/devicetree/bindings the
+> > warning about a separate patch seems wrong.
+> 
+> Rob Herring wrote that bit.  He's now cc'd.  lkml too.
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+Yeah, I'd noticed this, but haven't dug into how to fix it. Given it 
+mainly happens in these schema conversion patches, I haven't been to 
+worried about it. Just 3300 more conversions todo and it will be 
+"fixed".
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+> > But the general feedback - in this very special case - is that
+> > checkpatch seems a bit too noisy.
+> > 
+> > If we as a bonus could get a warning when new yaml files do not
+> > use:
+> > # SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
+> > That would be great.
+> 
+> Submitted here:
+> 
+> https://lkml.org/lkml/2020/1/29/292
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+The bigger review issue is to check the above license is what's used 
+(but not on conversions).
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/ethernet/mellanox/mlxsw/core.c                    | 2 +-
- drivers/net/ethernet/mellanox/mlxsw/core_acl_flex_keys.c      | 2 +-
- drivers/net/ethernet/mellanox/mlxsw/spectrum1_kvdl.c          | 2 +-
- drivers/net/ethernet/mellanox/mlxsw/spectrum2_kvdl.c          | 2 +-
- drivers/net/ethernet/mellanox/mlxsw/spectrum_acl.c            | 4 ++--
- .../net/ethernet/mellanox/mlxsw/spectrum_acl_bloom_filter.c   | 2 +-
- drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.c       | 4 ++--
- drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.h       | 4 ++--
- drivers/net/ethernet/mellanox/mlxsw/spectrum_kvdl.c           | 2 +-
- drivers/net/ethernet/mellanox/mlxsw/spectrum_mr.c             | 2 +-
- drivers/net/ethernet/mellanox/mlxsw/spectrum_nve.c            | 2 +-
- 11 files changed, 14 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/core.c b/drivers/net/ethernet/mellanox/mlxsw/core.c
-index e9f791c43f20..0d630096a28c 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/core.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/core.c
-@@ -82,7 +82,7 @@ struct mlxsw_core {
- 	struct mlxsw_core_port *ports;
- 	unsigned int max_ports;
- 	bool fw_flash_in_progress;
--	unsigned long driver_priv[0];
-+	unsigned long driver_priv[];
- 	/* driver_priv has to be always the last item */
- };
- 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/core_acl_flex_keys.c b/drivers/net/ethernet/mellanox/mlxsw/core_acl_flex_keys.c
-index feb4672a5ac0..bd2207f60722 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/core_acl_flex_keys.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/core_acl_flex_keys.c
-@@ -72,7 +72,7 @@ struct mlxsw_afk_key_info {
- 						      * is index inside "blocks"
- 						      */
- 	struct mlxsw_afk_element_usage elusage;
--	const struct mlxsw_afk_block *blocks[0];
-+	const struct mlxsw_afk_block *blocks[];
- };
- 
- static bool
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum1_kvdl.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum1_kvdl.c
-index 09ee0a807747..a9fff8adc75e 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum1_kvdl.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum1_kvdl.c
-@@ -60,7 +60,7 @@ static const struct mlxsw_sp1_kvdl_part_info mlxsw_sp1_kvdl_parts_info[] = {
- 
- struct mlxsw_sp1_kvdl_part {
- 	struct mlxsw_sp1_kvdl_part_info info;
--	unsigned long usage[0];	/* Entries */
-+	unsigned long usage[];	/* Entries */
- };
- 
- struct mlxsw_sp1_kvdl {
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum2_kvdl.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum2_kvdl.c
-index 8d14770766b4..3a73d654017f 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum2_kvdl.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum2_kvdl.c
-@@ -45,7 +45,7 @@ struct mlxsw_sp2_kvdl_part {
- 	unsigned int usage_bit_count;
- 	unsigned int indexes_per_usage_bit;
- 	unsigned int last_allocated_bit;
--	unsigned long usage[0];	/* Usage bits */
-+	unsigned long usage[];	/* Usage bits */
- };
- 
- struct mlxsw_sp2_kvdl {
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl.c
-index 3d3cca596116..9368b93dab38 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl.c
-@@ -58,7 +58,7 @@ struct mlxsw_sp_acl_ruleset {
- 	struct mlxsw_sp_acl_ruleset_ht_key ht_key;
- 	struct rhashtable rule_ht;
- 	unsigned int ref_count;
--	unsigned long priv[0];
-+	unsigned long priv[];
- 	/* priv has to be always the last item */
- };
- 
-@@ -71,7 +71,7 @@ struct mlxsw_sp_acl_rule {
- 	u64 last_used;
- 	u64 last_packets;
- 	u64 last_bytes;
--	unsigned long priv[0];
-+	unsigned long priv[];
- 	/* priv has to be always the last item */
- };
- 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_bloom_filter.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_bloom_filter.c
-index 3a2de13fcb68..dbd3bebf11ec 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_bloom_filter.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_bloom_filter.c
-@@ -13,7 +13,7 @@
- struct mlxsw_sp_acl_bf {
- 	struct mutex lock; /* Protects Bloom Filter updates. */
- 	unsigned int bank_size;
--	refcount_t refcnt[0];
-+	refcount_t refcnt[];
- };
- 
- /* Bloom filter uses a crc-16 hash over chunks of data which contain 4 key
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.c
-index e993159e8e4c..430da69003d8 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.c
-@@ -224,7 +224,7 @@ struct mlxsw_sp_acl_tcam_vchunk;
- struct mlxsw_sp_acl_tcam_chunk {
- 	struct mlxsw_sp_acl_tcam_vchunk *vchunk;
- 	struct mlxsw_sp_acl_tcam_region *region;
--	unsigned long priv[0];
-+	unsigned long priv[];
- 	/* priv has to be always the last item */
- };
- 
-@@ -243,7 +243,7 @@ struct mlxsw_sp_acl_tcam_vchunk {
- struct mlxsw_sp_acl_tcam_entry {
- 	struct mlxsw_sp_acl_tcam_ventry *ventry;
- 	struct mlxsw_sp_acl_tcam_chunk *chunk;
--	unsigned long priv[0];
-+	unsigned long priv[];
- 	/* priv has to be always the last item */
- };
- 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.h b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.h
-index 5965913565a5..96437992b102 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.h
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.h
-@@ -20,7 +20,7 @@ struct mlxsw_sp_acl_tcam {
- 	struct mutex lock; /* guards vregion list */
- 	struct list_head vregion_list;
- 	u32 vregion_rehash_intrvl;   /* ms */
--	unsigned long priv[0];
-+	unsigned long priv[];
- 	/* priv has to be always the last item */
- };
- 
-@@ -86,7 +86,7 @@ struct mlxsw_sp_acl_tcam_region {
- 	char tcam_region_info[MLXSW_REG_PXXX_TCAM_REGION_INFO_LEN];
- 	struct mlxsw_afk_key_info *key_info;
- 	struct mlxsw_sp *mlxsw_sp;
--	unsigned long priv[0];
-+	unsigned long priv[];
- 	/* priv has to be always the last item */
- };
- 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_kvdl.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_kvdl.c
-index 1e4cdee7bcd7..715ec8ecacba 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_kvdl.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_kvdl.c
-@@ -8,7 +8,7 @@
- 
- struct mlxsw_sp_kvdl {
- 	const struct mlxsw_sp_kvdl_ops *kvdl_ops;
--	unsigned long priv[0];
-+	unsigned long priv[];
- 	/* priv has to be always the last item */
- };
- 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_mr.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_mr.c
-index 54275624718b..423eedebcd22 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_mr.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_mr.c
-@@ -68,7 +68,7 @@ struct mlxsw_sp_mr_table {
- 	struct list_head route_list;
- 	struct rhashtable route_ht;
- 	const struct mlxsw_sp_mr_table_ops *ops;
--	char catchall_route_priv[0];
-+	char catchall_route_priv[];
- 	/* catchall_route_priv has to be always the last item */
- };
- 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_nve.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_nve.c
-index 2153bcc4b585..16a130c2f21c 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_nve.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_nve.c
-@@ -67,7 +67,7 @@ struct mlxsw_sp_nve_mc_record {
- 	struct mlxsw_sp_nve_mc_list *mc_list;
- 	const struct mlxsw_sp_nve_mc_record_ops *ops;
- 	u32 kvdl_index;
--	struct mlxsw_sp_nve_mc_entry entries[0];
-+	struct mlxsw_sp_nve_mc_entry entries[];
- };
- 
- struct mlxsw_sp_nve_mc_list {
--- 
-2.25.0
-
+Rob
