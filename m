@@ -2,138 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93BA5162C8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 18:20:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC5B5162BCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 18:12:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726754AbgBRRUZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 12:20:25 -0500
-Received: from rhlx01.hs-esslingen.de ([129.143.116.10]:44156 "EHLO
-        rhlx01.hs-esslingen.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726415AbgBRRUY (ORCPT
+        id S1726681AbgBRRMR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 12:12:17 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:34434 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726402AbgBRRMR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 12:20:24 -0500
-X-Greylist: delayed 535 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Feb 2020 12:20:23 EST
-Received: by rhlx01.hs-esslingen.de (Postfix, from userid 1203)
-        id F2D7B29C4924; Tue, 18 Feb 2020 18:11:26 +0100 (CET)
-Date:   Tue, 18 Feb 2020 18:11:26 +0100
-From:   Adrian Reber <adrian@lisas.de>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
-        Dmitry Safonov <dima@arista.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        containers <containers@lists.linux-foundation.org>,
-        criu@openvz.org, Linux API <linux-api@vger.kernel.org>,
-        x86@kernel.org, Andrei Vagin <avagin@gmail.com>
-Subject: Re: Time Namespaces: CLONE_NEWTIME and clone3()?
-Message-ID: <20200218171126.GF2322403@lisas.de>
-References: <20191112012724.250792-1-dima@arista.com>
- <20191112012724.250792-4-dima@arista.com>
- <CAHO5Pa2_7BzZPCXjFj4f=YoX28M4q2Au=h6GrzN-EjRffMo1iw@mail.gmail.com>
- <20200217145908.7epzz5nescccwvzv@wittgenstein>
- <CAKgNAkjfdWFwNdFzdBY81_8WZJNtbtztfjO9T2YNQDV4ThNiNw@mail.gmail.com>
- <20200217230331.he6p5bs766zp6smx@wittgenstein>
+        Tue, 18 Feb 2020 12:12:17 -0500
+Received: by mail-pf1-f196.google.com with SMTP id i6so10986425pfc.1;
+        Tue, 18 Feb 2020 09:12:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=BnPFaeZ3s43WUYcze9Kwo0dphRPPj2p/nuAOY7Iiq+8=;
+        b=Tvwpfn+F2RvTr98QbZKPePm7QRSSanWAsEG7c+BMFMe4LjUC0xiReKD6HTVbuLqwCC
+         KxeMbvctk6orp0LF6ZmK4Raz9N5eMNa+3u057kXwzlSxKNNFL2rgKqc1Z/v7LqXWhNdM
+         EMJpMOrJx1o601n7D1CXRLhaB0NCZhCAhcBPftpV2YBuwXsnVKRqiZ+xafIif7WvE6Ba
+         FMYCHafYDNB6P0q8YKY58lDMT7zKDC0F/HhYjtoSXkTqfvSqFOosITPrtyry7FUfv0uB
+         AMUYUp/P06ZSbJ7xx2KbYIzOiYmkX0/H2Q67DEnn5c6MfcIT9bvD4t+utKDRq3UaNVaR
+         3Y1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=BnPFaeZ3s43WUYcze9Kwo0dphRPPj2p/nuAOY7Iiq+8=;
+        b=GHZs6MFwWPfAGavj+ZmIZKLgFPXQIcjb56XCXRN+avwbB+4YwbUwyjXhmP7nbv/Z7o
+         uW9tKedIXALWALYMLuJ8bt+YoX39QG/WMyrV2j73A8rEo1KAzFo9AlrM+ZZoJJtN3LLT
+         q6wEY6qNgXN0+RAhr01PMoRjpt/NHG+rx9L+kivXYN7C25b/ratGgLBwMecZv8lq0Vbv
+         NlfoV1ydlCtSiUKtbN++FRyO1I56DwHvzQrn616FPxf23zsPdZKCIqKTvGPRCA8DE3mX
+         1W10GOgnMh4mO/zQ16K27kT41QAB33jqy7gO/WeXlczbzDQ1zOnOshus1XO0OTgOuqWF
+         anng==
+X-Gm-Message-State: APjAAAW06LP3+CBmxb/UtC2sla7TdWd9fHBULO6tekahtYr5fOVDW3FB
+        UuvdIxgi8Dxzc7ujvY+TKtU=
+X-Google-Smtp-Source: APXvYqzISR3SCcV6wjCMjx4AhKC6RIu/lfMH3tpyp9bPHw1FkmDVC8A6IfL0knG5wA4RMVhycn84hg==
+X-Received: by 2002:aa7:9546:: with SMTP id w6mr22056881pfq.66.1582045936454;
+        Tue, 18 Feb 2020 09:12:16 -0800 (PST)
+Received: from ?IPv6:2001:4898:d8:28:a99d:cf29:8886:cbc? ([2001:4898:80e8:2:29b3:cf29:8886:cbc])
+        by smtp.gmail.com with ESMTPSA id z10sm5534950pgf.35.2020.02.18.09.12.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Feb 2020 09:12:15 -0800 (PST)
+Subject: Re: [PATCH v11 1/2] dt-bindings: edac: dmc-520.yaml
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     James Morse <james.morse@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-edac <linux-edac@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, hangl@microsoft.com,
+        ruizhao@microsoft.com, Lei Wang <lewan@microsoft.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Yuqing Shen <yuqing.shen@broadcom.com>
+References: <5354a9c3-5b5a-486a-9d19-fa9be169faef@gmail.com>
+ <20200217181055.GC14426@zn.tnic>
+From:   Shiping Ji <shiping.linux@gmail.com>
+Message-ID: <4c02326d-cf38-e1e1-1822-d24de22fa2cc@gmail.com>
+Date:   Tue, 18 Feb 2020 09:12:15 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200217230331.he6p5bs766zp6smx@wittgenstein>
-X-Url:  <http://lisas.de/~adrian/>
-X-Operating-System: Linux (5.4.8-200.fc31.x86_64)
-X-Load-Average: 7.47 8.46 9.12
-X-Unexpected: The Spanish Inquisition
-X-GnuPG-Key: gpg --recv-keys D3C4906A
+In-Reply-To: <20200217181055.GC14426@zn.tnic>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 12:03:31AM +0100, Christian Brauner wrote:
-> On Mon, Feb 17, 2020 at 10:47:53PM +0100, Michael Kerrisk (man-pages) wrote:
-> > Hello Christian,
-> > 
-> > On Mon, 17 Feb 2020 at 16:15, Christian Brauner
-> > <christian.brauner@ubuntu.com> wrote:
-> > >
-> > > On Mon, Feb 17, 2020 at 03:20:55PM +0100, Michael Kerrisk wrote:
-> > > > Hello Dmitry, Andrei,
-> > > >
-> > > > Is the CLONE_NEWTIME flag intended to be usable with clone3()? The
-> > > > mail quoted below implies (in my reading) that this should be possible
-> > > > once clone3() is available, which it is by now. (See also [1].)
-> > > >
-> > > > If the answer is yes, CLONE_NEWTIME  should be usable with clone3(),
-> > > > then I have a bug report and a question.
-> > > >
-> > > > I successfully used CLONE_NEWTIME with unshare(). But if I try to use
-> > > > CLONE_NEWSIGNAL with clone3(), it errors out with EINVAL, because of
-> > >
-> > > s/CLONE_NEWSIGNAL/CLONE_NEWTIME/
-> > >
-> > > > the following check in clone3_args_valid():
-> > > >
-> > > >         /*
-> > > >          * - make the CLONE_DETACHED bit reuseable for clone3
-> > > >          * - make the CSIGNAL bits reuseable for clone3
-> > > >          */
-> > > >         if (kargs->flags & (CLONE_DETACHED | CSIGNAL))
-> > > >                 return false;
-> > > >
-> > > > The problem is that CLONE_NEWTIME matches one of the bits in the
-> > > > CSIGNAL mask. If the intention is to allow CLONE_NEWTIME with
-> > > > clone3(), then either the bit needs to be redefined, or the error
-> > > > checking in clone3_args_valid() needs to be reworked.
-> > >
-> > > If this is intended to be useable with clone3() the check should be
-> > > adapted to allow for CLONE_NEWTIME. (I asked about this a while ago I
-> > > think.)
-> > > But below rather sounds like it should simply be an unshare() flag. The
-> > > code seems to set frozen_offsets to true right after copy_namespaces()
-> > > in timens_on_fork(new_ns, tsk) and so the offsets can't be changed
-> > > anymore unless I'm reading this wrong.
-> > > Alternatives seem to either make timens_offsets writable once after fork
-> > > and before exec, I guess - though that's probably not going to work
-> > > with the vdso judging from timens_on_fork().
-> > >
-> > > The other alternative is that Andrei and Dmitry send me a patch to
-> > > enable CLONE_NEWTIME with clone3() by exposing struct timens_offsets (or
-> > > a version of it) in the uapi and extend struct clone_args to include a
-> > > pointer to a struct timens_offset that is _only_ set when CLONE_NEWTIME
-> > > is set.
-> > > Though the unshare() way sounds way less invasive simpler.
-> > 
-> > Actually, I think the alternative you propose just here is better. I
-> > imagine there are times when one will want to create multiple
-> > namespaces with a single call to clone3(), including a time namespace.
-> > I think this should be allowed by the API. And, otherwise, clone3()
-> > becomes something of a second-class citizen for creating namespaces.
-> > (I don't really get the "less invasive" argument. Implementing this is
-> > just a piece of kernel to code to make user-space's life a bit simpler
-> > and more consistent.)
+On 2/17/2020 10:10 AM, Borislav Petkov wrote:
+> I have only this v11 patch 1/2 in my inbox and not the actual driver,
+> i.e., patch 2/2.
 > 
-> I don't particularly mind either way. If there's actual users that need
-> to set it at clone3() time then we can extend it. So I'd like to hear
-> what Adrian, Dmitry, and Thomas think since they are well-versed how
-> this will be used in the wild. I'm weary of exposing a whole new uapi
-> struct and extending clone3() without any real use-case but I'm happy to
-> if there is!
+> For the driver, I have v10 here:
+> 
+> https://lkml.kernel.org/r/83b48c70-dc06-d0d4-cae9-a2187fca628b@gmail.com
+> 
+> Did you send a v11 of the driver itself or should I have a look at v10?
 
-Re-creating a time namespace during restore via clone3() would be CRIU's
-preferred way of doing this. If available CRIU is already using
-clone3(), especially because of set_tid, and for the time namespace we
-would also rely on clone3() to re-create it.
+Actually I didn't send v11 of the driver since it will be identical to 
+v10, sorry for keeping you waiting on this. Please review v10, thanks!
 
-I will provide a patch to extend clone3() to handle the creation of a
-new time namespace.
+--
+Best regards,
+Shiping Ji
 
-		Adrian
+
