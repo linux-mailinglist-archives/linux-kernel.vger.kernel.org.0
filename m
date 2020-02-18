@@ -2,86 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E6B4162EF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 19:48:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2B9E162EF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 19:49:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726492AbgBRSsf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 13:48:35 -0500
-Received: from foss.arm.com ([217.140.110.172]:58880 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726225AbgBRSsf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 13:48:35 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5CC9731B;
-        Tue, 18 Feb 2020 10:48:34 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D3DC53F703;
-        Tue, 18 Feb 2020 10:48:33 -0800 (PST)
-Date:   Tue, 18 Feb 2020 18:48:32 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: tas2562: Return invalid for when bitwidth is
- invalid
-Message-ID: <20200218184832.GL4232@sirena.org.uk>
-References: <20200218174706.27309-1-dmurphy@ti.com>
+        id S1726548AbgBRStu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 13:49:50 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:34398 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbgBRStu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 13:49:50 -0500
+Received: by mail-lj1-f193.google.com with SMTP id x7so24202108ljc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 10:49:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=K/hRoOXddpf2rg3/iA7HHccAIzHUJB1ObxyUSqAalTY=;
+        b=NZzRuV1ykVa1MAKkVAJ+ayE7uc4yeKrTUPiopFgzMVSDworqehvv6s1IVq73p/Olth
+         xB/LLOUygDjmABRDoAr27sggaJdlNl63J92LiGLxnz84PmCA5tETqhf2S1Vm6zwMxzef
+         51K5GQq09q/p65UvpTOXQtxzKGwp4nzMgihRw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=K/hRoOXddpf2rg3/iA7HHccAIzHUJB1ObxyUSqAalTY=;
+        b=mXqdSYO41WXp95tP87/gWrsKY/dxrS4UKtqLJ/fHLfedOCcsfkw7LcRRkRb/OKn30j
+         dyd85ILsrtJ8WBX5uG6OpHiUJPGVNKE8j+C3IrPN1eeitHjGJ21OV+TL2Z8jAIRzSg+n
+         EVeCeJCD+lSJgKYdEVdoXosVNCBD5fMIDQbVCk2iX0H6Z67FsPmzKqMn6IVbDW7pKKzp
+         wCLvsYqgeFX6S4HAzjjRGq9hWHjWnYLOulLN9iXZ6EuYPay2Es8Z/2VZDVSXHDNLGyQ+
+         /Je2WzCC/NZw9LriYZxoLG+8PdMjarxoeCjwkp2kns3ylPNuLJiLEcN5/niOeKCCNzm3
+         k4Iw==
+X-Gm-Message-State: APjAAAXYVwc/zAx+DNGLM2L1wOFbyeQYaWNlDdetANr42xaefRvKHY6F
+        gG9PbFdApW9pYBjSc8z1KxogMx2qj18=
+X-Google-Smtp-Source: APXvYqwXRngoRyq0/lTKFLS989+5zDvvt5iK6aiy6+ZC34wSmGAFy0OiRa1RYDsAuBaAEpm9YueEIw==
+X-Received: by 2002:a2e:8e2a:: with SMTP id r10mr12999821ljk.219.1582051787803;
+        Tue, 18 Feb 2020 10:49:47 -0800 (PST)
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
+        by smtp.gmail.com with ESMTPSA id u15sm2697831lfl.87.2020.02.18.10.49.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Feb 2020 10:49:47 -0800 (PST)
+Received: by mail-lf1-f41.google.com with SMTP id f24so15290809lfh.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 10:49:46 -0800 (PST)
+X-Received: by 2002:ac2:4839:: with SMTP id 25mr10897394lft.192.1582051786457;
+ Tue, 18 Feb 2020 10:49:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="0qVF/w3MHQqLSynd"
-Content-Disposition: inline
-In-Reply-To: <20200218174706.27309-1-dmurphy@ti.com>
-X-Cookie: No alcohol, dogs or horses.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200217222803.6723-1-idryomov@gmail.com> <202002171546.A291F23F12@keescook>
+ <CAOi1vP-2uAD83Vi=Eebu_GPzq5DUt+z9zogA7BNGF1B1jUgAVw@mail.gmail.com>
+In-Reply-To: <CAOi1vP-2uAD83Vi=Eebu_GPzq5DUt+z9zogA7BNGF1B1jUgAVw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 18 Feb 2020 10:49:30 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whj0vMcdVPC0=9aAsN2-tsCyFKF4beb2gohFeFK_Z-Y9g@mail.gmail.com>
+Message-ID: <CAHk-=whj0vMcdVPC0=9aAsN2-tsCyFKF4beb2gohFeFK_Z-Y9g@mail.gmail.com>
+Subject: Re: [PATCH] vsprintf: don't obfuscate NULL and error pointers
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        "Tobin C . Harding" <me@tobin.cc>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 17, 2020 at 4:07 PM Ilya Dryomov <idryomov@gmail.com> wrote:
+>
+> I'm not sure what you mean by efault string.  Are you referring to what
+> %pe is doing?  If so, no -- I would keep %p and %pe separate.
 
---0qVF/w3MHQqLSynd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Right.
 
-On Tue, Feb 18, 2020 at 11:47:06AM -0600, Dan Murphy wrote:
-> If the bitwidth passed in to the set_bitwidth function is not supported
-> then return an error.
->=20
-> Fixes: 29b74236bd57 ("ASoC: tas2562: Introduce the TAS2562 amplifier")
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
->  scripts/conmakehash        | Bin 0 -> 13120 bytes
->  scripts/sortextable        | Bin 0 -> 18040 bytes
->  sound/soc/codecs/tas2562.c |   3 ++-
->  3 files changed, 2 insertions(+), 1 deletion(-)
->  create mode 100755 scripts/conmakehash
->  create mode 100755 scripts/sortextable
->=20
-> diff --git a/scripts/conmakehash b/scripts/conmakehash
-> new file mode 100755
-> index 0000000000000000000000000000000000000000..17eec37019b8ae45f42f3c820=
-46d1a55a6f69cb3
-> GIT binary patch
-> literal 13120
-> zcmeHOeQ;D&mcN}25CU`u1i`Q23C#=3Dv(j@XB0Wx-n4!le?@~!SFHl6fK(rc$X+x=3DRD
+But bringing up %pe makes me realize that we do odd things for NULL
+for that. We print errors in a nice legible form, but we show NULL as
+a zero value, I think.
 
-This is...  fun?  I'm guessing it's not intentional, it's certainly a
-little difficult to review.  :)
+So maybe %pe should show NULL as "(null)"? Or even as just "0" to go
+with the error names that just look like the integer error syntax (eg
+"-EINVAL")
 
---0qVF/w3MHQqLSynd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5MMX8ACgkQJNaLcl1U
-h9AE1Qf/Zp6m3NI0e0rXFXTJ2XbGhyY0eb9a56oQ6NAH8Cxv75wmSpRtYY56PGpK
-XgBcQN67E9zoR9G+t8WS3t60tOmLAOyAVVDNQ4llIzUsl5oq0zcN5QZhG0GeDPwF
-gfKhGhyKgyZ7cNY0IJETfg9kgF+zvUq49Dh9APTHkBr4OMd0XDJxuBSc2+oCFeAb
-ozO7V5pje1NZe3zcwJY7ZvrjJ+MXnwevO+V9r+1QpFXS6als6G+JC3nChaDBHT7P
-3rQJVO1Wtbl9m9cN2zUj18Zbg5dYjGQLr2ak91NLBjeawlzVSCQucidm0rAaGL4H
-BrBsxv18mqZb8bouvke9jMA+15ovmw==
-=piVj
------END PGP SIGNATURE-----
-
---0qVF/w3MHQqLSynd--
+                 Linus
