@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06442163266
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:10:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E83C1631D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:06:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728245AbgBRT6l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 14:58:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36222 "EHLO mail.kernel.org"
+        id S1728445AbgBRUC5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 15:02:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728203AbgBRT6a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:58:30 -0500
+        id S1728636AbgBRUCw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 15:02:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 424F424125;
-        Tue, 18 Feb 2020 19:58:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8664624125;
+        Tue, 18 Feb 2020 20:02:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582055909;
-        bh=yYZKeSyGawqNcMCw4ypNqgx7uLhMIDMRc5yLeMvZ3TI=;
+        s=default; t=1582056172;
+        bh=ALJFu7IESkTZwkNiXtuqDRqI1jrSFS0kIq8FsnmF+ig=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TgSRUfSvXZQtBz3N0gnamkpv9aczV4NUZZN4LtnNT5uww8UyQWeX45UnFx7M/DHz6
-         NFsg2SSYguua6Euk7c1AR0bcQQe3aVEkcCzTl8o14sUip203ao6hk6+E9k3EDVKWOj
-         dt4gPXeR1ddcTN8zSB+SAkWqPyNQ0NxVJHDVX2yY=
+        b=t8PVVXc1cNQ/wjsAeyBa79S3rAkRiUH5waqVcMGNiNpG0XwrpmyFcFuSV3XSyCnIP
+         AG787zKQJNarO7LSB3hQtc/nURaE81nVQwC5+wXBsOVrxmg58ebgJqP3zdpDkJCVMO
+         lbHpjzc7q047EOzUxKPBRGsV8C30+yaE4kZigBZU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robert Richter <rrichter@marvell.com>,
-        Borislav Petkov <bp@suse.de>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH 5.4 28/66] EDAC/sysfs: Remove csrow objects on errors
-Date:   Tue, 18 Feb 2020 20:54:55 +0100
-Message-Id: <20200218190430.669318831@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 5.5 35/80] KVM: nVMX: Use correct root level for nested EPT shadow page tables
+Date:   Tue, 18 Feb 2020 20:54:56 +0100
+Message-Id: <20200218190435.806782732@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200218190428.035153861@linuxfoundation.org>
-References: <20200218190428.035153861@linuxfoundation.org>
+In-Reply-To: <20200218190432.043414522@linuxfoundation.org>
+References: <20200218190432.043414522@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Robert Richter <rrichter@marvell.com>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit 4d59588c09f2a2daedad2a544d4d1b602ab3a8af upstream.
+commit 148d735eb55d32848c3379e460ce365f2c1cbe4b upstream.
 
-All created csrow objects must be removed in the error path of
-edac_create_csrow_objects(). The objects have been added as devices.
+Hardcode the EPT page-walk level for L2 to be 4 levels, as KVM's MMU
+currently also hardcodes the page walk level for nested EPT to be 4
+levels.  The L2 guest is all but guaranteed to soft hang on its first
+instruction when L1 is using EPT, as KVM will construct 4-level page
+tables and then tell hardware to use 5-level page tables.
 
-They need to be removed by doing a device_del() *and* put_device() call
-to also free their memory. The missing put_device() leaves a memory
-leak. Use device_unregister() instead of device_del() which properly
-unregisters the device doing both.
-
-Fixes: 7adc05d2dc3a ("EDAC/sysfs: Drop device references properly")
-Signed-off-by: Robert Richter <rrichter@marvell.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Tested-by: John Garry <john.garry@huawei.com>
-Cc: <stable@vger.kernel.org>
-Link: https://lkml.kernel.org/r/20200212120340.4764-4-rrichter@marvell.com
+Fixes: 855feb673640 ("KVM: MMU: Add 5 level EPT & Shadow page table support.")
+Cc: stable@vger.kernel.org
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/edac/edac_mc_sysfs.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/x86/kvm/vmx/vmx.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/edac/edac_mc_sysfs.c
-+++ b/drivers/edac/edac_mc_sysfs.c
-@@ -447,8 +447,7 @@ error:
- 		csrow = mci->csrows[i];
- 		if (!nr_pages_per_csrow(csrow))
- 			continue;
--
--		device_del(&mci->csrows[i]->dev);
-+		device_unregister(&mci->csrows[i]->dev);
- 	}
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -2968,6 +2968,9 @@ void vmx_set_cr0(struct kvm_vcpu *vcpu,
  
- 	return err;
+ static int get_ept_level(struct kvm_vcpu *vcpu)
+ {
++	/* Nested EPT currently only supports 4-level walks. */
++	if (is_guest_mode(vcpu) && nested_cpu_has_ept(get_vmcs12(vcpu)))
++		return 4;
+ 	if (cpu_has_vmx_ept_5levels() && (cpuid_maxphyaddr(vcpu) > 48))
+ 		return 5;
+ 	return 4;
 
 
