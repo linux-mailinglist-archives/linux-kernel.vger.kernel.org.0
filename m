@@ -2,114 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C12F3162CBB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 18:27:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 543E7162CC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 18:28:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726841AbgBRR1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 12:27:51 -0500
-Received: from foss.arm.com ([217.140.110.172]:56790 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726475AbgBRR1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 12:27:50 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 706AD31B;
-        Tue, 18 Feb 2020 09:27:50 -0800 (PST)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1EBD03F703;
-        Tue, 18 Feb 2020 09:27:49 -0800 (PST)
-Date:   Tue, 18 Feb 2020 17:27:46 +0000
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        id S1726777AbgBRR2e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 12:28:34 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51969 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726411AbgBRR2d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 12:28:33 -0500
+Received: by mail-wm1-f66.google.com with SMTP id t23so3632795wmi.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 09:28:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=t79WR+N+O/xLx5EnVWrI0Bo3jvdlkHF5FexB0Coc0e4=;
+        b=SXCr3MwKdGml/kqRlZx4Xh4HTwEskmbeNPapQbWyh/0AFZLtr7H0LjfEQ/QreiBVFZ
+         yYR7oqLZp0tLk5n0qtUrPIY/YsoxjvX9WHdxo39RNOd/9ompVe//5LAONCw+ZvpX3c2e
+         CcX1mtyKAL70MMo0vvlzbCRWKDZyjdpNoWFf5O8tPwsunHyazKYcpQX1CMD13poeMMFe
+         vXegohfcsya/9OJxOU66FTUnUf8QO56vawRumP2jQgsPuzVnINSXgllL1FF0AUh4k9fm
+         +IEw1P/m/TfUYtpaqnVrRyX/txLl4Zvy1bB7BoLUsuN3eyM0GNty0jskgQ9goi/lD/XO
+         eAJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=t79WR+N+O/xLx5EnVWrI0Bo3jvdlkHF5FexB0Coc0e4=;
+        b=QJ5wOM8YWwKYBQsf0e+H+oou1l43FLJDsyj4Ue31btGjWgi8T3cFmyrd5zJPCikl42
+         VkodJ4zgbg5caCjveh2sGjhIn42xkt+AdxQ28bG/VZIVrDhHLrwzS+1kOxSDZoobH0Yw
+         +yzEwFLBDEZITrZ4itYDK+HdSVj78+SRJzxSbv5JyMqoGbZiC11D3OoDGqLdMcg7Ncpd
+         P141qSdnC9OMLTASS0Z6oFUbwEFqA/WXUqfCO6C00Qt7hRVgnrUkbjsc3rm8AStleX78
+         Nh/od5Db7h7Wiong6/cif23elsvbd1D4q/kOjcxDizVgTSayKO8DqerLR1ntBF2wzWin
+         PTvw==
+X-Gm-Message-State: APjAAAWqyrtF7+8w/H+cAR+p8S+8ewA3CKhKN6mmL5k/sw0Z0cxo8CMs
+        OtaRAw/gYidOII4abtnR5wQ=
+X-Google-Smtp-Source: APXvYqzEklauFIvbHoHH6Q4TOD2OrcGCFpTLs5/jFW8oZl6MOSuEwmS7hrvyc7XPl7s5DXAKl7VxXA==
+X-Received: by 2002:a1c:5401:: with SMTP id i1mr3986014wmb.99.1582046910216;
+        Tue, 18 Feb 2020 09:28:30 -0800 (PST)
+Received: from wambui.zuku.co.ke ([197.237.61.225])
+        by smtp.googlemail.com with ESMTPSA id t13sm6998757wrw.19.2020.02.18.09.28.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2020 09:28:29 -0800 (PST)
+From:   Wambui Karuga <wambui.karugax@gmail.com>
+To:     abrodkin@synopsys.com, airlied@linux.ie, daniel@ffwll.ch
+Cc:     gregkh@linuxfoundation.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] sched/rt: cpupri_find: implement fallback mechanism
- for !fit case
-Message-ID: <20200218172745.hd7fxjqnzqkhfqx3@e107158-lin.cambridge.arm.com>
-References: <20200214163949.27850-1-qais.yousef@arm.com>
- <20200214163949.27850-2-qais.yousef@arm.com>
- <c0772fca-0a4b-c88d-fdf2-5715fcf8447b@arm.com>
- <20200217234549.rpv3ns7bd7l6twqu@e107158-lin>
- <20200218114658.74236b3c@gandalf.local.home>
+Subject: [PATCH] drm/arc: make arcpgu_debugfs_init return 0
+Date:   Tue, 18 Feb 2020 20:28:12 +0300
+Message-Id: <20200218172821.18378-1-wambui.karugax@gmail.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200218114658.74236b3c@gandalf.local.home>
-User-Agent: NeoMutt/20171215
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/18/20 11:46, Steven Rostedt wrote:
-> On Mon, 17 Feb 2020 23:45:49 +0000
-> Qais Yousef <qais.yousef@arm.com> wrote:
-> 
-> > --- a/kernel/sched/rt.c
-> > +++ b/kernel/sched/rt.c
-> > @@ -14,6 +14,8 @@ static int do_sched_rt_period_timer(struct rt_bandwidth *rt_b, int overrun);
-> > 
-> >  struct rt_bandwidth def_rt_bandwidth;
-> > 
-> > +typedef bool (*fitness_fn_t)(struct task_struct *p, int cpu);
-> > +
-> >  static enum hrtimer_restart sched_rt_period_timer(struct hrtimer *timer)
-> >  {
-> >         struct rt_bandwidth *rt_b =
-> > @@ -1708,6 +1710,7 @@ static int find_lowest_rq(struct task_struct *task)
-> >         struct cpumask *lowest_mask = this_cpu_cpumask_var_ptr(local_cpu_mask);
-> >         int this_cpu = smp_processor_id();
-> >         int cpu      = task_cpu(task);
-> > +       fitness_fn_t fitness_fn;
-> > 
-> >         /* Make sure the mask is initialized first */
-> >         if (unlikely(!lowest_mask))
-> > @@ -1716,8 +1719,17 @@ static int find_lowest_rq(struct task_struct *task)
-> >         if (task->nr_cpus_allowed == 1)
-> >                 return -1; /* No other targets possible */
-> > 
-> > +       /*
-> > +        * Help cpupri_find avoid the cost of looking for a fitting CPU when
-> > +        * not really needed.
-> > +        */
-> > +       if (static_branch_unlikely(&sched_asym_cpucapacity))
-> > +               fitness_fn = rt_task_fits_capacity;
-> > +       else
-> > +               fitness_fn = NULL;
-> > +
-> >         if (!cpupri_find(&task_rq(task)->rd->cpupri, task, lowest_mask,
-> > -                        rt_task_fits_capacity))
-> > +                        fitness_fn))
-> >                 return -1; /* No targets found */
-> > 
-> >         /*
-> 
-> 
-> If we are going to use static branches, then lets just remove the
-> parameter totally. That is, make two functions (with helpers), where
-> one needs this fitness function the other does not.
-> 
-> 	if (static_branch_unlikely(&sched_asym_cpu_capacity))
-> 		ret = cpupri_find_fitness(...);
-> 	else
-> 		ret = cpupri_find(...);
-> 
-> 	if (!ret)
-> 		return -1;
-> 
-> Something like that?
+As drm_debugfs_create_files should return void, remove its use as the
+return value of arcpgu_debugfs_init and have the latter function
+return 0 directly.
 
-Is there any implication on code generation here?
+Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
+---
+ drivers/gpu/drm/arc/arcpgu_drv.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-I like my flavour better tbh. But I don't mind refactoring the function out if
-it does make it more readable.
+diff --git a/drivers/gpu/drm/arc/arcpgu_drv.c b/drivers/gpu/drm/arc/arcpgu_drv.c
+index d6a6692db0ac..660b25f9588e 100644
+--- a/drivers/gpu/drm/arc/arcpgu_drv.c
++++ b/drivers/gpu/drm/arc/arcpgu_drv.c
+@@ -139,8 +139,10 @@ static struct drm_info_list arcpgu_debugfs_list[] = {
+ 
+ static int arcpgu_debugfs_init(struct drm_minor *minor)
+ {
+-	return drm_debugfs_create_files(arcpgu_debugfs_list,
+-		ARRAY_SIZE(arcpgu_debugfs_list), minor->debugfs_root, minor);
++	drm_debugfs_create_files(arcpgu_debugfs_list,
++				 ARRAY_SIZE(arcpgu_debugfs_list),
++				 minor->debugfs_root, minor);
++	return 0;
+ }
+ #endif
+ 
+-- 
+2.25.0
 
-Thanks
-
---
-Qais Yousef
