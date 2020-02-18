@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 938451631C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:06:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B984416315F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:01:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728983AbgBRUCi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 15:02:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43122 "EHLO mail.kernel.org"
+        id S1727709AbgBRT7x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 14:59:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38722 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728970AbgBRUCg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 15:02:36 -0500
+        id S1728483AbgBRT7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 14:59:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B9B2E21D56;
-        Tue, 18 Feb 2020 20:02:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB1072464E;
+        Tue, 18 Feb 2020 19:59:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582056156;
-        bh=r3Wt9Fqia8ELqoZcBvGRbikshi1Mn5+KDL7u1kFTmjA=;
+        s=default; t=1582055989;
+        bh=KDjerKczOZHWwPnuBGNxgXOG0D9QiJQCmyfpxvInpYo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JBPj6XnXlmUHvT/28JZ3EOJ4YPCTZPWo5+zTbTHYod89lMH902tRVwdDsUqFPdtX+
-         teI2YF1MtXxac96W+C86o22BDHCM16R3RGUb5Ce1DURMpEgkE5KmscUjbm0yHy/Ivr
-         JNvsELKM7kpp8ssZfVqkfJ8MyGSouIvsJQC/asto=
+        b=tOtbGxPjdKhJeRJh5hreSYAfyyVGSpXTYcffSic8TIGxPoJjrqJeVEslpUoKfl9/b
+         W8TnXGLwUjLTpVaRvHNMKmwuyQNB0GoLdvzhZpfrvyGa6zJkk+8LXItK0tgKpCNJuA
+         owOVZaW3/Xtukmd+wPRb4Pl47mmXByT4/tiyBiq4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhu Yanjun <yanjunz@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 5.5 56/80] RDMA/rxe: Fix soft lockup problem due to using tasklets in softirq
-Date:   Tue, 18 Feb 2020 20:55:17 +0100
-Message-Id: <20200218190437.492485814@linuxfoundation.org>
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        Brian Masney <masneyb@onstation.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Maulik Shah <mkshah@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 5.4 51/66] spmi: pmic-arb: Set lockdep class for hierarchical irq domains
+Date:   Tue, 18 Feb 2020 20:55:18 +0100
+Message-Id: <20200218190432.763926947@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200218190432.043414522@linuxfoundation.org>
-References: <20200218190432.043414522@linuxfoundation.org>
+In-Reply-To: <20200218190428.035153861@linuxfoundation.org>
+References: <20200218190428.035153861@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,83 +48,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhu Yanjun <yanjunz@mellanox.com>
+From: Stephen Boyd <swboyd@chromium.org>
 
-commit 8ac0e6641c7ca14833a2a8c6f13d8e0a435e535c upstream.
+commit 2d5a2f913b658a7ae984773a63318ed4daadf4af upstream.
 
-When run stress tests with RXE, the following Call Traces often occur
+I see the following lockdep splat in the qcom pinctrl driver when
+attempting to suspend the device.
 
-  watchdog: BUG: soft lockup - CPU#2 stuck for 22s! [swapper/2:0]
-  ...
-  Call Trace:
-  <IRQ>
-  create_object+0x3f/0x3b0
-  kmem_cache_alloc_node_trace+0x129/0x2d0
-  __kmalloc_reserve.isra.52+0x2e/0x80
-  __alloc_skb+0x83/0x270
-  rxe_init_packet+0x99/0x150 [rdma_rxe]
-  rxe_requester+0x34e/0x11a0 [rdma_rxe]
-  rxe_do_task+0x85/0xf0 [rdma_rxe]
-  tasklet_action_common.isra.21+0xeb/0x100
-  __do_softirq+0xd0/0x298
-  irq_exit+0xc5/0xd0
-  smp_apic_timer_interrupt+0x68/0x120
-  apic_timer_interrupt+0xf/0x20
-  </IRQ>
-  ...
+ WARNING: possible recursive locking detected
+ 5.4.11 #3 Tainted: G        W
+ --------------------------------------------
+ cat/3074 is trying to acquire lock:
+ ffffff81f49804c0 (&irq_desc_lock_class){-.-.}, at: __irq_get_desc_lock+0x64/0x94
 
-The root cause is that tasklet is actually a softirq. In a tasklet
-handler, another softirq handler is triggered. Usually these softirq
-handlers run on the same cpu core. So this will cause "soft lockup Bug".
+ but task is already holding lock:
+ ffffff81f1cc10c0 (&irq_desc_lock_class){-.-.}, at: __irq_get_desc_lock+0x64/0x94
 
-Fixes: 8700e3e7c485 ("Soft RoCE driver")
-Link: https://lore.kernel.org/r/20200212072635.682689-8-leon@kernel.org
-Signed-off-by: Zhu Yanjun <yanjunz@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+ other info that might help us debug this:
+  Possible unsafe locking scenario:
+
+        CPU0
+        ----
+   lock(&irq_desc_lock_class);
+   lock(&irq_desc_lock_class);
+
+  *** DEADLOCK ***
+
+  May be due to missing lock nesting notation
+
+ 6 locks held by cat/3074:
+  #0: ffffff81f01d9420 (sb_writers#7){.+.+}, at: vfs_write+0xd0/0x1a4
+  #1: ffffff81bd7d2080 (&of->mutex){+.+.}, at: kernfs_fop_write+0x12c/0x1fc
+  #2: ffffff81f4c322f0 (kn->count#337){.+.+}, at: kernfs_fop_write+0x134/0x1fc
+  #3: ffffffe411a41d60 (system_transition_mutex){+.+.}, at: pm_suspend+0x108/0x348
+  #4: ffffff81f1c5e970 (&dev->mutex){....}, at: __device_suspend+0x168/0x41c
+  #5: ffffff81f1cc10c0 (&irq_desc_lock_class){-.-.}, at: __irq_get_desc_lock+0x64/0x94
+
+ stack backtrace:
+ CPU: 5 PID: 3074 Comm: cat Tainted: G        W         5.4.11 #3
+ Hardware name: Google Cheza (rev3+) (DT)
+ Call trace:
+  dump_backtrace+0x0/0x174
+  show_stack+0x20/0x2c
+  dump_stack+0xc8/0x124
+  __lock_acquire+0x460/0x2388
+  lock_acquire+0x1cc/0x210
+  _raw_spin_lock_irqsave+0x64/0x80
+  __irq_get_desc_lock+0x64/0x94
+  irq_set_irq_wake+0x40/0x144
+  qpnpint_irq_set_wake+0x28/0x34
+  set_irq_wake_real+0x40/0x5c
+  irq_set_irq_wake+0x70/0x144
+  pm8941_pwrkey_suspend+0x34/0x44
+  platform_pm_suspend+0x34/0x60
+  dpm_run_callback+0x64/0xcc
+  __device_suspend+0x310/0x41c
+  dpm_suspend+0xf8/0x298
+  dpm_suspend_start+0x84/0xb4
+  suspend_devices_and_enter+0xbc/0x620
+  pm_suspend+0x210/0x348
+  state_store+0xb0/0x108
+  kobj_attr_store+0x14/0x24
+  sysfs_kf_write+0x4c/0x64
+  kernfs_fop_write+0x15c/0x1fc
+  __vfs_write+0x54/0x18c
+  vfs_write+0xe4/0x1a4
+  ksys_write+0x7c/0xe4
+  __arm64_sys_write+0x20/0x2c
+  el0_svc_common+0xa8/0x160
+  el0_svc_handler+0x7c/0x98
+  el0_svc+0x8/0xc
+
+Set a lockdep class when we map the irq so that irq_set_wake() doesn't
+warn about a lockdep bug that doesn't exist.
+
+Fixes: 12a9eeaebba3 ("spmi: pmic-arb: convert to v2 irq interfaces to support hierarchical IRQ chips")
+Cc: Douglas Anderson <dianders@chromium.org>
+Cc: Brian Masney <masneyb@onstation.org>
+Cc: Lina Iyer <ilina@codeaurora.org>
+Cc: Maulik Shah <mkshah@codeaurora.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Link: https://lore.kernel.org/r/20200121183748.68662-1-swboyd@chromium.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/sw/rxe/rxe_comp.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/spmi/spmi-pmic-arb.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/infiniband/sw/rxe/rxe_comp.c
-+++ b/drivers/infiniband/sw/rxe/rxe_comp.c
-@@ -329,7 +329,7 @@ static inline enum comp_state check_ack(
- 					qp->comp.psn = pkt->psn;
- 					if (qp->req.wait_psn) {
- 						qp->req.wait_psn = 0;
--						rxe_run_task(&qp->req.task, 1);
-+						rxe_run_task(&qp->req.task, 0);
- 					}
- 				}
- 				return COMPST_ERROR_RETRY;
-@@ -463,7 +463,7 @@ static void do_complete(struct rxe_qp *q
- 	 */
- 	if (qp->req.wait_fence) {
- 		qp->req.wait_fence = 0;
--		rxe_run_task(&qp->req.task, 1);
-+		rxe_run_task(&qp->req.task, 0);
- 	}
+--- a/drivers/spmi/spmi-pmic-arb.c
++++ b/drivers/spmi/spmi-pmic-arb.c
+@@ -731,6 +731,7 @@ static int qpnpint_irq_domain_translate(
+ 	return 0;
  }
  
-@@ -479,7 +479,7 @@ static inline enum comp_state complete_a
- 		if (qp->req.need_rd_atomic) {
- 			qp->comp.timeout_retry = 0;
- 			qp->req.need_rd_atomic = 0;
--			rxe_run_task(&qp->req.task, 1);
-+			rxe_run_task(&qp->req.task, 0);
- 		}
- 	}
++static struct lock_class_key qpnpint_irq_lock_class, qpnpint_irq_request_class;
  
-@@ -725,7 +725,7 @@ int rxe_completer(void *arg)
- 							RXE_CNT_COMP_RETRY);
- 					qp->req.need_retry = 1;
- 					qp->comp.started_retry = 1;
--					rxe_run_task(&qp->req.task, 1);
-+					rxe_run_task(&qp->req.task, 0);
- 				}
+ static void qpnpint_irq_domain_map(struct spmi_pmic_arb *pmic_arb,
+ 				   struct irq_domain *domain, unsigned int virq,
+@@ -746,6 +747,9 @@ static void qpnpint_irq_domain_map(struc
+ 	else
+ 		handler = handle_level_irq;
  
- 				if (pkt) {
++
++	irq_set_lockdep_class(virq, &qpnpint_irq_lock_class,
++			      &qpnpint_irq_request_class);
+ 	irq_domain_set_info(domain, virq, hwirq, &pmic_arb_irqchip, pmic_arb,
+ 			    handler, NULL, NULL);
+ }
 
 
