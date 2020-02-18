@@ -2,72 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7DC3163051
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:38:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D797163057
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:40:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726446AbgBRTiz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 14:38:55 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:51126 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726283AbgBRTiz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:38:55 -0500
-Received: from zn.tnic (p200300EC2F0C1F00DCB96C3517B36067.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:1f00:dcb9:6c35:17b3:6067])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C8E811EC0CAA;
-        Tue, 18 Feb 2020 20:38:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1582054733;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=OqGTJVey3byW94WtpQyLsVkrLrmmQJ80pToxR9gFeiQ=;
-        b=J7z9dmYhf7IzQqjnoQHTCWGHR8Mp2FhwWctywz8TfsvzgctyrV4/VDYY9+U664shF/G1yP
-        fCNukwh/2Quqx3JGYD05dPyC3N4B/1e0YgKqdJf5CCt2lyqgV5arkMLme2vTujLISY4AAx
-        P8LLsMFJ+EyfB39w3OsaAR0Nx0Q4Nro=
-Date:   Tue, 18 Feb 2020 20:38:50 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [for-next][PATCH 04/26] bootconfig: Add Extra Boot Config support
-Message-ID: <20200218193850.GM14449@zn.tnic>
-References: <20200206175858.GG9741@zn.tnic>
- <20200207114617.3bda49673175d3fa33cbe85e@kernel.org>
- <20200207114122.GB24074@zn.tnic>
- <20200208000648.3383f991fee68af5ee229d65@kernel.org>
- <20200210112512.GA29627@zn.tnic>
- <20200211001007.62290c743e049b231bdd7052@kernel.org>
- <20200210174053.GD29627@zn.tnic>
- <20200211110207.7e0f1b048cc207e1a31ddd31@kernel.org>
- <20200218132724.GC14449@zn.tnic>
- <20200218125748.5085929c@gandalf.local.home>
+        id S1726595AbgBRTkd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 14:40:33 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:40355 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbgBRTkd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 14:40:33 -0500
+X-Originating-IP: 86.202.105.35
+Received: from localhost (lfbn-lyo-1-9-35.w86-202.abo.wanadoo.fr [86.202.105.35])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id BE37440005;
+        Tue, 18 Feb 2020 19:40:24 +0000 (UTC)
+Date:   Tue, 18 Feb 2020 20:40:24 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Corentin Labbe <clabbe@baylibre.com>
+Cc:     b-liu@ti.com, balbi@kernel.org, gregkh@linuxfoundation.org,
+        ludovic.desroches@microchip.com, mathias.nyman@intel.com,
+        nicolas.ferre@microchip.com, slemieux.tyco@gmail.com,
+        stern@rowland.harvard.edu, vz@mleia.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH 04/20] usb: gadget: at91_udc: remove useless cast for
+ driver.name
+Message-ID: <20200218194024.GD3385@piout.net>
+References: <1582054383-35760-1-git-send-email-clabbe@baylibre.com>
+ <1582054383-35760-5-git-send-email-clabbe@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200218125748.5085929c@gandalf.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1582054383-35760-5-git-send-email-clabbe@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 12:57:48PM -0500, Steven Rostedt wrote:
-> OK, what if we put it as default 'n' but we still check if "bootconfig"
-> is on the command line. And if it is, we warn with something like:
+On 18/02/2020 19:32:47+0000, Corentin Labbe wrote:
+> device_driver name is const char pointer, so it not useful to cast
+> driver_name (which is already const char).
 > 
-> #ifndef CONFIG_BOOTCONFIG
-> 	pr_err("WARNING: 'bootconfig' found on the kernel command line but CONFIG_BOOTCONFIG is not set in this kernel\n");
-> #endif
+> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-Sure, makes sense to me. And all the code that requires it, can simply
-select BOOTCONFIG.
-
-Thx.
+> ---
+>  drivers/usb/gadget/udc/at91_udc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/gadget/udc/at91_udc.c b/drivers/usb/gadget/udc/at91_udc.c
+> index 1b2b548c59a0..eede5cedacb4 100644
+> --- a/drivers/usb/gadget/udc/at91_udc.c
+> +++ b/drivers/usb/gadget/udc/at91_udc.c
+> @@ -2021,7 +2021,7 @@ static struct platform_driver at91_udc_driver = {
+>  	.suspend	= at91udc_suspend,
+>  	.resume		= at91udc_resume,
+>  	.driver		= {
+> -		.name	= (char *) driver_name,
+> +		.name	= driver_name,
+>  		.of_match_table	= at91_udc_dt_ids,
+>  	},
+>  };
+> -- 
+> 2.24.1
+> 
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
