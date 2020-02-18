@@ -2,96 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13DAA16304D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:38:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC370163052
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:39:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbgBRThy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 14:37:54 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:10938 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726339AbgBRThy (ORCPT
+        id S1726496AbgBRTjD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 14:39:03 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42963 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbgBRTjC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:37:54 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01IJXws6193719
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 14:37:53 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y8hwnj1fq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 14:37:52 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 18 Feb 2020 19:37:50 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 18 Feb 2020 19:37:47 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01IJbkch43188450
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 Feb 2020 19:37:46 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1278552050;
-        Tue, 18 Feb 2020 19:37:46 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.154.230])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id AA5985204F;
-        Tue, 18 Feb 2020 19:37:44 +0000 (GMT)
-Subject: Re: [PATCH v4 1/3] IMA: Update KBUILD_MODNAME for IMA files to ima
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>, joe@perches.com,
-        skhan@linuxfoundation.org, linux-integrity@vger.kernel.org
-Cc:     sashal@kernel.org, nramas@linux.microsoft.com,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 18 Feb 2020 14:37:42 -0500
-In-Reply-To: <857c8dc6-d09c-423e-c520-53bb85c6d46c@linux.microsoft.com>
-References: <20200215014709.3006-1-tusharsu@linux.microsoft.com>
-         <20200215014709.3006-2-tusharsu@linux.microsoft.com>
-         <857c8dc6-d09c-423e-c520-53bb85c6d46c@linux.microsoft.com>
+        Tue, 18 Feb 2020 14:39:02 -0500
+Received: by mail-lj1-f194.google.com with SMTP id d10so24371767ljl.9
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 11:39:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=CZVPOdBOz9oqPt50DFcOS2FFpkbcLimq03cuRtqGXPA=;
+        b=Xi2BST5TLRjQNTfbbkSbh6qaVoOZxo9wA4E6heEAZZLJ8lCI0RYUW0O3V3Ddaqw4Oe
+         o+B9hvNSpADznWAJR0EE8cpmhP3bLlzMcSp84VDzu+PjQO3HlAfDZGDpTLi2JDkD5jFK
+         AXBsp3XZOAgj/bXQWSuhRhswXAHyU+64Xo3kI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=CZVPOdBOz9oqPt50DFcOS2FFpkbcLimq03cuRtqGXPA=;
+        b=hTT3lNC4kcMnkaJpDfbXmySx1adNoLYVDyMkwXyVd5s4bb2sPxRMhC7NWpZXfp6bYF
+         +NKfVgGoEhHCHWXB1WI4OAFD8GCnGS2A3guqOcRHunyAiH84i8C1iTrlJJixWQYWgmFF
+         Bl4EEKep/jbsxDiOS33aQmqetwDf1JdKh794BnbMvF1YSlybCJLl/BkG2xr8U7jamLDy
+         Zb7NUkgl0mcIFBDcp+RLWtw9rG4si8R0tUqavuKXQmrMYoi5ciZ9eocqdACYq94a4ZO9
+         Z4nUrBdx3KyNJlxWsJ/17o9THir0orCHmplVs/oqTwBBbRlsnrghfb2DShqR9YNtDpDP
+         U+9w==
+X-Gm-Message-State: APjAAAWmRxSZ37Wy3Azc+RsmscajCjQLVbtE3zb2Npf1Jwmzw4h88PRO
+        1hYANWnLvw+leWj5DxEgi8L1U8P/B7M=
+X-Google-Smtp-Source: APXvYqx2TSu6SOa01i7vmG4QsdmPz8TXh/8Vgc+2y6Wc9K+6k7WO8vEZWA/vK2Uui+tAg8OPfZZ6dA==
+X-Received: by 2002:a2e:e12:: with SMTP id 18mr14184950ljo.123.1582054739904;
+        Tue, 18 Feb 2020 11:38:59 -0800 (PST)
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
+        by smtp.gmail.com with ESMTPSA id y7sm3047714ljy.92.2020.02.18.11.38.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Feb 2020 11:38:59 -0800 (PST)
+Received: by mail-lf1-f51.google.com with SMTP id c23so15402319lfi.7
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 11:38:58 -0800 (PST)
+X-Received: by 2002:a05:6512:78:: with SMTP id i24mr11588487lfo.10.1582054738541;
+ Tue, 18 Feb 2020 11:38:58 -0800 (PST)
+MIME-Version: 1.0
+References: <20200217222803.6723-1-idryomov@gmail.com> <202002171546.A291F23F12@keescook>
+ <CAOi1vP-2uAD83Vi=Eebu_GPzq5DUt+z9zogA7BNGF1B1jUgAVw@mail.gmail.com>
+ <CAHk-=whj0vMcdVPC0=9aAsN2-tsCyFKF4beb2gohFeFK_Z-Y9g@mail.gmail.com> <20200218193136.GA22499@angband.pl>
+In-Reply-To: <20200218193136.GA22499@angband.pl>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 18 Feb 2020 11:38:42 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjEd-gZ1g52kgi_g8gq-QCF2E01TkQd5Hmj4W5aThLw3A@mail.gmail.com>
+Message-ID: <CAHk-=wjEd-gZ1g52kgi_g8gq-QCF2E01TkQd5Hmj4W5aThLw3A@mail.gmail.com>
+Subject: Re: [PATCH] vsprintf: don't obfuscate NULL and error pointers
+To:     Adam Borowski <kilobyte@angband.pl>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        "Tobin C . Harding" <me@tobin.cc>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20021819-0016-0000-0000-000002E80C3E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20021819-0017-0000-0000-0000334B21B2
-Message-Id: <1582054662.5067.15.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-18_06:2020-02-18,2020-02-18 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- impostorscore=0 suspectscore=0 bulkscore=0 adultscore=0 clxscore=1015
- priorityscore=1501 mlxlogscore=967 spamscore=0 malwarescore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002180132
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2020-02-18 at 11:25 -0800, Tushar Sugandhi wrote:
-> Hi Mimi,
-> 
-> On 2020-02-14 5:47 p.m., Tushar Sugandhi wrote:
-> > The kbuild Makefile specifies object files for vmlinux in the $(obj-y)
-> > lists. These lists depend on the kernel configuration[1].
-> > 
-> > The kbuild Makefile for IMA combines the object files for IMA into a
-> > single object file namely ima.o. All the object files for IMA should be
-> > combined into ima.o. But certain object files are being added to their
-> > own $(obj-y). This results in the log messages from those modules getting
-> > prefixed with their respective base file name, instead of "ima". This is
-> > inconsistent with the log messages from the IMA modules that are combined
-> > into ima.o.
-> > 
-> > This change fixes the above issue.
-> > 
-> > [1] Documentation\kbuild\makefiles.rst
-> > 
-> Is there any feedback on this patch description?
-> I can address it in the next iteration.
+On Tue, Feb 18, 2020 at 11:31 AM Adam Borowski <kilobyte@angband.pl> wrote:
+>
+> Either "0" or "NULL" (or "=E2=88=85" if you allow cp437-subset Unicode ) =
+wouldn't
+> cause such confusion.
 
-No, it looks good to me.
+An all-uppercase "NULL" probably matches the error code printout
+syntax better too, and is more clearly a pointer.
 
-Mimi
+And with %pe you can't assume columnar output anyway (unless you
+explicitly ask for some width), so the length of the output cannot
+matter.
 
+So yeah, I agree. To extend on Ilya's example:
+
+                              ptr        error-ptr             NULL
+  %p:            0000000001f8cc5b fffffffffffffff2 0000000000000000
+  %pK, kptr =3D 0: 0000000001f8cc5b fffffffffffffff2 0000000000000000
+  %px:           ffff888048c04020 fffffffffffffff2 0000000000000000
+  %pK, kptr =3D 1: ffff888048c04020 fffffffffffffff2 0000000000000000
+  %pK, kptr =3D 2: 0000000000000000 0000000000000000 0000000000000000
+  %p:            0000000001f8cc5b -EFAULT NULL
+
+would seem to be a sane output format. Hmm?
+
+             Linus
