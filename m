@@ -2,219 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 230E81632EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:20:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C4551632DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:17:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbgBRUTZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 15:19:25 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37917 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726384AbgBRUTZ (ORCPT
+        id S1727862AbgBRURV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 15:17:21 -0500
+Received: from gateway32.websitewelcome.com ([192.185.145.102]:27768 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726772AbgBRURQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 15:19:25 -0500
-Received: by mail-wm1-f68.google.com with SMTP id a9so4338354wmj.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 12:19:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Fjd7JDIqMogS+ecAjflr/UQOm6NZ79xvDYhlsrLIVp8=;
-        b=GTbwyqXSsALa3HKNnan9u6EmLpurUr35f2SvXSLcV5aMTSlz0e/VvVuBpRS3r8gTVr
-         sgwK/1l7FK9/VCrgHmT9q92e8CyvVBFpDrcMR1UQ8CP1gkeDnmwnFSI2z3n+gjyVrpxO
-         NWveKV/3TiBNAME8rv50/BSamKlvJc2OFLXLk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Fjd7JDIqMogS+ecAjflr/UQOm6NZ79xvDYhlsrLIVp8=;
-        b=nX4JeWbSeRcfiXw9tdQKCzdRS4aUsaakj8zoTOo6T/X3w9W4ntZv7x8qas9hKj4ZJb
-         RQsXAu/lZgYoBNN78tC50vU/vn8sOHw27dpxTfaZFqpbMdyqbQ4OcFuIryeoi1KTlq6a
-         Mj44fIUAFJNghm9435QKMU6TVW4eNFxFthDIA9qthxIpRCZqy7HzrDNJ0MRoO0YG4ir7
-         jt218GJ4u1vSnrCLBSrYxaS7fvNCbv5eAI1OYpaPFobRuLINJb8JVq2BOZ8Hj/uqTfT1
-         7IMLtAFuW14CvLh/5HFUvAfuJh/ZZOh3yM91i3GFfTwj3wJKsv0WYRZ4/Id1p809sUty
-         4C2A==
-X-Gm-Message-State: APjAAAU9Qgq50b0r2kP2X/GIoMhkFSVeCCwQb/zmZHzq4vi3tGDGXchq
-        hUzIrkuUMfrbzkfuFw1dewLGdSLDwTpyPCCdwBUNRw==
-X-Google-Smtp-Source: APXvYqwyT1Zl+Ukm4WyEu9LaH1ZAWp8D6b5xvv2uarrWNoLF2k+riF1MagTvM49bzlcQDPRxwbPI7wKPV+UhrpVk228=
-X-Received: by 2002:a7b:ce98:: with SMTP id q24mr4807130wmj.41.1582057161792;
- Tue, 18 Feb 2020 12:19:21 -0800 (PST)
+        Tue, 18 Feb 2020 15:17:16 -0500
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway32.websitewelcome.com (Postfix) with ESMTP id 2844EB4BC5
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 14:17:14 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 49IwjkLnSEfyq49IwjsO0X; Tue, 18 Feb 2020 14:17:14 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=hSonzuSC9I+gp7SbsXv5MLaN7QKhuqhe9ZSmdoBwwj4=; b=vaqzdOM3utWVwKGJpO/ksgySbi
+        ATVfEyGZmn5a4DHT6cm63x215cHRxy8PdFD5R3IozmxO3YL8Uzm6J+m+II3nZKM5sXNZAaA1gLCao
+        mEn7+JFihz0Z5qzzpLdJ9WE7hUbCocPFi/+S3K1K/5ZSVGxZA10cymnYB8Rs6xhqYG3Id5W6zZnPe
+        ZBf2ExqNaeVnlJcbLyXwfp5kFuRpHRl8J7NK9gRdIDZmsGiLRXY5x1yoEa0irS0g7FRGVjfjIY+eg
+        OcdtbRqh1XtVWPjV3ZQoKfh9N2+koF55FCis/3NCAn4SNIVIsZcA0KpddyZm+eVyZ5MOmGIDY6ee3
+        /2OvMdpQ==;
+Received: from [200.68.140.26] (port=8476 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j49Iv-000BM2-P3; Tue, 18 Feb 2020 14:17:13 -0600
+Subject: Re: [PATCH][next] net/mlx5: IPsec, Replace zero-length array with
+ flexible-array member
+To:     Leon Romanovsky <leon@kernel.org>
+Cc:     Boris Pismenny <borisp@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200217195434.GA1166@embeddedor> <20200218163522.GB11536@unreal>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <2c0b59b6-7897-6618-a72c-8306f42709f6@embeddedor.com>
+Date:   Tue, 18 Feb 2020 14:19:51 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200214153535.32046-1-cristian.marussi@arm.com>
-In-Reply-To: <20200214153535.32046-1-cristian.marussi@arm.com>
-From:   Jim Quinlan <james.quinlan@broadcom.com>
-Date:   Tue, 18 Feb 2020 15:19:10 -0500
-Message-ID: <CA+-6iNyFYusJTfiFgCNoRrcT5Xo4nof4fc=d46GiPAUD4o2j+Q@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 00/13] SCMI Notifications Core Support
-To:     Cristian Marussi <cristian.marussi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lukasz Luba <lukasz.luba@arm.com>, Jonathan.Cameron@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200218163522.GB11536@unreal>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.68.140.26
+X-Source-L: No
+X-Exim-ID: 1j49Iv-000BM2-P3
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [200.68.140.26]:8476
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Cristian,
-
-This looks very robust and general but I'm wondering about the
-"notification -> user" latency.  It appears there are at least five or
-so memcpy()s of the notification message as it works its way to the
-user, and added to that is the work queue deferral latency.  Is there
-a concern on your end for low latency notifications, perhaps for
-emergency notifications or do you consider this to be quick enough?
-
-Note that we (BrcmSTB) have implemented our own  SCMI notification
-system for a proprietary protocol and we designed it to deliver
-notifications as quickly as possible.  Our system is more or less a
-disposable hack and would not stand up to heavy or general usage.  We
-fully intend to move to the approved Linux notification system.  On
-that note,  I'm just wondering if you had any comment on the
-possibility of  "slimming down" your RFC, e.g. perhaps somehow
-collapsing some memcpy()s.
-
-Thanks,
-Jim
-PS I'm going on vacation so I won't be able to email for a week.
 
 
-On Fri, Feb 14, 2020 at 10:36 AM Cristian Marussi
-<cristian.marussi@arm.com> wrote:
->
-> Hi all,
->
-> this series wants to introduce SCMI Notification Support, built on top of
-> the standard Kernel notification chain subsystem.
->
-> At initialization time each SCMI Protocol takes care to register with the
-> new SCMI notification core the set of its own events which it intends to
-> support.
->
-> Using a possibly proposed API in include/linux/scmi_protocol.h (not
-> finalized though, NO EXPORTs_) a Kernel user can register its own
-> notifier_t callback (via a notifier_block as usual) against any registered
-> event as identified by the tuple:
->
->                 (proto_id, event_id, src_id)
->
-> where src_id represents a generic source identifier which is protocol
-> dependent like domain_id, performance_id, sensor_id and so forth.
-> (users can anyway do NOT provide any src_id, and subscribe instead to ALL
->  the existing (if any) src_id sources for that proto_id/evt_id combination)
->
-> Each of the above tuple-specified event will be served on its own dedicated
-> blocking notification chain.
->
-> Upon a notification delivery all the users' registered notifier_t callbacks
-> will be in turn invoked and fed with the event_id as @action param and a
-> generated custom per-event struct _report as @data param.
-> (as in include/linux/scmi_protocol.h)
->
-> The final step of notification delivery via users' callback invocation is
-> instead delegated to a pool of deferred workers (Kernel cmwq): each
-> SCMI protocol has its own dedicated worker and dedicated queue to push
-> events from the rx ISR to the worker.
->
-> The series is marked as RFC mainly because:
->
-> - the API as said is tentative and not EXPORTed; currently consisting of a
->   generic interface like:
->
->          scmi_register_event_notifier(proto_id, evt_id, *src_id, *nb)
->
->   as found in scmi_protocol.h, or using the equivalent 'handle' operations
->   in scmi_notify_ops if used by an scmi_driver.
->
->   It's open for discussion.
->
-> - no Event priorization has been considered: each protocol has its own
->   queue and deferred worker instance, so as to avoid that one protocol
->   flood can overrun a single queue and influence other protocols'
->   notifications' delivery.
->   But that's it, all the workers are unbound, low_pri cmwq workers.
->
->   Should we enforce some sort of built-in prio amongst the events ?
->   Should this priority instead be compile time configurable ?
->
->   Again, open for discussion.
->
-> - no configuration is possible: it can be imagined that on a real platform
->   events' priority (if any) and events queues' depth could be something
->   somehow compile-time configurable, but this is not addressed by this
->   series at all.
->
-> Based on scmi-next 5.6 [1], on top of:
->
-> commit 5c8a47a5a91d ("firmware: arm_scmi: Make scmi core independent of
->                       the transport type")
->
-> This series has been tested on JUNO with an experimental firmware only
-> supporting Perf Notifications.
->
-> Any thoughts ?
->
-> Thanks
->
-> Cristian
-> ----
->
-> v1 --> v2:
-> - dropped anti-tampering patch
-> - rebased on top of scmi-for-next-5.6, which includes Viresh series that
->   make SCMI core independent of transport (5c8a47a5a91d)
-> - add a few new SCMI transport methods on top of Viresh patch to address
->   needs of SCMI Notifications
-> - reviewed/renamed scmi_handle_xfer_delayed_resp()
-> - split main SCMI Notification core patch (~1k lines) into three chunks:
->   protocol-registration / callbacks-registration / dispatch-and-delivery
-> - removed awkward usage of IDR maps in favour of pure hashtables
-> - added enable/disable refcounting in notification core (was broken in v1)
-> - removed per-protocol candidate API: a single generic API is now proposed
->   instead of scmi_register_<proto>_event_notifier(evt_id, *src_id, *nb)
-> - added handle->notify_ops as an alternative notification API
->   for scmi_driver
-> - moved ALL_SRCIDs enabled handling from protocol code to core code
-> - reviewed protocol registration/unregistration logic to use devres
-> - reviewed cleanup phase on shutdown
-> - fixed  ERROR: reference preceded by free as reported by kbuild test robot
->
-> [1] git://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux.git
->
-> Cristian Marussi (10):
->   firmware: arm_scmi: Add notifications support in transport layer
->   firmware: arm_scmi: Add notification protocol-registration
->   firmware: arm_scmi: Add notification callbacks-registration
->   firmware: arm_scmi: Add notification dispatch and delivery
->   firmware: arm_scmi: Enable notification core
->   firmware: arm_scmi: Add Power notifications support
->   firmware: arm_scmi: Add Perf notifications support
->   firmware: arm_scmi: Add Sensor notifications support
->   firmware: arm_scmi: Add Reset notifications support
->   firmware: arm_scmi: Add Base notifications support
->
-> Sudeep Holla (3):
->   firmware: arm_scmi: Add receive buffer support for notifications
->   firmware: arm_scmi: Update protocol commands and notification list
->   firmware: arm_scmi: Add support for notifications message processing
->
->  drivers/firmware/arm_scmi/Makefile  |    2 +-
->  drivers/firmware/arm_scmi/base.c    |  121 +++
->  drivers/firmware/arm_scmi/bus.c     |   11 +
->  drivers/firmware/arm_scmi/common.h  |   12 +
->  drivers/firmware/arm_scmi/driver.c  |  118 ++-
->  drivers/firmware/arm_scmi/mailbox.c |   17 +
->  drivers/firmware/arm_scmi/notify.c  | 1102 +++++++++++++++++++++++++++
->  drivers/firmware/arm_scmi/notify.h  |   78 ++
->  drivers/firmware/arm_scmi/perf.c    |  140 +++-
->  drivers/firmware/arm_scmi/power.c   |  133 +++-
->  drivers/firmware/arm_scmi/reset.c   |  100 ++-
->  drivers/firmware/arm_scmi/sensors.c |   77 +-
->  drivers/firmware/arm_scmi/shmem.c   |   15 +
->  include/linux/scmi_protocol.h       |  114 +++
->  14 files changed, 2009 insertions(+), 31 deletions(-)
->  create mode 100644 drivers/firmware/arm_scmi/notify.c
->  create mode 100644 drivers/firmware/arm_scmi/notify.h
->
-> --
-> 2.17.1
->
+On 2/18/20 10:35, Leon Romanovsky wrote:
+> On Mon, Feb 17, 2020 at 01:54:34PM -0600, Gustavo A. R. Silva wrote:
+>> The current codebase makes use of the zero-length array language
+>> extension to the C90 standard, but the preferred mechanism to declare
+>> variable-length types such as these ones is a flexible array member[1][2],
+>> introduced in C99:
+>>
+>> struct foo {
+>>         int stuff;
+>>         struct boo array[];
+>> };
+>>
+>> By making use of the mechanism above, we will get a compiler warning
+>> in case the flexible array does not occur last in the structure, which
+>> will help us prevent some kind of undefined behavior bugs from being
+>> inadvertently introduced[3] to the codebase from now on.
+>>
+>> Also, notice that, dynamic memory allocations won't be affected by
+>> this change:
+>>
+>> "Flexible array members have incomplete type, and so the sizeof operator
+>> may not be applied. As a quirk of the original implementation of
+>> zero-length arrays, sizeof evaluates to zero."[1]
+>>
+>> This issue was found with the help of Coccinelle.
+>>
+>> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+>> [2] https://github.com/KSPP/linux/issues/21
+>> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>  drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Can you please do one patch for whole mlx5,
+> instead of many identical patches?
+> 
+
+Sure thing. I can do that.
+
+Thanks
+--
+Gustavo
