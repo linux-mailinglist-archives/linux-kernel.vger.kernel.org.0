@@ -2,170 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 936E21628B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 15:41:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A17A71628AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 15:40:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbgBROlD convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 18 Feb 2020 09:41:03 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51112 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726116AbgBROlD (ORCPT
+        id S1726750AbgBROkO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 09:40:14 -0500
+Received: from a80-127-99-228.adsl.xs4all.nl ([80.127.99.228]:51262 "EHLO
+        hetgrotebos.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726116AbgBROkO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 09:41:03 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01IEYECq129874
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 09:41:02 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y6e2fjcpx-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 09:41:00 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <naveen.n.rao@linux.vnet.ibm.com>;
-        Tue, 18 Feb 2020 14:40:58 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 18 Feb 2020 14:40:55 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01IEesQW56164594
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 Feb 2020 14:40:54 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 863DC11C05B;
-        Tue, 18 Feb 2020 14:40:54 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DB0BB11C050;
-        Tue, 18 Feb 2020 14:40:53 +0000 (GMT)
-Received: from localhost (unknown [9.199.60.10])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 18 Feb 2020 14:40:53 +0000 (GMT)
-Date:   Tue, 18 Feb 2020 20:10:52 +0530
-From:   "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: Re: [PATCH 2/2] powerpc/kprobes: Reduce depth of a test
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <642c8b4ca59e658be38d8dde00f994e183790a6a.1581687838.git.christophe.leroy@c-s.fr>
-        <b67d6705956a1a294af600700115930ff87e643c.1581687838.git.christophe.leroy@c-s.fr>
-In-Reply-To: <b67d6705956a1a294af600700115930ff87e643c.1581687838.git.christophe.leroy@c-s.fr>
+        Tue, 18 Feb 2020 09:40:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=wizzup.org;
+         s=mail; h=Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:
+        References:Cc:To:Subject:Sender:Reply-To:Content-Transfer-Encoding:Content-ID
+        :Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:
+        Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe
+        :List-Post:List-Owner:List-Archive;
+        bh=hllLoCyM9RmK7u/rPo0DwB939Hm+Eyw+3efkMrghnmY=; b=pVxiJO6d9ZEI422RObEcVc8TMW
+        dDURo5BgGRHeVFnVGBzv2seORa+1r1KstBytKEMeHO9z1nHMY9VDcIHs6RR1A9aG6HDUu8Pku0WA/
+        ByW+AUxZUG1Jwl1PuzNA6rpQamOH5xfCy/Ao/p8m0FSyu6QPVKr6vEZN+jX0dMA48yBMCRVObYRCd
+        rRl/4oUBgXIzik98UXKO0IGRWFoihqGykX9OfuYf+v9ew8Npw+rH3NWoy4XH1zaX5CiQ30hazCL4L
+        Y0XUE6BSC/6l5DWpOx3S+FARkvvfO2iZCXf/VPjFeMhHtfRWRbh5EfwgfDP2F7wFOW7gF6IcNEa7D
+        CRaZJ82g==;
+Received: from deepwater.fritz.box ([192.168.178.25] helo=[0.0.0.0])
+        by hetgrotebos.org with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <merlijn@wizzup.org>)
+        id 1j442l-0004Bt-LR; Tue, 18 Feb 2020 14:40:11 +0000
+Subject: Re: [PATCH] scsi: sr: get rid of sr global mutex
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-scsi@vger.kernel.org, Merlijn Wajer <merlijn@archive.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+References: <20200214135433.29448-1-merlijn@wizzup.org>
+ <yq1a75gmpsv.fsf@oracle.com> <yq11rqsmp2s.fsf@oracle.com>
+From:   Merlijn Wajer <merlijn@wizzup.org>
+Autocrypt: addr=merlijn@wizzup.org; prefer-encrypt=mutual; keydata=
+ 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
+ /XslHw==
+Message-ID: <02f9ad3c-632a-dbfe-8cca-3a8c61d77923@wizzup.org>
+Date:   Tue, 18 Feb 2020 15:41:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.0
 MIME-Version: 1.0
-User-Agent: astroid/v0.15-13-gb675b421
- (https://github.com/astroidmail/astroid)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-X-TM-AS-GCONF: 00
-x-cbid: 20021814-0012-0000-0000-00000387FE91
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20021814-0013-0000-0000-000021C48F21
-Message-Id: <1582036273.gp0i4o7fv2.naveen@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-18_02:2020-02-17,2020-02-18 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=816 mlxscore=0 suspectscore=0 clxscore=1015 lowpriorityscore=0
- impostorscore=0 phishscore=0 bulkscore=0 adultscore=0 priorityscore=1501
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002180114
+In-Reply-To: <yq11rqsmp2s.fsf@oracle.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="ss2PJczctqRhK1AxEE5q8BDZsVzTIB80u"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy wrote:
-> 	if (a) {
-> 		if (b)
-> 			do_something();
-> 	}
-> 
-> Is equivalent to
-> 
-> 	if (a & b)
-> 		do_something();
-> 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->  arch/powerpc/kernel/kprobes.c | 58 +++++++++++++++++------------------
->  1 file changed, 28 insertions(+), 30 deletions(-)
-> 
-> diff --git a/arch/powerpc/kernel/kprobes.c b/arch/powerpc/kernel/kprobes.c
-> index 7a925eb76ec0..d7c80a078c1e 100644
-> --- a/arch/powerpc/kernel/kprobes.c
-> +++ b/arch/powerpc/kernel/kprobes.c
-> @@ -277,38 +277,36 @@ int kprobe_handler(struct pt_regs *regs)
->  
->  	/* Check we're not actually recursing */
->  	p = get_kprobe(addr);
-> -	if (kprobe_running()) {
-> -		if (p) {
-> -			kprobe_opcode_t insn = *p->ainsn.insn;
-> -			if (kcb->kprobe_status == KPROBE_HIT_SS &&
-> -					is_trap(insn)) {
-> -				/* Turn off 'trace' bits */
-> -				regs->msr &= ~MSR_SINGLESTEP;
-> -				regs->msr |= kcb->kprobe_saved_msr;
-> -				goto no_kprobe;
-> -			}
-> -			/* We have reentered the kprobe_handler(), since
-> -			 * another probe was hit while within the handler.
-> -			 * We here save the original kprobes variables and
-> -			 * just single step on the instruction of the new probe
-> -			 * without calling any user handlers.
-> -			 */
-> -			save_previous_kprobe(kcb);
-> -			set_current_kprobe(p, regs, kcb);
-> -			kprobes_inc_nmissed_count(p);
-> -			kcb->kprobe_status = KPROBE_REENTER;
-> -			if (p->ainsn.boostable >= 0) {
-> -				ret = try_to_emulate(p, regs);
-> -
-> -				if (ret > 0) {
-> -					restore_previous_kprobe(kcb);
-> -					preempt_enable_no_resched();
-> -					return 1;
-> -				}
-> +	if (kprobe_running() && p) {
-> +		kprobe_opcode_t insn = *p->ainsn.insn;
-> +
-> +		if (kcb->kprobe_status == KPROBE_HIT_SS && is_trap(insn)) {
-> +			/* Turn off 'trace' bits */
-> +			regs->msr &= ~MSR_SINGLESTEP;
-> +			regs->msr |= kcb->kprobe_saved_msr;
-> +			goto no_kprobe;
-> +		}
-> +		/* We have reentered the kprobe_handler(), since
-> +		 * another probe was hit while within the handler.
-> +		 * We here save the original kprobes variables and
-> +		 * just single step on the instruction of the new probe
-> +		 * without calling any user handlers.
-> +		 */
-> +		save_previous_kprobe(kcb);
-> +		set_current_kprobe(p, regs, kcb);
-> +		kprobes_inc_nmissed_count(p);
-> +		kcb->kprobe_status = KPROBE_REENTER;
-> +		if (p->ainsn.boostable >= 0) {
-> +			ret = try_to_emulate(p, regs);
-> +
-> +			if (ret > 0) {
-> +				restore_previous_kprobe(kcb);
-> +				preempt_enable_no_resched();
-> +				return 1;
->  			}
-> -			prepare_singlestep(p, regs);
-> -			return 1;
->  		}
-> +		prepare_singlestep(p, regs);
-> +		return 1;
->  	}
->  
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--ss2PJczctqRhK1AxEE5q8BDZsVzTIB80u
+Content-Type: multipart/mixed; boundary="1h7b2dFr87mLIl72K3vSp02SDsmxUDEhG"
 
-If we move the below !p case before the check for kprobe_running() right 
-after get_kprobe(), we won't need to check for (p) above and we won't 
-have any change in logic from Patch 1.
+--1h7b2dFr87mLIl72K3vSp02SDsmxUDEhG
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: quoted-printable
 
->  	if (!p) {
+Hi Martin,
+
+On 18/02/2020 06:39, Martin K. Petersen wrote:
+>=20
+> Merlijn,
+>=20
+>>> When replacing the Big Kernel Lock in commit
+>>> 2a48fc0ab24241755dc93bfd4f01d68efab47f5a ("block: autoconvert trivial=
+
+>>> BKL users to private mutex"), the lock was replaced with a sr-wide
+>>> lock.
+>>
+>> Applied to 5.7/scsi-queue, thanks!
+>=20
+> Doesn't build. Please rebase on top of 5.7/scsi-queue and
+> resubmit. Thanks!
+
+I've sent out a new (v2) patch, based on `5.7/scsi-queue`. I've sent it
+out using my work-email for proper attribution, and now it also matches
+the Signed-off-by.
+
+Sorry for the hassle.
+
+One question -- I would like to put in some extra work to get this patch
+(or some version of it) sent out to stable trees as well. Is there any
+additional work I can do to get that going, or is it a matter of
+emailing the right person/list?
+
+Thanks,
+Cheers,
+Merlijn
 
 
-- Naveen
+--1h7b2dFr87mLIl72K3vSp02SDsmxUDEhG--
 
+--ss2PJczctqRhK1AxEE5q8BDZsVzTIB80u
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYIAB0WIQRM5LT7NbLF9yb6a/UGN09rynK8WgUCXkv3kwAKCRAGN09rynK8
+WmkGAQCtv8Y4royWjK/XfgIlc/0h6WlkrndRw5oZvuvkLG4AvgEAt+7wpCd0l3eu
+DyO1931vuvVNAJxk6XpDeCsINWeKSgs=
+=0JI0
+-----END PGP SIGNATURE-----
+
+--ss2PJczctqRhK1AxEE5q8BDZsVzTIB80u--
