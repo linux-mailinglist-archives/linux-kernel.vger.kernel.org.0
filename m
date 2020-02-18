@@ -2,229 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5E4116225B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 09:28:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77DA6162261
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 09:28:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727069AbgBRI1q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 03:27:46 -0500
-Received: from first.geanix.com ([116.203.34.67]:59662 "EHLO first.geanix.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726962AbgBRI1o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 03:27:44 -0500
-Received: from localhost (unknown [193.163.1.7])
-        by first.geanix.com (Postfix) with ESMTPSA id C9794C003F;
-        Tue, 18 Feb 2020 08:26:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=geanix.com; s=first;
-        t=1582014413; bh=FjjXvDzFnkljG7dLY4SaZbmbX0tHBNHM2LB3sA1jlV4=;
-        h=From:To:Cc:Subject:Date;
-        b=kX65JjUAmN4R6IuXkZUWoQi7FEjZuRS1rGNFUc3lqptn2DHfQMGY/8hotnkWwa+/E
-         5Mw0uOZOigwn9VTT94gmTos9A5q1RcV3rXneB2FIo6A9Mb60tg3Ib/G/JZ+gl33uOx
-         vWHgEcU/KTqB/QjaTQZAyTEVlEWUN6vjcAktpDdaSiuNfCcie5vhZRatb2adFKtEUU
-         XZ3VKe7QB9Q7wnPdzAjT9guayEFrxBirCO94TAYFR292uh5s5q0STcP6xyrlhsUrKA
-         zLjusdtFg3t+fN3i1mgRyTYdod2fhUz9NI1fjYPwwM0iLaOAgc5yEhCn1f3uOyEH3H
-         YaijeYKb4Yw9w==
-From:   Esben Haabendal <esben@geanix.com>
-To:     netdev@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S . Miller" <davem@davemloft.net>,
-        Michal Simek <michal.simek@xilinx.com>,
-        =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>
-Subject: [PATCH 8/8] net: ll_temac: Add ethtool support for coalesce parameters
-Date:   Tue, 18 Feb 2020 09:27:41 +0100
-Message-Id: <20200218082741.7710-1-esben@geanix.com>
-X-Mailer: git-send-email 2.25.0
+        id S1726620AbgBRI2q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 03:28:46 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:41842 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726428AbgBRI2p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 03:28:45 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01I8SW4U066945;
+        Tue, 18 Feb 2020 02:28:32 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582014512;
+        bh=KxsGlJLlQqpQOFPAW8G1D3lM/rR4M+CFCA+c33IlSfI=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=BJZU9EU2/oSzVLAqxKpS3NaSJSmxtqOGyzAn3JnmVx2F/fnRAi7lS7qygRpcyhYIy
+         I+Rdv6pSGJ+v/oqoz89l+m5n9NdQGvuTfdWboAxce9ZoSheZ12ILHmCXptQPyEOMUI
+         ANaj3/ybFaHWk/DRl9VzRv4viUXntW/wIv2IpyGQ=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01I8SWab094063
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 18 Feb 2020 02:28:32 -0600
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 18
+ Feb 2020 02:28:30 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 18 Feb 2020 02:28:30 -0600
+Received: from [192.168.2.14] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01I8SREa008811;
+        Tue, 18 Feb 2020 02:28:27 -0600
+Subject: Re: dma_mask limited to 32-bits with OF platform device
+To:     Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>
+CC:     =?UTF-8?Q?P=c3=a9ter_Ujfalusi?= <peter.ujfalusi@ti.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        "Nori, Sekhar" <nsekhar@ti.com>, "Anna, Suman" <s-anna@ti.com>,
+        <stefan.wahren@i2se.com>, <afaerber@suse.de>, <hverkuil@xs4all.nl>,
+        Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Nishanth Menon <nm@ti.com>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+References: <c1c75923-3094-d3fc-fe8e-ee44f17b1a0a@ti.com>
+ <3a91f306-f544-a63c-dfe2-7eae7b32bcca@arm.com>
+ <56314192-f3c6-70c5-6b9a-3d580311c326@ti.com>
+ <9bd83815-6f54-2efb-9398-42064f73ab1c@arm.com>
+ <20200217132133.GA27134@lst.de>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <b3c56884-128e-a7e1-2e09-0e8de3c3512d@ti.com>
+Date:   Tue, 18 Feb 2020 10:28:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.7 required=4.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=disabled
-        version=3.4.3
-X-Spam-Checker-Version: SpamAssassin 3.4.3 (2019-12-06) on eb9da72b0f73
+In-Reply-To: <20200217132133.GA27134@lst.de>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please note that the delays are calculated based on typical
-parameters.  But as TEMAC is an HDL IP, designs may vary, and future
-work might be needed to make this calculation configurable.
+Chrishtoph,
 
-Signed-off-by: Esben Haabendal <esben@geanix.com>
----
- drivers/net/ethernet/xilinx/ll_temac.h      |   5 +-
- drivers/net/ethernet/xilinx/ll_temac_main.c | 102 ++++++++++++++++----
- 2 files changed, 85 insertions(+), 22 deletions(-)
+The branch works fine for SATA on DRA7 with CONFIG_LPAE once I
+have the below DT fix.
 
-diff --git a/drivers/net/ethernet/xilinx/ll_temac.h b/drivers/net/ethernet/xilinx/ll_temac.h
-index 8777ec6e21c8..4a73127e10a6 100644
---- a/drivers/net/ethernet/xilinx/ll_temac.h
-+++ b/drivers/net/ethernet/xilinx/ll_temac.h
-@@ -379,9 +379,10 @@ struct temac_local {
- 	int rx_bd_tail;
- 
- 	/* DMA channel control setup */
--	u32 tx_chnl_ctrl;
--	u32 rx_chnl_ctrl;
-+	u8 coalesce_count_tx;
-+	u8 coalesce_delay_tx;
- 	u8 coalesce_count_rx;
-+	u8 coalesce_delay_rx;
- 
- 	struct delayed_work restart_work;
- };
-diff --git a/drivers/net/ethernet/xilinx/ll_temac_main.c b/drivers/net/ethernet/xilinx/ll_temac_main.c
-index e3d4857334f3..3168dd77ecbc 100644
---- a/drivers/net/ethernet/xilinx/ll_temac_main.c
-+++ b/drivers/net/ethernet/xilinx/ll_temac_main.c
-@@ -379,11 +379,13 @@ static int temac_dma_bd_init(struct net_device *ndev)
- 	}
- 
- 	/* Configure DMA channel (irq setup) */
--	lp->dma_out(lp, TX_CHNL_CTRL, lp->tx_chnl_ctrl |
-+	lp->dma_out(lp, TX_CHNL_CTRL,
-+		    lp->coalesce_delay_tx << 24 | lp->coalesce_count_tx << 16 |
- 		    0x00000400 | // Use 1 Bit Wide Counters. Currently Not Used!
- 		    CHNL_CTRL_IRQ_EN | CHNL_CTRL_IRQ_ERR_EN |
- 		    CHNL_CTRL_IRQ_DLY_EN | CHNL_CTRL_IRQ_COAL_EN);
--	lp->dma_out(lp, RX_CHNL_CTRL, lp->rx_chnl_ctrl |
-+	lp->dma_out(lp, RX_CHNL_CTRL,
-+		    lp->coalesce_delay_rx << 24 | lp->coalesce_count_rx << 16 |
- 		    CHNL_CTRL_IRQ_IOE |
- 		    CHNL_CTRL_IRQ_EN | CHNL_CTRL_IRQ_ERR_EN |
- 		    CHNL_CTRL_IRQ_DLY_EN | CHNL_CTRL_IRQ_COAL_EN);
-@@ -1284,6 +1286,69 @@ static int ll_temac_ethtools_set_ringparam(struct net_device *ndev,
- 	return 0;
- }
- 
-+static int ll_temac_ethtools_get_coalesce(struct net_device *ndev,
-+					  struct ethtool_coalesce *ec)
-+{
-+	struct temac_local *lp = netdev_priv(ndev);
-+
-+	ec->rx_max_coalesced_frames = lp->coalesce_count_rx;
-+	ec->tx_max_coalesced_frames = lp->coalesce_count_tx;
-+	ec->rx_coalesce_usecs = (lp->coalesce_delay_rx * 512) / 100;
-+	ec->tx_coalesce_usecs = (lp->coalesce_delay_tx * 512) / 100;
-+	return 0;
-+}
-+
-+static int ll_temac_ethtools_set_coalesce(struct net_device *ndev,
-+					  struct ethtool_coalesce *ec)
-+{
-+	struct temac_local *lp = netdev_priv(ndev);
-+
-+	if (netif_running(ndev)) {
-+		netdev_err(ndev,
-+			   "Please stop netif before applying configuration\n");
-+		return -EFAULT;
-+	}
-+
-+	if (ec->rx_coalesce_usecs_irq ||
-+	    ec->rx_max_coalesced_frames_irq ||
-+	    ec->tx_coalesce_usecs_irq ||
-+	    ec->tx_max_coalesced_frames_irq ||
-+	    ec->stats_block_coalesce_usecs ||
-+	    ec->use_adaptive_rx_coalesce ||
-+	    ec->use_adaptive_tx_coalesce ||
-+	    ec->pkt_rate_low ||
-+	    ec->rx_coalesce_usecs_low ||
-+	    ec->rx_max_coalesced_frames_low ||
-+	    ec->tx_coalesce_usecs_low ||
-+	    ec->tx_max_coalesced_frames_low ||
-+	    ec->pkt_rate_high ||
-+	    ec->rx_coalesce_usecs_high ||
-+	    ec->rx_max_coalesced_frames_high ||
-+	    ec->tx_coalesce_usecs_high ||
-+	    ec->tx_max_coalesced_frames_high ||
-+	    ec->rate_sample_interval)
-+		return -EOPNOTSUPP;
-+	if (ec->rx_max_coalesced_frames)
-+		lp->coalesce_count_rx = ec->rx_max_coalesced_frames;
-+	if (ec->tx_max_coalesced_frames)
-+		lp->coalesce_count_tx = ec->tx_max_coalesced_frames;
-+	/* With typical LocalLink clock speed of 200 MHz and
-+	 * C_PRESCALAR=1023, each delay count corresponds to 5.12 us.
-+	 */
-+	if (ec->rx_coalesce_usecs)
-+		lp->coalesce_delay_rx =
-+			min(255U, (ec->rx_coalesce_usecs * 100) / 512);
-+	if (ec->tx_coalesce_usecs)
-+		lp->coalesce_delay_tx =
-+			min(255U, (ec->tx_coalesce_usecs * 100) / 512);
-+
-+	pr_info("%d -> %d  %d -> %d\n",
-+		ec->rx_coalesce_usecs, lp->coalesce_delay_rx,
-+		ec->tx_coalesce_usecs, lp->coalesce_delay_tx);
-+
-+	return 0;
-+}
-+
- static const struct ethtool_ops temac_ethtool_ops = {
- 	.nway_reset = phy_ethtool_nway_reset,
- 	.get_link = ethtool_op_get_link,
-@@ -1292,6 +1357,8 @@ static const struct ethtool_ops temac_ethtool_ops = {
- 	.set_link_ksettings = phy_ethtool_set_link_ksettings,
- 	.get_ringparam	= ll_temac_ethtools_get_ringparam,
- 	.set_ringparam	= ll_temac_ethtools_set_ringparam,
-+	.get_coalesce	= ll_temac_ethtools_get_coalesce,
-+	.set_coalesce	= ll_temac_ethtools_set_coalesce,
- };
- 
- static int temac_probe(struct platform_device *pdev)
-@@ -1401,6 +1468,14 @@ static int temac_probe(struct platform_device *pdev)
- 		/* Can checksum TCP/UDP over IPv4. */
- 		ndev->features |= NETIF_F_IP_CSUM;
- 
-+	/* Defaults for IRQ delay/coalescing setup.  These are
-+	 * configuration values, so does not belong in device-tree.
-+	 */
-+	lp->coalesce_delay_tx = 0x10;
-+	lp->coalesce_count_tx = 0x22;
-+	lp->coalesce_delay_rx = 0xff;
-+	lp->coalesce_count_rx = 0x07;
-+
- 	/* Setup LocalLink DMA */
- 	if (temac_np) {
- 		/* Find the DMA node, map the DMA registers, and
-@@ -1439,14 +1514,6 @@ static int temac_probe(struct platform_device *pdev)
- 		lp->rx_irq = irq_of_parse_and_map(dma_np, 0);
- 		lp->tx_irq = irq_of_parse_and_map(dma_np, 1);
- 
--		/* Use defaults for IRQ delay/coalescing setup.  These
--		 * are configuration values, so does not belong in
--		 * device-tree.
--		 */
--		lp->tx_chnl_ctrl = 0x10220000;
--		lp->rx_chnl_ctrl = 0xff070000;
--		lp->coalesce_count_rx = 0x07;
--
- 		/* Finished with the DMA node; drop the reference */
- 		of_node_put(dma_np);
- 	} else if (pdata) {
-@@ -1472,18 +1539,13 @@ static int temac_probe(struct platform_device *pdev)
- 		lp->tx_irq = platform_get_irq(pdev, 1);
- 
- 		/* IRQ delay/coalescing setup */
--		if (pdata->tx_irq_timeout || pdata->tx_irq_count)
--			lp->tx_chnl_ctrl = (pdata->tx_irq_timeout << 24) |
--				(pdata->tx_irq_count << 16);
--		else
--			lp->tx_chnl_ctrl = 0x10220000;
-+		if (pdata->tx_irq_timeout || pdata->tx_irq_count) {
-+			lp->coalesce_delay_tx = pdata->tx_irq_timeout;
-+			lp->coalesce_count_tx = pdata->tx_irq_count;
-+		}
- 		if (pdata->rx_irq_timeout || pdata->rx_irq_count) {
--			lp->rx_chnl_ctrl = (pdata->rx_irq_timeout << 24) |
--				(pdata->rx_irq_count << 16);
-+			lp->coalesce_delay_rx = pdata->rx_irq_timeout;
- 			lp->coalesce_count_rx = pdata->rx_irq_count;
--		} else {
--			lp->rx_chnl_ctrl = 0xff070000;
--			lp->coalesce_count_rx = 0x07;
- 		}
- 	}
- 
+Do you intend to send these fixes to -stable?
+
+------------------------- arch/arm/boot/dts/dra7.dtsi -------------------------
+index d78b684e7fca..853ecf3cfb37 100644
+@@ -645,6 +645,8 @@
+  		sata: sata@4a141100 {
+  			compatible = "snps,dwc-ahci";
+  			reg = <0x4a140000 0x1100>, <0x4a141100 0x7>;
++			#size-cells = <2>;
++			dma-ranges = <0x00000000 0x00000000 0x1 0x00000000>;
+  			interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
+  			phys = <&sata_phy>;
+  			phy-names = "sata-phy";
+
+
+cheers,
+-roger
+
+On 17/02/2020 15:21, Christoph Hellwig wrote:
+> Roger,
+> 
+> can you try the branch below and check if that helps?
+> 
+>      git://git.infradead.org/users/hch/misc.git arm-dma-bus-limit
+> 
+> Gitweb:
+> 
+>      http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/arm-dma-bus-limit
+> 
+
 -- 
-2.25.0
-
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
