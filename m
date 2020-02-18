@@ -2,87 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B64E162A77
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 17:28:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 091D2162A7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 17:30:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726610AbgBRQ2r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 11:28:47 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:52240 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726463AbgBRQ2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 11:28:46 -0500
-Received: from zn.tnic (p200300EC2F0C1F0014C3F76BBACA8B76.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:1f00:14c3:f76b:baca:8b76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0AFD71EC02D2;
-        Tue, 18 Feb 2020 17:28:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1582043325;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=XHwbSZ3DAFOYktOHxFjUverHeEraGIR2KVPHXRaJz+Y=;
-        b=UtUufhEBu3BrIHzXmXf230+fla0+swQ9btDJ4GIKrjr+4sgkrs4I941/iN8OeQFVKhUQDY
-        GeDfrvmaGYBWD61MhTS9AoVZq0nhwLQq3kRIitxV+pNPJgTkoICcBdmDI/JdKSZudQT3cM
-        R+MXH5ouVjvadBtw91RfZOZChbRmoe8=
-Date:   Tue, 18 Feb 2020 17:28:45 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Prarit Bhargava <prarit@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Robert Richter <rrichter@marvell.com>,
-        linux-edac@vger.kernel.org
-Subject: Re: [PATCH] EDAC/mce_amd: Output Scalable MCA processor warning once
-Message-ID: <20200218162845.GI14449@zn.tnic>
-References: <20200217134627.19765-1-prarit@redhat.com>
+        id S1726767AbgBRQaI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 11:30:08 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:57195 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726463AbgBRQaI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 11:30:08 -0500
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1j45l7-0003h0-5w; Tue, 18 Feb 2020 16:30:05 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, Jakub Kicinski <kuba@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        linux-pm@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH net-next v3 1/9] sysfs: add sysfs_file_change_owner{_by_name}()
+Date:   Tue, 18 Feb 2020 17:29:35 +0100
+Message-Id: <20200218162943.2488012-2-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200218162943.2488012-1-christian.brauner@ubuntu.com>
+References: <20200218162943.2488012-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200217134627.19765-1-prarit@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 17, 2020 at 08:46:27AM -0500, Prarit Bhargava wrote:
-> This warning is output for every virtual cpu in a guest on an EPYC 2
-> system.  The warning only needs to be logged one time.
-> 
-> Output the warning only once.
-> 
-> Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: Tony Luck <tony.luck@intel.com>
-> Cc: James Morse <james.morse@arm.com>
-> Cc: Robert Richter <rrichter@marvell.com>
-> Cc: linux-edac@vger.kernel.org
-> ---
->  drivers/edac/mce_amd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/edac/mce_amd.c b/drivers/edac/mce_amd.c
-> index ea980c556f2e..8874b7722b2f 100644
-> --- a/drivers/edac/mce_amd.c
-> +++ b/drivers/edac/mce_amd.c
-> @@ -1239,7 +1239,7 @@ static int __init mce_amd_init(void)
->  
->  	case 0x17:
->  	case 0x18:
-> -		pr_warn("Decoding supported only on Scalable MCA processors.\n");
-> +		pr_warn_once("Decoding supported only on Scalable MCA processors.\n");
->  		return -EINVAL;
->  
->  	default:
-> -- 
+Add helpers to change the owner of a sysfs files.
+This function will be used to correctly account for kobject ownership
+changes, e.g. when moving network devices between network namespaces.
 
-Applied, thanks.
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+/* v2 */
+-  Greg Kroah-Hartman <gregkh@linuxfoundation.org>:
+   - Better naming for sysfs_file_change_owner() to reflect the fact that it
+     can be used to change the owner of the kobject itself by passing NULL as
+     argument.
+- Christian Brauner <christian.brauner@ubuntu.com>:
+  - Split sysfs_file_change_owner() into two helpers sysfs_change_owner() and
+    sysfs_change_owner_by_name(). The former changes the owner of the kobject
+    itself, the latter the owner of the kobject looked up via the name
+    argument.
 
+/* v3 */
+-  Greg Kroah-Hartman <gregkh@linuxfoundation.org>:
+   - Add explicit uid/gid parameters.
+---
+ fs/sysfs/file.c       | 67 +++++++++++++++++++++++++++++++++++++++++++
+ include/linux/sysfs.h | 17 +++++++++++
+ 2 files changed, 84 insertions(+)
+
+diff --git a/fs/sysfs/file.c b/fs/sysfs/file.c
+index 130fc6fbcc03..32bb04b4d9d9 100644
+--- a/fs/sysfs/file.c
++++ b/fs/sysfs/file.c
+@@ -558,3 +558,70 @@ void sysfs_remove_bin_file(struct kobject *kobj,
+ 	kernfs_remove_by_name(kobj->sd, attr->attr.name);
+ }
+ EXPORT_SYMBOL_GPL(sysfs_remove_bin_file);
++
++static int internal_change_owner(struct kernfs_node *kn, struct kobject *kobj,
++				 kuid_t kuid, kgid_t kgid)
++{
++	struct iattr newattrs = {
++		.ia_valid = ATTR_UID | ATTR_GID,
++		.ia_uid = kuid,
++		.ia_gid = kgid,
++	};
++	return kernfs_setattr(kn, &newattrs);
++}
++
++/**
++ *	sysfs_file_change_owner_by_name - change owner of a file.
++ *	@kobj:	object.
++ *	@name:	name of the file to change.
++ *	@kuid:	new owner's kuid
++ *	@kgid:	new owner's kgid
++ */
++int sysfs_file_change_owner_by_name(struct kobject *kobj, const char *name,
++				    kuid_t kuid, kgid_t kgid)
++{
++	struct kernfs_node *kn;
++	int error;
++
++	if (!name)
++		return -EINVAL;
++
++	if (!kobj->state_in_sysfs)
++		return -EINVAL;
++
++	kn = kernfs_find_and_get(kobj->sd, name);
++	if (!kn)
++		return -ENOENT;
++
++	error = internal_change_owner(kn, kobj, kuid, kgid);
++
++	kernfs_put(kn);
++
++	return error;
++}
++EXPORT_SYMBOL_GPL(sysfs_file_change_owner_by_name);
++
++/**
++ *	sysfs_file_change_owner - change owner of a file.
++ *	@kobj:	object.
++ *	@kuid: new owner's kuid
++ *	@kgid: new owner's kgid
++ */
++int sysfs_file_change_owner(struct kobject *kobj, kuid_t kuid, kgid_t kgid)
++{
++	struct kernfs_node *kn;
++	int error;
++
++	if (!kobj->state_in_sysfs)
++		return -EINVAL;
++
++	kernfs_get(kobj->sd);
++
++	kn = kobj->sd;
++	error = internal_change_owner(kn, kobj, kuid, kgid);
++
++	kernfs_put(kn);
++
++	return error;
++}
++EXPORT_SYMBOL_GPL(sysfs_file_change_owner);
+diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
+index fa7ee503fb76..c11d11c78713 100644
+--- a/include/linux/sysfs.h
++++ b/include/linux/sysfs.h
+@@ -310,6 +310,10 @@ static inline void sysfs_enable_ns(struct kernfs_node *kn)
+ 	return kernfs_enable_ns(kn);
+ }
+ 
++int sysfs_file_change_owner(struct kobject *kobj, kuid_t kuid, kgid_t kgid);
++int sysfs_file_change_owner_by_name(struct kobject *kobj, const char *name,
++				    kuid_t kuid, kgid_t kgid);
++
+ #else /* CONFIG_SYSFS */
+ 
+ static inline int sysfs_create_dir_ns(struct kobject *kobj, const void *ns)
+@@ -522,6 +526,19 @@ static inline void sysfs_enable_ns(struct kernfs_node *kn)
+ {
+ }
+ 
++static inline int int sysfs_file_change_owner(struct kobject *kobj, kuid_t kuid,
++					      kgid_t kgid)
++{
++	return 0;
++}
++
++static inline int sysfs_file_change_owner_by_name(struct kobject *kobj,
++						  const char *name, kuid_t kuid,
++						  kgid_t kgid)
++{
++	return 0;
++}
++
+ #endif /* CONFIG_SYSFS */
+ 
+ static inline int __must_check sysfs_create_file(struct kobject *kobj,
 -- 
-Regards/Gruss,
-    Boris.
+2.25.0
 
-https://people.kernel.org/tglx/notes-about-netiquette
