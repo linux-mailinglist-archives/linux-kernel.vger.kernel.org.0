@@ -2,277 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FED2162BBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 18:11:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93BA5162C8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 18:20:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbgBRRK2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 12:10:28 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:47103 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726549AbgBRRK2 (ORCPT
+        id S1726754AbgBRRUZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 12:20:25 -0500
+Received: from rhlx01.hs-esslingen.de ([129.143.116.10]:44156 "EHLO
+        rhlx01.hs-esslingen.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726415AbgBRRUY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 12:10:28 -0500
-Received: by mail-lj1-f193.google.com with SMTP id x14so23820946ljd.13
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 09:10:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=eT/SN5oR8qHPpwEwvT6iuViW5jmEYiDg693/zU5SNAg=;
-        b=DPideaKc6XhYHrfdqmi4V+8rc64F/Un2cc960MB+K0JNtI8pF0+oVuz3jr6UBwPjSj
-         EMLUuSTbV0urSh1AhsihcUH584B2F+YpDP89CzrcJOEY0Kw/EXsn9BT7sNrLqPGH/Xnp
-         0AGQU/SbZx74+VvU1j+uQlXwQmkU/vshFLYhLWGL4VJJ120OmmskJaWIQ9C+owkKUL5P
-         0ygdF66U2NQDTToh2eir3vBGTsLY3j7BDiSBqFnerxBcQAd+Uthsld4ugZ3SpKwud/8g
-         EQaZ723iAPF+HYUoZlTFweS1Vhhv+K0PYkPCQAnr8SAZKDs2olZvnX9aSUcgaOiaq0Wl
-         7kpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=eT/SN5oR8qHPpwEwvT6iuViW5jmEYiDg693/zU5SNAg=;
-        b=pMw1lA+NSGodd2LG4eur4oeavAmPMms0dc3/V107COYAxBsgL2MPTH2/sixdGTpjUO
-         dxDgXFL0TA5dxVJ7qE3hWBzj9+GJrQr3n0385QMZhJu7efuAi6cQn8nbQfxXqHBE8Qgr
-         Xr0/+BUCY3ghMb53GInSCWf1/uj/A34qMxlev7uJ11VCNQz1whkieKlbxTaOV9w0GwF3
-         yTqsCDKY4DRYtSCdBAveVQxE265N4tzR6E52rOl9XtmxJf5a9CTStKeUGOFeK8OThKB5
-         MBgJmuqqHDHFGGPE9eUHQttBHqvPrbMYhF1Kun+L5ujrt1R6Hl20Q5peoncD3xlQ4BN2
-         Luiw==
-X-Gm-Message-State: APjAAAVTGJu8r1kQX2JWMRYGy00pkQ7/cEAlRwbN2Jrs5kjl0g4K9CWe
-        Ybs4rxrLMIeki5/w3kS+UrDv9d/8blw=
-X-Google-Smtp-Source: APXvYqyTpRJaS4fne7NiUOz22DmT8TIqeKU8alDA7ovxWpU8wfrX3NeC0ZOYQP/eplYqZsXOocoRZw==
-X-Received: by 2002:a2e:9842:: with SMTP id e2mr13545781ljj.293.1582045825346;
-        Tue, 18 Feb 2020 09:10:25 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id p26sm2619929lfh.64.2020.02.18.09.10.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2020 09:10:24 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 1BF1D100FA6; Tue, 18 Feb 2020 20:10:52 +0300 (+03)
-Date:   Tue, 18 Feb 2020 20:10:52 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 13/25] fs: Add zero_user_large
-Message-ID: <20200218171052.lwd56nr332qjgs5j@box>
-References: <20200212041845.25879-1-willy@infradead.org>
- <20200212041845.25879-14-willy@infradead.org>
- <20200214135248.zqcqx3erb4pnlvmu@box>
- <20200214160342.GA7778@bombadil.infradead.org>
- <20200218141634.zhhjgtv44ux23l3l@box>
- <20200218161349.GS7778@bombadil.infradead.org>
+        Tue, 18 Feb 2020 12:20:24 -0500
+X-Greylist: delayed 535 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Feb 2020 12:20:23 EST
+Received: by rhlx01.hs-esslingen.de (Postfix, from userid 1203)
+        id F2D7B29C4924; Tue, 18 Feb 2020 18:11:26 +0100 (CET)
+Date:   Tue, 18 Feb 2020 18:11:26 +0100
+From:   Adrian Reber <adrian@lisas.de>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+        Dmitry Safonov <dima@arista.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        containers <containers@lists.linux-foundation.org>,
+        criu@openvz.org, Linux API <linux-api@vger.kernel.org>,
+        x86@kernel.org, Andrei Vagin <avagin@gmail.com>
+Subject: Re: Time Namespaces: CLONE_NEWTIME and clone3()?
+Message-ID: <20200218171126.GF2322403@lisas.de>
+References: <20191112012724.250792-1-dima@arista.com>
+ <20191112012724.250792-4-dima@arista.com>
+ <CAHO5Pa2_7BzZPCXjFj4f=YoX28M4q2Au=h6GrzN-EjRffMo1iw@mail.gmail.com>
+ <20200217145908.7epzz5nescccwvzv@wittgenstein>
+ <CAKgNAkjfdWFwNdFzdBY81_8WZJNtbtztfjO9T2YNQDV4ThNiNw@mail.gmail.com>
+ <20200217230331.he6p5bs766zp6smx@wittgenstein>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200218161349.GS7778@bombadil.infradead.org>
+In-Reply-To: <20200217230331.he6p5bs766zp6smx@wittgenstein>
+X-Url:  <http://lisas.de/~adrian/>
+X-Operating-System: Linux (5.4.8-200.fc31.x86_64)
+X-Load-Average: 7.47 8.46 9.12
+X-Unexpected: The Spanish Inquisition
+X-GnuPG-Key: gpg --recv-keys D3C4906A
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 08:13:49AM -0800, Matthew Wilcox wrote:
-> On Tue, Feb 18, 2020 at 05:16:34PM +0300, Kirill A. Shutemov wrote:
-> > > +               if (start1 >= PAGE_SIZE) {
-> > > +                       start1 -= PAGE_SIZE;
-> > > +                       end1 -= PAGE_SIZE;
-> > > +                       if (start2) {
-> > > +                               start2 -= PAGE_SIZE;
-> > > +                               end2 -= PAGE_SIZE;
-> > > +                       }
+On Tue, Feb 18, 2020 at 12:03:31AM +0100, Christian Brauner wrote:
+> On Mon, Feb 17, 2020 at 10:47:53PM +0100, Michael Kerrisk (man-pages) wrote:
+> > Hello Christian,
 > > 
-> > You assume start2/end2 is always after start1/end1 in the page.
-> > Is it always true? If so, I would add BUG_ON() for it.
-> 
-> after or zero.  Yes, I should add a BUG_ON to check for that.
-> 
-> > Otherwise, looks good.
-> 
-> Here's what I currently have (I'll add the BUG_ON later):
-> 
-> commit 7fabe16755365cdc6e80343ef994843ecebde60a
-> Author: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Date:   Sat Feb 1 03:38:49 2020 -0500
-> 
->     fs: Support THPs in zero_user_segments
->     
->     We can only kmap() one subpage of a THP at a time, so loop over all
->     relevant subpages, skipping ones which don't need to be zeroed.  This is
->     too large to inline when THPs are enabled and we actually need highmem,
->     so put it in highmem.c.
->     
->     Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-
-> 
-> diff --git a/include/linux/highmem.h b/include/linux/highmem.h
-> index ea5cdbd8c2c3..74614903619d 100644
-> --- a/include/linux/highmem.h
-> +++ b/include/linux/highmem.h
-> @@ -215,13 +215,18 @@ static inline void clear_highpage(struct page *page)
->         kunmap_atomic(kaddr);
->  }
->  
-> +#if defined(CONFIG_HIGHMEM) && defined(CONFIG_TRANSPARENT_HUGEPAGE)
-> +void zero_user_segments(struct page *page, unsigned start1, unsigned end1,
-> +               unsigned start2, unsigned end2);
-> +#else /* !HIGHMEM || !TRANSPARENT_HUGEPAGE */
-
-This is a neat trick. I like it.
-
-Although, it means non-inlined version will never get tested :/
-
->  static inline void zero_user_segments(struct page *page,
-> -       unsigned start1, unsigned end1,
-> -       unsigned start2, unsigned end2)
-> +               unsigned start1, unsigned end1,
-> +               unsigned start2, unsigned end2)
->  {
-> +       unsigned long i;
->         void *kaddr = kmap_atomic(page);
->  
-> -       BUG_ON(end1 > PAGE_SIZE || end2 > PAGE_SIZE);
-> +       BUG_ON(end1 > thp_size(page) || end2 > thp_size(page));
->  
->         if (end1 > start1)
->                 memset(kaddr + start1, 0, end1 - start1);
-> @@ -230,8 +235,10 @@ static inline void zero_user_segments(struct page *page,
->                 memset(kaddr + start2, 0, end2 - start2);
->  
->         kunmap_atomic(kaddr);
-> -       flush_dcache_page(page);
-> +       for (i = 0; i < hpage_nr_pages(page); i++)
-> +               flush_dcache_page(page + i);
->  }
-> +#endif /* !HIGHMEM || !TRANSPARENT_HUGEPAGE */
->  
->  static inline void zero_user_segment(struct page *page,
->         unsigned start, unsigned end)
-> diff --git a/mm/highmem.c b/mm/highmem.c
-> index 64d8dea47dd1..3a85c66ef532 100644
-> --- a/mm/highmem.c
-> +++ b/mm/highmem.c
-> @@ -367,9 +367,67 @@ void kunmap_high(struct page *page)
->         if (need_wakeup)
->                 wake_up(pkmap_map_wait);
->  }
-> -
->  EXPORT_SYMBOL(kunmap_high);
-> -#endif
-> +
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +void zero_user_segments(struct page *page, unsigned start1, unsigned end1,
-> +               unsigned start2, unsigned end2)
-> +{
-> +       unsigned int i;
-> +
-> +       BUG_ON(end1 > thp_size(page) || end2 > thp_size(page));
-> +
-> +       for (i = 0; i < hpage_nr_pages(page); i++) {
-> +               void *kaddr;
-> +               unsigned this_end;
-> +
-> +               if (end1 == 0 && start2 >= PAGE_SIZE) {
-> +                       start2 -= PAGE_SIZE;
-> +                       end2 -= PAGE_SIZE;
-> +                       continue;
-> +               }
-> +
-> +               if (start1 >= PAGE_SIZE) {
-> +                       start1 -= PAGE_SIZE;
-> +                       end1 -= PAGE_SIZE;
-> +                       if (start2) {
-> +                               start2 -= PAGE_SIZE;
-> +                               end2 -= PAGE_SIZE;
-> +                       }
-> +                       continue;
-> +               }
-> +
-> +               kaddr = kmap_atomic(page + i);
-> +
-> +               this_end = min_t(unsigned, end1, PAGE_SIZE);
-> +               if (end1 > start1)
-> +                       memset(kaddr + start1, 0, this_end - start1);
-> +               end1 -= this_end;
-> +               start1 = 0;
-> +
-> +               if (start2 >= PAGE_SIZE) {
-> +                       start2 -= PAGE_SIZE;
-> +                       end2 -= PAGE_SIZE;
-> +               } else {
-> +                       this_end = min_t(unsigned, end2, PAGE_SIZE);
-> +                       if (end2 > start2)
-> +                               memset(kaddr + start2, 0, this_end - start2);
-> +                       end2 -= this_end;
-> +                       start2 = 0;
-> +               }
-> +
-> +               kunmap_atomic(kaddr);
-> +               flush_dcache_page(page + i);
-> +
-> +               if (!end1 && !end2)
-> +                       break;
-> +       }
-> +
-> +       BUG_ON((start1 | start2 | end1 | end2) != 0);
-> +}
-> +EXPORT_SYMBOL(zero_user_segments);
-> +#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
-> +#endif /* CONFIG_HIGHMEM */
->  
->  #if defined(HASHED_PAGE_VIRTUAL)
->  
-> 
-> 
-> 
-> > > +                       continue;
-> > > +               }
-> > > +
-> > > +               kaddr = kmap_atomic(page + i);
-> > > +
-> > > +               this_end = min_t(unsigned, end1, PAGE_SIZE);
-> > > +               if (end1 > start1)
-> > > +                       memset(kaddr + start1, 0, this_end - start1);
-> > > +               end1 -= this_end;
-> > > +               start1 = 0;
-> > > +
-> > > +               if (start2 >= PAGE_SIZE) {
-> > > +                       start2 -= PAGE_SIZE;
-> > > +                       end2 -= PAGE_SIZE;
-> > > +               } else {
-> > > +                       this_end = min_t(unsigned, end2, PAGE_SIZE);
-> > > +                       if (end2 > start2)
-> > > +                               memset(kaddr + start2, 0, this_end - start2);
-> > > +                       end2 -= this_end;
-> > > +                       start2 = 0;
-> > > +               }
-> > > +
-> > > +               kunmap_atomic(kaddr);
-> > > +               flush_dcache_page(page + i);
-> > > +
-> > > +               if (!end1 && !end2)
-> > > +                       break;
-> > > +       }
-> > > +
-> > > +       BUG_ON((start1 | start2 | end1 | end2) != 0);
-> > >  }
-> > > 
-> > > I think at this point it has to move out-of-line too.
-> > > 
-> > > > > +static inline void zero_user_large(struct page *page,
-> > > > > +		unsigned start, unsigned size)
-> > > > > +{
-> > > > > +	unsigned int i;
-> > > > > +
-> > > > > +	for (i = 0; i < thp_order(page); i++) {
-> > > > > +		if (start > PAGE_SIZE) {
-> > > > 
-> > > > Off-by-one? >= ?
-> > > 
-> > > Good catch; I'd also noticed that when I came to redo the zero_user_segments().
-> > > 
+> > On Mon, 17 Feb 2020 at 16:15, Christian Brauner
+> > <christian.brauner@ubuntu.com> wrote:
+> > >
+> > > On Mon, Feb 17, 2020 at 03:20:55PM +0100, Michael Kerrisk wrote:
+> > > > Hello Dmitry, Andrei,
+> > > >
+> > > > Is the CLONE_NEWTIME flag intended to be usable with clone3()? The
+> > > > mail quoted below implies (in my reading) that this should be possible
+> > > > once clone3() is available, which it is by now. (See also [1].)
+> > > >
+> > > > If the answer is yes, CLONE_NEWTIME  should be usable with clone3(),
+> > > > then I have a bug report and a question.
+> > > >
+> > > > I successfully used CLONE_NEWTIME with unshare(). But if I try to use
+> > > > CLONE_NEWSIGNAL with clone3(), it errors out with EINVAL, because of
+> > >
+> > > s/CLONE_NEWSIGNAL/CLONE_NEWTIME/
+> > >
+> > > > the following check in clone3_args_valid():
+> > > >
+> > > >         /*
+> > > >          * - make the CLONE_DETACHED bit reuseable for clone3
+> > > >          * - make the CSIGNAL bits reuseable for clone3
+> > > >          */
+> > > >         if (kargs->flags & (CLONE_DETACHED | CSIGNAL))
+> > > >                 return false;
+> > > >
+> > > > The problem is that CLONE_NEWTIME matches one of the bits in the
+> > > > CSIGNAL mask. If the intention is to allow CLONE_NEWTIME with
+> > > > clone3(), then either the bit needs to be redefined, or the error
+> > > > checking in clone3_args_valid() needs to be reworked.
+> > >
+> > > If this is intended to be useable with clone3() the check should be
+> > > adapted to allow for CLONE_NEWTIME. (I asked about this a while ago I
+> > > think.)
+> > > But below rather sounds like it should simply be an unshare() flag. The
+> > > code seems to set frozen_offsets to true right after copy_namespaces()
+> > > in timens_on_fork(new_ns, tsk) and so the offsets can't be changed
+> > > anymore unless I'm reading this wrong.
+> > > Alternatives seem to either make timens_offsets writable once after fork
+> > > and before exec, I guess - though that's probably not going to work
+> > > with the vdso judging from timens_on_fork().
+> > >
+> > > The other alternative is that Andrei and Dmitry send me a patch to
+> > > enable CLONE_NEWTIME with clone3() by exposing struct timens_offsets (or
+> > > a version of it) in the uapi and extend struct clone_args to include a
+> > > pointer to a struct timens_offset that is _only_ set when CLONE_NEWTIME
+> > > is set.
+> > > Though the unshare() way sounds way less invasive simpler.
 > > 
-> > -- 
-> >  Kirill A. Shutemov
+> > Actually, I think the alternative you propose just here is better. I
+> > imagine there are times when one will want to create multiple
+> > namespaces with a single call to clone3(), including a time namespace.
+> > I think this should be allowed by the API. And, otherwise, clone3()
+> > becomes something of a second-class citizen for creating namespaces.
+> > (I don't really get the "less invasive" argument. Implementing this is
+> > just a piece of kernel to code to make user-space's life a bit simpler
+> > and more consistent.)
+> 
+> I don't particularly mind either way. If there's actual users that need
+> to set it at clone3() time then we can extend it. So I'd like to hear
+> what Adrian, Dmitry, and Thomas think since they are well-versed how
+> this will be used in the wild. I'm weary of exposing a whole new uapi
+> struct and extending clone3() without any real use-case but I'm happy to
+> if there is!
 
--- 
- Kirill A. Shutemov
+Re-creating a time namespace during restore via clone3() would be CRIU's
+preferred way of doing this. If available CRIU is already using
+clone3(), especially because of set_tid, and for the time namespace we
+would also rely on clone3() to re-create it.
+
+I will provide a patch to extend clone3() to handle the creation of a
+new time namespace.
+
+		Adrian
