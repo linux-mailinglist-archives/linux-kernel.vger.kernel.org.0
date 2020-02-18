@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6C04163299
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:10:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46853163211
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:06:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727916AbgBRUIn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 15:08:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35044 "EHLO mail.kernel.org"
+        id S1728536AbgBRUF2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 15:05:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41582 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727987AbgBRT5j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:57:39 -0500
+        id S1728610AbgBRUBu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 15:01:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 726EA24670;
-        Tue, 18 Feb 2020 19:57:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A10F82465D;
+        Tue, 18 Feb 2020 20:01:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582055858;
-        bh=5BanddPanjla8ZTGWbfTE9JVb11UW/XRK0aZm0tPR+A=;
+        s=default; t=1582056110;
+        bh=UaHQsd0lbeb/d/qEnZXRs/3aNWzkj9aSTZcTiZmiilg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0joDewAIV3Qy/VVyN1o3iAKPjNjt3XXr/YGXcPkx5Q7CpkA3OIfSdXAkQgu+M5tcy
-         MIiwMO7DLy1G8/Firtf9wYE7Qv/ovTaQCab92jZAHfZoAfa1eK7f9+ebEYM8CqTt3W
-         7km0dsRL45tuvuZ0tg+qAmUxpwH6rMNWNneJolGc=
+        b=prHR9dPiEjEhX4J++VQSa3515/zxWCVAb3mv7Ax/LiOpUwtj/g4Ttrdr1yvtr1ruQ
+         JV+jLZExQoSWaZecl/E/aXjQIGwQFCDqk54ffHwFFBEcIDWkOX0xv1tGRaUENM4qLy
+         yG4/QfMW2zuA6VM1orkAVW5FGauvytV8rweIxtaE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gaurav Agrawal <agrawalgaurav@gnome.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 5.4 02/66] Input: synaptics - enable SMBus on ThinkPad L470
-Date:   Tue, 18 Feb 2020 20:54:29 +0100
-Message-Id: <20200218190428.289430191@linuxfoundation.org>
+        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.5 09/80] ALSA: hda/realtek - Add more codec supported Headset Button
+Date:   Tue, 18 Feb 2020 20:54:30 +0100
+Message-Id: <20200218190432.972127246@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200218190428.035153861@linuxfoundation.org>
-References: <20200218190428.035153861@linuxfoundation.org>
+In-Reply-To: <20200218190432.043414522@linuxfoundation.org>
+References: <20200218190432.043414522@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,32 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gaurav Agrawal <agrawalgaurav@gnome.org>
+From: Kailang Yang <kailang@realtek.com>
 
-commit b8a3d819f872e0a3a0a6db0dbbcd48071042fb98 upstream.
+commit 2b3b6497c38d123934de68ea82a247b557d95290 upstream.
 
-Add touchpad LEN2044 to the list, as it is capable of working with
-psmouse.synaptics_intertouch=1
+Add supported Headset Button for ALC215/ALC285/ALC289.
 
-Signed-off-by: Gaurav Agrawal <agrawalgaurav@gnome.org>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/CADdtggVzVJq5gGNmFhKSz2MBwjTpdN5YVOdr4D3Hkkv=KZRc9g@mail.gmail.com
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Kailang Yang <kailang@realtek.com>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/948f70b4488f4cc2b629a39ce4e4be33@realtek.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/mouse/synaptics.c |    1 +
- 1 file changed, 1 insertion(+)
+ sound/pci/hda/patch_realtek.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/input/mouse/synaptics.c
-+++ b/drivers/input/mouse/synaptics.c
-@@ -180,6 +180,7 @@ static const char * const smbus_pnp_ids[
- 	"LEN0097", /* X280 -> ALPS trackpoint */
- 	"LEN009b", /* T580 */
- 	"LEN200f", /* T450s */
-+	"LEN2044", /* L470  */
- 	"LEN2054", /* E480 */
- 	"LEN2055", /* E580 */
- 	"SYN3052", /* HP EliteBook 840 G4 */
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -5701,8 +5701,11 @@ static void alc_fixup_headset_jack(struc
+ 		break;
+ 	case HDA_FIXUP_ACT_INIT:
+ 		switch (codec->core.vendor_id) {
++		case 0x10ec0215:
+ 		case 0x10ec0225:
++		case 0x10ec0285:
+ 		case 0x10ec0295:
++		case 0x10ec0289:
+ 		case 0x10ec0299:
+ 			alc_write_coef_idx(codec, 0x48, 0xd011);
+ 			alc_update_coef_idx(codec, 0x49, 0x007f, 0x0045);
 
 
