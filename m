@@ -2,75 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6EAF1636B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 00:02:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91CB61636B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 00:03:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727584AbgBRXCp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 18:02:45 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:39378 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727298AbgBRXCo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 18:02:44 -0500
-Received: by mail-oi1-f193.google.com with SMTP id z2so21895491oih.6;
-        Tue, 18 Feb 2020 15:02:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8Qdurl6q3a3eB4GyIQmTlaPHPli9FvMDsggjNiK6b9o=;
-        b=OxFicn/Y3pMVTnHB/boxzIuUtNlLM9Oj+ACMOYFv/cbm7LtHIKV2OltbTy7zO5FZRm
-         JgbYUN4q8gkRdj2HjfPAqBI5zlYDqMbh3dh+0BYuSxY5F9O9xLsA1pu8tYNQvyMppIeb
-         T5kOqZs77CRywximPhf2YWftppxcYRI9i3gX7D3jtmlEgBAzbagufDdx3rRvQdTuZWgj
-         6jVFPnKHLlX+Y9jNJPd/9BZttgjBoTKp/Z6cbzVNwOj9NCHx9AsxaCeZrxtysMCP5aPw
-         PwXUa5NY8ucysXsjclacxQWuFwFRBHZzsYRQ4B4lwmdNOtUwyFaw3LauKTpBNULNbKLO
-         w5Jg==
-X-Gm-Message-State: APjAAAXmlgFk52f3TVG3PcQ7NrQl1O2PNEZfdUTEGOy3uccwMThOmlTZ
-        LtV4nwfGO0lAdgvqt+Fwv8ShZr5Niw==
-X-Google-Smtp-Source: APXvYqzmF4QLmggvkwY8/szwJ4ToFkj6ea0y9bI9QY90+bM3sJJowbM21nmt30gu9Lr3d97D28YFkA==
-X-Received: by 2002:aca:1011:: with SMTP id 17mr2961684oiq.72.1582066964108;
-        Tue, 18 Feb 2020 15:02:44 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 60sm1879234otu.45.2020.02.18.15.02.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2020 15:02:43 -0800 (PST)
-Received: (nullmailer pid 9843 invoked by uid 1000);
-        Tue, 18 Feb 2020 23:02:42 -0000
-Date:   Tue, 18 Feb 2020 17:02:42 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette =?iso-8859-1?Q?=A0?= 
-        <mturquette@baylibre.com>, David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH v4 1/5] dt-bindings: clock: Add support for Modem clocks
- in GCC
-Message-ID: <20200218230242.GA9790@bogus>
-References: <1582049733-17050-1-git-send-email-tdas@codeaurora.org>
- <1582049733-17050-2-git-send-email-tdas@codeaurora.org>
+        id S1727743AbgBRXDM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 18:03:12 -0500
+Received: from mga02.intel.com ([134.134.136.20]:57150 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727298AbgBRXDL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 18:03:11 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2020 15:03:11 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,458,1574150400"; 
+   d="scan'208";a="239504569"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
+  by orsmga006.jf.intel.com with ESMTP; 18 Feb 2020 15:03:10 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] KVM: x86: Minor emulator cleanup
+Date:   Tue, 18 Feb 2020 15:03:07 -0800
+Message-Id: <20200218230310.29410-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1582049733-17050-2-git-send-email-tdas@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Feb 2020 23:45:29 +0530, Taniya Das wrote:
-> Add clock ids for GCC MSS clocks which are required to bring the modem
-> out of reset.
-> 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  include/dt-bindings/clock/qcom,gcc-sc7180.h | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
+Three small patches to move emulator specific variables from 'struct
+kvm_vcpu_arch' to 'struct x86_emulate_ctxt'.
 
-Acked-by: Rob Herring <robh@kernel.org>
+v2:
+  - Rebase to kvm/queue, 2c2787938512 ("KVM: selftests: Stop ...")
+
+Sean Christopherson (3):
+  KVM: x86: Add EMULTYPE_PF when emulation is triggered by a page fault
+  KVM: x86: Move gpa_val and gpa_available into the emulator context
+  KVM: x86: Move #PF retry tracking variables into emulation context
+
+ arch/x86/include/asm/kvm_emulate.h |  8 ++++++
+ arch/x86/include/asm/kvm_host.h    | 19 ++++++-------
+ arch/x86/kvm/mmu/mmu.c             | 10 ++-----
+ arch/x86/kvm/x86.c                 | 45 +++++++++++++++++++-----------
+ 4 files changed, 48 insertions(+), 34 deletions(-)
+
+-- 
+2.24.1
+
