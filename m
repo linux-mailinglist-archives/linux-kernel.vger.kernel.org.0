@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4A84163180
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:01:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9576D163182
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:01:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728400AbgBRUBI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 15:01:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40550 "EHLO mail.kernel.org"
+        id S1728739AbgBRUBP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 15:01:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727695AbgBRUBG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 15:01:06 -0500
+        id S1728719AbgBRUBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 15:01:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D00A2465A;
-        Tue, 18 Feb 2020 20:01:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E24D024670;
+        Tue, 18 Feb 2020 20:01:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582056065;
-        bh=vC5s8skuuT4Pw1HgDuMfLLZwagwGHzh3DvvGguPCFxI=;
+        s=default; t=1582056068;
+        bh=oHjNPYRc6V5pjSMnY/9ywhh4+Sjp1tPVDNCkJphgWzo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wtEJUwwYDZgk2bUqLUAFqMfL++6Q++gFwzQlo3BB0v2IH4z9OX0oP8H5Ja/r04KI1
-         xAaMUfrhDhy8CVib3iWpcCfXeOm+JV9gTYNHU4OFJRpVvzf/VW+Fjms1ku4tp+c61J
-         Hrl92gJ1Q+MV9q6dNRu/9PekOGqHEGdljy/JE1q4=
+        b=aXQl0/1VmfcqrOhcQ1AmvzNmsYMI9blyGYymGsXqxI1HTYde37HM5Ki7DwqTwwBJ8
+         8Te359uEDR3/ryPvnYF20Exdosu+BUmBvXSzCNBPcpJqrFym9AnhhaomIdKxs4dNSp
+         Ijl4f07aLZwh+POjosO9UyxeYcTaJHapaG9GYgpg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, ryusuke1925 <st13s20@gm.ibaraki-ct.ac.jp>,
-        Koki Mitani <koki.mitani.xg@hco.ntt.co.jp>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Filipe Manana <fdmanana@suse.com>,
+        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.5 21/80] Btrfs: fix race between using extent maps and merging them
-Date:   Tue, 18 Feb 2020 20:54:42 +0100
-Message-Id: <20200218190434.273780806@linuxfoundation.org>
+Subject: [PATCH 5.5 22/80] btrfs: ref-verify: fix memory leaks
+Date:   Tue, 18 Feb 2020 20:54:43 +0100
+Message-Id: <20200218190434.459046517@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200218190432.043414522@linuxfoundation.org>
 References: <20200218190432.043414522@linuxfoundation.org>
@@ -46,128 +43,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Wenwen Wang <wenwen@cs.uga.edu>
 
-commit ac05ca913e9f3871126d61da275bfe8516ff01ca upstream.
+commit f311ade3a7adf31658ed882aaab9f9879fdccef7 upstream.
 
-We have a few cases where we allow an extent map that is in an extent map
-tree to be merged with other extents in the tree. Such cases include the
-unpinning of an extent after the respective ordered extent completed or
-after logging an extent during a fast fsync. This can lead to subtle and
-dangerous problems because when doing the merge some other task might be
-using the same extent map and as consequence see an inconsistent state of
-the extent map - for example sees the new length but has seen the old start
-offset.
+In btrfs_ref_tree_mod(), 'ref' and 'ra' are allocated through kzalloc() and
+kmalloc(), respectively. In the following code, if an error occurs, the
+execution will be redirected to 'out' or 'out_unlock' and the function will
+be exited. However, on some of the paths, 'ref' and 'ra' are not
+deallocated, leading to memory leaks. For example, if 'action' is
+BTRFS_ADD_DELAYED_EXTENT, add_block_entry() will be invoked. If the return
+value indicates an error, the execution will be redirected to 'out'. But,
+'ref' is not deallocated on this path, causing a memory leak.
 
-With luck this triggers a BUG_ON(), and not some silent bug, such as the
-following one in __do_readpage():
+To fix the above issues, deallocate both 'ref' and 'ra' before exiting from
+the function when an error is encountered.
 
-  $ cat -n fs/btrfs/extent_io.c
-  3061  static int __do_readpage(struct extent_io_tree *tree,
-  3062                           struct page *page,
-  (...)
-  3127                  em = __get_extent_map(inode, page, pg_offset, cur,
-  3128                                        end - cur + 1, get_extent, em_cached);
-  3129                  if (IS_ERR_OR_NULL(em)) {
-  3130                          SetPageError(page);
-  3131                          unlock_extent(tree, cur, end);
-  3132                          break;
-  3133                  }
-  3134                  extent_offset = cur - em->start;
-  3135                  BUG_ON(extent_map_end(em) <= cur);
-  (...)
-
-Consider the following example scenario, where we end up hitting the
-BUG_ON() in __do_readpage().
-
-We have an inode with a size of 8KiB and 2 extent maps:
-
-  extent A: file offset 0, length 4KiB, disk_bytenr = X, persisted on disk by
-            a previous transaction
-
-  extent B: file offset 4KiB, length 4KiB, disk_bytenr = X + 4KiB, not yet
-            persisted but writeback started for it already. The extent map
-	    is pinned since there's writeback and an ordered extent in
-	    progress, so it can not be merged with extent map A yet
-
-The following sequence of steps leads to the BUG_ON():
-
-1) The ordered extent for extent B completes, the respective page gets its
-   writeback bit cleared and the extent map is unpinned, at that point it
-   is not yet merged with extent map A because it's in the list of modified
-   extents;
-
-2) Due to memory pressure, or some other reason, the MM subsystem releases
-   the page corresponding to extent B - btrfs_releasepage() is called and
-   returns 1, meaning the page can be released as it's not dirty, not under
-   writeback anymore and the extent range is not locked in the inode's
-   iotree. However the extent map is not released, either because we are
-   not in a context that allows memory allocations to block or because the
-   inode's size is smaller than 16MiB - in this case our inode has a size
-   of 8KiB;
-
-3) Task B needs to read extent B and ends up __do_readpage() through the
-   btrfs_readpage() callback. At __do_readpage() it gets a reference to
-   extent map B;
-
-4) Task A, doing a fast fsync, calls clear_em_loggin() against extent map B
-   while holding the write lock on the inode's extent map tree - this
-   results in try_merge_map() being called and since it's possible to merge
-   extent map B with extent map A now (the extent map B was removed from
-   the list of modified extents), the merging begins - it sets extent map
-   B's start offset to 0 (was 4KiB), but before it increments the map's
-   length to 8KiB (4kb + 4KiB), task A is at:
-
-   BUG_ON(extent_map_end(em) <= cur);
-
-   The call to extent_map_end() sees the extent map has a start of 0
-   and a length still at 4KiB, so it returns 4KiB and 'cur' is 4KiB, so
-   the BUG_ON() is triggered.
-
-So it's dangerous to modify an extent map that is in the tree, because some
-other task might have got a reference to it before and still using it, and
-needs to see a consistent map while using it. Generally this is very rare
-since most paths that lookup and use extent maps also have the file range
-locked in the inode's iotree. The fsync path is pretty much the only
-exception where we don't do it to avoid serialization with concurrent
-reads.
-
-Fix this by not allowing an extent map do be merged if if it's being used
-by tasks other then the one attempting to merge the extent map (when the
-reference count of the extent map is greater than 2).
-
-Reported-by: ryusuke1925 <st13s20@gm.ibaraki-ct.ac.jp>
-Reported-by: Koki Mitani <koki.mitani.xg@hco.ntt.co.jp>
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=206211
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
+CC: stable@vger.kernel.org # 4.15+
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent_map.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ fs/btrfs/ref-verify.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/fs/btrfs/extent_map.c
-+++ b/fs/btrfs/extent_map.c
-@@ -237,6 +237,17 @@ static void try_merge_map(struct extent_
- 	struct extent_map *merge = NULL;
- 	struct rb_node *rb;
+--- a/fs/btrfs/ref-verify.c
++++ b/fs/btrfs/ref-verify.c
+@@ -744,6 +744,7 @@ int btrfs_ref_tree_mod(struct btrfs_fs_i
+ 		 */
+ 		be = add_block_entry(fs_info, bytenr, num_bytes, ref_root);
+ 		if (IS_ERR(be)) {
++			kfree(ref);
+ 			kfree(ra);
+ 			ret = PTR_ERR(be);
+ 			goto out;
+@@ -757,6 +758,8 @@ int btrfs_ref_tree_mod(struct btrfs_fs_i
+ 			"re-allocated a block that still has references to it!");
+ 			dump_block_entry(fs_info, be);
+ 			dump_ref_action(fs_info, ra);
++			kfree(ref);
++			kfree(ra);
+ 			goto out_unlock;
+ 		}
  
-+	/*
-+	 * We can't modify an extent map that is in the tree and that is being
-+	 * used by another task, as it can cause that other task to see it in
-+	 * inconsistent state during the merging. We always have 1 reference for
-+	 * the tree and 1 for this task (which is unpinning the extent map or
-+	 * clearing the logging flag), so anything > 2 means it's being used by
-+	 * other tasks too.
-+	 */
-+	if (refcount_read(&em->refs) > 2)
-+		return;
-+
- 	if (em->start != 0) {
- 		rb = rb_prev(&em->rb_node);
- 		if (rb)
+@@ -819,6 +822,7 @@ int btrfs_ref_tree_mod(struct btrfs_fs_i
+ "dropping a ref for a existing root that doesn't have a ref on the block");
+ 				dump_block_entry(fs_info, be);
+ 				dump_ref_action(fs_info, ra);
++				kfree(ref);
+ 				kfree(ra);
+ 				goto out_unlock;
+ 			}
+@@ -834,6 +838,7 @@ int btrfs_ref_tree_mod(struct btrfs_fs_i
+ "attempting to add another ref for an existing ref on a tree block");
+ 			dump_block_entry(fs_info, be);
+ 			dump_ref_action(fs_info, ra);
++			kfree(ref);
+ 			kfree(ra);
+ 			goto out_unlock;
+ 		}
 
 
