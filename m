@@ -2,77 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31F2716264D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 13:42:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 082DB162668
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 13:48:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbgBRMm4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 07:42:56 -0500
-Received: from mail-qk1-f171.google.com ([209.85.222.171]:36229 "EHLO
-        mail-qk1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726595AbgBRMm4 (ORCPT
+        id S1726648AbgBRMr7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 07:47:59 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:35876 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726595AbgBRMr6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 07:42:56 -0500
-Received: by mail-qk1-f171.google.com with SMTP id t83so2317519qke.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 04:42:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=HXwLXPC3uj2FBozvtZYRTOCinHGN6/mECOLa8GGzXbw=;
-        b=DMiEa56RcS6t4bfviWcOwkMg7hVCD0v6dp3izIiWck3+NoVCJkw0oWwtBX4pQZSo8w
-         9hgJtRN14UsC3sxU5kIaOo24XZSOUgpJt+ppUqPWXuHYfUrvaZxxcavgvZM3eBq+wc+g
-         gnWNWf/2l4LYB5IyBBVv6ZmNW8aBcTnuxqw07nQJjrRLsuOPIrdRc27pqAfwCmfaYTVC
-         CfAXR1/XjHrodMOB5SHhBgs3j1O5QOE+NWKIQqnm6EIYsU85ff0WfJBMU6ZCC3UScvgK
-         OAKoXUJcqoAihaBB/5s6wJPJ/vhSe1l2qEhO9YyrY3SLIKxYTWNVt8Rmx7eETNg9TBse
-         A6Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=HXwLXPC3uj2FBozvtZYRTOCinHGN6/mECOLa8GGzXbw=;
-        b=Bwl/NSo5ze96me+7V4zBBVIseQUBTC7LakqpWNdNXy8iMj/KScGhXzninrkr/Gls7h
-         8FVBFiOVBoGRP4W3tBpGOzFfPZI5Kl3Z0KuXXsjGOTVlPjMN+klcNaJBiVp0B7Zb3QPN
-         jra+R5xds582kA3JOoOXI5Kbm22wI0umVvfhHWHOVTlRGxka4Bj3IlcMaofmHjwkz2rl
-         BXUbRBeaHMb60vdgg+i2wY45Y5Gxlv+JLRW+BKyxBSxJF3LVZYq/Z5LUzU+3OK8zDc52
-         OvmY8j2nGe0kqFz+yqiIygApuvmlSwGu1o04m1UkzWK/ZclwRVLhndejOkZb94ldc+Fe
-         dSIg==
-X-Gm-Message-State: APjAAAUzjzmEtz5E7RC4RZJS3/gBcO1g6h/3ylpvwd3Ozi1AkMno26CE
-        p3uHfC9sk9QEd2zebMA0UY0xtQ==
-X-Google-Smtp-Source: APXvYqy6Wm7sXU7W5+mucvMyXdyd6lZPrkO3Ol/mLD3Hrklp9U/tJLSKHsmzQkfj3CnheHidAYAp8Q==
-X-Received: by 2002:a37:ac17:: with SMTP id e23mr18514275qkm.80.1582029773807;
-        Tue, 18 Feb 2020 04:42:53 -0800 (PST)
-Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id l10sm1786508qke.93.2020.02.18.04.42.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2020 04:42:53 -0800 (PST)
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH -next v2] mm: annotate a data race in page_zonenum()
-Date:   Tue, 18 Feb 2020 07:42:52 -0500
-Message-Id: <4F681D4B-8A43-4312-8085-BC679D3D83F4@lca.pw>
-References: <20200214161639.GR2935@paulmck-ThinkPad-P72>
-Cc:     akpm@linux-foundation.org, elver@google.com, david@redhat.com,
-        jack@suse.cz, jhubbard@nvidia.com, ira.weiny@intel.com,
-        dan.j.williams@intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20200214161639.GR2935@paulmck-ThinkPad-P72>
-To:     paulmck@kernel.org
-X-Mailer: iPhone Mail (17D50)
+        Tue, 18 Feb 2020 07:47:58 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01ICltSI017329;
+        Tue, 18 Feb 2020 06:47:55 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582030075;
+        bh=xVEyUW1XdjD1ES7xYnuISdMvDkFO7eHR+YedhiMAABo=;
+        h=Subject:To:References:From:Date:In-Reply-To;
+        b=IxudEPiXN/PX6W1z0gwhqR0tT6NV2oiqd/p8N17e+bYDgcG95nilbG3RYwVxJuAJe
+         8SF3+l5tFNzVVGpyblUwrM7K+9smlqZiy6NCEO9fQxe/8WBSuAtq2pBxdkHELcJYXL
+         RA3fK40Qm8njUSKNtaw27MS2dBCBtRXBuqlVgPGg=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01IClt24016380
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 18 Feb 2020 06:47:55 -0600
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 18
+ Feb 2020 06:47:55 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 18 Feb 2020 06:47:55 -0600
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01ICltr0062821;
+        Tue, 18 Feb 2020 06:47:55 -0600
+Subject: Re: [PATCH 0/3] leds: add support for apa102c leds
+To:     Nicolas Belin <nbelin@baylibre.com>,
+        <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>,
+        <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+References: <1582018657-5720-1-git-send-email-nbelin@baylibre.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <04642127-0e68-43b1-9b6c-0dbb56dc9bfe@ti.com>
+Date:   Tue, 18 Feb 2020 06:43:12 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <1582018657-5720-1-git-send-email-nbelin@baylibre.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hellp
 
+On 2/18/20 3:37 AM, Nicolas Belin wrote:
+> This patch series adds the driver and its related documentation
+> for the APA102C RGB Leds.
+>
+> Patch 1 adds the APA102C led manufacturer to the vendor-prefixes list.
+>
+> Patch 2 Documents the APA102C led driver.
+>
+> Patch 3 contains the actual driver code and modifications in the Kconfig
+> and the Makefile.
 
-> On Feb 14, 2020, at 11:16 AM, Paul E. McKenney <paulmck@kernel.org> wrote:=
+Is this something that can benefit from the Multicolor framework patches?
 
->=20
-> Any of the three options above would get you into -next quickly.
->=20
-> So just let me know how you would like to proceed.
+https://lore.kernel.org/patchwork/project/lkml/list/?series=427513
 
-Unless Andrew has any objection, I think it makes sense that you pick this u=
-p as it is pretty much a low risk patch.=
+Can you RFC the APA102C driver on top of the Multicolor FW to see how it 
+blends?
+
+Dan
+
