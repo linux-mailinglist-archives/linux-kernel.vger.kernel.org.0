@@ -2,105 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BFA4162230
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 09:26:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77F6E162245
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 09:27:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726402AbgBRI0W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 03:26:22 -0500
-Received: from first.geanix.com ([116.203.34.67]:59522 "EHLO first.geanix.com"
+        id S1726659AbgBRI1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 03:27:16 -0500
+Received: from mga07.intel.com ([134.134.136.100]:18962 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726180AbgBRI0W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 03:26:22 -0500
-Received: from localhost (unknown [193.163.1.7])
-        by first.geanix.com (Postfix) with ESMTPSA id CEB4CC0026;
-        Tue, 18 Feb 2020 08:25:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=geanix.com; s=first;
-        t=1582014331; bh=qoOyWfzrbqLyzdPY/hjg2UBPWMBJE3nsF+rXsF0O5mw=;
-        h=From:To:Cc:Subject:Date;
-        b=l4PYsw3bh9kdGsaJ7lo1bIxGxVqWrUj1Bu9jhShyb73EV+k9w7SsfvQpeKAZVKMw5
-         /TGLrOw1Q904u38D+9MkswUYt/spejVTERMRCsTSoFmXM6HAHj7+KL609NWASdjrf6
-         4ByiSSKGbst/ELiFHMn5RcuCQNa4gdgAx6aMfLyXPQD8/qn+SDFJSo0T1013WRj2ym
-         lu7aHzqSmznI+4Gz5hzb6JLbALHA/S/ukcXUwVv3TZtrAwMTrv420DZwCWk3krrPmA
-         A+ybgrcTZYc97gBip/TD0Sf/nuQ26+VUzq76NMUqBX5ovjE+oMymvCgFJiN4yzExQQ
-         JnDhmuhE/0QgA==
-From:   Esben Haabendal <esben@geanix.com>
-To:     netdev@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S . Miller" <davem@davemloft.net>,
-        Michal Simek <michal.simek@xilinx.com>,
-        =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>,
-        stable@vger.kernel.org
-Subject: [PATCH 1/8] net: ll_temac: Fix race condition causing TX hang
-Date:   Tue, 18 Feb 2020 09:26:19 +0100
-Message-Id: <20200218082619.7119-1-esben@geanix.com>
-X-Mailer: git-send-email 2.25.0
+        id S1726105AbgBRI1Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 03:27:16 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2020 00:27:14 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,455,1574150400"; 
+   d="scan'208";a="235466622"
+Received: from yhuang-dev.sh.intel.com ([10.239.159.151])
+  by orsmga003.jf.intel.com with ESMTP; 18 Feb 2020 00:27:11 -0800
+From:   "Huang, Ying" <ying.huang@intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Feng Tang <feng.tang@intel.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@redhat.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: [RFC -V2 0/8] autonuma: Optimize memory placement in memory tiering system
+Date:   Tue, 18 Feb 2020 16:26:26 +0800
+Message-Id: <20200218082634.1596727-1-ying.huang@intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=0.2 required=4.0 tests=BAYES_40,DKIM_INVALID,
-        DKIM_SIGNED,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=disabled
-        version=3.4.3
-X-Spam-Checker-Version: SpamAssassin 3.4.3 (2019-12-06) on eb9da72b0f73
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is possible that the interrupt handler fires and frees up space in
-the TX ring in between checking for sufficient TX ring space and
-stopping the TX queue in temac_start_xmit. If this happens, the
-queue wake from the interrupt handler will occur before the queue is
-stopped, causing a lost wakeup and the adapter's transmit hanging.
+From: Huang Ying <ying.huang@intel.com>
 
-To avoid this, after stopping the queue, check again whether there is
-sufficient space in the TX ring. If so, wake up the queue again.
+With the advent of various new memory types, there may be multiple
+memory types in one system, e.g. DRAM and PMEM (persistent memory).
+Because the performance and cost of the different types of memory may
+be different, the memory subsystem of the machine could be called
+the memory tiering system.
 
-This is a port of the similar fix in axienet driver,
-commit 7de44285c1f6 ("net: axienet: Fix race condition causing TX hang").
+After commit c221c0b0308f ("device-dax: "Hotplug" persistent memory
+for use like normal RAM"), the PMEM could be used as the
+cost-effective volatile memory in separate NUMA nodes.  In a typical
+memory tiering system, there are CPUs, DRAM and PMEM in each physical
+NUMA node.  The CPUs and the DRAM will be put in one logical node,
+while the PMEM will be put in another (faked) logical node.
 
-Signed-off-by: Esben Haabendal <esben@geanix.com>
-Cc: stable@vger.kernel.org
----
- drivers/net/ethernet/xilinx/ll_temac_main.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+To optimize the system overall performance, the hot pages should be
+placed in DRAM node.  To do that, we need to identify the hot pages in
+the PMEM node and migrate them to DRAM node via NUMA migration.
 
-diff --git a/drivers/net/ethernet/xilinx/ll_temac_main.c b/drivers/net/ethernet/xilinx/ll_temac_main.c
-index 6f11f52c9a9e..996004ef8bd4 100644
---- a/drivers/net/ethernet/xilinx/ll_temac_main.c
-+++ b/drivers/net/ethernet/xilinx/ll_temac_main.c
-@@ -788,6 +788,9 @@ static void temac_start_xmit_done(struct net_device *ndev)
- 		stat = be32_to_cpu(cur_p->app0);
- 	}
- 
-+	/* Matches barrier in temac_start_xmit */
-+	smp_mb();
-+
- 	netif_wake_queue(ndev);
- }
- 
-@@ -830,9 +833,19 @@ temac_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 	cur_p = &lp->tx_bd_v[lp->tx_bd_tail];
- 
- 	if (temac_check_tx_bd_space(lp, num_frag + 1)) {
--		if (!netif_queue_stopped(ndev))
--			netif_stop_queue(ndev);
--		return NETDEV_TX_BUSY;
-+		if (netif_queue_stopped(ndev))
-+			return NETDEV_TX_BUSY;
-+
-+		netif_stop_queue(ndev);
-+
-+		/* Matches barrier in temac_start_xmit_done */
-+		smp_mb();
-+
-+		/* Space might have just been freed - check again */
-+		if (temac_check_tx_bd_space(lp, num_frag))
-+			return NETDEV_TX_BUSY;
-+
-+		netif_wake_queue(ndev);
- 	}
- 
- 	cur_p->app0 = 0;
--- 
-2.25.0
+While in autonuma, there are a set of existing mechanisms to identify
+the pages recently accessed by the CPUs in a node and migrate the
+pages to the node.  So we can reuse these mechanisms to build
+mechanisms to optimize page placement in the memory tiering system.
+This has been implemented in this patchset.
 
+At the other hand, the cold pages should be placed in PMEM node.  So,
+we also need to identify the cold pages in the DRAM node and migrate
+them to PMEM node.
+
+In the following patchset,
+
+[PATCH 0/4] [RFC] Migrate Pages in lieu of discard
+https://lore.kernel.org/linux-mm/20191016221148.F9CCD155@viggo.jf.intel.com/
+
+A mechanism to demote the cold DRAM pages to PMEM node under memory
+pressure is implemented.  Based on that, the cold DRAM pages can be
+demoted to PMEM node proactively to free some memory space on DRAM
+node.  And this frees space on DRAM node for the hot PMEM pages to be
+migrated to.  This has been implemented in this patchset too.
+
+The patchset is based on the following not-yet-merged patchset
+(after being rebased to v5.5):
+
+[PATCH 0/4] [RFC] Migrate Pages in lieu of discard
+https://lore.kernel.org/linux-mm/20191016221148.F9CCD155@viggo.jf.intel.com/
+
+This is part of a larger patch set.  If you want to apply these or
+play with them, I'd suggest using the tree from below,
+
+https://github.com/hying-caritas/linux/commits/autonuma-r2
+
+With all above optimization, the score of pmbench memory accessing
+benchmark with 80:20 read/write ratio and normal access address
+distribution improves 116% on a 2 socket Intel server with Optane DC
+Persistent Memory.
+
+Changelog:
+
+v2:
+
+- Addressed comments for V1.
+
+- Rebased on v5.5.
+
+Best Regards,
+Huang, Ying
