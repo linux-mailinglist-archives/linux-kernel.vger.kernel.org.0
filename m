@@ -2,174 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88399162252
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 09:28:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72428162233
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 09:26:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbgBRI13 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 03:27:29 -0500
-Received: from mga07.intel.com ([134.134.136.100]:18962 "EHLO mga07.intel.com"
+        id S1726442AbgBRI0f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 03:26:35 -0500
+Received: from first.geanix.com ([116.203.34.67]:59546 "EHLO first.geanix.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726729AbgBRI12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 03:27:28 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2020 00:27:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,455,1574150400"; 
-   d="scan'208";a="235466678"
-Received: from yhuang-dev.sh.intel.com ([10.239.159.151])
-  by orsmga003.jf.intel.com with ESMTP; 18 Feb 2020 00:27:24 -0800
-From:   "Huang, Ying" <ying.huang@intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Feng Tang <feng.tang@intel.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@redhat.com>,
-        Mel Gorman <mgorman@suse.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: [RFC -V2 4/8] autonuma, memory tiering: Skip to scan fastest memory
-Date:   Tue, 18 Feb 2020 16:26:30 +0800
-Message-Id: <20200218082634.1596727-5-ying.huang@intel.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200218082634.1596727-1-ying.huang@intel.com>
-References: <20200218082634.1596727-1-ying.huang@intel.com>
+        id S1726180AbgBRI0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 03:26:34 -0500
+Received: from localhost (unknown [193.163.1.7])
+        by first.geanix.com (Postfix) with ESMTPSA id 5784CC0028;
+        Tue, 18 Feb 2020 08:25:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=geanix.com; s=first;
+        t=1582014343; bh=ZAtnUACFheEa+h5OEOS/NnijGN4MumK8ORv55Tzj4Pg=;
+        h=From:To:Cc:Subject:Date;
+        b=cbrXkPqVmRHDowf8/B1LxQuNGMJmAf3flIv5q/EUHaXXnOuV7AkRNGznb200Cfk9U
+         4yXbtk3DRCroIPHGsfQxKBcjfejtg7ZJqDJeVsIrO6l+osJPCebfo4LANeKEYmEE4+
+         bDKyA7XyXwDHaFCMb4Haio8PjRMciPiZac1QOUY4Wqh45NQIfkw7FPMIBatE263Icj
+         baOQHZ7J3z0utjVgFnlgGibtyAVKuyaegn8D+mFmdNBTVSMxFyixylD4y3rx4fLdQK
+         3dd9+j9PHByuoUV2/eNPh1arzaIb4eK0ECM/4N+sExu6YfIuJvAFzVApBcmw1ljVP3
+         rNj22NCCxCREg==
+From:   Esben Haabendal <esben@geanix.com>
+To:     netdev@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Andrew Lunn <andrew@lunn.ch>,
+        "David S . Miller" <davem@davemloft.net>,
+        Michal Simek <michal.simek@xilinx.com>,
+        =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>,
+        stable@vger.kernel.org
+Subject: [PATCH 2/8] net: ll_temac: Add more error handling of dma_map_single() calls
+Date:   Tue, 18 Feb 2020 09:26:31 +0100
+Message-Id: <20200218082631.7204-1-esben@geanix.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.7 required=4.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=disabled
+        version=3.4.3
+X-Spam-Checker-Version: SpamAssassin 3.4.3 (2019-12-06) on eb9da72b0f73
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huang Ying <ying.huang@intel.com>
+This adds error handling to the remaining dma_map_single() calls, so that
+behavior is well defined if/when we run out of DMA memory.
 
-In memory tiering NUMA balancing mode, the hot pages of the workload
-in the fastest memory node couldn't be promoted to anywhere, so it's
-unnecessary to identify the hot pages in the fastest memory node via
-changing their PTE mapping to have PROT_NONE.  So that the page faults
-could be avoided too.
-
-The patch improves the score of pmbench memory accessing benchmark
-with 80:20 read/write ratio and normal access address distribution by
-4.6% on a 2 socket Intel server with Optance DC Persistent Memory.
-The autonuma hint faults for DRAM node is reduced to almost 0 in the
-test.
-
-Known problem: the statistics of autonuma such as per-node memory
-accesses, and local/remote ratio, etc. will be influenced.  Especially
-the NUMA scanning period automatic adjustment will not work
-reasonably.  So we cannot rely on that.  Fortunately, there's no CPU
-in the PMEM NUMA nodes, so we will not move tasks there because of
-the statistics issue.
-
-Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org
+Signed-off-by: Esben Haabendal <esben@geanix.com>
+Cc: stable@vger.kernel.org
 ---
- mm/huge_memory.c | 30 +++++++++++++++++++++---------
- mm/mprotect.c    | 14 +++++++++++++-
- 2 files changed, 34 insertions(+), 10 deletions(-)
+ drivers/net/ethernet/xilinx/ll_temac_main.c | 26 +++++++++++++++++++--
+ 1 file changed, 24 insertions(+), 2 deletions(-)
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index a88093213674..d45de9b1ead9 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -33,6 +33,7 @@
- #include <linux/oom.h>
- #include <linux/numa.h>
- #include <linux/page_owner.h>
-+#include <linux/sched/sysctl.h>
+diff --git a/drivers/net/ethernet/xilinx/ll_temac_main.c b/drivers/net/ethernet/xilinx/ll_temac_main.c
+index 996004ef8bd4..c368c3914bda 100644
+--- a/drivers/net/ethernet/xilinx/ll_temac_main.c
++++ b/drivers/net/ethernet/xilinx/ll_temac_main.c
+@@ -367,6 +367,8 @@ static int temac_dma_bd_init(struct net_device *ndev)
+ 		skb_dma_addr = dma_map_single(ndev->dev.parent, skb->data,
+ 					      XTE_MAX_JUMBO_FRAME_SIZE,
+ 					      DMA_FROM_DEVICE);
++		if (dma_mapping_error(ndev->dev.parent, skb_dma_addr))
++			goto out;
+ 		lp->rx_bd_v[i].phys = cpu_to_be32(skb_dma_addr);
+ 		lp->rx_bd_v[i].len = cpu_to_be32(XTE_MAX_JUMBO_FRAME_SIZE);
+ 		lp->rx_bd_v[i].app0 = cpu_to_be32(STS_CTRL_APP0_IRQONEND);
+@@ -863,12 +865,13 @@ temac_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+ 	skb_dma_addr = dma_map_single(ndev->dev.parent, skb->data,
+ 				      skb_headlen(skb), DMA_TO_DEVICE);
+ 	cur_p->len = cpu_to_be32(skb_headlen(skb));
++	if (WARN_ON_ONCE(dma_mapping_error(ndev->dev.parent, skb_dma_addr)))
++		return NETDEV_TX_BUSY;
+ 	cur_p->phys = cpu_to_be32(skb_dma_addr);
+ 	ptr_to_txbd((void *)skb, cur_p);
  
- #include <asm/tlb.h>
- #include <asm/pgalloc.h>
-@@ -1967,17 +1968,28 @@ int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
- 	}
- #endif
+ 	for (ii = 0; ii < num_frag; ii++) {
+-		lp->tx_bd_tail++;
+-		if (lp->tx_bd_tail >= TX_BD_NUM)
++		if (++lp->tx_bd_tail >= TX_BD_NUM)
+ 			lp->tx_bd_tail = 0;
  
--	/*
--	 * Avoid trapping faults against the zero page. The read-only
--	 * data is likely to be read-cached on the local CPU and
--	 * local/remote hits to the zero page are not interesting.
--	 */
--	if (prot_numa && is_huge_zero_pmd(*pmd))
--		goto unlock;
-+	if (prot_numa) {
-+		struct page *page;
-+		/*
-+		 * Avoid trapping faults against the zero page. The read-only
-+		 * data is likely to be read-cached on the local CPU and
-+		 * local/remote hits to the zero page are not interesting.
-+		 */
-+		if (is_huge_zero_pmd(*pmd))
-+			goto unlock;
- 
--	if (prot_numa && pmd_protnone(*pmd))
--		goto unlock;
-+		if (pmd_protnone(*pmd))
-+			goto unlock;
- 
-+		page = pmd_page(*pmd);
-+		/*
-+		 * Skip if normal numa balancing is disabled and no
-+		 * faster memory node to promote to
-+		 */
-+		if (!(sysctl_numa_balancing_mode & NUMA_BALANCING_NORMAL) &&
-+		    next_promotion_node(page_to_nid(page)) == -1)
-+			goto unlock;
-+	}
- 	/*
- 	 * In case prot_numa, we are under down_read(mmap_sem). It's critical
- 	 * to not clear pmd intermittently to avoid race with MADV_DONTNEED
-diff --git a/mm/mprotect.c b/mm/mprotect.c
-index 7a8e84f86831..7322c98284ac 100644
---- a/mm/mprotect.c
-+++ b/mm/mprotect.c
-@@ -28,6 +28,7 @@
- #include <linux/ksm.h>
- #include <linux/uaccess.h>
- #include <linux/mm_inline.h>
-+#include <linux/sched/sysctl.h>
- #include <asm/pgtable.h>
- #include <asm/cacheflush.h>
- #include <asm/mmu_context.h>
-@@ -79,6 +80,7 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
- 			 */
- 			if (prot_numa) {
- 				struct page *page;
-+				int nid;
- 
- 				/* Avoid TLB flush if possible */
- 				if (pte_protnone(oldpte))
-@@ -105,7 +107,17 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
- 				 * Don't mess with PTEs if page is already on the node
- 				 * a single-threaded process is running on.
- 				 */
--				if (target_node == page_to_nid(page))
-+				nid = page_to_nid(page);
-+				if (target_node == nid)
-+					continue;
-+
-+				/*
-+				 * Skip scanning if normal numa
-+				 * balancing is disabled and no faster
-+				 * memory node to promote to
-+				 */
-+				if (!(sysctl_numa_balancing_mode & NUMA_BALANCING_NORMAL) &&
-+				    next_promotion_node(nid) == -1)
- 					continue;
- 			}
- 
+ 		cur_p = &lp->tx_bd_v[lp->tx_bd_tail];
+@@ -876,6 +879,25 @@ temac_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+ 					      skb_frag_address(frag),
+ 					      skb_frag_size(frag),
+ 					      DMA_TO_DEVICE);
++		if (dma_mapping_error(ndev->dev.parent, skb_dma_addr)) {
++			if (--lp->tx_bd_tail < 0)
++				lp->tx_bd_tail = TX_BD_NUM - 1;
++			cur_p = &lp->tx_bd_v[lp->tx_bd_tail];
++			while (--ii >= 0) {
++				--frag;
++				dma_unmap_single(ndev->dev.parent,
++						 be32_to_cpu(cur_p->phys),
++						 skb_frag_size(frag),
++						 DMA_TO_DEVICE);
++				if (--lp->tx_bd_tail < 0)
++					lp->tx_bd_tail = TX_BD_NUM - 1;
++				cur_p = &lp->tx_bd_v[lp->tx_bd_tail];
++			}
++			dma_unmap_single(ndev->dev.parent,
++					 be32_to_cpu(cur_p->phys),
++					 skb_headlen(skb), DMA_TO_DEVICE);
++			return NETDEV_TX_BUSY;
++		}
+ 		cur_p->phys = cpu_to_be32(skb_dma_addr);
+ 		cur_p->len = cpu_to_be32(skb_frag_size(frag));
+ 		cur_p->app0 = 0;
 -- 
-2.24.1
+2.25.0
 
