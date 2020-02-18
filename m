@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BEC7163296
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:10:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA538163179
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:01:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727898AbgBRUI3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 15:08:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35402 "EHLO mail.kernel.org"
+        id S1728115AbgBRUAy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 15:00:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727232AbgBRT55 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:57:57 -0500
+        id S1728075AbgBRUAv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 15:00:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F9F620659;
-        Tue, 18 Feb 2020 19:57:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43ED924125;
+        Tue, 18 Feb 2020 20:00:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582055877;
-        bh=EmGc26XpQQJRxz7sKbnLLn5rH2g2hZ9Ry83rw/3dFPo=;
+        s=default; t=1582056050;
+        bh=EwYfUOnmtfFffy16it4zCFunWeADkB2Shz4MSOMEUtc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hlKd5mHPugw/zUM+17umTO3ti0f2tBr3lQNfVDrouSFlyRUTO4hUgR83F4VslJ2Gn
-         TfdKnEzrCTspaRdcOXkPYZmWUVce6ADaEDOUKeAsvDCD3yRwN0zebUCWjxvtrMbYw/
-         oTwDqpoC4oeQ71eUro6F6Iobi68r15K5OsEzMfI0=
+        b=R7q7iALN5lLhSL1h9sSy+LwSGvmOJ4QNSMKxhFzbNUEn/ZMEtfkHKCSCsj5BDX9dM
+         LPUVopN734aOE3W04BaPiLt2u4TVCAfe69+RalWp2bqwSQcFSVGJcJcmthwjr9J9Zy
+         wql/bhb5uzTPgOWXj7sXB0Pd9tat4X58EsFL1fZ4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 5.4 09/66] ACPI: PM: s2idle: Avoid possible race related to the EC GPE
-Date:   Tue, 18 Feb 2020 20:54:36 +0100
-Message-Id: <20200218190428.963951947@linuxfoundation.org>
+        stable@vger.kernel.org, Andreas Dilger <adilger@dilger.ca>,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 5.5 16/80] ext4: dont assume that mmp_nodename/bdevname have NUL
+Date:   Tue, 18 Feb 2020 20:54:37 +0100
+Message-Id: <20200218190433.731972284@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200218190428.035153861@linuxfoundation.org>
-References: <20200218190428.035153861@linuxfoundation.org>
+In-Reply-To: <20200218190432.043414522@linuxfoundation.org>
+References: <20200218190432.043414522@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,132 +43,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Andreas Dilger <adilger@dilger.ca>
 
-commit e3728b50cd9be7d4b1469447cdf1feb93e3b7adb upstream.
+commit 14c9ca0583eee8df285d68a0e6ec71053efd2228 upstream.
 
-It is theoretically possible for the ACPI EC GPE to be set after the
-s2idle_ops->wake() called from s2idle_loop() has returned and before
-the subsequent pm_wakeup_pending() check is carried out.  If that
-happens, the resulting wakeup event will cause the system to resume
-even though it may be a spurious one.
+Don't assume that the mmp_nodename and mmp_bdevname strings are NUL
+terminated, since they are filled in by snprintf(), which is not
+guaranteed to do so.
 
-To avoid that race, first make the ->wake() callback in struct
-platform_s2idle_ops return a bool value indicating whether or not
-to let the system resume and rearrange s2idle_loop() to use that
-value instad of the direct pm_wakeup_pending() call if ->wake() is
-present.
-
-Next, rework acpi_s2idle_wake() to process EC events and check
-pm_wakeup_pending() before re-arming the SCI for system wakeup
-to prevent it from triggering prematurely and add comments to
-that function to explain the rationale for the new code flow.
-
-Fixes: 56b991849009 ("PM: sleep: Simplify suspend-to-idle control flow")
-Cc: 5.4+ <stable@vger.kernel.org> # 5.4+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Link: https://lore.kernel.org/r/1580076215-1048-1-git-send-email-adilger@dilger.ca
+Signed-off-by: Andreas Dilger <adilger@dilger.ca>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/sleep.c    |   46 ++++++++++++++++++++++++++++++++--------------
- include/linux/suspend.h |    2 +-
- kernel/power/suspend.c  |    9 +++++----
- 3 files changed, 38 insertions(+), 19 deletions(-)
+ fs/ext4/mmp.c |   12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
---- a/drivers/acpi/sleep.c
-+++ b/drivers/acpi/sleep.c
-@@ -977,21 +977,28 @@ static int acpi_s2idle_prepare_late(void
- 	return 0;
- }
- 
--static void acpi_s2idle_wake(void)
-+static bool acpi_s2idle_wake(void)
+--- a/fs/ext4/mmp.c
++++ b/fs/ext4/mmp.c
+@@ -120,10 +120,10 @@ void __dump_mmp_msg(struct super_block *
  {
--	/*
--	 * If IRQD_WAKEUP_ARMED is set for the SCI at this point, the SCI has
--	 * not triggered while suspended, so bail out.
--	 */
--	if (!acpi_sci_irq_valid() ||
--	    irqd_is_wakeup_armed(irq_get_irq_data(acpi_sci_irq)))
--		return;
--
--	/*
--	 * If there are EC events to process, the wakeup may be a spurious one
--	 * coming from the EC.
--	 */
--	if (acpi_ec_dispatch_gpe()) {
-+	if (!acpi_sci_irq_valid())
-+		return pm_wakeup_pending();
-+
-+	while (pm_wakeup_pending()) {
-+		/*
-+		 * If IRQD_WAKEUP_ARMED is set for the SCI at this point, the
-+		 * SCI has not triggered while suspended, so bail out (the
-+		 * wakeup is pending anyway and the SCI is not the source of
-+		 * it).
-+		 */
-+		if (irqd_is_wakeup_armed(irq_get_irq_data(acpi_sci_irq)))
-+			return true;
-+
-+		/*
-+		 * If there are no EC events to process, the wakeup is regarded
-+		 * as a genuine one.
-+		 */
-+		if (!acpi_ec_dispatch_gpe())
-+			return true;
-+
- 		/*
- 		 * Cancel the wakeup and process all pending events in case
- 		 * there are any wakeup ones in there.
-@@ -1009,8 +1016,19 @@ static void acpi_s2idle_wake(void)
- 		acpi_ec_flush_work();
- 		acpi_os_wait_events_complete(); /* synchronize Notify handling */
- 
-+		/*
-+		 * The SCI is in the "suspended" state now and it cannot produce
-+		 * new wakeup events till the rearming below, so if any of them
-+		 * are pending here, they must be resulting from the processing
-+		 * of EC events above or coming from somewhere else.
-+		 */
-+		if (pm_wakeup_pending())
-+			return true;
-+
- 		rearm_wake_irq(acpi_sci_irq);
- 	}
-+
-+	return false;
+ 	__ext4_warning(sb, function, line, "%s", msg);
+ 	__ext4_warning(sb, function, line,
+-		       "MMP failure info: last update time: %llu, last update "
+-		       "node: %s, last update device: %s",
+-		       (long long unsigned int) le64_to_cpu(mmp->mmp_time),
+-		       mmp->mmp_nodename, mmp->mmp_bdevname);
++		       "MMP failure info: last update time: %llu, last update node: %.*s, last update device: %.*s",
++		       (unsigned long long)le64_to_cpu(mmp->mmp_time),
++		       (int)sizeof(mmp->mmp_nodename), mmp->mmp_nodename,
++		       (int)sizeof(mmp->mmp_bdevname), mmp->mmp_bdevname);
  }
  
- static void acpi_s2idle_restore_early(void)
---- a/include/linux/suspend.h
-+++ b/include/linux/suspend.h
-@@ -191,7 +191,7 @@ struct platform_s2idle_ops {
- 	int (*begin)(void);
- 	int (*prepare)(void);
- 	int (*prepare_late)(void);
--	void (*wake)(void);
-+	bool (*wake)(void);
- 	void (*restore_early)(void);
- 	void (*restore)(void);
- 	void (*end)(void);
---- a/kernel/power/suspend.c
-+++ b/kernel/power/suspend.c
-@@ -131,11 +131,12 @@ static void s2idle_loop(void)
- 	 * to avoid them upfront.
+ /*
+@@ -154,6 +154,7 @@ static int kmmpd(void *data)
+ 	mmp_check_interval = max(EXT4_MMP_CHECK_MULT * mmp_update_interval,
+ 				 EXT4_MMP_MIN_CHECK_INTERVAL);
+ 	mmp->mmp_check_interval = cpu_to_le16(mmp_check_interval);
++	BUILD_BUG_ON(sizeof(mmp->mmp_bdevname) < BDEVNAME_SIZE);
+ 	bdevname(bh->b_bdev, mmp->mmp_bdevname);
+ 
+ 	memcpy(mmp->mmp_nodename, init_utsname()->nodename,
+@@ -375,7 +376,8 @@ skip:
+ 	/*
+ 	 * Start a kernel thread to update the MMP block periodically.
  	 */
- 	for (;;) {
--		if (s2idle_ops && s2idle_ops->wake)
--			s2idle_ops->wake();
--
--		if (pm_wakeup_pending())
-+		if (s2idle_ops && s2idle_ops->wake) {
-+			if (s2idle_ops->wake())
-+				break;
-+		} else if (pm_wakeup_pending()) {
- 			break;
-+		}
- 
- 		pm_wakeup_clear(false);
- 
+-	EXT4_SB(sb)->s_mmp_tsk = kthread_run(kmmpd, mmpd_data, "kmmpd-%s",
++	EXT4_SB(sb)->s_mmp_tsk = kthread_run(kmmpd, mmpd_data, "kmmpd-%.*s",
++					     (int)sizeof(mmp->mmp_bdevname),
+ 					     bdevname(bh->b_bdev,
+ 						      mmp->mmp_bdevname));
+ 	if (IS_ERR(EXT4_SB(sb)->s_mmp_tsk)) {
 
 
