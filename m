@@ -2,66 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89C5316372E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 00:30:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B34D2163746
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 00:34:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728122AbgBRXaE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 18:30:04 -0500
-Received: from mga04.intel.com ([192.55.52.120]:38644 "EHLO mga04.intel.com"
+        id S1727982AbgBRXeF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 18:34:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728090AbgBRXaA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 18:30:00 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2020 15:29:58 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,458,1574150400"; 
-   d="scan'208";a="282936694"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
-  by FMSMGA003.fm.intel.com with ESMTP; 18 Feb 2020 15:29:58 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        id S1727772AbgBRXeE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 18:34:04 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B644222B48;
+        Tue, 18 Feb 2020 23:34:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582068844;
+        bh=tADbs7+vMmC2wdGtNIYrUlaWEITG75T1VqIEm5r6Nm8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=LDWTd+fNRWQ710TkyAFGVODdJxYPatd97J79NivbbuINMgJoo5ay7m19cT7EVZaQz
+         h3oSt+g+5ybQj4jr+v1/tBA0k4e7BO3YPT0s0szZLaIQQWLEXZIIlo9qF9BGoI+Box
+         ha9XDcO2SiY5BYXHVi/d+yDP1uHRtLTIBgfxhRd0=
+Subject: Re: [PATCH 5.4 00/66] 5.4.21-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 13/13] KVM: x86: Allow userspace to disable the kernel's emulator
-Date:   Tue, 18 Feb 2020 15:29:53 -0800
-Message-Id: <20200218232953.5724-14-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200218232953.5724-1-sean.j.christopherson@intel.com>
-References: <20200218232953.5724-1-sean.j.christopherson@intel.com>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20200218190428.035153861@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <76af662b-927a-2b6a-ab0b-2465a9d52d6d@kernel.org>
+Date:   Tue, 18 Feb 2020 16:34:03 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200218190428.035153861@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Expose the emulator control to userspace via a module param.
+On 2/18/20 12:54 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.21 release.
+> There are 66 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 20 Feb 2020 19:03:19 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.21-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/kvm/x86.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Compiled and booted on my test system. No dmesg regressions.
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index f9134e1104c2..ca3aa185f5ee 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -159,7 +159,8 @@ EXPORT_SYMBOL_GPL(enable_vmware_backdoor);
- static bool __read_mostly force_emulation_prefix = false;
- module_param(force_emulation_prefix, bool, S_IRUGO);
- 
--static const bool enable_emulator = true;
-+static bool __read_mostly enable_emulator = true;
-+module_param_named(emulator, enable_emulator, bool, 0440);
- 
- int __read_mostly pi_inject_timer = -1;
- module_param(pi_inject_timer, bint, S_IRUGO | S_IWUSR);
--- 
-2.24.1
+thanks,
+-- Shuah
 
