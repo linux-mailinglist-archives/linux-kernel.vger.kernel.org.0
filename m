@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22E81161F16
+	by mail.lfdr.de (Postfix) with ESMTP id 975C9161F17
 	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 03:42:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726681AbgBRCmN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 21:42:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54262 "EHLO mail.kernel.org"
+        id S1726703AbgBRCmP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 21:42:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726477AbgBRClt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 21:41:49 -0500
+        id S1726240AbgBRClv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 21:41:51 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72E8724649;
-        Tue, 18 Feb 2020 02:41:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DBD652467A;
+        Tue, 18 Feb 2020 02:41:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581993709;
-        bh=ZISZO3v3AhBff22PqMDVPy3sI56gdxu348tYny317jk=;
+        s=default; t=1581993711;
+        bh=9s1PS3TUw7Zsqgs3UGzHhRFfsoLeo9wjHRqNuA7KWTU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wLOu/lunTyTIVPA1PudwJyI4qV2Uh3/dGfChbFpddmixSlmR++kQICW21WZDTpr+5
-         ZlrGvCHYaQkQjBx4HohI8YJ1M4NtCw8q0zd5hP45jk8JO46ZIds+PTSZA1oNBjMCmZ
-         Rl/xDtsThQKh7pt/QyZMqC0lqf9ACzM2qemf89b0=
+        b=DIwAJNQ5HNu9czhmM5+JIIXVf88Bwz+rEaOqO3+ovrz4lcdLhtE5nggYwMLQWpGo+
+         h0v+nvbpEj9gYwiIeG6aZ/+agZ5G5pXaWzUHezJSVXQV136VyGhtBt7ISIZRBYrXOl
+         cVRsJiDmz9VLW/XUYQGXV5OWWkc4KiR53crjOTZI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     mingo@kernel.org, peterz@infradead.org
 Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, jolsa@redhat.com,
         alexey.budankov@linux.intel.com, songliubraving@fb.com,
         acme@redhat.com, allison@lohutok.net,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 05/11] tools/lib/lockdep: add definition required for IRQ flag tracing
-Date:   Mon, 17 Feb 2020 21:41:27 -0500
-Message-Id: <20200218024133.5059-6-sashal@kernel.org>
+Subject: [PATCH 06/11] tools/kernel.h: add BUILD_BUG_ON_NOT_POWER_OF_2 macro
+Date:   Mon, 17 Feb 2020 21:41:28 -0500
+Message-Id: <20200218024133.5059-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200218024133.5059-1-sashal@kernel.org>
 References: <20200218024133.5059-1-sashal@kernel.org>
@@ -42,62 +42,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We are going to start building with CONFIG_TRACE_IRQFLAGS defined, so
-let's wire up a few dummy variables in our task_struct.
-
-This isn't needed in userspace, but due to some refactoring in
-kernel-side lockdep it's easier to just wire it up and enable
-CONFIG_TRACE_IRQFLAGS.
+This is now needed as a result of 12593b7467f9 ("locking/lockdep: Reduce
+space occupied by stack traces").
 
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/include/linux/lockdep.h | 8 ++++++++
- tools/lib/lockdep/lockdep.c   | 4 ++--
- 2 files changed, 10 insertions(+), 2 deletions(-)
+ tools/include/linux/kernel.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/tools/include/linux/lockdep.h b/tools/include/linux/lockdep.h
-index e56997288f2b0..3a9924d6d3ae8 100644
---- a/tools/include/linux/lockdep.h
-+++ b/tools/include/linux/lockdep.h
-@@ -23,6 +23,8 @@
+diff --git a/tools/include/linux/kernel.h b/tools/include/linux/kernel.h
+index d2b3e1cc0218e..cc3d60623ca47 100644
+--- a/tools/include/linux/kernel.h
++++ b/tools/include/linux/kernel.h
+@@ -38,6 +38,12 @@
+ #define BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
+ #define BUILD_BUG_ON_ZERO(e) (sizeof(struct { int:-!!(e); }))
  
- #include "../../../include/linux/lockdep.h"
- 
-+static bool early_boot_irqs_disabled;
++/* Force a compilation error if a constant expression is not a power of 2 */
++#define __BUILD_BUG_ON_NOT_POWER_OF_2(n)        \
++	BUILD_BUG_ON(((n) & ((n) - 1)) != 0)
++#define BUILD_BUG_ON_NOT_POWER_OF_2(n)                  \
++	BUILD_BUG_ON((n) == 0 || (((n) & ((n) - 1)) != 0))
 +
- struct task_struct {
- 	u64 curr_chain_key;
- 	int lockdep_depth;
-@@ -31,6 +33,12 @@ struct task_struct {
- 	gfp_t lockdep_reclaim_gfp;
- 	int pid;
- 	int state;
-+	int softirqs_enabled, hardirqs_enabled, softirqs_disabled, hardirqs_disabled, irq_events;
-+	unsigned long softirq_disable_ip, softirq_enable_ip;
-+	unsigned int softirq_disable_event, softirq_enable_event;
-+	unsigned long hardirq_disable_ip, hardirq_enable_ip;
-+	unsigned int hardirq_disable_event, hardirq_enable_event;
-+	int softirq_context, hardirq_context;
- 	char comm[17];
- };
- 
-diff --git a/tools/lib/lockdep/lockdep.c b/tools/lib/lockdep/lockdep.c
-index 348a9d0fb766a..9be12d233477a 100644
---- a/tools/lib/lockdep/lockdep.c
-+++ b/tools/lib/lockdep/lockdep.c
-@@ -15,10 +15,10 @@ u32 prandom_u32(void)
- 	abort();
- }
- 
--void print_irqtrace_events(struct task_struct *curr)
-+/*void print_irqtrace_events(struct task_struct *curr)
- {
- 	abort();
--}
-+}*/
- 
- static struct new_utsname *init_utsname(void)
- {
+ #ifndef max
+ #define max(x, y) ({				\
+ 	typeof(x) _max1 = (x);			\
 -- 
 2.20.1
 
