@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1321D163024
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:34:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31667163021
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:34:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726648AbgBRTdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 14:33:24 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43350 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726283AbgBRTdT (ORCPT
+        id S1726605AbgBRTdW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 14:33:22 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55920 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726488AbgBRTdU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:33:19 -0500
-Received: by mail-wr1-f66.google.com with SMTP id r11so25354032wrq.10
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 11:33:18 -0800 (PST)
+        Tue, 18 Feb 2020 14:33:20 -0500
+Received: by mail-wm1-f65.google.com with SMTP id q9so3959073wmj.5
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 11:33:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=FhP33f76rG+2Qj5CzOw/Y5VWMBQgpWuzrnyIzrFTRug=;
-        b=rxlXAX64TS/KCHzcquPeVDjrlKmhePjl7Da7rcF8lconyP93SOoeZRkpAzD8fKtmwN
-         GyZ52w3D8vQQhcN0UUHGGogGIQCSCsYLLhHmeUAbg5p0Zi1Qe3hj+pxbxKIkp0WTEgti
-         wG6PFqRUclRWAZQOQOFkcEm4BxOBBPj7tMZV63K1ptJfpRV6x2VWltJmPpPVgH7cPiRR
-         x4UFbSTU64A9kFo4Be1Caj3s2qyIctoiCWCsBNZBuemmG2DOnqTlMNeLNYbRviohmz31
-         SUrXmmqVSlasXdBJbXfR+6bKA2L/2Fe2/3siHfd886mRj4AtRBGDMaayfe+49fq18sBZ
-         rarA==
+        bh=MaLAtkjRxzJam7Y2UUkQL0f+cfe4YM8Rlep2oOYDR4k=;
+        b=kAbhpKkW6Qgf8n1gsp1qpisZqrAfOgVqPywaJl9q0N7aQAo5i9LsHbxPp49sb2xW9A
+         3UCjfTTxyQH8SLjFsjhp3xFTTml+jboMB1DqnvKg1zVl0HouT6gjFlC67xr5nYu1SaAw
+         4d4lnUUHzNlYu4K0FkHR3WbjYIS9FAOCdZgsmIIclVEPxOtHXaJIphzy6XdFu2f1h0cp
+         ilFXA8PK2zAUfhEGMkiouWb9K7PaU8ZbBf1h3DeM1hB0FWS4EBEAMvarMJsWWHESP6k+
+         yT3FIhr53D1jIio5A0NQ4eg4suK2ojST4Xw0YGA2DUUTij0M9ku6ffuhTAShAqvW3CGU
+         SYSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=FhP33f76rG+2Qj5CzOw/Y5VWMBQgpWuzrnyIzrFTRug=;
-        b=N5e2mMfmk39EN8lsa8ST+Xk3FzPsEq6YMwnE3zGn4V50N4fBbA6OIba/7c2L05rJbd
-         0cOvc9w02Q1JNWr6DeyJokBZn3RP8iiJHtwNCV+c2avOCCfVv6ggKL8816rJGoJRbyOF
-         f5Ota6qPMzBZqaJAYjG3jXhhKGI/dZXEf1rdBGqz2sHryb7zR1pWc7qzIfjJEzJULlNv
-         q+ginwUGVxJ4E8w11XX3ts2WwT8lPKDgRCBiFoCJa1JeP/0BLpqxoOlCV5D/A6Ug9hJ9
-         +9R6+WnoDlH4L1nq2DFlVuU1eT49AzqQ6yAhHEUHYgGfd/M6iiUZmIk8bXYIg6McBFXQ
-         W2ng==
-X-Gm-Message-State: APjAAAVn14kXxotLt7h1PpPDT9tT1oo30bjJWSqx/A8zAg74S6mMAvw2
-        ZwX7WPegKX52oschm0QuMfp+Vg==
-X-Google-Smtp-Source: APXvYqxhujNKLgxfrSjYnJS/zwBxDj7zsb/kp7GsJVcV6m1WCw9TcjWQNQ1Ew3Vn+k2gChJtTAvicA==
-X-Received: by 2002:adf:cd04:: with SMTP id w4mr32416868wrm.219.1582054397663;
-        Tue, 18 Feb 2020 11:33:17 -0800 (PST)
+        bh=MaLAtkjRxzJam7Y2UUkQL0f+cfe4YM8Rlep2oOYDR4k=;
+        b=oAZzbUKImgzc2FH4C+nCzh09keH0FJnwpFioHKB5vP4q9NQpNniGe2dIggcK9orrRi
+         NyRcnQlueLkeSx5HwzvOnVCF0rUszdIMLQlfNgpSPK4j7DzMBlWM99mqMWpmgWEMkAee
+         BgWWnde2WaL14lpxpLkMA/jptiXvqRjrHkwzw1kSaAgL5A/C4n+9T3W9JROKJK0uL003
+         0s/vc3OpEMvawjpJaeltctLx/eSlFGgBbXM6oSAhM3tcgeAM7jYECFQvKJBPvWfY3YTU
+         DMf1ggxhJfKHlzGJaYfSBWQUCvRZt/Am9lYP9OGdz1Y2757v05u44W9TQfxnedirzyLB
+         MUYw==
+X-Gm-Message-State: APjAAAWugP7A23sFcF6D5BKmorYerFXuvk85SPUvtUzfOyRYfJlqtfwS
+        FZzDAwTR+6l6ywqJRPGoxA3pDg==
+X-Google-Smtp-Source: APXvYqxcx1r+IcoGtXHd2hQV1AZzw6FglIgIvVP3Ij/NByDoGTZj5rYGpAki6fUvsL6Az9tGsFk0eA==
+X-Received: by 2002:a1c:a5c7:: with SMTP id o190mr4836846wme.183.1582054398819;
+        Tue, 18 Feb 2020 11:33:18 -0800 (PST)
 Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id k16sm7649266wru.0.2020.02.18.11.33.16
+        by smtp.googlemail.com with ESMTPSA id k16sm7649266wru.0.2020.02.18.11.33.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 18 Feb 2020 11:33:17 -0800 (PST)
+        Tue, 18 Feb 2020 11:33:18 -0800 (PST)
 From:   Corentin Labbe <clabbe@baylibre.com>
 To:     alexandre.belloni@bootlin.com, b-liu@ti.com, balbi@kernel.org,
         gregkh@linuxfoundation.org, ludovic.desroches@microchip.com,
@@ -51,9 +51,9 @@ To:     alexandre.belloni@bootlin.com, b-liu@ti.com, balbi@kernel.org,
         slemieux.tyco@gmail.com, stern@rowland.harvard.edu, vz@mleia.com
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-usb@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH 03/20] usb: gadget: udc: amd5536udc_pci: remove useless cast for driver.name
-Date:   Tue, 18 Feb 2020 19:32:46 +0000
-Message-Id: <1582054383-35760-4-git-send-email-clabbe@baylibre.com>
+Subject: [PATCH 04/20] usb: gadget: at91_udc: remove useless cast for driver.name
+Date:   Tue, 18 Feb 2020 19:32:47 +0000
+Message-Id: <1582054383-35760-5-git-send-email-clabbe@baylibre.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1582054383-35760-1-git-send-email-clabbe@baylibre.com>
 References: <1582054383-35760-1-git-send-email-clabbe@baylibre.com>
@@ -62,27 +62,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pci_driver name is const char pointer, so it not useful to cast
-name (which is already const char).
+device_driver name is const char pointer, so it not useful to cast
+driver_name (which is already const char).
 
 Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
 ---
- drivers/usb/gadget/udc/amd5536udc_pci.c | 2 +-
+ drivers/usb/gadget/udc/at91_udc.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/udc/amd5536udc_pci.c b/drivers/usb/gadget/udc/amd5536udc_pci.c
-index bfd1c9e80a1f..80685e4306f3 100644
---- a/drivers/usb/gadget/udc/amd5536udc_pci.c
-+++ b/drivers/usb/gadget/udc/amd5536udc_pci.c
-@@ -202,7 +202,7 @@ MODULE_DEVICE_TABLE(pci, pci_id);
- 
- /* PCI functions */
- static struct pci_driver udc_pci_driver = {
--	.name =		(char *) name,
-+	.name =		name,
- 	.id_table =	pci_id,
- 	.probe =	udc_pci_probe,
- 	.remove =	udc_pci_remove,
+diff --git a/drivers/usb/gadget/udc/at91_udc.c b/drivers/usb/gadget/udc/at91_udc.c
+index 1b2b548c59a0..eede5cedacb4 100644
+--- a/drivers/usb/gadget/udc/at91_udc.c
++++ b/drivers/usb/gadget/udc/at91_udc.c
+@@ -2021,7 +2021,7 @@ static struct platform_driver at91_udc_driver = {
+ 	.suspend	= at91udc_suspend,
+ 	.resume		= at91udc_resume,
+ 	.driver		= {
+-		.name	= (char *) driver_name,
++		.name	= driver_name,
+ 		.of_match_table	= at91_udc_dt_ids,
+ 	},
+ };
 -- 
 2.24.1
 
