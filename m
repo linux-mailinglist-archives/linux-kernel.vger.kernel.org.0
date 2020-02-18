@@ -2,79 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 401BA16263E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 13:38:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BE9E162644
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 13:40:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726599AbgBRMh7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 07:37:59 -0500
-Received: from foss.arm.com ([217.140.110.172]:51322 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726363AbgBRMh7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 07:37:59 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6DB051FB;
-        Tue, 18 Feb 2020 04:37:58 -0800 (PST)
-Received: from [192.168.0.7] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A1A6B3F6CF;
-        Tue, 18 Feb 2020 04:37:56 -0800 (PST)
-Subject: Re: [PATCH v2 2/5] sched/numa: Replace runnable_load_avg by load_avg
-To:     Vincent Guittot <vincent.guittot@linaro.org>, mingo@redhat.com,
-        peterz@infradead.org, juri.lelli@redhat.com, rostedt@goodmis.org,
-        bsegall@google.com, mgorman@suse.de, linux-kernel@vger.kernel.org
-Cc:     pauld@redhat.com, parth@linux.ibm.com, valentin.schneider@arm.com,
-        hdanton@sina.com
-References: <20200214152729.6059-1-vincent.guittot@linaro.org>
- <20200214152729.6059-3-vincent.guittot@linaro.org>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <ecbf5317-e6cf-fc20-9871-4ea06a987952@arm.com>
-Date:   Tue, 18 Feb 2020 13:37:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200214152729.6059-3-vincent.guittot@linaro.org>
+        id S1726634AbgBRMkJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 07:40:09 -0500
+Received: from mail-qk1-f176.google.com ([209.85.222.176]:43859 "EHLO
+        mail-qk1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726363AbgBRMkJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 07:40:09 -0500
+Received: by mail-qk1-f176.google.com with SMTP id p7so19290537qkh.10
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 04:40:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=LWli3K53CEX1HNi+Tv/g1jNkXhayZEjclQo7y9gNLIg=;
+        b=GB/rqqA7hJJg58RQqIcDEtDMUPNqc/+XnLUPmx/2fCLTZN+/K/5yEloHg1bvKV9zlC
+         AA/KMkY98nxFljPtm17Vm0ox83jDH5DsVGWLqwHhwrVbmI9/KQST8UGrV0H7CQQSvPzi
+         7tzCdVtXXWD7ONqp6UnggxilWwkOnD++koYl+FbVKiIM+aeH3Jz8GZNzDFOzBopfQQjR
+         Y6UpifbOccA1y2UyL1AmVasK4x3ljvvSdCyux4ACz7XKr1W7xlC49rEpOFEKbwrRvkyX
+         DMDRmLEOb4xW6cPwTKzM1Q8sUsyAOdhjk3xDaaFRCoHn2NLSLMwa9GRDQCosW3n+2tHH
+         Ym1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=LWli3K53CEX1HNi+Tv/g1jNkXhayZEjclQo7y9gNLIg=;
+        b=bZ72aR9UVvEOm1KxcTbIr0GpiCjs+ssefMuTW1P++k9WNrDFRTewOPw1bfard2oH41
+         eT99kEnfFpv1Lsz1QkyjyNqCNF8sX4F0+rx8Nf/cepsInFCzuSNLRhfBpVvO7mNLMlTZ
+         K9d/5A1BkvDkLJ51yM6IYa1BzSFRifvPJ4FshgRSWO/o6gWzyu0gWbQLOkrSzln5TnuD
+         zWnHIt1L6KMZ9S25zqJ1xa5uKFtU1JPEKz1Ou2wVFA2dq+5RVt7wyE85/4yLAKgGlYtP
+         TCDJI5g4wtWOKlMShGTfcuHPtJsrgaRngkae9U+faCf4Ix2yKbEEVoSklLvl6nm7czVl
+         ceGA==
+X-Gm-Message-State: APjAAAVEtgI3muzfF4q4Trm8g+bbMX4pxWIIFF710osCIvWJ17+qyMr3
+        x9o+/WfgiQGPQlGED68xj3FHiWfTcl/3lA==
+X-Google-Smtp-Source: APXvYqyd3eazdTC7HD2pIOmHzLCRMhVj8/vlWUZ0zIP2gj/268N8Yf0idWhkqlXqQcmCRcrvbt+AHA==
+X-Received: by 2002:a05:620a:4cc:: with SMTP id 12mr18079991qks.153.1582029608059;
+        Tue, 18 Feb 2020 04:40:08 -0800 (PST)
+Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id p18sm1846908qkp.47.2020.02.18.04.40.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Feb 2020 04:40:07 -0800 (PST)
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+From:   Qian Cai <cai@lca.pw>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH -next] fork: annotate a data race in vm_area_dup()
+Date:   Tue, 18 Feb 2020 07:40:06 -0500
+Message-Id: <93E6B243-9A0F-410C-8EE4-9D57E28AF5AF@lca.pw>
+References: <20200218103002.6rtjreyqjepo3yxe@box>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, elver@google.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        peterz@infradead.org,
+        syzbot+c034966b0b02f94f7f34@syzkaller.appspotmail.com,
+        syzkaller-bugs@googlegroups.com
+In-Reply-To: <20200218103002.6rtjreyqjepo3yxe@box>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+X-Mailer: iPhone Mail (17D50)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/02/2020 16:27, Vincent Guittot wrote:
-
-[...]
-
->  	/*
->  	 * The load is corrected for the CPU capacity available on each node.
->  	 *
-> @@ -1788,10 +1831,10 @@ static int task_numa_migrate(struct task_struct *p)
->  	dist = env.dist = node_distance(env.src_nid, env.dst_nid);
->  	taskweight = task_weight(p, env.src_nid, dist);
->  	groupweight = group_weight(p, env.src_nid, dist);
-> -	update_numa_stats(&env.src_stats, env.src_nid);
-> +	update_numa_stats(&env, &env.src_stats, env.src_nid);
-
-This looks strange. Can you do:
-
--static void update_numa_stats(struct task_numa_env *env,
-+static void update_numa_stats(unsigned int imbalance_pct,
-                              struct numa_stats *ns, int nid)
-
--    update_numa_stats(&env, &env.src_stats, env.src_nid);
-+    update_numa_stats(env.imbalance_pct, &env.src_stats, env.src_nid);
-
-[...]
-
-> +static unsigned long cpu_runnable_load(struct rq *rq)
-> +{
-> +	return cfs_rq_runnable_load_avg(&rq->cfs);
-> +}
-> +
-
-Why not remove cpu_runnable_load() in this patch rather moving it?
-
-kernel/sched/fair.c:5492:22: warning: ‘cpu_runnable_load’ defined but
-not used [-Wunused-function]
- static unsigned long cpu_runnable_load(struct rq *rq)
 
 
+> On Feb 18, 2020, at 5:29 AM, Kirill A. Shutemov <kirill@shutemov.name> wro=
+te:
+>=20
+> I think I've got this:
+>=20
+> vm_area_dup() blindly copies all fields of orignal VMA to the new one.
+> This includes coping vm_area_struct::shared.rb which is normally protected=
+
+> by i_mmap_lock. But this is fine because the read value will be
+> overwritten on the following __vma_link_file() under proper protectection.=
+
+
+Right, multiple processes could share the same file-based address space wher=
+e those vma have been linked into address_space::i_mmap via vm_area_struct::=
+shared.rb. Thus, the reader could see its shared.rb linkage pointers got upd=
+ated by other processes.
+
+>=20
+> So the fix is correct, but justificaiton is lacking.
+>=20
+> Also, I would like to more fine-grained annotation: marking with
+> data_race() 200 bytes copy may hide other issues.
+
+That is the harder part where I don=E2=80=99t think we have anything for tha=
+t today. Macro, any suggestions? ASSERT_IGNORE_FIELD()?=
