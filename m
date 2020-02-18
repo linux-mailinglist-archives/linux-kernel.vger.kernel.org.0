@@ -2,215 +2,521 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B563E162529
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 12:01:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E3BE162551
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 12:11:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726583AbgBRLBP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 06:01:15 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:34513 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726539AbgBRLBP (ORCPT
+        id S1726583AbgBRLLf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 06:11:35 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:28603 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726415AbgBRLLe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 06:01:15 -0500
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200218110113epoutp03745076c41398cf90a26998f751a46763~0eiYqITTD2758027580epoutp03F
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 11:01:13 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200218110113epoutp03745076c41398cf90a26998f751a46763~0eiYqITTD2758027580epoutp03F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1582023673;
-        bh=C6dCAQnEDcW0676qRiZ4sb3/DZNCer6oaAzZ+fq/Yl4=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=VQibAqz3BG3SewqHl0+LS1zbta0z51UWEX2PbPnxnXresm21Zy7fi1jWeJG3joxVL
-         Xn3K9zX08A8JxRNuEmjTOORqVuQPuuFDoVCaomamMOmMTUHwCT7xvg3XS0Ry3fG8jF
-         MGK61mW/W20leAdkolRvwnPip7rtVCZ8IvOH9jRQ=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200218110113epcas1p2cb62f189c469662795272e8f12734d96~0eiYQVgWP1700017000epcas1p2K;
-        Tue, 18 Feb 2020 11:01:13 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.157]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 48MHw65YXMzMqYlx; Tue, 18 Feb
-        2020 11:01:10 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F0.AD.51241.6F3CB4E5; Tue, 18 Feb 2020 20:01:10 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20200218110110epcas1p49fcb41cb04e4b6b4011c0cf15ecca02b~0eiVvJ6Cw0803508035epcas1p4Q;
-        Tue, 18 Feb 2020 11:01:10 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200218110110epsmtrp17e0e89a0c4502abd70980dbe3e6ccae0~0eiVt0DB72068620686epsmtrp12;
-        Tue, 18 Feb 2020 11:01:10 +0000 (GMT)
-X-AuditID: b6c32a39-163ff7000001c829-06-5e4bc3f62bd0
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        FA.0E.10238.6F3CB4E5; Tue, 18 Feb 2020 20:01:10 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200218110110epsmtip2b7a6d99c68f7bd020cfa35d60df4b84a~0eiVigtl42361823618epsmtip2e;
-        Tue, 18 Feb 2020 11:01:10 +0000 (GMT)
-Subject: Re: [PATCH v3] extcon: palmas: hide error messages if gpio returns
- -EPROBE_DEFER
-To:     Ladislav Michl <ladis@linux-mips.org>
-Cc:     "H. Nikolaus Schaller" <hns@goldelico.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
-        kernel@pyra-handheld.com, linux-omap@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <34f3cd11-321b-9aab-31a7-a3fb03691980@samsung.com>
-Date:   Tue, 18 Feb 2020 20:09:16 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        Tue, 18 Feb 2020 06:11:34 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1582024294; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=+ZhXrCGiroKxS0y2NbAXy2Q56OPm0h5198cey44uu/g=;
+ b=kGXHZtoJdxdMbpLqBURM6kCGA+2x/52tOYho6HgWziW3OyAAHb9pclO3pV0fbwFtTB9V8aSi
+ e090KVRzWANzr1cFeNDio6ftM+DV2qFPPjacghF0vl/UNOtN0htoiUpgHo3I8wt52zN4wEXJ
+ blkvJm37jo/wYzMo6v+ZJpvBOfA=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e4bc665.7fb70e70d570-smtp-out-n03;
+ Tue, 18 Feb 2020 11:11:33 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id D7BFDC4479C; Tue, 18 Feb 2020 11:11:32 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: ppvk)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1BD43C43383;
+        Tue, 18 Feb 2020 11:11:31 +0000 (UTC)
 MIME-Version: 1.0
-In-Reply-To: <20200218104810.GA194120@lenoch>
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHeXfm8Vgt35bLpxGlJ4q0dDvq6lgZRREj+yBFQQXayZ2muBs7
-        U7p9yJqVZlrahaZlZUbaPeYqYwleitldEaI0k0yyi6ZpWQq17Rj57ff+n//D8/7f96EI+WVS
-        SaWbbLzVxBlocoLUVR8RHfWjPjFZXVC+gB12DUnY5qE9bEllsYStHm0m2ZaaUpItuVgoZd9k
-        XyaXB2qv9jUR2sbKaxKtvagmUDto309oC5xVSPv99swkcnPG0jSe0/HWMN6Uatalm/QJdOL6
-        lJUpmoVqJoqJZxfRYSbOyCfQq9YmRa1ON3ivQodlcYZMr5TECQKtWrbUas608WFpZsGWQPMW
-        ncESb4kWOKOQadJHp5qNixm1OkbjNW7NSMvt/S219Ct3uOv1e9FjRR4KogDHwZ/+HiIPTaDk
-        +C6C1sNPCV9BjgcQ7P+8TSz8QHDrREvAv47zg0MBYsGNoL21jRQPfQiaijqkPtdUvAWGi16i
-        PERRITgC2kZVPg+BnyNovHYy0OchcSTUfnxF+jgYh0Pr8HvkYxleBtlVdr8uxXPAvS/Hzwq8
-        ETwu+5hnCnhOd/lnBeEo8HQ/8HsIHAqvu8okIs+CO19L/dkA/ySh8skbUoywCjoarhIiT4VP
-        j5yBIiuhp/DAGO+GSk8DKTYfQuCsfTGWPxZqK4olvmSEN9mNGpUoh8O9kTNIHDwZeofyA3wW
-        wDI4dEAuWmZDy7t2icjTofxgLnkU0Y5xcRzjIjjGRXD8H3YOSavQNN4iGPW8wFg04z/7NvJv
-        aWT8XfTw2do6hClET5IlFaxJlgdwWcJOYx0CiqBDZImhXkmm43bu4q3mFGumgRfqkMb72scI
-        pSLV7N15ky2F0cTExsayccxCDcPQobLOTRHJcqznbHwGz1t4678+CRWk3Iu2H3M7i3cPfAse
-        af4QnmBShE9aUnEq6G3itomuC64jivlWs9J+vXrLpeCcRakjqkLV9/wNBQNXss5mV+VWd39x
-        nqwYbfu1QvjFf+6xxZd9fZVfPtq5fPi+e96Gm5zuiGVw7rqXx/uZDMkt+yZpb7Gnr2vGXPVq
-        x6minIFe6sZNpm0HLRXSOCaSsArcX32U5T+7AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMIsWRmVeSWpSXmKPExsWy7bCSvO63w95xBj0P+C1+bPvKZHHpa43F
-        7JWTmSy2/rnEZnF51xw2i9lL+lksbjeuYHNg91jz/hSzx9GVa5k8WibtYvf40tLM7NG3ZRWj
-        x+dNcgFsUVw2Kak5mWWpRfp2CVwZne9+sRR8lKrYezi9gfG0aBcjJ4eEgInEwi9fWbsYuTiE
-        BHYzSpxfuYYNIiEpMe3iUeYuRg4gW1ji8OFiiJq3jBILLlxnBqkRFoiW+DHpIiNIjYiApsSd
-        P/ogNcwC5xklDtx4zwjRcJtJ4vqhN2ANbAJaEvtf3ABbwC+gKHH1x2NGEJtXwE6icVULWJxF
-        QFVib1MrmC0qECaxc8ljJogaQYmTM5+wgNicAroSJ5/tA6thFlCX+DPvEjOELS5x68l8Jghb
-        XmL72znMExiFZyFpn4WkZRaSlllIWhYwsqxilEwtKM5Nzy02LDDMSy3XK07MLS7NS9dLzs/d
-        xAiOKi3NHYyXl8QfYhTgYFTi4V0xwStOiDWxrLgy9xCjBAezkgivtzhQiDclsbIqtSg/vqg0
-        J7X4EKM0B4uSOO/TvGORQgLpiSWp2ampBalFMFkmDk6pBkaj+Jl1zS22dgZdr+dMm7rQnWGx
-        7Ze1s57tu/SR4cG584Jv1118nltz4G9tnxrXM1aGv+4xswoPqJqaJ+ebz/xRNK3n1eWu5D39
-        S90ebTr72eTSfW9mERkT9i0y7soF7q83czHEsD65dEXwyLfDr/lv31rt8dPS6fHkjTU1Lbt/
-        miyYJnVvuc5OJZbijERDLeai4kQAGyslV6YCAAA=
-X-CMS-MailID: 20200218110110epcas1p49fcb41cb04e4b6b4011c0cf15ecca02b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200217133832epcas1p329af393e88fa76189ca141d2534f9ad2
-References: <CGME20200217133832epcas1p329af393e88fa76189ca141d2534f9ad2@epcas1p3.samsung.com>
-        <d5c2826a5f00fcaee62f00662ae2a44dc4a5395d.1581946695.git.hns@goldelico.com>
-        <b2655a58-6541-a2c9-c44d-536e5cef1ee3@samsung.com>
-        <20200218102140.GA193069@lenoch>
-        <cbee6f0b-f268-2e77-f7b7-f19114fdf178@samsung.com>
-        <20200218104810.GA194120@lenoch>
+Date:   Tue, 18 Feb 2020 16:41:31 +0530
+From:   ppvk@codeaurora.org
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     adrian.hunter@intel.com, robh+dt@kernel.org,
+        ulf.hansson@linaro.org, asutoshd@codeaurora.org,
+        stummala@codeaurora.org, sayalil@codeaurora.org,
+        rampraka@codeaurora.org, vbadigan@codeaurora.org, sboyd@kernel.org,
+        georgi.djakov@linaro.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, agross@kernel.org,
+        linux-mmc-owner@vger.kernel.org, mka@chromium.org,
+        Subhash Jadavani <subhashj@codeaurora.org>
+Subject: Re: [RFC v3 1/2] mmc: sdhci-msm: Add interconnect bus bandwidth
+ scaling support
+In-Reply-To: <20200208233910.GB955802@ripper>
+References: <1581086695-16645-1-git-send-email-ppvk@codeaurora.org>
+ <1581086695-16645-2-git-send-email-ppvk@codeaurora.org>
+ <20200208233910.GB955802@ripper>
+Message-ID: <48e0f11b7b8e278eba1004c1001706ae@codeaurora.org>
+X-Sender: ppvk@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/18/20 7:48 PM, Ladislav Michl wrote:
-> On Tue, Feb 18, 2020 at 07:35:47PM +0900, Chanwoo Choi wrote:
->> On 2/18/20 7:21 PM, Ladislav Michl wrote:
->>> On Tue, Feb 18, 2020 at 12:28:25PM +0900, Chanwoo Choi wrote:
->>>> On 2/17/20 10:38 PM, H. Nikolaus Schaller wrote:
->>>>> If the gpios are probed after this driver (e.g. if they
->>>>> come from an i2c expander) there is no need to print an
->>>>> error message.
->>>>>
->>>>> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
->>>>> ---
->>>>>  drivers/extcon/extcon-palmas.c | 8 ++++++--
->>>>>  1 file changed, 6 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/drivers/extcon/extcon-palmas.c b/drivers/extcon/extcon-palmas.c
->>>>> index edc5016f46f1..cea58d0cb457 100644
->>>>> --- a/drivers/extcon/extcon-palmas.c
->>>>> +++ b/drivers/extcon/extcon-palmas.c
->>>>> @@ -205,14 +205,18 @@ static int palmas_usb_probe(struct platform_device *pdev)
->>>>>  
->>>>>  	palmas_usb->id_gpiod = devm_gpiod_get_optional(&pdev->dev, "id",
->>>>>  							GPIOD_IN);
->>>>> -	if (IS_ERR(palmas_usb->id_gpiod)) {
->>>>> +	if (PTR_ERR(palmas_usb->id_gpiod) == -EPROBE_DEFER) {
->>>>> +		return -EPROBE_DEFER;
-> 
-> Here we returned...
+Hi Bjorn,
 
-hmm. you better to suggest the result of cocci script
-to understand why it is matter.
+Thanks for the review !
 
+On 2020-02-09 05:09, Bjorn Andersson wrote:
+> On Fri 07 Feb 06:44 PST 2020, Pradeep P V K wrote:
 > 
->>>>> +	} else if (IS_ERR(palmas_usb->id_gpiod)) {
+>> Add interconnect bandwidths for SDHC driver using OPP framework that
+>> is required by SDHC driver based on the clock frequency and bus width
+>> of the card. Otherwise, the system clocks may run at minimum clock
+>> speed and thus affecting the performance.
+>> 
+>> This change is based on Georgi Djakov [RFC]
+>> (https://lkml.org/lkml/2018/10/11/499) and
+>> 
+>> Saravana Kannan [PATCH v6]
+>> (https://lkml.org/lkml/2019/12/6/740)
 > 
-> How could this else get triggered?
+> Write out the subject of these two patches, rather than stating that
+> it's based on one RFC and some PATCH version 6. Or just state that it's
+> based on work by Georgi and Saravana.
+> 
+Sure. i will update this in my next patch set.
 
-I don't understand your intention. 
-If devm_gpiod_get_optional return the error except of -EPROBE_DEFER,
-it is triggered. Is it wrong?
+>> 
+>> change from RFC v2 -> v3 changes:
+>> - Modified interconnect bandwidth support using OPP framework.
+>> - Addressed review comments on v2.
+> 
+> Move the changelog below the --- line
+> 
+ok.
 
+>> 
+>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+>> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+>> Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+>> Co-developed-by: Pradeep P V K <ppvk@codeaurora.org>
+>> Signed-off-by: Pradeep P V K <ppvk@codeaurora.org>
 > 
->>>>>  		dev_err(&pdev->dev, "failed to get id gpio\n");
->>>>>  		return PTR_ERR(palmas_usb->id_gpiod);
->>>>>  	}
->>>>>  
->>>>>  	palmas_usb->vbus_gpiod = devm_gpiod_get_optional(&pdev->dev, "vbus",
->>>>>  							GPIOD_IN);
->>>>> -	if (IS_ERR(palmas_usb->vbus_gpiod)) {
->>>>> +	if (PTR_ERR(palmas_usb->vbus_gpiod) == -EPROBE_DEFER) {
->>>>> +		return -EPROBE_DEFER;
->>>>> +	} else if (IS_ERR(palmas_usb->vbus_gpiod)) {
->>>>>  		dev_err(&pdev->dev, "failed to get vbus gpio\n");
->>>>>  		return PTR_ERR(palmas_usb->vbus_gpiod);
->>>>>  	}
->>>>>
->>>>
->>>> I think that it is enough to handle the -EPROBE_DEFER.
->>>> Also, I prefer to use single if/else statement 
->>>> instead of the nested if/else statement.
->>>>
->>>> Applied it.
->>>
->>> Uh... As it is? Then it is matter of time it triggers someones cocci
->>> script pointing to else after return. Could you at least fix this?
->>
->> Sorry. I don't understand. Do you mean that this patch has the
->> some issue of cocci script?
+> You should read these as the history of how this patch reached LKML and
+> can use Co-developed-by to indicate that several people was part of a
+> single step.
 > 
-> Yes.
+> So if you're both co-author and the one sending it to LKML then you
+> should have 4 Co-developed-by tags here.
+> 
+sure, i will follow this from my patch series.
 
-As I said, you better to suggest the result of cocci script.
+>> ---
+>>  drivers/mmc/host/sdhci-msm.c | 251 
+>> ++++++++++++++++++++++++++++++++++++++++++-
+>>  1 file changed, 247 insertions(+), 4 deletions(-)
+>> 
+>> diff --git a/drivers/mmc/host/sdhci-msm.c 
+>> b/drivers/mmc/host/sdhci-msm.c
+>> index 71f29ba..f061cd8 100644
+>> --- a/drivers/mmc/host/sdhci-msm.c
+>> +++ b/drivers/mmc/host/sdhci-msm.c
+>> @@ -11,8 +11,10 @@
+>>  #include <linux/mmc/mmc.h>
+>>  #include <linux/pm_runtime.h>
+>>  #include <linux/slab.h>
+>> +#include <linux/interconnect.h>
+>>  #include <linux/iopoll.h>
+>>  #include <linux/regulator/consumer.h>
+>> +#include <linux/pm_opp.h>
+>> 
+>>  #include "sdhci-pltfm.h"
+>> 
+>> @@ -229,6 +231,14 @@ struct sdhci_msm_variant_info {
+>>  	const struct sdhci_msm_offset *offset;
+>>  };
+>> 
+>> +struct sdhci_msm_bus_vote_data {
+>> +
+> 
+> Move the { to the empty line.
+> 
+ok.
+>> +	struct icc_path *sdhc_to_ddr;
+>> +	struct icc_path *cpu_to_sdhc;
+>> +	bool skip_bus_bw_voting;
+>> +	u32 curr_freq;
+>> +};
+>> +
+>>  struct sdhci_msm_host {
+>>  	struct platform_device *pdev;
+>>  	void __iomem *core_mem;	/* MSM SDCC mapped address */
+>> @@ -255,8 +265,11 @@ struct sdhci_msm_host {
+>>  	bool use_cdr;
+>>  	u32 transfer_mode;
+>>  	bool updated_ddr_cfg;
+>> +	struct sdhci_msm_bus_vote_data *bus_vote_data;
+>>  };
+>> 
+>> +static void sdhci_msm_bus_voting(struct sdhci_host *host, u32 
+>> enable);
+>> +
+>>  static const struct sdhci_msm_offset *sdhci_priv_msm_offset(struct 
+>> sdhci_host *host)
+>>  {
+>>  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>> @@ -1564,6 +1577,7 @@ static void sdhci_msm_set_clock(struct 
+>> sdhci_host *host, unsigned int clock)
+>> 
+>>  	msm_set_clock_rate_for_bus_mode(host, clock);
+>>  out:
+>> +	sdhci_msm_bus_voting(host, !!clock);
+>>  	__sdhci_msm_set_clock(host, clock);
+>>  }
+>> 
+>> @@ -1685,6 +1699,219 @@ static void 
+>> sdhci_msm_set_regulator_caps(struct sdhci_msm_host *msm_host)
+>>  	pr_debug("%s: supported caps: 0x%08x\n", mmc_hostname(mmc), caps);
+>>  }
+>> 
+>> +/*
+>> + * Returns required bandwidth in Bytes per Sec
+>> + */
+>> +static unsigned long sdhci_get_bw_required(struct sdhci_host *host,
+>> +					struct mmc_ios *ios)
+>> +{
+>> +	unsigned long bw;
+>> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+>> +
+>> +	bw = msm_host->clk_rate;
+>> +
+>> +	if (ios->bus_width == MMC_BUS_WIDTH_4)
+>> +		bw /= 2;
+>> +	else if (ios->bus_width == MMC_BUS_WIDTH_1)
+>> +		bw /= 8;
+>> +
+>> +	return bw;
+> 
+> 
+> switch (ios->bus_width) {
+> case MMC_BUS_WIDTH_1:
+> 	return msm_host->clk_rate / 8;
+> case MMC_BUS_WIDTH_4:
+> 	return msm_host->clk_rate / 2;
+> case MMC_BUS_WIDTH_8:
+> 	return msm_host->clk_rate;
+> }
+> 
+ok. i will do this in my next patch.
 
+>> +}
+>> +
+>> +/*
+>> + * Helper function to parse the exact OPP node
+>> + * Returns OPP pointer on success else NULL on error
+>> + */
+>> +static struct dev_pm_opp *find_opp_for_freq(struct sdhci_msm_host 
+>> *msm_host,
 > 
->> I think that it fixes the probe sequence issue
->> between extcon-palmas and gpio driver. It is not related to
->> any result from cocci script. If the extcon-palmas.c has
->> the issue by cocci or checkpatch, anyone can send the other patch
->> for fixup.
+> A function with this name doesn't belong in the sdhci-msm driver.
 > 
-> Do you mean to send fixup to what you just applied? What happened
-> to review process? Nikolaus himself told you patch could be better
-> and we were just waiting which solution you choose to send final patch.
+ok. i will update the function name accordingly.
 
-I has not thought that Nikolaus will send next patch
-when I read this thread.
+>> +							unsigned long bw)
+>> +{
+>> +	struct dev_pm_opp *opp;
+>> +	struct sdhci_host *host = mmc_priv(msm_host->mmc);
+>> +	unsigned int freq = bw;
+>> +	struct device *dev = &msm_host->pdev->dev;
+>> +
+>> +
+>> +	if (!freq)
+>> +		opp = dev_pm_opp_find_peak_bw_floor(dev, &freq);
+>> +	else
+>> +		opp = dev_pm_opp_find_peak_bw_exact(dev, freq, true);
+>> +
+>> +	/* Max Bandwidth vote */
+>> +	if (PTR_ERR(opp) == -ERANGE && freq > sdhci_msm_get_max_clock(host))
+>> +		opp = dev_pm_opp_find_peak_bw_ceil(dev, &bw);
+>> +
+>> +	if (IS_ERR(opp)) {
+>> +		dev_err(dev, "Failed to find OPP for freq:%u err:%ld\n",
+>> +				freq, PTR_ERR(opp));
+>> +		return NULL;
+>> +	}
+>> +	return opp;
+>> +}
+>> +
+>> +/*
+>> + * This function sets the interconnect bus bandwidth
+>> + * vote based on bw (bandwidth) argument.
+>> + */
+>> +#define BUS_INTERCONNECT_PATHS 2 /* 1. sdhc -> ddr 2. cpu -> sdhc */
+>> +static void sdhci_msm_bus_set_vote(struct sdhci_host *host,
+>> +						unsigned int bw)
+>> +{
+>> +	int i;
+>> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+>> +	struct sdhci_msm_bus_vote_data *vote_data = msm_host->bus_vote_data;
+>> +	struct dev_pm_opp *opp;
+>> +	unsigned long freq = bw;
+>> +	unsigned long ib[BUS_INTERCONNECT_PATHS], 
+>> ab[BUS_INTERCONNECT_PATHS];
+>> +	int ddr_rc = 0, cpu_rc = 0;
+>> +
+>> +	if (!msm_host->bus_vote_data->sdhc_to_ddr ||
+>> +			!msm_host->bus_vote_data->cpu_to_sdhc)
+> 
+> Why not include this check in the calling code, which already checks 
+> for
+> skip_bus_bw_voting?
+> 
+This is actually redundant. This is not required here again. 
+skip_bus_bw_voting will set when
+the handlers are NULL. so i will remove this in my next patch set.
 
+>> +		return;
+>> +
+>> +	if (bw != vote_data->curr_freq) {
 > 
->> I think that it is enough to fix the issue which is only
->> related to the probe sequence between gpio and extcon-palmas.c
+> if (bw == vote_data->curr_freq)
+> 	return;
 > 
-> Agree, but look again at the patch.
+> Will save you an indentation level in the rest of the function.
 > 
-> 	ladis
+sure. i will make the change accordingly.
+
+>> +		for (i = 0; i < BUS_INTERCONNECT_PATHS; i++) {
+>> +			opp = find_opp_for_freq(msm_host, freq);
+>> +			if (opp) {
+>> +				ab[i] =	dev_pm_opp_get_bw(opp, &ib[i]);
+>> +				freq += 1; /* Next Band width vote */
 > 
+> Why do you request bw for sdhc-ddr and then bw+1 for cpu-sdhc?
 > 
+for sdhci-msm, the OPP's for path sdhc-ddr and cpu-sdhc are same, to 
+avoid
+OPP errors and warnings, i just added +1 for cpu-sdhc to differentiate 
+between
+sdhc-ddr and cpu-sdhc OPPS. This needs to be taken care while adding 
+opp's in dt
+for cpu-sdhc path.
 
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+>> +				dev_pm_opp_put(opp);
+>> +			}
+>> +		}
+>> +		pr_debug("%s: freq:%d sdhc_to_ddr ab:%lu ib:%lu cpu_to_sdhc ab:%lu 
+>> ib:%lu\n",
+>> +				mmc_hostname(host->mmc), bw, ab[0], ib[0],
+>> +				ab[1], ib[1]);
+> 
+> You probably have compiler warnings here as not all code paths will get
+> here with ib and ab initialized.
+> 
+True. i will make the change accordingly.
+
+>> +		ddr_rc = icc_set_bw(vote_data->sdhc_to_ddr, 0, ib[0]);
+>> +		cpu_rc = icc_set_bw(vote_data->cpu_to_sdhc, 0, ib[1]);
+>> +		if (ddr_rc || cpu_rc) {
+>> +			pr_err("%s: icc_set() failed ddr_rc_err:%d cpu_rc_err:%d\n",
+> 
+> dev_err()
+> 
+ok.
+
+>> +				mmc_hostname(host->mmc), ddr_rc, cpu_rc);
+>> +			return;
+>> +		}
+>> +		vote_data->curr_freq = bw;
+>> +	}
+>> +}
+>> +
+>> +/*
+>> + * This function registers the device to OPP framework and
+>> + * parses few optional parameters from the device tree node.
+>> + * Returns NULL bvd pointer on error else a valid bvd pointer.
+>> + */
+>> +static struct sdhci_msm_bus_vote_data 
+>> *sdhci_msm_get_bus_vote_data(struct device
+>> +				       *dev, struct sdhci_msm_host *host)
+>> +
+>> +{
+>> +	struct platform_device *pdev = to_platform_device(dev);
+> 
+> Just pass the platform_device instead of passing &pdev->dev and then
+> container_of() it directly.
+> 
+This function is not required here. i will move the necessary code to 
+the caller fn().
+to look the code more simpler. i will make the changes accordingly in my 
+next patch series.
+
+>> +	struct sdhci_msm_bus_vote_data *vote_data = NULL;
+>> +	int ret = 0;
+> 
+> No need to initialize either vote_data or ret, given that they are both
+> written before read below.
+> 
+same as above.
+
+>> +
+>> +	if (!pdev) {
+> 
+> How could this happen?
+> 
+same as above.
+>> +		dev_err(dev, "Null platform device!\n");
+>> +		return NULL;
+>> +	}
+>> +	vote_data = devm_kzalloc(dev, sizeof(*vote_data), GFP_KERNEL);
+>> +	if (!vote_data)
+>> +		return vote_data;
+>> +
+>> +	ret = dev_pm_opp_of_add_table(dev);
+>> +	if (ret) {
+>> +		if (ret == -ENODEV || ret == -ENODATA) {
+>> +			dev_dbg(dev, "OPP not found. Skip bus voting!!:%d\n",
+>> +					ret);
+>> +			vote_data->skip_bus_bw_voting = true;
+>> +		} else {
+>> +			dev_dbg(dev, "OPP regestration failed:%d\n", ret);
+>> +			goto err;
+>> +		}
+>> +	}
+>> +
+>> +	return vote_data;
+>> +err:
+>> +	devm_kfree(dev, vote_data);
+>> +	vote_data = NULL;
+> 
+> This is a local variable, no need to clear it.
+> 
+same as above.
+>> +	return vote_data;
+>> +}
+>> +
+>> +/*
+>> + * Helper function to register for OPP and interconnect
+>> + * frameworks.
+>> + */
+>> +static int sdhci_msm_bus_register(struct sdhci_msm_host *host,
+>> +				struct platform_device *pdev)
+>> +{
+>> +	struct sdhci_msm_bus_vote_data *vote_data;
+>> +	struct device *dev = &pdev->dev;
+>> +	int ret = 0;
+>> +
+>> +	vote_data = sdhci_msm_get_bus_vote_data(dev, host);
+>> +	if (!vote_data) {
+>> +		dev_dbg(&pdev->dev, "Failed to get bus_scale data\n");
+>> +		host->bus_vote_data = NULL;
+>> +		return -EINVAL;
+>> +	}
+>> +	host->bus_vote_data = vote_data;
+>> +
+>> +	vote_data->sdhc_to_ddr = of_icc_get(&pdev->dev, "sdhc-ddr");
+>> +	if (!vote_data->sdhc_to_ddr) {
+>> +		dev_dbg(&pdev->dev, "DT property for path %s missing\n",
+>> +				"sdhc-ddr");
+>> +		return -ENOENT;
+>> +	} else if (IS_ERR(vote_data->sdhc_to_ddr) {
+>> +		dev_dbg(&pdev->dev, "(%ld): failed getting %s path\n",
+>> +				PTR_ERR(vote_data->sdhc_to_ddr), "sdhc-ddr");
+>> +		ret = PTR_ERR(vote_data->sdhc_to_ddr);
+>> +		vote_data->sdhc_to_ddr = NULL;
+>> +		return ret;
+>> +	}
+>> +	vote_data->cpu_to_sdhc = of_icc_get(&pdev->dev, "cpu-sdhc");
+>> +	if (!vote_data->cpu_to_sdhc) {
+> 
+> Afaict there's no reason to hold onto sdhc_to_ddr or vote_data itself 
+> if
+> this happens.
+> 
+> I think things would be cleaner if you make this function return the
+> vote_data for success, NULL if the information was omitted or ERR_PTR()
+> in case invalid data was given.
+> 
+> Assign this in the caller, check for IS_ERR() and in the places where
+> you want to know if you are doing bus voting or not you can just check
+> for host->bus_vote_data - no need to check sdhc_to_ddr, cpu_to_sdhc and
+> skip_bus_bw_voting individually..
+> 
+> 
+> And given that it's an both-or-nothing this function would be cleaner 
+> if
+> you of_icc_get() both paths, then do error handling - and then follow 
+> up
+> with the introduction of devm and bulk operations to the icc API.
+> 
+Agree with your suggestions, will make this change in my next patch set.
+>> +		dev_dbg(&pdev->dev, "DT property for path %s missing\n",
+>> +					"cpu_to_sdhc");
+>> +		return -ENOENT;
+>> +	} else if (IS_ERR(vote_data->cpu_to_sdhc)) {
+>> +		dev_dbg(&pdev->dev, "(%ld): failed getting %s path\n",
+>> +				PTR_ERR(vote_data->cpu_to_sdhc), "cpu-sdhc");
+>> +		ret = PTR_ERR(vote_data->cpu_to_sdhc);
+>> +		vote_data->cpu_to_sdhc = NULL;
+>> +		return ret;
+>> +	}
+>> +	return ret;
+>> +}
+>> +
+>> +static void sdhci_msm_bus_unregister(struct device *dev,
+>> +				struct sdhci_msm_host *host)
+>> +{
+>> +	struct sdhci_msm_bus_vote_data *vote_data = host->bus_vote_data;
+>> +
+>> +	if (vote_data->skip_bus_bw_voting ||
+>> +		!vote_data->sdhc_to_ddr ||
+>> +		!vote_data->cpu_to_sdhc)
+>> +		return;
+>> +
+>> +	icc_put(vote_data->sdhc_to_ddr);
+>> +	icc_put(vote_data->cpu_to_sdhc);
+>> +}
+>> +
+>> +#define MSM_MMC_BUS_VOTING_DELAY        200 /* msecs */
+> 
+> This is unused.
+> 
+ok. i will remove.
+>> +
+>> +static void sdhci_msm_bus_voting(struct sdhci_host *host, u32 enable)
+> 
+> Split this in an enable and a disable
+> 
+Why to split into two functions, most of the code is same and would be 
+simpler
+to use with the same name for both enable and disable.
+>> +{
+>> +	struct mmc_ios *ios = &host->mmc->ios;
+>> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+>> +	unsigned int bw;
+>> +
+>> +	if (msm_host->bus_vote_data->skip_bus_bw_voting)
+>> +		return;
+>> +
+>> +	if (enable) {
+>> +		bw = sdhci_get_bw_required(host, ios);
+>> +		sdhci_msm_bus_set_vote(host, bw);
+>> +	} else
+>> +		sdhci_msm_bus_set_vote(host, 0);
+>> +}
+>> +
+>>  static const struct sdhci_msm_variant_ops mci_var_ops = {
+>>  	.msm_readl_relaxed = sdhci_msm_mci_variant_readl_relaxed,
+>>  	.msm_writel_relaxed = sdhci_msm_mci_variant_writel_relaxed,
+> 
+> Regards,
+> Bjorn
