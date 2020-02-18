@@ -2,130 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BBB3163006
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:30:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3A4616309C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:50:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726616AbgBRTaz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 14:30:55 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:50102 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726283AbgBRTaz (ORCPT
+        id S1726415AbgBRTuR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 14:50:17 -0500
+Received: from tartarus.angband.pl ([54.37.238.230]:45242 "EHLO
+        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbgBRTuR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:30:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=LV+MVA27GmERT76AQSFW7+TDX7eGVtFvNiOU/nZfQ3g=; b=JN0ihHEYLrKtAzPlpc2c+kakEP
-        AXp0XTtoT01qhyRVDWZ89g6HvK4L3jlP/8BV/rC0S8fh7kKrsJrsjge/9s1Tzbk85tLOvdP/dgdKC
-        KtUyXXEhqmdV1Rrf6EvZnq+CRJTgsry5YplZrzyiHGG/bynzIJyBL9/5TNwzqv3HHAF7pfaEcP58h
-        VltY5FDyp/4TIIzqDqlWeLyqpTIAiUI5xIVORPsbppF5tdlrOO+ytDl/tiJn9H+5iFXA0Kmnf3YJK
-        KyyUiHIu8WC5g6+UIV+/C9tnyoGHjBAephjll88bh39KALFwj8Sac3OgF1HtOsV1W7mJJo4YQcNPn
-        jOTObN7A==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j48Zu-0007NA-EW; Tue, 18 Feb 2020 19:30:42 +0000
-Subject: Re: [RFC PATCH] security: <linux/lsm_hooks.h>: fix all kernel-doc
- warnings
-To:     Stephen Smalley <sds@tycho.nsa.gov>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Cc:     John Johansen <john.johansen@canonical.com>,
+        Tue, 18 Feb 2020 14:50:17 -0500
+X-Greylist: delayed 1110 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Feb 2020 14:50:16 EST
+Received: from kilobyte by tartarus.angband.pl with local (Exim 4.92)
+        (envelope-from <kilobyte@angband.pl>)
+        id 1j48am-0007Xq-OO; Tue, 18 Feb 2020 20:31:36 +0100
+Date:   Tue, 18 Feb 2020 20:31:36 +0100
+From:   Adam Borowski <kilobyte@angband.pl>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
         Kees Cook <keescook@chromium.org>,
-        Micah Morton <mortonm@chromium.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-References: <fb2c98bd-b579-6ad0-721a-56a4f81f0d6e@infradead.org>
- <ec4e5117-08b6-d4df-fb08-deb553ebdc73@tycho.nsa.gov>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <f30f4baf-0929-3438-ffaa-4ffc401c52df@infradead.org>
-Date:   Tue, 18 Feb 2020 11:30:40 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        LKML <linux-kernel@vger.kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        "Tobin C . Harding" <me@tobin.cc>
+Subject: Re: [PATCH] vsprintf: don't obfuscate NULL and error pointers
+Message-ID: <20200218193136.GA22499@angband.pl>
+References: <20200217222803.6723-1-idryomov@gmail.com>
+ <202002171546.A291F23F12@keescook>
+ <CAOi1vP-2uAD83Vi=Eebu_GPzq5DUt+z9zogA7BNGF1B1jUgAVw@mail.gmail.com>
+ <CAHk-=whj0vMcdVPC0=9aAsN2-tsCyFKF4beb2gohFeFK_Z-Y9g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <ec4e5117-08b6-d4df-fb08-deb553ebdc73@tycho.nsa.gov>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHk-=whj0vMcdVPC0=9aAsN2-tsCyFKF4beb2gohFeFK_Z-Y9g@mail.gmail.com>
+X-Junkbait: aaron@angband.pl, zzyx@angband.pl
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: kilobyte@angband.pl
+X-SA-Exim-Scanned: No (on tartarus.angband.pl); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/18/20 6:03 AM, Stephen Smalley wrote:
-> On 2/16/20 2:08 AM, Randy Dunlap wrote:
->> From: Randy Dunlap <rdunlap@infradead.org>
->>
->> Fix all kernel-doc warnings in <linux/lsm_hooks.h>.
->> Fixes the following warnings:
->>
->> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'quotactl' not described in 'security_list_options'
->> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'quota_on' not described in 'security_list_options'
->> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'sb_free_mnt_opts' not described in 'security_list_options'
->> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'sb_eat_lsm_opts' not described in 'security_list_options'
->> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'sb_kern_mount' not described in 'security_list_options'
->> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'sb_show_options' not described in 'security_list_options'
->> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'sb_add_mnt_opt' not described in 'security_list_options'
->> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'd_instantiate' not described in 'security_list_options'
->> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'getprocattr' not described in 'security_list_options'
->> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'setprocattr' not described in 'security_list_options'
->> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'locked_down' not described in 'security_list_options'
->> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'perf_event_open' not described in 'security_list_options'
->> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'perf_event_alloc' not described in 'security_list_options'
->> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'perf_event_free' not described in 'security_list_options'
->> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'perf_event_read' not described in 'security_list_options'
->> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'perf_event_write' not described in 'security_list_options'
->>
->> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
->> Cc: John Johansen <john.johansen@canonical.com>
->> Cc: Kees Cook <keescook@chromium.org>
->> Cc: Micah Morton <mortonm@chromium.org>
->> Cc: James Morris <jmorris@namei.org>
->> Cc: "Serge E. Hallyn" <serge@hallyn.com>
->> Cc: linux-security-module@vger.kernel.org
->> Cc: Paul Moore <paul@paul-moore.com>
->> Cc: Stephen Smalley <sds@tycho.nsa.gov>
->> Cc: Eric Paris <eparis@parisplace.org>
->> Cc: Casey Schaufler <casey@schaufler-ca.com>
->> Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
->> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->> ---
->> Notes:
->> a. The location for some of these might need to be modified.
->> b. 'locked_down' was just missing a final ':'.
->> c. Added a new section: Security hooks for perf events.
->>
->>   include/linux/lsm_hooks.h |   36 +++++++++++++++++++++++++++++++++++-
->>   1 file changed, 35 insertions(+), 1 deletion(-)
->>
->> --- lnx-56-rc1.orig/include/linux/lsm_hooks.h
->> +++ lnx-56-rc1/include/linux/lsm_hooks.h
->> @@ -136,6 +140,10 @@
->>    *    @sb superblock being remounted
->>    *    @data contains the filesystem-specific data.
->>    *    Return 0 if permission is granted.
->> + * @sb_kern_mount:
->> + *     Mount this @sb if allowed by permissions.
->> + * @sb_show_options:
->> + *     Show (print on @m) mount options for this @sb.
->>    * @sb_umount:
->>    *    Check permission before the @mnt file system is unmounted.
->>    *    @mnt contains the mounted file system.
+On Tue, Feb 18, 2020 at 10:49:30AM -0800, Linus Torvalds wrote:
+> On Mon, Feb 17, 2020 at 4:07 PM Ilya Dryomov <idryomov@gmail.com> wrote:
+> >
+> > I'm not sure what you mean by efault string.  Are you referring to what
+> > %pe is doing?  If so, no -- I would keep %p and %pe separate.
 > 
-> Thanks for doing this.  Note that some of the existing kernel-doc comments for these hooks include a separate line describing each parameter (not just embedded in the function description) and a line describing the return value.  Is that optional for kernel-doc? Obviously what you have added here is an improvement, just wondering whether it suffices or needs further augmentation.
+> Right.
+> 
+> But bringing up %pe makes me realize that we do odd things for NULL
+> for that. We print errors in a nice legible form, but we show NULL as
+> a zero value, I think.
+> 
+> So maybe %pe should show NULL as "(null)"? Or even as just "0" to go
+> with the error names that just look like the integer error syntax (eg
+> "-EINVAL")
 
-Hi Stephen,
+"(null)" stands for a dereference of a null pointer rather than for printing
+the pointer itself.  This is a convention copied from glibc's printf("%s").
+Either "0" or "NULL" (or "∅" if you allow cp437-subset Unicode ☺ ) wouldn't
+cause such confusion.
 
-The additional kernel-doc comments that you refer to are obviously Good to Have,
-but they are not required.  I didn't feel comfortable or qualified to add
-all of that info, but if anyone wants to help/contribute, please do so.
 
-thanks.
+Meow!
 -- 
-~Randy
-
+⢀⣴⠾⠻⢶⣦⠀ A MAP07 (Dead Simple) raspberry tincture recipe: 0.5l 95% alcohol,
+⣾⠁⢠⠒⠀⣿⡁ 1kg raspberries, 0.4kg sugar; put into a big jar for 1 month.
+⢿⡄⠘⠷⠚⠋⠀ Filter out and throw away the fruits (can dump them into a cake,
+⠈⠳⣄⠀⠀⠀⠀ etc), let the drink age at least 3-6 months.
