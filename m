@@ -2,97 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8B7E1632CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:16:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58FED1632B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:15:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727656AbgBRUQj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 15:16:39 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39536 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727020AbgBRUQX (ORCPT
+        id S1726557AbgBRUPI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 15:15:08 -0500
+Received: from mail-wm1-f49.google.com ([209.85.128.49]:51971 "EHLO
+        mail-wm1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726403AbgBRUPH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 15:16:23 -0500
-Received: by mail-wr1-f68.google.com with SMTP id y11so25516511wrt.6;
-        Tue, 18 Feb 2020 12:16:22 -0800 (PST)
+        Tue, 18 Feb 2020 15:15:07 -0500
+Received: by mail-wm1-f49.google.com with SMTP id t23so4096632wmi.1;
+        Tue, 18 Feb 2020 12:15:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ot6ftoBvywFIPbQBl7QRXXyQKytR59k2PPdj1umDHHE=;
-        b=mwjU0e8lGOQLNEe4L13MCWGOUaA2tOW1fWokTjK2gVzlu0TRM7uiHTiJl96OIGUcFk
-         AkkohWT3v27SOLagAUNF7s7m77CMlknD85iZ5w5FKumFSL12F3indLSVaBBi2n5rfb0q
-         U4c2aJbvRv6uJeIn1wRhu04OmmguXzGHh+/xev4K8CC6cYkqNs6w5sTONC6xdtwNYvgi
-         i7dyFw2XVhRRMtF9pk9zfMJVe0CPlRzZt08bCicHsCvcET8l+BM3nTREQmpIbaNFJ/vq
-         ck3AqHaxugwc2ZK++6VZcVebQUJCbrvrZCE+SUnulF+E/2z16ZB2m+GzIgfSMwGb3zT1
-         FDiA==
+        h=from:date:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=0x0/HJiEHIniNToQWMEKzmP1pNeyrj9mArFmMB3/6oE=;
+        b=cQ/FPSt5OIRzl1p9b3GlWHZLZF3ES6cfsrm+xOf8SoJjHGH4TWiN/h6mdpR+y492h0
+         f/MUwDUSpVtDzXeZwwMOEKO8UrrR0pTIY1CHnL6j20GNRsM2JvOF3371F/OmXNrIptn3
+         CiHlLJUYwuCpSwyJq/jSi499b4/V37S1I5ydkRiLEUWQSbU5Z68aCcD4+9nDTCVxBxKJ
+         UOcTxcejqStBTxt+Lwze3KmqkYGmpOilVJP4OuozkAvgSgCRhplfwQcyf4/oiw1ZxLOu
+         zCBYeE5HNED5Nenn0EL8S6YrJ54SKUjtozg12xrLhgdfaI5kWDiw0tVWH1niZ9jk0SHC
+         Jx/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ot6ftoBvywFIPbQBl7QRXXyQKytR59k2PPdj1umDHHE=;
-        b=sCXd4CtwJagi/4OtPAM5pcqcgSsuhDPkA94ASLQqjnFRg4mGx47k8smHzQx7NkXB1g
-         JJh7tUoa4ZTGOykyME39GYS9Gy77ct1x8/pThzhriusR67NiMnNSoCuf0HqongNO+3m9
-         IVxaTrNfcq2hZ5O6NZ2nBlwbAiOhAuP9KSjXCMvKuwK8eduB1SA56EjCNCW8FrfM0QlU
-         fcOON5EgQzIt4qeQYlyO9+jEaYqG637QKYleWZM/Jj8qpHT4y0MvEDj+cApSqQR5eHHN
-         mISEoKhBRE2lLwO2njQyOomYDvqwamb89IzjFzph5kWOA+r81pVVEXNwMxldDoAER+mK
-         gZZg==
-X-Gm-Message-State: APjAAAVhEwv4yGlaHBFLsfMYtaqcEkgr8WECselnSQeGHGcPFizlelo9
-        i4EwoSkAnwAdGmjHwa5tKNd1P0ml
-X-Google-Smtp-Source: APXvYqxJQGTDEBu/gswzJM8KSbgz12pSk/OeKS6xYG8/W7JgZ1WY4LxyyAhWwNjARpc1m9rf8mztxw==
-X-Received: by 2002:adf:f091:: with SMTP id n17mr29853689wro.387.1582056981873;
-        Tue, 18 Feb 2020 12:16:21 -0800 (PST)
-Received: from ?IPv6:2003:ea:8f29:6000:5cb0:582f:968:ec00? (p200300EA8F2960005CB0582F0968EC00.dip0.t-ipconnect.de. [2003:ea:8f29:6000:5cb0:582f:968:ec00])
-        by smtp.googlemail.com with ESMTPSA id s65sm4859862wmf.48.2020.02.18.12.16.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2020 12:16:21 -0800 (PST)
-Subject: [PATCH net-next v2 13/13] vmxnet3: use new helper
- tcp_v6_gso_csum_prep
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-To:     David Miller <davem@davemloft.net>,
-        Ronak Doshi <doshir@vmware.com>,
-        "VMware, Inc." <pv-drivers@vmware.com>
-Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <fffc8b6d-68ed-7501-18f1-94cf548821fb@gmail.com>
-Message-ID: <b0b506d9-29b2-c1be-9f88-0c9a8c9e63fe@gmail.com>
-Date:   Tue, 18 Feb 2020 21:13:58 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=0x0/HJiEHIniNToQWMEKzmP1pNeyrj9mArFmMB3/6oE=;
+        b=PNauAWQbaxcGp7slQseJDSuC0DZphSTlIERXD5sPI+05NBzQmPRslsBWbtEjCBt1Ao
+         Oa2UzXHOcVcXY8FfymB+j+4e6PUemaQ9I2kNr4NstIayLzpT5gDUzLGqogDrHOThJE5V
+         TGCk/kbNBgvCs669aq1qcood3nhehjSHvgUP7DzWFZjxel+BGCOqzT7OyCOkPzIdRlOc
+         m8kwMAzd4CIFdlImb6Gnqkd37I4FoaIdlG/e3dA4dcwpSL6EEoDKgNBeVjX30onauIuF
+         R28Rw9Fsrd8VY6hXd4orMacr2QlB3gp+60SOA38hvNl18d0TtCLEL4oQXM68LrPn1ald
+         9Okw==
+X-Gm-Message-State: APjAAAWNUlLZMJtL7DlJkJrDxcErqF0FyYbzd9wIRCDjawPbNppVccnz
+        Yng8KbAr+wB+Ar/KRBmVVNk=
+X-Google-Smtp-Source: APXvYqxaKM2I2yMNbfTnkgC7Ma2W+KQe6RNJr+dtwL3UO48sj8LWbrvhSS1fDhoq9yK7xMRlItjpyA==
+X-Received: by 2002:a1c:66d6:: with SMTP id a205mr4898203wmc.10.1582056905203;
+        Tue, 18 Feb 2020 12:15:05 -0800 (PST)
+Received: from felia ([2001:16b8:38a9:1a00:819d:444c:ffbc:5dca])
+        by smtp.gmail.com with ESMTPSA id v5sm8114572wrv.86.2020.02.18.12.15.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2020 12:15:04 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+X-Google-Original-From: Lukas Bulwahn <lukas@gmail.com>
+Date:   Tue, 18 Feb 2020 21:14:53 +0100 (CET)
+X-X-Sender: lukas@felia
+To:     "Luck, Tony" <tony.luck@intel.com>
+cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Anatoly Pugachev <matorola@gmail.com>, Pat Gefre <pfg@sgi.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Yu, Fenghua" <fenghua.yu@intel.com>,
+        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Joe Perches <joe@perches.com>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        Linux Kernel list <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] tty/serial: cleanup after ioc*_serial driver removal
+In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F7F57B7D6@ORSMSX115.amr.corp.intel.com>
+Message-ID: <alpine.DEB.2.21.2002182112520.3368@felia>
+References: <20200217081558.10266-1-lukas.bulwahn@gmail.com> <CADxRZqwGBi=4A224mG0cPgONdNitnvi3LFD_KQckxdYSXzgBGg@mail.gmail.com> <alpine.DEB.2.21.2002170950390.11007@felia> <3908561D78D1C84285E8C5FCA982C28F7F57B7D6@ORSMSX115.amr.corp.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <fffc8b6d-68ed-7501-18f1-94cf548821fb@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use new helper tcp_v6_gso_csum_prep in additional network drivers.
-
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
----
- drivers/net/vmxnet3/vmxnet3_drv.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/net/vmxnet3/vmxnet3_drv.c b/drivers/net/vmxnet3/vmxnet3_drv.c
-index 18f152fa0..722cb054a 100644
---- a/drivers/net/vmxnet3/vmxnet3_drv.c
-+++ b/drivers/net/vmxnet3/vmxnet3_drv.c
-@@ -942,10 +942,7 @@ vmxnet3_prepare_tso(struct sk_buff *skb,
- 		tcph->check = ~csum_tcpudp_magic(iph->saddr, iph->daddr, 0,
- 						 IPPROTO_TCP, 0);
- 	} else if (ctx->ipv6) {
--		struct ipv6hdr *iph = ipv6_hdr(skb);
--
--		tcph->check = ~csum_ipv6_magic(&iph->saddr, &iph->daddr, 0,
--					       IPPROTO_TCP, 0);
-+		tcp_v6_gso_csum_prep(skb);
- 	}
- }
- 
--- 
-2.25.1
 
 
+On Tue, 18 Feb 2020, Luck, Tony wrote:
+
+> > I do not know if there are more ia64 serial drivers, but the MAINTAINERS 
+> > entry and commit message suggested there is not another serial driver.
+> 
+> Lukas,
+> 
+> There aren't any other ia64 specific serial drivers. But ia64 does use generic
+> serial drivers (e.g. my test machine has a couple of serial ports attached to 16550A
+> devices)
+> 
+> I think some notes in that documentation file still apply. Please don't delete.
+> 
+
+I provided a PATCH v2 that does not delete the documentation, which 
+already was reviewed by Christoph Hellwig.
+
+Please pick and apply that PATCH v2.
+
+Lukas 
