@@ -2,140 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A3F6162C26
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 18:15:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6B24162C59
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 18:17:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727958AbgBRROg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 12:14:36 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:33737 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727875AbgBRROe (ORCPT
+        id S1726756AbgBRRQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 12:16:59 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:35770 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726475AbgBRRQ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 12:14:34 -0500
-Received: from mwalle01.sab.local. (unknown [213.135.10.150])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id DE21623D06;
-        Tue, 18 Feb 2020 18:14:30 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1582046071;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=OXgmkwBe7DwnhUeIreA0ttrwVjYja06p6FlV/rhJKqk=;
-        b=W1F6C5neEJoDK3sAJ3pc9pIEkKrKYg1nqZTLfOSMt7m6Zjmp4L0yCv7uSB1OqvaOhqRLdm
-        PlFAlNH9of9ZZy6Wn6U3pay488h8FVFENksfsu/sXpkmOZU1AAG5PAj0I4rDX8SqLDPqXS
-        Ak6yMISOie1SsWMqMuBE4lBHfJRvYzc=
-From:   Michael Walle <michael@walle.cc>
-To:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Michael Walle <michael@walle.cc>
-Subject: [PATCH v2 2/2] arm64: dts: ls1028a: add missing SPI nodes
-Date:   Tue, 18 Feb 2020 18:14:18 +0100
-Message-Id: <20200218171418.18297-2-michael@walle.cc>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200218171418.18297-1-michael@walle.cc>
-References: <20200218171418.18297-1-michael@walle.cc>
+        Tue, 18 Feb 2020 12:16:59 -0500
+Received: from callcc.thunk.org (guestnat-104-133-8-109.corp.google.com [104.133.8.109] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 01IHEs2F021040
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 18 Feb 2020 12:14:56 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id AF6994211EF; Tue, 18 Feb 2020 12:14:53 -0500 (EST)
+Date:   Tue, 18 Feb 2020 12:14:53 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Mark Salyzyn <salyzyn@android.com>
+Cc:     Rob Herring <robh@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Potapenko <glider@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Juergen Gross <jgross@suse.com>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH 2/3] random: rng-seed source is utf-8
+Message-ID: <20200218171453.GE147128@mit.edu>
+References: <158166060044.9887.549561499483343724.stgit@devnote2>
+ <158166062748.9887.15284887096084339722.stgit@devnote2>
+ <CAL_Jsq+BDfWgGTVtppD-JEFHZRqpc00WaV2N7c6qsPBSaxOEPw@mail.gmail.com>
+ <20200214224744.GC439135@mit.edu>
+ <f15511bf-b840-0633-3354-506b7b0607fe@android.com>
+ <20200215005336.GD439135@mit.edu>
+ <243ab5a8-2ce1-1465-0175-3f5d483cbde1@android.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Bar: ++++++
-X-Spam-Level: ******
-X-Rspamd-Server: web
-X-Spam-Status: Yes, score=6.40
-X-Spam-Score: 6.40
-X-Rspamd-Queue-Id: DE21623D06
-X-Spamd-Result: default: False [6.40 / 15.00];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         R_MISSING_CHARSET(2.50)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         BROKEN_CONTENT_TYPE(1.50)[];
-         NEURAL_SPAM(0.00)[0.482];
-         DKIM_SIGNED(0.00)[];
-         DBL_PROHIBIT(0.00)[0.32.167.96:email,0.32.50.48:email,0.32.89.64:email,0.32.11.32:email];
-         RCPT_COUNT_SEVEN(0.00)[8];
-         MID_CONTAINS_FROM(1.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         ASN(0.00)[asn:12941, ipnet:213.135.0.0/19, country:DE];
-         SUSPICIOUS_RECIPS(1.50)[]
-X-Spam: Yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <243ab5a8-2ce1-1465-0175-3f5d483cbde1@android.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The LS1028A has three (dual) SPI controller. These are compatible with
-the ones from the LS1021A. Add the nodes.
+On Tue, Feb 18, 2020 at 08:01:51AM -0800, Mark Salyzyn wrote:
+> I am additionally concerned about add_bootloader_randomness() because it is
+> possible for it to sleep because of add_hwgenerator_randomness() as once it
+> hits the entropy threshold. As-is it can not be used inside start_kernel()
+> because the sleep would result in a kernel panic, and I suspect its use
+> inside early_init_dt_scan_chosen() for the commit "fdt: add support for
+> rng-seed" might also be problematic since it is effectively called
+> underneath start_kernel() is it not?
+> 
+> If add_bootloader_randomness was rewritten to call add_device_randomness()
+> always, and when trusted also called the functionality of the new
+> credit_trusted_entropy_bits (no longer needing to be exported if so), then
+> the function could be used in both start_kernel() and
+> early_init_dt_scan_chosen().
 
-The third controller was tested on a custom board.
+That's a good point, and it's a bug in add_bootloader_randomness().
+That should be easily fixed by simply having it call mix_pool_bytes()
+and credit_entropy_bits() directly.  I'll create a patch...
 
-Signed-off-by: Michael Walle <michael@walle.cc>
----
-changes since v1:
- - add "fsl,ls1028a-dspi" compatible string
-
- .../arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 39 +++++++++++++++++++
- 1 file changed, 39 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-index 0bf375ec959b..ef1e3867b3fb 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-@@ -290,6 +290,45 @@
- 			status = "disabled";
- 		};
- 
-+		dspi0: spi@2100000 {
-+			compatible = "fsl,ls1028a-dspi", "fsl,ls1021a-v1.0-dspi";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x0 0x2100000 0x0 0x10000>;
-+			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-names = "dspi";
-+			clocks = <&clockgen 4 1>;
-+			spi-num-chipselects = <4>;
-+			little-endian;
-+			status = "disabled";
-+		};
-+
-+		dspi1: spi@2110000 {
-+			compatible = "fsl,ls1028a-dspi", "fsl,ls1021a-v1.0-dspi";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x0 0x2110000 0x0 0x10000>;
-+			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-names = "dspi";
-+			clocks = <&clockgen 4 1>;
-+			spi-num-chipselects = <4>;
-+			little-endian;
-+			status = "disabled";
-+		};
-+
-+		dspi2: spi@2120000 {
-+			compatible = "fsl,ls1028a-dspi", "fsl,ls1021a-v1.0-dspi";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x0 0x2120000 0x0 0x10000>;
-+			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-names = "dspi";
-+			clocks = <&clockgen 4 1>;
-+			spi-num-chipselects = <3>;
-+			little-endian;
-+			status = "disabled";
-+		};
-+
- 		esdhc: mmc@2140000 {
- 			compatible = "fsl,ls1028a-esdhc", "fsl,esdhc";
- 			reg = <0x0 0x2140000 0x0 0x10000>;
--- 
-2.20.1
-
+    			  	     	  	   - Ted
