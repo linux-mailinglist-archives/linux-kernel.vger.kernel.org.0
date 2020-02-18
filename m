@@ -2,72 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD468162EA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 19:35:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 802D0162EAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 19:36:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726478AbgBRSf3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 13:35:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57964 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726225AbgBRSf2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 13:35:28 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8A5421D56;
-        Tue, 18 Feb 2020 18:35:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582050928;
-        bh=3BdkFnYPLhOhBdpCJtbJp9xRUqLuC+0bft4+KFYk3bE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WzqCoK+Ecqn06hqNFk0zCX+iF36AycyV9vA21tteU1RmExbfn6DQVALLxifEE6xKS
-         kmwJSgcUm7/biv2NCNMbcwWYKSQUFDM14jWDPbFje9Pnycri6lRsCd8Lw9DkKUmz9d
-         YJxOHL/o+PuAeE5EUIWLhvBCruAJjkZaPCjqiiB4=
-Date:   Tue, 18 Feb 2020 19:35:26 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     "Sudarikov, Roman" <roman.sudarikov@linux.intel.com>
-Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, eranian@google.com,
-        bgregg@netflix.com, ak@linux.intel.com, kan.liang@linux.intel.com,
-        alexander.antonov@intel.com
-Subject: Re: [PATCH v7 0/3] perf x86: Exposing IO stack to IO PMON mapping
- through sysfs
-Message-ID: <20200218183526.GB2665507@kroah.com>
-References: <20200214140159.9267-1-roman.sudarikov@linux.intel.com>
- <34ec945b-2456-7398-44c2-d523973e8e61@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <34ec945b-2456-7398-44c2-d523973e8e61@linux.intel.com>
+        id S1726481AbgBRSg3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 13:36:29 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:40585 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726296AbgBRSg3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 13:36:29 -0500
+Received: by mail-pl1-f196.google.com with SMTP id y1so8410715plp.7
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 10:36:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20150623.gappssmtp.com; s=20150623;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=deSq0a14rSLUpPG1ENh74nUw4fh0dIpGPEl5kTUgrmw=;
+        b=omEsIjt8aCcWfGTycR646o4RZaZaKMTiWee69L+h8Fll5DulpeCtdxPisOy8v0kvAM
+         vu/2SlirKz3PFVgerQ+7mQNQVxEZgmSX+NtbNS8r1crMliYrPxUePrcoxH4zF2g3BuaO
+         nefp+B1sAzPMdwKqxU82rlYdguWXyDAiEMndG+3ZRotaL7i8NbwThMLyeQs/ab6AZPXC
+         506Ja+fL4Mqd1QNcEv6tcQhkhQ5JPNrVVmaNgG/Y6C6Q8033tQlpfDVvMg7Z9mnJLpgy
+         dPMIiQPP6tjBmYU2cZ34bUrQB9figgSStewo8Mg6Cq+4r0QneW73BkVzmlIbsvSffU6W
+         hWDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=deSq0a14rSLUpPG1ENh74nUw4fh0dIpGPEl5kTUgrmw=;
+        b=C1UrmkbOZEN6eXSQ00X5eIqPrfnmeBKNZXk5RQFOxVTaGk7/0d++LFhO6XN90CvYBB
+         rUr2P1FSB2YwL2NY8XNd+TVXIosmHj4Z5pUojgk4/ieyLiVmaom9Th5rOlHB97la/019
+         zDzPRNvXSuzCagWWws1yvfmnfTa8IQhJbyjKG1JKY3Hj2Jcj8pse1EEli6noNqVywV35
+         2LeoaNLz/J5hyrVM1dZ9P/5NZDJPNPjFoiuYqsEp+Fab/jWDzTctNQdSfP8vkkEXSwnl
+         NVjSpmTBaddO3lot6rceAYuenZmerKQtSrhw3aDtsFBW4OfbyTOq2SvEs4VfKHED943Z
+         haUg==
+X-Gm-Message-State: APjAAAVq/wy1+vylewC1ALyvnAVBbqJku9jmhq5k6wsBc5AmXwvOFyMq
+        t0+McU3MvXItQnWQbfQzWDpjgA==
+X-Google-Smtp-Source: APXvYqwcYKKfwzMe9EN+17kdygLIXGc6z65srtD5bMH+mVuMdxWGlEWgWQagiLvoXlBPO5rzfJPmEA==
+X-Received: by 2002:a17:902:426:: with SMTP id 35mr21802232ple.176.1582050988323;
+        Tue, 18 Feb 2020 10:36:28 -0800 (PST)
+Received: from localhost ([2620:0:1000:2514:23a5:d584:6a92:3e3c])
+        by smtp.gmail.com with ESMTPSA id z10sm5664511pgf.35.2020.02.18.10.36.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2020 10:36:27 -0800 (PST)
+Date:   Tue, 18 Feb 2020 10:36:27 -0800 (PST)
+X-Google-Original-Date: Tue, 18 Feb 2020 10:36:25 PST (-0800)
+Subject:     Re: [PATCH] RISC-V: Don't enable all interrupts in trap_init()
+In-Reply-To: <CAOnJCU+_CnH6XcXbVrf4LCg3s830n6x6OyWckzoBC-kG2yFpwQ@mail.gmail.com>
+CC:     Anup Patel <Anup.Patel@wdc.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>, anup@brainfault.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Atish Patra <Atish.Patra@wdc.com>,
+        Alistair Francis <Alistair.Francis@wdc.com>,
+        linux-riscv@lists.infradead.org, Christoph Hellwig <hch@lst.de>
+From:   Palmer Dabbelt <palmer@dabbelt.com>
+To:     atishp@atishpatra.org
+Message-ID: <mhng-afe8915b-f34a-49e5-86fd-92f5de4100ed@palmerdabbelt-glaptop1>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 05:35:36PM +0300, Sudarikov, Roman wrote:
-> Hi Greg,
-> 
-> Could you please take a look at the patch set?
+On Sun, 02 Feb 2020 03:48:18 PST (-0800), atishp@atishpatra.org wrote:
+> On Sun, Feb 2, 2020 at 3:06 AM Anup Patel <anup.patel@wdc.com> wrote:
+>>
+>> Historically, we have been enabling all interrupts for each
+>> HART in trap_init(). Ideally, we should only enable M-mode
+>> interrupts for M-mode kernel and S-mode interrupts for S-mode
+>> kernel in trap_init().
+>>
+>> Currently, we get suprious S-mode interrupts on Kendryte K210
+>> board running M-mode NO-MMU kernel because we are enabling all
+>> interrupts in trap_init(). To fix this, we only enable software
+>> and external interrupt in trap_init(). In future, trap_init()
+>> will only enable software interrupt and PLIC driver will enable
+>> external interrupt using CPU notifiers.
 
-Could you please relax and wait?  You sent this less than 48 hours ago:
+I think we should add a proper interrupt controller driver for the per-hart
+interrupt controllers, as doing this within the other drivers is ugly -- for
+example, there's no reason an MMIO timer or interrupt controller driver should
+be toggling these bits.
 
-> On 14.02.2020 17:01, roman.sudarikov@linux.intel.com wrote:
+>> Cc: stable@vger.kernel.org
+>> Fixes: 76d2a0493a17 ("RISC-V: Init and Halt Code)
 
-For a subsystem that I am not the maintainer of, and for a totally
-low-priority issue, for a feature that I don't have hardware to test it
-for.
+I'd argue this actually fixes the M-mode stuff, since that's the first place
+this issue shows up.  I've queued this with
 
-You now have moved to the back of my pending review queue:
-	$ mdfrm -c ~/mail/todo/
-	437 messages in /home/gregkh/mail/todo/
+Fixes: a4c3733d32a7 ("riscv: abstract out CSR names for supervisor vs machine mode")
 
-As you well know, Intel is already on my "short list of companies to
-ignore patches from" as it is, so I am going to force the issue now and
-REQUIRE you to follow the internally documented Intel rules on how to
-send patches to Greg.  Hint, how you did it is _not_ how I have required
-for it to happen.  No idea how this snuck through my filters, I need to
-go fix that up...
+instead, as that's the first commit that will actually write to MIE and
+therefor the first commit that will actually exhibit bad behavior.  It also has
+the advantage of making the patch apply on older trees, which should make life
+easier for the stable folks.
 
-greg k-h
+>> Signed-off-by: Anup Patel <anup.patel@wdc.com>
+>> ---
+>>  arch/riscv/kernel/traps.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
+>> index f4cad5163bf2..ffb3d94bf0cc 100644
+>> --- a/arch/riscv/kernel/traps.c
+>> +++ b/arch/riscv/kernel/traps.c
+>> @@ -156,6 +156,6 @@ void __init trap_init(void)
+>>         csr_write(CSR_SCRATCH, 0);
+>>         /* Set the exception vector address */
+>>         csr_write(CSR_TVEC, &handle_exception);
+>> -       /* Enable all interrupts */
+>> -       csr_write(CSR_IE, -1);
+>> +       /* Enable interrupts */
+>> +       csr_write(CSR_IE, IE_SIE | IE_EIE);
+>>  }
+>> --
+>> 2.17.1
+>>
+>>
+>
+> Looks good.
+> Reviewed-by: Atish Patra <atish.patra@wdc.com>
+
+Tested-by: Palmer Dabbelt <palmerdabbelt@google.com> [QMEU virt machine with SMP]
+Reviewed-by: Palmer Dabbelt <palmerdabbelt@google.com>
+
+I consider this a bugfix, so I'm targeting it for RCs.  It's on fixes and
+should go up this week.
+
+Thanks!
