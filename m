@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E8F71631CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:06:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 553CA16316E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:01:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729008AbgBRUCs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 15:02:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43424 "EHLO mail.kernel.org"
+        id S1728575AbgBRUAW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 15:00:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728994AbgBRUCp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 15:02:45 -0500
+        id S1727462AbgBRUAP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 15:00:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA20924673;
-        Tue, 18 Feb 2020 20:02:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 85FB824655;
+        Tue, 18 Feb 2020 20:00:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582056164;
-        bh=AxIFDZl3bXYO08f8cH7vwWk4gl2vtpQa9tmD9xZTEkE=;
+        s=default; t=1582056015;
+        bh=yaJiDeQSI2EMCSVNMIN7LeAM+k+7UbmGAwh6/ahZFPk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qyTeGvVSsGl6IgXJUt9QwLBd0Rdjj3Usxxp/OZRm0cha7g+VyUdj31d2R5Ujw4Lb3
-         bmDczcNMP+lUOsuJAdsKgsIUcqVtw9RQXcife/K7YR2imcf+41KUkgLqPuF2jO8MCS
-         6neupaFntrK3d4Sx+opJS4GJnXEbnED6B9mpy7YQ=
+        b=MS99XP2ApjmfJMQLGU+ALPmHZ1/AJCK/wtjeIl08sL/A4uvwFuPuQQaC/QFGDZorD
+         0OaEfhtQS59hVB04o3xCXEOJriGE+/hUJlucifDsMS8OTxlvKbyMdU9aPlxGGy/1Vm
+         xMFDAnHGjIImj9gOgrCtTf7nqWCeVOCsHKlfijps=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luca Weiss <luca@z3ntu.xyz>,
-        Sven Van Asbroeck <TheSven73@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 5.5 59/80] Input: ili210x - fix return value of is_visible function
-Date:   Tue, 18 Feb 2020 20:55:20 +0100
-Message-Id: <20200218190437.752831132@linuxfoundation.org>
+        stable@vger.kernel.org, Sara Sharon <sara.sharon@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 5.4 54/66] mac80211: fix quiet mode activation in action frames
+Date:   Tue, 18 Feb 2020 20:55:21 +0100
+Message-Id: <20200218190433.068096153@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200218190432.043414522@linuxfoundation.org>
-References: <20200218190432.043414522@linuxfoundation.org>
+In-Reply-To: <20200218190428.035153861@linuxfoundation.org>
+References: <20200218190428.035153861@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +44,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luca Weiss <luca@z3ntu.xyz>
+From: Sara Sharon <sara.sharon@intel.com>
 
-commit fbd1ec000213c8b457dd4fb15b6de9ba02ec5482 upstream.
+commit 2bf973ff9b9aeceb8acda629ae65341820d4b35b upstream.
 
-The is_visible function expects the permissions associated with an
-attribute of the sysfs group or 0 if an attribute is not visible.
+Previously I intended to ignore quiet mode in probe response, however
+I ended up ignoring it instead for action frames. As a matter of fact,
+this path isn't invoked for probe responses to start with. Just revert
+this patch.
 
-Change the code to return the attribute permissions when the attribute
-should be visible which resolves the warning:
-
-  Attribute calibrate: Invalid permissions 01
-
-Fixes: cc12ba1872c6 ("Input: ili210x - optionally show calibrate sysfs attribute")
-Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
-Reviewed-by: Sven Van Asbroeck <TheSven73@gmail.com>
-Link: https://lore.kernel.org/r/20200209145628.649409-1-luca@z3ntu.xyz
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Sara Sharon <sara.sharon@intel.com>
+Fixes: 7976b1e9e3bf ("mac80211: ignore quiet mode in probe")
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Link: https://lore.kernel.org/r/20200131111300.891737-15-luca@coelho.fi
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/touchscreen/ili210x.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/mac80211/mlme.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/input/touchscreen/ili210x.c
-+++ b/drivers/input/touchscreen/ili210x.c
-@@ -321,7 +321,7 @@ static umode_t ili210x_calibrate_visible
- 	struct i2c_client *client = to_i2c_client(dev);
- 	struct ili210x *priv = i2c_get_clientdata(client);
+--- a/net/mac80211/mlme.c
++++ b/net/mac80211/mlme.c
+@@ -8,7 +8,7 @@
+  * Copyright 2007, Michael Wu <flamingice@sourmilk.net>
+  * Copyright 2013-2014  Intel Mobile Communications GmbH
+  * Copyright (C) 2015 - 2017 Intel Deutschland GmbH
+- * Copyright (C) 2018 - 2019 Intel Corporation
++ * Copyright (C) 2018 - 2020 Intel Corporation
+  */
  
--	return priv->chip->has_calibrate_reg;
-+	return priv->chip->has_calibrate_reg ? attr->mode : 0;
- }
+ #include <linux/delay.h>
+@@ -1311,7 +1311,7 @@ ieee80211_sta_process_chanswitch(struct
+ 	if (!res) {
+ 		ch_switch.timestamp = timestamp;
+ 		ch_switch.device_timestamp = device_timestamp;
+-		ch_switch.block_tx =  beacon ? csa_ie.mode : 0;
++		ch_switch.block_tx = csa_ie.mode;
+ 		ch_switch.chandef = csa_ie.chandef;
+ 		ch_switch.count = csa_ie.count;
+ 		ch_switch.delay = csa_ie.max_switch_time;
+@@ -1404,7 +1404,7 @@ ieee80211_sta_process_chanswitch(struct
  
- static const struct attribute_group ili210x_attr_group = {
+ 	sdata->vif.csa_active = true;
+ 	sdata->csa_chandef = csa_ie.chandef;
+-	sdata->csa_block_tx = ch_switch.block_tx;
++	sdata->csa_block_tx = csa_ie.mode;
+ 	ifmgd->csa_ignored_same_chan = false;
+ 
+ 	if (sdata->csa_block_tx)
+@@ -1438,7 +1438,7 @@ ieee80211_sta_process_chanswitch(struct
+ 	 * reset when the disconnection worker runs.
+ 	 */
+ 	sdata->vif.csa_active = true;
+-	sdata->csa_block_tx = ch_switch.block_tx;
++	sdata->csa_block_tx = csa_ie.mode;
+ 
+ 	ieee80211_queue_work(&local->hw, &ifmgd->csa_connection_drop_work);
+ 	mutex_unlock(&local->chanctx_mtx);
 
 
