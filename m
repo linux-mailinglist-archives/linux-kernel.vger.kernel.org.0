@@ -2,81 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8EF0162C9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 18:23:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A76C9162CA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 18:23:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbgBRRXF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 12:23:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46978 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726605AbgBRRXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 12:23:05 -0500
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5306F20801;
-        Tue, 18 Feb 2020 17:22:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582046584;
-        bh=j2Iac1zey820mNpdh5yJdPFMBBkcx1p+/nwylqP9Bj4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pGRedyRNM0efhtBXW3mukIv+0Uyx6UFrCDbXNxScGGlS2kUHuf6Z9u5cvnGH2VWIy
-         VkGS9156ykY8H/gDdmCTkV+MFWiVdh3DiGfyr7ajOhFrJqs4dkwqrQ6H6z1Yn7urSI
-         cJWxWOtaqgY9/KrBPR/ucs/jZ3LiWrbmvtYMmeq8=
-Date:   Tue, 18 Feb 2020 17:22:56 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        soc@kernel.org, Andre Przywara <andre.przywara@arm.com>,
-        Robert Richter <rrichter@marvell.com>,
-        Jon Loeliger <jdl@jdl.com>, Alexander Graf <graf@amazon.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Mark Langsdorf <mlangsdo@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        devicetree@vger.kernel.org, Eric Auger <eric.auger@redhat.com>,
-        iommu@lists.linux-foundation.org,
-        James Morse <james.morse@arm.com>,
-        Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
-        kvm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        netdev@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [RFC PATCH 11/11] dt-bindings: Remove Calxeda platforms bindings
-Message-ID: <20200218172255.GG1133@willie-the-truck>
-References: <20200218171321.30990-1-robh@kernel.org>
- <20200218171321.30990-12-robh@kernel.org>
+        id S1726797AbgBRRXt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 12:23:49 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:48646 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726638AbgBRRXs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 12:23:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=L93uXmdo1WB0FttPt2OeEARmgFjlBb7DbeNFDjVlnbs=; b=SNf5w0nJ40hyIPTGzU9jLx7RpP
+        ++jkwmG0HF+sV1aJLZKOnzCvYzR7qqQkFJe4xqg8qvqGTjcqXD3JlNlzlZw6T+v991Di+KM8WP8qf
+        Df5Ry8y5nhWbfX8S64+XLRM0NjUA1FLZBdFvZyEvf9F+hOzZFHYKJ61lrjJCZi9zAgnpTHuzaz5Fb
+        +NOoBNCach/FxA6/Q1qkqju59ezoHwJH3MdrOilCD2apvIapDQ0v5lY2Z48/a7n3Zc1ful6QTWc2m
+        po0g+R1H70dY6bFgfrHEUZFKP9FHyWPdTmFG+79cflsqJL+wvVHl/nzgFVt3uHHYASFB2NzWDUhAs
+        kOxmrGwA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j46b5-00015A-OT; Tue, 18 Feb 2020 17:23:47 +0000
+Date:   Tue, 18 Feb 2020 09:23:47 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     James Bottomley <jejb@linux.ibm.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Merlijn Wajer <merlijn@archive.org>, merlijn@wizzup.org,
+        linux-scsi@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] scsi: sr: get rid of sr global mutex
+Message-ID: <20200218172347.GA3020@infradead.org>
+References: <20200218143918.30267-1-merlijn@archive.org>
+ <20200218171259.GA6724@infradead.org>
+ <1582046428.16681.7.camel@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200218171321.30990-12-robh@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1582046428.16681.7.camel@linux.ibm.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 11:13:21AM -0600, Rob Herring wrote:
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  .../devicetree/bindings/arm/calxeda.yaml      | 22 ----------
->  .../devicetree/bindings/arm/calxeda/l2ecc.txt | 15 -------
->  .../devicetree/bindings/ata/sata_highbank.txt | 44 -------------------
->  .../devicetree/bindings/clock/calxeda.txt     | 17 -------
->  .../memory-controllers/calxeda-ddr-ctrlr.txt  | 16 -------
->  .../devicetree/bindings/net/calxeda-xgmac.txt | 18 --------
->  .../bindings/phy/calxeda-combophy.txt         | 17 -------
+On Tue, Feb 18, 2020 at 09:20:28AM -0800, James Bottomley wrote:
+> > > Replace the global mutex with per-sr-device mutex.
+> > 
+> > Do we actually need the lock at all?  What is protected by it?
+> 
+> We do at least for cdrom_open.  It modifies the cdi structure with no
+> other protection and concurrent modification would at least screw up
+> the use counter which is not atomic.  Same reasoning for cdrom_release.
 
-You can drop the "calxeda,smmu-secure-config-access" from the Arm SMMU
-binding doc too (either here, or as part of the other patch).
-
-Will
+Wouldn't the right fix to add locking to cdrom_open/release instead of
+having an undocumented requirement for the callers?
