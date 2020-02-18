@@ -2,127 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 717C7162402
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 10:56:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1050416240E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 10:59:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726449AbgBRJ4R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 04:56:17 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53298 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726373AbgBRJ4R (ORCPT
+        id S1726444AbgBRJ7K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 04:59:10 -0500
+Received: from conuserg-08.nifty.com ([210.131.2.75]:33652 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726193AbgBRJ7K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 04:56:17 -0500
-Received: by mail-wm1-f67.google.com with SMTP id s10so2087265wmh.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 01:56:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UdH2WwRjeP0392FSfzUeJpWFNKo0z7G6MGSSmZM+wnw=;
-        b=JkGobR7ne7hE4lO8Y9G7F0mwGgXu/l74bR/V2dOzMUri9Jndvty2pi+NIGotqZmZ8N
-         HBo97sQj1xBSQSYgD6BbGL3uQe26Q/j1SOWQOxIzG+pfQb8vH1l4UFQ3JnWANsCss2xp
-         l03JegdpvjVjSqzYW43xqrtJgsoFn1uRaRzCabyggFPT8pt6oNXGbn1i6/SKE0/2BDPT
-         BDmIp2NIjiUUtLycIG38oQH0Nv+X0gIASUrKcMtn3hsU7X/ZabQiQ8nEbYxHMFbJ734V
-         FyTj1fNiudVfEVUUGcEfCu6zsPo6BFhbzrQLV8eTj5iXyrei+J1uxqEyJ7aS8tteAG5c
-         3HhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UdH2WwRjeP0392FSfzUeJpWFNKo0z7G6MGSSmZM+wnw=;
-        b=g9pLPPeoChoBTlxNO562euEJUWiiXQd7TIU+6hLX7JVNTZHKAD4RNP/pd/LeJUeP6V
-         517JjG62TTaHWEOtxSbbeWsaTxVDY7iG4jth/oadOeE6X5QKUhtdoupSh8idQK3IaCpe
-         nJVGbiTxbqk+TLAMmcVrlBZTR7lMj6LqFRMEJoj4yMEk3u7u0VoZhHdxiW48wM87i8cC
-         jT18zOB8EK5Wmc9C6uAORJ9EulNPF/894GBqWPoM2Kcm/mQn3zzUitCo9fqRU/qXaOWT
-         OnMJOmS5RoshrYNQiNsYrGSY7EXs74PjSuMi1F0Glqcbo9th2GNyFLRbjJqRA3dxdgWE
-         6www==
-X-Gm-Message-State: APjAAAXQa+ayb75CkKivmqDvhlCARLMgDTeHZyqv6aNEYIGqYG3PZyC6
-        5Eo2qHLarOmwCExyzJuTWUx3xw==
-X-Google-Smtp-Source: APXvYqytGhJ61N7kXx+F6MuGoEGrfZFJgE1ENO08u102dUmJ85nq1PD/yvS6IXqIQnbuVfUdbBqsWQ==
-X-Received: by 2002:a1c:38c7:: with SMTP id f190mr2161681wma.94.1582019774942;
-        Tue, 18 Feb 2020 01:56:14 -0800 (PST)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id g21sm2835191wmh.17.2020.02.18.01.56.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Feb 2020 01:56:14 -0800 (PST)
-Subject: Re: [PATCH v2 2/7] nvmem: fix another memory leak in error path
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Khouloud Touil <ktouil@baylibre.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        stable@vger.kernel.org
-References: <20200218094234.23896-1-brgl@bgdev.pl>
- <20200218094234.23896-3-brgl@bgdev.pl>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <6e7a5df7-6ded-7777-5552-879934c185ad@linaro.org>
-Date:   Tue, 18 Feb 2020 09:56:13 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20200218094234.23896-3-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 18 Feb 2020 04:59:10 -0500
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-08.nifty.com with ESMTP id 01I9x18W005260;
+        Tue, 18 Feb 2020 18:59:01 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com 01I9x18W005260
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1582019941;
+        bh=7hztNWwkPF1IHvl8qgr2FXfKE2sZO9qLeIR6zGqkn5M=;
+        h=From:To:Cc:Subject:Date:From;
+        b=W/eIDJ81fDqWmWyOOKt3KzPhVujWRDL4FALFcC+lFa8xTeV8LHt2eywHoP3ZVN4B3
+         7IBdyW8PMJWYD/1svrGpRGCV3KYsjmvdh55IItfa4yHZwtPoeg2JxnticYM0qUJJep
+         bhWTnqErcsRvfRoD7LTwP6fFImOo9x1JTfNvUrt0dyWgSeoPRe4ZTEJW5FqZ0A6JH7
+         RRWG+OfgW0kn4CRNRrBLEh0PQQWelmlWc/AOss9fj8LAJcf4M0Zi15lVyhJt/nKeNk
+         W7KvEo+yt97E0ZffS0NaP46JSvTxXXDvzzwyQJn9xo1H3BiG6Ea1wSxS8K/VqHFPhM
+         upogNwhjeH8pg==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <masahiroy@kernel.org>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <masahiroy@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] fixdep: remove unneeded code and comments about *.ver files
+Date:   Tue, 18 Feb 2020 18:58:59 +0900
+Message-Id: <20200218095859.9725-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is probably stale code. In old days (~ Linux 2.5.59), Kbuild made
+genksyms generate include/linux/modules/*.ver files.
 
+The currenct Kbuild does not generate *.ver files at all.
 
-On 18/02/2020 09:42, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> The nvmem struct is only freed on the first error check after its
-> allocation and leaked after that. Fix it with a new label.
-> 
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->   drivers/nvmem/core.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-> index b0be03d5f240..c9b3f4047154 100644
-> --- a/drivers/nvmem/core.c
-> +++ b/drivers/nvmem/core.c
-> @@ -343,10 +343,8 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
->   		return ERR_PTR(-ENOMEM);
->   
->   	rval  = ida_simple_get(&nvmem_ida, 0, 0, GFP_KERNEL);
-> -	if (rval < 0) {
-> -		kfree(nvmem);
-> -		return ERR_PTR(rval);
-> -	}
-> +	if (rval < 0)
-> +		goto err_free_nvmem;
->   	if (config->wp_gpio)
->   		nvmem->wp_gpio = config->wp_gpio;
->   	else
-> @@ -432,6 +430,8 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
->   	put_device(&nvmem->dev);
->   err_ida_remove:
->   	ida_simple_remove(&nvmem_ida, nvmem->id);
-> +err_free_nvmem:
-> +	kfree(nvmem);
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
 
-This is not correct fix to start with, if the device has already been 
-intialized before jumping here then nvmem would be freed as part of 
-nvmem_release().
+ scripts/basic/fixdep.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-So the bug was actually introduced by adding err_ida_remove label.
+diff --git a/scripts/basic/fixdep.c b/scripts/basic/fixdep.c
+index 9ba47b0a47b9..ad2041817985 100644
+--- a/scripts/basic/fixdep.c
++++ b/scripts/basic/fixdep.c
+@@ -77,11 +77,6 @@
+  * dependencies on include/config/my/option.h for every
+  * CONFIG_MY_OPTION encountered in any of the prerequisites.
+  *
+- * It will also filter out all the dependencies on *.ver. We need
+- * to make sure that the generated version checksum are globally up
+- * to date before even starting the recursive build, so it's too late
+- * at this point anyway.
+- *
+  * We don't even try to really parse the header files, but
+  * merely grep, i.e. if CONFIG_FOO is mentioned in a comment, it will
+  * be picked up as well. It's not a problem with respect to
+@@ -299,8 +294,7 @@ static void *read_file(const char *filename)
+ static int is_ignored_file(const char *s, int len)
+ {
+ 	return str_ends_with(s, len, "include/generated/autoconf.h") ||
+-	       str_ends_with(s, len, "include/generated/autoksyms.h") ||
+-	       str_ends_with(s, len, ".ver");
++	       str_ends_with(s, len, "include/generated/autoksyms.h");
+ }
+ 
+ /*
+-- 
+2.17.1
 
-You can free nvmem at that point but not at any point after that as 
-device core would be holding a reference to it.
-
---srini
-
-
-
->   
->   	return ERR_PTR(rval);
->   }
-> 
