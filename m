@@ -2,113 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC7BA1623E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 10:51:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFC591623EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 10:52:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbgBRJvN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 04:51:13 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:39574 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726449AbgBRJvN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 04:51:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582019472;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=f6S3H9Q+xCWLQbxsvGz1L63SOHDRI/P/SP31mReQZeM=;
-        b=fFVTVD96ILzvaAGFmzTJ7rWlP6Y6hYqUTFL90AwJKT2Bh8M3yRvvpaw2wb4jNmmk5xbmm9
-        7kmkd99TvUO90STINX2f5UfthJnhG0doLBn8YcszYn/GeN0JX87pLPEljqsa1qbC/fsvHr
-        G7uy6mYoMR3py9ewrdfFLfYA+HmULQM=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-378-XkBS2qtUPQKkUtoTSFTt0A-1; Tue, 18 Feb 2020 04:51:10 -0500
-X-MC-Unique: XkBS2qtUPQKkUtoTSFTt0A-1
-Received: by mail-wr1-f70.google.com with SMTP id j4so10518530wrs.13
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 01:51:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=f6S3H9Q+xCWLQbxsvGz1L63SOHDRI/P/SP31mReQZeM=;
-        b=ORDUJ513NsB+6rhe8/3o+I+gx6i2h/XZykmwp8V4J2K/rJfKtU2ppqFRfU+L9e63PL
-         1M0jr4uiNDeJEEpuvMpB6XFQW5Pxe+8UqtWy29bNlfDHZ+/K+2za8INC1yrnoH8jT5gf
-         NfmaOpcWnGUsLR3xhTCKC+bgeBT9v31sBhBAAaCeBo8qKQAHdo1PW0sxC9n88KThQAj4
-         EnLnttzgLTKLlIFHjgUjsLDxrZ+Gb2GTQo7iAEVk3ogEgHeR9o9nTtLJjkNQyMrcpuO5
-         woKz9PCRQ7jMUa20iI01BbUFT9/ELuBvafpwJpJBkSsBOGi9yMVaWHHFbkVtJh1Nqwwq
-         FvWA==
-X-Gm-Message-State: APjAAAWFLrogG8n6vz4F0epcTfOyHQJWbB+O7EmiiZJdb0uM/xOs1o/L
-        gXuYbTqv/61fkxSbyPDJIpf4uCG/C9lJ6CSZlM4Bzm8PCAO/EhviUAaEIlRF8oWvuZhaErDR6Jr
-        IDASrkEXYPXikyA5nyqUVNO7O
-X-Received: by 2002:adf:ef92:: with SMTP id d18mr26767552wro.234.1582019469076;
-        Tue, 18 Feb 2020 01:51:09 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzbsVWsC/clpUSMI+QxchpdxgMAvfJu1v5ks+QAVdg84JW43xe6pTbomJpPHIiBlicc26MBfg==
-X-Received: by 2002:adf:ef92:: with SMTP id d18mr26767533wro.234.1582019468906;
-        Tue, 18 Feb 2020 01:51:08 -0800 (PST)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id e16sm5329978wrs.73.2020.02.18.01.51.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2020 01:51:08 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     linmiaohe <linmiaohe@huawei.com>
-Cc:     "kvm\@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86\@kernel.org" <x86@kernel.org>,
-        "pbonzini\@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar\@redhat.com" <rkrcmar@redhat.com>,
-        "sean.j.christopherson\@intel.com" <sean.j.christopherson@intel.com>,
-        "wanpengli\@tencent.com" <wanpengli@tencent.com>,
-        "jmattson\@google.com" <jmattson@google.com>,
-        "joro\@8bytes.org" <joro@8bytes.org>,
-        "tglx\@linutronix.de" <tglx@linutronix.de>,
-        "mingo\@redhat.com" <mingo@redhat.com>,
-        "bp\@alien8.de" <bp@alien8.de>, "hpa\@zytor.com" <hpa@zytor.com>
-Subject: Re: [PATCH] KVM: x86: don't notify userspace IOAPIC on edge-triggered interrupt EOI
-In-Reply-To: <edf7454be5a743928cbc1bec5dce238d@huawei.com>
-References: <edf7454be5a743928cbc1bec5dce238d@huawei.com>
-Date:   Tue, 18 Feb 2020 10:51:07 +0100
-Message-ID: <8736b89qb8.fsf@vitty.brq.redhat.com>
+        id S1726481AbgBRJwg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 04:52:36 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55132 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726264AbgBRJwg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 04:52:36 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 20384B4F0;
+        Tue, 18 Feb 2020 09:52:34 +0000 (UTC)
+Date:   Tue, 18 Feb 2020 10:52:32 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        John Ogness <john.ogness@linutronix.de>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/3] printk/console: Fix preferred console handling
+Message-ID: <20200218095232.q6tqjmome4fhc6f5@pathway.suse.cz>
+References: <20200213095133.23176-1-pmladek@suse.com>
+ <20200217130308.GA447@jagdpanzerIV.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200217130308.GA447@jagdpanzerIV.localdomain>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-linmiaohe <linmiaohe@huawei.com> writes:
+On Mon 2020-02-17 22:03:08, Sergey Senozhatsky wrote:
+> On (20/02/13 10:51), Petr Mladek wrote:
+> > Hi,
+> > 
+> > I send this on behalf of Benjamin who is traveling at the moment.
+> > It is an interesting approach to long terms problems with matching
+> > the console preferred on the command line.
+> > 
+> > Changes against v3:
+> > 
+> > 	+ better check when accepting pre-enabled consoles
+> > 	+ correct reasoning in the 3rd patch
+> > 	+ update a comment of CON_CONSDEV definition
+> > 	+ fixed checkpatch warnings
+> 
+> Looks good to me,
+> 
+> Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 
-> Vitaly Kuznetsov <vkuznets@redhat.com> writes:
->>linmiaohe <linmiaohe@huawei.com> writes:
->>
->>> @@ -417,7 +417,7 @@ void kvm_scan_ioapic_routes(struct kvm_vcpu *vcpu,
->>>  
->>>  			kvm_set_msi_irq(vcpu->kvm, entry, &irq);
->>>  
->>> -			if (irq.level &&
->>> +			if (irq.trig_mode &&
->>>  			    kvm_apic_match_dest(vcpu, NULL, APIC_DEST_NOSHORT,
->>>  						irq.dest_id, irq.dest_mode))
->>>  				__set_bit(irq.vector, ioapic_handled_vectors);
->>
->>Assuming Radim's comment (13db77347db1) is correct, the change in
->>3159d36ad799 looks wrong and your patch restores the status quo. Actually, kvm_set_msi_irq() always sets irq->level = 1 so checking it is pointless.
->>
->>Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
->
-> Thanks for review.
->
->>
->> (but it is actually possible that there's a buggy userspace out there which expects EOI notifications; we won't find out unless we try to fix the bug).
->>
->
-> Yeh, there may be a buggy userspace hidden from this unexpected EOI notifications. It may not be worth enough to fix it as we may spend many time
-> to catch the bug.
-> Perhaps we should only remove the pointless checking of irq->level for cleanup. :)
+The patchset is commited in printk.git, branch
+for-5.7-preferred-console.
 
-I'm feeling brave so in case nobody expresses any particular concerns
-let's just fix it :-)
-
--- 
-Vitaly
-
+Best Regards,
+Petr
