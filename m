@@ -2,71 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 250D51622B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 09:51:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C03E51622CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 09:54:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbgBRIvF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 03:51:05 -0500
-Received: from comms.puri.sm ([159.203.221.185]:39986 "EHLO comms.puri.sm"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726671AbgBRIvE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 03:51:04 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by comms.puri.sm (Postfix) with ESMTP id 8FE51E114C;
-        Tue, 18 Feb 2020 00:51:04 -0800 (PST)
-Received: from comms.puri.sm ([127.0.0.1])
-        by localhost (comms.puri.sm [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id qYOfLCYxd975; Tue, 18 Feb 2020 00:51:03 -0800 (PST)
-From:   Martin Kepplinger <martin.kepplinger@puri.sm>
-To:     robh@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de
-Cc:     linux-imx@nxp.com, Anson.Huang@nxp.com, devicetree@vger.kernel.org,
-        kernel@puri.sm, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Martin Kepplinger <martin.kepplinger@puri.sm>,
-        Marco Felsch <m.felsch@pengutronix.de>
-Subject: [PATCH v2 9/9] arm64: dts: librem5-devkit: add lsm9ds1 mount matrix
-Date:   Tue, 18 Feb 2020 09:49:42 +0100
-Message-Id: <20200218084942.4884-10-martin.kepplinger@puri.sm>
-In-Reply-To: <20200218084942.4884-1-martin.kepplinger@puri.sm>
-References: <20200218084942.4884-1-martin.kepplinger@puri.sm>
-Content-Transfer-Encoding: 8bit
+        id S1726330AbgBRIyI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 03:54:08 -0500
+Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:54565 "EHLO
+        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726186AbgBRIyH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 03:54:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1582016047; x=1613552047;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=NnW2Xr8n2sakcn0GkM6yWrfHpG7o7KnOOXlAkm455jQ=;
+  b=jbcW526jyUKrYooZLiAUc5vtKdqCXacswRQNmqygXS7OU+k9djj1u0Nt
+   zik1PCSIUbRnqEoDWne1vJAXS0VTvKjEQhg2w/ibkxnuGq1bi1mIfchIz
+   LcRzXpqTFLUo1Rgfl3Oa8Q0OyrCiOEI87CyyABroqRhaod3MgM1/7U6Sf
+   s=;
+IronPort-SDR: FmDtL19JW7d/b3j2oxTQxS8bXSA147s6EJaknLC5r+QsXeNCFkOIvfTlVRqyctoKFo3Dodlsbx
+ 3rEYBVmnz57g==
+X-IronPort-AV: E=Sophos;i="5.70,455,1574121600"; 
+   d="scan'208";a="17440540"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1d-9ec21598.us-east-1.amazon.com) ([10.43.8.6])
+  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP; 18 Feb 2020 08:53:54 +0000
+Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
+        by email-inbound-relay-1d-9ec21598.us-east-1.amazon.com (Postfix) with ESMTPS id 0A533A2103;
+        Tue, 18 Feb 2020 08:53:46 +0000 (UTC)
+Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
+ EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
+ id 15.0.1236.3; Tue, 18 Feb 2020 08:53:46 +0000
+Received: from u886c93fd17d25d.ant.amazon.com (10.43.160.108) by
+ EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 18 Feb 2020 08:53:35 +0000
+From:   SeongJae Park <sjpark@amazon.com>
+To:     <akpm@linux-foundation.org>
+CC:     SeongJae Park <sjpark@amazon.de>, <acme@kernel.org>,
+        <alexander.shishkin@linux.intel.com>, <amit@kernel.org>,
+        <brendan.d.gregg@gmail.com>, <brendanhiggins@google.com>,
+        <cai@lca.pw>, <colin.king@canonical.com>, <corbet@lwn.net>,
+        <dwmw@amazon.com>, <jolsa@redhat.com>, <kirill@shutemov.name>,
+        <mark.rutland@arm.com>, <mgorman@suse.de>, <minchan@kernel.org>,
+        <mingo@redhat.com>, <namhyung@kernel.org>, <peterz@infradead.org>,
+        <rdunlap@infradead.org>, <rostedt@goodmis.org>, <shuah@kernel.org>,
+        <sj38.park@gmail.com>, <vdavydov.dev@gmail.com>,
+        <linux-mm@kvack.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [RFC v2 0/4] Implement Data Access Monitoring-based Memory Operation Schemes
+Date:   Tue, 18 Feb 2020 09:53:05 +0100
+Message-ID: <20200218085309.18346-1-sjpark@amazon.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.43.160.108]
+X-ClientProxiedBy: EX13D10UWB004.ant.amazon.com (10.43.161.121) To
+ EX13D31EUA001.ant.amazon.com (10.43.165.15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The IMU chip on the librem5-devkit is not mounted at the "natural" place
-that would match normal phone orientation (see the documentation for the
-details about what that is).
+From: SeongJae Park <sjpark@amazon.de>
 
-Since the lsm9ds1 driver supports providing a mount matrix, we can describe
-the orientation on the board in the dts:
+DAMON[1] can be used as a primitive for data access awared memory management
+optimizations.  That said, users who want such optimizations should run DAMON,
+read the monitoring results, analyze it, plan a new memory management scheme,
+and apply the new scheme by themselves.  Such efforts will be inevitable for
+some complicated optimizations.
 
-Create a right-handed coordinate system (x * -1; see the datasheet for the
-axis) and rotate 180 degrees around the y axis because the device sits on
-the back side from the display.
+However, in many other cases, the users would just want the system to apply an
+memory management action to a memory region of a specific size having a
+specific access frequency for a specific time.  For example, "page out a memory
+region larger than 100 MiB keeping only rare accesses more than 10 minutes", or
+"Use THP for a memory region larger than 2 MiB maintaing frequent accesses for
+more than 5 seconds".
 
-Signed-off-by: Martin Kepplinger <martin.kepplinger@puri.sm>
-Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
----
- arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts | 3 +++
- 1 file changed, 3 insertions(+)
+This RFC patchset makes DAMON to handle such data access monitoring-based
+operation schemes.  With this change, users can do the data access awared
+optimizations by simply specifying their schemes to DAMON.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts b/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-index 4cb11ed17c24..19ca3b4f802f 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-@@ -537,6 +537,9 @@
- 		reg = <0x6a>;
- 		vdd-supply = <&reg_3v3_p>;
- 		vddio-supply = <&reg_3v3_p>;
-+		mount-matrix =  "1",  "0",  "0",
-+				"0",  "1",  "0",
-+				"0",  "0", "-1";
- 	};
- };
- 
+
+Sequence Of Patches
+===================
+
+The patches are based on the v5.5 plus v5 DAMON patchset[1] and Minchan's
+``madvise()`` factor-out patch[2].  Minchan's patch was necessary for reuse of
+``madvise()`` code in DAMON.  You can also clone the complete git tree:
+
+    $ git clone git://github.com/sjp38/linux -b damos/rfc/v2
+
+The web is also available:
+https://github.com/sjp38/linux/releases/tag/damos/rfc/v2
+
+The first patch allows DAMON to reuse ``madvise()`` code for the actions.  The
+second patch accounts age of each region.  Third patch implements the handling
+of the schemes in DAMON and exports a kernel space programming interface for
+it.  Finally, the fourth patch implements a debugfs interface for privileged
+people and programs.
+
+[1] https://lore.kernel.org/linux-mm/20200217103110.30817-1-sjpark@amazon.com/
+[2] https://lore.kernel.org/linux-mm/20200128001641.5086-2-minchan@kernel.org/
+
+
+Patch History
+=============
+
+Changes from RFC v1
+(https://lore.kernel.org/linux-mm/20200210150921.32482-1-sjpark@amazon.com/)
+ - Properly adjust age accounting related properties after splitting, merging,
+   and action applying
+
+SeongJae Park (4):
+  mm/madvise: Export madvise_common() to mm internal code
+  mm/damon: Account age of target regions
+  mm/damon: Implement data access monitoring-based operation schemes
+  mm/damon/schemes: Implement a debugfs interface
+
+ include/linux/damon.h |  29 ++++
+ mm/damon.c            | 360 +++++++++++++++++++++++++++++++++++++++++-
+ mm/internal.h         |   4 +
+ mm/madvise.c          |   3 +-
+ 4 files changed, 388 insertions(+), 8 deletions(-)
+
 -- 
-2.20.1
+2.17.1
 
