@@ -2,70 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D17DC16329E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:10:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27DC81632A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:10:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728265AbgBRUJD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 15:09:03 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:56696 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726729AbgBRUJB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 15:09:01 -0500
-Received: from zn.tnic (p200300EC2F0C1F00DCB96C3517B36067.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:1f00:dcb9:6c35:17b3:6067])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B54D41EC0C1A;
-        Tue, 18 Feb 2020 21:08:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1582056539;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=jmx0+z5jUn1UpZBqLi7uGXjByEV5/Ttc9P/ABLwrAZM=;
-        b=FyTZYuiDS+cpITcqPx08jBvNoaFPPFytcGfkneBv1JenackcGRNG4pz9x0VbXJc0lsPVU2
-        zRZzcgf9XMiZ2F8jtGhV8XwpWUhCBWAl/a5XF5JgG1T96yEZKVR6ELdlwHW12A3VF+wTNc
-        iCKVlddjRiyTnZkxeqZd3x/46DXUJqQ=
-Date:   Tue, 18 Feb 2020 21:09:00 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     "Luck, Tony" <tony.luck@intel.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andy Lutomirski <luto@kernel.org>, x86-ml <x86@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] #MC mess
-Message-ID: <20200218200900.GS14449@zn.tnic>
-References: <20200218173150.GK14449@zn.tnic>
- <3908561D78D1C84285E8C5FCA982C28F7F57B937@ORSMSX115.amr.corp.intel.com>
- <20200218200200.GE11457@worktop.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200218200200.GE11457@worktop.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1728145AbgBRUJL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 15:09:11 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:55893 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727135AbgBRUJJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 15:09:09 -0500
+Received: by mail-wm1-f68.google.com with SMTP id q9so4051932wmj.5
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 12:09:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=4O8UBMcWrJ0vW2xCQ1w086ifQXzUq/0Zcfzr3vmxCmU=;
+        b=hXAdbJg9t7Ac7RWs2LVmLNuhUWu7hjBhe1Z8zVbgf5MTlBwdMbUrvJRzRAOAQsDc0I
+         EUM8+Gww5mrY84CsItT7dvGCd3oXCNqqoUvzcU5nXhvJvaTEvmA+kvxVEYOxAXv/gGdc
+         ictOXLSgaUbnju48nPm5bLTfBSOlaU6fSu4BQuHA9qtPpiUYlr2FjaFJJxAGFqWrNmgb
+         lWogUfBylpH6gHl/gxg5kggzq3YYcAbCIskV+OYW2tTWvcOGoRDbwc4nk8AIafQpWExb
+         rHYi6sQSgdrP+P2gduAztJFiiVWpU0wOBi2rxLbXy04ZQ//c1jLI1VSRMmqBODLmu4bS
+         KxUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=4O8UBMcWrJ0vW2xCQ1w086ifQXzUq/0Zcfzr3vmxCmU=;
+        b=rXaxK6+GVQBJaDKkhR1EetUb0JRG7h9rdphIs6+MeMrrhnPkPDe2V3ZWpfQc37q6vi
+         clM3ADVmQ6uK+iqw8obNmIKpM7EAgES7BHHgerOASZVh4JtP0I1y9y0SfzjVK9eM3cwx
+         BpDcVmaxSpRX8NH7G4YzZjVmO4we8ti3n0zn6oEZJLpzCTXDi39w1nIFCupuDTHraU8a
+         +hUV44uaLUdY6tOZq2WvYJW+aMI5GSkZfCJfEy6rxla5uzjIPPyA4aLhrbwM6S89Sd/Z
+         bdfpvJoKt+cgBKU8ynyD/Dj05oPBjJ21/e/NWPh1khCBXyIO0K7kDQ6rr7loLBRyTebk
+         rOkQ==
+X-Gm-Message-State: APjAAAXkMcphlVjA2ESp85jmzjw/Wt4VmQ7ZZbeU1JWRd6HusUTrQJLs
+        rLWdK2PsZBBLdQI3IqjQp6pLog==
+X-Google-Smtp-Source: APXvYqyz8XCmBJQazBT3WrJL/40oe8aCs3Awx1JIxQFwy+25m3+8OEWhpJq7d8e2b6HSlTLRNYWFWA==
+X-Received: by 2002:a1c:1dc7:: with SMTP id d190mr5026741wmd.48.1582056546861;
+        Tue, 18 Feb 2020 12:09:06 -0800 (PST)
+Received: from localhost.localdomain ([51.15.160.169])
+        by smtp.googlemail.com with ESMTPSA id c74sm5043017wmd.26.2020.02.18.12.09.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 18 Feb 2020 12:09:06 -0800 (PST)
+From:   Corentin Labbe <clabbe@baylibre.com>
+To:     lee.jones@linaro.org, tony@atomide.com
+Cc:     linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        Corentin Labbe <clabbe@baylibre.com>
+Subject: [PATCH] mfd: omap: remove useless cast for driver.name
+Date:   Tue, 18 Feb 2020 20:09:01 +0000
+Message-Id: <1582056541-16973-1-git-send-email-clabbe@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 09:02:00PM +0100, Peter Zijlstra wrote:
-> Then please rewrite the #MC entry code to deal with nested exceptions
-> unmasking the MCE, very similr to NMI.
-> 
-> The moment you allow tracing, jump_labels or anything else you can
-> expect #PF, #BP and probably #DB while inside #MC, those will then IRET
-> and re-enable the #MC.
+device_driver name is const char pointer, so it not useful to cast
+xx_driver_name (which is already const char).
 
-Yeah, I'd like to keep it simple and reenable all the crap we disabled
-only on exit from the handler.
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+---
+ drivers/mfd/omap-usb-host.c | 2 +-
+ drivers/mfd/omap-usb-tll.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Dunno if we care about losing tracing samples when an MCE happened...
-
-> The current situation is completely and utterly buggered.
-
-Lovely. ;-(
-
+diff --git a/drivers/mfd/omap-usb-host.c b/drivers/mfd/omap-usb-host.c
+index 4798d9f3f9d5..1f4f01b02d98 100644
+--- a/drivers/mfd/omap-usb-host.c
++++ b/drivers/mfd/omap-usb-host.c
+@@ -840,7 +840,7 @@ MODULE_DEVICE_TABLE(of, usbhs_omap_dt_ids);
+ 
+ static struct platform_driver usbhs_omap_driver = {
+ 	.driver = {
+-		.name		= (char *)usbhs_driver_name,
++		.name		= usbhs_driver_name,
+ 		.pm		= &usbhsomap_dev_pm_ops,
+ 		.of_match_table = usbhs_omap_dt_ids,
+ 	},
+diff --git a/drivers/mfd/omap-usb-tll.c b/drivers/mfd/omap-usb-tll.c
+index 265f5e350e1c..72f5a1cf867a 100644
+--- a/drivers/mfd/omap-usb-tll.c
++++ b/drivers/mfd/omap-usb-tll.c
+@@ -304,7 +304,7 @@ MODULE_DEVICE_TABLE(of, usbtll_omap_dt_ids);
+ 
+ static struct platform_driver usbtll_omap_driver = {
+ 	.driver = {
+-		.name		= (char *)usbtll_driver_name,
++		.name		= usbtll_driver_name,
+ 		.of_match_table = usbtll_omap_dt_ids,
+ 	},
+ 	.probe		= usbtll_omap_probe,
 -- 
-Regards/Gruss,
-    Boris.
+2.24.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
