@@ -2,157 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F070162B16
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 17:52:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AE46162B1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 17:54:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726672AbgBRQwr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 11:52:47 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:35937 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726402AbgBRQwq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 11:52:46 -0500
-Received: by mail-il1-f196.google.com with SMTP id b15so17915098iln.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 08:52:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=p0fkl9Uzjvd3+WRgDhEFvb5mku/9M7bl3Tq60YNDT/A=;
-        b=Dd9R74vFY8XS/S+w0Y6unMczYIsI66Q07QH2IgANqOiXC0pEUPyBNl+kG52Av/fUSz
-         CdrR69dTJ44steJ4WnF8tX2hA5d8+I6ewvazMQllAJY8kSzOKtnKExR5GxWUElqp16G5
-         OT/RxIdkO4pKiAlC0G2kUsI4LKGwfsdgp89HY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=p0fkl9Uzjvd3+WRgDhEFvb5mku/9M7bl3Tq60YNDT/A=;
-        b=LMiNtwCJavkFSxYDuHdzmVO2RlJP08xDY+SyZjgQQalsJwo6/Pp1GX0/fY9N3nwH62
-         k5tDvlLZ344xLuf8nuZHbO7sTR6fk7YZTmeir/H5XtUapjoyhpK/8tEN0xSJNhgL0b1J
-         6c6pXDl2A5VFb769RsftXfdTECHAoStQTaPHHC/ssA5r92guSJHjvSltut4Q62Kuma90
-         TZTZwoJ+waZP2lUe3mR3zz/JfoDEh0phTgxeNfBq4X0hd/IP1hnD0U5kDKynqKfOuWNk
-         61kn/Bz+sTYZmB+4+ZdeAACvuH9OKm9KV1WdRXTCk0UinxE5uqnmBY3c05nuCMNrsrm3
-         TfLA==
-X-Gm-Message-State: APjAAAWPDWcQW5J5K2IYJ1GU2E2f6i6JNl7rPoWx8UdJ6Kdr4D8z+/44
-        Igg7t3Y/+/y8nt1JgXnBYdXjPPxsj0XtyKJILH7n8w==
-X-Google-Smtp-Source: APXvYqwweWZEL08yiHntB60lwMDPipKRE4zbu6p4on2cRYdzLYfnMWh8srysRNrqrHm3fle6Do0l5tq3x8H+qOlYX7o=
-X-Received: by 2002:a92:5d88:: with SMTP id e8mr20676161ilg.106.1582044765519;
- Tue, 18 Feb 2020 08:52:45 -0800 (PST)
+        id S1726717AbgBRQyM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 11:54:12 -0500
+Received: from mail-eopbgr70088.outbound.protection.outlook.com ([40.107.7.88]:13801
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726360AbgBRQyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 11:54:12 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=O0j2N1JX8HCtL5j57zisWnejuZzP+9NzK4cu5wsKUgpf+ADXnhATBV9uJCP8LcUhhsUncwu4in19M7vxeSubQg4ZmcqD5rjWJUa0q8T2nzOBik5kzp16rWHgaeFxsMWB57+fBOZR4E4JISNWnIFLSNsQ8ArWIGN6f3AAc5W3d6hIEb88J1ent29iFdagFpNyaz8+ZPXx5rlA1g9wzFfpKZqajlRfVf9/nLpinPUQF/qp2ugPipB3SZ4dRGn3aGqyUkGqWuULtKTztZ49cFKHqDBUih6HoUChXMGtcLaYhtzLV3isZar7vVr9zinQx9WUVOgc2jGNYwjqyUE1eQ3qpg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KKMxCb1mG3KkEYxtE8YDfXySNv2vkczNnN5hnO8yUSw=;
+ b=Gg5eD4x5dajHcl/s2LtgAUG/9r2rJwdY+UEfGz7Xrhu98mwNPIQZf7xM4GEF4e1ovXvB+maFC0s4xO2AhoS+mJ5SjpknLhry7VvgkOSOG4jmLYDi9E+X+rtK/QuIIbKptsynz/rNzHWO0Icjp1BzMpfijYVpuU6Q5LxfcfJRywPXNGAq2OfiT5KmwrhiWqiEOyrKHq7RDYdJJRRjKTyjkOzyfvayR+GpXqtHIGodTVm+Ac/Br/nvzvN7ktWSichZLBuPwF4Uo6/RiplVPWNN+U83gzgoIbKE4z5DA+v99buHzKBaJvMMCZFC5H/xabVdszY18MoMNSM0TY9mQS7qyw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KKMxCb1mG3KkEYxtE8YDfXySNv2vkczNnN5hnO8yUSw=;
+ b=lNpdbNppo8VJ3AxxEtL/HWfVgN6tJ0mrmSojrTfhRMNsWgro05t1auuek2swkcZBYMuvanMjC15gowR0sAG9izNs18na4tvaYV6nnT+91bZxKGcaFiLfqhrehvFSXkvAffT7nXIpUs1fGXaQsBQTyui/vh3spK5jZz1jeTHa1B8=
+Received: from VE1PR04MB6687.eurprd04.prod.outlook.com (20.179.234.30) by
+ VE1PR04MB6656.eurprd04.prod.outlook.com (20.179.235.95) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2729.25; Tue, 18 Feb 2020 16:54:06 +0000
+Received: from VE1PR04MB6687.eurprd04.prod.outlook.com
+ ([fe80::b896:5bc0:c4dd:bd23]) by VE1PR04MB6687.eurprd04.prod.outlook.com
+ ([fe80::b896:5bc0:c4dd:bd23%2]) with mapi id 15.20.2729.032; Tue, 18 Feb 2020
+ 16:54:06 +0000
+From:   Leo Li <leoyang.li@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/2] arm64: defconfig: run through savedefconfig for
+ ordering
+Thread-Topic: [PATCH 1/2] arm64: defconfig: run through savedefconfig for
+ ordering
+Thread-Index: AQHV4HYQkBp5gNwa3EW+6CF+jjRMxage5usAgAJPBQA=
+Date:   Tue, 18 Feb 2020 16:54:05 +0000
+Message-ID: <VE1PR04MB6687EFB8CC40D9A53E8D25008F110@VE1PR04MB6687.eurprd04.prod.outlook.com>
+References: <1581382559-18520-1-git-send-email-leoyang.li@nxp.com>
+ <20200217053427.GA6042@dragon>
+In-Reply-To: <20200217053427.GA6042@dragon>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leoyang.li@nxp.com; 
+x-originating-ip: [64.157.242.222]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: e50be303-3f19-48e2-cc87-08d7b4932a6d
+x-ms-traffictypediagnostic: VE1PR04MB6656:
+x-microsoft-antispam-prvs: <VE1PR04MB66567772077F85E11FDB39368F110@VE1PR04MB6656.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 031763BCAF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(376002)(346002)(396003)(136003)(366004)(199004)(189003)(186003)(33656002)(478600001)(81166006)(81156014)(6506007)(52536014)(316002)(110136005)(53546011)(54906003)(8936002)(7696005)(8676002)(55016002)(9686003)(2906002)(26005)(86362001)(5660300002)(66476007)(66946007)(76116006)(66556008)(64756008)(66446008)(4326008)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR04MB6656;H:VE1PR04MB6687.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: yvDBWnI/n8LKmHmBzX2EfxrqkYdIfGOO4mPevz2VRLukKDJzGwkXTgfKtE+5unmNt3c6W/ZUnxDPplK0fmKG1Pm4USY8f/z53ABAVm6bqT/wDFfUrL7W8IOhfiyc9O9WQnKtKcTlSD7FaqKQo4H1kl49qR8EbioZcHWkOLd+jxN9tErV4DDMSEe2HEsqAZCJE0ICR2SDhkduxz1B+AQwjNx45da74Xqa0d6QakIxkniiQhGKttym+6MKBBL/xWbAhVVbNRIcv0gKXaF8KyJZOCLfv+80jGLs6TlyBhGJybmUEDveWp2+7LuWCbj+cZ605G069K5nVQM/CQOf+x9wZyZDSYqmfYpZzJqK3ibnOkAXOGiCAiS7E9BatZpwnMJGtCl8+P+n6TZ1IA5OFqc0x9BAwvVAj3NAsu96cYuHWzndsyl6pJZpVng20GjjUuBt
+x-ms-exchange-antispam-messagedata: rpC6UYZb0lN332KRE12gfUggPTSo36oV+bI724z9HpscZMzGyqUfSiSbNkl4t6yjbIiSUxilPo7biE2dAGTxZpwJ4Q1O+wrwP1Tywt/oRkHCiGNUPifdWfzR46ukNtE5ZvhpckJCyBJihTa/zaCMdg==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <158166060044.9887.549561499483343724.stgit@devnote2>
- <158166062748.9887.15284887096084339722.stgit@devnote2> <CAL_Jsq+BDfWgGTVtppD-JEFHZRqpc00WaV2N7c6qsPBSaxOEPw@mail.gmail.com>
- <20200214224744.GC439135@mit.edu> <f15511bf-b840-0633-3354-506b7b0607fe@android.com>
- <20200215005336.GD439135@mit.edu> <243ab5a8-2ce1-1465-0175-3f5d483cbde1@android.com>
-In-Reply-To: <243ab5a8-2ce1-1465-0175-3f5d483cbde1@android.com>
-From:   Hsin-Yi Wang <hsinyi@chromium.org>
-Date:   Wed, 19 Feb 2020 00:52:19 +0800
-Message-ID: <CAJMQK-j8w5++R-CCAVVupba96JRVJ+O91J=O-MT3nep+rx1Yzw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] random: rng-seed source is utf-8
-To:     Mark Salyzyn <salyzyn@android.com>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>, Rob Herring <robh@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Potapenko <glider@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Juergen Gross <jgross@suse.com>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e50be303-3f19-48e2-cc87-08d7b4932a6d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2020 16:54:05.9936
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Zf57IO5YRY+NuEyrmFrmMFpn9aWney9KNd04SjkvhWoEo9Vik3WcSvbIyAHF9/1z+ir6/xa8Sb6KiYaqJ56FZg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB6656
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 12:01 AM Mark Salyzyn <salyzyn@android.com> wrote:
->
-> On 2/14/20 4:53 PM, Theodore Y. Ts'o wrote:
-> > On Fri, Feb 14, 2020 at 02:55:36PM -0800, Mark Salyzyn wrote:
-> >>> This is why I really think what gets specified via the boot command
-> >>> line, or bootconfig, should specify the bits of entropy and the
-> >>> entropy seed *separately*, so it can be specified explicitly, instead
-> >>> of assuming that *everyone knows* that rng-seed is either (a) a binary
-> >>> string, or (b) utf-8, or (c) a hex string.  The fact is, everyone does
-> >>> *not* know, or everyone will have a different implementation, which
-> >>> everyone will say is *obviously* the only way to go....
-> >>>
-> >> Given that the valid option are between 4 (hex), 6 (utf-8) or 8 (binary), we
-> >> can either split the difference and accept 6; or take a pass at the values
-> >> and determine which of the set they belong to [0-9a-fA-F], [!-~] or
-> >> [\000-\377]  nor need to separately specify.
-> > So let's split this up into separate issues.  First of all, from an
-> > architectural issue, I really think we need to change
-> > add_bootloader_randomness() in drivers/char/random.c so it looks like this:
+
+
+> -----Original Message-----
+> From: Shawn Guo <shawnguo@kernel.org>
+> Sent: Sunday, February 16, 2020 11:34 PM
+> To: Leo Li <leoyang.li@nxp.com>; Arnd Bergmann <arnd@arndb.de>; Olof
+> Johansson <olof@lixom.net>
+> Cc: linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH 1/2] arm64: defconfig: run through savedefconfig for
+> ordering
+>=20
+> On Mon, Feb 10, 2020 at 06:55:58PM -0600, Li Yang wrote:
+> > Used "make defconfig savedefconfig" to regenerate defconfig file in the
+> > right order to prepare for additional defconfig changes.
 > >
-> > void add_bootloader_randomness(const void *buf, unsigned int size, unsigned int entropy_bits)
+> > Signed-off-by: Li Yang <leoyang.li@nxp.com>
+>=20
+> Arnd, Olof,
+>=20
+> How do we handle arm64 defconfig savedefconfig changes? I think it will
+> likely cause conflicts with changes from other platform maintainers.
+
+Actually I think it helps a lot for managing off-tree defconfig patches whe=
+n we keep it sorted with savedefconfig because changes to the same option w=
+ill always be at the same location and shown as proper conflicts when mergi=
+ng.
+
+Regards,
+Leo
+>=20
+> Shawn
+>=20
+> > ---
+> >  arch/arm64/configs/defconfig | 15 ++++++---------
+> >  1 file changed, 6 insertions(+), 9 deletions(-)
 > >
-> > That's because this is a general function that could be used by any
-> > number of bootloaders.  For example, for the UEFI bootloader, it can
-> > use the UEFI call that will return binary bits.  Some other bootloader
-> > might use utf-8, etc.  So it would be an abstraction violation to have
-> > code in drivers/char/random.c make assumption about how a particular
-> > bootloader might be behaving.
+> > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfi=
+g
+> > index 0f212889c931..618001ef5c81 100644
+> > --- a/arch/arm64/configs/defconfig
+> > +++ b/arch/arm64/configs/defconfig
+> > @@ -471,9 +471,9 @@ CONFIG_DW_WATCHDOG=3Dy
+> >  CONFIG_SUNXI_WATCHDOG=3Dm
+> >  CONFIG_IMX2_WDT=3Dy
+> >  CONFIG_IMX_SC_WDT=3Dm
+> > +CONFIG_QCOM_WDT=3Dm
+> >  CONFIG_MESON_GXBB_WATCHDOG=3Dm
+> >  CONFIG_MESON_WATCHDOG=3Dm
+> > -CONFIG_QCOM_WDT=3Dm
+> >  CONFIG_RENESAS_WDT=3Dy
+> >  CONFIG_UNIPHIER_WATCHDOG=3Dy
+> >  CONFIG_BCM2835_WDT=3Dy
+> > @@ -594,8 +594,8 @@ CONFIG_SND_SOC_TAS571X=3Dm
+> >  CONFIG_SND_SIMPLE_CARD=3Dm
+> >  CONFIG_SND_AUDIO_GRAPH_CARD=3Dm
+> >  CONFIG_I2C_HID=3Dm
+> > -CONFIG_USB=3Dy
+> >  CONFIG_USB_CONN_GPIO=3Dm
+> > +CONFIG_USB=3Dy
+> >  CONFIG_USB_OTG=3Dy
+> >  CONFIG_USB_XHCI_HCD=3Dy
+> >  CONFIG_USB_XHCI_TEGRA=3Dy
+> > @@ -617,7 +617,6 @@ CONFIG_USB_CHIPIDEA_HOST=3Dy
+> >  CONFIG_USB_ISP1760=3Dy
+> >  CONFIG_USB_HSIC_USB3503=3Dy
+> >  CONFIG_NOP_USB_XCEIV=3Dy
+> > -CONFIG_USB_ULPI=3Dy
+> >  CONFIG_USB_GADGET=3Dy
+> >  CONFIG_USB_RENESAS_USBHS_UDC=3Dm
+> >  CONFIG_USB_RENESAS_USB3=3Dm
+> > @@ -756,7 +755,6 @@ CONFIG_OWL_PM_DOMAINS=3Dy
+> >  CONFIG_RASPBERRYPI_POWER=3Dy
+> >  CONFIG_IMX_SCU_SOC=3Dy
+> >  CONFIG_QCOM_AOSS_QMP=3Dy
+> > -CONFIG_QCOM_COMMAND_DB=3Dy
+> >  CONFIG_QCOM_GENI_SE=3Dy
+> >  CONFIG_QCOM_GLINK_SSR=3Dm
+> >  CONFIG_QCOM_RMTFS_MEM=3Dm
+> > @@ -771,14 +769,12 @@ CONFIG_ARCH_R8A774A1=3Dy
+> >  CONFIG_ARCH_R8A774B1=3Dy
+> >  CONFIG_ARCH_R8A774C0=3Dy
+> >  CONFIG_ARCH_R8A7795=3Dy
+> > -CONFIG_ARCH_R8A7796=3Dy
+> >  CONFIG_ARCH_R8A77961=3Dy
+> >  CONFIG_ARCH_R8A77965=3Dy
+> >  CONFIG_ARCH_R8A77970=3Dy
+> >  CONFIG_ARCH_R8A77980=3Dy
+> >  CONFIG_ARCH_R8A77990=3Dy
+> >  CONFIG_ARCH_R8A77995=3Dy
+> > -CONFIG_QCOM_PDC=3Dy
+> >  CONFIG_ROCKCHIP_PM_DOMAINS=3Dy
+> >  CONFIG_ARCH_TEGRA_132_SOC=3Dy
+> >  CONFIG_ARCH_TEGRA_210_SOC=3Dy
+> > @@ -809,6 +805,7 @@ CONFIG_PWM_ROCKCHIP=3Dy
+> >  CONFIG_PWM_SAMSUNG=3Dy
+> >  CONFIG_PWM_SUN4I=3Dm
+> >  CONFIG_PWM_TEGRA=3Dm
+> > +CONFIG_QCOM_PDC=3Dy
+> >  CONFIG_RESET_QCOM_AOSS=3Dy
+> >  CONFIG_RESET_QCOM_PDC=3Dm
+> >  CONFIG_RESET_TI_SCI=3Dy
+> > @@ -880,16 +877,16 @@ CONFIG_NLS_ISO8859_1=3Dy
+> >  CONFIG_SECURITY=3Dy
+> >  CONFIG_CRYPTO_ECHAINIV=3Dy
+> >  CONFIG_CRYPTO_ANSI_CPRNG=3Dy
+> > +CONFIG_CRYPTO_USER_API_RNG=3Dm
+> >  CONFIG_CRYPTO_DEV_SUN8I_CE=3Dm
+> >  CONFIG_CRYPTO_DEV_FSL_CAAM=3Dm
+> > -CONFIG_CRYPTO_DEV_HISI_ZIP=3Dm
+> > -CONFIG_CRYPTO_USER_API_RNG=3Dm
+> >  CONFIG_CRYPTO_DEV_QCOM_RNG=3Dm
+> > +CONFIG_CRYPTO_DEV_HISI_ZIP=3Dm
+> >  CONFIG_CMA_SIZE_MBYTES=3D32
+> >  CONFIG_PRINTK_TIME=3Dy
+> >  CONFIG_DEBUG_INFO=3Dy
+> > -CONFIG_DEBUG_FS=3Dy
+> >  CONFIG_MAGIC_SYSRQ=3Dy
+> > +CONFIG_DEBUG_FS=3Dy
+> >  CONFIG_DEBUG_KERNEL=3Dy
+> >  # CONFIG_SCHED_DEBUG is not set
+> >  # CONFIG_DEBUG_PREEMPT is not set
+> > --
+> > 2.17.1
 > >
-> > The second question is we are going to be parsing an rng_seed
-> > parameter it shows up in bootconfig or in the boot command line, how
-> > do we decide how many bits of entropy it actually has.  The advantage
-> > of using the boot command line is we don't need to change the rest of
-> > the bootloader ecosystem.  But that's also a massive weakness, since
-> > apparently some people are already using it, and perhaps not in the
-> > same way.
-> >
-> > So what I'd really prefer is if we use something new, and we define it
-> > in a way that makes as close as possible to "impossible to misuse".
-> > (See Rusty Russell's API design manifesto[1]).  So I'm going to
-> > propose something different.  Let's use something new, say
-> > entropy_seed_hex, and let's say that it *must* be a hex string:
-> >
-> >      entropy_seed_hex=7337db91a4824e3480ba6d2dfaa60bec
-> >
-> > If it is not a valid hex string, it gets zero entropy credit.
-> >
-> > I don't think we really need to worry about efficient encoding of the
-> > seed, since 256 bits is only 64 characters using a hex string.  An
-> > whether it's 32 characters or 64 characters, the max command line
-> > string is 32k, so it's probably not worth it to try to do something
-> > more complex.  (And only 128 bits is needed to declare the CRNG to be
-> > fully initialized, in which case we're talking about 16 characters
-> > versus 32 charaters.)
-> >
-> > [1] http://sweng.the-davies.net/Home/rustys-api-design-manifesto
-> >
-> >                                               - Ted
-> >
-> I am additionally concerned about add_bootloader_randomness() because it
-> is possible for it to sleep because of add_hwgenerator_randomness() as
-> once it hits the entropy threshold. As-is it can not be used inside
-> start_kernel() because the sleep would result in a kernel panic, and I
-> suspect its use inside early_init_dt_scan_chosen() for the commit "fdt:
-> add support for rng-seed" might also be problematic since it is
-> effectively called underneath start_kernel() is it not?
->
-> If add_bootloader_randomness was rewritten to call
-> add_device_randomness() always, and when trusted also called the
-> functionality of the new credit_trusted_entropy_bits (no longer needing
-> to be exported if so), then the function could be used in both
-> start_kernel() and early_init_dt_scan_chosen().
->
-I tested 64 bytes rng-seed previously so didn't hit the threshold that
-makes it suspend. Thanks for pointing this out.
-+1 for changing the add_bootloader_randomness() function as you
-suggested to avoid this issue. But besides credit_entropy_bits(), they
-are also different on crng_init (crng_fast_load/crng_slow_load).
