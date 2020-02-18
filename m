@@ -2,176 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A96D1628AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 15:40:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B29AF1628B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 15:40:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726713AbgBROj6 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 18 Feb 2020 09:39:58 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40196 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726605AbgBROj6 (ORCPT
+        id S1726821AbgBROkt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 09:40:49 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:45186 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726116AbgBROkt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 09:39:58 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01IEZATg093139
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 09:39:57 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y7uagwcpc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 09:39:56 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <naveen.n.rao@linux.ibm.com>;
-        Tue, 18 Feb 2020 14:39:54 -0000
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 18 Feb 2020 14:39:52 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01IEcuUR40042880
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 Feb 2020 14:38:56 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CDD54A4051;
-        Tue, 18 Feb 2020 14:39:51 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 60FFEA4040;
-        Tue, 18 Feb 2020 14:39:51 +0000 (GMT)
-Received: from localhost (unknown [9.199.60.10])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 18 Feb 2020 14:39:51 +0000 (GMT)
-Date:   Tue, 18 Feb 2020 20:09:49 +0530
-From:   "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
-Subject: Re: [PATCH 1/2] powerpc/kprobes: Remove redundant code
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <642c8b4ca59e658be38d8dde00f994e183790a6a.1581687838.git.christophe.leroy@c-s.fr>
-In-Reply-To: <642c8b4ca59e658be38d8dde00f994e183790a6a.1581687838.git.christophe.leroy@c-s.fr>
+        Tue, 18 Feb 2020 09:40:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=saNejNnyTb3I2aNu5CjUwfQSUXCmbXes/gAxR4QEVZE=; b=bXCyNDzvmPS2RSKmOsr2jW0FLA
+        8ThMeVyVNu1QI1vBCuWJahsCj+ysQiiV20/QpbcOfYTts1ih9uVI6y56+rWPNPTiNV27zsVyBU7kG
+        knZ6GdvNpyJwi1N7W0nWeBeafJPGFINqKB5Cjl9q2uM0dqkx3E/FIJZ4Jh24f1MU6HF3t4J8xcNsx
+        2xyp/xb1GuCMxmTO60gEOUpnj9FFFEw8+cs4AH30g0H5izFonHGSmZ/BbBdEM2+IdIQJspL/OO3IY
+        UYDuHkfljUFV6MYKeNeEcfEWgI5IcFReetPJBCSRp9diPnpJWvkwDn6oQ8R57ku7BSzr8tfw/2zoY
+        6PEiar/A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j443F-0001Z7-TL; Tue, 18 Feb 2020 14:40:42 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id DF9F63077C4;
+        Tue, 18 Feb 2020 15:38:45 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id BD3A12032661F; Tue, 18 Feb 2020 15:40:37 +0100 (CET)
+Date:   Tue, 18 Feb 2020 15:40:37 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Carter Li =?utf-8?B?5p2O6YCa5rSy?= <carter.li@eoitek.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring <io-uring@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH] asm-generic/atomic: Add try_cmpxchg() fallbacks
+Message-ID: <20200218144037.GC14946@hirez.programming.kicks-ass.net>
+References: <7c4c3996-4886-eb58-cdee-fe0951907ab5@kernel.dk>
+ <addcd44e-ed9b-5f82-517d-c1ed3ee2d85c@kernel.dk>
+ <b8069e62-7ea4-c7f3-55a3-838241951068@kernel.dk>
+ <20200217120920.GQ14914@hirez.programming.kicks-ass.net>
+ <53de3581-b902-89ba-3f53-fd46b052df40@kernel.dk>
+ <43c066d1-a892-6a02-82e7-7be850d9454d@kernel.dk>
+ <20200217174610.GU14897@hirez.programming.kicks-ass.net>
+ <592cf069-41ee-0bc1-1f83-e058e5dd53ff@kernel.dk>
+ <20200218131310.GZ14914@hirez.programming.kicks-ass.net>
+ <20200218142700.GB14946@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-User-Agent: astroid/v0.15-13-gb675b421
- (https://github.com/astroidmail/astroid)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-X-TM-AS-GCONF: 00
-x-cbid: 20021814-0020-0000-0000-000003AB4FEB
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20021814-0021-0000-0000-000022034BEA
-Message-Id: <1582036611.9hm2t8ijhz.naveen@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-18_02:2020-02-17,2020-02-18 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 malwarescore=0 clxscore=1011 bulkscore=0 suspectscore=0
- adultscore=0 impostorscore=0 mlxscore=0 mlxlogscore=788 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002180114
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200218142700.GB14946@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy wrote:
-> At the time being we have something like
-> 
-> 	if (something) {
-> 		p = get();
-> 		if (p) {
-> 			if (something_wrong)
-> 				goto out;
-> 			...
-> 			return;
-> 		} else if (a != b) {
-> 			if (some_error)
-> 				goto out;
-> 			...
-> 		}
-> 		goto out;
-> 	}
-> 	p = get();
-> 	if (!p) {
-> 		if (a != b) {
-> 			if (some_error)
-> 				goto out;
-> 			...
-> 		}
-> 		goto out;
-> 	}
-> 
-> This is similar to
-> 
-> 	p = get();
-> 	if (something) {
-> 		if (p) {
-> 			if (something_wrong)
-> 				goto out;
-> 			...
-> 			return;
-> 		}
-> 	}
-> 	if (!p) {
-> 		if (a != b) {
-> 			if (some_error)
-> 				goto out;
-> 			...
-> 		}
-> 		goto out;
-> 	}
-> 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->  arch/powerpc/kernel/kprobes.c | 15 +--------------
->  1 file changed, 1 insertion(+), 14 deletions(-)
-
-Good cleanup, thanks.
-
-> 
-> diff --git a/arch/powerpc/kernel/kprobes.c b/arch/powerpc/kernel/kprobes.c
-> index f8b848aa65bd..7a925eb76ec0 100644
-> --- a/arch/powerpc/kernel/kprobes.c
-> +++ b/arch/powerpc/kernel/kprobes.c
-> @@ -276,8 +276,8 @@ int kprobe_handler(struct pt_regs *regs)
->  	kcb = get_kprobe_ctlblk();
+On Tue, Feb 18, 2020 at 03:27:00PM +0100, Peter Zijlstra wrote:
+> diff --git a/scripts/atomic/gen-atomic-fallback.sh b/scripts/atomic/gen-atomic-fallback.sh
+> index b6c6f5d306a7..3c9be8d550e0 100755
+> --- a/scripts/atomic/gen-atomic-fallback.sh
+> +++ b/scripts/atomic/gen-atomic-fallback.sh
+> @@ -140,6 +140,32 @@ cat <<EOF
+>  EOF
+>  }
 >  
->  	/* Check we're not actually recursing */
-> +	p = get_kprobe(addr);
->  	if (kprobe_running()) {
-> -		p = get_kprobe(addr);
->  		if (p) {
->  			kprobe_opcode_t insn = *p->ainsn.insn;
->  			if (kcb->kprobe_status == KPROBE_HIT_SS &&
-> @@ -308,22 +308,9 @@ int kprobe_handler(struct pt_regs *regs)
->  			}
->  			prepare_singlestep(p, regs);
->  			return 1;
-> -		} else if (*addr != BREAKPOINT_INSTRUCTION) {
-> -			/* If trap variant, then it belongs not to us */
-> -			kprobe_opcode_t cur_insn = *addr;
-> -
-> -			if (is_trap(cur_insn))
-> -				goto no_kprobe;
-> -			/* The breakpoint instruction was removed by
-> -			 * another cpu right after we hit, no further
-> -			 * handling of this interrupt is appropriate
-> -			 */
-> -			ret = 1;
->  		}
-> -		goto no_kprobe;
+> +gen_try_cmpxchg_fallback()
+> +{
+> +	local order="$1"; shift;
+> +
+> +cat <<EOF
+> +#ifndef try_cmpxchg${order}
+> +#define try_cmpxchg${order}(_ptr, _oldp, _new) \\
+> +({ \\
+> +	typeof(*ptr) ___r, ___o = *(_oldp); \\
+               *(_ptr)
+> +	___r = cmpxchg${order}((_ptr), ___o, (_new)); \\
+> +	if (unlikely(___r != ___o)) \\
+> +		*(_old) = ___r; \\
+		*(_oldp)
+> +	likely(___r == ___o); \\
+> +})
+> +#endif /* try_cmpxchg${order} */
 
-A minot nit -- removing the above goto makes a slight change to the 
-logic. But, see my comments for the next patch.
-
-- Naveen
-
->  	}
->  
-> -	p = get_kprobe(addr);
->  	if (!p) {
->  		if (*addr != BREAKPOINT_INSTRUCTION) {
->  			/*
-> -- 
-> 2.25.0
-> 
-> 
-
+And it actually builds, as tested on an ARM build.
