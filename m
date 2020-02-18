@@ -2,83 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B9E5162692
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 13:57:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8681E1626FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 14:16:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbgBRM5O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 07:57:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34432 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726043AbgBRM5O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 07:57:14 -0500
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF01F2067D;
-        Tue, 18 Feb 2020 12:57:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582030633;
-        bh=xgj7HIUuh3c9j2fXgc0CIDFvIhaZn0e3I9sVaisiphY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ab7WgANOKYiRaiLca2c/NpH1Jn1FxJy0jOeUR57DeFvcJRjcmRtQW/8iUtRItoK68
-         pK2oWvvivsrKOGBDEn9uV/8mYLZNwKS52+0BuGg5Ln0Vai67tF42IWJKgv+FCfHa9b
-         rcWajllOO7jY+xk4A+vEfgATRjOqn+Ym6/B+rHE4=
-Date:   Tue, 18 Feb 2020 12:57:07 +0000
-From:   Will Deacon <will@kernel.org>
-To:     John Garry <john.garry@huawei.com>
-Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org, ak@linux.intel.com,
-        linuxarm@huawei.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, suzuki.poulose@arm.com,
-        james.clark@arm.com, zhangshaokun@hisilicon.com,
-        robin.murphy@arm.com
-Subject: Re: [PATCH RFC 0/7] perf pmu-events: Support event aliasing for
- system PMUs
-Message-ID: <20200218125707.GB20212@willie-the-truck>
-References: <1579876505-113251-1-git-send-email-john.garry@huawei.com>
+        id S1726640AbgBRNQv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 08:16:51 -0500
+Received: from 6.mo5.mail-out.ovh.net ([178.32.119.138]:50165 "EHLO
+        6.mo5.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726116AbgBRNQv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 08:16:51 -0500
+X-Greylist: delayed 601 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Feb 2020 08:16:50 EST
+Received: from player779.ha.ovh.net (unknown [10.110.115.3])
+        by mo5.mail-out.ovh.net (Postfix) with ESMTP id B22CF26D58A
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 13:59:45 +0100 (CET)
+Received: from sk2.org (cre33-1_migr-88-122-126-116.fbx.proxad.net [88.122.126.116])
+        (Authenticated sender: steve@sk2.org)
+        by player779.ha.ovh.net (Postfix) with ESMTPSA id 0DFEEF77705F;
+        Tue, 18 Feb 2020 12:59:40 +0000 (UTC)
+From:   Stephen Kitt <steve@sk2.org>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        linux-doc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Stephen Kitt <steve@sk2.org>
+Subject: [PATCH v2 0/8] docs: sysctl/kernel.rst rework
+Date:   Tue, 18 Feb 2020 13:59:15 +0100
+Message-Id: <20200218125923.685-1-steve@sk2.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1579876505-113251-1-git-send-email-john.garry@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 16123168143214857605
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedugedrjeekgdegjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofggtgfgsehtkeertdertdejnecuhfhrohhmpefuthgvphhhvghnucfmihhtthcuoehsthgvvhgvsehskhdvrdhorhhgqeenucfkpheptddrtddrtddrtddpkeekrdduvddvrdduvdeirdduudeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpqdhouhhtpdhhvghlohepphhlrgihvghrjeejledrhhgrrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpehsthgvvhgvsehskhdvrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 24, 2020 at 10:34:58PM +0800, John Garry wrote:
-> Currently event aliasing for only CPU and uncore PMUs is supported. In
-> fact, only uncore PMUs aliasing for when the uncore PMUs are fixed for a
-> CPU is supported, which may not always be the case for certain
-> architectures.
-> 
-> This series adds support for PMU event aliasing for system and other
-> uncore PMUs which are not fixed to a specific CPU.
-> 
-> For this, we introduce support for another per-arch mapfile, which maps a
-> particular system identifier to a set of system PMU events for that
-> system. This is much the same as what we do for CPU event aliasing.
-> 
-> To support this, we need to change how we match a PMU to a mapfile,
-> whether it should use a CPU or system mapfile. For this we do the
-> following:
-> 
-> - For CPU PMU, we always match for the event mapfile based on the CPUID.
->   This has not changed.
-> 
-> - For an uncore or system PMU, we match first based on the SYSID (if set).
->   If this fails, then we match on the CPUID.
-> 
->   This works for x86, as x86 would not have any system mapfiles for uncore
->   PMUs (and match on the CPUID).
-> 
-> Initial reference support is also added for ARM SMMUv3 PMCG (Performance
-> Monitor Event Group) PMU for HiSilicon hip08 platform with only a single
-> event so far - see driver in drivers/perf/arm_smmuv3_pmu.c for that driver.
+Hi,
 
-Why don't we just expose SMMU_IIDR in the SMMUv3 PMU directory, so that
-you can key off that? I'm nervous about coming up with a global "SYSID"
-when we don't have the ability to standardise anything in that space.
+A recent discussion about differences in the "panic" description in
+sysctl/kernel.rst led me to look into completing that file, and it
+turned out that more work was needed than documenting "panic". This
+patch series is the first batch, making the resulting documentation
+hopefully nicer and more accurate. It doesn't add fields that are
+present in 5.5 but not documented; I've started adding these, but I'd
+rather submit them individually once the basic kernel.rst is
+committed, to make it easier to request review from the appropriate
+maintainers (each patch adding documentation should be mergeable
+separately, without needing a patch series).
 
-Will
+Regards,
+
+Stephen
+
+
+Changes in v2:
+* in the first patch, drop the first kernel version mention, leave the
+  copyright lines alone;
+* in the second patch, merge : and ::, drop a smartquote in favour of
+  a plain quote;
+* in commit messages, give the references used for the documentation;
+* add a script to check the documentation against the code;
+* drop the rtsig entries which are not relevant now (as revealed by
+  the check script).
+
+Stephen Kitt (8):
+  docs: pretty up sysctl/kernel.rst
+  docs: merge debugging-modules.txt into sysctl/kernel.rst
+  docs: drop l2cr from sysctl/kernel.rst
+  docs: add missing IPC documentation in sysctl/kernel.rst
+  docs: document stop-a in sysctl/kernel.rst
+  docs: document panic fully in sysctl/kernel.rst
+  docs: add a script to check sysctl docs
+  docs: sysctl/kernel: remove rtsig entries
+
+ Documentation/admin-guide/sysctl/kernel.rst | 1029 ++++++++++---------
+ Documentation/debugging-modules.txt         |   22 -
+ scripts/check-sysctl-docs                   |  181 ++++
+ 3 files changed, 707 insertions(+), 525 deletions(-)
+ delete mode 100644 Documentation/debugging-modules.txt
+ create mode 100755 scripts/check-sysctl-docs
+
+
+base-commit: 359c92c02bfae1a6f1e8e37c298e518fd256642c
+-- 
+2.20.1
+
