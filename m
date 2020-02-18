@@ -2,301 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0448163596
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 22:58:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F40921635C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 23:04:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728107AbgBRV6k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 16:58:40 -0500
-Received: from mga02.intel.com ([134.134.136.20]:52969 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728027AbgBRV6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 16:58:36 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2020 13:58:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,458,1574150400"; 
-   d="scan'208";a="436004652"
-Received: from gza.jf.intel.com ([10.54.75.28])
-  by fmsmga006.fm.intel.com with ESMTP; 18 Feb 2020 13:58:35 -0800
-From:   John Andersen <john.s.andersen@intel.com>
-To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
-        pbonzini@redhat.com
-Cc:     hpa@zytor.com, sean.j.christopherson@intel.com,
-        vkuznets@redhat.com, wanpengli@tencent.com, jmattson@google.com,
-        liran.alon@oracle.com, luto@kernel.org, joro@8bytes.org,
-        rick.p.edgecombe@intel.com, kristen@linux.intel.com,
-        arjan@linux.intel.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, John Andersen <john.s.andersen@intel.com>
-Subject: [RFC v2 4/4] X86: Use KVM CR pin MSRs
-Date:   Tue, 18 Feb 2020 13:59:02 -0800
-Message-Id: <20200218215902.5655-5-john.s.andersen@intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20200218215902.5655-1-john.s.andersen@intel.com>
-References: <20200218215902.5655-1-john.s.andersen@intel.com>
+        id S1726548AbgBRWEJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 17:04:09 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:37890 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726352AbgBRWEI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 17:04:08 -0500
+Received: by mail-pl1-f193.google.com with SMTP id t6so8627066plj.5
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 14:04:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KjiEVUVH3LhEUahEgPDeCz6/w7FXRv21B6oRozWFPDw=;
+        b=VVKcd0AsCnqbiOA75vkfYLI8PR3c9gYothwuJHKWcW2POCaYfkrnile0l9cvw1DZso
+         e34atdHIm1vZM6nQdkGZPjLyU5oKCoSyHDWlxq6zFeJRogIz5MXD4Pegzg0tLVa45NdM
+         6fHMsvuRHjhL4q6xbb0r5JrMPyc6Sk6/CWzl6mG5jRwKT4c3uRa7pyahek4pdPf0DDg7
+         p1a+SqSJDDpnFGPegCZYbyrKOZW/7nDyA5Si/GXPSfUaY3jNo9JZY3U2M1bWGANEPHIR
+         F44OupWSSIp/AfgNBRZ8zzQkz2qRSOq2iKh4+BA0mjADleLHYS33X+NtAg0VGI6LIIze
+         a6eA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KjiEVUVH3LhEUahEgPDeCz6/w7FXRv21B6oRozWFPDw=;
+        b=Zh9Pp+fIlHF3gdGRqUJ0aC2L/8OjO/V0H6WdwnK4Pn+Jr9yu+/asiDBYCvS6cxL55w
+         jZzKTVgdrkgM83VcJ7fqeGt2E3vP56UYBKx3hXktzlp9BL6oO6BqKMqH3JlTCqU/x1Ss
+         v8vyKed3JP3xVYu8thBj291r5hj9MyOpNRvK3DcfAlCq5MX8et6xihrQBn8E8d4EawQH
+         FpLuYC/Yhqu4jhYVbe1UIOdKIUoX+uaVoxb/pczwR+ADhUs6duvwjyQm+uqDLrTyHQYY
+         ftkV5UF+5T2vd8W8ZldUEo82twsrwAtX+uG6JIAbD9Z3Abkri30h8UdrCP17HbQ5nB2H
+         Ysiw==
+X-Gm-Message-State: APjAAAXDrlslUVQkBlYPUc75oi51iMnx5K7tzEHV4Pa95vjC+jn+DzwC
+        Qv6XRDeUwUxsvHu7QqJbSC7GOV7fewEXCJ2fpJ3ALw==
+X-Google-Smtp-Source: APXvYqzOs3hVD9imOllueUR+A3F1a+++GIZjcCfIXygMhJX1S7V5sZjKG9PFURgXzJqEh/OPsKcQAciddf1QhLTeH9g=
+X-Received: by 2002:a17:902:9a4c:: with SMTP id x12mr21844315plv.297.1582063446576;
+ Tue, 18 Feb 2020 14:04:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1581094694-6513-1-git-send-email-alan.maguire@oracle.com>
+ <1581094694-6513-2-git-send-email-alan.maguire@oracle.com>
+ <c42ac237-476a-526f-b445-61e7a63bc101@gmail.com> <CAFd5g47p9wnbz=HrNh0U2bbc=0ZaJ7n0U+_=E8yp8yPMrqwzaA@mail.gmail.com>
+ <MWHPR13MB0895A9AC64475539ECF99987FD110@MWHPR13MB0895.namprd13.prod.outlook.com>
+In-Reply-To: <MWHPR13MB0895A9AC64475539ECF99987FD110@MWHPR13MB0895.namprd13.prod.outlook.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Tue, 18 Feb 2020 14:03:55 -0800
+Message-ID: <CAFd5g44BmpxS7RgxoNBywBOs3NjWdFp+A_aU5Ym0MrSn=O_RbA@mail.gmail.com>
+Subject: Re: [PATCH v3 kunit-next 1/2] kunit: add debugfs /sys/kernel/debug/kunit/<suite>/results
+ display
+To:     "Bird, Tim" <Tim.Bird@sony.com>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Alan Maguire <alan.maguire@oracle.com>,
+        Greg KH <gregkh@linuxfoundation.org>, shuah <shuah@kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        David Gow <davidgow@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Strengthen existing control register pinning when running
-paravirtualized under KVM. Check which bits KVM supports pinning for
-each control register and only pin supported bits which are already
-pinned via the existing native protection. Write to KVM CR0/4 pinned
-MSRs to enable pinning.
+On Tue, Feb 18, 2020 at 12:49 PM Bird, Tim <Tim.Bird@sony.com> wrote:
+>
+>
+>
+> > -----Original Message-----
+> > From:  Brendan Higgins
+> >
+> > On Wed, Feb 12, 2020 at 7:25 PM Frank Rowand <frowand.list@gmail.com> wrote:
+> > >
+> > > On 2/7/20 10:58 AM, Alan Maguire wrote:
+>
+> ...
+>
+> > > > diff --git a/lib/kunit/test.c b/lib/kunit/test.c
+> > > > index 9242f93..aec607f 100644
+> > > > --- a/lib/kunit/test.c
+> > > > +++ b/lib/kunit/test.c
+> > > > @@ -10,6 +10,7 @@
+> > > >  #include <linux/kernel.h>
+> > > >  #include <linux/sched/debug.h>
+> > > >
+> > > > +#include "debugfs.h"
+> > > >  #include "string-stream.h"
+> > > >  #include "try-catch-impl.h"
+> > > >
+> > > > @@ -28,73 +29,91 @@ static void kunit_print_tap_version(void)
+> > > >       }
+> > > >  }
+> > > >
+> > > > -static size_t kunit_test_cases_len(struct kunit_case *test_cases)
+> > > > +size_t kunit_suite_num_test_cases(struct kunit_suite *suite)
+> > > >  {
+> > > >       struct kunit_case *test_case;
+> > > >       size_t len = 0;
+> > > >
+> > > > -     for (test_case = test_cases; test_case->run_case; test_case++)
+> > > > +     kunit_suite_for_each_test_case(suite, test_case)
+> > > >               len++;
+> > > >
+> > > >       return len;
+> > > >  }
+> > > > +EXPORT_SYMBOL_GPL(kunit_suite_num_test_cases);
+> > > >
+> > > >  static void kunit_print_subtest_start(struct kunit_suite *suite)
+> > > >  {
+> > > >       kunit_print_tap_version();
+> > > > -     pr_info("\t# Subtest: %s\n", suite->name);
+> > > > -     pr_info("\t1..%zd\n", kunit_test_cases_len(suite->test_cases));
+> > > > +     kunit_log(KERN_INFO, suite, "# Subtest: %s", suite->name);
+> > > > +     kunit_log(KERN_INFO, suite, "1..%zd",
+> > > > +               kunit_suite_num_test_cases(suite));
+> > >
+> > > The subtest 'is a TAP stream indented 4 spaces'.  (So the old code was
+> > > also incorrect since it indented with a tab.)
+> >
+> > Whoops.
+> >
+> > I agree that fixing tabs to spaces is probably the easiest thing to do
+> > here; nevertheless, I think this might be a good time to talk about
+> > other deviations from the spec and what to do about it. This might
+> > also be a good time to bring up Tim's comment at LPC last year about
+> > forking TAP. Arguably I already have given that TAP14 is still under
+> > review and is consequently subject to change.
+> >
+> > Additionally, the way I report expectation/assertion failures are my
+> > own extension to the TAP spec. I did this because at the time I wasn't
+> > ready to open the can of worms that was adding a YAML serializer to
+> > the Linux kernel; I mentioned adding a YAML serializer at LPC and
+> > people didn't seem super thrilled with the idea.
+>
+> I'm not sure I follow.  Are you talking about writing YAML or interpreting
+> YAML.  You don't need a serializer to write YAML.  It can be done
+> with straight text output.  I guess it depends on the scope of what you
+> envision.  Even if you want to do more than trivial structured output,
+> I don't think you'll need a full serializer.  (IOW, I think you could sneak
+> something in and just call it a test output formatter.  Just don't call it YAML
+> and most people won't notice. :-)
 
-Initiate KVM assisted pinning directly following the setup of native
-pinning on boot CPU. For non-boot CPUs initiate paravirtualized pinning
-on CPU identification.
+Yeah, for the first one or two things just printing things out
+directly is probably fine, and yes, I could have just snuck it in, but
+at the time it wasn't a hindrance for me to ask what people wanted: I
+had already worked around it.
 
-Identification of non-boot CPUs takes place after the boot CPU has setup
-native CR pinning. Therefore, non-boot CPUs access pinned bits setup by
-the boot CPU and request that those be pinned. All CPUs request
-paravirtualized pinning of the same bits which are already pinned
-natively.
+In any case, I was just explaining part of why I did expectations and
+assertion failures the way that I did.
 
-Guests using the kexec system call currently do not support
-paravirtualized control register pinning. This is due to early boot
-code writing known good values to control registers, these values do
-not contain the protected bits. This is due to CPU feature
-identification being done at a later time, when the kernel properly
-checks if it can enable protections. As such, the pv_cr_pin command line
-option has been added which instructs the kernel to disable kexec in
-favor of enabling paravirtualized control register pinning. crashkernel
-is also disabled when the pv_cr_pin parameter is specified due to its
-reliance on kexec.
+> >
+> > Further both the TAP implementation here as well as what is in
+> > kselftest have arbitrary kernel output mixed in with TAP output, which
+> > seems to be a further deviation from the spec.
+> Well that's a different kettle of worms, and really argues for staying
+> with something that is strictly line-based.
+>
+> >
+> > In an effort to do this, and so that at the very least I could
+> > document what I have done here, I have been looking into getting a
+> > copy of TAP into the kernel. Unfortunately, TAP appears to have some
+> > licensing issues. TAP says that it can be used/modified "under the
+> > same terms as Perl itself" and then provides a dead link. I filed a
+> > pull request to update the licence to the Perl Artistic Licence 1.0
+> > since I believe that is what they are referencing; however, I have not
+> > heard back from them yet.
+>
+> When you say "getting a copy of TAP into the kernel", I presume you mean
+> an existing implementation to produce TAP output?  Or are you talking about
+> a TAP interpreter?  I'm not sure the former needs to use an existing implementation.
 
-When we fix kexec, we will still need a way for a kernel with support to
-know if the kernel it is attempting to load has support. If a kernel
-with this enabled attempts to kexec a kernel where this is not
-supported, it would trigger a fault almost immediately.
+Sorry, that wasn't clear. I meant: get a copy of the TAP spec itself
+into the kernel documentation. KUnit already has an implementation.
 
-Liran suggested adding a section to the built image acting as a flag to
-signify support for being kexec'd by a kernel with pinning enabled.
-Should that approach be implemented, it is likely that the command line
-flag (pv_cr_pin) would still be desired for some deprecation period. We
-wouldn't want the default behavior to change from being able to kexec
-older kernels to not being able to, as this might break some users
-workflows.
+> I previously volunteered (in Lisbon) to write up the TAP deviations,
+> and never got around to it.   Sorry about that. I can try to work on it now if
+> people are still interested.
 
-Signed-off-by: John Andersen <john.s.andersen@intel.com>
----
- .../admin-guide/kernel-parameters.txt         | 11 ++++++
- arch/x86/Kconfig                              | 10 +++++
- arch/x86/include/asm/kvm_para.h               | 17 ++++++++
- arch/x86/kernel/cpu/common.c                  |  5 +++
- arch/x86/kernel/kvm.c                         | 39 +++++++++++++++++++
- arch/x86/kernel/setup.c                       |  8 ++++
- 6 files changed, 90 insertions(+)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index dbc22d684627..8552501a1579 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3836,6 +3836,17 @@
- 			[KNL] Number of legacy pty's. Overwrites compiled-in
- 			default number.
- 
-+	pv_cr_pin	[SECURITY,X86]
-+			Enable paravirtualized control register pinning. When
-+			running paravirutalized under KVM, request that KVM not
-+			allow the guest to disable kernel protection features
-+			set in CPU control registers. Specifying this option
-+			will disable kexec (and crashkernel). If kexec support
-+			has not been compiled into the kernel and host KVM
-+			supports paravirtualized control register pinning, it
-+			will be active by default without the need to specify
-+			this parameter.
-+
- 	quiet		[KNL] Disable most log messages
- 
- 	r128=		[HW,DRM]
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index beea77046f9b..d47b09ae23bd 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -800,6 +800,7 @@ config KVM_GUEST
- 	bool "KVM Guest support (including kvmclock)"
- 	depends on PARAVIRT
- 	select PARAVIRT_CLOCK
-+	select PARAVIRT_CR_PIN
- 	select ARCH_CPUIDLE_HALTPOLL
- 	default y
- 	---help---
-@@ -843,6 +844,15 @@ config PARAVIRT_TIME_ACCOUNTING
- config PARAVIRT_CLOCK
- 	bool
- 
-+config PARAVIRT_CR_PIN
-+       bool "Paravirtual bit pinning for CR0 and CR4"
-+       depends on KVM_GUEST
-+       help
-+         Select this option to have the virtualised guest request that the
-+         hypervisor disallow it from disabling protections set in control
-+         registers. The hypervisor will prevent exploits from disabling
-+         features such as SMEP, SMAP, UMIP, and WP.
-+
- config JAILHOUSE_GUEST
- 	bool "Jailhouse non-root cell support"
- 	depends on X86_64 && PCI
-diff --git a/arch/x86/include/asm/kvm_para.h b/arch/x86/include/asm/kvm_para.h
-index 9b4df6eaa11a..342b475e7adf 100644
---- a/arch/x86/include/asm/kvm_para.h
-+++ b/arch/x86/include/asm/kvm_para.h
-@@ -102,6 +102,23 @@ static inline void kvm_spinlock_init(void)
- }
- #endif /* CONFIG_PARAVIRT_SPINLOCKS */
- 
-+#ifdef CONFIG_PARAVIRT_CR_PIN
-+void __init kvm_paravirt_cr_pinning_init(void);
-+void kvm_setup_paravirt_cr_pinning(unsigned long cr0_pinned_bits,
-+				   unsigned long cr4_pinned_bits);
-+#else
-+static inline void kvm_paravirt_cr_pinning_init(void)
-+{
-+	return;
-+}
-+
-+static inline void kvm_setup_paravirt_cr_pinning(unsigned long cr0_pinned_bits,
-+						 unsigned long cr4_pinned_bits)
-+{
-+	return;
-+}
-+#endif /* CONFIG_PARAVIRT_CR_PIN */
-+
- #else /* CONFIG_KVM_GUEST */
- #define kvm_async_pf_task_wait(T, I) do {} while(0)
- #define kvm_async_pf_task_wake(T) do {} while(0)
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 08682757e547..bbf1de0cb253 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -21,6 +21,7 @@
- #include <linux/smp.h>
- #include <linux/io.h>
- #include <linux/syscore_ops.h>
-+#include <linux/kvm_para.h>
- 
- #include <asm/stackprotector.h>
- #include <asm/perf_event.h>
-@@ -416,6 +417,8 @@ static void __init setup_cr_pinning(void)
- 	mask = (X86_CR4_SMEP | X86_CR4_SMAP | X86_CR4_UMIP);
- 	cr4_pinned_bits = this_cpu_read(cpu_tlbstate.cr4) & mask;
- 	static_key_enable(&cr_pinning.key);
-+
-+	kvm_setup_paravirt_cr_pinning(X86_CR0_WP, cr4_pinned_bits);
- }
- 
- /*
-@@ -1589,6 +1592,8 @@ void identify_secondary_cpu(struct cpuinfo_x86 *c)
- 	mtrr_ap_init();
- 	validate_apic_and_package_id(c);
- 	x86_spec_ctrl_setup_ap();
-+
-+	kvm_setup_paravirt_cr_pinning(X86_CR0_WP, cr4_pinned_bits);
- }
- 
- static __init int setup_noclflush(char *arg)
-diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index d817f255aed8..f6c159229e35 100644
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -24,6 +24,8 @@
- #include <linux/debugfs.h>
- #include <linux/nmi.h>
- #include <linux/swait.h>
-+#include <linux/init.h>
-+#include <linux/kexec.h>
- #include <asm/timer.h>
- #include <asm/cpu.h>
- #include <asm/traps.h>
-@@ -34,6 +36,7 @@
- #include <asm/hypervisor.h>
- #include <asm/tlb.h>
- #include <asm/cpuidle_haltpoll.h>
-+#include <asm/cmdline.h>
- 
- static int kvmapf = 1;
- 
-@@ -708,6 +711,7 @@ static void __init kvm_apic_init(void)
- static void __init kvm_init_platform(void)
- {
- 	kvmclock_init();
-+	kvm_paravirt_cr_pinning_init();
- 	x86_platform.apic_post_init = kvm_apic_init;
- }
- 
-@@ -857,6 +861,41 @@ void __init kvm_spinlock_init(void)
- 
- #endif	/* CONFIG_PARAVIRT_SPINLOCKS */
- 
-+#ifdef CONFIG_PARAVIRT_CR_PIN
-+static int kvm_paravirt_cr_pinning_enabled __ro_after_init = 0;
-+
-+void __init kvm_paravirt_cr_pinning_init()
-+{
-+#ifdef CONFIG_KEXEC_CORE
-+	if (!cmdline_find_option_bool(boot_command_line, "pv_cr_pin"))
-+		return;
-+
-+	/* Paravirtualized CR pinning is currently incompatible with kexec */
-+	kexec_load_disabled = 1;
-+#endif
-+
-+	kvm_paravirt_cr_pinning_enabled = 1;
-+}
-+
-+void kvm_setup_paravirt_cr_pinning(unsigned long cr0_pinned_bits,
-+				   unsigned long cr4_pinned_bits)
-+{
-+	u64 mask;
-+
-+	if (!kvm_paravirt_cr_pinning_enabled)
-+		return;
-+
-+	if (!kvm_para_has_feature(KVM_FEATURE_CR_PIN))
-+		return;
-+
-+	rdmsrl(MSR_KVM_CR0_PIN_ALLOWED, mask);
-+	wrmsrl(MSR_KVM_CR0_PINNED, cr0_pinned_bits & mask);
-+
-+	rdmsrl(MSR_KVM_CR4_PIN_ALLOWED, mask);
-+	wrmsrl(MSR_KVM_CR4_PINNED, cr4_pinned_bits & mask);
-+}
-+#endif
-+
- #ifdef CONFIG_ARCH_CPUIDLE_HALTPOLL
- 
- static void kvm_disable_host_haltpoll(void *i)
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 9e71d6f6e564..a75f9e730cc3 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -26,6 +26,9 @@
- #include <asm/apic.h>
- #include <asm/bios_ebda.h>
- #include <asm/bugs.h>
-+#include <asm/kasan.h>
-+#include <asm/cmdline.h>
-+
- #include <asm/cpu.h>
- #include <asm/efi.h>
- #include <asm/gart.h>
-@@ -496,6 +499,11 @@ static void __init reserve_crashkernel(void)
- 		return;
- 	}
- 
-+	if (cmdline_find_option_bool(boot_command_line, "pv_cr_pin")) {
-+		pr_info("Ignoring crashkernel since pv_cr_pin present in cmdline\n");
-+		return;
-+	}
-+
- 	/* 0 means: find the address automatically */
- 	if (!crash_base) {
- 		/*
--- 
-2.21.0
-
+I think that would be useful. I would do it, but, as I mentioned,
+there are licensing issues with the TAP spec. I am trying to resolve
+those issues, and am currently waiting to hear back from somebody from
+TAP.
