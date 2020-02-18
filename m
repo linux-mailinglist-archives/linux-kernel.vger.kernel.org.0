@@ -2,94 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FA0916358D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 22:54:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99C7B16359B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 22:58:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727999AbgBRVyT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 16:54:19 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:42678 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726482AbgBRVyT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 16:54:19 -0500
-Received: from zn.tnic (p200300EC2F0C1F00B896B40159BA1A96.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:1f00:b896:b401:59ba:1a96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E0C8F1EC0C31;
-        Tue, 18 Feb 2020 22:54:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1582062857;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=zwwTIfNeXE0+PhfSG968Dl+SHEvpcxijJ0a07ILjQLw=;
-        b=QGtWD285YbgVFOi9XzS2Uav1mmO1rv7jcv9KXSra++21FdyQVYyJLcboFb0M8IGe35XYI7
-        9H+SxFWLcTxBt+N4MkalKow4lNV9vIp56K10d8n6RqrvAogTfYxweMD/fot9Oa4SFicM6l
-        l6mrEs67SdidLPEekTl7JA4BBpXBn3U=
-Date:   Tue, 18 Feb 2020 22:54:11 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Kim Phillips <kim.phillips@amd.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Babu Moger <babu.moger@amd.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Frank van der Linden <fllinden@amazon.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Huang Rui <ray.huang@amd.com>,
-        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
-        Jan Beulich <jbeulich@suse.com>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Luwei Kang <luwei.kang@intel.com>,
-        Martin =?utf-8?B?TGnFoWth?= <mliska@suse.cz>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v3] x86/cpu/amd: Enable the fixed Instructions Retired
- counter IRPERF
-Message-ID: <20200218215411.GU14449@zn.tnic>
-References: <20200214201805.13830-1-kim.phillips@amd.com>
- <20200218112035.GB14449@zn.tnic>
- <15f0ff78-1a94-cfa7-297b-c226cb98d10f@amd.com>
+        id S1728122AbgBRV6y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 16:58:54 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:35360 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726655AbgBRV6x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 16:58:53 -0500
+Received: by mail-lf1-f68.google.com with SMTP id n20so600803lfa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 13:58:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=anholt-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ahpk/GappiCcM5wW00z5eRTm7XSNbwAT9p1AedeyQaE=;
+        b=kdpjP80seFPRBqxhxIpalWncJhJycuWAQPQT0uf/BhAioMxpA/HQSrB4FFdQP+vo/L
+         KzZMVoRXpw4PUTQavb0o6cZHHaGKHSVcOUgix+7f/NfUfAl9aCz7L0/IbtVECP3Hmx5k
+         uQFJiRqinUNrrBdMEj/yIhEp3RBT2Uxd72BlqR4nMUwzHAyMKM7YPchqExAMmNWGqoBi
+         Ph19zMTGlFHeCAUda62180ibnNyy2wl7eOxbVuLhU6Jsy9cLpevU3SYjCp9Zrk7UP43A
+         VMce/XyzyXhUBuaWX2tdTaeUxZdF5O1Zs8APWnkdHzTNx1e2XTvdK45WjNKQLPXeMS0F
+         1T4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ahpk/GappiCcM5wW00z5eRTm7XSNbwAT9p1AedeyQaE=;
+        b=bRlaPXLfvd9pT7KZE37SD+QvqOPQtIjtBnpgCSAyxf/aIMwYc4OzH3B+QQEZwav+hs
+         8qYLXwIK4wpj1aaX75038A+lNy9tnDYPuiMLU6DynKoXUyMZRvXhhDpM44QmvjiydIPR
+         IcD+HNzDLcofIRplq93mtbkGyq8jvY8mbsKsWhM4CHQ9zudO+kBwe9NS8SnAKdArO7DD
+         dTsq07CpnVJnxcL31WWDKCffqz/dWIsPROxnJwX6BSU0uDmUNn84XHT+H4jSerbUj2zr
+         J2zBI3AWv1HlLpckpqF0m+AWiRZ6SeLCvWBr6+Q9NmcS4KUpuV2lm/ELW/o3mMwhLScC
+         uWdA==
+X-Gm-Message-State: APjAAAXB1FBgDrdT2Nl35tKEsCJlxwT6RRnKtDYVvQcxYXD97VslfJ7G
+        BvwsBFuDR/ONPGu7rYLJCOsqJKZ8vO4GHRKKDc6VGg==
+X-Google-Smtp-Source: APXvYqwfJ/KjDHUqMyRYTcya4wxUGjDyhjQGBQJimj1/3xX/vD0XeMTB9CXlS07iJHjcgr5dOlc5NuiOgM8QWSquNew=
+X-Received: by 2002:ac2:4214:: with SMTP id y20mr11460778lfh.212.1582063131075;
+ Tue, 18 Feb 2020 13:58:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <15f0ff78-1a94-cfa7-297b-c226cb98d10f@amd.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1581705404-5124-1-git-send-email-jcrouse@codeaurora.org>
+In-Reply-To: <1581705404-5124-1-git-send-email-jcrouse@codeaurora.org>
+From:   Eric Anholt <eric@anholt.net>
+Date:   Tue, 18 Feb 2020 13:58:39 -0800
+Message-ID: <CADaigPXdn84cR0Pu-uLnCwOVHNUiOi_t6u7OYYDU6tkSvdWp6A@mail.gmail.com>
+Subject: Re: [PATCH] drm/msm/a5xx: Always set an OPP supported hardware value
+To:     Jordan Crouse <jcrouse@codeaurora.org>
+Cc:     linux-arm-msm@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Sean Paul <sean@poorly.run>, Wen Yang <wen.yang99@zte.com.cn>,
+        AngeloGioacchino Del Regno <kholk11@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        freedreno@lists.freedesktop.org,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Ben Dooks <ben.dooks@codethink.co.uk>,
+        Daniel Vetter <daniel@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 03:35:25PM -0600, Kim Phillips wrote:
-> The only reason to have it show in /proc/cpuinfo is for userspace,
-> but they can check for a nonzero count prior to using, instead.
+On Fri, Feb 14, 2020 at 10:36 AM Jordan Crouse <jcrouse@codeaurora.org> wrote:
+>
+> If the opp table specifies opp-supported-hw as a property but the driver
+> has not set a supported hardware value the OPP subsystem will reject
+> all the table entries.
+>
+> Set a "default" value that will match the default table entries but not
+> conflict with any possible real bin values. Also fix a small memory leak
+> and free the buffer allocated by nvmem_cell_read().
+>
+> Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
 
-How is userspace going to check it? perf tool or people *can* check it?
-If perf is going to check it then I'm fine with having the bug bit in
-/proc/cpuinfo along with a patch for perf adding usage for it.
+This does fix my warn at boot on db820c.
 
-If not and people in userspace can maybe check it but they probably
-won't then adding that bug bit would be a waste of bit.
-
-> Let me know if you'd like me to send a v4, or if you will just apply
-> this version of yours.
-
-I can take the simpler version for now. If you still want to have perf
-tool check the bit, you could submit a new patch adding that bug bit
-along with a perf tool patch using it...
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Reviewed-by: Eric Anholt <eric@anholt.net>
