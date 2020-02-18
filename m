@@ -2,75 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2C63161F15
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 03:42:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B87A161F1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 03:43:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726656AbgBRCmH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 21:42:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54474 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726569AbgBRCl6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 21:41:58 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B285B22527;
-        Tue, 18 Feb 2020 02:41:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581993717;
-        bh=ENuIonxA9t7MXcbRtsH6Z/8DcbDtTbt/JJI0qGNDi04=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xy6vTA9/gmquwU0JXvdXa55QQ+rrtT+sN9tqiQ7Ngxu5eFnb/3uwUe5Vg+xFDt4fw
-         o5SNKjg3UWFgBTOgKldUbe0e8u3VebqnTpyKpTYjkHluh+TGeUCaVGdC8jsAxHYv2D
-         NpL1X/+/O2HMsct1pwzPPtke9R9phj0OYEZKwyvU=
-From:   Sasha Levin <sashal@kernel.org>
-To:     mingo@kernel.org, peterz@infradead.org
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, jolsa@redhat.com,
-        alexey.budankov@linux.intel.com, songliubraving@fb.com,
-        acme@redhat.com, allison@lohutok.net,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 11/11] tools/lib/lockdep: call lockdep_init_task on init
-Date:   Mon, 17 Feb 2020 21:41:33 -0500
-Message-Id: <20200218024133.5059-12-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200218024133.5059-1-sashal@kernel.org>
-References: <20200218024133.5059-1-sashal@kernel.org>
+        id S1726353AbgBRCnQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 21:43:16 -0500
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:40439 "EHLO
+        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726240AbgBRCnQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 21:43:16 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0TqCIusF_1581993788;
+Received: from 30.27.234.229(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0TqCIusF_1581993788)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 18 Feb 2020 10:43:11 +0800
+Subject: Re: [PATCH v2 1/2] crypto: fix mismatched hash algorithm name sm3-256
+ to sm3
+To:     Mimi Zohar <zohar@linux.ibm.com>, herbert@gondor.apana.org.au,
+        davem@davemloft.net, jarkko.sakkinen@linux.intel.com,
+        ebiggers@kernel.org, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com
+Cc:     linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200217093649.97938-1-tianjia.zhang@linux.alibaba.com>
+ <20200217093649.97938-2-tianjia.zhang@linux.alibaba.com>
+ <1581989598.8515.233.camel@linux.ibm.com>
+From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Message-ID: <f99d89d5-fbe0-49b9-a24d-b282ceb33e95@linux.alibaba.com>
+Date:   Tue, 18 Feb 2020 10:43:08 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
+In-Reply-To: <1581989598.8515.233.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We now have to explicitly call lockdep_init_task() when starting up.
 
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- tools/lib/lockdep/preload.c | 4 ++++
- 1 file changed, 4 insertions(+)
 
-diff --git a/tools/lib/lockdep/preload.c b/tools/lib/lockdep/preload.c
-index 8f1adbe887b2f..578fdeda9422c 100644
---- a/tools/lib/lockdep/preload.c
-+++ b/tools/lib/lockdep/preload.c
-@@ -9,6 +9,8 @@
- #include "include/liblockdep/mutex.h"
- #include "../../include/linux/rbtree.h"
- 
-+extern struct task_struct *__curr(void);
-+
- /**
-  * struct lock_lookup - liblockdep's view of a single unique lock
-  * @orig: pointer to the original pthread lock, used for lookups
-@@ -421,6 +423,8 @@ __attribute__((constructor)) static void init_preload(void)
- 	if (__init_state == done)
- 		return;
- 
-+	lockdep_init_task(__curr());
-+
- #ifndef __GLIBC__
- 	__init_state = prepare;
- 
--- 
-2.20.1
+On 2020/2/18 9:33, Mimi Zohar wrote:
+> On Mon, 2020-02-17 at 17:36 +0800, Tianjia Zhang wrote:
+>> The name sm3-256 is defined in hash_algo_name in hash_info, but the
+>> algorithm name implemented in sm3_generic.c is sm3, which will cause
+>> the sm3-256 algorithm to be not found in some application scenarios of
+>> the hash algorithm, and an ENOENT error will occur. For example,
+>> IMA, keys, and other subsystems that reference hash_algo_name all use
+>> the hash algorithm of sm3.
+>>
+>> According to https://tools.ietf.org/id/draft-oscca-cfrg-sm3-01.html,
+>> SM3 always produces a 256-bit hash value and there are no plans for
+>> other length development, so there is no ambiguity in the name of sm3.
+>>
+>> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+>> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> 
+> The previous version of this patch set is queued in the next-
+> integrity-testing branch.  That version of this patch didn't
+> change TPM_ALG_SM3_256.  Unless the TPM standard was modified, the TPM
+> spec refers to it as TPM_ALG_SM3_256.  Has that changed?
+> 
+> Mimi
+> 
 
+The definition in the TPM specification is still TPM_ALG_SM3_256, please
+ignore the modification to the TPM definition in this patch.
+
+Thanks,
+Tianjia
