@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 992EA1622AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 09:50:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A80A1622AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 09:50:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726401AbgBRIum (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 03:50:42 -0500
-Received: from comms.puri.sm ([159.203.221.185]:39728 "EHLO comms.puri.sm"
+        id S1726445AbgBRIup (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 03:50:45 -0500
+Received: from comms.puri.sm ([159.203.221.185]:39752 "EHLO comms.puri.sm"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726264AbgBRIuk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 03:50:40 -0500
+        id S1726264AbgBRIun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 03:50:43 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by comms.puri.sm (Postfix) with ESMTP id 89387E1132;
-        Tue, 18 Feb 2020 00:50:40 -0800 (PST)
+        by comms.puri.sm (Postfix) with ESMTP id 78DB7E1139;
+        Tue, 18 Feb 2020 00:50:43 -0800 (PST)
 Received: from comms.puri.sm ([127.0.0.1])
         by localhost (comms.puri.sm [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id EwxoEjvKN8rU; Tue, 18 Feb 2020 00:50:39 -0800 (PST)
+        with ESMTP id LH4sHeoznah9; Tue, 18 Feb 2020 00:50:42 -0800 (PST)
 From:   Martin Kepplinger <martin.kepplinger@puri.sm>
 To:     robh@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
         s.hauer@pengutronix.de, kernel@pengutronix.de
@@ -25,9 +25,9 @@ Cc:     linux-imx@nxp.com, Anson.Huang@nxp.com, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         "Angus Ainslie (Purism)" <angus@akkea.ca>,
         Martin Kepplinger <martin.kepplinger@puri.sm>
-Subject: [PATCH v2 1/9] arm64: dts: librem5-devkit: add sai2 and sai6 pinctrl definitions
-Date:   Tue, 18 Feb 2020 09:49:34 +0100
-Message-Id: <20200218084942.4884-2-martin.kepplinger@puri.sm>
+Subject: [PATCH v2 2/9] arm64: dts: librem5-devkit: enable sai2 and sai6 audio interface
+Date:   Tue, 18 Feb 2020 09:49:35 +0100
+Message-Id: <20200218084942.4884-3-martin.kepplinger@puri.sm>
 In-Reply-To: <20200218084942.4884-1-martin.kepplinger@puri.sm>
 References: <20200218084942.4884-1-martin.kepplinger@puri.sm>
 Content-Transfer-Encoding: 8bit
@@ -38,8 +38,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Angus Ainslie (Purism)" <angus@akkea.ca>
 
-Add missing sai2 and sai6 audio interface pinctrl definitions for the
-Librem 5 devkit.
+enable the imx8mq sai2 and sai6 audio interface for the librem 5 devkit.
 
 Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
 Signed-off-by: Martin Kepplinger <martin.kepplinger@puri.sm>
@@ -48,35 +47,35 @@ Signed-off-by: Martin Kepplinger <martin.kepplinger@puri.sm>
  1 file changed, 19 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts b/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-index 007c14eec676..1e9fa80be647 100644
+index 1e9fa80be647..25135b08d4f8 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
 +++ b/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-@@ -567,6 +567,25 @@
- 		>;
- 	};
+@@ -761,6 +761,25 @@
+ 	status = "okay";
+ };
  
-+	pinctrl_sai2: sai2grp {
-+		fsl,pins = <
-+			MX8MQ_IOMUXC_SAI2_TXFS_SAI2_TX_SYNC	0xd6
-+			MX8MQ_IOMUXC_SAI2_TXC_SAI2_TX_BCLK	0xd6
-+			MX8MQ_IOMUXC_SAI2_TXD0_SAI2_TX_DATA0	0xd6
-+			MX8MQ_IOMUXC_SAI2_RXD0_SAI2_RX_DATA0	0xd6
-+			MX8MQ_IOMUXC_SAI2_MCLK_SAI2_MCLK	0xd6
-+		>;
-+	};
++&sai2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_sai2>;
++	assigned-clocks = <&clk IMX8MQ_CLK_SAI2>;
++	assigned-clock-parents = <&clk IMX8MQ_AUDIO_PLL1_OUT>;
++	assigned-clock-rates = <24576000>;
++	status = "okay";
++};
 +
-+	pinctrl_sai6: sai6grp {
-+		fsl,pins = <
-+			MX8MQ_IOMUXC_SAI1_RXD5_SAI6_RX_DATA0	0xd6
-+			MX8MQ_IOMUXC_SAI1_RXD6_SAI6_RX_SYNC	0xd6
-+			MX8MQ_IOMUXC_SAI1_TXD4_SAI6_RX_BCLK     0xd6
-+			MX8MQ_IOMUXC_SAI1_TXD5_SAI6_TX_DATA0	0xd6
-+		>;
-+	};
++&sai6 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_sai6>;
++	assigned-clocks = <&clk IMX8MQ_CLK_SAI6>;
++	assigned-clock-parents = <&clk IMX8MQ_AUDIO_PLL1_OUT>;
++	assigned-clock-rates = <24576000>;
++	fsl,sai-synchronous-rx;
++	status = "okay";
++};
 +
- 	pinctrl_typec: typecgrp {
- 		fsl,pins = <
- 			MX8MQ_IOMUXC_NAND_DATA06_GPIO3_IO12		0x16
+ &uart1 { /* console */
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_uart1>;
 -- 
 2.20.1
 
