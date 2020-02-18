@@ -2,183 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 187F3162E40
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 19:18:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE8BE162E4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 19:20:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726613AbgBRSRz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 13:17:55 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:38012 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726333AbgBRSRv (ORCPT
+        id S1726548AbgBRSUH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 13:20:07 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:47083 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbgBRSUH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 13:17:51 -0500
-Received: by mail-lj1-f193.google.com with SMTP id w1so24093472ljh.5
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 10:17:49 -0800 (PST)
+        Tue, 18 Feb 2020 13:20:07 -0500
+Received: by mail-ed1-f68.google.com with SMTP id p14so17744271edy.13;
+        Tue, 18 Feb 2020 10:20:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=vkHg12+pkfjCrH0xKz1xddA4Ce0rSl7Bk5j9kTZ2CsA=;
-        b=fDS5n0jSfMLHWoNzdaiy+EuQ+r0xoenmqK7VCFBRv9qa7ktNqUsFocJqITZTf9kPrD
-         u/0xfazciVWSUcUdM8USsX8+i24FltjGxxqxDcSBsnyAuExTOqR4i08T3cq8ViuSsKTG
-         TXTqJMhWXPfneiNOywCNBAXBYhv2k+DIgKNgI=
+        bh=mFpfQMXDcTILM8p6YZkURH/PZ0c/a3Gt7zfwkgA7PZs=;
+        b=FyQYrjqyqb21kEEx3w3LXCyRBFAjASj6lCrAa3Ha+O7l5IiRL4jnoXo9NxDLjeI1Qs
+         /rixHYxVJqzcG6EaiGZlVDUT3PnahWrZo4/UNYcvlHOYuYVRSJW83E+s1TnxiZaKjhHn
+         GJkStXXOTWn58ayGW+UHNKwFf0spIqZ3hneJwUUV+KH1x2PvQtdiiZthkgyFko00OOLg
+         sKXcC3L9KNviP+tq9VthA5TzyV843P2Ns+W+aCXfgeuXIzMChZgeJxp6+piIEJ0usF7L
+         HcjePpSCEeRIyJ9IIC0lM2HUSsoqhVt4yrm1wUN17ZZLt5lPLG9REEOxNyuTE4HvXfpN
+         yIoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vkHg12+pkfjCrH0xKz1xddA4Ce0rSl7Bk5j9kTZ2CsA=;
-        b=guVwzfYeUMjfg8S571pVeAPcpcIvYPSln1WtBI5I/B24TfyMfY7C4V733IF8jxVyIo
-         x/PoB6fIhJn/fHdObqQy08d4N0RYjJOZ57NtTIJFb0QySp4YoQJ1z563xWQdkFUdHZs6
-         8Foy3coDoD52g7m5ZWiV2dG6uDdO36mkXf2kEvmTZFI78CU+8O7BGkDRYxM8Ir6cJPic
-         SqZzqX0CDr1ZukKPoJUT/HbFmre9JfRvo+yzDmEsbwby6BCuxSqLf4Jhd1TrrZFCmqsB
-         Wrn5LKAxZv1lODO2AQ1Wg2UoVisixHHaS6U7Gkca74nI4TCZJOWC8SZisORvrFltZk53
-         bBUA==
-X-Gm-Message-State: APjAAAW4Ekw3gP4QVFipbsr9XIE1MHc52kK1gNJMQpq1g2GlA2kYiMKv
-        +sA669RhkM3JjsO1YccN9SxwpFehypA=
-X-Google-Smtp-Source: APXvYqxfxfg36vFaglYb+YvCJR3hJip4vmIXmUsfb9NV06MyuYfGPNNAbp48kTHb1w1xJVdc0czWGQ==
-X-Received: by 2002:a05:651c:448:: with SMTP id g8mr13847702ljg.35.1582049868628;
-        Tue, 18 Feb 2020 10:17:48 -0800 (PST)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id f4sm2879026ljo.79.2020.02.18.10.17.47
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2020 10:17:47 -0800 (PST)
-Received: by mail-lf1-f48.google.com with SMTP id l18so15258036lfc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 10:17:47 -0800 (PST)
-X-Received: by 2002:ac2:456f:: with SMTP id k15mr11088292lfm.125.1582049867037;
- Tue, 18 Feb 2020 10:17:47 -0800 (PST)
+        bh=mFpfQMXDcTILM8p6YZkURH/PZ0c/a3Gt7zfwkgA7PZs=;
+        b=oMt77L8uW0NWgnM2LuakMw5X5d4qPrkt+b9clmcqe6zxE6CBdb5Dwvx+bdGfWcndrV
+         NIAQGoPxFvNDiwf8YoqiTCDHxg3z1lpuYQ4V/Gk7t0zw5KSCdpQ41ErGNXYLjqWS25B/
+         QkpZphdDbfuJaIkuNadCcPT8kr5l51kO/KRtK4+T4GzIJkHy0tS/xKyjiEDNue2+pBJn
+         7eBPT9seMLsEkkaGP3dDe4rwAyGm/HIatClDCRxEUGsB4Ir172dnztkhCVbTdFzBysMP
+         zDgl5vMGZshNOByrcKrU7azobmz7ZrTOHZfPFny1EvBaHFeSYmJQ74xoHnfgXlaKoAsH
+         29OA==
+X-Gm-Message-State: APjAAAXoV089pr39ogBijCvxBiW/Uy+3So8j6yA08mrFGOfSu/4IJAzK
+        i7/T2toUmXdfzxsADwjM9qiwgF7RF9sVhyUReV8=
+X-Google-Smtp-Source: APXvYqwqURRrVtjZm03lW6XQA7ZhZaAg148HuuceB26Lz99GzgTJCZLN/lZNTR1RHx1cjra7vjc/E+IlK3Q/BY845lE=
+X-Received: by 2002:a17:906:a44d:: with SMTP id cb13mr21055283ejb.258.1582050004828;
+ Tue, 18 Feb 2020 10:20:04 -0800 (PST)
 MIME-Version: 1.0
-References: <20200214154854.6746-1-sashal@kernel.org> <20200214154854.6746-542-sashal@kernel.org>
- <CANaxB-zjYecWpjMoX6dXY3B5HtVu8+G9npRnaX2FnTvp9XucTw@mail.gmail.com>
- <CAHk-=wjd6BKXEpU0MfEaHuOEK-StRToEcYuu6NpVfR0tR5d6xw@mail.gmail.com> <CAHk-=wgs8E4JYVJHaRV2hMn3dxUnM8i0Kn2mA1SjzJdsbB9tXw@mail.gmail.com>
-In-Reply-To: <CAHk-=wgs8E4JYVJHaRV2hMn3dxUnM8i0Kn2mA1SjzJdsbB9tXw@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 18 Feb 2020 10:17:30 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiaDvYHBt8oyZGOp2XwJW4wNXVAchqTFuVBvASTFx_KfA@mail.gmail.com>
-Message-ID: <CAHk-=wiaDvYHBt8oyZGOp2XwJW4wNXVAchqTFuVBvASTFx_KfA@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 5.5 542/542] pipe: use exclusive waits when
- reading or writing
-To:     Andrei Vagin <avagin@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: multipart/mixed; boundary="00000000000057bf59059eddb0ac"
+References: <1580250823-30739-1-git-send-email-jcrouse@codeaurora.org>
+In-Reply-To: <1580250823-30739-1-git-send-email-jcrouse@codeaurora.org>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Tue, 18 Feb 2020 10:19:53 -0800
+Message-ID: <CAF6AEGvQyaZL8iSKkzTZ-X4nqXWcyO6RBf-pUfOZFg0w52BGUA@mail.gmail.com>
+Subject: Re: [RFC PATCH v1] iommu/arm-smmu: Allow domains to choose a context bank
+To:     Jordan Crouse <jcrouse@codeaurora.org>
+Cc:     "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will@kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---00000000000057bf59059eddb0ac
-Content-Type: text/plain; charset="UTF-8"
-
-On Tue, Feb 18, 2020 at 9:54 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Tue, Jan 28, 2020 at 2:34 PM Jordan Crouse <jcrouse@codeaurora.org> wrote:
 >
-> Anyway, new patch attached. This hasn't been tested either, but I'll
-> let you know if it's broken too ;)
+> Domains which are being set up for split pagetables usually want to be
+> on a specific context bank for hardware reasons. Force the context
+> bank for domains with the split-pagetable quirk to context bank 0.
+> If context bank 0 is taken, move that context bank to another unused
+> bank and rewrite the stream matching registers accordingly.
 
-That one looks good. Some small cosmetic edits later, and with a
-commit log it looks like the appended.
+Is the only reason for dealing with the case that bank 0 is already in
+use, due to the DMA domain that gets setup before driver probes?
 
-If you're testing this and it works for your full CRIU test case too,
-I'll add your tested-by if I get it before I end up pushing things out
-later today,
+I'm kinda thinking that we need to invent a way to unwind/detatch the
+DMA domain, and unhook the iommu-dmaops, since this seems to already
+be already causing problems with dma-bufs imported from other drivers
+(who expect that dma_map_*(), with the importing device's dev ptr,
+will do something sane.
 
-                    Linus
+BR,
+-R
 
---00000000000057bf59059eddb0ac
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-pipe-make-sure-to-wake-up-everybody-when-the-last-re.patch"
-Content-Disposition: attachment; 
-	filename="0001-pipe-make-sure-to-wake-up-everybody-when-the-last-re.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_k6s7mo4e0>
-X-Attachment-Id: f_k6s7mo4e0
-
-RnJvbSA3ZTJmZTk2ZDFiNzYwZWIzZTdkZWM3NzFkYjdiODk4M2Q1YjZjMjVjIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBMaW51cyBUb3J2YWxkcyA8dG9ydmFsZHNAbGludXgtZm91bmRh
-dGlvbi5vcmc+CkRhdGU6IFR1ZSwgMTggRmViIDIwMjAgMTA6MTI6NTggLTA4MDAKU3ViamVjdDog
-W1BBVENIXSBwaXBlOiBtYWtlIHN1cmUgdG8gd2FrZSB1cCBldmVyeWJvZHkgd2hlbiB0aGUgbGFz
-dAogcmVhZGVyL3dyaXRlciBjbG9zZXMKCkFuZHJlaSBWYWdpbiByZXBvcnRlZCB0aGF0IGNvbW1p
-dCAwZGRhZDIxZDNlOTkgKCJwaXBlOiB1c2UgZXhjbHVzaXZlCndhaXRzIHdoZW4gcmVhZGluZyBv
-ciB3cml0aW5nIikgYnJva2Ugb25lIG9mIHRoZSBDUklVIHRlc3RzLiAgSGUgZXZlbgpoYXMgYSB0
-cml2aWFsIHJlcHJvZHVjZXI6CgogICAgI2luY2x1ZGUgPHVuaXN0ZC5oPgogICAgI2luY2x1ZGUg
-PHN5cy90eXBlcy5oPgogICAgI2luY2x1ZGUgPHN5cy93YWl0Lmg+CgogICAgaW50IG1haW4oKQog
-ICAgewogICAgICAgICAgICBpbnQgcFsyXTsKICAgICAgICAgICAgcGlkX3QgcDEsIHAyOwogICAg
-ICAgICAgICBpbnQgc3RhdHVzOwoKICAgICAgICAgICAgaWYgKHBpcGUocCkgPT0gLTEpCiAgICAg
-ICAgICAgICAgICAgICAgcmV0dXJuIDE7CgogICAgICAgICAgICBwMSA9IGZvcmsoKTsKICAgICAg
-ICAgICAgaWYgKHAxID09IDApIHsKICAgICAgICAgICAgICAgICAgICBjbG9zZShwWzFdKTsKICAg
-ICAgICAgICAgICAgICAgICByZWFkKHBbMF0sICZzdGF0dXMsIHNpemVvZihzdGF0dXMpKTsKICAg
-ICAgICAgICAgICAgICAgICByZXR1cm4gMDsKICAgICAgICAgICAgfQogICAgICAgICAgICBwMiA9
-IGZvcmsoKTsKICAgICAgICAgICAgaWYgKHAyID09IDApIHsKICAgICAgICAgICAgICAgICAgICBj
-bG9zZShwWzFdKTsKICAgICAgICAgICAgICAgICAgICByZWFkKHBbMF0sICZzdGF0dXMsIHNpemVv
-ZihzdGF0dXMpKTsKICAgICAgICAgICAgICAgICAgICByZXR1cm4gMDsKICAgICAgICAgICAgfQog
-ICAgICAgICAgICBzbGVlcCgxKTsKICAgICAgICAgICAgY2xvc2UocFsxXSk7CiAgICAgICAgICAg
-IHdhaXQoJnN0YXR1cyk7CiAgICAgICAgICAgIHdhaXQoJnN0YXR1cyk7CgogICAgICAgICAgICBy
-ZXR1cm4gMDsKICAgIH0KCmFuZCB0aGUgcHJvYmxlbSAtIG9uY2UgaGUgcG9pbnRzIGl0IG91dCAt
-IGlzIG9idmlvdXMuICBXZSB1c2UgdGhlc2UgbmljZQpleGNsdXNpdmUgd2FpdHMsIGJ1dCB3aGVu
-IHRoZSBsYXN0IHdyaXRlciBnb2VzIGF3YXksIGl0IHRoZW4gbmVlZHMgdG8Kd2FrZSB1cCBfZXZl
-cnlfIHJlYWRlciAoYW5kIGNvbnZlcnNlbHksIHRoZSBsYXN0IHJlYWRlciBkaXNhcHBlYXJpbmcK
-bmVlZHMgdG8gd2FrZSBldmVyeSB3cml0ZXIsIG9mIGNvdXJzZSkuCgpJbiBmYWN0LCB3aGVuIGdv
-aW5nIHRocm91Z2ggdGhpcywgd2UgaGFkIHNldmVyYWwgc21hbGwgb2RkaXRpZXMgYXJvdW5kCmhv
-dyB0byB3YWtlIHRoaW5ncy4gIFdlIGRpZCBpbiBmYWN0IHdha2UgZXZlcnkgcmVhZGVyIHdoZW4g
-d2UgY2hhbmdlZAp0aGUgc2l6ZSBvZiB0aGUgcGlwZSBidWZmZXJzLiAgQnV0IHRoYXQncyBlbnRp
-cmVseSBwb2ludGxlc3MsIHNpbmNlIHRoYXQKanVzdCBhY3RzIGFzIGEgcG9zc2libGUgc291cmNl
-IG9mIG5ldyBzcGFjZSAtIG5vIG5ldyBkYXRhIHRvIHJlYWQuCgpBbmQgd2hlbiB3ZSBjaGFuZ2Ug
-dGhlIHNpemUgb2YgdGhlIGJ1ZmZlciwgd2UgZG9uJ3QgbmVlZCB0byB3YWtlIGFsbAp3cml0ZXJz
-IGV2ZW4gd2hlbiB3ZSBhZGQgc3BhY2UgLSB0aGF0IGNhc2UgYWN0cyBqdXN0IGFzIGlmIHNvbWVi
-b2R5IG1hZGUKc3BhY2UgYnkgcmVhZGluZywgYW5kIGFueSB3cml0ZXIgdGhhdCBmaW5kcyBpdHNl
-bGYgbm90IGZpbGxpbmcgaXQgdXAKZW50aXJlbHkgd2lsbCB3YWtlIHRoZSBuZXh0IG9uZS4KCk9u
-IHRoZSBvdGhlciBoYW5kLCBvbiB0aGUgZXhpdCBwYXRoLCB3ZSB0cmllZCB0byBsaW1pdCB0aGUg
-d2FrZXVwcyB3aXRoCnRoZSBwcm9wZXIgcG9sbCBrZXlzIGV0Yywgd2hpY2ggaXMgZW50aXJlbHkg
-cG9pbnRsZXNzLCBiZWNhdXNlIGF0IHRoYXQKcG9pbnQgd2Ugb2J2aW91c2x5IG5lZWQgdG8gd2Fr
-ZSB1cCBldmVyeWJvZHkuICBTbyBkb24ndCBkbyB0aGF0OiBqdXN0Cndha2UgdXAgZXZlcnlib2R5
-IC0gYnV0IG9ubHkgZG8gdGhhdCBpZiB0aGUgY291bnRzIGNoYW5nZWQgdG8gemVyby4KClNvIGZp
-eCB0aG9zZSBub24tSU8gd2FrZXVwcyB0byBiZSBtb3JlIHByb3Blcjogc3BhY2UgY2hhbmdlIGRv
-ZXNuJ3QgYWRkCmFueSBuZXcgZGF0YSwgYnV0IGl0IG1pZ2h0IG1ha2Ugcm9vbSBmb3Igd3JpdGVy
-cywgc28gaXQgd2FrZXMgdXAgYQp3cml0ZXIuICBBbmQgdGhlIGFjdHVhbCBjaGFuZ2VzIHRvIHJl
-YWRlci93cml0ZXIgY291bnRzIHNob3VsZCB3YWtlIHVwCmV2ZXJ5Ym9keSwgc2luY2UgZXZlcnli
-b2R5IGlzIGFmZmVjdGVkIChpZSByZWFkZXJzIHdpbGwgYWxsIHNlZSBFT0YgaWYKdGhlIHdyaXRl
-cnMgaGF2ZSBnb25lIGF3YXksIGFuZCB3cml0ZXJzIHdpbGwgYWxsIGdldCBFUElQRSBpZiBhbGwK
-cmVhZGVycyBoYXZlIGdvbmUgYXdheSkuCgpGaXhlczogMGRkYWQyMWQzZTk5ICgicGlwZTogdXNl
-IGV4Y2x1c2l2ZSB3YWl0cyB3aGVuIHJlYWRpbmcgb3Igd3JpdGluZyIpClJlcG9ydGVkLWJ5OiBB
-bmRyZWkgVmFnaW4gPGF2YWdpbkBnbWFpbC5jb20+CkNjOiBKb3NoIFRyaXBsZXR0IDxqb3NoQGpv
-c2h0cmlwbGV0dC5vcmc+ClNpZ25lZC1vZmYtYnk6IExpbnVzIFRvcnZhbGRzIDx0b3J2YWxkc0Bs
-aW51eC1mb3VuZGF0aW9uLm9yZz4KLS0tCiBmcy9waXBlLmMgfCAxOCArKysrKysrKysrLS0tLS0t
-LS0KIDEgZmlsZSBjaGFuZ2VkLCAxMCBpbnNlcnRpb25zKCspLCA4IGRlbGV0aW9ucygtKQoKZGlm
-ZiAtLWdpdCBhL2ZzL3BpcGUuYyBiL2ZzL3BpcGUuYwppbmRleCA1YTM0ZDZjMjJkNGMuLjIxNDQ1
-MDc0NDdjNSAxMDA2NDQKLS0tIGEvZnMvcGlwZS5jCisrKyBiL2ZzL3BpcGUuYwpAQCAtNzIyLDkg
-KzcyMiwxMCBAQCBwaXBlX3JlbGVhc2Uoc3RydWN0IGlub2RlICppbm9kZSwgc3RydWN0IGZpbGUg
-KmZpbGUpCiAJaWYgKGZpbGUtPmZfbW9kZSAmIEZNT0RFX1dSSVRFKQogCQlwaXBlLT53cml0ZXJz
-LS07CiAKLQlpZiAocGlwZS0+cmVhZGVycyB8fCBwaXBlLT53cml0ZXJzKSB7Ci0JCXdha2VfdXBf
-aW50ZXJydXB0aWJsZV9zeW5jX3BvbGwoJnBpcGUtPnJkX3dhaXQsIEVQT0xMSU4gfCBFUE9MTFJE
-Tk9STSB8IEVQT0xMRVJSIHwgRVBPTExIVVApOwotCQl3YWtlX3VwX2ludGVycnVwdGlibGVfc3lu
-Y19wb2xsKCZwaXBlLT53cl93YWl0LCBFUE9MTE9VVCB8IEVQT0xMV1JOT1JNIHwgRVBPTExFUlIg
-fCBFUE9MTEhVUCk7CisJLyogV2FzIHRoYXQgdGhlIGxhc3QgcmVhZGVyIG9yIHdyaXRlciwgYnV0
-IG5vdCB0aGUgb3RoZXIgc2lkZT8gKi8KKwlpZiAoIXBpcGUtPnJlYWRlcnMgIT0gIXBpcGUtPndy
-aXRlcnMpIHsKKwkJd2FrZV91cF9pbnRlcnJ1cHRpYmxlX2FsbCgmcGlwZS0+cmRfd2FpdCk7CisJ
-CXdha2VfdXBfaW50ZXJydXB0aWJsZV9hbGwoJnBpcGUtPndyX3dhaXQpOwogCQlraWxsX2Zhc3lu
-YygmcGlwZS0+ZmFzeW5jX3JlYWRlcnMsIFNJR0lPLCBQT0xMX0lOKTsKIAkJa2lsbF9mYXN5bmMo
-JnBpcGUtPmZhc3luY193cml0ZXJzLCBTSUdJTywgUE9MTF9PVVQpOwogCX0KQEAgLTEwMjYsOCAr
-MTAyNyw4IEBAIHN0YXRpYyBpbnQgd2FpdF9mb3JfcGFydG5lcihzdHJ1Y3QgcGlwZV9pbm9kZV9p
-bmZvICpwaXBlLCB1bnNpZ25lZCBpbnQgKmNudCkKIAogc3RhdGljIHZvaWQgd2FrZV91cF9wYXJ0
-bmVyKHN0cnVjdCBwaXBlX2lub2RlX2luZm8gKnBpcGUpCiB7Ci0Jd2FrZV91cF9pbnRlcnJ1cHRp
-YmxlKCZwaXBlLT5yZF93YWl0KTsKLQl3YWtlX3VwX2ludGVycnVwdGlibGUoJnBpcGUtPndyX3dh
-aXQpOworCXdha2VfdXBfaW50ZXJydXB0aWJsZV9hbGwoJnBpcGUtPnJkX3dhaXQpOworCXdha2Vf
-dXBfaW50ZXJydXB0aWJsZV9hbGwoJnBpcGUtPndyX3dhaXQpOwogfQogCiBzdGF0aWMgaW50IGZp
-Zm9fb3BlbihzdHJ1Y3QgaW5vZGUgKmlub2RlLCBzdHJ1Y3QgZmlsZSAqZmlscCkKQEAgLTExNDQs
-NyArMTE0NSw3IEBAIHN0YXRpYyBpbnQgZmlmb19vcGVuKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0
-cnVjdCBmaWxlICpmaWxwKQogCiBlcnJfd3I6CiAJaWYgKCEtLXBpcGUtPndyaXRlcnMpCi0JCXdh
-a2VfdXBfaW50ZXJydXB0aWJsZSgmcGlwZS0+cmRfd2FpdCk7CisJCXdha2VfdXBfaW50ZXJydXB0
-aWJsZV9hbGwoJnBpcGUtPnJkX3dhaXQpOwogCXJldCA9IC1FUkVTVEFSVFNZUzsKIAlnb3RvIGVy
-cjsKIApAQCAtMTI3MSw4ICsxMjcyLDkgQEAgc3RhdGljIGxvbmcgcGlwZV9zZXRfc2l6ZShzdHJ1
-Y3QgcGlwZV9pbm9kZV9pbmZvICpwaXBlLCB1bnNpZ25lZCBsb25nIGFyZykKIAlwaXBlLT5tYXhf
-dXNhZ2UgPSBucl9zbG90czsKIAlwaXBlLT50YWlsID0gdGFpbDsKIAlwaXBlLT5oZWFkID0gaGVh
-ZDsKLQl3YWtlX3VwX2ludGVycnVwdGlibGVfYWxsKCZwaXBlLT5yZF93YWl0KTsKLQl3YWtlX3Vw
-X2ludGVycnVwdGlibGVfYWxsKCZwaXBlLT53cl93YWl0KTsKKworCS8qIFRoaXMgbWlnaHQgaGF2
-ZSBtYWRlIG1vcmUgcm9vbSBmb3Igd3JpdGVycyAqLworCXdha2VfdXBfaW50ZXJydXB0aWJsZSgm
-cGlwZS0+d3Jfd2FpdCk7CiAJcmV0dXJuIHBpcGUtPm1heF91c2FnZSAqIFBBR0VfU0laRTsKIAog
-b3V0X3JldmVydF9hY2N0OgotLSAKMi4yNC4wLjE1OC5nM2ZlZDE1NTI4OQoK
---00000000000057bf59059eddb0ac--
+>
+> This is be used by [1] and [2] to leave context bank 0 open so that
+> the Adreno GPU can program it.
+>
+> [1] https://lists.linuxfoundation.org/pipermail/iommu/2020-January/041438.html
+> [2] https://lists.linuxfoundation.org/pipermail/iommu/2020-January/041444.html
+>
+> Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
+> ---
+>
+>  drivers/iommu/arm-smmu.c | 63 +++++++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 59 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+> index 85a6773..799a254 100644
+> --- a/drivers/iommu/arm-smmu.c
+> +++ b/drivers/iommu/arm-smmu.c
+> @@ -254,6 +254,43 @@ static int __arm_smmu_alloc_bitmap(unsigned long *map, int start, int end)
+>         return idx;
+>  }
+>
+> +static void arm_smmu_write_s2cr(struct arm_smmu_device *smmu, int idx);
+> +
+> +static int __arm_smmu_alloc_cb(struct arm_smmu_device *smmu, int start,
+> +               int target)
+> +{
+> +       int new, i;
+> +
+> +       /* Allocate a new context bank id */
+> +       new = __arm_smmu_alloc_bitmap(smmu->context_map, start,
+> +               smmu->num_context_banks);
+> +
+> +       if (new < 0)
+> +               return new;
+> +
+> +       /* If no target is set or we actually got the bank index we wanted */
+> +       if (target == -1 || new == target)
+> +               return new;
+> +
+> +       /* Copy the context configuration to the new index */
+> +       memcpy(&smmu->cbs[new], &smmu->cbs[target], sizeof(*smmu->cbs));
+> +       smmu->cbs[new].cfg->cbndx = new;
+> +
+> +       /* FIXME: Do we need locking here? */
+> +       for (i = 0; i < smmu->num_mapping_groups; i++) {
+> +               if (smmu->s2crs[i].cbndx == target) {
+> +                       smmu->s2crs[i].cbndx = new;
+> +                       arm_smmu_write_s2cr(smmu, i);
+> +               }
+> +       }
+> +
+> +       /*
+> +        * FIXME: Does getting here imply that 'target' is already set in the
+> +        * context_map?
+> +        */
+> +       return target;
+> +}
+> +
+>  static void __arm_smmu_free_bitmap(unsigned long *map, int idx)
+>  {
+>         clear_bit(idx, map);
+> @@ -770,6 +807,7 @@ static int arm_smmu_init_domain_context(struct iommu_domain *domain,
+>         struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+>         struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
+>         unsigned long quirks = 0;
+> +       int forcecb = -1;
+>
+>         mutex_lock(&smmu_domain->init_mutex);
+>         if (smmu_domain->smmu)
+> @@ -844,8 +882,25 @@ static int arm_smmu_init_domain_context(struct iommu_domain *domain,
+>                          * SEP_UPSTREAM so we don't need to reduce the size of
+>                          * the ias to account for the sign extension bit
+>                          */
+> -                       if (smmu_domain->split_pagetables)
+> -                               quirks |= IO_PGTABLE_QUIRK_ARM_TTBR1;
+> +                       if (smmu_domain->split_pagetables) {
+> +                               /*
+> +                                * If split pagetables are enabled, assume that
+> +                                * the user's intent is to use per-instance
+> +                                * pagetables which, at least on a QCOM target,
+> +                                * means that this domain should be on context
+> +                                * bank 0.
+> +                                */
+> +
+> +                               /*
+> +                                * If we can't force to context bank 0 then
+> +                                * don't bother enabling split pagetables which
+> +                                * then would not allow aux domains
+> +                                */
+> +                               if (start == 0) {
+> +                                       forcecb = 0;
+> +                                       quirks |= IO_PGTABLE_QUIRK_ARM_TTBR1;
+> +                               }
+> +                       }
+>                 } else if (cfg->fmt == ARM_SMMU_CTX_FMT_AARCH32_L) {
+>                         fmt = ARM_32_LPAE_S1;
+>                         ias = min(ias, 32UL);
+> @@ -883,8 +938,8 @@ static int arm_smmu_init_domain_context(struct iommu_domain *domain,
+>                 ret = -EINVAL;
+>                 goto out_unlock;
+>         }
+> -       ret = __arm_smmu_alloc_bitmap(smmu->context_map, start,
+> -                                     smmu->num_context_banks);
+> +
+> +       ret = __arm_smmu_alloc_cb(smmu, start, forcecb);
+>         if (ret < 0)
+>                 goto out_unlock;
+>
+> --
+> 2.7.4
