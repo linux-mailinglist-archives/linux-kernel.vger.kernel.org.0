@@ -2,98 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E60F162DD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 19:10:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C92F5162DD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 19:12:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726482AbgBRSKg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 13:10:36 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:7280 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726246AbgBRSKf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 13:10:35 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01IHrvve005912;
-        Tue, 18 Feb 2020 19:10:18 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=xNEAHaZmjG+dizQJ5LA4/u9LlslrrIeo9frKOjluLvE=;
- b=Sb5mUHF4yAYaVeseQBJjLZ7YzajRiE1kCopcm9LPWaRW1xn61nDZjUAxa+gxxFs8rJea
- tmxeol4PqiGdtrkiqPrSLHPntmKa33mJ/1T8V06KIH40z0WWtJitSKkYVPvaqC/DQbTV
- yn/DbmpuTJQIQjQxVS1XqEUcU8ilAZAgwPARUhpcVe+523xRVD4XzDDVSvmY+E4wu/bj
- RRqbo40k6/RZBeJ8yc2uPcpSU+MpaFuci7htgzh1/Sca3AxpGEMNIY+xQdGSxtbL5A/0
- Vqxizj+wlSZw6kouhxziZq8fr2BLfS5XG3h7vOxgDv1ngzIHTZrSoisJ8cz4l/XwU8iC EQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2y66ne2xwn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 18 Feb 2020 19:10:18 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D8CFA10003D;
-        Tue, 18 Feb 2020 19:10:13 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A81F92BD50D;
-        Tue, 18 Feb 2020 19:10:13 +0100 (CET)
-Received: from lmecxl0912.lme.st.com (10.75.127.47) by SFHDAG3NODE2.st.com
- (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 18 Feb
- 2020 19:10:12 +0100
-Subject: Re: [PATCH v2 0/2] Add GPIO level-sensitive interrupt support
-To:     Marek Vasut <marex@denx.de>, Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-References: <20200218131218.10789-1-alexandre.torgue@st.com>
- <b5a2dcab-06db-4863-ac5c-28f4ef0c5ac9@denx.de>
-From:   Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <32e409e6-d475-802a-6a90-c8ba6c0cf6d5@st.com>
-Date:   Tue, 18 Feb 2020 19:10:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1726477AbgBRSMB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 13:12:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42258 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726239AbgBRSMB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 13:12:01 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48CB1208C4;
+        Tue, 18 Feb 2020 18:12:00 +0000 (UTC)
+Date:   Tue, 18 Feb 2020 13:11:58 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Tony Luck <tony.luck@intel.com>, x86-ml <x86@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] #MC mess
+Message-ID: <20200218131158.693eeefc@gandalf.local.home>
+In-Reply-To: <20200218173150.GK14449@zn.tnic>
+References: <20200218173150.GK14449@zn.tnic>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <b5a2dcab-06db-4863-ac5c-28f4ef0c5ac9@denx.de>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG6NODE2.st.com (10.75.127.17) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-18_05:2020-02-18,2020-02-18 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marek
+On Tue, 18 Feb 2020 18:31:50 +0100
+Borislav Petkov <bp@alien8.de> wrote:
 
-On 2/18/20 5:25 PM, Marek Vasut wrote:
-> On 2/18/20 2:12 PM, Alexandre Torgue wrote:
->> This series adds the possibility to handle gpio interrupts on level.
->>
->> GPIO hardware block is directly linked to EXTI block but EXTI handles
->> external interrupts only on edge. To be able to handle GPIO interrupt on
->> level a "hack" is done in gpio irq chip: parent interrupt (exti irq chip)
->> is retriggered following interrupt type and gpio line value.
->>
->> In exti irq chip, retrigger ops function is added.
+> Ok,
 > 
-> btw. this might be unrelated, but is it possible to have e.g. gpioC2 set
-> as trigger-level-low and gpioD2 set as trigger-edge-falling ? It seems
-> 8eb2dfee9fb1 ("pinctrl: stm32: add lock mechanism for irqmux selection")
-> prevents that.
+> so Peter raised this question on IRC today, that the #MC handler needs
+> to disable all kinds of tracing/kprobing and etc exceptions happening
+> while handling an #MC. And I guess we can talk about supporting some
+> exceptions but #MC is usually nasty enough to not care about tracing
+> when former happens.
+
+What's the issue with tracing? Does this affect the tracing done by the
+edac_mc_handle_error code?
+
+It has a trace event in it, that the rasdaemon uses.
+
+> 
+> So how about this trivial first stab of using the big hammer and simply
+> turning off stuff? The nmi_enter()/nmi_exit() thing still needs debating
+> because ist_enter() already does rcu_nmi_enter() and I'm not sure
+> whether any of the context tracking would still be ok with that.
+> 
+> Anything else I'm missing? It is likely...
+> 
+> Thx.
+> 
+> ---
+> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+> index 2c4f949611e4..6dff97c53310 100644
+> --- a/arch/x86/kernel/cpu/mce/core.c
+> +++ b/arch/x86/kernel/cpu/mce/core.c
+> @@ -1214,7 +1214,7 @@ static void __mc_scan_banks(struct mce *m, struct mce *final,
+>   * MCE broadcast. However some CPUs might be broken beyond repair,
+>   * so be always careful when synchronizing with others.
+>   */
+> -void do_machine_check(struct pt_regs *regs, long error_code)
+> +void notrace do_machine_check(struct pt_regs *regs, long error_code)
+>  {
+>  	DECLARE_BITMAP(valid_banks, MAX_NR_BANKS);
+>  	DECLARE_BITMAP(toclear, MAX_NR_BANKS);
+> @@ -1251,6 +1251,10 @@ void do_machine_check(struct pt_regs *regs, long error_code)
+>  	if (__mc_check_crashing_cpu(cpu))
+>  		return;
+>  
+> +	hw_breakpoint_disable();
+> +	static_key_disable(&__tracepoint_read_msr.key);
+
+I believe static_key_disable() sleeps, and does all kinds of crazing
+things (like update the code).
+
+-- Steve
+
+> +	tracing_off();
+> +
+>  	ist_enter(regs);
+>  
+>  	this_cpu_inc(mce_exception_count);
+> @@ -1360,6 +1364,7 @@ void do_machine_check(struct pt_regs *regs, long error_code)
+>  	ist_exit(regs);
+>  }
+>  EXPORT_SYMBOL_GPL(do_machine_check);
+> +NOKPROBE_SYMBOL(do_machine_check);
+>  
+>  #ifndef CONFIG_MEMORY_FAILURE
+>  int memory_failure(unsigned long pfn, int flags)
 > 
 
-No it's not possible. Each gpio line doesn't have a dedicated Exti line 
-Each Exti line is muxing between gpio banks.
-
-Mapping is done as following:
-
-EXTI0 = A0 or B0 or C0 .... or Z0 : selected by Mux
-EXTI1 = A1 or B1 or C1 ....or Z1 : selected by Mux
-EXTI2 = A2 or B2 or C2 ....or Z2 : selected by Mux
-...
-
-regards
-Alexandre
