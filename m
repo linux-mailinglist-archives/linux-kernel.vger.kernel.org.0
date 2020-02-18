@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF41B16316F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:01:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47A9516329F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:10:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728583AbgBRUAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 15:00:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39454 "EHLO mail.kernel.org"
+        id S1728285AbgBRUJE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 15:09:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728544AbgBRUAR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 15:00:17 -0500
+        id S1727934AbgBRT53 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 14:57:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03DC120659;
-        Tue, 18 Feb 2020 20:00:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D89EA2465A;
+        Tue, 18 Feb 2020 19:57:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582056017;
-        bh=MKwR1Ey5s9/JR9K6iEYpEMGtlvVkD6LC+UA956/m7G8=;
+        s=default; t=1582055848;
+        bh=YsUAoqFLDYdV+2dulnURG+0+0deDRpiA7VAIMBWwO9g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fzZdnnWeie8VgnrrW/8flQduO+mQsJWMrTmpPbucmQp0oz3zkf0qQ5GLAADokB8fm
-         YWyjT4fv3nfGVRa8iI2uViZAnXzSUi0VP4d9D/fpTbxRY6yK8JSYoj7HiKisMsBXEe
-         ydaN/ehfEBpCRGgeBsCXaWeWLmniuNJpCD8+IG+E=
+        b=CChIMgbNQex/DU+R2KYDWUrKaugaXZ20LkBkzzkOlWVLtLXUdTddPMUm22YaFyxbm
+         tf4iujF8dwxeVgnaY6epbdgGBI0HK7y9L7ktyvdN/My6ezDvF0OqkT1hj4mAoJ14JC
+         kYTLSOS19tlJVoM3HeXKeSSpTCYykpBH9zTRgRa4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Petr Pavlu <petr.pavlu@suse.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 5.4 55/66] cifs: fix mount option display for sec=krb5i
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        "zhangyi (F)" <yi.zhang@huawei.com>, Theodore Tso <tytso@mit.edu>,
+        stable@kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 36/38] jbd2: move the clearing of b_modified flag to the journal_unmap_buffer()
 Date:   Tue, 18 Feb 2020 20:55:22 +0100
-Message-Id: <20200218190433.154543984@linuxfoundation.org>
+Message-Id: <20200218190422.713559950@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200218190428.035153861@linuxfoundation.org>
-References: <20200218190428.035153861@linuxfoundation.org>
+In-Reply-To: <20200218190418.536430858@linuxfoundation.org>
+References: <20200218190418.536430858@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,44 +44,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Petr Pavlu <petr.pavlu@suse.com>
+From: zhangyi (F) <yi.zhang@huawei.com>
 
-commit 3f6166aaf19902f2f3124b5426405e292e8974dd upstream.
+[ Upstream commit 6a66a7ded12baa6ebbb2e3e82f8cb91382814839 ]
 
-Fix display for sec=krb5i which was wrongly interleaved by cruid,
-resulting in string "sec=krb5,cruid=<...>i" instead of
-"sec=krb5i,cruid=<...>".
+There is no need to delay the clearing of b_modified flag to the
+transaction committing time when unmapping the journalled buffer, so
+just move it to the journal_unmap_buffer().
 
-Fixes: 96281b9e46eb ("smb3: for kerberos mounts display the credential uid used")
-Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Link: https://lore.kernel.org/r/20200213063821.30455-2-yi.zhang@huawei.com
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/cifsfs.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/jbd2/commit.c      | 43 +++++++++++++++----------------------------
+ fs/jbd2/transaction.c | 10 ++++++----
+ 2 files changed, 21 insertions(+), 32 deletions(-)
 
---- a/fs/cifs/cifsfs.c
-+++ b/fs/cifs/cifsfs.c
-@@ -414,7 +414,7 @@ cifs_show_security(struct seq_file *s, s
- 		seq_puts(s, "ntlm");
- 		break;
- 	case Kerberos:
--		seq_printf(s, "krb5,cruid=%u", from_kuid_munged(&init_user_ns,ses->cred_uid));
-+		seq_puts(s, "krb5");
- 		break;
- 	case RawNTLMSSP:
- 		seq_puts(s, "ntlmssp");
-@@ -427,6 +427,10 @@ cifs_show_security(struct seq_file *s, s
+diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
+index 020bd7a0d8e03..3fe9b7c27ce82 100644
+--- a/fs/jbd2/commit.c
++++ b/fs/jbd2/commit.c
+@@ -971,34 +971,21 @@ void jbd2_journal_commit_transaction(journal_t *journal)
+ 		 * it. */
  
- 	if (ses->sign)
- 		seq_puts(s, "i");
-+
-+	if (ses->sectype == Kerberos)
-+		seq_printf(s, ",cruid=%u",
-+			   from_kuid_munged(&init_user_ns, ses->cred_uid));
- }
+ 		/*
+-		* A buffer which has been freed while still being journaled by
+-		* a previous transaction.
+-		*/
+-		if (buffer_freed(bh)) {
+-			/*
+-			 * If the running transaction is the one containing
+-			 * "add to orphan" operation (b_next_transaction !=
+-			 * NULL), we have to wait for that transaction to
+-			 * commit before we can really get rid of the buffer.
+-			 * So just clear b_modified to not confuse transaction
+-			 * credit accounting and refile the buffer to
+-			 * BJ_Forget of the running transaction. If the just
+-			 * committed transaction contains "add to orphan"
+-			 * operation, we can completely invalidate the buffer
+-			 * now. We are rather through in that since the
+-			 * buffer may be still accessible when blocksize <
+-			 * pagesize and it is attached to the last partial
+-			 * page.
+-			 */
+-			jh->b_modified = 0;
+-			if (!jh->b_next_transaction) {
+-				clear_buffer_freed(bh);
+-				clear_buffer_jbddirty(bh);
+-				clear_buffer_mapped(bh);
+-				clear_buffer_new(bh);
+-				clear_buffer_req(bh);
+-				bh->b_bdev = NULL;
+-			}
++		 * A buffer which has been freed while still being journaled
++		 * by a previous transaction, refile the buffer to BJ_Forget of
++		 * the running transaction. If the just committed transaction
++		 * contains "add to orphan" operation, we can completely
++		 * invalidate the buffer now. We are rather through in that
++		 * since the buffer may be still accessible when blocksize <
++		 * pagesize and it is attached to the last partial page.
++		 */
++		if (buffer_freed(bh) && !jh->b_next_transaction) {
++			clear_buffer_freed(bh);
++			clear_buffer_jbddirty(bh);
++			clear_buffer_mapped(bh);
++			clear_buffer_new(bh);
++			clear_buffer_req(bh);
++			bh->b_bdev = NULL;
+ 		}
  
- static void
+ 		if (buffer_jbddirty(bh)) {
+diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
+index 911ff18249b75..97ffe12a22624 100644
+--- a/fs/jbd2/transaction.c
++++ b/fs/jbd2/transaction.c
+@@ -2228,14 +2228,16 @@ static int journal_unmap_buffer(journal_t *journal, struct buffer_head *bh,
+ 			return -EBUSY;
+ 		}
+ 		/*
+-		 * OK, buffer won't be reachable after truncate. We just set
+-		 * j_next_transaction to the running transaction (if there is
+-		 * one) and mark buffer as freed so that commit code knows it
+-		 * should clear dirty bits when it is done with the buffer.
++		 * OK, buffer won't be reachable after truncate. We just clear
++		 * b_modified to not confuse transaction credit accounting, and
++		 * set j_next_transaction to the running transaction (if there
++		 * is one) and mark buffer as freed so that commit code knows
++		 * it should clear dirty bits when it is done with the buffer.
+ 		 */
+ 		set_buffer_freed(bh);
+ 		if (journal->j_running_transaction && buffer_jbddirty(bh))
+ 			jh->b_next_transaction = journal->j_running_transaction;
++		jh->b_modified = 0;
+ 		jbd2_journal_put_journal_head(jh);
+ 		spin_unlock(&journal->j_list_lock);
+ 		jbd_unlock_bh_state(bh);
+-- 
+2.20.1
+
 
 
