@@ -2,119 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A33CF1627F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 15:19:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB79F162801
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 15:21:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726681AbgBROTJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 09:19:09 -0500
-Received: from muru.com ([72.249.23.125]:55870 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726445AbgBROTJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 09:19:09 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 6B43D8043;
-        Tue, 18 Feb 2020 14:19:52 +0000 (UTC)
-Date:   Tue, 18 Feb 2020 06:19:05 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        "Arthur D ." <spinal.by@gmail.com>,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        Merlijn Wajer <merlijn@wizzup.org>, Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH] ASoC: ti: Allocate dais dynamically for TDM and audio
- graph card
-Message-ID: <20200218141905.GG35972@atomide.com>
-References: <20200211171645.41990-1-tony@atomide.com>
- <cd46c6ec-80e3-332f-4922-e58a3acbfc61@ti.com>
- <20200212143543.GI64767@atomide.com>
- <20200214003452.xuadnylj2udqyljs@earth.universe>
- <20200214013454.GX64767@atomide.com>
- <20200214130428.gkhmr55ptmi2bh2x@earth.universe>
- <20200214170946.GB64767@atomide.com>
- <20200218140431.emrxgvckrpltmg2s@earth.universe>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200218140431.emrxgvckrpltmg2s@earth.universe>
+        id S1726723AbgBROVF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 09:21:05 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:41579 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726599AbgBROVE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 09:21:04 -0500
+Received: by mail-qk1-f195.google.com with SMTP id d11so19572621qko.8
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 06:21:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=oQ5uMvj46YJt8du9hHYIxA2AHiZ2qf4UtK0vshdPA7k=;
+        b=pVwRuh4BaTn8YPjr2IxIwRAmmQKxPSCA61udn+YRyUJNFsLAVCbihPsf7i75uhUwbr
+         +0fs1RaV4qLf9li0eukOM5+LEaNAwgkcriWirfC0RF6txXF1SBd8esVOjADSEoZO+Wr0
+         /X01M29q8Bi1V8jFSz2+vsig87KwPaoILhBOuAUkTvLaO+AZ7yOXfWej+eBeJXiLuyg7
+         FJGgckZGhgHDiGaof0+31va7N2CnPPuELXoWnsc1ctExVXUBp9Qbbxngeea1NHJmLFUa
+         Fdpjgmod1Ih1wjBMZnE5deA9PivD7MmcRKe6cQoK6wOoF0Pc26hA+6PbHq5IdbLEtNDP
+         pXhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=oQ5uMvj46YJt8du9hHYIxA2AHiZ2qf4UtK0vshdPA7k=;
+        b=JvHsUNANdzurmvr7VJzWNuEIZCXfql8lDxLgWGwVykTkQqa7LkawkEXmUQKcY+VRZP
+         t5xcAy8f2M4lNGQ8a1vGh9ETfgiTX0oQhqZjNlnBGAztEg0c0a0cLGvL/il49G/RPrAR
+         3QVeWL4SOfW5t+e8ayol/RU0Zo5ziGZ7+JIU8P3Oj8dlfVNVcESjKrWZeae1StxKFgId
+         iV3lNOr+hHMgOge0debmFLb9sbuDb2CNnbOAB8Nl62oKoPmugoC/pOijZzQl6QbKL+62
+         YRnXF8I2jTr2JIamE1uVA0Bp6z/Q2wkICIY2QEfc10qxEukfBk2CWacoLIP02A3ECmy/
+         6dqg==
+X-Gm-Message-State: APjAAAVFYxqP9zKz39xggF/8/c8lIoZbuUVLsUabhklAV5KcFZDaWutK
+        3SkXjhh67XMf4hoWRDl2rRQBfA==
+X-Google-Smtp-Source: APXvYqzi+ZyeIa0ShCT4V+bcuLrOAzliPevTmxjHuIzAagLNkXUxzGqFIjS23L1FVBe5nLBjzfoN0w==
+X-Received: by 2002:a37:9186:: with SMTP id t128mr17685805qkd.180.1582035661956;
+        Tue, 18 Feb 2020 06:21:01 -0800 (PST)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id s8sm1936681qkm.88.2020.02.18.06.21.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Feb 2020 06:21:01 -0800 (PST)
+Message-ID: <1582035660.7365.90.camel@lca.pw>
+Subject: Re: [PATCH v12 1/9] hugetlb_cgroup: Add hugetlb_cgroup reservation
+ counter
+From:   Qian Cai <cai@lca.pw>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Mina Almasry <almasrymina@google.com>
+Cc:     mike.kravetz@oracle.com, shuah@kernel.org, rientjes@google.com,
+        shakeelb@google.com, gthelen@google.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, cgroups@vger.kernel.org
+Date:   Tue, 18 Feb 2020 09:21:00 -0500
+In-Reply-To: <20200211151906.637d1703e4756066583b89da@linux-foundation.org>
+References: <20200211213128.73302-1-almasrymina@google.com>
+         <20200211151906.637d1703e4756066583b89da@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Sebastian Reichel <sebastian.reichel@collabora.com> [200218 06:05]:
-> Hi,
+On Tue, 2020-02-11 at 15:19 -0800, Andrew Morton wrote:
+> On Tue, 11 Feb 2020 13:31:20 -0800 Mina Almasry <almasrymina@google.com> wrote:
 > 
-> On Fri, Feb 14, 2020 at 09:09:46AM -0800, Tony Lindgren wrote:
-> > * Sebastian Reichel <sre@kernel.org> [200214 13:05]:
-> > > On Thu, Feb 13, 2020 at 05:34:54PM -0800, Tony Lindgren wrote:
-> > > > And bluetooth would be similar to cpcap_audio and mot_mdm6600_audio
-> > > > above.
-> > > 
-> > > My understanding is, that CPU is not involved for calls (except for
-> > > setting up cpcap registers correctly). Basically McBSP3 should
-> > > remain idle for a call and data goes directly from modem to cpcap.
-> > > The same should work for modem <-> BT, except that CPCAP seems to
-> > > always provide the clock. That would imply a direct link between
-> > > modem and codec / BT?
-> > 
-> > Yes the direct link is i2s. I'm ot sure if mcbsp can be idle during
-> > voice call though, I guess it should be doable since mcbsp is not
-> > the clock master :)
-> > 
-> > > > My guess is that only cpcap registers and clock rate needs to be
-> > > > changed for bluetooth audio BTW, so if somebody havs a bluetooth
-> > > > headset just do the following in Android:
-> > > > 
-> > > > # cpcaprw --all > /tmp/before
-> > > > configure bluetooth headset for audio in android and start
-> > > > playing some music or make a phone call
-> > > > ...
-> > > > # cpcaprw --all > /tmp/after
-> > > > stop playing music or phone call
-> > > > ...
-> > > > diff -u /tmp/before /tmp/after
-> > > > 
-> > > > The registers will be different for a bluetooth phone call and
-> > > > playing music.
-> > > 
-> > > I can provider register values once I find some time.
+> > These counters will track hugetlb reservations rather than hugetlb
+> > memory faulted in. This patch only adds the counter, following patches
+> > add the charging and uncharging of the counter.
 > 
-> [NI] Normal idle (no BT headset connected)
-> [BI] Bluetooth idle (with BT headset connected)
-> [BC] Bluetooth call in progress
-> [NC] Normal call in progress (BT headset disabled)
+> We're still pretty thin on review here, but as it's v12 and Mike
+> appears to be signed up to look at this work, I'll add them to -next to
+> help move things forward.
 > 
->                      [NI]  =>  [BI]  =>  [BC]  =>  [NC]
-> CPCAP_REG_VAUDIOC   0x0065 => 0x0065 => 0x0065 => 0x0025
-> CPCAP_REG_CC        0x0000 => 0x0000 => 0x6000 => 0x60df
-> CPCAP_REG_CDI       0x0040 => 0x0000 => 0xaa40 => 0xae0a
-> CPCAP_REG_SDAC      -------------- 0x0000 --------------
-> CPCAP_REG_SDACDI    -------------- 0x0004 --------------
-> CPCAP_REG_TXI       0x0804 => 0x0004 => 0x0000 => 0x0cc6
-> CPCAP_REG_TXMP      0x079c => 0x079c => 0x0400 => 0x0673
-> CPCAP_REG_RXOA      0x0000 => 0x0000 => 0x0001 => 0x0001
-> CPCAP_REG_RXVC      0x0d34 => 0x0d34 => 0x0000 => 0x0b2c
-> CPCAP_REG_RXCOA     0x0000 => 0x0000 => 0x0000 => 0x0601
-> CPCAP_REG_RXSDOA    0x0000 => 0x0000 => 0x0600 => 0x0600
-> CPCAP_REG_RXEPOA    -------------- 0x0400 --------------
-> CPCAP_REG_RXLL      -------------- 0x0000 --------------
-> CPCAP_REG_A2LA      -------------- 0x0030 --------------
-> CPCAP_REG_MIPIS1    -------------- 0x0000 --------------
-> CPCAP_REG_MIPIS2    -------------- 0x0000 --------------
-> CPCAP_REG_MIPIS3    -------------- 0x0000 --------------
-> CPCAP_REG_LVAB      -------------- 0x0000 --------------
 
-Great thanks! Care to do also a dump just playing music to on
-bluetooth headset at some point?
+Reverted the whole series on the top of next-20200217 fixed a crash below (I
+don't see anything in next-20200218 would make any differences).
 
-Regards,
-
-Tony
-
-
+[ 7933.691114][T35046] LTP: starting hugemmap06
+[ 7933.806377][T14355] ------------[ cut here ]------------
+[ 7933.806541][T14355] kernel BUG at mm/hugetlb.c:490!
+VM_BUG_ON(t - f <= 1);
+[ 7933.806562][T14355] Oops: Exception in kernel mode, sig: 5 [#1]
+[ 7933.806573][T14355] LE PAGE_SIZE=64K MMU=Radix SMP NR_CPUS=256
+DEBUG_PAGEALLOC NUMA PowerNV
+[ 7933.806594][T14355] Modules linked in: kvm_hv kvm brd ext4 crc16 mbcache jbd2
+loop ip_tables x_tables xfs sd_mod bnx2x ahci mdio libahci tg3 libata libphy
+firmware_class dm_mirror dm_region_hash dm_log dm_mod [last unloaded:
+binfmt_misc]
+[ 7933.806651][T14355] CPU: 54 PID: 14355 Comm: hugemmap06 Tainted:
+G           O      5.6.0-rc2-next-20200217 #1
+[ 7933.806674][T14355] NIP:  c00000000040d22c LR: c00000000040d210 CTR:
+0000000000000000
+[ 7933.806696][T14355] REGS: c0000014b71ef660 TRAP: 0700   Tainted:
+G           O       (5.6.0-rc2-next-20200217)
+[ 7933.806727][T14355] MSR:  900000000282b033
+<SF,HV,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  CR: 22022228  XER: 00000000
+[ 7933.806772][T14355] CFAR: c00000000040cbec IRQMASK: 0 
+[ 7933.806772][T14355] GPR00: c00000000040d210 c0000014b71ef8f0 c000000001657000
+0000000000000001 
+[ 7933.806772][T14355] GPR04: 0000000000000012 0000000000000013 0000000000000000
+0000000000000000 
+[ 7933.806772][T14355] GPR08: 0000000000000002 0000000000000002 0000000000000001
+0000000000000036 
+[ 7933.806772][T14355] GPR12: 0000000022022222 c000001ffffd3d00 00007fffad670000
+00007fffa4bc0000 
+[ 7933.806772][T14355] GPR16: 0000000000000000 c000000001567178 c0000014b71efa50
+0000000000000000 
+[ 7933.806772][T14355] GPR20: 0000000000000000 0000000000000013 0000000000000012
+0000000000000001 
+[ 7933.806772][T14355] GPR24: c0000019f74cd270 5deadbeef0000100 5deadbeef0000122
+c0000019f74cd2c0 
+[ 7933.806772][T14355] GPR28: 0000000000000001 c0000019f74cd268 c0000014b71ef918
+0000000000000001 
+[ 7933.806961][T14355] NIP [c00000000040d22c] region_add+0x11c/0x3a0
+[ 7933.806980][T14355] LR [c00000000040d210] region_add+0x100/0x3a0
+[ 7933.807008][T14355] Call Trace:
+[ 7933.807024][T14355] [c0000014b71ef8f0] [c00000000040d210]
+region_add+0x100/0x3a0 (unreliable)
+[ 7933.807056][T14355] [c0000014b71ef9b0] [c00000000040e0c8]
+__vma_reservation_common+0x148/0x210
+__vma_reservation_common at mm/hugetlb.c:2150
+[ 7933.807087][T14355] [c0000014b71efa20] [c0000000004132a0]
+alloc_huge_page+0x350/0x830
+alloc_huge_page at mm/hugetlb.c:2359
+[ 7933.807100][T14355] [c0000014b71efad0] [c0000000004168f8]
+hugetlb_no_page+0x158/0xcb0
+[ 7933.807113][T14355] [c0000014b71efc20] [c000000000417bc8]
+hugetlb_fault+0x678/0xb30
+[ 7933.807136][T14355] [c0000014b71efcd0] [c0000000003b1de4]
+handle_mm_fault+0x444/0x450
+[ 7933.807158][T14355] [c0000014b71efd20] [c000000000070b1c]
+__do_page_fault+0x2bc/0xfd0
+[ 7933.807181][T14355] [c0000014b71efe20] [c00000000000aa88]
+handle_page_fault+0x10/0x30
+[ 7933.807201][T14355] Instruction dump:
+[ 7933.807209][T14355] 38c00000 7ea5ab78 7ec4b378 7fa3eb78 4bfff80d e9210020
+e91d0050 e95d0068 
+[ 7933.807232][T14355] 7d3c4850 7d294214 7faa4800 409c0238 <0b170000> 7f03c378
+4858c005 60000000 
+[ 7933.807267][T14355] ---[ end trace 7560275de5f409f8 ]---
+[ 7933.905258][T14355] 
+[ 7934.905339][T14355] Kernel panic - not syncing: Fatal exception
