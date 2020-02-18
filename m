@@ -2,149 +2,513 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A2411627B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 15:08:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D90BF1627BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 15:10:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726666AbgBROIn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 09:08:43 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:47640 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726373AbgBROIn (ORCPT
+        id S1726723AbgBROKk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 09:10:40 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41484 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726338AbgBROKj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 09:08:43 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01IE8aTe072394;
-        Tue, 18 Feb 2020 08:08:36 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1582034917;
-        bh=4BdW1JJPThl9i4+P6/loVm2QUGqngwrPUTpXVz+GMFI=;
-        h=From:To:CC:Subject:Date;
-        b=ZQs3yrtvLVTRF2HF+1U9f5fNjaCOdQwUWH7+mmvjg7di5RpeS3yZ+vogwfVnmWH+f
-         1Xrjj+HwGGjCn0MetPtQiQ4cN4knFTNR3jCD/bpCC1Tmtgz42JTNJbXqvxgLfoRlbp
-         kEGcIT4ufv893934slXJIA5iBygxezzZ0hqZHPAk=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01IE8aaE080194
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 18 Feb 2020 08:08:36 -0600
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 18
- Feb 2020 08:08:36 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 18 Feb 2020 08:08:36 -0600
-Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01IE8Xqr096183;
-        Tue, 18 Feb 2020 08:08:34 -0600
-From:   Faiz Abbas <faiz_abbas@ti.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>
-CC:     <ulf.hansson@linaro.org>, <adrian.hunter@intel.com>,
-        <kishon@ti.com>, <tony@atomide.com>, <faiz_abbas@ti.com>
-Subject: [PATCH] mmc: sdhci-omap: Add Support for Suspend/Resume
-Date:   Tue, 18 Feb 2020 19:40:18 +0530
-Message-ID: <20200218141018.24456-1-faiz_abbas@ti.com>
-X-Mailer: git-send-email 2.19.2
+        Tue, 18 Feb 2020 09:10:39 -0500
+Received: by mail-wr1-f66.google.com with SMTP id c9so24129278wrw.8
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 06:10:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QNcYutcXJYBdrUvt9S14FFrvpElG22ZCpcaNPeORXls=;
+        b=uMVBHL3SiWvyvRfD88IieARqnTOcZ0l3w8N0dWuGjysrtTICB8N1vx4nzY19rkWdbZ
+         MdhzJSQ3FST1Ya0dnrLwgTs9/nMEc3cX3ijYTEWTgzAVVfWZmh7hLNrf9pzfGM+2SeHJ
+         cqO9gz9t8JkSoamnyygSaYba2poSUQgGRYZGdNEs+yMKZrNMFDguncS5QFstWTwQiKNP
+         pMxMzgw2ftH7NQXp5dfQDR5BKraMhgGefnE6L3AR4CnJ4ZyThjH7ThZz8Pb/SWO5cmx6
+         JkP42Us5pG5GFdMQdqifGOH2LujcGRRvBHAZGm8JBUq0bnkp0W5AvaE/ya5DnOvbWgCz
+         DbPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QNcYutcXJYBdrUvt9S14FFrvpElG22ZCpcaNPeORXls=;
+        b=QadcG9oINSfGRAFsWKg9CDy26qGT5cwADcSR+OtBqORXNasPTDV7H/e/i/LRCl9Nq1
+         Ua74mWnpQGCo/ayugXQzhrr0FCntsdMn7ltnUUoHC0xQQ3k3OuSrpXmQjVCQRWXFN+Oc
+         6sOH8O6K2oHGjcWnxsXSJLKqAsKJsNDHFhQbLcKCt5DzbOVGSlb3HWgRhxErxjxKp6A+
+         LoDsHU+Vke7S3oplpzhgxPRTf7jXhJeVxycHwYdDafQT1BwN41tWAN/cxlv4+nhp+8yq
+         cHUeltev+F1L96DrBl8FfL7u5lYyaNGEuIH1i05nhoSmXfqzK7WKH8lj7/+8mHiPivc+
+         II5A==
+X-Gm-Message-State: APjAAAV8hP0c3JtThwvZZEOP/5xl217q6c9jA8VAZ9gX+ATkm0KIFBjM
+        RZojHbsPNsw29pA4qVJLmMdjog==
+X-Google-Smtp-Source: APXvYqyeuon7ZWz62tFJjiV/PDB7Y+KiG6I9b5ztmxUBv6mOPLO6c4Ld++ffdgFpmLXX6nx9VOtFIA==
+X-Received: by 2002:a5d:6151:: with SMTP id y17mr28816721wrt.110.1582035037291;
+        Tue, 18 Feb 2020 06:10:37 -0800 (PST)
+Received: from apalos.home ([2a02:587:4655:3a80:2e56:dcff:fe9a:8f06])
+        by smtp.gmail.com with ESMTPSA id d13sm6733669wrc.64.2020.02.18.06.10.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2020 06:10:36 -0800 (PST)
+From:   Ilias Apalodimas <ilias.apalodimas@linaro.org>
+To:     netdev@vger.kernel.org
+Cc:     jonathan.lemon@gmail.com, lorenzo@kernel.org, toke@redhat.com,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
+Subject: [PATCH net-next v4] net: page_pool: API cleanup and comments
+Date:   Tue, 18 Feb 2020 16:10:31 +0200
+Message-Id: <20200218141031.377860-1-ilias.apalodimas@linaro.org>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add power management ops which save and restore the driver context and
-facilitate a system suspend and resume.
+Functions starting with __ usually indicate those which are exported,
+but should not be called directly. Update some of those declared in the
+API and make it more readable.
 
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+page_pool_unmap_page() and page_pool_release_page() were doing
+exactly the same thing calling __page_pool_clean_page().  Let's
+rename __page_pool_clean_page() to page_pool_release_page() and
+export it in order to show up on perf logs and get rid of
+page_pool_unmap_page().
+
+Finally rename __page_pool_put_page() to page_pool_put_page() since we
+can now directly call it from drivers and rename the existing
+page_pool_put_page() to page_pool_put_full_page() since they do the same
+thing but the latter is trying to sync the full DMA area.
+
+This patch also updates netsec, mvneta and stmmac drivers which use
+those functions.
+
+Acked-by: Toke Høiland-Jørgensen <toke@redhat.com>
+Signed-off-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
 ---
- drivers/mmc/host/sdhci-omap.c | 59 +++++++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
+Changes since
+v1:
+- Fixed netsec driver compilation error
+v2:
+- Improved comment description of page_pool_put_page()
+v3:
+- Properly define page_pool_release_page() in the header file
+  within an ifdef since xdp.c uses it even if CONFIG_PAGE_POOL is not selected
+- rename __page_pool_clean_page -> page_pool_release_page and get rid of
+another redundant helper
 
-diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
-index 882053151a47..a524c01da8de 100644
---- a/drivers/mmc/host/sdhci-omap.c
-+++ b/drivers/mmc/host/sdhci-omap.c
-@@ -108,6 +108,11 @@ struct sdhci_omap_host {
- 	struct pinctrl		*pinctrl;
- 	struct pinctrl_state	**pinctrl_state;
- 	bool			is_tuning;
-+	/* Omap specific context save */
-+	u32			con;
-+	u32			hctl;
-+	u32			sysctl;
-+	u32			capa;
- };
+ drivers/net/ethernet/marvell/mvneta.c         | 19 +++--
+ drivers/net/ethernet/socionext/netsec.c       | 23 +++---
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c |  4 +-
+ include/net/page_pool.h                       | 36 ++++------
+ net/core/page_pool.c                          | 70 ++++++++++---------
+ net/core/xdp.c                                |  2 +-
+ 6 files changed, 74 insertions(+), 80 deletions(-)
+
+diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
+index 98017e7d5dd0..22b568c60f65 100644
+--- a/drivers/net/ethernet/marvell/mvneta.c
++++ b/drivers/net/ethernet/marvell/mvneta.c
+@@ -1933,7 +1933,7 @@ static void mvneta_rxq_drop_pkts(struct mvneta_port *pp,
+ 		if (!data || !(rx_desc->buf_phys_addr))
+ 			continue;
  
- static void sdhci_omap_start_clock(struct sdhci_omap_host *omap_host);
-@@ -1233,11 +1238,65 @@ static int sdhci_omap_remove(struct platform_device *pdev)
- 	return 0;
+-		page_pool_put_page(rxq->page_pool, data, false);
++		page_pool_put_full_page(rxq->page_pool, data, false);
+ 	}
+ 	if (xdp_rxq_info_is_reg(&rxq->xdp_rxq))
+ 		xdp_rxq_info_unreg(&rxq->xdp_rxq);
+@@ -2108,9 +2108,9 @@ mvneta_run_xdp(struct mvneta_port *pp, struct mvneta_rx_queue *rxq,
+ 		err = xdp_do_redirect(pp->dev, xdp, prog);
+ 		if (err) {
+ 			ret = MVNETA_XDP_DROPPED;
+-			__page_pool_put_page(rxq->page_pool,
+-					     virt_to_head_page(xdp->data),
+-					     len, true);
++			page_pool_put_page(rxq->page_pool,
++					   virt_to_head_page(xdp->data), len,
++					   true);
+ 		} else {
+ 			ret = MVNETA_XDP_REDIR;
+ 		}
+@@ -2119,9 +2119,9 @@ mvneta_run_xdp(struct mvneta_port *pp, struct mvneta_rx_queue *rxq,
+ 	case XDP_TX:
+ 		ret = mvneta_xdp_xmit_back(pp, xdp);
+ 		if (ret != MVNETA_XDP_TX)
+-			__page_pool_put_page(rxq->page_pool,
+-					     virt_to_head_page(xdp->data),
+-					     len, true);
++			page_pool_put_page(rxq->page_pool,
++					   virt_to_head_page(xdp->data), len,
++					   true);
+ 		break;
+ 	default:
+ 		bpf_warn_invalid_xdp_action(act);
+@@ -2130,9 +2130,8 @@ mvneta_run_xdp(struct mvneta_port *pp, struct mvneta_rx_queue *rxq,
+ 		trace_xdp_exception(pp->dev, prog, act);
+ 		/* fall through */
+ 	case XDP_DROP:
+-		__page_pool_put_page(rxq->page_pool,
+-				     virt_to_head_page(xdp->data),
+-				     len, true);
++		page_pool_put_page(rxq->page_pool,
++				   virt_to_head_page(xdp->data), len, true);
+ 		ret = MVNETA_XDP_DROPPED;
+ 		break;
+ 	}
+diff --git a/drivers/net/ethernet/socionext/netsec.c b/drivers/net/ethernet/socionext/netsec.c
+index e8224b543dfc..46424533d478 100644
+--- a/drivers/net/ethernet/socionext/netsec.c
++++ b/drivers/net/ethernet/socionext/netsec.c
+@@ -896,9 +896,9 @@ static u32 netsec_run_xdp(struct netsec_priv *priv, struct bpf_prog *prog,
+ 	case XDP_TX:
+ 		ret = netsec_xdp_xmit_back(priv, xdp);
+ 		if (ret != NETSEC_XDP_TX)
+-			__page_pool_put_page(dring->page_pool,
+-					     virt_to_head_page(xdp->data),
+-					     len, true);
++			page_pool_put_page(dring->page_pool,
++					   virt_to_head_page(xdp->data), len,
++					   true);
+ 		break;
+ 	case XDP_REDIRECT:
+ 		err = xdp_do_redirect(priv->ndev, xdp, prog);
+@@ -906,9 +906,9 @@ static u32 netsec_run_xdp(struct netsec_priv *priv, struct bpf_prog *prog,
+ 			ret = NETSEC_XDP_REDIR;
+ 		} else {
+ 			ret = NETSEC_XDP_CONSUMED;
+-			__page_pool_put_page(dring->page_pool,
+-					     virt_to_head_page(xdp->data),
+-					     len, true);
++			page_pool_put_page(dring->page_pool,
++					   virt_to_head_page(xdp->data), len,
++					   true);
+ 		}
+ 		break;
+ 	default:
+@@ -919,9 +919,8 @@ static u32 netsec_run_xdp(struct netsec_priv *priv, struct bpf_prog *prog,
+ 		/* fall through -- handle aborts by dropping packet */
+ 	case XDP_DROP:
+ 		ret = NETSEC_XDP_CONSUMED;
+-		__page_pool_put_page(dring->page_pool,
+-				     virt_to_head_page(xdp->data),
+-				     len, true);
++		page_pool_put_page(dring->page_pool,
++				   virt_to_head_page(xdp->data), len, true);
+ 		break;
+ 	}
+ 
+@@ -1020,8 +1019,8 @@ static int netsec_process_rx(struct netsec_priv *priv, int budget)
+ 			 * cache state. Since we paid the allocation cost if
+ 			 * building an skb fails try to put the page into cache
+ 			 */
+-			__page_pool_put_page(dring->page_pool, page,
+-					     pkt_len, true);
++			page_pool_put_page(dring->page_pool, page, pkt_len,
++					   true);
+ 			netif_err(priv, drv, priv->ndev,
+ 				  "rx failed to build skb\n");
+ 			break;
+@@ -1199,7 +1198,7 @@ static void netsec_uninit_pkt_dring(struct netsec_priv *priv, int id)
+ 		if (id == NETSEC_RING_RX) {
+ 			struct page *page = virt_to_page(desc->addr);
+ 
+-			page_pool_put_page(dring->page_pool, page, false);
++			page_pool_put_full_page(dring->page_pool, page, false);
+ 		} else if (id == NETSEC_RING_TX) {
+ 			dma_unmap_single(priv->dev, desc->dma_addr, desc->len,
+ 					 DMA_TO_DEVICE);
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 5836b21edd7e..37920b4da091 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -1251,11 +1251,11 @@ static void stmmac_free_rx_buffer(struct stmmac_priv *priv, u32 queue, int i)
+ 	struct stmmac_rx_buffer *buf = &rx_q->buf_pool[i];
+ 
+ 	if (buf->page)
+-		page_pool_put_page(rx_q->page_pool, buf->page, false);
++		page_pool_put_full_page(rx_q->page_pool, buf->page, false);
+ 	buf->page = NULL;
+ 
+ 	if (buf->sec_page)
+-		page_pool_put_page(rx_q->page_pool, buf->sec_page, false);
++		page_pool_put_full_page(rx_q->page_pool, buf->sec_page, false);
+ 	buf->sec_page = NULL;
  }
  
-+static void sdhci_omap_context_save(struct sdhci_omap_host *omap_host)
+diff --git a/include/net/page_pool.h b/include/net/page_pool.h
+index cfbed00ba7ee..81d7773f96cd 100644
+--- a/include/net/page_pool.h
++++ b/include/net/page_pool.h
+@@ -151,6 +151,7 @@ struct page_pool *page_pool_create(const struct page_pool_params *params);
+ #ifdef CONFIG_PAGE_POOL
+ void page_pool_destroy(struct page_pool *pool);
+ void page_pool_use_xdp_mem(struct page_pool *pool, void (*disconnect)(void *));
++void page_pool_release_page(struct page_pool *pool, struct page *page);
+ #else
+ static inline void page_pool_destroy(struct page_pool *pool)
+ {
+@@ -160,41 +161,32 @@ static inline void page_pool_use_xdp_mem(struct page_pool *pool,
+ 					 void (*disconnect)(void *))
+ {
+ }
++static inline void page_pool_release_page(struct page_pool *pool,
++					  struct page *page)
 +{
-+	omap_host->con = sdhci_omap_readl(omap_host, SDHCI_OMAP_CON);
-+	omap_host->hctl = sdhci_omap_readl(omap_host, SDHCI_OMAP_HCTL);
-+	omap_host->sysctl = sdhci_omap_readl(omap_host, SDHCI_OMAP_SYSCTL);
-+	omap_host->capa = sdhci_omap_readl(omap_host, SDHCI_OMAP_CAPA);
 +}
+ #endif
+ 
+-/* Never call this directly, use helpers below */
+-void __page_pool_put_page(struct page_pool *pool, struct page *page,
+-			  unsigned int dma_sync_size, bool allow_direct);
++void page_pool_put_page(struct page_pool *pool, struct page *page,
++			unsigned int dma_sync_size, bool allow_direct);
+ 
+-static inline void page_pool_put_page(struct page_pool *pool,
+-				      struct page *page, bool allow_direct)
++/* Same as above but will try to sync the entire area pool->max_len */
++static inline void page_pool_put_full_page(struct page_pool *pool,
++					   struct page *page, bool allow_direct)
+ {
+ 	/* When page_pool isn't compiled-in, net/core/xdp.c doesn't
+ 	 * allow registering MEM_TYPE_PAGE_POOL, but shield linker.
+ 	 */
+ #ifdef CONFIG_PAGE_POOL
+-	__page_pool_put_page(pool, page, -1, allow_direct);
++	page_pool_put_page(pool, page, -1, allow_direct);
+ #endif
+ }
+-/* Very limited use-cases allow recycle direct */
 +
-+static void sdhci_omap_context_restore(struct sdhci_omap_host *omap_host)
-+{
-+	sdhci_omap_writel(omap_host, SDHCI_OMAP_CON, omap_host->con);
-+	sdhci_omap_writel(omap_host, SDHCI_OMAP_HCTL, omap_host->hctl);
-+	sdhci_omap_writel(omap_host, SDHCI_OMAP_SYSCTL, omap_host->sysctl);
-+	sdhci_omap_writel(omap_host, SDHCI_OMAP_CAPA, omap_host->capa);
-+}
++/* Same as above but the caller must guarantee safe context. e.g NAPI */
+ static inline void page_pool_recycle_direct(struct page_pool *pool,
+ 					    struct page *page)
+ {
+-	__page_pool_put_page(pool, page, -1, true);
+-}
+-
+-/* Disconnects a page (from a page_pool).  API users can have a need
+- * to disconnect a page (from a page_pool), to allow it to be used as
+- * a regular page (that will eventually be returned to the normal
+- * page-allocator via put_page).
+- */
+-void page_pool_unmap_page(struct page_pool *pool, struct page *page);
+-static inline void page_pool_release_page(struct page_pool *pool,
+-					  struct page *page)
+-{
+-#ifdef CONFIG_PAGE_POOL
+-	page_pool_unmap_page(pool, page);
+-#endif
++	page_pool_put_full_page(pool, page, true);
+ }
+ 
+ static inline dma_addr_t page_pool_get_dma_addr(struct page *page)
+diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+index 9b7cbe35df37..c330fd82d332 100644
+--- a/net/core/page_pool.c
++++ b/net/core/page_pool.c
+@@ -96,7 +96,7 @@ struct page_pool *page_pool_create(const struct page_pool_params *params)
+ }
+ EXPORT_SYMBOL(page_pool_create);
+ 
+-static void __page_pool_return_page(struct page_pool *pool, struct page *page);
++static void page_pool_return_page(struct page_pool *pool, struct page *page);
+ 
+ noinline
+ static struct page *page_pool_refill_alloc_cache(struct page_pool *pool,
+@@ -137,7 +137,7 @@ static struct page *page_pool_refill_alloc_cache(struct page_pool *pool,
+ 			 * (2) break out to fallthrough to alloc_pages_node.
+ 			 * This limit stress on page buddy alloactor.
+ 			 */
+-			__page_pool_return_page(pool, page);
++			page_pool_return_page(pool, page);
+ 			page = NULL;
+ 			break;
+ 		}
+@@ -280,18 +280,25 @@ static s32 page_pool_inflight(struct page_pool *pool)
+ 	return inflight;
+ }
+ 
+-/* Cleanup page_pool state from page */
+-static void __page_pool_clean_page(struct page_pool *pool,
+-				   struct page *page)
++/* Disconnects a page (from a page_pool).  API users can have a need
++ * to disconnect a page (from a page_pool), to allow it to be used as
++ * a regular page (that will eventually be returned to the normal
++ * page-allocator via put_page).
++ */
++void page_pool_release_page(struct page_pool *pool, struct page *page)
+ {
+ 	dma_addr_t dma;
+ 	int count;
+ 
+ 	if (!(pool->p.flags & PP_FLAG_DMA_MAP))
++		/* Always account for inflight pages, even if we didn't
++		 * map them
++		 */
+ 		goto skip_dma_unmap;
+ 
+ 	dma = page->dma_addr;
+-	/* DMA unmap */
 +
-+static int __maybe_unused sdhci_omap_suspend(struct device *dev)
-+{
-+	struct sdhci_host *host = dev_get_drvdata(dev);
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_omap_host *omap_host = sdhci_pltfm_priv(pltfm_host);
-+
-+	sdhci_suspend_host(host);
-+
-+	sdhci_omap_context_save(omap_host);
-+
-+	pinctrl_pm_select_idle_state(dev);
-+
-+	pm_runtime_put_sync(dev);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused sdhci_omap_resume(struct device *dev)
-+{
-+	struct sdhci_host *host = dev_get_drvdata(dev);
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_omap_host *omap_host = sdhci_pltfm_priv(pltfm_host);
-+
-+	pm_runtime_get_sync(dev);
-+
-+	pinctrl_pm_select_default_state(dev);
-+
-+	sdhci_omap_context_restore(omap_host);
-+
-+	sdhci_resume_host(host);
-+
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(sdhci_omap_dev_pm_ops, sdhci_omap_suspend,
-+			 sdhci_omap_resume);
-+
- static struct platform_driver sdhci_omap_driver = {
- 	.probe = sdhci_omap_probe,
- 	.remove = sdhci_omap_remove,
- 	.driver = {
- 		   .name = "sdhci-omap",
-+		   .pm = &sdhci_omap_dev_pm_ops,
- 		   .of_match_table = omap_sdhci_match,
- 		  },
- };
++	/* When page is unmapped, it cannot be returned our pool */
+ 	dma_unmap_page_attrs(pool->p.dev, dma,
+ 			     PAGE_SIZE << pool->p.order, pool->p.dma_dir,
+ 			     DMA_ATTR_SKIP_CPU_SYNC);
+@@ -303,21 +310,12 @@ static void __page_pool_clean_page(struct page_pool *pool,
+ 	count = atomic_inc_return(&pool->pages_state_release_cnt);
+ 	trace_page_pool_state_release(pool, page, count);
+ }
+-
+-/* unmap the page and clean our state */
+-void page_pool_unmap_page(struct page_pool *pool, struct page *page)
+-{
+-	/* When page is unmapped, this implies page will not be
+-	 * returned to page_pool.
+-	 */
+-	__page_pool_clean_page(pool, page);
+-}
+-EXPORT_SYMBOL(page_pool_unmap_page);
++EXPORT_SYMBOL(page_pool_release_page);
+ 
+ /* Return a page to the page allocator, cleaning up our state */
+-static void __page_pool_return_page(struct page_pool *pool, struct page *page)
++static void page_pool_return_page(struct page_pool *pool, struct page *page)
+ {
+-	__page_pool_clean_page(pool, page);
++	page_pool_release_page(pool, page);
+ 
+ 	put_page(page);
+ 	/* An optimization would be to call __free_pages(page, pool->p.order)
+@@ -326,8 +324,7 @@ static void __page_pool_return_page(struct page_pool *pool, struct page *page)
+ 	 */
+ }
+ 
+-static bool __page_pool_recycle_into_ring(struct page_pool *pool,
+-				   struct page *page)
++static bool page_pool_recycle_in_ring(struct page_pool *pool, struct page *page)
+ {
+ 	int ret;
+ 	/* BH protection not needed if current is serving softirq */
+@@ -344,7 +341,7 @@ static bool __page_pool_recycle_into_ring(struct page_pool *pool,
+  *
+  * Caller must provide appropriate safe context.
+  */
+-static bool __page_pool_recycle_direct(struct page *page,
++static bool page_pool_recycle_in_cache(struct page *page,
+ 				       struct page_pool *pool)
+ {
+ 	if (unlikely(pool->alloc.count == PP_ALLOC_CACHE_SIZE))
+@@ -363,8 +360,14 @@ static bool pool_page_reusable(struct page_pool *pool, struct page *page)
+ 	return !page_is_pfmemalloc(page);
+ }
+ 
+-void __page_pool_put_page(struct page_pool *pool, struct page *page,
+-			  unsigned int dma_sync_size, bool allow_direct)
++/* If the page refcnt == 1, this will try to recycle the page.
++ * if PP_FLAG_DMA_SYNC_DEV is set, we'll try to sync the DMA area for
++ * the configured size min(dma_sync_size, pool->max_len).
++ * If the page refcnt != 1, then the page will be returned to memory
++ * subsystem.
++ */
++void page_pool_put_page(struct page_pool *pool, struct page *page,
++			unsigned int dma_sync_size, bool allow_direct)
+ {
+ 	/* This allocator is optimized for the XDP mode that uses
+ 	 * one-frame-per-page, but have fallbacks that act like the
+@@ -381,12 +384,12 @@ void __page_pool_put_page(struct page_pool *pool, struct page *page,
+ 						      dma_sync_size);
+ 
+ 		if (allow_direct && in_serving_softirq())
+-			if (__page_pool_recycle_direct(page, pool))
++			if (page_pool_recycle_in_cache(page, pool))
+ 				return;
+ 
+-		if (!__page_pool_recycle_into_ring(pool, page)) {
++		if (!page_pool_recycle_in_ring(pool, page)) {
+ 			/* Cache full, fallback to free pages */
+-			__page_pool_return_page(pool, page);
++			page_pool_return_page(pool, page);
+ 		}
+ 		return;
+ 	}
+@@ -403,12 +406,13 @@ void __page_pool_put_page(struct page_pool *pool, struct page *page,
+ 	 * doing refcnt based recycle tricks, meaning another process
+ 	 * will be invoking put_page.
+ 	 */
+-	__page_pool_clean_page(pool, page);
++	/* Do not replace this with page_pool_return_page() */
++	page_pool_release_page(pool, page);
+ 	put_page(page);
+ }
+-EXPORT_SYMBOL(__page_pool_put_page);
++EXPORT_SYMBOL(page_pool_put_page);
+ 
+-static void __page_pool_empty_ring(struct page_pool *pool)
++static void page_pool_empty_ring(struct page_pool *pool)
+ {
+ 	struct page *page;
+ 
+@@ -419,7 +423,7 @@ static void __page_pool_empty_ring(struct page_pool *pool)
+ 			pr_crit("%s() page_pool refcnt %d violation\n",
+ 				__func__, page_ref_count(page));
+ 
+-		__page_pool_return_page(pool, page);
++		page_pool_return_page(pool, page);
+ 	}
+ }
+ 
+@@ -449,7 +453,7 @@ static void page_pool_empty_alloc_cache_once(struct page_pool *pool)
+ 	 */
+ 	while (pool->alloc.count) {
+ 		page = pool->alloc.cache[--pool->alloc.count];
+-		__page_pool_return_page(pool, page);
++		page_pool_return_page(pool, page);
+ 	}
+ }
+ 
+@@ -461,7 +465,7 @@ static void page_pool_scrub(struct page_pool *pool)
+ 	/* No more consumers should exist, but producers could still
+ 	 * be in-flight.
+ 	 */
+-	__page_pool_empty_ring(pool);
++	page_pool_empty_ring(pool);
+ }
+ 
+ static int page_pool_release(struct page_pool *pool)
+@@ -535,7 +539,7 @@ void page_pool_update_nid(struct page_pool *pool, int new_nid)
+ 	/* Flush pool alloc cache, as refill will check NUMA node */
+ 	while (pool->alloc.count) {
+ 		page = pool->alloc.cache[--pool->alloc.count];
+-		__page_pool_return_page(pool, page);
++		page_pool_return_page(pool, page);
+ 	}
+ }
+ EXPORT_SYMBOL(page_pool_update_nid);
+diff --git a/net/core/xdp.c b/net/core/xdp.c
+index 8310714c47fd..4c7ea85486af 100644
+--- a/net/core/xdp.c
++++ b/net/core/xdp.c
+@@ -372,7 +372,7 @@ static void __xdp_return(void *data, struct xdp_mem_info *mem, bool napi_direct,
+ 		xa = rhashtable_lookup(mem_id_ht, &mem->id, mem_id_rht_params);
+ 		page = virt_to_head_page(data);
+ 		napi_direct &= !xdp_return_frame_no_direct();
+-		page_pool_put_page(xa->page_pool, page, napi_direct);
++		page_pool_put_full_page(xa->page_pool, page, napi_direct);
+ 		rcu_read_unlock();
+ 		break;
+ 	case MEM_TYPE_PAGE_SHARED:
 -- 
-2.19.2
+2.25.0
 
