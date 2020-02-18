@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24413163140
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:01:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A79EA163246
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:09:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726656AbgBRT6x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 14:58:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36740 "EHLO mail.kernel.org"
+        id S1726891AbgBRT4R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 14:56:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728301AbgBRT6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:58:50 -0500
+        id S1726840AbgBRT4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 14:56:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7331324125;
-        Tue, 18 Feb 2020 19:58:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB88524125;
+        Tue, 18 Feb 2020 19:56:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582055929;
-        bh=VXS9ycr6wu/QTgmXZxZM+8/LTsMlAdSZjeqbUw8H8Gc=;
+        s=default; t=1582055773;
+        bh=PN70iUaMI2vVCsiu0IR/4OKL5dOUbpqzS8SEM07qHbk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HPprocoHjYHRtz9u6MMLmmGbgdci87xp6HQnQXE68aE1tRaJdzP3LWFYzzFBRayKA
-         amVOUTgh//cWn7JPUV+BQ21lOfqEoQre7+2tBT66f4LdWw/1/VSkvH/GQVvAwGGGYN
-         judDIDR6/PxvLYjyQRJaPmTrGdHbdNi3CaA1uXcc=
+        b=rx8YaVFwzW+yqEsYB5D3acO2pWMs/Q92KUoftXAGsrK8zypVwDz13fxwwqtXxmCot
+         CVwJcErZ1esdbAtJ0MTWpbTOpvTf1eYIFZPa9MKi/8f/wwXKe1OG8t/pVAovJImp3G
+         sAjdN6WQMRMlZBKwL34a3ZwrqpPZaNv4JKAZq1eQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Steven Price <steven.price@arm.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH 5.4 35/66] drm/panfrost: Make sure the shrinker does not reclaim referenced BOs
+        stable@vger.kernel.org, ryusuke1925 <st13s20@gm.ibaraki-ct.ac.jp>,
+        Koki Mitani <koki.mitani.xg@hco.ntt.co.jp>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.19 16/38] Btrfs: fix race between using extent maps and merging them
 Date:   Tue, 18 Feb 2020 20:55:02 +0100
-Message-Id: <20200218190431.301556622@linuxfoundation.org>
+Message-Id: <20200218190420.490991421@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200218190428.035153861@linuxfoundation.org>
-References: <20200218190428.035153861@linuxfoundation.org>
+In-Reply-To: <20200218190418.536430858@linuxfoundation.org>
+References: <20200218190418.536430858@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,82 +46,128 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Boris Brezillon <boris.brezillon@collabora.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit 7e0cf7e9936c4358b0863357b90aa12afe6489da upstream.
+commit ac05ca913e9f3871126d61da275bfe8516ff01ca upstream.
 
-Userspace might tag a BO purgeable while it's still referenced by GPU
-jobs. We need to make sure the shrinker does not purge such BOs until
-all jobs referencing it are finished.
+We have a few cases where we allow an extent map that is in an extent map
+tree to be merged with other extents in the tree. Such cases include the
+unpinning of an extent after the respective ordered extent completed or
+after logging an extent during a fast fsync. This can lead to subtle and
+dangerous problems because when doing the merge some other task might be
+using the same extent map and as consequence see an inconsistent state of
+the extent map - for example sees the new length but has seen the old start
+offset.
 
-Fixes: 013b65101315 ("drm/panfrost: Add madvise and shrinker support")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
-Reviewed-by: Steven Price <steven.price@arm.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20191129135908.2439529-9-boris.brezillon@collabora.com
+With luck this triggers a BUG_ON(), and not some silent bug, such as the
+following one in __do_readpage():
+
+  $ cat -n fs/btrfs/extent_io.c
+  3061  static int __do_readpage(struct extent_io_tree *tree,
+  3062                           struct page *page,
+  (...)
+  3127                  em = __get_extent_map(inode, page, pg_offset, cur,
+  3128                                        end - cur + 1, get_extent, em_cached);
+  3129                  if (IS_ERR_OR_NULL(em)) {
+  3130                          SetPageError(page);
+  3131                          unlock_extent(tree, cur, end);
+  3132                          break;
+  3133                  }
+  3134                  extent_offset = cur - em->start;
+  3135                  BUG_ON(extent_map_end(em) <= cur);
+  (...)
+
+Consider the following example scenario, where we end up hitting the
+BUG_ON() in __do_readpage().
+
+We have an inode with a size of 8KiB and 2 extent maps:
+
+  extent A: file offset 0, length 4KiB, disk_bytenr = X, persisted on disk by
+            a previous transaction
+
+  extent B: file offset 4KiB, length 4KiB, disk_bytenr = X + 4KiB, not yet
+            persisted but writeback started for it already. The extent map
+	    is pinned since there's writeback and an ordered extent in
+	    progress, so it can not be merged with extent map A yet
+
+The following sequence of steps leads to the BUG_ON():
+
+1) The ordered extent for extent B completes, the respective page gets its
+   writeback bit cleared and the extent map is unpinned, at that point it
+   is not yet merged with extent map A because it's in the list of modified
+   extents;
+
+2) Due to memory pressure, or some other reason, the MM subsystem releases
+   the page corresponding to extent B - btrfs_releasepage() is called and
+   returns 1, meaning the page can be released as it's not dirty, not under
+   writeback anymore and the extent range is not locked in the inode's
+   iotree. However the extent map is not released, either because we are
+   not in a context that allows memory allocations to block or because the
+   inode's size is smaller than 16MiB - in this case our inode has a size
+   of 8KiB;
+
+3) Task B needs to read extent B and ends up __do_readpage() through the
+   btrfs_readpage() callback. At __do_readpage() it gets a reference to
+   extent map B;
+
+4) Task A, doing a fast fsync, calls clear_em_loggin() against extent map B
+   while holding the write lock on the inode's extent map tree - this
+   results in try_merge_map() being called and since it's possible to merge
+   extent map B with extent map A now (the extent map B was removed from
+   the list of modified extents), the merging begins - it sets extent map
+   B's start offset to 0 (was 4KiB), but before it increments the map's
+   length to 8KiB (4kb + 4KiB), task A is at:
+
+   BUG_ON(extent_map_end(em) <= cur);
+
+   The call to extent_map_end() sees the extent map has a start of 0
+   and a length still at 4KiB, so it returns 4KiB and 'cur' is 4KiB, so
+   the BUG_ON() is triggered.
+
+So it's dangerous to modify an extent map that is in the tree, because some
+other task might have got a reference to it before and still using it, and
+needs to see a consistent map while using it. Generally this is very rare
+since most paths that lookup and use extent maps also have the file range
+locked in the inode's iotree. The fsync path is pretty much the only
+exception where we don't do it to avoid serialization with concurrent
+reads.
+
+Fix this by not allowing an extent map do be merged if if it's being used
+by tasks other then the one attempting to merge the extent map (when the
+reference count of the extent map is greater than 2).
+
+Reported-by: ryusuke1925 <st13s20@gm.ibaraki-ct.ac.jp>
+Reported-by: Koki Mitani <koki.mitani.xg@hco.ntt.co.jp>
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=206211
+CC: stable@vger.kernel.org # 4.4+
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/panfrost/panfrost_drv.c          |    1 +
- drivers/gpu/drm/panfrost/panfrost_gem.h          |    6 ++++++
- drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c |    3 +++
- drivers/gpu/drm/panfrost/panfrost_job.c          |    7 ++++++-
- 4 files changed, 16 insertions(+), 1 deletion(-)
+ fs/btrfs/extent_map.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-@@ -166,6 +166,7 @@ panfrost_lookup_bos(struct drm_device *d
- 			break;
- 		}
- 
-+		atomic_inc(&bo->gpu_usecount);
- 		job->mappings[i] = mapping;
- 	}
- 
---- a/drivers/gpu/drm/panfrost/panfrost_gem.h
-+++ b/drivers/gpu/drm/panfrost/panfrost_gem.h
-@@ -30,6 +30,12 @@ struct panfrost_gem_object {
- 		struct mutex lock;
- 	} mappings;
+--- a/fs/btrfs/extent_map.c
++++ b/fs/btrfs/extent_map.c
+@@ -228,6 +228,17 @@ static void try_merge_map(struct extent_
+ 	struct extent_map *merge = NULL;
+ 	struct rb_node *rb;
  
 +	/*
-+	 * Count the number of jobs referencing this BO so we don't let the
-+	 * shrinker reclaim this object prematurely.
++	 * We can't modify an extent map that is in the tree and that is being
++	 * used by another task, as it can cause that other task to see it in
++	 * inconsistent state during the merging. We always have 1 reference for
++	 * the tree and 1 for this task (which is unpinning the extent map or
++	 * clearing the logging flag), so anything > 2 means it's being used by
++	 * other tasks too.
 +	 */
-+	atomic_t gpu_usecount;
++	if (refcount_read(&em->refs) > 2)
++		return;
 +
- 	bool noexec		:1;
- 	bool is_heap		:1;
- };
---- a/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
-@@ -41,6 +41,9 @@ static bool panfrost_gem_purge(struct dr
- 	struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
- 	struct panfrost_gem_object *bo = to_panfrost_bo(obj);
- 
-+	if (atomic_read(&bo->gpu_usecount))
-+		return false;
-+
- 	if (!mutex_trylock(&shmem->pages_lock))
- 		return false;
- 
---- a/drivers/gpu/drm/panfrost/panfrost_job.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_job.c
-@@ -270,8 +270,13 @@ static void panfrost_job_cleanup(struct
- 	dma_fence_put(job->render_done_fence);
- 
- 	if (job->mappings) {
--		for (i = 0; i < job->bo_count; i++)
-+		for (i = 0; i < job->bo_count; i++) {
-+			if (!job->mappings[i])
-+				break;
-+
-+			atomic_dec(&job->mappings[i]->obj->gpu_usecount);
- 			panfrost_gem_mapping_put(job->mappings[i]);
-+		}
- 		kvfree(job->mappings);
- 	}
- 
+ 	if (em->start != 0) {
+ 		rb = rb_prev(&em->rb_node);
+ 		if (rb)
 
 
