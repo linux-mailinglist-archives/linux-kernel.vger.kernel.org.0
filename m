@@ -2,182 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F9CD1631FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:06:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35CEC1632BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:16:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729178AbgBRUEA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 15:04:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45416 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729166AbgBRUD6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 15:03:58 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40FFD21D56;
-        Tue, 18 Feb 2020 20:03:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582056237;
-        bh=MjbAwarxr7IV5yIMjnOz7+XarybWEmEx3aToUhDogsE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e/mP9+KL14wo15c04RKPZv6suZAZpcSsCvEuWs2zFYwfl0SEEZfcAHe/bVu7k9AMF
-         zLvcezocHQymCm7AMIcl0hYG8Gt3EO5pcNzUdnBRtcCZFnkrjpnlZRxt3ANI3lr9py
-         NzInA/7iECqMCvNcLKFMDoA+/yPe3emcqJwMnsUk=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 80/80] mmc: core: Rework wp-gpio handling
-Date:   Tue, 18 Feb 2020 20:55:41 +0100
-Message-Id: <20200218190439.428756287@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200218190432.043414522@linuxfoundation.org>
-References: <20200218190432.043414522@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1726672AbgBRUQM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 15:16:12 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34802 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726403AbgBRUQL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 15:16:11 -0500
+Received: by mail-wr1-f68.google.com with SMTP id n10so23590979wrm.1;
+        Tue, 18 Feb 2020 12:16:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=bFMbK7LyKRnHu/ZMhuK+JeN3P8TImavRX9bgAiZfMtk=;
+        b=QXTAl6KeEOAmHWG0qH4S6XmPJj4USYFkCIZ78dT/rmi09maEvpVOzZ//BmyS1kesW5
+         XI0TPXmZ4qZ31jlmuQf0h92ss4SwkWJD0CejHK2mP4ontx77GV16UeS5NSj1hJT9DdLM
+         7Jp/3ahcbfRwH6xUmZPVnPH/+DZFAaM5OFoXpCQUaqd7lr2KciD2f1UX97+D9esFaXeb
+         MHqm3+rmkAeECR3RkLCiE3l94YF4S6XbViZ/ur1ZSwK6SZ4lbKgVBkwNoCkeZWI37kMC
+         WmvS9n0GQIDsgnLwBpALegvqZ7pIl5NjrlFPcg6hlF7QDFnkxvHaaQKfgGjjT9VCyVBW
+         ytag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bFMbK7LyKRnHu/ZMhuK+JeN3P8TImavRX9bgAiZfMtk=;
+        b=EfB0TFcT1Y440VwWf/O2PCUs3cbQBmr5XoiW6Jg69qwiGoGb1LifHg5omOpVkFn1zT
+         mbt1NwSbpLFFlgri3aiX8YiNktex5L5iOnsNvqeoHm1rYbnxsF1v9mIOD7t2BoEaAZq9
+         Z5k6omMjPOiWsTIwZGF2KrPwqyFqYdYRJg+2TnBmB4IasF3EYZds+x6pt/5KJJ7HvxKG
+         QzbVylhYfHWLLsZ9xU0EQEO9ww0dY10RLQeIGWbmWHMZdcOFgJr7E84YZNWBDaSf85An
+         HVBtMik+zTH7X+TRvVbFhNoTYL/aaCZAUQqGjcjpXJmiixd3n3JHh7c/MzY7Ccv+VCCo
+         jQHA==
+X-Gm-Message-State: APjAAAUy7J+I4lg7sJ9avF+rqSVm3c2bnw9k1GNAOyfs/Ws7JP/C4C8L
+        I7J4ZSOfvvyrcg18rihpVWhyjm5NVqQ=
+X-Google-Smtp-Source: APXvYqx0o7TLaD/TAtGQo3xJ8sCR+Q65dDtECgJ0RmmNYCrQiqxI1MUf49p/dryUzt3jnppRFGzHDQ==
+X-Received: by 2002:adf:f28f:: with SMTP id k15mr30535210wro.230.1582056968961;
+        Tue, 18 Feb 2020 12:16:08 -0800 (PST)
+Received: from ?IPv6:2003:ea:8f29:6000:5cb0:582f:968:ec00? (p200300EA8F2960005CB0582F0968EC00.dip0.t-ipconnect.de. [2003:ea:8f29:6000:5cb0:582f:968:ec00])
+        by smtp.googlemail.com with ESMTPSA id p26sm4590202wmc.24.2020.02.18.12.16.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Feb 2020 12:16:08 -0800 (PST)
+Subject: [PATCH net-next v2 01/13] net: core: add helper tcp_v6_gso_csum_prep
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+To:     David Miller <davem@davemloft.net>,
+        Realtek linux nic maintainers <nic_swsd@realtek.com>,
+        Jay Cliburn <jcliburn@gmail.com>,
+        Chris Snook <chris.snook@gmail.com>,
+        Rasesh Mody <rmody@marvell.com>,
+        Sudarsana Kalluru <skalluru@marvell.com>,
+        GR-Linux-NIC-Dev@marvell.com,
+        Christian Benvenuti <benve@cisco.com>,
+        Govindarajulu Varadarajan <_govind@gmx.com>,
+        Parvi Kaustubhi <pkaustub@cisco.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Guo-Fu Tseng <cooldavid@cooldavid.org>,
+        Shannon Nelson <snelson@pensando.io>,
+        Pensando Drivers <drivers@pensando.io>,
+        Timur Tabi <timur@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Ronak Doshi <doshir@vmware.com>,
+        "VMware, Inc." <pv-drivers@vmware.com>
+Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        intel-wired-lan@lists.osuosl.org, linux-hyperv@vger.kernel.org,
+        Linux USB Mailing List <linux-usb@vger.kernel.org>
+References: <fffc8b6d-68ed-7501-18f1-94cf548821fb@gmail.com>
+Message-ID: <82ba1653-6a88-edf2-b22f-938b64e46655@gmail.com>
+Date:   Tue, 18 Feb 2020 20:56:41 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <fffc8b6d-68ed-7501-18f1-94cf548821fb@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Several network drivers for chips that support TSO6 share the same code
+for preparing the TCP header, so let's factor it out to a helper.
+A difference is that some drivers reset the payload_len whilst others
+don't do this. This value is overwritten by TSO anyway, therefore
+the new helper resets it in general.
 
-[ Upstream commit 9073d10b098973519044f5fcdc25586810b435da ]
-
-Use MMC_CAP2_RO_ACTIVE_HIGH flag as indicator if GPIO line is to be
-inverted compared to DT/platform-specified polarity. The flag is not used
-after init in GPIO mode anyway. No functional changes intended.
-
-Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Link: https://lore.kernel.org/r/a60f563f11bbff821da2fa2949ca82922b144860.1576031637.git.mirq-linux@rere.qmqm.pl
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+Reviewed-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 ---
- drivers/gpio/gpiolib-of.c          |  4 ----
- drivers/mmc/core/host.c            | 11 ++++-------
- drivers/mmc/core/slot-gpio.c       |  3 +++
- drivers/mmc/host/pxamci.c          |  8 ++++----
- drivers/mmc/host/sdhci-esdhc-imx.c |  3 ++-
- 5 files changed, 13 insertions(+), 16 deletions(-)
+ include/net/ip6_checksum.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index b696e4598a240..b0e79bed59520 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -147,10 +147,6 @@ static void of_gpio_flags_quirks(struct device_node *np,
- 			if (of_property_read_bool(np, "cd-inverted"))
- 				*flags ^= OF_GPIO_ACTIVE_LOW;
- 		}
--		if (!strcmp(propname, "wp-gpios")) {
--			if (of_property_read_bool(np, "wp-inverted"))
--				*flags ^= OF_GPIO_ACTIVE_LOW;
--		}
+diff --git a/include/net/ip6_checksum.h b/include/net/ip6_checksum.h
+index 7bec95df4..27ec612cd 100644
+--- a/include/net/ip6_checksum.h
++++ b/include/net/ip6_checksum.h
+@@ -76,6 +76,15 @@ static inline void __tcp_v6_send_check(struct sk_buff *skb,
  	}
- 	/*
- 	 * Some GPIO fixed regulator quirks.
-diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
-index 105b7a7c02513..b3484def0a8b0 100644
---- a/drivers/mmc/core/host.c
-+++ b/drivers/mmc/core/host.c
-@@ -176,7 +176,6 @@ int mmc_of_parse(struct mmc_host *host)
- 	u32 bus_width, drv_type, cd_debounce_delay_ms;
- 	int ret;
- 	bool cd_cap_invert, cd_gpio_invert = false;
--	bool ro_cap_invert, ro_gpio_invert = false;
+ }
  
- 	if (!dev || !dev_fwnode(dev))
- 		return 0;
-@@ -255,9 +254,11 @@ int mmc_of_parse(struct mmc_host *host)
- 	}
- 
- 	/* Parse Write Protection */
--	ro_cap_invert = device_property_read_bool(dev, "wp-inverted");
- 
--	ret = mmc_gpiod_request_ro(host, "wp", 0, 0, &ro_gpio_invert);
-+	if (device_property_read_bool(dev, "wp-inverted"))
-+		host->caps2 |= MMC_CAP2_RO_ACTIVE_HIGH;
++static inline void tcp_v6_gso_csum_prep(struct sk_buff *skb)
++{
++	struct ipv6hdr *ipv6h = ipv6_hdr(skb);
++	struct tcphdr *th = tcp_hdr(skb);
 +
-+	ret = mmc_gpiod_request_ro(host, "wp", 0, 0, NULL);
- 	if (!ret)
- 		dev_info(host->parent, "Got WP GPIO\n");
- 	else if (ret != -ENOENT && ret != -ENOSYS)
-@@ -266,10 +267,6 @@ int mmc_of_parse(struct mmc_host *host)
- 	if (device_property_read_bool(dev, "disable-wp"))
- 		host->caps2 |= MMC_CAP2_NO_WRITE_PROTECT;
- 
--	/* See the comment on CD inversion above */
--	if (ro_cap_invert ^ ro_gpio_invert)
--		host->caps2 |= MMC_CAP2_RO_ACTIVE_HIGH;
--
- 	if (device_property_read_bool(dev, "cap-sd-highspeed"))
- 		host->caps |= MMC_CAP_SD_HIGHSPEED;
- 	if (device_property_read_bool(dev, "cap-mmc-highspeed"))
-diff --git a/drivers/mmc/core/slot-gpio.c b/drivers/mmc/core/slot-gpio.c
-index da2596c5fa28d..582ec3d720f64 100644
---- a/drivers/mmc/core/slot-gpio.c
-+++ b/drivers/mmc/core/slot-gpio.c
-@@ -241,6 +241,9 @@ int mmc_gpiod_request_ro(struct mmc_host *host, const char *con_id,
- 			return ret;
- 	}
- 
-+	if (host->caps2 & MMC_CAP2_RO_ACTIVE_HIGH)
-+		gpiod_toggle_active_low(desc);
++	ipv6h->payload_len = 0;
++	th->check = ~tcp_v6_check(0, &ipv6h->saddr, &ipv6h->daddr, 0);
++}
 +
- 	if (gpio_invert)
- 		*gpio_invert = !gpiod_is_active_low(desc);
- 
-diff --git a/drivers/mmc/host/pxamci.c b/drivers/mmc/host/pxamci.c
-index 024acc1b0a2ea..b2bbcb09a49e6 100644
---- a/drivers/mmc/host/pxamci.c
-+++ b/drivers/mmc/host/pxamci.c
-@@ -740,16 +740,16 @@ static int pxamci_probe(struct platform_device *pdev)
- 			goto out;
- 		}
- 
-+		if (!host->pdata->gpio_card_ro_invert)
-+			mmc->caps2 |= MMC_CAP2_RO_ACTIVE_HIGH;
-+
- 		ret = mmc_gpiod_request_ro(mmc, "wp", 0, 0, NULL);
- 		if (ret && ret != -ENOENT) {
- 			dev_err(dev, "Failed requesting gpio_ro\n");
- 			goto out;
- 		}
--		if (!ret) {
-+		if (!ret)
- 			host->use_ro_gpio = true;
--			mmc->caps2 |= host->pdata->gpio_card_ro_invert ?
--				0 : MMC_CAP2_RO_ACTIVE_HIGH;
--		}
- 
- 		if (host->pdata->init)
- 			host->pdata->init(dev, pxamci_detect_irq, mmc);
-diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
-index 1c988d6a24330..dccb4df465126 100644
---- a/drivers/mmc/host/sdhci-esdhc-imx.c
-+++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-@@ -1381,13 +1381,14 @@ static int sdhci_esdhc_imx_probe_nondt(struct platform_device *pdev,
- 				host->mmc->parent->platform_data);
- 	/* write_protect */
- 	if (boarddata->wp_type == ESDHC_WP_GPIO) {
-+		host->mmc->caps2 |= MMC_CAP2_RO_ACTIVE_HIGH;
-+
- 		err = mmc_gpiod_request_ro(host->mmc, "wp", 0, 0, NULL);
- 		if (err) {
- 			dev_err(mmc_dev(host->mmc),
- 				"failed to request write-protect gpio!\n");
- 			return err;
- 		}
--		host->mmc->caps2 |= MMC_CAP2_RO_ACTIVE_HIGH;
- 	}
- 
- 	/* card_detect */
+ #if IS_ENABLED(CONFIG_IPV6)
+ static inline void tcp_v6_send_check(struct sock *sk, struct sk_buff *skb)
+ {
 -- 
-2.20.1
-
+2.25.1
 
 
