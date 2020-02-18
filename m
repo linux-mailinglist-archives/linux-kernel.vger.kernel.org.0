@@ -2,135 +2,263 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66A6D1627AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 15:07:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C29B71627C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 15:12:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726672AbgBROHD convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 18 Feb 2020 09:07:03 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:28682 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726567AbgBROHC (ORCPT
+        id S1726605AbgBROMW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 09:12:22 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:52054 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726338AbgBROMW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 09:07:02 -0500
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01IDvoo3133991
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 09:07:01 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y6cbakmq7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 09:07:01 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <naveen.n.rao@linux.vnet.ibm.com>;
-        Tue, 18 Feb 2020 14:06:58 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 18 Feb 2020 14:06:54 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01IE6rt919398782
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 Feb 2020 14:06:53 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2328A4C050;
-        Tue, 18 Feb 2020 14:06:53 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B43B94C04E;
-        Tue, 18 Feb 2020 14:06:52 +0000 (GMT)
-Received: from localhost (unknown [9.199.60.10])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 18 Feb 2020 14:06:52 +0000 (GMT)
-Date:   Tue, 18 Feb 2020 19:36:51 +0530
-From:   "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: Re: [PATCH] powerpc/kprobes: Fix trap address when trap happened in
- real mode
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Anil =?iso-8859-1?q?S=0A?= Keshavamurthy 
-        <anil.s.keshavamurthy@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>, stable@kernel.vger.org
-References: <b1451438f7148ad0e03306a1f1409f4ad1d6ec7c.1581684263.git.christophe.leroy@c-s.fr>
-        <20200214225434.464ec467ad9094961abb8ddc@kernel.org>
-        <e09d3c42-542e-48c1-2f1e-cfe605b05bec@c-s.fr>
-        <20200216213411.824295a321d8fa979dedbbbe@kernel.org>
-        <baee8186-549a-f6cf-3619-884b6d708185@c-s.fr>
-        <20200217192735.5070f0925c4159ccffa4e465@kernel.org>
-        <c6257b49-bf02-d30a-1e2e-99abba5955e6@c-s.fr>
-        <20200218094421.6d402de389ce23a55a3ec084@kernel.org>
-        <c93c5346-d964-9167-c4dd-3123917344cf@c-s.fr>
-        <20200218192905.a3ed969e8565901c4f69fa22@kernel.org>
-        <2b3f664e-d4ad-edd3-5bed-a4492f4ed213@c-s.fr>
-        <20200218213317.533c78753cefb05bd42cc6ad@kernel.org>
-In-Reply-To: <20200218213317.533c78753cefb05bd42cc6ad@kernel.org>
+        Tue, 18 Feb 2020 09:12:22 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01IEC5qI001586;
+        Tue, 18 Feb 2020 08:12:05 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582035125;
+        bh=bNTXu71NE0h/VJ8zfewkGVLjiEHxVw0+DNsKQs3ZHdA=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=Sz1cJYOsza8s0QBaUyDd+4znkqgCHA9sdXGzC2s58EI2W1GsHUUh2TQsZ2EFrKSRz
+         iwrecpPX7/6DGh86OwD8wcSO8JUQKoY4JMFAVhZGFoq9l53iWjlpJ3CWYXINTFrm9e
+         XECkrKsAeWD33tJo46rW61TW0sEsokqRhdiPD+Gc=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01IEC5F3023723;
+        Tue, 18 Feb 2020 08:12:05 -0600
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 18
+ Feb 2020 08:12:05 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 18 Feb 2020 08:12:05 -0600
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01IEC4q3077097;
+        Tue, 18 Feb 2020 08:12:04 -0600
+Subject: Re: [PATCH net-next v2] net: phy: dp83867: Add speed optimization
+ feature
+From:   Dan Murphy <dmurphy@ti.com>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>, <andrew@lunn.ch>
+CC:     <linux@armlinux.org.uk>, <davem@davemloft.net>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20200204181319.27381-1-dmurphy@ti.com>
+ <0ebcd40d-b9cc-1a76-bb18-91d8350aa1cd@gmail.com>
+ <170d6518-ea82-08d3-0348-228c72425e64@ti.com>
+ <7569617d-f69f-9190-1223-77d3be637753@gmail.com>
+ <c7a7bd71-3a1c-1cf3-5faa-204b10ea8b78@ti.com>
+ <44499cb2-ec72-75a1-195b-fbadd8463e1c@ti.com>
+ <6f800f83-0008-c138-c33a-c00a95862463@ti.com>
+Message-ID: <e9f873a1-2158-3aa3-482b-79bf09da7056@ti.com>
+Date:   Tue, 18 Feb 2020 08:07:22 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-User-Agent: astroid/v0.15-13-gb675b421
- (https://github.com/astroidmail/astroid)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-X-TM-AS-GCONF: 00
-x-cbid: 20021814-4275-0000-0000-000003A32911
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20021814-4276-0000-0000-000038B73025
-Message-Id: <1582033782.f2l6jsd36b.naveen@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-18_02:2020-02-17,2020-02-18 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- priorityscore=1501 suspectscore=0 impostorscore=0 adultscore=0
- lowpriorityscore=0 bulkscore=0 malwarescore=0 clxscore=1015 phishscore=0
- mlxscore=0 mlxlogscore=971 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002180110
+In-Reply-To: <6f800f83-0008-c138-c33a-c00a95862463@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Masami, Christophe,
-Apologies for pitching in late here...
+Grygorii
 
-Masami Hiramatsu wrote:
-> On Tue, 18 Feb 2020 12:04:41 +0100
-> Christophe Leroy <christophe.leroy@c-s.fr> wrote:
-> 
->> >> Nevertheless, if one symbol has been forgotten in the blacklist, I think
->> >> it is a problem if it generate Oopses.
->> > 
->> > There is a long history also on x86 to make a blacklist. Anyway, how did
->> > you get this error on PPC32? Somewhere would you like to probe and
->> > it is a real mode function? Or, it happened unexpectedly?
->> 
->> The first Oops I got was triggered by a WARN_ON() kind of trap in real 
->> mode. The trap exception handler called kprobe_handler() which tried to 
->> read the instruction at the trap address (which was a real-mode address) 
->> so it triggered a Bad Access Fault.
->> 
->> This was initially the purpose of my patch.
-> 
-> OK, then filtering the trap reason in kprobe handler is a bit strange.
-> It should be done in the previous stage (maybe in trap.c)
-> Can we filter it by exception flag or only by checking the instruction
-> which causes the exception, or needs get_kprobe()...?
+On 2/14/20 12:31 PM, Dan Murphy wrote:
+> Grygorii
+>
+> On 2/14/20 12:32 PM, Grygorii Strashko wrote:
+>>
+>>
+>> On 06/02/2020 00:01, Dan Murphy wrote:
+>>> Florian
+>>>
+>>> On 2/5/20 4:00 PM, Florian Fainelli wrote:
+>>>> On 2/5/20 1:51 PM, Dan Murphy wrote:
+>>>>> Heiner
+>>>>>
+>>>>> On 2/5/20 3:16 PM, Heiner Kallweit wrote:
+>>>>>> On 04.02.2020 19:13, Dan Murphy wrote:
+>>>>>>> Set the speed optimization bit on the DP83867 PHY.
+>>>>>>> This feature can also be strapped on the 64 pin PHY devices
+>>>>>>> but the 48 pin devices do not have the strap pin available to 
+>>>>>>> enable
+>>>>>>> this feature in the hardware.  PHY team suggests to have this 
+>>>>>>> bit set.
+>>>>>>>
+>>>>>>> With this bit set the PHY will auto negotiate and report the link
+>>>>>>> parameters in the PHYSTS register.  This register provides a single
+>>>>>>> location within the register set for quick access to commonly 
+>>>>>>> accessed
+>>>>>>> information.
+>>>>>>>
+>>>>>>> In this case when auto negotiation is on the PHY core reads the 
+>>>>>>> bits
+>>>>>>> that have been configured or if auto negotiation is off the PHY 
+>>>>>>> core
+>>>>>>> reads the BMCR register and sets the phydev parameters accordingly.
+>>>>>>>
+>>>>>>> This Giga bit PHY can throttle the speed to 100Mbps or 10Mbps to
+>>>>>>> accomodate a
+>>>>>>> 4-wire cable.  If this should occur the PHYSTS register contains 
+>>>>>>> the
+>>>>>>> current negotiated speed and duplex mode.
+>>>>>>>
+>>>>>>> In overriding the genphy_read_status the dp83867_read_status 
+>>>>>>> will do a
+>>>>>>> genphy_read_status to setup the LP and pause bits. And then the 
+>>>>>>> PHYSTS
+>>>>>>> register is read and the phydev speed and duplex mode settings are
+>>>>>>> updated.
+>>>>>>>
+>>>>>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>>>>>>> ---
+>>>>>>> v2 - Updated read status to call genphy_read_status first, added
+>>>>>>> link_change
+>>>>>>> callback to notify of speed change and use phy_set_bits -
+>>>>>>> https://lore.kernel.org/patchwork/patch/1188348/
+>>>>>>>
+>>>>>> As stated in the first review, it would be appreciated if you 
+>>>>>> implement
+>>>>>> also the downshift tunable. This could be a separate patch in this
+>>>>>> series.
+>>>>>> Most of the implementation would be boilerplate code.
+>>>>> I just don't have a requirement from our customer to make it 
+>>>>> adjustable
+>>>>> so I did not want to add something extra.
+>>>>>
+>>>>> I can add in for v3.
+>>>>>
+>>>>>> And I have to admit that I'm not too happy with the term "speed
+>>>>>> optimization".
+>>>>>> This sounds like the PHY has some magic to establish a 1.2Gbps link.
+>>>>>> Even though the vendor may call it this way in the datasheet, the
+>>>>>> standard
+>>>>>> term is "downshift". I'm fine with using "speed optimization" in
+>>>>>> constants
+>>>>>> to be in line with the datasheet. Just a comment in the code 
+>>>>>> would be
+>>>>>> helpful
+>>>>>> that speed optimization is the vendor's term for downshift.
+>>>>> Ack.  The data sheet actually says "Speed optimization, also known as
+>>>>> link downshift"
+>>>>>
+>>>>> So I probably will just rename everything down shift.
+>>>>>
+>>>>>>>    drivers/net/phy/dp83867.c | 55 
+>>>>>>> +++++++++++++++++++++++++++++++++++++++
+>>>>>>>    1 file changed, 55 insertions(+)
+>>>>>>>
+>>>>>>> diff --git a/drivers/net/phy/dp83867.c b/drivers/net/phy/dp83867.c
+>>>>>>> index 967f57ed0b65..6f86ca1ebb51 100644
+>>>>>>> --- a/drivers/net/phy/dp83867.c
+>>>>>>> +++ b/drivers/net/phy/dp83867.c
+>>>>>>> @@ -21,6 +21,7 @@
+>>>>>>>    #define DP83867_DEVADDR        0x1f
+>>>>>>>      #define MII_DP83867_PHYCTRL    0x10
+>>>>>>> +#define MII_DP83867_PHYSTS    0x11
+>>>>>>>    #define MII_DP83867_MICR    0x12
+>>>>>>>    #define MII_DP83867_ISR        0x13
+>>>>>>>    #define DP83867_CFG2        0x14
+>>>>>>> @@ -118,6 +119,15 @@
+>>>>>>>    #define DP83867_IO_MUX_CFG_CLK_O_SEL_MASK    (0x1f << 8)
+>>>>>>>    #define DP83867_IO_MUX_CFG_CLK_O_SEL_SHIFT    8
+>>>>>>>    +/* PHY STS bits */
+>>>>>>> +#define DP83867_PHYSTS_1000            BIT(15)
+>>>>>>> +#define DP83867_PHYSTS_100            BIT(14)
+>>>>>>> +#define DP83867_PHYSTS_DUPLEX            BIT(13)
+>>>>>>> +#define DP83867_PHYSTS_LINK            BIT(10)
+>>>>>>> +
+>>>>>>> +/* CFG2 bits */
+>>>>>>> +#define DP83867_SPEED_OPTIMIZED_EN        (BIT(8) | BIT(9))
+>>>>>>> +
+>>>>>>>    /* CFG3 bits */
+>>>>>>>    #define DP83867_CFG3_INT_OE            BIT(7)
+>>>>>>>    #define DP83867_CFG3_ROBUST_AUTO_MDIX        BIT(9)
+>>>>>>> @@ -287,6 +297,43 @@ static int dp83867_config_intr(struct 
+>>>>>>> phy_device
+>>>>>>> *phydev)
+>>>>>>>        return phy_write(phydev, MII_DP83867_MICR, micr_status);
+>>>>>>>    }
+>>>>>>>    +static void dp83867_link_change_notify(struct phy_device 
+>>>>>>> *phydev)
+>>>>>>> +{
+>>>>>>> +    if (phydev->state != PHY_RUNNING)
+>>>>>>> +        return;
+>>>>>>> +
+>>>>>>> +    if (phydev->speed == SPEED_100 || phydev->speed == SPEED_10)
+>>>>>>> +        phydev_warn(phydev, "Downshift detected connection is
+>>>>>>> %iMbps\n",
+>>>>>>> +                phydev->speed);
+>>>>>> The link partner may simply not advertise 1Gbps. How do you know 
+>>>>>> that
+>>>>>> a link speed of e.g. 100Mbps is caused by a downshift?
+>>>>>> Some PHY's I've seen with this feature have a flag somewhere 
+>>>>>> indicating
+>>>>>> that downshift occurred. How about the PHY here?
+>>>>> I don't see a register that gives us that status
+>>>>>
+>>>>> I will ask the hardware team if there is one.
+>>>>>
+>>>>> This is a 1Gbps PHY by default so if a slower connection is 
+>>>>> established
+>>>>> due to faulty cabling or LP advertisement then this would be a down
+>>>>> shift IMO.
+>>>> With your current link_change_notify function it would not be possible
+>>>> to know whether the PHY was connected to a link partner that 
+>>>> advertised
+>>>> only 10/100 and so 100 ended up being the link speed, or the link
+>>>> partner was capable of 10/100/1000 and downshift reduced the link 
+>>>> speed.
+>>>>
+>>>> If you cannot tell the difference from a register, it might be 
+>>>> better to
+>>>> simply omit that function then.
+>>>
+>>> Yeah I thought it was a bit redundant and wonky to see in the log 
+>>> that the link established to xG/Mbps and then see another message 
+>>> saying the downshift occurred.
+>>
+>> I think it's good idea to have this message as just wrong cable might 
+>> be used.
+>>
+>> But this notifier make no sense in it current form - it will produce 
+>> noise in case of forced 100m/10M.
+>>
+>> FYI. PHY sequence to update link:
+>> phy_state_machine()
+>> |-phy_check_link_status()
+>>   |-phy_link_down/up()
+>>     |- .phy_link_change()->phy_link_change()
+>>     |-adjust_link() ----> netdev callback
+>> |-phydev->drv->link_change_notify(phydev);
+>>
+>> So, log output has to be done or in .read_status() or
+>> some info has to be saved in .read_status() and then re-used in
+>> .link_change_notify().
+>>
+> OK I will try to find a way to give some sort of message.
+>
+> Also we did get confirmation from HW guys and you also confirmed that 
+> the number of attempts for downshift is configurable.  So I will be 
+> adding back the tunable code once net-next opens.
+>
+I worked on this a bit and I think the notification is a bit complicated 
+to get into the code just to print a message.  First the notification 
+comes from the interrupt register which is COR. So if I read the 
+interrupt register in read_status then the ack_interrupt call back won't 
+do anything and status will be lost so if we need to implement other 
+features that depend on the interrupt status that status is cleared.  In 
+addition the downshift interrupt will be read and cleared so the state 
+of any downshift is lost after the message.  The link_change_notifier is 
+called first then the ack_interrupt function is called so as I stated 
+the downshift status will be reset to no downshift as the bit is 
+cleared.  So I don't think adding this notifier is worth the complex 
+code to print a message.
 
-I think Masami's earlier patch proposal to bail out early from 
-kprobe_handler() is appropriate here. We don't support kprobe in real 
-mode since we don't have a way to ensure that the pre/post handlers work 
-properly.
-
-We will obviously also have to blacklist some of the real mode code from 
-being probed to begin with. In addition, we will also have to blacklist 
-any location where we can't take a trap (MSR_RI being unset, as an 
-example)
-
-Christophe,
-See some of the below patch series:
-https://patchwork.ozlabs.org/patch/752336/
-https://patchwork.ozlabs.org/patch/752333/
-https://patchwork.ozlabs.org/patch/782399/
-
-
-- Naveen
+Dan
 
