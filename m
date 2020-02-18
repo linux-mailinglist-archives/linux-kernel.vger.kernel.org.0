@@ -2,75 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE5A31632B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:14:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EC0F1632CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:16:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726648AbgBRUMc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 15:12:32 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:35028 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726403AbgBRUMc (ORCPT
+        id S1727601AbgBRUQh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 15:16:37 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55208 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726875AbgBRUQW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 15:12:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=JUY9aCZNkGp5r3GhAmz34nl2t/YX1uUl7G5Ml5dOHcY=; b=J+op2zkhQrmmZG0CHmPk1/T3Kh
-        O/GGJe4A5octVekXAoFs3Qp/NxM8W/vsthAB3yFUP8TqgbFjuQh/gPj5wNWLWS8zoOXQNqqReRtE7
-        9oiA/69drvLkRivZl/J81Y3OCoZ1OaYf6H+VOEmSIfuSUjWDS/GqFn0nab6ZSStW9p/ORciSXLVL6
-        1hS//7tFMZ3ecIXAR5sNlEeqSN7BRUlugD48vXsm6GVlIxluASNfl0swbmoFGYDn+oTtFOhn/KF/P
-        10oTe+MeeaR904MMBDg5Y1zpvF7OLCOLufdUQGMX8VSdMjbcVfnetbi8sMdEb0UgdxCrux76b9dgg
-        HeR1Fq3A==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j49DZ-0005mU-Ks; Tue, 18 Feb 2020 20:11:41 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 58E7D980E53; Tue, 18 Feb 2020 21:11:42 +0100 (CET)
-Date:   Tue, 18 Feb 2020 21:11:42 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com, mingo@kernel.org, jiangshanlai@gmail.com,
-        dipankar@in.ibm.com, akpm@linux-foundation.org,
-        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
-        tglx@linutronix.de, rostedt@goodmis.org, dhowells@redhat.com,
-        edumazet@google.com, fweisbec@gmail.com, oleg@redhat.com,
-        joel@joelfernandes.org
-Subject: Re: [PATCH tip/core/rcu 1/3] rcu-tasks: *_ONCE() for
- rcu_tasks_cbs_head
-Message-ID: <20200218201142.GF11457@worktop.programming.kicks-ass.net>
-References: <20200215002446.GA15663@paulmck-ThinkPad-P72>
- <20200215002520.15746-1-paulmck@kernel.org>
- <20200217123851.GR14914@hirez.programming.kicks-ass.net>
- <20200217181615.GP2935@paulmck-ThinkPad-P72>
- <20200218075648.GW14914@hirez.programming.kicks-ass.net>
- <20200218162719.GE2935@paulmck-ThinkPad-P72>
+        Tue, 18 Feb 2020 15:16:22 -0500
+Received: by mail-wm1-f65.google.com with SMTP id n3so1904082wmk.4;
+        Tue, 18 Feb 2020 12:16:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=P04rn9lFXpmxUOEq7MJs3reKsxv52XdBYh7sLajh3CY=;
+        b=FW4MonpJa2N0pddv7lUanWtAX779jwjYA7p5umStKtEpH7S74naMUfR9GiKJB6oT70
+         /EXBZ5Nr2ETHlbAvkiU3ExXuhEkN3dVYdB7TsCvnS+pgGIoooWTdOc2hZfmqNKB9x65k
+         lxc8OX6KOlNDO1ibspOIXe3ihI2ccVLOZZNIoaxxgtk2R/d19BzWP4xeWTiZhqHuwQT1
+         3doutBf8dp/LcvleJCppISFwTLlgCEkOwCDuXX5FFZaTsDJyhEYQEfOI9RCgeV0y+1HF
+         qyLJtoOr7upsCTUSDiJ/XsBHX8m6WfoG5b7glrxAESk4dHXLDvFAjbiX4GWmtOrpKvMC
+         yPvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=P04rn9lFXpmxUOEq7MJs3reKsxv52XdBYh7sLajh3CY=;
+        b=HZR3JUaFMEQGfmL17OVyoIFnoDqHqmrPvrDd+XT2C51DkhaVA5P8od+A6U5vULFY2r
+         xT6ZwgbOkxQU9u0j1A+RPk95ra4MAmwYHlwWj3yciEnoZlkolyXZEkIhMdhffrAnQx4k
+         88uc663OEl244rWwURMOeeLwSr/XDmPvLlf89KgpsgVzjhoWzVJ3IPm7Mq+8J5OJcq/L
+         12Z/t6BzA4upT8G3Ko/uY77pMSdrktPqZI06oHacm4AuIDwmf55h+VzT83P3z02RsWol
+         xHOQnLcAEJ55RtT4I5GY5vU+0rBLUzqJ2o+kVpL5xogiQCXOPqtLj7pLzLCjiXudBjO8
+         8S1g==
+X-Gm-Message-State: APjAAAWZLw3ITXsbuxriYt1ycsoL0xeJycInxIwXM6I0b4obEtPeApqt
+        eeM4Ei6D1Vq6HHb2XrnWXWO0iGOO
+X-Google-Smtp-Source: APXvYqxWxx3vX4zkRPsVLD6wkEKUHPEBac8V27LgRCjAP9sRfDhzHOQQ/cKZrdyd4rt60fN/4Kcr2A==
+X-Received: by 2002:a05:600c:291d:: with SMTP id i29mr5098417wmd.39.1582056979539;
+        Tue, 18 Feb 2020 12:16:19 -0800 (PST)
+Received: from ?IPv6:2003:ea:8f29:6000:5cb0:582f:968:ec00? (p200300EA8F2960005CB0582F0968EC00.dip0.t-ipconnect.de. [2003:ea:8f29:6000:5cb0:582f:968:ec00])
+        by smtp.googlemail.com with ESMTPSA id t9sm7890993wrv.63.2020.02.18.12.16.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Feb 2020 12:16:19 -0800 (PST)
+Subject: [PATCH net-next v2 11/13] hv_netvsc: use new helper
+ tcp_v6_gso_csum_prep
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+To:     David Miller <davem@davemloft.net>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>
+Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-hyperv@vger.kernel.org
+References: <fffc8b6d-68ed-7501-18f1-94cf548821fb@gmail.com>
+Message-ID: <52eb76b1-5acd-9d88-1496-889504b60e92@gmail.com>
+Date:   Tue, 18 Feb 2020 21:11:43 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200218162719.GE2935@paulmck-ThinkPad-P72>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <fffc8b6d-68ed-7501-18f1-94cf548821fb@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 08:27:19AM -0800, Paul E. McKenney wrote:
-> On Tue, Feb 18, 2020 at 08:56:48AM +0100, Peter Zijlstra wrote:
+Use new helper tcp_v6_gso_csum_prep in additional network drivers.
 
-> > I just took offence at the Changelog wording. It seems to suggest there
-> > actually is a problem, there is not.
-> 
-> Quoting the changelog: "Not appropriate for backporting due to failure
-> being unlikely."
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+---
+ drivers/net/hyperv/netvsc_drv.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-That implies there is failure, however unlikely.
+diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
+index 65e12cb07..5ee282b20 100644
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -638,10 +638,7 @@ static int netvsc_xmit(struct sk_buff *skb, struct net_device *net, bool xdp_tx)
+ 		} else {
+ 			lso_info->lso_v2_transmit.ip_version =
+ 				NDIS_TCP_LARGE_SEND_OFFLOAD_IPV6;
+-			ipv6_hdr(skb)->payload_len = 0;
+-			tcp_hdr(skb)->check =
+-				~csum_ipv6_magic(&ipv6_hdr(skb)->saddr,
+-						 &ipv6_hdr(skb)->daddr, 0, IPPROTO_TCP, 0);
++			tcp_v6_gso_csum_prep(skb);
+ 		}
+ 		lso_info->lso_v2_transmit.tcp_header_offset = skb_transport_offset(skb);
+ 		lso_info->lso_v2_transmit.mss = skb_shinfo(skb)->gso_size;
+-- 
+2.25.1
 
-In this particular case there is absolutely no failure, except perhaps
-in KCSAN. This patch is a pure annotation such that KCSAN can understand
-the code.
 
-Like said, I don't object to the actual patch, but I do think it is
-important to call out false negatives or to describe the actual problem
-found.
