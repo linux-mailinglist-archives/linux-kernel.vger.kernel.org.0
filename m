@@ -2,62 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35F62162A57
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 17:23:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73465162A58
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 17:24:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726638AbgBRQXC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 11:23:02 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:51210 "EHLO mail.skyhub.de"
+        id S1726557AbgBRQYz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 11:24:55 -0500
+Received: from gentwo.org ([3.19.106.255]:41648 "EHLO gentwo.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726415AbgBRQXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 11:23:01 -0500
-Received: from zn.tnic (p200300EC2F0C1F0014C3F76BBACA8B76.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:1f00:14c3:f76b:baca:8b76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 89D0D1EC0273;
-        Tue, 18 Feb 2020 17:23:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1582042980;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=mWXkj9EqAVkCheQgZBQ+7aSsSl+evXPSmLLYsoTW9EM=;
-        b=cnyHWtDHc6k95iulQ5Qi+KEPvIcIIK89kDuvyw3e6LABdb5mgyYjOCq/gUXP3IholrCP2R
-        JOcUBNVnYudtXkxKdiORcSFB8ds76+Fjw0yB1yv3OC/XiqDDdwQfOFBAavDyCA19xyKkhG
-        37meLu8gQzX+Es4aPXsPq5VSi7ZrhtM=
-Date:   Tue, 18 Feb 2020 17:23:00 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Prarit Bhargava <prarit@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Krupp <centos@akr.yagii.de>,
-        Tony Luck <tony.luck@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-edac@vger.kernel.org
-Subject: Re: [PATCH v2] x86/mce: Do not log spurious corrected mce errors
-Message-ID: <20200218162300.GH14449@zn.tnic>
-References: <20200217130659.15895-1-prarit@redhat.com>
- <20200218161319.GG14449@zn.tnic>
- <e1bf1a0e-db70-906f-d09c-90cc2eef28dc@redhat.com>
+        id S1726399AbgBRQYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 11:24:55 -0500
+Received: by gentwo.org (Postfix, from userid 1002)
+        id A45B33E998; Tue, 18 Feb 2020 16:24:54 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+        by gentwo.org (Postfix) with ESMTP id A246B3E997;
+        Tue, 18 Feb 2020 16:24:54 +0000 (UTC)
+Date:   Tue, 18 Feb 2020 16:24:54 +0000 (UTC)
+From:   Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@www.lameter.com
+To:     "Tobin C. Harding" <tobin@kernel.org>
+cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] tools: vm: slabinfo: Add numa information for
+ objects
+In-Reply-To: <20200217084828.9092-3-tobin@kernel.org>
+Message-ID: <alpine.DEB.2.21.2002181623150.20682@www.lameter.com>
+References: <20200217084828.9092-1-tobin@kernel.org> <20200217084828.9092-3-tobin@kernel.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e1bf1a0e-db70-906f-d09c-90cc2eef28dc@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 11:17:34AM -0500, Prarit Bhargava wrote:
-> That's weird.  I just re-compiled it on my system without any issue.  Can I have
-> your .config to double check my compile?  I'm using the standard fedora config FWIW.
+On Mon, 17 Feb 2020, Tobin C. Harding wrote:
 
-Just disable CONFIG_X86_MCE_INTEL
+> Add a field to the slabinfo struct for the NUMA information and
+> output it during a NUMA report as is done for `slabs` and `partial`.
 
--- 
-Regards/Gruss,
-    Boris.
+How will this look? Note that there are boxes now with potentially huge
+NUMA nodes (AMD Rome can already do 32 with an optimal BIOS layout for
+minimal latency).
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Maybe make it optional with a --numa switch or so?
+
