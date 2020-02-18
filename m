@@ -2,94 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58FED1632B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:15:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D8361632E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:17:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726557AbgBRUPI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 15:15:08 -0500
-Received: from mail-wm1-f49.google.com ([209.85.128.49]:51971 "EHLO
-        mail-wm1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726403AbgBRUPH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 15:15:07 -0500
-Received: by mail-wm1-f49.google.com with SMTP id t23so4096632wmi.1;
-        Tue, 18 Feb 2020 12:15:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=0x0/HJiEHIniNToQWMEKzmP1pNeyrj9mArFmMB3/6oE=;
-        b=cQ/FPSt5OIRzl1p9b3GlWHZLZF3ES6cfsrm+xOf8SoJjHGH4TWiN/h6mdpR+y492h0
-         f/MUwDUSpVtDzXeZwwMOEKO8UrrR0pTIY1CHnL6j20GNRsM2JvOF3371F/OmXNrIptn3
-         CiHlLJUYwuCpSwyJq/jSi499b4/V37S1I5ydkRiLEUWQSbU5Z68aCcD4+9nDTCVxBxKJ
-         UOcTxcejqStBTxt+Lwze3KmqkYGmpOilVJP4OuozkAvgSgCRhplfwQcyf4/oiw1ZxLOu
-         zCBYeE5HNED5Nenn0EL8S6YrJ54SKUjtozg12xrLhgdfaI5kWDiw0tVWH1niZ9jk0SHC
-         Jx/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=0x0/HJiEHIniNToQWMEKzmP1pNeyrj9mArFmMB3/6oE=;
-        b=PNauAWQbaxcGp7slQseJDSuC0DZphSTlIERXD5sPI+05NBzQmPRslsBWbtEjCBt1Ao
-         Oa2UzXHOcVcXY8FfymB+j+4e6PUemaQ9I2kNr4NstIayLzpT5gDUzLGqogDrHOThJE5V
-         TGCk/kbNBgvCs669aq1qcood3nhehjSHvgUP7DzWFZjxel+BGCOqzT7OyCOkPzIdRlOc
-         m8kwMAzd4CIFdlImb6Gnqkd37I4FoaIdlG/e3dA4dcwpSL6EEoDKgNBeVjX30onauIuF
-         R28Rw9Fsrd8VY6hXd4orMacr2QlB3gp+60SOA38hvNl18d0TtCLEL4oQXM68LrPn1ald
-         9Okw==
-X-Gm-Message-State: APjAAAWNUlLZMJtL7DlJkJrDxcErqF0FyYbzd9wIRCDjawPbNppVccnz
-        Yng8KbAr+wB+Ar/KRBmVVNk=
-X-Google-Smtp-Source: APXvYqxaKM2I2yMNbfTnkgC7Ma2W+KQe6RNJr+dtwL3UO48sj8LWbrvhSS1fDhoq9yK7xMRlItjpyA==
-X-Received: by 2002:a1c:66d6:: with SMTP id a205mr4898203wmc.10.1582056905203;
-        Tue, 18 Feb 2020 12:15:05 -0800 (PST)
-Received: from felia ([2001:16b8:38a9:1a00:819d:444c:ffbc:5dca])
-        by smtp.gmail.com with ESMTPSA id v5sm8114572wrv.86.2020.02.18.12.15.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2020 12:15:04 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-X-Google-Original-From: Lukas Bulwahn <lukas@gmail.com>
-Date:   Tue, 18 Feb 2020 21:14:53 +0100 (CET)
-X-X-Sender: lukas@felia
-To:     "Luck, Tony" <tony.luck@intel.com>
-cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Anatoly Pugachev <matorola@gmail.com>, Pat Gefre <pfg@sgi.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Yu, Fenghua" <fenghua.yu@intel.com>,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        Joe Perches <joe@perches.com>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        Linux Kernel list <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] tty/serial: cleanup after ioc*_serial driver removal
-In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F7F57B7D6@ORSMSX115.amr.corp.intel.com>
-Message-ID: <alpine.DEB.2.21.2002182112520.3368@felia>
-References: <20200217081558.10266-1-lukas.bulwahn@gmail.com> <CADxRZqwGBi=4A224mG0cPgONdNitnvi3LFD_KQckxdYSXzgBGg@mail.gmail.com> <alpine.DEB.2.21.2002170950390.11007@felia> <3908561D78D1C84285E8C5FCA982C28F7F57B7D6@ORSMSX115.amr.corp.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1727881AbgBRURa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 15:17:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53074 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726760AbgBRUR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 15:17:29 -0500
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3F522176D;
+        Tue, 18 Feb 2020 20:17:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582057048;
+        bh=weYP7sKkXUQ9+dPSpuZHGyb6ldBepLg2xY6Xq6EVWLs=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=Q8LUAi98bCOoRUbZZiAC1tCRV4FMwu6P0vOLNRqBMcE0qEqbCkjTLOwNu32ynWOyu
+         F+SsHBGc7Nra3m5+tFZPN6BuuzWqMssm+fyPZwIectsVuSy1olsP17yRe/nInxXbcz
+         6sx/4Ff6mwwfF1m9qlusanJK1PREGZIqETu3dfXM=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 980213520856; Tue, 18 Feb 2020 12:17:28 -0800 (PST)
+Date:   Tue, 18 Feb 2020 12:17:28 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        rostedt@goodmis.org, mingo@kernel.org, gregkh@linuxfoundation.org,
+        gustavo@embeddedor.com, tglx@linutronix.de, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com
+Subject: Re: [PATCH v2 3/9] rcu,tracing: Create trace_rcu_{enter,exit}()
+Message-ID: <20200218201728.GH2935@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20200212210139.382424693@infradead.org>
+ <20200212210749.971717428@infradead.org>
+ <20200212232005.GC115917@google.com>
+ <20200213082716.GI14897@hirez.programming.kicks-ass.net>
+ <20200213135138.GB2935@paulmck-ThinkPad-P72>
+ <20200213164031.GH14914@hirez.programming.kicks-ass.net>
+ <20200213185612.GG2935@paulmck-ThinkPad-P72>
+ <20200213204444.GA94647@google.com>
+ <20200218195831.GD11457@worktop.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200218195831.GD11457@worktop.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Tue, 18 Feb 2020, Luck, Tony wrote:
-
-> > I do not know if there are more ia64 serial drivers, but the MAINTAINERS 
-> > entry and commit message suggested there is not another serial driver.
+On Tue, Feb 18, 2020 at 08:58:31PM +0100, Peter Zijlstra wrote:
+> On Thu, Feb 13, 2020 at 03:44:44PM -0500, Joel Fernandes wrote:
 > 
-> Lukas,
+> > > > That _should_ already be the case today. That is, if we end up in a
+> > > > tracer and in_nmi() is unreliable we're already screwed anyway.
 > 
-> There aren't any other ia64 specific serial drivers. But ia64 does use generic
-> serial drivers (e.g. my test machine has a couple of serial ports attached to 16550A
-> devices)
+> > I removed the static from rcu_nmi_enter()/exit() as it is called from
+> > outside, that makes it build now. Updated below is Paul's diff. I also added
+> > NOKPROBE_SYMBOL() to rcu_nmi_exit() to match rcu_nmi_enter() since it seemed
+> > asymmetric.
 > 
-> I think some notes in that documentation file still apply. Please don't delete.
+> > +__always_inline void rcu_nmi_exit(void)
+> >  {
+> >  	struct rcu_data *rdp = this_cpu_ptr(&rcu_data);
+> >  
+> > @@ -651,25 +653,15 @@ static __always_inline void rcu_nmi_exit_common(bool irq)
+> >  	trace_rcu_dyntick(TPS("Startirq"), rdp->dynticks_nmi_nesting, 0, atomic_read(&rdp->dynticks));
+> >  	WRITE_ONCE(rdp->dynticks_nmi_nesting, 0); /* Avoid store tearing. */
+> >  
+> > -	if (irq)
+> > +	if (!in_nmi())
+> >  		rcu_prepare_for_idle();
+> >  
+> >  	rcu_dynticks_eqs_enter();
+> >  
+> > -	if (irq)
+> > +	if (!in_nmi())
+> >  		rcu_dynticks_task_enter();
+> >  }
 > 
+> Boris and me have been going over the #MC code (and finding loads of
+> 'interesting' code) and ran into ist_enter(), whish has the following
+> code:
+> 
+>                 /*
+>                  * We might have interrupted pretty much anything.  In
+>                  * fact, if we're a machine check, we can even interrupt
+>                  * NMI processing.  We don't want in_nmi() to return true,
+>                  * but we need to notify RCU.
+>                  */
+>                 rcu_nmi_enter();
+> 
+> 
+> Which, to me, sounds all sorts of broken. The IST (be it #DB or #MC) can
+> happen while we're holding all sorts of locks. This must be an NMI-like
+> context.
 
-I provided a PATCH v2 that does not delete the documentation, which 
-already was reviewed by Christoph Hellwig.
+Ouch!  Looks like I need to hold off on getting rid of the "irq"
+parameters if in_nmi() isn't going to be accurate.
 
-Please pick and apply that PATCH v2.
-
-Lukas 
+							Thanx, Paul
