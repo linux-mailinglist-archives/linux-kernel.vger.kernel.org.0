@@ -2,72 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F35BC162660
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 13:45:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DEBE162649
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 13:41:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726680AbgBRMpf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 07:45:35 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:35646 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726512AbgBRMpf (ORCPT
+        id S1726636AbgBRMl4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 07:41:56 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:51288 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726512AbgBRMlz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 07:45:35 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01ICjWYi016830;
-        Tue, 18 Feb 2020 06:45:32 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1582029932;
-        bh=dnj//0zodylv9fY/4CtvgSGPpRwAJebJFvfHLzBPTps=;
-        h=Subject:To:References:From:Date:In-Reply-To;
-        b=JlE5VakpR0OdmB4shdFN3EWxwhlCOJoulkANYy7LEK5CJTHTiD69QQgKbQ2jUddYD
-         +JN7iKis/erPEMvbJS/BW1yw5v0kmO4SFHcb+rHZA3/q1eF8CWNkHilyAOBY7GMZyO
-         Vhts56Zja29C6c2repuXsHzPIz/M4eL+Kb/XXGZA=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01ICjWgK027105;
-        Tue, 18 Feb 2020 06:45:32 -0600
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 18
- Feb 2020 06:45:31 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 18 Feb 2020 06:45:31 -0600
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01ICjVsd034966;
-        Tue, 18 Feb 2020 06:45:31 -0600
-Subject: Re: [PATCH 1/3] dt-bindings: Document shiji vendor-prefix
-To:     Nicolas Belin <nbelin@baylibre.com>,
-        <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>,
-        <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-References: <1582018657-5720-1-git-send-email-nbelin@baylibre.com>
- <1582018657-5720-2-git-send-email-nbelin@baylibre.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <455c5db0-7190-8874-bdbc-dc0985905162@ti.com>
-Date:   Tue, 18 Feb 2020 06:40:49 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Tue, 18 Feb 2020 07:41:55 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j42C6-00Efka-5Y; Tue, 18 Feb 2020 12:41:42 +0000
+Date:   Tue, 18 Feb 2020 12:41:42 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Macpaul Lin <macpaul.lin@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Shen Jing <jingx.shen@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
+        Vincent Pelletier <plr.vincent@gmail.com>,
+        Jerry Zhang <zhangjerry@google.com>, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Mediatek WSD Upstream <wsd_upstream@mediatek.com>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>
+Subject: Re: [PATCH] lib: iov_iter.c: fix a possible calculation error on
+ remaining bytes
+Message-ID: <20200218124142.GJ23230@ZenIV.linux.org.uk>
+References: <1582011672-17189-1-git-send-email-macpaul.lin@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <1582018657-5720-2-git-send-email-nbelin@baylibre.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1582011672-17189-1-git-send-email-macpaul.lin@mediatek.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nicolas
-
-On 2/18/20 3:37 AM, Nicolas Belin wrote:
-> Shenzhen Shiji Lighting Co.,Ltd is a LED manufacturer.
->
-> Signed-off-by: Nicolas Belin <nbelin@baylibre.com>
+On Tue, Feb 18, 2020 at 03:41:12PM +0800, Macpaul Lin wrote:
+> This issue was found when adbd trying to open functionfs with AIO mode.
+> Usually, we need to set "setprop sys.usb.ffs.aio_compat 0" to enable
+> adbd with AIO mode on Android.
+> 
+> When adbd is opening functionfs, it will try to read 24 bytes at the
+> fisrt read I/O control. If this reading has been failed, adbd will
+> try to send FUNCTIONFS_CLEAR_HALT to functionfs. When adbd is in AIO
+> mode, functionfs will be acted with asyncronized I/O path. After the
+> successful read transfer has been completed by gadget hardware, the
+> following series of functions will be called.
+>   ffs_epfile_async_io_complete() -> ffs_user_copy_worker() ->
+>     copy_to_iter() -> _copy_to_iter() -> copyout() ->
+>     iterate_and_advance() -> iterate_iovec()
+> 
+> Adding debug trace to these functions, it has been found that in
+> iterate_iovec(), the calculation result of n will be turned into zero.
+>    n = wanted - n; /* 0 == n = 24 - 24; */
+> Which causes copyout() won't copy data to userspace since the length
+> to be copied "v.iov_len" will be zero, which isn't correct. This also
+> leads ffs_copy_to_iter() always return -EFAULT. Finally adbd cannot
+> open functionfs and send FUNCTIONFS_CLEAR_HALT.
+> 
+> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
 > ---
+>  lib/iov_iter.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+> index fb29c02c6a3c..f9334144e259 100644
+> --- a/lib/iov_iter.c
+> +++ b/lib/iov_iter.c
+> @@ -36,7 +36,8 @@
+>  		skip = __v.iov_len;			\
+>  		n -= __v.iov_len;			\
+>  	}						\
+> -	n = wanted - n;					\
+> +	if (n != wanted)				\
+> +		n = wanted - n;				\
+>  }
 
-You need to add the devicetree mailing list and Rob Herring to this for 
-their review of the dt bindings patches
+	First of all, nothing in that line can possibly *cause*
+copyout() to do anything - it's after the calls of step.  What's
+more, this changes behaviour only when wanted would've been equal to
+n, doesn't it?  Which translates into "no decrements of n have
+happened at all", i.e. "nothing has been copied".  IOW, it's
+a consequence of no copyout, not the cause of such.  You can
+make copy_to_iter() lie and pretend if has copied everything
+when it has copied nothing, but that won't change the underlying
+bug.
 
-Dan
-
+	So I'm afraid your debugging is not finished - you
+still need to find out what causes the copyout failures and/or
+BS iov_iter padded by caller.
