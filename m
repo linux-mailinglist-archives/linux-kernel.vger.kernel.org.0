@@ -2,48 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EA4416353C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 22:41:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92A5B163544
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 22:43:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727938AbgBRVlW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 16:41:22 -0500
-Received: from relay10.mail.gandi.net ([217.70.178.230]:49059 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727916AbgBRVlW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 16:41:22 -0500
-Received: from localhost (lfbn-lyo-1-9-35.w86-202.abo.wanadoo.fr [86.202.105.35])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 7990C24000B;
-        Tue, 18 Feb 2020 21:41:20 +0000 (UTC)
-Date:   Tue, 18 Feb 2020 22:41:20 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     a.zummo@towertech.it, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
-Subject: Re: [PATCH] rtc: snvs: Remove unused include of of_device.h
-Message-ID: <20200218214120.GI3385@piout.net>
-References: <1581823666-16944-1-git-send-email-Anson.Huang@nxp.com>
+        id S1727935AbgBRVnH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 16:43:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48212 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726481AbgBRVnG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 16:43:06 -0500
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26CEF22B48
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 21:43:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582062186;
+        bh=rnCNNwfwhhUByAEoWNGt0qucm6qUiZuNAQwPm+qSMtM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=aicildmJ7rBxWL7JzzdwvmvR9g9L8JkOfUpk+3g8xitwe8LZhGDavlRVGXFzvIb4F
+         b4LDzq/aP/RrVNhXbcYbtdg3dA8L7bJdi5jeRiSCN0TfrDV/NpRPJMaJ1E/LKB1Xcl
+         6BvCRpQ6lZOA5Ryvr8bQEUY+dDjqqLIg/gU55h98=
+Received: by mail-wr1-f46.google.com with SMTP id y11so25763434wrt.6
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 13:43:06 -0800 (PST)
+X-Gm-Message-State: APjAAAWb9eUWK5uUIyEK5UexMq+xIi6/wNUdaE119c/s9NZdRbmHs0sR
+        ZGA4z5YGaQ0D9KDG+UkQZwlJsSK+rDM+/jcsAOrcAA==
+X-Google-Smtp-Source: APXvYqzLREAcofk3M298MDaI+8CWYJZx5SlL6vMrAkXQhof8olULKyvV0eELk98DkPzLqW5H2eTQ23f8/Fz6jJu3GmI=
+X-Received: by 2002:adf:8564:: with SMTP id 91mr32101320wrh.252.1582062184607;
+ Tue, 18 Feb 2020 13:43:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1581823666-16944-1-git-send-email-Anson.Huang@nxp.com>
+References: <20200218063038.3436-1-xypron.glpk@gmx.de> <212145f2-5b00-fe82-82a8-360d3f608b35@infradead.org>
+In-Reply-To: <212145f2-5b00-fe82-82a8-360d3f608b35@infradead.org>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Tue, 18 Feb 2020 22:42:53 +0100
+X-Gmail-Original-Message-ID: <CAKv+Gu8ggxtYehOc++E+NxiaRuDigieUQauz-xbCPXU1vW6sEQ@mail.gmail.com>
+Message-ID: <CAKv+Gu8ggxtYehOc++E+NxiaRuDigieUQauz-xbCPXU1vW6sEQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] efi/libstub: describe memory functions
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Heinrich Schuchardt <xypron.glpk@gmx.de>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/02/2020 11:27:45+0800, Anson Huang wrote:
-> There is nothing in use from of_device.h, remove it.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
->  drivers/rtc/rtc-snvs.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-Applied, thanks.
+On Tue, 18 Feb 2020 at 07:33, Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+> On 2/17/20 10:30 PM, Heinrich Schuchardt wrote:
+> > Provide descriptions of:
+> >
+> > * efi_get_memory_map()
+> > * efi_low_alloc_above()
+> > * efi_free()
+> >
+> > Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
+> > ---
+> > v3:
+> >       add missing colons for parameter descriptions
+> > v2:
+> >       point out how efi_free() is rounding up the memory size
+> > ---
+> >  drivers/firmware/efi/libstub/mem.c | 36 ++++++++++++++++++++++++++++--
+> >  1 file changed, 34 insertions(+), 2 deletions(-)
+>
+> Looks good. Thanks.
+>
+> Acked-by: Randy Dunlap <rdunlap@infradead.org>
+>
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Queued, thanks.
