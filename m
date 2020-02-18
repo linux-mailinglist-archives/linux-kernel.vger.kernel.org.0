@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 129291630D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:58:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12012163101
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:58:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727742AbgBRT44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 14:56:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34046 "EHLO mail.kernel.org"
+        id S1728178AbgBRT6Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 14:58:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727680AbgBRT4x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:56:53 -0500
+        id S1727637AbgBRT6T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 14:58:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1545024125;
-        Tue, 18 Feb 2020 19:56:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E02E24686;
+        Tue, 18 Feb 2020 19:58:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582055812;
-        bh=ObUpMlK267QZmVRlHMUvnqv/x+nKyOlA4C48PMZo4H4=;
+        s=default; t=1582055899;
+        bh=sxy4tI9unjHyXjtMuYgOqv37W4y7fCByf7CdtlFP7pI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Kdh30zdd1QGdm9SGzuJE07gC57vv9WPSSoTT7GeTbU4LVxI2MUyy+uJAbTsnQrnXB
-         TG9uRn7C1QF5bQ0NZmMQTxWL2dr6OfjE3SmBw2m1/XPOZIv9YPGCky+9jgq/DriQjv
-         nrLhDAAx1e6bJeB6vyhxw93wHsrY90WNC4IuzK80=
+        b=19DAutQqNRs3kFdRzGHEw631WIBIq5nbSuyUhj8Hk57Q7iaBR2pg3KYmmP/6Xxwoi
+         psBdWNqjuwhNhEtgn4uSZHkfpL5lf1V3RpDMughlDUOdRcCdoNpezVlKi4o1DnHxLZ
+         UtQ/zNVpbIeqC+H8wfaLgWEBEZ281HamfXusGASE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 05/38] ALSA: hda/realtek - Fix silent output on MSI-GL73
+        stable@vger.kernel.org, Paul Thomas <pthomas8589@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 5.4 24/66] gpio: xilinx: Fix bug where the wrong GPIO register is written to
 Date:   Tue, 18 Feb 2020 20:54:51 +0100
-Message-Id: <20200218190419.171847259@linuxfoundation.org>
+Message-Id: <20200218190430.318532041@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200218190418.536430858@linuxfoundation.org>
-References: <20200218190418.536430858@linuxfoundation.org>
+In-Reply-To: <20200218190428.035153861@linuxfoundation.org>
+References: <20200218190428.035153861@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,33 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Paul Thomas <pthomas8589@gmail.com>
 
-commit 7dafba3762d6c0083ded00a48f8c1a158bc86717 upstream.
+commit c3afa804c58e5c30ac63858b527fffadc88bce82 upstream.
 
-MSI-GL73 laptop with ALC1220 codec requires a similar workaround for
-Clevo laptops to enforce the DAC/mixer connection path.  Set up a
-quirk entry for that.
+Care is taken with "index", however with the current version
+the actual xgpio_writereg is using index for data but
+xgpio_regoffset(chip, i) for the offset. And since i is already
+incremented it is incorrect. This patch fixes it so that index
+is used for the offset too.
 
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=204159
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200212081047.27727-1-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paul Thomas <pthomas8589@gmail.com>
+Link: https://lore.kernel.org/r/20200125221410.8022-1-pthomas8589@gmail.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpio/gpio-xilinx.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -2442,6 +2442,7 @@ static const struct snd_pci_quirk alc882
- 	SND_PCI_QUIRK(0x1071, 0x8258, "Evesham Voyaeger", ALC882_FIXUP_EAPD),
- 	SND_PCI_QUIRK(0x1458, 0xa002, "Gigabyte EP45-DS3/Z87X-UD3H", ALC889_FIXUP_FRONT_HP_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1458, 0xa0b8, "Gigabyte AZ370-Gaming", ALC1220_FIXUP_GB_DUAL_CODECS),
-+	SND_PCI_QUIRK(0x1462, 0x1276, "MSI-GL73", ALC1220_FIXUP_CLEVO_P950),
- 	SND_PCI_QUIRK(0x1462, 0x7350, "MSI-7350", ALC889_FIXUP_CD),
- 	SND_PCI_QUIRK(0x1462, 0xda57, "MSI Z270-Gaming", ALC1220_FIXUP_GB_DUAL_CODECS),
- 	SND_PCI_QUIRK_VENDOR(0x1462, "MSI", ALC882_FIXUP_GPIO3),
+--- a/drivers/gpio/gpio-xilinx.c
++++ b/drivers/gpio/gpio-xilinx.c
+@@ -147,9 +147,10 @@ static void xgpio_set_multiple(struct gp
+ 	for (i = 0; i < gc->ngpio; i++) {
+ 		if (*mask == 0)
+ 			break;
++		/* Once finished with an index write it out to the register */
+ 		if (index !=  xgpio_index(chip, i)) {
+ 			xgpio_writereg(chip->regs + XGPIO_DATA_OFFSET +
+-				       xgpio_regoffset(chip, i),
++				       index * XGPIO_CHANNEL_OFFSET,
+ 				       chip->gpio_state[index]);
+ 			spin_unlock_irqrestore(&chip->gpio_lock[index], flags);
+ 			index =  xgpio_index(chip, i);
+@@ -165,7 +166,7 @@ static void xgpio_set_multiple(struct gp
+ 	}
+ 
+ 	xgpio_writereg(chip->regs + XGPIO_DATA_OFFSET +
+-		       xgpio_regoffset(chip, i), chip->gpio_state[index]);
++		       index * XGPIO_CHANNEL_OFFSET, chip->gpio_state[index]);
+ 
+ 	spin_unlock_irqrestore(&chip->gpio_lock[index], flags);
+ }
 
 
