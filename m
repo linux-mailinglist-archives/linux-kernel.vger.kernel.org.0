@@ -2,180 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CA8B162719
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 14:27:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81680162735
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 14:37:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726569AbgBRN1a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 08:27:30 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:54760 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726399AbgBRN1a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 08:27:30 -0500
-Received: from zn.tnic (p200300EC2F0C1F0028FD4265E0CDE335.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:1f00:28fd:4265:e0cd:e335])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 89AFA1EC0CD1;
-        Tue, 18 Feb 2020 14:27:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1582032448;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=hFxRM15HM26NyrxumWRXrxY4uiJbKqEVp2xvq+9/djw=;
-        b=ew3fcGEuEhnDUgEWcWklSGlyzB2TZgFb2Q5AoeeBTbAzi1ue2u2GESDvhlhkGj9SCONJDV
-        zpngw05x1Jsv8FvRs/sXddC+7fnXe4eNzSAKtnSB2JTLYVlHV/atQSU8lAEtZZzvoYvu4L
-        PP6CFbRl78hyR/GcQUGLH4nwHfKsWf4=
-Date:   Tue, 18 Feb 2020 14:27:24 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [for-next][PATCH 04/26] bootconfig: Add Extra Boot Config support
-Message-ID: <20200218132724.GC14449@zn.tnic>
-References: <20200206115405.GA22608@zn.tnic>
- <20200206234100.953b48ecef04f97c112d2e8b@kernel.org>
- <20200206175858.GG9741@zn.tnic>
- <20200207114617.3bda49673175d3fa33cbe85e@kernel.org>
- <20200207114122.GB24074@zn.tnic>
- <20200208000648.3383f991fee68af5ee229d65@kernel.org>
- <20200210112512.GA29627@zn.tnic>
- <20200211001007.62290c743e049b231bdd7052@kernel.org>
- <20200210174053.GD29627@zn.tnic>
- <20200211110207.7e0f1b048cc207e1a31ddd31@kernel.org>
+        id S1726667AbgBRNhm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 08:37:42 -0500
+Received: from 14.mo7.mail-out.ovh.net ([178.33.251.19]:58250 "EHLO
+        14.mo7.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726347AbgBRNhl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 08:37:41 -0500
+X-Greylist: delayed 2258 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Feb 2020 08:37:40 EST
+Received: from player779.ha.ovh.net (unknown [10.110.208.203])
+        by mo7.mail-out.ovh.net (Postfix) with ESMTP id D7FEC152E86
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 14:00:13 +0100 (CET)
+Received: from sk2.org (cre33-1_migr-88-122-126-116.fbx.proxad.net [88.122.126.116])
+        (Authenticated sender: steve@sk2.org)
+        by player779.ha.ovh.net (Postfix) with ESMTPSA id 0AFF6F777158;
+        Tue, 18 Feb 2020 13:00:00 +0000 (UTC)
+From:   Stephen Kitt <steve@sk2.org>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        linux-doc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Stephen Kitt <steve@sk2.org>
+Subject: [PATCH v2 2/8] docs: merge debugging-modules.txt into sysctl/kernel.rst
+Date:   Tue, 18 Feb 2020 13:59:17 +0100
+Message-Id: <20200218125923.685-3-steve@sk2.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200218125923.685-1-steve@sk2.org>
+References: <20200218125923.685-1-steve@sk2.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200211110207.7e0f1b048cc207e1a31ddd31@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 16131049443819212165
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedugedrjeekgdegjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepufhtvghphhgvnhcumfhithhtuceoshhtvghvvgesshhkvddrohhrgheqnecukfhppedtrddtrddtrddtpdekkedruddvvddruddviedrudduieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphdqohhuthdphhgvlhhopehplhgrhigvrhejjeelrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshhtvghvvgesshhkvddrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 11:02:07AM +0900, Masami Hiramatsu wrote:
-> Sorry, you might misunderstand that the bootconfig replaces legacy command
-> line. No, the legacy command line is still there and at least the part of
-> suppremental command line parts of bootconfig are merged into the command
-> line and shown in dmesg. So even if the user use bootconfig, their kernel
-> command line was just updated, they can grub it and simply paste on other
-> machine (if it accepts longer command line)
+This fits nicely in sysctl/kernel.rst, merge it (and rephrase it)
+instead of linking to it.
 
-Ok, I did just play with the thing. I used this boot config for my guest:
-
+Signed-off-by: Stephen Kitt <steve@sk2.org>
 ---
-kernel {
-	root=/dev/sda1
-	resume=/dev/sda2
-	debug
-	ignore_loglevel
-	log_buf_len=16M
-	earlyprintk=ttyS0,115200
-	console=ttyS0,115200
-	console=tty0
-	no_console_suspend
-}
+ Documentation/admin-guide/sysctl/kernel.rst | 14 ++++++++++++-
+ Documentation/debugging-modules.txt         | 22 ---------------------
+ 2 files changed, 13 insertions(+), 23 deletions(-)
+ delete mode 100644 Documentation/debugging-modules.txt
 
-init {
-	net.ifnames=0
-}
----
-
-and added it to an initrd which I created especially for this. Which
-brings me to the next issue I see: AFAIU, bootconfig requires people
-to have initrd. And the majority of deployments do have initrd enabled
-but there are use cases where people don't need it. So if bootconfig is
-going to be default Y, it better support that case.
-
-For example and for a similar reason I support builtin microcode in the
-microcode loader - when you don't want to enable initrd.
-
-Then, I did add the above bootconfig to the initrd:
-
-./tools/bootconfig/bootconfig -a bootconfig /tmp/initrd.img
-Apply bootconfig to /tmp/initrd.img
-        Number of nodes: 21
-        Size: 194 bytes
-        Checksum: 16268
-
-and booted my guest.
-
-The thing I noticed is that the guest doesn't show any output in its
-window anymore but only shows the login window when it is done booting.
-
-And that is probably because of the console= thing. /proc/bootconfig has
-
-$ cat /proc/bootconfig
-kernel.root = "/dev/sda1"
-kernel.resume = "/dev/sda2"
-kernel.debug = ""
-kernel.ignore_loglevel = ""
-kernel.log_buf_len = "16M"
-kernel.earlyprintk = "ttyS0", "115200"
-kernel.console = "ttyS0", "115200", "tty0"
-kernel.no_console_suspend = ""
-init.net.ifnames = "0"
-
-and bootconfig parsing has merged the console= parameters. And the same
-thing happens if I boot the guest with "console=ttyS0,115200,tty0" on
-the normal cmdline. But
-
-console=ttyS0,115200 console=tty0
-
-is not the same as
-
-console=ttyS0,115200,tty0
-
-Former has been this way since forever if you wanna have serial output
-to ttyS* *and* tty output at the same time.
-
-Also, I wouldn't want to rule out any other changes in behavior in
-other command line options due to this change in parsing and merging of
-options.
-
-So again, I'm still not convinced bootconfig should be used everywhere
-and by default.
-
-In addition to the initrd requirement, it needs a special tool to glue
-it to the end of the initrd. Yeah yeah, it is part of the kernel and the
-glueing can be made part of the initrd creation tool but still, it is
-one more and new step.
-
-Now, if bootconfig can *supplement* the normal command line so that you
-can add more complex configuration directives with it, in *addition* to
-the normal command line, then sure, by all means.
-
-And it seems that it does that: I did
-
----
-kernel {
-        initcall_debug
-}
-
-init {
-}
----
-
-and added it to the cmdline:
-
-[    0.047358] Kernel command line: initcall_debug root=/dev/sda1 resume=/dev/sda2 debug ignore_loglevel log_buf_len=16M earlyprintk=ttyS0,115200 console=ttyS0,115200 console=tty0 no_console_suspend net.ifnames=0  bootconfig
-
-and you can see "initcall_debug" there and it did enable the initcall
-debugging output so yeah, that seems to work.
-
-Btw, if you remove the boot config with the tool (-d) and still boot
-with "bootconfig" it says:
-
-[    0.043958] bootconfig size -23483140 greater than max size 32767
-
-so you need to check presence of bootconfig blob and limits in the
-parsing code too or so.
-
-In any case, this is only my opinion, of course, and I might very well
-be missing something.
-
+diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+index c17ed1db8eea..392c6be1424d 100644
+--- a/Documentation/admin-guide/sysctl/kernel.rst
++++ b/Documentation/admin-guide/sysctl/kernel.rst
+@@ -386,7 +386,19 @@ This flag controls the L2 cache of G3 processor boards. If
+ modprobe
+ ========
+ 
+-See Documentation/debugging-modules.txt.
++This gives the full path of the modprobe command which the kernel will
++use to load modules. This can be used to debug module loading
++requests::
++
++    echo '#! /bin/sh' > /tmp/modprobe
++    echo 'echo "$@" >> /tmp/modprobe.log' >> /tmp/modprobe
++    echo 'exec /sbin/modprobe "$@"' >> /tmp/modprobe
++    chmod a+x /tmp/modprobe
++    echo /tmp/modprobe > /proc/sys/kernel/modprobe
++
++This only applies when the *kernel* is requesting that the module be
++loaded; it won't have any effect if the module is being loaded
++explicitly using ``modprobe`` from userspace.
+ 
+ 
+ modules_disabled
+diff --git a/Documentation/debugging-modules.txt b/Documentation/debugging-modules.txt
+deleted file mode 100644
+index 172ad4aec493..000000000000
+--- a/Documentation/debugging-modules.txt
++++ /dev/null
+@@ -1,22 +0,0 @@
+-Debugging Modules after 2.6.3
+------------------------------
+-
+-In almost all distributions, the kernel asks for modules which don't
+-exist, such as "net-pf-10" or whatever.  Changing "modprobe -q" to
+-"succeed" in this case is hacky and breaks some setups, and also we
+-want to know if it failed for the fallback code for old aliases in
+-fs/char_dev.c, for example.
+-
+-In the past a debugging message which would fill people's logs was
+-emitted.  This debugging message has been removed.  The correct way
+-of debugging module problems is something like this:
+-
+-echo '#! /bin/sh' > /tmp/modprobe
+-echo 'echo "$@" >> /tmp/modprobe.log' >> /tmp/modprobe
+-echo 'exec /sbin/modprobe "$@"' >> /tmp/modprobe
+-chmod a+x /tmp/modprobe
+-echo /tmp/modprobe > /proc/sys/kernel/modprobe
+-
+-Note that the above applies only when the *kernel* is requesting
+-that the module be loaded -- it won't have any effect if that module
+-is being loaded explicitly using "modprobe" from userspace.
 -- 
-Regards/Gruss,
-    Boris.
+2.20.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
