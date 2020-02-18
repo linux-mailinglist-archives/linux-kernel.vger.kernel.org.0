@@ -2,184 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F17A1628BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 15:43:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A96D1628AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 15:40:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726787AbgBROnX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 09:43:23 -0500
-Received: from mail.archive.org ([207.241.224.6]:60886 "EHLO mail.archive.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726116AbgBROnW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 09:43:22 -0500
-X-Greylist: delayed 372 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Feb 2020 09:43:22 EST
-Received: from mail.archive.org (localhost [127.0.0.1])
-        by mail.archive.org (Postfix) with ESMTP id 64DB71FAF0;
-        Tue, 18 Feb 2020 14:37:08 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.archive.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,SHORTCIRCUIT
-        autolearn=disabled version=3.4.2
-Received: from kgpe-d16.fritz.box (a82-161-36-93.adsl.xs4all.nl [82.161.36.93])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: merlijn@archive.org)
-        by mail.archive.org (Postfix) with ESMTPSA id DD9731FAEF;
-        Tue, 18 Feb 2020 14:37:06 +0000 (UTC)
-From:   Merlijn Wajer <merlijn@archive.org>
-To:     merlijn@wizzup.org, linux-scsi@vger.kernel.org
-Cc:     Merlijn Wajer <merlijn@archive.org>, Jens Axboe <axboe@kernel.dk>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] scsi: sr: get rid of sr global mutex
-Date:   Tue, 18 Feb 2020 15:39:17 +0100
-Message-Id: <20200218143918.30267-1-merlijn@archive.org>
-X-Mailer: git-send-email 2.23.0
+        id S1726713AbgBROj6 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 18 Feb 2020 09:39:58 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40196 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726605AbgBROj6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 09:39:58 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01IEZATg093139
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 09:39:57 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2y7uagwcpc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 09:39:56 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <naveen.n.rao@linux.ibm.com>;
+        Tue, 18 Feb 2020 14:39:54 -0000
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 18 Feb 2020 14:39:52 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01IEcuUR40042880
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Feb 2020 14:38:56 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CDD54A4051;
+        Tue, 18 Feb 2020 14:39:51 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 60FFEA4040;
+        Tue, 18 Feb 2020 14:39:51 +0000 (GMT)
+Received: from localhost (unknown [9.199.60.10])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 18 Feb 2020 14:39:51 +0000 (GMT)
+Date:   Tue, 18 Feb 2020 20:09:49 +0530
+From:   "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
+Subject: Re: [PATCH 1/2] powerpc/kprobes: Remove redundant code
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <642c8b4ca59e658be38d8dde00f994e183790a6a.1581687838.git.christophe.leroy@c-s.fr>
+In-Reply-To: <642c8b4ca59e658be38d8dde00f994e183790a6a.1581687838.git.christophe.leroy@c-s.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Envelope-From: <merlijn@archive.org>
+User-Agent: astroid/v0.15-13-gb675b421
+ (https://github.com/astroidmail/astroid)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8BIT
+X-TM-AS-GCONF: 00
+x-cbid: 20021814-0020-0000-0000-000003AB4FEB
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20021814-0021-0000-0000-000022034BEA
+Message-Id: <1582036611.9hm2t8ijhz.naveen@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-18_02:2020-02-17,2020-02-18 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ lowpriorityscore=0 malwarescore=0 clxscore=1011 bulkscore=0 suspectscore=0
+ adultscore=0 impostorscore=0 mlxscore=0 mlxlogscore=788 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002180114
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When replacing the Big Kernel Lock in commit
-2a48fc0ab24241755dc93bfd4f01d68efab47f5a ("block: autoconvert trivial
-BKL users to private mutex"), the lock was replaced with a sr-wide lock.
+Christophe Leroy wrote:
+> At the time being we have something like
+> 
+> 	if (something) {
+> 		p = get();
+> 		if (p) {
+> 			if (something_wrong)
+> 				goto out;
+> 			...
+> 			return;
+> 		} else if (a != b) {
+> 			if (some_error)
+> 				goto out;
+> 			...
+> 		}
+> 		goto out;
+> 	}
+> 	p = get();
+> 	if (!p) {
+> 		if (a != b) {
+> 			if (some_error)
+> 				goto out;
+> 			...
+> 		}
+> 		goto out;
+> 	}
+> 
+> This is similar to
+> 
+> 	p = get();
+> 	if (something) {
+> 		if (p) {
+> 			if (something_wrong)
+> 				goto out;
+> 			...
+> 			return;
+> 		}
+> 	}
+> 	if (!p) {
+> 		if (a != b) {
+> 			if (some_error)
+> 				goto out;
+> 			...
+> 		}
+> 		goto out;
+> 	}
+> 
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> ---
+>  arch/powerpc/kernel/kprobes.c | 15 +--------------
+>  1 file changed, 1 insertion(+), 14 deletions(-)
 
-This causes very poor performance when using multiple sr devices, as the
-sr driver was not able to execute more than one command to one drive at
-any given time, even when there were many CD drives available.
+Good cleanup, thanks.
 
-Replace the global mutex with per-sr-device mutex.
+> 
+> diff --git a/arch/powerpc/kernel/kprobes.c b/arch/powerpc/kernel/kprobes.c
+> index f8b848aa65bd..7a925eb76ec0 100644
+> --- a/arch/powerpc/kernel/kprobes.c
+> +++ b/arch/powerpc/kernel/kprobes.c
+> @@ -276,8 +276,8 @@ int kprobe_handler(struct pt_regs *regs)
+>  	kcb = get_kprobe_ctlblk();
+>  
+>  	/* Check we're not actually recursing */
+> +	p = get_kprobe(addr);
+>  	if (kprobe_running()) {
+> -		p = get_kprobe(addr);
+>  		if (p) {
+>  			kprobe_opcode_t insn = *p->ainsn.insn;
+>  			if (kcb->kprobe_status == KPROBE_HIT_SS &&
+> @@ -308,22 +308,9 @@ int kprobe_handler(struct pt_regs *regs)
+>  			}
+>  			prepare_singlestep(p, regs);
+>  			return 1;
+> -		} else if (*addr != BREAKPOINT_INSTRUCTION) {
+> -			/* If trap variant, then it belongs not to us */
+> -			kprobe_opcode_t cur_insn = *addr;
+> -
+> -			if (is_trap(cur_insn))
+> -				goto no_kprobe;
+> -			/* The breakpoint instruction was removed by
+> -			 * another cpu right after we hit, no further
+> -			 * handling of this interrupt is appropriate
+> -			 */
+> -			ret = 1;
+>  		}
+> -		goto no_kprobe;
 
-Someone tried this patch at the time, but it never made it
-upstream, due to possible concerns with race conditions, but it's not
-clear the patch actually caused those:
+A minot nit -- removing the above goto makes a slight change to the 
+logic. But, see my comments for the next patch.
 
-https://www.spinics.net/lists/linux-scsi/msg63706.html
-https://www.spinics.net/lists/linux-scsi/msg63750.html
+- Naveen
 
-Also see
+>  	}
+>  
+> -	p = get_kprobe(addr);
+>  	if (!p) {
+>  		if (*addr != BREAKPOINT_INSTRUCTION) {
+>  			/*
+> -- 
+> 2.25.0
+> 
+> 
 
-http://lists.xiph.org/pipermail/paranoia/2019-December/001647.html
-
-Signed-off-by: Merlijn Wajer <merlijn@archive.org>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/scsi/sr.c | 20 +++++++++++---------
- drivers/scsi/sr.h |  2 ++
- 2 files changed, 13 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
-index 0fbb8fe6e521..fe0e1c721a99 100644
---- a/drivers/scsi/sr.c
-+++ b/drivers/scsi/sr.c
-@@ -79,7 +79,6 @@ MODULE_ALIAS_SCSI_DEVICE(TYPE_WORM);
- 	 CDC_CD_R|CDC_CD_RW|CDC_DVD|CDC_DVD_R|CDC_DVD_RAM|CDC_GENERIC_PACKET| \
- 	 CDC_MRW|CDC_MRW_W|CDC_RAM)
- 
--static DEFINE_MUTEX(sr_mutex);
- static int sr_probe(struct device *);
- static int sr_remove(struct device *);
- static blk_status_t sr_init_command(struct scsi_cmnd *SCpnt);
-@@ -536,9 +535,9 @@ static int sr_block_open(struct block_device *bdev, fmode_t mode)
- 	scsi_autopm_get_device(sdev);
- 	check_disk_change(bdev);
- 
--	mutex_lock(&sr_mutex);
-+	mutex_lock(&cd->lock);
- 	ret = cdrom_open(&cd->cdi, bdev, mode);
--	mutex_unlock(&sr_mutex);
-+	mutex_unlock(&cd->lock);
- 
- 	scsi_autopm_put_device(sdev);
- 	if (ret)
-@@ -551,10 +550,10 @@ static int sr_block_open(struct block_device *bdev, fmode_t mode)
- static void sr_block_release(struct gendisk *disk, fmode_t mode)
- {
- 	struct scsi_cd *cd = scsi_cd(disk);
--	mutex_lock(&sr_mutex);
-+	mutex_lock(&cd->lock);
- 	cdrom_release(&cd->cdi, mode);
- 	scsi_cd_put(cd);
--	mutex_unlock(&sr_mutex);
-+	mutex_unlock(&cd->lock);
- }
- 
- static int sr_block_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd,
-@@ -565,7 +564,7 @@ static int sr_block_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd,
- 	void __user *argp = (void __user *)arg;
- 	int ret;
- 
--	mutex_lock(&sr_mutex);
-+	mutex_lock(&cd->lock);
- 
- 	ret = scsi_ioctl_block_when_processing_errors(sdev, cmd,
- 			(mode & FMODE_NDELAY) != 0);
-@@ -595,7 +594,7 @@ static int sr_block_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd,
- 	scsi_autopm_put_device(sdev);
- 
- out:
--	mutex_unlock(&sr_mutex);
-+	mutex_unlock(&cd->lock);
- 	return ret;
- }
- 
-@@ -608,7 +607,7 @@ static int sr_block_compat_ioctl(struct block_device *bdev, fmode_t mode, unsign
- 	void __user *argp = compat_ptr(arg);
- 	int ret;
- 
--	mutex_lock(&sr_mutex);
-+	mutex_lock(&cd->lock);
- 
- 	ret = scsi_ioctl_block_when_processing_errors(sdev, cmd,
- 			(mode & FMODE_NDELAY) != 0);
-@@ -638,7 +637,7 @@ static int sr_block_compat_ioctl(struct block_device *bdev, fmode_t mode, unsign
- 	scsi_autopm_put_device(sdev);
- 
- out:
--	mutex_unlock(&sr_mutex);
-+	mutex_unlock(&cd->lock);
- 	return ret;
- 
- }
-@@ -745,6 +744,7 @@ static int sr_probe(struct device *dev)
- 	disk = alloc_disk(1);
- 	if (!disk)
- 		goto fail_free;
-+	mutex_init(&cd->lock);
- 
- 	spin_lock(&sr_index_lock);
- 	minor = find_first_zero_bit(sr_index_bits, SR_DISKS);
-@@ -1055,6 +1055,8 @@ static void sr_kref_release(struct kref *kref)
- 
- 	put_disk(disk);
- 
-+	mutex_destroy(&cd->lock);
-+
- 	kfree(cd);
- }
- 
-diff --git a/drivers/scsi/sr.h b/drivers/scsi/sr.h
-index a2bb7b8bace5..339c624e04d8 100644
---- a/drivers/scsi/sr.h
-+++ b/drivers/scsi/sr.h
-@@ -20,6 +20,7 @@
- 
- #include <linux/genhd.h>
- #include <linux/kref.h>
-+#include <linux/mutex.h>
- 
- #define MAX_RETRIES	3
- #define SR_TIMEOUT	(30 * HZ)
-@@ -51,6 +52,7 @@ typedef struct scsi_cd {
- 	bool ignore_get_event:1;	/* GET_EVENT is unreliable, use TUR */
- 
- 	struct cdrom_device_info cdi;
-+	struct mutex lock;
- 	/* We hold gendisk and scsi_device references on probe and use
- 	 * the refs on this kref to decide when to release them */
- 	struct kref kref;
--- 
-2.23.0
