@@ -2,126 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 580E7162A2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 17:15:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9164C162A0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 17:08:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726634AbgBRQPd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 11:15:33 -0500
-Received: from mail.efficios.com ([167.114.26.124]:42580 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726360AbgBRQPc (ORCPT
+        id S1726617AbgBRQIp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 11:08:45 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:43183 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726360AbgBRQIp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 11:15:32 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.efficios.com (Postfix) with ESMTP id 58D4B256DF3;
-        Tue, 18 Feb 2020 11:15:31 -0500 (EST)
-Received: from mail.efficios.com ([127.0.0.1])
-        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id tmNNx4F-udVa; Tue, 18 Feb 2020 11:15:31 -0500 (EST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.efficios.com (Postfix) with ESMTP id E0BEF2578A4;
-        Tue, 18 Feb 2020 11:15:30 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com E0BEF2578A4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1582042530;
-        bh=5UEGMAe09c0uhoyr1w31js41MQsx532sjq0P/JWOjIo=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=DqRQgGg3QaKuaJ/KHVfwr0hX0w8rcR/sm/1Q5yrVteFd7E1ClYUdUzAsa9MfANy4b
-         BzcHqVH3e5L0RKghM+TFjdBrjxwYepZYej/+FJMw85oFlSrcbgMvTvCsD9JsHKYUUr
-         9bzmwQpLzOTVoZ/G08+wmGY/r9oBSqib7jES4/hsKiwcpQ1SX/s7ZkcynBayNUWxhs
-         Ko6WU+ylzrHJW2O6hRk+oZYu36SNssSt9N/OkVfx1fJZtyKAW0O5iW1PBabqsueVLy
-         ta1I+dMO3R/Uk1hoRgeh0u/6bpQfmFZ5ftz8ykJCYQvMKB1Bdft9KW6GS+IdJuVeFB
-         1U4vxRMXsyN3Q==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([127.0.0.1])
-        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id Mycul7_S9TMN; Tue, 18 Feb 2020 11:15:30 -0500 (EST)
-Received: from mail03.efficios.com (mail03.efficios.com [167.114.26.124])
-        by mail.efficios.com (Postfix) with ESMTP id CACF2256DB5;
-        Tue, 18 Feb 2020 11:15:30 -0500 (EST)
-Date:   Tue, 18 Feb 2020 11:15:30 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     paulmck <paulmck@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     rostedt <rostedt@goodmis.org>,
-        "Joel Fernandes, Google" <joel@joelfernandes.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Message-ID: <1841874582.7975.1582042530726.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20200218161231.GD2935@paulmck-ThinkPad-P72>
-References: <20200213211930.GG170680@google.com> <20200213223918.GN2935@paulmck-ThinkPad-P72> <20200214151906.b1354a7ed6b01fc3bf2de862@kernel.org> <20200215145934.GD2935@paulmck-ThinkPad-P72> <20200217175519.12a694a969c1a8fb2e49905e@kernel.org> <20200217163112.GM2935@paulmck-ThinkPad-P72> <20200218133335.c87d7b2399ee6532bf28b74a@kernel.org> <20200218161231.GD2935@paulmck-ThinkPad-P72>
-Subject: Re: [PATCH v2 3/9] rcu,tracing: Create trace_rcu_{enter,exit}()
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.26.124]
-X-Mailer: Zimbra 8.8.15_GA_3899 (ZimbraWebClient - FF72 (Linux)/8.8.15_GA_3895)
-Thread-Topic: rcu,tracing: Create trace_rcu_{enter,exit}()
-Thread-Index: E7a9UHyAd+58DcDwrMqxghyBB+Sv3g==
+        Tue, 18 Feb 2020 11:08:45 -0500
+Received: by mail-pl1-f196.google.com with SMTP id p11so8243720plq.10;
+        Tue, 18 Feb 2020 08:08:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=/PWlIRrux36Z8YXu1c6rYJDQ0dR+HkQHRAcmTGfpRHA=;
+        b=Wgikwh8/fq9qwIWTMaJkaQThHgvxfDWhHENraP0DiIzzSAj35YjR+DZaMV2WEQg67v
+         JCmyiY4bh+10crmZGGwVT5CgYfpW190885U7uL6UAmLbwDC2Zm9vY7wNHnsryOZN/zop
+         2k/831O1h3NE7MgvJb2DqelTL//+p6B3dNlyrTN0mIrcaceW0MjdSYroz8zc9FeIJMoV
+         oCpyOf3f4asPzYEWn1RxRcGajYYQ09A8mb3hT9wkqIDHwnVWTJybmnh+WdXwf3TTqxxz
+         9ibr0nmuoeQdvagcy8IKje9E6lBy75/n34mv2YVmchT75KVwkmU/SIfI2s+3nRMRuEZ0
+         c3lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=/PWlIRrux36Z8YXu1c6rYJDQ0dR+HkQHRAcmTGfpRHA=;
+        b=Kdi331CMS1AH087jAuTjky9Njjlkr8NvbYx9vSXapNb1j8FpCzl0UNNf0fmc8QEWBu
+         P7MArz5AA5VIsiOCApXc6svppbbCAqDcSJwEap47CEwpf1F6m5f1c4O3yfdB2a2eggbQ
+         +DdHq5Usafr/9NO1Pyn19qXjIRG+hBD2vIYJoHOi2OtHYUtV1hPDMPuwcMVQoPrKwVxL
+         L48IhzRmQ1/MRdQWe/jEfN8jtwTtSHgGqRQPLcAe7JoKuK+/39/zwPcc5EZX9/6o5Y2D
+         HDeDdaC1yx0cAaM+/lU3XT16z9nkPrkh27uoUqAe6VHyB48pPLmdUTauWnM4mWrySvU2
+         6b/g==
+X-Gm-Message-State: APjAAAX86Qpb5crh4LYaBJHj5EEJuosCDZ9rR6swHEsBjGmbs/tXAbdf
+        39m1yOzdk4qt7Ct9d9cESZ4=
+X-Google-Smtp-Source: APXvYqwq30136YrcBJPF6QwgqCw02zX8wuOYcx6L1EtvZLWymcIhi+ooZhvqNMzsFO3Arf/VYTO5VA==
+X-Received: by 2002:a17:902:bc88:: with SMTP id bb8mr20297850plb.274.1582042123021;
+        Tue, 18 Feb 2020 08:08:43 -0800 (PST)
+Received: from localhost.localdomain ([1.39.134.248])
+        by smtp.gmail.com with ESMTPSA id 7sm4866755pfc.21.2020.02.18.08.08.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 18 Feb 2020 08:08:41 -0800 (PST)
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     benh@kernel.crashing.org, b.zolnierkie@samsung.com
+Cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        Souptick Joarder <jrdr.linux@gmail.com>
+Subject: [PATCH] video: fbdev: radeon: Remove dead code
+Date:   Tue, 18 Feb 2020 21:45:56 +0530
+Message-Id: <1582042556-21555-1-git-send-email-jrdr.linux@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Feb 18, 2020, at 11:12 AM, paulmck paulmck@kernel.org wrote:
+This is dead code since 3.15 and can be removed if not
+going to be useful further.
 
-> On Tue, Feb 18, 2020 at 01:33:35PM +0900, Masami Hiramatsu wrote:
->> On Mon, 17 Feb 2020 08:31:12 -0800
->> "Paul E. McKenney" <paulmck@kernel.org> wrote:
->> > 
->> > > BTW, if you consider the x86 specific code is in the generic file,
->> > > we can move NOKPROBE_SYMBOL() in arch/x86/kernel/traps.c.
->> > > (Sorry, I've hit this idea right now)
->> > 
->> > Might this affect other architectures with NMIs and probe-like things?
->> > If so, it might make sense to leave it where it is.
->> 
->> Yes, git grep shows that arm64 is using rcu_nmi_enter() in
->> debug_exception_enter().
->> OK, let's keep it, but maybe it is good to update the comment for
->> arm64 too. What about following?
->> 
->> +/*
->> + * All functions in do_int3() on x86, do_debug_exception() on arm64 must be
->> + * marked NOKPROBE before kprobes handler is called.
->> + * ist_enter() on x86 and debug_exception_enter() on arm64 which is called
->> + * before kprobes handle happens to call rcu_nmi_enter() which means
->> + * that rcu_nmi_enter() must be marked NOKRPOBE.
->> + */
-> 
-> Would it work to describe the general problem, then give x86 details
-> as a specific example, as follows?
-> 
-> /*
-> * On some architectures, certain exceptions prohibit use of kprobes until
-> * the exception code path reaches a certain point.  For example, on x86 all
-> * functions called by do_int3() must be marked NOKPROBE.  However, once
-> * kprobe_int3_handler() is called, kprobing is permitted.  Specifically,
-> * ist_enter() is called in do_int3() before kprobe_int3_handle().
-> * Furthermore, ist_enter() calls rcu_nmi_enter(), which means that
-> * rcu_nmi_enter() must be marked NOKRPOBE.
-> */
-> 
-> That way, I don't feel like I need to update the commment each time
-> a new architecture adds this capability.  ;-)
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+---
+ drivers/video/fbdev/aty/radeon_base.c | 16 ----------------
+ 1 file changed, 16 deletions(-)
 
-I suspect this kind of comment would belong in a new
-Documentation/features/kprobes/annotations.txt or something
-similar. You might want to look at other "features" files to see
-the expected layout.
-
-Thanks,
-
-Mathieu
-
+diff --git a/drivers/video/fbdev/aty/radeon_base.c b/drivers/video/fbdev/aty/radeon_base.c
+index 3af00e3..ccf888e 100644
+--- a/drivers/video/fbdev/aty/radeon_base.c
++++ b/drivers/video/fbdev/aty/radeon_base.c
+@@ -849,12 +849,6 @@ static int radeonfb_check_var (struct fb_var_screeninfo *var, struct fb_info *in
+ 		case 9 ... 16:
+ 			v.bits_per_pixel = 16;
+ 			break;
+-		case 17 ... 24:
+-#if 0 /* Doesn't seem to work */
+-			v.bits_per_pixel = 24;
+-			break;
+-#endif			
+-			return -EINVAL;
+ 		case 25 ... 32:
+ 			v.bits_per_pixel = 32;
+ 			break;
+@@ -2548,16 +2542,6 @@ static void radeonfb_pci_unregister(struct pci_dev *pdev)
+ 	if (rinfo->mon2_EDID)
+ 		sysfs_remove_bin_file(&rinfo->pdev->dev.kobj, &edid2_attr);
+ 
+-#if 0
+-	/* restore original state
+-	 * 
+-	 * Doesn't quite work yet, I suspect if we come from a legacy
+-	 * VGA mode (or worse, text mode), we need to do some VGA black
+-	 * magic here that I know nothing about. --BenH
+-	 */
+-        radeon_write_mode (rinfo, &rinfo->init_state, 1);
+- #endif
+-
+ 	del_timer_sync(&rinfo->lvds_timer);
+ 	arch_phys_wc_del(rinfo->wc_cookie);
+         unregister_framebuffer(info);
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+1.9.1
+
