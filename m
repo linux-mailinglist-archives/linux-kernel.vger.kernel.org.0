@@ -2,102 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01ABA162D9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 19:01:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5D2F162DB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 19:03:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbgBRSBk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 13:01:40 -0500
-Received: from mga09.intel.com ([134.134.136.24]:61234 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726415AbgBRSBk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 13:01:40 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2020 10:01:39 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,456,1574150400"; 
-   d="scan'208";a="229545068"
-Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
-  by fmsmga008.fm.intel.com with ESMTP; 18 Feb 2020 10:01:38 -0800
-Received: from fmsmsx163.amr.corp.intel.com (10.18.125.72) by
- FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Tue, 18 Feb 2020 10:01:38 -0800
-Received: from fmsmsx117.amr.corp.intel.com ([169.254.3.129]) by
- fmsmsx163.amr.corp.intel.com ([169.254.6.29]) with mapi id 14.03.0439.000;
- Tue, 18 Feb 2020 10:01:37 -0800
-From:   "Souza, Jose" <jose.souza@intel.com>
-To:     "Mun, Gwan-gyeong" <gwan-gyeong.mun@intel.com>,
-        "Nikula, Jani" <jani.nikula@intel.com>,
-        "linux@dominikbrodowski.net" <linux@dominikbrodowski.net>,
-        "s.zharkoff@gmail.com" <s.zharkoff@gmail.com>,
-        "boris.brezillon@collabora.com" <boris.brezillon@collabora.com>
-CC:     "airlied@redhat.com" <airlied@redhat.com>,
-        "laurent.pinchart@ideasonboard.com" 
-        <laurent.pinchart@ideasonboard.com>,
-        "jernej.skrabec@siol.net" <jernej.skrabec@siol.net>,
-        "narmstrong@baylibre.com" <narmstrong@baylibre.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jonas@kwiboo.se" <jonas@kwiboo.se>
-Subject: Re: lockup on boot -- drm/i915/display: Force the state compute
- phase once to enable PSR
-Thread-Topic: lockup on boot -- drm/i915/display: Force the state compute
- phase once to enable PSR
-Thread-Index: AQHV5lFoC6T9MFo/lE+Y1qx4cXwPi6ghxJcA
-Date:   Tue, 18 Feb 2020 18:01:37 +0000
-Message-ID: <eb191e966bb4065239d413fd904684de24d37789.camel@intel.com>
-References: <20200217200942.GA2433@light.dominikbrodowski.net>
-         <20200217220852.55cbac43@collabora.com>
-         <20200218114821.GA2240@light.dominikbrodowski.net>
-In-Reply-To: <20200218114821.GA2240@light.dominikbrodowski.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.24.14.232]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <4DA84107666A674F8E93A51113551788@intel.com>
-Content-Transfer-Encoding: base64
+        id S1726672AbgBRSDM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 13:03:12 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42015 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726403AbgBRSDM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 13:03:12 -0500
+Received: by mail-wr1-f67.google.com with SMTP id k11so25059850wrd.9
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 10:03:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=V/tjhq7oBEyOycP7UZixOMOtUlTvd2hXQJK9Eop241Y=;
+        b=DDyhwFE4de9F78yd1ZPlzxTgEeAp+R7qKvINaKsqzab98Bhiw1IzW4Hfout+GyH9wq
+         VZEEok99wm14lIHZhVAgOZH3rllXIPqsBBMCW7QWxNu52fR/JbtbSv7nHTjI3AaVf4Hi
+         D5kPt135GHHHZ8IYDfwPDA0i5vcVCGzV8X0505FxninFfNbdeiyAkOLhpPT0t70ivMvu
+         O2KZCH7OQ2dOk2Ksb9DRkb8eoi0rjSp4EybIAi1INXt/r0fT91iKohal+LAqa2l87UA6
+         gBZQLnMEcG+EA92Fcrqk2u+o0jEXSRK6NAKRw96ej9lVzlQnm1qnlgqwhkxLvGZlZinK
+         qzUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=V/tjhq7oBEyOycP7UZixOMOtUlTvd2hXQJK9Eop241Y=;
+        b=HQSbT98msDDrdTNnUVn2yTltlvxVgFpiQ9ZqSAboYATVT0vjyETKue6B85Bd2GN/qN
+         i0uMR/Rv2o7q6PDY9hJLbxMYsj1H/djeCRUipvEtpiOLQpyrux0H3uzXE0yk/MhjYuao
+         4kkbSXM++q1N0txGl7gVSUR3R5hdZDOStnwyLoanfD4beEZ31QvWsNE+dV8nEvbGcRjH
+         lfJ71nP0QIYcDdUpif5Xo08kLsuP65tZIjOWEC3cltafFMxPKiDWsO1RLSWl4uo3u0dD
+         xGVwICq7EvFiSzH0PJcxXRzomDJ/9ZF6uoQOPn7lkmlpjY2w+wFIjLLh5WTumBQTZC20
+         py3w==
+X-Gm-Message-State: APjAAAVUW9EDZ4iQ0wQS7aeb1rDu9ynCluuwsKZURrqZnl2EKoS/wCG8
+        epBCCDA/FPFbDf/ep4I0b7E=
+X-Google-Smtp-Source: APXvYqzuZqIlzAcXP+ZKKIIA3TCwv6a2IseAjKCamN6X7gGt4vqM+Z/JqeNkVqO66rFMw8/UajOi/A==
+X-Received: by 2002:a5d:61d1:: with SMTP id q17mr31130089wrv.156.1582048989986;
+        Tue, 18 Feb 2020 10:03:09 -0800 (PST)
+Received: from wambui.local ([197.237.61.225])
+        by smtp.googlemail.com with ESMTPSA id o2sm4309335wmh.46.2020.02.18.10.03.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2020 10:03:08 -0800 (PST)
+From:   Wambui Karuga <wambui.karugax@gmail.com>
+X-Google-Original-From: Wambui Karuga <wambui@wambui>
+Date:   Tue, 18 Feb 2020 21:02:56 +0300 (EAT)
+To:     Lucas Stach <l.stach@pengutronix.de>
+cc:     Wambui Karuga <wambui.karugax@gmail.com>,
+        linux+etnaviv@armlinux.org.uk, christian.gmeiner@gmail.com,
+        airlied@linux.ie, daniel@ffwll.ch, etnaviv@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        gregkh@linuxfoundation.org
+Subject: Re: [PATCH] drm/etnaviv: remove check for return value of drm_debugfs
+ function
+In-Reply-To: <71275b167f41ca424216c2bda0459bf305a1162c.camel@pengutronix.de>
+Message-ID: <alpine.LNX.2.21.99999.375.2002182102230.20178@wambui>
+References: <20200218172821.18378-1-wambui.karugax@gmail.com> <20200218172821.18378-4-wambui.karugax@gmail.com> <71275b167f41ca424216c2bda0459bf305a1162c.camel@pengutronix.de>
+User-Agent: Alpine 2.21.99999 (LNX 375 2019-10-29)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkNCg0KWWVzIHRoaXMgcGF0Y2ggaGFzIGEgaXNzdWUgYW5kIHdlIGhhdmUgYSBmaXgsIEknbSB0
-cnlpbmcgdG8gZmluZA0Kc29tZW9uZSB0byByZXZpZXcgaXQsIG1vcmUgaW5mb3JtYXRpb246IA0K
-aHR0cHM6Ly9naXRsYWIuZnJlZWRlc2t0b3Aub3JnL2RybS9pbnRlbC9pc3N1ZXMvMTE1MQ0KDQpP
-biBUdWUsIDIwMjAtMDItMTggYXQgMTI6NDggKzAxMDAsIERvbWluaWsgQnJvZG93c2tpIHdyb3Rl
-Og0KPiBPbiBNb24sIEZlYiAxNywgMjAyMCBhdCAxMDowODo1MlBNICswMTAwLCBCb3JpcyBCcmV6
-aWxsb24gd3JvdGU6DQo+ID4gT24gTW9uLCAxNyBGZWIgMjAyMCAyMTowOTo0MiArMDEwMA0KPiA+
-IERvbWluaWsgQnJvZG93c2tpIDxsaW51eEBkb21pbmlrYnJvZG93c2tpLm5ldD4gd3JvdGU6DQo+
-ID4gDQo+ID4gPiBPbiBteSBvbGQgRGVsbCBYUFMgMTMgbGFwdG9wIHdpdGgNCj4gPiA+IA0KPiA+
-ID4gMDA6MDAuMCBIb3N0IGJyaWRnZTogSW50ZWwgQ29ycG9yYXRpb24gQnJvYWR3ZWxsLVUgSG9z
-dCBCcmlkZ2UNCj4gPiA+IC1PUEkgKHJldiAwOSkNCj4gPiA+IDAwOjAyLjAgVkdBIGNvbXBhdGli
-bGUgY29udHJvbGxlcjogSW50ZWwgQ29ycG9yYXRpb24gSEQgR3JhcGhpY3MNCj4gPiA+IDU1MDAg
-KHJldiAwOSkgKHByb2ctaWYgMDAgW1ZHQSBjb250cm9sbGVyXSkNCj4gPiA+IA0KPiA+ID4gYm9v
-dGluZyA1LjYtcmMxIGFuZCAtcmMyIGZhaWxzIGFmdGVyIHRoZSBkbWVzZyBsaW5lDQo+ID4gPiAN
-Cj4gPiA+IAlmYjA6IHN3aXRjaGluZyB0byBpbnRlbGRybWZiIGZyb20gc2ltcGxlDQo+ID4gPiAN
-Cj4gPiA+IHdoaWxlIHRoZSBuZXh0IGxpbmVzIHNob3VsZCBiZSBzb21ldGhpbmcgbGlrZSAodjUu
-NSk6DQo+ID4gPiANCj4gPiA+IAlDb25zb2xlOiBzd2l0Y2hpbmcgdG8gY29sb3VyIGR1bW15IGRl
-dmljZSA4MHgyNQ0KPiA+ID4gCWk5MTUgMDAwMDowMDowMi4wOiB2Z2FhcmI6IGRlYWN0aXZhdGUg
-dmdhIGNvbnNvbGUNCj4gPiA+IAlbZHJtXSBBQ1BJIEJJT1MgcmVxdWVzdHMgYW4gZXhjZXNzaXZl
-IHNsZWVwIG9mIDI1MDAwIG1zLCB1c2luZw0KPiA+ID4gMTUwMCBtcyBpbnN0ZWFkDQo+ID4gPiAJ
-W2RybV0gU3VwcG9ydHMgdmJsYW5rIHRpbWVzdGFtcCBjYWNoaW5nIFJldiAyICgyMS4xMC4yMDEz
-KS4NCj4gPiA+IAlbZHJtXSBEcml2ZXIgc3VwcG9ydHMgcHJlY2lzZSB2YmxhbmsgdGltZXN0YW1w
-IHF1ZXJ5Lg0KPiA+ID4gCWk5MTUgMDAwMDowMDowMi4wOiB2Z2FhcmI6IGNoYW5nZWQgVkdBIGRl
-Y29kZXM6DQo+ID4gPiBvbGRkZWNvZGVzPWlvK21lbSxkZWNvZGVzPWlvK21lbTpvd25zPWlvK21l
-bQ0KPiA+ID4gDQo+ID4gPiBBIGdpdCBiaXNlY3QgbGVhZCB0bw0KPiA+ID4gDQo+ID4gPiAJY29t
-bWl0IGI4NmQ4OTU1MjRhYiAoImRybS9icmlkZ2U6IEFkZCBhbiAtPmF0b21pY19jaGVjaygpDQo+
-ID4gPiBob29rIikNCj4gPiANCj4gPiBUaGlzIGNvbW1pdCBoYXMgYmVlbiByZXZlcnRlZDogeW91
-IHNob3VsZCBpZ25vcmUgYW55IGZhaWx1cmVzDQo+ID4gYmV0d2Vlbg0KPiA+IGI4NmQ4OTU1MjRh
-YiAoImRybS9icmlkZ2U6IEFkZCBhbiAtPmF0b21pY19jaGVjaygpIGhvb2siKSBhbmQNCj4gPiAw
-OTkxMjYzNTIzMDMgKCJSZXZlcnQgImRybS9icmlkZ2U6IEFkZCBhIGRybV9icmlkZ2Vfc3RhdGUg
-b2JqZWN0IikuDQo+IA0KPiBBIG5ldyBiaXNlY3Qgbm93IHBvaW50cyB0bw0KPiANCj4gCTYwYzZh
-MTRiNDg5YiAoImRybS9pOTE1L2Rpc3BsYXk6IEZvcmNlIHRoZSBzdGF0ZSBjb21wdXRlIHBoYXNl
-DQo+IAlvbmNlIHRvIGVuYWJsZSBQU1IiKS4NCj4gDQo+IFBsZWFzZSBub3RlIHRoYXQgYmlzZWN0
-aW5nIHRoaXMgaXMgcXVpdGUgYSBoYXNzbGUsIGluIHBhcnRpY3VsYXIgZHVlDQo+IHRvDQo+IHZh
-cmlvdXMgcmV2ZXJ0cyBpbiBiZXR3ZWVuIGFuZCBiYWNrLW1lcmdlcyAoc3VjaCBhcyBlYzAyN2Iz
-M2M4YmIsDQo+IHdoaWNoIGhhcw0KPiB0d28gcGFyZW50cyBpbiAiYmFkIiBzdGF0ZSkuIEFzIDYw
-YzZhMTRiNDg5YiBkb2VzIG5vdCByZXZlcnQgY2xlYW5seSwNCj4gSQ0KPiBjYW4ndCB0ZXN0IGEg
-cmV2ZXJ0IG9uIHRvcCBvZiA1LjYtcmMyLg0KPiANCj4gVGhhbmtzLA0KPiAJRG9taW5paw0K
+
+
+On Tue, 18 Feb 2020, Lucas Stach wrote:
+
+> On Di, 2020-02-18 at 20:28 +0300, Wambui Karuga wrote:
+>> As there is no need to check the return value if
+>> drm_debugfs_create_files,
+>
+> And here is where the commit message skips a very important
+> information: Since 987d65d01356 (drm: debugfs: make
+> drm_debugfs_create_files() never fail) this function never returns
+> anything other than 0, so there is no point in checking. This
+> information should be in the commit message, so the reviewer doesn't
+> need to look up this fact in the git history.
+>
+Okay, I can add that to the commit message and resend.
+Thanks.
+
+> Regards,
+> Lucas
+>
+>>  remove the check and error handling in
+>> etnaviv_debugfs_init and have the function return 0 directly.
+>>
+>> Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
+>> ---
+>>  drivers/gpu/drm/etnaviv/etnaviv_drv.c | 16 ++++------------
+>>  1 file changed, 4 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+>> b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+>> index 6b43c1c94e8f..a65d30a48a9d 100644
+>> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+>> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+>> @@ -233,19 +233,11 @@ static struct drm_info_list
+>> etnaviv_debugfs_list[] = {
+>>
+>>  static int etnaviv_debugfs_init(struct drm_minor *minor)
+>>  {
+>> -	struct drm_device *dev = minor->dev;
+>> -	int ret;
+>> -
+>> -	ret = drm_debugfs_create_files(etnaviv_debugfs_list,
+>> -			ARRAY_SIZE(etnaviv_debugfs_list),
+>> -			minor->debugfs_root, minor);
+>> +	drm_debugfs_create_files(etnaviv_debugfs_list,
+>> +				 ARRAY_SIZE(etnaviv_debugfs_list),
+>> +				 minor->debugfs_root, minor);
+>>
+>> -	if (ret) {
+>> -		dev_err(dev->dev, "could not install
+>> etnaviv_debugfs_list\n");
+>> -		return ret;
+>> -	}
+>> -
+>> -	return ret;
+>> +	return 0;
+>>  }
+>>  #endif
+>>
+>
+>
