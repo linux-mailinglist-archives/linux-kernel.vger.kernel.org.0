@@ -2,89 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF862163458
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 22:09:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC7F4163468
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 22:11:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728074AbgBRVJp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 16:09:45 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:55028 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727916AbgBRVJn (ORCPT
+        id S1727213AbgBRVL0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 16:11:26 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:42916 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726444AbgBRVL0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 16:09:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582060182;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=E9mRKEIAjKB1Xq/wMpY1paNLH79mcLaPS2RPUKkvMDQ=;
-        b=PIKIBcXXV5icRXnBUto48WVeEz7JlejGzH9QixoY2on11Zwy4OnlJMUM3PdphJm69+L+qM
-        kmgGnu7omAxZY8QDPP+v2oZFiD4hdwC48TfAucvhtlnBvntR7AAkapQ70lB4Z7IR59UYD1
-        gZzs7OMMTv5YmAfzUPF1vSmCahJGUoY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-218-D5lFg6opNpGvWSZgTdsX6A-1; Tue, 18 Feb 2020 16:09:34 -0500
-X-MC-Unique: D5lFg6opNpGvWSZgTdsX6A-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9EA32DBA3;
-        Tue, 18 Feb 2020 21:09:32 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A890060BE1;
-        Tue, 18 Feb 2020 21:09:31 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Murphy Zhou <jencce.kernel@gmail.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Jia He <justin.he@arm.com>, Linux MM <linux-mm@kvack.org>,
-        "Shutemov\, Kirill" <kirill.shutemov@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm: get rid of WARN if failed to cow user pages
-References: <20191225054227.gii6ctjkuddjnprs@xzhoux.usersys.redhat.com>
-        <CAPcyv4hMPh0C+_OV+vuiYQikb8ZvRanna4vXfKN=10yrAyCjDA@mail.gmail.com>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Tue, 18 Feb 2020 16:09:30 -0500
-In-Reply-To: <CAPcyv4hMPh0C+_OV+vuiYQikb8ZvRanna4vXfKN=10yrAyCjDA@mail.gmail.com>
-        (Dan Williams's message of "Tue, 14 Jan 2020 22:02:34 -0800")
-Message-ID: <x49imk3bo1h.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 18 Feb 2020 16:11:26 -0500
+Received: by mail-ot1-f67.google.com with SMTP id 66so20978837otd.9;
+        Tue, 18 Feb 2020 13:11:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JLj5MuG39X7ohvdGwz68k7hpK4bGkAF6LlKwMzI17fY=;
+        b=cG+CeNo49EJxj5IVLB7T4jroy16d3Cban2zFWV9nUD651ikmNVaMbV7HS5m/Rhq8pt
+         S8jAyrdpEKFMAEPEEAb8DxQxcAjC7VFw7kNQnW/vzBwSH/NAssvuAI3J27LtFMorxJGo
+         eEhY7cH/GKN37PakbdBl5SLnSAwZRL0aZjq3XqlzCTQJJkOwcRv7ICXRuRJCRCVZYdIV
+         8FaiYMHw68pXWg63uoHbZ9+Jgihn/EOzwXvnxi7zJ2NupHGSydXcwOURas9C7Bcmi6i5
+         rUOGa7toDOOxj58qbZnk4U+0M7TBALKFw+2KCzb9+C2FKQQxQUhzXyp5aNA9h/JTnscO
+         FFjw==
+X-Gm-Message-State: APjAAAUZjtusudsDD8RmtPy2iamt52T8xG8LZCM4YzRNP2s1xC3H2hly
+        PgbZ4HEGb7QeWVTqTAvErg==
+X-Google-Smtp-Source: APXvYqyvDWo4AalFirW/wiyW+z0rlSsdM7ILddVe9R02+u1l0aKDD+QFfJX6c1Cxuf/5hwFswmpkPg==
+X-Received: by 2002:a9d:4f02:: with SMTP id d2mr2472350otl.368.1582060285321;
+        Tue, 18 Feb 2020 13:11:25 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id p83sm3813oia.51.2020.02.18.13.11.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2020 13:11:24 -0800 (PST)
+Received: (nullmailer pid 11759 invoked by uid 1000);
+        Tue, 18 Feb 2020 21:11:23 -0000
+Date:   Tue, 18 Feb 2020 15:11:23 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Benjamin Gaignard <benjamin.gaignard@st.com>
+Cc:     wg@grandegger.com, mkl@pengutronix.de, davem@davemloft.net,
+        robh+dt@kernel.org, mark.rutland@arm.com, sriram.dash@samsung.com,
+        linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: Re: [PATCH v4 1/2] dt-bindinsg: net: can: Convert can-transceiver to
+ json-schema
+Message-ID: <20200218211123.GA11668@bogus>
+References: <20200207100306.20997-1-benjamin.gaignard@st.com>
+ <20200207100306.20997-2-benjamin.gaignard@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200207100306.20997-2-benjamin.gaignard@st.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dan Williams <dan.j.williams@intel.com> writes:
+On Fri, 7 Feb 2020 11:03:05 +0100, Benjamin Gaignard wrote:
+> Convert can-transceiver property to json-schema
+> 
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+> ---
+> version 4:
+> - no change
+> 
+> version 3:
+> - only declare max-bitrate property in can-transceiver.yaml
+> 
+>  .../bindings/net/can/can-transceiver.txt           | 24 ----------------------
+>  .../bindings/net/can/can-transceiver.yaml          | 18 ++++++++++++++++
+>  2 files changed, 18 insertions(+), 24 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/net/can/can-transceiver.txt
+>  create mode 100644 Documentation/devicetree/bindings/net/can/can-transceiver.yaml
+> 
 
-> [ drop Ross, add Kirill, linux-mm, and lkml ]
->
-> On Tue, Dec 24, 2019 at 9:42 PM Murphy Zhou <jencce.kernel@gmail.com> wrote:
->>
->> By running xfstests with fsdax enabled, generic/437 always hits this
->> warning[1] since this commit:
->>
->> commit 83d116c53058d505ddef051e90ab27f57015b025
->> Author: Jia He <justin.he@arm.com>
->> Date:   Fri Oct 11 22:09:39 2019 +0800
->>
->>     mm: fix double page fault on arm64 if PTE_AF is cleared
->>
->> Looking at the test program[2] generic/437 uses, it's pretty easy
->> to hit this warning. Remove this WARN as it seems not necessary.
->
-> This is not sufficient justification. Does this same test fail without
-> DAX? If not, why not? At a minimum you need to explain why this is not
-> indicating a problem.
+Applied, thanks.
 
-I ran into this, too, and Kirill has posted a patch[1] to fix the issue.
-Note that it's a potential data corrupter, so just removing the warning
-is NOT the right approach.  :)
-
--Jeff
-
-[1] https://lore.kernel.org/linux-mm/20200218154151.13349-1-kirill.shutemov@linux.intel.com/T/#u
-
+Rob
