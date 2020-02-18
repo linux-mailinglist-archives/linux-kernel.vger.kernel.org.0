@@ -2,47 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C270163039
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:34:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2EB916300A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:33:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727487AbgBRTer (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 14:34:47 -0500
-Received: from mail-wm1-f48.google.com ([209.85.128.48]:40703 "EHLO
-        mail-wm1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726346AbgBRTdR (ORCPT
+        id S1726449AbgBRTdR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 14:33:17 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44047 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbgBRTdR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 18 Feb 2020 14:33:17 -0500
-Received: by mail-wm1-f48.google.com with SMTP id t14so4203136wmi.5
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 11:33:15 -0800 (PST)
+Received: by mail-wr1-f65.google.com with SMTP id m16so25357919wrx.11
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 11:33:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=+jgqRKML7Yrf3AYnGUIzG8hS1esv3rcPRRHV79fbvHM=;
-        b=psv0JUyk005qlyxlj1y9J8rTdUdyhCDFJ8a52kSkwHTJ/UUnAdgPuS8uo/RvUQeufE
-         IdR+1lIruwhhBdDjahf5NsTruJo6m5wRtMuj10lr44QAxMyTu2yeXbwg0oLq5l9XDJ19
-         gF/npJQeVP389phPJ1HuNhkxGV5DEpcgDeU2V6F0XFFvsAHMVBJtB2+ZilGPEnwjGZu+
-         JHbNfoxTnrwiWgzqfroaexHBf6AOBs7iETrD6WKuri0WQ8YJPpTONO1jHaEK5CLeJuBf
-         f8ty/A9+CxIxsy3Ns/70PDj+VGvOcqe1ioJPrgHgkPDevJyMAt3la2sYCqXZGfniokvD
-         ofwA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=9nGneN4FF9FG4UqBBakQfwNSGfoHUIS33OCajZHkIHc=;
+        b=OvB7KyfyEVZHQJfu/Zd/LprOMDUmwxj14FNKr6Qv5XAFcb22USOTj1kGcVyzSm2RXH
+         GOHieY/yIwsFCWpLr7XeqeJFhQ2DHcc5hfwydTprXHOaUcga3Qr6pHSjYIrf/Q6XSqNs
+         StC1ITm1/WWYjQjMd/IQgYHp8BYmvOMfPS8J4ma59IkWd4rpCEd0Uqlh8eApv6pRHK6L
+         Am+CSNySXgEsH1c6DqlpNBEoavoJxGyRh4mZ2ettOdwynUmBA/cwJRYpCMtcG7mCrbWt
+         I+x9br1lCHlQvuXWsY3Jxq1xXA6B97Pj2unGQN7+kNssu99Qej/NoUcH2bdCd8hY0V8+
+         tEYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=+jgqRKML7Yrf3AYnGUIzG8hS1esv3rcPRRHV79fbvHM=;
-        b=L4ieBnWQnUdjhHuha3UgwStWoMMN+cdervV7oo/WNBvbM4ldRLoCaeMKLeRJpm43u3
-         FaAKA3KZsdNj/WpbI+ZGw1rqbMv1TG1p6WSJkhBqY2m2pl8Txit+oIJqqGohXDfjReqc
-         mCSvgrsGqPWgVClUE3myk++IEY4fYftih4WbktUaCJVD2X47lYdmxE7qU948Pxj0Io5J
-         povPF0eLPwtrWr3ScQujWgkRTswCC6yS5ltSYDyc2nsWod89w3UneIw+xS64T/7iaudW
-         ug8ZV+322EOGw5eRX95YH3RXaq6QSgPZcOV71DSL2+O06zzVJgkCUN5f3X2JVVFzkhJY
-         hzCA==
-X-Gm-Message-State: APjAAAVpwqpPCN0++4SJOd/tNgY5TaAjxWRwLJIdbScoEG1wrHyXT7vC
-        MUarayqcymOQ+emfpn1tWqHxgQ==
-X-Google-Smtp-Source: APXvYqwCxodnbtZlxvUkeYI5t16CdUAuDYPYCyMJxqeG3RsIVjlqMSYNSQQ1wHqDOq1LeY0/99WinA==
-X-Received: by 2002:a1c:1d13:: with SMTP id d19mr4919167wmd.163.1582054394962;
-        Tue, 18 Feb 2020 11:33:14 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=9nGneN4FF9FG4UqBBakQfwNSGfoHUIS33OCajZHkIHc=;
+        b=FwHgwCA/OJJ1KaaF3dvySe0w7pxhg3ITi8TNw7tF+uqbzFSz13kYKf59boKBfqQus1
+         1Fg8vtcLoytHeoy9y9oQZ8yKLh3t9iKlKNUrb28gKhtNEwhrNMIGruiooxbQtC6Fqmlo
+         rEesyt50b9NQU2BZnR9l9n4IFxIKJ6nuxfWPiPZInd/Yk8Wzmk4sUEbtZK2KYAu+CEue
+         KbOjZvz0AC1ad4KTfXoT6eJq+MJCns0ZYY5sNOlPGAzGUyaTCpWFZJH0a09z6iLkytxi
+         BQ4rTqmJXC/K66t2KUgcCFd+ewigegDP6ePzww5nvQgN89D/6OyB4IPWDQjcPEyWdo9j
+         /G/w==
+X-Gm-Message-State: APjAAAV9M9fMX7TqYg04QD5ZLjJZ2wj6zo4gUERSP0ObBUDvn1CxXI75
+        PgqE9uPNnAA0iCTakeuk0X/ssA==
+X-Google-Smtp-Source: APXvYqw3rW1kRcZH/PRtRWgPRBFpvvRAhqVbY4TEosssX4QTBJn9TlTcWsGkj8OA5iYx8iCEg6BUZg==
+X-Received: by 2002:a5d:6b82:: with SMTP id n2mr32891365wrx.153.1582054395840;
+        Tue, 18 Feb 2020 11:33:15 -0800 (PST)
 Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id k16sm7649266wru.0.2020.02.18.11.33.13
+        by smtp.googlemail.com with ESMTPSA id k16sm7649266wru.0.2020.02.18.11.33.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 18 Feb 2020 11:33:13 -0800 (PST)
+        Tue, 18 Feb 2020 11:33:15 -0800 (PST)
 From:   Corentin Labbe <clabbe@baylibre.com>
 To:     alexandre.belloni@bootlin.com, b-liu@ti.com, balbi@kernel.org,
         gregkh@linuxfoundation.org, ludovic.desroches@microchip.com,
@@ -50,64 +51,38 @@ To:     alexandre.belloni@bootlin.com, b-liu@ti.com, balbi@kernel.org,
         slemieux.tyco@gmail.com, stern@rowland.harvard.edu, vz@mleia.com
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-usb@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH 00/20] usb: remove useless cast for driver.name
-Date:   Tue, 18 Feb 2020 19:32:43 +0000
-Message-Id: <1582054383-35760-1-git-send-email-clabbe@baylibre.com>
+Subject: [PATCH 01/20] usb: gadget: legacy: gmidi: remove useless cast for driver.name
+Date:   Tue, 18 Feb 2020 19:32:44 +0000
+Message-Id: <1582054383-35760-2-git-send-email-clabbe@baylibre.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1582054383-35760-1-git-send-email-clabbe@baylibre.com>
+References: <1582054383-35760-1-git-send-email-clabbe@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This serie remove a useless (char*) cast for some xxx_driver.name.
-pci_driver, device_driver, usb_composite_driver structures have a "name"
-member which is const char * and all the driver patched assigned to it a
-const char[] name, so the cast was bad and unnecessary.
+usb_composite_driver name is const char pointer, so it not useful to cast
+longname (which is already const char).
 
-Corentin Labbe (20):
-  usb: gadget: legacy: gmidi: remove useless cast for driver.name
-  usb: gadget: legacy: inode: remove useless cast for driver.name
-  usb: gadget: udc: amd5536udc_pci: remove useless cast for driver.name
-  usb: gadget: at91_udc: remove useless cast for driver.name
-  usb: gadget: dummy_hcd: remove useless cast for driver.name
-  usb: gadget: fotg210-udc: remove useless cast for driver.name
-  usb: gadget: fusb300_udc: remove useless cast for driver.name
-  usb: gadget: goku_udc: remove useless cast for driver.name
-  usb: gadget: lpc32xx_udc: remove useless cast for driver.name
-  usb: gadget: m66592-udc: remove useless cast for driver.name
-  usb: gadget: net2280: remove useless cast for driver.name
-  usb: gadget: omap_udc: remove useless cast for driver.name
-  usb: gadget: r8a66597-udc: remove useless cast for driver.name
-  usb: gadget: renesas_usb3: remove useless cast for driver.name
-  usb: host: ehci-pci: remove useless cast for driver.name
-  usb: host: ohci-pci: remove useless cast for driver.name
-  usb: host: sl811-hcd: remove useless cast for driver.name
-  usb: host: uhci-pci: remove useless cast for driver.name
-  usb: host: xhci-pci: remove useless cast for driver.name
-  usb: musb: core: remove useless cast for driver.name
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+---
+ drivers/usb/gadget/legacy/gmidi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/usb/gadget/legacy/gmidi.c       | 2 +-
- drivers/usb/gadget/legacy/inode.c       | 2 +-
- drivers/usb/gadget/udc/amd5536udc_pci.c | 2 +-
- drivers/usb/gadget/udc/at91_udc.c       | 2 +-
- drivers/usb/gadget/udc/dummy_hcd.c      | 4 ++--
- drivers/usb/gadget/udc/fotg210-udc.c    | 2 +-
- drivers/usb/gadget/udc/fusb300_udc.c    | 2 +-
- drivers/usb/gadget/udc/goku_udc.c       | 2 +-
- drivers/usb/gadget/udc/lpc32xx_udc.c    | 2 +-
- drivers/usb/gadget/udc/m66592-udc.c     | 2 +-
- drivers/usb/gadget/udc/net2280.c        | 2 +-
- drivers/usb/gadget/udc/omap_udc.c       | 2 +-
- drivers/usb/gadget/udc/r8a66597-udc.c   | 2 +-
- drivers/usb/gadget/udc/renesas_usb3.c   | 2 +-
- drivers/usb/host/ehci-pci.c             | 2 +-
- drivers/usb/host/ohci-pci.c             | 2 +-
- drivers/usb/host/sl811-hcd.c            | 2 +-
- drivers/usb/host/uhci-pci.c             | 2 +-
- drivers/usb/host/xhci-pci.c             | 2 +-
- drivers/usb/musb/musb_core.c            | 2 +-
- 20 files changed, 21 insertions(+), 21 deletions(-)
-
+diff --git a/drivers/usb/gadget/legacy/gmidi.c b/drivers/usb/gadget/legacy/gmidi.c
+index 9eea2d18f2bf..265c392810d7 100644
+--- a/drivers/usb/gadget/legacy/gmidi.c
++++ b/drivers/usb/gadget/legacy/gmidi.c
+@@ -174,7 +174,7 @@ static int midi_bind(struct usb_composite_dev *cdev)
+ }
+ 
+ static struct usb_composite_driver midi_driver = {
+-	.name		= (char *) longname,
++	.name		= longname,
+ 	.dev		= &device_desc,
+ 	.strings	= dev_strings,
+ 	.max_speed	= USB_SPEED_HIGH,
 -- 
 2.24.1
 
