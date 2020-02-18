@@ -2,68 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F319B162736
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 14:38:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5AED16273D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 14:39:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbgBRNiB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 08:38:01 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:56176 "EHLO mail.skyhub.de"
+        id S1726705AbgBRNjv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 08:39:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726347AbgBRNiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 08:38:01 -0500
-Received: from zn.tnic (p200300EC2F0C1F0028FD4265E0CDE335.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:1f00:28fd:4265:e0cd:e335])
+        id S1726582AbgBRNju (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 08:39:50 -0500
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0E70B1EC0CD1;
-        Tue, 18 Feb 2020 14:38:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1582033080;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=3fEGQmlRrx7Ve1nJ21t9s4LB01DniXaNSXB1qQeQEOk=;
-        b=dYjV/1HjQgoWDktIVXa9DVTBajaxdUS/8ISqM4yublqc3UXsUzugiyrpGNwZV/1KMn49Rp
-        jz7wPaRvqKPStP/ZXlncUaBypSNv2NTa5dhFiwCyzEMLg0cC/AebNBbmgizaqOH0UB4280
-        ZJC61b3E3Zeof9bkHlPU+rTO3sSJOhE=
-Date:   Tue, 18 Feb 2020 14:37:56 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "H.J. Lu" <hjl.tools@gmail.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: Re: [PATCH] x86: Don't declare __force_order in kaslr_64.c
-Message-ID: <20200218133756.GD14449@zn.tnic>
-References: <20200124181811.4780-1-hjl.tools@gmail.com>
- <E184715B-30CD-4951-BAF4-E95135AEE938@amacapital.net>
- <CAMe9rOov9pLYcDLcu2CR7-i5VJhWzz4n95MYiXZDd9p79nQFyQ@mail.gmail.com>
- <CAMe9rOrtj-Hrr6tmSrwg_V9bawXXB2WjsSedL=aCaaH-=ZSKsA@mail.gmail.com>
- <20200218104552.GA14449@zn.tnic>
- <CAMe9rOpyb0-DZME8fdqjvD4fM7-0ZugM3YcPfX9i-kGM1Yj_QA@mail.gmail.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 8578A2173E;
+        Tue, 18 Feb 2020 13:39:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582033190;
+        bh=8MIgSUVG1vBHF+xjowMLhULulLb4CVftpGAFG9luE9o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Z1cpeQqTDA28ONjB3IwZuJRuSQO+JuDzB6ePSCf9UaBMYkSo8LemaZzTO6EYjRAYy
+         aCOR+yemsiYGuUoOukhNG5eMAvDQhIV1KKEkrRkzk6G+j3XXPUOECc+d6DzxgFVIll
+         t2LOdnA4KLsCFXarF8XMG87Hsw74ViNntaIUYWGo=
+Date:   Tue, 18 Feb 2020 13:39:43 +0000
+From:   Will Deacon <will@kernel.org>
+To:     John Garry <john.garry@huawei.com>
+Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org, ak@linux.intel.com,
+        linuxarm@huawei.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, suzuki.poulose@arm.com,
+        james.clark@arm.com, zhangshaokun@hisilicon.com,
+        robin.murphy@arm.com
+Subject: Re: [PATCH RFC 0/7] perf pmu-events: Support event aliasing for
+ system PMUs
+Message-ID: <20200218133943.GF20212@willie-the-truck>
+References: <1579876505-113251-1-git-send-email-john.garry@huawei.com>
+ <20200218125707.GB20212@willie-the-truck>
+ <a40903fe-d52f-96c6-a06a-fe834d71d625@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMe9rOpyb0-DZME8fdqjvD4fM7-0ZugM3YcPfX9i-kGM1Yj_QA@mail.gmail.com>
+In-Reply-To: <a40903fe-d52f-96c6-a06a-fe834d71d625@huawei.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 03:38:54AM -0800, H.J. Lu wrote:
-> I wrote this patch as the part of the previous CET patch set Yu-cheng submitted.
-> Since this is a standalone patch, he asked me to send it separately.  I didn't
-> remove Yu-cheng's SOB when I submitted this patch.
+On Tue, Feb 18, 2020 at 01:24:38PM +0000, John Garry wrote:
+> On 18/02/2020 12:57, Will Deacon wrote:
+> > On Fri, Jan 24, 2020 at 10:34:58PM +0800, John Garry wrote:
+> > > Currently event aliasing for only CPU and uncore PMUs is supported. In
+> > > fact, only uncore PMUs aliasing for when the uncore PMUs are fixed for a
+> > > CPU is supported, which may not always be the case for certain
+> > > architectures.
+> > > 
+> > > This series adds support for PMU event aliasing for system and other
+> > > uncore PMUs which are not fixed to a specific CPU.
+> > > 
+> > > For this, we introduce support for another per-arch mapfile, which maps a
+> > > particular system identifier to a set of system PMU events for that
+> > > system. This is much the same as what we do for CPU event aliasing.
+> > > 
+> > > To support this, we need to change how we match a PMU to a mapfile,
+> > > whether it should use a CPU or system mapfile. For this we do the
+> > > following:
+> > > 
+> > > - For CPU PMU, we always match for the event mapfile based on the CPUID.
+> > >    This has not changed.
+> > > 
+> > > - For an uncore or system PMU, we match first based on the SYSID (if set).
+> > >    If this fails, then we match on the CPUID.
+> > > 
+> > >    This works for x86, as x86 would not have any system mapfiles for uncore
+> > >    PMUs (and match on the CPUID).
+> > > 
+> > > Initial reference support is also added for ARM SMMUv3 PMCG (Performance
+> > > Monitor Event Group) PMU for HiSilicon hip08 platform with only a single
+> > > event so far - see driver in drivers/perf/arm_smmuv3_pmu.c for that driver.
+> > 
+> > Why don't we just expose SMMU_IIDR in the SMMUv3 PMU directory, so that
+> > you can key off that?
+> 
+> That does not sound like a standard sysfs interface.
 
-Ok, dropping it.
+It's standard in the sense that PMUs already have their own directory under
+sysfs where you can put things. For example, the "caps" directory is a
+dumping ground for all sorts of PMU-specific information.
 
-Thx.
+On the other hand, saying "please go figure out which SoC you're on"
+certainly isn't standard and is likely to lead to unreliable, spaghetti
+code.
 
--- 
-Regards/Gruss,
-    Boris.
+> Anyway, I don't think that works for every case, quoting from
+> https://lkml.org/lkml/2019/10/16/465:
+> 
+> "> Note: I do acknowledge that an overall issue is that we assume all PMCG
+> IMP DEF events are same for a given SMMU model.
+> 
+> That assumption does technically fail already - I know MMU-600 has
+> different IMP-DEF events for its TCU and TBUs, however as long as we can
+> get as far as "this is some part of an MMU-600" the driver should be
+> able to figure out the rest ..."
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Perhaps I'm misreading this, but it sounds like if you knew it was an
+MMU-600 then you'd be ok. I also don't understand how a SoC ID makes things
+any easier in this regard.
+
+> So even if it is solvable here, the kernel driver(s) will need to be
+> reworked. And that is just solving one case in many.
+
+PMU drivers will need to expose more information to userspace so that they
+can be identified more precisely, yes. I wouldn't say they would need to be
+"reworked".
+
+> I'm nervous about coming up with a global "SYSID"
+> > when we don't have the ability to standardise anything in that space.
+> 
+> I understand totally, especially if any sysid is based on DT bindings.
+
+Well if this is going to be ACPI-only then it's a non-starter.
+
+> But this is some sort of standardization:
+> https://developer.arm.com/docs/den0028/c, see SMCCC_ARCH_SOC_ID
+
+Yay, firmware :/
+
+Even if this was widely implemented (it's not), I still think that it's
+the wrong level of abstraction. Why not do away with ACPI/DT entirely
+and predicate everything off the SoC ID?
+
+Will
