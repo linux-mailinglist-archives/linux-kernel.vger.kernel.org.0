@@ -2,109 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CA2B162620
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 13:31:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F7A8162631
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 13:33:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbgBRMbn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 07:31:43 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:33856 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726403AbgBRMbm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 07:31:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582029101;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=8SlpuMhxEkNsVu++R0qzZ0u0OpROVAfPhZWy1e0dEb8=;
-        b=b9jPDwNhgHW6pQ/ivHxq9yoNq13hAo72+D+SA8qy1qLfamlgHIPBKV+giAtDWszM3ozp8c
-        GsVGAo4GK7mGeDCFEdiR1lc6BFqGXgemlZXLgKFB7ysLQkTffDaey+uZQrB2lhLSSzghPl
-        czKAzwMySXAeXe4G4fwAWGa39fHPFoI=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-10-KUDYJ7h0PqqF7VqkYFVNCQ-1; Tue, 18 Feb 2020 07:31:40 -0500
-X-MC-Unique: KUDYJ7h0PqqF7VqkYFVNCQ-1
-Received: by mail-wm1-f72.google.com with SMTP id n17so931wmk.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 04:31:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=8SlpuMhxEkNsVu++R0qzZ0u0OpROVAfPhZWy1e0dEb8=;
-        b=N7qKtjipPl5W8qQSUW4oBML+UyOdrkHMq+g5e/axEOjhf/XzDSc6kelp93QLViob4n
-         MR8Bz0YXL/WSSbncIlpLvtBIWQz5G6F8q9H3+NiE8AF/Gw7z5AbSNpdy6G6VBpC+TDfQ
-         HSHe2ayZ+kvqQMoxyrBCHBUjagk5HFteAqdhi7rXakG8nQIWHBeeTJHnC8DYWQM3CTxp
-         WehR9K18XJZ7ilIXtVZgQLyp8Ez24NHWVySqecfKxWbwGXJUDXbNlsGyMJ0Yi9gmdRh1
-         JbGHJ0FOh2cDtt84q4Tw1OrDon1mkv4doyuO2opKRGPqT1VYkZFWvM/UUoAazr+NPcL7
-         PAAw==
-X-Gm-Message-State: APjAAAWwtFzRQb7ReJI1sRut7hKUavQE1V3om5MCS16lzrRh1Zy5AeTJ
-        48q6QFl3pyVoXEk/MuLB1/c44BgwrjbanLhn63rwEDO1qTzLl40occXxh1zXnbC+8ScBW0mPLBX
-        ID4ihRhR40Sk3YlOEb0HOuYyU
-X-Received: by 2002:a5d:6151:: with SMTP id y17mr28368350wrt.110.1582029098847;
-        Tue, 18 Feb 2020 04:31:38 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyX7L8WQTkUFJv9QhdUj6RJA4xdxAXKjDQbK3r6resoWQuxm7d2+WUtLLTRQZ1zvQ/gtSV0vQ==
-X-Received: by 2002:a5d:6151:: with SMTP id y17mr28368330wrt.110.1582029098553;
-        Tue, 18 Feb 2020 04:31:38 -0800 (PST)
-Received: from steredhat (host209-4-dynamic.27-79-r.retail.telecomitalia.it. [79.27.4.209])
-        by smtp.gmail.com with ESMTPSA id b16sm3283514wmj.39.2020.02.18.04.31.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2020 04:31:37 -0800 (PST)
-Date:   Tue, 18 Feb 2020 13:31:35 +0100
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] io_uring: remove unnecessary NULL checks
-Message-ID: <20200218123135.5iihagj3lkwx4h52@steredhat>
-References: <20200217143945.ua4lawkg22ggfihr@kili.mountain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200217143945.ua4lawkg22ggfihr@kili.mountain>
+        id S1726648AbgBRMdX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 07:33:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56650 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726347AbgBRMdW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 07:33:22 -0500
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5217720836;
+        Tue, 18 Feb 2020 12:33:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582029201;
+        bh=p5Cg7dkaOL/TAP7UTqb1VuRqbfVQB0oiZv/kRkrlk/0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=aWlnTD3ngHGWit+WUQibOybAWTCa6KrOOwO2IOZComn3onYHL2f3hlybn60pMK2W2
+         m1ZtfcTNRjXCTbu7ZTw2SFkydP3x6D+xiRBCwpOxGvIT+YOh8HAtyBQ9KJ4gwMb/RA
+         NSbG43ehzUVWqqs7PWxiIRP/d/R42VxcCrQQPEfk=
+Date:   Tue, 18 Feb 2020 21:33:17 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        stable@kernel.vger.org,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH] powerpc/kprobes: Fix trap address when trap happened in
+ real mode
+Message-Id: <20200218213317.533c78753cefb05bd42cc6ad@kernel.org>
+In-Reply-To: <2b3f664e-d4ad-edd3-5bed-a4492f4ed213@c-s.fr>
+References: <b1451438f7148ad0e03306a1f1409f4ad1d6ec7c.1581684263.git.christophe.leroy@c-s.fr>
+        <20200214225434.464ec467ad9094961abb8ddc@kernel.org>
+        <e09d3c42-542e-48c1-2f1e-cfe605b05bec@c-s.fr>
+        <20200216213411.824295a321d8fa979dedbbbe@kernel.org>
+        <baee8186-549a-f6cf-3619-884b6d708185@c-s.fr>
+        <20200217192735.5070f0925c4159ccffa4e465@kernel.org>
+        <c6257b49-bf02-d30a-1e2e-99abba5955e6@c-s.fr>
+        <20200218094421.6d402de389ce23a55a3ec084@kernel.org>
+        <c93c5346-d964-9167-c4dd-3123917344cf@c-s.fr>
+        <20200218192905.a3ed969e8565901c4f69fa22@kernel.org>
+        <2b3f664e-d4ad-edd3-5bed-a4492f4ed213@c-s.fr>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 17, 2020 at 05:39:45PM +0300, Dan Carpenter wrote:
-> The "kmsg" pointer can't be NULL and we have already dereferenced it so
-> a check here would be useless.
+On Tue, 18 Feb 2020 12:04:41 +0100
+Christophe Leroy <christophe.leroy@c-s.fr> wrote:
+
+> >> Nevertheless, if one symbol has been forgotten in the blacklist, I think
+> >> it is a problem if it generate Oopses.
+> > 
+> > There is a long history also on x86 to make a blacklist. Anyway, how did
+> > you get this error on PPC32? Somewhere would you like to probe and
+> > it is a real mode function? Or, it happened unexpectedly?
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  fs/io_uring.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> The first Oops I got was triggered by a WARN_ON() kind of trap in real 
+> mode. The trap exception handler called kprobe_handler() which tried to 
+> read the instruction at the trap address (which was a real-mode address) 
+> so it triggered a Bad Access Fault.
 > 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 72bc378edebc..e9f339453ddb 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -3065,7 +3065,7 @@ static int io_sendmsg(struct io_kiocb *req, struct io_kiocb **nxt,
->  			if (req->io)
->  				return -EAGAIN;
->  			if (io_alloc_async_ctx(req)) {
-> -				if (kmsg && kmsg->iov != kmsg->fast_iov)
-> +				if (kmsg->iov != kmsg->fast_iov)
->  					kfree(kmsg->iov);
->  				return -ENOMEM;
->  			}
-> @@ -3219,7 +3219,7 @@ static int io_recvmsg(struct io_kiocb *req, struct io_kiocb **nxt,
->  			if (req->io)
->  				return -EAGAIN;
->  			if (io_alloc_async_ctx(req)) {
-> -				if (kmsg && kmsg->iov != kmsg->fast_iov)
-> +				if (kmsg->iov != kmsg->fast_iov)
->  					kfree(kmsg->iov);
->  				return -ENOMEM;
->  			}
+> This was initially the purpose of my patch.
 
-Make sense.
+OK, then filtering the trap reason in kprobe handler is a bit strange.
+It should be done in the previous stage (maybe in trap.c)
+Can we filter it by exception flag or only by checking the instruction
+which causes the exception, or needs get_kprobe()...?
 
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+> After discussion with you, I started looking at what would be the effect 
+> of setting a kprobe event in a function which runs in real mode.
 
-Thanks,
-Stefano
+If the kprobe single-stepping (or emulation) works in real mode, just
+ignore the kprobes pre/post_handlers and increment nmissed count.
 
+If that doesn't work, we have to call a BUG_ON, because we can not
+continue the code execution. And also, you have to find a way to make
+a blacklist for real mode code.
+
+> >>
+> >>> Or, some parts are possble to run under both real mode and kernel mode?
+> >>
+> >> I don't think so, at least on PPC32
+> > 
+> > OK, that's a good news. Also, are there any independent section where such
+> > real mode functions are stored? (I can see start_real_trampolines in
+> > sections.h) If that kind of sections are defined, it is easy to make
+> > a blacklist in arch_populate_kprobe_blacklist(). See arch/arm64/kernel/probes/kprobes.c.
+> 
+> Part of them are in .head.text, and this section is already blacklisted 
+> throught function arch_within_kprobe_blacklist()
+
+Then, those are OK.
+
+> 
+> But there are several other functions which are not there. For instance, 
+> many things within entry_32.S, and also things in hash_low.S
+> On PPC64 (ie in entry_64.S) they were explicitely blacklisted with 
+> _ASM_NOKPROBE_SYMBOL(). We have to do the same on PPC64
+
+Agreed. Some of such unstable state code must not be probed.
+
+> >>>> So the 'program check' exception handler doesn't find the owner of the
+> >>>> trap hence generate an Oops.
+> >>>>
+> >>>> Even if we don't want kprobe() to proceed with the event entirely
+> >>>> (allthough it works at least for simple events), I'd expect it to fail
+> >>>> gracefully.
+> >>>
+> >>> Agreed. I thought it was easy to identify real mode code. But if it is
+> >>> hard, we should apply your first patch and also skip user handlers
+> >>> if we are in the real mode (and increment missed count).
+> >>
+> >> user handlers are already skipped.
+> > 
+> > Yes, if you don't put a kprobes on real mode code. However, if user
+> > (accidentally) puts a probe on real mode code, it might call a
+> > user handler?
+> 
+> Are we talking about the same thing ?
+
+Ah, sorry about that. "user handler" here I meant was "kprobe pre/post_handler
+function defined by the user of kprobes".
+
+> 
+> Only kernel code can run in real mode, so the following code at the 
+> beginning of kprobe_handler() does the job ?
+> 
+> 	if (user_mode(regs))
+> 		return 0;
+
+Yes, you're right.
+
+> >> What do you think about my latest proposal below ? If a trap is
+> >> encoutered in real mode, if checks if the matching virtual address
+> >> corresponds to a valid kprobe. If it is, it skips it. If not, it returns
+> >> 0 to tell "it's no me". You are also talking about incrementing the
+> >> missed count. Who do we do that ?
+> > 
+> > I rather like your first patch. If there is a kprobes, we can not skip
+> > the instruction, because there is an instruction which must be executed.
+> > (or single-skipped, but I'm not sure the emulator works correctly on
+> > real mode)
+> 
+> Oops, yes of course.
+
+Thank you,
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
