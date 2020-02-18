@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA338163268
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:10:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A1BB163208
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:06:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727370AbgBRT6o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 14:58:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36520 "EHLO mail.kernel.org"
+        id S1728933AbgBRUEd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 15:04:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728243AbgBRT6k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:58:40 -0500
+        id S1728262AbgBRUDX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 15:03:23 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A14CF24125;
-        Tue, 18 Feb 2020 19:58:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A40424670;
+        Tue, 18 Feb 2020 20:03:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582055920;
+        s=default; t=1582056202;
         bh=nqHU8jXhun/Vp7ATeVmn5fPoMWew8sVRoYGpt1T47a4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QmDIRf4P+RGpeCiNM9/rSQ3TUciYEiYq8TPwzukSSCb+NPhseIl3AhCPzYFcnh2Tw
-         K/yG/Prgz2TE8MlucO8nbFu9f12rS8+6mQGZudE/XhirA8TvK9uLBz5AU/3SyJ4hBF
-         gYg7poKiC+ftPUX0H58AkBf1byelIaI6LAWPBtSw=
+        b=Ui4i0N7XLvaUhS4WaRsk2INEp5bC2Vw02/ISVo2w+TzFHrHEcsT6YcTHCcy4w9yoL
+         giNEJWJTXYE8motqUzP9TnBk29MlsZQ/iPJDy+vPMSI4LUZ7urjS2fKDSpNm2nvLgX
+         eMS2YGAg8bYtRmjTSnXen3Ogfs4RGtK7hImmPED8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Kim Phillips <kim.phillips@amd.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 5.4 31/66] perf/x86/amd: Add missing L2 misses event spec to AMD Family 17hs event map
+Subject: [PATCH 5.5 37/80] perf/x86/amd: Add missing L2 misses event spec to AMD Family 17hs event map
 Date:   Tue, 18 Feb 2020 20:54:58 +0100
-Message-Id: <20200218190430.947195319@linuxfoundation.org>
+Message-Id: <20200218190435.970207368@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200218190428.035153861@linuxfoundation.org>
-References: <20200218190428.035153861@linuxfoundation.org>
+In-Reply-To: <20200218190432.043414522@linuxfoundation.org>
+References: <20200218190432.043414522@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
