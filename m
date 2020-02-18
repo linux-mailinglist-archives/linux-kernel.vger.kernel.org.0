@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89D961631BF
+	by mail.lfdr.de (Postfix) with ESMTP id F3F211631C0
 	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:06:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728940AbgBRUCa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 15:02:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42774 "EHLO mail.kernel.org"
+        id S1728953AbgBRUCb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 15:02:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728930AbgBRUC1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 15:02:27 -0500
+        id S1728938AbgBRUC3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 15:02:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC4FF21D56;
-        Tue, 18 Feb 2020 20:02:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 556BD24125;
+        Tue, 18 Feb 2020 20:02:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582056146;
-        bh=O9r5i8nqHSQAto/Wve6Tojb8JBvbpPLEf6XmOAKP9Mk=;
+        s=default; t=1582056148;
+        bh=OjXV5UxT/cv4HzXnOe69nhUM+fCcsFqY4JerfQY6uFc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DND2p6CQpLmF6GqI4suZmO95U1UOBZp1USzH2ZQKDi8udZmnYW7+6b4hjhBwnXZG0
-         JdHRJB1DMxqUByO/l1a9YygJ//EFWe7dHQ6DUzVGEFxYqajxrtH/K+x6e44wEfyo2v
-         BwmmQzVejnjhyan0TNzQ4iCLyc+lrQOHPL+Qr2Qc=
+        b=PyFJ7Bc6gL6ylttxSbbDEBXu+/uRXdb1/qd5+ibQ9ucUkyjHl3neK/MXsA3fLsepO
+         +9zocA7IAAWBpTQUCffu88ILFL/ztzAPWpCs6cLJq6p+AtXmkdW5xqHwFt7b4g8CVO
+         q2GcRcrbHbJH00xHS3Kuy0peciYVMtDE5SOzPGLw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yonatan Cohen <yonatanc@mellanox.com>,
+        stable@vger.kernel.org, Avihai Horon <avihaih@mellanox.com>,
+        Maor Gottlieb <maorg@mellanox.com>,
         Leon Romanovsky <leonro@mellanox.com>,
         Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 5.5 52/80] IB/umad: Fix kernel crash while unloading ib_umad
-Date:   Tue, 18 Feb 2020 20:55:13 +0100
-Message-Id: <20200218190437.172007798@linuxfoundation.org>
+Subject: [PATCH 5.5 53/80] RDMA/core: Fix invalid memory access in spec_filter_size
+Date:   Tue, 18 Feb 2020 20:55:14 +0100
+Message-Id: <20200218190437.251349085@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200218190432.043414522@linuxfoundation.org>
 References: <20200218190432.043414522@linuxfoundation.org>
@@ -44,78 +45,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yonatan Cohen <yonatanc@mellanox.com>
+From: Avihai Horon <avihaih@mellanox.com>
 
-commit 9ea04d0df6e6541c6736b43bff45f1e54875a1db upstream.
+commit a72f4ac1d778f7bde93dfee69bfc23377ec3d74f upstream.
 
-When disassociating a device from umad we must ensure that the sysfs
-access is prevented before blocking the fops, otherwise assumptions in
-syfs don't hold:
+Add a check that the size specified in the flow spec header doesn't cause
+an overflow when calculating the filter size, and thus prevent access to
+invalid memory.  The following crash from syzkaller revealed it.
 
-	    CPU0            	        CPU1
-	 ib_umad_kill_port()        ibdev_show()
-	    port->ib_dev = NULL
-                                      dev_name(port->ib_dev)
-
-The prior patch made an error in moving the device_destroy(), it should
-have been split into device_del() (above) and put_device() (below). At
-this point we already have the split, so move the device_del() back to its
-original place.
-
-  kernel stack
-  PF: error_code(0x0000) - not-present page
-  Oops: 0000 [#1] SMP DEBUG_PAGEALLOC PTI
-  RIP: 0010:ibdev_show+0x18/0x50 [ib_umad]
-  RSP: 0018:ffffc9000097fe40 EFLAGS: 00010282
-  RAX: 0000000000000000 RBX: ffffffffa0441120 RCX: ffff8881df514000
-  RDX: ffff8881df514000 RSI: ffffffffa0441120 RDI: ffff8881df1e8870
-  RBP: ffffffff81caf000 R08: ffff8881df1e8870 R09: 0000000000000000
-  R10: 0000000000001000 R11: 0000000000000003 R12: ffff88822f550b40
-  R13: 0000000000000001 R14: ffffc9000097ff08 R15: ffff8882238bad58
-  FS:  00007f1437ff3740(0000) GS:ffff888236940000(0000) knlGS:0000000000000000
+  kasan: CONFIG_KASAN_INLINE enabled
+  kasan: GPF could be caused by NULL-ptr deref or user memory access
+  general protection fault: 0000 [#1] SMP KASAN PTI
+  CPU: 1 PID: 17834 Comm: syz-executor.3 Not tainted 5.5.0-rc5 #2
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+  rel-1.12.1-0-ga5cab58e9a3f-prebuilt.qemu.org 04/01/2014
+  RIP: 0010:memchr_inv+0xd3/0x330
+  Code: 89 f9 89 f5 83 e1 07 0f 85 f9 00 00 00 49 89 d5 49 c1 ed 03 45 85
+  ed 74 6f 48 89 d9 48 b8 00 00 00 00 00 fc ff df 48 c1 e9 03 <80> 3c 01
+  00 0f 85 0d 02 00 00 44 0f b6 e5 48 b8 01 01 01 01 01 01
+  RSP: 0018:ffffc9000a13fa50 EFLAGS: 00010202
+  RAX: dffffc0000000000 RBX: 7fff88810de9d820 RCX: 0ffff11021bd3b04
+  RDX: 000000000000fff8 RSI: 0000000000000000 RDI: 7fff88810de9d820
+  RBP: 0000000000000000 R08: ffff888110d69018 R09: 0000000000000009
+  R10: 0000000000000001 R11: ffffed10236267cc R12: 0000000000000004
+  R13: 0000000000001fff R14: ffff88810de9d820 R15: 0000000000000040
+  FS:  00007f9ee0e51700(0000) GS:ffff88811b100000(0000)
+  knlGS:0000000000000000
   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 00000000000004e8 CR3: 00000001e0dfc001 CR4: 00000000001606e0
+  CR2: 0000000000000000 CR3: 0000000115ea0006 CR4: 0000000000360ee0
+  DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+  DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
   Call Trace:
-   dev_attr_show+0x15/0x50
-   sysfs_kf_seq_show+0xb8/0x1a0
-   seq_read+0x12d/0x350
-   vfs_read+0x89/0x140
-   ksys_read+0x55/0xd0
-   do_syscall_64+0x55/0x1b0
-   entry_SYSCALL_64_after_hwframe+0x44/0xa9:
+   spec_filter_size.part.16+0x34/0x50
+   ib_uverbs_kern_spec_to_ib_spec_filter+0x691/0x770
+   ib_uverbs_ex_create_flow+0x9ea/0x1b40
+   ib_uverbs_write+0xaa5/0xdf0
+   __vfs_write+0x7c/0x100
+   vfs_write+0x168/0x4a0
+   ksys_write+0xc8/0x200
+   do_syscall_64+0x9c/0x390
+   entry_SYSCALL_64_after_hwframe+0x44/0xa9
+  RIP: 0033:0x465b49
+  Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89
+  f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01
+  f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+  RSP: 002b:00007f9ee0e50c58 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+  RAX: ffffffffffffffda RBX: 000000000073bf00 RCX: 0000000000465b49
+  RDX: 00000000000003a0 RSI: 00000000200007c0 RDI: 0000000000000004
+  RBP: 0000000000000003 R08: 0000000000000000 R09: 0000000000000000
+  R10: 0000000000000000 R11: 0000000000000246 R12: 00007f9ee0e516bc
+  R13: 00000000004ca2da R14: 000000000070deb8 R15: 00000000ffffffff
+  Modules linked in:
+  Dumping ftrace buffer:
+     (ftrace buffer empty)
 
-Fixes: cf7ad3030271 ("IB/umad: Avoid destroying device while it is accessed")
-Link: https://lore.kernel.org/r/20200212072635.682689-9-leon@kernel.org
-Signed-off-by: Yonatan Cohen <yonatanc@mellanox.com>
+Fixes: 94e03f11ad1f ("IB/uverbs: Add support for flow tag")
+Link: https://lore.kernel.org/r/20200126171500.4623-1-leon@kernel.org
+Signed-off-by: Avihai Horon <avihaih@mellanox.com>
+Reviewed-by: Maor Gottlieb <maorg@mellanox.com>
 Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/user_mad.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/infiniband/core/uverbs_cmd.c |   15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
---- a/drivers/infiniband/core/user_mad.c
-+++ b/drivers/infiniband/core/user_mad.c
-@@ -1312,6 +1312,9 @@ static void ib_umad_kill_port(struct ib_
- 	struct ib_umad_file *file;
- 	int id;
+--- a/drivers/infiniband/core/uverbs_cmd.c
++++ b/drivers/infiniband/core/uverbs_cmd.c
+@@ -2720,12 +2720,6 @@ static int kern_spec_to_ib_spec_action(s
+ 	return 0;
+ }
  
-+	cdev_device_del(&port->sm_cdev, &port->sm_dev);
-+	cdev_device_del(&port->cdev, &port->dev);
+-static size_t kern_spec_filter_sz(const struct ib_uverbs_flow_spec_hdr *spec)
+-{
+-	/* Returns user space filter size, includes padding */
+-	return (spec->size - sizeof(struct ib_uverbs_flow_spec_hdr)) / 2;
+-}
+-
+ static ssize_t spec_filter_size(const void *kern_spec_filter, u16 kern_filter_size,
+ 				u16 ib_real_filter_sz)
+ {
+@@ -2869,11 +2863,16 @@ int ib_uverbs_kern_spec_to_ib_spec_filte
+ static int kern_spec_to_ib_spec_filter(struct ib_uverbs_flow_spec *kern_spec,
+ 				       union ib_flow_spec *ib_spec)
+ {
+-	ssize_t kern_filter_sz;
++	size_t kern_filter_sz;
+ 	void *kern_spec_mask;
+ 	void *kern_spec_val;
+ 
+-	kern_filter_sz = kern_spec_filter_sz(&kern_spec->hdr);
++	if (check_sub_overflow((size_t)kern_spec->hdr.size,
++			       sizeof(struct ib_uverbs_flow_spec_hdr),
++			       &kern_filter_sz))
++		return -EINVAL;
 +
- 	mutex_lock(&port->file_mutex);
++	kern_filter_sz /= 2;
  
- 	/* Mark ib_dev NULL and block ioctl or other file ops to progress
-@@ -1331,8 +1334,6 @@ static void ib_umad_kill_port(struct ib_
- 
- 	mutex_unlock(&port->file_mutex);
- 
--	cdev_device_del(&port->sm_cdev, &port->sm_dev);
--	cdev_device_del(&port->cdev, &port->dev);
- 	ida_free(&umad_ida, port->dev_num);
- 
- 	/* balances device_initialize() */
+ 	kern_spec_val = (void *)kern_spec +
+ 		sizeof(struct ib_uverbs_flow_spec_hdr);
 
 
