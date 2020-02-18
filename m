@@ -2,93 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 485911634DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 22:27:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08EB71634E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 22:27:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727802AbgBRV06 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 16:26:58 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:50224 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726339AbgBRV06 (ORCPT
+        id S1727851AbgBRV1S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 16:27:18 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:44714 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726339AbgBRV1R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 16:26:58 -0500
-Received: from dread.disaster.area (pa49-179-138-28.pa.nsw.optusnet.com.au [49.179.138.28])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 0B3B97EA1A6;
-        Wed, 19 Feb 2020 08:26:54 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1j4AOK-0003K5-Rm; Wed, 19 Feb 2020 08:26:52 +1100
-Date:   Wed, 19 Feb 2020 08:26:52 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v6 00/19] Change readahead API
-Message-ID: <20200218212652.GR10776@dread.disaster.area>
-References: <20200217184613.19668-1-willy@infradead.org>
- <20200218045633.GH10776@dread.disaster.area>
- <20200218134230.GN7778@bombadil.infradead.org>
+        Tue, 18 Feb 2020 16:27:17 -0500
+Received: by mail-oi1-f196.google.com with SMTP id d62so21607448oia.11;
+        Tue, 18 Feb 2020 13:27:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SZkfM2vOw8ze2ybVAuGSNguaCr88qukHDOjEHLDc/Vw=;
+        b=NTOV4MHUBC3afKGzgBEIj1N/G8Wh2ORKKnF2/GsINtd2RQF96qcWcRSMretkoJu0Xk
+         unA+BabosFDF4m/KakXK00U2iqBg9hY+aMyvjOZbUTnO7J5KnJ2vZuO4cTHG6C7LirMw
+         9z+M5nBqgM257nEI8kfDFScRCIM11ig9sQvgholzg24MGKGpougIPL6KOtyTglo1zAQI
+         7+yeMPNYpFslbhvLlV1R4TTOabZ9Q0RgNiKW8bEnkJVZmnrZ9u9mXeGPqILaQrBq6oSp
+         Wyw8hKPMfu82CEjSi4pE1zoygpQDFqzYbqO5gKlWsL1Gdynu0WFen1502HIwj+nQbpyO
+         0N3w==
+X-Gm-Message-State: APjAAAWfmFU8Fq1+1YS0Mf1Ee+hmzem/j0a1D6F0dttkxmxh489KHOm9
+        mL7mEbAY2oj5BgJibCDtIg==
+X-Google-Smtp-Source: APXvYqxgHOj3VjZX1AHlZ5Nh2dnVpuVFb3Z30Trjs3tK6fu2V/2tB52gtPEpxGhmDmnIDY9k6xcduw==
+X-Received: by 2002:a05:6808:7dd:: with SMTP id f29mr2642106oij.67.1582061236713;
+        Tue, 18 Feb 2020 13:27:16 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id i20sm1766945otp.14.2020.02.18.13.27.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2020 13:27:15 -0800 (PST)
+Received: (nullmailer pid 1931 invoked by uid 1000);
+        Tue, 18 Feb 2020 21:27:14 -0000
+Date:   Tue, 18 Feb 2020 15:27:14 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
+        stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Linux-imx@nxp.com
+Subject: Re: [PATCH V4 2/4] dt-bindings: pinctrl: Convert i.MX8MM to
+ json-schema
+Message-ID: <20200218212714.GA1878@bogus>
+References: <1582012300-30260-1-git-send-email-Anson.Huang@nxp.com>
+ <1582012300-30260-2-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200218134230.GN7778@bombadil.infradead.org>
+In-Reply-To: <1582012300-30260-2-git-send-email-Anson.Huang@nxp.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
-        a=zAxSp4fFY/GQY8/esVNjqw==:117 a=zAxSp4fFY/GQY8/esVNjqw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=IkcTkHD0fZMA:10 a=l697ptgUJYAA:10
-        a=7-415B0cAAAA:8 a=13k90lvrXjaGpILklQQA:9 a=QEXdDO2ut3YA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 05:42:30AM -0800, Matthew Wilcox wrote:
-> On Tue, Feb 18, 2020 at 03:56:33PM +1100, Dave Chinner wrote:
-> > Latest version in your git tree:
-> > 
-> > $ ▶ glo -n 5 willy/readahead
-> > 4be497096c04 mm: Use memalloc_nofs_save in readahead path
-> > ff63497fcb98 iomap: Convert from readpages to readahead
-> > 26aee60e89b5 iomap: Restructure iomap_readpages_actor
-> > 8115bcca7312 fuse: Convert from readpages to readahead
-> > 3db3d10d9ea1 f2fs: Convert from readpages to readahead
-> > $
-> > 
-> > merged into a 5.6-rc2 tree fails at boot on my test vm:
-> > 
-> > [    2.423116] ------------[ cut here ]------------
-> > [    2.424957] list_add double add: new=ffffea000efff4c8, prev=ffff8883bfffee60, next=ffffea000efff4c8.
-> > [    2.428259] WARNING: CPU: 4 PID: 1 at lib/list_debug.c:29 __list_add_valid+0x67/0x70
-> > [    2.457484] Call Trace:
-> > [    2.458171]  __pagevec_lru_add_fn+0x15f/0x2c0
-> > [    2.459376]  pagevec_lru_move_fn+0x87/0xd0
-> > [    2.460500]  ? pagevec_move_tail_fn+0x2d0/0x2d0
-> > [    2.461712]  lru_add_drain_cpu+0x8d/0x160
-> > [    2.462787]  lru_add_drain+0x18/0x20
+On Tue, 18 Feb 2020 15:51:38 +0800, Anson Huang wrote:
+> Convert the i.MX8MM pinctrl binding to DT schema format using json-schema
 > 
-> Are you sure that was 4be497096c04 ?  I ask because there was a
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+> Changes since V3:
+> 	- use uint32-matrix instead of uint32-array for fsl,pins.
+> ---
+>  .../bindings/pinctrl/fsl,imx8mm-pinctrl.txt        | 36 ----------
+>  .../bindings/pinctrl/fsl,imx8mm-pinctrl.yaml       | 82 ++++++++++++++++++++++
+>  2 files changed, 82 insertions(+), 36 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx8mm-pinctrl.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx8mm-pinctrl.yaml
+> 
 
-Yes, because it's the only version I've actually merged into my
-working tree, compiled and tried to run. :P
-
-> version pushed to that git tree that did contain a list double-add
-> (due to a mismerge when shuffling patches).  I noticed it and fixed
-> it, and 4be497096c04 doesn't have that problem.  I also test with
-> CONFIG_DEBUG_LIST turned on, but this problem you hit is going to be
-> probabilistic because it'll depend on the timing between whatever other
-> list is being used and the page actually being added to the LRU.
-
-I'll see if I can reproduce it.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Reviewed-by: Rob Herring <robh@kernel.org>
