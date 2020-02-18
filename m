@@ -2,148 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF708162A0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 17:07:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B85EA162A11
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 17:10:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726582AbgBRQHj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 11:07:39 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:36484 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726360AbgBRQHi (ORCPT
+        id S1726648AbgBRQKG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 11:10:06 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:44246 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726360AbgBRQKF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 11:07:38 -0500
-Received: by mail-pj1-f67.google.com with SMTP id gv17so1193524pjb.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 08:07:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=es-iitr-ac-in.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=6IJPCaTEcBb2m8XkY4aRmJfNArzRhDFzGrCWNLyN7Ic=;
-        b=nNQYMPFNJpNoZxtqF2phDv1wjXg0AOZ/bl4BaeHLoULkitFcLFvO3rs4v3tmN7E108
-         tDWdJm31m3moyA169gHYrLc/puw5pYrowXS7G6CHHU23HSnEuG4+oX57a7ItNS9dBthQ
-         FH63MQBYEqz4zkoxEXkPInytkpJrdBCRH6oERlUbX3RvNVqi+F8nI39WXY1X2aJjPcJK
-         o0qLDJNkEtjRUJD3cwrd2M6y0rzsIRMkuBPaWdfRLaWiPyJgky/uEhnouXIPZWJsihld
-         F1Gim6pg0v5ed3RKxw86kVFL0I9AHP/84LExdk5/9NVFpulFphpKCcEYKx8Z+lp7wxpS
-         0wug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=6IJPCaTEcBb2m8XkY4aRmJfNArzRhDFzGrCWNLyN7Ic=;
-        b=C4xhYWVMwZ3Clz7igP3aSRyKWFwT899wNjF4JPbEeFCr+Nv1AGlGX724FaTo6sNRUE
-         RMEijJYvVDDLWecPSj7LXoV7SeqjVeS4U5PyRx96v69DZ8CUyFFrii9SW78Bkm17TPvX
-         VPYEzBz7fSOJPfzY+RmGc4UXbhUlGEYECgU2htTGP5rreLSlWYbZnI3vXeXKc7c6mA4G
-         V4pnvl5qSOhQt1eBXwitLlC/ygdNLSGc8SnS+6N3VK1KA/WHJM2ihY8X5rfpVXqB/8Cl
-         T09Xe4XmpjeX7AXNQXeodsnByZ6yEHU/Lo6LzclJTokZpjvs25U2k9vWCofvM86+fNQl
-         eWcg==
-X-Gm-Message-State: APjAAAUkruV9uvUMPfA2iHVHV7VbjH/+rzgDtpKs2HL6Q78lP7/7D9VP
-        m3jvp8rhFrIZNyjNshF99KSQjQ==
-X-Google-Smtp-Source: APXvYqy8JRIuOTKUkj1s0uIaQjKYrPfy6Q91GTwrh/k+Pt+nzWjZ0HbG7DxYrRNO5RCTUzT9wAwWBw==
-X-Received: by 2002:a17:902:b583:: with SMTP id a3mr21124343pls.180.1582042056382;
-        Tue, 18 Feb 2020 08:07:36 -0800 (PST)
-Received: from kaaira-HP-Pavilion-Notebook ([103.37.201.176])
-        by smtp.gmail.com with ESMTPSA id g9sm4773300pfm.150.2020.02.18.08.07.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Feb 2020 08:07:35 -0800 (PST)
-Date:   Tue, 18 Feb 2020 21:37:28 +0530
-From:   Kaaira Gupta <kgupta@es.iitr.ac.in>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: bcm2835-camera: call function instead of macro
-Message-ID: <20200218160727.GA17010@kaaira-HP-Pavilion-Notebook>
+        Tue, 18 Feb 2020 11:10:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=5KDaFTW+pz8VfJMmd/150jcSlwmVWcMm/3HMnI/xfvg=; b=ipLlBOxgYKVfRZo7Sgo48aXcMn
+        g+YvOK1M9fWayNYCWbwGsZLPH92YapUqcU3V5/r6tbkb9ft/cqAo3wSGowvvZcx4rWcc7/FZqrjgU
+        C3Fut73k2NJ3qoka036sCPRkrwE5zKTESvinIrwcv+q0cgEnEAW9BFRIcBy7P/qW64o6xFymjBnd6
+        8c5ms/UIfeyFwZwXVtAUiNakXaQvESAYSksXwpI8XKuUP0K9NptGJs83qh5VWlLhzAz7zqZR5fA4t
+        Wop5PUNx/CWSP8yDQssgxeF8hMUqj5MF3HuUkauFwvDvTC8SaXnbvBgLZnpTizJzcd+E709oxa5QK
+        FdKMzcpg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j45Rk-0001Tm-Vv; Tue, 18 Feb 2020 16:10:04 +0000
+Date:   Tue, 18 Feb 2020 08:10:04 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v6 08/19] mm: Add readahead address space operation
+Message-ID: <20200218161004.GR7778@bombadil.infradead.org>
+References: <20200217184613.19668-1-willy@infradead.org>
+ <20200217184613.19668-14-willy@infradead.org>
+ <20200218062147.GN10776@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200218062147.GN10776@dread.disaster.area>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix checkpatch.pl warning of 'macro argument reuse' in bcm2835-camera.h
-by removing the macro and calling the function, written in macro in
-bcm2835-camera.h, directly in bcm2835-camera.c
+On Tue, Feb 18, 2020 at 05:21:47PM +1100, Dave Chinner wrote:
+> On Mon, Feb 17, 2020 at 10:45:54AM -0800, Matthew Wilcox wrote:
+> > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> > 
+> > This replaces ->readpages with a saner interface:
+> >  - Return void instead of an ignored error code.
+> >  - Pages are already in the page cache when ->readahead is called.
+> 
+> Might read better as:
+> 
+>  - Page cache is already populates with locked pages when
+>    ->readahead is called.
 
-Signed-off-by: Kaaira Gupta <kgupta@es.iitr.ac.in>
----
- .../bcm2835-camera/bcm2835-camera.c           | 28 +++++++++++++++----
- .../bcm2835-camera/bcm2835-camera.h           | 10 -------
- 2 files changed, 22 insertions(+), 16 deletions(-)
+Will do.
 
-diff --git a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-index 1ef31a984741..19b3ba80d0e7 100644
---- a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-+++ b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-@@ -919,9 +919,17 @@ static int vidioc_g_fmt_vid_cap(struct file *file, void *priv,
- 	else
- 		f->fmt.pix.colorspace = V4L2_COLORSPACE_SMPTE170M;
- 	f->fmt.pix.priv = 0;
--
--	v4l2_dump_pix_format(1, bcm2835_v4l2_debug, &dev->v4l2_dev, &f->fmt.pix,
--			     __func__);
-+	v4l2_dbg(1, bcm2835_v4l2_debug, &dev->v4l2_dev,
-+		 "%s: w %u h %u field %u pfmt 0x%x bpl %u sz_img %u colorspace 0x%x priv %u\n",
-+		  __func__,
-+		 (&f->fmt.pix)->width,
-+		 (&f->fmt.pix)->height,
-+		 (&f->fmt.pix)->field,
-+		 (&f->fmt.pix)->pixelformat,
-+		 (&f->fmt.pix)->bytesperline,
-+		 (&f->fmt.pix)->sizeimage,
-+		 (&f->fmt.pix)->colorspace,
-+		 (&f->fmt.pix)->priv);
- 	return 0;
- }
- 
-@@ -995,9 +1003,17 @@ static int vidioc_try_fmt_vid_cap(struct file *file, void *priv,
- 	v4l2_dbg(1, bcm2835_v4l2_debug, &dev->v4l2_dev,
- 		 "Now %dx%d format %08X\n",
- 		f->fmt.pix.width, f->fmt.pix.height, f->fmt.pix.pixelformat);
--
--	v4l2_dump_pix_format(1, bcm2835_v4l2_debug, &dev->v4l2_dev, &f->fmt.pix,
--			     __func__);
-+	v4l2_dbg(1, bcm2835_v4l2_debug, &dev->v4l2_dev,
-+		 "%s: w %u h %u field %u pfmt 0x%x bpl %u sz_img %u colorspace 0x%x priv %u\n",
-+		 __func__,
-+		 (&f->fmt.pix)->width,
-+		 (&f->fmt.pix)->height,
-+		 (&f->fmt.pix)->field,
-+		 (&f->fmt.pix)->pixelformat,
-+		 (&f->fmt.pix)->bytesperline,
-+		 (&f->fmt.pix)->sizeimage,
-+		 (&f->fmt.pix)->colorspace,
-+		 (&f->fmt.pix)->priv);
- 	return 0;
- }
- 
-diff --git a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.h b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.h
-index b5fce38de038..2e3e1954e3ce 100644
---- a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.h
-+++ b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.h
-@@ -121,16 +121,6 @@ int set_framerate_params(struct bm2835_mmal_dev *dev);
- 
- /* Debug helpers */
- 
--#define v4l2_dump_pix_format(level, debug, dev, pix_fmt, desc)	\
--{	\
--	v4l2_dbg(level, debug, dev,	\
--"%s: w %u h %u field %u pfmt 0x%x bpl %u sz_img %u colorspace 0x%x priv %u\n", \
--		desc,	\
--		(pix_fmt)->width, (pix_fmt)->height, (pix_fmt)->field,	\
--		(pix_fmt)->pixelformat, (pix_fmt)->bytesperline,	\
--		(pix_fmt)->sizeimage, (pix_fmt)->colorspace, (pix_fmt)->priv); \
--}
--
- #define v4l2_dump_win_format(level, debug, dev, win_fmt, desc)	\
- {	\
- 	v4l2_dbg(level, debug, dev,	\
--- 
-2.17.1
+> >  - Implementation looks up the pages in the page cache instead of
+> >    having them passed in a linked list.
+> 
+> Add:
+> 
+>  - cleanup of unused readahead handled by ->readahead caller, not
+>    the method implementation.
 
+The readpages caller does that cleanup too, so it's not an advantage
+to the readahead interface.
+
+        if (mapping->a_ops->readpages) {
+                ret = mapping->a_ops->readpages(filp, mapping, pages, nr_pages);
+                /* Clean up the remaining pages */
+                put_pages_list(pages);
+                goto out;
+        }
+
+> >  ``readpages``
+> >  	called by the VM to read pages associated with the address_space
+> >  	object.  This is essentially just a vector version of readpage.
+> >  	Instead of just one page, several pages are requested.
+> >  	readpages is only used for read-ahead, so read errors are
+> >  	ignored.  If anything goes wrong, feel free to give up.
+> > +	This interface is deprecated; implement readahead instead.
+> 
+> What is the removal schedule for the deprecated interface? 
+
+I mentioned that in the cover letter; once Dave Howells has the fscache
+branch merged, I'll do the remaining filesystems.  Should be within the
+next couple of merge windows.
+
+> > +/* The byte offset into the file of this readahead block */
+> > +static inline loff_t readahead_offset(struct readahead_control *rac)
+> > +{
+> > +	return (loff_t)rac->_start * PAGE_SIZE;
+> > +}
+> 
+> Urk. Didn't an early page use "offset" for the page index? That
+> was was "mm: Remove 'page_offset' from readahead loop" did, right?
+> 
+> That's just going to cause confusion to have different units for
+> readahead "offsets"....
+
+We are ... not consistent anywhere in the VM/VFS with our naming.
+Unfortunately.
+
+$ grep -n offset mm/filemap.c 
+391: * @start:	offset in bytes where the range starts
+...
+815:	pgoff_t offset = old->index;
+...
+2020:	unsigned long offset;      /* offset into pagecache page */
+...
+2257:	*ppos = ((loff_t)index << PAGE_SHIFT) + offset;
+
+That last one's my favourite.  Not to mention the fine distinction you
+and I discussed recently between offset_in_page() and page_offset().
+
+Best of all, even our types encode the ambiguity of an 'offset'.  We have
+pgoff_t and loff_t (replacing the earlier off_t).
+
+So, new rule.  'pos' is the number of bytes into a file.  'index' is the
+number of PAGE_SIZE pages into a file.  We don't use the word 'offset'
+at all.  'length' as a byte count and 'count' as a page count seem like
+fine names to me.
+
+> > -	if (aops->readpages) {
+> > +	if (aops->readahead) {
+> > +		aops->readahead(rac);
+> > +		readahead_for_each(rac, page) {
+> > +			unlock_page(page);
+> > +			put_page(page);
+> > +		}
+> 
+> This needs a comment to explain the unwinding that needs to be done
+> here. I'm not going to remember in a year's time that this is just
+> for the pages that weren't submitted by ->readahead....
+
+ACK.
