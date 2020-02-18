@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1025A163205
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:06:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3024A16326B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:10:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729151AbgBRUE1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 15:04:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44804 "EHLO mail.kernel.org"
+        id S1728303AbgBRT6u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 14:58:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728753AbgBRUDb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 15:03:31 -0500
+        id S1728288AbgBRT6s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 14:58:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C61221D56;
-        Tue, 18 Feb 2020 20:03:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EEED420659;
+        Tue, 18 Feb 2020 19:58:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582056210;
+        s=default; t=1582055927;
         bh=lUIPdkq7OTx62a3ygJyQLftVTpwgspHMoLu7DyEpkQc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RgA0LqaDN8xShlC0RI1UK7Mfj2WO94r+5j+3pmEmzQJWNTPxOQnR3oyB/fLiF6YZG
-         Z5xgUT7sajxloxNl6rtTqO4TrY2br/lHA0g9sonlekCPma9Uz3yoP3Q0+7Qd7meAS5
-         HE1dQXTPdvb1XMqWSQR0HMJQ4HhOjq9sk7AfCwE0=
+        b=wz44PmpY9iMbWkLduWBuJT3Yf+0zDWXPDpvKLgIzIawnp8zw+h1YlwcVc9avLUY5O
+         V5P76uepln9sINVeYtnK0oGUmR+RsxgOLobGjYmeF4EyNd9R3CR4S+wj/FDvU1qvMI
+         05ACJKVy9l9JxfARDyCk06ILzRUt7JsauAFwlLn4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -36,12 +36,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Eric Anholt <eric@anholt.net>, Sam Ravnborg <sam@ravnborg.org>,
         Rob Clark <robdclark@chromium.org>,
         Daniel Vetter <daniel.vetter@intel.com>
-Subject: [PATCH 5.5 40/80] drm/vgem: Close use-after-free race in vgem_gem_create
+Subject: [PATCH 5.4 34/66] drm/vgem: Close use-after-free race in vgem_gem_create
 Date:   Tue, 18 Feb 2020 20:55:01 +0100
-Message-Id: <20200218190436.210849575@linuxfoundation.org>
+Message-Id: <20200218190431.217621623@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200218190432.043414522@linuxfoundation.org>
-References: <20200218190432.043414522@linuxfoundation.org>
+In-Reply-To: <20200218190428.035153861@linuxfoundation.org>
+References: <20200218190428.035153861@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
