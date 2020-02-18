@@ -2,92 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA4631626A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 14:01:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DFB81626B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 14:01:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726680AbgBRNBW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 08:01:22 -0500
-Received: from alexa-out-blr-01.qualcomm.com ([103.229.18.197]:62303 "EHLO
-        alexa-out-blr-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726373AbgBRNBU (ORCPT
+        id S1726762AbgBRNB6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 08:01:58 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42464 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726648AbgBRNB5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 08:01:20 -0500
-Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
-  by alexa-out-blr-01.qualcomm.com with ESMTP/TLS/AES256-SHA; 18 Feb 2020 18:31:16 +0530
-Received: from c-ppvk-linux.qualcomm.com ([10.206.24.34])
-  by ironmsg02-blr.qualcomm.com with ESMTP; 18 Feb 2020 18:30:44 +0530
-Received: by c-ppvk-linux.qualcomm.com (Postfix, from userid 2304101)
-        id D3B324C42; Tue, 18 Feb 2020 18:30:43 +0530 (IST)
-From:   Pradeep P V K <ppvk@codeaurora.org>
-To:     bjorn.andersson@linaro.org, adrian.hunter@intel.com,
-        robh+dt@kernel.org, ulf.hansson@linaro.org,
-        asutoshd@codeaurora.org, stummala@codeaurora.org,
-        sayalil@codeaurora.org, rampraka@codeaurora.org,
-        vbadigan@codeaurora.org, sboyd@kernel.org,
-        georgi.djakov@linaro.org, mka@chromium.org
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        agross@kernel.org, linux-mmc-owner@vger.kernel.org,
-        Pradeep P V K <ppvk@codeaurora.org>
-Subject: [RFC v4 2/2] dt-bindings: mmc: sdhci-msm: Add interconnect BW scaling strings
-Date:   Tue, 18 Feb 2020 18:30:33 +0530
-Message-Id: <1582030833-12964-3-git-send-email-ppvk@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1582030833-12964-1-git-send-email-ppvk@codeaurora.org>
-References: <1582030833-12964-1-git-send-email-ppvk@codeaurora.org>
+        Tue, 18 Feb 2020 08:01:57 -0500
+Received: by mail-lj1-f194.google.com with SMTP id d10so22851895ljl.9;
+        Tue, 18 Feb 2020 05:01:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3NRJPj3OerMDUZIsLVIBTx3cxsVu/NqvIaRSfxkUDjk=;
+        b=ZqrPJBs7Tlhw0pc/b3ZpLDIFuJb6Qd3kBwiTrq2plEc25WoAK8oWQcCVsRtoJtU51f
+         nXmXCezpFtcTq2+1y3kYsVlLI83rQRghbYgi4BCQ2eZzWkqEkhxalddHLjikO+hLnVLz
+         GAepQZyJncUccBWh7Y+UGXbnP1RncqzTsVMJqqTPhuhwqowo6buoGTBuYDsUwXDTe38r
+         YfcnGICAcinunmW6C6oRaQEyWBeDSfqdxcxH4pwmDOw3zUacWW58rEMLMIWR0QSYPFIF
+         Ft90RL807LNlaFnxRnN+2g2jkvUiTguwhPYzCJVe0Bsmt5HeI+t4cTiMydv4Su3O1fdu
+         1c0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3NRJPj3OerMDUZIsLVIBTx3cxsVu/NqvIaRSfxkUDjk=;
+        b=rdTvspuAVaSrHiwg9fQqJaKoiZ7uhP7oG9On47MKIa8cjzjg1dUu705XhZm3I9A5Nw
+         u8HiRbfcadb76Qs9iZA0KgS7Dshz5Ly8SJNpO1IoOPBbBqrRvgoZurhGtOZMFoYdXNXW
+         mZ5PezmkkxfRvSE1CeM+OqySpVj0BEy9cYIQNKG0ZCz77cka350KWdeLgVm5JxX8iq8p
+         6xBN0hSuJZERmnCmc3Tu5roSGb5SI056D+sg6SkOkiUE9lsS37qxCvH7VqUsWIeLit5S
+         I4Q4XGp5d6V9NPLRPKSC4AvKZEXfA9dn6k1xwjQ1FSd3l260OCzfcPBRk+jy6lm2wNLR
+         eaxQ==
+X-Gm-Message-State: APjAAAUvTG5DMHmywKYmSxK3pnbLr5CPuHIRwdyAoCXSWDHC9YopB1Lx
+        livHdJbZPXwnx9r4F82ar2dUWVKa/XIUH6U6nGE=
+X-Google-Smtp-Source: APXvYqxONNhL8ahuIYdrsoVgkIbRN6liLiU+pdYOPCPkpHuXvPwsraNW0EIhNjpyMTO4eyKbuO5eK8XAJqs/p6GOwCU=
+X-Received: by 2002:a2e:9157:: with SMTP id q23mr12846980ljg.196.1582030915517;
+ Tue, 18 Feb 2020 05:01:55 -0800 (PST)
+MIME-Version: 1.0
+References: <20200214192750.20845-1-alifer.wsdm@gmail.com> <20200217082047.nzxxo7mpejq5yj65@pengutronix.de>
+In-Reply-To: <20200217082047.nzxxo7mpejq5yj65@pengutronix.de>
+From:   Alifer Moraes <alifer.wsdm@gmail.com>
+Date:   Tue, 18 Feb 2020 10:02:31 -0300
+Message-ID: <CA+W=15bD5Ek0S8_OAr3nTBrhNJCozF7yAB=BhX0c0HCAOVVVOQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: dts: imx8mm-evk: add phy-reset-gpios for fec1
+To:     Marco Felsch <m.felsch@pengutronix.de>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, peng.fan@nxp.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, linux-kernel@vger.kernel.org,
+        linux-imx@nxp.com, kernel@pengutronix.de, leonard.crestez@nxp.com,
+        Fabio Estevam <festevam@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add interconnect bandwidth scaling supported strings for qcom-sdhci
-controller.
+Hello,
 
-Signed-off-by: Pradeep P V K <ppvk@codeaurora.org>
----
+I forgot to select reply all in this question, so I answered only to Marco.
 
-changes from RFC v3 -> v4:
-- No changes.
+> Where is this gpio muxed?
+>
 
- Documentation/devicetree/bindings/mmc/sdhci-msm.txt | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+The gpio is muxed in the subnode pinctrl_fec1.
 
-diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-index 7ee639b..cbe97b8 100644
---- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-+++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-@@ -40,6 +40,21 @@ Required properties:
- 	"cal"	- reference clock for RCLK delay calibration (optional)
- 	"sleep"	- sleep clock for RCLK delay calibration (optional)
- 
-+Optional Properties:
-+* Following bus parameters are required for interconnect bandwidth scaling:
-+- interconnects: Pairs of phandles and interconnect provider specifier
-+		 to denote the edge source and destination ports of
-+		 the interconnect path.
-+
-+- interconnect-names: For sdhc, we have two main paths.
-+		1. Data path : sdhc to ddr
-+		2. Config path : cpu to sdhc
-+		For Data interconnect path the name supposed to be
-+		is "sdhc-ddr" and for config interconnect path it is
-+		"cpu-sdhc".
-+		Please refer to Documentation/devicetree/bindings/
-+		interconnect/ for more details.
-+
- Example:
- 
- 	sdhc_1: sdhci@f9824900 {
-@@ -57,6 +72,9 @@ Example:
- 
- 		clocks = <&gcc GCC_SDCC1_APPS_CLK>, <&gcc GCC_SDCC1_AHB_CLK>;
- 		clock-names = "core", "iface";
-+		interconnects = <&qnoc MASTER_SDCC_ID &qnoc SLAVE_DDR_ID>,
-+				<&qnoc MASTER_CPU_ID &qnoc SLAVE_SDCC_ID>;
-+		interconnect-names = "sdhc-ddr","cpu-sdhc";
- 	};
- 
- 	sdhc_2: sdhci@f98a4900 {
--- 
-1.9.1
+Regards,
 
+Alifer
