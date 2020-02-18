@@ -2,49 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF0C116207E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 06:40:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 286C916207F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 06:40:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726284AbgBRFkS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 00:40:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43820 "EHLO mail.kernel.org"
+        id S1726322AbgBRFkV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 00:40:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725909AbgBRFkS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 00:40:18 -0500
-Subject: Re: [GIT PULL] Btrfs fix for 5.6-rc2
+        id S1725909AbgBRFkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 00:40:20 -0500
+Subject: Re: [GIT PULL] eCryptfs fixes for 5.6-rc3
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582004418;
-        bh=97SUQ24phw+psmy6TmZZtzFUJl9LBoxcMVLoYt+B9J4=;
+        s=default; t=1582004420;
+        bh=yZBA4laHRvxSN+sE6pN6c7/LKb/QYOQmNjR9+WygDpc=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=Jxurf7V69n3HGzrX8kB998tHCcoRjW5MdICDq6ctwEH3nP1XQJ38bC6M4WNdkYcAd
-         J8HJoSl7HkxBXS0GBQKNqJV38T4WdBAomF42Gp3po/4i6M/O2T/PitfOrkVOv+R1D1
-         0/xI/dWda852eSZZquom4L4XbtCS91ZLqZClTXF4=
+        b=BY9gUL7ruQBBCzI9eQzQd1/QqEZKC/UJ0B2pjVonCh5JINZm6VozHTwDwiSY0kYxQ
+         RwmRYvdvqDJk/7LTVgP/MpMCgHTp/WD2t648Jx2T4Zad6SKKyNlsCud1sgoj60SQfK
+         RpjJMna87UCYyAn8ZQltFpop7E/QYql/vz0gYiNY=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <cover.1581962653.git.dsterba@suse.com>
-References: <cover.1581962653.git.dsterba@suse.com>
+In-Reply-To: <20200217205343.GA280196@elm>
+References: <20200217205343.GA280196@elm>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <cover.1581962653.git.dsterba@suse.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.6-rc1-tag
-X-PR-Tracked-Commit-Id: 52e29e331070cd7d52a64cbf1b0958212a340e28
+X-PR-Tracked-Message-Id: <20200217205343.GA280196@elm>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/tyhicks/ecryptfs.git
+ tags/ecryptfs-5.6-rc3-fixes
+X-PR-Tracked-Commit-Id: 2c2a7552dd6465e8fde6bc9cccf8d66ed1c1eb72
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: eaea2947063ac694cddff1787d43e7807490dbc7
-Message-Id: <158200441799.24167.9075205058877968253.pr-tracker-bot@kernel.org>
-Date:   Tue, 18 Feb 2020 05:40:17 +0000
-To:     David Sterba <dsterba@suse.com>
-Cc:     torvalds@linux-foundation.org, David Sterba <dsterba@suse.com>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+X-PR-Merge-Commit-Id: b1da3acc781ce445445d959b41064d209a27bc2d
+Message-Id: <158200442005.24167.3412622613576452077.pr-tracker-bot@kernel.org>
+Date:   Tue, 18 Feb 2020 05:40:20 +0000
+To:     Tyler Hicks <code@tyhicks.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, ecryptfs@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 17 Feb 2020 19:43:26 +0100:
+The pull request you sent on Mon, 17 Feb 2020 14:53:43 -0600:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.6-rc1-tag
+> https://git.kernel.org/pub/scm/linux/kernel/git/tyhicks/ecryptfs.git tags/ecryptfs-5.6-rc3-fixes
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/eaea2947063ac694cddff1787d43e7807490dbc7
+https://git.kernel.org/torvalds/c/b1da3acc781ce445445d959b41064d209a27bc2d
 
 Thank you!
 
