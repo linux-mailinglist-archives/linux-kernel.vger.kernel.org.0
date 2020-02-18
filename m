@@ -2,89 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EE70163366
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:47:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93B23163373
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:49:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727656AbgBRUrT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 15:47:19 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:36771 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726380AbgBRUrS (ORCPT
+        id S1727683AbgBRUt0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 15:49:26 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:3361 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726380AbgBRUtZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 15:47:18 -0500
-Received: by mail-oi1-f195.google.com with SMTP id c16so21559415oic.3;
-        Tue, 18 Feb 2020 12:47:18 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VPaoilgC2MVulKsvvmY3VL8acfEnq/hEkFxwm21dKyY=;
-        b=kwsuoJdfVhtQ5XAZPyC6/Ihu+u1L8lUqzAdSRfWzpjrGO97YmA5VJPS/bTUVEi7/0h
-         igrZcv0kh9lBOj9dgEvDl/jcMT1P574gFBfMM/IsO+7y+sFrHn4gyL/tO3SfnCL33qa9
-         aIn74/5l/956yKWEvEDRkeJVR4dQdSpjuRutfh5E79Rhgkx1u1hp0ChDPYRJVzB3qBiM
-         jMF1RisnDT5AGTNMlKb4aUPkZwt4agUmDcp+x/Csy9s1mvckHrcT1N5MMXbII07vPmWS
-         o8KKRQbnpq/UiIkRUozXhw+mmj0xLmkm/Jus/CmmD/W/tU9q+RAZFENC4SRzCujhjoGe
-         OIxA==
-X-Gm-Message-State: APjAAAVDF8r6WOt4hcFhrxTR/OQEIWDlsCfsZHz+P0spKHvCvZuMdbuR
-        fIVr/oVlqxFmdvO7A4ddIw==
-X-Google-Smtp-Source: APXvYqxps8IdMZeg25SMK6apXOiY+3Bdn4PwC0ZH41zv7AZ2UDrwTVfF/4BmTyrHIpnk7zX90lyxmQ==
-X-Received: by 2002:a54:4085:: with SMTP id i5mr2484867oii.17.1582058838189;
-        Tue, 18 Feb 2020 12:47:18 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id i7sm1559438oib.42.2020.02.18.12.47.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2020 12:47:17 -0800 (PST)
-Received: (nullmailer pid 9634 invoked by uid 1000);
-        Tue, 18 Feb 2020 20:47:16 -0000
-Date:   Tue, 18 Feb 2020 14:47:16 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     JC Kuo <jckuo@nvidia.com>
-Cc:     gregkh@linuxfoundation.org, thierry.reding@gmail.com,
-        robh@kernel.org, jonathanh@nvidia.com, kishon@ti.com,
-        linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        nkristam@nvidia.com, JC Kuo <jckuo@nvidia.com>
-Subject: Re: [PATCH v6 3/5] dt-bindings: phy: tegra: Add Tegra194 support
-Message-ID: <20200218204716.GA9575@bogus>
-References: <20200212061133.11665-1-jckuo@nvidia.com>
- <20200212061133.11665-4-jckuo@nvidia.com>
+        Tue, 18 Feb 2020 15:49:25 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e4c4da80000>; Tue, 18 Feb 2020 12:48:40 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 18 Feb 2020 12:49:11 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 18 Feb 2020 12:49:11 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 18 Feb
+ 2020 20:49:11 +0000
+Subject: Re: [PATCH v6 00/19] Change readahead API
+To:     Matthew Wilcox <willy@infradead.org>,
+        <linux-fsdevel@vger.kernel.org>
+CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        <linux-btrfs@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
+        <linux-ext4@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <cluster-devel@redhat.com>, <ocfs2-devel@oss.oracle.com>,
+        <linux-xfs@vger.kernel.org>
+References: <20200217184613.19668-1-willy@infradead.org>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <80d98657-2f93-da92-a541-707429a6fcdf@nvidia.com>
+Date:   Tue, 18 Feb 2020 12:49:11 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200212061133.11665-4-jckuo@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200217184613.19668-1-willy@infradead.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1582058920; bh=sSzUuAsXGIrXy4vQ0zTAGyf0jed9sNlmwz2tpEx8I1w=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=OYgEBVV/ua9FohonQVxYl3qPPXVMYQG31aVJZXFPu7SkYOwxhtaZfQM11ZRWuKWRn
+         lVI3HR/RIXFrZMOWjvHUihTcKXkE2jgWZqXXGCNxpXb3Nv2SKAT+FXp4fzmW9R+SbR
+         +H8xokJDzpZ6UCukKlMzu/5eKP5axPGrm5jxpyyz73wcaxjN5ykeBaYI4TDMwgMSY8
+         xsZHrBQYyHRUHdXgYU3ZVNQuJpgqlmVcDrdSv4XqikXa55cxrAOxN2l1s5oRfr4SZG
+         EEyk1LdZCMme+4QhBVN+8g/HUCynjQ8e9lz6/YoFujDdaTBOhd1TQ8nXhH+hrOTVqL
+         JwGZHfev+XX/A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Feb 2020 14:11:31 +0800, JC Kuo wrote:
-> Extend the bindings to cover the set of features found in Tegra194.
-> Note that, technically, there are four more supplies connected to the
-> XUSB pad controller (DVDD_PEX, DVDD_PEX_PLL, HVDD_PEX and HVDD_PEX_PLL)
-> , but the power sequencing requirements of Tegra194 require these to be
-> under the control of the PMIC.
+On 2/17/20 10:45 AM, Matthew Wilcox wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > 
-> Tegra194 XUSB PADCTL supports up to USB 3.1 Gen 2 speed, however, it
-> is possible for some platforms have long signal trace that could not
-> provide sufficient electrical environment for Gen 2 speed. This patch
-> adds a "maximum-speed" property to usb3 ports which can be used to
-> specify the maximum supported speed for any particular USB 3.1 port.
-> For a port that is not capable of SuperSpeedPlus, "maximum-speed"
-> property should carry "super-speed".
+> This series adds a readahead address_space operation to eventually
+> replace the readpages operation.  The key difference is that
+> pages are added to the page cache as they are allocated (and
+> then looked up by the filesystem) instead of passing them on a
+> list to the readpages operation and having the filesystem add
+> them to the page cache.  It's a net reduction in code for each
+> implementation, more efficient than walking a list, and solves
+> the direct-write vs buffered-read problem reported by yu kuai at
+> https://lore.kernel.org/linux-fsdevel/20200116063601.39201-1-yukuai3@huawei.com/
 > 
-> Signed-off-by: JC Kuo <jckuo@nvidia.com>
-> ---
-> Changes in v6: none
-> Changes in v5:
-> - re-use "maximum-speed" instead of adding "nvidia,disable-gen2"
-> Changes in v4: none
-> Changes in v3: none
-> Changes in v2:
-> - fix a typo
-> 
->  .../phy/nvidia,tegra124-xusb-padctl.txt        | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
+> The only unconverted filesystems are those which use fscache.
+> Their conversion is pending Dave Howells' rewrite which will make the
+> conversion substantially easier.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Hi Matthew,
+
+I see that Dave Chinner is reviewing this series, but I'm trying out his recent
+advice about code reviews [1], and so I'm not going to read his comments first.
+So you may see some duplication or contradictions this time around.
+
+
+[1] Somewhere in this thread, "[LSF/MM/BPF TOPIC] FS Maintainers Don't Scale": 
+https://lore.kernel.org/r/20200131052520.GC6869@magnolia
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
+
+> 
+> v6:
+>  - Name the private members of readahead_control with a leading underscore
+>    (suggested by Christoph Hellwig)
+>  - Fix whitespace in rst file
+>  - Remove misleading comment in btrfs patch
+>  - Add readahead_next() API and use it in iomap
+>  - Add iomap_readahead kerneldoc.
+>  - Fix the mpage_readahead kerneldoc
+>  - Make various readahead functions return void
+>  - Keep readahead_index() and readahead_offset() pointing to the start of
+>    this batch through the body.  No current user requires this, but it's
+>    less surprising.
+>  - Add kerneldoc for page_cache_readahead_limit
+>  - Make page_idx an unsigned long, and rename it to just 'i'
+>  - Get rid of page_offset local variable
+>  - Add patch to call memalloc_nofs_save() before allocating pages (suggested
+>    by Michal Hocko)
+>  - Resplit a lot of patches for more logical progression and easier review
+>    (suggested by John Hubbard)
+>  - Added sign-offs where received, and I deemed still relevant
+> 
+> v5 switched to passing a readahead_control struct (mirroring the
+> writepages_control struct passed to writepages).  This has a number of
+> advantages:
+>  - It fixes a number of bugs in various implementations, eg forgetting to
+>    increment 'start', an off-by-one error in 'nr_pages' or treating 'start'
+>    as a byte offset instead of a page offset.
+>  - It allows us to change the arguments without changing all the
+>    implementations of ->readahead which just call mpage_readahead() or
+>    iomap_readahead()
+>  - Figuring out which pages haven't been attempted by the implementation
+>    is more natural this way.
+>  - There's less code in each implementation.
+> 
+> Matthew Wilcox (Oracle) (19):
+>   mm: Return void from various readahead functions
+>   mm: Ignore return value of ->readpages
+>   mm: Use readahead_control to pass arguments
+>   mm: Rearrange readahead loop
+>   mm: Remove 'page_offset' from readahead loop
+>   mm: rename readahead loop variable to 'i'
+>   mm: Put readahead pages in cache earlier
+>   mm: Add readahead address space operation
+>   mm: Add page_cache_readahead_limit
+>   fs: Convert mpage_readpages to mpage_readahead
+>   btrfs: Convert from readpages to readahead
+>   erofs: Convert uncompressed files from readpages to readahead
+>   erofs: Convert compressed files from readpages to readahead
+>   ext4: Convert from readpages to readahead
+>   f2fs: Convert from readpages to readahead
+>   fuse: Convert from readpages to readahead
+>   iomap: Restructure iomap_readpages_actor
+>   iomap: Convert from readpages to readahead
+>   mm: Use memalloc_nofs_save in readahead path
+> 
+>  Documentation/filesystems/locking.rst |   6 +-
+>  Documentation/filesystems/vfs.rst     |  13 ++
+>  drivers/staging/exfat/exfat_super.c   |   7 +-
+>  fs/block_dev.c                        |   7 +-
+>  fs/btrfs/extent_io.c                  |  46 ++-----
+>  fs/btrfs/extent_io.h                  |   3 +-
+>  fs/btrfs/inode.c                      |  16 +--
+>  fs/erofs/data.c                       |  39 ++----
+>  fs/erofs/zdata.c                      |  29 ++--
+>  fs/ext2/inode.c                       |  10 +-
+>  fs/ext4/ext4.h                        |   3 +-
+>  fs/ext4/inode.c                       |  23 ++--
+>  fs/ext4/readpage.c                    |  22 ++-
+>  fs/ext4/verity.c                      |  35 +----
+>  fs/f2fs/data.c                        |  50 +++----
+>  fs/f2fs/f2fs.h                        |   5 +-
+>  fs/f2fs/verity.c                      |  35 +----
+>  fs/fat/inode.c                        |   7 +-
+>  fs/fuse/file.c                        |  46 +++----
+>  fs/gfs2/aops.c                        |  23 ++--
+>  fs/hpfs/file.c                        |   7 +-
+>  fs/iomap/buffered-io.c                | 118 +++++++----------
+>  fs/iomap/trace.h                      |   2 +-
+>  fs/isofs/inode.c                      |   7 +-
+>  fs/jfs/inode.c                        |   7 +-
+>  fs/mpage.c                            |  38 ++----
+>  fs/nilfs2/inode.c                     |  15 +--
+>  fs/ocfs2/aops.c                       |  34 ++---
+>  fs/omfs/file.c                        |   7 +-
+>  fs/qnx6/inode.c                       |   7 +-
+>  fs/reiserfs/inode.c                   |   8 +-
+>  fs/udf/inode.c                        |   7 +-
+>  fs/xfs/xfs_aops.c                     |  13 +-
+>  fs/zonefs/super.c                     |   7 +-
+>  include/linux/fs.h                    |   2 +
+>  include/linux/iomap.h                 |   3 +-
+>  include/linux/mpage.h                 |   4 +-
+>  include/linux/pagemap.h               |  90 +++++++++++++
+>  include/trace/events/erofs.h          |   6 +-
+>  include/trace/events/f2fs.h           |   6 +-
+>  mm/internal.h                         |   8 +-
+>  mm/migrate.c                          |   2 +-
+>  mm/readahead.c                        | 184 +++++++++++++++++---------
+>  43 files changed, 474 insertions(+), 533 deletions(-)
+> 
+> 
+> base-commit: 11a48a5a18c63fd7621bb050228cebf13566e4d8
+> 
