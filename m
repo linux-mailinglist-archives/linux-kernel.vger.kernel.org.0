@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 871C11631AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:05:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 830E2163143
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:01:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728858AbgBRUCF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 15:02:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42020 "EHLO mail.kernel.org"
+        id S1727960AbgBRT67 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 14:58:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728852AbgBRUCB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 15:02:01 -0500
+        id S1728324AbgBRT64 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 14:58:56 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2013B24672;
-        Tue, 18 Feb 2020 20:01:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D524320659;
+        Tue, 18 Feb 2020 19:58:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582056120;
-        bh=yZYak2tDGAyXioyAn/oqvdhOUDgNJyA3joLyhTJ0PQo=;
+        s=default; t=1582055935;
+        bh=QmdDR5zvXy6PIgNyuxthXmWql3YpnD4Coiu30lyUMZg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CS1G+i3PevSLGtcgKamBwVFbNvtqIdG3GIgnTJHndoS8LPCbq6c2DIvJDEAMuF25m
-         4sHGtGXOziYvVBe5NcxrfvQejVAJUr5NiF7Ycc3WQYHQtl4eBkCb7mwFNeBIma+Uig
-         L9uq5NXCUP/FMkq6S5ZZgf+PBRZP8l12lnduC67I=
+        b=lzJHH1+ejCf+/Tc7XqRpp20l0Rd/jqov1XetEG6IhPqjyY9DazpPuklycpcsYOwtG
+         CQCfrKMPBrBUYeGd5uoZMJTYVHoH7dJJyf5sexafXlpRPQ6d0sJ9S+576myuLJWqZg
+         IwP1sPolQegwBIHYr0apSG1cVNHq4rA/+Ok+p/Ps=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 5.5 43/80] drm/amdgpu: update smu_v11_0_pptable.h
+        stable@vger.kernel.org, Sujith Pandel <sujith_pandel@dell.com>,
+        David Milburn <dmilburn@redhat.com>,
+        Yi Zhang <yi.zhang@redhat.com>,
+        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 5.4 37/66] nvme: fix the parameter order for nvme_get_log in nvme_get_fw_slot_info
 Date:   Tue, 18 Feb 2020 20:55:04 +0100
-Message-Id: <20200218190436.481284122@linuxfoundation.org>
+Message-Id: <20200218190431.468890354@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200218190432.043414522@linuxfoundation.org>
-References: <20200218190432.043414522@linuxfoundation.org>
+In-Reply-To: <20200218190428.035153861@linuxfoundation.org>
+References: <20200218190428.035153861@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,76 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alex Deucher <alexander.deucher@amd.com>
+From: Yi Zhang <yi.zhang@redhat.com>
 
-commit c1d66bc2e531b4ed3a9464b8e87144cc6b2fd63f upstream.
+commit f25372ffc3f6c2684b57fb718219137e6ee2b64c upstream.
 
-Update to the latest changes.
+nvme fw-activate operation will get bellow warning log,
+fix it by update the parameter order
 
-Reviewed-by: Evan Quan <evan.quan@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org # 5.5.x
+[  113.231513] nvme nvme0: Get FW SLOT INFO log error
+
+Fixes: 0e98719b0e4b ("nvme: simplify the API for getting log pages")
+Reported-by: Sujith Pandel <sujith_pandel@dell.com>
+Reviewed-by: David Milburn <dmilburn@redhat.com>
+Signed-off-by: Yi Zhang <yi.zhang@redhat.com>
+Signed-off-by: Keith Busch <kbusch@kernel.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/powerplay/inc/smu_v11_0_pptable.h |   46 ++++++++++++------
- 1 file changed, 32 insertions(+), 14 deletions(-)
+ drivers/nvme/host/core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/amd/powerplay/inc/smu_v11_0_pptable.h
-+++ b/drivers/gpu/drm/amd/powerplay/inc/smu_v11_0_pptable.h
-@@ -39,21 +39,39 @@
- #define SMU_11_0_PP_OVERDRIVE_VERSION                   0x0800
- #define SMU_11_0_PP_POWERSAVINGCLOCK_VERSION            0x0100
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -3853,7 +3853,7 @@ static void nvme_get_fw_slot_info(struct
+ 	if (!log)
+ 		return;
  
-+enum SMU_11_0_ODFEATURE_CAP {
-+    SMU_11_0_ODCAP_GFXCLK_LIMITS = 0,
-+    SMU_11_0_ODCAP_GFXCLK_CURVE,
-+    SMU_11_0_ODCAP_UCLK_MAX,
-+    SMU_11_0_ODCAP_POWER_LIMIT,
-+    SMU_11_0_ODCAP_FAN_ACOUSTIC_LIMIT,
-+    SMU_11_0_ODCAP_FAN_SPEED_MIN,
-+    SMU_11_0_ODCAP_TEMPERATURE_FAN,
-+    SMU_11_0_ODCAP_TEMPERATURE_SYSTEM,
-+    SMU_11_0_ODCAP_MEMORY_TIMING_TUNE,
-+    SMU_11_0_ODCAP_FAN_ZERO_RPM_CONTROL,
-+    SMU_11_0_ODCAP_AUTO_UV_ENGINE,
-+    SMU_11_0_ODCAP_AUTO_OC_ENGINE,
-+    SMU_11_0_ODCAP_AUTO_OC_MEMORY,
-+    SMU_11_0_ODCAP_FAN_CURVE,
-+    SMU_11_0_ODCAP_COUNT,
-+};
-+
- enum SMU_11_0_ODFEATURE_ID {
--    SMU_11_0_ODFEATURE_GFXCLK_LIMITS        = 1 << 0,         //GFXCLK Limit feature
--    SMU_11_0_ODFEATURE_GFXCLK_CURVE         = 1 << 1,         //GFXCLK Curve feature
--    SMU_11_0_ODFEATURE_UCLK_MAX             = 1 << 2,         //UCLK Limit feature
--    SMU_11_0_ODFEATURE_POWER_LIMIT          = 1 << 3,         //Power Limit feature
--    SMU_11_0_ODFEATURE_FAN_ACOUSTIC_LIMIT   = 1 << 4,         //Fan Acoustic RPM feature
--    SMU_11_0_ODFEATURE_FAN_SPEED_MIN        = 1 << 5,         //Minimum Fan Speed feature
--    SMU_11_0_ODFEATURE_TEMPERATURE_FAN      = 1 << 6,         //Fan Target Temperature Limit feature
--    SMU_11_0_ODFEATURE_TEMPERATURE_SYSTEM   = 1 << 7,         //Operating Temperature Limit feature
--    SMU_11_0_ODFEATURE_MEMORY_TIMING_TUNE   = 1 << 8,         //AC Timing Tuning feature
--    SMU_11_0_ODFEATURE_FAN_ZERO_RPM_CONTROL = 1 << 9,         //Zero RPM feature
--    SMU_11_0_ODFEATURE_AUTO_UV_ENGINE       = 1 << 10,        //Auto Under Volt GFXCLK feature
--    SMU_11_0_ODFEATURE_AUTO_OC_ENGINE       = 1 << 11,        //Auto Over Clock GFXCLK feature
--    SMU_11_0_ODFEATURE_AUTO_OC_MEMORY       = 1 << 12,        //Auto Over Clock MCLK feature
--    SMU_11_0_ODFEATURE_FAN_CURVE            = 1 << 13,        //VICTOR TODO
-+    SMU_11_0_ODFEATURE_GFXCLK_LIMITS        = 1 << SMU_11_0_ODCAP_GFXCLK_LIMITS,            //GFXCLK Limit feature
-+    SMU_11_0_ODFEATURE_GFXCLK_CURVE         = 1 << SMU_11_0_ODCAP_GFXCLK_CURVE,             //GFXCLK Curve feature
-+    SMU_11_0_ODFEATURE_UCLK_MAX             = 1 << SMU_11_0_ODCAP_UCLK_MAX,                 //UCLK Limit feature
-+    SMU_11_0_ODFEATURE_POWER_LIMIT          = 1 << SMU_11_0_ODCAP_POWER_LIMIT,              //Power Limit feature
-+    SMU_11_0_ODFEATURE_FAN_ACOUSTIC_LIMIT   = 1 << SMU_11_0_ODCAP_FAN_ACOUSTIC_LIMIT,       //Fan Acoustic RPM feature
-+    SMU_11_0_ODFEATURE_FAN_SPEED_MIN        = 1 << SMU_11_0_ODCAP_FAN_SPEED_MIN,            //Minimum Fan Speed feature
-+    SMU_11_0_ODFEATURE_TEMPERATURE_FAN      = 1 << SMU_11_0_ODCAP_TEMPERATURE_FAN,          //Fan Target Temperature Limit feature
-+    SMU_11_0_ODFEATURE_TEMPERATURE_SYSTEM   = 1 << SMU_11_0_ODCAP_TEMPERATURE_SYSTEM,       //Operating Temperature Limit feature
-+    SMU_11_0_ODFEATURE_MEMORY_TIMING_TUNE   = 1 << SMU_11_0_ODCAP_MEMORY_TIMING_TUNE,       //AC Timing Tuning feature
-+    SMU_11_0_ODFEATURE_FAN_ZERO_RPM_CONTROL = 1 << SMU_11_0_ODCAP_FAN_ZERO_RPM_CONTROL,     //Zero RPM feature
-+    SMU_11_0_ODFEATURE_AUTO_UV_ENGINE       = 1 << SMU_11_0_ODCAP_AUTO_UV_ENGINE,           //Auto Under Volt GFXCLK feature
-+    SMU_11_0_ODFEATURE_AUTO_OC_ENGINE       = 1 << SMU_11_0_ODCAP_AUTO_OC_ENGINE,           //Auto Over Clock GFXCLK feature
-+    SMU_11_0_ODFEATURE_AUTO_OC_MEMORY       = 1 << SMU_11_0_ODCAP_AUTO_OC_MEMORY,           //Auto Over Clock MCLK feature
-+    SMU_11_0_ODFEATURE_FAN_CURVE            = 1 << SMU_11_0_ODCAP_FAN_CURVE,                //Fan Curve feature
-     SMU_11_0_ODFEATURE_COUNT                = 14,
- };
- #define SMU_11_0_MAX_ODFEATURE    32          //Maximum Number of OD Features
+-	if (nvme_get_log(ctrl, NVME_NSID_ALL, 0, NVME_LOG_FW_SLOT, log,
++	if (nvme_get_log(ctrl, NVME_NSID_ALL, NVME_LOG_FW_SLOT, 0, log,
+ 			sizeof(*log), 0))
+ 		dev_warn(ctrl->device, "Get FW SLOT INFO log error\n");
+ 	kfree(log);
 
 
