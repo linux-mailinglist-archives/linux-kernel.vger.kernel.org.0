@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F26116315A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:01:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEA77163219
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:06:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728469AbgBRT7o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 14:59:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38520 "EHLO mail.kernel.org"
+        id S1728747AbgBRUFu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 15:05:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727935AbgBRT7l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:59:41 -0500
+        id S1728734AbgBRUBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 15:01:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F20882464E;
-        Tue, 18 Feb 2020 19:59:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53B6524670;
+        Tue, 18 Feb 2020 20:01:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582055981;
-        bh=qmES+1uRtANOGz79p7/ycb4Nn1So7DrO0/YhdSWe8TY=;
+        s=default; t=1582056073;
+        bh=ObdtB8WiQ7UgrHn8retaPbeSEF6sSEYZalXcNXXdMS0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BZOvjRyuZ2WSI25WnfZHlfJdPNKBDA1sr1Mm3Tz7BK0UAgCQfQiL40vJZcOp1fEvI
-         zZyKqUjrvk61Y/DmOnQM6GYGTS3JvWIdcPZz2277b0jlYCJ0znbRWXrfhHLeNY0b6s
-         akrIWK1BIn/m/nucwlLp7bhbiRBh1Cm3FUsz46ks=
+        b=0f0dA92btEvaGhuvh3IOLYqnIS+DHVW/s4AQh2hojMYnha/j2WsU3ppiehBd4rMds
+         YbYVa2KhNZIpb0EnbjHauzTQXQm/j7AS1SvBl8aKiNDMDMcSHGZX3mq65piZfC5++U
+         mek5k8FhLiZju2Xpc7gqlYIndFYprlALceLfzPIE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        stable@kernel.org
-Subject: [PATCH 5.4 18/66] ext4: improve explanation of a mount failure caused by a misconfigured kernel
+        stable@vger.kernel.org, Anand Jain <anand.jain@oracle.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 5.5 24/80] btrfs: log message when rw remount is attempted with unclean tree-log
 Date:   Tue, 18 Feb 2020 20:54:45 +0100
-Message-Id: <20200218190429.776224561@linuxfoundation.org>
+Message-Id: <20200218190434.690498465@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200218190428.035153861@linuxfoundation.org>
-References: <20200218190428.035153861@linuxfoundation.org>
+In-Reply-To: <20200218190432.043414522@linuxfoundation.org>
+References: <20200218190432.043414522@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,55 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: David Sterba <dsterba@suse.com>
 
-commit d65d87a07476aa17df2dcb3ad18c22c154315bec upstream.
+commit 10a3a3edc5b89a8cd095bc63495fb1e0f42047d9 upstream.
 
-If CONFIG_QFMT_V2 is not enabled, but CONFIG_QUOTA is enabled, when a
-user tries to mount a file system with the quota or project quota
-enabled, the kernel will emit a very confusing messsage:
+A remount to a read-write filesystem is not safe when there's tree-log
+to be replayed. Files that could be opened until now might be affected
+by the changes in the tree-log.
 
-    EXT4-fs warning (device vdc): ext4_enable_quotas:5914: Failed to enable quota tracking (type=0, err=-3). Please run e2fsck to fix.
-    EXT4-fs (vdc): mount failed
+A regular mount is needed to replay the log so the filesystem presents
+the consistent view with the pending changes included.
 
-We will now report an explanatory message indicating which kernel
-configuration options have to be enabled, to avoid customer/sysadmin
-confusion.
-
-Link: https://lore.kernel.org/r/20200215012738.565735-1-tytso@mit.edu
-Google-Bug-Id: 149093531
-Fixes: 7c319d328505b778 ("ext4: make quota as first class supported feature")
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+CC: stable@vger.kernel.org # 4.4+
+Reviewed-by: Anand Jain <anand.jain@oracle.com>
+Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/super.c |   14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+ fs/btrfs/super.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -2961,17 +2961,11 @@ static int ext4_feature_set_ok(struct su
- 		return 0;
- 	}
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -1803,6 +1803,8 @@ static int btrfs_remount(struct super_bl
+ 		}
  
--#ifndef CONFIG_QUOTA
--	if (ext4_has_feature_quota(sb) && !readonly) {
-+#if !defined(CONFIG_QUOTA) || !defined(CONFIG_QFMT_V2)
-+	if (!readonly && (ext4_has_feature_quota(sb) ||
-+			  ext4_has_feature_project(sb))) {
- 		ext4_msg(sb, KERN_ERR,
--			 "Filesystem with quota feature cannot be mounted RDWR "
--			 "without CONFIG_QUOTA");
--		return 0;
--	}
--	if (ext4_has_feature_project(sb) && !readonly) {
--		ext4_msg(sb, KERN_ERR,
--			 "Filesystem with project quota feature cannot be mounted RDWR "
--			 "without CONFIG_QUOTA");
-+			 "The kernel was not built with CONFIG_QUOTA and CONFIG_QFMT_V2");
- 		return 0;
- 	}
- #endif  /* CONFIG_QUOTA */
+ 		if (btrfs_super_log_root(fs_info->super_copy) != 0) {
++			btrfs_warn(fs_info,
++		"mount required to replay tree-log, cannot remount read-write");
+ 			ret = -EINVAL;
+ 			goto restore;
+ 		}
 
 
