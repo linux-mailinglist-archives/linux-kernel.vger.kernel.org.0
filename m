@@ -2,112 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10454162390
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 10:40:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7633A1623BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 10:44:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726464AbgBRJjy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 04:39:54 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:41089 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726193AbgBRJjx (ORCPT
+        id S1726667AbgBRJoQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 04:44:16 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35192 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726199AbgBRJoP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 04:39:53 -0500
-Received: by mail-ed1-f68.google.com with SMTP id c26so24046463eds.8
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 01:39:52 -0800 (PST)
+        Tue, 18 Feb 2020 04:44:15 -0500
+Received: by mail-pf1-f196.google.com with SMTP id y73so10391721pfg.2;
+        Tue, 18 Feb 2020 01:44:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ri50rwS+DwKS+xdiT/P+5HE1fXClWtkp9WTD/LVC98k=;
-        b=KI/aHslK/e7VD/qZEsqk3jaN/3BOu1yhytDSreqQtdWbJRTqjVSjc3qM6Tzuh2zz5i
-         R0fsIro52A0NGmibGj/wVghzgz+NwLLd0gALlAjAbYQyCiuK2d7msEHAJ1X2oH8k3yVt
-         hqbO0jgTLMFp5c0SjbWvorIk/GMYAFoFN96yxpqkblV70wtKw/JLy+beQnJAti3FCimP
-         FQiop4PsagBP/+xGrTI7n7O87WubWDGxR0VZKa2C+jYUYXpjlq7DLCeLZiyW+ncm1Zjc
-         7DIEK47AM4nw4BMDt0ynD4NJjvrOnzfoe6h+gQPROuNdcbx5BSJiOlpnTx2ozKfE4Oq9
-         x8GA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HNw/4H6/vd73/BDz9NY7P3n/SYJkPQvMSu9pnjd4OI0=;
+        b=T0jj166NyIIYsZWGkA6bw1qquWK4pwEH8zNZqOrz7gRJ+w0IOg8SHBoOfGUoeSC76j
+         lfwAKNKWj/CUSESKN8/p9psXJ669A8U/IK6OIufFheKUBA4oTzN8lc9Ct+VrnVf2/fiy
+         EQhAP0LT5FYmOLmZ6pY3T/0epMl9QN8wX/+nbnXMzxXWTBgCM0RYJTqubzNPy1wRv3vt
+         mvcnyDXROkK3qHl2irsJHU02kG6sIsUgdfyu5VuwnWMSOxriPaqvagQeInOA5PKuiuC5
+         oYZFV1g7W+ePVMB/I+oWcRTtozZRhUp3wJmDISk4gyLpOQ4IM8qVlBmoa69QSOP+Gwgm
+         rDlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ri50rwS+DwKS+xdiT/P+5HE1fXClWtkp9WTD/LVC98k=;
-        b=SQPgZ5DRauBf7BJ2DNx7vPZaa/RaoW+wfx5u/2+wgXmZu7Kq9kR32mgG2B2ss00hai
-         0tuQykZOFG0TOtn/R7zeaps1b8kZQbFUC+kP7FyOr90TbVpXKcQdW829jFQtckfDEqP4
-         yowMcyfz5NAP3+3VZ1FnmKyP15AGPW6BanKknRfKbkM0+DXfhkYDe/d4DsGcHB49pxB6
-         yHquj+GnHvuVubBGyp1uPyVFosQmOq2nDfJSa5szt/eSERQPKFChaGTLh7RXGpRuz4hJ
-         1oLYK2f4N3kLAQL26hzLbTfB/tWFR3REPLaPhjbp4nlPJakL7MHoISWOzGm3LC507nCt
-         igJQ==
-X-Gm-Message-State: APjAAAXG9BYedrGvhaLv1nEQ7gxBPiXbaSFF3M2mGYSV75hSA+ToDJGX
-        HS7Ie5CH3lFCIp7TKrbgAwq/xwV9Xd1EKaoZk2O45A==
-X-Google-Smtp-Source: APXvYqwPmrjtbUt3H2+QDBo0aopxeSgvwYExYKpjl0BM4dpOEKo5xW+lYJ2BY7xMzI3AGGcvU+8a7WhntIWppVfJuzU=
-X-Received: by 2002:aa7:c2cb:: with SMTP id m11mr18480901edp.89.1582018791471;
- Tue, 18 Feb 2020 01:39:51 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HNw/4H6/vd73/BDz9NY7P3n/SYJkPQvMSu9pnjd4OI0=;
+        b=jwG42tgp5LUWN8lf1OcMIP6Nfkqo3VHUwQpI6FrfgzQO/xndf1uOMBaBkUj1lx7nzp
+         jkE0u+KKsjLGe0FUGceTUCCr9d9Uuz6fKVbVl6gZy8Mx5Kmezdv1OPIxY4eMhke4t64y
+         O0Z3INOKw4SXtqVoAm4erUlNf15gplgEU0FMjnaIE5Fkmne8i26vz7XKYIyQQIwVvJAX
+         vSBaTBMqXhdowXbLQUNFc3GakwYrQ4C+TpBkeAZSMxlfZsMTAWv/3e2sDKbb7Sy3AJO+
+         tAKbQf+Ijl8n5osflEQwcymlbX78YBpbV22JHXOPQWSf8NeUGJ8gj6paXNYpMwFDk2ZR
+         8Rhg==
+X-Gm-Message-State: APjAAAWkvT6lZr1jWWp3cBRkzDnYsINK5rTJJDFCz+0ppeCZV963lRX9
+        Qam3VzQtrLIB1z1/H1zpkINyeCGQVDE=
+X-Google-Smtp-Source: APXvYqwSQovdx0x/dBbrq78/Nk3rJpBtr4ZejkKk0cG28D2d6b4sV77mnRgoiOTrXIW2YD58v8XhfA==
+X-Received: by 2002:a63:a741:: with SMTP id w1mr22532136pgo.131.1582019055042;
+        Tue, 18 Feb 2020 01:44:15 -0800 (PST)
+Received: from localhost.localdomain ([103.231.91.38])
+        by smtp.gmail.com with ESMTPSA id l10sm2457419pjy.5.2020.02.18.01.44.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Feb 2020 01:44:14 -0800 (PST)
+From:   Bhaskar Chowdhury <unixbhaskar@gmail.com>
+To:     corbet@lwn.net, federico.vaga@vaga.pv.it, rdunlap@infradead.org
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bhaskar Chowdhury <unixbhaskar@gmail.com>
+Subject: [PATCH] Replace dead urls with active urls for Mutt
+Date:   Tue, 18 Feb 2020 15:10:13 +0530
+Message-Id: <20200218094013.29806-1-unixbhaskar@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-References: <20200218005659.91318-1-lrizzo@google.com> <20200218165529.39e761c4be828285cc060279@kernel.org>
-In-Reply-To: <20200218165529.39e761c4be828285cc060279@kernel.org>
-From:   Luigi Rizzo <lrizzo@google.com>
-Date:   Tue, 18 Feb 2020 01:39:40 -0800
-Message-ID: <CAMOZA0L14CjA97UHj7V1tPuOtesrUykYPj3_vgbF3JQWS3bcaw@mail.gmail.com>
-Subject: Re: [PATCH v3] kretprobe: percpu support
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, naveen.n.rao@linux.ibm.com,
-        anil.s.keshavamurthy@intel.com, David Miller <davem@davemloft.net>,
-        gregkh@linuxfoundation.org, Ingo Molnar <mingo@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 17, 2020 at 11:55 PM Masami Hiramatsu <mhiramat@kernel.org> wrote:
->
-> Hi Luigi,
->
-> On Mon, 17 Feb 2020 16:56:59 -0800
-> Luigi Rizzo <lrizzo@google.com> wrote:
->
-> > kretprobe uses a list protected by a single lock to allocate a
-> > kretprobe_instance in pre_handler_kretprobe(). This works poorly with
-> > concurrent calls.
->
-> Yes, there are several potential performance issue and the recycle
-> instance is one of them. However, I think this spinlock is not so racy,
-> but noisy (especially on many core machine) right?
+This patch replace stale/dead urls with active urls for Mutt.
 
-correct, it is especially painful on 2+ sockets and many-core systems
-when attaching kretprobes on otherwise uncontended paths.
+Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+---
+ Documentation/process/email-clients.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->
-> Racy lock is the kretprobe_hash_lock(), I would like to replace it
-> with ftrace's per-task shadow stack. But that will be available
-> only if CONFIG_FUNCTION_GRAPH_TRACER=y (and instance has no own
-> payload).
->
-> > This patch offers a simplified fix: the percpu_instance flag indicates
-> > that we allocate one instance per CPU, and the allocation is contention
-> > free, but we allow only have one pending entry per CPU (this could be
-> > extended to a small constant number without much trouble).
->
-> OK, the percpu instance idea is good to me, and I think it should be
-> default option. Unless user specifies the number of instances, it should
-> choose percpu instance by default.
+diff --git a/Documentation/process/email-clients.rst b/Documentation/process/email-clients.rst
+index 5273d06c8ff6..c4f9dc7a0889 100644
+--- a/Documentation/process/email-clients.rst
++++ b/Documentation/process/email-clients.rst
+@@ -237,9 +237,9 @@ using Mutt to send patches through Gmail::
 
-That was my initial implementation, which would not even need the
-percpu_instance
-flag in struct kretprobe. However, I felt that changing the default
-would have subtle
-side effects (e.g., only one outstanding call per CPU) so I thought it
-would be better
-to leave the default unchanged and make the flag explicit.
+ The Mutt docs have lots more information:
 
-> Moreover, this makes things a bit complicated, can you add per-cpu
-> instance array? If it is there, we can remove the old recycle rp insn
-> code.
+-    http://dev.mutt.org/trac/wiki/UseCases/Gmail
++    https://gitlab.com/muttmua/mutt/-/wikis/UseCases/Gmail
 
-Can you clarify what you mean by "per-cpu instance array" ?
-Do you mean allowing multiple outstanding entries per cpu?
+-    http://dev.mutt.org/doc/manual.html
++    http://www.mutt.org/doc/manual/
 
-I will address your code comments in an updated patch.
+ Pine (TUI)
+ **********
+--
+2.24.1
 
-thanks
-luigi
