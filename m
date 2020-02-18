@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C25941630EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:58:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94DF71630E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:58:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727959AbgBRT5e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 14:57:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34796 "EHLO mail.kernel.org"
+        id S1727894AbgBRT5W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 14:57:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726735AbgBRT50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:57:26 -0500
+        id S1726557AbgBRT5K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 14:57:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57C0C20659;
-        Tue, 18 Feb 2020 19:57:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA24124676;
+        Tue, 18 Feb 2020 19:57:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582055845;
-        bh=u9QadL+YesFMEdUQcQEqUQB7XQTVq7Y/7R5E6mojdVk=;
+        s=default; t=1582055830;
+        bh=68U/xLqyVjRfkOsGOYbz9f1hYAYIM2awf/NeUB1Psm0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Cf53A2HV90r4BQNaIZhWm1Q5b+NGBF/PZF7RaPSVI234U02wIY07o34u8lOoDXazs
-         0+TCY74SIY7Dkvy6qy3FcP21njkBlplmLeu0CO8z5tGE41vb+ugrRkN6LXu6+nJRUu
-         42HJLBNx/xwHqd7Ml/7juLxDdYnrKGzqxyHuiS5o=
+        b=VvWcUzBTYVLq2vDNSmPbJr/yMfonQS3shdv0PL8eDq6ZMlHbB9RlvTf7UC8dDiN/N
+         yMbEU/E8kSTurs51IXjU14cXtgX/EAzPLy0Hl+s1F7nGdW7QDALqZxtGdNG1T0BTVj
+         ojbAKJCJ0lde6ict7CBAZ2gOdqHSHfCMpkNPc7Uk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olga Kornievskaia <kolga@netapp.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: [PATCH 4.19 35/38] NFSv4.1 make cachethis=no for writes
-Date:   Tue, 18 Feb 2020 20:55:21 +0100
-Message-Id: <20200218190422.605660378@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 38/38] KVM: x86/mmu: Fix struct guest_walker arrays for 5-level paging
+Date:   Tue, 18 Feb 2020 20:55:24 +0100
+Message-Id: <20200218190422.917834466@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200218190418.536430858@linuxfoundation.org>
 References: <20200218190418.536430858@linuxfoundation.org>
@@ -44,32 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Olga Kornievskaia <kolga@netapp.com>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit cd1b659d8ce7697ee9799b64f887528315b9097b upstream.
+[ Upstream commit f6ab0107a4942dbf9a5cf0cca3f37e184870a360 ]
 
-Turning caching off for writes on the server should improve performance.
+Define PT_MAX_FULL_LEVELS as PT64_ROOT_MAX_LEVEL, i.e. 5, to fix shadow
+paging for 5-level guest page tables.  PT_MAX_FULL_LEVELS is used to
+size the arrays that track guest pages table information, i.e. using a
+"max levels" of 4 causes KVM to access garbage beyond the end of an
+array when querying state for level 5 entries.  E.g. FNAME(gpte_changed)
+will read garbage and most likely return %true for a level 5 entry,
+soft-hanging the guest because FNAME(fetch) will restart the guest
+instead of creating SPTEs because it thinks the guest PTE has changed.
 
-Fixes: fba83f34119a ("NFS: Pass "privileged" value to nfs4_init_sequence()")
-Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
-Reviewed-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Note, KVM doesn't yet support 5-level nested EPT, so PT_MAX_FULL_LEVELS
+gets to stay "4" for the PTTYPE_EPT case.
 
+Fixes: 855feb673640 ("KVM: MMU: Add 5 level EPT & Shadow page table support.")
+Cc: stable@vger.kernel.org
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/nfs4proc.c |    2 +-
+ arch/x86/kvm/paging_tmpl.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -5117,7 +5117,7 @@ static void nfs4_proc_write_setup(struct
- 	hdr->timestamp   = jiffies;
- 
- 	msg->rpc_proc = &nfs4_procedures[NFSPROC4_CLNT_WRITE];
--	nfs4_init_sequence(&hdr->args.seq_args, &hdr->res.seq_res, 1, 0);
-+	nfs4_init_sequence(&hdr->args.seq_args, &hdr->res.seq_res, 0, 0);
- 	nfs4_state_protect_write(server->nfs_client, clnt, msg, hdr);
- }
- 
+diff --git a/arch/x86/kvm/paging_tmpl.h b/arch/x86/kvm/paging_tmpl.h
+index 100ae4fabf170..61f10a4fd8074 100644
+--- a/arch/x86/kvm/paging_tmpl.h
++++ b/arch/x86/kvm/paging_tmpl.h
+@@ -36,7 +36,7 @@
+ 	#define PT_GUEST_ACCESSED_SHIFT PT_ACCESSED_SHIFT
+ 	#define PT_HAVE_ACCESSED_DIRTY(mmu) true
+ 	#ifdef CONFIG_X86_64
+-	#define PT_MAX_FULL_LEVELS 4
++	#define PT_MAX_FULL_LEVELS PT64_ROOT_MAX_LEVEL
+ 	#define CMPXCHG cmpxchg
+ 	#else
+ 	#define CMPXCHG cmpxchg64
+-- 
+2.20.1
+
 
 
