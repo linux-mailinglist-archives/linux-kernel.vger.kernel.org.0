@@ -2,103 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 889E5162AD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 17:40:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E89E162AE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 17:43:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726713AbgBRQkf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 11:40:35 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:32984 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726655AbgBRQke (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 11:40:34 -0500
-Received: by mail-wr1-f66.google.com with SMTP id u6so24828419wrt.0;
-        Tue, 18 Feb 2020 08:40:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=Qrn/311N8UKWCU3JBItnZPXVbDym7dBk+dJkq1lmoEQ=;
-        b=Spm+JfJajdxPAfH0FP+lNEzVOzmRBFnCutuIbmm2nw9nzUxdFWhYqDOlsJ2NSvCnQ0
-         5xK1qTa89q0rXa8bOm5n5jpibys2+uzIQ0hcININxPDZsCs03aj62CQInGfpQAc4C60V
-         1dlj+4TEWQC9h+s82rwJk2DzRq3qO6YFCH02SzxFDmnGRHuSVu53Q8K5F6JyDmBnw0wZ
-         mYzt/Apjh7D8vdMd7HJDr9AmUgZzEuJmtH515dWYbKl+hY0GEBFg3yJoOhzncak8TAH+
-         1c/xeFUchE5CT628YfEFPSB7USU03Lfu4vPSVNV4sOnmE43AHVNJfBzV0isOTamJGn5s
-         5S+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=Qrn/311N8UKWCU3JBItnZPXVbDym7dBk+dJkq1lmoEQ=;
-        b=Ba22vdK6ZcSIov2Pi7cs9IkPZdUZwHyqX52GiX8lyiYEAu0gqPDFhx8rEUwOZwsUgJ
-         vM9Pbuy16VG29L0LZ7X+c6T3m9WdBe+SC7/b2vs458T5hyfQIpNScbSKSOK2XJ1HNQ2p
-         2tckl5Ouw/U6lQghXwJdK/IYKrDKJZbR7a8LVfR0tIMB1AJkK7VefHaAE22ZO4lA4j6x
-         iDDteO7RqfLwuFpU1Aa6WFXEKVXvz8hLMDQSSrD69Szw5yuIRauLHWP3Bt9Z07LLHAtl
-         uXIpAh5yRpe30Ly8a7eq16sg6gxfY80uPE6THZUY++HVgtXZfCaCf3/k4PfnOe1SiQ9I
-         e5KA==
-X-Gm-Message-State: APjAAAVvhylxPwG/U6WgVHZ8y9VqGP7/xWALyEvMGU+rghOC9Kw2Rptj
-        h9WMUvXYBw1U9krViC0SNog=
-X-Google-Smtp-Source: APXvYqynwmR/FUKse+HbFGtRSlF5Ycib8DCRIUWZ9ge+rXwKutwFUdlpFoxp6pz5XqGoOjfeaQlMiQ==
-X-Received: by 2002:a05:6000:1208:: with SMTP id e8mr31277467wrx.351.1582044033050;
-        Tue, 18 Feb 2020 08:40:33 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id r6sm6763636wrp.95.2020.02.18.08.40.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2020 08:40:32 -0800 (PST)
-Date:   Tue, 18 Feb 2020 17:40:31 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Namjae Jeon <linkinjeon@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        valdis.kletnieks@vt.edu, sj1557.seo@samsung.com, arnd@arndb.de,
-        namjae.jeon@samsung.com
-Subject: Re: [PATCH v13 00/13] add the latest exfat driver
-Message-ID: <20200218164031.daoaxqasdtatmaqo@pali>
-References: <20200121125727.24260-1-linkinjeon@gmail.com>
- <20200125213228.GA5518@lst.de>
- <20200127090409.vvv7sd2uohmliwk5@pali>
- <20200127092343.GB392535@kroah.com>
- <20200127092840.gogcrq3pozgfayiy@pali>
- <20200127093328.GA413113@kroah.com>
+        id S1726672AbgBRQnQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 11:43:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59986 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726528AbgBRQnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 11:43:15 -0500
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8F9B21D56;
+        Tue, 18 Feb 2020 16:43:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582044194;
+        bh=wuFZ+80meI/wCrT4fcDqibe9FS/MNqI4Yqa+RTE6mSU=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=jDQweW1cjYLyQePTP6bA+ueGikUn5TNmIqZFse63qinGEqoLROoiVVIEvOrIcn60e
+         4tbCHoIX8ydAylg/+PhgrtO/JV9wFVmxYr3k2AR7kjo7d+RbvrWCDK7uv0BfYo36Kj
+         YAXjOQ4FB3KUD9ZVgbAgrem4wN+qBWpO539bk+qw=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id AD4263520365; Tue, 18 Feb 2020 08:43:14 -0800 (PST)
+Date:   Tue, 18 Feb 2020 08:43:14 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Lai Jiangshan <laijs@linux.alibaba.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH V2 2/7] rcu: cleanup rcu_preempt_deferred_qs()
+Message-ID: <20200218164314.GG2935@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20191102124559.1135-3-laijs@linux.alibaba.com>
+ <20191103020150.GA23770@tardis>
+ <7489f817-adaf-275b-b19d-18ad248b071f@linux.alibaba.com>
+ <20191104145539.GY20975@paulmck-ThinkPad-P72>
+ <e820852f-87ca-f974-2245-99833205e270@linux.alibaba.com>
+ <20191105071911.GL20975@paulmck-ThinkPad-P72>
+ <20191111143238.GA13306@paulmck-ThinkPad-P72>
+ <cbded276-6770-25a0-2975-2c087872a38e@linux.alibaba.com>
+ <20200217232307.GA17570@paulmck-ThinkPad-P72>
+ <20200218094124.339c0315@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200127093328.GA413113@kroah.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20200218094124.339c0315@gandalf.local.home>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday 27 January 2020 10:33:28 Greg KH wrote:
-> On Mon, Jan 27, 2020 at 10:28:40AM +0100, Pali Rohár wrote:
-> > On Monday 27 January 2020 10:23:43 Greg KH wrote:
-> > > On Mon, Jan 27, 2020 at 10:04:09AM +0100, Pali Rohár wrote:
-> > > > On Saturday 25 January 2020 22:32:28 Christoph Hellwig wrote:
-> > > > > The RCU changes looks sensible to me:
-> > > > > 
-> > > > > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > > > 
-> > > > Great! Are there any other issues with this last version?
-> > > > 
-> > > > If not, Greg would you take this patch series?
+On Tue, Feb 18, 2020 at 09:41:24AM -0500, Steven Rostedt wrote:
+> On Mon, 17 Feb 2020 15:23:07 -0800
+> "Paul E. McKenney" <paulmck@kernel.org> wrote:
+> 
+> > > I'm still asking for more comments.
 > > > 
-> > > Me?  I'm not the vfs/fs maintainer.
+> > > By now, I have received some precious comments, mainly due to my
+> > > stupid naming mistakes and a misleading changelog. I should have
+> 
+> How about typos?
+
+We appear to have enough typos, thank you!
+
+> > > updated all these with a new series patches. But I hope I
+> > > can polish more in the new patchset with more suggestions from
+> > > valuable comments, especially in x86,scheduler,percpu and rcu
+> > > areas.
+> > > 
+> > > I'm very obliged to hear anything.  
 > > 
-> > You took exfat driver (into staging), so I thought that exfat handled by you.
+> > commit 23a58acde0eea57ac77377e5d50d9562b2dbdfaa
+> > Author: Lai Jiangshan <laijs@linux.alibaba.com>
+> > Date:   Sat Feb 15 14:37:26 2020 -0800
+> > 
+> >     rcu: Don't set nesting depth negative in rcu_preempt_deferred_qs()
+> >     
+> >     Now that RCU flavors have been consolidated, an RCU-preempt
+> >     rcu_rea_unlock() in an interrupt or softirq handler cannot possibly
 > 
-> I am the maintainer of drivers/staging/*.
+> What's a "rea"? ;-)
+
+A typo.  Probably mine.  Thank you for catching it, will fix!  ;-)
+
+But maybe an rcu_rhea_lock()?  Just in case the rheas are getting loose?
+
+							Thanx, Paul
+
+> -- Steve
 > 
-> scripts/get_maintainer.pl is your friend :)
-
-Al Viro, you are already in loop, would you take exfat fs in current
-form? Or are there any other issues which needs to be fixed?
-
--- 
-Pali Rohár
-pali.rohar@gmail.com
+> >     end the RCU read-side critical section.  Consider the old vulnerability
+> >     involving rcu_preempt_deferred_qs() being invoked within such a handler
+> >     that interrupted an extended RCU read-side critical section, in which
+> >     a wakeup might be invoked with a scheduler lock held.  Because
+> >     rcu_read_unlock_special() no longer does wakeups in such situations,
+> >     it is no longer necessary for rcu_preempt_deferred_qs() to set the
+> >     nesting level negative.
+> >     
+> >     This commit therfore removes this recursion-protection code from
+> >     rcu_preempt_deferred_qs().
+> >     
+> >     Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
+> >     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > 
+> >
