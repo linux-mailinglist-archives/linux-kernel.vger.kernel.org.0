@@ -2,66 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44EFC161EC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 02:56:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06FF6161ECD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 03:00:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726380AbgBRB4U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Feb 2020 20:56:20 -0500
-Received: from szxga01-in.huawei.com ([45.249.212.187]:2964 "EHLO huawei.com"
+        id S1726299AbgBRCAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Feb 2020 21:00:09 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10196 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726108AbgBRB4T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Feb 2020 20:56:19 -0500
-Received: from DGGEMM402-HUB.china.huawei.com (unknown [172.30.72.55])
-        by Forcepoint Email with ESMTP id CD48718DE2656FD75CA8;
-        Tue, 18 Feb 2020 09:56:17 +0800 (CST)
-Received: from dggeme715-chm.china.huawei.com (10.1.199.111) by
- DGGEMM402-HUB.china.huawei.com (10.3.20.210) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Tue, 18 Feb 2020 09:56:17 +0800
-Received: from dggeme763-chm.china.huawei.com (10.3.19.109) by
- dggeme715-chm.china.huawei.com (10.1.199.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Tue, 18 Feb 2020 09:56:17 +0800
-Received: from dggeme763-chm.china.huawei.com ([10.6.66.36]) by
- dggeme763-chm.china.huawei.com ([10.6.66.36]) with mapi id 15.01.1713.004;
- Tue, 18 Feb 2020 09:56:17 +0800
-From:   linmiaohe <linmiaohe@huawei.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Krish Sadhukhan <krish.sadhukhan@oracle.com>
-CC:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
-        "wanpengli@tencent.com" <wanpengli@tencent.com>,
-        "jmattson@google.com" <jmattson@google.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>
-Subject: Re: [PATCH] KVM: apic: remove unused function apic_lvt_vector()
-Thread-Topic: [PATCH] KVM: apic: remove unused function apic_lvt_vector()
-Thread-Index: AdXl/mukwxIGAhU+rEGyO/fRDkVJww==
-Date:   Tue, 18 Feb 2020 01:56:17 +0000
-Message-ID: <5c43bef1c82f4324935e341c744fdd9c@huawei.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.173.221.158]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726140AbgBRCAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Feb 2020 21:00:08 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id B0213BD0F2FC8BAE92CD;
+        Tue, 18 Feb 2020 10:00:03 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Tue, 18 Feb 2020
+ 09:59:56 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <netanel@amazon.com>, <akiyano@amazon.com>, <gtzalik@amazon.com>,
+        <saeedb@amazon.com>, <zorik@amazon.com>, <davem@davemloft.net>,
+        <kuba@kernel.org>, <hawk@kernel.org>, <john.fastabend@gmail.com>,
+        <sameehj@amazon.com>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] net: ena: remove set but not used variable 'rx_ring'
+Date:   Tue, 18 Feb 2020 09:59:51 +0800
+Message-ID: <20200218015951.7224-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-UGFvbG8gQm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNvbT4gd3JvdGU6DQo+T24gMTcvMDIvMjAg
-MTg6MDIsIFZpdGFseSBLdXpuZXRzb3Ygd3JvdGU6DQo+PiANCj4+IEFsc28sIGFwaWNfbHZ0X2Vu
-YWJsZWQoKSBpcyBvbmx5IHVzZWQgb25jZSB3aXRoIEFQSUNfTFZUVCBhcyB0aGUgDQo+PiBzZWNv
-bmQgYXJndW1lbnQgc28gSSdkIHN1Z2dlc3Qgd2UgYWxzbyBkbzoNCj4+IA0KPj4gZGlmZiAtLWdp
-dCBhL2FyY2gveDg2L2t2bS9sYXBpYy5jIGIvYXJjaC94ODYva3ZtL2xhcGljLmMgaW5kZXggDQo+
-PiANCj4+IGluIGFkZGl0aW9uIHRvIHRoZSBhYm92ZS4NCj4+IA0KPj4gLS0gVml0YWx5DQo+DQo+
-U291bmRzIGdvb2QuDQo+DQoNCldpbGwgZG8uIFRoYW5rcyBhbGwgb2YgeW91Lg0KDQo=
+drivers/net/ethernet/amazon/ena/ena_netdev.c: In function ena_xdp_xmit_buff:
+drivers/net/ethernet/amazon/ena/ena_netdev.c:316:19: warning:
+ variable rx_ring set but not used [-Wunused-but-set-variable]
+
+commit 548c4940b9f1 ("net: ena: Implement XDP_TX action")
+left behind this unused variable.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/amazon/ena/ena_netdev.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.c b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+index 081acf0..894e8c1 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
++++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+@@ -313,7 +313,6 @@ static int ena_xdp_xmit_buff(struct net_device *dev,
+ 	struct ena_com_tx_ctx ena_tx_ctx = {0};
+ 	struct ena_tx_buffer *tx_info;
+ 	struct ena_ring *xdp_ring;
+-	struct ena_ring *rx_ring;
+ 	u16 next_to_use, req_id;
+ 	int rc;
+ 	void *push_hdr;
+@@ -324,8 +323,6 @@ static int ena_xdp_xmit_buff(struct net_device *dev,
+ 	req_id = xdp_ring->free_ids[next_to_use];
+ 	tx_info = &xdp_ring->tx_buffer_info[req_id];
+ 	tx_info->num_of_bufs = 0;
+-	rx_ring = &xdp_ring->adapter->rx_ring[qid -
+-		  xdp_ring->adapter->xdp_first_ring];
+ 	page_ref_inc(rx_info->page);
+ 	tx_info->xdp_rx_page = rx_info->page;
+ 
+-- 
+2.7.4
+
+
