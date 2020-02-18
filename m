@@ -2,145 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A221162FEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:28:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6FF1162FFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:30:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726557AbgBRT2Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 14:28:16 -0500
-Received: from mail-pf1-f179.google.com ([209.85.210.179]:43800 "EHLO
-        mail-pf1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726467AbgBRT2P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:28:15 -0500
-Received: by mail-pf1-f179.google.com with SMTP id s1so11135722pfh.10
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 11:28:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zhYJCkJXlPxXtgjObEVr42uyGuLn0+lKW2wKfP/UpCE=;
-        b=DvmqpHrnM5O330XZo1r4oQuSvPgecXnkvWf1HePsqxhXDtfRmjIjyRMJC5NXDcCYn+
-         OwvGhCTbVAvqmsw7DHX6CX7ayI8MRX80ZKZFm3l7gtOi8e7I+QXoV2LNG3hx3pvtvgiV
-         LSIt91cMdVZ0sjN19WquhWlHxwMKtoi8sHzngiTeNW13UUBuZJ+eKQMx92fEmu2wm/iA
-         Zt5J/EId0BdKG8K0owTwcXRs3abR2p6cDm6V/Hc1tImyyILCj1yMKM1SnD10oedygFij
-         qIgZMDYYyaPAr0O+2Mq3cmqiX39FLOwWYivab+YigA6JwRjURv6j+9wGEC6ZR3iOJu+H
-         mZDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=zhYJCkJXlPxXtgjObEVr42uyGuLn0+lKW2wKfP/UpCE=;
-        b=CMeJzLEW9yYfedDdbvP2KFirHiDORvbBda9zsK4wEDwFB4J12K3xXxjmtY0PNlnTgz
-         KvNa5j6OUtzPs6oQbLAjLDXP+cTgJyPuKleMTnuJKsBKE87FKCSeXmKy26U6L2j7dzpR
-         J9epFQspz1OH7p1GpM/COaDD/G/0ilQQP3Rt+KaQEC0fmlIDZZGxjC9O3O45JyjFMi3S
-         Dhxa6MbdG+wE6Ahi3YdtzS9LLtYt9xM12FrSglR8g66wjqyytYiRz3EckMvoH6gZMDe4
-         4FApe3k78l0s8mCsom/dcoMh0Nk3RQhujhjU09byHYEaD680KOpxFXWAbDQI29YICB+q
-         8PbA==
-X-Gm-Message-State: APjAAAVqDL6lwIIN6pdNyhY0tzecZ5NbLP+4bBPHGsJ9G/RMv/njSW1W
-        5/KpTASRATKsFET2LROMOZP+IA==
-X-Google-Smtp-Source: APXvYqxvBhs/kNz46f0NM7yQK9O+VsDMro0hxwtL6uWXHEPpf1QvsgH3bBRF8NOa1+svFTWNKSApFA==
-X-Received: by 2002:a62:cfc1:: with SMTP id b184mr22611022pfg.55.1582054093924;
-        Tue, 18 Feb 2020 11:28:13 -0800 (PST)
-Received: from localhost ([2620:0:1000:2514:23a5:d584:6a92:3e3c])
-        by smtp.gmail.com with ESMTPSA id q12sm4931028pfh.158.2020.02.18.11.28.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2020 11:28:13 -0800 (PST)
-Date:   Tue, 18 Feb 2020 11:28:13 -0800 (PST)
-X-Google-Original-Date: Tue, 18 Feb 2020 11:28:02 PST (-0800)
-Subject:     Re: arm64: bpf: Elide some moves to a0 after calls
-In-Reply-To: <5e39d509c9edc_63882ad0d49345c08@john-XPS-13-9370.notmuch>
-CC:     Bjorn Topel <bjorn.topel@gmail.com>, daniel@iogearbox.net,
-        ast@kernel.org, zlim.lnx@gmail.com, catalin.marinas@arm.com,
-        will@kernel.org, kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
-        andriin@fb.com, shuah@kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        clang-built-linux@googlegroups.com, kernel-team@android.com
-From:   Palmer Dabbelt <palmerdabbelt@google.com>
-To:     john.fastabend@gmail.com
-Message-ID: <mhng-eae623ac-3032-4327-9b23-af9838e3e979@palmerdabbelt-glaptop1>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        id S1726510AbgBRTa3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 14:30:29 -0500
+Received: from namei.org ([65.99.196.166]:46820 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726283AbgBRTa3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 14:30:29 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 01IJSexZ014160;
+        Tue, 18 Feb 2020 19:28:41 GMT
+Date:   Wed, 19 Feb 2020 06:28:40 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+cc:     Serge Hallyn <serge@hallyn.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Will Deacon <will@kernel.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Helge Deller <deller@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Igor Lubashev <ilubashe@akamai.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        oprofile-list@lists.sf.net,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        linux-man@vger.kernel.org
+Subject: Re: [PATCH v7 07/12] powerpc/perf: open access for CAP_PERFMON
+ privileged process
+In-Reply-To: <b144d52b-6040-4660-46d1-2c8c58e98e7e@linux.intel.com>
+Message-ID: <alpine.LRH.2.21.2002190628270.10165@namei.org>
+References: <c8de937a-0b3a-7147-f5ef-69f467e87a13@linux.intel.com> <b144d52b-6040-4660-46d1-2c8c58e98e7e@linux.intel.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 04 Feb 2020 12:33:13 PST (-0800), john.fastabend@gmail.com wrote:
-> Björn Töpel wrote:
->> On Tue, 28 Jan 2020 at 03:14, Palmer Dabbelt <palmerdabbelt@google.com> wrote:
->> >
->> > There's four patches here, but only one of them actually does anything.  The
->> > first patch fixes a BPF selftests build failure on my machine and has already
->> > been sent to the list separately.  The next three are just staged such that
->> > there are some patches that avoid changing any functionality pulled out from
->> > the whole point of those refactorings, with two cleanups and then the idea.
->> >
->> > Maybe this is an odd thing to say in a cover letter, but I'm not actually sure
->> > this patch set is a good idea.  The issue of extra moves after calls came up as
->> > I was reviewing some unrelated performance optimizations to the RISC-V BPF JIT.
->> > I figured I'd take a whack at performing the optimization in the context of the
->> > arm64 port just to get a breath of fresh air, and I'm not convinced I like the
->> > results.
->> >
->> > That said, I think I would accept something like this for the RISC-V port
->> > because we're already doing a multi-pass optimization for shrinking function
->> > addresses so it's not as much extra complexity over there.  If we do that we
->> > should probably start puling some of this code into the shared BPF compiler,
->> > but we're also opening the doors to more complicated BPF JIT optimizations.
->> > Given that the BPF JIT appears to have been designed explicitly to be
->> > simple/fast as opposed to perform complex optimization, I'm not sure this is a
->> > sane way to move forward.
->> >
->> 
->> Obviously I can only speak for myself and the RISC-V JIT, but given
->> that we already have opened the door for more advanced translations
->> (branch relaxation e.g.), I think that this makes sense. At the same
->> time we don't want to go all JVM on the JITs. :-P
->
-> I'm not against it although if we start to go this route I would want some
-> way to quantify how we are increasing/descreasing load times.
->
->> 
->> > I figured I'd send the patch set out as more of a question than anything else.
->> > Specifically:
->> >
->> > * How should I go about measuring the performance of these sort of
->> >   optimizations?  I'd like to balance the time it takes to run the JIT with the
->> >   time spent executing the program, but I don't have any feel for what real BPF
->> >   programs look like or have any benchmark suite to run.  Is there something
->> >   out there this should be benchmarked against?  (I'd also like to know that to
->> >   run those benchmarks on the RISC-V port.)
->> 
->> If you run the selftests 'test_progs' with -v it'll measure/print the
->> execution time of the programs. I'd say *most* BPF program invokes a
->> helper (via call). It would be interesting to see, for say the
->> selftests, how often the optimization can be performed.
->> 
->> > * Is this the sort of thing that makes sense in a BPF JIT?  I guess I've just
->> >   realized I turned "review this patch" into a way bigger rabbit hole than I
->> >   really want to go down...
->> >
->> 
->> I'd say 'yes'. My hunch, and the workloads I've seen, BPF programs are
->> usually loaded, and then resident for a long time. So, the JIT time is
->> not super critical. The FB/Cilium folks can definitely provide a
->> better sample point, than my hunch. ;-)
->
-> In our case the JIT time can be relevant because we are effectively holding
-> up a kubernetes pod load waiting for programs to load. However, we can
-> probably work-around it by doing more aggressive dynamic linking now that
-> this is starting to land.
->
-> It would be interesting to have a test to measure load time in selftests
-> or selftests/benchmark/ perhaps. We have some of these out of tree we
-> could push in I think if there is interest.
+On Mon, 17 Feb 2020, Alexey Budankov wrote:
 
-I'd be interested in some sort of benchmark suite for BPF.  Something like
-selftests/bpf/benchmarks/ seems like a reasonable place to me.
+> For backward compatibility reasons access to the monitoring remains
+> open for CAP_SYS_ADMIN privileged processes but CAP_SYS_ADMIN usage
+> for secure monitoring is discouraged with respect to CAP_PERFMON
+> capability.
+> 
+> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 
->
->> 
->> 
->> Björn
+
+Reviewed-by: James Morris <jamorris@linux.microsoft.com>
+
+
+-- 
+James Morris
+<jmorris@namei.org>
+
