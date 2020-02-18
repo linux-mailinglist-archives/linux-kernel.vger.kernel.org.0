@@ -2,111 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6043163103
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:58:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D6E61630B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:54:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728199AbgBRT63 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 14:58:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36074 "EHLO mail.kernel.org"
+        id S1726558AbgBRTyz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 14:54:55 -0500
+Received: from mga17.intel.com ([192.55.52.151]:33124 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728179AbgBRT6Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:58:24 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F7C024125;
-        Tue, 18 Feb 2020 19:58:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582055904;
-        bh=E/CjsNhoRB3Jo/2R9C3EkvwCVeD17nzH6g1tRVZtoyY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VUVqdbHM/1fc9XeLnf0eySF/CKT/t6nSLZFK2i4ATIZW+Lt+HX7j37oE2ubGvq1bF
-         XQE2vYoXMTWofKTMD9uPfgIABHow4pyLINHHQBdzp8Syut05F26/NfNq21Dmy0o6WW
-         bKgtgyxV5c6PTuvaW6B9M0i2rPQZTPnzFW8WLnuw=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andre Tomt <andre@tomt.net>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: [PATCH 5.4 26/66] xprtrdma: Fix DMA scatter-gather list mapping imbalance
-Date:   Tue, 18 Feb 2020 20:54:53 +0100
-Message-Id: <20200218190430.488655256@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200218190428.035153861@linuxfoundation.org>
-References: <20200218190428.035153861@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1726283AbgBRTyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 14:54:55 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2020 11:54:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,457,1574150400"; 
+   d="scan'208";a="258667177"
+Received: from orsmsx101.amr.corp.intel.com ([10.22.225.128])
+  by fmsmga004.fm.intel.com with ESMTP; 18 Feb 2020 11:54:54 -0800
+Received: from orsmsx115.amr.corp.intel.com ([169.254.4.100]) by
+ ORSMSX101.amr.corp.intel.com ([169.254.8.110]) with mapi id 14.03.0439.000;
+ Tue, 18 Feb 2020 11:54:54 -0800
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+CC:     Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Andy Lutomirski <luto@kernel.org>, x86-ml <x86@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: RE: [RFC] #MC mess
+Thread-Topic: [RFC] #MC mess
+Thread-Index: AQHV5oFaNSfU2AXDXU6dRUAZO7v/0KghQszggACf7QD//3pjMA==
+Date:   Tue, 18 Feb 2020 19:54:54 +0000
+Message-ID: <3908561D78D1C84285E8C5FCA982C28F7F57BD54@ORSMSX115.amr.corp.intel.com>
+References: <20200218173150.GK14449@zn.tnic>
+ <3908561D78D1C84285E8C5FCA982C28F7F57B937@ORSMSX115.amr.corp.intel.com>
+ <20200218195130.GO14449@zn.tnic>
+In-Reply-To: <20200218195130.GO14449@zn.tnic>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.139]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuck Lever <chuck.lever@oracle.com>
-
-commit ca1c671302825182629d3c1a60363cee6f5455bb upstream.
-
-The @nents value that was passed to ib_dma_map_sg() has to be passed
-to the matching ib_dma_unmap_sg() call. If ib_dma_map_sg() choses to
-concatenate sg entries, it will return a different nents value than
-it was passed.
-
-The bug was exposed by recent changes to the AMD IOMMU driver, which
-enabled sg entry concatenation.
-
-Looking all the way back to commit 4143f34e01e9 ("xprtrdma: Port to
-new memory registration API") and reviewing other kernel ULPs, it's
-not clear that the frwr_map() logic was ever correct for this case.
-
-Reported-by: Andre Tomt <andre@tomt.net>
-Suggested-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-Cc: stable@vger.kernel.org
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- net/sunrpc/xprtrdma/frwr_ops.c |   13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
---- a/net/sunrpc/xprtrdma/frwr_ops.c
-+++ b/net/sunrpc/xprtrdma/frwr_ops.c
-@@ -326,8 +326,8 @@ struct rpcrdma_mr_seg *frwr_map(struct r
- {
- 	struct rpcrdma_ia *ia = &r_xprt->rx_ia;
- 	struct ib_reg_wr *reg_wr;
-+	int i, n, dma_nents;
- 	struct ib_mr *ibmr;
--	int i, n;
- 	u8 key;
- 
- 	if (nsegs > ia->ri_max_frwr_depth)
-@@ -351,15 +351,16 @@ struct rpcrdma_mr_seg *frwr_map(struct r
- 			break;
- 	}
- 	mr->mr_dir = rpcrdma_data_dir(writing);
-+	mr->mr_nents = i;
- 
--	mr->mr_nents =
--		ib_dma_map_sg(ia->ri_id->device, mr->mr_sg, i, mr->mr_dir);
--	if (!mr->mr_nents)
-+	dma_nents = ib_dma_map_sg(ia->ri_id->device, mr->mr_sg, mr->mr_nents,
-+				  mr->mr_dir);
-+	if (!dma_nents)
- 		goto out_dmamap_err;
- 
- 	ibmr = mr->frwr.fr_mr;
--	n = ib_map_mr_sg(ibmr, mr->mr_sg, mr->mr_nents, NULL, PAGE_SIZE);
--	if (unlikely(n != mr->mr_nents))
-+	n = ib_map_mr_sg(ibmr, mr->mr_sg, dma_nents, NULL, PAGE_SIZE);
-+	if (n != dma_nents)
- 		goto out_mapmr_err;
- 
- 	ibmr->iova &= 0x00000000ffffffff;
-
-
+Pj4gSG93IGFib3V0IHNvbWUgY29kZSB0byB0dXJuIGFsbCB0aG9zZSBiYWNrIG9uIGZvciBhIHJl
+Y292ZXJhYmxlICh3aGVyZQ0KPj4gd2UgYWN0dWFsbHkgcmVjb3ZlcmVkKSAjTUM/DQo+DQo+IFRo
+ZSB1c2UgY2FzZSBiZWluZz8NCg0KUmVjb3ZlcmFibGUgbWFjaGluZSBjaGVja3MgYXJlIGEgbm9y
+bWFsIChob3BlZnVsbHkgcmFyZSkgZXZlbnQgb24gYSBzZXJ2ZXIuICBCdXQgeW91IHdvdWxkbid0
+DQp3YW50IHRvIGxvc2UgdHJhY2luZyBjYXBhYmlsaXR5IGp1c3QgYmVjYXVzZSB3ZSB0b29rIGEg
+cGFnZSBvZmZsaW5lIGFuZCBraWxsZWQgYSBwcm9jZXNzIHRvIHJlY292ZXIuDQoNCi1Ub255DQo=
