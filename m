@@ -2,172 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A17A71628AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 15:40:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AC541628B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 15:41:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbgBROkO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 09:40:14 -0500
-Received: from a80-127-99-228.adsl.xs4all.nl ([80.127.99.228]:51262 "EHLO
-        hetgrotebos.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726116AbgBROkO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 09:40:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=wizzup.org;
-         s=mail; h=Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:
-        References:Cc:To:Subject:Sender:Reply-To:Content-Transfer-Encoding:Content-ID
-        :Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:
-        Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe
-        :List-Post:List-Owner:List-Archive;
-        bh=hllLoCyM9RmK7u/rPo0DwB939Hm+Eyw+3efkMrghnmY=; b=pVxiJO6d9ZEI422RObEcVc8TMW
-        dDURo5BgGRHeVFnVGBzv2seORa+1r1KstBytKEMeHO9z1nHMY9VDcIHs6RR1A9aG6HDUu8Pku0WA/
-        ByW+AUxZUG1Jwl1PuzNA6rpQamOH5xfCy/Ao/p8m0FSyu6QPVKr6vEZN+jX0dMA48yBMCRVObYRCd
-        rRl/4oUBgXIzik98UXKO0IGRWFoihqGykX9OfuYf+v9ew8Npw+rH3NWoy4XH1zaX5CiQ30hazCL4L
-        Y0XUE6BSC/6l5DWpOx3S+FARkvvfO2iZCXf/VPjFeMhHtfRWRbh5EfwgfDP2F7wFOW7gF6IcNEa7D
-        CRaZJ82g==;
-Received: from deepwater.fritz.box ([192.168.178.25] helo=[0.0.0.0])
-        by hetgrotebos.org with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <merlijn@wizzup.org>)
-        id 1j442l-0004Bt-LR; Tue, 18 Feb 2020 14:40:11 +0000
-Subject: Re: [PATCH] scsi: sr: get rid of sr global mutex
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-scsi@vger.kernel.org, Merlijn Wajer <merlijn@archive.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-References: <20200214135433.29448-1-merlijn@wizzup.org>
- <yq1a75gmpsv.fsf@oracle.com> <yq11rqsmp2s.fsf@oracle.com>
-From:   Merlijn Wajer <merlijn@wizzup.org>
-Autocrypt: addr=merlijn@wizzup.org; prefer-encrypt=mutual; keydata=
- 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
- /XslHw==
-Message-ID: <02f9ad3c-632a-dbfe-8cca-3a8c61d77923@wizzup.org>
-Date:   Tue, 18 Feb 2020 15:41:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.0
+        id S1726962AbgBROl2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 09:41:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60178 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726116AbgBROl2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 09:41:28 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C2F020801;
+        Tue, 18 Feb 2020 14:41:26 +0000 (UTC)
+Date:   Tue, 18 Feb 2020 09:41:24 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     Lai Jiangshan <laijs@linux.alibaba.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH V2 2/7] rcu: cleanup rcu_preempt_deferred_qs()
+Message-ID: <20200218094124.339c0315@gandalf.local.home>
+In-Reply-To: <20200217232307.GA17570@paulmck-ThinkPad-P72>
+References: <20191102124559.1135-1-laijs@linux.alibaba.com>
+        <20191102124559.1135-3-laijs@linux.alibaba.com>
+        <20191103020150.GA23770@tardis>
+        <7489f817-adaf-275b-b19d-18ad248b071f@linux.alibaba.com>
+        <20191104145539.GY20975@paulmck-ThinkPad-P72>
+        <e820852f-87ca-f974-2245-99833205e270@linux.alibaba.com>
+        <20191105071911.GL20975@paulmck-ThinkPad-P72>
+        <20191111143238.GA13306@paulmck-ThinkPad-P72>
+        <cbded276-6770-25a0-2975-2c087872a38e@linux.alibaba.com>
+        <20200217232307.GA17570@paulmck-ThinkPad-P72>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <yq11rqsmp2s.fsf@oracle.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="ss2PJczctqRhK1AxEE5q8BDZsVzTIB80u"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---ss2PJczctqRhK1AxEE5q8BDZsVzTIB80u
-Content-Type: multipart/mixed; boundary="1h7b2dFr87mLIl72K3vSp02SDsmxUDEhG"
+On Mon, 17 Feb 2020 15:23:07 -0800
+"Paul E. McKenney" <paulmck@kernel.org> wrote:
 
---1h7b2dFr87mLIl72K3vSp02SDsmxUDEhG
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: quoted-printable
+> > I'm still asking for more comments.
+> > 
+> > By now, I have received some precious comments, mainly due to my
+> > stupid naming mistakes and a misleading changelog. I should have
 
-Hi Martin,
+How about typos?
 
-On 18/02/2020 06:39, Martin K. Petersen wrote:
->=20
-> Merlijn,
->=20
->>> When replacing the Big Kernel Lock in commit
->>> 2a48fc0ab24241755dc93bfd4f01d68efab47f5a ("block: autoconvert trivial=
-
->>> BKL users to private mutex"), the lock was replaced with a sr-wide
->>> lock.
->>
->> Applied to 5.7/scsi-queue, thanks!
->=20
-> Doesn't build. Please rebase on top of 5.7/scsi-queue and
-> resubmit. Thanks!
-
-I've sent out a new (v2) patch, based on `5.7/scsi-queue`. I've sent it
-out using my work-email for proper attribution, and now it also matches
-the Signed-off-by.
-
-Sorry for the hassle.
-
-One question -- I would like to put in some extra work to get this patch
-(or some version of it) sent out to stable trees as well. Is there any
-additional work I can do to get that going, or is it a matter of
-emailing the right person/list?
-
-Thanks,
-Cheers,
-Merlijn
+> > updated all these with a new series patches. But I hope I
+> > can polish more in the new patchset with more suggestions from
+> > valuable comments, especially in x86,scheduler,percpu and rcu
+> > areas.
+> > 
+> > I'm very obliged to hear anything.  
 
 
---1h7b2dFr87mLIl72K3vSp02SDsmxUDEhG--
+> 
+> commit 23a58acde0eea57ac77377e5d50d9562b2dbdfaa
+> Author: Lai Jiangshan <laijs@linux.alibaba.com>
+> Date:   Sat Feb 15 14:37:26 2020 -0800
+> 
+>     rcu: Don't set nesting depth negative in rcu_preempt_deferred_qs()
+>     
+>     Now that RCU flavors have been consolidated, an RCU-preempt
+>     rcu_rea_unlock() in an interrupt or softirq handler cannot possibly
 
---ss2PJczctqRhK1AxEE5q8BDZsVzTIB80u
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+What's a "rea"? ;-)
 
------BEGIN PGP SIGNATURE-----
+-- Steve
 
-iHUEARYIAB0WIQRM5LT7NbLF9yb6a/UGN09rynK8WgUCXkv3kwAKCRAGN09rynK8
-WmkGAQCtv8Y4royWjK/XfgIlc/0h6WlkrndRw5oZvuvkLG4AvgEAt+7wpCd0l3eu
-DyO1931vuvVNAJxk6XpDeCsINWeKSgs=
-=0JI0
------END PGP SIGNATURE-----
-
---ss2PJczctqRhK1AxEE5q8BDZsVzTIB80u--
+>     end the RCU read-side critical section.  Consider the old vulnerability
+>     involving rcu_preempt_deferred_qs() being invoked within such a handler
+>     that interrupted an extended RCU read-side critical section, in which
+>     a wakeup might be invoked with a scheduler lock held.  Because
+>     rcu_read_unlock_special() no longer does wakeups in such situations,
+>     it is no longer necessary for rcu_preempt_deferred_qs() to set the
+>     nesting level negative.
+>     
+>     This commit therfore removes this recursion-protection code from
+>     rcu_preempt_deferred_qs().
+>     
+>     Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
+>     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> 
+>
