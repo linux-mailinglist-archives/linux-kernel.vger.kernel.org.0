@@ -2,130 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 283CE163761
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 00:40:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49CB2163766
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 00:43:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727592AbgBRXkW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 18:40:22 -0500
-Received: from mga04.intel.com ([192.55.52.120]:39205 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727186AbgBRXkT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 18:40:19 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2020 15:40:18 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,458,1574150400"; 
-   d="scan'208";a="436033038"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
-  by fmsmga006.fm.intel.com with ESMTP; 18 Feb 2020 15:40:18 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] KVM: x86: Snapshot MSR index in a local variable when processing lists
-Date:   Tue, 18 Feb 2020 15:40:12 -0800
-Message-Id: <20200218234012.7110-4-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200218234012.7110-1-sean.j.christopherson@intel.com>
-References: <20200218234012.7110-1-sean.j.christopherson@intel.com>
+        id S1726760AbgBRXnV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 18:43:21 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:58074 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726427AbgBRXnV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 18:43:21 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01INhCcV136753;
+        Tue, 18 Feb 2020 23:43:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=0m00BguRlLekOA8EI0mqAMtdAPqsM6dw3X+VwmV1jKU=;
+ b=VfUuBat95GLBnl5Z0MvUS0geiN7taCy0N45hIa6gtaEbyeak1SvFKOOnFA9exgIZL3ah
+ PT8jtQd1wC2kv9ZBc6pkGrZOJS3OlH3iXmlGbSAqDKNgFvZRlALIfm4bIgvFZx8PzD5M
+ m+c8KBsuMeYP68QLynXnnrxX1lOrLFSs4gEbmD54qHNNXw6wid8IMUQGFa3se9To7Rgy
+ 3uwzk3Xm/eZnvHVHam5VyHut89CKYltM5H8rrDlB/Ujh16MhsCOr5dh44NeYOr5Sq35y
+ GThuOCNTfOavz9NJhO8HEhPEfQxv66Hy+un8DXCD3hJQ/Lb8c9cirs2Nxry2JJbH0TZ8 fg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2y8e1hn2ja-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Feb 2020 23:43:15 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01INgA4b071778;
+        Tue, 18 Feb 2020 23:43:15 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2y6tetf960-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Feb 2020 23:43:14 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01INhCCS018965;
+        Tue, 18 Feb 2020 23:43:12 GMT
+Received: from [192.168.1.206] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 18 Feb 2020 15:43:12 -0800
+Subject: Re: [PATCH -next] mm/hugetlb: Fix file_region entry allocations
+To:     Mina Almasry <almasrymina@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+References: <20200218222658.132101-1-almasrymina@google.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <67aa82a8-3c8d-d1eb-7e83-4f722b1eeb2a@oracle.com>
+Date:   Tue, 18 Feb 2020 15:43:11 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200218222658.132101-1-almasrymina@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9535 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0 bulkscore=0
+ suspectscore=2 mlxscore=0 mlxlogscore=999 adultscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002180161
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9535 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 phishscore=0
+ mlxlogscore=999 mlxscore=0 malwarescore=0 clxscore=1015 adultscore=0
+ lowpriorityscore=0 spamscore=0 bulkscore=0 priorityscore=1501
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002180161
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Snapshot the MSR index when processing the virtualized and emulated MSR
-lists in kvm_init_msr_list() to improve code readability, particularly
-in the RTIT and PerfMon MSR checks.
+On 2/18/20 2:26 PM, Mina Almasry wrote:
+> Commit a9e443086489e ("hugetlb: disable region_add file_region
+> coalescing") introduced a bug with adding file_region entries
+> that is fixed here:
+> 
+> 1. Refactor file_region entry allocation logic into 1 function called
+>    from region_add and region_chg since the code is now identical.
+> 2. region_chg only modifies resv->adds_in_progress after the regions
+>    have been allocated. In the past it used to increment
+>    adds_in_progress and then drop the lock, which would confuse racing
+>    region_add calls into thinking they need to allocate entries when
+>    they are not allowed.
+> 3. In region_add, only try to allocate regions when
+>    actual_regions_needed > in_regions_needed. This is not causing a bug
+>    but is better for cleanliness and reasoning about the code.
+> 
+> Tested using ltp hugemmap0* tests, and libhugetlbfs tests.
+> 
+> Reported-by: Qian Cai <cai@lca.pw>
+> Signed-off-by: Mina Almasry <almasrymina@google.com>
+> Fixes: Commit a9e443086489e ("hugetlb: disable region_add file_region
+> coalescing")
+> 
+> ---
+>  mm/hugetlb.c | 149 +++++++++++++++++++++++++--------------------------
+>  1 file changed, 74 insertions(+), 75 deletions(-)
+> 
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index 8171d2211be77..3d5b48ae8971f 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -439,6 +439,66 @@ static long add_reservation_in_range(struct resv_map *resv, long f, long t,
+>  	return add;
+>  }
+> 
+> +/* Must be called with resv->lock acquired. Will drop lock to allocate entries.
+> + */
+> +static int allocate_file_region_entries(struct resv_map *resv,
+> +					int regions_needed)
+> +{
 
-No functional change intended.
+I think this is going to need annotation for the lock or sparse is going
+throw a warning.  See,
 
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/kvm/x86.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+https://lore.kernel.org/linux-mm/20200214204741.94112-7-jbi.octave@gmail.com/
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 0d3aa4e5f7bb..0475dfb337c6 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -5223,7 +5223,7 @@ long kvm_arch_vm_ioctl(struct file *filp,
- static void kvm_init_msr_list(void)
- {
- 	struct x86_pmu_capability x86_pmu;
--	u32 dummy[2];
-+	u32 dummy[2], msr_index;
- 	unsigned i;
- 
- 	BUILD_BUG_ON_MSG(INTEL_PMC_MAX_FIXED != 4,
-@@ -5236,14 +5236,16 @@ static void kvm_init_msr_list(void)
- 	num_msr_based_features = 0;
- 
- 	for (i = 0; i < ARRAY_SIZE(msrs_to_save_all); i++) {
--		if (rdmsr_safe(msrs_to_save_all[i], &dummy[0], &dummy[1]) < 0)
-+		msr_index = msrs_to_save_all[i];
-+
-+		if (rdmsr_safe(msr_index, &dummy[0], &dummy[1]) < 0)
- 			continue;
- 
- 		/*
- 		 * Even MSRs that are valid in the host may not be exposed
- 		 * to the guests in some cases.
- 		 */
--		switch (msrs_to_save_all[i]) {
-+		switch (msr_index) {
- 		case MSR_IA32_BNDCFGS:
- 			if (!kvm_mpx_supported())
- 				continue;
-@@ -5271,17 +5273,17 @@ static void kvm_init_msr_list(void)
- 			break;
- 		case MSR_IA32_RTIT_ADDR0_A ... MSR_IA32_RTIT_ADDR3_B:
- 			if (!kvm_x86_ops->pt_supported() ||
--				msrs_to_save_all[i] - MSR_IA32_RTIT_ADDR0_A >=
-+				msr_index - MSR_IA32_RTIT_ADDR0_A >=
- 				intel_pt_validate_hw_cap(PT_CAP_num_address_ranges) * 2)
- 				continue;
- 			break;
- 		case MSR_ARCH_PERFMON_PERFCTR0 ... MSR_ARCH_PERFMON_PERFCTR0 + 17:
--			if (msrs_to_save_all[i] - MSR_ARCH_PERFMON_PERFCTR0 >=
-+			if (msr_index - MSR_ARCH_PERFMON_PERFCTR0 >=
- 			    min(INTEL_PMC_MAX_GENERIC, x86_pmu.num_counters_gp))
- 				continue;
- 			break;
- 		case MSR_ARCH_PERFMON_EVENTSEL0 ... MSR_ARCH_PERFMON_EVENTSEL0 + 17:
--			if (msrs_to_save_all[i] - MSR_ARCH_PERFMON_EVENTSEL0 >=
-+			if (msr_index - MSR_ARCH_PERFMON_EVENTSEL0 >=
- 			    min(INTEL_PMC_MAX_GENERIC, x86_pmu.num_counters_gp))
- 				continue;
- 			break;
-@@ -5289,14 +5291,16 @@ static void kvm_init_msr_list(void)
- 			break;
- 		}
- 
--		msrs_to_save[num_msrs_to_save++] = msrs_to_save_all[i];
-+		msrs_to_save[num_msrs_to_save++] = msr_index;
- 	}
- 
- 	for (i = 0; i < ARRAY_SIZE(emulated_msrs_all); i++) {
--		if (!kvm_x86_ops->has_emulated_msr(emulated_msrs_all[i]))
-+		msr_index = emulated_msrs_all[i];
-+
-+		if (!kvm_x86_ops->has_emulated_msr(msr_index))
- 			continue;
- 
--		emulated_msrs[num_emulated_msrs++] = emulated_msrs_all[i];
-+		emulated_msrs[num_emulated_msrs++] = msr_index;
- 	}
- 
- 	for (i = 0; i < ARRAY_SIZE(msr_based_features_all); i++) {
+Other than that, looks good.  Sorry I missed that race in the review.
 -- 
-2.24.1
-
+Mike Kravetz
