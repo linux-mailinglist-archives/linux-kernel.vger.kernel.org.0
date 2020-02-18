@@ -2,92 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D69C162935
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 16:18:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E59416292C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 16:18:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727283AbgBRPSb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 10:18:31 -0500
-Received: from laurent.telenet-ops.be ([195.130.137.89]:39530 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726902AbgBRPS2 (ORCPT
+        id S1726795AbgBRPRu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 10:17:50 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38545 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726666AbgBRPRu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 10:18:28 -0500
-Received: from ramsan ([84.195.182.253])
-        by laurent.telenet-ops.be with bizsmtp
-        id 4FJE220015USYZQ01FJEv2; Tue, 18 Feb 2020 16:18:25 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1j44dZ-0006yO-UY; Tue, 18 Feb 2020 16:18:13 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1j44dZ-000238-Sw; Tue, 18 Feb 2020 16:18:13 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-Cc:     Alexander Graf <graf@amazon.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        qemu-devel@nongnu.org, Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 5/5] MAINTAINERS: Add GPIO Aggregator section
-Date:   Tue, 18 Feb 2020 16:18:12 +0100
-Message-Id: <20200218151812.7816-6-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200218151812.7816-1-geert+renesas@glider.be>
-References: <20200218151812.7816-1-geert+renesas@glider.be>
+        Tue, 18 Feb 2020 10:17:50 -0500
+Received: by mail-lj1-f196.google.com with SMTP id w1so23392607ljh.5
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 07:17:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=qWhEX9RKxhypnM5PPqWFOUyYSGe+pegPEe4K7fpUEmA=;
+        b=PzuGy0rlY3m0PILFANKBf4jU07YdevfnTGGFHMjs9F/K8E1yFdiUnUyvR7m8no03/h
+         3pCXn1X+ehHvBcC3Uc3QRYlT/ZjtUhn7I3SiF6yhssc/WTwymLNmQRg8b73Fcm/TzvJd
+         is/qIVvOqL9gFoekZwT0N9mvfC9j0pO39BjX7KBGYqJhCZFbnNX8EIAObEpnQl+Phcx7
+         zKYzVNXnUnHTB1ejNs/Rv9cu1w0ldFPqJDk7qgMGuFprB1XspaTqLRWZSbLGSb07BOOi
+         05unZ2B2QATKxlasmD2FOCEjp2WZ0CNF820QeigP/i2HUW6XVE+i6Uv6tjUzfJEQ9K6Q
+         23Xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=qWhEX9RKxhypnM5PPqWFOUyYSGe+pegPEe4K7fpUEmA=;
+        b=I7ftrIVfoUDYBOHTSlxmtMoPqttsySGKqTsHZoHidphTi1zFR/hUo/dPfcXIsF5fcv
+         7TojM+Z602vGs2WFcV41bNHTEI8ehOAX+iFMTWfz9j88Xgho4NL2jiYDtaDlNsNMW2BX
+         yTDR9muXLxjDGkBXUqf40Iq//hsJ+wRHlJz4ruskyuHn9ZrLUdR5+RLu2DJzpWEHjyJ7
+         I4aXzM8Sp7trioNMrKbrxLhzGbDiYM5I0TZS4o3N9JbatoBGmRB1XehwX3tVqoMG9m8H
+         5SHsUxiVcXX9Aks9lqS9wNp93TpJUDiYN9r5THm+dBGPywiB8GGD3gPA9hK6sPE/X9Xw
+         uTqg==
+X-Gm-Message-State: APjAAAVJJHytn93iXFZsgjJIXvrjxiHTniJlfIWNGI9J4OUIlCQiUTkS
+        J4Cgi8vqK+qhdR9TTrm7Kb9itQ==
+X-Google-Smtp-Source: APXvYqwmDGsCUfLrJ8biBI5KsgtzZAXb+nMk2XFsea2b0gKSENYf0OwiYFWttt/aHElu78KUASDZmg==
+X-Received: by 2002:a05:651c:239:: with SMTP id z25mr12797943ljn.48.1582039067743;
+        Tue, 18 Feb 2020 07:17:47 -0800 (PST)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id g15sm2747705ljk.8.2020.02.18.07.17.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2020 07:17:47 -0800 (PST)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 74291100FA3; Tue, 18 Feb 2020 18:18:13 +0300 (+03)
+Date:   Tue, 18 Feb 2020 18:18:13 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Qian Cai <cai@lca.pw>
+Cc:     Marco Elver <elver@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        syzbot <syzbot+c034966b0b02f94f7f34@syzkaller.appspotmail.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: [PATCH -next] fork: annotate a data race in vm_area_dup()
+Message-ID: <20200218151813.3yzzb2hzlmtbf5xg@box>
+References: <20200218103002.6rtjreyqjepo3yxe@box>
+ <93E6B243-9A0F-410C-8EE4-9D57E28AF5AF@lca.pw>
+ <CANpmjNO320YvGvUfBkWJFnv+QwZy=B0GG=WAMKv7ZOJ2UYFkPg@mail.gmail.com>
+ <1582038035.7365.93.camel@lca.pw>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1582038035.7365.93.camel@lca.pw>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a maintainership section for the GPIO Aggregator, covering
-documentation and driver source code.
+On Tue, Feb 18, 2020 at 10:00:35AM -0500, Qian Cai wrote:
+> On Tue, 2020-02-18 at 15:09 +0100, Marco Elver wrote:
+> > On Tue, 18 Feb 2020 at 13:40, Qian Cai <cai@lca.pw> wrote:
+> > > 
+> > > 
+> > > 
+> > > > On Feb 18, 2020, at 5:29 AM, Kirill A. Shutemov <kirill@shutemov.name> wrote:
+> > > > 
+> > > > I think I've got this:
+> > > > 
+> > > > vm_area_dup() blindly copies all fields of orignal VMA to the new one.
+> > > > This includes coping vm_area_struct::shared.rb which is normally protected
+> > > > by i_mmap_lock. But this is fine because the read value will be
+> > > > overwritten on the following __vma_link_file() under proper protectection.
+> > > 
+> > > Right, multiple processes could share the same file-based address space where those vma have been linked into address_space::i_mmap via vm_area_struct::shared.rb. Thus, the reader could see its shared.rb linkage pointers got updated by other processes.
+> > > 
+> > > > 
+> > > > So the fix is correct, but justificaiton is lacking.
+> > > > 
+> > > > Also, I would like to more fine-grained annotation: marking with
+> > > > data_race() 200 bytes copy may hide other issues.
+> > > 
+> > > That is the harder part where I don’t think we have anything for that today. Macro, any suggestions? ASSERT_IGNORE_FIELD()?
+> > 
+> > There is no nice interface I can think of. All options will just cause
+> > more problems, inconsistencies, or annoyances.
+> > 
+> > Ideally, to not introduce more types of macros and keep it consistent,
+> > ASSERT_EXCLUSIVE_FIELDS_EXCEPT(var, ...) maybe what you're after:
+> > "Check no concurrent writers to struct, except ignore the provided
+> > fields".
+> > 
+> > This option doesn't quite work, unless you just restrict it to 1 field
+> > (we can't use ranges, because e.g. vm_area_struct has
+> > __randomize_layout). The next time around, you'll want 2 fields, and
+> > it won't work. Also, do we know that 'shared.rb' is the only thing we
+> > want to ignore?
+> > 
+> > If you wanted something similar to ASSERT_EXCLUSIVE_BITS, it'd have to
+> > be ASSERT_EXCLUSIVE_FIELDS(var, ...), however, this is quite annoying
+> > for structs with many fields as you'd have to list all of them. It's
+> > similar to what you can already do currently (but I also don't
+> > recommend because it's unmaintainable):
+> > 
+> > ASSERT_EXCLUSIVE_WRITER(orig->vm_start);
+> > ASSERT_EXCLUSIVE_WRITER(orig->vm_end);
+> > ASSERT_EXCLUSIVE_WRITER(orig->vm_next);
+> > ASSERT_EXCLUSIVE_WRITER(orig->vm_prev);
+> > ... and so on ...
+> > *new = data_race(*orig);
+> > 
+> > Also note that vm_area_struct has __randomize_layout, which makes
+> > using ranges impossible. All in all, I don't see a terribly nice
+> > option.
+> > 
+> > If, however, you knew that there are 1 or 2 fields only that you want
+> > to make sure are not modified concurrently, ASSERT_EXCLUSIVE_WRITER +
+> > data_race() would probably work well (or even ASSERT_EXCLUSIVE_ACCESS
+> > if you want to make sure there are no writers nor _readers_).
+> 
+> I am testing an idea that just do,
+> 
+> lockdep_assert_held_write(&orig->vm_mm->mmap_sem);
+> *new = data_race(*orig);
+> 
+> The idea is that as long as we have the exclusive mmap_sem held in all paths
+> (auditing indicated so), no writer should be able to mess up our vm_area_struct
+> except the "shared.rb" field which has no harm.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
----
-v5:
-  - Add Reviewed-by, Tested-by,
+Well, some fields protected by page_table_lock and can be written to
+without exclusive mmap_sem. Probably even without any mmap_sem: pin
+mm_struct + page_table_lock should be enough.
 
-v4:
-  - Drop controversial GPIO repeater,
-
-v3:
-  - New.
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 634376400709d6e8..d39f550ab1555a87 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7128,6 +7128,13 @@ F:	Documentation/firmware-guide/acpi/gpio-properties.rst
- F:	drivers/gpio/gpiolib-acpi.c
- F:	drivers/gpio/gpiolib-acpi.h
- 
-+GPIO AGGREGATOR
-+M:	Geert Uytterhoeven <geert+renesas@glider.be>
-+L:	linux-gpio@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/admin-guide/gpio/gpio-aggregator.rst
-+F:	drivers/gpio/gpio-aggregator.c
-+
- GPIO IR Transmitter
- M:	Sean Young <sean@mess.org>
- L:	linux-media@vger.kernel.org
 -- 
-2.17.1
-
+ Kirill A. Shutemov
