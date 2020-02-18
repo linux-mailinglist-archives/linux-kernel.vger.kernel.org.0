@@ -2,237 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A420163385
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:53:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A09416338B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:55:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbgBRUxi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 15:53:38 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:22470 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726384AbgBRUxh (ORCPT
+        id S1726760AbgBRUzB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 15:55:01 -0500
+Received: from alln-iport-6.cisco.com ([173.37.142.93]:59652 "EHLO
+        alln-iport-6.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726380AbgBRUzA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 15:53:37 -0500
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01IKnivZ003632;
-        Tue, 18 Feb 2020 12:53:20 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
- subject : message-id : references : content-type :
- content-transfer-encoding : in-reply-to : mime-version; s=facebook;
- bh=ktI5qN853tuvj28oDz14ao7IsEFpf1M/e2VybvC0t5s=;
- b=XAnghUAEYq8qm2gaI8wIdC5vMxexuHBEIamnSp4zL4c4SLQLaPnZU2Ng518jXGWsJz1D
- qJ1ULu45V2lVjN8r18THRDBRSgf+v7pVLxmm3+Pv9g/rTLnf3o/t+6hR6xLPhNQcR/93
- WzCzF4Vwc0mzFxSUe5sRjuN1JtORkkx+IvE= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2y6f8vwprm-7
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 18 Feb 2020 12:53:20 -0800
-Received: from NAM02-CY1-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.35.172) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Tue, 18 Feb 2020 12:53:18 -0800
+        Tue, 18 Feb 2020 15:55:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=1420; q=dns/txt; s=iport;
+  t=1582059299; x=1583268899;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=qHGSPJYUWaP3FHLyCY4CRIua/3sd1BrFgdBFnK41Yx4=;
+  b=UqlUUDJl1uJxnjC9xL884FwsRxshEsCXqbp0MB9QnnRN3xFAweXYOP1E
+   gjRi2r+fTFbApzBUSSBXzB2KuxPS8scQrAl+7l4i4RA38YFqAPov5Q9GC
+   GtNLEqs1XtzxhwGLYkVpOVd9/+yEOpRyKSCkICzgy4K9JEMYoecJ+O3Bx
+   0=;
+IronPort-PHdr: =?us-ascii?q?9a23=3AYqPi3RF8biwuZc8osM4l0Z1GYnJ96bzpIg4Y7I?=
+ =?us-ascii?q?YmgLtSc6Oluo7vJ1Hb+e4z1Q3SRYuO7fVChqKWqK3mVWEaqbe5+HEZON0pNV?=
+ =?us-ascii?q?cejNkO2QkpAcqLE0r+efLjaS03GNtLfFRk5Hq8d0NSHZW2ag=3D=3D?=
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0BJAABBTkxe/4UNJK1mHAEBAQEBBwE?=
+ =?us-ascii?q?BEQEEBAEBgWcHAQELAYFTUAWBRCAECyoKh1ADhFqGH4JfjxaIe4EugSQDVAk?=
+ =?us-ascii?q?BAQEMAQEtAgQBAYRAAoIDJDQJDgIDDQEBBQEBAQIBBQRthTcMhWYBAQEBAxI?=
+ =?us-ascii?q?oBgEBNwEPAgEIDgYBAwkVEA8jJQIEDgUihU8DLgECol4CgTmIYoIngn8BAQW?=
+ =?us-ascii?q?FJxiCDAmBOAGMIxqBQT+EJD6ES4NCgiywDgqCO5ZNKA6bGC2KW4FrnTgCBAI?=
+ =?us-ascii?q?EBQIOAQEFgVI5gVhwFYMnUBgNjh0HewGCcIpTdIEpjSOBDQGBDwEB?=
+X-IronPort-AV: E=Sophos;i="5.70,457,1574121600"; 
+   d="scan'208";a="454746104"
+Received: from alln-core-11.cisco.com ([173.36.13.133])
+  by alln-iport-6.cisco.com with ESMTP/TLS/DHE-RSA-SEED-SHA; 18 Feb 2020 20:54:59 +0000
+Received: from XCH-RCD-002.cisco.com (xch-rcd-002.cisco.com [173.37.102.12])
+        by alln-core-11.cisco.com (8.15.2/8.15.2) with ESMTPS id 01IKsxsl002766
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=FAIL);
+        Tue, 18 Feb 2020 20:54:59 GMT
+Received: from xhs-aln-003.cisco.com (173.37.135.120) by XCH-RCD-002.cisco.com
+ (173.37.102.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 18 Feb
+ 2020 14:54:58 -0600
+Received: from xhs-rtp-001.cisco.com (64.101.210.228) by xhs-aln-003.cisco.com
+ (173.37.135.120) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 18 Feb
+ 2020 14:54:57 -0600
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (64.101.32.56) by
+ xhs-rtp-001.cisco.com (64.101.210.228) with Microsoft SMTP Server (TLS) id
+ 15.0.1473.3 via Frontend Transport; Tue, 18 Feb 2020 15:54:57 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UGwNjVfNSjm9jbviKDjEpUuNzNPS2y+YsdQII77nRIoPgwG2bSjwoDRZdbXuNVWJgxMCs2StQQQVNJY5t25zyn2I0t74e7GT+dqW3+WO3t2jaAjplFc+K+KH3xY9e02F5ECyEViMU9Ce3cmk5l2Kn+T3CVC1vwOSosfCl5nUG2LmILqQAMRx1Hi8u+fwH99/c1NkeXeeOlODYzZbd5R2hwanM/3vddH1wK6664XTx+z2I4+X3WAQAB0vBBPOY5AIHX5a8AwqtJoZdsAdfl5+YByGvBfDfsW1nVF5ox0t7uFIRMnJVL8WFBoey8yfgcH+ySle3ajBp++qjMAcutt7iQ==
+ b=dsnqm1lb/fj6IPrIexfJ98zZ1a33i4BRNAK59fkLc3CTEu+nbYom5Ctek/B8M42VLj+3HBX/Zzv1NdrZZYt4BZbfsUCV41ri7oGPCZNemxydm/hD5d+6aVScoyGYtNSWUlWIxdeW9UKHO7DDIlvvMpePrGlohV4Mj29bUaNQz6Ej+9mRu8i+6PLZQfQ2ULjO3HT+2w2kcEaPA5dN9bJFEb1gHTa/gF6uVLxnwaMiLwN8yQNHrKeNYncRJZ1Vjm+qSaWn94+Wly8lPsUIXC2xL/8wiJ7IHtOtl2W7QmQfzgQyxi5PJJS1E3JUhEkpnrxJ3PZRQL1zTCavz930sX4VUA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ktI5qN853tuvj28oDz14ao7IsEFpf1M/e2VybvC0t5s=;
- b=Pyc20xEfLRjWl7Pzyj5GjHqRoDQ0ot/jFYznCg+M8ZOd27axDM9QUoI5VUZljrMLY2a02D/XvLJ6ueNCzgn3SGDWfX0LUem4ICga+PXvEZl10GFpWxDzgMCJfOvy362rDJ/fy6ZVHsTOcUfJNLhljR0vu4ggjNXiRFSEEb9Rd3jpcT3/A29B01qlcXRcRq5Xoqc0X2aGhNPNxM+hzlGIc/8Vx4j6FBfh7hoqiPGwWNnlqpEXBquyU2xhhN0f96slJG1B/GHTdlOoc2baakVfbzL1URx/DsBpgW6WAmvhA5XXPM1gnsX+tr1jQcCnZUh0pKB0NC/KaK9z2XtU4rbDnQ==
+ bh=qHGSPJYUWaP3FHLyCY4CRIua/3sd1BrFgdBFnK41Yx4=;
+ b=X5SRpm4VST2vMBGGcwfDvX3oyX6KYo6MJLiGsucRXZZQ5F2lcz/Vx8XXE8OUJIhnl06xxz6NnfcwjgASxkADwASI5mD/mwnWxlPyH3wFe8TQDEjNhhTPH5POb2L8I8rACIDcrbvwU75nbTV1HvLablsE+u4D6n8QXO8RiBzCWPjrtWbUBI+Ud+L3xdGyaToO9HEdH86jmJwp24kWTp9mVKBsWcFlspOfefioopk+v8vF3AGwk4qUC98Cl6TpWozI65em9zNI7PDjKg6kkNfE0f0/Q8Ae35Ccvj1glHzWTD8l3HIK0YeAUKCLL5ogLKI2KOKBlYuGWjbSt3RsPheRHg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
+ smtp.mailfrom=cisco.com; dmarc=pass action=none header.from=cisco.com;
+ dkim=pass header.d=cisco.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cisco.onmicrosoft.com;
+ s=selector2-cisco-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ktI5qN853tuvj28oDz14ao7IsEFpf1M/e2VybvC0t5s=;
- b=QaGLgDBy6gQL2s9TLBueyxuJaS2OphwGXrzGm+OWLT9ZgKLZt6OzjFcQTrg9gQCCG8Clh/aWJhtXxmJcmlb21ePNV0z04HaVgCTwTukvrkbjrBJY6Y/2NwLElS0Gl6kbU+HgiBobkBB9f1hpEcYR0VWlDxCEqtUnEk5P2N+caIU=
-Received: from BYAPR15MB2631.namprd15.prod.outlook.com (20.179.155.147) by
- BYAPR15MB3189.namprd15.prod.outlook.com (20.179.56.91) with Microsoft SMTP
+ bh=qHGSPJYUWaP3FHLyCY4CRIua/3sd1BrFgdBFnK41Yx4=;
+ b=zswTTHb8s6by5x0imvoDTv6XURTPPMm1SiwDsE6Fsogw7kdi0AC/W4mWNMKy+SlBwPn8np8/lfHnB9pG+SBopVidMc5Wi8pFyipn72EuNWWczxf7/T4aqipz8ZvVYQDBSG1Q6cQQxaaBLdrG4XkapnVRVS/NRy+ZiaYO6hv9vJA=
+Received: from BYAPR11MB3205.namprd11.prod.outlook.com (20.177.187.32) by
+ BYAPR11MB2552.namprd11.prod.outlook.com (52.135.227.150) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2729.22; Tue, 18 Feb 2020 20:53:17 +0000
-Received: from BYAPR15MB2631.namprd15.prod.outlook.com
- ([fe80::ccb6:a331:77d8:d308]) by BYAPR15MB2631.namprd15.prod.outlook.com
- ([fe80::ccb6:a331:77d8:d308%7]) with mapi id 15.20.2729.032; Tue, 18 Feb 2020
- 20:53:17 +0000
-Date:   Tue, 18 Feb 2020 12:53:12 -0800
-From:   Roman Gushchin <guro@fb.com>
-To:     Wen Yang <wenyang@linux.alibaba.com>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Xunlei Pang <xlpang@linux.alibaba.com>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm/slub: Detach node lock from counting free objects
-Message-ID: <20200218205312.GA3156@carbon>
-References: <20200201031502.92218-1-wenyang@linux.alibaba.com>
- <20200212145247.bf89431272038de53dd9d975@linux-foundation.org>
- <b42f7daa-4aea-1cf8-5bbb-2cd5d48b4e9a@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b42f7daa-4aea-1cf8-5bbb-2cd5d48b4e9a@linux.alibaba.com>
-X-ClientProxiedBy: CO2PR07CA0053.namprd07.prod.outlook.com (2603:10b6:100::21)
- To BYAPR15MB2631.namprd15.prod.outlook.com (2603:10b6:a03:150::19)
-MIME-Version: 1.0
-Received: from carbon (2620:10d:c090:500::4:238) by CO2PR07CA0053.namprd07.prod.outlook.com (2603:10b6:100::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2729.23 via Frontend Transport; Tue, 18 Feb 2020 20:53:16 +0000
-X-Originating-IP: [2620:10d:c090:500::4:238]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 94ae379e-6254-4b21-2ce1-08d7b4b49463
-X-MS-TrafficTypeDiagnostic: BYAPR15MB3189:
-X-Microsoft-Antispam-PRVS: <BYAPR15MB318963581E6C7344D7E93553BE110@BYAPR15MB3189.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
-X-Forefront-PRVS: 031763BCAF
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(346002)(376002)(136003)(39860400002)(366004)(396003)(199004)(189003)(66476007)(66556008)(4326008)(66946007)(53546011)(2906002)(186003)(33716001)(16526019)(55016002)(86362001)(54906003)(1076003)(9686003)(5660300002)(8676002)(6666004)(478600001)(8936002)(52116002)(6496006)(81156014)(6916009)(316002)(9576002)(33656002)(81166006);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB3189;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: fb.com does not designate
+ 15.20.2750.17; Tue, 18 Feb 2020 20:54:56 +0000
+Received: from BYAPR11MB3205.namprd11.prod.outlook.com
+ ([fe80::89a6:9355:e6ba:832]) by BYAPR11MB3205.namprd11.prod.outlook.com
+ ([fe80::89a6:9355:e6ba:832%7]) with mapi id 15.20.2729.032; Tue, 18 Feb 2020
+ 20:54:56 +0000
+From:   "Daniel Walker (danielwa)" <danielwa@cisco.com>
+To:     David Miller <davem@davemloft.net>
+CC:     "zbr@ioremap.net" <zbr@ioremap.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drivers: connector: cn_proc: allow limiting certain
+ messages
+Thread-Topic: [PATCH] drivers: connector: cn_proc: allow limiting certain
+ messages
+Thread-Index: AQHV5p2t0fDeU99AI0q9taXpnYkWBg==
+Date:   Tue, 18 Feb 2020 20:54:56 +0000
+Message-ID: <20200218205441.GA24043@zorba>
+References: <20200217175209.GM24152@zorba>
+ <20200217.185235.495219494110132658.davem@davemloft.net>
+ <20200218163030.GR24152@zorba>
+ <20200218.123546.666027846950664712.davem@davemloft.net>
+In-Reply-To: <20200218.123546.666027846950664712.davem@davemloft.net>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=danielwa@cisco.com; 
+x-originating-ip: [128.107.241.188]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 035703d4-1127-467a-d0a5-08d7b4b4cfb1
+x-ms-traffictypediagnostic: BYAPR11MB2552:
+x-microsoft-antispam-prvs: <BYAPR11MB25522F1636E564EEBA346C56DD110@BYAPR11MB2552.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 031763BCAF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(7916004)(376002)(396003)(136003)(366004)(346002)(39860400002)(189003)(199004)(6506007)(81166006)(54906003)(15650500001)(186003)(26005)(316002)(81156014)(71200400001)(8936002)(6486002)(2906002)(5660300002)(86362001)(33656002)(6916009)(4326008)(1076003)(66446008)(6512007)(9686003)(66556008)(33716001)(66946007)(64756008)(478600001)(66476007)(76116006)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR11MB2552;H:BYAPR11MB3205.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: cisco.com does not designate
  permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: KLSejzSeFUIoUrDw56PnTCI07agx4SQmZd80eoOH+6IT2Ha/FSnkdYenFX+w2mw10GyxoCzPWdscU17pTGMbqMrayOKZbftYSMMuoaXqQDWu/4/VbXlKTaKlfNZh2R70+TYDMVKKMfThs0XfWGAjL/v+SqJkADpzbWV7SbVYkbN6LyE3P2vXu3gRJksWS3+siORcbGQB3CwQ0E6HFYF7H9RbUofnrtjDJQ7nlhuAQGG6Bup1Hi05HBtUk5cCCeCRfJ0tHdfidCrl8UscFmABOWtL7ZBp/9Yz2dF5mL4v7yruX5V+10zNfkC6b+GDtUJ9BJDs75GJhgNKht5QAeUPieDplot5GwarcFPwt/rKnh4MVmNqDt57qGv7jhod1DDKILjdmi4lzNnSDZrMCQKuDKu4KYrmTgesdeq2/ojJfMKJbZi81MivP4/xX20pAIMg
-X-MS-Exchange-AntiSpam-MessageData: 725vWGf83iTqpZjphBLZ/GZiF7rkH/D/BYVmpHSM+9JFkiDxtC4F9QgMEXi1T1+YN8AAw+4C6sAzwu5R1szMpWJwm3uY7VUokk6yQ1QA+7o7SO12/qvqVK3iJL1XglFm49SsHeta0Ggy5UsBnSAlAjAsV2jakMpEW7AzSor5tKN/lvJwMHNrl9mIi+yjKpBN
-X-MS-Exchange-CrossTenant-Network-Message-Id: 94ae379e-6254-4b21-2ce1-08d7b4b49463
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2020 20:53:17.6043
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 8V6a/tJGAn0OGbQ0GvAzfkYqb0JHknMU+B6esBno4XPTxtObwJgfDhrsVMwqknZfcoRdg/6SpU9GEYCnmdYYw1QavP0nYfuRlM5iT63vKOGYq7tOsPSNSoQCm3zhThbAC652P/fmLdK1HgsEMEDq06nMmWinoWOfGhVDXS3L8DEjCmQd/25lFAiEFTLh+ebY/hYtheMGiTtWCmBX7MQczWBAn0H1GdBolqrW3EVx21/op8wIVmPi1CCeNDiHDeRRrovuToYR+NluOO7eHVIfQD+zMqfFfQZulmgebMgPTBVepBeQJ+ozZ2c5aAuLpLN4FZu8bOdWWpT+EXtc3vVp9OQfK5li5Js3Sleh8w+d3Soo+Nyn5IyiNoMrApwRLzlhf/oY4KejcYMg8SUfOe302gXn5fOb4bwqEF6WM0I0HuIOARSLGF44kmorhinYDmPq
+x-ms-exchange-antispam-messagedata: TLBOgxvftujjv/RNloohRbX8mP8NKCrdobw9CYx+dqYsFxs5mihs8GxkyyMKcTKXEGnRShFnfc3MOkn6qpG3eBb7dioGubIYMhHAjkz7h34PRPom/PexZ3xKrBHO6x02Ne9HIgaD9DcqtJG6DMF6rw==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <B9CAB0FFB9ED6447B9838954E29F7DEF@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 035703d4-1127-467a-d0a5-08d7b4b4cfb1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2020 20:54:56.5745
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: q3x1E+oxa5QGnRA4QHu6DYz7O0+fM9oZLLLOSJQIieMpes7oVets7rAavD8UiRm+
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB3189
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-18_06:2020-02-18,2020-02-18 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 bulkscore=0
- mlxlogscore=999 lowpriorityscore=0 priorityscore=1501 malwarescore=0
- adultscore=0 clxscore=1011 spamscore=0 impostorscore=0 suspectscore=5
- mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002180137
-X-FB-Internal: deliver
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 5ae1af62-9505-4097-a69a-c1553ef7840e
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: mygS3wEShQe8jbY6PCyk9pNpcasDnxYP+i2z+sJPJbUT7Swgb+M8qDL4DOpeYATb753J7w2+QlraaSb6s96vpA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR11MB2552
+X-OriginatorOrg: cisco.com
+X-Outbound-SMTP-Client: 173.37.102.12, xch-rcd-002.cisco.com
+X-Outbound-Node: alln-core-11.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 16, 2020 at 12:15:54PM +0800, Wen Yang wrote:
-> 
-> 
-> On 2020/2/13 6:52 上午, Andrew Morton wrote:
-> > On Sat,  1 Feb 2020 11:15:02 +0800 Wen Yang <wenyang@linux.alibaba.com> wrote:
-> > 
-> > > The lock, protecting the node partial list, is taken when couting the free
-> > > objects resident in that list. It introduces locking contention when the
-> > > page(s) is moved between CPU and node partial lists in allocation path
-> > > on another CPU. So reading "/proc/slabinfo" can possibily block the slab
-> > > allocation on another CPU for a while, 200ms in extreme cases. If the
-> > > slab object is to carry network packet, targeting the far-end disk array,
-> > > it causes block IO jitter issue.
-> > > 
-> > > This fixes the block IO jitter issue by caching the total inuse objects in
-> > > the node in advance. The value is retrieved without taking the node partial
-> > > list lock on reading "/proc/slabinfo".
-> > > 
-> > > ...
-> > > 
-> > > @@ -1768,7 +1774,9 @@ static void free_slab(struct kmem_cache *s, struct page *page)
-> > >   static void discard_slab(struct kmem_cache *s, struct page *page)
-> > >   {
-> > > -	dec_slabs_node(s, page_to_nid(page), page->objects);
-> > > +	int inuse = page->objects;
-> > > +
-> > > +	dec_slabs_node(s, page_to_nid(page), page->objects, inuse);
-> > 
-> > Is this right?  dec_slabs_node(..., page->objects, page->objects)?
-> > 
-> > If no, we could simply pass the page* to inc_slabs_node/dec_slabs_node
-> > and save a function argument.
-> > 
-> > If yes then why?
-> > 
-> 
-> Thanks for your comments.
-> We are happy to improve this patch based on your suggestions.
-> 
-> 
-> When the user reads /proc/slabinfo, in order to obtain the active_objs
-> information, the kernel traverses all slabs and executes the following code
-> snippet:
-> static unsigned long count_partial(struct kmem_cache_node *n,
->                                         int (*get_count)(struct page *))
-> {
->         unsigned long flags;
->         unsigned long x = 0;
->         struct page *page;
-> 
->         spin_lock_irqsave(&n->list_lock, flags);
->         list_for_each_entry(page, &n->partial, slab_list)
->                 x += get_count(page);
->         spin_unlock_irqrestore(&n->list_lock, flags);
->         return x;
-> }
-> 
-> It may cause performance issues.
-> 
-> Christoph suggested "you could cache the value in the userspace application?
-> Why is this value read continually?", But reading the /proc/slabinfo is
-> initiated by the user program. As a cloud provider, we cannot control user
-> behavior. If a user program inadvertently executes cat /proc/slabinfo, it
-> may affect other user programs.
-> 
-> As Christoph said: "The count is not needed for any operations. Just for the
-> slabinfo output. The value has no operational value for the allocator
-> itself. So why use extra logic to track it in potentially performance
-> critical paths?"
-> 
-> In this way, could we show the approximate value of active_objs in the
-> /proc/slabinfo?
-> 
-> Based on the following information:
-> In the discard_slab() function, page->inuse is equal to page->total_objects;
-> In the allocate_slab() function, page->inuse is also equal to
-> page->total_objects (with one exception: for kmem_cache_node, page-> inuse
-> equals 1);
-> page->inuse will only change continuously when the obj is constantly
-> allocated or released. (This should be the performance critical path
-> emphasized by Christoph)
-> 
-> When users query the global slabinfo information, we may use total_objects
-> to approximate active_objs.
+On Tue, Feb 18, 2020 at 12:35:46PM -0800, David Miller wrote:
+> From: "Daniel Walker (danielwa)" <danielwa@cisco.com>
+> Date: Tue, 18 Feb 2020 16:30:36 +0000
+>=20
+> > It's multicast and essentially broadcast messages .. So everyone gets e=
+very
+> > message, and once it's on it's likely it won't be turned off. Given tha=
+t, It seems
+> > appropriate that the system administrator has control of what messages =
+if any
+> > are sent, and it should effect all listening for messages.
+> >=20
+> > I think I would agree with you if this was unicast, and each listener c=
+ould tailor
+> > what messages they want to get. However, this interface isn't that, and=
+ it would
+> > be considerable work to convert to that.
+>=20
+> You filter at recvmsg() on the specific socket, multicast or not, I
+> don't understand what the issue is.
 
-Well, from one point of view, it makes no sense, because the ratio between
-these two numbers is very meaningful: it's the slab utilization rate.
+Cisco tried something like this (I don't know if it was exactly what your r=
+eferring to),
+and it was messy and fairly complicated for a simple interface. In fact it =
+was
+the first thing I suggested for Cisco.
 
-On the other side, with enabled per-cpu partial lists active_objs has
-nothing to do with the reality anyway, so I agree with you, calling
-count_partial() is almost useless.
+I'm not sure why Connector has to supply an exact set of messages, one coul=
+d
+just make a whole new kernel module hooked into netlink sending a different
+subset of connector messages. The interface eats up CPU and slows the
+system if it's sending messages your just going to ignore. I'm sure the
+filtering would also slows down the system.
 
-That said, I wonder if the right thing to do is something like the patch below?
-
-Thanks!
-
-Roman
-
---
-
-diff --git a/mm/slub.c b/mm/slub.c
-index 1d644143f93e..ba0505e75ecc 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -2411,14 +2411,16 @@ static inline unsigned long node_nr_objs(struct kmem_cache_node *n)
- static unsigned long count_partial(struct kmem_cache_node *n,
-                                        int (*get_count)(struct page *))
- {
--       unsigned long flags;
-        unsigned long x = 0;
-+#ifdef CONFIG_SLUB_CPU_PARTIAL
-+       unsigned long flags;
-        struct page *page;
- 
-        spin_lock_irqsave(&n->list_lock, flags);
-        list_for_each_entry(page, &n->partial, slab_list)
-                x += get_count(page);
-        spin_unlock_irqrestore(&n->list_lock, flags);
-+#endif
-        return x;
- }
- #endif /* CONFIG_SLUB_DEBUG || CONFIG_SYSFS */
-
+Daniel=
