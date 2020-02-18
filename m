@@ -2,96 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6477E162227
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 09:22:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94CF516222C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 09:26:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726264AbgBRIWs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 03:22:48 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:13844 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726105AbgBRIWs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 03:22:48 -0500
-X-UUID: 3923b5bdecd74763b460bd7dc9a86b7f-20200218
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=SfaeYyzD1vskIHsIX3CHP6DvU8UKTsX3PGwgpB+tsvc=;
-        b=mVf66q9caClDpvIVT7XpzG1PZLpTugIeklyrENikbbWCe88V8ZUSqYDnJ/FM65a8FTiEeBSkR4or2kQYIVUXA+Prp5pf4UZPj7CbYIdGy8MadR+o1djiyBN+N9gIAQDtxnqjhBb3VHIf4ziOQuT7HbYR114CQcRJ+LxH/ntw9y8=;
-X-UUID: 3923b5bdecd74763b460bd7dc9a86b7f-20200218
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 369555937; Tue, 18 Feb 2020 16:22:43 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 18 Feb 2020 16:22:07 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 18 Feb 2020 16:22:24 +0800
-Message-ID: <1582014162.20566.2.camel@mtksdaap41>
-Subject: Re: [PATCH 2/3] drm/mediatek: make sure previous message done or be
- aborted before send
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
-CC:     David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        YT Shen <yt.shen@mediatek.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>, <tfiga@chromium.org>,
-        <drinkcat@chromium.org>, <linux-kernel@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>
-Date:   Tue, 18 Feb 2020 16:22:42 +0800
-In-Reply-To: <1581662912.17949.4.camel@mtksdaap41>
-References: <20200214044954.16923-1-bibby.hsieh@mediatek.com>
-         <20200214044954.16923-2-bibby.hsieh@mediatek.com>
-         <1581662912.17949.4.camel@mtksdaap41>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1726339AbgBRI0L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 03:26:11 -0500
+Received: from first.geanix.com ([116.203.34.67]:59508 "EHLO first.geanix.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726180AbgBRI0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 03:26:11 -0500
+Received: from localhost (unknown [193.163.1.7])
+        by first.geanix.com (Postfix) with ESMTPSA id 022A1C0025;
+        Tue, 18 Feb 2020 08:25:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=geanix.com; s=first;
+        t=1582014320; bh=/5PMdnbcZEmMSf5cYP0ZOMULsq12k2qzbPlGi8rrhgU=;
+        h=From:To:Cc:Subject:Date;
+        b=ZgWAOP0Hylu0LjKdn3Be7eQFCzflLQxHlbF9uN5ym2/rCl6O/6VcuXiWzoCWPi7um
+         VuwNlDTMwWLPnF3jARudkJRYDPOEcX0SNjE1foTw3ezYopjP7ZHlLG2CJ1ADDZNuiJ
+         nyWO8ROCLMvNKZvk93KqX4SH7RIK+9UpcGQLUIQTzauvPCtKqVTmMgNbO3J7zGakb9
+         QcB6UZr9jKQiv4JCpCc1dG8VK/LydOeIQM7I2FobwSwod2xomL4oGBcQcMKWwrGdnl
+         OwoihCxFENs1TfKNVjtHvah/xoG5ucszhw/2PzirGJjgSRsWRavT8WW4C3PcI6n0/3
+         FRiDfyPSgmKWw==
+From:   Esben Haabendal <esben@geanix.com>
+To:     netdev@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Andrew Lunn <andrew@lunn.ch>,
+        "David S . Miller" <davem@davemloft.net>,
+        Michal Simek <michal.simek@xilinx.com>,
+        =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>
+Subject: [PATCH 0/8] net: ll_temac: Bugfixes and ethtool support
+Date:   Tue, 18 Feb 2020 09:26:07 +0100
+Message-Id: <20200218082607.7035-1-esben@geanix.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-X-TM-SNTS-SMTP: 971137264DABD4948DC8DF38BF36DD743309BA80C941579AAD6973CA1A1390162000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=1.0 required=4.0 tests=BAYES_50,DKIM_INVALID,
+        DKIM_SIGNED,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=disabled
+        version=3.4.3
+X-Spam-Level: *
+X-Spam-Checker-Version: SpamAssassin 3.4.3 (2019-12-06) on eb9da72b0f73
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIEJpYmJ5Og0KDQpPbiBGcmksIDIwMjAtMDItMTQgYXQgMTQ6NDggKzA4MDAsIENLIEh1IHdy
-b3RlOg0KPiBIaSwgQmliYnk6DQo+IA0KPiBPbiBGcmksIDIwMjAtMDItMTQgYXQgMTI6NDkgKzA4
-MDAsIEJpYmJ5IEhzaWVoIHdyb3RlOg0KPiA+IE1lZGlhdGVrIENNRFEgZHJpdmVyIHJlbW92ZWQg
-YXRvbWljIHBhcmFtZXRlciBhbmQgaW1wbGVtZW50YXRpb24NCj4gPiByZWxhdGVkIHRvIGF0b21p
-Yy4gRFJNIGRyaXZlciBuZWVkIHRvIG1ha2Ugc3VyZSBwcmV2aW91cyBtZXNzYWdlDQo+ID4gZG9u
-ZSBvciBiZSBhYm9ydGVkIGJlZm9yZSB3ZSBzZW5kIG5leHQgbWVzc2FnZS4NCj4gPiANCj4gPiBJ
-ZiBwcmV2aW91cyBtZXNzYWdlIGlzIHN0aWxsIHdhaXRpbmcgZm9yIGV2ZW50LCBpdCBtZWFucyB0
-aGUNCj4gPiBzZXR0aW5nIGhhc24ndCBiZWVuIHVwZGF0ZWQgaW50byBkaXNwbGF5IGhhcmR3YXJl
-IHJlZ2lzdGVyLA0KPiA+IHdlIGNhbiBhYm9ydCB0aGUgbWVzc2FnZSBhbmQgc2VuZCBuZXh0IG1l
-c3NhZ2UgdG8gdXBkYXRlIHRoZQ0KPiA+IG5ld2VzdCBzZXR0aW5nIGludG8gZGlzcGxheSBoYXJk
-d2FyZS4NCj4gPiBJZiBwcmV2aW91cyBtZXNzYWdlIGFscmVhZHkgc3RhcnRlZCwgd2UgaGF2ZSB0
-byB3YWl0IGl0IHVudGlsDQo+ID4gdHJhbnNtaXNzaW9uIGhhcyBiZWVuIGNvbXBsZXRlZC4NCj4g
-PiANCj4gPiBTbyB3ZSBmbHVzaCBtYm94IGNsaWVudCBiZWZvcmUgd2Ugc2VuZCBuZXcgbWVzc2Fn
-ZSB0byBjb250cm9sbGVyDQo+ID4gZHJpdmVyLg0KPiA+IA0KPiANCj4gUmV2aWV3ZWQtYnk6IENL
-IEh1IDxjay5odUBtZWRpYXRlay5jb20+DQo+IA0KPiA+IFRoaXMgcGF0Y2ggZGVwZW5kcyBvbiBw
-dGFjaDoNCj4gPiBbMC8zXSBSZW1vdmUgYXRvbWljX2V4ZWMNCj4gPiBodHRwczovL3BhdGNod29y
-ay5rZXJuZWwub3JnL2NvdmVyLzExMzgxNjc3Lw0KPiA+IA0KDQpUaGlzIHBhdGNoIGRvZXMgbm90
-IGRlcGVuZCBvbiBhbnkgcGF0Y2gsIHNvIGFwcGxpZWQgdG8NCm1lZGlhdGVrLWRybS1maXhlcy01
-LjYgWzFdLCB0aGFua3MuDQoNClsxXQ0KaHR0cHM6Ly9naXRodWIuY29tL2NraHUtbWVkaWF0ZWsv
-bGludXguZ2l0LXRhZ3MvY29tbWl0cy9tZWRpYXRlay1kcm0tZml4ZXMtNS42DQoNClJlZ2FyZHMs
-DQpDSw0KDQo+ID4gU2lnbmVkLW9mZi1ieTogQmliYnkgSHNpZWggPGJpYmJ5LmhzaWVoQG1lZGlh
-dGVrLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1f
-Y3J0Yy5jIHwgMSArDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKQ0KPiA+IA0K
-PiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9jcnRjLmMg
-Yi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9jcnRjLmMNCj4gPiBpbmRleCAzYzUz
-ZWEyMjIwOGMuLmUzNWI2NmM1YmEwZiAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0v
-bWVkaWF0ZWsvbXRrX2RybV9jcnRjLmMNCj4gPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0
-ZWsvbXRrX2RybV9jcnRjLmMNCj4gPiBAQCAtNDkxLDYgKzQ5MSw3IEBAIHN0YXRpYyB2b2lkIG10
-a19kcm1fY3J0Y19od19jb25maWcoc3RydWN0IG10a19kcm1fY3J0YyAqbXRrX2NydGMpDQo+ID4g
-IAl9DQo+ID4gICNpZiBJU19FTkFCTEVEKENPTkZJR19NVEtfQ01EUSkNCj4gPiAgCWlmIChtdGtf
-Y3J0Yy0+Y21kcV9jbGllbnQpIHsNCj4gPiArCQltYm94X2ZsdXNoKG10a19jcnRjLT5jbWRxX2Ns
-aWVudC0+Y2hhbiwgMjAwMCk7DQo+ID4gIAkJY21kcV9oYW5kbGUgPSBjbWRxX3BrdF9jcmVhdGUo
-bXRrX2NydGMtPmNtZHFfY2xpZW50LCBQQUdFX1NJWkUpOw0KPiA+ICAJCWNtZHFfcGt0X2NsZWFy
-X2V2ZW50KGNtZHFfaGFuZGxlLCBtdGtfY3J0Yy0+Y21kcV9ldmVudCk7DQo+ID4gIAkJY21kcV9w
-a3Rfd2ZlKGNtZHFfaGFuZGxlLCBtdGtfY3J0Yy0+Y21kcV9ldmVudCk7DQo+IA0KDQo=
+Patch 1-4 brings fixes a number of bugs observed.
+Patch 5-6 are simple cleanup, removing two unused struct fields.
+Patch 7-8 add ethtool support for controlling rx and tx ring sizes and irq
+coalesce parameters.
+
+Esben Haabendal (9):
+  net: ll_temac: Fix race condition causing TX hang
+  net: ll_temac: Add more error handling of dma_map_single() calls
+  net: ll_temac: Fix RX buffer descriptor handling on GFP_ATOMIC
+    pressure
+  net: ll_temac: Handle DMA halt condition caused by buffer underrun
+  net: ll_temac: Remove unused tx_bd_next struct field
+  net: ll_temac: Remove unused start_p variable
+  net: ll_temac: Make RX/TX ring sizes configurable
+  net: ll_temac: Add ethtool support for coalesce parameters
+
+ drivers/net/ethernet/xilinx/ll_temac.h      |  12 +-
+ drivers/net/ethernet/xilinx/ll_temac_main.c | 435 ++++++++++++++++----
+ 2 files changed, 367 insertions(+), 80 deletions(-)
+
+-- 
+2.25.0
 
