@@ -2,98 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 636701634A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 22:19:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 935111634AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 22:20:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbgBRVTH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 16:19:07 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:36638 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726482AbgBRVTH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 16:19:07 -0500
-Received: by mail-ot1-f65.google.com with SMTP id j20so21025780otq.3;
-        Tue, 18 Feb 2020 13:19:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CEprnubCzTtFH2kEj0Xp6JjvSDETKIIdT0CSWCcyBW8=;
-        b=kVcMOGKK5ExNa6TDJDa9BGTQlzGFL/VLnDKPpTkKNjGmfcH95A+aaXdrlTR4ghQ7bz
-         jGk+llPxh8w1aWQ4uR7xpaXD1n7+eq4o7TpVKfnCoTTeCM8IBatCivOC6IDyJNyDBz+V
-         sBHEGLr3jEi4j3HWYlJS5xW3L0tfodeKB6SLd+Rbg7yYVnE7XIP2cj7bO+5hakPNjtZk
-         ZWjvQBGkVd1Co1x0CkBYEtejCh/8vom1ryZFo9jNnZCog5qBHhn0yfvhRiHPmb4fTsDv
-         L44CcIXT61C69acyuWlpjvYrsDXc40xYGFp6rEDyZJe2dL72dkSLki3juyhXrroSZwpf
-         0VHg==
-X-Gm-Message-State: APjAAAWwxUmOFQ+wbDSCQOqKGJKtyg++OMVOqPJYVPk+EJdkNrA48iZr
-        TpW2zBX+AVguiLyPW0Rv1g==
-X-Google-Smtp-Source: APXvYqybXVyGew1U/Qdm6Ql5rJ3ez5H4g1Nw7s9ewtILrIB0urAUCtN7DUY4qOUY25SltRSFxq4zqQ==
-X-Received: by 2002:a05:6830:139a:: with SMTP id d26mr17893745otq.75.1582060746503;
-        Tue, 18 Feb 2020 13:19:06 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id p65sm10876oif.47.2020.02.18.13.19.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2020 13:19:05 -0800 (PST)
-Received: (nullmailer pid 22622 invoked by uid 1000);
-        Tue, 18 Feb 2020 21:19:05 -0000
-Date:   Tue, 18 Feb 2020 15:19:05 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Akash Asthana <akashast@codeaurora.org>
-Cc:     robh+dt@kernel.org, agross@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mgautam@codeaurora.org,
-        rojay@codeaurora.org, skakit@codeaurora.org, swboyd@chromium.org,
-        Akash Asthana <akashast@codeaurora.org>
-Subject: Re: [PATCH V4 1/3] dt-bindings: geni-se: Convert QUP geni-se
- bindings to YAML
-Message-ID: <20200218211905.GA22559@bogus>
-References: <1581932212-19469-1-git-send-email-akashast@codeaurora.org>
- <1581932212-19469-2-git-send-email-akashast@codeaurora.org>
+        id S1727161AbgBRVT5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 16:19:57 -0500
+Received: from foss.arm.com ([217.140.110.172]:34482 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726339AbgBRVT5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 16:19:57 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A43351FB;
+        Tue, 18 Feb 2020 13:19:56 -0800 (PST)
+Received: from [10.0.2.15] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D952D3F68F;
+        Tue, 18 Feb 2020 13:19:54 -0800 (PST)
+Subject: Re: [PATCH v2 4/5] sched/pelt: Add a new runnable average signal
+To:     Vincent Guittot <vincent.guittot@linaro.org>, mingo@redhat.com,
+        peterz@infradead.org, juri.lelli@redhat.com,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        mgorman@suse.de, linux-kernel@vger.kernel.org
+Cc:     pauld@redhat.com, parth@linux.ibm.com, hdanton@sina.com
+References: <20200214152729.6059-1-vincent.guittot@linaro.org>
+ <20200214152729.6059-5-vincent.guittot@linaro.org>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <4cda8dc3-f6bb-2896-c899-65eadd5c839d@arm.com>
+Date:   Tue, 18 Feb 2020 21:19:16 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1581932212-19469-2-git-send-email-akashast@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200214152729.6059-5-vincent.guittot@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Feb 2020 15:06:50 +0530, Akash Asthana wrote:
-> Convert QUP geni-se bindings to DT schema format using json-schema.
+On 14/02/2020 15:27, Vincent Guittot wrote:
+> Now that runnable_load_avg has been removed, we can replace it by a new
+> signal that will highlight the runnable pressure on a cfs_rq. This signal
+> track the waiting time of tasks on rq and can help to better define the
+> state of rqs.
 > 
-> Signed-off-by: Akash Asthana <akashast@codeaurora.org>
-> ---
-> Changes in V2:
->  - As per Stephen's comment corrected defintion of interrupts for UART node.
->    Any valid UART node must contain atleast 1 interrupts.
+> At now, only util_avg is used to define the state of a rq:
+>   A rq with more that around 80% of utilization and more than 1 tasks is
+>   considered as overloaded.
 > 
-> Changes in V3:
->  - As per Rob's comment, added number of reg entries for reg property.
->  - As per Rob's comment, corrected unit address to hex.
->  - As per Rob's comment, created a pattern which matches everything common
->    to geni based I2C, SPI and UART controller and then one pattern  for each.
->  - As per Rob's comment, restored original example.
+> But the util_avg signal of a rq can become temporaly low after that a task
+> migrated onto another rq which can bias the classification of the rq.
 > 
-> Changes in V4:
->  - Resolve below compilation error reported from bot.
+> When tasks compete for the same rq, their runnable average signal will be
+> higher than util_avg as it will include the waiting time and we can use
+> this signal to better classify cfs_rqs.
 > 
-> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/soc/qcom/
-> qcom,geni-se.yaml: properties:clocks:minItems: False schema does not allow 2
-> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/soc/qcom/
-> qcom,geni-se.yaml: properties:clocks:maxItems: False schema does not allow 2
-> Documentation/devicetree/bindings/Makefile:12: recipe for target
-> 'Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.example.dts' failed
-> make[1]: *** [Documentation/devicetree/bindings/soc/qcom/
-> qcom,geni-se.example.dts] Error 1
-> Makefile:1263: recipe for target 'dt_binding_check' failed
-> make: *** [dt_binding_check] Error 2
-> 
->  .../devicetree/bindings/soc/qcom/qcom,geni-se.txt  |  94 ---------
->  .../devicetree/bindings/soc/qcom/qcom,geni-se.yaml | 209 +++++++++++++++++++++
->  2 files changed, 209 insertions(+), 94 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
->  create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.yaml
+> The new runnable_avg will track the runnable time of a task which simply
+> adds the waiting time to the running time. The runnable _avg of cfs_rq
+> will be the /Sum of se's runnable_avg and the runnable_avg of group entity
+> will follow the one of the rq similarly to util_avg.
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+I did a bit of playing around with tracepoints and it seems to be behaving
+fine. For instance, if I spawn 12 always runnable tasks (sysbench --test=cpu)
+on my Juno (6 CPUs), I get to a system-wide runnable value (\Sum cpu_runnable())
+of about 12K. I've only eyeballed them, but migration of the signal values
+seem fine too.
+
+I have a slight worry that the rq-wide runnable signal might be too easy to
+inflate, since we aggregate for *all* runnable tasks, and that may not play
+well with your group_is_overloaded() change (despite having the imbalance_pct
+on the "right" side).
+
+In any case I'll need to convince myself of it with some messing around, and
+this concerns patch 5 more than patch 4. So FWIW for this one:
+
+Tested-by: Valentin Schneider <valentin.schneider@arm.com>
+
+I also have one (two) more nit(s) below.
+
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> ---
+> diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
+> @@ -227,14 +231,14 @@ ___update_load_sum(u64 now, struct sched_avg *sa,
+>  	 * Step 1: accumulate *_sum since last_update_time. If we haven't
+>  	 * crossed period boundaries, finish.
+>  	 */
+> -	if (!accumulate_sum(delta, sa, load, running))
+> +	if (!accumulate_sum(delta, sa, load, runnable, running))
+>  		return 0;
+>  
+>  	return 1;
+>  }
+>  
+>  static __always_inline void
+> -___update_load_avg(struct sched_avg *sa, unsigned long load)
+> +___update_load_avg(struct sched_avg *sa, unsigned long load, unsigned long runnable)
+>  {
+>  	u32 divider = LOAD_AVG_MAX - 1024 + sa->period_contrib;
+>  
+> @@ -242,6 +246,7 @@ ___update_load_avg(struct sched_avg *sa, unsigned long load)
+>  	 * Step 2: update *_avg.
+>  	 */
+>  	sa->load_avg = div_u64(load * sa->load_sum, divider);
+> +	sa->runnable_avg =	div _u64(runnable * sa->runnable_sum, divider);
+                          ^^^^^^        ^^^^^^^^
+                            a)             b)
+a) That's a tab
+
+b) The value being passed is always 1, do we really need it to expose it as a
+   parameter?
