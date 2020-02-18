@@ -2,125 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C795162616
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 13:26:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12256162612
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 13:25:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726648AbgBRM0T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 07:26:19 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10638 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726422AbgBRM0S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 07:26:18 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id D4EEA935B4138836A188;
-        Tue, 18 Feb 2020 20:25:07 +0800 (CST)
-Received: from [127.0.0.1] (10.177.223.23) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Tue, 18 Feb 2020
- 20:24:58 +0800
-Subject: Re: [PATCH] bus: fsl-mc: Add ACPI support for fsl-mc
-To:     "Pankaj Bansal (OSS)" <pankaj.bansal@oss.nxp.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC:     Marc Zyngier <maz@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Makarand Pawagi <makarand.pawagi@nxp.com>,
-        Calvin Johnson <calvin.johnson@nxp.com>,
-        "stuyoder@gmail.com" <stuyoder@gmail.com>,
-        "nleeder@codeaurora.org" <nleeder@codeaurora.org>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Cristi Sovaiala <cristian.sovaiala@nxp.com>,
-        "Will Deacon" <will@kernel.org>,
-        "jon@solid-run.com" <jon@solid-run.com>,
-        "Russell King" <linux@armlinux.org.uk>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andy Wang <Andy.Wang@arm.com>, Varun Sethi <V.Sethi@nxp.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Paul Yang <Paul.Yang@arm.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Shameerali Kolothum Thodi 
-        <shameerali.kolothum.thodi@huawei.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>
-References: <VI1PR04MB5135D7D8597D33DB76DA05BDB0110@VI1PR04MB5135.eurprd04.prod.outlook.com>
-From:   Hanjun Guo <guohanjun@huawei.com>
-Message-ID: <615c6807-c018-92c9-b66a-8afdda183699@huawei.com>
-Date:   Tue, 18 Feb 2020 20:24:56 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S1726594AbgBRMZl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 07:25:41 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:54694 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726445AbgBRMZl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 07:25:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582028739;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=zUALy/6rw/WQITi6JawN9LYVRine+PJ4kFmYbzQ+Tno=;
+        b=Oht+dw0UVf6hNNCZeVStNhn2Lp5WFgPa9zhrLerzzudFk4XL5ClitIvq5zyKwHymO6wp+/
+        zZ9r0O9KxOaPIcs3/GPaFCtfCjcn+g+K2mWDD61g435NAYnXCp9Ubb4jKTH8UblZmnqmv6
+        h930uwpdFKM2rocFcnGViR04i5PnoHw=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-365-wkp7d5xsN-64sONjtk22uw-1; Tue, 18 Feb 2020 07:25:35 -0500
+X-MC-Unique: wkp7d5xsN-64sONjtk22uw-1
+Received: by mail-wr1-f70.google.com with SMTP id w6so10720187wrm.16
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 04:25:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=zUALy/6rw/WQITi6JawN9LYVRine+PJ4kFmYbzQ+Tno=;
+        b=Z0hyxXfqOKtuQm0ws3/2hg8uss1CNGJPVWrWsCZMNoer6rcKojvbS7ie+lPmpyvJRV
+         j9fWgbwK7pr1ScRE4ecQwM6AEVlGKqzjdenDuqbQdMR0TO5Gkq/CK6y7GSTGxmeEVV2k
+         THrH9cNteup3s71DKwKvyEPtwIKdsGZMmveUTfdjQPs22GJM237JcC8b4yROz9iIzYmj
+         5yNDl9iF+UGUapysrKFu0k/53+16UHXAAlwCB+XfA0EoC2jLbNmmxHY/1TPwPsVQYPlb
+         L8JE84jRpIlNERzOI9+ieJ0upvBklq/USPt6/kJUPCBSoZ77OqQVMBUncSMKOxfvG3CG
+         bIrQ==
+X-Gm-Message-State: APjAAAXtmLfS09ZbvkYLgNydmVVeClxrgNomnm9A2pxOCHPpEYBtsJiO
+        9JPK4x6PM47rppw661hzMw401DXdF8GuF8usFMTWog4d3GHV3kPbG0ubYGEStDZHmCCq3hFT+dz
+        QdrFpSLmnARYgom/dAfphOv/U
+X-Received: by 2002:adf:d84c:: with SMTP id k12mr29071459wrl.96.1582028734673;
+        Tue, 18 Feb 2020 04:25:34 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxhU8pdbXEFSvaSqszpm3vIy1yZrm2dReINqHQSVvV2IHiG18n2f1rI2hRMmHYcZjp8GImIvg==
+X-Received: by 2002:adf:d84c:: with SMTP id k12mr29071436wrl.96.1582028734500;
+        Tue, 18 Feb 2020 04:25:34 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id z10sm3232941wmk.31.2020.02.18.04.25.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2020 04:25:34 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     linmiaohe <linmiaohe@huawei.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
+        pbonzini@redhat.com, rkrcmar@redhat.com,
+        sean.j.christopherson@intel.com, wanpengli@tencent.com,
+        jmattson@google.com, joro@8bytes.org, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, hpa@zytor.com
+Subject: Re: [PATCH] KVM: VMX: replace "fall through" with "return true" to indicate different case
+In-Reply-To: <1581997168-20350-1-git-send-email-linmiaohe@huawei.com>
+References: <1581997168-20350-1-git-send-email-linmiaohe@huawei.com>
+Date:   Tue, 18 Feb 2020 13:25:33 +0100
+Message-ID: <87wo8k84le.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <VI1PR04MB5135D7D8597D33DB76DA05BDB0110@VI1PR04MB5135.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.223.23]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pankaj,
+linmiaohe <linmiaohe@huawei.com> writes:
 
-On 2020/2/18 16:00, Pankaj Bansal (OSS) wrote:
-[...]
->>>> Side note: would you mind removing the email headers (as above) in your
->>>> replies please ?
->>
->> Read the question above please.
->>
->> [...]
->>
->>>>> As stated above, in Linux MC is a bus (just like PCI bus, AMBA bus etc)
->>>>> There can be multiple devices attached to this bus. Moreover, we can
->>>> dynamically create/destroy these devices.
->>>>> Now, we want to represent this BUS (not individual devices connected to
->> bus)
->>>> in IORT table.
->>>>> The only possible way right now we see is that we describe it as Named
->>>> components having a pool of ID mappings.
->>>>> As and when devices are created and attached to bus, we sift through this
->> pool
->>>> to correctly determine the output ID for the device.
->>>>> Now the input ID that we provide, can come from device itself.
->>>>> Then we can use the Platform MSI framework for MC bus devices.
->>>>
->>>> So are you asking me if that's OK ? Or there is something you can't
->>>> describe with IORT ?
->>>
->>> I am asking if that would be acceptable?
->>> i.e. we represent MC bus as Named component is IORT table with a pool of IDs
->> (without single ID mapping flag)
->>> and then we use the Platform MSI framework for all children devices of MC
->> bus.
->>> Note that it would require the Platform MSI layer to correctly pass an input id
->> for a platform device to IORT layer.
->>
->> How is this solved in DT ? You don't seem to need any DT binding on top
->> of the msi-parent property, which is equivalent to IORT single mappings
->> AFAICS so I would like to understand the whole DT flow (so that I
->> understand how this FSL bus works) before commenting any further.
-> 
-> In DT case, we create the domain DOMAIN_BUS_FSL_MC_MSI for MC bus and it's children.
-> And then when MC child device is created, we search the "msi-parent" property from the MC
-> DT node and get the ITS associated with MC bus. Then we search DOMAIN_BUS_FSL_MC_MSI
-> on that ITS. Once we find the domain, we can call msi_domain_alloc_irqs for that domain.
-> 
-> This is exactly what we tried to do initially with ACPI. But the searching DOMAIN_BUS_FSL_MC_MSI
-> associated to an ITS, is something that is part of drivers/acpi/arm64/iort.c.
-> (similar to DOMAIN_BUS_PLATFORM_MSI and DOMAIN_BUS_PCI_MSI)
+> From: Miaohe Lin <linmiaohe@huawei.com>
+>
+> The second "/* fall through */" in rmode_exception() makes code harder to
+> read. Replace it with "return true" to indicate they are different cases
+> and also this improves the readability.
+>
+> Suggested-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+> ---
+>  arch/x86/kvm/vmx/vmx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index a13368b2719c..c5bcbbada2db 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -4495,7 +4495,7 @@ static bool rmode_exception(struct kvm_vcpu *vcpu, int vec)
+>  		if (vcpu->guest_debug &
+>  			(KVM_GUESTDBG_SINGLESTEP | KVM_GUESTDBG_USE_HW_BP))
+>  			return false;
+> -		/* fall through */
+> +		return true;
+>  	case DE_VECTOR:
+>  	case OF_VECTOR:
+>  	case BR_VECTOR:
 
-Can you have a look at mbigen driver (drivers/irqchip/irq-mbigen.c) to see if
-it helps you?
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-mbigen is an irq converter to convert device's wired interrupts into MSI
-(connecting to ITS), which will alloc a bunch of MSIs from ITS platform MSI
-domain at the setup.
+Thanks!
 
-Thanks
-Hanjun
+-- 
+Vitaly
 
