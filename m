@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4785B1631EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:06:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C600F16313D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:01:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729118AbgBRUDg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 15:03:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44730 "EHLO mail.kernel.org"
+        id S1728294AbgBRT6s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 14:58:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36610 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728964AbgBRUD2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 15:03:28 -0500
+        id S1727906AbgBRT6p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 14:58:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62D5221D56;
-        Tue, 18 Feb 2020 20:03:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A697D24125;
+        Tue, 18 Feb 2020 19:58:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582056207;
+        s=default; t=1582055925;
         bh=VlYFbi8R93NZ9MLjbFG8aNwqFw6eH/NfQOSq89lK47Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XsdVCE/jVm1qgN+yVQPEcV6BXIQUcy5Lcmr2gZNTSSv1+zQKQl9SoKnhRn8V4fCs1
-         q2ahlSvfaqvLzDFkuSiz9BNd2MQ+2S3fFk32RQdv6hFgr3fJh5LkH53+RcBF3fkekg
-         IyKwwC8HU3wh00Ut4hCL1wsiiGKETnXzrlWMq/Bg=
+        b=p6SGSzlpgKfY/jGyPrOwXRrMLNgI8WfnIQjdj2w0rePmUxUZL9L8bof2yUJco4OFA
+         WibSeljLZK7UhI0S2VZ81ohep/G2jsrIYiwQrKb2iQGOifT/01rGeJT+D1pSM564rl
+         QZnNfLF8tXqcDhsqsqCXT6HdYAOSOo7mtWRnoq3Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>,
         Christian Borntraeger <borntraeger@de.ibm.com>,
         Vasily Gorbik <gor@linux.ibm.com>
-Subject: [PATCH 5.5 39/80] s390/uv: Fix handling of length extensions
+Subject: [PATCH 5.4 33/66] s390/uv: Fix handling of length extensions
 Date:   Tue, 18 Feb 2020 20:55:00 +0100
-Message-Id: <20200218190436.134907146@linuxfoundation.org>
+Message-Id: <20200218190431.133878860@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200218190432.043414522@linuxfoundation.org>
-References: <20200218190432.043414522@linuxfoundation.org>
+In-Reply-To: <20200218190428.035153861@linuxfoundation.org>
+References: <20200218190428.035153861@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
