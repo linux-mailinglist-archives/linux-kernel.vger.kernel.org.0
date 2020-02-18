@@ -2,92 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D1E216222B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 09:26:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79D59162258
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 09:28:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726289AbgBRI0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 03:26:10 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36314 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726105AbgBRI0J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 03:26:09 -0500
-Received: by mail-lj1-f193.google.com with SMTP id r19so21889254ljg.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 00:26:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=lPpnBH/Ec+U4BS9aeM6PNHC3PGBciULDCwrtqz+a1OA=;
-        b=DnjHaN1qBkLLWyLNs08YhKQSELw6EA3k0PVEYvSL4y5LiKDsAowA2Z0F9NX95BPVZP
-         nAw6kvB/KytsAqAB+591hSD9VA5Fu+U7/JmvzkLXAHZ9i3/ojNPFOr446dxr16L6sEae
-         lpONGATz4gijbGFl+xdBJD54Nzl5LVhnuOsDNnpabjej7SjHZ5cIz+cqTjLAnvS6P5Z1
-         TaDcyDSjxobPB9rH/taGuvTjMitthUKOwZKCiYT43bJW+AgbdPEoHEiCZ5yDnQfSX7LA
-         KTsS+vfofrNwBuvmWGK5MZFFFIcN2l8pm0ydbrgw6p/lZmhqirL/ot7HkQMxOzEjj8Hd
-         TWXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=lPpnBH/Ec+U4BS9aeM6PNHC3PGBciULDCwrtqz+a1OA=;
-        b=QvKATLXBzq66g1FmU9cG6L85cO7d2I5MHqCKtiMRBJs4bHPIodtmfka7VOmvAIZSmo
-         5U0jgZC7G7GrAE3QvYpGZBs+u2vAnDIHTn9q00EvMcgLe0gNrMIaxeDyloUVvlLzTe19
-         DTYYru+FKsXPYKH3rq7C7qCUg5XfHkH+h55SEIF+SBZNJcdv2yf7jdsqLgwxAw+teEx0
-         mS68hN7ik/7P+xPMHVp4AqaSNfQkL4/ziUATWXAsfldmIERmWBB0P7FCdugzXpxJFhrl
-         0A3AAaCyITSBIug5XHxJhTl51DOshEQhNgoznRJCtFbZDQpySpl7KSNx24jk10gF7+hR
-         rx7g==
-X-Gm-Message-State: APjAAAVzRJ3oZgKpwfAhgHHT8TY23sHcZMWkRWpwMGDoAnqL+Xbt3A3o
-        x8Zg6g1XQz+teZ/Koziq92rKBg==
-X-Google-Smtp-Source: APXvYqxe0fjPnzAoZSBTdwq8ivm8QoPOQWpxXLSnYk93TuBbd5ajAuJ3GNhfLzgu6lkObfJc7IdoGg==
-X-Received: by 2002:a2e:81d0:: with SMTP id s16mr12350688ljg.166.1582014367627;
-        Tue, 18 Feb 2020 00:26:07 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id i4sm2177411lji.0.2020.02.18.00.26.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2020 00:26:07 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 68859100E9D; Tue, 18 Feb 2020 11:26:32 +0300 (+03)
-Date:   Tue, 18 Feb 2020 11:26:32 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     David Rientjes <rientjes@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Jeremy Cline <jcline@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [patch] mm, thp: track fallbacks due to failed memcg charges
- separately
-Message-ID: <20200218082632.kn5ouiditzx5h2iq@box>
-References: <alpine.DEB.2.21.2002172139310.152060@chino.kir.corp.google.com>
+        id S1726882AbgBRI1k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 03:27:40 -0500
+Received: from mga07.intel.com ([134.134.136.100]:18962 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726252AbgBRI1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 03:27:38 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2020 00:27:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,455,1574150400"; 
+   d="scan'208";a="235466721"
+Received: from yhuang-dev.sh.intel.com ([10.239.159.151])
+  by orsmga003.jf.intel.com with ESMTP; 18 Feb 2020 00:27:35 -0800
+From:   "Huang, Ying" <ying.huang@intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Feng Tang <feng.tang@intel.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@redhat.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: [RFC -V2 7/8] autonuma, memory tiering: Double hot threshold for write hint page fault
+Date:   Tue, 18 Feb 2020 16:26:33 +0800
+Message-Id: <20200218082634.1596727-8-ying.huang@intel.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200218082634.1596727-1-ying.huang@intel.com>
+References: <20200218082634.1596727-1-ying.huang@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.2002172139310.152060@chino.kir.corp.google.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 17, 2020 at 09:41:40PM -0800, David Rientjes wrote:
-> The thp_fault_fallback stat in either /proc/vmstat is incremented if 
-> either the hugepage allocation fails through the page allocator or the 
-> hugepage charge fails through mem cgroup.
-> 
-> This patch leaves this field untouched but adds a new field,
-> thp_fault_fallback_charge, which is incremented only when the mem cgroup
-> charge fails.
-> 
-> This distinguishes between faults that want to be backed by hugepages but
-> fail due to fragmentation (or low memory conditions) and those that fail
-> due to mem cgroup limits.  That can be used to determine the impact of 
-> fragmentation on the system by excluding faults that failed due to memcg 
-> usage.
-> 
-> Signed-off-by: David Rientjes <rientjes@google.com>
+From: Huang Ying <ying.huang@intel.com>
 
-The patch looks good to me, but I noticed that we miss THP_FAULT_FALLBACK
-(and THP_FAULT_FALLBACK_CHARGE) accounting in shmem_getpage_gfp().
+The write performance of PMEM is much worse than its read
+performance.  So even if a write-mostly pages is colder than a
+read-mostly pages, it is usually better to put the write-mostly pages
+in DRAM and read-mostly pages in PMEM.
 
-Could you fix this while you are there?
+To give write-mostly pages more opportunity to be promoted to DRAM, in
+this patch, the hot threshold for write hint page fault is
+doubled (easier to be promoted).
+
+Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org
+---
+ include/linux/sched/numa_balancing.h | 1 +
+ kernel/sched/fair.c                  | 2 ++
+ mm/memory.c                          | 3 +++
+ 3 files changed, 6 insertions(+)
+
+diff --git a/include/linux/sched/numa_balancing.h b/include/linux/sched/numa_balancing.h
+index 4899ec000245..518b3d6143ba 100644
+--- a/include/linux/sched/numa_balancing.h
++++ b/include/linux/sched/numa_balancing.h
+@@ -15,6 +15,7 @@
+ #define TNF_FAULT_LOCAL	0x08
+ #define TNF_MIGRATE_FAIL 0x10
+ #define TNF_YOUNG	0x20
++#define TNF_WRITE	0x40
+ 
+ #ifdef CONFIG_NUMA_BALANCING
+ extern void task_numa_fault(int last_node, int node, int pages, int flags);
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 773f3220efc4..e5f7f4139c82 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -1513,6 +1513,8 @@ bool should_numa_migrate_memory(struct task_struct *p, struct page * page,
+ 			return false;
+ 
+ 		th = msecs_to_jiffies(sysctl_numa_balancing_hot_threshold);
++		if (flags & TNF_WRITE)
++			th *= 2;
+ 		latency = numa_hint_fault_latency(p, addr);
+ 		if (latency > th)
+ 			return false;
+diff --git a/mm/memory.c b/mm/memory.c
+index 207caa9e61da..595d3cd62f61 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3829,6 +3829,9 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
+ 	if (pte_young(old_pte))
+ 		flags |= TNF_YOUNG;
+ 
++	if (vmf->flags & FAULT_FLAG_WRITE)
++		flags |= TNF_WRITE;
++
+ 	page = vm_normal_page(vma, vmf->address, pte);
+ 	if (!page)
+ 		goto unmap_out;
 -- 
- Kirill A. Shutemov
+2.24.1
+
