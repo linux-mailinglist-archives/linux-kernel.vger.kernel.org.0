@@ -2,135 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AB971630E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:58:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99FDA1630B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:55:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727910AbgBRT5Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 14:57:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34576 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726680AbgBRT5P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:57:15 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E017F24655;
-        Tue, 18 Feb 2020 19:57:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582055835;
-        bh=OQNUdeiiIH546txsURXZ8slQbFJ8FFp2PyIS12eUZe0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rC6khffjtovDhMEx3is+D7JOEih55Z2rfFhH1KI4sqHzJYz4vWjNGqXV8DhUJHiMe
-         12mrfMPf1KVn2HIyl6QgH0aTxCdVOPxG3IEZk/XUMoyUYFt/+XJ4o1vFwCOn38LPj5
-         GnXizaH213mgeJB/mkwMF1ruOgWiFWGbTUmrYTbk=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maor Gottlieb <maorg@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>
-Subject: [PATCH 4.19 31/38] RDMA/core: Fix protection fault in get_pkey_idx_qp_list
-Date:   Tue, 18 Feb 2020 20:55:17 +0100
-Message-Id: <20200218190422.207285867@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200218190418.536430858@linuxfoundation.org>
-References: <20200218190418.536430858@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1726655AbgBRTz2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 14:55:28 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43191 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbgBRTz2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 14:55:28 -0500
+Received: by mail-wr1-f67.google.com with SMTP id r11so25424056wrq.10;
+        Tue, 18 Feb 2020 11:55:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=2XbnpJ3DCsRKiHe1DaCKVtnJE9/aeVVRESQe3D8Emz0=;
+        b=vUohnzwHM6ww95pQT57+3W9rF4ypv0oi9Sr2c9p3s83ysEDCy4B8i7wA2YEjpx4o7O
+         NcjBuJOYJT3TkV38cAxuxjb+GQg+/EGWFW7GqjNTqfN9IXB1ujD8cfSNj805Eqi9UL3J
+         sVm9BCtuHEfxKEPYZxsEhZJn7fhEIQrGxl+bbVqNYURgddAdzTdXM+0zuWbYJmPrQY59
+         wKP2rd4F6kVeZdGKvosiHVzXPskpRcN+Ld9zlmdZfT1pXW9Pmgt5x9Wmmq76Ugw2uFx1
+         kRSPDlv37YJUGIgNKnCM8XV/FSdiTFZJzGUDuK+ZYgrIDM8RGYpeMxkNLm4rW2QysL8S
+         aFaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=2XbnpJ3DCsRKiHe1DaCKVtnJE9/aeVVRESQe3D8Emz0=;
+        b=G99VNtUeZnAbiQpqH+h+WNaENDsKM/BH/9xIe9NHnD0vTTShat8nl5vgNFzFoIx435
+         6AYY6Ty3gU+tagblMyluJCiS/tGnROjp0kY/xMsHxQ0/umTw2qAXySp4p9uKJJvQn/oM
+         g/loia1ZNRfhlzuZPx3Rhr4IFpwjKc04Apnyptu4o8Xv0O0EpEMWWtf6JBPgCVXuzgsQ
+         NiDK0GaXO83SQWzRZuTiEyxtIH2BNXBGax4ZZOxWv1lt7jIssMNWPXwqMHldTF3I2CEm
+         a8gQp+6HtA8w/NE306hSIx4iSTKQ+k8S4qNt9CEQgINwjpMO0F21l9Wp5ndjQzBZAMG9
+         4oQQ==
+X-Gm-Message-State: APjAAAXEnkIb9Lj2ZrXMmEc6i//VLL+ii3YKufknS+CJByYbAehP7s+c
+        J66mFT8Nk0AcURHiUEHV1nCThg+dCRo=
+X-Google-Smtp-Source: APXvYqxgH2Zy4SF7Ru6OgX1SQtM0GsOax0n4VqsktL36jANdSqE9ij6StXtgtan9ISXSA9S4DFix+Q==
+X-Received: by 2002:a5d:438c:: with SMTP id i12mr30082796wrq.51.1582055724084;
+        Tue, 18 Feb 2020 11:55:24 -0800 (PST)
+Received: from ?IPv6:2003:ea:8f29:6000:5cb0:582f:968:ec00? (p200300EA8F2960005CB0582F0968EC00.dip0.t-ipconnect.de. [2003:ea:8f29:6000:5cb0:582f:968:ec00])
+        by smtp.googlemail.com with ESMTPSA id t187sm4914865wmt.25.2020.02.18.11.55.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Feb 2020 11:55:23 -0800 (PST)
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Subject: [PATCH net-next v2 0/13] net: core: add helper tcp_v6_gso_csum_prep
+To:     David Miller <davem@davemloft.net>,
+        Realtek linux nic maintainers <nic_swsd@realtek.com>,
+        Jay Cliburn <jcliburn@gmail.com>,
+        Chris Snook <chris.snook@gmail.com>,
+        Rasesh Mody <rmody@marvell.com>,
+        Sudarsana Kalluru <skalluru@marvell.com>,
+        GR-Linux-NIC-Dev@marvell.com,
+        Christian Benvenuti <benve@cisco.com>,
+        Govindarajulu Varadarajan <_govind@gmx.com>,
+        Parvi Kaustubhi <pkaustub@cisco.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Guo-Fu Tseng <cooldavid@cooldavid.org>,
+        Shannon Nelson <snelson@pensando.io>,
+        Pensando Drivers <drivers@pensando.io>,
+        Timur Tabi <timur@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Ronak Doshi <doshir@vmware.com>,
+        "VMware, Inc." <pv-drivers@vmware.com>
+Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        intel-wired-lan@lists.osuosl.org, linux-hyperv@vger.kernel.org,
+        Linux USB Mailing List <linux-usb@vger.kernel.org>
+Message-ID: <fffc8b6d-68ed-7501-18f1-94cf548821fb@gmail.com>
+Date:   Tue, 18 Feb 2020 20:55:18 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leon Romanovsky <leonro@mellanox.com>
+Several network drivers for chips that support TSO6 share the same code
+for preparing the TCP header, so let's factor it out to a helper.
+A difference is that some drivers reset the payload_len whilst others
+don't do this. This value is overwritten by TSO anyway, therefore
+the new helper resets it in general.
 
-commit 1dd017882e01d2fcd9c5dbbf1eb376211111c393 upstream.
+Heiner Kallweit (13):
+  net: core: add helper tcp_v6_gso_csum_prep
+  r8169: use new helper tcp_v6_gso_csum_prep
+  net: atheros: use new helper tcp_v6_gso_csum_prep
+  bna: use new helper tcp_v6_gso_csum_prep
+  enic: use new helper tcp_v6_gso_csum_prep
+  e1000(e): use new helper tcp_v6_gso_csum_prep
+  jme: use new helper tcp_v6_gso_csum_prep
+  ionic: use new helper tcp_v6_gso_csum_prep
+  net: qcom/emac: use new helper tcp_v6_gso_csum_prep
+  net: socionext: use new helper tcp_v6_gso_csum_prep
+  hv_netvsc: use new helper tcp_v6_gso_csum_prep
+  r8152: use new helper tcp_v6_gso_csum_prep
+  vmxnet3: use new helper tcp_v6_gso_csum_prep
 
-We don't need to set pkey as valid in case that user set only one of pkey
-index or port number, otherwise it will be resulted in NULL pointer
-dereference while accessing to uninitialized pkey list.  The following
-crash from Syzkaller revealed it.
+ drivers/net/ethernet/atheros/alx/main.c       |  5 +---
+ .../net/ethernet/atheros/atl1c/atl1c_main.c   |  6 ++---
+ drivers/net/ethernet/brocade/bna/bnad.c       |  7 +----
+ drivers/net/ethernet/cisco/enic/enic_main.c   |  3 +--
+ drivers/net/ethernet/intel/e1000/e1000_main.c |  6 +----
+ drivers/net/ethernet/intel/e1000e/netdev.c    |  5 +---
+ drivers/net/ethernet/jme.c                    |  7 +----
+ .../net/ethernet/pensando/ionic/ionic_txrx.c  |  5 +---
+ drivers/net/ethernet/qualcomm/emac/emac-mac.c |  7 ++---
+ drivers/net/ethernet/realtek/r8169_main.c     | 26 ++-----------------
+ drivers/net/ethernet/socionext/netsec.c       |  6 +----
+ drivers/net/hyperv/netvsc_drv.c               |  5 +---
+ drivers/net/usb/r8152.c                       | 26 ++-----------------
+ drivers/net/vmxnet3/vmxnet3_drv.c             |  5 +---
+ include/net/ip6_checksum.h                    |  9 +++++++
+ 15 files changed, 27 insertions(+), 101 deletions(-)
 
-  kasan: CONFIG_KASAN_INLINE enabled
-  kasan: GPF could be caused by NULL-ptr deref or user memory access
-  general protection fault: 0000 [#1] SMP KASAN PTI
-  CPU: 1 PID: 14753 Comm: syz-executor.2 Not tainted 5.5.0-rc5 #2
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-  rel-1.12.1-0-ga5cab58e9a3f-prebuilt.qemu.org 04/01/2014
-  RIP: 0010:get_pkey_idx_qp_list+0x161/0x2d0
-  Code: 01 00 00 49 8b 5e 20 4c 39 e3 0f 84 b9 00 00 00 e8 e4 42 6e fe 48
-  8d 7b 10 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 04
-  02 84 c0 74 08 3c 01 0f 8e d0 00 00 00 48 8d 7d 04 48 b8
-  RSP: 0018:ffffc9000bc6f950 EFLAGS: 00010202
-  RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff82c8bdec
-  RDX: 0000000000000002 RSI: ffffc900030a8000 RDI: 0000000000000010
-  RBP: ffff888112c8ce80 R08: 0000000000000004 R09: fffff5200178df1f
-  R10: 0000000000000001 R11: fffff5200178df1f R12: ffff888115dc4430
-  R13: ffff888115da8498 R14: ffff888115dc4410 R15: ffff888115da8000
-  FS:  00007f20777de700(0000) GS:ffff88811b100000(0000)
-  knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 0000001b2f721000 CR3: 00000001173ca002 CR4: 0000000000360ee0
-  DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-  DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-  Call Trace:
-   port_pkey_list_insert+0xd7/0x7c0
-   ib_security_modify_qp+0x6fa/0xfc0
-   _ib_modify_qp+0x8c4/0xbf0
-   modify_qp+0x10da/0x16d0
-   ib_uverbs_modify_qp+0x9a/0x100
-   ib_uverbs_write+0xaa5/0xdf0
-   __vfs_write+0x7c/0x100
-   vfs_write+0x168/0x4a0
-   ksys_write+0xc8/0x200
-   do_syscall_64+0x9c/0x390
-   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Fixes: d291f1a65232 ("IB/core: Enforce PKey security on QPs")
-Link: https://lore.kernel.org/r/20200212080651.GB679970@unreal
-Signed-off-by: Maor Gottlieb <maorg@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Message-Id: <20200212080651.GB679970@unreal>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/infiniband/core/security.c |   24 +++++++++---------------
- 1 file changed, 9 insertions(+), 15 deletions(-)
-
---- a/drivers/infiniband/core/security.c
-+++ b/drivers/infiniband/core/security.c
-@@ -336,22 +336,16 @@ static struct ib_ports_pkeys *get_new_pp
- 	if (!new_pps)
- 		return NULL;
- 
--	if (qp_attr_mask & (IB_QP_PKEY_INDEX | IB_QP_PORT)) {
--		if (!qp_pps) {
--			new_pps->main.port_num = qp_attr->port_num;
--			new_pps->main.pkey_index = qp_attr->pkey_index;
--		} else {
--			new_pps->main.port_num = (qp_attr_mask & IB_QP_PORT) ?
--						  qp_attr->port_num :
--						  qp_pps->main.port_num;
--
--			new_pps->main.pkey_index =
--					(qp_attr_mask & IB_QP_PKEY_INDEX) ?
--					 qp_attr->pkey_index :
--					 qp_pps->main.pkey_index;
--		}
-+	if (qp_attr_mask & IB_QP_PORT)
-+		new_pps->main.port_num =
-+			(qp_pps) ? qp_pps->main.port_num : qp_attr->port_num;
-+	if (qp_attr_mask & IB_QP_PKEY_INDEX)
-+		new_pps->main.pkey_index = (qp_pps) ? qp_pps->main.pkey_index :
-+						      qp_attr->pkey_index;
-+	if ((qp_attr_mask & IB_QP_PKEY_INDEX) && (qp_attr_mask & IB_QP_PORT))
- 		new_pps->main.state = IB_PORT_PKEY_VALID;
--	} else if (qp_pps) {
-+
-+	if (!(qp_attr_mask & (IB_QP_PKEY_INDEX || IB_QP_PORT)) && qp_pps) {
- 		new_pps->main.port_num = qp_pps->main.port_num;
- 		new_pps->main.pkey_index = qp_pps->main.pkey_index;
- 		if (qp_pps->main.state != IB_PORT_PKEY_NOT_VALID)
-
+-- 
+2.25.1
 
