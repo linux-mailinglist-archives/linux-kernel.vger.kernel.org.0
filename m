@@ -2,235 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28EAF1637C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 00:55:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7805E163788
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 00:54:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728137AbgBRXz0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 18:55:26 -0500
-Received: from mga04.intel.com ([192.55.52.120]:40044 "EHLO mga04.intel.com"
+        id S1727597AbgBRXyc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 18:54:32 -0500
+Received: from mga06.intel.com ([134.134.136.31]:37582 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726641AbgBRXyk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 18:54:40 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1726716AbgBRXyb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 18:54:31 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2020 15:54:39 -0800
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2020 15:54:30 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,458,1574150400"; 
-   d="scan'208";a="224313159"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
-  by orsmga007.jf.intel.com with ESMTP; 18 Feb 2020 15:54:38 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Paul Mackerras <paulus@ozlabs.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, Marc Zyngier <maz@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-mips@vger.kernel.org, kvm@vger.kernel.org,
-        kvm-ppc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/9] KVM: x86: Move init-only kvm_x86_ops to separate struct
+   d="scan'208";a="408252387"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga005.jf.intel.com with ESMTP; 18 Feb 2020 15:54:30 -0800
 Date:   Tue, 18 Feb 2020 15:54:30 -0800
-Message-Id: <20200218235437.20533-3-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200218235437.20533-1-sean.j.christopherson@intel.com>
-References: <20200218235437.20533-1-sean.j.christopherson@intel.com>
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Jeff Moyer <jmoyer@redhat.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v3 00/12] Enable per-file/directory DAX operations V3
+Message-ID: <20200218235429.GB14509@iweiny-DESK2.sc.intel.com>
+References: <20200213195839.GG6870@magnolia>
+ <20200213232923.GC22854@iweiny-DESK2.sc.intel.com>
+ <CAPcyv4hkWoC+xCqicH1DWzmU2DcpY0at_A6HaBsrdLbZ6qzWow@mail.gmail.com>
+ <20200214200607.GA18593@iweiny-DESK2.sc.intel.com>
+ <x4936bcdfso.fsf@segfault.boston.devel.redhat.com>
+ <20200214215759.GA20548@iweiny-DESK2.sc.intel.com>
+ <x49y2t4bz8t.fsf@segfault.boston.devel.redhat.com>
+ <x49tv3sbwu5.fsf@segfault.boston.devel.redhat.com>
+ <20200218023535.GA14509@iweiny-DESK2.sc.intel.com>
+ <x49zhdgasal.fsf@segfault.boston.devel.redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <x49zhdgasal.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the kvm_x86_ops functions that are used only within the scope of
-kvm_init() into a separate struct, kvm_x86_init_ops.  In addition to
-identifying the init-only functions without restorting to code comments,
-this also sets the stage for waiting until after ->hardware_setup() to
-set kvm_x86_ops.  Setting kvm_x86_ops after ->hardware_setup() is
-desirable as many of the hooks are not usable until ->hardware_setup()
-completes.
+On Tue, Feb 18, 2020 at 09:22:58AM -0500, Jeff Moyer wrote:
+> Ira Weiny <ira.weiny@intel.com> writes:
+> 
+> > Yep...  and a long weekend if you are in the US...  I ran the test with V4 and
+> > got the panic below.
+> >
+> > Is this similar to what you see?  If so I'll work on it in V4.  FWIW with '-o
+> 
+> Yes, precisely.
 
-No functional change intended.
+Ok...
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/include/asm/kvm_host.h | 13 +++++++++----
- arch/x86/kvm/svm.c              | 15 ++++++++++-----
- arch/x86/kvm/vmx/vmx.c          | 16 +++++++++++-----
- arch/x86/kvm/x86.c              | 10 ++++++----
- 4 files changed, 36 insertions(+), 18 deletions(-)
+> 
+> > dax' specified I don't see how fsstress is causing an issue with my patch set.
+> > Does fsstress attempt to change dax states?  I don't see that in the test but
+> > I'm not real familiar with generic/013 and fsstress.
+> 
+> Not that I'm aware of, no.
+> 
+> > If my disassembly of read_pages is correct it looks like readpage is null which
+> > makes sense because all files should be IS_DAX() == true due to the mount option...
+> >
+> > But tracing code indicates that the patch:
+> >
+> > 	fs: remove unneeded IS_DAX() check
+> >
+> > ... may be the culprit and the following fix may work...
+> >
+> > diff --git a/mm/filemap.c b/mm/filemap.c
+> > index 3a7863ba51b9..7eaf74a2a39b 100644
+> > --- a/mm/filemap.c
+> > +++ b/mm/filemap.c
+> > @@ -2257,7 +2257,7 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+> >         if (!count)
+> >                 goto out; /* skip atime */
+> >  
+> > -       if (iocb->ki_flags & IOCB_DIRECT) {
+> > +       if (iocb->ki_flags & IOCB_DIRECT || IS_DAX(inode)) {
+> >                 struct file *file = iocb->ki_filp;
+> >                 struct address_space *mapping = file->f_mapping;
+> >                 struct inode *inode = mapping->host;
+> 
+> Well, you'll have to up-level the inode variable instantiation,
+> obviously.  That solves this particular issue.
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 4dffbc10d3f8..55e72b0e592b 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1042,12 +1042,8 @@ static inline u16 kvm_lapic_irq_dest_mode(bool dest_mode_logical)
- }
- 
- struct kvm_x86_ops {
--	int (*cpu_has_kvm_support)(void);          /* __init */
--	int (*disabled_by_bios)(void);             /* __init */
- 	int (*hardware_enable)(void);
- 	void (*hardware_disable)(void);
--	int (*check_processor_compatibility)(void);/* __init */
--	int (*hardware_setup)(void);               /* __init */
- 	void (*hardware_unsetup)(void);            /* __exit */
- 	bool (*cpu_has_accelerated_tpr)(void);
- 	bool (*has_emulated_msr)(int index);
-@@ -1258,6 +1254,15 @@ struct kvm_x86_ops {
- 	int (*enable_direct_tlbflush)(struct kvm_vcpu *vcpu);
- };
- 
-+struct kvm_x86_init_ops {
-+	int (*cpu_has_kvm_support)(void);
-+	int (*disabled_by_bios)(void);
-+	int (*check_processor_compatibility)(void);
-+	int (*hardware_setup)(void);
-+
-+	struct kvm_x86_ops *runtime_ops;
-+};
-+
- struct kvm_arch_async_pf {
- 	u32 token;
- 	gfn_t gfn;
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index a3e32d61d60c..b1faf6c33541 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -7375,11 +7375,7 @@ static void svm_pre_update_apicv_exec_ctrl(struct kvm *kvm, bool activate)
- }
- 
- static struct kvm_x86_ops svm_x86_ops __ro_after_init = {
--	.cpu_has_kvm_support = has_svm,
--	.disabled_by_bios = is_disabled,
--	.hardware_setup = svm_hardware_setup,
- 	.hardware_unsetup = svm_hardware_unsetup,
--	.check_processor_compatibility = svm_check_processor_compat,
- 	.hardware_enable = svm_hardware_enable,
- 	.hardware_disable = svm_hardware_disable,
- 	.cpu_has_accelerated_tpr = svm_cpu_has_accelerated_tpr,
-@@ -7515,9 +7511,18 @@ static struct kvm_x86_ops svm_x86_ops __ro_after_init = {
- 	.apic_init_signal_blocked = svm_apic_init_signal_blocked,
- };
- 
-+static struct kvm_x86_init_ops svm_init_ops __initdata = {
-+	.cpu_has_kvm_support = has_svm,
-+	.disabled_by_bios = is_disabled,
-+	.hardware_setup = svm_hardware_setup,
-+	.check_processor_compatibility = svm_check_processor_compat,
-+
-+	.runtime_ops = &svm_x86_ops,
-+};
-+
- static int __init svm_init(void)
- {
--	return kvm_init(&svm_x86_ops, sizeof(struct vcpu_svm),
-+	return kvm_init(&svm_init_ops, sizeof(struct vcpu_svm),
- 			__alignof__(struct vcpu_svm), THIS_MODULE);
- }
- 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 9a6664886f2e..01aed5386ed2 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -7729,11 +7729,8 @@ static bool vmx_check_apicv_inhibit_reasons(ulong bit)
- }
- 
- static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
--	.cpu_has_kvm_support = cpu_has_kvm_support,
--	.disabled_by_bios = vmx_disabled_by_bios,
--	.hardware_setup = hardware_setup,
- 	.hardware_unsetup = hardware_unsetup,
--	.check_processor_compatibility = vmx_check_processor_compat,
-+
- 	.hardware_enable = hardware_enable,
- 	.hardware_disable = hardware_disable,
- 	.cpu_has_accelerated_tpr = report_flexpriority,
-@@ -7881,6 +7878,15 @@ static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
- 	.apic_init_signal_blocked = vmx_apic_init_signal_blocked,
- };
- 
-+static struct kvm_x86_init_ops vmx_init_ops __initdata = {
-+	.cpu_has_kvm_support = cpu_has_kvm_support,
-+	.disabled_by_bios = vmx_disabled_by_bios,
-+	.check_processor_compatibility = vmx_check_processor_compat,
-+	.hardware_setup = hardware_setup,
-+
-+	.runtime_ops = &vmx_x86_ops,
-+};
-+
- static void vmx_cleanup_l1d_flush(void)
- {
- 	if (vmx_l1d_flush_pages) {
-@@ -7965,7 +7971,7 @@ static int __init vmx_init(void)
- 	}
- #endif
- 
--	r = kvm_init(&vmx_x86_ops, sizeof(struct vcpu_vmx),
-+	r = kvm_init(&vmx_init_ops, sizeof(struct vcpu_vmx),
- 		     __alignof__(struct vcpu_vmx), THIS_MODULE);
- 	if (r)
- 		return r;
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index bdd0a613b374..315297dec85c 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -7285,8 +7285,8 @@ static struct notifier_block pvclock_gtod_notifier = {
- 
- int kvm_arch_init(void *opaque)
- {
-+	struct kvm_x86_init_ops *ops = opaque;
- 	int r;
--	struct kvm_x86_ops *ops = opaque;
- 
- 	if (kvm_x86_ops) {
- 		printk(KERN_ERR "kvm: already loaded the other module\n");
-@@ -7335,7 +7335,7 @@ int kvm_arch_init(void *opaque)
- 	if (r)
- 		goto out_free_percpu;
- 
--	kvm_x86_ops = ops;
-+	kvm_x86_ops = ops->runtime_ops;
- 
- 	kvm_mmu_set_mask_ptes(PT_USER_MASK, PT_ACCESSED_MASK,
- 			PT_DIRTY_MASK, PT64_NX_MASK, 0,
-@@ -9593,9 +9593,10 @@ void kvm_arch_hardware_disable(void)
- 
- int kvm_arch_hardware_setup(void *opaque)
- {
-+	struct kvm_x86_init_ops *ops = opaque;
- 	int r;
- 
--	r = kvm_x86_ops->hardware_setup();
-+	r = ops->hardware_setup();
- 	if (r != 0)
- 		return r;
- 
-@@ -9630,13 +9631,14 @@ void kvm_arch_hardware_unsetup(void)
- int kvm_arch_check_processor_compat(void *opaque)
- {
- 	struct cpuinfo_x86 *c = &cpu_data(smp_processor_id());
-+	struct kvm_x86_init_ops *ops = opaque;
- 
- 	WARN_ON(!irqs_disabled());
- 
- 	if (kvm_host_cr4_reserved_bits(c) != cr4_reserved_bits)
- 		return -EIO;
- 
--	return kvm_x86_ops->check_processor_compatibility();
-+	return ops->check_processor_compatibility();
- }
- 
- bool kvm_vcpu_is_reset_bsp(struct kvm_vcpu *vcpu)
--- 
-2.24.1
+Well...  This seems to be a random issue.  I've had BMC issues with
+my server most of the day...  But even with this patch I still get the failure
+in read_pages().  :-/
 
+And I have gotten it to both succeed and fail with qemu...  :-/
+
+> The next traceback
+> you'll hit is in the writeback path:
+
+> 
+> [  116.044545] ------------[ cut here ]------------
+> [  116.049163] WARNING: CPU: 48 PID: 4469 at fs/dax.c:862 dax_writeback_mapping_range+0x397/0x530
+> ...
+> [  116.134509] CPU: 48 PID: 4469 Comm: fsstress Not tainted 5.6.0-rc1+ #43
+> [  116.141121] Hardware name: Intel Corporation S2600WFD/S2600WFD, BIOS SE5C620.86B.0D.01.0395.022720191340 02/27/2019
+> [  116.151549] RIP: 0010:dax_writeback_mapping_range+0x397/0x530
+> [  116.157294] Code: ff ff 31 db 48 8b 7c 24 28 c6 07 00 0f 1f 40 00 fb 48 8b 7c 24 10 e8 98 fc 29 00 0f 1f 44 00 00 e9 f1 fc ff ff 4c 8b 64 24 08 <0f> 0b be fb ff ff ff 4c 89 e7 e8 fa 87 ed ff f0 41 80 8c 24 80 00
+> [  116.176036] RSP: 0018:ffffb9b162fa7c18 EFLAGS: 00010046
+> [  116.181261] RAX: 0000000000000000 RBX: 00000000000001ac RCX: 0000000000000020
+> [  116.188387] RDX: 0000000000000000 RSI: 00000000000001ac RDI: ffffb9b162fa7c40
+> [  116.195519] RBP: 0000000000000020 R08: ffff9a73dc24d6b0 R09: 0000000000000020
+> [  116.202648] R10: 0000000000000000 R11: 0000000000000238 R12: ffff9a73d92c66b8
+> [  116.209774] R13: ffffe4a09f0cb200 R14: 0000000000000000 R15: ffffe4a09f0cb200
+> [  116.216907] FS:  00007f2dbcd22b80(0000) GS:ffff9a7420c00000(0000) knlGS:0000000000000000
+> [  116.224992] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  116.230735] CR2: 00007fa21808b648 CR3: 000000179e0a2003 CR4: 00000000007606e0
+> [  116.237860] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [  116.244990] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [  116.252115] PKRU: 55555554
+> [  116.254827] Call Trace:
+> [  116.257286]  do_writepages+0x41/0xd0
+> [  116.260862]  __filemap_fdatawrite_range+0xcb/0x100
+> [  116.265653]  filemap_write_and_wait_range+0x38/0x90
+> [  116.270579]  xfs_setattr_size+0x2c2/0x3e0 [xfs]
+> [  116.275126]  xfs_file_fallocate+0x239/0x440 [xfs]
+> [  116.279831]  ? selinux_file_permission+0x108/0x140
+> [  116.284622]  vfs_fallocate+0x14d/0x2f0
+> [  116.288374]  ksys_fallocate+0x3c/0x80
+> [  116.292039]  __x64_sys_fallocate+0x1a/0x20
+> [  116.296139]  do_syscall_64+0x55/0x1d0
+> [  116.299806]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> [  116.304856] RIP: 0033:0x7f2dbc21983b
+> [  116.308435] Code: ff ff eb ba 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 8d 05 25 0e 2d 00 49 89 ca 8b 00 85 c0 75 14 b8 1d 01 00 00 0f 05 <48> 3d 00 f0 ff ff 77 5d c3 0f 1f 40 00 41 55 49 89 cd 41 54 49 89
+> 
+> That's here:
+> 
+>         /*
+>          * A page got tagged dirty in DAX mapping? Something is seriously
+>          * wrong.
+>          */
+>         if (WARN_ON(!xa_is_value(entry)))
+>                 return -EIO;
+
+I have not gotten this.  Having to walk to the lab to power cycle the machine
+has slowed my progress...
+
+Ira
+
+> 
+> Cheers,
+> Jeff
+> 
