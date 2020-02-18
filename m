@@ -2,104 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EEE416224C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 09:28:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87B9B162220
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 09:18:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbgBRI1W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 03:27:22 -0500
-Received: from mx.kolabnow.com ([95.128.36.42]:51570 "EHLO mx.kolabnow.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726667AbgBRI1V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 03:27:21 -0500
-X-Greylist: delayed 591 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Feb 2020 03:27:20 EST
-Received: from localhost (unknown [127.0.0.1])
-        by ext-mx-out003.mykolab.com (Postfix) with ESMTP id 6F98040434;
-        Tue, 18 Feb 2020 09:17:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kolabnow.com; h=
-        content-type:content-type:content-transfer-encoding:mime-version
-        :references:in-reply-to:message-id:date:date:subject:subject
-        :from:from:received:received:received; s=dkim20160331; t=
-        1582013845; x=1583828246; bh=ZCUmRkTZBCscrc2Oka2I0C9qAlUD6xdUbb8
-        k/+y23eA=; b=zBT7ls+sKA7y8wjvjDIgdOBSl5T+/EIXyh11yYUkB79p/AzsevI
-        l/1AsxWVTmsHOg9ZwehcEk4OTojIUo/uwqqL17q+bKlv4aE17R3ve/Tt9U8sElYH
-        6ksIiwCl3tL8qLwVLCHMIj0CR/IA0f8ncwDKWhNPrmOYSlP1+TFN9pfOy2b1ffHU
-        585fWv8Hv1J/bNCXYU+T5eZTbMgl7YWX5GpQdliZF4K7U2ntnOP3ujSuqwrwNlZK
-        GJHkqLvwWLatclXvJGHj67k+L642EshEhSuBcuNFAcLE1VUIMiGrSWdCcuAmMs1B
-        mugZGVKPwDN1Ks8nfb99e3ERi6BYynWvUcXTgI6jzfqKFSvi09C6ys/3Otss8lHZ
-        GgmrQ9uHLdnl2rgxo3H+rQdgWkaulhmfqqbiNMUYy8v/FjBEVDUIYZzHKouLqW9H
-        qZlUBzm9LnUiKFlKr7UcbbMwkpVyHoo/N2KwdZayxWruA7LJ5gArWJMfchO4Ydgg
-        KGcbD76djb2J4/3ymQ5AfoRkW+giQnEZHUdYVOm1uJxhgr9frr3TszcuNERzqGEa
-        galNq38nbnNHBLi1Mdmcm9WA9/DuMHI3V63dm0LKB7szMURpLUU0h6bGcfqS1GYf
-        eUcIbKGKovS7J2fSWZ5zJstcSijrNxmR0p9SElygnvjtIbqR08fAGnkc=
-X-Virus-Scanned: amavisd-new at mykolab.com
-X-Spam-Flag: NO
-X-Spam-Score: -1.899
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.899 tagged_above=-10 required=5
-        tests=[BAYES_00=-1.9, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Received: from mx.kolabnow.com ([127.0.0.1])
-        by localhost (ext-mx-out003.mykolab.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id CYhEPNypRUrb; Tue, 18 Feb 2020 09:17:25 +0100 (CET)
-Received: from int-mx003.mykolab.com (unknown [10.9.13.3])
-        by ext-mx-out003.mykolab.com (Postfix) with ESMTPS id B8454403C2;
-        Tue, 18 Feb 2020 09:17:25 +0100 (CET)
-Received: from ext-subm001.mykolab.com (unknown [10.9.6.1])
-        by int-mx003.mykolab.com (Postfix) with ESMTPS id 57BDDAB7;
-        Tue, 18 Feb 2020 09:17:25 +0100 (CET)
-From:   Federico Vaga <federico.vaga@vaga.pv.it>
-To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>
-Cc:     corbet@lwn.net, rdunlap@infradead.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Replace stale url with active one for Mutt
-Date:   Tue, 18 Feb 2020 09:17:23 +0100
-Message-ID: <26370462.jMSB3ls19i@pcbe13614>
-In-Reply-To: <20200218065854.13152-1-unixbhaskar@gmail.com>
-References: <20200218065854.13152-1-unixbhaskar@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        id S1726283AbgBRISP convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 18 Feb 2020 03:18:15 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:37800 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726105AbgBRISP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 03:18:15 -0500
+Received: from marcel-macpro.fritz.box (p4FEFC5A7.dip0.t-ipconnect.de [79.239.197.167])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 678BFCED24;
+        Tue, 18 Feb 2020 09:27:37 +0100 (CET)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
+Subject: Re: [Bluez PATCH v6] bluetooth: secure bluetooth stack from bluedump
+ attack
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20200217120454.Bluez.v6.1.Ia71869d2f3e19a76a6a352c61088a085a1d41ba6@changeid>
+Date:   Tue, 18 Feb 2020 09:18:12 +0100
+Cc:     Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        ChromeOS Bluetooth Upstreaming 
+        <chromeos-bluetooth-upstreaming@chromium.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <0B84BD16-9C82-4910-8646-B24BCB152AC2@holtmann.org>
+References: <20200217120454.Bluez.v6.1.Ia71869d2f3e19a76a6a352c61088a085a1d41ba6@changeid>
+To:     Howard Chung <howardchung@google.com>
+X-Mailer: Apple Mail (2.3608.60.0.2.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, February 18, 2020 7:58:54 AM CET Bhaskar Chowdhury wrote:
-> This patch will replace  dead/stale url with the active urls.
+Hi Howard,
+
+> Attack scenario:
+> 1. A Chromebook (let's call this device A) is paired to a legitimate
+>   Bluetooth classic device (e.g. a speaker) (let's call this device
+>   B).
+> 2. A malicious device (let's call this device C) pretends to be the
+>   Bluetooth speaker by using the same BT address.
+> 3. If device A is not currently connected to device B, device A will
+>   be ready to accept connection from device B in the background
+>   (technically, doing Page Scan).
+> 4. Therefore, device C can initiate connection to device A
+>   (because device A is doing Page Scan) and device A will accept the
+>   connection because device A trusts device C's address which is the
+>   same as device B's address.
+> 5. Device C won't be able to communicate at any high level Bluetooth
+>   profile with device A because device A enforces that device C is
+>   encrypted with their common Link Key, which device C doesn't have.
+>   But device C can initiate pairing with device A with just-works
+>   model without requiring user interaction (there is only pairing
+>   notification). After pairing, device A now trusts device C with a
+>   new different link key, common between device A and C.
+> 6. From now on, device A trusts device C, so device C can at anytime
+>   connect to device A to do any kind of high-level hijacking, e.g.
+>   speaker hijack or mouse/keyboard hijack.
 > 
-> Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+> Since we don't know whether the repairing is legitimate or not,
+> leave the decision to user space if all the conditions below are met.
+> - the pairing is initialized by peer
+> - the authorization method is just-work
+> - host already had the link key to the peer
+> 
+> Signed-off-by: Howard Chung <howardchung@google.com>
 > ---
->  Documentation/process/email-clients.rst | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/Documentation/process/email-clients.rst
-> b/Documentation/process/email-clients.rst index 5273d06c8ff6..bf8b4c9a4efe
-> 100644
-> --- a/Documentation/process/email-clients.rst
-> +++ b/Documentation/process/email-clients.rst
-> @@ -237,9 +237,9 @@ using Mutt to send patches through Gmail::
-> 
->  The Mutt docs have lots more information:
-> 
-> -    http://dev.mutt.org/trac/wiki/UseCases/Gmail
-> +    https://gitlab.com/muttmua/mutt/-/wikis/UseCases/Gmail
-> 
-> -    http://dev.mutt.org/doc/manual.html
-> +    http://www.mutt.org/#doc
+> Changes in v6:
+> - Fix passkey uninitialized issue
 
-http://www.mutt.org/doc/manual/
+since I already applied v5, can you send a delta-patch. And please add a comment for using 0 as passkey and why that is correct.
 
-I think this link is better
+Regards
 
-> 
->  Pine (TUI)
->  **********
-> --
-> 2.24.1
-
-
--- 
-Federico Vaga
-http://www.federicovaga.it/
-
+Marcel
 
