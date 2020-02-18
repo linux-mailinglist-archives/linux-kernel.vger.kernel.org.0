@@ -2,77 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3A4616309C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:50:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53D1C163054
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:39:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726415AbgBRTuR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 14:50:17 -0500
-Received: from tartarus.angband.pl ([54.37.238.230]:45242 "EHLO
-        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726283AbgBRTuR (ORCPT
+        id S1726539AbgBRTjr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 14:39:47 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:49280 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbgBRTjr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:50:17 -0500
-X-Greylist: delayed 1110 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Feb 2020 14:50:16 EST
-Received: from kilobyte by tartarus.angband.pl with local (Exim 4.92)
-        (envelope-from <kilobyte@angband.pl>)
-        id 1j48am-0007Xq-OO; Tue, 18 Feb 2020 20:31:36 +0100
-Date:   Tue, 18 Feb 2020 20:31:36 +0100
-From:   Adam Borowski <kilobyte@angband.pl>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ilya Dryomov <idryomov@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        "Tobin C . Harding" <me@tobin.cc>
-Subject: Re: [PATCH] vsprintf: don't obfuscate NULL and error pointers
-Message-ID: <20200218193136.GA22499@angband.pl>
-References: <20200217222803.6723-1-idryomov@gmail.com>
- <202002171546.A291F23F12@keescook>
- <CAOi1vP-2uAD83Vi=Eebu_GPzq5DUt+z9zogA7BNGF1B1jUgAVw@mail.gmail.com>
- <CAHk-=whj0vMcdVPC0=9aAsN2-tsCyFKF4beb2gohFeFK_Z-Y9g@mail.gmail.com>
+        Tue, 18 Feb 2020 14:39:47 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01IJanDR118725;
+        Tue, 18 Feb 2020 13:36:49 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582054609;
+        bh=GgHMMWikXXitKD/AGrzFrLxAIGAeZxrL9hb7kQz+ZSg=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=YZhSVFOmjDz6ndBizA8kSE/cB2eldFw/YkD/OS2oFAHCiSetLl6MStsRdtQmlzWlm
+         mPoL+9T94d05owL3GwqPNR/OqW6j1lssh/LZOJFxNBJfdU7WOUS+UWkvPC7fvNFi1a
+         2Qj+OHEF1/Hrb6+qvcO9qDSoyBISATQkOVEqgoAA=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01IJan0T081014
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 18 Feb 2020 13:36:49 -0600
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 18
+ Feb 2020 13:36:48 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 18 Feb 2020 13:36:48 -0600
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01IJamdF019213;
+        Tue, 18 Feb 2020 13:36:48 -0600
+Subject: Re: [PATCH v2 2/2] ASoC: tlv320adcx140: Add the tlv320adcx140 codec
+ driver family
+To:     Mark Brown <broonie@kernel.org>
+CC:     <lgirdwood@gmail.com>, <perex@perex.cz>, <tiwai@suse.com>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+References: <20200218172140.23740-1-dmurphy@ti.com>
+ <20200218172140.23740-3-dmurphy@ti.com> <20200218192321.GN4232@sirena.org.uk>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <0faf0bfe-6186-59d0-e800-8523a33044dc@ti.com>
+Date:   Tue, 18 Feb 2020 13:32:05 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20200218192321.GN4232@sirena.org.uk>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHk-=whj0vMcdVPC0=9aAsN2-tsCyFKF4beb2gohFeFK_Z-Y9g@mail.gmail.com>
-X-Junkbait: aaron@angband.pl, zzyx@angband.pl
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: kilobyte@angband.pl
-X-SA-Exim-Scanned: No (on tartarus.angband.pl); SAEximRunCond expanded to false
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 10:49:30AM -0800, Linus Torvalds wrote:
-> On Mon, Feb 17, 2020 at 4:07 PM Ilya Dryomov <idryomov@gmail.com> wrote:
-> >
-> > I'm not sure what you mean by efault string.  Are you referring to what
-> > %pe is doing?  If so, no -- I would keep %p and %pe separate.
-> 
-> Right.
-> 
-> But bringing up %pe makes me realize that we do odd things for NULL
-> for that. We print errors in a nice legible form, but we show NULL as
-> a zero value, I think.
-> 
-> So maybe %pe should show NULL as "(null)"? Or even as just "0" to go
-> with the error names that just look like the integer error syntax (eg
-> "-EINVAL")
+Mark
 
-"(null)" stands for a dereference of a null pointer rather than for printing
-the pointer itself.  This is a convention copied from glibc's printf("%s").
-Either "0" or "NULL" (or "∅" if you allow cp437-subset Unicode ☺ ) wouldn't
-cause such confusion.
+On 2/18/20 1:23 PM, Mark Brown wrote:
+> On Tue, Feb 18, 2020 at 11:21:40AM -0600, Dan Murphy wrote:
+>
+> A couple of very small things, otherwise this looks good:
+>
+>> +	if (unlikely(!tx_mask)) {
+>> +		dev_err(component->dev, "tx and rx masks need to be non 0\n");
+>> +		return -EINVAL;
+>> +	}
+> Do you really need the unlikely() annotation here?  This is *hopefully*
+> not a hot path.
 
+I was copying the code from tlv320aic3x.c as suggested by one our audio 
+guys here in TI.
 
-Meow!
--- 
-⢀⣴⠾⠻⢶⣦⠀ A MAP07 (Dead Simple) raspberry tincture recipe: 0.5l 95% alcohol,
-⣾⠁⢠⠒⠀⣿⡁ 1kg raspberries, 0.4kg sugar; put into a big jar for 1 month.
-⢿⡄⠘⠷⠚⠋⠀ Filter out and throw away the fruits (can dump them into a cake,
-⠈⠳⣄⠀⠀⠀⠀ etc), let the drink age at least 3-6 months.
+I can remove it if you desire
+
+>
+>> +static int adcx140_codec_probe(struct snd_soc_component *component)
+>> +{
+>> +	struct adcx140_priv *adcx140 = snd_soc_component_get_drvdata(component);
+>> +	int sleep_cfg_val = ADCX140_WAKE_DEV;
+>> +	u8 bias_source;
+>> +	u8 vref_source;
+>> +	int ret;
+>> +
+>> +	adcx140->supply_areg = devm_regulator_get_optional(adcx140->dev,
+>> +							   "areg");
+>> +	if (IS_ERR(adcx140->supply_areg)) {
+> You should really do the request and defer at the I2C level, that avoids
+> running through the whole card initialization repeatedly when the device
+> isn't ready.  Basically try to do all resource aquisition at the device
+> level and then use it at the card level.
+
+Ack.� Makes more sense to do it in the I2C probe.
+
+Dan
+
