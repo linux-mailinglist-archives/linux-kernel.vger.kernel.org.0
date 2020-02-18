@@ -2,73 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ADE3162067
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 06:28:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6676D162070
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 06:33:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726312AbgBRF2j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 00:28:39 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:58408 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbgBRF2i (ORCPT
+        id S1726225AbgBRFdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 00:33:24 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:50773 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725878AbgBRFdY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 00:28:38 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::f0c])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 6872715B44F9C;
-        Mon, 17 Feb 2020 21:28:38 -0800 (PST)
-Date:   Mon, 17 Feb 2020 21:28:37 -0800 (PST)
-Message-Id: <20200217.212837.2017737709048002711.davem@davemloft.net>
-To:     gustavo@embeddedor.com
-Cc:     kuba@kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] net: netlink: Replace zero-length array with
- flexible-array member
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200217200719.GA8545@embeddedor>
-References: <20200217200719.GA8545@embeddedor>
-X-Mailer: Mew version 6.8 on Emacs 26.3
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 17 Feb 2020 21:28:38 -0800 (PST)
+        Tue, 18 Feb 2020 00:33:24 -0500
+Received: from dread.disaster.area (pa49-179-138-28.pa.nsw.optusnet.com.au [49.179.138.28])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 8B4E77EA1B5;
+        Tue, 18 Feb 2020 16:33:20 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1j3vVX-00063Y-Ld; Tue, 18 Feb 2020 16:33:19 +1100
+Date:   Tue, 18 Feb 2020 16:33:19 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH v6 06/19] mm: rename readahead loop variable to 'i'
+Message-ID: <20200218053319.GL10776@dread.disaster.area>
+References: <20200217184613.19668-1-willy@infradead.org>
+ <20200217184613.19668-10-willy@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200217184613.19668-10-willy@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=LYdCFQXi c=1 sm=1 tr=0
+        a=zAxSp4fFY/GQY8/esVNjqw==:117 a=zAxSp4fFY/GQY8/esVNjqw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
+        a=JfrnYn6hAAAA:8 a=Ikd4Dj_1AAAA:8 a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8
+        a=hst_v9hiAf68Pp7nMRMA:9 a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Date: Mon, 17 Feb 2020 14:07:19 -0600
+On Mon, Feb 17, 2020 at 10:45:50AM -0800, Matthew Wilcox wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> 
+> Change the type of page_idx to unsigned long, and rename it -- it's
+> just a loop counter, not a page index.
+> 
+> Suggested-by: John Hubbard <jhubbard@nvidia.com>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  mm/readahead.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-> The current codebase makes use of the zero-length array language
-> extension to the C90 standard, but the preferred mechanism to declare
-> variable-length types such as these ones is a flexible array member[1][2],
-> introduced in C99:
-> 
-> struct foo {
->         int stuff;
->         struct boo array[];
-> };
-> 
-> By making use of the mechanism above, we will get a compiler warning
-> in case the flexible array does not occur last in the structure, which
-> will help us prevent some kind of undefined behavior bugs from being
-> inadvertently introduced[3] to the codebase from now on.
-> 
-> Also, notice that, dynamic memory allocations won't be affected by
-> this change:
-> 
-> "Flexible array members have incomplete type, and so the sizeof operator
-> may not be applied. As a quirk of the original implementation of
-> zero-length arrays, sizeof evaluates to zero."[1]
-> 
-> This issue was found with the help of Coccinelle.
-> 
-> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-> [2] https://github.com/KSPP/linux/issues/21
-> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Looks fine.
 
-Applied.
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
+
+-- 
+Dave Chinner
+david@fromorbit.com
