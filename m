@@ -2,183 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC95716247C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 11:27:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BFDE16249F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 11:32:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726403AbgBRK1q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 05:27:46 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:44077 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726193AbgBRK1p (ORCPT
+        id S1726521AbgBRKcx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 05:32:53 -0500
+Received: from m213143.mail.qiye.163.com ([223.252.213.143]:45170 "EHLO
+        m213143.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726391AbgBRKcx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 05:27:45 -0500
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200218102743epoutp04ec8f6f3e6008b5116ac645d180b4ac7d~0eFI-Nd-s3090430904epoutp04G
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 10:27:43 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200218102743epoutp04ec8f6f3e6008b5116ac645d180b4ac7d~0eFI-Nd-s3090430904epoutp04G
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1582021663;
-        bh=vKSMlfIkqirRTQYXX9qnJW4/hzJAeYLc6csS5YeRX2A=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=FAR85Sx/Z7fD67K00arVYNY1MQN9XemQQKgyQ9fsMQpOlbrrEVBScD0cBqD1nq/ox
-         cCcXqNBKvEjz1q7EG482CX3Q1HPEuBpdQW59O1zrXherDB8uQ8zn1g8BMk8LXFHE13
-         cGYy+wsPjLQf+Pe/6Ad7cwCBT2R1GQjkBrTljs1I=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200218102743epcas1p251c7b769d756f1c5052bdb58ee99c96b~0eFIpSwYb0296402964epcas1p2J;
-        Tue, 18 Feb 2020 10:27:43 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.152]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 48MH9S6sQvzMqYkV; Tue, 18 Feb
-        2020 10:27:40 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        E5.97.57028.C1CBB4E5; Tue, 18 Feb 2020 19:27:40 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20200218102740epcas1p4717d159cb0fd53fd9feac7c382af43dd~0eFF87-xX0978109781epcas1p4W;
-        Tue, 18 Feb 2020 10:27:40 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200218102740epsmtrp1a2167198b7f4d63c2451ea224e73066b~0eFF8QI890549005490epsmtrp1C;
-        Tue, 18 Feb 2020 10:27:40 +0000 (GMT)
-X-AuditID: b6c32a35-50bff7000001dec4-94-5e4bbc1c5910
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        CF.2C.10238.C1CBB4E5; Tue, 18 Feb 2020 19:27:40 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200218102740epsmtip293ff206bcaf707bfb3fc8cff3b56981d~0eFFsUUlW0922309223epsmtip2v;
-        Tue, 18 Feb 2020 10:27:40 +0000 (GMT)
-Subject: Re: [PATCH v3] extcon: palmas: hide error messages if gpio returns
- -EPROBE_DEFER
-To:     Ladislav Michl <ladis@linux-mips.org>
-Cc:     "H. Nikolaus Schaller" <hns@goldelico.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
-        kernel@pyra-handheld.com, linux-omap@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <cbee6f0b-f268-2e77-f7b7-f19114fdf178@samsung.com>
-Date:   Tue, 18 Feb 2020 19:35:47 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        Tue, 18 Feb 2020 05:32:53 -0500
+X-Greylist: delayed 456 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Feb 2020 05:32:52 EST
+Received: from vivo.com (wm-7 [127.0.0.1])
+        by m213143.mail.qiye.163.com (Hmail) with ESMTP id 880CE5818EA;
+        Tue, 18 Feb 2020 18:25:11 +0800 (CST)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+Message-ID: <AG*AmQC6CEB-c3GeBiN1qKrE.3.1582021511507.Hmail.wenhu.wang@vivo.com>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Andrew Donnellan <ajd@linux.ibm.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Richard Fontana <rfontana@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, wangwenhu <wenhu.pku@gmail.com>,
+        Paul Mackerras <paulus@samba.org>, trivial@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linuxppc-dev@lists.ozlabs.org, lonehugo@hotmail.com
+Subject: =?UTF-8?B?UmU6UmU6IFtQQVRDSF0gcG93ZXJwYy9zeXNkZXY6IGZpeCBjb21waWxlIGVycm9ycw==?=
+X-Priority: 3
+X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2016-163.com
+X-Originating-IP: 58.251.74.226
+In-Reply-To: <d3b340dc-54df-24f6-2831-50456beea7ab@c-s.fr>
 MIME-Version: 1.0
-In-Reply-To: <20200218102140.GA193069@lenoch>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJJsWRmVeSWpSXmKPExsWy7bCmrq7MHu84g3//TSx+bPvKZHHpa43F
-        7JWTmSy2/rnEZnF51xw2i9lL+lksbjeuYHNg91jz/hSzx9GVa5k8WibtYvf40tLM7NG3ZRWj
-        x+dNcgFsUdk2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW5koKeYm5qbZKLj4Bum6Z
-        OUCnKCmUJeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIKLAv0ihNzi0vz0vWS83OtDA0M
-        jEyBChOyM2ZeeMpUsFW44vfPqawNjLf4uxg5OSQETCS+Nc1i7GLk4hAS2MEoMe3CdijnE6PE
-        8ymX2SGcb4wS73tBMhAtV+6vharayyhx9cErqKr3jBIn1r9kBqkSFoiW+DHpIlAVB4eIgKbE
-        nT/6IDXMAucZJY6uncYOUsMmoCWx/8UNNhCbX0BR4uqPx2AbeAXsJI5+bQWrYRFQlXhwrQes
-        RlQgTOLkthaoGkGJkzOfsIDYnAK6EhvOfAaLMwuIS9x6Mp8JwpaX2P52DjPE1d/ZJOZsLIOw
-        XSSa+y6zQ9jCEq+Ob4GypSRe9rdB2dUSK08eYQM5WkKgg1Fiy/4LrBAJY4n9SyczgTzGDPTY
-        +l36EGFFiZ2/50LdwCfx7msPK0iJhACvREebEESJssTlB3eZIGxJicXtnWwTGJVmIflmFpIP
-        ZiH5YBbCsgWMLKsYxVILinPTU4sNCwyRY3sTIziZapnuYJxyzucQowAHoxIPb0CfV5wQa2JZ
-        cWXuIUYJDmYlEV5vcaAQb0piZVVqUX58UWlOavEhRlNgYE9klhJNzgcm+rySeENTI2NjYwsT
-        QzNTQ0Mlcd6HkZpxQgLpiSWp2ampBalFMH1MHJxSDYxH5kXw37nxO7NL5OROloZSU/lFitbZ
-        L26LFRifXrbXv6LRiHnRu09sB2Z6Vl23CsncV1glJMlw52X4uU/ePRevVLdu5J+9hr3dY+n0
-        RJ0tVpMalLYWT5++Yn4315w+jSZnzjdNkZKf94RcXtXh9iqzXizx2ntZdscM8e+8UiJWdfd2
-        zwr6baLEUpyRaKjFXFScCABT8JHovAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCIsWRmVeSWpSXmKPExsWy7bCSvK7MHu84g79vRSx+bPvKZHHpa43F
-        7JWTmSy2/rnEZnF51xw2i9lL+lksbjeuYHNg91jz/hSzx9GVa5k8WibtYvf40tLM7NG3ZRWj
-        x+dNcgFsUVw2Kak5mWWpRfp2CVwZMy88ZSrYKlzx++dU1gbGW/xdjJwcEgImElfur2XsYuTi
-        EBLYzShx7eIidoiEpMS0i0eZuxg5gGxhicOHiyFq3jJKzPvbxAZSIywQLfFj0kVGkBoRAU2J
-        O3/0QWqYBc4zShy48R5qaDOTxMGlV1lBGtgEtCT2v7gB1swvoChx9cdjRhCbV8BO4ujXVrDF
-        LAKqEg+u9YDViAqESexc8pgJokZQ4uTMJywgNqeArsSGM5/BepkF1CX+zLvEDGGLS9x6Mp8J
-        wpaX2P52DvMERuFZSNpnIWmZhaRlFpKWBYwsqxglUwuKc9Nziw0LDPNSy/WKE3OLS/PS9ZLz
-        czcxguNKS3MH4+Ul8YcYBTgYlXh4V0zwihNiTSwrrsw9xCjBwawkwustDhTiTUmsrEotyo8v
-        Ks1JLT7EKM3BoiTO+zTvWKSQQHpiSWp2ampBahFMlomDU6qBMbcrx8CXs/ol/4s9xr87r3R3
-        PjwZwiEuXZEYnxZ3ovJLM8+leqbnp2fabl/9cNGZK502aXtObWG/MHXTv473HkvjFx5++opL
-        ZuL7De+P2FWdDbVcOX/2xjnTdy71Ev/H4dLC4Gxu/YNVUrsn2jL0Ar/egqN3Av6qGPUv4z9x
-        l+/KC9Yl9eWPE5RYijMSDbWYi4oTAQyz9JqnAgAA
-X-CMS-MailID: 20200218102740epcas1p4717d159cb0fd53fd9feac7c382af43dd
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200217133832epcas1p329af393e88fa76189ca141d2534f9ad2
-References: <CGME20200217133832epcas1p329af393e88fa76189ca141d2534f9ad2@epcas1p3.samsung.com>
-        <d5c2826a5f00fcaee62f00662ae2a44dc4a5395d.1581946695.git.hns@goldelico.com>
-        <b2655a58-6541-a2c9-c44d-536e5cef1ee3@samsung.com>
-        <20200218102140.GA193069@lenoch>
+Received: from wenhu.wang@vivo.com( [58.251.74.226) ] by ajax-webmail ( [127.0.0.1] ) ; Tue, 18 Feb 2020 18:25:11 +0800 (GMT+08:00)
+From:   =?UTF-8?B?546L5paH6JmO?= <wenhu.wang@vivo.com>
+Date:   Tue, 18 Feb 2020 18:25:11 +0800 (GMT+08:00)
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZSFVCTktCQkJMSE1MQ05DQllXWShZQU
+        hPN1dZLVlBSVdZCQ4XHghZQVk1NCk2OjckKS43PlkG
+X-HM-Sender-Digest: e1kJHlYWEh9ZQUhNSkpJS01MT0xJN1dZDB4ZWUEPCQ4eV1kSHx4VD1lB
+        WUc6PFE6Fio4TTg#OVYYSDweORI1SgowCT5VSFVKTkNJS0lKTkpITExDVTMWGhIXVQweFRMOVQwa
+        FRw7DRINFFUYFBZFWVdZEgtZQVlOQ1VJTkpVTE9VSUlNWVdZCAFZQUNPT0w3Bg++
+X-HM-Tid: 0a7057d4898a7f7bkuuk880ce5818ea
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/18/20 7:21 PM, Ladislav Michl wrote:
-> On Tue, Feb 18, 2020 at 12:28:25PM +0900, Chanwoo Choi wrote:
->> On 2/17/20 10:38 PM, H. Nikolaus Schaller wrote:
->>> If the gpios are probed after this driver (e.g. if they
->>> come from an i2c expander) there is no need to print an
->>> error message.
->>>
->>> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
->>> ---
->>>  drivers/extcon/extcon-palmas.c | 8 ++++++--
->>>  1 file changed, 6 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/extcon/extcon-palmas.c b/drivers/extcon/extcon-palmas.c
->>> index edc5016f46f1..cea58d0cb457 100644
->>> --- a/drivers/extcon/extcon-palmas.c
->>> +++ b/drivers/extcon/extcon-palmas.c
->>> @@ -205,14 +205,18 @@ static int palmas_usb_probe(struct platform_device *pdev)
->>>  
->>>  	palmas_usb->id_gpiod = devm_gpiod_get_optional(&pdev->dev, "id",
->>>  							GPIOD_IN);
->>> -	if (IS_ERR(palmas_usb->id_gpiod)) {
->>> +	if (PTR_ERR(palmas_usb->id_gpiod) == -EPROBE_DEFER) {
->>> +		return -EPROBE_DEFER;
->>> +	} else if (IS_ERR(palmas_usb->id_gpiod)) {
->>>  		dev_err(&pdev->dev, "failed to get id gpio\n");
->>>  		return PTR_ERR(palmas_usb->id_gpiod);
->>>  	}
->>>  
->>>  	palmas_usb->vbus_gpiod = devm_gpiod_get_optional(&pdev->dev, "vbus",
->>>  							GPIOD_IN);
->>> -	if (IS_ERR(palmas_usb->vbus_gpiod)) {
->>> +	if (PTR_ERR(palmas_usb->vbus_gpiod) == -EPROBE_DEFER) {
->>> +		return -EPROBE_DEFER;
->>> +	} else if (IS_ERR(palmas_usb->vbus_gpiod)) {
->>>  		dev_err(&pdev->dev, "failed to get vbus gpio\n");
->>>  		return PTR_ERR(palmas_usb->vbus_gpiod);
->>>  	}
->>>
->>
->> I think that it is enough to handle the -EPROBE_DEFER.
->> Also, I prefer to use single if/else statement 
->> instead of the nested if/else statement.
->>
->> Applied it.
-> 
-> Uh... As it is? Then it is matter of time it triggers someones cocci
-> script pointing to else after return. Could you at least fix this?
-
-Sorry. I don't understand. Do you mean that this patch has the
-some issue of cocci script?
-
-I think that it fixes the probe sequence issue
-between extcon-palmas and gpio driver. It is not related to
-any result from cocci script. If the extcon-palmas.c has
-the issue by cocci or checkpatch, anyone can send the other patch
-for fixup.
-
-I think that it is enough to fix the issue which is only
-related to the probe sequence between gpio and extcon-palmas.c
-
-> 
-> Thanks,
-> 	ladis
-> 
-> 
-
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+CkZyb206IENocmlzdG9waGUgTGVyb3kgPGNocmlzdG9waGUubGVyb3lAYy1zLmZyPgogRGF0ZTog
+MjAyMC0wMS0yMSAxNjozNzowNwpUbzoi546L5paH6JmOIiA8d2VuaHUud2FuZ0B2aXZvLmNvbT4s
+QW5kcmV3IERvbm5lbGxhbiA8YWpkQGxpbnV4LmlibS5jb20+CiBjYzogS2F0ZSBTdGV3YXJ0IDxr
+c3Rld2FydEBsaW51eGZvdW5kYXRpb24ub3JnPixSaWNoYXJkIEZvbnRhbmEgPHJmb250YW5hQHJl
+ZGhhdC5jb20+LEdyZWcgS3JvYWgtSGFydG1hbiA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc+
+LGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcsd2FuZ3dlbmh1IDx3ZW5odS5wa3VAZ21haWwu
+Y29tPixQYXVsIE1hY2tlcnJhcyA8cGF1bHVzQHNhbWJhLm9yZz4sdHJpdmlhbEBrZXJuZWwub3Jn
+LFRob21hcyBHbGVpeG5lciA8dGdseEBsaW51dHJvbml4LmRlPixsaW51eHBwYy1kZXZAbGlzdHMu
+b3psYWJzLm9yZyxsb25laHVnb0Bob3RtYWlsLmNvbQpTdWJqZWN0OiBSZTogW1BBVENIXSBwb3dl
+cnBjL3N5c2RldjogZml4IGNvbXBpbGUgZXJyb3JzPgo+Cj5MZSAyMS8wMS8yMDIwIMOgIDA3OjU5
+LCDnjovmlofomY4gYSDDqWNyaXTCoDoKPj4g5Y+R5Lu25Lq677yaQW5kcmV3IERvbm5lbGxhbiA8
+YWpkQGxpbnV4LmlibS5jb20+Cj4+IOWPkemAgeaXpeacn++8mjIwMjAtMDEtMjEgMTQ6MTM6MDcK
+Pj4g5pS25Lu25Lq677yad2FuZ3dlbmh1IDx3ZW5odS5wa3VAZ21haWwuY29tPixCZW5qYW1pbiBI
+ZXJyZW5zY2htaWR0IDxiZW5oQGtlcm5lbC5jcmFzaGluZy5vcmc+LFBhdWwgTWFja2VycmFzIDxw
+YXVsdXNAc2FtYmEub3JnPixNaWNoYWVsIEVsbGVybWFuIDxtcGVAZWxsZXJtYW4uaWQuYXU+LEth
+dGUgU3Rld2FydCA8a3N0ZXdhcnRAbGludXhmb3VuZGF0aW9uLm9yZz4sR3JlZyBLcm9haC1IYXJ0
+bWFuIDxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz4sUmljaGFyZCBGb250YW5hIDxyZm9udGFu
+YUByZWRoYXQuY29tPixUaG9tYXMgR2xlaXhuZXIgPHRnbHhAbGludXRyb25peC5kZT4sbGludXhw
+cGMtZGV2QGxpc3RzLm96bGFicy5vcmcsbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZwo+PiDm
+ioTpgIHkurrvvJp0cml2aWFsQGtlcm5lbC5vcmcsbG9uZWh1Z29AaG90bWFpbC5jb20sd2VuaHUu
+d2FuZ0B2aXZvLmNvbQo+PiDkuLvpopjvvJpSZTogW1BBVENIXSBwb3dlcnBjL3N5c2RldjogZml4
+IGNvbXBpbGUgZXJyb3JzPk9uIDIxLzEvMjAgNDozMSBwbSwgd2FuZ3dlbmh1IHdyb3RlOgo+Pj4+
+IEZyb206IHdhbmd3ZW5odSA8d2VuaHUud2FuZ0B2aXZvLmNvbT4KPj4+Pgo+Pj4+IEluY2x1ZGUg
+YXJjaC9wb3dlcnBjL2luY2x1ZGUvYXNtL2lvLmggaW50byBmc2xfODV4eF9jYWNoZV9zcmFtLmMg
+dG8KPj4+PiBmaXggdGhlIGltcGxpY2l0IGRlY2xhcmF0aW9uIGNvbXBpbGUgZXJyb3JzIHdoZW4g
+YnVpbGRpbmcgQ2FjaGUtU3JhbS4KPj4+Pgo+Pj4+IGFyY2gvcG93ZXJwYy9zeXNkZXYvZnNsXzg1
+eHhfY2FjaGVfc3JhbS5jOiBJbiBmdW5jdGlvbiDigJhpbnN0YW50aWF0ZV9jYWNoZV9zcmFt4oCZ
+Ogo+Pj4+IGFyY2gvcG93ZXJwYy9zeXNkZXYvZnNsXzg1eHhfY2FjaGVfc3JhbS5jOjk3OjI2OiBl
+cnJvcjogaW1wbGljaXQgZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24g4oCYaW9yZW1hcF9jb2hlcmVu
+dOKAmTsgZGlkIHlvdSBtZWFuIOKAmGJpdG1hcF9jb21wbGVtZW504oCZPyBbLVdlcnJvcj1pbXBs
+aWNpdC1mdW5jdGlvbi1kZWNsYXJhdGlvbl0KPj4+PiAgICAgY2FjaGVfc3JhbS0+YmFzZV92aXJ0
+ID0gaW9yZW1hcF9jb2hlcmVudChjYWNoZV9zcmFtLT5iYXNlX3BoeXMsCj4+Pj4gICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIF5+fn5+fn5+fn5+fn5+fn4KPj4+PiAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgYml0bWFwX2NvbXBsZW1lbnQKPj4+PiBhcmNoL3Bvd2VycGMvc3lzZGV2L2Zz
+bF84NXh4X2NhY2hlX3NyYW0uYzo5NzoyNDogZXJyb3I6IGFzc2lnbm1lbnQgbWFrZXMgcG9pbnRl
+ciBmcm9tIGludGVnZXIgd2l0aG91dCBhIGNhc3QgWy1XZXJyb3I9aW50LWNvbnZlcnNpb25dCj4+
+Pj4gICAgIGNhY2hlX3NyYW0tPmJhc2VfdmlydCA9IGlvcmVtYXBfY29oZXJlbnQoY2FjaGVfc3Jh
+bS0+YmFzZV9waHlzLAo+Pj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgXgo+Pj4+IGFyY2gv
+cG93ZXJwYy9zeXNkZXYvZnNsXzg1eHhfY2FjaGVfc3JhbS5jOjEyMzoyOiBlcnJvcjogaW1wbGlj
+aXQgZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24g4oCYaW91bm1hcOKAmTsgZGlkIHlvdSBtZWFuIOKA
+mHJvdW5kdXDigJk/IFstV2Vycm9yPWltcGxpY2l0LWZ1bmN0aW9uLWRlY2xhcmF0aW9uXQo+Pj4+
+ICAgICBpb3VubWFwKGNhY2hlX3NyYW0tPmJhc2VfdmlydCk7Cj4+Pj4gICAgIF5+fn5+fn4KPj4+
+PiAgICAgcm91bmR1cAo+Pj4+IGNjMTogYWxsIHdhcm5pbmdzIGJlaW5nIHRyZWF0ZWQgYXMgZXJy
+b3JzCj4+Pj4KPj4+PiBTaWduZWQtb2ZmLWJ5OiB3YW5nd2VuaHUgPHdlbmh1LndhbmdAdml2by5j
+b20+Cj4+Pgo+Pj4gSG93IGxvbmcgaGFzIHRoaXMgY29kZSBiZWVuIGJyb2tlbiBmb3I/Cj4+IAo+
+PiBJdCdzIGJlZW4gYnJva2VuIGFsbW9zdCAxNSBtb250aHMgc2luY2UgdGhlIGNvbW1pdCBiZWxv
+dzoKPj4gImNvbW1pdCBhYTkxNzk2ZWM0NjMzOWYyZWQ1M2RhMzExYmQzZWE3N2EzZTRkZmUxCj4+
+IEF1dGhvcjogQ2hyaXN0b3BoZSBMZXJveSA8Y2hyaXN0b3BoZS5sZXJveUBjLXMuZnI+Cj4+IERh
+dGU6ICAgVHVlIE9jdCA5IDEzOjUxOjQxIDIwMTggKzAwMDAKPj4gCj4+ICAgICAgcG93ZXJwYzog
+ZG9uJ3QgdXNlIGlvcmVtYXBfcHJvdCgpIG5vciBfX2lvcmVtYXAoKSB1bmxlc3MgcmVhbGx5IG5l
+ZWRlZC4iCj4+IAo+PiBBbmQgd2UgYXJlIHdvcmtpbmcgb24gaXQgbm93IGZvciBmdXJ0aGVyIGRl
+dmVsb3BtZW50Lgo+Cj5UaGF0J3MgcHJldHR5IHN1cnByaXNpbmcuIFRoYXQgY29tbWl0IGRpZG4n
+dCBjaGFuZ2UgdGhlIGlvdW5tYXAoKS4gSXQgCj5vbmx5IHJlcGxhY2VkIGlvcmVtYXBfcHJvdCgp
+IGJ5IGlvcmVtYXBfY29oZXJlbnQoKS4gQm90aCBhcmUgZGVmaW5lZCBpbiBpby5oCj4KPkNocmlz
+dG9waGUKPgoKVGhlIGNvbXBpbGUgZXJyb3IgZXhpc3RzIHNpbmNlIHRoZSB1cGxvYWRpbmcgb2Yg
+dGhlIGRyaXZlcgpEZXRhaWxzIGJlbG93OgoxLiAiaW9yZW1hcF9mbGFncyIgZGVmaW5lZCBpbiAi
+YXNtL2lvLmgiIHdhcyB1c2VkIHByaW1hcmlseShXZWQgT2N0IDEzIDE3OjMwOjU2IDIwMTApOgoo
+NmRiOTJjYzlkMDdkOiBwb3dlcnBjLzg1eHg6IGFkZCBjYWNoZS1zcmFtIHN1cHBvcnQpOwoyLiAi
+aW9yZW1hcF9wcm90IiB3YXMgdXNlZCB0byByZXBsYWNlICJpb3JlbWFwX2ZsYWdzIgooNDBmMWNl
+N2ZiN2U4OiBwb3dlcnBjOiBSZW1vdmUgaW9yZW1hcF9mbGFncyk7CjMuICJpb3JlbWFwX2NvaGVy
+ZW50IiB3YXMgdXNlZCB0byByZXBsYWNlICJpb3JlbWFwX3Byb3QiOgooYWE5MTc5NmVjNDYzOiBw
+b3dlcnBjOiBkb24ndCB1c2UgaW9yZW1hcF9wcm90KCkgbm9yIF9faW9yZW1hcCgpIHVubGVzcyBy
+ZWFsbHkgbmVlZGVkLikKClNvIEkgd2lsbCBkbyB0aGUgcmUtcGF0Y2ggd2l0aCBhICJGaXhlZCIg
+dGFnIGFuZCAiPGxpbnV4L2lvLmg+IiBpbmNsdWRlIG1vZGlmaWNhdGlvbi4KV2hpY2ggY29tbWl0
+IHNob3VsZCBiZSByZWZlcmVuY2VkIHRvIGFwcGVuZCB0byAiRml4ZWQiIHRhZz8gKE5vLjEgb3Ig
+Tm8uMyA/KQoKV2VuaHUKCj4+IAo+Pj4KPj4+PiAtLS0KPj4+PiAgICBhcmNoL3Bvd2VycGMvc3lz
+ZGV2L2ZzbF84NXh4X2NhY2hlX3NyYW0uYyB8IDEgKwo+Pj4+ICAgIDEgZmlsZSBjaGFuZ2VkLCAx
+IGluc2VydGlvbigrKQo+Pj4+Cj4+Pj4gZGlmZiAtLWdpdCBhL2FyY2gvcG93ZXJwYy9zeXNkZXYv
+ZnNsXzg1eHhfY2FjaGVfc3JhbS5jIGIvYXJjaC9wb3dlcnBjL3N5c2Rldi9mc2xfODV4eF9jYWNo
+ZV9zcmFtLmMKPj4+PiBpbmRleCBmNmM2NjVkYWM3MjUuLjI5YjY4NjhlZmY3ZCAxMDA2NDQKPj4+
+PiAtLS0gYS9hcmNoL3Bvd2VycGMvc3lzZGV2L2ZzbF84NXh4X2NhY2hlX3NyYW0uYwo+Pj4+ICsr
+KyBiL2FyY2gvcG93ZXJwYy9zeXNkZXYvZnNsXzg1eHhfY2FjaGVfc3JhbS5jCj4+Pj4gQEAgLTE3
+LDYgKzE3LDcgQEAKPj4+PiAgICAjaW5jbHVkZSA8bGludXgvb2ZfcGxhdGZvcm0uaD4KPj4+PiAg
+ICAjaW5jbHVkZSA8YXNtL3BndGFibGUuaD4KPj4+PiAgICAjaW5jbHVkZSA8YXNtL2ZzbF84NXh4
+X2NhY2hlX3NyYW0uaD4KPj4+PiArI2luY2x1ZGUgPGFzbS9pby5oPgo+Pj4+Cj4+Pj4gICAgI2lu
+Y2x1ZGUgImZzbF84NXh4X2NhY2hlX2N0bHIuaCIKPj4+Pgo+Pj4KPj4+IC0tIAo+Pj4gQW5kcmV3
+IERvbm5lbGxhbiAgICAgICAgICAgICAgT3pMYWJzLCBBREwgQ2FuYmVycmEKPj4+IGFqZEBsaW51
+eC5pYm0uY29tICAgICAgICAgICAgIElCTSBBdXN0cmFsaWEgTGltaXRlZAo+Pj4KPj4gCj4+IFdl
+bmh1Cj4+IAoNCg0K
