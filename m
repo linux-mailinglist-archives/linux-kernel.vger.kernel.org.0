@@ -2,255 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1005C162E8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 19:30:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8742162E93
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 19:30:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726515AbgBRSaI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 13:30:08 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35445 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726225AbgBRSaH (ORCPT
+        id S1726638AbgBRSaR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 13:30:17 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:41417 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726318AbgBRSaN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 13:30:07 -0500
-Received: by mail-pg1-f196.google.com with SMTP id v23so7956749pgk.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 10:30:07 -0800 (PST)
+        Tue, 18 Feb 2020 13:30:13 -0500
+Received: by mail-oi1-f195.google.com with SMTP id i1so21073275oie.8;
+        Tue, 18 Feb 2020 10:30:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=/05aq8w2Ac9heQRuCsKZ8//q0fIiiZ3ikHYCvXo97do=;
-        b=UG2B8uax7MUwbV9a1ZtWSEVm0fmr4llis9wnqBZFUHEp/p3aY5BE41hsxnbyEz4h3c
-         XCaY+wjxuHbVq4PlXCYJ8Xp2J/7Teym4GhlaD1g1DdyqnLmAdrExaGKla4mFDpfp5cNN
-         x3CWDqtosc1ampS4gQl7o8bf93KDpNdgY4/TI=
+        bh=+wiw5lrCSQij+T7Z3oal8MXvOgfhByiSsTRsFyzWrro=;
+        b=AL2OqpCvhL88spvXodEIYCX2UE5sle8Xf4g0XdrZ/ldsokqbmwcoZn3eBX7anyuWy8
+         vlrlN/A6J+XJwXYFZmV/DAHEnW7d7FK01iuCj9nf+YS5pEBD68wWtTWzRVHfWKw4ipEo
+         LmYli6LkiVJtD2pJTpZzGqJKB/ylu0Z6JisMgEqUXYyDW2F4hdPQJpI6x9+jctd3UJ3p
+         WIabauyIg1yCjPr1JYhXdNpbJPZX4claJRgDQJ3YYfdywrUxJMKOY1UaS+G66RmsBSLs
+         m4jqANpQ0fr86C9+hjGJyYnWLdT8I1YDs0uRlg/iHgH/wW2NLVyUgJXTWuycmZjWbJtI
+         0Quw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/05aq8w2Ac9heQRuCsKZ8//q0fIiiZ3ikHYCvXo97do=;
-        b=DjlFqPQoyQVDHQwceN14kUP2C9V49moXEYpT0wjwVaBOUM3+8HJXmADJoDFCmFM1ZB
-         hK1L/o9qCmXsUYmHMYi/3DcxB5wEE1u89phvXgBloKhCin7xa1xl5UL2yRsaNz/j9zKZ
-         VtmBjDsoycvVxa5O9ePtQnY9/EYQnmSmTI3tbIvIdtkUYPGdRSBdqhA6I9ehYrRFWQ82
-         QTtMXbST0d7jnLsN1DEG3jHLno8PsGZW1601kQHICoOlcJEKBdDi07QVLuXDh/ofLFeB
-         /t0oCfl4b5u+PX+hdydxg77Ak+59O9XUfPHvAS1iVnQfGJn1LSlRIyMxfCjAGSjxdUD7
-         64ow==
-X-Gm-Message-State: APjAAAXaT+EMh6B5Fx3UXqKuYrdE4DnHNLvVBz0LdoCFBhi+75FKWk2v
-        K2cJZu98+SvuGwuOiSdbW0IBNA==
-X-Google-Smtp-Source: APXvYqz2HMgsEPxt+fVKPlAmN9ICuVsjj9xIosDvxD2FToPVOHU551WJiw7rjvIjdZIQQ/BuFw5ZoA==
-X-Received: by 2002:a63:5657:: with SMTP id g23mr23422019pgm.452.1582050606668;
-        Tue, 18 Feb 2020 10:30:06 -0800 (PST)
-Received: from google.com ([2620:15c:202:201:172e:4646:c089:ce59])
-        by smtp.gmail.com with ESMTPSA id t11sm5477183pgi.15.2020.02.18.10.30.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2020 10:30:05 -0800 (PST)
-Date:   Tue, 18 Feb 2020 10:30:04 -0800
-From:   Prashant Malani <pmalani@chromium.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     Gwendal Grignou <gwendal@chromium.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Fabien Lahoudere <fabien.lahoudere@collabora.com>,
-        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>
-Subject: Re: [PATCH v2 10/17] iio: cros_ec: Use cros_ec_cmd()
-Message-ID: <20200218183004.GA184561@google.com>
-References: <20200205190028.183069-1-pmalani@chromium.org>
- <20200205190028.183069-11-pmalani@chromium.org>
- <20200206121753.7b809631@archlinux>
- <671a55aa-1e5e-4e21-4a62-55db4dee368a@collabora.com>
- <CACeCKad4zp9O7WAPu5S1rmUDwkzWLjk_1i7YtPvXUG=nDvkYAA@mail.gmail.com>
- <CAPUE2usO-Ny61+wEdTcwR3b+RgGjeQ4Jb24UeF8siscqFQ5ogQ@mail.gmail.com>
- <2ebc4e17-df7a-d5c2-f657-16d06e402bd4@collabora.com>
- <CACeCKafG35Di+SU2i=DD09tUyFvq0wyDOLj5J1fUhnds3bTeDg@mail.gmail.com>
+        bh=+wiw5lrCSQij+T7Z3oal8MXvOgfhByiSsTRsFyzWrro=;
+        b=GuIVI3kwndmszIcolPpNgk0RKxbmQdZe40yuTGhHqNku2amEn2/1TZw8MO07XG/UeJ
+         7YcOuAocyULFJ0cWWZ+nzuDzVGyl6DCgK4ln/ubwesqQ7cnFAU4URtNyETdreI0RUCCr
+         RjgJgAZjgRFbzdDTWHNxem00w/XtpocbNPZ8W6fDwhghSI8/JaUVkkvbUDlp0pmLWZm8
+         RE/Mi7G6g3htJ4QzMe+xRwNpQb2fDMFGW6sxrbdVGqomws3YbfFKauAe7Bkcwty0GYUM
+         bqF6AzKrpE2S1USeVR9RaNMO/QuSFp/BFwDHxLaxoOOEfcTEMb4MEk7asOtROBffH6Rd
+         106Q==
+X-Gm-Message-State: APjAAAW6d31ObTKIVt0ktnvOLMnHtMxsIXL8HQxJxiX/vAbNBluMzZSd
+        Z8AlqLF30JeIyGj+zHaoEOQ=
+X-Google-Smtp-Source: APXvYqx9VaDZWhHzRlewamxKXnv7qlX1vetohx2dH9usR8s6uZil0EOAwAHij+iXu+/MAXWLp76QAQ==
+X-Received: by 2002:aca:2b04:: with SMTP id i4mr2129858oik.21.1582050612821;
+        Tue, 18 Feb 2020 10:30:12 -0800 (PST)
+Received: from ubuntu-m2-xlarge-x86 ([2604:1380:4111:8b00::1])
+        by smtp.gmail.com with ESMTPSA id l207sm1435015oih.25.2020.02.18.10.30.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Feb 2020 10:30:12 -0800 (PST)
+Date:   Tue, 18 Feb 2020 11:30:11 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        linux-mips@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Subject: Re: [PATCH] MIPS: vdso: Wrap -mexplicit-relocs in cc-option
+Message-ID: <20200218183011.GA7516@ubuntu-m2-xlarge-x86>
+References: <20200217211149.44132-1-natechancellor@gmail.com>
+ <CAKwvOdnRbMrXNSMAA20UnoAUKBu5X7JO+DvNTb9pebuzQbRVcw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACeCKafG35Di+SU2i=DD09tUyFvq0wyDOLj5J1fUhnds3bTeDg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAKwvOdnRbMrXNSMAA20UnoAUKBu5X7JO+DvNTb9pebuzQbRVcw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+On Tue, Feb 18, 2020 at 10:28:15AM -0800, Nick Desaulniers wrote:
+> On Mon, Feb 17, 2020 at 1:11 PM Nathan Chancellor
+> <natechancellor@gmail.com> wrote:
+> >
+> > Clang does not support this option and errors out:
+> >
+> > clang-11: error: unknown argument: '-mexplicit-relocs'
+> >
+> > Clang does not appear to need this flag like GCC does because the jalr
+> > check that was added in commit 976c23af3ee5 ("mips: vdso: add build
+> > time check that no 'jalr t9' calls left") passes just fine with
+> >
+> > $ make ARCH=mips CC=clang CROSS_COMPILE=mipsel-linux-gnu- malta_defconfig arch/mips/vdso/
+> >
+> > even before commit d3f703c4359f ("mips: vdso: fix 'jalr t9' crash in
+> > vdso code").
+> >
+> > -mrelax-pic-calls has been supported since clang 9, which is the
+> > earliest version that could build a working MIPS kernel, and it is the
+> > default for clang so just leave it be.
+> >
+> > Fixes: d3f703c4359f ("mips: vdso: fix 'jalr t9' crash in vdso code")
+> > Link: https://github.com/ClangBuiltLinux/linux/issues/890
+> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> 
+> Thanks for the patch, and detailed context.
+> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+> 
+> With this patch applied:
+> $ make ARCH=mips CC=clang CROSS_COMPILE=mipsel-linux-gnu-
+> malta_defconfig arch/mips/vdso/
+> $ lvm-objdump --disassemble arch/mips/vdso/vdso.so.dbg.raw | egrep -h "jarl.*t9"
+> $ llvm-objdump --disassemble arch/mips/vdso/vdso.so.dbg.raw | grep jarl
+> So jarl instructions aren't emitted.
+> 
+> Tested-by: Nick Desaulniers <ndesaulniers@google.com>
 
-Just thought I'd ping this thread since it's been a week since the last
-email.
+Thank you for double checking and the review!
 
-On Mon, Feb 10, 2020 at 12:14:01PM -0800, Prashant Malani wrote:
-> Hi All (trimming most code parts of the thread for the sake of brevity),
-> 
-> Thanks for listing the points Enric, Please see my notes inline:
-> 
-> On Mon, Feb 10, 2020 at 3:03 AM Enric Balletbo i Serra
-> <enric.balletbo@collabora.com> wrote:
-> >
-> > Hi Gwendal, Prashant et all
-> >
-> > On 7/2/20 19:47, Gwendal Grignou wrote:
-> > > On Thu, Feb 6, 2020 at 10:50 AM Prashant Malani <pmalani@chromium.org> wrote:
-> > >>
-> > >> Hi Enric,
-> > >>
-> > >> Thanks for taking a look at the patch. Please see my response inline:
-> ....
-> > >>>>> @@ -171,9 +162,11 @@ int cros_ec_motion_send_host_cmd(struct cros_ec_sensors_core_state *state,
-> > >>>>>
-> > >>>>>      memcpy(state->msg->data, &state->param, sizeof(state->param));
-> > >>>>>
-> > >>>>> -    ret = cros_ec_cmd_xfer_status(state->ec, state->msg);
-> > >>>>> +    ret = cros_ec_cmd_xfer(state->ec, state->msg);
-> > >>>>>      if (ret < 0)
-> > >>>>>              return ret;
-> > >>>>> +    else if (state->msg->result != EC_RES_SUCCESS)
-> > >>>>> +            return -EPROTO;
-> > >>>>>
-> > >>>
-> > >>> There is no way to use the new cros_ec_cmd here?
-> > > When the EC does not support sensor fifo,
-> > > cros_ec_motion_send_host_cmd() is on the data path. For instance, it
-> > > is called 2 times every 10ms by chrome to calculate the lid angle. I
-> > > would be reluctant to call malloc. Given it is well encapsulated into
-> > > the sensor stack. Does it make sense to call cros_ec_cmd_xfer
-> > > directly?
-> > >
-> >
-> > Thanks Gwendal for pointing this, it makes totally sense, and I suspect this can
-> > happen on other cases.
-> >
-> > Just to make clear, my concern is not about not using the new 'cros_ec_cmd'
-> > here, is about changing 'cros_ec_cmd_xfer_status' for 'cros_ec_cmd_xfer'. Also,
-> > my other concern is how useful is the new 'cros_ec_cmd' replacing what we have
-> > now if cannot replace all current uses.
-> >
-> > My points of view are this:
-> >
-> > * Actually we have cros_ec_cmd_xfer and cros_ec_cmd_xfer_status, use the second
-> > one is better, in fact, we tried to move all the cros_ec_cmd_xfer to the _status
-> > version in the past because makes the code and error handling cleaner. So I'm
-> > reticent to get back to use cros_ec_cmd_xfer instead of cros_ec_cmd_xfer_status.
-> >
-> > * The users of the cros-ec protocol sometimes they mallocing/freeing at runtime,
-> > and sometimes they don't. IMHO *non* mallocing/freeing is usually better, more
-> > efficient and faster. Would be nice to standardize this.
-> 
-> I think we should look at latency (I am assuming that is one of the
-> concerns Gwendal was referring to).
-> We should certainly do more rigorous measurements, but I did a crude
-> measurement across a devm_kzalloc() used on one of the EC commands
-> inside platform/chrome for struct EC command:
-> - Used ktime_get_ns() to record time before and after the devm_kzalloc()
-> - Used ktime_sub to subtract the "after" and "before" values:
-> 
->         struct cros_ec_command *msg;
->         int ret;
-> +       ktime_t start, end, diff;
-> 
-> +       start = ktime_get_ns();
->         msg = kzalloc(sizeof(*msg) + max(outsize, insize), GFP_KERNEL);
-> +       end = ktime_get_ns();
->         if (!msg)
->                 return -ENOMEM;
-> 
-> +       diff = ktime_sub(end, start);
-> +       printk("%s(): TEST: kzalloc took: %lld\n", __func__, ktime_to_ns(diff));
-> 
-> On an i5 1.6 GHz system, across 16 call measurements I got the
-> following latency values (in ns):
-> - Count, N:16
-> - Average: 72.375
-> - Std. Dev : 28.768
-> - Max: 143
-> - Min:  51
-> 
-> Are these values significant for the various call-sites? I think the
-> driver authors might be able to comment better there (unfortunately I
-> don't have enough context for each case).
-> Of course there will be other overhead (memcpy) but I think this is a
-> good starting point for the discussion.
-> (My apologies if this measurement method is incorrect/inaccurate.)
-
-Any thoughts / comments here?
-
-On an overall note, I think keeping cros_ec_cmd_xfer() and cros_ec_cmd()
-might be a good starting point.
-
-In this way, we are not introducing any extra function. Also, we can
-begin converting the cros_ec_cmd_xfer() use cases (a few call-sites may
-need to be investigated from a latency perspective). The
-cros_ec_cmd_xfer() conversions are better handled in separate patch
-series.
-
-Best regards,
-
--Prashant
-> 
-> >
-> > * If we want to introduce a new 'cros_ec_cmd', this should make the code cleaner
-> > and ideally should be the way we tell the users they should use to communicate
-> > with the cros-ec and not open coding constantly. Ideally, should be a
-> > replacement of all current 'cros_ec_cmd_xfer*' versions.
-> 
-> As I mentioned previously, I think all calls of cros_ec_cmd_xfer() can
-> be converted to use cros_ec_cmd() (especially since the new API has a
-> *result pointer),
-> but I think it should be staged out a bit more (since cases like iio:
-> cros_ec driver require non-trivial refactoring which I think is better
-> in a patch/series).
-> 
-> >
-> > * If 'cros_ec_cmd' *cannot* replace all the cases, it should be clear to the
-> > user in which cases he should use this function and in which cases shouldn't use
-> > this function.
-> 
-> This seems like a good compromise, but my expectation is that if there
-> is a "fast" and "slow" version of the same functionality, developers
-> would be inclined to use the "fast" version always?
-> 
-> 
-> > * Finally, what pointed Gwendal, what's the best approach to send commands to
-> > the EC by default, is better use dynamic memory? or is better use the stack? is
-> > it always safe use the stack? is always efficient use allocated memory?
-> >
-> > As you can see I have a lot of questions still around, but taking in
-> > consideration that this will be an important change I think that makes sense
-> > spend some time discussing it.
-> >
-> > What do you think?
-> >
-> > Enric
-> >
-> >
-> > > Gwendal.
-> > >>
-> > >> I think it is doable. From looking at the code I felt the factors we
-> > >> need to be careful about are:
-> > >> - The function cros_ec_motion_send_host_cmd() is called from a few
-> > >> other files, each of which set up the struct cros_ec_command
-> > >> differently (reference:
-> > >> https://elixir.bootlin.com/linux/latest/ident/cros_ec_motion_send_host_cmd)
-> > >> - It is not clear to me how readability will be affected by making the
-> > >> change to cros_ec_cmd().
-> > >>
-> > >> Due to the above two factors, but primarily because I wanted to avoid
-> > >> making such an involved large change in this 17 patch series, I
-> > >> reasoned it would be better to make the transition to cros_ec_cmd()
-> > >> for these files in a separate patch/series.
-> > >> My plan after this patch series is to work on this driver(perhaps we
-> > >> can eliminate cros_ec_motion_send_host_cmd() itself?), and then remove
-> > >> cros_ec_cmd_xfer() usage.
-> > >>
-> > >> WDYT?
-> > >>
-> > >> Best regards,
-> > >>
-> > >>
-> > >>>
-> > >>>
-> > >>>>>      if (ret &&
-> > >>>>>          state->resp != (struct ec_response_motion_sense *)state->msg->data)
-> > >>>>
+Cheers,
+Nathan
