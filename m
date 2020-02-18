@@ -2,72 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9DFB163589
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 22:53:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FA0916358D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 22:54:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727992AbgBRVxf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 16:53:35 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:56846 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726482AbgBRVxe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 16:53:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=TVHpoS6plyzACu0vk9UnX06s7fnOOIPSB1JSNnBqV2c=; b=ktybOmcX5Nbv7T3M2y32Yi1O2c
-        aeb5lBs/jS6U8KGZOGpA7gNbiKbw7FoKrh57K4I9mVBW3Cto/eOt67Q3ld2bFeha1lePKmTOe2z/P
-        AC70cB1jnhGyO9D6ghtog9/XkqUKpHYYgTlORR1Ychoj3uZ9QN86TrmQCgpNk8pOJJctt8kr7LlA+
-        gm1vn6cBSTzS0U1Z6/j0Su+HPcls7Wts8QrYaI0pK1V/Jw5rsS23ZGD6SJYQMSxbD8PkSWqs9DUXu
-        dZfTjICtCX8XOolh2PHs3UiMOgwwW0zCMLf+cl+aFsa1Ga41MYkycMkv16hWhea9zKrHn2evMHOzj
-        /8i38ggw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j4Ao3-0000lt-MR; Tue, 18 Feb 2020 21:53:27 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B315E98045F; Tue, 18 Feb 2020 22:53:25 +0100 (CET)
-Date:   Tue, 18 Feb 2020 22:53:25 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Luck, Tony" <tony.luck@intel.com>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andy Lutomirski <luto@kernel.org>, x86-ml <x86@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, paulmck@kernel.org
-Subject: Re: [RFC] #MC mess
-Message-ID: <20200218215325.GE11802@worktop.programming.kicks-ass.net>
-References: <20200218173150.GK14449@zn.tnic>
- <3908561D78D1C84285E8C5FCA982C28F7F57B937@ORSMSX115.amr.corp.intel.com>
- <20200218200200.GE11457@worktop.programming.kicks-ass.net>
- <3908561D78D1C84285E8C5FCA982C28F7F57BDFB@ORSMSX115.amr.corp.intel.com>
- <20200218203404.GI11457@worktop.programming.kicks-ass.net>
- <20200218214904.GD11802@worktop.programming.kicks-ass.net>
+        id S1727999AbgBRVyT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 16:54:19 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:42678 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726482AbgBRVyT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 16:54:19 -0500
+Received: from zn.tnic (p200300EC2F0C1F00B896B40159BA1A96.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:1f00:b896:b401:59ba:1a96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E0C8F1EC0C31;
+        Tue, 18 Feb 2020 22:54:16 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1582062857;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=zwwTIfNeXE0+PhfSG968Dl+SHEvpcxijJ0a07ILjQLw=;
+        b=QGtWD285YbgVFOi9XzS2Uav1mmO1rv7jcv9KXSra++21FdyQVYyJLcboFb0M8IGe35XYI7
+        9H+SxFWLcTxBt+N4MkalKow4lNV9vIp56K10d8n6RqrvAogTfYxweMD/fot9Oa4SFicM6l
+        l6mrEs67SdidLPEekTl7JA4BBpXBn3U=
+Date:   Tue, 18 Feb 2020 22:54:11 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Kim Phillips <kim.phillips@amd.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Babu Moger <babu.moger@amd.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Frank van der Linden <fllinden@amazon.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Huang Rui <ray.huang@amd.com>,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        Jan Beulich <jbeulich@suse.com>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Luwei Kang <luwei.kang@intel.com>,
+        Martin =?utf-8?B?TGnFoWth?= <mliska@suse.cz>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3] x86/cpu/amd: Enable the fixed Instructions Retired
+ counter IRPERF
+Message-ID: <20200218215411.GU14449@zn.tnic>
+References: <20200214201805.13830-1-kim.phillips@amd.com>
+ <20200218112035.GB14449@zn.tnic>
+ <15f0ff78-1a94-cfa7-297b-c226cb98d10f@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200218214904.GD11802@worktop.programming.kicks-ass.net>
+In-Reply-To: <15f0ff78-1a94-cfa7-297b-c226cb98d10f@amd.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 10:49:04PM +0100, Peter Zijlstra wrote:
-> diff --git a/include/linux/hardirq.h b/include/linux/hardirq.h
-> index da0af631ded5..146332764673 100644
-> --- a/include/linux/hardirq.h
-> +++ b/include/linux/hardirq.h
-> @@ -71,7 +71,7 @@ extern void irq_exit(void);
->  		printk_nmi_enter();				\
->  		lockdep_off();					\
->  		ftrace_nmi_enter();				\
-> -		BUG_ON(in_nmi());				\
-> +		BUG_ON(in_nmi() == 0xf);			\
+On Tue, Feb 18, 2020 at 03:35:25PM -0600, Kim Phillips wrote:
+> The only reason to have it show in /proc/cpuinfo is for userspace,
+> but they can check for a nonzero count prior to using, instead.
 
-That wants to be:
+How is userspace going to check it? perf tool or people *can* check it?
+If perf is going to check it then I'm fine with having the bug bit in
+/proc/cpuinfo along with a patch for perf adding usage for it.
 
-		BUG_ON(in_nmi() == NMI_MASK);			\
+If not and people in userspace can maybe check it but they probably
+won't then adding that bug bit would be a waste of bit.
 
->  		preempt_count_add(NMI_OFFSET + HARDIRQ_OFFSET);	\
->  		rcu_nmi_enter();				\
->  		trace_hardirq_enter();				\
+> Let me know if you'd like me to send a v4, or if you will just apply
+> this version of yours.
+
+I can take the simpler version for now. If you still want to have perf
+tool check the bit, you could submit a new patch adding that bug bit
+along with a perf tool patch using it...
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
