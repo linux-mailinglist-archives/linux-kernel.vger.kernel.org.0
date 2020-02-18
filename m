@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6928B163147
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:01:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD11B1631B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 21:05:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727380AbgBRT7J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 14:59:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37342 "EHLO mail.kernel.org"
+        id S1728873AbgBRUCM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 15:02:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728362AbgBRT7G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:59:06 -0500
+        id S1728868AbgBRUCI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 15:02:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3511924670;
-        Tue, 18 Feb 2020 19:59:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19EAD24672;
+        Tue, 18 Feb 2020 20:02:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582055945;
-        bh=D35N25K8N/+3qxxU6oWsd/VcsaIY+YrZgEa17lB9r1M=;
+        s=default; t=1582056128;
+        bh=l4P5wzIuHe9TK/p1Lf98jBjZh1puwj7i0tmg6bUuEOY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qyQQxqazUKBSx9OZF4Pu9rxvakeWA7MrQSSAwFr17MTICyMlAJ5pt6uImYcxa+P17
-         ryZTlkocLoZs8gujTIJCkT7v0zUhudJyBUiwV5/npbD5iiZlFsaR280/reod8bWQT1
-         tKrxJ4ttLl9Z/Se0Y8/OWYL1QIfVWCFJdeI1iVWU=
+        b=1KAGgf12SaXVK4xSznOw4AibHrpbL3yEsW4ib0vWP73yfB2SeBjt+ep71j8rmQxwn
+         Ly32Utg8H1ans4bI4sbhkXSj2u+Ei/lygPmj0jPG8nN6HcwZwbFXOeKkexPnm1Za3y
+         w4HQNiO8zZ3M0If/YwQT+KKyz8h7rjEnc1q33zuw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Kaike Wan <kaike.wan@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 5.4 40/66] IB/hfi1: Acquire lock to release TID entries when user file is closed
+        stable@vger.kernel.org, Sujith Pandel <sujith_pandel@dell.com>,
+        David Milburn <dmilburn@redhat.com>,
+        Yi Zhang <yi.zhang@redhat.com>,
+        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 5.5 46/80] nvme: fix the parameter order for nvme_get_log in nvme_get_fw_slot_info
 Date:   Tue, 18 Feb 2020 20:55:07 +0100
-Message-Id: <20200218190431.721981574@linuxfoundation.org>
+Message-Id: <20200218190436.723495694@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200218190428.035153861@linuxfoundation.org>
-References: <20200218190428.035153861@linuxfoundation.org>
+In-Reply-To: <20200218190432.043414522@linuxfoundation.org>
+References: <20200218190432.043414522@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,52 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kaike Wan <kaike.wan@intel.com>
+From: Yi Zhang <yi.zhang@redhat.com>
 
-commit a70ed0f2e6262e723ae8d70accb984ba309eacc2 upstream.
+commit f25372ffc3f6c2684b57fb718219137e6ee2b64c upstream.
 
-Each user context is allocated a certain number of RcvArray (TID)
-entries and these entries are managed through TID groups. These groups
-are put into one of three lists in each user context: tid_group_list,
-tid_used_list, and tid_full_list, depending on the number of used TID
-entries within each group. When TID packets are expected, one or more
-TID groups will be allocated. After the packets are received, the TID
-groups will be freed. Since multiple user threads may access the TID
-groups simultaneously, a mutex exp_mutex is used to synchronize the
-access. However, when the user file is closed, it tries to release
-all TID groups without acquiring the mutex first, which risks a race
-condition with another thread that may be releasing its TID groups,
-leading to data corruption.
+nvme fw-activate operation will get bellow warning log,
+fix it by update the parameter order
 
-This patch addresses the issue by acquiring the mutex first before
-releasing the TID groups when the file is closed.
+[  113.231513] nvme nvme0: Get FW SLOT INFO log error
 
-Fixes: 3abb33ac6521 ("staging/hfi1: Add TID cache receive init and free funcs")
-Link: https://lore.kernel.org/r/20200210131026.87408.86853.stgit@awfm-01.aw.intel.com
-Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Kaike Wan <kaike.wan@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: 0e98719b0e4b ("nvme: simplify the API for getting log pages")
+Reported-by: Sujith Pandel <sujith_pandel@dell.com>
+Reviewed-by: David Milburn <dmilburn@redhat.com>
+Signed-off-by: Yi Zhang <yi.zhang@redhat.com>
+Signed-off-by: Keith Busch <kbusch@kernel.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/hfi1/user_exp_rcv.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/nvme/host/core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/hfi1/user_exp_rcv.c
-+++ b/drivers/infiniband/hw/hfi1/user_exp_rcv.c
-@@ -165,10 +165,12 @@ void hfi1_user_exp_rcv_free(struct hfi1_
- 	if (fd->handler) {
- 		hfi1_mmu_rb_unregister(fd->handler);
- 	} else {
-+		mutex_lock(&uctxt->exp_mutex);
- 		if (!EXP_TID_SET_EMPTY(uctxt->tid_full_list))
- 			unlock_exp_tids(uctxt, &uctxt->tid_full_list, fd);
- 		if (!EXP_TID_SET_EMPTY(uctxt->tid_used_list))
- 			unlock_exp_tids(uctxt, &uctxt->tid_used_list, fd);
-+		mutex_unlock(&uctxt->exp_mutex);
- 	}
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -3867,7 +3867,7 @@ static void nvme_get_fw_slot_info(struct
+ 	if (!log)
+ 		return;
  
- 	kfree(fd->invalid_tids);
+-	if (nvme_get_log(ctrl, NVME_NSID_ALL, 0, NVME_LOG_FW_SLOT, log,
++	if (nvme_get_log(ctrl, NVME_NSID_ALL, NVME_LOG_FW_SLOT, 0, log,
+ 			sizeof(*log), 0))
+ 		dev_warn(ctrl->device, "Get FW SLOT INFO log error\n");
+ 	kfree(log);
 
 
