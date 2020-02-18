@@ -2,161 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5680162FF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:30:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BBB3163006
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:30:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726422AbgBRTaY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 14:30:24 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:37680 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726283AbgBRTaX (ORCPT
+        id S1726616AbgBRTaz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 14:30:55 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:50102 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbgBRTaz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:30:23 -0500
-Received: by mail-qk1-f195.google.com with SMTP id c188so20678150qkg.4
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 11:30:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=U9BxnklloKOZjCuc3cdTh1HeN/WnMWEq4zfovk73vyI=;
-        b=nT49w0C1ih5oOzBuBiyvQjcGXgaymRwO9laS+OKDFfRZxupH6y7XS1KkdPScRyKr7Y
-         TLq9WjVJyN6/VcyD6x32k0izI8wLRVmKM5Rsq0WbUf4/hD/YmFCTeMADkULpEBF7zGmH
-         jcOvWaensQUjpPb71s4iSUMXCIjg61ptLPuZ+lpRZXVof6kXle79aTHPOhUCjSJuB2HW
-         wTNHJm2VVJMDt7LszNAtbhRSEfHsDAihoUkR5Tkk9HjIYiXHpU2Cxv/GZb3geQplz7rq
-         rvn8+Q9tl7llI3pMLPHrz9iy7PSnDxS/2zqirUQGyCM7hdiBIqCLI1PFHn6uPEgS0RCV
-         EJug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=U9BxnklloKOZjCuc3cdTh1HeN/WnMWEq4zfovk73vyI=;
-        b=rzor2X8ijm4OlCHBN9QzzDO8C1uYOe9UXFlMgmpE+DAT3GXXGOIqS2dCWfMMm4y1wt
-         NH47qd/rZ79Z+CVpal4AYrWHea/KZEHl/ShMKQm8a1AWI6a7m/vJvox7lSkNN+TXq1lr
-         e5/Xlifseujvuh5QP23oyTUbQrlGzGqOasiAubESzDVs9b1J1ZCdr/yWWnTHcFouY2gz
-         LBq6p4r/JtjeExKF8hEXj4ruAGhC0kd5w5n7BXsnxbnAT0GhC4uwzrL9nVx0G9QH99eC
-         uD/O+chzLVyvaIP41Ac4uICd9Uokq3/kzLhj41Z6rZb+OOKSSiBo9iDOEIQxqX55ZIQg
-         N1Cg==
-X-Gm-Message-State: APjAAAVcYemquQUh7Qw00mzgKaZGASBFn9yD7VE/xFDVV60if4oZNCJV
-        WdNMBHhjwKZjR1I2L4WQlpg=
-X-Google-Smtp-Source: APXvYqzPBYX13UKcjxqTRxINgTW3YVwcmTzpGKcYlyHHhqImes3oVrqtJfJVeX1Cbl5C51KUmqQCeg==
-X-Received: by 2002:a37:a488:: with SMTP id n130mr19775161qke.120.1582054221733;
-        Tue, 18 Feb 2020 11:30:21 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([177.195.210.189])
-        by smtp.gmail.com with ESMTPSA id o10sm2223215qtp.38.2020.02.18.11.30.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2020 11:30:21 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id B2047403AD; Tue, 18 Feb 2020 16:30:11 -0300 (-03)
-Date:   Tue, 18 Feb 2020 16:30:11 -0300
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Leo Yan <leo.yan@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        Robert Walker <robert.walker@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Coresight ML <coresight@lists.linaro.org>
-Subject: Re: [PATCH v4 0/5] perf cs-etm: Fix synthesizing instruction samples
-Message-ID: <20200218193011.GB5365@kernel.org>
-References: <20200213094204.2568-1-leo.yan@linaro.org>
- <20200218184934.GA11448@xps15>
+        Tue, 18 Feb 2020 14:30:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=LV+MVA27GmERT76AQSFW7+TDX7eGVtFvNiOU/nZfQ3g=; b=JN0ihHEYLrKtAzPlpc2c+kakEP
+        AXp0XTtoT01qhyRVDWZ89g6HvK4L3jlP/8BV/rC0S8fh7kKrsJrsjge/9s1Tzbk85tLOvdP/dgdKC
+        KtUyXXEhqmdV1Rrf6EvZnq+CRJTgsry5YplZrzyiHGG/bynzIJyBL9/5TNwzqv3HHAF7pfaEcP58h
+        VltY5FDyp/4TIIzqDqlWeLyqpTIAiUI5xIVORPsbppF5tdlrOO+ytDl/tiJn9H+5iFXA0Kmnf3YJK
+        KyyUiHIu8WC5g6+UIV+/C9tnyoGHjBAephjll88bh39KALFwj8Sac3OgF1HtOsV1W7mJJo4YQcNPn
+        jOTObN7A==;
+Received: from [2601:1c0:6280:3f0::19c2]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j48Zu-0007NA-EW; Tue, 18 Feb 2020 19:30:42 +0000
+Subject: Re: [RFC PATCH] security: <linux/lsm_hooks.h>: fix all kernel-doc
+ warnings
+To:     Stephen Smalley <sds@tycho.nsa.gov>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Cc:     John Johansen <john.johansen@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Micah Morton <mortonm@chromium.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+References: <fb2c98bd-b579-6ad0-721a-56a4f81f0d6e@infradead.org>
+ <ec4e5117-08b6-d4df-fb08-deb553ebdc73@tycho.nsa.gov>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <f30f4baf-0929-3438-ffaa-4ffc401c52df@infradead.org>
+Date:   Tue, 18 Feb 2020 11:30:40 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200218184934.GA11448@xps15>
-X-Url:  http://acmel.wordpress.com
+In-Reply-To: <ec4e5117-08b6-d4df-fb08-deb553ebdc73@tycho.nsa.gov>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Feb 18, 2020 at 11:49:34AM -0700, Mathieu Poirier escreveu:
-> On Thu, Feb 13, 2020 at 05:41:59PM +0800, Leo Yan wrote:
-> > This patch series is to address issues for synthesizing instruction
-> > samples, especially when the instruction sample period is small enough,
-> > the current logic cannot synthesize multiple instruction samples within
-> > one instruction range packet.
-> > 
-> > Patch 0001 is to swap packets for instruction samples, so this allow
-> > option '--itrace=iNNN' can work well.
-> > 
-> > Patch 0002 avoids to reset the last branches for every instruction
-> > sample; if reset the last branches for every time generating sample, the
-> > later samples in the same range packet cannot use the last branches
-> > anymore.
-> > 
-> > Patch 0003 is the fixing for handling different instruction periods,
-> > especially for small sample period.
-> > 
-> > Patch 0004 is an optimization for copying last branches; it only copies
-> > last branches once if the instruction samples share the same last
-> > branches.
-> > 
-> > Patch 0005 is a minor fix for unsigned variable comparison to zero.
-> > 
-> > This patch set has been rebased on the latest perf/core branch; and
-> > verified on Juno board with below commands:
-> > 
-> >   # perf script --itrace=i2
-> >   # perf script --itrace=i2il16
-> >   # perf inject --itrace=i2il16 -i perf.data -o perf.data.new
-> >   # perf inject --itrace=i100il16 -i perf.data -o perf.data.new
-> > 
-> > Changes from v3:
-> > * Refactored patch 0001 with new function cs_etm__packet_swap() (Mike);
-> > * Refined instruction sample generation flow with single while loop,
-> >   which completely uses Mike's suggestions (Mike);
-> > * Added Mike's review tags for patch 01/02/04/05.
-> > 
-> > Changes from v2:
-> > * Added patch 0001 which is to fix swapping packets for instruction
-> >   samples;
-> > * Refined minor commit logs and comments;
-> > * Rebased on the latest perf/core branch.
-> > 
-> > Changes from v1:
-> > * Rebased patch set on perf/core branch with latest commit 9fec3cd5fa4a
-> >   ("perf map: Check if the map still has some refcounts on exit").
-> > 
-> > 
-> > 
-> > Leo Yan (5):
-> >   perf cs-etm: Swap packets for instruction samples
-> >   perf cs-etm: Continuously record last branch
-> >   perf cs-etm: Correct synthesizing instruction samples
-> >   perf cs-etm: Optimize copying last branches
-> >   perf cs-etm: Fix unsigned variable comparison to zero
+On 2/18/20 6:03 AM, Stephen Smalley wrote:
+> On 2/16/20 2:08 AM, Randy Dunlap wrote:
+>> From: Randy Dunlap <rdunlap@infradead.org>
+>>
+>> Fix all kernel-doc warnings in <linux/lsm_hooks.h>.
+>> Fixes the following warnings:
+>>
+>> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'quotactl' not described in 'security_list_options'
+>> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'quota_on' not described in 'security_list_options'
+>> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'sb_free_mnt_opts' not described in 'security_list_options'
+>> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'sb_eat_lsm_opts' not described in 'security_list_options'
+>> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'sb_kern_mount' not described in 'security_list_options'
+>> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'sb_show_options' not described in 'security_list_options'
+>> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'sb_add_mnt_opt' not described in 'security_list_options'
+>> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'd_instantiate' not described in 'security_list_options'
+>> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'getprocattr' not described in 'security_list_options'
+>> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'setprocattr' not described in 'security_list_options'
+>> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'locked_down' not described in 'security_list_options'
+>> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'perf_event_open' not described in 'security_list_options'
+>> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'perf_event_alloc' not described in 'security_list_options'
+>> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'perf_event_free' not described in 'security_list_options'
+>> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'perf_event_read' not described in 'security_list_options'
+>> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'perf_event_write' not described in 'security_list_options'
+>>
+>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+>> Cc: John Johansen <john.johansen@canonical.com>
+>> Cc: Kees Cook <keescook@chromium.org>
+>> Cc: Micah Morton <mortonm@chromium.org>
+>> Cc: James Morris <jmorris@namei.org>
+>> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+>> Cc: linux-security-module@vger.kernel.org
+>> Cc: Paul Moore <paul@paul-moore.com>
+>> Cc: Stephen Smalley <sds@tycho.nsa.gov>
+>> Cc: Eric Paris <eparis@parisplace.org>
+>> Cc: Casey Schaufler <casey@schaufler-ca.com>
+>> Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
+>> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>> ---
+>> Notes:
+>> a. The location for some of these might need to be modified.
+>> b. 'locked_down' was just missing a final ':'.
+>> c. Added a new section: Security hooks for perf events.
+>>
+>>   include/linux/lsm_hooks.h |   36 +++++++++++++++++++++++++++++++++++-
+>>   1 file changed, 35 insertions(+), 1 deletion(-)
+>>
+>> --- lnx-56-rc1.orig/include/linux/lsm_hooks.h
+>> +++ lnx-56-rc1/include/linux/lsm_hooks.h
+>> @@ -136,6 +140,10 @@
+>>    *    @sb superblock being remounted
+>>    *    @data contains the filesystem-specific data.
+>>    *    Return 0 if permission is granted.
+>> + * @sb_kern_mount:
+>> + *     Mount this @sb if allowed by permissions.
+>> + * @sb_show_options:
+>> + *     Show (print on @m) mount options for this @sb.
+>>    * @sb_umount:
+>>    *    Check permission before the @mnt file system is unmounted.
+>>    *    @mnt contains the mounted file system.
 > 
-> For all the patches in this set:
-> 
-> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> 
-> Unless Arnaldo says otherwise, I suggest you send a new V5 with Mike's RB for
-> patch 3/5 and mine for all of them.  That way he doesn't have to edit the
-> patches when applying them.
+> Thanks for doing this.  Note that some of the existing kernel-doc comments for these hooks include a separate line describing each parameter (not just embedded in the function description) and a line describing the return value.  Is that optional for kernel-doc? Obviously what you have added here is an improvement, just wondering whether it suffices or needs further augmentation.
 
-Yeah, that would make things easier for me, always appreciated.
+Hi Stephen,
 
-- Arnaldo
- 
-> Thanks,
-> Mathieu
-> 
-> > 
-> >  tools/perf/util/cs-etm.c | 157 +++++++++++++++++++++++++++------------
-> >  1 file changed, 111 insertions(+), 46 deletions(-)
-> > 
-> > -- 
-> > 2.17.1
-> > 
+The additional kernel-doc comments that you refer to are obviously Good to Have,
+but they are not required.  I didn't feel comfortable or qualified to add
+all of that info, but if anyone wants to help/contribute, please do so.
 
+thanks.
 -- 
+~Randy
 
-- Arnaldo
