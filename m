@@ -2,77 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07F8F162DB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 19:03:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89511162DB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 19:04:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726638AbgBRSDD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 13:03:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39188 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726403AbgBRSDD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 13:03:03 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2714C2070B;
-        Tue, 18 Feb 2020 18:03:02 +0000 (UTC)
-Date:   Tue, 18 Feb 2020 13:03:00 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        id S1726736AbgBRSD5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 13:03:57 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:44623 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726403AbgBRSD5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 13:03:57 -0500
+Received: by mail-qk1-f194.google.com with SMTP id j8so4065094qka.11
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 10:03:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=aJ1BGIDBYGzcyK8G8MxbNsnhVp8YW/urTc9MDE4QmZk=;
+        b=l0XaU/uefp36+SJJxTAxnIaHsK0+EPAmXcFPMsLURbl3BQD9ZfmArypV0e3vQyWpt5
+         Ky0yJzLK4yKBbpcH4pa8ECMGG62FFKlhBP58jHZtjupGfjOX/0PO+/tus06p05upcmWP
+         /xUds2PjQMAPxfdc6RziMTg9cfZixdc5L5vFWd/JnCmsew9zFU9jLMuhvBNAbOkLKwlD
+         xHPVNHsMCkRGyQC7gNFhu/J/bDkgu2PwT6Zrl3ZblPFMlGfTJ9OnizJyV/xyPhPEXNp1
+         6OjyBxtjL06osCjx/N8bbpeUcIgStdxRn9+9bcm0VVICwHEPXMDNSLzg0Lmu15mtfA3G
+         CzZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aJ1BGIDBYGzcyK8G8MxbNsnhVp8YW/urTc9MDE4QmZk=;
+        b=P3loOgRV4xfpFptn5Z0BTBAP188D+RxuUDH/MjpsmupnVfSSwoQd60nkueoETm9wb/
+         6TdGpj9vcGs5HdjWQkdh5oTz82jWQS4En4p/dJUs2xsV6dnlxZ50aeb8hik2bsTVx2Qr
+         ZM2csAHjAYfl2qLcwmvwWm+Iv35RNG6g5ZGaVrgyRTjkyntVN9ZYlApg+U9lgjSQJvkN
+         xkFWAg9nSI9PXE0yU8yKta0HyhqmEhNSCjp0ifDaXU2DFUcoBONRT1j9iq5EuGBu8ZZS
+         D4duElmoFr1vnKsBSoS4LC6ReMsnp8uQ9GIrYw6wxeruwlqExSr2ar+rD4HewmuXSx3q
+         E4Rg==
+X-Gm-Message-State: APjAAAUPExXeVR7CwjsCwfJxEUIJjSJE1De8rnshsY6RdY6Oqr203pyr
+        USva9pOtrfDB1+MEddHx/F0=
+X-Google-Smtp-Source: APXvYqy36ybWUfZ9Ds7GUTu3rog9ZaFFe4FGMupgQOnSlEADzzRnBVP9y7VypCZs7ztvfChviv4ZPw==
+X-Received: by 2002:a37:b103:: with SMTP id a3mr20208424qkf.204.1582049036041;
+        Tue, 18 Feb 2020 10:03:56 -0800 (PST)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id k50sm2217315qtc.90.2020.02.18.10.03.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2020 10:03:55 -0800 (PST)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Tue, 18 Feb 2020 13:03:54 -0500
+To:     Arvind Sankar <nivedita@alum.mit.edu>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] sched/rt: cpupri_find: implement fallback mechanism
- for !fit case
-Message-ID: <20200218130300.679f77ea@gandalf.local.home>
-In-Reply-To: <20200218172745.hd7fxjqnzqkhfqx3@e107158-lin.cambridge.arm.com>
-References: <20200214163949.27850-1-qais.yousef@arm.com>
-        <20200214163949.27850-2-qais.yousef@arm.com>
-        <c0772fca-0a4b-c88d-fdf2-5715fcf8447b@arm.com>
-        <20200217234549.rpv3ns7bd7l6twqu@e107158-lin>
-        <20200218114658.74236b3c@gandalf.local.home>
-        <20200218172745.hd7fxjqnzqkhfqx3@e107158-lin.cambridge.arm.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Subject: Re: [PATCH 1/2] x86/boot/compressed/64: Remove .bss/.pgtable from
+ bzImage
+Message-ID: <20200218180353.GA930230@rani.riverdale.lan>
+References: <20200109150218.16544-1-nivedita@alum.mit.edu>
+ <20200205162921.GA318609@rani.riverdale.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200205162921.GA318609@rani.riverdale.lan>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Feb 2020 17:27:46 +0000
-Qais Yousef <qais.yousef@arm.com> wrote:
-
-> > If we are going to use static branches, then lets just remove the
-> > parameter totally. That is, make two functions (with helpers), where
-> > one needs this fitness function the other does not.
+On Wed, Feb 05, 2020 at 11:29:21AM -0500, Arvind Sankar wrote:
+> On Thu, Jan 09, 2020 at 10:02:17AM -0500, Arvind Sankar wrote:
+> > Commit 5b11f1cee579 ("x86, boot: straighten out ranges to copy/zero in
+> > compressed/head*.S") introduced a separate .pgtable section, splitting
+> > it out from the rest of .bss. This section was added without the
+> > writeable flag, marking it as read-only. This results in the linker
+> > putting the .rela.dyn section (containing bogus dynamic relocations from
+> > head_64.o) after the .bss and .pgtable sections.
 > > 
-> > 	if (static_branch_unlikely(&sched_asym_cpu_capacity))
-> > 		ret = cpupri_find_fitness(...);
-> > 	else
-> > 		ret = cpupri_find(...);
+> > When we use objcopy to convert compressed/vmlinux into a binary for the
+> > bzImage, the .bss and .pgtable sections get materialized as ~176KiB of
+> > zero bytes in the binary in order to place .rela.dyn at the correct
+> > location.
 > > 
-> > 	if (!ret)
-> > 		return -1;
+> > Fix this by marking .pgtable as writeable. This moves the .rela.dyn
+> > section earlier so that .bss and .pgtable are the last allocated
+> > sections and so don't appear in bzImage.
 > > 
-> > Something like that?  
+> > Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
+> > ---
+> >  arch/x86/boot/compressed/head_64.S | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+> > index 58a512e33d8d..6eb30f8a3ce7 100644
+> > --- a/arch/x86/boot/compressed/head_64.S
+> > +++ b/arch/x86/boot/compressed/head_64.S
+> > @@ -709,7 +709,7 @@ SYM_DATA_END_LABEL(boot_stack, SYM_L_LOCAL, boot_stack_end)
+> >  /*
+> >   * Space for page tables (not in .bss so not zeroed)
+> >   */
+> > -	.section ".pgtable","a",@nobits
+> > +	.section ".pgtable","aw",@nobits
+> >  	.balign 4096
+> >  SYM_DATA_LOCAL(pgtable,		.fill BOOT_PGT_SIZE, 1, 0)
+> >  
+> > -- 
+> > 2.24.1
+> > 
 > 
-> Is there any implication on code generation here?
+> Gentle reminder.
 > 
-> I like my flavour better tbh. But I don't mind refactoring the function out if
-> it does make it more readable.
+> https://lore.kernel.org/lkml/20200109150218.16544-1-nivedita@alum.mit.edu
 
-I just figured we remove the passing of the parameter (which does make
-an impact on the code generation).
-
-Also, perhaps it would be better to not have to pass functions to the
-cpupri_find(). Is there any other function that needs to be past, or
-just this one in this series?
-
--- Steve
+Ping.
