@@ -2,87 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35560162FE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:27:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ADAF162FD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:25:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbgBRT1N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 14:27:13 -0500
-Received: from namei.org ([65.99.196.166]:46736 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726296AbgBRT1N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:27:13 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 01IJPSnR013669;
-        Tue, 18 Feb 2020 19:25:28 GMT
-Date:   Wed, 19 Feb 2020 06:25:28 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-cc:     Serge Hallyn <serge@hallyn.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Will Deacon <will@kernel.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Helge Deller <deller@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        oprofile-list@lists.sf.net,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        linux-man@vger.kernel.org
-Subject: Re: [PATCH v7 06/12] trace/bpf_trace: open access for CAP_PERFMON
- privileged process
-In-Reply-To: <fc689865-f8ff-1e85-ac0c-b2f1c28b7eb6@linux.intel.com>
-Message-ID: <alpine.LRH.2.21.2002190625150.10165@namei.org>
-References: <c8de937a-0b3a-7147-f5ef-69f467e87a13@linux.intel.com> <fc689865-f8ff-1e85-ac0c-b2f1c28b7eb6@linux.intel.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1726512AbgBRTZ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 14:25:58 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:58788 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbgBRTZ5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 14:25:57 -0500
+Received: from [10.137.112.97] (unknown [131.107.147.225])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 24D4720B9C02;
+        Tue, 18 Feb 2020 11:25:57 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 24D4720B9C02
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1582053957;
+        bh=IlZjYMt8348usfDsk/hmaIjApktRG/nXtvI4U//iFDw=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=T4bNp0VpB7uwx7OA32BD/YZwewN4xTZ4f+Ka9ScZtV4WJsvlWw8p2FMMtj3du515t
+         u64+c253RlXLIIUI/KB25ZGspmEMZ8f/oA5TWokG1ScEB0rQHFXNV/dMKdm+SHUMMs
+         5qf0oAa2QB82ysg7xNXk6Ad/ucn+M0Lr2c537Vj0=
+Subject: Re: [PATCH v4 1/3] IMA: Update KBUILD_MODNAME for IMA files to ima
+From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
+To:     zohar@linux.ibm.com, joe@perches.com, skhan@linuxfoundation.org,
+        linux-integrity@vger.kernel.org
+Cc:     sashal@kernel.org, nramas@linux.microsoft.com,
+        linux-kernel@vger.kernel.org
+References: <20200215014709.3006-1-tusharsu@linux.microsoft.com>
+ <20200215014709.3006-2-tusharsu@linux.microsoft.com>
+Message-ID: <857c8dc6-d09c-423e-c520-53bb85c6d46c@linux.microsoft.com>
+Date:   Tue, 18 Feb 2020 11:25:56 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20200215014709.3006-2-tusharsu@linux.microsoft.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Feb 2020, Alexey Budankov wrote:
+Hi Mimi,
 
+On 2020-02-14 5:47 p.m., Tushar Sugandhi wrote:
+> The kbuild Makefile specifies object files for vmlinux in the $(obj-y)
+> lists. These lists depend on the kernel configuration[1].
 > 
-> Open access to bpf_trace monitoring for CAP_PERFMON privileged process.
-> Providing the access under CAP_PERFMON capability singly, without the
-> rest of CAP_SYS_ADMIN credentials, excludes chances to misuse the
-> credentials and makes operation more secure.
+> The kbuild Makefile for IMA combines the object files for IMA into a
+> single object file namely ima.o. All the object files for IMA should be
+> combined into ima.o. But certain object files are being added to their
+> own $(obj-y). This results in the log messages from those modules getting
+> prefixed with their respective base file name, instead of "ima". This is
+> inconsistent with the log messages from the IMA modules that are combined
+> into ima.o.
 > 
-> CAP_PERFMON implements the principal of least privilege for performance
-> monitoring and observability operations (POSIX IEEE 1003.1e 2.2.2.39
-> principle of least privilege: A security design principle that states
-> that a process or program be granted only those privileges (e.g.,
-> capabilities) necessary to accomplish its legitimate function, and only
-> for the time that such privileges are actually required)
+> This change fixes the above issue.
 > 
-> For backward compatibility reasons access to bpf_trace monitoring
-> remains open for CAP_SYS_ADMIN privileged processes but CAP_SYS_ADMIN
-> usage for secure bpf_trace monitoring is discouraged with respect to
-> CAP_PERFMON capability.
+> [1] Documentation\kbuild\makefiles.rst
 > 
-> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+Is there any feedback on this patch description?
+I can address it in the next iteration.
 
-
-Reviewed-by: James Morris <jamorris@linux.microsoft.com>
-
-
--- 
-James Morris
-<jmorris@namei.org>
-
+Thanks,
+Tushar
