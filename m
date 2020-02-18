@@ -2,125 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CFC9162FDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:26:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F161F162FEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:28:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726515AbgBRT0y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 14:26:54 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34796 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726283AbgBRT0y (ORCPT
+        id S1726438AbgBRT2G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 14:28:06 -0500
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:27158 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726296AbgBRT2F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:26:54 -0500
-Received: by mail-pf1-f195.google.com with SMTP id i6so11159698pfc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 11:26:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PG1inGCjkR8mbsV9FBAGsiFoMPIEZyx6SU/E1O5JF7M=;
-        b=LKslbmH0dvmcG60Ck8sK/dmQiiexpGxXSgYtk3lY8upWmpuvOz/oM+fPI6ZbcDhDsa
-         RpPSJd2RUqGFX/QQYtGVauBVeZypL2oKXrEObFBe12YylfCiFeSoI80UMMRdjEsdg7n3
-         POgU5qp0Tgi8hPVyOf17vRI1G2fQe7rF6uWKLJxDaereKr+1W2qiRv0L6RwRmoOfryLx
-         h96KAO8dbjtrrnazYDf6UwT1vUQ+L70DL0X/CZlKWXMQT7OYN3/dnpovh7DVQASJ7rMX
-         IguDxDfOK8XUGiszApK+IDSIuUQMX1PFq8XSomi7opasBfzniD9phH9yq00SVfztmKO3
-         xZKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PG1inGCjkR8mbsV9FBAGsiFoMPIEZyx6SU/E1O5JF7M=;
-        b=OWD9p13aVKXikqtiP5ZOVDI0LT5AuPcEkr/ShrCr97eg9eDZOPDZQAZd3mjWGiBAVH
-         ifafOBV6b/GgpemE7h8bleq/3rbqU7tKv1BzKWpNIMSEHRSj7v3VDUZRlQtQWsF0ZqEg
-         8Jo3klJy6CGA+GVXTC8km6LtzdrXd9vGvuuGVzqyd7rdBk87URNsDSFhZr3cO7Y2ocWG
-         8F9YpDzWqES1W+HW9hnMLcoUt7zzxMeBPl83bmSelwjqfUh1WbpiYKPEwT88brKezzre
-         u4cjUOwWmB8cLJBTPuCgxrQnmZIcp98OBjojaPrTzYotf8e3TE+W3MtMWzaiR5nSXtIM
-         mbSQ==
-X-Gm-Message-State: APjAAAVr7uFyFHPAvs3XO4MYF69LaOSUO1jT8J9x6E4n6ZgxvJ9j0aTj
-        5rX22w9gDwNW8XkhLBbrnA/WwIXqLLeVopIvz9ikQw==
-X-Google-Smtp-Source: APXvYqz4+UZUuuR5h/fNaE5Tzptkbuq8wJ2Z/GQxsLTn9qb7rpgmkUShMVAz14BtnZOgirr4od0cln9sN1EnrYiTfSs=
-X-Received: by 2002:a62:6842:: with SMTP id d63mr23106087pfc.113.1582054013382;
- Tue, 18 Feb 2020 11:26:53 -0800 (PST)
+        Tue, 18 Feb 2020 14:28:05 -0500
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id 01IJRjGi005013
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 04:27:46 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com 01IJRjGi005013
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1582054066;
+        bh=0LaSGEGizcBcrlCJXQ7v7CjwfgybxWS3s9NbZtBPJ5k=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=cdbBFOXFZ23x11aP2VoefVJIUawvYaxkVvVaNmaQ7ksASvnS8r3oXIBBdPafGx/3e
+         5q1IkX/NeM/uWc43eT+Ny9Vv1fiEF5EVjLCeJ3oaX7dKCPbryL7Q/5zBg9hxZdot66
+         HGusDwaPEiHgISwr3KDYxdU4jQApQG/klhNVH6p9w1dMklkcOdiD+b1+Npbtbf4XUZ
+         ZrWoZtljCj0fTYg/WeNyn5rHWnt1yJU3GtZ+PIZuJ5zCRqo8OZzviWS11lggCiCUrw
+         /w3LUDVLJdYMVH16pnpYJvknQPvvCFq/5cR0fvfYleE6TWV0aVAEebDX2aoQ/9DXpF
+         zNF5/jJNIOOVg==
+X-Nifty-SrcIP: [209.85.217.44]
+Received: by mail-vs1-f44.google.com with SMTP id r18so13801276vso.5
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 11:27:46 -0800 (PST)
+X-Gm-Message-State: APjAAAUwP0Ap455/vYaIAQ2eiruJxoPib6tmBanNCGGU5j+c/apbA4fd
+        wwusx/l0mTKgSXVho7uUHjyxTeFcS49O3YyJXzY=
+X-Google-Smtp-Source: APXvYqyxgX9bz8kt0wGCHvppmFrEffcciJXshd1N+TopXEtPzP+/SHrMf7HlW3Og0qvRlwwPfSAZXgWZav4sYfNgjH0=
+X-Received: by 2002:a05:6102:48b:: with SMTP id n11mr11885261vsa.181.1582054064789;
+ Tue, 18 Feb 2020 11:27:44 -0800 (PST)
 MIME-Version: 1.0
-References: <1581949660-20113-1-git-send-email-alan.maguire@oracle.com> <1581949660-20113-3-git-send-email-alan.maguire@oracle.com>
-In-Reply-To: <1581949660-20113-3-git-send-email-alan.maguire@oracle.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Tue, 18 Feb 2020 11:26:42 -0800
-Message-ID: <CAFd5g47bU+5dEb2FxbT1X0oXgcD0jOkqW7a4WfCxVttRhDSYoA@mail.gmail.com>
-Subject: Re: [PATCH v4 kunit-next 2/3] kunit: add log test
-To:     Alan Maguire <alan.maguire@oracle.com>
-Cc:     Shuah Khan <skhan@linuxfoundation.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
+References: <20200214143709.6490-1-jeyu@kernel.org> <20200217145644.GA221719@google.com>
+ <20200218160553.GA18056@linux-8ccs>
+In-Reply-To: <20200218160553.GA18056@linux-8ccs>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Wed, 19 Feb 2020 04:27:09 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATBCE7j-FH3kFwHOjgjerjx8hziK9iWD5Av6wyweovewA@mail.gmail.com>
+Message-ID: <CAK7LNATBCE7j-FH3kFwHOjgjerjx8hziK9iWD5Av6wyweovewA@mail.gmail.com>
+Subject: Re: [PATCH] modpost: return error if module is missing ns imports and MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS=n
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     Matthias Maennich <maennich@google.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+        Martijn Coenen <maco@android.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 17, 2020 at 6:28 AM Alan Maguire <alan.maguire@oracle.com> wrote:
+On Wed, Feb 19, 2020 at 1:06 AM Jessica Yu <jeyu@kernel.org> wrote:
 >
-> the logging test ensures multiple strings logged appear in the
-> log string associated with the test when CONFIG_KUNIT_DEBUGFS is
-> enabled.
+> +++ Matthias Maennich [17/02/20 14:56 +0000]:
+> >Hi Jessica!
+> >
+> >On Fri, Feb 14, 2020 at 03:37:09PM +0100, Jessica Yu wrote:
+> >>Currently when CONFIG_MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS=n, modpost only warns
+> >>when a module is missing namespace imports. Under this configuration, such a module
+> >>cannot be loaded into the kernel anyway, as the module loader would reject it.
+> >>We might as well return a build error when a module is missing namespace imports
+> >>under CONFIG_MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS=n, so that the build
+> >>warning does not go ignored/unnoticed.
+> >
+> >I generally agree with the idea of the patch. Thanks for working on
+> >this! I also can't remember any reason why I did not write it like this
+> >initially. Probably just because I introduced this configuration option
+> >quite late in the development process of the initial patches.
+> >
+> >>
+> >>Signed-off-by: Jessica Yu <jeyu@kernel.org>
+> >>---
+> >>scripts/Makefile.modpost |  1 +
+> >>scripts/mod/modpost.c    | 19 +++++++++++++++----
+> >>2 files changed, 16 insertions(+), 4 deletions(-)
+> >>
+> >>diff --git a/scripts/Makefile.modpost b/scripts/Makefile.modpost
+> >>index b4d3f2d122ac..a53660f910a9 100644
+> >>--- a/scripts/Makefile.modpost
+> >>+++ b/scripts/Makefile.modpost
+> >>@@ -53,6 +53,7 @@ MODPOST = scripts/mod/modpost                                               \
+> >>      $(if $(KBUILD_EXTMOD),$(addprefix -e ,$(KBUILD_EXTRA_SYMBOLS))) \
+> >>      $(if $(KBUILD_EXTMOD),-o $(modulesymfile))                      \
+> >>      $(if $(CONFIG_SECTION_MISMATCH_WARN_ONLY),,-E)                  \
+> >>+     $(if $(CONFIG_MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS),,-N)      \
+> >>      $(if $(KBUILD_MODPOST_WARN),-w)
+> >>
+> >>ifdef MODPOST_VMLINUX
+> >>diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+> >>index 7edfdb2f4497..53e966f7d557 100644
+> >>--- a/scripts/mod/modpost.c
+> >>+++ b/scripts/mod/modpost.c
+> >>@@ -39,6 +39,8 @@ static int sec_mismatch_count = 0;
+> >>static int sec_mismatch_fatal = 0;
+> >>/* ignore missing files */
+> >>static int ignore_missing_files;
+> >>+/* Return an error when there are missing namespace imports */
+> >>+static int missing_ns_import_error = 0;
+> >
+> >A more suitable name is maybe missing_ns_import_is_error or follow the
+> >naming of the config option: allow_missing_ns_imports (with default = 1).
+> >
+> >>
+> >>enum export {
+> >>      export_plain,      export_unused,     export_gpl,
+> >>@@ -2216,9 +2218,15 @@ static int check_exports(struct module *mod)
+> >>
+> >>              if (exp->namespace &&
+> >>                  !module_imports_namespace(mod, exp->namespace)) {
+> >>-                     warn("module %s uses symbol %s from namespace %s, but does not import it.\n",
+> >>-                          basename, exp->name, exp->namespace);
+> >>-                     add_namespace(&mod->missing_namespaces, exp->namespace);
+> >>+                     if (missing_ns_import_error) {
+> >>+                             merror("module %s uses symbol %s from namespace %s, but does not import it.\n",
+> >>+                                     basename, exp->name, exp->namespace);
+> >
+> >I would like to avoid the code duplication here. The string literal is
+> >identical for both cases.
 >
-> Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
+> Hm, but one is a call to merror() and the other to warn(). The
+> previous if (warn_unresolved) block does the same thing. I am not sure
+> how to simplify it to one call without introducing macro magic or
+> overcomplicating things. Or were you thinking of something else?
 
-Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
 
-One minor comment below.
+I would not say this is a horrible duplication,
+but if you avoid repeating the same string,
+maybe you could do like this:
 
-> ---
->  lib/kunit/kunit-test.c | 27 ++++++++++++++++++++++++++-
->  1 file changed, 26 insertions(+), 1 deletion(-)
+PRINTF log(enum loglevel loglevel, const char *fmt, ...)
+
+
+
+BTW, you accidentally changed the indentation of
+add_namespace(&mod->missing_namespaces, exp->namespace);
+
+
+
+> >>+                             err = 1;
+> >
+> >Also, if we fail here, we might as well help the user to fix it by
+> >suggesting to run `make nsdeps` (once per failed modpost run). Speaking
+> >of which, `make nsdeps` is currently broken by this patch as it relies
+> >on a successful (yet warning-full) build of the modules. So, in case of
+> >`make nsdeps`, we probably have to omit the -N flag again when invoking
+> >modpost.
 >
-> diff --git a/lib/kunit/kunit-test.c b/lib/kunit/kunit-test.c
-> index aceb5bf..0789060 100644
-> --- a/lib/kunit/kunit-test.c
-> +++ b/lib/kunit/kunit-test.c
-> @@ -329,6 +329,31 @@ static void kunit_resource_test_exit(struct kunit *test)
->         .exit = kunit_resource_test_exit,
->         .test_cases = kunit_resource_test_cases,
->  };
-> -kunit_test_suites(&kunit_try_catch_test_suite, &kunit_resource_test_suite);
-> +
-> +static void kunit_log_test(struct kunit *test)
-> +{
-> +       kunit_log(KERN_INFO, test, "put this in log.");
-> +       kunit_log(KERN_INFO, test, "this too.");
-> +
-> +#ifdef CONFIG_KUNIT_DEBUGFS
-> +       KUNIT_EXPECT_NOT_ERR_OR_NULL(test,
-> +                                    strstr(test->log, "put this in log."));
-> +       KUNIT_EXPECT_NOT_ERR_OR_NULL(test,
-> +                                    strstr(test->log, "this too."));
-> +#endif
-> +}
-
-Would you mind adding some expectations against the suite log? It
-might be good for the sake of completeness.
-
-> +
-> +static struct kunit_case kunit_log_test_cases[] = {
-> +       KUNIT_CASE(kunit_log_test),
-> +       {}
-> +};
-> +
-> +static struct kunit_suite kunit_log_test_suite = {
-> +       .name = "kunit-log-test",
-> +       .test_cases = kunit_log_test_cases,
-> +};
-> +
-> +kunit_test_suites(&kunit_try_catch_test_suite, &kunit_resource_test_suite,
-> +                 &kunit_log_test_suite);
+> Good catch! Since KBUILD_NSDEPS is set when running `make nsdeps`,
+> maybe we can do something like:
 >
->  MODULE_LICENSE("GPL v2");
-> --
-> 1.8.3.1
->
+> diff --git a/scripts/Makefile.modpost b/scripts/Makefile.modpost
+> index a53660f910a9..145703ef8d3a 100644
+> --- a/scripts/Makefile.modpost
+> +++ b/scripts/Makefile.modpost
+> @@ -53,7 +53,7 @@ MODPOST = scripts/mod/modpost                                         \
+>         $(if $(KBUILD_EXTMOD),$(addprefix -e ,$(KBUILD_EXTRA_SYMBOLS))) \
+>         $(if $(KBUILD_EXTMOD),-o $(modulesymfile))                      \
+>         $(if $(CONFIG_SECTION_MISMATCH_WARN_ONLY),,-E)                  \
+> -       $(if $(CONFIG_MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS),,-N)      \
+> +       $(if $(CONFIG_MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS),,$(if $(KBUILD_NSDEPS),,-N))      \
+
+
+If you follow Matthias' suggestion
+"follow the naming of the config option: allow_missing_ns_imports
+(with default = 1)."
+the option is inverted, and you can write it more simply:
+
+
+      $(if $(CONFIG_MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS)$(KBUILD_NSDEPS),-n)
+     \
+
+
+
+
+
+
+--
+Best Regards
+Masahiro Yamada
