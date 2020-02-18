@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCA6C1630F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:58:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 434441630F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 20:58:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728039AbgBRT5s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 14:57:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35214 "EHLO mail.kernel.org"
+        id S1728059AbgBRT5w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 14:57:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35260 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728022AbgBRT5q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:57:46 -0500
+        id S1727135AbgBRT5t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 14:57:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D564B24655;
-        Tue, 18 Feb 2020 19:57:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6CFD20659;
+        Tue, 18 Feb 2020 19:57:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582055866;
-        bh=UaHQsd0lbeb/d/qEnZXRs/3aNWzkj9aSTZcTiZmiilg=;
+        s=default; t=1582055869;
+        bh=iaLubHGPgPk7jIXL2erHvzW0+SkVMmcTvq40jqMmVM8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=otksbcQx/Ry8PhZvgpU+3pAR9r2y0iLn+3gtrxCDqflafOSWKEsww/geb3xevkICM
-         BnCzouEywOCafwHQFRCM/65A25TIFgKz0Rr6VuO46i6STy8gFzJ5TbM5blIYRMamwk
-         62vcvfSJFgctd5N/Mxi2jjBOgx6EJRDGGjMtELSY=
+        b=RhHxImfknJQQiYWnO00o4WDz2hXMXboXfaCA1NW2pgTMOHtNn/WkA1bJLX4iN860B
+         +vlkdfX7T8iK/JhNe3m8y9Le0PoS5MLk3jfVIqUGeez8V/+sdqOzlVnCGIAc66L7w1
+         +FSXCA6tAoeayOgToD/Xf38AL250zsiq05TXw8sE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.4 05/66] ALSA: hda/realtek - Add more codec supported Headset Button
-Date:   Tue, 18 Feb 2020 20:54:32 +0100
-Message-Id: <20200218190428.622094301@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.4 06/66] ALSA: hda/realtek - Fix silent output on MSI-GL73
+Date:   Tue, 18 Feb 2020 20:54:33 +0100
+Message-Id: <20200218190428.702286805@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200218190428.035153861@linuxfoundation.org>
 References: <20200218190428.035153861@linuxfoundation.org>
@@ -43,35 +42,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kailang Yang <kailang@realtek.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 2b3b6497c38d123934de68ea82a247b557d95290 upstream.
+commit 7dafba3762d6c0083ded00a48f8c1a158bc86717 upstream.
 
-Add supported Headset Button for ALC215/ALC285/ALC289.
+MSI-GL73 laptop with ALC1220 codec requires a similar workaround for
+Clevo laptops to enforce the DAC/mixer connection path.  Set up a
+quirk entry for that.
 
-Signed-off-by: Kailang Yang <kailang@realtek.com>
+BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=204159
 Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/948f70b4488f4cc2b629a39ce4e4be33@realtek.com
+Link: https://lore.kernel.org/r/20200212081047.27727-1-tiwai@suse.de
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    3 +++
- 1 file changed, 3 insertions(+)
+ sound/pci/hda/patch_realtek.c |    1 +
+ 1 file changed, 1 insertion(+)
 
 --- a/sound/pci/hda/patch_realtek.c
 +++ b/sound/pci/hda/patch_realtek.c
-@@ -5701,8 +5701,11 @@ static void alc_fixup_headset_jack(struc
- 		break;
- 	case HDA_FIXUP_ACT_INIT:
- 		switch (codec->core.vendor_id) {
-+		case 0x10ec0215:
- 		case 0x10ec0225:
-+		case 0x10ec0285:
- 		case 0x10ec0295:
-+		case 0x10ec0289:
- 		case 0x10ec0299:
- 			alc_write_coef_idx(codec, 0x48, 0xd011);
- 			alc_update_coef_idx(codec, 0x49, 0x007f, 0x0045);
+@@ -2447,6 +2447,7 @@ static const struct snd_pci_quirk alc882
+ 	SND_PCI_QUIRK(0x1071, 0x8258, "Evesham Voyaeger", ALC882_FIXUP_EAPD),
+ 	SND_PCI_QUIRK(0x1458, 0xa002, "Gigabyte EP45-DS3/Z87X-UD3H", ALC889_FIXUP_FRONT_HP_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1458, 0xa0b8, "Gigabyte AZ370-Gaming", ALC1220_FIXUP_GB_DUAL_CODECS),
++	SND_PCI_QUIRK(0x1462, 0x1276, "MSI-GL73", ALC1220_FIXUP_CLEVO_P950),
+ 	SND_PCI_QUIRK(0x1462, 0x7350, "MSI-7350", ALC889_FIXUP_CD),
+ 	SND_PCI_QUIRK(0x1462, 0xda57, "MSI Z270-Gaming", ALC1220_FIXUP_GB_DUAL_CODECS),
+ 	SND_PCI_QUIRK_VENDOR(0x1462, "MSI", ALC882_FIXUP_GPIO3),
 
 
