@@ -2,91 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E987B1623AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 10:44:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01C6D1623B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2020 10:44:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726760AbgBRJnP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 04:43:15 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33615 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbgBRJnF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 04:43:05 -0500
-Received: by mail-wr1-f66.google.com with SMTP id u6so23116221wrt.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 01:43:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=1tGKCYnBEpjpoG5QSejrUPURgc2UVgvoiMB1koCeCZI=;
-        b=GCaozWAzhz2rzE3xCPycDcZfcJEqLfqMgQo3eIz7yz4vHoD1VyK54/EwdkV5KLeIEs
-         kbsuHvMVu4ZPMyBOJfO+Gc3z2MPajyZGfG7z0g4X5mpq+bevno2+vcVtdt1sAU46rzQG
-         vxmGaHfYDiWmrah4zwJxta/GwJpkfZsn19u+lPFY0VlbXwTxu3IWmQkEwYAnhkVmorel
-         pIyMeeAIHglpnFeJKWHwDXbWA3tuC07pSrYe8S9AzG23GnAzbqIOV2xnptCCJCKACjqu
-         3RLJUvOs+Xqy3WpIfGaPRCUe+njTB2kYKCavPhHCML0TSt2PnFcFSjuUG5csSmQ0z6iy
-         MkIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=1tGKCYnBEpjpoG5QSejrUPURgc2UVgvoiMB1koCeCZI=;
-        b=hpjnN1QO75uwCTIkXL4/5eDcdA0nnJWbLm1omyekZZlPHs7vES09Kp7HhkO23g70Lm
-         iqylADHbYC0F3zdRG+0PeRRn8Cp+nW+nqoq+/GkrUZwy7innmq3R0bOSSvHBS7V7kc8e
-         1gmnKXLgTcA5+nTDC5I6W6nKHC9ANGPsJDQeKai48+TKEGHT42Z4/w58+l+PoARokJTs
-         p0YYpgEm6jpxi2mf7o/82paINBA2/Gi3TaK7Xz1OqTidtIw/xVMCbMeKeVxc3h35t63Y
-         Navp/kAZWxl/XrPVDkYOXlHSEFGtc1LZdnum4A4fa6u7KfoixVZ7wNNeh6LIH5JWF1RU
-         k5rg==
-X-Gm-Message-State: APjAAAU+1lTndKLJPnH75yjnijkaiJTa2D8KvvuaAQb4C57ex56vd88l
-        Ee6Zlglg+k4Yy8FWvibM1N2gYNH0tSs=
-X-Google-Smtp-Source: APXvYqyaik2K3jmCriYAi/Btuue1NpMxh6Kl4mMKAIzp4/pL1q8QhpdD78hGoBibP9oQDkjFFVN9Pw==
-X-Received: by 2002:a5d:4746:: with SMTP id o6mr1437713wrs.70.1582018984313;
-        Tue, 18 Feb 2020 01:43:04 -0800 (PST)
-Received: from localhost.localdomain (lfbn-nic-1-188-94.w2-15.abo.wanadoo.fr. [2.15.37.94])
-        by smtp.gmail.com with ESMTPSA id s23sm5351095wra.15.2020.02.18.01.43.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2020 01:43:03 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Khouloud Touil <ktouil@baylibre.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 7/7] nvmem: add a newline for readability
-Date:   Tue, 18 Feb 2020 10:42:34 +0100
-Message-Id: <20200218094234.23896-8-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200218094234.23896-1-brgl@bgdev.pl>
-References: <20200218094234.23896-1-brgl@bgdev.pl>
+        id S1726620AbgBRJn7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 04:43:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46038 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726199AbgBRJn7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 04:43:59 -0500
+Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A37B7206E2;
+        Tue, 18 Feb 2020 09:43:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582019038;
+        bh=glEd8LJg33O82qVtAetCni+HqVd9K5Kd0qvxg1Lw4x4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BnC8as/2IqxRU9Yof3Riunpd5ghLEMkDOCHPGVqmZ92/AY3wlU0/16p4BSv3F/2P3
+         jZ0OwMQ+mStgxWyfe79suW0thBq9gNYEgONjCXPQKAtG9hNsK/5rVxLXcxWyEUlkOS
+         qeALyMVj3ieInr8CvOc2QiBSjnZ3iKyF6ieeZkEk=
+Date:   Tue, 18 Feb 2020 17:43:52 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com,
+        devicetree@vger.kernel.org, u.kleine-koenig@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Linux-imx@nxp.com
+Subject: Re: [PATCH V3 RESEND 1/7] ARM: dts: imx6sx: Improve UART pins macro
+ defines
+Message-ID: <20200218094351.GE6075@dragon>
+References: <1581938021-16259-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1581938021-16259-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Mon, Feb 17, 2020 at 07:13:35PM +0800, Anson Huang wrote:
+> Add DCE/DTE to UART pins macro defines to distinguish the
+> DCE and DTE functions, keep old defines at the end of file
+> for some time to make it backward compatible.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-Visibly separate the GPIO request from the previous operation in the
-code with a newline.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/nvmem/core.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 5e7d46eccaf6..ec955db4673c 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -346,6 +346,7 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
- 	rval  = ida_simple_get(&nvmem_ida, 0, 0, GFP_KERNEL);
- 	if (rval < 0)
- 		goto err_free_nvmem;
-+
- 	if (config->wp_gpio)
- 		nvmem->wp_gpio = gpiod_ref(config->wp_gpio);
- 	else
--- 
-2.25.0
-
+Applied all, thanks.
