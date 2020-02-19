@@ -2,100 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CFD7164951
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 16:57:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3641B164955
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 16:58:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbgBSP51 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 10:57:27 -0500
-Received: from bmailout3.hostsharing.net ([176.9.242.62]:58581 "EHLO
-        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726651AbgBSP50 (ORCPT
+        id S1726794AbgBSP6A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 10:58:00 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:34807 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726651AbgBSP6A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 10:57:26 -0500
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout3.hostsharing.net (Postfix) with ESMTPS id 6AE27101E694F;
-        Wed, 19 Feb 2020 16:57:24 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id 16111ECCD0; Wed, 19 Feb 2020 16:57:24 +0100 (CET)
-Date:   Wed, 19 Feb 2020 16:57:24 +0100
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Stuart Hayes <stuart.w.hayes@gmail.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Austin Bolen <austin_bolen@dell.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
-        Sinan Kaya <okaya@kernel.org>,
-        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, narendra_k@dell.com,
-        Enzo Matsumiya <ematsumiya@suse.com>
-Subject: Re: [PATCH v3] PCI: pciehp: Make sure pciehp_isr clears interrupt
- events
-Message-ID: <20200219155724.4jm2yt75u4s2t3tn@wunner.de>
-References: <20200207195450.52026-1-stuart.w.hayes@gmail.com>
- <20200209150328.2x2zumhqbs6fihmc@wunner.de>
- <20200209180722.ikuyjignnd7ddfp5@wunner.de>
- <20200209202512.rzaqoc7tydo2ouog@wunner.de>
+        Wed, 19 Feb 2020 10:58:00 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 3B4A92219C;
+        Wed, 19 Feb 2020 10:57:59 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Wed, 19 Feb 2020 10:57:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=yR7ZFP5jnyQYDGWXj4DoIv/8TgX
+        gvbgn3+/o7E/ImuY=; b=TTjtDNdYCwxvj6idPJY+4wBNWdnb+DCfxk2To/mlIGs
+        tAip1rxCYFFiM6LAMPslY0DnHccbnApmApk/UT8mffvie5K3BrJmV7yNvOeJlRGb
+        YN5Kk4QU8cX8/JwT8074n5wp0uOA5PmgJhpmPa6ZbS/ikfaL2eYu2+uG+ctpTvie
+        SjjT4ZQemE+nQpogagIZHt9s1lkdCXHCFbPhQBnlXShn6R0AZYSpNyJqJAfg2XlT
+        8Zcl5KF9EygpvaQgv9hh7icq+LYaxWtaIZ358kQwY12ZFPp2FZDzBfToZBUs7o+b
+        3/ALpcRrPUp0coEOnzjQXHWAYO7ZrZrg0+1p4uwzbcw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=yR7ZFP
+        5jnyQYDGWXj4DoIv/8TgXgvbgn3+/o7E/ImuY=; b=xrMle4Tk8VgE87uyNspfTD
+        2hBU7zcs8WE9gFdgzEgY/rind5W/t/PTx+3CWjPHWXWtaTjEnGyZE7/8JNbcxBjS
+        c6dhaD8SDpz2/9W570IsuRPK9iE7QyzxJfhAeWPFkUGMT7wiNalHBxlqwAhJhYbj
+        k4Er3R3gGNVrA0uyyp6I8TXYIOiNcNy/O0Xjgh9SvfYnQBJWwtjOeQ2BBXVrOwg5
+        f87BZ4EmpoUuzWyT6jvv820mBl4hHroVeLm+9s2ceOpgQwxfq9kda4zzyb+2LuZg
+        UgWTpehb7RVlLgUjNR4LbECnERLs5mnViaKfQxVn9aa7AHcGMiQK4Y7PIzph7QzA
+        ==
+X-ME-Sender: <xms:BFtNXkoWWu9lBepEpMfiXGXNyOySUG20wKHfkzi8dl1erT5-_im8-A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrkedtgdekfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucfkphepledtrd
+    ekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
+    fhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:BFtNXhJvJoMDZ0HaE1S5qRV0DmIhfo9D-qwRAtZIotGg7v8ziu7--A>
+    <xmx:BFtNXsYXvL5yIfgaWx4zpQrECCz2rTQbaxTeT_6KJRAJtqJNjT4mNg>
+    <xmx:BFtNXl6YWhDDl8Br25JCv6loIDrsiwH0Q-3tjka0YGwZneh33VSUDw>
+    <xmx:B1tNXmxSRsn1QcEl5mwSz8hMDeTsUHlrpwKuLro09sFzzEo0cAsQXg>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 5E3CA328005A;
+        Wed, 19 Feb 2020 10:57:56 -0500 (EST)
+Date:   Wed, 19 Feb 2020 16:57:54 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] drm/sun4i: dsi: Avoid hotplug race with DRM driver bind
+Message-ID: <20200219155754.vajepubw64hxfmum@gilmour.lan>
+References: <20200217060906.15152-1-samuel@sholland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="54gv4v2726dkjnkb"
 Content-Disposition: inline
-In-Reply-To: <20200209202512.rzaqoc7tydo2ouog@wunner.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20200217060906.15152-1-samuel@sholland.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 09, 2020 at 09:25:12PM +0100, Lukas Wunner wrote:
-> Below is another attempt.  I'll have to take a look at this with a
-> fresh pair of eyeballs though to verify I haven't overlooked anything
-> else and also to determine if this is actually simpler than Stuart's
-> approach.  Again, the advantage here is that processing of the events
-> by the IRQ thread is sped up by not delaying it until the Slot Status
-> register has settled.
 
-After some deliberation I've come full circle and think that Stuart's
-approach is actually better than mine:
+--54gv4v2726dkjnkb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I thought that my approach would speed up processing of events by
-waking the IRQ thread immediately after the first loop iteration.
-But I've realized that right at the beginning of the IRQ thread,
-synchronize_hardirq() is called, so the IRQ thread will wait for
-the hardirq handler to finish before actually processing the events.
+On Mon, Feb 17, 2020 at 12:09:06AM -0600, Samuel Holland wrote:
+> We need to make sure that the DRM driver is fully registered before
+> allowing the panel to be attached. Otherwise, we may trigger a hotplug
+> event before sun4i_framebuffer_init() sets up drm->mode_config.funcs,
+> causing a NULL pointer dereference.
+>
+> Fixes: 1a2703bd7356 ("drm/sun4i: dsi: Allow binding the host without a panel")
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
 
-The rationale for the call to synchronize_hardirq() is that the
-IRQ thread was woken, but now sees that the hardirq handler is
-running (again) to collect more events.  In that situation it makes
-sense to wait for them to be collected before starting to process
-events.
+Thanks for following up on this, I've applied it
 
-Is the synchronize_hardirq() absolutely necessary?  Not really,
-but I still think that it makes sense.  In reality, the latency
-for additional loop iterations is likely small, so it's probably
-not worth to optimize for immediate processing after the first
-loop iteration.
+Maxime
 
-Stuart's approach is also less intrusive and doesn't change the
-logic as much as my approach does.  His patch therefore lends
-itself better for backporting to stable.
+--54gv4v2726dkjnkb
+Content-Type: application/pgp-signature; name="signature.asc"
 
-So I've just respun Stuart's v3 patch, taking into account the
-review comments I had sent for it.  I've taken the liberty to make
-some editorial changes to the commit message and code comment.
-Stuart & Bjorn, if you don't like these, please feel free to roll
-back my changes to them as you see fit.
+-----BEGIN PGP SIGNATURE-----
 
-I realize now that I forgot to add the following tags,
-Bjorn, could you add them if/when applying?
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXk1bAgAKCRDj7w1vZxhR
+xePFAQCYhA+x3yuXQWCrT9byki6JCFoJ0+xYDdlmkViFi6k1LgD7BAzzLGu8/hS1
+PLrGCLHwJ0LBV1vFqXuLFHhBB7lBOwc=
+=BDH/
+-----END PGP SIGNATURE-----
 
-Fixes: 7b4ce26bcf69 ("PCI: pciehp: Convert to threaded IRQ")
-Cc: stable@vger.kernel.org # v4.19+
-
-Thanks!
-
-Lukas
+--54gv4v2726dkjnkb--
