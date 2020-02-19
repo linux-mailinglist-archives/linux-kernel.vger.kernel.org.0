@@ -2,170 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37CF616414E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 11:17:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2B631641B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 11:23:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbgBSKRN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 05:17:13 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:45111 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbgBSKRM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 05:17:12 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 59so22599722otp.12;
-        Wed, 19 Feb 2020 02:17:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GJAqVwXdCZXPTne0AiTX4Fk1uxObKIcjDphAbJJ660k=;
-        b=q2Gzjl9HuMen1wCAAI9CmaFnjtFH+hhjKyFKWC1FHFAG2fuRnJWJ3dc36IiZGTliii
-         Qr5swYw5AAwaJR/VoF6Ib9ahaWgnWDW27pc5C4WrE8CZTW3EwORywr/6rMK5/r1bamnz
-         hfxVSh4nWn6MACSaO3MKLLedDWhsNKUiwObN0L+ePjA3th5X8MAQp5IuSAIupNTNgA5x
-         r50XSXQjL/Pe+kVnj+F61TClq5HLlfv+uIFmcxAGI3hOWzWVCHzBFQQVEMA2essz/HC/
-         fG9sEjVUjl0ilb2w93Du2sxLt+H0iBgjt7XUIZY+HlYD4uuisrGdYqZ9Yo/wF3Z6O7px
-         SqmQ==
-X-Gm-Message-State: APjAAAV8nxCB3RI1PNqrBtwTDHirbqBY9vaE2CzT3aylLYZNF61rFm26
-        zYWCkPTQ+wBmCwipf20hAPLEG7UtWRbety8E8es=
-X-Google-Smtp-Source: APXvYqzZrdQJH/Cfn4il9kL1X9oAi45ce4JPx5PKjIVPqq1ze44X+v1H30gqpKR+Zhq1zOgAfO3sVmnLElkeTuTigJI=
-X-Received: by 2002:a9d:5c0c:: with SMTP id o12mr4220978otk.145.1582107430981;
- Wed, 19 Feb 2020 02:17:10 -0800 (PST)
+        id S1726710AbgBSKXN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 05:23:13 -0500
+Received: from mail-eopbgr40061.outbound.protection.outlook.com ([40.107.4.61]:3302
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726617AbgBSKXN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 05:23:13 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IyzqVx1DYcKAx5uk+u9b2TVeX0MYd+8fIVNq8v72KMI8GSfllGBeCzVfiF6Nq8V5yko+e6/aLqGt3LwBLvG8TScCqxcSf7EmEgiZI+08Ryw+2zY4NqT7OJHzCy15QWWj26T42CQ4q07137Cyog9PVxbOUVP9oL6JDRF6ZAA7pSaeX0ArsJbN8Q3BQjrGzDPKLoSbcOb4rW6xf3pJQvfkeYaW1jT+ueHznAwAXOXccOxtwJHxx1FuFUwL4E+9mxosbbdnuS+q/PRGwpqQB73bcO/AdsR+9znTPIh1TtzwxQu4UpNdlBQt3mL9QA5b0F62G2Oj484/RwgEveZrn5hjEw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qUs0+8jKfz67XE1EDU0COV3hY0F1wHrKeEL5stXCfh4=;
+ b=dLERd8OlQEae1PdD55jYvQFqDsHy4KiiUv7WZjnRK/YN3UzjKX/5H1mf+n5ly6G3rNxW8MtEJdtRBb+hcihdaWuGLsG63GPFH9OiGLDPdKGAA0rHHcXyF7Vj9iFFBuCT0kIcwAzo4KgbrtEH0ErhrSsabGs20yDBLNGln1FsWzB80fqFy+21dGPSwHxXA1ZY9gSnzYTQ4CvJtxHpVwhbgLP1u/GsIIU/RuOiEnn5PPXuy+T80WZbPnnNwMkejDuQ+PutbENbprW6zjv/HuteoWJr6G98YCl5xQDMLFS+Jvf/HXbt1qepBOkK9Y/Eqb12lFet+tW6001nkyHkc5tIYA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qUs0+8jKfz67XE1EDU0COV3hY0F1wHrKeEL5stXCfh4=;
+ b=eDnN/5gAkDA4EqKLXXJkynbU7v5k91mUUAuN0McGNI/5X7WG9ruOyvvY30TZ2TA0UrYnx/kxpUxFxnpFZkIex9dqaw4f9//Jdxs9c9bJ0ECdBtPI/kOJ/l4nreiXVVyJI56QYhyzZirfag4wSrj4PrEOrJ3G5ZXQtMEcJ8DmB2Q=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB4676.eurprd04.prod.outlook.com (52.135.152.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2729.31; Wed, 19 Feb 2020 10:23:08 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2729.032; Wed, 19 Feb 2020
+ 10:23:08 +0000
+From:   peng.fan@nxp.com
+To:     sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        festevam@gmail.com, abel.vesa@nxp.com, leonard.crestez@nxp.com
+Cc:     kernel@pengutronix.de, linux-imx@nxp.com, aisheng.dong@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, anson.huang@nxp.com,
+        ping.bai@nxp.com, l.stach@pengutronix.de,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH RESEND v3 0/4] clk: imx: imx8m: fix a53 cpu clock
+Date:   Wed, 19 Feb 2020 18:17:05 +0800
+Message-Id: <1582107429-21123-1-git-send-email-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain
+X-ClientProxiedBy: HKAPR04CA0014.apcprd04.prod.outlook.com
+ (2603:1096:203:d0::24) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
 MIME-Version: 1.0
-References: <20200218151812.7816-1-geert+renesas@glider.be> <20200218151812.7816-3-geert+renesas@glider.be>
-In-Reply-To: <20200218151812.7816-3-geert+renesas@glider.be>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 19 Feb 2020 11:17:00 +0100
-Message-ID: <CAMuHMdVzkN5c1P3=xD5BzC=R-O8fWJfMRdDtWxcTLO0TUy5n1Q@mail.gmail.com>
-Subject: Re: [PATCH v5 2/5] gpiolib: Add support for GPIO line table lookup
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Alexander Graf <graf@amazon.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        QEMU Developers <qemu-devel@nongnu.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
+Received: from localhost.localdomain (119.31.174.66) by HKAPR04CA0014.apcprd04.prod.outlook.com (2603:1096:203:d0::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2729.23 via Frontend Transport; Wed, 19 Feb 2020 10:23:04 +0000
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [119.31.174.66]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 5e70990e-8b29-43ee-7a65-08d7b525b6e2
+X-MS-TrafficTypeDiagnostic: AM0PR04MB4676:|AM0PR04MB4676:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM0PR04MB46769F0274F66B552AEA784588100@AM0PR04MB4676.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-Forefront-PRVS: 0318501FAE
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(346002)(366004)(39860400002)(396003)(136003)(189003)(199004)(6512007)(9686003)(86362001)(81166006)(36756003)(6486002)(5660300002)(8936002)(8676002)(316002)(2906002)(478600001)(81156014)(66946007)(66476007)(66556008)(52116002)(186003)(69590400006)(26005)(6506007)(16526019)(4326008)(956004)(2616005)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4676;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: wgbbEG2aSUB3dRoo7KwG0lokd86t6fsxg2NI3/H6xfTpjSVohyPv+xiD/D7bS/u3o6WDYmesSdrQKxX+Swl2uIQAaIwHGog2ZPAg/P5vMVSlyBBxqZMaOalSPlqJsH9ycRkB7bWGg4kDNtMwhAXwK2Ih8y9HxNZOSREF2BMvOxRJDYZpH9XxFzgykEVP9OAnS85L2dbOMeUPQHKznCI0rz4lB5CLQFtzyacoKGR0AnnG/5LfnO1MwqN9yv5Y0cXr4zGMmq/EHYMQQtZKF8xoMZRFFSay1/DvzCk3XRuNYIuNN7QMZSAlsQwF1btlKtRn8dcU+HaEZyHFQIEK1mtrNMsADrUkpRO3v7M/9qFk32hSg0DRsbM1MZWX4E8ijgxdPLCnWloq3mgh5I6bu/h360pMrooEgrXUpAEMsdygDVxBP6sg+wymZrj3XnGQDhE6NluHiXzbPZVqf6TMpQPB1J738ZHpBU8TfsPzYNrVQKH38pYITYl0VO5XAR2Fxr7Q+47kKMNE3Stp/fDSCq2uCufa3w6dDqvV3G5mvbzFOAa8/YH9HoKiSXPQjWF4z72A
+X-MS-Exchange-AntiSpam-MessageData: RSrON4Z9hRsWQV53vHUDoEPD6ZtFPrdPOAZTNejqhpSeBDY4tt5erMkD/udiRP7W4evltxdWfn9n8xEB3Vxdk5EN5TKpwgXLF6gET9GpaM9iIaWchbgHg1acKYCpQ6JYuE74KtmVSy2jQZbn9q7K5A==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e70990e-8b29-43ee-7a65-08d7b525b6e2
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2020 10:23:08.6325
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6rOrClj0yZtWOs2AXbMzKGo3fj3lSr7Hgs0OZUwRLYW6SUihlTJzeKZX5rhSKgJkswESyX0zCQ4fNgDsUtUxzA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4676
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 4:18 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> Currently GPIOs can only be referred to by GPIO controller and offset in
-> GPIO lookup tables.
->
-> Add support for looking them up by line name.
-> Rename gpiod_lookup.chip_label to gpiod_lookup.key, to make it clear
-> that this field can have two meanings, and update the kerneldoc and
-> GPIO_LOOKUP*() macros.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
-> Reviewed-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-> Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+From: Peng Fan <peng.fan@nxp.com>
 
-> --- a/include/linux/gpio/machine.h
-> +++ b/include/linux/gpio/machine.h
-> @@ -20,8 +20,9 @@ enum gpio_lookup_flags {
->
->  /**
->   * struct gpiod_lookup - lookup table
-> - * @chip_label: name of the chip the GPIO belongs to
-> - * @chip_hwnum: hardware number (i.e. relative to the chip) of the GPIO
-> + * @key: either the name of the chip the GPIO belongs to, or the GPIO line name
-> + * @chip_hwnum: hardware number (i.e. relative to the chip) of the GPIO, or
-> + *              U16_MAX to indicate that @key is a GPIO line name
->   * @con_id: name of the GPIO from the device's point of view
->   * @idx: index of the GPIO in case several GPIOs share the same name
->   * @flags: bitmask of gpio_lookup_flags GPIO_* values
-> @@ -30,7 +31,7 @@ enum gpio_lookup_flags {
->   * functions using platform data.
->   */
->  struct gpiod_lookup {
-> -       const char *chip_label;
-> +       const char *key;
->         u16 chip_hwnum;
->         const char *con_id;
->         unsigned int idx;
+V3:
+ Rebased to Shawn's for-next branch
+ Typo fix
 
-This needs an update in the documentation:
+V2:
+ Fix i.MX8MP build
+ Update cover letter, i.MX7D not have this issue 
 
---- a/Documentation/driver-api/gpio/board.rst
-+++ b/Documentation/driver-api/gpio/board.rst
-@@ -113,13 +113,15 @@ files that desire to do so need to include the
-following header::
- GPIOs are mapped by the means of tables of lookups, containing instances of the
- gpiod_lookup structure. Two macros are defined to help declaring such
-mappings::
+The A53 CCM clk root only accepts input up to 1GHz, CCM A53 root
+signoff timing is 1Ghz, however the A53 core which sources from CCM
+root could run above 1GHz which voilates the CCM.
 
--       GPIO_LOOKUP(chip_label, chip_hwnum, con_id, flags)
--       GPIO_LOOKUP_IDX(chip_label, chip_hwnum, con_id, idx, flags)
-+       GPIO_LOOKUP(key, chip_hwnum, con_id, flags)
-+       GPIO_LOOKUP_IDX(key, chip_hwnum, con_id, idx, flags)
+There is a CORE_SEL slice before A53 core, we need configure the
+CORE_SEL slice source from ARM PLL, not A53 CCM clk root.
 
- where
+The A53 CCM clk root should only be used when need to change ARM PLL
+frequency.
 
--  - chip_label is the label of the gpiod_chip instance providing the GPIO
--  - chip_hwnum is the hardware number of the GPIO within the chip
-+  - key is either the label of the gpiod_chip instance providing the GPIO, or
-+    the GPIO line name
-+  - chip_hwnum is the hardware number of the GPIO within the chip, or U16_MAX
-+    to indicate that key is a GPIO line name
-   - con_id is the name of the GPIO function from the device point of view. It
-        can be NULL, in which case it will match any function.
-   - idx is the index of the GPIO within the function.
+Peng Fan (4):
+  clk: imx: imx8mq: fix a53 cpu clock
+  clk: imx: imx8mm: fix a53 cpu clock
+  clk: imx: imx8mn: fix a53 cpu clock
+  clk: imx: imx8mp: fix a53 cpu clock
 
-
-Furthermore, a few drivers populate the gpiod_lookup members directly,
-instead of using the convenience macros:
-
-    arch/arm/mach-integrator/impd1.c
-    drivers/i2c/busses/i2c-i801.c
-    drivers/mfd/sm501.c
-
-Either they have to be updated s/chip_label/key/, or start using the macros,
-e.g.
-
---- a/drivers/i2c/busses/i2c-i801.c
-+++ b/drivers/i2c/busses/i2c-i801.c
-@@ -1444,9 +1444,9 @@ static int i801_add_mux(struct i801_priv *priv)
-                return -ENOMEM;
-        lookup->dev_id = "i2c-mux-gpio";
-        for (i = 0; i < mux_config->n_gpios; i++) {
--               lookup->table[i].chip_label = mux_config->gpio_chip;
--               lookup->table[i].chip_hwnum = mux_config->gpios[i];
--               lookup->table[i].con_id = "mux";
-+               lookup->table[i] = (struct gpiod_lookup)
-+                       GPIO_LOOKUP(mux_config->gpio_chip,
-+                                   mux_config->gpios[i], "mux", 0);
-        }
-        gpiod_add_lookup_table(lookup);
-        priv->lookup = lookup;
-
-Do you have any preference?
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
+ drivers/clk/imx/clk-imx8mm.c             | 16 ++++++++++++----
+ drivers/clk/imx/clk-imx8mn.c             | 16 ++++++++++++----
+ drivers/clk/imx/clk-imx8mp.c             | 16 ++++++++++++----
+ drivers/clk/imx/clk-imx8mq.c             | 16 ++++++++++++----
+ include/dt-bindings/clock/imx8mm-clock.h |  4 +++-
+ include/dt-bindings/clock/imx8mn-clock.h |  4 +++-
+ include/dt-bindings/clock/imx8mp-clock.h |  3 ++-
+ include/dt-bindings/clock/imx8mq-clock.h |  4 +++-
+ 8 files changed, 59 insertions(+), 20 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.16.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
