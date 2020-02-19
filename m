@@ -2,196 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8A9E164AA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 17:38:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F717164AAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 17:38:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbgBSQiB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 11:38:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60330 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726528AbgBSQiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 11:38:01 -0500
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FA3424656;
-        Wed, 19 Feb 2020 16:38:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582130280;
-        bh=ACKzIqdrnFtV0FFqptMxhiTP7NwwRO+06iz2twchFQQ=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=XIAnyBdocShxMXVBWTgaMbJW3qbkUhapUga77mw09uqicPtYZSnWt51Car3M+vT9N
-         +BBZxhS71mPZb262IXNtWdbuYBCjwxP9fsMA8r33zzgkUG1kRA0Si8Q/Iv0kPgZgeG
-         /imIvhWxE//aTVJiGc5gW8FfDT/QryoFU7TQ/5dU=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 0A14035209B0; Wed, 19 Feb 2020 08:38:00 -0800 (PST)
-Date:   Wed, 19 Feb 2020 08:38:00 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        rostedt@goodmis.org, mingo@kernel.org, joel@joelfernandes.org,
-        gregkh@linuxfoundation.org, gustavo@embeddedor.com,
-        tglx@linutronix.de, josh@joshtriplett.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        luto@kernel.org, tony.luck@intel.com, frederic@kernel.org,
-        dan.carpenter@oracle.com, mhiramat@kernel.org
-Subject: Re: [PATCH v3 06/22] rcu: Rename rcu_irq_{enter,exit}_irqson()
-Message-ID: <20200219163800.GZ2935@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20200219144724.800607165@infradead.org>
- <20200219150744.719277483@infradead.org>
+        id S1727078AbgBSQif (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 11:38:35 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:42310 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726717AbgBSQie (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 11:38:34 -0500
+Received: by mail-lf1-f67.google.com with SMTP id y19so612954lfl.9;
+        Wed, 19 Feb 2020 08:38:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=oc1iG+0sFqJJpFuBmYp8D6jIrAENImR/n43R/TFZnyw=;
+        b=BvD2WyXLCVUryS3IROysHumXd7lOaFWsK5xX8FY7TszpdKrxg87K22WgG22BFXbTW9
+         SDZEOU3LHeFx3Hqhw9XUnVlMICmren3S8VPcyidelhDD8qiQuTnIa55EpyT9yb+Cw1M9
+         YSJQrKeDxDx7S4DVf6XHTgNNjeHZgJrVHjYX+IJphxq5s1L7Huv6qnN7ScnWmh0szmfS
+         zQ5L5Jr6jjCAYyqPMDxDcVpxDAst9f0l4gmaHXSrlMkaAtqLknDxeN1+0nUFfJvPGAQv
+         2P8JZZj33zSE4ewTQqorNetCc9CtjWqaH/7RHECd8BOadTgnVcYulx+Jw2ksL1nPFQqv
+         q2nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oc1iG+0sFqJJpFuBmYp8D6jIrAENImR/n43R/TFZnyw=;
+        b=EjhwbyqWWKL0+7H+hHUuRl30pJzFMz1ZsSx1Scji8GXtGaaQgopZH/LM84Sq91m/Z3
+         kcinN4O8wC9I9YlneAN2Ydk8P0BATOSPlIDyXLc3+Wtv0f7pM5sK8hjoRxdB1f57v0I9
+         EYPmtFFpqLf8lcN9Irb++dFBs5W71/buWXJGj5O7mzmBbHAyy1sxuWI4nRBn3oFAV9us
+         NUw1TDKluCr5JCenWPd3SJISLnG5cE2WEZkve3IBYZuU6GQM2rbNZzqcuuZdtUYhmuHA
+         g7GAGpsszcAFxZd/AQ3UwGmJCQyXRY2MqE5Aoer1Kad7zp47ZyiwVqhNvPVrWHVVUPxg
+         WpdA==
+X-Gm-Message-State: APjAAAVK+Wyl4jUNtfIznblaoZvIyvzO7Weh9jNiRvTxQ7b6E3A5BijB
+        g9XPUyOkIxCxwTMp67/+6+jakhMN
+X-Google-Smtp-Source: APXvYqx6W6H73i4GCMqbHQV8ZP9n8MEmNzglcNRDvno5D2hF3kFde722JXZXZYwB//bVHj8V+qSFcw==
+X-Received: by 2002:ac2:5964:: with SMTP id h4mr13913125lfp.213.1582130311784;
+        Wed, 19 Feb 2020 08:38:31 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id u16sm54074lfi.36.2020.02.19.08.38.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Feb 2020 08:38:31 -0800 (PST)
+Subject: Re: [PATCH v1] partitions/efi: Add 'gpt_sector' kernel cmdline
+ parameter
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Davidlohr Bueso <dave@stgolabs.net>,
+        Colin Cross <ccross@android.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        David Heidelberg <david@ixit.cz>,
+        Peter Geis <pgwipeout@gmail.com>, linux-efi@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200219162339.16192-1-digetx@gmail.com>
+ <20200219162738.GA10644@infradead.org>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <d0df41ca-e14a-1bbf-5632-781d3e46f279@gmail.com>
+Date:   Wed, 19 Feb 2020 19:38:30 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200219150744.719277483@infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200219162738.GA10644@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 03:47:30PM +0100, Peter Zijlstra wrote:
-> The functions do in fact use local_irq_{save,restore}() and can
-> therefore be used when IRQs are in fact disabled. Worse, they are
-> already used in places where IRQs are disabled, leading to great
-> confusion when reading the code.
+19.02.2020 19:27, Christoph Hellwig пишет:
+> On Wed, Feb 19, 2020 at 07:23:39PM +0300, Dmitry Osipenko wrote:
+>> The gpt_sector=<sector> causes the GPT partition search to look at the
+>> specified sector for a valid GPT header if the GPT is not found at the
+>> beginning or the end of block device.
+>>
+>> In particular this is needed for NVIDIA Tegra consumer-grade Android
+>> devices in order to make them usable with the upstream kernel because
+>> these devices use a proprietary / closed-source partition table format
+>> for the EMMC and it's impossible to change the partition's format. Luckily
+>> there is a GPT table in addition to the proprietary table, which is placed
+>> in uncommon location of the EMMC storage and bootloader passes the
+>> location to kernel using "gpt gpt_sector=<sector>" cmdline parameters.
+>>
+>> This patch is based on the original work done by Colin Cross for the
+>> downstream Android kernel.
 > 
-> Rename them to fix this confusion.
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> I don't think a magic command line is the way to go.  The best would be
+> to reverse-engineer the proprietary partition table format.  If that is
+> too hard we can at least key off the odd GPT location based of it's
+> magic number.
 
-My first reaction was "Hey, wait, where is the _irqrestore()?"
-
-Nevertheless, especially since these are the only _irqson() functions:
-
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
-
-> ---
->  include/linux/rcupdate.h   |    4 ++--
->  include/linux/rcutiny.h    |    4 ++--
->  include/linux/rcutree.h    |    4 ++--
->  include/linux/tracepoint.h |    4 ++--
->  kernel/cpu_pm.c            |    4 ++--
->  kernel/rcu/tree.c          |    8 ++++----
->  kernel/trace/trace.c       |    4 ++--
->  7 files changed, 16 insertions(+), 16 deletions(-)
-> 
-> --- a/include/linux/rcupdate.h
-> +++ b/include/linux/rcupdate.h
-> @@ -120,9 +120,9 @@ static inline void rcu_init_nohz(void) {
->   */
->  #define RCU_NONIDLE(a) \
->  	do { \
-> -		rcu_irq_enter_irqson(); \
-> +		rcu_irq_enter_irqsave(); \
->  		do { a; } while (0); \
-> -		rcu_irq_exit_irqson(); \
-> +		rcu_irq_exit_irqsave(); \
->  	} while (0)
->  
->  /*
-> --- a/include/linux/rcutiny.h
-> +++ b/include/linux/rcutiny.h
-> @@ -68,8 +68,8 @@ static inline int rcu_jiffies_till_stall
->  static inline void rcu_idle_enter(void) { }
->  static inline void rcu_idle_exit(void) { }
->  static inline void rcu_irq_enter(void) { }
-> -static inline void rcu_irq_exit_irqson(void) { }
-> -static inline void rcu_irq_enter_irqson(void) { }
-> +static inline void rcu_irq_exit_irqsave(void) { }
-> +static inline void rcu_irq_enter_irqsave(void) { }
->  static inline void rcu_irq_exit(void) { }
->  static inline void exit_rcu(void) { }
->  static inline bool rcu_preempt_need_deferred_qs(struct task_struct *t)
-> --- a/include/linux/rcutree.h
-> +++ b/include/linux/rcutree.h
-> @@ -46,8 +46,8 @@ void rcu_idle_enter(void);
->  void rcu_idle_exit(void);
->  void rcu_irq_enter(void);
->  void rcu_irq_exit(void);
-> -void rcu_irq_enter_irqson(void);
-> -void rcu_irq_exit_irqson(void);
-> +void rcu_irq_enter_irqsave(void);
-> +void rcu_irq_exit_irqsave(void);
->  
->  void exit_rcu(void);
->  
-> --- a/include/linux/tracepoint.h
-> +++ b/include/linux/tracepoint.h
-> @@ -181,7 +181,7 @@ static inline struct tracepoint *tracepo
->  		 */							\
->  		if (rcuidle) {						\
->  			__idx = srcu_read_lock_notrace(&tracepoint_srcu);\
-> -			rcu_irq_enter_irqson();				\
-> +			rcu_irq_enter_irqsave();			\
->  		}							\
->  									\
->  		it_func_ptr = rcu_dereference_raw((tp)->funcs);		\
-> @@ -195,7 +195,7 @@ static inline struct tracepoint *tracepo
->  		}							\
->  									\
->  		if (rcuidle) {						\
-> -			rcu_irq_exit_irqson();				\
-> +			rcu_irq_exit_irqsave();				\
->  			srcu_read_unlock_notrace(&tracepoint_srcu, __idx);\
->  		}							\
->  									\
-> --- a/kernel/cpu_pm.c
-> +++ b/kernel/cpu_pm.c
-> @@ -24,10 +24,10 @@ static int cpu_pm_notify(enum cpu_pm_eve
->  	 * could be disfunctional in cpu idle. Copy RCU_NONIDLE code to let
->  	 * RCU know this.
->  	 */
-> -	rcu_irq_enter_irqson();
-> +	rcu_irq_enter_irqsave();
->  	ret = __atomic_notifier_call_chain(&cpu_pm_notifier_chain, event, NULL,
->  		nr_to_call, nr_calls);
-> -	rcu_irq_exit_irqson();
-> +	rcu_irq_exit_irqsave();
->  
->  	return notifier_to_errno(ret);
->  }
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -699,10 +699,10 @@ void rcu_irq_exit(void)
->  /*
->   * Wrapper for rcu_irq_exit() where interrupts are enabled.
->   *
-> - * If you add or remove a call to rcu_irq_exit_irqson(), be sure to test
-> + * If you add or remove a call to rcu_irq_exit_irqsave(), be sure to test
->   * with CONFIG_RCU_EQS_DEBUG=y.
->   */
-> -void rcu_irq_exit_irqson(void)
-> +void rcu_irq_exit_irqsave(void)
->  {
->  	unsigned long flags;
->  
-> @@ -875,10 +875,10 @@ void rcu_irq_enter(void)
->  /*
->   * Wrapper for rcu_irq_enter() where interrupts are enabled.
->   *
-> - * If you add or remove a call to rcu_irq_enter_irqson(), be sure to test
-> + * If you add or remove a call to rcu_irq_enter_irqsave(), be sure to test
->   * with CONFIG_RCU_EQS_DEBUG=y.
->   */
-> -void rcu_irq_enter_irqson(void)
-> +void rcu_irq_enter_irqsave(void)
->  {
->  	unsigned long flags;
->  
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -3004,9 +3004,9 @@ void __trace_stack(struct trace_array *t
->  	if (unlikely(in_nmi()))
->  		return;
->  
-> -	rcu_irq_enter_irqson();
-> +	rcu_irq_enter_irqsave();
->  	__ftrace_trace_stack(buffer, flags, skip, pc, NULL);
-> -	rcu_irq_exit_irqson();
-> +	rcu_irq_exit_irqsave();
->  }
->  
->  /**
-> 
-> 
+I'll try to take a look at RE, pretty sure somebody tried to do that before.
