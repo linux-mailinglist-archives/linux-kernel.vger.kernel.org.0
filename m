@@ -2,95 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1BF21651D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 22:42:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8C701651DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 22:45:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727747AbgBSVmC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 16:42:02 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:32846 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726703AbgBSVmB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 16:42:01 -0500
-Received: by mail-lf1-f65.google.com with SMTP id n25so1366641lfl.0;
-        Wed, 19 Feb 2020 13:41:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VEk1jczyN0OI7UPJElzxYnut4DWzleHzhCa3whUE/CU=;
-        b=S/7npCVFJFbsTkochGFmBPTlrGIJaY7oXM9SGAEuujzbQJYcVKLD4qB2hMsBNLQ6D1
-         1qbBNi24oKyWaBR/faUh9QiZ7f7UAuDZfzmYk0Ckf3OreL+EI48f0txeWiz2n+1uNtRl
-         Ct7TZ6PU7/iesTYju+4FtJawwbOID9IoWeWQlPSjp0EQ08gAgn4qNkUro0CbFDJeNXeS
-         JyO3MCSi48tVG6+gShp5M6y2vl5YgjtULhS6nKw8pwT+iQpyIdyJhnf5FDR+MPmTRn+i
-         JkcjHJNJiPLvTBp5D1BD7TVGVUE6zos1eXhAliOzRjTsYKymLbp6OQ6WQrQ44r7MrQ/I
-         KCMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=VEk1jczyN0OI7UPJElzxYnut4DWzleHzhCa3whUE/CU=;
-        b=RcjxlHAUL2KqN++jnlJ1grEvuRC3ZcZCYcylBFO7Y7m43OF6WyQjZQ+1BCYfeY3h/+
-         Oa88r4MovB+e77JVRkmdffBadeAKP+JlmXE5riLtWg88AGyqAio/XnzQI8TJWbqCj+Zo
-         7LsgVrzTvbQgYCN06xG3/bJLKrvGdAzmXtoVQzec4PysKUXsWDODM2ungKnp+lWkMsHn
-         BO4c+oPEiCdOzkgLjCsS8sN/CRJ9MLQO3+6J6HVv1b+USNx2RRRguFwfv7FsOSevkPKj
-         EI+2fWAIn8x4ZZpKNT1XZBzHR6Ek9Bbyb5EvqFeP2tqvbvHGH3YtTxo/m/eVsZbgvX9C
-         HpiA==
-X-Gm-Message-State: APjAAAUSlEvHWdHwer2BHl4FFD5UGKCZB16CorrImeC3sImsDihcc81o
-        b1uRnLsISSvyI80zs6iLERm0a5fi
-X-Google-Smtp-Source: APXvYqzpG6cs12Rq8hl94132hyOOS/pxFQUZtufPNFB7XWQgAC1lHrRFOlMN0zDX9fZ1O1r0Lyl+fA==
-X-Received: by 2002:a19:c3c2:: with SMTP id t185mr14600751lff.56.1582148518536;
-        Wed, 19 Feb 2020 13:41:58 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id m24sm546736ljb.81.2020.02.19.13.41.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2020 13:41:57 -0800 (PST)
-Subject: Re: [PATCH v1] nfc: pn544: Fix occasional HW initialization failure
-To:     David Miller <davem@davemloft.net>
-Cc:     sameo@linux.intel.com, david@ixit.cz, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200219150122.31524-1-digetx@gmail.com>
- <20200219.111130.5189327548859835.davem@davemloft.net>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <7723e3ad-e004-a691-6605-50ce05132162@gmail.com>
-Date:   Thu, 20 Feb 2020 00:41:56 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1727640AbgBSVpU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 16:45:20 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59618 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727469AbgBSVpT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 16:45:19 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 13A39AF2D;
+        Wed, 19 Feb 2020 21:45:17 +0000 (UTC)
+Date:   Wed, 19 Feb 2020 21:45:13 +0000
+From:   Mel Gorman <mgorman@suse.de>
+To:     Sultan Alsawaf <sultan@kerneltoast.com>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [PATCH] mm: Stop kswapd early when nothing's waiting for it to
+ free pages
+Message-ID: <20200219214513.GL3420@suse.de>
+References: <20200219182522.1960-1-sultan@kerneltoast.com>
+ <dcd1cb4c-89dc-856b-ea1b-8d4930fec3eb@intel.com>
+ <20200219194006.GA3075@sultan-book.localdomain>
+ <20200219200527.GF11847@dhcp22.suse.cz>
+ <20200219204220.GA3488@sultan-book.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <20200219.111130.5189327548859835.davem@davemloft.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20200219204220.GA3488@sultan-book.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-19.02.2020 22:11, David Miller пишет:
-> From: Dmitry Osipenko <digetx@gmail.com>
-> Date: Wed, 19 Feb 2020 18:01:22 +0300
+On Wed, Feb 19, 2020 at 12:42:20PM -0800, Sultan Alsawaf wrote:
+> > Again, do you have more details about the workload and what was the
+> > cause of responsiveness issues? Because I would expect that the
+> > situation would be quite opposite because it is usually the direct
+> > reclaim that is a source of stalls visible from userspace. Or is this
+> > about a single CPU situation where kswapd saturates the single CPU and
+> > all other tasks are just not getting enough CPU cycles?
 > 
->> The PN544 driver checks the "enable" polarity during of driver's probe and
->> it's doing that by turning ON and OFF NFC with different polarities until
->> enabling succeeds. It takes some time for the hardware to power-down, and
->> thus, to deassert the IRQ that is raised by turning ON the hardware.
->> Since the delay after last power-down of the polarity-checking process is
->> missed in the code, the interrupt may trigger immediately after installing
->> the IRQ handler (right after the checking is done), which results in IRQ
->> handler trying to touch the disabled HW and ends with marking NFC as
->> 'DEAD' during of the driver's probe:
->>
->>   pn544_hci_i2c 1-002a: NFC: nfc_en polarity : active high
->>   pn544_hci_i2c 1-002a: NFC: invalid len byte
->>   shdlc: llc_shdlc_recv_frame: NULL Frame -> link is dead
->>
->> This patch fixes the occasional NFC initialization failure on Nexus 7
->> device.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> 
-> Applied and queued up for -stable, thanks.
+> The workload was having lots of applications open at once. At a certain point
+> when memory ran low, my system became sluggish and kswapd CPU usage skyrocketed.
+> I added printks into kswapd with this patch, and my premature exit in kswapd
+> kicked in quite often.
 > 
 
-Awesome, thanks!
+This could be watermark boosting run wild again. Can you test with
+sysctl vm.watermark_boost_factor=0 or the following patch? (preferably
+both to compare and contrast).
+
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 572fb17c6273..71dd47172cef 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -3462,6 +3462,25 @@ static bool pgdat_balanced(pg_data_t *pgdat, int order, int classzone_idx)
+ 	return false;
+ }
+ 
++static void acct_boosted_reclaim(pg_data_t *pgdat, int classzone_idx,
++				unsigned long *zone_boosts)
++{
++	struct zone *zone;
++	unsigned long flags;
++	int i;
++
++	for (i = 0; i <= classzone_idx; i++) {
++		if (!zone_boosts[i])
++			continue;
++
++		/* Increments are under the zone lock */
++		zone = pgdat->node_zones + i;
++		spin_lock_irqsave(&zone->lock, flags);
++		zone->watermark_boost -= min(zone->watermark_boost, zone_boosts[i]);
++		spin_unlock_irqrestore(&zone->lock, flags);
++	}
++}
++
+ /* Clear pgdat state for congested, dirty or under writeback. */
+ static void clear_pgdat_congested(pg_data_t *pgdat)
+ {
+@@ -3654,9 +3673,17 @@ static int balance_pgdat(pg_data_t *pgdat, int order, int classzone_idx)
+ 		if (!nr_boost_reclaim && balanced)
+ 			goto out;
+ 
+-		/* Limit the priority of boosting to avoid reclaim writeback */
+-		if (nr_boost_reclaim && sc.priority == DEF_PRIORITY - 2)
+-			raise_priority = false;
++		/*
++		 * Abort boosting if reclaiming at higher priority is not
++		 * working to avoid excessive reclaim due to lower zones
++		 * being boosted.
++		 */
++		if (nr_boost_reclaim && sc.priority == DEF_PRIORITY - 2) {
++			acct_boosted_reclaim(pgdat, classzone_idx, zone_boosts);
++			boosted = false;
++			nr_boost_reclaim = 0;
++			goto restart;
++		}
+ 
+ 		/*
+ 		 * Do not writeback or swap pages for boosted reclaim. The
+@@ -3738,18 +3765,7 @@ static int balance_pgdat(pg_data_t *pgdat, int order, int classzone_idx)
+ out:
+ 	/* If reclaim was boosted, account for the reclaim done in this pass */
+ 	if (boosted) {
+-		unsigned long flags;
+-
+-		for (i = 0; i <= classzone_idx; i++) {
+-			if (!zone_boosts[i])
+-				continue;
+-
+-			/* Increments are under the zone lock */
+-			zone = pgdat->node_zones + i;
+-			spin_lock_irqsave(&zone->lock, flags);
+-			zone->watermark_boost -= min(zone->watermark_boost, zone_boosts[i]);
+-			spin_unlock_irqrestore(&zone->lock, flags);
+-		}
++		acct_boosted_reclaim(pgdat, classzone_idx, zone_boosts);
+ 
+ 		/*
+ 		 * As there is now likely space, wakeup kcompact to defragment
