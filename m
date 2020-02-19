@@ -2,61 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF847164445
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 13:30:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD2781644AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 13:52:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727646AbgBSMaE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 07:30:04 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:58347 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726491AbgBSMaD (ORCPT
+        id S1727576AbgBSMws (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 07:52:48 -0500
+Received: from imap3.hz.codethink.co.uk ([176.9.8.87]:49098 "EHLO
+        imap3.hz.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727103AbgBSMws (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 07:30:03 -0500
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j4OU0-0003po-Qk; Wed, 19 Feb 2020 12:29:40 +0000
-Date:   Wed, 19 Feb 2020 13:29:39 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>,
-        smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Phil Estes <estesp@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v3 11/25] inode: inode_owner_or_capable(): handle fsid
- mappings
-Message-ID: <20200219122939.x6o4fytdcunkvg6i@wittgenstein>
-References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
- <20200218143411.2389182-12-christian.brauner@ubuntu.com>
- <20200218222523.GA9535@infradead.org>
+        Wed, 19 Feb 2020 07:52:48 -0500
+X-Greylist: delayed 2361 seconds by postgrey-1.27 at vger.kernel.org; Wed, 19 Feb 2020 07:52:47 EST
+Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
+        by imap3.hz.codethink.co.uk with esmtpsa  (Exim 4.92 #3 (Debian))
+        id 1j4OE9-0003q3-58; Wed, 19 Feb 2020 12:13:17 +0000
+Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.93)
+        (envelope-from <ben@rainbowdash.codethink.co.uk>)
+        id 1j4OE8-005GIt-ID; Wed, 19 Feb 2020 12:13:16 +0000
+From:   Ben Dooks <ben.dooks@codethink.co.uk>
+To:     linux-kernel@lists.codethink.co.uk
+Cc:     Ben Dooks <ben.dooks@codethink.co.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] rqchip/gic: make clearner warnings when no-type specified
+Date:   Wed, 19 Feb 2020 12:13:14 +0000
+Message-Id: <20200219121315.1254222-1-ben.dooks@codethink.co.uk>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200218222523.GA9535@infradead.org>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 02:25:23PM -0800, Christoph Hellwig wrote:
-> On Tue, Feb 18, 2020 at 03:33:57PM +0100, Christian Brauner wrote:
-> > +	if (is_userns_visible(inode->i_sb->s_iflags)) {
-> > +		if (kuid_has_mapping(ns, inode->i_uid) && ns_capable(ns, CAP_FOWNER))
-> > +			return true;
-> > +	} else if (kfsuid_has_mapping(ns, inode->i_uid) && ns_capable(ns, CAP_FOWNER)) {
-> 
-> This adds some crazy long unreadable lines..
+If an IRQ is defined without an associated type, then this triggers a
+warning in the IRQ translation function gic_irq_domain_translate()
+which does not give any useful information about which node was at fault.
+It also means that if there are multiple entries the dmesg soon fills
+with backtraces which are not useufl either.
 
-I'll ad a helper in the next version or wrap those lines depending on
-what makes more sense.
+Change to print a single line with the info of which fwspec
+info was at fault.
+
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+---
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Marc Zyngier <maz@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Cc; linux-arm-kernel@lists.infradead.org
+---
+ drivers/irqchip/irq-gic.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+index 30ab623343d3..52442eff4027 100644
+--- a/drivers/irqchip/irq-gic.c
++++ b/drivers/irqchip/irq-gic.c
+@@ -996,6 +996,16 @@ static void gic_irq_domain_unmap(struct irq_domain *d, unsigned int irq)
+ {
+ }
+ 
++/* give a useful warning if there is no type specified. Just using WARN()
++ * end up with lots of not-useful stack backtraces. SHow the node and the
++ * IRQ number being translated.
++ */
++static void warn_no_type(struct irq_domain *d, unsigned long irq)
++{
++	pr_warn("WARNING: GIC: %s: no type specified when translating %lu\n",
++		d->name, irq);
++}
++
+ static int gic_irq_domain_translate(struct irq_domain *d,
+ 				    struct irq_fwspec *fwspec,
+ 				    unsigned long *hwirq,
+@@ -1018,7 +1028,8 @@ static int gic_irq_domain_translate(struct irq_domain *d,
+ 		*type = fwspec->param[2] & IRQ_TYPE_SENSE_MASK;
+ 
+ 		/* Make it clear that broken DTs are... broken */
+-		WARN_ON(*type == IRQ_TYPE_NONE);
++		if (*type == IRQ_TYPE_NONE)
++			warn_no_type(d, fwspec->param[1]);
+ 		return 0;
+ 	}
+ 
+@@ -1029,7 +1040,8 @@ static int gic_irq_domain_translate(struct irq_domain *d,
+ 		*hwirq = fwspec->param[0];
+ 		*type = fwspec->param[1];
+ 
+-		WARN_ON(*type == IRQ_TYPE_NONE);
++		if (*type == IRQ_TYPE_NONE)
++			warn_no_type(d, fwspec->param[0]);
+ 		return 0;
+ 	}
+ 
+-- 
+2.25.0
+
