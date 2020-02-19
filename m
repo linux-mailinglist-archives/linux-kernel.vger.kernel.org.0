@@ -2,83 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CB22163AFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 04:18:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D2D4163B08
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 04:22:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728308AbgBSDSW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 22:18:22 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:53424 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728260AbgBSDSW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 22:18:22 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 092E8BD6156035A3226A;
-        Wed, 19 Feb 2020 11:18:20 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.204) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 19 Feb
- 2020 11:18:15 +0800
-Subject: Re: [PATCH 3/3] f2fs: avoid unneeded barrier in do_checkpoint()
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
-References: <20200218102136.32150-1-yuchao0@huawei.com>
- <20200218102136.32150-3-yuchao0@huawei.com>
- <20200219025154.GB96609@google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <576f8389-ba27-b461-5466-cc62e84b5c92@huawei.com>
-Date:   Wed, 19 Feb 2020 11:18:15 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726613AbgBSDWg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 22:22:36 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:43103 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726346AbgBSDWf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 22:22:35 -0500
+Received: by mail-ed1-f65.google.com with SMTP id dc19so27348611edb.10
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 19:22:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mOwsfCxIuEAE5EfWzjTqJ5OG19WWGU0wtmPirueEhaU=;
+        b=eSd7Al7OY+mz5Or3VCm94r/VJDi1/bdRrhb9Ior3AMIH15vekk9WuEMIusd4zqBes5
+         Ntpj53PgI/pKghFIQWbSVCEz2D+DuJSIFFryKUtFft133BNTw3XCqOJs2vcM24tXZC6p
+         qV5O/UsBAxe0uidFndVqxdqOdu6aOn2zCHOciFcQT1ZlT+gj4X0qe+wlR0IVIEBkQBkW
+         kKDGqcTRPcjqA/PmZs18SGduB1UMRGZmw4CGAAuRQDvv1kPAWyUD0bsbSE/yYGsxcS4q
+         vVHspuASnEQYPUC1OrN0gCMRSmkAKy0yqd6u9L1ZQ3FL6O57Na+9hDemklOQWRDXkICx
+         N0Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mOwsfCxIuEAE5EfWzjTqJ5OG19WWGU0wtmPirueEhaU=;
+        b=klffs4+3TZIB65JDmfLo+NQBLhGxLGLFlMOC3IL1oOR4OAVR+/4QtwAGcw/+yIa8Hp
+         992M2Ey22swIF/wsGNrpg8CCavEGDpX8/B0CyGlLYh6fZejMxYcq/Dujxk6PuIfqMmYP
+         TsUKeEYqbGZf9Bv2yCNEdJ1uUSUOcOQPjns9ToXepiHojKzIhNFSkkfr3aGyjt+lHIEn
+         veMTdoD+/pcITzwLX4U8meA/YUiiU+AV6JytNxHQ2zyv2I07vdWO8q4jRRYuyfVDnh+c
+         z6QxiXhDXeOySQvLkV6R6SQRmeml+kvuyryM82yNZrJ2qcjR0GAy1btpYZA68yvvsG7N
+         ZmvQ==
+X-Gm-Message-State: APjAAAUZ40fB8HC9MEHZV+XWOyO+J+4jXlNrngL2P5/p6Qjpnv5CIzZa
+        nBXaR6bYBAmBObZnxxrE9Q1eUE24ppLv1g0kGjA=
+X-Google-Smtp-Source: APXvYqzwIb1FUBaecbUsJa4vYm6bhf8m9qyf9cN1RF7nJCD/1BOnd7Jb98IDNKDk4iocVSXjGHIlPjoZ9TBqh9WZA1A=
+X-Received: by 2002:a05:6402:c0f:: with SMTP id co15mr21926223edb.200.1582082553048;
+ Tue, 18 Feb 2020 19:22:33 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200219025154.GB96609@google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+References: <alpine.DEB.2.21.2002172139310.152060@chino.kir.corp.google.com> <alpine.DEB.2.21.2002181828070.108053@chino.kir.corp.google.com>
+In-Reply-To: <alpine.DEB.2.21.2002181828070.108053@chino.kir.corp.google.com>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Tue, 18 Feb 2020 19:22:16 -0800
+Message-ID: <CAHbLzkrJ_=8f8STvZ2GPGH6Arup8cKgGqigj4FQXWpmD-C5wNQ@mail.gmail.com>
+Subject: Re: [patch 1/2] mm, shmem: add thp fault alloc and fallback stats
+To:     David Rientjes <rientjes@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Jeremy Cline <jcline@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020/2/19 10:51, Jaegeuk Kim wrote:
-> On 02/18, Chao Yu wrote:
->> We don't need to wait all dirty page submitting IO twice,
->> remove unneeded wait step.
-> 
-> What happens if checkpoint and other meta writs are reordered?
+On Tue, Feb 18, 2020 at 6:29 PM David Rientjes <rientjes@google.com> wrote:
+>
+> The thp_fault_alloc and thp_fault_fallback vmstats are incremented when a
+> hugepage is successfully or unsuccessfully allocated, respectively, during
+> a page fault for anonymous memory.
+>
+> Extend this to shmem as well.  Note that care is taken to increment
+> thp_fault_alloc only when the fault succeeds; this is the same behavior as
+> anonymous thp.
+>
+> Signed-off-by: David Rientjes <rientjes@google.com>
+> ---
+>  mm/shmem.c | 23 ++++++++++++++---------
+>  1 file changed, 14 insertions(+), 9 deletions(-)
+>
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -1502,9 +1502,8 @@ static struct page *shmem_alloc_page(gfp_t gfp,
+>         return page;
+>  }
+>
+> -static struct page *shmem_alloc_and_acct_page(gfp_t gfp,
+> -               struct inode *inode,
+> -               pgoff_t index, bool huge)
+> +static struct page *shmem_alloc_and_acct_page(gfp_t gfp, struct inode *inode,
+> +               pgoff_t index, bool fault, bool huge)
+>  {
+>         struct shmem_inode_info *info = SHMEM_I(inode);
+>         struct page *page;
+> @@ -1518,9 +1517,11 @@ static struct page *shmem_alloc_and_acct_page(gfp_t gfp,
+>         if (!shmem_inode_acct_block(inode, nr))
+>                 goto failed;
+>
+> -       if (huge)
+> +       if (huge) {
+>                 page = shmem_alloc_hugepage(gfp, info, index);
+> -       else
+> +               if (!page && fault)
+> +                       count_vm_event(THP_FAULT_FALLBACK);
+> +       } else
+>                 page = shmem_alloc_page(gfp, info, index);
+>         if (page) {
+>                 __SetPageLocked(page);
+> @@ -1832,11 +1833,10 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+>         }
+>
+>  alloc_huge:
+> -       page = shmem_alloc_and_acct_page(gfp, inode, index, true);
+> +       page = shmem_alloc_and_acct_page(gfp, inode, index, vmf, true);
+>         if (IS_ERR(page)) {
+>  alloc_nohuge:
+> -               page = shmem_alloc_and_acct_page(gfp, inode,
+> -                                                index, false);
+> +               page = shmem_alloc_and_acct_page(gfp, inode, index, vmf, false);
+>         }
+>         if (IS_ERR(page)) {
+>                 int retry = 5;
+> @@ -1871,8 +1871,11 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+>
+>         error = mem_cgroup_try_charge_delay(page, charge_mm, gfp, &memcg,
+>                                             PageTransHuge(page));
+> -       if (error)
+> +       if (error) {
+> +               if (vmf && PageTransHuge(page))
+> +                       count_vm_event(THP_FAULT_FALLBACK);
+>                 goto unacct;
+> +       }
+>         error = shmem_add_to_page_cache(page, mapping, hindex,
+>                                         NULL, gfp & GFP_RECLAIM_MASK);
+>         if (error) {
+> @@ -1883,6 +1886,8 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+>         mem_cgroup_commit_charge(page, memcg, false,
+>                                  PageTransHuge(page));
+>         lru_cache_add_anon(page);
+> +       if (vmf && PageTransHuge(page))
+> +               count_vm_event(THP_FAULT_ALLOC);
 
-checkpoint can be done as following:
+I think shmem THP alloc is accounted to THP_FILE_ALLOC. And it has
+been accounted by shmem_add_to_page_cache(). So, it sounds like a
+double count.
 
-1. All meta except last cp-park of checkpoint area.
-2. last cp-park of checkpoint area
-
-So we only need to keep barrier in between step 1 and 2, we don't need
-to care about the write order of meta in step 1, right?
-
-Thanks,
-
-> 
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/checkpoint.c | 2 --
->>  1 file changed, 2 deletions(-)
->>
->> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->> index 751815cb4c2b..9c88fb3d255a 100644
->> --- a/fs/f2fs/checkpoint.c
->> +++ b/fs/f2fs/checkpoint.c
->> @@ -1384,8 +1384,6 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->>  
->>  	/* Flush all the NAT/SIT pages */
->>  	f2fs_sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
->> -	/* Wait for all dirty meta pages to be submitted for IO */
->> -	f2fs_wait_on_all_pages(sbi, F2FS_DIRTY_META);
->>  
->>  	/*
->>  	 * modify checkpoint
->> -- 
->> 2.18.0.rc1
-> .
-> 
+>
+>         spin_lock_irq(&info->lock);
+>         info->alloced += compound_nr(page);
+>
