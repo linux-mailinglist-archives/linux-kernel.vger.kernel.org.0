@@ -2,163 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEABE163B5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 04:34:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CD97163B66
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 04:35:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbgBSDeP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 22:34:15 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:38729 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726446AbgBSDeP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 22:34:15 -0500
-Received: by mail-lf1-f65.google.com with SMTP id r14so16168369lfm.5
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 19:34:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=TYt7HJjvktLwYF5fWsjcRqKlBg9s9ySi5xDNucBdwwM=;
-        b=V2kGHxSpVquxNbLsrIA4Tc8X0T0dQK8oblbDB63inYvlFgNXSQrjgAGT5vP3BQoMWu
-         wUgyAd+JyD3fsz2NRRMnbOxsND22Z4FVr/Tb886Olr5cKqxgc59jsYDtdhBrxoeYyE7B
-         syLOnxQkIOj/VbJBqYyShP1jm3e0aIsyXshXWfmDmtz05T3lEaVu1lkIqfzfzOfpFqqM
-         ZRJVgtUsSU+ZLXrBDI5kwkuZCgAHMg59c/lzlRAmlt+ELnc67H1WApvcLKQQu3gC1QtQ
-         B5HJTw7Wt52jYDhDvkFAd3rKhHwljQ5kN426zY0iBoRogMSnOxDd/8mRrS7RbTNwkxOx
-         OCSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=TYt7HJjvktLwYF5fWsjcRqKlBg9s9ySi5xDNucBdwwM=;
-        b=OuLJCzVWq0HcmpcMV3T8XMn4v9aaumS+6tlXJZV2sV7zLXXOtohDw7Hjh3rE4GDQmI
-         q8xj+xduciXGMJMneinYPeXJ7ZOlgD6ETz4MmBSD14em42x5IZy4XJhxI9pqR4s9FqWM
-         LBr06ItfgzXgXnM0/pfXTHNZw3LAWH/g+dip16gU47MG4KxXAqgZ37hyp6N+1QAei8cw
-         bt6HwPSjU7o1oGyxst78/HCBFT35XeV+Add6wX5zFyoSSPGr0l1zPTzrpUCt+6pFnYMX
-         ryJ9GCcJo75UDMIzv+Z3ievZwREYml/ASOcgIiMH8kQ1ujA0fvJr/sqvZphSm5NYpHCh
-         0ceg==
-X-Gm-Message-State: APjAAAXFMm4OXAMXANZNIR49QA85IwDKVJDN9Hu5bNuwAlIR02y7dZOB
-        c2+XHfcyRexwGWTsC+s5w+NNqwZWpRkCJ7S2T2FPSw==
-X-Google-Smtp-Source: APXvYqwvVYTdTd/xkQkW7M6vEezu20MskC8zCQh/UXfXhkGWKW9ijfCSFt8ZFACOfhqPHeFSpss0pRG6zZbylyWTw7U=
-X-Received: by 2002:ac2:59dd:: with SMTP id x29mr11952854lfn.95.1582083252806;
- Tue, 18 Feb 2020 19:34:12 -0800 (PST)
+        id S1726729AbgBSDfh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 22:35:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42768 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726446AbgBSDfh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 22:35:37 -0500
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C289424655;
+        Wed, 19 Feb 2020 03:35:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582083336;
+        bh=tdPejpHYKFC4AC7qPtDsJpaqp9EJYHzk8D60EwQzhSI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ElD7YzTAqtfCH7VPiOSjO0VQ7eBxs4wRxvD3pjLlPFgwAetFyl/3WaRMgw8zOHRDt
+         EY5gs7C2Q+GBr0W2OzmuLXEUkK7PJZnqEhcnRbhHR1Q1cwasPXcSJV3PrflwVOMZKi
+         Ucc4HjJvPK81RYkjHtvKR2B38rKa1GS2CPovllcw=
+Date:   Tue, 18 Feb 2020 19:35:34 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     cluster-devel@redhat.com, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, ocfs2-devel@oss.oracle.com
+Subject: Re: [PATCH v6 08/19] mm: Add readahead address space operation
+Message-ID: <20200219033534.GD1075@sol.localdomain>
+References: <20200217184613.19668-1-willy@infradead.org>
+ <20200217184613.19668-14-willy@infradead.org>
+ <20200219031044.GA1075@sol.localdomain>
 MIME-Version: 1.0
-References: <20200218190428.035153861@linuxfoundation.org>
-In-Reply-To: <20200218190428.035153861@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Wed, 19 Feb 2020 09:04:01 +0530
-Message-ID: <CA+G9fYtZeFz4mX2EW4yhT4vwTM+SBdDSJH=ZRvV4Lg1pQ0W0_w@mail.gmail.com>
-Subject: Re: [PATCH 5.4 00/66] 5.4.21-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200219031044.GA1075@sol.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 19 Feb 2020 at 01:28, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 5.4.21 release.
-> There are 66 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 20 Feb 2020 19:03:19 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
-5.4.21-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-5.4.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Tue, Feb 18, 2020 at 07:10:44PM -0800, Eric Biggers wrote:
+> On Mon, Feb 17, 2020 at 10:45:54AM -0800, Matthew Wilcox wrote:
+> > diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+> > index 7d4d09dd5e6d..81ab30fbe45c 100644
+> > --- a/Documentation/filesystems/vfs.rst
+> > +++ b/Documentation/filesystems/vfs.rst
+> > @@ -706,6 +706,7 @@ cache in your filesystem.  The following members are defined:
+> >  		int (*readpage)(struct file *, struct page *);
+> >  		int (*writepages)(struct address_space *, struct writeback_control *);
+> >  		int (*set_page_dirty)(struct page *page);
+> > +		void (*readahead)(struct readahead_control *);
+> >  		int (*readpages)(struct file *filp, struct address_space *mapping,
+> >  				 struct list_head *pages, unsigned nr_pages);
+> >  		int (*write_begin)(struct file *, struct address_space *mapping,
+> > @@ -781,12 +782,24 @@ cache in your filesystem.  The following members are defined:
+> >  	If defined, it should set the PageDirty flag, and the
+> >  	PAGECACHE_TAG_DIRTY tag in the radix tree.
+> >  
+> > +``readahead``
+> > +	Called by the VM to read pages associated with the address_space
+> > +	object.  The pages are consecutive in the page cache and are
+> > +	locked.  The implementation should decrement the page refcount
+> > +	after starting I/O on each page.  Usually the page will be
+> > +	unlocked by the I/O completion handler.  If the function does
+> > +	not attempt I/O on some pages, the caller will decrement the page
+> > +	refcount and unlock the pages for you.	Set PageUptodate if the
+> > +	I/O completes successfully.  Setting PageError on any page will
+> > +	be ignored; simply unlock the page if an I/O error occurs.
+> > +
+> 
+> This is unclear about how "not attempting I/O" works and how that affects who is
+> responsible for putting and unlocking the pages.  How does the caller know which
+> pages were not attempted?  Can any arbitrary subset of pages be not attempted,
+> or just the last N pages?
+> 
+> In the code, the caller actually uses readahead_for_each() to iterate through
+> and put+unlock the pages.  That implies that ->readahead() must also use
+> readahead_for_each() as well, in order for the iterator to be advanced
+> correctly... Right?  And the ownership of each page is transferred to the callee
+> when the callee advances the iterator past that page.
+> 
+> I don't see how ext4_readahead() and f2fs_readahead() can work at all, given
+> that they don't advance the iterator.
+> 
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Yep, this patchset immediately crashes on boot with:
 
-Summary
-------------------------------------------------------------------------
+BUG: Bad page state in process swapper/0  pfn:02176
+page:ffffea00000751d0 refcount:0 mapcount:0 mapping:ffff88807cba0400 index:0x0
+ext4_da_aops name:"systemd"
+flags: 0x100000000020001(locked|mappedtodisk)
+raw: 0100000000020001 dead000000000100 dead000000000122 ffff88807cba0400
+raw: 0000000000000000 0000000000000000 00000000ffffffff
+page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
+bad because of flags: 0x1(locked)
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.6.0-rc2-00019-g7203ed9018cb9 #18
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20191223_100556-anatol 04/01/2014
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x7a/0xaa lib/dump_stack.c:118
+ bad_page.cold+0x89/0xba mm/page_alloc.c:649
+ free_pages_check_bad+0x5d/0x60 mm/page_alloc.c:1050
+ free_pages_check mm/page_alloc.c:1059 [inline]
+ free_pages_prepare mm/page_alloc.c:1157 [inline]
+ free_pcp_prepare+0x1c1/0x200 mm/page_alloc.c:1198
+ free_unref_page_prepare mm/page_alloc.c:3011 [inline]
+ free_unref_page+0x16/0x70 mm/page_alloc.c:3060
+ __put_single_page mm/swap.c:81 [inline]
+ __put_page+0x31/0x40 mm/swap.c:115
+ put_page include/linux/mm.h:1029 [inline]
+ ext4_mpage_readpages+0x778/0x9b0 fs/ext4/readpage.c:405
+ ext4_readahead+0x2f/0x40 fs/ext4/inode.c:3242
+ read_pages+0x4c/0x200 mm/readahead.c:126
+ page_cache_readahead_limit+0x224/0x250 mm/readahead.c:241
+ __do_page_cache_readahead mm/readahead.c:266 [inline]
+ ra_submit mm/internal.h:62 [inline]
+ ondemand_readahead+0x1df/0x4d0 mm/readahead.c:544
+ page_cache_sync_readahead+0x2d/0x40 mm/readahead.c:579
+ generic_file_buffered_read+0x77e/0xa90 mm/filemap.c:2029
+ generic_file_read_iter+0xd4/0x130 mm/filemap.c:2302
+ ext4_file_read_iter fs/ext4/file.c:131 [inline]
+ ext4_file_read_iter+0x53/0x180 fs/ext4/file.c:114
+ call_read_iter include/linux/fs.h:1897 [inline]
+ new_sync_read+0x113/0x1a0 fs/read_write.c:414
+ __vfs_read+0x21/0x30 fs/read_write.c:427
+ vfs_read+0xcb/0x160 fs/read_write.c:461
+ kernel_read+0x2c/0x40 fs/read_write.c:440
+ prepare_binprm+0x14f/0x190 fs/exec.c:1589
+ __do_execve_file.isra.0+0x4c0/0x800 fs/exec.c:1806
+ do_execveat_common fs/exec.c:1871 [inline]
+ do_execve+0x20/0x30 fs/exec.c:1888
+ run_init_process+0xc8/0xcd init/main.c:1279
+ try_to_run_init_process+0x10/0x36 init/main.c:1288
+ kernel_init+0xac/0xfd init/main.c:1385
+ ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+Disabling lock debugging due to kernel taint
+page:ffffea00000751d0 refcount:0 mapcount:0 mapping:ffff88807cba0400 index:0x0
+ext4_da_aops name:"systemd"
+flags: 0x100000000020001(locked|mappedtodisk)
+raw: 0100000000020001 dead000000000100 dead000000000122 ffff88807cba0400
+raw: 0000000000000000 0000000000000000 00000000ffffffff
+page dumped because: VM_BUG_ON_PAGE(page_ref_count(page) == 0)
 
-kernel: 5.4.21-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-5.4.y
-git commit: 70464966e42b69820bd71947631574b2d9f13ea6
-git describe: v5.4.20-67-g70464966e42b
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-5.4-oe/bui=
-ld/v5.4.20-67-g70464966e42b
 
-No regressions (compared to build v5.4.20)
+I had to add:
 
-No fixes (compared to build v5.4.20)
+diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+index e14841ade6122..cb982088b5225 100644
+--- a/fs/ext4/readpage.c
++++ b/fs/ext4/readpage.c
+@@ -401,8 +401,10 @@ int ext4_mpage_readpages(struct address_space *mapping,
+ 		else
+ 			unlock_page(page);
+ 	next_page:
+-		if (rac)
++		if (rac) {
+ 			put_page(page);
++			readahead_next(rac);
++		}
+ 	}
+ 	if (bio)
+ 		submit_bio(bio);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 87964e4cb6b81..e16b0fe42e2e5 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2238,8 +2238,10 @@ int f2fs_mpage_readpages(struct inode *inode, struct readahead_control *rac,
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+ next_page:
+ #endif
+-		if (rac)
++		if (rac) {
+ 			put_page(page);
++			readahead_next(rac);
++		}
+ 
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+ 		if (f2fs_compressed_file(inode)) {
 
-Ran 20055 total tests in the following environments and test suites.
 
-Environments
---------------
-- dragonboard-410c
-- hi6220-hikey
-- i386
-- juno-r2
-- nxp-ls2088
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15
-- x86
-
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libgpiod
-* libhugetlbfs
-* linux-log-parser
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-sched-tests
-* spectre-meltdown-checker-test
-* ltp-fs-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-securebits-tests
-* network-basic-tests
-* perf
-* v4l2-compliance
-* ltp-open-posix-tests
-* ltp-syscalls-tests
-* kvm-unit-tests
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
