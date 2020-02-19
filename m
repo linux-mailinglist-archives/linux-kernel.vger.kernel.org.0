@@ -2,106 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40D331642A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 11:53:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C95961642AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 11:54:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbgBSKxv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 05:53:51 -0500
-Received: from first.geanix.com ([116.203.34.67]:57102 "EHLO first.geanix.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726469AbgBSKxv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 05:53:51 -0500
-Received: from localhost (_gateway [172.20.0.1])
-        by first.geanix.com (Postfix) with ESMTPSA id 1C78BC002E;
-        Wed, 19 Feb 2020 10:53:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=geanix.com; s=first;
-        t=1582109629; bh=KvmUZ7RpfqddUx8uLthfjCMTy9g+ZYpZDHIMYzR1KoQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=QDWUVQDTAquUov6+PXtSzsOfsH4R3+bYJ3ZFFOC28FYbLNwgyFlsz7nSieXIiZObI
-         6RS5Cq28tPzIwWfbHZgOkd/XyTSlCRafR7TkPqfGeqwDLdmzmY3nyS3CqkX3Q9PJhU
-         41iR4DuU8ZKbDxt5N1tCKXPCncY6kOy4RZGxwdCWezT2xTMbB9JFcf58WjgZZVSiu0
-         PhJW2zacPec6lzoZSjXu+5GzHFR4kDgIjvxC8bUA1n3K5gZSROG0Ay/8sJ1WvKJn2u
-         kFX78mjFRB31JsHAvVbmiSBDVwE5dJFSitJCWTyiKjyr3uggxs94cQnuO3kc8Bb+E4
-         oHuj6tj7RiLWw==
-From:   Esben Haabendal <esben@geanix.com>
-To:     netdev@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S . Miller" <davem@davemloft.net>,
-        Michal Simek <michal.simek@xilinx.com>,
-        =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>
-Subject: [PATCH net 1/4] net: ll_temac: Fix race condition causing TX hang
-Date:   Wed, 19 Feb 2020 11:53:48 +0100
-Message-Id: <c93e0f5ef92d2b17c04e256e32460e9dee1107e8.1582108989.git.esben@geanix.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <cover.1582108989.git.esben@geanix.com>
-References: <cover.1582108989.git.esben@geanix.com>
+        id S1727208AbgBSKyH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 05:54:07 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:34955 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726469AbgBSKyF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 05:54:05 -0500
+Received: by mail-qk1-f193.google.com with SMTP id v2so22587219qkj.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 02:54:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=BC5JBxhf1L5HFeMhJ5aFhi6TWfttWOnbJEt9bKPTIJY=;
+        b=JNvMBzc+vlyBrHXzEGZKInLBhZLIMe9ePS7Kl50HX5bTTg61NpbrkQ38au/HO6YalS
+         4GUQv7RD4JbU/BGvQHaTm7AgZqFjoUkAcXKWgcOgbFmw3A72UKk+v5FURaJ+teqQvRxh
+         qHCfnNj2MhUZE18oWRHKBWNQ5CC9Qtk5nsyzcVJ7Q7ohvx1lx2u58kpoq6SlE39hIfYf
+         IlFMvgyDLu+oRLuwKdWFSsx0EkdAfwH8cuA00gdMVwmfg/5WricxnpOSX4kA2g3qzQxc
+         KgS8KijqLWcfSw4kiBo5g9xt8p9m4mpzoFhA5uoqUb27Lec530Q83Vpepwws8qn984+h
+         c4Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=BC5JBxhf1L5HFeMhJ5aFhi6TWfttWOnbJEt9bKPTIJY=;
+        b=IGwqXCAKCx2981n6+C8sniL5YwFFgdRKCTR7fDpQw6XwuzEHTMHpD932npjmB9+ENg
+         ee1bsac7T7LW8R5RnrCEbrXQ8gvI1UKofdorbqeV+nwoEpkfj+csXK2GwJ1phvPQdtFO
+         nBWxwS3K4/Zpa3bmDgyGgKBN1uRpCBjjFp5up6Jhdh9IiZaJwKDh+60W9xHUfmCaclv+
+         yZOBIfIkzPzms+MyBceuOUCwJIoQfvb9UVogdiEs4w+S41NHy2HHIZfUN6Vz9HH6wwe3
+         kuZSuygICAsseil4dyUlZOKqk1kt/gHOwVpszgCNGh60hjrcf1xqEx/579/1RfEeQmxM
+         bEVg==
+X-Gm-Message-State: APjAAAWaI0GnAvWw2vYfAJO8F9Bz1vZ8ME5R/jQ3imrQxRY4NqUAAyIJ
+        Z5iQWicBj2/6ZNJ3nj2ujSN4flgGt4JWrXAT0pKKyw==
+X-Google-Smtp-Source: APXvYqyOSZag9U2LFBEH5aKt58+Qbd/MrwtebHG/3tGR08Au59dSCg0QbOk1ucU5UNH8HPg4WDJbs09WBgrz9UtxPmI=
+X-Received: by 2002:a37:a488:: with SMTP id n130mr22380303qke.120.1582109644632;
+ Wed, 19 Feb 2020 02:54:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.7 required=4.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=disabled
-        version=3.4.3
-X-Spam-Checker-Version: SpamAssassin 3.4.3 (2019-12-06) on eb9da72b0f73
+References: <20200219092218.18143-1-brgl@bgdev.pl> <20200219092218.18143-2-brgl@bgdev.pl>
+ <e1882a57-5a54-b94e-aa0d-3515c671bc3f@linaro.org>
+In-Reply-To: <e1882a57-5a54-b94e-aa0d-3515c671bc3f@linaro.org>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Wed, 19 Feb 2020 11:53:53 +0100
+Message-ID: <CAMpxmJVPAhw3j==etjwCYVj_YVH7=hfr0Lr2AnTmdYuJLeQpow@mail.gmail.com>
+Subject: Re: [PATCH v3 1/7] nvmem: fix memory leak in error path
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Khouloud Touil <ktouil@baylibre.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is possible that the interrupt handler fires and frees up space in
-the TX ring in between checking for sufficient TX ring space and
-stopping the TX queue in temac_start_xmit. If this happens, the
-queue wake from the interrupt handler will occur before the queue is
-stopped, causing a lost wakeup and the adapter's transmit hanging.
+=C5=9Br., 19 lut 2020 o 11:52 Srinivas Kandagatla
+<srinivas.kandagatla@linaro.org> napisa=C5=82(a):
+>
+>
+>
+> On 19/02/2020 09:22, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski<bgolaszewski@baylibre.com>
+> >
+> > We need to free the ida mapping and nvmem struct if the write-protect
+> > GPIO lookup fails.
+> >
+> > Fixes: 2a127da461a9 ("nvmem: add support for the write-protect pin")
+> > Signed-off-by: Bartosz Golaszewski<bgolaszewski@baylibre.com>
+> > ---
+> >   drivers/nvmem/core.c | 7 +++++--
+> >   1 file changed, 5 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+> > index ef326f243f36..89974e40d250 100644
+> > --- a/drivers/nvmem/core.c
+> > +++ b/drivers/nvmem/core.c
+> > @@ -352,8 +352,11 @@ struct nvmem_device *nvmem_register(const struct n=
+vmem_config *config)
+> >       else
+> >               nvmem->wp_gpio =3D gpiod_get_optional(config->dev, "wp",
+> >                                                   GPIOD_OUT_HIGH);
+> > -     if (IS_ERR(nvmem->wp_gpio))
+> > -             return ERR_CAST(nvmem->wp_gpio);
+> > +     if (IS_ERR(nvmem->wp_gpio)) {
+> > +             ida_simple_remove(&nvmem_ida, nvmem->id);
+> > +             kfree(nvmem);
+> > +             return ERR_PTR(rval);
+>
+> Why are you returning rval here?
+> This points return value of ida_simple_get and not the actual error code
+> from wp_gpio.
+>
 
-To avoid this, after stopping the queue, check again whether there is
-sufficient space in the TX ring. If so, wake up the queue again.
+Duh! Thanks for catching this.
 
-This is a port of the similar fix in axienet driver,
-commit 7de44285c1f6 ("net: axienet: Fix race condition causing TX hang").
-
-Fixes: 23ecc4bde21f ("net: ll_temac: fix checksum offload logic")
-Signed-off-by: Esben Haabendal <esben@geanix.com>
----
- drivers/net/ethernet/xilinx/ll_temac_main.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/ethernet/xilinx/ll_temac_main.c b/drivers/net/ethernet/xilinx/ll_temac_main.c
-index 6f11f52c9a9e..996004ef8bd4 100644
---- a/drivers/net/ethernet/xilinx/ll_temac_main.c
-+++ b/drivers/net/ethernet/xilinx/ll_temac_main.c
-@@ -788,6 +788,9 @@ static void temac_start_xmit_done(struct net_device *ndev)
- 		stat = be32_to_cpu(cur_p->app0);
- 	}
- 
-+	/* Matches barrier in temac_start_xmit */
-+	smp_mb();
-+
- 	netif_wake_queue(ndev);
- }
- 
-@@ -830,9 +833,19 @@ temac_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 	cur_p = &lp->tx_bd_v[lp->tx_bd_tail];
- 
- 	if (temac_check_tx_bd_space(lp, num_frag + 1)) {
--		if (!netif_queue_stopped(ndev))
--			netif_stop_queue(ndev);
--		return NETDEV_TX_BUSY;
-+		if (netif_queue_stopped(ndev))
-+			return NETDEV_TX_BUSY;
-+
-+		netif_stop_queue(ndev);
-+
-+		/* Matches barrier in temac_start_xmit_done */
-+		smp_mb();
-+
-+		/* Space might have just been freed - check again */
-+		if (temac_check_tx_bd_space(lp, num_frag))
-+			return NETDEV_TX_BUSY;
-+
-+		netif_wake_queue(ndev);
- 	}
- 
- 	cur_p->app0 = 0;
--- 
-2.25.0
-
+Bart
