@@ -2,104 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF42F1644EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 14:04:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46FE0164512
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 14:12:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726789AbgBSNEC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 08:04:02 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:49948 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726530AbgBSNEB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 08:04:01 -0500
-Received: from zn.tnic (p200300EC2F095500AC4EBF6CAFE7BFD1.dip0.t-ipconnect.de [IPv6:2003:ec:2f09:5500:ac4e:bf6c:afe7:bfd1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4B9201EC0216;
-        Wed, 19 Feb 2020 14:03:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1582117439;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=rvGK9TWc5VQzzfElldcN9WbR6raRibrDQlfQVR2ux0U=;
-        b=IAFwokmEabnjoZRjjrIL2p1e19VOt69CshgSD0FL+9iSI4y8Oh0HdeBKIrLAlaXv99hlW9
-        PuCWBdk9EQFG8p5BWhUYnkbvVFNwkFpIwov3UlI9y4l2skXGC180p8FdDWpaghq8FxswUf
-        /aQvWNZr3cHpbXmYwElgfOO8Rc1sezc=
-Date:   Wed, 19 Feb 2020 14:03:53 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Prarit Bhargava <prarit@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Krupp <centos@akr.yagii.de>,
-        Tony Luck <tony.luck@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-edac@vger.kernel.org
-Subject: Re: [PATCH v2] x86/mce: Do not log spurious corrected mce errors
-Message-ID: <20200219130353.GC30966@zn.tnic>
-References: <20200217130659.15895-1-prarit@redhat.com>
- <20200218161319.GG14449@zn.tnic>
- <894a39cb-21e7-3e43-1907-cae390537ccf@redhat.com>
+        id S1727697AbgBSNMQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 08:12:16 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:47262 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbgBSNMQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 08:12:16 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01JDC3LO065242;
+        Wed, 19 Feb 2020 07:12:03 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582117923;
+        bh=B/O91ZYHGjTEacr23ckeGZ3NbDZ9epolpD1ChKHO78s=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=NHM1TGu+mOsa6kL8O4ZCmpz5we8vGZ1NRM8JYIcwGE+HCeI9MakLQvq/312aHfpNP
+         uomBnpwDmNBivJM6qH7XSevgqXu8AKNhYbtLzfZbT9EtzNRQIavKtBe0YHdJMsbJU+
+         iL4FAP2OksTNoEMkTCELFG7FXnq/3zqV119d1rgQ=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01JDC37c096025
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 19 Feb 2020 07:12:03 -0600
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 19
+ Feb 2020 07:12:03 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 19 Feb 2020 07:12:03 -0600
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01JDC2QZ056606;
+        Wed, 19 Feb 2020 07:12:03 -0600
+Subject: Re: [PATCH linux-master 0/3] MCAN updates for clock discovery
+To:     <linux-kernel@vger.kernel.org>, <mkl@pengutronix.de>,
+        <linux-can@vger.kernel.org>, <wg@grandegger.com>,
+        <sriram.dash@samsung.com>
+CC:     <davem@davemloft.net>
+References: <20200131183433.11041-1-dmurphy@ti.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <a97ed7ef-e95a-af32-4d01-2ed7c2c08c20@ti.com>
+Date:   Wed, 19 Feb 2020 07:07:19 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <894a39cb-21e7-3e43-1907-cae390537ccf@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200131183433.11041-1-dmurphy@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 07:25:59AM -0500, Prarit Bhargava wrote:
-> When I submitted this patch I looked at other commits in the kernel near
-> top-of-tree and they have Signed-off-by followed by Co-developed-by, and also
-> took your suggestion of not using a Signed-off-by for Alexander.  That's why I
+Bump
 
-I said:
-
-"This is not how this is expressed. Either you write that in free text in
-the commit message or you use Co-developed-by. More details in
-
-Documentation/process/submitting-patches.rst"
-
-> I'm now thoroughly confused as to what the correct format is.  It seems like
-> checkpatch.py is telling me to include a Signed-off-by in addition to the
-> Co-developed-by for Alexander but you explicitly told me not to.
+On 1/31/20 12:34 PM, Dan Murphy wrote:
+> Hello
 >
-> > See Documentation/process/submitting-patches.rst for more detail.
-
-You need to start reading my replies in their entirety and finally read that
-document I've pointed to twice:
-
-"Co-developed-by: states that the patch was co-created by multiple developers;
-it is a used to give attribution to co-authors (in addition to the author
-attributed by the From: tag) when several people work on a single patch.  Since
-									  ^^^^^
-Co-developed-by: denotes authorship, every Co-developed-by: must be immediately
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-followed by a Signed-off-by: of the associated co-author."
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-I.e., basically what checkpatch is saying.
-
-So you either
-
-a) write in free text in the commit message something like
-
-"This is based on a patch submitted to RH bugzilla by Alexander Krupp
-<centos@akr.yagii.de>"
-
-OR
-
-b) use
-
-Co-developed-by: Alexander Krupp <centos@akr.yagii.de>
-Signed-off-by: Alexander Krupp <centos@akr.yagii.de>
-
-Either a) XOR b).
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> These are the initial fixes for issues found in and requested in
+> https://lore.kernel.org/patchwork/patch/1165091/
+>
+> For the clock discovery and initialization.
+>
+> Dan
+>
+> Dan Murphy (3):
+>    can: tcan4x5x: Move clock init to TCAN driver
+>    can: m_can_platform: Move clock discovery and init to platform
+>    can: m_can: Remove unused clock function from the framework
+>
+>   drivers/net/can/m_can/m_can.c          | 16 ------
+>   drivers/net/can/m_can/m_can.h          |  3 -
+>   drivers/net/can/m_can/m_can_platform.c | 37 +++++++++---
+>   drivers/net/can/m_can/tcan4x5x.c       | 78 +++++++++++++++++++-------
+>   4 files changed, 89 insertions(+), 45 deletions(-)
+>
