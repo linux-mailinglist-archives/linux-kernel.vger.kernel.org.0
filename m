@@ -2,74 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 577E3163DB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 08:34:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 006A4163DC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 08:35:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727646AbgBSHeg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 02:34:36 -0500
-Received: from [167.172.186.51] ([167.172.186.51]:35192 "EHLO shell.v3.sk"
-        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726824AbgBSHeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 02:34:08 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id DD9B2DFCA2;
-        Wed, 19 Feb 2020 07:34:22 +0000 (UTC)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id TklClGzdHZXb; Wed, 19 Feb 2020 07:34:19 +0000 (UTC)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 2A517E0052;
-        Wed, 19 Feb 2020 07:34:18 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id gaoAiPHX0KQk; Wed, 19 Feb 2020 07:34:16 +0000 (UTC)
-Received: from furthur.lan (unknown [109.183.109.54])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 6BB55E007F;
-        Wed, 19 Feb 2020 07:34:16 +0000 (UTC)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH 10/10] ARM: dts: mmp3: Use the MMP3 compatible string for /clocks
-Date:   Wed, 19 Feb 2020 08:33:53 +0100
-Message-Id: <20200219073353.184336-11-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200219073353.184336-1-lkundrak@v3.sk>
-References: <20200219073353.184336-1-lkundrak@v3.sk>
+        id S1726710AbgBSHfv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 02:35:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52936 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726548AbgBSHfu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 02:35:50 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D36D52176D;
+        Wed, 19 Feb 2020 07:35:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582097750;
+        bh=fX6KRM1X5Jo5RsKxZDPRp/cqOi3EYu6e+t9QUMDjriI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nbpaBGt2aLkLH3ZuPkT6aBpFHK2ZLlle7+OW+GguJBosgroGRskPpVF9whQNGQsvI
+         PEAFOezHGk/veRsnuLPNdfMdanf5cO+9GFAZGqMeIqp4prWGMMB5KEATX+Q4tEl5y7
+         2QLp1KlAYcoFv+hHFmO9ZlA/wx+Poo4n4lIDq4V8=
+Date:   Wed, 19 Feb 2020 08:35:48 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Vitor Soares <Vitor.Soares@synopsys.com>
+Cc:     linux-kernel@vger.kernel.org, linux-i3c@lists.infradead.org,
+        Joao.Pinto@synopsys.com, Jose.Abreu@synopsys.com,
+        bbrezillon@kernel.org, wsa@the-dreams.de, arnd@arndb.de,
+        broonie@kernel.org, corbet@lwn.net
+Subject: Re: [PATCH v3 3/5] i3c: master: add i3c_for_each_dev helper
+Message-ID: <20200219073548.GA2728338@kroah.com>
+References: <cover.1582069402.git.vitor.soares@synopsys.com>
+ <868e5b37fd817b65e6953ed7279f5063e5fc06c5.1582069402.git.vitor.soares@synopsys.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <868e5b37fd817b65e6953ed7279f5063e5fc06c5.1582069402.git.vitor.soares@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clocks are in fact slightly different on MMP3. In particular, PLL2 is
-fixed to a different frequency, there's an extra PLL3, and the GPU
-clocks are configured differently.
+On Wed, Feb 19, 2020 at 01:20:41AM +0100, Vitor Soares wrote:
+> Introduce i3c_for_each_dev(), an i3c device iterator for use by i3cdev.
+> 
+> Signed-off-by: Vitor Soares <vitor.soares@synopsys.com>
+> ---
+>  drivers/i3c/internals.h |  1 +
+>  drivers/i3c/master.c    | 12 ++++++++++++
+>  2 files changed, 13 insertions(+)
+> 
+> diff --git a/drivers/i3c/internals.h b/drivers/i3c/internals.h
+> index bc062e8..a6deedf 100644
+> --- a/drivers/i3c/internals.h
+> +++ b/drivers/i3c/internals.h
+> @@ -24,4 +24,5 @@ int i3c_dev_enable_ibi_locked(struct i3c_dev_desc *dev);
+>  int i3c_dev_request_ibi_locked(struct i3c_dev_desc *dev,
+>  			       const struct i3c_ibi_setup *req);
+>  void i3c_dev_free_ibi_locked(struct i3c_dev_desc *dev);
+> +int i3c_for_each_dev(void *data, int (*fn)(struct device *, void *));
+>  #endif /* I3C_INTERNAL_H */
+> diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+> index 21c4372..8e22da2 100644
+> --- a/drivers/i3c/master.c
+> +++ b/drivers/i3c/master.c
+> @@ -2640,6 +2640,18 @@ void i3c_dev_free_ibi_locked(struct i3c_dev_desc *dev)
+>  	dev->ibi = NULL;
+>  }
+>  
+> +int i3c_for_each_dev(void *data, int (*fn)(struct device *, void *))
+> +{
+> +	int res;
+> +
+> +	mutex_lock(&i3c_core_lock);
+> +	res = bus_for_each_dev(&i3c_bus_type, NULL, data, fn);
+> +	mutex_unlock(&i3c_core_lock);
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
- arch/arm/boot/dts/mmp3.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ick, why the lock?  Are you _sure_ you need that?  The core should
+handle any list locking issues here, right?
 
-diff --git a/arch/arm/boot/dts/mmp3.dtsi b/arch/arm/boot/dts/mmp3.dtsi
-index 59a108e49b41e..3e28f0dc9df41 100644
---- a/arch/arm/boot/dts/mmp3.dtsi
-+++ b/arch/arm/boot/dts/mmp3.dtsi
-@@ -531,7 +531,7 @@ l2: l2-cache-controller@d0020000 {
- 		};
-=20
- 		soc_clocks: clocks@d4050000 {
--			compatible =3D "marvell,mmp2-clock";
-+			compatible =3D "marvell,mmp3-clock";
- 			reg =3D <0xd4050000 0x1000>,
- 			      <0xd4282800 0x400>,
- 			      <0xd4015000 0x1000>;
---=20
-2.24.1
+I don't see bus-specific-locks around other subsystem functions that do
+this (like usb_for_each_dev).
 
+thanks,
+
+greg k-h
