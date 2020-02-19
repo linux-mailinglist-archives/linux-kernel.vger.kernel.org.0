@@ -2,137 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 026BC164B03
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 17:52:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A750164AF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 17:50:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbgBSQwU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 11:52:20 -0500
-Received: from mout.kundenserver.de ([217.72.192.75]:52941 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726450AbgBSQwU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 11:52:20 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1M8QFi-1j8sQZ3yPg-004Vt0; Wed, 19 Feb 2020 17:51:52 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Jens Axboe <axboe@kernel.dk>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Adam Williamson <awilliam@redhat.com>,
-        Chris Murphy <bugzilla@colorremedies.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Tim Waugh <tim@cyberelk.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org
-Subject: [PATCH] compat_ioctl, cdrom: Replace .ioctl with .compat_ioctl in four appropriate places
-Date:   Wed, 19 Feb 2020 17:50:07 +0100
-Message-Id: <20200219165139.3467320-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.25.0
+        id S1726767AbgBSQuV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 11:50:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35442 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726551AbgBSQuV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 11:50:21 -0500
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3AC720578;
+        Wed, 19 Feb 2020 16:50:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582131020;
+        bh=kOXZCZKenNSD9wrjdQ1BdQRHvBQn6jUQq/YNOfpaiQI=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=tabKOyUUDIEk+mcMZmV4P2vFUQPjgX8ZHvwTq9MnBMeuUY1U7/xv6u73vcU0T1LEI
+         HzsmSmTpvbEEJ8KFZNgFPHkW9bs7OXAZvdMMs1IGnU2H4LHoHr4/cvalrZh3rnNKTW
+         2+GB4sMHmoKxV6TKLm/RMbDbeP2Up/AA8ehMCfgU=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 645D335209B0; Wed, 19 Feb 2020 08:50:20 -0800 (PST)
+Date:   Wed, 19 Feb 2020 08:50:20 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, mingo@kernel.org,
+        joel@joelfernandes.org, gregkh@linuxfoundation.org,
+        gustavo@embeddedor.com, tglx@linutronix.de, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+        luto@kernel.org, tony.luck@intel.com, frederic@kernel.org,
+        dan.carpenter@oracle.com, mhiramat@kernel.org,
+        Marco Elver <elver@google.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v3 16/22] locking/atomics, kcsan: Add KCSAN
+ instrumentation
+Message-ID: <20200219165020.GF2935@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20200219144724.800607165@infradead.org>
+ <20200219150745.299217979@infradead.org>
+ <20200219104626.633f0650@gandalf.local.home>
+ <20200219160318.GG18400@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:s83bO8mKDR7xliqovCqp1GmWzEogAJvpGM54ZuLLH4pmNDsLTFY
- ZxQUDSrXrb28nM+9drVbtrJ8MxqeW1pcICoxq0M2y+aB7qvD7iMDpcHWlECDzZL3mhdhI8K
- BS8BYAcJqRI2ZWDXrlXqDDTO/DjF/Q05SjUWe1SBIBOeT7W12CpXurHmSTHy5X5VVQQIUtO
- bOHv7lVkw7ikMgz7kiz/w==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:6qcWV+qWiLI=:kjXIiUB/VicY7yGRA7ziGY
- 1kANGtrqCMHfXJf786bqSJ4WFSALkZjbMLtINIV4T+vxgzLgP14+/+o87XoB8AVtCbsM8kSU2
- JI4f2MPP0HNWgn+2LpS3cLb7xghKtlFrZesE8ZoHQdrwNQA8TYnwo7i8iyWT9HB/jOsfGV3LL
- 44C+RdOO+cVWTpSTxrIQlkh0FqrhHoevLjCx+9RY95AdV8S2y5F34wcsWwJ6ip0PT5kuzV6Il
- hzgefpeFTffFB3QgfQolJedi0HJGGr8LxI0ncuaVgWICAk3xBtKfPuNevbrVXP4lsI1AM8hgF
- e+AIJYY4vi0qSKjKANRQ/QT0Dx71Txo5/LLy3/UAuJTwirsg+AcLyZvPJMm64+1WptLr3b6BF
- RKNkDnFWVixEY95EGsfpmnYdt9NeK0dbodW6RUy81Q/jnEPU2MGfTAu1tIbqmB2W35IXC6DuF
- podvY+5Xxnq/2Q2vk9VqoBFXvehS9LY6pj6EZ5yEWpyT7NauOEat01WVpSczGhPHXHnEN/3h6
- aKIueqLHBKpGHnXYIjiuy2iGxQsibiG/eLbSbcBMKwYVdRWRbqcnHP4Kq9GTyLwL4dTE5USZi
- aPOlnrKGSAjB/LMbVO4F7dN1KG6ykrsF2HvXh7QxFP6Q1NvKuZte5cMMhgj1N8BSC4ARzLYxv
- LBdyXTSwHlhJGZV+d1tLgWwyR1mZFiTy0jP5n1sx42z9DwEe1XaujjxQN57RcT2S93y3Qj0Ky
- rm7R3B5pUNK3kdNFswGHNan0hA50VY7ikJxsHyKcBI69ebqUEeCdCLq1mGBHTdpDNsPeiCTQE
- 1WnDQxC7sbtImKsPybVj6QylWejuYsNDlTlTBj14+wohn9SOzM=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200219160318.GG18400@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adam Williamson <awilliam@redhat.com>
+On Wed, Feb 19, 2020 at 05:03:18PM +0100, Peter Zijlstra wrote:
+> On Wed, Feb 19, 2020 at 10:46:26AM -0500, Steven Rostedt wrote:
+> > On Wed, 19 Feb 2020 15:47:40 +0100
+> > Peter Zijlstra <peterz@infradead.org> wrote:
+> > 
+> > > From: Marco Elver <elver@google.com>
+> > > 
+> > > This adds KCSAN instrumentation to atomic-instrumented.h.
+> > > 
+> > > Signed-off-by: Marco Elver <elver@google.com>
+> > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > > [peterz: removed the actual kcsan hooks]
+> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > > Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+> > > ---
+> > >  include/asm-generic/atomic-instrumented.h |  390 +++++++++++++++---------------
+> > >  scripts/atomic/gen-atomic-instrumented.sh |   14 -
+> > >  2 files changed, 212 insertions(+), 192 deletions(-)
+> > > 
+> > 
+> > 
+> > Does this and the rest of the series depend on the previous patches in
+> > the series? Or can this be a series on to itself (patches 16-22)?
+> 
+> It can probably stand on its own, but it very much is related in so far
+> that it's fallout from staring at all this nonsense.
+> 
+> Without these the do_int3() can actually have accidental tracing before
+> reaching it's nmi_enter().
 
-Arnd Bergmann inadvertently typoed these in d320a9551e394 and
-64cbfa96551a; they seem to be the cause of
-https://bugzilla.redhat.com/show_bug.cgi?id=1801353 , invalid
-SCSI commands when udev tries to query a DVD drive.
+The original is already in -tip, so some merge magic will be required.
 
-[arnd] Found another instance of the same bug, also introduced
-in my compat_ioctl series.
-
-Fixes: d320a9551e39 ("compat_ioctl: scsi: move ioctl handling into drivers")
-Fixes: 64cbfa96551a ("compat_ioctl: move cdrom commands into cdrom.c")
-Fixes: c103d6ee69f9 ("compat_ioctl: ide: floppy: add handler")
-Link: https://bugzilla.redhat.com/show_bug.cgi?id=1801353
-Bisected-by: Chris Murphy <bugzilla@colorremedies.com>
-Signed-off-by: Adam Williamson <awilliam@redhat.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/block/paride/pcd.c | 2 +-
- drivers/cdrom/gdrom.c      | 2 +-
- drivers/ide/ide-gd.c       | 2 +-
- drivers/scsi/sr.c          | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/block/paride/pcd.c b/drivers/block/paride/pcd.c
-index 117cfc8cd05a..cda5cf917e9a 100644
---- a/drivers/block/paride/pcd.c
-+++ b/drivers/block/paride/pcd.c
-@@ -276,7 +276,7 @@ static const struct block_device_operations pcd_bdops = {
- 	.release	= pcd_block_release,
- 	.ioctl		= pcd_block_ioctl,
- #ifdef CONFIG_COMPAT
--	.ioctl		= blkdev_compat_ptr_ioctl,
-+	.compat_ioctl	= blkdev_compat_ptr_ioctl,
- #endif
- 	.check_events	= pcd_block_check_events,
- };
-diff --git a/drivers/cdrom/gdrom.c b/drivers/cdrom/gdrom.c
-index 886b2638c730..c51292c2a131 100644
---- a/drivers/cdrom/gdrom.c
-+++ b/drivers/cdrom/gdrom.c
-@@ -519,7 +519,7 @@ static const struct block_device_operations gdrom_bdops = {
- 	.check_events		= gdrom_bdops_check_events,
- 	.ioctl			= gdrom_bdops_ioctl,
- #ifdef CONFIG_COMPAT
--	.ioctl			= blkdev_compat_ptr_ioctl,
-+	.compat_ioctl		= blkdev_compat_ptr_ioctl,
- #endif
- };
- 
-diff --git a/drivers/ide/ide-gd.c b/drivers/ide/ide-gd.c
-index 1bb99b556393..05c26986637b 100644
---- a/drivers/ide/ide-gd.c
-+++ b/drivers/ide/ide-gd.c
-@@ -361,7 +361,7 @@ static const struct block_device_operations ide_gd_ops = {
- 	.release		= ide_gd_release,
- 	.ioctl			= ide_gd_ioctl,
- #ifdef CONFIG_COMPAT
--	.ioctl			= ide_gd_compat_ioctl,
-+	.compat_ioctl		= ide_gd_compat_ioctl,
- #endif
- 	.getgeo			= ide_gd_getgeo,
- 	.check_events		= ide_gd_check_events,
-diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
-index 0fbb8fe6e521..e4240e4ae8bb 100644
---- a/drivers/scsi/sr.c
-+++ b/drivers/scsi/sr.c
-@@ -688,7 +688,7 @@ static const struct block_device_operations sr_bdops =
- 	.release	= sr_block_release,
- 	.ioctl		= sr_block_ioctl,
- #ifdef CONFIG_COMPAT
--	.ioctl		= sr_block_compat_ioctl,
-+	.compat_ioctl	= sr_block_compat_ioctl,
- #endif
- 	.check_events	= sr_block_check_events,
- 	.revalidate_disk = sr_block_revalidate_disk,
--- 
-2.25.0
-
+							Thanx, Paul
