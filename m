@@ -2,115 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA143164938
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 16:52:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBF8416492A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 16:50:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbgBSPwZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 10:52:25 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:40788 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726651AbgBSPwZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 10:52:25 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01JFlKkn165283;
-        Wed, 19 Feb 2020 15:52:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=+0MKjwYS6o56kZOWus6xPspoxgNogY35LPaujONId3I=;
- b=cg1bMIXWVeTVesVIC7DolETYE7jLDNBF2KZx3Fx8KiAQ4s5MTyUO4dubtOBMrzBmPfVL
- o/rTNkUZGCuIftPwlV1cmEug8HP0B5A1SuFJUiAkaJ6KYMgNKXf9jrCEoVRjyK33VVH6
- kbSCfrqZIJoxaLpm+6EIrXFCyU4gXfLo4+TdOduNQgUou96FKH5CPWVFEU+xX/xzB20X
- tmyhzf1YTMZKZ3lOqsDJ+EtpqgpIXTi4PVUQ13z1/ky0nKmmK23wJnMazIgYVSjUer82
- o2R/92rS67TxO+d5gGzwVuUzKwIK/NxaBmemDyVdawPP7gR53LFzGxbRJ7KLB1X+djoC 7g== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2y8udkc083-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 Feb 2020 15:52:17 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01JFmEOF030012;
-        Wed, 19 Feb 2020 15:50:16 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2y8udargwy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 Feb 2020 15:50:16 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01JFoF96031867;
-        Wed, 19 Feb 2020 15:50:15 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 19 Feb 2020 07:50:15 -0800
-Date:   Wed, 19 Feb 2020 07:50:12 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk,
-        raven@themaw.net, mszeredi@redhat.com, christian@brauner.io,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/19] VFS: Filesystem information and notifications [ver
- #16]
-Message-ID: <20200219155012.GA9496@magnolia>
-References: <158204549488.3299825.3783690177353088425.stgit@warthog.procyon.org.uk>
- <20200219144613.lc5y2jgzipynas5l@wittgenstein>
+        id S1726773AbgBSPuj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 10:50:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46268 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726569AbgBSPuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 10:50:37 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5C5C2465D;
+        Wed, 19 Feb 2020 15:50:35 +0000 (UTC)
+Date:   Wed, 19 Feb 2020 10:50:34 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org, joel@joelfernandes.org,
+        gregkh@linuxfoundation.org, gustavo@embeddedor.com,
+        tglx@linutronix.de, paulmck@kernel.org, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+        luto@kernel.org, tony.luck@intel.com, frederic@kernel.org,
+        dan.carpenter@oracle.com, mhiramat@kernel.org,
+        "Steven Rostedt (VMware)" <rosted@goodmis.org>
+Subject: Re: [PATCH v3 09/22] sched,rcu,tracing: Avoid tracing before
+ in_nmi() is correct
+Message-ID: <20200219105034.40915c50@gandalf.local.home>
+In-Reply-To: <20200219150744.888917422@infradead.org>
+References: <20200219144724.800607165@infradead.org>
+        <20200219150744.888917422@infradead.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200219144613.lc5y2jgzipynas5l@wittgenstein>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9536 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 adultscore=0
- mlxlogscore=999 malwarescore=0 bulkscore=0 suspectscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002190119
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9536 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 suspectscore=0
- spamscore=0 priorityscore=1501 adultscore=0 mlxscore=0 clxscore=1011
- malwarescore=0 mlxlogscore=999 phishscore=0 impostorscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002190119
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 03:46:13PM +0100, Christian Brauner wrote:
-> On Tue, Feb 18, 2020 at 05:04:55PM +0000, David Howells wrote:
-> > 
-> > Here are a set of patches that adds system calls, that (a) allow
-> > information about the VFS, mount topology, superblock and files to be
-> > retrieved and (b) allow for notifications of mount topology rearrangement
-> > events, mount and superblock attribute changes and other superblock events,
-> > such as errors.
-> > 
-> > ============================
-> > FILESYSTEM INFORMATION QUERY
-> > ============================
-> > 
-> > The first system call, fsinfo(), allows information about the filesystem at
-> > a particular path point to be queried as a set of attributes, some of which
-> > may have more than one value.
-> > 
-> > Attribute values are of four basic types:
-> > 
-> >  (1) Version dependent-length structure (size defined by type).
-> > 
-> >  (2) Variable-length string (up to 4096, including NUL).
-> > 
-> >  (3) List of structures (up to INT_MAX size).
-> > 
-> >  (4) Opaque blob (up to INT_MAX size).
+On Wed, 19 Feb 2020 15:47:33 +0100
+Peter Zijlstra <peterz@infradead.org> wrote:
+
+> If we call into a tracer before in_nmi() becomes true, the tracer can
+> no longer detect it is called from NMI context and behave correctly.
 > 
-> I mainly have an organizational question. :) This is a huge patchset
-> with lots and lots of (good) features. Wouldn't it make sense to make
-> the fsinfo() syscall a completely separate patchset from the
-> watch_mount() and watch_sb() syscalls? It seems that they don't need to
-> depend on each other at all. This would make reviewing this so much
-> nicer and likely would mean that fsinfo() could proceed a little faster.
+> Therefore change nmi_{enter,exit}() to use __preempt_count_{add,sub}()
+> as the normal preempt_count_{add,sub}() have a (desired) function
+> trace entry.
+> 
+> This fixes a potential issue with current code; AFAICT when the
+> function-tracer has stack-tracing enabled __trace_stack() will
+> malfunction when it hits the preempt_count_add() function entry from
+> NMI context.
+> 
+> Suggested-by: Steven Rostedt (VMware) <rosted@goodmis.org>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>
 
-Agreed; I was also wondering why it was necessary to have three new
-features in the same large(ish) patchset.
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
---D
 
-> Christian
+-- Steve
