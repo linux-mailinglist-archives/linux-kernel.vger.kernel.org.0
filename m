@@ -2,131 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 982E9164BE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 18:28:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05285164BCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 18:22:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726638AbgBSR2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 12:28:54 -0500
-Received: from mail-out.m-online.net ([212.18.0.9]:38158 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726518AbgBSR2y (ORCPT
+        id S1726754AbgBSRWT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 12:22:19 -0500
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:39019 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726582AbgBSRWS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 12:28:54 -0500
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 48N4Sy0XBmz1qrMV;
-        Wed, 19 Feb 2020 18:28:50 +0100 (CET)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 48N4Sx6ZC6z1qx0K;
-        Wed, 19 Feb 2020 18:28:49 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id 3JamWYMpJdr7; Wed, 19 Feb 2020 18:28:48 +0100 (CET)
-X-Auth-Info: +eqKCJ9/Kpkal2WS3YfV5JluqC+AvVPDD2Bszf4YLMU=
-Received: from [IPv6:::1] (unknown [195.140.253.167])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Wed, 19 Feb 2020 18:28:48 +0100 (CET)
-Subject: Re: [PATCH v2 0/2] Add GPIO level-sensitive interrupt support
-To:     Alexandre Torgue <alexandre.torgue@st.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-References: <20200218131218.10789-1-alexandre.torgue@st.com>
- <b5a2dcab-06db-4863-ac5c-28f4ef0c5ac9@denx.de>
- <32e409e6-d475-802a-6a90-c8ba6c0cf6d5@st.com>
- <088e786c-511e-cf95-fc41-5343b8134407@denx.de>
- <d271f09b-6391-779a-b133-66bcdfbb0ec6@st.com>
-From:   Marek Vasut <marex@denx.de>
-Message-ID: <38e7cf57-2f89-7615-0841-316355a9102f@denx.de>
-Date:   Wed, 19 Feb 2020 18:24:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        Wed, 19 Feb 2020 12:22:18 -0500
+X-Originating-IP: 93.34.114.233
+Received: from uno.localdomain (93-34-114-233.ip49.fastwebnet.it [93.34.114.233])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id C7D0DFF80A;
+        Wed, 19 Feb 2020 17:22:12 +0000 (UTC)
+Date:   Wed, 19 Feb 2020 18:24:56 +0100
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Michael Rodin <mrodin@de.adit-jv.com>
+Cc:     niklas.soderlund@ragnatech.se, mchehab@kernel.org,
+        p.zabel@pengutronix.de, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        efriedrich@de.adit-jv.com, erosca@de.adit-jv.com,
+        sudipi@jp.adit-jv.com, akiyama@nds-osk.co.jp
+Subject: Re: [PATCH] [RFC] media: rcar-vin: don't wait for stop state on
+ clock lane during start of CSI2
+Message-ID: <20200219172456.hyo2aksvubxpoqrn@uno.localdomain>
+References: <1582026251-21047-1-git-send-email-mrodin@de.adit-jv.com>
 MIME-Version: 1.0
-In-Reply-To: <d271f09b-6391-779a-b133-66bcdfbb0ec6@st.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="jvjmcxubogualhde"
+Content-Disposition: inline
+In-Reply-To: <1582026251-21047-1-git-send-email-mrodin@de.adit-jv.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/19/20 10:20 AM, Alexandre Torgue wrote:
-Hi,
-[...]
->>>>> This series adds the possibility to handle gpio interrupts on level.
->>>>>
->>>>> GPIO hardware block is directly linked to EXTI block but EXTI handles
->>>>> external interrupts only on edge. To be able to handle GPIO
->>>>> interrupt on
->>>>> level a "hack" is done in gpio irq chip: parent interrupt (exti irq
->>>>> chip)
->>>>> is retriggered following interrupt type and gpio line value.
->>>>>
->>>>> In exti irq chip, retrigger ops function is added.
->>>>
->>>> btw. this might be unrelated, but is it possible to have e.g. gpioC2
->>>> set
->>>> as trigger-level-low and gpioD2 set as trigger-edge-falling ? It seems
->>>> 8eb2dfee9fb1 ("pinctrl: stm32: add lock mechanism for irqmux
->>>> selection")
->>>> prevents that.
->>>>
->>>
->>> No it's not possible. Each gpio line doesn't have a dedicated Exti line
->>> Each Exti line is muxing between gpio banks.
->>
->> OK, that confirms my assumption.
->>
->>> Mapping is done as following:
->>>
->>> EXTI0 = A0 or B0 or C0 .... or Z0 : selected by Mux
->>> EXTI1 = A1 or B1 or C1 ....or Z1 : selected by Mux
->>> EXTI2 = A2 or B2 or C2 ....or Z2 : selected by Mux
->>> ...
->>
->> Is it at least possible to have IRQs of the same type on the same exti
->> line? E.g. gpioA2 of trigger-edge-falling and gpioB2
->> trigger-edge-falling ?
->>
-> 
-> Sorry I don't catch your point. If you already succeed to get gpioA2,
-> then you will failed to get gpioB2 but looking at function call stack we
-> could get an other issue.
 
-Considering the EXTI line limitations, I'd like to know what kind of IRQ
-input configuration is allowed/valid and what kind of configuration is
-not valid.
+--jvjmcxubogualhde
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-> Lets take example where you succeed to get gpioa2 as interrupt (using
-> interrupt bindings) and now you try to do the same for gpiob2, you will
-> have (roughly):
-> 
-> stm32_gpio_irq_request_resources (for gpiob2) --> succeed
-> 
-> stm32_gpio_set_type
->  |
->  |--> stm32_exti_set_type type -> change exti line 2 trigger registers
->                                   with gpiob2 binding.
-> 
-> stm32_gpio_domain_activate --> failed as exti line2 is already used
->                    by gpioa2.
-> 
-> So as stm32_gpio_set_type is called before checking than exti line is
-> available, type could be changed and behavior of gpioa2 interrupt broken.
-> 
-> Solution would be to move the exti line mux check from
-> stm32_gpio_domain_activate to  stm32_gpio_irq_request_resources callback.
+Hello,
 
-So the hardware does support using both gpioA2 and gpioB2 as an
-interrupt source, for different drivers, if they are of the same
-interrupt type. Except the current implementation does not permit that.
+On Tue, Feb 18, 2020 at 12:44:11PM +0100, Michael Rodin wrote:
+> The chapter 7.1 "D-PHY Physical Layer Option" of the CSI2 specification
+> states that non-continuous clock behavior is optional, i.e. the Clock Lane
+> can remain in high-speed mode between the transmission of data packets.
+> Therefore waiting for the stop state (LP-11) on the Clock Lane is wrong and
+> will cause timeouts when a CSI2 transmitter with continuous clock behavior
+> is attached to R-Car CSI2 receiver. So wait only for the stop state on the
+> Data Lanes.
 
-If the interrupt types are different, that is not supported by the hardware.
+Am I wrong or the desired behaviour should depend on the presence of
+the clock-noncontinuous property in the CSI-2 input endpoint ?
+If clock-noncontinuous is set, then wait for the clock lane to
+enter stop state too, if not just wait for the data lanes to stop.
 
-Correct ?
+If this is correct, it will also require a change to the bindings and
+that's the tricky part. So far the CSI-2 receiver behaved as the
+clock-noncontinuous property was set (wait for both data and clock
+lanes) and older dtb should continue to work under this assumption. If
+you want to support devices with continuous clock then you have to require
+the clock-noncontinuous property to be explicitly set to false, and
+assume it's true if not specified. BUT clock-noncontinuous is a
+boolean property, whose value depends on it's presence only. So I fear
+we need to add a 'clock-continuous' flag to video-interfaces.txt,
+parse it in the CSI-2 receiver driver, and then ignore the clock lane
+stop state if and only if said property is specified.
+
+Does this make sense ?
+
+Thanks
+   j
+
+>
+> Signed-off-by: Michael Rodin <mrodin@de.adit-jv.com>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-csi2.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> index faa9fb2..6d1992a 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> @@ -416,8 +416,7 @@ static int rcsi2_wait_phy_start(struct rcar_csi2 *priv)
+>  	for (timeout = 0; timeout <= 20; timeout++) {
+>  		const u32 lane_mask = (1 << priv->lanes) - 1;
+>
+> -		if ((rcsi2_read(priv, PHCLM_REG) & PHCLM_STOPSTATECKL)  &&
+> -		    (rcsi2_read(priv, PHDLM_REG) & lane_mask) == lane_mask)
+> +		if ((rcsi2_read(priv, PHDLM_REG) & lane_mask) == lane_mask)
+>  			return 0;
+>
+>  		usleep_range(1000, 2000);
+> --
+> 2.7.4
+>
+
+--jvjmcxubogualhde
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl5Nb2gACgkQcjQGjxah
+VjxTwA/+M8267lFucyowW2LpnMiSjwueQTHQySaNv+2/1++rFkymfQFdYVRwmi1s
+aEEeArjKkyZg8GQYnbXIPD2GDJygStJ69nqFKhmxsTuNSufHUaHG5ejrVz0IkI8e
+pd+eqMOGPp29eHUESTLiIfNDiGM80Xhn+zs6w5Gf1bzybwOpWzMqaVBUiE2DC3Kd
+f4ETr/luVYtCbmzXdgh1TAQ4lPkz93pS3EBp2AS4wNXpA+G+JSok4qnj7B3noVBi
+RBeraL/Ca718dlnq5tZCd+eycIlERQTgSir+ZzDATmrzwN+q5WOCqlrmwaUMh9VF
+FAWQyRLfGWOT9bo+lcnQ2RjpVbF7OvmkesiY0DsR8+btENIhpjuMuuAvI3TSQEBX
+rC9hYyaPicd4V4hjeVfOGduadjIq8qJ/iOIzWmOemA4XhIv3KAySbOqNuA6ejVRM
+3JntotjuknCM3HyWEfwdIFnlV2r2keZ0gqhcwG9Sg4a2sXTAQnSiIz781uETE/AH
+gPS1xJsJ+pDvM3g7/WEYI/tad7roEWkHBROkudu0JUOcYzzYnIi6zaISsAWQeyGA
+x5/bYSKOyiVYWV/s2ckbAhiAK37YZXGFOKs1ByLgvKt13xmtSy9UmLkJBq3kCvXv
+fsE0WfNjkaFVFLM3H2w0wyzMfcmB+fK853U0lbyjtl4N1NbLBaU=
+=mPQD
+-----END PGP SIGNATURE-----
+
+--jvjmcxubogualhde--
