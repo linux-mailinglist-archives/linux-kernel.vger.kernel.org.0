@@ -2,82 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BC581645F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 14:50:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E5E8164612
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 14:53:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727683AbgBSNuN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 08:50:13 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:45791 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbgBSNuN (ORCPT
+        id S1727775AbgBSNxr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 08:53:47 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:35377 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726786AbgBSNxr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 08:50:13 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 59so131403otp.12;
-        Wed, 19 Feb 2020 05:50:12 -0800 (PST)
+        Wed, 19 Feb 2020 08:53:47 -0500
+Received: by mail-oi1-f195.google.com with SMTP id b18so23869384oie.2;
+        Wed, 19 Feb 2020 05:53:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PDadwaa2tCalOGhbrNe+eCFiucqxINzGz8b3IuyJVBo=;
-        b=EGsSEAtLKFuTpzxcIzJ29HQJY0zofaY7DnrDaCzc7Nd/0nu8bq6suOGmsO0EthPJAV
-         PGhvnjGpA5/ZIK3qeyAdbL7h5JPk3xQd7crvCg2N5MAQQVqw0AewtgjCrGFwU7upd5H2
-         mvFYsWCFIzwujge6bHVq31oy4SuOLrhah4CM6DJZOAAxmD9RVl1Cg3EBxnxuwVsNjptV
-         Tu8Pjx2ySkdxfYbn0AyVM96HhSWOxezRxW0ovZREXjGagS+TSuVVzxTPoTIwI9L+4ebM
-         Ewa+cwlsSien2ZeIP+zSBfNR/uezp5JYVdEb3/6atEBKZc8KCgRinPS2RvANxQLJIAcM
-         AQyQ==
-X-Gm-Message-State: APjAAAXpPUIsrR9PeRNpu6EluZpLJKPPIuKeGjYk8YKdc5UOJhyskEdL
-        A2ouHV31hQxMido4IsqBCg==
-X-Google-Smtp-Source: APXvYqx9tjudoBcfo2l2gjTj/tz/jOPKzWnJusxxw8qa+pcBGOCG323+8cZRapiKtJcy/ffY1jGT2Q==
-X-Received: by 2002:a05:6830:1c8:: with SMTP id r8mr6946584ota.63.1582120212489;
-        Wed, 19 Feb 2020 05:50:12 -0800 (PST)
+        bh=E2rxf7SPwcgMTCE3K5oM6SSprAcPTnFFVvcz8mMphIc=;
+        b=pH2IMWZFMhEQ69Y3roSihvK6WyU0CmTYbFYZ6ixqw0rwkXYbnlGCcVyHbT6xQKCbr0
+         pBIApOVw1GQi0TTPZFtpL6/cxW6s0k6I1F+o5N/a2W7riTl+3QUQ4pCrJv62punRP1mz
+         tKqLwDhIcUWuepVwb8IK71DxATaAE3PX/+C25EC43IoC7h51aFP4QN2UUOADDmiX4YKO
+         CUAtwBO7MLVtMSvPurM6QSRxOCeUzApAwITCSRyWu6nlj/iba9GvkofkbJMQHRmqBJ1y
+         YvL7SGLYBumR/5aVdB0peXjrRIh5fxHXltS0vnQTQwcStYNqflu3x34abtOswRArMAo7
+         0rEw==
+X-Gm-Message-State: APjAAAXnXejKkf2CGG89u0ZsBHbSUdXIAi3Alp6IPWUXfM7mkD91dqmb
+        bDGMd1dNkooXQ8i6ZdW9aHLdbh0s1Q==
+X-Google-Smtp-Source: APXvYqwMJGVebJ0gKcE0QNmF2FJsBNguLXG/bpvWNsk6/5ZNGmKQ4j0O9Fd7bFZgKeFdrJCKWzJYdw==
+X-Received: by 2002:aca:ea43:: with SMTP id i64mr4733986oih.30.1582120426367;
+        Wed, 19 Feb 2020 05:53:46 -0800 (PST)
 Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id a1sm654837oti.2.2020.02.19.05.50.10
+        by smtp.gmail.com with ESMTPSA id k17sm700771oic.45.2020.02.19.05.53.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 05:50:11 -0800 (PST)
-Received: (nullmailer pid 9937 invoked by uid 1000);
-        Wed, 19 Feb 2020 13:50:10 -0000
-Date:   Wed, 19 Feb 2020 07:50:10 -0600
+        Wed, 19 Feb 2020 05:53:45 -0800 (PST)
+Received: (nullmailer pid 17381 invoked by uid 1000);
+        Wed, 19 Feb 2020 13:53:44 -0000
+Date:   Wed, 19 Feb 2020 07:53:44 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Baolin Wang <baolin.wang7@gmail.com>
-Cc:     rui.zhang@intel.com, daniel.lezcano@linaro.org,
-        amit.kucheria@verdurent.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, orsonzhai@gmail.com, baolin.wang7@gmail.com,
-        freeman.liu@unisoc.com, zhang.lyra@gmail.com,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: thermal: sprd: Add the Spreadtrum
- thermal documentation
-Message-ID: <20200219135010.GA9880@bogus>
-References: <444e45ce0a9b390b2502dfcefd1ddb36948fa8e1.1582013101.git.baolin.wang7@gmail.com>
+To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc:     Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mark Rutland <mark.rutland@arm.com>, dmaengine@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: dmaengine: Add UniPhier external DMA
+ controller bindings
+Message-ID: <20200219135344.GA15319@bogus>
+References: <1582077141-16793-1-git-send-email-hayashi.kunihiko@socionext.com>
+ <1582077141-16793-2-git-send-email-hayashi.kunihiko@socionext.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <444e45ce0a9b390b2502dfcefd1ddb36948fa8e1.1582013101.git.baolin.wang7@gmail.com>
+In-Reply-To: <1582077141-16793-2-git-send-email-hayashi.kunihiko@socionext.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Feb 2020 16:10:27 +0800, Baolin Wang wrote:
-> From: Baolin Wang <baolin.wang@unisoc.com>
+On Wed, 19 Feb 2020 10:52:20 +0900, Kunihiko Hayashi wrote:
+> Add devicetree binding documentation for external DMA controller
+> implemented on Socionext UniPhier SOCs.
 > 
-> Add the Spreadtrum thermal documentation.
-> 
-> Signed-off-by: Baolin Wang <baolin.wang@unisoc.com>
-> Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 > ---
-> Changes from v2:
->  - Add missing #address-cells and #size-cells properties.
->  - Change the child node name with patternProperties.
->  - Simplify the nvmem-cells-names property.
-> 
-> Changes from v1:
->  - Change to yaml format.
-> ---
->  .../devicetree/bindings/thermal/sprd-thermal.yaml  |  108 ++++++++++++++++++++
->  1 file changed, 108 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/thermal/sprd-thermal.yaml
+>  .../bindings/dma/socionext,uniphier-xdmac.yaml     | 63 ++++++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.yaml
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+My bot found errors running 'make dt_binding_check' on your patch:
+
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.yaml: Additional properties are not allowed ('additinalProperties' was unexpected)
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.yaml: Additional properties are not allowed ('additinalProperties' was unexpected)
+Documentation/devicetree/bindings/Makefile:12: recipe for target 'Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.example.dts' failed
+make[1]: *** [Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.example.dts] Error 1
+Makefile:1263: recipe for target 'dt_binding_check' failed
+make: *** [dt_binding_check] Error 2
+
+See https://patchwork.ozlabs.org/patch/1240464
+Please check and re-submit.
