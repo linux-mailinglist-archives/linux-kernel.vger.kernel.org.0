@@ -2,85 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBB48164AB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 17:39:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A2CE3164AC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 17:41:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726922AbgBSQjf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 11:39:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60850 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726569AbgBSQjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 11:39:35 -0500
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D851724654;
-        Wed, 19 Feb 2020 16:39:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582130374;
-        bh=/CX8XIpaKr86fJuFzYlFh8LeDEIxxg1IRlMhB0yl2rk=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=Ax5CMFITNCdHNpbnOkvKU+C1twFP5c8MOR0MfOSxGS8MQRWa5+JMZoPwaJjaRZ4MD
-         cM+oT9cVnmTFXacu0OLqV1rOi9IDr3VNFlnty02cvaPZ8ar8ZNsxWuGFohErKCaUSC
-         Ezofaa6c6li6Vpq/aVFyEoasoR8P5fe5FXyIQWoA=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id B382935209B0; Wed, 19 Feb 2020 08:39:34 -0800 (PST)
-Date:   Wed, 19 Feb 2020 08:39:34 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        rostedt@goodmis.org, mingo@kernel.org, joel@joelfernandes.org,
-        gregkh@linuxfoundation.org, gustavo@embeddedor.com,
-        tglx@linutronix.de, josh@joshtriplett.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        luto@kernel.org, tony.luck@intel.com, frederic@kernel.org,
-        dan.carpenter@oracle.com, mhiramat@kernel.org
-Subject: Re: [PATCH v3 07/22] rcu: Mark rcu_dynticks_curr_cpu_in_eqs() inline
-Message-ID: <20200219163934.GA2935@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20200219144724.800607165@infradead.org>
- <20200219150744.775936989@infradead.org>
+        id S1726802AbgBSQll (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 11:41:41 -0500
+Received: from mail-lf1-f50.google.com ([209.85.167.50]:45380 "EHLO
+        mail-lf1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726613AbgBSQll (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 11:41:41 -0500
+Received: by mail-lf1-f50.google.com with SMTP id z5so602585lfd.12;
+        Wed, 19 Feb 2020 08:41:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xpW2s9YmRADGcXppS2FRk5Efh7WOmzPm2pmUyNxQfeQ=;
+        b=dr2NYApHtpWCP6LfTVWCBXEt6GXEdtFCZ1sq8it9d4M70QzndLclem/VUm1vktQTBS
+         bNTN8h4aeb1b/hJ0Qj0UeeyKhjh+YI9h3yZCs6A1QPQlfna8V3Xay7G4xP7gmX/EeD1t
+         UTT6WwQ2usDL3DT6G5801VLUjI0wFfjM7/qSCITFTbKBQDUR/QTzy/EenlqYNxwheSzQ
+         uDPEDt2rjXlLYdN/SgjRIi/GuWqyS2Dxdv4NpUNV/x9MP9Ro9g9IS3fHIp9u++S1LvN0
+         Tw2KN92YZ7/h7ZpYzPP/9HLGNuEuTfLHutXDOwnKdM7Vb/CdP7GuqekHjoWozo3T+50g
+         VnuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xpW2s9YmRADGcXppS2FRk5Efh7WOmzPm2pmUyNxQfeQ=;
+        b=VCgRb9QXeSEFZSxCsVPCI7TJUVX9rQPL5PizUGz7Fk570xGLMmqMNeHxsVkCfsApF3
+         ofhC+l7eK5WfEkni0SGlZjHsnSlkmV7Z63IPEK5ryAMFiEJV09c2YzrSQdC7y8W0EAjb
+         hdUmL5YlmZvKTbAr72XdBnt5lxS6iO6YSk3iVK5PsbJUveuiJ3DB1WI12t6H7eSWFhN1
+         9svvnD0tRDz3Kl0EuomD52RsYbuTAL/jUMEj3ugGOTVMLF6vQq+R+vedRqk4VhPtJ56E
+         VjZ7hBczn2OqAA727LOfMcK7w6qTTWTRni64ewFA0KFsJhOyG4L5gF7Fm1UHd8qw8Wx7
+         aZOg==
+X-Gm-Message-State: APjAAAX9Z2In2h9e3pYrBcb5vQkFKgmMcFCEOx0fwuvjrrtYwo7GSsmP
+        tCl1WRUGZXP7lMnZmUju/Ik8vTVjyRjZaLxMvUs=
+X-Google-Smtp-Source: APXvYqwPp4/AumwQc3c6Dw58j4QTP17+fn/HR+ybdvpaK6r6LPciWQp8E2+0WqLAou6rGBqtV7ghBp9cVdE0Uy7sIX4=
+X-Received: by 2002:a05:6512:4c6:: with SMTP id w6mr2337793lfq.157.1582130498507;
+ Wed, 19 Feb 2020 08:41:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200219150744.775936989@infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200219133012.7cb6ac9e@carbon>
+In-Reply-To: <20200219133012.7cb6ac9e@carbon>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Wed, 19 Feb 2020 08:41:27 -0800
+Message-ID: <CAADnVQKQRKtDz0Boy=-cudc4eKGXB-yParGZv6qvYcQR4uMUQQ@mail.gmail.com>
+Subject: Re: Kernel 5.5.4 build fail for BPF-selftests with latest LLVM
+To:     Jesper Dangaard Brouer <brouer@redhat.com>
+Cc:     Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        BPF-dev-list <bpf@vger.kernel.org>,
+        Daniel Borkmann <borkmann@iogearbox.net>,
+        David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 03:47:31PM +0100, Peter Zijlstra wrote:
-> Since rcu_is_watching() is notrace (and needs to be, as it can be
-> called from the tracers), make sure everything it in turn calls is
-> notrace too.
-> 
-> To that effect, mark rcu_dynticks_curr_cpu_in_eqs() inline, which
-> implies notrace, as the function is tiny.
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+On Wed, Feb 19, 2020 at 4:30 AM Jesper Dangaard Brouer
+<brouer@redhat.com> wrote:
+>
+> I'm willing to help out, such that we can do either version or feature
+> detection, to either skip compiling specific test programs or at least
+> give users a proper warning of they are using a too "old" LLVM version.
+...
+> progs/test_core_reloc_bitfields_probed.c:47:13: error: use of unknown builtin '__builtin_preserve_field_info' [-Wimplicit-function-declaration]
+>         out->ub1 = BPF_CORE_READ_BITFIELD_PROBED(in, ub1);
 
-There was some controversy over inline vs. notrace, leading me to
-ask whether we should use both inline and notrace here.  ;-)
-
-Assuming that the usual tracing suspects are OK with it:
-
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
-
-> ---
->  kernel/rcu/tree.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -294,7 +294,7 @@ static void rcu_dynticks_eqs_online(void
->   *
->   * No ordering, as we are sampling CPU-local information.
->   */
-> -static bool rcu_dynticks_curr_cpu_in_eqs(void)
-> +static inline bool rcu_dynticks_curr_cpu_in_eqs(void)
->  {
->  	struct rcu_data *rdp = this_cpu_ptr(&rcu_data);
->  
-> 
-> 
+imo this is proper warning message already.
