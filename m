@@ -2,96 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8519164D11
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 18:55:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF7C0164D17
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 18:56:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbgBSRzq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 12:55:46 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:27080 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726659AbgBSRzp (ORCPT
+        id S1726712AbgBSR4w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 12:56:52 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54240 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726514AbgBSR4v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 12:55:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582134944;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=woJrYBQ5G1rIzUoBIxisrRt/fHuFNb6jWX81Ut30+Bc=;
-        b=XepYboAfsQQNWtCx50VGEyzOfnRussqI55aiEJLCIQoTbXH/A4+DO9cuY7zKEfrg59NDwz
-        8R0pIs4iH2CM8+DG1WWzKdFgmr0BqASAIZz9G3Fzl2Y8fq6RhJc+opDkAy1sPD4fK+fKbm
-        eNhMkdgnTas7RhkhjGNRfn7WFeAQMrE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-29-c4VgchpyOW2sfzE38trctg-1; Wed, 19 Feb 2020 12:55:36 -0500
-X-MC-Unique: c4VgchpyOW2sfzE38trctg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8DBF413F9;
-        Wed, 19 Feb 2020 17:55:34 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-122-163.rdu2.redhat.com [10.10.122.163])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 64AC21001920;
-        Wed, 19 Feb 2020 17:55:32 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHk-=wjFwT-fRw0kH-dYS9M5eBz3Jg0FeUfhf6VnGrPMVDDCBg@mail.gmail.com>
-References: <CAHk-=wjFwT-fRw0kH-dYS9M5eBz3Jg0FeUfhf6VnGrPMVDDCBg@mail.gmail.com> <158212290024.224464.862376690360037918.stgit@warthog.procyon.org.uk> <CAMuHMdV+H0p3qFV=gDz0dssXVhzd+L_eEn6s0jzrU5M79_50HQ@mail.gmail.com> <227117.1582124888@warthog.procyon.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dhowells@redhat.com, Geert Uytterhoeven <geert@linux-m68k.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, coda@cs.cmu.edu,
-        linux-afs@lists.infradead.org, CIFS <linux-cifs@vger.kernel.org>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] vfs: syscalls: Add create_automount() and remove_automount()
+        Wed, 19 Feb 2020 12:56:51 -0500
+Received: by mail-wm1-f65.google.com with SMTP id s10so1661288wmh.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 09:56:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=RnmIkUaXzV1O+1VS/NyDxwCOq2I1yESOXBaHwQRGaf0=;
+        b=G0a9vOzj/q7uDeIqggCjkaY5G0W5f/ja02TiSC66hscZOYLFvDhK3JRR2tAEVdaSKc
+         ehrXQMN+fczRLpaCaQBJgW9+IHXpd4HvUhoEo27xkVy33Z3X+gzuxYnZKixfyVnToTGD
+         yS+knnLIdpwQJ72FxmyyRrg4/8mYoROAm82Cb4k1JmiqbyjfxCQWA96gcl3H4jU2INrv
+         l/YpJ2u0XZpqmo8jGUBOtJaIZvebTNZhzfoGcLseEAFQAGgyw013bVvkXU/EzlKNjcTi
+         7iL7RaAvVQ0QR2cm/0GMqi/s+8CylnEQTkg4ydOZRYbfo/iRp+5yJ8Rlj9Uvy5QveANO
+         qcCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=RnmIkUaXzV1O+1VS/NyDxwCOq2I1yESOXBaHwQRGaf0=;
+        b=hSy+hZgzepmgareXI2lY7MbHHSBhlR2HNqg8fgu5RSLJgUrf2yACW6Vi/G+vqOtFud
+         crhiaI+8Q6mJATB5MBqzl9FLn5/BrDe7HcarqZqa2SHzkt6t5yGepO5/P6Rlq6K+WwQV
+         tNTpfoypi94PsxsyHxaIZqRdQxqhhG3W29TOBHB1FPbzTaGUlu+p3sDndwQR8AE5kJ/m
+         Xwj/LrYZ85IfO3Mc/9KcSepvLX7C3/7rRrSESqapvnkCH6crrKNhnsoUWeG/uq06NnZq
+         fqciRFPjkgSM/6ADe83TkaAtHdQ6KdJQ9nFmf2uCc39rjk+yQfUu/gmSlbSrQPN/3p+Q
+         0/+g==
+X-Gm-Message-State: APjAAAUNHKfZne4bF+AcqH9cO0ewoYDAvLQkcgvH16WSDaCt7y1MYcKJ
+        D/HTa37udXLRzQEIoRmyP1LmdBJidAId/4fCup4VKQ==
+X-Google-Smtp-Source: APXvYqyumjWbeIRbAAQ3QUDMQpO38pyn00miVAyE08VUKdejWzZ9hUptAO3teis8IB/n5DFxkzZoLzcGAQL54YQ0tPQ=
+X-Received: by 2002:a7b:c1d0:: with SMTP id a16mr11236052wmj.175.1582135009360;
+ Wed, 19 Feb 2020 09:56:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <241567.1582134931.1@warthog.procyon.org.uk>
-Date:   Wed, 19 Feb 2020 17:55:31 +0000
-Message-ID: <241568.1582134931@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+References: <20200218094815.233387-1-glider@google.com> <202002190916.EFA74B50C@keescook>
+In-Reply-To: <202002190916.EFA74B50C@keescook>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Wed, 19 Feb 2020 18:56:38 +0100
+Message-ID: <CAG_fn=X-BeOooHDCKczm+KzWDBp_TY5e2VTnUxiqbHpipoF-sg@mail.gmail.com>
+Subject: Re: [PATCH] lib/test_stackinit: move a local outside the switch statement
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Jann Horn <jannh@google.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Wed, Feb 19, 2020 at 6:36 PM Kees Cook <keescook@chromium.org> wrote:
+>
+> On Tue, Feb 18, 2020 at 10:48:15AM +0100, glider@google.com wrote:
+> > Right now CONFIG_INIT_STACK_ALL is unable to initialize locals declared
+> > in switch statements, see http://llvm.org/PR44916.
+> > Move the variable declaration outside the switch in lib/test_stackinit.=
+c
+> > to prevent potential test failures until this is sorted out.
+> >
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Signed-off-by: Alexander Potapenko <glider@google.com>
+>
+> Er, no. This test is specifically to catch that case. (i.e. the proposed
+> GCC version of this feature misses this case too.) We absolutely want
+> this test to continue to fail until it's fixed:
+>
+> [   65.546670] test_stackinit: switch_1_none FAIL (uninit bytes: 8)
+> [   65.547478] test_stackinit: switch_2_none FAIL (uninit bytes: 8)
+>
+> What would be nice is if Clang could at least _warn_ about these
+> conditions. GCC does this in the same situation:
+>
+> fs/fcntl.c: In function =E2=80=98send_sigio_to_task=E2=80=99:
+> fs/fcntl.c:738:13: warning: statement will never be executed [-Wswitch-un=
+reachable]
+>    siginfo_t si;
+>              ^~
 
-> What are the insane pioctl semantics you want?
+Is this really a bug from the C Standard point of view?
+Initializing the switch-local variable or executing other code after
+the switch would indeed be a problem, but isn't it correct to declare
+an uninitialized local as long as it's initialized in the branches
+that use it?
 
-There's a file type beyond file, dir and symlink that AFS supports:
-mountpoint.  It appears as a directory with no lookup op in Linux - though it
-does support readlink.  When a client walks over it, it causes an automount of
-the volume named by the content of the mountpoint "file" on that point.  NFS
-and CIFS have similar things.
+> I have a patch to fix all the switch statement variables, though:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=
+=3Dkspp/gcc-plugin/stackinit&id=3D35ed32e16e13a86370e4b70991db8d5f771ba898
 
-AFS allows the user to create them and remove them:
+Am I understanding right that these warnings only show up in the
+instrumented build?
+According to the GCC manual:
 
-	http://docs.openafs.org/Reference/1/fs_mkmount.html
-	http://docs.openafs.org/Reference/1/fs_rmmount.html
+   -Wswitch-unreachable does not warn if the statement between the
+controlling expression and the first case label is just a declaration
 
-provided the server grants permission to do so.
+> -Kees
+>
+> > ---
+> >  lib/test_stackinit.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/lib/test_stackinit.c b/lib/test_stackinit.c
+> > index 2d7d257a430e..41e2a6e0cdaa 100644
+> > --- a/lib/test_stackinit.c
+> > +++ b/lib/test_stackinit.c
+> > @@ -282,9 +282,9 @@ DEFINE_TEST(user, struct test_user, STRUCT, none);
+> >   */
+> >  static int noinline __leaf_switch_none(int path, bool fill)
+> >  {
+> > -     switch (path) {
+> > -             uint64_t var;
+> > +     uint64_t var;
+> >
+> > +     switch (path) {
+> >       case 1:
+> >               target_start =3D &var;
+> >               target_size =3D sizeof(var);
+> > --
+> > 2.25.0.265.gbab2e86ba0-goog
+> >
+>
+> --
+> Kees Cook
 
-OpenAFS, Coda, etc. do this by means of a pair of pioctl() functions (at
-least, I think Coda does - it ships the pioctl parameters off to userspace to
-handle, so the handling is not actually in the kernel).
 
-> If you can't even open a file on the filesystem, you damn well
-> shouldn't be able to to "pioctl" on it.
-> 
-> And if you *can* open a file on the filesystem, why can't you just use
-> ioctl on it?
 
-Directory, not file.  You can do mkdir (requiring write and execute), for
-example, in a directory you cannot open (which would require read).  If you
-cannot open it, you cannot do ioctl on it.
+--=20
+Alexander Potapenko
+Software Engineer
 
-open(O_PATH) doesn't help because that doesn't let you do ioctl.
+Google Germany GmbH
+Erika-Mann-Stra=C3=9Fe, 33
+80636 M=C3=BCnchen
 
-David
-
+Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
