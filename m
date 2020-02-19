@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2150D163F55
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:41:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61DA1163F66
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:42:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726996AbgBSIli (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 03:41:38 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44302 "EHLO mx2.suse.de"
+        id S1727362AbgBSImK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 03:42:10 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44310 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726760AbgBSIl0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726767AbgBSIl0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 19 Feb 2020 03:41:26 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 9EE78B031;
+        by mx2.suse.de (Postfix) with ESMTP id ED0E4AD88;
         Wed, 19 Feb 2020 08:41:24 +0000 (UTC)
 From:   Jiri Slaby <jslaby@suse.cz>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH 17/24] n_hdlc: switch tbusy and woke_up to bools
-Date:   Wed, 19 Feb 2020 09:41:11 +0100
-Message-Id: <20200219084118.26491-17-jslaby@suse.cz>
+Subject: [PATCH 18/24] n_hdlc: remove unneeded ifdef
+Date:   Wed, 19 Feb 2020 09:41:12 +0100
+Message-Id: <20200219084118.26491-18-jslaby@suse.cz>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200219084118.26491-1-jslaby@suse.cz>
 References: <20200219084118.26491-1-jslaby@suse.cz>
@@ -32,64 +32,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-They are in fact bools, so save some bytes (8B on x86_64). Also describe
-@woke_up as we know what it is.
+TTY_NO_WRITE_SPLIT is (always) defined in linux/tty.h, so no need to
+check for it.
 
 Signed-off-by: Jiri Slaby <jslaby@suse.cz>
 ---
- drivers/tty/n_hdlc.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/tty/n_hdlc.c | 2 --
+ 1 file changed, 2 deletions(-)
 
 diff --git a/drivers/tty/n_hdlc.c b/drivers/tty/n_hdlc.c
-index 615abe582cac..c4fe09124185 100644
+index c4fe09124185..cf8485beaccd 100644
 --- a/drivers/tty/n_hdlc.c
 +++ b/drivers/tty/n_hdlc.c
-@@ -125,7 +125,7 @@ struct n_hdlc_buf_list {
-  * struct n_hdlc - per device instance data structure
-  * @magic - magic value for structure
-  * @tbusy - reentrancy flag for tx wakeup code
-- * @woke_up - FIXME: describe this field
-+ * @woke_up - tx wakeup needs to be run again as it was called while @tbusy
-  * @tx_buf_list - list of pending transmit frame buffers
-  * @rx_buf_list - list of received frame buffers
-  * @tx_free_buf_list - list unused transmit frame buffers
-@@ -133,8 +133,8 @@ struct n_hdlc_buf_list {
-  */
- struct n_hdlc {
- 	int			magic;
--	int			tbusy;
--	int			woke_up;
-+	bool			tbusy;
-+	bool			woke_up;
- 	struct n_hdlc_buf_list	tx_buf_list;
- 	struct n_hdlc_buf_list	rx_buf_list;
- 	struct n_hdlc_buf_list	tx_free_buf_list;
-@@ -275,12 +275,12 @@ static void n_hdlc_send_frames(struct n_hdlc *n_hdlc, struct tty_struct *tty)
- 		
-  	spin_lock_irqsave(&n_hdlc->tx_buf_list.spinlock, flags);
- 	if (n_hdlc->tbusy) {
--		n_hdlc->woke_up = 1;
-- 		spin_unlock_irqrestore(&n_hdlc->tx_buf_list.spinlock, flags);
-+		n_hdlc->woke_up = true;
-+		spin_unlock_irqrestore(&n_hdlc->tx_buf_list.spinlock, flags);
- 		return;
- 	}
--	n_hdlc->tbusy = 1;
--	n_hdlc->woke_up = 0;
-+	n_hdlc->tbusy = true;
-+	n_hdlc->woke_up = false;
- 	spin_unlock_irqrestore(&n_hdlc->tx_buf_list.spinlock, flags);
- 
- 	tbuf = n_hdlc_buf_get(&n_hdlc->tx_buf_list);
-@@ -332,7 +332,7 @@ static void n_hdlc_send_frames(struct n_hdlc *n_hdlc, struct tty_struct *tty)
+@@ -244,10 +244,8 @@ static int n_hdlc_tty_open (struct tty_struct *tty)
+ 	tty->disc_data = n_hdlc;
+ 	tty->receive_room = 65536;
  	
- 	/* Clear the re-entry flag */
- 	spin_lock_irqsave(&n_hdlc->tx_buf_list.spinlock, flags);
--	n_hdlc->tbusy = 0;
-+	n_hdlc->tbusy = false;
- 	spin_unlock_irqrestore(&n_hdlc->tx_buf_list.spinlock, flags); 
+-#if defined(TTY_NO_WRITE_SPLIT)
+ 	/* change tty_io write() to not split large writes into 8K chunks */
+ 	set_bit(TTY_NO_WRITE_SPLIT,&tty->flags);
+-#endif
  	
-         if (n_hdlc->woke_up)
+ 	/* flush receive data from driver */
+ 	tty_driver_flush_buffer(tty);
 -- 
 2.25.0
 
