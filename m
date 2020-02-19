@@ -2,635 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E1F5163F7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:43:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68445163F89
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:44:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727640AbgBSImt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 03:42:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42202 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726197AbgBSImn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 03:42:43 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 962C8208E4;
-        Wed, 19 Feb 2020 08:42:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582101762;
-        bh=e6tNZV1/FpHd+hNRbBxi3D3UPac4QwtGNmcrf8soYT0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FALzDx6uGG1r6+p2NMtFTxz7kb3CAI53SlzvdFnBlqmiNwTayUPCtP5v8cXnliLOJ
-         zX2jXw0+KSo4+2Rg6ZNHUEFfTshNxQq7XwNMyejyvl3Pz2+HSgJU+yMQ04sz7LckME
-         WTtsEZTSmaySZLegaPTmOmP0+dFmnWQC3s9gekdU=
-Date:   Wed, 19 Feb 2020 09:42:39 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Vitor Soares <Vitor.Soares@synopsys.com>
-Cc:     linux-kernel@vger.kernel.org, linux-i3c@lists.infradead.org,
-        Joao.Pinto@synopsys.com, Jose.Abreu@synopsys.com,
-        bbrezillon@kernel.org, wsa@the-dreams.de, arnd@arndb.de,
-        broonie@kernel.org, corbet@lwn.net
-Subject: Re: [PATCH v3 4/5] i3c: add i3cdev module to expose i3c dev in /dev
-Message-ID: <20200219084239.GA2737861@kroah.com>
-References: <cover.1582069402.git.vitor.soares@synopsys.com>
- <e093ae9da81e7702c188a20d1e8b9d7f8024bfeb.1582069402.git.vitor.soares@synopsys.com>
+        id S1726523AbgBSIoP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 03:44:15 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2442 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726297AbgBSIoP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 03:44:15 -0500
+Received: from lhreml706-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id C88BB11341989E321FC8;
+        Wed, 19 Feb 2020 08:44:13 +0000 (GMT)
+Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
+ lhreml706-cah.china.huawei.com (10.201.108.47) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 19 Feb 2020 08:44:13 +0000
+Received: from [127.0.0.1] (10.210.170.116) by lhreml724-chm.china.huawei.com
+ (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Wed, 19 Feb
+ 2020 08:44:11 +0000
+Subject: Re: [PATCH RFC 0/7] perf pmu-events: Support event aliasing for
+ system PMUs
+To:     Joakim Zhang <qiangqing.zhang@nxp.com>,
+        Mark Rutland <mark.rutland@arm.com>
+CC:     "ak@linux.intel.com" <ak@linux.intel.com>,
+        "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "Will Deacon" <will@kernel.org>, Linuxarm <linuxarm@huawei.com>,
+        "acme@kernel.org" <acme@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Zhangshaokun <zhangshaokun@hisilicon.com>,
+        "alexander.shishkin@linux.intel.com" 
+        <alexander.shishkin@linux.intel.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "james.clark@arm.com" <james.clark@arm.com>,
+        "namhyung@kernel.org" <namhyung@kernel.org>,
+        "jolsa@redhat.com" <jolsa@redhat.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>
+References: <1579876505-113251-1-git-send-email-john.garry@huawei.com>
+ <20200218125707.GB20212@willie-the-truck>
+ <a40903fe-d52f-96c6-a06a-fe834d71d625@huawei.com>
+ <20200218133943.GF20212@willie-the-truck>
+ <627cbc50-4b36-7f7f-179d-3d27d9e0215a@huawei.com>
+ <20200218170803.GA9968@lakrids.cambridge.arm.com>
+ <cb004f43-b2a4-ae23-9fd3-0f70bd69701b@huawei.com>
+ <20200218181331.GB9968@lakrids.cambridge.arm.com>
+ <DB7PR04MB46188F06D6CEA1430712E648E6100@DB7PR04MB4618.eurprd04.prod.outlook.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <b6781341-3d28-bda8-621b-aeca413dc8ae@huawei.com>
+Date:   Wed, 19 Feb 2020 08:44:10 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e093ae9da81e7702c188a20d1e8b9d7f8024bfeb.1582069402.git.vitor.soares@synopsys.com>
+In-Reply-To: <DB7PR04MB46188F06D6CEA1430712E648E6100@DB7PR04MB4618.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.210.170.116]
+X-ClientProxiedBy: lhreml743-chm.china.huawei.com (10.201.108.193) To
+ lhreml724-chm.china.huawei.com (10.201.108.75)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 01:20:42AM +0100, Vitor Soares wrote:
-> This patch adds user mode support to I3C SDR transfers.
+On 19/02/2020 01:55, Joakim Zhang wrote:
 > 
-> The module is based on i2c-dev.c with the follow features:
->   - expose on /dev the i3c devices dynamically based on if they have
->     a device driver bound.
->   - Dynamically allocate the char device Major number.
+>> -----Original Message-----
+>> From: Mark Rutland <mark.rutland@arm.com>
+>> Sent: 2020Äê2ÔÂ19ÈÕ 2:14
+>> To: John Garry <john.garry@huawei.com>
+>> Cc: ak@linux.intel.com; Joakim Zhang <qiangqing.zhang@nxp.com>;
+>> suzuki.poulose@arm.com; peterz@infradead.org; Will Deacon
+>> <will@kernel.org>; Linuxarm <linuxarm@huawei.com>; acme@kernel.org;
+>> linux-kernel@vger.kernel.org; Zhangshaokun <zhangshaokun@hisilicon.com>;
+>> alexander.shishkin@linux.intel.com; mingo@redhat.com;
+>> james.clark@arm.com; namhyung@kernel.org; jolsa@redhat.com;
+>> linux-arm-kernel@lists.infradead.org; robin.murphy@arm.com; Sudeep Holla
+>> <sudeep.holla@arm.com>
+>> Subject: Re: [PATCH RFC 0/7] perf pmu-events: Support event aliasing for
+>> system PMUs
 > 
-> Signed-off-by: Vitor Soares <vitor.soares@synopsys.com>
-> ---
-> Changes in v3:
->   Use the xfer_lock to prevent device detach during ioctl call
->   Expose i3cdev under /dev/bus/i3c/ folder like usb does
->   Change NOTIFY_BOUND to NOTIFY_BIND, this allows the device detach occur
->   before driver->probe
->   Avoid use of IS_ERR_OR_NULL
->   Use u64_to_user_ptr instead of (void __user *)(uintptr_t) cast
->   Allocate k_xfer and data_ptrs at once to eliminate duble allocation check
->   Pass i3cdev to dev->driver_data
->   Make all minors available
+> [...]
+>>> And typically most PMU HW would have no ID reg, so where to even get
+>>> this identification info? Joakim Zhang seems to have this problem for
+>>> the imx8 DDRC PMU driver.
+>>
+>> For imx8, the DT compat string or additional properties on the DDRC node
+>> could be used to imply the id.
 > 
-> Changes in v2:
->   Use IDR api for minor numbering
->   Modify ioctl struct
->   Fix SPDX license
+> Hi Mark,
 > 
->  drivers/i3c/Kconfig             |  15 ++
->  drivers/i3c/Makefile            |   1 +
->  drivers/i3c/i3cdev.c            | 429 ++++++++++++++++++++++++++++++++++++++++
->  include/uapi/linux/i3c/i3cdev.h |  38 ++++
->  4 files changed, 483 insertions(+)
->  create mode 100644 drivers/i3c/i3cdev.c
->  create mode 100644 include/uapi/linux/i3c/i3cdev.h
+> Yes, actually we can expose something like DDRC_ID to indicate each specific DDR controller, to point out the filter feature.
+> But, even the SoCs integrated the same DDRC_ID, just say that they have the same DDRC controller.
 > 
-> diff --git a/drivers/i3c/Kconfig b/drivers/i3c/Kconfig
-> index 30a4415..0164276 100644
-> --- a/drivers/i3c/Kconfig
-> +++ b/drivers/i3c/Kconfig
-> @@ -20,5 +20,20 @@ menuconfig I3C
->  	  will be called i3c.
->  
->  if I3C
-> +
-> +config I3CDEV
-> +	tristate "I3C device interface"
-> +	depends on I3C
-> +	help
-> +	  Say Y here to use i3c-* device files, usually found in the /dev
-> +	  directory on your system.  They make it possible to have user-space
-> +	  programs use the I3C devices.
-> +
-> +	  This support is also available as a module.  If so, the module
-> +	  will be called i3cdev.
-> +
-> +	  Note that this application programming interface is EXPERIMENTAL
-> +	  and hence SUBJECT TO CHANGE WITHOUT NOTICE while it stabilizes.
-> +
->  source "drivers/i3c/master/Kconfig"
->  endif # I3C
-> diff --git a/drivers/i3c/Makefile b/drivers/i3c/Makefile
-> index 11982ef..606d422 100644
-> --- a/drivers/i3c/Makefile
-> +++ b/drivers/i3c/Makefile
-> @@ -1,4 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0
->  i3c-y				:= device.o master.o
->  obj-$(CONFIG_I3C)		+= i3c.o
-> +obj-$(CONFIG_I3CDEV)		+= i3cdev.o
->  obj-$(CONFIG_I3C)		+= master/
-> diff --git a/drivers/i3c/i3cdev.c b/drivers/i3c/i3cdev.c
-> new file mode 100644
-> index 0000000..1a6bd35
-> --- /dev/null
-> +++ b/drivers/i3c/i3cdev.c
-> @@ -0,0 +1,429 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2020 Synopsys, Inc. and/or its affiliates.
-> + *
-> + * Author: Vitor Soares <soares@synopsys.com>
-> + */
-> +
-> +#include <linux/cdev.h>
-> +#include <linux/compat.h>
-> +#include <linux/device.h>
-> +#include <linux/fs.h>
-> +#include <linux/init.h>
-> +#include <linux/jiffies.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/notifier.h>
-> +#include <linux/slab.h>
-> +#include <linux/uaccess.h>
-> +
-> +#include <linux/i3c/i3cdev.h>
-> +
-> +#include "internals.h"
-> +
-> +struct i3cdev_data {
-> +	struct i3c_device *i3c;
-> +	struct device *dev;
-> +	struct mutex xfer_lock; /* prevent detach while transferring */
-> +	struct cdev cdev;
-> +	int id;
-> +};
-> +
-> +static DEFINE_IDA(i3cdev_ida);
-> +static dev_t i3cdev_number;
-> +#define I3C_MINORS (MINORMASK + 1)
-> +
-> +static struct i3cdev_data *get_free_i3cdev(struct i3c_device *i3c)
-> +{
-> +	struct i3cdev_data *i3cdev;
-> +	int id;
-> +
-> +	id = ida_simple_get(&i3cdev_ida, 0, I3C_MINORS, GFP_KERNEL);
-> +	if (id < 0) {
-> +		pr_err("i3cdev: no minor number available!\n");
-> +		return ERR_PTR(id);
-> +	}
-> +
-> +	i3cdev = kzalloc(sizeof(*i3cdev), GFP_KERNEL);
-> +	if (!i3cdev) {
-> +		ida_simple_remove(&i3cdev_ida, id);
-> +		return ERR_PTR(-ENOMEM);
-> +	}
-> +
-> +	i3cdev->i3c = i3c;
-> +	i3cdev->id = id;
-> +	i3cdev_set_drvdata(i3c, i3cdev);
-> +
-> +	return i3cdev;
-> +}
-> +
-> +static void put_i3cdev(struct i3cdev_data *i3cdev)
-> +{
-> +	i3cdev_set_drvdata(i3cdev->i3c, NULL);
-> +	kfree(i3cdev);
-> +}
-> +
-> +static ssize_t
-> +i3cdev_read(struct file *file, char __user *buf, size_t count, loff_t *f_pos)
-> +{
-> +	struct i3cdev_data *i3cdev = file->private_data;
-> +	struct i3c_device *i3c = i3cdev->i3c;
-> +	struct i3c_priv_xfer xfers = {
-> +		.rnw = true,
-> +		.len = count,
-> +	};
-> +	int ret = -EACCES;
-> +	char *tmp;
-> +
-> +	mutex_lock(&i3cdev->xfer_lock);
-> +	if (i3c->dev.driver)
-> +		goto err_out;
-> +
-> +	tmp = kzalloc(count, GFP_KERNEL);
-> +	if (!tmp)
-> +		return -ENOMEM;
-> +
-> +	xfers.data.in = tmp;
-> +
-> +	dev_dbg(&i3c->dev, "Reading %zu bytes.\n", count);
-> +
-> +	ret = i3c_device_do_priv_xfers(i3c, &xfers, 1);
-> +	if (!ret)
-> +		ret = copy_to_user(buf, tmp, xfers.len) ? -EFAULT : xfers.len;
-> +
-> +	kfree(tmp);
-> +
-> +err_out:
-> +	mutex_unlock(&i3cdev->xfer_lock);
-> +	return ret;
-> +}
-> +
-> +static ssize_t
-> +i3cdev_write(struct file *file, const char __user *buf, size_t count,
-> +	     loff_t *f_pos)
-> +{
-> +	struct i3cdev_data *i3cdev = file->private_data;
-> +	struct i3c_device *i3c = i3cdev->i3c;
-> +	struct i3c_priv_xfer xfers = {
-> +		.rnw = false,
-> +		.len = count,
+>  From user space, the usage is different, for example:
+> 
+> i.MX8MM and i.MX8MN, they use the same driver(DDRC_ID) and cortex-a53 integrated.
+> 
+> If we want to monitor VPU, their *master id* is different from SoCs.
+> On i.MX8MM, event is imx8_ddr0/axid-read,axi_id=0x08/
+> On i.MX8MN, event is imx8_ddr0/axid-read,axi_id=0x12/
+> 
+> I try to write a JSON file to use these events, for now, I only can locate the file at the directory: tools/perf/pmu-events/arch/arm64/arm/cortex-a53/
+> 
+> Perf tool loads all events when CPUID matched, which is now unreasonable, we want related events are loaded for specific SoC.
 
-No error checking of count?
+so we could have a folder like .../arch/arm64/nxp/system for these 
+JSONs. The perf tool can be updated to handle CPU and system events in 
+separate folders.
 
-> +	};
+> 
+> All events will also be loaded if we use DDRC_ID to match in the future, this seems to not be a good ideal.
 
-You can have this structure on the stack?
+The important part is knowing which events are supported per 
+implementation. Is there any method in the driver of knowing the 
+specific implementation, like any DT compat string? Least preferred 
+option would be DT machine ID.
 
-> +	int ret = -EACCES;
-> +	char *tmp;
-> +
-> +	mutex_lock(&i3cdev->xfer_lock);
-> +	if (i3c->dev.driver)
-> +		goto err_out;
-> +
-> +	tmp = memdup_user(buf, count);
+> 
 
-So userspace can allocate any amount of memory they want to?
-
-Not good :(
-
-> +	if (IS_ERR(tmp))
-> +		return PTR_ERR(tmp);
-> +
-> +	xfers.data.out = tmp;
-> +
-> +	dev_dbg(&i3c->dev, "Writing %zu bytes.\n", count);
-> +
-> +	ret = i3c_device_do_priv_xfers(i3c, &xfers, 1);
-> +	kfree(tmp);
-> +
-> +err_out:
-> +	mutex_unlock(&i3cdev->xfer_lock);
-> +	return (!ret) ? count : ret;
-> +}
-> +
-> +static int
-> +i3cdev_do_priv_xfer(struct i3c_device *dev, struct i3c_ioc_priv_xfer *xfers,
-> +		    unsigned int nxfers)
-> +{
-> +	struct i3c_priv_xfer *k_xfers;
-> +	u8 **data_ptrs;
-> +	int i, ret = 0;
-> +
-> +	/* Since we have nxfers we may allocate k_xfer + *data_ptrs together */
-> +	k_xfers = kcalloc(nxfers, sizeof(*k_xfers) + sizeof(*data_ptrs),
-> +			  GFP_KERNEL);
-> +	if (!k_xfers)
-> +		return -ENOMEM;
-> +
-> +	/* set data_ptrs to be after nxfers * i3c_priv_xfer */
-> +	data_ptrs = (void *)k_xfers + (nxfers * sizeof(*k_xfers));
-> +
-> +	for (i = 0; i < nxfers; i++) {
-> +		data_ptrs[i] = memdup_user((const u8 __user *)
-> +					   (uintptr_t)xfers[i].data,
-> +					   xfers[i].len);
-> +		if (IS_ERR(data_ptrs[i])) {
-> +			ret = PTR_ERR(data_ptrs[i]);
-> +			break;
-> +		}
-> +
-> +		k_xfers[i].len = xfers[i].len;
-> +		if (xfers[i].rnw) {
-> +			k_xfers[i].rnw = true;
-> +			k_xfers[i].data.in = data_ptrs[i];
-> +		} else {
-> +			k_xfers[i].rnw = false;
-> +			k_xfers[i].data.out = data_ptrs[i];
-> +		}
-> +	}
-> +
-> +	if (ret < 0) {
-> +		i--;
-> +		goto err_free_mem;
-> +	}
-> +
-> +	ret = i3c_device_do_priv_xfers(dev, k_xfers, nxfers);
-> +	if (ret)
-> +		goto err_free_mem;
-> +
-> +	for (i = 0; i < nxfers; i++) {
-> +		if (xfers[i].rnw) {
-> +			if (copy_to_user(u64_to_user_ptr(xfers[i].data),
-> +					 data_ptrs[i], xfers[i].len))
-> +				ret = -EFAULT;
-
-You should bail out of the loop here.
-
-> +		}
-> +	}
-> +
-> +err_free_mem:
-> +	for (; i >= 0; i--)
-> +		kfree(data_ptrs[i]);
-> +	kfree(k_xfers);
-> +	return ret;
-> +}
-> +
-> +static struct i3c_ioc_priv_xfer *
-> +i3cdev_get_ioc_priv_xfer(unsigned int cmd, struct i3c_ioc_priv_xfer *u_xfers,
-> +			 unsigned int *nxfers)
-> +{
-> +	u32 tmp = _IOC_SIZE(cmd);
-> +
-> +	if ((tmp % sizeof(struct i3c_ioc_priv_xfer)) != 0)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	*nxfers = tmp / sizeof(struct i3c_ioc_priv_xfer);
-> +	if (*nxfers == 0)
-> +		return ERR_PTR(-EINVAL);
-
-But no error checking for too many of these?
-
-> +
-> +	return memdup_user(u_xfers, tmp);
-> +}
-> +
-> +static int
-> +i3cdev_ioc_priv_xfer(struct i3c_device *i3c, unsigned int cmd,
-> +		     struct i3c_ioc_priv_xfer *u_xfers)
-
-You lost your __user marking of this pointer :(
-
-Please fix that up, have you run sparse on this?
-
-> +{
-> +	struct i3c_ioc_priv_xfer *k_xfers;
-> +	unsigned int nxfers;
-> +	int ret;
-> +
-> +	k_xfers = i3cdev_get_ioc_priv_xfer(cmd, u_xfers, &nxfers);
-> +	if (IS_ERR(k_xfers))
-> +		return PTR_ERR(k_xfers);
-> +
-> +	ret = i3cdev_do_priv_xfer(i3c, k_xfers, nxfers);
-> +
-> +	kfree(k_xfers);
-> +
-> +	return ret;
-> +}
-> +
-> +static long
-> +i3cdev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-> +{
-> +	struct i3cdev_data *i3cdev = file->private_data;
-> +	struct i3c_device *i3c = i3cdev->i3c;
-> +	int ret = -EACCES;
-> +
-> +	dev_dbg(&i3c->dev, "ioctl, cmd=0x%02x, arg=0x%02lx\n", cmd, arg);
-> +
-> +	if (_IOC_TYPE(cmd) != I3C_DEV_IOC_MAGIC)
-> +		return -ENOTTY;
-> +
-> +	/* Use the xfer_lock to prevent device detach during ioctl call */
-> +	mutex_lock(&i3cdev->xfer_lock);
-> +	if (i3c->dev.driver)
-> +		goto err_no_dev;
-> +
-> +	/* Check command number and direction */
-> +	if (_IOC_NR(cmd) == _IOC_NR(I3C_IOC_PRIV_XFER(0)) &&
-> +	    _IOC_DIR(cmd) == (_IOC_READ | _IOC_WRITE))
-
-Shouldn't the ioctl core already handle this for you?
-
-> +		ret = i3cdev_ioc_priv_xfer(i3c, cmd,
-> +					(struct i3c_ioc_priv_xfer __user *)arg);
-> +
-> +err_no_dev:
-> +	mutex_unlock(&i3cdev->xfer_lock);
-> +	return ret;
-> +}
-> +
-> +static int i3cdev_open(struct inode *inode, struct file *file)
-> +{
-> +	struct i3cdev_data *i3cdev = container_of(inode->i_cdev,
-> +						  struct i3cdev_data,
-> +						  cdev);
-> +	file->private_data = i3cdev;
-> +
-> +	return 0;
-> +}
-> +
-> +static int i3cdev_release(struct inode *inode, struct file *file)
-> +{
-> +	file->private_data = NULL;
-
-Why does this matter?
-
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct file_operations i3cdev_fops = {
-> +	.owner		= THIS_MODULE,
-> +	.read		= i3cdev_read,
-> +	.write		= i3cdev_write,
-> +	.unlocked_ioctl	= i3cdev_ioctl,
-> +	.compat_ioctl	= compat_ptr_ioctl,
-> +	.open		= i3cdev_open,
-> +	.release	= i3cdev_release,
-> +};
-> +
-> +/* ------------------------------------------------------------------------- */
-> +
-> +static struct class *i3cdev_class;
-> +
-> +static int i3cdev_attach(struct device *dev, void *dummy)
-> +{
-> +	struct i3cdev_data *i3cdev;
-> +	struct i3c_device *i3c;
-> +	int res;
-> +
-> +	if (dev->type == &i3c_masterdev_type || dev->driver)
-> +		return 0;
-> +
-> +	i3c = dev_to_i3cdev(dev);
-> +
-> +	/* Get a device */
-> +	i3cdev = get_free_i3cdev(i3c);
-> +	if (IS_ERR(i3cdev))
-> +		return PTR_ERR(i3cdev);
-> +
-> +	mutex_init(&i3cdev->xfer_lock);
-> +	cdev_init(&i3cdev->cdev, &i3cdev_fops);
-> +	i3cdev->cdev.owner = THIS_MODULE;
-> +	res = cdev_add(&i3cdev->cdev,
-> +		       MKDEV(MAJOR(i3cdev_number), i3cdev->id), 1);
-> +	if (res)
-> +		goto error_cdev;
-> +
-> +	/* register this i3c device with the driver core */
-> +	i3cdev->dev = device_create(i3cdev_class, &i3c->dev,
-> +				    MKDEV(MAJOR(i3cdev_number), i3cdev->id),
-> +				    NULL, "bus!i3c!%s", dev_name(&i3c->dev));
-> +	if (IS_ERR(i3cdev->dev)) {
-> +		res = PTR_ERR(i3cdev->dev);
-> +		goto error;
-> +	}
-> +	pr_debug("i3cdev: I3C device [%s] registered as minor %d\n",
-> +		 dev_name(&i3c->dev), i3cdev->id);
-
-dev_dbg()?
-
-> +	return 0;
-> +
-> +error:
-> +	cdev_del(&i3cdev->cdev);
-> +error_cdev:
-> +	put_i3cdev(i3cdev);
-> +	return res;
-> +}
-> +
-> +static int i3cdev_detach(struct device *dev, void *dummy)
-> +{
-> +	struct i3cdev_data *i3cdev;
-> +	struct i3c_device *i3c;
-> +
-> +	if (dev->type == &i3c_masterdev_type)
-> +		return 0;
-> +
-> +	i3c = dev_to_i3cdev(dev);
-> +
-> +	i3cdev = i3cdev_get_drvdata(i3c);
-> +	if (!i3cdev)
-> +		return 0;
-> +
-> +	/* Prevent transfers while cdev removal */
-> +	mutex_lock(&i3cdev->xfer_lock);
-> +	cdev_del(&i3cdev->cdev);
-> +	device_destroy(i3cdev_class, MKDEV(MAJOR(i3cdev_number), i3cdev->id));
-> +	mutex_unlock(&i3cdev->xfer_lock);
-> +
-> +	ida_simple_remove(&i3cdev_ida, i3cdev->id);
-> +	put_i3cdev(i3cdev);
-> +
-> +	pr_debug("i3cdev: device [%s] unregistered\n", dev_name(&i3c->dev));
-
-dev_dbg()?
-
-> +
-> +	return 0;
-> +}
-> +
-> +static int i3cdev_notifier_call(struct notifier_block *nb,
-> +				unsigned long action,
-> +				void *data)
-> +{
-> +	struct device *dev = data;
-> +
-> +	switch (action) {
-> +	case BUS_NOTIFY_ADD_DEVICE:
-> +	case BUS_NOTIFY_UNBOUND_DRIVER:
-> +		return i3cdev_attach(dev, NULL);
-> +	case BUS_NOTIFY_DEL_DEVICE:
-> +	case BUS_NOTIFY_BIND_DRIVER:
-> +		return i3cdev_detach(dev, NULL);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static struct notifier_block i3cdev_notifier = {
-> +	.notifier_call = i3cdev_notifier_call,
-> +};
-> +
-> +static int __init i3cdev_init(void)
-> +{
-> +	int res;
-> +
-> +	/* Dynamically request unused major number */
-> +	res = alloc_chrdev_region(&i3cdev_number, 0, I3C_MINORS, "i3c");
-> +	if (res)
-> +		goto out;
-> +
-> +	/* Create a classe to populate sysfs entries*/
-> +	i3cdev_class = class_create(THIS_MODULE, "i3cdev");
-> +	if (IS_ERR(i3cdev_class)) {
-> +		res = PTR_ERR(i3cdev_class);
-> +		goto out_unreg_chrdev;
-> +	}
-> +
-> +	/* Keep track of busses which have devices to add or remove later */
-> +	res = bus_register_notifier(&i3c_bus_type, &i3cdev_notifier);
-> +	if (res)
-> +		goto out_unreg_class;
-> +
-> +	/* Bind to already existing device without driver right away */
-> +	i3c_for_each_dev(NULL, i3cdev_attach);
-> +
-> +	return 0;
-> +
-> +out_unreg_class:
-> +	class_destroy(i3cdev_class);
-> +out_unreg_chrdev:
-> +	unregister_chrdev_region(i3cdev_number, I3C_MINORS);
-> +out:
-> +	pr_err("%s: Driver Initialisation failed\n", __FILE__);
-
-spelling?
-
-> +	return res;
-> +}
-> +
-> +static void __exit i3cdev_exit(void)
-> +{
-> +	bus_unregister_notifier(&i3c_bus_type, &i3cdev_notifier);
-> +	i3c_for_each_dev(NULL, i3cdev_detach);
-> +	class_destroy(i3cdev_class);
-> +	unregister_chrdev_region(i3cdev_number, I3C_MINORS);
-> +}
-> +
-> +MODULE_AUTHOR("Vitor Soares <soares@synopsys.com>");
-> +MODULE_DESCRIPTION("I3C /dev entries driver");
-> +MODULE_LICENSE("GPL");
-> +
-> +module_init(i3cdev_init);
-> +module_exit(i3cdev_exit);
-> diff --git a/include/uapi/linux/i3c/i3cdev.h b/include/uapi/linux/i3c/i3cdev.h
-> new file mode 100644
-> index 0000000..656a686
-> --- /dev/null
-> +++ b/include/uapi/linux/i3c/i3cdev.h
-> @@ -0,0 +1,37 @@
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> +/*
-> + * Copyright (c) 2020 Synopsys, Inc. and/or its affiliates.
-> + *
-> + * Author: Vitor Soares <vitor.soares@synopsys.com>
-> + */
-> +
-> +#ifndef _UAPI_I3C_DEV_H_
-> +#define _UAPI_I3C_DEV_H_
-> +
-> +#include <linux/types.h>
-> +#include <linux/ioctl.h>
-> +
-> +/* IOCTL commands */
-> +#define I3C_DEV_IOC_MAGIC	0x07
-> +
-> +/**
-> + * struct i3c_ioc_priv_xfer - I3C SDR ioctl private transfer
-> + * @data: Holds pointer to userspace buffer with transmit data.
-> + * @len: Length of data buffer buffers, in bytes.
-> + * @rnw: encodes the transfer direction. true for a read, false for a write
-> + */
-> +struct i3c_ioc_priv_xfer {
-> +	__u64 data;
-> +	__u16 len;
-> +	__u8 rnw;
-
-Shouldn't this be an enum type?  "true" is not a __u8 value :)
-
-> +	__u8 pad[5];
-> +};
-> +
-> +#define I3C_PRIV_XFER_SIZE(N)	\
-> +	((((sizeof(struct i3c_ioc_priv_xfer)) * (N)) < (1 << _IOC_SIZEBITS)) \
-> +	? ((sizeof(struct i3c_ioc_priv_xfer)) * (N)) : 0)
-> +
-> +#define I3C_IOC_PRIV_XFER(N)	\
-> +	_IOC(_IOC_READ|_IOC_WRITE, I3C_DEV_IOC_MAGIC, 30, I3C_PRIV_XFER_SIZE(N))
-
-_IOCWR()?
-
-thanks,
-
-greg k-h
+John
