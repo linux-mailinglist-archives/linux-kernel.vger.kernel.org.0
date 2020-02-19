@@ -2,188 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D56D01639CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 03:04:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 113E51639D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 03:08:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728176AbgBSCEr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 21:04:47 -0500
-Received: from smtprelay0026.hostedemail.com ([216.40.44.26]:40707 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727208AbgBSCEp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 21:04:45 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id C1DDE2C7C;
-        Wed, 19 Feb 2020 02:04:44 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::,RULES_HIT:2:41:69:355:379:541:800:960:973:988:989:1260:1311:1314:1345:1359:1437:1515:1535:1605:1606:1730:1747:1777:1792:2194:2199:2393:2559:2562:3138:3139:3140:3141:3142:3867:3868:4117:4321:5007:6120:6261:8660:10004:10848:11026:11473:11658:11914:12043:12296:12297:12438:12555:12895:12986:13148:13230:13894:21080:21433:21451:21627:21990:30029:30054:30080,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: bun57_80a920a39cb55
-X-Filterd-Recvd-Size: 6568
-Received: from joe-laptop.perches.com (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf03.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 19 Feb 2020 02:04:44 +0000 (UTC)
-From:   Joe Perches <joe@perches.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 2/2] trace_events/trace_export: Use __section
-Date:   Tue, 18 Feb 2020 18:03:18 -0800
-Message-Id: <71e7010925c59cd65273b4dbd3ec8ec8516d65cd.1582077699.git.joe@perches.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1582077698.git.joe@perches.com>
-References: <cover.1582077698.git.joe@perches.com>
+        id S1727851AbgBSCIA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 21:08:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47020 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726761AbgBSCH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 21:07:59 -0500
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68CC924655;
+        Wed, 19 Feb 2020 02:07:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582078078;
+        bh=ufSZgg1wZOqFJZOXUO8f0j1hDXf30tLyORTHplCmLGs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=xFQu/8fX/yhfSKSM3vii6wtXTcTqL6SCtvO0uxeNmherG2KRiyFAnyQ78T+05xNHR
+         mt43Vr5ztaRWprUfmbtvY5z/RT5n952ZbjvFC55/H21q2Ht/0jmgbXo892XMMX5cDK
+         7nwFE7JtZ3SMB5/oiLXUqkUf06DUz1ieMS9hmSJ4=
+Received: by mail-qt1-f170.google.com with SMTP id d5so16143242qto.0;
+        Tue, 18 Feb 2020 18:07:58 -0800 (PST)
+X-Gm-Message-State: APjAAAX8ckAms/ZmIAecFaweGF0ylmrP+W8sVSd39lsGcokfejXvMUgO
+        vmgxxV/7xLKSAotalePafL+FNQszWXHB4KuHxQ==
+X-Google-Smtp-Source: APXvYqzilKNDgKSHVeW3zu6GzBq5ZhsXsw+wNn13+9u8EcbRQ0taUuXVhe6rsxsqnedWAGc9PGbp2OCwlfjhwY3hvUs=
+X-Received: by 2002:aed:2344:: with SMTP id i4mr20224440qtc.136.1582078077503;
+ Tue, 18 Feb 2020 18:07:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200218220748.54823-1-john.stultz@linaro.org>
+ <CAHp75VcPL7DYp9hjgMu+d=CE=g+V7ZxT9ZyXX-OjEW_JQ4m_nA@mail.gmail.com>
+ <CALAqxLWtYfwCzDRVecWF8yRQSKQZh-N2g0SifageUaG0QhBGJg@mail.gmail.com> <CALAqxLW-Z=sut+A5Ezg4PkZ0HzM-np3PY_gAn0r=Ef0+FDBQDA@mail.gmail.com>
+In-Reply-To: <CALAqxLW-Z=sut+A5Ezg4PkZ0HzM-np3PY_gAn0r=Ef0+FDBQDA@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 18 Feb 2020 20:07:46 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJQRa5PNgms_jJ8bdsJqscW8dsKUtbzhGVLNvsAt0qMAQ@mail.gmail.com>
+Message-ID: <CAL_JsqJQRa5PNgms_jJ8bdsJqscW8dsKUtbzhGVLNvsAt0qMAQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] driver core: Rework logic in __driver_deferred_probe_check_state
+ to allow EPROBE_DEFER to be returned for longer
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Todd Kjos <tkjos@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        Thierry Reding <treding@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert __attribute__((section("foo"))) to __section(foo) to be a
-bit more kernel style compliant and improve readability a tiny bit.
+On Tue, Feb 18, 2020 at 7:11 PM John Stultz <john.stultz@linaro.org> wrote:
+>
+> On Tue, Feb 18, 2020 at 4:19 PM John Stultz <john.stultz@linaro.org> wrote:
+> >
+> > On Tue, Feb 18, 2020 at 4:06 PM Andy Shevchenko
+> > <andy.shevchenko@gmail.com> wrote:
+> > > On Wednesday, February 19, 2020, John Stultz <john.stultz@linaro.org> wrote:
+> > >> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> > >> index b25bcab2a26b..9d916a7b56a6 100644
+> > >> --- a/drivers/base/dd.c
+> > >> +++ b/drivers/base/dd.c
+> > >> @@ -237,13 +237,12 @@ __setup("deferred_probe_timeout=", deferred_probe_timeout_setup);
+> > >>
+> > >>  static int __driver_deferred_probe_check_state(struct device *dev)
+> > >>  {
+> > >> -       if (!initcalls_done)
+> > >> -               return -EPROBE_DEFER;
+> > >
+> > >
+> > > Why to touch this? Can't you simple add a new condition here 'if (deferred_probe_timeout > 0)'... ?
+> >
+> > I think that might work. I'll give it a spin later tonight and double check it.
+> >
+> > The main thing I wanted to do is fix the logic hole in the current
+> > code where after initcalls_done=true but before deferred_probe_timeout
+> > has expired we just fall through and return 0, which results in an
+> > ENODEV being returned from the calling function.
+>
+>
+> So on IRC Bjorn sort of clarified a point I think Rob was trying to
+> make on the earlier iteration of this patch, that it seems like
+> Thierry's patch here:
+>   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=62a6bc3a1e4f4ee9ae0076fa295f9af1c3725ce3
+> *seems* to be trying to address the exact same issue, and maybe we
+> should just have the genpd code use that instead?
 
-Signed-off-by: Joe Perches <joe@perches.com>
----
- include/trace/trace_events.h | 29 +++++++++++------------------
- kernel/trace/trace_export.c  |  9 ++++-----
- 2 files changed, 15 insertions(+), 23 deletions(-)
+Looking at it some more, I think the change to the pinctrl code there
+breaks the case I care about (pinctrl described in DT and no driver on
+a system that previously worked without pinctrl). Maybe if I set the
+timeout to 0 it will still work (which would be fine).
 
-diff --git a/include/trace/trace_events.h b/include/trace/trace_events.h
-index 361999f..a5b2eb 100644
---- a/include/trace/trace_events.h
-+++ b/include/trace/trace_events.h
-@@ -45,7 +45,7 @@ TRACE_MAKE_SYSTEM_STR();
- 		.eval_value = a				\
- 	};						\
- 	static struct trace_eval_map __used		\
--	__attribute__((section("_ftrace_eval_map")))	\
-+	__section(_ftrace_eval_map)			\
- 	*TRACE_SYSTEM##_##a = &__##TRACE_SYSTEM##_##a
- 
- #undef TRACE_DEFINE_SIZEOF
-@@ -58,7 +58,7 @@ TRACE_MAKE_SYSTEM_STR();
- 		.eval_value = sizeof(a)			\
- 	};						\
- 	static struct trace_eval_map __used		\
--	__attribute__((section("_ftrace_eval_map")))	\
-+	__section(_ftrace_eval_map)			\
- 	*TRACE_SYSTEM##_##a = &__##TRACE_SYSTEM##_##a
- 
- /*
-@@ -369,8 +369,7 @@ trace_raw_output_##call(struct trace_iterator *iter, int flags,		\
- 									\
- 	return trace_handle_return(s);					\
- }									\
--static struct trace_event_functions					\
--__attribute__((section("_ftrace_data")))				\
-+static struct trace_event_functions __section(_ftrace_data)		\
- trace_event_type_funcs_##call = {					\
- 	.trace			= trace_raw_output_##call,		\
- };
-@@ -441,8 +440,7 @@ static struct trace_event_functions trace_event_type_funcs_##call = {	\
- 
- #undef DECLARE_EVENT_CLASS
- #define DECLARE_EVENT_CLASS(call, proto, args, tstruct, func, print)	\
--static struct trace_event_fields					\
--__attribute__((section("_ftrace_data")))				\
-+static struct trace_event_fields __section(_ftrace_data)		\
- trace_event_fields_##call[] = {						\
- 	tstruct								\
- 	{}								\
-@@ -624,7 +622,7 @@ static inline notrace int trace_event_get_offsets_##call(		\
-  * // its only safe to use pointers when doing linker tricks to
-  * // create an array.
-  * static struct trace_event_call __used
-- * __attribute__((section("_ftrace_events"))) *__event_<call> = &event_<call>;
-+ * __section(_ftrace_events) *__event_<call> = &event_<call>;
-  *
-  */
- 
-@@ -751,7 +749,7 @@ static inline void ftrace_test_probe_##call(void)			\
- #undef DECLARE_EVENT_CLASS
- #define DECLARE_EVENT_CLASS(call, proto, args, tstruct, assign, print)	\
- _TRACE_PERF_PROTO(call, PARAMS(proto));					\
--static char __attribute__((section("_ftrace_data")))			\
-+static char __section(_ftrace_data)					\
- print_fmt_##call[] = print;						\
- static struct trace_event_class __used __refdata event_class_##call = { \
- 	.system			= TRACE_SYSTEM_STRING,			\
-@@ -766,8 +764,7 @@ static struct trace_event_class __used __refdata event_class_##call = { \
- #undef DEFINE_EVENT
- #define DEFINE_EVENT(template, call, proto, args)			\
- 									\
--static struct trace_event_call __used					\
--__attribute__((section("_ftrace_data")))				\
-+static struct trace_event_call __used __section(_ftrace_data)		\
- event_##call = {							\
- 	.class			= &event_class_##template,		\
- 	{								\
-@@ -777,18 +774,15 @@ event_##call = {							\
- 	.print_fmt		= print_fmt_##template,			\
- 	.flags			= TRACE_EVENT_FL_TRACEPOINT,		\
- };									\
--static struct trace_event_call __used					\
--__attribute__((section("_ftrace_events")))				\
-+static struct trace_event_call __used __section(_ftrace_events)		\
- *__event_##call = &event_##call
- 
- #undef DEFINE_EVENT_PRINT
- #define DEFINE_EVENT_PRINT(template, call, proto, args, print)		\
--									\
--static char __attribute__((section("_ftrace_data")))			\
-+static char __section(_ftrace_data)					\
- print_fmt_##call[] = print;						\
- 									\
--static struct trace_event_call __used					\
--__attribute__((section("_ftrace_data")))				\
-+static struct trace_event_call __used __section(_ftrace_data)		\
- event_##call = {							\
- 	.class			= &event_class_##template,		\
- 	{								\
-@@ -798,8 +792,7 @@ event_##call = {							\
- 	.print_fmt		= print_fmt_##call,			\
- 	.flags			= TRACE_EVENT_FL_TRACEPOINT,		\
- };									\
--static struct trace_event_call __used					\
--__attribute__((section("_ftrace_events")))				\
-+static struct trace_event_call __used __section(_ftrace_events)		\
- *__event_##call = &event_##call
- 
- #include TRACE_INCLUDE(TRACE_INCLUDE_FILE)
-diff --git a/kernel/trace/trace_export.c b/kernel/trace/trace_export.c
-index 90af7c9..e38a672 100644
---- a/kernel/trace/trace_export.c
-+++ b/kernel/trace/trace_export.c
-@@ -111,8 +111,7 @@ static void __always_unused ____ftrace_check_##name(void)		\
- 
- #undef FTRACE_ENTRY
- #define FTRACE_ENTRY(name, struct_name, id, tstruct, print)		\
--static struct trace_event_fields					\
--__attribute__((section("_ftrace_data")))				\
-+static struct trace_event_fields __section(_ftrace_data)		\
- ftrace_event_fields_##name[] = {					\
- 	tstruct								\
- 	{}								\
-@@ -153,7 +152,7 @@ static struct trace_event_class __refdata event_class_ftrace_##call = {	\
- 	.reg			= regfn,				\
- };									\
- 									\
--struct trace_event_call __used __attribute((section("_ftrace_data")))	\
-+struct trace_event_call __used __section(_ftrace_data)			\
- event_##call = {							\
- 	.class			= &event_class_ftrace_##call,		\
- 	{								\
-@@ -163,8 +162,8 @@ event_##call = {							\
- 	.print_fmt		= print,				\
- 	.flags			= TRACE_EVENT_FL_IGNORE_ENABLE,		\
- };									\
--static struct trace_event_call __used						\
--__attribute__((section("_ftrace_events"))) *__event_##call = &event_##call;
-+static struct trace_event_call * __used __section(_ftrace_events)	\
-+__event_##call = &event_##call;
- 
- #undef FTRACE_ENTRY
- #define FTRACE_ENTRY(call, struct_name, etype, tstruct, print)		\
--- 
-2.24.0
+> The main question though, is why do we need both?  As mentioned above,
+> the existing logic in __driver_deferred_probe_check_state() seems
+> wrong: Until late_initcall it returns EPROBE_DEFER, then after
+> initcalls_done==true returns 0 (in which case the caller then
+> translates to ENODEV), until the timeout expires which it then returns
+> ETIMEDOUT.
+>
+> I suspect what is really wanted is EPROBE_DEFER -> (0) ENODEV (when
+> timeout is not set) or EPROBE_DEFER -> ETIMEOUT (when the timeout is
+> set), instead of the two state transitions it currently makes.
 
+Yes. There's never any reason to return 0. It should be one of 3
+errnos. If we're moving to always having a timeout, then maybe ENODEV
+isn't even needed. I guess it's a stronger "we're done with init and
+there's never going to be another driver" which maybe we should do for
+!CONFIG_MODULES.
+
+> So I still think my patch is needed, but I also suspect a better fix
+> would be to kill driver_deferred_probe_check_state() and just replace
+> its usage with driver_deferred_probe_check_state_continue(). Or am I
+> still missing something?
+
+I think those should be merged. They now do almost the same thing.
+Only in the timeout==-1 case do they differ.
+
+The original intent was that driver_deferred_probe_check_state()
+simply returned what state we're in and the caller would decide what
+to do with that. IOW, each caller could implement their own policy
+possibly based on other information. Pinctrl factored in a DT hint.
+IOMMU relied on everything was built-in.
+
+The one complication which I mentioned already is with consoles. A
+timeout (and dependencies in modules) there doesn't work. You have to
+probe and register the console before init is done.
+
+Rob
