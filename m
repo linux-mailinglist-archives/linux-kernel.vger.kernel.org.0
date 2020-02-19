@@ -2,92 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB062164DEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 19:48:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB5E3164DF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 19:49:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726801AbgBSSsx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 13:48:53 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:54108 "EHLO vps0.lunn.ch"
+        id S1726760AbgBSStV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 13:49:21 -0500
+Received: from muru.com ([72.249.23.125]:56096 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726634AbgBSSsx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 13:48:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=lg5RewCddo/rU7+BSEcqBBC22Am10XAHrObIfp0nnpk=; b=k/IoAle40nYTEgfJ19eI6UDaQ0
-        UjBSLyIKItHH98qmWLGiy1C9pcqZsfWeOjjnaiWBUNmQ1hIID8CbYp4KCNvA1KgHTVvJZ6j0qjSZ/
-        e375kX4XllTp6R9DYaNxBrvCQuT+rHIWZNvQDPyHklm7LVn0elbq2fWOUx0aE6ftktPM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
-        (envelope-from <andrew@lunn.ch>)
-        id 1j4UOt-0001oN-5M; Wed, 19 Feb 2020 19:48:47 +0100
-Date:   Wed, 19 Feb 2020 19:48:47 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     f.fainelli@gmail.com, hkallweit1@gmail.com, linux@armlinux.org.uk,
-        davem@davemloft.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, afd@ti.com
-Subject: Re: [PATCH net-master] net: phy: dp83848: Add the TI TLK05/06 PHY ID
-Message-ID: <20200219184847.GD3281@lunn.ch>
-References: <20200219181613.5898-1-dmurphy@ti.com>
+        id S1726634AbgBSStV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 13:49:21 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 9CA2B80F3;
+        Wed, 19 Feb 2020 18:50:03 +0000 (UTC)
+Date:   Wed, 19 Feb 2020 10:49:16 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        "Arthur D ." <spinal.by@gmail.com>,
+        Merlijn Wajer <merlijn@wizzup.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>
+Subject: Re: [PATCH] ASoC: cpcap: Implement set_tdm_slot for voice call
+ support
+Message-ID: <20200219184916.GB37466@atomide.com>
+References: <ae2b7d9e-d05e-54ac-4f18-27cc8c4e81a0@ti.com>
+ <20200212144620.GJ64767@atomide.com>
+ <9a060430-5a3e-61e1-3d2c-f89819d9436f@ti.com>
+ <20200217232325.GD35972@atomide.com>
+ <8fc1dded-6d28-f5cd-f2f9-3a6810571119@ti.com>
+ <20200218153211.GI35972@atomide.com>
+ <20200218170628.r47xc3yydg6xx2yh@earth.universe>
+ <20200218174258.GK4232@sirena.org.uk>
+ <20200219173902.GA37466@atomide.com>
+ <20200219174600.GH4488@sirena.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200219181613.5898-1-dmurphy@ti.com>
+In-Reply-To: <20200219174600.GH4488@sirena.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 12:16:13PM -0600, Dan Murphy wrote:
-> Add the TLK05/06 PHY ID to the DP83848 driver.  The TI website indicates
-> that the DP83822 device is a drop in replacement for the TLK05 device
-> but the TLK device does not have WoL support.  The TLK device is
-> register compatible to the DP83848 and the DP83848 does not support WoL
-> either.  So this PHY can be associated with the DP83848 driver.
+* Mark Brown <broonie@kernel.org> [200219 17:46]:
+> On Wed, Feb 19, 2020 at 09:39:02AM -0800, Tony Lindgren wrote:
+> > * Mark Brown <broonie@kernel.org> [200218 17:43]:
 > 
-> The initial TLKx PHY ID in the driver is a legacy ID and the public data
-> sheet indicates a new PHY ID.  So not to break any kernels out there
-> both IDs will continue to be supported in this driver.
+> > > you to address for system enablement.  OTOH if you manage to get one of
+> > > the generic cards working well that'd be excellent!
 > 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
->  drivers/net/phy/dp83848.c | 4 ++++
->  1 file changed, 4 insertions(+)
+> > Well to me it seems that we just already have all the data needed with
+> > the graph binding and snd-soc-audio-graph-card + codec2codec support.
 > 
-> diff --git a/drivers/net/phy/dp83848.c b/drivers/net/phy/dp83848.c
-> index 54c7c1b44e4d..66907cfa816a 100644
-> --- a/drivers/net/phy/dp83848.c
-> +++ b/drivers/net/phy/dp83848.c
-> @@ -12,6 +12,7 @@
->  #define TI_DP83620_PHY_ID		0x20005ce0
->  #define NS_DP83848C_PHY_ID		0x20005c90
->  #define TLK10X_PHY_ID			0x2000a210
-> +#define TLK105_06_PHY_ID		0x2000a211
->  
->  /* Registers */
->  #define DP83848_MICR			0x11 /* MII Interrupt Control Register */
-> @@ -85,6 +86,7 @@ static struct mdio_device_id __maybe_unused dp83848_tbl[] = {
->  	{ NS_DP83848C_PHY_ID, 0xfffffff0 },
->  	{ TI_DP83620_PHY_ID, 0xfffffff0 },
->  	{ TLK10X_PHY_ID, 0xfffffff0 },
-> +	{ TLK105_06_PHY_ID, 0xfffffff0 },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(mdio, dp83848_tbl);
-> @@ -115,6 +117,8 @@ static struct phy_driver dp83848_driver[] = {
->  			   dp83848_config_init),
->  	DP83848_PHY_DRIVER(TLK10X_PHY_ID, "TI TLK10X 10/100 Mbps PHY",
->  			   NULL),
-> +	DP83848_PHY_DRIVER(TLK105_06_PHY_ID, "TI TLK105/06 10/100 Mbps PHY",
-> +			   NULL),
+> > I don't think we have cases where the cpcap codec is not the master,
+> > so as long as the cpcap codec knows what's going on then there
+> > may not be a need for machine driver.
+> 
+> > I guess the the bluetooth to modem path is the one to check to see
+> > what provides the clocks..
+> 
+> Usually in telephony cases it's the modem that's the clock master FWIW.
 
-I'm pretty sure Andrew's comment is correct. Due to the mask, the
-TLK10X_PHY_ID entry will hit.
+Well at least the samplerate needs to be configured in the cpcap
+codec driver for voice calls, and we're setting CPCAP_BIT_CDC_CLK_EN
+bit for voice call which is the "Voice DAI Clock". It's also set when
+just playing audio using the voice channel is used. And we also have
+a similar bit for CPCAP_BIT_ST_CLK_EN for "HiFi DAI Clock" for the
+hifi channel. So these would seem to hit that it is really the cpcap
+that's the clock master for voice calls in this case.
 
-What you can do is change the order and the mask. Put TLK105_06_PHY_ID
-before TLK10X_PHY_ID and have an exact match, no mask.
+But I guess the test to do there would be to just clear the bit
+for CPCAP_BIT_CDC_CLK_EN during a voice call and see if it still
+works.
 
-       Andrew
+Regards,
+
+Tony
