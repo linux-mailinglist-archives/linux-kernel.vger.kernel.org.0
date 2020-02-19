@@ -2,69 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C463163CEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 07:10:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 510D8163CDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 07:04:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbgBSGKQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 01:10:16 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:36492 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726096AbgBSGKM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 01:10:12 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 78D5A1A097C;
-        Wed, 19 Feb 2020 07:10:10 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F0E7E1A0890;
-        Wed, 19 Feb 2020 07:10:02 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id D8BAA402DD;
-        Wed, 19 Feb 2020 14:09:53 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, abel.vesa@nxp.com,
-        peng.fan@nxp.com, fugang.duan@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 3/3] clk: imx8mp: Correct the enet_qos parent clock
-Date:   Wed, 19 Feb 2020 14:04:11 +0800
-Message-Id: <1582092251-19222-3-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1582092251-19222-1-git-send-email-Anson.Huang@nxp.com>
-References: <1582092251-19222-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726496AbgBSGER (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 01:04:17 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:44630 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726055AbgBSGEQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 01:04:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=AFjhUzdSTL6y+bUgZojZ9Wfk2mmuh2/h+v4Y4bp+dts=; b=euzainEafG+87t1P9h7KE5mkvI
+        BHK6B7Pb2S42nRqKfcgAxHx9lFxGyY7C4gj0VsK14d+283DNJqKHVA8ulMfTJEKhRhjaq5HbAv/Bj
+        yCSVjDiOvBuN5IouW8M010Z1gvID/vYICHdQtwhvOJL8WI0Prvbbr6uWzK5nJ222Oa6HP/Mr12RGo
+        jPGPdHpBaPvDbncrTzOP/5LqdTrwJZFkq06bWAdt2uPG75ZDwc3cqft38JwV/UZQwpSUxvyhp1NxM
+        bDCDWcvC/x8L3kKhtMOzDVs+Xy/gJ34WwhYKpGiluzGZtbEfTxXFNIj6sPNg+5CRpsUh1EjuiFaHm
+        uGIQ/O2Q==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j4IT1-0003R9-8O; Wed, 19 Feb 2020 06:04:15 +0000
+Date:   Tue, 18 Feb 2020 22:04:15 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v6 17/19] iomap: Restructure iomap_readpages_actor
+Message-ID: <20200219060415.GO24185@bombadil.infradead.org>
+References: <20200217184613.19668-1-willy@infradead.org>
+ <20200217184613.19668-31-willy@infradead.org>
+ <20200219032900.GE10776@dread.disaster.area>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200219032900.GE10776@dread.disaster.area>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fugang Duan <fugang.duan@nxp.com>
+On Wed, Feb 19, 2020 at 02:29:00PM +1100, Dave Chinner wrote:
+> On Mon, Feb 17, 2020 at 10:46:11AM -0800, Matthew Wilcox wrote:
+> > @@ -418,6 +412,15 @@ iomap_readpages_actor(struct inode *inode, loff_t pos, loff_t length,
+> >  		}
+> >  		ret = iomap_readpage_actor(inode, pos + done, length - done,
+> >  				ctx, iomap, srcmap);
+> > +		if (WARN_ON(ret == 0))
+> > +			break;
+> 
+> This error case now leaks ctx->cur_page....
 
-enet_qos is for eqos tsn AXI bus clock whose clock source is from
-ccm_enet_axi_clk_root, and controlled by CCM_CCGR59(offset 0x43b0)
-and CCM_CCGR64(offset 0x4400), so correct enet_qos root clock's
-parent clock to sim_enet.
+Yes ... and I see the consequence.  I mean, this is a "shouldn't happen",
+so do we want to put effort into cleanup here ...
 
-Fixes: 9c140d992676 ("clk: imx: Add support for i.MX8MP clock driver")
-Signed-off-by: Fugang Duan <fugang.duan@nxp.com>
----
- drivers/clk/imx/clk-imx8mp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > @@ -451,11 +454,7 @@ iomap_readpages(struct address_space *mapping, struct list_head *pages,
+> >  done:
+> >  	if (ctx.bio)
+> >  		submit_bio(ctx.bio);
+> > -	if (ctx.cur_page) {
+> > -		if (!ctx.cur_page_in_bio)
+> > -			unlock_page(ctx.cur_page);
+> > -		put_page(ctx.cur_page);
+> > -	}
+> > +	BUG_ON(ctx.cur_page);
+> 
+> And so will now trigger both a warn and a bug....
 
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index 1a9d7a0..cb58fb8 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -688,7 +688,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MP_CLK_CAN1_ROOT] = imx_clk_hw_gate2("can1_root_clk", "can1", ccm_base + 0x4350, 0);
- 	hws[IMX8MP_CLK_CAN2_ROOT] = imx_clk_hw_gate2("can2_root_clk", "can2", ccm_base + 0x4360, 0);
- 	hws[IMX8MP_CLK_SDMA1_ROOT] = imx_clk_hw_gate4("sdma1_root_clk", "ipg_root", ccm_base + 0x43a0, 0);
--	hws[IMX8MP_CLK_ENET_QOS_ROOT] = imx_clk_hw_gate4("enet_qos_root_clk", "enet_axi", ccm_base + 0x43b0, 0);
-+	hws[IMX8MP_CLK_ENET_QOS_ROOT] = imx_clk_hw_gate4("enet_qos_root_clk", "sim_enet_root_clk", ccm_base + 0x43b0, 0);
- 	hws[IMX8MP_CLK_SIM_ENET_ROOT] = imx_clk_hw_gate4("sim_enet_root_clk", "enet_axi", ccm_base + 0x4400, 0);
- 	hws[IMX8MP_CLK_GPU2D_ROOT] = imx_clk_hw_gate4("gpu2d_root_clk", "gpu2d_div", ccm_base + 0x4450, 0);
- 	hws[IMX8MP_CLK_GPU3D_ROOT] = imx_clk_hw_gate4("gpu3d_root_clk", "gpu3d_core_div", ccm_base + 0x4460, 0);
--- 
-2.7.4
+... or do we just want to run slap bang into this bug?
 
+Option 1: Remove the check for 'ret == 0' altogether, as we had it before.
+That puts us into endless loop territory for a failure mode, and it's not
+parallel with iomap_readpage().
+
+Option 2: Remove the WARN_ON from the check.  Then we just hit the BUG_ON,
+but we don't know why we did it.
+
+Option 3: Set cur_page to NULL.  We'll hit the WARN_ON, avoid the BUG_ON,
+might end up with a page in the page cache which is never unlocked.
+
+Option 4: Do the unlock/put page dance before setting the cur_page to NULL.
+We might double-unlock the page.
+
+There are probably other options here too.
