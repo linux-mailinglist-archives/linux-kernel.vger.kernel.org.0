@@ -2,72 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB00F163EAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:15:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C2FD163EB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:16:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726647AbgBSIPR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 03:15:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34528 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726156AbgBSIPQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 03:15:16 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1726715AbgBSIQB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 03:16:01 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:46068 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726156AbgBSIQB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 03:16:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=fz8LT+4esfX6yBhrJ0QEH4biUnsulpI1jbUWNtcaXug=; b=UKrpwvRqPUrThLBLzWAaJMaHt1
+        95+P+1Gfr0p2/Jddo4PzxuvJadJcvHwlgv6hewmQMjs7kziZ10dxHZH7pFSVfTtfvDx4AXy4egGY2
+        0DKJb2W+kyzOAA7iRXrTbnAvW5vdBa2w/D9pszwZc2KAKBT4GiqvLjxzQN/UyTIgwcru4k7lAh1xe
+        Na0pPEYKr5jv3jiY0JtqfKatTpulfvTdKnzrVIzGJ2RIy9E7svOGiURcM9aDVEslFmwpvdDGKl1iN
+        a3pqJVFvA+/UGcHDTHBshNY8rtNQr1DnOMalyYBpm6CE0BKMyzEqpdL5SPhI02DL4oa5S7OQawfq4
+        wxx7qAWg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j4KWG-0000lW-J5; Wed, 19 Feb 2020 08:15:44 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1E242176D;
-        Wed, 19 Feb 2020 08:15:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582100116;
-        bh=2lJvgbRb9rP6Vhs0w8YL7pQP2f3DBRY6ioR0MgXbnAM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KsUc4mlSoOf5rkLOIyakA9xHsbeBxTx9HmoTKBL5+29cWoHsD++AiexBiih06GTzT
-         wbNMPotqi517j9MFy4wCrMP19VGEXYXceLGx8sDvgPBkp00r+Pb7da1tz28ua5QBoU
-         NEHviUetaGrJLSX/r7WtHJDI3agfb13actQrPl9E=
-Date:   Wed, 19 Feb 2020 09:15:14 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Todd Kjos <tkjos@google.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] driver core: Make deferred_probe_timeout global
- so it can be shared
-Message-ID: <20200219081514.GA2735658@kroah.com>
-References: <20200218220748.54823-1-john.stultz@linaro.org>
- <20200218220748.54823-2-john.stultz@linaro.org>
- <20200219075730.GA2732797@kroah.com>
- <e67836f6-dcaa-c7b6-0779-35a9ff98ba38@infradead.org>
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 8045F30414E;
+        Wed, 19 Feb 2020 09:13:49 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C732120206D9B; Wed, 19 Feb 2020 09:15:41 +0100 (CET)
+Date:   Wed, 19 Feb 2020 09:15:41 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Tony Luck <tony.luck@intel.com>, x86-ml <x86@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] #MC mess
+Message-ID: <20200219081541.GG14914@hirez.programming.kicks-ass.net>
+References: <20200218173150.GK14449@zn.tnic>
+ <CALCETrXbitwGKcEbCF84y0aEGz+B4LL_bj-_njgyXBJA74abOA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e67836f6-dcaa-c7b6-0779-35a9ff98ba38@infradead.org>
+In-Reply-To: <CALCETrXbitwGKcEbCF84y0aEGz+B4LL_bj-_njgyXBJA74abOA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 12:00:09AM -0800, Randy Dunlap wrote:
-> On 2/18/20 11:57 PM, Greg Kroah-Hartman wrote:
-> > On Tue, Feb 18, 2020 at 10:07:48PM +0000, John Stultz wrote:
-> >> --- a/include/linux/device/driver.h
-> >> +++ b/include/linux/device/driver.h
-> >> @@ -236,6 +236,7 @@ driver_find_device_by_acpi_dev(struct device_driver *drv, const void *adev)
-> >>  }
-> >>  #endif
-> >>  
-> >> +extern int deferred_probe_timeout;
-> >>  void driver_deferred_probe_add(struct device *dev);
-> > 
-> > If this is going to be global now, can you rename it to
-> > "driver_defferred_probe_timeout" to make it more in line with the other
+On Tue, Feb 18, 2020 at 04:15:57PM -0800, Andy Lutomirski wrote:
+> On Tue, Feb 18, 2020 at 9:31 AM Borislav Petkov <bp@alien8.de> wrote:
+> >
+> > Ok,
+> >
+> > so Peter raised this question on IRC today, that the #MC handler needs
+> > to disable all kinds of tracing/kprobing and etc exceptions happening
+> > while handling an #MC. And I guess we can talk about supporting some
+> > exceptions but #MC is usually nasty enough to not care about tracing
+> > when former happens.
+> >
 > 
-> or driver_deferred_probe_timeout please.
+> It's worth noting that MCE is utterly, terminally screwed under high
+> load.  In particular:
+> 
+> Step 1: NMI (due to perf).
+> 
+> immediately thereafter (before any of the entry asm runs)
+> 
+> Step 2: MCE (due to recoverable memory failure or remote CPU MCE)
+> 
+> Step 3: MCE does its thing and does IRET
+> 
+> Step 4: NMI
+> 
+> We are toast.
+> 
+> Tony, etc, can you ask your Intel contacts who care about this kind of
+> thing to stop twiddling their thumbs and FIX IT?  The easy fix is
+> utterly trivial.  Add a new instruction IRET_NON_NMI.  It does
+> *exactly* the same thing as IRET except that it does not unmask NMIs.
+> (It also doesn't unmask NMIs if it faults.)  No fancy design work.
+> Future improvements can still happen on top of this.
 
-Yes, that's spelt better :)
+Yes please! Of course, we're stuck with the existing NMI entry crap
+forever because legacy, but it would make all things NMI so much saner.
