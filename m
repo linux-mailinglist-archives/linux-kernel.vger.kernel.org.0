@@ -2,107 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F18FE163CE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 07:05:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D40A163D01
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 07:26:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726515AbgBSGFP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 01:05:15 -0500
-Received: from mga11.intel.com ([192.55.52.93]:45753 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726055AbgBSGFO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 01:05:14 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2020 22:05:14 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,459,1574150400"; 
-   d="scan'208";a="239595768"
-Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.159.41])
-  by orsmga006.jf.intel.com with ESMTP; 18 Feb 2020 22:05:10 -0800
-From:   "Huang\, Ying" <ying.huang@intel.com>
-To:     Mel Gorman <mgorman@suse.de>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>, Feng Tang <feng.tang@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Michal Hocko" <mhocko@suse.com>, Rik van Riel <riel@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [RFC -V2 3/8] autonuma, memory tiering: Use kswapd to demote cold pages to PMEM
-References: <20200218082634.1596727-1-ying.huang@intel.com>
-        <20200218082634.1596727-4-ying.huang@intel.com>
-        <20200218090932.GD3420@suse.de>
-Date:   Wed, 19 Feb 2020 14:05:09 +0800
-In-Reply-To: <20200218090932.GD3420@suse.de> (Mel Gorman's message of "Tue, 18
-        Feb 2020 09:09:32 +0000")
-Message-ID: <87o8tvglii.fsf@yhuang-dev.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S1726551AbgBSG0o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 01:26:44 -0500
+Received: from mail-qv1-f65.google.com ([209.85.219.65]:43885 "EHLO
+        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726202AbgBSG0n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 01:26:43 -0500
+Received: by mail-qv1-f65.google.com with SMTP id p2so10317635qvo.10;
+        Tue, 18 Feb 2020 22:26:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0AcgEW7Nzia0J/XRf8fWH9Xd9Cf6gra4pdDV/CfwMW8=;
+        b=GkQkIkwu3bSBbkX5iqfaiTQ/EWXrz7RZHKk2yfg4nz7wWXo3quKjX3E1IRLce3DGxm
+         DplPfnCtn7dp9hhWpY/m2B8BJGFYwXZ4UFL26QEpai5NBUKZGR5LUxerP3pM02MKRmDb
+         dbW3rq5C3WlbwtJzU7rGzptNTJ9bijeu49I5lcCvqqRyXt4Li7Nq5AHG7qh8BocxZuo8
+         3JUvL2bDAEQF29tEpfdh55zkmHyWcE/+4NjUILBwfQEZWakU1a79/LBR/96xkGKzeJYO
+         Yfxk5dow2hM9ycQ54JPXQNrGf0NQYMRyENq95jFH8CIJ0xPJUS1qXXTBufppfHlVvrnG
+         pHLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0AcgEW7Nzia0J/XRf8fWH9Xd9Cf6gra4pdDV/CfwMW8=;
+        b=an9qdWkJg9iZy6SckGcjEHQJuO7sb44o41kielXRHYDWn+RWH5lVjYUUDioKxogaRK
+         tt+qc3TGWkUTPuSts5mXg4toWlm4Q/x3Zk+UqY0oNgEUm4v0/r1eb6EOI7s580BlwF1w
+         LABL7VBJxIZIWb4YqCwhpzVurRexHtuFBzfhr4+DJCvzSVMEAW5/9/I6RGVulfHcsoqW
+         DJVgszClK0V5Fuqt08E+5oFgNXZ2eHruF3WpGK5ToeqqanCtZFE014LZuoS7yTeUZk86
+         jRK0Cg4Y5NnDUT6DEeulA5AMEqiFnXaK2HDOKOxr1o6X2ZsL5PwmBO1MYj5ZXBBN/S4p
+         5GSQ==
+X-Gm-Message-State: APjAAAWWfEcNX8OAfoyvnNyy9w6wdRU0TmyMzibN9uYFFEOG5dpc1MSz
+        yAspTFribQ2KTsSptBb71/k=
+X-Google-Smtp-Source: APXvYqzKwD91/nC2RbUzYfJ4VcV0Uo/JIoQ1VLbyw/Ly/Uh2gsKDSrQwovgooWirT3x3ZqGaABhHpQ==
+X-Received: by 2002:a0c:a281:: with SMTP id g1mr19893975qva.168.1582093602261;
+        Tue, 18 Feb 2020 22:26:42 -0800 (PST)
+Received: from auth1-smtp.messagingengine.com (auth1-smtp.messagingengine.com. [66.111.4.227])
+        by smtp.gmail.com with ESMTPSA id g84sm528780qke.129.2020.02.18.22.26.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Feb 2020 22:26:41 -0800 (PST)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailauth.nyi.internal (Postfix) with ESMTP id 7F9B52221A;
+        Wed, 19 Feb 2020 01:26:38 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Wed, 19 Feb 2020 01:26:38 -0500
+X-ME-Sender: <xms:GNVMXmv9xhC6qNyttzhAS_dCGFzqMF0jdB2vfajqLYe5Y2NjOIAnuQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrjeelgdelgecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepuehoqhhunhcuhfgv
+    nhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucffohhmrghinhepkh
+    gvrhhnvghlrdhorhhgpdhgihhthhhusgdrtghomhdpihhnrhhirgdrfhhrnecukfhppeeh
+    vddrudehhedrudduuddrjedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihht
+    hidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrg
+    hilhdrtghomhesfhhigihmvgdrnhgrmhgv
+X-ME-Proxy: <xmx:GNVMXpLvH150ImJ4YxZj3Q7cZIgosNe75Fm00EUVZ6qP5-CZHjDInQ>
+    <xmx:GNVMXjgX4Y6OBKcc6r73mxGCrsDQkM7zIm9fZuXYoCio95u-9zSecQ>
+    <xmx:GNVMXtvrvoMiU0sMYDbfkbaYwRATfJM6Irh7uW_6vazje5SaU45ayQ>
+    <xmx:HtVMXiN7X9oPH7cijwrpi040vXQDHgFB4xchEe4BixliuaIOj1SJ59dEryk>
+Received: from localhost (unknown [52.155.111.71])
+        by mail.messagingengine.com (Postfix) with ESMTPA id A263A3060BD1;
+        Wed, 19 Feb 2020 01:26:31 -0500 (EST)
+From:   Boqun Feng <boqun.feng@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: [RFC v2 0/4] Documentation/locking/atomic: Add litmus tests for atomic APIs
+Date:   Wed, 19 Feb 2020 14:26:23 +0800
+Message-Id: <20200219062627.104736-1-boqun.feng@gmail.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mel Gorman <mgorman@suse.de> writes:
+A recent discussion raises up the requirement for having test cases for
+atomic APIs:
 
-> On Tue, Feb 18, 2020 at 04:26:29PM +0800, Huang, Ying wrote:
->> From: Huang Ying <ying.huang@intel.com>
->> 
->> In a memory tiering system, if the memory size of the workloads is
->> smaller than that of the faster memory (e.g. DRAM) nodes, all pages of
->> the workloads should be put in the faster memory nodes.  But this
->> makes it unnecessary to use slower memory (e.g. PMEM) at all.
->> 
->> So in common cases, the memory size of the workload should be larger
->> than that of the faster memory nodes.  And to optimize the
->> performance, the hot pages should be promoted to the faster memory
->> nodes while the cold pages should be demoted to the slower memory
->> nodes.  To achieve that, we have two choices,
->> 
->> a. Promote the hot pages from the slower memory node to the faster
->>    memory node.  This will create some memory pressure in the faster
->>    memory node, thus trigger the memory reclaiming, where the cold
->>    pages will be demoted to the slower memory node.
->> 
->> b. Demote the cold pages from faster memory node to the slower memory
->>    node.  This will create some free memory space in the faster memory
->>    node, and the hot pages in the slower memory node could be promoted
->>    to the faster memory node.
->> 
->> The choice "a" will create the memory pressure in the faster memory
->> node.  If the memory pressure of the workload is high too, the memory
->> pressure may become so high that the memory allocation latency of the
->> workload is influenced, e.g. the direct reclaiming may be triggered.
->> 
->> The choice "b" works much better at this aspect.  If the memory
->> pressure of the workload is high, it will consume the free memory and
->> the hot pages promotion will stop earlier if its allocation watermark
->> is higher than that of the normal memory allocation.
->> 
->> In this patch, choice "b" is implemented.  If memory tiering NUMA
->> balancing mode is enabled, the node isn't the slowest node, and the
->> free memory size of the node is below the high watermark, the kswapd
->> of the node will be waken up to free some memory until the free memory
->> size is above the high watermark + autonuma promotion rate limit.  If
->> the free memory size is below the high watermark, autonuma promotion
->> will stop working.  This avoids to create too much memory pressure to
->> the system.
->> 
->> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
->
-> Unfortunately I stopped reading at this point. It depends on another series
-> entirely and they really need to be presented together instead of relying
-> on searching mail archives to find other patches to try assemble the full
-> picture :(. Ideally each stage would have supporting data showing roughly
-> how it behaves at each major stage. I know this will be a pain but the
-> original NUMA balancing had the same problem and ultimately started with
-> one large series that got the basics right followed by other series that
-> improved it in stages. That process is *still* ongoing today.
+	https://lore.kernel.org/lkml/20200213085849.GL14897@hirez.programming.kicks-ass.net/
 
-Sorry for inconvenience, we will post a new patchset including both
-series and add supporting data at each major stage when possible.
+, and since we already have a way to generate a test module from a
+litmus test with klitmus[1]. It makes sense that we add more litmus
+tests for atomic APIs. And based on the previous discussion, I create a
+new directory Documentation/atomic-tests and put these litmus tests
+here.
 
-Best Regards,
-Huang, Ying
+This patchset starts the work by adding the litmus tests which are
+already used in atomic_t.txt, and also improve the atomic_t.txt to make
+it consistent with the litmus tests.
+
+Previous version:
+v1: https://lore.kernel.org/linux-doc/20200214040132.91934-1-boqun.feng@gmail.com/
+
+Changes since v1:
+
+*	Move the tests into Documentation/atomic-tests directory as a
+	result of the discussion with Alan and Paul.
+
+*	Word changing on litmus test names and other sentences in
+	documents based on Alan's suggestion.
+
+*	Add local variable declarations in 
+	Atomic-RMW+mb__after_atomic-is-stronger-than-acquire to make
+	klitmus work as per Andrea's suggestion.
+
+Currently, I haven't heard anything from Luc on whether the
+atomic_add_unless() works or not for the LKMM, but based on my test and
+Andrea's previous test, I think it actually works. I will add the
+corresponding changes to the LIMITATIONS part of LKMM document if I got
+a comfirm from Luc. And my PR:
+
+	https://github.com/herd/herdtools7/pull/28
+
+is still not merged. So this version is simply an RFC and comments and
+suggesions are welcome!
+
+Regards,
+Boqun
+
+
+[1]: http://diy.inria.fr/doc/litmus.html#klitmus
+
+Boqun Feng (4):
+  Documentation/locking/atomic: Fix atomic-set litmus test
+  Documentation/locking/atomic: Introduce atomic-tests directory
+  Documentation/locking/atomic: Add a litmus test for atomic_set()
+  Documentation/locking/atomic: Add a litmus test smp_mb__after_atomic()
+
+ ...ter_atomic-is-stronger-than-acquire.litmus | 32 +++++++++++++++++++
+ ...c-RMW-ops-are-atomic-WRT-atomic_set.litmus | 24 ++++++++++++++
+ Documentation/atomic-tests/README             | 16 ++++++++++
+ Documentation/atomic_t.txt                    | 24 +++++++-------
+ MAINTAINERS                                   |  1 +
+ 5 files changed, 85 insertions(+), 12 deletions(-)
+ create mode 100644 Documentation/atomic-tests/Atomic-RMW+mb__after_atomic-is-stronger-than-acquire.litmus
+ create mode 100644 Documentation/atomic-tests/Atomic-RMW-ops-are-atomic-WRT-atomic_set.litmus
+ create mode 100644 Documentation/atomic-tests/README
+
+-- 
+2.25.0
+
