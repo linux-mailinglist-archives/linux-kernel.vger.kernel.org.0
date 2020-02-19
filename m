@@ -2,123 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BC11163F4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:35:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9973163F5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:42:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726680AbgBSIfM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 03:35:12 -0500
-Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:47415 "EHLO
-        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726001AbgBSIfL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 03:35:11 -0500
-Received: from [192.168.2.10] ([46.9.235.248])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id 4Kp0jzM3DP9a94Kp3jnR2K; Wed, 19 Feb 2020 09:35:09 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
-        t=1582101309; bh=C8+TLX9CUjoYRbjqV89DAOrnbxNqT7La9+Tr4+Nt/Xs=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=Im/GCuvczi+2FTbLoNthxvmmyj/yWDPNHrxtz76J+xF24ZTX6P2sAsYjH5WeaH1cl
-         n94ltxdd8tbqYnWKoYK3OwG7CPh/Fkichzhz9l2+CkCxW1aa5t4L/vAwMBdnZfgOJ0
-         2sODOe3cx7qRA6b5qJOBDnjVHGaeZFj8fS6vJHa8QQdLYb77gc910q0kyRkP2XDgO7
-         iKEGlvmXc7vzPFiJjpTAwMFBKIGcyEie5cZwZrpM2t1mY3GxETwcVoPtELpPg3dRAi
-         wr9VQm122I7NV5vKucWvwLfKf5TcH3lrR/q/OhmgC6hZ0yKg/opbxaluW0zDCw0ko2
-         gvpBIDM15NPDg==
-Subject: Re: [RFC][PATCHv2 11/12] videobuf2: add begin/end cpu_access
- callbacks to dma-sg
-To:     Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Sakari Ailus <sakari.ailus@iki.fi>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200204025641.218376-1-senozhatsky@chromium.org>
- <20200204025641.218376-12-senozhatsky@chromium.org>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <06d654ec-9d05-4ef5-c27e-ff78c96a3457@xs4all.nl>
-Date:   Wed, 19 Feb 2020 09:35:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1726766AbgBSIlZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 03:41:25 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44236 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726480AbgBSIlW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 03:41:22 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 4A135ADA1;
+        Wed, 19 Feb 2020 08:41:19 +0000 (UTC)
+From:   Jiri Slaby <jslaby@suse.cz>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jiri Slaby <jslaby@suse.cz>
+Subject: [PATCH 01/24] n_hdlc: remove tracing debug prints
+Date:   Wed, 19 Feb 2020 09:40:55 +0100
+Message-Id: <20200219084118.26491-1-jslaby@suse.cz>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-In-Reply-To: <20200204025641.218376-12-senozhatsky@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfAM6J5MuTxDS9Mq5vbGVpdEHcL+zpBvRu+SSDWsXh/ekZ6HatxQGKgFprfDkFu0Ka3/ar4Z/N5a4SPBi5lejeQuuvs59XV0qYbRg7/KEai1qKNs0vSNK
- SFvHeF75F+IGbVDs/hJzUe6nd4KxhjIIoY11hh5HLmH4NAE4/JNIsLyTZ4b7ti0hAWyCFqTkL8/gjMuwIx28GWpnr4FLpakv3tNkQjyTt9f6WEAsl16kWJ52
- tMa2gzFo4MGztIycB5X6Bu/FMsnRRXkEEIZJEGf75dFw1EoiO4F2pvx7Dvd1BykI2pDRjr50hkbFDgHtz/r592L7KPJ9nYA40SCm+ZZ0C6R65kkik4VmJYzb
- Pdq0/q8CriBaYsAQvLZ4yUiBfcs6zvnl5W1YMDCrW2QwYvh7nNmWYELvEjwNAMIogBsck43+Utr15Yl8EqaYxd2irJ0sJbyDtIthifA6vGa1uefSsbVbXBDt
- 0KYxiuZ8F3EUAAYDIhhxLZ7xIzTZzVZ8kNDb7lcw87ojTWj2tuwPqYcZOvDIzAQTcAaJGq0F9rDO1ADT
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/4/20 3:56 AM, Sergey Senozhatsky wrote:
-> Provide begin_cpu_access() and end_cpu_access() dma_buf_ops
-> callbacks for cache synchronisation on exported buffers.
-> 
-> V4L2_FLAG_MEMORY_NON_CONSISTENT has no effect on dma-sg buffers.
-> dma-sg allocates memory using the page allocator directly, so
-> there is no memory consistency guarantee.
+We can trace functions using ftrace, so there is no need for this
+additional prints. Remove them.
 
-This should also be a comment in the code.
+We keep only those which print some additional info, not only function
+name & "entry"/"exit".
 
-Regards,
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+---
+ drivers/tty/n_hdlc.c | 32 ++------------------------------
+ 1 file changed, 2 insertions(+), 30 deletions(-)
 
-	Hans
-
-> 
-> Change-Id: Ia0d9d72a8c2a9fe3264ac148f59201573289ed2c
-> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> ---
->  .../media/common/videobuf2/videobuf2-dma-sg.c | 22 +++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/drivers/media/common/videobuf2/videobuf2-dma-sg.c b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-> index 6db60e9d5183..bfc99a0cb7b9 100644
-> --- a/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-> +++ b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-> @@ -470,6 +470,26 @@ static void vb2_dma_sg_dmabuf_ops_release(struct dma_buf *dbuf)
->  	vb2_dma_sg_put(dbuf->priv);
->  }
->  
-> +static int vb2_dma_sg_dmabuf_ops_begin_cpu_access(struct dma_buf *dbuf,
-> +					enum dma_data_direction direction)
-> +{
-> +	struct vb2_dma_sg_buf *buf = dbuf->priv;
-> +	struct sg_table *sgt = buf->dma_sgt;
-> +
-> +	dma_sync_sg_for_cpu(buf->dev, sgt->sgl, sgt->nents, buf->dma_dir);
-> +	return 0;
-> +}
-> +
-> +static int vb2_dma_sg_dmabuf_ops_end_cpu_access(struct dma_buf *dbuf,
-> +					enum dma_data_direction direction)
-> +{
-> +	struct vb2_dma_sg_buf *buf = dbuf->priv;
-> +	struct sg_table *sgt = buf->dma_sgt;
-> +
-> +	dma_sync_sg_for_device(buf->dev, sgt->sgl, sgt->nents, buf->dma_dir);
-> +	return 0;
-> +}
-> +
->  static void *vb2_dma_sg_dmabuf_ops_vmap(struct dma_buf *dbuf)
->  {
->  	struct vb2_dma_sg_buf *buf = dbuf->priv;
-> @@ -488,6 +508,8 @@ static const struct dma_buf_ops vb2_dma_sg_dmabuf_ops = {
->  	.detach = vb2_dma_sg_dmabuf_ops_detach,
->  	.map_dma_buf = vb2_dma_sg_dmabuf_ops_map,
->  	.unmap_dma_buf = vb2_dma_sg_dmabuf_ops_unmap,
-> +	.begin_cpu_access = vb2_dma_sg_dmabuf_ops_begin_cpu_access,
-> +	.end_cpu_access = vb2_dma_sg_dmabuf_ops_end_cpu_access,
->  	.vmap = vb2_dma_sg_dmabuf_ops_vmap,
->  	.mmap = vb2_dma_sg_dmabuf_ops_mmap,
->  	.release = vb2_dma_sg_dmabuf_ops_release,
-> 
+diff --git a/drivers/tty/n_hdlc.c b/drivers/tty/n_hdlc.c
+index 27b506bf03ce..9e115ecf920d 100644
+--- a/drivers/tty/n_hdlc.c
++++ b/drivers/tty/n_hdlc.c
+@@ -232,10 +232,7 @@ static void n_hdlc_release(struct n_hdlc *n_hdlc)
+ {
+ 	struct tty_struct *tty = n_hdlc2tty (n_hdlc);
+ 	struct n_hdlc_buf *buf;
+-	
+-	if (debuglevel >= DEBUG_LEVEL_INFO)	
+-		printk("%s(%d)n_hdlc_release() called\n",__FILE__,__LINE__);
+-		
++
+ 	/* Ensure that the n_hdlcd process is not hanging on select()/poll() */
+ 	wake_up_interruptible (&tty->read_wait);
+ 	wake_up_interruptible (&tty->write_wait);
+@@ -287,9 +284,6 @@ static void n_hdlc_tty_close(struct tty_struct *tty)
+ {
+ 	struct n_hdlc *n_hdlc = tty2n_hdlc (tty);
+ 
+-	if (debuglevel >= DEBUG_LEVEL_INFO)	
+-		printk("%s(%d)n_hdlc_tty_close() called\n",__FILE__,__LINE__);
+-		
+ 	if (n_hdlc != NULL) {
+ 		if (n_hdlc->magic != HDLC_MAGIC) {
+ 			printk (KERN_WARNING"n_hdlc: trying to close unopened tty!\n");
+@@ -309,10 +303,6 @@ static void n_hdlc_tty_close(struct tty_struct *tty)
+ 			n_hdlc_release (n_hdlc);
+ 		}
+ 	}
+-	
+-	if (debuglevel >= DEBUG_LEVEL_INFO)	
+-		printk("%s(%d)n_hdlc_tty_close() success\n",__FILE__,__LINE__);
+-		
+ }	/* end of n_hdlc_tty_close() */
+ 
+ /**
+@@ -353,10 +343,7 @@ static int n_hdlc_tty_open (struct tty_struct *tty)
+ 	
+ 	/* flush receive data from driver */
+ 	tty_driver_flush_buffer(tty);
+-		
+-	if (debuglevel >= DEBUG_LEVEL_INFO)	
+-		printk("%s(%d)n_hdlc_tty_open() success\n",__FILE__,__LINE__);
+-		
++
+ 	return 0;
+ 	
+ }	/* end of n_tty_hdlc_open() */
+@@ -376,8 +363,6 @@ static void n_hdlc_send_frames(struct n_hdlc *n_hdlc, struct tty_struct *tty)
+ 	unsigned long flags;
+ 	struct n_hdlc_buf *tbuf;
+ 
+-	if (debuglevel >= DEBUG_LEVEL_INFO)	
+-		printk("%s(%d)n_hdlc_send_frames() called\n",__FILE__,__LINE__);
+  check_again:
+ 		
+  	spin_lock_irqsave(&n_hdlc->tx_buf_list.spinlock, flags);
+@@ -447,10 +432,6 @@ static void n_hdlc_send_frames(struct n_hdlc *n_hdlc, struct tty_struct *tty)
+ 	
+         if (n_hdlc->woke_up)
+ 	  goto check_again;
+-
+-	if (debuglevel >= DEBUG_LEVEL_INFO)	
+-		printk("%s(%d)n_hdlc_send_frames() exit\n",__FILE__,__LINE__);
+-		
+ }	/* end of n_hdlc_send_frames() */
+ 
+ /**
+@@ -463,9 +444,6 @@ static void n_hdlc_tty_wakeup(struct tty_struct *tty)
+ {
+ 	struct n_hdlc *n_hdlc = tty2n_hdlc(tty);
+ 
+-	if (debuglevel >= DEBUG_LEVEL_INFO)	
+-		printk("%s(%d)n_hdlc_tty_wakeup() called\n",__FILE__,__LINE__);
+-		
+ 	if (!n_hdlc)
+ 		return;
+ 
+@@ -564,9 +542,6 @@ static ssize_t n_hdlc_tty_read(struct tty_struct *tty, struct file *file,
+ 	struct n_hdlc_buf *rbuf;
+ 	DECLARE_WAITQUEUE(wait, current);
+ 
+-	if (debuglevel >= DEBUG_LEVEL_INFO)	
+-		printk("%s(%d)n_hdlc_tty_read() called\n",__FILE__,__LINE__);
+-		
+ 	/* Validate the pointers */
+ 	if (!n_hdlc)
+ 		return -EIO;
+@@ -802,9 +777,6 @@ static __poll_t n_hdlc_tty_poll(struct tty_struct *tty, struct file *filp,
+ 	struct n_hdlc *n_hdlc = tty2n_hdlc (tty);
+ 	__poll_t mask = 0;
+ 
+-	if (debuglevel >= DEBUG_LEVEL_INFO)	
+-		printk("%s(%d)n_hdlc_tty_poll() called\n",__FILE__,__LINE__);
+-		
+ 	if (n_hdlc && n_hdlc->magic == HDLC_MAGIC && tty == n_hdlc->tty) {
+ 		/* queue current process into any wait queue that */
+ 		/* may awaken in the future (read and write) */
+-- 
+2.25.0
 
