@@ -2,86 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EC02164AFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 17:52:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1CC7164B06
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 17:52:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbgBSQv6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 11:51:58 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:35476 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726450AbgBSQv6 (ORCPT
+        id S1726980AbgBSQw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 11:52:28 -0500
+Received: from www62.your-server.de ([213.133.104.62]:40848 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726450AbgBSQw2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 11:51:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=aOY3HVNQlxhNJtO2V3TApKHEpYE+w+Db2fWfBxPBg70=; b=aPCcJ9zrRXoUBYVDUKXy3j/k5j
-        yZk9tmPqWFKmqWJQ98hEtRqBOsPIYOIenFwwhHx8m8CYgSGxcMjQzJ3YApVKYLxDgUX8aXH4oQzJf
-        KfZg5wyIDaz2RVRvBCtSBe6T39nda9WAj3V65qNSoEBI5/eA+3hPRpB2ADTKUO/zfZ4q+nOTE78/5
-        H6ljMA5Pp3zU3gbJ2Duv8QwodNYEKtto+/JcMYkkLWTtPjcY4t4V+YTCkY9VRCLXJAGPxTQpK/ooh
-        c2qx87kmUEOKNEsWjyp/LQ/LKXol9Q8hyI60NtIMd2SzUwABydg/rZARjRJvflIPrQBT/U2mRpItU
-        1vqZOtTQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j4SZN-0001JM-FA; Wed, 19 Feb 2020 16:51:29 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 75EB4300606;
-        Wed, 19 Feb 2020 17:49:35 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id DB88D201E478A; Wed, 19 Feb 2020 17:51:27 +0100 (CET)
-Date:   Wed, 19 Feb 2020 17:51:27 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>, tony.luck@intel.com,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        kasan-dev <kasan-dev@googlegroups.com>
-Subject: Re: [PATCH v3 22/22] x86/int3: Ensure that poke_int3_handler() is
- not sanitized
-Message-ID: <20200219165127.GF14946@hirez.programming.kicks-ass.net>
-References: <20200219144724.800607165@infradead.org>
- <20200219150745.651901321@infradead.org>
- <CACT4Y+Y+nPcnbb8nXGQA1=9p8BQYrnzab_4SvuPwbAJkTGgKOQ@mail.gmail.com>
- <20200219163025.GH18400@hirez.programming.kicks-ass.net>
+        Wed, 19 Feb 2020 11:52:28 -0500
+Received: from sslproxy06.your-server.de ([78.46.172.3])
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1j4SaG-0005EC-ES; Wed, 19 Feb 2020 17:52:24 +0100
+Received: from [2001:1620:665:0:5795:5b0a:e5d5:5944] (helo=linux-3.fritz.box)
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1j4SaF-000Jq9-VN; Wed, 19 Feb 2020 17:52:24 +0100
+Subject: Re: [PATCH bpf-next 0/6] bpftool: Allow to select sections and filter
+ probes
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Michal Rostecki <mrostecki@opensuse.org>
+Cc:     bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+References: <20200218190224.22508-1-mrostecki@opensuse.org>
+ <CAADnVQJm_tvMGjhHyVn66feA3rHLSXTdzqCCABu+9tKer89LVA@mail.gmail.com>
+ <06ae3070-0d35-df49-9310-d1fb7bfb3e67@opensuse.org>
+ <CAADnVQLhEaV=dWMZC83g5QHit7Qvu4H84Dh--K3aOTiUNeEd4g@mail.gmail.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <498282f3-7e75-c24d-513d-be97b165b01f@iogearbox.net>
+Date:   Wed, 19 Feb 2020 17:52:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200219163025.GH18400@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAADnVQLhEaV=dWMZC83g5QHit7Qvu4H84Dh--K3aOTiUNeEd4g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.102.1/25728/Wed Feb 19 15:06:20 2020)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 05:30:25PM +0100, Peter Zijlstra wrote:
-> > It's quite fragile. Tomorrow poke_int3_handler handler calls more of
-> > fewer functions, and both ways it's not detected by anything.
+On 2/19/20 5:37 PM, Alexei Starovoitov wrote:
+> On Wed, Feb 19, 2020 at 4:33 AM Michal Rostecki <mrostecki@opensuse.org> wrote:
+>>
+>> On 2/19/20 4:02 AM, Alexei Starovoitov wrote:
+>>> The motivation is clear, but I think the users shouldn't be made
+>>> aware of such implementation details. I think instead of filter_in/out
+>>> it's better to do 'full or safe' mode of probing.
+>>> By default it can do all the probing that doesn't cause
+>>> extra dmesgs and in 'full' mode it can probe everything.
+>>
+>> Alright, then I will send later v2 where the "internal" implementation
+>> (filtering out based on regex) stays similar (filter_out will stay in
+>> the code without being exposed to users, filter_in will be removed). And
+>> the exposed option of "safe" probing will just apply the
+>> "(trace|write_user)" filter_out pattern. Does it sound good?
 > 
-> Yes; not having tools for this is pretty annoying. In 0/n I asked Dan if
-> smatch could do at least the normal tracing stuff, the compiler
-> instrumentation bits are going to be far more difficult because smatch
-> doesn't work at that level :/
-> 
-> (I actually have
+> yes. If implementation is doing filter_in and applying 'trace_printk|write_user'
+> strings hidden within bpftool than I think it should be good.
+> What do you think the default should be?
+> It feels to me that the default should not be causing dmesg prints.
+> So only addition flag for bpftool command line will be 'bpftool
+> feature probe full'
 
-... and I stopped typing ...
-
-I think I mean to say something like: ... more changes to
-poke_int3_handler() pending, but they're all quite simple).
+Agree, that makes sense to me.
