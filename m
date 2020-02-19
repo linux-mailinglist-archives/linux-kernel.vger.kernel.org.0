@@ -2,164 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFDD01638D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 01:59:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1B81163914
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 02:11:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727762AbgBSA7X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 19:59:23 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:53932 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726482AbgBSA7W (ORCPT
+        id S1727910AbgBSBLe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 20:11:34 -0500
+Received: from gateway24.websitewelcome.com ([192.185.51.253]:49633 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726757AbgBSBLe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 19:59:22 -0500
-Received: from dread.disaster.area (pa49-179-138-28.pa.nsw.optusnet.com.au [49.179.138.28])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 368A83A2380;
-        Wed, 19 Feb 2020 11:59:16 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1j4Dhr-0004cn-HF; Wed, 19 Feb 2020 11:59:15 +1100
-Date:   Wed, 19 Feb 2020 11:59:15 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v6 07/19] mm: Put readahead pages in cache earlier
-Message-ID: <20200219005915.GV10776@dread.disaster.area>
-References: <20200217184613.19668-1-willy@infradead.org>
- <20200217184613.19668-12-willy@infradead.org>
- <20200218061459.GM10776@dread.disaster.area>
- <20200218154222.GQ7778@bombadil.infradead.org>
+        Tue, 18 Feb 2020 20:11:34 -0500
+X-Greylist: delayed 1393 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Feb 2020 20:11:33 EST
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id 0C3E53249
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 18:48:20 -0600 (CST)
+Received: from br164.hostgator.com.br ([192.185.176.180])
+        by cmsmtp with SMTP
+        id 4DXHjJ2qURP4z4DXHjjPhG; Tue, 18 Feb 2020 18:48:20 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=castello.eng.br; s=default; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=JoYnHBAG6Y5v6fA38lydAZysRIc6JyUc06Qk8jBvAUk=; b=w1E4Gp6D/9U2l7EaNAy00GX6Jg
+        17Xr4eHKch+rmlP/+VeQNFjzBvy8SfbIIsRnA1R7vPNk+ign0ZNg4cBqUa1Qh0WSIKbhS5woHIAYY
+        G4oexTma33sdm2XgXOg9I+3piUWcBU69QXNi0K1qEqprdB8A1mwcUNvyaB4KSB7UEdb2CDakCjxfo
+        Z5RNwe1fP8CP1rgwk5F8QsUTJmIxE2Xdm/2PczWq/bDdw6se6VjEwWM/PdfgBUNmYa1eeGysnmjut
+        XrVlPT6rQ91P7B/m6NzhNw9hHTd/vew785BKQUdKzi4gfVheSGv43gu3+GII0IlDXJotY7phCkFaA
+        Ar4Ym6tg==;
+Received: from [191.31.202.255] (port=52372 helo=castello.castello)
+        by br164.hostgator.com.br with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <matheus@castello.eng.br>)
+        id 1j4DXG-000PIC-8O; Tue, 18 Feb 2020 21:48:18 -0300
+From:   Matheus Castello <matheus@castello.eng.br>
+To:     afaerber@suse.de, manivannan.sadhasivam@linaro.org
+Cc:     daniel.lezcano@linaro.org, tglx@linutronix.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Matheus Castello <matheus@castello.eng.br>
+Subject: [PATCH v2] clocksource: owl: Improve owl_timer_init fail messages
+Date:   Tue, 18 Feb 2020 21:48:10 -0300
+Message-Id: <20200219004810.411190-1-matheus@castello.eng.br>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <e3d851477d569ccb66294b2292495778a3a24c09.camel@suse.de>
+References: <e3d851477d569ccb66294b2292495778a3a24c09.camel@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200218154222.GQ7778@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
-        a=zAxSp4fFY/GQY8/esVNjqw==:117 a=zAxSp4fFY/GQY8/esVNjqw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
-        a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8 a=vUdR-S3ouboEXt6xVngA:9
-        a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - br164.hostgator.com.br
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - castello.eng.br
+X-BWhitelist: no
+X-Source-IP: 191.31.202.255
+X-Source-L: No
+X-Exim-ID: 1j4DXG-000PIC-8O
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (castello.castello) [191.31.202.255]:52372
+X-Source-Auth: matheus@castello.eng.br
+X-Email-Count: 1
+X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 07:42:22AM -0800, Matthew Wilcox wrote:
-> On Tue, Feb 18, 2020 at 05:14:59PM +1100, Dave Chinner wrote:
-> > On Mon, Feb 17, 2020 at 10:45:52AM -0800, Matthew Wilcox wrote:
-> > > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> > > 
-> > > At allocation time, put the pages in the cache unless we're using
-> > > ->readpages.  Add the readahead_for_each() iterator for the benefit of
-> > > the ->readpage fallback.  This iterator supports huge pages, even though
-> > > none of the filesystems to be converted do yet.
-> > 
-> > This could be better written - took me some time to get my head
-> > around it and the code.
-> > 
-> > "When populating the page cache for readahead, mappings that don't
-> > use ->readpages need to have their pages added to the page cache
-> > before ->readpage is called. Do this insertion earlier so that the
-> > pages can be looked up immediately prior to ->readpage calls rather
-> > than passing them on a linked list. This early insert functionality
-> > is also required by the upcoming ->readahead method that will
-> > replace ->readpages.
-> > 
-> > Optimise and simplify the readpage loop by adding a
-> > readahead_for_each() iterator to provide the pages we need to read.
-> > This iterator also supports huge pages, even though none of the
-> > filesystems have been converted to use them yet."
-> 
-> Thanks, I'll use that.
-> 
-> > > +static inline struct page *readahead_page(struct readahead_control *rac)
-> > > +{
-> > > +	struct page *page;
-> > > +
-> > > +	if (!rac->_nr_pages)
-> > > +		return NULL;
-> > 
-> > Hmmmm.
-> > 
-> > > +
-> > > +	page = xa_load(&rac->mapping->i_pages, rac->_start);
-> > > +	VM_BUG_ON_PAGE(!PageLocked(page), page);
-> > > +	rac->_batch_count = hpage_nr_pages(page);
-> > 
-> > So we could have rac->_nr_pages = 2, and then we get an order 2
-> > large page returned, and so rac->_batch_count = 4.
-> 
-> Well, no, we couldn't.  rac->_nr_pages is incremented by 4 when we add
-> an order-2 page to the readahead.
+Check the return from clocksource_mmio_init, add messages in case of
+an error and in case of not having a defined clock property.
 
-I don't see any code that does that. :)
+Signed-off-by: Matheus Castello <matheus@castello.eng.br>
+---
 
-i.e. we aren't actually putting high order pages into the page
-cache here - page_alloc() allocates order-0 pages) - so there's
-nothing in the patch that tells me how rac->_nr_pages behaves
-when allocating large pages...
+Thanks Manivannan and Andreas for the review.
+Tested on my Caninos Labrador s500 based board.
 
-IOWs, we have an undocumented assumption in the implementation...
+Changes since v1:
+(suggested by maintainers)
+- Maintains consistency output PTR_ERR(clk)
+- Returning in case of error on clocksource_mmio_init
+- Use parentheses between the error code
+- Remove OF mention
 
-> I can put a
-> 	BUG_ON(rac->_batch_count > rac->_nr_pages)
-> in here to be sure to catch any logic error like that.
+ drivers/clocksource/timer-owl.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-Definitely necessary given that we don't insert large pages for
-readahead yet. A comment explaining the assumptions that the
-code makes for large pages is probably in order, too.
+diff --git a/drivers/clocksource/timer-owl.c b/drivers/clocksource/timer-owl.c
+index 900fe736145d..820fbcc05503 100644
+--- a/drivers/clocksource/timer-owl.c
++++ b/drivers/clocksource/timer-owl.c
+@@ -135,8 +135,11 @@ static int __init owl_timer_init(struct device_node *node)
+ 	}
 
-> > > -		page->index = offset;
-> > > -		list_add(&page->lru, &page_pool);
-> > > +		if (use_list) {
-> > > +			page->index = offset;
-> > > +			list_add(&page->lru, &page_pool);
-> > > +		} else if (add_to_page_cache_lru(page, mapping, offset,
-> > > +					gfp_mask) < 0) {
-> > > +			put_page(page);
-> > > +			goto read;
-> > > +		}
-> > 
-> > Ok, so that's why you put read code at the end of the loop. To turn
-> > the code into spaghetti :/
-> > 
-> > How much does this simplify down when we get rid of ->readpages and
-> > can restructure the loop? This really seems like you're trying to
-> > flatten two nested loops into one by the use of goto....
-> 
-> I see it as having two failure cases in this loop.  One for "page is
-> already present" (which already existed) and one for "allocated a page,
-> but failed to add it to the page cache" (which used to be done later).
-> I didn't want to duplicate the "call read_pages()" code.  So I reshuffled
-> the code rather than add a nested loop.  I don't think the nested loop
-> is easier to read (we'll be at 5 levels of indentation for some statements).
-> Could do it this way ...
+ 	clk = of_clk_get(node, 0);
+-	if (IS_ERR(clk))
+-		return PTR_ERR(clk);
++	if (IS_ERR(clk)) {
++		ret = PTR_ERR(clk);
++		pr_err("Failed to get clock for clocksource (%d)\n", ret);
++		return ret;
++	}
 
-Can we move the update of @rac inside read_pages()? The next
-start offset^Windex we start at is rac._start + rac._nr_pages, right?
+ 	rate = clk_get_rate(clk);
 
-so read_pages() could do:
+@@ -144,8 +147,12 @@ static int __init owl_timer_init(struct device_node *node)
+ 	owl_timer_set_enabled(owl_clksrc_base, true);
 
-{
-	if (readahead_count(rac)) {
-		/* do readahead */
-	}
+ 	sched_clock_register(owl_timer_sched_read, 32, rate);
+-	clocksource_mmio_init(owl_clksrc_base + OWL_Tx_VAL, node->name,
+-			      rate, 200, 32, clocksource_mmio_readl_up);
++	ret = clocksource_mmio_init(owl_clksrc_base + OWL_Tx_VAL, node->name,
++				    rate, 200, 32, clocksource_mmio_readl_up);
++	if (ret) {
++		pr_err("Failed to register clocksource (%d)\n", ret);
++		return ret;
++	}
 
-	/* advance the readahead cursor */
-	rac->_start += rac->_nr_pages;
-	rac._nr_pages = 0;
-}
+ 	owl_timer_reset(owl_clkevt_base);
 
-and then we only need to call read_pages() in these cases and so
-the requirement for avoiding duplicating code is avoided...
+--
+2.25.0
 
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
