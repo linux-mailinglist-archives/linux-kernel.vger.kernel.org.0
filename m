@@ -2,132 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BBC5163FFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 10:08:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69FEE164005
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 10:12:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbgBSJI3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 04:08:29 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60612 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726163AbgBSJI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 04:08:28 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id DC0A8AF33;
-        Wed, 19 Feb 2020 09:08:25 +0000 (UTC)
-Date:   Wed, 19 Feb 2020 09:08:22 +0000
-From:   Mel Gorman <mgorman@suse.de>
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     Vincent Guittot <vincent.guittot@linaro.org>, mingo@redhat.com,
-        peterz@infradead.org, juri.lelli@redhat.com,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        linux-kernel@vger.kernel.org, pauld@redhat.com,
-        parth@linux.ibm.com, hdanton@sina.com
-Subject: Re: [PATCH v2 4/5] sched/pelt: Add a new runnable average signal
-Message-ID: <20200219090822.GH3420@suse.de>
-References: <20200214152729.6059-1-vincent.guittot@linaro.org>
- <20200214152729.6059-5-vincent.guittot@linaro.org>
- <4cda8dc3-f6bb-2896-c899-65eadd5c839d@arm.com>
+        id S1726710AbgBSJMd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 04:12:33 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33578 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726385AbgBSJMd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 04:12:33 -0500
+Received: by mail-pg1-f195.google.com with SMTP id 6so12419478pgk.0;
+        Wed, 19 Feb 2020 01:12:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Mn4zsjlzynntfOs5YFb07oY3dWpb5D0zaBJYwASVQWY=;
+        b=G6gHGceS0yAmiHRQ/TMZbsluyMQ1XzeYXax7LBY7adHSvicxi2bo/GVfPp7ucUV/TS
+         LyMb5uocPPTHdhXzuKMCff0rZI8EupnzAxxLE8h/rrp/k7yaj6Wl0WOA9pnVuBuW6vp4
+         aNJ/sEFRM5pTwAlDWEcwnD8935Eupw7rX2OXFD1XOaZQsxliVpzCfUzSgZGrghz9uYOb
+         +Gqgkll4YMjV9s8GQQAtbnxLrj2kaRdYec4FTp8H4hN49EYjKtjIneSIxvCqAzEyVWQV
+         VU5TxIj93vH1Q4l5DWndMunaR1aWkNIBzz0sCRk9B+n4AozUTdy72qyCXUpXaWODLbcS
+         ZPTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Mn4zsjlzynntfOs5YFb07oY3dWpb5D0zaBJYwASVQWY=;
+        b=aCyrPmvHV9hcN56TYWKqdBIhaHxT52+50eoju82wfGHvYAsFeKbr9E+okEpOktng1U
+         t9g3Qy1A67N9gzwLBDytPh9qnHBix7HxYFMAo5Hgl1JpbswPDaafhKU7b3C7vfqznQnj
+         SdfIrN24u3J760///MLtofXu0uVQAQTDdb0S/0+zgRx1MS9NFjXiLtJQNv4lzMxGeccm
+         poJAhEX135nrPzG7dmdiJsi2oa2JNo8wGXBhM5p5fBxzeBNpHlA6Tglr0WZ+VKhSWh1Q
+         cMsuZtoaLWFmreDcVgeCN9ANjhZ+b/slZupxqld7+tFTPU8j9Hpb0N20TPXm7TZduVF4
+         C8oQ==
+X-Gm-Message-State: APjAAAX4rg72YVasKgh7u/hDNpmDyJDBHKi/xqZvHDbsMKmFfUOl7wUC
+        geKBIDZuXQxCyr/5qDWN5+0=
+X-Google-Smtp-Source: APXvYqysCxVXMoTrskLDknj6A+zYSggTxDmnhSSnVmwhyNIO6fwm//kfNy0Yb6rVqHQj9Fsr5aKc2Q==
+X-Received: by 2002:a65:5281:: with SMTP id y1mr26294515pgp.327.1582103552650;
+        Wed, 19 Feb 2020 01:12:32 -0800 (PST)
+Received: from localhost.localdomain ([146.196.37.220])
+        by smtp.googlemail.com with ESMTPSA id b18sm2074688pfb.116.2020.02.19.01.12.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2020 01:12:32 -0800 (PST)
+From:   Amol Grover <frextrite@gmail.com>
+To:     Johannes Berg <johannes@sipsolutions.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Amol Grover <frextrite@gmail.com>
+Subject: [PATCH] cfg80211: Pass lockdep expression to RCU lists
+Date:   Wed, 19 Feb 2020 14:41:04 +0530
+Message-Id: <20200219091102.10709-1-frextrite@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <4cda8dc3-f6bb-2896-c899-65eadd5c839d@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 09:19:16PM +0000, Valentin Schneider wrote:
-> On 14/02/2020 15:27, Vincent Guittot wrote:
-> > Now that runnable_load_avg has been removed, we can replace it by a new
-> > signal that will highlight the runnable pressure on a cfs_rq. This signal
-> > track the waiting time of tasks on rq and can help to better define the
-> > state of rqs.
-> > 
-> > At now, only util_avg is used to define the state of a rq:
-> >   A rq with more that around 80% of utilization and more than 1 tasks is
-> >   considered as overloaded.
-> > 
-> > But the util_avg signal of a rq can become temporaly low after that a task
-> > migrated onto another rq which can bias the classification of the rq.
-> > 
-> > When tasks compete for the same rq, their runnable average signal will be
-> > higher than util_avg as it will include the waiting time and we can use
-> > this signal to better classify cfs_rqs.
-> > 
-> > The new runnable_avg will track the runnable time of a task which simply
-> > adds the waiting time to the running time. The runnable _avg of cfs_rq
-> > will be the /Sum of se's runnable_avg and the runnable_avg of group entity
-> > will follow the one of the rq similarly to util_avg.
-> > 
-> 
-> I did a bit of playing around with tracepoints and it seems to be behaving
-> fine. For instance, if I spawn 12 always runnable tasks (sysbench --test=cpu)
-> on my Juno (6 CPUs), I get to a system-wide runnable value (\Sum cpu_runnable())
-> of about 12K. I've only eyeballed them, but migration of the signal values
-> seem fine too.
-> 
-> I have a slight worry that the rq-wide runnable signal might be too easy to
-> inflate, since we aggregate for *all* runnable tasks, and that may not play
-> well with your group_is_overloaded() change (despite having the imbalance_pct
-> on the "right" side).
-> 
-> In any case I'll need to convince myself of it with some messing around, and
-> this concerns patch 5 more than patch 4. So FWIW for this one:
-> 
-> Tested-by: Valentin Schneider <valentin.schneider@arm.com>
-> 
-> I also have one (two) more nit(s) below.
-> 
+rdev->sched_scan_req_list maybe traversed using list_for_each_entry_rcu
+outside an RCU read-side critical section but under the protection
+of rtnl_mutex.
 
-Thanks.
+Hence, add corresponding lockdep expression to silence false-positive
+warnings, and harden RCU lists.
 
-> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > ---
-> > diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
-> > @@ -227,14 +231,14 @@ ___update_load_sum(u64 now, struct sched_avg *sa,
-> >  	 * Step 1: accumulate *_sum since last_update_time. If we haven't
-> >  	 * crossed period boundaries, finish.
-> >  	 */
-> > -	if (!accumulate_sum(delta, sa, load, running))
-> > +	if (!accumulate_sum(delta, sa, load, runnable, running))
-> >  		return 0;
-> >  
-> >  	return 1;
-> >  }
-> >  
-> >  static __always_inline void
-> > -___update_load_avg(struct sched_avg *sa, unsigned long load)
-> > +___update_load_avg(struct sched_avg *sa, unsigned long load, unsigned long runnable)
-> >  {
-> >  	u32 divider = LOAD_AVG_MAX - 1024 + sa->period_contrib;
-> >  
-> > @@ -242,6 +246,7 @@ ___update_load_avg(struct sched_avg *sa, unsigned long load)
-> >  	 * Step 2: update *_avg.
-> >  	 */
-> >  	sa->load_avg = div_u64(load * sa->load_sum, divider);
-> > +	sa->runnable_avg =	div _u64(runnable * sa->runnable_sum, divider);
->                           ^^^^^^        ^^^^^^^^
->                             a)             b)
-> a) That's a tab
-> 
+Signed-off-by: Amol Grover <frextrite@gmail.com>
+---
+ net/wireless/scan.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Fixed and I'll post a v4 of my own series with Vincent's included.
-
-> b) The value being passed is always 1, do we really need it to expose it as a
->    parameter?
-
-This does appear to be an oversight but I'm not familiar enough with
-pelt to be sure.
-
-___update_load_avg() is called when sum of the load has changed because
-a pelt period has passed and it has lost sight and does not care if an
-individual sched entity is runnable or not. The parameter was added by
-this patch but I cannot find any useful meaning for it.
-
-Vincent, what was your thinking here? Should the parameter be removed?
-
+diff --git a/net/wireless/scan.c b/net/wireless/scan.c
+index aef240fdf8df..7f1af8f347b1 100644
+--- a/net/wireless/scan.c
++++ b/net/wireless/scan.c
+@@ -556,9 +556,8 @@ cfg80211_find_sched_scan_req(struct cfg80211_registered_device *rdev, u64 reqid)
+ {
+ 	struct cfg80211_sched_scan_request *pos;
+ 
+-	WARN_ON_ONCE(!rcu_read_lock_held() && !lockdep_rtnl_is_held());
+-
+-	list_for_each_entry_rcu(pos, &rdev->sched_scan_req_list, list) {
++	list_for_each_entry_rcu(pos, &rdev->sched_scan_req_list, list,
++				lockdep_rtnl_is_held()) {
+ 		if (pos->reqid == reqid)
+ 			return pos;
+ 	}
 -- 
-Mel Gorman
-SUSE Labs
+2.24.1
+
