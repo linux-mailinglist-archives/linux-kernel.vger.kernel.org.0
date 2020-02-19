@@ -2,100 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE4A416407E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 10:36:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A38316407C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 10:35:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726623AbgBSJgJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 04:36:09 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43665 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbgBSJgJ (ORCPT
+        id S1726548AbgBSJfe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 04:35:34 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36652 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726210AbgBSJfd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 04:36:09 -0500
-Received: by mail-pl1-f193.google.com with SMTP id p11so9318959plq.10;
-        Wed, 19 Feb 2020 01:36:08 -0800 (PST)
+        Wed, 19 Feb 2020 04:35:33 -0500
+Received: by mail-pg1-f193.google.com with SMTP id d9so12442834pgu.3;
+        Wed, 19 Feb 2020 01:35:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=USv22fMY4lRbm7kdOlrco6KeUFWgxCIZrYv0NUecR8k=;
-        b=mFl+Rpghcx4xs9gygrl7xbkfupYFtIeXXg7A2VrlMXSkKuMQsWKeCG26GbJDCiOieA
-         OjvFeZpZfmYjIpBwwOBC9csCzviJo3jbxes07OuwfMKnYxJUcVKvyfaQepkrHlLQx9es
-         OV7Iu2BxOSRlY1uWn0azWWlBlxhrfAL1rnIEVUnSViqd4vKaKk30ZnHvziLZcbICXXdJ
-         rLShTFl9eQRoiKGW0P2xPeeBunLdmhwGgSpuuQMZFkTJMTClvncjNGMTqkyzJhTPZ7l7
-         bVuNYv9kA+TX8kwieNjO4JqyjO3IVcfqL78VqmZ1CUZaxtive881yHsaUaEmaKDPtOo0
-         yKTw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XHwhZR1aZjPYv0PmkX/Vd7zZe4RwwVtxuCpFzogn/FE=;
+        b=vWlJsiNDnJ1GB/fTvfLeoH/hxZWTvy0Z4Eb/wS13XIb26me96HiX9MJtdhRRnZZoom
+         5+4D+qomsSUUhE5gjGTkKyqCO8F+rHvGleSuCJiqcB5c8QDh7fndrlXR0wcK3JHcTjdP
+         Zq7myTRAN5olGp4khMFesUmEo4gV7x9zVRDCGkp01J6lP2cOiCbVLAx6jQFHuevHutaK
+         +kmXUsRRTvvI/G8JrFSy8sIqBUA0LcWZBC5Xi7noKn710QHg/FOtdhl0hdmuiQ9NsqfQ
+         bFYbzSmoj3zOHc2ooOgDhYeGhW1H1r6nysEoMHv/fP/fWBFKT6q5nAzZUT0thTDPrtBz
+         v5+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=USv22fMY4lRbm7kdOlrco6KeUFWgxCIZrYv0NUecR8k=;
-        b=BnqxSqgb2PCsdaQaiqsFx6PyJxYz4A8QlguJcIIK6LB6qseV1pRAe9qC/opNUtm1/Z
-         q2kTuAS1gmtlSj2KUBi2npYm/ys6/JvmZ7NUcjc9xk74+S5A4A7hXxwGpY+HEzjbOdXU
-         hVpa5xxZ+PwoYXsJOar9WFMD7nIGFDkxLopYce2iXGl7IbJrFEqq8LTe++FQVnz8ltpL
-         XFbveUc9719dJSVdDnIdYe6b7fL7GeVPKbtt0xmamfoSMCDmVCV8l3LWSGX3SWDCw2k6
-         OEsOgjkf8Fyyc6I4WByIQAnXT2hwcmaajRqP94bct8GfUzEK6+X/QPiXoGJyhVeumOXi
-         EyZQ==
-X-Gm-Message-State: APjAAAUMbtOMaR3X4PdQv3XPBrbLxvQYFqeT2wgZeNDX2PO0vOqHDZ73
-        i/zFEE4z/nfH3RIHD1KkySQ=
-X-Google-Smtp-Source: APXvYqyK7T17usTuMnhZLEVXZVGy6SV0GxYbz6ukrtcwQEV2x5dPjBIC/2rZ3TlaqMsCMFAuKp/yxQ==
-X-Received: by 2002:a17:902:9a09:: with SMTP id v9mr24385277plp.341.1582104968248;
-        Wed, 19 Feb 2020 01:36:08 -0800 (PST)
-Received: from localhost.localdomain ([146.196.37.220])
-        by smtp.googlemail.com with ESMTPSA id x197sm2119217pfc.1.2020.02.19.01.36.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 01:36:07 -0800 (PST)
-From:   Amol Grover <frextrite@gmail.com>
-To:     Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
-        Amol Grover <frextrite@gmail.com>
-Subject: [PATCH] sunrpc: Pass lockdep expression to RCU lists
-Date:   Wed, 19 Feb 2020 15:05:05 +0530
-Message-Id: <20200219093504.16290-1-frextrite@gmail.com>
-X-Mailer: git-send-email 2.24.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XHwhZR1aZjPYv0PmkX/Vd7zZe4RwwVtxuCpFzogn/FE=;
+        b=ehgrAcbANBGVhqrzauQtk8VroKkdagek62blWAM53h+By7vW+V+MZl1M2+ul1m7Ulk
+         oP393TcB7nXVzXr2bO9ODm+BjiI+N8mntQ1QMyvrVsLrZ+GyUvhZG+L5ELSpwLUeUOtM
+         e0x16hbo+rR2p3wz9om/4ZA4gp3ZPKDGAaSbGswLkXVii5TOB1YAzZlJhMFoosGqPNyU
+         GDyS1UFRe887fyMRcGVuNrRObMHwrLiHZYwRY27yAC0PIF18hkOO4D5PhbbOMcdAWgcK
+         c+8vnBdNI44QfjOmniFUWaP2rN+ettdoy8eY/ttwTqGi+fpAvLHASSY+7acOaCGfL/ap
+         Y2/A==
+X-Gm-Message-State: APjAAAW9H08QD0KEZ3p9s49S8vEScE6dWc5e/libhs3fYjysxBSC8Rtj
+        jAeswY0dAjjpWa2Z8ckuDHehT0QRvAYLHAzb9OzoXkaJ93Y=
+X-Google-Smtp-Source: APXvYqwHy4+ki6LvqfM1U6+wN/+xYkIf7WUyGmP+FmHfs0ItzrgZx8wPzNyYMXSycYZmCTL+L5N0/X9iKXgC1YFhgbM=
+X-Received: by 2002:a62:52d0:: with SMTP id g199mr25197889pfb.241.1582104932745;
+ Wed, 19 Feb 2020 01:35:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAHk-=wjEd-gZ1g52kgi_g8gq-QCF2E01TkQd5Hmj4W5aThLw3A@mail.gmail.com>
+ <20200219082155.6787-1-linux@rasmusvillemoes.dk>
+In-Reply-To: <20200219082155.6787-1-linux@rasmusvillemoes.dk>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 19 Feb 2020 11:35:25 +0200
+Message-ID: <CAHp75Vd865FYQFUk56ej-vaDj2M-5=3XjQ3rKzoJQhZMsEZuyg@mail.gmail.com>
+Subject: Re: [PATCH] vsprintf: sanely handle NULL passed to %pe
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Tobin C . Harding" <me@tobin.cc>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Documentation List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-detail->hash_table[] is traversed using hlist_for_each_entry_rcu
-outside an RCU read-side critical section but under the protection
-of detail->hash_lock.
+On Wed, Feb 19, 2020 at 10:24 AM Rasmus Villemoes
+<linux@rasmusvillemoes.dk> wrote:
+>
+> Extend %pe to pretty-print NULL in addition to ERR_PTRs,
+> i.e. everything IS_ERR_OR_NULL().
+>
 
-Hence, add corresponding lockdep expression to silence false-positive
-warnings, and harden RCU lists.
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+One nit below, though.
 
-Signed-off-by: Amol Grover <frextrite@gmail.com>
----
- net/sunrpc/cache.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> ---
+> Something like this? The actual code change is +2,-1 with another +1
+> for a test case.
+>
+>  Documentation/core-api/printk-formats.rst | 9 +++++----
+>  lib/errname.c                             | 4 ++++
+>  lib/test_printf.c                         | 1 +
+>  lib/vsprintf.c                            | 4 ++--
+>  4 files changed, 12 insertions(+), 6 deletions(-)
+>
+> diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
+> index 8ebe46b1af39..964b55291445 100644
+> --- a/Documentation/core-api/printk-formats.rst
+> +++ b/Documentation/core-api/printk-formats.rst
+> @@ -86,10 +86,11 @@ Error Pointers
+>
+>         %pe     -ENOSPC
+>
+> -For printing error pointers (i.e. a pointer for which IS_ERR() is true)
+> -as a symbolic error name. Error values for which no symbolic name is
+> -known are printed in decimal, while a non-ERR_PTR passed as the
+> -argument to %pe gets treated as ordinary %p.
 
-diff --git a/net/sunrpc/cache.c b/net/sunrpc/cache.c
-index f740cb51802a..5db5f5b94726 100644
---- a/net/sunrpc/cache.c
-+++ b/net/sunrpc/cache.c
-@@ -97,7 +97,8 @@ static struct cache_head *sunrpc_cache_add_entry(struct cache_detail *detail,
- 	spin_lock(&detail->hash_lock);
- 
- 	/* check if entry appeared while we slept */
--	hlist_for_each_entry_rcu(tmp, head, cache_list) {
-+	hlist_for_each_entry_rcu(tmp, head, cache_list,
-+				 lockdep_is_held(&detail->hash_lock)) {
- 		if (detail->match(tmp, key)) {
- 			if (cache_is_expired(detail, tmp)) {
- 				hlist_del_init_rcu(&tmp->cache_list);
+> +For printing error pointers (i.e. a pointer for which IS_ERR() is
+> +true) as a symbolic error name. Error values for which no symbolic
+
+Why to reformat these lines?
+
+> +name is known are printed in decimal. A NULL pointer is printed as
+> +NULL. All other pointer values (i.e. anything !IS_ERR_OR_NULL()) get
+> +treated as ordinary %p.
+>
+>  Symbols/Function Pointers
+>  -------------------------
+> diff --git a/lib/errname.c b/lib/errname.c
+> index 0c4d3e66170e..7757bc00f564 100644
+> --- a/lib/errname.c
+> +++ b/lib/errname.c
+> @@ -11,9 +11,13 @@
+>   * allocated errnos (with EHWPOISON = 257 on parisc, and EDQUOT = 1133
+>   * on mips), so this wastes a bit of space on those - though we
+>   * special case the EDQUOT case.
+> + *
+> + * For the benefit of %pe being able to print any ERR_OR_NULL pointer
+> + * symbolically, 0 is also treated specially.
+>   */
+>  #define E(err) [err + BUILD_BUG_ON_ZERO(err <= 0 || err > 300)] = "-" #err
+>  static const char *names_0[] = {
+> +       [0] = "NULL",
+>         E(E2BIG),
+>         E(EACCES),
+>         E(EADDRINUSE),
+> diff --git a/lib/test_printf.c b/lib/test_printf.c
+> index 2d9f520d2f27..3a37d0e9e735 100644
+> --- a/lib/test_printf.c
+> +++ b/lib/test_printf.c
+> @@ -641,6 +641,7 @@ errptr(void)
+>         test("[-EIO    ]", "[%-8pe]", ERR_PTR(-EIO));
+>         test("[    -EIO]", "[%8pe]", ERR_PTR(-EIO));
+>         test("-EPROBE_DEFER", "%pe", ERR_PTR(-EPROBE_DEFER));
+> +       test("[NULL]", "[%pe]", NULL);
+>  #endif
+>  }
+>
+> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+> index 7c488a1ce318..b7118d78eb20 100644
+> --- a/lib/vsprintf.c
+> +++ b/lib/vsprintf.c
+> @@ -2247,8 +2247,8 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
+>         case 'x':
+>                 return pointer_string(buf, end, ptr, spec);
+>         case 'e':
+> -               /* %pe with a non-ERR_PTR gets treated as plain %p */
+> -               if (!IS_ERR(ptr))
+> +               /* %pe with a non-ERR_OR_NULL ptr gets treated as plain %p */
+> +               if (!IS_ERR_OR_NULL(ptr))
+>                         break;
+>                 return err_ptr(buf, end, ptr, spec);
+>         }
+> --
+> 2.23.0
+>
+
+
 -- 
-2.24.1
-
+With Best Regards,
+Andy Shevchenko
