@@ -2,103 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17776164D8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 19:21:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 427F7164D7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 19:16:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726691AbgBSSVh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 13:21:37 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:54478 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726582AbgBSSVg (ORCPT
+        id S1726659AbgBSSQX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 13:16:23 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:35908 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726582AbgBSSQW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 13:21:36 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01JILIGk015406;
-        Wed, 19 Feb 2020 12:21:18 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1582136478;
-        bh=au41jVMNZVVyoK32FVyeoksJNT9R9w3OPUwvi6D1Si4=;
-        h=From:To:CC:Subject:Date;
-        b=pr/tai/MepQMv1hq/68bmruqZS4r2VeiJe5znF5PCGp5MFKwpT/0XQ9b6+h39BCYY
-         btXqQ1zKR2cxPMdcg/NKYZ6sTDBrd519NNsSm78MNsYTnnPKeXq7MHuTRfpeRK6CAf
-         Onw/xbYRDHYihDkmNttWWEbNuhtmSvTmlSSgV8V4=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01JILIM1065394
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 19 Feb 2020 12:21:18 -0600
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 19
- Feb 2020 12:21:18 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 19 Feb 2020 12:21:18 -0600
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01JILILv036974;
-        Wed, 19 Feb 2020 12:21:18 -0600
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <andrew@lunn.ch>, <f.fainelli@gmail.com>, <hkallweit1@gmail.com>
-CC:     <linux@armlinux.org.uk>, <davem@davemloft.net>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <afd@ti.com>, Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH net-master] net: phy: dp83848: Add the TI TLK05/06 PHY ID
-Date:   Wed, 19 Feb 2020 12:16:13 -0600
-Message-ID: <20200219181613.5898-1-dmurphy@ti.com>
-X-Mailer: git-send-email 2.25.0
+        Wed, 19 Feb 2020 13:16:22 -0500
+Received: by mail-qt1-f193.google.com with SMTP id t13so910852qto.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 10:16:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=L3uNdVhyvZUZMuONp/GCn48zcnEYXAubnE18F0EpTYo=;
+        b=fgvJbvEH/Gwc8c+GGSSzc8CRe7dKArbQeuM7TCQXWN9NSMQRyIIGLsjoZiK95AGFHy
+         YKVGCWTrXC7zy3J7kd4QvE+d5oFpLNpp5KWYh+Wu4gphonXZiY1tpkmVJ7spFgdPB/7F
+         86b9rMJQZ/ppDaQihWkHpPo6cIjtVKrAOpmIut1GNAE6g8gn6kms+YEvN5IPLs0QiHr0
+         9RD6LrC61uMCPHWBALwkRKsYx9Pr4WSEkElty5oc8QEqu9j9Tycizdz9tqBKpGcTofbx
+         +jURzssSi9PEYE8K5qgbkAB5UzDQ03yYv0YmUA4On5GyN2e/XuF0m8YuOgav0oufiVn3
+         cskw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=L3uNdVhyvZUZMuONp/GCn48zcnEYXAubnE18F0EpTYo=;
+        b=uGmc8bV87KGzyhuEnYERyTJpY3YS/m1godezTJ2yH/pAe547Fw/dD5UAHcjBwwECwr
+         /fiauR7Pefqvcu3yJePdK7VYughmPLV6UtePvzRmRJipAi063ObEUR7quQm07a1iIiYy
+         SjYC50CfBNz5Sps1Z75Y+o0L0er+o1LPie8JzSTqc3s0VjOOAv6hZBpH1U9LPcH40kOq
+         5IZKfJpuqwx6p43V0fTJOwEIlK0t2yGQdEMr2rTChgmb0+rpP+T1/sf19c4vHBT72XJm
+         sNwOW98fupY75Im3TcmqJMOsAUzMGg677zwU85hJUw378G+9OE505wz3KMiKJjPDEUpR
+         UXZQ==
+X-Gm-Message-State: APjAAAUJ6Eg8PnbZ6UlOo9etE/un51Yfe23sr+VGZJ2JnfctNarJ8r+H
+        PQM1pEvaOM9YTMMQdOQgFJajrw==
+X-Google-Smtp-Source: APXvYqx7BLkUJdcYX7+yBiOE3TbwLXzLrFnlr9aCs+2LjYI6+iSMS9Q/QMToPsqB+g6BrST8LbIhfw==
+X-Received: by 2002:ac8:958:: with SMTP id z24mr23429096qth.40.1582136180447;
+        Wed, 19 Feb 2020 10:16:20 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
+        by smtp.gmail.com with ESMTPSA id p18sm233866qkp.47.2020.02.19.10.16.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Feb 2020 10:16:20 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1j4TtT-0004LS-IK; Wed, 19 Feb 2020 14:16:19 -0400
+Date:   Wed, 19 Feb 2020 14:16:19 -0400
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@redhat.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Subject: Re: [PATCH 3/6] tracing: Wrap section comparison in
+ tracer_alloc_buffers with COMPARE_SECTIONS
+Message-ID: <20200219181619.GV31668@ziepe.ca>
+References: <20200219045423.54190-1-natechancellor@gmail.com>
+ <20200219045423.54190-4-natechancellor@gmail.com>
+ <20200219093445.386f1c09@gandalf.local.home>
+ <CAKwvOdm-N1iX0SMxGDV5Vf=qS5uHPdH3S-TRs-065BuSOdKt1w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKwvOdm-N1iX0SMxGDV5Vf=qS5uHPdH3S-TRs-065BuSOdKt1w@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the TLK05/06 PHY ID to the DP83848 driver.  The TI website indicates
-that the DP83822 device is a drop in replacement for the TLK05 device
-but the TLK device does not have WoL support.  The TLK device is
-register compatible to the DP83848 and the DP83848 does not support WoL
-either.  So this PHY can be associated with the DP83848 driver.
+On Wed, Feb 19, 2020 at 09:44:31AM -0800, Nick Desaulniers wrote:
+> On Wed, Feb 19, 2020 at 6:34 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > On Tue, 18 Feb 2020 21:54:20 -0700
+> > Nathan Chancellor <natechancellor@gmail.com> wrote:
+> >
+> > > Clang warns:
+> > >
+> > > ../kernel/trace/trace.c:9335:33: warning: array comparison always
+> > > evaluates to true [-Wtautological-compare]
+> > >         if (__stop___trace_bprintk_fmt != __start___trace_bprintk_fmt)
+> > >                                        ^
+> > > 1 warning generated.
+> > >
+> > > These are not true arrays, they are linker defined symbols, which are
+> > > just addresses so there is not a real issue here. Use the
+> > > COMPARE_SECTIONS macro to silence this warning by casting the linker
+> > > defined symbols to unsigned long, which keeps the logic the same.
+> > >
+> > > Link: https://github.com/ClangBuiltLinux/linux/issues/765
+> > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > >  kernel/trace/trace.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> > > index c797a15a1fc7..e1f3b16e457b 100644
+> > > +++ b/kernel/trace/trace.c
+> > > @@ -9332,7 +9332,7 @@ __init static int tracer_alloc_buffers(void)
+> > >               goto out_free_buffer_mask;
+> > >
+> > >       /* Only allocate trace_printk buffers if a trace_printk exists */
+> > > -     if (__stop___trace_bprintk_fmt != __start___trace_bprintk_fmt)
+> > > +     if (COMPARE_SECTIONS(__stop___trace_bprintk_fmt, !=, __start___trace_bprintk_fmt))
+> >
+> > Sorry, but this is really ugly and unreadable. Please find some other
+> > solution to fix this.
+> >
+> > NAK-by: Steven Rostedt
+> >
+> 
+> Hey Nathan,
+> Thanks for the series; enabling the warning will help us find more
+> bugs.  Revisiting what the warning is about, I checked on this
+> "referring to symbols defined in linker scripts from C" pattern.  This
+> document [0] (by no means definitive, but I think it has a good idea)
+> says:
+> 
+> Linker symbols that represent a data address: In C code, declare the
+> variable as an extern variable. Then, refer to the value of the linker
+> symbol using the & operator. Because the variable is at a valid data
+> address, we know that a data pointer can represent the value.
+> Linker symbols for an arbitrary address: In C code, declare this as an
+> extern symbol. The type does not matter. If you are using GCC
+> extensions, declare it as "extern void".
+> 
+> Indeed, it seems that Clang is happier with that pattern:
+> https://godbolt.org/z/sW3t5W
+> 
+> Looking at __stop___trace_bprintk_fmt in particular:
+> 
+> kernel/trace/trace.h
+> 1923:extern const char *__stop___trace_bprintk_fmt[];
 
-The initial TLKx PHY ID in the driver is a legacy ID and the public data
-sheet indicates a new PHY ID.  So not to break any kernels out there
-both IDs will continue to be supported in this driver.
+Godbolt says clang is happy if it is written as:
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
- drivers/net/phy/dp83848.c | 4 ++++
- 1 file changed, 4 insertions(+)
+  if (&__stop___trace_bprintk_fmt[0] != &__start___trace_bprintk_fmt[0])
 
-diff --git a/drivers/net/phy/dp83848.c b/drivers/net/phy/dp83848.c
-index 54c7c1b44e4d..66907cfa816a 100644
---- a/drivers/net/phy/dp83848.c
-+++ b/drivers/net/phy/dp83848.c
-@@ -12,6 +12,7 @@
- #define TI_DP83620_PHY_ID		0x20005ce0
- #define NS_DP83848C_PHY_ID		0x20005c90
- #define TLK10X_PHY_ID			0x2000a210
-+#define TLK105_06_PHY_ID		0x2000a211
- 
- /* Registers */
- #define DP83848_MICR			0x11 /* MII Interrupt Control Register */
-@@ -85,6 +86,7 @@ static struct mdio_device_id __maybe_unused dp83848_tbl[] = {
- 	{ NS_DP83848C_PHY_ID, 0xfffffff0 },
- 	{ TI_DP83620_PHY_ID, 0xfffffff0 },
- 	{ TLK10X_PHY_ID, 0xfffffff0 },
-+	{ TLK105_06_PHY_ID, 0xfffffff0 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(mdio, dp83848_tbl);
-@@ -115,6 +117,8 @@ static struct phy_driver dp83848_driver[] = {
- 			   dp83848_config_init),
- 	DP83848_PHY_DRIVER(TLK10X_PHY_ID, "TI TLK10X 10/100 Mbps PHY",
- 			   NULL),
-+	DP83848_PHY_DRIVER(TLK105_06_PHY_ID, "TI TLK105/06 10/100 Mbps PHY",
-+			   NULL),
- };
- module_phy_driver(dp83848_driver);
- 
--- 
-2.25.0
+Which is probably the best compromise. The type here is const char
+*[], so it would be a shame to see it go.
 
+I think this warning is specific to arrays and is designed to detect
+programmer errors like:
+  int a[1];
+  int b[1];
+  return a < b;
+
+Where the author intended to use memcmp()
+
+Jason
