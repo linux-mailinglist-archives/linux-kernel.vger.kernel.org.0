@@ -2,118 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E55F0163B56
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 04:32:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99285163B5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 04:34:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbgBSDbu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 22:31:50 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:37104 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726700AbgBSDbt (ORCPT
+        id S1726766AbgBSDed (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 22:34:33 -0500
+Received: from smtprelay0025.hostedemail.com ([216.40.44.25]:44318 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726446AbgBSDed (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 22:31:49 -0500
-Received: by mail-qk1-f193.google.com with SMTP id c188so21774354qkg.4
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 19:31:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=jHR/l6G5FEKGMJhTzgWx6Lx5s7Me/VCpIw5FaLdoEjA=;
-        b=or6ekwiklAlNX8SKgSHr0xR2FDZTUR5ht8LBrn8aAlKiu+SefIuup7N9U8ZOZkLSpg
-         ZEpV4XAPb8xs49yymfrh55OjRTmRvdKT8BLsL4T0ybQ50iY1LWguDmF4BavU9Ymu1S78
-         3s50jjReQRxRyMxoSFP9peJPozJDmhbqTukSU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jHR/l6G5FEKGMJhTzgWx6Lx5s7Me/VCpIw5FaLdoEjA=;
-        b=HLbtVjgZilK4e30aTO2Sd4NLI/sUXuUac9N3eYNYSsyCXDKH/6UsjzKsgudbzicxm8
-         Hkklrry/ixbn2svdiTLUej8qWf9TcUffS/vkgabQkwTnCdAcYmQzjv2Jq18irBGWjKml
-         rUxJr+DKVHA6ye0ZAOju7znqP7O9Oz2lUuaLcC9GeJ1APfUlYP9kK1d7f4UtY73zhflx
-         aVr+tXoS+kFZ02joZPuDfqGe9D7DLdiGT+eoff+6ERnDsFrTen52k4E0Rh/YIOwQ/nK9
-         8VxztbgBgKn9/EQT2tPV3tuxxY+Iuyo7WC3J8EPQAHMLJsRCZqmkH5W1OoMFchsvAYco
-         N11Q==
-X-Gm-Message-State: APjAAAU3MhHK4Xy0Nq7Hw/AZjps6RSO8XEFtzxXBsukAlBdHeoT3ROC+
-        hbk18um4UpqXiZNyhuzRmp/7yw==
-X-Google-Smtp-Source: APXvYqwgPAs38dxkial8Gm1edpOh6Av9hIBhnJLfYkPtJUxTy+RJYV4Fd83usTr6jDlHZFbdvJ8yDg==
-X-Received: by 2002:a37:4dc1:: with SMTP id a184mr21909944qkb.62.1582083108373;
-        Tue, 18 Feb 2020 19:31:48 -0800 (PST)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id l10sm357109qke.93.2020.02.18.19.31.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2020 19:31:47 -0800 (PST)
-Date:   Tue, 18 Feb 2020 22:31:47 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Lai Jiangshan <laijs@linux.alibaba.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, rcu@vger.kernel.org
-Subject: Re: [PATCH V2 1/7] rcu: use preempt_count to test whether scheduler
- locks is held
-Message-ID: <20200219033147.GA103554@google.com>
-References: <20191102124559.1135-1-laijs@linux.alibaba.com>
- <20191102124559.1135-2-laijs@linux.alibaba.com>
+        Tue, 18 Feb 2020 22:34:33 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 8381F182CED2A;
+        Wed, 19 Feb 2020 03:34:31 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:1801:1981:2194:2199:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3867:3870:3872:3874:4321:4605:5007:6120:7974:8660:10004:10400:10848:10967:11026:11232:11658:11914:12043:12294:12296:12297:12438:12679:12740:12760:12895:13148:13230:13439:14181:14659:14721:21080:21325:21451:21611:21627:30029:30054:30075:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: eggs49_276b585518d5b
+X-Filterd-Recvd-Size: 2918
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf02.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 19 Feb 2020 03:34:30 +0000 (UTC)
+Message-ID: <658fe8a43c01360813d11087ea974b12c02bb6b4.camel@perches.com>
+Subject: Re: [RFC PATCH 0/2] trace: Move trace data to new section
+ _ftrace_data
+From:   Joe Perches <joe@perches.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org
+Date:   Tue, 18 Feb 2020 19:33:08 -0800
+In-Reply-To: <20200218222615.713d542d@gandalf.local.home>
+References: <cover.1582077698.git.joe@perches.com>
+         <20200218215328.16744447@gandalf.local.home>
+         <899e4e41c4cf5c62a4fbce0923e5796141ef46f0.camel@perches.com>
+         <20200218222615.713d542d@gandalf.local.home>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191102124559.1135-2-laijs@linux.alibaba.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 02, 2019 at 12:45:53PM +0000, Lai Jiangshan wrote:
-> Ever since preemption was introduced to linux kernel,
-> irq disabled spinlocks are always held with preemption
-> disabled. One of the reason is that sometimes we need
-> to use spin_unlock() which will do preempt_enable()
-> to unlock the irq disabled spinlock with keeping irq
-> disabled. So preempt_count can be used to test whether
-> scheduler locks is possible held.
+On Tue, 2020-02-18 at 22:26 -0500, Steven Rostedt wrote:
+> On Tue, 18 Feb 2020 19:09:10 -0800
+> Joe Perches <joe@perches.com> wrote:
 > 
-> CC: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
-> ---
->  kernel/rcu/tree_plugin.h | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+> > I don't care about the section name at all.
+> > 
+> > I used that name for consistency with _ftrace_event
+> > in the same file. 
+> > Perhaps the _ftrace_event section
+> > name could be renamed to something
+> > intelligible too.
 > 
-> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-> index 0982e9886103..aba5896d67e3 100644
-> --- a/kernel/rcu/tree_plugin.h
-> +++ b/kernel/rcu/tree_plugin.h
-> @@ -603,10 +603,14 @@ static void rcu_read_unlock_special(struct task_struct *t)
->  		      tick_nohz_full_cpu(rdp->cpu);
->  		// Need to defer quiescent state until everything is enabled.
->  		if (irqs_were_disabled && use_softirq &&
-> -		    (in_interrupt() ||
-> -		     (exp && !t->rcu_read_unlock_special.b.deferred_qs))) {
-> +		    (in_interrupt() || (exp && !preempt_bh_were_disabled))) {
->  			// Using softirq, safe to awaken, and we get
->  			// no help from enabling irqs, unlike bh/preempt.
-> +			// in_interrupt(): raise_softirq_irqoff() is
-> +			// guaranteed not to not do wakeup
-> +			// !preempt_bh_were_disabled: scheduler locks cannot
-> +			// be held, since spinlocks are always held with
-> +			// preempt_disable(), so the wakeup will be safe.
+> Yes, that should probably get changed. That's a leftover when we just
+> called everything "ftrace", but it should have been changed when I
+> renamed the file from ftrace.h to trace_event.h.
 
-This means if preemption is disabled for any reason (other than scheduler
-locks), such as acquiring an unrelated lock that is not held by the
-scheduler, then the softirq would not be raised even if it was safe to
-do so. From that respect, it seems a step back no?
+Pick a name.
 
-thanks,
+btw: it's not used in an x86-64 allmodconfig or defconfig
+as an actual separate section as far as I tell.
 
- - Joel
+$ git grep _ftrace_events
+include/asm-generic/vmlinux.lds.h:                      __start_ftrace_events = .;                      \
+include/asm-generic/vmlinux.lds.h:                      KEEP(*(_ftrace_events))                         \
+include/asm-generic/vmlinux.lds.h:                      __stop_ftrace_events = .;                       \
+include/linux/syscalls.h:         __attribute__((section("_ftrace_events")))                    \
+include/linux/syscalls.h:         __attribute__((section("_ftrace_events")))                    \
+include/trace/trace_events.h: * __section(_ftrace_events) *__event_<call> = &event_<call>;
+include/trace/trace_events.h:static struct trace_event_call __used __section(_ftrace_events)            \
+include/trace/trace_events.h:static struct trace_event_call __used __section(_ftrace_events)            \
+kernel/module.c:        mod->trace_events = section_objs(info, "_ftrace_events",
+kernel/trace/trace_events.c:extern struct trace_event_call *__start_ftrace_events[];
+kernel/trace/trace_events.c:extern struct trace_event_call *__stop_ftrace_events[];
+kernel/trace/trace_events.c:    for_each_event(iter, __start_ftrace_events, __stop_ftrace_events) {
+kernel/trace/trace_export.c:static struct trace_event_call * __used __section(_ftrace_events)   \
 
 
->  			raise_softirq_irqoff(RCU_SOFTIRQ);
->  		} else {
->  			// Enabling BH or preempt does reschedule, so...
-> -- 
-> 2.20.1
-> 
