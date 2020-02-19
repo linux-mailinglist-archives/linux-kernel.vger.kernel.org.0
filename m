@@ -2,86 +2,635 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5069C163F6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:42:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E1F5163F7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:43:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727069AbgBSIme (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 03:42:34 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41638 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727589AbgBSIm3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 03:42:29 -0500
-Received: by mail-pf1-f195.google.com with SMTP id j9so12144327pfa.8
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 00:42:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rEfRYK8X2QQnG43sHHHHoR8YIwfIEm7XxLTlJ/H+Qso=;
-        b=D4fnLH50SoBcu24sBK+TREJyUfMHxXPaZKVeoLfvA5KFxaZ7c68RJNszw2tBFA9Qcp
-         ba+eAmlzeBfOiXE8FiyX0VS/UsLgVA9SF+n+DR06ziu8bljGWCHxbU/czk9XIaQ7Imvj
-         bhlROB8OvWew6mZ/ZxOVoOWi7afsncAZvIcNo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rEfRYK8X2QQnG43sHHHHoR8YIwfIEm7XxLTlJ/H+Qso=;
-        b=Ka1VMnl84MrQcyowH4IRghsU4uTDgV2H28YNon33vJPSPoGX3OonbcFfVs6tedEWsy
-         m76+wt1BIMLMrDvk+DxxqwOv8kyt6WLiavnFMCA5xbJsimQ8oQ36Ak7KIOc+rzXUWM8D
-         kvWYEcYyKy28s8Ukceur+mDolriDI90UTt98UaRLFhpesLcav4xYi9k8mBkYWMFUWJl2
-         9YZQzFsQmZun7EXiILsSPk87S1AP4mh2dViFC5urBDdTh4OivAo3qLi5NyQCzUfePxAF
-         evDigYW92yEc9VQr21zbEzzVOt6A2Cu/TZwswMprHykYanTFiKp27Uji+O9ZjTOOOWkW
-         IGrQ==
-X-Gm-Message-State: APjAAAVj43kMMArV0bHlBrW7DuZB10rSNTVn9lv4iK609uLdHEwFjTob
-        xUtV4tgRoUEz2p+Gcb29wPz1ZA==
-X-Google-Smtp-Source: APXvYqzjnuZExpo94NDDjP+oXQOEJXX7Rv7xGZvYk6wB2CYz2vbMD1KopE9TEkAVUNxHi4plCGVSsw==
-X-Received: by 2002:aa7:9796:: with SMTP id o22mr25408908pfp.101.1582101748508;
-        Wed, 19 Feb 2020 00:42:28 -0800 (PST)
-Received: from localhost ([2401:fa00:8f:203:5bbb:c872:f2b1:f53b])
-        by smtp.gmail.com with ESMTPSA id v25sm1829913pfe.147.2020.02.19.00.42.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 00:42:27 -0800 (PST)
-Date:   Wed, 19 Feb 2020 17:42:26 +0900
-From:   Sergey Senozhatsky <senozhatsky@chromium.org>
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCHv2 11/12] videobuf2: add begin/end cpu_access
- callbacks to dma-sg
-Message-ID: <20200219084226.GC122464@google.com>
-References: <20200204025641.218376-1-senozhatsky@chromium.org>
- <20200204025641.218376-12-senozhatsky@chromium.org>
- <06d654ec-9d05-4ef5-c27e-ff78c96a3457@xs4all.nl>
+        id S1727640AbgBSImt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 03:42:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42202 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726197AbgBSImn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 03:42:43 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 962C8208E4;
+        Wed, 19 Feb 2020 08:42:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582101762;
+        bh=e6tNZV1/FpHd+hNRbBxi3D3UPac4QwtGNmcrf8soYT0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FALzDx6uGG1r6+p2NMtFTxz7kb3CAI53SlzvdFnBlqmiNwTayUPCtP5v8cXnliLOJ
+         zX2jXw0+KSo4+2Rg6ZNHUEFfTshNxQq7XwNMyejyvl3Pz2+HSgJU+yMQ04sz7LckME
+         WTtsEZTSmaySZLegaPTmOmP0+dFmnWQC3s9gekdU=
+Date:   Wed, 19 Feb 2020 09:42:39 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Vitor Soares <Vitor.Soares@synopsys.com>
+Cc:     linux-kernel@vger.kernel.org, linux-i3c@lists.infradead.org,
+        Joao.Pinto@synopsys.com, Jose.Abreu@synopsys.com,
+        bbrezillon@kernel.org, wsa@the-dreams.de, arnd@arndb.de,
+        broonie@kernel.org, corbet@lwn.net
+Subject: Re: [PATCH v3 4/5] i3c: add i3cdev module to expose i3c dev in /dev
+Message-ID: <20200219084239.GA2737861@kroah.com>
+References: <cover.1582069402.git.vitor.soares@synopsys.com>
+ <e093ae9da81e7702c188a20d1e8b9d7f8024bfeb.1582069402.git.vitor.soares@synopsys.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <06d654ec-9d05-4ef5-c27e-ff78c96a3457@xs4all.nl>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <e093ae9da81e7702c188a20d1e8b9d7f8024bfeb.1582069402.git.vitor.soares@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (20/02/19 09:35), Hans Verkuil wrote:
-> On 2/4/20 3:56 AM, Sergey Senozhatsky wrote:
-> > Provide begin_cpu_access() and end_cpu_access() dma_buf_ops
-> > callbacks for cache synchronisation on exported buffers.
-> > 
-> > V4L2_FLAG_MEMORY_NON_CONSISTENT has no effect on dma-sg buffers.
-> > dma-sg allocates memory using the page allocator directly, so
-> > there is no memory consistency guarantee.
+On Wed, Feb 19, 2020 at 01:20:42AM +0100, Vitor Soares wrote:
+> This patch adds user mode support to I3C SDR transfers.
 > 
-> This should also be a comment in the code.
+> The module is based on i2c-dev.c with the follow features:
+>   - expose on /dev the i3c devices dynamically based on if they have
+>     a device driver bound.
+>   - Dynamically allocate the char device Major number.
+> 
+> Signed-off-by: Vitor Soares <vitor.soares@synopsys.com>
+> ---
+> Changes in v3:
+>   Use the xfer_lock to prevent device detach during ioctl call
+>   Expose i3cdev under /dev/bus/i3c/ folder like usb does
+>   Change NOTIFY_BOUND to NOTIFY_BIND, this allows the device detach occur
+>   before driver->probe
+>   Avoid use of IS_ERR_OR_NULL
+>   Use u64_to_user_ptr instead of (void __user *)(uintptr_t) cast
+>   Allocate k_xfer and data_ptrs at once to eliminate duble allocation check
+>   Pass i3cdev to dev->driver_data
+>   Make all minors available
+> 
+> Changes in v2:
+>   Use IDR api for minor numbering
+>   Modify ioctl struct
+>   Fix SPDX license
+> 
+>  drivers/i3c/Kconfig             |  15 ++
+>  drivers/i3c/Makefile            |   1 +
+>  drivers/i3c/i3cdev.c            | 429 ++++++++++++++++++++++++++++++++++++++++
+>  include/uapi/linux/i3c/i3cdev.h |  38 ++++
+>  4 files changed, 483 insertions(+)
+>  create mode 100644 drivers/i3c/i3cdev.c
+>  create mode 100644 include/uapi/linux/i3c/i3cdev.h
+> 
+> diff --git a/drivers/i3c/Kconfig b/drivers/i3c/Kconfig
+> index 30a4415..0164276 100644
+> --- a/drivers/i3c/Kconfig
+> +++ b/drivers/i3c/Kconfig
+> @@ -20,5 +20,20 @@ menuconfig I3C
+>  	  will be called i3c.
+>  
+>  if I3C
+> +
+> +config I3CDEV
+> +	tristate "I3C device interface"
+> +	depends on I3C
+> +	help
+> +	  Say Y here to use i3c-* device files, usually found in the /dev
+> +	  directory on your system.  They make it possible to have user-space
+> +	  programs use the I3C devices.
+> +
+> +	  This support is also available as a module.  If so, the module
+> +	  will be called i3cdev.
+> +
+> +	  Note that this application programming interface is EXPERIMENTAL
+> +	  and hence SUBJECT TO CHANGE WITHOUT NOTICE while it stabilizes.
+> +
+>  source "drivers/i3c/master/Kconfig"
+>  endif # I3C
+> diff --git a/drivers/i3c/Makefile b/drivers/i3c/Makefile
+> index 11982ef..606d422 100644
+> --- a/drivers/i3c/Makefile
+> +++ b/drivers/i3c/Makefile
+> @@ -1,4 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  i3c-y				:= device.o master.o
+>  obj-$(CONFIG_I3C)		+= i3c.o
+> +obj-$(CONFIG_I3CDEV)		+= i3cdev.o
+>  obj-$(CONFIG_I3C)		+= master/
+> diff --git a/drivers/i3c/i3cdev.c b/drivers/i3c/i3cdev.c
+> new file mode 100644
+> index 0000000..1a6bd35
+> --- /dev/null
+> +++ b/drivers/i3c/i3cdev.c
+> @@ -0,0 +1,429 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2020 Synopsys, Inc. and/or its affiliates.
+> + *
+> + * Author: Vitor Soares <soares@synopsys.com>
+> + */
+> +
+> +#include <linux/cdev.h>
+> +#include <linux/compat.h>
+> +#include <linux/device.h>
+> +#include <linux/fs.h>
+> +#include <linux/init.h>
+> +#include <linux/jiffies.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/notifier.h>
+> +#include <linux/slab.h>
+> +#include <linux/uaccess.h>
+> +
+> +#include <linux/i3c/i3cdev.h>
+> +
+> +#include "internals.h"
+> +
+> +struct i3cdev_data {
+> +	struct i3c_device *i3c;
+> +	struct device *dev;
+> +	struct mutex xfer_lock; /* prevent detach while transferring */
+> +	struct cdev cdev;
+> +	int id;
+> +};
+> +
+> +static DEFINE_IDA(i3cdev_ida);
+> +static dev_t i3cdev_number;
+> +#define I3C_MINORS (MINORMASK + 1)
+> +
+> +static struct i3cdev_data *get_free_i3cdev(struct i3c_device *i3c)
+> +{
+> +	struct i3cdev_data *i3cdev;
+> +	int id;
+> +
+> +	id = ida_simple_get(&i3cdev_ida, 0, I3C_MINORS, GFP_KERNEL);
+> +	if (id < 0) {
+> +		pr_err("i3cdev: no minor number available!\n");
+> +		return ERR_PTR(id);
+> +	}
+> +
+> +	i3cdev = kzalloc(sizeof(*i3cdev), GFP_KERNEL);
+> +	if (!i3cdev) {
+> +		ida_simple_remove(&i3cdev_ida, id);
+> +		return ERR_PTR(-ENOMEM);
+> +	}
+> +
+> +	i3cdev->i3c = i3c;
+> +	i3cdev->id = id;
+> +	i3cdev_set_drvdata(i3c, i3cdev);
+> +
+> +	return i3cdev;
+> +}
+> +
+> +static void put_i3cdev(struct i3cdev_data *i3cdev)
+> +{
+> +	i3cdev_set_drvdata(i3cdev->i3c, NULL);
+> +	kfree(i3cdev);
+> +}
+> +
+> +static ssize_t
+> +i3cdev_read(struct file *file, char __user *buf, size_t count, loff_t *f_pos)
+> +{
+> +	struct i3cdev_data *i3cdev = file->private_data;
+> +	struct i3c_device *i3c = i3cdev->i3c;
+> +	struct i3c_priv_xfer xfers = {
+> +		.rnw = true,
+> +		.len = count,
+> +	};
+> +	int ret = -EACCES;
+> +	char *tmp;
+> +
+> +	mutex_lock(&i3cdev->xfer_lock);
+> +	if (i3c->dev.driver)
+> +		goto err_out;
+> +
+> +	tmp = kzalloc(count, GFP_KERNEL);
+> +	if (!tmp)
+> +		return -ENOMEM;
+> +
+> +	xfers.data.in = tmp;
+> +
+> +	dev_dbg(&i3c->dev, "Reading %zu bytes.\n", count);
+> +
+> +	ret = i3c_device_do_priv_xfers(i3c, &xfers, 1);
+> +	if (!ret)
+> +		ret = copy_to_user(buf, tmp, xfers.len) ? -EFAULT : xfers.len;
+> +
+> +	kfree(tmp);
+> +
+> +err_out:
+> +	mutex_unlock(&i3cdev->xfer_lock);
+> +	return ret;
+> +}
+> +
+> +static ssize_t
+> +i3cdev_write(struct file *file, const char __user *buf, size_t count,
+> +	     loff_t *f_pos)
+> +{
+> +	struct i3cdev_data *i3cdev = file->private_data;
+> +	struct i3c_device *i3c = i3cdev->i3c;
+> +	struct i3c_priv_xfer xfers = {
+> +		.rnw = false,
+> +		.len = count,
 
-OK.
+No error checking of count?
 
-	-ss
+> +	};
+
+You can have this structure on the stack?
+
+> +	int ret = -EACCES;
+> +	char *tmp;
+> +
+> +	mutex_lock(&i3cdev->xfer_lock);
+> +	if (i3c->dev.driver)
+> +		goto err_out;
+> +
+> +	tmp = memdup_user(buf, count);
+
+So userspace can allocate any amount of memory they want to?
+
+Not good :(
+
+> +	if (IS_ERR(tmp))
+> +		return PTR_ERR(tmp);
+> +
+> +	xfers.data.out = tmp;
+> +
+> +	dev_dbg(&i3c->dev, "Writing %zu bytes.\n", count);
+> +
+> +	ret = i3c_device_do_priv_xfers(i3c, &xfers, 1);
+> +	kfree(tmp);
+> +
+> +err_out:
+> +	mutex_unlock(&i3cdev->xfer_lock);
+> +	return (!ret) ? count : ret;
+> +}
+> +
+> +static int
+> +i3cdev_do_priv_xfer(struct i3c_device *dev, struct i3c_ioc_priv_xfer *xfers,
+> +		    unsigned int nxfers)
+> +{
+> +	struct i3c_priv_xfer *k_xfers;
+> +	u8 **data_ptrs;
+> +	int i, ret = 0;
+> +
+> +	/* Since we have nxfers we may allocate k_xfer + *data_ptrs together */
+> +	k_xfers = kcalloc(nxfers, sizeof(*k_xfers) + sizeof(*data_ptrs),
+> +			  GFP_KERNEL);
+> +	if (!k_xfers)
+> +		return -ENOMEM;
+> +
+> +	/* set data_ptrs to be after nxfers * i3c_priv_xfer */
+> +	data_ptrs = (void *)k_xfers + (nxfers * sizeof(*k_xfers));
+> +
+> +	for (i = 0; i < nxfers; i++) {
+> +		data_ptrs[i] = memdup_user((const u8 __user *)
+> +					   (uintptr_t)xfers[i].data,
+> +					   xfers[i].len);
+> +		if (IS_ERR(data_ptrs[i])) {
+> +			ret = PTR_ERR(data_ptrs[i]);
+> +			break;
+> +		}
+> +
+> +		k_xfers[i].len = xfers[i].len;
+> +		if (xfers[i].rnw) {
+> +			k_xfers[i].rnw = true;
+> +			k_xfers[i].data.in = data_ptrs[i];
+> +		} else {
+> +			k_xfers[i].rnw = false;
+> +			k_xfers[i].data.out = data_ptrs[i];
+> +		}
+> +	}
+> +
+> +	if (ret < 0) {
+> +		i--;
+> +		goto err_free_mem;
+> +	}
+> +
+> +	ret = i3c_device_do_priv_xfers(dev, k_xfers, nxfers);
+> +	if (ret)
+> +		goto err_free_mem;
+> +
+> +	for (i = 0; i < nxfers; i++) {
+> +		if (xfers[i].rnw) {
+> +			if (copy_to_user(u64_to_user_ptr(xfers[i].data),
+> +					 data_ptrs[i], xfers[i].len))
+> +				ret = -EFAULT;
+
+You should bail out of the loop here.
+
+> +		}
+> +	}
+> +
+> +err_free_mem:
+> +	for (; i >= 0; i--)
+> +		kfree(data_ptrs[i]);
+> +	kfree(k_xfers);
+> +	return ret;
+> +}
+> +
+> +static struct i3c_ioc_priv_xfer *
+> +i3cdev_get_ioc_priv_xfer(unsigned int cmd, struct i3c_ioc_priv_xfer *u_xfers,
+> +			 unsigned int *nxfers)
+> +{
+> +	u32 tmp = _IOC_SIZE(cmd);
+> +
+> +	if ((tmp % sizeof(struct i3c_ioc_priv_xfer)) != 0)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	*nxfers = tmp / sizeof(struct i3c_ioc_priv_xfer);
+> +	if (*nxfers == 0)
+> +		return ERR_PTR(-EINVAL);
+
+But no error checking for too many of these?
+
+> +
+> +	return memdup_user(u_xfers, tmp);
+> +}
+> +
+> +static int
+> +i3cdev_ioc_priv_xfer(struct i3c_device *i3c, unsigned int cmd,
+> +		     struct i3c_ioc_priv_xfer *u_xfers)
+
+You lost your __user marking of this pointer :(
+
+Please fix that up, have you run sparse on this?
+
+> +{
+> +	struct i3c_ioc_priv_xfer *k_xfers;
+> +	unsigned int nxfers;
+> +	int ret;
+> +
+> +	k_xfers = i3cdev_get_ioc_priv_xfer(cmd, u_xfers, &nxfers);
+> +	if (IS_ERR(k_xfers))
+> +		return PTR_ERR(k_xfers);
+> +
+> +	ret = i3cdev_do_priv_xfer(i3c, k_xfers, nxfers);
+> +
+> +	kfree(k_xfers);
+> +
+> +	return ret;
+> +}
+> +
+> +static long
+> +i3cdev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+> +{
+> +	struct i3cdev_data *i3cdev = file->private_data;
+> +	struct i3c_device *i3c = i3cdev->i3c;
+> +	int ret = -EACCES;
+> +
+> +	dev_dbg(&i3c->dev, "ioctl, cmd=0x%02x, arg=0x%02lx\n", cmd, arg);
+> +
+> +	if (_IOC_TYPE(cmd) != I3C_DEV_IOC_MAGIC)
+> +		return -ENOTTY;
+> +
+> +	/* Use the xfer_lock to prevent device detach during ioctl call */
+> +	mutex_lock(&i3cdev->xfer_lock);
+> +	if (i3c->dev.driver)
+> +		goto err_no_dev;
+> +
+> +	/* Check command number and direction */
+> +	if (_IOC_NR(cmd) == _IOC_NR(I3C_IOC_PRIV_XFER(0)) &&
+> +	    _IOC_DIR(cmd) == (_IOC_READ | _IOC_WRITE))
+
+Shouldn't the ioctl core already handle this for you?
+
+> +		ret = i3cdev_ioc_priv_xfer(i3c, cmd,
+> +					(struct i3c_ioc_priv_xfer __user *)arg);
+> +
+> +err_no_dev:
+> +	mutex_unlock(&i3cdev->xfer_lock);
+> +	return ret;
+> +}
+> +
+> +static int i3cdev_open(struct inode *inode, struct file *file)
+> +{
+> +	struct i3cdev_data *i3cdev = container_of(inode->i_cdev,
+> +						  struct i3cdev_data,
+> +						  cdev);
+> +	file->private_data = i3cdev;
+> +
+> +	return 0;
+> +}
+> +
+> +static int i3cdev_release(struct inode *inode, struct file *file)
+> +{
+> +	file->private_data = NULL;
+
+Why does this matter?
+
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct file_operations i3cdev_fops = {
+> +	.owner		= THIS_MODULE,
+> +	.read		= i3cdev_read,
+> +	.write		= i3cdev_write,
+> +	.unlocked_ioctl	= i3cdev_ioctl,
+> +	.compat_ioctl	= compat_ptr_ioctl,
+> +	.open		= i3cdev_open,
+> +	.release	= i3cdev_release,
+> +};
+> +
+> +/* ------------------------------------------------------------------------- */
+> +
+> +static struct class *i3cdev_class;
+> +
+> +static int i3cdev_attach(struct device *dev, void *dummy)
+> +{
+> +	struct i3cdev_data *i3cdev;
+> +	struct i3c_device *i3c;
+> +	int res;
+> +
+> +	if (dev->type == &i3c_masterdev_type || dev->driver)
+> +		return 0;
+> +
+> +	i3c = dev_to_i3cdev(dev);
+> +
+> +	/* Get a device */
+> +	i3cdev = get_free_i3cdev(i3c);
+> +	if (IS_ERR(i3cdev))
+> +		return PTR_ERR(i3cdev);
+> +
+> +	mutex_init(&i3cdev->xfer_lock);
+> +	cdev_init(&i3cdev->cdev, &i3cdev_fops);
+> +	i3cdev->cdev.owner = THIS_MODULE;
+> +	res = cdev_add(&i3cdev->cdev,
+> +		       MKDEV(MAJOR(i3cdev_number), i3cdev->id), 1);
+> +	if (res)
+> +		goto error_cdev;
+> +
+> +	/* register this i3c device with the driver core */
+> +	i3cdev->dev = device_create(i3cdev_class, &i3c->dev,
+> +				    MKDEV(MAJOR(i3cdev_number), i3cdev->id),
+> +				    NULL, "bus!i3c!%s", dev_name(&i3c->dev));
+> +	if (IS_ERR(i3cdev->dev)) {
+> +		res = PTR_ERR(i3cdev->dev);
+> +		goto error;
+> +	}
+> +	pr_debug("i3cdev: I3C device [%s] registered as minor %d\n",
+> +		 dev_name(&i3c->dev), i3cdev->id);
+
+dev_dbg()?
+
+> +	return 0;
+> +
+> +error:
+> +	cdev_del(&i3cdev->cdev);
+> +error_cdev:
+> +	put_i3cdev(i3cdev);
+> +	return res;
+> +}
+> +
+> +static int i3cdev_detach(struct device *dev, void *dummy)
+> +{
+> +	struct i3cdev_data *i3cdev;
+> +	struct i3c_device *i3c;
+> +
+> +	if (dev->type == &i3c_masterdev_type)
+> +		return 0;
+> +
+> +	i3c = dev_to_i3cdev(dev);
+> +
+> +	i3cdev = i3cdev_get_drvdata(i3c);
+> +	if (!i3cdev)
+> +		return 0;
+> +
+> +	/* Prevent transfers while cdev removal */
+> +	mutex_lock(&i3cdev->xfer_lock);
+> +	cdev_del(&i3cdev->cdev);
+> +	device_destroy(i3cdev_class, MKDEV(MAJOR(i3cdev_number), i3cdev->id));
+> +	mutex_unlock(&i3cdev->xfer_lock);
+> +
+> +	ida_simple_remove(&i3cdev_ida, i3cdev->id);
+> +	put_i3cdev(i3cdev);
+> +
+> +	pr_debug("i3cdev: device [%s] unregistered\n", dev_name(&i3c->dev));
+
+dev_dbg()?
+
+> +
+> +	return 0;
+> +}
+> +
+> +static int i3cdev_notifier_call(struct notifier_block *nb,
+> +				unsigned long action,
+> +				void *data)
+> +{
+> +	struct device *dev = data;
+> +
+> +	switch (action) {
+> +	case BUS_NOTIFY_ADD_DEVICE:
+> +	case BUS_NOTIFY_UNBOUND_DRIVER:
+> +		return i3cdev_attach(dev, NULL);
+> +	case BUS_NOTIFY_DEL_DEVICE:
+> +	case BUS_NOTIFY_BIND_DRIVER:
+> +		return i3cdev_detach(dev, NULL);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static struct notifier_block i3cdev_notifier = {
+> +	.notifier_call = i3cdev_notifier_call,
+> +};
+> +
+> +static int __init i3cdev_init(void)
+> +{
+> +	int res;
+> +
+> +	/* Dynamically request unused major number */
+> +	res = alloc_chrdev_region(&i3cdev_number, 0, I3C_MINORS, "i3c");
+> +	if (res)
+> +		goto out;
+> +
+> +	/* Create a classe to populate sysfs entries*/
+> +	i3cdev_class = class_create(THIS_MODULE, "i3cdev");
+> +	if (IS_ERR(i3cdev_class)) {
+> +		res = PTR_ERR(i3cdev_class);
+> +		goto out_unreg_chrdev;
+> +	}
+> +
+> +	/* Keep track of busses which have devices to add or remove later */
+> +	res = bus_register_notifier(&i3c_bus_type, &i3cdev_notifier);
+> +	if (res)
+> +		goto out_unreg_class;
+> +
+> +	/* Bind to already existing device without driver right away */
+> +	i3c_for_each_dev(NULL, i3cdev_attach);
+> +
+> +	return 0;
+> +
+> +out_unreg_class:
+> +	class_destroy(i3cdev_class);
+> +out_unreg_chrdev:
+> +	unregister_chrdev_region(i3cdev_number, I3C_MINORS);
+> +out:
+> +	pr_err("%s: Driver Initialisation failed\n", __FILE__);
+
+spelling?
+
+> +	return res;
+> +}
+> +
+> +static void __exit i3cdev_exit(void)
+> +{
+> +	bus_unregister_notifier(&i3c_bus_type, &i3cdev_notifier);
+> +	i3c_for_each_dev(NULL, i3cdev_detach);
+> +	class_destroy(i3cdev_class);
+> +	unregister_chrdev_region(i3cdev_number, I3C_MINORS);
+> +}
+> +
+> +MODULE_AUTHOR("Vitor Soares <soares@synopsys.com>");
+> +MODULE_DESCRIPTION("I3C /dev entries driver");
+> +MODULE_LICENSE("GPL");
+> +
+> +module_init(i3cdev_init);
+> +module_exit(i3cdev_exit);
+> diff --git a/include/uapi/linux/i3c/i3cdev.h b/include/uapi/linux/i3c/i3cdev.h
+> new file mode 100644
+> index 0000000..656a686
+> --- /dev/null
+> +++ b/include/uapi/linux/i3c/i3cdev.h
+> @@ -0,0 +1,37 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +/*
+> + * Copyright (c) 2020 Synopsys, Inc. and/or its affiliates.
+> + *
+> + * Author: Vitor Soares <vitor.soares@synopsys.com>
+> + */
+> +
+> +#ifndef _UAPI_I3C_DEV_H_
+> +#define _UAPI_I3C_DEV_H_
+> +
+> +#include <linux/types.h>
+> +#include <linux/ioctl.h>
+> +
+> +/* IOCTL commands */
+> +#define I3C_DEV_IOC_MAGIC	0x07
+> +
+> +/**
+> + * struct i3c_ioc_priv_xfer - I3C SDR ioctl private transfer
+> + * @data: Holds pointer to userspace buffer with transmit data.
+> + * @len: Length of data buffer buffers, in bytes.
+> + * @rnw: encodes the transfer direction. true for a read, false for a write
+> + */
+> +struct i3c_ioc_priv_xfer {
+> +	__u64 data;
+> +	__u16 len;
+> +	__u8 rnw;
+
+Shouldn't this be an enum type?  "true" is not a __u8 value :)
+
+> +	__u8 pad[5];
+> +};
+> +
+> +#define I3C_PRIV_XFER_SIZE(N)	\
+> +	((((sizeof(struct i3c_ioc_priv_xfer)) * (N)) < (1 << _IOC_SIZEBITS)) \
+> +	? ((sizeof(struct i3c_ioc_priv_xfer)) * (N)) : 0)
+> +
+> +#define I3C_IOC_PRIV_XFER(N)	\
+> +	_IOC(_IOC_READ|_IOC_WRITE, I3C_DEV_IOC_MAGIC, 30, I3C_PRIV_XFER_SIZE(N))
+
+_IOCWR()?
+
+thanks,
+
+greg k-h
