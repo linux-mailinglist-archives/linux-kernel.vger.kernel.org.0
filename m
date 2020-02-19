@@ -2,99 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18B12164930
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 16:51:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5303164935
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 16:52:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726828AbgBSPvp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 10:51:45 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39920 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726528AbgBSPvo (ORCPT
+        id S1726856AbgBSPwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 10:52:05 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:39835 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726710AbgBSPwF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 10:51:44 -0500
-Received: by mail-wr1-f65.google.com with SMTP id y11so1118685wrt.6
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 07:51:43 -0800 (PST)
+        Wed, 19 Feb 2020 10:52:05 -0500
+Received: by mail-qt1-f194.google.com with SMTP id c5so529740qtj.6;
+        Wed, 19 Feb 2020 07:52:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=NlNA5caPFDkRRH0y0qsccyBK12IFqz12JUTfxJlSVCM=;
-        b=vsPf0AKcpWyPNj6F2JMoW6AtOfj+k/44fPz0eHs3WR9SU8e788OrvazJ4K+MAcaAqN
-         INmpJrIB4W7COEiD4pvB+3El/FioM3wJAFyWr64DD6jLRr0/esnS5ywD4R6Uon6cf0yN
-         0R4+mXOmfl2a1xQQayyf/1zH8L8S0f3FU1F3zgk6Bx4t4UkR4ebYPNtnDo+qhouPswAU
-         gVLHHT5Bzzk3fu2wKB9RRkzxdD9CiRntJXWvGYO2V26GjWgVumFWfmRq9SUIAQacqlm7
-         VG1Y3qxLU5VqtyBvVe8/VrgGucpZ1KTA31eE2tnOg6yl+Kuf/WXv5V2A/Yrvpu1ws3+S
-         poaA==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=fFVDMYCiG2Jj7QSlhcVZE7ZVXQws5yCHBTafyc8gAf0=;
+        b=Qkf7uJ1c4rV5Qm1v9FuRvQTyPOE0LdHlD1+++LZmhiqhFLAYLJCJQYulwn5mGbVQSQ
+         b93pgugYT/+zQWagehceyEAvjfr1/EXp/YZpqn3v0IJ1ru89mZ3VSjJS6GRX/FI9LJCe
+         XB0ajQwGjX/snUDFYuq61rJEPhUPxutyuiw8s3DOs6i/EgCsMkd4HnJsxkztYM9Me6sx
+         9o5BLcIFLyBJNWmV3BNFtO7yrg1L1MEmQ31pETajfSjjFWOV9MPZ54G3lgfVDbpSuNWK
+         DqTsVYB/R3ez5ZLWy+GAX7MGLOc4sP/o+7xmXydKDgRpRW3B24yugdxMlZlSWMa/UEEc
+         BdOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=NlNA5caPFDkRRH0y0qsccyBK12IFqz12JUTfxJlSVCM=;
-        b=T/O5HHVdl/kSLKYNlQjDwOjAcZI6fXZY5k1rFlbsCBbAYE637Yv5i3H2FzTWaFFLzH
-         NVjpcY96Y+tAeqymyUYfvvoZssQQsKUWGwIM6RjABYyOx5vRac+KLcvhxwuaXkafW+mF
-         MmwoKcdObGoJk63gr9des2vfvwEVUb5pG8eT/FMwnB1EzOj5qUiNhxG5BE8IB+j8d+gU
-         72OsKI3WrafuXnz+WuHciveUuydvImknxOKTBimT0UXSiHoZGbW0KgorZZKNDgRnLUbg
-         fgoNT3QDPgDKWCRniOpvbFBN2q5dQnBPrzGtmDMQMSlnnqBC4HTauXKp5dHQ+/7o2QkI
-         0jFQ==
-X-Gm-Message-State: APjAAAWGR9t2CzyD2y4wNUnlj6PjKXEushb9PEmVxjb/IbYztaOXJsfP
-        7nqhvOiQ7olO+Hk7cclcALG2uYWFzL0=
-X-Google-Smtp-Source: APXvYqyPz9quIQgUnKHU3+UaSMfbxNnk62gkJXMkIlQjMT7rfQaC77nit7zVt3ALZ/CjtPhn7Ddgag==
-X-Received: by 2002:a5d:640d:: with SMTP id z13mr35278231wru.181.1582127502904;
-        Wed, 19 Feb 2020 07:51:42 -0800 (PST)
-Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id d4sm251578wra.14.2020.02.19.07.51.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 19 Feb 2020 07:51:41 -0800 (PST)
-From:   Corentin Labbe <clabbe@baylibre.com>
-To:     davem@davemloft.net, herbert@gondor.apana.org.au
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH 2/2] crypto: drbg: DRBG_CTR should select CTR
-Date:   Wed, 19 Feb 2020 15:51:35 +0000
-Message-Id: <1582127495-5871-2-git-send-email-clabbe@baylibre.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1582127495-5871-1-git-send-email-clabbe@baylibre.com>
-References: <1582127495-5871-1-git-send-email-clabbe@baylibre.com>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=fFVDMYCiG2Jj7QSlhcVZE7ZVXQws5yCHBTafyc8gAf0=;
+        b=EVPpXADiSU17GnrSF9wqICCl5gO2Jo43CqQ788plpVa0QWZxfU4z1H2nW7FUx5jEnj
+         OFd7HCx+DjZMx71JynIWUxdH3wiDmQC3YvG5AK0xQPZYgxfKbi4ic+OwkZWP9atXRYFK
+         MIAxTwczsbguX5/lenVsWD4bJy3BoTaAWgu9bn7Kn5JweUgxXVilAz7o/UXV4K3VEa6l
+         NOcYAQSst8tGEsAeUajKMnjQUKz+K0s+wbaqFw97wvWrBnCN/VRWUGfTOcFWcfUjcKA5
+         LqHwIJH7DKEKAUq/lq9fqbnRmMN6G1/fe7G7RZdaYOLQ0N+vW9iKGqAj86TJGmGwSfd6
+         ecfQ==
+X-Gm-Message-State: APjAAAUMr7JiayCnuc9fjHlISyQqwqoBFH+PH7J+6ss7YqAAhTDJ1JxD
+        l18OQXE+VUg6D0JxlyE1++I=
+X-Google-Smtp-Source: APXvYqxggCQfBsIJiialGvH6QEFJhXGEsvlvNLXoHwPOUf5pBk2TNNO+hRO+6MpcmvMYFZn6dKUAow==
+X-Received: by 2002:ac8:4410:: with SMTP id j16mr22707290qtn.261.1582127523849;
+        Wed, 19 Feb 2020 07:52:03 -0800 (PST)
+Received: from localhost ([2620:10d:c091:500::2:e7ce])
+        by smtp.gmail.com with ESMTPSA id c52sm197292qtb.16.2020.02.19.07.52.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2020 07:52:03 -0800 (PST)
+Date:   Wed, 19 Feb 2020 10:52:02 -0500
+From:   Tejun Heo <tj@kernel.org>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Li Zefan <lizefan@huawei.com>, cgroups <cgroups@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Valentin Schneider <valentin.schneider@arm.com>
+Subject: Re: [regression] cpuset: offlined CPUs removed from affinity masks
+Message-ID: <20200219155202.GE698990@mtj.thefacebook.com>
+References: <1251528473.590671.1579196495905.JavaMail.zimbra@efficios.com>
+ <1317969050.4131.1581955387909.JavaMail.zimbra@efficios.com>
+ <20200219151922.GB698990@mtj.thefacebook.com>
+ <1589496945.670.1582126985824.JavaMail.zimbra@efficios.com>
+ <20200219154740.GD698990@mtj.thefacebook.com>
+ <59426509.702.1582127435733.JavaMail.zimbra@efficios.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <59426509.702.1582127435733.JavaMail.zimbra@efficios.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-if CRYPTO_DRBG_CTR is builtin and CTR is module, allocating such algo
-will fail.
-DRBG: could not allocate CTR cipher TFM handle: ctr(aes)
-alg: drbg: Failed to reset rng
-alg: drbg: Test 0 failed for drbg_pr_ctr_aes128
-DRBG: could not allocate CTR cipher TFM handle: ctr(aes)
-alg: drbg: Failed to reset rng
-alg: drbg: Test 0 failed for drbg_nopr_ctr_aes128
-DRBG: could not allocate CTR cipher TFM handle: ctr(aes)
-alg: drbg: Failed to reset rng
-alg: drbg: Test 0 failed for drbg_nopr_ctr_aes192
-DRBG: could not allocate CTR cipher TFM handle: ctr(aes)
-alg: drbg: Failed to reset rng
-ialg: drbg: Test 0 failed for drbg_nopr_ctr_aes256
+On Wed, Feb 19, 2020 at 10:50:35AM -0500, Mathieu Desnoyers wrote:
+> I can look into figuring out the commit introducing this issue, which I
+> suspect will be close to the introduction of CONFIG_CPUSET into the
+> kernel (which was ages ago). I'll check and let you know.
 
-Since setting DRBG_CTR=CTR lead to a recursive dependency, let's depends
-on CTR=y
+Oh, yeah, I'm pretty sure it goes way back. I don't think tracking
+that down would be necessary. I was just wondering whether it was a
+recent change because you said it was a regression.
 
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
----
- crypto/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/crypto/Kconfig b/crypto/Kconfig
-index 6d27fc6a7bf5..eddeb43fc01c 100644
---- a/crypto/Kconfig
-+++ b/crypto/Kconfig
-@@ -1822,7 +1822,7 @@ config CRYPTO_DRBG_HASH
- config CRYPTO_DRBG_CTR
- 	bool "Enable CTR DRBG"
- 	select CRYPTO_AES
--	depends on CRYPTO_CTR
-+	depends on CRYPTO_CTR=y
- 	help
- 	  Enable the CTR DRBG variant as defined in NIST SP800-90A.
- 
 -- 
-2.24.1
-
+tejun
