@@ -2,187 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D96BF163874
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 01:21:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D811E163879
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 01:22:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727939AbgBSAVA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 19:21:00 -0500
-Received: from smtprelay-out1.synopsys.com ([149.117.87.133]:42544 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726962AbgBSAUv (ORCPT
+        id S1727940AbgBSAV7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 19:21:59 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:44891 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726858AbgBSAV7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 19:20:51 -0500
-Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 23916C00A0;
-        Wed, 19 Feb 2020 00:20:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1582071650; bh=wRaHT6OlsAkBw+1g6iSX8HH400srvvpxsxuJTkRgCvg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=f/+P0S8VgEGpfYNSAGkhdi19uDzy08MkSLKyxwHR5cSMOUixTc9U1Jc15m92Jyaeb
-         CBDUV+rzIdoNjxPH9zaX90K64a3vqKn2b6nMWa02Y4FUxUl6oC92XHTysFCFfkHs7K
-         uvkoP+Dw86Hn8AEINxMQk4aerrujUXyJVgAD3kPLWl7QyXiT9xHWeBH4J1dS//jZSr
-         QxvwuywjPYhG7sKbgIETQTv/VPB6SimRr3BSlseH4NBxFg8+Oeds/Y+rOIupCkjHlN
-         e92W7kYmJXfutNVgq5yxedN6BIiJnx0eG48Fp/ZVRfDGSqmcD5IcFX+fMmyaF5No3O
-         2Y+XkrXl3cmhA==
-Received: from de02.synopsys.com (de02.internal.synopsys.com [10.225.17.21])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 9EA83A007D;
-        Wed, 19 Feb 2020 00:20:47 +0000 (UTC)
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by de02.synopsys.com (Postfix) with ESMTP id 4FFBC3D255;
-        Wed, 19 Feb 2020 01:20:47 +0100 (CET)
-From:   Vitor Soares <Vitor.Soares@synopsys.com>
-To:     linux-kernel@vger.kernel.org, linux-i3c@lists.infradead.org
-Cc:     Joao.Pinto@synopsys.com, Jose.Abreu@synopsys.com,
-        bbrezillon@kernel.org, gregkh@linuxfoundation.org,
-        wsa@the-dreams.de, arnd@arndb.de, broonie@kernel.org,
-        corbet@lwn.net, Vitor Soares <Vitor.Soares@synopsys.com>
-Subject: [PATCH v3 5/5] add i3cdev documentation
-Date:   Wed, 19 Feb 2020 01:20:43 +0100
-Message-Id: <a6f65d23947070f52c43fee4a1427745ea675ae0.1582069402.git.vitor.soares@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1582069402.git.vitor.soares@synopsys.com>
-References: <cover.1582069402.git.vitor.soares@synopsys.com>
-In-Reply-To: <cover.1582069402.git.vitor.soares@synopsys.com>
-References: <cover.1582069402.git.vitor.soares@synopsys.com>
+        Tue, 18 Feb 2020 19:21:59 -0500
+Received: by mail-oi1-f193.google.com with SMTP id d62so22031570oia.11
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 16:21:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iwevfYaMGMnWqDp7BRBH9ndZK1ueB9FpG7BWDRha664=;
+        b=uXpGi2JtCaKA3afhjgPnx3+k6bu9jRJFFsxC1tdxkFA2xmvGo813n+ZBpK+kHNH/39
+         aZ7yNwhZeAq6N113hFT+Z7i3q+igLWsyXdAmQCx0FBwKnVkgREb0kVWKfguOHKueZveq
+         ZvOaEfMgOMt2ySw4a1QyCrQJC2t/FNxIRmHkuSurQ9D6XOB2qmC2ne59d1ee/3/6jwaM
+         JtifkDeTXpnBdsiIlxZf5GoQkjGQc5fpmIu0DLDptiQoBobekKlKZo6hn+pha4aLWmPr
+         B+bYAjtTgusI/aORPogBkG+bpo4h/Bu6olv6xoFBj2IjpY4R4Lva9xceCo8cbzAhNQPZ
+         v9Nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iwevfYaMGMnWqDp7BRBH9ndZK1ueB9FpG7BWDRha664=;
+        b=CYjF3wXh+CRXbHDK8x62r/n8GD56AV77GindIEr6XcVt0NbjQ3fFkJl6qSJGJ2cHRw
+         EwArBukcL6UyRFLbfp2Ww6aebWyLuuDg+VeG3ZwSyjKPdoDJQeTdyyLiAh2P/sW079eq
+         F8iETwXBACcns1vGd8tuBKOSVFHA6piVa3pmPvDpOPq98dynZx+xGPD/zEImaA2fpIcy
+         NTvcwiyW3vAhKtxEnhUM5MnqOeKMoRXjzl59v+ZbOTqFJP9ZvXGgf807eOvRrYYosYzm
+         AurgNFsa0z8j3agQNX2u18DyKc8ZI9M12JYgYqqsfQf4qp0E1u18JYOrE1zmBh3p6cCm
+         hSWg==
+X-Gm-Message-State: APjAAAW3uRmxHLBxs1QbrswZSgyXj0xh8Btslhy2Fgg9KlE6w7m3B+n0
+        5MkA6ypQOKqqS2NDfpokuHGp8Or3Cgyybf8gH6mSAQ==
+X-Google-Smtp-Source: APXvYqyYiXJ4jQH3RxiDV6J7/uaLgk6BiS53+aqHNeUal6TNgdsW5hDDsiGSQ/HeW/6snAkmK42XqN3LCG9NUaItzAg=
+X-Received: by 2002:a54:4396:: with SMTP id u22mr3027403oiv.128.1582071718379;
+ Tue, 18 Feb 2020 16:21:58 -0800 (PST)
+MIME-Version: 1.0
+References: <20200218235104.112323-1-john.stultz@linaro.org> <20200219000736.GA5511@jackp-linux.qualcomm.com>
+In-Reply-To: <20200219000736.GA5511@jackp-linux.qualcomm.com>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Tue, 18 Feb 2020 16:21:47 -0800
+Message-ID: <CALAqxLUSU4j3G6zBsxeOanF2A4fi-Q+JKu6FVDXOwAzpnZvWNQ@mail.gmail.com>
+Subject: Re: [PATCH] usb: dwc3: gadget: Update chain bit correctly when using
+ sg list
+To:     Jack Pham <jackp@codeaurora.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Pratham Pratap <prathampratap@codeaurora.org>,
+        Felipe Balbi <balbi@kernel.org>, Yang Fei <fei.yang@intel.com>,
+        Thinh Nguyen <thinhn@synopsys.com>,
+        Tejas Joglekar <tejas.joglekar@synopsys.com>,
+        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
+        Todd Kjos <tkjos@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add documentation for the userspace API of i3cdev module.
+On Tue, Feb 18, 2020 at 4:07 PM Jack Pham <jackp@codeaurora.org> wrote:
+>
+> Hi John,
+>
+> Thanks for following-up with this! While you're doing minor tweaks
+> anyway, I hope you don't mind me picking some nits below.
+>
+> On Tue, Feb 18, 2020 at 11:51:04PM +0000, John Stultz wrote:
+> > From: Pratham Pratap <prathampratap@codeaurora.org>
+> >
+> > If scatter-gather operation is allowed, a large USB request is split
+> > into multiple TRBs. For preparing TRBs for sg list, driver iterates
+> > over the list and creates TRB for each sg and mark the chain bit to
+> > false for the last sg. The current IOMMU driver is clubbing the list
+> > of sgs which shares a page boundary into one and giving it to USB driver.
+> > With this the number of sgs mapped it not equal to the the number of sgs
+> > passed. Because of this USB driver is not marking the chain bit to false
+> > since it couldn't iterate to the last sg. This patch addresses this issue
+> > by marking the chain bit to false if it is the last mapped sg.
+> >
+> > At a practical level, this patch resolves USB transfer stalls
+> > seen with adb on dwc3 based db845c, pixel3 and other qcom
+> > hardware after functionfs gadget added scatter-gather support
+> > around v4.20.
+> >
+> > Credit also to Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
+> > who implemented a very similar fix to this issue.
+> >
+> > Cc: Felipe Balbi <balbi@kernel.org>
+> > Cc: Yang Fei <fei.yang@intel.com>
+> > Cc: Thinh Nguyen <thinhn@synopsys.com>
+> > Cc: Tejas Joglekar <tejas.joglekar@synopsys.com>
+> > Cc: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+> > Cc: Jack Pham <jackp@codeaurora.org>
+> > Cc: Todd Kjos <tkjos@google.com>
+> > Cc: Greg KH <gregkh@linuxfoundation.org>
+> > Cc: Linux USB List <linux-usb@vger.kernel.org>
+> > Cc: stable <stable@vger.kernel.org>
+> > Signed-off-by: Pratham Pratap <prathampratap@codeaurora.org>
+> > [jstultz: Slight tweak to remove sg_is_last() usage, reworked
+> >           commit message, minor comment tweak]
+> > Signed-off-by: John Stultz <john.stultz@linaro.org>
+> > ---
+> >  drivers/usb/dwc3/gadget.c | 9 ++++++++-
+> >  1 file changed, 8 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+> > index 1b8014ab0b25..10aa511051e8 100644
+> > --- a/drivers/usb/dwc3/gadget.c
+> > +++ b/drivers/usb/dwc3/gadget.c
+> > @@ -1071,7 +1071,14 @@ static void dwc3_prepare_one_trb_sg(struct dwc3_ep *dep,
+> >               unsigned int rem = length % maxp;
+> >               unsigned chain = true;
+> >
+> > -             if (sg_is_last(s))
+> > +             /*
+> > +              * IOMMU driver is coalescing the list of sgs which shares a
+> > +              * page boundary into one and giving it to USB driver. With
+> > +              * this the number of sgs mapped it not equal to the the number
+>                                                  ^^ s/it/is/     ^^^ /d
+>
+> Or could we more specifically say "number of sgs mapped could be less
+> than number passed"?
+>
+> > +              * of sgs passed. Mark the chain bit to false if it is the last
+> > +              * mapped sg.
+> > +              */
+> > +             if ((i == remaining - 1))
+>
+> These outer parens are superfluous.
 
-Signed-off-by: Vitor Soares <vitor.soares@synopsys.com>
----
- Documentation/userspace-api/i3c/i3cdev.rst | 116 +++++++++++++++++++++++++++++
- 1 file changed, 116 insertions(+)
- create mode 100644 Documentation/userspace-api/i3c/i3cdev.rst
+Thanks for catching these. I'll respin here shortly.
 
-diff --git a/Documentation/userspace-api/i3c/i3cdev.rst b/Documentation/userspace-api/i3c/i3cdev.rst
-new file mode 100644
-index 0000000..ada269f
---- /dev/null
-+++ b/Documentation/userspace-api/i3c/i3cdev.rst
-@@ -0,0 +1,116 @@
-+====================
-+I3C Device Interface
-+====================
-+
-+I3C devices have the flexibility of being accessed from userspace, as well
-+through the conventional use of kernel drivers. Userspace access, although
-+limited to private SDR I3C transfers, provides the advantage of simplifying
-+the implementation of straightforward communication protocols, applicable to
-+scenarios where transfers are dedicated such for sensor bring-up scenarios
-+(prototyping environments) or for microcontroller slave communication
-+implementation.
-+
-+The major device number is dynamically attributed and it's all reserved for
-+the i3c devices. By default, the i3cdev module only exposes the i3c devices
-+without device driver bind and aren't of master type in sort of character
-+device file under /dev/bus/i3c/ folder. They are identified through its
-+<bus id>-<Provisional ID> same way they can be found in /sys/bus/i3c/devices/.
-+::
-+
-+# ls -l /dev/bus/i3c/
-+total 0
-+crw-------    1 root     root      248,   0 Jan  1 00:22 0-6072303904d2
-+crw-------    1 root     root      248,   1 Jan  1 00:22 0-b7405ba00929
-+
-+The simplest way to use this interface is to not have an I3C device bound to
-+a kernel driver, this can be achieved by not have the kernel driver loaded or
-+using the Sysfs to unbind the kernel driver from the device.
-+
-+BASIC CHARACTER DEVICE API
-+===============================
-+For now, the API has only support private SDR read and write transfers.
-+Those transaction can be achieved by the following:
-+
-+``read(file, buffer, sizeof(buffer))``
-+  The standard read() operation will work as a simple transaction of private
-+  SDR read data followed a stop.
-+  Return the number of bytes read on success, and a negative error otherwise.
-+
-+``write(file, buffer, sizeof(buffer))``
-+  The standard write() operation will work as a simple transaction of private
-+  SDR write data followed a stop.
-+  Return the number of bytes written on success, and a negative error otherwise.
-+
-+``ioctl(file, I3C_IOC_PRIV_XFER(nxfers), struct i3c_ioc_priv_xfer *xfers)``
-+  It combines read/write transactions without a stop in between.
-+  Return 0 on success, and a negative error otherwise.
-+
-+NOTES:
-+  - According to the MIPI I3C Protocol is the I3C slave that terminates the read
-+    transaction otherwise Master can abort early on ninth (T) data bit of each
-+    SDR data word.
-+
-+  - Normal open() and close() operations on /dev/bus/i3c/<bus>-<provisional id>
-+    files work as you would expect.
-+
-+  - As documented in cdev_del() if a device was already open during
-+    i3cdev_detach, the read(), write() and ioctl() fops will still be callable
-+    yet they will return -EACCES.
-+
-+C EXAMPLE
-+=========
-+Working with I3C devices is much like working with files. You will need to open
-+a file descriptor, do some I/O operations with it, and then close it.
-+
-+The following header files should be included in an I3C program::
-+
-+#include <fcntl.h>
-+#include <unistd.h>
-+#include <sys/ioctl.h>
-+#include <linux/types.h>
-+#include <linux/i3c/i3cdev.h>
-+
-+To work with an I3C device, the application must open the driver, made
-+available at the device node::
-+
-+  int file;
-+
-+  file = open("/dev/bus/i3c/0-6072303904d2", O_RDWR);
-+  if (file < 0)
-+  exit(1);
-+
-+Now the file is opened, we can perform the operations available::
-+
-+  /* Write function */
-+  uint_t8  buf[] = {0x00, 0xde, 0xad, 0xbe, 0xef}
-+  if (write(file, buf, 5) != 5) {
-+    /* ERROR HANDLING: I3C transaction failed */
-+  }
-+
-+  /*  Read function */
-+  ret = read(file, buf, 5);
-+  If (ret < 0) {
-+    /* ERROR HANDLING: I3C transaction failed */
-+  } else {
-+    /* Iterate over buf[] to get the read data */
-+  }
-+
-+  /* IOCTL function */
-+  struct i3c_ioc_priv_xfer xfers[2];
-+
-+  uint8_t tx_buf[] = {0x00, 0xde, 0xad, 0xbe, 0xef};
-+  uint8_t rx_buf[10];
-+
-+  xfers[0].data = (uintptr_t)tx_buf;
-+  xfers[0].len = 5;
-+  xfers[0].rnw = 0;
-+  xfers[1].data = (uintptr_t)rx_buf;
-+  xfers[1].len = 10;
-+  xfers[1].rnw = 1;
-+
-+  if (ioctl(file, I3C_IOC_PRIV_XFER(2), xfers) < 0)
-+    /* ERROR HANDLING: I3C transaction failed */
-+
-+The device can be closed when the open file descriptor is no longer required::
-+
-+  close(file);
-\ No newline at end of file
--- 
-2.7.4
+> Also wondering if it would be more or less clear to just set the
+> variable once (and awkwardly move the comment to appear above the
+> local var declaration):
+>
+>                 unsigned chain = (i < remaining - 1);
+>
 
+Personally, I think doing it via the conditional makes the logic a bit
+less taxing to read/skim. So I might keep that bit as is.
+
+thanks
+-john
