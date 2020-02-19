@@ -2,104 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 578D1164E72
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 20:06:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2F77164E7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 20:07:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbgBSTGn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 14:06:43 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:32872 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726671AbgBSTGn (ORCPT
+        id S1726882AbgBSTHv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 14:07:51 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:41588 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726717AbgBSTHu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 14:06:43 -0500
-Received: by mail-qk1-f196.google.com with SMTP id h4so1207424qkm.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 11:06:42 -0800 (PST)
+        Wed, 19 Feb 2020 14:07:50 -0500
+Received: by mail-lf1-f68.google.com with SMTP id m30so990156lfp.8
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 11:07:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=m/aJSG1GnO/FT6DkcizY0uaRrvb/5pvLMIdj8tnZKx8=;
-        b=XoIByrGDv6i82eVAV//K7wSt8/qjjE4WRdFaDTsnvyoaOczAZrPomz2G6fvczEljhO
-         QUK/NFCscW2+/b/4kZ7Oz9cUXubB0OaO3eAzmzAdMt59Ino3V2JJNpklqOh9NxaCJwlt
-         CDJM5nyxfJMCKzbsuCKGsTVJTAwYZIkjlnZV8H4Rp4bdzKa72tmsBQh3C5ZUxIeDQLUl
-         KgdxHVs8LKaBfhSSX2Fleo/A+ZUDA8Dx+u6WXZGWMFeBmZQK8LWO0+jXCfNeORrxX0ay
-         vDvWNJP2eTO+2yWwRzwEBC4aUrlU2ZBsYrnTgMp5h6ITZt1XNLkbZ3R8R0Clq3Cg3Lic
-         oe+g==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PW7lNRLaUwWMkxjmDviGmCx98DZMFUxSA3+XY1xBUHc=;
+        b=Hx1j/CCXthRsFcYUkCqUCZKHuALKrv53PhNO0/eSPdI55ETBuvMT4Bzt7Qa//aT+Xq
+         pbz3LbAT0K7mf2O2wl4T+6nDRq33OiFGxtJRkEnoPAzmD/q8ILz+w8fB+i5OEbDM4aTv
+         V5D7jcX/IJAfFXSwG3AgccJqFA6k9pBx+DkqY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=m/aJSG1GnO/FT6DkcizY0uaRrvb/5pvLMIdj8tnZKx8=;
-        b=jRAt4EH3z22IlE14NjjZ31W1SvwVN48iX2338Yaz0dD4407uk+ptxPWxj4cGE09I9Y
-         UufX5AmdTJFL9O43sgTW0eXxP3R1A+jMIisHr9+eu48IjwaxGcFJ9a6NoTfBhYunLe55
-         tzlsGi2QuZ3ovSb8qmggmfVMXh38Qbrwr/BpXKcd6ZDQ734Jm1lTTCphaNp8LhqGGmMY
-         QmG7yiKd9dpSpqFsWg5P+Ef0NGV+sVUe4sNWvqnXyOvYSWagDhd4sjO0CMetwGAT2dY1
-         5WsqGxA2J/tFyk53NRyRYMIlCxqWl2jWHkXPhslnokq1g0kwIsz4daYB1lEa0FhsU18I
-         0KlQ==
-X-Gm-Message-State: APjAAAVUxtl70zIRKGAUkT0t0CkBVhv9ZMN1feJxRPBUyI/Ey+QdamNX
-        CFtl6VGtx8tDr+nmhMzkQt0Lu/Yk
-X-Google-Smtp-Source: APXvYqwUwOZpW1fVd3kaNR02Zf66B6fIWhv1+GJ5XEdDawDsImh3meHEQ4eCe+CPIGSZPG7nnJejAg==
-X-Received: by 2002:a05:620a:1332:: with SMTP id p18mr2119777qkj.283.1582139202217;
-        Wed, 19 Feb 2020 11:06:42 -0800 (PST)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id r1sm434566qtu.83.2020.02.19.11.06.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 11:06:42 -0800 (PST)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Wed, 19 Feb 2020 14:06:40 -0500
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] x86/boot/compressed/64: Remove .bss/.pgtable from
- bzImage
-Message-ID: <20200219190640.GA1926073@rani.riverdale.lan>
-References: <20200109150218.16544-1-nivedita@alum.mit.edu>
- <20200205162921.GA318609@rani.riverdale.lan>
- <20200218180353.GA930230@rani.riverdale.lan>
- <20200219120938.GB30966@zn.tnic>
- <20200219175717.GA1892094@rani.riverdale.lan>
- <20200219182230.GG30966@zn.tnic>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PW7lNRLaUwWMkxjmDviGmCx98DZMFUxSA3+XY1xBUHc=;
+        b=qSiz/2l/YCnGuYu23z0unUwTUO7wTh65z3tITUIqzJe2vrXdUWRSbrYUTy+fEiBbLx
+         gfYld/ImbhbhFCAB3CVDV2b6ZwSAIpfsZ03WmaBVYFJweD70DeqLpNjEkLFmWxJGgK0E
+         lEqpvoaElurR4V6glouI4BY7MQQ7nJQtgxF75s9EEZDj4llW6XBQJ/csdEpO/zMWtMx2
+         PcmYxWo6bew6oqxKyCB5f60SLswrqXFqkCd8NsUKQdH8LnPD33pOn57+2wbMMvkSlW2E
+         rUjOQp7LMtNHzD89Pk2DjElaYWklpAWKjwhH1CewQJD0aMiJl0gaHKDLDq0bPQAR7n8g
+         LFLg==
+X-Gm-Message-State: APjAAAVF0myecDZsjNmyqK/00JmuYHTCBX7d4EyXIERUcD/wfKkzVkdJ
+        uIyPG49XLNhx2PF77YCiG3zf8BZOp4U=
+X-Google-Smtp-Source: APXvYqxLPllsGZLlxNtEUpBnVXacBqb+gEXDDN272hE95BQSEU8d8/PhZ51akiCWShoJWTk8nIciww==
+X-Received: by 2002:a19:c205:: with SMTP id l5mr14090817lfc.159.1582139266396;
+        Wed, 19 Feb 2020 11:07:46 -0800 (PST)
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
+        by smtp.gmail.com with ESMTPSA id q14sm267168lfc.60.2020.02.19.11.07.44
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Feb 2020 11:07:45 -0800 (PST)
+Received: by mail-lf1-f51.google.com with SMTP id f24so1015369lfh.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 11:07:44 -0800 (PST)
+X-Received: by 2002:a05:6512:687:: with SMTP id t7mr14685091lfe.30.1582139264476;
+ Wed, 19 Feb 2020 11:07:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200219182230.GG30966@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <158212290024.224464.862376690360037918.stgit@warthog.procyon.org.uk>
+ <CAMuHMdV+H0p3qFV=gDz0dssXVhzd+L_eEn6s0jzrU5M79_50HQ@mail.gmail.com>
+ <227117.1582124888@warthog.procyon.org.uk> <CAHk-=wjFwT-fRw0kH-dYS9M5eBz3Jg0FeUfhf6VnGrPMVDDCBg@mail.gmail.com>
+ <241568.1582134931@warthog.procyon.org.uk> <CAHk-=wi=UbOwm8PMQUB1xaXRWEhhoVFdsKDSz=bX++rMQOUj0w@mail.gmail.com>
+In-Reply-To: <CAHk-=wi=UbOwm8PMQUB1xaXRWEhhoVFdsKDSz=bX++rMQOUj0w@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 19 Feb 2020 11:07:28 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whfoWHvL29PPXncxV6iprC4e_m6CQWQJ1G4-JtR+uGVUA@mail.gmail.com>
+Message-ID: <CAHk-=whfoWHvL29PPXncxV6iprC4e_m6CQWQJ1G4-JtR+uGVUA@mail.gmail.com>
+Subject: Re: [RFC PATCH] vfs: syscalls: Add create_automount() and remove_automount()
+To:     David Howells <dhowells@redhat.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, coda@cs.cmu.edu,
+        linux-afs@lists.infradead.org, CIFS <linux-cifs@vger.kernel.org>,
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 07:22:30PM +0100, Borislav Petkov wrote:
-> On Wed, Feb 19, 2020 at 12:57:17PM -0500, Arvind Sankar wrote:
-> > There isn't any particular urgency (at least until fg-kaslr patches try
-> 
-> Ok, I was just making sure you're not pinging because there's something
-> more urgent here. See below.
-> 
-> > to make it 64MiB bigger), but it's unclear how long to wait before
-> > sending a reminder -- Documentation/process suggests that comments
-> > should be received in a week or so, pinging after 4 and 6 weeks seemed
-> > reasonable. If x86 has a longer queue, might be worth documenting that
-> > somewhere?
-> 
-> We try to track all stuff but x86 is super crazy most of the time,
-> especially currently, so stuff gets prioritized based on urgency and we
-> also try to round-robin through all submitters so that stuff doesn't get
-> left out.
-> 
-> Thus the one-week thing will never work with x86. Once a month ping
-> maybe.
-> 
-> In your case, since it is an improvement which is good to have but not
-> absolutely a must and not a bugfix, it is understandable that it would
-> get pushed back in priority.
-> 
-> But stuff usually won't be forgotten and we'll get to it eventually - it
-> is just that we're mega swamped all the time. :-\
-> 
+On Wed, Feb 19, 2020 at 10:55 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Why don't you just use mkdir with S_ISVTX set, or something like that?
 
-Ok, thanks.
+Actually, since this is apparently a different filetype, the _logical_
+thing to do is to use "mknod()".
+
+Yes, yes, it will require a new case (and maybe a per-filesystem
+callback or a flag or something) in "may_mknod()" and "do_mknodat()"
+to let those new kinds through, but it sounds like mknod() is actually
+what you're doing.
+
+You presumably need a new type _anyway_ for stat() and/or the filldir
+d_type field. Or do you always want to make it look exactly like a
+directory to all user space?
+
+                  Linus
