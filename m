@@ -2,99 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB7C31643CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 12:59:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 605361643D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 13:03:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727370AbgBSL7p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 06:59:45 -0500
-Received: from foss.arm.com ([217.140.110.172]:47412 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726708AbgBSL7p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 06:59:45 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5415131B;
-        Wed, 19 Feb 2020 03:59:44 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C9F2E3F6CF;
-        Wed, 19 Feb 2020 03:59:43 -0800 (PST)
-Date:   Wed, 19 Feb 2020 11:59:42 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Todd Kjos <tkjos@google.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] driver core: Make deferred_probe_timeout global
- so it can be shared
-Message-ID: <20200219115942.GA4488@sirena.org.uk>
-References: <20200218220748.54823-1-john.stultz@linaro.org>
- <20200218220748.54823-2-john.stultz@linaro.org>
+        id S1727232AbgBSMDF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 07:03:05 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:57487 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726891AbgBSMDC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 07:03:02 -0500
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1j4O4A-00028x-UM; Wed, 19 Feb 2020 12:02:59 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Haw Loeung <haw.loeung@canonical.com>
+Subject: [PATCH net-next] net/ipv4/sysctl: show tcp_{allowed,available}_congestion_control in non-initial netns
+Date:   Wed, 19 Feb 2020 13:02:53 +0100
+Message-Id: <20200219120253.2667548-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="8t9RHnE3ZwKMSgU+"
-Content-Disposition: inline
-In-Reply-To: <20200218220748.54823-2-john.stultz@linaro.org>
-X-Cookie: FORTH IF HONK THEN
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+It is currenty possible to switch the TCP congestion control algorithm
+in non-initial network namespaces:
 
---8t9RHnE3ZwKMSgU+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+unshare -U --map-root --net --fork --pid --mount-proc
+echo "reno" > /proc/sys/net/ipv4/tcp_congestion_control
 
-On Tue, Feb 18, 2020 at 10:07:48PM +0000, John Stultz wrote:
-> This patch, suggested by Rob, allows deferred_probe_timeout to
-> be global so other substems can use it.
+works just fine. But currently non-initial network namespaces have no
+way of kowing which congestion algorithms are available or allowed other
+than through trial and error by writing the names of the algorithms into
+the aforementioned file.
+Since we already allow changing the congestion algorithm in non-initial
+network namespaces by exposing the tcp_congestion_control file there is
+no reason to not also expose the
+tcp_{allowed,available}_congestion_control files to non-initial network
+namespaces. After this change a container with a separate network
+namespace will show:
 
-> This also sets the default to 30 instead of -1 (no timeout) and
-> modifies the regulator code to make use of it instead of its
-> hard-coded 30 second interval.
+root@f1:~# ls -al /proc/sys/net/ipv4/tcp_* | grep congestion
+-rw-r--r-- 1 root root 0 Feb 19 11:54 /proc/sys/net/ipv4/tcp_allowed_congestion_control
+-r--r--r-- 1 root root 0 Feb 19 11:54 /proc/sys/net/ipv4/tcp_available_congestion_control
+-rw-r--r-- 1 root root 0 Feb 19 11:54 /proc/sys/net/ipv4/tcp_congestion_control
 
-This is at least two patches, one adding the new feature and the other
-adding a user of that feature.
+Link: https://github.com/lxc/lxc/issues/3267
+Reported-by: Haw Loeung <haw.loeung@canonical.com>
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+ net/ipv4/sysctl_net_ipv4.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-> @@ -5767,18 +5772,17 @@ static int __init regulator_init_complete(void)
->  		has_full_constraints =3D true;
-> =20
->  	/*
-> -	 * We punt completion for an arbitrary amount of time since
-> +	 * We punt completion for deferred_probe_timeout seconds since
->  	 * systems like distros will load many drivers from userspace
->  	 * so consumers might not always be ready yet, this is
->  	 * particularly an issue with laptops where this might bounce
+diff --git a/net/ipv4/sysctl_net_ipv4.c b/net/ipv4/sysctl_net_ipv4.c
+index 9684af02e0a5..d9531b4b33f2 100644
+--- a/net/ipv4/sysctl_net_ipv4.c
++++ b/net/ipv4/sysctl_net_ipv4.c
+@@ -554,18 +554,6 @@ static struct ctl_table ipv4_table[] = {
+ 		.proc_handler	= proc_dointvec,
+ 	},
+ #endif /* CONFIG_NETLABEL */
+-	{
+-		.procname	= "tcp_available_congestion_control",
+-		.maxlen		= TCP_CA_BUF_MAX,
+-		.mode		= 0444,
+-		.proc_handler   = proc_tcp_available_congestion_control,
+-	},
+-	{
+-		.procname	= "tcp_allowed_congestion_control",
+-		.maxlen		= TCP_CA_BUF_MAX,
+-		.mode		= 0644,
+-		.proc_handler   = proc_allowed_congestion_control,
+-	},
+ 	{
+ 		.procname	= "tcp_available_ulp",
+ 		.maxlen		= TCP_ULP_BUF_MAX,
+@@ -885,6 +873,18 @@ static struct ctl_table ipv4_net_table[] = {
+ 		.maxlen		= TCP_CA_NAME_MAX,
+ 		.proc_handler	= proc_tcp_congestion_control,
+ 	},
++	{
++		.procname	= "tcp_available_congestion_control",
++		.maxlen		= TCP_CA_BUF_MAX,
++		.mode		= 0444,
++		.proc_handler   = proc_tcp_available_congestion_control,
++	},
++	{
++		.procname	= "tcp_allowed_congestion_control",
++		.maxlen		= TCP_CA_BUF_MAX,
++		.mode		= 0644,
++		.proc_handler   = proc_allowed_congestion_control,
++	},
+ 	{
+ 		.procname	= "tcp_keepalive_time",
+ 		.data		= &init_net.ipv4.sysctl_tcp_keepalive_time,
 
-While I don't see it doing any harm I'm not 100% convinced by this
-change - we're not really doing anything directly to do with deferred
-probe here, we're shutting off regulators that remain unused late in
-boot but even then they'll still be available for use.  It feels a bit
-unclear and the way you've adapted the code to always have a timeout
-even if the deferred probe timeout gets changed feels a bit off.  If
-nothing else this comment needs more of an update than you've done.
+base-commit: bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9
+-- 
+2.25.0
 
---8t9RHnE3ZwKMSgU+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5NIysACgkQJNaLcl1U
-h9Ashgf/dhUO3BoxzBzZCXprOsWsjQUjxy4uldVR1kQq26HrRxPptQQB4MbZ2l3O
-mK9nTS027nDNZ5tCE5m/H4HcZnXvCR6ya05xixa5CcDc+mgaR8R2XDCJ63GFVYhL
-dy0R4r4iQdx11vC1gJWNiscHBNgbWKRjSRsZLR51k2STkhaLhitvABbapP3BviU0
-LtjwBbIDFwUdxPNGNaTUoss+vL5jdpm7l45io7bm6sLpE3UyAWQum7XZbsuXqmfv
-9hHiObCOd3J7UUQe0bY7jEhWAf6ml9EOB5kyFyUTB3E5S4SM3o4PNyCl2yfEbict
-RhH1UDGHnyXl/DCi6ox3CKwcZtWPtQ==
-=fsjG
------END PGP SIGNATURE-----
-
---8t9RHnE3ZwKMSgU+--
