@@ -2,164 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 138B9164E78
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 20:07:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0A44164E8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 20:10:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbgBSTHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 14:07:42 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:39118 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726613AbgBSTHl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 14:07:41 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1j4Uh2-0002Ro-UH; Wed, 19 Feb 2020 20:07:33 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 8527C1C20D7;
-        Wed, 19 Feb 2020 20:07:32 +0100 (CET)
-Date:   Wed, 19 Feb 2020 19:07:32 -0000
-From:   "tip-bot2 for Kim Phillips" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/cpu/amd: Enable the fixed Instructions Retired
- counter IRPERF
-Cc:     Kim Phillips <kim.phillips@amd.com>, Borislav Petkov <bp@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>, stable@vger.kernel.org,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200214201805.13830-1-kim.phillips@amd.com>
-References: <20200214201805.13830-1-kim.phillips@amd.com>
-MIME-Version: 1.0
-Message-ID: <158213925220.13786.9146323471825204537.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        id S1726768AbgBSTKc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 14:10:32 -0500
+Received: from mga05.intel.com ([192.55.52.43]:7642 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726634AbgBSTKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 14:10:32 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2020 11:10:31 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,461,1574150400"; 
+   d="scan'208";a="408536204"
+Received: from otc-lr-04.jf.intel.com ([10.54.39.48])
+  by orsmga005.jf.intel.com with ESMTP; 19 Feb 2020 11:10:31 -0800
+From:   kan.liang@linux.intel.com
+To:     acme@kernel.org, jolsa@redhat.com, mingo@redhat.com,
+        peterz@infradead.org, linux-kernel@vger.kernel.org
+Cc:     mark.rutland@arm.com, namhyung@kernel.org,
+        ravi.bangoria@linux.ibm.com, yao.jin@linux.intel.com,
+        ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH 0/5] Support metric group constraint
+Date:   Wed, 19 Feb 2020 11:08:35 -0800
+Message-Id: <1582139320-75181-1-git-send-email-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/urgent branch of tip:
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Commit-ID:     21b5ee59ef18e27d85810584caf1f7ddc705ea83
-Gitweb:        https://git.kernel.org/tip/21b5ee59ef18e27d85810584caf1f7ddc705ea83
-Author:        Kim Phillips <kim.phillips@amd.com>
-AuthorDate:    Wed, 19 Feb 2020 18:52:43 +01:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Wed, 19 Feb 2020 20:01:54 +01:00
+Some metric groups, e.g. Page_Walks_Utilization, will never count when
+NMI watchdog is enabled.
 
-x86/cpu/amd: Enable the fixed Instructions Retired counter IRPERF
+ $echo 1 > /proc/sys/kernel/nmi_watchdog
+ $perf stat -M Page_Walks_Utilization
 
-Commit
+ Performance counter stats for 'system wide':
 
-  aaf248848db50 ("perf/x86/msr: Add AMD IRPERF (Instructions Retired)
-		  performance counter")
+ <not counted>      itlb_misses.walk_pending       (0.00%)
+ <not counted>      dtlb_load_misses.walk_pending  (0.00%)
+ <not counted>      dtlb_store_misses.walk_pending (0.00%)
+ <not counted>      ept.walk_pending               (0.00%)
+ <not counted>      cycles                         (0.00%)
 
-added support for access to the free-running counter via 'perf -e
-msr/irperf/', but when exercised, it always returns a 0 count:
+       2.343460588 seconds time elapsed
 
-BEFORE:
+ Some events weren't counted. Try disabling the NMI watchdog:
+        echo 0 > /proc/sys/kernel/nmi_watchdog
+        perf stat ...
+        echo 1 > /proc/sys/kernel/nmi_watchdog
+ The events in group usually have to be from the same PMU. Try
+ reorganizing the group.
 
-  $ perf stat -e instructions,msr/irperf/ true
+A metric group is a weak group, which relies on group validation
+code in the kernel to determine whether to be opened as a group or
+a non-group. However, group validation code may return false-positives,
+especially when NMI watchdog is enabled. (The metric group is allowed
+as a group but will never be scheduled.)
 
-   Performance counter stats for 'true':
+The attempt to fix the group validation code has been rejected.
+https://lore.kernel.org/lkml/20200117091341.GX2827@hirez.programming.kicks-ass.net/
+Because we cannot accurately predict whether the group can be scheduled
+as a group, only by checking current status.
 
-             624,833      instructions
-                   0      msr/irperf/
+This patch set provides another solution to mitigate the issue.
+Add "MetricConstraint" in event list, which provides a hint for perf tool,
+e.g. "MetricConstraint": "NO_NMI_WATCHDOG". Perf tool can change the
+metric group to non-group (standalone metrics) if NMI watchdog is enabled.
 
-Simply set its enable bit - HWCR bit 30 - to make it start counting.
+After applying the patch,
 
-Enablement is restricted to all machines advertising IRPERF capability,
-except those susceptible to an erratum that makes the IRPERF return
-bad values.
+ $echo 1 > /proc/sys/kernel/nmi_watchdog
+ $perf stat -M Page_Walks_Utilization
+  Splitting metric group Page_Walks_Utilization into standalone metrics.
+  Try disabling the NMI watchdog to comply NO_NMI_WATCHDOG metric constraint:
+        echo 0 > /proc/sys/kernel/nmi_watchdog
+        perf stat ...
+        echo 1 > /proc/sys/kernel/nmi_watchdog
 
-That erratum occurs in Family 17h models 00-1fh [1], but not in F17h
-models 20h and above [2].
+ Performance counter stats for 'system wide':
 
-AFTER (on a family 17h model 31h machine):
+        18,253,454      itlb_misses.walk_pending  #      0.0
+                              Page_Walks_Utilization   (50.55%)
+        78,051,525      dtlb_load_misses.walk_pending  (50.55%)
+        29,213,063      dtlb_store_misses.walk_pending (50.55%)
+                 0      ept.walk_pending               (50.55%)
+     2,542,132,364      cycles                         (49.92%)
 
-  $ perf stat -e instructions,msr/irperf/ true
+       1.037095993 seconds time elapsed
 
-   Performance counter stats for 'true':
+Kan Liang (5):
+  perf jevents: Support metric constraint
+  perf metricgroup: Factor out metricgroup__add_metric_weak_group()
+  perf util: Factor out sysctl__nmi_watchdog_enabled()
+  perf metricgroup: Support metric constraint
+  perf vendor events: Add NO_NMI_WATCHDOG metric constraint
 
-             621,690      instructions
-             622,490      msr/irperf/
+ .../arch/x86/cascadelakex/clx-metrics.json         |  3 +-
+ .../pmu-events/arch/x86/skylake/skl-metrics.json   |  3 +-
+ .../pmu-events/arch/x86/skylakex/skx-metrics.json  |  3 +-
+ tools/perf/pmu-events/jevents.c                    | 19 +++--
+ tools/perf/pmu-events/jevents.h                    |  2 +-
+ tools/perf/pmu-events/pmu-events.h                 |  1 +
+ tools/perf/util/metricgroup.c                      | 97 ++++++++++++++++------
+ tools/perf/util/stat-display.c                     |  6 +-
+ tools/perf/util/util.c                             | 18 ++++
+ tools/perf/util/util.h                             |  2 +
+ 10 files changed, 116 insertions(+), 38 deletions(-)
 
-[1] Revision Guide for AMD Family 17h Models 00h-0Fh Processors
-[2] Revision Guide for AMD Family 17h Models 30h-3Fh Processors
+-- 
+2.7.4
 
-The revision guides are available from the bugzilla Link below.
-
- [ bp: Massage commit message. ]
-
-Fixes: aaf248848db50 ("perf/x86/msr: Add AMD IRPERF (Instructions Retired) performance counter")
-Signed-off-by: Kim Phillips <kim.phillips@amd.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: stable@vger.kernel.org
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537
-Link: http://lkml.kernel.org/r/20200214201805.13830-1-kim.phillips@amd.com
----
- arch/x86/include/asm/msr-index.h |  2 ++
- arch/x86/kernel/cpu/amd.c        | 14 ++++++++++++++
- 2 files changed, 16 insertions(+)
-
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index ebe1685..d5e517d 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -512,6 +512,8 @@
- #define MSR_K7_HWCR			0xc0010015
- #define MSR_K7_HWCR_SMMLOCK_BIT		0
- #define MSR_K7_HWCR_SMMLOCK		BIT_ULL(MSR_K7_HWCR_SMMLOCK_BIT)
-+#define MSR_K7_HWCR_IRPERF_EN_BIT	30
-+#define MSR_K7_HWCR_IRPERF_EN		BIT_ULL(MSR_K7_HWCR_IRPERF_EN_BIT)
- #define MSR_K7_FID_VID_CTL		0xc0010041
- #define MSR_K7_FID_VID_STATUS		0xc0010042
- 
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index ac83a0f..1f875fb 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -28,6 +28,7 @@
- 
- static const int amd_erratum_383[];
- static const int amd_erratum_400[];
-+static const int amd_erratum_1054[];
- static bool cpu_has_amd_erratum(struct cpuinfo_x86 *cpu, const int *erratum);
- 
- /*
-@@ -972,6 +973,15 @@ static void init_amd(struct cpuinfo_x86 *c)
- 	/* AMD CPUs don't reset SS attributes on SYSRET, Xen does. */
- 	if (!cpu_has(c, X86_FEATURE_XENPV))
- 		set_cpu_bug(c, X86_BUG_SYSRET_SS_ATTRS);
-+
-+	/*
-+	 * Turn on the Instructions Retired free counter on machines not
-+	 * susceptible to erratum #1054 "Instructions Retired Performance
-+	 * Counter May Be Inaccurate".
-+	 */
-+	if (cpu_has(c, X86_FEATURE_IRPERF) &&
-+	    !cpu_has_amd_erratum(c, amd_erratum_1054))
-+		msr_set_bit(MSR_K7_HWCR, MSR_K7_HWCR_IRPERF_EN_BIT);
- }
- 
- #ifdef CONFIG_X86_32
-@@ -1099,6 +1109,10 @@ static const int amd_erratum_400[] =
- static const int amd_erratum_383[] =
- 	AMD_OSVW_ERRATUM(3, AMD_MODEL_RANGE(0x10, 0, 0, 0xff, 0xf));
- 
-+/* #1054: Instructions Retired Performance Counter May Be Inaccurate */
-+static const int amd_erratum_1054[] =
-+	AMD_OSVW_ERRATUM(0, AMD_MODEL_RANGE(0x17, 0, 0, 0x2f, 0xf));
-+
- 
- static bool cpu_has_amd_erratum(struct cpuinfo_x86 *cpu, const int *erratum)
- {
