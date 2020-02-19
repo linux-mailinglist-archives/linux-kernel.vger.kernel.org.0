@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2422A163F6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:42:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC552163F67
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:42:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727487AbgBSImW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 03:42:22 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44278 "EHLO mx2.suse.de"
+        id S1727438AbgBSImO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 03:42:14 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44300 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726723AbgBSIlZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 03:41:25 -0500
+        id S1726736AbgBSIl0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 03:41:26 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 00C32AED8;
-        Wed, 19 Feb 2020 08:41:23 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 4D88CAF22;
+        Wed, 19 Feb 2020 08:41:24 +0000 (UTC)
 From:   Jiri Slaby <jslaby@suse.cz>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH 15/24] n_hdlc: add helper for buffers allocation
-Date:   Wed, 19 Feb 2020 09:41:09 +0100
-Message-Id: <20200219084118.26491-15-jslaby@suse.cz>
+Subject: [PATCH 16/24] n_hdlc: move tty_ldisc_ops to the bottom
+Date:   Wed, 19 Feb 2020 09:41:10 +0100
+Message-Id: <20200219084118.26491-16-jslaby@suse.cz>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200219084118.26491-1-jslaby@suse.cz>
 References: <20200219084118.26491-1-jslaby@suse.cz>
@@ -32,82 +32,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Given both rx and tx allocations do the same, add a new helper
-(n_hdlc_alloc_buf) and use it for both of them. This cleans up
-n_hdlc_alloc slightly.
+This makes forward declarations unnecessary. So drop them.
 
 Signed-off-by: Jiri Slaby <jslaby@suse.cz>
 ---
- drivers/tty/n_hdlc.c | 42 ++++++++++++++++++++----------------------
- 1 file changed, 20 insertions(+), 22 deletions(-)
+ drivers/tty/n_hdlc.c | 46 +++++++++++++++-----------------------------
+ 1 file changed, 15 insertions(+), 31 deletions(-)
 
 diff --git a/drivers/tty/n_hdlc.c b/drivers/tty/n_hdlc.c
-index 2709d18364eb..4276931fd071 100644
+index 4276931fd071..615abe582cac 100644
 --- a/drivers/tty/n_hdlc.c
 +++ b/drivers/tty/n_hdlc.c
-@@ -699,6 +699,23 @@ static __poll_t n_hdlc_tty_poll(struct tty_struct *tty, struct file *filp,
- 	return mask;
- }	/* end of n_hdlc_tty_poll() */
+@@ -157,22 +157,6 @@ static struct n_hdlc *n_hdlc_alloc (void);
+ /* max frame size for memory allocations */
+ static int maxframe = 4096;
  
-+static void n_hdlc_alloc_buf(struct n_hdlc_buf_list *list, unsigned int count,
-+		const char *name)
-+{
-+	struct n_hdlc_buf *buf;
-+	unsigned int i;
-+
-+	for (i = 0; i < count; i++) {
-+		buf = kmalloc(struct_size(buf, buf, maxframe), GFP_KERNEL);
-+		if (!buf) {
-+			pr_debug("%s(%d)%s(), kmalloc() failed for %s buffer %u\n",
-+					__FILE__, __LINE__, __func__, name, i);
-+			return;
-+		}
-+		n_hdlc_buf_put(list, buf);
-+	}
-+}
-+
- /**
-  * n_hdlc_alloc - allocate an n_hdlc instance data structure
-  *
-@@ -706,8 +723,6 @@ static __poll_t n_hdlc_tty_poll(struct tty_struct *tty, struct file *filp,
-  */
- static struct n_hdlc *n_hdlc_alloc(void)
+-/* TTY callbacks */
+-
+-static ssize_t n_hdlc_tty_read(struct tty_struct *tty, struct file *file,
+-			   __u8 __user *buf, size_t nr);
+-static ssize_t n_hdlc_tty_write(struct tty_struct *tty, struct file *file,
+-			    const unsigned char *buf, size_t nr);
+-static int n_hdlc_tty_ioctl(struct tty_struct *tty, struct file *file,
+-			    unsigned int cmd, unsigned long arg);
+-static __poll_t n_hdlc_tty_poll(struct tty_struct *tty, struct file *filp,
+-				    poll_table *wait);
+-static int n_hdlc_tty_open(struct tty_struct *tty);
+-static void n_hdlc_tty_close(struct tty_struct *tty);
+-static void n_hdlc_tty_receive(struct tty_struct *tty, const __u8 *cp,
+-			       char *fp, int count);
+-static void n_hdlc_tty_wakeup(struct tty_struct *tty);
+-
+ static void flush_rx_queue(struct tty_struct *tty)
  {
--	struct n_hdlc_buf *buf;
--	int i;
- 	struct n_hdlc *n_hdlc = kzalloc(sizeof(*n_hdlc), GFP_KERNEL);
+ 	struct n_hdlc *n_hdlc = tty->disc_data;
+@@ -191,21 +175,6 @@ static void flush_tx_queue(struct tty_struct *tty)
+ 		n_hdlc_buf_put(&n_hdlc->tx_free_buf_list, buf);
+ }
  
- 	if (!n_hdlc)
-@@ -723,26 +738,9 @@ static struct n_hdlc *n_hdlc_alloc(void)
- 	INIT_LIST_HEAD(&n_hdlc->rx_buf_list.list);
- 	INIT_LIST_HEAD(&n_hdlc->tx_buf_list.list);
+-static struct tty_ldisc_ops n_hdlc_ldisc = {
+-	.owner		= THIS_MODULE,
+-	.magic		= TTY_LDISC_MAGIC,
+-	.name		= "hdlc",
+-	.open		= n_hdlc_tty_open,
+-	.close		= n_hdlc_tty_close,
+-	.read		= n_hdlc_tty_read,
+-	.write		= n_hdlc_tty_write,
+-	.ioctl		= n_hdlc_tty_ioctl,
+-	.poll		= n_hdlc_tty_poll,
+-	.receive_buf	= n_hdlc_tty_receive,
+-	.write_wakeup	= n_hdlc_tty_wakeup,
+-	.flush_buffer   = flush_rx_queue,
+-};
+-
+ static void n_hdlc_free_buf_list(struct n_hdlc_buf_list *list)
+ {
+ 	struct n_hdlc_buf *buf;
+@@ -810,6 +779,21 @@ static struct n_hdlc_buf *n_hdlc_buf_get(struct n_hdlc_buf_list *buf_list)
+ 	return buf;
+ }	/* end of n_hdlc_buf_get() */
  
--	/* allocate free rx buffer list */
--	for(i=0;i<DEFAULT_RX_BUF_COUNT;i++) {
--		buf = kmalloc(struct_size(buf, buf, maxframe), GFP_KERNEL);
--		if (buf)
--			n_hdlc_buf_put(&n_hdlc->rx_free_buf_list,buf);
--		else
--			pr_debug("%s(%d)%s(), kmalloc() failed for rx buffer %d\n",
--					__FILE__, __LINE__, __func__, i);
--	}
--	
--	/* allocate free tx buffer list */
--	for(i=0;i<DEFAULT_TX_BUF_COUNT;i++) {
--		buf = kmalloc(struct_size(buf, buf, maxframe), GFP_KERNEL);
--		if (buf)
--			n_hdlc_buf_put(&n_hdlc->tx_free_buf_list,buf);
--		else
--			pr_debug("%s(%d)%s(), kmalloc() failed for tx buffer %d\n",
--					__FILE__, __LINE__, __func__, i);
--	}
--	
-+	n_hdlc_alloc_buf(&n_hdlc->rx_free_buf_list, DEFAULT_RX_BUF_COUNT, "rx");
-+	n_hdlc_alloc_buf(&n_hdlc->tx_free_buf_list, DEFAULT_TX_BUF_COUNT, "tx");
++static struct tty_ldisc_ops n_hdlc_ldisc = {
++	.owner		= THIS_MODULE,
++	.magic		= TTY_LDISC_MAGIC,
++	.name		= "hdlc",
++	.open		= n_hdlc_tty_open,
++	.close		= n_hdlc_tty_close,
++	.read		= n_hdlc_tty_read,
++	.write		= n_hdlc_tty_write,
++	.ioctl		= n_hdlc_tty_ioctl,
++	.poll		= n_hdlc_tty_poll,
++	.receive_buf	= n_hdlc_tty_receive,
++	.write_wakeup	= n_hdlc_tty_wakeup,
++	.flush_buffer   = flush_rx_queue,
++};
 +
- 	/* Initialize the control block */
- 	n_hdlc->magic  = HDLC_MAGIC;
- 
+ static int __init n_hdlc_init(void)
+ {
+ 	int status;
 -- 
 2.25.0
 
