@@ -2,132 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A998C1649E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 17:18:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D4291649F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 17:19:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727666AbgBSQS2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 11:18:28 -0500
-Received: from mga01.intel.com ([192.55.52.88]:22800 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726771AbgBSQS2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 11:18:28 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2020 08:18:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,461,1574150400"; 
-   d="scan'208";a="224547220"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by orsmga007.jf.intel.com with ESMTP; 19 Feb 2020 08:18:27 -0800
-Date:   Wed, 19 Feb 2020 08:18:27 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Erwan Velu <e.velu@criteo.com>
-Cc:     Erwan Velu <erwanaliasr1@gmail.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kvm: x86: Print "disabled by bios" only once per host
-Message-ID: <20200219161827.GD15888@linux.intel.com>
-References: <20200214143035.607115-1-e.velu@criteo.com>
- <20200214170508.GB20690@linux.intel.com>
- <70b4d8fa-57c0-055b-8391-4952dec32a58@criteo.com>
- <20200218184802.GC28156@linux.intel.com>
- <91db305a-1d81-61a6-125b-3094e75b4b3e@criteo.com>
+        id S1727206AbgBSQTV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 11:19:21 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:34842 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726610AbgBSQTV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 11:19:21 -0500
+Received: by mail-ot1-f66.google.com with SMTP id r16so689056otd.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 08:19:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hp2F1W8Z5yebZP9iufYiJ6AFdgufj77efxtq6/ay/Xk=;
+        b=tomtrQl6RpRKwmUBNbEgTtGWBJAVFohcLwCx61e0sXqs18M/AgUvPtmuBlbrrp9sm6
+         Cx4c+PZ9e6CScmNlnOQW5gtFueeSeC8Hc6p+g/1gIhGQ9lVCAbwIuIOqjoHnLnXPwRku
+         xSebol9/Gmjyy+/e/vbkNu8YUIfWe/J8Rz7VSLVE1AFbfIJdLIeg952I7c2yErtlYLgz
+         XAL/LOqi8T1ir1RiVzN/oVLRg05wAI2UMHlKTP+P7plTzBMiWi69f9TVNbJllvQBBlhv
+         i+gb7uspY5LoxEnKPYeE44naIzvgRJW+nhqkOfQeZGZ5MlhhEkMGw5g9WHx/uvAdi2Pz
+         BzzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hp2F1W8Z5yebZP9iufYiJ6AFdgufj77efxtq6/ay/Xk=;
+        b=PZNzTyWlnZV6G/AZfWiz7Oeo6RsN8tBPObcYLiwkRNQWpXu1P6uLZ2fNxedbrorBso
+         r3c5ynO8/QF1ywXphe8K4Sxq1d6KSQNlQgTaS+Qv6jI4YOy57/KMVvP+E+JOiHUPQvTV
+         ndOwMbpjiylEVT6YnxcvWMmV1jMqCLfYjWGPry5LeQf5mw4ZN81KiPzgFwC8Nk3od0Zc
+         H9duKvctY4BEY1AShAE/j8AgxxbTyONNbJLXDn5nOhukmcaZbtqYlZ5zNYq4byNRqXHW
+         qMe+tOjeq6mBTwGyGfgdqjh5Dr+L00GGgEPf/Wt+v2ieWek184/MQsitgEqDokPp6OGL
+         zNEg==
+X-Gm-Message-State: APjAAAUgVyojWBvKbWl16iG45dgVe8/V/1/NhF8CLNS1pEHOsLTyJ/ab
+        EpZKVaYOuCw7w8kPYmyix4JMd9ELHnhe6fFEJtjItg==
+X-Google-Smtp-Source: APXvYqz9j+Ney28+R+WNTvikN6AJwjjyrG5NaFmWCBeChGSg04X/81XzMz5ZTyls3WnVMRPFjijYbLd7xZIoXgTGLDI=
+X-Received: by 2002:a9d:5e8b:: with SMTP id f11mr6589632otl.110.1582129160469;
+ Wed, 19 Feb 2020 08:19:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <91db305a-1d81-61a6-125b-3094e75b4b3e@criteo.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20200218143411.2389182-1-christian.brauner@ubuntu.com> <20200218143411.2389182-7-christian.brauner@ubuntu.com>
+In-Reply-To: <20200218143411.2389182-7-christian.brauner@ubuntu.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 19 Feb 2020 17:18:54 +0100
+Message-ID: <CAG48ez28VjU7+c_yrz6fLij+o9mS-psK-5s_zdGpJJ+3S=R3Tg@mail.gmail.com>
+Subject: Re: [PATCH v3 06/25] user_namespace: make map_write() support fsid mappings
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Stephen Barber <smbarber@chromium.org>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Phil Estes <estesp@gmail.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 12:19:01PM +0100, Erwan Velu wrote:
-> On 18/02/2020 19:48, Sean Christopherson wrote:
-> [...]
-> >Fix userspace to only do the "add" on one CPU.
-> >
-> >Changing kvm_arch_init() to use pr_err_once() for the disabled_by_bios()
-> >case "works", but it's effectively a hack to workaround a flawed userspace.
-> 
-> I'll see with the user space tool to sort this out.
-> 
-> I'm also considering how "wrong" is what they do: udevadm trigger is
-> generating 3500  "uevent add" on my system and I only noticed kvm to print
-> this noisy message.
-> 
-> So as the print once isn't that "wrong" neither, this simple patch would
-> avoid polluting the kernel logs.
-> 
-> 
-> So my proposal would be
-> 
-> - have this simple patch on the kernel side to avoid having userspace apps
-> polluting logs
-> 
-> - contacting the udev people to see the rational & fix it too : I'll do that
-> 
-> 
-> As you said, once probed, there is no need reprinting the same message again
-> as the situation cannot have changed.
+On Tue, Feb 18, 2020 at 3:35 PM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+> Based on discussions with Jann we decided in order to cleanly handle nested
+> user namespaces that fsid mappings can only be written before the corresponding
+> id mappings have been written. Writing id mappings before writing the
+> corresponding fsid mappings causes fsid mappings to mirror id mappings.
+>
+> Consider creating a user namespace NS1 with the initial user namespace as
+> parent. Assume NS1 receives id mapping 0 100000 100000 and fsid mappings 0
+> 300000 100000. Files that root in NS1 will create will map to kfsuid=300000 and
+> kfsgid=300000 and will hence be owned by uid=300000 and gid 300000 on-disk in
+> the initial user namespace.
+> Now assume user namespace NS2 is created in user namespace NS1. Assume that NS2
+> receives id mapping 0 10000 65536 and an fsid mapping of 0 10000 65536. Files
+> that root in NS2 will create will map to kfsuid=10000 and kfsgid=10000 in NS1.
+> hence, files created by NS2 will hence be appear to be be owned by uid=10000
+> and gid=10000 on-disk in NS1. Looking at the initial user namespace, files
+> created by NS2 will map to kfsuid=310000 and kfsgid=310000 and hence will be
+> owned by uid=310000 and gid=310000 on-disk.
+[...]
+>  static bool new_idmap_permitted(const struct file *file,
+>                                 struct user_namespace *ns, int cap_setid,
+> -                               struct uid_gid_map *new_map)
+> +                               struct uid_gid_map *new_map,
+> +                               enum idmap_type idmap_type)
+>  {
+>         const struct cred *cred = file->f_cred;
+> +
+> +       /* Don't allow writing fsuid maps when uid maps have been written. */
+> +       if (idmap_type == FSUID_MAP && idmap_exists(&ns->uid_map))
+> +               return false;
+> +
+> +       /* Don't allow writing fsgid maps when gid maps have been written. */
+> +       if (idmap_type == FSGID_MAP && idmap_exists(&ns->gid_map))
+> +               return false;
 
-For this exact scenario, on Intel/VMX, this is mostly true.  But, the MSR
-check for AMD/SVM has a disable bit that takes effect irrespective of the
-MSR's locked bit, i.e. SVM could theoretically change state without any
-super special behavior.
-
-Even on Intel, the state can potentially change, especially on a system
-with a misbehaving BIOS.  FEATURE_CONTROL is cleared on CPU RESET, e.g. VMX
-enabling could change if BIOS "forgets" to reinitialize the MSR upon waking
-from S3 (suspend).  Things get really weird if we consider the case where
-BIOS leaves the MSR unlocked after S3, the user manually writes the MSR,
-and then it gets cleared again on a different S3 transition.
-
-SVM is even more sensitive because VM_CR is cleared on INIT, not just RESET.
-
-> As we are on the preliminary return code path (to make a EOPNOTSUPP), I
-> would vote for protecting the print against multiple calls/prints.
-> 
-> The kernel patch isn't impacting anyone (in a regular case) and just avoid
-> pollution.
-> 
-> Would you agree on that ?
-
-Sadly, no.  Don't get me wrong, I completely agree that, ideally, KVM would
-not spam the log, even when presented with a misbehaving userspace.
-
-My hesitation about changing the error message to pr_err_once() isn't so
-much about right versus wrong as it is about creating misleading and
-potentially confusing code in KVM, and setting a precedent that I don't
-think we want to carry forward.
-
-E.g. the _once() doesn't hold true if module kvm is unloaded and other
-error messages such as basic CPU support would still be unlimited.  The
-basic CPU support message definitely should *not* be _once() as that would
-squash messages when loading the wrong vendor module.
-
-As for setting a precedent, moving the error message to the vendor module
-or making kvm a monolithic module would "break" the _once() behavior.
-
-And, the current systemd behavior is actually quite dangerous, e.g. on a
-misconfigured system where SVM is enabled on a subset of CPUs, probing KVM
-on every CPU essentially guarantees that KVM will be loaded on a broken
-system.  In that case, I think we actually want the spam.  Note, as of
-kernel 5.6, this doesn't apply to VMX as kvm_intel will no longer load on a
-misconfigured system since FEATURE_CONTROL configuration is incorporated
-into the per-CPU checks.
-
-All of that being said, what about converting all of the error messages to
-pr_err_ratelimited()?  That would take the edge off this particular problem,
-wouldn't create incosistencies between error messages, and won't completely
-squash error messages in corner case scenarios on misconfigured systems.
+Why are these checks necessary? Shouldn't an fs*id map have already
+been implicitly created?
