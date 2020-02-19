@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E119C163F65
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:42:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FBDB163F58
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:41:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727295AbgBSImH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 03:42:07 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44320 "EHLO mx2.suse.de"
+        id S1727187AbgBSIlu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 03:41:50 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44346 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726787AbgBSIl1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 03:41:27 -0500
+        id S1726794AbgBSIl2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 03:41:28 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 00008AEAC;
-        Wed, 19 Feb 2020 08:41:25 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 4DBCDAEC5;
+        Wed, 19 Feb 2020 08:41:26 +0000 (UTC)
 From:   Jiri Slaby <jslaby@suse.cz>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH 21/24] n_hdlc: remove spaces between function name and (
-Date:   Wed, 19 Feb 2020 09:41:15 +0100
-Message-Id: <20200219084118.26491-21-jslaby@suse.cz>
+Subject: [PATCH 22/24] n_hdlc: add missing spaces after commas
+Date:   Wed, 19 Feb 2020 09:41:16 +0100
+Message-Id: <20200219084118.26491-22-jslaby@suse.cz>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200219084118.26491-1-jslaby@suse.cz>
 References: <20200219084118.26491-1-jslaby@suse.cz>
@@ -34,48 +34,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Jiri Slaby <jslaby@suse.cz>
 ---
- drivers/tty/n_hdlc.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/tty/n_hdlc.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/tty/n_hdlc.c b/drivers/tty/n_hdlc.c
-index ee27573b0624..d52bcfa7f8e4 100644
+index d52bcfa7f8e4..7ae4347a946f 100644
 --- a/drivers/tty/n_hdlc.c
 +++ b/drivers/tty/n_hdlc.c
-@@ -152,7 +152,7 @@ static struct n_hdlc_buf *n_hdlc_buf_get(struct n_hdlc_buf_list *list);
+@@ -201,7 +201,7 @@ static void n_hdlc_tty_close(struct tty_struct *tty)
+ 		return;
+ 	}
+ #if defined(TTY_NO_WRITE_SPLIT)
+-	clear_bit(TTY_NO_WRITE_SPLIT,&tty->flags);
++	clear_bit(TTY_NO_WRITE_SPLIT, &tty->flags);
+ #endif
+ 	tty->disc_data = NULL;
  
- /* Local functions */
+@@ -245,7 +245,7 @@ static int n_hdlc_tty_open(struct tty_struct *tty)
+ 	tty->receive_room = 65536;
  
--static struct n_hdlc *n_hdlc_alloc (void);
-+static struct n_hdlc *n_hdlc_alloc(void);
+ 	/* change tty_io write() to not split large writes into 8K chunks */
+-	set_bit(TTY_NO_WRITE_SPLIT,&tty->flags);
++	set_bit(TTY_NO_WRITE_SPLIT, &tty->flags);
  
- /* max frame size for memory allocations */
- static int maxframe = 4096;
-@@ -222,7 +222,7 @@ static void n_hdlc_tty_close(struct tty_struct *tty)
-  *
-  * Returns 0 if success, otherwise error code
-  */
--static int n_hdlc_tty_open (struct tty_struct *tty)
-+static int n_hdlc_tty_open(struct tty_struct *tty)
- {
- 	struct n_hdlc *n_hdlc = tty->disc_data;
+ 	/* flush receive data from driver */
+ 	tty_driver_flush_buffer(tty);
+@@ -399,7 +399,7 @@ static void n_hdlc_tty_receive(struct tty_struct *tty, const __u8 *data,
+ 	}
  
-@@ -347,7 +347,7 @@ static void n_hdlc_tty_wakeup(struct tty_struct *tty)
- {
- 	struct n_hdlc *n_hdlc = tty->disc_data;
+ 	/* copy received data to HDLC buffer */
+-	memcpy(buf->buf,data,count);
++	memcpy(buf->buf, data, count);
+ 	buf->count=count;
  
--	n_hdlc_send_frames (n_hdlc, tty);
-+	n_hdlc_send_frames(n_hdlc, tty);
- }	/* end of n_hdlc_tty_wakeup() */
+ 	/* add HDLC buffer to list of received frames */
+@@ -550,8 +550,8 @@ static ssize_t n_hdlc_tty_write(struct tty_struct *tty, struct file *file,
  
- /**
-@@ -406,7 +406,7 @@ static void n_hdlc_tty_receive(struct tty_struct *tty, const __u8 *data,
- 	n_hdlc_buf_put(&n_hdlc->rx_buf_list, buf);
+ 		/* Send the data */
+ 		tbuf->count = error = count;
+-		n_hdlc_buf_put(&n_hdlc->tx_buf_list,tbuf);
+-		n_hdlc_send_frames(n_hdlc,tty);
++		n_hdlc_buf_put(&n_hdlc->tx_buf_list, tbuf);
++		n_hdlc_send_frames(n_hdlc, tty);
+ 	}
  
- 	/* wake up any blocked reads and perform async signalling */
--	wake_up_interruptible (&tty->read_wait);
-+	wake_up_interruptible(&tty->read_wait);
- 	if (tty->fasync != NULL)
- 		kill_fasync(&tty->fasync, SIGIO, POLL_IN);
+ 	return error;
+@@ -586,14 +586,14 @@ static int n_hdlc_tty_ioctl(struct tty_struct *tty, struct file *file,
+ 	case FIONREAD:
+ 		/* report count of read data available */
+ 		/* in next available frame (if any) */
+-		spin_lock_irqsave(&n_hdlc->rx_buf_list.spinlock,flags);
++		spin_lock_irqsave(&n_hdlc->rx_buf_list.spinlock, flags);
+ 		buf = list_first_entry_or_null(&n_hdlc->rx_buf_list.list,
+ 						struct n_hdlc_buf, list_item);
+ 		if (buf)
+ 			count = buf->count;
+ 		else
+ 			count = 0;
+-		spin_unlock_irqrestore(&n_hdlc->rx_buf_list.spinlock,flags);
++		spin_unlock_irqrestore(&n_hdlc->rx_buf_list.spinlock, flags);
+ 		error = put_user(count, (int __user *)arg);
+ 		break;
+ 
+@@ -601,12 +601,12 @@ static int n_hdlc_tty_ioctl(struct tty_struct *tty, struct file *file,
+ 		/* get the pending tx byte count in the driver */
+ 		count = tty_chars_in_buffer(tty);
+ 		/* add size of next output frame in queue */
+-		spin_lock_irqsave(&n_hdlc->tx_buf_list.spinlock,flags);
++		spin_lock_irqsave(&n_hdlc->tx_buf_list.spinlock, flags);
+ 		buf = list_first_entry_or_null(&n_hdlc->tx_buf_list.list,
+ 						struct n_hdlc_buf, list_item);
+ 		if (buf)
+ 			count += buf->count;
+-		spin_unlock_irqrestore(&n_hdlc->tx_buf_list.spinlock,flags);
++		spin_unlock_irqrestore(&n_hdlc->tx_buf_list.spinlock, flags);
+ 		error = put_user(count, (int __user *)arg);
+ 		break;
  
 -- 
 2.25.0
