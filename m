@@ -2,162 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E85E9163FC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:51:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A8CC163FCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:53:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727161AbgBSIuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 03:50:19 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2443 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726582AbgBSIuS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 03:50:18 -0500
-Received: from lhreml707-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 94A329A75D14FEA2E52C;
-        Wed, 19 Feb 2020 08:50:16 +0000 (GMT)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- lhreml707-cah.china.huawei.com (10.201.108.48) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 19 Feb 2020 08:50:15 +0000
-Received: from [127.0.0.1] (10.210.170.116) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Wed, 19 Feb
- 2020 08:50:14 +0000
-Subject: Re: [PATCH RFC 0/7] perf pmu-events: Support event aliasing for
- system PMUs
-To:     Mark Rutland <mark.rutland@arm.com>
-CC:     "ak@linux.intel.com" <ak@linux.intel.com>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>,
-        "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        Will Deacon <will@kernel.org>, Linuxarm <linuxarm@huawei.com>,
-        "acme@kernel.org" <acme@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Zhangshaokun <zhangshaokun@hisilicon.com>,
-        "alexander.shishkin@linux.intel.com" 
-        <alexander.shishkin@linux.intel.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "james.clark@arm.com" <james.clark@arm.com>,
-        "namhyung@kernel.org" <namhyung@kernel.org>,
-        "jolsa@redhat.com" <jolsa@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
-References: <1579876505-113251-1-git-send-email-john.garry@huawei.com>
- <20200218125707.GB20212@willie-the-truck>
- <a40903fe-d52f-96c6-a06a-fe834d71d625@huawei.com>
- <20200218133943.GF20212@willie-the-truck>
- <627cbc50-4b36-7f7f-179d-3d27d9e0215a@huawei.com>
- <20200218170803.GA9968@lakrids.cambridge.arm.com>
- <cb004f43-b2a4-ae23-9fd3-0f70bd69701b@huawei.com>
- <20200218181331.GB9968@lakrids.cambridge.arm.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <822114f9-8ff4-c769-66a0-7e637ce49cd5@huawei.com>
-Date:   Wed, 19 Feb 2020 08:50:13 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1726491AbgBSIxw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 03:53:52 -0500
+Received: from foss.arm.com ([217.140.110.172]:43928 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726202AbgBSIxw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 03:53:52 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5F8441FB;
+        Wed, 19 Feb 2020 00:53:51 -0800 (PST)
+Received: from [192.168.0.7] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6D7DD3F68F;
+        Wed, 19 Feb 2020 00:53:49 -0800 (PST)
+Subject: Re: [RFC] Display the cpu of sched domain in procfs
+To:     Valentin Schneider <valentin.schneider@arm.com>,
+        Chen Yu <yu.chen.surf@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Mel Gorman <mgorman@suse.de>, Tony Luck <tony.luck@intel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Borislav Petkov <bp@suse.de>
+References: <CADjb_WQ0wFgZWBo0Xo1Q+NWS6vF0BSs5H0ho+5FM82Mu-JVYoQ@mail.gmail.com>
+ <787302f0-670f-fadf-14e6-ea0a73603d77@arm.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <60febadb-df21-a44b-d282-e43c104d2497@arm.com>
+Date:   Wed, 19 Feb 2020 09:53:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200218181331.GB9968@lakrids.cambridge.arm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <787302f0-670f-fadf-14e6-ea0a73603d77@arm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.210.170.116]
-X-ClientProxiedBy: lhreml743-chm.china.huawei.com (10.201.108.193) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 19/02/2020 09:13, Valentin Schneider wrote:
+> Hi,
+> 
+> On 19/02/2020 07:15, Chen Yu wrote:
+>> Problem:
+>> sched domain topology is not always consistent with the CPU topology exposed at
+>> /sys/devices/system/cpu/cpuX/topology,  which makes it
+>> hard for monitor tools to distinguish the CPUs among different sched domains.
 >>
->>> For system PMUs, I'd rather the system PMU driver exposed some sort of
->>> implementation ID. e.g. the SMMU_ID for SMMU. We can give that a generic name,
->>> and mandate that where a driver exposes it, the format/meaning is defined in
->>> the documentation for the driver.
+>> For example, on x86 if there are NUMA nodes within a package, say,
+>> SNC(Sub-Numa-Cluster),
+>> then there would be no die sched domain but only NUMA sched domains
+>> created. As a result,
+>> you don't know what the sched domain hierarchical is by only looking
+>> at /sys/devices/system/cpu/cpuX/topology.
 >>
->> Then doesn't that per-PMU ID qualify as brittle and non-standard also?
-> 
-> Not in my mind; any instances of the same IP can have the same ID,
-> regardless of which SoC they're in. Once userspace learns about
-> device-foo-4000, it knows about it on all SoCs. That also means you can
-> support heterogeneous instances in the same SoC.
+>> Although by appending sched_debug in command line would show the sched
+>> domain CPU topology,
+>> it is only printed once during boot up, which makes it hard to track
+>> at run-time.
 
-Sure, but this device-foo-4000 naming is a concern for standardization, 
-stable ABI, and perf tool support.
+What about /proc/schedstat?
 
-> 
-> If a device varies so much on a SoC-by-SoC basis and or the driver has
-> no idea what to expose, it could be legitimate for the PMU driver to
-> expose the SoC ID as its PMU-specific ID, but I don't think we should
-> make that the common/only case.
+E.g. on Intel Xeon CPU E5-2690 v2
 
-But where does the PMU driver get the SoC ID? Does it have to check DT 
-machine ID, ACPI OEM ID, or SMCCC SOC ID?
+$ cat /proc/schedstat | head
+version 15
+timestamp 4486170100
+cpu0 0 0 0 0 0 0 59501267037720 16902762382193 1319621004
+domain0 00,00100001 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+domain1 00,3ff003ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+domain2 ff,ffffffff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 
-I can't imagine that you really want this stuff in the kernel PMU 
-drivers, but that's your call.
+        ^^^^^^^^^^^
 
-> 
->> At least the SMC SoC ID is according to some standard.
->>
->> And typically most PMU HW would have no ID reg, so where to even get this
->> identification info? Joakim Zhang seems to have this problem for the imx8
->> DDRC PMU driver.
-> 
-> For imx8, the DT compat string or additional properties on the DDRC node
-> could be used to imply the id.
+cpu1 0 0 0 0 0 0 56045879920164 16758983055410 1318489275
+domain0 00,00200002 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+domain1 00,3ff003ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+domain2 ff,ffffffff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+...
 
-Fine, but it's the ACPI case which is what I am concerned about.
-
-> 
->>> That can be namespace by driver, so e.g. keys would be smmu_sysfs_name/<id> and
->>> ddrc_sysfs_name/<id>.
->>>
->>>>>> So even if it is solvable here, the kernel driver(s) will need to be
->>>>>> reworked. And that is just solving one case in many.
->>>>> PMU drivers will need to expose more information to userspace so that they
->>>>> can be identified more precisely, yes. I wouldn't say they would need to be
->>>>> "reworked".
->>>> OK, so some combination of changes would still be required for the SMMU
->>>> PMCG, IORT, and SMMUv3 drivers.
->>> To expose the SMMU ID, surely that's just the driver?
->>
->> This case is complicated, like others I anticipate.
->>
->> So the SMMU PMCG HW has no ID register itself, and this idea relies on using
->> the associated SMMUv3 IIDR in lieu. For that, we need to involve the IORT,
->> SMMUv3, and SMMU PMCG drivers to create this linkage, and even then I still
->> have my doubts on whether this is even proper.
-> 
-> Ok, I hadn't appreciated that the PMCG did not have an ID register
-> itself.
-> 
-> I think that the relationship between the SMMU and PMCG is a stronger
-> argument against using the SOC_ID. If the PMCGs in a system are
-> heterogeneous, then you must know the type of the specific instance.
-
-Perf tool PMU events can handle that. Each PMCG PMU instance has a 
-different name - the name encoding includes the HW base address, so 
-always unique per system - and then so the JSON can know this and have 
-events specific per instance.
-
-> 
->> Please see https://lore.kernel.org/linux-iommu/1569854031-237636-1-git-send-email-john.garry@huawei.com/
->> for reference.
->>
->> Or are there
->>> implementations where the ID register is bogus and have to be overridden?
->>>
->>
->> I will also note that perf tool PMU events framework relies today on
->> generating a table of events aliases per CPU and matching based on that. If
->> you want to totally disassociate a CPU or any SoC ID mapping, then this will
->> require big perf tool rework.
-> 
-> I think that might be necessary, as otherwise we're going to back
-> ourselves into a corner by building what's simple now.
-
-I appreciate what you're saying. I'll check this idea further.
-
-Cheers,
-John
