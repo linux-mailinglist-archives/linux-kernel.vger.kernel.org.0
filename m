@@ -2,89 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D12D5164D81
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 19:16:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58798164D8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 19:22:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbgBSSQ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 13:16:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58090 "EHLO mail.kernel.org"
+        id S1726708AbgBSSWa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 13:22:30 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:42938 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726582AbgBSSQ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 13:16:56 -0500
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        id S1726582AbgBSSWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 13:22:30 -0500
+Received: from zn.tnic (p200300EC2F095500C57DC876B1A4488F.dip0.t-ipconnect.de [IPv6:2003:ec:2f09:5500:c57d:c876:b1a4:488f])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D420C24656;
-        Wed, 19 Feb 2020 18:16:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582136216;
-        bh=7crgeJqOXjvpVZqlMX7ni5vWNV3EHF/0EQ0glLP1wVo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YFYds0gXOo7Pn45RvT16No9BzJ28dvhr3iXd/o2uMXprsiGXz884d33e7lTxiY3dC
-         gLCnwsKGTPCUCHv2+Aip38hTuA80WHAhboMjTMzPJIRRfcTH5ZQ1BpNmxIjAfJI+NG
-         PMPXhfcnpxUpDfHsf5Y+nOzoXzYrl0OCqJ6CNItw=
-Date:   Wed, 19 Feb 2020 10:16:54 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Corentin Labbe <clabbe@baylibre.com>
-Cc:     catalin.marinas@arm.com, davem@davemloft.net,
-        herbert@gondor.apana.org.au, will@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH] crypto: arm64: CE: implement export/import
-Message-ID: <20200219181654.GB2312@sol.localdomain>
-References: <1582128037-18644-1-git-send-email-clabbe@baylibre.com>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1BCF81EC0CD9;
+        Wed, 19 Feb 2020 19:22:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1582136549;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=lmGikz7Q/Yq4MxVd8jpfVZwtYUz5dkwZIJ5oO0ns5X4=;
+        b=TudCOrdnDYBvOHcXxzjmLIGuZTvzfGiI+0vqVO8NEPF9zblw6YIFWGvXG+IE6116JlU2M7
+        onbwkIvlL7/KBl7wNVLkAIFR7iNQhJk56Ue1tV9vcb05JM4mck+A94LNwrB7GTrwRwr3Cr
+        VS/jU26z4AsPWwNDJuaceo+UhVo8a0I=
+Date:   Wed, 19 Feb 2020 19:22:30 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Arvind Sankar <nivedita@alum.mit.edu>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] x86/boot/compressed/64: Remove .bss/.pgtable from
+ bzImage
+Message-ID: <20200219182230.GG30966@zn.tnic>
+References: <20200109150218.16544-1-nivedita@alum.mit.edu>
+ <20200205162921.GA318609@rani.riverdale.lan>
+ <20200218180353.GA930230@rani.riverdale.lan>
+ <20200219120938.GB30966@zn.tnic>
+ <20200219175717.GA1892094@rani.riverdale.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1582128037-18644-1-git-send-email-clabbe@baylibre.com>
+In-Reply-To: <20200219175717.GA1892094@rani.riverdale.lan>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 04:00:37PM +0000, Corentin Labbe wrote:
-> When an ahash algorithm fallback to another ahash and that fallback is
-> shaXXX-CE, doing export/import lead to error like this:
-> alg: ahash: sha1-sun8i-ce export() overran state buffer on test vector 0, cfg=\"import/export\"
-> 
-> This is due to the descsize of shaxxx-ce larger than struct shaxxx_state off by an u32.
-> For fixing this, let's implement export/import which rip the finalize
-> variant instead of using generic export/import.
-> 
-> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-> ---
->  arch/arm64/crypto/sha1-ce-glue.c | 20 ++++++++++++++++++++
->  arch/arm64/crypto/sha2-ce-glue.c | 23 +++++++++++++++++++++++
->  2 files changed, 43 insertions(+)
-> 
-> diff --git a/arch/arm64/crypto/sha1-ce-glue.c b/arch/arm64/crypto/sha1-ce-glue.c
-> index 63c875d3314b..dc44d48415cd 100644
-> --- a/arch/arm64/crypto/sha1-ce-glue.c
-> +++ b/arch/arm64/crypto/sha1-ce-glue.c
-> @@ -91,12 +91,32 @@ static int sha1_ce_final(struct shash_desc *desc, u8 *out)
->  	return sha1_base_finish(desc, out);
->  }
->  
-> +static int sha1_ce_export(struct shash_desc *desc, void *out)
-> +{
-> +	struct sha1_ce_state *sctx = shash_desc_ctx(desc);
-> +
-> +	memcpy(out, sctx, sizeof(struct sha1_state));
-> +	return 0;
-> +}
-> +
-> +static int sha1_ce_import(struct shash_desc *desc, const void *in)
-> +{
-> +	struct sha1_ce_state *sctx = shash_desc_ctx(desc);
-> +
-> +	memcpy(sctx, in, sizeof(struct sha1_state));
-> +	sctx->finalize = 0;
-> +	return 0;
-> +}
+On Wed, Feb 19, 2020 at 12:57:17PM -0500, Arvind Sankar wrote:
+> There isn't any particular urgency (at least until fg-kaslr patches try
 
-Can you use '&sctx->sst' instead of 'sctx' so that we aren't relying on the
-'struct sha1_state' being located at the beginning of the struct?
+Ok, I was just making sure you're not pinging because there's something
+more urgent here. See below.
 
-Likewise for SHA-2.
+> to make it 64MiB bigger), but it's unclear how long to wait before
+> sending a reminder -- Documentation/process suggests that comments
+> should be received in a week or so, pinging after 4 and 6 weeks seemed
+> reasonable. If x86 has a longer queue, might be worth documenting that
+> somewhere?
 
-- Eric
+We try to track all stuff but x86 is super crazy most of the time,
+especially currently, so stuff gets prioritized based on urgency and we
+also try to round-robin through all submitters so that stuff doesn't get
+left out.
+
+Thus the one-week thing will never work with x86. Once a month ping
+maybe.
+
+In your case, since it is an improvement which is good to have but not
+absolutely a must and not a bugfix, it is understandable that it would
+get pushed back in priority.
+
+But stuff usually won't be forgotten and we'll get to it eventually - it
+is just that we're mega swamped all the time. :-\
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
