@@ -2,32 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7763A164EDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 20:26:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FD88164EE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 20:27:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbgBST0a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 14:26:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46374 "EHLO mail.kernel.org"
+        id S1726891AbgBST0y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 14:26:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46558 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726634AbgBST0a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 14:26:30 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        id S1726719AbgBST0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 14:26:54 -0500
+Received: from X1 (nat-ab2241.sltdut.senawave.net [162.218.216.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00E60208E4;
-        Wed, 19 Feb 2020 19:26:28 +0000 (UTC)
-Date:   Wed, 19 Feb 2020 14:26:27 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     shuah@kernel.org
-Cc:     Alan Maguire <alan.maguire@oracle.com>, mhiramat@kernel.org,
-        mingo@redhat.com, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] ftrace/selftest: clean up failure cases
-Message-ID: <20200219142627.716090a0@gandalf.local.home>
-In-Reply-To: <1582104810-12983-1-git-send-email-alan.maguire@oracle.com>
-References: <1582104810-12983-1-git-send-email-alan.maguire@oracle.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 09525208E4;
+        Wed, 19 Feb 2020 19:26:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582140414;
+        bh=Yc4u2FNt1IF2IbHtsIBwT/EjGq6IDcKxgr96tmofLT0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=uuO8ONawyjT+YQsnSh9q7TNz5MXsxAChG8Jkavgb1IBkTn6/nlCiavADJp69yj4uH
+         Q+hOztkuyRvzY7JZQcWs5x2xWSd9ckOLENn2Kme+eE4juIf23dHrA3g1XPIBd4Asjw
+         WSHuBCjriM/qQ5bLTjugv90KBVY6t7QA5HNLpseA=
+Date:   Wed, 19 Feb 2020 11:26:53 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Sultan Alsawaf <sultan@kerneltoast.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: Stop kswapd early when nothing's waiting for it to
+ free pages
+Message-Id: <20200219112653.116de9db314dade1f6086696@linux-foundation.org>
+In-Reply-To: <20200219182522.1960-1-sultan@kerneltoast.com>
+References: <20200219182522.1960-1-sultan@kerneltoast.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -35,49 +41,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 19 Feb 2020 10:25:22 -0800 Sultan Alsawaf <sultan@kerneltoast.com> wrote:
 
-Shuah,
+> Keeping kswapd running when all the failed allocations that invoked it
+> are satisfied incurs a high overhead due to unnecessary page eviction
+> and writeback, as well as spurious VM pressure events to various
+> registered shrinkers. When kswapd doesn't need to work to make an
+> allocation succeed anymore, stop it prematurely to save resources.
 
-Can you take these two patches through your tree?
+Seems sensible.
 
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
--- Steve
-
-
-On Wed, 19 Feb 2020 09:33:28 +0000
-Alan Maguire <alan.maguire@oracle.com> wrote:
-
-> When running the ftrace selftests, 2 failures and 6 unresolved
-> cases were observed.  The failures can be avoided by setting
-> a sysctl prior to test execution (fixed in patch 1) and by
-> having unresolved cases not return 0 from ftracetest by default
-> since they indicate an absence of testing modules/programs
-> rather than ftrace issues (patch 2).
-> 
-> The latter are classified as "unresolved" tests, which operate
-> differently from "unsupported" tests.  For unsupported tests,
-> we note the unsupported count but do not consider the tests
-> as having failed, whereas with unresolved the test run is
-> considered to have failed so returns "not ok" when run via
-> kselftest ("make -C tools/testing/selftest/ftrace run_tests").
-> 
-> Patch 2 aligns the unresolved behaviour with the unsupported;
-> by default, unresolved outcomes do not trigger overall failure,
-> but they can if --fail-unresolved is specified.
-> 
-> Changes since v1:
-> 
-> - updated patch 1 to use /proc path instead of sysctl (Masami)
-> - updated patch 2 to modify unresolved handling in ftracetest
->   rather than change individual unresolved -> unsupported (Masami)
-> 
-> Alan Maguire (2):
->   ftrace/selftests: workaround cgroup RT scheduling issues
->   ftrace/selftest: make unresolved cases cause failure if
->     --fail-unresolved set
-> 
->  tools/testing/selftests/ftrace/ftracetest | 30 +++++++++++++++++++++++++++++-
->  1 file changed, 29 insertions(+), 1 deletion(-)
-> 
+Please fully describe the userspace-visible runtime effects of this
+change?
 
