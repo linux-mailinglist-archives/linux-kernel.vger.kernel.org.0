@@ -2,155 +2,264 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 233AD1648AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 16:33:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D2F5164906
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 16:45:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726891AbgBSPdb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 10:33:31 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:32809 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726821AbgBSPda (ORCPT
+        id S1726764AbgBSPpC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 10:45:02 -0500
+Received: from 1.mo178.mail-out.ovh.net ([178.33.251.53]:33007 "EHLO
+        1.mo178.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726643AbgBSPpB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 10:33:30 -0500
-Received: by mail-ot1-f68.google.com with SMTP id w6so543869otk.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 07:33:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=E1sKBvtd2cVQy85wDQQwaHFMe+BR9oZ60u87YmbbgsA=;
-        b=rkWnytES8w36IUEEtDRL8rezVYVLF3qfXgFjjxsq5fO+3E5345SKZme9Z180HRGxR8
-         eHiL95Ewyfc2QvDvpEY/AONZJWpcGQMcwYK0GODKdShdKRLuQoQJkaIM6OF3NS+qRd+P
-         BEjM7iwYtXIihoNMIf8HqHwZVpJtwyFfpr9tNWgUcIjZO6MxLWTAkA3NdhmyPa+V1tAE
-         jd2/P/S1EGHEw4HtlEWORJBXhpNs+qzm/sYdf+zoBY46UrEKvXU9ynWGwF2p+y+UGnME
-         1EOk8SseFzkw81fh2Kn10sLOz9pLTlLCr+xTG8u+No0GfUuweV59hOowE7GHzVUY4kJ8
-         OqTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=E1sKBvtd2cVQy85wDQQwaHFMe+BR9oZ60u87YmbbgsA=;
-        b=lR/LCHSY+fc9A1tWlH9nBnVopXH2OIeQnodtdHRklEDTQ/PtWGgnr/iWpjD/IfRm4+
-         Na0ezj2pYv6H9X+LVR0WgHRLNOw+2zRxIauwSL7ncTOnReSNXwd9jyX4uXWy3m/iFJ04
-         XZp5fU0YntL4MhnczvPikc8j4S13PNQXdIG6owbAqOgYCYVoTpmEs8AyFCWgygt9BVii
-         ONP3y/cLwMGZHVLusV+yc4uy66WWMDiEe/n/X1BHvGjzytIYxYqzCA8BV6j5SN8j0oxr
-         O16WIotpqMjSgj3pQe6YV46hwEy8JUn1fuKVsItZwnclqyqRjJO49niQ6kACHPBaW3hX
-         X+gg==
-X-Gm-Message-State: APjAAAW5GUpgvHRTfSZEMDRRBKDabqGSahT/dBub3LZtFdnoaJA/z5Or
-        PtrH9l/D4Zd8zEyPuraDP7vHiNMhcIvfSXG3jVqkvw==
-X-Google-Smtp-Source: APXvYqzAPTgQ5P4aqucu1AcBe1mbzC38YJT9N/S1MOlBCev/cgDOUGz6H7VRarOAuw8VuUWRyxlBXSPgB2wK1I5CR9U=
-X-Received: by 2002:a05:6830:1d6e:: with SMTP id l14mr19506704oti.32.1582126408054;
- Wed, 19 Feb 2020 07:33:28 -0800 (PST)
+        Wed, 19 Feb 2020 10:45:01 -0500
+Received: from player739.ha.ovh.net (unknown [10.108.35.210])
+        by mo178.mail-out.ovh.net (Postfix) with ESMTP id 108A08EAB3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 16:35:13 +0100 (CET)
+Received: from sk2.org (cre33-1_migr-88-122-126-116.fbx.proxad.net [88.122.126.116])
+        (Authenticated sender: steve@sk2.org)
+        by player739.ha.ovh.net (Postfix) with ESMTPSA id B14AEB8813C7;
+        Wed, 19 Feb 2020 15:35:00 +0000 (UTC)
+From:   Stephen Kitt <steve@sk2.org>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        linux-doc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Stephen Kitt <steve@sk2.org>
+Subject: [PATCH v3] docs: add a script to check sysctl docs
+Date:   Wed, 19 Feb 2020 16:34:42 +0100
+Message-Id: <20200219153442.10205-1-steve@sk2.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
-In-Reply-To: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 19 Feb 2020 16:33:00 +0100
-Message-ID: <CAG48ez0mKg-nvcvuU-=a3oi4MTs2eiTQiqtOi89wqUm7uzuSBg@mail.gmail.com>
-Subject: Re: [PATCH v3 00/25] user_namespace: introduce fsid mappings
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@ubuntu.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Stephen Barber <smbarber@chromium.org>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Phil Estes <estesp@gmail.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 6174716565579910533
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedugedrkedtgdejlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepufhtvghphhgvnhcumfhithhtuceoshhtvghvvgesshhkvddrohhrgheqnecukfhppedtrddtrddtrddtpdekkedruddvvddruddviedrudduieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphdqohhuthdphhgvlhhopehplhgrhigvrhejfeelrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshhtvghvvgesshhkvddrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 3:35 PM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
-[...]
-> - Let the keyctl infrastructure only operate on kfsid which are always
->   mapped/looked up in the id mappings similar to what we do for
->   filesystems that have the same superblock visible in multiple user
->   namespaces.
->
-> This version also comes with minimal tests which I intend to expand in
-> the future.
->
-> From pings and off-list questions and discussions at Google Container
-> Security Summit there seems to be quite a lot of interest in this
-> patchset with use-cases ranging from layer sharing for app containers
-> and k8s, as well as data sharing between containers with different id
-> mappings. I haven't Cced all people because I don't have all the email
-> adresses at hand but I've at least added Phil now. :)
->
-> This is the implementation of shiftfs which was cooked up during lunch at
-> Linux Plumbers 2019 the day after the container's microconference. The
-> idea is a design-stew from St=C3=A9phane, Aleksa, Eric, and myself (and b=
-y
-> now also Jann.
-> Back then we all were quite busy with other work and couldn't really sit
-> down and implement it. But I took a few days last week to do this work,
-> including demos and performance testing.
-> This implementation does not require us to touch the VFS substantially
-> at all. Instead, we implement shiftfs via fsid mappings.
-> With this patch, it took me 20 mins to port both LXD and LXC to support
-> shiftfs via fsid mappings.
-[...]
+This script allows sysctl documentation to be checked against the
+kernel source code, to identify missing or obsolete entries. Running
+it against 5.5 shows for example that sysctl/kernel.rst has two
+obsolete entries and is missing 52 entries.
 
-Can you please grep through the kernel for all uses of ->fsuid and
-->fsgid and fix them up appropriately? Some cases I still see:
+Signed-off-by: Stephen Kitt <steve@sk2.org>
+---
+Changes since v2:
+* drop UTF-8 characters
+* fix license identifier
+* fix example invocation to include path as well as table
 
+v2 was the initial submission (in v2 of the sysctl/kernel.rst patch
+set).
+---
+ Documentation/admin-guide/sysctl/kernel.rst |   3 +
+ scripts/check-sysctl-docs                   | 181 ++++++++++++++++++++
+ 2 files changed, 184 insertions(+)
+ create mode 100755 scripts/check-sysctl-docs
 
-The SafeSetID LSM wants to enforce that you can only use CAP_SETUID to
-gain the privileges of a specific set of IDs:
+diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+index 6fbfa497388a..ba4b51bb1f3e 100644
+--- a/Documentation/admin-guide/sysctl/kernel.rst
++++ b/Documentation/admin-guide/sysctl/kernel.rst
+@@ -2,6 +2,9 @@
+ Documentation for /proc/sys/kernel/
+ ===================================
+ 
++.. See scripts/check-sysctl-docs to keep this up to date
++
++
+ Copyright (c) 1998, 1999,  Rik van Riel <riel@nl.linux.org>
+ 
+ Copyright (c) 2009,        Shen Feng<shen@cn.fujitsu.com>
+diff --git a/scripts/check-sysctl-docs b/scripts/check-sysctl-docs
+new file mode 100755
+index 000000000000..8bcb9e26c7bc
+--- /dev/null
++++ b/scripts/check-sysctl-docs
+@@ -0,0 +1,181 @@
++#!/usr/bin/gawk -f
++# SPDX-License-Identifier: GPL-2.0
++
++# Script to check sysctl documentation against source files
++#
++# Copyright (c) 2020 Stephen Kitt
++
++# Example invocation:
++#	scripts/check-sysctl-docs -vtable="kernel" \
++#		Documentation/admin-guide/sysctl/kernel.rst \
++#		$(git grep -l register_sysctl_)
++#
++# Specify -vdebug=1 to see debugging information
++
++BEGIN {
++    if (!table) {
++	print "Please specify the table to look for using the table variable" > "/dev/stderr"
++	exit 1
++    }
++}
++
++# The following globals are used:
++# children: maps ctl_table names and procnames to child ctl_table names
++# documented: maps documented entries (each key is an entry)
++# entries: maps ctl_table names and procnames to counts (so
++#          enumerating the subkeys for a given ctl_table lists its
++#          procnames)
++# files: maps procnames to source file names
++# paths: maps ctl_path names to paths
++# curpath: the name of the current ctl_path struct
++# curtable: the name of the current ctl_table struct
++# curentry: the name of the current proc entry (procname when parsing
++#           a ctl_table, constructed path when parsing a ctl_path)
++
++
++# Remove punctuation from the given value
++function trimpunct(value) {
++    while (value ~ /^["&]/) {
++	value = substr(value, 2)
++    }
++    while (value ~ /[]["&,}]$/) {
++	value = substr(value, 1, length(value) - 1)
++    }
++    return value
++}
++
++# Print the information for the given entry
++function printentry(entry) {
++    seen[entry]++
++    printf "* %s from %s", entry, file[entry]
++    if (documented[entry]) {
++	printf " (documented)"
++    }
++    print ""
++}
++
++
++# Stage 1: build the list of documented entries
++FNR == NR && /^=+$/ {
++    if (prevline ~ /Documentation for/) {
++	# This is the main title
++	next
++    }
++
++    # The previous line is a section title, parse it
++    $0 = prevline
++    if (debug) print "Parsing " $0
++    inbrackets = 0
++    for (i = 1; i <= NF; i++) {
++	if (length($i) == 0) {
++	    continue
++	}
++	if (!inbrackets && substr($i, 1, 1) == "(") {
++	    inbrackets = 1
++	}
++	if (!inbrackets) {
++	    token = trimpunct($i)
++	    if (length(token) > 0 && token != "and") {
++		if (debug) print trimpunct($i)
++		documented[trimpunct($i)]++
++	    }
++	}
++	if (inbrackets && substr($i, length($i), 1) == ")") {
++	    inbrackets = 0
++	}
++    }
++}
++
++FNR == NR {
++    prevline = $0
++    next
++}
++
++
++# Stage 2: process each file and find all sysctl tables
++BEGINFILE {
++    delete children
++    delete entries
++    delete paths
++    curpath = ""
++    curtable = ""
++    curentry = ""
++    if (debug) print "Processing file " FILENAME
++}
++
++/^static struct ctl_path/ {
++    match($0, /static struct ctl_path ([^][]+)/, tables)
++    curpath = tables[1]
++    if (debug) print "Processing path " curpath
++}
++
++/^static struct ctl_table/ {
++    match($0, /static struct ctl_table ([^][]+)/, tables)
++    curtable = tables[1]
++    if (debug) print "Processing table " curtable
++}
++
++/^};$/ {
++    curpath = ""
++    curtable = ""
++    curentry = ""
++}
++
++curpath && /\.procname[\t ]*=[\t ]*".+"/ {
++    match($0, /.procname[\t ]*=[\t ]*"([^"]+)"/, names)
++    if (curentry) {
++	curentry = curentry "/" names[1]
++    } else {
++	curentry = names[1]
++    }
++    if (debug) print "Setting path " curpath " to " curentry
++    paths[curpath] = curentry
++}
++
++curtable && /\.procname[\t ]*=[\t ]*".+"/ {
++    match($0, /.procname[\t ]*=[\t ]*"([^"]+)"/, names)
++    curentry = names[1]
++    if (debug) print "Adding entry " curentry " to table " curtable
++    entries[curtable][curentry]++
++    file[curentry] = FILENAME
++}
++
++/\.child[\t ]*=/ {
++    child = trimpunct($NF)
++    if (debug) print "Linking child " child " to table " curtable " entry " curentry
++    children[curtable][curentry] = child
++}
++
++/register_sysctl_table\(.*\)/ {
++    match($0, /register_sysctl_table\(([^)]+)\)/, tables)
++    if (debug) print "Registering table " tables[1]
++    if (children[tables[1]][table]) {
++	for (entry in entries[children[tables[1]][table]]) {
++	    printentry(entry)
++	}
++    }
++}
++
++/register_sysctl_paths\(.*\)/ {
++    match($0, /register_sysctl_paths\(([^)]+), ([^)]+)\)/, tables)
++    if (debug) print "Attaching table " tables[2] " to path " tables[1]
++    if (paths[tables[1]] == table) {
++	for (entry in entries[tables[2]]) {
++	    printentry(entry)
++	}
++    }
++    split(paths[tables[1]], components, "/")
++    if (length(components) > 1 && components[1] == table) {
++	# Count the first subdirectory as seen
++	seen[components[2]]++
++    }
++}
++
++
++END {
++    for (entry in documented) {
++	if (!seen[entry]) {
++	    print "No implementation for " entry
++	}
++    }
++}
+-- 
+2.20.1
 
-static int safesetid_task_fix_setuid(struct cred *new,
-                                     const struct cred *old,
-                                     int flags)
-{
-
-        /* Do nothing if there are no setuid restrictions for our old RUID.=
- */
-        if (setuid_policy_lookup(old->uid, INVALID_UID) =3D=3D SIDPOL_DEFAU=
-LT)
-                return 0;
-
-        if (uid_permitted_for_cred(old, new->uid) &&
-            uid_permitted_for_cred(old, new->euid) &&
-            uid_permitted_for_cred(old, new->suid) &&
-            uid_permitted_for_cred(old, new->fsuid))
-                return 0;
-
-        /*
-         * Kill this process to avoid potential security vulnerabilities
-         * that could arise from a missing whitelist entry preventing a
-         * privileged process from dropping to a lesser-privileged one.
-         */
-        force_sig(SIGKILL);
-        return -EACCES;
-}
-
-This could theoretically be bypassed through setfsuid() if the kuid
-based on the fsuid mappings is permitted but the kuid based on the
-normal mappings is not.
-
-
-fs/coredump.c in suid dump mode uses "cred->fsuid =3D GLOBAL_ROOT_UID";
-this should probably also fix up the other uid, even if there is no
-scenario in which it would actually be used at the moment?
-
-
-The netfilter xt_owner stuff makes packet filtering decisions based on
-the ->fsuid; it might be better to filter on the ->kfsuid so that you
-can filter traffic from different user namespaces differently?
-
-
-audit_log_task_info() is doing "from_kuid(&init_user_ns, cred->fsuid)".
