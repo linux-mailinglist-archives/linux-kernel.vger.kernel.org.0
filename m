@@ -2,58 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25FBC164310
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 12:11:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DB72164316
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 12:12:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbgBSLLO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 06:11:14 -0500
-Received: from ms.lwn.net ([45.79.88.28]:33930 "EHLO ms.lwn.net"
+        id S1726719AbgBSLMx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 06:12:53 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53278 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726821AbgBSLLO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 06:11:14 -0500
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 2FBBF2E5;
-        Wed, 19 Feb 2020 11:11:09 +0000 (UTC)
-Date:   Wed, 19 Feb 2020 04:11:04 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Jonathan =?UTF-8?B?TmV1c2Now6RmZXI=?= <j.neuschaefer@gmx.net>
-Cc:     linux-doc@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Shobhit Kukreti <shobhitkukreti@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Harald Seiler <hws@denx.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] docs: driver-api: edid: Fix list formatting
-Message-ID: <20200219041104.7d672841@lwn.net>
-In-Reply-To: <20200214174139.16101-1-j.neuschaefer@gmx.net>
-References: <20200214174139.16101-1-j.neuschaefer@gmx.net>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1726469AbgBSLMx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 06:12:53 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 444DAB071;
+        Wed, 19 Feb 2020 11:12:51 +0000 (UTC)
+Message-ID: <ef452bde229efda053385e8dc198e79bb693d1a1.camel@suse.de>
+Subject: Re: [PATCH v2] ARM: bcm2835_defconfig: add support for Raspberry Pi4
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Stefan Wahren <stefan.wahren@i2se.com>
+Date:   Wed, 19 Feb 2020 12:12:49 +0100
+In-Reply-To: <20200217155506.5245-1-m.szyprowski@samsung.com>
+References: <CGME20200217155513eucas1p2f97cb31428fd50181a4fe16682322d8f@eucas1p2.samsung.com>
+         <20200217155506.5245-1-m.szyprowski@samsung.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-imMygzlNXScDnCG/heyJ"
+User-Agent: Evolution 3.34.3 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 14 Feb 2020 18:41:32 +0100
-Jonathan Neuschäfer <j.neuschaefer@gmx.net> wrote:
 
-> Without the empty lines, Sphinx renders the list as part of the running
-> text.
-> 
-> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+--=-imMygzlNXScDnCG/heyJ
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I've applied this (and the rest of the set as well).
+On Mon, 2020-02-17 at 16:55 +0100, Marek Szyprowski wrote:
+> Add drivers needed to boot Raspberry Pi4 board.
+>=20
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
 
-Thanks,
+Patch applied.
 
-jon
+Thanks!
+Nicolas
+
+
+--=-imMygzlNXScDnCG/heyJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl5NGDEACgkQlfZmHno8
+x/4KYAf+NasWXeQRrxVGMq5QF8EPKm/U5EThi3qXZ9TTT3JG8Ueadngkf6KUYWuw
+JzOSjsMOqvjd+Ra/1wdtohm0MOhzxl5LziVfINeM0Q1w9dTPF5L/dl1eKYQnonhG
+116dcdSGLTz8crnHkXy1CvSCG4+iYcgM/PoQxRjqczNaV/8mUyPmdk3HShRLCJMp
+pw7HuUwdsr8RzXwNo7kqo32MDXYbSl5LMyMvis0eIHjeo7bX976nrjZGpiqoPjeW
+pUo6BHRkNLPIUFuMhYrkL+BBdSN2b32BrkBxXbv/D0TD4Uo2cxeaYR+TnB2JyRE/
+zfQC4alNMfy8Jn9Bw8ogEHolUm7Auw==
+=Gfgz
+-----END PGP SIGNATURE-----
+
+--=-imMygzlNXScDnCG/heyJ--
+
