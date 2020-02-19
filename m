@@ -2,62 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2E4F1647A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 16:01:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2E311647B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 16:02:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726791AbgBSPBE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 10:01:04 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:51596 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726569AbgBSPBE (ORCPT
+        id S1726808AbgBSPCd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 10:02:33 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41620 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726703AbgBSPCc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 10:01:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=dQq5UdvWp+QdydyVJRmEnvUTQNEYvIRUriwjl717Wo4=; b=FbVPGaVtVufC1cWxht/uSdu9LM
-        u4inzXpj28Km884GMUnmZBZO/CLojvZi7gibEIxqwy5P16gRi74kIpFFlM3LmNzkK2VjQeGLm1PIN
-        Ast9YJe2181MgGTKVtU4ay5LehVsSUfjLEqKWgKXAy8nNlOwI8zWX80DwX6CuU/UuAiBX+eo4CCHP
-        Y81PP5VVxaEj/8tazt0cFvBWDXBOs9Ln2s3muutl3kguvTUKQ6dd4LkeHCQybnqB9Utkcyr9mBpK4
-        yVPx2Lypjcjd5xEPJl6EzkzejWufd+ETMbK3W9ivGAB1WoW5AaZ+vd3KfWIaBSoF1nkRoP3ugUxQh
-        XhutwZkQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j4QqV-0003kJ-Mw; Wed, 19 Feb 2020 15:01:03 +0000
-Date:   Wed, 19 Feb 2020 07:01:03 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     John Hubbard <jhubbard@nvidia.com>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, ocfs2-devel@oss.oracle.com,
-        linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v6 07/19] mm: Put readahead pages in cache earlier
-Message-ID: <20200219150103.GQ24185@bombadil.infradead.org>
-References: <20200217184613.19668-1-willy@infradead.org>
- <20200217184613.19668-12-willy@infradead.org>
- <e3671faa-dfb3-ceba-3120-a445b2982a95@nvidia.com>
- <20200219144117.GP24185@bombadil.infradead.org>
- <20200219145246.GA29869@infradead.org>
+        Wed, 19 Feb 2020 10:02:32 -0500
+Received: by mail-lj1-f194.google.com with SMTP id h23so691872ljc.8;
+        Wed, 19 Feb 2020 07:02:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jI8b92MXgk0efhak9gk6FrgPJCPT1ISTWrmOifLTsoU=;
+        b=Kr4uhcHMWJ8Uzx91/pGTmRC+NMYgl0iwH+UcWMlpZRrSPIFUHcdEt8iyXsiwNzgtbj
+         Ll8ehpL+88BYPc2RzEvrxQjK7jtS/KAud3YBv7S+CE1BglxJwRa54gnqqMgaUcKvisW1
+         zHBSCfc0DWwnq9o1LQM/kxT4aRYK2Vfy9LR+euFwQXZ/HAFzgtF9fGqUe9dvOUxUSykh
+         PdtUDakmFzKmZZsbgIGTBp5PrLW5g3bdLvAtHsQ4OyvVUlnT/3OJzKGxM/jPhP2qstDb
+         jPMyZJnLqzzK+HW7uLxLWw0YsZxnxc9NUWHEb/cJT0TmIXrGmp8bibYSq9suMRmseWmZ
+         A7nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jI8b92MXgk0efhak9gk6FrgPJCPT1ISTWrmOifLTsoU=;
+        b=Er2cPS5ETpJdRQm2Vh5Q9wBc1wwSIJItpOlNsjYM+qC5uTddPvjlU0e3oPO2bVqguO
+         jfOxVAQxq65PLjYZQGgDOTOzoh53T9kHZROfgPexWfdczDJQars2d1SeJoefuwGhRkLX
+         DfEgYvKHzMTwMKBxhp0bVrvI/tP/USc+vH6klMT5pKpL6VgkSZxit1ov58mDaV/AEi8f
+         vC7uWiH2btfo+Z2YgX4h8C6ERRMYFgGd2RBfT9oWV9EOnHdiyAWa8v+BvlFsVnI7nHPH
+         WzAQQ9FxRkfGNCItjAvFAbRFfG802GMH/YqMsR3QSGN+s1wRTDfb7YkyxAR84dd60svE
+         b0XA==
+X-Gm-Message-State: APjAAAWm/s6Qb4wRA7oak4w++JpkT6FmNTd6SXBZiMPZiTOHZDGcHAvx
+        DAMDvhnxtfIHzUe70/RAl+M=
+X-Google-Smtp-Source: APXvYqxx5v5g8sUuYN9vbyRJSlE7QZVKB3360ZXmfF6Oc0N7a7eAUxjubXZsj4q9V+iquV3uw21rgw==
+X-Received: by 2002:a2e:7812:: with SMTP id t18mr16855004ljc.289.1582124550514;
+        Wed, 19 Feb 2020 07:02:30 -0800 (PST)
+Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.gmail.com with ESMTPSA id v5sm1345848ljk.67.2020.02.19.07.02.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2020 07:02:27 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Samuel Ortiz <sameo@linux.intel.com>,
+        David Heidelberg <david@ixit.cz>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1] nfc: pn544: Fix occasional HW initialization failure
+Date:   Wed, 19 Feb 2020 18:01:22 +0300
+Message-Id: <20200219150122.31524-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200219145246.GA29869@infradead.org>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 06:52:46AM -0800, Christoph Hellwig wrote:
-> On Wed, Feb 19, 2020 at 06:41:17AM -0800, Matthew Wilcox wrote:
-> > #define readahead_for_each(rac, page)                                   \
-> >         while ((page = readahead_page(rac)))
-> > 
-> > No more readahead_next() to forget to add to filesystems which don't use
-> > the readahead_for_each() iterator.  Ahem.
-> 
-> And then kill readahead_for_each and open code the above to make it
-> even more obvious?
+The PN544 driver checks the "enable" polarity during of driver's probe and
+it's doing that by turning ON and OFF NFC with different polarities until
+enabling succeeds. It takes some time for the hardware to power-down, and
+thus, to deassert the IRQ that is raised by turning ON the hardware.
+Since the delay after last power-down of the polarity-checking process is
+missed in the code, the interrupt may trigger immediately after installing
+the IRQ handler (right after the checking is done), which results in IRQ
+handler trying to touch the disabled HW and ends with marking NFC as
+'DEAD' during of the driver's probe:
 
-Makes sense.
+  pn544_hci_i2c 1-002a: NFC: nfc_en polarity : active high
+  pn544_hci_i2c 1-002a: NFC: invalid len byte
+  shdlc: llc_shdlc_recv_frame: NULL Frame -> link is dead
+
+This patch fixes the occasional NFC initialization failure on Nexus 7
+device.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/nfc/pn544/i2c.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/nfc/pn544/i2c.c b/drivers/nfc/pn544/i2c.c
+index 720c89d6066e..4ac8cb262559 100644
+--- a/drivers/nfc/pn544/i2c.c
++++ b/drivers/nfc/pn544/i2c.c
+@@ -225,6 +225,7 @@ static void pn544_hci_i2c_platform_init(struct pn544_i2c_phy *phy)
+ 
+ out:
+ 	gpiod_set_value_cansleep(phy->gpiod_en, !phy->en_polarity);
++	usleep_range(10000, 15000);
+ }
+ 
+ static void pn544_hci_i2c_enable_mode(struct pn544_i2c_phy *phy, int run_mode)
+-- 
+2.24.0
+
