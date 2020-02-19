@@ -2,95 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9BC2164E88
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 20:10:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E4C3164E7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 20:09:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbgBSTKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 14:10:34 -0500
-Received: from mga05.intel.com ([192.55.52.43]:7645 "EHLO mga05.intel.com"
+        id S1726703AbgBSTJb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 14:09:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726803AbgBSTKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 14:10:33 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2020 11:10:32 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,461,1574150400"; 
-   d="scan'208";a="408536209"
-Received: from otc-lr-04.jf.intel.com ([10.54.39.48])
-  by orsmga005.jf.intel.com with ESMTP; 19 Feb 2020 11:10:31 -0800
-From:   kan.liang@linux.intel.com
-To:     acme@kernel.org, jolsa@redhat.com, mingo@redhat.com,
-        peterz@infradead.org, linux-kernel@vger.kernel.org
-Cc:     mark.rutland@arm.com, namhyung@kernel.org,
-        ravi.bangoria@linux.ibm.com, yao.jin@linux.intel.com,
-        ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH 5/5] perf vendor events: Add NO_NMI_WATCHDOG metric constraint
-Date:   Wed, 19 Feb 2020 11:08:40 -0800
-Message-Id: <1582139320-75181-6-git-send-email-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1582139320-75181-1-git-send-email-kan.liang@linux.intel.com>
-References: <1582139320-75181-1-git-send-email-kan.liang@linux.intel.com>
+        id S1726609AbgBSTJa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 14:09:30 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5692208C4;
+        Wed, 19 Feb 2020 19:09:28 +0000 (UTC)
+Date:   Wed, 19 Feb 2020 14:09:27 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@redhat.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Subject: Re: [PATCH 3/6] tracing: Wrap section comparison in
+ tracer_alloc_buffers with COMPARE_SECTIONS
+Message-ID: <20200219140927.396ca577@gandalf.local.home>
+In-Reply-To: <20200219181619.GV31668@ziepe.ca>
+References: <20200219045423.54190-1-natechancellor@gmail.com>
+        <20200219045423.54190-4-natechancellor@gmail.com>
+        <20200219093445.386f1c09@gandalf.local.home>
+        <CAKwvOdm-N1iX0SMxGDV5Vf=qS5uHPdH3S-TRs-065BuSOdKt1w@mail.gmail.com>
+        <20200219181619.GV31668@ziepe.ca>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Wed, 19 Feb 2020 14:16:19 -0400
+Jason Gunthorpe <jgg@ziepe.ca> wrote:
 
-Add NO_NMI_WATCHDOG metric constraint to Page_Walks_Utilization for
-Sky Lake and Cascade Lake.
+> > kernel/trace/trace.h
+> > 1923:extern const char *__stop___trace_bprintk_fmt[];  
+> 
+> Godbolt says clang is happy if it is written as:
+> 
+>   if (&__stop___trace_bprintk_fmt[0] != &__start___trace_bprintk_fmt[0])
+> 
+> Which is probably the best compromise. The type here is const char
+> *[], so it would be a shame to see it go.
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- tools/perf/pmu-events/arch/x86/cascadelakex/clx-metrics.json | 3 ++-
- tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json      | 3 ++-
- tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json     | 3 ++-
- 3 files changed, 6 insertions(+), 3 deletions(-)
+If the above works, I'd be happy with that. As it is still readable.
 
-diff --git a/tools/perf/pmu-events/arch/x86/cascadelakex/clx-metrics.json b/tools/perf/pmu-events/arch/x86/cascadelakex/clx-metrics.json
-index f946532..a728c6e 100644
---- a/tools/perf/pmu-events/arch/x86/cascadelakex/clx-metrics.json
-+++ b/tools/perf/pmu-events/arch/x86/cascadelakex/clx-metrics.json
-@@ -215,7 +215,8 @@
-         "BriefDescription": "Utilization of the core's Page Walker(s) serving STLB misses triggered by instruction/Load/Store accesses",
-         "MetricExpr": "( ITLB_MISSES.WALK_PENDING + DTLB_LOAD_MISSES.WALK_PENDING + DTLB_STORE_MISSES.WALK_PENDING + EPT.WALK_PENDING ) / ( 2 * cycles )",
-         "MetricGroup": "TLB",
--        "MetricName": "Page_Walks_Utilization"
-+        "MetricName": "Page_Walks_Utilization",
-+        "MetricConstraint": "NO_NMI_WATCHDOG"
-     },
-     {
-         "BriefDescription": "Utilization of the core's Page Walker(s) serving STLB misses triggered by instruction/Load/Store accesses",
-diff --git a/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json b/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
-index e7feb60..f97e831 100644
---- a/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
-+++ b/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
-@@ -215,7 +215,8 @@
-         "BriefDescription": "Utilization of the core's Page Walker(s) serving STLB misses triggered by instruction/Load/Store accesses",
-         "MetricExpr": "( ITLB_MISSES.WALK_PENDING + DTLB_LOAD_MISSES.WALK_PENDING + DTLB_STORE_MISSES.WALK_PENDING + EPT.WALK_PENDING ) / ( 2 * cycles )",
-         "MetricGroup": "TLB",
--        "MetricName": "Page_Walks_Utilization"
-+        "MetricName": "Page_Walks_Utilization",
-+        "MetricConstraint": "NO_NMI_WATCHDOG"
-     },
-     {
-         "BriefDescription": "Utilization of the core's Page Walker(s) serving STLB misses triggered by instruction/Load/Store accesses",
-diff --git a/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json b/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
-index 21d7a0c..35f5db1 100644
---- a/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
-+++ b/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
-@@ -215,7 +215,8 @@
-         "BriefDescription": "Utilization of the core's Page Walker(s) serving STLB misses triggered by instruction/Load/Store accesses",
-         "MetricExpr": "( ITLB_MISSES.WALK_PENDING + DTLB_LOAD_MISSES.WALK_PENDING + DTLB_STORE_MISSES.WALK_PENDING + EPT.WALK_PENDING ) / ( 2 * cycles )",
-         "MetricGroup": "TLB",
--        "MetricName": "Page_Walks_Utilization"
-+        "MetricName": "Page_Walks_Utilization",
-+        "MetricConstraint": "NO_NMI_WATCHDOG"
-     },
-     {
-         "BriefDescription": "Utilization of the core's Page Walker(s) serving STLB misses triggered by instruction/Load/Store accesses",
--- 
-2.7.4
-
+-- Steve
