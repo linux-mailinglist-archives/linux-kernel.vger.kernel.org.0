@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D078F163D94
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 08:34:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAC39163DBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 08:35:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbgBSHeG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 02:34:06 -0500
-Received: from [167.172.186.51] ([167.172.186.51]:35098 "EHLO shell.v3.sk"
+        id S1726672AbgBSHex (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 02:34:53 -0500
+Received: from [167.172.186.51] ([167.172.186.51]:35118 "EHLO shell.v3.sk"
         rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726163AbgBSHeD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 02:34:03 -0500
+        id S1726821AbgBSHeG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 02:34:06 -0500
 Received: from localhost (localhost.localdomain [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 13665E007A;
-        Wed, 19 Feb 2020 07:34:17 +0000 (UTC)
+        by zimbra.v3.sk (Postfix) with ESMTP id 375D1E005C;
+        Wed, 19 Feb 2020 07:34:19 +0000 (UTC)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id mWa3L8iDaQ_k; Wed, 19 Feb 2020 07:34:13 +0000 (UTC)
+        with ESMTP id ytSnHxQJ2Uja; Wed, 19 Feb 2020 07:34:14 +0000 (UTC)
 Received: from localhost (localhost.localdomain [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 8B236E0052;
-        Wed, 19 Feb 2020 07:34:13 +0000 (UTC)
+        by zimbra.v3.sk (Postfix) with ESMTP id 04B20E006F;
+        Wed, 19 Feb 2020 07:34:14 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id P04ULaU_ck5M; Wed, 19 Feb 2020 07:34:13 +0000 (UTC)
+        with ESMTP id VudPmGfcJW79; Wed, 19 Feb 2020 07:34:13 +0000 (UTC)
 Received: from furthur.lan (unknown [109.183.109.54])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id F18E1E0031;
-        Wed, 19 Feb 2020 07:34:12 +0000 (UTC)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 64067DFCA2;
+        Wed, 19 Feb 2020 07:34:13 +0000 (UTC)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
@@ -35,9 +35,9 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH 01/10] clk: mmp2: Remove a unused prototype
-Date:   Wed, 19 Feb 2020 08:33:44 +0100
-Message-Id: <20200219073353.184336-2-lkundrak@v3.sk>
+Subject: [PATCH 02/10] clk: mmp2: Constify some strings
+Date:   Wed, 19 Feb 2020 08:33:45 +0100
+Message-Id: <20200219073353.184336-3-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200219073353.184336-1-lkundrak@v3.sk>
 References: <20200219073353.184336-1-lkundrak@v3.sk>
@@ -48,28 +48,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no mmp_clk_register_pll2() routine.
+All the parent clock names for the muxes are constant. Add const.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- drivers/clk/mmp/clk.h | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/clk/mmp/clk-mix.c     |  2 +-
+ drivers/clk/mmp/clk-of-mmp2.c | 13 +++++++------
+ drivers/clk/mmp/clk.h         |  4 ++--
+ 3 files changed, 10 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/clk/mmp/clk-mix.c b/drivers/clk/mmp/clk-mix.c
+index d2cd36c54474f..7a351ec65564e 100644
+--- a/drivers/clk/mmp/clk-mix.c
++++ b/drivers/clk/mmp/clk-mix.c
+@@ -441,7 +441,7 @@ const struct clk_ops mmp_clk_mix_ops =3D {
+=20
+ struct clk *mmp_clk_register_mix(struct device *dev,
+ 					const char *name,
+-					const char **parent_names,
++					const char * const *parent_names,
+ 					u8 num_parents,
+ 					unsigned long flags,
+ 					struct mmp_clk_mix_config *config,
+diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.=
+c
+index 6e71591e63a00..ee086d9714160 100644
+--- a/drivers/clk/mmp/clk-of-mmp2.c
++++ b/drivers/clk/mmp/clk-of-mmp2.c
+@@ -127,16 +127,16 @@ static void mmp2_pll_init(struct mmp2_clk_unit *pxa=
+_unit)
+ static DEFINE_SPINLOCK(uart0_lock);
+ static DEFINE_SPINLOCK(uart1_lock);
+ static DEFINE_SPINLOCK(uart2_lock);
+-static const char *uart_parent_names[] =3D {"uart_pll", "vctcxo"};
++static const char * const uart_parent_names[] =3D {"uart_pll", "vctcxo"}=
+;
+=20
+ static DEFINE_SPINLOCK(ssp0_lock);
+ static DEFINE_SPINLOCK(ssp1_lock);
+ static DEFINE_SPINLOCK(ssp2_lock);
+ static DEFINE_SPINLOCK(ssp3_lock);
+-static const char *ssp_parent_names[] =3D {"vctcxo_4", "vctcxo_2", "vctc=
+xo", "pll1_16"};
++static const char * const ssp_parent_names[] =3D {"vctcxo_4", "vctcxo_2"=
+, "vctcxo", "pll1_16"};
+=20
+ static DEFINE_SPINLOCK(timer_lock);
+-static const char *timer_parent_names[] =3D {"clk32", "vctcxo_4", "vctcx=
+o_2", "vctcxo"};
++static const char * const timer_parent_names[] =3D {"clk32", "vctcxo_4",=
+ "vctcxo_2", "vctcxo"};
+=20
+ static DEFINE_SPINLOCK(reset_lock);
+=20
+@@ -190,7 +190,7 @@ static void mmp2_apb_periph_clk_init(struct mmp2_clk_=
+unit *pxa_unit)
+ }
+=20
+ static DEFINE_SPINLOCK(sdh_lock);
+-static const char *sdh_parent_names[] =3D {"pll1_4", "pll2", "usb_pll", =
+"pll1"};
++static const char * const sdh_parent_names[] =3D {"pll1_4", "pll2", "usb=
+_pll", "pll1"};
+ static struct mmp_clk_mix_config sdh_mix_config =3D {
+ 	.reg_info =3D DEFINE_MIX_REG_INFO(4, 10, 2, 8, 32),
+ };
+@@ -201,11 +201,12 @@ static DEFINE_SPINLOCK(usbhsic1_lock);
+=20
+ static DEFINE_SPINLOCK(disp0_lock);
+ static DEFINE_SPINLOCK(disp1_lock);
+-static const char *disp_parent_names[] =3D {"pll1", "pll1_16", "pll2", "=
+vctcxo"};
++static const char * const disp_parent_names[] =3D {"pll1", "pll1_16", "p=
+ll2", "vctcxo"};
+=20
+ static DEFINE_SPINLOCK(ccic0_lock);
+ static DEFINE_SPINLOCK(ccic1_lock);
+-static const char *ccic_parent_names[] =3D {"pll1_2", "pll1_16", "vctcxo=
+"};
++static const char * const ccic_parent_names[] =3D {"pll1_2", "pll1_16", =
+"vctcxo"};
++
+ static struct mmp_clk_mix_config ccic0_mix_config =3D {
+ 	.reg_info =3D DEFINE_MIX_REG_INFO(4, 17, 2, 6, 32),
+ };
 diff --git a/drivers/clk/mmp/clk.h b/drivers/clk/mmp/clk.h
-index 70bb73257647a..5bcbced3f458e 100644
+index 5bcbced3f458e..37d1e1d7b664c 100644
 --- a/drivers/clk/mmp/clk.h
 +++ b/drivers/clk/mmp/clk.h
-@@ -124,9 +124,6 @@ extern struct clk *mmp_clk_register_gate(struct devic=
-e *dev, const char *name,
- 			u32 val_disable, unsigned int gate_flags,
- 			spinlock_t *lock);
-=20
--
--extern struct clk *mmp_clk_register_pll2(const char *name,
--		const char *parent_name, unsigned long flags);
- extern struct clk *mmp_clk_register_apbc(const char *name,
- 		const char *parent_name, void __iomem *base,
- 		unsigned int delay, unsigned int apbc_flags, spinlock_t *lock);
+@@ -97,7 +97,7 @@ struct mmp_clk_mix {
+ extern const struct clk_ops mmp_clk_mix_ops;
+ extern struct clk *mmp_clk_register_mix(struct device *dev,
+ 					const char *name,
+-					const char **parent_names,
++					const char * const *parent_names,
+ 					u8 num_parents,
+ 					unsigned long flags,
+ 					struct mmp_clk_mix_config *config,
+@@ -193,7 +193,7 @@ void mmp_register_gate_clks(struct mmp_clk_unit *unit=
+,
+ struct mmp_param_mux_clk {
+ 	unsigned int id;
+ 	char *name;
+-	const char **parent_name;
++	const char * const *parent_name;
+ 	u8 num_parents;
+ 	unsigned long flags;
+ 	unsigned long offset;
 --=20
 2.24.1
 
