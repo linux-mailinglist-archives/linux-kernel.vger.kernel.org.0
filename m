@@ -2,96 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9337316403A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 10:22:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E64EE164043
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 10:23:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbgBSJWe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 04:22:34 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33094 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726767AbgBSJWc (ORCPT
+        id S1726902AbgBSJXA convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 19 Feb 2020 04:23:00 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:37697 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726582AbgBSJW7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 04:22:32 -0500
-Received: by mail-wr1-f67.google.com with SMTP id u6so27367856wrt.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 01:22:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=odwKwtP2lE8W97hrRy8NvVzj5zWj2rVZZDM+vhqGNzE=;
-        b=kN4ndebWVxSAl3I2DeNQFdgtH5aq0q9L9+oarqqkG+xsMTE62bhik4iJ5XqnBoF5q/
-         /3bTEIpaKsDjo5fe3hIBVllyXv2UYDc+nPURBs9sRjQZnN0IdlUUrmFd1BJfugsPaXrq
-         mtBPLync0/t3eexaWGxSkfGEnQ92QuvCo3HvszjoF3EV4G5WQezQ//rTaE9SW5AQHwIO
-         zxT6/snlUIoVoAQDU1bx3D8WpRpRfNkO47tIPosDKUPfCxmnBkvkZcJnXxsIoqP8SsTb
-         1sMBgyv4tnBUqj7PzzrodZSdkviZj1l/c17AWmjk1XumhemE5nv3uDZmcQ6jy7gfzabS
-         CI/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=odwKwtP2lE8W97hrRy8NvVzj5zWj2rVZZDM+vhqGNzE=;
-        b=aEUqDPAZnelJCO7uKY7NtYpvGG5Yk7ezPQKEH9TwE2FPY1zrh9IA4TFkxjOoVB0JfY
-         SBFk1spLMr5a2u5snmqmXtWhqu+fIk7uQ0foq3AQqW52wYCKl+aBIFth9fFlSJs47xQ4
-         RW5bARsBYt/vUISf/VEMAoySqVSwFPUUjDnaGK9UXP0QA2r0BAgDJNU7vgxGR3Fv3e+o
-         hZsAHMoLxU3Xxo/LKWLDwIbVSCN/NDf0nhlUqxxMywzSM1xe5QFw73jBLhJPecqljr+/
-         vAVeGCkfjfMiN/vx6NVcYP5Tv7KX3L1V5u0925oQkYHRRcfwtIkDvm6NAJXxKMq25Kw6
-         rmlQ==
-X-Gm-Message-State: APjAAAW5BB11A3CgA9aAGwvgE8TntwH1nmz5egxQzG2CGW7fH6FIjyNr
-        pmY4BdFzspb3VhWgMVs+nTdJHw==
-X-Google-Smtp-Source: APXvYqzMAsBMU+3D/XofaGr4QgydoNbC5+5IkqGNjXo2HITsljiwnnn5pJgC9o9DjsVBK+fpvaklTw==
-X-Received: by 2002:a5d:6709:: with SMTP id o9mr33982122wru.82.1582104149172;
-        Wed, 19 Feb 2020 01:22:29 -0800 (PST)
-Received: from localhost.localdomain (lfbn-nic-1-65-232.w2-15.abo.wanadoo.fr. [2.15.156.232])
-        by smtp.gmail.com with ESMTPSA id s65sm2172296wmf.48.2020.02.19.01.22.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 01:22:28 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Khouloud Touil <ktouil@baylibre.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 7/7] nvmem: add a comment about resource management
-Date:   Wed, 19 Feb 2020 10:22:18 +0100
-Message-Id: <20200219092218.18143-8-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200219092218.18143-1-brgl@bgdev.pl>
-References: <20200219092218.18143-1-brgl@bgdev.pl>
+        Wed, 19 Feb 2020 04:22:59 -0500
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1j4LZ7-00015z-GQ; Wed, 19 Feb 2020 10:22:45 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id 1EF39103A05; Wed, 19 Feb 2020 10:22:45 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+Cc:     Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        "VMware\, Inc." <pv-drivers@vmware.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] x86/ioperm: add new paravirt function update_io_bitmap
+In-Reply-To: <b0f33786-79b1-f8ee-24ae-ce9f9f4791af@suse.com>
+References: <20200218154712.25490-1-jgross@suse.com> <87mu9fr4ky.fsf@nanos.tec.linutronix.de> <b0f33786-79b1-f8ee-24ae-ce9f9f4791af@suse.com>
+Date:   Wed, 19 Feb 2020 10:22:45 +0100
+Message-ID: <8736b7q6ca.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Jürgen Groß <jgross@suse.com> writes:
+> On 18.02.20 22:03, Thomas Gleixner wrote:
+>> BTW, why isn't stuff like this not catched during next or at least
+>> before the final release? Is nothing running CI on upstream with all
+>> that XEN muck active?
+>
+> This problem showed up by not being able to start the X server (probably
+> not the freshest one) in dom0 on a moderate aged AMD system.
+>
+> Our CI tests tend do be more text console based for dom0.
 
-The fact that part of the resources associated with the nvmem resources
-is freed by the release() callback in device_type caused me some
-confusion. Add a comment explaining that to nvmem_register().
+tools/testing/selftests/x86/io[perm|pl] should have caught that as well,
+right? If not, we need to fix the selftests.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/nvmem/core.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Thanks,
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 40fe5913c264..6e28f3fddf53 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -397,6 +397,11 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
- 
- 	dev_dbg(&nvmem->dev, "Registering nvmem device %s\n", config->name);
- 
-+	/*
-+	 * After calling device_add() we can stop freeing previously
-+	 * allocated resources - they'll be freed from nvmem_release()
-+	 * when the device's reference count drops to 0.
-+	 */
- 	rval = device_add(&nvmem->dev);
- 	if (rval)
- 		goto err_put_device;
--- 
-2.25.0
-
+        tglx
