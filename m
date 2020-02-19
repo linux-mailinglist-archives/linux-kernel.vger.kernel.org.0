@@ -2,148 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58A13164703
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 15:33:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A118164704
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 15:33:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728031AbgBSOc5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 09:32:57 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:9842 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727855AbgBSOcy (ORCPT
+        id S1728042AbgBSOdG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 09:33:06 -0500
+Received: from outbound-smtp59.blacknight.com ([46.22.136.243]:60659 "EHLO
+        outbound-smtp59.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727855AbgBSOdG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 09:32:54 -0500
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01JERjT0012661;
-        Wed, 19 Feb 2020 15:32:36 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=JHlugCMPeafDhqnQCwr6NKMoawpruvdUfsLKyWqVHHU=;
- b=tuXpnKRhY6Fxw6XASL602zFNeIDMIKOza70/A4Tla7+Wuw6TPxPXC2DacadzQTIdbxTw
- Ih23+eKf+OQE/wxivC8pqpCTNCT5L++xXvq8+wu97tvN37VEHc/jDuPTtY3z08sje7qT
- 1rKA3Cfy0dJnlfYUViWn++lxh71ip5vq38zKVAVrjH5mP6gL3w+nGC3pAjx/LxKkVQU/
- 89vyg+RhGDZrZdYpJgttjpsmownlCqfVePokn92NfGZIAHAWjsaO1N/BysWeRs3prPrM
- RTKoe+DY/NG6uwybBeJkaHVQjN0mbjyaoiFzBvUBIvrU/RDY6iqPlxeo7+sjgi9mc+ly pw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2y8ub1bg8x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 19 Feb 2020 15:32:36 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6C9A310002A;
-        Wed, 19 Feb 2020 15:32:32 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 61C382BEC5A;
-        Wed, 19 Feb 2020 15:32:32 +0100 (CET)
-Received: from localhost (10.75.127.45) by SFHDAG3NODE2.st.com (10.75.127.8)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 19 Feb 2020 15:32:31
- +0100
-From:   Alexandre Torgue <alexandre.torgue@st.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <marex@denx.de>, <alexandre.torgue@st.com>
-Subject: [PATCH v3 2/2] pinctrl: stm32: Add level interrupt support to gpio irq chip
-Date:   Wed, 19 Feb 2020 15:32:29 +0100
-Message-ID: <20200219143229.18084-3-alexandre.torgue@st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200219143229.18084-1-alexandre.torgue@st.com>
-References: <20200219143229.18084-1-alexandre.torgue@st.com>
+        Wed, 19 Feb 2020 09:33:06 -0500
+Received: from mail.blacknight.com (pemlinmail05.blacknight.ie [81.17.254.26])
+        by outbound-smtp59.blacknight.com (Postfix) with ESMTPS id 00217FB160
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 14:33:03 +0000 (GMT)
+Received: (qmail 26706 invoked from network); 19 Feb 2020 14:33:03 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 19 Feb 2020 14:33:03 -0000
+Date:   Wed, 19 Feb 2020 14:33:00 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     kvm@vger.kernel.org, david@redhat.com, mst@redhat.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, yang.zhang.wz@gmail.com,
+        pagupta@redhat.com, konrad.wilk@oracle.com, nitesh@redhat.com,
+        riel@surriel.com, willy@infradead.org, lcapitulino@redhat.com,
+        dave.hansen@intel.com, wei.w.wang@intel.com, aarcange@redhat.com,
+        pbonzini@redhat.com, dan.j.williams@intel.com, mhocko@kernel.org,
+        alexander.h.duyck@linux.intel.com, vbabka@suse.cz,
+        osalvador@suse.de
+Subject: Re: [PATCH v17 3/9] mm: Add function __putback_isolated_page
+Message-ID: <20200219143300.GR3466@techsingularity.net>
+References: <20200211224416.29318.44077.stgit@localhost.localdomain>
+ <20200211224624.29318.89287.stgit@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-19_03:2020-02-19,2020-02-19 signatures=0
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20200211224624.29318.89287.stgit@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GPIO hardware block is directly linked to EXTI block but EXTI handles
-external interrupts only on edge. To be able to handle GPIO interrupt on
-level a "hack" is done in gpio irq chip: parent interrupt (exti irq chip)
-is retriggered following interrupt type and gpio line value.
+On Tue, Feb 11, 2020 at 02:46:24PM -0800, Alexander Duyck wrote:
+> From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> 
+> There are cases where we would benefit from avoiding having to go through
+> the allocation and free cycle to return an isolated page.
+> 
+> Examples for this might include page poisoning in which we isolate a page
+> and then put it back in the free list without ever having actually
+> allocated it.
+> 
+> This will enable us to also avoid notifiers for the future free page
+> reporting which will need to avoid retriggering page reporting when
+> returning pages that have been reported on.
+> 
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 
-Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
-Tested-by: Marek Vasut <marex@denx.de>
+Ok, the prior code that used post_alloc_hook to make the isolated page seem
+like a normally allocated page followed by a free seems strange anyway. As
+well as being expensive, isolated pages can end up on the per-cpu lists
+which is probably not what is desired. I *think* what you've done is ok so
 
-diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-index 2d5e0435af0a..d330b30729a5 100644
---- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-+++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-@@ -92,6 +92,7 @@ struct stm32_gpio_bank {
- 	u32 bank_nr;
- 	u32 bank_ioport_nr;
- 	u32 pin_backup[STM32_GPIO_PINS_PER_BANK];
-+	u8 irq_type[STM32_GPIO_PINS_PER_BANK];
- };
- 
- struct stm32_pinctrl {
-@@ -303,6 +304,46 @@ static const struct gpio_chip stm32_gpio_template = {
- 	.get_direction		= stm32_gpio_get_direction,
- };
- 
-+void stm32_gpio_irq_eoi(struct irq_data *d)
-+{
-+	struct stm32_gpio_bank *bank = d->domain->host_data;
-+	int level;
-+
-+	irq_chip_eoi_parent(d);
-+
-+	/* If level interrupt type then retrig */
-+	level = stm32_gpio_get(&bank->gpio_chip, d->hwirq);
-+	if ((level == 0 && bank->irq_type[d->hwirq] == IRQ_TYPE_LEVEL_LOW) ||
-+	    (level == 1 && bank->irq_type[d->hwirq] == IRQ_TYPE_LEVEL_HIGH))
-+		irq_chip_retrigger_hierarchy(d);
-+};
-+
-+static int stm32_gpio_set_type(struct irq_data *d, unsigned int type)
-+{
-+	struct stm32_gpio_bank *bank = d->domain->host_data;
-+	u32 parent_type;
-+
-+	switch (type) {
-+	case IRQ_TYPE_EDGE_RISING:
-+	case IRQ_TYPE_EDGE_FALLING:
-+	case IRQ_TYPE_EDGE_BOTH:
-+		parent_type = type;
-+		break;
-+	case IRQ_TYPE_LEVEL_HIGH:
-+		parent_type = IRQ_TYPE_EDGE_RISING;
-+		break;
-+	case IRQ_TYPE_LEVEL_LOW:
-+		parent_type = IRQ_TYPE_EDGE_FALLING;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	bank->irq_type[d->hwirq] = type;
-+
-+	return irq_chip_set_type_parent(d, parent_type);
-+};
-+
- static int stm32_gpio_irq_request_resources(struct irq_data *irq_data)
- {
- 	struct stm32_gpio_bank *bank = irq_data->domain->host_data;
-@@ -332,11 +373,11 @@ static void stm32_gpio_irq_release_resources(struct irq_data *irq_data)
- 
- static struct irq_chip stm32_gpio_irq_chip = {
- 	.name		= "stm32gpio",
--	.irq_eoi	= irq_chip_eoi_parent,
-+	.irq_eoi	= stm32_gpio_irq_eoi,
- 	.irq_ack	= irq_chip_ack_parent,
- 	.irq_mask	= irq_chip_mask_parent,
- 	.irq_unmask	= irq_chip_unmask_parent,
--	.irq_set_type	= irq_chip_set_type_parent,
-+	.irq_set_type	= stm32_gpio_set_type,
- 	.irq_set_wake	= irq_chip_set_wake_parent,
- 	.irq_request_resources = stm32_gpio_irq_request_resources,
- 	.irq_release_resources = stm32_gpio_irq_release_resources,
+Acked-by: Mel Gorman <mgorman@techsingularity.net>
+
 -- 
-2.17.1
-
+Mel Gorman
+SUSE Labs
