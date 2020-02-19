@@ -2,258 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA5281645DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 14:43:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E540D164606
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 14:51:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727721AbgBSNnP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 08:43:15 -0500
-Received: from foss.arm.com ([217.140.110.172]:49234 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726548AbgBSNnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 08:43:12 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B98801FB;
-        Wed, 19 Feb 2020 05:43:11 -0800 (PST)
-Received: from e107158-lin (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 697403F68F;
-        Wed, 19 Feb 2020 05:43:10 -0800 (PST)
-Date:   Wed, 19 Feb 2020 13:43:08 +0000
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Pavan Kondeti <pkondeti@codeaurora.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] sched/rt: allow pulling unfitting task
-Message-ID: <20200219134306.4uvnlh4co3zwohzw@e107158-lin>
-References: <20200214163949.27850-1-qais.yousef@arm.com>
- <20200214163949.27850-3-qais.yousef@arm.com>
- <20200217091042.GB28029@codeaurora.org>
+        id S1727662AbgBSNvw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 08:51:52 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:38336 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726551AbgBSNvv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 08:51:51 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01JDp7OS029970;
+        Wed, 19 Feb 2020 07:51:07 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582120267;
+        bh=vTSHaVd8INFkohfIoQSaUHu44hugyt9qmFZrmuUvcUk=;
+        h=From:To:CC:Subject:Date;
+        b=LnjG0+3auAQ579Ba+OfDzHq5zy8sUEL5JC0Ez42EgKQtbnLdWVeTi+AoNH8pcdWt/
+         kssWmoTWECbHi9GX1meiCPOO4DPyrUZZeWLQFNpTJpl542+le+G4UPxG7WRMdUaFKy
+         GR00AwFd+sVk8/HtTDLPY7thu3KhVbgsYPJhF5uY=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01JDp7Ll071524
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 19 Feb 2020 07:51:07 -0600
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 19
+ Feb 2020 07:51:06 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 19 Feb 2020 07:51:06 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01JDp6CC005716;
+        Wed, 19 Feb 2020 07:51:06 -0600
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH] ASoC: tas2562: Add support for ISENSE and VSENSE
+Date:   Wed, 19 Feb 2020 07:46:22 -0600
+Message-ID: <20200219134622.22066-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200217091042.GB28029@codeaurora.org>
-User-Agent: NeoMutt/20171215
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/17/20 14:40, Pavan Kondeti wrote:
-> Hi Qais,
-> 
-> On Fri, Feb 14, 2020 at 04:39:48PM +0000, Qais Yousef wrote:
-> > When implemented RT Capacity Awareness; the logic was done such that if
-> > a task was running on a fitting CPU, then it was sticky and we would try
-> > our best to keep it there.
-> > 
-> > But as Steve suggested, to adhere to the strict priority rules of RT
-> > class; allow pulling an RT task to unfitting CPU to ensure it gets a
-> > chance to run ASAP. When doing so, mark the queue as overloaded to give
-> > the system a chance to push the task to a better fitting CPU when a
-> > chance arises.
-> > 
-> > Suggested-by: Steven Rostedt <rostedt@goodmis.org>
-> > Signed-off-by: Qais Yousef <qais.yousef@arm.com>
-> > ---
-> >  kernel/sched/rt.c | 16 +++++++++++++---
-> >  1 file changed, 13 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-> > index 4043abe45459..0c8bac134d3a 100644
-> > --- a/kernel/sched/rt.c
-> > +++ b/kernel/sched/rt.c
-> > @@ -1646,10 +1646,20 @@ static void put_prev_task_rt(struct rq *rq, struct task_struct *p)
-> >  
-> >  static int pick_rt_task(struct rq *rq, struct task_struct *p, int cpu)
-> >  {
-> > -	if (!task_running(rq, p) &&
-> > -	    cpumask_test_cpu(cpu, p->cpus_ptr) &&
-> > -	    rt_task_fits_capacity(p, cpu))
-> > +	if (!task_running(rq, p) && cpumask_test_cpu(cpu, p->cpus_ptr)) {
-> > +
-> > +		/*
-> > +		 * If the CPU doesn't fit the task, allow pulling but mark the
-> > +		 * rq as overloaded so that we can push it again to a more
-> > +		 * suitable CPU ASAP.
-> > +		 */
-> > +		if (!rt_task_fits_capacity(p, cpu)) {
-> > +			rt_set_overload(rq);
-> > +			rq->rt.overloaded = 1;
-> > +		}
-> > +
-> 
-> Here rq is source rq from which the task is being pulled. I can't understand
-> how marking overload condition on source_rq help. Because overload condition
-> gets cleared in the task dequeue path. i.e dec_rt_tasks->dec_rt_migration->
-> update_rt_migration().
-> 
-> Also, the overload condition with nr_running=1 may not work as expected unless
-> we track this overload condition (due to unfit) separately. Because a task
-> can be pushed only when it is NOT running. So a task running on silver will
-> continue to run there until it wakes up next time or another high prio task
-> gets queued here (due to affinity).
-> 
-> btw, Are you testing this path by disabling RT_PUSH_IPI feature? I ask this
-> because, This feature gets turned on by default in our b.L platforms and
-> RT task migrations happens by the busy CPU pushing the tasks. Or are there
-> any cases where we can run into pick_rt_task() even when RT_PUSH_IPI is
-> enabled?
+Add additional support for ISENSE and VSENSE feature for the TAS2562.
+This feature monitors the output to the loud speaker attempts to
+eliminate IR drop errors due to packaging.
 
-I changed the approach to set the overload at wake up now. I think I got away
-without having to encode the reason in rq->rt.overload.
+This feature is defined in Section 8.4.5 IV Sense of the data sheet.
 
-Steve, Pavan, if you can scrutinize this approach I'd be appreciated. It seemed
-to work fine with my testing.
-
-I'll push an updated series if this turned out okay.
-
-Thanks
-
---
-Qais Yousef
-
--->8--
-
-
-When implemented RT Capacity Awareness; the logic was done such that if
-a task was running on a fitting CPU, then it was sticky and we would try
-our best to keep it there.
-
-But as Steve suggested, to adhere to the strict priority rules of RT
-class; allow pulling an RT task to unfitting CPU to ensure it gets a
-chance to run ASAP.
-
-To better handle the fact the task is running on unfit CPU, when it
-wakes up mark it as overloaded which will cause it to be pushed to
-a fitting CPU when it becomes available.
-
-The latter change requires teaching push_rt_task() how to handle pushing
-unfit task.
-
-If the unfit task is the only pushable task, then we only force the push
-if we find a fitting CPU. Otherwise we bail out.
-
-Else if the task is higher priorirty than current task, then we
-reschedule.
-
-Else if the rq has other pushable tasks, then we push the unfitting task
-anyway to reduce the pressure on the rq even if the target CPU is unfit
-too.
-
-Suggested-by: Steven Rostedt <rostedt@goodmis.org>
-Signed-off-by: Qais Yousef <qais.yousef@arm.com>
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
- kernel/sched/rt.c | 52 +++++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 48 insertions(+), 4 deletions(-)
+ sound/soc/codecs/tas2562.c | 32 +++++++++++++++++++++++++++-----
+ sound/soc/codecs/tas2562.h |  6 +++---
+ 2 files changed, 30 insertions(+), 8 deletions(-)
 
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 6d959be4bba0..6d92219d5733 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -1658,8 +1658,7 @@ static void put_prev_task_rt(struct rq *rq, struct task_struct *p)
- static int pick_rt_task(struct rq *rq, struct task_struct *p, int cpu)
- {
- 	if (!task_running(rq, p) &&
--	    cpumask_test_cpu(cpu, p->cpus_ptr) &&
--	    rt_task_fits_capacity(p, cpu))
-+	    cpumask_test_cpu(cpu, p->cpus_ptr))
- 		return 1;
+diff --git a/sound/soc/codecs/tas2562.c b/sound/soc/codecs/tas2562.c
+index 5b4803a76719..b2682c2360b6 100644
+--- a/sound/soc/codecs/tas2562.c
++++ b/sound/soc/codecs/tas2562.c
+@@ -383,18 +383,34 @@ static int tas2562_dac_event(struct snd_soc_dapm_widget *w,
+ 	struct snd_soc_component *component =
+ 					snd_soc_dapm_to_component(w->dapm);
+ 	struct tas2562_data *tas2562 = snd_soc_component_get_drvdata(component);
++	int ret;
  
+ 	switch (event) {
+ 	case SND_SOC_DAPM_POST_PMU:
+-		dev_info(tas2562->dev, "SND_SOC_DAPM_POST_PMU\n");
++		ret = snd_soc_component_update_bits(component,
++			TAS2562_PWR_CTRL,
++			TAS2562_MODE_MASK,
++			TAS2562_MUTE);
++		if (ret)
++			goto end;
+ 		break;
+ 	case SND_SOC_DAPM_PRE_PMD:
+-		dev_info(tas2562->dev, "SND_SOC_DAPM_PRE_PMD\n");
++		ret = snd_soc_component_update_bits(component,
++			TAS2562_PWR_CTRL,
++			TAS2562_MODE_MASK,
++			TAS2562_SHUTDOWN);
++		if (ret)
++			goto end;
+ 		break;
+ 	default:
+-		break;
++		dev_err(tas2562->dev, "Not supported evevt\n");
++		return -EINVAL;
+ 	}
+ 
++end:
++	if (ret < 0)
++		return ret;
++
  	return 0;
-@@ -1860,6 +1859,7 @@ static int push_rt_task(struct rq *rq)
- 	struct task_struct *next_task;
- 	struct rq *lowest_rq;
- 	int ret = 0;
-+	bool fit;
- 
- 	if (!rq->rt.overloaded)
- 		return 0;
-@@ -1872,12 +1872,21 @@ static int push_rt_task(struct rq *rq)
- 	if (WARN_ON(next_task == rq->curr))
- 		return 0;
- 
-+	/*
-+	 * The rq could be overloaded because it has unfitting task, if that's
-+	 * the case they we need to try harder to find a better fitting CPU.
-+	 */
-+	fit = rt_task_fits_capacity(next_task, cpu_of(rq));
-+
- 	/*
- 	 * It's possible that the next_task slipped in of
- 	 * higher priority than current. If that's the case
- 	 * just reschedule current.
-+	 *
-+	 * Unless next_task doesn't fit in this cpu, then continue with the
-+	 * attempt to push it.
- 	 */
--	if (unlikely(next_task->prio < rq->curr->prio)) {
-+	if (unlikely(next_task->prio < rq->curr->prio && fit)) {
- 		resched_curr(rq);
- 		return 0;
- 	}
-@@ -1920,6 +1929,33 @@ static int push_rt_task(struct rq *rq)
- 		goto retry;
- 	}
- 
-+	/*
-+	 * Bail out if the task doesn't fit on either CPUs.
-+	 *
-+	 * Unless..
-+	 *
-+	 * * The priority of next_task is higher than current, then we
-+	 *   resched_curr(). We forced skipping this condition above.
-+	 *
-+	 * * The rq has more tasks to push, then we probably should push anyway
-+	 *   reduce the load on this rq.
-+	 */
-+	if (!fit && !rt_task_fits_capacity(next_task, cpu_of(lowest_rq))) {
-+
-+		/* we forced skipping this condition, so re-evaluate it */
-+		if (unlikely(next_task->prio < rq->curr->prio)) {
-+			resched_curr(rq);
-+			goto out_unlock;
-+		}
-+
-+		/*
-+		 * If there are more tasks to push, then the rq is overloaded
-+		 * with more than just this task, so push anyway.
-+		 */
-+		if (has_pushable_tasks(rq))
-+			goto out_unlock;
-+	}
-+
- 	deactivate_task(rq, next_task, 0);
- 	set_task_cpu(next_task, lowest_rq->cpu);
- 	activate_task(lowest_rq, next_task, 0);
-@@ -1927,6 +1963,7 @@ static int push_rt_task(struct rq *rq)
- 
- 	resched_curr(lowest_rq);
- 
-+out_unlock:
- 	double_unlock_balance(rq, lowest_rq);
- 
- out:
-@@ -2223,7 +2260,14 @@ static void task_woken_rt(struct rq *rq, struct task_struct *p)
- 			    (rq->curr->nr_cpus_allowed < 2 ||
- 			     rq->curr->prio <= p->prio);
- 
--	if (need_to_push || !rt_task_fits_capacity(p, cpu_of(rq)))
-+	bool fit = rt_task_fits_capacity(p, cpu_of(rq));
-+
-+	if (!fit && !rq->rt.overloaded) {
-+		rt_set_overload(rq);
-+		rq->rt.overloaded = 1;
-+	}
-+
-+	if (need_to_push || !fit)
- 		push_rt_tasks(rq);
  }
  
+@@ -416,7 +432,6 @@ static const struct snd_kcontrol_new tas2562_snd_controls[] = {
+ static const struct snd_soc_dapm_widget tas2562_dapm_widgets[] = {
+ 	SND_SOC_DAPM_AIF_IN("ASI1", "ASI1 Playback", 0, SND_SOC_NOPM, 0, 0),
+ 	SND_SOC_DAPM_MUX("ASI1 Sel", SND_SOC_NOPM, 0, 0, &tas2562_asi1_mux),
+-	SND_SOC_DAPM_AIF_IN("DAC IN", "Playback", 0, SND_SOC_NOPM, 0, 0),
+ 	SND_SOC_DAPM_DAC_E("DAC", NULL, SND_SOC_NOPM, 0, 0, tas2562_dac_event,
+ 			   SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_PRE_PMD),
+ 	SND_SOC_DAPM_SWITCH("ISENSE", TAS2562_PWR_CTRL, 3, 1, &isense_switch),
+@@ -431,7 +446,7 @@ static const struct snd_soc_dapm_route tas2562_audio_map[] = {
+ 	{"ASI1 Sel", "Left", "ASI1"},
+ 	{"ASI1 Sel", "Right", "ASI1"},
+ 	{"ASI1 Sel", "LeftRightDiv2", "ASI1"},
+-	{ "DAC", NULL, "DAC IN" },
++	{ "DAC", NULL, "ASI1 Sel" },
+ 	{ "OUT", NULL, "DAC" },
+ 	{"ISENSE", "Switch", "IMON"},
+ 	{"VSENSE", "Switch", "VMON"},
+@@ -472,6 +487,13 @@ static struct snd_soc_dai_driver tas2562_dai[] = {
+ 			.rates      = SNDRV_PCM_RATE_8000_192000,
+ 			.formats    = TAS2562_FORMATS,
+ 		},
++		.capture = {
++			.stream_name    = "ASI1 Capture",
++			.channels_min   = 0,
++			.channels_max   = 2,
++			.rates		= SNDRV_PCM_RATE_8000_192000,
++			.formats	= TAS2562_FORMATS,
++		},
+ 		.ops = &tas2562_speaker_dai_ops,
+ 	},
+ };
+diff --git a/sound/soc/codecs/tas2562.h b/sound/soc/codecs/tas2562.h
+index 62e659ab786d..6f55ebcf19ea 100644
+--- a/sound/soc/codecs/tas2562.h
++++ b/sound/soc/codecs/tas2562.h
+@@ -40,7 +40,7 @@
+ 
+ #define TAS2562_RESET	BIT(0)
+ 
+-#define TAS2562_MODE_MASK	0x3
++#define TAS2562_MODE_MASK	GENMASK(1,0)
+ #define TAS2562_ACTIVE		0x0
+ #define TAS2562_MUTE		0x1
+ #define TAS2562_SHUTDOWN	0x2
+@@ -73,8 +73,8 @@
+ #define TAS2562_TDM_CFG2_RXWLEN_24B	BIT(3)
+ #define TAS2562_TDM_CFG2_RXWLEN_32B	(BIT(2) | BIT(3))
+ 
+-#define TAS2562_VSENSE_POWER_EN		BIT(2)
+-#define TAS2562_ISENSE_POWER_EN		BIT(3)
++#define TAS2562_VSENSE_POWER_EN		2
++#define TAS2562_ISENSE_POWER_EN		3
+ 
+ #define TAS2562_TDM_CFG5_VSNS_EN	BIT(6)
+ #define TAS2562_TDM_CFG5_VSNS_SLOT_MASK	GENMASK(5, 0)
 -- 
-2.17.1
+2.25.0
 
