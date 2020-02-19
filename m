@@ -2,74 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02C7E165259
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 23:18:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22AE016526C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 23:22:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727802AbgBSWSv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 17:18:51 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:38236 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726760AbgBSWSu (ORCPT
+        id S1727787AbgBSWWp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 17:22:45 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:44570 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727163AbgBSWWp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 17:18:50 -0500
-Received: by mail-oi1-f193.google.com with SMTP id r137so5911184oie.5;
-        Wed, 19 Feb 2020 14:18:50 -0800 (PST)
+        Wed, 19 Feb 2020 17:22:45 -0500
+Received: by mail-ot1-f68.google.com with SMTP id h9so1739340otj.11;
+        Wed, 19 Feb 2020 14:22:44 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Lb8z6pmbJJ2LJeHbmRGrWhVRqC/aW6CAMpmAMz1gxTk=;
-        b=AcroxdroS4ZlXmUajS7qeyXYTCRnG7+hY5+1dY8e/J6X/cCxbkN/rC7rphrkRqukSq
-         ctjnP0TYiLUWfQ718+g8wowVBDowpiUOPwxdaHrA4q1RBoqwVFupwCnfpLyp7ynYB6wC
-         zV3ShcJFYYWYTHomfmYkqQitX6LZCiyJcXGYfTyFOO4JtknyI/xrzusE2imGYD5jl1Y0
-         E3rkHI/kM/3scO8lwuQfgj9xhSBq6BUgQ9kz/WJ+O+3UdixsoYi8RQdwVHtoxRSyRgY/
-         PfLZSvxQOUX63KYo1prWC3yqYKZAXZ26fRFiXIY3MEUovD7m5GSW7yjeM7zNk9DaGM5N
-         SdQw==
-X-Gm-Message-State: APjAAAXiKh1Bpx3cJd8DTjFxoDO/SR+LWl1czBHhR/m/JN5HbjwLi3mU
-        l63YWFUnnd8SkdcHeFL4mg==
-X-Google-Smtp-Source: APXvYqzHJyK1DAI0qeUN2NlIkEGccyceEGasZSdf75idALGhOVUFySZL04o4JBQ0SR/eiD5nh9G9cQ==
-X-Received: by 2002:a05:6808:3ae:: with SMTP id n14mr6210097oie.63.1582150729704;
-        Wed, 19 Feb 2020 14:18:49 -0800 (PST)
+         :mime-version:content-disposition:in-reply-to:content-language
+         :user-agent;
+        bh=2sNkfWb3pfIlKB+u9ML9Dfe9kkvuZVvEoC0qldkLHAg=;
+        b=oI3LdgTZBAJbQgzfbrh4jTDKwNRaJ6x5WDlckhG0M57gmhBR4ogEv5qXAgi4XhHKxe
+         Z7H4wc+z7ePJJBwNwyjlt9k9g6+cIGwoQiTVamuKNUm7rUN3TBDpNO6gWSVrPZmG5Ise
+         NSsJxZfbv17rlM2dGLTaLoMWOiXB1g8g4kC9gzQYOZfrE57dSdiRhpOD2pX/SV5vWmc6
+         ghbxwGNViCEQ5asJBbCaB6Jmt1HVLgolwJKBqKLl2nyxFmkPi3Lli5qDOh89l9dY37QL
+         kyFjteZf/Eo9a3fGNl6BB5CYsdsLIViCPfxud22jKbmdiuEZivGAV2UOb9Lt5U0m4uXP
+         oNMg==
+X-Gm-Message-State: APjAAAW5OWsqL7P0FZ/igQ39CQhsDjMkJQpm39aqeU2zKTwyrCVaeyHk
+        QWgmf5JrlHT2mntkF4gW7g==
+X-Google-Smtp-Source: APXvYqz7rt85MIurXjJi9Zhc8regbA3GAy27xdpXY9iVID53QfHaCOnwuA5h4zSXeZvXkfnK6tcwTQ==
+X-Received: by 2002:a9d:6e02:: with SMTP id e2mr22323857otr.194.1582150964507;
+        Wed, 19 Feb 2020 14:22:44 -0800 (PST)
 Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id p184sm428899oic.40.2020.02.19.14.18.48
+        by smtp.gmail.com with ESMTPSA id n16sm382938otk.25.2020.02.19.14.22.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 14:18:49 -0800 (PST)
-Received: (nullmailer pid 6936 invoked by uid 1000);
-        Wed, 19 Feb 2020 22:18:48 -0000
-Date:   Wed, 19 Feb 2020 16:18:48 -0600
+        Wed, 19 Feb 2020 14:22:43 -0800 (PST)
+Received: (nullmailer pid 13215 invoked by uid 1000);
+        Wed, 19 Feb 2020 22:22:42 -0000
+Date:   Wed, 19 Feb 2020 16:22:42 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Anand Moon <linux.amoon@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Felipe Balbi <balbi@kernel.org>
-Subject: Re: [PATCH] dt-bindings: usb: exynos-usb: Document clock names for
- DWC3 bindings
-Message-ID: <20200219221848.GA6855@bogus>
-References: <1581343456-18900-1-git-send-email-krzk@kernel.org>
+To:     Oliver Graute <oliver.graute@kococonnector.com>
+Cc:     "aisheng.dong@nxp.com" <aisheng.dong@nxp.com>,
+        "fabio.estevam@nxp.com" <fabio.estevam@nxp.com>,
+        "peng.fan@nxp.com" <peng.fan@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Oliver Graute <oliver.graute@kococonnector.com>,
+        Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] dt-bindings: arm64: imx: Add board binding for
+ i.MX8QM MEK  Board
+Message-ID: <20200219222242.GA13182@bogus>
+References: <20200213144451.31455-1-oliver.graute@kococonnector.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1581343456-18900-1-git-send-email-krzk@kernel.org>
+In-Reply-To: <20200213144451.31455-1-oliver.graute@kococonnector.com>
+Content-Language: en-US
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Feb 2020 15:04:16 +0100, Krzysztof Kozlowski wrote:
-> The Exynos DWC3 driver expects certain clock names, depending on used
-> compatible.  Document this explicitly in the bindings.
+On Thu, 13 Feb 2020 14:46:05 +0000, Oliver Graute wrote:
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Add board binding for i.MX8QM MEK Board
+> 
+> Signed-off-by: Oliver Graute <oliver.graute@kococonnector.com>
 > ---
->  Documentation/devicetree/bindings/usb/exynos-usb.txt | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+>  this patch should belong to this series:
+> 
+>  https://patchwork.kernel.org/patch/10824573/
+> 
+>  Documentation/devicetree/bindings/arm/fsl.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
 
-Applied, thanks.
-
-Rob
+Acked-by: Rob Herring <robh@kernel.org>
