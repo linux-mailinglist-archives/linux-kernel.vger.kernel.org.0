@@ -2,143 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 627CC164E2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 19:55:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 520EB164E33
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 19:56:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726773AbgBSSzn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 13:55:43 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:39089 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726683AbgBSSzn (ORCPT
+        id S1726945AbgBSS4O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 13:56:14 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44361 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726754AbgBSS4M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 13:55:43 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1j4UVV-0002CX-Rc; Wed, 19 Feb 2020 19:55:38 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 646F81C20D5;
-        Wed, 19 Feb 2020 19:55:37 +0100 (CET)
-Date:   Wed, 19 Feb 2020 18:55:37 -0000
-From:   "tip-bot2 for Prarit Bhargava" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: ras/core] x86/mce: Do not log spurious corrected mce errors
-Cc:     Alexander Krupp <centos@akr.yagii.de>,
-        Prarit Bhargava <prarit@redhat.com>,
-        Borislav Petkov <bp@suse.de>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200219131611.36816-1-prarit@redhat.com>
-References: <20200219131611.36816-1-prarit@redhat.com>
+        Wed, 19 Feb 2020 13:56:12 -0500
+Received: by mail-lf1-f65.google.com with SMTP id v201so943070lfa.11
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 10:56:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4/btNie2yJSHTlvtkEMVrzLJ5p+2iau4ZxcsT8Kh+V8=;
+        b=OANlOLlls14aKMkL1WjVjo8f/tVbYdtb8Nt9MCvon8MWsZkBp2wf0M4h4HkivP25SY
+         Lor+Pn5WeqeFiam04EJmGY4IF6tW7qKCzkRZwxbdgjj0f2w6R9Z2iIpFLl/G1lsUeweh
+         z+TQEaepT45ebjzQ5n9r3U+GEMxGXZG+BGf8c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4/btNie2yJSHTlvtkEMVrzLJ5p+2iau4ZxcsT8Kh+V8=;
+        b=MUkHB9qX6rTRlFa3+pLuUL+LQcURgWEGhr07DH56Jg2VMiwZQUncJLxqQisccvqwW1
+         A10MwKBiqwM2yAnYnoltF2msnHgxJjq6L32tzqVAJxaAkryp6f0vQgAAJGdQGf3dBP1u
+         GTKI9apowk3i9Th1wg9u6MadXOi52FMf6yQrt/fybnhxozeZn15QG6zA6TVonavDx8wO
+         oHmOggSK1cnw3KGoyt4B+xCpi5T8L2HGtyaHh/dGcbN80VP5w1PIIew7Ya342OoDxoPF
+         faIusMTVcD63wsRFm53vhI8U4Hg26EsUhc43FzQ3iY9BqoSZKvJoQUapaR9x59vdEQh9
+         lNZg==
+X-Gm-Message-State: APjAAAWFQcWkoYuo77D3shl61aRcBIQrNyvlV2fr0KyD6sUwapbNa3HW
+        QVnF+jVd9cVDozF+kcSbJKJ9xI0Xn6Q=
+X-Google-Smtp-Source: APXvYqyreObVDgUP0qKmEbckqat24SPOdz0RaBn7pPDBhUzETH7qngW9Pn6vNY+eN3PIEl9VsDZ82g==
+X-Received: by 2002:a19:4884:: with SMTP id v126mr2919742lfa.112.1582138568759;
+        Wed, 19 Feb 2020 10:56:08 -0800 (PST)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id c27sm253428lfh.62.2020.02.19.10.56.07
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Feb 2020 10:56:08 -0800 (PST)
+Received: by mail-lj1-f171.google.com with SMTP id a13so1468749ljm.10
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 10:56:07 -0800 (PST)
+X-Received: by 2002:a2e:88c5:: with SMTP id a5mr16927004ljk.201.1582138567368;
+ Wed, 19 Feb 2020 10:56:07 -0800 (PST)
 MIME-Version: 1.0
-Message-ID: <158213853701.13786.14681165672201600813.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <158212290024.224464.862376690360037918.stgit@warthog.procyon.org.uk>
+ <CAMuHMdV+H0p3qFV=gDz0dssXVhzd+L_eEn6s0jzrU5M79_50HQ@mail.gmail.com>
+ <227117.1582124888@warthog.procyon.org.uk> <CAHk-=wjFwT-fRw0kH-dYS9M5eBz3Jg0FeUfhf6VnGrPMVDDCBg@mail.gmail.com>
+ <241568.1582134931@warthog.procyon.org.uk>
+In-Reply-To: <241568.1582134931@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 19 Feb 2020 10:55:51 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wi=UbOwm8PMQUB1xaXRWEhhoVFdsKDSz=bX++rMQOUj0w@mail.gmail.com>
+Message-ID: <CAHk-=wi=UbOwm8PMQUB1xaXRWEhhoVFdsKDSz=bX++rMQOUj0w@mail.gmail.com>
+Subject: Re: [RFC PATCH] vfs: syscalls: Add create_automount() and remove_automount()
+To:     David Howells <dhowells@redhat.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, coda@cs.cmu.edu,
+        linux-afs@lists.infradead.org, CIFS <linux-cifs@vger.kernel.org>,
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the ras/core branch of tip:
+On Wed, Feb 19, 2020 at 9:55 AM David Howells <dhowells@redhat.com> wrote:
+>
+> There's a file type beyond file, dir and symlink that AFS supports:
+> mountpoint.  It appears as a directory with no lookup op in Linux - though it
+> does support readlink.  When a client walks over it, it causes an automount of
+> the volume named by the content of the mountpoint "file" on that point.  NFS
+> and CIFS have similar things.
 
-Commit-ID:     2976908e4198aa02fc3f76802358f69396267189
-Gitweb:        https://git.kernel.org/tip/2976908e4198aa02fc3f76802358f69396267189
-Author:        Prarit Bhargava <prarit@redhat.com>
-AuthorDate:    Wed, 19 Feb 2020 08:16:11 -05:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Wed, 19 Feb 2020 18:14:49 +01:00
+Honestly, AFS isn't common or relevant enough to make this worth a new
+special system call etc.
 
-x86/mce: Do not log spurious corrected mce errors
+Why don't you just use mkdir with S_ISVTX set, or something like that?
+Maybe we can even add a new mode bit and allow you to set that one.
 
-A user has reported that they are seeing spurious corrected errors on
-their hardware.
+And why would removal be any different from rmdir()?
 
-Intel Errata HSD131, HSM142, HSW131, and BDM48 report that "spurious
-corrected errors may be logged in the IA32_MC0_STATUS register with
-the valid field (bit 63) set, the uncorrected error field (bit 61) not
-set, a Model Specific Error Code (bits [31:16]) of 0x000F, and an MCA
-Error Code (bits [15:0]) of 0x0005." The Errata PDFs are linked in the
-bugzilla below.
+Or just do a perfectly regular mkdir(), followed by a ioctl().
 
-Block these spurious errors from the console and logs.
+> Directory, not file.  You can do mkdir (requiring write and execute), for
+> example, in a directory you cannot open (which would require read).  If you
+> cannot open it, you cannot do ioctl on it.
 
- [ bp: Move the intel_filter_mce() header declarations into the already
-   existing CONFIG_X86_MCE_INTEL ifdeffery. ]
+Honestly, who cares?
 
-Co-developed-by: Alexander Krupp <centos@akr.yagii.de>
-Signed-off-by: Alexander Krupp <centos@akr.yagii.de>
-Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=206587
-Link: https://lkml.kernel.org/r/20200219131611.36816-1-prarit@redhat.com
----
- arch/x86/kernel/cpu/mce/core.c     |  2 ++
- arch/x86/kernel/cpu/mce/intel.c    | 17 +++++++++++++++++
- arch/x86/kernel/cpu/mce/internal.h |  2 ++
- 3 files changed, 21 insertions(+)
+Seriously. Just make the rule be that you need read permission on the
+directory too in order to do that ioctl() that is your magical "make
+special node".
 
-diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index 2c4f949..fe3983d 100644
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -1877,6 +1877,8 @@ bool filter_mce(struct mce *m)
- {
- 	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
- 		return amd_filter_mce(m);
-+	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
-+		return intel_filter_mce(m);
- 
- 	return false;
- }
-diff --git a/arch/x86/kernel/cpu/mce/intel.c b/arch/x86/kernel/cpu/mce/intel.c
-index 5627b10..989148e 100644
---- a/arch/x86/kernel/cpu/mce/intel.c
-+++ b/arch/x86/kernel/cpu/mce/intel.c
-@@ -520,3 +520,20 @@ void mce_intel_feature_clear(struct cpuinfo_x86 *c)
- {
- 	intel_clear_lmce();
- }
-+
-+bool intel_filter_mce(struct mce *m)
-+{
-+	struct cpuinfo_x86 *c = &boot_cpu_data;
-+
-+	/* MCE errata HSD131, HSM142, HSW131, BDM48, and HSM142 */
-+	if ((c->x86 == 6) &&
-+	    ((c->x86_model == INTEL_FAM6_HASWELL) ||
-+	     (c->x86_model == INTEL_FAM6_HASWELL_L) ||
-+	     (c->x86_model == INTEL_FAM6_BROADWELL) ||
-+	     (c->x86_model == INTEL_FAM6_HASWELL_G)) &&
-+	    (m->bank == 0) &&
-+	    ((m->status & 0xa0000000ffffffff) == 0x80000000000f0005))
-+		return true;
-+
-+	return false;
-+}
-diff --git a/arch/x86/kernel/cpu/mce/internal.h b/arch/x86/kernel/cpu/mce/internal.h
-index b785c0d..97db184 100644
---- a/arch/x86/kernel/cpu/mce/internal.h
-+++ b/arch/x86/kernel/cpu/mce/internal.h
-@@ -48,6 +48,7 @@ void cmci_disable_bank(int bank);
- void intel_init_cmci(void);
- void intel_init_lmce(void);
- void intel_clear_lmce(void);
-+bool intel_filter_mce(struct mce *m);
- #else
- # define cmci_intel_adjust_timer mce_adjust_timer_default
- static inline bool mce_intel_cmci_poll(void) { return false; }
-@@ -56,6 +57,7 @@ static inline void cmci_disable_bank(int bank) { }
- static inline void intel_init_cmci(void) { }
- static inline void intel_init_lmce(void) { }
- static inline void intel_clear_lmce(void) { }
-+static inline bool intel_filter_mce(struct mce *m) { return false; };
- #endif
- 
- void mce_timer_kick(unsigned long interval);
+What makes this all *SO* special, and *SO* important that you need to
+follow somebody elses rules that absolutely nobody cares about?
+
+              Linus
