@@ -2,105 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99827163996
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 02:49:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB98F1639A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 02:52:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728071AbgBSBtz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 20:49:55 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43133 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727959AbgBSBtz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 20:49:55 -0500
-Received: by mail-pg1-f193.google.com with SMTP id u12so11524609pgb.10
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 17:49:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mCpHqL2j5BnpvPO+BvKBhD4kS+poF12ECCa7tnpH+YM=;
-        b=ts8VDPPBuLBZSekAbBB4AA9teS6dDAo1HBlFrWgCyrq8tuMc3thxftGa4AHpAl9HfC
-         u7yxDltYVpeECwcY8RzDqO6Oc+ujMt1LKMzE60hyRUp4CRmsuXIAURjdU5sPKFRoFEwm
-         6FN7vQ7hbitggAiOqBJscQwLzxfsXk6P3kE/ijGHV8xJt/0agF6tzs7iGM9/TJ0Fvy9F
-         ArDT1pSLD7/sstOaJU2GCdk92lHOemZWj0EQ3zQfulnRwfJ76bPc+DDLQ9ZRE1nVboYb
-         jR7FRhkDaPhSRUnmUrrhkxZbwc53oVyaoPQDanlDY6cxtAjJ8vR46+8/3WdA4kMg6eXF
-         I4yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mCpHqL2j5BnpvPO+BvKBhD4kS+poF12ECCa7tnpH+YM=;
-        b=JCWvm6uTi87Ktx3mUPGXCspGSOumUsN0H1mROXfg3JR3Oy0OHMXfjmYj6dwc8SPGYa
-         4LR+wWXVWE0m/MCAztmMAIlmSkILVziVZZksRBUB0AvFYKLtHcb4PdLQF4jss5Kr3WeL
-         NvOQx1o+d+u0wPA+rJtXr2INMKg+augzDy+RJCI3XSL9pQFXTGDE1bqIC54PYxkSpQki
-         0MW0mz229aFqhE9yG7RWgq7RNITWe9hrvzcj1YEAwcAivDJO7gf2vLY66jkq0ZDiOe1Y
-         AM3VKXpTxIXeKuDEk4mAEG2AvDRkOO4vlAbLnT4ysA3DOVw1b5IyEj8zWIAc05ByTiR/
-         Oh8w==
-X-Gm-Message-State: APjAAAV4nwGDJxINgKQINPTmdHB1UVmVJdNu8qM0XeAzrUv3jAkC+xHD
-        0hWUqQxdO06g+5HH9r4tpsFTvg==
-X-Google-Smtp-Source: APXvYqywbiuEpD1gaeQyiKrj/G0fRGBegWe1kQhCb3QNT2ZiaM+5B/V4zEAel8kBFDrwr4m3Dknbgg==
-X-Received: by 2002:a63:2266:: with SMTP id t38mr26477980pgm.145.1582076994532;
-        Tue, 18 Feb 2020 17:49:54 -0800 (PST)
-Received: from localhost ([223.226.55.170])
-        by smtp.gmail.com with ESMTPSA id q25sm288920pfg.41.2020.02.18.17.49.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Feb 2020 17:49:53 -0800 (PST)
-Date:   Wed, 19 Feb 2020 07:19:51 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        soc@kernel.org, Andre Przywara <andre.przywara@arm.com>,
-        Robert Richter <rrichter@marvell.com>,
-        Jon Loeliger <jdl@jdl.com>, Alexander Graf <graf@amazon.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Mark Langsdorf <mlangsdo@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        devicetree@vger.kernel.org, Eric Auger <eric.auger@redhat.com>,
-        iommu@lists.linux-foundation.org,
-        James Morse <james.morse@arm.com>,
-        Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
-        kvm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        netdev@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Luck <tony.luck@intel.com>, Will Deacon <will@kernel.org>
-Subject: Re: [RFC PATCH 04/11] cpufreq: Remove Calxeda driver
-Message-ID: <20200219014951.2o2diuw5dzooafji@vireshk-i7>
-References: <20200218171321.30990-1-robh@kernel.org>
- <20200218171321.30990-5-robh@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200218171321.30990-5-robh@kernel.org>
-User-Agent: NeoMutt/20180716-391-311a52
+        id S1728031AbgBSBwZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 20:52:25 -0500
+Received: from mx.socionext.com ([202.248.49.38]:19789 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726698AbgBSBwZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 20:52:25 -0500
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 19 Feb 2020 10:52:24 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 43C04603AC;
+        Wed, 19 Feb 2020 10:52:24 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Wed, 19 Feb 2020 10:52:24 +0900
+Received: from plum.e01.socionext.com (unknown [10.213.132.32])
+        by kinkan.css.socionext.com (Postfix) with ESMTP id CD6A11A01BB;
+        Wed, 19 Feb 2020 10:52:23 +0900 (JST)
+From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To:     Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Subject: [PATCH v3 0/2] dmaengine: Add UniPhier XDMAC driver
+Date:   Wed, 19 Feb 2020 10:52:19 +0900
+Message-Id: <1582077141-16793-1-git-send-email-hayashi.kunihiko@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-02-20, 11:13, Rob Herring wrote:
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: linux-pm@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
-> Do not apply yet.
-> 
->  drivers/cpufreq/Kconfig.arm          |  10 ---
->  drivers/cpufreq/Makefile             |   3 +-
->  drivers/cpufreq/cpufreq-dt-platdev.c |   3 -
->  drivers/cpufreq/highbank-cpufreq.c   | 106 ---------------------------
->  4 files changed, 1 insertion(+), 121 deletions(-)
->  delete mode 100644 drivers/cpufreq/highbank-cpufreq.c
+Add support for UniPhier external DMA controller (XDMAC), that is
+implemented in Pro4, Pro5, PXs2, LD11, LD20 and PXs3 SoCs.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Changes since v2:
+- dt-bindings: Fix SPDX and some properties
+- Fix iteration count calculation for memcpy
+- Replace zero-length array with flexible-array member in struct
+  uniphier_xdmac_device.
+
+Changes since v1:
+- dt-bindings: Rewrite with DT schema.
+- Change return type of uniphier_xdmac_chan_init() to void,
+  and remove error return in probe.
+
+Kunihiko Hayashi (2):
+  dt-bindings: dmaengine: Add UniPhier external DMA controller bindings
+  dmaengine: uniphier-xdmac: Add UniPhier external DMA controller driver
+
+ .../bindings/dma/socionext,uniphier-xdmac.yaml     |  63 +++
+ drivers/dma/Kconfig                                |  11 +
+ drivers/dma/Makefile                               |   1 +
+ drivers/dma/uniphier-xdmac.c                       | 611 +++++++++++++++++++++
+ 4 files changed, 686 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.yaml
+ create mode 100644 drivers/dma/uniphier-xdmac.c
 
 -- 
-viresh
+2.7.4
+
