@@ -2,230 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B576163BC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 05:03:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09274163BCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 05:04:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726650AbgBSED0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 23:03:26 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:18060 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726439AbgBSED0 (ORCPT
+        id S1726659AbgBSEEr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 23:04:47 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:42740 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726439AbgBSEEr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 23:03:26 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01J40EL8040261
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 23:03:24 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2y8ubeu4u8-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 23:03:24 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
-        Wed, 19 Feb 2020 04:03:22 -0000
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 19 Feb 2020 04:03:14 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01J42Hom50069946
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 Feb 2020 04:02:17 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 603AC11C04A;
-        Wed, 19 Feb 2020 04:03:13 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B895011C054;
-        Wed, 19 Feb 2020 04:03:12 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 19 Feb 2020 04:03:12 +0000 (GMT)
-Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
-        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 2BF59A00DF;
-        Wed, 19 Feb 2020 15:03:08 +1100 (AEDT)
-From:   "Alastair D'Silva" <alastair@au1.ibm.com>
-To:     Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Anton Blanchard <anton@ozlabs.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        =?ISO-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kurz <groug@kaod.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org
-Date:   Wed, 19 Feb 2020 15:03:11 +1100
-In-Reply-To: <20200203125346.0000503f@Huawei.com>
-References: <20191203034655.51561-1-alastair@au1.ibm.com>
-         <20191203034655.51561-9-alastair@au1.ibm.com>
-         <20200203125346.0000503f@Huawei.com>
-Organization: IBM Australia
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
+        Tue, 18 Feb 2020 23:04:47 -0500
+Received: by mail-qt1-f196.google.com with SMTP id r5so16235675qtt.9
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 20:04:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oP2MqxukizBRlPC9SfvqBAcpKQDQ39+MBV8Jn9d7IdU=;
+        b=knLDS9RoP4max5hfagxZux9hUSAX4uFXfIJOs4Pl2iD9XJS0gDytXhY535GWwyXKmN
+         GJGwl+8ma/bF3nRhUMOQSPTgsNO/7vN7ewM5h8CkBZnCKRxP101mDXAPZcn6FYdj448X
+         0inKFN/p2mRk2G19n6AB6ukXJyEI6j0DXLgym23pawd/vSoFtufYh7mTtUO6o+y/vjw2
+         e1USu3q3AkJyEWBUdYnDTdoEEfoz03ddfy9+SkuecdjATdIvFhRcOs1uXasqBzGjRHMR
+         vJ1UwDMKKfS0aJHfclnzQaWPADxOLlMObvWb9NCenfbbY11xlpkRGRjdmJZ2WfSEOgkl
+         6KFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oP2MqxukizBRlPC9SfvqBAcpKQDQ39+MBV8Jn9d7IdU=;
+        b=OPdH0UlMQM4SJV/eBzxvSbqljVDKXY8RUy3z22woyYzzqnxzBdCwo3UiaYzSL+bUWi
+         Fy64f8vFSeWcgRxrM5FiUiuk3oWMOvQErMMTWlVThgwvHvTQVop7Pdrop4s6+d3qRTji
+         fUHJ+UPK7zQksR7Zk9GNOJKSWjNIDq1hDUyCvD+3nEvoNT4FA9rcvpfhNOqe4cHLqaBd
+         1xbvFlET27xX3/Xy6IqZVNZBZEF2cYsWyDiKAKUz+I4dIxRnv2rmZscyIpQ6iAs0Iq5y
+         qhAONFrVq6cV1wPvveYmzp1jObCdVYzWR3jlDie9DRzL8bL4h6DI4KwFfWBz3Mm4lJ6B
+         9uow==
+X-Gm-Message-State: APjAAAWsGtxQKTJHVIQ6Gq7XdjCTzd+b2X6pGuU8po7Z0dLYnN82WC+O
+        AeCJh2avVPmstDXeeqUZ3VpWSA==
+X-Google-Smtp-Source: APXvYqyuVmcb2uQ0JQaLq7Vd7ocdcNzzYrdnVg8V+sqphizIq6oakYuSZVaek3e4KcMnvWva5NaWNA==
+X-Received: by 2002:ac8:1b18:: with SMTP id y24mr19970707qtj.158.1582085086153;
+        Tue, 18 Feb 2020 20:04:46 -0800 (PST)
+Received: from ovpn-121-44.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id r6sm323671qtm.63.2020.02.18.20.04.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Feb 2020 20:04:45 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     viro@zeniv.linux.org.uk
+Cc:     hch@infradead.org, darrick.wong@oracle.com, elver@google.com,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [PATCH] fs: fix a data race in i_size_write/i_size_read
+Date:   Tue, 18 Feb 2020 23:04:26 -0500
+Message-Id: <20200219040426.1140-1-cai@lca.pw>
+X-Mailer: git-send-email 2.21.0 (Apple Git-122.2)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20021904-0012-0000-0000-000003882478
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20021904-0013-0000-0000-000021C4B6B6
-Message-Id: <97c92496adec4c4b03ad634af030a0c1470ee099.camel@au1.ibm.com>
-Subject: RE: [PATCH v2 08/27] ocxl: Save the device serial number in ocxl_fn
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-18_08:2020-02-18,2020-02-18 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- mlxlogscore=578 lowpriorityscore=0 bulkscore=0 suspectscore=0
- impostorscore=0 adultscore=0 mlxscore=0 phishscore=0 clxscore=1015
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002190028
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2020-02-03 at 12:53 +0000, Jonathan Cameron wrote:
-> On Tue, 3 Dec 2019 14:46:36 +1100
-> Alastair D'Silva <alastair@au1.ibm.com> wrote:
-> 
-> > From: Alastair D'Silva <alastair@d-silva.org>
-> > 
-> > This patch retrieves the serial number of the card and makes it
-> > available
-> > to consumers of the ocxl driver via the ocxl_fn struct.
-> > 
-> > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> > Acked-by: Frederic Barrat <fbarrat@linux.ibm.com>
-> > Acked-by: Andrew Donnellan <ajd@linux.ibm.com>
-> > ---
-> >  drivers/misc/ocxl/config.c | 46
-> > ++++++++++++++++++++++++++++++++++++++
-> >  include/misc/ocxl.h        |  1 +
-> >  2 files changed, 47 insertions(+)
-> > 
-> > diff --git a/drivers/misc/ocxl/config.c
-> > b/drivers/misc/ocxl/config.c
-> > index fb0c3b6f8312..a9203c309365 100644
-> > --- a/drivers/misc/ocxl/config.c
-> > +++ b/drivers/misc/ocxl/config.c
-> > @@ -71,6 +71,51 @@ static int find_dvsec_afu_ctrl(struct pci_dev
-> > *dev, u8 afu_idx)
-> >  	return 0;
-> >  }
-> >  
-> > +/**
-> 
-> Make sure anything you mark as kernel doc with /** is valid
-> kernel-doc.
-> 
+inode::i_size could be accessed concurently as noticed by KCSAN,
 
-Ok
+ BUG: KCSAN: data-race in iomap_do_writepage / iomap_write_end
 
-> > + * Find a related PCI device (function 0)
-> > + * @device: PCI device to match
-> > + *
-> > + * Returns a pointer to the related device, or null if not found
-> > + */
-> > +static struct pci_dev *get_function_0(struct pci_dev *dev)
-> > +{
-> > +	unsigned int devfn = PCI_DEVFN(PCI_SLOT(dev->devfn), 0); //
-> > Look for function 0
-> 
-> Not sure the trailing comment adds much.
-> 
-> I'd personally not bother with this wrapper at all and just call
-> the pci functions directly where needed.
-> 
+ write to 0xffff8bf68fc0cac0 of 8 bytes by task 7484 on cpu 71:
+  iomap_write_end+0xea/0x530
+  i_size_write at include/linux/fs.h:888
+  (inlined by) iomap_write_end at fs/iomap/buffered-io.c:782
+  iomap_write_actor+0x132/0x200
+  iomap_apply+0x245/0x8a5
+  iomap_file_buffered_write+0xbd/0xf0
+  xfs_file_buffered_aio_write+0x1c2/0x790 [xfs]
+  xfs_file_write_iter+0x232/0x2d0 [xfs]
+  new_sync_write+0x29c/0x3b0
+  __vfs_write+0x92/0xa0
+  vfs_write+0x103/0x260
+  ksys_write+0x9d/0x130
+  __x64_sys_write+0x4c/0x60
+  do_syscall_64+0x91/0xb05
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-I'm not that familiar with the macros, so its not immediately obvious
-to me what it's doing, so my preference is to leave it.
-> > +
-> > +	return pci_get_domain_bus_and_slot(pci_domain_nr(dev->bus),
-> > +					dev->bus->number, devfn);
-> > +}
-> > +
-> > +static void read_serial(struct pci_dev *dev, struct ocxl_fn_config
-> > *fn)
-> > +{
-> > +	u32 low, high;
-> > +	int pos;
-> > +
-> > +	pos = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_DSN);
-> > +	if (pos) {
-> > +		pci_read_config_dword(dev, pos + 0x04, &low);
-> > +		pci_read_config_dword(dev, pos + 0x08, &high);
-> > +
-> > +		fn->serial = low | ((u64)high) << 32;
-> > +
-> > +		return;
-> > +	}
-> > +
-> > +	if (PCI_FUNC(dev->devfn) != 0) {
-> > +		struct pci_dev *related = get_function_0(dev);
-> > +
-> > +		if (!related) {
-> > +			fn->serial = 0;
-> > +			return;
-> > +		}
-> > +
-> > +		read_serial(related, fn);
-> > +		pci_dev_put(related);
-> > +		return;
-> > +	}
-> > +
-> > +	fn->serial = 0;
-> > +}
-> > +
-> >  static void read_pasid(struct pci_dev *dev, struct ocxl_fn_config
-> > *fn)
-> >  {
-> >  	u16 val;
-> > @@ -208,6 +253,7 @@ int ocxl_config_read_function(struct pci_dev
-> > *dev, struct ocxl_fn_config *fn)
-> >  	int rc;
-> >  
-> >  	read_pasid(dev, fn);
-> > +	read_serial(dev, fn);
-> >  
-> >  	rc = read_dvsec_tl(dev, fn);
-> >  	if (rc) {
-> > diff --git a/include/misc/ocxl.h b/include/misc/ocxl.h
-> > index 6f7c02f0d5e3..9843051c3c5b 100644
-> > --- a/include/misc/ocxl.h
-> > +++ b/include/misc/ocxl.h
-> > @@ -46,6 +46,7 @@ struct ocxl_fn_config {
-> >  	int dvsec_afu_info_pos; /* offset of the AFU information DVSEC
-> > */
-> >  	s8 max_pasid_log;
-> >  	s8 max_afu_index;
-> > +	u64 serial;
-> >  };
-> >  
-> >  enum ocxl_endian {
+ read to 0xffff8bf68fc0cac0 of 8 bytes by task 5901 on cpu 70:
+  iomap_do_writepage+0xf4/0x450
+  i_size_read at include/linux/fs.h:866
+  (inlined by) iomap_do_writepage at fs/iomap/buffered-io.c:1558
+  write_cache_pages+0x523/0xb20
+  iomap_writepages+0x47/0x80
+  xfs_vm_writepages+0xc7/0x100 [xfs]
+  do_writepages+0x5e/0x130
+  __writeback_single_inode+0xd5/0xb20
+  writeback_sb_inodes+0x429/0x910
+  __writeback_inodes_wb+0xc4/0x150
+  wb_writeback+0x47b/0x830
+  wb_workfn+0x688/0x930
+  process_one_work+0x54f/0xb90
+  worker_thread+0x80/0x5f0
+  kthread+0x1cd/0x1f0
+  ret_from_fork+0x27/0x50
+
+ Reported by Kernel Concurrency Sanitizer on:
+ CPU: 70 PID: 5901 Comm: kworker/u257:2 Tainted: G             L    5.6.0-rc2-next-20200218+ #2
+ Hardware name: HPE ProLiant DL385 Gen10/ProLiant DL385 Gen10, BIOS A40 07/10/2019
+ Workqueue: writeback wb_workfn (flush-254:0)
+
+The write is protected by exclusive inode::i_rwsem (in
+xfs_file_buffered_aio_write()) but the read is not. A shattered value
+could introduce a logic bug. Fixed it using a pair of WRITE/READ_ONCE().
+
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ include/linux/fs.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 3cd4fe6b845e..25f98da90cf3 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -863,7 +863,7 @@ static inline loff_t i_size_read(const struct inode *inode)
+ 	preempt_enable();
+ 	return i_size;
+ #else
+-	return inode->i_size;
++	return READ_ONCE(inode->i_size);
+ #endif
+ }
+ 
+@@ -885,7 +885,7 @@ static inline void i_size_write(struct inode *inode, loff_t i_size)
+ 	inode->i_size = i_size;
+ 	preempt_enable();
+ #else
+-	inode->i_size = i_size;
++	WRITE_ONCE(inode->i_size, i_size);
+ #endif
+ }
+ 
 -- 
-Alastair D'Silva
-Open Source Developer
-Linux Technology Centre, IBM Australia
-mob: 0423 762 819
+2.21.0 (Apple Git-122.2)
 
