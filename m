@@ -2,99 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69FEE164005
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 10:12:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC568163FFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 10:11:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbgBSJMd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 04:12:33 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:33578 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726385AbgBSJMd (ORCPT
+        id S1726632AbgBSJLs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 04:11:48 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:58570 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726202AbgBSJLr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 04:12:33 -0500
-Received: by mail-pg1-f195.google.com with SMTP id 6so12419478pgk.0;
-        Wed, 19 Feb 2020 01:12:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Mn4zsjlzynntfOs5YFb07oY3dWpb5D0zaBJYwASVQWY=;
-        b=G6gHGceS0yAmiHRQ/TMZbsluyMQ1XzeYXax7LBY7adHSvicxi2bo/GVfPp7ucUV/TS
-         LyMb5uocPPTHdhXzuKMCff0rZI8EupnzAxxLE8h/rrp/k7yaj6Wl0WOA9pnVuBuW6vp4
-         aNJ/sEFRM5pTwAlDWEcwnD8935Eupw7rX2OXFD1XOaZQsxliVpzCfUzSgZGrghz9uYOb
-         +Gqgkll4YMjV9s8GQQAtbnxLrj2kaRdYec4FTp8H4hN49EYjKtjIneSIxvCqAzEyVWQV
-         VU5TxIj93vH1Q4l5DWndMunaR1aWkNIBzz0sCRk9B+n4AozUTdy72qyCXUpXaWODLbcS
-         ZPTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Mn4zsjlzynntfOs5YFb07oY3dWpb5D0zaBJYwASVQWY=;
-        b=aCyrPmvHV9hcN56TYWKqdBIhaHxT52+50eoju82wfGHvYAsFeKbr9E+okEpOktng1U
-         t9g3Qy1A67N9gzwLBDytPh9qnHBix7HxYFMAo5Hgl1JpbswPDaafhKU7b3C7vfqznQnj
-         SdfIrN24u3J760///MLtofXu0uVQAQTDdb0S/0+zgRx1MS9NFjXiLtJQNv4lzMxGeccm
-         poJAhEX135nrPzG7dmdiJsi2oa2JNo8wGXBhM5p5fBxzeBNpHlA6Tglr0WZ+VKhSWh1Q
-         cMsuZtoaLWFmreDcVgeCN9ANjhZ+b/slZupxqld7+tFTPU8j9Hpb0N20TPXm7TZduVF4
-         C8oQ==
-X-Gm-Message-State: APjAAAX4rg72YVasKgh7u/hDNpmDyJDBHKi/xqZvHDbsMKmFfUOl7wUC
-        geKBIDZuXQxCyr/5qDWN5+0=
-X-Google-Smtp-Source: APXvYqysCxVXMoTrskLDknj6A+zYSggTxDmnhSSnVmwhyNIO6fwm//kfNy0Yb6rVqHQj9Fsr5aKc2Q==
-X-Received: by 2002:a65:5281:: with SMTP id y1mr26294515pgp.327.1582103552650;
-        Wed, 19 Feb 2020 01:12:32 -0800 (PST)
-Received: from localhost.localdomain ([146.196.37.220])
-        by smtp.googlemail.com with ESMTPSA id b18sm2074688pfb.116.2020.02.19.01.12.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 01:12:32 -0800 (PST)
-From:   Amol Grover <frextrite@gmail.com>
-To:     Johannes Berg <johannes@sipsolutions.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Amol Grover <frextrite@gmail.com>
-Subject: [PATCH] cfg80211: Pass lockdep expression to RCU lists
-Date:   Wed, 19 Feb 2020 14:41:04 +0530
-Message-Id: <20200219091102.10709-1-frextrite@gmail.com>
-X-Mailer: git-send-email 2.24.1
+        Wed, 19 Feb 2020 04:11:47 -0500
+X-UUID: 557d7cd66a6a422f971494d1dc2267f0-20200219
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=SLGppPs6Z/J39znqpbn3i7/ZsMo7evHcwHC2/b+MPjU=;
+        b=qt0zwqzX4AHHitPhtdDlzMqc5Jzk7iBeYR/CHj0sm359kd8/gljuMzU7ipNZFXFnB0U8X96/BU/IM7h4ePi0eLaQ+xQsPDO8ZTf3HagJq2KcL/XushcFrFFgU61GUDDIDwNM0xnM2GaTs1uiVBin/Gbjd+DT/PD9pBddM1a2xnM=;
+X-UUID: 557d7cd66a6a422f971494d1dc2267f0-20200219
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <stanley.chu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 289965575; Wed, 19 Feb 2020 17:11:40 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 19 Feb 2020 17:09:07 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 19 Feb 2020 17:12:13 +0800
+Message-ID: <1582103495.26304.42.camel@mtksdccf07>
+Subject: Re: [PATCH v1 1/2] scsi: ufs: add required delay after gating
+ reference clock
+From:   Stanley Chu <stanley.chu@mediatek.com>
+To:     Can Guo <cang@codeaurora.org>
+CC:     <linux-scsi@vger.kernel.org>, <martin.petersen@oracle.com>,
+        <avri.altman@wdc.com>, <alim.akhtar@samsung.com>,
+        <jejb@linux.ibm.com>, <beanhuo@micron.com>,
+        <asutoshd@codeaurora.org>, <matthias.bgg@gmail.com>,
+        <bvanassche@acm.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kuohong.wang@mediatek.com>,
+        <peter.wang@mediatek.com>, <chun-hung.wu@mediatek.com>,
+        <andy.teng@mediatek.com>
+Date:   Wed, 19 Feb 2020 17:11:35 +0800
+In-Reply-To: <a8cd5beee0a1e12a40da752c6cd9b5de@codeaurora.org>
+References: <20200217093559.16830-1-stanley.chu@mediatek.com>
+         <20200217093559.16830-2-stanley.chu@mediatek.com>
+         <c6874825dd60ea04ed401fbd1b5cb568@codeaurora.org>
+         <1581945168.26304.4.camel@mtksdccf07>
+         <e518c4d1d94ec15e9c4c31c34a9e42d1@codeaurora.org>
+         <1581946449.26304.15.camel@mtksdccf07>
+         <56c1fc80919491d058d904fcc7301835@codeaurora.org>
+         <a8cd5beee0a1e12a40da752c6cd9b5de@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-TM-SNTS-SMTP: 9236600DEE7C39A014B8A4C770286A4CF9C92C55D3222424BDB3994F3AAEDF2E2000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rdev->sched_scan_req_list maybe traversed using list_for_each_entry_rcu
-outside an RCU read-side critical section but under the protection
-of rtnl_mutex.
-
-Hence, add corresponding lockdep expression to silence false-positive
-warnings, and harden RCU lists.
-
-Signed-off-by: Amol Grover <frextrite@gmail.com>
----
- net/wireless/scan.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/net/wireless/scan.c b/net/wireless/scan.c
-index aef240fdf8df..7f1af8f347b1 100644
---- a/net/wireless/scan.c
-+++ b/net/wireless/scan.c
-@@ -556,9 +556,8 @@ cfg80211_find_sched_scan_req(struct cfg80211_registered_device *rdev, u64 reqid)
- {
- 	struct cfg80211_sched_scan_request *pos;
- 
--	WARN_ON_ONCE(!rcu_read_lock_held() && !lockdep_rtnl_is_held());
--
--	list_for_each_entry_rcu(pos, &rdev->sched_scan_req_list, list) {
-+	list_for_each_entry_rcu(pos, &rdev->sched_scan_req_list, list,
-+				lockdep_rtnl_is_held()) {
- 		if (pos->reqid == reqid)
- 			return pos;
- 	}
--- 
-2.24.1
+SGkgQ2FuLA0KDQpPbiBXZWQsIDIwMjAtMDItMTkgYXQgMTA6MzUgKzA4MDAsIENhbiBHdW8gd3Jv
+dGU6DQoNCj4gU2luY2Ugd2UgYWxsIG5lZWQgdGhpcyBkZWxheSBoZXJlLCBob3cgYWJvdXQgcHV0
+IHRoZSBkZWxheSBpbiB0aGUNCj4gZW50cmVuY2Ugb2YgdWZzaGNkX3NldHVwX2Nsb2NrcygpLCBi
+ZWZvcmUgdm9wc19zZXR1cF9jbG9ja3MoKT8NCj4gSWYgc28sIHdlIGNhbiByZW1vdmUgYWxsIHRo
+ZSBkZWxheXMgd2UgYWRkZWQgaW4gb3VyIHZvcHMgc2luY2UgdGhlDQo+IGRlbGF5IGFueXdheXMg
+ZGVsYXlzIGV2ZXJ5dGhpbmcgaW5zaWRlIHVmc2hjZF9zZXR1cF9jbG9ja3MoKS4NCj4gDQoNCkFs
+d2F5cyBwdXR0aW5nIHRoZSBkZWxheSBpbiB0aGUgZW50cmFuY2Ugb2YgdWZzaGNkX3NldHVwX2Ns
+b2NrcygpIG1heQ0KYWRkIHVud2FudGVkIGRlbGF5IGZvciB2ZW5kb3JzLCBqdXN0IGxpa2UgeW91
+ciBjdXJyZW50IGltcGxlbWVudGF0aW9uLA0Kb3Igc29tZSBvdGhlciB2ZW5kb3JzIHdobyBkbyBu
+b3Qgd2FudCB0byBkaXNhYmxlIHRoZSByZWZlcmVuY2UgY2xvY2suDQoNCkkgdGhpbmsgY3VycmVu
+dCBwYXRjaCBpcyBtb3JlIHJlYXNvbmFibGUgYmVjYXVzZSB0aGUgZGVsYXkgaXMgYXBwbGllZCB0
+bw0KY2xvY2sgb25seSBuYW1lZCBhcyAicmVmX2NsayIgc3BlY2lmaWNhbGx5Lg0KDQpJZiB5b3Ug
+bmVlZHMgdG8ga2VlcCAicmVmX2NsayIgaW4gRFQsIHdvdWxkIHlvdSBjb25zaWRlciB0byByZW1v
+dmUgdGhlDQpkZWxheSBpbiB5b3VyIHVmc19xY29tX2Rldl9yZWZfY2xrX2N0cmwoKSBhbmQgbGV0
+IHRoZSBkZWxheSBoYXBwZW5zIHZpYQ0KY29tbW9uIHVmc2hjZF9zZXR1cF9jbG9ja3MoKSBvbmx5
+PyBIb3dldmVyIHlvdSBtYXkgc3RpbGwgbmVlZCBkZWxheSBpZg0KY2FsbCBwYXRoIGNvbWVzIGZy
+b20gdWZzX3Fjb21fcHdyX2NoYW5nZV9ub3RpZnkoKS4NCg0KV2hhdCBkbyB5b3UgdGhpbms/DQoN
+Cj4gTWVhbndoaWxlLCBpZiB5b3Ugd2FudCB0byBtb2RpZnkgdGhlIGRlbGF5DQo+IChoYmEtPmRl
+dl9pbmZvLmNsa19nYXRpbmdfd2FpdF91cykgZm9yIHNvbWUgcmVhc29ucywgc2F5IGZvciBzcGVj
+aWZpYw0KPiBVRlMgZGV2aWNlcywgeW91IHN0aWxsIGNhbiBkbyBpdCBpbiB2b3BzX2FwcGx5X2Rl
+dl9xdWlya3MoKS4NCj4gDQo+IFdoYXQgZG8geW91IHNheT8NCj4gDQo+IFRoYW5rcywNCj4gQ2Fu
+IEd1by4NCg0KVGhhbmtzLA0KU3RhbmxleSBDaHUNCg0K
 
