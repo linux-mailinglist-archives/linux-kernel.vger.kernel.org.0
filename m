@@ -2,139 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D13D164344
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 12:23:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F422116434D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 12:24:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727006AbgBSLXK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 06:23:10 -0500
-Received: from foss.arm.com ([217.140.110.172]:46812 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726484AbgBSLXJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 06:23:09 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 12F8231B;
-        Wed, 19 Feb 2020 03:23:09 -0800 (PST)
-Received: from [10.37.12.28] (unknown [10.37.12.28])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 13CF43F6CF;
-        Wed, 19 Feb 2020 03:23:05 -0800 (PST)
-Subject: Re: [PATCH 1/2] ARM: dts: exynos: Add dynamic-power-coefficient to
- Exynos5422 CPUs
-To:     kgene@kernel.org, krzk@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        cw00.choi@samsung.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        b.zolnierkie@samsung.com, dietmar.eggemann@arm.com
-References: <20200219095828.8063-1-lukasz.luba@arm.com>
- <20200219095828.8063-2-lukasz.luba@arm.com>
-From:   Lukasz Luba <lukasz.luba@arm.com>
-Message-ID: <d545fe0f-3af2-4d37-ab44-c78fba350029@arm.com>
-Date:   Wed, 19 Feb 2020 11:23:04 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726902AbgBSLYg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 06:24:36 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10220 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726484AbgBSLYf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 06:24:35 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 36923731F1AD512310EE;
+        Wed, 19 Feb 2020 19:24:33 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Wed, 19 Feb 2020
+ 19:24:24 +0800
+From:   yu kuai <yukuai3@huawei.com>
+To:     <allison@lohutok.net>, <gregkh@linuxfoundation.org>,
+        <tglx@linutronix.de>, <bianpan2016@163.com>,
+        <kstewart@linuxfoundation.org>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yukuai3@huawei.com>, <yi.zhang@huawei.com>,
+        <zhengbin13@huawei.com>
+Subject: [PATCH 3/3] NFC: fdp: remove set but not used variable 'client'
+Date:   Wed, 19 Feb 2020 19:23:24 +0800
+Message-ID: <20200219112324.17682-1-yukuai3@huawei.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-In-Reply-To: <20200219095828.8063-2-lukasz.luba@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-My apologizes for the mistake in the subject. It should be
-"PATCH v2 1/2" (mistake in script arguments while sending).
-The same applies to the second patch, should be  "PATCH v2 2/2".
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Regards,
-Lukasz
+drivers/nfc/fdp/i2c.c: In function ‘fdp_nci_i2c_irq_thread_fn’:
+drivers/nfc/fdp/i2c.c:205:21: warning: variable ‘client’ set but
+not used [-Wunused-but-set-variable]
 
-On 2/19/20 9:58 AM, lukasz.luba@arm.com wrote:
-> From: Lukasz Luba <lukasz.luba@arm.com>
-> 
-> To use Energy Aware Scheduler (EAS) the Energy Model (EM) should be
-> registered for CPUs. Add dynamic-power-coefficient into CPU nodes which
-> let CPUFreq subsystem register the EM structures. This will increase
-> energy efficiency of big.LITTLE platforms.
-> 
-> The 'dynamic-power-coefficient' values have been obtained experimenting
-> with different workloads. The power measurements taken from big CPU
-> Cluster and LITTLE CPU Cluster has been compared with official documents
-> and synthetic workloads estimations. The effective power ratio between
-> Cortex-A7 and Cortex-A15 CPUs (~3x) is also aligned with documentation.
-> 
-> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
-> ---
->   arch/arm/boot/dts/exynos5422-cpus.dtsi | 8 ++++++++
->   1 file changed, 8 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5422-cpus.dtsi b/arch/arm/boot/dts/exynos5422-cpus.dtsi
-> index 1b8605cf2407..4b641b9b8179 100644
-> --- a/arch/arm/boot/dts/exynos5422-cpus.dtsi
-> +++ b/arch/arm/boot/dts/exynos5422-cpus.dtsi
-> @@ -31,6 +31,7 @@
->   			operating-points-v2 = <&cluster_a7_opp_table>;
->   			#cooling-cells = <2>; /* min followed by max */
->   			capacity-dmips-mhz = <539>;
-> +			dynamic-power-coefficient = <90>;
->   		};
->   
->   		cpu1: cpu@101 {
-> @@ -43,6 +44,7 @@
->   			operating-points-v2 = <&cluster_a7_opp_table>;
->   			#cooling-cells = <2>; /* min followed by max */
->   			capacity-dmips-mhz = <539>;
-> +			dynamic-power-coefficient = <90>;
->   		};
->   
->   		cpu2: cpu@102 {
-> @@ -55,6 +57,7 @@
->   			operating-points-v2 = <&cluster_a7_opp_table>;
->   			#cooling-cells = <2>; /* min followed by max */
->   			capacity-dmips-mhz = <539>;
-> +			dynamic-power-coefficient = <90>;
->   		};
->   
->   		cpu3: cpu@103 {
-> @@ -67,6 +70,7 @@
->   			operating-points-v2 = <&cluster_a7_opp_table>;
->   			#cooling-cells = <2>; /* min followed by max */
->   			capacity-dmips-mhz = <539>;
-> +			dynamic-power-coefficient = <90>;
->   		};
->   
->   		cpu4: cpu@0 {
-> @@ -79,6 +83,7 @@
->   			operating-points-v2 = <&cluster_a15_opp_table>;
->   			#cooling-cells = <2>; /* min followed by max */
->   			capacity-dmips-mhz = <1024>;
-> +			dynamic-power-coefficient = <310>;
->   		};
->   
->   		cpu5: cpu@1 {
-> @@ -91,6 +96,7 @@
->   			operating-points-v2 = <&cluster_a15_opp_table>;
->   			#cooling-cells = <2>; /* min followed by max */
->   			capacity-dmips-mhz = <1024>;
-> +			dynamic-power-coefficient = <310>;
->   		};
->   
->   		cpu6: cpu@2 {
-> @@ -103,6 +109,7 @@
->   			operating-points-v2 = <&cluster_a15_opp_table>;
->   			#cooling-cells = <2>; /* min followed by max */
->   			capacity-dmips-mhz = <1024>;
-> +			dynamic-power-coefficient = <310>;
->   		};
->   
->   		cpu7: cpu@3 {
-> @@ -115,6 +122,7 @@
->   			operating-points-v2 = <&cluster_a15_opp_table>;
->   			#cooling-cells = <2>; /* min followed by max */
->   			capacity-dmips-mhz = <1024>;
-> +			dynamic-power-coefficient = <310>;
->   		};
->   	};
->   };
-> 
+It is never used, and so can be removed.
+
+Signed-off-by: yu kuai <yukuai3@huawei.com>
+---
+ drivers/nfc/fdp/i2c.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/nfc/fdp/i2c.c b/drivers/nfc/fdp/i2c.c
+index 257fdd7a28c7..31de9a7e70f8 100644
+--- a/drivers/nfc/fdp/i2c.c
++++ b/drivers/nfc/fdp/i2c.c
+@@ -202,7 +202,6 @@ static int fdp_nci_i2c_read(struct fdp_i2c_phy *phy, struct sk_buff **skb)
+ static irqreturn_t fdp_nci_i2c_irq_thread_fn(int irq, void *phy_id)
+ {
+ 	struct fdp_i2c_phy *phy = phy_id;
+-	struct i2c_client *client;
+ 	struct sk_buff *skb;
+ 	int r;
+ 
+@@ -211,8 +210,6 @@ static irqreturn_t fdp_nci_i2c_irq_thread_fn(int irq, void *phy_id)
+ 		return IRQ_NONE;
+ 	}
+ 
+-	client = phy->i2c_dev;
+-
+ 	r = fdp_nci_i2c_read(phy, &skb);
+ 
+ 	if (r == -EREMOTEIO)
+-- 
+2.17.2
+
