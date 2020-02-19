@@ -2,86 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 250931648FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 16:44:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92CB516490E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 16:46:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbgBSPo2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 10:44:28 -0500
-Received: from foss.arm.com ([217.140.110.172]:51514 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726523AbgBSPo1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 10:44:27 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D0061FB;
-        Wed, 19 Feb 2020 07:44:27 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A5C233F68F;
-        Wed, 19 Feb 2020 07:44:26 -0800 (PST)
-Date:   Wed, 19 Feb 2020 15:44:25 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH 2/2] ASoC: meson: add t9015 internal DAC driver
-Message-ID: <20200219154425.GD4488@sirena.org.uk>
-References: <20200219133646.1035506-1-jbrunet@baylibre.com>
- <20200219133646.1035506-3-jbrunet@baylibre.com>
- <20200219145500.GC4488@sirena.org.uk>
- <1ja75ey4vj.fsf@starbuckisacylon.baylibre.com>
+        id S1726783AbgBSPqF convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 19 Feb 2020 10:46:05 -0500
+Received: from mail-il1-f197.google.com ([209.85.166.197]:38679 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726645AbgBSPqE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 10:46:04 -0500
+Received: by mail-il1-f197.google.com with SMTP id i67so538642ilf.5
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 07:46:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to:content-transfer-encoding;
+        bh=meEL6Fy6aleZ9jtvpgGrvnGSbq9MuEYemHMybXseYg4=;
+        b=f3SUE58/YgBfF0JLpdg9f1ANe71O21x02oULTlSzD5TwuiLDfaMMNM4ZElqA2XF+Md
+         WSSHB6Rvc39JEoZ/IjzMmR7z7+MZLZz8NMlX90i+XjhUTgnKZhVBgqJaqSEuEgw2dtZI
+         tykv4U4rnYWW4FD78g0o8k21ZTN20b/EQS0hpaG41ri8T9zVHuQb7ouVxtFOetdr3T2C
+         nZvlouXsaYw6I+M85eLVv8L94rUcdOhuwHje9eMCeTENC2QlSONAmfB6ssskhWwbfcgC
+         LpU9rU7eFL1kfolj20zPVcmM30Z9qUDYSqf56cdz07sIDKYl7xWVFEFv59JWAZkAFuyi
+         MGMQ==
+X-Gm-Message-State: APjAAAXl3kOf5Br7zXZg4GzQkZ9bLKIUE3lEHnNaSn25fVJ1yknqrjDW
+        filLa+R2GcoK5+OzNuAyyYQ/FtU8ALDF6RwAv1mkcvPoyc5D
+X-Google-Smtp-Source: APXvYqwJfaY34Duul7QI4nsW4eP5gWo56eh9X0PBjI8pEz/ZDnQ4R7/IwdlEugDK5rSMkM2M9L+WROKda4/pXhpDOVDjiChOjTov
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="JwB53PgKC5A7+0Ej"
-Content-Disposition: inline
-In-Reply-To: <1ja75ey4vj.fsf@starbuckisacylon.baylibre.com>
-X-Cookie: FORTH IF HONK THEN
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a92:91d8:: with SMTP id e85mr25001159ill.146.1582127163011;
+ Wed, 19 Feb 2020 07:46:03 -0800 (PST)
+Date:   Wed, 19 Feb 2020 07:46:02 -0800
+In-Reply-To: <000000000000c7999e059c86eebe@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008a7b14059eefafff@google.com>
+Subject: Re: KASAN: use-after-free Read in bitmap_ipmac_ext_cleanup
+From:   syzbot <syzbot+33fc3ad6fa11675e1a7e@syzkaller.appspotmail.com>
+To:     a@unstable.cc, b.a.t.m.a.n@lists.open-mesh.org,
+        coreteam@netfilter.org, davem@davemloft.net,
+        florent.fourcot@wifirst.fr, fw@strlen.de, jeremy@azazel.net,
+        johannes.berg@intel.com, kadlec@blackhole.kfki.hu,
+        kadlec@netfilter.org, linux-kernel@vger.kernel.org,
+        mareklindner@neomailbox.ch, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
+        po-hsu.lin@canonical.com, skhan@linuxfoundation.org,
+        sw@simonwunderlich.de, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+syzbot suspects this bug was fixed by commit:
 
---JwB53PgKC5A7+0Ej
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+commit 32c72165dbd0e246e69d16a3ad348a4851afd415
+Author: Kadlecsik József <kadlec@blackhole.kfki.hu>
+Date:   Sun Jan 19 21:06:49 2020 +0000
 
-On Wed, Feb 19, 2020 at 04:27:12PM +0100, Jerome Brunet wrote:
-> On Wed 19 Feb 2020 at 15:55, Mark Brown <broonie@kernel.org> wrote:
+    netfilter: ipset: use bitmap infrastructure completely
 
-> >> +	/* Channel Src */
-> >> +	SOC_ENUM("Right DAC Source", dacr_in_enum),
-> >> +	SOC_ENUM("Left DAC Source",  dacl_in_enum),
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13435a7ee00000
+start commit:   8f8972a3 Merge tag 'mtd/fixes-for-5.5-rc7' of git://git.ke..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d9290aeb7e6cf1c4
+dashboard link: https://syzkaller.appspot.com/bug?extid=33fc3ad6fa11675e1a7e
+userspace arch: i386
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15982cc9e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11be38d6e00000
 
-> > Ideally these would be moved into DAPM (using an AIF_IN widget for the
-> > DAI).
+If the result looks correct, please mark the bug fixed by replying with:
 
-> I can (I initially did) but I don't think it is worth it.
+#syz fix: netfilter: ipset: use bitmap infrastructure completely
 
-> I would split Playback into 2 AIF for Left and Right, then add a mux to
-> select one them if front of both DAC. It will had 4 widgets and 6 routes
-> but it won't allow turn anything on or off. There is no PM improvement.
-
-> Do you still want me to change this ?
-
-It can help us track things like external amps connected to the DACs,
-especially when we manage to get to the point of tracking individual
-audio streams over DAI links.
-
---JwB53PgKC5A7+0Ej
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5NV9gACgkQJNaLcl1U
-h9B1bggAg2Hke5eWreSl3h32yjHnSqSd3PP0FGDmBKiB8wwIidEnFIVCpcMesE/D
-a6aM9T+fI+H0uiiAhroMreYDklRU+cJaTcDHBfEHMiTB7p8WPTUiGjUz8ZwqbmTM
-rn93VmzRm+hGQj9oj6QGxUxpXQ2j3UKh/iXEa/SItvNP7/cGs/mPjpFZ5PLJjSvO
-2glHbvcvqLgm54cNrHsC/Wx4LbpVMznw1dXRXNkzi4sWgcpBNwVm6Rph32EijKuE
-W4klrGqOa2Oj0ha5e97b+cZbTONpIPgVrDfegcbcPf+EHsYevSyPS4Pzdk0mGNXI
-36fS/u8fbsdVLyq3L89UxhOXP6vvMw==
-=bIhx
------END PGP SIGNATURE-----
-
---JwB53PgKC5A7+0Ej--
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
