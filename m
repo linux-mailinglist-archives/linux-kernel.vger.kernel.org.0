@@ -2,187 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F314164BD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 18:23:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 982E9164BE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 18:28:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726667AbgBSRXP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 12:23:15 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:36028 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726518AbgBSRXO (ORCPT
+        id S1726638AbgBSR2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 12:28:54 -0500
+Received: from mail-out.m-online.net ([212.18.0.9]:38158 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726518AbgBSR2y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 12:23:14 -0500
-Received: by mail-il1-f196.google.com with SMTP id b15so21224793iln.3;
-        Wed, 19 Feb 2020 09:23:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zGngLDQbpsAufC+vN/662a3UH3A2uSByCjnMwkjEXbU=;
-        b=K0bVDSlAeZ+cV8BYIIlNBAokck4JA7othBQVjHjqgahBKM6hvMLrRxc8Pvp6HQogaE
-         p5LYexw+7R2VD14Z7tmNlG2asjlNh/tQArz1bDsvfYQX3f8z3fVqSDJBsSdD3cOrcm1q
-         JLNOn6NukaONTWjQtgYqMSx7lJS+cvsvcfo/OuM1WdS3UjY81/5PBes+O11p/ve9o114
-         CVZjR9eXjEDRKVSWW4xa3V/3gicfYeqLTckvdhAKPhaFIV/hmkwN/StbztV40KrzfrJW
-         ni3pvhrX95urbSUZfYcxUma4bO442+wjM6WSHHTJ4NgfRWgvEHcqSZBogR20Kz5t2oBx
-         zOtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zGngLDQbpsAufC+vN/662a3UH3A2uSByCjnMwkjEXbU=;
-        b=i8QUCThf8gqVj0ns2qifGs2bkF/hM4Vhqog4xuHqsZJhJmdUELOJgKb8uRt5ZIGh4R
-         GhWcCUySB9/uj/Vg0sFqH5i+vnGhaAIwd6dYVx/k5R5i5uHOh6Cw1vEe4H/AQLC1No6W
-         1IplznVQXAp2v4UP3oW/uA0NbjsrbhwU7mIT7q/MLg3UK7WoPSv7mLlnifuAv3gWd6YF
-         hQSm1O2UROSyRgJc2cXs30LzNP960I72nScdhAsy2EVMvM+raEzhBsTXBsGWCGSIO4EC
-         zb020RzJKDDwuVRthD6Ze4E+S/GlC7orgrriD1HUzGppYaitnZ1Wocx+2gfNR599SMdC
-         vJcA==
-X-Gm-Message-State: APjAAAUd5uqyfhws6QUNPRTr9rC8WmQk9R/3tVpFDs6H2Artw4VHHivp
-        678kORvD94UasyqR0wnz+elwD+bqclBQ9PzB0gg=
-X-Google-Smtp-Source: APXvYqyLsL36ItksCPZerVnrn9TvANn/FrLVPPCRLzGXiUlqmZBEgfajic9eRskjLz2SvFSt1PJDWkre/W/BGTnY1ic=
-X-Received: by 2002:a92:3991:: with SMTP id h17mr18908735ilf.131.1582132994133;
- Wed, 19 Feb 2020 09:23:14 -0800 (PST)
+        Wed, 19 Feb 2020 12:28:54 -0500
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 48N4Sy0XBmz1qrMV;
+        Wed, 19 Feb 2020 18:28:50 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 48N4Sx6ZC6z1qx0K;
+        Wed, 19 Feb 2020 18:28:49 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id 3JamWYMpJdr7; Wed, 19 Feb 2020 18:28:48 +0100 (CET)
+X-Auth-Info: +eqKCJ9/Kpkal2WS3YfV5JluqC+AvVPDD2Bszf4YLMU=
+Received: from [IPv6:::1] (unknown [195.140.253.167])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Wed, 19 Feb 2020 18:28:48 +0100 (CET)
+Subject: Re: [PATCH v2 0/2] Add GPIO level-sensitive interrupt support
+To:     Alexandre Torgue <alexandre.torgue@st.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+References: <20200218131218.10789-1-alexandre.torgue@st.com>
+ <b5a2dcab-06db-4863-ac5c-28f4ef0c5ac9@denx.de>
+ <32e409e6-d475-802a-6a90-c8ba6c0cf6d5@st.com>
+ <088e786c-511e-cf95-fc41-5343b8134407@denx.de>
+ <d271f09b-6391-779a-b133-66bcdfbb0ec6@st.com>
+From:   Marek Vasut <marex@denx.de>
+Message-ID: <38e7cf57-2f89-7615-0841-316355a9102f@denx.de>
+Date:   Wed, 19 Feb 2020 18:24:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-References: <CAHk-=wjEd-gZ1g52kgi_g8gq-QCF2E01TkQd5Hmj4W5aThLw3A@mail.gmail.com>
- <20200219082155.6787-1-linux@rasmusvillemoes.dk> <CAOi1vP-4=QCSZ2A89g1po2p=6n_g09SXUCa0_r2SBJm2greRmw@mail.gmail.com>
- <0fef2a1f-9391-43a9-32d5-2788ae96c529@rasmusvillemoes.dk> <20200219134826.qqdhy2z67ubsnr2m@pathway.suse.cz>
- <5459eb50-48e2-2fd9-3560-0bc921e3678c@rasmusvillemoes.dk> <20200219144558.2jbawr52qb63vysq@pathway.suse.cz>
- <bcfb2f94-e7a8-0860-86e3-9fc866d98742@rasmusvillemoes.dk>
-In-Reply-To: <bcfb2f94-e7a8-0860-86e3-9fc866d98742@rasmusvillemoes.dk>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 19 Feb 2020 18:23:40 +0100
-Message-ID: <CAOi1vP_n-29hPnbeZH7-sb6=_OCPgUgkz-GeWLJw_L1P-CvCww@mail.gmail.com>
-Subject: Re: [PATCH] vsprintf: sanely handle NULL passed to %pe
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        "Tobin C . Harding" <me@tobin.cc>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Documentation List <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <d271f09b-6391-779a-b133-66bcdfbb0ec6@st.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 4:40 PM Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
->
-> On 19/02/2020 15.45, Petr Mladek wrote:
-> > On Wed 2020-02-19 14:56:32, Rasmus Villemoes wrote:
-> >> On 19/02/2020 14.48, Petr Mladek wrote:
-> >>> On Wed 2020-02-19 12:53:22, Rasmus Villemoes wrote:
-> >>>> --- a/lib/vsprintf.c
-> >>>> +++ b/lib/vsprintf.c
-> >>> The test should go into null_pointer() instead of errptr().
-> >>
-> >> Eh, no, the behaviour of %pe is tested by errptr(). I'll keep it that
-> >> way. But I should add a #else section that tests how %pe behaves without
-> >> CONFIG_SYMBOLIC_ERRNAME - though that's orthogonal to this patch.
-> >
-> > OK, we should agree on some structure first.
-> >
-> > We already have two top level functions that test how a particular
-> > pointer is printed using different pointer modifiers:
-> >
-> >       null_pointer();     -> NULL with %p, %pX, %pE
-> >       invalid_pointer();  -> random pointer with %p, %pX, %pE
-> >
-> > Following this logic, errptr() should test how a pointer from IS_ERR() range
-> > is printed using different pointer formats.
->
-> Oh please. I wrote test_printf.c originally and structured it with one
-> helper for each %p<whatever>. How are your additions null_pointer and
-> invalid_pointer good examples for what the existing style is?
->
-> 707cc7280f452 (Rasmus Villemoes 2015-11-06 16:30:29 -0800 649)
-> test_pointer(void)
-> 707cc7280f452 (Rasmus Villemoes 2015-11-06 16:30:29 -0800 650) {
-> 707cc7280f452 (Rasmus Villemoes 2015-11-06 16:30:29 -0800 651)  plain();
-> 3e5903eb9cff7 (Petr Mladek      2019-04-17 13:53:48 +0200 652)
-> null_pointer();
-> 3e5903eb9cff7 (Petr Mladek      2019-04-17 13:53:48 +0200 653)
-> invalid_pointer();
-> 707cc7280f452 (Rasmus Villemoes 2015-11-06 16:30:29 -0800 654)
-> symbol_ptr();
-> 707cc7280f452 (Rasmus Villemoes 2015-11-06 16:30:29 -0800 655)
-> kernel_ptr();
-> 707cc7280f452 (Rasmus Villemoes 2015-11-06 16:30:29 -0800 656)
-> struct_resource();
-> 707cc7280f452 (Rasmus Villemoes 2015-11-06 16:30:29 -0800 657)  addr();
-> 707cc7280f452 (Rasmus Villemoes 2015-11-06 16:30:29 -0800 658)
-> escaped_str();
-> 707cc7280f452 (Rasmus Villemoes 2015-11-06 16:30:29 -0800 659)
-> hex_string();
-> 707cc7280f452 (Rasmus Villemoes 2015-11-06 16:30:29 -0800 660)  mac();
-> 707cc7280f452 (Rasmus Villemoes 2015-11-06 16:30:29 -0800 661)  ip();
-> 707cc7280f452 (Rasmus Villemoes 2015-11-06 16:30:29 -0800 662)  uuid();
-> 707cc7280f452 (Rasmus Villemoes 2015-11-06 16:30:29 -0800 663)  dentry();
-> 707cc7280f452 (Rasmus Villemoes 2015-11-06 16:30:29 -0800 664)
-> struct_va_format();
-> 4d42c44727a06 (Andy Shevchenko  2018-12-04 23:23:11 +0200 665)
-> struct_rtc_time();
-> 707cc7280f452 (Rasmus Villemoes 2015-11-06 16:30:29 -0800 666)
-> struct_clk();
-> 707cc7280f452 (Rasmus Villemoes 2015-11-06 16:30:29 -0800 667)  bitmap();
-> 707cc7280f452 (Rasmus Villemoes 2015-11-06 16:30:29 -0800 668)
-> netdev_features();
-> edf14cdbf9a0e (Vlastimil Babka  2016-03-15 14:55:56 -0700 669)  flags();
-> 57f5677e535ba (Rasmus Villemoes 2019-10-15 21:07:05 +0200 670)  errptr();
-> f1ce39df508de (Sakari Ailus     2019-10-03 15:32:19 +0300 671)
-> fwnode_pointer();
->
->
-> > I am open to crate another logic but it must be consistent.
->
-> So yeah, I'm going to continue testing the behaviour of %pe in errptr, TYVM.
->
-> > If you want to check %pe with NULL in errptr(), you have to
-> > split the other two functions per-modifier. IMHO, it is not
-> > worth it.
->
-> Agreed, let's leave null_pointer and invalid_pointer alone.
->
-> >>>> BTW., your original patch for %p lacks corresponding update of
-> >>>> test_vsprintf.c. Please add appropriate test cases.
-> >>>
-> >>> diff --git a/lib/test_printf.c b/lib/test_printf.c
-> >>> index 2d9f520d2f27..1726a678bccd 100644
-> >>> --- a/lib/test_printf.c
-> >>> +++ b/lib/test_printf.c
-> >>> @@ -333,7 +333,7 @@ test_hashed(const char *fmt, const void *p)
-> >>>  static void __init
-> >>>  null_pointer(void)
-> >>>  {
-> >>> -   test_hashed("%p", NULL);
-> >>> +   test(ZEROS "00000000", "%p", NULL);
-> >>
-> >> No, it most certainly also needs to check a few "%p", ERR_PTR(-4) cases
-> >> (where one of course has to use explicit integers and not E* constants).
-> >
-> > Yes, it would be great to add checks for %p, %px for IS_ERR() range.
-> > But it is different story. The above change is for the original patch
-> > and it was about NULL pointer handling.
->
-> Wrong. The original patch (i.e. Ilya's) had subject "vsprintf: don't
-> obfuscate NULL and error pointers" and did
->
-> +       if (IS_ERR_OR_NULL(ptr))
->
-> so the tests that should be part of that patch very much need to cover
-> both NULL and ERR_PTRs passed to plain %p.
+On 2/19/20 10:20 AM, Alexandre Torgue wrote:
+Hi,
+[...]
+>>>>> This series adds the possibility to handle gpio interrupts on level.
+>>>>>
+>>>>> GPIO hardware block is directly linked to EXTI block but EXTI handles
+>>>>> external interrupts only on edge. To be able to handle GPIO
+>>>>> interrupt on
+>>>>> level a "hack" is done in gpio irq chip: parent interrupt (exti irq
+>>>>> chip)
+>>>>> is retriggered following interrupt type and gpio line value.
+>>>>>
+>>>>> In exti irq chip, retrigger ops function is added.
+>>>>
+>>>> btw. this might be unrelated, but is it possible to have e.g. gpioC2
+>>>> set
+>>>> as trigger-level-low and gpioD2 set as trigger-edge-falling ? It seems
+>>>> 8eb2dfee9fb1 ("pinctrl: stm32: add lock mechanism for irqmux
+>>>> selection")
+>>>> prevents that.
+>>>>
+>>>
+>>> No it's not possible. Each gpio line doesn't have a dedicated Exti line
+>>> Each Exti line is muxing between gpio banks.
+>>
+>> OK, that confirms my assumption.
+>>
+>>> Mapping is done as following:
+>>>
+>>> EXTI0 = A0 or B0 or C0 .... or Z0 : selected by Mux
+>>> EXTI1 = A1 or B1 or C1 ....or Z1 : selected by Mux
+>>> EXTI2 = A2 or B2 or C2 ....or Z2 : selected by Mux
+>>> ...
+>>
+>> Is it at least possible to have IRQs of the same type on the same exti
+>> line? E.g. gpioA2 of trigger-edge-falling and gpioB2
+>> trigger-edge-falling ?
+>>
+> 
+> Sorry I don't catch your point. If you already succeed to get gpioA2,
+> then you will failed to get gpioB2 but looking at function call stack we
+> could get an other issue.
 
-I sent v2 of my patch with the update to test_printf.c.
+Considering the EXTI line limitations, I'd like to know what kind of IRQ
+input configuration is allowed/valid and what kind of configuration is
+not valid.
 
-I see your point about one function for each %p variant, but since
-it's already been disrupted with null_pointer() and invalid_pointer()
-and also because test_hashed() has a comment which implies that it
-must be called after plain(), I piled on by adding error_pointer().
+> Lets take example where you succeed to get gpioa2 as interrupt (using
+> interrupt bindings) and now you try to do the same for gpiob2, you will
+> have (roughly):
+> 
+> stm32_gpio_irq_request_resources (for gpiob2) --> succeed
+> 
+> stm32_gpio_set_type
+>  |
+>  |--> stm32_exti_set_type type -> change exti line 2 trigger registers
+>                                   with gpiob2 binding.
+> 
+> stm32_gpio_domain_activate --> failed as exti line2 is already used
+>                    by gpioa2.
+> 
+> So as stm32_gpio_set_type is called before checking than exti line is
+> available, type could be changed and behavior of gpioa2 interrupt broken.
+> 
+> Solution would be to move the exti line mux check from
+> stm32_gpio_domain_activate to  stm32_gpio_irq_request_resources callback.
 
-Thanks,
+So the hardware does support using both gpioA2 and gpioB2 as an
+interrupt source, for different drivers, if they are of the same
+interrupt type. Except the current implementation does not permit that.
 
-                Ilya
+If the interrupt types are different, that is not supported by the hardware.
+
+Correct ?
