@@ -2,150 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CE1E163EC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:19:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6E3F163EEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:22:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbgBSITw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 03:19:52 -0500
-Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:47245 "EHLO
-        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726539AbgBSITw (ORCPT
+        id S1726487AbgBSIWB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 03:22:01 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:40969 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725992AbgBSIWB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 03:19:52 -0500
-Received: from [192.168.2.10] ([46.9.235.248])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id 4KaAjzEowP9a94KaEjnLlk; Wed, 19 Feb 2020 09:19:50 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
-        t=1582100390; bh=nfF8wMmiXD8n6wpKKTJOHRpwFi71Fz2zG1LZaP4lDVo=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=EgNvAQKeI195N08iqj121owBGpQz1h+ESmVg5R+imkIC3o8YQTT+9BTaVj0fGFEYH
-         6+JqWGrhfz0M1lvgKJlfE3A5Nf6c7LeybrbeifAlV8iu5jVdakyMljozU3gBv1md5T
-         YZ1Fz4vqPVfEOVSy/pcY7SeVr+nny9NR8IylKlx+nROJ+2CzJFnyuJE0//FvZWWw/Z
-         r92BUl0Rlm01RUh6zwbJIymcP/9zqtoUg2zCk6rO+w9oH24rkKS2pqfqo+h73a7Qr+
-         uzlgCHUgpcI2u99ejNbt8TwyQ5ncxBrN5XDZqjfGnXGLQJ811K8tTo4Tmc37yL+RAk
-         FVMB1lNr7dlMQ==
-Subject: Re: [RFC][PATCHv2 03/12] videobuf2: add
- V4L2_FLAG_MEMORY_NON_CONSISTENT flag
-To:     Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Sakari Ailus <sakari.ailus@iki.fi>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200204025641.218376-1-senozhatsky@chromium.org>
- <20200204025641.218376-4-senozhatsky@chromium.org>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <bc32cd42-6452-dba2-e98e-e757b9ffc6d4@xs4all.nl>
-Date:   Wed, 19 Feb 2020 09:19:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Wed, 19 Feb 2020 03:22:01 -0500
+Received: by mail-lj1-f195.google.com with SMTP id h23so26097344ljc.8
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 00:22:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=QocX4xe51J3RSXYlXcQqHwsZ0qHMm3/L1TgcBAZQ+18=;
+        b=Cm0jHNzMc1wmARq03auILfDgmxjx8hfusAXEN/NwWQEsQBIwbiehu3i/OXuo8MCUqe
+         UK01W2dHxUcersBp1PLHwu4XScDXkYvJIlowTtjV4wf9B4SqgLlTdsa/GHPJBOkJWcZb
+         1J85DJvKFxy3ico7+zzcsRRLWuyFpJxWZ0iz4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=QocX4xe51J3RSXYlXcQqHwsZ0qHMm3/L1TgcBAZQ+18=;
+        b=SS/jwXo9BOT/jvxhJGa3KHhVNDHCbOhpiobfknR9Uh9zvyH5xzOZM1iqDcjF3H/UW/
+         imSJzUj5dfzePk5liO0/+m2VuBR/SgmlSfpOT/C/JbboEcw2gzRlaXboTpYzdcBebWtc
+         GOI1je6wBTIzahNrUYbj1V4uYhKs5CB3C3RXE64Cl0fq8rgeEEoUJ2jzw2/NNV0I54O3
+         xjQiSAwuAeSSSOIfB4SnLCUvQLR86XKgvR8EqNn5up8EhxaT6lEwPrcoVzvSwvRzDuKv
+         wnHA+5Ao3eF7HP4URswIspZwChTp7FVLe3K/+ytdmg51LsODw2tLkgPIkDB0Y5cZzCll
+         4Spg==
+X-Gm-Message-State: APjAAAVD7kbeVpC9KTKn7jwo0+XhF6u0OUz0N2lgBfIcG3vGWg4Uws3U
+        FjqzPyF8w0VDXszACghmXy7rpg==
+X-Google-Smtp-Source: APXvYqzjQ7poQEj9Hw7Tcdbo3KnqE29g1euQ3vNK0hzI4uLgZ2V+I7OOd8vEE+X3k+9GXDA5rDXoMw==
+X-Received: by 2002:a2e:b68c:: with SMTP id l12mr14792534ljo.36.1582100519172;
+        Wed, 19 Feb 2020 00:21:59 -0800 (PST)
+Received: from prevas-ravi.prevas.se ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id s18sm821624ljj.36.2020.02.19.00.21.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2020 00:21:58 -0800 (PST)
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To:     Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Tobin C . Harding" <me@tobin.cc>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] vsprintf: sanely handle NULL passed to %pe
+Date:   Wed, 19 Feb 2020 09:21:55 +0100
+Message-Id: <20200219082155.6787-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <CAHk-=wjEd-gZ1g52kgi_g8gq-QCF2E01TkQd5Hmj4W5aThLw3A@mail.gmail.com>
+References: 
 MIME-Version: 1.0
-In-Reply-To: <20200204025641.218376-4-senozhatsky@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfHRKjqqrhjrAxguj1fFSS2HkyPrdNgyyQE1o7/yoUy9HTR6KV9bzpSgYBDS5JeS+476yAyR/gX0ymWe6aGHWfmx8ei6rKbDRPamxFXw6mk3KitOh04yU
- D1x9D0nOCRtTzNIEQ8cpzNFeZ9ll5qY79sQF3Csdz4khdyHaU17Hv6fCAMyz4A8TR/KFF2DpgZtm3cZszNN9Dpym3WhOIpt6JI7VleLZG/zb0sMMJ5PPXGGf
- vdsT4CJpmWqMBv5kno9l3DX/GH7smcD7i76wlSRSAbtc9+9QmFTLesP/0kpNg8Ss0KDlfNyEtLTr5JTGco073d+WOPZZquRgNsoQvXl2Uw8pC472AwbAbyfV
- KNHoY6F39Vk/61/vbvvTop3qI2ELg3Y8cTcg38e2Br+aci4VAWeDfkomfHVKVT+EgIbTK9wES8HurJ8CKObqLwpfh7Z/DDHh1yb5Tdlya/EldRJT0z8C/VbS
- vPUg84ckHuB+Avk2iEAz0zqLoDssz02DGipo8yoNvM+7z+iZ7U95OZTpf50ybEI2Zc694rS5YnkmXxUi
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/4/20 3:56 AM, Sergey Senozhatsky wrote:
-> By setting or clearing V4L2_FLAG_MEMORY_NON_CONSISTENT flag
-> user-space should be able to set or clear queue's NON_CONSISTENT
-> ->dma_attrs. Queue's ->dma_attrs are passed to the underlying
-> allocator in __vb2_buf_mem_alloc(), so thus user-space is able
-> to request vb2 buffer's memory to be either consistent (coherent)
-> or non-consistent.
-> 
-> Change-Id: Ib333081c482e23c9a89386078293e19c3fd59076
-> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> ---
->  Documentation/media/uapi/v4l/buffer.rst | 27 +++++++++++++++++++++++++
->  include/uapi/linux/videodev2.h          |  2 ++
->  2 files changed, 29 insertions(+)
-> 
-> diff --git a/Documentation/media/uapi/v4l/buffer.rst b/Documentation/media/uapi/v4l/buffer.rst
-> index 9149b57728e5..af007daf0591 100644
-> --- a/Documentation/media/uapi/v4l/buffer.rst
-> +++ b/Documentation/media/uapi/v4l/buffer.rst
-> @@ -705,6 +705,33 @@ Buffer Flags
->  
->  .. c:type:: v4l2_memory
->  
-> +Memory Consistency Flags
+Extend %pe to pretty-print NULL in addition to ERR_PTRs,
+i.e. everything IS_ERR_OR_NULL().
 
-This new part should be added *above* the '.. c:type:: v4l2_memory' line.
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+Something like this? The actual code change is +2,-1 with another +1
+for a test case.
 
-You also need to add '.. _memory-flags:' just before this section so that
-you can link to it from the create_bufs and reqbufs ioctl descriptions.
+ Documentation/core-api/printk-formats.rst | 9 +++++----
+ lib/errname.c                             | 4 ++++
+ lib/test_printf.c                         | 1 +
+ lib/vsprintf.c                            | 4 ++--
+ 4 files changed, 12 insertions(+), 6 deletions(-)
 
-> +========================
-> +
-> +.. tabularcolumns:: |p{7.0cm}|p{2.2cm}|p{8.3cm}|
-> +
-> +.. cssclass:: longtable
-> +
-> +.. flat-table::
-> +    :header-rows:  0
-> +    :stub-columns: 0
-> +    :widths:       3 1 4
-> +
-> +    * .. _`V4L2_FLAG_MEMORY_NON_CONSISTENT`:
-> +
-> +      - ``V4L2_FLAG_MEMORY_NON_CONSISTENT``
-> +      - 0x00000001
-> +      - vb2 buffer is allocated either in consistent (it will be automatically
-> +	coherent between CPU and bus) or non-consistent memory. The latter
-> +	can provide performance gains, for instance CPU cache sync/flush
-> +	operations can be avoided if the buffer is accesed by the corresponding
-
-accesed -> accessed
-
-> +	device only and CPU does not read/write to/from that buffer. However,
-> +	this requires extra care from the driver -- it must guarantee memory
-> +	consistency by issuing cache flush/sync when consistency is needed.
-> +	If this flag is set V4L2 will attempt to allocate vb2 buffer in
-> +	non-consistent memory. This flag is ignored if queue does not report
-> +        :ret:`V4L2_BUF_CAP_SUPPORTS_CACHE_HINTS` capability.
-
-V4L2_BUF_CAP_SUPPORTS_CACHE_HINTS is not defined. Add that first in a separate
-patch.
-
-Also update the current description of the V4L2_BUF_FLAG_NO_CACHE_INVALIDATE/CLEAN
-flags to indicate that they are only valid if V4L2_BUF_CAP_SUPPORTS_CACHE_HINTS
-is set (that should be done in the patch adding the V4L2_BUF_CAP_SUPPORTS_CACHE_HINTS
-capability).
-
-Regards,
-
-	Hans
-
-> +
->  enum v4l2_memory
->  ================
->  
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index 5f9357dcb060..72efc1c544cd 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -189,6 +189,8 @@ enum v4l2_memory {
->  	V4L2_MEMORY_DMABUF           = 4,
->  };
->  
-> +#define V4L2_FLAG_MEMORY_NON_CONSISTENT		(1 << 0)
-> +
->  /* see also http://vektor.theorem.ca/graphics/ycbcr/ */
->  enum v4l2_colorspace {
->  	/*
-> 
+diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
+index 8ebe46b1af39..964b55291445 100644
+--- a/Documentation/core-api/printk-formats.rst
++++ b/Documentation/core-api/printk-formats.rst
+@@ -86,10 +86,11 @@ Error Pointers
+ 
+ 	%pe	-ENOSPC
+ 
+-For printing error pointers (i.e. a pointer for which IS_ERR() is true)
+-as a symbolic error name. Error values for which no symbolic name is
+-known are printed in decimal, while a non-ERR_PTR passed as the
+-argument to %pe gets treated as ordinary %p.
++For printing error pointers (i.e. a pointer for which IS_ERR() is
++true) as a symbolic error name. Error values for which no symbolic
++name is known are printed in decimal. A NULL pointer is printed as
++NULL. All other pointer values (i.e. anything !IS_ERR_OR_NULL()) get
++treated as ordinary %p.
+ 
+ Symbols/Function Pointers
+ -------------------------
+diff --git a/lib/errname.c b/lib/errname.c
+index 0c4d3e66170e..7757bc00f564 100644
+--- a/lib/errname.c
++++ b/lib/errname.c
+@@ -11,9 +11,13 @@
+  * allocated errnos (with EHWPOISON = 257 on parisc, and EDQUOT = 1133
+  * on mips), so this wastes a bit of space on those - though we
+  * special case the EDQUOT case.
++ *
++ * For the benefit of %pe being able to print any ERR_OR_NULL pointer
++ * symbolically, 0 is also treated specially.
+  */
+ #define E(err) [err + BUILD_BUG_ON_ZERO(err <= 0 || err > 300)] = "-" #err
+ static const char *names_0[] = {
++	[0] = "NULL",
+ 	E(E2BIG),
+ 	E(EACCES),
+ 	E(EADDRINUSE),
+diff --git a/lib/test_printf.c b/lib/test_printf.c
+index 2d9f520d2f27..3a37d0e9e735 100644
+--- a/lib/test_printf.c
++++ b/lib/test_printf.c
+@@ -641,6 +641,7 @@ errptr(void)
+ 	test("[-EIO    ]", "[%-8pe]", ERR_PTR(-EIO));
+ 	test("[    -EIO]", "[%8pe]", ERR_PTR(-EIO));
+ 	test("-EPROBE_DEFER", "%pe", ERR_PTR(-EPROBE_DEFER));
++	test("[NULL]", "[%pe]", NULL);
+ #endif
+ }
+ 
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index 7c488a1ce318..b7118d78eb20 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -2247,8 +2247,8 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
+ 	case 'x':
+ 		return pointer_string(buf, end, ptr, spec);
+ 	case 'e':
+-		/* %pe with a non-ERR_PTR gets treated as plain %p */
+-		if (!IS_ERR(ptr))
++		/* %pe with a non-ERR_OR_NULL ptr gets treated as plain %p */
++		if (!IS_ERR_OR_NULL(ptr))
+ 			break;
+ 		return err_ptr(buf, end, ptr, spec);
+ 	}
+-- 
+2.23.0
 
