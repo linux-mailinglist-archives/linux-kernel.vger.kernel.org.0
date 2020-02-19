@@ -2,448 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 012C41645AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 14:37:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0728C1645A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 14:36:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727849AbgBSNhD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 08:37:03 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41742 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727762AbgBSNhA (ORCPT
+        id S1727655AbgBSNg5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 08:36:57 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:11945 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727402AbgBSNg5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 08:37:00 -0500
-Received: by mail-wr1-f68.google.com with SMTP id c9so550222wrw.8
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 05:36:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=6FPAvPiCXoDi8cmgLJ1lHMdUMUKv0XX6f1mskgtrNFY=;
-        b=VHAdISWMfathLd5IZRk9Zm7NOQA2Jr4RLaFpZqB9GMWjQts6p6VlTaznQF2kzF+8uz
-         S4XPBtb4mQ9raZGYexfsyAuQ2nz83XyCD3eIM07WwU6NWchwh7cnm8tbvOpdua8+VzRz
-         jpcknKAdQjkZJ6NF+PJVE4MnTpN425MuIuK0FM6aDXVb9U9KMf6bL6w94zp4Po1qSdYE
-         t9/81v9IGC+VLKnvZVCwjX8qLVjpuNBSg5qJnG5jF994o1RIiUySdIKQgDxnsnT/BeY9
-         Q4bmJYgoPjaP+intj4PpueODvBDkmQE4F5/i3qKR60L+UuFsfNkJlLASmA2IUVgfYDrU
-         HOkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=6FPAvPiCXoDi8cmgLJ1lHMdUMUKv0XX6f1mskgtrNFY=;
-        b=KCAHdKXsWepxQ5v27LBiEZ1to47l71SBFeRYUapDCDZ0y1zfjczakp0oYyDxoh81dM
-         xWNm1FuqAY0ryrdexI/C3bpTqDw3qV502yuNXDo8iAHQ7eW62jsNgojHJEtgTJI/pB+r
-         G3SCn1rrSoOOrRJwoX+nigbYoCPwEUVCq47/9GxR+vT4lSytRN6J5p8KfhLSlq2aGpBk
-         4FX+1u8VADyghFkG68NxMY8txWQce3rWj6S4U5AgM5v4D0sAaALuzzYNercA5c7AtUlv
-         JCcjF9rixTdbpZ7/nXfzuhJmmFrwvV5IPH2g/nhzwBXoLdQ6MRNLnSMaKyL+lsvSIdog
-         Y9sQ==
-X-Gm-Message-State: APjAAAVAxemYKg36hARUB086vEU66CXiO9CX8GaiDW/nbQqt18eDHd7D
-        WEEXNQ6yVXYMEtimgy/zv63/Jw==
-X-Google-Smtp-Source: APXvYqwoJQU6JTKcGP81SNBGUHBlm2hN2BfEOeA/oaAL5HgHjinkvgYDfnooX4+Av/3xA/iGqBUmjw==
-X-Received: by 2002:adf:f288:: with SMTP id k8mr38062587wro.301.1582119418954;
-        Wed, 19 Feb 2020 05:36:58 -0800 (PST)
-Received: from localhost.localdomain (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.googlemail.com with ESMTPSA id q124sm8856480wme.2.2020.02.19.05.36.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 05:36:57 -0800 (PST)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH 2/2] ASoC: meson: add t9015 internal DAC driver
-Date:   Wed, 19 Feb 2020 14:36:46 +0100
-Message-Id: <20200219133646.1035506-3-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200219133646.1035506-1-jbrunet@baylibre.com>
-References: <20200219133646.1035506-1-jbrunet@baylibre.com>
+        Wed, 19 Feb 2020 08:36:57 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e4d39b00000>; Wed, 19 Feb 2020 05:35:44 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 19 Feb 2020 05:36:55 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 19 Feb 2020 05:36:55 -0800
+Received: from [10.24.47.202] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 19 Feb
+ 2020 13:36:51 +0000
+Subject: Re: [PATCH V2 0/5] Add support to defer core initialization
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        <lorenzo.pieralisi@arm.com>, <andrew.murray@arm.com>,
+        Tom Joseph <tjoseph@cadence.com>,
+        Milind Parab <mparab@cadence.com>
+CC:     <jingoohan1@gmail.com>, <gustavo.pimentel@synopsys.com>,
+        <bhelgaas@google.com>, <thierry.reding@gmail.com>,
+        <Jisheng.Zhang@synaptics.com>, <jonathanh@nvidia.com>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kthota@nvidia.com>, <mmaddireddy@nvidia.com>, <sagar.tv@gmail.com>
+References: <20200103100736.27627-1-vidyas@nvidia.com>
+ <a8678df3-141b-51ab-b0cb-5e88c6ac91b5@nvidia.com>
+ <680a58ec-5d09-3e3b-2fd6-544c32732818@nvidia.com>
+ <ca911119-da45-4cbd-b173-2ac8397fd79a@ti.com>
+ <b4af8353-3a56-fa31-3391-056050c0440a@ti.com>
+X-Nvconfidentiality: public
+From:   Vidya Sagar <vidyas@nvidia.com>
+Message-ID: <7e8dafcd-bc3f-4acc-7023-85e24bebdd94@nvidia.com>
+Date:   Wed, 19 Feb 2020 19:06:47 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <b4af8353-3a56-fa31-3391-056050c0440a@ti.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1582119344; bh=saeAo+6CA9nP1TJZ3V+aw49+kvyess3aW/RdMbEEWdU=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=jp7782EC/XBpgy64sS1ExDLberT7kmom0+EBPoa/JwCeJ5eBcWoqvElVUL8DW/c4o
+         P4iVpEXDd/7Mx4IDFG1joWasBHaG3MOlqSe+9n9FF8DvtPnqOuym4bVylqIvLAM/L+
+         f3gI2Vo1PEOJvkCSdq4jsp1uKjD7inZKg7M5UxefeizVWMwXLVNGHHbumwD80AwEbS
+         JNl3QToqG1MEzF3FQSdIcigF8fHyudTFK0KtXBjvZfyaCZLPVhwEHyV+jGYJrZCQFI
+         PZGFgopOAcJfe0twr3LizdPO+NaTnuVUEcl/Y0ZaGwpsDhwQjDh+ViOW72J/F1hxZP
+         3dn1vExWmp9vg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the codec driver of the internal DAC found on Amlogic gxl, g12a and
-sm1 family.
+Hi Lorenzo, Andrew,
+Kishon did rebase [1] mentioned below and removed dependencies.
+New patch series is available
+@ http://patchwork.ozlabs.org/project/linux-pci/list/?series=3D158088
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+I rebased my patches on top of this and is available for review
+@ http://patchwork.ozlabs.org/project/linux-pci/list/?series=3D158959
+
+Please let us know the way forward towards merging these patches.
+
+Thanks,
+Vidya Sagar
+
+On 2/5/2020 12:07 PM, Kishon Vijay Abraham I wrote:
+> External email: Use caution opening links or attachments
+>=20
+>=20
+> +Tom, Milind
+>=20
+> Hi,
+>=20
+> On 23/01/20 3:25 PM, Kishon Vijay Abraham I wrote:
+>> Hi Vidya Sagar,
+>>
+>> On 23/01/20 2:54 pm, Vidya Sagar wrote:
+>>> Hi Kishon,
+>>> Apologies for pinging again. Could you please review this series?
+>>>
+>>> Thanks,
+>>> Vidya Sagar
+>>>
+>>> On 1/11/2020 5:18 PM, Vidya Sagar wrote:
+>>>> Hi Kishon,
+>>>> Could you please review this series?
+>>>>
+>>>> Also, this series depends on the following change of yours
+>>>> http://patchwork.ozlabs.org/patch/1109884/
+>>>> Whats the plan to get this merged?
+>>
+>> I've posted the endpoint improvements as a separate series
+>> http://lore.kernel.org/r/20191231100331.6316-1-kishon@ti.com
+>>
+>> I'd prefer this series gets tested by others. I'm also planning to test
+>> this series. Sorry for the delay. I'll test review and test this series
+>> early next week.
+>=20
+> I tested this series with DRA7 configured in EP mode. So for the series
+> itself
+>=20
+> Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+>=20
+> Tom, Can you test this series in Cadence platform?
+>=20
+> Lorenzo, Andrew,
+>=20
+> How do you want to go about merging this series? This series depends on
+> [1] which in turn is dependent on two other series. If required, I can
+> rebase [1] on mainline kernel and remove it's dependencies with the
+> other series. That way this series and [1] could be merged. And the
+> other series could be worked later. Kindly let me know.
+>=20
+> Thanks
+> Kishon
+>=20
+> [1] ->
+> https://lore.kernel.org/linux-pci/20191231100331.6316-1-kishon@ti.com/
+>>
+>> Thanks
+>> Kishon
+>>
+>>>>
+>>>> Thanks,
+>>>> Vidya Sagar
+>>>>
+>>>> On 1/3/20 3:37 PM, Vidya Sagar wrote:
+>>>>> EPC/DesignWare core endpoint subsystems assume that the core
+>>>>> registers are
+>>>>> available always for SW to initialize. But, that may not be the case
+>>>>> always.
+>>>>> For example, Tegra194 hardware has the core running on a clock that
+>>>>> is derived
+>>>>> from reference clock that is coming into the endpoint system from hos=
+t.
+>>>>> Hence core is made available asynchronously based on when host system
+>>>>> is going
+>>>>> for enumeration of devices. To accommodate this kind of hardwares,
+>>>>> support is
+>>>>> required to defer the core initialization until the respective
+>>>>> platform driver
+>>>>> informs the EPC/DWC endpoint sub-systems that the core is indeed
+>>>>> available for
+>>>>> initiaization. This patch series is attempting to add precisely that.
+>>>>> This series is based on Kishon's patch that adds notification mechani=
+sm
+>>>>> support from EPC to EPF @ http://patchwork.ozlabs.org/patch/1109884/
+>>>>>
+>>>>> Vidya Sagar (5):
+>>>>>     PCI: endpoint: Add core init notifying feature
+>>>>>     PCI: dwc: Refactor core initialization code for EP mode
+>>>>>     PCI: endpoint: Add notification for core init completion
+>>>>>     PCI: dwc: Add API to notify core initialization completion
+>>>>>     PCI: pci-epf-test: Add support to defer core initialization
+>>>>>
+>>>>>    .../pci/controller/dwc/pcie-designware-ep.c   |=C2=A0 79 +++++++--=
 ---
- sound/soc/meson/Kconfig  |   8 +
- sound/soc/meson/Makefile |   2 +
- sound/soc/meson/t9015.c  | 320 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 330 insertions(+)
- create mode 100644 sound/soc/meson/t9015.c
-
-diff --git a/sound/soc/meson/Kconfig b/sound/soc/meson/Kconfig
-index 22d2af75b59e..897a706dcda0 100644
---- a/sound/soc/meson/Kconfig
-+++ b/sound/soc/meson/Kconfig
-@@ -6,6 +6,7 @@ config SND_MESON_AIU
- 	tristate "Amlogic AIU"
- 	select SND_MESON_CODEC_GLUE
- 	select SND_PCM_IEC958
-+	imply SND_SOC_MESON_T9015
- 	imply SND_SOC_HDMI_CODEC if DRM_MESON_DW_HDMI
- 	help
- 	  Select Y or M to add support for the Audio output subsystem found
-@@ -116,4 +117,11 @@ config SND_MESON_G12A_TOHDMITX
- 	help
- 	  Select Y or M to add support for HDMI audio on the g12a SoC
- 	  family
-+
-+config SND_SOC_MESON_T9015
-+	tristate "Amlogic T9015 DAC"
-+	select REGMAP_MMIO
-+	help
-+	  Say Y or M if you want to add support for the internal DAC found
-+	  on GXL, G12 and SM1 SoC family.
- endmenu
-diff --git a/sound/soc/meson/Makefile b/sound/soc/meson/Makefile
-index f9c90c391498..3c9d48846816 100644
---- a/sound/soc/meson/Makefile
-+++ b/sound/soc/meson/Makefile
-@@ -23,6 +23,7 @@ snd-soc-meson-card-utils-objs := meson-card-utils.o
- snd-soc-meson-codec-glue-objs := meson-codec-glue.o
- snd-soc-meson-gx-sound-card-objs := gx-card.o
- snd-soc-meson-g12a-tohdmitx-objs := g12a-tohdmitx.o
-+snd-soc-meson-t9015-objs := t9015.o
- 
- obj-$(CONFIG_SND_MESON_AIU) += snd-soc-meson-aiu.o
- obj-$(CONFIG_SND_MESON_AXG_FIFO) += snd-soc-meson-axg-fifo.o
-@@ -40,3 +41,4 @@ obj-$(CONFIG_SND_MESON_CARD_UTILS) += snd-soc-meson-card-utils.o
- obj-$(CONFIG_SND_MESON_CODEC_GLUE) += snd-soc-meson-codec-glue.o
- obj-$(CONFIG_SND_MESON_GX_SOUND_CARD) += snd-soc-meson-gx-sound-card.o
- obj-$(CONFIG_SND_MESON_G12A_TOHDMITX) += snd-soc-meson-g12a-tohdmitx.o
-+obj-$(CONFIG_SND_SOC_MESON_T9015) += snd-soc-meson-t9015.o
-diff --git a/sound/soc/meson/t9015.c b/sound/soc/meson/t9015.c
-new file mode 100644
-index 000000000000..b8a003efa628
---- /dev/null
-+++ b/sound/soc/meson/t9015.c
-@@ -0,0 +1,320 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (c) 2020 BayLibre, SAS.
-+// Author: Jerome Brunet <jbrunet@baylibre.com>
-+
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/module.h>
-+#include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/reset.h>
-+#include <sound/soc.h>
-+#include <sound/tlv.h>
-+
-+#define BLOCK_EN	0x00
-+#define  LORN_EN	0
-+#define  LORP_EN	1
-+#define  LOLN_EN	2
-+#define  LOLP_EN	3
-+#define  DACR_EN	4
-+#define  DACL_EN	5
-+#define  DACR_INV	20
-+#define  DACL_INV	21
-+#define  DACR_SRC	22
-+#define  DACL_SRC	23
-+#define  REFP_BUF_EN	BIT(12)
-+#define  BIAS_CURRENT_EN BIT(13)
-+#define  VMID_GEN_FAST	BIT(14)
-+#define  VMID_GEN_EN	BIT(15)
-+#define  I2S_MODE	BIT(30)
-+#define VOL_CTRL0	0x04
-+#define  GAIN_H		31
-+#define  GAIN_L		23
-+#define VOL_CTRL1	0x08
-+#define  DAC_MONO	8
-+#define  RAMP_RATE	10
-+#define  VC_RAMP_MODE	12
-+#define  MUTE_MODE	13
-+#define  UNMUTE_MODE	14
-+#define  DAC_SOFT_MUTE	15
-+#define  DACR_VC	16
-+#define  DACL_VC	24
-+#define LINEOUT_CFG	0x0c
-+#define  LORN_POL	0
-+#define  LORP_POL	4
-+#define  LOLN_POL	8
-+#define  LOLP_POL	12
-+#define POWER_CFG	0x10
-+
-+struct t9015 {
-+	struct clk *pclk;
-+	struct regulator *avdd;
-+};
-+
-+static int t9015_dai_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
-+{
-+	struct snd_soc_component *component = dai->component;
-+	unsigned int val;
-+
-+	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
-+	case SND_SOC_DAIFMT_CBM_CFM:
-+		val = I2S_MODE;
-+		break;
-+
-+	case SND_SOC_DAIFMT_CBS_CFS:
-+		val = 0;
-+		break;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	snd_soc_component_update_bits(component, BLOCK_EN, I2S_MODE, val);
-+
-+	if (((fmt & SND_SOC_DAIFMT_FORMAT_MASK) != SND_SOC_DAIFMT_I2S) &&
-+	    ((fmt & SND_SOC_DAIFMT_FORMAT_MASK) != SND_SOC_DAIFMT_LEFT_J))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static const struct snd_soc_dai_ops t9015_dai_ops = {
-+	.set_fmt = t9015_dai_set_fmt,
-+};
-+
-+static struct snd_soc_dai_driver t9015_dai = {
-+	.name = "t9015-hifi",
-+	.playback = {
-+		.stream_name = "Playback",
-+		.channels_min = 1,
-+		.channels_max = 2,
-+		.rates = SNDRV_PCM_RATE_8000_96000,
-+		.formats = (SNDRV_PCM_FMTBIT_S8 |
-+			    SNDRV_PCM_FMTBIT_S16_LE |
-+			    SNDRV_PCM_FMTBIT_S20_LE |
-+			    SNDRV_PCM_FMTBIT_S24_LE),
-+	},
-+	.ops = &t9015_dai_ops,
-+};
-+
-+static const DECLARE_TLV_DB_MINMAX_MUTE(dac_vol_tlv, -9525, 0);
-+
-+static const char * const ramp_rate_txt[] = { "Fast", "Slow" };
-+static SOC_ENUM_SINGLE_DECL(ramp_rate_enum, VOL_CTRL1, RAMP_RATE,
-+			    ramp_rate_txt);
-+
-+static const char * const dacr_in_txt[] = { "Right", "Left" };
-+static SOC_ENUM_SINGLE_DECL(dacr_in_enum, BLOCK_EN, DACR_SRC, dacr_in_txt);
-+
-+static const char * const dacl_in_txt[] = { "Left", "Right" };
-+static SOC_ENUM_SINGLE_DECL(dacl_in_enum, BLOCK_EN, DACL_SRC, dacl_in_txt);
-+
-+static const char * const mono_txt[] = { "Stereo", "Mono"};
-+static SOC_ENUM_SINGLE_DECL(mono_enum, VOL_CTRL1, DAC_MONO, mono_txt);
-+
-+static const struct snd_kcontrol_new t9015_snd_controls[] = {
-+	/* Volume Controls */
-+	SOC_SINGLE("Playback Mute", VOL_CTRL1, DAC_SOFT_MUTE, 1, 0),
-+	SOC_DOUBLE_TLV("Playback Volume", VOL_CTRL1, DACL_VC, DACR_VC,
-+		       0xff, 0, dac_vol_tlv),
-+
-+	/* Ramp Controls */
-+	SOC_ENUM("Ramp Rate", ramp_rate_enum),
-+	SOC_SINGLE("Volume Ramp Enable", VOL_CTRL1, VC_RAMP_MODE, 1, 0),
-+	SOC_SINGLE("Mute Ramp Enable", VOL_CTRL1, MUTE_MODE, 1, 0),
-+	SOC_SINGLE("Unmute Ramp Enable", VOL_CTRL1, UNMUTE_MODE, 1, 0),
-+
-+	/* Channel Src */
-+	SOC_ENUM("Right DAC Source", dacr_in_enum),
-+	SOC_ENUM("Left DAC Source",  dacl_in_enum),
-+	SOC_ENUM("Channel Mode", mono_enum),
-+};
-+
-+static const struct snd_soc_dapm_widget t9015_dapm_widgets[] = {
-+	SND_SOC_DAPM_DAC("Right DAC", NULL, BLOCK_EN, DACR_EN, 0),
-+	SND_SOC_DAPM_DAC("Left DAC",  NULL, BLOCK_EN, DACL_EN, 0),
-+	SND_SOC_DAPM_OUT_DRV("Right- Driver", BLOCK_EN, LORN_EN, 0,
-+			 NULL, 0),
-+	SND_SOC_DAPM_OUT_DRV("Right+ Driver", BLOCK_EN, LORP_EN, 0,
-+			 NULL, 0),
-+	SND_SOC_DAPM_OUT_DRV("Left- Driver",  BLOCK_EN, LOLN_EN, 0,
-+			 NULL, 0),
-+	SND_SOC_DAPM_OUT_DRV("Left+ Driver",  BLOCK_EN, LOLP_EN, 0,
-+			 NULL, 0),
-+	SND_SOC_DAPM_OUTPUT("LORN"),
-+	SND_SOC_DAPM_OUTPUT("LORP"),
-+	SND_SOC_DAPM_OUTPUT("LOLN"),
-+	SND_SOC_DAPM_OUTPUT("LOLP"),
-+};
-+
-+static const struct snd_soc_dapm_route t9015_dapm_routes[] = {
-+	{ "Right DAC", NULL, "Playback" },
-+	{ "Left DAC",  NULL, "Playback" },
-+	{ "Right- Driver", NULL, "Right DAC" },
-+	{ "Right+ Driver", NULL, "Right DAC" },
-+	{ "Left- Driver",  NULL, "Left DAC"  },
-+	{ "Left+ Driver",  NULL, "Left DAC"  },
-+	{ "LORN", NULL, "Right- Driver", },
-+	{ "LORP", NULL, "Right+ Driver", },
-+	{ "LOLN", NULL, "Left- Driver",  },
-+	{ "LOLP", NULL, "Left+ Driver",  },
-+};
-+
-+static int t9015_set_bias_level(struct snd_soc_component *component,
-+				enum snd_soc_bias_level level)
-+{
-+	struct t9015 *priv = snd_soc_component_get_drvdata(component);
-+	enum snd_soc_bias_level now =
-+		snd_soc_component_get_bias_level(component);
-+	int ret;
-+
-+	switch (level) {
-+	case SND_SOC_BIAS_ON:
-+		snd_soc_component_update_bits(component, BLOCK_EN,
-+					      BIAS_CURRENT_EN,
-+					      BIAS_CURRENT_EN);
-+		break;
-+	case SND_SOC_BIAS_PREPARE:
-+		snd_soc_component_update_bits(component, BLOCK_EN,
-+					      BIAS_CURRENT_EN,
-+					      0);
-+		break;
-+	case SND_SOC_BIAS_STANDBY:
-+		ret = regulator_enable(priv->avdd);
-+		if (ret) {
-+			dev_err(component->dev, "AVDD enable failed\n");
-+			return ret;
-+		}
-+
-+		if (now == SND_SOC_BIAS_OFF) {
-+			snd_soc_component_update_bits(component, BLOCK_EN,
-+				VMID_GEN_EN | VMID_GEN_FAST | REFP_BUF_EN,
-+				VMID_GEN_EN | VMID_GEN_FAST | REFP_BUF_EN);
-+
-+			mdelay(200);
-+			snd_soc_component_update_bits(component, BLOCK_EN,
-+						      VMID_GEN_FAST,
-+						      0);
-+		}
-+
-+		break;
-+	case SND_SOC_BIAS_OFF:
-+		snd_soc_component_update_bits(component, BLOCK_EN,
-+			VMID_GEN_EN | VMID_GEN_FAST | REFP_BUF_EN,
-+			0);
-+
-+		regulator_disable(priv->avdd);
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct snd_soc_component_driver t9015_codec_driver = {
-+	.set_bias_level		= t9015_set_bias_level,
-+	.controls		= t9015_snd_controls,
-+	.num_controls		= ARRAY_SIZE(t9015_snd_controls),
-+	.dapm_widgets		= t9015_dapm_widgets,
-+	.num_dapm_widgets	= ARRAY_SIZE(t9015_dapm_widgets),
-+	.dapm_routes		= t9015_dapm_routes,
-+	.num_dapm_routes	= ARRAY_SIZE(t9015_dapm_routes),
-+	.suspend_bias_off	= 1,
-+	.endianness		= 1,
-+	.non_legacy_dai_naming	= 1,
-+};
-+
-+static const struct regmap_config t9015_regmap_config = {
-+	.reg_bits		= 32,
-+	.reg_stride		= 4,
-+	.val_bits		= 32,
-+	.max_register		= POWER_CFG,
-+};
-+
-+static int t9015_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct t9015 *priv;
-+	void __iomem *regs;
-+	struct regmap *regmap;
-+	int ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+	platform_set_drvdata(pdev, priv);
-+
-+	priv->pclk = devm_clk_get(dev, "pclk");
-+	if (IS_ERR(priv->pclk)) {
-+		if (PTR_ERR(priv->pclk) != -EPROBE_DEFER)
-+			dev_err(dev, "failed to get core clock\n");
-+		return PTR_ERR(priv->pclk);
-+	}
-+
-+	priv->avdd = devm_regulator_get(dev, "AVDD");
-+	if (IS_ERR(priv->avdd)) {
-+		if (PTR_ERR(priv->avdd) != -EPROBE_DEFER)
-+			dev_err(dev, "failed to AVDD\n");
-+		return PTR_ERR(priv->avdd);
-+	}
-+
-+	ret = clk_prepare_enable(priv->pclk);
-+	if (ret) {
-+		dev_err(dev, "core clock enable failed\n");
-+		return ret;
-+	}
-+
-+	ret = devm_add_action_or_reset(dev,
-+			(void(*)(void *))clk_disable_unprepare,
-+			priv->pclk);
-+	if (ret)
-+		return ret;
-+
-+	ret = device_reset(dev);
-+	if (ret) {
-+		dev_err(dev, "reset failed\n");
-+		return ret;
-+	}
-+
-+	regs = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(regs)) {
-+		dev_err(dev, "register map failed\n");
-+		return PTR_ERR(regs);
-+	}
-+
-+	regmap = devm_regmap_init_mmio(dev, regs, &t9015_regmap_config);
-+	if (IS_ERR(regmap)) {
-+		dev_err(dev, "regmap init failed\n");
-+		return PTR_ERR(regmap);
-+	}
-+
-+	/*
-+	 * Initialize output polarity:
-+	 * ATM the output polarity is fixed but in the future it might useful
-+	 * to add DT property to set this depending on the platform needs
-+	 */
-+	regmap_write(regmap, LINEOUT_CFG, 0x1111);
-+
-+	return devm_snd_soc_register_component(dev, &t9015_codec_driver,
-+					       &t9015_dai, 1);
-+}
-+
-+static const struct of_device_id t9015_ids[] = {
-+	{ .compatible = "amlogic,t9015", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, t9015_ids);
-+
-+static struct platform_driver t9015_driver = {
-+	.driver = {
-+		.name = "t9015-codec",
-+		.of_match_table = of_match_ptr(t9015_ids),
-+	},
-+	.probe = t9015_probe,
-+};
-+
-+module_platform_driver(t9015_driver);
-+
-+MODULE_DESCRIPTION("ASoC Amlogic T9015 codec driver");
-+MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
-+MODULE_LICENSE("GPL");
--- 
-2.24.1
-
+>>>>>    drivers/pci/controller/dwc/pcie-designware.h  |=C2=A0 11 ++
+>>>>>    drivers/pci/endpoint/functions/pci-epf-test.c | 118 ++++++++++++--=
+----
+>>>>>    drivers/pci/endpoint/pci-epc-core.c           |=C2=A0 19 ++-
+>>>>>    include/linux/pci-epc.h                       |=C2=A0=C2=A0 2 +
+>>>>>    include/linux/pci-epf.h                       |=C2=A0=C2=A0 5 +
+>>>>>    6 files changed, 164 insertions(+), 70 deletions(-)
+>>>>>
