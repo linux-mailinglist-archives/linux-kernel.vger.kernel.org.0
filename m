@@ -2,80 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE687163A8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 03:52:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B709E163A89
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 03:51:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728303AbgBSCwP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 21:52:15 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:39466 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728027AbgBSCwP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 21:52:15 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id BE3FAAF365DBB3DB6BE6;
-        Wed, 19 Feb 2020 10:52:12 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.56) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 19 Feb 2020 10:52:05 +0800
-From:   Tian Tao <tiantao6@hisilicon.com>
-To:     <puck.chen@hisilicon.com>, <airlied@linux.ie>, <daniel@ffwll.ch>,
-        <tzimmermann@suse.de>, <kraxel@redhat.com>,
-        <alexander.deucher@amd.com>, <tglx@linutronix.de>,
-        <dri-devel@lists.freedesktop.org>, <xinliang.liu@linaro.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <linuxarm@huawei.com>
-Subject: [PATCH] drm/hisilicon: Set preferred mode resolution and maximum resolution
-Date:   Wed, 19 Feb 2020 10:51:47 +0800
-Message-ID: <1582080707-18825-1-git-send-email-tiantao6@hisilicon.com>
-X-Mailer: git-send-email 2.7.4
+        id S1728276AbgBSCvz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 21:51:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34168 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728027AbgBSCvz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 21:51:55 -0500
+Received: from localhost (unknown [104.132.1.66])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4967207FD;
+        Wed, 19 Feb 2020 02:51:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582080714;
+        bh=/yXdGWmYsKqPX70bTTNAr64nklyYO6iG2lgGEie9/Nc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XR9V1FR5JQ/VnRmYbFVz1VJC0jUNv0LCv0L90Zs0t1FInM2sK6BPB89oh2nVAnsjz
+         1j8gWFCFmU3WBZ3o9K+XChjUjepAn00v8laLChhyc8WbUiZBkikuMGO+kbtxc8yiWM
+         DcYckPYwAfceieD0lL4raxeXnD9eOSbbAd3roLCk=
+Date:   Tue, 18 Feb 2020 18:51:54 -0800
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, chao@kernel.org
+Subject: Re: [PATCH 3/3] f2fs: avoid unneeded barrier in do_checkpoint()
+Message-ID: <20200219025154.GB96609@google.com>
+References: <20200218102136.32150-1-yuchao0@huawei.com>
+ <20200218102136.32150-3-yuchao0@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.56]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200218102136.32150-3-yuchao0@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-set the preferred mode resolution to 1024 * 768 and maximum
-resolution to 1920 * 1200.
+On 02/18, Chao Yu wrote:
+> We don't need to wait all dirty page submitting IO twice,
+> remove unneeded wait step.
 
-Signed-off-by: Tian Tao <tiantao6@hisilicon.com>
-Signed-off-by: Gong junjie <gongjunjie2@huawei.com>
----
- drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+What happens if checkpoint and other meta writs are reordered?
 
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c
-index 6d98fdc..82fc7d3 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c
-@@ -11,8 +11,10 @@
-  *	Jianhua Li <lijianhua@huawei.com>
-  */
- 
-+#include <drm/drm_gem_vram_helper.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_probe_helper.h>
-+#include <drm/drm_crtc_helper.h>
- #include <drm/drm_print.h>
- 
- #include "hibmc_drm_drv.h"
-@@ -20,7 +22,13 @@
- 
- static int hibmc_connector_get_modes(struct drm_connector *connector)
- {
--	return drm_add_modes_noedid(connector, 800, 600);
-+	int count;
-+
-+	drm_connector_update_edid_property(connector, NULL);
-+	count = drm_add_modes_noedid(connector, 1920, 1200);
-+	drm_set_preferred_mode(connector, 1024, 768);
-+
-+	return count;
- }
- 
- static enum drm_mode_status hibmc_connector_mode_valid(struct drm_connector *connector,
--- 
-2.7.4
-
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/checkpoint.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index 751815cb4c2b..9c88fb3d255a 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -1384,8 +1384,6 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  
+>  	/* Flush all the NAT/SIT pages */
+>  	f2fs_sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
+> -	/* Wait for all dirty meta pages to be submitted for IO */
+> -	f2fs_wait_on_all_pages(sbi, F2FS_DIRTY_META);
+>  
+>  	/*
+>  	 * modify checkpoint
+> -- 
+> 2.18.0.rc1
