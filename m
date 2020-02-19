@@ -2,134 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7099B16467D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 15:10:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EB00164666
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 15:09:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728186AbgBSOKN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 09:10:13 -0500
-Received: from outbound-smtp53.blacknight.com ([46.22.136.237]:57401 "EHLO
-        outbound-smtp53.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727918AbgBSOKH (ORCPT
+        id S1728044AbgBSOJP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 09:09:15 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41322 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727756AbgBSOJO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 09:10:07 -0500
-Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
-        by outbound-smtp53.blacknight.com (Postfix) with ESMTPS id AD849FB13D
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 14:10:04 +0000 (GMT)
-Received: (qmail 2640 invoked from network); 19 Feb 2020 14:10:04 -0000
-Received: from unknown (HELO stampy.112glenside.lan) (mgorman@techsingularity.net@[84.203.18.57])
-  by 81.17.254.9 with ESMTPA; 19 Feb 2020 14:10:04 -0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Phil Auld <pauld@redhat.com>, Hillf Danton <hdanton@sina.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 13/13] sched/numa: Stop an exhastive search if a reasonable swap candidate or idle CPU is found
-Date:   Wed, 19 Feb 2020 14:07:36 +0000
-Message-Id: <20200219140736.20499-14-mgorman@techsingularity.net>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20200219140736.20499-1-mgorman@techsingularity.net>
-References: <20200219140736.20499-1-mgorman@techsingularity.net>
+        Wed, 19 Feb 2020 09:09:14 -0500
+Received: by mail-wr1-f66.google.com with SMTP id c9so680433wrw.8
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 06:09:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=JGM4RkGLLaFSnOa8BB7mpJxXjjdhB1y60VVHn0z+pew=;
+        b=Mpzvqg/96O9XJBO85GyCDhcffXGgrF/cgk8f5H5ZJk7Y41L8HvATVViR+s7K7uYugG
+         jnUa5V4C6Uo/tifu3SpQ33EaMvqAdIMI7XGdrXXzuXDC+T/+lJnklL11ZeWsSoXJJ6gd
+         Sm7xGWklY8BXnqZErW0CMpEkc6DoKr4LhUZ4pZ/kKNJ3RzR3Wqa85PEtbSSjiUM8C+zt
+         lJ6nyu47+IQClRYQm4PF0c3LtrJOS+3idB95HRsCcyA7e+Dkicaawh2TWDB74UXMzVxl
+         JgpiFZqDJlwYGKPLNZqJorJ89HOlg8cjDjon5Ax048MGuK2esCQFeQdmQ2OV+1l3CtHu
+         kAyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=JGM4RkGLLaFSnOa8BB7mpJxXjjdhB1y60VVHn0z+pew=;
+        b=gAXNrKJpDcjLf2Y6pfKKUX6YwySuGr60JEaAj0I3ZoHUy08HXJGfNE9EqFRHy/2Bn9
+         q2gW3ZCvHAnz16Hatv9Cr9olqp92cfEBf/JWDhaJCJoKtPpr2iRyVPD5nJS/mUD5Almb
+         UifZaQDLdVZZ2dRug8dIxdJ9rT4cdh44c5e2ekm2LtPYh1i6yeSNdn53XXR16NEHwQA3
+         /kv95HdmoiQqBb5bzYyjyjhEPNTXrGhmz3e6uAqqzRNbpt9IEBpwfuUwcL0kSC5F6+O5
+         6lyFsKEfmlF/deJBRDyIPjbifL3oPQ3C6kRXIvfDn/YmkKlmKgvl8dkCxZNGH/s3dwtn
+         idJw==
+X-Gm-Message-State: APjAAAV9HWTyzbI9swqwuF6YAKSQQTU59tXXIgNQB5YInFfvsNed17uq
+        TH5BbiFm6tyyGlsQTvYtLbFYDEA2AqY=
+X-Google-Smtp-Source: APXvYqxdRLIszlOHZfFNWUcmLYHcGMqKeshhz0KZ8IRyyt0eY3GIsphQUgWiNOeTQCQJGiephQmV6g==
+X-Received: by 2002:adf:db84:: with SMTP id u4mr36805190wri.317.1582121352765;
+        Wed, 19 Feb 2020 06:09:12 -0800 (PST)
+Received: from robin.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id b11sm3302343wrx.89.2020.02.19.06.09.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2020 06:09:12 -0800 (PST)
+From:   Phong LE <ple@baylibre.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Phong LE <ple@baylibre.com>
+Subject: [PATCH] regmap: wrong descriptions in regmap_range_cfg
+Date:   Wed, 19 Feb 2020 15:09:06 +0100
+Message-Id: <20200219140906.29180-1-ple@baylibre.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When domains are imbalanced or overloaded a search of all CPUs on the
-target domain is searched and compared with task_numa_compare. In some
-circumstances, a candidate is found that is an obvious win.
+Swap selector_mask and selector_shift descriptions
 
-o A task can move to an idle CPU and an idle CPU is found
-o A swap candidate is found that would move to its preferred domain
-
-This patch terminates the search when either condition is met.
-
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+Signed-off-by: Phong LE <ple@baylibre.com>
 ---
- kernel/sched/fair.c | 31 +++++++++++++++++++++++++++----
- 1 file changed, 27 insertions(+), 4 deletions(-)
+ include/linux/regmap.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index d790fac0072c..3060ba94e813 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1707,7 +1707,7 @@ static bool load_too_imbalanced(long src_load, long dst_load,
-  * into account that it might be best if task running on the dst_cpu should
-  * be exchanged with the source task
-  */
--static void task_numa_compare(struct task_numa_env *env,
-+static bool task_numa_compare(struct task_numa_env *env,
- 			      long taskimp, long groupimp, bool maymove)
- {
- 	struct numa_group *cur_ng, *p_ng = deref_curr_numa_group(env->p);
-@@ -1718,9 +1718,10 @@ static void task_numa_compare(struct task_numa_env *env,
- 	int dist = env->dist;
- 	long moveimp = imp;
- 	long load;
-+	bool stopsearch = false;
- 
- 	if (READ_ONCE(dst_rq->numa_migrate_on))
--		return;
-+		return false;
- 
- 	rcu_read_lock();
- 	cur = rcu_dereference(dst_rq->curr);
-@@ -1731,8 +1732,10 @@ static void task_numa_compare(struct task_numa_env *env,
- 	 * Because we have preemption enabled we can get migrated around and
- 	 * end try selecting ourselves (current == env->p) as a swap candidate.
- 	 */
--	if (cur == env->p)
-+	if (cur == env->p) {
-+		stopsearch = true;
- 		goto unlock;
-+	}
- 
- 	if (!cur) {
- 		if (maymove && moveimp >= env->best_imp)
-@@ -1860,8 +1863,27 @@ static void task_numa_compare(struct task_numa_env *env,
- 	}
- 
- 	task_numa_assign(env, cur, imp);
-+
-+	/*
-+	 * If a move to idle is allowed because there is capacity or load
-+	 * balance improves then stop the search. While a better swap
-+	 * candidate may exist, a search is not free.
-+	 */
-+	if (maymove && !cur && env->best_cpu >= 0 && idle_cpu(env->best_cpu))
-+		stopsearch = true;
-+
-+	/*
-+	 * If a swap candidate must be identified and the current best task
-+	 * moves its preferred node then stop the search.
-+	 */
-+	if (!maymove && env->best_task &&
-+	    env->best_task->numa_preferred_nid == env->src_nid) {
-+		stopsearch = true;
-+	}
- unlock:
- 	rcu_read_unlock();
-+
-+	return stopsearch;
- }
- 
- static void task_numa_find_cpu(struct task_numa_env *env,
-@@ -1916,7 +1938,8 @@ static void task_numa_find_cpu(struct task_numa_env *env,
- 			continue;
- 
- 		env->dst_cpu = cpu;
--		task_numa_compare(env, taskimp, groupimp, maymove);
-+		if (task_numa_compare(env, taskimp, groupimp, maymove))
-+			break;
- 	}
- }
- 
+diff --git a/include/linux/regmap.h b/include/linux/regmap.h
+index f0a092a1a96d..40b07168fd8e 100644
+--- a/include/linux/regmap.h
++++ b/include/linux/regmap.h
+@@ -461,8 +461,8 @@ struct regmap_config {
+  * @range_max: Address of the highest register in virtual range.
+  *
+  * @selector_reg: Register with selector field.
+- * @selector_mask: Bit shift for selector value.
+- * @selector_shift: Bit mask for selector value.
++ * @selector_mask: Bit mask for selector value.
++ * @selector_shift: Bit shift for selector value.
+  *
+  * @window_start: Address of first (lowest) register in data window.
+  * @window_len: Number of registers in data window.
 -- 
-2.16.4
+2.17.1
 
