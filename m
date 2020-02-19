@@ -2,179 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4350816527F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 23:26:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3B30165287
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 23:30:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727868AbgBSW0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 17:26:50 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:41204 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727291AbgBSW0t (ORCPT
+        id S1727803AbgBSWat (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 17:30:49 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:38727 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727163AbgBSWas (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 17:26:49 -0500
-Received: by mail-qt1-f193.google.com with SMTP id l21so1468295qtr.8;
-        Wed, 19 Feb 2020 14:26:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=77QMWZNt2P60hLQ8k2WkobTZOYuQcji0wAgaq/fXtCM=;
-        b=KFkBY2olxZYCK+/8EzDemlFkDrs6pvRfKvSFrDMPzFEDUhPzJJ4aL+kFi6/ysz3K+Q
-         KwW8kGJ+wtfnCNFktmYryzjVLMZoq6okfL0dhySDfdWC8qccjisFZa6cbxyR0CbNU8v/
-         Vqgtk9s8lN5QP4z7BQL2+PXlRnUI+hzSUpn1jBa58sz3KvcjKUfAgm9OmbfK+L7SG36x
-         y7xeE4CFzb9mtkb5QebGDp7GBQtN5jZIkVrSyRvjNoKPWa79u/sVbVCR/rtbZn8SBdvt
-         S52dPpqRaUcCBlhzy8jVHVlpXhJCRoiUgO/PsKNr1qPu03+1iUvtKKUZ6V0GNxePHcJy
-         mTqg==
+        Wed, 19 Feb 2020 17:30:48 -0500
+Received: by mail-oi1-f196.google.com with SMTP id r137so5942407oie.5;
+        Wed, 19 Feb 2020 14:30:48 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=77QMWZNt2P60hLQ8k2WkobTZOYuQcji0wAgaq/fXtCM=;
-        b=CcsEqrXCJpspqX8DiokqYWxIGdcqEzV8Js0Gz+uxpYERF7wqx/NFjrdmMYNP/NbxIF
-         OqE9h0mva18eg5UrCreAICioVRTTHAtq7d1KeLo4R0uQUH2ZH+/0/HxJt8xkU/O2OQyf
-         /GzO3+GWQs/Fi2GiGRkBXCkgNAaPq+RWVpqeEeLIdGr+Nz2K4Rz8lWRjqnRqJrh75F/u
-         tg7W7dhn04heILZ4d96AhWeSpW5jRTErHtyTOA++322PuLRUGkttKrvvUv4hyaO9ilPw
-         kk4GqlZ55A0cO0SgkgkYN70K9NilVGqXHqO6Hix6/39oc5LpL7NCWWPy24PL2Sn9I4Sl
-         +mvw==
-X-Gm-Message-State: APjAAAWM7+iEY+XTnpUT00vC60TtYsBIr507ePmqhu+ezmTiujN2beJV
-        xuz19Q77RO/Tcnop9ARwVApZJbAQ6SmS+0IJJGo=
-X-Google-Smtp-Source: APXvYqz3a4ETeSJ5fGaTDg5stUvGWjGnVZRnuL45qseQ2+wWXS+F973/E91acebkXk/T6RuR5NdcLVXrNcqB+TKtGQ8=
-X-Received: by 2002:ac8:4050:: with SMTP id j16mr23557464qtl.171.1582151207577;
- Wed, 19 Feb 2020 14:26:47 -0800 (PST)
-MIME-Version: 1.0
-References: <20200219133012.7cb6ac9e@carbon> <CAADnVQKQRKtDz0Boy=-cudc4eKGXB-yParGZv6qvYcQR4uMUQQ@mail.gmail.com>
- <20200219180348.40393e28@carbon> <CAEf4Bza9imKymHfv_LpSFE=kNB5=ZapTS3SCdeZsDdtrUrUGcg@mail.gmail.com>
- <20200219192854.6b05b807@carbon> <CAEf4BzaRAK6-7aCCVOA6hjTevKuxgvZZnHeVgdj_ZWNn8wibYQ@mail.gmail.com>
- <20200219210609.20a097fb@carbon> <CAEUSe79Vn8wr=BOh0RzccYij_snZDY=2XGmHmR494wsQBBoo5Q@mail.gmail.com>
-In-Reply-To: <CAEUSe79Vn8wr=BOh0RzccYij_snZDY=2XGmHmR494wsQBBoo5Q@mail.gmail.com>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Wed, 19 Feb 2020 14:26:36 -0800
-Message-ID: <CAEf4BzZgjJjGLzcrzMhTLU8ESSCSxdAHuDPd52aQU1zVKxqBzg@mail.gmail.com>
-Subject: Re: Kernel 5.5.4 build fail for BPF-selftests with latest LLVM
-To:     =?UTF-8?B?RGFuaWVsIETDrWF6?= <daniel.diaz@linaro.org>
-Cc:     Jesper Dangaard Brouer <brouer@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        BPF-dev-list <bpf@vger.kernel.org>,
-        Daniel Borkmann <borkmann@iogearbox.net>,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Wu4HYGBqerN4aCKCQ+E16577x7yAfinXWHH5tKYvb4E=;
+        b=QFDZAKnz/7G32hf3DnaG3qK9sjcepac6Y4A0eRA5f+NmnonRjEpAv/YfC50M/u3qDh
+         GPa9WVv3iymha8xmeJ7ItAhVXnrFLUawJMhKJezxZhdrC/tpuLjfveCvE+ys3tRXnPMO
+         yEvPGEEOBvCA/cHxj5Q1Trv3Ku3dn5/oztReCCKvlkVm36mV9w7Dff8ysYuujT0zk/YJ
+         xBBqYFZV5qtJnDfaBFIt6h6FqZOS/c2T+VN616lHshKanI07BK5yhAG0N03wW2obf59D
+         5lMdoxs4zohYyND8Nvk8MGiYLst+ztwBokb6OSL+9eIUk4/5lNIf0wDqK2GyLpjXALWx
+         TCXA==
+X-Gm-Message-State: APjAAAXVC2a9/PxxEokO5AkXlWTa0/FCxgvuKNrzshvtadGjG5rg6k7Y
+        Wn3FbJMlVcVmhcaXPb6eIw==
+X-Google-Smtp-Source: APXvYqxxCdgrCCY3ghBEaFroq2na5pXDTn1f9hNYcEgxilsTmVqO87VbZffaVp+gF7TyRfU+vpWBCA==
+X-Received: by 2002:aca:fc0c:: with SMTP id a12mr5913011oii.118.1582151447622;
+        Wed, 19 Feb 2020 14:30:47 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id s12sm420688oic.31.2020.02.19.14.30.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2020 14:30:46 -0800 (PST)
+Received: (nullmailer pid 24235 invoked by uid 1000);
+        Wed, 19 Feb 2020 22:30:46 -0000
+Date:   Wed, 19 Feb 2020 16:30:46 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Evan Benn <evanbenn@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, jwerner@chromium.org,
+        devicetree@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: watchdog: Add arm,smc-wdt watchdog
+ arm,smc-wdt compatible
+Message-ID: <20200219223046.GA16537@bogus>
+References: <20200214062637.216209-1-evanbenn@chromium.org>
+ <20200214172512.1.I02ebc5b8743b1a71e0e15f68ea77e506d4e6f840@changeid>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200214172512.1.I02ebc5b8743b1a71e0e15f68ea77e506d4e6f840@changeid>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 1:59 PM Daniel D=C3=ADaz <daniel.diaz@linaro.org> w=
-rote:
->
-> Hello!
->
-> On Wed, 19 Feb 2020 at 14:06, Jesper Dangaard Brouer <brouer@redhat.com> =
-wrote:
-> >
-> > On Wed, 19 Feb 2020 10:38:45 -0800
-> > Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
-> >
-> > > On Wed, Feb 19, 2020 at 10:29 AM Jesper Dangaard Brouer
-> > > <brouer@redhat.com> wrote:
-> > > >
-> > > > On Wed, 19 Feb 2020 09:38:50 -0800
-> > > > Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
-> > > >
-> > > > > On Wed, Feb 19, 2020 at 9:04 AM Jesper Dangaard Brouer
-> > > > > <brouer@redhat.com> wrote:
-> > > > > >
-> > > > > > On Wed, 19 Feb 2020 08:41:27 -0800
-> > > > > > Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
-> > > > > >
-> > > > > > > On Wed, Feb 19, 2020 at 4:30 AM Jesper Dangaard Brouer
-> > > > > > > <brouer@redhat.com> wrote:
-> > > > > > > >
-> > > > > > > > I'm willing to help out, such that we can do either version=
- or feature
-> > > > > > > > detection, to either skip compiling specific test programs =
-or at least
-> > > > > > > > give users a proper warning of they are using a too "old" L=
-LVM version.
-> > > > > > > ...
-> > > > > > > > progs/test_core_reloc_bitfields_probed.c:47:13: error: use =
-of unknown builtin '__builtin_preserve_field_info' [-Wimplicit-function-dec=
-laration]
-> > > > > > > >         out->ub1 =3D BPF_CORE_READ_BITFIELD_PROBED(in, ub1)=
-;
-> > > > > > >
-> > > > > > > imo this is proper warning message already.
-> > > > > >
-> > > > > > This is an error, not a warning.  The build breaks as the make =
-process stops.
-> > > > > >
-> > > > >
-> > > > > Latest Clang was a requirement for building and running all selft=
-ests
-> > > > > for a long time now. There were few previous discussions on maili=
-ng
-> > > > > list about this and each time the conclusion was the same: latest
-> > > > > Clang is a requirement for BPF selftests.
-> > > >
-> > > > The latest Clang is 9.0.1, and it doesn't build with that.
-> > >
-> > > Latest as in "latest built from sources".
-> >
-> > When I download a specific kernel release, how can I know what LLVM
-> > git-hash or version I need (to use BPF-selftests)?
-> >
-> > Do you think it is reasonable to require end-users to compile their own
-> > bleeding edge version of LLVM, to use BPF-selftests?
-> >
-> > I do hope that some end-users of BPF-selftests will be CI-systems.
-> > That also implies that CI-system maintainers need to constantly do
-> > "latest built from sources" of LLVM git-tree to keep up.  Is that a
-> > reasonable requirement when buying a CI-system in the cloud?
->
-> We [1] are end users of kselftests and many other test suites [2]. We
-> run all of our testing on every git-push on linux-stable-rc, mainline,
-> and linux-next -- approximately 1 million tests per week. We have a
-> dedicated engineering team looking after this CI infrastructure and
-> test results, and as such, I can wholeheartedly echo Jesper's
-> sentiment here: We would really like to help kernel maintainers and
-> developers by automatically testing their code in real hardware, but
-> the BPF kselftests are difficult to work with from a CI perspective.
-> We have caught and reported [3] many [4] build [5] failures [6] in the
-> past for libbpf/Perf, but building is just one of the pieces. We are
-> unable to run the entire BPF kselftests because only a part of the
-> code builds, so our testing is very limited there.
->
-> We hope that this situation can be improved and that our and everyone
-> else's automated testing can help you guys too. For this to work out,
-> we need some help.
+On Fri, Feb 14, 2020 at 05:26:36PM +1100, Evan Benn wrote:
+> This watchdog can be used on ARM systems with a Secure
+> Monitor firmware to forward watchdog operations to
+> firmware via a Secure Monitor Call.
+> 
+> Signed-off-by: Evan Benn <evanbenn@chromium.org>
+> ---
+> 
+>  .../bindings/watchdog/arm,smc-wdt.yaml        | 30 +++++++++++++++++++
+>  MAINTAINERS                                   |  6 ++++
+>  2 files changed, 36 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/watchdog/arm,smc-wdt.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/watchdog/arm,smc-wdt.yaml b/Documentation/devicetree/bindings/watchdog/arm,smc-wdt.yaml
+> new file mode 100644
+> index 000000000000..5170225b0c98
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/watchdog/arm,smc-wdt.yaml
+> @@ -0,0 +1,30 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/watchdog/arm,smc-wdt.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: ARM Secure Monitor Call based watchdog
 
-Is it hard to make sure that your CIs install latest builds of Clang,
-though? See [0], Clang has even latest Clang 11 snapshots available
-(though BPF selftests need only Clang 10 right now). In fact, libbpf's
-Github repo just got a support for building latest kernel + building
-latest selftests + running selftests in QEMU, performed for each PR
-([1]), in Travis CI. Making selftests silently being not built/run if
-Clang is too old will just hide problems without anyone noticing.
+You are not the first 'watchdog in firmware accessed via an SMC call'. 
+Is there some more detail about what implementation this is? Part of 
+TF-A? Defined by some spec (I can dream)?
 
-  [0] http://apt.llvm.org/
-  [1] https://travis-ci.org/libbpf/libbpf/jobs/651838387?utm_medium=3Dnotif=
-ication&utm_source=3Dgithub_status
+> +
+> +allOf:
+> +  - $ref: "watchdog.yaml#"
+> +
+> +maintainers:
+> +  - Julius Werner <jwerner@chromium.org>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - arm,smc-wdt
+> +
+> +required:
+> +  - compatible
+> +
+> +examples:
+> +  - |
+> +    watchdog {
 
->
-> [1] https://lkft.linaro.org/
-> [2] https://www.youtube.com/watch?v=3DR3H9fPhPf54&t=3D1m26s
-> [3] https://lore.kernel.org/bpf/CA+G9fYtAQGwf=3DOoEvHwbJpitcfhpfhy-ar+6FR=
-rWC_-ti7sUTg@mail.gmail.com/
-> [4] https://lore.kernel.org/stable/CA+G9fYtxRoK6D1_oMf9zQj8MW0JtPdphDDO1N=
-HcYQcoFNL5pjw@mail.gmail.com/
-> [5] https://lore.kernel.org/bpf/CA+G9fYssgDcBkiNGSV7BmjE4Tj1j1_fa4VTJFv3N=
-=3D2FHzewQLg@mail.gmail.com/
-> [6] https://lore.kernel.org/bpf/CA+G9fYsK8zn3jqF=3DWz6=3D8BBx4i1JTkv2h-LC=
-bjE11UJkcz_NEA@mail.gmail.com/
+I'd expect this to be a child of whatever firmware implements this 
+function.
+
+> +      compatible = "arm,smc-wdt";
+> +      timeout-sec = <15>;
+> +    };
+> +
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e48ab79879ac..5c45536e1177 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1421,6 +1421,12 @@ S:	Maintained
+>  F:	Documentation/devicetree/bindings/interrupt-controller/amazon,al-fic.txt
+>  F:	drivers/irqchip/irq-al-fic.c
+>  
+> +ARM SMC WATCHDOG DRIVER
+> +M:	Julius Werner <jwerner@chromium.org>
+> +R:	Evan Benn <evanbenn@chromium.org>
+> +S:	Maintained
+> +F:	devicetree/bindings/watchdog/arm,smc-wdt.yaml
+> +
+>  ARM SMMU DRIVERS
+>  M:	Will Deacon <will@kernel.org>
+>  R:	Robin Murphy <robin.murphy@arm.com>
+> -- 
+> 2.25.0.265.gbab2e86ba0-goog
+> 
