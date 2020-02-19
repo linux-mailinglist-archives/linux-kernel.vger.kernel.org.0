@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BEFA163E5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:00:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AECF8163E5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:00:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbgBSIAf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1726683AbgBSIAf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 19 Feb 2020 03:00:35 -0500
-Received: from [167.172.186.51] ([167.172.186.51]:35412 "EHLO shell.v3.sk"
+Received: from [167.172.186.51] ([167.172.186.51]:35424 "EHLO shell.v3.sk"
         rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726491AbgBSIAc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726156AbgBSIAc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 19 Feb 2020 03:00:32 -0500
 Received: from localhost (localhost.localdomain [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 89B63DFFFE;
+        by zimbra.v3.sk (Postfix) with ESMTP id EEFDAE0028;
         Wed, 19 Feb 2020 08:00:45 +0000 (UTC)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id IxgsZhfY5tA0; Wed, 19 Feb 2020 08:00:44 +0000 (UTC)
+        with ESMTP id puz4RNlyY5RV; Wed, 19 Feb 2020 08:00:44 +0000 (UTC)
 Received: from localhost (localhost.localdomain [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id E83B9E0028;
-        Wed, 19 Feb 2020 08:00:43 +0000 (UTC)
+        by zimbra.v3.sk (Postfix) with ESMTP id 3B1B9E0051;
+        Wed, 19 Feb 2020 08:00:44 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id gsPD3rXW-Suy; Wed, 19 Feb 2020 08:00:43 +0000 (UTC)
+        with ESMTP id SUdoU6w6TsmE; Wed, 19 Feb 2020 08:00:43 +0000 (UTC)
 Received: from furthur.lan (unknown [109.183.109.54])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 3AC29DFF72;
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 8B854DFCA2;
         Wed, 19 Feb 2020 08:00:43 +0000 (UTC)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Marc Zyngier <maz@kernel.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
         linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH 1/2] irqchip/mmp: Safeguard against multiple root intc initialization
-Date:   Wed, 19 Feb 2020 09:00:23 +0100
-Message-Id: <20200219080024.4002-2-lkundrak@v3.sk>
+Subject: [PATCH 2/2] irqchip/mmp: Avoid overflowing icu_data[]
+Date:   Wed, 19 Feb 2020 09:00:24 +0100
+Message-Id: <20200219080024.4002-3-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200219080024.4002-1-lkundrak@v3.sk>
 References: <20200219080024.4002-1-lkundrak@v3.sk>
@@ -45,55 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We can only handle one root ICU. Let's warn if someone messes up and adds
-multiple in the devicetree.
+In case someone messes up and adds too many interrupt muxes in the device
+tree, icu_data would overflow into things that follow it in bss, likely
+mmp_icu2_base and mmp_icu_base.
+
+Let's add a safeguard, so that we fail gracefully instead of panicking
+at some later point for reasons that are then not immediately clear.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- drivers/irqchip/irq-mmp.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/irqchip/irq-mmp.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
-index 4a74ac7b7c42e..f597d96409a1f 100644
+index f597d96409a1f..c7ef2cea1c020 100644
 --- a/drivers/irqchip/irq-mmp.c
 +++ b/drivers/irqchip/irq-mmp.c
-@@ -250,6 +250,11 @@ void __init icu_init_irq(void)
- 	int irq;
+@@ -505,6 +505,11 @@ static int __init mmp2_mux_of_init(struct device_nod=
+e *node,
+ 		return -ENODEV;
 =20
- 	max_icu_nr =3D 1;
-+	if (mmp_icu_base) {
-+		pr_err("ICU already initialized\n");
-+		return;
+ 	i =3D max_icu_nr;
++	if (i >=3D MAX_ICU_NR) {
++		pr_err("Too many interrupt muxes\n");
++		return -EINVAL;
 +	}
 +
- 	mmp_icu_base =3D ioremap(0xd4282000, 0x1000);
- 	icu_data[0].conf_enable =3D mmp_conf.conf_enable;
- 	icu_data[0].conf_disable =3D mmp_conf.conf_disable;
-@@ -273,6 +278,11 @@ void __init mmp2_init_icu(void)
- 	int irq, end;
-=20
- 	max_icu_nr =3D 8;
-+	if (mmp_icu_base) {
-+		pr_err("ICU already initialized\n");
-+		return;
-+	}
-+
- 	mmp_icu_base =3D ioremap(0xd4282000, 0x1000);
- 	icu_data[0].conf_enable =3D mmp2_conf.conf_enable;
- 	icu_data[0].conf_disable =3D mmp2_conf.conf_disable;
-@@ -380,6 +390,11 @@ static int __init mmp_init_bases(struct device_node =
-*node)
- 		return ret;
- 	}
-=20
-+	if (mmp_icu_base) {
-+		pr_err("ICU already initialized\n");
-+		return -EEXIST;
-+	}
-+
- 	mmp_icu_base =3D of_iomap(node, 0);
- 	if (!mmp_icu_base) {
- 		pr_err("Failed to get interrupt controller register\n");
+ 	ret =3D of_property_read_u32(node, "mrvl,intc-nr-irqs",
+ 				   &nr_irqs);
+ 	if (ret) {
 --=20
 2.24.1
 
