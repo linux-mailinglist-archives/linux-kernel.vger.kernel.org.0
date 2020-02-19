@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB8CA163F54
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:41:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E659163F6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:42:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726927AbgBSIlf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 03:41:35 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44346 "EHLO mx2.suse.de"
+        id S1727553AbgBSImZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 03:42:25 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44280 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726713AbgBSIlZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726715AbgBSIlZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 19 Feb 2020 03:41:25 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 42387AEC5;
+        by mx2.suse.de (Postfix) with ESMTP id 9ACC1AEAC;
         Wed, 19 Feb 2020 08:41:23 +0000 (UTC)
 From:   Jiri Slaby <jslaby@suse.cz>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH 13/24] n_hdlc: remove cached tty
-Date:   Wed, 19 Feb 2020 09:41:07 +0100
-Message-Id: <20200219084118.26491-13-jslaby@suse.cz>
+Subject: [PATCH 14/24] n_hdlc: remove checking of n_hdlc
+Date:   Wed, 19 Feb 2020 09:41:08 +0100
+Message-Id: <20200219084118.26491-14-jslaby@suse.cz>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200219084118.26491-1-jslaby@suse.cz>
 References: <20200219084118.26491-1-jslaby@suse.cz>
@@ -32,99 +32,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's not needed, as now it's clear, that it's always the same as the one
-passed from the tty layer.
+We got rid of backup_tty recently. Also, the tty layer ensures not to
+call other ldisc hooks after ldisc close. That means, all those tests
+are superfluous now so remove them.
+
+Note that we remove the magic check in write after schedule too. The tty
+cannot change during schedule.
 
 Signed-off-by: Jiri Slaby <jslaby@suse.cz>
 ---
- drivers/tty/n_hdlc.c | 21 +++++----------------
- 1 file changed, 5 insertions(+), 16 deletions(-)
+ drivers/tty/n_hdlc.c | 32 +++-----------------------------
+ 1 file changed, 3 insertions(+), 29 deletions(-)
 
 diff --git a/drivers/tty/n_hdlc.c b/drivers/tty/n_hdlc.c
-index 39a58febd896..2ac702974b57 100644
+index 2ac702974b57..2709d18364eb 100644
 --- a/drivers/tty/n_hdlc.c
 +++ b/drivers/tty/n_hdlc.c
-@@ -124,7 +124,6 @@ struct n_hdlc_buf_list {
- /**
-  * struct n_hdlc - per device instance data structure
-  * @magic - magic value for structure
-- * @tty - ptr to TTY structure
-  * @tbusy - reentrancy flag for tx wakeup code
-  * @woke_up - FIXME: describe this field
-  * @tx_buf_list - list of pending transmit frame buffers
-@@ -134,7 +133,6 @@ struct n_hdlc_buf_list {
-  */
- struct n_hdlc {
- 	int			magic;
--	struct tty_struct	*tty;
- 	int			tbusy;
- 	int			woke_up;
- 	struct n_hdlc_buf_list	tx_buf_list;
-@@ -240,8 +238,6 @@ static void n_hdlc_tty_close(struct tty_struct *tty)
- 	clear_bit(TTY_NO_WRITE_SPLIT,&tty->flags);
- #endif
- 	tty->disc_data = NULL;
--	if (tty != n_hdlc->tty)
--		return;
+@@ -227,9 +227,6 @@ static void n_hdlc_tty_close(struct tty_struct *tty)
+ {
+ 	struct n_hdlc *n_hdlc = tty->disc_data;
  
- 	/* Ensure that the n_hdlcd process is not hanging on select()/poll() */
- 	wake_up_interruptible(&tty->read_wait);
-@@ -280,7 +276,6 @@ static int n_hdlc_tty_open (struct tty_struct *tty)
- 	}
- 		
- 	tty->disc_data = n_hdlc;
--	n_hdlc->tty    = tty;
- 	tty->receive_room = 65536;
- 	
- #if defined(TTY_NO_WRITE_SPLIT)
-@@ -391,11 +386,6 @@ static void n_hdlc_tty_wakeup(struct tty_struct *tty)
- 	if (!n_hdlc)
+-	if (!n_hdlc)
+-		return;
+-
+ 	if (n_hdlc->magic != HDLC_MAGIC) {
+ 		printk(KERN_WARNING "n_hdlc: trying to close unopened tty!\n");
  		return;
+@@ -383,11 +380,7 @@ static void n_hdlc_tty_wakeup(struct tty_struct *tty)
+ {
+ 	struct n_hdlc *n_hdlc = tty->disc_data;
  
--	if (tty != n_hdlc->tty) {
--		clear_bit(TTY_DO_WRITE_WAKEUP, &tty->flags);
+-	if (!n_hdlc)
 -		return;
--	}
 -
  	n_hdlc_send_frames (n_hdlc, tty);
- 		
+-		
  }	/* end of n_hdlc_tty_wakeup() */
-@@ -420,7 +410,7 @@ static void n_hdlc_tty_receive(struct tty_struct *tty, const __u8 *data,
+ 
+ /**
+@@ -409,10 +402,6 @@ static void n_hdlc_tty_receive(struct tty_struct *tty, const __u8 *data,
+ 	pr_debug("%s(%d)%s() called count=%d\n",
  			__FILE__, __LINE__, __func__, count);
  
- 	/* This can happen if stuff comes in on the backup tty */
--	if (!n_hdlc || tty != n_hdlc->tty)
-+	if (!n_hdlc)
- 		return;
- 		
+-	/* This can happen if stuff comes in on the backup tty */
+-	if (!n_hdlc)
+-		return;
+-		
  	/* verify line is using HDLC discipline */
-@@ -461,8 +451,8 @@ static void n_hdlc_tty_receive(struct tty_struct *tty, const __u8 *data,
- 	
- 	/* wake up any blocked reads and perform async signalling */
- 	wake_up_interruptible (&tty->read_wait);
--	if (n_hdlc->tty->fasync != NULL)
--		kill_fasync (&n_hdlc->tty->fasync, SIGIO, POLL_IN);
-+	if (tty->fasync != NULL)
-+		kill_fasync(&tty->fasync, SIGIO, POLL_IN);
+ 	if (n_hdlc->magic != HDLC_MAGIC) {
+ 		printk("%s(%d) line not using HDLC discipline\n",
+@@ -473,10 +462,6 @@ static ssize_t n_hdlc_tty_read(struct tty_struct *tty, struct file *file,
+ 	struct n_hdlc_buf *rbuf;
+ 	DECLARE_WAITQUEUE(wait, current);
  
- }	/* end of n_hdlc_tty_receive() */
+-	/* Validate the pointers */
+-	if (!n_hdlc)
+-		return -EIO;
+-
+ 	/* verify user access to buffer */
+ 	if (!access_ok(buf, nr)) {
+ 		printk(KERN_WARNING "%s(%d) n_hdlc_tty_read() can't verify user "
+@@ -558,10 +543,6 @@ static ssize_t n_hdlc_tty_write(struct tty_struct *tty, struct file *file,
+ 	pr_debug("%s(%d)%s() called count=%zd\n", __FILE__, __LINE__, __func__,
+ 			count);
  
-@@ -598,8 +588,7 @@ static ssize_t n_hdlc_tty_write(struct tty_struct *tty, struct file *file,
- 		schedule();
- 			
- 		n_hdlc = tty->disc_data;
--		if (!n_hdlc || n_hdlc->magic != HDLC_MAGIC || 
--		    tty != n_hdlc->tty) {
-+		if (!n_hdlc || n_hdlc->magic != HDLC_MAGIC) {
- 			printk("n_hdlc_tty_write: %p invalid after wait!\n", n_hdlc);
- 			error = -EIO;
+-	/* Verify pointers */
+-	if (!n_hdlc)
+-		return -EIO;
+-
+ 	if (n_hdlc->magic != HDLC_MAGIC)
+ 		return -EIO;
+ 
+@@ -586,14 +567,7 @@ static ssize_t n_hdlc_tty_write(struct tty_struct *tty, struct file *file,
  			break;
-@@ -712,7 +701,7 @@ static __poll_t n_hdlc_tty_poll(struct tty_struct *tty, struct file *filp,
+ 		}
+ 		schedule();
+-			
+-		n_hdlc = tty->disc_data;
+-		if (!n_hdlc || n_hdlc->magic != HDLC_MAGIC) {
+-			printk("n_hdlc_tty_write: %p invalid after wait!\n", n_hdlc);
+-			error = -EIO;
+-			break;
+-		}
+-			
++
+ 		if (signal_pending(current)) {
+ 			error = -EINTR;
+ 			break;
+@@ -638,7 +612,7 @@ static int n_hdlc_tty_ioctl(struct tty_struct *tty, struct file *file,
+ 	pr_debug("%s(%d)%s() called %d\n", __FILE__, __LINE__, __func__, cmd);
+ 
+ 	/* Verify the status of the device */
+-	if (!n_hdlc || n_hdlc->magic != HDLC_MAGIC)
++	if (n_hdlc->magic != HDLC_MAGIC)
+ 		return -EBADF;
+ 
+ 	switch (cmd) {
+@@ -701,7 +675,7 @@ static __poll_t n_hdlc_tty_poll(struct tty_struct *tty, struct file *filp,
  	struct n_hdlc *n_hdlc = tty->disc_data;
  	__poll_t mask = 0;
  
--	if (!n_hdlc || n_hdlc->magic != HDLC_MAGIC || tty != n_hdlc->tty)
-+	if (!n_hdlc || n_hdlc->magic != HDLC_MAGIC)
+-	if (!n_hdlc || n_hdlc->magic != HDLC_MAGIC)
++	if (n_hdlc->magic != HDLC_MAGIC)
  		return 0;
  
  	/*
