@@ -2,264 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D2F5164906
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 16:45:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A7C61648B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 16:35:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726764AbgBSPpC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 10:45:02 -0500
-Received: from 1.mo178.mail-out.ovh.net ([178.33.251.53]:33007 "EHLO
-        1.mo178.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726643AbgBSPpB (ORCPT
+        id S1726761AbgBSPfv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 10:35:51 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:47023 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726645AbgBSPfv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 10:45:01 -0500
-Received: from player739.ha.ovh.net (unknown [10.108.35.210])
-        by mo178.mail-out.ovh.net (Postfix) with ESMTP id 108A08EAB3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 16:35:13 +0100 (CET)
-Received: from sk2.org (cre33-1_migr-88-122-126-116.fbx.proxad.net [88.122.126.116])
-        (Authenticated sender: steve@sk2.org)
-        by player739.ha.ovh.net (Postfix) with ESMTPSA id B14AEB8813C7;
-        Wed, 19 Feb 2020 15:35:00 +0000 (UTC)
-From:   Stephen Kitt <steve@sk2.org>
-To:     Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-doc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Stephen Kitt <steve@sk2.org>
-Subject: [PATCH v3] docs: add a script to check sysctl docs
-Date:   Wed, 19 Feb 2020 16:34:42 +0100
-Message-Id: <20200219153442.10205-1-steve@sk2.org>
-X-Mailer: git-send-email 2.20.1
+        Wed, 19 Feb 2020 10:35:51 -0500
+Received: by mail-lj1-f195.google.com with SMTP id x14so782235ljd.13
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 07:35:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6tTYqiI2XE0FI71U+lA9HyQqoyVK3A/0rXuG1/SFCPQ=;
+        b=E/Po18yOEv6N41T9n8m7/Z5I/hAn0Hssaag999poMmOzS2DXFaMu2kp81CrAnNFvUy
+         lI6zZ8wd7W7VoCoMbGBOFS35CJOamIFSgfizXI9Dm7yZcLnt3VqeuoukkjTMcVNVy0KU
+         kQK2zjIa6IvviDBC7WXSr13M4H9AGRo9cgIQTZ14xfDIvANE8qhhPas4JpJ1qmCPncIK
+         bg8W3Mj+0prC3YzemQnGINJixRcBBkDo/j1o+9bGi4nniv0gH+c2aseu7sMGUJU639qj
+         nekGtfUWmxROFEJhGIpRgZ5VB/TwgaPVg0ld9C++rje8uyPR/RPIXamAUtv0O2O5b+oS
+         mTng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6tTYqiI2XE0FI71U+lA9HyQqoyVK3A/0rXuG1/SFCPQ=;
+        b=ha2JdlTPji9Yq544tGtbAcwtT/FwIKLQIpDBO0zkNcijPIWWJPPoskNkvJhMBrN57x
+         cliGg+Cz+YaSklwGSrD40y+g3uOG18B5iFYTZ6y5syoPI6KBgSGXTwxMDez6545oDLBS
+         OI8iqZrCcq3RxuDII6N8BjU6WdevzeEEOXS9F8YpvVvTrG10g0vFBo9T4mUKBdxOHrOa
+         GnsJkE4vz1f/WtduYMXemydY+NeATTAP9xSkAnpl8pwRzs07itfyEry+Y/jF25cKZLM/
+         OPfzDmWoQO2MpLbAlsJSdBkD4E+nGj2+pfJoRgM1MxkQ2izvTGXLPdmQjfoLOiBDhJ5k
+         ToaQ==
+X-Gm-Message-State: APjAAAVQVUdUX+BvlLtq8csDQCc2XShUCJSj5fO2ve/0Ci6+8LADjM6d
+        N0zmc01DSFcvplI2jPFRx46TPDDjOtI=
+X-Google-Smtp-Source: APXvYqzd7/6ZNc3I5nBZwwQWiZxslKBC6dtIIexCX7OraX2xnSM//30bm5Tt2XpNxBfNJpFX/1vbqQ==
+X-Received: by 2002:a2e:93c5:: with SMTP id p5mr16224498ljh.192.1582126549176;
+        Wed, 19 Feb 2020 07:35:49 -0800 (PST)
+Received: from genomnajs.ideon.se ([85.235.10.227])
+        by smtp.gmail.com with ESMTPSA id z205sm1536587lfa.52.2020.02.19.07.35.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2020 07:35:48 -0800 (PST)
+From:   Linus Walleij <linus.walleij@linaro.org>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v2] irqchip: vic: Support cascaded VIC in device tree
+Date:   Wed, 19 Feb 2020 16:35:43 +0100
+Message-Id: <20200219153543.137153-1-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 6174716565579910533
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedugedrkedtgdejlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepufhtvghphhgvnhcumfhithhtuceoshhtvghvvgesshhkvddrohhrgheqnecukfhppedtrddtrddtrddtpdekkedruddvvddruddviedrudduieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphdqohhuthdphhgvlhhopehplhgrhigvrhejfeelrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshhtvghvvgesshhkvddrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This script allows sysctl documentation to be checked against the
-kernel source code, to identify missing or obsolete entries. Running
-it against 5.5 shows for example that sysctl/kernel.rst has two
-obsolete entries and is missing 52 entries.
+When transitioning some elder platforms to device tree it
+becomes necessary to cascade VIC IRQ chips off another
+interrupt controller.
 
-Signed-off-by: Stephen Kitt <steve@sk2.org>
+Tested with the cascaded VIC on the Integrator/AP attached
+logic module IM-PD1.
+
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-Changes since v2:
-* drop UTF-8 characters
-* fix license identifier
-* fix example invocation to include path as well as table
-
-v2 was the initial submission (in v2 of the sysctl/kernel.rst patch
-set).
+ChangeLog v1->v2:
+- Drop the default assignment of 0 as parent IRQ.
+- This is not tagged as fix: no regression.
 ---
- Documentation/admin-guide/sysctl/kernel.rst |   3 +
- scripts/check-sysctl-docs                   | 181 ++++++++++++++++++++
- 2 files changed, 184 insertions(+)
- create mode 100755 scripts/check-sysctl-docs
+ drivers/irqchip/irq-vic.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index 6fbfa497388a..ba4b51bb1f3e 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -2,6 +2,9 @@
- Documentation for /proc/sys/kernel/
- ===================================
+diff --git a/drivers/irqchip/irq-vic.c b/drivers/irqchip/irq-vic.c
+index f3f20a3cff50..3c87d925f74c 100644
+--- a/drivers/irqchip/irq-vic.c
++++ b/drivers/irqchip/irq-vic.c
+@@ -509,9 +509,7 @@ static int __init vic_of_init(struct device_node *node,
+ 	void __iomem *regs;
+ 	u32 interrupt_mask = ~0;
+ 	u32 wakeup_mask = ~0;
+-
+-	if (WARN(parent, "non-root VICs are not supported"))
+-		return -EINVAL;
++	int parent_irq;
  
-+.. See scripts/check-sysctl-docs to keep this up to date
-+
-+
- Copyright (c) 1998, 1999,  Rik van Riel <riel@nl.linux.org>
+ 	regs = of_iomap(node, 0);
+ 	if (WARN_ON(!regs))
+@@ -519,11 +517,14 @@ static int __init vic_of_init(struct device_node *node,
  
- Copyright (c) 2009,        Shen Feng<shen@cn.fujitsu.com>
-diff --git a/scripts/check-sysctl-docs b/scripts/check-sysctl-docs
-new file mode 100755
-index 000000000000..8bcb9e26c7bc
---- /dev/null
-+++ b/scripts/check-sysctl-docs
-@@ -0,0 +1,181 @@
-+#!/usr/bin/gawk -f
-+# SPDX-License-Identifier: GPL-2.0
-+
-+# Script to check sysctl documentation against source files
-+#
-+# Copyright (c) 2020 Stephen Kitt
-+
-+# Example invocation:
-+#	scripts/check-sysctl-docs -vtable="kernel" \
-+#		Documentation/admin-guide/sysctl/kernel.rst \
-+#		$(git grep -l register_sysctl_)
-+#
-+# Specify -vdebug=1 to see debugging information
-+
-+BEGIN {
-+    if (!table) {
-+	print "Please specify the table to look for using the table variable" > "/dev/stderr"
-+	exit 1
-+    }
-+}
-+
-+# The following globals are used:
-+# children: maps ctl_table names and procnames to child ctl_table names
-+# documented: maps documented entries (each key is an entry)
-+# entries: maps ctl_table names and procnames to counts (so
-+#          enumerating the subkeys for a given ctl_table lists its
-+#          procnames)
-+# files: maps procnames to source file names
-+# paths: maps ctl_path names to paths
-+# curpath: the name of the current ctl_path struct
-+# curtable: the name of the current ctl_table struct
-+# curentry: the name of the current proc entry (procname when parsing
-+#           a ctl_table, constructed path when parsing a ctl_path)
-+
-+
-+# Remove punctuation from the given value
-+function trimpunct(value) {
-+    while (value ~ /^["&]/) {
-+	value = substr(value, 2)
-+    }
-+    while (value ~ /[]["&,}]$/) {
-+	value = substr(value, 1, length(value) - 1)
-+    }
-+    return value
-+}
-+
-+# Print the information for the given entry
-+function printentry(entry) {
-+    seen[entry]++
-+    printf "* %s from %s", entry, file[entry]
-+    if (documented[entry]) {
-+	printf " (documented)"
-+    }
-+    print ""
-+}
-+
-+
-+# Stage 1: build the list of documented entries
-+FNR == NR && /^=+$/ {
-+    if (prevline ~ /Documentation for/) {
-+	# This is the main title
-+	next
-+    }
-+
-+    # The previous line is a section title, parse it
-+    $0 = prevline
-+    if (debug) print "Parsing " $0
-+    inbrackets = 0
-+    for (i = 1; i <= NF; i++) {
-+	if (length($i) == 0) {
-+	    continue
-+	}
-+	if (!inbrackets && substr($i, 1, 1) == "(") {
-+	    inbrackets = 1
-+	}
-+	if (!inbrackets) {
-+	    token = trimpunct($i)
-+	    if (length(token) > 0 && token != "and") {
-+		if (debug) print trimpunct($i)
-+		documented[trimpunct($i)]++
-+	    }
-+	}
-+	if (inbrackets && substr($i, length($i), 1) == ")") {
-+	    inbrackets = 0
-+	}
-+    }
-+}
-+
-+FNR == NR {
-+    prevline = $0
-+    next
-+}
-+
-+
-+# Stage 2: process each file and find all sysctl tables
-+BEGINFILE {
-+    delete children
-+    delete entries
-+    delete paths
-+    curpath = ""
-+    curtable = ""
-+    curentry = ""
-+    if (debug) print "Processing file " FILENAME
-+}
-+
-+/^static struct ctl_path/ {
-+    match($0, /static struct ctl_path ([^][]+)/, tables)
-+    curpath = tables[1]
-+    if (debug) print "Processing path " curpath
-+}
-+
-+/^static struct ctl_table/ {
-+    match($0, /static struct ctl_table ([^][]+)/, tables)
-+    curtable = tables[1]
-+    if (debug) print "Processing table " curtable
-+}
-+
-+/^};$/ {
-+    curpath = ""
-+    curtable = ""
-+    curentry = ""
-+}
-+
-+curpath && /\.procname[\t ]*=[\t ]*".+"/ {
-+    match($0, /.procname[\t ]*=[\t ]*"([^"]+)"/, names)
-+    if (curentry) {
-+	curentry = curentry "/" names[1]
-+    } else {
-+	curentry = names[1]
-+    }
-+    if (debug) print "Setting path " curpath " to " curentry
-+    paths[curpath] = curentry
-+}
-+
-+curtable && /\.procname[\t ]*=[\t ]*".+"/ {
-+    match($0, /.procname[\t ]*=[\t ]*"([^"]+)"/, names)
-+    curentry = names[1]
-+    if (debug) print "Adding entry " curentry " to table " curtable
-+    entries[curtable][curentry]++
-+    file[curentry] = FILENAME
-+}
-+
-+/\.child[\t ]*=/ {
-+    child = trimpunct($NF)
-+    if (debug) print "Linking child " child " to table " curtable " entry " curentry
-+    children[curtable][curentry] = child
-+}
-+
-+/register_sysctl_table\(.*\)/ {
-+    match($0, /register_sysctl_table\(([^)]+)\)/, tables)
-+    if (debug) print "Registering table " tables[1]
-+    if (children[tables[1]][table]) {
-+	for (entry in entries[children[tables[1]][table]]) {
-+	    printentry(entry)
-+	}
-+    }
-+}
-+
-+/register_sysctl_paths\(.*\)/ {
-+    match($0, /register_sysctl_paths\(([^)]+), ([^)]+)\)/, tables)
-+    if (debug) print "Attaching table " tables[2] " to path " tables[1]
-+    if (paths[tables[1]] == table) {
-+	for (entry in entries[tables[2]]) {
-+	    printentry(entry)
-+	}
-+    }
-+    split(paths[tables[1]], components, "/")
-+    if (length(components) > 1 && components[1] == table) {
-+	# Count the first subdirectory as seen
-+	seen[components[2]]++
-+    }
-+}
-+
-+
-+END {
-+    for (entry in documented) {
-+	if (!seen[entry]) {
-+	    print "No implementation for " entry
-+	}
-+    }
-+}
+ 	of_property_read_u32(node, "valid-mask", &interrupt_mask);
+ 	of_property_read_u32(node, "valid-wakeup-mask", &wakeup_mask);
++	parent_irq = of_irq_get(node, 0);
++	if (parent_irq < 0)
++		parent_irq = 0;
+ 
+ 	/*
+ 	 * Passing 0 as first IRQ makes the simple domain allocate descriptors
+ 	 */
+-	__vic_init(regs, 0, 0, interrupt_mask, wakeup_mask, node);
++	__vic_init(regs, parent_irq, 0, interrupt_mask, wakeup_mask, node);
+ 
+ 	return 0;
+ }
 -- 
-2.20.1
+2.24.1
 
