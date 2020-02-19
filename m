@@ -2,184 +2,230 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A385163BC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 05:04:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B576163BC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 05:03:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726719AbgBSEEL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 23:04:11 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:20182 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726439AbgBSEEL (ORCPT
+        id S1726650AbgBSED0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 23:03:26 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:18060 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726439AbgBSED0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 23:04:11 -0500
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01J3vJxX002714;
-        Tue, 18 Feb 2020 20:03:30 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=subject : to : cc :
- references : from : message-id : date : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=facebook;
- bh=78CLQtV3QFjxONi3GHvA+o6nUAYD+4y+JiRLaXQRRoY=;
- b=mEerubVRuO/0/buph9k0d7WOdv87S02Z6/6a14jWPby87J19NiLlN7rqeAwFL4o43pna
- nt/yiOFj5tdNZOfAJFp60al9waaW/ISba7PwPzlP1RATZy696vf2FD2tF/9wRXe/BJLI
- AnCDhIyoUTDsp3mCEJ+FzseiWo7Aph2124c= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2y8ud18ftq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 18 Feb 2020 20:03:30 -0800
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.35.172) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Tue, 18 Feb 2020 20:03:29 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CM53FOMDCrbifWFsUCz7360BvfWUNdz5ypbxjkogLfHhx3b55hEB5sgH3HsnZRI9mWU26LsNvogDnXSTNQQC37PhnxdlGAIwiwgS8lgfewKHtiKYRosOAu5A/g6ksT2QoUUqfZOcfDtDa/e1bfVTPv249kyoq0r+OegA7XaGivH35biVZo2yopqQ/SlC3djE/CoFj+hque9tA9PPMFN8G3sJd9HrMyTKpeGrr8ltlphxLqGT/opHk4Ge9Yd5RVK5wm/pUfqMin9OewlwhFNDG7stydAzVdOjwQBwV5nyXWPKom4veIkBtrNM5FPa55M4DbK2X7NWHmYk9latgcHwjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=78CLQtV3QFjxONi3GHvA+o6nUAYD+4y+JiRLaXQRRoY=;
- b=E6zSQYhJ90sx1vUrBhhPGovbW6b4liGlvTo4w53HTBJydW/PJi5OuPWlaMrjyHy08Yp85fFf2tW7yycCpejLa1sQe+2rYD/F2m9ayUvUFFWde6wjemQzzjmlqnEY+kk80BF76SV8ZOQGX2JPAs1UGTgB6EeTwiYRbJf1T/llNwk1BEOQLu99ZFj2OgLEOZTOx7WqP/TC1Z9L8afaX3Mx/GNoab0UlZPBBG81zlNHs4gJ9pZJUqqJouJzudKqUr3Sf2UYAnOKEMWGCpgGhcs53OwPLTJMAUNaI5TaAw53vUSBU1GeR1lmjYqcRlYIrSoH9FJ2u+SxppgsoY/wWQqH5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=78CLQtV3QFjxONi3GHvA+o6nUAYD+4y+JiRLaXQRRoY=;
- b=c7buKpAE7ZmDLSkqW9ih0BEwsNH1c+ZZBWJjIg1gXiwk67GwXBn23L0UguiKb/yMk1MWdEkIy7mCu4I8tBQWVhtCGIe5F4SqGxSxChq5x3hyBMbKI0uEOAZk/QzzDQo/rug1jLqkz3kkOSCC/O1wgMDSjw0Dn/l1qyZ5x5rEAwE=
-Received: from DM6PR15MB3001.namprd15.prod.outlook.com (20.178.231.16) by
- DM6PR15MB3912.namprd15.prod.outlook.com (20.181.5.77) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2750.17; Wed, 19 Feb 2020 04:03:28 +0000
-Received: from DM6PR15MB3001.namprd15.prod.outlook.com
- ([fe80::294e:884:76fd:743c]) by DM6PR15MB3001.namprd15.prod.outlook.com
- ([fe80::294e:884:76fd:743c%4]) with mapi id 15.20.2729.032; Wed, 19 Feb 2020
- 04:03:28 +0000
-Subject: Re: possible deadlock in bpf_lru_push_free
-To:     Hillf Danton <hdanton@sina.com>
-CC:     syzbot <syzbot+122b5421d14e68f29cd1@syzkaller.appspotmail.com>,
-        <andriin@fb.com>, <ast@kernel.org>, <bpf@vger.kernel.org>,
-        <daniel@iogearbox.net>, <kafai@fb.com>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <songliubraving@fb.com>, <syzkaller-bugs@googlegroups.com>
-References: <20200217052336.5556-1-hdanton@sina.com>
- <dca36c4b-bbf5-b215-faa9-1992240f2b69@fb.com>
- <20200219021542.3304-1-hdanton@sina.com>
-From:   Yonghong Song <yhs@fb.com>
-Message-ID: <7e8c1cf0-fccf-1ed9-40ed-3a13b2287cf8@fb.com>
-Date:   Tue, 18 Feb 2020 20:03:06 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
- Gecko/20100101 Thunderbird/68.5.0
-In-Reply-To: <20200219021542.3304-1-hdanton@sina.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CO1PR15CA0085.namprd15.prod.outlook.com
- (2603:10b6:101:20::29) To DM6PR15MB3001.namprd15.prod.outlook.com
- (2603:10b6:5:13c::16)
+        Tue, 18 Feb 2020 23:03:26 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01J40EL8040261
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 23:03:24 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2y8ubeu4u8-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 23:03:24 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
+        Wed, 19 Feb 2020 04:03:22 -0000
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 19 Feb 2020 04:03:14 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01J42Hom50069946
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 Feb 2020 04:02:17 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 603AC11C04A;
+        Wed, 19 Feb 2020 04:03:13 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B895011C054;
+        Wed, 19 Feb 2020 04:03:12 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 19 Feb 2020 04:03:12 +0000 (GMT)
+Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
+        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 2BF59A00DF;
+        Wed, 19 Feb 2020 15:03:08 +1100 (AEDT)
+From:   "Alastair D'Silva" <alastair@au1.ibm.com>
+To:     Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Anton Blanchard <anton@ozlabs.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        =?ISO-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kurz <groug@kaod.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org
+Date:   Wed, 19 Feb 2020 15:03:11 +1100
+In-Reply-To: <20200203125346.0000503f@Huawei.com>
+References: <20191203034655.51561-1-alastair@au1.ibm.com>
+         <20191203034655.51561-9-alastair@au1.ibm.com>
+         <20200203125346.0000503f@Huawei.com>
+Organization: IBM Australia
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
 MIME-Version: 1.0
-Received: from marksan-mbp.DHCP.thefacebook.com (2620:10d:c090:400::5:982) by CO1PR15CA0085.namprd15.prod.outlook.com (2603:10b6:101:20::29) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2729.25 via Frontend Transport; Wed, 19 Feb 2020 04:03:26 +0000
-X-Originating-IP: [2620:10d:c090:400::5:982]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9f46ffc7-35e5-4cd3-fd05-08d7b4f0acbb
-X-MS-TrafficTypeDiagnostic: DM6PR15MB3912:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DM6PR15MB3912AF900235918EC72A9C11D3100@DM6PR15MB3912.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
-X-Forefront-PRVS: 0318501FAE
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(396003)(376002)(39860400002)(136003)(346002)(189003)(199004)(66476007)(66556008)(5660300002)(31696002)(16526019)(186003)(2906002)(66946007)(316002)(4326008)(6666004)(6916009)(36756003)(6486002)(6512007)(31686004)(81166006)(81156014)(6506007)(53546011)(8936002)(52116002)(8676002)(478600001)(2616005)(86362001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR15MB3912;H:DM6PR15MB3001.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 17O4NBg10BM+SdzluzwwDZKGBGd9RLflxKr5CYX04RSOkftMDQATc7Fy9I/Pf4VzAiXsO4Uf2HDjOw0kDXg1Fu5JZYVYScyeaxk3xYj3LipISk/wQEmQq3410Tu8JVZGYtKZGE0FB4MaG7uPfyVli8TDnd8s8LjxwAbWEMyhG4kScT+MB3KFbuTsM3aRH3T9RYionXOd+MDFy/ogT39SM3RibiqrcqMeblrn35/Daxuo6Wu6Ts1grdTkkwhxKzMR+31CzFf/5ZY3jV5QeyNc2BFOzAk0jcNXIFu4Ps+48b4SUD3Bvtf01h8rH1P2ss96RJhhkXEB12wS8k/RoZ67/MfpW4xhb7fF9NXenLRIrBx8OQFWCgxUKp0aFe+r0GK383H1qOwXeTA2yWs+qdmYYAq4T+VtbLhvMesEEOk/bMkc6fDIQ/ABiHS2gRjt5BWX
-X-MS-Exchange-AntiSpam-MessageData: OcTdcRVNy3W4QyLXP5Xhydx2Jq7W8FKCcA/eKjHZGlzy8kD+LwP4225V/qKx4qJ6ICj5PoOFZL+s6Jxd8zFyY14BrOofvEpjjzJXGKLPsNBkHen/W+9MIFNo/sFxF5owwFj/5BsX6SOfr9qphkPzBnpCs99eKpIXowSL7VLufbmLmwaVFvcOcEKAZA+Ib0eG
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9f46ffc7-35e5-4cd3-fd05-08d7b4f0acbb
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2020 04:03:28.2014
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ncc4PglXqXvHac/KtZJwSdHBrvuGpoXPfeAIURjFdXGea66VtfcNzUW38fB9XqAf
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR15MB3912
-X-OriginatorOrg: fb.com
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 20021904-0012-0000-0000-000003882478
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20021904-0013-0000-0000-000021C4B6B6
+Message-Id: <97c92496adec4c4b03ad634af030a0c1470ee099.camel@au1.ibm.com>
+Subject: RE: [PATCH v2 08/27] ocxl: Save the device serial number in ocxl_fn
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
  definitions=2020-02-18_08:2020-02-18,2020-02-18 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxlogscore=717
- mlxscore=0 suspectscore=2 lowpriorityscore=0 clxscore=1015 phishscore=0
- adultscore=0 priorityscore=1501 malwarescore=0 bulkscore=0 impostorscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ mlxlogscore=578 lowpriorityscore=0 bulkscore=0 suspectscore=0
+ impostorscore=0 adultscore=0 mlxscore=0 phishscore=0 clxscore=1015
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2001150001 definitions=main-2002190028
-X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 2020-02-03 at 12:53 +0000, Jonathan Cameron wrote:
+> On Tue, 3 Dec 2019 14:46:36 +1100
+> Alastair D'Silva <alastair@au1.ibm.com> wrote:
+> 
+> > From: Alastair D'Silva <alastair@d-silva.org>
+> > 
+> > This patch retrieves the serial number of the card and makes it
+> > available
+> > to consumers of the ocxl driver via the ocxl_fn struct.
+> > 
+> > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> > Acked-by: Frederic Barrat <fbarrat@linux.ibm.com>
+> > Acked-by: Andrew Donnellan <ajd@linux.ibm.com>
+> > ---
+> >  drivers/misc/ocxl/config.c | 46
+> > ++++++++++++++++++++++++++++++++++++++
+> >  include/misc/ocxl.h        |  1 +
+> >  2 files changed, 47 insertions(+)
+> > 
+> > diff --git a/drivers/misc/ocxl/config.c
+> > b/drivers/misc/ocxl/config.c
+> > index fb0c3b6f8312..a9203c309365 100644
+> > --- a/drivers/misc/ocxl/config.c
+> > +++ b/drivers/misc/ocxl/config.c
+> > @@ -71,6 +71,51 @@ static int find_dvsec_afu_ctrl(struct pci_dev
+> > *dev, u8 afu_idx)
+> >  	return 0;
+> >  }
+> >  
+> > +/**
+> 
+> Make sure anything you mark as kernel doc with /** is valid
+> kernel-doc.
+> 
 
+Ok
 
-On 2/18/20 6:15 PM, Hillf Danton wrote:
+> > + * Find a related PCI device (function 0)
+> > + * @device: PCI device to match
+> > + *
+> > + * Returns a pointer to the related device, or null if not found
+> > + */
+> > +static struct pci_dev *get_function_0(struct pci_dev *dev)
+> > +{
+> > +	unsigned int devfn = PCI_DEVFN(PCI_SLOT(dev->devfn), 0); //
+> > Look for function 0
 > 
-> Hey
+> Not sure the trailing comment adds much.
 > 
-> On Tue, 18 Feb 2020 15:55:02 -0800 Yonghong Song wrote:
->>
->> Thanks for Martin for explanation! I think changing l->hash_node.next is
->> unsafe here as another thread may execute on a different cpu and
->> traverse the same list. It will see hash_node.next = NULL and it is
+> I'd personally not bother with this wrapper at all and just call
+> the pci functions directly where needed.
 > 
-> Good catch.
-> 
->> unexpected.
->>
->> How about the following patch?
->>
-> Looks nicer, thanks :P
-> 
->> diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
->> index 2d182c4ee9d9..246ef0f2e985 100644
->> --- a/kernel/bpf/hashtab.c
->> +++ b/kernel/bpf/hashtab.c
->> @@ -56,6 +56,7 @@ struct htab_elem {
->>                           union {
->>                                   struct bpf_htab *htab;
->>                                   struct pcpu_freelist_node fnode;
->> +                               struct htab_elem *link;
->>                           };
->>                   };
->>           };
->> @@ -1256,6 +1257,7 @@ __htab_map_lookup_and_delete_batch(struct bpf_map *map,
->>           void __user *ukeys = u64_to_user_ptr(attr->batch.keys);
->>           void *ubatch = u64_to_user_ptr(attr->batch.in_batch);
->>           u32 batch, max_count, size, bucket_size;
->> +       struct htab_elem *node_to_free = NULL;
->>           u64 elem_map_flags, map_flags;
->>           struct hlist_nulls_head *head;
->>           struct hlist_nulls_node *n;
->> @@ -1370,9 +1372,14 @@ __htab_map_lookup_and_delete_batch(struct bpf_map *map,
->>                   }
->>                   if (do_delete) {
->>                           hlist_nulls_del_rcu(&l->hash_node);
->> -                       if (is_lru_map)
->> -                               bpf_lru_push_free(&htab->lru, &l->lru_node);
->> -                       else
->> +                       if (is_lru_map) {
->> +                               /* l->hnode overlaps with *l->hash_node.pprev
-> 
-> nit: looks like you mean l->link
 
-Yes, my previous attempt uses "hnode" and later changed to "link" but 
-forget to change the comments.
+I'm not that familiar with the macros, so its not immediately obvious
+to me what it's doing, so my preference is to leave it.
+> > +
+> > +	return pci_get_domain_bus_and_slot(pci_domain_nr(dev->bus),
+> > +					dev->bus->number, devfn);
+> > +}
+> > +
+> > +static void read_serial(struct pci_dev *dev, struct ocxl_fn_config
+> > *fn)
+> > +{
+> > +	u32 low, high;
+> > +	int pos;
+> > +
+> > +	pos = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_DSN);
+> > +	if (pos) {
+> > +		pci_read_config_dword(dev, pos + 0x04, &low);
+> > +		pci_read_config_dword(dev, pos + 0x08, &high);
+> > +
+> > +		fn->serial = low | ((u64)high) << 32;
+> > +
+> > +		return;
+> > +	}
+> > +
+> > +	if (PCI_FUNC(dev->devfn) != 0) {
+> > +		struct pci_dev *related = get_function_0(dev);
+> > +
+> > +		if (!related) {
+> > +			fn->serial = 0;
+> > +			return;
+> > +		}
+> > +
+> > +		read_serial(related, fn);
+> > +		pci_dev_put(related);
+> > +		return;
+> > +	}
+> > +
+> > +	fn->serial = 0;
+> > +}
+> > +
+> >  static void read_pasid(struct pci_dev *dev, struct ocxl_fn_config
+> > *fn)
+> >  {
+> >  	u16 val;
+> > @@ -208,6 +253,7 @@ int ocxl_config_read_function(struct pci_dev
+> > *dev, struct ocxl_fn_config *fn)
+> >  	int rc;
+> >  
+> >  	read_pasid(dev, fn);
+> > +	read_serial(dev, fn);
+> >  
+> >  	rc = read_dvsec_tl(dev, fn);
+> >  	if (rc) {
+> > diff --git a/include/misc/ocxl.h b/include/misc/ocxl.h
+> > index 6f7c02f0d5e3..9843051c3c5b 100644
+> > --- a/include/misc/ocxl.h
+> > +++ b/include/misc/ocxl.h
+> > @@ -46,6 +46,7 @@ struct ocxl_fn_config {
+> >  	int dvsec_afu_info_pos; /* offset of the AFU information DVSEC
+> > */
+> >  	s8 max_pasid_log;
+> >  	s8 max_afu_index;
+> > +	u64 serial;
+> >  };
+> >  
+> >  enum ocxl_endian {
+-- 
+Alastair D'Silva
+Open Source Developer
+Linux Technology Centre, IBM Australia
+mob: 0423 762 819
 
-Will post a patch soon.
-
-> 
->> +                                * in memory. l->hash_node.pprev has been
->> +                                * poisoned and nobody should access it.
->> +                                */
->> +                               l->link = node_to_free;
->> +                               node_to_free = l;
->> +                       } else
->>                                   free_htab_elem(htab, l);
->>                   }
->>                   dst_key += key_size;
-> 
