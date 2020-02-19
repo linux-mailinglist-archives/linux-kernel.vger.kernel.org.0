@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8B3C163FC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:51:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C87C8163FC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:51:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727280AbgBSIu0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 03:50:26 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49738 "EHLO mx2.suse.de"
+        id S1727211AbgBSIuW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 03:50:22 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49746 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726677AbgBSItx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726713AbgBSItx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 19 Feb 2020 03:49:53 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 79CF1ACC6;
+        by mx2.suse.de (Postfix) with ESMTP id C38E8AD06;
         Wed, 19 Feb 2020 08:49:51 +0000 (UTC)
 From:   Jiri Slaby <jslaby@suse.cz>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH 04/10] n_gsm: introduce enum gsm_mux_state
-Date:   Wed, 19 Feb 2020 09:49:43 +0100
-Message-Id: <20200219084949.28074-4-jslaby@suse.cz>
+Subject: [PATCH 05/10] n_gsm: add missing __user annotations
+Date:   Wed, 19 Feb 2020 09:49:44 +0100
+Message-Id: <20200219084949.28074-5-jslaby@suse.cz>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200219084949.28074-1-jslaby@suse.cz>
 References: <20200219084949.28074-1-jslaby@suse.cz>
@@ -32,84 +32,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-gsm_mux->state is clearly an enumeration. So introduce one and use it
--- compiler now checks if valid values are assigned to the field.
+sparse warns about incorrect types:
+n_gsm.c:2638:35: warning: incorrect type in argument 1 (different address spaces)
+n_gsm.c:2638:35:    expected void [noderef] <asn:1> *to
+n_gsm.c:2638:35:    got void *
 
-Note that a compiler warns about unhandled cases in switch. Add default
-cases with a pr_debug (which is not printed by default).
-
-The values of the states are preserved thanks to the nature of enum.
+The ioctl handler casts its `arg' to (void *) without __user. Add that.
 
 Signed-off-by: Jiri Slaby <jslaby@suse.cz>
 ---
- drivers/tty/n_gsm.c | 33 +++++++++++++++++++++------------
- 1 file changed, 21 insertions(+), 12 deletions(-)
+ drivers/tty/n_gsm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/tty/n_gsm.c b/drivers/tty/n_gsm.c
-index 7fee5a580f21..82e3d88c1f3f 100644
+index 82e3d88c1f3f..d866884c105b 100644
 --- a/drivers/tty/n_gsm.c
 +++ b/drivers/tty/n_gsm.c
-@@ -173,6 +173,20 @@ struct gsm_control {
- 	int error;	/* Error if any */
- };
- 
-+enum gsm_mux_state {
-+	GSM_SEARCH,
-+	GSM_START,
-+	GSM_ADDRESS,
-+	GSM_CONTROL,
-+	GSM_LEN,
-+	GSM_DATA,
-+	GSM_FCS,
-+	GSM_OVERRUN,
-+	GSM_LEN0,
-+	GSM_LEN1,
-+	GSM_SSOF,
-+};
-+
- /*
-  *	Each GSM mux we have is represented by this structure. If we are
-  *	operating as an ldisc then we use this structure as our ldisc
-@@ -197,18 +211,7 @@ struct gsm_mux {
- 
- 	/* Framing Layer */
- 	unsigned char *buf;
--	int state;
--#define GSM_SEARCH		0
--#define GSM_START		1
--#define GSM_ADDRESS		2
--#define GSM_CONTROL		3
--#define GSM_LEN			4
--#define GSM_DATA		5
--#define GSM_FCS			6
--#define GSM_OVERRUN		7
--#define GSM_LEN0		8
--#define GSM_LEN1		9
--#define GSM_SSOF		10
-+	enum gsm_mux_state state;
- 	unsigned int len;
- 	unsigned int address;
- 	unsigned int count;
-@@ -1934,6 +1937,9 @@ static void gsm0_receive(struct gsm_mux *gsm, unsigned char c)
- 			break;
- 		}
- 		break;
-+	default:
-+		pr_debug("%s: unhandled state: %d\n", __func__, gsm->state);
-+		break;
- 	}
- }
- 
-@@ -2008,6 +2014,9 @@ static void gsm1_receive(struct gsm_mux *gsm, unsigned char c)
- 		break;
- 	case GSM_OVERRUN:	/* Over-long - eg a dropped SOF */
- 		break;
-+	default:
-+		pr_debug("%s: unhandled state: %d\n", __func__, gsm->state);
-+		break;
- 	}
- }
- 
+@@ -2638,11 +2638,11 @@ static int gsmld_ioctl(struct tty_struct *tty, struct file *file,
+ 	switch (cmd) {
+ 	case GSMIOC_GETCONF:
+ 		gsm_copy_config_values(gsm, &c);
+-		if (copy_to_user((void *)arg, &c, sizeof(c)))
++		if (copy_to_user((void __user *)arg, &c, sizeof(c)))
+ 			return -EFAULT;
+ 		return 0;
+ 	case GSMIOC_SETCONF:
+-		if (copy_from_user(&c, (void *)arg, sizeof(c)))
++		if (copy_from_user(&c, (void __user *)arg, sizeof(c)))
+ 			return -EFAULT;
+ 		return gsm_config(gsm, &c);
+ 	case GSMIOC_GETFIRST:
 -- 
 2.25.0
 
