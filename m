@@ -2,77 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A73D164582
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 14:29:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB2E41645A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 14:37:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727747AbgBSN3A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 08:29:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34218 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726725AbgBSN3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 08:29:00 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67BE824654;
-        Wed, 19 Feb 2020 13:28:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582118939;
-        bh=2Eok6QDwEYTXtMZn1ZUTzSuDcxAHDuGB/EMud+DtNVA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SDOquG1GvLtxm/+qKnQDLJtvjCuHprU5zHxrLLHPi9io2GUA4ex23J0n2NJ0n/lVy
-         7RdP3jPNxPm569R+/Wv6Eq+A1JxOTUow5q6tUIME8BX0EsMqB6O/1vuTcOys+2BB3Y
-         sTOjAecBi4r80oLBY38TAluXbBr8Rx6QOTKKRmGo=
-Date:   Wed, 19 Feb 2020 14:28:56 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jesper Dangaard Brouer <brouer@redhat.com>
-Cc:     Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        BPF-dev-list <bpf@vger.kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Daniel Borkmann <borkmann@iogearbox.net>,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>
-Subject: Re: Kernel 5.5.4 build fail for BPF-selftests with latest LLVM
-Message-ID: <20200219132856.GA2836367@kroah.com>
-References: <20200219133012.7cb6ac9e@carbon>
+        id S1727755AbgBSNg7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 08:36:59 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37227 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727402AbgBSNg6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 08:36:58 -0500
+Received: by mail-wr1-f67.google.com with SMTP id w15so581063wru.4
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 05:36:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HwepP4vylkvrAMsKrJGWiwfWFEMFo390d/0hPnMfDnQ=;
+        b=Irva5dhDO7EeC/Gq61LwcdDA8SlWmI5WtROw0M6kcYEwuY1jDLSJ+y73xIUtZPyrj+
+         p3mFAKgb/uvVhkn9uCHbuA0guPmbGlioDgYymJFVf3MHc/q3A/0vEC/t9140r7ZLnUQl
+         Fr0fN2VVS2grIBPMAMi0teBetl/uTUELthI98JilwqkP4Iwma6YTDSNBhDkz9hyRaPGI
+         gtXMisst6zIZbntFjDhIUmkOLCM9D1xAw4ggRKOxh/IaYhkSci+8xVY+aklr6GNXDCDL
+         fwNgiBHAgXgzy6SIWPRyayR9I5fmAt11PAbnTcvhohV5oGjumm6ZQN+kkM/Uas3sNgHx
+         wxcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HwepP4vylkvrAMsKrJGWiwfWFEMFo390d/0hPnMfDnQ=;
+        b=bJHHMrzSKblFVYnk/DzkBE/VjD/6h+EsAskg1XHD66q7u1Uo3UzuwZ943Ja4unGD6g
+         wHcBTFu9imFE4dkxUSMrRYRCjVGsAV2rVB73FKKdqlF82QBv8KZrYGh3FQeAEMf9B1fs
+         aTtrh/4Rfh3iH2xLESBtrMGhugQ8RYn9uoyHwwMB/KDDzrf2JIWk5a7XtCexC47IBW7r
+         FBOBPdCUrhUUYHhxVIqe3a9DTwlhiLTiiUyiwm1813wuXrW+ocIMgrkJ7KrJg6a+4xKz
+         dY7BRNSNBu+O9cBGxN1twzU9J6LBC6XzDPi58SVh3C8U+pOWdFe1IFKCZ3l6lkpcJIjS
+         5lRw==
+X-Gm-Message-State: APjAAAVLhb1ErFcZdQ0p5HIafy8Mwv43a8DoKkSeq+roCaOhnn1FEeWi
+        rmnxrs/TjCvGz2lPKPi49V8rmQ==
+X-Google-Smtp-Source: APXvYqzFBdf+KvQ/AaFbssZg7VHUlYCElqE3Jj98G953ZIChVvbutlzYOglzkBF0ek20O6lSxHLvQA==
+X-Received: by 2002:a5d:4f0f:: with SMTP id c15mr37854818wru.251.1582119415457;
+        Wed, 19 Feb 2020 05:36:55 -0800 (PST)
+Received: from localhost.localdomain (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.googlemail.com with ESMTPSA id q124sm8856480wme.2.2020.02.19.05.36.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2020 05:36:54 -0800 (PST)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        Kevin Hilman <khilman@baylibre.com>
+Subject: [PATCH 0/2] ASoC: meson: add internal DAC support
+Date:   Wed, 19 Feb 2020 14:36:44 +0100
+Message-Id: <20200219133646.1035506-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200219133012.7cb6ac9e@carbon>
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 01:30:12PM +0100, Jesper Dangaard Brouer wrote:
-> Hi Andrii,
-> 
-> Downloaded tarball for kernel release 5.5.4, and I cannot compile
-> tools/testing/selftests/bpf/ with latest LLVM release version 9.
+This patchset adds support for the internal audio DAC provided on the
+Amlogic gxl, g12a and sm1 SoC families. On each of these SoC families,
+there is glue between this codec on the audio provider. The architecture
+is similar to the one used for the synopsys hdmi codec on these SoCs
 
-Is this something that recently broke?  If so, what commit caused it?
+Jerome Brunet (2):
+  ASoC: meson: add t9015 internal codec binding documentation
+  ASoC: meson: add t9015 internal DAC driver
 
-And has llvm 9 always worked here?
+ .../bindings/sound/amlogic,t9015.yaml         |  58 ++++
+ sound/soc/meson/Kconfig                       |   8 +
+ sound/soc/meson/Makefile                      |   2 +
+ sound/soc/meson/t9015.c                       | 320 ++++++++++++++++++
+ 4 files changed, 388 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/amlogic,t9015.yaml
+ create mode 100644 sound/soc/meson/t9015.c
 
-> Looking closer at the build error messages, I can see that this is
-> caused by using LLVM features that (I assume) will be avail in release
-> 10. I find it very strange that we can release a kernel that have build
-> dependencies on a unreleased version of LLVM.
+-- 
+2.24.1
 
-Is this the first time you have tried using llvm to build a kernel?
-This isn't a new thing :)
-
-> I love the new LLVM BTF features, but we cannot break users/CI-systems
-> that wants to run the BPF-selftests.
-
-Is this a regression from older kernels?
-
-And does gcc work?
-
-thanks,
-
-greg k-h
