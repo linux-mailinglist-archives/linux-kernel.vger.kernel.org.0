@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E193D163DB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 08:34:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06C66163D99
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 08:34:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727709AbgBSHek (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 02:34:40 -0500
-Received: from [167.172.186.51] ([167.172.186.51]:35166 "EHLO shell.v3.sk"
+        id S1727107AbgBSHeK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 02:34:10 -0500
+Received: from [167.172.186.51] ([167.172.186.51]:35154 "EHLO shell.v3.sk"
         rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726945AbgBSHeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726871AbgBSHeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 19 Feb 2020 02:34:08 -0500
 Received: from localhost (localhost.localdomain [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id E367FE0046;
+        by zimbra.v3.sk (Postfix) with ESMTP id 80CAFE0070;
         Wed, 19 Feb 2020 07:34:21 +0000 (UTC)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id tRQ7l11uIYi5; Wed, 19 Feb 2020 07:34:16 +0000 (UTC)
+        with ESMTP id nKYUoyJAWwlr; Wed, 19 Feb 2020 07:34:17 +0000 (UTC)
 Received: from localhost (localhost.localdomain [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 336AFE0074;
+        by zimbra.v3.sk (Postfix) with ESMTP id CB093E0046;
         Wed, 19 Feb 2020 07:34:16 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id ciOnyxmKWg_h; Wed, 19 Feb 2020 07:34:15 +0000 (UTC)
+        with ESMTP id TnV4bDUmBWVF; Wed, 19 Feb 2020 07:34:15 +0000 (UTC)
 Received: from furthur.lan (unknown [109.183.109.54])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id E433CE0046;
-        Wed, 19 Feb 2020 07:34:14 +0000 (UTC)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 4CD59E005C;
+        Wed, 19 Feb 2020 07:34:15 +0000 (UTC)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
@@ -35,9 +35,9 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH 06/10] dt-bindings: clock: Add MMP3 compatible string
-Date:   Wed, 19 Feb 2020 08:33:49 +0100
-Message-Id: <20200219073353.184336-7-lkundrak@v3.sk>
+Subject: [PATCH 07/10] clk: mmp2: Check for MMP3
+Date:   Wed, 19 Feb 2020 08:33:50 +0100
+Message-Id: <20200219073353.184336-8-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200219073353.184336-1-lkundrak@v3.sk>
 References: <20200219073353.184336-1-lkundrak@v3.sk>
@@ -48,50 +48,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This binding describes the PMUs that are found on MMP3 as well. Add the
-compatible strings and adjust the description.
+The MMP3's are similar enough to MMP2, but there are differencies, such
+are more clocks available on the newer model. We want to tell which
+platform are we on.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- .../devicetree/bindings/clock/marvell,mmp2-clock.yaml  | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/clk/mmp/clk-of-mmp2.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/marvell,mmp2-clock.y=
-aml b/Documentation/devicetree/bindings/clock/marvell,mmp2-clock.yaml
-index c5fc2ad0236dd..e2b6ac96bbcb0 100644
---- a/Documentation/devicetree/bindings/clock/marvell,mmp2-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/marvell,mmp2-clock.yaml
-@@ -4,14 +4,14 @@
- $id: http://devicetree.org/schemas/clock/marvell,mmp2-clock.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.=
+c
+index 251d8d0e78abb..7594a8280b93a 100644
+--- a/drivers/clk/mmp/clk-of-mmp2.c
++++ b/drivers/clk/mmp/clk-of-mmp2.c
+@@ -62,8 +62,14 @@
+ #define MPMU_UART_PLL	0x14
+ #define MPMU_PLL2_CR	0x34
 =20
--title: Marvell MMP2 Clock Controller
-+title: Marvell MMP2 and MMP3 Clock Controller
++enum mmp2_clk_model {
++	CLK_MODEL_MMP2,
++	CLK_MODEL_MMP3,
++};
++
+ struct mmp2_clk_unit {
+ 	struct mmp_clk_unit unit;
++	enum mmp2_clk_model model;
+ 	void __iomem *mpmu_base;
+ 	void __iomem *apmu_base;
+ 	void __iomem *apbc_base;
+@@ -326,6 +332,11 @@ static void __init mmp2_clk_init(struct device_node =
+*np)
+ 	if (!pxa_unit)
+ 		return;
 =20
- maintainers:
-   - Lubomir Rintel <lkundrak@v3.sk>
++	if (of_device_is_compatible(np, "marvell,mmp3-clock"))
++		pxa_unit->model =3D CLK_MODEL_MMP3;
++	else
++		pxa_unit->model =3D CLK_MODEL_MMP2;
++
+ 	pxa_unit->mpmu_base =3D of_iomap(np, 0);
+ 	if (!pxa_unit->mpmu_base) {
+ 		pr_err("failed to map mpmu registers\n");
+@@ -365,3 +376,4 @@ static void __init mmp2_clk_init(struct device_node *=
+np)
+ }
 =20
- description: |
--  The MMP2 clock subsystem generates and supplies clock to various
--  controllers within the MMP2 SoC.
-+  The clock subsystem on MMP2 or MMP3 generates and supplies clock to va=
-rious
-+  controllers within the SoC.
-=20
-   Each clock is assigned an identifier and client nodes use this identif=
-ier
-   to specify the clock which they consume.
-@@ -20,7 +20,9 @@ description: |
-=20
- properties:
-   compatible:
--    const: marvell,mmp2-clock # controller compatible with MMP2 SoC
-+    enum:
-+      - marvell,mmp2-clock # controller compatible with MMP2 SoC
-+      - marvell,mmp3-clock # controller compatible with MMP3 SoC
-=20
-   reg:
-     items:
+ CLK_OF_DECLARE(mmp2_clk, "marvell,mmp2-clock", mmp2_clk_init);
++CLK_OF_DECLARE(mmp3_clk, "marvell,mmp3-clock", mmp2_clk_init);
 --=20
 2.24.1
 
