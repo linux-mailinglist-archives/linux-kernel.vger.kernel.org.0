@@ -2,123 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05285164BCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 18:22:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FB84164BD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 18:26:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726754AbgBSRWT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 12:22:19 -0500
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:39019 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726582AbgBSRWS (ORCPT
+        id S1726647AbgBSRZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 12:25:57 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:34576 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726514AbgBSRZ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 12:22:18 -0500
-X-Originating-IP: 93.34.114.233
-Received: from uno.localdomain (93-34-114-233.ip49.fastwebnet.it [93.34.114.233])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id C7D0DFF80A;
-        Wed, 19 Feb 2020 17:22:12 +0000 (UTC)
-Date:   Wed, 19 Feb 2020 18:24:56 +0100
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Michael Rodin <mrodin@de.adit-jv.com>
-Cc:     niklas.soderlund@ragnatech.se, mchehab@kernel.org,
-        p.zabel@pengutronix.de, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        efriedrich@de.adit-jv.com, erosca@de.adit-jv.com,
-        sudipi@jp.adit-jv.com, akiyama@nds-osk.co.jp
-Subject: Re: [PATCH] [RFC] media: rcar-vin: don't wait for stop state on
- clock lane during start of CSI2
-Message-ID: <20200219172456.hyo2aksvubxpoqrn@uno.localdomain>
-References: <1582026251-21047-1-git-send-email-mrodin@de.adit-jv.com>
+        Wed, 19 Feb 2020 12:25:56 -0500
+Received: by mail-ua1-f68.google.com with SMTP id 1so507299uao.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 09:25:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lOv0TJC8hMcQtpE5VWA57B/HblMF/rVC1OozLuYaMQ4=;
+        b=wCVKJi1wPos2aoe3r35P78Z+FSG1LznO9dOxVeXE0xdKHBduJWQSiBquqEYSJJEekN
+         yY2L0IZbsj9dlV7LpX0lkR6+uGJXfjz4aR31Qye5jkCHwWzR2UJ7t5Iu7fNK51fnvIq6
+         a46RzXx5I6pPrFY8wdnCPQWlVZaXc4VncX69Ar93mXAxIeneFKCcgvUgjkB+8UmaapxX
+         C5AxmUjVUKWLDtDoJV5sAMlPxU7Rn2Y66c9nq9icSa1tDUfbTJ8Gnqr5l2RIp6O5lbOG
+         1Jdh0a/rKTL7Pv9XiYDRJm7vPCpWne6JU2Zikx7hlaxaGKeNFsDElZMIzoxnGSRJKOMu
+         g/PQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lOv0TJC8hMcQtpE5VWA57B/HblMF/rVC1OozLuYaMQ4=;
+        b=hPO7W2cFceWuzmhmT0JCTFCZjLuPxCjdME04Q4U44mYIT8BHBhJxEHe6KqoDdQ5uI1
+         k1FzvsKT2uSuoYc/+q/CIf5KTc3eNnvL+z59XbUdomk9qHuKp/8acIuhod1ZKalfXaP8
+         8M0iuaAw5vTqBzU01nwHxKrEdF7kjEHdvaVVRMz7B5fNh4PHXNariuwAK34LcuyL8Qbc
+         u0Z1dN5ja1U4jlHAaEIASzUflaYvKiGB5arrR+30yNCAvV9bcISO5pCJZwfwJ3J0YCvB
+         Q9PDcD+RHBQoL6jhOESDa3Q3xRalLuaChfZ8PlViP53cgejHQ2C1m6pYke+jml+bnyGg
+         JV7A==
+X-Gm-Message-State: APjAAAUMYpHpimSwmxX5nqINfP+kG/xhTdsRf74Ph1/g0DaaBBWZmIGF
+        Z/q1z2u254EirVa2q7S3se3mhhsQ1CrDNmo+ace3ug==
+X-Google-Smtp-Source: APXvYqwSo6GUilJ/FzOryvH4ZQvh+dOFRIWXmaH6WmAGeZIJvKZZbDWH/ybZ+0IbluDu6CE89M7poWhpL8t0ZLuEzsk=
+X-Received: by 2002:ab0:14a2:: with SMTP id d31mr13781595uae.106.1582133154592;
+ Wed, 19 Feb 2020 09:25:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jvjmcxubogualhde"
-Content-Disposition: inline
-In-Reply-To: <1582026251-21047-1-git-send-email-mrodin@de.adit-jv.com>
+References: <20191018161033.261971-1-samitolvanen@google.com>
+ <20200219000817.195049-1-samitolvanen@google.com> <20200219000817.195049-2-samitolvanen@google.com>
+ <60ec3a49-7b71-df31-f231-b48ff135b718@infradead.org>
+In-Reply-To: <60ec3a49-7b71-df31-f231-b48ff135b718@infradead.org>
+From:   Sami Tolvanen <samitolvanen@google.com>
+Date:   Wed, 19 Feb 2020 09:25:43 -0800
+Message-ID: <CABCJKudVbSMEXWTPw+bzzMuEf_kNsrfYiY53S5ZhWqGB9ynFEA@mail.gmail.com>
+Subject: Re: [PATCH v8 01/12] add support for Clang's Shadow Call Stack (SCS)
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jann Horn <jannh@google.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---jvjmcxubogualhde
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-
-Hello,
-
-On Tue, Feb 18, 2020 at 12:44:11PM +0100, Michael Rodin wrote:
-> The chapter 7.1 "D-PHY Physical Layer Option" of the CSI2 specification
-> states that non-continuous clock behavior is optional, i.e. the Clock Lane
-> can remain in high-speed mode between the transmission of data packets.
-> Therefore waiting for the stop state (LP-11) on the Clock Lane is wrong and
-> will cause timeouts when a CSI2 transmitter with continuous clock behavior
-> is attached to R-Car CSI2 receiver. So wait only for the stop state on the
-> Data Lanes.
-
-Am I wrong or the desired behaviour should depend on the presence of
-the clock-noncontinuous property in the CSI-2 input endpoint ?
-If clock-noncontinuous is set, then wait for the clock lane to
-enter stop state too, if not just wait for the data lanes to stop.
-
-If this is correct, it will also require a change to the bindings and
-that's the tricky part. So far the CSI-2 receiver behaved as the
-clock-noncontinuous property was set (wait for both data and clock
-lanes) and older dtb should continue to work under this assumption. If
-you want to support devices with continuous clock then you have to require
-the clock-noncontinuous property to be explicitly set to false, and
-assume it's true if not specified. BUT clock-noncontinuous is a
-boolean property, whose value depends on it's presence only. So I fear
-we need to add a 'clock-continuous' flag to video-interfaces.txt,
-parse it in the CSI-2 receiver driver, and then ignore the clock lane
-stop state if and only if said property is specified.
-
-Does this make sense ?
-
-Thanks
-   j
-
+On Tue, Feb 18, 2020 at 8:20 PM Randy Dunlap <rdunlap@infradead.org> wrote:
 >
-> Signed-off-by: Michael Rodin <mrodin@de.adit-jv.com>
-> ---
->  drivers/media/platform/rcar-vin/rcar-csi2.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> Hi Sami,
 >
-> diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> index faa9fb2..6d1992a 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> @@ -416,8 +416,7 @@ static int rcsi2_wait_phy_start(struct rcar_csi2 *priv)
->  	for (timeout = 0; timeout <= 20; timeout++) {
->  		const u32 lane_mask = (1 << priv->lanes) - 1;
+> a couple of minor tweaks:
 >
-> -		if ((rcsi2_read(priv, PHCLM_REG) & PHCLM_STOPSTATECKL)  &&
-> -		    (rcsi2_read(priv, PHDLM_REG) & lane_mask) == lane_mask)
-> +		if ((rcsi2_read(priv, PHDLM_REG) & lane_mask) == lane_mask)
->  			return 0;
+> On 2/18/20 4:08 PM, Sami Tolvanen wrote:
+> > diff --git a/arch/Kconfig b/arch/Kconfig
+> > index 98de654b79b3..66b34fd0df54 100644
+> > --- a/arch/Kconfig
+> > +++ b/arch/Kconfig
+> > @@ -526,6 +526,40 @@ config STACKPROTECTOR_STRONG
+> >         about 20% of all kernel functions, which increases the kernel code
+> >         size by about 2%.
+> >
+> > +config ARCH_SUPPORTS_SHADOW_CALL_STACK
+> > +     bool
+> > +     help
+> > +       An architecture should select this if it supports Clang's Shadow
+> > +       Call Stack, has asm/scs.h, and implements runtime support for shadow
+> > +       stack switching.
+> > +
+> > +config SHADOW_CALL_STACK
+> > +     bool "Clang Shadow Call Stack"
+> > +     depends on ARCH_SUPPORTS_SHADOW_CALL_STACK
+> > +     help
+> > +       This option enables Clang's Shadow Call Stack, which uses a
+> > +       shadow stack to protect function return addresses from being
+> > +       overwritten by an attacker. More information can be found from
 >
->  		usleep_range(1000, 2000);
-> --
-> 2.7.4
+>                                                               found in
 >
+> > +       Clang's documentation:
+> > +
+> > +         https://clang.llvm.org/docs/ShadowCallStack.html
+> > +
+> > +       Note that security guarantees in the kernel differ from the ones
+> > +       documented for user space. The kernel must store addresses of shadow
+> > +       stacks used by other tasks and interrupt handlers in memory, which
+> > +       means an attacker capable reading and writing arbitrary memory may
+>
+>                             capable of
 
---jvjmcxubogualhde
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks, Randy! I'll fix these in the next version.
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl5Nb2gACgkQcjQGjxah
-VjxTwA/+M8267lFucyowW2LpnMiSjwueQTHQySaNv+2/1++rFkymfQFdYVRwmi1s
-aEEeArjKkyZg8GQYnbXIPD2GDJygStJ69nqFKhmxsTuNSufHUaHG5ejrVz0IkI8e
-pd+eqMOGPp29eHUESTLiIfNDiGM80Xhn+zs6w5Gf1bzybwOpWzMqaVBUiE2DC3Kd
-f4ETr/luVYtCbmzXdgh1TAQ4lPkz93pS3EBp2AS4wNXpA+G+JSok4qnj7B3noVBi
-RBeraL/Ca718dlnq5tZCd+eycIlERQTgSir+ZzDATmrzwN+q5WOCqlrmwaUMh9VF
-FAWQyRLfGWOT9bo+lcnQ2RjpVbF7OvmkesiY0DsR8+btENIhpjuMuuAvI3TSQEBX
-rC9hYyaPicd4V4hjeVfOGduadjIq8qJ/iOIzWmOemA4XhIv3KAySbOqNuA6ejVRM
-3JntotjuknCM3HyWEfwdIFnlV2r2keZ0gqhcwG9Sg4a2sXTAQnSiIz781uETE/AH
-gPS1xJsJ+pDvM3g7/WEYI/tad7roEWkHBROkudu0JUOcYzzYnIi6zaISsAWQeyGA
-x5/bYSKOyiVYWV/s2ckbAhiAK37YZXGFOKs1ByLgvKt13xmtSy9UmLkJBq3kCvXv
-fsE0WfNjkaFVFLM3H2w0wyzMfcmB+fK853U0lbyjtl4N1NbLBaU=
-=mPQD
------END PGP SIGNATURE-----
-
---jvjmcxubogualhde--
+Sami
