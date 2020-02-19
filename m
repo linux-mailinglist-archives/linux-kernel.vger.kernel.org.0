@@ -2,86 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD82F164BDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 18:26:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54C7D164D24
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 18:58:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbgBSR03 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 12:26:29 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:38913 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726558AbgBSR02 (ORCPT
+        id S1726754AbgBSR6H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 12:58:07 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:47064 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726609AbgBSR6H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 12:26:28 -0500
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1j4T6o-0000pA-OG; Wed, 19 Feb 2020 18:26:03 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id BF7A5103A01; Wed, 19 Feb 2020 18:26:01 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        David Miller <davem@davemloft.net>, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Sebastian Sewior <bigeasy@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Clark Williams <williams@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [RFC patch 04/19] bpf/tracing: Remove redundant preempt_disable() in __bpf_trace_run()
-In-Reply-To: <20200219115415.57ee6d3c@gandalf.local.home>
-References: <20200214133917.304937432@linutronix.de> <20200214161503.289763704@linutronix.de> <20200219115415.57ee6d3c@gandalf.local.home>
-Date:   Wed, 19 Feb 2020 18:26:01 +0100
-Message-ID: <87d0aapjyu.fsf@nanos.tec.linutronix.de>
+        Wed, 19 Feb 2020 12:58:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582135081;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=osE6Os536TzWa3Iu36fjeW3PyeJPL+4fg4AlWyJ2Fe8=;
+        b=Dp80u7+h+NTPn25UgqJgIBHJYRTbYliLbwoPnDMF7kwC2v4UcREtqWfWyASQb40Zn0wjST
+        aAdSMHsMMgwQ860VpueDOkOteDc6vyBwcVYnmNKUl3VtAvnkkFWhRtNzkKo6P0LXaxG8FI
+        7wiBctcke6Jk02q1NqKK46rGw4G5xTc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-313-Bt2leHTQP2q-fUD22d082g-1; Wed, 19 Feb 2020 12:57:59 -0500
+X-MC-Unique: Bt2leHTQP2q-fUD22d082g-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1470D100550E;
+        Wed, 19 Feb 2020 17:57:57 +0000 (UTC)
+Received: from localhost (unknown [10.36.118.184])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BE60648;
+        Wed, 19 Feb 2020 17:57:53 +0000 (UTC)
+Date:   Wed, 19 Feb 2020 15:11:34 +0000
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Halil Pasic <pasic@linux.ibm.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Viktor Mihajlovski <mihajlov@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
+Subject: Re: [PATCH 0/2] virtio-blk: improve handling of DMA mapping failures
+Message-ID: <20200219151134.GI1078625@stefanha-x1.localdomain>
+References: <20200213123728.61216-1-pasic@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <20200213123728.61216-1-pasic@linux.ibm.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zqjkMoGlbUJ91oFe"
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Steven Rostedt <rostedt@goodmis.org> writes:
+--zqjkMoGlbUJ91oFe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Fri, 14 Feb 2020 14:39:21 +0100
-> Thomas Gleixner <tglx@linutronix.de> wrote:
->
->> __bpf_trace_run() disables preemption around the BPF_PROG_RUN() invocation.
->> 
->> This is redundant because __bpf_trace_run() is invoked from a trace point
->> via __DO_TRACE() which already disables preemption _before_ invoking any of
->> the functions which are attached to a trace point.
->> 
->> Remove it.
->> 
->> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
->> ---
->>  kernel/trace/bpf_trace.c |    2 --
->>  1 file changed, 2 deletions(-)
->> 
->> --- a/kernel/trace/bpf_trace.c
->> +++ b/kernel/trace/bpf_trace.c
->> @@ -1476,9 +1476,7 @@ static __always_inline
->>  void __bpf_trace_run(struct bpf_prog *prog, u64 *args)
->>  {
->
-> Should there be a "cant_migrate()" added here?
+On Thu, Feb 13, 2020 at 01:37:26PM +0100, Halil Pasic wrote:
+> Two patches are handling new edge cases introduced by doing DMA mappings
+> (which can fail) in virtio core.
+>=20
+> I stumbled upon this while stress testing I/O for Protected Virtual
+> Machines. I deliberately chose a tiny swiotlb size and have generated
+> load with fio. With more than one virtio-blk disk in use I experienced
+> hangs.
+>=20
+> The goal of this series is to fix those hangs.
+>=20
+> Halil Pasic (2):
+>   virtio-blk: fix hw_queue stopped on arbitrary error
+>   virtio-blk: improve virtqueue error to BLK_STS
+>=20
+>  drivers/block/virtio_blk.c | 17 ++++++++++++-----
+>  1 file changed, 12 insertions(+), 5 deletions(-)
+>=20
+>=20
+> base-commit: 39bed42de2e7d74686a2d5a45638d6a5d7e7d473
+> --=20
+> 2.17.1
+>=20
 
-A cant_sleep() is the right thing to add as this really needs to stay
-non-preemptible. Hmm?
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
 
->>  	rcu_read_lock();
->> -	preempt_disable();
->>  	(void) BPF_PROG_RUN(prog, args);
->> -	preempt_enable();
->>  	rcu_read_unlock();
->>  }
+--zqjkMoGlbUJ91oFe
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
+-----BEGIN PGP SIGNATURE-----
 
-        tglx
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl5NUCYACgkQnKSrs4Gr
+c8j5Pgf+MI41fd9a93cz9zlmiW7E/b+B99Zg/shlPYBcQXo0INymDnvknnpzLpqK
+uHn5ZGq85kM6+ls29Zhh4w7bxiJlBBNRzCkIIRxe5CwyOptQPcKHONreD1suCGT0
+boXaZtrbU1Wt1bWRBK4F9OLZcyIFxUESQ36b1r1VddZsKeFETUXAwjpSEU9bVCZ6
+qJfDp9RLYVvFISB17avVnsqyw8xO9mVI3RyIdzQATERL9W3DVxaacULruMmlBHvq
+T3nt4WcQjbTHEmTjvpnwGg2Oz4uvaRGm617bv082XAOP+Xr0h9uNU119WKCYk1Qk
+VML23VMN5owhMcib+gUXV3/9bQQkYQ==
+=GsRc
+-----END PGP SIGNATURE-----
+
+--zqjkMoGlbUJ91oFe--
 
