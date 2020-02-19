@@ -2,92 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEF3E16533A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 00:55:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65AC7165341
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 00:58:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbgBSXzW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 18:55:22 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:52181 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726613AbgBSXzW (ORCPT
+        id S1726824AbgBSX6T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 18:58:19 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:40141 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726731AbgBSX6T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 18:55:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582156521;
-        h=from:from:reply-to:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:mime-version:mime-version:
-         content-type:content-type; bh=gVZETO5ToPW9ORza98Ii24fKRNVEYxysJCTkt8Xpckw=;
-        b=Ei3vKDzRLMehLGiO7JJUoEJWFVhwfYnmfVQ57XE0oPqFYrVtD2tD/n7npYmnAmN9FCQJ8c
-        TLQkvYrNDZ8TJHEo63yXHHtUlJPUje63C2i/brVZ7PiWoDMKCEla2WW4GUfd3iR7HUKPTU
-        ibz7yeQAOfDCpDwpTTkQtZ8yiC4hP2Y=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-428-LWYBNX4MPUu7TMq7ka3Akg-1; Wed, 19 Feb 2020 18:55:19 -0500
-X-MC-Unique: LWYBNX4MPUu7TMq7ka3Akg-1
-Received: by mail-qt1-f197.google.com with SMTP id p12so1387489qtu.6
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 15:55:19 -0800 (PST)
+        Wed, 19 Feb 2020 18:58:19 -0500
+Received: by mail-oi1-f195.google.com with SMTP id a142so25705086oii.7;
+        Wed, 19 Feb 2020 15:58:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BX9+oiU9NUzGK1+aV9/Uah0G+lhW9/DtCwBAHxWnn3I=;
+        b=KU1uqUYVxkoQfS26YEi+ztZu7uQD6NmCYAjnD4WbMrS3FbUgBPMQxL4cToOQRD6Uov
+         nHqZX7QwUxnmIRKEcKaP8NEsh/58I2e78+wWxDrpu1BXApMDiJMolk2hwg9CzqcOf9sW
+         YE4tYRCZaEyh/x1674lcZY1l/H0F0ArPvwmZIxON3DfEjagSV1uN/AxJKPXKBeA241xL
+         WqwyGwfYPVg0aO9XUojnJGQxro+u25NEoqXrbNR09NiA6eBYzNO4I80Q2dLPiRbdLZkb
+         04tkTaqeTm6+rrMCyLbyFF+HCBtuFvxa0v0YSX5dAdbBWko9TEenvJpgjmfSY9CevQ+/
+         hitw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:reply-to
-         :mail-followup-to:mime-version:content-disposition;
-        bh=gVZETO5ToPW9ORza98Ii24fKRNVEYxysJCTkt8Xpckw=;
-        b=UfweLVPABEmMajOuD+IX1VnsNY4e9Aln/k7eiK07CVN+F6/3Ly4vlDnPdXLTnX79zu
-         sKDuXsdUpZHNmGC7d7l/jzEgY919ov1mobGAIaPehg2yC1m7MIZlzjE/ysSpdnokyPGi
-         CQpZVU87WOSVSU25BAM5UNhA2Z6whcPbVmY+CmfBv3XjZrFWFXHm1dvaeclrnmWPE3kw
-         sXVLdjcQePq7+/z5hPX6jpWl226IPiN+S3dG2RqTcgMTIVZpHa+i/nWSAKbBTqPM5ivv
-         RIJwzJOTuucOnv3FKOhRfMMr3d2wDwrHI1jeHncYk1Cmw8Ub5hFzwJ4YlmZpJtCORIJj
-         i0wg==
-X-Gm-Message-State: APjAAAWHpcDwRlbLNaDeSw+73HtnFG/UlO7KmNvFip+B4ZlAkW6lSgUm
-        YKlb4LD6hlfHy1Mc/UcxZaNmDdA8r0P69jlm1XRtUDTmC7Gx5g6vsN9aOIyIAMUrAKY/MEVqMFo
-        9K5kzMtbTaU1vum4sTUXgaCD6
-X-Received: by 2002:ac8:7773:: with SMTP id h19mr24151852qtu.144.1582156518743;
-        Wed, 19 Feb 2020 15:55:18 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzLk9mkKQYUXT76ax9fqf+CkQQ7t28OAi5KYr4prqEib7SPchhm8V2sj9zWJCebg67zNz8Iwg==
-X-Received: by 2002:ac8:7773:: with SMTP id h19mr24151842qtu.144.1582156518440;
-        Wed, 19 Feb 2020 15:55:18 -0800 (PST)
-Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
-        by smtp.gmail.com with ESMTPSA id z6sm849662qto.86.2020.02.19.15.55.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 15:55:17 -0800 (PST)
-Date:   Wed, 19 Feb 2020 16:55:16 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: question about iommu_need_mapping
-Message-ID: <20200219235516.zl44y7ydgqqja6x5@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BX9+oiU9NUzGK1+aV9/Uah0G+lhW9/DtCwBAHxWnn3I=;
+        b=M/VKtYr5IUMKwGD5odp0XvHvaoe8o3lESFzKYG/iV6lwy8S7p3dq+jrdlt5Ef71VT9
+         yMuM7Xb683bDcg6i+VnR+pfPJfXq391UVdiZQDnjn+/MRArlIdLJeh6qErvA3983LPud
+         vBcz4FDJLqP7zmqb6r6U18o05NFCtlX3MVMjxWEv+bS/8L+dvZFkvQOJgzugwOjMhA3V
+         gXJxcZRcHmcozN/9D9WxHlsvo0H2Tsy8nF5Dqa0A2qftHA7KNgVPsarsX9PV0RBt/mW5
+         yWF7eNPP9kEGjwWyTWqlMQtWcB3ulG3cV1AeKpX82boBIyxTjGU56HohsLBZN59iWIsd
+         pA3g==
+X-Gm-Message-State: APjAAAVAGhtbVde3ljRursK6Ova5VxM0tbgd8SJAuYAz++mPCDY0s0Wo
+        6avAN6w5llkezO2tQg7Rin2FwtNnZ2fTi4GHEM4=
+X-Google-Smtp-Source: APXvYqwRxzwlvasanDAZCzqmiAcIi+8du+kTb0XmBWuXgm+lcYoRDBqJdLFMRLpwiKeOks5taARgUtmAle4aHBvqjI0=
+X-Received: by 2002:aca:ddc2:: with SMTP id u185mr185041oig.24.1582156697455;
+ Wed, 19 Feb 2020 15:58:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
+References: <20200215065826.739102-1-gch981213@gmail.com> <20200218125557.GD4232@sirena.org.uk>
+In-Reply-To: <20200218125557.GD4232@sirena.org.uk>
+From:   Chuanhong Guo <gch981213@gmail.com>
+Date:   Thu, 20 Feb 2020 07:58:06 +0800
+Message-ID: <CAJsYDVL03KJv7eewGekBPCfpbOuTX0tJ6qZaydvJnBDzZ5vEwg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] rewrite mtk-quadspi spi-nor driver with spi-mem
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-mediatek@lists.infradead.org, linux-spi@vger.kernel.org,
+        linux-mtd@lists.infradead.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Is it possible for a device to end up with dev->archdata.iommu == NULL
-on iommu_need_mapping in the following instance:
+Hi!
 
-1. iommu_group has dma domain for default
-2. device gets private identity domain in intel_iommu_add_device
-3. iommu_need_mapping gets called with that device.
-4. dmar_remove_one_dev_info sets dev->archdata.iommu = NULL via unlink_domain_info.
-5. request_default_domain_for_dev exits after checking that group->default_domain
-    exists, and group->default_domain->type is dma.
-6. iommu_request_dma_domain_for_dev returns 0 from request_default_domain_for_dev
-    and a private dma domain isn't created for the device.
+On Tue, Feb 18, 2020 at 8:55 PM Mark Brown <broonie@kernel.org> wrote:
+> This is an ABI break so you shouldn't be doing this, if the existing
+> binding works it should continue to work.
 
-The case I was seeing went away with commit 9235cb13d7d1 ("iommu/vt-d:
-Allow devices with RMRRs to use identity domain"), because it changed
-which domain the group and devices were using, but it seems like it is
-still a possibility with the code. Baolu, you mentioned possibly
-removing the domain switch. Commit 98b2fffb5e27 ("iommu/vt-d: Handle
-32bit device with identity default domain") makes it sound like the
-domain switch is required.
+The missing spi-max-frequency is the only part preventing old
+device tree to work with this driver.
+If the goal is to make existing dt binding work, I could patch dt using
+of_add_property in v2. I saw similar device tree patching for legacy
+bindings in pinctrl-single driver.
 
+>
+> > 3. removing the old driver. I'll create this commit after 1 and 2 are
+> >    applied to avoid possible rebasing due to any changes in the old
+> >    driver.
+>
+> This isn't great as it means we have a period with two drivers for the
+> same thing in tree which is at best going to be confusing.  There's no
+> advantage to splitting this out.
+
+Got it. I'll add this patch in v2.
+
+--
 Regards,
-Jerry
-
+Chuanhong Guo
