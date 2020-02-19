@@ -2,73 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C07041643D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 13:03:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6BFE1643DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 13:06:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726856AbgBSMDB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 07:03:01 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54498 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726548AbgBSMDA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 07:03:00 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id B6E62BB18;
-        Wed, 19 Feb 2020 12:02:58 +0000 (UTC)
-Subject: Re: [PATCH] xen: Enable interrupts when calling _cond_resched()
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     x86@kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        xen-devel@lists.xenproject.org
-References: <87tv3mq1rm.fsf@nanos.tec.linutronix.de>
-From:   =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Message-ID: <8808612b-11c2-f7b8-f027-7ff92e992c50@suse.com>
-Date:   Wed, 19 Feb 2020 13:02:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727069AbgBSMGY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 07:06:24 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:57574 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726495AbgBSMGY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 07:06:24 -0500
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1j4O7B-0002If-8k; Wed, 19 Feb 2020 12:06:05 +0000
+Date:   Wed, 19 Feb 2020 13:06:04 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>,
+        smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Phil Estes <estesp@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v3 09/25] fs: add is_userns_visible() helper
+Message-ID: <20200219120604.vqudwaeppebvisco@wittgenstein>
+References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
+ <20200218143411.2389182-10-christian.brauner@ubuntu.com>
+ <20200219024233.GA19334@mail.hallyn.com>
 MIME-Version: 1.0
-In-Reply-To: <87tv3mq1rm.fsf@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200219024233.GA19334@mail.hallyn.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19.02.20 12:01, Thomas Gleixner wrote:
-> xen_maybe_preempt_hcall() is called from the exception entry point
-> xen_do_hypervisor_callback with interrupts disabled.
+On Tue, Feb 18, 2020 at 08:42:33PM -0600, Serge Hallyn wrote:
+> On Tue, Feb 18, 2020 at 03:33:55PM +0100, Christian Brauner wrote:
+> > Introduce a helper which makes it possible to detect fileystems whose
+> > superblock is visible in multiple user namespace. This currently only
+> > means proc and sys. Such filesystems usually have special semantics so their
+> > behavior will not be changed with the introduction of fsid mappings.
 > 
-> _cond_resched() evades the might_sleep() check in cond_resched() which
-> would have caught that and schedule_debug() unfortunately lacks a check
-> for irqs_disabled().
+> Hi,
 > 
-> Enable interrupts around the call and use cond_resched() to catch future
-> issues.
-> 
-> Fixes: fdfd811ddde3 ("x86/xen: allow privcmd hypercalls to be preempted")
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
->   drivers/xen/preempt.c |    4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> --- a/drivers/xen/preempt.c
-> +++ b/drivers/xen/preempt.c
-> @@ -33,8 +33,10 @@ asmlinkage __visible void xen_maybe_pree
->   		 * cpu.
->   		 */
->   		__this_cpu_write(xen_in_preemptible_hcall, false);
-> -		_cond_resched();
-> +		local_irq_enable();
-> +		cond_resched();
->   		__this_cpu_write(xen_in_preemptible_hcall, true);
-> +		local_irq_disable();
+> I'm afraid I've got a bit of a hangup about the terminology here.  I
+> *think* what you mean is that SB_I_USERNS_VISIBLE is an fs whose uids are
+> always translated per the id mappings, not fsid mappings.  But when I see
 
-Could you please put the call of local_irq_disable() directly after the
-cond_resched() call to make the result symmetric regarding writing of
-xen_in_preemptible_hcall and irq enable/disable?
+Correct!
 
+> the name it seems to imply that !SB_I_USERNS_VISIBLE filesystems can't
+> be seen by other namespaces at all.
+> 
+> Am I right in my first interpretation?  If so, can we talk about the
+> naming?
 
-Juergen
+Yep, your first interpretation is right. What about: wants_idmaps()
