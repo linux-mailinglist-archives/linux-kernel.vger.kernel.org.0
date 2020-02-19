@@ -2,158 +2,237 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36C6A163A3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 03:35:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F005163A46
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 03:35:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727880AbgBSCfa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 21:35:30 -0500
-Received: from mail27.static.mailgun.info ([104.130.122.27]:21494 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726761AbgBSCfa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 21:35:30 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1582079729; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=jXPj6BmmHK1fbvzmEuD+DaWJ8U2v+ztHn2qwHyzklAE=;
- b=TyqEqJrqReb0laK8uveazUTV41WxKHrDrr+aIrMmZBq2lLOZlRM3zP6Cp6a63eqBT78627j0
- 8dNE+drBbN8BUqTR+GvQk3Xv8cUTYrvSP4v0IHRwzePZBVZJEsMHhOtj6eArYDsbAhdakpUw
- sq5G8iaJDM8ycLzUkspQLPg5KFI=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e4c9ef0.7f5b20aab3e8-smtp-out-n03;
- Wed, 19 Feb 2020 02:35:28 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 706D4C447A2; Wed, 19 Feb 2020 02:35:28 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: cang)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 90523C433A2;
-        Wed, 19 Feb 2020 02:35:27 +0000 (UTC)
+        id S1728156AbgBSCfz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 21:35:55 -0500
+Received: from mail.hallyn.com ([178.63.66.53]:49488 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728087AbgBSCfy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 21:35:54 -0500
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 4AFEEFF9; Tue, 18 Feb 2020 20:35:52 -0600 (CST)
+Date:   Tue, 18 Feb 2020 20:35:52 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>,
+        smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Phil Estes <estesp@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v3 05/25] user_namespace: refactor map_write()
+Message-ID: <20200219023552.GD19144@mail.hallyn.com>
+References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
+ <20200218143411.2389182-6-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 19 Feb 2020 10:35:27 +0800
-From:   Can Guo <cang@codeaurora.org>
-To:     Stanley Chu <stanley.chu@mediatek.com>
-Cc:     linux-scsi@vger.kernel.org, martin.petersen@oracle.com,
-        avri.altman@wdc.com, alim.akhtar@samsung.com, jejb@linux.ibm.com,
-        beanhuo@micron.com, asutoshd@codeaurora.org,
-        matthias.bgg@gmail.com, bvanassche@acm.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kuohong.wang@mediatek.com, peter.wang@mediatek.com,
-        chun-hung.wu@mediatek.com, andy.teng@mediatek.com
-Subject: Re: [PATCH v1 1/2] scsi: ufs: add required delay after gating
- reference clock
-In-Reply-To: <56c1fc80919491d058d904fcc7301835@codeaurora.org>
-References: <20200217093559.16830-1-stanley.chu@mediatek.com>
- <20200217093559.16830-2-stanley.chu@mediatek.com>
- <c6874825dd60ea04ed401fbd1b5cb568@codeaurora.org>
- <1581945168.26304.4.camel@mtksdccf07>
- <e518c4d1d94ec15e9c4c31c34a9e42d1@codeaurora.org>
- <1581946449.26304.15.camel@mtksdccf07>
- <56c1fc80919491d058d904fcc7301835@codeaurora.org>
-Message-ID: <a8cd5beee0a1e12a40da752c6cd9b5de@codeaurora.org>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200218143411.2389182-6-christian.brauner@ubuntu.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stanely,
-
-On 2020-02-17 21:42, Can Guo wrote:
-> On 2020-02-17 21:34, Stanley Chu wrote:
->> Hi Can,
->> 
->> On Mon, 2020-02-17 at 21:22 +0800, Can Guo wrote:
->>> On 2020-02-17 21:12, Stanley Chu wrote:
->>> > Hi Can,
->>> >
->>> >
->>> >> >  			} else if (!on && clki->enabled) {
->>> >> >  				clk_disable_unprepare(clki->clk);
->>> >> > +				wait_us = hba->dev_info.clk_gating_wait_us;
->>> >> > +				if (ref_clk && wait_us)
->>> >> > +					usleep_range(wait_us, wait_us + 10);
->>> >>
->>> >> Hi St,anley,
->>> >>
->>> >> If wait_us is 1us, it would be inappropriate to use usleep_range()
->>> >> here.
->>> >> You have checks of the delay in patch #2, but why it is not needed
->>> >> here?
->>> >>
->>> >> Thanks,
->>> >> Can Guo.
->>> >
->>> > You are right. I could make that delay checking as common function so
->>> > it
->>> > can be used here as well to cover all possible values.
->>> >
->>> > Thanks for suggestion.
->>> > Stanley
->>> 
->>> Hi Stanley,
->>> 
->>> One more thing, as in patch #2, you have already added delays in your
->>> ufshcd_vops_setup_clocks(OFF, PRE_CHANGE) path, plus this delay here,
->>> don't you delay for 2*bRefClkGatingWaitTime in ufshcd_setup_clocks()?
->>> As the delay added in your vops also delays the actions of turning
->>> off all the other clocks in ufshcd_setup_clocks(), you don't need the
->>> delay here again, do you agree?
->> 
->> MediaTek driver is not using reference clocks named as "ref_clk" 
->> defined
->> in device tree, thus the delay specific for "ref_clk" in
->> ufshcd_setup_clocks() will not be applied in MediaTek platform.
->> 
->> This patch is aimed to add delay for this kind of "ref_clk" used by 
->> any
->> future vendors.
->> 
->> Anyway thanks for the reminding : )
->> 
->>> 
->>> Thanks,
->>> Can Guo.
->> 
->> 
->> Thanks,
->> Stanley
+On Tue, Feb 18, 2020 at 03:33:51PM +0100, Christian Brauner wrote:
+> Refactor map_write() to prepare for adding fsid mappings support. This mainly
+> factors out various open-coded parts into helpers that can be reused in the
+> follow up patch.
 > 
-> Hi Stanley,
+> Cc: Jann Horn <jannh@google.com>
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+
+Acked-by: Serge Hallyn <serge@hallyn.com>
+
+> ---
+> /* v2 */
+> patch not present
 > 
-> Then we are unluckily hit by this change. We have ref_clk in DT, thus
-> this change would add unwanted delays to our platforms. but still we
-> disable device's ref_clk in vops. :)
+> /* v3 */
+> patch added
+> - Jann Horn <jannh@google.com>:
+>   - Split changes to map_write() to implement fsid mappings into three separate
+>     patches: basic fsid helpers, preparatory changes to map_write(), actual
+>     fsid mapping support in map_write().
+> ---
+>  kernel/user_namespace.c | 117 +++++++++++++++++++++++++---------------
+>  1 file changed, 74 insertions(+), 43 deletions(-)
 > 
-> Could you please hold on patch #1 first? I need sometime to have a
-> dicussion with my colleagues on this.
-> 
-> Thanks.
-> Can Guo.
-
-Since we all need this delay here, how about put the delay in the
-entrence of ufshcd_setup_clocks(), before vops_setup_clocks()?
-If so, we can remove all the delays we added in our vops since the
-delay anyways delays everything inside ufshcd_setup_clocks().
-
-Meanwhile, if you want to modify the delay
-(hba->dev_info.clk_gating_wait_us) for some reasons, say for specific
-UFS devices, you still can do it in vops_apply_dev_quirks().
-
-What do you say?
-
-Thanks,
-Can Guo.
+> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+> index 2cfd1e519cc4..e91141262bcc 100644
+> --- a/kernel/user_namespace.c
+> +++ b/kernel/user_namespace.c
+> @@ -1038,10 +1038,10 @@ static int cmp_extents_reverse(const void *a, const void *b)
+>  }
+>  
+>  /**
+> - * sort_idmaps - Sorts an array of idmap entries.
+> + * sort_map - Sorts an array of idmap entries.
+>   * Can only be called if number of mappings exceeds UID_GID_MAP_MAX_BASE_EXTENTS.
+>   */
+> -static int sort_idmaps(struct uid_gid_map *map)
+> +static int sort_map(struct uid_gid_map *map)
+>  {
+>  	if (map->nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS)
+>  		return 0;
+> @@ -1064,6 +1064,71 @@ static int sort_idmaps(struct uid_gid_map *map)
+>  	return 0;
+>  }
+>  
+> +static int sort_idmaps(struct uid_gid_map *map)
+> +{
+> +	return sort_map(map);
+> +}
+> +
+> +static int map_from_parent(struct uid_gid_map *new_map,
+> +			   struct uid_gid_map *parent_map)
+> +{
+> +	unsigned idx;
+> +
+> +	/* Map the lower ids from the parent user namespace to the
+> +	 * kernel global id space.
+> +	 */
+> +	for (idx = 0; idx < new_map->nr_extents; idx++) {
+> +		struct uid_gid_extent *e;
+> +		u32 lower_first;
+> +
+> +		if (new_map->nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS)
+> +			e = &new_map->extent[idx];
+> +		else
+> +			e = &new_map->forward[idx];
+> +
+> +		lower_first = map_id_range_down(parent_map, e->lower_first, e->count);
+> +
+> +		/* Fail if we can not map the specified extent to
+> +		 * the kernel global id space.
+> +		 */
+> +		if (lower_first == (u32)-1)
+> +			return -EPERM;
+> +
+> +		e->lower_first = lower_first;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int map_into_kids(struct uid_gid_map *id_map,
+> +			 struct uid_gid_map *parent_id_map)
+> +{
+> +	return map_from_parent(id_map, parent_id_map);
+> +}
+> +
+> +static void install_idmaps(struct uid_gid_map *id_map,
+> +			   struct uid_gid_map *new_id_map)
+> +{
+> +	if (new_id_map->nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS) {
+> +		memcpy(id_map->extent, new_id_map->extent,
+> +		       new_id_map->nr_extents * sizeof(new_id_map->extent[0]));
+> +	} else {
+> +		id_map->forward = new_id_map->forward;
+> +		id_map->reverse = new_id_map->reverse;
+> +	}
+> +}
+> +
+> +static void free_idmaps(struct uid_gid_map *new_id_map)
+> +{
+> +	if (new_id_map->nr_extents > UID_GID_MAP_MAX_BASE_EXTENTS) {
+> +		kfree(new_id_map->forward);
+> +		kfree(new_id_map->reverse);
+> +		new_id_map->forward = NULL;
+> +		new_id_map->reverse = NULL;
+> +		new_id_map->nr_extents = 0;
+> +	}
+> +}
+> +
+>  static ssize_t map_write(struct file *file, const char __user *buf,
+>  			 size_t count, loff_t *ppos,
+>  			 int cap_setid,
+> @@ -1073,7 +1138,6 @@ static ssize_t map_write(struct file *file, const char __user *buf,
+>  	struct seq_file *seq = file->private_data;
+>  	struct user_namespace *ns = seq->private;
+>  	struct uid_gid_map new_map;
+> -	unsigned idx;
+>  	struct uid_gid_extent extent;
+>  	char *kbuf = NULL, *pos, *next_line;
+>  	ssize_t ret;
+> @@ -1191,61 +1255,28 @@ static ssize_t map_write(struct file *file, const char __user *buf,
+>  	if (!new_idmap_permitted(file, ns, cap_setid, &new_map))
+>  		goto out;
+>  
+> -	ret = -EPERM;
+> -	/* Map the lower ids from the parent user namespace to the
+> -	 * kernel global id space.
+> -	 */
+> -	for (idx = 0; idx < new_map.nr_extents; idx++) {
+> -		struct uid_gid_extent *e;
+> -		u32 lower_first;
+> -
+> -		if (new_map.nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS)
+> -			e = &new_map.extent[idx];
+> -		else
+> -			e = &new_map.forward[idx];
+> -
+> -		lower_first = map_id_range_down(parent_map,
+> -						e->lower_first,
+> -						e->count);
+> -
+> -		/* Fail if we can not map the specified extent to
+> -		 * the kernel global id space.
+> -		 */
+> -		if (lower_first == (u32) -1)
+> -			goto out;
+> -
+> -		e->lower_first = lower_first;
+> -	}
+> +	ret = map_into_kids(&new_map, parent_map);
+> +	if (ret)
+> +		goto out;
+>  
+>  	/*
+>  	 * If we want to use binary search for lookup, this clones the extent
+>  	 * array and sorts both copies.
+>  	 */
+>  	ret = sort_idmaps(&new_map);
+> -	if (ret < 0)
+> +	if (ret)
+>  		goto out;
+>  
+>  	/* Install the map */
+> -	if (new_map.nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS) {
+> -		memcpy(map->extent, new_map.extent,
+> -		       new_map.nr_extents * sizeof(new_map.extent[0]));
+> -	} else {
+> -		map->forward = new_map.forward;
+> -		map->reverse = new_map.reverse;
+> -	}
+> +	install_idmaps(map, &new_map);
+>  	smp_wmb();
+>  	map->nr_extents = new_map.nr_extents;
+>  
+>  	*ppos = count;
+>  	ret = count;
+>  out:
+> -	if (ret < 0 && new_map.nr_extents > UID_GID_MAP_MAX_BASE_EXTENTS) {
+> -		kfree(new_map.forward);
+> -		kfree(new_map.reverse);
+> -		map->forward = NULL;
+> -		map->reverse = NULL;
+> -		map->nr_extents = 0;
+> -	}
+> +	if (ret < 0)
+> +		free_idmaps(&new_map);
+>  
+>  	mutex_unlock(&userns_state_mutex);
+>  	kfree(kbuf);
+> -- 
+> 2.25.0
