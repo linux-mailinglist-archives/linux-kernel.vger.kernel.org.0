@@ -2,60 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 621B0164888
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 16:27:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FA421648F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 16:42:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727476AbgBSP13 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 10:27:29 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:53904 "EHLO vps0.lunn.ch"
+        id S1726948AbgBSPml convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 19 Feb 2020 10:42:41 -0500
+Received: from mail.lrsd.org ([170.211.119.189]:15034 "EHLO mail.lrsd.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726858AbgBSP12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 10:27:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=LgL2DzEgrX9RO/F/GCD9K7RxSQzZA2rhMCjy6pPUGc4=; b=TMMyIzDd90A5BgjPpsTeIdCi0J
-        K4PZst1cBcwpRlDEwH9dXOAsvKoGaxuPROxYfX+ZRHCXz+a03aO/5yCw3YG74pc3gHwMGaqhI8x6D
-        mKb+WlKzaaoFuROK23nBwU7B1YaeUCL3rJJMuose3KBFpqTEXYLAWYa3c7fOTcOhKUBc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
-        (envelope-from <andrew@lunn.ch>)
-        id 1j4RG0-00011Z-3p; Wed, 19 Feb 2020 16:27:24 +0100
-Date:   Wed, 19 Feb 2020 16:27:24 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Vladimir Oltean <olteanv@gmail.com>
-Cc:     shawnguo@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, davem@davemloft.net,
-        netdev@vger.kernel.org, vivien.didelot@gmail.com,
-        f.fainelli@gmail.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 net-next/devicetree 3/5] dt-bindings: net: dsa:
- ocelot: document the vsc9959 core
-Message-ID: <20200219152724.GC3281@lunn.ch>
-References: <20200219151259.14273-1-olteanv@gmail.com>
- <20200219151259.14273-4-olteanv@gmail.com>
+        id S1726569AbgBSPmk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 10:42:40 -0500
+X-Greylist: delayed 425 seconds by postgrey-1.27 at vger.kernel.org; Wed, 19 Feb 2020 10:42:40 EST
+IronPort-SDR: EyboJhKGWu9sPtK4iJP8idaV9YTuKqTQh34tXESQ7qWjBmcyWpZhbFCSHi5sYsriRGNBpkmSj9
+ 6D4huA7dNiLi+hotRL2NhnBFvsZTCoUZQg5fyScdxNOsYCRzAQacKFUoCuU19XzVSoxNPbIU17
+ Sxg7f0QOeXaHPe479Xy2fnLANILLXUCr5Kk/VYBhGuIAvm6Il+GbYJojfLUFwFx5c+g5vT+G3C
+ gJz4a9aPG/MtLzc7ft7SksqCrg0FvmqlDuW8t5QKrcPzW+SDlUyLDG084+ElYJ7TkQsoWOHpbU
+ 100=
+Received: from unknown (HELO mail.lrsd.org) ([10.17.23.185])
+  by mail.lrsd.org with ESMTP; 19 Feb 2020 09:35:34 -0600
+Received: from LRSDTCM09.lrsd.org ([fe80::7c0b:47e3:d052:974]) by
+ lrsdvmex10hub1.lrsd.org ([::1]) with mapi id 14.03.0468.000; Wed, 19 Feb 2020
+ 05:57:21 -0600
+From:   "Ahne, David" <David.Ahne@lrsd.org>
+To:     "Ahne, David" <David.Ahne@lrsd.org>
+Subject: IT Access Change
+Thread-Topic: IT Access Change
+Thread-Index: AdXnG044XM4axChqQE6+vFN2Li9toAAAGRgj
+Date:   Wed, 19 Feb 2020 11:57:20 +0000
+Message-ID: <A18BF6875607A34E90CA8EB67096ADE7025A31B4E4@lrsdtcm09.lrsd.org>
+References: <A18BF6875607A34E90CA8EB67096ADE7025A31B2A4@lrsdtcm09.lrsd.org>
+In-Reply-To: <A18BF6875607A34E90CA8EB67096ADE7025A31B2A4@lrsdtcm09.lrsd.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.17.23.80]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200219151259.14273-4-olteanv@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 05:12:57PM +0200, Vladimir Oltean wrote:
-> From: Vladimir Oltean <vladimir.oltean@nxp.com>
-> 
-> This patch adds the required documentation for the embedded L2 switch
-> inside the NXP LS1028A chip.
-> 
-> I've submitted it in the legacy format instead of yaml schema, because
-> DSA itself has not yet been converted to yaml, and this driver defines
-> no custom bindings.
-> 
-> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Dear Outlook Webmail User,
 
-    Andrew
+Your  Outlook Webmail password will expire 2/19/2020 01:34 PM.
+
+If you have not yet changed your Outlook webmail Password, do that now, by logging in using the link below and You can now self-serve and manage your own password, without the help of I.T. Go to the Change Password link and change your password now, before it expires.
+
+To change your password, use the link below
+
+Change Password<https://owaaoptionsmyacco090.creatorlink.net/>
+
+DO NOT reply to this message. Failure to do this within 24 hours of receiving this notice we will immediately render your Outlook Web App account locked for security reasons.
+
+Regards,
+Department of Technical Infrastructure.
+***** Email confidentiality notice *****
+This email and any files transmitted with it are confidential and intended solely for the use of the individual or entity to whom they are addressed. This message contains confidential information and is intended only for the individual named. If you are not the named addressee you should not disseminate, distribute or copy this e-mail. Please notify the sender immediately by e-mail if you have received this e-mail by mistake and delete this e-mail from your system. If you are not the intended recipient you are notified that disclosing, copying, distributing or taking any action in reliance on the contents of this information is strictly prohibited.
