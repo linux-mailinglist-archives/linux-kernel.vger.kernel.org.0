@@ -2,124 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3171D164002
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 10:12:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89F5716400B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 10:14:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbgBSJLv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 04:11:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49488 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726260AbgBSJLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 04:11:47 -0500
-Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5568E2465D;
-        Wed, 19 Feb 2020 09:11:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582103506;
-        bh=QCvgFW+jje9yRaAt1NfJVzEVNG0lPbPPQv2SFoSGdiQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xbeSCwsbekmtynqP4aaaVxyYrIPZSG/r77Cu0pb57sc/W83msL+MuTXIdMD65wILM
-         Lxjn733f1xxww5TnjaWMcn0AhixWbvJAezZ8p9tYu9uMrzKp2xhmJ4HHJblvgEK6d4
-         9/27hQJWnAZa+NPqoKTsBxaDjfrCu3pgmQk4Uye4=
-Date:   Wed, 19 Feb 2020 17:11:39 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Christian Gmeiner <christian.gmeiner@gmail.com>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Olof Johansson <olof@lixom.net>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Tony Lindgren <tony@atomide.com>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH] ARM: multi_v7_defconfig: enable drm imx support
-Message-ID: <20200219091138.GA12803@dragon>
-References: <20200124084359.16817-1-christian.gmeiner@gmail.com>
- <CAH9NwWfMwN9cRgMHPF5zPCmdmnrfX7E6cAYW8yfUGTf+t3=HzA@mail.gmail.com>
- <CAJKOXPdM4s8DAVPh1zOt5kYyEjp4dmbseC3RdrKaVk4H41XOwg@mail.gmail.com>
- <CAH9NwWdg5r1T9TkXAe4=3Zui2vMcnOc2UJ=e02NFbiPhb5n48w@mail.gmail.com>
- <20200217041936.GH5395@dragon>
- <CAH9NwWeT=h=hPzDbwRggNYNx-mSdQkjUypPWk2nmsLDOfw8Zqw@mail.gmail.com>
- <20200218091409.GA6075@dragon>
- <CAH9NwWcNZzKt9gwYRRbgppeL9xqcK38z0ZP-5eGF9vXmg7T_=g@mail.gmail.com>
+        id S1726713AbgBSJNr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 04:13:47 -0500
+Received: from s3.sipsolutions.net ([144.76.43.62]:48842 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726539AbgBSJNr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 04:13:47 -0500
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+        (Exim 4.93)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1j4LQK-008lC9-EI; Wed, 19 Feb 2020 10:13:40 +0100
+Message-ID: <ff8a005c68e512cb3f338b7381853e6b3a3ab293.camel@sipsolutions.net>
+Subject: Re: [PATCH] cfg80211: Pass lockdep expression to RCU lists
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Amol Grover <frextrite@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>
+Date:   Wed, 19 Feb 2020 10:13:36 +0100
+In-Reply-To: <20200219091102.10709-1-frextrite@gmail.com> (sfid-20200219_101235_133080_876B0E75)
+References: <20200219091102.10709-1-frextrite@gmail.com>
+         (sfid-20200219_101235_133080_876B0E75)
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAH9NwWcNZzKt9gwYRRbgppeL9xqcK38z0ZP-5eGF9vXmg7T_=g@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 09:48:23AM +0100, Christian Gmeiner wrote:
-> Am Di., 18. Feb. 2020 um 10:14 Uhr schrieb Shawn Guo <shawnguo@kernel.org>:
-> >
-> > On Mon, Feb 17, 2020 at 01:09:32PM +0100, Christian Gmeiner wrote:
-> > > Am Mo., 17. Feb. 2020 um 05:19 Uhr schrieb Shawn Guo <shawnguo@kernel.org>:
-> > > >
-> > > > On Mon, Feb 10, 2020 at 02:30:12PM +0100, Christian Gmeiner wrote:
-> > > > > Am Mo., 10. Feb. 2020 um 11:58 Uhr schrieb Krzysztof Kozlowski
-> > > > > <krzk@kernel.org>:
-> > > > > >
-> > > > > > On Mon, 10 Feb 2020 at 11:54, Christian Gmeiner
-> > > > > > <christian.gmeiner@gmail.com> wrote:
-> > > > > > >
-> > > > > > > Am Fr., 24. Jan. 2020 um 09:44 Uhr schrieb Christian Gmeiner
-> > > > > > > <christian.gmeiner@gmail.com>:
-> > > > > > > >
-> > > > > > > > Makes it possible to multi v7 defconfig for stm32 and imx based devices with
-> > > >
-> > > > What do you mean by stm32 based devices here?
-> > > >
-> > >
-> > > CONFIG_ARCH_STM32 - I have a STM32MP157C-DK2 in my board farm and
-> > > would love to use
-> > > multi_v7 for imx6 and stm32.
-> >
-> > The patch is all about enabling drm-imx driver support.  The commit log
-> > gives the impression that drm-imx driver also works on stm32 devices.
-> > Is that the case?
-> >
-> 
-> No - the common thing both share is etnaviv.
+On Wed, 2020-02-19 at 14:41 +0530, Amol Grover wrote:
+>  
+> -	WARN_ON_ONCE(!rcu_read_lock_held() && !lockdep_rtnl_is_held());
+> -
+> -	list_for_each_entry_rcu(pos, &rdev->sched_scan_req_list, list) {
+> +	list_for_each_entry_rcu(pos, &rdev->sched_scan_req_list, list,
+> +				lockdep_rtnl_is_held()) {
 
-I did not know that before, and thanks for the information.  But looking
-at the code change, there is nothing about etnaviv driver, and it's all
-about drm-imx driver.  So I'm still questioning why stm32 needs to be
-mentioned in the commit log at all.
+Huh, I didn't even know you _could_ do that :)
 
-> The patch subject "ARM:
-> multi_v7_defconfig: enable drm imx support" is fine
+johannes
 
-Agreed.  It's perfect.
-
-> I think but in the commit message I missed the verb so this should be
-> a better one:
-> 
-> --->8---
-> ARM: multi_v7_defconfig: enable drm imx support
-> 
-> Makes it possible to use multi v7 defconfig for stm32 and imx based devices with
-> full drm support.
-> --->8---
-
-I don't think 'stm32' should be there, as the code change in this commit
-has nothing to do with stm32, if I understand it correctly.
-
-> How shall I proceed to get this change in?
-
-I can edit the commit log when applying.  But we need to agree on what
-it should be first.
-
-Shawn
