@@ -2,662 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8EE4163E6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:05:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A55A163E6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:06:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726623AbgBSIFW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 03:05:22 -0500
-Received: from out28-74.mail.aliyun.com ([115.124.28.74]:36467 "EHLO
-        out28-74.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726163AbgBSIFV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 03:05:21 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07436282|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.421906-0.0107096-0.567384;DS=CONTINUE|ham_regular_dialog|0.191699-0.00649547-0.801806;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03279;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=24;RT=24;SR=0;TI=SMTPD_---.GpdyRw5_1582099030;
-Received: from 192.168.10.227(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.GpdyRw5_1582099030)
-          by smtp.aliyun-inc.com(10.147.42.16);
-          Wed, 19 Feb 2020 15:57:12 +0800
-Subject: Re: [PATCH v5 2/7] MIPS: JZ4780: Introduce SMP support.
-To:     Paul Cercueil <paul@crapouillou.net>
-References: <1581792932-108032-1-git-send-email-zhouyanjie@wanyeetech.com>
- <1581792932-108032-4-git-send-email-zhouyanjie@wanyeetech.com>
- <1581865141.3.3@crapouillou.net>
-Cc:     linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, ralf@linux-mips.org, paulburton@kernel.org,
-        jiaxun.yang@flygoat.com, chenhc@lemote.com, allison@lohutok.net,
-        tglx@linutronix.de, daniel.lezcano@linaro.org,
-        geert+renesas@glider.be, krzk@kernel.org, keescook@chromium.org,
-        ebiederm@xmission.com, miquel.raynal@bootlin.com,
-        paul@boddie.org.uk, hns@goldelico.com,
-        mips-creator-ci20-dev@googlegroups.com
-From:   Zhou Yanjie <zhouyanjie@wanyeetech.com>
-Message-ID: <5E4CEA56.8070009@wanyeetech.com>
-Date:   Wed, 19 Feb 2020 15:57:10 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.8.0
+        id S1726672AbgBSIGH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 03:06:07 -0500
+Received: from mail-db3eur04hn2022.outbound.protection.outlook.com ([52.101.138.22]:30375
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726163AbgBSIGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 03:06:06 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FYo0n6Wy6dqgUWIQHtnyqDWHyMqBfQVjvcDAQwmgH7Hz83g4TjAgZTgnY7muuayh1klFs1viDcaeVH3b1G5JxGaSauFNUWopQvqEj5HTsasnTz8tO0M5F0wNEGqV3RcuWk79b5MvXX7n6wIIrOXiSCFcz0ODfhfvnc1XVyuaMh3riAOEdUINih0dH+lNUQsqsBQLiUnsi20u+iJA+6pjsGceGtr4qbc4iTo6VKoXHcSVDa/5J9SSeGnuWYXyPg2u6dOq4YSp5T0qcvpYmQi17KOoCyGZxr0rpraJ91gDynO5u+nLoix8LRRrckG260kULx/VqkveSkcwUJCplSvYlg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SuWKoZEgoW+a2HA+rdUidaWbzpODUZhz3rJVcjHOlf4=;
+ b=gQ6lQsDtPCHKRg0+5n9CQMvMRd8PHSqGwgHMp7Tt8bNhuulahp0EL9J7bZnJAXWTz063gzQRCaRGKPrrTryx2155a7vR+lS1pi3K7AzE38k51evjYhI49H5GMpBlEaEiOYu5bheXRCPRBJouc2PQorHwAPeHcq921hOJM0zoV24NNBgmWp1x+YW+MK8B55Et7nRVSh/+qtd7lBRUPfr3r4IrEnkGmovOdD5VaSIA6sus35B0gwlsIDdW+IwQS56al/DDJJKEf8YIbNImiECbeCqDGtoxyugWDHhVXKP79wIqZR+AdaprEfoNKjdZUWfwJGAjR9rK0Qf0heFp7kiArw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SuWKoZEgoW+a2HA+rdUidaWbzpODUZhz3rJVcjHOlf4=;
+ b=ZqrrwEkTg6Leydzu/pId2JKv9mJfMYrIAahRCNH4b4Wsz/oi94qElLgqWrLFK7EQNLdUJd72xQxN3xeHeeWjhGPGE5zfUCs5LWKIA2hEprpdWGdXVnu1noAKYwZXS9qvJ546fZtBdeFbwawUo+wkb/jr1T39sc6jZpbSMyQZSDg=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB4132.eurprd04.prod.outlook.com (52.134.94.25) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2729.25; Wed, 19 Feb 2020 08:06:02 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2729.032; Wed, 19 Feb 2020
+ 08:06:02 +0000
+From:   peng.fan@nxp.com
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de, sboyd@kernel.org,
+        robh+dt@kernel.org, viresh.kumar@linaro.org, rjw@rjwysocki.net
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        Anson.Huang@nxp.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, abel.vesa@nxp.com,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH v2 00/14] ARM: imx7ulp: add cpufreq using cpufreq-dt
+Date:   Wed, 19 Feb 2020 15:59:43 +0800
+Message-Id: <1582099197-20327-1-git-send-email-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain
+X-ClientProxiedBy: HKAPR04CA0013.apcprd04.prod.outlook.com
+ (2603:1096:203:d0::23) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
 MIME-Version: 1.0
-In-Reply-To: <1581865141.3.3@crapouillou.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Received: from localhost.localdomain (119.31.174.66) by HKAPR04CA0013.apcprd04.prod.outlook.com (2603:1096:203:d0::23) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2729.23 via Frontend Transport; Wed, 19 Feb 2020 08:05:58 +0000
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [119.31.174.66]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 17a2ec7d-3e6f-429a-09f2-08d7b5128fcc
+X-MS-TrafficTypeDiagnostic: AM0PR04MB4132:|AM0PR04MB4132:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM0PR04MB4132716BD0CF34D0F69642F788100@AM0PR04MB4132.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6108;
+X-Forefront-PRVS: 0318501FAE
+X-Forefront-Antispam-Report: SFV:SPM;SFS:(10009020)(4636009)(136003)(346002)(366004)(396003)(376002)(39860400002)(199004)(189003)(9686003)(6666004)(2906002)(6486002)(6512007)(316002)(478600001)(69590400006)(966005)(2616005)(66476007)(8936002)(86362001)(8676002)(36756003)(81156014)(186003)(7416002)(81166006)(52116002)(5660300002)(66946007)(4326008)(6506007)(16526019)(26005)(956004)(66556008)(556354011);DIR:OUT;SFP:1501;SCL:5;SRVR:AM0PR04MB4132;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: D99F/l2TMG1Tj1GAQEYcD7aCWlGHLq0phTkGuPcGoWeyX4e78+hh6BlH1ab5xCNDPiaFbeIu87/7PSxERunhTWvBAPNiFRhEkQupXRhALR/ZcjViBz8q9wBdEB1OXdfvd7SHDLtZi2GK7R4fjD43jpUL3TvkGB6CtG5LtR9HUos/4XOIJd4lsK2sOzWBH9XbZCqWBVft/qV96RO9Zv5hqpEc4s0Nc5ZNRss4AK5dwBtFkPacOLkCu90tSYZPinfO2l2MvbO0K1MlyduLWa4aGUFB1iQZ6kfTVaahKjaPoWvSt87eTMmi8ZslBbXmJz7zEza9y6aARaSUnGz9oyJ8wbfoZ7NXGVkkeNmLPAkMBwl3G1ovW6S+HGkiOujf9A8sFmJv5n+AlKO+HEDufofxXe4uYBI+3vbKDFo5ymCSzz1AFHed8JDPKuVi4A1+gaqPutJPNrQ6qWmO60AzgPg7HuVA1uLph3yLkS28V4KsNGLz0NjcrKxkF4teCjpijI807Bc82O9J+2tGIOHou0mzGWJAl3uAAXGnIghoxSqv5LST9qJjaI64IXYfwRo3AV6ms1DQXkTS+qIjG+tt+N0utdDPG+HOLJU2wBL4fUDZDbrVu5B6Rf4/bDS3sLpsVCQj+V801/A0x7NMSpWBNxTECzkZMkBDt0+ghp/01O6hVVOAOAx7cwP/slbliU7A29UmMXc4bpHjVfGdz9/2nNiudgYFPpZ7lZbAhg9vE+QMi8yxffFo38NlnUr6OyCLyvHz4oz08si8fRFkc/bTSFNKiljTahWAGtjvvbzSxoj3cMTTqJ7RVI3YcH4ua1H6FaUaHsWJ0cTd9p4EfPF2ujc7uoWmlVjW236vuajScCQ3Pc+UeTq36DUUfIwvEXBzO3MKQj5mb7mi+W6lzjiS9wVoj6upcoTi3Y4n5V7g3c4/luQ=
+X-MS-Exchange-AntiSpam-MessageData: NOuTPX76odbqKRJYiqh0h4QcbJ9ZfInNunWIzYzrg+QZwwPq9bn+W4ouyxyCyhbbGhlXUZ4AK7OUXOJNwWTAMlZzgn9c7MHYB4c9miXYJnpZGFckbjHJ/ej+KeUcz0cbsnZXXtKCToNy5NO9SFj1yQ==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 17a2ec7d-3e6f-429a-09f2-08d7b5128fcc
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2020 08:06:02.4755
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cTxUOXXIIAixhvzPw3FtdKB8jSWTQbHJOx2fjYoxG7p8BtFUogFwAetcQdeSRJlhcLemJ0C3k48YIPcbDjrXBg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4132
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
+From: Peng Fan <peng.fan@nxp.com>
 
-On 2020年02月16日 22:59, Paul Cercueil wrote:
-> Hi Zhou,
->
->
-> Le dim., févr. 16, 2020 at 02:55, 周琰杰 (Zhou Yanjie) 
-> <zhouyanjie@wanyeetech.com> a écrit :
->> Forward port smp support from kernel 3.18.3 of CI20_linux
->> to upstream kernel 5.6.
->>
->> Tested-by: H. Nikolaus Schaller <hns@goldelico.com>
->> Tested-by: Paul Boddie <paul@boddie.org.uk>
->> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
->> Reviewed-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
->> ---
->>
->> Notes:
->>     v1->v2:
->>     1.Remove unnecessary "plat_irq_dispatch(void)" in irq-ingenic.c.
->>     2.Add a timeout check for "jz4780_boot_secondary()" to avoid a 
->> dead loop.
->>     3.Replace hard code in smp.c with macro.
->>
->>     v2->v3:
->>     1.Remove unnecessary "extern void (*r4k_blast_dcache)(void)" in 
->> smp.c.
->>     2.Use "for_each_of_cpu_node" instead "for_each_compatible_node" 
->> in smp.c.
->>     3.Use "of_cpu_node_to_id" instead "of_property_read_u32_index" in 
->> smp.c.
->>     4.Move LCR related operations to jz4780-cgu.c.
->>
->>     v3->v4:
->>     Rebase on top of kernel 5.6-rc1.
->>
->>     v4->v5:
->>     1.Splitting changes involving "jz4780-cgu.c" into separate commit.
->>     2.Use "request_irq()" replace "setup_irq()".
->>
->>  arch/mips/include/asm/mach-jz4740/jz4780-smp.h |  91 ++++++++
->>  arch/mips/jz4740/Kconfig                       |   3 +
->>  arch/mips/jz4740/Makefile                      |   5 +
->>  arch/mips/jz4740/prom.c                        |   4 +
->>  arch/mips/jz4740/smp-entry.S                   |  57 +++++
->>  arch/mips/jz4740/smp.c                         | 283 
->> +++++++++++++++++++++++++
->>  arch/mips/kernel/idle.c                        |  14 +-
->>  7 files changed, 456 insertions(+), 1 deletion(-)
->>  create mode 100644 arch/mips/include/asm/mach-jz4740/jz4780-smp.h
->>  create mode 100644 arch/mips/jz4740/smp-entry.S
->>  create mode 100644 arch/mips/jz4740/smp.c
->>
->> diff --git a/arch/mips/include/asm/mach-jz4740/jz4780-smp.h 
->> b/arch/mips/include/asm/mach-jz4740/jz4780-smp.h
->> new file mode 100644
->> index 00000000..3f592ce
->> --- /dev/null
->> +++ b/arch/mips/include/asm/mach-jz4740/jz4780-smp.h
->> @@ -0,0 +1,91 @@
->> +/* SPDX-License-Identifier: GPL-2.0-or-later */
->> +/*
->> + *  Copyright (C) 2013, Paul Burton <paul.burton@imgtec.com>
->> + *  JZ4780 SMP definitions
->> + */
->> +
->> +#ifndef __MIPS_ASM_MACH_JZ4740_JZ4780_SMP_H__
->> +#define __MIPS_ASM_MACH_JZ4740_JZ4780_SMP_H__
->> +
->> +#define read_c0_corectrl()        __read_32bit_c0_register($12, 2)
->> +#define write_c0_corectrl(val) __write_32bit_c0_register($12, 2, val)
->> +
->> +#define read_c0_corestatus() __read_32bit_c0_register($12, 3)
->> +#define write_c0_corestatus(val) __write_32bit_c0_register($12, 3, val)
->> +
->> +#define read_c0_reim()            __read_32bit_c0_register($12, 4)
->> +#define write_c0_reim(val) __write_32bit_c0_register($12, 4, val)
->> +
->> +#define read_c0_mailbox0()        __read_32bit_c0_register($20, 0)
->> +#define write_c0_mailbox0(val) __write_32bit_c0_register($20, 0, val)
->> +
->> +#define read_c0_mailbox1()        __read_32bit_c0_register($20, 1)
->> +#define write_c0_mailbox1(val) __write_32bit_c0_register($20, 1, val)
->> +
->> +#define smp_clr_pending(mask) do {        \
->> +        unsigned int stat;        \
->> +        stat = read_c0_corestatus();    \
->> +        stat &= ~((mask) & 0xff);    \
->> +        write_c0_corestatus(stat);    \
->> +    } while (0)
->> +
->> +/*
->> + * Core Control register
->> + */
->> +#define CORECTRL_SLEEP1M_SHIFT    17
->> +#define CORECTRL_SLEEP1M    (_ULCAST_(0x1) << CORECTRL_SLEEP1M_SHIFT)
->> +#define CORECTRL_SLEEP0M_SHIFT    16
->> +#define CORECTRL_SLEEP0M    (_ULCAST_(0x1) << CORECTRL_SLEEP0M_SHIFT)
->> +#define CORECTRL_RPC1_SHIFT    9
->> +#define CORECTRL_RPC1        (_ULCAST_(0x1) << CORECTRL_RPC1_SHIFT)
->> +#define CORECTRL_RPC0_SHIFT    8
->> +#define CORECTRL_RPC0        (_ULCAST_(0x1) << CORECTRL_RPC0_SHIFT)
->> +#define CORECTRL_SWRST1_SHIFT    1
->> +#define CORECTRL_SWRST1        (_ULCAST_(0x1) << CORECTRL_SWRST1_SHIFT)
->> +#define CORECTRL_SWRST0_SHIFT    0
->> +#define CORECTRL_SWRST0        (_ULCAST_(0x1) << CORECTRL_SWRST0_SHIFT)
->> +
->> +/*
->> + * Core Status register
->> + */
->> +#define CORESTATUS_SLEEP1_SHIFT    17
->> +#define CORESTATUS_SLEEP1    (_ULCAST_(0x1) << CORESTATUS_SLEEP1_SHIFT)
->> +#define CORESTATUS_SLEEP0_SHIFT    16
->> +#define CORESTATUS_SLEEP0    (_ULCAST_(0x1) << CORESTATUS_SLEEP0_SHIFT)
->> +#define CORESTATUS_IRQ1P_SHIFT    9
->> +#define CORESTATUS_IRQ1P    (_ULCAST_(0x1) << CORESTATUS_IRQ1P_SHIFT)
->> +#define CORESTATUS_IRQ0P_SHIFT    8
->> +#define CORESTATUS_IRQ0P    (_ULCAST_(0x1) << CORESTATUS_IRQ8P_SHIFT)
->> +#define CORESTATUS_MIRQ1P_SHIFT    1
->> +#define CORESTATUS_MIRQ1P    (_ULCAST_(0x1) << CORESTATUS_MIRQ1P_SHIFT)
->> +#define CORESTATUS_MIRQ0P_SHIFT    0
->> +#define CORESTATUS_MIRQ0P    (_ULCAST_(0x1) << CORESTATUS_MIRQ0P_SHIFT)
->> +
->> +/*
->> + * Reset Entry & IRQ Mask register
->> + */
->> +#define REIM_ENTRY_SHIFT    16
->> +#define REIM_ENTRY        (_ULCAST_(0xffff) << REIM_ENTRY_SHIFT)
->> +#define REIM_IRQ1M_SHIFT    9
->> +#define REIM_IRQ1M        (_ULCAST_(0x1) << REIM_IRQ1M_SHIFT)
->> +#define REIM_IRQ0M_SHIFT    8
->> +#define REIM_IRQ0M        (_ULCAST_(0x1) << REIM_IRQ0M_SHIFT)
->> +#define REIM_MBOXIRQ1M_SHIFT    1
->> +#define REIM_MBOXIRQ1M        (_ULCAST_(0x1) << REIM_MBOXIRQ1M_SHIFT)
->> +#define REIM_MBOXIRQ0M_SHIFT    0
->> +#define REIM_MBOXIRQ0M        (_ULCAST_(0x1) << REIM_MBOXIRQ0M_SHIFT)
->> +
->> +#ifdef CONFIG_SMP
->> +
->> +extern void jz4780_smp_wait_irqoff(void);
->> +
->> +extern void jz4780_smp_init(void);
->> +extern void jz4780_secondary_cpu_entry(void);
->> +
->> +#else /* !CONFIG_SMP */
->> +
->> +static inline void jz4780_smp_init(void) { }
->> +
->> +#endif /* !CONFIG_SMP */
->> +
->> +#endif /* __MIPS_ASM_MACH_JZ4740_JZ4780_SMP_H__ */
->> diff --git a/arch/mips/jz4740/Kconfig b/arch/mips/jz4740/Kconfig
->> index 412d2fa..0239597 100644
->> --- a/arch/mips/jz4740/Kconfig
->> +++ b/arch/mips/jz4740/Kconfig
->> @@ -34,9 +34,12 @@ config MACH_JZ4770
->>
->>  config MACH_JZ4780
->>      bool
->> +    select GENERIC_CLOCKEVENTS_BROADCAST if SMP
->>      select MIPS_CPU_SCACHE
->> +    select NR_CPUS_DEFAULT_2
->>      select SYS_HAS_CPU_MIPS32_R2
->>      select SYS_SUPPORTS_HIGHMEM
->> +    select SYS_SUPPORTS_SMP
->>
->>  config MACH_X1000
->>      bool
->> diff --git a/arch/mips/jz4740/Makefile b/arch/mips/jz4740/Makefile
->> index 6de14c0..0a0f024 100644
->> --- a/arch/mips/jz4740/Makefile
->> +++ b/arch/mips/jz4740/Makefile
->> @@ -12,3 +12,8 @@ CFLAGS_setup.o = -I$(src)/../../../scripts/dtc/libfdt
->>  # PM support
->>
->>  obj-$(CONFIG_PM) += pm.o
->> +
->> +# SMP support
->> +
->> +obj-$(CONFIG_SMP) += smp.o
->> +obj-$(CONFIG_SMP) += smp-entry.o
->> diff --git a/arch/mips/jz4740/prom.c b/arch/mips/jz4740/prom.c
->> index ff4555c..a79159e 100644
->> --- a/arch/mips/jz4740/prom.c
->> +++ b/arch/mips/jz4740/prom.c
->> @@ -8,10 +8,14 @@
->>
->>  #include <asm/bootinfo.h>
->>  #include <asm/fw/fw.h>
->> +#include <asm/mach-jz4740/jz4780-smp.h>
->>
->>  void __init prom_init(void)
->>  {
->>      fw_init_cmdline();
->> +#if defined(CONFIG_MACH_JZ4780) && defined(CONFIG_SMP)
->> +    jz4780_smp_init();
->> +#endif
->
-> You should not check for defined(CONFIG_MACH_JZ4780), because that 
-> means you cannot have a kernel that works on multiple SoCs at the same 
-> time. Instead, check the value of "mips_machtype".
+V2:
+ Per Stephen's comments, I drop the cpuv2 clk code, and find another
+ solution to change ARM clk
+ Included get_intermediate/target_intermedate for cpufreq-dt
+ Add i.MX7ULP intermedidate implementation.
+ Per Fabio's comments, disallow HSRUN when LDO enabled.
+ Add dt-bindings and pmc node
 
-Sure, I will change it in next version.
+V1:
+ https://patchwork.kernel.org/patch/11364609/
 
-Thanks and best regards!
+This patchset aims to use cpufreq-dt for i.MX7ULP to avoid
+plaform specific cpufreq driver. i.MX7ULP has some specicial
+requirements to change ARM core clock, see patch 11/13,
+"cpufreq: imx-cpufreq-dt: support i.MX7ULP"
 
->
-> -Paul
->
->>  }
->>
->>  void __init prom_free_prom_memory(void)
->> diff --git a/arch/mips/jz4740/smp-entry.S b/arch/mips/jz4740/smp-entry.S
->> new file mode 100644
->> index 00000000..20049a3
->> --- /dev/null
->> +++ b/arch/mips/jz4740/smp-entry.S
->> @@ -0,0 +1,57 @@
->> +/* SPDX-License-Identifier: GPL-2.0-or-later */
->> +/*
->> + *  Copyright (C) 2013, Paul Burton <paul.burton@imgtec.com>
->> + *  JZ4780 SMP entry point
->> + */
->> +
->> +#include <asm/addrspace.h>
->> +#include <asm/asm.h>
->> +#include <asm/asmmacro.h>
->> +#include <asm/cacheops.h>
->> +#include <asm/mipsregs.h>
->> +
->> +#define CACHE_SIZE (32 * 1024)
->> +#define CACHE_LINESIZE 32
->> +
->> +.extern jz4780_cpu_entry_sp
->> +.extern jz4780_cpu_entry_gp
->> +
->> +.section .text.smp-entry
->> +.balign 0x10000
->> +.set noreorder
->> +LEAF(jz4780_secondary_cpu_entry)
->> +    mtc0    zero, CP0_CAUSE
->> +
->> +    li    t0, ST0_CU0
->> +    mtc0    t0, CP0_STATUS
->> +
->> +    /* cache setup */
->> +    li    t0, KSEG0
->> +    ori    t1, t0, CACHE_SIZE
->> +    mtc0    zero, CP0_TAGLO, 0
->> +1:    cache    Index_Store_Tag_I, 0(t0)
->> +    cache    Index_Store_Tag_D, 0(t0)
->> +    bne    t0, t1, 1b
->> +     addiu    t0, t0, CACHE_LINESIZE
->> +
->> +    /* kseg0 cache attribute */
->> +    mfc0    t0, CP0_CONFIG, 0
->> +    ori    t0, t0, CONF_CM_CACHABLE_NONCOHERENT
->> +    mtc0    t0, CP0_CONFIG, 0
->> +
->> +    /* pagemask */
->> +    mtc0    zero, CP0_PAGEMASK, 0
->> +
->> +    /* retrieve sp */
->> +    la    t0, jz4780_cpu_entry_sp
->> +    lw    sp, 0(t0)
->> +
->> +    /* retrieve gp */
->> +    la    t0, jz4780_cpu_entry_gp
->> +    lw    gp, 0(t0)
->> +
->> +    /* jump to the kernel in kseg0 */
->> +    la    t0, smp_bootstrap
->> +    jr    t0
->> +     nop
->> +    END(jz4780_secondary_cpu_entry)
->> diff --git a/arch/mips/jz4740/smp.c b/arch/mips/jz4740/smp.c
->> new file mode 100644
->> index 00000000..826fd0f
->> --- /dev/null
->> +++ b/arch/mips/jz4740/smp.c
->> @@ -0,0 +1,283 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + *  Copyright (C) 2013, Paul Burton <paul.burton@imgtec.com>
->> + *  JZ4780 SMP
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/delay.h>
->> +#include <linux/interrupt.h>
->> +#include <linux/of.h>
->> +#include <linux/sched.h>
->> +#include <linux/sched/task_stack.h>
->> +#include <linux/smp.h>
->> +#include <linux/tick.h>
->> +#include <asm/mach-jz4740/jz4780-smp.h>
->> +#include <asm/r4kcache.h>
->> +#include <asm/smp-ops.h>
->> +
->> +static struct clk *cpu_clock_gates[CONFIG_NR_CPUS] = { NULL };
->> +
->> +u32 jz4780_cpu_entry_sp;
->> +u32 jz4780_cpu_entry_gp;
->> +
->> +static struct cpumask cpu_running;
->> +
->> +static DEFINE_SPINLOCK(smp_lock);
->> +
->> +/*
->> + * The Ingenic jz4780 SMP variant has to write back dirty cache 
->> lines before
->> + * executing wait. The CPU & cache clock will be gated until we 
->> return from
->> + * the wait, and if another core attempts to access data from our 
->> data cache
->> + * during this time then it will lock up.
->> + */
->> +void jz4780_smp_wait_irqoff(void)
->> +{
->> +    unsigned long pending = read_c0_cause() & read_c0_status() & 
->> CAUSEF_IP;
->> +
->> +    /*
->> +     * Going to idle has a significant overhead due to the cache 
->> flush so
->> +     * try to avoid it if we'll immediately be woken again due to an 
->> IRQ.
->> +     */
->> +    if (!need_resched() && !pending) {
->> +        r4k_blast_dcache();
->> +
->> +        __asm__(
->> +        "    .set push    \n"
->> +        "    .set mips3    \n"
->> +        "    sync        \n"
->> +        "    wait        \n"
->> +        "    .set pop    \n");
->> +    }
->> +
->> +    local_irq_enable();
->> +}
->> +
->> +static irqreturn_t mbox_handler(int irq, void *dev_id)
->> +{
->> +    int cpu = smp_processor_id();
->> +    u32 action, status;
->> +
->> +    spin_lock(&smp_lock);
->> +
->> +    switch (cpu) {
->> +    case 0:
->> +        action = read_c0_mailbox0();
->> +        write_c0_mailbox0(0);
->> +        break;
->> +    case 1:
->> +        action = read_c0_mailbox1();
->> +        write_c0_mailbox1(0);
->> +        break;
->> +    default:
->> +        panic("unhandled cpu %d!", cpu);
->> +    }
->> +
->> +    /* clear pending mailbox interrupt */
->> +    status = read_c0_corestatus();
->> +    status &= ~(CORESTATUS_MIRQ0P << cpu);
->> +    write_c0_corestatus(status);
->> +
->> +    spin_unlock(&smp_lock);
->> +
->> +    if (action & SMP_RESCHEDULE_YOURSELF)
->> +        scheduler_ipi();
->> +    if (action & SMP_CALL_FUNCTION)
->> +        generic_smp_call_function_interrupt();
->> +
->> +    return IRQ_HANDLED;
->> +}
->> +
->> +static void jz4780_smp_setup(void)
->> +{
->> +    u32 addr, reim;
->> +    int cpu;
->> +
->> +    reim = read_c0_reim();
->> +
->> +    for (cpu = 0; cpu < NR_CPUS; cpu++) {
->> +        __cpu_number_map[cpu] = cpu;
->> +        __cpu_logical_map[cpu] = cpu;
->> +        set_cpu_possible(cpu, true);
->> +    }
->> +
->> +    /* mask mailbox interrupts for this core */
->> +    reim &= ~REIM_MBOXIRQ0M;
->> +    write_c0_reim(reim);
->> +
->> +    /* clear mailboxes & pending mailbox IRQs */
->> +    write_c0_mailbox0(0);
->> +    write_c0_mailbox1(0);
->> +    write_c0_corestatus(0);
->> +
->> +    /* set reset entry point */
->> +    addr = KSEG1ADDR((u32)&jz4780_secondary_cpu_entry);
->> +    WARN_ON(addr & ~REIM_ENTRY);
->> +    reim &= ~REIM_ENTRY;
->> +    reim |= addr & REIM_ENTRY;
->> +
->> +    /* unmask mailbox interrupts for this core */
->> +    reim |= REIM_MBOXIRQ0M;
->> +    write_c0_reim(reim);
->> +    set_c0_status(STATUSF_IP3);
->> +    irq_enable_hazard();
->> +
->> +    cpumask_set_cpu(cpu, &cpu_running);
->> +}
->> +
->> +static void jz4780_smp_prepare_cpus(unsigned int max_cpus)
->> +{
->> +    struct device_node *cpu_node;
->> +    unsigned cpu, ctrl;
->> +    int err;
->> +
->> +    /* setup the mailbox IRQ */
->> +    err = request_irq(MIPS_CPU_IRQ_BASE + 3, mbox_handler,
->> +                IRQF_PERCPU | IRQF_NO_THREAD, "core mailbox", NULL);
->> +    if (err)
->> +        pr_err("request_irq() on core mailbox failed\n");
->> +
->> +    init_cpu_present(cpu_possible_mask);
->> +
->> +    ctrl = read_c0_corectrl();
->> +
->> +    for (cpu = 0; cpu < max_cpus; cpu++) {
->> +        /* use reset entry point from REIM register */
->> +        ctrl |= CORECTRL_RPC0 << cpu;
->> +    }
->> +
->> +    for_each_of_cpu_node(cpu_node) {
->> +        cpu = of_cpu_node_to_id(cpu_node);
->> +        if (cpu < 0) {
->> +            pr_err("Failed to read index of %s\n",
->> +                   cpu_node->full_name);
->> +            continue;
->> +        }
->> +
->> +        cpu_clock_gates[cpu] = of_clk_get(cpu_node, 0);
->> +        if (IS_ERR(cpu_clock_gates[cpu])) {
->> +            cpu_clock_gates[cpu] = NULL;
->> +            continue;
->> +        }
->> +
->> +        err = clk_prepare(cpu_clock_gates[cpu]);
->> +        if (err)
->> +            pr_err("Failed to prepare CPU clock gate\n");
->> +    }
->> +
->> +    write_c0_corectrl(ctrl);
->> +}
->> +
->> +static int jz4780_boot_secondary(int cpu, struct task_struct *idle)
->> +{
->> +    unsigned long flags;
->> +    u32 ctrl;
->> +
->> +    spin_lock_irqsave(&smp_lock, flags);
->> +
->> +    /* ensure the core is in reset */
->> +    ctrl = read_c0_corectrl();
->> +    ctrl |= CORECTRL_SWRST0 << cpu;
->> +    write_c0_corectrl(ctrl);
->> +
->> +    /* ungate core clock */
->> +    if (cpu_clock_gates[cpu])
->> +        clk_enable(cpu_clock_gates[cpu]);
->> +
->> +    /* set entry sp/gp register values */
->> +    jz4780_cpu_entry_sp = __KSTK_TOS(idle);
->> +    jz4780_cpu_entry_gp = (u32)task_thread_info(idle);
->> +    smp_wmb();
->> +
->> +    /* take the core out of reset */
->> +    ctrl &= ~(CORECTRL_SWRST0 << cpu);
->> +    write_c0_corectrl(ctrl);
->> +
->> +    cpumask_set_cpu(cpu, &cpu_running);
->> +
->> +    spin_unlock_irqrestore(&smp_lock, flags);
->> +
->> +    return 0;
->> +}
->> +
->> +static void jz4780_init_secondary(void)
->> +{
->> +}
->> +
->> +static void jz4780_smp_finish(void)
->> +{
->> +    u32 reim;
->> +
->> +    spin_lock(&smp_lock);
->> +
->> +    /* unmask mailbox interrupts for this core */
->> +    reim = read_c0_reim();
->> +    reim |= REIM_MBOXIRQ0M << smp_processor_id();
->> +    write_c0_reim(reim);
->> +
->> +    spin_unlock(&smp_lock);
->> +
->> +    /* unmask interrupts for this core */
->> +    change_c0_status(ST0_IM, STATUSF_IP3 | STATUSF_IP2 |
->> +             STATUSF_IP1 | STATUSF_IP0);
->> +    irq_enable_hazard();
->> +
->> +    /* force broadcast timer */
->> +    tick_broadcast_force();
->> +}
->> +
->> +static void jz4780_send_ipi_single_locked(int cpu, unsigned int action)
->> +{
->> +    u32 mbox;
->> +
->> +    switch (cpu) {
->> +    case 0:
->> +        mbox = read_c0_mailbox0();
->> +        write_c0_mailbox0(mbox | action);
->> +        break;
->> +    case 1:
->> +        mbox = read_c0_mailbox1();
->> +        write_c0_mailbox1(mbox | action);
->> +        break;
->> +    default:
->> +        panic("unhandled cpu %d!", cpu);
->> +    }
->> +}
->> +
->> +static void jz4780_send_ipi_single(int cpu, unsigned int action)
->> +{
->> +    unsigned long flags;
->> +
->> +    spin_lock_irqsave(&smp_lock, flags);
->> +    jz4780_send_ipi_single_locked(cpu, action);
->> +    spin_unlock_irqrestore(&smp_lock, flags);
->> +}
->> +
->> +static void jz4780_send_ipi_mask(const struct cpumask *mask,
->> +                 unsigned int action)
->> +{
->> +    unsigned long flags;
->> +    int cpu;
->> +
->> +    spin_lock_irqsave(&smp_lock, flags);
->> +
->> +    for_each_cpu(cpu, mask)
->> +        jz4780_send_ipi_single_locked(cpu, action);
->> +
->> +    spin_unlock_irqrestore(&smp_lock, flags);
->> +}
->> +
->> +static struct plat_smp_ops jz4780_smp_ops = {
->> +    .send_ipi_single = jz4780_send_ipi_single,
->> +    .send_ipi_mask = jz4780_send_ipi_mask,
->> +    .init_secondary = jz4780_init_secondary,
->> +    .smp_finish = jz4780_smp_finish,
->> +    .boot_secondary = jz4780_boot_secondary,
->> +    .smp_setup = jz4780_smp_setup,
->> +    .prepare_cpus = jz4780_smp_prepare_cpus,
->> +};
->> +
->> +void jz4780_smp_init(void)
->> +{
->> +    register_smp_ops(&jz4780_smp_ops);
->> +}
->> diff --git a/arch/mips/kernel/idle.c b/arch/mips/kernel/idle.c
->> index 37f8e78..a406de3 100644
->> --- a/arch/mips/kernel/idle.c
->> +++ b/arch/mips/kernel/idle.c
->> @@ -19,6 +19,10 @@
->>  #include <asm/idle.h>
->>  #include <asm/mipsregs.h>
->>
->> +#ifdef CONFIG_MACH_JZ4780
->> +# include <asm/mach-jz4740/jz4780-smp.h>
->> +#endif
->> +
->>  /*
->>   * Not all of the MIPS CPUs have the "wait" instruction available. 
->> Moreover,
->>   * the implementation of the "wait" feature differs between CPU 
->> families. This
->> @@ -172,7 +176,6 @@ void __init check_wait(void)
->>      case CPU_CAVIUM_OCTEON_PLUS:
->>      case CPU_CAVIUM_OCTEON2:
->>      case CPU_CAVIUM_OCTEON3:
->> -    case CPU_XBURST:
->>      case CPU_LOONGSON32:
->>      case CPU_XLR:
->>      case CPU_XLP:
->> @@ -246,6 +249,15 @@ void __init check_wait(void)
->>             cpu_wait = r4k_wait;
->>           */
->>          break;
->> +    case CPU_XBURST:
->> +#if defined(CONFIG_MACH_JZ4780) && defined(CONFIG_SMP)
->> +        if (NR_CPUS > 1)
->> +            cpu_wait = jz4780_smp_wait_irqoff;
->> +        else
->> +            cpu_wait = r4k_wait;
->> +#else
->> +        cpu_wait = r4k_wait;
->> +#endif
->>      default:
->>          break;
->>      }
->> -- 
->> 2.7.4
->>
->
+Patch [1,2]/13: add pmc bindings and node. We need read pmc registers
+  to get system info.
+Patch [3-6]/13: i.MX7ULP clk pfd/pll code change to make sure to get the
+  expected pfd output clk. For RUN/HSRUN clock, we use API
+  imx_clk_hw_cpu to make sure RUN or HSRUN could not shutdown clock output.
+
+Patch [7-8]/13: Make sure we could run into HSRUN mode and not when LDO
+  enabled.
+
+Patch 9/13: let cpufred-dt could have get_intermediate/target_intermediate
+  hooks to allow platform specific freq set.
+
+Patch [10-12]/13: i.MX7ULP cpufreq support
+
+Patch 13/13: Test dts, should not apply.
+
+For rpmsg/vitio part, I have posted patchset, if you wanna rpmsg regulator:
+https://patchwork.kernel.org/cover/11390481/
+
+Anson Huang (1):
+  clk: imx: Fix division by zero warning on pfdv2
+
+Peng Fan (13):
+  dt-bindings: fsl: add i.MX7ULP PMC binding doc
+  ARM: dts: imx7ulp: add pmc node
+  clk: imx: pfdv2: switch to use determine_rate
+  clk: imx: pfdv2: determine best parent rate
+  clk: imx: pllv4: use prepare/unprepare
+  clk: imx7ulp: make it easy to change ARM core clk
+  ARM: imx: imx7ulp: support HSRUN mode
+  ARM: imx: cpuidle-imx7ulp: Stop mode disallowed when HSRUN
+  cpufreq: dt: Allow platform specific intermediate callbacks
+  cpufreq: Add i.MX7ULP to cpufreq-dt-platdev blacklist
+  cpufreq: imx-cpufreq-dt: support i.MX7ULP
+  ARM: imx7ulp: enable cpufreq
+  [Do not Apply] ARM: dts: imx7ulp: add cpu OPP points
+
+ .../bindings/arm/freescale/imx7ulp_pmc.yaml        | 32 +++++++++
+ arch/arm/boot/dts/imx7ulp.dtsi                     | 38 ++++++++++
+ arch/arm/mach-imx/common.h                         |  1 +
+ arch/arm/mach-imx/cpuidle-imx7ulp.c                | 14 +++-
+ arch/arm/mach-imx/mach-imx7ulp.c                   |  3 +
+ arch/arm/mach-imx/pm-imx7ulp.c                     | 25 +++++++
+ drivers/clk/imx/clk-imx7ulp.c                      |  6 +-
+ drivers/clk/imx/clk-pfdv2.c                        | 61 +++++++++++-----
+ drivers/clk/imx/clk-pllv4.c                        | 12 ++--
+ drivers/cpufreq/cpufreq-dt-platdev.c               |  1 +
+ drivers/cpufreq/cpufreq-dt.c                       |  4 ++
+ drivers/cpufreq/cpufreq-dt.h                       |  4 ++
+ drivers/cpufreq/imx-cpufreq-dt.c                   | 83 +++++++++++++++++++++-
+ include/dt-bindings/clock/imx7ulp-clock.h          |  5 +-
+ 14 files changed, 257 insertions(+), 32 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/freescale/imx7ulp_pmc.yaml
+
+-- 
+2.16.4
 
