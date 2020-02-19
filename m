@@ -2,68 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6070164B3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 17:57:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01101164B72
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 18:05:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726682AbgBSQ5E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 11:57:04 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:55246 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726528AbgBSQ5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 11:57:03 -0500
-Received: from zn.tnic (p200300EC2F095500C57DC876B1A4488F.dip0.t-ipconnect.de [IPv6:2003:ec:2f09:5500:c57d:c876:b1a4:488f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726826AbgBSRF3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 12:05:29 -0500
+Received: from avon.wwwdotorg.org ([104.237.132.123]:33014 "EHLO
+        avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726514AbgBSRF3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 12:05:29 -0500
+X-Greylist: delayed 331 seconds by postgrey-1.27 at vger.kernel.org; Wed, 19 Feb 2020 12:05:28 EST
+Received: from [10.20.204.51] (unknown [216.228.112.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 498D21EC0CD9;
-        Wed, 19 Feb 2020 17:57:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1582131422;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=wBQ/V+Owq77r5fLvZwGz8LVJdcyZkflLLKgxNcXUSdA=;
-        b=WTdKP+F8vPWRVBlx/zejK9TZPtBxxTegXT2VRNnuYGBmVzrcYo9tT3T30aH1SPdsy7bEX5
-        rIpJWs1GMLcTov1wdGw4WAkVEg0mDXpqNXsT3qjsPfnyd0QvTKyMPvaxtLsjTqM0EZo3p7
-        MmxGKc8Z9xW4JBr2/eniYUv1QjEa/IM=
-Date:   Wed, 19 Feb 2020 17:56:50 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mingo@kernel.org, joel@joelfernandes.org,
-        gregkh@linuxfoundation.org, gustavo@embeddedor.com,
-        tglx@linutronix.de, paulmck@kernel.org, josh@joshtriplett.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        luto@kernel.org, tony.luck@intel.com, frederic@kernel.org,
-        dan.carpenter@oracle.com, mhiramat@kernel.org,
-        Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>
-Subject: Re: [PATCH v3 01/22] hardirq/nmi: Allow nested nmi_enter()
-Message-ID: <20200219165650.GB32346@zn.tnic>
-References: <20200219144724.800607165@infradead.org>
- <20200219150744.428764577@infradead.org>
- <20200219103126.33f67cf3@gandalf.local.home>
+        by avon.wwwdotorg.org (Postfix) with ESMTPSA id 7C4F21C092D;
+        Wed, 19 Feb 2020 09:59:55 -0700 (MST)
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.102.1 at avon.wwwdotorg.org
+Subject: Re: [PATCH v1] partitions/efi: Add 'gpt_sector' kernel cmdline
+ parameter
+To:     Christoph Hellwig <hch@infradead.org>,
+        Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Davidlohr Bueso <dave@stgolabs.net>,
+        Colin Cross <ccross@android.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        David Heidelberg <david@ixit.cz>,
+        Peter Geis <pgwipeout@gmail.com>, linux-efi@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200219162339.16192-1-digetx@gmail.com>
+ <20200219162738.GA10644@infradead.org>
+From:   Stephen Warren <swarren@wwwdotorg.org>
+Message-ID: <f9e41108-7811-0deb-6977-be0f60e23b52@wwwdotorg.org>
+Date:   Wed, 19 Feb 2020 09:59:54 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200219103126.33f67cf3@gandalf.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200219162738.GA10644@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 10:31:26AM -0500, Steven Rostedt wrote:
-> Probably should document somewhere (in a comment above nmi_enter()?)
-> that we allow nmi_enter() to nest up to 15 times.
+On 2/19/20 9:27 AM, Christoph Hellwig wrote:
+> On Wed, Feb 19, 2020 at 07:23:39PM +0300, Dmitry Osipenko wrote:
+>> The gpt_sector=<sector> causes the GPT partition search to look at the
+>> specified sector for a valid GPT header if the GPT is not found at the
+>> beginning or the end of block device.
+>>
+>> In particular this is needed for NVIDIA Tegra consumer-grade Android
+>> devices in order to make them usable with the upstream kernel because
+>> these devices use a proprietary / closed-source partition table format
+>> for the EMMC and it's impossible to change the partition's format. Luckily
+>> there is a GPT table in addition to the proprietary table, which is placed
+>> in uncommon location of the EMMC storage and bootloader passes the
+>> location to kernel using "gpt gpt_sector=<sector>" cmdline parameters.
+>>
+>> This patch is based on the original work done by Colin Cross for the
+>> downstream Android kernel.
+> 
+> I don't think a magic command line is the way to go.  The best would be
+> to reverse-engineer the proprietary partition table format.  If that is
+> too hard we can at least key off the odd GPT location based of it's
+> magic number.
 
-Yah, and can we make the BUG_ON() WARN_ON or so instead, so that there's
-at least a chance to be able to catch it for debugging. Or is the box
-going to be irreparably wedged after the 4 bits overflow?
+I thought that the backup GPT was always present in the standard 
+location; it's just the primary GPT that's in an odd location. So, this 
+kernel parameter just forces the kernel to look first for the primary 
+GPT in the unusual location, thus avoiding an error message when that's 
+not there, and the system falls back to the backup GPT.
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Or, do I misremember the layout, or the kernel's behaviour if primary 
+GPT is missing?
