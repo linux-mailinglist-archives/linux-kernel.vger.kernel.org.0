@@ -2,74 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D203A164436
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 13:29:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF847164445
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 13:30:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727513AbgBSM26 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 07:28:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44270 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726491AbgBSM25 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 07:28:57 -0500
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F004B21D56;
-        Wed, 19 Feb 2020 12:28:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582115337;
-        bh=pZqcXAmiIFw4IeJtWb4Wcj8aOi5Y83+K1GOOaMEDO7E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Umn/1xgaV43oz7F197cgo+A0c9gYfvgLHah+dwfpDMlsoOlwhteZSYiflE5BPlul/
-         DX1Ql9t919o+Z0DaA7Z7VQQKBfY019XpUOFh7TO8hKi2JKQYjXO1rIu44zNL5jANbV
-         ZCHllR7RHSdLV8ZMw/usUo5/sCFW64rEnm3GA6uM=
-Date:   Wed, 19 Feb 2020 12:28:52 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     "Isaac J. Manjarres" <isaacm@codeaurora.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com, pratikp@codeaurora.org,
-        Liam Mark <lmark@codeaurora.org>
-Subject: Re: [RFC PATCH] iommu/iova: Add a best-fit algorithm
-Message-ID: <20200219122852.GB19400@willie-the-truck>
-References: <1581721602-17010-1-git-send-email-isaacm@codeaurora.org>
- <b9d31aa9-fb57-ad31-52e4-1a5c21e5e0de@arm.com>
+        id S1727646AbgBSMaE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 07:30:04 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:58347 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726491AbgBSMaD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 07:30:03 -0500
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1j4OU0-0003po-Qk; Wed, 19 Feb 2020 12:29:40 +0000
+Date:   Wed, 19 Feb 2020 13:29:39 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>,
+        smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Phil Estes <estesp@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v3 11/25] inode: inode_owner_or_capable(): handle fsid
+ mappings
+Message-ID: <20200219122939.x6o4fytdcunkvg6i@wittgenstein>
+References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
+ <20200218143411.2389182-12-christian.brauner@ubuntu.com>
+ <20200218222523.GA9535@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <b9d31aa9-fb57-ad31-52e4-1a5c21e5e0de@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200218222523.GA9535@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 17, 2020 at 04:03:54PM +0000, Robin Murphy wrote:
-> On 14/02/2020 11:06 pm, Isaac J. Manjarres wrote:
-> > From: Liam Mark <lmark@codeaurora.org>
-> > 
-> > Using the best-fit algorithm, instead of the first-fit
-> > algorithm, may reduce fragmentation when allocating
-> > IOVAs.
+On Tue, Feb 18, 2020 at 02:25:23PM -0800, Christoph Hellwig wrote:
+> On Tue, Feb 18, 2020 at 03:33:57PM +0100, Christian Brauner wrote:
+> > +	if (is_userns_visible(inode->i_sb->s_iflags)) {
+> > +		if (kuid_has_mapping(ns, inode->i_uid) && ns_capable(ns, CAP_FOWNER))
+> > +			return true;
+> > +	} else if (kfsuid_has_mapping(ns, inode->i_uid) && ns_capable(ns, CAP_FOWNER)) {
 > 
-> What kind of pathological allocation patterns make that a serious problem?
-> Is there any scope for simply changing the order of things in the callers?
-> Do these drivers also run under other DMA API backends (e.g. 32-bit Arm)?
-> 
-> More generally, if a driver knows enough to want to second-guess a generic
-> DMA API allocator, that's a reasonable argument that it should perhaps be
-> properly IOMMU-aware and managing its own address space anyway. Perhaps this
-> effort might be better spent finishing off the DMA ops bypass stuff to make
-> that approach more robust and welcoming.
+> This adds some crazy long unreadable lines..
 
-Anecdotally, it appears to be a fairly common problem for 32-bit capable
-DMA masters to hit fragmentation problems with the current IOVA allocator
-but yes, some numbers to show how that is improved using best-fit (as
-opposed to e.g. worst-fit) are definitely required here.
-
-It might be that we can simply swizzle the algorithm to focus on reduced
-fragmentation for smaller (i.e. 32-bit) address spaces, but leave larger
-domains with the current approach to avoid increasing the allocation
-overhead.
-
-Will
+I'll ad a helper in the next version or wrap those lines depending on
+what makes more sense.
