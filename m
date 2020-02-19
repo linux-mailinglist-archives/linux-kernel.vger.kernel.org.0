@@ -2,89 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50187163D7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 08:30:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAA61163DBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 08:35:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726680AbgBSHaL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 02:30:11 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:38574 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbgBSHaJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 02:30:09 -0500
-Received: by mail-lf1-f67.google.com with SMTP id r14so16566215lfm.5
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 23:30:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7FnCiq4hA96VAHvbFXLDbnkoYqJvhn7/q9GEFSkjLz8=;
-        b=XA+8LmMoQ+0bciAXjXuKHio/Ma3CwfuhLLlbTK4oJqgiKU4zD/hF4yy1tFqQ9LVleM
-         j0p862IU1tdCS4eE3aRlheE2DIKO2Ey0K0Dq/pN1EijBGsLuuNk0++i73XjdEMBShwpL
-         qQ9eAj5wFQ4RyOV2TDnGOfSeS5NcqKlGoZ9fE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7FnCiq4hA96VAHvbFXLDbnkoYqJvhn7/q9GEFSkjLz8=;
-        b=LYuU41y0VKsMwvunfQ8Jxo6h3S+a0f62acNDm7LHW2Hz38Gbn94l21zIWVbGgYvmP9
-         eYkepJWJC0nkbbaueFN/t9nXokgAsK74oC9BGsvQmaqeF4lUWhHfFcm3d/wJDPYbPcki
-         ZePRttqoORctzD70IMPPUEi4bF75huCLQ3ll/1dHvSqGTUXNsBBKgX+SsRLvRGWitmGW
-         mX46UBLcyHb4zNy/Fw0CUdk7bY5Xbu7SQZhpf7a5WPeLcPDMM4CYpoA4FbhsOnZz6yTY
-         JHIMKA4+4pOzXWBupS527EZc2Oif0heEdMzhhQTJlYYjMoaGu1eA924Zkzk2jze2jcu0
-         pniA==
-X-Gm-Message-State: APjAAAVUuROhGZLyMZwX1kVwUwLZb2sA2WmxiN12AVpQx35frwxfU3qa
-        aHfCwvJWA5Qm0JmTaavx170Gbg==
-X-Google-Smtp-Source: APXvYqx8vCjrG9iQLoAlDqFbCik4pZOKiSELxoACc0IuQGQVH3YTUjiTKzZe/ZVgMyzDsvD1E9omhw==
-X-Received: by 2002:a19:c1c9:: with SMTP id r192mr12743260lff.28.1582097407281;
-        Tue, 18 Feb 2020 23:30:07 -0800 (PST)
-Received: from [172.16.11.50] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id z22sm539555lfd.87.2020.02.18.23.30.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2020 23:30:06 -0800 (PST)
-Subject: Re: [PATCH] vsprintf: don't obfuscate NULL and error pointers
-To:     Ilya Dryomov <idryomov@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Adam Borowski <kilobyte@angband.pl>,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        "Tobin C . Harding" <me@tobin.cc>
-References: <20200217222803.6723-1-idryomov@gmail.com>
- <202002171546.A291F23F12@keescook>
- <CAOi1vP-2uAD83Vi=Eebu_GPzq5DUt+z9zogA7BNGF1B1jUgAVw@mail.gmail.com>
- <CAHk-=whj0vMcdVPC0=9aAsN2-tsCyFKF4beb2gohFeFK_Z-Y9g@mail.gmail.com>
- <20200218193136.GA22499@angband.pl>
- <CAHk-=wjEd-gZ1g52kgi_g8gq-QCF2E01TkQd5Hmj4W5aThLw3A@mail.gmail.com>
- <CAOi1vP_Ned9QG32+o9KT-Bh3qMTb6h0SaP8W74Am_gkVX3mcSQ@mail.gmail.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <178fd91a-5171-d269-2e8f-bf58e5d98fbe@rasmusvillemoes.dk>
-Date:   Wed, 19 Feb 2020 08:30:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1726826AbgBSHeE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 02:34:04 -0500
+Received: from [167.172.186.51] ([167.172.186.51]:35050 "EHLO shell.v3.sk"
+        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726772AbgBSHeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 02:34:02 -0500
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 8FF63E0071;
+        Wed, 19 Feb 2020 07:34:14 +0000 (UTC)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id HN17adJcV5R0; Wed, 19 Feb 2020 07:34:13 +0000 (UTC)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 1EE14E0046;
+        Wed, 19 Feb 2020 07:34:13 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 2QCWGCc6_F_A; Wed, 19 Feb 2020 07:34:12 +0000 (UTC)
+Received: from furthur.lan (unknown [109.183.109.54])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 7C773DFCA2;
+        Wed, 19 Feb 2020 07:34:12 +0000 (UTC)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 00/10] MMP2 CLK Update
+Date:   Wed, 19 Feb 2020 08:33:43 +0100
+Message-Id: <20200219073353.184336-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <CAOi1vP_Ned9QG32+o9KT-Bh3qMTb6h0SaP8W74Am_gkVX3mcSQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/02/2020 21.19, Ilya Dryomov wrote:
+Hi,
 
-> Looks sensible to me.  Without this patch NULL is obfuscated for
-> both %p and %pe though.  Do you want this patch amended or prefer
-> a follow-up for %pe "0000000000000000" -> "NULL" so that it can be
-> discussed separately?
+please consider applying this patch series. Its goal is to ultimately
+provide accurate clock sources from PLLs configured by firmware on MMP2 a=
+nd
+MMP3. Currently they are hardcoded to more or less wrong values, which
+causes bad timings when they are use (e.g. to generate display clock).
 
-Please cc me on all vsprintf.c patches (scripts/get_maintainer.pl should
-list me as reviewer), and especially ones that touch the recently added %pe.
+It starts off with a handful of cleanups:
 
-Thanks,
-Rasmus
+  [PATCH 01/10] clk: mmp2: Remove a unused prototype
+  [PATCH 02/10] clk: mmp2: Constify some strings
+  [PATCH 03/10] dt-bindings: clock: Convert marvell,mmp2-clock to
+
+The next patch adds the logic for calculating the rate of clock signals
+coming from the PLLs dynamically, while not actually switching the
+driver over to using it.
+
+  [PATCH 04/10] clk: mmp2: Add support for PLL clock sources
+
+Then MMP2 is switched over:
+
+  [PATCH 05/10] clk: mmp2: Stop pretending PLL outputs are constant
+
+Switching MMP3 requires some more work, because until now, the driver
+has been the same for both versions of the SoC:
+
+  [PATCH 06/10] dt-bindings: clock: Add MMP3 compatible string
+  [PATCH 07/10] clk: mmp2: Check for MMP3
+  [PATCH 08/10] dt-bindings: marvell,mmp2: Add clock ids for MMP3 PLLs
+  [PATCH 09/10] clk: mmp2: Add PLLs that are available on MMP3
+  [PATCH 10/10] ARM: dts: mmp3: Use the MMP3 compatible string for
+
+The hardware vendor doesn't supply documentation, so this is best-effort
+work based on the code dump from Marvell.
+
+Tested on MMP2 and MMP3 based hardware I have; details in relevant
+commit messages.
+
+Thank you,
+Lubo
+
