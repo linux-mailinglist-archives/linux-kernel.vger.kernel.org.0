@@ -2,106 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35D1E164F4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 20:54:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE922164F4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 20:57:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbgBSTy1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 14:54:27 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:40208 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726634AbgBSTy0 (ORCPT
+        id S1726963AbgBST5A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 14:57:00 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45747 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726648AbgBST47 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 14:54:26 -0500
-Received: by mail-qt1-f194.google.com with SMTP id v25so1144542qto.7
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 11:54:26 -0800 (PST)
+        Wed, 19 Feb 2020 14:56:59 -0500
+Received: by mail-pl1-f196.google.com with SMTP id b22so491759pls.12
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 11:56:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GZ9YXuE15eVQ1m82XL11R20aCz4heFp3V/a8Xs8KTDk=;
-        b=ODVc7IEJfwpkmKIQUqFybHBw620ekiVwat/n9Ac5Pfspu1Q4DuB58gmJDIsLNVVBR7
-         EpgFHQfjMKK9d8IFitaDW17i9XWGMOavG4yOJnvYsg02g18N65AN1jFk1HcjJ57HAFxd
-         Srq5n3/4F5KJ984TW6fFo2kUw679IcjtmPWAcaOWdAcZSMUz+MUTctzRJjL6rDujJi/Y
-         EZ5twEFC1HpJvBQ4+fhBpkHpbsTIlkaMeDsXOufmgAI9ouoTt9BWBKfdT8kf7Xff3/mQ
-         zcrvJjierCEsOXBM6EBzIlWLE2Y6UQ4XbCxlvapTQbBcZKR3JvyWwjtYZpGRKgkQ/k9/
-         vfwA==
+        d=es-iitr-ac-in.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=a7yW3eGud1nSB17w6PgcUOM+BLtId9z+DBtjQPe4XL0=;
+        b=r/l08eDzR96yyXbytmobJW2Bl/fPaohWkVNzuCsnrvjhVcAb6GheysMrymn9aLAksW
+         heGi5eeX4ymS+7fQqjPVdqR3W+0teRBB14DV4TJArI5VmU1ClW+cC/rqNQ8SyY4O3z/M
+         X/cPNzvMGkj+IfvKrMCHh2nMWM1LIpEVitkwZeZaZUusIrLQdZQ2phfNKYqhW3qt7/iY
+         rf79KBtXefhjbHADz0i4mZ+ROJtY1qJ1M8Vn5syeAk1QjZzOGln6i5hpbNgHQHPztRrf
+         BsdMfEPmcoclw0n7l9rYCMJJmvylvV8paInd5zRQJ37e5ogoA3FOJvpC/DAl9fRmza5m
+         thQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GZ9YXuE15eVQ1m82XL11R20aCz4heFp3V/a8Xs8KTDk=;
-        b=GlePMC1KoAZZRzocKSr/x8bUTcHLTj0RyligaRtmfyn+nvzIvtDCZUKuEwQyzal1Uc
-         CQAfYO/RkzjcSAxVBEzxiKEW+rR11EoTP07TBaMtjQVwEMrgSMa7v5Cshikm7QfJfqzT
-         4J+slltY2JTsT8ck4/AUzWp0K6CUUwdNjZj+KqUPSQM7t1nolKjI81IRFPPErGGQpuwl
-         0lt/SNAtHZNBjZHA/njNDyxYeY/nOAwJeLE+I8jANBpxifLE4x/avoAiglrOeM/hYXeZ
-         M2HVI9zolvKTlsWBV/itb5wFfSS04nP3Kku/gbbQvTHgqzJ8xdcrXZzwtv2oUoUtJUuC
-         h6aw==
-X-Gm-Message-State: APjAAAW4HXG125C7+7F1MqZVtQIAROl+qaJwjkzR7oLUVsupDEbMC1/+
-        kQMbVoSuVDui0sgEODr8Z/3t1A==
-X-Google-Smtp-Source: APXvYqwUhupndXBE09xsDkgUA7kwgC2NQShW8nuUAvL8wUSkyIakN42anJqBWpm/nMwac3dxI/meAg==
-X-Received: by 2002:aed:3fb7:: with SMTP id s52mr22354651qth.97.1582142065790;
-        Wed, 19 Feb 2020 11:54:25 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
-        by smtp.gmail.com with ESMTPSA id p8sm490083qtn.71.2020.02.19.11.54.25
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=a7yW3eGud1nSB17w6PgcUOM+BLtId9z+DBtjQPe4XL0=;
+        b=fhasdCqmAG5Ga9dzzCMpMVIE/0sXs6orI8wn1XH+PCgsoOkF2IhHPKE8LO4v0mbnX5
+         OrGUvg4pgVtgT3xKZmqOyBRJoDvldR3vcK2e4or9LPvOzCFfweaBNBQhbyeYXDCsfiRm
+         uRiqahDVC2kEarkz5skZ4wtz7cUlbIfcfdN/KgOGSj90EZqHa+cLzJbe9BbX76Cy/d9z
+         zKV+AIkqRdiIvsXNFD4DCKlx7EdzUSmffcQlDLDAlaGdutAYbHWJCNHERD3O9tnRmbAY
+         XSFJZbAysCmmcPilKM4qqCpg+jyi/ElRbghU0IrRTEs7jhKFor0YoWea5v6XHEpMKUUm
+         89Ag==
+X-Gm-Message-State: APjAAAXZQ8xEzpmAnidbYWsDp12kPGjnb8DmNCTpwzRzJaBQo/SX2PGm
+        X+rdMODYizaMjkaHr/On86qe3Q==
+X-Google-Smtp-Source: APXvYqxwuzVnh9ab7+j2hcebiGY8l+/eJsMFxnHM0mMZAQQEbpFy2cBwB1vsrtm/7WJQHXpNqIW4FA==
+X-Received: by 2002:a17:90a:20aa:: with SMTP id f39mr10917261pjg.35.1582142218933;
+        Wed, 19 Feb 2020 11:56:58 -0800 (PST)
+Received: from kaaira-HP-Pavilion-Notebook ([103.37.201.172])
+        by smtp.gmail.com with ESMTPSA id t189sm422306pfd.168.2020.02.19.11.56.55
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Feb 2020 11:54:25 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1j4VQO-0006DL-Tx; Wed, 19 Feb 2020 15:54:24 -0400
-Date:   Wed, 19 Feb 2020 15:54:24 -0400
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@redhat.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Subject: Re: [PATCH 3/6] tracing: Wrap section comparison in
- tracer_alloc_buffers with COMPARE_SECTIONS
-Message-ID: <20200219195424.GW31668@ziepe.ca>
-References: <20200219045423.54190-1-natechancellor@gmail.com>
- <20200219045423.54190-4-natechancellor@gmail.com>
- <20200219093445.386f1c09@gandalf.local.home>
- <CAKwvOdm-N1iX0SMxGDV5Vf=qS5uHPdH3S-TRs-065BuSOdKt1w@mail.gmail.com>
- <20200219181619.GV31668@ziepe.ca>
- <CAKwvOd=8vb5eOjiLg96zr25Xsq_Xge_Ym7RsNqKK8g+ZR9KWzA@mail.gmail.com>
+        Wed, 19 Feb 2020 11:56:58 -0800 (PST)
+Date:   Thu, 20 Feb 2020 01:26:51 +0530
+From:   Kaaira Gupta <kgupta@es.iitr.ac.in>
+To:     Vaibhav Agarwal <vaibhav.sr@gmail.com>,
+        Mark Greer <mgreer@animalcreek.com>,
+        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: greybus: match parenthesis alignment
+Message-ID: <20200219195651.GA485@kaaira-HP-Pavilion-Notebook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKwvOd=8vb5eOjiLg96zr25Xsq_Xge_Ym7RsNqKK8g+ZR9KWzA@mail.gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 11:11:19AM -0800, Nick Desaulniers wrote:
-> > Godbolt says clang is happy if it is written as:
-> >
-> >   if (&__stop___trace_bprintk_fmt[0] != &__start___trace_bprintk_fmt[0])
-> >
-> > Which is probably the best compromise. The type here is const char
-> > *[], so it would be a shame to see it go.
-> 
-> If the "address" is never dereferenced, but only used for arithmetic
-> (in a way that the the pointed to type is irrelevant), does the
-> pointed to type matter? 
+Fix checkpatch.pl warning of alignment should match open parenthesis in
+audio_codec.c
 
-The type is used here:
+Signed-off-by: Kaaira Gupta <kgupta@es.iitr.ac.in>
+---
+ drivers/staging/greybus/audio_codec.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-        if (*pos < start_index)
-                return __start___trace_bprintk_fmt + *pos;
+diff --git a/drivers/staging/greybus/audio_codec.c b/drivers/staging/greybus/audio_codec.c
+index 08746c85dea6..d62f91f4e9a2 100644
+--- a/drivers/staging/greybus/audio_codec.c
++++ b/drivers/staging/greybus/audio_codec.c
+@@ -70,7 +70,7 @@ static int gbaudio_module_enable_tx(struct gbaudio_codec_info *codec,
+ 		i2s_port = 0;	/* fixed for now */
+ 		cportid = data->connection->hd_cport_id;
+ 		ret = gb_audio_apbridgea_register_cport(data->connection,
+-						i2s_port, cportid,
++							i2s_port, cportid,
+ 						AUDIO_APBRIDGEA_DIRECTION_TX);
+ 		if (ret) {
+ 			dev_err_ratelimited(module->dev,
+@@ -160,7 +160,7 @@ static int gbaudio_module_disable_tx(struct gbaudio_module_info *module, int id)
+ 		i2s_port = 0;	/* fixed for now */
+ 		cportid = data->connection->hd_cport_id;
+ 		ret = gb_audio_apbridgea_unregister_cport(data->connection,
+-						i2s_port, cportid,
++							  i2s_port, cportid,
+ 						AUDIO_APBRIDGEA_DIRECTION_TX);
+ 		if (ret) {
+ 			dev_err_ratelimited(module->dev,
+@@ -205,7 +205,7 @@ static int gbaudio_module_enable_rx(struct gbaudio_codec_info *codec,
+ 		i2s_port = 0;	/* fixed for now */
+ 		cportid = data->connection->hd_cport_id;
+ 		ret = gb_audio_apbridgea_register_cport(data->connection,
+-						i2s_port, cportid,
++							i2s_port, cportid,
+ 						AUDIO_APBRIDGEA_DIRECTION_RX);
+ 		if (ret) {
+ 			dev_err_ratelimited(module->dev,
+@@ -295,7 +295,7 @@ static int gbaudio_module_disable_rx(struct gbaudio_module_info *module, int id)
+ 		i2s_port = 0;	/* fixed for now */
+ 		cportid = data->connection->hd_cport_id;
+ 		ret = gb_audio_apbridgea_unregister_cport(data->connection,
+-						i2s_port, cportid,
++							  i2s_port, cportid,
+ 						AUDIO_APBRIDGEA_DIRECTION_RX);
+ 		if (ret) {
+ 			dev_err_ratelimited(module->dev,
+-- 
+2.17.1
 
-The return expression should be a const char **
-
-Presumably the caller of find_next derferences it.
-
-Jason
