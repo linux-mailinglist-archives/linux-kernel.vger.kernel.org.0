@@ -2,138 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B669F164EA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 20:15:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAE9F164EAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 20:16:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbgBSTPW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 14:15:22 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44129 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726609AbgBSTPW (ORCPT
+        id S1726851AbgBSTQV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 14:16:21 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:42936 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726638AbgBSTQV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 14:15:22 -0500
-Received: by mail-pf1-f196.google.com with SMTP id y5so529217pfb.11;
-        Wed, 19 Feb 2020 11:15:21 -0800 (PST)
+        Wed, 19 Feb 2020 14:16:21 -0500
+Received: by mail-qk1-f196.google.com with SMTP id o28so1187815qkj.9
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 11:16:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2zEHOco7QzZ9vaVw4GQ0CN4vwjsRv+RVGKpumkhb5GU=;
-        b=tSseXEsRzFSuZb4RaMTcizdxiKwxvPX3//HWY3MdQvniSRMStqeuH2gB3REfk7Dsh7
-         zBdPH1fGRg3vXQ9zRuTPLnBV9iwQbsMAVB7WpltokDdWQh2PsE7dbnk0yq/vxhQbL+3p
-         0b4lPp7A1dCcGZ0ylT9ifa0NMu+yke6jxF9m6Hse0MMu9GnBf1rEKaGxRzhFbFpm/wt5
-         VNpd2KIyJlZ6drl7lmpuLxwNUsMpQTxIJzwzj7i/gMGJRNBT5FFqF7XBxjWF4Ke4iIrm
-         49CEWiKDkBSrHocJd/VQKWs3KYVGos3VSZynxH5nn3BSPR5wn3PfH38aXlyF2zc88vJA
-         r+UA==
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=mZCRvJUEd0aeZMSM2KiDRl8M85Gpn4sTqFj3MDhSdPs=;
+        b=ZICvLtBj1Wsb4nDHlvOkhJNjp3TK0gM17yFa9MWXljGt5qzSyWPJyOsQ2sFarzK7fo
+         BUjh3r6byLkmeK3UhKrBX+McO538JJpggApObSaFa7bl67ekDkGK29iwsMiq41gfPvMX
+         4UHHiWljqNjxb1OKPRXzIXh8ymNLCJGtes2Zcn12WpgyyO+0SUmRejsSms4mxW7hSzgU
+         nKjNF019p2KE9fxskrQvcbZt5XkL0ZWaIaAcdZtK7/I/2r4+s7VR/gLAVBzZknuwqgPw
+         s7kQMRNLecMpnp/YU05mEVI/pqk3i00TvTx+a7189OODFLRBJcRg3laDJqIQubVaU+LO
+         924w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=2zEHOco7QzZ9vaVw4GQ0CN4vwjsRv+RVGKpumkhb5GU=;
-        b=aPtu6l+kBofTG9YvHXPanY+kn78BvtzAl6NQvwNWmMoF8A5/UxreFrsKp2Grhkg2rB
-         6ItYTpZvElh5QPac9H+HBHb/aEhbGErogT0qnqc5hUnZtBRHKzzrgA7OeoluQRcwny4D
-         WbUEWW7rcg3L2xdsZdrKsDIhht9S+JNVxWSqJFykBFgLPADiyGVtKMbzh27Eta9JTh0K
-         15EDiAR5SNequ9qAH+qrPw/ms5ZWGIHq6EW88EKickA9HoTiPfc47gT3LcREyur+almr
-         K5w1Fq5DyFNP1h7g1lohparYglDXzPSh1hfqPY+Y9tWDEi0QK0VhZSblRBuTZXstmbiB
-         X0Uw==
-X-Gm-Message-State: APjAAAUlkkkVrymT+stLs/cIbR/fc5fgVdm1/iz+/tWqmKWTditxNXkv
-        gXUIDueZ844vgNLsXPxcC58=
-X-Google-Smtp-Source: APXvYqyq3LTZQ1hG+kWceiD95Lk5ozghhvAU+rYXpMNfL/pVnY0HFspm5XHxmnjcx6GItMtSj7aB8g==
-X-Received: by 2002:aa7:8699:: with SMTP id d25mr28006271pfo.139.1582139720968;
-        Wed, 19 Feb 2020 11:15:20 -0800 (PST)
-Received: from [10.67.49.41] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id b1sm407827pfp.44.2020.02.19.11.15.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2020 11:15:19 -0800 (PST)
-Subject: Re: [PATCH v2 1/4] soc: bcm2835: Sync xHCI reset firmware property
- with downstream
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com
-Cc:     linux-usb@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org,
-        tim.gover@raspberrypi.org, linux-pci@vger.kernel.org,
-        wahrenst@gmx.net
-References: <20200219123933.2792-1-nsaenzjulienne@suse.de>
- <20200219123933.2792-2-nsaenzjulienne@suse.de>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- G10n8gCguORqNGMsVRxrlLs7/himep7MrCc=
-Message-ID: <ab378eb2-b285-86b8-8473-643a6075f1ed@gmail.com>
-Date:   Wed, 19 Feb 2020 11:15:11 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=mZCRvJUEd0aeZMSM2KiDRl8M85Gpn4sTqFj3MDhSdPs=;
+        b=trl9JyrTecRq23qnw5RJHn+Nfec5T+OhsdPJLbHUmcknnN1/DwFthdAyaozl4APtVj
+         A4stOu9xdWHVmijyioWR2YNqGqp5J+xiTKn6GavWbUXmeXaYDc9x6YJF9Ss50wgPvGHu
+         QxFMLGdKoKbJKCx2/jpewT0z+sbclUMFNyEpdesRzi7xh9khK52kePDKI092PKdnKymX
+         1baRQI6uFqO/JNF+Mn8o7ntWfUe7SZvSptv3NOW/+cVPNs6jYnfJY1VHEdEV1AdkZvMe
+         k4AAudGta2/HDNkk8N+gB0ovEzRlXn4qqhqVwWiX836eu9Bmbbm0e5reWX0jU73I0+FT
+         5nIQ==
+X-Gm-Message-State: APjAAAVLHBPPVHyHEyWdZEK52vUQR/93leEoKqQgefn5A2SrFwuI59i7
+        fSvdFvgFUCsE/UTqTHolZUWtouGdSj0=
+X-Google-Smtp-Source: APXvYqz9amEfdzGX4zShoEWYftKfNorEjDz56/h4hIyjAMq7P48d1ZPghHUVh4aopdc5sI0lKx4huw==
+X-Received: by 2002:ae9:e207:: with SMTP id c7mr24017223qkc.128.1582139780194;
+        Wed, 19 Feb 2020 11:16:20 -0800 (PST)
+Received: from localhost ([2620:10d:c091:500::2:3bde])
+        by smtp.gmail.com with ESMTPSA id b84sm310728qkg.90.2020.02.19.11.16.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2020 11:16:19 -0800 (PST)
+Date:   Wed, 19 Feb 2020 14:16:18 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>, Roman Gushchin <guro@fb.com>,
+        linux-mm@kvack.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com
+Subject: Re: [PATCH] mm: memcontrol: asynchronous reclaim for memory.high
+Message-ID: <20200219191618.GB54486@cmpxchg.org>
+References: <20200219181219.54356-1-hannes@cmpxchg.org>
+ <20200219183731.GC11847@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20200219123933.2792-2-nsaenzjulienne@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200219183731.GC11847@dhcp22.suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/19/20 4:39 AM, Nicolas Saenz Julienne wrote:
-> The property is needed in order to trigger VL805's firmware load.
+On Wed, Feb 19, 2020 at 07:37:31PM +0100, Michal Hocko wrote:
+> On Wed 19-02-20 13:12:19, Johannes Weiner wrote:
+> > We have received regression reports from users whose workloads moved
+> > into containers and subsequently encountered new latencies. For some
+> > users these were a nuisance, but for some it meant missing their SLA
+> > response times. We tracked those delays down to cgroup limits, which
+> > inject direct reclaim stalls into the workload where previously all
+> > reclaim was handled my kswapd.
 > 
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> I am curious why is this unexpected when the high limit is explicitly
+> documented as a throttling mechanism.
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
+Memory.high is supposed to curb aggressive growth using throttling
+instead of OOM killing. However, if the workload has plenty of easily
+reclaimable memory and just needs to recycle a couple of cache pages
+to permit an allocation, there is no need to throttle the workload -
+just as there wouldn't be any need to trigger the OOM killer.
+
+So it's not unexpected, but it's unnecessarily heavy-handed: since
+memory.high allows some flexibility around the target size, we can
+move the routine reclaim activity (cache recycling) out of the main
+execution stream of the workload, just like we do with kswapd. If that
+cannot keep up, we can throttle and do direct reclaim.
+
+It doesn't change the memory.high semantics, but it allows exploiting
+the fact that we have SMP systems and can parallize the book keeping.
+
+> > This patch adds asynchronous reclaim to the memory.high cgroup limit
+> > while keeping direct reclaim as a fallback. In our testing, this
+> > eliminated all direct reclaim from the affected workload.
+> 
+> Who is accounted for all the work? Unless I am missing something this
+> just gets hidden in the system activity and that might hurt the
+> isolation. I do see how moving the work to a different context is
+> desirable but this work has to be accounted properly when it is going to
+> become a normal mode of operation (rather than a rare exception like the
+> existing irq context handling).
+
+Yes, the plan is to account it to the cgroup on whose behalf we're
+doing the work.
+
+The problem is that we have a general lack of usable CPU control right
+now - see Rik's work on this: https://lkml.org/lkml/2019/8/21/1208.
+For workloads that are contended on CPU, we cannot enable the CPU
+controller because the scheduling latencies are too high. And for
+workloads that aren't CPU contended, well, it doesn't really matter
+where the reclaim cycles are accounted to.
+
+Once we have the CPU controller up to speed, we can add annotations
+like these to account stretches of execution to specific
+cgroups. There just isn't much point to do it before we can actually
+enable CPU control on the real workloads where it would matter.
+
+[ This is generally work in process: for example, if you isolate
+  workloads with memory.low, kswapd cpu time isn't accounted to the
+  cgroup that causes it. Swap IO issued by kswapd isn't accounted to
+  the group that is getting swapped. The memory consumed by struct
+  cgroup itself, the percpu allocations for the vmstat arrays etc.,
+  which is sizable, are not accounted to the cgroup that creates
+  subgroups, and so forth. ]
