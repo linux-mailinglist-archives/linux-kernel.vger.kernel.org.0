@@ -2,78 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E65411647BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 16:05:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E86BC1647BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 16:05:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726773AbgBSPF1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 10:05:27 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:50850 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726528AbgBSPF0 (ORCPT
+        id S1726802AbgBSPFn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 10:05:43 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:40051 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726663AbgBSPFn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 10:05:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=CmpNQkTd3vKnTq7/TH/RtMx5e3zbH2m4y+mEOQjw6BA=; b=1YTSyvj8g/pdWWys4wIaEv5bRJ
-        qJyFJIjYB4oK5I7Iy0dp2rthMCM03ED3LLgk6XlGpU5goYtIqBYawszo4VXN+zS/vHonBsS9RjbZl
-        9rgiiswz71jqImDv0ysKRU1jeYLEA/NDfJcjym7gT3//6hiskVsHQZarFROJQD1jmOGTZ16p+EwnT
-        mJ+CZwF6A4sO3s3kZRli9MhFHjLNsKJDZBjtlzB9vNXmXrc6HK66RGK+DA3IrpAZuIUF4uYTMy8zj
-        TtvL2T9s+da9RUlqLsEVQv6hJmk5qCJ4YIJ/bsEuaLy+3+GoDSLy8iLbTp6QqaG2j9JHvm4zykXEq
-        p4CKmuAg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j4QuU-0007V7-IS; Wed, 19 Feb 2020 15:05:10 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5D9A1300565;
-        Wed, 19 Feb 2020 16:03:15 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 58B032871C337; Wed, 19 Feb 2020 16:05:07 +0100 (CET)
-Date:   Wed, 19 Feb 2020 16:05:07 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Tony Luck <tony.luck@intel.com>, x86-ml <x86@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] #MC mess
-Message-ID: <20200219150507.GD18400@hirez.programming.kicks-ass.net>
-References: <20200218173150.GK14449@zn.tnic>
- <CALCETrXbitwGKcEbCF84y0aEGz+B4LL_bj-_njgyXBJA74abOA@mail.gmail.com>
- <20200219081541.GG14914@hirez.programming.kicks-ass.net>
- <20200219092115.3b3cccd9@gandalf.local.home>
+        Wed, 19 Feb 2020 10:05:43 -0500
+Received: by mail-ot1-f65.google.com with SMTP id i6so416207otr.7;
+        Wed, 19 Feb 2020 07:05:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SBKr6SKoCafYNmFC5MjIcmPvtNTyDNU/puwE+3je3yw=;
+        b=IAnoSWehFEL7vMivpe+ZE1ANDz7gZ/bdBTA04+nX9+Rl6F9sO5SWVt+BUnbARhwM2p
+         tnVLpIU9E6I9UIpXQSWj4yUPnsgaGii+WYOZ1VENO4QypcCK4uO2pbDGc9ejst2BcyTo
+         LAdwly7gNbCQKHvnyQyihxP8HnVnUItJFgb4NbSDFCJAvhhS/uda0g+TtS1ImpzEasLg
+         QNNjhjZNnXOgtaB43akoPHVI08PtHPj+8TlyXZ2t/mLpXr771/DeowLPdgwddLuTr8oa
+         pckvKx2AKuzl7KQFKUkB6uXUOadUcwwgLyl0kCA7LbEFL+eQU1drHR5kbtDEOiDDGAaP
+         CMJw==
+X-Gm-Message-State: APjAAAUqHAdeElqJTE7XHontWhQOGz8wUwJxYdT959tjHVeuZAZtP5Xe
+        wOacm3hf+smUQC0qJspXtQ==
+X-Google-Smtp-Source: APXvYqzQfbs3yejJP7JC1NIdQfNXPIqC6m0QklCphdJhvqRhtoYtKQhsaQx+0uOvCILhD83U6NqKKQ==
+X-Received: by 2002:a9d:7357:: with SMTP id l23mr19144503otk.10.1582124742732;
+        Wed, 19 Feb 2020 07:05:42 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id g5sm3046otp.10.2020.02.19.07.05.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2020 07:05:41 -0800 (PST)
+Received: (nullmailer pid 22736 invoked by uid 1000);
+        Wed, 19 Feb 2020 15:05:41 -0000
+Date:   Wed, 19 Feb 2020 09:05:41 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Olivier Moysan <olivier.moysan@st.com>
+Cc:     lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
+        tiwai@suse.com, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
+        alsa-devel@alsa-project.org, robh@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-kernel@vger.kernel.org, olivier.moysan@st.com,
+        arnaud.pouliquen@st.com, benjamin.gaignard@st.com
+Subject: Re: [PATCH v2] ASoC: dt-bindings: stm32: convert i2s to json-schema
+Message-ID: <20200219150541.GA22679@bogus>
+References: <20200207120345.24672-1-olivier.moysan@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200219092115.3b3cccd9@gandalf.local.home>
+In-Reply-To: <20200207120345.24672-1-olivier.moysan@st.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 09:21:15AM -0500, Steven Rostedt wrote:
-> On Wed, 19 Feb 2020 09:15:41 +0100
-> Peter Zijlstra <peterz@infradead.org> wrote:
+On Fri, 7 Feb 2020 13:03:45 +0100, Olivier Moysan wrote:
+> Convert the STM32 I2S bindings to DT schema format using json-schema.
 > 
-> > > 
-> > > Tony, etc, can you ask your Intel contacts who care about this kind of
-> > > thing to stop twiddling their thumbs and FIX IT?  The easy fix is
-> > > utterly trivial.  Add a new instruction IRET_NON_NMI.  It does
-> > > *exactly* the same thing as IRET except that it does not unmask NMIs.
-> > > (It also doesn't unmask NMIs if it faults.)  No fancy design work.
-> > > Future improvements can still happen on top of this.  
-> > 
-> > Yes please! Of course, we're stuck with the existing NMI entry crap
-> > forever because legacy, but it would make all things NMI so much saner.
+> Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
+> ---
+> Changes in v2:
+> - Define items order for clock and dma properties
+> ---
+>  .../bindings/sound/st,stm32-i2s.txt           | 62 -------------
+>  .../bindings/sound/st,stm32-i2s.yaml          | 87 +++++++++++++++++++
+>  2 files changed, 87 insertions(+), 62 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/sound/st,stm32-i2s.txt
+>  create mode 100644 Documentation/devicetree/bindings/sound/st,stm32-i2s.yaml
 > 
-> What would be nice is to have a NMI_IRET, that is defined as something
-> that wont break legacy CPUs. Where it could be just a nop iret, or maybe
-> if possible a "lock iret"? That is, not have a IRET_NON_NMI, as that
-> would be all over the place, but just the iret for NMI itself. As
-> that's in one place.
 
-I don't think that matters much; alternatives should be able to deal
-with all that either which way around.
+Reviewed-by: Rob Herring <robh@kernel.org>
