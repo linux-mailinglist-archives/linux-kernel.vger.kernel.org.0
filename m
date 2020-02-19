@@ -2,96 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21C191640D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 10:53:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC59A1640FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 10:59:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726613AbgBSJxY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 04:53:24 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45103 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbgBSJxY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 04:53:24 -0500
-Received: by mail-pf1-f195.google.com with SMTP id 2so12232182pfg.12;
-        Wed, 19 Feb 2020 01:53:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9v8+wIBub2qiLrO6UKbQxc1lcW/tT/d7asx+H//NX30=;
-        b=u57rzFA9pzTtMdQVkpEyH91i0vMmE1fKyg+1p5GmPkcbJZXGbx2GxHJTN4+B9DtfQ6
-         w1KoHvl5zcNbhWbjXEp/8Wbz23UDVorCbM8TrCS85deP9UG4NXuIB6ltRL4BcQjtUhUN
-         jSenzfHBEkVDNcu9q9OeD3DFSseCHgSwcJ9ASJ51uKlaDWKk60oHc8mX6xQHVNOB9Gz0
-         fBGry9M86uIgCidu0Ofb18szAinmsjYhHAVkVj3/y6p9v37WnZ5dHvZl9iKtbFfXMGUs
-         aSZfJ8mHdKFxy0cOSlAvwmoQ/ah3ORgjqt8AHCBkEXvi9Nt8z+b4KZLmR1ptdAZcC79l
-         OwlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9v8+wIBub2qiLrO6UKbQxc1lcW/tT/d7asx+H//NX30=;
-        b=TUwmY/cutxeUs6+sdFtY2fPxqkioM+pXqwgdwnq9+R+FCEmFhUTQEA05QQxa/zBpqa
-         JxHB71NgEgE3g5yhWozdYhtGtcoF44P4c2xZW+yHH6dOeTS5WVMLXr1e1eGn+4Fq1XmM
-         ecjK4XlbtMGJCYNQkobLIOUTTZrCNVndhhHLzELq/0kb3339z1PcRSb/3ZeCzOlIgB1u
-         5cPIeMKN/a5vas6c5nAPbnlu37UjqOIhzdu6AikFp+L9jtP0PJcF+rYVhwE1AcKBinRQ
-         GDSHHu5WeuEStIbtJvFT5wg1Qinki6XntgI1QboEpmT3NSO1kIEvgm8mMDKZPyDBWMe4
-         ARLw==
-X-Gm-Message-State: APjAAAWilrbeFw3iLGdHK0kF75XsTp4Lf1EyuohkWg4YMuo7Fsc1myvC
-        OnW0Y6WM+PWZq0uhP+4NlKc=
-X-Google-Smtp-Source: APXvYqyN5sxGSp5lOMX94IBT9XEXhNRJK9Ibb42qfRvKAGp1zdKgDaYVcSh+nz2Zj9q/TECBXgh1+A==
-X-Received: by 2002:a63:5f4e:: with SMTP id t75mr26676074pgb.7.1582106003790;
-        Wed, 19 Feb 2020 01:53:23 -0800 (PST)
-Received: from localhost.localdomain ([146.196.37.220])
-        by smtp.googlemail.com with ESMTPSA id t11sm2063907pgi.15.2020.02.19.01.53.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 01:53:23 -0800 (PST)
-From:   Amol Grover <frextrite@gmail.com>
-To:     Arvid Brodin <arvid.brodin@alten.se>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     --cc=netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Amol Grover <frextrite@gmail.com>
-Subject: [PATCH] net: hsr: Pass lockdep expression to RCU lists
-Date:   Wed, 19 Feb 2020 15:23:03 +0530
-Message-Id: <20200219095302.21987-1-frextrite@gmail.com>
-X-Mailer: git-send-email 2.24.1
+        id S1726712AbgBSJ7n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 04:59:43 -0500
+Received: from mail-am6eur05on2042.outbound.protection.outlook.com ([40.107.22.42]:9312
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726450AbgBSJ7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 04:59:42 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ViuTN4t1WoxGvObKyKJhfjtFfMyJPdMuTo7nCy3569jxX+FAAAXiujrUMsDYcDkoyWXt/e5AA6L2FZx0WvWQmJx6TvIhYviIYKzp4yKxuyXYmuesM6+dGkmdTK2YXdrXGtX6bSMssvOrURRNrektBFd1RuOEnAp3oLI9NeILwr3jH/RJgoS9PugKxFrH1MXAhOpEzvFwf93+4nrnuT0ZmOOnpX0M4EQM7MDiX2WFv9XKSdRJig6FZ6q3AvU/8hJXtJMRhs13mVsSkMNQGnPF9JqjrZWIaz+HSVV7jxX5AbQvDwbRfTFPpG9kCMqj31iQRyTTAEjN5ce8PBfz7n+Y5g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qUs0+8jKfz67XE1EDU0COV3hY0F1wHrKeEL5stXCfh4=;
+ b=XxlMOsN7nP+el48TesKRI2rE0wQrbs6lRnpTXOmXOR9Q7sSFxJr5F8fDSVWhXEvU9JQ/BvDhxJnfqcbb/eMbcWUPKszIgWYvCLsvXepjeGNWJUNMDbFpvetTqtg1FUNnTMOobi/E7W6PrxfybkdHZjBNieAu+PbJnXBB2eVyt773xN9eXXpcndtQrPuQuAOGAcCsVHt7ok/IxuH5Y61JeH1XzWv/Y8w1Lr2S+IJscMpq9dewnbChhbWeD3RvduZ2nmY9R+arC7CvC2h3b8WBysKGaEgSS+IGhdBattgdzxvGuCRqFHV5bu3zzECW8yglSSJTxNNnkm1ZGY1WnIFrQw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qUs0+8jKfz67XE1EDU0COV3hY0F1wHrKeEL5stXCfh4=;
+ b=r88Wp/UD1wO3x5Fvkeo/6slIVSZjoj3IXD2O9/DUIr1WBmUha4azIxAcqv+4uCOF5/I5mULg1uD6ktC/oLmewZxXKrWnaqso+2in0pbCBmcils6yO9irPFzQdl7OJ4m/U6Z3xT4E5g8rotxZxxG35hieuFkEhfK2Xd1wSp5hPFI=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB6514.eurprd04.prod.outlook.com (20.179.254.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2750.17; Wed, 19 Feb 2020 09:59:39 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2729.032; Wed, 19 Feb 2020
+ 09:59:39 +0000
+From:   peng.fan@nxp.com
+To:     sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        festevam@gmail.com, abel.vesa@nxp.com, leonard.crestez@nxp.com
+Cc:     kernel@pengutronix.de, linux-imx@nxp.com, aisheng.dong@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, anson.huang@nxp.com,
+        ping.bai@nxp.com, l.stach@pengutronix.de,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH v3 0/4] clk: imx: imx8m: fix a53 cpu clock
+Date:   Wed, 19 Feb 2020 17:53:34 +0800
+Message-Id: <1582106022-20926-1-git-send-email-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain
+X-ClientProxiedBy: HK2PR0302CA0008.apcprd03.prod.outlook.com
+ (2603:1096:202::18) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: from localhost.localdomain (119.31.174.66) by HK2PR0302CA0008.apcprd03.prod.outlook.com (2603:1096:202::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2750.8 via Frontend Transport; Wed, 19 Feb 2020 09:59:34 +0000
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [119.31.174.66]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: e8ac4cd8-a3a6-4213-b6ac-08d7b5226ef8
+X-MS-TrafficTypeDiagnostic: AM0PR04MB6514:|AM0PR04MB6514:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM0PR04MB65143663F3703822FC5DB91488100@AM0PR04MB6514.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-Forefront-PRVS: 0318501FAE
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(366004)(396003)(136003)(39860400002)(189003)(199004)(4326008)(2616005)(956004)(6512007)(5660300002)(8936002)(9686003)(16526019)(186003)(478600001)(81166006)(81156014)(8676002)(36756003)(2906002)(6486002)(6506007)(86362001)(66946007)(52116002)(69590400006)(66556008)(66476007)(316002)(26005)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6514;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Ld55/VfB6iZDzJk6QRMhxIWP0iuf5ZOZ7j0/5fTG89KKJnwAznHvIUTx1i3Pj75geHFMU5EXG0DrsmOsdlumcN6Gryr2syXs7zpzisOO5eG5ld5A3F6dG19zJ1P+HlyK+Dp0aMP3vc0oPdby8vgUtFYu0CihbgMr94Ob0rQ4qNKGDZFYzuNDI5TZ+jlVRnK4opt3DU2humIrP0HuD/s+AkfevDA6ZnfKWgzFbRChL3MF9UD+C1aCb/PDGi7KJSuX8A4sumjmcJu/DmWhxXDE0bUs7ryU9P4vMlHP5Or+vJPANi5iTp1X1vEq4xVtxn7GIHIpGvqDGpn5gaIcjLnM//iy6ukkrdqivs4LtsofVDGnm1dvyj9NG2+NdVK+iAOOZJZ8KnuPFZt3+4Zc9JvueziI8/0Xp+DRO10l/SHqrNtAYC2ygJsp2D/a/yOBVxXtd1g1PiEvln8uSdJ/w5u6b9edsuH8oUqxIMOIMumudKJiWO6fQZXy7aM2DjAYxNDJeoq4ueOgDHr3KHQGxEtJg8Gc76AggXkOGJgeuvcCAQ+LGgnmeSlMxW3NGfsQUQSL
+X-MS-Exchange-AntiSpam-MessageData: BeOaCoLIFR3Yo5Uwgtu15rX48MC5jahHh7pVMR9NTedDcItHrerIRYAfDe451T0EqwSc9tW/pnmUqtYMjpBCF7rNyt4OGyM9LZ96/eUCNUYHvNdVOGfe5CqAlU886L2iEHKOrulA2bPriUxj92BO3A==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e8ac4cd8-a3a6-4213-b6ac-08d7b5226ef8
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2020 09:59:39.5351
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qewFcObmvNFQ15roaR/j3whPr1Zpm1dNTinsHS1652X/4xmotcU1tFkV3iVcHZ1Y/W4lh/pJc/UbfXXxEb12Kg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6514
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-node_db is traversed using list_for_each_entry_rcu
-outside an RCU read-side critical section but under the protection
-of hsr->list_lock.
+From: Peng Fan <peng.fan@nxp.com>
 
-Hence, add corresponding lockdep expression to silence false-positive
-warnings, and harden RCU lists.
+V3:
+ Rebased to Shawn's for-next branch
+ Typo fix
 
-Signed-off-by: Amol Grover <frextrite@gmail.com>
----
- net/hsr/hsr_framereg.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+V2:
+ Fix i.MX8MP build
+ Update cover letter, i.MX7D not have this issue 
 
-diff --git a/net/hsr/hsr_framereg.c b/net/hsr/hsr_framereg.c
-index 27dc65d7de67..cc8fcfd3918d 100644
---- a/net/hsr/hsr_framereg.c
-+++ b/net/hsr/hsr_framereg.c
-@@ -156,7 +156,8 @@ static struct hsr_node *hsr_add_node(struct hsr_priv *hsr,
- 		new_node->seq_out[i] = seq_out;
- 
- 	spin_lock_bh(&hsr->list_lock);
--	list_for_each_entry_rcu(node, node_db, mac_list) {
-+	list_for_each_entry_rcu(node, node_db, mac_list,
-+				lockdep_is_held(&hsr->list_lock)) {
- 		if (ether_addr_equal(node->macaddress_A, addr))
- 			goto out;
- 		if (ether_addr_equal(node->macaddress_B, addr))
+The A53 CCM clk root only accepts input up to 1GHz, CCM A53 root
+signoff timing is 1Ghz, however the A53 core which sources from CCM
+root could run above 1GHz which voilates the CCM.
+
+There is a CORE_SEL slice before A53 core, we need configure the
+CORE_SEL slice source from ARM PLL, not A53 CCM clk root.
+
+The A53 CCM clk root should only be used when need to change ARM PLL
+frequency.
+
+Peng Fan (4):
+  clk: imx: imx8mq: fix a53 cpu clock
+  clk: imx: imx8mm: fix a53 cpu clock
+  clk: imx: imx8mn: fix a53 cpu clock
+  clk: imx: imx8mp: fix a53 cpu clock
+
+ drivers/clk/imx/clk-imx8mm.c             | 16 ++++++++++++----
+ drivers/clk/imx/clk-imx8mn.c             | 16 ++++++++++++----
+ drivers/clk/imx/clk-imx8mp.c             | 16 ++++++++++++----
+ drivers/clk/imx/clk-imx8mq.c             | 16 ++++++++++++----
+ include/dt-bindings/clock/imx8mm-clock.h |  4 +++-
+ include/dt-bindings/clock/imx8mn-clock.h |  4 +++-
+ include/dt-bindings/clock/imx8mp-clock.h |  3 ++-
+ include/dt-bindings/clock/imx8mq-clock.h |  4 +++-
+ 8 files changed, 59 insertions(+), 20 deletions(-)
+
 -- 
-2.24.1
+2.16.4
 
