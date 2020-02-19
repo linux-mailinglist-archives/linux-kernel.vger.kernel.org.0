@@ -2,67 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39027163E51
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 08:57:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C782163E56
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 08:59:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726604AbgBSH5c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 02:57:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58766 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726260AbgBSH5c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 02:57:32 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B30321D56;
-        Wed, 19 Feb 2020 07:57:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582099052;
-        bh=dX6II76srch6B1FGnp5iAvUq0daDmqaINqk1Uwkiv7k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FSWnDFgkZCvfs4BxmO1i+z3Hx1ADug+aiVjtcyfa4bpW005OrxgcnTe4InbIoV+c/
-         OiPP3h5bTJREVwMOz8BY5aM1ePubbMVN40KHH7NdvqCGR09/udT5pFMHbW0x0S22gH
-         2EQv8yZYYrCMWU8O7NDH5P+FpTuxgTlbSlNR/HZU=
-Date:   Wed, 19 Feb 2020 08:57:30 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Todd Kjos <tkjos@google.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] driver core: Make deferred_probe_timeout global
- so it can be shared
-Message-ID: <20200219075730.GA2732797@kroah.com>
-References: <20200218220748.54823-1-john.stultz@linaro.org>
- <20200218220748.54823-2-john.stultz@linaro.org>
+        id S1726623AbgBSH7S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 02:59:18 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:49900 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726156AbgBSH7S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 02:59:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=d2h7Hjg5NeUkN0zqsxuDL8hCed7EaXHpJcg40URIgGc=; b=unhcIQ9SV2IoiGA3l5wj4aTMMP
+        RUvmwIA4vyLRk6+iiWP1g7Ti/gK6hxO8wv1abAwX//kQjRpSzVxzTMKKPZ95tszkPypQkuAobhl8d
+        N3Dhz4xo7VAvSS2YNd+oYJgy9mXfDtvEmS3xiSXOCxwHax5MLAAKEL+Kb+j4KgSErdNnNw5XQ2bIb
+        IQdVLg6G9sNSoVrSdXqiG0L92YAYZ22OZnDLDChr3lTNWQ8Z3k8gUcz/8kb1TWAEophJlR4x8gmLS
+        tN/Ndo2AJmC4rlYtmWr8slAuSEK2D5dbYXQmDD2scrYZ58n3X97KX6Nz7+uJTlKhn7yn3ZO5iH6In
+        pyPT3VZA==;
+Received: from [2601:1c0:6280:3f0::19c2]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j4KGJ-0006SD-TK; Wed, 19 Feb 2020 07:59:15 +0000
+Subject: Re: [PATCH v5 2/2] clk: intel: Add CGU clock driver for a new SoC
+To:     Rahul Tanwar <rahul.tanwar@linux.intel.com>,
+        mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+        mark.rutland@arm.com, linux-clk@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        andriy.shevchenko@intel.com, qi-ming.wu@intel.com,
+        yixin.zhu@linux.intel.com, cheol.yong.kim@intel.com,
+        rtanwar <rahul.tanwar@intel.com>
+References: <cover.1582096982.git.rahul.tanwar@linux.intel.com>
+ <6148b5b25d4a6833f0a72801d569ed97ac6ca55b.1582096982.git.rahul.tanwar@linux.intel.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <e8259928-cb2a-a453-8f2a-1b57c8abdb8c@infradead.org>
+Date:   Tue, 18 Feb 2020 23:59:14 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200218220748.54823-2-john.stultz@linaro.org>
+In-Reply-To: <6148b5b25d4a6833f0a72801d569ed97ac6ca55b.1582096982.git.rahul.tanwar@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 10:07:48PM +0000, John Stultz wrote:
-> --- a/include/linux/device/driver.h
-> +++ b/include/linux/device/driver.h
-> @@ -236,6 +236,7 @@ driver_find_device_by_acpi_dev(struct device_driver *drv, const void *adev)
->  }
->  #endif
+On 2/18/20 11:40 PM, Rahul Tanwar wrote:
+> From: rtanwar <rahul.tanwar@intel.com>
+> 
+> Clock Generation Unit(CGU) is a new clock controller IP of a forthcoming
+> Intel network processor SoC named Lightning Mountain(LGM). It provides
+> programming interfaces to control & configure all CPU & peripheral clocks.
+> Add common clock framework based clock controller driver for CGU.
+> 
+> Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
+> ---
+>  drivers/clk/Kconfig           |   1 +
+>  drivers/clk/x86/Kconfig       |   8 +
+>  drivers/clk/x86/Makefile      |   1 +
+>  drivers/clk/x86/clk-cgu-pll.c | 156 +++++++++++
+>  drivers/clk/x86/clk-cgu.c     | 636 ++++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/x86/clk-cgu.h     | 335 ++++++++++++++++++++++
+>  drivers/clk/x86/clk-lgm.c     | 492 ++++++++++++++++++++++++++++++++
+>  7 files changed, 1629 insertions(+)
+>  create mode 100644 drivers/clk/x86/Kconfig
+>  create mode 100644 drivers/clk/x86/clk-cgu-pll.c
+>  create mode 100644 drivers/clk/x86/clk-cgu.c
+>  create mode 100644 drivers/clk/x86/clk-cgu.h
+>  create mode 100644 drivers/clk/x86/clk-lgm.c
+> 
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index bcb257baed06..43dab257e7aa 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -360,6 +360,7 @@ source "drivers/clk/sunxi-ng/Kconfig"
+>  source "drivers/clk/tegra/Kconfig"
+>  source "drivers/clk/ti/Kconfig"
+>  source "drivers/clk/uniphier/Kconfig"
+> +source "drivers/clk/x86/Kconfig"
+>  source "drivers/clk/zynqmp/Kconfig"
 >  
-> +extern int deferred_probe_timeout;
->  void driver_deferred_probe_add(struct device *dev);
+>  endmenu
 
-If this is going to be global now, can you rename it to
-"driver_defferred_probe_timeout" to make it more in line with the other
-exported symbols here?
+Hi,
 
-thanks,
+> diff --git a/drivers/clk/x86/Kconfig b/drivers/clk/x86/Kconfig
+> new file mode 100644
+> index 000000000000..2e2b9730541f
+> --- /dev/null
+> +++ b/drivers/clk/x86/Kconfig
+> @@ -0,0 +1,8 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +config CLK_LGM_CGU
+> +	depends on (OF && HAS_IOMEM) || COMPILE_TEST
 
-greg k-h
+This "depends on" looks problematic to me. I guess we shall see when
+all the build bots get to it.
+
+> +	select OF_EARLY_FLATTREE
+
+If OF is not set and HAS_IOMEM is not set, but COMPILE_TEST is set,
+I expect that this should not be attempting to select OF_EARLY_FLATTREE.
+
+Have you tried such a config combination?
+
+> +	bool "Clock driver for Lightning Mountain(LGM) platform"
+> +	help
+> +	  Clock Generation Unit(CGU) driver for Intel Lightning Mountain(LGM)
+> +	  network processor SoC.
+thanks.
+-- 
+~Randy
+
