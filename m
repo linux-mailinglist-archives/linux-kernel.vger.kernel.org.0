@@ -2,150 +2,189 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A793163FE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 10:03:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAB0B164009
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 10:13:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726656AbgBSJC6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 04:02:58 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:39545 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726195AbgBSJC6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 04:02:58 -0500
-Received: by mail-lf1-f66.google.com with SMTP id t23so16792331lfk.6
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 01:02:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9mdafkGFE1/A9hESaW/fy4nLurlhlMJSzFn2FCxSr3Q=;
-        b=eihYPreWe/yvP2cPuwbUY1INzp6vheX1MaFnujPkEniCx9dNvK9Vl7pb8uFCnARvHA
-         crP9qf9nbYD/q10piaIz4sE3ERU6IdMIkk39cNyzJ6WzgBxPwwLtKPWE71t6N9/xxiz9
-         OKnJmIpLWh+tZWMiTxCFDoWwt7LBhk/7lCKopdKbC5auFbX8j+ZvA9ee8tfuKMdaSYZc
-         DkXyYsFSVnjGgqsSYOflGeUemfJ7BXnyJR2o9ZWMSHhdbXAlBl2ih6XFkZ9KU012B802
-         YNUmF1RCHbhcqfw/tUbMXctsFAs4Bk4XK6aoJXMQdYqTRFX72vdH3cEW+E8Qrl+U15aF
-         iUDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9mdafkGFE1/A9hESaW/fy4nLurlhlMJSzFn2FCxSr3Q=;
-        b=Avn3sz+pFCEfDffzNVtGSjIa6dp1x2O7wG1mdQyw8+MhUCwhJLy6LZMeOTXgQoak6z
-         FVFMIT9c/z8siy4v571pXOmiHCPklv0A3/UnIHFaODvCZof69YqUW7BELFdye6iNe5ba
-         FYQMGNOdzcGJliAJEcIGs2cfER7Vm0NQfOwqeS7jTpFqi8DUGj40WPRzPSg+BHn2PssL
-         2ueBGQIVj+fE4vhYOyQ7dTftKBGLv0zxYjrxUahc9mH3vlgWH5TgFVvg9o30+m0/U+e9
-         Ng81PqU5c9siDgKc91OMJN7lcnkUFQJwsU9GCl6WnH+LQtn0NzeMKH7mxQL1goHuEJdn
-         wbvg==
-X-Gm-Message-State: APjAAAUyG/B8+VBkKejoQqaJBo9+x5bQv7p3Ja4qoDEVSgO4MvIKOv8K
-        VlVRnTolXL798wbWgeKtf/1mfR7h5+mDmv1L9sUBng==
-X-Google-Smtp-Source: APXvYqx7bZlxmxvokOv1nZr/+UeiYfNKfPUQuyAkDtduDKN0uB8lDW3A+OyVmt6hVHikd2Ug3nEGr33JBj+byWdsFAo=
-X-Received: by 2002:ac2:4add:: with SMTP id m29mr12895991lfp.190.1582102975220;
- Wed, 19 Feb 2020 01:02:55 -0800 (PST)
+        id S1726523AbgBSJNk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 04:13:40 -0500
+Received: from mga04.intel.com ([192.55.52.120]:29897 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726265AbgBSJNj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 04:13:39 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2020 01:13:39 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,459,1574150400"; 
+   d="scan'208";a="315339832"
+Received: from joy-optiplex-7040.sh.intel.com (HELO joy-OptiPlex-7040) ([10.239.13.16])
+  by orsmga001.jf.intel.com with ESMTP; 19 Feb 2020 01:13:38 -0800
+Date:   Wed, 19 Feb 2020 04:04:17 -0500
+From:   Yan Zhao <yan.y.zhao@intel.com>
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 0/3] vfio/type1: Reduce vfio_iommu.lock contention
+Message-ID: <20200219090417.GA30338@joy-OptiPlex-7040>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <157919849533.21002.4782774695733669879.stgit@gimli.home>
+ <20200117011050.GC1759@joy-OptiPlex-7040>
 MIME-Version: 1.0
-References: <20200214152729.6059-1-vincent.guittot@linaro.org>
- <20200214152729.6059-5-vincent.guittot@linaro.org> <4cda8dc3-f6bb-2896-c899-65eadd5c839d@arm.com>
-In-Reply-To: <4cda8dc3-f6bb-2896-c899-65eadd5c839d@arm.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Wed, 19 Feb 2020 10:02:43 +0100
-Message-ID: <CAKfTPtBVuYC9=QaMzeGuVqMBCTxT9mAp9U=iWZMzNg0a7Jos-Q@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] sched/pelt: Add a new runnable average signal
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Phil Auld <pauld@redhat.com>, Parth Shah <parth@linux.ibm.com>,
-        Hillf Danton <hdanton@sina.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200117011050.GC1759@joy-OptiPlex-7040>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Feb 2020 at 22:19, Valentin Schneider
-<valentin.schneider@arm.com> wrote:
->
-> On 14/02/2020 15:27, Vincent Guittot wrote:
-> > Now that runnable_load_avg has been removed, we can replace it by a new
-> > signal that will highlight the runnable pressure on a cfs_rq. This signal
-> > track the waiting time of tasks on rq and can help to better define the
-> > state of rqs.
-> >
-> > At now, only util_avg is used to define the state of a rq:
-> >   A rq with more that around 80% of utilization and more than 1 tasks is
-> >   considered as overloaded.
-> >
-> > But the util_avg signal of a rq can become temporaly low after that a task
-> > migrated onto another rq which can bias the classification of the rq.
-> >
-> > When tasks compete for the same rq, their runnable average signal will be
-> > higher than util_avg as it will include the waiting time and we can use
-> > this signal to better classify cfs_rqs.
-> >
-> > The new runnable_avg will track the runnable time of a task which simply
-> > adds the waiting time to the running time. The runnable _avg of cfs_rq
-> > will be the /Sum of se's runnable_avg and the runnable_avg of group entity
-> > will follow the one of the rq similarly to util_avg.
-> >
->
-> I did a bit of playing around with tracepoints and it seems to be behaving
-> fine. For instance, if I spawn 12 always runnable tasks (sysbench --test=cpu)
-> on my Juno (6 CPUs), I get to a system-wide runnable value (\Sum cpu_runnable())
-> of about 12K. I've only eyeballed them, but migration of the signal values
-> seem fine too.
->
-> I have a slight worry that the rq-wide runnable signal might be too easy to
-> inflate, since we aggregate for *all* runnable tasks, and that may not play
-> well with your group_is_overloaded() change (despite having the imbalance_pct
-> on the "right" side).
->
-> In any case I'll need to convince myself of it with some messing around, and
-> this concerns patch 5 more than patch 4. So FWIW for this one:
->
-> Tested-by: Valentin Schneider <valentin.schneider@arm.com>
->
-> I also have one (two) more nit(s) below.
->
-> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+On Fri, Jan 17, 2020 at 09:10:51AM +0800, Yan Zhao wrote:
+> Thank you, Alex!
+> I'll try it and let you know the result soon. :)
+> 
+> On Fri, Jan 17, 2020 at 02:17:49AM +0800, Alex Williamson wrote:
+> > Hi Yan,
+> > 
+> > I wonder if this might reduce the lock contention you're seeing in the
+> > vfio_dma_rw series.  These are only compile tested on my end, so I hope
+> > they're not too broken to test.  Thanks,
+> > 
+> > Alex
+> > 
 > > ---
-> > diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
-> > @@ -227,14 +231,14 @@ ___update_load_sum(u64 now, struct sched_avg *sa,
-> >        * Step 1: accumulate *_sum since last_update_time. If we haven't
-> >        * crossed period boundaries, finish.
-> >        */
-> > -     if (!accumulate_sum(delta, sa, load, running))
-> > +     if (!accumulate_sum(delta, sa, load, runnable, running))
-> >               return 0;
+> > 
+> > Alex Williamson (3):
+> >       vfio/type1: Convert vfio_iommu.lock from mutex to rwsem
+> >       vfio/type1: Replace obvious read lock instances
+> >       vfio/type1: Introduce pfn_list mutex
+> > 
+> > 
+> >  drivers/vfio/vfio_iommu_type1.c |   67 ++++++++++++++++++++++++---------------
+> >  1 file changed, 41 insertions(+), 26 deletions(-)
 > >
-> >       return 1;
-> >  }
-> >
-> >  static __always_inline void
-> > -___update_load_avg(struct sched_avg *sa, unsigned long load)
-> > +___update_load_avg(struct sched_avg *sa, unsigned long load, unsigned long runnable)
-> >  {
-> >       u32 divider = LOAD_AVG_MAX - 1024 + sa->period_contrib;
-> >
-> > @@ -242,6 +246,7 @@ ___update_load_avg(struct sched_avg *sa, unsigned long load)
-> >        * Step 2: update *_avg.
-> >        */
-> >       sa->load_avg = div_u64(load * sa->load_sum, divider);
-> > +     sa->runnable_avg =      div _u64(runnable * sa->runnable_sum, divider);
->                           ^^^^^^        ^^^^^^^^
->                             a)             b)
-> a) That's a tab
->
-> b) The value being passed is always 1, do we really need it to expose it as a
->    parameter?
 
-In fact, I haven't been able to convince myself if it was better to
-add the SCHED_CAPACITY_SCALE range in the _sum or only in the _avg.
-That's the reason for this parameter to still being there.
-On one side we do a shift at every PELT update and the
-attach/detach/propagate are quite straight forward. On the other side
-it is done only during attach/detach/propagate but it complexify the
-thing. Having it in _sum doesn't seem to be a concern so I will keep
-it there and remove the parameter
+hi Alex
+I have finished testing of this series.
+It's quite stable and passed our MTBF testing :)
+
+However, after comparing the performance data obtained from several
+benchmarks in guests (see below),
+it seems that this series does not bring in obvious benefit.
+(at least to cases we have tested, and though I cannot fully explain it yet).
+So, do you think it's good for me not to include this series into my next
+version of "use vfio_dma_rw to read/write IOVAs from CPU side"?
+
+
+B: stands for baseline code, where mutex is used for vfio_iommu.lock
+B+S: applied rwsem patches to convert vfio_iommu.lock from mutex to
+rwsem.
+
+==== comparison: benchmark scores ====
+(1) with 1 VM:
+
+ score  |     glmark2    |   lightsmark    |   openarena
+-----------------------------------------------------------
+      B | 1248 (100%)    | 219.70 (100%)   | 114.9 (100%)
+    B+S | 1252 (100.3%)  | 222.76 (101.2%) | 114.8 ( 99.9%)
+
+
+(2) with 2 VMs:
+
+ score  |     glmark2    |   lightsmark    |   openarena                                       
+-----------------------------------------------------------                                    
+      B | 812   (100%)   | 211.46 (100%)   | 115.3 (100%)                                      
+    B+S | 812.8 (100.1%) | 212.96 (100.7%) | 114.9 (99.6%) 
+
+
+==== comparison: average cycles spent on vfio_iommu.lock =====
+(1) with 1 VM:
+
+ cycles | glmark2   | lightsmark | openarena | VM boot up
+---------------------------------------------------------
+      B | 107       | 113        | 110       | 107
+    B+S | 112 (+5)  | 111  (-2)  | 108 (-2)  | 104 (-3)
+
+Note:
+a. during VM boot up, for rwsem, there are 24921 reads vs 67 writes
+(372:1)
+b. for the mesured 3 benchmarks, no write for rwsem.
+
+
+(2) with 2 VMs:
+
+ cycles | glmark2   | lightsmark | openarena | VM boot up
+----------------------------------------------------------
+      B | 113       | 119        | 112       | 119
+    B+S | 118 (+5)  | 138  (+19) | 110 (-2)  | 114 (-5)
+
+
+similar results obtained after applying patches of vfio_dma_rw.
+
+B: stands for baseline code, where mutex is used for vfio_iommu.lock
+B+V: baseline code + patches to convert from using kvm_read/write_guest
+to using vfio_dma_rw
+B+V+S: baseline code + patches to using vfio_dma_rw + patches to use
+rwsem
+
+==== comparison: benchmark scores =====
+(1) with 1 VM:
+
+ score  |     glmark2    |   lightsmark    |   openarena
+----------------------------------------------------------
+    B+V | 1244 (100%)    | 222.18 (100%)   | 114.4 (100%)
+  B+V+S | 1241 ( 99.8%)  | 223.90 (100.8%) | 114.6 (100.2%)
+
+(2) with 2 VMs:
+
+        |     glmark2    |   lightsmark    |   openarena
+----------------------------------------------------------
+    B+V | 811.2 (100%)   | 211.20 (100%)   | 115.4 (100%)
+  B+V+S | 811   (99.98%) | 211.81 (100.3%) | 115.5 (100.1%)
+
+
+==== comparison: average cycles spent on vfio_dma_rw =====
+(1) with 1 VM:
+
+cycles  |    glmark2  | lightsmark | openarena
+--------------------------------------------------
+    B+V | 1396        | 1592       | 1351 
+  B+V+S | 1415 (+19 ) | 1650 (+58) | 1357 (+6)
+
+(2) with 2 VMs:
+
+cycles  |    glmark2  | lightsmark | openarena
+--------------------------------------------------
+    B+V | 1974        | 2024       | 1636
+  B+V+S | 1979 (+5)   | 2051 (+27) | 1644 (+8)
+
+
+==== comparison: average cycles spent on vfio_iommu.lock =====
+(1) with 1 VM:
+
+ cycles | glmark2   | lightsmark | openarena | VM boot up
+---------------------------------------------------------
+    B+V | 137       | 139        | 156       | 124
+  B+V+S | 142 (+5)  | 143 (+4)   | 149 (-7)  | 114 (-10)
+
+(2) with 2 VMs:
+
+ cycles | glmark2   | lightsmark | openarena | VM boot up
+---------------------------------------------------------
+    B+V | 153       | 148        | 146       | 111
+  B+V+S | 155 (+2)  | 157 (+9)   | 156 (+10) | 118 (+7)
+
+
+P.S.
+You may find some inconsistency when comparing to the test result I sent
+at https://lkml.org/lkml/2020/1/14/1486. It is because I had to changed
+my test machine for personal reason and also because I made lightsmark not
+to sync on vblank events.
+
+
+Thanks
+Yan
+
+
