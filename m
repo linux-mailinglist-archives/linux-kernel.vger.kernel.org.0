@@ -2,194 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 917FD164427
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 13:26:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CED0164430
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 13:28:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727362AbgBSM0O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 07:26:14 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:41369 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726530AbgBSM0O (ORCPT
+        id S1727193AbgBSM2I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 07:28:08 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:58298 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726491AbgBSM2I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 07:26:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582115172;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=aU/Kb9yyQfFq/B4zFRzH8ISmhlDlgLRWQwirtVr5slw=;
-        b=UE54qS9EII++lIIDvmCQ2gry6Zb33wf3llS2HNlhVLM/sb8tEYe7a40tRPo+yOnWc5zbpj
-        QD0W/FBhBR8A6x13LUq9W43DkBJr5NefuzxaiR/g5kCINTtkHgB7zlTSpiCu0BZkBl/nkf
-        kVBO+DjZ0aiZfAuBnZwCOQsOsyVF1/c=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-410-b9pysub7Opy2xssPrJfx3Q-1; Wed, 19 Feb 2020 07:26:03 -0500
-X-MC-Unique: b9pysub7Opy2xssPrJfx3Q-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A18A5107ACC5;
-        Wed, 19 Feb 2020 12:26:01 +0000 (UTC)
-Received: from prarit.bos.redhat.com (prarit-guest.7a2m.lab.eng.bos.redhat.com [10.16.222.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5767C5C112;
-        Wed, 19 Feb 2020 12:26:00 +0000 (UTC)
-Subject: Re: [PATCH v2] x86/mce: Do not log spurious corrected mce errors
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Krupp <centos@akr.yagii.de>,
-        Tony Luck <tony.luck@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-edac@vger.kernel.org
-References: <20200217130659.15895-1-prarit@redhat.com>
- <20200218161319.GG14449@zn.tnic>
-From:   Prarit Bhargava <prarit@redhat.com>
-Message-ID: <894a39cb-21e7-3e43-1907-cae390537ccf@redhat.com>
-Date:   Wed, 19 Feb 2020 07:25:59 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 19 Feb 2020 07:28:08 -0500
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1j4OSH-0003l8-Ra; Wed, 19 Feb 2020 12:27:53 +0000
+Date:   Wed, 19 Feb 2020 13:27:52 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-api@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, smbarber@chromium.org,
+        Seth Forshee <seth.forshee@canonical.com>,
+        linux-security-module@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>
+Subject: Re: [PATCH v3 00/25] user_namespace: introduce fsid mappings
+Message-ID: <20200219122752.jalnsmsotigwxwsw@wittgenstein>
+References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
+ <1582069856.16681.59.camel@HansenPartnership.com>
 MIME-Version: 1.0
-In-Reply-To: <20200218161319.GG14449@zn.tnic>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Disposition: inline
+In-Reply-To: <1582069856.16681.59.camel@HansenPartnership.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2/18/20 11:13 AM, Borislav Petkov wrote:
-> On Mon, Feb 17, 2020 at 08:06:59AM -0500, Prarit Bhargava wrote:
->> A user has reported that they are seeing spurious corrected errors on
->> their hardware.
->>
->> Intel Errata HSD131, HSM142, HSW131, and BDM48 report that
->> "spurious corrected errors may be logged in the IA32_MC0_STATUS register
->> with the valid field (bit 63) set, the uncorrected error field (bit 61)
->> not set, a Model Specific Error Code (bits [31:16]) of 0x000F, and
->> an MCA Error Code (bits [15:0]) of 0x0005."
->>
->> Block these spurious errors from the console and logs.
->>
->> Links to Intel Specification updates:
->> HSD131: https://www.intel.com/content/www/us/en/products/docs/processors/core/4th-gen-core-family-desktop-specification-update.html
->> HSM142: https://www.intel.com/content/www/us/en/products/docs/processors/core/4th-gen-core-family-mobile-specification-update.html
->> HSW131: https://www.intel.com/content/www/us/en/processors/xeon/xeon-e3-1200v3-spec-update.html
->> BDM48: https://www.intel.com/content/www/us/en/products/docs/processors/core/5th-gen-core-family-spec-update.html
+On Tue, Feb 18, 2020 at 03:50:56PM -0800, James Bottomley wrote:
+> On Tue, 2020-02-18 at 15:33 +0100, Christian Brauner wrote:
+> > In the usual case of running an unprivileged container we will have
+> > setup an id mapping, e.g. 0 100000 100000. The on-disk mapping will
+> > correspond to this id mapping, i.e. all files which we want to appear
+> > as 0:0 inside the user namespace will be chowned to 100000:100000 on
+> > the host. This works, because whenever the kernel needs to do a
+> > filesystem access it will lookup the corresponding uid and gid in the
+> > idmapping tables of the container. Now think about the case where we
+> > want to have an id mapping of 0 100000 100000 but an on-disk mapping
+> > of 0 300000 100000 which is needed to e.g. share a single on-disk
+> > mapping with multiple containers that all have different id mappings.
+> > This will be problematic. Whenever a filesystem access is requested,
+> > the kernel will now try to lookup a mapping for 300000 in the id
+> > mapping tables of the user namespace but since there is none the
+> > files will appear to be owned by the overflow id, i.e. usually
+> > 65534:65534 or nobody:nogroup.
+> > 
+> > With fsid mappings we can solve this by writing an id mapping of 0
+> > 100000 100000 and an fsid mapping of 0 300000 100000. On filesystem
+> > access the kernel will now lookup the mapping for 300000 in the fsid
+> > mapping tables of the user namespace. And since such a mapping
+> > exists, the corresponding files will have correct ownership.
 > 
-> My previous review comment still holds:
-> 
-> Those links tend to get stale with time. If you really want to refer to
-> the PDFs, add a new bugzilla entry on https://bugzilla.kernel.org/, add
-> them there as an attachment and add the link to the entry to the commit
-> message.
-> 
->> Signed-off-by: Prarit Bhargava <prarit@redhat.com>
->> Co-developed-by: Alexander Krupp <centos@akr.yagii.de>
-> 
-> WARNING: Co-developed-by: must be immediately followed by Signed-off-by:
-> #36:
+> So I did compile this up in order to run the shiftfs tests over it to
+> see how it coped with the various corner cases.  However, what I find
+> is it simply fails the fsid reverse mapping in the setup.  Trying to
+> use a simple uid of 0 100000 1000 and a fsid of 100000 0 1000 fails the
+> entry setuid(0) call because of this code:
 
-Borislav, when I've been using your Co-developed-by & not using a Signed-off-by
-process but when I run checkpatch.py I get the following warning:
-
-WARNING: Co-developed-by and Signed-off-by: name/email do not match
-#21:
-Co-developed-by: Alexander Krupp <centos@akr.yagii.de>
-Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-
-When I submitted this patch I looked at other commits in the kernel near
-top-of-tree and they have Signed-off-by followed by Co-developed-by, and also
-took your suggestion of not using a Signed-off-by for Alexander.  That's why I
-chose to display them this way in v2.
-
-Examples:
-
-126196100063 ("lib/zlib: add s390 hardware support for kernel zlib_inflate")
-40ca1bf580ef ("PCI: brcmstb: Add MSI support")
-
-I'm now thoroughly confused as to what the correct format is.  It seems like
-checkpatch.py is telling me to include a Signed-off-by in addition to the
-Co-developed-by for Alexander but you explicitly told me not to.
-
-P.
-
-> 
-> See Documentation/process/submitting-patches.rst for more detail.
-> 
->> Cc: Tony Luck <tony.luck@intel.com>
->> Cc: Borislav Petkov <bp@alien8.de>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Ingo Molnar <mingo@redhat.com>
->> Cc: "H. Peter Anvin" <hpa@zytor.com>
->> Cc: x86@kernel.org
->> Cc: linux-edac@vger.kernel.org
->> ---
->>  arch/x86/kernel/cpu/mce/core.c     |  2 ++
->>  arch/x86/kernel/cpu/mce/intel.c    | 17 +++++++++++++++++
->>  arch/x86/kernel/cpu/mce/internal.h |  1 +
->>  3 files changed, 20 insertions(+)
->>
->> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
->> index 2c4f949611e4..fe3983d551cc 100644
->> --- a/arch/x86/kernel/cpu/mce/core.c
->> +++ b/arch/x86/kernel/cpu/mce/core.c
->> @@ -1877,6 +1877,8 @@ bool filter_mce(struct mce *m)
->>  {
->>  	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
->>  		return amd_filter_mce(m);
->> +	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
->> +		return intel_filter_mce(m);
->>  
->>  	return false;
->>  }
->> diff --git a/arch/x86/kernel/cpu/mce/intel.c b/arch/x86/kernel/cpu/mce/intel.c
->> index 5627b1091b85..989148e6746c 100644
->> --- a/arch/x86/kernel/cpu/mce/intel.c
->> +++ b/arch/x86/kernel/cpu/mce/intel.c
->> @@ -520,3 +520,20 @@ void mce_intel_feature_clear(struct cpuinfo_x86 *c)
->>  {
->>  	intel_clear_lmce();
->>  }
->> +
->> +bool intel_filter_mce(struct mce *m)
->> +{
->> +	struct cpuinfo_x86 *c = &boot_cpu_data;
->> +
->> +	/* MCE errata HSD131, HSM142, HSW131, BDM48, and HSM142 */
->> +	if ((c->x86 == 6) &&
->> +	    ((c->x86_model == INTEL_FAM6_HASWELL) ||
->> +	     (c->x86_model == INTEL_FAM6_HASWELL_L) ||
->> +	     (c->x86_model == INTEL_FAM6_BROADWELL) ||
->> +	     (c->x86_model == INTEL_FAM6_HASWELL_G)) &&
->> +	    (m->bank == 0) &&
->> +	    ((m->status & 0xa0000000ffffffff) == 0x80000000000f0005))
->> +		return true;
->> +
->> +	return false;
->> +}
->> diff --git a/arch/x86/kernel/cpu/mce/internal.h b/arch/x86/kernel/cpu/mce/internal.h
->> index b785c0d0b590..821faba5b05d 100644
->> --- a/arch/x86/kernel/cpu/mce/internal.h
->> +++ b/arch/x86/kernel/cpu/mce/internal.h
->> @@ -175,5 +175,6 @@ extern bool amd_filter_mce(struct mce *m);
->>  #else
->>  static inline bool amd_filter_mce(struct mce *m)			{ return false; };
->>  #endif
->> +extern bool intel_filter_mce(struct mce *m);
-> 
-> It doesn't even build:
-> 
-> ld: arch/x86/kernel/cpu/mce/core.o: in function `filter_mce':
-> /home/boris/kernel/linux/arch/x86/kernel/cpu/mce/core.c:1881: undefined reference to `intel_filter_mce'
-> make: *** [Makefile:1077: vmlinux] Error 1
-> 
-> Hint: do it like it is done for amd_filter_mce() but in the respective
-> #ifdef CONFIG_X86_MCE_INTEL place.
-> 
-
+This is easy to fix. But what's the exact use-case?
