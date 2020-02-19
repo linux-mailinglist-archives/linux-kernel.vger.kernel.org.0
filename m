@@ -2,187 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A807C1643B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 12:53:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DEB621643BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 12:55:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727099AbgBSLxa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 06:53:30 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40506 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726548AbgBSLx3 (ORCPT
+        id S1726948AbgBSLza (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 06:55:30 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38188 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726617AbgBSLza (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 06:53:29 -0500
-Received: by mail-lj1-f195.google.com with SMTP id n18so44582ljo.7
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 03:53:26 -0800 (PST)
+        Wed, 19 Feb 2020 06:55:30 -0500
+Received: by mail-pl1-f194.google.com with SMTP id t6so9476911plj.5
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 03:55:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=71fpEu9gj4xQyGwVvrbfmB+uFD/Qs603qpfWf+rF/cI=;
-        b=WydRZKXY9aoo5/x9r7meASA5yIZERSvCqFjexbUYomQCBLBEMl8ai9Rdp78ufDUjEO
-         jDpzgAurjWlj6uqcwYa/MbVhrLIe44j2GlJRQvJCVc293/5erLflQh+iQfVWV7gir5F4
-         RHZkO/3p6owHHQCYafZVPzY+y0IoY0Bh7pYY8=
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:from:date:message-id:subject:to;
+        bh=2YxWgvIJdD6AE8Ce+eEDzrC0gSnd+arQ9utE5ORXuyI=;
+        b=u0kH4MND4ahMHLS85ttv3hOOT3RWDc0FC7pTEHTlPdpF1hhtkpg7u1wpIdltuGwV+n
+         +DCFeU5T92YfxQLB3mZ0D4qlkcOjhxkMDvrHxZa4V5OSzVYyPYfxQffKV28WgFDCBqss
+         esJBeZNETvnRLMcb5vmNZ7xTJM+XJkTCtQQCavH313mUoh795fjaSTBWaYI1Ehd2GHO8
+         WXyxbNDpnWaT8xY6n7b4jIZDzM+rUNs71372hcj65mh/B9YXd7KR8KgjpIIxJbfLY+G8
+         bqVBzZDkNtVX9OoeMJ24ZrliDFJdhT/GcaHkVW2kB0DVX0V1yAAreYai/yqAWqRXCDZz
+         WPsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=71fpEu9gj4xQyGwVvrbfmB+uFD/Qs603qpfWf+rF/cI=;
-        b=GLVz1xffP802RZTHYWfa7AvGTCceN0lqTeAca7UlVtPVia/31N45mG3jewK547MKEF
-         pv2aKXlVbIXiW3JMN2NpIZsGu1PGdx3P61i1mrp1U7E5Gfa38SjWLF9lfFzASVAqHk5Y
-         o3kbcF0uzT2N6UkB+vnBkkOdhe3X4zUs/ytmJWBk8poO/6V/9Kz41WZc+/EYHs1pY221
-         PqPDBWKj+1GurmrJMt/cTU1mmuCpuh3loJkNqK+CUIo21ZztMkv2abHxfJ84LxrrhG+h
-         W+LFFyNWIw9tpqhFxiWjAkdO/NjVTz0Y4f1rMF8lRJ2AzBBewthfqqKnLEiYIWyXXqSV
-         L6PA==
-X-Gm-Message-State: APjAAAUmBfDAmwEsjY+qY184qgnM5V1GoTqgwz0DTwCaeltxdwJFahZj
-        Ecs6zBM9MFm0cf60AUjqzOeETNjDNWJHHF2P
-X-Google-Smtp-Source: APXvYqwriRVyrAscp4UctZ1kCxokgDNdH+bpOZqirl4aV2eKSeSZNiDE+6GiSUXaE4BVrSQYu3s1Dg==
-X-Received: by 2002:a2e:556:: with SMTP id 83mr15644254ljf.127.1582113204971;
-        Wed, 19 Feb 2020 03:53:24 -0800 (PST)
-Received: from [172.16.11.50] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id o69sm1150496lff.14.2020.02.19.03.53.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2020 03:53:24 -0800 (PST)
-Subject: Re: [PATCH] vsprintf: sanely handle NULL passed to %pe
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        "Tobin C . Harding" <me@tobin.cc>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <CAHk-=wjEd-gZ1g52kgi_g8gq-QCF2E01TkQd5Hmj4W5aThLw3A@mail.gmail.com>
- <20200219082155.6787-1-linux@rasmusvillemoes.dk>
- <CAOi1vP-4=QCSZ2A89g1po2p=6n_g09SXUCa0_r2SBJm2greRmw@mail.gmail.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <0fef2a1f-9391-43a9-32d5-2788ae96c529@rasmusvillemoes.dk>
-Date:   Wed, 19 Feb 2020 12:53:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to;
+        bh=2YxWgvIJdD6AE8Ce+eEDzrC0gSnd+arQ9utE5ORXuyI=;
+        b=owWE4e12Nmocm9F9rbeu4uf1HISUzftHoP96SfooF//UIagPdbXI07EEUE+s0ZkmZe
+         C8L6jL4bLX9LrGYzAcovsD3zVG9Vkw2AsvTURlVE8CE82PlxXYrWvjuTl52D2FjufLBp
+         T7zpJFfx/tD7iO41/wSgZ9cjmFeYZ7cEiqgQRvpgZGKb0yE8fNlWtdH2fMH1tI+G7vFr
+         gUAFUhj9v+vq3IFf03Cho+5OUXWmK6a7HozKCPCiK7T/5DXLAiU9n2IuQdZBovK37plj
+         nF+DfxcBzfqJ6N93rQhvQRSN82NiVljQLsHLzGpxATGVYS3toOj9E+2Pzl6uBsbpsg6Q
+         cpIQ==
+X-Gm-Message-State: APjAAAWfFjrBP0fZatnmHkpNoVv4hbVtfFZDk+gi0n6VsdwB5eM8LgBy
+        Vd8gYJHggdFuXxTuI35k/XwM25ATtezjTx3OL5E=
+X-Google-Smtp-Source: APXvYqwbpaLK7Rk9wetjB+vFjUudL9vM/2efUzXJSC5gAX8WQsIDHhnb/+OoDM+6GGpNQ7oT3VSxLQF0v5D8iPDST80=
+X-Received: by 2002:a17:90a:c705:: with SMTP id o5mr8478241pjt.67.1582113329901;
+ Wed, 19 Feb 2020 03:55:29 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAOi1vP-4=QCSZ2A89g1po2p=6n_g09SXUCa0_r2SBJm2greRmw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a17:90b:341:0:0:0:0 with HTTP; Wed, 19 Feb 2020 03:55:29
+ -0800 (PST)
+From:   lisa jaster <jaster189@gmail.com>
+Date:   Wed, 19 Feb 2020 11:55:29 +0000
+X-Google-Sender-Auth: qZeqk2ACI-rSNoFQT2ojnccSHGo
+Message-ID: <CAAp4uHYgB-4xpMrUgoFsO2ft18oOvOQPn0g-MvNw1ojbGiSArw@mail.gmail.com>
+Subject: Hello.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/02/2020 12.20, Ilya Dryomov wrote:
-> On Wed, Feb 19, 2020 at 9:21 AM Rasmus Villemoes
-> <linux@rasmusvillemoes.dk> wrote:
->>
->> Extend %pe to pretty-print NULL in addition to ERR_PTRs,
->> i.e. everything IS_ERR_OR_NULL().
->>
->> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
->> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
->> ---
->> Something like this? The actual code change is +2,-1 with another +1
->> for a test case.
->>
->>  Documentation/core-api/printk-formats.rst | 9 +++++----
->>  lib/errname.c                             | 4 ++++
->>  lib/test_printf.c                         | 1 +
->>  lib/vsprintf.c                            | 4 ++--
->>  4 files changed, 12 insertions(+), 6 deletions(-)
->>
->> diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
->> index 8ebe46b1af39..964b55291445 100644
->> --- a/Documentation/core-api/printk-formats.rst
->> +++ b/Documentation/core-api/printk-formats.rst
->> @@ -86,10 +86,11 @@ Error Pointers
->>
->>         %pe     -ENOSPC
->>
->> -For printing error pointers (i.e. a pointer for which IS_ERR() is true)
->> -as a symbolic error name. Error values for which no symbolic name is
->> -known are printed in decimal, while a non-ERR_PTR passed as the
->> -argument to %pe gets treated as ordinary %p.
->> +For printing error pointers (i.e. a pointer for which IS_ERR() is
->> +true) as a symbolic error name. Error values for which no symbolic
->> +name is known are printed in decimal. A NULL pointer is printed as
->> +NULL. All other pointer values (i.e. anything !IS_ERR_OR_NULL()) get
->> +treated as ordinary %p.
->>
->>  Symbols/Function Pointers
->>  -------------------------
->> diff --git a/lib/errname.c b/lib/errname.c
->> index 0c4d3e66170e..7757bc00f564 100644
->> --- a/lib/errname.c
->> +++ b/lib/errname.c
->> @@ -11,9 +11,13 @@
->>   * allocated errnos (with EHWPOISON = 257 on parisc, and EDQUOT = 1133
->>   * on mips), so this wastes a bit of space on those - though we
->>   * special case the EDQUOT case.
->> + *
->> + * For the benefit of %pe being able to print any ERR_OR_NULL pointer
->> + * symbolically, 0 is also treated specially.
->>   */
->>  #define E(err) [err + BUILD_BUG_ON_ZERO(err <= 0 || err > 300)] = "-" #err
->>  static const char *names_0[] = {
->> +       [0] = "NULL",
->>         E(E2BIG),
->>         E(EACCES),
->>         E(EADDRINUSE),
->> diff --git a/lib/test_printf.c b/lib/test_printf.c
->> index 2d9f520d2f27..3a37d0e9e735 100644
->> --- a/lib/test_printf.c
->> +++ b/lib/test_printf.c
->> @@ -641,6 +641,7 @@ errptr(void)
->>         test("[-EIO    ]", "[%-8pe]", ERR_PTR(-EIO));
->>         test("[    -EIO]", "[%8pe]", ERR_PTR(-EIO));
->>         test("-EPROBE_DEFER", "%pe", ERR_PTR(-EPROBE_DEFER));
->> +       test("[NULL]", "[%pe]", NULL);
->>  #endif
->>  }
->>
->> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
->> index 7c488a1ce318..b7118d78eb20 100644
->> --- a/lib/vsprintf.c
->> +++ b/lib/vsprintf.c
->> @@ -2247,8 +2247,8 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
->>         case 'x':
->>                 return pointer_string(buf, end, ptr, spec);
->>         case 'e':
->> -               /* %pe with a non-ERR_PTR gets treated as plain %p */
->> -               if (!IS_ERR(ptr))
->> +               /* %pe with a non-ERR_OR_NULL ptr gets treated as plain %p */
->> +               if (!IS_ERR_OR_NULL(ptr))
->>                         break;
-> 
-> FWIW I was about to post a patch that just special cases NULL here.
-> 
-> I think changing errname() to return "NULL" for 0 is overkill.
-> People will sooner or later discover that function and start using it
-> in contexts that don't have anything to do with pointers.  Returning
-> _some_ string for 0 (instead of NULL) makes it very close to standard
-> strerror(), and "NULL" for 0 (i.e. success) seems rather odd.
-
-I see what you mean, but I don't share your assumption that errname()
-will ever grow callers other than the one in vsprintf.c. But I don't
-have any strong opinion either way. Perhaps this on top of my patch
-
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -619,7 +619,7 @@ static char *err_ptr(char *buf, char *end, void *ptr,
-                     struct printf_spec spec)
- {
-        int err = PTR_ERR(ptr);
--       const char *sym = errname(err);
-+       const char *sym = err ? errname(err) : "NULL";
-
-        if (sym)
-                return string_nocheck(buf, end, sym, spec);
-
-instead of the change(s) in errname.c? And then the test case for
-'"%pe", NULL' should also be moved outside CONFIG_SYMBOLIC_ERRNAME.
-
-BTW., your original patch for %p lacks corresponding update of
-test_vsprintf.c. Please add appropriate test cases.
-
-Rasmus
+-- 
+How are you?
