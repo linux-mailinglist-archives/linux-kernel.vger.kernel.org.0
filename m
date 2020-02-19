@@ -2,87 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D41E5164F9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 21:11:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E658164F9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 21:12:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727125AbgBSULB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 15:11:01 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:40257 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726634AbgBSULA (ORCPT
+        id S1726851AbgBSUMe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 15:12:34 -0500
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:42281 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726634AbgBSUMe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 15:11:00 -0500
-Received: by mail-io1-f66.google.com with SMTP id x1so1998569iop.7
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 12:11:00 -0800 (PST)
+        Wed, 19 Feb 2020 15:12:34 -0500
+Received: by mail-vk1-f195.google.com with SMTP id c15so509822vko.9
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 12:12:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=+h8OMq5ap5ScfL8XqeP9gKwIkHjfAosh3tAUb+IoSRs=;
-        b=StGX0zg+xGzM+nwSZF3wlA5TRpwRQV5LywLkEYDUQA8ItE8WvExKoaWyzqtWaBAZZj
-         xXiwktKui2oz2yXjjVoDOY2JhsknoK22qlgduTqvon/np3lpZqf4fYX/HvTFhsZtSCa9
-         5tbkbKiAlRgP4XjBMC2zc4OIod3FwGklWggFRHJcAqxAZBEO8GK3k0M/dq7SqdLkaXYw
-         uZTmP3nm8OINa8oQ+Qj4jRwa4T7UAkFYMBbk+Dwaf4nOzO5r5uBVk/s4KPG6YZlhBCsC
-         Td2PLQT7QU+3ZvSrcw/cSHkinmm58Td71PO/ZldX9vSy22u6oZ/iler8dZzHZZ9holk2
-         7VUw==
+        bh=42MaK4n6+CrelpQTjPFZO9NB2S0O1OTsWCtSJ9pIv6o=;
+        b=KZjz6JeV1vFYXt8q0wyrdwBhXZ/8rzg3LVXGgnEjLp0yccOlrd9L+Ok9CSnmEDAScF
+         5DXgdCokxyl/DepQSJRvQZcSN+CE8Kcr0SWpEfzBMCL7WlKU8JPwmUJCsE2rI7Vb7lKV
+         bgQULZyhEbb7MwpvmgaQHsqZa8CaNOAvokqUXRgGKlW538y3zdoMMZdFUy60Yhv2WJdn
+         xOhNioYtaDA8ydHmJeTzDTHNO8vInpQ9cb9Ph5Mu9jvt5hFURbjsN43FQ7NZbkVfeBb2
+         LHRWZWKArxzLHQPRZfP/szxqEcv4AqpjRJQcw8TGu10OvO3/JnOO2GhuCUA9yjJvEBPV
+         ehWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=+h8OMq5ap5ScfL8XqeP9gKwIkHjfAosh3tAUb+IoSRs=;
-        b=FDJdw2erSkdmLtgZ5C/lyLPJr2z2GF7xeAJTcJ6loELodnKiAudzuoI5nwMmusZsTO
-         zezToCk2MoG3pRv8LYCE1zEtmjvLWHpmYUkOZfNRDb1HzkJpiXJbwwTCXl4EIHuf5Jrt
-         YuAfGoramH5Lo5G1iP/CaT6WcLq656KY81C0//Tr1oFnZdyd8s30+w2ox9Lv9R8Uxxjn
-         Oe22oU1KWf5DuvxxcjPvUcWKIWRV0rKTupAxfKocwrul/7oQS9eX+77wLdyVEk8FHq8U
-         4SyNIwRdhKScnayLYa2wMjqqe0QNdbG2Xs8chimeVlVqruI1gxgk2kSxVz7Mn7fLYyzf
-         hYjw==
-X-Gm-Message-State: APjAAAV6xGjgjotQ2KdzNZ1mFKAur72SEnyeQnL3oSdiXS+ZbAiy0/25
-        lppQaJp6t29Z/f0z068raGgveVAT87iCoanoIsXD
-X-Google-Smtp-Source: APXvYqxspfdZL63YAPwl0zB/0t3IqfpJBoujRekmUD9zTan0lw3FKnPG50r5i9iSwh8I5nZTXhsdp2aSTqI2g8bEk3w=
-X-Received: by 2002:a6b:7b41:: with SMTP id m1mr19646049iop.191.1582143060172;
- Wed, 19 Feb 2020 12:11:00 -0800 (PST)
+        bh=42MaK4n6+CrelpQTjPFZO9NB2S0O1OTsWCtSJ9pIv6o=;
+        b=Z8BhsKge4kFfCpHTxFnaYFm30Z1SnWHzVIPCHHNXPl9EXvQppcGvBILGM3DhwQIGPl
+         RVbLuYoHKEm6+ZJhBXv6OUYDIB+Gw/8/pgWCFqO8gMlyhP7j2TFvzl97NWpcZUPnGXW5
+         1A3cMi5ZsreplbhzGVjIA0zkfcgbAkCzNV35gZauzjQKjZ7BrB089mkdDjVhPBhrEkjB
+         pUGrcSs5auicTgMRS7Jv+E7MX3/Dw+PiZbaCvnzBMb/YyqlmRIF5Gcsfbfr8Phy96/2g
+         jf+zVPbcDXuwOxLkYT/DDDSc89r3EjZAH5L5DiEGDja9y7aUuE1AbX5qnfbs40g7kj41
+         /APA==
+X-Gm-Message-State: APjAAAX+IZrAR8pUqZgGgYYoNGLnrjD5nS6YqNbNFvkefwOsky5M5/72
+        Aot86DSTWe2hLlbMeZ4p+6M3yLGReDuuNnc9KoYqEg==
+X-Google-Smtp-Source: APXvYqyTw52gSQ4jw8pztzOwndZ0sk6pyQFwXTfytaf2zPfg719bU3sRcZ3Xjk3tkUfVqd3npa2/1rrBf+K/+C8JeGQ=
+X-Received: by 2002:a1f:4541:: with SMTP id s62mr12216061vka.59.1582143153200;
+ Wed, 19 Feb 2020 12:12:33 -0800 (PST)
 MIME-Version: 1.0
-References: <87zhdeq4qu.fsf@nanos.tec.linutronix.de>
-In-Reply-To: <87zhdeq4qu.fsf@nanos.tec.linutronix.de>
-From:   Brian Gerst <brgerst@gmail.com>
-Date:   Wed, 19 Feb 2020 15:10:49 -0500
-Message-ID: <CAMzpN2ie64-TOJ5MJ+MFQ22GxXcjAgthJBV046OOPjvcMAseNw@mail.gmail.com>
-Subject: Re: [PATCH] x86/entry/32: Add missing ASM_CLAC in general_protection entry
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
+References: <20191018161033.261971-1-samitolvanen@google.com>
+ <20200219000817.195049-1-samitolvanen@google.com> <0386ecad-f3d6-f1dc-90da-7f05b2793839@arm.com>
+In-Reply-To: <0386ecad-f3d6-f1dc-90da-7f05b2793839@arm.com>
+From:   Sami Tolvanen <samitolvanen@google.com>
+Date:   Wed, 19 Feb 2020 12:12:21 -0800
+Message-ID: <CABCJKudAYATQSVLHbM4873Yr2EYufrBWQ7Pmv+L97uHhBQUe4w@mail.gmail.com>
+Subject: Re: [PATCH v8 00/12] add support for Clang's Shadow Call Stack
+To:     James Morse <james.morse@arm.com>
+Cc:     Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jann Horn <jannh@google.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 4:58 AM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> All exception entry points must have ASM_CLAC right at the
-> beginning. The general_protection entry is missing one.
->
-> Fixes: e59d1b0a2419 ("x86-32, smap: Add STAC/CLAC instructions to 32-bit kernel entry")
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: stable@vger.kernel.org
-> ---
->  arch/x86/entry/entry_32.S |    1 +
->  1 file changed, 1 insertion(+)
->
-> --- a/arch/x86/entry/entry_32.S
-> +++ b/arch/x86/entry/entry_32.S
-> @@ -1681,6 +1681,7 @@ SYM_CODE_START(int3)
->  SYM_CODE_END(int3)
->
->  SYM_CODE_START(general_protection)
-> +       ASM_CLAC
->         pushl   $do_general_protection
->         jmp     common_exception
->  SYM_CODE_END(general_protection)
+On Wed, Feb 19, 2020 at 10:38 AM James Morse <james.morse@arm.com> wrote:
+> This looks like reserving x18 is causing Clang to not-inline the __kern_hyp_va() calls,
+> losing the vitally important section information. (I can see why the compiler thinks this
+> is fair)
 
-How about moving ASM_CLAC to common_exception instead?  That would
-save a few bytes (kernel text + alternatives), and the AC bit has no
-effect on kernel stack pushes.
+Thanks for catching this. This doesn't appear to be caused by
+reserving x18, it looks like SCS itself is causing clang to avoid
+inlining these. If I add __noscs to __kern_hyp_va(), clang inlines the
+function again. __always_inline also works, as you pointed out.
 
---
-Brian Gerst
+> Is this a known, er, thing, with clang-9?
+
+I can reproduce this with ToT clang as well.
+
+> I suspect repainting all KVM's 'inline' with __always_inline will fix it. (yuck!) I'll try
+> tomorrow.
+
+I think switching to __always_inline is the correct solution here.
+
+Sami
