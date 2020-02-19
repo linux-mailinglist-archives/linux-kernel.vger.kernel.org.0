@@ -2,62 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FA421648F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 16:42:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BB1F1648A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 16:30:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbgBSPml convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 19 Feb 2020 10:42:41 -0500
-Received: from mail.lrsd.org ([170.211.119.189]:15034 "EHLO mail.lrsd.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726569AbgBSPmk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 10:42:40 -0500
-X-Greylist: delayed 425 seconds by postgrey-1.27 at vger.kernel.org; Wed, 19 Feb 2020 10:42:40 EST
-IronPort-SDR: EyboJhKGWu9sPtK4iJP8idaV9YTuKqTQh34tXESQ7qWjBmcyWpZhbFCSHi5sYsriRGNBpkmSj9
- 6D4huA7dNiLi+hotRL2NhnBFvsZTCoUZQg5fyScdxNOsYCRzAQacKFUoCuU19XzVSoxNPbIU17
- Sxg7f0QOeXaHPe479Xy2fnLANILLXUCr5Kk/VYBhGuIAvm6Il+GbYJojfLUFwFx5c+g5vT+G3C
- gJz4a9aPG/MtLzc7ft7SksqCrg0FvmqlDuW8t5QKrcPzW+SDlUyLDG084+ElYJ7TkQsoWOHpbU
- 100=
-Received: from unknown (HELO mail.lrsd.org) ([10.17.23.185])
-  by mail.lrsd.org with ESMTP; 19 Feb 2020 09:35:34 -0600
-Received: from LRSDTCM09.lrsd.org ([fe80::7c0b:47e3:d052:974]) by
- lrsdvmex10hub1.lrsd.org ([::1]) with mapi id 14.03.0468.000; Wed, 19 Feb 2020
- 05:57:21 -0600
-From:   "Ahne, David" <David.Ahne@lrsd.org>
-To:     "Ahne, David" <David.Ahne@lrsd.org>
-Subject: IT Access Change
-Thread-Topic: IT Access Change
-Thread-Index: AdXnG044XM4axChqQE6+vFN2Li9toAAAGRgj
-Date:   Wed, 19 Feb 2020 11:57:20 +0000
-Message-ID: <A18BF6875607A34E90CA8EB67096ADE7025A31B4E4@lrsdtcm09.lrsd.org>
-References: <A18BF6875607A34E90CA8EB67096ADE7025A31B2A4@lrsdtcm09.lrsd.org>
-In-Reply-To: <A18BF6875607A34E90CA8EB67096ADE7025A31B2A4@lrsdtcm09.lrsd.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.17.23.80]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        id S1726856AbgBSPaX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 10:30:23 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:35443 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726701AbgBSPaW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 10:30:22 -0500
+Received: by mail-oi1-f193.google.com with SMTP id b18so24191803oie.2;
+        Wed, 19 Feb 2020 07:30:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JzcGItIJYGsl2cZdeJy9RWrhUYytz4QlrMkMbEGYVto=;
+        b=HJZkBmk+x89uDojI7ZE6uEKtJEcYgBNMQtGG5818UyMIrthiRB/aqqL3/XKm0TYtMR
+         Jb58hVSdNmepb2StvadbXvsP/F3MRqZf+I5hXdWyclVZX/DvvkhG+aPkCGBk3pA1M3Jo
+         aGpEgoYE9D5TBAWyj3f85nsemGCIQM3NllPRC7JV1mNGiwbBqYwvM58XD6I/voQWsGcS
+         tEuV3x3bTvEgIIAYAp7FgVCl5O+cmW4QsQsdmQs4xW5rgidIlVXkf5GwZ1KDB1gxUKMw
+         Unp4jcwKE2awaTJexYW9xiSRlFdvaYv9KCycvJ6GSP6w9aDxS2LMyl+CoWdV9s+NPwD3
+         +poA==
+X-Gm-Message-State: APjAAAW0C2Z4Xnp+KI0TrNVF3VZFFR5hgSgRH41upQlPbsK0yz2eye+Q
+        gnRt1rtj7KW4Yux0gKs5oQ==
+X-Google-Smtp-Source: APXvYqzgdNvRS6k2NroirQrsz+VuIisaXtV513aooiJzs49WDEhynFy2ewrvEpl6PVO4/ZyO6EK6kw==
+X-Received: by 2002:a05:6808:45:: with SMTP id v5mr4765338oic.90.1582126221379;
+        Wed, 19 Feb 2020 07:30:21 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id l207sm74554oih.25.2020.02.19.07.30.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2020 07:30:20 -0800 (PST)
+Received: (nullmailer pid 24733 invoked by uid 1000);
+        Wed, 19 Feb 2020 15:30:19 -0000
+Date:   Wed, 19 Feb 2020 09:30:19 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Collabora Kernel ML <kernel@collabora.com>,
+        Andrzej Hajda <a.hajda@samsung.com>, matthias.bgg@gmail.com,
+        drinkcat@chromium.org, hsinyi@chromium.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        David Airlie <airlied@linux.ie>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2 1/2] Documentation: bindings: Add ANX7688 HDMI to DP
+ bridge binding
+Message-ID: <20200219153019.GA19271@bogus>
+References: <20200213145416.890080-1-enric.balletbo@collabora.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200213145416.890080-1-enric.balletbo@collabora.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Feb 13, 2020 at 03:54:15PM +0100, Enric Balletbo i Serra wrote:
+> From: Nicolas Boichat <drinkcat@chromium.org>
 
-Dear Outlook Webmail User,
+'dt-bindings: ....' for the subject please.
 
-Your  Outlook Webmail password will expire 2/19/2020 01:34 PM.
+> 
+> Add documentation for DT properties supported by anx7688 HDMI-DP
+> converter.
+> 
+> Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+> Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
+> 
+> Changes in v2:
+> - Improve a bit the descriptions using the info from the datasheet.
+> - Convert binding to yaml.
+> - Use dual licensing.
+> 
+>  .../bindings/display/bridge/anx7688.yaml      | 79 +++++++++++++++++++
 
-If you have not yet changed your Outlook webmail Password, do that now, by logging in using the link below and You can now self-serve and manage your own password, without the help of I.T. Go to the Change Password link and change your password now, before it expires.
+Use the full compatible string: analogix,anx7688.yaml
 
-To change your password, use the link below
+>  1 file changed, 79 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/bridge/anx7688.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/display/bridge/anx7688.yaml b/Documentation/devicetree/bindings/display/bridge/anx7688.yaml
+> new file mode 100644
+> index 000000000000..c1b4b5191d44
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/bridge/anx7688.yaml
+> @@ -0,0 +1,79 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/bridge/anx7688.yaml#
 
-Change Password<https://owaaoptionsmyacco090.creatorlink.net/>
+Don't forget to update this too.
 
-DO NOT reply to this message. Failure to do this within 24 hours of receiving this notice we will immediately render your Outlook Web App account locked for security reasons.
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Analogix ANX7688 HDMI to USB Type-C Bridge (Port Controller with MUX)
+> +
+> +maintainers:
+> +  - Nicolas Boichat <drinkcat@chromium.org>
+> +  - Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> +
+> +description: |
+> +  The ANX7688 is a single-chip mobile transmitter to support 4K 60 frames per
+> +  second (4096x2160p60) or FHD 120 frames per second (1920x1080p120) video
+> +  resolution from a smartphone or tablet with full function USB-C.
+> +
+> +  This binding only describes the HDMI to DP display bridge.
+> +
+> +properties:
+> +  compatible:
+> +    const: analogix,anx7688
+> +
+> +  reg:
+> +    maxItems: 1
+> +    description: I2C address of the device
 
-Regards,
-Department of Technical Infrastructure.
-***** Email confidentiality notice *****
-This email and any files transmitted with it are confidential and intended solely for the use of the individual or entity to whom they are addressed. This message contains confidential information and is intended only for the individual named. If you are not the named addressee you should not disseminate, distribute or copy this e-mail. Please notify the sender immediately by e-mail if you have received this e-mail by mistake and delete this e-mail from your system. If you are not the intended recipient you are notified that disclosing, copying, distributing or taking any action in reliance on the contents of this information is strictly prohibited.
+That's every reg, you can drop 'description'.
+
+> +
+> +  ports:
+> +    type: object
+> +
+> +    properties:
+> +      port@0:
+> +        type: object
+> +        description: |
+> +          Video port for HDMI input
+> +
+> +      port@1:
+> +        type: object
+> +        description: |
+> +          Video port for DP output
+> +
+> +    required:
+> +      - port@0
+
+IMO, port@1 should be required too. If not a fixed panel, then it should 
+have a connector node.
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - ports
+> +
+> +examples:
+> +  - |
+> +    i2c0 {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        anx7688: dp-bridge@2c {
+> +            compatible = "analogix,anx7688";
+> +            reg = <0x2c>;
+> +
+> +            ports {
+> +                #address-cells = <1>;
+> +                #size-cells = <0>;
+> +
+> +                port@0 {
+> +                    reg = <0>;
+> +                    anx7866_in: endpoint {
+> +                        remote-endpoint = <&hdmi0_out>;
+> +                    };
+> +                };
+> +
+> +                port@1 {
+> +                    reg = <1>;
+> +                    anx7866_out: endpoint {
+> +                        remote-endpoint = <&panel_in>;
+> +                   };
+> +                };
+> +            };
+> +        };
+> +    };
+> -- 
+> 2.25.0
+> 
