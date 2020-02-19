@@ -2,87 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DACC7163A85
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 03:50:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0055B163A81
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 03:49:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728285AbgBSCuX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 21:50:23 -0500
-Received: from smtp.uniroma2.it ([160.80.6.23]:58348 "EHLO smtp.uniroma2.it"
+        id S1728266AbgBSCt3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 21:49:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728027AbgBSCuW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 21:50:22 -0500
-Received: from utente-Aspire-V3-572G (wireless-130-133.net.uniroma2.it [160.80.133.130])
-        by smtp-2015.uniroma2.it (8.14.4/8.14.4/Debian-8) with SMTP id 01J2nOYa002713;
-        Wed, 19 Feb 2020 03:49:29 +0100
-Date:   Wed, 19 Feb 2020 03:49:24 +0100
-From:   Carmine Scarpitta <carmine.scarpitta@uniroma2.it>
-To:     David Ahern <dsahern@gmail.com>
-Cc:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        kuba@kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ahmed.abdelsalam@gssi.it,
-        dav.lebrun@gmail.com, andrea.mayer@uniroma2.it,
-        paolo.lungaroni@cnit.it, hiroki.shirokura@linecorp.com
-Subject: Re: [net-next 1/2] Perform IPv4 FIB lookup in a predefined FIB
- table
-Message-Id: <20200219034924.272d991505ee68d95566ff8d@uniroma2.it>
-In-Reply-To: <cd18410f-7065-ebea-74c5-4c016a3f1436@gmail.com>
-References: <20200213010932.11817-1-carmine.scarpitta@uniroma2.it>
-        <20200213010932.11817-2-carmine.scarpitta@uniroma2.it>
-        <7302c1f7-b6d1-90b7-5df1-3e5e0ba98f53@gmail.com>
-        <20200219005007.23d724b7f717ef89ad3d75e5@uniroma2.it>
-        <cd18410f-7065-ebea-74c5-4c016a3f1436@gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-unknown-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.100.0 at smtp-2015
-X-Virus-Status: Clean
+        id S1728027AbgBSCt3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 21:49:29 -0500
+Received: from localhost (unknown [104.132.1.66])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 858F824654;
+        Wed, 19 Feb 2020 02:49:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582080568;
+        bh=pOEc9MEZ6T3vljY0q9joT1dIPADh7c/sUtPf/8kggMk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tkBphdEXciG/bwBiAOIIhSYPuMeHdIWO0uxMZpL3fzTZhoAR1aoCXZO/tH87u8s9U
+         KPcA7GhWRjiysUMR0tEoGNPW/ip5Ngqm2Y0pywj2dgV8OA9GYlDt1gRcmo18BgvkWB
+         Yij4dbl2lXpt1mvwI2Uo7AbpdKRdT54rsW7Hqq2k=
+Date:   Tue, 18 Feb 2020 18:49:28 -0800
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, chao@kernel.org
+Subject: Re: [PATCH 1/3] f2fs: avoid __GFP_NOFAIL in f2fs_bio_alloc
+Message-ID: <20200219024928.GA96609@google.com>
+References: <20200218102136.32150-1-yuchao0@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200218102136.32150-1-yuchao0@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
-Thanks for the reply.
+On 02/18, Chao Yu wrote:
+> __f2fs_bio_alloc() won't fail due to memory pool backend, remove unneeded
+> __GFP_NOFAIL flag in __f2fs_bio_alloc().
 
-The problem is not related to the table lookup. Calling fib_table_lookup and then rt_dst_alloc from seg6_local.c is good.
+It it safe for old kernels as well when thinking backports?
 
-But after the lookup we need to forward the packet according the matched table entry. This requires to perform all the steps already implemented by ip_route_input_slow function. So we need to call the following functions (defined in route.c):
-- rt_cache_valid
-- find_exception
-- rt_dst_alloc
-- rt_set_nexthop
-- rt_cache_route
-
-Some of these functions are not exported and so we cannot call them from seg6_local.c
-Consequently, we are not able to support all the functionalities implemented by IPv4 routing subsystem.
-
-We are not harming the IPv4 FIB lookup. We introduce a new flag that allows us to re-use all the non exported functions. 
-
-If the flag is not set, the normal IPv4 FIB lookup is the same with no change. 
-
-Thanks,
-Carmine
-
-
-On Tue, 18 Feb 2020 18:05:58 -0700
-David Ahern <dsahern@gmail.com> wrote:
-
-> On 2/18/20 4:50 PM, Carmine Scarpitta wrote:
-> > Indeed both call fib_table_lookup and rt_dst_alloc are exported for modules. 
-> > However, several functions defined in route.c are not exported:
-> > - the two functions rt_cache_valid and rt_cache_route required to handle the routing cache
-> > - find_exception, required to support fib exceptions.
-> > This would require duplicating a lot of the IPv4 routing code. 
-> > The reason behind this change is really to reuse the IPv4 routing code instead of doing a duplication. 
-> > 
-> > For the fi member of the struct fib_result, we will fix it by initializing before "if (!tbl_known)"
 > 
-> The route.c code does not need to know about the fib table or fib
-> policy. Why do all of the existing policy options (mark, L3 domains,
-> uid) to direct the lookup to the table of interest not work for this use
-> case?
-
-
--- 
-Carmine Scarpitta <carmine.scarpitta@uniroma2.it>
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/data.c | 12 ++++--------
+>  fs/f2fs/f2fs.h |  2 +-
+>  2 files changed, 5 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index baf12318ec64..3a4ece26928c 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -54,17 +54,13 @@ static inline struct bio *__f2fs_bio_alloc(gfp_t gfp_mask,
+>  	return bio_alloc_bioset(gfp_mask, nr_iovecs, &f2fs_bioset);
+>  }
+>  
+> -struct bio *f2fs_bio_alloc(struct f2fs_sb_info *sbi, int npages, bool no_fail)
+> +struct bio *f2fs_bio_alloc(struct f2fs_sb_info *sbi, int npages, bool noio)
+>  {
+> -	struct bio *bio;
+> -
+> -	if (no_fail) {
+> +	if (noio) {
+>  		/* No failure on bio allocation */
+> -		bio = __f2fs_bio_alloc(GFP_NOIO, npages);
+> -		if (!bio)
+> -			bio = __f2fs_bio_alloc(GFP_NOIO | __GFP_NOFAIL, npages);
+> -		return bio;
+> +		return __f2fs_bio_alloc(GFP_NOIO, npages);
+>  	}
+> +
+>  	if (time_to_inject(sbi, FAULT_ALLOC_BIO)) {
+>  		f2fs_show_injection_info(sbi, FAULT_ALLOC_BIO);
+>  		return NULL;
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 5316ac3eacdf..65f569949d42 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -3343,7 +3343,7 @@ void f2fs_destroy_checkpoint_caches(void);
+>   */
+>  int __init f2fs_init_bioset(void);
+>  void f2fs_destroy_bioset(void);
+> -struct bio *f2fs_bio_alloc(struct f2fs_sb_info *sbi, int npages, bool no_fail);
+> +struct bio *f2fs_bio_alloc(struct f2fs_sb_info *sbi, int npages, bool noio);
+>  int f2fs_init_bio_entry_cache(void);
+>  void f2fs_destroy_bio_entry_cache(void);
+>  void f2fs_submit_bio(struct f2fs_sb_info *sbi,
+> -- 
+> 2.18.0.rc1
