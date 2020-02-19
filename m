@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0268A163DEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 08:40:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59D86163DEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 08:40:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727463AbgBSHkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 02:40:05 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41566 "EHLO mx2.suse.de"
+        id S1727637AbgBSHkH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 02:40:07 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41574 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726891AbgBSHj4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 02:39:56 -0500
+        id S1726927AbgBSHjz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 02:39:55 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id B93E9B1EA;
-        Wed, 19 Feb 2020 07:39:53 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 0E4CEAF3D;
+        Wed, 19 Feb 2020 07:39:54 +0000 (UTC)
 From:   Jiri Slaby <jslaby@suse.cz>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH 7/9] vt: vt_kern.h, remove extern from functions
-Date:   Wed, 19 Feb 2020 08:39:49 +0100
-Message-Id: <20200219073951.16151-7-jslaby@suse.cz>
+Subject: [PATCH 8/9] vt: selection, remove redeclaration of poke_blanked_console
+Date:   Wed, 19 Feb 2020 08:39:50 +0100
+Message-Id: <20200219073951.16151-8-jslaby@suse.cz>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200219073951.16151-1-jslaby@suse.cz>
 References: <20200219073951.16151-1-jslaby@suse.cz>
@@ -32,112 +32,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Unify the declarations of functions in vt_kern.h: some are with extern,
-some are not. Remove extern from the former as it is not needed for
-functions.
+It is declared in vt_kern.h, so no need to declare it in selection.c
+which includes the header.
 
 Signed-off-by: Jiri Slaby <jslaby@suse.cz>
 ---
- include/linux/vt_kern.h | 62 ++++++++++++++++++++---------------------
- 1 file changed, 31 insertions(+), 31 deletions(-)
+ drivers/tty/vt/selection.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/include/linux/vt_kern.h b/include/linux/vt_kern.h
-index ded5c48598f3..abf5bccf906a 100644
---- a/include/linux/vt_kern.h
-+++ b/include/linux/vt_kern.h
-@@ -28,8 +28,9 @@
- #define BROKEN_GRAPHICS_PROGRAMS 1
- #endif
+diff --git a/drivers/tty/vt/selection.c b/drivers/tty/vt/selection.c
+index 0cd7072b6a56..eaf11729ef9e 100644
+--- a/drivers/tty/vt/selection.c
++++ b/drivers/tty/vt/selection.c
+@@ -35,8 +35,6 @@
+ /* Don't take this from <ctype.h>: 011-015 on the screen aren't spaces */
+ #define isspace(c)	((c) == ' ')
  
--extern void kd_mksound(unsigned int hz, unsigned int ticks);
--extern int kbd_rate(struct kbd_repeat *rep);
-+void kd_mksound(unsigned int hz, unsigned int ticks);
-+int kbd_rate(struct kbd_repeat *rep);
-+
- extern int fg_console, last_console, want_console;
- 
- /* console.c */
-@@ -131,8 +132,8 @@ void vt_event_post(unsigned int event, unsigned int old, unsigned int new);
- int vt_waitactive(int n);
- void change_console(struct vc_data *new_vc);
- void reset_vc(struct vc_data *vc);
--extern int do_unbind_con_driver(const struct consw *csw, int first, int last,
--			     int deflt);
-+int do_unbind_con_driver(const struct consw *csw, int first, int last,
-+			 int deflt);
- int vty_init(const struct file_operations *console_fops);
- 
- extern bool vt_dont_switch;
-@@ -146,7 +147,7 @@ struct vt_spawn_console {
- };
- extern struct vt_spawn_console vt_spawn_con;
- 
--extern int vt_move_to_console(unsigned int vt, int alloc);
-+int vt_move_to_console(unsigned int vt, int alloc);
- 
- /* Interfaces for VC notification of character events (for accessibility etc) */
- 
-@@ -155,35 +156,34 @@ struct vt_notifier_param {
- 	unsigned int c;		/* Printed char */
- };
- 
--extern int register_vt_notifier(struct notifier_block *nb);
--extern int unregister_vt_notifier(struct notifier_block *nb);
-+int register_vt_notifier(struct notifier_block *nb);
-+int unregister_vt_notifier(struct notifier_block *nb);
- 
--extern void hide_boot_cursor(bool hide);
-+void hide_boot_cursor(bool hide);
- 
- /* keyboard  provided interfaces */
--extern int vt_do_diacrit(unsigned int cmd, void __user *up, int eperm);
--extern int vt_do_kdskbmode(int console, unsigned int arg);
--extern int vt_do_kdskbmeta(int console, unsigned int arg);
--extern int vt_do_kbkeycode_ioctl(int cmd, struct kbkeycode __user *user_kbkc,
--								int perm);
--extern int vt_do_kdsk_ioctl(int cmd, struct kbentry __user *user_kbe,
--					int perm, int console);
--extern int vt_do_kdgkb_ioctl(int cmd, struct kbsentry __user *user_kdgkb,
--                                        int perm);
--extern int vt_do_kdskled(int console, int cmd, unsigned long arg, int perm);
--extern int vt_do_kdgkbmode(int console);
--extern int vt_do_kdgkbmeta(int console);
--extern void vt_reset_unicode(int console);
--extern int vt_get_shift_state(void);
--extern void vt_reset_keyboard(int console);
--extern int vt_get_leds(int console, int flag);
--extern int vt_get_kbd_mode_bit(int console, int bit);
--extern void vt_set_kbd_mode_bit(int console, int bit);
--extern void vt_clr_kbd_mode_bit(int console, int bit);
--extern void vt_set_led_state(int console, int leds);
--extern void vt_set_led_state(int console, int leds);
--extern void vt_kbd_con_start(int console);
--extern void vt_kbd_con_stop(int console);
-+int vt_do_diacrit(unsigned int cmd, void __user *up, int eperm);
-+int vt_do_kdskbmode(int console, unsigned int arg);
-+int vt_do_kdskbmeta(int console, unsigned int arg);
-+int vt_do_kbkeycode_ioctl(int cmd, struct kbkeycode __user *user_kbkc,
-+			  int perm);
-+int vt_do_kdsk_ioctl(int cmd, struct kbentry __user *user_kbe, int perm,
-+		     int console);
-+int vt_do_kdgkb_ioctl(int cmd, struct kbsentry __user *user_kdgkb, int perm);
-+int vt_do_kdskled(int console, int cmd, unsigned long arg, int perm);
-+int vt_do_kdgkbmode(int console);
-+int vt_do_kdgkbmeta(int console);
-+void vt_reset_unicode(int console);
-+int vt_get_shift_state(void);
-+void vt_reset_keyboard(int console);
-+int vt_get_leds(int console, int flag);
-+int vt_get_kbd_mode_bit(int console, int bit);
-+void vt_set_kbd_mode_bit(int console, int bit);
-+void vt_clr_kbd_mode_bit(int console, int bit);
-+void vt_set_led_state(int console, int leds);
-+void vt_set_led_state(int console, int leds);
-+void vt_kbd_con_start(int console);
-+void vt_kbd_con_stop(int console);
- 
- void vc_scrolldelta_helper(struct vc_data *c, int lines,
- 		unsigned int rolled_over, void *_base, unsigned int size);
+-extern void poke_blanked_console(void);
+-
+ /* FIXME: all this needs locking */
+ static struct vc_selection {
+ 	struct mutex lock;
 -- 
 2.25.0
 
