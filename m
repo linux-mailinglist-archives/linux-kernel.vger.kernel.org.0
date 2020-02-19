@@ -2,82 +2,241 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2435A164D5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 19:10:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C05A0164D6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 19:12:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbgBSSJ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 13:09:56 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45935 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726645AbgBSSJ4 (ORCPT
+        id S1726681AbgBSSMZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 13:12:25 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:34085 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726605AbgBSSMY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 13:09:56 -0500
-Received: by mail-pf1-f193.google.com with SMTP id 2so438743pfg.12;
-        Wed, 19 Feb 2020 10:09:56 -0800 (PST)
+        Wed, 19 Feb 2020 13:12:24 -0500
+Received: by mail-qk1-f193.google.com with SMTP id c20so1032931qkm.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 10:12:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=gUc6iYIu77GVSs+UtHNasOCjUTr8dlq5hQEQBI5NlhQ=;
-        b=Swrz8HEMPaydU4pD3iaNBxrYpyGjbEh9IVLjgYHtSjdepJEcwt2ElEwsEZAaU7UVCK
-         /LyNzRhfvrhBaGyzFHRlmd7PaQ7VKdWGh9cgoXCOEHqsX0mvjk946b8/ITR/N9ttaCiS
-         9BVMedNjTXVwS8XDypMsqVjgiaahK7aIQjr2JA6nrCiaASRcaBMMzZqj0YJJVfATYsbA
-         ueNX+P0KhlF7yl6h4yaXEVvcwYQ/Dm81RFzfwljfCqo7Q4VR8P1SCnxg07zEhkBlBdCH
-         ADab63L9LSCwk0qwOhvGkIMla2ozVbs7zFQfCOsSGXAlgoU1er9+rkhEG979XsegHah5
-         MRwQ==
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nyHLiC8XkwcyLqR3rLu/BwGv+w1mXfzRj/lTpFIDBKk=;
+        b=GkTPctej1MwDF6qrQTa6Bd5b3GEMii0/4ZyyoxUUxSVK4yrAFiTPNUkV9khKirjNjO
+         lFDwLo4wsvoC6/B1DDUizFlvfN1+WWtaqgWi/dqZJ9Z8CZveyMpxwBLgytas4Yn+2Uc3
+         Zuurs21A/VIiEmkLD9OohUUj/FiGGL+hG1hnIdL9AoWmoc/gil5ltV68GjMX+g1fnDq+
+         i/8uY7ZU3xANLsmzcJI/zwX+vq8svSYZikeiMmC/vdmpTR2gYM5p/7jvug5Ciks+H39r
+         O1M7vDcsrpHuOqOaZuNZINoAIhGcM6fltA2fDVsAeeAxuAIvKOxGrtQ4FgMm+OFKpFWL
+         P3Pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gUc6iYIu77GVSs+UtHNasOCjUTr8dlq5hQEQBI5NlhQ=;
-        b=ia9Qp9cF89uGfB/SGO27b7Uis/V4YqreYFBVDV08LOyT9oMI5s6esYbko2I6Rf8RE2
-         UjDXD8o+2qOVPVYuAgqsXa0qbcnfj69jUVAS4IgrMmEpKe8Pu7RzRPfhBqV5I2A2KoVH
-         imenwJHra+gC3RLIvz3EFeqCI2zAIyMBHYTdK3Js+RYHn6aVt6qxlVUEKtKaonMZTelg
-         JqsjJXs2E42XVyylvje/F+YhhHRNjLNaN4eWjr5Bukk1ba75Sr04kgutYssaJeDthKaX
-         GZ5X/HmyPDO+N8DZicAvC2Ry2ZKvbdlkrnbbw/yBAqsqV/gx+/K1dpha5egmRSvsDKk/
-         jEgg==
-X-Gm-Message-State: APjAAAUJ7a4gYpSwacCWaNCBZhFey6s0nWuhMIuZ6tpX25qHbdlv8r8d
-        NDwlMWPvGc6SZacXMoMO2b0=
-X-Google-Smtp-Source: APXvYqy+W6yax+vaDQzK1opYCAm188MW+FPRGPCSop9w+xGOl1ftSD8ieYYtwzASs0xbXF/UwodmKg==
-X-Received: by 2002:a63:c304:: with SMTP id c4mr29775917pgd.85.1582135795851;
-        Wed, 19 Feb 2020 10:09:55 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id x21sm290659pfq.76.2020.02.19.10.09.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Feb 2020 10:09:55 -0800 (PST)
-Date:   Wed, 19 Feb 2020 10:09:54 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 5.5 00/80] 5.5.5-stable review
-Message-ID: <20200219180954.GC26169@roeck-us.net>
-References: <20200218190432.043414522@linuxfoundation.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nyHLiC8XkwcyLqR3rLu/BwGv+w1mXfzRj/lTpFIDBKk=;
+        b=l5JK8hrkc4Ffr8ApZrXTbWP+4n1hDWDxCNJWbDnfCulHqwr0hDzf1NIRxY3wLKZq7r
+         TDSTPxXQNQh7tE3Rank0x9pu5L8ptV+y00g+GZlThTD5AztdAQF6I10iGSfItAMdwzcE
+         QOCVuV0H8G1Yi6kCOhUtKWRj2XQ7j/gujjh92pEnwyWL+zPEm6ZvMeB7KQYLASAj2bMT
+         FfhZcNH26IBPNsqTRNhL3yBayOwBBINzPc9ct+KKiV6SqpT2nqAGeH3FHvLnq63xLe7M
+         z/zB/gz+JBxGs+0ySyZkhqtXweTUF6vkjf/++VZSA366EVYrOvuck0U4inC0l7GQI1qL
+         YtSw==
+X-Gm-Message-State: APjAAAVCfwk3zRQ1sreGWIIOwlApdyI6BJSOMK3mNUzrDf45JLxuUJAc
+        klmkJlmnEiMAeF+1oM5TfeSnzg==
+X-Google-Smtp-Source: APXvYqxQP+2JZAwmgpbQaOmHN+mZFY9huQzZ0AFJMd+VQkazsqk7kclEYBq/LhoeD2GTcppz0tsQvw==
+X-Received: by 2002:a05:620a:222d:: with SMTP id n13mr24920245qkh.268.1582135940510;
+        Wed, 19 Feb 2020 10:12:20 -0800 (PST)
+Received: from localhost ([2620:10d:c091:500::2:3bde])
+        by smtp.gmail.com with ESMTPSA id t23sm361021qto.88.2020.02.19.10.12.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2020 10:12:19 -0800 (PST)
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Michal Hocko <mhocko@suse.com>, Tejun Heo <tj@kernel.org>,
+        Roman Gushchin <guro@fb.com>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: [PATCH] mm: memcontrol: asynchronous reclaim for memory.high
+Date:   Wed, 19 Feb 2020 13:12:19 -0500
+Message-Id: <20200219181219.54356-1-hannes@cmpxchg.org>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200218190432.043414522@linuxfoundation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 08:54:21PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.5.5 release.
-> There are 80 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 20 Feb 2020 19:03:19 +0000.
-> Anything received after that time might be too late.
-> 
+We have received regression reports from users whose workloads moved
+into containers and subsequently encountered new latencies. For some
+users these were a nuisance, but for some it meant missing their SLA
+response times. We tracked those delays down to cgroup limits, which
+inject direct reclaim stalls into the workload where previously all
+reclaim was handled my kswapd.
 
-Build results:
-	total: 157 pass: 157 fail: 0
-Qemu test results:
-	total: 412 pass: 412 fail: 0
+This patch adds asynchronous reclaim to the memory.high cgroup limit
+while keeping direct reclaim as a fallback. In our testing, this
+eliminated all direct reclaim from the affected workload.
 
-Guenter
+memory.high has a grace buffer of about 4% between when it becomes
+exceeded and when allocating threads get throttled. We can use the
+same buffer for the async reclaimer to operate in. If the worker
+cannot keep up and the grace buffer is exceeded, allocating threads
+will fall back to direct reclaim before getting throttled.
+
+For irq-context, there's already async memory.high enforcement. Re-use
+that work item for all allocating contexts, but switch it to the
+unbound workqueue so reclaim work doesn't compete with the workload.
+The work item is per cgroup, which means the workqueue infrastructure
+will create at maximum one worker thread per reclaiming cgroup.
+
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+---
+ mm/memcontrol.c | 60 +++++++++++++++++++++++++++++++++++++------------
+ mm/vmscan.c     | 10 +++++++--
+ 2 files changed, 54 insertions(+), 16 deletions(-)
+
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index cf02e3ef3ed9..bad838d9c2bb 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -1446,6 +1446,10 @@ static char *memory_stat_format(struct mem_cgroup *memcg)
+ 	seq_buf_printf(&s, "pgsteal %lu\n",
+ 		       memcg_events(memcg, PGSTEAL_KSWAPD) +
+ 		       memcg_events(memcg, PGSTEAL_DIRECT));
++	seq_buf_printf(&s, "pgscan_direct %lu\n",
++		       memcg_events(memcg, PGSCAN_DIRECT));
++	seq_buf_printf(&s, "pgsteal_direct %lu\n",
++		       memcg_events(memcg, PGSTEAL_DIRECT));
+ 	seq_buf_printf(&s, "%s %lu\n", vm_event_name(PGACTIVATE),
+ 		       memcg_events(memcg, PGACTIVATE));
+ 	seq_buf_printf(&s, "%s %lu\n", vm_event_name(PGDEACTIVATE),
+@@ -2235,10 +2239,19 @@ static void reclaim_high(struct mem_cgroup *memcg,
+ 
+ static void high_work_func(struct work_struct *work)
+ {
++	unsigned long high, usage;
+ 	struct mem_cgroup *memcg;
+ 
+ 	memcg = container_of(work, struct mem_cgroup, high_work);
+-	reclaim_high(memcg, MEMCG_CHARGE_BATCH, GFP_KERNEL);
++
++	high = READ_ONCE(memcg->high);
++	usage = page_counter_read(&memcg->memory);
++
++	if (usage <= high)
++		return;
++
++	set_worker_desc("cswapd/%llx", cgroup_id(memcg->css.cgroup));
++	reclaim_high(memcg, usage - high, GFP_KERNEL);
+ }
+ 
+ /*
+@@ -2304,15 +2317,22 @@ void mem_cgroup_handle_over_high(void)
+ 	unsigned long pflags;
+ 	unsigned long penalty_jiffies, overage;
+ 	unsigned int nr_pages = current->memcg_nr_pages_over_high;
++	bool tried_direct_reclaim = false;
+ 	struct mem_cgroup *memcg;
+ 
+ 	if (likely(!nr_pages))
+ 		return;
+ 
+-	memcg = get_mem_cgroup_from_mm(current->mm);
+-	reclaim_high(memcg, nr_pages, GFP_KERNEL);
+ 	current->memcg_nr_pages_over_high = 0;
+ 
++	memcg = get_mem_cgroup_from_mm(current->mm);
++	high = READ_ONCE(memcg->high);
++recheck:
++	usage = page_counter_read(&memcg->memory);
++
++	if (usage <= high)
++		goto out;
++
+ 	/*
+ 	 * memory.high is breached and reclaim is unable to keep up. Throttle
+ 	 * allocators proactively to slow down excessive growth.
+@@ -2325,12 +2345,6 @@ void mem_cgroup_handle_over_high(void)
+ 	 * overage amount.
+ 	 */
+ 
+-	usage = page_counter_read(&memcg->memory);
+-	high = READ_ONCE(memcg->high);
+-
+-	if (usage <= high)
+-		goto out;
+-
+ 	/*
+ 	 * Prevent division by 0 in overage calculation by acting as if it was a
+ 	 * threshold of 1 page
+@@ -2369,6 +2383,16 @@ void mem_cgroup_handle_over_high(void)
+ 	if (penalty_jiffies <= HZ / 100)
+ 		goto out;
+ 
++	/*
++	 * It's possible async reclaim just isn't able to keep
++	 * up. Before we go to sleep, try direct reclaim.
++	 */
++	if (!tried_direct_reclaim) {
++		reclaim_high(memcg, nr_pages, GFP_KERNEL);
++		tried_direct_reclaim = true;
++		goto recheck;
++	}
++
+ 	/*
+ 	 * If we exit early, we're guaranteed to die (since
+ 	 * schedule_timeout_killable sets TASK_KILLABLE). This means we don't
+@@ -2544,13 +2568,21 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+ 	 */
+ 	do {
+ 		if (page_counter_read(&memcg->memory) > memcg->high) {
++			/*
++			 * Kick off the async reclaimer, which should
++			 * be doing most of the work to avoid latency
++			 * in the workload. But also check in on its
++			 * progress before resuming to userspace, in
++			 * case we need to do direct reclaim, or even
++			 * throttle the allocating thread if reclaim
++			 * cannot keep up with allocation demand.
++			 */
++			queue_work(system_unbound_wq, &memcg->high_work);
+ 			/* Don't bother a random interrupted task */
+-			if (in_interrupt()) {
+-				schedule_work(&memcg->high_work);
+-				break;
++			if (!in_interrupt()) {
++				current->memcg_nr_pages_over_high += batch;
++				set_notify_resume(current);
+ 			}
+-			current->memcg_nr_pages_over_high += batch;
+-			set_notify_resume(current);
+ 			break;
+ 		}
+ 	} while ((memcg = parent_mem_cgroup(memcg)));
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 74e8edce83ca..d6085115c7f2 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1947,7 +1947,10 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
+ 	__mod_node_page_state(pgdat, NR_ISOLATED_ANON + file, nr_taken);
+ 	reclaim_stat->recent_scanned[file] += nr_taken;
+ 
+-	item = current_is_kswapd() ? PGSCAN_KSWAPD : PGSCAN_DIRECT;
++	if (current_is_kswapd() || (cgroup_reclaim(sc) && current_work()))
++		item = PGSCAN_KSWAPD;
++	else
++		item = PGSCAN_DIRECT;
+ 	if (!cgroup_reclaim(sc))
+ 		__count_vm_events(item, nr_scanned);
+ 	__count_memcg_events(lruvec_memcg(lruvec), item, nr_scanned);
+@@ -1961,7 +1964,10 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
+ 
+ 	spin_lock_irq(&pgdat->lru_lock);
+ 
+-	item = current_is_kswapd() ? PGSTEAL_KSWAPD : PGSTEAL_DIRECT;
++	if (current_is_kswapd() || (cgroup_reclaim(sc) && current_work()))
++		item = PGSTEAL_KSWAPD;
++	else
++		item = PGSTEAL_DIRECT;
+ 	if (!cgroup_reclaim(sc))
+ 		__count_vm_events(item, nr_reclaimed);
+ 	__count_memcg_events(lruvec_memcg(lruvec), item, nr_reclaimed);
+-- 
+2.24.1
+
