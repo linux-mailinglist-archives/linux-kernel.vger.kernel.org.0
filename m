@@ -2,91 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C0A9163E41
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 08:55:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9804163E46
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 08:55:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726558AbgBSHyq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 02:54:46 -0500
-Received: from mga07.intel.com ([134.134.136.100]:6491 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726156AbgBSHyp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 02:54:45 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2020 23:54:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,459,1574150400"; 
-   d="scan'208";a="436148633"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga006.fm.intel.com with ESMTP; 18 Feb 2020 23:54:42 -0800
-Received: from [10.125.252.130] (abudanko-mobl.ccr.corp.intel.com [10.125.252.130])
-        by linux.intel.com (Postfix) with ESMTP id 40E9A580270;
-        Tue, 18 Feb 2020 23:54:36 -0800 (PST)
-Subject: Re: [PATCH v7 01/12] capabilities: introduce CAP_PERFMON to kernel
- and user space
-To:     James Morris <jmorris@namei.org>
-Cc:     Serge Hallyn <serge@hallyn.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Will Deacon <will@kernel.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Helge Deller <deller@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        oprofile-list@lists.sf.net,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        linux-man@vger.kernel.org
-References: <c8de937a-0b3a-7147-f5ef-69f467e87a13@linux.intel.com>
- <f56fbb5c-1477-44d5-7346-85a1ca0869dc@linux.intel.com>
- <alpine.LRH.2.21.2002190621180.10165@namei.org>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <4664bbc7-e4ef-5d6e-7f71-96e5567fcf60@linux.intel.com>
-Date:   Wed, 19 Feb 2020 10:54:35 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1726682AbgBSHzF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 02:55:05 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:21540 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726569AbgBSHzF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 02:55:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582098904;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=i1mLBd9LWHB+KH9pfrmfXQPkFdMyiuEf6cTfBeditaA=;
+        b=VITCrzzh4zioa0s73dEgfHRDsVtEc3q+3Uy+FsIfj5EEeL3ppkZnNQQRzJklzvBLop7G7R
+        Gz1RtoeuSppyrKe1JbbAu4DKoevQyicb9AlcnU8eoK7tzDZfwtqJIFc+AKjjmMSe7UaRYp
+        WDaRg8OjGqmjYLFd0azn76Y2flQ+GtY=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-248-9ce3ydFnPF2vm2tMxDo_Fw-1; Wed, 19 Feb 2020 02:54:58 -0500
+X-MC-Unique: 9ce3ydFnPF2vm2tMxDo_Fw-1
+Received: by mail-qv1-f71.google.com with SMTP id v3so14124310qvm.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 23:54:58 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=i1mLBd9LWHB+KH9pfrmfXQPkFdMyiuEf6cTfBeditaA=;
+        b=VVpfanczBZu89olDLK+rcrpLrFK6WhkBLqwfFH6507hDU2X4fsPsiR0DVIWexVrZyy
+         0g32hOaNnIngPK4rVJ4J6XCATgB469GvMhWMk+Br8CSwFhRqInXELvHkFQa/G10oXhwD
+         4/laowCcLpTKDHjJw4W/Z2rOckEuZs0v5cCFflMVo9k/S4ZEKcKjew8+MaOfbsEtflAj
+         RE/qN82ZHNm3mc1u+u0e2QAnpPQjPuZTyhsmZ7o4WgbA/TtwnFMHpvviItvo+DsAbXVi
+         PwLnZixKpt1Eqsm6U27PAulLnkWFQGGYSsEkENF4oTBBi/iguQPQchmOUIs29bTjbCGM
+         b1Mg==
+X-Gm-Message-State: APjAAAWm2mUxCpz937xLkBOihp13uneDWIKSgcCYtr27KsUGNPmVB8mL
+        0/lAutobCU/eg2SxewYCvai+cadYJymBqJznOprdPFUFn01X9cNOxf3tvm2Ff/4vodzfdCjYGtt
+        qQm/FCyjJdL6feeWq0KIDDXE4XTJl3k4V7gv9MjZz
+X-Received: by 2002:a05:620a:1366:: with SMTP id d6mr22176817qkl.230.1582098898544;
+        Tue, 18 Feb 2020 23:54:58 -0800 (PST)
+X-Google-Smtp-Source: APXvYqy7039fN0rfpeY5AjhVmdUWeucyK4eyLBE67zRJtzyKFxN2zW/8mz/0vFANt1B8IQuhcyFS3m7H5RyH3TSFiQw=
+X-Received: by 2002:a05:620a:1366:: with SMTP id d6mr22176812qkl.230.1582098898293;
+ Tue, 18 Feb 2020 23:54:58 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.2002190621180.10165@namei.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <ae5eee33-9dfc-0609-1bf8-33fd773b9bd5@hanno.de>
+ <CAO-hwJJ1sc_RAh4ytWSOmRqfVESi2dvB_Ao_Vn+6XXixxVyxrA@mail.gmail.com> <74d73ebc-0cff-768d-00b7-57bb9b44124f@hanno.de>
+In-Reply-To: <74d73ebc-0cff-768d-00b7-57bb9b44124f@hanno.de>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Wed, 19 Feb 2020 08:54:47 +0100
+Message-ID: <CAO-hwJL8cSJqG4TB6ZJiqoWr0RhV0zhMNK3qVwS6i9FmK7RCRA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] HID: hid-bigbenff: fixing three crash bugs in a
+ gamepad driver
+To:     Hanno Zulla <kontakt@hanno.de>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Feb 18, 2020 at 12:44 PM Hanno Zulla <kontakt@hanno.de> wrote:
+>
+> Hi Benjamin,
+>
+> > I think the patches are correct (have you tested them with actual HW?).
+>
+> Yes, I did, and am also properly embarrassed that I didn't notice the
+> double free bug in the original driver.
+>
+> > However, checkpatch complains that the From and Signed-off-by email
+> > differ. Can you send a v2 with a fix for that?
+>
+> Here it is.
+>
 
-On 18.02.2020 22:21, James Morris wrote:
-> On Mon, 17 Feb 2020, Alexey Budankov wrote:
-> 
->>
->> Introduce CAP_PERFMON capability designed to secure system performance
->> monitoring and observability operations so that CAP_PERFMON would assist
->> CAP_SYS_ADMIN capability in its governing role for performance
->> monitoring and observability subsystems.
-> 
-> 
-> Acked-by: James Morris <jamorris@linux.microsoft.com>
+Thanks for the quick respin.
 
-Thanks James! 
-I appreciate your involvement and collaboration 
-w.r.t to the whole patch set.
+Not sure what happened, but the commit title was duplicated in all of
+the commits.
 
-Gratefully,
-Alexey
+Anyway, not a big deal, fixed and pushed to for-5.6/upstream-fixes
+
+Cheers,
+Benjamin
+
+> Thanks,
+>
+> Hanno
+>
+
