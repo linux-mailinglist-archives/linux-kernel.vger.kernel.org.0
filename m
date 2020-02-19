@@ -2,125 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3336616402D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 10:22:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0908A16403B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 10:22:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726643AbgBSJWA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 04:22:00 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:44466 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726202AbgBSJV7 (ORCPT
+        id S1726799AbgBSJWj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 04:22:39 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36435 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726731AbgBSJWa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 04:21:59 -0500
-Received: by mail-ot1-f66.google.com with SMTP id h9so22419176otj.11
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 01:21:58 -0800 (PST)
+        Wed, 19 Feb 2020 04:22:30 -0500
+Received: by mail-wr1-f65.google.com with SMTP id z3so27360694wru.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 01:22:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jnk001kHHnMJZPh5284on/H7ZVuekrqsnplVhw3qKG4=;
-        b=skzdvmlkEwjc+AAGfz8cHX6+KV0Ear7q/T2X/aLZyVNB8hYHhuw7952mIi9a+oHsp2
-         a1qaqaJ4LCcNqSSVeOrMDRc8eCDQ3PQxS8dNBJdz6Jn23OH1JxI0uxCYBe6DfX+c3Wsv
-         BMvlxvoP7fNcpGpjkNUEGOMVNRsOdBPAlrgy+eyisWwxiYxQbtZhI/qyU3ILtNbxWj30
-         XJ7Y5/V1GTnfsI37Rl1wHgxVw8Ow3geprTuNTc9F7LzKNG4Bq3L0gtcPzyJIV6b75eUg
-         jFoCUoEaq29fBnOKzUjWJKft6VdearndY50Bh6pcEV5S8fsxKTzBy/FpQ9saBVoUf2eO
-         DNNQ==
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Xop7uA9KEA3CflxMp8alKEaw5KRSgikIaNdlPJzVrNQ=;
+        b=r8Q679kTidmPGV9qqdOGKu2H4tC7DJE7MA/9HVWs5fL7uOkBJ+xkSxk/8Ma/zPCgfK
+         bePJi2CuwGjHXVihV+QXhvJZ8qM2R3Xl7ZVoravdFbvcQFPym9nBJswEX9iLwoDUAvFm
+         eFY+lZdsJx8xjNw9T64pSxPnDNBQYJqy50oCuWSQoAVoTI5F4xhlMEZtbV/JCEDDDrj0
+         PmOQzp3/5EXfIwuciW+kl5Knk+mTqd8Yh0hNESUosFw28uG4C4CYLoPf52E05iCmP5Us
+         OibMyXlGei2qaoXMiKAvMX9jX6I5tlsgZXHM2qINc+CrdeMWhAzLEeoJxeJxv4p7Ufak
+         684w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jnk001kHHnMJZPh5284on/H7ZVuekrqsnplVhw3qKG4=;
-        b=RRYdKl3wmOfG5JIlgtvsFFLdWcDWQtQPSqWF4p6kRErI87tZgpg/ppEb4NOEXTUZF1
-         CpC01A3P6CacqH2LNFBTk1tQb3cGFNWxcnVNGP6JRzkzRX8BJ75wvrzhDiksrFhaeOp9
-         heGiRha/jTHfxRWFBrGegdFg4GEycH58tuet3At0gVJTeDY6uAP6gjrjz0moHRhXl/qB
-         E2jCSEPh/DtYNLNYJeFmNDfwnH8OaE2g4kNXmynnqiWSC4Q4HpJ1MBpbhCCzXqszyNDH
-         gg7e+ONCpDch0/0JhcjAMXaP0yNI0pXO2S+fOeJbCt9a/XAxV8ylF96Ht/+Ym/7uQBL+
-         iBQw==
-X-Gm-Message-State: APjAAAXc7GfN402otGU9WZihXGqxowdmi2RL0XxlzjZHOEMinNJB8E4i
-        YztAliUZ1ouG222isE8156OhpWc0lfo23pDEKmi5Mg==
-X-Google-Smtp-Source: APXvYqyJ4nt9+Cb3VvmCUmEkmEWPRJPd34khUiRmOXNDD0rpIaPsxx6hd3bW+kSqhqA60hbPtZDo3MahZ+o5NuJLHog=
-X-Received: by 2002:a9d:7410:: with SMTP id n16mr19494651otk.23.1582104117580;
- Wed, 19 Feb 2020 01:21:57 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Xop7uA9KEA3CflxMp8alKEaw5KRSgikIaNdlPJzVrNQ=;
+        b=c48s8AyllHLh08MMd7oO365ao679ItwMVtgU71/Hsvd3cOa9DHq0PTDIH2UP/vivCb
+         o4eMH5SPgvN1wDnoKxFlGEmWBBHsfcmYGLQzVVK3OuirByGroCKrrj3aRauloQJTjhUl
+         /zaF5Akl4d/OSr0mjapHAmkdknOnMKVyB729P+CX/j36WFwSdXtHyEgdTV4yZURmBs78
+         50gW44c2J1yknPB70koWERPhB1WkrO3a9RfIjdpcKfL2bx7jVeFQh+V7qkRPTwe6sYpk
+         HsTJwg/pXaMpAt315pLAH3V7BcXsbVUFHTYWiaFsbzSTk8jSpkBO540pb4Yia9KMLO2H
+         H0lg==
+X-Gm-Message-State: APjAAAV2De9YhPVN4yGcWqHUFiR3O2+5hAOH10qq7BVcLkkrCTGQcwnc
+        VNRudj8z2Fu/pq6tqjhCfVkwaQ==
+X-Google-Smtp-Source: APXvYqzonMxTkxgCJH+ua9IjTjmhGpJl96JKt4UTWjr+kP29vfj9Vttfjvx5nFw+/0nfinMWLfdsBg==
+X-Received: by 2002:adf:b193:: with SMTP id q19mr34330865wra.78.1582104141315;
+        Wed, 19 Feb 2020 01:22:21 -0800 (PST)
+Received: from localhost.localdomain (lfbn-nic-1-65-232.w2-15.abo.wanadoo.fr. [2.15.156.232])
+        by smtp.gmail.com with ESMTPSA id s65sm2172296wmf.48.2020.02.19.01.22.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2020 01:22:20 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Khouloud Touil <ktouil@baylibre.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v3 0/7] nvmem/gpio: fix resource management
+Date:   Wed, 19 Feb 2020 10:22:11 +0100
+Message-Id: <20200219092218.18143-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-References: <20200219045228.GO23230@ZenIV.linux.org.uk> <EDCBB5B9-DEE4-4D4B-B2F4-F63179977D6C@lca.pw>
- <20200219052329.GP23230@ZenIV.linux.org.uk>
-In-Reply-To: <20200219052329.GP23230@ZenIV.linux.org.uk>
-From:   Marco Elver <elver@google.com>
-Date:   Wed, 19 Feb 2020 10:21:46 +0100
-Message-ID: <CANpmjNM=+y-OwKjtsjsEkwPjpHXpt7ywaE48JyiND6dKt=Vf1Q@mail.gmail.com>
-Subject: Re: [PATCH] fs: fix a data race in i_size_write/i_size_read
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Qian Cai <cai@lca.pw>, Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 19 Feb 2020 at 06:23, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Wed, Feb 19, 2020 at 12:08:40AM -0500, Qian Cai wrote:
-> >
-> >
-> > > On Feb 18, 2020, at 11:52 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > >
-> > > If aligned 64bit stores on 64bit host (note the BITS_PER_LONG ifdefs) end up
-> > > being split, the kernel is FUBAR anyway.  Details, please - how could that
-> > > end up happening?
-> >
-> > My understanding is the compiler might decide to split the load into saying two 4-byte loads. Then, we might have,
-> >
-> > Load1
-> > Store
-> > Load2
-> >
-> > where the load value could be a garbage. Also, Marco (the KCSAN maintainer) who knew more of compiler than me mentioned that there is no guarantee that the store will not be split either. Thus, the WRITE_ONCE().
-> >
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-In theory, yes. But by now we're aware of the current convention of
-assuming plain aligned writes up to word-size are atomic (which KCSAN
-respects with default Kconfig).
+This series addresses a couple problems with memory management in nvmem
+core.
 
->         I would suggest
-> * if some compiler does that, ask the persons responsible for that
-> "optimization" which flags should be used to disable it.
-> * if they fail to provide such, educate them regarding the
-> usefulness of their idea
-> * if that does not help, don't use the bloody piece of garbage.
->
->         Again, is that pure theory (because I can't come up with
-> any reason why splitting a 32bit load would be any less legitimate
-> than doing the same to a 64bit one on a 64bit architecture),
-> or is there anything that really would pull that off?
+First we fix a memory leak introduced in this release cycle. Next we extend
+the GPIO framework to use reference counting for GPIO descriptors. We then
+use it to fix the resource management problem with the write-protect pin.
 
-Right. In reality, for mainstream architectures, it appears quite unlikely.
+Finally we add some readability tweaks and a comment clearing up some
+confusion about resource management.
 
-There may be other valid reasons, such as documenting the fact the
-write can happen concurrently with loads.
+While the memory leak with wp-gpios is now in mainline - I'm not sure how
+to go about applying the kref patch. This is theoretically a new feature
+but it's also the cleanest way of fixing the problem.
 
-Let's assume the WRITE_ONCE can be dropped.
+v1 -> v2:
+- make gpiod_ref() helper return
+- reorganize the series for easier merging
+- fix another memory leak
 
-The load is a different story. While load tearing may not be an issue,
-it's more likely that other optimizations can break the code. For
-example load fusing can break code that expects repeated loads in a
-loop. E.g. I found these uses of i_size_read in loops:
+v2 -> v3:
+- drop incorrect patches
+- add a patch adding a comment about resource management
+- extend the GPIO kref patch: only increment the reference count if the
+  descriptor is associated with a requested line
 
-git grep -E '(for|while) \(.*i_size_read'
-fs/ocfs2/dir.c: while (ctx->pos < i_size_read(inode)) {
-fs/ocfs2/dir.c:                 for (i = 0; i < i_size_read(inode) &&
-i < offset; ) {
-fs/ocfs2/dir.c: while (ctx->pos < i_size_read(inode)) {
-fs/ocfs2/dir.c:         while (ctx->pos < i_size_read(inode)
-fs/squashfs/dir.c:      while (length < i_size_read(inode)) {
-fs/squashfs/namei.c:    while (length < i_size_read(dir)) {
+Bartosz Golaszewski (6):
+  nvmem: fix memory leak in error path
+  gpiolib: use kref in gpio_desc
+  nvmem: increase the reference count of a gpio passed over config
+  nvmem: remove a stray newline in nvmem_register()
+  nvmem: add a newline for readability
+  nvmem: add a comment about resource management
 
-Can i_size writes happen concurrently, and if so will these break if
-the compiler decides to just do i_size_read's load once, and keep the
-result in a register?
+Khouloud Touil (1):
+  nvmem: release the write-protect pin
 
-Thanks,
--- Marco
+ drivers/gpio/gpiolib.c        | 36 ++++++++++++++++++++++++++++++++---
+ drivers/gpio/gpiolib.h        |  1 +
+ drivers/nvmem/core.c          | 17 +++++++++++++----
+ include/linux/gpio/consumer.h |  1 +
+ 4 files changed, 48 insertions(+), 7 deletions(-)
+
+-- 
+2.25.0
+
