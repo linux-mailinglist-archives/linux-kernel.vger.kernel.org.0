@@ -2,112 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E06816502C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 21:42:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7633D165036
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 21:46:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727171AbgBSUmY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 15:42:24 -0500
-Received: from mail-pl1-f182.google.com ([209.85.214.182]:44508 "EHLO
-        mail-pl1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726645AbgBSUmX (ORCPT
+        id S1727274AbgBSUq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 15:46:27 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:39514 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726645AbgBSUq1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 15:42:23 -0500
-Received: by mail-pl1-f182.google.com with SMTP id d9so543796plo.11
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 12:42:23 -0800 (PST)
+        Wed, 19 Feb 2020 15:46:27 -0500
+Received: by mail-qt1-f196.google.com with SMTP id c5so1276449qtj.6
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 12:46:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mMv6ZohV9vWAZb5AuOsCpS0uJmYFOu3/CP4E2vVtix4=;
+        b=N6NW/wD1u4rOYJ2axf80jZwf6dgLLQtukDs212ABaUwHuneq2HjTofcNZB8Qwe7vMw
+         EaQBe9iJKqvcgZHcTlJg1g+7AFYYjV4oNP4u9SLmmGXNrNsSjtdAmiF2O2tNQMVsu5LW
+         kpF1xy6winrMdghU4cxYwijY9p2j4HKt9jeQvSbIfTG4TDbXHyN0XDVmivl6GmkKV4yb
+         RZ8CLE9PZ99fPZ6a7zmOQOdQem9KRBWCwETJVaauoq3kmY2izRFufyiWfXkYTNYU6tbg
+         Qc+57B4WXE6NvXLBRrnSZ4rBKt7jaYbjU/KwN4g026k+yqRIXklYForrGBHIXXbjLKjH
+         7JCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=XlRxO87zkf/AZ6fh20OMIQSRLp7vbnlHaFnZNks6GNI=;
-        b=Ig8pEXnfIemutf1UORp3od6pTyBx+vB6yNXBdb37XWyLJE7Yakc2GbtyI4XVC0MAqh
-         s6C0cntb5Fz5iRb7jtLefJaUDRsljpg6/VujCR5sJdbJiBX+1D8KsiARIgnF8MqVrSZy
-         j5IB28fYyxj7vHhZH7s96Pzr1icE5rNNRl6FsL1KyI83ULFkAK3gmWGBXBmx/n5JM7vX
-         t2oH2iYEaVWpG0j/Wybk41mCG3GZ6l3VOCjNcJHTyD2UKtU3V+Sc5thZohTWgkXXc+Ej
-         6uHhwpKNdOqetvKOy/8Rrg4g4YV0QYcVzqs3lvF0lVCtyzDmSxH2bddUJ91k5CqAI8Cf
-         xy5g==
-X-Gm-Message-State: APjAAAXrJkeKlfzylyMLpK0f41xusEdk9VquQ36A7+1/K17W0GWopH0f
-        JIL618BZn+sOfftOvl/6oHw=
-X-Google-Smtp-Source: APXvYqwkDymfw8D/L9PhjjHvG7D/OoNLTVBSTKhGrP8xP+IqgehdJyfbntSfF/pc3LWqhSUHIAKqPQ==
-X-Received: by 2002:a17:90a:fd85:: with SMTP id cx5mr10894444pjb.80.1582144943130;
-        Wed, 19 Feb 2020 12:42:23 -0800 (PST)
-Received: from sultan-book.localdomain ([104.200.129.62])
-        by smtp.gmail.com with ESMTPSA id q8sm713147pje.2.2020.02.19.12.42.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 12:42:22 -0800 (PST)
-Date:   Wed, 19 Feb 2020 12:42:20 -0800
-From:   Sultan Alsawaf <sultan@kerneltoast.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Mel Gorman <mgorman@suse.de>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH] mm: Stop kswapd early when nothing's waiting for it to
- free pages
-Message-ID: <20200219204220.GA3488@sultan-book.localdomain>
-References: <20200219182522.1960-1-sultan@kerneltoast.com>
- <dcd1cb4c-89dc-856b-ea1b-8d4930fec3eb@intel.com>
- <20200219194006.GA3075@sultan-book.localdomain>
- <20200219200527.GF11847@dhcp22.suse.cz>
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mMv6ZohV9vWAZb5AuOsCpS0uJmYFOu3/CP4E2vVtix4=;
+        b=cwT65doJPwRyMjwqzrCqCyXyOgfnVmCww3QgvbLhfQSIL6HVP9vNdDeyjE2JQGwXnW
+         Fsl1mlDZohcNVHPzskhKi8DinsLf9onMZ/ePyfZUAy9TmbrVUBa0c59jgUo3CRA3Q6t9
+         pMQBM3OWMIcwg/EkCAari9FJmmz0axA1UOlfexDhJUgo8dhzN7ce4SmLvMC4rVlayiDH
+         p6+N1JSii3g+oknZNrT2mof51OF47DwcuI5JpGzEe5vmRspX1jxG/RqsNyyeAdZdnXfx
+         u8lME32WLo7zrIWKDy0RnsQ7rh7LSlDmCv5SvrZGh7SsbR222VcyPMfpW2Mg+35AFi2G
+         blYg==
+X-Gm-Message-State: APjAAAWKdEjB1++QxHYPHPzqFUz0ga3mMZn1k0o7DSaPM9QEivtMOXZ4
+        WHnI1MOL+0Jw466O1TBjp70l8w==
+X-Google-Smtp-Source: APXvYqwPkUdYKUhN3C1ThTgi9PBRnyem/7wRKpwkfyPxTs8WwuWIcvbA7vvFmJ/ZXusMp2MS8tHbiQ==
+X-Received: by 2002:ac8:3aa6:: with SMTP id x35mr7267344qte.38.1582145186541;
+        Wed, 19 Feb 2020 12:46:26 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
+        by smtp.gmail.com with ESMTPSA id h20sm456455qkk.64.2020.02.19.12.46.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Feb 2020 12:46:26 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1j4WEj-0003Mn-Lz; Wed, 19 Feb 2020 16:46:25 -0400
+Date:   Wed, 19 Feb 2020 16:46:25 -0400
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Doug Ledford <dledford@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+Subject: Re: [PATCH] RDMA/core: Fix use of logical OR in get_new_pps
+Message-ID: <20200219204625.GA12915@ziepe.ca>
+References: <20200217204318.13609-1-natechancellor@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200219200527.GF11847@dhcp22.suse.cz>
+In-Reply-To: <20200217204318.13609-1-natechancellor@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 09:05:27PM +0100, Michal Hocko wrote:
-> Could you be more specific please? kspwad should stop as soon as the
-> high watermark is reached. If that is not the case then there is a bug
-> which should be fixed.
-
-No, there is no bug causing kswapd to continue beyond the high watermark.
-
-> Sure it is quite possible that kswapd is busy for extended amount of
-> time if the memory pressure is continuous.
+On Mon, Feb 17, 2020 at 01:43:18PM -0700, Nathan Chancellor wrote:
+> Clang warns:
 > 
-> > On a constrained system I tested (mem=2G), this patch had the positive effect of
-> > improving overall responsiveness at high memory pressure.
+> ../drivers/infiniband/core/security.c:351:41: warning: converting the
+> enum constant to a boolean [-Wint-in-bool-context]
+>         if (!(qp_attr_mask & (IB_QP_PKEY_INDEX || IB_QP_PORT)) && qp_pps) {
+>                                                ^
+> 1 warning generated.
 > 
-> Again, do you have more details about the workload and what was the
-> cause of responsiveness issues? Because I would expect that the
-> situation would be quite opposite because it is usually the direct
-> reclaim that is a source of stalls visible from userspace. Or is this
-> about a single CPU situation where kswapd saturates the single CPU and
-> all other tasks are just not getting enough CPU cycles?
-
-The workload was having lots of applications open at once. At a certain point
-when memory ran low, my system became sluggish and kswapd CPU usage skyrocketed.
-I added printks into kswapd with this patch, and my premature exit in kswapd
-kicked in quite often.
-
-> > On systems with more memory I tested (>=4G), kswapd becomes more expensive to
-> > run at its higher scan depths, so stopping kswapd prematurely when there aren't
-> > any memory allocations waiting for it prevents it from reaching the *really*
-> > expensive scan depths and burning through even more resources.
-> > 
-> > Combine a large amount of memory with a slow CPU and the current problematic
-> > behavior of kswapd at high memory pressure shows. My personal test scenario for
-> > this was an arm64 CPU with a variable amount of memory (up to 4G RAM + 2G swap).
+> A bitwise OR should have been used instead.
 > 
-> But still, somebody has to put the system into balanced state so who is
-> going to do all the work?
+> Fixes: 1dd017882e01 ("RDMA/core: Fix protection fault in get_pkey_idx_qp_list")
+> Link: https://github.com/ClangBuiltLinux/linux/issues/889
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+> ---
+>  drivers/infiniband/core/security.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-All the work will be done by kswapd of course, but only if it's needed.
+Applied to for-next, thanks
 
-The real problem is that a single memory allocation failure, and free memory
-being some amount below the high watermark, are not good heuristics to predict
-*future* memory allocation needs. They are good for determining how to steer
-kswapd to help satisfy a failed allocation in the present, but anything more is
-pure speculation (which turns out to be wrong speculation, since this behavior
-causes problems).
-
-If there are outstanding failed allocations that won't go away, then it's
-perfectly reasonable to keep kswapd running until it frees pages up to the high
-watermark. But beyond that is unnecessary, since there's no way to know if or
-when kswapd will need to fire up again. This makes sense considering how kswapd
-is currently invoked: it's fired up due to a failed allocation of some sort, not
-because the amount of free memory dropped below the high watermark.
-
-Sultan
+Jason
