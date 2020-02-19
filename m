@@ -2,53 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11F19163A05
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 03:20:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8016163A0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 03:20:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728194AbgBSCT6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Feb 2020 21:19:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50146 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726768AbgBSCT6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Feb 2020 21:19:58 -0500
-Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE290207FD;
-        Wed, 19 Feb 2020 02:19:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582078797;
-        bh=6KO77SOFrH1Ddyvoza5ZvqYLAvpu4o8si99XFZUtu2Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Wkg5dbfOP2V8936xVv3qGO4JVvE8Ra8ZgwlcxCzfJIlVgIFWdmQCnh7xcj9B1DvAx
-         TRGQ950vP95jp7ww384KVIM4CpY5fc2SGzYA/NBnCH0DwGatvDspIoTeKcvj4tfiL2
-         JBleHomkbTQbPmmwkTrW770ZCmuRiv45Sud0HYXE=
-Date:   Wed, 19 Feb 2020 10:19:51 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, leonard.crestez@nxp.com,
-        abel.vesa@nxp.com, peng.fan@nxp.com, ping.bai@nxp.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
-Subject: Re: [PATCH 1/3] clk: imx8mp: Include slab.h instead of clkdev.h
-Message-ID: <20200219021950.GK6075@dragon>
-References: <1582023806-6261-1-git-send-email-Anson.Huang@nxp.com>
+        id S1728087AbgBSCUk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Feb 2020 21:20:40 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:44552 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726768AbgBSCUj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Feb 2020 21:20:39 -0500
+Received: by mail-oi1-f193.google.com with SMTP id d62so22265212oia.11
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 18:20:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YYT6YZNCZsYRqHQEeWZi0Rtcai+ljMyFoBbjqMKSqxc=;
+        b=UTz22aO9BW7ldKype5PMjKYgkdUXWZkCahIJ+RyHZG91H2zi2kNtgjOZDbZPuQjQfc
+         /+4xIEr0CUk3JlchuehDeffQM5JKU85Hj+IOgrbEgRK6z9jBhpA87CFwmUbUwcnNZ0c+
+         p1/wGJ4HmKnzMxuj1pfJuKceL84ivttiu1R0mQP19Dq4ml8/vJYbL6/o2Z6cMEWQRtHZ
+         oiZ61kilcOkjq8KONZU8aWVeLkWoIJZoUj4Qz0B77fPjrJAw2sfd0f09a/rdPYGJOcaC
+         WpssdrebShKO6EY3OEevPWjqtZ2QE32GaLiTQZsErZwKzKVRnm20oPRuTruQwoleCxC7
+         m/zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YYT6YZNCZsYRqHQEeWZi0Rtcai+ljMyFoBbjqMKSqxc=;
+        b=WcRyAFsZ04mcb88qbvqPkCfIRMcEVhWbiUFXe2Ms/OQO3ioLbGLet+Z+ztbX+OB2Dd
+         /jsDODMXlIVBpGyVEzasdAX/zMmalwwTyp5DZT4rnqM2U4UKynTExpwF/veHE4X1wFx+
+         vY1WbGyg2S4nXJImZAx7Xf+ZW62PCwhP2vc8g05NfVBIk3Ro5U0X2n2DE58HKA/hIb5E
+         HbTFcDSDdG0nn6uMBG22vUnOx04k9qGMeYn/d36KEpPC2yuBSnbAGBM9rFHQnUg97S6v
+         xEQ7IlHFif09E8ZvTWCHX8IH2xAdEdftn+0yy/D7wQ8cSiH2XYo4PNqywpkIcsU0AIB1
+         6Txw==
+X-Gm-Message-State: APjAAAX9D5dOl3HVzBpKC2IgIngtsKgIXvNY+6wj7xv+zjFdZwWAIgxE
+        jBHQkNHzwsSlbzXGAwlyO2jlbxXYoZrc4leYU64rjA==
+X-Google-Smtp-Source: APXvYqyeq/1kr3UBsc2WTXKqbpQPEbbZqh8CMPINGqnKFEYX7pqqyj+Fk04yGXb+vCdmnpYvqdU5qlh8vlrkIUN0YVY=
+X-Received: by 2002:aca:4789:: with SMTP id u131mr3091991oia.43.1582078838922;
+ Tue, 18 Feb 2020 18:20:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1582023806-6261-1-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200111052125.238212-1-saravanak@google.com>
+In-Reply-To: <20200111052125.238212-1-saravanak@google.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Tue, 18 Feb 2020 18:20:03 -0800
+Message-ID: <CAGETcx-y8j21tCude5oxU3NbEmb91f_m1dWJa0wUALkA40pwfA@mail.gmail.com>
+Subject: Re: [PATCH v1] clocksource: Avoid creating dead devices
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Android Kernel Team <kernel-team@android.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 07:03:24PM +0800, Anson Huang wrote:
-> slab.h is necessary and included indirectly by clkdev.h,
-> actually, there is nothing in use from clkdev.h, so just
-> include slab.h instead of clkdev.h.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+On Fri, Jan 10, 2020 at 9:21 PM Saravana Kannan <saravanak@google.com> wrote:
+>
+> Timer initialization is done during early boot way before the driver
+> core starts processing devices and drivers. Timers initialized during
+> this early boot period don't really need or use a struct device.
+>
+> However, for timers represented as device tree nodes, the struct devices
+> are still created and sit around unused and wasting memory. This change
+> avoid this by marking the device tree nodes as "populated" if the
+> corresponding timer is successfully initialized.
+>
+> Signed-off-by: Saravana Kannan <saravanak@google.com>
+> ---
+>  drivers/clocksource/timer-probe.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/clocksource/timer-probe.c b/drivers/clocksource/timer-probe.c
+> index ee9574da53c0..a10f28d750a9 100644
+> --- a/drivers/clocksource/timer-probe.c
+> +++ b/drivers/clocksource/timer-probe.c
+> @@ -27,8 +27,10 @@ void __init timer_probe(void)
+>
+>                 init_func_ret = match->data;
+>
+> +               of_node_set_flag(np, OF_POPULATED);
+>                 ret = init_func_ret(np);
+>                 if (ret) {
+> +                       of_node_clear_flag(np, OF_POPULATED);
+>                         if (ret != -EPROBE_DEFER)
+>                                 pr_err("Failed to initialize '%pOF': %d\n", np,
+>                                        ret);
+> --
+> 2.25.0.rc1.283.g88dfdc4193-goog
 
-Applied all, thanks.
+Gentle reminder.
+
+-Saravana
