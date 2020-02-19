@@ -2,68 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58FCF1642C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 11:58:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CE3B1642C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 12:00:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbgBSK6Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 05:58:25 -0500
-Received: from ms.lwn.net ([45.79.88.28]:33838 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726270AbgBSK6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 05:58:25 -0500
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id B49EF2DC;
-        Wed, 19 Feb 2020 10:58:23 +0000 (UTC)
-Date:   Wed, 19 Feb 2020 03:58:18 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs: kref: Clarify the use of two kref_put() in
- example code
-Message-ID: <20200219035818.08ad246f@lwn.net>
-In-Reply-To: <20200213125311.21256-1-manivannan.sadhasivam@linaro.org>
-References: <20200213125311.21256-1-manivannan.sadhasivam@linaro.org>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1726682AbgBSLAV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 06:00:21 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39333 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbgBSLAV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 06:00:21 -0500
+Received: by mail-wm1-f66.google.com with SMTP id c84so105935wme.4
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 03:00:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7H/YCOn3cZ80p3ZvLfOobGUP/Cj28W0PDaZeNMELPIA=;
+        b=flBkeap4OICGKzUAhwUnG6FiQB1q04IFsUXbjyFENB6EOm/Xqe55BJaBUvuTORHncc
+         VswpQuiR/4l08ix5jb3w4/Uc6QoG2O8dGaIxzVt9wP0x4G2FSLCPEG/W3o8OLIrFBx/P
+         IeqCZROJl3ptNO+i5+n5ziOvzba7tfCtGjz2cSyKsJ8dleFnYwzueCCsrCyPVTTstVH9
+         sjTB6latKBzHDv69IKj7VJeH78iqDtGrVIuGaml5dsEsuV4zNP8fFGHmdzUYTdgVgb8W
+         0ohMfKENUy7UNze1SiVkhESR2guCb527zd0ZJXxUVVx9MMqgev2XtDc3g0rB8O9igPlT
+         GzYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7H/YCOn3cZ80p3ZvLfOobGUP/Cj28W0PDaZeNMELPIA=;
+        b=WrGPKYOmEFkFkLTO+V+nIFq/3revqMuy8C5uL3PwQCC4/1dSgbByBYcVyiHGyp5yTG
+         f6cn89kC87NCaiAEmmqSKke79GGKAZ9wXSs8F5L13jSMwXwI6IxTNUivzZKTS8mgU1VI
+         iE2AGBp3SS32vZI85PX3lFKS5EPRQ28sw15B68poil6AylDuH0txxfHJIYuJGzLbfqs7
+         tOesYUWI+PM+HyM2fUIzPf+Q3oLHHLuz1WgVy3YhRwGvrO5lwEuZ+pwZdd/sNYcGA8lb
+         sHIgWfYqXcobt3bSY0znnwDa3t/BR247FHiHn3Hn4stEh+y5R9rvPhj5c++AR5BymL86
+         CCyA==
+X-Gm-Message-State: APjAAAUxShHOI95h43rPUmkx1j6w7DjyKaw113xBUSoGqUC+xZxsTxI+
+        ny37l7T7qbLIstNm3Bjzo49AdXI19Zg=
+X-Google-Smtp-Source: APXvYqzf/HQlKxt/BTpiD44E/5sNAO7qxk3LcGuhwkPntczUGlNzz4XgXLBh2d4dsCaVgvNHY0KA4g==
+X-Received: by 2002:a7b:cd14:: with SMTP id f20mr9243214wmj.43.1582110018880;
+        Wed, 19 Feb 2020 03:00:18 -0800 (PST)
+Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id t1sm2603782wma.43.2020.02.19.03.00.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Feb 2020 03:00:18 -0800 (PST)
+Subject: Re: [PATCH v3 0/7] nvmem/gpio: fix resource management
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Khouloud Touil <ktouil@baylibre.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20200219092218.18143-1-brgl@bgdev.pl>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <4a36c93a-704a-832b-0f66-dd17fe304da6@linaro.org>
+Date:   Wed, 19 Feb 2020 11:00:17 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200219092218.18143-1-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Feb 2020 18:23:11 +0530
-Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> wrote:
 
-> Eventhough the current documentation explains that the reference count
-> gets incremented by both kref_init() and kref_get(), it is often
-> misunderstood that only one instance of kref_put() is needed in the
-> example code. So let's clarify that a bit.
+
+On 19/02/2020 09:22, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  Documentation/kref.txt | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/kref.txt b/Documentation/kref.txt
-> index 3af384156d7e..c61eea6f1bf2 100644
-> --- a/Documentation/kref.txt
-> +++ b/Documentation/kref.txt
-> @@ -128,6 +128,10 @@ since we already have a valid pointer that we own a refcount for.  The
->  put needs no lock because nothing tries to get the data without
->  already holding a pointer.
->  
-> +In the above example, kref_put() will be called 2 times in both success
-> +and error paths. This is necessary because the reference count got
-> +incremented 2 times by kref_init() and kref_get().
 
-Out of curiosity, where have you seen this misunderstanding happening?
-I'm not really opposed to this change, but I don't understand why it's
-really needed.
+Can you please rebase your patches on top of
 
-Thanks,
+https://git.kernel.org/pub/scm/linux/kernel/git/srini/nvmem.git/log/?h=for-next
 
-jon
+
+--srini
