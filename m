@@ -2,82 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BA0A1652D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 23:55:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D19A21652DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 00:03:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727958AbgBSWzv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 17:55:51 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36589 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727727AbgBSWzv (ORCPT
+        id S1727855AbgBSXDu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 18:03:50 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:41842 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727163AbgBSXDu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 17:55:51 -0500
-Received: by mail-pf1-f195.google.com with SMTP id 185so847003pfv.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 14:55:51 -0800 (PST)
+        Wed, 19 Feb 2020 18:03:50 -0500
+Received: by mail-lf1-f67.google.com with SMTP id m30so1473056lfp.8;
+        Wed, 19 Feb 2020 15:03:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:in-reply-to:references
-         :subject:from:cc:to:date:message-id:user-agent;
-        bh=Lxsf5kW7zAx4u4YDWo1NdFtdmCAYIXgVe8+YaAC3Zos=;
-        b=HUco0403JkvbPgRhV7hslj1hBa2vX8TSQfPktiFvpuFsot0ggjzTLDzwPHq/JkwsUl
-         TnpR+yDtwckD/2kvVFpLQoPvUHT7jEAp2uxVqGTHtEmje67eOupCl5e3Yqg+qk95A9dA
-         /nxPF0EjfIup/RxK1f2ufEPXt7q30ef0pA3Z4=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=u1b+ps8lztV4XyHEm278bMODq/J9Mw3/Gq8CUQAHwg0=;
+        b=RYkYzbQ7IwwW9BSlL1ac6tlfCGg8H5b46i7ySkptMCIgV/dbWeRljn/EIy/rnhpd3C
+         NlD3DZe05tqDxmEiXSQbIlgwb9wqo0NWO9X7VMnnJBvT6y91lBqdH7AwP5zVEuNG/b4a
+         4RWH4DVZOswDnjGblE+Xn+01AP8r/D8MQGhqIscBgYtPwuvZWJoZqXRr77b0CDiDOrDW
+         4dX75HL/9y6MNZwqatlYFJ+Pi3m1a53ULB7MkfQ+QIoTuZVSCFmtgM6SrkbvLHUAOxJ2
+         xSOrVMprqSF6W2EKgQOuUcBVJi38ZRLe+/xtVOheyIqt3We80eleGytjDDvriAb6XlKO
+         Vg5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding
-         :in-reply-to:references:subject:from:cc:to:date:message-id
-         :user-agent;
-        bh=Lxsf5kW7zAx4u4YDWo1NdFtdmCAYIXgVe8+YaAC3Zos=;
-        b=E2wqlBcZYb6H27GtHCH2G20dDEnVG/ERhOo95CeDE6kMxsNCkRfslpgHphMuAHD6xe
-         FM1tl6o9PmH5Yj3RNWatUCr7Om4B+4WvMt+AIX2AuWiHhs/icAAq1I+fapAXwJiuixlS
-         cjd/l+JxHQqBITujHOfCxkZOERq+H/j/m1ou3wZVURFiQqZnLD284CdF/bSwBZD0SW9S
-         rlymLEBDXWjTFtd8ZXJ+j3jf4+U552OPLpFG2lW4ggxKakkyfpR4M+LPuH0jlLWFk/og
-         bvKnMaS32lU8WEXi5AccFd1URXdGq3aICslUl/Ghq/504NGVDEGkwby/pw+72iERMjkx
-         kspw==
-X-Gm-Message-State: APjAAAVILVpGO+3kKrVq937v/i1dRKjI725XzzL788CKH/bmJQFCJmw4
-        tBCbsPd80Ij9jDMhTWtm/vUgAg==
-X-Google-Smtp-Source: APXvYqwavXnk0eDVEhKxJmFmH+FdLraxOHjztu+55YhcmMjl2+Fcrv3IgiSGdm+BFSkL1beVZSqvpQ==
-X-Received: by 2002:a63:cf4f:: with SMTP id b15mr7641133pgj.287.1582152950942;
-        Wed, 19 Feb 2020 14:55:50 -0800 (PST)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id y16sm634708pfn.177.2020.02.19.14.55.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 14:55:50 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=u1b+ps8lztV4XyHEm278bMODq/J9Mw3/Gq8CUQAHwg0=;
+        b=Z8yqZS+pdVIvNABfwbuAkb3C7aUqLX1NyHSEMIfvDI7Cr5sS/JcY0DUxlIPuG60z/W
+         ZcI90R9rnpYt/aLjbgQkDcled0mNZzrJ7Lu9bhE7sOywzNwN3iERbWPHSDngnFTsN9fO
+         zakLoJo1GHlrvD/rglbqobdWEC0UXp+PWC04CHOMP0x6Hk5Y1N1YRSBHGC8nzCJL8qXV
+         VYiGWUy5iDe6iXZAAEozmPv8SS234EFo88Eo5kmtrgaZpnheRq0VAUT5QXoa/oHxguvk
+         Hexrr+1raKXDBl3O1igIDmevkzQ0y88onSaH1N8ysb9nM206iiL5euRXODVvmHK2iHT2
+         XZhw==
+X-Gm-Message-State: APjAAAWxtxspTOFW2FOk9yix4aTK29D3OufTqUkT3RUIkeelXsW5x6IC
+        EnkPT4xl5I8XNyvUkCifJlBQ33eIyT0RyYaa//jRHjtY
+X-Google-Smtp-Source: APXvYqwisdx9+kc17pcpMePXcrmyys5g9WOMxpjMU9BkzTj75NWWighxckbh/Fq92t3ZM16FQIlmHD4iqfKLBbSnxgY=
+X-Received: by 2002:a19:5013:: with SMTP id e19mr14559430lfb.8.1582153428297;
+ Wed, 19 Feb 2020 15:03:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <9fa8a4e09b6fcff4b9d4facc9f9e9f8e3c4a41d5.1582048155.git.amit.kucheria@linaro.org>
-References: <cover.1582048155.git.amit.kucheria@linaro.org> <9fa8a4e09b6fcff4b9d4facc9f9e9f8e3c4a41d5.1582048155.git.amit.kucheria@linaro.org>
-Subject: Re: [PATCH v5 4/8] drivers: thermal: tsens: Release device in success path
-From:   Stephen Boyd <swboyd@chromium.org>
-Cc:     Amit Kucheria <amit.kucheria@verdurent.com>,
-        linux-pm@vger.kernel.org
-To:     Amit Kucheria <amit.kucheria@linaro.org>,
-        Andy Gross <agross@kernel.org>, bjorn.andersson@linaro.org,
-        daniel.lezcano@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sivaa@codeaurora.org
-Date:   Wed, 19 Feb 2020 14:55:49 -0800
-Message-ID: <158215294977.184098.9773724834739432956@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+References: <20200218030432.4600-1-dxu@dxuuu.xyz> <20200218030432.4600-3-dxu@dxuuu.xyz>
+ <CAADnVQKA3ZCEAynRQOaorAxF4hP2ZgCD=6UMbF5yMCtrR7hw9A@mail.gmail.com>
+In-Reply-To: <CAADnVQKA3ZCEAynRQOaorAxF4hP2ZgCD=6UMbF5yMCtrR7hw9A@mail.gmail.com>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Wed, 19 Feb 2020 15:03:36 -0800
+Message-ID: <CAADnVQLbBm6SULFf3sGNWznc2Q+pALLJpLsMO9XuyY1oXQoO6w@mail.gmail.com>
+Subject: Re: [PATCH v8 bpf-next 2/2] selftests/bpf: add bpf_read_branch_records()
+ selftest
+To:     Daniel Xu <dxu@dxuuu.xyz>
+Cc:     bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Team <kernel-team@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Amit Kucheria (2020-02-18 10:12:08)
-> We don't currently call put_device in case of successfully initialising
-> the device.
+On Wed, Feb 19, 2020 at 2:47 PM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Mon, Feb 17, 2020 at 7:04 PM Daniel Xu <dxu@dxuuu.xyz> wrote:
+> >
+> > Add a selftest to test:
+> >
+> > * default bpf_read_branch_records() behavior
+> > * BPF_F_GET_BRANCH_RECORDS_SIZE flag behavior
+> > * error path on non branch record perf events
+> > * using helper to write to stack
+> > * using helper to write to global
+> >
+> > On host with hardware counter support:
+> >
+> >     # ./test_progs -t perf_branches
+> >     #27/1 perf_branches_hw:OK
+> >     #27/2 perf_branches_no_hw:OK
+> >     #27 perf_branches:OK
+> >     Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
+> >
+> > On host without hardware counter support (VM):
+> >
+> >     # ./test_progs -t perf_branches
+> >     #27/1 perf_branches_hw:OK
+> >     #27/2 perf_branches_no_hw:OK
+> >     #27 perf_branches:OK
+> >     Summary: 1/2 PASSED, 1 SKIPPED, 0 FAILED
+>
+> That's not what I see:
+> ./test_progs -t perf_branches
+> test_perf_branches_hw:FAIL:perf_event_open err -1
+> #27/1 perf_branches_hw:FAIL
+> #27/2 perf_branches_no_hw:OK
+> #27 perf_branches:FAIL
+> Summary: 0/1 PASSED, 0 SKIPPED, 2 FAILED
+>
+> I remember previous version used to work, but something changed.
 
-Sure, but why is that a problem? Presumably the device is kept pinned
-forever?
-
->=20
-> Allow control to fall through so we can use same code for success and
-> error paths to put_device.
->=20
-> As a part of this fixup, change devm_ioremap_resource to act on the same
-> device pointer as that used to allocate regmap memory. That ensures that
-> we are free to release op->dev after examining its resources.
->=20
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Looks like the error code has changed.
+I've added
+if (errno == ENOENT || errno == EOPNOTSUPP)
+and applied.
+Please test your patches more carefully next time.
