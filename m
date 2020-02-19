@@ -2,78 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFFD91652A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 23:42:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA04C1652A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 23:43:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727883AbgBSWmf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 17:42:35 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43799 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727163AbgBSWme (ORCPT
+        id S1727851AbgBSWnv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 17:43:51 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40777 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727232AbgBSWnv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 17:42:34 -0500
-Received: by mail-pf1-f193.google.com with SMTP id s1so812407pfh.10
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 14:42:34 -0800 (PST)
+        Wed, 19 Feb 2020 17:43:51 -0500
+Received: by mail-pf1-f196.google.com with SMTP id b185so822464pfb.7
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 14:43:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DarAl82PcxJAMUan8osRqiWJP5zrzBNFn2my/A9LRV0=;
+        b=SI2uasgQc9FMfi5L8cj/jMw5i/igTpq5jC76d8Ym788Dg4qfgnAUOue0gF1t/Q//25
+         CuR3r/WGfAOahQVIpbSGoeK53gfYTf6gBU6A+NGdEbBkR6qgO3pEjsY/wulM9RBIXpkb
+         lfZ3o+uAQLoYpJKeEHu+KySxpiicUAPB7ek0vQX+MF2S2SqgG03zrU6fc7s6lWDC6Vjc
+         F7tdFfJ5Rq1FOUk2FKQqFq+okBgPsCEEB9chHVPLm9iDwZ1hz+VnIxib6yUAW6BtmKwR
+         u6vFhBzCyzsLm5snKXcTsbkh/i9rk8FFZVVUAbtsHXJf85L5lkyWQSY3nSTuF7zXr8R8
+         sU3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=OIoZhKbx27/FCo9yilFuIVLxJ+Eh0wcGMXuT/euPHOc=;
-        b=EWU2wJgaKEjGy5Br1fZNKC7fVlcD7SGWAIGBIrng/Kd1WAT6vBn2YgQMqreHbBUYyJ
-         8RRr53TBaKiAR8Qh2CGV0INnXnaXYPmcZl0l2XB7CyrNaEA7gndXi6bTZtLKC1sZH/1/
-         ukIve+D7gNwGEihaelSfMOx4qvVHTwg531i3rC1qukaJuktRlEPC1GtcCWHGqa/taBbZ
-         123GTwO7QsngtTkf26WjdUFev4ni92i9lUuc2H0gJbppi/WNGe4eaGFVLS4y9a7Bief1
-         Gf4kJ4Wcr1njSWA7nI8SLXWQD1Ocgtb3v0OkB1SiQLIkgDIEweOF/AC8K2SAbp2K312t
-         vqPw==
-X-Gm-Message-State: APjAAAUruwKv7AoOk0lsgmCJL/C2JwIcMqRsodvtjseSgTInlYAx3EjO
-        WiTcyeKpFTNSX8BhEcfeC5g=
-X-Google-Smtp-Source: APXvYqzFd+7FAez8BO6WoN8/0I+p7oskMsNBKXcYctB7DEouDjN17mDU3zO6Ke3OQtZ/LDuGM9pMgQ==
-X-Received: by 2002:a65:468d:: with SMTP id h13mr3403908pgr.359.1582152154012;
-        Wed, 19 Feb 2020 14:42:34 -0800 (PST)
-Received: from sultan-book.localdomain ([104.200.129.62])
-        by smtp.gmail.com with ESMTPSA id d2sm794824pjv.18.2020.02.19.14.42.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 14:42:33 -0800 (PST)
-Date:   Wed, 19 Feb 2020 14:42:31 -0800
-From:   Sultan Alsawaf <sultan@kerneltoast.com>
-To:     Mel Gorman <mgorman@suse.de>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH] mm: Stop kswapd early when nothing's waiting for it to
- free pages
-Message-ID: <20200219224231.GA5190@sultan-book.localdomain>
-References: <20200219182522.1960-1-sultan@kerneltoast.com>
- <dcd1cb4c-89dc-856b-ea1b-8d4930fec3eb@intel.com>
- <20200219194006.GA3075@sultan-book.localdomain>
- <20200219200527.GF11847@dhcp22.suse.cz>
- <20200219204220.GA3488@sultan-book.localdomain>
- <20200219214513.GL3420@suse.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DarAl82PcxJAMUan8osRqiWJP5zrzBNFn2my/A9LRV0=;
+        b=HoVPkf9MCLNTwc0vcIKzJhO6hE141AB2oJpr9HtwkeVYQXHpRz1a79XCqZOs8HswA6
+         Sk7V9AL86Sr/yS99i00PG7sLK9qQGRU36B9XEkGtupU57KRJ9Hn7pm3f3YJNO6sMRo8o
+         64yCcB5EPId2sSvqdIWiNXmefaJvme+7daM/zXus391Z5/Y8ijKFK8qIg4B5tlafNtIF
+         WFFSW61tkGOck+x9qZtpMSsJvJqpQWsNiZGpj9msDfclOvallc7DM5N2/Hjz1ZHhk2ck
+         aBIR5EI9zziW/8f4FsZU0PUNdmGWqQw00iiccAJtNr0mOXaNGm+K/EC5SPE7y/qGuYzR
+         /U7Q==
+X-Gm-Message-State: APjAAAVPiTfMD83WlxJnZpA2LqyIUS4Hor6krtqJTvOb+oy4u/yvsVtA
+        4KCMI9CLMPslRUabZ41lFgd9u2YUEjbj4dSaIRQlLQ==
+X-Google-Smtp-Source: APXvYqxEZxyzj2o3h2/4b2lxiDR3ZyXP5vS3IdPCQrTBEhnxDQlQi2PAtKFWTpf2l/rL2e36VXoG7CgtC1N0WJrPr48=
+X-Received: by 2002:a63:f24b:: with SMTP id d11mr29148152pgk.381.1582152230079;
+ Wed, 19 Feb 2020 14:43:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200219214513.GL3420@suse.de>
+References: <f18c3743de0fef673d49dd35760f26bdef7f6fc3.1581359535.git.jpoimboe@redhat.com>
+ <158142525822.411.5401976987070210798.tip-bot2@tip-bot2> <20200213221100.odwg5gan3dwcpk6g@treble>
+ <87sgjeghal.fsf@nanos.tec.linutronix.de> <20200214175758.s34rdwmwgiq6qwq7@treble>
+In-Reply-To: <20200214175758.s34rdwmwgiq6qwq7@treble>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 19 Feb 2020 14:43:39 -0800
+Message-ID: <CAKwvOdmJvWpmbP3GyzaZxyiuwooFXA8D7ui05QE7+f8Oaz+rXg@mail.gmail.com>
+Subject: Re: [tip: core/objtool] objtool: Fail the kernel build on fatal errors
+To:     Chen Rong <rong.a.chen@intel.com>, Philip Li <philip.li@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        tip-bot2 for Josh Poimboeuf <tip-bot2@linutronix.de>,
+        linux-tip-commits@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Julien Thierry <jthierry@redhat.com>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 09:45:13PM +0000, Mel Gorman wrote:
-> This could be watermark boosting run wild again. Can you test with
-> sysctl vm.watermark_boost_factor=0 or the following patch? (preferably
-> both to compare and contrast).
+On Fri, Feb 14, 2020 at 9:58 AM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+>
+> On Fri, Feb 14, 2020 at 01:10:26AM +0100, Thomas Gleixner wrote:
+> > Josh Poimboeuf <jpoimboe@redhat.com> writes:
+> > > On Tue, Feb 11, 2020 at 12:47:38PM -0000, tip-bot2 for Josh Poimboeuf wrote:
+> > >> The following commit has been merged into the core/objtool branch of tip:
+> > >>
+> > >> Commit-ID:     644592d328370af4b3e027b7b1ae9f81613782d8
+> > >> Gitweb:        https://git.kernel.org/tip/644592d328370af4b3e027b7b1ae9f81613782d8
+> > >> Author:        Josh Poimboeuf <jpoimboe@redhat.com>
+> > >> AuthorDate:    Mon, 10 Feb 2020 12:32:38 -06:00
+> > >> Committer:     Borislav Petkov <bp@suse.de>
+> > >> CommitterDate: Tue, 11 Feb 2020 13:27:03 +01:00
+> > >>
+> > >> objtool: Fail the kernel build on fatal errors
+> > >>
+> > >> When objtool encounters a fatal error, it usually means the binary is
+> > >> corrupt or otherwise broken in some way.  Up until now, such errors were
+> > >> just treated as warnings which didn't fail the kernel build.
+> > >>
+> > >> However, objtool is now stable enough that if a fatal error is
+> > >> discovered, it most likely means something is seriously wrong and it
+> > >> should fail the kernel build.
+> > >>
+> > >> Note that this doesn't apply to "normal" objtool warnings; only fatal
+> > >> ones.
+> > >
+> > > Clang still has some toolchain issues which need to be sorted out, so
+> > > upgrading the fatal errors is causing their CI to fail.
+> >
+> > Good. Last time we made it fail they just fixed their stuff.
+> >
+> > > So I think we need to drop this one for now.
+> >
+> > Why? It's our decision to define which level of toolchain brokeness is
+> > tolerable.
+> >
+> > > Boris, are you able to just drop it or should I send a revert?
+> >
+> > I really want to see a revert which has a proper justification why the
+> > issues of clang are tolerable along with a clear statement when this
+> > fatal error will come back. And 'when' means a date, not 'when clang is
+> > fixed'.
+>
+> Fair enough.  The root cause was actually a bug in binutils which gets
+> triggered by a new clang feature.  So instead of reverting the above
+> patch, I think I've figured out a way to work around the binutils bug,
+> while also improving objtool at the same time (win-win).
+>
+> The binutils bug will be fixed in binutils 2.35.
+>
+> BTW, to be fair, this was less "Clang has issues" and more "Josh is
+> lazy".  I didn't test the patch with Clang -- I tend to rely on 0-day
+> bot reports because I don't have the bandwidth to test the
+> kernel/config/toolchain combinations.  Nick tells me Clang will soon be
+> integrated with the 0-day bot, which should help prevent this type of
+> thing in the future.
 
-I can test that, but something to note is that I've been doing equal testing
-with this on 4.4, which exhibits the same behavior, and that kernel doesn't have
-watermark boosting in it, as far as I can tell.
-
-I don't think what we're addressing here is a "bug", but rather something
-fundamental about how we've been thinking about kswapd lifetime. The argument
-here is that it's not coherent to be letting kswapd run as it does, and instead
-gating it on outstanding allocation requests provides much more reasonable
-behavior, given real workloads and use patterns.
-
-Does that make sense and seem reasonable?
-
-Sultan
+Hi Rong, Philip,
+Do you have any status updates on turning on the 0day bot emails to
+the patch authors in production?  It's been quite handy in helping us
+find issues, for the private mails we've been triaging daily.
+-- 
+Thanks,
+~Nick Desaulniers
