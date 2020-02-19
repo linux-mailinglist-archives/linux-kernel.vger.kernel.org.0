@@ -2,161 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3288164ED0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 20:22:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30975164ED6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 20:23:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726996AbgBSTWl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 14:22:41 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:46182 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726672AbgBSTWl (ORCPT
+        id S1726777AbgBSTX1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 14:23:27 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:46720 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726609AbgBSTX0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 14:22:41 -0500
-Received: by mail-il1-f195.google.com with SMTP id t17so21501112ilm.13
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 11:22:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ml1MOyX82nSja1VpXVmwy2WTtqE+i8Eb83IXuucGSCI=;
-        b=nWIfYWNkB9QhIwJaslwkx6i/R9ZPE365epjTHhQygQQSrEMa9PBLnvx4F5Dr0lXFKN
-         b05KlMVQ4LNnzDyIwhKFmnAyqZURfvO5KPlbqKQOl5UUc7CIDlgH+nFTvKYrzas33C6D
-         2cuSxe1UgWt5GPoYwo8K99kvg+7RWDIuw1tvoVhpF+RwoP40MJT7fTxO69770GdBCnL6
-         xeH7D2iIvai/DZhXnbhgH5gV/WSWG2t85EXmhgETbLhaQQ4xd/OSi7slI7BoOQT1Uakc
-         eELKJnmoWTz/WP2vJW16fwfi9LxexEWMuRrqssZ0dpsajF0+G/PaG1BdTmY/ukZR65uD
-         cQdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ml1MOyX82nSja1VpXVmwy2WTtqE+i8Eb83IXuucGSCI=;
-        b=fe+RwdQc32j6Wgsag/Om8E/7EdrBOE8vNks7DvxPR2FAvRfNxJyfEeUGxG6u0fqwl5
-         qrVBJ3oo9Y3Dkb2EIWSHnPLOE/fmpce7FjyGO+JnrJhbFYN4SRw28h1pBafa09SCHsAX
-         4zj43v+UZPVfJq50x64nJ/aL5W7THxEREk1DSD2etCl/8OY32+71bMZDAFx6PnPI7HzO
-         Va3MkIuy7WrvP6nV8kQpkRBjbafyFhfFCdqj9lWIYm/7xm49ELi4Vyyixwt7aYV+yjWx
-         6XZU0tGovgKpLv2MseG0E4ZiBSwQ2LsbKMzBNZbvsfmfCs0C7sLFsK9NebgVnWeiEJWz
-         UIYA==
-X-Gm-Message-State: APjAAAWuSH3eirIwQVQspfE80rZcsdZ/NX9lUc1Tiyz/5QJY1n3XvxEg
-        fvrEeysprzAT/21sbmZBEkIsW8vrwCBm3tBevYg=
-X-Google-Smtp-Source: APXvYqxrDLQt40xRKej4K0PZCiMjI+y2gHlu4+VJmMz79iJuBIQJK6okXDNFJI7Gt+oOapOxnMEtlavBbN0FojuMcQ4=
-X-Received: by 2002:a92:d7c6:: with SMTP id g6mr24578181ilq.282.1582140160551;
- Wed, 19 Feb 2020 11:22:40 -0800 (PST)
-MIME-Version: 1.0
-References: <20200219171225.5547-1-idryomov@gmail.com> <CAHp75Vf24yNeLEweq_70AUzKwbdyurB6ze9739Qy9djA9dSefg@mail.gmail.com>
- <CAOi1vP9gfMoU14Ax+VLksQ+_3yOO3m3bh0Uh02SUMfPFDDEW9g@mail.gmail.com>
-In-Reply-To: <CAOi1vP9gfMoU14Ax+VLksQ+_3yOO3m3bh0Uh02SUMfPFDDEW9g@mail.gmail.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 19 Feb 2020 20:23:06 +0100
-Message-ID: <CAOi1vP8NN=8e8kW6g7KegUt52auJoE53ZCdEQHv2DMqFe1=g0Q@mail.gmail.com>
-Subject: Re: [PATCH v2] vsprintf: don't obfuscate NULL and error pointers
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        "Tobin C . Harding" <me@tobin.cc>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 19 Feb 2020 14:23:26 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 1104C15AE0883;
+        Wed, 19 Feb 2020 11:23:26 -0800 (PST)
+Date:   Wed, 19 Feb 2020 11:23:25 -0800 (PST)
+Message-Id: <20200219.112325.2251268530784358968.davem@davemloft.net>
+To:     f.fainelli@gmail.com
+Cc:     netdev@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
+        linux@armlinux.org.uk, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 0/3] net: phy: Better support for BCM54810
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20200214233853.27217-1-f.fainelli@gmail.com>
+References: <20200214233853.27217-1-f.fainelli@gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 19 Feb 2020 11:23:26 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 7:07 PM Ilya Dryomov <idryomov@gmail.com> wrote:
->
-> On Wed, Feb 19, 2020 at 6:37 PM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> >
-> > On Wed, Feb 19, 2020 at 7:13 PM Ilya Dryomov <idryomov@gmail.com> wrote:
-> > >
-> > > I don't see what security concern is addressed by obfuscating NULL
-> > > and IS_ERR() error pointers, printed with %p/%pK.  Given the number
-> > > of sites where %p is used (over 10000) and the fact that NULL pointers
-> > > aren't uncommon, it probably wouldn't take long for an attacker to
-> > > find the hash that corresponds to 0.  Although harder, the same goes
-> > > for most common error values, such as -1, -2, -11, -14, etc.
-> > >
-> > > The NULL part actually fixes a regression: NULL pointers weren't
-> > > obfuscated until commit 3e5903eb9cff ("vsprintf: Prevent crash when
-> > > dereferencing invalid pointers") which went into 5.2.  I'm tacking
-> > > the IS_ERR() part on here because error pointers won't leak kernel
-> > > addresses and printing them as pointers shouldn't be any different
-> > > from e.g. %d with PTR_ERR_OR_ZERO().  Obfuscating them just makes
-> > > debugging based on existing pr_debug and friends excruciating.
-> > >
-> > > Note that the "always print 0's for %pK when kptr_restrict == 2"
-> > > behaviour which goes way back is left as is.
-> > >
-> > > Example output with the patch applied:
-> > >
-> > >                             ptr         error-ptr              NULL
-> > > %p:            0000000001f8cc5b  fffffffffffffff2  0000000000000000
-> > > %pK, kptr = 0: 0000000001f8cc5b  fffffffffffffff2  0000000000000000
-> > > %px:           ffff888048c04020  fffffffffffffff2  0000000000000000
-> > > %pK, kptr = 1: ffff888048c04020  fffffffffffffff2  0000000000000000
-> > > %pK, kptr = 2: 0000000000000000  0000000000000000  0000000000000000
-> >
-> > ...
-> >
-> > > +/*
-> > > + * NULL pointers aren't hashed.
-> > > + */
-> > >  static void __init
-> > >  null_pointer(void)
-> > >  {
-> > > -       test_hashed("%p", NULL);
-> > > +       test(ZEROS "00000000", "%p", NULL);
-> > >         test(ZEROS "00000000", "%px", NULL);
-> > >         test("(null)", "%pE", NULL);
-> > >  }
-> > >
-> > > +/*
-> > > + * Error pointers aren't hashed.
-> > > + */
-> > > +static void __init
-> > > +error_pointer(void)
-> > > +{
-> > > +       test(ONES "fffffff5", "%p", ERR_PTR(-EAGAIN));
-> > > +       test(ONES "fffffff5", "%px", ERR_PTR(-EAGAIN));
-> >
-> > > +       test("(efault)", "%pE", ERR_PTR(-EAGAIN));
-> >
-> > Hmm... Is capital E on purpose here?
->
-> Yes.  It shows that for %pE an error pointer is still invalid.
-> %pe is tested separately, in errptr(), and the output would have
-> been "-EAGAIN".
->
-> > Maybe we may use something else ('%ph'?) for sake of deviation?
->
-> If you look at the resulting file, you will see that null_pointer(),
-> error_pointer() and invalid_pointer() exercise the same three variants:
-> %p, %px and %pE.
->
-> This is somewhat confusing, but there seems to be some disagreement
-> between Pavel and Rasmus as to how the test suite should be structured
-> and I didn't want to attempt to restructure anything in this patch.
+From: Florian Fainelli <f.fainelli@gmail.com>
+Date: Fri, 14 Feb 2020 15:38:50 -0800
 
-Sorry, I meant Petr of course.
+> Hi David, Andrew, Heiner,
+> 
+> This patch series updates the broadcom PHY driver to better support the
+> BCM54810 and allow it to make use of the exiting
+> bcm54xx_adjust_rxrefclk() as well as fix suspend/resume for it.
 
-Rasmus, who had to deal with mips defining EDQUOT to 1133 by special
-casing that in lib/errname.c, reminded me that error codes are a mess:
-EAGAIN is different on alpha.  Rather than picking another error code
-that is the same on all architectures, let's just use explicit -11.
+Florian, please respond to Andrew's feedback on patch #2 wrt. the checking
+of PHY_BRCM_RX_REFCLK_UNUSED.
 
-error_pointer() should be:
-
-        test(ONES "fffffff5", "%p", ERR_PTR(-11));
-        test(ONES "fffffff5", "%px", ERR_PTR(-11));
-        test("(efault)", "%pE", ERR_PTR(-11));
-
-I'll wait for more feedback and respin (or perhaps this can be
-fixed up while applying).
-
-Thanks,
-
-                Ilya
+Thank you.
