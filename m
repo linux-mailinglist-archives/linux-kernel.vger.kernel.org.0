@@ -2,94 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 918E216530D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 00:27:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 875D5165311
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 00:28:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726762AbgBSX1V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 18:27:21 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44962 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbgBSX1U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 18:27:20 -0500
-Received: by mail-pg1-f196.google.com with SMTP id g3so884661pgs.11;
-        Wed, 19 Feb 2020 15:27:20 -0800 (PST)
+        id S1726824AbgBSX23 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 18:28:29 -0500
+Received: from mail-bn8nam11on2077.outbound.protection.outlook.com ([40.107.236.77]:6246
+        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726680AbgBSX23 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 18:28:29 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FV+2iXAe5eINPU5ZaE8PUUd6jLIUnd9VTHMmQ93X9EpNPGJ6bCWDyPuGhZqSSJLh2thuFk/vA67B7NykKB20ALPZ3vg08o38us48XZ6HYP5vTuG2eX+9CxLcdcHuyDx2uqIQBqBl40pl69aCo+NuY2hPeqN00AQtRwuunoj8cFrl1lbyHrbBnNSQLn6/SMd+oHDYDIFSAxDIVRJVLjt7zDC2hdt5UQt9azruxwWAppXXJNpUjsa73qwm3RgWt9kDHNJ8ABiyJDKwNXzklK/ZqEQl98wbFPOJtMJmK+jo1CWHqPL6X/qKqBkabuhOANROdUxY5LL3haRK4XHWFhWhMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GNf/ErxMfW8RimSQCTxUYZLIolSykVIh80nTZCktsao=;
+ b=cFwDBDxyXlYQMdxjTf0N+4DdB5QBDXU9wYgnAaJ6PbSMmNgvI6u3/hNDNJO5069CGsvlNJwF8LBP1T5681RgGuB2eKvNlCa22ZDvBkyck21t6NeAdlQuAkzPkPzyKXEEFpCGbZxH2KN3ySVyxIqmj9MKS0s/zpiTrUaoisqYfhplqmDENBPW7nNikoPTHbtNxigEysd1uMas27qRRctWjzrF0Ebve/JCaRtSkdU+SBkvGcqDfmuS53YTIrJS1Y+79g5uPPs5OfvO5NF8OobpPhBcCyj/P3lAhLict8y4S7BvpsEzBtku9BVm22WuLMavxqE3kvpeKRXCHKrPfVNKOQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6JiFaz5iy9gmHgnooypOSxsxA0ut5ONuFdOKVlOwCFg=;
-        b=rWVv971tZXzMCXq1FdEk/AVgIB38nVbzCRKGwYiuo/d+7G/ZfKFWWWEOdUkzQ/rcZR
-         FxsuihZyd44JZAZFbtG/DgRR9Z8o66oMxnooTwsYlHEZLP3Q8zpBHhR4yNTltN2arc3g
-         k7f3MD8eJ4WroZ29wX5C7DK2Wx6uWwLS7nuo4wUtMJJ+oSfGRpOZzoMLQWpwQfUxj50K
-         2eYXiq49X9NpT/3abVPsfUm/mppohRwr0+jFNviQbuP70DpK+WFHSV++gGGuS7hUW1Pm
-         kPUoPHkvUuOQrN1ao6/20B0UFu8VUoYlFa0+O6BNoqQYPe9CMIP08rV72XtI3MOsr+Tb
-         u0aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6JiFaz5iy9gmHgnooypOSxsxA0ut5ONuFdOKVlOwCFg=;
-        b=tf04PCNHcxFESU3KD8K4XEjEBaulH2vysQnh5IoNq2QDsXAwii7H26GEe6+2dnIIFW
-         fMMHIFACCI0BJoG/0fNp2M5NpE2aBlDJ+KDuDh0LQUithUMoPiXficGcoNRT/a7D+btE
-         Cfx9Yt46T7XDOIbsOe8Y2HFA0aH4S+RfyWjLv3ShdDbAi5k7YaG5cgS9VHuUY7+6UkkJ
-         7sJdZJjNP/fLTL75z9EpN4SHJs+Vvgjr/wOkoaSW8cA4mXmiK7gnO8nUN0btRff517PS
-         1y+zkHIg6kJQC9yynwuBeiR2RQ4JPmA4r5e0txCbkGLar30hBphtEwtqCH1o0+2B7Pex
-         9MAg==
-X-Gm-Message-State: APjAAAVqx4AU9rL45BgHOMX6KMv+m3S5o+JFXfd1MmVvMm/YfQy21PSr
-        2W4l74q06id2ptjXQgDX+Ro=
-X-Google-Smtp-Source: APXvYqzq5to/NST8CWJIajv2bRAa9C+1cpIpDX1QKU7hisIV/jAiodj/ikTotObNse4EB9ovrbseUA==
-X-Received: by 2002:aa7:8bda:: with SMTP id s26mr29656770pfd.194.1582154839975;
-        Wed, 19 Feb 2020 15:27:19 -0800 (PST)
-Received: from ?IPv6:2001:4898:d8:28:a99d:cf29:8886:cbc? ([2001:4898:80e8:9:29ac:cf29:8886:cbc])
-        by smtp.gmail.com with ESMTPSA id w189sm682332pfw.157.2020.02.19.15.27.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2020 15:27:19 -0800 (PST)
-Subject: Re: [PATCH v11 1/2] dt-bindings: edac: dmc-520.yaml
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     James Morse <james.morse@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GNf/ErxMfW8RimSQCTxUYZLIolSykVIh80nTZCktsao=;
+ b=KUyld60WiEgOKbQLIx/0TvdOb8ApYlwxrhtek0yB8V4vVkDRtOKGwiCGhPJ1f7O2xmiVoCHuA2lWpzvOeqYdx30ArPi+V+oIXb1k5YDH/5WeiRTOWKxvJVNim1WkNdJs7bcCTLz3T//62wUONcFJs2zQLK7CKzkQ/+AUyQtwXns=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=kim.phillips@amd.com; 
+Received: from SN6PR12MB2845.namprd12.prod.outlook.com (52.135.106.33) by
+ SN6PR12MB2766.namprd12.prod.outlook.com (52.135.107.138) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2729.29; Wed, 19 Feb 2020 23:27:49 +0000
+Received: from SN6PR12MB2845.namprd12.prod.outlook.com
+ ([fe80::dd6f:a575:af8e:4f1b]) by SN6PR12MB2845.namprd12.prod.outlook.com
+ ([fe80::dd6f:a575:af8e:4f1b%7]) with mapi id 15.20.2729.032; Wed, 19 Feb 2020
+ 23:27:49 +0000
+From:   Kim Phillips <kim.phillips@amd.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>
+Cc:     Kim Phillips <kim.phillips@amd.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Jiri Olsa <jolsa@redhat.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-edac <linux-edac@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, hangl@microsoft.com,
-        ruizhao@microsoft.com, Lei Wang <lewan@microsoft.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Yuqing Shen <yuqing.shen@broadcom.com>
-References: <5354a9c3-5b5a-486a-9d19-fa9be169faef@gmail.com>
- <20200217181055.GC14426@zn.tnic>
- <4c02326d-cf38-e1e1-1822-d24de22fa2cc@gmail.com>
- <20200219200358.GJ30966@zn.tnic>
-From:   Shiping Ji <shiping.linux@gmail.com>
-Message-ID: <98d39c59-8ae0-0f7e-1bd4-3c83c1b6bee0@gmail.com>
-Date:   Wed, 19 Feb 2020 15:27:18 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Michael Petlan <mpetlan@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        stable@vger.kernel.org
+Subject: [PATCH 1/3] perf/amd/uncore: Replace manual sampling check with CAP_NO_INTERRUPT flag
+Date:   Wed, 19 Feb 2020 17:27:27 -0600
+Message-Id: <20200219232729.21460-1-kim.phillips@amd.com>
+X-Mailer: git-send-email 2.25.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: DM6PR14CA0054.namprd14.prod.outlook.com
+ (2603:10b6:5:18f::31) To SN6PR12MB2845.namprd12.prod.outlook.com
+ (2603:10b6:805:75::33)
 MIME-Version: 1.0
-In-Reply-To: <20200219200358.GJ30966@zn.tnic>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: from fritz.amd.com (165.204.77.1) by DM6PR14CA0054.namprd14.prod.outlook.com (2603:10b6:5:18f::31) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2729.23 via Frontend Transport; Wed, 19 Feb 2020 23:27:47 +0000
+X-Mailer: git-send-email 2.25.0
+X-Originating-IP: [165.204.77.1]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 2ebaeb8b-0137-48e8-9916-08d7b5935515
+X-MS-TrafficTypeDiagnostic: SN6PR12MB2766:|SN6PR12MB2766:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <SN6PR12MB276623B992BDCD234B8C4B3487100@SN6PR12MB2766.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6108;
+X-Forefront-PRVS: 0318501FAE
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(136003)(39860400002)(366004)(376002)(396003)(189003)(199004)(16526019)(956004)(2616005)(54906003)(36756003)(7416002)(6666004)(44832011)(8936002)(478600001)(110136005)(316002)(26005)(186003)(81156014)(4326008)(66556008)(6486002)(66946007)(86362001)(52116002)(7696005)(1076003)(2906002)(8676002)(66476007)(5660300002)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2766;H:SN6PR12MB2845.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: mT0wxFo/5vR0jdveeUNu1TFQg7h1pq+2pHgga0NKUoEF5++evuaXZWUDyR6Cyoy6vx6Y8tjQ7H21VosiC1yzuErcpo854o48E3hA8eBHZCRw7OVBNE/I+Q2v3YlWty06taYfDzOmlmAI7MY4ynlTe05Vd6HiUXZpOwZSFGpee7UjtWZsbmFH5WyB30V32qbIQJ1Pw2TnhsXRKw/PqKA4ncml0X1IdqrRG7CqRL8zvf0dLVQwKusp/9d3S4bZOYhxrDu+CSklhF6LhM/XlQyBuV3KB1yqJfxSBr6teOKsYooGouGtXM++/qQV7mQhmN18MQaAdqOcdJpL9UzvQyJBndNxSWWsR0P2EF84tJ09v2C+OK3KsXzHNkq1th6/7CM/KF7aTjh6tL+d91q5kTsdZINBkDBe+BXcxhBGOKwudGoH5D1e2C5x1TavNp1e5nGW
+X-MS-Exchange-AntiSpam-MessageData: 5ZQyZ7WzS2D7N9OCNzsx8/MKkUu6V1oyxEv5SgqwkPi2nqArxx4f5NfdBhE2gmtUHSbDWNmdY/1WL5TKaV5ty4eDfjy7dZz7gffZDx1skoJzxZwszx7zHBnh5U5VwtZFnTS3tObBOSLA/UdD9sjaXg==
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2ebaeb8b-0137-48e8-9916-08d7b5935515
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2020 23:27:49.0532
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: e9zAmHrKhaxUcn6SepsPMr5RsTwtqJzg9qGkNiIDYhPtf27UyLc70fw3rRZqJ+P+GHG7cLMVZnfNXXDDVKoiQw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2766
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/19/2020 12:03 PM, Borislav Petkov wrote:
-> On Tue, Feb 18, 2020 at 09:12:15AM -0800, Shiping Ji wrote:
->> Actually I didn't send v11 of the driver since it will be identical to v10,
->> sorry for keeping you waiting on this. Please review v10, thanks!
-> 
-> Ok, both patches queued and will appear in linux-next soon.
-> 
-> Thanks for the effort and persistence!
-> 
-> :-)
+This enables the sampling check in kernel/events/core.c's
+perf_event_open, which returns the more appropriate -EOPNOTSUPP.
 
-Thanks a lot for the prompt action! This is great learning process for me :)
+BEFORE:
 
---
-Best regards,
-Shiping Ji
+$ sudo perf record -a -e instructions,l3_request_g1.caching_l3_cache_accesses true
+Error:
+The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (l3_request_g1.caching_l3_cache_accesses).
+/bin/dmesg | grep -i perf may provide additional information.
+
+With nothing relevant in dmesg.
+
+AFTER:
+
+$ sudo perf record -a -e instructions,l3_request_g1.caching_l3_cache_accesses true
+Error:
+l3_request_g1.caching_l3_cache_accesses: PMU Hardware doesn't support sampling/overflow-interrupts. Try 'perf stat'
+
+Signed-off-by: Kim Phillips <kim.phillips@amd.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org
+Cc: x86@kernel.org
+Cc: stable@vger.kernel.org
+Fixes: c43ca5091a37 ("perf/x86/amd: Add support for AMD NB and L2I "uncore" counters")
+---
+ arch/x86/events/amd/uncore.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
+
+diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
+index a6ea07f2aa84..4d867a752f0e 100644
+--- a/arch/x86/events/amd/uncore.c
++++ b/arch/x86/events/amd/uncore.c
+@@ -190,15 +190,12 @@ static int amd_uncore_event_init(struct perf_event *event)
+ 
+ 	/*
+ 	 * NB and Last level cache counters (MSRs) are shared across all cores
+-	 * that share the same NB / Last level cache. Interrupts can be directed
+-	 * to a single target core, however, event counts generated by processes
+-	 * running on other cores cannot be masked out. So we do not support
+-	 * sampling and per-thread events.
++	 * that share the same NB / Last level cache.  On family 16h and below,
++	 * Interrupts can be directed to a single target core, however, event
++	 * counts generated by processes running on other cores cannot be masked
++	 * out. So we do not support sampling and per-thread events via
++	 * CAP_NO_INTERRUPT, and we do not enable counter overflow interrupts:
+ 	 */
+-	if (is_sampling_event(event) || event->attach_state & PERF_ATTACH_TASK)
+-		return -EINVAL;
+-
+-	/* and we do not enable counter overflow interrupts */
+ 	hwc->config = event->attr.config & AMD64_RAW_EVENT_MASK_NB;
+ 	hwc->idx = -1;
+ 
+@@ -306,7 +303,7 @@ static struct pmu amd_nb_pmu = {
+ 	.start		= amd_uncore_start,
+ 	.stop		= amd_uncore_stop,
+ 	.read		= amd_uncore_read,
+-	.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
++	.capabilities	= PERF_PMU_CAP_NO_EXCLUDE | PERF_PMU_CAP_NO_INTERRUPT,
+ };
+ 
+ static struct pmu amd_llc_pmu = {
+@@ -317,7 +314,7 @@ static struct pmu amd_llc_pmu = {
+ 	.start		= amd_uncore_start,
+ 	.stop		= amd_uncore_stop,
+ 	.read		= amd_uncore_read,
+-	.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
++	.capabilities	= PERF_PMU_CAP_NO_EXCLUDE | PERF_PMU_CAP_NO_INTERRUPT,
+ };
+ 
+ static struct amd_uncore *amd_uncore_alloc(unsigned int cpu)
+-- 
+2.25.0
+
