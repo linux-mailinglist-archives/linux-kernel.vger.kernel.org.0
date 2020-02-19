@@ -2,92 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2474C16496C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 17:04:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CFFB164971
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 17:05:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbgBSQEx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 11:04:53 -0500
-Received: from foss.arm.com ([217.140.110.172]:51850 "EHLO foss.arm.com"
+        id S1726852AbgBSQFU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 11:05:20 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44158 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726645AbgBSQEx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 11:04:53 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3F4B71FB;
-        Wed, 19 Feb 2020 08:04:52 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B7D7A3F6CF;
-        Wed, 19 Feb 2020 08:04:51 -0800 (PST)
-Date:   Wed, 19 Feb 2020 16:04:50 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ASoC: dt-bindings: simple-card: switch to yaml base
- Documentation
-Message-ID: <20200219160450.GE4488@sirena.org.uk>
-References: <87blq1zr8n.wl-kuninori.morimoto.gx@renesas.com>
- <20200219155808.GA25095@bogus>
+        id S1726645AbgBSQFU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 11:05:20 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 435ACACF0;
+        Wed, 19 Feb 2020 16:05:17 +0000 (UTC)
+From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>
+Cc:     Dan Murphy <dmurphy@ti.com>, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+Subject: [PATCH v3] leds: add SGI IP30 led support
+Date:   Wed, 19 Feb 2020 17:05:04 +0100
+Message-Id: <20200219160504.27555-1-tbogendoerfer@suse.de>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Yb+qhiCg54lqZFXW"
-Content-Disposition: inline
-In-Reply-To: <20200219155808.GA25095@bogus>
-X-Cookie: FORTH IF HONK THEN
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch implemenets a driver to support the front panel LEDs of
+SGI Octane (IP30) workstations.
 
---Yb+qhiCg54lqZFXW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+---
+Changes in v3:
+  - rebased to 5.6-rc2
 
-On Wed, Feb 19, 2020 at 09:58:08AM -0600, Rob Herring wrote:
-> On Fri, Feb 14, 2020 at 02:13:05PM +0900, Kuninori Morimoto wrote:
-> > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> >=20
-> > This patch switches from .txt base to .yaml base Document.
+Changes in v2:
+  - use led names conforming to include/dt-bindings/leds/common.h
+  - read LED state from firmware
+  - leave setting up to user
 
-Please delete unneeded context from mails when replying.  Doing this
-makes it much easier to find your reply in the message, helping ensure
-it won't be missed by people scrolling through the irrelevant quoted
-material.
+ drivers/leds/Kconfig     | 11 ++++++
+ drivers/leds/Makefile    |  1 +
+ drivers/leds/leds-ip30.c | 80 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 92 insertions(+)
+ create mode 100644 drivers/leds/leds-ip30.c
 
-> > +  dai-tdm-slot-num:
-> > +    description: see tdm-slot.txt.
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index d82f1dea3711..c664d84e1667 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -846,6 +846,17 @@ config LEDS_TPS6105X
+ 	  It is a single boost converter primarily for white LEDs and
+ 	  audio amplifiers.
+ 
++config LEDS_IP30
++	tristate "LED support for SGI Octane machines"
++	depends on LEDS_CLASS
++	depends on SGI_MFD_IOC3
++	help
++	  This option enables support for the Red and White LEDs of
++	  SGI Octane machines.
++
++	  To compile this driver as a module, choose M here: the module
++	  will be called leds-ip30.
++
+ comment "LED Triggers"
+ source "drivers/leds/trigger/Kconfig"
+ 
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index d7e1107753fb..46bd611a03a9 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -86,6 +86,7 @@ obj-$(CONFIG_LEDS_TI_LMU_COMMON)	+= leds-ti-lmu-common.o
+ obj-$(CONFIG_LEDS_LM3697)		+= leds-lm3697.o
+ obj-$(CONFIG_LEDS_LM36274)		+= leds-lm36274.o
+ obj-$(CONFIG_LEDS_TPS6105X)		+= leds-tps6105x.o
++obj-$(CONFIG_LEDS_IP30)			+= leds-ip30.o
+ 
+ # LED SPI Drivers
+ obj-$(CONFIG_LEDS_CR0014114)		+= leds-cr0014114.o
+diff --git a/drivers/leds/leds-ip30.c b/drivers/leds/leds-ip30.c
+new file mode 100644
+index 000000000000..82453a216f81
+--- /dev/null
++++ b/drivers/leds/leds-ip30.c
+@@ -0,0 +1,80 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * LED Driver for SGI Octane machines
++ */
++
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/platform_device.h>
++#include <linux/leds.h>
++
++struct ip30_led {
++	struct led_classdev cdev;
++	u32 __iomem *reg;
++};
++
++static void ip30led_set(struct led_classdev *led_cdev,
++			enum led_brightness value)
++{
++	struct ip30_led *led = container_of(led_cdev, struct ip30_led, cdev);
++
++	if (value)
++		writel(1, led->reg);
++	else
++		writel(0, led->reg);
++}
++
++static int ip30led_create(struct platform_device *pdev, int num)
++{
++	struct resource *res;
++	struct ip30_led *data;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, num);
++	if (!res)
++		return -EBUSY;
++
++	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	data->reg = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(data->reg))
++		return PTR_ERR(data->reg);
++
++
++	if (num == 0)
++		data->cdev.name = "white:indicator";
++	else
++		data->cdev.name = "red:indicator";
++
++	data->cdev.brightness = readl(data->reg);
++	data->cdev.max_brightness = 1;
++	data->cdev.brightness_set = ip30led_set;
++
++	return devm_led_classdev_register(&pdev->dev, &data->cdev);
++}
++
++static int ip30led_probe(struct platform_device *pdev)
++{
++	int ret;
++
++	ret = ip30led_create(pdev, 0);
++	if (ret < 0)
++		return ret;
++
++	return ip30led_create(pdev, 1);
++}
++
++static struct platform_driver ip30led_driver = {
++	.probe		= ip30led_probe,
++	.driver		= {
++		.name		= "ip30-leds",
++	},
++};
++
++module_platform_driver(ip30led_driver);
++
++MODULE_AUTHOR("Thomas Bogendoerfer <tbogendoerfer@suse.de>");
++MODULE_DESCRIPTION("SGI Octane LED driver");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:ip30-leds");
+-- 
+2.25.0
 
-> Is there a max?
-
-No.
-
-> > +    description: see tdm-slot.txt.
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-
-> max is 32 or something much less than 2^32?
-
-It'll be much less than 2^32 but could potentially be fairly large in a
-big telephony system.
-
---Yb+qhiCg54lqZFXW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5NXKEACgkQJNaLcl1U
-h9DkIgf+PId+cf44wocBGhUhG5MM+TGNp2SLlvXDPC9TiWLqmdmtPLAYKVQQehxq
-v5dH0QMF9b3zI4zcMLX/LjT6UJGptws3jGlVQWTpxdl/4evXXgmYIJ/6F9PFClfl
-4qw6j/8DgmnFT4/Z3a/H4bXOjdooxbsU8YQ45xqHjwqlEhIkwWuWVvUCiVUt3wR1
-ds7xrNP2XUvckeC90M/OVmv9TDVzjkDEp5MrWRCUIK+ptKWtMDJNKlv5uF+Sh/FU
-ICjgBBiL82lrk9eRccdIVjjeXDFOwQMfx4KXW1IwfrbW+ZvAL9gP/UCQo5+pqVnq
-fHt1FURjfodweBdVzejev4FDZCWbAA==
-=MTvU
------END PGP SIGNATURE-----
-
---Yb+qhiCg54lqZFXW--
