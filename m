@@ -2,68 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C813F163CB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 06:35:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 841DF163CC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 06:39:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726539AbgBSFfq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 00:35:46 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:44192 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725842AbgBSFfq (ORCPT
+        id S1726270AbgBSFjd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 00:39:33 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:42078 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725842AbgBSFjd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 00:35:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=i5jjRMxpChRQy+2J/xRxaZpOqmFrFWQR+xd6cg6u2PI=; b=DuVHuymBPWn5wDST1aeEelhfNM
-        /bXL88FT9MFQnHGtbK4rSNZ+luoUIXATKSnNmq0w0g+oFVWjyKpy66W6FFgRGnswoBOWQpscJbJQP
-        4VedcAPQbAlzmDR4kFU3J0Di3kgpR1We770va4VzU0v+3uU5Psu/vRRzwnfoiQqbwdrygPBoB0Acc
-        Kj/viayLIFCgDZTYuGeW41k0nXnLmWVc48ZXm+FRjozkqV+sHubRee661ywX49PCOT/E1uqhfX2Ny
-        D9csTE5YF0U7xa7/EP5Jtkli2RRKOHF+UMVo8N/d71C108g1DAP7O0iiHuaezDNJcoHL5lnGSyTJU
-        QRfWManA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j4I1Q-0004Jt-TF; Wed, 19 Feb 2020 05:35:44 +0000
-Date:   Tue, 18 Feb 2020 21:35:44 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v6 17/19] iomap: Restructure iomap_readpages_actor
-Message-ID: <20200219053544.GN24185@bombadil.infradead.org>
-References: <20200217184613.19668-1-willy@infradead.org>
- <20200217184613.19668-31-willy@infradead.org>
- <d4803ef9-7a2f-965f-8f0f-c5e15396d892@nvidia.com>
+        Wed, 19 Feb 2020 00:39:33 -0500
+Received: by mail-yb1-f193.google.com with SMTP id z125so11802163ybf.9
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2020 21:39:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=d6qeSHn0R8eb7oUSh15TXKxMRyNgkmSfzopxI3yp3FM=;
+        b=RcJvnBF7TNNpu0kEihSEJQdZW95fpfOgZ8O3iNQbqQAgROzILUpdP+uVsm/rcl1j+J
+         pjHjdUQD8jTt8MxZmqU2s6sl3TKCO/vW71rwrEK/UNzllPgXKlnfv5KaYhTHQQZhpq0q
+         JzCLLmRVQWZMfwLNHqdwVTUvsX+P25oawWZv8lgqmJqQxFnKmdRsV7u5bPjM+hGEOwQW
+         jbjIL2+JuT+a7/TcxjKhX4/fI4aVB7FYyLDvxHe0mCM5rGF8gzWRiVHauRngciMbMnGR
+         5cuP6muvicfgeDgvGntE9eVb9lOsAigqLa/NwsuMIcUXZjY07CHLO43xs3HWFA8ufjwd
+         gpMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=d6qeSHn0R8eb7oUSh15TXKxMRyNgkmSfzopxI3yp3FM=;
+        b=XJiU1Rkr+N3WQ/uwAmW2T1gX0YQVCANzWViOiciBOwA1IVwdjOcRo1CMLXB4Q6sNuB
+         5S1CTm0/hf5irsss/FfL0Uxgj5PJoZj4+xFaKBYcz+oZTqyV0a46q53uWK2RUd1dWQO8
+         QxDkUptyj6f/u5Q7t3iqNqGJK6bac3YkeZn3XXA3+qkCe3TEf71Z0WZpcnDo4Qro/E9O
+         ETNmHsFO9ZvrrtxcVOiqm3SlhpvJqO43/6yQnSWiAyEbwMM72C+hwd42PIvXATdTVbKp
+         njtPjRPHev2fVAT7ICm+wWPtuu4+2jW0ICUJSqECnUUg7Ilj397XAgY700TL257mHr3b
+         XMDw==
+X-Gm-Message-State: APjAAAVYST8QjuQvv48ADXwUnpo1MWCSqXFCNXbkc2mNCkhTOqpNq/k2
+        1WDFWnI8dMcTAq4iBC2JM5gd2+it+2EhYX9iSu0D2xWw
+X-Google-Smtp-Source: APXvYqw7XK3ql/hUSl5JmamnqXChYaKmxXHXPH/aXXM9HWgu2rFUFD7ZrvlJDTyhaeZmP6y0+qG8Ip7GA1hGQ3aztoo=
+X-Received: by 2002:a25:42ca:: with SMTP id p193mr20880605yba.147.1582090771031;
+ Tue, 18 Feb 2020 21:39:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d4803ef9-7a2f-965f-8f0f-c5e15396d892@nvidia.com>
+References: <20200218172821.18378-1-wambui.karugax@gmail.com> <20200218172821.18378-6-wambui.karugax@gmail.com>
+In-Reply-To: <20200218172821.18378-6-wambui.karugax@gmail.com>
+From:   Ben Skeggs <skeggsb@gmail.com>
+Date:   Wed, 19 Feb 2020 15:39:20 +1000
+Message-ID: <CACAvsv4fWZWqQozMFPnyk7nXVyGPvszhY33qEQ74D0eAHofp2Q@mail.gmail.com>
+Subject: Re: [Nouveau] [PATCH] drm/nouveau: remove checks for return value of
+ debugfs functions
+To:     Wambui Karuga <wambui.karugax@gmail.com>
+Cc:     Ben Skeggs <bskeggs@redhat.com>, Dave Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        ML nouveau <nouveau@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 07:17:18PM -0800, John Hubbard wrote:
-> > -	for (done = 0; done < length; done += ret) {
-> 
-> nit: this "for" loop was perfect just the way it was. :) I'd vote here for reverting
-> the change to a "while" loop. Because with this change, now the code has to 
-> separately initialize "done", separately increment "done", and the beauty of a
-> for loop is that the loop init and control is all clearly in one place. For things
-> that follow that model (as in this case!), that's a Good Thing.
-> 
-> And I don't see any technical reason (even in the following patch) that requires 
-> this change.
+On Wed, 19 Feb 2020 at 03:28, Wambui Karuga <wambui.karugax@gmail.com> wrote:
+>
+> As there is no need to check for the return value of debugfs_create_file
+> and drm_debugfs_create_files, remove unnecessary checks and error
+> handling in nouveau_drm_debugfs_init.
+Thanks!
 
-It's doing the increment in the wrong place.  We want the increment done in
-the middle of the loop, before we check whether we've got to the end of
-the page.  Not at the end of the loop.
-
-> > +	BUG_ON(ctx.cur_page);
-> 
-> Is a full BUG_ON() definitely called for here? Seems like a WARN might suffice...
-
-Dave made a similar comment; I'll pick this up there.
+>
+> Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
+> ---
+>  drivers/gpu/drm/nouveau/nouveau_debugfs.c | 20 ++++++++------------
+>  1 file changed, 8 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_debugfs.c b/drivers/gpu/drm/nouveau/nouveau_debugfs.c
+> index 7dfbbbc1beea..15a3d40edf02 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_debugfs.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_debugfs.c
+> @@ -222,22 +222,18 @@ nouveau_drm_debugfs_init(struct drm_minor *minor)
+>  {
+>         struct nouveau_drm *drm = nouveau_drm(minor->dev);
+>         struct dentry *dentry;
+> -       int i, ret;
+> +       int i;
+>
+>         for (i = 0; i < ARRAY_SIZE(nouveau_debugfs_files); i++) {
+> -               dentry = debugfs_create_file(nouveau_debugfs_files[i].name,
+> -                                            S_IRUGO | S_IWUSR,
+> -                                            minor->debugfs_root, minor->dev,
+> -                                            nouveau_debugfs_files[i].fops);
+> -               if (!dentry)
+> -                       return -ENOMEM;
+> +               debugfs_create_file(nouveau_debugfs_files[i].name,
+> +                                   S_IRUGO | S_IWUSR,
+> +                                   minor->debugfs_root, minor->dev,
+> +                                   nouveau_debugfs_files[i].fops);
+>         }
+>
+> -       ret = drm_debugfs_create_files(nouveau_debugfs_list,
+> -                                      NOUVEAU_DEBUGFS_ENTRIES,
+> -                                      minor->debugfs_root, minor);
+> -       if (ret)
+> -               return ret;
+> +       drm_debugfs_create_files(nouveau_debugfs_list,
+> +                                NOUVEAU_DEBUGFS_ENTRIES,
+> +                                minor->debugfs_root, minor);
+>
+>         /* Set the size of the vbios since we know it, and it's confusing to
+>          * userspace if it wants to seek() but the file has a length of 0
+> --
+> 2.25.0
+>
+> _______________________________________________
+> Nouveau mailing list
+> Nouveau@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/nouveau
