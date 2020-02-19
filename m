@@ -2,78 +2,545 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7357D163CAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 06:30:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7266B163C50
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 06:01:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726169AbgBSF3m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 00:29:42 -0500
-Received: from zmail.nuczu.edu.ua ([91.234.43.158]:38645 "EHLO
-        zmail.nuczu.edu.ua" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725842AbgBSF3l (ORCPT
+        id S1726038AbgBSFBP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 00:01:15 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48068 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725306AbgBSFBO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 00:29:41 -0500
-X-Greylist: delayed 4477 seconds by postgrey-1.27 at vger.kernel.org; Wed, 19 Feb 2020 00:29:41 EST
-Received: from localhost (localhost [127.0.0.1])
-        by zmail.nuczu.edu.ua (Postfix) with ESMTP id 995BA743A48;
-        Wed, 19 Feb 2020 03:15:02 +0200 (EET)
-Received: from zmail.nuczu.edu.ua ([127.0.0.1])
-        by localhost (zmail.nuczu.edu.ua [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id VaVxP5KM1d9b; Wed, 19 Feb 2020 03:15:02 +0200 (EET)
-Received: from localhost (localhost [127.0.0.1])
-        by zmail.nuczu.edu.ua (Postfix) with ESMTP id 428F84F8D61;
-        Wed, 19 Feb 2020 00:31:38 +0200 (EET)
-DKIM-Filter: OpenDKIM Filter v2.10.3 zmail.nuczu.edu.ua 428F84F8D61
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nuczu.edu.ua;
-        s=A52E72AE-E4EF-11E9-9906-53CE3145A657; t=1582065098;
-        bh=o+H3O7n1+zJcXo0FhJs7spyf8HmE4ClnBa/Y2Gk0DL0=;
-        h=MIME-Version:To:From:Date:Message-Id;
-        b=AJw8k4PCFeXm/1lMLdI3+gZVmbC69hyM3/GTHLRtapk6IsPIIaRjWSW1snHS88yzD
-         r8R76sxsT/HGiFZHXdRq3cLvdWK9FQYcmV6uYk2OUhX2A6OSp4jSZpEuArOnmT2bax
-         cmjLV+sKuAiWhxzPPrA6PDe1635L/aNdnS9YQhEJZrufxaTJ2HTL+NIpnur84hMa0a
-         7S9KUVhYhfIkqCvP0MCVvjDw2inICHYi7gcCiekYtqkRYG3A+JCArbc2Rkw4AiggLg
-         2Cw/elovC077DyUpVhSbcNaF7FoGKaVSN4b9yMhlWUQ6PG2h4I0fNpZkmR2ncRkX/E
-         EOnUWSjBf5Uyw==
-X-Virus-Scanned: amavisd-new at nuczu.edu.ua
-Received: from zmail.nuczu.edu.ua ([127.0.0.1])
-        by localhost (zmail.nuczu.edu.ua [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id ghbAr2pY7oDJ; Wed, 19 Feb 2020 00:31:36 +0200 (EET)
-Received: from [10.109.183.140] (unknown [105.12.3.161])
-        by zmail.nuczu.edu.ua (Postfix) with ESMTPSA id 476204FDE50;
-        Tue, 18 Feb 2020 22:03:57 +0200 (EET)
-Content-Type: text/plain; charset="utf-8"
+        Wed, 19 Feb 2020 00:01:14 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01J4x2C5076524
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 00:01:10 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2y8ubuvtr3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 00:01:10 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
+        Wed, 19 Feb 2020 05:01:08 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 19 Feb 2020 05:01:01 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01J510nh55443556
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 Feb 2020 05:01:00 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 01EF84C040;
+        Wed, 19 Feb 2020 05:01:00 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 09CDF4C058;
+        Wed, 19 Feb 2020 05:00:59 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 19 Feb 2020 05:00:58 +0000 (GMT)
+Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
+        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 6DB61A00DF;
+        Wed, 19 Feb 2020 16:00:54 +1100 (AEDT)
+From:   "Alastair D'Silva" <alastair@au1.ibm.com>
+To:     Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Anton Blanchard <anton@ozlabs.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        =?ISO-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kurz <groug@kaod.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org
+Date:   Wed, 19 Feb 2020 16:00:57 +1100
+In-Reply-To: <20200203141846.00004981@Huawei.com>
+References: <20191203034655.51561-1-alastair@au1.ibm.com>
+         <20191203034655.51561-14-alastair@au1.ibm.com>
+         <20200203141846.00004981@Huawei.com>
+Organization: IBM Australia
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: =?utf-8?q?Wohlt=C3=A4tigkeitsspende_von_2=2E000=2E000_Euro?=
-To:     Recipients <dushkin@nuczu.edu.ua>
-From:   ''Michael weirsky'' <dushkin@nuczu.edu.ua>
-Date:   Tue, 18 Feb 2020 22:03:46 +0200
-Reply-To: mikeweirskyspende@gmail.com
-Message-Id: <20200218200357.476204FDE50@zmail.nuczu.edu.ua>
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 20021905-4275-0000-0000-000003A353F3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20021905-4276-0000-0000-000038B75CB4
+Message-Id: <6d41f1e365960f3b3f8779ca117868c4d8508489.camel@au1.ibm.com>
+Subject: RE: [PATCH v2 13/27] nvdimm/ocxl: Add support for Admin commands
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-18_08:2020-02-18,2020-02-18 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ lowpriorityscore=0 spamscore=0 suspectscore=0 mlxlogscore=999
+ clxscore=1015 malwarescore=0 adultscore=0 impostorscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002190033
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lieber Freund,
+On Mon, 2020-02-03 at 14:18 +0000, Jonathan Cameron wrote:
+> On Tue, 3 Dec 2019 14:46:41 +1100
+> Alastair D'Silva <alastair@au1.ibm.com> wrote:
+> 
+> > From: Alastair D'Silva <alastair@d-silva.org>
+> > 
+> > This patch requests the metadata required to issue admin commands,
+> > as well
+> > as some helper functions to construct and check the completion of
+> > the
+> > commands.
+> > 
+> > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> 
+> A few trivial bits inline.
+> 
+> Jonathan
+> 
+> > ---
+> >  drivers/nvdimm/ocxl/scm.c          |  67 +++++++++++++
+> >  drivers/nvdimm/ocxl/scm_internal.c | 152
+> > +++++++++++++++++++++++++++++
+> >  drivers/nvdimm/ocxl/scm_internal.h |  62 ++++++++++++
+> >  3 files changed, 281 insertions(+)
+> > 
+> > diff --git a/drivers/nvdimm/ocxl/scm.c b/drivers/nvdimm/ocxl/scm.c
+> > index 8088f65c289e..1e175f3c3cf2 100644
+> > --- a/drivers/nvdimm/ocxl/scm.c
+> > +++ b/drivers/nvdimm/ocxl/scm.c
+> > @@ -267,6 +267,58 @@ static int scm_register_lpc_mem(struct
+> > scm_data *scm_data)
+> >  	return 0;
+> >  }
+> >  
+> > +/**
+> > + * scm_extract_command_metadata() - Extract command data from MMIO
+> > & save it for further use
+> > + * @scm_data: a pointer to the SCM device data
+> > + * @offset: The base address of the command data structures
+> > (address of CREQO)
+> > + * @command_metadata: A pointer to the command metadata to
+> > populate
+> > + * Return: 0 on success, negative on failure
+> > + */
+> > +static int scm_extract_command_metadata(struct scm_data *scm_data,
+> > u32 offset,
+> > +					struct command_metadata
+> > *command_metadata)
+> > +{
+> > +	int rc;
+> > +	u64 tmp;
+> > +
+> > +	rc = ocxl_global_mmio_read64(scm_data->ocxl_afu, offset,
+> > OCXL_LITTLE_ENDIAN,
+> > +				     &tmp);
+> > +	if (rc)
+> > +		return rc;
+> > +
+> > +	command_metadata->request_offset = tmp >> 32;
+> > +	command_metadata->response_offset = tmp & 0xFFFFFFFF;
+> > +
+> > +	rc = ocxl_global_mmio_read64(scm_data->ocxl_afu, offset + 8,
+> > OCXL_LITTLE_ENDIAN,
+> > +				     &tmp);
+> > +	if (rc)
+> > +		return rc;
+> > +
+> > +	command_metadata->data_offset = tmp >> 32;
+> > +	command_metadata->data_size = tmp & 0xFFFFFFFF;
+> > +
+> > +	command_metadata->id = 0;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +/**
+> > + * scm_setup_command_metadata() - Set up the command metadata
+> > + * @scm_data: a pointer to the SCM device data
+> > + */
+> > +static int scm_setup_command_metadata(struct scm_data *scm_data)
+> > +{
+> > +	int rc;
+> > +
+> > +	mutex_init(&scm_data->admin_command.lock);
+> > +
+> > +	rc = scm_extract_command_metadata(scm_data,
+> > GLOBAL_MMIO_ACMA_CREQO,
+> > +					  &scm_data->admin_command);
+> > +	if (rc)
+> > +		return rc;
+> 
+> Unless you are adding to this later in the series.
+> 
 
-Ich bin Herr Mike Weirsky, New Jersey, Vereinigte Staaten von Amerika, der =
-Mega-Gewinner von $ 273million In Mega Millions Jackpot, spende ich an 5 zu=
-f=C3=A4llige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Ma=
-il nach einem Spinball ausgew=C3=A4hlt.Ich habe den gr=C3=B6=C3=9Ften Teil =
-meines Verm=C3=B6gens auf eine Reihe von Wohlt=C3=A4tigkeitsorganisationen =
-und Organisationen verteilt.Ich habe mich freiwillig dazu entschieden, die =
-Summe von =E2=82=AC 2.000.000,00 an Sie als eine der ausgew=C3=A4hlten 5 zu=
- spenden, um meine Gewinne zu =C3=BCberpr=C3=BCfen.
-Das ist dein Spendencode: [MW530342019]
-www.youtube.com/watch?v=3Dun8yRTmrYMY
+Ignored
 
-Antworten Sie mit dem SPENDE-CODE an diese =
+> 	return scm_extract_command_metadata(scm_data,...)
+> 
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  /**
+> >   * scm_is_usable() - Is a controller usable?
+> >   * @scm_data: a pointer to the SCM device data
+> > @@ -276,6 +328,8 @@ static bool scm_is_usable(const struct scm_data
+> > *scm_data)
+> >  {
+> >  	u64 chi = 0;
+> >  	int rc = scm_chi(scm_data, &chi);
+> > +	if (rc)
+> > +		return false;
+> >  
+> >  	if (!(chi & GLOBAL_MMIO_CHI_CRDY)) {
+> >  		dev_err(&scm_data->dev, "SCM controller is not
+> > ready.\n");
+> > @@ -502,6 +556,14 @@ static int scm_probe(struct pci_dev *pdev,
+> > const struct pci_device_id *ent)
+> >  	}
+> >  	scm_data->pdev = pdev;
+> >  
+> > +	scm_data->timeouts[ADMIN_COMMAND_ERRLOG] = 2000; // ms
+> > +	scm_data->timeouts[ADMIN_COMMAND_HEARTBEAT] = 100; // ms
+> > +	scm_data->timeouts[ADMIN_COMMAND_SMART] = 100; // ms
+> > +	scm_data->timeouts[ADMIN_COMMAND_CONTROLLER_DUMP] = 1000; // ms
+> > +	scm_data->timeouts[ADMIN_COMMAND_CONTROLLER_STATS] = 100; // ms
+> > +	scm_data->timeouts[ADMIN_COMMAND_SHUTDOWN] = 1000; // ms
+> > +	scm_data->timeouts[ADMIN_COMMAND_FW_UPDATE] = 16000; // ms
+> > +
+> >  	pci_set_drvdata(pdev, scm_data);
+> >  
+> >  	scm_data->ocxl_fn = ocxl_function_open(pdev);
+> > @@ -543,6 +605,11 @@ static int scm_probe(struct pci_dev *pdev,
+> > const struct pci_device_id *ent)
+> >  		goto err;
+> >  	}
+> >  
+> > +	if (scm_setup_command_metadata(scm_data)) {
+> > +		dev_err(&pdev->dev, "Could not read OCXL command
+> > matada\n");
+> > +		goto err;
+> > +	}
+> > +
+> >  	elapsed = 0;
+> >  	timeout = scm_data->readiness_timeout + scm_data-
+> > >memory_available_timeout;
+> >  	while (!scm_is_usable(scm_data)) {
+> > diff --git a/drivers/nvdimm/ocxl/scm_internal.c
+> > b/drivers/nvdimm/ocxl/scm_internal.c
+> > index 72d3c0e7d846..7b11b56863fb 100644
+> > --- a/drivers/nvdimm/ocxl/scm_internal.c
+> > +++ b/drivers/nvdimm/ocxl/scm_internal.c
+> > @@ -17,3 +17,155 @@ int scm_chi(const struct scm_data *scm_data,
+> > u64 *chi)
+> >  
+> >  	return 0;
+> >  }
+> > +
+> > +static int scm_command_request(const struct scm_data *scm_data,
+> > +			       struct command_metadata *cmd, u8
+> > op_code)
+> > +{
+> > +	u64 val = op_code;
+> > +	int rc;
+> > +	u8 i;
+> > +
+> > +	cmd->op_code = op_code;
+> > +	cmd->id++;
+> > +
+> > +	val |= ((u64)cmd->id) << 16;
+> > +
+> > +	rc = ocxl_global_mmio_write64(scm_data->ocxl_afu, cmd-
+> > >request_offset,
+> > +				      OCXL_LITTLE_ENDIAN, val);
+> > +	if (rc)
+> > +		return rc;
+> > +
+> > +	for (i = 0x08; i <= 0x38; i += 0x08) {
+> 
+> perhaps use sizeof(u64) to explain where the 0x08s come from.
+> For the 0x38, might be worth a define.
 
+Ok
+> 
+> > +		rc = ocxl_global_mmio_write64(scm_data->ocxl_afu,
+> > +					      cmd->request_offset + i,
+> > +					      OCXL_LITTLE_ENDIAN, 0);
+> > +		if (rc)
+> > +			return rc;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +int scm_admin_command_request(struct scm_data *scm_data, u8
+> > op_code)
+> > +{
+> > +	u64 val;
+> > +	int rc = ocxl_global_mmio_read64(scm_data->ocxl_afu,
+> > GLOBAL_MMIO_CHI,
+> > +					 OCXL_LITTLE_ENDIAN, &val);
+> > +	if (rc)
+> > +		return rc;
+> > +
+> > +	return scm_command_request(scm_data, &scm_data->admin_command,
+> > op_code);
+> > +}
+> > +
+> > +static int scm_command_response(const struct scm_data *scm_data,
+> > +			 const struct command_metadata *cmd)
+> > +{
+> > +	u64 val;
+> > +	u16 id;
+> > +	u8 status;
+> > +	int rc = ocxl_global_mmio_read64(scm_data->ocxl_afu,
+> > +					 cmd->response_offset,
+> > +					 OCXL_LITTLE_ENDIAN, &val);
+> > +	if (rc)
+> > +		return rc;
+> > +
+> > +	status = val & 0xff;
+> > +	id = (val >> 16) & 0xffff;
+> > +
+> > +	if (id != cmd->id) {
+> > +		dev_warn(&scm_data->dev,
+> > +			 "Expected response for command %d, but
+> > received response for command %d instead.\n",
+> > +			 cmd->id, id);
+> > +	}
+> > +
+> > +	return status;
+> > +}
+> > +
+> > +int scm_admin_response(const struct scm_data *scm_data)
+> > +{
+> > +	return scm_command_response(scm_data, &scm_data-
+> > >admin_command);
+> > +}
+> > +
+> > +
+> > +int scm_admin_command_execute(const struct scm_data *scm_data)
+> > +{
+> > +	return ocxl_global_mmio_set64(scm_data->ocxl_afu,
+> > GLOBAL_MMIO_HCI,
+> > +				      OCXL_LITTLE_ENDIAN,
+> > GLOBAL_MMIO_HCI_ACRW);
+> > +}
+> > +
+> > +static bool scm_admin_command_complete(const struct scm_data
+> > *scm_data)
+> > +{
+> > +	u64 val = 0;
+> > +
+> > +	int rc = scm_chi(scm_data, &val);
+> > +
+> > +	WARN_ON(rc);
+> > +
+> > +	return (val & GLOBAL_MMIO_CHI_ACRA) != 0;
+> > +}
+> > +
+> > +int scm_admin_command_complete_timeout(const struct scm_data
+> > *scm_data,
+> > +				       int command)
+> > +{
+> > +	u32 timeout = scm_data->timeouts[command];
+> > +	// 32 is the next power of 2 greater than the 20ms minimum for
+> > msleep
+> > +#define TIMEOUT_SLEEP_MILLIS 32
+> > +	timeout /= TIMEOUT_SLEEP_MILLIS;
+> > +	if (!timeout)
+> > +		timeout = SCM_DEFAULT_TIMEOUT / TIMEOUT_SLEEP_MILLIS;
+> > +
+> > +	while (timeout-- > 0) {
+> > +		if (scm_admin_command_complete(scm_data))
+> > +			return 0;
+> > +		msleep(TIMEOUT_SLEEP_MILLIS);
+> > +	}
+> > +
+> > +	if (scm_admin_command_complete(scm_data))
+> > +		return 0;
+> > +
+> > +	return -EBUSY;
+> > +}
+> > +
+> > +int scm_admin_response_handled(const struct scm_data *scm_data)
+> > +{
+> > +	return ocxl_global_mmio_set64(scm_data->ocxl_afu,
+> > GLOBAL_MMIO_CHIC,
+> > +				      OCXL_LITTLE_ENDIAN,
+> > GLOBAL_MMIO_CHI_ACRA);
+> > +}
+> > +
+> > +void scm_warn_status(const struct scm_data *scm_data, const char
+> > *message,
+> > +		     u8 status)
+> > +{
+> > +	const char *text = "Unknown";
+> > +
+> > +	switch (status) {
+> > +	case STATUS_SUCCESS:
+> > +		text = "Success";
+> > +		break;
+> > +
+> > +	case STATUS_MEM_UNAVAILABLE:
+> > +		text = "Persistent memory unavailable";
+> > +		break;
+> > +
+> > +	case STATUS_BAD_OPCODE:
+> > +		text = "Bad opcode";
+> > +		break;
+> > +
+> > +	case STATUS_BAD_REQUEST_PARM:
+> > +		text = "Bad request parameter";
+> > +		break;
+> > +
+> > +	case STATUS_BAD_DATA_PARM:
+> > +		text = "Bad data parameter";
+> > +		break;
+> > +
+> > +	case STATUS_DEBUG_BLOCKED:
+> > +		text = "Debug action blocked";
+> > +		break;
+> > +
+> > +	case STATUS_FAIL:
+> > +		text = "Failed";
+> > +		break;
+> > +	}
+> > +
+> > +	dev_warn(&scm_data->dev, "%s: %s (%x)\n", message, text,
+> > status);
+> > +}
+> > diff --git a/drivers/nvdimm/ocxl/scm_internal.h
+> > b/drivers/nvdimm/ocxl/scm_internal.h
+> > index 584450f55e30..9bff684cd069 100644
+> > --- a/drivers/nvdimm/ocxl/scm_internal.h
+> > +++ b/drivers/nvdimm/ocxl/scm_internal.h
+> > @@ -6,6 +6,8 @@
+> >  #include <linux/libnvdimm.h>
+> >  #include <linux/mm.h>
+> >  
+> > +#define SCM_DEFAULT_TIMEOUT 100
+> > +
+> >  #define GLOBAL_MMIO_CHI		0x000
+> >  #define GLOBAL_MMIO_CHIC	0x008
+> >  #define GLOBAL_MMIO_CHIE	0x010
+> > @@ -80,6 +82,16 @@
+> >  
+> >  #define SCM_LABEL_AREA_SIZE	(1UL << PA_SECTION_SHIFT)
+> >  
+> > +struct command_metadata {
+> > +	u32 request_offset;
+> > +	u32 response_offset;
+> > +	u32 data_offset;
+> > +	u32 data_size;
+> > +	struct mutex lock;
+> > +	u16 id;
+> > +	u8 op_code;
+> > +};
+> > +
+> >  struct scm_function_0 {
+> >  	struct pci_dev *pdev;
+> >  	struct ocxl_fn *ocxl_fn;
+> > @@ -95,9 +107,11 @@ struct scm_data {
+> >  	struct ocxl_afu *ocxl_afu;
+> >  	struct ocxl_context *ocxl_context;
+> >  	void *metadata_addr;
+> > +	struct command_metadata admin_command;
+> >  	struct resource scm_res;
+> >  	struct nd_region *nd_region;
+> >  	char fw_version[8+1];
+> > +	u32 timeouts[ADMIN_COMMAND_MAX+1];
+> >  
+> >  	u32 max_controller_dump_size;
+> >  	u16 scm_revision; // major/minor
+> > @@ -122,3 +136,51 @@ struct scm_data {
+> >   * Returns 0 on success, negative on error
+> >   */
+> >  int scm_chi(const struct scm_data *scm_data, u64 *chi);
+> > +
+> > +/**
+> > + * scm_admin_command_request() - Issue an admin command request
+> > + * @scm_data: a pointer to the SCM device data
+> > + * @op_code: The op-code for the command
+> > + *
+> > + * Returns an identifier for the command, or negative on error
+> > + */
+> > +int scm_admin_command_request(struct scm_data *scm_data, u8
+> > op_code);
+> > +
+> > +/**
+> > + * scm_admin_response() - Validate an admin response
+> > + * @scm_data: a pointer to the SCM device data
+> > + * Returns the status code of the command, or negative on error
+> > + */
+> > +int scm_admin_response(const struct scm_data *scm_data);
+> > +
+> > +/**
+> > + * scm_admin_command_execute() - Notify the controller to start
+> > processing a pending admin command
+> > + * @scm_data: a pointer to the SCM device data
+> > + * Returns 0 on success, negative on error
+> > + */
+> > +int scm_admin_command_execute(const struct scm_data *scm_data);
+> > +
+> > +/**
+> > + * scm_admin_command_complete_timeout() - Wait for an admin
+> > command to finish executing
+> > + * @scm_data: a pointer to the SCM device data
+> > + * @command: the admin command to wait for completion (determines
+> > the timeout)
+> > + * Returns 0 on success, -EBUSY on timeout
+> > + */
+> > +int scm_admin_command_complete_timeout(const struct scm_data
+> > *scm_data,
+> > +				       int command);
+> > +
+> > +/**
+> > + * scm_admin_response_handled() - Notify the controller that the
+> > admin response has been handled
+> > + * @scm_data: a pointer to the SCM device data
+> > + * Returns 0 on success, negative on failure
+> > + */
+> > +int scm_admin_response_handled(const struct scm_data *scm_data);
+> > +
+> > +/**
+> > + * scm_warn_status() - Emit a kernel warning showing a command
+> > status.
+> > + * @scm_data: a pointer to the SCM device data
+> > + * @message: A message to accompany the warning
+> > + * @status: The command status
+> > + */
+> > +void scm_warn_status(const struct scm_data *scm_data, const char
+> > *message,
+> > +		     u8 status);
+-- 
+Alastair D'Silva
+Open Source Developer
+Linux Technology Centre, IBM Australia
+mob: 0423 762 819
 
-E-Mail:mikeweirskyspende@gmail.com
-
-Ich hoffe, Sie und Ihre Familie gl=C3=BCcklich zu machen.
-
-Gr=C3=BC=C3=9Fe
-Herr Mike Weirsky
