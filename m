@@ -2,159 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B70E4164336
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 12:20:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFF8D16433F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 12:23:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727001AbgBSLU1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 06:20:27 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:38481 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726514AbgBSLU1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 06:20:27 -0500
-Received: by mail-il1-f193.google.com with SMTP id f5so20259332ilq.5;
-        Wed, 19 Feb 2020 03:20:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wlG3nAa6BYD+iSp33UrqkLf/yy6E18oediW8a3IHWEE=;
-        b=lqrMZzD75cIs1XvYxtvW/PfD/BoQl24mKjNsYCd6y/97XIQT6pJHdKQvlURlGAn5ji
-         9Kng8T8BBQAVnuttwpOZEIB+rvcYhxrv4uUrX3xZd63KuUDvT90rqqugMLDgpHNfONVU
-         LzTYhqlQ1dE53RZU0SAi18BpeklsaEI4VmogQl2Y+VhMaEKXnDkmDXlYMPJ9PH29lUZV
-         WqQdiopEXJYdFpHqqHN41Q0dE6hiyh9f7I9/ssz80F0hEPTfwH+xu5orFtNJFMTSfPIV
-         UNx0gmq06kljo9YkbVLDHDGC00zFrgpvQAi1Mc99Brv2BedjxjVa+/vjBSRKxhokYG73
-         1sag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wlG3nAa6BYD+iSp33UrqkLf/yy6E18oediW8a3IHWEE=;
-        b=fQkUud1ETtQymdXKcN8PvVl8USykAqN3/JlMvVXyOENishbfpR/yPC4gI9B1soboBf
-         iZPpG1E4cotHyIlfKsOEBMiBnze7dyoze9rPJoI1nEV/ms2kU5MGAtnkF+4UQjjLZfe+
-         wAMt+yodsjkjZFdBpimoo7czyUGMRwN+2gqlICJ77Bj7Ed6EUGMt7manR82evIHiSOn7
-         Dp6+CQbfbZuR/tt8i1GWybEAw8UHTZq5zmau1HUloMAt1vX+ExezIpDP2Ly1j5ikGUH5
-         BUFG0CPMQPrCPG8mNs0uvOuzYzae9a9P6QgpnedcJ6mLSrrSLUbw/AkGv5+S0gebOgUC
-         sDnw==
-X-Gm-Message-State: APjAAAWOrI/p+yuoqYjo/cgDoh2J8gxXjgqnj11xZRp61+0KfPa7W6yV
-        P8xnf3JEhBMR8TLwhZS4aAvkej0mU6YjGOq1FYs=
-X-Google-Smtp-Source: APXvYqxe3KWnktEfzpmKptdMszpnXSJm8A5UxsbKU39uxO1rNDKE7wgLIqdm+nZ9iVSSMOkm7yfbWcV56Fb0MZ54YQA=
-X-Received: by 2002:a92:3a8d:: with SMTP id i13mr25028030ilf.112.1582111226499;
- Wed, 19 Feb 2020 03:20:26 -0800 (PST)
+        id S1726821AbgBSLXF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 06:23:05 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10218 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726484AbgBSLXE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 06:23:04 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 37FF2B07EE7D5F7B7DE1;
+        Wed, 19 Feb 2020 19:22:57 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Wed, 19 Feb 2020
+ 19:22:48 +0800
+From:   yu kuai <yukuai3@huawei.com>
+To:     <clm@fb.com>, <josef@toxicpanda.com>, <dsterba@suse.com>
+CC:     <linux-btrfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yukuai3@huawei.com>, <zhengbin13@huawei.com>,
+        <yi.zhang@huawei.com>
+Subject: [PATCH 1/3] btrfs: remove set but not used variable 'root_owner'
+Date:   Wed, 19 Feb 2020 19:21:48 +0800
+Message-ID: <20200219112148.16914-1-yukuai3@huawei.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-References: <CAHk-=wjEd-gZ1g52kgi_g8gq-QCF2E01TkQd5Hmj4W5aThLw3A@mail.gmail.com>
- <20200219082155.6787-1-linux@rasmusvillemoes.dk>
-In-Reply-To: <20200219082155.6787-1-linux@rasmusvillemoes.dk>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 19 Feb 2020 12:20:53 +0100
-Message-ID: <CAOi1vP-4=QCSZ2A89g1po2p=6n_g09SXUCa0_r2SBJm2greRmw@mail.gmail.com>
-Subject: Re: [PATCH] vsprintf: sanely handle NULL passed to %pe
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        "Tobin C . Harding" <me@tobin.cc>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 9:21 AM Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
->
-> Extend %pe to pretty-print NULL in addition to ERR_PTRs,
-> i.e. everything IS_ERR_OR_NULL().
->
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> ---
-> Something like this? The actual code change is +2,-1 with another +1
-> for a test case.
->
->  Documentation/core-api/printk-formats.rst | 9 +++++----
->  lib/errname.c                             | 4 ++++
->  lib/test_printf.c                         | 1 +
->  lib/vsprintf.c                            | 4 ++--
->  4 files changed, 12 insertions(+), 6 deletions(-)
->
-> diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
-> index 8ebe46b1af39..964b55291445 100644
-> --- a/Documentation/core-api/printk-formats.rst
-> +++ b/Documentation/core-api/printk-formats.rst
-> @@ -86,10 +86,11 @@ Error Pointers
->
->         %pe     -ENOSPC
->
-> -For printing error pointers (i.e. a pointer for which IS_ERR() is true)
-> -as a symbolic error name. Error values for which no symbolic name is
-> -known are printed in decimal, while a non-ERR_PTR passed as the
-> -argument to %pe gets treated as ordinary %p.
-> +For printing error pointers (i.e. a pointer for which IS_ERR() is
-> +true) as a symbolic error name. Error values for which no symbolic
-> +name is known are printed in decimal. A NULL pointer is printed as
-> +NULL. All other pointer values (i.e. anything !IS_ERR_OR_NULL()) get
-> +treated as ordinary %p.
->
->  Symbols/Function Pointers
->  -------------------------
-> diff --git a/lib/errname.c b/lib/errname.c
-> index 0c4d3e66170e..7757bc00f564 100644
-> --- a/lib/errname.c
-> +++ b/lib/errname.c
-> @@ -11,9 +11,13 @@
->   * allocated errnos (with EHWPOISON = 257 on parisc, and EDQUOT = 1133
->   * on mips), so this wastes a bit of space on those - though we
->   * special case the EDQUOT case.
-> + *
-> + * For the benefit of %pe being able to print any ERR_OR_NULL pointer
-> + * symbolically, 0 is also treated specially.
->   */
->  #define E(err) [err + BUILD_BUG_ON_ZERO(err <= 0 || err > 300)] = "-" #err
->  static const char *names_0[] = {
-> +       [0] = "NULL",
->         E(E2BIG),
->         E(EACCES),
->         E(EADDRINUSE),
-> diff --git a/lib/test_printf.c b/lib/test_printf.c
-> index 2d9f520d2f27..3a37d0e9e735 100644
-> --- a/lib/test_printf.c
-> +++ b/lib/test_printf.c
-> @@ -641,6 +641,7 @@ errptr(void)
->         test("[-EIO    ]", "[%-8pe]", ERR_PTR(-EIO));
->         test("[    -EIO]", "[%8pe]", ERR_PTR(-EIO));
->         test("-EPROBE_DEFER", "%pe", ERR_PTR(-EPROBE_DEFER));
-> +       test("[NULL]", "[%pe]", NULL);
->  #endif
->  }
->
-> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-> index 7c488a1ce318..b7118d78eb20 100644
-> --- a/lib/vsprintf.c
-> +++ b/lib/vsprintf.c
-> @@ -2247,8 +2247,8 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
->         case 'x':
->                 return pointer_string(buf, end, ptr, spec);
->         case 'e':
-> -               /* %pe with a non-ERR_PTR gets treated as plain %p */
-> -               if (!IS_ERR(ptr))
-> +               /* %pe with a non-ERR_OR_NULL ptr gets treated as plain %p */
-> +               if (!IS_ERR_OR_NULL(ptr))
->                         break;
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-FWIW I was about to post a patch that just special cases NULL here.
+fs/btrfs/tree-log.c: In function ‘walk_down_log_tree’:
+fs/btrfs/tree-log.c:2698:6: warning: variable ‘root_owner’
+set but not used [-Wunused-but-set-variable]
+fs/btrfs/tree-log.c: In function ‘walk_up_log_tree’:
+fs/btrfs/tree-log.c:2793:6: warning: variable ‘root_owner’
+set but not used [-Wunused-but-set-variable]
 
-I think changing errname() to return "NULL" for 0 is overkill.
-People will sooner or later discover that function and start using it
-in contexts that don't have anything to do with pointers.  Returning
-_some_ string for 0 (instead of NULL) makes it very close to standard
-strerror(), and "NULL" for 0 (i.e. success) seems rather odd.
+They are never used, and so can be removed.
 
-Thanks,
+Signed-off-by: yu kuai <yukuai3@huawei.com>
+---
+ fs/btrfs/tree-log.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-                Ilya
+diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
+index 5e6b18924e00..156beda01b18 100644
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -2695,7 +2695,6 @@ static noinline int walk_down_log_tree(struct btrfs_trans_handle *trans,
+ 				   struct walk_control *wc)
+ {
+ 	struct btrfs_fs_info *fs_info = root->fs_info;
+-	u64 root_owner;
+ 	u64 bytenr;
+ 	u64 ptr_gen;
+ 	struct extent_buffer *next;
+@@ -2721,7 +2720,6 @@ static noinline int walk_down_log_tree(struct btrfs_trans_handle *trans,
+ 		blocksize = fs_info->nodesize;
+ 
+ 		parent = path->nodes[*level];
+-		root_owner = btrfs_header_owner(parent);
+ 
+ 		next = btrfs_find_create_tree_block(fs_info, bytenr);
+ 		if (IS_ERR(next))
+@@ -2790,7 +2788,6 @@ static noinline int walk_up_log_tree(struct btrfs_trans_handle *trans,
+ 				 struct walk_control *wc)
+ {
+ 	struct btrfs_fs_info *fs_info = root->fs_info;
+-	u64 root_owner;
+ 	int i;
+ 	int slot;
+ 	int ret;
+@@ -2809,7 +2806,6 @@ static noinline int walk_up_log_tree(struct btrfs_trans_handle *trans,
+ 			else
+ 				parent = path->nodes[*level + 1];
+ 
+-			root_owner = btrfs_header_owner(parent);
+ 			ret = wc->process_func(root, path->nodes[*level], wc,
+ 				 btrfs_header_generation(path->nodes[*level]),
+ 				 *level);
+-- 
+2.17.2
+
