@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61DA1163F66
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:42:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 956DE163F56
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 09:41:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727362AbgBSImK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 03:42:10 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44310 "EHLO mx2.suse.de"
+        id S1727036AbgBSIln (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 03:41:43 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44328 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726767AbgBSIl0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726773AbgBSIl0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 19 Feb 2020 03:41:26 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id ED0E4AD88;
-        Wed, 19 Feb 2020 08:41:24 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 467EEB03B;
+        Wed, 19 Feb 2020 08:41:25 +0000 (UTC)
 From:   Jiri Slaby <jslaby@suse.cz>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH 18/24] n_hdlc: remove unneeded ifdef
-Date:   Wed, 19 Feb 2020 09:41:12 +0100
-Message-Id: <20200219084118.26491-18-jslaby@suse.cz>
+Subject: [PATCH 19/24] n_hdlc: use __func__ and pr_ print helpers
+Date:   Wed, 19 Feb 2020 09:41:13 +0100
+Message-Id: <20200219084118.26491-19-jslaby@suse.cz>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200219084118.26491-1-jslaby@suse.cz>
 References: <20200219084118.26491-1-jslaby@suse.cz>
@@ -32,29 +32,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TTY_NO_WRITE_SPLIT is (always) defined in linux/tty.h, so no need to
-check for it.
+* we mark the message in n_hdlc_tty_receive as error
+* we use __func__ instead of explicit function name
+* we switch the remaining prints to pr_* helpers
 
 Signed-off-by: Jiri Slaby <jslaby@suse.cz>
 ---
- drivers/tty/n_hdlc.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/tty/n_hdlc.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/tty/n_hdlc.c b/drivers/tty/n_hdlc.c
-index c4fe09124185..cf8485beaccd 100644
+index cf8485beaccd..048e5a155bea 100644
 --- a/drivers/tty/n_hdlc.c
 +++ b/drivers/tty/n_hdlc.c
-@@ -244,10 +244,8 @@ static int n_hdlc_tty_open (struct tty_struct *tty)
- 	tty->disc_data = n_hdlc;
- 	tty->receive_room = 65536;
+@@ -197,7 +197,7 @@ static void n_hdlc_tty_close(struct tty_struct *tty)
+ 	struct n_hdlc *n_hdlc = tty->disc_data;
+ 
+ 	if (n_hdlc->magic != HDLC_MAGIC) {
+-		printk(KERN_WARNING "n_hdlc: trying to close unopened tty!\n");
++		pr_warn("n_hdlc: trying to close unopened tty!\n");
+ 		return;
+ 	}
+ #if defined(TTY_NO_WRITE_SPLIT)
+@@ -231,13 +231,13 @@ static int n_hdlc_tty_open (struct tty_struct *tty)
+ 
+ 	/* There should not be an existing table for this slot. */
+ 	if (n_hdlc) {
+-		printk (KERN_ERR"n_hdlc_tty_open:tty already associated!\n" );
++		pr_err("%s: tty already associated!\n", __func__);
+ 		return -EEXIST;
+ 	}
  	
--#if defined(TTY_NO_WRITE_SPLIT)
- 	/* change tty_io write() to not split large writes into 8K chunks */
- 	set_bit(TTY_NO_WRITE_SPLIT,&tty->flags);
--#endif
+ 	n_hdlc = n_hdlc_alloc();
+ 	if (!n_hdlc) {
+-		printk (KERN_ERR "n_hdlc_alloc failed\n");
++		pr_err("%s: n_hdlc_alloc failed\n", __func__);
+ 		return -ENFILE;
+ 	}
+ 		
+@@ -371,8 +371,8 @@ static void n_hdlc_tty_receive(struct tty_struct *tty, const __u8 *data,
+ 
+ 	/* verify line is using HDLC discipline */
+ 	if (n_hdlc->magic != HDLC_MAGIC) {
+-		printk("%s(%d) line not using HDLC discipline\n",
+-			__FILE__,__LINE__);
++		pr_err("%s(%d) line not using HDLC discipline\n",
++				__FILE__, __LINE__);
+ 		return;
+ 	}
  	
- 	/* flush receive data from driver */
- 	tty_driver_flush_buffer(tty);
+@@ -431,8 +431,8 @@ static ssize_t n_hdlc_tty_read(struct tty_struct *tty, struct file *file,
+ 
+ 	/* verify user access to buffer */
+ 	if (!access_ok(buf, nr)) {
+-		printk(KERN_WARNING "%s(%d) n_hdlc_tty_read() can't verify user "
+-		"buffer\n", __FILE__, __LINE__);
++		pr_warn("%s(%d) %s() can't verify user buffer\n",
++				__FILE__, __LINE__, __func__);
+ 		return -EFAULT;
+ 	}
+ 
 -- 
 2.25.0
 
