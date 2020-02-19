@@ -2,125 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90A2D165273
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 23:23:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E196216527B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 23:26:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727858AbgBSWXy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 17:23:54 -0500
-Received: from ozlabs.org ([203.11.71.1]:53965 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727082AbgBSWXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 17:23:54 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48NC1L4Sm0z9sRG;
-        Thu, 20 Feb 2020 09:23:49 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1582151031;
-        bh=LUDgvdSwYxLSm2ujH88YLkYz8f+r7X9YUZvj7psSYMw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=MdBwteHmzPo3JsgXveNOGoWTVkStnSrYU2WyiPZUaqRRhnZE+FXcXFE9T7qGBIpKo
-         RESFvzDSWiRv7miPSKAggjvJUVvMiXR4PvApMahxIgTiyE7bnF0IK26cwrs2WP+ZED
-         86/FSVgC5p5zUFo/UiVuGCjdJkIJOwVdBcIzAJ8DPsjstSQycZbXsrUyBfxzuMorOD
-         +yIhOEoe7uNucs5NecgQlp1FLUlw/tuwprJxTl+TKnOHgZhtaH6ad8iGdIp9c+2rj0
-         k0Yr8yEt63kWrJ2gttii9LJeL/AJXOg/SqfAJQRsJuPWac7/nuD1ka3+sp11gyKQth
-         jfAQP25J2X05A==
-Date:   Thu, 20 Feb 2020 09:23:44 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Sterba <dsterba@suse.cz>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Nikolay Borisov <nborisov@suse.com>
-Subject: linux-next: build failure after merge of the btrfs tree
-Message-ID: <20200220092344.2a738574@canb.auug.org.au>
+        id S1727755AbgBSW0n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 17:26:43 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:35466 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727291AbgBSW0m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 17:26:42 -0500
+Received: by mail-io1-f68.google.com with SMTP id h8so2437882iob.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 14:26:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DZA0ribeEWX8XZYNOp8V2N04XGm24eAG8ehEYb5CcW4=;
+        b=VJa9ax/Yn+26wBkOB2vajcBuaN3funzj7TCXC1MTUyqxO6HmN0wth2X8WJqP5wslCE
+         ICxFKrAKE/3yirjnw7ZEdeZluvzWvX7rhTfLu8bG9pxONYSYwXy6M/W0rZrWB9k9aiHK
+         kwp2E7MJMyqu2iOIYJwVbRScgBFYnMyIfH+gskrnwRgFcLZxxE11hEBP2IrgroDZuuFu
+         H7mWEXO+Z/RSffJk+lVFkqCeQ5wk/8hxW+Qup2B0QUNdU2HChrE3qyGPBc1LiO+YpE+4
+         DoRX6fq4Sljh9y90H+tsgzytCGCMLlD+GTl493Hr0jKSH0S6RmsrlFQXLaha+mjXX+v9
+         YBAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DZA0ribeEWX8XZYNOp8V2N04XGm24eAG8ehEYb5CcW4=;
+        b=pF+2TIV6lxxiOGSTf98zZIPQjx4qYbiHCAi+/i+uZzmm8yweZ2drafbbAQMRu3R63N
+         22SBAv2+kaL2DQfRwn3g3f6XQnZvUpGSoUMkoYnP8juzGI6W+/p5OjmcfaxanhygvUwZ
+         nD5xR0d8ni1ZzuY0xXzSkj9WLufC5OkZ65yA6F2rIpaBx+NLp6H99XUOCngG4/pH59pW
+         rGn3Q/sZu86EibAhbxcJlN7VOR1F+y5vSj3zi7vQkhBPwcixEk08iLQATDrtjkRPFGhD
+         XBc1XqtmuAuuv/i3A9Lulek1eohcTqMo9NKxc/Zl1q9eVGa2lmfPzvBQNIqF+INCAC+x
+         eqeQ==
+X-Gm-Message-State: APjAAAX3c3TbH+GDN0MxGhWrrnX7kCWbkRy72um2PCTwBeesFSQYRs/e
+        3plHrAYnFmPppref0LWQiz2Y2qqtzDt700kG1s3Gwg==
+X-Google-Smtp-Source: APXvYqyNMrvd51aRqORJ2/CIK2NvfdHwqs4soxukKFFUBUxtDRo+9uPnz37KrS2gf9oum1QkW/IIRN9OYMSuHuD3rmI=
+X-Received: by 2002:a02:cc59:: with SMTP id i25mr22026556jaq.78.1582151200403;
+ Wed, 19 Feb 2020 14:26:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/HhWZXL8A9/VOX789pJ1LhRS";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <20200213082643.GB9144@ming.t460p> <d2c77921-fdcd-4667-d21a-60700e6a2fa5@acm.org>
+ <CAKUOC8U1H8qJ+95pcF-fjeu9hag3P3Wm6XiOh26uXOkvpNngZg@mail.gmail.com>
+ <de7b841c-a195-1b1e-eb60-02cbd6ba4e0a@acm.org> <CACVXFVP114+QBhw1bXqwgKRw_s4tBM_ZkuvjdXEU7nwkbJuH1Q@mail.gmail.com>
+ <CAKUOC8Xss0YPefhKfwBiBar-7QQ=QrVh3d_8NBfidCCxUuxcgg@mail.gmail.com>
+ <20200215034652.GA19867@ming.t460p> <CAJmaN=miqzhnZUTqaTOPp+OWY8+QYhXoE=h5apSucMkEU4nvtA@mail.gmail.com>
+ <20200219025456.GD31488@ming.t460p> <CAKUOC8UceQ_cDQC8ckvUio0AZHhasi7Np-PQ09e-dQ3fechKoA@mail.gmail.com>
+ <20200219222255.GB24522@ming.t460p>
+In-Reply-To: <20200219222255.GB24522@ming.t460p>
+From:   Salman Qazi <sqazi@google.com>
+Date:   Wed, 19 Feb 2020 14:26:26 -0800
+Message-ID: <CAKUOC8VGMYM1w15G-2KKZ=SEU_T_Xv9fR2Kp3JUupogBxy5x8g@mail.gmail.com>
+Subject: Re: BLKSECDISCARD ioctl and hung tasks
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jesse Barnes <jsbarnes@google.com>,
+        Ming Lei <tom.leiming@gmail.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Gwendal Grignou <gwendal@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/HhWZXL8A9/VOX789pJ1LhRS
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Feb 19, 2020 at 2:23 PM Ming Lei <ming.lei@redhat.com> wrote:
+>
+> On Wed, Feb 19, 2020 at 09:54:31AM -0800, Salman Qazi wrote:
+> > On Tue, Feb 18, 2020 at 6:55 PM Ming Lei <ming.lei@redhat.com> wrote:
+> > >
+> > > On Tue, Feb 18, 2020 at 08:11:53AM -0800, Jesse Barnes wrote:
+> > > > On Fri, Feb 14, 2020 at 7:47 PM Ming Lei <ming.lei@redhat.com> wrote:
+> > > > > What are the 'other operations'? Are they block IOs?
+> > > > >
+> > > > > If yes, that is why I suggest to fix submit_bio_wait(), which should cover
+> > > > > most of sync bio submission.
+> > > > >
+> > > > > Anyway, the fix is simple & generic enough, I'd plan to post a formal
+> > > > > patch if no one figures out better doable approaches.
+> > > >
+> > > > Yeah I think any block I/O operation that occurs after the
+> > > > BLKSECDISCARD is submitted will also potentially be affected by the
+> > > > hung task timeouts, and I think your patch will address that.  My only
+> > > > concern with it is that it might hide some other I/O "hangs" that are
+> > > > due to device misbehavior instead.  Yes driver and device timeouts
+> > > > should generally catch those, but with this in place we might miss a
+> > > > few bugs.
+> > > >
+> > > > Given the nature of these types of storage devices though, I think
+> > > > that's a minor issue and not worth blocking the patch on, given that
+> > > > it should prevent a lot of false positive hang reports as Salman
+> > > > demonstrated.
+> > >
+> > > Hello Jesse and Salman,
+> > >
+> > > One more question about this issue, do you enable BLK_WBT on your test
+> > > kernel?
+> >
+> > It doesn't exist on the original 4.4-based kernel where we reproduced
+> > this bug.  I am curious how this interacts with this bug.
+>
+> blk-wbt can throttle discard request and keep discard queue not too
+> deep.
+>
+> However, given block erase is involved in BLKSECDISCARD, I guess blk-wbt
+> may not avoid this task hung issue completely.
 
-Hi all,
+Thanks for the explanation.
 
-After merging the btrfs tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+As I said, it takes one 4K BLKSECDISCARD to get to 100 second delay
+where the entire device is unusable for that time.  So, the
+queue doesn't have to be deep at all.  It's a single tiny IOCTL.
 
-fs/btrfs/extent-tree.c: In function 'btrfs_alloc_logged_file_extent':
-fs/btrfs/extent-tree.c:4425:20: error: passing argument 1 of 'btrfs_pin_ext=
-ent' from incompatible pointer type [-Werror=3Dincompatible-pointer-types]
- 4425 |   btrfs_pin_extent(fs_info, ins->objectid, ins->offset, 1);
-      |                    ^~~~~~~
-      |                    |
-      |                    struct btrfs_fs_info *
-fs/btrfs/extent-tree.c:2609:49: note: expected 'struct btrfs_trans_handle *=
-' but argument is of type 'struct btrfs_fs_info *'
- 2609 | int btrfs_pin_extent(struct btrfs_trans_handle *trans,
-      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
-
-Caused by commit
-
-  4e2c2f96e6a3 ("btrfs: Make btrfs_pin_extent take trans handle")
-
-interacting with commit
-
-  bd727173e443 ("btrfs: handle logged extent failure properly")
-
-from the btrfs-fixes tree.
-
-I have applied the following merge fix patch for today.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 20 Feb 2020 09:20:33 +1100
-Subject: [PATCH] btrfs: fix for btrfs_pin_extent() API change
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/btrfs/extent-tree.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
-index 56ad0a4ff5ba..9dcd70cc3ca3 100644
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -4422,7 +4422,7 @@ int btrfs_alloc_logged_file_extent(struct btrfs_trans=
-_handle *trans,
- 	ret =3D alloc_reserved_file_extent(trans, 0, root_objectid, 0, owner,
- 					 offset, ins, 1);
- 	if (ret)
--		btrfs_pin_extent(fs_info, ins->objectid, ins->offset, 1);
-+		btrfs_pin_extent(trans, ins->objectid, ins->offset, 1);
- 	btrfs_put_block_group(block_group);
- 	return ret;
- }
---=20
-2.25.0
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/HhWZXL8A9/VOX789pJ1LhRS
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5NtXAACgkQAVBC80lX
-0GxufQf/e3XdeaPJVdcDfX8oGy6W9crlHRnAli6kk/7TKllyFq0an9xB/7Rnq92d
-A/UKsx2N4nKnKcJ2Stj8hq2zOzb1WpXVsCLniPkVxjY608ih9hm+sF4li/kvW8Z8
-5xEPwNEm72AJn/iFt1WqefjNRI4p0QBfL8w/W2CWb5ZllN8wLjcF00rjb/Tjr5Yb
-niPPgCLjLk0YTmxxOdLuqZxMFRxvOhF+1PDncMByWRAIpCrP/Yfb+zUwzpHITSsJ
-zmJnR5R+PmRv6PxUwIhfBS75IQnGj/0o7WSD/OrXPV3tOa4YLMWTcYWu6S5T3VUv
-DjnvCfuDAk7SkbQtfOF4D3V7VLAfDg==
-=/xZK
------END PGP SIGNATURE-----
-
---Sig_/HhWZXL8A9/VOX789pJ1LhRS--
+>
+>
+> Thanks,
+> Ming
+>
