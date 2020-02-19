@@ -2,81 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EB00164666
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 15:09:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57E2416466B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 15:09:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728044AbgBSOJP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 09:09:15 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41322 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727756AbgBSOJO (ORCPT
+        id S1728091AbgBSOJ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 09:09:28 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:42816 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728063AbgBSOJY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 09:09:14 -0500
-Received: by mail-wr1-f66.google.com with SMTP id c9so680433wrw.8
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 06:09:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=JGM4RkGLLaFSnOa8BB7mpJxXjjdhB1y60VVHn0z+pew=;
-        b=Mpzvqg/96O9XJBO85GyCDhcffXGgrF/cgk8f5H5ZJk7Y41L8HvATVViR+s7K7uYugG
-         jnUa5V4C6Uo/tifu3SpQ33EaMvqAdIMI7XGdrXXzuXDC+T/+lJnklL11ZeWsSoXJJ6gd
-         Sm7xGWklY8BXnqZErW0CMpEkc6DoKr4LhUZ4pZ/kKNJ3RzR3Wqa85PEtbSSjiUM8C+zt
-         lJ6nyu47+IQClRYQm4PF0c3LtrJOS+3idB95HRsCcyA7e+Dkicaawh2TWDB74UXMzVxl
-         JgpiFZqDJlwYGKPLNZqJorJ89HOlg8cjDjon5Ax048MGuK2esCQFeQdmQ2OV+1l3CtHu
-         kAyQ==
+        Wed, 19 Feb 2020 09:09:24 -0500
+Received: by mail-oi1-f196.google.com with SMTP id j132so23886923oih.9;
+        Wed, 19 Feb 2020 06:09:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=JGM4RkGLLaFSnOa8BB7mpJxXjjdhB1y60VVHn0z+pew=;
-        b=gAXNrKJpDcjLf2Y6pfKKUX6YwySuGr60JEaAj0I3ZoHUy08HXJGfNE9EqFRHy/2Bn9
-         q2gW3ZCvHAnz16Hatv9Cr9olqp92cfEBf/JWDhaJCJoKtPpr2iRyVPD5nJS/mUD5Almb
-         UifZaQDLdVZZ2dRug8dIxdJ9rT4cdh44c5e2ekm2LtPYh1i6yeSNdn53XXR16NEHwQA3
-         /kv95HdmoiQqBb5bzYyjyjhEPNTXrGhmz3e6uAqqzRNbpt9IEBpwfuUwcL0kSC5F6+O5
-         6lyFsKEfmlF/deJBRDyIPjbifL3oPQ3C6kRXIvfDn/YmkKlmKgvl8dkCxZNGH/s3dwtn
-         idJw==
-X-Gm-Message-State: APjAAAV9HWTyzbI9swqwuF6YAKSQQTU59tXXIgNQB5YInFfvsNed17uq
-        TH5BbiFm6tyyGlsQTvYtLbFYDEA2AqY=
-X-Google-Smtp-Source: APXvYqxdRLIszlOHZfFNWUcmLYHcGMqKeshhz0KZ8IRyyt0eY3GIsphQUgWiNOeTQCQJGiephQmV6g==
-X-Received: by 2002:adf:db84:: with SMTP id u4mr36805190wri.317.1582121352765;
-        Wed, 19 Feb 2020 06:09:12 -0800 (PST)
-Received: from robin.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id b11sm3302343wrx.89.2020.02.19.06.09.11
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=w0+iwQxqNl/u797DK+0XyoBMJz+IIdj3rSrLkc2+kbs=;
+        b=QBOx2ZSEXrHbCmd8jU0LL/Exg7ryyHYwI4/suzaq+OGmsUro4i5bCrnSOSjqJR+qDN
+         ZaQcD2pLccnf6mBQnuYXri5F25tzTu07bfcuyjw0fxJwpNrni7kacSTbJIvBnSKCBF0z
+         uO1taak8+ritB2SxiBtGFhFubz8kBuasEsQ+hTf3PVNUbDffylA/+BEN//y/EZAyvJl5
+         LYr8ItwyOZp+Vx3sNp2xK5cV8uERzhz7oNA05wiCH/P9zMmPB/ckvqdvsfere4/JXMfx
+         Fd2xQiLfymEtcTs5tu+XyG+I5lpju0Z8T/30Mu+rDkYQtdrhBGU0tk/WXKDvv57v5zJt
+         Aj2A==
+X-Gm-Message-State: APjAAAVAQE+CuIYZn4ha6ljkouBtLL3QDJFzrYEBK7aamyJm4yPV7yi8
+        ch/ThXBqnk4DI6f1Czk9ww==
+X-Google-Smtp-Source: APXvYqyBzFjf4VEjf1EoLRQ0uCruPnwDHxFaEDDuZ7gw9XftwRfkd4+9xnhC8HJN5lU4jCtbEAB0lw==
+X-Received: by 2002:aca:3f8b:: with SMTP id m133mr4540584oia.51.1582121363283;
+        Wed, 19 Feb 2020 06:09:23 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id c10sm647696otl.77.2020.02.19.06.09.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 06:09:12 -0800 (PST)
-From:   Phong LE <ple@baylibre.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Phong LE <ple@baylibre.com>
-Subject: [PATCH] regmap: wrong descriptions in regmap_range_cfg
-Date:   Wed, 19 Feb 2020 15:09:06 +0100
-Message-Id: <20200219140906.29180-1-ple@baylibre.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 19 Feb 2020 06:09:22 -0800 (PST)
+Received: (nullmailer pid 8118 invoked by uid 1000);
+        Wed, 19 Feb 2020 14:09:21 -0000
+Date:   Wed, 19 Feb 2020 08:09:21 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     peng.fan@nxp.com
+Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 1/9] dt-bindings: remoteproc: Convert imx-rproc to
+ json-schema
+Message-ID: <20200219140921.GA7031@bogus>
+References: <1582097265-20170-1-git-send-email-peng.fan@nxp.com>
+ <1582097265-20170-2-git-send-email-peng.fan@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1582097265-20170-2-git-send-email-peng.fan@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Swap selector_mask and selector_shift descriptions
+On Wed, 19 Feb 2020 15:27:37 +0800, peng.fan@nxp.com wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> Convert the i.MX remoteproc binding to DT schema format
+> using json-schema
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  .../devicetree/bindings/remoteproc/imx-rproc.txt   | 33 ------------
+>  .../devicetree/bindings/remoteproc/imx-rproc.yaml  | 61 ++++++++++++++++++++++
+>  2 files changed, 61 insertions(+), 33 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/imx-rproc.yaml
+> 
 
-Signed-off-by: Phong LE <ple@baylibre.com>
----
- include/linux/regmap.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+My bot found errors running 'make dt_binding_check' on your patch:
 
-diff --git a/include/linux/regmap.h b/include/linux/regmap.h
-index f0a092a1a96d..40b07168fd8e 100644
---- a/include/linux/regmap.h
-+++ b/include/linux/regmap.h
-@@ -461,8 +461,8 @@ struct regmap_config {
-  * @range_max: Address of the highest register in virtual range.
-  *
-  * @selector_reg: Register with selector field.
-- * @selector_mask: Bit shift for selector value.
-- * @selector_shift: Bit mask for selector value.
-+ * @selector_mask: Bit mask for selector value.
-+ * @selector_shift: Bit shift for selector value.
-  *
-  * @window_start: Address of first (lowest) register in data window.
-  * @window_len: Number of registers in data window.
--- 
-2.17.1
+warning: no schema found in file: Documentation/devicetree/bindings/remoteproc/imx-rproc.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/imx-rproc.yaml: ignoring, error in schema: properties: clocks: items
+Documentation/devicetree/bindings/display/simple-framebuffer.example.dts:21.16-37.11: Warning (chosen_node_is_root): /example-0/chosen: chosen node must be at root node
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/imx-rproc.yaml: properties:clocks:items: {'Clock for co-processor (See': '../clock/clock-bindings.txt)'} is not valid under any of the given schemas (Possible causes of the failure):
+	/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/imx-rproc.yaml: properties:clocks:items: Additional properties are not allowed ('Clock for co-processor (See' was unexpected)
 
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/imx-rproc.yaml: properties:clocks: {'items': {'Clock for co-processor (See': '../clock/clock-bindings.txt)'}} is not valid under any of the given schemas (Possible causes of the failure):
+	/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/imx-rproc.yaml: properties:clocks: 'maxItems' is a required property
+	/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/imx-rproc.yaml: properties:clocks:items: {'Clock for co-processor (See': '../clock/clock-bindings.txt)'} is not valid under any of the given schemas (Possible causes of the failure):
+		/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/imx-rproc.yaml: properties:clocks:items: {'Clock for co-processor (See': '../clock/clock-bindings.txt)'} is not of type 'array'
+
+
+Documentation/devicetree/bindings/Makefile:12: recipe for target 'Documentation/devicetree/bindings/remoteproc/imx-rproc.example.dts' failed
+make[1]: *** [Documentation/devicetree/bindings/remoteproc/imx-rproc.example.dts] Error 1
+Makefile:1263: recipe for target 'dt_binding_check' failed
+make: *** [dt_binding_check] Error 2
+
+See https://patchwork.ozlabs.org/patch/1240544
+Please check and re-submit.
