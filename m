@@ -2,168 +2,189 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E540D164606
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 14:51:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E8121645F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 14:48:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727662AbgBSNvw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 08:51:52 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:38336 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726551AbgBSNvv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 08:51:51 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01JDp7OS029970;
-        Wed, 19 Feb 2020 07:51:07 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1582120267;
-        bh=vTSHaVd8INFkohfIoQSaUHu44hugyt9qmFZrmuUvcUk=;
-        h=From:To:CC:Subject:Date;
-        b=LnjG0+3auAQ579Ba+OfDzHq5zy8sUEL5JC0Ez42EgKQtbnLdWVeTi+AoNH8pcdWt/
-         kssWmoTWECbHi9GX1meiCPOO4DPyrUZZeWLQFNpTJpl542+le+G4UPxG7WRMdUaFKy
-         GR00AwFd+sVk8/HtTDLPY7thu3KhVbgsYPJhF5uY=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01JDp7Ll071524
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 19 Feb 2020 07:51:07 -0600
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 19
- Feb 2020 07:51:06 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 19 Feb 2020 07:51:06 -0600
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01JDp6CC005716;
-        Wed, 19 Feb 2020 07:51:06 -0600
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH] ASoC: tas2562: Add support for ISENSE and VSENSE
-Date:   Wed, 19 Feb 2020 07:46:22 -0600
-Message-ID: <20200219134622.22066-1-dmurphy@ti.com>
-X-Mailer: git-send-email 2.25.0
+        id S1727469AbgBSNsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 08:48:31 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43168 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726548AbgBSNsb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 08:48:31 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 97F7CBF3D;
+        Wed, 19 Feb 2020 13:48:27 +0000 (UTC)
+Date:   Wed, 19 Feb 2020 14:48:26 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        "Tobin C . Harding" <me@tobin.cc>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] vsprintf: sanely handle NULL passed to %pe
+Message-ID: <20200219134826.qqdhy2z67ubsnr2m@pathway.suse.cz>
+References: <CAHk-=wjEd-gZ1g52kgi_g8gq-QCF2E01TkQd5Hmj4W5aThLw3A@mail.gmail.com>
+ <20200219082155.6787-1-linux@rasmusvillemoes.dk>
+ <CAOi1vP-4=QCSZ2A89g1po2p=6n_g09SXUCa0_r2SBJm2greRmw@mail.gmail.com>
+ <0fef2a1f-9391-43a9-32d5-2788ae96c529@rasmusvillemoes.dk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0fef2a1f-9391-43a9-32d5-2788ae96c529@rasmusvillemoes.dk>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add additional support for ISENSE and VSENSE feature for the TAS2562.
-This feature monitors the output to the loud speaker attempts to
-eliminate IR drop errors due to packaging.
+On Wed 2020-02-19 12:53:22, Rasmus Villemoes wrote:
+> On 19/02/2020 12.20, Ilya Dryomov wrote:
+> > On Wed, Feb 19, 2020 at 9:21 AM Rasmus Villemoes
+> > <linux@rasmusvillemoes.dk> wrote:
+> >>
+> >> Extend %pe to pretty-print NULL in addition to ERR_PTRs,
+> >> i.e. everything IS_ERR_OR_NULL().
+> >>
+> >> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> >> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> >> ---
+> >> Something like this? The actual code change is +2,-1 with another +1
+> >> for a test case.
+> >>
+> >>  Documentation/core-api/printk-formats.rst | 9 +++++----
+> >>  lib/errname.c                             | 4 ++++
+> >>  lib/test_printf.c                         | 1 +
+> >>  lib/vsprintf.c                            | 4 ++--
+> >>  4 files changed, 12 insertions(+), 6 deletions(-)
+> >>
+> >> diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
+> >> index 8ebe46b1af39..964b55291445 100644
+> >> --- a/Documentation/core-api/printk-formats.rst
+> >> +++ b/Documentation/core-api/printk-formats.rst
+> >> @@ -86,10 +86,11 @@ Error Pointers
+> >>
+> >>         %pe     -ENOSPC
+> >>
+> >> -For printing error pointers (i.e. a pointer for which IS_ERR() is true)
+> >> -as a symbolic error name. Error values for which no symbolic name is
+> >> -known are printed in decimal, while a non-ERR_PTR passed as the
+> >> -argument to %pe gets treated as ordinary %p.
+> >> +For printing error pointers (i.e. a pointer for which IS_ERR() is
+> >> +true) as a symbolic error name. Error values for which no symbolic
+> >> +name is known are printed in decimal. A NULL pointer is printed as
+> >> +NULL. All other pointer values (i.e. anything !IS_ERR_OR_NULL()) get
+> >> +treated as ordinary %p.
+> >>
+> >>  Symbols/Function Pointers
+> >>  -------------------------
+> >> diff --git a/lib/errname.c b/lib/errname.c
+> >> index 0c4d3e66170e..7757bc00f564 100644
+> >> --- a/lib/errname.c
+> >> +++ b/lib/errname.c
+> >> @@ -11,9 +11,13 @@
+> >>   * allocated errnos (with EHWPOISON = 257 on parisc, and EDQUOT = 1133
+> >>   * on mips), so this wastes a bit of space on those - though we
+> >>   * special case the EDQUOT case.
+> >> + *
+> >> + * For the benefit of %pe being able to print any ERR_OR_NULL pointer
+> >> + * symbolically, 0 is also treated specially.
+> >>   */
+> >>  #define E(err) [err + BUILD_BUG_ON_ZERO(err <= 0 || err > 300)] = "-" #err
+> >>  static const char *names_0[] = {
+> >> +       [0] = "NULL",
+> >>         E(E2BIG),
+> >>         E(EACCES),
+> >>         E(EADDRINUSE),
+> >> diff --git a/lib/test_printf.c b/lib/test_printf.c
+> >> index 2d9f520d2f27..3a37d0e9e735 100644
+> >> --- a/lib/test_printf.c
+> >> +++ b/lib/test_printf.c
+> >> @@ -641,6 +641,7 @@ errptr(void)
+> >>         test("[-EIO    ]", "[%-8pe]", ERR_PTR(-EIO));
+> >>         test("[    -EIO]", "[%8pe]", ERR_PTR(-EIO));
+> >>         test("-EPROBE_DEFER", "%pe", ERR_PTR(-EPROBE_DEFER));
+> >> +       test("[NULL]", "[%pe]", NULL);
+> >>  #endif
+> >>  }
+> >>
+> >> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+> >> index 7c488a1ce318..b7118d78eb20 100644
+> >> --- a/lib/vsprintf.c
+> >> +++ b/lib/vsprintf.c
+> >> @@ -2247,8 +2247,8 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
+> >>         case 'x':
+> >>                 return pointer_string(buf, end, ptr, spec);
+> >>         case 'e':
+> >> -               /* %pe with a non-ERR_PTR gets treated as plain %p */
+> >> -               if (!IS_ERR(ptr))
+> >> +               /* %pe with a non-ERR_OR_NULL ptr gets treated as plain %p */
+> >> +               if (!IS_ERR_OR_NULL(ptr))
+> >>                         break;
+> > 
+> > FWIW I was about to post a patch that just special cases NULL here.
+> > 
+> > I think changing errname() to return "NULL" for 0 is overkill.
+> > People will sooner or later discover that function and start using it
+> > in contexts that don't have anything to do with pointers.  Returning
+> > _some_ string for 0 (instead of NULL) makes it very close to standard
+> > strerror(), and "NULL" for 0 (i.e. success) seems rather odd.
+> 
+> I see what you mean, but I don't share your assumption that errname()
+> will ever grow callers other than the one in vsprintf.c. But I don't
+> have any strong opinion either way. Perhaps this on top of my patch
+> 
+> --- a/lib/vsprintf.c
+> +++ b/lib/vsprintf.c
+> @@ -619,7 +619,7 @@ static char *err_ptr(char *buf, char *end, void *ptr,
+>                      struct printf_spec spec)
+>  {
+>         int err = PTR_ERR(ptr);
+> -       const char *sym = errname(err);
+> +       const char *sym = err ? errname(err) : "NULL";
 
-This feature is defined in Section 8.4.5 IV Sense of the data sheet.
+I like this more than adding "NULL" errname.
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
- sound/soc/codecs/tas2562.c | 32 +++++++++++++++++++++++++++-----
- sound/soc/codecs/tas2562.h |  6 +++---
- 2 files changed, 30 insertions(+), 8 deletions(-)
 
-diff --git a/sound/soc/codecs/tas2562.c b/sound/soc/codecs/tas2562.c
-index 5b4803a76719..b2682c2360b6 100644
---- a/sound/soc/codecs/tas2562.c
-+++ b/sound/soc/codecs/tas2562.c
-@@ -383,18 +383,34 @@ static int tas2562_dac_event(struct snd_soc_dapm_widget *w,
- 	struct snd_soc_component *component =
- 					snd_soc_dapm_to_component(w->dapm);
- 	struct tas2562_data *tas2562 = snd_soc_component_get_drvdata(component);
-+	int ret;
- 
- 	switch (event) {
- 	case SND_SOC_DAPM_POST_PMU:
--		dev_info(tas2562->dev, "SND_SOC_DAPM_POST_PMU\n");
-+		ret = snd_soc_component_update_bits(component,
-+			TAS2562_PWR_CTRL,
-+			TAS2562_MODE_MASK,
-+			TAS2562_MUTE);
-+		if (ret)
-+			goto end;
- 		break;
- 	case SND_SOC_DAPM_PRE_PMD:
--		dev_info(tas2562->dev, "SND_SOC_DAPM_PRE_PMD\n");
-+		ret = snd_soc_component_update_bits(component,
-+			TAS2562_PWR_CTRL,
-+			TAS2562_MODE_MASK,
-+			TAS2562_SHUTDOWN);
-+		if (ret)
-+			goto end;
- 		break;
- 	default:
--		break;
-+		dev_err(tas2562->dev, "Not supported evevt\n");
-+		return -EINVAL;
- 	}
- 
-+end:
-+	if (ret < 0)
-+		return ret;
-+
- 	return 0;
+>         if (sym)
+>                 return string_nocheck(buf, end, sym, spec);
+> 
+> instead of the change(s) in errname.c? And then the test case for
+> '"%pe", NULL' should also be moved outside CONFIG_SYMBOLIC_ERRNAME.
+
+The test should go into null_pointer() instead of errptr().
+
+Could you send updated patch, please? ;-)
+
+
+> BTW., your original patch for %p lacks corresponding update of
+> test_vsprintf.c. Please add appropriate test cases.
+
+Good point. The existing test_hashed() is rather weak
+and it did not catch this change.
+
+It would be nice to make test_hash() more powerful.
+Anyway, the minimal udpate would be:
+
+diff --git a/lib/test_printf.c b/lib/test_printf.c
+index 2d9f520d2f27..1726a678bccd 100644
+--- a/lib/test_printf.c
++++ b/lib/test_printf.c
+@@ -333,7 +333,7 @@ test_hashed(const char *fmt, const void *p)
+ static void __init
+ null_pointer(void)
+ {
+-	test_hashed("%p", NULL);
++	test(ZEROS "00000000", "%p", NULL);
+ 	test(ZEROS "00000000", "%px", NULL);
+ 	test("(null)", "%pE", NULL);
  }
- 
-@@ -416,7 +432,6 @@ static const struct snd_kcontrol_new tas2562_snd_controls[] = {
- static const struct snd_soc_dapm_widget tas2562_dapm_widgets[] = {
- 	SND_SOC_DAPM_AIF_IN("ASI1", "ASI1 Playback", 0, SND_SOC_NOPM, 0, 0),
- 	SND_SOC_DAPM_MUX("ASI1 Sel", SND_SOC_NOPM, 0, 0, &tas2562_asi1_mux),
--	SND_SOC_DAPM_AIF_IN("DAC IN", "Playback", 0, SND_SOC_NOPM, 0, 0),
- 	SND_SOC_DAPM_DAC_E("DAC", NULL, SND_SOC_NOPM, 0, 0, tas2562_dac_event,
- 			   SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_PRE_PMD),
- 	SND_SOC_DAPM_SWITCH("ISENSE", TAS2562_PWR_CTRL, 3, 1, &isense_switch),
-@@ -431,7 +446,7 @@ static const struct snd_soc_dapm_route tas2562_audio_map[] = {
- 	{"ASI1 Sel", "Left", "ASI1"},
- 	{"ASI1 Sel", "Right", "ASI1"},
- 	{"ASI1 Sel", "LeftRightDiv2", "ASI1"},
--	{ "DAC", NULL, "DAC IN" },
-+	{ "DAC", NULL, "ASI1 Sel" },
- 	{ "OUT", NULL, "DAC" },
- 	{"ISENSE", "Switch", "IMON"},
- 	{"VSENSE", "Switch", "VMON"},
-@@ -472,6 +487,13 @@ static struct snd_soc_dai_driver tas2562_dai[] = {
- 			.rates      = SNDRV_PCM_RATE_8000_192000,
- 			.formats    = TAS2562_FORMATS,
- 		},
-+		.capture = {
-+			.stream_name    = "ASI1 Capture",
-+			.channels_min   = 0,
-+			.channels_max   = 2,
-+			.rates		= SNDRV_PCM_RATE_8000_192000,
-+			.formats	= TAS2562_FORMATS,
-+		},
- 		.ops = &tas2562_speaker_dai_ops,
- 	},
- };
-diff --git a/sound/soc/codecs/tas2562.h b/sound/soc/codecs/tas2562.h
-index 62e659ab786d..6f55ebcf19ea 100644
---- a/sound/soc/codecs/tas2562.h
-+++ b/sound/soc/codecs/tas2562.h
-@@ -40,7 +40,7 @@
- 
- #define TAS2562_RESET	BIT(0)
- 
--#define TAS2562_MODE_MASK	0x3
-+#define TAS2562_MODE_MASK	GENMASK(1,0)
- #define TAS2562_ACTIVE		0x0
- #define TAS2562_MUTE		0x1
- #define TAS2562_SHUTDOWN	0x2
-@@ -73,8 +73,8 @@
- #define TAS2562_TDM_CFG2_RXWLEN_24B	BIT(3)
- #define TAS2562_TDM_CFG2_RXWLEN_32B	(BIT(2) | BIT(3))
- 
--#define TAS2562_VSENSE_POWER_EN		BIT(2)
--#define TAS2562_ISENSE_POWER_EN		BIT(3)
-+#define TAS2562_VSENSE_POWER_EN		2
-+#define TAS2562_ISENSE_POWER_EN		3
- 
- #define TAS2562_TDM_CFG5_VSNS_EN	BIT(6)
- #define TAS2562_TDM_CFG5_VSNS_SLOT_MASK	GENMASK(5, 0)
--- 
-2.25.0
 
+
+Best Regards,
+Petr
