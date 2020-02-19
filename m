@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A4C6164D61
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 19:10:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CFA2164D63
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 19:10:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726797AbgBSSKF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 13:10:05 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35653 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726645AbgBSSKC (ORCPT
+        id S1726729AbgBSSKM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 13:10:12 -0500
+Received: from mail-lj1-f181.google.com ([209.85.208.181]:32864 "EHLO
+        mail-lj1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726783AbgBSSKF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 13:10:02 -0500
-Received: by mail-lj1-f193.google.com with SMTP id q8so1372700ljb.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 10:10:00 -0800 (PST)
+        Wed, 19 Feb 2020 13:10:05 -0500
+Received: by mail-lj1-f181.google.com with SMTP id y6so1386973lji.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 10:10:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=VHRaRIY6VC0lr/bsxS9DFYm2vnnWlx5lRwPcPyEFXY8=;
-        b=gPoKimKTfqXeaHb/8TGnGKiKadlA4zsOW1otR4I/sil7LU1xLql4X/Z5B+MFOfsTop
-         w/ibtafB1NiWhq7Xv+8ILNm+hTBM7E5IUfN32t5XlIVVJZnNzZudtvHPYZsBq5discGm
-         LiJIoaqOEoHn0bJVztnhrUFEPj05q727TXZxPFRHiCZOVpOeq27877/zTFYAKzu2BpGd
-         DsfcQMHPnzI39piTrkm80ut5XZ+iY96UV+eMlAofUXDvtjNFZHAEg9M8pXTNOvGpkBNv
-         pDB11JGdX4pDVm+AyNGSP4d3Q8pDUUU40G41Spc9gd35dTl7Mgia6V15oP6akiDPas1S
-         8cMQ==
+        bh=CXy/lin2Xh1wX40VjvzK4N5EhPUQ7F76cQqtDhuzdAw=;
+        b=ZSmb5C/cZRYqsLdPN5VclmwPUdQnDwDtrA7+GzYBWb84Svro7eD8Goee9p+QyRNffa
+         lpqAyFWy+OjRvu2rpmV7A4Jmhdsc+5LuASif2bPB98oAKK8SAwcn+GtOJIG8ms9rTe/N
+         RP4ciMh5Oz0za8q1UrrAdZnxI7sqVIsyXhU/gxjc2NDufE8aa+dHG/ouZuOl4lxk5/xs
+         PNhGSDzRpOqOb5liAqynz+yB+24F4ZZtRq81KpAGlGd+fDNr3x49k47xudxaB+T9qNIU
+         PHdveJ7Khmi/0PaqciofTOm9bLWPWJ953WvudgraUKFCfqbcNtpMhezDXeFq8Ab8SS8K
+         lGeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=VHRaRIY6VC0lr/bsxS9DFYm2vnnWlx5lRwPcPyEFXY8=;
-        b=R8cCgYTt2ogTkopeMBGh/mIR0hjHuVjbj6qX+6+piqOGQCNRPEx0YlmhJPk5eFnrp7
-         8HC/3+YgSwELkVICEDVQoPrw8oWQIBlrLepU3AIVJmBTp6QbKrrjjNvmSDm58+XODFEe
-         GTU3JHr2fokNUNTjG417GuHDyzJuHb5ei+t+uDiyh0zU0RN+5qEUiTn+PjcKNm69mLip
-         CKHETjSfrvM7YD2ZV+KuKj+LypmQjRGPSvaeydTvUgV8QG4alF19RK+nRE3EV8U7yqGU
-         v+Sfu45OMmwfc+7+WEQgmpxlvVuveSExYtG3f08m/cFF46KfESUE0etnaNuShV/f5x8b
-         AQfg==
-X-Gm-Message-State: APjAAAU7bnQFDMFFXe+FYvf4f+OlJtGIPqwnvkJDHkueryWVbSBnOh7D
-        tfPuogqyY0+h2C34Wa+35JE=
-X-Google-Smtp-Source: APXvYqxvm4JywuwtvNksBuTIyRXNkm+Tp130I25jlGLt/f+T62qAbvOhoYaS6P/K1V7awdKdjw1/Hg==
-X-Received: by 2002:a2e:3608:: with SMTP id d8mr16524098lja.152.1582135800094;
-        Wed, 19 Feb 2020 10:10:00 -0800 (PST)
+        bh=CXy/lin2Xh1wX40VjvzK4N5EhPUQ7F76cQqtDhuzdAw=;
+        b=b029zSJzCRqdbM4RHperVwKUHW6qj8n4xIiJq/2xMObYmZ8QIMJ4X7Tc0WTNPSnc4O
+         CBGG8R3iIQJMXLlWx9FVz60AJdgv08JR62/G7vR7W3XkQ4fxnYQUphugiOMY5JpxYvz7
+         P7CckNmr7BI4xlZabdu0WOmChtwbmgYrC7Dxbgvu+8L++73A2ElQf0mo1iPgg2QS4fpt
+         1PsZklO0UZX3J86WELovInZYXOKjDfj7pP/Gsa5qcBUP9S6H8pxDbdxjSBbExE9mmaaX
+         ZTV8Bv5dX4F0JzJijXSovxpKrtq17PgQiKXYOJKZd14oEJWN8iFHHqfL9tKWBlY+m/0A
+         oV2A==
+X-Gm-Message-State: APjAAAWpaKm1++zPdMnH2f6jVQ2tfW/GVVu1/tXq6A7CZB2fexHNlLm9
+        TvgyF1DCIMye3mtt6KiD9AWwK749uxJ69Q==
+X-Google-Smtp-Source: APXvYqwZu3/RGiLTbpL0Zcsi2lbhwfT1xxLVM2mwlQE0Ir+J5oDWNK91WxTAezMAOPajhF/43rFOuw==
+X-Received: by 2002:a2e:7e11:: with SMTP id z17mr16664008ljc.279.1582135801686;
+        Wed, 19 Feb 2020 10:10:01 -0800 (PST)
 Received: from localhost.localdomain ([5.20.204.163])
-        by smtp.gmail.com with ESMTPSA id 14sm183942lfz.47.2020.02.19.10.09.58
+        by smtp.gmail.com with ESMTPSA id 14sm183942lfz.47.2020.02.19.10.10.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 10:09:59 -0800 (PST)
+        Wed, 19 Feb 2020 10:10:00 -0800 (PST)
 From:   Andrey Lebedev <andrey.lebedev@gmail.com>
 To:     mripard@kernel.org, wens@csie.org, airlied@linux.ie,
         daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     linux-sunxi@googlegroups.com, Andrey Lebedev <andrey@lebedev.lt>
-Subject: [PATCH 2/5] drm/sun4i: tcon: Separate quirks for tcon0 and tcon1 on A20
-Date:   Wed, 19 Feb 2020 20:08:55 +0200
-Message-Id: <20200219180858.4806-3-andrey.lebedev@gmail.com>
+Subject: [PATCH 3/5] ARM: dts: sun7i: Add LVDS panel support on A20
+Date:   Wed, 19 Feb 2020 20:08:56 +0200
+Message-Id: <20200219180858.4806-4-andrey.lebedev@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200219180858.4806-1-andrey.lebedev@gmail.com>
 References: <20200210195633.GA21832@kedthinkpad>
@@ -66,28 +66,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andrey Lebedev <andrey@lebedev.lt>
 
-Timing controllers on A20 are not equivalent: tcon0 on A20 supports
-LVDS output and tcon1 does not. Separate the capabilities by
-introducing independent set of quirks for each of the tcons.
+Define pins for LVDS channels 0 and 1, configure reset line for tcon0 and
+provide sample LVDS panel, connected to tcon0.
 
 Signed-off-by: Andrey Lebedev <andrey@lebedev.lt>
 ---
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/sun7i-a20.dtsi | 30 ++++++++++++++++++++++++++----
+ 1 file changed, 26 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index cc6b05ca2c69..b7234eef3c7b 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -1508,6 +1508,8 @@ const struct of_device_id sun4i_tcon_of_table[] = {
- 	{ .compatible = "allwinner,sun5i-a13-tcon", .data = &sun5i_a13_quirks },
- 	{ .compatible = "allwinner,sun6i-a31-tcon", .data = &sun6i_a31_quirks },
- 	{ .compatible = "allwinner,sun6i-a31s-tcon", .data = &sun6i_a31s_quirks },
-+	{ .compatible = "allwinner,sun7i-a20-tcon0", .data = &sun7i_a20_quirks },
-+	{ .compatible = "allwinner,sun7i-a20-tcon1", .data = &sun7i_a20_quirks },
- 	{ .compatible = "allwinner,sun7i-a20-tcon", .data = &sun7i_a20_quirks },
- 	{ .compatible = "allwinner,sun8i-a23-tcon", .data = &sun8i_a33_quirks },
- 	{ .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
+diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
+index 92b5be97085d..d50263c1ca9a 100644
+--- a/arch/arm/boot/dts/sun7i-a20.dtsi
++++ b/arch/arm/boot/dts/sun7i-a20.dtsi
+@@ -47,6 +47,7 @@
+ #include <dt-bindings/dma/sun4i-a10.h>
+ #include <dt-bindings/clock/sun7i-a20-ccu.h>
+ #include <dt-bindings/reset/sun4i-a10-ccu.h>
++#include <dt-bindings/pinctrl/sun4i-a10.h>
+ 
+ / {
+ 	interrupt-parent = <&gic>;
+@@ -404,11 +405,12 @@
+ 		};
+ 
+ 		tcon0: lcd-controller@1c0c000 {
+-			compatible = "allwinner,sun7i-a20-tcon";
++			compatible = "allwinner,sun7i-a20-tcon0",
++				     "allwinner,sun7i-a20-tcon";
+ 			reg = <0x01c0c000 0x1000>;
+ 			interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
+-			resets = <&ccu RST_TCON0>;
+-			reset-names = "lcd";
++			resets = <&ccu RST_TCON0>, <&ccu RST_LVDS>;
++			reset-names = "lcd", "lvds";
+ 			clocks = <&ccu CLK_AHB_LCD0>,
+ 				 <&ccu CLK_TCON0_CH0>,
+ 				 <&ccu CLK_TCON0_CH1>;
+@@ -444,6 +446,11 @@
+ 					#size-cells = <0>;
+ 					reg = <1>;
+ 
++					tcon0_out_lvds: endpoint@0 {
++						reg = <0>;
++						allwinner,tcon-channel = <0>;
++					};
++
+ 					tcon0_out_hdmi: endpoint@1 {
+ 						reg = <1>;
+ 						remote-endpoint = <&hdmi_in_tcon0>;
+@@ -454,7 +461,8 @@
+ 		};
+ 
+ 		tcon1: lcd-controller@1c0d000 {
+-			compatible = "allwinner,sun7i-a20-tcon";
++			compatible = "allwinner,sun7i-a20-tcon1",
++				     "allwinner,sun7i-a20-tcon";
+ 			reg = <0x01c0d000 0x1000>;
+ 			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
+ 			resets = <&ccu RST_TCON1>;
+@@ -931,6 +939,20 @@
+ 				function = "ir1";
+ 			};
+ 
++			/omit-if-no-ref/
++			lcd_lvds0_pins: lcd-lvds0-pins {
++				pins = "PD0", "PD1", "PD2", "PD3", "PD4",
++				       "PD5", "PD6", "PD7", "PD8", "PD9";
++				function = "lvds0";
++			};
++
++			/omit-if-no-ref/
++			lcd_lvds1_pins: lcd-lvds1-pins {
++				pins = "PD10", "PD11", "PD12", "PD13", "PD14",
++				       "PD15", "PD16", "PD17", "PD18", "PD19";
++				function = "lvds1";
++			};
++
+ 			/omit-if-no-ref/
+ 			mmc0_pins: mmc0-pins {
+ 				pins = "PF0", "PF1", "PF2",
 -- 
 2.20.1
 
