@@ -2,108 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 621A0163FFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 10:11:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3171D164002
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2020 10:12:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726530AbgBSJLp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 04:11:45 -0500
-Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:48735 "EHLO
-        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726260AbgBSJLp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 04:11:45 -0500
-Received: from [192.168.2.10] ([46.9.235.248])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id 4LONjze0uP9a94LOQjnfLP; Wed, 19 Feb 2020 10:11:43 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
-        t=1582103503; bh=xsN8vhfHa7tW/G+6aX+0P4BNgzapyUwsBGOb49UIpYU=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=udinrWQOgb62fcBFlTUaRKjgx4/5BXVbXBc0URjtyG0AazxHRKsVcmiXkrJYHWsAd
-         sd1iA8eHUhHmh0huM+aJGJ6gFNUp/sWnBvhjC7aXVImmnvoRGVP9huDG+1ujiU53QU
-         NzZEyDtSIfQW/5UTrfxOQXppJ8vi4/JkoAPxKDb9Gbb+YWtTD/Ovta0KSulMYbHJ0a
-         sqsO9NHhQGscck6tlVgaGMRxuQtiYwLBw5zU1icY8ltrM/ncbyxQsOlYwYAUFnWRgT
-         GqRbQI5wMkCdRZ8BvRkl25v0WQGLhvC734MIYLk4U8EQhln4I7xLLed/INo8jYOiWD
-         9XBO3t0xa0iUw==
-Subject: Re: [RFC][PATCHv2 05/12] videobuf2: handle
- V4L2_FLAG_MEMORY_NON_CONSISTENT flag
-To:     Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200204025641.218376-1-senozhatsky@chromium.org>
- <20200204025641.218376-6-senozhatsky@chromium.org>
- <83147032-25a4-9450-d455-437e82e09dc8@xs4all.nl>
- <20200219090547.GF122464@google.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <9bd88d23-9c4f-05dd-2514-b7c46f03a578@xs4all.nl>
-Date:   Wed, 19 Feb 2020 10:11:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1726664AbgBSJLv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 04:11:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49488 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726260AbgBSJLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 04:11:47 -0500
+Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5568E2465D;
+        Wed, 19 Feb 2020 09:11:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582103506;
+        bh=QCvgFW+jje9yRaAt1NfJVzEVNG0lPbPPQv2SFoSGdiQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=xbeSCwsbekmtynqP4aaaVxyYrIPZSG/r77Cu0pb57sc/W83msL+MuTXIdMD65wILM
+         Lxjn733f1xxww5TnjaWMcn0AhixWbvJAezZ8p9tYu9uMrzKp2xhmJ4HHJblvgEK6d4
+         9/27hQJWnAZa+NPqoKTsBxaDjfrCu3pgmQk4Uye4=
+Date:   Wed, 19 Feb 2020 17:11:39 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Christian Gmeiner <christian.gmeiner@gmail.com>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Olof Johansson <olof@lixom.net>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Tony Lindgren <tony@atomide.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH] ARM: multi_v7_defconfig: enable drm imx support
+Message-ID: <20200219091138.GA12803@dragon>
+References: <20200124084359.16817-1-christian.gmeiner@gmail.com>
+ <CAH9NwWfMwN9cRgMHPF5zPCmdmnrfX7E6cAYW8yfUGTf+t3=HzA@mail.gmail.com>
+ <CAJKOXPdM4s8DAVPh1zOt5kYyEjp4dmbseC3RdrKaVk4H41XOwg@mail.gmail.com>
+ <CAH9NwWdg5r1T9TkXAe4=3Zui2vMcnOc2UJ=e02NFbiPhb5n48w@mail.gmail.com>
+ <20200217041936.GH5395@dragon>
+ <CAH9NwWeT=h=hPzDbwRggNYNx-mSdQkjUypPWk2nmsLDOfw8Zqw@mail.gmail.com>
+ <20200218091409.GA6075@dragon>
+ <CAH9NwWcNZzKt9gwYRRbgppeL9xqcK38z0ZP-5eGF9vXmg7T_=g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200219090547.GF122464@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfNLD2qyH4WWBgDvGKIxeVc0YKijOhw/xXNM0IXvd+FD9r53kiC1OnbaA/pniGBduWa7/ZNwXVVZMK3ohTj75fe2FP/wA89cPd7km2yn79QqCRumHXpRS
- 6PGtrwWptkDkSVqmuTfUeWLWOhmAmsqK6QaGRKFcgQcgmZAFuuwLLBBTo4RYC+xrWLAsIKHkhzzhFaFpyUOAXBDr4OPUAvpcW/haVl+EWfziSVXpSJdUO2+W
- fQbRDpVq3N5tK3tm/g/0Cby0wY6yTvja2B4L6R8RpRDMbqMbvOfhzbq72N6mllfXUp6tG4aqoS+k3AZG4vB12m5dBBbnaqbJJtX5/stnqxYf/tg7Sk6QLmgt
- eiRW+/dZ7W+0x22vr7FxEzkl4Fg/SENWrSCQoKKZ+YKzyTNQDYVcr0SQiPmh6fxZJNHxQYAX8wA0r2a0a5BBh7kZbZA+26UUyNGmbjXPWj1OuPZDd9St/8z2
- NBm0hmc+c+bgSTdaw7QNL/nLyoLHEFDqrqCN4s6ISfKEz+0eFosRNva2zuImI7/4XoMdIdxBFpR9PAnN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAH9NwWcNZzKt9gwYRRbgppeL9xqcK38z0ZP-5eGF9vXmg7T_=g@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/19/20 10:05 AM, Sergey Senozhatsky wrote:
-> On (20/02/19 09:48), Hans Verkuil wrote:
-> [..]
->>>  int vb2_reqbufs(struct vb2_queue *q, struct v4l2_requestbuffers *req)
->>>  {
->>>  	int ret = vb2_verify_memory_type(q, req->memory, req->type);
->>> +	bool consistent = true;
->>> +
->>> +	if (req->flags & V4L2_FLAG_MEMORY_NON_CONSISTENT)
->>> +		consistent = false;
->>
->> There is no check against allow_cache_hints: if that's 0, then
->> the V4L2_FLAG_MEMORY_NON_CONSISTENT flag should be cleared since it is
->> not supported.
+On Wed, Feb 19, 2020 at 09:48:23AM +0100, Christian Gmeiner wrote:
+> Am Di., 18. Feb. 2020 um 10:14 Uhr schrieb Shawn Guo <shawnguo@kernel.org>:
+> >
+> > On Mon, Feb 17, 2020 at 01:09:32PM +0100, Christian Gmeiner wrote:
+> > > Am Mo., 17. Feb. 2020 um 05:19 Uhr schrieb Shawn Guo <shawnguo@kernel.org>:
+> > > >
+> > > > On Mon, Feb 10, 2020 at 02:30:12PM +0100, Christian Gmeiner wrote:
+> > > > > Am Mo., 10. Feb. 2020 um 11:58 Uhr schrieb Krzysztof Kozlowski
+> > > > > <krzk@kernel.org>:
+> > > > > >
+> > > > > > On Mon, 10 Feb 2020 at 11:54, Christian Gmeiner
+> > > > > > <christian.gmeiner@gmail.com> wrote:
+> > > > > > >
+> > > > > > > Am Fr., 24. Jan. 2020 um 09:44 Uhr schrieb Christian Gmeiner
+> > > > > > > <christian.gmeiner@gmail.com>:
+> > > > > > > >
+> > > > > > > > Makes it possible to multi v7 defconfig for stm32 and imx based devices with
+> > > >
+> > > > What do you mean by stm32 based devices here?
+> > > >
+> > >
+> > > CONFIG_ARCH_STM32 - I have a STM32MP157C-DK2 in my board farm and
+> > > would love to use
+> > > multi_v7 for imx6 and stm32.
+> >
+> > The patch is all about enabling drm-imx driver support.  The commit log
+> > gives the impression that drm-imx driver also works on stm32 devices.
+> > Is that the case?
+> >
 > 
-> The check is in set_queue_consistency()
+> No - the common thing both share is etnaviv.
 
-That's the check against the functionality. I'm talking about the API level:
-if !q->allow_cache_hints, then clear V4L2_FLAG_MEMORY_NON_CONSISTENT from
-req->flags so that, when the ioctl returns to userspace, the application can
-tell that that flag was rejected.
+I did not know that before, and thanks for the information.  But looking
+at the code change, there is nothing about etnaviv driver, and it's all
+about drm-imx driver.  So I'm still questioning why stm32 needs to be
+mentioned in the commit log at all.
 
-Regards,
+> The patch subject "ARM:
+> multi_v7_defconfig: enable drm imx support" is fine
 
-	Hans
+Agreed.  It's perfect.
 
+> I think but in the commit message I missed the verb so this should be
+> a better one:
 > 
-> static void set_queue_consistency(struct vb2_queue *q, bool consistent_mem)
-> {
-> 	if (!q->allow_cache_hints)
-> 		return;
+> --->8---
+> ARM: multi_v7_defconfig: enable drm imx support
 > 
-> 	if (consistent_mem)
-> 		q->dma_attrs &= ~DMA_ATTR_NON_CONSISTENT;
-> 	else
-> 		q->dma_attrs |= DMA_ATTR_NON_CONSISTENT;
-> }
-> 
-> I don't explicitly clear DMA_ATTR_NON_CONSISTENT attr for
-> !->allow_cache_hints queues just in case if the driver for
-> some reason sets that flag. ->allow_cache_hints is, thus,
-> only for cases when user-space asks us to set or clear it.
-> 
-> 	-ss
-> 
+> Makes it possible to use multi v7 defconfig for stm32 and imx based devices with
+> full drm support.
+> --->8---
 
+I don't think 'stm32' should be there, as the code change in this commit
+has nothing to do with stm32, if I understand it correctly.
+
+> How shall I proceed to get this change in?
+
+I can edit the commit log when applying.  But we need to agree on what
+it should be first.
+
+Shawn
