@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06083166936
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 21:57:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2966D166933
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 21:57:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729385AbgBTU50 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 15:57:26 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46755 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729351AbgBTU5W (ORCPT
+        id S1729373AbgBTU5Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 15:57:24 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34420 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729353AbgBTU5W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 20 Feb 2020 15:57:22 -0500
-Received: by mail-wr1-f68.google.com with SMTP id z7so6108991wrl.13;
-        Thu, 20 Feb 2020 12:57:19 -0800 (PST)
+Received: by mail-wr1-f66.google.com with SMTP id n10so6219525wrm.1;
+        Thu, 20 Feb 2020 12:57:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=2f3uV3RWKbMqCO2QFYzkPoEF8LM6TNVDI/Gi9TBUfHI=;
-        b=MXSn1rgdt7P3tH8KZP0tFbRW6901b2HrvP3o9gUFzYQW2YGGn1fvKWV5NbQR8QnUEm
-         VVPdxU2ZVBFz09WF9nLh6Th61kWM5IYt2PHvpZ5fMlsHe/S4YDfA6kqHtd6/bzu3Vctd
-         gzuBSqpJ865xupjulzXrZpNZs2zBp6Sqbey6Yp7xpAaCm9ojA3Y3OBWgDOVD1pYeL9hi
-         RiQQYprFLTNE0iABe1B0lPQOJWgYGIyYrFrBQy6rH9OSpUKysGYV2sC3AEo7pVGr0q7g
-         +1d/YnfZyo9if35mQTuIQqcesG72SynQdXGtogTKJuXOSrLvOxVNtZr3BG6YaVnJgxUA
-         5L8w==
+        bh=RG8nTnetEI+zdQjFw+fmF3JKM7yL0FmTV3DulfAKQCE=;
+        b=Tw8m8gSMOT8HmDjVje0Qqtmvu1U75EqYkkj4CDyN694mrjiG4H9ixFL2ezGX4KPDP3
+         RjqIMJCIlrU/m0Shxaa2uhHl2wTuHEFrA/kHFDRSTPMlEKfIWben3M4DFLBuw6204jVH
+         iTuKVmWjSCBJr04vHF7OQcG73RbDcNi+T4WQtGbPHEwnhg4ioIebtxFg/2etrbwniV8Z
+         HZEGb5wo+0xV8CYGYPyAoIZT3j6IJrBTt1glz3IaW9CBQpuFO03JuAkS5OfG6GH8ppkL
+         hEQywUFRlH6qC359qrWtBjGugkoIYB3bc31prtrRyNhxwPULco1Mb3dkG1DM8Ydozbeu
+         TqxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=2f3uV3RWKbMqCO2QFYzkPoEF8LM6TNVDI/Gi9TBUfHI=;
-        b=kU1NvkuxBLv5elfuhskevxdvAJA6SOtMx43//rEWNj6JKuHk4iGMG+P2ATvsazcgTZ
-         pCxuiTnWaPT1ZgAqp5VwAShxGelUeSfFeXg/SizWu8hIZfTQSYh4lyi8pK4vM2lkBVlk
-         K7vdeHqv4A6q94fQt9xP5apOg+fpNi6ZGrlMbhgDomTrFBU5my719wF+i23sjkorDV0c
-         pcFyNWBl0MC85y94V+CcTqxVUXJ2EzluAQQHpQLYr1Gg5HAF74fND9xUr21N9lrwvIEe
-         xxZDXnrv16D9vqRM4Jkdb9JFTmdyO0S0/LIZC9scFiWO9FCMMWCgscngQZc9XMU6Zdd3
-         oVYg==
-X-Gm-Message-State: APjAAAXUzG4XSAcnQujEZfjHMmQyPv30yIjnvvcqpqWMdHKTnv+Y6hDN
-        cfg/PKVNnxYZnDiV0cyRD6U=
-X-Google-Smtp-Source: APXvYqxE6O1xRP/s3Eex8+uTAabiof5+67V1QlISYwfPiFGVMeLM+jOyIb3TGVjHrpRx4Ny1OfKZJQ==
-X-Received: by 2002:adf:f787:: with SMTP id q7mr44114421wrp.297.1582232239167;
-        Thu, 20 Feb 2020 12:57:19 -0800 (PST)
+        bh=RG8nTnetEI+zdQjFw+fmF3JKM7yL0FmTV3DulfAKQCE=;
+        b=s1Qbbzv2xuSpdehi/8krRbHraOkc0u+rUJubt0siPsQPJTDsgiaawiCdsSG/rNCs3S
+         eAlkMGYO0sjynDrzJ0Wf12PNFUb5h1kO0++LjvNrj1ykFWl8Xox6SQx5/AiszrpW2NLX
+         /gZepfGejBMB1CCZ77Mn8lU1kUsVy7zH2sk/d4kctOJriqeydIps74yRp2mPXmuEPKfS
+         +OfyFOPD5BaK28uSsEytOaR7EmnWUAcvyzZmFbl41/BAHqjvsj7h8Hz8oCH/thQxoemZ
+         VVMWn/Utu9oJ1Zl3k/pMCbrIuckqFGpiNq32yt4aw0xu3rXEAKk/7d0MnCZ3YyURztLG
+         255A==
+X-Gm-Message-State: APjAAAWNy5OuVuivMb0cZYPC5Rj4L/LiYjbDuiWt6g2QcYtFDJ2SldK9
+        pNhEavXW4izYLgDfSyHjG20=
+X-Google-Smtp-Source: APXvYqxlxFGLAA9Vo8M059FO6ksBPW7ZfiFJySSp6CnBQQsFIx7JY0Gf28LdZvkjqbiU1JCkeMKvAQ==
+X-Received: by 2002:adf:ecc2:: with SMTP id s2mr44990985wro.263.1582232240472;
+        Thu, 20 Feb 2020 12:57:20 -0800 (PST)
 Received: from localhost.localdomain (p200300F1373A1900428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:f1:373a:1900:428d:5cff:feb9:9db8])
-        by smtp.googlemail.com with ESMTPSA id a184sm695039wmf.29.2020.02.20.12.57.17
+        by smtp.googlemail.com with ESMTPSA id a184sm695039wmf.29.2020.02.20.12.57.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2020 12:57:18 -0800 (PST)
+        Thu, 20 Feb 2020 12:57:19 -0800 (PST)
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 To:     jbrunet@baylibre.com, broonie@kernel.org, robh+dt@kernel.org,
         mark.rutland@arm.com, alsa-devel@alsa-project.org,
@@ -52,9 +52,9 @@ To:     jbrunet@baylibre.com, broonie@kernel.org, robh+dt@kernel.org,
 Cc:     lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 1/3] ASoC: meson: aiu: Document Meson8 and Meson8b support in the dt-bindings
-Date:   Thu, 20 Feb 2020 21:57:09 +0100
-Message-Id: <20200220205711.77953-2-martin.blumenstingl@googlemail.com>
+Subject: [PATCH 2/3] ASoC: meson: aiu: introduce a struct for platform specific information
+Date:   Thu, 20 Feb 2020 21:57:10 +0100
+Message-Id: <20200220205711.77953-3-martin.blumenstingl@googlemail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200220205711.77953-1-martin.blumenstingl@googlemail.com>
 References: <20200220205711.77953-1-martin.blumenstingl@googlemail.com>
@@ -65,28 +65,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The AIU audio output controller on the Meson8 and Meson8b SoC families
-is compatible with the one found in the GXBB family. Document the
-compatible string for these two older SoCs.
+Introduce a struct aiu_platform_data to make the driver aware of
+platform specific information. Convert the existing check for the
+internal stereo audio codec (only available on GXL) to this new struct.
+Support for the 32-bit SoCs will need this as well because the
+AIU_CLK_CTRL_MORE register doesn't have the I2S divider bits (and we
+need to use the I2S divider from AIU_CLK_CTRL instead).
 
 Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- Documentation/devicetree/bindings/sound/amlogic,aiu.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ sound/soc/meson/aiu.c | 19 ++++++++++++++++---
+ sound/soc/meson/aiu.h |  5 +++++
+ 2 files changed, 21 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/amlogic,aiu.yaml b/Documentation/devicetree/bindings/sound/amlogic,aiu.yaml
-index 3ef7632dcb59..a61bccf915d8 100644
---- a/Documentation/devicetree/bindings/sound/amlogic,aiu.yaml
-+++ b/Documentation/devicetree/bindings/sound/amlogic,aiu.yaml
-@@ -21,6 +21,8 @@ properties:
-       - enum:
-         - amlogic,aiu-gxbb
-         - amlogic,aiu-gxl
-+        - amlogic,aiu-meson8
-+        - amlogic,aiu-meson8b
-       - const:
-           amlogic,aiu
+diff --git a/sound/soc/meson/aiu.c b/sound/soc/meson/aiu.c
+index d3e2d40e9562..38209312a8c3 100644
+--- a/sound/soc/meson/aiu.c
++++ b/sound/soc/meson/aiu.c
+@@ -273,6 +273,11 @@ static int aiu_probe(struct platform_device *pdev)
+ 	aiu = devm_kzalloc(dev, sizeof(*aiu), GFP_KERNEL);
+ 	if (!aiu)
+ 		return -ENOMEM;
++
++	aiu->platform = device_get_match_data(dev);
++	if (!aiu->platform)
++		return -ENODEV;
++
+ 	platform_set_drvdata(pdev, aiu);
  
+ 	ret = device_reset(dev);
+@@ -322,7 +327,7 @@ static int aiu_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* Register the internal dac control component on gxl */
+-	if (of_device_is_compatible(dev->of_node, "amlogic,aiu-gxl")) {
++	if (aiu->platform->has_acodec) {
+ 		ret = aiu_acodec_ctrl_register_component(dev);
+ 		if (ret) {
+ 			dev_err(dev,
+@@ -344,9 +349,17 @@ static int aiu_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct aiu_platform_data aiu_gxbb_pdata = {
++	.has_acodec = false,
++};
++
++static const struct aiu_platform_data aiu_gxl_pdata = {
++	.has_acodec = true,
++};
++
+ static const struct of_device_id aiu_of_match[] = {
+-	{ .compatible = "amlogic,aiu-gxbb", },
+-	{ .compatible = "amlogic,aiu-gxl", },
++	{ .compatible = "amlogic,aiu-gxbb", .data = &aiu_gxbb_pdata },
++	{ .compatible = "amlogic,aiu-gxl", .data = &aiu_gxl_pdata },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, aiu_of_match);
+diff --git a/sound/soc/meson/aiu.h b/sound/soc/meson/aiu.h
+index 06a968c55728..ab003638d5e5 100644
+--- a/sound/soc/meson/aiu.h
++++ b/sound/soc/meson/aiu.h
+@@ -27,11 +27,16 @@ struct aiu_interface {
+ 	int irq;
+ };
+ 
++struct aiu_platform_data {
++	bool has_acodec;
++};
++
+ struct aiu {
+ 	struct clk *pclk;
+ 	struct clk *spdif_mclk;
+ 	struct aiu_interface i2s;
+ 	struct aiu_interface spdif;
++	const struct aiu_platform_data *platform;
+ };
+ 
+ #define AIU_FORMATS (SNDRV_PCM_FMTBIT_S16_LE |	\
 -- 
 2.25.1
 
