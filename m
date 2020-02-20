@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D41D1166315
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:33:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB87E16630E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:33:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729027AbgBTQcR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 11:32:17 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:29359 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728937AbgBTQbq (ORCPT
+        id S1728996AbgBTQbz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 11:31:55 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:49717 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728970AbgBTQbs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 11:31:46 -0500
+        Thu, 20 Feb 2020 11:31:48 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582216305;
+        s=mimecast20190719; t=1582216307;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=gp1yBY+tfz3ASfvSkHX3QDXKz8JE+vKM1ZqbokypNuk=;
-        b=OVF22Jqoz0C5Ng/ReS9vsZekukg0F+iavkNkEi3LP19/OMpkIclKpuxb9i8BA6Xym6ODRX
-        BnRPvwUn0llVNLA8p6Uiw0lkQFzSey674OJyLQY8zLQwRATbMdOyUR9r3er4XttbYExywz
-        J1+X0lv5OwuzMb9Z6a9292qXA7ElI5E=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-154-PcaNpfU4NdOhc17bOfpkBA-1; Thu, 20 Feb 2020 11:31:43 -0500
-X-MC-Unique: PcaNpfU4NdOhc17bOfpkBA-1
-Received: by mail-qt1-f197.google.com with SMTP id x8so2956873qtq.14
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 08:31:43 -0800 (PST)
+        bh=klS12EpOfCO+92N1kPohJ72pmA2dZr16cCtOmkqqQu0=;
+        b=Xkp6A0RoSKsB1r/jiKhgYZNlkV/3gY18zOV2Un5ofNEsyqNs2WJ/y9tWGhNoGZPZwPH2Q0
+        2b+ep0OxlXmlXu5/UMwllgs8TFQYaoYpgVV6BNflSsRT5bIulF+TCmIn+QSvScd97oKJ5s
+        kdB4ovh6cs2RjvjuTWm0Mdacvv1HvZ4=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-138-9Ljq1ZAeOsCD_Uq2pEcFOQ-1; Thu, 20 Feb 2020 11:31:45 -0500
+X-MC-Unique: 9Ljq1ZAeOsCD_Uq2pEcFOQ-1
+Received: by mail-qt1-f199.google.com with SMTP id p12so2962883qtu.6
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 08:31:45 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=gp1yBY+tfz3ASfvSkHX3QDXKz8JE+vKM1ZqbokypNuk=;
-        b=jE1K5A93Loddn4WcRNsHXcaeThTI4Tpy9FPuxioCHF4fAZsHznfrBxFYqnWwd60y+g
-         7+w2YigP6IW+KoQdjr9Ro6qXH2RxuRYcq+5uisIFoP+0+o+5impUvQnMIwz6D8MrGO7P
-         w74FFwdSiaDN1QwB/gqg6NgZLrqpn0KxsCScSZLTwqwSgHVnQe5xXwFCzlJ+RVklY+B2
-         EhWspFKEKS1BOfh4RXlTajOxf8GvTOqBgVs7AVP7g5ViTljmhA0tVgekAQOAu+ZF8R+b
-         CU/eeQAGlhOTKvoQBXt15gZrGM20XRPjMZEmhM9XBG+5/VG2Mt34U8fpju79mi5IGZsW
-         zajw==
-X-Gm-Message-State: APjAAAXUblmZauBQZJsut4qLvO5sTBnRR5Pl0KTUUoPl8weLnsSIKW1+
-        6cnLw3rE6Nel2lbfhPsrpLArdmj1GYJjk2uOfmgW93duHRQcACvHlm3a6AwK6qJXnuzr7tXLo83
-        VvlGpqXFGqb1S7YvGXuaQPxcV
-X-Received: by 2002:a0c:f8c6:: with SMTP id h6mr26863086qvo.239.1582216303200;
-        Thu, 20 Feb 2020 08:31:43 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyLQom3vQH0usWmFRQsDeOtxC8SZvueF6+wF3aikKMPHtAIMojm8cCOEtP1dTBilcK23E+sjQ==
-X-Received: by 2002:a0c:f8c6:: with SMTP id h6mr26863069qvo.239.1582216302958;
-        Thu, 20 Feb 2020 08:31:42 -0800 (PST)
+        bh=klS12EpOfCO+92N1kPohJ72pmA2dZr16cCtOmkqqQu0=;
+        b=hP47sbYzx32iGMHUDFMB6A8dOuhl1X7ClqOE/hgORnhrjUIlhKi1o1x92o9R44ySUX
+         0wUTtw581ei36Twa85poRkUF9yNhlHHuLhZup5PnTOsWY7oV1ptW0UFrtbS6ivhhUlhk
+         pjCqI8txesvExtkHhLi1CqE8fKCfpbxu6xz7MyPmDoZNIPvAtfuHkj6qYqpwFHuK5IYM
+         mQqYrf7dpi2CUv6/owdJk4feMhNgUq94hdLCbCSqgW0xW5qANSi+kDhAI4PjxqMT30Oy
+         Fm+Xxr1OljQ3sx1Pj5cwVpD97a8s2xL3Fp2xpG8ZpKj2orrLul5r5Fhxx0log0Wyg6eG
+         CO3A==
+X-Gm-Message-State: APjAAAVE6ffzwETExwG2CZl5wrGjVpxQijDF/Kl/l5Mq3iQcc5W07IWH
+        Jv2UXYaV3drx47pC7KZdLQhqZ35oA9WmuHTVK27DX09cfcRd5Cz19o7P+KkBCdTKt/WIbfNruoL
+        otHMcrwUAmtYkzvZ9zW2Bs449
+X-Received: by 2002:a05:6214:6aa:: with SMTP id s10mr26736223qvz.138.1582216304917;
+        Thu, 20 Feb 2020 08:31:44 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzYGpukdNxdfXYm0WZoUSCZUP5BJRRurBSVxU3kXV0jc2iuspd6kbmXRu4C8oT1RGdmpXxezg==
+X-Received: by 2002:a05:6214:6aa:: with SMTP id s10mr26736189qvz.138.1582216304590;
+        Thu, 20 Feb 2020 08:31:44 -0800 (PST)
 Received: from xz-x1.redhat.com ([104.156.64.75])
-        by smtp.gmail.com with ESMTPSA id l19sm42366qkl.3.2020.02.20.08.31.41
+        by smtp.gmail.com with ESMTPSA id l19sm42366qkl.3.2020.02.20.08.31.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2020 08:31:42 -0800 (PST)
+        Thu, 20 Feb 2020 08:31:43 -0800 (PST)
 From:   Peter Xu <peterx@redhat.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     Brian Geffon <bgeffon@google.com>,
@@ -70,9 +70,9 @@ Cc:     Brian Geffon <bgeffon@google.com>,
         Hugh Dickins <hughd@google.com>,
         "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
         Jerome Glisse <jglisse@redhat.com>
-Subject: [PATCH v6 15/19] userfaultfd: wp: don't wake up when doing write protect
-Date:   Thu, 20 Feb 2020 11:31:08 -0500
-Message-Id: <20200220163112.11409-16-peterx@redhat.com>
+Subject: [PATCH v6 16/19] userfaultfd: wp: UFFDIO_REGISTER_MODE_WP documentation update
+Date:   Thu, 20 Feb 2020 11:31:09 -0500
+Message-Id: <20200220163112.11409-17-peterx@redhat.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200220163112.11409-1-peterx@redhat.com>
 References: <20200220163112.11409-1-peterx@redhat.com>
@@ -83,54 +83,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It does not make sense to try to wake up any waiting thread when we're
-write-protecting a memory region.  Only wake up when resolving a write
-protected page fault.
+From: Martin Cracauer <cracauer@cons.org>
 
+Adds documentation about the write protection support.
+
+Signed-off-by: Martin Cracauer <cracauer@cons.org>
+Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+[peterx: rewrite in rst format; fixups here and there]
+Reviewed-by: Jerome Glisse <jglisse@redhat.com>
 Reviewed-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- fs/userfaultfd.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ Documentation/admin-guide/mm/userfaultfd.rst | 51 ++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 59e9e399fddb..6e878d23547c 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -1812,6 +1812,7 @@ static int userfaultfd_writeprotect(struct userfaultfd_ctx *ctx,
- 	struct uffdio_writeprotect uffdio_wp;
- 	struct uffdio_writeprotect __user *user_uffdio_wp;
- 	struct userfaultfd_wake_range range;
-+	bool mode_wp, mode_dontwake;
+diff --git a/Documentation/admin-guide/mm/userfaultfd.rst b/Documentation/admin-guide/mm/userfaultfd.rst
+index 5048cf661a8a..c30176e67900 100644
+--- a/Documentation/admin-guide/mm/userfaultfd.rst
++++ b/Documentation/admin-guide/mm/userfaultfd.rst
+@@ -108,6 +108,57 @@ UFFDIO_COPY. They're atomic as in guaranteeing that nothing can see an
+ half copied page since it'll keep userfaulting until the copy has
+ finished.
  
- 	if (READ_ONCE(ctx->mmap_changing))
- 		return -EAGAIN;
-@@ -1830,18 +1831,20 @@ static int userfaultfd_writeprotect(struct userfaultfd_ctx *ctx,
- 	if (uffdio_wp.mode & ~(UFFDIO_WRITEPROTECT_MODE_DONTWAKE |
- 			       UFFDIO_WRITEPROTECT_MODE_WP))
- 		return -EINVAL;
--	if ((uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_WP) &&
--	     (uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE))
++Notes:
 +
-+	mode_wp = uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_WP;
-+	mode_dontwake = uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE;
++- If you requested UFFDIO_REGISTER_MODE_MISSING when registering then
++  you must provide some kind of page in your thread after reading from
++  the uffd.  You must provide either UFFDIO_COPY or UFFDIO_ZEROPAGE.
++  The normal behavior of the OS automatically providing a zero page on
++  an annonymous mmaping is not in place.
 +
-+	if (mode_wp && mode_dontwake)
- 		return -EINVAL;
++- None of the page-delivering ioctls default to the range that you
++  registered with.  You must fill in all fields for the appropriate
++  ioctl struct including the range.
++
++- You get the address of the access that triggered the missing page
++  event out of a struct uffd_msg that you read in the thread from the
++  uffd.  You can supply as many pages as you want with UFFDIO_COPY or
++  UFFDIO_ZEROPAGE.  Keep in mind that unless you used DONTWAKE then
++  the first of any of those IOCTLs wakes up the faulting thread.
++
++- Be sure to test for all errors including (pollfd[0].revents &
++  POLLERR).  This can happen, e.g. when ranges supplied were
++  incorrect.
++
++Write Protect Notifications
++---------------------------
++
++This is equivalent to (but faster than) using mprotect and a SIGSEGV
++signal handler.
++
++Firstly you need to register a range with UFFDIO_REGISTER_MODE_WP.
++Instead of using mprotect(2) you use ioctl(uffd, UFFDIO_WRITEPROTECT,
++struct *uffdio_writeprotect) while mode = UFFDIO_WRITEPROTECT_MODE_WP
++in the struct passed in.  The range does not default to and does not
++have to be identical to the range you registered with.  You can write
++protect as many ranges as you like (inside the registered range).
++Then, in the thread reading from uffd the struct will have
++msg.arg.pagefault.flags & UFFD_PAGEFAULT_FLAG_WP set. Now you send
++ioctl(uffd, UFFDIO_WRITEPROTECT, struct *uffdio_writeprotect) again
++while pagefault.mode does not have UFFDIO_WRITEPROTECT_MODE_WP set.
++This wakes up the thread which will continue to run with writes. This
++allows you to do the bookkeeping about the write in the uffd reading
++thread before the ioctl.
++
++If you registered with both UFFDIO_REGISTER_MODE_MISSING and
++UFFDIO_REGISTER_MODE_WP then you need to think about the sequence in
++which you supply a page and undo write protect.  Note that there is a
++difference between writes into a WP area and into a !WP area.  The
++former will have UFFD_PAGEFAULT_FLAG_WP set, the latter
++UFFD_PAGEFAULT_FLAG_WRITE.  The latter did not fail on protection but
++you still need to supply a page when UFFDIO_REGISTER_MODE_MISSING was
++used.
++
+ QEMU/KVM
+ ========
  
- 	ret = mwriteprotect_range(ctx->mm, uffdio_wp.range.start,
--				  uffdio_wp.range.len, uffdio_wp.mode &
--				  UFFDIO_WRITEPROTECT_MODE_WP,
-+				  uffdio_wp.range.len, mode_wp,
- 				  &ctx->mmap_changing);
- 	if (ret)
- 		return ret;
- 
--	if (!(uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE)) {
-+	if (!mode_wp && !mode_dontwake) {
- 		range.start = uffdio_wp.range.start;
- 		range.len = uffdio_wp.range.len;
- 		wake_userfault(ctx, &range);
 -- 
 2.24.1
 
