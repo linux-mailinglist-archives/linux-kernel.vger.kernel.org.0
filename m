@@ -2,166 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E54A11661B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:01:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 597AC1661B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:02:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728703AbgBTQBH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 11:01:07 -0500
-Received: from foss.arm.com ([217.140.110.172]:45498 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728414AbgBTQBH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 11:01:07 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3DA5C31B;
-        Thu, 20 Feb 2020 08:01:06 -0800 (PST)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 418113F6CF;
-        Thu, 20 Feb 2020 08:01:04 -0800 (PST)
-Date:   Thu, 20 Feb 2020 16:00:54 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>, andrew.murray@arm.com,
-        Tom Joseph <tjoseph@cadence.com>,
-        Milind Parab <mparab@cadence.com>, jingoohan1@gmail.com,
-        gustavo.pimentel@synopsys.com, bhelgaas@google.com,
-        thierry.reding@gmail.com, Jisheng.Zhang@synaptics.com,
-        jonathanh@nvidia.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kthota@nvidia.com,
-        mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V2 0/5] Add support to defer core initialization
-Message-ID: <20200220160044.GA8859@e121166-lin.cambridge.arm.com>
-References: <20200103100736.27627-1-vidyas@nvidia.com>
- <a8678df3-141b-51ab-b0cb-5e88c6ac91b5@nvidia.com>
- <680a58ec-5d09-3e3b-2fd6-544c32732818@nvidia.com>
- <ca911119-da45-4cbd-b173-2ac8397fd79a@ti.com>
- <b4af8353-3a56-fa31-3391-056050c0440a@ti.com>
- <7e8dafcd-bc3f-4acc-7023-85e24bebdd94@nvidia.com>
+        id S1728607AbgBTQC3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 11:02:29 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:51920 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728414AbgBTQC3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 11:02:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582214548;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=hbwtB78+GrmjAgtuBkp/5M+dteqsFUb6HTGdpyT5C/M=;
+        b=E25NuS5ebfIMLKILPg6vRYWy6yd8/J+PZUWQakBlV6zC0b0ojXeCGUV0plcEH/AV8X6u/a
+        teJ1SbF6Ew9yV22tvOMC/pG42DcpSOkhRVGnye7kYsZJtERDVnATdfjpe+Un154aNB0Ikz
+        R85VuPIqkk4dzAD3OgQLq0UeeGdYbXE=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-278-zVQUZuQdPJyasWjmKePQWw-1; Thu, 20 Feb 2020 11:02:25 -0500
+X-MC-Unique: zVQUZuQdPJyasWjmKePQWw-1
+Received: by mail-qk1-f197.google.com with SMTP id v81so3039198qkb.11
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 08:02:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=hbwtB78+GrmjAgtuBkp/5M+dteqsFUb6HTGdpyT5C/M=;
+        b=FMjjdJDNPqjIgwB5KBa5kXPRFzXOMBI4KW2m56jmoy2IrLS6uvwzmyE4I2YnYp2WoD
+         Pf3c+v3HoSdEB2W5Rocqmk3K/UNEfgYs1Fq8Jy+xLkbTA8mt+CYhIfQt8VG2+RInsXYa
+         o3TIfGS4Omk+vp9UJu+nJAWxjsPpkkmSkS0RMrUJv/YZfStNWBPCs+DSlcnXqLjU8xJi
+         8iQppt3sWP/qq4wBc/Go++aD5xaUvwT+z7dn4/zXyiy52KCA6OEXQktS6fLmoz3XUsQ8
+         uwdShi/H11JHyi4ZgkDGzC80LP78vhNADNtAH6px1HdhPPKCfq5RaIknynohOlcNbrIO
+         jlEQ==
+X-Gm-Message-State: APjAAAW5hNXmzw+EE3qE2O/KIUhcIandET289MBb/aK1GSljjQ/g/CDE
+        AjZ6G7vWX8d1J2ONgGaoYx7IWiTZLeQb5pRI/Ij2+N3nn62ZcnGYVkS7X0iX9hBrckM9qerWLyu
+        mtS+gE6IwZ/EGl/Kpa9fIrUbn
+X-Received: by 2002:a05:620a:1656:: with SMTP id c22mr29866249qko.144.1582214545474;
+        Thu, 20 Feb 2020 08:02:25 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxAKv5wpNeJTADqrEPJkZSXqFJ+Srl5Hx+rjfv0aI9xLkhXUkuB0gk2HFLl4PavjsFYL99WWg==
+X-Received: by 2002:a05:620a:1656:: with SMTP id c22mr29866224qko.144.1582214545238;
+        Thu, 20 Feb 2020 08:02:25 -0800 (PST)
+Received: from xz-x1.redhat.com ([104.156.64.75])
+        by smtp.gmail.com with ESMTPSA id d206sm1816478qke.66.2020.02.20.08.02.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2020 08:02:24 -0800 (PST)
+From:   Peter Xu <peterx@redhat.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     Peter Xu <peterx@redhat.com>, Martin Cracauer <cracauer@cons.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Brian Geffon <bgeffon@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        David Hildenbrand <david@redhat.com>,
+        Bobby Powers <bobbypowers@gmail.com>,
+        Mel Gorman <mgorman@suse.de>
+Subject: [PATCH RESEND v6 07/16] powerpc/mm: Use helper fault_signal_pending()
+Date:   Thu, 20 Feb 2020 11:02:22 -0500
+Message-Id: <20200220160222.9422-1-peterx@redhat.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200220155353.8676-1-peterx@redhat.com>
+References: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <7e8dafcd-bc3f-4acc-7023-85e24bebdd94@nvidia.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 07:06:47PM +0530, Vidya Sagar wrote:
-> Hi Lorenzo, Andrew,
-> Kishon did rebase [1] mentioned below and removed dependencies.
-> New patch series is available
-> @ http://patchwork.ozlabs.org/project/linux-pci/list/?series=158088
-> 
-> I rebased my patches on top of this and is available for review
-> @ http://patchwork.ozlabs.org/project/linux-pci/list/?series=158959
-> 
-> Please let us know the way forward towards merging these patches.
+Let powerpc code to use the new helper, by moving the signal handling
+earlier before the retry logic.
 
-Hi Vidya,
+Signed-off-by: Peter Xu <peterx@redhat.com>
+---
+ arch/powerpc/mm/fault.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-I shall have a look shortly, I have planned to start queueing patches
-from next week.
+diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
+index 8db0507619e2..0868172ce4e3 100644
+--- a/arch/powerpc/mm/fault.c
++++ b/arch/powerpc/mm/fault.c
+@@ -582,6 +582,9 @@ static int __do_page_fault(struct pt_regs *regs, unsigned long address,
+ 
+ 	major |= fault & VM_FAULT_MAJOR;
+ 
++	if (fault_signal_pending(fault, regs))
++		return user_mode(regs) ? 0 : SIGBUS;
++
+ 	/*
+ 	 * Handle the retry right now, the mmap_sem has been released in that
+ 	 * case.
+@@ -595,15 +598,8 @@ static int __do_page_fault(struct pt_regs *regs, unsigned long address,
+ 			 */
+ 			flags &= ~FAULT_FLAG_ALLOW_RETRY;
+ 			flags |= FAULT_FLAG_TRIED;
+-			if (!fatal_signal_pending(current))
+-				goto retry;
++			goto retry;
+ 		}
+-
+-		/*
+-		 * User mode? Just return to handle the fatal exception otherwise
+-		 * return to bad_page_fault
+-		 */
+-		return is_user ? 0 : SIGBUS;
+ 	}
+ 
+ 	up_read(&current->mm->mmap_sem);
+-- 
+2.24.1
 
-Thanks,
-Lorenzo
-
-> Thanks,
-> Vidya Sagar
-> 
-> On 2/5/2020 12:07 PM, Kishon Vijay Abraham I wrote:
-> > External email: Use caution opening links or attachments
-> > 
-> > 
-> > +Tom, Milind
-> > 
-> > Hi,
-> > 
-> > On 23/01/20 3:25 PM, Kishon Vijay Abraham I wrote:
-> > > Hi Vidya Sagar,
-> > > 
-> > > On 23/01/20 2:54 pm, Vidya Sagar wrote:
-> > > > Hi Kishon,
-> > > > Apologies for pinging again. Could you please review this series?
-> > > > 
-> > > > Thanks,
-> > > > Vidya Sagar
-> > > > 
-> > > > On 1/11/2020 5:18 PM, Vidya Sagar wrote:
-> > > > > Hi Kishon,
-> > > > > Could you please review this series?
-> > > > > 
-> > > > > Also, this series depends on the following change of yours
-> > > > > http://patchwork.ozlabs.org/patch/1109884/
-> > > > > Whats the plan to get this merged?
-> > > 
-> > > I've posted the endpoint improvements as a separate series
-> > > http://lore.kernel.org/r/20191231100331.6316-1-kishon@ti.com
-> > > 
-> > > I'd prefer this series gets tested by others. I'm also planning to test
-> > > this series. Sorry for the delay. I'll test review and test this series
-> > > early next week.
-> > 
-> > I tested this series with DRA7 configured in EP mode. So for the series
-> > itself
-> > 
-> > Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
-> > 
-> > Tom, Can you test this series in Cadence platform?
-> > 
-> > Lorenzo, Andrew,
-> > 
-> > How do you want to go about merging this series? This series depends on
-> > [1] which in turn is dependent on two other series. If required, I can
-> > rebase [1] on mainline kernel and remove it's dependencies with the
-> > other series. That way this series and [1] could be merged. And the
-> > other series could be worked later. Kindly let me know.
-> > 
-> > Thanks
-> > Kishon
-> > 
-> > [1] ->
-> > https://lore.kernel.org/linux-pci/20191231100331.6316-1-kishon@ti.com/
-> > > 
-> > > Thanks
-> > > Kishon
-> > > 
-> > > > > 
-> > > > > Thanks,
-> > > > > Vidya Sagar
-> > > > > 
-> > > > > On 1/3/20 3:37 PM, Vidya Sagar wrote:
-> > > > > > EPC/DesignWare core endpoint subsystems assume that the core
-> > > > > > registers are
-> > > > > > available always for SW to initialize. But, that may not be the case
-> > > > > > always.
-> > > > > > For example, Tegra194 hardware has the core running on a clock that
-> > > > > > is derived
-> > > > > > from reference clock that is coming into the endpoint system from host.
-> > > > > > Hence core is made available asynchronously based on when host system
-> > > > > > is going
-> > > > > > for enumeration of devices. To accommodate this kind of hardwares,
-> > > > > > support is
-> > > > > > required to defer the core initialization until the respective
-> > > > > > platform driver
-> > > > > > informs the EPC/DWC endpoint sub-systems that the core is indeed
-> > > > > > available for
-> > > > > > initiaization. This patch series is attempting to add precisely that.
-> > > > > > This series is based on Kishon's patch that adds notification mechanism
-> > > > > > support from EPC to EPF @ http://patchwork.ozlabs.org/patch/1109884/
-> > > > > > 
-> > > > > > Vidya Sagar (5):
-> > > > > >     PCI: endpoint: Add core init notifying feature
-> > > > > >     PCI: dwc: Refactor core initialization code for EP mode
-> > > > > >     PCI: endpoint: Add notification for core init completion
-> > > > > >     PCI: dwc: Add API to notify core initialization completion
-> > > > > >     PCI: pci-epf-test: Add support to defer core initialization
-> > > > > > 
-> > > > > >    .../pci/controller/dwc/pcie-designware-ep.c   |  79 +++++++-----
-> > > > > >    drivers/pci/controller/dwc/pcie-designware.h  |  11 ++
-> > > > > >    drivers/pci/endpoint/functions/pci-epf-test.c | 118 ++++++++++++------
-> > > > > >    drivers/pci/endpoint/pci-epc-core.c           |  19 ++-
-> > > > > >    include/linux/pci-epc.h                       |   2 +
-> > > > > >    include/linux/pci-epf.h                       |   5 +
-> > > > > >    6 files changed, 164 insertions(+), 70 deletions(-)
-> > > > > > 
