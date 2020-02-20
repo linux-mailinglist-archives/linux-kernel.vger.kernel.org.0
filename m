@@ -2,1150 +2,357 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A977165AC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 10:59:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44209165AB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 10:58:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727662AbgBTJ7R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 04:59:17 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36046 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726501AbgBTJ7Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 04:59:16 -0500
-Received: by mail-pg1-f193.google.com with SMTP id d9so1691135pgu.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 01:59:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=PVZsaXe3O/EFhbkcUBzLx/kfdmtAGj1mNaXT+PSOMxw=;
-        b=FDfFF3eiXmhcPMSR/L17Gcxol4vTxi6yrTwlcoh1snKqGGRV336Q4qT8/NWuXvsiDI
-         Hu/2BqLSd9FxY0G6MmQOWhYMEFZDobHteuCNgorB2MxMA/4PhXlaMN9xO3M5TKEKxIYU
-         GUrgh4t3+92UCsH48sXkghGj3uvxaqLQsQ0s/hQVjkA1lfGoim6lXmxBPT6huMzqxBm2
-         LhJ6if1+QCxX1VSoSFg/18/QgMtxOVMJZIadMrSCM1V6Y+0iJCrVY9V16nQVDjQFzTQ0
-         nddUCzkKypX6Q/Ns63F62cRTPqVFPN0trhdsrsygKxVkJAQa5+CkMLycDNH008TLs+3W
-         Ie3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=PVZsaXe3O/EFhbkcUBzLx/kfdmtAGj1mNaXT+PSOMxw=;
-        b=rHxmcgCZhZvCgmrbRjs+4Lcx1b7vfyjEkxFPNA6bHT8q3tgeb8G5DhQh0G/QH1K4QN
-         jBF8AHTTZarPpxC3UeCv0OyKMlseFxvVlTDAofGEm/nCB3AJ0Az25lSe8FGtTIMUxccd
-         ULXv5KeVIFF7hkFh4vIvGD9PADsinzwx87GLeiJdY/xoaNR73qjFRjvel6bkPn4S0i5v
-         rjgKXKuFEvWLUGhVFeu9XjVsozGhuBG21AIV0U8eWAHxLg6Js5vuSDCG1TUaOngfA3Oy
-         7I+O64YhnZ/btoLAszkp2ixMFVimPhYLAuZoC8DOtyMSkPkCERPzMgpazneUckJSnfmi
-         Bbqw==
-X-Gm-Message-State: APjAAAUjlK6TEPisAiZddZz1duJTOY2JPbhJ6ceZV9xUde1r+Qeiz9R+
-        Gh9HQyUSP8v5AX0EMkDcGbev
-X-Google-Smtp-Source: APXvYqyLMmV3Eu4foZEBUaM5thM7SVHSU7fGiiVm3LvML6tt8xlve6/vDFEDHNvRL8aegxudSRhcjg==
-X-Received: by 2002:a63:ac46:: with SMTP id z6mr28519950pgn.301.1582192754842;
-        Thu, 20 Feb 2020 01:59:14 -0800 (PST)
-Received: from localhost.localdomain ([2409:4072:315:9501:edda:4222:88ae:442f])
-        by smtp.gmail.com with ESMTPSA id b3sm2678644pjo.30.2020.02.20.01.59.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2020 01:59:13 -0800 (PST)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     gregkh@linuxfoundation.org, arnd@arndb.de
-Cc:     smohanad@codeaurora.org, jhugo@codeaurora.org,
-        kvalo@codeaurora.org, bjorn.andersson@linaro.org,
-        hemantk@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 02/16] bus: mhi: core: Add support for registering MHI controllers
-Date:   Thu, 20 Feb 2020 15:28:40 +0530
-Message-Id: <20200220095854.4804-3-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200220095854.4804-1-manivannan.sadhasivam@linaro.org>
-References: <20200220095854.4804-1-manivannan.sadhasivam@linaro.org>
+        id S1727274AbgBTJ6p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 04:58:45 -0500
+Received: from mga06.intel.com ([134.134.136.31]:16156 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726799AbgBTJ6p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 04:58:45 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2020 01:58:44 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,464,1574150400"; 
+   d="scan'208";a="239971150"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga006.jf.intel.com with ESMTP; 20 Feb 2020 01:58:44 -0800
+Received: from [10.226.39.49] (unknown [10.226.39.49])
+        by linux.intel.com (Postfix) with ESMTP id 40882580270;
+        Thu, 20 Feb 2020 01:58:42 -0800 (PST)
+Subject: Re: [PATCH v2 2/2] phy: intel: Add driver support for Combophy
+To:     Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        kishon@ti.com, robh@kernel.org, cheol.yong.kim@intel.com,
+        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
+        yixin.zhu@intel.com
+References: <208fcb9660abd560aeab077442d158d84a3dddee.1582021248.git.eswara.kota@linux.intel.com>
+ <b49e2f94631da003fb4b1409adc42fb81f77877b.1582021248.git.eswara.kota@linux.intel.com>
+ <20200219101435.GM10400@smile.fi.intel.com>
+From:   Dilip Kota <eswara.kota@linux.intel.com>
+Message-ID: <3c73c805-55a6-dcc0-4cd4-dd452f1d002d@linux.intel.com>
+Date:   Thu, 20 Feb 2020 17:58:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
+MIME-Version: 1.0
+In-Reply-To: <20200219101435.GM10400@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds support for registering MHI controller drivers with
-the MHI stack. MHI controller drivers manages the interaction with the
-MHI client devices such as the external modems and WiFi chipsets. They
-are also the MHI bus master in charge of managing the physical link
-between the host and client device.
 
-This is based on the patch submitted by Sujeev Dias:
-https://lkml.org/lkml/2018/7/9/987
+On 2/19/2020 6:14 PM, Andy Shevchenko wrote:
+> On Wed, Feb 19, 2020 at 11:31:30AM +0800, Dilip Kota wrote:
+>> Combophy subsystem provides PHYs for various
+>> controllers like PCIe, SATA and EMAC.
+> ...
+>
+>> +static const char *const intel_iphy_names[] = {"pcie", "xpcs", "sata"};
+> + blank line
+Typo, will fix it.
+>
+>> +#define CLK_100MHZ		100000000
+>> +#define CLK_156_25MHZ		156250000
+> ...
+>
+>> +enum {
+>> +	PHY_0 = 0,
+> Aren't enum:s start with 0 by the standard?
+> Ditto for all enum:s.
+> (Or, if it represents value from hardware, perhaps makes sense to put a comment
+>   to each of such enum and then all values must be explicit)
+Values are related to h/w registers, will add the description in the 
+comments.
+>
+>> +	PHY_1,
+>> +	PHY_MAX_NUM,
+>> +};
+> ...
+>
+>> +struct intel_cbphy_iphy {
+>> +	struct phy		*phy;
+>> +	struct device		*dev;
+> Can dev be derived from phy? Or phy from dev?
+I see, there is no need of storing phy. Will remove it in the next patch 
+version.
+>
+>> +	bool			enable;
+>> +	struct intel_combo_phy	*parent;
+>> +	struct reset_control	*app_rst;
+>> +	u32			id;
+>> +};
+> ...
+>
+>> +static int intel_cbphy_iphy_enable(struct intel_cbphy_iphy *iphy, bool set)
+>> +{
+>> +	struct intel_combo_phy *cbphy = iphy->parent;
+>> +	u32 val, bitn;
+>> +
+>> +	bitn = cbphy->phy_mode * 2 + iphy->id;
+> Why not
+>
+> 	u32 mask = BIT(cbphy->phy_mode * 2 + iphy->id);
+> 	u32 val;
+Looks more better, i will update it.
+>
+>> +	/* Register: 0 is enable, 1 is disable */
+>> +	val =  set ? 0 : BIT(bitn);
+> 	val = set ? 0 : mask;
+>
+> (why double space?)
+Typo error. Will correct it.
+>
+>> +
+>> +	return regmap_update_bits(cbphy->hsiocfg, REG_CLK_DISABLE(cbphy->bid),
+>> +				 BIT(bitn), val);
+> 	return regmap_update_bits(..., mask, val);
+>
+> ?
+Still it is taking more than 80 characters with mask, need to be in 2 lines
 
-Signed-off-by: Sujeev Dias <sdias@codeaurora.org>
-Signed-off-by: Siddartha Mohanadoss <smohanad@codeaurora.org>
-[jhugo: added static config for controllers and fixed several bugs]
-Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
-[mani: removed DT dependency, splitted and cleaned up for upstream]
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/bus/Kconfig             |   1 +
- drivers/bus/Makefile            |   3 +
- drivers/bus/mhi/Kconfig         |  14 ++
- drivers/bus/mhi/Makefile        |   2 +
- drivers/bus/mhi/core/Makefile   |   3 +
- drivers/bus/mhi/core/init.c     | 402 ++++++++++++++++++++++++++++++++
- drivers/bus/mhi/core/internal.h | 151 ++++++++++++
- include/linux/mhi.h             | 400 +++++++++++++++++++++++++++++++
- include/linux/mod_devicetable.h |  12 +
- 9 files changed, 988 insertions(+)
- create mode 100644 drivers/bus/mhi/Kconfig
- create mode 100644 drivers/bus/mhi/Makefile
- create mode 100644 drivers/bus/mhi/core/Makefile
- create mode 100644 drivers/bus/mhi/core/init.c
- create mode 100644 drivers/bus/mhi/core/internal.h
- create mode 100644 include/linux/mhi.h
+return regmap_update_bits(...,
+                                                      mask, val);
 
-diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
-index 6095b6df8a81..6d4e4497b59b 100644
---- a/drivers/bus/Kconfig
-+++ b/drivers/bus/Kconfig
-@@ -201,5 +201,6 @@ config DA8XX_MSTPRI
- 	  peripherals.
- 
- source "drivers/bus/fsl-mc/Kconfig"
-+source "drivers/bus/mhi/Kconfig"
- 
- endmenu
-diff --git a/drivers/bus/Makefile b/drivers/bus/Makefile
-index 1320bcf9fa9d..05f32cd694a4 100644
---- a/drivers/bus/Makefile
-+++ b/drivers/bus/Makefile
-@@ -34,3 +34,6 @@ obj-$(CONFIG_UNIPHIER_SYSTEM_BUS)	+= uniphier-system-bus.o
- obj-$(CONFIG_VEXPRESS_CONFIG)	+= vexpress-config.o
- 
- obj-$(CONFIG_DA8XX_MSTPRI)	+= da8xx-mstpri.o
-+
-+# MHI
-+obj-$(CONFIG_MHI_BUS)		+= mhi/
-diff --git a/drivers/bus/mhi/Kconfig b/drivers/bus/mhi/Kconfig
-new file mode 100644
-index 000000000000..a8bd9bd7db7c
---- /dev/null
-+++ b/drivers/bus/mhi/Kconfig
-@@ -0,0 +1,14 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# MHI bus
-+#
-+# Copyright (c) 2018-2020, The Linux Foundation. All rights reserved.
-+#
-+
-+config MHI_BUS
-+       tristate "Modem Host Interface (MHI) bus"
-+       help
-+	 Bus driver for MHI protocol. Modem Host Interface (MHI) is a
-+	 communication protocol used by the host processors to control
-+	 and communicate with modem devices over a high speed peripheral
-+	 bus or shared memory.
-diff --git a/drivers/bus/mhi/Makefile b/drivers/bus/mhi/Makefile
-new file mode 100644
-index 000000000000..19e6443b72df
---- /dev/null
-+++ b/drivers/bus/mhi/Makefile
-@@ -0,0 +1,2 @@
-+# core layer
-+obj-y += core/
-diff --git a/drivers/bus/mhi/core/Makefile b/drivers/bus/mhi/core/Makefile
-new file mode 100644
-index 000000000000..2db32697c67f
---- /dev/null
-+++ b/drivers/bus/mhi/core/Makefile
-@@ -0,0 +1,3 @@
-+obj-$(CONFIG_MHI_BUS) := mhi.o
-+
-+mhi-y := init.o
-diff --git a/drivers/bus/mhi/core/init.c b/drivers/bus/mhi/core/init.c
-new file mode 100644
-index 000000000000..6f24c21284ec
---- /dev/null
-+++ b/drivers/bus/mhi/core/init.c
-@@ -0,0 +1,402 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018-2020, The Linux Foundation. All rights reserved.
-+ *
-+ */
-+
-+#include <linux/device.h>
-+#include <linux/dma-direction.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/interrupt.h>
-+#include <linux/list.h>
-+#include <linux/mhi.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/vmalloc.h>
-+#include <linux/wait.h>
-+#include "internal.h"
-+
-+static int parse_ev_cfg(struct mhi_controller *mhi_cntrl,
-+			struct mhi_controller_config *config)
-+{
-+	struct mhi_event *mhi_event;
-+	struct mhi_event_config *event_cfg;
-+	struct device *dev = &mhi_cntrl->mhi_dev->dev;
-+	int i, num;
-+
-+	num = config->num_events;
-+	mhi_cntrl->total_ev_rings = num;
-+	mhi_cntrl->mhi_event = kcalloc(num, sizeof(*mhi_cntrl->mhi_event),
-+				       GFP_KERNEL);
-+	if (!mhi_cntrl->mhi_event)
-+		return -ENOMEM;
-+
-+	/* Populate event ring */
-+	mhi_event = mhi_cntrl->mhi_event;
-+	for (i = 0; i < num; i++) {
-+		event_cfg = &config->event_cfg[i];
-+
-+		mhi_event->er_index = i;
-+		mhi_event->ring.elements = event_cfg->num_elements;
-+		mhi_event->intmod = event_cfg->irq_moderation_ms;
-+		mhi_event->irq = event_cfg->irq;
-+
-+		if (event_cfg->channel != U32_MAX) {
-+			/* This event ring has a dedicated channel */
-+			mhi_event->chan = event_cfg->channel;
-+			if (mhi_event->chan >= mhi_cntrl->max_chan) {
-+				dev_err(dev,
-+					"Event Ring channel not available\n");
-+				goto error_ev_cfg;
-+			}
-+
-+			mhi_event->mhi_chan =
-+				&mhi_cntrl->mhi_chan[mhi_event->chan];
-+		}
-+
-+		/* Priority is fixed to 1 for now */
-+		mhi_event->priority = 1;
-+
-+		mhi_event->db_cfg.brstmode = event_cfg->mode;
-+		if (MHI_INVALID_BRSTMODE(mhi_event->db_cfg.brstmode))
-+			goto error_ev_cfg;
-+
-+		mhi_event->data_type = event_cfg->data_type;
-+
-+		mhi_event->hw_ring = event_cfg->hardware_event;
-+		if (mhi_event->hw_ring)
-+			mhi_cntrl->hw_ev_rings++;
-+		else
-+			mhi_cntrl->sw_ev_rings++;
-+
-+		mhi_event->cl_manage = event_cfg->client_managed;
-+		mhi_event->offload_ev = event_cfg->offload_channel;
-+		mhi_event++;
-+	}
-+
-+	/* We need IRQ for each event ring + additional one for BHI */
-+	mhi_cntrl->nr_irqs_req = mhi_cntrl->total_ev_rings + 1;
-+
-+	return 0;
-+
-+error_ev_cfg:
-+
-+	kfree(mhi_cntrl->mhi_event);
-+	return -EINVAL;
-+}
-+
-+static int parse_ch_cfg(struct mhi_controller *mhi_cntrl,
-+			struct mhi_controller_config *config)
-+{
-+	struct mhi_channel_config *ch_cfg;
-+	struct device *dev = &mhi_cntrl->mhi_dev->dev;
-+	int i;
-+	u32 chan;
-+
-+	mhi_cntrl->max_chan = config->max_channels;
-+
-+	/*
-+	 * The allocation of MHI channels can exceed 32KB in some scenarios,
-+	 * so to avoid any memory possible allocation failures, vzalloc is
-+	 * used here
-+	 */
-+	mhi_cntrl->mhi_chan = vzalloc(mhi_cntrl->max_chan *
-+				      sizeof(*mhi_cntrl->mhi_chan));
-+	if (!mhi_cntrl->mhi_chan)
-+		return -ENOMEM;
-+
-+	INIT_LIST_HEAD(&mhi_cntrl->lpm_chans);
-+
-+	/* Populate channel configurations */
-+	for (i = 0; i < config->num_channels; i++) {
-+		struct mhi_chan *mhi_chan;
-+
-+		ch_cfg = &config->ch_cfg[i];
-+
-+		chan = ch_cfg->num;
-+		if (chan >= mhi_cntrl->max_chan) {
-+			dev_err(dev, "Channel %d not available\n", chan);
-+			goto error_chan_cfg;
-+		}
-+
-+		mhi_chan = &mhi_cntrl->mhi_chan[chan];
-+		mhi_chan->name = ch_cfg->name;
-+		mhi_chan->chan = chan;
-+
-+		mhi_chan->tre_ring.elements = ch_cfg->num_elements;
-+		if (!mhi_chan->tre_ring.elements)
-+			goto error_chan_cfg;
-+
-+		/*
-+		 * For some channels, local ring length should be bigger than
-+		 * the transfer ring length due to internal logical channels
-+		 * in device. So host can queue much more buffers than transfer
-+		 * ring length. Example, RSC channels should have a larger local
-+		 * channel length than transfer ring length.
-+		 */
-+		mhi_chan->buf_ring.elements = ch_cfg->local_elements;
-+		if (!mhi_chan->buf_ring.elements)
-+			mhi_chan->buf_ring.elements = mhi_chan->tre_ring.elements;
-+		mhi_chan->er_index = ch_cfg->event_ring;
-+		mhi_chan->dir = ch_cfg->dir;
-+
-+		/*
-+		 * For most channels, chtype is identical to channel directions.
-+		 * So, if it is not defined then assign channel direction to
-+		 * chtype
-+		 */
-+		mhi_chan->type = ch_cfg->type;
-+		if (!mhi_chan->type)
-+			mhi_chan->type = (enum mhi_ch_type)mhi_chan->dir;
-+
-+		mhi_chan->ee_mask = ch_cfg->ee_mask;
-+		mhi_chan->db_cfg.pollcfg = ch_cfg->pollcfg;
-+		mhi_chan->lpm_notify = ch_cfg->lpm_notify;
-+		mhi_chan->offload_ch = ch_cfg->offload_channel;
-+		mhi_chan->db_cfg.reset_req = ch_cfg->doorbell_mode_switch;
-+		mhi_chan->pre_alloc = ch_cfg->auto_queue;
-+		mhi_chan->auto_start = ch_cfg->auto_start;
-+
-+		/*
-+		 * If MHI host allocates buffers, then the channel direction
-+		 * should be DMA_FROM_DEVICE
-+		 */
-+		if (mhi_chan->pre_alloc && mhi_chan->dir != DMA_FROM_DEVICE) {
-+			dev_err(dev, "Invalid channel configuration\n");
-+			goto error_chan_cfg;
-+		}
-+
-+		/*
-+		 * Bi-directional and direction less channel must be an
-+		 * offload channel
-+		 */
-+		if ((mhi_chan->dir == DMA_BIDIRECTIONAL ||
-+		     mhi_chan->dir == DMA_NONE) && !mhi_chan->offload_ch) {
-+			dev_err(dev, "Invalid channel configuration\n");
-+			goto error_chan_cfg;
-+		}
-+
-+		if (!mhi_chan->offload_ch) {
-+			mhi_chan->db_cfg.brstmode = ch_cfg->doorbell;
-+			if (MHI_INVALID_BRSTMODE(mhi_chan->db_cfg.brstmode)) {
-+				dev_err(dev, "Invalid Door bell mode\n");
-+				goto error_chan_cfg;
-+			}
-+		}
-+
-+		mhi_chan->configured = true;
-+
-+		if (mhi_chan->lpm_notify)
-+			list_add_tail(&mhi_chan->node, &mhi_cntrl->lpm_chans);
-+	}
-+
-+	return 0;
-+
-+error_chan_cfg:
-+	vfree(mhi_cntrl->mhi_chan);
-+
-+	return -EINVAL;
-+}
-+
-+static int parse_config(struct mhi_controller *mhi_cntrl,
-+			struct mhi_controller_config *config)
-+{
-+	int ret;
-+
-+	/* Parse MHI channel configuration */
-+	ret = parse_ch_cfg(mhi_cntrl, config);
-+	if (ret)
-+		return ret;
-+
-+	/* Parse MHI event configuration */
-+	ret = parse_ev_cfg(mhi_cntrl, config);
-+	if (ret)
-+		goto error_ev_cfg;
-+
-+	mhi_cntrl->timeout_ms = config->timeout_ms;
-+	if (!mhi_cntrl->timeout_ms)
-+		mhi_cntrl->timeout_ms = MHI_TIMEOUT_MS;
-+
-+	mhi_cntrl->bounce_buf = config->use_bounce_buf;
-+	mhi_cntrl->buffer_len = config->buf_len;
-+	if (!mhi_cntrl->buffer_len)
-+		mhi_cntrl->buffer_len = MHI_MAX_MTU;
-+
-+	return 0;
-+
-+error_ev_cfg:
-+	vfree(mhi_cntrl->mhi_chan);
-+
-+	return ret;
-+}
-+
-+int mhi_register_controller(struct mhi_controller *mhi_cntrl,
-+			    struct mhi_controller_config *config)
-+{
-+	int ret;
-+	int i;
-+	struct mhi_event *mhi_event;
-+	struct mhi_chan *mhi_chan;
-+	struct mhi_cmd *mhi_cmd;
-+	struct mhi_device *mhi_dev;
-+
-+	if (!mhi_cntrl)
-+		return -EINVAL;
-+
-+	if (!mhi_cntrl->runtime_get || !mhi_cntrl->runtime_put)
-+		return -EINVAL;
-+
-+	if (!mhi_cntrl->status_cb || !mhi_cntrl->link_status)
-+		return -EINVAL;
-+
-+	ret = parse_config(mhi_cntrl, config);
-+	if (ret)
-+		return -EINVAL;
-+
-+	mhi_cntrl->mhi_cmd = kcalloc(NR_OF_CMD_RINGS,
-+				     sizeof(*mhi_cntrl->mhi_cmd), GFP_KERNEL);
-+	if (!mhi_cntrl->mhi_cmd) {
-+		ret = -ENOMEM;
-+		goto error_alloc_cmd;
-+	}
-+
-+	INIT_LIST_HEAD(&mhi_cntrl->transition_list);
-+	spin_lock_init(&mhi_cntrl->transition_lock);
-+	spin_lock_init(&mhi_cntrl->wlock);
-+	init_waitqueue_head(&mhi_cntrl->state_event);
-+
-+	mhi_cmd = mhi_cntrl->mhi_cmd;
-+	for (i = 0; i < NR_OF_CMD_RINGS; i++, mhi_cmd++)
-+		spin_lock_init(&mhi_cmd->lock);
-+
-+	mhi_event = mhi_cntrl->mhi_event;
-+	for (i = 0; i < mhi_cntrl->total_ev_rings; i++, mhi_event++) {
-+		/* Skip for offload events */
-+		if (mhi_event->offload_ev)
-+			continue;
-+
-+		mhi_event->mhi_cntrl = mhi_cntrl;
-+		spin_lock_init(&mhi_event->lock);
-+	}
-+
-+	mhi_chan = mhi_cntrl->mhi_chan;
-+	for (i = 0; i < mhi_cntrl->max_chan; i++, mhi_chan++) {
-+		mutex_init(&mhi_chan->mutex);
-+		init_completion(&mhi_chan->completion);
-+		rwlock_init(&mhi_chan->lock);
-+	}
-+
-+	/* Register controller with MHI bus */
-+	mhi_dev = mhi_alloc_device(mhi_cntrl);
-+	if (IS_ERR(mhi_dev)) {
-+		dev_err(mhi_cntrl->cntrl_dev, "Failed to allocate MHI device\n");
-+		ret = PTR_ERR(mhi_dev);
-+		goto error_alloc_dev;
-+	}
-+
-+	mhi_dev->dev_type = MHI_DEVICE_CONTROLLER;
-+	mhi_dev->mhi_cntrl = mhi_cntrl;
-+	dev_set_name(&mhi_dev->dev, "%s", dev_name(mhi_cntrl->cntrl_dev));
-+
-+	/* Init wakeup source */
-+	device_init_wakeup(&mhi_dev->dev, true);
-+
-+	ret = device_add(&mhi_dev->dev);
-+	if (ret)
-+		goto error_add_dev;
-+
-+	mhi_cntrl->mhi_dev = mhi_dev;
-+
-+	return 0;
-+
-+error_add_dev:
-+	put_device(&mhi_dev->dev);
-+
-+error_alloc_dev:
-+	kfree(mhi_cntrl->mhi_cmd);
-+
-+error_alloc_cmd:
-+	vfree(mhi_cntrl->mhi_chan);
-+	kfree(mhi_cntrl->mhi_event);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(mhi_register_controller);
-+
-+void mhi_unregister_controller(struct mhi_controller *mhi_cntrl)
-+{
-+	struct mhi_device *mhi_dev = mhi_cntrl->mhi_dev;
-+	struct mhi_chan *mhi_chan = mhi_cntrl->mhi_chan;
-+	unsigned int i;
-+
-+	kfree(mhi_cntrl->mhi_cmd);
-+	kfree(mhi_cntrl->mhi_event);
-+
-+	/* Drop the references to MHI devices created for channels */
-+	for (i = 0; i < mhi_cntrl->max_chan; i++, mhi_chan++) {
-+		if (!mhi_chan->mhi_dev)
-+			continue;
-+
-+		put_device(&mhi_chan->mhi_dev->dev);
-+	}
-+	vfree(mhi_cntrl->mhi_chan);
-+
-+	device_del(&mhi_dev->dev);
-+	put_device(&mhi_dev->dev);
-+}
-+EXPORT_SYMBOL_GPL(mhi_unregister_controller);
-+
-+static void mhi_release_device(struct device *dev)
-+{
-+	struct mhi_device *mhi_dev = to_mhi_device(dev);
-+
-+	kfree(mhi_dev);
-+}
-+
-+struct mhi_device *mhi_alloc_device(struct mhi_controller *mhi_cntrl)
-+{
-+	struct mhi_device *mhi_dev;
-+	struct device *dev;
-+
-+	mhi_dev = kzalloc(sizeof(*mhi_dev), GFP_KERNEL);
-+	if (!mhi_dev)
-+		return ERR_PTR(-ENOMEM);
-+
-+	dev = &mhi_dev->dev;
-+	device_initialize(dev);
-+	dev->bus = &mhi_bus_type;
-+	dev->release = mhi_release_device;
-+	dev->parent = mhi_cntrl->cntrl_dev;
-+	mhi_dev->mhi_cntrl = mhi_cntrl;
-+	mhi_dev->dev_wake = 0;
-+
-+	return mhi_dev;
-+}
-+
-+static int mhi_match(struct device *dev, struct device_driver *drv)
-+{
-+	return 0;
-+};
-+
-+struct bus_type mhi_bus_type = {
-+	.name = "mhi",
-+	.dev_name = "mhi",
-+	.match = mhi_match,
-+};
-+
-+static int __init mhi_init(void)
-+{
-+	return bus_register(&mhi_bus_type);
-+}
-+
-+static void __exit mhi_exit(void)
-+{
-+	bus_unregister(&mhi_bus_type);
-+}
-+
-+postcore_initcall(mhi_init);
-+module_exit(mhi_exit);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("MHI Host Interface");
-diff --git a/drivers/bus/mhi/core/internal.h b/drivers/bus/mhi/core/internal.h
-new file mode 100644
-index 000000000000..6af59ac3ec9d
---- /dev/null
-+++ b/drivers/bus/mhi/core/internal.h
-@@ -0,0 +1,151 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2018-2020, The Linux Foundation. All rights reserved.
-+ *
-+ */
-+
-+#ifndef _MHI_INT_H
-+#define _MHI_INT_H
-+
-+#include <linux/mhi.h>
-+
-+extern struct bus_type mhi_bus_type;
-+
-+/* MHI transfer completion events */
-+enum mhi_ev_ccs {
-+	MHI_EV_CC_INVALID = 0x0,
-+	MHI_EV_CC_SUCCESS = 0x1,
-+	MHI_EV_CC_EOT = 0x2, /* End of transfer event */
-+	MHI_EV_CC_OVERFLOW = 0x3,
-+	MHI_EV_CC_EOB = 0x4, /* End of block event */
-+	MHI_EV_CC_OOB = 0x5, /* Out of block event */
-+	MHI_EV_CC_DB_MODE = 0x6,
-+	MHI_EV_CC_UNDEFINED_ERR = 0x10,
-+	MHI_EV_CC_BAD_TRE = 0x11,
-+};
-+
-+enum mhi_ch_state {
-+	MHI_CH_STATE_DISABLED = 0x0,
-+	MHI_CH_STATE_ENABLED = 0x1,
-+	MHI_CH_STATE_RUNNING = 0x2,
-+	MHI_CH_STATE_SUSPENDED = 0x3,
-+	MHI_CH_STATE_STOP = 0x4,
-+	MHI_CH_STATE_ERROR = 0x5,
-+};
-+
-+#define MHI_INVALID_BRSTMODE(mode) (mode != MHI_DB_BRST_DISABLE && \
-+				    mode != MHI_DB_BRST_ENABLE)
-+
-+#define NR_OF_CMD_RINGS			1
-+#define CMD_EL_PER_RING			128
-+#define PRIMARY_CMD_RING		0
-+#define MHI_MAX_MTU			0xffff
-+
-+enum mhi_er_type {
-+	MHI_ER_TYPE_INVALID = 0x0,
-+	MHI_ER_TYPE_VALID = 0x1,
-+};
-+
-+struct db_cfg {
-+	bool reset_req;
-+	bool db_mode;
-+	u32 pollcfg;
-+	enum mhi_db_brst_mode brstmode;
-+	dma_addr_t db_val;
-+	void (*process_db)(struct mhi_controller *mhi_cntrl,
-+			   struct db_cfg *db_cfg, void __iomem *io_addr,
-+			   dma_addr_t db_val);
-+};
-+
-+struct mhi_ring {
-+	dma_addr_t dma_handle;
-+	dma_addr_t iommu_base;
-+	u64 *ctxt_wp; /* point to ctxt wp */
-+	void *pre_aligned;
-+	void *base;
-+	void *rp;
-+	void *wp;
-+	size_t el_size;
-+	size_t len;
-+	size_t elements;
-+	size_t alloc_size;
-+	void __iomem *db_addr;
-+};
-+
-+struct mhi_cmd {
-+	struct mhi_ring ring;
-+	spinlock_t lock;
-+};
-+
-+struct mhi_buf_info {
-+	void *v_addr;
-+	void *bb_addr;
-+	void *wp;
-+	void *cb_buf;
-+	dma_addr_t p_addr;
-+	size_t len;
-+	enum dma_data_direction dir;
-+};
-+
-+struct mhi_event {
-+	struct mhi_controller *mhi_cntrl;
-+	struct mhi_chan *mhi_chan; /* dedicated to channel */
-+	u32 er_index;
-+	u32 intmod;
-+	u32 irq;
-+	int chan; /* this event ring is dedicated to a channel (optional) */
-+	u32 priority;
-+	enum mhi_er_data_type data_type;
-+	struct mhi_ring ring;
-+	struct db_cfg db_cfg;
-+	struct tasklet_struct task;
-+	spinlock_t lock;
-+	int (*process_event)(struct mhi_controller *mhi_cntrl,
-+			     struct mhi_event *mhi_event,
-+			     u32 event_quota);
-+	bool hw_ring;
-+	bool cl_manage;
-+	bool offload_ev; /* managed by a device driver */
-+};
-+
-+struct mhi_chan {
-+	const char *name;
-+	/*
-+	 * Important: When consuming, increment tre_ring first and when
-+	 * releasing, decrement buf_ring first. If tre_ring has space, buf_ring
-+	 * is guranteed to have space so we do not need to check both rings.
-+	 */
-+	struct mhi_ring buf_ring;
-+	struct mhi_ring tre_ring;
-+	u32 chan;
-+	u32 er_index;
-+	u32 intmod;
-+	enum mhi_ch_type type;
-+	enum dma_data_direction dir;
-+	struct db_cfg db_cfg;
-+	enum mhi_ch_ee_mask ee_mask;
-+	enum mhi_ch_state ch_state;
-+	enum mhi_ev_ccs ccs;
-+	struct mhi_device *mhi_dev;
-+	void (*xfer_cb)(struct mhi_device *mhi_dev, struct mhi_result *result);
-+	struct mutex mutex;
-+	struct completion completion;
-+	rwlock_t lock;
-+	struct list_head node;
-+	bool lpm_notify;
-+	bool configured;
-+	bool offload_ch;
-+	bool pre_alloc;
-+	bool auto_start;
-+	bool wake_capable;
-+};
-+
-+/* Default MHI timeout */
-+#define MHI_TIMEOUT_MS (1000)
-+
-+struct mhi_device *mhi_alloc_device(struct mhi_controller *mhi_cntrl);
-+
-+int mhi_destroy_device(struct device *dev, void *data);
-+void mhi_create_devices(struct mhi_controller *mhi_cntrl);
-+
-+#endif /* _MHI_INT_H */
-diff --git a/include/linux/mhi.h b/include/linux/mhi.h
-new file mode 100644
-index 000000000000..a34aa50120c8
---- /dev/null
-+++ b/include/linux/mhi.h
-@@ -0,0 +1,400 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2018-2020, The Linux Foundation. All rights reserved.
-+ *
-+ */
-+#ifndef _MHI_H_
-+#define _MHI_H_
-+
-+#include <linux/device.h>
-+#include <linux/dma-direction.h>
-+#include <linux/mutex.h>
-+#include <linux/rwlock_types.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock_types.h>
-+#include <linux/wait.h>
-+#include <linux/workqueue.h>
-+
-+struct mhi_chan;
-+struct mhi_event;
-+struct mhi_ctxt;
-+struct mhi_cmd;
-+struct mhi_buf_info;
-+
-+/**
-+ * enum mhi_callback - MHI callback
-+ * @MHI_CB_IDLE: MHI entered idle state
-+ * @MHI_CB_PENDING_DATA: New data available for client to process
-+ * @MHI_CB_LPM_ENTER: MHI host entered low power mode
-+ * @MHI_CB_LPM_EXIT: MHI host about to exit low power mode
-+ * @MHI_CB_EE_RDDM: MHI device entered RDDM exec env
-+ * @MHI_CB_EE_MISSION_MODE: MHI device entered Mission Mode exec env
-+ * @MHI_CB_SYS_ERROR: MHI device entered error state (may recover)
-+ * @MHI_CB_FATAL_ERROR: MHI device entered fatal error state
-+ */
-+enum mhi_callback {
-+	MHI_CB_IDLE,
-+	MHI_CB_PENDING_DATA,
-+	MHI_CB_LPM_ENTER,
-+	MHI_CB_LPM_EXIT,
-+	MHI_CB_EE_RDDM,
-+	MHI_CB_EE_MISSION_MODE,
-+	MHI_CB_SYS_ERROR,
-+	MHI_CB_FATAL_ERROR,
-+};
-+
-+/**
-+ * enum mhi_flags - Transfer flags
-+ * @MHI_EOB: End of buffer for bulk transfer
-+ * @MHI_EOT: End of transfer
-+ * @MHI_CHAIN: Linked transfer
-+ */
-+enum mhi_flags {
-+	MHI_EOB,
-+	MHI_EOT,
-+	MHI_CHAIN,
-+};
-+
-+/**
-+ * enum mhi_device_type - Device types
-+ * @MHI_DEVICE_XFER: Handles data transfer
-+ * @MHI_DEVICE_CONTROLLER: Control device
-+ */
-+enum mhi_device_type {
-+	MHI_DEVICE_XFER,
-+	MHI_DEVICE_CONTROLLER,
-+};
-+
-+/**
-+ * enum mhi_ch_type - Channel types
-+ * @MHI_CH_TYPE_INVALID: Invalid channel type
-+ * @MHI_CH_TYPE_OUTBOUND: Outbound channel to the device
-+ * @MHI_CH_TYPE_INBOUND: Inbound channel from the device
-+ * @MHI_CH_TYPE_INBOUND_COALESCED: Coalesced channel for the device to combine
-+ *				   multiple packets and send them as a single
-+ *				   large packet to reduce CPU consumption
-+ */
-+enum mhi_ch_type {
-+	MHI_CH_TYPE_INVALID = 0,
-+	MHI_CH_TYPE_OUTBOUND = DMA_TO_DEVICE,
-+	MHI_CH_TYPE_INBOUND = DMA_FROM_DEVICE,
-+	MHI_CH_TYPE_INBOUND_COALESCED = 3,
-+};
-+
-+/**
-+ * enum mhi_ee_type - Execution environment types
-+ * @MHI_EE_PBL: Primary Bootloader
-+ * @MHI_EE_SBL: Secondary Bootloader
-+ * @MHI_EE_AMSS: Modem, aka the primary runtime EE
-+ * @MHI_EE_RDDM: Ram dump download mode
-+ * @MHI_EE_WFW: WLAN firmware mode
-+ * @MHI_EE_PTHRU: Passthrough
-+ * @MHI_EE_EDL: Embedded downloader
-+ */
-+enum mhi_ee_type {
-+	MHI_EE_PBL,
-+	MHI_EE_SBL,
-+	MHI_EE_AMSS,
-+	MHI_EE_RDDM,
-+	MHI_EE_WFW,
-+	MHI_EE_PTHRU,
-+	MHI_EE_EDL,
-+	MHI_EE_MAX_SUPPORTED = MHI_EE_EDL,
-+	MHI_EE_DISABLE_TRANSITION, /* local EE, not related to mhi spec */
-+	MHI_EE_NOT_SUPPORTED,
-+	MHI_EE_MAX,
-+};
-+
-+/**
-+ * enum mhi_ch_ee_mask - Execution environment mask for channel
-+ * @MHI_CH_EE_PBL: Allow channel to be used in PBL EE
-+ * @MHI_CH_EE_SBL: Allow channel to be used in SBL EE
-+ * @MHI_CH_EE_AMSS: Allow channel to be used in AMSS EE
-+ * @MHI_CH_EE_RDDM: Allow channel to be used in RDDM EE
-+ * @MHI_CH_EE_PTHRU: Allow channel to be used in PTHRU EE
-+ * @MHI_CH_EE_WFW: Allow channel to be used in WFW EE
-+ * @MHI_CH_EE_EDL: Allow channel to be used in EDL EE
-+ */
-+enum mhi_ch_ee_mask {
-+	MHI_CH_EE_PBL = BIT(MHI_EE_PBL),
-+	MHI_CH_EE_SBL = BIT(MHI_EE_SBL),
-+	MHI_CH_EE_AMSS = BIT(MHI_EE_AMSS),
-+	MHI_CH_EE_RDDM = BIT(MHI_EE_RDDM),
-+	MHI_CH_EE_PTHRU = BIT(MHI_EE_PTHRU),
-+	MHI_CH_EE_WFW = BIT(MHI_EE_WFW),
-+	MHI_CH_EE_EDL = BIT(MHI_EE_EDL),
-+};
-+
-+/**
-+ * enum mhi_er_data_type - Event ring data types
-+ * @MHI_ER_DATA: Only client data over this ring
-+ * @MHI_ER_CTRL: MHI control data and client data
-+ */
-+enum mhi_er_data_type {
-+	MHI_ER_DATA,
-+	MHI_ER_CTRL,
-+};
-+
-+/**
-+ * enum mhi_db_brst_mode - Doorbell mode
-+ * @MHI_DB_BRST_DISABLE: Burst mode disable
-+ * @MHI_DB_BRST_ENABLE: Burst mode enable
-+ */
-+enum mhi_db_brst_mode {
-+	MHI_DB_BRST_DISABLE = 0x2,
-+	MHI_DB_BRST_ENABLE = 0x3,
-+};
-+
-+/**
-+ * struct mhi_channel_config - Channel configuration structure for controller
-+ * @name: The name of this channel
-+ * @num: The number assigned to this channel
-+ * @num_elements: The number of elements that can be queued to this channel
-+ * @local_elements: The local ring length of the channel
-+ * @event_ring: The event rung index that services this channel
-+ * @dir: Direction that data may flow on this channel
-+ * @type: Channel type
-+ * @ee_mask: Execution Environment mask for this channel
-+ * @pollcfg: Polling configuration for burst mode.  0 is default.  milliseconds
-+	     for UL channels, multiple of 8 ring elements for DL channels
-+ * @doorbell: Doorbell mode
-+ * @lpm_notify: The channel master requires low power mode notifications
-+ * @offload_channel: The client manages the channel completely
-+ * @doorbell_mode_switch: Channel switches to doorbell mode on M0 transition
-+ * @auto_queue: Framework will automatically queue buffers for DL traffic
-+ * @auto_start: Automatically start (open) this channel
-+ */
-+struct mhi_channel_config {
-+	char *name;
-+	u32 num;
-+	u32 num_elements;
-+	u32 local_elements;
-+	u32 event_ring;
-+	enum dma_data_direction dir;
-+	enum mhi_ch_type type;
-+	u32 ee_mask;
-+	u32 pollcfg;
-+	enum mhi_db_brst_mode doorbell;
-+	bool lpm_notify;
-+	bool offload_channel;
-+	bool doorbell_mode_switch;
-+	bool auto_queue;
-+	bool auto_start;
-+};
-+
-+/**
-+ * struct mhi_event_config - Event ring configuration structure for controller
-+ * @num_elements: The number of elements that can be queued to this ring
-+ * @irq_moderation_ms: Delay irq for additional events to be aggregated
-+ * @irq: IRQ associated with this ring
-+ * @channel: Dedicated channel number. U32_MAX indicates a non-dedicated ring
-+ * @priority: Priority of this ring. Use 1 for now
-+ * @mode: Doorbell mode
-+ * @data_type: Type of data this ring will process
-+ * @hardware_event: This ring is associated with hardware channels
-+ * @client_managed: This ring is client managed
-+ * @offload_channel: This ring is associated with an offloaded channel
-+ */
-+struct mhi_event_config {
-+	u32 num_elements;
-+	u32 irq_moderation_ms;
-+	u32 irq;
-+	u32 channel;
-+	u32 priority;
-+	enum mhi_db_brst_mode mode;
-+	enum mhi_er_data_type data_type;
-+	bool hardware_event;
-+	bool client_managed;
-+	bool offload_channel;
-+};
-+
-+/**
-+ * struct mhi_controller_config - Root MHI controller configuration
-+ * @max_channels: Maximum number of channels supported
-+ * @timeout_ms: Timeout value for operations. 0 means use default
-+ * @buf_len: Size of automatically allocated buffers. 0 means use default
-+ * @num_channels: Number of channels defined in @ch_cfg
-+ * @ch_cfg: Array of defined channels
-+ * @num_events: Number of event rings defined in @event_cfg
-+ * @event_cfg: Array of defined event rings
-+ * @use_bounce_buf: Use a bounce buffer pool due to limited DDR access
-+ * @m2_no_db: Host is not allowed to ring DB in M2 state
-+ */
-+struct mhi_controller_config {
-+	u32 max_channels;
-+	u32 timeout_ms;
-+	u32 buf_len;
-+	u32 num_channels;
-+	struct mhi_channel_config *ch_cfg;
-+	u32 num_events;
-+	struct mhi_event_config *event_cfg;
-+	bool use_bounce_buf;
-+	bool m2_no_db;
-+};
-+
-+/**
-+ * struct mhi_controller - Master MHI controller structure
-+ * @cntrl_dev: Pointer to the struct device of physical bus acting as the MHI
-+ *            controller (required)
-+ * @mhi_dev: MHI device instance for the controller
-+ * @regs: Base address of MHI MMIO register space (required)
-+ * @iova_start: IOMMU starting address for data (required)
-+ * @iova_stop: IOMMU stop address for data (required)
-+ * @fw_image: Firmware image name for normal booting (required)
-+ * @edl_image: Firmware image name for emergency download mode (optional)
-+ * @sbl_size: SBL image size downloaded through BHIe (optional)
-+ * @seg_len: BHIe vector size (optional)
-+ * @mhi_chan: Points to the channel configuration table
-+ * @lpm_chans: List of channels that require LPM notifications
-+ * @irq: base irq # to request (required)
-+ * @max_chan: Maximum number of channels the controller supports
-+ * @total_ev_rings: Total # of event rings allocated
-+ * @hw_ev_rings: Number of hardware event rings
-+ * @sw_ev_rings: Number of software event rings
-+ * @nr_irqs_req: Number of IRQs required to operate (optional)
-+ * @nr_irqs: Number of IRQ allocated by bus master (required)
-+ * @mhi_event: MHI event ring configurations table
-+ * @mhi_cmd: MHI command ring configurations table
-+ * @mhi_ctxt: MHI device context, shared memory between host and device
-+ * @pm_mutex: Mutex for suspend/resume operation
-+ * @pm_lock: Lock for protecting MHI power management state
-+ * @timeout_ms: Timeout in ms for state transitions
-+ * @pm_state: MHI power management state
-+ * @db_access: DB access states
-+ * @ee: MHI device execution environment
-+ * @dev_wake: Device wakeup count
-+ * @pending_pkts: Pending packets for the controller
-+ * @transition_list: List of MHI state transitions
-+ * @transition_lock: Lock for protecting MHI state transition list
-+ * @wlock: Lock for protecting device wakeup
-+ * @st_worker: State transition worker
-+ * @fw_worker: Firmware download worker
-+ * @syserr_worker: System error worker
-+ * @state_event: State change event
-+ * @status_cb: CB function to notify power states of the device (required)
-+ * @link_status: CB function to query link status of the device (required)
-+ * @wake_get: CB function to assert device wake (optional)
-+ * @wake_put: CB function to de-assert device wake (optional)
-+ * @wake_toggle: CB function to assert and de-assert device wake (optional)
-+ * @runtime_get: CB function to controller runtime resume (required)
-+ * @runtimet_put: CB function to decrement pm usage (required)
-+ * @buffer_len: Bounce buffer length
-+ * @bounce_buf: Use of bounce buffer
-+ * @fbc_download: MHI host needs to do complete image transfer (optional)
-+ * @pre_init: MHI host needs to do pre-initialization before power up
-+ * @wake_set: Device wakeup set flag
-+ *
-+ * Fields marked as (required) need to be populated by the controller driver
-+ * before calling mhi_register_controller(). For the fields marked as (optional)
-+ * they can be populated depending on the usecase.
-+ */
-+struct mhi_controller {
-+	struct device *cntrl_dev;
-+	struct mhi_device *mhi_dev;
-+	void __iomem *regs;
-+	dma_addr_t iova_start;
-+	dma_addr_t iova_stop;
-+	const char *fw_image;
-+	const char *edl_image;
-+	size_t sbl_size;
-+	size_t seg_len;
-+	struct mhi_chan *mhi_chan;
-+	struct list_head lpm_chans;
-+	int *irq;
-+	u32 max_chan;
-+	u32 total_ev_rings;
-+	u32 hw_ev_rings;
-+	u32 sw_ev_rings;
-+	u32 nr_irqs_req;
-+	u32 nr_irqs;
-+
-+	struct mhi_event *mhi_event;
-+	struct mhi_cmd *mhi_cmd;
-+	struct mhi_ctxt *mhi_ctxt;
-+
-+	struct mutex pm_mutex;
-+	rwlock_t pm_lock;
-+	u32 timeout_ms;
-+	u32 pm_state;
-+	u32 db_access;
-+	enum mhi_ee_type ee;
-+	atomic_t dev_wake;
-+	atomic_t pending_pkts;
-+	struct list_head transition_list;
-+	spinlock_t transition_lock;
-+	spinlock_t wlock;
-+	struct work_struct st_worker;
-+	struct work_struct fw_worker;
-+	struct work_struct syserr_worker;
-+	wait_queue_head_t state_event;
-+
-+	void (*status_cb)(struct mhi_controller *mhi_cntrl,
-+			  enum mhi_callback cb);
-+	int (*link_status)(struct mhi_controller *mhi_cntrl);
-+	void (*wake_get)(struct mhi_controller *mhi_cntrl, bool override);
-+	void (*wake_put)(struct mhi_controller *mhi_cntrl, bool override);
-+	void (*wake_toggle)(struct mhi_controller *mhi_cntrl);
-+	int (*runtime_get)(struct mhi_controller *mhi_cntrl);
-+	void (*runtime_put)(struct mhi_controller *mhi_cntrl);
-+
-+	size_t buffer_len;
-+	bool bounce_buf;
-+	bool fbc_download;
-+	bool pre_init;
-+	bool wake_set;
-+};
-+
-+/**
-+ * struct mhi_device - Structure representing a MHI device which binds
-+ *                     to channels
-+ * @id: Pointer to MHI device ID struct
-+ * @chan_name: Name of the channel to which the device binds
-+ * @mhi_cntrl: Controller the device belongs to
-+ * @ul_chan: UL channel for the device
-+ * @dl_chan: DL channel for the device
-+ * @dev: Driver model device node for the MHI device
-+ * @dev_type: MHI device type
-+ * @dev_wake: Device wakeup counter
-+ */
-+struct mhi_device {
-+	const struct mhi_device_id *id;
-+	const char *chan_name;
-+	struct mhi_controller *mhi_cntrl;
-+	struct mhi_chan *ul_chan;
-+	struct mhi_chan *dl_chan;
-+	struct device dev;
-+	enum mhi_device_type dev_type;
-+	u32 dev_wake;
-+};
-+
-+/**
-+ * struct mhi_result - Completed buffer information
-+ * @buf_addr: Address of data buffer
-+ * @bytes_xferd: # of bytes transferred
-+ * @dir: Channel direction
-+ * @transaction_status: Status of last transaction
-+ */
-+struct mhi_result {
-+	void *buf_addr;
-+	size_t bytes_xferd;
-+	enum dma_data_direction dir;
-+	int transaction_status;
-+};
-+
-+#define to_mhi_device(dev) container_of(dev, struct mhi_device, dev)
-+
-+/**
-+ * mhi_register_controller - Register MHI controller
-+ * @mhi_cntrl: MHI controller to register
-+ * @config: Configuration to use for the controller
-+ */
-+int mhi_register_controller(struct mhi_controller *mhi_cntrl,
-+			    struct mhi_controller_config *config);
-+
-+/**
-+ * mhi_unregister_controller - Unregister MHI controller
-+ * @mhi_cntrl: MHI controller to unregister
-+ */
-+void mhi_unregister_controller(struct mhi_controller *mhi_cntrl);
-+
-+#endif /* _MHI_H_ */
-diff --git a/include/linux/mod_devicetable.h b/include/linux/mod_devicetable.h
-index e3596db077dc..be15e997fe39 100644
---- a/include/linux/mod_devicetable.h
-+++ b/include/linux/mod_devicetable.h
-@@ -821,4 +821,16 @@ struct wmi_device_id {
- 	const void *context;
- };
- 
-+#define MHI_NAME_SIZE 32
-+
-+/**
-+ * struct mhi_device_id - MHI device identification
-+ * @chan: MHI channel name
-+ * @driver_data: driver data;
-+ */
-+struct mhi_device_id {
-+	const char chan[MHI_NAME_SIZE];
-+	kernel_ulong_t driver_data;
-+};
-+
- #endif /* LINUX_MOD_DEVICETABLE_H */
--- 
-2.17.1
+>
+>> +}
+>> +
+>> +static int intel_cbphy_pcie_refclk_cfg(struct intel_cbphy_iphy *iphy, bool set)
+>> +{
+>> +	struct intel_combo_phy *cbphy = iphy->parent;
+>> +	const u32 pad_dis_cfg_off = 0x174;
+>> +	u32 val, bitn;
+>> +
+>> +	bitn = cbphy->id * 2 + iphy->id;
+>> +
+>> +	/* Register: 0 is enable, 1 is disable */
+>> +	val = set ? 0 : BIT(bitn);
+>> +
+>> +	return regmap_update_bits(cbphy->syscfg, pad_dis_cfg_off, BIT(bitn),
+>> +				 val);
+> Ditto.
+Here it can with go in single line with mask,
+>
+>> +}
+> ...
+>
+>> +static int intel_cbphy_iphy_cfg(struct intel_cbphy_iphy *iphy,
+>> +				int (*phy_cfg)(struct intel_cbphy_iphy *))
+>> +{
+>> +	struct intel_combo_phy *cbphy = iphy->parent;
+>> +	struct intel_cbphy_iphy *sphy;
+>> +	int ret;
+>> +
+>> +	ret = phy_cfg(iphy);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	if (cbphy->aggr_mode == PHY_DL_MODE) {
+> 	if (x != y)
+> 		return 0;
+>
+>> +		sphy = &cbphy->iphy[PHY_1];
+>> +		ret = phy_cfg(sphy);
+>> +	}
+>> +
+>> +	return ret;
+> 	return phy_cfg(...);
+>
+>> +}
+> ...
+>
+>> +	switch (mode) {
+>> +	case PHY_PCIE_MODE:
+>> +		cb_mode = (aggr == PHY_DL_MODE) ?
+>> +			  PCIE_DL_MODE : PCIE0_PCIE1_MODE;
+> I think one line is okay here.
 
+its taking 82 characters.
+
+>
+>> +		break;
+>> +
+>> +	case PHY_XPCS_MODE:
+>> +		cb_mode = (aggr == PHY_DL_MODE) ? RXAUI_MODE : XPCS0_XPCS1_MODE;
+>> +		break;
+>> +
+>> +	case PHY_SATA_MODE:
+>> +		if (aggr == PHY_DL_MODE) {
+>> +			dev_err(dev, "CBPHY%u mode:%u not support dual lane!\n",
+>> +				cbphy->id, mode);
+>> +			return -EINVAL;
+>> +		}
+>> +
+>> +		cb_mode = SATA0_SATA1_MODE;
+>> +		break;
+>> +
+>> +	default:
+>> +		dev_err(dev, "CBPHY%u mode:%u not supported!\n",
+>> +			cbphy->id, mode);
+>> +		return -EINVAL;
+>> +	}
+> ...
+>
+>
+>> +	if (!atomic_read(&cbphy->init_cnt)) {
+> Here it can be 0.
+>
+>> +		ret = clk_prepare_enable(cbphy->core_clk);
+>> +		if (ret) {
+>> +			dev_err(cbphy->dev, "Clock enable failed!\n");
+>> +			return ret;
+>> +		}
+>> +
+>> +		ret = clk_set_rate(cbphy->core_clk, cbphy->clk_rate);
+>> +		if (ret) {
+>> +			dev_err(cbphy->dev, "Clock freq set to %lu failed!\n",
+>> +				cbphy->clk_rate);
+>> +			goto clk_err;
+>> +		}
+>> +
+>> +		intel_cbphy_rst_assert(cbphy);
+>> +		ret = intel_cbphy_set_mode(cbphy);
+>> +		if (ret)
+>> +			goto clk_err;
+>> +	}
+>> +
+>> +	ret = intel_cbphy_iphy_enable(iphy, true);
+>> +	if (ret) {
+>> +		dev_err(dev, "Failed enabling Phy core\n");
+>> +		goto clk_err;
+>> +	}
+>> +
+>> +	if (!atomic_read(&cbphy->init_cnt))
+> Here it can be 1.
+True,
+I will fix this.
+Thanks for pointing it.
+>
+>> +		intel_cbphy_rst_deassert(cbphy);
+> Is it correct way to go?
+>
+>> +	ret = reset_control_deassert(iphy->app_rst);
+>> +	if (ret) {
+>> +		dev_err(dev, "PHY(%u:%u) phy deassert failed!\n",
+>> +			COMBO_PHY_ID(iphy), PHY_ID(iphy));
+>> +		goto clk_err;
+>> +	}
+> ...
+>
+>> +		ret = intel_cbphy_iphy_cfg(iphy,
+>> +					   intel_cbphy_pcie_en_pad_refclk);
+> One line is fine here.
+It is taking 81 characters, so kept in 2 lines.
+>
+>> +		if (ret)
+>> +			return ret;
+> ...
+>
+>> +		ret = intel_cbphy_iphy_cfg(iphy,
+>> +					   intel_cbphy_pcie_dis_pad_refclk);
+> Ditto.
+82 characters here.
+>
+>> +		if (ret)
+>> +			return ret;
+> ...
+>
+>> +		return ret;
+>> +	}
+>> +
+>> +	iphy->enable = true;
+>> +	platform_set_drvdata(pdev, iphy);
+>> +
+>> +	return 0;
+>> +}
+> ...
+>
+>> +	if (cbphy->aggr_mode == PHY_DL_MODE) {
+>> +		if (!iphy0->enable || !iphy1->enable) {
+> 	if (a) {
+> 		if (b) {
+> 			...
+> 		}
+> 	}
+>
+> is the same as
+> 	if (a && b) {
+> 		...
+> 	}
+>
+> We have it many times discussed internally.
+Will fix it.
+>
+>> +			dev_err(cbphy->dev,
+>> +				"Dual lane mode but lane0: %s, lane1: %s\n",
+>> +				iphy0->enable ? "on" : "off",
+>> +				iphy1->enable ? "on" : "off");
+>> +			return -EINVAL;
+>> +		}
+>> +	}
+> ...
+>
+>> +	ret = fwnode_property_get_reference_args(dev_fwnode(dev),
+>> +						 "intel,syscfg", NULL, 1, 0,
+>> +						 &ref);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	fwnode_handle_put(ref.fwnode);
+> Why here?
+
+Instructed to do:
+
+" Caller is responsible to call fwnode_handle_put() on the returned   
+args->fwnode pointer"
+
+>
+>> +	cbphy->id = ref.args[0];
+>> +	cbphy->syscfg = device_node_to_regmap(ref.fwnode->dev->of_node);
+> You rather need to have fwnode_to_regmap(). It's easy to add as a preparatory patch.
+Sure, I will add it.
+>
+>> +
+>> +	ret = fwnode_property_get_reference_args(dev_fwnode(dev), "intel,hsio",
+>> +						 NULL, 1, 0, &ref);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	fwnode_handle_put(ref.fwnode);
+>> +	cbphy->bid = ref.args[0];
+>> +	cbphy->hsiocfg = device_node_to_regmap(ref.fwnode->dev->of_node);
+> Ditto.
+>
+>> +	if (!device_property_read_u32(dev, "intel,phy-mode", &prop)) {
+> Hmm... Why to mix device_property_*() vs. fwnode_property_*() ?
+device_property_* are wrapper functions to fwnode_property_*().
+Calling the fwnode_property_*() ending up doing the same work of 
+device_property_*().
+
+If the best practice is to maintain symmetry, will call fwnode_property_*().
+
+>
+>> +		cbphy->phy_mode = prop;
+>> +		if (cbphy->phy_mode >= PHY_MAX_MODE) {
+>> +			dev_err(dev, "PHY mode: %u is invalid\n",
+>> +				cbphy->phy_mode);
+>> +			return -EINVAL;
+>> +		}
+>> +	}
+> ...
+>
+>> +	.owner =	THIS_MODULE,
+> Do we still need this?
+Present in all the PHY drivers,
+Please let me know if it need to be removed.
+
+Regards,
+Dilip
+
+>
