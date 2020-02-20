@@ -2,112 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D905166A68
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 23:38:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30707166A62
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 23:35:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729259AbgBTWih (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 17:38:37 -0500
-Received: from smtp.uniroma2.it ([160.80.6.23]:58786 "EHLO smtp.uniroma2.it"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729006AbgBTWih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 17:38:37 -0500
-Received: from utente-Aspire-V3-572G ([160.80.225.138])
-        by smtp-2015.uniroma2.it (8.14.4/8.14.4/Debian-8) with SMTP id 01KMXax2031786;
-        Thu, 20 Feb 2020 23:33:41 +0100
-Date:   Thu, 20 Feb 2020 23:33:36 +0100
-From:   Carmine Scarpitta <carmine.scarpitta@uniroma2.it>
-To:     David Ahern <dsahern@gmail.com>
-Cc:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        kuba@kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ahmed.abdelsalam@gssi.it,
-        dav.lebrun@gmail.com, andrea.mayer@uniroma2.it,
-        paolo.lungaroni@cnit.it, hiroki.shirokura@linecorp.com
-Subject: Re: [net-next 1/2] Perform IPv4 FIB lookup in a predefined FIB
- table
-Message-Id: <20200220233336.53eda87e7a76ed24317e0165@uniroma2.it>
-In-Reply-To: <a39867b0-c40f-e588-6cf9-1524581bb145@gmail.com>
-References: <20200213010932.11817-1-carmine.scarpitta@uniroma2.it>
-        <20200213010932.11817-2-carmine.scarpitta@uniroma2.it>
-        <7302c1f7-b6d1-90b7-5df1-3e5e0ba98f53@gmail.com>
-        <20200219005007.23d724b7f717ef89ad3d75e5@uniroma2.it>
-        <cd18410f-7065-ebea-74c5-4c016a3f1436@gmail.com>
-        <20200219034924.272d991505ee68d95566ff8d@uniroma2.it>
-        <a39867b0-c40f-e588-6cf9-1524581bb145@gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-unknown-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.100.0 at smtp-2015
-X-Virus-Status: Clean
+        id S1729239AbgBTWfN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 17:35:13 -0500
+Received: from outbound-smtp49.blacknight.com ([46.22.136.233]:59583 "EHLO
+        outbound-smtp49.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729096AbgBTWfN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 17:35:13 -0500
+Received: from mail.blacknight.com (pemlinmail06.blacknight.ie [81.17.255.152])
+        by outbound-smtp49.blacknight.com (Postfix) with ESMTPS id 4AF39FB39C
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 22:35:11 +0000 (GMT)
+Received: (qmail 15339 invoked from network); 20 Feb 2020 22:35:11 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 20 Feb 2020 22:35:10 -0000
+Date:   Thu, 20 Feb 2020 22:35:08 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Cc:     Alexander Duyck <alexander.duyck@gmail.com>, kvm@vger.kernel.org,
+        david@redhat.com, mst@redhat.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org,
+        yang.zhang.wz@gmail.com, pagupta@redhat.com,
+        konrad.wilk@oracle.com, nitesh@redhat.com, riel@surriel.com,
+        willy@infradead.org, lcapitulino@redhat.com, dave.hansen@intel.com,
+        wei.w.wang@intel.com, aarcange@redhat.com, pbonzini@redhat.com,
+        dan.j.williams@intel.com, mhocko@kernel.org, vbabka@suse.cz,
+        osalvador@suse.de
+Subject: Re: [PATCH v17 4/9] mm: Introduce Reported pages
+Message-ID: <20200220223508.GX3466@techsingularity.net>
+References: <20200211224416.29318.44077.stgit@localhost.localdomain>
+ <20200211224635.29318.19750.stgit@localhost.localdomain>
+ <20200219145511.GS3466@techsingularity.net>
+ <7d3c732d9ec7725dcb5a90c1dc8e9859fbe6ccc0.camel@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <7d3c732d9ec7725dcb5a90c1dc8e9859fbe6ccc0.camel@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
-
-Regarding your question. 
-
-Our use-case is more than doing lookup into a VRF. 
-
-What we are working on a multi-tenant automated DC fabric that supports 
-overlay, traffic engineering (TE) and service function chaining (SFC). 
-We are leveraging the SRv6 implementation in Linux. 
- 
-For the overlay we leverage: 
-- SRv6 T.Encaps to encapsulate both IPv4 and IPv6 traffic of the tenant 
-   (T.Encaps is supported since kernel 4.10) 
-- SRv6 End.DT4 to decapsulate the overlay encapsulation and does the 
-lookup inside the tenants VRF (this is the only missing piece)
-
-For TE we leverage: 
-- SRv6 End and End.X functions to steer traffic through one or more midpoints
-to avoid congested links, etc. (End and End.X are supported since kernel 4.14)
-
-For SFC we leverage some network functions that supports SRv6: 
-- iptables already supports matching SRv6 header since kernel 4.16. 
-- There is some work in progress of adding support to nftables as well. 
-
-On top of that we are using BGP as a control plane to advertise the VPN/Egress 
-tunnel endpoints. 
-
-Part of this is already running in production at LINE corporation [1]. 
-
-As you can see, what is missing is having SRv6 End.DT4 supported to do 
-decapsulation and VRF lookup.  
-
-We introduced this flag to avoid duplicating the IPv4 FIB lookup code. 
-
-For the "tbl_known" flag, we can wrap the check of the flag inside 
-a "#ifdef CONFIG_IP_MULTIPLE_TABLES" directive. 
-If CONFIG_IP_MULTIPLE_TABLES is not set, we won't do any check.  
-
-Thanks, 
-Carmine 
-
-
-[1] https://speakerdeck.com/line_developers/line-data-center-networking-with-srv6
-
-
-On Tue, 18 Feb 2020 21:29:31 -0700
-David Ahern <dsahern@gmail.com> wrote:
-
-> On 2/18/20 7:49 PM, Carmine Scarpitta wrote:
-> > Hi David,
-> > Thanks for the reply.
+On Thu, Feb 20, 2020 at 10:44:21AM -0800, Alexander Duyck wrote:
+> > > +static int
+> > > +page_reporting_cycle(struct page_reporting_dev_info *prdev, struct zone *zone,
+> > > +		     unsigned int order, unsigned int mt,
+> > > +		     struct scatterlist *sgl, unsigned int *offset)
+> > > +{
+> > > +	struct free_area *area = &zone->free_area[order];
+> > > +	struct list_head *list = &area->free_list[mt];
+> > > +	unsigned int page_len = PAGE_SIZE << order;
+> > > +	struct page *page, *next;
+> > > +	int err = 0;
+> > > +
+> > > +	/*
+> > > +	 * Perform early check, if free area is empty there is
+> > > +	 * nothing to process so we can skip this free_list.
+> > > +	 */
+> > > +	if (list_empty(list))
+> > > +		return err;
+> > > +
+> > > +	spin_lock_irq(&zone->lock);
+> > > +
+> > > +	/* loop through free list adding unreported pages to sg list */
+> > > +	list_for_each_entry_safe(page, next, list, lru) {
+> > > +		/* We are going to skip over the reported pages. */
+> > > +		if (PageReported(page))
+> > > +			continue;
+> > > +
+> > > +		/* Attempt to pull page from list */
+> > > +		if (!__isolate_free_page(page, order))
+> > > +			break;
+> > > +
 > > 
-> > The problem is not related to the table lookup. Calling fib_table_lookup and then rt_dst_alloc from seg6_local.c is good.
+> > Might want to note that you are breaking because the only reason to fail
+> > the isolation is that watermarks are not met and we are likely under
+> > memory pressure. It's not a big issue.
 > > 
+> > However, while I think this is correct, it's hard to follow. This loop can
+> > be broken out of with pages still on the scatter gather list. The current
+> > flow guarantees that err will not be set at this point so the caller
+> > cleans it up so we always drain the list either here or in the caller.
 > 
-> you did not answer my question. Why do all of the existing policy
-> options (mark, L3 domains, uid) to direct the lookup to the table of
-> interest not work for this use case?
+> I can probably submit a follow-up patch to update the comments. The reason
+> for not returning an error is because I didn't consider it an error that
+> we encountered the watermark and were not able to pull any more pages.
+> Instead I considered that the "stop" point for this pass and have it just
+> exit out of the loop and flush the data.
 > 
-> What you want is not unique. There are many ways to make it happen.
-> Bleeding policy details to route.c and adding a flag that is always
-> present and checked even when not needed (e.g.,
-> CONFIG_IP_MULTIPLE_TABLES is disabled) is not the right way to do it.
 
+I don't consider it an error and I don't think you should return an
+error. The comment just needs to explain that the draining happens in
+the caller in this case. That should be enough of a warning to a future
+developer to double check the flow after any changes to make sure the
+drain is reached.
+
+> > While I think it works, it's a bit fragile. I recommend putting a comment
+> > above this noting why it's safe and put a VM_WARN_ON_ONCE(err) before the
+> > break in case someone tries to change this in a years time and does not
+> > spot that the flow to reach page_reporting_drain *somewhere* is critical.
+> 
+> I assume this isn't about this section, but the section below?
+> 
+
+I meant something like
+
+if (!__isolate_free_page(page, order)) {
+	VM_WARN_ON_ONCE(err);
+	break;
+}
+
+Because at this point it's possible there are entries that should go
+through page_reporting_drain() but the caller will not call
+page_reporting_drain() in the event of an error.
 
 -- 
-Carmine Scarpitta <carmine.scarpitta@uniroma2.it>
+Mel Gorman
+SUSE Labs
