@@ -2,192 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1B9D16679A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 20:53:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BC411667A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 20:54:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728964AbgBTTxz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 14:53:55 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:23065 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728556AbgBTTxz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 14:53:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582228433;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=aCcTytOP234Bpez2/x/ttANB+L1zPQGu6RuaOR8/cjA=;
-        b=R/+g2KqP5hVOiDlEPrdthY0zZipHrIiOT8zX8UaWWGwk/yQPN2c2kTpX0TSJd+PTAPvsS3
-        3ObNYlXXOxyIDbwzKMN3e1UN8fZw+HjwN3RIms5njE0snpq2U2yuVtF3AKsmWADPu6mIBl
-        JI/Vo925y0OwOBBM5hToeYbuC94Q+Xg=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-460-eixVDyz7OtGZCB7eiNrKyQ-1; Thu, 20 Feb 2020 14:53:51 -0500
-X-MC-Unique: eixVDyz7OtGZCB7eiNrKyQ-1
-Received: by mail-qt1-f197.google.com with SMTP id o18so3379345qtt.19
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 11:53:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=aCcTytOP234Bpez2/x/ttANB+L1zPQGu6RuaOR8/cjA=;
-        b=SmCOYl6Wa8Y7aBhc2OOcHlVHvrzWILV8qmM4MKPzgAWcJ3Q9nW8wqnw92aiVEhqc61
-         dr+/u1ug887K1KNuOMvMSr89UWylFIUzVIxAnvfLm5hw3Vesx5CX5LSnUC0jsqB8OfPb
-         yZjJh0YqXiZa6PM0UV7ok6sc+BumO/I/q4fogB+YIUvmHk69M5dRlfHEM9Djjj8xlQRG
-         Shk3QdQAx4q36X998n0oO6U8YIunuqV7cFxuFCXX5revNl5O4YDJpF+sM6nq0/SthLI8
-         PPk3R+tiWDPfulVmYYABqE0/6QV0KPxPWRMx8CPqs+XYrvNp+cVj9QCwZrGu168HBhyD
-         1brQ==
-X-Gm-Message-State: APjAAAUeVhwq2mds2Fm5loxWgjdGJiyHWxIYOcc7ylRunIHPPRwqUIDl
-        SxeV/ws8PgG56WTEBBB0gLcemNeDMInsnGaPBHs2jYVwrWN9wtc7rJzTg/Ycpw3AtffaharEyLk
-        6u0gmOwDcGmeRqaFtwEyoafU5
-X-Received: by 2002:a0c:eacb:: with SMTP id y11mr27802170qvp.68.1582228431160;
-        Thu, 20 Feb 2020 11:53:51 -0800 (PST)
-X-Google-Smtp-Source: APXvYqz93atG3z/lnFBir34YOlOdzPMcROHMRiL5PAnpOXXRYB9KUMpanhKW+UUPSuYBC/9MetdmXg==
-X-Received: by 2002:a0c:eacb:: with SMTP id y11mr27802131qvp.68.1582228430870;
-        Thu, 20 Feb 2020 11:53:50 -0800 (PST)
-Received: from xz-x1.redhat.com ([104.156.64.75])
-        by smtp.gmail.com with ESMTPSA id r37sm293401qtj.44.2020.02.20.11.53.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2020 11:53:50 -0800 (PST)
-From:   Peter Xu <peterx@redhat.com>
-To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc:     Peter Xu <peterx@redhat.com>, Martin Cracauer <cracauer@cons.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Brian Geffon <bgeffon@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        David Hildenbrand <david@redhat.com>,
-        Bobby Powers <bobbypowers@gmail.com>,
-        Mel Gorman <mgorman@suse.de>
-Subject: [PATCH RESEND v6 12/16] mm: Introduce FAULT_FLAG_INTERRUPTIBLE
-Date:   Thu, 20 Feb 2020 14:53:48 -0500
-Message-Id: <20200220195348.16302-1-peterx@redhat.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200220155353.8676-1-peterx@redhat.com>
-References: 
+        id S1729031AbgBTTyJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 14:54:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45302 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728556AbgBTTyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 14:54:08 -0500
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD217208E4;
+        Thu, 20 Feb 2020 19:54:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582228447;
+        bh=G7F0PXamV8KjthSBpmnQYzM9wFyKJlEKoCMkaPi/V2A=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=QBbz2JVlL4gMj+bS1andjj5ao4hXrn6mRCwkQXu+GYp+ytsMzxurmAj1uGfifTfvS
+         BIP92Y44BHzLEYC80V2kJn/hgSTB9+wMDxhTJr+PmCsioO0byrKdVWIb8eQmIsjfgw
+         XTeymf6neRgd1tabn0V11TyrknFmoCCjnP/e8oYw=
+Received: by mail-qk1-f180.google.com with SMTP id o28so4744342qkj.9;
+        Thu, 20 Feb 2020 11:54:07 -0800 (PST)
+X-Gm-Message-State: APjAAAXkezniAWzeyhGgM17YluTC3Nm9shk20G83yhGRX0ovJLySDXEC
+        uSeCrli5ObJX312ozF5P5+LPeCcIx+oC4TZIhQ==
+X-Google-Smtp-Source: APXvYqwUpbePX8rcwBZf0o9pMlMFzEH0M7fCorDHPbfwgZVsl3To5oa244R0QJ3sIPjUMWARlW8Y5KyDGO8NwfCeV64=
+X-Received: by 2002:a37:5347:: with SMTP id h68mr29237844qkb.393.1582228446784;
+ Thu, 20 Feb 2020 11:54:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CFE9AEF5-FFF9-44A9-90D8-DE6AC7E7DD4F@goldelico.com> <20200220060001.25807-1-andreas@kemnade.info>
+In-Reply-To: <20200220060001.25807-1-andreas@kemnade.info>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 20 Feb 2020 13:53:55 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKTdpbLfPq_eGUf-w-0s8JMndbMrQ2BsMt+8y+eqQ-kZw@mail.gmail.com>
+Message-ID: <CAL_JsqKTdpbLfPq_eGUf-w-0s8JMndbMrQ2BsMt+8y+eqQ-kZw@mail.gmail.com>
+Subject: Re: [PATCH RFC] Bindings: nvmem: add bindings for JZ4780 efuse
+To:     Andreas Kemnade <andreas@kemnade.info>
+Cc:     "H. Nikolaus Schaller" <hns@goldelico.com>,
+        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Mathieu Malaterre <malat@debian.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:MIPS" <linux-mips@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-handle_userfaultfd() is currently the only one place in the kernel
-page fault procedures that can respond to non-fatal userspace signals.
-It was trying to detect such an allowance by checking against USER &
-KILLABLE flags, which was "un-official".
+On Thu, Feb 20, 2020 at 12:00 AM Andreas Kemnade <andreas@kemnade.info> wrote:
+>
+> From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+>
+> This patch brings support for the JZ4780 efuse. Currently it only expose
+> a read only access to the entire 8K bits efuse memory.
+>
+> Tested-by: Mathieu Malaterre <malat@debian.org>
+> Signed-off-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+> [converted to yaml]
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> ---
+> I will not update/maintain this, just have the impression that here some
+> more work is needed to make somebody comfortable with yaml than stick
+> to the usual pointing to documentation and I have not the ingredients
+> for doing
+> cat  Antihistamines >/dev/brain ;-)
+> and I do not want to see the other patches get lost.
 
-In this patch, we introduced a new flag (FAULT_FLAG_INTERRUPTIBLE) to
-show that the fault handler allows the fault procedure to respond even
-to non-fatal signals.  Meanwhile, add this new flag to the default
-fault flags so that all the page fault handlers can benefit from the
-new flag.  With that, replacing the userfault check to this one.
+Looks about right...
 
-Since the line is getting even longer, clean up the fault flags a bit
-too to ease TTY users.
+>
+>  .../bindings/nvmem/ingenic,jz4780-efuse.yaml  | 51 +++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/nvmem/ingenic,jz4780-efuse.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/nvmem/ingenic,jz4780-efuse.yaml b/Documentation/devicetree/bindings/nvmem/ingenic,jz4780-efuse.yaml
+> new file mode 100644
+> index 000000000000..ad56c17b0bd5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/nvmem/ingenic,jz4780-efuse.yaml
+> @@ -0,0 +1,51 @@
+> +# SPDX-License-Identifier: GPL-2.0
 
-Although we've got a new flag and applied it, we shouldn't have any
-functional change with this patch so far.
+Dual license new bindings please:
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- fs/userfaultfd.c   |  4 +---
- include/linux/mm.h | 39 ++++++++++++++++++++++++++++-----------
- 2 files changed, 29 insertions(+), 14 deletions(-)
+(GPL-2.0-only OR BSD-2-Clause)
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 888272621f38..c076d3295958 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -462,9 +462,7 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
- 	uwq.ctx = ctx;
- 	uwq.waken = false;
- 
--	return_to_userland =
--		(vmf->flags & (FAULT_FLAG_USER|FAULT_FLAG_KILLABLE)) ==
--		(FAULT_FLAG_USER|FAULT_FLAG_KILLABLE);
-+	return_to_userland = vmf->flags & FAULT_FLAG_INTERRUPTIBLE;
- 	blocking_state = return_to_userland ? TASK_INTERRUPTIBLE :
- 			 TASK_KILLABLE;
- 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 08ca35d3c341..ff653f9136dd 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -378,22 +378,38 @@ extern unsigned int kobjsize(const void *objp);
-  */
- extern pgprot_t protection_map[16];
- 
--#define FAULT_FLAG_WRITE	0x01	/* Fault was a write access */
--#define FAULT_FLAG_MKWRITE	0x02	/* Fault was mkwrite of existing pte */
--#define FAULT_FLAG_ALLOW_RETRY	0x04	/* Retry fault if blocking */
--#define FAULT_FLAG_RETRY_NOWAIT	0x08	/* Don't drop mmap_sem and wait when retrying */
--#define FAULT_FLAG_KILLABLE	0x10	/* The fault task is in SIGKILL killable region */
--#define FAULT_FLAG_TRIED	0x20	/* Second try */
--#define FAULT_FLAG_USER		0x40	/* The fault originated in userspace */
--#define FAULT_FLAG_REMOTE	0x80	/* faulting for non current tsk/mm */
--#define FAULT_FLAG_INSTRUCTION  0x100	/* The fault was during an instruction fetch */
-+/**
-+ * Fault flag definitions.
-+ *
-+ * @FAULT_FLAG_WRITE: Fault was a write fault.
-+ * @FAULT_FLAG_MKWRITE: Fault was mkwrite of existing PTE.
-+ * @FAULT_FLAG_ALLOW_RETRY: Allow to retry the fault if blocked.
-+ * @FAULT_FLAG_RETRY_NOWAIT: Don't drop mmap_sem and wait when retrying.
-+ * @FAULT_FLAG_KILLABLE: The fault task is in SIGKILL killable region.
-+ * @FAULT_FLAG_TRIED: The fault has been tried once.
-+ * @FAULT_FLAG_USER: The fault originated in userspace.
-+ * @FAULT_FLAG_REMOTE: The fault is not for current task/mm.
-+ * @FAULT_FLAG_INSTRUCTION: The fault was during an instruction fetch.
-+ * @FAULT_FLAG_INTERRUPTIBLE: The fault can be interrupted by non-fatal signals.
-+ */
-+#define FAULT_FLAG_WRITE			0x01
-+#define FAULT_FLAG_MKWRITE			0x02
-+#define FAULT_FLAG_ALLOW_RETRY			0x04
-+#define FAULT_FLAG_RETRY_NOWAIT			0x08
-+#define FAULT_FLAG_KILLABLE			0x10
-+#define FAULT_FLAG_TRIED			0x20
-+#define FAULT_FLAG_USER				0x40
-+#define FAULT_FLAG_REMOTE			0x80
-+#define FAULT_FLAG_INSTRUCTION  		0x100
-+#define FAULT_FLAG_INTERRUPTIBLE		0x200
- 
- /*
-  * The default fault flags that should be used by most of the
-  * arch-specific page fault handlers.
-  */
- #define FAULT_FLAG_DEFAULT  (FAULT_FLAG_ALLOW_RETRY | \
--			     FAULT_FLAG_KILLABLE)
-+			     FAULT_FLAG_KILLABLE | \
-+			     FAULT_FLAG_INTERRUPTIBLE)
- 
- #define FAULT_FLAG_TRACE \
- 	{ FAULT_FLAG_WRITE,		"WRITE" }, \
-@@ -404,7 +420,8 @@ extern pgprot_t protection_map[16];
- 	{ FAULT_FLAG_TRIED,		"TRIED" }, \
- 	{ FAULT_FLAG_USER,		"USER" }, \
- 	{ FAULT_FLAG_REMOTE,		"REMOTE" }, \
--	{ FAULT_FLAG_INSTRUCTION,	"INSTRUCTION" }
-+	{ FAULT_FLAG_INSTRUCTION,	"INSTRUCTION" }, \
-+	{ FAULT_FLAG_INTERRUPTIBLE,	"INTERRUPTIBLE" }
- 
- /*
-  * vm_fault is filled by the the pagefault handler and passed to the vma's
--- 
-2.24.1
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/nvmem/ingenic,jz4780-efuse.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Ingenic JZ EFUSE driver bindings
+> +
+> +maintainers:
+> +  - tbd <tbd@tbd>
+> +
+> +allOf:
+> +  - $ref: "nvmem.yaml#"
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ingenic,jz4780-efuse
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    # Handle for the ahb for the efuse.
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +   items:
+> +     - const:  bus_clk
 
+My prior comment still applies.
+
+Also, for a single clock, you don't really need a name.
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clock
+
+'make dt_binding_check' would have pointed the error here for you:
+
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/nvmem/ingenic,jz4780-efuse.example.dt.yaml:
+efuse@134100d0: 'clock' is a required property
+
+> +  - clock-names
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/jz4780-cgu.h>
+> +
+> +    efuse@134100d0 {
+> +        compatible = "ingenic,jz4780-efuse";
+> +        reg = <0x134100d0 0x2c>;
+> +
+> +        clocks = <&cgu JZ4780_CLK_AHB2>;
+> +        clock-names = "bus_clk";
+> +    };
+> +
+> +...
+> --
+> 2.20.1
+>
