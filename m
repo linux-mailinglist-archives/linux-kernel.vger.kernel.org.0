@@ -2,82 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59C67165F1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 14:48:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F9C0165F2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 14:49:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728271AbgBTNsu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 08:48:50 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:35948 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728042AbgBTNsu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 08:48:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=zBQV1Nvl6gQ7063nOMO4bl4Qit9dtUsePu9xZtdIUpM=; b=igtOB94RI8XKtzVTmpl7adfTBc
-        nUPRfeBQAn6qgMu2mIMXdqdemGWBPZM6m1mk0JRQ4gln6YP021QrTz7JW7WriTW9kQd9HhefrWodr
-        DPdZE7ea3rkTiKxZzjV2rfZFsVohFeCSeKjLKjW2laQNPicIuou8l8cd1nA0LgsCPlX64i0y7yahW
-        32HPR3UOUNpTTE89QggDpsf9Uy+G746NO+E5c6nPo49C7MXOyuBpobo2jZnaHlZEfffwdWw5lxpdO
-        LXm98qt8lqtRm5JiZBti5MLazqN7XkI5SW89icHM4E2rVuaoGC9UJqrtuJmXRDlbntv0SnHwa7P6h
-        mNHva41Q==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j4mC9-0006TC-8A; Thu, 20 Feb 2020 13:48:49 +0000
-Date:   Thu, 20 Feb 2020 05:48:49 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "linux-erofs@lists.ozlabs.org" <linux-erofs@lists.ozlabs.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "linux-f2fs-devel@lists.sourceforge.net" 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        "cluster-devel@redhat.com" <cluster-devel@redhat.com>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
-Subject: Re: [PATCH v7 14/24] btrfs: Convert from readpages to readahead
-Message-ID: <20200220134849.GV24185@bombadil.infradead.org>
-References: <20200219210103.32400-1-willy@infradead.org>
- <20200219210103.32400-15-willy@infradead.org>
- <SN4PR0401MB35987D7B76007B93B1C5CE5E9B130@SN4PR0401MB3598.namprd04.prod.outlook.com>
+        id S1728306AbgBTNtr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 08:49:47 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:32729 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728117AbgBTNtq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 08:49:46 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 48NbYh1hVyz9v0MK;
+        Thu, 20 Feb 2020 14:49:44 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=Mlu6cmGM; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id OFAoWcNwe3RW; Thu, 20 Feb 2020 14:49:44 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 48NbYh0JY5z9v0MJ;
+        Thu, 20 Feb 2020 14:49:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1582206584; bh=BNmen+R0A95fKF9yP5dTxuzGe+sL7dAQ7ChpuSoUS5c=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Mlu6cmGMba4L0sYZwxMEPfQwvJ+HCjrFncFIsGGZhNyFJqdvp9qEWWiTgnEWpp9RL
+         pciPb9n1ehAPK8yK4dlvakvdTx+sF/pfbSYPOROhLft3wEXG7RqrGpunAuYLHnv2JL
+         o4VjCgVlhpSuA13ZUihgB11Y+lLOuB4UgA0nkJHE=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 61A838B86D;
+        Thu, 20 Feb 2020 14:49:45 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id N_Jiuu8x05kS; Thu, 20 Feb 2020 14:49:45 +0100 (CET)
+Received: from [192.168.4.90] (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id ACB748B866;
+        Thu, 20 Feb 2020 14:49:44 +0100 (CET)
+Subject: Re: [PATCH v3 5/6] powerpc/fsl_booke/64: clear the original kernel if
+ randomized
+To:     Jason Yan <yanaijie@huawei.com>, mpe@ellerman.id.au,
+        linuxppc-dev@lists.ozlabs.org, diana.craciun@nxp.com,
+        benh@kernel.crashing.org, paulus@samba.org, npiggin@gmail.com,
+        keescook@chromium.org, kernel-hardening@lists.openwall.com,
+        oss@buserror.net
+Cc:     linux-kernel@vger.kernel.org, zhaohongjiang@huawei.com
+References: <20200206025825.22934-1-yanaijie@huawei.com>
+ <20200206025825.22934-6-yanaijie@huawei.com>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <0f778e1c-5e29-e600-1cf0-aeb3e1a6fe08@c-s.fr>
+Date:   Thu, 20 Feb 2020 14:49:44 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN4PR0401MB35987D7B76007B93B1C5CE5E9B130@SN4PR0401MB3598.namprd04.prod.outlook.com>
+In-Reply-To: <20200206025825.22934-6-yanaijie@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 09:42:19AM +0000, Johannes Thumshirn wrote:
-> On 19/02/2020 22:03, Matthew Wilcox wrote:
-> > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> > 
-> > Use the new readahead operation in btrfs.  Add a
-> > readahead_for_each_batch() iterator to optimise the loop in the XArray.
+
+
+Le 06/02/2020 à 03:58, Jason Yan a écrit :
+> The original kernel still exists in the memory, clear it now.
+
+No such problem with PPC32 ? Or is that common ?
+
+Christophe
+
 > 
-> OK I must admit I haven't followed this series closely, but what 
-> happened to said readahead_for_each_batch()?
+> Signed-off-by: Jason Yan <yanaijie@huawei.com>
+> Cc: Scott Wood <oss@buserror.net>
+> Cc: Diana Craciun <diana.craciun@nxp.com>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Christophe Leroy <christophe.leroy@c-s.fr>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Nicholas Piggin <npiggin@gmail.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> ---
+>   arch/powerpc/mm/nohash/kaslr_booke.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> As far as I can see it's now:
+> diff --git a/arch/powerpc/mm/nohash/kaslr_booke.c b/arch/powerpc/mm/nohash/kaslr_booke.c
+> index c6f5c1db1394..ed1277059368 100644
+> --- a/arch/powerpc/mm/nohash/kaslr_booke.c
+> +++ b/arch/powerpc/mm/nohash/kaslr_booke.c
+> @@ -378,8 +378,10 @@ notrace void __init kaslr_early_init(void *dt_ptr, phys_addr_t size)
+>   	unsigned int *__kaslr_offset = (unsigned int *)(KERNELBASE + 0x58);
+>   	unsigned int *__run_at_load = (unsigned int *)(KERNELBASE + 0x5c);
+>   
+> -	if (*__run_at_load == 1)
+> +	if (*__run_at_load == 1) {
+> +		kaslr_late_init();
+>   		return;
+> +	}
+>   
+>   	/* Setup flat device-tree pointer */
+>   	initial_boot_params = dt_ptr;
 > 
-> [...]
-> > +	while ((nr = readahead_page_batch(rac, pagepool))) {
-
-Oops, forgot to update the changelog there.  Yes, that's exactly what it
-changed to.  That discussion was here:
-
-https://lore.kernel.org/linux-fsdevel/20200219144117.GP24185@bombadil.infradead.org/
-
-... and then Christoph pointed out the iterators weren't really adding
-much value at that point, so they got deleted.  New changelog for
-this patch:
-
-btrfs: Convert from readpages to readahead
-  
-Implement the new readahead method in btrfs.  Add a readahead_page_batch()
-to optimise fetching a batch of pages at once.
-
