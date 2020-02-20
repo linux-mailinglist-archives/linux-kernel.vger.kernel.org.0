@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3E731661DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:08:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DBD41661D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:06:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728680AbgBTQIE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 11:08:04 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:6676 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728567AbgBTQID (ORCPT
+        id S1728659AbgBTQGs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 11:06:48 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:13266 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728585AbgBTQGr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 11:08:03 -0500
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01KG3x8Q027503
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 11:08:01 -0500
+        Thu, 20 Feb 2020 11:06:47 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01KG3lgI020667
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 11:06:46 -0500
 Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y92xehp21-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2y8ubxd47k-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 11:08:01 -0500
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 11:06:46 -0500
 Received: from localhost
         by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
-        Thu, 20 Feb 2020 16:07:59 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        Thu, 20 Feb 2020 16:06:44 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
         by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 20 Feb 2020 16:07:53 -0000
+        Thu, 20 Feb 2020 16:06:39 -0000
 Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01KG6btL22020162
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01KG6c9347644754
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 20 Feb 2020 16:06:37 GMT
+        Thu, 20 Feb 2020 16:06:38 GMT
 Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CE339AE058;
-        Thu, 20 Feb 2020 16:06:37 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 6A21CAE04D;
+        Thu, 20 Feb 2020 16:06:38 +0000 (GMT)
 Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4D54DAE057;
+        by IMSVA (Postfix) with ESMTP id DD1F8AE053;
         Thu, 20 Feb 2020 16:06:37 +0000 (GMT)
 Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
         by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
@@ -58,102 +58,69 @@ Cc:     Halil Pasic <pasic@linux.ibm.com>, linux-s390@vger.kernel.org,
         David Gibson <david@gibson.dropbear.id.au>,
         "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
         Michael Mueller <mimu@linux.ibm.com>
-Subject: [PATCH 1/2] mm: move force_dma_unencrypted() to mem_encrypt.h
-Date:   Thu, 20 Feb 2020 17:06:05 +0100
+Subject: [PATCH 2/2] virtio: let virtio use DMA API when guest RAM is protected
+Date:   Thu, 20 Feb 2020 17:06:06 +0100
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200220160606.53156-1-pasic@linux.ibm.com>
 References: <20200220160606.53156-1-pasic@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 20022016-0008-0000-0000-00000354D0ED
+x-cbid: 20022016-0008-0000-0000-00000354D0D9
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20022016-0009-0000-0000-00004A75E16D
-Message-Id: <20200220160606.53156-2-pasic@linux.ibm.com>
+x-cbparentid: 20022016-0009-0000-0000-00004A75E158
+Message-Id: <20200220160606.53156-3-pasic@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
  definitions=2020-02-20_04:2020-02-19,2020-02-20 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- clxscore=1015 lowpriorityscore=0 phishscore=0 bulkscore=0 spamscore=0
- suspectscore=0 malwarescore=0 priorityscore=1501 impostorscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002200118
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ phishscore=0 impostorscore=0 clxscore=1015 priorityscore=1501 bulkscore=0
+ suspectscore=0 malwarescore=0 mlxlogscore=999 spamscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002200118
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently force_dma_unencrypted() is only used by the direct
-implementation of the DMA API, and thus resides in dma-direct.h. But
-there is nothing dma-direct specific about it: if one was -- for
-whatever reason -- to implement custom DMA ops that have to in the
-encrypted/protected scenarios dma-direct currently deals with, one would
-need exactly this kind of information.
+Currently the advanced guest memory protection technologies (AMD SEV,
+powerpc secure guest technology and s390 Protected VMs) abuse the
+VIRTIO_F_IOMMU_PLATFORM flag to make virtio core use the DMA API, which
+is in turn necessary, to make IO work with guest memory protection.
 
-More importantly, virtio has to use DMA API (so that the memory
-encryption (x86) or protection (power, s390) is handled) under the very
-same circumstances force_dma_unencrypted() returns true. Furthermore,
-the in these cases the reason to go via the DMA API is distinct,
-compared to the reason indicated by VIRTIO_F_IOMMU_PLATFORM: we need to
-use DMA API independently of the device's properties with regards to
-access to memory. I.e. the addresses in the descriptors are still guest
-physical addresses, the device may still be implemented by a SMP CPU,
-and thus the device shall use those without any further translation. See
-[1].
+But VIRTIO_F_IOMMU_PLATFORM a.k.a. VIRTIO_F_ACCESS_PLATFORM is really a
+different beast: with virtio devices whose implementation runs on an SMP
+CPU we are still fine with doing all the usual optimizations, it is just
+that we need to make sure that the memory protection mechanism does not
+get in the way. The VIRTIO_F_ACCESS_PLATFORM mandates more work on the
+side of the guest (and possibly he host side as well) than we actually
+need.
 
-Let's move force_dma_unencrypted() the so virtio, or other
-implementations of DMA ops can make the right decisions.
-
-[1] https://docs.oasis-open.org/virtio/virtio/v1.1/cs01/virtio-v1.1-cs01.html#x1-4100006
-(In the spec VIRTIO_F_IOMMU_PLATFORM is called
-VIRTIO_F_ACCESS_PLATFORM).
+An additional benefit of teaching the guest to make the right decision
+(and use DMA API) on it's own is: removing the need, to mandate special
+VM configuration for guests that may run with protection. This is
+especially interesting for s390 as VIRTIO_F_IOMMU_PLATFORM pushes all
+the virtio control structures into the first 2G of guest memory:
+something we don't necessarily want to do per-default.
 
 Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
 Tested-by: Ram Pai <linuxram@us.ibm.com>
 Tested-by: Michael Mueller <mimu@linux.ibm.com>
 ---
- include/linux/dma-direct.h  |  9 ---------
- include/linux/mem_encrypt.h | 10 ++++++++++
- 2 files changed, 10 insertions(+), 9 deletions(-)
+ drivers/virtio/virtio_ring.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
-index 24b8684aa21d..590b15d881b0 100644
---- a/include/linux/dma-direct.h
-+++ b/include/linux/dma-direct.h
-@@ -26,15 +26,6 @@ static inline phys_addr_t __dma_to_phys(struct device *dev, dma_addr_t dev_addr)
- }
- #endif /* !CONFIG_ARCH_HAS_PHYS_TO_DMA */
+diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+index 867c7ebd3f10..fafc8f924955 100644
+--- a/drivers/virtio/virtio_ring.c
++++ b/drivers/virtio/virtio_ring.c
+@@ -243,6 +243,9 @@ static bool vring_use_dma_api(struct virtio_device *vdev)
+ 	if (!virtio_has_iommu_quirk(vdev))
+ 		return true;
  
--#ifdef CONFIG_ARCH_HAS_FORCE_DMA_UNENCRYPTED
--bool force_dma_unencrypted(struct device *dev);
--#else
--static inline bool force_dma_unencrypted(struct device *dev)
--{
--	return false;
--}
--#endif /* CONFIG_ARCH_HAS_FORCE_DMA_UNENCRYPTED */
--
- /*
-  * If memory encryption is supported, phys_to_dma will set the memory encryption
-  * bit in the DMA address, and dma_to_phys will clear it.  The raw __phys_to_dma
-diff --git a/include/linux/mem_encrypt.h b/include/linux/mem_encrypt.h
-index 5c4a18a91f89..64a48c4b01a2 100644
---- a/include/linux/mem_encrypt.h
-+++ b/include/linux/mem_encrypt.h
-@@ -22,6 +22,16 @@ static inline bool mem_encrypt_active(void) { return false; }
- 
- #endif	/* CONFIG_ARCH_HAS_MEM_ENCRYPT */
- 
-+struct device;
-+#ifdef CONFIG_ARCH_HAS_FORCE_DMA_UNENCRYPTED
-+bool force_dma_unencrypted(struct device *dev);
-+#else
-+static inline bool force_dma_unencrypted(struct device *dev)
-+{
-+	return false;
-+}
-+#endif /* CONFIG_ARCH_HAS_FORCE_DMA_UNENCRYPTED */
++	if (force_dma_unencrypted(&vdev->dev))
++		return true;
 +
- #ifdef CONFIG_AMD_MEM_ENCRYPT
- /*
-  * The __sme_set() and __sme_clr() macros are useful for adding or removing
+ 	/* Otherwise, we are left to guess. */
+ 	/*
+ 	 * In theory, it's possible to have a buggy QEMU-supposed
 -- 
 2.17.1
 
