@@ -2,93 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3457C166A09
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 22:44:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 720F7166A0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 22:51:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729078AbgBTVos (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 16:44:48 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:35322 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726670AbgBTVos (ORCPT
+        id S1729111AbgBTVvn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 16:51:43 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:38520 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726670AbgBTVvm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 16:44:48 -0500
-Received: by mail-ot1-f65.google.com with SMTP id r16so156141otd.2;
-        Thu, 20 Feb 2020 13:44:48 -0800 (PST)
+        Thu, 20 Feb 2020 16:51:42 -0500
+Received: by mail-io1-f65.google.com with SMTP id s24so121216iog.5
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 13:51:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=MHiTv90gsZjcPD4mQ61n4HTIDYa1NmZVPZ1IayUwQkI=;
+        b=Lal3T0tqKD0/jZ8xvGBMp13g3q7wmRO74luIx8Se8bB9uNip2THv3Z96HX2Gom9/C5
+         H2aLX4afOEkNrE6TMJUqGmC1MPVbUwIjR2xSJHxcsr6Er9A1gOkML2mqF308GmZrrh0s
+         12LySCIgfsvZBGlJg0j786PzqQhgsL1uwyPgtWhFx0mlJRpxWwdPPMJzUB0bxGHrspz+
+         noFO8S+QnWmuoBIcaFNTHGkwRKsqE75REORDPw9xMs81bQezGBkAsUU2ceXuM33mT545
+         jEabuRzfjlL5G4D0Tqu14IMmyTgEq2eY+FbTFJju7BlOr7twlvkO4UHnm+qAn745Qlpe
+         OhnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gVNMXV+GYwL7O+PpLd4msfz5vj4MvTvgQc/WifjGAvM=;
-        b=fBoH3Gx7Mrpaj+cKypiJGEfmTKi4kqI9V3/DqhT6WV71meh72wMzvQQm7ZLtRqhZzz
-         pIhtQ/f/6I5UDZAwHZDZxVIRdUSqSNhHaTRnpKRyxC96dkpZcfbaPNIqar2JLB1p0wTn
-         k54MYlnH9SKha0ApUEMN4ycESiB+eKVkO4XufHUpecjI5ThJ6ZtOdS7WbvJ3IYLmBX9o
-         NzwPpoVjMsjlBoo/J9sKRkfwn+P4uYZo6fwUZYT4pTD1FicKLQ50Qd+VCVEZokqazHlW
-         7GV1Qd5cbO5GpW6V5sMUYrW+dcTvQIUU2HdWk6JqearmxnLbTUPGdknZ6zsqHYVyLR/E
-         3ULw==
-X-Gm-Message-State: APjAAAWD6HiV8U4QWJ5XWYaf26Q9wxwg35OVPLmxceicqMpidCAz5rNw
-        N5D/Hw0o26U/g21Z8Kky4ZZ2fF4/TGou8FPEZnw=
-X-Google-Smtp-Source: APXvYqzXrW8tTLCrt5fn19taPhUJKI/pQVbfsUINFlYguhoDqbfR/4Vi6SciKAUGdzIl7AgirjHDY6trZyHsrsTZKLw=
-X-Received: by 2002:a05:6830:4b9:: with SMTP id l25mr3712558otd.266.1582235087639;
- Thu, 20 Feb 2020 13:44:47 -0800 (PST)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=MHiTv90gsZjcPD4mQ61n4HTIDYa1NmZVPZ1IayUwQkI=;
+        b=Kn/FSbc3wOpRow3VIoO+9qndPDtIzbI/dgfQOcnOfZx8EvES0q/TsJYw9XONJAX9Lg
+         fEEy9QOCDs011RsuEe1ROBV8vN3Dq/jTL2U4j3Xf0zChg4kS/NqTsYJtgAiEE4kOK6+p
+         Y4VQB5kTI84CkoDgtZ3IsKkRMpi1198UPqYNlgoYGbXYke1FFSgvBdpR+U4rx4DUnUsm
+         VU/d0r7xiLgHzvCJV4LRS2lX1uU/b4tzDdTcTzYgI24e4hbTtjiiCCgbzcoAWNnjssvC
+         2Unc/CWy5ejY3KtKIJpBFERElrWgSvWeUEdjHpaGn1KQ2YjnhH5+Zv0PDyfj4XNqOfw8
+         /uqA==
+X-Gm-Message-State: APjAAAVAdXNDNK1rjh/kVj84JKIApGLTFeWXHGM6KHah3y7lyriAYHzE
+        upBExtIXmP8PzvmV0AGJqD5Vt19DRdInySoyaCg=
+X-Google-Smtp-Source: APXvYqyRVtm7D6lKYHvbUcoiOIZdHl5VUiTRdNqMGc5LRXGK1NBCVcAlpFYlrtAuon7hXEGdL/8MIge2N5N3mEqWUVc=
+X-Received: by 2002:a02:c558:: with SMTP id g24mr27340542jaj.81.1582235501758;
+ Thu, 20 Feb 2020 13:51:41 -0800 (PST)
 MIME-Version: 1.0
-References: <CAJZ5v0he=WQ6159fyaYYffdi66y596rVo7z1yLyGFcH45PXNUg@mail.gmail.com>
- <202002201158.2911CE2388@keescook>
-In-Reply-To: <202002201158.2911CE2388@keescook>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 20 Feb 2020 22:44:35 +0100
-Message-ID: <CAJZ5v0hkKUi7FUOneEy2nO-=RM8ZbcoG1uHRYNWzrjONEhKYxQ@mail.gmail.com>
-Subject: Re: [Regression] Docs build broken by commit 51e46c7a4007
-To:     Kees Cook <keescook@chromium.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Received: by 2002:a02:94ca:0:0:0:0:0 with HTTP; Thu, 20 Feb 2020 13:51:41
+ -0800 (PST)
+Reply-To: seybajean@yahoo.com
+From:   SEYBA JEAN <seybaj2005@gmail.com>
+Date:   Thu, 20 Feb 2020 21:51:41 +0000
+Message-ID: <CAGVrLO6AdUz+8bKz7eQ201W-w-9gn=ambnt65zk2DQToz6tEWg@mail.gmail.com>
+Subject: INVESTMENT PROPOSAL
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 9:05 PM Kees Cook <keescook@chromium.org> wrote:
->
-> On Thu, Feb 20, 2020 at 07:50:47PM +0100, Rafael J. Wysocki wrote:
-> > On two of my systems the docs build has been broken by commit
-> > 51e46c7a4007 ("docs, parallelism: Rearrange how jobserver reservations
-> > are made").
-> >
-> > The symptom is that the build system complains about the "output"
-> > directory not being there and returns with an error.
-> >
-> > Reverting the problematic commit makes the problem go away.
->
-> How strange! This must be some race in the parallel build.
+-- 
+Hello,
 
-I don't think so, I didn't use -j with htmldocs builds.
+I am so sorry contacting you in this means especially when we have
+never met before. I urgently seek your service to represent me in
+investing in your region / country and you will be paid for your
+service without affecting your present job with very little time
+invested in it.
 
-And you know what, adding "-j 2" to the command line actually makes it work. :-)
+So please confirm interest by responding back.
 
-> AFAICT, "output" is made in the first sub-target (Documentation/media). This
-> doesn't look entirely stable (there's no ordering implied by the "all"
-> target in there)...
->
-> Does this work for you?
+My dearest regards
 
-No, it doesn't.
-
->
-> diff --git a/Documentation/Makefile b/Documentation/Makefile
-> index d77bb607aea4..5654e087ae1e 100644
-> --- a/Documentation/Makefile
-> +++ b/Documentation/Makefile
-> @@ -62,7 +62,8 @@ loop_cmd = $(echo-cmd) $(cmd_$(1)) || exit;
->  #    e.g. "media" for the linux-tv book-set at ./Documentation/media
->
->  quiet_cmd_sphinx = SPHINX  $@ --> file://$(abspath $(BUILDDIR)/$3/$4)
-> -      cmd_sphinx = $(MAKE) BUILDDIR=$(abspath $(BUILDDIR)) $(build)=Documentation/media $2 && \
-> +      cmd_sphinx = mkdir -p $(abspath $(BUILDDIR)) && \
-> +       $(MAKE) BUILDDIR=$(abspath $(BUILDDIR)) $(build)=Documentation/media $2 && \
->         PYTHONDONTWRITEBYTECODE=1 \
->         BUILDDIR=$(abspath $(BUILDDIR)) SPHINX_CONF=$(abspath $(srctree)/$(src)/$5/$(SPHINX_CONF)) \
->         $(PYTHON) $(srctree)/scripts/jobserver-exec \
->
-> --
+Seyba Jean
