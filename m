@@ -2,96 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 913DB165686
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 06:09:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B8C6165688
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 06:10:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726198AbgBTFJ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 00:09:27 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:37545 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725956AbgBTFJ1 (ORCPT
+        id S1726423AbgBTFKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 00:10:24 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:41974 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725811AbgBTFKY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 00:09:27 -0500
-Received: by mail-oi1-f196.google.com with SMTP id q84so26342413oic.4
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 21:09:27 -0800 (PST)
+        Thu, 20 Feb 2020 00:10:24 -0500
+Received: by mail-ot1-f68.google.com with SMTP id r27so2494652otc.8
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 21:10:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=rfCI3MmNMKhIWwdq7waZHHOt5wHpRU9+ke91xb3DAzE=;
-        b=Z7rISj6XW9+gPfMtkytqsTPD5lZNd1gr8bp0+NHb0cuJ+4AJIMAE6+fNiBqdfrEngL
-         PLpCADWI0F6xGdugsxRqURFc8opWsdOwxaBKQcoFjM2qBTlp8aUPD/ZTrBoHe97y+6bQ
-         wKoPK0fFKBL4UXzFuKEgOopQOf/0HfJPFi0UavfH2FRxeIdb4RBpYh692Xxd/bCeTlRQ
-         XB92Uh2czrNw9o3GsScTQ5vPqKaAroiZPXLRhqJE2PcugNWmRJ34MGEZ3j3/1W9fO3u0
-         f25Z7vjh/BHngGBqrPQtF76GxBtYkSJP+RmLmBmFmtDksduqv4i/qYGxGXpGHU46OhjX
-         +f5Q==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=h5u7Xp7U99NSUOO/E2a/GBuGs/jUCGPtflsLAzfdTyw=;
+        b=AKq416MATIx767hbDafYSr2qGlA9d0kCZsKOTXysmdA4ZjamVtWxIESFgy81gdC/MM
+         Osi0AV7tsnCCF44AW7O6HxRA9IwLWKT/yUa1kcN3W+9s9oOp/IWW5WE/ogU6ZL4+Uzfe
+         ultzURxzO6w5kriTkIcy3B8CoSzb9C8d3/lExJH9S9erU70cFoAY5rrngi/SEmrKBPBR
+         8axvuyg5iRLHKzKbbt6WmSdFb3qUHeWwSo/uDqQXITnYI28C+V2+0ZxqU/eaXOViv/us
+         l/Fq2SpjU3OiamLvN/8sP8YlUXCPtkWoJ4Ce7m+lq0Cae7LbdYdCsGtqoaZh3UtNQJLM
+         TZJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=rfCI3MmNMKhIWwdq7waZHHOt5wHpRU9+ke91xb3DAzE=;
-        b=Y0xR6uzYwkLnJGAtuTV2Yo0s8dzle9BUtn+hHW2vL2QYI8+CZD00Ju5PxOah8d6e9I
-         z9l1iUJpa9JEFxNw+QJPZ3FJ8crBYpITtXRgZ7EAbmJXg2jUB6OmSzUtOcB7XNz+c7bq
-         4ZOxPqvECDXR/TWbFY6RQAAB3Lll1/NM17zsMg+hwTHkXp6fZ3qLMSZeEcqpaGekkHyr
-         4/hvV1NolBkhR8uPqLtwhEavmqBL6UveR5YRoRc6o+yVWJSMAINPJGhfU7kuXdWNURYt
-         LeQIIBgD8W/wIJW51P1pue0ohAMD9AS3aibdz2mbrOBUC56rCyRVcPWWD4foFvCtQyLB
-         5Yvg==
-X-Gm-Message-State: APjAAAXrnNS65pBJSbQSA5z2ppprKTslFQtRAaBPTGpu/vbq+8rkII5t
-        XXfPScANw51NrzdBIZYXnaWGQNjZw1EkcY2q9A8=
-X-Google-Smtp-Source: APXvYqyzcFRAb5lC8IfIhnvfPElo7dqIOxqSkTERg8p5qkiTJIKeed6X+aoqiFPu3i8Ny9YLWkmfR5XwE/7bPqyHzf8=
-X-Received: by 2002:aca:d6c8:: with SMTP id n191mr866247oig.103.1582175366668;
- Wed, 19 Feb 2020 21:09:26 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=h5u7Xp7U99NSUOO/E2a/GBuGs/jUCGPtflsLAzfdTyw=;
+        b=uKycKxq5fOkjJILKeU7+txKangzl/bqePhsdOZD79xE6ZHsKn6FbVw2h4ZAt7MvYsL
+         PCOBSC707OW1a1R9UAPWI3EH7qcXbP5CG7PJvhkg+ob+AxSz3+SG0yOMAgIubmyhU9Nj
+         H9JVPRKUAx96/Ev6zU1B2Cp+ZN8p1826H2rD/B5aF+0M0hLk9879nNqbBo8mmIPHeMG7
+         ezpzCH/zTfORQMBtgb9a/uzRAUY9k5/Ty1UotjRyYZx7RvLT77DTRQ4VI4QbMFQ8uz6i
+         2CC23znUymbTm/GnRoocKDDfYR5arETnihj5diWrsNnug4lmxx4AkTSqBsm7UFK29idt
+         38AQ==
+X-Gm-Message-State: APjAAAW0NKdckDlmucWTY+hAVLHMXiqs9FAFYy9Qkrs7vHOjiTDaN8f8
+        9cwnYTaRap3StuqoddiSMvM=
+X-Google-Smtp-Source: APXvYqwg2Rjx8/JioE8aCnNVyEz+BeBgyp748izDXcZLNZaJYsRCg/6662zxTKvULPHKD0JHWTK9Ew==
+X-Received: by 2002:a9d:6290:: with SMTP id x16mr21296090otk.343.1582175423669;
+        Wed, 19 Feb 2020 21:10:23 -0800 (PST)
+Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
+        by smtp.gmail.com with ESMTPSA id g8sm745303otq.19.2020.02.19.21.10.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2020 21:10:23 -0800 (PST)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: [PATCH v2] tracing: Use address-of operator on section symbols
+Date:   Wed, 19 Feb 2020 22:10:12 -0700
+Message-Id: <20200220051011.26113-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Received: by 2002:a9d:2204:0:0:0:0:0 with HTTP; Wed, 19 Feb 2020 21:09:26
- -0800 (PST)
-Reply-To: fatimabanneth12@gmail.com
-From:   Mrs Fatima Banneth <missaloekipkalya@gmail.com>
-Date:   Thu, 20 Feb 2020 06:09:26 +0100
-Message-ID: <CAHSLF68SzPCcmysXr0RWbdp1AMmnDv7J3kVFkfjqXe0c4W_2Og@mail.gmail.com>
-Subject: Dear friend.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear friend.
+Clang warns:
 
-It's my pleasure to have contact with you, based on the critical
-condition I find myself, though, it's not financial problem, but my
-health, you might have know that cancer is not what to talk  about at
-home I have been in the hospital for 5 months now I am married to Mr.
-Abaulkarim Banneth who worked with Tunisia embassy in Burkina Faso for
-nine years before he died in the year 2008.We were married for eleven
-years without a child. He died after a brief illness that lasted for
-five days.
+../kernel/trace/trace.c:9335:33: warning: array comparison always
+evaluates to true [-Wtautological-compare]
+        if (__stop___trace_bprintk_fmt != __start___trace_bprintk_fmt)
+                                       ^
+1 warning generated.
 
-Since his death I decided not to remarry because of the attitude of
-his younger Brother who is just after properties. When my late husband
-was alive he deposited the sum of US$ 8.2million ( Eight million two
-hundred thousand dollars) in a bank in Burkina Faso for me, Presently
-this money is still in bank.
+These are not true arrays, they are linker defined symbols, which are
+just addresses. Using the address of operator silences the warning and
+does not change the runtime result of the check (tested with some print
+statements compiled in with clang + ld.lld and gcc + ld.bfd in QEMU).
 
-And My Doctors told me that I don't have much time to live because of
-the cancer problem and i dont want to live this money in the bank for
-Government instead I decided to use it for Old people who cannot work
-again and Orphans who have nothing to eat because my Husband family
-people are very wicked, Having known my condition I decided to hand
-over this fund to a responsible person that have fear of God to take
-care of less-privileged people with this fund , please utilize this
-money the way I am going to instruct here I want you to take 30%
-Percent of the total money for yourself While 70% of the money will go
-to charity works and helping the Old people who have nothing to eat.
+Link: https://github.com/ClangBuiltLinux/linux/issues/893
+Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
 
-I don't want my husband's efforts to be used by the Government and I
-dont want my Husband people to know about this money. I grew up as an
-Orphan and I don't have anybody as my family member, if you are really
-interested to help me please do not hesitate to indicate your interest
-to me. I will be very happy if you can write me through my private
-email addre(fatimabanneth017@gmail.com) for easy communication
+v1 -> v2: https://lore.kernel.org/lkml/20200219045423.54190-4-natechancellor@gmail.com/
 
+* No longer a series because there is no prerequisite patch.
+* Use address-of operator instead of casting to unsigned long.
 
-I wait for your response.
-My regards,
-Mrs Fatima Banneth
-written from Hospital
+NOTE: The code generation does seem to change, unlike every other call
+site that I did this change to but the result of the check remains the
+same as noted in the commit message and I cannot really understand what
+has changed in the assembly. Please let me know if there is something
+catastrophically wrong.
+
+ kernel/trace/trace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index c797a15a1fc7..78727dd9a6f5 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -9332,7 +9332,7 @@ __init static int tracer_alloc_buffers(void)
+ 		goto out_free_buffer_mask;
+ 
+ 	/* Only allocate trace_printk buffers if a trace_printk exists */
+-	if (__stop___trace_bprintk_fmt != __start___trace_bprintk_fmt)
++	if (&__stop___trace_bprintk_fmt != &__start___trace_bprintk_fmt)
+ 		/* Must be called before global_trace.buffer is allocated */
+ 		trace_printk_init_buffers();
+ 
+-- 
+2.25.1
+
