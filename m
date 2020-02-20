@@ -2,68 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1394166180
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 16:54:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B409E166186
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 16:56:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728662AbgBTPyx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 10:54:53 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:56204 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728380AbgBTPyw (ORCPT
+        id S1728574AbgBTP4B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 10:56:01 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:42912 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728428AbgBTP4B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 10:54:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=D6I8jW+2llttZsSrEwC7oLd5yfRbnmR5fQ3XY07h6/A=; b=PM/AprBicbU39edYsbWTpTc0Na
-        emVcq7cb+NHUM6oooQNEoXkG8+bHD9DPrTjjG2z2x3T5qTsF2asVZBk11hr9EbGPUjnd00E3//wQZ
-        Ybl+M5Ncbk5X+eqZuv5FQg2IiH2QMSkNvYYPTlkj7xTRE/LwRRrh6jsluV0sdP9tbDuj8LPcnDHs1
-        hcDRVlsCikcg/+gbg3xn8+BGR6mA7HS7wgpHnbqj5ErHAFq/eFM9zwR+c5djfNPqtTIEOm8KczQWy
-        Y9fVsWdlNqjO9NJrXN3ek4kvMofOELyh95VqWLxea4QhQIGt2c5AYVzLVexEyX6ylz0YB4RkWIKLh
-        T/R9auvw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j4oA8-00077l-7Q; Thu, 20 Feb 2020 15:54:52 +0000
-Date:   Thu, 20 Feb 2020 07:54:52 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "linux-erofs@lists.ozlabs.org" <linux-erofs@lists.ozlabs.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "linux-f2fs-devel@lists.sourceforge.net" 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        "cluster-devel@redhat.com" <cluster-devel@redhat.com>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
-Subject: Re: [PATCH v7 14/24] btrfs: Convert from readpages to readahead
-Message-ID: <20200220155452.GX24185@bombadil.infradead.org>
-References: <20200219210103.32400-1-willy@infradead.org>
- <20200219210103.32400-15-willy@infradead.org>
- <SN4PR0401MB35987D7B76007B93B1C5CE5E9B130@SN4PR0401MB3598.namprd04.prod.outlook.com>
- <20200220134849.GV24185@bombadil.infradead.org>
- <20200220154658.GA19577@infradead.org>
+        Thu, 20 Feb 2020 10:56:01 -0500
+Received: by mail-pl1-f194.google.com with SMTP id e8so1701572plt.9
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 07:56:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=dPLlvkm9LDItGatWM8z0zqMFKuHSP92PMk+ALHwse6g=;
+        b=ziQRes5Wn8emIACRiQKqwWQd7p+hOvkb67mJ6Bz09tTlUTSaeOt6azfgjJBuzGxsVx
+         XrkSwyDlksNCs4l+mjPgIhrQI8wQC4jCoSmlcxefVgwinDvD0GV9iPu37Uu7FGHLQ3d8
+         9rHCoKTuh7/OZJDwUonf8aJhm2Y3qa+mlLgX9bXWUEjQd59BjeeskxAHjtohAuDX7juC
+         JukbhoovrJ+3s2YDXq6GdAt0p9A5JpVvweXA0i0ZlTYRg6alPWV0V+1v8VjHqAfXhjkA
+         mtizN6+hPmJOZP9fOQst8tsBOv5XiYOlVjbdL2EhtNBHAho8BnWSbJiEQA/OVpugM2+9
+         Helw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=dPLlvkm9LDItGatWM8z0zqMFKuHSP92PMk+ALHwse6g=;
+        b=Kc5d4F9dAFkx9ZDE0JWeEaIxUTSCLN0vF4X9PXUL566BSwQFvxKGZnFJ/O3oHemhyP
+         nh170lpF2NIS8hovI0HP21rUNDW33uT4Ll0xNwOHZYPEUugWTkt7DO6tu95Vuk5BrBlp
+         vuZNS/OehF2dP2mkjuax/QWxoX3/y7G3/89gB9QUP5XTbECyZ0nOsxygEInsviNCxnUN
+         Jk7wZ+6joNFcs4mxTk1Vy4LJaafMYLLt/QCPb/VZQtSn1fFg0VEajy3aL3fo2xsVt3Vt
+         yncFPe36p1QV4fcjZgcvsJzzuex6EZTOPrqK1WYzIAicKpIEBI9aQ46PDIIHY2mpYaBv
+         C9RQ==
+X-Gm-Message-State: APjAAAWfGbgfzj09zyNnFsVEsOgUzVTcpi2RoIJ0IJMegoT7PauuP3j6
+        urk7JmLcuXZ4SUw/NKjG5Ld3ZB2Z07k=
+X-Google-Smtp-Source: APXvYqzQg5xdhcudupIotNjSrqXf+6W08xrzP5NVdRO6Vhdy1jTtk44EddZdLaITBvHl0445gSYhzA==
+X-Received: by 2002:a17:902:528:: with SMTP id 37mr32621886plf.322.1582214159735;
+        Thu, 20 Feb 2020 07:55:59 -0800 (PST)
+Received: from ripper (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id q6sm19046pfh.127.2020.02.20.07.55.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2020 07:55:59 -0800 (PST)
+Date:   Thu, 20 Feb 2020 07:55:03 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Todd Kjos <tkjos@google.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v4 1/6] driver core: Fix
+ driver_deferred_probe_check_state() logic
+Message-ID: <20200220155503.GD955802@ripper>
+References: <20200220050440.45878-1-john.stultz@linaro.org>
+ <20200220050440.45878-2-john.stultz@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200220154658.GA19577@infradead.org>
+In-Reply-To: <20200220050440.45878-2-john.stultz@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 07:46:58AM -0800, Christoph Hellwig wrote:
-> On Thu, Feb 20, 2020 at 05:48:49AM -0800, Matthew Wilcox wrote:
-> > btrfs: Convert from readpages to readahead
-> >   
-> > Implement the new readahead method in btrfs.  Add a readahead_page_batch()
-> > to optimise fetching a batch of pages at once.
-> 
-> Shouldn't this readahead_page_batch heper go into a separate patch so
-> that it clearly stands out?
+On Wed 19 Feb 21:04 PST 2020, John Stultz wrote:
 
-I'll move it into 'Put readahead pages in cache earlier' for v8 (the
-same patch where we add readahead_page())
+> driver_deferred_probe_check_state() has some uninituitive behavior.
+> 
+> * From boot to late_initcall, it returns -EPROBE_DEFER
+> 
+> * From late_initcall to the deferred_probe_timeout (if set)
+>   it returns -ENODEV
+> 
+> * If the deferred_probe_timeout it set, after it fires, it
+>   returns -ETIMEDOUT
+> 
+> This is a bit confusing, as its useful to have the function
+> return -EPROBE_DEFER while the timeout is still running. This
+> behavior has resulted in the somwhat duplicative
+> driver_deferred_probe_check_state_continue() function being
+> added.
+> 
+> Thus this patch tries to improve the logic, so that it behaves
+> as such:
+> 
+> * If deferred_probe_timeout is set, it returns -EPROBE_DEFER
+>   until the timeout, afterwhich it returns -ETIMEDOUT.
+> 
+> * If deferred_probe_timeout is not set (-1), it returns
+>   -EPROBE_DEFER until late_initcall, after which it returns
+> 
+> This will make the deferred_probe_timeout value much more
+> functional, and will allow us to consolidate the
+> driver_deferred_probe_check_state() and
+> driver_deferred_probe_check_state_continue() logic in a later
+> patch.
+> 
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Kevin Hilman <khilman@kernel.org>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Len Brown <len.brown@intel.com>
+> Cc: Todd Kjos <tkjos@google.com>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Liam Girdwood <lgirdwood@gmail.com>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Thierry Reding <treding@nvidia.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: linux-pm@vger.kernel.org
+> Signed-off-by: John Stultz <john.stultz@linaro.org>
+> Change-Id: I8349b7a403ce8cbce485ea0a0a5512fddffb635c
+
+Please drop the Change-Id.
+
+> ---
+> v4:
+> * Simplified logic suggested by Andy Shevchenko
+> * Clarified commit message to focus on logic change
+> ---
+>  drivers/base/dd.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> index b25bcab2a26b..bb383dca39c1 100644
+> --- a/drivers/base/dd.c
+> +++ b/drivers/base/dd.c
+> @@ -237,7 +237,7 @@ __setup("deferred_probe_timeout=", deferred_probe_timeout_setup);
+>  
+>  static int __driver_deferred_probe_check_state(struct device *dev)
+>  {
+> -	if (!initcalls_done)
+> +	if (!initcalls_done || deferred_probe_timeout > 0)
+>  		return -EPROBE_DEFER;
+>  
+>  	if (!deferred_probe_timeout) {
+> @@ -252,9 +252,11 @@ static int __driver_deferred_probe_check_state(struct device *dev)
+>   * driver_deferred_probe_check_state() - Check deferred probe state
+>   * @dev: device to check
+>   *
+> - * Returns -ENODEV if init is done and all built-in drivers have had a chance
+> - * to probe (i.e. initcalls are done), -ETIMEDOUT if deferred probe debug
+> - * timeout has expired, or -EPROBE_DEFER if none of those conditions are met.
+> + * Returnes -EPROBE_DEFER if initcalls have not completed, or the deferred
+
+As pointed out by Rafael, this should be Return:
+
+With that addressed, you have my
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
+> + * probe timeout is set, but not expried.
+> + * Returns -ETIMEDOUT if the probe timeout was set and has expired.
+> + * Returns -ENODEV if initcalls have completed and the deferred probe timeout
+> + * was not set.
+>   *
+>   * Drivers or subsystems can opt-in to calling this function instead of directly
+>   * returning -EPROBE_DEFER.
+> -- 
+> 2.17.1
+> 
