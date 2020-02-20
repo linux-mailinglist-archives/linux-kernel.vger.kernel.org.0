@@ -2,111 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F8F9165444
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 02:31:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 019AE165450
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 02:36:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727727AbgBTBbQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 20:31:16 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:39040 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726962AbgBTBbP (ORCPT
+        id S1727620AbgBTBgR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 20:36:17 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:9219 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727135AbgBTBgP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 20:31:15 -0500
-Received: by mail-pj1-f66.google.com with SMTP id e9so170006pjr.4;
-        Wed, 19 Feb 2020 17:31:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=szYg2AQsd4vPQUXlNOTQeaWlhRWbCJD6D1ASNIe6NPQ=;
-        b=YnmfKpLlHDFp/4r9dbH9mYpcYtDzQkvfjIBwgZOS2FTAVbZEvFLZJV5cYEjVMHryDD
-         ZinziWcgxAtkfqZWej/jlk7ErptUcF9zL/uzSUXVV0X8Y/ituH3Puhd62Y94Aby9OSkG
-         3UbWxTFpyekwXSZdOygXreubDyUmc65byNxSAW4/uIxvOjBoGj1tmYLH0V8Xds/Gg/TB
-         wiCCGBqvOvG9wBmmK/W8WPoO9RMwtjz/i6JLUr2rGsuV4PSe0tqMxW13nlDTwF5PGwPY
-         melwQyeC74boGcoqQU9vlVMFYWCOnAYj9pFLH6QPl1xq/lpWe0zHUKeugY3TkPMfI2ps
-         bZng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=szYg2AQsd4vPQUXlNOTQeaWlhRWbCJD6D1ASNIe6NPQ=;
-        b=e1AKUOUZx1wX7n0+5hRqARI9gKqpzdiJYqLZJxkyf6ssdXZOpvJVdzPLwxvo38p4Yr
-         Om0ZuVBlKaRi+z3DSUjgr2f5bzXbqkJzONEWIGxJHngrCWv1ofZrkGG86GPQYAOBTmyn
-         c0Mp9aI28rf8NveDkN7xB61Irjxg/EPdD2iKkpAltdWSXfJnMlLH9PqyNIGXCB70bWnK
-         sw7LJ0HUIFwopgfft53j8yfu6Qo7tukcQGubhe3W5yko+d7QQC8Ci1JnPu0Y0RI5Ix+R
-         ICWNUDoy8ZUkUFGILYQ2bvEzTRb1cRNChp1nXUKYeeVhFXTKXw6506x8QZRwaUyw6pxA
-         GSNw==
-X-Gm-Message-State: APjAAAUDBcEFPQgFi2TNL5aARp7qYr3d2184atYrgvRqGW6Jaq0cL6vB
-        VhZeRRD9Bide4+tK6dCInLI=
-X-Google-Smtp-Source: APXvYqyzmgvxyBGFHEKtfmbVHh4nsUmpCnOiJOLklUkLLXD00WNKvL2PU2ls8e+TkkBLFHlsbUTTpw==
-X-Received: by 2002:a17:90a:b318:: with SMTP id d24mr687568pjr.142.1582162274835;
-        Wed, 19 Feb 2020 17:31:14 -0800 (PST)
-Received: from taoren-ubuntuvm (c-24-4-25-55.hsd1.ca.comcast.net. [24.4.25.55])
-        by smtp.gmail.com with ESMTPSA id u13sm957679pjn.29.2020.02.19.17.31.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Feb 2020 17:31:14 -0800 (PST)
-Date:   Wed, 19 Feb 2020 17:31:04 -0800
-From:   Tao Ren <rentao.bupt@gmail.com>
-To:     Andrew Jeffery <andrew@aj.id.au>
-Cc:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Colin King <colin.king@canonical.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-usb@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
-        Tao Ren <taoren@fb.com>
-Subject: Re: [PATCH v3 0/5] aspeed-g6: enable usb support
-Message-ID: <20200220013103.GA4830@taoren-ubuntuvm>
-References: <20200218031315.562-1-rentao.bupt@gmail.com>
- <5d295199-d0d7-4d58-be29-4621738d7f28@www.fastmail.com>
+        Wed, 19 Feb 2020 20:36:15 -0500
+X-UUID: 8822993177144f7cae617536a7168d95-20200220
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=M86BLgqozbH/Kl6AgJIXd8CaALScxACbiWE+AGXHu0M=;
+        b=Cj+GpElCDUUggrUPzXSWal+0LBXA/Js6cHOFqPE/HSfaiaFT5cQVqGJOVhIk4xx0Y8hcHvzyj1y6Q9oTXDtHHS3Uj3fqXFw9iZpkhY6n4ouBXRHWRSCrFNfZ8aENxznZvMCINcJKXhRTUIxqURVMkFU95xxb1IPgavATLujoa7g=;
+X-UUID: 8822993177144f7cae617536a7168d95-20200220
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 23207877; Thu, 20 Feb 2020 09:36:09 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs06n1.mediatek.inc (172.21.101.129) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 20 Feb 2020 09:36:08 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 20 Feb 2020 09:35:31 +0800
+Message-ID: <1582162568.24713.0.camel@mtksdaap41>
+Subject: Re: [PATCH] drm/mediatek: component type MTK_DISP_OVL_2L is not
+ correctly handled
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Phong LE <ple@baylibre.com>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Date:   Thu, 20 Feb 2020 09:36:08 +0800
+In-Reply-To: <20200219141324.29299-1-ple@baylibre.com>
+References: <20200219141324.29299-1-ple@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5d295199-d0d7-4d58-be29-4621738d7f28@www.fastmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 10:55:10AM +1030, Andrew Jeffery wrote:
-> 
-> 
-> On Tue, 18 Feb 2020, at 13:43, rentao.bupt@gmail.com wrote:
-> > From: Tao Ren <rentao.bupt@gmail.com>
-> > 
-> > The patch series aims at enabling USB Host and Gadget support on AST2600
-> > platforms.
-> > 
-> > Patch #1 replaces hardcoded vhub port/endpoint number with device tree
-> > properties, so that it's more convenient to add support for ast2600-vhub
-> > which provides more downstream ports and endpoints.
-> 
-> Ah, something I should have mentioned on the previous series is you'll need
-> to update the binding documentation with the new properties.
+SGksIFBob25nOg0KDQpPbiBXZWQsIDIwMjAtMDItMTkgYXQgMTU6MTMgKzAxMDAsIFBob25nIExF
+IHdyb3RlOg0KPiBUaGUgbGFyYiBkZXZpY2UgcmVtYWlucyBOVUxMIGlmIHRoZSB0eXBlIGlzIE1U
+S19ESVNQX09WTF8yTC4NCj4gQSBrZXJuZWwgcGFuaWMgaXMgcmFpc2VkIHdoZW4gYSBjcnRjIHVz
+ZXMgbXRrX3NtaV9sYXJiX2dldCBvcg0KPiBtdGtfc21pX2xhcmJfcHV0Lg0KPiANCg0KUmV2aWV3
+ZWQtYnk6IENLIEh1IDxjay5odUBtZWRpYXRlay5jb20+DQoNCj4gU2lnbmVkLW9mZi1ieTogUGhv
+bmcgTEUgPHBsZUBiYXlsaWJyZS5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlh
+dGVrL210a19kcm1fZGRwX2NvbXAuYyB8IDEgKw0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0
+aW9uKCspDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19k
+cm1fZGRwX2NvbXAuYyBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2RkcF9jb21w
+LmMNCj4gaW5kZXggMWY1YTExMmJiMDM0Li41N2M4OGRlOWEzMjkgMTAwNjQ0DQo+IC0tLSBhL2Ry
+aXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2RkcF9jb21wLmMNCj4gKysrIGIvZHJpdmVy
+cy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZGRwX2NvbXAuYw0KPiBAQCAtNDcxLDYgKzQ3MSw3
+IEBAIGludCBtdGtfZGRwX2NvbXBfaW5pdChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZp
+Y2Vfbm9kZSAqbm9kZSwNCj4gIAkvKiBPbmx5IERNQSBjYXBhYmxlIGNvbXBvbmVudHMgbmVlZCB0
+aGUgTEFSQiBwcm9wZXJ0eSAqLw0KPiAgCWNvbXAtPmxhcmJfZGV2ID0gTlVMTDsNCj4gIAlpZiAo
+dHlwZSAhPSBNVEtfRElTUF9PVkwgJiYNCj4gKwkgICAgdHlwZSAhPSBNVEtfRElTUF9PVkxfMkwg
+JiYNCj4gIAkgICAgdHlwZSAhPSBNVEtfRElTUF9SRE1BICYmDQo+ICAJICAgIHR5cGUgIT0gTVRL
+X0RJU1BfV0RNQSkNCj4gIAkJcmV0dXJuIDA7DQoNCg==
 
-Looks like we don't have dt binding documentation for this driver. I will add
-the document in my 2nd patch set "allow to customize vhub device IDs/strings"
-so all the new dt properties are included in the doc.
-
-> > 
-> > Patch #2 enables ast2600 support in aspeed-vhub usb gadget driver.
-> 
-> Also need to add the 2600 support to the dt binding document.
-> 
-> Looks good to me otherwise.
-> 
-> Andrew
-
-Thanks again for the quick review, Andrew.
-
-
-Cheers,
-
-Tao
