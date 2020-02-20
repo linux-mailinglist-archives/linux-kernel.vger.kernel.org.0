@@ -2,223 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9B65166729
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 20:29:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A942D16672F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 20:31:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728990AbgBTT3q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 14:29:46 -0500
-Received: from mga01.intel.com ([192.55.52.88]:16662 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728964AbgBTT3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 14:29:45 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2020 11:29:44 -0800
-X-IronPort-AV: E=Sophos;i="5.70,465,1574150400"; 
-   d="scan'208";a="228993659"
-Received: from ykim6-mobl1.amr.corp.intel.com (HELO arch-ashland-svkelley.intel.com) ([10.254.188.97])
-  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 20 Feb 2020 11:29:44 -0800
-From:   Sean V Kelley <sean.v.kelley@linux.intel.com>
-To:     tglx@linutronix.de, bhelgaas@google.com, corbet@lwn.net,
-        mingo@redhat.com, bp@alien8.de
-Cc:     x86@kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kar.hin.ong@ni.com, sassmann@kpanic.de,
-        Sean V Kelley <sean.v.kelley@linux.intel.com>
-Subject: [PATCH v2 2/2] Documentation:PCI: Add background on Boot Interrupts
-Date:   Thu, 20 Feb 2020 11:29:30 -0800
-Message-Id: <20200220192930.64820-3-sean.v.kelley@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200220192930.64820-1-sean.v.kelley@linux.intel.com>
-References: <20200220192930.64820-1-sean.v.kelley@linux.intel.com>
+        id S1728834AbgBTTbI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 14:31:08 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:34236 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728334AbgBTTbI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 14:31:08 -0500
+Received: by mail-pj1-f65.google.com with SMTP id f2so1428838pjq.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 11:31:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=sXrvFoJPqvg02BUxIE3UTho5sV5nybX8qyPHpbQqr8E=;
+        b=Z70rwuoFsDifWDdSPas8zJnF+Mg+i8+o1G2DC8mif0hkptJNC5ARTCELec1tul0u6Y
+         yW3yPrYySlq+1gxFpLFMrXTbm/A3s0PUqIIgeJz2ykBzrTW8epYftwgCqTttoU8OK9rU
+         hSdVAXqZQYqWTG83XN557bG6e1C0aHluhJeeM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sXrvFoJPqvg02BUxIE3UTho5sV5nybX8qyPHpbQqr8E=;
+        b=dtCaS32QMuP4X9KOak36oBoIPHaNwJbamJkFI5eiRHEyBYwxAxIMjcPdbz+H7XZkSe
+         os2TvrIo5amSr5da6Lln5I+bzSKXg2A/nkbQTDMo+ZuW14GYYxVid/RgXp1KKP2VdoPx
+         1gdeLfyZtPzxKo3KQ3Eb3uA0nCRiUcWtvMef25gVqXpUnUO2oJybG8+SxXyuq9iG3gpW
+         vRVGke1xgDBof9k/ZgA1m0M1TTCgaRXXAONvi+RBQz+KSkiZcHObmzSmdtTBlz9moUxG
+         Wh1oegmB4TiQ1aFSATYIS0Vm1PratE4i1CFnruKiMkoM05UlpYYQgt3yDXXjQbpnkDr0
+         xyjQ==
+X-Gm-Message-State: APjAAAU5MyjK67MBq7MZ/bEOtwtMZlzm1Dg1jpmPwAaMMZMIhG86xsis
+        QNsWq8FZWwzc12mP1lsLMgcpQQ==
+X-Google-Smtp-Source: APXvYqz9mp7EYWo84cTExZVyCFz4HlzngV4TM7788p/mvz2FPEMPzJOeDtaA6kvPL6z9ON/ddq4yjw==
+X-Received: by 2002:a17:90a:ac0e:: with SMTP id o14mr5557795pjq.11.1582227066988;
+        Thu, 20 Feb 2020 11:31:06 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
+        by smtp.gmail.com with ESMTPSA id 199sm376209pfu.71.2020.02.20.11.31.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2020 11:31:06 -0800 (PST)
+Date:   Thu, 20 Feb 2020 11:31:05 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Maulik Shah <mkshah@codeaurora.org>
+Cc:     swboyd@chromium.org, evgreen@chromium.org,
+        bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, agross@kernel.org,
+        dianders@chromium.org, rnayak@codeaurora.org, ilina@codeaurora.org,
+        lsrao@codeaurora.org
+Subject: Re: [PATCH v5 1/7] drivers: qcom: rpmh: fix macro to accept NULL
+ argument
+Message-ID: <20200220193105.GB24720@google.com>
+References: <1582108810-21263-1-git-send-email-mkshah@codeaurora.org>
+ <1582108810-21263-2-git-send-email-mkshah@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1582108810-21263-2-git-send-email-mkshah@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Improve understanding of the PCI quirks for this legacy PCI interrupt
-behavior to the benefit of developers and users alike.
+Hi Maulik,
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Sean V Kelley <sean.v.kelley@linux.intel.com>
----
- Documentation/PCI/boot-interrupts.rst | 153 ++++++++++++++++++++++++++
- Documentation/PCI/index.rst           |   1 +
- 2 files changed, 154 insertions(+)
- create mode 100644 Documentation/PCI/boot-interrupts.rst
+this patch and '[v5,2/7] drivers: qcom: rpmh: remove rpmh_flush
+export' already landed in the QCOM tree (in the branch 'drivers-for-5.7'):
 
-diff --git a/Documentation/PCI/boot-interrupts.rst b/Documentation/PCI/boot-interrupts.rst
-new file mode 100644
-index 000000000000..b4d42481fd7f
---- /dev/null
-+++ b/Documentation/PCI/boot-interrupts.rst
-@@ -0,0 +1,153 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+===============
-+Boot Interrupts
-+===============
-+
-+:Author: - Sean V Kelley <sean.v.kelley@linux.intel.com>
-+
-+Overview
-+========
-+
-+On PCI Express, interrupts are represented with either MSI or inbound interrupt
-+messages (Assert_INTx/Deassert_INTx). The integrated IO-APIC in a given Core
-+IO converts the legacy interrupt messages from PCI Express to MSI interrupts.
-+If the IO-APIC is disabled (via the mask bits in the IO-APIC table entries),
-+the messages are routed to the legacy PCH. This in-band interrupt mechanism was
-+traditionally necessary for systems that did not support the IO-APIC and for
-+boot. Intel in the past has used the term "boot interrupts" to describe this
-+mechanism. Further, the PCI Express protocol describes this in-band legacy
-+wire-interrupt INTx mechanism for I/O devices to signal PCI-style level
-+interrupts. The subsequent paragraphs describe problems with the Core IO
-+handling of INTx message routing to the PCH and mitigation within BIOS and
-+the OS.
-+
-+
-+Problem
-+=======
-+
-+When in-band legacy INTx messages are forwarded to the PCH, they in turn
-+trigger a new interrupt for which the OS likely lacks a handler. When an
-+interrupt goes unhandled over time, they are tracked by the Linux kernel
-+as Spurious Interrupts. The IRQ will be disabled by the Linux kernel after
-+it reaches a specific count with the error "nobody cared". This disabled
-+IRQ now prevents valid usage by an existing interrupt which may happen to
-+share the IRQ line.
-+
-+irq 19: nobody cared (try booting with the "irqpoll" option)
-+CPU: 0 PID: 2988 Comm: irq/34-nipalk Tainted: 4.14.87-rt49-02410-g4a640ec-dirty #1
-+Hardware name: National Instruments NI PXIe-8880/NI PXIe-8880, BIOS 2.1.5f1 01/09/2020
-+Call Trace:
-+<IRQ>
-+ ? dump_stack+0x46/0x5e
-+ ? __report_bad_irq+0x2e/0xb0
-+ ? note_interrupt+0x242/0x290
-+ ? nNIKAL100_memoryRead16+0x8/0x10 [nikal]
-+ ? handle_irq_event_percpu+0x55/0x70
-+ ? handle_irq_event+0x4f/0x80
-+ ? handle_fasteoi_irq+0x81/0x180
-+ ? handle_irq+0x1c/0x30
-+ ? do_IRQ+0x41/0xd0
-+ ? common_interrupt+0x84/0x84
-+</IRQ>
-+
-+handlers:
-+irq_default_primary_handler threaded usb_hcd_irq
-+Disabling IRQ #19
-+
-+
-+Conditions
-+==========
-+
-+The use of threaded interrupts is the most likely condition to trigger this
-+problem today. Threaded interrupts may not be reenabled after the IRQ handler
-+wakes. These "one shot" conditions mean that the threaded interrupt needs to
-+keep the interrupt line masked until the threaded handler has run. Especially
-+when dealing with high data rate interrupts, the thread needs to run to completion
-+otherwise some handlers will end up in stack overflows since the interrupt
-+of the issuing device is still active.
-+
-+Affected Chipsets
-+=================
-+
-+The legacy interrupt forwarding mechansim exists today in a number of devices
-+including but not limited to chipsets from AMD/ATI, Broadcom, and Intel. Changes
-+made through the mitigations below have been applied to drivers/pci/quirks.c
-+
-+Starting with ICX there are no longer any IO-APICs in the Core IO's devices.
-+IO-APIC is only in the PCH.  Devices connected to the Core IO's PCIE Root Ports
-+will use native MSI/MSI-X mechanisms.
-+
-+Mitigations
-+===========
-+
-+The mitigations take the form of PCI quirks. The preference has been to first
-+identify and make use of a means to disable the routing to the PCH. In such a
-+case a quirk to disable boot interrupt generation can be added.[1]
-+
-+Intel® 6300ESB I/O Controller Hub
-+Alternate Base Address Register:
-+ BIE: Boot Interrupt Enable
-+	0 = Boot interrupt is enabled.
-+	1 = Boot interrupt is disabled.
-+
-+Intel® Sandy Bridge through Sky Lake based Xeon servers:
-+Coherent Interface Protocol Interrupt Control
-+ dis_intx_route2pch/dis_intx_route2ich/dis_intx_route2dmi2:
-+	When this bit is set. Local INTx messages received from the
-+	Intel® Quick Data DMA/PCI Express ports are not routed to legacy
-+	PCH - they are either converted into MSI via the integrated IO-APIC
-+	(if the IO-APIC mask bit is clear in the appropriate entries)
-+	or cause no further action (when mask bit is set)
-+
-+In the absence of a way to directly disable the routing, another approach
-+has been to make use of PCI Interrupt pin to INTx routing tables for purposes
-+of redirecting the interrupt handler to the rerouted interrupt line by default.
-+Therefore, on chipsets where this INTx routing cannot be disabled, the
-+Linux kernel will reroute the valid interrupt to its legacy interrupt. This
-+redirection of the handler will prevent the occurrence of the spurious
-+interrupt detection which would ordinarily disable the IRQ line due to
-+excessive unhandled counts.[2]
-+
-+The config option X86_REROUTE_FOR_BROKEN_BOOT_IRQS exists to enable
-+(or disable) the redirection of the interrupt handler to the PCH interrupt
-+line. The option can be overridden by either pci=ioapicreroute or
-+pci=noioapicreroute.[3]
-+
-+
-+More Documentation
-+==================
-+
-+There is an overview of the legacy interrupt handling mentioned in several
-+datasheets (6300ESB and 6700PXH below). While largely the same, it provides
-+insight into the evolution of its handling with chipsets.
-+
-+Example of disabling of the boot interrupt
-+------------------------------------------
-+
-+Intel® 6300ESB I/O Controller Hub (Document # 300641-004US)
-+	5.7.3 Boot Interrupt
-+	https://www.intel.com/content/dam/doc/datasheet/6300esb-io-controller-hub-datasheet.pdf
-+
-+Intel® Xeon® Processor E5-1600/2400/2600/4600 v3 Product Families
-+Datasheet - Volume 2: Registers (Dcument # 330784-003)
-+	6.6.41 cipintrc Coherent Interface Protocol Interrupt Control
-+	https://www.intel.com/content/dam/www/public/us/en/documents/datasheets/xeon-e5-v3-datasheet-vol-2.pdf
-+
-+Example of handler rerouting
-+----------------------------
-+
-+Intel® 6700PXH 64-bit PCI Hub (Document # 302628)
-+	2.15.2 PCI Express Legacy INTx Support and Boot Interrupt
-+	https://www.intel.com/content/dam/doc/datasheet/6700pxh-64-bit-pci-hub-datasheet.pdf
-+
-+
-+If you have any legacy PCI interrupt questions that aren't answered, email me.
-+
-+Cheers,
-+    Sean V Kelley
-+    sean.v.kelley@linux.intel.com
-+
-+[1] https://lore.kernel.org/lkml/12131949181903-git-send-email-sassmann@suse.de/
-+[2] https://lore.kernel.org/lkml/12131949182094-git-send-email-sassmann@suse.de/
-+[3] https://lore.kernel.org/lkml/487C8EA7.6020205@suse.de/
-diff --git a/Documentation/PCI/index.rst b/Documentation/PCI/index.rst
-index 6768305e4c26..8f66feaafd4f 100644
---- a/Documentation/PCI/index.rst
-+++ b/Documentation/PCI/index.rst
-@@ -16,3 +16,4 @@ Linux PCI Bus Subsystem
-    pci-error-recovery
-    pcieaer-howto
-    endpoint/index
-+   boot-interrupts
--- 
-2.25.1
+d5e205079c34a drivers: qcom: rpmh: remove rpmh_flush export
+aff9cc0847a58 drivers: qcom: rpmh: fix macro to accept NULL argument
 
+Please rebase your working tree and stop sending these.
+
+Thanks
+
+Matthias
+
+On Wed, Feb 19, 2020 at 04:10:04PM +0530, Maulik Shah wrote:
+> Device argument matches with dev variable declared in RPMH message.
+> Compiler reports error when the argument is NULL since the argument
+> matches the name of the property. Rename dev argument to device to
+> fix this.
+> 
+> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
+> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+> ---
+>  drivers/soc/qcom/rpmh.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
+> index 035091f..3a4579d 100644
+> --- a/drivers/soc/qcom/rpmh.c
+> +++ b/drivers/soc/qcom/rpmh.c
+> @@ -23,7 +23,7 @@
+>  
+>  #define RPMH_TIMEOUT_MS			msecs_to_jiffies(10000)
+>  
+> -#define DEFINE_RPMH_MSG_ONSTACK(dev, s, q, name)	\
+> +#define DEFINE_RPMH_MSG_ONSTACK(device, s, q, name)	\
+>  	struct rpmh_request name = {			\
+>  		.msg = {				\
+>  			.state = s,			\
+> @@ -33,7 +33,7 @@
+>  		},					\
+>  		.cmd = { { 0 } },			\
+>  		.completion = q,			\
+> -		.dev = dev,				\
+> +		.dev = device,				\
+>  		.needs_free = false,				\
+>  	}
+>  
+> -- 
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+> of Code Aurora Forum, hosted by The Linux Foundation
