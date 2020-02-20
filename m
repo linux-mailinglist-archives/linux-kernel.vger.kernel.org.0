@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CE1C165791
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 07:24:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DB0D165786
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 07:23:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbgBTGXh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 01:23:37 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:33908 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727036AbgBTGXM (ORCPT
+        id S1727285AbgBTGXP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 01:23:15 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:32796 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725988AbgBTGXN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 01:23:12 -0500
-Received: by mail-pf1-f194.google.com with SMTP id i6so1400737pfc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 22:23:11 -0800 (PST)
+        Thu, 20 Feb 2020 01:23:13 -0500
+Received: by mail-pl1-f195.google.com with SMTP id ay11so1142126plb.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 22:23:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=dZSYj4kTVX2QKNO4qM/GL6talXd67o8KZVFc5Pes8+c=;
-        b=TNlFJ47j/n51UH7nhg7ZSP2xl6mjw5Z4eJZvo6/HIrlLllt6vipeXtnR8qIihoe4/2
-         dk7uD4LbivJMR47wpyp9uAKtrxNZfakAu+Xsz42GokveoHCVPFcSKmm0LufYf6rKC1fz
-         8Sr5ZOjdnxz4YGQtkqAS86nJuJKbR52TL9mNk=
+        bh=BVbUzx4OtLJL33n3gcVzeyzzu3sZRJkzVIJtmTNV+t8=;
+        b=JKxOV9AmdvytuXIbHOqsVPLiEQIr2s/zJTnOGnJ0C9/B4mRzi71p9CyGQLE0WiyZG1
+         uCoBI9KY7JgQEXDxAxLhJ78/rqt7frpx3WhF7xrFGNEN/+3jrK/vKvgeYkdw9Tuf/+qv
+         SIP2lN2ClGaLU7i6KOgMBvHHUFhTWKwQ6Xy5Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=dZSYj4kTVX2QKNO4qM/GL6talXd67o8KZVFc5Pes8+c=;
-        b=LZbpk/I0ABOf2e3wEZY4ZsV8YRF3WC3D/GK8OXwtz46ofeXfXfgAY2KyZp7zYKz+rk
-         UOKaaJnO+O+uW/mneOgRcFb1CL2/iepq8axzU/9bWYi2FOUSb+ANu+AvYuhfAUHYaprJ
-         2pmWs4hdeXHiybuo0gEbGPQC2GUQtoKBLiT9L1k6aGIzVJAP2OjzwzwI7W6JUF8/xV8r
-         SpLa65O5YHhthFhfyR+T/4+IQnR0MP27QWqqhMGOg0/91XrVyj2YQD6bjQT7MzrRE/DU
-         xsCIIBcFf4LMrKzHC7kOBZN3uzPGW064pscUnQjSjQXZ/CMWH1suSZcWuVWX3OzFmmeg
-         yeLw==
-X-Gm-Message-State: APjAAAVRKLztzt9EYdcn+2TuqewCg4PNejRKbjbRfOqDCySaD0nZ+lGu
-        z61sbybJiYqH/K8wI5KLxKSynw==
-X-Google-Smtp-Source: APXvYqwq62M/efZaqT2+1rrIrwer9ELCsk9xh7WiMNuBgusEoV/hmWrLZ/SGmXZZ1a4bqmDfl4jLPg==
-X-Received: by 2002:aa7:914b:: with SMTP id 11mr31556085pfi.69.1582179791494;
-        Wed, 19 Feb 2020 22:23:11 -0800 (PST)
+        bh=BVbUzx4OtLJL33n3gcVzeyzzu3sZRJkzVIJtmTNV+t8=;
+        b=C9ffaB+TrRBuMgn/TfSNNJ5HrLWksXxsXVsh5EpXWaU7NFS/vEvEeEPuFKRCoF5xw0
+         o2q9BS6jkgdbg933g8a6r42hvFJ6S00BwYzSWY9V6U6yRqqtvg5i/Uq020+K2QB29zzM
+         zXyYue49dENyqBKEJ6J9NlHLJrjTlDM2lEDtg1w3vfvdAxWbD0hledatKKnzA62KnRkK
+         FSpyFULM+o6OmdYr9PJtaCKHZ7NZxbTOtw4G7Dp06GwuP4+XV0Gma9H1Xae0ApxnTT/u
+         zCrDFwGJwWYujdO4RqHtPQJ4960FOZGDAnRvMNsNxtCSzVPGMG9xxooKkbhugaUpyBZ7
+         ScEg==
+X-Gm-Message-State: APjAAAXUepQ5bZ1j90YouTmcoRf7xjm1A3CkzXwROZBvIga+qmn9c6sx
+        yByE9t4VKqpLyeVTx0ZECFC3zw==
+X-Google-Smtp-Source: APXvYqzXN0ax5Db2wRJdkMHnt8sHgkOkIWDQT9FiYaQD9pDs6MV//rTXASYUMAmxULw00aCV9LuFzA==
+X-Received: by 2002:a17:90a:6c26:: with SMTP id x35mr1732741pjj.126.1582179792813;
+        Wed, 19 Feb 2020 22:23:12 -0800 (PST)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id b18sm1786855pfb.116.2020.02.19.22.23.10
+        by smtp.gmail.com with ESMTPSA id x21sm1755020pfq.76.2020.02.19.22.23.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 22:23:10 -0800 (PST)
+        Wed, 19 Feb 2020 22:23:11 -0800 (PST)
 From:   Kees Cook <keescook@chromium.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Harald Welte <laforge@gnumonks.org>
+To:     Pravin B Shelar <pshelar@ovn.org>
 Cc:     Alexander Potapenko <glider@google.com>,
-        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] pcmcia: Distribute switch variables for initialization
-Date:   Wed, 19 Feb 2020 22:23:08 -0800
-Message-Id: <20200220062308.69032-1-keescook@chromium.org>
+        Kees Cook <keescook@chromium.org>, netdev@vger.kernel.org,
+        dev@openvswitch.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] openvswitch: Distribute switch variables for initialization
+Date:   Wed, 19 Feb 2020 22:23:09 -0800
+Message-Id: <20200220062309.69077-1-keescook@chromium.org>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -73,39 +73,78 @@ direct initializations, the warnings remain.
 To avoid these problems, move such variables into the "case" where
 they're used or lift them up into the main function body.
 
-drivers/char/pcmcia/cm4000_cs.c: In function ‘monitor_card’:
-drivers/char/pcmcia/cm4000_cs.c:734:17: warning: statement will never be executed [-Wswitch-unreachable]
-  734 |   unsigned char flags0;
-      |                 ^~~~~~
+net/openvswitch/flow_netlink.c: In function ‘validate_set’:
+net/openvswitch/flow_netlink.c:2711:29: warning: statement will never be executed [-Wswitch-unreachable]
+ 2711 |  const struct ovs_key_ipv4 *ipv4_key;
+      |                             ^~~~~~~~
 
 [1] https://bugs.llvm.org/show_bug.cgi?id=44916
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- drivers/char/pcmcia/cm4000_cs.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/openvswitch/flow_netlink.c |   18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/char/pcmcia/cm4000_cs.c b/drivers/char/pcmcia/cm4000_cs.c
-index 15bf585af5d3..4edb4174a1e2 100644
---- a/drivers/char/pcmcia/cm4000_cs.c
-+++ b/drivers/char/pcmcia/cm4000_cs.c
-@@ -731,8 +731,9 @@ static void monitor_card(struct timer_list *t)
- 	}
+diff --git a/net/openvswitch/flow_netlink.c b/net/openvswitch/flow_netlink.c
+index 7da4230627f5..288122eec7c8 100644
+--- a/net/openvswitch/flow_netlink.c
++++ b/net/openvswitch/flow_netlink.c
+@@ -2708,10 +2708,6 @@ static int validate_set(const struct nlattr *a,
+ 		return -EINVAL;
  
- 	switch (dev->mstate) {
-+	case M_CARDOFF: {
- 		unsigned char flags0;
--	case M_CARDOFF:
+ 	switch (key_type) {
+-	const struct ovs_key_ipv4 *ipv4_key;
+-	const struct ovs_key_ipv6 *ipv6_key;
+-	int err;
+-
+ 	case OVS_KEY_ATTR_PRIORITY:
+ 	case OVS_KEY_ATTR_SKB_MARK:
+ 	case OVS_KEY_ATTR_CT_MARK:
+@@ -2723,7 +2719,9 @@ static int validate_set(const struct nlattr *a,
+ 			return -EINVAL;
+ 		break;
+ 
+-	case OVS_KEY_ATTR_TUNNEL:
++	case OVS_KEY_ATTR_TUNNEL: {
++		int err;
 +
- 		DEBUGP(4, dev, "M_CARDOFF\n");
- 		flags0 = inb(REG_FLAGS0(iobase));
- 		if (flags0 & 0x02) {
-@@ -755,6 +756,7 @@ static void monitor_card(struct timer_list *t)
- 			dev->mdelay = T_50MSEC;
+ 		if (masked)
+ 			return -EINVAL; /* Masked tunnel set not supported. */
+ 
+@@ -2732,8 +2730,10 @@ static int validate_set(const struct nlattr *a,
+ 		if (err)
+ 			return err;
+ 		break;
++	}
++	case OVS_KEY_ATTR_IPV4: {
++		const struct ovs_key_ipv4 *ipv4_key;
+ 
+-	case OVS_KEY_ATTR_IPV4:
+ 		if (eth_type != htons(ETH_P_IP))
+ 			return -EINVAL;
+ 
+@@ -2753,8 +2753,10 @@ static int validate_set(const struct nlattr *a,
+ 				return -EINVAL;
  		}
  		break;
 +	}
- 	case M_FETCH_ATR:
- 		DEBUGP(4, dev, "M_FETCH_ATR\n");
- 		xoutb(0x80, REG_FLAGS0(iobase));
++	case OVS_KEY_ATTR_IPV6: {
++		const struct ovs_key_ipv6 *ipv6_key;
+ 
+-	case OVS_KEY_ATTR_IPV6:
+ 		if (eth_type != htons(ETH_P_IPV6))
+ 			return -EINVAL;
+ 
+@@ -2781,7 +2783,7 @@ static int validate_set(const struct nlattr *a,
+ 			return -EINVAL;
+ 
+ 		break;
+-
++	}
+ 	case OVS_KEY_ATTR_TCP:
+ 		if ((eth_type != htons(ETH_P_IP) &&
+ 		     eth_type != htons(ETH_P_IPV6)) ||
+-- 
+2.20.1
+
 
