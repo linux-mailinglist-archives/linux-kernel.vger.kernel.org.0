@@ -2,187 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 509CA165B87
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 11:30:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2696F165B8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 11:31:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727576AbgBTKap (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 05:30:45 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:35422 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726885AbgBTKao (ORCPT
+        id S1727802AbgBTKaz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 05:30:55 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:45579 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726871AbgBTKaz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 05:30:44 -0500
-Received: by mail-ot1-f67.google.com with SMTP id r16so3194069otd.2;
-        Thu, 20 Feb 2020 02:30:43 -0800 (PST)
+        Thu, 20 Feb 2020 05:30:55 -0500
+Received: by mail-oi1-f194.google.com with SMTP id v19so27016872oic.12;
+        Thu, 20 Feb 2020 02:30:54 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=wO6AuiI3EdmqOyIBwgh0qHP3XlZjJrsiTj0RBtDfBq8=;
-        b=VOSCq7vWqeAqiYW9P6iKo9iBz7Aygdh7eDJjXJVGRFsgUQcbp3RUX0by+uM+vFvTP5
-         W6ZB0dj1jL0RaX70sioIyTKE+mLS32b7anfjjUYlJTfzCIFpT1xclg4Ve0oJBD7gv1Bp
-         D7TEeTRyZLcJHoJaTZpV0k30Q7wRx/+zrWCAstmLkPl6+Iq6lqELF0WcegxPMgL4zFA1
-         GxxwhBfLw80KYZSS8LZaSDvHv8FIO5LCM9vW8osl0V5Fn534uSawCZggeYVVOlu0S/F2
-         i4uF6nIQYuoQGgGlVIbyxijCEvzQa9pR7RaWpM5WF5vvqoS4V370aWqRg51A3Hw0S3UR
-         pDSA==
-X-Gm-Message-State: APjAAAWrnASxXeYbXHlsI+hhDnzDN0fUIyjnmErytKLbUPGkpeZ8vIJV
-        xLp0tq2t0OXhNC9bo+jzXmzsmqz5TzEg0G2Be/Q=
-X-Google-Smtp-Source: APXvYqzoNQiMHXsINekY6fRvwCSG2MWfDbUr3Fyn5ZFXqEJMKQeSsMrQOWb3oOXeOZRjssfcvy0Ifs17byzMgZWWz2I=
-X-Received: by 2002:a05:6830:4b9:: with SMTP id l25mr1287589otd.266.1582194643319;
- Thu, 20 Feb 2020 02:30:43 -0800 (PST)
+        bh=LaRxy7mSTm2TUALpIGXjpz65a6FCoe/jI7xl5xTwPto=;
+        b=dg8r1ikTI1ZZyBUFISRbgw9825x7ZU7/j2y4g68FQho6dczEffo/LCNoC7KhGwksCu
+         a61e62SvqJ5bhNrQbJV1G2RAsNuXFRolPI3ccoITbf6O4SekxA5808H0PS+ULgNKDZS7
+         SjERN3VZN4N2o8aGIhGIYkuMiN+IbM0ksvQgROyVVqumGaPONWIWkIlQJ0n3OWXka7L7
+         Bo9IUXdu4i7SrraqxBHSo70UFByIDrn2LOSAIegPqkH+UA3V3oOCLfOSCLe38J+q3ZIk
+         TbhtTPXZ7Mak14oUwuO/34Pe4MwTRIDYlIxXH6c92Ne2qArIOzyIhOsq88FLjzJBCWJa
+         QZvw==
+X-Gm-Message-State: APjAAAWdkJdsb+0OrOLkm7X2j7M3QORAoobg1x6Nbia5BouJ8B4wW6PE
+        LLjgM0mqJeuAVyH6uWSCjTbJ34AZ6onqOJ/xutkG64HQ
+X-Google-Smtp-Source: APXvYqzyg5SeUJapHnGnohk1i8hiYxXjg3x2KCPKIyEqlh7N9USv+WlDEtilOjkYsCFxXxjfurKt3yb828JFZbfyqQw=
+X-Received: by 2002:aca:48cd:: with SMTP id v196mr1496275oia.102.1582194654310;
+ Thu, 20 Feb 2020 02:30:54 -0800 (PST)
 MIME-Version: 1.0
-References: <20200218162943.2488012-1-christian.brauner@ubuntu.com>
- <20200218162943.2488012-7-christian.brauner@ubuntu.com> <CAJZ5v0hJwXH8Oc4spzDDemHhBVGKqtbrV2UG6-gmT-F0hA4ynA@mail.gmail.com>
- <20200220102107.grkyypt7swrufzas@wittgenstein>
-In-Reply-To: <20200220102107.grkyypt7swrufzas@wittgenstein>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 20 Feb 2020 11:30:32 +0100
-Message-ID: <CAJZ5v0itDdfdNd6TzLi=2J517CyjEBbKb+K4OfkkSt-B+w9taw@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 6/9] drivers/base/power: add dpm_sysfs_change_owner()
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Linux PM <linux-pm@vger.kernel.org>
+References: <1582018657-5720-1-git-send-email-nbelin@baylibre.com> <1582018657-5720-3-git-send-email-nbelin@baylibre.com>
+In-Reply-To: <1582018657-5720-3-git-send-email-nbelin@baylibre.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 20 Feb 2020 11:30:43 +0100
+Message-ID: <CAMuHMdWPgUKOHyspV3bL_4YKsxgXvEgQqdOzoo-8s8gi_g3rVw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] dt-bindings: leds: Shiji Lighting APA102C LED driver
+To:     Nicolas Belin <nbelin@baylibre.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-leds@vger.kernel.org,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Lukas Wunner <lukas@wunner.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 11:21 AM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
+Hi Nicolas,
+
+CC devicetree, Lukas
+
+On Tue, Feb 18, 2020 at 10:39 AM Nicolas Belin <nbelin@baylibre.com> wrote:
+> Document Shiji Lighting APA102C LED driver device tree bindings.
 >
-> On Thu, Feb 20, 2020 at 11:02:04AM +0100, Rafael J. Wysocki wrote:
-> > On Tue, Feb 18, 2020 at 5:30 PM Christian Brauner
-> > <christian.brauner@ubuntu.com> wrote:
-> > >
-> > > Add a helper to change the owner of a device's power entries. This
-> > > needs to happen when the ownership of a device is changed, e.g. when
-> > > moving network devices between network namespaces.
-> > > This function will be used to correctly account for ownership changes,
-> > > e.g. when moving network devices between network namespaces.
-> > >
-> > > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> > > ---
-> > > /* v2 */
-> > > - "Rafael J. Wysocki" <rafael@kernel.org>:
-> > >   -  Fold if (dev->power.wakeup && dev->power.wakeup->dev) check into
-> > >      if (device_can_wakeup(dev)) check since the former can never be true if
-> > >      the latter is false.
-> > >
-> > > - Christian Brauner <christian.brauner@ubuntu.com>:
-> > >   - Place (dev->power.wakeup && dev->power.wakeup->dev) check under
-> > >     CONFIG_PM_SLEEP ifdefine since it will wakeup_source will only be available
-> > >     when this config option is set.
-> > >
-> > > /* v3 */
-> > > -  Greg Kroah-Hartman <gregkh@linuxfoundation.org>:
-> > >    - Add explicit uid/gid parameters.
-> > > ---
-> > >  drivers/base/core.c        |  4 ++++
-> > >  drivers/base/power/power.h |  3 +++
-> > >  drivers/base/power/sysfs.c | 42 ++++++++++++++++++++++++++++++++++++++
-> > >  3 files changed, 49 insertions(+)
-> > >
-> > > diff --git a/drivers/base/core.c b/drivers/base/core.c
-> > > index ec0d5e8cfd0f..efec2792f5d7 100644
-> > > --- a/drivers/base/core.c
-> > > +++ b/drivers/base/core.c
-> > > @@ -3522,6 +3522,10 @@ int device_change_owner(struct device *dev, kuid_t kuid, kgid_t kgid)
-> > >         if (error)
-> > >                 goto out;
-> > >
-> > > +       error = dpm_sysfs_change_owner(dev, kuid, kgid);
-> > > +       if (error)
-> > > +               goto out;
-> > > +
-> > >  #ifdef CONFIG_BLOCK
-> > >         if (sysfs_deprecated && dev->class == &block_class)
-> > >                 goto out;
-> > > diff --git a/drivers/base/power/power.h b/drivers/base/power/power.h
-> > > index 444f5c169a0b..54292cdd7808 100644
-> > > --- a/drivers/base/power/power.h
-> > > +++ b/drivers/base/power/power.h
-> > > @@ -74,6 +74,7 @@ extern int pm_qos_sysfs_add_flags(struct device *dev);
-> > >  extern void pm_qos_sysfs_remove_flags(struct device *dev);
-> > >  extern int pm_qos_sysfs_add_latency_tolerance(struct device *dev);
-> > >  extern void pm_qos_sysfs_remove_latency_tolerance(struct device *dev);
-> > > +extern int dpm_sysfs_change_owner(struct device *dev, kuid_t kuid, kgid_t kgid);
-> > >
-> > >  #else /* CONFIG_PM */
-> > >
-> > > @@ -88,6 +89,8 @@ static inline void pm_runtime_remove(struct device *dev) {}
-> > >
-> > >  static inline int dpm_sysfs_add(struct device *dev) { return 0; }
-> > >  static inline void dpm_sysfs_remove(struct device *dev) {}
-> > > +static inline int dpm_sysfs_change_owner(struct device *dev, kuid_t kuid,
-> > > +                                        kgid_t kgid) { return 0; }
-> > >
-> > >  #endif
-> > >
-> > > diff --git a/drivers/base/power/sysfs.c b/drivers/base/power/sysfs.c
-> > > index d7d82db2e4bc..4e79afcd5ca8 100644
-> > > --- a/drivers/base/power/sysfs.c
-> > > +++ b/drivers/base/power/sysfs.c
-> > > @@ -684,6 +684,48 @@ int dpm_sysfs_add(struct device *dev)
-> > >         return rc;
-> > >  }
-> > >
-> > > +int dpm_sysfs_change_owner(struct device *dev, kuid_t kuid, kgid_t kgid)
-> > > +{
-> > > +       int rc;
-> > > +
-> > > +       if (device_pm_not_required(dev))
-> > > +               return 0;
-> > > +
-> > > +       rc = sysfs_group_change_owner(&dev->kobj, &pm_attr_group, kuid, kgid);
-> > > +       if (rc)
-> > > +               return rc;
-> > > +
-> > > +       if (pm_runtime_callbacks_present(dev)) {
-> > > +               rc = sysfs_group_change_owner(
-> > > +                       &dev->kobj, &pm_runtime_attr_group, kuid, kgid);
-> > > +               if (rc)
-> > > +                       return rc;
-> > > +       }
-> > > +       if (device_can_wakeup(dev)) {
-> > > +               rc = sysfs_group_change_owner(&dev->kobj, &pm_wakeup_attr_group,
-> > > +                                             kuid, kgid);
-> > > +               if (rc)
-> > > +                       return rc;
-> > > +
-> > > +#ifdef CONFIG_PM_SLEEP
-> > > +               if (dev->power.wakeup && dev->power.wakeup->dev) {
-> > > +                       rc = device_change_owner(dev->power.wakeup->dev, kuid,
-> > > +                                                kgid);
-> > > +                       if (rc)
-> > > +                               return rc;
-> > > +               }
-> > > +#endif
-> >
-> > First off, I don't particularly like #ifdefs in function bodies.  In
-> > particular, there is a CONFIG_PM_SLEEP block in this file already and
-> > you could define a new function in there to carry out the above
-> > operations, and provide an empty stub of it for the "unset" case.
-> > Failing to do so is somewhat on the "rushing things in" side in my
-> > view.
+> Signed-off-by: Nicolas Belin <nbelin@baylibre.com>
+> ---
+>  .../devicetree/bindings/leds/leds-apa102c.yaml     | 91 ++++++++++++++++++++++
+>  1 file changed, 91 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-apa102c.yaml
 >
-> How ifdefines are used is highly dependent on the subsystem; networking
-> ofen uses in-place ifdefines in some parts and not in others. That has
-> nothing to do with rushing things. I'm happy to change it to your
-> preferences.
+> diff --git a/Documentation/devicetree/bindings/leds/leds-apa102c.yaml b/Documentation/devicetree/bindings/leds/leds-apa102c.yaml
+> new file mode 100644
+> index 000000000000..24bc2fc19fcb
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-apa102c.yaml
+> @@ -0,0 +1,91 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/leds/leds-apa102c.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: LED driver for Shiji Lighting - APA102C
+> +
+> +maintainers:
+> +  - Nicolas Belin <nbelin@baylibre.com>
+> +
+> +description:
+> +  Each LED is represented as a sub-node of the leds-apa102c device.  Each LED
+> +  is a three color RGB LED with 32 levels brightness adjustment that can be
+> +  cascaded so that multiple LEDs can be set with a single command.
+> +
+> +properties:
+> +  compatible:
+> +    const: shiji,apa102c
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  spi-max-frequency:
+> +    maximum: 1000000
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - spi-max-frequency
+> +  - '#address-cells'
+> +  - '#size-cells'
+> +
+> +patternProperties:
+> +  "^led@[0-9]+$":
+> +    type: object
+> +    description: |
+> +      Properties for an array of connected LEDs.
+> +
+> +    properties:
+> +      reg:
+> +        description: |
+> +          This property corresponds to the led index. It has to be between 0
+> +          and the number of managed leds minus 1
+> +        maxItems: 1
+> +
+> +      label:
+> +        description: |
+> +          This property corresponds to the name of the led. If not set,
+> +          the led index will be used to create the led name instead
+> +        maxItems: 1
+> +
+> +      linux,default-trigger: true
+> +
+> +    required:
+> +      - reg
+> +
+> +examples:
+> +  - |
+> +    spi {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        led-controller@0 {
+> +            compatible = "shiji,apa102c";
+> +            reg = <0>;
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +            spi-max-frequency = <1000000>;
+> +            led@0 {
+> +                reg = <0>;
+> +                label = "led1";
+> +            };
+> +
+> +            led@1 {
+> +                reg = <1>;
+> +                label = "led2";
+> +            };
+> +
+> +            led@2 {
+> +                reg = <2>;
+> +                label = "led3";
+> +            };
+> +        };
+> +    };
 
-Thanks!
+Perhaps this should use "#daisy-chained-devices" instead of listing all LEDs
+explicitly?
+Or would that cause problems w.r.t. LED labeling?
 
-> Thanks for pointing out your expectations. But please don't
-> assume bad intentions on my part because I'm not meeting them right
-> away. It often is the case that adding a helper that is called in one
-> place is not well-received.
+Documentation/devicetree/bindings/common-properties.txt
 
-Fair enough, sorry for being harsh.
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
