@@ -2,260 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC2601665C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 19:04:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F05516664F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 19:29:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728461AbgBTSEx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 13:04:53 -0500
-Received: from mout.web.de ([212.227.15.14]:34947 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727298AbgBTSEv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 13:04:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1582221886;
-        bh=cED0tHcFWzQhYnuQNvhD6+a83OOv92ePG6aWKNeLv9Y=;
-        h=X-UI-Sender-Class:Date:From:To:Cc:Subject;
-        b=Un0y7ZRp+gADQR8u6zJrF8HSgozZRdBmiVH5npvs+8iaL4kvxaOKdoLF+IQwkFGMU
-         /V4Kg9kckTledA9+L7zsEmlNqUm5r0t13UnKzL8PIafiB9oQEsBajab6XDpLvsLZu7
-         klCO4FLrd3i8VSrheIXXrjeyvMOL1RDFzllsild4=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from luklap ([94.134.180.199]) by smtp.web.de (mrweb001
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0Lzs0p-1jZD011LVb-0152pg; Thu, 20
- Feb 2020 19:04:46 +0100
-Date:   Thu, 20 Feb 2020 19:04:45 +0100
-From:   Lukas Straub <lukasstraub2@web.de>
-To:     linux-kernel <linux-kernel@vger.kernel.org>
-Cc:     Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        dm-devel <dm-devel@redhat.com>
-Subject: [PATCH] dm-integrity: Prevent RMW for full tag area writes
-Message-ID: <20200220190445.2222af54@luklap>
+        id S1728575AbgBTS3c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 13:29:32 -0500
+Received: from gateway36.websitewelcome.com ([192.185.200.11]:16459 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727535AbgBTS3c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 13:29:32 -0500
+X-Greylist: delayed 1385 seconds by postgrey-1.27 at vger.kernel.org; Thu, 20 Feb 2020 13:29:31 EST
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id A3F7C40A70177
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 11:20:55 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 4qDRj7YkaAGTX4qDRjI7XB; Thu, 20 Feb 2020 12:06:25 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=9mYujdgmmZufehJIlbnl7Z8a6PMBrqPZZkMyrDsekWo=; b=X1/SoYte9fhrwavUGSJ8+laUO1
+        kbbO2QwV8ZSWu8AHrjymZwevX9lNDoJa76MePJRPIr4sIyXfqn7kK5gCYDrNcOB57atscbNjOWoaN
+        3Zna5XmwUoBURHhzOmSUJeAay5rV88t7e90TKJ9twL/FaYQY0fw6NC9nDddMLpLzT7nqjd6JlG1yD
+        PTgVYEf1yNU7td6cW/3+xS1oWbn0YDXql2hcJSSp0uyxUbuGECZmrIMMYnI9olZPiUNlU7f+IN9qf
+        MxbxMBtAeGWXwFoMK9X+fgcq+oDVtmkaH65OL4XnvilTaDdYSbjlYs9GCAfl5rVMjNT6UOddqcw2L
+        VB8uXZKg==;
+Received: from [201.144.174.47] (port=31877 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j4qDR-001i8x-Il; Thu, 20 Feb 2020 12:06:25 -0600
+Subject: Re: [PATCH] IB/core, cache: Replace zero-length array with
+ flexible-array member
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@oracle.com>
+References: <20200213010425.GA13068@embeddedor.com>
+ <20200220173756.GA19347@ziepe.ca>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <67d7c04f-026b-2829-cd7a-de0a889635c6@embeddedor.com>
+Date:   Thu, 20 Feb 2020 12:09:08 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:j/VhRjSkDO6znn4FrHt3mC8n7LlVlbZVwkVTUlm/MVlZnqIEN/E
- Q+Q63qWJCXLRysqLWXYyI5sNRzNR+nGrjrwhjDL4AmIDX2z/tbid1AOZi9cSolIRjDJ+E6G
- DpcGJbKsRMvzxriSnblo6CEIuPT08lG584MRJ7/JMFo51AfBGgF9FQx3nvZ/8dDueft3vqE
- tg0Rg+vgmApE9S/rn6h0g==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:634g0Ktj+5Q=:OeZZsXReddB08MfLeqtxs0
- aR3FIXFQVklIZVpkbWdK1bZpWyfc7djbSeGEZrQGoo3dMIypBGlgDGaWsuip2P9orzj1K6H8L
- 608zJQn8tOapXyKRHZZiV6jcsO+AnPqhHRksRJhqZwKo9IqATTOg7Cg2ulu2Swkh6HpIacpK9
- ocnzDTx15Giux/YoWWZqSNb2zJza7uPOAINUtC4CdT32l2/YsUcAUXdFgcGOJjgwtRWA5WEbE
- HjU0zL+h3L26r72nK1m6FzHdqKjhcnimIza5VQmJLSJ3QJQuWdqx1jWakMuBajKMJr6wmLWsR
- b1zdq4yP9nIeWXrusutgDHydrMRwvpDtALPte4a2jOM70tGAL8+klwAySC8fRpFLv+ky0DLx/
- HEG680CRO6Ugn73qWA+04uLuLFg4WeECqNBJPrPbwegwk2F2QYxLwqldTtUZhFI+ceeZU4w0H
- 8bL9GyU1upbHGcRoQBJvqDB1fsq6X53A7nq44anR61Rh9uYE6drDelNKskmKoBeErf76Q+D3T
- OEvh06DIhR4f10Igwfgox+NwgBb9igZOyzrggesZmJCHDVEPmu9nkc2U6dEK0K8NjpyMIDPQN
- EyNwbhS4aa3JlP1sU7WrfsBPTS3ycGlZACp6jN+brmmY8APQEP05yDdfyL6Tg54XcZDSN/JNv
- FloOqdHkJtc1f4ZTEu72uE5TaCs+i465myRpT519jV0q/ww4Ei98S8luXtWjoSVWcqqY5+mlW
- bRgffY83z0WyQUNrMHFPG17qrIQ//f0lYCDYl0YrHAsv2Lnz1iAFwXTURiwY42e+ssComG1Ee
- azeqSpNYur8h+aW1mcCeI/2WqyADj64LNGsTAiGyQjLAvdaKWvGF5EtRw2m7R1ub8RLDPaNZv
- 744U5sncz2Ni/S/+1+DZaLb0kq0ihkbgx5nUIdW52Btft4fjqKwMj4AJhTW29/jrBvto8FQpk
- EwacYMkvw3a7ILT7buj+zg8cR1MN+T4cphpmSRY7IAQoiuwQRPlDnGGTS1cPZNvkgxr6Q3c4g
- wwD1LrOtktt99A7XeRd2RERBJwiweTp8eXEJnApIFQ9mE/qxg++ZjCM033/XFjtlp7kn3Tp8r
- CZiLvWPDslG3s5raDK9dyckajifS6kxqnBHAXgIwHYrnGv1RSK5sAABbx6yHiZMSwKQ69NO2c
- x45hbhF+LSC1mqv6vl7NcadHCTVCYE2My2bVuAXc2Y3eko5NFVHb2KWX+DiiXj6xUlapQYktx
- muWXXnnvOWYEcKusS
+In-Reply-To: <20200220173756.GA19347@ziepe.ca>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.144.174.47
+X-Source-L: No
+X-Exim-ID: 1j4qDR-001i8x-Il
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [201.144.174.47]:31877
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a full tag area is being written, don't read it first. This prevents a
-read-modify-write cycle and increases performance on HDDs considerably.
 
-To do this we now calculate the checksums for all sectors in the bio in on=
-e
-go in integrity_metadata and then pass the result to dm_integrity_rw_tag,
-which now checks if we overwrite the whole tag area.
 
-Benchmarking with a 5400RPM HDD with bitmap mode:
-integritysetup format --no-wipe --batch-mode --interleave-sectors $((64*10=
-24)) -t 4 -s 512 -I crc32c -B /dev/sdc
-integritysetup open -I crc32c -B /dev/sdc hdda_integ
-dd if=3D/dev/zero of=3D/dev/mapper/hdda_integ bs=3D64K count=3D$((16*1024*=
-4)) conv=3Dfsync oflag=3Ddirect status=3Dprogress
+On 2/20/20 11:37, Jason Gunthorpe wrote:
 
-Without patch:
-4294967296 bytes (4.3 GB, 4.0 GiB) copied, 400.326 s, 10.7 MB/s
+> 
+> I squished the four drivers/infiniband patches together and added a
+> few more, see below. Applied to for-next
+> 
 
-With patch:
-4294967296 bytes (4.3 GB, 4.0 GiB) copied, 41.2057 s, 104 MB/s
+Great! Thank you. :)
 
-Signed-off-by: Lukas Straub <lukasstraub2@web.de>
-=2D--
- drivers/md/dm-integrity.c | 80 ++++++++++++++++++++++-----------------
- 1 file changed, 46 insertions(+), 34 deletions(-)
+> It would be fanatstic to follow this up with some analysis to find
+> cases where sizeof() is performed on a struct with a [] flex array -
+> these days people should be using struct_size() (interested DanC?)
+> 
 
-diff --git a/drivers/md/dm-integrity.c b/drivers/md/dm-integrity.c
-index b225b3e445fa..0e5ddcf44935 100644
-=2D-- a/drivers/md/dm-integrity.c
-+++ b/drivers/md/dm-integrity.c
-@@ -1309,9 +1309,16 @@ static int dm_integrity_rw_tag(struct dm_integrity_=
-c *ic, unsigned char *tag, se
- 		if (unlikely(r))
- 			return r;
+I've been working on both things:
 
--		data =3D dm_bufio_read(ic->bufio, *metadata_block, &b);
--		if (IS_ERR(data))
--			return PTR_ERR(data);
-+		/* Don't read tag area from disk if we're going to overwrite it complet=
-ely */
-+		if (op =3D=3D TAG_WRITE && *metadata_offset =3D=3D 0 && total_size >=3D=
- ic->metadata_run) {
-+			data =3D dm_bufio_new(ic->bufio, *metadata_block, &b);
-+			if (IS_ERR(data))
-+				return PTR_ERR(data);
-+		} else {
-+			data =3D dm_bufio_read(ic->bufio, *metadata_block, &b);
-+			if (IS_ERR(data))
-+				return PTR_ERR(data);
-+		}
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/?qt=grep&q=struct_size%28%29+helper
 
- 		to_copy =3D min((1U << SECTOR_SHIFT << ic->log2_buffer_sectors) - *meta=
-data_offset, total_size);
- 		dp =3D data + *metadata_offset;
-@@ -1514,6 +1521,8 @@ static void integrity_metadata(struct work_struct *w=
-)
- {
- 	struct dm_integrity_io *dio =3D container_of(w, struct dm_integrity_io, =
-work);
- 	struct dm_integrity_c *ic =3D dio->ic;
-+	unsigned sectors_to_process =3D dio->range.n_sectors;
-+	sector_t sector =3D dio->range.logical_sector;
-
- 	int r;
-
-@@ -1522,16 +1531,14 @@ static void integrity_metadata(struct work_struct =
-*w)
- 		struct bio_vec bv;
- 		unsigned digest_size =3D crypto_shash_digestsize(ic->internal_hash);
- 		struct bio *bio =3D dm_bio_from_per_bio_data(dio, sizeof(struct dm_inte=
-grity_io));
--		char *checksums;
-+		char *checksums, *checksums_ptr;
- 		unsigned extra_space =3D unlikely(digest_size > ic->tag_size) ? digest_=
-size - ic->tag_size : 0;
- 		char checksums_onstack[HASH_MAX_DIGESTSIZE];
--		unsigned sectors_to_process =3D dio->range.n_sectors;
--		sector_t sector =3D dio->range.logical_sector;
-
- 		if (unlikely(ic->mode =3D=3D 'R'))
- 			goto skip_io;
-
--		checksums =3D kmalloc((PAGE_SIZE >> SECTOR_SHIFT >> ic->sb->log2_sector=
-s_per_block) * ic->tag_size + extra_space,
-+		checksums =3D kmalloc((dio->range.n_sectors >> ic->sb->log2_sectors_per=
-_block) * ic->tag_size + extra_space,
- 				    GFP_NOIO | __GFP_NORETRY | __GFP_NOWARN);
- 		if (!checksums) {
- 			checksums =3D checksums_onstack;
-@@ -1542,49 +1549,45 @@ static void integrity_metadata(struct work_struct =
-*w)
- 			}
- 		}
-
-+		checksums_ptr =3D checksums;
- 		__bio_for_each_segment(bv, bio, iter, dio->orig_bi_iter) {
- 			unsigned pos;
--			char *mem, *checksums_ptr;
--
--again:
-+			char *mem;
- 			mem =3D (char *)kmap_atomic(bv.bv_page) + bv.bv_offset;
- 			pos =3D 0;
--			checksums_ptr =3D checksums;
- 			do {
- 				integrity_sector_checksum(ic, sector, mem + pos, checksums_ptr);
--				checksums_ptr +=3D ic->tag_size;
--				sectors_to_process -=3D ic->sectors_per_block;
-+
-+				if (likely(checksums !=3D checksums_onstack)) {
-+					checksums_ptr +=3D ic->tag_size;
-+				} else {
-+					r =3D dm_integrity_rw_tag(ic, checksums, &dio->metadata_block, &dio-=
->metadata_offset,
-+								ic->tag_size, !dio->write ? TAG_CMP : TAG_WRITE);
-+					if (unlikely(r))
-+						goto internal_hash_error;
-+				}
-+
- 				pos +=3D ic->sectors_per_block << SECTOR_SHIFT;
- 				sector +=3D ic->sectors_per_block;
--			} while (pos < bv.bv_len && sectors_to_process && checksums !=3D check=
-sums_onstack);
-+				sectors_to_process -=3D ic->sectors_per_block;
-+			} while (pos < bv.bv_len && sectors_to_process);
- 			kunmap_atomic(mem);
-
--			r =3D dm_integrity_rw_tag(ic, checksums, &dio->metadata_block, &dio->m=
-etadata_offset,
--						checksums_ptr - checksums, !dio->write ? TAG_CMP : TAG_WRITE);
--			if (unlikely(r)) {
--				if (r > 0) {
--					DMERR_LIMIT("Checksum failed at sector 0x%llx",
--						    (unsigned long long)(sector - ((r + ic->tag_size - 1) / ic->tag=
-_size)));
--					r =3D -EILSEQ;
--					atomic64_inc(&ic->number_of_mismatches);
--				}
--				if (likely(checksums !=3D checksums_onstack))
--					kfree(checksums);
--				goto error;
--			}
--
- 			if (!sectors_to_process)
- 				break;
-+		}
-
--			if (unlikely(pos < bv.bv_len)) {
--				bv.bv_offset +=3D pos;
--				bv.bv_len -=3D pos;
--				goto again;
-+		if (likely(checksums !=3D checksums_onstack)) {
-+			r =3D dm_integrity_rw_tag(ic, checksums, &dio->metadata_block, &dio->m=
-etadata_offset,
-+						(dio->range.n_sectors >> ic->sb->log2_sectors_per_block) * ic->tag_=
-size,
-+						!dio->write ? TAG_CMP : TAG_WRITE);
-+			if (unlikely(r)) {
-+				kfree(checksums);
-+				goto internal_hash_error;
- 			}
-+			kfree(checksums);
- 		}
-
--		if (likely(checksums !=3D checksums_onstack))
--			kfree(checksums);
- 	} else {
- 		struct bio_integrity_payload *bip =3D dio->orig_bi_integrity;
-
-@@ -1615,6 +1618,13 @@ static void integrity_metadata(struct work_struct *=
-w)
- skip_io:
- 	dec_in_flight(dio);
- 	return;
-+internal_hash_error:
-+	if (r > 0) {
-+		DMERR_LIMIT("Checksum failed at sector 0x%llx",
-+				(unsigned long long)(sector - ((r + ic->tag_size - 1) / ic->tag_size)=
-));
-+		r =3D -EILSEQ;
-+		atomic64_inc(&ic->number_of_mismatches);
-+	}
- error:
- 	dio->bi_status =3D errno_to_blk_status(r);
- 	dec_in_flight(dio);
-@@ -3019,6 +3029,8 @@ static void dm_integrity_io_hints(struct dm_target *=
-ti, struct queue_limits *lim
- 		limits->physical_block_size =3D ic->sectors_per_block << SECTOR_SHIFT;
- 		blk_limits_io_min(limits, ic->sectors_per_block << SECTOR_SHIFT);
- 	}
-+
-+	blk_limits_io_opt(limits, (1U << ic->sb->log2_interleave_sectors));
- }
-
- static void calculate_journal_section_size(struct dm_integrity_c *ic)
-=2D-
-2.20.1
+Thanks
+--
+Gustavo
