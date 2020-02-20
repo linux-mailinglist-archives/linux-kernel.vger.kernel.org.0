@@ -2,174 +2,295 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 374171658A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 08:46:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A489F1658B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 08:49:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbgBTHqU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 02:46:20 -0500
-Received: from mail-eopbgr80059.outbound.protection.outlook.com ([40.107.8.59]:41614
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726248AbgBTHqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 02:46:20 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=k/6N2MShVlhVaLXrmVEQUY6Hi6lY+TYY/41BOCwZ3bO8+9Js+/T96LNBd0ODOZMLLOO/c6QInvaWPree33kCsa4FrAZ37XkXKtINXT/QniMujDT4Byq8yD+XDe0cT8rX2myxuCipjBtbiP31ea20r+GHHtnAHS/xgtI8shPggGGSXpiRYYhI9MB1KZeh0UWxtHtMWzal6HWCR63xzIbxBqXZpmF4ZtFZrl3TrrfohWUcTCS1qEUmfRmJLzLZTI1gSwkI3VyAACl1EFwBzWJJcXb18SJ8TRiTRP3FrKWbKorYLssmuj97i2wS83yA/va/lKQYwTn7xOvKUVg9qmn69g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=leREqLmgPqTFhzWCXfhPjWrK1kHBpcOgD1wqwIrvk1Y=;
- b=e+6iNch5r8ay5Nt6VRIGVXKDA1nwXErmqpXyz6IY/rdYle82eULN6DtTB5xnwm+bW8ydO8+2Ehrnd09/9LeSGfhe9XNu744fO5c9cx34sm8f6MLnQvOkJm3nynWJeFQHo7Hdk0BxjhewhxLRNgAYVMemGm1AfxKGsDQKjOg+VWaBmr1XrXlqs3Ymcm5cgcP8WN0JEpbZojuRj8TTcxm8cnGLLB+mMFg85pP2nITivItLRd0A4hE7gNP2iJ6hMcJ6HYLN1rwk7eijFX9PvvnM+eXfxaRBYVTcxhJw6jK4nIbYLj+sDHVOnWvI2AgkJDPwBbHn/YbQVNkkZKSukuUKQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=leREqLmgPqTFhzWCXfhPjWrK1kHBpcOgD1wqwIrvk1Y=;
- b=EUzR1pE7Hl73MA+9MdHsn7iY/uDR5ATc2GA2QoGLovbLtDyqk0UPV9LcgImUx+BZSjHl9341M/epXMul4MVAydHd2nsPDgrN+2779ZR1Y3ZSPRhHNuWE+EsU/4yDZa3KQRlOyiHEowxK2plrs0M9sifSh4RGfyjSbtsvgqz/Css=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB5219.eurprd04.prod.outlook.com (20.177.42.24) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2729.22; Thu, 20 Feb 2020 07:46:14 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2729.033; Thu, 20 Feb 2020
- 07:46:14 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     Daniel Baluta <daniel.baluta@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>
-CC:     "festevam@gmail.com" <festevam@gmail.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "olof@lixom.net" <olof@lixom.net>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        "krzk@kernel.org" <krzk@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "daniel.baluta@gmail.com" <daniel.baluta@gmail.com>
-Subject: RE: [PATCH V4 1/2] firmware: imx: add dummy functions
-Thread-Topic: [PATCH V4 1/2] firmware: imx: add dummy functions
-Thread-Index: AQHV57c69tAonJSx8UC66CYpr4wwt6gjs7AAgAAAUkA=
-Date:   Thu, 20 Feb 2020 07:46:13 +0000
-Message-ID: <AM0PR04MB44817C5B222428272F48FE0088130@AM0PR04MB4481.eurprd04.prod.outlook.com>
-References: <1582179843-14375-1-git-send-email-peng.fan@nxp.com>
- <1582179843-14375-2-git-send-email-peng.fan@nxp.com>
- <a5134838-53d4-97f0-d126-b94164871763@nxp.com>
-In-Reply-To: <a5134838-53d4-97f0-d126-b94164871763@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-originating-ip: [119.31.174.68]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: abecfbca-4728-4b65-d7ef-08d7b5d8f60f
-x-ms-traffictypediagnostic: AM0PR04MB5219:|AM0PR04MB5219:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB52196A7CACC66B9FF5E1F75488130@AM0PR04MB5219.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 031996B7EF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(39860400002)(366004)(346002)(376002)(136003)(199004)(189003)(33656002)(26005)(6506007)(2906002)(5660300002)(76116006)(86362001)(44832011)(8936002)(53546011)(66946007)(66476007)(66556008)(64756008)(66446008)(186003)(52536014)(478600001)(9686003)(81156014)(55016002)(71200400001)(8676002)(81166006)(4326008)(316002)(54906003)(7696005)(110136005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5219;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: H0Au8osANIaib63IU157mE1LEGeaNxy5yrivuMGS7B6LTgpmQ4GMuPnA105M3GLsTRAiM/IWvVNo0KvoGlOK6bU+TjYNL9zPZzEXtKkiOK/rY9O0tpAQCSB+dpjZ1x02gXr0M6b6BVt3HDYkwmq1tnnZSCB7r4vJlYHrNYhYNYhFW7kAjwTfWqSrpTSeat6CUp9jrsnTFmqftE0BihVya5iD44EyD0bHtK/M0n9V9+Cq9zEcTowEiyFxbdh2vWi/nNvEN1FCIJYZoVF5o45E0P8d23msheju3awL5r2MeiSyYANvUIiBIWwBPzwlFUzk50o9y5RTbtZM2eLJVAL9qglbSfId8mEpHVhRVj/TLc+M4TBJogIKQgPWXj8yH2IJZ3yvO3PUw/ubf3FHlvpmIYaNqj7j8mMPk9kPYmSKcvEk4lWSAcdW7DI8ZBAygMCM
-x-ms-exchange-antispam-messagedata: H7NyWUjaEMVseKZA4RbZj3k4h5t1sG44aWhWPpyzIunx+VQAtvljss96DsUpQIcpi5VykFD9DoThUalhjWVAakbwQHUoE2jNQIlpSSYXyD+BkUqIXYXawrdq3Vr+YgwQpT0B1r1r9V9HEi6voIto1A==
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: abecfbca-4728-4b65-d7ef-08d7b5d8f60f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Feb 2020 07:46:14.0032
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: SaM7jF8nwJ3hzcCYHPXdOU8SA+DrnkQpemk0Mi25IR2gPTx72X38faCjKeGcCVAyKCNbLDY3m+M3q/ozH/ahrA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5219
+        id S1726959AbgBTHsC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 02:48:02 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44569 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726248AbgBTHsB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 02:48:01 -0500
+Received: by mail-pf1-f195.google.com with SMTP id y5so1488091pfb.11;
+        Wed, 19 Feb 2020 23:48:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=8Nh/sE8E54kbhANiaxeyQqh/Z69sM3wG9T1CQJH+T/g=;
+        b=pyLIrdO+jGm3rWDrw8+RXNSnRWdzwqooDeTQM/Vl15MWauTMvhfEkHqrtjzON3Xo9b
+         Mhh1dnHOx95TuPKcGqpK+ljwzagp1PDmEznxVPCg+TFx2zDGeZaBRqvQbtCgCpLsYPGS
+         KOaiDpDYmvcS52HYa5we3fHc0p87CxjL/g9qA2yv5BQgRNIrTLnff8Mw4MdNQtyrqTkJ
+         561AbDQIjup3MO4btGVNRFK1qc2A86YnD9O8+MNMwIN+kh8oqZKnYdaR02V8XP1Lm7iX
+         KuJDr2hOjQtcdiHoV+GNjtyGrBWiH7CV3vJVFV+q2JhcN6h3heeE0Oz9oztnyMd99cFb
+         Zx9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8Nh/sE8E54kbhANiaxeyQqh/Z69sM3wG9T1CQJH+T/g=;
+        b=P0bUL1LgoLpuaCQgXMzCbFjzoAvNfmYmFD0P3UEYJ7qC98SI5vLufrJYF48coWWcnz
+         IA5ab+95CYXV+LCGX2lzp0JVmUUaczS0C3punCCIy24tpUyMBlVfEBKZ0PwKS+9T0YM9
+         83Q4hMY8eH9e493s77S6XCBOK589eyIYZkA9R0UlJAjqlDl1virp+6gyZNPt3E8hNu8I
+         AK6ZaB8gQKNCl6wBrX+3to3OK5zYKBMWwHcmmYAMuE6LblPQjX8AkNUEYujqgrmAIKSk
+         Nwqz1O3tptpEcmFXOMv5NsOYKUg1w633OUJsWwrD9v8kYbnt6j9kTpfL+7He9jKkKBx9
+         8A4A==
+X-Gm-Message-State: APjAAAU72g9qMf6tAvrPfMSmOfEV9gnziU6wzsc2feUrGvy5O/XuEwiK
+        +TOFD7ESBCHFeyNmAKlf68VCyGeFEQc=
+X-Google-Smtp-Source: APXvYqxlCtyB86Ooqiyzts60VCTpGoJB+aPumZ9gFPM8JdSAmdddh+dyZpWV3awZaSuGJYoBKXgwjg==
+X-Received: by 2002:a63:ed01:: with SMTP id d1mr29060024pgi.95.1582184880930;
+        Wed, 19 Feb 2020 23:48:00 -0800 (PST)
+Received: from nitin-ThinkPad-X1-Yoga-4th.lenovo.com ([120.138.48.130])
+        by smtp.gmail.com with ESMTPSA id fz21sm2004889pjb.15.2020.02.19.23.47.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2020 23:48:00 -0800 (PST)
+From:   Nitin Joshi <nitjoshi@gmail.com>
+X-Google-Original-From: Nitin Joshi <njoshi1@lenovo.com>
+To:     ibm-acpi@hmh.eng.br, dvhart@infradead.org, andy@infradead.org
+Cc:     ibm-acpi-devel@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org, mpearson@lenovo.com,
+        linux-kernel@vger.kernel.org, Nitin Joshi <njoshi1@lenovo.com>,
+        Benjamin Berg <bberg@redhat.com>
+Subject: [PATCH] thinkpad_acpi: Add sysfs entry for lcdshadow feature
+Date:   Thu, 20 Feb 2020 16:46:37 +0900
+Message-Id: <20200220074637.7578-1-njoshi1@lenovo.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gU3ViamVjdDogUmU6IFtQQVRDSCBWNCAxLzJdIGZpcm13YXJlOiBpbXg6IGFkZCBkdW1t
-eSBmdW5jdGlvbnMNCj4gDQo+IE9uIDIwLjAyLjIwMjAgMDg6MjQsIFBlbmcgRmFuIHdyb3RlOg0K
-PiA+IEZyb206IFBlbmcgRmFuIDxwZW5nLmZhbkBueHAuY29tPg0KPiA+DQo+ID4gSU1YX1NDVV9T
-T0MgY291bGQgYmUgZW5hYmxlZCB3aXRoIENPTVBJTEVfVEVTVCwgaG93ZXZlciB0aGVyZSBpcyBu
-bw0KPiA+IGR1bW15IGZ1bmN0aW9ucyB3aGVuIENPTkZJR19JTVhfU0NVIG5vdCBkZWZpbmVkLiBU
-aGVuIHRoZXJlIHdpbGwgYmUNCj4gPiBidWlsZCBmYWlsdXJlLg0KPiA+DQo+ID4gU28gYWRkIGR1
-bW15IGZ1bmN0aW9ucyB0byBhdm9pZCBidWlsZCBmYWlsdXJlIGZvciBDT01QSUxFX1RFU1QNCj4g
-Pg0KPiA+IFNpZ25lZC1vZmYtYnk6IFBlbmcgRmFuIDxwZW5nLmZhbkBueHAuY29tPg0KPiA+IC0t
-LQ0KPiA+ICAgaW5jbHVkZS9saW51eC9maXJtd2FyZS9pbXgvaXBjLmggICAgICB8IDEzICsrKysr
-KysrKysrKysNCj4gPiAgIGluY2x1ZGUvbGludXgvZmlybXdhcmUvaW14L3NjaS5oICAgICAgfCAy
-MiArKysrKysrKysrKysrKysrKysrKysrDQo+ID4gICBpbmNsdWRlL2xpbnV4L2Zpcm13YXJlL2lt
-eC9zdmMvbWlzYy5oIHwgMTkgKysrKysrKysrKysrKysrKysrKw0KPiA+ICAgMyBmaWxlcyBjaGFu
-Z2VkLCA1NCBpbnNlcnRpb25zKCspDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51
-eC9maXJtd2FyZS9pbXgvaXBjLmgNCj4gPiBiL2luY2x1ZGUvbGludXgvZmlybXdhcmUvaW14L2lw
-Yy5oDQo+ID4gaW5kZXggNjMxMmM4Y2IwODRhLi4zMDQ3NTA4MmY0NzIgMTAwNjQ0DQo+ID4gLS0t
-IGEvaW5jbHVkZS9saW51eC9maXJtd2FyZS9pbXgvaXBjLmgNCj4gPiArKysgYi9pbmNsdWRlL2xp
-bnV4L2Zpcm13YXJlL2lteC9pcGMuaA0KPiA+IEBAIC0zNSw2ICszNSw3IEBAIHN0cnVjdCBpbXhf
-c2NfcnBjX21zZyB7DQo+ID4gICAJdWludDhfdCBmdW5jOw0KPiA+ICAgfTsNCj4gPg0KPiA+ICsj
-aWZkZWYgQ09ORklHX0lNWF9TQ1UNCj4gPiAgIC8qDQo+ID4gICAgKiBUaGlzIGlzIGFuIGZ1bmN0
-aW9uIHRvIHNlbmQgYW4gUlBDIG1lc3NhZ2Ugb3ZlciBhbiBJUEMgY2hhbm5lbC4NCj4gPiAgICAq
-IEl0IGlzIGNhbGxlZCBieSBjbGllbnQtc2lkZSBTQ0ZXIEFQSSBmdW5jdGlvbiBzaGltcy4NCj4g
-PiBAQCAtNTYsNCArNTcsMTYgQEAgaW50IGlteF9zY3VfY2FsbF9ycGMoc3RydWN0IGlteF9zY19p
-cGMgKmlwYywgdm9pZA0KPiAqbXNnLCBib29sIGhhdmVfcmVzcCk7DQo+ID4gICAgKiBAcmV0dXJu
-IFJldHVybnMgYW4gZXJyb3IgY29kZSAoMCA9IHN1Y2Nlc3MsIGZhaWxlZCBpZiA8IDApDQo+ID4g
-ICAgKi8NCj4gPiAgIGludCBpbXhfc2N1X2dldF9oYW5kbGUoc3RydWN0IGlteF9zY19pcGMgKipp
-cGMpOw0KPiA+ICsjZWxzZQ0KPiA+ICtzdGF0aWMgaW5saW5lIGludCBpbXhfc2N1X2NhbGxfcnBj
-KHN0cnVjdCBpbXhfc2NfaXBjICppcGMsIHZvaWQgKm1zZywNCj4gPiArCQkJCSAgIGJvb2wgaGF2
-ZV9yZXNwKQ0KPiA+ICt7DQo+ID4gKwlyZXR1cm4gLUVOT1RTVVBQOw0KPiA+ICt9DQo+ID4gKw0K
-PiA+ICtzdGF0aWMgaW5saW5lIGludCBpbXhfc2N1X2dldF9oYW5kbGUoc3RydWN0IGlteF9zY19p
-cGMgKippcGMpIHsNCj4gPiArCXJldHVybiAtRU5PVFNVUFA7DQo+ID4gK30NCj4gPiArI2VuZGlm
-DQo+ID4gICAjZW5kaWYgLyogX1NDX0lQQ19IICovDQo+ID4gZGlmZiAtLWdpdCBhL2luY2x1ZGUv
-bGludXgvZmlybXdhcmUvaW14L3NjaS5oDQo+ID4gYi9pbmNsdWRlL2xpbnV4L2Zpcm13YXJlL2lt
-eC9zY2kuaA0KPiA+IGluZGV4IDE3YmE0ZTQwNTEyOS4uN2VhODc1YjE4NmUzIDEwMDY0NA0KPiA+
-IC0tLSBhL2luY2x1ZGUvbGludXgvZmlybXdhcmUvaW14L3NjaS5oDQo+ID4gKysrIGIvaW5jbHVk
-ZS9saW51eC9maXJtd2FyZS9pbXgvc2NpLmgNCj4gPiBAQCAtMTYsOCArMTYsMzAgQEANCj4gPiAg
-ICNpbmNsdWRlIDxsaW51eC9maXJtd2FyZS9pbXgvc3ZjL21pc2MuaD4NCj4gPiAgICNpbmNsdWRl
-IDxsaW51eC9maXJtd2FyZS9pbXgvc3ZjL3BtLmg+DQo+ID4NCj4gPiArI2lmZGVmIENPTkZJR19J
-TVhfU0NVDQo+ID4gICBpbnQgaW14X3NjdV9lbmFibGVfZ2VuZXJhbF9pcnFfY2hhbm5lbChzdHJ1
-Y3QgZGV2aWNlICpkZXYpOw0KPiA+ICAgaW50IGlteF9zY3VfaXJxX3JlZ2lzdGVyX25vdGlmaWVy
-KHN0cnVjdCBub3RpZmllcl9ibG9jayAqbmIpOw0KPiA+ICAgaW50IGlteF9zY3VfaXJxX3VucmVn
-aXN0ZXJfbm90aWZpZXIoc3RydWN0IG5vdGlmaWVyX2Jsb2NrICpuYik7DQo+ID4gICBpbnQgaW14
-X3NjdV9pcnFfZ3JvdXBfZW5hYmxlKHU4IGdyb3VwLCB1MzIgbWFzaywgdTggZW5hYmxlKTsNCj4g
-PiArI2Vsc2UNCj4gPiArc3RhdGljIGlubGluZSBpbnQgaW14X3NjdV9lbmFibGVfZ2VuZXJhbF9p
-cnFfY2hhbm5lbChzdHJ1Y3QgZGV2aWNlDQo+ID4gKypkZXYpIHsNCj4gPiArCXJldHVybiAtRU5P
-VFNVUFA7DQo+ID4gK30NCj4gPiArDQo+ID4gK3N0YXRpYyBpbmxpbmUgaW50IGlteF9zY3VfaXJx
-X3JlZ2lzdGVyX25vdGlmaWVyKHN0cnVjdCBub3RpZmllcl9ibG9jaw0KPiA+ICsqbmIpIHsNCj4g
-PiArCXJldHVybiAtRU5PVFNVUFA7DQo+ID4gK30NCj4gPiArDQo+ID4gK3N0YXRpYyBpbmxpbmUg
-aW50IGlteF9zY3VfaXJxX3VucmVnaXN0ZXJfbm90aWZpZXIoc3RydWN0DQo+ID4gK25vdGlmaWVy
-X2Jsb2NrICpuYikgew0KPiA+ICsJcmV0dXJuIC1FTk9UU1VQUDsNCj4gPiArfQ0KPiA+ICsNCj4g
-PiArc3RhdGljIGlubGluZSBpbnQgaW14X3NjdV9pcnFfZ3JvdXBfZW5hYmxlKHU4IGdyb3VwLCB1
-MzIgbWFzaywgdTgNCj4gPiArZW5hYmxlKSB7DQo+ID4gKwlyZXR1cm4gLUVOT1RTVVBQOw0KPiA+
-ICt9DQo+ID4gKyNlbmRpZg0KPiA+ICAgI2VuZGlmIC8qIF9TQ19TQ0lfSCAqLw0KPiA+IGRpZmYg
-LS1naXQgYS9pbmNsdWRlL2xpbnV4L2Zpcm13YXJlL2lteC9zdmMvbWlzYy5oDQo+ID4gYi9pbmNs
-dWRlL2xpbnV4L2Zpcm13YXJlL2lteC9zdmMvbWlzYy5oDQo+ID4gaW5kZXggMDMxZGQ0ZDNjNzY2
-Li4zZjRhMGY1MjZiNzMgMTAwNjQ0DQo+ID4gLS0tIGEvaW5jbHVkZS9saW51eC9maXJtd2FyZS9p
-bXgvc3ZjL21pc2MuaA0KPiA+ICsrKyBiL2luY2x1ZGUvbGludXgvZmlybXdhcmUvaW14L3N2Yy9t
-aXNjLmgNCj4gPiBAQCAtNDYsNiArNDYsNyBAQCBlbnVtIGlteF9taXNjX2Z1bmMgew0KPiA+ICAg
-ICogQ29udHJvbCBGdW5jdGlvbnMNCj4gPiAgICAqLw0KPiA+DQo+ID4gKyNpZmRlZiBDT05GSUdf
-SU1YX1NDVQ0KPiA+ICAgaW50IGlteF9zY19taXNjX3NldF9jb250cm9sKHN0cnVjdCBpbXhfc2Nf
-aXBjICppcGMsIHUzMiByZXNvdXJjZSwNCj4gPiAgIAkJCSAgICB1OCBjdHJsLCB1MzIgdmFsKTsN
-Cj4gPg0KPiA+IEBAIC01NCw1ICs1NSwyMyBAQCBpbnQgaW14X3NjX21pc2NfZ2V0X2NvbnRyb2wo
-c3RydWN0IGlteF9zY19pcGMgKmlwYywNCj4gPiB1MzIgcmVzb3VyY2UsDQo+ID4NCj4gPiAgIGlu
-dCBpbXhfc2NfcG1fY3B1X3N0YXJ0KHN0cnVjdCBpbXhfc2NfaXBjICppcGMsIHUzMiByZXNvdXJj
-ZSwNCj4gPiAgIAkJCWJvb2wgZW5hYmxlLCB1NjQgcGh5c19hZGRyKTsNCj4gPiArI2Vsc2UNCj4g
-RnVuY3Rpb25zIGZvciBkdW1teSBjYXNlIGJlbG93IHNob3VsZCBiZSBzdGF0aWMgaW5saW5lLg0K
-DQpPcHBzLiBGb3Jnb3QgdG8gYWRkIHRoZXNlIHRocmVlLg0KDQpUaGFua3MsDQpQZW5nLg0KDQo+
-ID4gK2ludCBpbXhfc2NfbWlzY19zZXRfY29udHJvbChzdHJ1Y3QgaW14X3NjX2lwYyAqaXBjLCB1
-MzIgcmVzb3VyY2UsDQo+ID4gKwkJCSAgICB1OCBjdHJsLCB1MzIgdmFsKQ0KPiA+ICt7DQo+ID4g
-KwlyZXR1cm4gLUVOT1RTVVBQOw0KPiA+ICt9DQo+ID4gKw0KPiA+ICtpbnQgaW14X3NjX21pc2Nf
-Z2V0X2NvbnRyb2woc3RydWN0IGlteF9zY19pcGMgKmlwYywgdTMyIHJlc291cmNlLA0KPiA+ICsJ
-CQkgICAgdTggY3RybCwgdTMyICp2YWwpDQo+ID4gK3sNCj4gPiArCXJldHVybiAtRU5PVFNVUFA7
-DQo+ID4gK30NCj4gPg0KPiA+ICtpbnQgaW14X3NjX3BtX2NwdV9zdGFydChzdHJ1Y3QgaW14X3Nj
-X2lwYyAqaXBjLCB1MzIgcmVzb3VyY2UsDQo+ID4gKwkJCWJvb2wgZW5hYmxlLCB1NjQgcGh5c19h
-ZGRyKQ0KPiA+ICt7DQo+ID4gKwlyZXR1cm4gLUVOT1RTVVBQOw0KPiA+ICt9DQo+ID4gKyNlbmRp
-Zg0KPiA+ICAgI2VuZGlmIC8qIF9TQ19NSVNDX0FQSV9IICovDQo+IA0KDQo=
+  This feature is supported on some Thinkpad products like T490s, Thinkpad
+  X1 yoga 4th Gen etc . The lcdshadow feature can be enabled and disabled
+  when user press "Fn" + "D" key. Currently, no user feedback is given for
+  this action. Adding as sysfs entry allows userspace to show an On Screen
+  Display whenever the setting changes.
+
+  Summary of changes is mentioned below :
+
+ - Added TP_HKEY_EV_LCDSHADOW_CHANGED for consistency inside the driver
+ - Added unmapped LCDSHADOW to keymap
+ - Added lcdshadow_get function to read value using ACPI
+ - Added lcdshadow_refresh function to re-read value and send notification
+ - Added sysfs group creation to tpaci_lcdshadow_init
+ - Added lcdshadow_exit to remove sysfs group again
+ - Implemented lcdshadow_enable_show/lcdshadow_enable_store
+ - Added handler to tpacpi_driver_event to update refresh lcdshadow
+ - Explicitly call tpacpi_driver_event for extended keyset
+
+ Patch is tested on kernel 5.5 on Thinkpad X1 Yoga 4th Gen.
+
+Co-developed-by: Benjamin Berg <bberg@redhat.com>
+Signed-off-by: Benjamin Berg <bberg@redhat.com>
+Reviewed-by: Mark Pearson <mpearson@lenovo.com>
+Signed-off-by: Nitin Joshi <njoshi1@lenovo.com>
+---
+ drivers/platform/x86/thinkpad_acpi.c | 117 +++++++++++++++++++++++----
+ 1 file changed, 102 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+index da794dcfdd92..bd137cc7baee 100644
+--- a/drivers/platform/x86/thinkpad_acpi.c
++++ b/drivers/platform/x86/thinkpad_acpi.c
+@@ -155,6 +155,7 @@ enum tpacpi_hkey_event_t {
+ 	TP_HKEY_EV_VOL_UP		= 0x1015, /* Volume up or unmute */
+ 	TP_HKEY_EV_VOL_DOWN		= 0x1016, /* Volume down or unmute */
+ 	TP_HKEY_EV_VOL_MUTE		= 0x1017, /* Mixer output mute */
++	TP_HKEY_EV_LCDSHADOW_CHANGED	= 0x130f, /* Eprivacy status changed */
+ 
+ 	/* Reasons for waking up from S3/S4 */
+ 	TP_HKEY_EV_WKUP_S3_UNDOCK	= 0x2304, /* undock requested, S3 */
+@@ -1925,6 +1926,7 @@ enum {	/* hot key scan codes (derived from ACPI DSDT) */
+ 
+ 	/* Lenovo extended keymap, starting at 0x1300 */
+ 	TP_ACPI_HOTKEYSCAN_EXTENDED_START,
++	TP_ACPI_HOTKEYSCAN_LCDSHADOW = 67,
+ 	/* first new observed key (star, favorites) is 0x1311 */
+ 	TP_ACPI_HOTKEYSCAN_STAR = 69,
+ 	TP_ACPI_HOTKEYSCAN_CLIPPING_TOOL2,
+@@ -3342,7 +3344,7 @@ static int __init hotkey_init(struct ibm_init_struct *iibm)
+ 		KEY_UNKNOWN, KEY_UNKNOWN, KEY_UNKNOWN, KEY_UNKNOWN,
+ 		KEY_UNKNOWN, KEY_UNKNOWN, KEY_UNKNOWN, KEY_UNKNOWN,
+ 		KEY_UNKNOWN, KEY_UNKNOWN, KEY_UNKNOWN, KEY_UNKNOWN,
+-		KEY_UNKNOWN, KEY_UNKNOWN
++		KEY_UNKNOWN, KEY_UNKNOWN, KEY_UNKNOWN,
+ 
+ 		},
+ 
+@@ -3444,7 +3446,8 @@ static int __init hotkey_init(struct ibm_init_struct *iibm)
+ 		KEY_UNKNOWN, KEY_UNKNOWN, KEY_UNKNOWN, KEY_UNKNOWN,
+ 		KEY_UNKNOWN, KEY_UNKNOWN, KEY_UNKNOWN, KEY_UNKNOWN,
+ 		KEY_UNKNOWN, KEY_UNKNOWN, KEY_UNKNOWN, KEY_UNKNOWN,
+-		KEY_UNKNOWN, KEY_UNKNOWN, KEY_UNKNOWN, KEY_UNKNOWN,
++		KEY_UNKNOWN, KEY_UNKNOWN, KEY_UNKNOWN,
++		KEY_RESERVED,         /* LCD Shadow/ePrivacy */
+ 		KEY_UNKNOWN,
+ 
+ 		KEY_BOOKMARKS,       /* Favorite app, 0x311 */
+@@ -3921,6 +3924,7 @@ static bool hotkey_notify_hotkey(const u32 hkey,
+ 		scancode -= (0x300 - TP_ACPI_HOTKEYSCAN_EXTENDED_START);
+ 		if (scancode >= TP_ACPI_HOTKEYSCAN_EXTENDED_START &&
+ 		    scancode < TPACPI_HOTKEY_MAP_LEN) {
++			tpacpi_driver_event(hkey);
+ 			tpacpi_input_send_key(scancode);
+ 			return true;
+ 		}
+@@ -9717,6 +9721,12 @@ static struct ibm_struct battery_driver_data = {
+ 
+ static int lcdshadow_state;
+ 
++static void lcdshadow_notify_change(void)
++{
++	sysfs_notify(&tpacpi_pdev->dev.kobj, NULL,
++		     "lcdshadow_enable");
++}
++
+ static int lcdshadow_on_off(bool state)
+ {
+ 	acpi_handle set_shadow_handle;
+@@ -9731,6 +9741,7 @@ static int lcdshadow_on_off(bool state)
+ 		return -EIO;
+ 
+ 	lcdshadow_state = state;
++	lcdshadow_notify_change();
+ 	return 0;
+ }
+ 
+@@ -9743,27 +9754,90 @@ static int lcdshadow_set(bool on)
+ 	return lcdshadow_on_off(on);
+ }
+ 
+-static int tpacpi_lcdshadow_init(struct ibm_init_struct *iibm)
++static int lcdshadow_get(void)
+ {
+ 	acpi_handle get_shadow_handle;
+ 	int output;
+ 
+-	if (ACPI_FAILURE(acpi_get_handle(hkey_handle, "GSSS", &get_shadow_handle))) {
+-		lcdshadow_state = -ENODEV;
+-		return 0;
+-	}
++	if (ACPI_FAILURE(acpi_get_handle(hkey_handle, "GSSS",
++					&get_shadow_handle)))
++		return -ENODEV;
+ 
+-	if (!acpi_evalf(get_shadow_handle, &output, NULL, "dd", 0)) {
+-		lcdshadow_state = -EIO;
++	if (!acpi_evalf(get_shadow_handle, &output, NULL, "dd", 0))
+ 		return -EIO;
++
++	if (!(output & 0x10000))
++		return -ENODEV;
++
++	return output & 0x1;
++}
++
++static void lcdshadow_refresh(void)
++{
++	int new_state;
++
++	new_state = lcdshadow_get();
++
++	if (lcdshadow_state != new_state) {
++		lcdshadow_state = new_state;
++		lcdshadow_notify_change();
+ 	}
+-	if (!(output & 0x10000)) {
+-		lcdshadow_state = -ENODEV;
+-		return 0;
+-	}
+-	lcdshadow_state = output & 0x1;
++}
+ 
+-	return 0;
++
++/* sysfs lcdshadow entry */
++static ssize_t lcdshadow_enable_show(struct device *dev,
++				      struct device_attribute *attr,
++				      char *buf)
++{
++	if (lcdshadow_state < 0)
++		return lcdshadow_state;
++
++	return snprintf(buf, PAGE_SIZE, "%d\n", lcdshadow_state);
++}
++
++static ssize_t lcdshadow_enable_store(struct device *dev,
++				       struct device_attribute *attr,
++				       const char *buf, size_t count)
++{
++	unsigned long t;
++	int res;
++
++	if (parse_strtoul(buf, 1, &t))
++		return -EINVAL;
++
++	tpacpi_disclose_usertask(attr->attr.name, "set to %ld\n", t);
++
++	res = lcdshadow_set(!!t);
++
++	return (res < 0) ? res : count;
++}
++
++static DEVICE_ATTR_RW(lcdshadow_enable);
++
++static struct attribute *lcdshadow_attributes[] = {
++	&dev_attr_lcdshadow_enable.attr,
++	NULL
++};
++
++static const struct attribute_group lcdshadow_attr_group = {
++	.attrs = lcdshadow_attributes,
++};
++
++
++static int tpacpi_lcdshadow_init(struct ibm_init_struct *iibm)
++{
++	int res;
++
++	lcdshadow_state = lcdshadow_get();
++
++	if (lcdshadow_state < 0 && lcdshadow_state != -ENODEV)
++		return lcdshadow_state;
++
++	res = sysfs_create_group(&tpacpi_pdev->dev.kobj,
++				  &lcdshadow_attr_group);
++
++	return res;
+ }
+ 
+ static void lcdshadow_resume(void)
+@@ -9805,11 +9879,18 @@ static int lcdshadow_write(char *buf)
+ 	return lcdshadow_set(state);
+ }
+ 
++static void lcdshadow_exit(void)
++{
++	sysfs_remove_group(&tpacpi_pdev->dev.kobj,
++			   &lcdshadow_attr_group);
++}
++
+ static struct ibm_struct lcdshadow_driver_data = {
+ 	.name = "lcdshadow",
+ 	.resume = lcdshadow_resume,
+ 	.read = lcdshadow_read,
+ 	.write = lcdshadow_write,
++	.exit = lcdshadow_exit,
+ };
+ 
+ /****************************************************************************
+@@ -9859,6 +9940,12 @@ static void tpacpi_driver_event(const unsigned int hkey_event)
+ 
+ 		mutex_unlock(&kbdlight_mutex);
+ 	}
++	if (lcdshadow_state >= 0) {
++		switch (hkey_event) {
++		case TP_HKEY_EV_LCDSHADOW_CHANGED:
++			lcdshadow_refresh();
++		}
++	}
+ }
+ 
+ static void hotkey_driver_event(const unsigned int scancode)
+-- 
+2.17.1
+
