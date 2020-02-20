@@ -2,357 +2,316 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44209165AB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 10:58:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9F0D165AC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 10:59:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727274AbgBTJ6p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 04:58:45 -0500
-Received: from mga06.intel.com ([134.134.136.31]:16156 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726799AbgBTJ6p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 04:58:45 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2020 01:58:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,464,1574150400"; 
-   d="scan'208";a="239971150"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga006.jf.intel.com with ESMTP; 20 Feb 2020 01:58:44 -0800
-Received: from [10.226.39.49] (unknown [10.226.39.49])
-        by linux.intel.com (Postfix) with ESMTP id 40882580270;
-        Thu, 20 Feb 2020 01:58:42 -0800 (PST)
-Subject: Re: [PATCH v2 2/2] phy: intel: Add driver support for Combophy
-To:     Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        kishon@ti.com, robh@kernel.org, cheol.yong.kim@intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
-        yixin.zhu@intel.com
-References: <208fcb9660abd560aeab077442d158d84a3dddee.1582021248.git.eswara.kota@linux.intel.com>
- <b49e2f94631da003fb4b1409adc42fb81f77877b.1582021248.git.eswara.kota@linux.intel.com>
- <20200219101435.GM10400@smile.fi.intel.com>
-From:   Dilip Kota <eswara.kota@linux.intel.com>
-Message-ID: <3c73c805-55a6-dcc0-4cd4-dd452f1d002d@linux.intel.com>
-Date:   Thu, 20 Feb 2020 17:58:41 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
-MIME-Version: 1.0
-In-Reply-To: <20200219101435.GM10400@smile.fi.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        id S1727720AbgBTJ7W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 04:59:22 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40933 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727677AbgBTJ7W (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 04:59:22 -0500
+Received: by mail-pf1-f195.google.com with SMTP id b185so1674992pfb.7
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 01:59:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=/MbaH1wYfToAAtK7qMJbBONL10BhSFsDsGorAAfsgPk=;
+        b=hyP1f/a/9yXtn01r4yT/NIPtZoEuwJpDPJArbwhGirMRyJK6fyKE8kz5t8hxx6BJSi
+         xsL1sGLNVMyuMSZn6DzIdCmQPvIM+JPMVsqz733NZl8QtulsFHQuottSK697drms6BNC
+         9BxGqOzxkIyqk1zIvTa4zbuw4R9fSwBEEcGLZ+TQ9t5QMlOyzf94RZsBk/fmeCvJDGSp
+         uoc9c/yZmL/v5HEagkO2wRFnD6v2v0tVljFV0YQ2XE8F4agbyDv6jcUmQwcOhCYVNj56
+         OD225F8iHKCUVkTZKGEa4/aH8VzuMPiA63DWmYXQS82Bplz0elSS5T7ZPuu2J9kNmGQe
+         8pLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=/MbaH1wYfToAAtK7qMJbBONL10BhSFsDsGorAAfsgPk=;
+        b=BDgmOEWC/RDMrvh85PSbBVILANtFNJG7/VHJ6cRgqxv26oIQbvEHIwmNU/f7qBK9ld
+         qsWvOSJuOw1EvwpETtPIdaPQE+rQLzMl+RIpcSQvI2xRG6XNUVm4sPmISXrah3XdOWGl
+         rIDQ1u8canF7wGUDr/5etV54uaGlxtXwxYwoTW4JkHoJ+mLcZjzaqeKJMYk2MnqmBkRa
+         JWg+sxZB6xMOLm5MCoTzjlvBM/Br7MSgSvBKJSX8jHoDRESGrWicPf6RqKTZYShnJgBW
+         tKcXFOEAOXXoEZOq0doqO052wJ1Kk55meOeHvEW4tEUmYkGC29tOPHxqmGV5ycZSthnS
+         KE0g==
+X-Gm-Message-State: APjAAAU9GyvLIZyuPaPwVZL4MFYZExN4lWf3OqdSANeaUnabCn0zi6gN
+        aj1h8zs+qk6g5XWAEULGZnJr
+X-Google-Smtp-Source: APXvYqz98iJpFzSq7+axs+6qTaqlUXtO1NObgDfeSlMgFatt/T6I9BJW6ovBsOAcdlkb8GHJ8kFRYg==
+X-Received: by 2002:a63:fe14:: with SMTP id p20mr30459395pgh.94.1582192760132;
+        Thu, 20 Feb 2020 01:59:20 -0800 (PST)
+Received: from localhost.localdomain ([2409:4072:315:9501:edda:4222:88ae:442f])
+        by smtp.gmail.com with ESMTPSA id b3sm2678644pjo.30.2020.02.20.01.59.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2020 01:59:19 -0800 (PST)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     gregkh@linuxfoundation.org, arnd@arndb.de
+Cc:     smohanad@codeaurora.org, jhugo@codeaurora.org,
+        kvalo@codeaurora.org, bjorn.andersson@linaro.org,
+        hemantk@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 03/16] bus: mhi: core: Add support for registering MHI client drivers
+Date:   Thu, 20 Feb 2020 15:28:41 +0530
+Message-Id: <20200220095854.4804-4-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200220095854.4804-1-manivannan.sadhasivam@linaro.org>
+References: <20200220095854.4804-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This commit adds support for registering MHI client drivers with the
+MHI stack. MHI client drivers binds to one or more MHI devices inorder
+to sends and receive the upper-layer protocol packets like IP packets,
+modem control messages, and diagnostics messages over MHI bus.
 
-On 2/19/2020 6:14 PM, Andy Shevchenko wrote:
-> On Wed, Feb 19, 2020 at 11:31:30AM +0800, Dilip Kota wrote:
->> Combophy subsystem provides PHYs for various
->> controllers like PCIe, SATA and EMAC.
-> ...
->
->> +static const char *const intel_iphy_names[] = {"pcie", "xpcs", "sata"};
-> + blank line
-Typo, will fix it.
->
->> +#define CLK_100MHZ		100000000
->> +#define CLK_156_25MHZ		156250000
-> ...
->
->> +enum {
->> +	PHY_0 = 0,
-> Aren't enum:s start with 0 by the standard?
-> Ditto for all enum:s.
-> (Or, if it represents value from hardware, perhaps makes sense to put a comment
->   to each of such enum and then all values must be explicit)
-Values are related to h/w registers, will add the description in the 
-comments.
->
->> +	PHY_1,
->> +	PHY_MAX_NUM,
->> +};
-> ...
->
->> +struct intel_cbphy_iphy {
->> +	struct phy		*phy;
->> +	struct device		*dev;
-> Can dev be derived from phy? Or phy from dev?
-I see, there is no need of storing phy. Will remove it in the next patch 
-version.
->
->> +	bool			enable;
->> +	struct intel_combo_phy	*parent;
->> +	struct reset_control	*app_rst;
->> +	u32			id;
->> +};
-> ...
->
->> +static int intel_cbphy_iphy_enable(struct intel_cbphy_iphy *iphy, bool set)
->> +{
->> +	struct intel_combo_phy *cbphy = iphy->parent;
->> +	u32 val, bitn;
->> +
->> +	bitn = cbphy->phy_mode * 2 + iphy->id;
-> Why not
->
-> 	u32 mask = BIT(cbphy->phy_mode * 2 + iphy->id);
-> 	u32 val;
-Looks more better, i will update it.
->
->> +	/* Register: 0 is enable, 1 is disable */
->> +	val =  set ? 0 : BIT(bitn);
-> 	val = set ? 0 : mask;
->
-> (why double space?)
-Typo error. Will correct it.
->
->> +
->> +	return regmap_update_bits(cbphy->hsiocfg, REG_CLK_DISABLE(cbphy->bid),
->> +				 BIT(bitn), val);
-> 	return regmap_update_bits(..., mask, val);
->
-> ?
-Still it is taking more than 80 characters with mask, need to be in 2 lines
+This is based on the patch submitted by Sujeev Dias:
+https://lkml.org/lkml/2018/7/9/987
 
-return regmap_update_bits(...,
-                                                      mask, val);
+Signed-off-by: Sujeev Dias <sdias@codeaurora.org>
+Signed-off-by: Siddartha Mohanadoss <smohanad@codeaurora.org>
+[mani: splitted and cleaned up for upstream]
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Reviewed-by: Jeffrey Hugo <jhugo@codeaurora.org>
+Tested-by: Jeffrey Hugo <jhugo@codeaurora.org>
+---
+ drivers/bus/mhi/core/init.c | 149 ++++++++++++++++++++++++++++++++++++
+ include/linux/mhi.h         |  39 ++++++++++
+ 2 files changed, 188 insertions(+)
 
->
->> +}
->> +
->> +static int intel_cbphy_pcie_refclk_cfg(struct intel_cbphy_iphy *iphy, bool set)
->> +{
->> +	struct intel_combo_phy *cbphy = iphy->parent;
->> +	const u32 pad_dis_cfg_off = 0x174;
->> +	u32 val, bitn;
->> +
->> +	bitn = cbphy->id * 2 + iphy->id;
->> +
->> +	/* Register: 0 is enable, 1 is disable */
->> +	val = set ? 0 : BIT(bitn);
->> +
->> +	return regmap_update_bits(cbphy->syscfg, pad_dis_cfg_off, BIT(bitn),
->> +				 val);
-> Ditto.
-Here it can with go in single line with mask,
->
->> +}
-> ...
->
->> +static int intel_cbphy_iphy_cfg(struct intel_cbphy_iphy *iphy,
->> +				int (*phy_cfg)(struct intel_cbphy_iphy *))
->> +{
->> +	struct intel_combo_phy *cbphy = iphy->parent;
->> +	struct intel_cbphy_iphy *sphy;
->> +	int ret;
->> +
->> +	ret = phy_cfg(iphy);
->> +	if (ret)
->> +		return ret;
->> +
->> +	if (cbphy->aggr_mode == PHY_DL_MODE) {
-> 	if (x != y)
-> 		return 0;
->
->> +		sphy = &cbphy->iphy[PHY_1];
->> +		ret = phy_cfg(sphy);
->> +	}
->> +
->> +	return ret;
-> 	return phy_cfg(...);
->
->> +}
-> ...
->
->> +	switch (mode) {
->> +	case PHY_PCIE_MODE:
->> +		cb_mode = (aggr == PHY_DL_MODE) ?
->> +			  PCIE_DL_MODE : PCIE0_PCIE1_MODE;
-> I think one line is okay here.
+diff --git a/drivers/bus/mhi/core/init.c b/drivers/bus/mhi/core/init.c
+index 6f24c21284ec..12e386862b3f 100644
+--- a/drivers/bus/mhi/core/init.c
++++ b/drivers/bus/mhi/core/init.c
+@@ -374,8 +374,157 @@ struct mhi_device *mhi_alloc_device(struct mhi_controller *mhi_cntrl)
+ 	return mhi_dev;
+ }
+ 
++static int mhi_driver_probe(struct device *dev)
++{
++	struct mhi_device *mhi_dev = to_mhi_device(dev);
++	struct mhi_controller *mhi_cntrl = mhi_dev->mhi_cntrl;
++	struct device_driver *drv = dev->driver;
++	struct mhi_driver *mhi_drv = to_mhi_driver(drv);
++	struct mhi_event *mhi_event;
++	struct mhi_chan *ul_chan = mhi_dev->ul_chan;
++	struct mhi_chan *dl_chan = mhi_dev->dl_chan;
++
++	if (ul_chan) {
++		/*
++		 * If channel supports LPM notifications then status_cb should
++		 * be provided
++		 */
++		if (ul_chan->lpm_notify && !mhi_drv->status_cb)
++			return -EINVAL;
++
++		/* For non-offload channels then xfer_cb should be provided */
++		if (!ul_chan->offload_ch && !mhi_drv->ul_xfer_cb)
++			return -EINVAL;
++
++		ul_chan->xfer_cb = mhi_drv->ul_xfer_cb;
++	}
++
++	if (dl_chan) {
++		/*
++		 * If channel supports LPM notifications then status_cb should
++		 * be provided
++		 */
++		if (dl_chan->lpm_notify && !mhi_drv->status_cb)
++			return -EINVAL;
++
++		/* For non-offload channels then xfer_cb should be provided */
++		if (!dl_chan->offload_ch && !mhi_drv->dl_xfer_cb)
++			return -EINVAL;
++
++		mhi_event = &mhi_cntrl->mhi_event[dl_chan->er_index];
++
++		/*
++		 * If the channel event ring is managed by client, then
++		 * status_cb must be provided so that the framework can
++		 * notify pending data
++		 */
++		if (mhi_event->cl_manage && !mhi_drv->status_cb)
++			return -EINVAL;
++
++		dl_chan->xfer_cb = mhi_drv->dl_xfer_cb;
++	}
++
++	/* Call the user provided probe function */
++	return mhi_drv->probe(mhi_dev, mhi_dev->id);
++}
++
++static int mhi_driver_remove(struct device *dev)
++{
++	struct mhi_device *mhi_dev = to_mhi_device(dev);
++	struct mhi_driver *mhi_drv = to_mhi_driver(dev->driver);
++	struct mhi_chan *mhi_chan;
++	enum mhi_ch_state ch_state[] = {
++		MHI_CH_STATE_DISABLED,
++		MHI_CH_STATE_DISABLED
++	};
++	int dir;
++
++	/* Skip if it is a controller device */
++	if (mhi_dev->dev_type == MHI_DEVICE_CONTROLLER)
++		return 0;
++
++	/* Reset both channels */
++	for (dir = 0; dir < 2; dir++) {
++		mhi_chan = dir ? mhi_dev->ul_chan : mhi_dev->dl_chan;
++
++		if (!mhi_chan)
++			continue;
++
++		/* Wake all threads waiting for completion */
++		write_lock_irq(&mhi_chan->lock);
++		mhi_chan->ccs = MHI_EV_CC_INVALID;
++		complete_all(&mhi_chan->completion);
++		write_unlock_irq(&mhi_chan->lock);
++
++		/* Set the channel state to disabled */
++		mutex_lock(&mhi_chan->mutex);
++		write_lock_irq(&mhi_chan->lock);
++		ch_state[dir] = mhi_chan->ch_state;
++		mhi_chan->ch_state = MHI_CH_STATE_SUSPENDED;
++		write_unlock_irq(&mhi_chan->lock);
++
++		mutex_unlock(&mhi_chan->mutex);
++	}
++
++	mhi_drv->remove(mhi_dev);
++
++	/* De-init channel if it was enabled */
++	for (dir = 0; dir < 2; dir++) {
++		mhi_chan = dir ? mhi_dev->ul_chan : mhi_dev->dl_chan;
++
++		if (!mhi_chan)
++			continue;
++
++		mutex_lock(&mhi_chan->mutex);
++
++		mhi_chan->ch_state = MHI_CH_STATE_DISABLED;
++
++		mutex_unlock(&mhi_chan->mutex);
++	}
++
++	return 0;
++}
++
++int mhi_driver_register(struct mhi_driver *mhi_drv)
++{
++	struct device_driver *driver = &mhi_drv->driver;
++
++	if (!mhi_drv->probe || !mhi_drv->remove)
++		return -EINVAL;
++
++	driver->bus = &mhi_bus_type;
++	driver->probe = mhi_driver_probe;
++	driver->remove = mhi_driver_remove;
++
++	return driver_register(driver);
++}
++EXPORT_SYMBOL_GPL(mhi_driver_register);
++
++void mhi_driver_unregister(struct mhi_driver *mhi_drv)
++{
++	driver_unregister(&mhi_drv->driver);
++}
++EXPORT_SYMBOL_GPL(mhi_driver_unregister);
++
+ static int mhi_match(struct device *dev, struct device_driver *drv)
+ {
++	struct mhi_device *mhi_dev = to_mhi_device(dev);
++	struct mhi_driver *mhi_drv = to_mhi_driver(drv);
++	const struct mhi_device_id *id;
++
++	/*
++	 * If the device is a controller type then there is no client driver
++	 * associated with it
++	 */
++	if (mhi_dev->dev_type == MHI_DEVICE_CONTROLLER)
++		return 0;
++
++	for (id = mhi_drv->id_table; id->chan[0]; id++)
++		if (!strcmp(mhi_dev->chan_name, id->chan)) {
++			mhi_dev->id = id;
++			return 1;
++		}
++
+ 	return 0;
+ };
+ 
+diff --git a/include/linux/mhi.h b/include/linux/mhi.h
+index a34aa50120c8..7e6b7743c705 100644
+--- a/include/linux/mhi.h
++++ b/include/linux/mhi.h
+@@ -354,6 +354,8 @@ struct mhi_controller {
+  * @dl_chan: DL channel for the device
+  * @dev: Driver model device node for the MHI device
+  * @dev_type: MHI device type
++ * @ul_chan_id: MHI channel id for UL transfer
++ * @dl_chan_id: MHI channel id for DL transfer
+  * @dev_wake: Device wakeup counter
+  */
+ struct mhi_device {
+@@ -364,6 +366,8 @@ struct mhi_device {
+ 	struct mhi_chan *dl_chan;
+ 	struct device dev;
+ 	enum mhi_device_type dev_type;
++	int ul_chan_id;
++	int dl_chan_id;
+ 	u32 dev_wake;
+ };
+ 
+@@ -381,6 +385,29 @@ struct mhi_result {
+ 	int transaction_status;
+ };
+ 
++/**
++ * struct mhi_driver - Structure representing a MHI client driver
++ * @probe: CB function for client driver probe function
++ * @remove: CB function for client driver remove function
++ * @ul_xfer_cb: CB function for UL data transfer
++ * @dl_xfer_cb: CB function for DL data transfer
++ * @status_cb: CB functions for asynchronous status
++ * @driver: Device driver model driver
++ */
++struct mhi_driver {
++	const struct mhi_device_id *id_table;
++	int (*probe)(struct mhi_device *mhi_dev,
++		     const struct mhi_device_id *id);
++	void (*remove)(struct mhi_device *mhi_dev);
++	void (*ul_xfer_cb)(struct mhi_device *mhi_dev,
++			   struct mhi_result *result);
++	void (*dl_xfer_cb)(struct mhi_device *mhi_dev,
++			   struct mhi_result *result);
++	void (*status_cb)(struct mhi_device *mhi_dev, enum mhi_callback mhi_cb);
++	struct device_driver driver;
++};
++
++#define to_mhi_driver(drv) container_of(drv, struct mhi_driver, driver)
+ #define to_mhi_device(dev) container_of(dev, struct mhi_device, dev)
+ 
+ /**
+@@ -397,4 +424,16 @@ int mhi_register_controller(struct mhi_controller *mhi_cntrl,
+  */
+ void mhi_unregister_controller(struct mhi_controller *mhi_cntrl);
+ 
++/**
++ * mhi_driver_register - Register driver with MHI framework
++ * @mhi_drv: Driver associated with the device
++ */
++int mhi_driver_register(struct mhi_driver *mhi_drv);
++
++/**
++ * mhi_driver_unregister - Unregister a driver for mhi_devices
++ * @mhi_drv: Driver associated with the device
++ */
++void mhi_driver_unregister(struct mhi_driver *mhi_drv);
++
+ #endif /* _MHI_H_ */
+-- 
+2.17.1
 
-its taking 82 characters.
-
->
->> +		break;
->> +
->> +	case PHY_XPCS_MODE:
->> +		cb_mode = (aggr == PHY_DL_MODE) ? RXAUI_MODE : XPCS0_XPCS1_MODE;
->> +		break;
->> +
->> +	case PHY_SATA_MODE:
->> +		if (aggr == PHY_DL_MODE) {
->> +			dev_err(dev, "CBPHY%u mode:%u not support dual lane!\n",
->> +				cbphy->id, mode);
->> +			return -EINVAL;
->> +		}
->> +
->> +		cb_mode = SATA0_SATA1_MODE;
->> +		break;
->> +
->> +	default:
->> +		dev_err(dev, "CBPHY%u mode:%u not supported!\n",
->> +			cbphy->id, mode);
->> +		return -EINVAL;
->> +	}
-> ...
->
->
->> +	if (!atomic_read(&cbphy->init_cnt)) {
-> Here it can be 0.
->
->> +		ret = clk_prepare_enable(cbphy->core_clk);
->> +		if (ret) {
->> +			dev_err(cbphy->dev, "Clock enable failed!\n");
->> +			return ret;
->> +		}
->> +
->> +		ret = clk_set_rate(cbphy->core_clk, cbphy->clk_rate);
->> +		if (ret) {
->> +			dev_err(cbphy->dev, "Clock freq set to %lu failed!\n",
->> +				cbphy->clk_rate);
->> +			goto clk_err;
->> +		}
->> +
->> +		intel_cbphy_rst_assert(cbphy);
->> +		ret = intel_cbphy_set_mode(cbphy);
->> +		if (ret)
->> +			goto clk_err;
->> +	}
->> +
->> +	ret = intel_cbphy_iphy_enable(iphy, true);
->> +	if (ret) {
->> +		dev_err(dev, "Failed enabling Phy core\n");
->> +		goto clk_err;
->> +	}
->> +
->> +	if (!atomic_read(&cbphy->init_cnt))
-> Here it can be 1.
-True,
-I will fix this.
-Thanks for pointing it.
->
->> +		intel_cbphy_rst_deassert(cbphy);
-> Is it correct way to go?
->
->> +	ret = reset_control_deassert(iphy->app_rst);
->> +	if (ret) {
->> +		dev_err(dev, "PHY(%u:%u) phy deassert failed!\n",
->> +			COMBO_PHY_ID(iphy), PHY_ID(iphy));
->> +		goto clk_err;
->> +	}
-> ...
->
->> +		ret = intel_cbphy_iphy_cfg(iphy,
->> +					   intel_cbphy_pcie_en_pad_refclk);
-> One line is fine here.
-It is taking 81 characters, so kept in 2 lines.
->
->> +		if (ret)
->> +			return ret;
-> ...
->
->> +		ret = intel_cbphy_iphy_cfg(iphy,
->> +					   intel_cbphy_pcie_dis_pad_refclk);
-> Ditto.
-82 characters here.
->
->> +		if (ret)
->> +			return ret;
-> ...
->
->> +		return ret;
->> +	}
->> +
->> +	iphy->enable = true;
->> +	platform_set_drvdata(pdev, iphy);
->> +
->> +	return 0;
->> +}
-> ...
->
->> +	if (cbphy->aggr_mode == PHY_DL_MODE) {
->> +		if (!iphy0->enable || !iphy1->enable) {
-> 	if (a) {
-> 		if (b) {
-> 			...
-> 		}
-> 	}
->
-> is the same as
-> 	if (a && b) {
-> 		...
-> 	}
->
-> We have it many times discussed internally.
-Will fix it.
->
->> +			dev_err(cbphy->dev,
->> +				"Dual lane mode but lane0: %s, lane1: %s\n",
->> +				iphy0->enable ? "on" : "off",
->> +				iphy1->enable ? "on" : "off");
->> +			return -EINVAL;
->> +		}
->> +	}
-> ...
->
->> +	ret = fwnode_property_get_reference_args(dev_fwnode(dev),
->> +						 "intel,syscfg", NULL, 1, 0,
->> +						 &ref);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	fwnode_handle_put(ref.fwnode);
-> Why here?
-
-Instructed to do:
-
-" Caller is responsible to call fwnode_handle_put() on the returned   
-args->fwnode pointer"
-
->
->> +	cbphy->id = ref.args[0];
->> +	cbphy->syscfg = device_node_to_regmap(ref.fwnode->dev->of_node);
-> You rather need to have fwnode_to_regmap(). It's easy to add as a preparatory patch.
-Sure, I will add it.
->
->> +
->> +	ret = fwnode_property_get_reference_args(dev_fwnode(dev), "intel,hsio",
->> +						 NULL, 1, 0, &ref);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	fwnode_handle_put(ref.fwnode);
->> +	cbphy->bid = ref.args[0];
->> +	cbphy->hsiocfg = device_node_to_regmap(ref.fwnode->dev->of_node);
-> Ditto.
->
->> +	if (!device_property_read_u32(dev, "intel,phy-mode", &prop)) {
-> Hmm... Why to mix device_property_*() vs. fwnode_property_*() ?
-device_property_* are wrapper functions to fwnode_property_*().
-Calling the fwnode_property_*() ending up doing the same work of 
-device_property_*().
-
-If the best practice is to maintain symmetry, will call fwnode_property_*().
-
->
->> +		cbphy->phy_mode = prop;
->> +		if (cbphy->phy_mode >= PHY_MAX_MODE) {
->> +			dev_err(dev, "PHY mode: %u is invalid\n",
->> +				cbphy->phy_mode);
->> +			return -EINVAL;
->> +		}
->> +	}
-> ...
->
->> +	.owner =	THIS_MODULE,
-> Do we still need this?
-Present in all the PHY drivers,
-Please let me know if it need to be removed.
-
-Regards,
-Dilip
-
->
