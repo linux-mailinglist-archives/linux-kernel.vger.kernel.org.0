@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E672A1662F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:31:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 048FB166303
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:33:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728862AbgBTQbY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 11:31:24 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:23586 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728245AbgBTQbX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728842AbgBTQbX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 20 Feb 2020 11:31:23 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:45462 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727868AbgBTQbW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 11:31:22 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
         s=mimecast20190719; t=1582216281;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=CDfp54tv0+rs3nPrDL5Amp10vZ/0yrKVTeej6RtTOAo=;
-        b=OWSILvtdtnHADB+etBZzPyUeLuNgU4yIuSc2O8IJHphvdh9u63axeqX5nL2hQ5G9Ta0tjh
-        74SaC/aTgnUsbXkNJjQWQhBHOmohBLhk86vuvCPBTk49cyTqHUabeKm4pCU0iSNSC8cezM
-        +B0xsdhNKqlWsTljdaOn2VlfWx5+5g8=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-422-I3lsghlSPAG2yy0Rj2wxYA-1; Thu, 20 Feb 2020 11:31:19 -0500
-X-MC-Unique: I3lsghlSPAG2yy0Rj2wxYA-1
-Received: by mail-qv1-f72.google.com with SMTP id e26so2938020qvb.4
+        bh=CHUFDqjtneZv80jBBtiyIEM9rxGSYmYj1xgCDRa8zzo=;
+        b=cQK2lEIxqT/gmOPMLfTUeweFVYMj7D786Z/CwiXOuog8UF+6Wd4xGZW2WNk4+DvU6aSiwp
+        1YLnBEdFdjuaorYmbqdFUjFtam3Z9OOIvqPAs+VcYuWfWJFISQpCCOjwXQgVmcTbWBlUOF
+        mSgG/u/RndbsGn1tVQdZiDbQSaTztF0=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-452-r-_C-lArN1SMLZxPWjFOWA-1; Thu, 20 Feb 2020 11:31:19 -0500
+X-MC-Unique: r-_C-lArN1SMLZxPWjFOWA-1
+Received: by mail-qt1-f197.google.com with SMTP id l25so2980710qtu.0
         for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 08:31:19 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=CDfp54tv0+rs3nPrDL5Amp10vZ/0yrKVTeej6RtTOAo=;
-        b=VgCVFkEyOx0ke/2QXv+R3rmENpTHjHSP9lc0pm2QvpoKoIJbKeDPX/YuN86bpcV3Wq
-         Hd46N0CHLy9rzRoAdMxBhAwT5QJopAju01ZNWTghzaUiZvvf4GDlV8OjTZZdbo8RHk7/
-         Tp1lKTpDbP3enF9l0zl5dSD+WLjQifPI7vXPQRYW/6FGnKFHlLnMzD8ZEXVbjP2miqnP
-         ntH6ec7/cpxrSC3Kw8Z+J14SfOufY0AtoREwzgVav5kKxQOiiYcOS7OskFRlvKZ04BrX
-         3Hf1Hd8+zrShry2pQz+lbSYck2xryWN4gLKZ+aI+Nab+VbPZ6vQjHmmPN+4JoMTWizQR
-         DrqQ==
-X-Gm-Message-State: APjAAAXIkekY911rXIqYaSK6tynJOo/7UubzO0k+D9vpJ7Hty96cLarv
-        Jp6KLOZWRQdJOGqzu+KClCdMceySUSFqSy/ikS6+hQvIWF6eTaFUxlSj4iexfJFn6rCo3h5Yhsi
-        C71avq8tZPA+tT1rtfkN6wAZS
-X-Received: by 2002:a37:b103:: with SMTP id a3mr29225534qkf.204.1582216277541;
-        Thu, 20 Feb 2020 08:31:17 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwcCHSfvKypdhtj1E5yiG/E6oGopv/63lCwj12vwvMeY43pNKmtOXoZ4aoprcfXGgqr4PQ/zA==
-X-Received: by 2002:a37:b103:: with SMTP id a3mr29225413qkf.204.1582216276682;
-        Thu, 20 Feb 2020 08:31:16 -0800 (PST)
+        bh=CHUFDqjtneZv80jBBtiyIEM9rxGSYmYj1xgCDRa8zzo=;
+        b=qP1dm/7vep40l2akdqEuws6m9Trp63JnntoqIJg/BqoFGKjVdwWTjrtnfdTTRXKDDn
+         VhBBCYc7GYam9aO6+Pv1HnMS8F6HBfkPHbBVToztdCCLUxMH6tUwTp0Ei5kq7ODDxgsk
+         bWJ+OtKxtpZ2SLQsZoG3yqmpEcEaINqT/zZvikfywuPtU6toQ9XC8KtQQY49f5L0H0fJ
+         GWukEuFQecxNmovPuhYh+I0t/7zCuqkQkRmbPs7fXum7fnsiDvTYujAcuN2x3a7eyZdb
+         PH/WCEG9K1Ke91Syp1gPttiAhRZJiWchkq/yf2lqchAyXEnwuea636EwvRPoYpur51/i
+         vt9A==
+X-Gm-Message-State: APjAAAV6iHknhf92jRh0WWbxj+vAbECPXJDqxSMtfxHpLlr/Bjgxs90+
+        ZcmdI2P+mnkZii3ypkWToVHWoIrweZ6XrIMQpmCtciphkLw7xOb0OCWmZbZaiqiweNMxNHYOY2W
+        SwN03apedgoGLUviqhDVVUi0H
+X-Received: by 2002:a37:9c10:: with SMTP id f16mr29744441qke.275.1582216278843;
+        Thu, 20 Feb 2020 08:31:18 -0800 (PST)
+X-Google-Smtp-Source: APXvYqx4qYyI240EJ4iaY8NxDR5Afaf1dkjtOJEaaFOxolIwXiqPaZSbmCZWqp6IyApgQc2eCSyiFA==
+X-Received: by 2002:a37:9c10:: with SMTP id f16mr29744392qke.275.1582216278582;
+        Thu, 20 Feb 2020 08:31:18 -0800 (PST)
 Received: from xz-x1.redhat.com ([104.156.64.75])
-        by smtp.gmail.com with ESMTPSA id l19sm42366qkl.3.2020.02.20.08.31.15
+        by smtp.gmail.com with ESMTPSA id l19sm42366qkl.3.2020.02.20.08.31.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2020 08:31:16 -0800 (PST)
+        Thu, 20 Feb 2020 08:31:17 -0800 (PST)
 From:   Peter Xu <peterx@redhat.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     Brian Geffon <bgeffon@google.com>,
@@ -69,12 +69,10 @@ Cc:     Brian Geffon <bgeffon@google.com>,
         Denis Plotnikov <dplotnikov@virtuozzo.com>,
         Hugh Dickins <hughd@google.com>,
         "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Jerome Glisse <jglisse@redhat.com>, Shaohua Li <shli@fb.com>,
-        Pavel Emelyanov <xemul@parallels.com>,
-        Rik van Riel <riel@redhat.com>
-Subject: [PATCH v6 01/19] userfaultfd: wp: add helper for writeprotect check
-Date:   Thu, 20 Feb 2020 11:30:54 -0500
-Message-Id: <20200220163112.11409-2-peterx@redhat.com>
+        Jerome Glisse <jglisse@redhat.com>, Shaohua Li <shli@fb.com>
+Subject: [PATCH v6 02/19] userfaultfd: wp: hook userfault handler to write protection fault
+Date:   Thu, 20 Feb 2020 11:30:55 -0500
+Message-Id: <20200220163112.11409-3-peterx@redhat.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200220163112.11409-1-peterx@redhat.com>
 References: <20200220163112.11409-1-peterx@redhat.com>
@@ -85,54 +83,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shaohua Li <shli@fb.com>
+From: Andrea Arcangeli <aarcange@redhat.com>
 
-add helper for writeprotect check. Will use it later.
+There are several cases write protection fault happens. It could be a
+write to zero page, swaped page or userfault write protected
+page. When the fault happens, there is no way to know if userfault
+write protect the page before. Here we just blindly issue a userfault
+notification for vma with VM_UFFD_WP regardless if app write protects
+it yet. Application should be ready to handle such wp fault.
 
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Pavel Emelyanov <xemul@parallels.com>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Kirill A. Shutemov <kirill@shutemov.name>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Signed-off-by: Shaohua Li <shli@fb.com>
+v1: From: Shaohua Li <shli@fb.com>
+
+v2: Handle the userfault in the common do_wp_page. If we get there a
+pagetable is present and readonly so no need to do further processing
+until we solve the userfault.
+
+In the swapin case, always swapin as readonly. This will cause false
+positive userfaults. We need to decide later if to eliminate them with
+a flag like soft-dirty in the swap entry (see _PAGE_SWP_SOFT_DIRTY).
+
+hugetlbfs wouldn't need to worry about swapouts but and tmpfs would
+be handled by a swap entry bit like anonymous memory.
+
+The main problem with no easy solution to eliminate the false
+positives, will be if/when userfaultfd is extended to real filesystem
+pagecache. When the pagecache is freed by reclaim we can't leave the
+radix tree pinned if the inode and in turn the radix tree is reclaimed
+as well.
+
+The estimation is that full accuracy and lack of false positives could
+be easily provided only to anonymous memory (as long as there's no
+fork or as long as MADV_DONTFORK is used on the userfaultfd anonymous
+range) tmpfs and hugetlbfs, it's most certainly worth to achieve it
+but in a later incremental patch.
+
+v3: Add hooking point for THP wrprotect faults.
+
+CC: Shaohua Li <shli@fb.com>
 Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-Reviewed-by: Jerome Glisse <jglisse@redhat.com>
+[peterx: don't conditionally drop FAULT_FLAG_WRITE in do_swap_page]
 Reviewed-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Reviewed-by: Jerome Glisse <jglisse@redhat.com>
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- include/linux/userfaultfd_k.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ mm/memory.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
-index ac9d71e24b81..5dc247af0f2e 100644
---- a/include/linux/userfaultfd_k.h
-+++ b/include/linux/userfaultfd_k.h
-@@ -52,6 +52,11 @@ static inline bool userfaultfd_missing(struct vm_area_struct *vma)
- 	return vma->vm_flags & VM_UFFD_MISSING;
- }
- 
-+static inline bool userfaultfd_wp(struct vm_area_struct *vma)
-+{
-+	return vma->vm_flags & VM_UFFD_WP;
-+}
-+
- static inline bool userfaultfd_armed(struct vm_area_struct *vma)
+diff --git a/mm/memory.c b/mm/memory.c
+index 0bccc622e482..3d8c7e8652e9 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -2733,6 +2733,11 @@ static vm_fault_t do_wp_page(struct vm_fault *vmf)
  {
- 	return vma->vm_flags & (VM_UFFD_MISSING | VM_UFFD_WP);
-@@ -96,6 +101,11 @@ static inline bool userfaultfd_missing(struct vm_area_struct *vma)
- 	return false;
- }
+ 	struct vm_area_struct *vma = vmf->vma;
  
-+static inline bool userfaultfd_wp(struct vm_area_struct *vma)
-+{
-+	return false;
-+}
++	if (userfaultfd_wp(vma)) {
++		pte_unmap_unlock(vmf->pte, vmf->ptl);
++		return handle_userfault(vmf, VM_UFFD_WP);
++	}
 +
- static inline bool userfaultfd_armed(struct vm_area_struct *vma)
+ 	vmf->page = vm_normal_page(vma, vmf->address, vmf->orig_pte);
+ 	if (!vmf->page) {
+ 		/*
+@@ -3930,8 +3935,11 @@ static inline vm_fault_t create_huge_pmd(struct vm_fault *vmf)
+ /* `inline' is required to avoid gcc 4.1.2 build error */
+ static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf, pmd_t orig_pmd)
  {
- 	return false;
+-	if (vma_is_anonymous(vmf->vma))
++	if (vma_is_anonymous(vmf->vma)) {
++		if (userfaultfd_wp(vmf->vma))
++			return handle_userfault(vmf, VM_UFFD_WP);
+ 		return do_huge_pmd_wp_page(vmf, orig_pmd);
++	}
+ 	if (vmf->vma->vm_ops->huge_fault)
+ 		return vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PMD);
+ 
 -- 
 2.24.1
 
