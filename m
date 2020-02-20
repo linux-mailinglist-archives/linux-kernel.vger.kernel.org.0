@@ -2,126 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ACAC166627
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 19:25:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C283416663A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 19:27:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728482AbgBTSZr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 13:25:47 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:53868 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726959AbgBTSZr (ORCPT
+        id S1728162AbgBTS1O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 13:27:14 -0500
+Received: from mail27.static.mailgun.info ([104.130.122.27]:58217 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728404AbgBTS1M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 13:25:47 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01KIDOiU057489;
-        Thu, 20 Feb 2020 18:25:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=MfkDo7F3aCv5MhbXyV3vcG34vepcUBqfArK40IWMSPM=;
- b=ehED6/brb3OLIlpBCDLQ8RVkzqfWWwGBQzMe5/iZiWEPtp6S/SrP2QtpAUOhXBD/nJW3
- nK+7VZyUtcJpus9B9TOiUgyunJ5eXfP/yip64KVp6ApVzTmHzqKgdXZS93qN3uGRAvaE
- SPIeqGF9hwL5t2z8o2Gnnh4mPl8Yjiaf2TwOo1/zAoPGPiyksfy4sa/+WnA8Du/btm7f
- /G/QxgOuRGFcxgg7HTZq4owWLjVCQjGSw0SJ7aXzhyAH8moJodX+KFz7LRuMtQeRUmNT
- 3d3czrmcD0EUdXWaDeqPVdLP0JstG5l9g3O2A1i+re25xPZkGfbLuYrmbIVzxxrd79Wb fA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2y8udkkm3g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 20 Feb 2020 18:25:14 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01KIBhYf089964;
-        Thu, 20 Feb 2020 18:23:13 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2y8ud4dwew-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 20 Feb 2020 18:23:13 +0000
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01KIN9fb032081;
-        Thu, 20 Feb 2020 18:23:10 GMT
-Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 20 Feb 2020 10:23:09 -0800
-Date:   Thu, 20 Feb 2020 13:23:26 -0500
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com, Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH] mm: memcontrol: asynchronous reclaim for memory.high
-Message-ID: <20200220182326.ubcjycaubgykiy6e@ca-dmjordan1.us.oracle.com>
-References: <20200219181219.54356-1-hannes@cmpxchg.org>
- <20200219183731.GC11847@dhcp22.suse.cz>
- <20200219191618.GB54486@cmpxchg.org>
- <20200219195332.GE11847@dhcp22.suse.cz>
- <20200219214112.4kt573kyzbvmbvn3@ca-dmjordan1.us.oracle.com>
- <20200219220859.GF54486@cmpxchg.org>
- <20200220154524.dql3i5brnjjwecft@ca-dmjordan1.us.oracle.com>
- <20200220155651.GG698990@mtj.thefacebook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200220155651.GG698990@mtj.thefacebook.com>
-User-Agent: NeoMutt/20180716
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9537 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0
- mlxlogscore=999 suspectscore=0 adultscore=0 spamscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002200135
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9537 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 suspectscore=0
- spamscore=0 priorityscore=1501 adultscore=0 mlxscore=0 clxscore=1015
- malwarescore=0 mlxlogscore=999 phishscore=0 impostorscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002200135
+        Thu, 20 Feb 2020 13:27:12 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1582223232; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=1b9L0w3z5bVHdWtnw5ZOrRJfst0EtjPxWLBYnnXzM2M=; b=Xri16SiXWOuAUvfEbte4CPdbb//eNXS/wAwydvA8RxTlHviJGf6/iARZ7pCPVGFOCU0z5iTq
+ uoZVwZJOu0QT1Ju5KNZC4ywk0UipSeVJbs2nqIAzhWcOKVakH2lXQyqykNp0gY93u5XcJ7zO
+ B9P2Yiu1q8OeAItFm8qqXM/PpVk=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e4ecf76.7f59f77e0688-smtp-out-n02;
+ Thu, 20 Feb 2020 18:27:02 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 9D3A7C447A6; Thu, 20 Feb 2020 18:27:02 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jcrouse)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 97EF5C43383;
+        Thu, 20 Feb 2020 18:27:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 97EF5C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+From:   Jordan Crouse <jcrouse@codeaurora.org>
+To:     linux-arm-msm@vger.kernel.org
+Cc:     smasetty@codeaurora.org, John Stultz <john.stultz@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Sean Paul <sean@poorly.run>, devicetree@vger.kernel.org,
+        Stephen Boyd <swboyd@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Rob Clark <robdclark@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Andy Gross <agross@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        freedreno@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>
+Subject: [PATCH v2 0/4] msm/gpu/a6xx: use the DMA-API for GMU memory allocations
+Date:   Thu, 20 Feb 2020 11:26:52 -0700
+Message-Id: <1582223216-23459-1-git-send-email-jcrouse@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 10:56:51AM -0500, Tejun Heo wrote:
-> On Thu, Feb 20, 2020 at 10:45:24AM -0500, Daniel Jordan wrote:
-> > Ok, consistency with io and memory is one advantage to doing it that way.
-> > Creating kthreads in cgroups also seems viable so far, and it's unclear whether
-> > either approach is significantly simpler or more maintainable than the other,
-> > at least to me.
-> 
-> The problem with separate kthread approach is that many of these work
-> units are tiny, and cgroup membership might not be known or doesn't
-> agree with the processing context from the beginning
 
-The amount of work wouldn't seem to matter as long as the kernel thread stays
-in the cgroup and lives long enough.  There's only the one-time cost of
-attaching it when it's forked.  That seems doable for unbound workqueues (the
-async reclaim), but may not be for the network packets.
+When CONFIG_INIT_ON_ALLOC_DEFAULT_ON the GMU memory allocator runs afoul of
+cache coherency issues because it is mapped as write-combine without clearing
+the cache after it was zeroed.
 
-The membership and context issues are pretty compelling though.  Good to know,
-I'll keep it in mind as I think this through.
+Rather than duplicate the hacky workaround we use in the GEM allocator for the
+same reason it turns out that we don't need to have a bespoke memory allocator
+for the GMU anyway. It uses a flat, global address space and there are only
+two relatively minor allocations anyway. In short, this is essentially what the
+DMA API was created for so replace a bunch of memory management code with two
+calls to allocate and free DMA memory and we're fine.
 
-> For example, the ownership of network packets can't be determined till
-> processing has progressed quite a bit in shared contexts and each item
-> too small to bounce around. The only viable way I can think of
-> splitting aggregate overhead according to the number of packets (or
-> some other trivially measureable quntity) processed.
-> 
-> Anything sitting in reclaim layer is the same. Reclaim should be
-> charged to the cgroup whose memory is reclaimed *but* shouldn't block
-> other cgroups which are waiting for that memory. It has to happen in
-> the context of the highest priority entity waiting for memory but the
-> costs incurred must be charged to the memory owners.
-> 
-> So, one way or the other, I think we'll need back charging and once
-> back charging is needed for big ticket items like network and reclaim,
-> it's kinda silly to use separate mechanisms for other stuff.
+The only wrinkle is that the memory allocations need to be in a very specific
+location in the GMU virtual address space so in order to get the iova allocator
+to do the right thing we need to specify the dma-ranges property in the device
+tree for the GMU node. Since we've not yet converted the GMU bindings over to
+YAML two patches quickly turn into four but at the end of it we have at least
+one bindings file converted to YAML and 99 less lines of code to worry about.
 
-Yes, having both would appear to be redundant.
+v2: Fix the example bindings for dma-ranges - the third item is the size
+Pass false to of_dma_configure so that it fails probe if the DMA region is not
+set up.
 
-> > Is someone on your side working on remote charging right now?  I was planning
-> > to post an RFD comparing these soon and it would make sense to include them.
-> 
-> It's been on the to do list but nobody is working on it yet.
+Jordan Crouse (4):
+  dt-bindings: display: msm: Convert GMU bindings to YAML
+  dt-bindings: display: msm: Add required dma-range property
+  arm64: dts: sdm845: Set the virtual address range for GMU allocations
+  drm/msm/a6xx: Use the DMA API for GMU memory objects
 
-Ok, thanks.
+ .../devicetree/bindings/display/msm/gmu.txt        | 116 -----------------
+ .../devicetree/bindings/display/msm/gmu.yaml       | 140 +++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi               |   2 +
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c              | 112 ++---------------
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.h              |   5 +-
+ 5 files changed, 153 insertions(+), 222 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/display/msm/gmu.txt
+ create mode 100644 Documentation/devicetree/bindings/display/msm/gmu.yaml
+
+-- 
+2.7.4
