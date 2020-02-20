@@ -2,104 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D46F166066
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 16:03:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CC5A16604D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 16:01:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728390AbgBTPD0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 10:03:26 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:46869 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728134AbgBTPD0 (ORCPT
+        id S1728448AbgBTPAj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 10:00:39 -0500
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:24942 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727761AbgBTPAh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 10:03:26 -0500
-Received: by mail-lj1-f194.google.com with SMTP id x14so4526294ljd.13
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 07:03:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LxO6VpOJIjKHq57KwHOFGT9nr+13wIF/dBwcEWsuzEg=;
-        b=zAtgcGHDO2T0usjZzu4nYCT5UC+A/FBkj+nFH5q0RePPgyLofKTbA0zhwIFP6kenac
-         xItNUhQqWoQOGlddS+vKnfvA4QCRWBw0FnLnYYZW/9lUWYeSKjq1J5C9R+Yj3wP9kZCR
-         FRIwMH0GFjbLIQ6KlXomzKuNSDR1WMkBYUx4+D6hMjYIHVn8EEGL70YdtN4whTUwLJpF
-         BDfrKa3HH670i+lf98h876GlLE3KWczf6SP27sz6x0hHuJTWVoiGbf7XqqIjTSMGS33Y
-         rbS7kYDF3ii79sHclghTh4+BcwLX5xDkZBaVIAEZGGXs/yfX7HRgkqdcuWY0/5cZ1GG7
-         +JCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LxO6VpOJIjKHq57KwHOFGT9nr+13wIF/dBwcEWsuzEg=;
-        b=do3afy279Yxa+g4PntRSyB7LMEvzxCNiFsndhRIVmA07JPQGLoekt5qBLsLCNu1h86
-         u+9UOpJkElUd9IeGnmagDhmhN6MoJtlVuj0zxz7EzIgTTNo/k/xdoHJlhmgH8vasvcdS
-         eqNrxNDARbzZvLaWmAhk2HlE/9ULfl4DdUfZkofEs8Sk4MhGsuQsLueLCVOlJGtDzmUX
-         o/7wXbTD1zUDUuMzRHd6vbv7Uf4/IW0ulXlv0tTwngOb8aqSNr4UsspmjU+ozBL6gFSL
-         GDQuf4e2NmjRn09CHxBRAB24XX5DGcWI4Y0A9i87CQFxE6ZBCeEBtPC8Kv4eXMUyzNtW
-         tjMQ==
-X-Gm-Message-State: APjAAAVM+1yQRL4asmmhXB9R68n5L+D46+FeEJTHlzG5zaJ6+R9DA3O4
-        SjSxz2CXtylZrsTABG2FUR5JUmt7633Vo9Ni+jhp5A==
-X-Google-Smtp-Source: APXvYqw6qh6x9/zwhJngNlJ+ruI4osBVT7VUQqyOcXlmxYpb88NIGEaxEuqeNN6LL9GHHlMwg5gYZc3XZAjCDwsiFvY=
-X-Received: by 2002:a2e:b6ce:: with SMTP id m14mr17877360ljo.99.1582211002826;
- Thu, 20 Feb 2020 07:03:22 -0800 (PST)
+        Thu, 20 Feb 2020 10:00:37 -0500
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01KEhvIp010963;
+        Thu, 20 Feb 2020 10:00:35 -0500
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+        by mx0a-00128a01.pphosted.com with ESMTP id 2y8ucu4ekc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 20 Feb 2020 10:00:35 -0500
+Received: from ASHBMBX9.ad.analog.com (ashbmbx9.ad.analog.com [10.64.17.10])
+        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 01KF0Yux001143
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+        Thu, 20 Feb 2020 10:00:34 -0500
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Thu, 20 Feb
+ 2020 10:00:33 -0500
+Received: from zeus.spd.analog.com (10.64.82.11) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
+ Transport; Thu, 20 Feb 2020 10:00:33 -0500
+Received: from saturn.ad.analog.com ([10.48.65.124])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 01KF0Uq8025958;
+        Thu, 20 Feb 2020 10:00:30 -0500
+From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+CC:     <robh+dt@kernel.org>, <jic23@kernel.org>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>
+Subject: [PATCH 1/5] iio: buffer-dmaengine: add dev-managed calls for buffer alloc/free
+Date:   Thu, 20 Feb 2020 17:03:13 +0200
+Message-ID: <20200220150317.1864-1-alexandru.ardelean@analog.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20200211091937.29558-1-brgl@bgdev.pl> <20200211091937.29558-7-brgl@bgdev.pl>
- <CACRpkdZNyCBxQF_pVPGENob5EKZfYjuaNq5bLNA42XjraXzNZg@mail.gmail.com> <CAMRc=MfkbJ=zTvgpaxFC7L7APEhfC7J_PcncGaQ_AQUA9uw2Fw@mail.gmail.com>
-In-Reply-To: <CAMRc=MfkbJ=zTvgpaxFC7L7APEhfC7J_PcncGaQ_AQUA9uw2Fw@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 20 Feb 2020 16:03:10 +0100
-Message-ID: <CACRpkdZE0F_E1o-psXdOh93j1JAS8uqT=ZOf4-mrj5WKoKcD6A@mail.gmail.com>
-Subject: Re: [RESEND PATCH v6 6/7] gpiolib: add new ioctl() for monitoring
- changes in line info
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Kent Gibson <warthog618@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-ADIRoutedOnPrem: True
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-20_04:2020-02-19,2020-02-20 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ suspectscore=2 mlxscore=0 clxscore=1015 phishscore=0 priorityscore=1501
+ mlxlogscore=999 lowpriorityscore=0 adultscore=0 malwarescore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002200109
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 12:00 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> > On Tue, Feb 11, 2020 at 10:19 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Currently, when using a 'iio_dmaengine_buffer_alloc()', an matching call to
+'iio_dmaengine_buffer_free()' must be made.
 
-> > A question:
-> >
-> > Bartosz, since you know about possible impacts on userspace,
-> > since this code use the preferred ktime_get_ns() rather than
-> > ktime_get_ns_real(), what happens if we just patch the other
-> > event timestamp to use ktime_get_ns() instead, so we use the
-> > same everywhere?
-> >
-> > If it's fine I'd like to just toss in a patch for that as well.
-> >
->
-> Arnd pointed out it would be an incompatible ABI change[1].
+With this change, this can be avoided by using
+'devm_iio_dmaengine_buffer_alloc()'. The buffer will get free'd via the
+device's devres handling.
 
-Yeah, I was thinking more about this specific answer from Arnd:
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+---
+ .../buffer/industrialio-buffer-dmaengine.c    | 70 +++++++++++++++++++
+ include/linux/iio/buffer-dmaengine.h          |  5 ++
+ 2 files changed, 75 insertions(+)
 
-> "It is an incompatible ABI change, the question here is whether anyone
-> actually cares. If nothing relies on the timestamps being in
-> CLOCK_REALTIME domain, then it can be changed, the question
-> is just how you want to prove that this is the case."
+diff --git a/drivers/iio/buffer/industrialio-buffer-dmaengine.c b/drivers/iio/buffer/industrialio-buffer-dmaengine.c
+index b129693af0fd..eff89037e3f5 100644
+--- a/drivers/iio/buffer/industrialio-buffer-dmaengine.c
++++ b/drivers/iio/buffer/industrialio-buffer-dmaengine.c
+@@ -229,6 +229,76 @@ void iio_dmaengine_buffer_free(struct iio_buffer *buffer)
+ }
+ EXPORT_SYMBOL_GPL(iio_dmaengine_buffer_free);
+ 
++static void __devm_iio_dmaengine_buffer_free(struct device *dev, void *res)
++{
++	iio_dmaengine_buffer_free(*(struct iio_buffer **)res);
++}
++
++/**
++ * devm_iio_dmaengine_buffer_alloc() - Resource-managed iio_dmaengine_buffer_alloc()
++ * @dev: Parent device for the buffer
++ * @channel: DMA channel name, typically "rx".
++ *
++ * This allocates a new IIO buffer which internally uses the DMAengine framework
++ * to perform its transfers. The parent device will be used to request the DMA
++ * channel.
++ *
++ * Once done using the buffer iio_dmaengine_buffer_free() should be used to
++ * release it.
++ */
++struct iio_buffer *devm_iio_dmaengine_buffer_alloc(struct device *dev,
++	const char *channel)
++{
++	struct iio_buffer **bufferp, *buffer;
++
++	bufferp = devres_alloc(__devm_iio_dmaengine_buffer_free,
++			       sizeof(*bufferp), GFP_KERNEL);
++	if (!bufferp)
++		return ERR_PTR(-ENOMEM);
++
++	buffer = iio_dmaengine_buffer_alloc(dev, channel);
++	if (!IS_ERR(buffer)) {
++		*bufferp = buffer;
++		devres_add(dev, bufferp);
++	} else {
++		devres_free(bufferp);
++	}
++
++	return buffer;
++}
++EXPORT_SYMBOL_GPL(devm_iio_dmaengine_buffer_alloc);
++
++static int devm_iio_dmaengine_buffer_match(struct device *dev, void *res,
++	void *data)
++{
++	struct iio_buffer **r = res;
++
++	if (!r || !*r) {
++		WARN_ON(!r || !*r);
++		return 0;
++	}
++
++	return *r == data;
++}
++
++/**
++ * devm_iio_dmaengine_buffer_free - iio_dmaengine_buffer_free
++ * @dev: Device this iio_buffer belongs to
++ * @buffer: The iio_buffer associated with the device
++ *
++ * Free buffer allocated with devm_iio_dmaengine_buffer_alloc().
++ */
++void devm_iio_dmaengine_buffer_free(struct device *dev,
++	struct iio_buffer *buffer)
++{
++	int rc;
++
++	rc = devres_release(dev, __devm_iio_dmaengine_buffer_free,
++			    devm_iio_dmaengine_buffer_match, buffer);
++	WARN_ON(rc);
++}
++EXPORT_SYMBOL_GPL(devm_iio_dmaengine_buffer_free);
++
+ MODULE_AUTHOR("Lars-Peter Clausen <lars@metafoo.de>");
+ MODULE_DESCRIPTION("DMA buffer for the IIO framework");
+ MODULE_LICENSE("GPL");
+diff --git a/include/linux/iio/buffer-dmaengine.h b/include/linux/iio/buffer-dmaengine.h
+index b3a57444a886..8dcd973d76c1 100644
+--- a/include/linux/iio/buffer-dmaengine.h
++++ b/include/linux/iio/buffer-dmaengine.h
+@@ -14,4 +14,9 @@ struct iio_buffer *iio_dmaengine_buffer_alloc(struct device *dev,
+ 	const char *channel);
+ void iio_dmaengine_buffer_free(struct iio_buffer *buffer);
+ 
++struct iio_buffer *devm_iio_dmaengine_buffer_alloc(struct device *dev,
++	const char *channel);
++void devm_iio_dmaengine_buffer_free(struct device *dev,
++	struct iio_buffer *buffer);
++
+ #endif
+-- 
+2.20.1
 
-So the question is if userspace really cares.
-
-What happens with libgpiod or users of it? Are they assuming
-the weirdness of CLOCK_REALTIME, or are they simply assuming
-something that is monotonic increasing and just lucky that they
-didn't run into anything jumping backwards in time even though
-they *could*.
-
-I think I'll propose a change and see what people say.
-
-> However - I asked Khouloud who's working on v2 of the line event
-> interface to use ktime_get_ns().
-
-That's great!
-
-Yours,
-Linus Walleij
