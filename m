@@ -2,65 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24CBA165DC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 13:44:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFAEC165DCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 13:45:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728074AbgBTMo4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 07:44:56 -0500
-Received: from a.mx.secunet.com ([62.96.220.36]:50216 "EHLO a.mx.secunet.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728021AbgBTMo4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 07:44:56 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by a.mx.secunet.com (Postfix) with ESMTP id 8520720491;
-        Thu, 20 Feb 2020 13:44:54 +0100 (CET)
-X-Virus-Scanned: by secunet
-Received: from a.mx.secunet.com ([127.0.0.1])
-        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id iOePJampMJ7u; Thu, 20 Feb 2020 13:44:53 +0100 (CET)
-Received: from mail-essen-01.secunet.de (mail-essen-01.secunet.de [10.53.40.204])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by a.mx.secunet.com (Postfix) with ESMTPS id 2FFAB2027C;
-        Thu, 20 Feb 2020 13:44:53 +0100 (CET)
-Received: from gauss2.secunet.de (10.182.7.193) by mail-essen-01.secunet.de
- (10.53.40.204) with Microsoft SMTP Server id 14.3.439.0; Thu, 20 Feb 2020
- 13:44:52 +0100
-Received: by gauss2.secunet.de (Postfix, from userid 1000)      id CF65E318028C;
- Thu, 20 Feb 2020 13:44:52 +0100 (CET)
-Date:   Thu, 20 Feb 2020 13:44:52 +0100
-From:   Steffen Klassert <steffen.klassert@secunet.com>
-To:     Yi Wang <wang.yi59@zte.com.cn>
-CC:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <kuba@kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <xue.zhihong@zte.com.cn>,
-        <wang.liang82@zte.com.cn>, Huang Zijiang <huang.zijiang@zte.com.cn>
-Subject: Re: [PATCH] xfrm: Use kmem_cache_zalloc() instead of
- kmem_cache_alloc() with flag GFP_ZERO.
-Message-ID: <20200220124452.GX8274@gauss3.secunet.de>
-References: <1581501276-5636-1-git-send-email-wang.yi59@zte.com.cn>
+        id S1728135AbgBTMpV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 07:45:21 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:41269 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727931AbgBTMpV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 07:45:21 -0500
+Received: by mail-qk1-f196.google.com with SMTP id d11so3351449qko.8
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 04:45:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=S+DR2tqwHDGoIzSaCv59EB/9EwXei3rtQ6/JX+jjHm0=;
+        b=u0kGKSV7g2gKVQQ0tktOYXAH7/+lxVouJ+8xGYEuQ+Ul+9zBK8tPqwmMCpEFgCrtOt
+         qxrVWpL+RHuA+RbhkCI8sYY6FKdTUxWLwet0QA9Qya0ymHwQetSiv9H3HffGUPO4kA/j
+         hpbls110s0uQMOQotm4P4lnkaWLzcue6FW2kncfAmejTlIFSRFAT/SyQD/Xa/P+aND6o
+         km9tF5TWWSRlNZ1PlpxW8AmXyHC1+IWdBRqhSFzAAhYByCHbsUq5RolPJNuQaODZmPxx
+         lVNMoV2qbwlogdzXgtoJRYF3SaN7wINLQiNYjcSwqfotwm2JMU9G7Lt41zirPPv768j9
+         J9WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=S+DR2tqwHDGoIzSaCv59EB/9EwXei3rtQ6/JX+jjHm0=;
+        b=NYahdN9fY2f+BH5qaV8TipWURystFp2e4It+BXQ5OLYplxqgPLyHTrjxVnbGoqCpEw
+         pE+0Rn0FwHOMaXKB0Y3TJJJn6T+McANb7qNVDGBhI3WGciZ90mJbvJ2B1lOo+1xrYS/z
+         WxAs9TaS9iP6GJ/wGcgD/r6tPc8bHf9SNMw7DSwVWJMCacOU1p7Dpb78l3dD6H5UxIl9
+         W3nPO5mHRowrfpgV1FXdb7deNbOQ5DsDxibN8M8f/AG1F5Y4DD75soLOdM7vgExlXUtY
+         /KFIqe35IvmTvsP8XMY1zpP0EcwREQb0lOUO9u3Cj12TMS+0vh/7EZ7AvG4Z6kNiFxjC
+         zA1Q==
+X-Gm-Message-State: APjAAAWPlt+Y11QBAPQ5CzxwzE/fOQZtjuIac5m/4CIM6HJlnwQStcyI
+        suiZuxQD+QRggnkf+lgXIar1BEtn05LIGjWzpo4fLg==
+X-Google-Smtp-Source: APXvYqxLCHV/q5CaKzKrQGpcmCEylpff0GaIk/6cWjgj7li8REIOva0pWlQZQJ1PFCpxJFhOHkj2NJEuc0c2pIY+tiA=
+X-Received: by 2002:a37:a488:: with SMTP id n130mr27484945qke.120.1582202720242;
+ Thu, 20 Feb 2020 04:45:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1581501276-5636-1-git-send-email-wang.yi59@zte.com.cn>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+References: <20200220100141.5905-1-brgl@bgdev.pl> <20200220100141.5905-2-brgl@bgdev.pl>
+ <965f715c-a714-00df-b496-a586969dd086@linaro.org>
+In-Reply-To: <965f715c-a714-00df-b496-a586969dd086@linaro.org>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Thu, 20 Feb 2020 13:45:09 +0100
+Message-ID: <CAMpxmJXiK+A1AF35OJoKnyYYkJ4VZUgqhzzYOazt-UWaMbCfww@mail.gmail.com>
+Subject: Re: [PATCH v4 1/4] nvmem: fix memory leak in error path
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Khouloud Touil <ktouil@baylibre.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 05:54:36PM +0800, Yi Wang wrote:
-> From: Huang Zijiang <huang.zijiang@zte.com.cn>
-> 
-> Use kmem_cache_zalloc instead of manually setting kmem_cache_alloc
-> with flag GFP_ZERO since kzalloc sets allocated memory
-> to zero.
-> 
-> Change in v2:
->      add indation
-> 
-> Signed-off-by: Huang Zijiang <huang.zijiang@zte.com.cn>
-> Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+czw., 20 lut 2020 o 12:30 Srinivas Kandagatla
+<srinivas.kandagatla@linaro.org> napisa=C5=82(a):
+>
+>
+>
+> On 20/02/2020 10:01, Bartosz Golaszewski wrote:
+> > -     if (IS_ERR(nvmem->wp_gpio))
+> > +     if (IS_ERR(nvmem->wp_gpio)) {
+> > +             ida_simple_remove(&nvmem_ida, nvmem->id);
+> > +             kfree(nvmem);
+> >               return ERR_CAST(nvmem->wp_gpio);
+> You freed nvmem just before this statement, how can nvmem->wp_gpio be
+> still be valid?
+>
+> Are you able to test this changes at your end?
+> Or
+> these are just compile tested?
+>
 
-Applied to ipsec-next, thanks!
+Sorry this was rushed, I will have access to the HW for testing tomorrow.
+
+Bartosz
