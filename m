@@ -2,240 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C57D1669FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 22:38:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE591166A05
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 22:40:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729236AbgBTViJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 16:38:09 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:43594 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727561AbgBTViJ (ORCPT
+        id S1729158AbgBTVkc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 16:40:32 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:54677 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728992AbgBTVkb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 16:38:09 -0500
-Received: by mail-qt1-f195.google.com with SMTP id g21so4009287qtq.10
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 13:38:07 -0800 (PST)
+        Thu, 20 Feb 2020 16:40:31 -0500
+Received: by mail-pj1-f67.google.com with SMTP id dw13so44402pjb.4
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 13:40:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ya7BzNWkK/aNL6Tv2iIJrxyXJnuSHN2DAiGDBEKCFME=;
-        b=rQTVaInbOR0nNBRyjg7OUiy8zpk8uVI/C0yvF8JrYqzIEQXaLVgUUhJRN1dp8pKmNm
-         Gwz9SKu9e2EeGhGibjXdXOkIWcD65V5R0kSHQo/FV8h/yDspwYoe45a0PxLatb83l2R2
-         E+gKsNlBxI/ALyh7kYSXTVAZqLVIqD1E9iGgDyO2G+22xyqxeW2MvHdqZdc0W14QJYTg
-         2f96GaDm7RjwtN9iVrbBKVYzKK61yLmEFQTwQqwxAVhOpMiVh+lWjrYiqOjcNWiCuzsd
-         sjrS1O0nXJqPVxmVmzKMUoIMysA64KkWboAHu9Tn9hwDODRe1zlRhxtx+7BVuZW96B3M
-         t8fg==
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SdMXiwQ30NtFiXHtEOV93iERJEGx/98ZsoX3dNQE1dU=;
+        b=fPbfSEvNBWFRQJpPerpnQOFFuOaBUykwN5G3Mb0OQ7ESFAV1G/GfvLFLh4E3x3/orj
+         QZCmolJ9+ZBm5kA1lEKjya5v3YRWAUVVCgsmHJw/YllODFWn0M7bvPEZKPWO774L79om
+         s55nEDeEVHyK7FWNTHPn5gY3+LQCa6Bo1B7oaST1i7SlzC8KFee1OwVT9Ej3jyChQNsS
+         j7X2PGbnxZTx1QHEbBQkl0Fz6gXj4H5hsbWYgzwl/xDvjDJORlmfK/IRMcOaxh7BRY0t
+         0hqAwWZ6QzKEjbrElt6rupJuyeLob1dQGRK0IGhyLqaJtqJlFOiVp+fNqn0EVfy+KHLd
+         wZiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ya7BzNWkK/aNL6Tv2iIJrxyXJnuSHN2DAiGDBEKCFME=;
-        b=BixUIP5aigBGdqMU+K4vWF3NMqMeu0/kA6Zol1/cP91ovcdAT2A2tUhePtgLVTKr/0
-         Jq4I2vOqOdYWKYZrneMuJjphuen3syacCfeSrQE6CtMFJSwo/98yrrExc7uLiYs+7C1k
-         2+wI5NotV8EUUWNJSBvDsD0nUpCz2Rzudj6JaxVe5vOXAdVlYhF1ekMMJdtb7IMKPSs7
-         WY42OgvQ+hWNc47R/z07qfX0Ozo2uM2BAqvP2v3tq2Ot8xLGFhsutTdoQgM9Jm6s0z27
-         lDUdMlilANAZvw5+kgQuZ1yAS/HxdfXQCRpU9QYo9CNs2Yf1HU1Aw6p2PSRZ3TshgwSW
-         eo2Q==
-X-Gm-Message-State: APjAAAWBKtF5IThlYe+DYYxcSwWiK2KWa7sAZm7qD1CkNnzSyuS5/OPk
-        MQ+eN0XuV6n5sFRxX1NLQaVM+vMMrCCa+39Sg6M=
-X-Google-Smtp-Source: APXvYqx9EZC0JNyWfusuB4QXxIWZmS+pIpitlsLm35JVfJohfpkIicI2phemogyTKUpyQwwnIXHCmtWvSi7373Q46BM=
-X-Received: by 2002:aed:2510:: with SMTP id v16mr28785378qtc.306.1582234686749;
- Thu, 20 Feb 2020 13:38:06 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SdMXiwQ30NtFiXHtEOV93iERJEGx/98ZsoX3dNQE1dU=;
+        b=Vg+2DXZnLv8pYqH0tFUqeZbaAI8h4FEkjH8NZucD1z7/Co5kk3ihSaLQhFVE/UxDGP
+         uVcFouJD6I64Zk/Imb0PRdvX/oTTWaFmyAuiLGNsQGSUdz/x7daqv6j9up40CFf9sTZ5
+         HnbO2s0LsKv98p2ft+30b3Ysh+rcWnomrgZsywuQiDs1M6tx0vzjZ1ZDkjwzeKroOdId
+         RDphlCObk5G9dGU6v2nuPqVa9Nvp0AigHJTR/Ptd8h/42RNvd2USj3hQu28vS6UZtiDb
+         rSwWO7IdfZnyb5+VHyGOBTwsiOFtls7PPngWvdAW7esfHafyFj+TkzQ8meKjUpBCni13
+         lrng==
+X-Gm-Message-State: APjAAAUPCKQCFljMQezQBlkiXz8n4uXhjsiGsDgrWwyeWIsGZ9+X9xpA
+        l0B9mZk6cKHDD8ZeLpMAdgA9Zw==
+X-Google-Smtp-Source: APXvYqxoWg8UWtAn7qZl+URGKHfmSgJlNhTD6bwEWpMBVPmnFq43cZPNxCZ2yrsn44C6bIEQW6nsKQ==
+X-Received: by 2002:a17:90a:ac0e:: with SMTP id o14mr6116479pjq.11.1582234830293;
+        Thu, 20 Feb 2020 13:40:30 -0800 (PST)
+Received: from cisco.hsd1.co.comcast.net ([2001:420:c0c8:1008::8b3])
+        by smtp.gmail.com with ESMTPSA id h3sm386289pjs.0.2020.02.20.13.40.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2020 13:40:29 -0800 (PST)
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tycho Andersen <tycho@tycho.ws>
+Subject: [PATCH] doc: fix filesystems/porting.rst whitespace
+Date:   Thu, 20 Feb 2020 14:40:09 -0700
+Message-Id: <20200220214009.11645-1-tycho@tycho.ws>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20200220083508.792071-1-anarsoul@gmail.com> <20200220083508.792071-7-anarsoul@gmail.com>
- <20200220141725.GG4998@pendragon.ideasonboard.com>
-In-Reply-To: <20200220141725.GG4998@pendragon.ideasonboard.com>
-From:   Vasily Khoruzhick <anarsoul@gmail.com>
-Date:   Thu, 20 Feb 2020 13:37:53 -0800
-Message-ID: <CA+E=qVe7vMwK3m-AfTiK+mL=9+rD7dNWjYSXBLgZZnMU1zPeSg@mail.gmail.com>
-Subject: Re: [PATCH 6/6] arm64: allwinner: a64: enable LCD-related hardware
- for Pinebook
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Icenowy Zheng <icenowy@aosc.io>, Torsten Duwe <duwe@suse.de>,
-        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Mark Brown <broonie@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Samuel Holland <samuel@sholland.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        arm-linux <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 6:17 AM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Vasily,
+If we start with spaces instead of tabs, rst seems to get confused and
+italicize some things (presumably because of the `*'s).
 
-Hi Laurent,
+Instead, let's switch to using leading tabs as we do elsewhere in the file.
 
-> Thank you for the patch.
->
-> On Thu, Feb 20, 2020 at 12:35:08AM -0800, Vasily Khoruzhick wrote:
-> > From: Icenowy Zheng <icenowy@aosc.io>
-> >
-> > Pinebook has an ANX6345 bridge connected to the RGB666 LCD output and
-> > eDP panel input. The bridge is controlled via I2C that's connected to
-> > R_I2C bus.
-> >
-> > Enable all this hardware in device tree.
-> >
-> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> > Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
-> > ---
-> >  .../dts/allwinner/sun50i-a64-pinebook.dts     | 69 ++++++++++++++++++-
-> >  1 file changed, 68 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
-> > index c06c540e6c08..f5633f550d8a 100644
-> > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
-> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
-> > @@ -48,6 +48,18 @@ lid_switch {
-> >               };
-> >       };
-> >
-> > +     panel_edp: panel-edp {
-> > +             compatible = "neweast,wjfh116008a";
-> > +             backlight = <&backlight>;
-> > +             power-supply = <&reg_dc1sw>;
-> > +
-> > +             port {
-> > +                     panel_edp_in: endpoint {
-> > +                             remote-endpoint = <&anx6345_out_edp>;
-> > +                     };
-> > +             };
-> > +     };
-> > +
-> >       reg_vbklt: vbklt {
-> >               compatible = "regulator-fixed";
-> >               regulator-name = "vbklt";
-> > @@ -109,6 +121,10 @@ &dai {
-> >       status = "okay";
-> >  };
-> >
-> > +&de {
-> > +     status = "okay";
-> > +};
-> > +
-> >  &ehci0 {
-> >       phys = <&usbphy 0>;
-> >       phy-names = "usb";
-> > @@ -119,6 +135,10 @@ &ehci1 {
-> >       status = "okay";
-> >  };
-> >
-> > +&mixer0 {
-> > +     status = "okay";
-> > +};
-> > +
-> >  &mmc0 {
-> >       pinctrl-names = "default";
-> >       pinctrl-0 = <&mmc0_pins>;
-> > @@ -177,12 +197,45 @@ &pwm {
-> >       status = "okay";
-> >  };
-> >
-> > -/* The ANX6345 eDP-bridge is on r_i2c */
-> >  &r_i2c {
-> >       clock-frequency = <100000>;
-> >       pinctrl-names = "default";
-> >       pinctrl-0 = <&r_i2c_pl89_pins>;
-> >       status = "okay";
-> > +
-> > +     anx6345: anx6345@38 {
-> > +             compatible = "analogix,anx6345";
-> > +             reg = <0x38>;
-> > +             reset-gpios = <&pio 3 24 GPIO_ACTIVE_LOW>; /* PD24 */
-> > +             dvdd25-supply = <&reg_dldo2>;
-> > +             dvdd12-supply = <&reg_fldo1>;
-> > +
-> > +             ports {
-> > +                     #address-cells = <1>;
-> > +                     #size-cells = <0>;
-> > +
-> > +                     anx6345_in: port@0 {
-> > +                             #address-cells = <1>;
-> > +                             #size-cells = <0>;
-> > +                             reg = <0>;
-> > +                             anx6345_in_tcon0: endpoint@0 {
-> > +                                     reg = <0>;
-> > +                                     remote-endpoint = <&tcon0_out_anx6345>;
-> > +                             };
->
-> As there's a single endpoint, you can drop the reg property, the @0
-> suffix, and the #address-cells and #size-cells property in the port@0
-> node (but not in the ports node).
+Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+---
+ Documentation/filesystems/porting.rst | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-Will do
+diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
+index f18506083ced..898e1d0c6e98 100644
+--- a/Documentation/filesystems/porting.rst
++++ b/Documentation/filesystems/porting.rst
+@@ -57,12 +57,13 @@ Turn your foo_read_super() into a function that would return 0 in case of
+ success and negative number in case of error (-EINVAL unless you have more
+ informative error value to report).  Call it foo_fill_super().  Now declare::
+ 
+-  int foo_get_sb(struct file_system_type *fs_type,
+-	int flags, const char *dev_name, void *data, struct vfsmount *mnt)
+-  {
+-	return get_sb_bdev(fs_type, flags, dev_name, data, foo_fill_super,
+-			   mnt);
+-  }
++	int foo_get_sb(struct file_system_type *fs_type,
++		       int flags, const char *dev_name, void *data,
++		       struct vfsmount *mnt)
++	{
++		return get_sb_bdev(fs_type, flags, dev_name, data, foo_fill_super,
++				   mnt);
++	}
+ 
+ (or similar with s/bdev/nodev/ or s/bdev/single/, depending on the kind of
+ filesystem).
+@@ -181,10 +182,10 @@ can be used as examples of very different filesystems.
+ iget4() and the read_inode2 callback have been superseded by iget5_locked()
+ which has the following prototype::
+ 
+-    struct inode *iget5_locked(struct super_block *sb, unsigned long ino,
+-				int (*test)(struct inode *, void *),
+-				int (*set)(struct inode *, void *),
+-				void *data);
++	struct inode *iget5_locked(struct super_block *sb, unsigned long ino,
++				   int (*test)(struct inode *, void *),
++				   int (*set)(struct inode *, void *),
++				   void *data);
+ 
+ 'test' is an additional function that can be used when the inode
+ number is not sufficient to identify the actual file object. 'set'
+-- 
+2.20.1
 
-> > +                     };
-> > +
-> > +                     anx6345_out: port@1 {
-> > +                             #address-cells = <1>;
-> > +                             #size-cells = <0>;
-> > +                             reg = <1>;
-> > +
-> > +                             anx6345_out_edp: endpoint@0 {
-> > +                                     reg = <0>;
-> > +                                     remote-endpoint = <&panel_edp_in>;
-> > +                             };
->
-> Same here.
-
-Will do
-
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-Thanks for reviewing the series!
-
-
->
-> > +                     };
-> > +             };
-> > +     };
-> >  };
-> >
-> >  &r_pio {
-> > @@ -357,6 +410,20 @@ &sound {
-> >                       "MIC2", "Internal Microphone Right";
-> >  };
-> >
-> > +&tcon0 {
-> > +     pinctrl-names = "default";
-> > +     pinctrl-0 = <&lcd_rgb666_pins>;
-> > +
-> > +     status = "okay";
-> > +};
-> > +
-> > +&tcon0_out {
-> > +     tcon0_out_anx6345: endpoint@0 {
-> > +             reg = <0>;
-> > +             remote-endpoint = <&anx6345_in_tcon0>;
-> > +     };
-> > +};
-> > +
-> >  &uart0 {
-> >       pinctrl-names = "default";
-> >       pinctrl-0 = <&uart0_pb_pins>;
->
-> --
-> Regards,
->
-> Laurent Pinchart
