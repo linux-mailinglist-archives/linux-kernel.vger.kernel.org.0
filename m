@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A3C2165E89
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 14:17:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 382E0165E9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 14:21:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728167AbgBTNRh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 08:17:37 -0500
-Received: from gateway31.websitewelcome.com ([192.185.144.96]:27221 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728129AbgBTNRh (ORCPT
+        id S1728145AbgBTNVj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 08:21:39 -0500
+Received: from gateway22.websitewelcome.com ([192.185.47.179]:30850 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727996AbgBTNVj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 08:17:37 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id 1682811432
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 07:17:35 -0600 (CST)
+        Thu, 20 Feb 2020 08:21:39 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id 86B145F27
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 07:21:37 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id 4lhujcJP5XVkQ4lhvjyrEY; Thu, 20 Feb 2020 07:17:35 -0600
+        id 4llpjvNqSRP4z4llpjLRj6; Thu, 20 Feb 2020 07:21:37 -0600
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
@@ -25,33 +25,30 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=z1nik/sLu1rWe1J16Res5lnb/I2LgkK5u9A27nU3ovY=; b=WkfFysgNRAo+UWyPV48G7KJxrr
-        QdENWL2WZlpyux/qZ58g4YNrrdODyN/3/5cURbxev/i8i5y9/fNa5+YyCQqKV2OF1pfuypyeMs6Lw
-        Y92EXY+tFP+JEI7zuhJ9u/F6GFh7jn0iMXQaIrEbM3+gaYf84/xhX9DUaDN6ZeBMHJoz95ht6epCx
-        mwmOwqv+ZxjhNYtjful6ZZFIlk487O59qsgsT0VioFBEeGpH9HBiP4Jg6ntzqB0+xPpRVA0H+Bz77
-        pcSB4jcakHBCa6z+/lfyyqg19of677C4vhYE8WCxtJPfP7j9vA8WbGR6YsuqF2vp5ilM+33vEmh8f
-        GwMVz72w==;
-Received: from [201.144.174.47] (port=28175 helo=embeddedor)
+        bh=aBVqKO+u3fecGVX4F0/4pATO5Sy+gKRtKWeV4k7qRzo=; b=x7h8Orqvf8KxMai8yvij1HqxiF
+        GxEp7yxJNcdmd0JZlW7bZconjwlIuu657HChS6j8ndOOaAuDbbJJB76LrNag9KyRwjd1BuSeOohB0
+        GNRLWnfXVTLFgH+Bqk6TtpyzFVIedbEgchwnMJmtuXdnRM35CCR6yutu994l0ocdjGuM8rB1S0ScT
+        NklxiPZea+ehf+TAvoxd9p132/UW/FWDtVko2d72G3idzES/pDk6OtpyNkhjrG8GKfiyhTWoyA/hl
+        d5Y7qUrGkJmiBFXbZG8C3CHcC4RKh+nvAT+BqUu8JrHWJyolTDALC2b2IxR02mIbdarlgJZ2+tTXa
+        RkHzKCpQ==;
+Received: from [201.144.174.47] (port=7747 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.92)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1j4lht-003Yvz-1W; Thu, 20 Feb 2020 07:17:33 -0600
-Date:   Thu, 20 Feb 2020 07:20:17 -0600
+        id 1j4lln-003avg-Mu; Thu, 20 Feb 2020 07:21:35 -0600
+Date:   Thu, 20 Feb 2020 07:24:20 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Minas Harutyunyan <hminas@synopsys.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Johan Hovold <johan@kernel.org>,
-        Felipe Balbi <balbi@kernel.org>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] USB: Replace zero-length array with flexible-array member
-Message-ID: <20200220132017.GA29262@embeddedor>
+Subject: [PATCH] sound: Replace zero-length array with flexible-array member
+Message-ID: <20200220132420.GA29765@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -64,13 +61,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 201.144.174.47
 X-Source-L: No
-X-Exim-ID: 1j4lht-003Yvz-1W
+X-Exim-ID: 1j4lln-003avg-Mu
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.144.174.47]:28175
+X-Source-Sender: (embeddedor) [201.144.174.47]:7747
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 11
+X-Email-Count: 25
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -108,286 +105,217 @@ This issue was found with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/usb/atm/usbatm.h              | 2 +-
- drivers/usb/dwc2/hcd.h                | 2 +-
- drivers/usb/host/ehci-tegra.c         | 2 +-
- drivers/usb/host/ehci.h               | 4 ++--
- drivers/usb/host/fotg210.h            | 2 +-
- drivers/usb/host/ohci.h               | 4 ++--
- drivers/usb/host/xhci-mtk.h           | 2 +-
- drivers/usb/host/xhci.h               | 4 ++--
- drivers/usb/serial/io_usbvend.h       | 4 ++--
- drivers/usb/serial/ti_usb_3410_5052.c | 4 ++--
- include/linux/usb.h                   | 4 ++--
- include/linux/usb/audio-v2.h          | 2 +-
- include/linux/usb/audio-v3.h          | 2 +-
- include/linux/usb/gadget.h            | 2 +-
- include/linux/usb/hcd.h               | 2 +-
- include/linux/usbdevice_fs.h          | 2 +-
- 16 files changed, 22 insertions(+), 22 deletions(-)
+ include/sound/control.h                  | 2 +-
+ include/sound/intel-nhlt.h               | 6 +++---
+ include/sound/soc-dapm.h                 | 2 +-
+ include/sound/soc.h                      | 2 +-
+ include/uapi/sound/asound.h              | 2 +-
+ include/uapi/sound/skl-tplg-interface.h  | 2 +-
+ sound/core/oss/pcm_plugin.h              | 2 +-
+ sound/firewire/fireworks/fireworks.h     | 2 +-
+ sound/soc/intel/atom/sst-atom-controls.h | 2 +-
+ sound/soc/intel/skylake/skl-i2s.h        | 2 +-
+ sound/soc/intel/skylake/skl-topology.h   | 4 ++--
+ sound/soc/intel/skylake/skl.h            | 2 +-
+ sound/usb/usx2y/usbusx2y.h               | 2 +-
+ 13 files changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/usb/atm/usbatm.h b/drivers/usb/atm/usbatm.h
-index d3bdc4cc47aa..8725755bd53d 100644
---- a/drivers/usb/atm/usbatm.h
-+++ b/drivers/usb/atm/usbatm.h
-@@ -164,7 +164,7 @@ struct usbatm_data {
- 	unsigned char *cell_buf;	/* holds partial rx cell */
- 	unsigned int buf_usage;
- 
--	struct urb *urbs[0];
-+	struct urb *urbs[];
+diff --git a/include/sound/control.h b/include/sound/control.h
+index 11feeee31e35..aeaed2a05bae 100644
+--- a/include/sound/control.h
++++ b/include/sound/control.h
+@@ -75,7 +75,7 @@ struct snd_kcontrol {
+ 	unsigned long private_value;
+ 	void *private_data;
+ 	void (*private_free)(struct snd_kcontrol *kcontrol);
+-	struct snd_kcontrol_volatile vd[0];	/* volatile data */
++	struct snd_kcontrol_volatile vd[];	/* volatile data */
  };
  
- static inline void *to_usbatm_driver_data(struct usb_interface *intf)
-diff --git a/drivers/usb/dwc2/hcd.h b/drivers/usb/dwc2/hcd.h
-index 8ca6d12a6f57..1224fa9df604 100644
---- a/drivers/usb/dwc2/hcd.h
-+++ b/drivers/usb/dwc2/hcd.h
-@@ -199,7 +199,7 @@ struct dwc2_hcd_urb {
- 	u32 flags;
- 	u16 interval;
- 	struct dwc2_hcd_pipe_info pipe_info;
--	struct dwc2_hcd_iso_packet_desc iso_descs[0];
-+	struct dwc2_hcd_iso_packet_desc iso_descs[];
- };
+ #define snd_kcontrol(n) list_entry(n, struct snd_kcontrol, list)
+diff --git a/include/sound/intel-nhlt.h b/include/sound/intel-nhlt.h
+index f657fd8fc0ad..743c2f442280 100644
+--- a/include/sound/intel-nhlt.h
++++ b/include/sound/intel-nhlt.h
+@@ -50,7 +50,7 @@ enum nhlt_device_type {
  
- /* Phases for control transfers */
-diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
-index d6433f206c17..10d51daa6a1b 100644
---- a/drivers/usb/host/ehci-tegra.c
-+++ b/drivers/usb/host/ehci-tegra.c
-@@ -282,7 +282,7 @@ static int tegra_ehci_hub_control(
- struct dma_aligned_buffer {
- 	void *kmalloc_ptr;
- 	void *old_xfer_buffer;
--	u8 data[0];
-+	u8 data[];
- };
- 
- static void free_dma_aligned_buffer(struct urb *urb)
-diff --git a/drivers/usb/host/ehci.h b/drivers/usb/host/ehci.h
-index ac5e967907d1..229b3de319e6 100644
---- a/drivers/usb/host/ehci.h
-+++ b/drivers/usb/host/ehci.h
-@@ -255,7 +255,7 @@ struct ehci_hcd {			/* one per controller */
- 	struct list_head	tt_list;
- 
- 	/* platform-specific data -- must come last */
--	unsigned long		priv[0] __aligned(sizeof(s64));
-+	unsigned long		priv[] __aligned(sizeof(s64));
- };
- 
- /* convert between an HCD pointer and the corresponding EHCI_HCD */
-@@ -460,7 +460,7 @@ struct ehci_iso_sched {
- 	struct list_head	td_list;
- 	unsigned		span;
- 	unsigned		first_packet;
--	struct ehci_iso_packet	packet[0];
-+	struct ehci_iso_packet	packet[];
- };
- 
- /*
-diff --git a/drivers/usb/host/fotg210.h b/drivers/usb/host/fotg210.h
-index 1b4db95e5c43..6cee40ec65b4 100644
---- a/drivers/usb/host/fotg210.h
-+++ b/drivers/usb/host/fotg210.h
-@@ -490,7 +490,7 @@ struct fotg210_iso_packet {
- struct fotg210_iso_sched {
- 	struct list_head	td_list;
- 	unsigned		span;
--	struct fotg210_iso_packet	packet[0];
-+	struct fotg210_iso_packet	packet[];
- };
- 
- /*
-diff --git a/drivers/usb/host/ohci.h b/drivers/usb/host/ohci.h
-index b015b00774b2..27c26ca10bfd 100644
---- a/drivers/usb/host/ohci.h
-+++ b/drivers/usb/host/ohci.h
-@@ -337,7 +337,7 @@ typedef struct urb_priv {
- 	u16			length;		// # tds in this request
- 	u16			td_cnt;		// tds already serviced
- 	struct list_head	pending;
--	struct td		*td [0];	// all TDs in this request
-+	struct td		*td[];		// all TDs in this request
- 
- } urb_priv_t;
- 
-@@ -435,7 +435,7 @@ struct ohci_hcd {
- 	struct dentry		*debug_dir;
- 
- 	/* platform-specific data -- must come last */
--	unsigned long           priv[0] __aligned(sizeof(s64));
-+	unsigned long           priv[] __aligned(sizeof(s64));
- 
- };
- 
-diff --git a/drivers/usb/host/xhci-mtk.h b/drivers/usb/host/xhci-mtk.h
-index 5ac458b7d2e0..acd56517215a 100644
---- a/drivers/usb/host/xhci-mtk.h
-+++ b/drivers/usb/host/xhci-mtk.h
-@@ -95,7 +95,7 @@ struct mu3h_sch_ep_info {
- 	u32 pkts;
- 	u32 cs_count;
- 	u32 burst_mode;
--	u32 bw_budget_table[0];
-+	u32 bw_budget_table[];
- };
- 
- #define MU3C_U3_PORT_MAX 4
-diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-index 3ecee10fdcdc..685180e1b98a 100644
---- a/drivers/usb/host/xhci.h
-+++ b/drivers/usb/host/xhci.h
-@@ -1642,7 +1642,7 @@ struct xhci_scratchpad {
- struct urb_priv {
- 	int	num_tds;
- 	int	num_tds_done;
--	struct	xhci_td	td[0];
-+	struct	xhci_td	td[];
- };
- 
- /*
-@@ -1901,7 +1901,7 @@ struct xhci_hcd {
- 
- 	void			*dbc;
- 	/* platform-specific data -- must come last */
--	unsigned long		priv[0] __aligned(sizeof(s64));
-+	unsigned long		priv[] __aligned(sizeof(s64));
- };
- 
- /* Platform specific overrides to generic XHCI hc_driver ops */
-diff --git a/drivers/usb/serial/io_usbvend.h b/drivers/usb/serial/io_usbvend.h
-index c38e87ac5ea9..0d1a5bb4636e 100644
---- a/drivers/usb/serial/io_usbvend.h
-+++ b/drivers/usb/serial/io_usbvend.h
-@@ -593,7 +593,7 @@ struct ti_i2c_desc {
- 	__u8	Type;			// Type of descriptor
- 	__le16	Size;			// Size of data only not including header
- 	__u8	CheckSum;		// Checksum (8 bit sum of data only)
--	__u8	Data[0];		// Data starts here
-+	__u8	Data[];		// Data starts here
- } __attribute__((packed));
- 
- // for 5152 devices only (type 2 record)
-@@ -601,7 +601,7 @@ struct ti_i2c_desc {
- struct ti_i2c_firmware_rec {
- 	__u8	Ver_Major;		// Firmware Major version number
- 	__u8	Ver_Minor;		// Firmware Minor version number
--	__u8	Data[0];		// Download starts here
-+	__u8	Data[];		// Download starts here
- } __attribute__((packed));
- 
- 
-diff --git a/drivers/usb/serial/ti_usb_3410_5052.c b/drivers/usb/serial/ti_usb_3410_5052.c
-index ef23acc9b9ce..73075b9351c5 100644
---- a/drivers/usb/serial/ti_usb_3410_5052.c
-+++ b/drivers/usb/serial/ti_usb_3410_5052.c
-@@ -219,7 +219,7 @@ struct ti_write_data_bytes {
- 	u8	bDataCounter;
- 	__be16	wBaseAddrHi;
- 	__be16	wBaseAddrLo;
--	u8	bData[0];
-+	u8	bData[];
+ struct nhlt_specific_cfg {
+ 	u32 size;
+-	u8 caps[0];
++	u8 caps[];
  } __packed;
  
- struct ti_read_data_request {
-@@ -234,7 +234,7 @@ struct ti_read_data_bytes {
- 	__u8	bCmdCode;
- 	__u8	bModuleId;
- 	__u8	bErrorCode;
--	__u8	bData[0];
-+	__u8	bData[];
+ struct nhlt_fmt_cfg {
+@@ -60,7 +60,7 @@ struct nhlt_fmt_cfg {
+ 
+ struct nhlt_fmt {
+ 	u8 fmt_count;
+-	struct nhlt_fmt_cfg fmt_config[0];
++	struct nhlt_fmt_cfg fmt_config[];
  } __packed;
  
- /* Interrupt struct */
-diff --git a/include/linux/usb.h b/include/linux/usb.h
-index ca1a5f1e1c5e..9f3c721c70dc 100644
---- a/include/linux/usb.h
-+++ b/include/linux/usb.h
-@@ -325,7 +325,7 @@ struct usb_interface_cache {
+ struct nhlt_endpoint {
+@@ -80,7 +80,7 @@ struct nhlt_endpoint {
+ struct nhlt_acpi_table {
+ 	struct acpi_table_header header;
+ 	u8 endpoint_count;
+-	struct nhlt_endpoint desc[0];
++	struct nhlt_endpoint desc[];
+ } __packed;
  
- 	/* variable-length array of alternate settings for this interface,
- 	 * stored in no particular order */
--	struct usb_host_interface altsetting[0];
-+	struct usb_host_interface altsetting[];
- };
- #define	ref_to_usb_interface_cache(r) \
- 		container_of(r, struct usb_interface_cache, ref)
-@@ -1589,7 +1589,7 @@ struct urb {
- 	int error_count;		/* (return) number of ISO errors */
- 	void *context;			/* (in) context for completion */
- 	usb_complete_t complete;	/* (in) completion routine */
--	struct usb_iso_packet_descriptor iso_frame_desc[0];
-+	struct usb_iso_packet_descriptor iso_frame_desc[];
- 					/* (in) ISO ONLY */
- };
- 
-diff --git a/include/linux/usb/audio-v2.h b/include/linux/usb/audio-v2.h
-index cb9900b34b67..ead8c9a47c6a 100644
---- a/include/linux/usb/audio-v2.h
-+++ b/include/linux/usb/audio-v2.h
-@@ -153,7 +153,7 @@ struct uac2_feature_unit_descriptor {
- 	__u8 bSourceID;
- 	/* bmaControls is actually u32,
- 	 * but u8 is needed for the hybrid parser */
--	__u8 bmaControls[0]; /* variable length */
-+	__u8 bmaControls[]; /* variable length */
- } __attribute__((packed));
- 
- /* 4.7.2.10 Effect Unit Descriptor */
-diff --git a/include/linux/usb/audio-v3.h b/include/linux/usb/audio-v3.h
-index 6b708434b7f9..c69a6f2e6837 100644
---- a/include/linux/usb/audio-v3.h
-+++ b/include/linux/usb/audio-v3.h
-@@ -109,7 +109,7 @@ struct uac3_feature_unit_descriptor {
- 	__u8 bSourceID;
- 	/* bmaControls is actually u32,
- 	 * but u8 is needed for the hybrid parser */
--	__u8 bmaControls[0]; /* variable length */
-+	__u8 bmaControls[]; /* variable length */
- 	/* wFeatureDescrStr omitted */
- } __attribute__((packed));
- 
-diff --git a/include/linux/usb/gadget.h b/include/linux/usb/gadget.h
-index 124462d65eac..9411c08a5c7e 100644
---- a/include/linux/usb/gadget.h
-+++ b/include/linux/usb/gadget.h
-@@ -767,7 +767,7 @@ struct usb_gadget_strings {
- 
- struct usb_gadget_string_container {
- 	struct list_head        list;
--	u8                      *stash[0];
-+	u8                      *stash[];
+ struct nhlt_resource_desc  {
+diff --git a/include/sound/soc-dapm.h b/include/sound/soc-dapm.h
+index 1a9c5dd40228..f870f927b70c 100644
+--- a/include/sound/soc-dapm.h
++++ b/include/sound/soc-dapm.h
+@@ -688,7 +688,7 @@ struct snd_soc_dapm_context {
+ /* A list of widgets associated with an object, typically a snd_kcontrol */
+ struct snd_soc_dapm_widget_list {
+ 	int num_widgets;
+-	struct snd_soc_dapm_widget *widgets[0];
++	struct snd_soc_dapm_widget *widgets[];
  };
  
- /* put descriptor for string with that id into buf (buflen >= 256) */
-diff --git a/include/linux/usb/hcd.h b/include/linux/usb/hcd.h
-index 712b2a603645..e12105ed3834 100644
---- a/include/linux/usb/hcd.h
-+++ b/include/linux/usb/hcd.h
-@@ -228,7 +228,7 @@ struct usb_hcd {
- 	/* The HC driver's private data is stored at the end of
- 	 * this structure.
- 	 */
--	unsigned long hcd_priv[0]
-+	unsigned long hcd_priv[]
- 			__attribute__ ((aligned(sizeof(s64))));
+ #define for_each_dapm_widgets(list, i, widget)				\
+diff --git a/include/sound/soc.h b/include/sound/soc.h
+index f0e4f36f83bf..9944b978ae70 100644
+--- a/include/sound/soc.h
++++ b/include/sound/soc.h
+@@ -1146,7 +1146,7 @@ struct snd_soc_pcm_runtime {
+ 	unsigned int fe_compr:1; /* for Dynamic PCM */
+ 
+ 	int num_components;
+-	struct snd_soc_component *components[0]; /* CPU/Codec/Platform */
++	struct snd_soc_component *components[]; /* CPU/Codec/Platform */
+ };
+ #define for_each_rtd_components(rtd, i, component)			\
+ 	for ((i) = 0;							\
+diff --git a/include/uapi/sound/asound.h b/include/uapi/sound/asound.h
+index 535a7229e1d9..3809993f6cb4 100644
+--- a/include/uapi/sound/asound.h
++++ b/include/uapi/sound/asound.h
+@@ -1071,7 +1071,7 @@ struct snd_ctl_elem_value {
+ struct snd_ctl_tlv {
+ 	unsigned int numid;	/* control element numeric identification */
+ 	unsigned int length;	/* in bytes aligned to 4 */
+-	unsigned int tlv[0];	/* first TLV */
++	unsigned int tlv[];	/* first TLV */
  };
  
-diff --git a/include/linux/usbdevice_fs.h b/include/linux/usbdevice_fs.h
-index 79aab0065ec8..14ea197ce37f 100644
---- a/include/linux/usbdevice_fs.h
-+++ b/include/linux/usbdevice_fs.h
-@@ -69,7 +69,7 @@ struct usbdevfs_urb32 {
- 	compat_int_t error_count;
- 	compat_uint_t signr;
- 	compat_caddr_t usercontext; /* unused */
--	struct usbdevfs_iso_packet_desc iso_frame_desc[0];
-+	struct usbdevfs_iso_packet_desc iso_frame_desc[];
+ #define SNDRV_CTL_IOCTL_PVERSION	_IOR('U', 0x00, int)
+diff --git a/include/uapi/sound/skl-tplg-interface.h b/include/uapi/sound/skl-tplg-interface.h
+index 9eee32f5e407..62f76f154d19 100644
+--- a/include/uapi/sound/skl-tplg-interface.h
++++ b/include/uapi/sound/skl-tplg-interface.h
+@@ -149,7 +149,7 @@ struct skl_dfw_algo_data {
+ 	__u32 rsvd:30;
+ 	__u32 param_id;
+ 	__u32 max;
+-	char params[0];
++	char params[];
+ } __packed;
+ 
+ enum skl_tkn_dir {
+diff --git a/sound/core/oss/pcm_plugin.h b/sound/core/oss/pcm_plugin.h
+index 8d2f7a4e3ab6..46e273bd4a78 100644
+--- a/sound/core/oss/pcm_plugin.h
++++ b/sound/core/oss/pcm_plugin.h
+@@ -64,7 +64,7 @@ struct snd_pcm_plugin {
+ 	char *buf;
+ 	snd_pcm_uframes_t buf_frames;
+ 	struct snd_pcm_plugin_channel *buf_channels;
+-	char extra_data[0];
++	char extra_data[];
  };
  
- struct usbdevfs_ioctl32 {
+ int snd_pcm_plugin_build(struct snd_pcm_substream *handle,
+diff --git a/sound/firewire/fireworks/fireworks.h b/sound/firewire/fireworks/fireworks.h
+index dda797209a27..654e28a6669f 100644
+--- a/sound/firewire/fireworks/fireworks.h
++++ b/sound/firewire/fireworks/fireworks.h
+@@ -177,7 +177,7 @@ struct snd_efw_phys_meters {
+ 	u32 in_meters;
+ 	u32 reserved4;
+ 	u32 reserved5;
+-	u32 values[0];
++	u32 values[];
+ } __packed;
+ enum snd_efw_clock_source {
+ 	SND_EFW_CLOCK_SOURCE_INTERNAL	= 0,
+diff --git a/sound/soc/intel/atom/sst-atom-controls.h b/sound/soc/intel/atom/sst-atom-controls.h
+index 5356e954a732..620b48d2a064 100644
+--- a/sound/soc/intel/atom/sst-atom-controls.h
++++ b/sound/soc/intel/atom/sst-atom-controls.h
+@@ -410,7 +410,7 @@ struct sst_cmd_set_gain_dual {
+ struct sst_cmd_set_params {
+ 	struct sst_destination_id dst;
+ 	u16 command_id;
+-	char params[0];
++	char params[];
+ } __packed;
+ 
+ 
+diff --git a/sound/soc/intel/skylake/skl-i2s.h b/sound/soc/intel/skylake/skl-i2s.h
+index d7c15873c0d4..dfce91e11be1 100644
+--- a/sound/soc/intel/skylake/skl-i2s.h
++++ b/sound/soc/intel/skylake/skl-i2s.h
+@@ -46,7 +46,7 @@ struct skl_i2s_config_mclk {
+ struct skl_i2s_config_mclk_ext {
+ 	u32 mdivctrl;
+ 	u32 mdivr_count;
+-	u32 mdivr[0];
++	u32 mdivr[];
+ } __packed;
+ 
+ struct skl_i2s_config_blob_signature {
+diff --git a/sound/soc/intel/skylake/skl-topology.h b/sound/soc/intel/skylake/skl-topology.h
+index e967800dbb62..d2cd8ef8e97f 100644
+--- a/sound/soc/intel/skylake/skl-topology.h
++++ b/sound/soc/intel/skylake/skl-topology.h
+@@ -119,7 +119,7 @@ struct skl_cpr_gtw_cfg {
+ struct skl_dma_control {
+ 	u32 node_id;
+ 	u32 config_length;
+-	u32 config_data[0];
++	u32 config_data[];
+ } __packed;
+ 
+ struct skl_cpr_cfg {
+@@ -152,7 +152,7 @@ struct skl_up_down_mixer_cfg {
+ 
+ struct skl_algo_cfg {
+ 	struct skl_base_cfg  base_cfg;
+-	char params[0];
++	char params[];
+ } __packed;
+ 
+ struct skl_base_outfmt_cfg {
+diff --git a/sound/soc/intel/skylake/skl.h b/sound/soc/intel/skylake/skl.h
+index 2bfbf59277c4..26057f38a014 100644
+--- a/sound/soc/intel/skylake/skl.h
++++ b/sound/soc/intel/skylake/skl.h
+@@ -49,7 +49,7 @@ struct skl_astate_param {
+ 
+ struct skl_astate_config {
+ 	u32 count;
+-	struct skl_astate_param astate_table[0];
++	struct skl_astate_param astate_table[];
+ };
+ 
+ struct skl_fw_config {
+diff --git a/sound/usb/usx2y/usbusx2y.h b/sound/usb/usx2y/usbusx2y.h
+index e0f77172ce8f..144b85f57bd2 100644
+--- a/sound/usb/usx2y/usbusx2y.h
++++ b/sound/usb/usx2y/usbusx2y.h
+@@ -18,7 +18,7 @@ struct snd_usX2Y_AsyncSeq {
+ struct snd_usX2Y_urbSeq {
+ 	int	submitted;
+ 	int	len;
+-	struct urb	*urb[0];
++	struct urb	*urb[];
+ };
+ 
+ #include "usx2yhwdeppcm.h"
 -- 
 2.25.0
 
