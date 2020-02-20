@@ -2,138 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD903165B5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 11:22:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EE82165B64
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 11:25:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727091AbgBTKWp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 05:22:45 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:35786 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726825AbgBTKWp (ORCPT
+        id S1726948AbgBTKZC convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 20 Feb 2020 05:25:02 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:39159 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726799AbgBTKZA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 05:22:45 -0500
-Received: by mail-pj1-f68.google.com with SMTP id q39so702938pjc.0;
-        Thu, 20 Feb 2020 02:22:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=X1iVrbEe5HI+WzLO15gODwW6rZL/OTMzbBzRb8jX2NQ=;
-        b=AzTP38YRlBEugdQFVd9RrmSBpuchkvsKlo2/eWRtKHjhO+JsMTIyBb2SqgbT0yPMgv
-         2+VPManZc9qdlMpGLyTNTSRyW02IwK5fdNnJ1FolWVJQxcHCuX8MGbahODKEGhL2NObS
-         5pxxKv+HytcuoHFWFBor/97OCjihn96JXQtYVFl15x3JZnb6a+FdClXn1p+QvrZsYt2t
-         mvGBWdv0pff94x7bZGXE+oQOw8WtOZRuqtLPkvAf2u9plwofgGoG/M5FCpmpAr3Km4N2
-         suNgSJdrffd4I7ahRe0pfxdpVzjIP/Gf5msOSimRlhXEL9+HjIfwnBAbEaI5k/IoDfLt
-         R/uw==
+        Thu, 20 Feb 2020 05:25:00 -0500
+Received: from mail-pf1-f197.google.com ([209.85.210.197])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1j4j0s-0003Eq-8h
+        for linux-kernel@vger.kernel.org; Thu, 20 Feb 2020 10:24:58 +0000
+Received: by mail-pf1-f197.google.com with SMTP id z17so2138823pfq.16
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 02:24:58 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=X1iVrbEe5HI+WzLO15gODwW6rZL/OTMzbBzRb8jX2NQ=;
-        b=Qw9sGRgbxaGA7C8j/LBkDlJuQco3HXk6qLS2j37DdAQ63r6rR45PXHAiJQKk6/BhVc
-         ixGcfIViIaV5zh79acjZ6CunpbNhYME7jt3Im9R/eSv1nQKCU04g+1N7ytXS+KWhqFgV
-         1l41KKwj6a2AIsbfWqnMbLeQo0n3SneeKE4iydQfkT7vnUJfTDzjeOla/+aypGyxKgfY
-         I0nkt3EIbKRLpNcwz0BP/YGkgqe1ft0dXphZ5FnppdFRqt6NHBdIoJYRr4J0q3gKeR4d
-         iS8LSLS2Ow19aXRyj8nKWc+xlndSRYB8rpTIA8wXt5ohq3f1Dpx49IprZUSbNNAwORgW
-         cGfA==
-X-Gm-Message-State: APjAAAXrmQenUyuqW5yaEPjUVjm8LoQ3h8CIcvQZXLWPl5RDlj7IgBM1
-        jv6d0HuZQLbXxG7ts7Tcljd4ZQ8YFqq+bts31Zw=
-X-Google-Smtp-Source: APXvYqxAaB3iot4nYemzWfGV3k8YCDIQwKiih0xwPUYqI3HZ6VGS7HsHV7/tk8EzeCBAoqSZv803ReVlUUbeoEYbeZc=
-X-Received: by 2002:a17:90b:3109:: with SMTP id gc9mr2770055pjb.30.1582194164374;
- Thu, 20 Feb 2020 02:22:44 -0800 (PST)
-MIME-Version: 1.0
-References: <20200213091600.554-1-uwe@kleine-koenig.org> <20200213091600.554-2-uwe@kleine-koenig.org>
- <CAHp75VcStj5sE3f0uK2deOWC=ojfx-z1fbrh6Lu6jAor9F9PgA@mail.gmail.com> <20200220074901.ohcrisjgd26555ya@pengutronix.de>
-In-Reply-To: <20200220074901.ohcrisjgd26555ya@pengutronix.de>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 20 Feb 2020 12:22:36 +0200
-Message-ID: <CAHp75VcxXWputX1y90t8f-c0a3dw2CHU6=ebQ+o6e8Z1GymiDw@mail.gmail.com>
-Subject: Re: [PATCH v6 1/4] lib: new helper kstrtodev_t()
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=2EdkyIyCMJrMlWy83hk5i7o/PPrtoxAhqlv9XeDdgGI=;
+        b=ZOe4fGHXvBjDevnnmU3re3hgxkr4J9zD9tLudHDdKWGyUF6TEmexIAR2Bev7QcMygz
+         dGq/1OwWPBUHzmvHE/hpOvvb1eS+Zm+ImZZbRgIdxSyYqIHMSduoonSw83BXH2qZZnCq
+         Xs0/PM7nfkdtvuTWJgym8oJcifI89AosJf1GEfPiXjhArFqk4KoXQGe8v1J3g8uTAI9b
+         Snr3zsEGH6lijAYif2KK8IsquTB4w3pKJM/qofzdOfAUnbb11CISMnSLvc9/mTv4Yh7g
+         qftfPIGxH1oXjrYj17geWw8jvEPErzALoXuZZWnAS2dPeH2qJO1GZVp0sK8HzIXFZ+LV
+         tPVA==
+X-Gm-Message-State: APjAAAW2EYUSb5OWYNx1q1iy6Rgf+94cxxD6pkYVwNi3mQ+bxfhE2Wte
+        Ps1F2o5uH1FlZ0xLi6TYXbQ8Mi9rM0kWu4AO4Y+IxnOu/25vn5aRmL/qnZgfULRh5hnZsUcKSye
+        SEwlw94rBtwWqILFPEuJ/KPxj+QwTY5GAb/n1EyO2fQ==
+X-Received: by 2002:a17:902:502:: with SMTP id 2mr30061232plf.151.1582194296480;
+        Thu, 20 Feb 2020 02:24:56 -0800 (PST)
+X-Google-Smtp-Source: APXvYqw1U1TJJ75/ORRnNCrTCi8jKVdfdbW9hiyENPeCxSlF/WxT8Y2ecFQQknRZTbaIRyynOg0Vxw==
+X-Received: by 2002:a17:902:502:: with SMTP id 2mr30061202plf.151.1582194296022;
+        Thu, 20 Feb 2020 02:24:56 -0800 (PST)
+Received: from 2001-b011-380f-3214-b828-48d4-ee3d-9937.dynamic-ip6.hinet.net (2001-b011-380f-3214-b828-48d4-ee3d-9937.dynamic-ip6.hinet.net. [2001:b011:380f:3214:b828:48d4:ee3d:9937])
+        by smtp.gmail.com with ESMTPSA id a69sm2888860pfa.129.2020.02.20.02.24.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Feb 2020 02:24:55 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
+Subject: Re: Hard Disk consumes lots of power in s2idle
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <CAJZ5v0jXvo0ceNMp=kstTi24Ne7F-ZGMcD0T0TSMpcZZWsJsUA@mail.gmail.com>
+Date:   Thu, 20 Feb 2020 18:24:53 +0800
+Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" 
+        <linux-ide@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Kent Lin <kent.lin@canonical.com>, Tejun Heo <tj@kernel.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <CA007B3C-C084-429E-B774-70264A9E609F@canonical.com>
+References: <0955D72C-D24D-402E-884F-C706578BF477@canonical.com>
+ <a9fd25cd0a151d20e975ce79ab70197e39ef01e1.camel@linux.intel.com>
+ <235CF4F8-19BF-4B00-8C92-E59CB2D476A7@canonical.com>
+ <CAJZ5v0jXvo0ceNMp=kstTi24Ne7F-ZGMcD0T0TSMpcZZWsJsUA@mail.gmail.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+X-Mailer: Apple Mail (2.3608.60.0.2.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 9:49 AM Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
-> On Wed, Feb 19, 2020 at 09:50:54PM +0200, Andy Shevchenko wrote:
-> > On Thu, Feb 13, 2020 at 11:27 AM Uwe Kleine-K=C3=B6nig <uwe@kleine-koen=
-ig.org> wrote:
-> > >
-> > > This function is in the same spirit as the other kstrto* functions an=
-d
-> > > uses the same calling convention. It expects the input string to be i=
-n
-> > > the format %u:%u and implements stricter parsing than sscanf as it
-> > > returns an error on trailing data (other than the usual \n).
 
-...
 
-> > On top of that, why kstrtodev_t is so important? How many users are
-> > already in the kernel to get an advantage out of it?
->
-> Does it need to be important? It matches the other kstrto* functions and
-> so it seemed more natural to me to put it near the other functions. I'm
-> not aware of other potential users and surprised you seem to suggest
-> this as a requirement.
+> On Feb 20, 2020, at 18:12, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> 
+> On Thu, Feb 20, 2020 at 9:08 AM Kai-Heng Feng
+> <kai.heng.feng@canonical.com> wrote:
+>> 
+>> Hi Srinivas,
+>> 
+>>> On Feb 20, 2020, at 02:36, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com> wrote:
+>>> 
+>>> Hi Kai,
+>>> 
+>>> On Wed, 2020-02-19 at 22:22 +0800, Kai-Heng Feng wrote:
+>>>> Hi Srinivas,
+>>>> 
+>>>> Your previous work to support DEVSLP works well on SATA SSDs, so I am
+>>>> asking you the issue I am facing:
+>>>> Once a laptop has a HDD installed, the power consumption during
+>>>> S2Idle increases ~0.4W, which is quite a lot.
+>>>> However, HDDs don't seem to support DEVSLP, so I wonder if you know
+>>>> to do proper power management for HDDs?
+>>> What is the default here
+>>> cat /sys/power/mem_sleep
+>>> s2idle or deep?
+>> 
+>> It defaults to s2idle.
+>> 
+>>> 
+>>> Please follow debug steps here:
+>>> https://01.org/blogs/qwang59/2018/how-achieve-s0ix-states-linux
+>>> 
+>>> We need to check whether you get any PC10 residency or not.
+>> 
+>> Yes it reaches PC10. It doesn't reach SLP_S0 though.
+>> The real number on S2Idle power consumption:
+>> No HDD: ~1.4W
+>> One HDD: ~1.8W
+>> 
+>> If the SoC doesn't hit PC10 the number should be significantly higher.
+>> That's why I think the issue is the power management on HDD itself.
+> 
+> I'm assuming that you mean a non-SSD device here.
 
-Yes it does. The kstrtox() are quite generic, what you are proposing
-is rather one particular case with blurry understanding how many users
-will be out of it.
-If you had told "look, we have 1234 users which may benefit out of
-it", I would have given no comment against.
+Yes, it's spinning rust here.
 
-> > What to do with all other possible variants ("%d:%d", "%dx%d" and its
-> > %u variant, etc)?
->
-> I don't see how %d:%d is relevant, major and minor cannot be negative
-> can they? I never saw 'x' as separator between major and minor. I
-> considered shortly parsing %u, but given that (I think) this is an
-> internal representation only I chose to not make it more visible than it
-> already is.
+> 
+> That would be handled via ata_port_suspend() I gather and whatever
+> that does should do the right thing.
+> 
+> Do you think that the disk doesn't spin down or it spins down, but the
+> logic stays on?
 
-See above, if we are going to make it generic, perhaps better to cover
-more possible users, right?
-Otherwise your change provokes pile of (replaced)
-kstrto_resolution() /* %ux:%u */
-kstrto_range() /* %d:%d */
-kstrto_you_name_it()
+The spin sound is audible, so I am certain the HDD spins down during S2Idle.
 
-> > Why simple_strto*() can't be used?
->
-> I didn't really consider it, but looking in more detail I don't like it
-> much. Without having tried it I think simple_strtoull accepts
-> "1000000000000000000000000000000000000000000" returning some arbitrary
-> value without an error indication.
+How do I know if the logic is on or off?
 
-So what? User has a lot of possibilities to shoot into the foot.
-Since you interpret this as device major:minor, not founding a device
-will be first level of error, next one when your code will try to do
-something out of it. It shouldn't be a problem of kstrtox generic
-helpers.
+Kai-Heng
 
-> And given that I was asked for strict
-> parsing (i.e. not accepting 2:4:something) I'd say using simple_strto*
-> is a step backwards. Also simple_strtoul() has "This function is obsolete=
-.
-> Please use kstrtoul instead." in its docstring which seems to apply to
-> the other simple_strto*() functions, too.
-
-I specifically fixed a doc string to approve its use in the precisely
-cases you have here.
-
---=20
-With Best Regards,
-Andy Shevchenko
