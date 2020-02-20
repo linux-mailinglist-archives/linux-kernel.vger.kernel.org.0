@@ -2,211 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB529166142
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 16:45:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B73A16613C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 16:45:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728571AbgBTPph (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 10:45:37 -0500
-Received: from esa3.hc3370-68.iphmx.com ([216.71.145.155]:15412 "EHLO
-        esa3.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728497AbgBTPpg (ORCPT
+        id S1728486AbgBTPp2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 10:45:28 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:46632 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728289AbgBTPp2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 10:45:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=citrix.com; s=securemail; t=1582213536;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=Hf2jfb9piSiHju6Ntp+FvddJlG4b1AFVZOCjx1jkZss=;
-  b=Qmuf/Xrp4UXYymWQ2h/clPw8NoSfx150gmhKIT068jN/FTbRrbRPLx0x
-   L8KpeFGsfNw8Jx4ghpbSvslWa+CFrIWXHaXD92PdzvnZmK9mZMFOwJqCb
-   xDuyvDx3j0PklYQ/gx9Txo9Won0gY+TvnVZ1HGS0fLNiMIeBlc1/iJa8+
-   M=;
-Authentication-Results: esa3.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=roger.pau@citrix.com; spf=Pass smtp.mailfrom=roger.pau@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
-Received-SPF: None (esa3.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  roger.pau@citrix.com) identity=pra; client-ip=162.221.158.21;
-  receiver=esa3.hc3370-68.iphmx.com;
-  envelope-from="roger.pau@citrix.com";
-  x-sender="roger.pau@citrix.com";
-  x-conformance=sidf_compatible
-Received-SPF: Pass (esa3.hc3370-68.iphmx.com: domain of
-  roger.pau@citrix.com designates 162.221.158.21 as permitted
-  sender) identity=mailfrom; client-ip=162.221.158.21;
-  receiver=esa3.hc3370-68.iphmx.com;
-  envelope-from="roger.pau@citrix.com";
-  x-sender="roger.pau@citrix.com";
-  x-conformance=sidf_compatible; x-record-type="v=spf1";
-  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
-  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
-  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
-  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83
-  ip4:168.245.78.127 ~all"
-Received-SPF: None (esa3.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@mail.citrix.com) identity=helo;
-  client-ip=162.221.158.21; receiver=esa3.hc3370-68.iphmx.com;
-  envelope-from="roger.pau@citrix.com";
-  x-sender="postmaster@mail.citrix.com";
-  x-conformance=sidf_compatible
-IronPort-SDR: ZHDdixRenlbATRuHBknsZwWZz7xs0v0NuFZmuADao7Vcj1Y3cpXV28Hpg3tWGHyzoPqbmMUbpn
- 3RODTM7jZRSgjsyQkTF3P48v+0IReUEWZ/qXIH4g3s1pEH2JtscssVMtFiFSbpoQgfNeWqCMkb
- 0q7nIJ3+Peu47qKTW6NylrFNYzp5kHsYcD7w38iuUDqhFLh6hPmlWZvuKSAUdEpuUKProKqZLy
- qQu+6xMWY0Wg+XDKCXpD16MdjYaSofKLq9wdY7VLTpLCCcAeTgGxcwP8wx9THTPwEkScIK6usq
- D9s=
-X-SBRS: 2.7
-X-MesageID: 12745476
-X-Ironport-Server: esa3.hc3370-68.iphmx.com
-X-Remote-IP: 162.221.158.21
-X-Policy: $RELAYED
-X-IronPort-AV: E=Sophos;i="5.70,464,1574139600"; 
-   d="scan'208";a="12745476"
-Date:   Thu, 20 Feb 2020 16:45:07 +0100
-From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
-To:     "Durrant, Paul" <pdurrant@amazon.co.uk>
-CC:     "Agarwal, Anchal" <anchalag@amazon.com>,
-        "Valentin, Eduardo" <eduval@amazon.com>,
-        "len.brown@intel.com" <len.brown@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>, "hpa@zytor.com" <hpa@zytor.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "sstabellini@kernel.org" <sstabellini@kernel.org>,
-        "fllinden@amaozn.com" <fllinden@amaozn.com>,
-        "Kamata, Munehisa" <kamatam@amazon.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "Singh, Balbir" <sblbir@amazon.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
-        "jgross@suse.com" <jgross@suse.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>
-Subject: Re: [Xen-devel] [RFC PATCH v3 06/12] xen-blkfront: add callbacks for
- PM suspend and hibernation
-Message-ID: <20200220154507.GO4679@Air-de-Roger>
-References: <cover.1581721799.git.anchalag@amazon.com>
- <890c404c585d7790514527f0c021056a7be6e748.1581721799.git.anchalag@amazon.com>
- <20200217100509.GE4679@Air-de-Roger>
- <20200217230553.GA8100@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com>
- <20200218091611.GN4679@Air-de-Roger>
- <20200219180424.GA17584@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com>
- <20200220083904.GI4679@Air-de-Roger>
- <f986b845491b47cc8469d88e2e65e2a7@EX13D32EUC003.ant.amazon.com>
+        Thu, 20 Feb 2020 10:45:28 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01KFiIcd099708;
+        Thu, 20 Feb 2020 15:45:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=Y/mFiU18EBtEaH5OMEwxs9bxgqWYfXtQzQK0tFNuMzw=;
+ b=XprjFRSGHt9YYCnNDTczDtIfli1Y+O0kphL/RPJ7I/vvYbyoTdaA1k7XDRwMMwTP/Ep1
+ hbkicNFvU3h3mL1nxqwsStgwBHHm7xKuv8BRKCjsKk+/shspPr7QLuFwEga05GMILil/
+ lpmK0g3v68WyUD6IVAGWlNImDuBofRSqpfwWBSRGnKDCDKSIpZPmC0qftkTCdsqfLEAo
+ TTpib+H965bQ77e7+qK1sTetoeqCydFYn9Azer0fHM66/tQASZ+b18g7ApOtSYIhbNWx
+ mD1DK+7ka2X3aQXR0sRZBnAEtPzBjuEAkon+WWWtdBYiTr7m9rxkevDzDEHyreVlaHn6 lQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2y8ud1ahwd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Feb 2020 15:45:13 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01KFfeTV191382;
+        Thu, 20 Feb 2020 15:45:12 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2y8ud435jg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Feb 2020 15:45:12 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01KFj7WR029782;
+        Thu, 20 Feb 2020 15:45:07 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 20 Feb 2020 07:45:07 -0800
+Date:   Thu, 20 Feb 2020 10:45:24 -0500
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>, Roman Gushchin <guro@fb.com>,
+        linux-mm@kvack.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH] mm: memcontrol: asynchronous reclaim for memory.high
+Message-ID: <20200220154524.dql3i5brnjjwecft@ca-dmjordan1.us.oracle.com>
+References: <20200219181219.54356-1-hannes@cmpxchg.org>
+ <20200219183731.GC11847@dhcp22.suse.cz>
+ <20200219191618.GB54486@cmpxchg.org>
+ <20200219195332.GE11847@dhcp22.suse.cz>
+ <20200219214112.4kt573kyzbvmbvn3@ca-dmjordan1.us.oracle.com>
+ <20200219220859.GF54486@cmpxchg.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f986b845491b47cc8469d88e2e65e2a7@EX13D32EUC003.ant.amazon.com>
-X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
- AMSPEX02CL01.citrite.net (10.69.22.125)
+In-Reply-To: <20200219220859.GF54486@cmpxchg.org>
+User-Agent: NeoMutt/20180716
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9537 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0
+ mlxlogscore=999 suspectscore=0 adultscore=0 spamscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002200115
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9537 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 malwarescore=0
+ suspectscore=0 bulkscore=0 spamscore=0 priorityscore=1501 phishscore=0
+ impostorscore=0 mlxlogscore=999 clxscore=1015 adultscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002200115
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 08:54:36AM +0000, Durrant, Paul wrote:
-> > -----Original Message-----
-> > From: Xen-devel <xen-devel-bounces@lists.xenproject.org> On Behalf Of
-> > Roger Pau Monné
-> > Sent: 20 February 2020 08:39
-> > To: Agarwal, Anchal <anchalag@amazon.com>
-> > Cc: Valentin, Eduardo <eduval@amazon.com>; len.brown@intel.com;
-> > peterz@infradead.org; benh@kernel.crashing.org; x86@kernel.org; linux-
-> > mm@kvack.org; pavel@ucw.cz; hpa@zytor.com; tglx@linutronix.de;
-> > sstabellini@kernel.org; fllinden@amaozn.com; Kamata, Munehisa
-> > <kamatam@amazon.com>; mingo@redhat.com; xen-devel@lists.xenproject.org;
-> > Singh, Balbir <sblbir@amazon.com>; axboe@kernel.dk;
-> > konrad.wilk@oracle.com; bp@alien8.de; boris.ostrovsky@oracle.com;
-> > jgross@suse.com; netdev@vger.kernel.org; linux-pm@vger.kernel.org;
-> > rjw@rjwysocki.net; linux-kernel@vger.kernel.org; vkuznets@redhat.com;
-> > davem@davemloft.net; Woodhouse, David <dwmw@amazon.co.uk>
-> > Subject: Re: [Xen-devel] [RFC PATCH v3 06/12] xen-blkfront: add callbacks
-> > for PM suspend and hibernation
++Peter
+
+On Wed, Feb 19, 2020 at 05:08:59PM -0500, Johannes Weiner wrote:
+> On Wed, Feb 19, 2020 at 04:41:12PM -0500, Daniel Jordan wrote:
+> > On Wed, Feb 19, 2020 at 08:53:32PM +0100, Michal Hocko wrote:
+> > > On Wed 19-02-20 14:16:18, Johannes Weiner wrote:
+> > > > On Wed, Feb 19, 2020 at 07:37:31PM +0100, Michal Hocko wrote:
+> > > > > On Wed 19-02-20 13:12:19, Johannes Weiner wrote:
+> > > > > > This patch adds asynchronous reclaim to the memory.high cgroup limit
+> > > > > > while keeping direct reclaim as a fallback. In our testing, this
+> > > > > > eliminated all direct reclaim from the affected workload.
+> > > > > 
+> > > > > Who is accounted for all the work? Unless I am missing something this
+> > > > > just gets hidden in the system activity and that might hurt the
+> > > > > isolation. I do see how moving the work to a different context is
+> > > > > desirable but this work has to be accounted properly when it is going to
+> > > > > become a normal mode of operation (rather than a rare exception like the
+> > > > > existing irq context handling).
+> > > > 
+> > > > Yes, the plan is to account it to the cgroup on whose behalf we're
+> > > > doing the work.
 > > 
-> > Thanks for this work, please see below.
+> > How are you planning to do that?
 > > 
-> > On Wed, Feb 19, 2020 at 06:04:24PM +0000, Anchal Agarwal wrote:
-> > > On Tue, Feb 18, 2020 at 10:16:11AM +0100, Roger Pau Monné wrote:
-> > > > On Mon, Feb 17, 2020 at 11:05:53PM +0000, Anchal Agarwal wrote:
-> > > > > On Mon, Feb 17, 2020 at 11:05:09AM +0100, Roger Pau Monné wrote:
-> > > > > > On Fri, Feb 14, 2020 at 11:25:34PM +0000, Anchal Agarwal wrote:
-> > > > > Quiescing the queue seemed a better option here as we want to make
-> > sure ongoing
-> > > > > requests dispatches are totally drained.
-> > > > > I should accept that some of these notion is borrowed from how nvme
-> > freeze/unfreeze
-> > > > > is done although its not apple to apple comparison.
-> > > >
-> > > > That's fine, but I would still like to requests that you use the same
-> > > > logic (as much as possible) for both the Xen and the PM initiated
-> > > > suspension.
-> > > >
-> > > > So you either apply this freeze/unfreeze to the Xen suspension (and
-> > > > drop the re-issuing of requests on resume) or adapt the same approach
-> > > > as the Xen initiated suspension. Keeping two completely different
-> > > > approaches to suspension / resume on blkfront is not suitable long
-> > > > term.
-> > > >
-> > > I agree with you on overhaul of xen suspend/resume wrt blkfront is a
-> > good
-> > > idea however, IMO that is a work for future and this patch series should
-> > > not be blocked for it. What do you think?
+> > I've been thinking about how to account a kernel thread's CPU usage to a cgroup
+> > on and off while working on the parallelizing Michal mentions below.  A few
+> > approaches are described here:
 > > 
-> > It's not so much that I think an overhaul of suspend/resume in
-> > blkfront is needed, it's just that I don't want to have two completely
-> > different suspend/resume paths inside blkfront.
-> > 
-> > So from my PoV I think the right solution is to either use the same
-> > code (as much as possible) as it's currently used by Xen initiated
-> > suspend/resume, or to also switch Xen initiated suspension to use the
-> > newly introduced code.
-> > 
-> > Having two different approaches to suspend/resume in the same driver
-> > is a recipe for disaster IMO: it adds complexity by forcing developers
-> > to take into account two different suspend/resume approaches when
-> > there's no need for it.
+> > https://lore.kernel.org/linux-mm/20200212224731.kmss6o6agekkg3mw@ca-dmjordan1.us.oracle.com/
 > 
-> I disagree. S3 or S4 suspend/resume (or perhaps we should call them power state transitions to avoid confusion) are quite different from Xen suspend/resume.
-> Power state transitions ought to be, and indeed are, visible to the software running inside the guest. Applications, as well as drivers, can receive notification and take whatever action they deem appropriate.
-> Xen suspend/resume OTOH is used when a guest is migrated and the code should go to all lengths possible to make any software running inside the guest (other than Xen specific enlightened code, such as PV drivers) completely unaware that anything has actually happened.
+> What we do for the IO controller is execute the work unthrottled but
+> charge the cgroup on whose behalf we are executing with whatever cost
+> or time or bandwith that was incurred. The cgroup will pay off this
+> debt when it requests more of that resource.
+>
+[snip code pointers]
 
-So from what you say above PM state transitions are notified to all
-drivers, and Xen suspend/resume is only notified to PV drivers, and
-here we are speaking about blkfront which is a PV driver, and should
-get notified in both cases. So I'm unsure why the same (or at least
-very similar) approach can't be used in both cases.
+Thanks!  Figuring out how the io controllers dealt with remote charging was on
+my list, this makes it easier.
 
-The suspend/resume approach proposed by this patch is completely
-different than the one used by a xenbus initiated suspend/resume, and
-I don't see a technical reason that warrants this difference.
+> The plan for the CPU controller is similar. When a remote execution
+> begins, flush the current runtime accumulated (update_curr) and
+> associate the current thread with another cgroup (similar to
+> current->active_memcg); when remote execution is done, flush the
+> runtime delta to that cgroup and unset the remote context.
 
-I'm not saying that the approach used here is wrong, it's just that I
-don't see the point in having two different ways to do suspend/resume
-in the same driver, unless there's a technical reason for it, which I
-don't think has been provided.
+Ok, consistency with io and memory is one advantage to doing it that way.
+Creating kthreads in cgroups also seems viable so far, and it's unclear whether
+either approach is significantly simpler or more maintainable than the other,
+at least to me.
 
-I would be fine with switching xenbus initiated suspend/resume to also
-use the approach proposed here: freeze the queues and drain the shared
-rings before suspending.
-
-> So, whilst it may be possible to use common routines to, for example, re-establish PV frontend/backend communication, PV frontend code should be acutely aware of the circumstances they are operating in. I can cite example code in the Windows PV driver, which have supported guest S3/S4 power state transitions since day 1.
-
-Hm, please bear with me, as I'm not sure I fully understand. Why isn't
-the current suspend/resume logic suitable for PM transitions?
-
-As said above, I'm happy to switch xenbus initiated suspend/resume to
-use the logic in this patch, but unless there's a technical reason for
-it I don't see why blkfront should have two completely different
-approaches to suspend/resume depending on whether it's a PM or a
-xenbus state change.
-
-Thanks, Roger.
+Is someone on your side working on remote charging right now?  I was planning
+to post an RFD comparing these soon and it would make sense to include them.
