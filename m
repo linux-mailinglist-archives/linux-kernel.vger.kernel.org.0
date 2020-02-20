@@ -2,146 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27129166ADD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 00:18:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8531D166AE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 00:22:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729365AbgBTXSt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 18:18:49 -0500
-Received: from ozlabs.org ([203.11.71.1]:39979 "EHLO ozlabs.org"
+        id S1729355AbgBTXWW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 18:22:22 -0500
+Received: from mga06.intel.com ([134.134.136.31]:29032 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727135AbgBTXSs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 18:18:48 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48NrBG4yv9z9sRh;
-        Fri, 21 Feb 2020 10:18:46 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1582240727;
-        bh=l9UM+zCUkLs/4YBcjYo+To2tyvruDnuXxmfULpRo/nc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ph/K03WW88ta7deHSfNMWrMWAY2i0/4+eSc/7QB5c6RNdMvfsygVVQUdFbXejRlLy
-         cZKoka5PT4lQXU/wSZNNkgUG4ic3pEMcMazmdIIZDrEX70jTqfX32nHtUR9hFhg0rV
-         r4BH0vhOKuiwsbVFPYAZaYEHa4VKijg5HLShb84Ikj4tkIAGQ3Frz3r5ibHp3AJlyo
-         UM2CAMa6XZ+D64/e5GbO5bVA12c37KVOThfHcDa9nwNaOetZJ3s2t+9nnYm78P8DvO
-         qOVNpYLEaKJzc12HDfzuXVLSqg/w3oml5XDMtAVgjMj6XEkHs/wRA8ZP/Q84dU0Fi1
-         FSVOco/62GyKw==
-Date:   Fri, 21 Feb 2020 10:18:45 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Arjun Roy <arjunroy@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Message-ID: <20200221101845.21c0c8c5@canb.auug.org.au>
-In-Reply-To: <CAOFY-A3q_pmtHKAoOJdbB09wy=dxs9SdpXjCsU1wBxU5EDHVmw@mail.gmail.com>
-References: <20200217145711.4af495a3@canb.auug.org.au>
-        <CAOFY-A1nfPjf3EcQB6KiEifbFR+aUtdSgK=CHGt_k3ziSG6T_Q@mail.gmail.com>
-        <CAOFY-A3q_pmtHKAoOJdbB09wy=dxs9SdpXjCsU1wBxU5EDHVmw@mail.gmail.com>
+        id S1729027AbgBTXWV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 18:22:21 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2020 15:22:20 -0800
+X-IronPort-AV: E=Sophos;i="5.70,466,1574150400"; 
+   d="scan'208";a="225026469"
+Received: from jbrandeb-desk.jf.intel.com ([10.166.244.152])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2020 15:22:20 -0800
+From:   Jesse Brandeburg <jesse.brandeburg@intel.com>
+To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de
+Cc:     Jesse Brandeburg <jesse.brandeburg@intel.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk,
+        andriy.shevchenko@intel.com, dan.j.williams@intel.com,
+        peterz@infradead.org
+Subject: [PATCH v3 1/2] x86: fix bitops.h warning with a moved cast
+Date:   Thu, 20 Feb 2020 15:21:54 -0800
+Message-Id: <20200220232155.2123827-1-jesse.brandeburg@intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/WlSQA3zZeWd/av48Z2WLf9P";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/WlSQA3zZeWd/av48Z2WLf9P
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Fix many sparse warnings when building with C=1.
 
-Hi all,
+When the kernel is compiled with C=1, there are lots of messages like:
+  arch/x86/include/asm/bitops.h:77:37: warning: cast truncates bits from constant value (ffffff7f becomes 7f)
 
-On Sun, 16 Feb 2020 22:45:35 -0800 Arjun Roy <arjunroy@google.com> wrote:
->
-> On Sun, Feb 16, 2020 at 8:12 PM Arjun Roy <arjunroy@google.com> wrote:
-> >
-> > On Sun, Feb 16, 2020 at 7:57 PM Stephen Rothwell <sfr@canb.auug.org.au>=
- wrote: =20
-> > >
-> > > After merging the akpm tree, today's linux-next build (sparc64 defcon=
-fig)
-> > > failed like this:
-> > >
-> > > mm/memory.c: In function 'insert_pages':
-> > > mm/memory.c:1523:56: error: macro "pte_index" requires 2 arguments, b=
-ut only 1 given
-> > >    remaining_pages_total, PTRS_PER_PTE - pte_index(addr));
-> > >                                                         ^
-> > >
-> > > Caused by commit
-> > >
-> > >   366142f0b000 ("mm/memory.c: add vm_insert_pages()")
-> > >
-> > > This is the first use of pte_index() outside arch specific code and t=
-he
-> > > sparc64 version of pte_index() nas an extra argument.
-> >
-> > Looks like this happens for sparc, and also metag. Other platforms
-> > just take the addr parameter based on a quick search.
->=20
-> And actually I guess there's no metag anyways now.
-> Looking further, then, it looks like in every non-sparc pte_index() is
-> an actual numerical index, while on sparc it goes a step further to
-> yield a pte_t *.
-> As far as I can tell, the sparc incarnation of this is only used by
-> the pte_offset_(kernel/map) macros.
->=20
-> So I think a possibly sane way to fix this would be:
-> 1. Define pte_index() to be a numerical index, like the other architectur=
-es,
-> 2. Define something like pte_entry() that uses pte_index(), and
-> 3. Have pte_offset_(kernel/map) be defined as pte_entry() instead.
->=20
-> Then pte_index would be operating on just an address for all
-> platforms, and the reverted patchset would work without any changes.
->=20
-> If this sounds acceptable, I can send a patch.
->=20
-> > > I have reverted these commits for today:
-> > >
-> > >   219ae14a9686 ("net-zerocopy-use-vm_insert_pages-for-tcp-rcv-zerocop=
-y-fix")
-> > >   cb912fdf96bf ("net-zerocopy: use vm_insert_pages() for tcp rcv zero=
-copy")
-> > >   72c684430b94 ("add missing page_count() check to vm_insert_pages().=
-")
-> > >   dbd9553775f3 ("mm-add-vm_insert_pages-fix")
-> > >   366142f0b000 ("mm/memory.c: add vm_insert_pages()")
-> > > =20
-> >
-> > In terms of fixing this; passing in an appropriate dir parameter is
-> > not really a problem, but what is concerning that it seems messy to
-> > have a per-platform ifdef to pass it either two arguments or one in
-> > this case. But it seems like either that would be one way to fix it,
-> > or having some arch method across all arches that takes two arguments
-> > (and ignores one of them for most arches).
-> >
-> > Is there a general preference for the right way forward, in this case?
+CONST_MASK() is using a signed integer "1" to create the mask which
+is later cast to (u8) when used. Move the cast to the definition and
+clean up the calling sites to prevent sparse from warning.
 
-Has there been any progress with this?  I am still reverting the above
-commits, so they are not getting any linux-next testing ...
+The reason the warning was occurring is because certain bitmasks that
+end with a mask next to a natural boundary like 7, 15, 23, 31, end up
+with a mask like 0x7f, which then results in sign extension when doing
+an invert (but I'm not a compiler expert). It was really only
+"clear_bit" that was having problems, and it was only on bit checks next
+to a byte boundary (top bit).
 
---=20
-Cheers,
-Stephen Rothwell
+Verified with a test module (see next patch) and assembly inspection
+that the patch doesn't introduce any change in generated code.
 
---Sig_/WlSQA3zZeWd/av48Z2WLf9P
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Signed-off-by: Jesse Brandeburg <jesse.brandeburg@intel.com>
+---
+v3: Clean up
+the header file changes as per peterz.
 
------BEGIN PGP SIGNATURE-----
+v2: use correct CC: list
+---
+ arch/x86/include/asm/bitops.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5PE9UACgkQAVBC80lX
-0GyOYggAjTGf7PaO6OpUQE/582qJnBS/Bp2yGI8K1o335IWQtnBApGbPvy/v/k1e
-BupKbY4mBVQhC0fZnLoNwBoZ2iDnjWwkQVYnNyQFohUv5xoDjnoLBJp1BSbpnlLA
-wkWRAG20ZK7NK+r5rKv6kNt1PWyRheBucfFUYabPrBuvHqSm7z5RXKjEWSw4bTIS
-VIEfO17i/5iNt2h+b1+BNcVq5cr2r/6LZYadTWS+4j0yP2mnRZKdvAsTCq8Nn6+7
-8cRSOoONNfsHShRnhHzKf+rOHCbGSgvm6rJEA2bWXLzDan4DqpQF/jD2jfJ982Mx
-KvP2uxCsDiv9f3eEGBpMuCsirLTfag==
-=THYJ
------END PGP SIGNATURE-----
+diff --git a/arch/x86/include/asm/bitops.h b/arch/x86/include/asm/bitops.h
+index 062cdecb2f24..96ef19dcbde6 100644
+--- a/arch/x86/include/asm/bitops.h
++++ b/arch/x86/include/asm/bitops.h
+@@ -46,7 +46,7 @@
+  * a mask operation on a byte.
+  */
+ #define CONST_MASK_ADDR(nr, addr)	WBYTE_ADDR((void *)(addr) + ((nr)>>3))
+-#define CONST_MASK(nr)			(1 << ((nr) & 7))
++#define CONST_MASK(nr)			((u8)1 << ((nr) & 7))
+ 
+ static __always_inline void
+ arch_set_bit(long nr, volatile unsigned long *addr)
+@@ -54,7 +54,7 @@ arch_set_bit(long nr, volatile unsigned long *addr)
+ 	if (__builtin_constant_p(nr)) {
+ 		asm volatile(LOCK_PREFIX "orb %1,%0"
+ 			: CONST_MASK_ADDR(nr, addr)
+-			: "iq" ((u8)CONST_MASK(nr))
++			: "iq" (CONST_MASK(nr))
+ 			: "memory");
+ 	} else {
+ 		asm volatile(LOCK_PREFIX __ASM_SIZE(bts) " %1,%0"
+@@ -74,7 +74,7 @@ arch_clear_bit(long nr, volatile unsigned long *addr)
+ 	if (__builtin_constant_p(nr)) {
+ 		asm volatile(LOCK_PREFIX "andb %1,%0"
+ 			: CONST_MASK_ADDR(nr, addr)
+-			: "iq" ((u8)~CONST_MASK(nr)));
++			: "iq" (0xff ^ CONST_MASK(nr)));
+ 	} else {
+ 		asm volatile(LOCK_PREFIX __ASM_SIZE(btr) " %1,%0"
+ 			: : RLONG_ADDR(addr), "Ir" (nr) : "memory");
 
---Sig_/WlSQA3zZeWd/av48Z2WLf9P--
+base-commit: ca7e1fd1026c5af6a533b4b5447e1d2f153e28f2
+-- 
+2.24.1
+
