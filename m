@@ -2,66 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41FDF16625A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:24:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 909F516626B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:25:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728659AbgBTQYF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 11:24:05 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:35548 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727709AbgBTQYF (ORCPT
+        id S1728528AbgBTQZj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 11:25:39 -0500
+Received: from out28-195.mail.aliyun.com ([115.124.28.195]:46125 "EHLO
+        out28-195.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727709AbgBTQZh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 11:24:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=/X+cuahXNVjwX8kIjzPU/QZUMEm+qIm+lNxfvhlX3EA=; b=lxTIdidZw2P2UO9t/Oji3FNceT
-        +CjnxJZogq66GLHl3rhRoufVhXPoH7CxN5rw1pgrMvr7szk03lJeq2TvDL3R2ys6m86hnGj7sXBXg
-        AQaHFo4WLWH90RnuR6backVMmU/lhsJTXMH7V42hfdxcXElLYWAoi8WkszieVn0N2xZmXUiT1EECe
-        GJX8uJUjnaFLb7zI2vKxvhhrKwSedVafnnaMtZd9zrJbg6npgPtnxSYDtx+h9J81ITalXizKXonPp
-        SQVVA+pyipbUonuljCpyE7+n90vEPRYltjJb/REqxUNVBonREpCV+ttQEEWV7EF1CEorahGhIHM1b
-        9p1J3F8g==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j4ocO-0001zg-A1; Thu, 20 Feb 2020 16:24:04 +0000
-Date:   Thu, 20 Feb 2020 08:24:04 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v7 21/24] iomap: Restructure iomap_readpages_actor
-Message-ID: <20200220162404.GY24185@bombadil.infradead.org>
-References: <20200219210103.32400-1-willy@infradead.org>
- <20200219210103.32400-22-willy@infradead.org>
- <20200220154741.GB19577@infradead.org>
+        Thu, 20 Feb 2020 11:25:37 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.405465|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.0476772-0.00724055-0.945082;DS=CONTINUE|ham_system_inform|0.0706042-0.188907-0.740489;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03309;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=23;RT=23;SR=0;TI=SMTPD_---.GqC0FCl_1582215911;
+Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.GqC0FCl_1582215911)
+          by smtp.aliyun-inc.com(10.147.40.2);
+          Fri, 21 Feb 2020 00:25:19 +0800
+From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
+        <zhouyanjie@wanyeetech.com>
+To:     linux-mips@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, tglx@linutronix.de,
+        ralf@linux-mips.org, paulburton@kernel.org,
+        jiaxun.yang@flygoat.com, chenhc@lemote.com, sboyd@kernel.org,
+        mturquette@baylibre.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        daniel.lezcano@linaro.org, paul@crapouillou.net,
+        geert+renesas@glider.be, krzk@kernel.org, ebiederm@xmission.com,
+        miquel.raynal@bootlin.com, keescook@chromium.org,
+        sernia.zhou@foxmail.com, zhenwenjin@gmail.com,
+        dongsheng.qiu@ingenic.com
+Subject: Introduce SMP support for CI20 (based on JZ4780) v6.
+Date:   Fri, 21 Feb 2020 00:24:41 +0800
+Message-Id: <1582215889-113034-1-git-send-email-zhouyanjie@wanyeetech.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200220154741.GB19577@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 07:47:41AM -0800, Christoph Hellwig wrote:
-> On Wed, Feb 19, 2020 at 01:01:00PM -0800, Matthew Wilcox wrote:
-> > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> > 
-> > By putting the 'have we reached the end of the page' condition at the end
-> > of the loop instead of the beginning, we can remove the 'submit the last
-> > page' code from iomap_readpages().  Also check that iomap_readpage_actor()
-> > didn't return 0, which would lead to an endless loop.
-> 
-> I'm obviously biassed a I wrote the original code, but I find the new
-> very much harder to understand (not that the previous one was easy, this
-> is tricky code..).
+Introduce SMP support for MIPS Creator CI20, which is
+based on Ingenic JZ4780 SoC.
 
-Agreed, I found the original code hard to understand.  I think this is
-easier because now cur_page doesn't leak outside this loop, so it has
-an obvious lifecycle.
-
-I'm kind of optimistic for Dave Howells' iov_iter addition of an
-ITER_MAPPING.  That might simplify all of this code.
