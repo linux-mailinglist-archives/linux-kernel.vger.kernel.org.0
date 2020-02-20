@@ -2,143 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AC3B16618A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 16:57:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DFBF166187
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 16:56:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728655AbgBTP46 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 10:56:58 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34803 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728460AbgBTP4y (ORCPT
+        id S1728611AbgBTP4h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 10:56:37 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:36784 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728414AbgBTP4h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 10:56:54 -0500
-Received: by mail-pg1-f193.google.com with SMTP id j4so2150883pgi.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 07:56:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=rNBzr+gKL7W/4+tMuEJmqqL2ELw8zx9/UXsCB1+eKjY=;
-        b=GhANP2g0294bY7ihToE8mRKMYwYIxEuzTTlWpZSq/Oj/DNB7wcAnz6UBnSA/0JlzO1
-         zQgrDPIGpwOyPqKz3rhBKLyBVINls8WEGLZ3i38vALuFb74X4TA2EQdBwdsRdEqMClwJ
-         7O6L2YGcyC6eoVlx39mkCRWCcNx4o+Iv397gKPOTx0tqlh/+B3R7Sm1uW4vNC3l3/E6E
-         uYudBzcX7IR1ofHCR+nbozHYZ5oAl97JP2DFKmeN2P1pBfUJJQBSyxzMxf021nn65FTI
-         x0h4wu/RANDJ/gFpme5Stsyy2G1FMyFjvLmgLy2zW8nr5FgDNhLBm8J7G0+vKQfU12Po
-         xnhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=rNBzr+gKL7W/4+tMuEJmqqL2ELw8zx9/UXsCB1+eKjY=;
-        b=KikM4fl3SrYQHcwD8j1xGMQG4QljxVEnRiT3q8g5sAGTIsrm15JHgSloglDbZaku6X
-         VJLYdXdyoITteZut8mz7eRqR9IHfLNqMdv5G4C1XRpHDkjURlfEqwhrooMgUnb0MsBKO
-         gp1UCBfkmbOoOUJK7CaA63eLGW38MC2WK1DC3u3eTNrhA+bfqoxLNCIrOzmgKwM+RnDr
-         QY3gjyvLKT2UCbMfrA+R4n1yFbzqiUEkQCwlE1sugWPCK7xYwxo5zfGzWTOWn4r3Y2PU
-         1TvlrFloeGZyGiUolJxO9hmPRR+g2xdFks7R0vwlj02GLHjlG/nBR3ancAPZ7dBDsEya
-         X5cg==
-X-Gm-Message-State: APjAAAViV+95kpTe2vI/dDNeTqZxR8lFZUE8rwSat2PcCpwugvf31VyU
-        +KenO3vwZjNfK47HbspiVFkV8GUSNaM=
-X-Google-Smtp-Source: APXvYqxgmpLr0iQFDhJMwwmGPN0p+UlmPhonwyMbkL9R2pkVjF5jGqMHkbnHZVBJ+BMwHtftaA4qJw==
-X-Received: by 2002:a63:33c4:: with SMTP id z187mr33761577pgz.114.1582214212585;
-        Thu, 20 Feb 2020 07:56:52 -0800 (PST)
-Received: from ripper (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id f13sm4218442pgk.12.2020.02.20.07.56.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2020 07:56:51 -0800 (PST)
-Date:   Thu, 20 Feb 2020 07:55:56 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Todd Kjos <tkjos@google.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v4 2/6] driver core: Set deferred_probe_timeout to a
- longer default if CONFIG_MODULES is set
-Message-ID: <20200220155556.GE955802@ripper>
-References: <20200220050440.45878-1-john.stultz@linaro.org>
- <20200220050440.45878-3-john.stultz@linaro.org>
+        Thu, 20 Feb 2020 10:56:37 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01KFlRVe131311;
+        Thu, 20 Feb 2020 15:56:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=G+CFuAFevU0UvGzgyujY9EHrI4dfidkI/fcfUAghG+4=;
+ b=W7XbyozorUajWdI0DAxjDS4ikVXI6pha0O/yUYkQE0l6ZvBpAwfvPBIu0uT2ldGBm6JV
+ 2noaNC8ZksCzTEOis8r4yq6VF+z6HWa/r+oWxc9UVpk1CdKS4OINeZHEI4FVOfBVysK0
+ 4lkB2MDBgZimm5SyoLHoKO/1stLhSqHbLgN5HmjcrRWFP5bGBlToum0/IZhHSZnDWelU
+ hyNJZXHSxLQLhRdULphUSs2fRZB/0hR0914G8NUWhfvz+SfdpbpObd+rlSVDe96RdY5Q
+ ldDn9JZNKAhC7dvF4rm8mv1SrriBrXVhqezsb3Hf3OP7ec0OP7Bo385YgSZFS5BNf90X MQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2y8udkjnam-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Feb 2020 15:56:13 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01KFlsYW012773;
+        Thu, 20 Feb 2020 15:56:12 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2y8ud43uqx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Feb 2020 15:56:12 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01KFu9GJ023160;
+        Thu, 20 Feb 2020 15:56:09 GMT
+Received: from [192.168.0.195] (/69.207.174.138)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 20 Feb 2020 07:56:09 -0800
+Subject: Re: [PATCH v3 0/3] Introduce per-task latency_nice for scheduler
+ hints
+To:     David Laight <David.Laight@ACULAB.COM>,
+        Parth Shah <parth@linux.ibm.com>,
+        "vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
+        "patrick.bellasi@matbug.net" <patrick.bellasi@matbug.net>,
+        "valentin.schneider@arm.com" <valentin.schneider@arm.com>,
+        "dhaval.giani@oracle.com" <dhaval.giani@oracle.com>,
+        "dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "qais.yousef@arm.com" <qais.yousef@arm.com>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "qperret@qperret.net" <qperret@qperret.net>,
+        "pjt@google.com" <pjt@google.com>, "tj@kernel.org" <tj@kernel.org>
+References: <20200116120230.16759-1-parth@linux.ibm.com>
+ <8ed0f40c-eeb4-c487-5420-a8eb185b5cdd@linux.ibm.com>
+ <c7e5b9da-66a3-3d69-d7aa-0319de3aa736@oracle.com>
+ <3ce2e8940fb14d95b011c8b30892aa62@AcuMS.aculab.com>
+ <10f42efa-3750-491a-74fe-d84c9c4924e3@oracle.com>
+ <2870e44f41414fd58b58f7831d7386fe@AcuMS.aculab.com>
+From:   chris hyser <chris.hyser@oracle.com>
+Message-ID: <7b50c0ee-5e2b-5cec-a7f6-514abdc5ee18@oracle.com>
+Date:   Thu, 20 Feb 2020 10:55:58 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200220050440.45878-3-john.stultz@linaro.org>
+In-Reply-To: <2870e44f41414fd58b58f7831d7386fe@AcuMS.aculab.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9537 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0
+ mlxlogscore=779 suspectscore=0 adultscore=0 spamscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002200116
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9537 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 suspectscore=0
+ spamscore=0 priorityscore=1501 adultscore=0 mlxscore=0 clxscore=1015
+ malwarescore=0 mlxlogscore=833 phishscore=0 impostorscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002200116
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 19 Feb 21:04 PST 2020, John Stultz wrote:
 
-> When using modules, its common for the modules not to be loaded
-> until quite late by userland. With the current code,
-> driver_deferred_probe_check_state() will stop returning
-> EPROBE_DEFER after late_initcall, which can cause module
-> dependency resolution to fail after that.
+
+On 2/20/20 9:39 AM, David Laight wrote:
+> From: chris hyser <chris.hyser@oracle.com>
+>> Sent: 19 February 2020 17:17
+>>
+>> On 2/19/20 6:18 AM, David Laight wrote:
+>>> From: chris hyser
+>>>> Sent: 18 February 2020 23:00
+>>> ...
+>>>> All, I was asked to take a look at the original latency_nice patchset.
+>>>> First, to clarify objectives, Oracle is not
+>>>> interested in trading throughput for latency.
+>>>> What we found is that the DB has specific tasks which do very little but
+>>>> need to do this as absolutely quickly as possible, ie extreme latency
+>>>> sensitivity. Second, the key to latency reduction
+>>>> in the task wakeup path seems to be limiting variations of "idle cpu" search.
+>>>> The latter particularly interests me as an example of "platform size
+>>>> based latency" which I believe to be important given all the varying size
+>>>> VMs and containers.
+>>>
+>>>   From my experiments there are a few things that seem to affect latency
+>>> of waking up real time (sched fifo) tasks on a normal kernel:
+>>
+>> Sorry. I was only ever talking about sched_other as per the original patchset. I realize the term
+>> extreme latency
+>> sensitivity may have caused confusion. What that means to DB people is no doubt different than audio
+>> people. :-)
 > 
-> So allow a longer window of 30 seconds (picked somewhat
-> arbitrarily, but influenced by the similar regulator core
-> timeout value) in the case where modules are enabled.
+> Shorter lines.....
 > 
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: Kevin Hilman <khilman@kernel.org>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: Len Brown <len.brown@intel.com>
-> Cc: Todd Kjos <tkjos@google.com>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Liam Girdwood <lgirdwood@gmail.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Thierry Reding <treding@nvidia.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: linux-pm@vger.kernel.org
-> Signed-off-by: John Stultz <john.stultz@linaro.org>
-> Change-Id: I9c5a02a54915ff53f9f14d49c601f41d7105e05e
+> ISTM you are making some already complicated code even more complex.
+> Better to make it simpler instead.
 
-Change-Id...
+The code already exists to set a limit to bail out of what is sometimes a needlessly excessive search. Setting that 
+based on an integer doesn't seem particularly complex. Now whether that is actually useful is what I'm currently looking at.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> ---
-> v4:
-> * Split out into its own patch as suggested by Mark
-> * Made change conditional on CONFIG_MODULES
-> ---
->  drivers/base/dd.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
 > 
-> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-> index bb383dca39c1..fa138f24e2d3 100644
-> --- a/drivers/base/dd.c
-> +++ b/drivers/base/dd.c
-> @@ -224,7 +224,16 @@ static int deferred_devs_show(struct seq_file *s, void *data)
->  }
->  DEFINE_SHOW_ATTRIBUTE(deferred_devs);
->  
-> +#ifdef CONFIG_MODULES
-> +/*
-> + * In the case of modules, set the default probe timeout to
-> + * 30 seconds to give userland some time to load needed modules
-> + */
-> +static int deferred_probe_timeout = 30;
-> +#else
-> +/* In the case of !modules, no probe timeout needed */
->  static int deferred_probe_timeout = -1;
-> +#endif
->  static int __init deferred_probe_timeout_setup(char *str)
->  {
->  	int timeout;
-> -- 
-> 2.17.1
+> If you need a thread to run as soon as possible after it is woken
+> why not use the RT scheduler (eg SCHED_FIFO) that is what it is for.
+
+Overkill and doesn't play well with cpu cgroup controller.
+
+
 > 
+> If there are delays finding an idle cpu to migrate a process to
+> (especially on systems with large numbers of cpu) then that is a
+> general problem that can be addressed without extra knobs.
+
+There is no if. It is a brute force search. There are delays proportional to the search domain size. You can optimize 
+the hell of out the brute force, or you use obtained knowledge to bail out early. Getting that knowledge from the user 
+is a time honored tradition. :-)
+
+-chrish
