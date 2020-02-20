@@ -2,91 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B520165FCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 15:36:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A443165FC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 15:34:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728300AbgBTOg3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 09:36:29 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:4009 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727943AbgBTOg2 (ORCPT
+        id S1728071AbgBTOeq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 09:34:46 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:49958 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727298AbgBTOeq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 09:36:28 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e4e99230000>; Thu, 20 Feb 2020 06:35:15 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 20 Feb 2020 06:36:27 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 20 Feb 2020 06:36:27 -0800
-Received: from [10.21.133.51] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 20 Feb
- 2020 14:36:24 +0000
-Subject: Re: [PATCH v3 03/10] ASoC: tegra: add Tegra210 based DMIC driver
-To:     Sameer Pujar <spujar@nvidia.com>, <perex@perex.cz>,
-        <tiwai@suse.com>, <robh+dt@kernel.org>
-CC:     <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <thierry.reding@gmail.com>, <digetx@gmail.com>,
-        <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <sharadg@nvidia.com>, <mkumard@nvidia.com>,
-        <viswanathl@nvidia.com>, <rlokhande@nvidia.com>,
-        <dramesh@nvidia.com>, <atalambedu@nvidia.com>
-References: <1582180492-25297-1-git-send-email-spujar@nvidia.com>
- <1582180492-25297-4-git-send-email-spujar@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <d7e81ada-9711-647d-3c4f-29dd469c6621@nvidia.com>
-Date:   Thu, 20 Feb 2020 14:36:22 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Thu, 20 Feb 2020 09:34:46 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01KEYdM1115028;
+        Thu, 20 Feb 2020 08:34:39 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582209279;
+        bh=8+7MreYs2ejy3RW3YZFzbeczSA4/cT2gYoH0Rjw2LeQ=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=n6UTuKFu1BNns8PouAW5cvFqd4HRW3OAfN1deVsLthyEPvrgbHjHhKwoIWuWhey++
+         upOaOdwHxGuf1wV1GIZCpWxlDVieYB8jqoX4pCY8Pvsw7lny2IDafVfmFpqyY80KEi
+         YKlVQzpgvFGZRfN7d8X4ga3mFVTM5Ms+QSMjsiOc=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01KEYdgv043683
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 20 Feb 2020 08:34:39 -0600
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 20
+ Feb 2020 08:34:38 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 20 Feb 2020 08:34:38 -0600
+Received: from ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with SMTP id 01KEYN9V011266;
+        Thu, 20 Feb 2020 08:34:23 -0600
+Date:   Thu, 20 Feb 2020 08:38:48 -0600
+From:   Benoit Parrot <bparrot@ti.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+CC:     <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v1] MAINTAINERS: Sort entries in database for TI VPE/CAL
+Message-ID: <20200220143848.rejb3q5l7v4y56uf@ti.com>
+References: <20200128145828.74161-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1582180492-25297-4-git-send-email-spujar@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1582209315; bh=U31myyW56C4tdiGtd2jJLPSaoyAgelANlRknYewe5kg=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=Lsp5luzmKreOs7Qi4z4so5RiHORS2xhCjFw9ZcrXLk4RInNCPoyWDdkg1Py4HeIvW
-         9myXHWRIKbEryDtXGnYOuM7WfymAzpvN4UofgD3xzNmICq+U4aDGSTxEbjBxwtY2Ia
-         JyGKnfQvO7hVCACBtalSZl/vSraTpfezSF9YIzEQrv0g5rEFqI0bYqW/R8C9hL0px6
-         8xhNZXGCwCR60LAjl2oawAhD328kayKTQq9dgpoWOjCknO4JcEISJFc0phpoaFio0b
-         1HFtmJxl5hrPDnvlmHe4oZApsnTz5VmtSz/MY6Tnxp1HSXAyp9lD+e0FNpjh0gPXXy
-         Jiixv66kxZ0bw==
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20200128145828.74161-1-andriy.shevchenko@linux.intel.com>
+User-Agent: NeoMutt/20171215
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Mauro,
 
-On 20/02/2020 06:34, Sameer Pujar wrote:
-> The Digital MIC (DMIC) Controller is used to interface with Pulse Density
-> Modulation (PDM) input devices. The DMIC controller implements a converter
-> to convert PDM signals to Pulse Code Modulation (PCM) signals. From signal
-> flow perspective, the DMIC can be viewed as a PDM receiver.
+Can you pick up this patch?
+There is already been at least 3 other similar patches posted in the last
+month.
+
+Thanks,
+Benoit
+
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote on Tue [2020-Jan-28 16:58:28 +0200]:
+> Run parse-maintainers.pl and choose TI VPE/CAL record. Fix it accordingly.
 > 
-> This patch registers DMIC component with ASoC framework. The component
-> driver exposes DAPM widgets, routes and kcontrols for the device. The DAI
-> driver exposes DMIC interfaces, which can be used to connect different
-> components in the ASoC layer. Makefile and Kconfig support is added to
-> allow to build the driver. The DMIC devices can be enabled in the DT via
-> "nvidia,tegra210-dmic" compatible string. This driver can be used for
-> Tegra186 and Tegra194 chips as well.
+> Note, this is urgent fix, without which parse-maintainers.pl throws
+> an exception:
 > 
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-
-Thanks!
-
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
-
--- 
-nvpublic
+> Odd non-pattern line '  Documentation/devicetree/bindings/media/ti,cal.yaml
+> ' for 'TI VPE/CAL DRIVERS' at scripts/parse-maintainers.pl line 147, <$file> line 16770.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  MAINTAINERS | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 9fbe2a19b8a3..f04b1c6508fe 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -16761,12 +16761,12 @@ F:	sound/soc/codecs/twl4030*
+>  TI VPE/CAL DRIVERS
+>  M:	Benoit Parrot <bparrot@ti.com>
+>  L:	linux-media@vger.kernel.org
+> +S:	Maintained
+>  W:	http://linuxtv.org/
+>  Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+> -S:	Maintained
+> -F:	drivers/media/platform/ti-vpe/
+> +F:	Documentation/devicetree/bindings/media/ti,cal.yaml
+>  F:	Documentation/devicetree/bindings/media/ti,vpe.yaml
+> -	Documentation/devicetree/bindings/media/ti,cal.yaml
+> +F:	drivers/media/platform/ti-vpe/
+>  
+>  TI WILINK WIRELESS DRIVERS
+>  L:	linux-wireless@vger.kernel.org
+> -- 
+> 2.24.1
+> 
