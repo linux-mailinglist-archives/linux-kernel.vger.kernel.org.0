@@ -2,197 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E7F2165AB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 10:58:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D96C165ABC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 10:59:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbgBTJ6h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 04:58:37 -0500
-Received: from mga01.intel.com ([192.55.52.88]:37319 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726799AbgBTJ6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 04:58:37 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2020 01:58:36 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,464,1574150400"; 
-   d="scan'208";a="259225619"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga004.fm.intel.com with ESMTP; 20 Feb 2020 01:58:36 -0800
-Received: from [10.226.39.49] (unknown [10.226.39.49])
-        by linux.intel.com (Postfix) with ESMTP id 8A86E580270;
-        Thu, 20 Feb 2020 01:58:33 -0800 (PST)
-From:   Dilip Kota <eswara.kota@linux.intel.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: phy: Add YAML schemas for Intel
- Combophy
-To:     Rob Herring <robh@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
-        Andy Shevchenko <andriy.shevchenko@intel.com>,
-        cheol.yong.kim@intel.com, chuanhua.lei@linux.intel.com,
-        qi-ming.wu@intel.com, yixin.zhu@intel.com
-References: <208fcb9660abd560aeab077442d158d84a3dddee.1582021248.git.eswara.kota@linux.intel.com>
- <CAL_JsqL56Ucpm2FK4BPKS+N=5Zxn1iQht7OdJK1pE7cPxtWL-w@mail.gmail.com>
-Message-ID: <6f4cad61-b094-78e5-9921-9de0a1d7dbd7@linux.intel.com>
-Date:   Thu, 20 Feb 2020 17:58:32 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1727495AbgBTJ7E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 04:59:04 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:35475 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726799AbgBTJ7E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 04:59:04 -0500
+Received: by mail-pl1-f195.google.com with SMTP id g6so1367282plt.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 01:59:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AnTe6KsYAt7hdn53Y5PcRUqdjTL4lw4b9ZC8/N4/PUk=;
+        b=N/pRSTMcqWrO3WYCYNgtANPiHF2r2pSF2s/9yROeWAnGxbRWgr/xnj7xNgAF9XXHqm
+         7UN3vhnqH84C2cQVZHrPLpK1imhwdQnfjVE76JXPmIg+QG+gQA9tVeWO57ZmYBt2mtFe
+         SuWYX/XusnZtF/bLuHhgJmAiVO+3gvU510krdgzk0eAj50wvnQpgpufdRjCJwWWGR7kP
+         km2QqzxkJqjSJQQb0A51BUFYfB6OqYf2puxvXR0kbOvcmmVByO6jddaC6REpSCm2g6qf
+         0itlbPhd443cCBMQ6ofw4ZO5w+LSVg1YL6SFbdqZ/mmgaQva8gOztPFGr3r+Lx5vgzmA
+         hyTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AnTe6KsYAt7hdn53Y5PcRUqdjTL4lw4b9ZC8/N4/PUk=;
+        b=phdv9KR4NxJ9Kz9I3UpWZrSdDPjnjyuugkUV/SdgrmBidKyXmdllKOTN8qHEBlCbfY
+         tVgk+U/ozkvCGnErJS1ox1h5NajFpBV9srbT0K597eMgp2iu3ov19nFhGGaruvUnAkDm
+         jycKuiKjntydx7GPo7BuqSUzj8ar4cxUXql7CLcjN9i1KyJMZRkD+QNjCPBGMY/qL79R
+         1s73wr0nL8VOFVXPdJpaIzlFic20g4qrW4mMxFft5UVkYiY33wE9ioxp/ghaMjo+Rbvv
+         oO6KxtDFYeqmV3uxv6B1o0WCfpkbrXGCIG+J3TTmA6CH0uThNPfeI0SGuEIZTR1zJE6m
+         YS4w==
+X-Gm-Message-State: APjAAAXU9IEgtC6kZzWCg8nV8xd0dE8Vrn7jCNxo4nqut2wiKL3KlKWm
+        P9z82cRsmvOH4HeO+dlgQvZ+6+y2MJba
+X-Google-Smtp-Source: APXvYqzmjWPsBhB7jzR9hy7JvvVmtBcNfYvpbYuDzhnkHKMzio4gWCgkVSzxB8gA38kUoFxiwVzyDg==
+X-Received: by 2002:a17:902:868e:: with SMTP id g14mr30692771plo.87.1582192743190;
+        Thu, 20 Feb 2020 01:59:03 -0800 (PST)
+Received: from localhost.localdomain ([2409:4072:315:9501:edda:4222:88ae:442f])
+        by smtp.gmail.com with ESMTPSA id b3sm2678644pjo.30.2020.02.20.01.58.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2020 01:59:02 -0800 (PST)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     gregkh@linuxfoundation.org, arnd@arndb.de
+Cc:     smohanad@codeaurora.org, jhugo@codeaurora.org,
+        kvalo@codeaurora.org, bjorn.andersson@linaro.org,
+        hemantk@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 00/16] Add MHI bus support
+Date:   Thu, 20 Feb 2020 15:28:38 +0530
+Message-Id: <20200220095854.4804-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqL56Ucpm2FK4BPKS+N=5Zxn1iQht7OdJK1pE7cPxtWL-w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
-On 2/19/2020 10:42 PM, Rob Herring wrote:
-> On Tue, Feb 18, 2020 at 9:31 PM Dilip Kota<eswara.kota@linux.intel.com>  wrote:
->> Combophy subsystem provides PHY support to various
->> controllers, viz. PCIe, SATA and EMAC.
->> Adding YAML schemas for the same.
->>
->> Signed-off-by: Dilip Kota<eswara.kota@linux.intel.com>
->> ---
->> Changes on v2:
->>
->>   Add custom 'select'
->>   Pass hardware instance entries with phandles and
->>     remove cell-index and bid entries
->>   Clock, register address space, are same for the children.
->>     So move them to parent node.
->>   Two PHY instances cannot run in different modes,
->>     so move the phy-mode entry to parent node.
->>   Add second child entry in the DT example.
->>
->>   .../devicetree/bindings/phy/intel,combo-phy.yaml   | 138 +++++++++++++++++++++
->>   1 file changed, 138 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/phy/intel,combo-phy.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/phy/intel,combo-phy.yaml b/Documentation/devicetree/bindings/phy/intel,combo-phy.yaml
->> new file mode 100644
->> index 000000000000..8e65a2a71e7f
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/phy/intel,combo-phy.yaml
->> @@ -0,0 +1,138 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id:http://devicetree.org/schemas/phy/intel,combo-phy.yaml#
->> +$schema:http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Intel Combophy Subsystem
->> +
->> +maintainers:
->> +  - Dilip Kota<eswara.kota@linux.intel.com>
->> +
->> +description: |
->> +  Intel Combophy subsystem supports PHYs for PCIe, EMAC and SATA
->> +  controllers. A single Combophy provides two PHY instances.
->> +
->> +# We need a select here so we don't match all nodes with 'simple-bus'
->> +select:
->> +  properties:
->> +    compatible:
->> +      contains:
->> +        const: intel,combo-phy
->> +  required:
->> +    - compatible
->> +
->> +properties:
->> +  $nodename:
->> +    pattern: "^combophy@[0-9]+$"
-> Unit addresses are hex.
-Will fix it.
->
->> +
->> +  compatible:
->> +    items:
->> +      - const: intel,combo-phy
-> Needs to be an SoC specific compatible.
-Sure, will update it to intel, combophy-lgm
->
->> +      - const: simple-bus
->> +
->> +  clocks:
->> +    description: |
->> +      List of phandle and clock specifier pairs as listed
->> +      in clock-names property. Configure the clocks according
->> +      to the PHY mode.
-> How many?
->
-> No need to redefine a common property name, drop description. Plus,
-> where's clock-names?
-Its only one clock, i will add maxItems:1 and remove the description.
->
->> +
->> +  reg:
->> +    items:
->> +      - description: ComboPhy core registers
->> +      - description: PCIe app core control registers
->> +
->> +  reg-names:
->> +    items:
->> +      - const: core
->> +      - const: app
->> +
->> +  resets:
->> +    maxItems: 2
->> +
->> +  reset-names:
->> +    items:
->> +      - const: phy
->> +      - const: core
->> +
->> +  intel,syscfg:
->> +    $ref: /schemas/types.yaml#/definitions/phandle
->> +    description: Chip configuration registers handle and ComboPhy instance id
->> +
->> +  intel,hsio:
->> +    $ref: /schemas/types.yaml#/definitions/phandle
->> +    description: HSIO registers handle and ComboPhy instance id on NOC
->> +
->> +  intel,aggregation:
->> +    description: |
->> +      Specify the flag to confiure ComboPHY in dual lane mode.
->> +    type: boolean
->> +
->> +  intel,phy-mode:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    minimum: 0
->> +    maximum: 2
->> +    description: |
->> +      Configure the mode of the PHY.
->> +        0 - PCIe
->> +        1 - xpcs
->> +        2 - sata
-> Doesn't this need to be per PHY? Or the 2 PHYs have to be the same mode?
->
-> Use the types defined in include/dt-bindings/phy/phy.h. You'll need to
-Sure, will define the types in header file.
-> add XPCS which maybe should be more specific to distinguish 1G, 10G,
-> etc. Also, we typically put the mode into the 'phys' cells so the mode
-> lives with the client node.
-Two PHYs must be in same mode.
-actual mode configuration is done for the ComboPhy to work as a two 
-individual PHYs in PCIe/XPCS/SATA mode or as a single PHY providing dual 
-physical lanes in PCIe/XPCS.
-And mode configuration is dependent on the 'intel,aggregation' flag.
-So, placed the phy-mode here itself, to make sure all the mode related 
-parameters are at one location. Also, avoids setting individual PHYs in 
-different modes.
+This is the second attempt at adding the MHI (Modem Host Interface) bus
+interface to Linux kernel. MHI is a communication protocol used by the
+host processors to control and communicate with modems over a high
+speed peripheral bus or shared memory. The MHI protocol has been
+designed and developed by Qualcomm Innovation Center, Inc., for use
+in their modems.
 
->> +
->> +patternProperties:
->> +  "^cb[0-9]phy@[0-9]+$":
-> ^phy@...
+The first submission was made by Sujeev Dias of Qualcomm:
 
-Sure, will fix it.
+https://lkml.org/lkml/2018/4/26/1159
+https://lkml.org/lkml/2018/7/9/987
 
-Regards,
-Dilip
+This series addresses most of the review comments by Greg and Arnd for
+the initial patchset. Furthermore, in order to ease the review process
+I've splitted the patches logically and dropped few of them which were
+not required for this initial submission.
 
->
+Below is the high level changelog:
+
+1. Removed all DT related code
+2. Got rid of pci specific struct members from top level mhi structs
+3. Moved device specific callbacks like ul_xfer() to driver struct. It
+   doesn’t make sense to have callbacks in device struct as suggested by
+   Greg
+4. Used priv data of `struct device` instead of own priv data in
+   `mhi_device` as suggested by Greg. This will allow us to use
+    dev_set{get}_drvdata() APIs in client drivers
+5. Removed all debugfs related code
+6. Changes to the APIs to look uniform
+7. Converted the documentation to .rst and placed in its own subdirectory
+8. Changes to the MHI device naming
+9. Converted all uppercase variable names to appropriate lowercase ones
+10. Removed custom debug code and used the dev_* ones where applicable
+11. Dropped timesync, DTR, UCI, and Qcom controller related codes
+12. Added QRTR client driver patch
+13. Added modalias support for the MHI stack as well as client driver for
+    autoloading of modules (client drivers) by udev once the MHI devices
+    are created
+
+This series includes the MHI stack as well as the QRTR client driver which
+falls under the networking subsystem.
+
+The reference controller implementation is here:
+https://git.linaro.org/people/manivannan.sadhasivam/linux.git/tree/drivers/net/wireless/ath/ath11k/mhi.c?h=ath11k-qca6390-mhi
+It will be submitted later along with ath11k patches.
+
+Following developers deserve explicit acknowledgements for their
+contributions to the MHI code:
+
+Sujeev Dias
+Siddartha Mohanadoss
+Hemant Kumar
+Jeff Hugo
+
+Thanks,
+Mani
+
+Changes in v3:
+
+* Fixed the MHI dev refcounting issue and avoided the use of nullifying the
+  mhi_dev pointer in mhi_release_device
+* Fixed the kref issue in QRTR MHI client driver
+* Renamed mhi_cntrl->dev to mhi_cntrl->cntrl_dev to avoid confusion
+* Exposed mhi_queue_* APIs to client drivers and got rid of queue_xfer callback
+* Removed mhi_buf_type as it is no longer required
+* Misc cleanups in the MHI stack
+* Added Jeff's Reviewed-by and Tested-by tags
+
+Changes in v2:
+
+* Added put_device to mhi_dealloc_device
+* Removed unused members from struct mhi_controller
+* Removed the atomicity of dev_wake in struct mhi_device as it is not required
+* Reordered MHI structs to avoid holes
+* Used struct device name for the controller device
+* Marked the required and optional mhi_controller members for helping the
+  controller driver implementation
+* Cleanups to the MHI doc
+* Removed _relaxed variants and used readl/writel
+* Added comments for MHI specific acronyms
+* Removed the usage of bitfields and used bitmasks for mhi_event_ctxt and
+  mhi_chan_ctxt
+* Used __64/__u32 types for structures representing hw states
+* Added Hemant as a co-maintainer of MHI bus. He is from the MHI team of
+  Qualcomm and he will take up reviews and if possible, maintainership
+  in future.
+
+Manivannan Sadhasivam (16):
+  docs: Add documentation for MHI bus
+  bus: mhi: core: Add support for registering MHI controllers
+  bus: mhi: core: Add support for registering MHI client drivers
+  bus: mhi: core: Add support for creating and destroying MHI devices
+  bus: mhi: core: Add support for ringing channel/event ring doorbells
+  bus: mhi: core: Add support for PM state transitions
+  bus: mhi: core: Add support for basic PM operations
+  bus: mhi: core: Add support for downloading firmware over BHIe
+  bus: mhi: core: Add support for downloading RDDM image during panic
+  bus: mhi: core: Add support for processing events from client device
+  bus: mhi: core: Add support for data transfer
+  bus: mhi: core: Add uevent support for module autoloading
+  MAINTAINERS: Add entry for MHI bus
+  net: qrtr: Add MHI transport layer
+  net: qrtr: Do not depend on ARCH_QCOM
+  soc: qcom: Do not depend on ARCH_QCOM for QMI helpers
+
+ Documentation/index.rst           |    1 +
+ Documentation/mhi/index.rst       |   18 +
+ Documentation/mhi/mhi.rst         |  218 +++++
+ Documentation/mhi/topology.rst    |   60 ++
+ MAINTAINERS                       |   10 +
+ drivers/bus/Kconfig               |    1 +
+ drivers/bus/Makefile              |    3 +
+ drivers/bus/mhi/Kconfig           |   14 +
+ drivers/bus/mhi/Makefile          |    2 +
+ drivers/bus/mhi/core/Makefile     |    3 +
+ drivers/bus/mhi/core/boot.c       |  507 ++++++++++
+ drivers/bus/mhi/core/init.c       | 1264 ++++++++++++++++++++++++
+ drivers/bus/mhi/core/internal.h   |  677 +++++++++++++
+ drivers/bus/mhi/core/main.c       | 1516 +++++++++++++++++++++++++++++
+ drivers/bus/mhi/core/pm.c         |  969 ++++++++++++++++++
+ drivers/soc/qcom/Kconfig          |    1 -
+ include/linux/mhi.h               |  666 +++++++++++++
+ include/linux/mod_devicetable.h   |   13 +
+ net/qrtr/Kconfig                  |    8 +-
+ net/qrtr/Makefile                 |    2 +
+ net/qrtr/mhi.c                    |  209 ++++
+ scripts/mod/devicetable-offsets.c |    3 +
+ scripts/mod/file2alias.c          |   10 +
+ 23 files changed, 6173 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/mhi/index.rst
+ create mode 100644 Documentation/mhi/mhi.rst
+ create mode 100644 Documentation/mhi/topology.rst
+ create mode 100644 drivers/bus/mhi/Kconfig
+ create mode 100644 drivers/bus/mhi/Makefile
+ create mode 100644 drivers/bus/mhi/core/Makefile
+ create mode 100644 drivers/bus/mhi/core/boot.c
+ create mode 100644 drivers/bus/mhi/core/init.c
+ create mode 100644 drivers/bus/mhi/core/internal.h
+ create mode 100644 drivers/bus/mhi/core/main.c
+ create mode 100644 drivers/bus/mhi/core/pm.c
+ create mode 100644 include/linux/mhi.h
+ create mode 100644 net/qrtr/mhi.c
+
+-- 
+2.17.1
+
