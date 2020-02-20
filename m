@@ -2,91 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14546166161
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 16:49:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C9EF166173
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 16:52:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728589AbgBTPtY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 10:49:24 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:45526 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728351AbgBTPtY (ORCPT
+        id S1728612AbgBTPwY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 10:52:24 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:39160 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728289AbgBTPwX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 10:49:24 -0500
-Received: by mail-io1-f67.google.com with SMTP id i11so5138591ioi.12
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 07:49:24 -0800 (PST)
+        Thu, 20 Feb 2020 10:52:23 -0500
+Received: by mail-pj1-f68.google.com with SMTP id e9so1055430pjr.4
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 07:52:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TNlV6j5dy2YpzNbMudPK2N6M4tmat+Q7yeBq9QSr2Cc=;
-        b=DAkOWfFvuULYeW4zlDdUrSsxfOp2+6i3eNbNfme23q36UoDRNBkz3lGrwWsQARSF/b
-         Bhcp7v4C73l4K6NITvym0C/OScIwDVQouN0vfj9CVVGbIxiQwUwfFxyjlbjrB23zO+ye
-         ChHirGZ2CzowM+kOAz1UKlh2JTJKtBhGXeduU=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=+/WxyvwzefS6yg5iKEGluqHuzG/pj5Si1hZf4+0mRQQ=;
+        b=i4puWcdvj1CWZtYIbzpGUOtJ5pIC79iIjAxMWCCZXdxq6G24+mGBTIIpnPCBHn0GNK
+         WAdSvxkSCdvSQdp9mPapKBWY/kV3xMOpF+OhcGriTMhwNaieg2/upGs/gMBYJU7jUkYL
+         EJM8Zl2RHkroltyGpXo2njZr5wkKWBHs4jsNOJTjSwWhKOSrn4hK033+7URfqA6fASVo
+         VRqv1xhTq9t5LCC/tsHJlJc136PxLRUc2xF/eNLZvdLHA0mnMVcXzkvNAfTV7LBAAVVo
+         KsWWXFx7m/oM5aks9F1su6hIUUJ6k2wPyhaPNDTQQq0U2jSlzth3PkhHSVgDK9vsxiaY
+         bOtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TNlV6j5dy2YpzNbMudPK2N6M4tmat+Q7yeBq9QSr2Cc=;
-        b=reHzgG51DJGaunE8mM66FqhqdbSP4sf5ycO//BmDVKBEB4G/W0NsuaLJ7IjszFBiYE
-         nrn0VgfohPt80uRWefzw4NhR+awDNKgyJ5rw0Cosm0t46dmV0IgBSQbkeVdgpMFierY+
-         Igw+AH2GSNiWyyTr55EyeTD6TUfJoEFkhFKEZRajxEF04rVMxMUIAqLFqNz9GIlQPO1q
-         91Bhx1rRG4FvL7Rmld/T1Evp/GcN73O/zWp4Y9t4U5D2o88L7eGTs0va3fpCzSanzHEn
-         80vfRc1NVenZGLBBHecXN3j5luvVdoGY00/jwfMLOM3GHwVVAP70FUswk42CEr2G/P13
-         Fkig==
-X-Gm-Message-State: APjAAAUr7QkotWr16P8d/sXg88qcHgAX6Beoj/rHVFFWzxJBjOJrku/Y
-        EbZYpjZmbeS53mo79w/GRiQKdyDUT7k=
-X-Google-Smtp-Source: APXvYqwo5E+136MY2CwhDaw8W8F8otbFcd8wGERgcY8BOLwyf/TxO32uWLk0lDAiASLqVmzlDZeraA==
-X-Received: by 2002:a05:6602:2113:: with SMTP id x19mr26054792iox.227.1582213763404;
-        Thu, 20 Feb 2020 07:49:23 -0800 (PST)
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id r18sm1216159ilo.3.2020.02.20.07.49.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2020 07:49:22 -0800 (PST)
-Subject: Re: [PATCH] selftest/lkdtm: Don't pollute 'git status'
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Kees Cook <keescook@chromium.org>
-Cc:     linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-References: <668b6ff463849ceee01f726fbf3e7110687575ec.1580976576.git.christophe.leroy@c-s.fr>
- <ca71e490-b4fa-bf53-7a60-b6954b9dd33e@c-s.fr>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <17ea7ab6-d5c4-cf38-3c3b-9da70b2c35b5@linuxfoundation.org>
-Date:   Thu, 20 Feb 2020 08:49:21 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=+/WxyvwzefS6yg5iKEGluqHuzG/pj5Si1hZf4+0mRQQ=;
+        b=pt411EiyfYKMrw5zwyX8FEg/UZ/G8QJHKIaIynRe4fCH0q1cbhjDDwZ3eMpnuKzmij
+         yytPoe6/kBZB1AxkaxLfvJqc7ohxjuj7/Bdv8Hd8EEuv/vl0UJCi1jZd8xowC6gDKNRx
+         CiG5VrRGf7Hl0Fof2aWKKc0Divbf1kXLsXxWxX4iArwEDS+NqXGJoAOvQHtGLZxTT8JQ
+         2tg7iUC5umyhYgFKYki3+w0n51kkXdcj9HfFxk55jeY95gjEsg84suY1iskWrlpGF8da
+         YjTsg5v8cltXM52bHeP6wS+j0ck+v3r9ljLkIy0Wsbtkf8aVuIC/3AyxkCwkPXdh8xQv
+         A8Ig==
+X-Gm-Message-State: APjAAAXVUp8OqQtbPoFWSaZ6ZTYRt0dPnE3yDKT3ESaqyYraI9ePHoxB
+        T5el5eqq8ERpULeG87jOmvlbGA==
+X-Google-Smtp-Source: APXvYqxJJRxwW5yt25an2UYEwvvA6N2u9Fzw+67nN1An6ph5EUR36LLQWDArLfHBLz9LPNR1QNd6LQ==
+X-Received: by 2002:a17:902:9b8b:: with SMTP id y11mr32790865plp.189.1582213942056;
+        Thu, 20 Feb 2020 07:52:22 -0800 (PST)
+Received: from ripper (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id s23sm3774686pjq.17.2020.02.20.07.52.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2020 07:52:21 -0800 (PST)
+Date:   Thu, 20 Feb 2020 07:51:26 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Sayali Lokhande <sayalil@codeaurora.org>
+Cc:     adrian.hunter@intel.com, robh+dt@kernel.org,
+        ulf.hansson@linaro.org, asutoshd@codeaurora.org,
+        stummala@codeaurora.org, ppvk@codeaurora.org,
+        rampraka@codeaurora.org, vbadigan@codeaurora.org, sboyd@kernel.org,
+        georgi.djakov@linaro.org, mka@chromium.org,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        agross@kernel.org, linux-mmc-owner@vger.kernel.org
+Subject: Re: [PATCH RFC] Toggle fifo write clk after ungating sdcc clk
+Message-ID: <20200220155126.GC955802@ripper>
+References: <1582190446-4778-1-git-send-email-sayalil@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <ca71e490-b4fa-bf53-7a60-b6954b9dd33e@c-s.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1582190446-4778-1-git-send-email-sayalil@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/20/20 7:58 AM, Christophe Leroy wrote:
-> ping
+On Thu 20 Feb 01:20 PST 2020, Sayali Lokhande wrote:
+
+> During GCC level clock gating of MCLK, the async FIFO
+> gets into some hang condition, such that for the next
+> transfer after MCLK ungating, first bit of CMD response
+> doesn't get written in to the FIFO. This cause the CPSM
+> to hang eventually leading to SW timeout.
 > 
-> On 02/06/2020 08:11 AM, Christophe Leroy wrote:
->> Commit 46d1a0f03d66 ("selftests/lkdtm: Add tests for LKDTM targets")
->> added generation of lkdtm test scripts.
->>
->> Ignore those generated scripts when performing 'git status'
->>
->> Fixes: 46d1a0f03d66 ("selftests/lkdtm: Add tests for LKDTM targets")
->> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> 
-> Without this, 'git status' now reports the following crap and real 
-> problems are drowned in the middle, that's annoying.
+> To fix the issue, toggle the FIFO write clock after
+> MCLK ungated to get the FIFO pointers and flags to
+> valid states.
 > 
 
-I will pull this in. Please cc linux-kselftest mailing list in the
-future.
+Please don't provide cover letters for a single patch.
 
-thanks,
--- Shuah
+Regards,
+Bjorn
 
+> Ram Prakash Gupta (1):
+>   mmc: sdhci-msm: Toggle fifo write clk after ungating sdcc clk
+> 
+>  drivers/mmc/host/sdhci-msm.c | 43 +++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 43 insertions(+)
+> 
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
