@@ -2,96 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C644816671F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 20:28:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1979E166711
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 20:23:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728952AbgBTT2j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 14:28:39 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:53048 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728596AbgBTT2j (ORCPT
+        id S1728390AbgBTTXM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 14:23:12 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:38973 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728334AbgBTTXM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 14:28:39 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01KJRs19059352;
-        Thu, 20 Feb 2020 13:27:54 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1582226874;
-        bh=bQZBs4R8I7SS5K4xnJzvOySpsb0IN5aljouYPVfbqJE=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=LAPmdFJ/We64GPO2f7Rw7VcZ6mNHuZ8mOvNP8+YMK6vVjiz4Lfz1fHEY5hY3YoZC6
-         Gn3VDyX0J1d8jdHfhwBQh2U2ey+p55+j9TsGwLa8MZ7+V8rggIlD/qyQWZ1ym9Rpen
-         z+pM99r/DaxeHvY12codHvrgMvR0gDlCIgSTq6Bc=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01KJRsfB000862;
-        Thu, 20 Feb 2020 13:27:54 -0600
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 20
- Feb 2020 13:27:54 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 20 Feb 2020 13:27:54 -0600
-Received: from [128.247.59.107] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01KJRdtc041257;
-        Thu, 20 Feb 2020 13:27:39 -0600
-Subject: Re: [PATCH] ASoC: tas2562: Add support for digital volume control
-To:     Mark Brown <broonie@kernel.org>
-CC:     <lgirdwood@gmail.com>, <perex@perex.cz>, <tiwai@suse.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-References: <20200220172721.10547-1-dmurphy@ti.com>
- <20200220184507.GF3926@sirena.org.uk>
- <de0e8a5b-8c2a-ee04-856f-f0d678a3c66b@ti.com>
- <20200220191803.GH3926@sirena.org.uk>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <6f3ff810-5e75-cb33-10d6-198a7c5cd202@ti.com>
-Date:   Thu, 20 Feb 2020 13:22:34 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Thu, 20 Feb 2020 14:23:12 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 77so4748578oty.6
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 11:23:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Bk1eIitMT2MS22kRJrkHf2a6nr5vMQhVA+AkCVP3xms=;
+        b=aTmzlFn5tqMffO4aaSdqSmOjwnlwPlhLBMDWmHM5hEgVohGoR95LIESWPin+FgU3m5
+         6SBKmIyXfz3mR7ZJGUztrCkEqttjywHypYPY01n74LbVdLtnW3lI3mGg/tCdRKylIrWc
+         Jq7asmZQKCD4pm93CxVIrFT9tn3nfGJqSSm8Vsd6HIo/Kcxe7LRKiOXtJ1R+KmDSgYri
+         yOJUHQv1/vVwu32bZ3WZIRFgjHFVUSuwrRUtJOBVFSUsAgNS/5PGnC2AW02w3iZZp4zg
+         Ia0U7nlOur/8FVS0Sgvy3hruRsr6xz+P5Rcb6cHozsula5vu8Q6sy6WkorjtHYEKafsR
+         OD5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Bk1eIitMT2MS22kRJrkHf2a6nr5vMQhVA+AkCVP3xms=;
+        b=l6S/bB9rUqrYHVrQLITv06yeqtRwzn3goLIxwFvYP5HLSmUKEtYhtSdH8cDDs1p3T7
+         MHw0ZW05UZfCmUcEgTom3pOcXdMFLlr7HCSaaeGRP2NNqaMiKixwy4jl59VhjHh8csue
+         VgZJE+rvEH49qxkc2GFAzPm/ExEc2IlJhIEYB+tGFCkX4+d3EQ8WOD9K5U+EHRyYeyD5
+         zFWF7RseOMcx6IOMRdrut2kQti958Z7WeiabNTeXR/Supl0fhK6IZM4IHUSRIcFw+8y9
+         W7IQfSNvPmAHk6I4HBBDmZ0jpDA9goitBqR09Ub8OZVl+cEXXEUlVPwqKFEeQ7l5OclB
+         CJ2A==
+X-Gm-Message-State: APjAAAWl9YVqu7z7R2YRp9ujAdWVxOWszVt5+iHJFPdKfJEz3lJ0laXW
+        41hFtsqQsXdjypd5dfh77zFXsbvkvHiPnGkyX0MQHQ==
+X-Google-Smtp-Source: APXvYqzc0r7mnwBlUc3tSqHO71Kmj09WeY278uUEiCztDiRqODK1P9Hy8XAqcMq8l4Nh1mPh3JVbkAAfzAHEF3HNj0E=
+X-Received: by 2002:a9d:7b4e:: with SMTP id f14mr24990667oto.355.1582226589659;
+ Thu, 20 Feb 2020 11:23:09 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200220191803.GH3926@sirena.org.uk>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20200211213128.73302-1-almasrymina@google.com>
+ <20200211151906.637d1703e4756066583b89da@linux-foundation.org>
+ <CAHS8izPUFQWq3PzhhRzp7u11173_-cmRkNuQWEswS51Xz6ZM0Q@mail.gmail.com> <20200219130648.83e6810848774c6fd649c445@linux-foundation.org>
+In-Reply-To: <20200219130648.83e6810848774c6fd649c445@linux-foundation.org>
+From:   Mina Almasry <almasrymina@google.com>
+Date:   Thu, 20 Feb 2020 11:22:58 -0800
+Message-ID: <CAHS8izN_FJektipBwiLsCO8ysMTM7k=CR_k3OV7+_y0ZbrGw+A@mail.gmail.com>
+Subject: Re: [PATCH v12 1/9] hugetlb_cgroup: Add hugetlb_cgroup reservation counter
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Mike Kravetz <mike.kravetz@oracle.com>, shuah <shuah@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Greg Thelen <gthelen@google.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, linux-kselftest@vger.kernel.org,
+        cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mark
+On Wed, Feb 19, 2020 at 1:06 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+>
+> On Wed, 19 Feb 2020 11:05:41 -0800 Mina Almasry <almasrymina@google.com> wrote:
+>
+> > On Tue, Feb 11, 2020 at 3:19 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+> > >
+> > > On Tue, 11 Feb 2020 13:31:20 -0800 Mina Almasry <almasrymina@google.com> wrote:
+> > >
+> > > > These counters will track hugetlb reservations rather than hugetlb
+> > > > memory faulted in. This patch only adds the counter, following patches
+> > > > add the charging and uncharging of the counter.
+> > >
+> > > We're still pretty thin on review here, but as it's v12 and Mike
+> > > appears to be signed up to look at this work, I'll add them to -next to
+> > > help move things forward.
+> > >
+> >
+> > Hi Andrew,
+> >
+> > Since the patches were merged into -next there have been build fixes
+> > and test fixes and some review comments. Would you like me to submit
+> > *new* patches to address these, or would you like me to squash the
+> > fixes into my existing patch series and submit another iteration of
+> > the patch series?
+>
+> What you did worked OK ;)
+>
+> Please check the end result next time I release a kernel.
 
-On 2/20/20 1:18 PM, Mark Brown wrote:
-> On Thu, Feb 20, 2020 at 12:46:57PM -0600, Dan Murphy wrote:
->> On 2/20/20 12:45 PM, Mark Brown wrote:
->>> Is there a reason not to use the chip default here?  Otherwise this
->>> looks good.
->> Chip default is set to 0dB full blast+ 0x40400000.  This sets the volume to
->> -110dB.
-> OK...  that's a policy decision the same as all other volume changes and
-> so shouldn't be done by the driver - as ever we don't know how the
-> system is set up and what values make sense and keeping things out of
-> the driver means we don't end up with competing system integration
-> decisions causing changes in the driver.  The system may have an
-> external amplifier they prefer to use for hardware volume control, may
-> prefer to do entirely soft volume control in their sound server or
-> something like that.
+Thanks Andrew! Things definitely moved along after the patchseries got
+into -next :D
 
-But this is an amplifier.  Not sure why the system designer would design 
-cascading amplifiers.
+By my count I think all my patches outside of the tests patch have
+been acked or reviewed. When you have a chance I have a couple of
+questions:
 
-And if that was the case wouldn't you want the output to be low so you 
-don't overdrive the ext amplifier front end?
+1. For the non-tests patch, anything pending on those preventing
+eventual submission to linus's tree?
+2. For the tests patch, I only have a Tested-by from Sandipan. Is that
+good enough? If the worst comes to worst and I don't get a review on
+that patch I would rather (if possible) that 'tests' patch can be
+dropped while I nag folks for a review, rather than block submission
+of the entire patch series. I ask because it's been out for review for
+some time and it's the one I got least discussion on so I'm not sure
+I'll have a review by the time it's needed.
 
-I mean I have no qualms with removing the init from the driver. I will 
-send v3 tomorrow after a 24 hour review cycle.
-
-I was considering safety in that the device is on at full blast (not 
-sure why the HW is defaulted that way but it is).
-
-But if volume is adjusted prior to playback then this is not an issue.  
-But if volume is not adjusted then it plays full blast.
-
-Dan
-
+Thanks again!
