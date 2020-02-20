@@ -2,121 +2,245 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41C7516600D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 15:53:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CE48166015
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 15:54:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728380AbgBTOw7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 09:52:59 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:14321 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727979AbgBTOw6 (ORCPT
+        id S1728359AbgBTOyq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 09:54:46 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:30874 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728288AbgBTOyo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 09:52:58 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e4e9d3c0000>; Thu, 20 Feb 2020 06:52:44 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 20 Feb 2020 06:52:58 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 20 Feb 2020 06:52:58 -0800
-Received: from [10.21.133.51] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 20 Feb
- 2020 14:52:54 +0000
-Subject: Re: [PATCH v3 10/10] arm64: defconfig: enable AHUB components for
- Tegra210 and later
-To:     Sameer Pujar <spujar@nvidia.com>, <perex@perex.cz>,
-        <tiwai@suse.com>, <robh+dt@kernel.org>
-CC:     <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <thierry.reding@gmail.com>, <digetx@gmail.com>,
-        <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <sharadg@nvidia.com>, <mkumard@nvidia.com>,
-        <viswanathl@nvidia.com>, <rlokhande@nvidia.com>,
-        <dramesh@nvidia.com>, <atalambedu@nvidia.com>
-References: <1582180492-25297-1-git-send-email-spujar@nvidia.com>
- <1582180492-25297-11-git-send-email-spujar@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <78372fd0-63ed-ea92-874f-ae1d3b78b54e@nvidia.com>
-Date:   Thu, 20 Feb 2020 14:52:52 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Thu, 20 Feb 2020 09:54:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582210482;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=qAEo6uU0h6TrnB+AzJl8drGs8IaXdhtJTL4N71C1gc8=;
+        b=MVbFrznsF+XzBm1HUD2ewzIHDz2w2zVMlhb2iL+8pbuB75cYDNCkgdBG2afAsUZYjNUoLA
+        V9AvJnPOLSsodjgOqucvx/l4azIe/FfuEk7ZibK8YoxE4cz1/x1+iF/ofPcdj6FRGr6e/k
+        3nmXa/NdSCyHGsYYPnY+cmgqjNAkU44=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-80-0b6N7j7MOcKh96VvGimqCQ-1; Thu, 20 Feb 2020 09:54:36 -0500
+X-MC-Unique: 0b6N7j7MOcKh96VvGimqCQ-1
+Received: by mail-qv1-f72.google.com with SMTP id s5so2694378qvr.15
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 06:54:36 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qAEo6uU0h6TrnB+AzJl8drGs8IaXdhtJTL4N71C1gc8=;
+        b=eaitS9jB8wdvwvv83N8qIKjWqPZwAEmUp+16VKUO2WlSiVC+tlrCoktajVGZLf8jgk
+         XteAwW6Ah85xAN8RP3sw6UmnhH4oIw1a9N5qEke4Oxwsgc3C8VTpftvQ5zt/mj9CG+FB
+         6CCzFxek9gPeRTHxVT7FFQpCsU7LUyXkYkHsJVcIX+74xu/3tpsGPu08bvV/6MWgIz/m
+         MY4kuIopguDPA0WY0eF8QzaEhllBb+mY6Mp7yPtXLZrYjBMJRSOED63OOq8HDoGm/uzU
+         EgDaWpTyh4gdnJX078JYzjfoqMfBUJpneSYwNHim2Lavj+3WMcRcNsExxLhn6Wow/1RR
+         UNFQ==
+X-Gm-Message-State: APjAAAW4/HzvlQLwxnJ2USNhYMl2VlL79tqg7oxmOVBSOegONrStAynj
+        Mz/icg3H/Dpa7SErOWP/ZoKurhq+KK3PaudSxJMr9uDTcHHPhi8oquCRR0ELCdc4srqwQV3yDV1
+        0PGhIWM/v02bpY7TmU6frLh4F
+X-Received: by 2002:ac8:7352:: with SMTP id q18mr26316187qtp.125.1582210475695;
+        Thu, 20 Feb 2020 06:54:35 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzWsFS82ySidjbVlfdT63ypLLaoFMuctN0YET94MVG1TOfbG3OuA7PvkPxiht5byTbrB0g3mg==
+X-Received: by 2002:ac8:7352:: with SMTP id q18mr26316150qtp.125.1582210475282;
+        Thu, 20 Feb 2020 06:54:35 -0800 (PST)
+Received: from xz-x1.redhat.com ([104.156.64.75])
+        by smtp.gmail.com with ESMTPSA id v82sm1725109qka.51.2020.02.20.06.54.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2020 06:54:34 -0800 (PST)
+From:   Peter Xu <peterx@redhat.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     Martin Cracauer <cracauer@cons.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jerome Glisse <jglisse@redhat.com>, peterx@redhat.com,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Brian Geffon <bgeffon@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        David Hildenbrand <david@redhat.com>,
+        Bobby Powers <bobbypowers@gmail.com>,
+        Mel Gorman <mgorman@suse.de>
+Subject: [PATCH v6 00/16] mm: Page fault enhancements
+Date:   Thu, 20 Feb 2020 09:54:16 -0500
+Message-Id: <20200220145432.4561-1-peterx@redhat.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <1582180492-25297-11-git-send-email-spujar@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1582210364; bh=zmkbVTyHDygsEOYlw9xj44yT1CKVWjor4rEVV0hpu/U=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=rW2hLniGp4lwV2eqjP1d4q93tJq+WYoVziVdy1ge4OR0YOsH1ta2Zi3iHAtleWDh7
-         3/d9W+rCFi1Fhmp3yhwiEgS7h+8HtS9GyVMZOwPICkqqcliVo2vCLEePvZB/askyGB
-         IWqD2WTU1c3lqqKLPjpUSLbhuxcahSODn5ksTydj633AvNpbjWDoQE5Hdik0QkAJr0
-         seX9hQv4B5+ZT4cpQ7V1X8ZuFv1/VPqlpF9tecKsOOlSzY8YyvPJmuRCUmXjAV711X
-         A2efpEYTqcnOT0O5IxBP4Pl0OUGwASpt4E/esSSQIL7jrcj6T7rQ1kdVXVw4YMDOQQ
-         Hbdaxb1mBS2JA==
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is v6 of the series.  It is majorly a rebase to 5.6-rc2, nothing
+else to be expected (plus some tests after the rebase).  Instead of
+rewrite the cover letter I decided to use what we have for v5.
 
-On 20/02/2020 06:34, Sameer Pujar wrote:
-> This patch enables following configs:
->  +CONFIG_TEGRA_ACONNECT=m
->  +CONFIG_SND_SOC_TEGRA=m
->  +CONFIG_SND_SOC_TEGRA210_AHUB=m
->  +CONFIG_SND_SOC_TEGRA210_DMIC=m
->  +CONFIG_SND_SOC_TEGRA210_I2S=m
->  +CONFIG_SND_SOC_TEGRA186_DSPK=m
->  +CONFIG_SND_SOC_TEGRA210_ADMAIF=m
-> 
-> This patch helps to register AHUB and its clients (I2S, DMIC, DSPK, ADMAIF)
-> with ASoC core. Since AHUB is child of ACONNECT, config TEGRA_ACONNECT is
-> enabled as well.
-> 
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> ---
->  arch/arm64/configs/defconfig | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index c8801be..784ca4f 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -207,6 +207,7 @@ CONFIG_FW_LOADER_USER_HELPER=y
->  CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y
->  CONFIG_HISILICON_LPC=y
->  CONFIG_SIMPLE_PM_BUS=y
-> +CONFIG_TEGRA_ACONNECT=m
->  CONFIG_MTD=y
->  CONFIG_MTD_BLOCK=y
->  CONFIG_MTD_RAW_NAND=y
-> @@ -590,6 +591,12 @@ CONFIG_SND_SOC_RK3399_GRU_SOUND=m
->  CONFIG_SND_SOC_SAMSUNG=y
->  CONFIG_SND_SOC_RCAR=m
->  CONFIG_SND_SUN4I_SPDIF=m
-> +CONFIG_SND_SOC_TEGRA=m
-> +CONFIG_SND_SOC_TEGRA210_AHUB=m
-> +CONFIG_SND_SOC_TEGRA210_DMIC=m
-> +CONFIG_SND_SOC_TEGRA210_I2S=m
-> +CONFIG_SND_SOC_TEGRA186_DSPK=m
-> +CONFIG_SND_SOC_TEGRA210_ADMAIF=m
->  CONFIG_SND_SOC_AK4613=m
->  CONFIG_SND_SOC_ES7134=m
->  CONFIG_SND_SOC_ES7241=m
+Adding extra CCs for both Bobby Powers <bobbypowers@gmail.com> and
+Brian Geffon <bgeffon@google.com>.
 
-Thanks!
+Any review comment is appreciated.  Thanks,
 
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+=============== v5 cover letter ==================
 
-Cheers
-Jon
+This is v5 of the series.  As Matthew suggested, I split the previous
+patch "mm: Return faster for non-fatal signals in user mode faults"
+into a few smaller ones:
+
+  1. One patch to introduce fatal_signal_pending(), and use it in
+     archs that can directly apply
+
+  2. A few more patches to let the rest archs to use the new helper.
+     With that we can have an unified entry for signal detection
+
+  3. One last patch to change fatal_signal_pending() to detect
+     userspace non-fatal signal
+
+Nothing should have changed in the rest patches.  Because the fault
+retry patches will depend on the previous ones, I decided to simply
+repost all the patches.
+
+Here's the new patchset layout:
+
+Patch 1-2:      cleanup, and potential bugfix of hugetlbfs on fault retry
+
+Patch 3-9:      let page fault to respond to non-fatal signals faster
+
+Patch 10:       remove the userfaultfd NOPAGE emulation
+
+Patch 11-14:    allow page fault to retry more than once
+
+Patch 15-16:    let gup code to use FAULT_FLAG_KILLABLE too
+
+I would really appreciate any review comments for the series,
+especially for the first two patches which IMHO are even not related
+to this patchset and they should either cleanup or fix things.
+
+Smoke tested on x86 only.
+
+Thanks,
+
+v5:
+- split "mm: Return faster for non-fatal signals in user mode faults"
+  into a few more patches, let all archs to use an unified entry for
+  fast signal handling (fatal_signal_pending)
+
+v4:
+- use lore.kernel.org for all the links in commit messages [Kirill]
+- one more patch ("mm/gup: Fix __get_user_pages() on fault retry of
+  hugetlb") to fix hugetlb path on fault retry
+- one more patch ("mm/gup: Allow to react to fatal signals") to:
+  - use down_read_killable() properly [Linus]
+  - pass in FAULT_FLAG_KILLABLE for all GUP [Linus]
+- one more patch ("mm/userfaultfd: Honor FAULT_FLAG_KILLABLE in fault
+  path") to let handle_userfaultfd() respect FAULT_FLAG_KILLABLE.
+  Should have no functional change after previous two new patches.
+
+v3:
+- check fatal signals in __get_user_page_locked() [Linus]
+- add r-bs
+
+v2:
+- resent previous version, rebase only
+
+=============== v1 cover letter ==================
+
+This series is split out of userfaultfd-wp series to only cover the
+general page fault changes, since it seems to make sense itself.
+
+Basically it does two things:
+
+  (a) Allows the page fault handlers to be more interactive on not
+      only SIGKILL, but also the rest of userspace signals (especially
+      for user-mode faults), and,
+
+  (b) Allows the page fault retry (VM_FAULT_RETRY) to happen for more
+      than once.
+
+I'm keeping the CC list as in uffd-wp v5, hopefully I'm not sending
+too much spams...
+
+And, instead of writting again the cover letter, I'm just copy-pasting
+my previous link here which has more details on why we do this:
+
+  https://patchwork.kernel.org/cover/10691991/
+
+The major change from that latest version should be that we introduced
+a new page fault flag FAULT_FLAG_INTERRUPTIBLE as suggested by Linus
+[1] to represents that we would like the fault handler to respond to
+non-fatal signals.  Also, we're more careful now on when to do the
+immediate return of the page fault for such signals.  For example, now
+we'll only check against signal_pending() for user-mode page faults
+and we keep the kernel-mode page fault patch untouched for it.  More
+information can be found in separate patches.
+
+The patchset is only lightly tested on x86.
+
+All comments are greatly welcomed.  Thanks,
+
+[1] https://lkml.org/lkml/2019/6/25/1382
+
+Peter Xu (16):
+  mm/gup: Rename "nonblocking" to "locked" where proper
+  mm/gup: Fix __get_user_pages() on fault retry of hugetlb
+  mm: Introduce fault_signal_pending()
+  x86/mm: Use helper fault_signal_pending()
+  arc/mm: Use helper fault_signal_pending()
+  arm64/mm: Use helper fault_signal_pending()
+  powerpc/mm: Use helper fault_signal_pending()
+  sh/mm: Use helper fault_signal_pending()
+  mm: Return faster for non-fatal signals in user mode faults
+  userfaultfd: Don't retake mmap_sem to emulate NOPAGE
+  mm: Introduce FAULT_FLAG_DEFAULT
+  mm: Introduce FAULT_FLAG_INTERRUPTIBLE
+  mm: Allow VM_FAULT_RETRY for multiple times
+  mm/gup: Allow VM_FAULT_RETRY for multiple times
+  mm/gup: Allow to react to fatal signals
+  mm/userfaultfd: Honor FAULT_FLAG_KILLABLE in fault path
+
+ arch/alpha/mm/fault.c           |  6 +--
+ arch/arc/mm/fault.c             | 35 +++++--------
+ arch/arm/mm/fault.c             |  7 +--
+ arch/arm64/mm/fault.c           | 26 +++------
+ arch/hexagon/mm/vm_fault.c      |  5 +-
+ arch/ia64/mm/fault.c            |  5 +-
+ arch/m68k/mm/fault.c            |  7 +--
+ arch/microblaze/mm/fault.c      |  5 +-
+ arch/mips/mm/fault.c            |  5 +-
+ arch/nds32/mm/fault.c           |  5 +-
+ arch/nios2/mm/fault.c           |  7 +--
+ arch/openrisc/mm/fault.c        |  5 +-
+ arch/parisc/mm/fault.c          |  8 ++-
+ arch/powerpc/mm/fault.c         | 20 ++-----
+ arch/riscv/mm/fault.c           |  9 +---
+ arch/s390/mm/fault.c            | 10 ++--
+ arch/sh/mm/fault.c              | 13 +++--
+ arch/sparc/mm/fault_32.c        |  5 +-
+ arch/sparc/mm/fault_64.c        |  5 +-
+ arch/um/kernel/trap.c           |  3 +-
+ arch/unicore32/mm/fault.c       |  8 ++-
+ arch/x86/mm/fault.c             | 30 +++++------
+ arch/xtensa/mm/fault.c          |  5 +-
+ drivers/gpu/drm/ttm/ttm_bo_vm.c | 12 +++--
+ fs/userfaultfd.c                | 62 ++++++++++------------
+ include/linux/mm.h              | 81 ++++++++++++++++++++++++----
+ include/linux/sched/signal.h    | 14 +++++
+ mm/filemap.c                    |  2 +-
+ mm/gup.c                        | 93 +++++++++++++++++++++------------
+ mm/hugetlb.c                    | 17 +++---
+ mm/internal.h                   |  6 +--
+ 31 files changed, 281 insertions(+), 240 deletions(-)
 
 -- 
-nvpublic
+2.24.1
+
