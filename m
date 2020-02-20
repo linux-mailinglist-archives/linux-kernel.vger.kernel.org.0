@@ -2,109 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2CE916650A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 18:37:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19B81166507
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 18:37:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728876AbgBTRhj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 12:37:39 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46742 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728356AbgBTRhh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 12:37:37 -0500
-Received: by mail-pf1-f196.google.com with SMTP id k29so2236369pfp.13;
-        Thu, 20 Feb 2020 09:37:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=kJSXURi17GaZNBPP0JzcsPR2iR7Cn6Nw/QvOcKOXUPo=;
-        b=Yxd42H7IRMldkJRd27VpBEePGf27gJnokv+p3ly2v/y5c0C1Z6jbZSQuQ2QR5z2rIO
-         9SOwkfzqGaYOv8MQExVergqESF5GA/Gx9AddqnWQ1zDLP0UavTKBlbsWHiIDZZWDh6ly
-         SkSI9FZGoc8ZsXfSjyw1orpOHfeJEgiHAEnyOsQHzY4TkPIXY+JWCtuERlQgLIgwA80D
-         GHbDnEG3ZdWwWJ9/Ilup32w4KiVjhhK1iOBfGBnRpUpe1X0cdWBBzLBrOXQUT3rJ04s+
-         77lqXgFXuPWI1G3FOj16n15kQDqSdoUyWltrzhFH/SIXlxD7P3/Aml8/jaC7Od0gZ1v+
-         6eJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=kJSXURi17GaZNBPP0JzcsPR2iR7Cn6Nw/QvOcKOXUPo=;
-        b=iUFlRR+Qr6E+Dhmoxj6EixPWbreBnPZhZFYlx7nuMmhPqydTSPLS9VxAzEclWYtMq/
-         df5s49r7cjzZ+en43PEnwSTXznsjym6B9KCmP3hD5fhHfub0EQ+LreEBN9ciC/oNv5AL
-         WPlVkuVIsMA20lrkOI1vvMdI0DM9vc29pj9SsJRGWsLtz6aLi9nef1QQjaqBacJc682c
-         9/l6m7KgoxVGuplGDH3TOd64s4cB3ZszWkhj8HTKRYzexVjVPRZwY44jvEIqZ9dSecCG
-         sIKM5RxNh9BSnKeAT/UwJFdBZ2h2UV8Wpw3FgM6x9VrqT6kz1vz7/96HFp9yEYQAdkLS
-         cncQ==
-X-Gm-Message-State: APjAAAXdG3f1FpWkG1qFUQsEvfNzsixJ/NsV06jQXQt9eTfhCjhgKg7d
-        e2hf79jwo6c7PQpHT/U/rDc=
-X-Google-Smtp-Source: APXvYqyZXr3vYDThysmYFmbmihtsW5OqKsNuPAqTPzdorr7OnlKMuEGOFT+vsTmOF3HRJ/yCa5Ez7A==
-X-Received: by 2002:a63:be48:: with SMTP id g8mr35351706pgo.23.1582220256810;
-        Thu, 20 Feb 2020 09:37:36 -0800 (PST)
-Received: from lenovo.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id m18sm4240960pgd.39.2020.02.20.09.37.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 20 Feb 2020 09:37:35 -0800 (PST)
-From:   Orson Zhai <orson.unisoc@gmail.com>
-To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        John Stultz <john.stultz@linaro.org>, mingmin.ling@unisoc.com,
-        orsonzhai@gmail.com, jingchao.ye@unisoc.com,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Orson Zhai <orson.unisoc@gmail.com>
-Subject: [PATCH] Revert "PM / devfreq: Modify the device name as devfreq(X) for sysfs"
-Date:   Fri, 21 Feb 2020 01:37:04 +0800
-Message-Id: <1582220224-1904-1-git-send-email-orson.unisoc@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        id S1728685AbgBTRhb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 12:37:31 -0500
+Received: from mga01.intel.com ([192.55.52.88]:6474 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728295AbgBTRha (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 12:37:30 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2020 09:37:30 -0800
+X-IronPort-AV: E=Sophos;i="5.70,465,1574150400"; 
+   d="scan'208";a="254546045"
+Received: from jbrandeb-desk.jf.intel.com ([10.166.244.152])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2020 09:37:29 -0800
+From:   Jesse Brandeburg <jesse.brandeburg@intel.com>
+To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de
+Cc:     Jesse Brandeburg <jesse.brandeburg@intel.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk,
+        andriy.shevchenko@intel.com, dan.j.williams@intel.com
+Subject: [PATCH v2 1/2] x86: fix bitops.h warning with a moved cast
+Date:   Thu, 20 Feb 2020 09:37:21 -0800
+Message-Id: <20200220173722.2034546-1-jesse.brandeburg@intel.com>
+X-Mailer: git-send-email 2.24.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 4585fbcb5331fc910b7e553ad3efd0dd7b320d14.
+Fix many sparse warnings when building with C=1.
 
-The name changing as devfreq(X) breaks some user space applications,
-such as Android HAL from Unisoc and Hikey [1].
-The device name will be changed unexpectly after every boot depending
-on module init sequence. It will make trouble to setup some system
-configuration like selinux for Android.
+When the kernel is compiled with C=1, there are lots of messages like:
+  arch/x86/include/asm/bitops.h:77:37: warning: cast truncates bits from constant value (ffffff7f becomes 7f)
 
-So we'd like to revert it back to old naming rule before any better
-way being found.
+CONST_MASK() is using a signed integer "1" to create the mask which
+is later cast to (u8) when used. Move the cast to the definition so
+and use local variables so sparse and the compiler can see the
+correct type.
 
-[1] https://lkml.org/lkml/2018/5/8/1042
+Verified with a test module (see next patch) and assembly inspection
+that the patch doesn't introduce any change in generated code.
 
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: Orson Zhai <orson.unisoc@gmail.com>
-
+Signed-off-by: Jesse Brandeburg <jesse.brandeburg@intel.com>
 ---
- drivers/devfreq/devfreq.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+v2: use correct CC: list
+---
+ arch/x86/include/asm/bitops.h | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index cceee8b..7dcf209 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -738,7 +738,6 @@ struct devfreq *devfreq_add_device(struct device *dev,
+diff --git a/arch/x86/include/asm/bitops.h b/arch/x86/include/asm/bitops.h
+index 062cdecb2f24..2922b352b6ed 100644
+--- a/arch/x86/include/asm/bitops.h
++++ b/arch/x86/include/asm/bitops.h
+@@ -46,15 +46,17 @@
+  * a mask operation on a byte.
+  */
+ #define CONST_MASK_ADDR(nr, addr)	WBYTE_ADDR((void *)(addr) + ((nr)>>3))
+-#define CONST_MASK(nr)			(1 << ((nr) & 7))
++#define CONST_MASK(nr)			((u8)1 << ((nr) & 7))
+ 
+ static __always_inline void
+ arch_set_bit(long nr, volatile unsigned long *addr)
  {
- 	struct devfreq *devfreq;
- 	struct devfreq_governor *governor;
--	static atomic_t devfreq_no = ATOMIC_INIT(-1);
- 	int err = 0;
- 
- 	if (!dev || !profile || !governor_name) {
-@@ -800,8 +799,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 	devfreq->suspend_freq = dev_pm_opp_get_suspend_opp_freq(dev);
- 	atomic_set(&devfreq->suspend_count, 0);
- 
--	dev_set_name(&devfreq->dev, "devfreq%d",
--				atomic_inc_return(&devfreq_no));
-+	dev_set_name(&devfreq->dev, "%s", dev_name(dev));
- 	err = device_register(&devfreq->dev);
- 	if (err) {
- 		mutex_unlock(&devfreq->lock);
+ 	if (__builtin_constant_p(nr)) {
++		u8 cmask = CONST_MASK(nr);
++
+ 		asm volatile(LOCK_PREFIX "orb %1,%0"
+ 			: CONST_MASK_ADDR(nr, addr)
+-			: "iq" ((u8)CONST_MASK(nr))
++			: "iq" (cmask)
+ 			: "memory");
+ 	} else {
+ 		asm volatile(LOCK_PREFIX __ASM_SIZE(bts) " %1,%0"
+@@ -72,9 +74,11 @@ static __always_inline void
+ arch_clear_bit(long nr, volatile unsigned long *addr)
+ {
+ 	if (__builtin_constant_p(nr)) {
++		u8 cmaski = ~CONST_MASK(nr);
++
+ 		asm volatile(LOCK_PREFIX "andb %1,%0"
+ 			: CONST_MASK_ADDR(nr, addr)
+-			: "iq" ((u8)~CONST_MASK(nr)));
++			: "iq" (cmaski));
+ 	} else {
+ 		asm volatile(LOCK_PREFIX __ASM_SIZE(btr) " %1,%0"
+ 			: : RLONG_ADDR(addr), "Ir" (nr) : "memory");
 -- 
-2.7.4
+2.24.1
 
