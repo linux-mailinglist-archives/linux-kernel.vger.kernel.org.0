@@ -2,206 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E74C16647A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 18:24:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B98E91664A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 18:26:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728818AbgBTRXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 12:23:53 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54726 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728733AbgBTRXw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 12:23:52 -0500
-Received: by mail-wm1-f68.google.com with SMTP id n3so2881967wmk.4
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 09:23:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thegoodpenguin-co-uk.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=DP+WeV+eCsLNcM+0j7VvT82QxXGphPuPG6yUJrTyu2U=;
-        b=R78Qigu18fQdSDHxyFt+gW5wubpXXtRHLj65ytZxFXLLy3m/Co+0ptUws9rqJFpJTg
-         5+KMf7B15USerdDLnaoM9irKTCXrd4+J95sO5zPCYQiTRs1Gx8H+H+x3G2CiCAvuyJu5
-         /U/9vm5hgp+xuWqrMkrMZg0yyxMQOx5fXOOBCnAmpu0LyPxTUnE7Woy2rl4jTb9Ms9hr
-         BzKxrwajcq3cp0lXRn35Sj3uf/H+DPPJh2HtZNdDHWmp+kfRaedRNapGWL/oRqlgLd9B
-         vgTlVOzYwGfyHr6qIwYaKx8aSkCjt4Qex3WgH9VjUUnUTQGJ47QI/fkm1+Agh9LLL/qK
-         l0SA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=DP+WeV+eCsLNcM+0j7VvT82QxXGphPuPG6yUJrTyu2U=;
-        b=dJ0HZtUN19FwSk5NElRvh4/jCfjkMjS8AEksVfwamwvCxvD3Qz06kXZ2Ga6VtcNkjS
-         JLgubchtCLlUKdN1HDJKq+rrTW+mPhziDu+xu9ZQuMeBo2cKQzwA/DIV2SaBizsi38Sq
-         Sub4de5o5bLB/9oNqrBcErh0i3JHpDWBNoGZdafjijTKrN2SmYubf0hIZV5ZHyZ6wO4T
-         R/lnYuCcONcFExQCANZ/SblqxQ48y+QdJhSjPbt9Ty5CEHliDHDcx2Df6plD49sezBUg
-         y/ioefLs6uyh6AotPMfJjKQARvdjfJ5gFhyC9kIfKNbHVscSoXCtVQbHh4uy/MUARqCT
-         mfBw==
-X-Gm-Message-State: APjAAAW9KxKSKe9cHwVawWzBFqOo31AgDJ3qSzLiy54xcwMRNHn0MWOn
-        hkhBT+OsvCUBpVbNTbMD6LsU3A==
-X-Google-Smtp-Source: APXvYqwoOtD3d5ksvVjxWcwZ0/DxwY7u+cyjGgOanzGPTjCQXXfMerwF375wbaNtGgrElDDsrXncyg==
-X-Received: by 2002:a1c:b789:: with SMTP id h131mr5560317wmf.148.1582219430876;
-        Thu, 20 Feb 2020 09:23:50 -0800 (PST)
-Received: from big-machine ([2a00:23c5:dd80:8400:98d8:49e6:cdcc:25df])
-        by smtp.gmail.com with ESMTPSA id c77sm5261153wmd.12.2020.02.20.09.23.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2020 09:23:50 -0800 (PST)
-Date:   Thu, 20 Feb 2020 17:23:48 +0000
-From:   Andrew Murray <amurray@thegoodpenguin.co.uk>
-To:     Zhiqiang Hou <Zhiqiang.Hou@nxp.com>
-Cc:     linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bhelgaas@google.com, robh+dt@kernel.org, andrew.murray@arm.com,
-        arnd@arndb.de, mark.rutland@arm.com, l.subrahmanya@mobiveil.co.in,
-        shawnguo@kernel.org, m.karthikeyan@mobiveil.co.in,
-        leoyang.li@nxp.com, lorenzo.pieralisi@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com, Mingkai.Hu@nxp.com,
-        Minghuan.Lian@nxp.com, Xiaowei.Bao@nxp.com
-Subject: Re: [PATCHv10 03/13] PCI: mobiveil: Collect the interrupt related
- operations into a function
-Message-ID: <20200220172348.GF19388@big-machine>
-References: <20200213040644.45858-1-Zhiqiang.Hou@nxp.com>
- <20200213040644.45858-4-Zhiqiang.Hou@nxp.com>
+        id S1728894AbgBTRZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 12:25:57 -0500
+Received: from sauhun.de ([88.99.104.3]:35012 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728756AbgBTRZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 12:25:54 -0500
+Received: from localhost (p5486CC48.dip0.t-ipconnect.de [84.134.204.72])
+        by pokefinder.org (Postfix) with ESMTPSA id 40FB52C07FE;
+        Thu, 20 Feb 2020 18:25:50 +0100 (CET)
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-i2c@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org, linux-i3c@lists.infradead.org,
+        Kieran Bingham <kieran@ksquared.org.uk>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 0/7] i2c: of: reserve unknown and ancillary addresses
+Date:   Thu, 20 Feb 2020 18:23:56 +0100
+Message-Id: <20200220172403.26062-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200213040644.45858-4-Zhiqiang.Hou@nxp.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 12:06:34PM +0800, Zhiqiang Hou wrote:
-> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> 
-> Collect the interrupt initialization related operations into
-> a new function such that it is more readable.
-> 
-> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+One outcome of my dynamic address assignment RFC series[1] was that we
+need a way to describe an I2C bus in DT fully. This includes unknown
+devices and devices requiring multiple addresses. This series implements
+that.
 
-Reviewed-by: Andrew Murray <amurray@thegoodpenguin.co.uk>
+Patches 1+2 do some preparational refactoring. After patch 3, we can
+have child nodes with an address, but no compatible. Those addresses
+will be marked busy now. They are handled by the dummy driver as well,
+but named "reserved" instead of dummy. Patches 4+5 are again some
+preparational refactoring. After patch 6, all addresses in a 'reg' array
+are now blocked by the I2C core, also using the dummy driver but named
+"reserved". So, we can have something like this:
 
-> ---
-> V10:
->  - Refined the subject and change log.
-> 
->  drivers/pci/controller/pcie-mobiveil.c | 65 +++++++++++++++++---------
->  1 file changed, 42 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
-> index 01df04ea5b48..9449528bb14f 100644
-> --- a/drivers/pci/controller/pcie-mobiveil.c
-> +++ b/drivers/pci/controller/pcie-mobiveil.c
-> @@ -454,12 +454,6 @@ static int mobiveil_pcie_parse_dt(struct mobiveil_pcie *pcie)
->  		return PTR_ERR(pcie->csr_axi_slave_base);
->  	pcie->pcie_reg_base = res->start;
->  
-> -	/* map MSI config resource */
-> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "apb_csr");
-> -	pcie->apb_csr_base = devm_pci_remap_cfg_resource(dev, res);
-> -	if (IS_ERR(pcie->apb_csr_base))
-> -		return PTR_ERR(pcie->apb_csr_base);
-> -
->  	/* read the number of windows requested */
->  	if (of_property_read_u32(node, "apio-wins", &pcie->apio_wins))
->  		pcie->apio_wins = MAX_PIO_WINDOWS;
-> @@ -467,12 +461,6 @@ static int mobiveil_pcie_parse_dt(struct mobiveil_pcie *pcie)
->  	if (of_property_read_u32(node, "ppio-wins", &pcie->ppio_wins))
->  		pcie->ppio_wins = MAX_PIO_WINDOWS;
->  
-> -	rp->irq = platform_get_irq(pdev, 0);
-> -	if (rp->irq <= 0) {
-> -		dev_err(dev, "failed to map IRQ: %d\n", rp->irq);
-> -		return -ENODEV;
-> -	}
-> -
->  	return 0;
->  }
->  
-> @@ -618,9 +606,6 @@ static int mobiveil_host_init(struct mobiveil_pcie *pcie)
->  	pab_ctrl |= (1 << AMBA_PIO_ENABLE_SHIFT) | (1 << PEX_PIO_ENABLE_SHIFT);
->  	mobiveil_csr_writel(pcie, pab_ctrl, PAB_CTRL);
->  
-> -	mobiveil_csr_writel(pcie, (PAB_INTP_INTX_MASK | PAB_INTP_MSI_MASK),
-> -			    PAB_INTP_AMBA_MISC_ENB);
-> -
->  	/*
->  	 * program PIO Enable Bit to 1 and Config Window Enable Bit to 1 in
->  	 * PAB_AXI_PIO_CTRL Register
-> @@ -670,9 +655,6 @@ static int mobiveil_host_init(struct mobiveil_pcie *pcie)
->  	value |= (PCI_CLASS_BRIDGE_PCI << 16);
->  	mobiveil_csr_writel(pcie, value, PAB_INTP_AXI_PIO_CLASS);
->  
-> -	/* setup MSI hardware registers */
-> -	mobiveil_pcie_enable_msi(pcie);
-> -
->  	return 0;
->  }
->  
-> @@ -873,6 +855,46 @@ static int mobiveil_pcie_init_irq_domain(struct mobiveil_pcie *pcie)
->  	return 0;
->  }
->  
-> +static int mobiveil_pcie_interrupt_init(struct mobiveil_pcie *pcie)
-> +{
-> +	struct platform_device *pdev = pcie->pdev;
-> +	struct device *dev = &pdev->dev;
-> +	struct mobiveil_root_port *rp = &pcie->rp;
-> +	struct resource *res;
-> +	int ret;
-> +
-> +	/* map MSI config resource */
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "apb_csr");
-> +	pcie->apb_csr_base = devm_pci_remap_cfg_resource(dev, res);
-> +	if (IS_ERR(pcie->apb_csr_base))
-> +		return PTR_ERR(pcie->apb_csr_base);
-> +
-> +	/* setup MSI hardware registers */
-> +	mobiveil_pcie_enable_msi(pcie);
-> +
-> +	rp->irq = platform_get_irq(pdev, 0);
-> +	if (rp->irq <= 0) {
-> +		dev_err(dev, "failed to map IRQ: %d\n", rp->irq);
-> +		return -ENODEV;
-> +	}
-> +
-> +	/* initialize the IRQ domains */
-> +	ret = mobiveil_pcie_init_irq_domain(pcie);
-> +	if (ret) {
-> +		dev_err(dev, "Failed creating IRQ Domain\n");
-> +		return ret;
-> +	}
-> +
-> +	irq_set_chained_handler_and_data(rp->irq, mobiveil_pcie_isr, pcie);
-> +
-> +	/* Enable interrupts */
-> +	mobiveil_csr_writel(pcie, (PAB_INTP_INTX_MASK | PAB_INTP_MSI_MASK),
-> +			    PAB_INTP_AMBA_MISC_ENB);
-> +
-> +
-> +	return 0;
-> +}
-> +
->  static int mobiveil_pcie_host_probe(struct mobiveil_pcie *pcie)
->  {
->  	struct mobiveil_root_port *rp = &pcie->rp;
-> @@ -906,15 +928,12 @@ static int mobiveil_pcie_host_probe(struct mobiveil_pcie *pcie)
->  		return ret;
->  	}
->  
-> -	/* initialize the IRQ domains */
-> -	ret = mobiveil_pcie_init_irq_domain(pcie);
-> +	ret = mobiveil_pcie_interrupt_init(pcie);
->  	if (ret) {
-> -		dev_err(dev, "Failed creating IRQ Domain\n");
-> +		dev_err(dev, "Interrupt init failed\n");
->  		return ret;
->  	}
->  
-> -	irq_set_chained_handler_and_data(rp->irq, mobiveil_pcie_isr, pcie);
-> -
->  	/* Initialize bridge */
->  	bridge->dev.parent = dev;
->  	bridge->sysdata = pcie;
-> -- 
-> 2.17.1
-> 
+	dummy@13 {
+	       reg = <0x13>, <0x14>;
+	};
+
+After patch 7 then, i2c_new_ancillary_device is spiced up to look for
+such a reserved address and return it as a good-old "dummy" device.
+Sanity checks include that only a sibling from the same DT node can
+request such an ancillary address. Stealing addresses from other drivers
+is not possible anymore. This is something I envisioned for some time
+now and I am quite happy with the implementation and how things work
+
+There is only one thing giving me some headache now. There is a danger
+of a regression maybe. If someone has multiple 'reg' entries in the DT
+but never used i2c_new_ancillary_device but i2c_new_dummy_device, then
+things will break now because i2c_new_dummy_device has not enough
+information to convert a "reserved" device to a "dummy" one. It will
+just see the address as busy. However, all binding documentations I
+found which use 'reg' as an array correctly use
+i2c_new_ancillary_device. On the other hand, my search strategy for
+finding such bindings and DTs do not feel perfect to me. Maybe there are
+also some more corner cases in this area, so this series is still RFC.
+
+And some more documentation is needed. Before that, though, the generic
+I2C binding docs need some overhaul, too.
+
+All tested on a Renesas Lager board (R-Car H2). A git branch can be
+found here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/i2c_alias_device_v2
+
+The I3C list is on CC not only because there is 1-line change in their
+subsystem, but maybe also because they need to be aware of these changes
+for their I2C fallback? I don't really know, let me know if you are not
+interested.
+
+Looking forward to comments!
+
+Happy hacking,
+
+   Wolfram
+
+[1] https://www.spinics.net/lists/linux-i2c/msg43291.html
+
+
+Wolfram Sang (7):
+  i2c: add sanity check for parameter of i2c_verify_client()
+  i2c: use DEFINE for the dummy driver name
+  i2c: allow DT nodes without 'compatible'
+  i2c: of: remove superfluous parameter from exported function
+  i2c: of: error message unification
+  i2c: of: mark a whole array of regs as reserved
+  i2c: core: hand over reserved devices when requesting ancillary
+    addresses
+
+ .../devicetree/bindings/i2c/i2c-ocores.txt    |  1 -
+ Documentation/devicetree/bindings/i2c/i2c.txt |  4 +-
+ drivers/i2c/i2c-core-base.c                   | 29 +++++--
+ drivers/i2c/i2c-core-of.c                     | 86 +++++++++++--------
+ drivers/i2c/i2c-core.h                        |  3 +
+ drivers/i3c/master.c                          |  2 +-
+ include/linux/i2c.h                           |  6 +-
+ 7 files changed, 83 insertions(+), 48 deletions(-)
+
+-- 
+2.20.1
+
