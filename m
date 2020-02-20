@@ -2,62 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9FC416671B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 20:27:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74464166721
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 20:29:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728901AbgBTT1S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 14:27:18 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:54446 "EHLO mail.skyhub.de"
+        id S1728927AbgBTT3i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 14:29:38 -0500
+Received: from mga01.intel.com ([192.55.52.88]:16662 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728334AbgBTT1R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 14:27:17 -0500
-Received: from zn.tnic (p200300EC2F0ADE00D4B58F3D7A4EE0EA.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:de00:d4b5:8f3d:7a4e:e0ea])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4A8011EC0CFF;
-        Thu, 20 Feb 2020 20:27:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1582226836;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=XgfWKf0Mxmz9+KIb4qScrwbVofOZQQvjCRbAo/W/lJA=;
-        b=Tzt/MsWBzUT9peQW31UzGbDa4/f4K2wK6PxNM+HFy78sYG+avvClK/1CKZLZlZ6WFXsnsu
-        3D0viOqOs2KyV0letSbO/OPpMEw7q+1MAp28QlwNMmPBKT7RchO5W4J+Ph77UQU3P1v9lF
-        Sf3jsFD0BMqdDWiJNrJ9RDIv38q+3W0=
-Date:   Thu, 20 Feb 2020 20:27:10 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH 0/2] objtool: clang-related fixes
-Message-ID: <20200220192709.GF30188@zn.tnic>
-References: <cover.1581997059.git.jpoimboe@redhat.com>
- <CAKwvOdnOrezCVzRSFfrXxXXgfPCNxeyi8=2-k9Fz=Y4xAe8fAw@mail.gmail.com>
+        id S1728248AbgBTT3h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 14:29:37 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2020 11:29:37 -0800
+X-IronPort-AV: E=Sophos;i="5.70,465,1574150400"; 
+   d="scan'208";a="228993647"
+Received: from ykim6-mobl1.amr.corp.intel.com (HELO arch-ashland-svkelley.intel.com) ([10.254.188.97])
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 20 Feb 2020 11:29:36 -0800
+From:   Sean V Kelley <sean.v.kelley@linux.intel.com>
+To:     tglx@linutronix.de, bhelgaas@google.com, corbet@lwn.net,
+        mingo@redhat.com, bp@alien8.de
+Cc:     x86@kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kar.hin.ong@ni.com, sassmann@kpanic.de,
+        Sean V Kelley <sean.v.kelley@linux.intel.com>
+Subject: [PATCH v2 0/2] pci: Add boot interrupt quirk mechanism for Xeon chipsets
+Date:   Thu, 20 Feb 2020 11:29:28 -0800
+Message-Id: <20200220192930.64820-1-sean.v.kelley@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAKwvOdnOrezCVzRSFfrXxXXgfPCNxeyi8=2-k9Fz=Y4xAe8fAw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 11:06:30AM -0800, Nick Desaulniers wrote:
-> Hello, can one of the x86 maintainers please pick up this series? Our
-> CI has been red *for days* now without it.
+Changes since v1 [1]:
 
-I'll queue them tomorrow.
+- Correct Documentation section title for 6300ESB chipset.
+(Jonathan Derrick)
 
-Thx.
+- Use consistent abbreviations in comments for IO-APIC and Core IO.
+(Andy Shevchenko)
 
--- 
-Regards/Gruss,
-    Boris.
+- Retained Reviewed-by tag due to no technical changes.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+[1]: https://lore.kernel.org/lkml/20200214213313.66622-1-sean.v.kelley@linux.intel.com/
+
+Bjorn, I'm open for it to go to stable as well.
+
+--
+
+When IRQ lines on secondary or higher IO-APICs are masked (e.g.,
+Real-Time threaded interrupts), many chipsets redirect IRQs on
+this line to the legacy PCH and in turn the base IO-APIC in the
+system. The unhandled interrupts on the base IO-APIC will be
+identified by the Linux kernel as Spurious Interrupts and can
+lead to disabled IRQ lines.
+
+Disabling this legacy PCI interrupt routing is chipset-specific and
+varies in mechanism between chipset vendors and across generations.
+In some cases the mechanism is exposed to BIOS but not all BIOS
+vendors chose to pick it up. With the increasing usage of RT as it
+marches towards mainline, additional issues have been raised with
+more recent Xeon chipsets.
+
+This patchset disables the boot interrupt on these Xeon chipsets where
+this is possible with an additional mechanism. In addition, this
+patchset includes documentation covering the background of this quirk.
+
+
+Sean V Kelley (2):
+  pci: Add boot interrupt quirk mechanism for Xeon chipsets
+  Documentation:PCI: Add background on Boot Interrupts
+
+ Documentation/PCI/boot-interrupts.rst | 153 ++++++++++++++++++++++++++
+ Documentation/PCI/index.rst           |   1 +
+ drivers/pci/quirks.c                  |  80 ++++++++++++--
+ 3 files changed, 227 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/PCI/boot-interrupts.rst
+
+--
+2.25.1
+
