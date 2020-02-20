@@ -2,105 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1551F16572C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 06:48:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1125E16572E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 06:49:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726494AbgBTFss (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 00:48:48 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:39978 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726149AbgBTFss (ORCPT
+        id S1726735AbgBTFtY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 00:49:24 -0500
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:43555 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725857AbgBTFtY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 00:48:48 -0500
-Received: by mail-ot1-f67.google.com with SMTP id i6so2569432otr.7
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 21:48:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=b0F6mdIbbyqJ8pmrP/z43Dyul8vyOpgKKbRJlBxceSI=;
-        b=Dj/PTuGcX5bvKKNndi7kNoL5fDDrnj8sA5ecSWCgXS5spldvi9f+HfbQiZk1BZ4Q27
-         BqVHTzq3Jf/QSqAp8/o6T1qrNhMFBsPsukftmAY6VAtLwds2AtYb1zdRi6JHsHzMHyPP
-         pUeCmkvyJt0aPlrTsOCCPfW0xGxsF4RZiM+L5AoVWG7xz6Ool8zSOAEy72MrFFrFIr8J
-         /9s8GKi1Vt8QkHBdpOr3i0EPmG2GCBqdRJDwC0d/9CboaJyQi3o230tDWy1i3vTVABT7
-         gZBTcuyBl/po1AuNmHZazbR6K82R+/fFvOvgzIIUHoJyr4xEwtTxTQAY2J2XDOKzxFfx
-         qP+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=b0F6mdIbbyqJ8pmrP/z43Dyul8vyOpgKKbRJlBxceSI=;
-        b=p8LSftx0UgVk3wTpc6Xv2DWiPaWQEAiChWv6n1A5CIG5GFcZkXzkWW+KNdLGjcpSGh
-         SwUh8Lij2Ld62osc3bcvI5lL0lnVD8J0XSnJ1H8KAcalLgbJihJ6UfL8mbBBeYMPfRuD
-         aDOt65y7IFyrwYUpPVbsRtwlA55IkZdXeLRzdatpFqkO7E5Rmz4ckwdJ9ialS9tVww/c
-         KxFSc24RpqXc6AIV4Ds6FV52alvtrHs3AtseDNbHs8LeHGsj7FiZyo6gNsO8bGWbjyou
-         0ccF1QbwIp8zYafDAVyEQO98l/x1qLpR2XUiUEspuEUTTx05zngLBbmPZX0ymRKBgpxM
-         rf4A==
-X-Gm-Message-State: APjAAAVGCxwuctzIpF5VbHAoKZigPgAXRNKEmwi4apAMS5cF0MX9HzLe
-        FFtkji9LAX45MvxotOZ8IictrY2RA91o8xau2QT5Hg==
-X-Google-Smtp-Source: APXvYqzKncDhV3hzHRxI4jFA2zFrFbfgTQzje+xro87W+aJ9SnJ1h1RBfXJLiqq06+0n0Lm5UwlHJjEcfTJS0vOnrPs=
-X-Received: by 2002:a9d:7d93:: with SMTP id j19mr23329830otn.102.1582177725955;
- Wed, 19 Feb 2020 21:48:45 -0800 (PST)
+        Thu, 20 Feb 2020 00:49:24 -0500
+X-Originating-IP: 79.86.19.127
+Received: from [192.168.0.12] (127.19.86.79.rev.sfr.net [79.86.19.127])
+        (Authenticated sender: alex@ghiti.fr)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 7561A20006;
+        Thu, 20 Feb 2020 05:49:21 +0000 (UTC)
+Subject: Re: [PATCH v2 3/3] riscv: Fix crash when flushing executable ioremap
+ regions
+From:   Alex Ghiti <alex@ghiti.fr>
+To:     Jan Kiszka <jan.kiszka@web.de>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-riscv@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org
+References: <cover.1581767384.git.jan.kiszka@web.de>
+ <8a555b0b0934f0ba134de92f6cf9db8b1744316c.1581767384.git.jan.kiszka@web.de>
+ <e721c440-2baf-d962-62ef-41a4f3b1333b@ghiti.fr>
+ <b63e5945-0e31-940f-5ff7-6754ef5c034f@web.de>
+ <441527ef-1fd4-ed98-8381-8902c4e05fc5@ghiti.fr>
+Message-ID: <74bd5c0c-cdeb-5498-2948-35f40600a8bc@ghiti.fr>
+Date:   Thu, 20 Feb 2020 00:49:20 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-References: <1582147978-31475-1-git-send-email-jcrouse@codeaurora.org>
-In-Reply-To: <1582147978-31475-1-git-send-email-jcrouse@codeaurora.org>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Wed, 19 Feb 2020 21:48:34 -0800
-Message-ID: <CALAqxLUzCN=xuF1Kx0Op_E0zMXK7PbHqynPu6TDozTMRrAuxkw@mail.gmail.com>
-Subject: Re: [PATCH v1 0/4] msm/gpu/a6xx: use the DMA-API for GMU memory allocations
-To:     Jordan Crouse <jcrouse@codeaurora.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Stephen Boyd <swboyd@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Sharat Masetty <smasetty@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Rob Clark <robdclark@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Andy Gross <agross@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        freedreno@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <441527ef-1fd4-ed98-8381-8902c4e05fc5@ghiti.fr>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 1:33 PM Jordan Crouse <jcrouse@codeaurora.org> wrote:
->
-> When CONFIG_INIT_ON_ALLOC_DEFAULT_ON the GMU memory allocator runs afoul of
-> cache coherency issues because it is mapped as write-combine without clearing
-> the cache after it was zeroed.
->
-> Rather than duplicate the hacky workaround we use in the GEM allocator for the
-> same reason it turns out that we don't need to have a bespoke memory allocator
-> for the GMU anyway. It uses a flat, global address space and there are only
-> two relatively minor allocations anyway. In short, this is essentially what the
-> DMA API was created for so replace a bunch of memory management code with two
-> calls to allocate and free DMA memory and we're fine.
->
-> The only wrinkle is that the memory allocations need to be in a very specific
-> location in the GMU virtual address space so in order to get the iova allocator
-> to do the right thing we need to specify the dma-ranges property in the device
-> tree for the GMU node. Since we've not yet converted the GMU bindings over to
-> YAML two patches quickly turn into four but at the end of it we have at least
-> one bindings file converted to YAML and 99 less lines of code to worry about.
->
-> Jordan Crouse (4):
->   dt-bindings: display: msm: Convert GMU bindings to YAML
->   dt-bindings: display: msm: Add required dma-range property
->   arm64: dts: sdm845: Set the virtual address range for GMU allocations
->   drm/msm/a6xx: Use the DMA API for GMU memory objects
+Hi Jan,
 
-Awesome! Thanks so much for the quick turnaround on this! This set
-resolves the crashes I was seeing with
-CONFIG_INIT_ON_ALLOC_DEFAULT_ON.
+On 2/16/20 2:56 PM, Alex Ghiti wrote:
+> On 2/16/20 11:05 AM, Jan Kiszka wrote:
+>> On 16.02.20 15:41, Alex Ghiti wrote:
+>>> Hi Jan,
+>>>
+>>> On 2/15/20 6:49 AM, Jan Kiszka wrote:
+>>>> From: Jan Kiszka <jan.kiszka@siemens.com>
+>>>>
+>>>> Those are not backed by page structs, and pte_page is returning an
+>>>> invalid pointer.
+>>>>
+>>>> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+>>>> =2D--
+>>>>   arch/riscv/mm/cacheflush.c | 3 ++-
+>>>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/arch/riscv/mm/cacheflush.c b/arch/riscv/mm/cacheflush.c
+>>>> index 8930ab7278e6..9ee2c1a387cc 100644
+>>>> =2D-- a/arch/riscv/mm/cacheflush.c
+>>>> +++ b/arch/riscv/mm/cacheflush.c
+>>>> @@ -84,7 +84,8 @@ void flush_icache_pte(pte_t pte)
+>>>>   {
+>>>>       struct page *page =3D pte_page(pte);
+>>>>
+>>>> -    if (!test_and_set_bit(PG_dcache_clean, &page->flags))
+>>>> +    if (!pfn_valid(pte_pfn(pte)) ||
+>>>> +        !test_and_set_bit(PG_dcache_clean, &page->flags))
+>>>>           flush_icache_all();
+>>>>   }
+>>>>   #endif /* CONFIG_MMU */
+>>>> =2D-
+>>>> 2.16.4
+>>>>
+>>>>
+>>>
+>>> When did you encounter such a situation ? i.e. executable code that is
+>>> not backed by struct page ?
+>>>
+>>> Riscv uses the generic implementation of ioremap and the way
+>>> _PAGE_IOREMAP is defined does not allow to map executable memory region
+>>> using ioremap, so I'm interested to understand how we end up in
+>>> flush_icache_pte for an executable region not backed by any struct page.
+>>
+>> You can create executable mappings of memory that Linux does not
+>> initially consider as RAM via ioremap_prot or ioremap_page_range. We are
+>> using that in Jailhouse to load the hypervisor code into reserved memory
+>> that is ioremapped for the purpose. Works fine on x86, arm and arm64.
+>>
+>> Jan
+> 
+> Ok thanks, I had missed this API.
+> 
+> Regarding your patch, I find it weird to do anything if the pfn is 
+> invalid, we could have garbage in pte pointing to an invalid region for 
+> example (I admit that the effect of flushing the icache would not be 
+> catastrophic in that situation).
+> 
+> I'm not saying I will come with a better solution but I'll take a deeper 
+> look tomorrow.
+> 
+> Alex
+> 
 
-Tested-by: John Stultz <john.stultz@linaro.org>
+I took a look at the Jailhouse driver. After loading the hypervisor into 
+the ioremapped region, it explicitly ensures icache/dcache consistency 
+by calling flush_icache_range here:
 
-thanks again!
--john
+https://github.com/siemens/jailhouse/blob/master/driver/main.c#L505
+
+There seems to be an implicit (?) rule that states that in-kernel code 
+modification must handle icache/dcache consistency:
+
+In arm64 set_pte_at definition, they do not sync icache/dcache when the 
+pte is kernel:
+
+https://elixir.bootlin.com/linux/latest/source/arch/arm64/include/asm/pgtable.h#L271
+
+In mips, they do the same:
+
+https://elixir.bootlin.com/linux/latest/source/arch/mips/mm/cache.c#L137
+
+So funnily, I'd do the contrary of what you have done, the mips way:
+
+diff --git a/arch/riscv/mm/cacheflush.c b/arch/riscv/mm/cacheflush.c
+index 8930ab7278e6..c90c8bb49109 100644
+--- a/arch/riscv/mm/cacheflush.c
++++ b/arch/riscv/mm/cacheflush.c
+@@ -84,6 +84,9 @@ void flush_icache_pte(pte_t pte)
+  {
+         struct page *page = pte_page(pte);
+
++       if (unlikely(!pfn_valid(pte_pfn(pte))))
++               return;
++
+         if (!test_and_set_bit(PG_dcache_clean, &page->flags))
+                 flush_icache_all();
+  }
+
+What do you think ?
+
+Alex
