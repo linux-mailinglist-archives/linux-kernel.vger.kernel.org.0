@@ -2,96 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C5E7165F5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 14:58:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32288165F52
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 14:57:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728286AbgBTN6s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 08:58:48 -0500
-Received: from sender3-op-o12.zoho.com.cn ([124.251.121.243]:17856 "EHLO
-        sender3-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727943AbgBTN6r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 08:58:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1582207017;
-        s=mail; d=flygoat.com; i=jiaxun.yang@flygoat.com;
-        h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=7yL9Udn53NkbbgUNkqIPdZQE2bNWaYqwiXCqgYxMS5Y=;
-        b=NNkK0BjfSIAsfOgAsMzTkc55olp44bNnAHJOPTOovKNX/ufBvPqYla7q3fYpkKSG
-        3BnepCcG8wGsfC3D4rIF9/DyZN//NIrL8K+M5GhB61KA7ZhYJky5aMdq/cTQdBxSr/7
-        I2bMmzxm/KpElJgRlcQUYZ2+xr3zTuWx0tgTMdSE=
-Received: from mail.baihui.com by mx.zoho.com.cn
-        with SMTP id 158220701284843.8168629100137; Thu, 20 Feb 2020 21:56:52 +0800 (CST)
-Date:   Thu, 20 Feb 2020 21:56:52 +0800
-From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     "PrasannaKumar Muralidharan" <prasannatsmkumar@gmail.com>,
-        "Paul Cercueil" <paul@crapouillou.net>,
-        "Mathieu Malaterre" <malat@debian.org>,
-        "Srinivas Kandagatla" <srinivas.kandagatla@linaro.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-mips" <linux-mips@vger.kernel.org>,
-        "Discussions about the Letux Kernel" <letux-kernel@openphoenux.org>
-Message-ID: <17062e30fec.12ef478cf6311.3456058528169872039@flygoat.com>
-In-Reply-To: <CFE9AEF5-FFF9-44A9-90D8-DE6AC7E7DD4F@goldelico.com>
-References: <cover.1581958529.git.hns@goldelico.com> <86b78db4d607e0bdda6def018bc7f73207ce82e8.1581958529.git.hns@goldelico.com> <20200218212609.GA30081@bogus> <CFE9AEF5-FFF9-44A9-90D8-DE6AC7E7DD4F@goldelico.com>
-Subject: Re: [RFC v4 2/6] Bindings: nvmem: add bindings for JZ4780 efuse
+        id S1728295AbgBTN5P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 08:57:15 -0500
+Received: from mx.treblig.org ([46.43.15.161]:58356 "EHLO mx.treblig.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727943AbgBTN5P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 08:57:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+        ; s=bytemarkmx; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID
+        :Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID
+        :Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:
+        Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe
+        :List-Post:List-Owner:List-Archive;
+        bh=trUk9QAGVy5As5jSzYabMW2A4UtLFgQM2O2KVgrb3Uk=; b=lbzZua+lp4FneaeF9HxEZAiZ8n
+        txrzLS1g5swfhpFMClAwzbtSIRCHSeM6M5LaXiRzYn+1eJRDaESRRwrDK8pMhE9JENZVKfByUYRoJ
+        kA5MHJGE+GaUXoYAMGLSdtt+h8pYVj2VMehH78Mi33dGqS+CXpMyUfjDCaq5fueURPZy4KhkTmyF1
+        HwX/r1B7HAqBGL7Fj4Moa+W44BY0/5Py48sZ50hVRnzvVFctIZCA8ZnFeRMA+wk9jZ6K3hglfEnVW
+        zZXS2lsex+R9BQskT+pk7qYxuiN1ILpFhKjp/XAzs9uzTajHas2ga1zNKNn8oPeDS8/VI4QAq+azM
+        qpq9plMA==;
+Received: from dg by mx.treblig.org with local (Exim 4.92)
+        (envelope-from <dg@treblig.org>)
+        id 1j4mKD-0006Wb-Kt; Thu, 20 Feb 2020 13:57:09 +0000
+Date:   Thu, 20 Feb 2020 13:57:09 +0000
+From:   "Dr. David Alan Gilbert" <linux@treblig.org>
+To:     Meelis Roos <mroos@linux.ee>, linux@roeck-us.net
+Cc:     linux-hwmon@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Chen Zhou <chenzhou10@huawei.com>
+Subject: Re: w83627ehf crash in 5.6.0-rc2-00055-gca7e1fd1026c
+Message-ID: <20200220135709.GB18071@gallifrey>
+References: <434212bb-4eb9-7366-3255-79826d0e65bc@linux.ee>
+ <20200220121451.GA18071@gallifrey>
+ <6050ed14-f7a6-cb99-7268-072129226d48@linux.ee>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Priority: Medium
-User-Agent: ZohoCN Mail
-X-Mailer: ZohoCN Mail
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6050ed14-f7a6-cb99-7268-072129226d48@linux.ee>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/4.19.0-5-amd64 (x86_64)
+X-Uptime: 13:55:25 up 172 days, 14:15,  1 user,  load average: 0.00, 0.00,
+ 0.00
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+* Meelis Roos (mroos@linux.ee) wrote:
+> > It looks like not all chips have temp_label, so I think we need to change w83627ehf_is_visible
+> > which has:
+> > 
+> >                  if (attr == hwmon_temp_input || attr == hwmon_temp_label)
+> >                          return 0444;
+> > 
+> > to
+> >                  if (attr == hwmon_temp_input)
+> >                          return 0444;
+> >                  if (attr == hwmon_temp_label) {
+> >                          if (data->temp_label)
+> > 				return 0444;
+> > 			else
+> > 				return 0;
+> >                  }
+> > 
+> > Does that work for you?
+> Yes, it works - sensors are displayed as they should be, with nothing in dmesg.
+> 
+> Thank you for so quick response!
 
+Great, I need to turn that into a proper patch; (I might need to wait till
+Saturday for that, although if someone needs it before then please shout).
 
---
-Jiaxun Yang
+Dave
 
- ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=B8=89, 2020-02-19 13:48:56 H. Nikolau=
-s Schaller <hns@goldelico.com> =E6=92=B0=E5=86=99 ----
- >=20
- > > Am 18.02.2020 um 22:26 schrieb Rob Herring <robh@kernel.org>:
- > >=20
- > > On Mon, Feb 17, 2020 at 05:55:26PM +0100, H. Nikolaus Schaller wrote:
- > >> From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
- > >>=20
- > >> This patch brings support for the JZ4780 efuse. Currently it only exp=
-ose
- > >> a read only access to the entire 8K bits efuse memory.
- > >>=20
- > >> Tested-by: Mathieu Malaterre <malat@debian.org>
- > >> Signed-off-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com=
->
- > >> Signed-off-by: Mathieu Malaterre <malat@debian.org>
- > >> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
- > >> ---
- > >> .../bindings/nvmem/ingenic,jz4780-efuse.txt     | 17 ++++++++++++++++=
-+
- > >> 1 file changed, 17 insertions(+)
- > >> create mode 100644 Documentation/devicetree/bindings/nvmem/ingenic,jz=
-4780-efuse.txt
- > >=20
- > > Please convert to a DT schema.
- >=20
- > Is there someone of you who can help to do that?
- >=20
- > DT schemas are still like a Chinese dialect for me (i.e. I can decipher =
-with help but neither speak nor write).
-
-I just had a try.
-
-https://paste.ubuntu.com/p/xgDdmwnGsz/
-
-Not sure if it's correct.
-
-Thanks.
-
- --
-Jiaxun Yang
-
+> 
+> -- 
+> Meelis Roos <mroos@linux.ee>
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
