@@ -2,104 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A89A16539D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 01:31:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F214E1653A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 01:36:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727161AbgBTAb4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 19:31:56 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35502 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727046AbgBTAb4 (ORCPT
+        id S1727187AbgBTAgh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 19:36:37 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34296 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726736AbgBTAgh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 19:31:56 -0500
-Received: by mail-pg1-f194.google.com with SMTP id v23so986514pgk.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 16:31:55 -0800 (PST)
+        Wed, 19 Feb 2020 19:36:37 -0500
+Received: by mail-pg1-f196.google.com with SMTP id j4so995201pgi.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 16:36:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=nh/PXJt5LIK6knlDEBV+szof//jRNZ6d+fFEe23/31U=;
-        b=x6gNshASw2xBuVQruMd2+i0AlOaA3fYhjwWuGLZwAM7FObTbKD0cIU7WwozKq5LG9N
-         QKe9K0IhRl08tPACnnQqAKOjsAP0EKLwMIAAeFNX2Hqyfvw7ZwVtdqkytJgJfm05KkkU
-         vr+c3vvs34c/xw+v9D5qMrCQTjnyAFfRmsWviBm5E/xCjJm0Jvl8XsAwc1dricxMw+Lh
-         upktjdIBtqcUH1E7t80m8dTkzVHqMqBoiQ3tgZ8lvNovnpIuzSMNmUo1maXZzESmZFxB
-         5npZjsYrYatMHb+gEJLgHK9gx5nHlf9LGlzzGapKcmhf8UMyBdHYl7cBOl1diX66k54k
-         K6gA==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DHH6Cxa30NDrImHrLr3z5k1RDXrDB96aHEdjNpf39yY=;
+        b=EeQQVTCXUnySDxGyHZNJe2fiADhSnLgaxqxoasZKZkkX94JvxBVzSG9usWYcBgU7Uw
+         fUb+rqhwp4lIPzT63pxxLrb2Uc5nwtuoTUxPsrcPCBI0EwOu/XVR1dk2Pqn7dc9aWIe6
+         aaSyPo4tJm01XDFeCH0kEl+Uqt6M92FNelWsU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=nh/PXJt5LIK6knlDEBV+szof//jRNZ6d+fFEe23/31U=;
-        b=IO+zmcxzrX9LhpTxBbhdRMCbN4rM0rZuurM05lq8niCoP7ONYZglz7yLAx2O/QSwdG
-         mSBaYyJEzsqiagPO5E/IjqjDMH13cuYfG0pmkHqLHEBr5HO9MqAyG+AzSpb81wYhwUQ9
-         ZM86j6XzvrYdltgHQNRVnRhl/m5g3NE23fVpiicdj9IRGnQsUohyFhtGKMIouZNoA2mz
-         onWFNL3LTarIJc6z2voXdMnJLPKyTyKqi7tQMv02MM8KiVbdhisfCBu1u+mmli5qiKs7
-         UWLFDTeT5ZPEbo8G7ESTbAHCHxAVSq/XSnR4Hvg57HEvB1eGeR5xQ//K+XUBIg0GzcmF
-         i3Dw==
-X-Gm-Message-State: APjAAAUN5PjhQ0p7DlbGPjfFnp6qayTEPxHmeE9Z6oJ/cJJBvlUPmmop
-        o+8+thl5u+WQmsVqCN52RPaGVA==
-X-Google-Smtp-Source: APXvYqxoGLXHiH+nbn5V/5/GaH/0ND+3nZ09GJR+kv3Z8JEcxf2VsZSpJjwFzPRRtnBZkQZ+r9FL6w==
-X-Received: by 2002:a63:7417:: with SMTP id p23mr29631359pgc.277.1582158715148;
-        Wed, 19 Feb 2020 16:31:55 -0800 (PST)
-Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id t186sm866470pgd.26.2020.02.19.16.31.53
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DHH6Cxa30NDrImHrLr3z5k1RDXrDB96aHEdjNpf39yY=;
+        b=ajQzgw7ufZWAJ1HfZ8Qzv+khE60dccgsCQxuJYttsP6aF9AYE4LrkCQt0Hi+T1cbCh
+         mZGRSUq94Z+uNuRvp9pBfq+Qn92C1DOZUAmuzSc2yQt9mZ8KTpwlkD1lExmjttwxzLpz
+         i0WlnAeF8/E6HkH/1ghzg4ua5YItTld4gKFMFz5X/TmLhVZ8g8qycAY2SQHY1os+kxjI
+         2n8Mzs0dQv65hn0V513h1V6+BM/Ky8QEWRYbzROol7ozd6fDDtxau9gV0WN6x0Tt1iid
+         yO3McoXA5YwEhuXDY1mcUhqfBTITpM/ZyGRbO1SXMqmU1kXxlKoGlFM2G8obVVU2HyZu
+         b9Hg==
+X-Gm-Message-State: APjAAAWDSlM8uVXEDucx7uQKe7NNI9h1XgNR7iMb5//xWIQGUhxxyYK3
+        FLnowav6jU3C6q660wGsyZ+myWDj4hc=
+X-Google-Smtp-Source: APXvYqzfcskQAyzM9AYEC6o0vJ7n46W6+Nu86B95+RjYp7QUNvfXpkFoBvazutkUcczUJhl1GttPbw==
+X-Received: by 2002:aa7:9562:: with SMTP id x2mr29388803pfq.147.1582158996546;
+        Wed, 19 Feb 2020 16:36:36 -0800 (PST)
+Received: from pmalani2.mtv.corp.google.com ([2620:15c:202:201:172e:4646:c089:ce59])
+        by smtp.gmail.com with ESMTPSA id g24sm788773pfk.92.2020.02.19.16.36.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 16:31:54 -0800 (PST)
-Date:   Wed, 19 Feb 2020 16:31:52 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Subject: Re: [PATCH] watchdog: qcom: Use irq flags from firmware
-Message-ID: <20200220003152.GC99370@yoga>
-References: <20200220002047.115000-1-swboyd@chromium.org>
+        Wed, 19 Feb 2020 16:36:35 -0800 (PST)
+From:   Prashant Malani <pmalani@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     heikki.krogerus@intel.com, enric.balletbo@collabora.com,
+        bleung@chromium.org, Prashant Malani <pmalani@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>
+Subject: [PATCH v3 3/4] platform/chrome: typec: Get PD_CONTROL cmd version
+Date:   Wed, 19 Feb 2020 16:36:30 -0800
+Message-Id: <20200220003631.206078-1-pmalani@chromium.org>
+X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200220002047.115000-1-swboyd@chromium.org>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 19 Feb 16:20 PST 2020, Stephen Boyd wrote:
+Query the EC to determine the version number of the PD_CONTROL
+command which is supported by the EC. Also store this value in the Type
+C data struct since it will be used to determine how to parse the
+response to queries for port information from the EC.
 
-> The DT or ACPI tables should tell the driver what the irq flags are.
-> Given that this driver probes only on DT based platforms and those DT
-> platforms specify the irq flags we can safely drop the forced irq flag
-> setting here.
-> 
-> Cc: Andy Gross <agross@kernel.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Signed-off-by: Prashant Malani <pmalani@chromium.org>
+---
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Changes in v3:
+- Moved if statement check in the end of probe() from this patch to a
+  previous patch.
 
-Regards,
-Bjorn
+Changes in v2:
+- No changes.
 
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->  drivers/watchdog/qcom-wdt.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/watchdog/qcom-wdt.c b/drivers/watchdog/qcom-wdt.c
-> index eb47fe5ed280..c70e89013101 100644
-> --- a/drivers/watchdog/qcom-wdt.c
-> +++ b/drivers/watchdog/qcom-wdt.c
-> @@ -248,8 +248,7 @@ static int qcom_wdt_probe(struct platform_device *pdev)
->  	/* check if there is pretimeout support */
->  	irq = platform_get_irq_optional(pdev, 0);
->  	if (irq > 0) {
-> -		ret = devm_request_irq(dev, irq, qcom_wdt_isr,
-> -				       IRQF_TRIGGER_RISING,
-> +		ret = devm_request_irq(dev, irq, qcom_wdt_isr, 0,
->  				       "wdt_bark", &wdt->wdd);
->  		if (ret)
->  			return ret;
-> -- 
-> Sent by a computer, using git, on the internet
-> 
+ drivers/platform/chrome/cros_ec_typec.c | 32 +++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+
+diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/chrome/cros_ec_typec.c
+index 6cac41f246b99f..5e025c3442bed1 100644
+--- a/drivers/platform/chrome/cros_ec_typec.c
++++ b/drivers/platform/chrome/cros_ec_typec.c
+@@ -21,6 +21,7 @@ struct cros_typec_data {
+ 	struct device *dev;
+ 	struct cros_ec_device *ec;
+ 	int num_ports;
++	unsigned int cmd_ver;
+ 	/* Array of ports, indexed by port number. */
+ 	struct typec_port *ports[EC_USB_PD_MAX_PORTS];
+ };
+@@ -154,6 +155,31 @@ static int cros_typec_ec_command(struct cros_typec_data *typec,
+ 	return ret;
+ }
+ 
++static int cros_typec_get_cmd_version(struct cros_typec_data *typec)
++{
++	struct ec_params_get_cmd_versions_v1 req_v1;
++	struct ec_response_get_cmd_versions resp;
++	int ret;
++
++	/* We're interested in the PD control command version. */
++	req_v1.cmd = EC_CMD_USB_PD_CONTROL;
++	ret = cros_typec_ec_command(typec, 1, EC_CMD_GET_CMD_VERSIONS,
++				    &req_v1, sizeof(req_v1), &resp,
++				    sizeof(resp));
++	if (ret < 0)
++		return ret;
++
++	if (resp.version_mask & EC_VER_MASK(1))
++		typec->cmd_ver = 1;
++	else
++		typec->cmd_ver = 0;
++
++	dev_dbg(typec->dev, "PD Control has version mask 0x%hhx\n",
++		typec->cmd_ver);
++
++	return 0;
++}
++
+ #ifdef CONFIG_ACPI
+ static const struct acpi_device_id cros_typec_acpi_id[] = {
+ 	{ "GOOG0014", 0 },
+@@ -185,6 +211,12 @@ static int cros_typec_probe(struct platform_device *pdev)
+ 	typec->ec = dev_get_drvdata(pdev->dev.parent);
+ 	platform_set_drvdata(pdev, typec);
+ 
++	ret = cros_typec_get_cmd_version(typec);
++	if (ret < 0) {
++		dev_err(dev, "failed to get PD command version info\n");
++		return ret;
++	}
++
+ 	ret = cros_typec_ec_command(typec, 0, EC_CMD_USB_PD_PORTS, NULL, 0,
+ 				    &resp, sizeof(resp));
+ 	if (ret < 0)
+-- 
+2.25.0.265.gbab2e86ba0-goog
+
