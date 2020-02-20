@@ -2,88 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7DC01659AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 09:56:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C07401659FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 10:18:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbgBTI4M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 03:56:12 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:59032 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726759AbgBTI4M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 03:56:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582188970;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=AHNF0+BtSxUWfLlE/zC/mUonO4VvK5YNXg2/wPJef2I=;
-        b=LH7AWsRwnKyQOG8JEWlJttd/LhBFh9z9iqCWh/dHnGl3Su5umMeNqZcdLvdII96a+APz4I
-        xifOlKqJOw6w8C0cluj16a2/Q1Pec9J/E2zKV9DdD+LbNnE4VaYakMDNSlTceerB2zMtaV
-        F34/9Xbw3zvrOz5SHkJ20InwsJ3q09I=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-320-g8c2rMgZOQOSCSUVJyMXxw-1; Thu, 20 Feb 2020 03:56:07 -0500
-X-MC-Unique: g8c2rMgZOQOSCSUVJyMXxw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 46D868010F6;
-        Thu, 20 Feb 2020 08:56:05 +0000 (UTC)
-Received: from localhost (ovpn-12-32.pek2.redhat.com [10.72.12.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E8069790D6;
-        Thu, 20 Feb 2020 08:56:01 +0000 (UTC)
-Date:   Thu, 20 Feb 2020 16:55:59 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Wei Yang <richardw.yang@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, david@redhat.com, osalvador@suse.de,
-        dan.j.williams@intel.com, mhocko@suse.com, rppt@linux.ibm.com,
-        robin.murphy@arm.com
-Subject: Re: [PATCH v2 6/7] mm/sparse.c: move subsection_map related codes
- together
-Message-ID: <20200220085559.GE4937@MiWiFi-R3L-srv>
-References: <20200220043316.19668-1-bhe@redhat.com>
- <20200220043316.19668-7-bhe@redhat.com>
- <20200220061832.GE32521@richard>
- <20200220070420.GD4937@MiWiFi-R3L-srv>
- <20200220071233.GA592@richard>
+        id S1727036AbgBTJSi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 04:18:38 -0500
+Received: from mx21.baidu.com ([220.181.3.85]:44128 "EHLO baidu.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726759AbgBTJSi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 04:18:38 -0500
+X-Greylist: delayed 1857 seconds by postgrey-1.27 at vger.kernel.org; Thu, 20 Feb 2020 04:18:34 EST
+Received: from BJHW-Mail-Ex14.internal.baidu.com (unknown [10.127.64.37])
+        by Forcepoint Email with ESMTPS id 6299E3CC4DF0E1EDB5B5;
+        Thu, 20 Feb 2020 16:31:33 +0800 (CST)
+Received: from BJHW-Mail-Ex13.internal.baidu.com (10.127.64.36) by
+ BJHW-Mail-Ex14.internal.baidu.com (10.127.64.37) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1713.5; Thu, 20 Feb 2020 16:31:32 +0800
+Received: from BJHW-Mail-Ex13.internal.baidu.com ([100.100.100.36]) by
+ BJHW-Mail-Ex13.internal.baidu.com ([100.100.100.36]) with mapi id
+ 15.01.1713.004; Thu, 20 Feb 2020 16:31:32 +0800
+From:   "Li,Rongqing" <lirongqing@baidu.com>
+To:     linmiaohe <linmiaohe@huawei.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>
+CC:     Liran Alon <liran.alon@oracle.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: =?gb2312?B?tPC4tDogW1BBVENIXVtyZXNlbmRdIEtWTTogZml4IGVycm9yIGhhbmRsaW5n?=
+ =?gb2312?B?IGluIHN2bV9jcHVfaW5pdA==?=
+Thread-Topic: [PATCH][resend] KVM: fix error handling in svm_cpu_init
+Thread-Index: AdXnxCuvQCn2ngYdSyKWLfuyXd13zwAA6TeA
+Date:   Thu, 20 Feb 2020 08:31:32 +0000
+Message-ID: <4d0b722be5cc4343a9fc9557dfbd00a1@baidu.com>
+References: <4cf5d767b570430a9e0b515a9d6d8fbd@huawei.com>
+In-Reply-To: <4cf5d767b570430a9e0b515a9d6d8fbd@huawei.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.21.156.28]
+x-baidu-bdmsfe-datecheck: 1_BJHW-Mail-Ex14_2020-02-20 16:31:33:229
+x-baidu-bdmsfe-viruscheck: BJHW-Mail-Ex14_GRAY_Inside_WithoutAtta_2020-02-20
+ 16:31:33:198
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200220071233.GA592@richard>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/20/20 at 03:12pm, Wei Yang wrote:
-> On Thu, Feb 20, 2020 at 03:04:20PM +0800, Baoquan He wrote:
-> >On 02/20/20 at 02:18pm, Wei Yang wrote:
-> >> On Thu, Feb 20, 2020 at 12:33:15PM +0800, Baoquan He wrote:
-> >> >No functional change.
-> >> >
-> >> 
-> >> Those functions are introduced in your previous patches.
-> >> 
-> >> Is it possible to define them close to each other at the very beginning?
-> >
-> >Thanks for reviewing.
-> >
-> >Do you mean to discard this patch and keep it as they are in the patch 4/7?
-> >If yes, it's fine to me to drop it as you suggested. To me, I prefer to put
-> >all subsection map handling codes together.
-> >
-> 
-> I mean when you introduce clear_subsection_map() in patch 3, is it possible to
-> move close to the definition of fill_subsection_map()?
-> 
-> Since finally you are will to move them together.
-
-Oh, got it. Yeah, I just put them close to their callers separately. I
-think it's also good to put them together as you suggested, but it
-doesn't matter much, right? I will consider this and see if I can adjust
-it if v3 is needed. Thanks.
-
+DQoNCj4gLS0tLS3Tyrz+1K28/i0tLS0tDQo+ILeivP7IyzogbGlubWlhb2hlIFttYWlsdG86bGlu
+bWlhb2hlQGh1YXdlaS5jb21dDQo+ILeiy83KsbzkOiAyMDIwxOoy1MIyMMjVIDE2OjE4DQo+IMrV
+vP7IyzogTGksUm9uZ3FpbmcgPGxpcm9uZ3FpbmdAYmFpZHUuY29tPjsgcGJvbnppbmlAcmVkaGF0
+LmNvbTsNCj4gdmt1em5ldHNAcmVkaGF0LmNvbQ0KPiCzrcvNOiBMaXJhbiBBbG9uIDxsaXJhbi5h
+bG9uQG9yYWNsZS5jb20+OyBrdm1Admdlci5rZXJuZWwub3JnOw0KPiBsaW51eC1rZXJuZWxAdmdl
+ci5rZXJuZWwub3JnOyB4ODZAa2VybmVsLm9yZw0KPiDW98ziOiBSZTogW1BBVENIXVtyZXNlbmRd
+IEtWTTogZml4IGVycm9yIGhhbmRsaW5nIGluIHN2bV9jcHVfaW5pdA0KPiANCj4gSGksDQo+IExp
+IFJvbmdRaW5nIDxsaXJvbmdxaW5nQGJhaWR1LmNvbT4gd3JpdGVzOg0KPiA+DQo+ID5zZC0+c2F2
+ZV9hcmVhIHNob3VsZCBiZSBmcmVlZCBpbiBlcnJvciBwYXRoDQo+ID4NCj4gPkZpeGVzOiA3MGNk
+OTRlNjBjNzMzICgiS1ZNOiBTVk06IFZNUlVOIHNob3VsZCB1c2UgYXNzb2NpYXRlZCBBU0lEIHdo
+ZW4NCj4gPlNFViBpcyBlbmFibGVkIikNCj4gPlNpZ25lZC1vZmYtYnk6IExpIFJvbmdRaW5nIDxs
+aXJvbmdxaW5nQGJhaWR1LmNvbT4NCj4gPlJldmlld2VkLWJ5OiBCcmlqZXNoIFNpbmdoIDxicmlq
+ZXNoLnNpbmdoQGFtZC5jb20+DQo+ID5SZXZpZXdlZC1ieTogVml0YWx5IEt1em5ldHNvdiA8dmt1
+em5ldHNAcmVkaGF0LmNvbT4NCj4gPi0tLQ0KPiA+IGFyY2gveDg2L2t2bS9zdm0uYyB8IDggKysr
+KystLS0NCj4gPiAxIGZpbGUgY2hhbmdlZCwgNSBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygt
+KQ0KPiANCj4gT2gsIGl0J3Mgc3RyYW5nZS4gVGhpcyBpcyBhbHJlYWR5IGZpeGVkIGluIG15IHBy
+ZXZpb3VzIHBhdGNoIDogW1BBVENIIHYyXSBLVk06DQo+IFNWTTogRml4IHBvdGVudGlhbCBtZW1v
+cnkgbGVhayBpbiBzdm1fY3B1X2luaXQoKS4NCj4gQW5kIFZpdGFseSBhbmQgTGlyYW4gZ2F2ZSBt
+ZSBSZXZpZXdlZC1ieSB0YWdzIGFuZCBQYW9sbyBxdWV1ZWQgaXQgb25lIG1vbnRoDQo+IGFnby4g
+QnV0IEkgY2FuJ3QgZm91bmQgaXQgaW4gbWFzdGVyIG9yIHF1ZXVlIGJyYW5jaC4gVGhlcmUgbWln
+aHQgYmUgc29tZXRoaW5nDQo+IHdyb25nLiA6KA0KDQoNCkluIGZhY3QsIEkgc2VuZCB0aGlzIHBh
+dGNoIDIwMTkvMDIvLCBhbmQgZ2V0IFJldmlld2VkLWJ5LCAgYnV0IGRpZCBub3QgcXVldWUNCg0K
+aHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8xMDg1Mzk3My8NCg0KYW5kIHJlc2Vu
+ZCBpdCAyMDE5LzA3DQoNCmh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTEwMzIw
+ODEvDQoNCg0KLUxpDQoNCg0K
