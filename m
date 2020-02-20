@@ -2,185 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1672165D9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 13:29:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2752165DB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 13:39:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727983AbgBTM3t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 07:29:49 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:45783 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727553AbgBTM3t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 07:29:49 -0500
-Received: by mail-ua1-f66.google.com with SMTP id k24so1321770uaq.12
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 04:29:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=benyossef-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=WW2EUJXIobmq0i782fSsZkElehRlUl2WjpJFD2q+kAA=;
-        b=F98XZC6wtUK9JFQJuaJd8ofnhq2RwFcttY5EroISu90H3yS4a3euVgH1cYPMyRpa6+
-         EUCejDjiGK6BnHU5V6sxeaWacW9/c0rcQnYnqGjGOUPD+CXZ4XyqYswHYN9UQLQLEvZ+
-         Ozr6+MT617nwg49bEIyaiFj/twboy2xxJ3jX88SWggF8WmQyagzbwu29Z+jLELgbCSiR
-         j6Z3rmr2+3dZ7KDlLAWUwQeEY2nV1yYLow2+v+jXeZhQsvg2FlP0kGPCkyhMm0S8hJ5p
-         s9bSmlVB4uZ/5gk//UzygMTsCblJHnYvcZ3HpEdcm0Lf9AN4kTpTRp358V1d5fu2Qz0I
-         smoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=WW2EUJXIobmq0i782fSsZkElehRlUl2WjpJFD2q+kAA=;
-        b=YksJjjx0/GIf15ee0SBWpCTG6pgfwadqR4B68PUM7YUWDwM63X5+8Bnv2kvRPplE+T
-         IXV5K2Px6hKczucux07HuZ47jjXKdfiHVp6o1UTVBeqXzTpKZ3V/9rz9wKduIztrCjO0
-         2wcpfq/8Ln+re4lRKatefrQTqUDegQIeeujOkhzr5WZy2iEQrZR30++ioTBzoaGFYspA
-         yKc2Uau6jJIhDKeY4x1prm65G+dmSR5f8qXLnr1c1yUM/lThiKnd3zLTFPf963DF25Jz
-         5WaHuCNr7syMm/FQ1y7s1KyyFYNRc2m/Nabjb2uEWn0sW4KfKziqbIF9Ve8Nt214Rlnw
-         ujsQ==
-X-Gm-Message-State: APjAAAVsFH7Lrnu5JWtbUP/GgOMRlxVF+xbwh6lavw2TRBlol+kW2zHa
-        trzsRbgY2ai/HATZXc9gfS2bLrVkIb0HoguXO9BkHQ==
-X-Google-Smtp-Source: APXvYqxBKVhq2LOoXM5H2IHFB5cohNE+ksyyccOhU/gldGDh746cny8TL2Tj1mneTpwVQ3MmInBxAvOEOUVqMzqq0m4=
-X-Received: by 2002:ab0:4144:: with SMTP id j62mr16087477uad.13.1582201787338;
- Thu, 20 Feb 2020 04:29:47 -0800 (PST)
+        id S1728054AbgBTMjT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 07:39:19 -0500
+Received: from mx.treblig.org ([46.43.15.161]:58190 "EHLO mx.treblig.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726885AbgBTMjT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 07:39:19 -0500
+X-Greylist: delayed 1465 seconds by postgrey-1.27 at vger.kernel.org; Thu, 20 Feb 2020 07:39:18 EST
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+        ; s=bytemarkmx; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID
+        :Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID
+        :Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:
+        Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe
+        :List-Post:List-Owner:List-Archive;
+        bh=GVRZn7EnprSC0n7xsBn//SNf96r1aQPqm7cND2nX3xY=; b=iH6mdeKfFdu+fgQ4WBJZlYkIMe
+        u70L6ycyavhobtFYXrVD0+dZp/JQcYsrQbFkwUgyvs1lsxvrQkhOqoG1AVFIDL4D754eUaBR/iYld
+        HtI7KWCrrqiWtLr44Yd9GulkOW0dC89oNf5B+RCP+hClo8VSwJhcYdS5q8E7d3I9+nuP7N7YGCKIG
+        HTvmF8XMqVqQ43SjhKWy5tmkgK5zfh4DKlfp/Tdkm7CMXB6hlePJaO8YwbYsApUv58XbccV5BPWhz
+        TucI/UJnliEjcRB954hg2o6iht1TfjoMeSfbwUqE05QSbW/y1TOKI+O9I5GkHnXoTcQ7FqYhBOz2Y
+        PU2bgvUg==;
+Received: from dg by mx.treblig.org with local (Exim 4.92)
+        (envelope-from <dg@treblig.org>)
+        id 1j4kjD-0005YP-9N; Thu, 20 Feb 2020 12:14:51 +0000
+Date:   Thu, 20 Feb 2020 12:14:51 +0000
+From:   "Dr. David Alan Gilbert" <linux@treblig.org>
+To:     Meelis Roos <mroos@linux.ee>
+Cc:     linux-hwmon@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Chen Zhou <chenzhou10@huawei.com>
+Subject: Re: w83627ehf crash in 5.6.0-rc2-00055-gca7e1fd1026c
+Message-ID: <20200220121451.GA18071@gallifrey>
+References: <434212bb-4eb9-7366-3255-79826d0e65bc@linux.ee>
 MIME-Version: 1.0
-References: <20200211181928.15178-1-geert+renesas@glider.be>
-In-Reply-To: <20200211181928.15178-1-geert+renesas@glider.be>
-From:   Gilad Ben-Yossef <gilad@benyossef.com>
-Date:   Thu, 20 Feb 2020 14:29:36 +0200
-Message-ID: <CAOtvUMdsQ+-HYLHg4JJ6_qeK-bn9WghuOJWpYH9G3xf1PWR5bw@mail.gmail.com>
-Subject: Re: [PATCH v2 00/34] crypto: ccree - miscellaneous fixes and improvements
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <434212bb-4eb9-7366-3255-79826d0e65bc@linux.ee>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/4.19.0-5-amd64 (x86_64)
+X-Uptime: 12:11:25 up 172 days, 12:31,  1 user,  load average: 0.00, 0.00,
+ 0.00
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 8:19 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
->
->         Hi all,
->
-> This series contains several fixes, cleanups, and other improvements for
-> the ARM TrustZone CryptoCell driver.
->
-> The first 3 patches have been sent before:
->   - [PATCH 0/2] Fix debugfs register access while suspended[1],
->   - [PATCH] [RFC] crypto: ccree - fix retry handling in
->     cc_send_sync_request()[2.
->
-> This is based on v5.6-rc1, with the following fixes from Gilad applied:
->   - [PATCH 0/4] crypto: ccree - fixes[3],
->   - [PATCH] crypto: ccree - dec auth tag size from cryptlen map[4].
->
-> This has been tested on R-Car H3 ES2.0.
-> To ease testing, I have pushed this series and its dependencies to the
-> topic/ccree-misc-v2  branch of my renesas-drivers repository at
-> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
->
-> Thanks for your comments!
->
-> [1] https://lore.kernel.org/r/20200124132957.15769-1-geert+renesas@glider=
-.be/
-> [2] https://lore.kernel.org/r/20200128190913.23086-1-geert+renesas@glider=
-.be/
-> [3] https://lore.kernel.org/r/20200129143757.680-1-gilad@benyossef.com/
-> [4] https://lore.kernel.org/r/20200202161914.9551-1-gilad@benyossef.com/
->
+* Meelis Roos (mroos@linux.ee) wrote:
+> While reading w83627ehf sensors output on D425KT mainboard, I consistently get NULL dereference as below.
+> 
+> 5.5.0 worked OK but gave a warning on driver load:
+> [  104.514954] w83627ehf: Found W83627DHG-P chip at 0x290
+> [  104.515634] w83627ehf w83627ehf.656: hwmon_device_register() is deprecated. Please convert the driver to use hwmon_device_register_with_info().
+> 
+> This is dmesg from current git (loading the driver and reading sensors with lm-sensors - no driver loading warning any more):
+> 
+> [  764.718192] w83627ehf: Found W83627DHG-P chip at 0x290
+> [  774.574874] BUG: kernel NULL pointer dereference, address: 0000000000000000
+> [  774.574889] #PF: supervisor read access in kernel mode
+> [  774.574895] #PF: error_code(0x0000) - not-present page
+> [  774.574901] PGD 0 P4D 0
+> [  774.574909] Oops: 0000 [#1] SMP NOPTI
+> [  774.574917] CPU: 0 PID: 604 Comm: sensors Not tainted 5.6.0-rc2-00055-gca7e1fd1026c #29
+> [  774.574923] Hardware name:  /D425KT, BIOS MWPNT10N.86A.0132.2013.0726.1534 07/26/2013
+> [  774.574939] RIP: 0010:w83627ehf_read_string+0x27/0x70 [w83627ehf]
+> [  774.574947] Code: 00 00 00 55 53 48 8d 64 24 f0 83 fa 15 48 8b 5f 78 75 29 83 fe 01 75 24 48 63 c9 48 8b 6b 58 48 83 f9 03 77 24 0f b6 44 0b 50 <48> 8b 44 c5 00 49 89 00 48 8d 64 24 10 5b 31 c0 5d c3 48 8d 64 24
+> [  774.574958] RSP: 0018:ffffb95980657df8 EFLAGS: 00010293
+> [  774.574965] RAX: 0000000000000000 RBX: ffff96caaa7f5218 RCX: 0000000000000000
+> [  774.574972] RDX: 0000000000000015 RSI: 0000000000000001 RDI: ffff96caa736ec08
+> [  774.574978] RBP: 0000000000000000 R08: ffffb95980657e20 R09: 0000000000000001
+> [  774.574985] R10: ffff96caaa635cc0 R11: 0000000000000000 R12: ffff96caa9f7cf00
+> [  774.574991] R13: ffff96caa9ec3d00 R14: ffff96caa9ec3d28 R15: ffff96caa9ec3d40
+> [  774.574999] FS:  00007fbc7c4e2740(0000) GS:ffff96caabc00000(0000) knlGS:0000000000000000
+> [  774.575008] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  774.575015] CR2: 0000000000000000 CR3: 0000000129d58000 CR4: 00000000000006f0
+> [  774.575021] Call Trace:
+> [  774.575036]  ? cp_new_stat+0x12d/0x160
+> [  774.575048]  hwmon_attr_show_string+0x37/0x70 [hwmon]
 
-OK, looks fine and all relevant tests pass on the newer hardware on
-all platforms.
+Sorry about that!
+It looks like not all chips have temp_label, so I think we need to change w83627ehf_is_visible
+which has:
 
-Acked-by: Gilad Ben-Yossef <gilad@benyossef.com>
+                if (attr == hwmon_temp_input || attr == hwmon_temp_label)
+                        return 0444;
 
-Thanks,
-Gilad
+to
+                if (attr == hwmon_temp_input)
+                        return 0444;
+                if (attr == hwmon_temp_label) {
+                        if (data->temp_label)
+				return 0444;
+			else
+				return 0;
+                }
 
-> Geert Uytterhoeven (34):
->   debugfs: regset32: Add Runtime PM support
->   crypto: ccree - fix debugfs register access while suspended
->   crypto: ccree - fix retry handling in cc_send_sync_request()
->   crypto: ccree - remove unneeded casts
->   crypto: ccree - swap SHA384 and SHA512 larval hashes at build time
->   crypto: ccree - drop duplicated error message on SRAM exhaustion
->   crypto: ccree - remove empty cc_sram_mgr_fini()
->   crypto: ccree - clean up clock handling
->   crypto: ccree - make mlli_params.mlli_virt_addr void *
->   crypto: ccree - use existing helpers to split 64-bit addresses
->   crypto: ccree - defer larval_digest_addr init until needed
->   crypto: ccree - remove bogus paragraph about freeing SRAM
->   crypto: ccree - use u32 for SRAM addresses
->   crypto: ccree - simplify Runtime PM handling
->   crypto: ccree - use of_device_get_match_data()
->   crypto: ccree - remove cc_pm_is_dev_suspended() wrapper
->   crypto: ccree - make cc_pm_{suspend,resume}() static
->   crypto: ccree - remove struct cc_sram_ctx
->   crypto: ccree - remove struct cc_debugfs_ctx
->   crypto: ccree - remove struct buff_mgr_handle
->   crypto: ccree - remove struct cc_cipher_handle
->   crypto: ccree - extract cc_init_copy_sram()
->   crypto: ccree - remove bogus kerneldoc markers
->   crypto: ccree - improve kerneldoc in cc_hw_queue_defs.h
->   crypto: ccree - improve kerneldoc in cc_buffer_mgr.c
->   crypto: ccree - improve kerneldoc in cc_hash.[ch]
->   crypto: ccree - improve kerneldoc in cc_request_mgr.[ch]
->   crypto: ccree - improve kerneldoc in cc_sram_mgr.[ch]
->   crypto: ccree - spelling s/Crytpcell/Cryptocell/
->   crypto: ccree - grammar s/not room/no room/
->   crypto: ccree - use existing dev helper in init_cc_resources()
->   crypto: ccree - use devm_k[mz]alloc() for AEAD data
->   crypto: ccree - use devm_k[mz]alloc() for cipher data
->   crypto: ccree - use devm_kzalloc() for hash data
->
->  drivers/crypto/ccree/cc_aead.c          |  61 +++---
->  drivers/crypto/ccree/cc_buffer_mgr.c    |  66 +++---
->  drivers/crypto/ccree/cc_buffer_mgr.h    |   4 +-
->  drivers/crypto/ccree/cc_cipher.c        |  61 ++----
->  drivers/crypto/ccree/cc_debugfs.c       |  29 +--
->  drivers/crypto/ccree/cc_driver.c        | 127 +++++-------
->  drivers/crypto/ccree/cc_driver.h        |  13 +-
->  drivers/crypto/ccree/cc_hash.c          | 225 +++++++++------------
->  drivers/crypto/ccree/cc_hash.h          |  31 ++-
->  drivers/crypto/ccree/cc_hw_queue_defs.h | 255 ++++++++++++------------
->  drivers/crypto/ccree/cc_pm.c            |  60 +-----
->  drivers/crypto/ccree/cc_pm.h            |  21 --
->  drivers/crypto/ccree/cc_request_mgr.c   |  47 +++--
->  drivers/crypto/ccree/cc_request_mgr.h   |  19 +-
->  drivers/crypto/ccree/cc_sram_mgr.c      |  78 +++-----
->  drivers/crypto/ccree/cc_sram_mgr.h      |  45 ++---
->  fs/debugfs/file.c                       |   8 +
->  include/linux/debugfs.h                 |   1 +
->  18 files changed, 456 insertions(+), 695 deletions(-)
->
-> --
-> 2.17.1
->
-> Gr{oetje,eeting}s,
->
->                                                 Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                                             -- Linus Torv=
-alds
+Does that work for you?
+
+Dave
 
 
-
---=20
-Gilad Ben-Yossef
-Chief Coffee Drinker
-
-values of =CE=B2 will give rise to dom!
+> [  774.575060]  dev_attr_show+0x14/0x50
+> [  774.575071]  sysfs_kf_seq_show+0xb5/0x1b0
+> [  774.575081]  seq_read+0xcf/0x460
+> [  774.575091]  vfs_read+0x9b/0x150
+> [  774.575100]  ksys_read+0x5f/0xe0
+> [  774.575111]  do_syscall_64+0x48/0x190
+> [  774.575121]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> [  774.575130] RIP: 0033:0x7fbc7c715871
+> [  774.575138] Code: fe ff ff 50 48 8d 3d 76 e5 09 00 e8 e9 ef 01 00 66 0f 1f 84 00 00 00 00 00 48 8d 05 69 3b 0d 00 8b 00 85 c0 75 13 31 c0 0f 05 <48> 3d 00 f0 ff ff 77 57 c3 66 0f 1f 44 00 00 48 83 ec 28 48 89 54
+> [  774.575151] RSP: 002b:00007ffe5092d848 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+> [  774.575161] RAX: ffffffffffffffda RBX: 00005630bdfb1330 RCX: 00007fbc7c715871
+> [  774.575168] RDX: 0000000000001000 RSI: 00007ffe5092d8e0 RDI: 0000000000000003
+> [  774.575175] RBP: 00007fbc7c7e5560 R08: 0000000000000003 R09: 00007fbc7c7e43b0
+> [  774.575182] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000001000
+> [  774.575190] R13: 00007ffe5092d8e0 R14: 0000000000000d68 R15: 00007fbc7c7e4960
+> [  774.575199] Modules linked in: w83627ehf hwmon_vid snd_hda_codec_realtek snd_hda_codec_generic snd_hda_intel snd_intel_dspcfg snd_hda_codec snd_hwdep snd_pcsp snd_hda_core ir_rc6_decoder rc_rc6_mce uas r8169 mceusb snd_pcm
+> iTCO_wdt rc_core snd_timer iTCO_vendor_support realtek snd libphy soundcore i2c_i801 lpc_ich parport_pc mfd_core parport coretemp hwmon autofs4
+> [  774.575247] CR2: 0000000000000000
+> [  774.575254] ---[ end trace 607462057ab8a988 ]---
+> [  774.575264] RIP: 0010:w83627ehf_read_string+0x27/0x70 [w83627ehf]
+> [  774.575273] Code: 00 00 00 55 53 48 8d 64 24 f0 83 fa 15 48 8b 5f 78 75 29 83 fe 01 75 24 48 63 c9 48 8b 6b 58 48 83 f9 03 77 24 0f b6 44 0b 50 <48> 8b 44 c5 00 49 89 00 48 8d 64 24 10 5b 31 c0 5d c3 48 8d 64 24
+> [  774.575287] RSP: 0018:ffffb95980657df8 EFLAGS: 00010293
+> [  774.575294] RAX: 0000000000000000 RBX: ffff96caaa7f5218 RCX: 0000000000000000
+> [  774.575301] RDX: 0000000000000015 RSI: 0000000000000001 RDI: ffff96caa736ec08
+> [  774.575308] RBP: 0000000000000000 R08: ffffb95980657e20 R09: 0000000000000001
+> [  774.575316] R10: ffff96caaa635cc0 R11: 0000000000000000 R12: ffff96caa9f7cf00
+> [  774.575323] R13: ffff96caa9ec3d00 R14: ffff96caa9ec3d28 R15: ffff96caa9ec3d40
+> [  774.575331] FS:  00007fbc7c4e2740(0000) GS:ffff96caabc00000(0000) knlGS:0000000000000000
+> [  774.575340] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  774.575347] CR2: 0000000000000000 CR3: 0000000129d58000 CR4: 00000000000006f0
+> 
+> 
+> -- 
+> Meelis Roos <mroos@linux.ee>
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
