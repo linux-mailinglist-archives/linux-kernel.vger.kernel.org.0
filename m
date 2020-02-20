@@ -2,144 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F05516664F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 19:29:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B18D91665D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 19:09:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728575AbgBTS3c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 13:29:32 -0500
-Received: from gateway36.websitewelcome.com ([192.185.200.11]:16459 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727535AbgBTS3c (ORCPT
+        id S1728315AbgBTSJ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 13:09:29 -0500
+Received: from sender4-of-o58.zoho.com ([136.143.188.58]:21807 "EHLO
+        sender4-of-o58.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727285AbgBTSJ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 13:29:32 -0500
-X-Greylist: delayed 1385 seconds by postgrey-1.27 at vger.kernel.org; Thu, 20 Feb 2020 13:29:31 EST
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id A3F7C40A70177
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 11:20:55 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 4qDRj7YkaAGTX4qDRjI7XB; Thu, 20 Feb 2020 12:06:25 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=9mYujdgmmZufehJIlbnl7Z8a6PMBrqPZZkMyrDsekWo=; b=X1/SoYte9fhrwavUGSJ8+laUO1
-        kbbO2QwV8ZSWu8AHrjymZwevX9lNDoJa76MePJRPIr4sIyXfqn7kK5gCYDrNcOB57atscbNjOWoaN
-        3Zna5XmwUoBURHhzOmSUJeAay5rV88t7e90TKJ9twL/FaYQY0fw6NC9nDddMLpLzT7nqjd6JlG1yD
-        PTgVYEf1yNU7td6cW/3+xS1oWbn0YDXql2hcJSSp0uyxUbuGECZmrIMMYnI9olZPiUNlU7f+IN9qf
-        MxbxMBtAeGWXwFoMK9X+fgcq+oDVtmkaH65OL4XnvilTaDdYSbjlYs9GCAfl5rVMjNT6UOddqcw2L
-        VB8uXZKg==;
-Received: from [201.144.174.47] (port=31877 helo=[192.168.43.131])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j4qDR-001i8x-Il; Thu, 20 Feb 2020 12:06:25 -0600
-Subject: Re: [PATCH] IB/core, cache: Replace zero-length array with
- flexible-array member
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>
-References: <20200213010425.GA13068@embeddedor.com>
- <20200220173756.GA19347@ziepe.ca>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <67d7c04f-026b-2829-cd7a-de0a889635c6@embeddedor.com>
-Date:   Thu, 20 Feb 2020 12:09:08 -0600
+        Thu, 20 Feb 2020 13:09:29 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1582222159; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=IhZrbv3LTYkKC0B91LP6afzc/JR2dokKMlVIyk4/2XJyTI1aR2Un4DuyHL+PRgH0FxChRBC0Vw6yfZ2nPmUXclYAqpXTa7Tbc49ahLPSvX9+9BGgaiWOF6LIWOcMRWtoGjyeBgdpoH06sLPCTeJj1yZFSkDeGC6/DJ4VI+vpfeM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1582222159; h=Content-Type:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=xw/sotA4oNFNJ04Z9OYEFDPVK+QMI4XGv7s7J3CTotQ=; 
+        b=hc3uTlOBpX+CUrKjMVfTRdd681Z3GHnvGmQSoPPvs9WBBjEu09BbXXWGtuqlEUdaVVzYzEOCikGPcrvJrvGI0qIP09QAV+djYTdqd17mqiWerpiU8DlJh+rirzcIiOQ6P9EgQ6NvSEdxCdhp5bOW5eTPUXi1nM+KZf1e2dNUW+A=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=qubes-os.org;
+        spf=pass  smtp.mailfrom=frederic.pierret@qubes-os.org;
+        dmarc=pass header.from=<frederic.pierret@qubes-os.org> header.from=<frederic.pierret@qubes-os.org>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1582222159;
+        s=s; d=qubes-os.org; i=frederic.pierret@qubes-os.org;
+        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type;
+        bh=xw/sotA4oNFNJ04Z9OYEFDPVK+QMI4XGv7s7J3CTotQ=;
+        b=C036gvuCI6PgqiMq2RqXs7sWe3NdWmzr2TqcGGnLCNMtpfROXd1zm1JDQI8Gri6A
+        3xqNM5+Ytq+j5RNn1qSSPuzQNQbqb8m+iOUQNj2b+SaEn0xUoOiHleHeQZd2/hFR+J0
+        Bg+bxomaJvwW25C6i0lR0Tx10qGb/TDmuuGHp4ks=
+Received: from [10.137.0.45] (82.102.18.6 [82.102.18.6]) by mx.zohomail.com
+        with SMTPS id 1582222157595579.3135438206202; Thu, 20 Feb 2020 10:09:17 -0800 (PST)
+Subject: Re: [Nouveau] [PATCH] nv50_disp_chan_mthd: ensure mthd is not NULL
+To:     Ilia Mirkin <imirkin@alum.mit.edu>
+Cc:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <dac89843-5258-5bed-ee86-7038e94e56da@qubes-os.org>
+ <c94ce223-56d5-e31a-2a2c-59defb988b28@qubes-os.org>
+ <CAKb7Uvh8Ob592LOizH9FGZz5ag=VJ3R=dh0G5iZSg2-JzWZFMQ@mail.gmail.com>
+From:   =?UTF-8?B?RnLDqWTDqXJpYyBQaWVycmV0?= 
+        <frederic.pierret@qubes-os.org>
+Message-ID: <ea846dcd-0fc9-01a6-4bb4-dde68888d06e@qubes-os.org>
+Date:   Thu, 20 Feb 2020 19:09:13 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20200220173756.GA19347@ziepe.ca>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.144.174.47
-X-Source-L: No
-X-Exim-ID: 1j4qDR-001i8x-Il
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.131]) [201.144.174.47]:31877
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <CAKb7Uvh8Ob592LOizH9FGZz5ag=VJ3R=dh0G5iZSg2-JzWZFMQ@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="hkI44MPNhtb0IuTBA6t4rXJyj69YDa5QI"
+X-Zoho-Virus-Status: 1
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--hkI44MPNhtb0IuTBA6t4rXJyj69YDa5QI
+Content-Type: multipart/mixed; boundary="WLJy850lTfsTLeed3UAVaXbc1Hmlnodt8"
+
+--WLJy850lTfsTLeed3UAVaXbc1Hmlnodt8
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+
+Hi Ilia,
+Well...if Ben made it's own version you mean using my patch given on comm=
+ent https://bugzilla.kernel.org/show_bug.cgi?id=3D206299#c9 and then addi=
+ng commit message without quoting me as reporter ok...
+
+At least, upstream is patched.
+
+Best,
+Fr=C3=A9d=C3=A9ric
+
+On 2020-02-20 18:32, Ilia Mirkin wrote:
+> Hi Fr=C3=A9d=C3=A9ric,
+>=20
+> It appears Ben made his own version of this patch (probably based on
+> the one you added to the kernel bz), and it's already upstream:
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/comm=
+it/?h=3Dv5.6-rc2&id=3D0e6176c6d286316e9431b4f695940cfac4ffe6c2
+>=20
+> Cheers,
+>=20
+>   -ilia
+>=20
+> On Thu, Feb 20, 2020 at 12:19 PM Fr=C3=A9d=C3=A9ric Pierret
+> <frederic.pierret@qubes-os.org> wrote:
+>>
+>> Hi,
+>> Is anything missing here? How can I get this merged?
+>>
+>> Best regards,
+>> Fr=C3=A9d=C3=A9ric Pierret
+>>
+>> On 2020-02-08 20:43, Fr=C3=A9d=C3=A9ric Pierret wrote:
+>>> Pointer to structure array is assumed not NULL by default. It has
+>>> the consequence to raise a kernel panic when it's not the case.
+>>>
+>>> Basically, running at least a RTX2080TI on Xen makes a bad mmio error=
+
+>>> which causes having 'mthd' pointer to be NULL in 'channv50.c'. From t=
+he
+>>> code, it's assumed to be not NULL by accessing directly 'mthd->data[0=
+]'
+>>> which is the reason of the kernel panic. Simply check if the pointer
+>>> is not NULL before continuing.
+>>>
+>>> BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=3D206299
+>>> Cc: stable@vger.kernel.org
+>>> Signed-off-by: Fr=C3=A9d=C3=A9ric Pierret (fepitre) <frederic.pierret=
+@qubes-os.org>
+>>> ---
+>>>  drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c | 2 ++
+>>>  1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c b/dr=
+ivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
+>>> index bcf32d92ee5a..50e3539f33d2 100644
+>>> --- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
+>>> +++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
+>>> @@ -74,6 +74,8 @@ nv50_disp_chan_mthd(struct nv50_disp_chan *chan, in=
+t debug)
+>>>
+>>>       if (debug > subdev->debug)
+>>>               return;
+>>> +     if (!mthd)
+>>> +             return;
+>>>
+>>>       for (i =3D 0; (list =3D mthd->data[i].mthd) !=3D NULL; i++) {
+>>>               u32 base =3D chan->head * mthd->addr;
+>>>
+>>
+>> _______________________________________________
+>> Nouveau mailing list
+>> Nouveau@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/nouveau
 
 
-On 2/20/20 11:37, Jason Gunthorpe wrote:
+--WLJy850lTfsTLeed3UAVaXbc1Hmlnodt8--
 
-> 
-> I squished the four drivers/infiniband patches together and added a
-> few more, see below. Applied to for-next
-> 
+--hkI44MPNhtb0IuTBA6t4rXJyj69YDa5QI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-Great! Thank you. :)
+-----BEGIN PGP SIGNATURE-----
 
-> It would be fanatstic to follow this up with some analysis to find
-> cases where sizeof() is performed on a struct with a [] flex array -
-> these days people should be using struct_size() (interested DanC?)
-> 
+iQIzBAEBCAAdFiEEn6ZLkvlecGvyjiymSEAQtc3FduIFAl5Oy0gACgkQSEAQtc3F
+duLVXQ//UcaE2INvYMM1EVdYZv3qU9YSA1kGBFofdUewle8ME//5XfA1y9+Regdz
+m/iunXPFn06NOCv13zYYTtmvs0PbHEdjWyi0GmfU5Qvmmr7Z+jsFetBDTi3y8IZu
+CffSroIMUGSEP0l06JA0Bg4gWJv/fGCIOXcn5rAdL1L0kbE1jAP3Y6nxhQExTgYq
+OvvSa2sxOBZ82fkuTTzN/qRKIMY+UGsHzMx+wUbGkRI4ncyxO0M6ZFqBAt4nTFA2
+k+FWQc9e8+mUXxQJSQ/8d8z+o2c16ss30CektB8KHQNQX3UqvrzXaOo1+VS3LduG
+3HI8kU4KnHT/K3Dy0Bf5AhyAHInS1URBETVEyANzQOMYQ3IOX6ORjdUP6pXeBiht
+lGf6OgakKWAos6gAcYYcYbpRFBFZEJEhfYcjvboPmL0WjhuKnmPjwS0UZVdA9iKr
+PD8BVzRZW+twgblxMvr1KNfIAyWCYckP53tpsqPq9+WbOEBBg5ub3o/S1UqLp2cH
+9h2jTzZoYjY6u+Kuaxw69aL4uZGwToKDD6sD6MW+dND5QE+N4E0zuDUCiUzDmmPm
+Aw7DFYVdHJIKDgbWPtdKAePZd3WVZ5OxBGgZAzslY7O26CUyvkUS8GnRqoB3UTdd
+aVghJwC5dw0lEXpast9xk0nPyd1TQIoFHFVXnxbxTV38LQ3xrrQ=
+=RGFd
+-----END PGP SIGNATURE-----
 
-I've been working on both things:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/?qt=grep&q=struct_size%28%29+helper
-
-Thanks
---
-Gustavo
+--hkI44MPNhtb0IuTBA6t4rXJyj69YDa5QI--
