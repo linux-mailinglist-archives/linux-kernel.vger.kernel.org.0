@@ -2,172 +2,219 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42DAA16631C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:33:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D4111662DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:30:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728780AbgBTQcs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 11:32:48 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:52348 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728336AbgBTQcr (ORCPT
+        id S1728778AbgBTQan (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 11:30:43 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:36404 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728134AbgBTQam (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 11:32:47 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01KGVCT0098925;
-        Thu, 20 Feb 2020 16:32:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=FTYI2rf57qFKmy9u3jBDlYnYqczz/CLz4OVjzu82Z1E=;
- b=LO7Fmk/KDnVN3ezdVZMqw61sik/zOyBD+Q5GGp6z5mx54GWjGnXQBfkrPfcQzrUM3os3
- kDOBco/J6q6W87q6xFsEins9Ap3PtCV10MU3HLanN3R6Mu21VX82pZZGug0oBStuzjgV
- o71gtPldYGrgrge7bf+EKi7OZHdCfT1EWbe7Sc5J61djjukDVSZLPzHgGKKrxWP3ssku
- R2fJAi8tlJbFBUtdxXMLuSKg4+hsnoWuEB6tXgAvZbFYHZu9+FyDE/qarwejainY955R
- Vmu9km9IlyL6ZSL3uLWrJOhmTlEMdVKVpL2/ZS2wrHacWL/Sp1CGMR7Jhsr13u8deyh+ BA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2y8uddaxjn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 20 Feb 2020 16:32:28 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01KGS1rc079568;
-        Thu, 20 Feb 2020 16:30:28 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2y8ud6df1s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 20 Feb 2020 16:30:28 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01KGUQvD018268;
-        Thu, 20 Feb 2020 16:30:26 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 20 Feb 2020 08:30:26 -0800
-Date:   Thu, 20 Feb 2020 08:30:24 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     Jeff Moyer <jmoyer@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v3 00/12] Enable per-file/directory DAX operations V3
-Message-ID: <20200220163024.GV9506@magnolia>
-References: <CAPcyv4hkWoC+xCqicH1DWzmU2DcpY0at_A6HaBsrdLbZ6qzWow@mail.gmail.com>
- <20200214200607.GA18593@iweiny-DESK2.sc.intel.com>
- <x4936bcdfso.fsf@segfault.boston.devel.redhat.com>
- <20200214215759.GA20548@iweiny-DESK2.sc.intel.com>
- <x49y2t4bz8t.fsf@segfault.boston.devel.redhat.com>
- <x49tv3sbwu5.fsf@segfault.boston.devel.redhat.com>
- <20200218023535.GA14509@iweiny-DESK2.sc.intel.com>
- <x49zhdgasal.fsf@segfault.boston.devel.redhat.com>
- <20200218235429.GB14509@iweiny-DESK2.sc.intel.com>
- <20200220162027.GA20772@iweiny-DESK2.sc.intel.com>
+        Thu, 20 Feb 2020 11:30:42 -0500
+Received: by mail-oi1-f195.google.com with SMTP id c16so28158282oic.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 08:30:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:reply-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=y9HQfeZQmR3ITWVRctdqux0hlFnrN0+7nUWBuGoGzbI=;
+        b=rAl0vrUdgC6BPCfHywHFImldtnI3m6Nj5ysAz5uBGUmEKyEPKdjcAq4t7lUO2stDK+
+         1t3k0thBRBULY6f2rwgUO2JbXJGA0QlMISutM6QHwTyDBTBJlbmBD42BOKB1LWHD9cCb
+         lLr8xuRQr6btT8GLq7QtB/mgo10L0lG4LZsXg4XoI0rCuOBHvgdD4fTMHBUmOrNKYVvI
+         Y2wkvJ93jpOQUYL2074hW4b9p6uKhmFrj1nT9Ujn/a1+5BWhVVbwa+ul+fLPkqZcp7yX
+         fFdEp07Q+lRUC7+7z07jRmsN4cOg07ydrTv4s7yBhE4Guyzi7TlUG+LCHTGLVXck9aFH
+         rVpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :reply-to:references:mime-version:content-disposition:in-reply-to
+         :user-agent;
+        bh=y9HQfeZQmR3ITWVRctdqux0hlFnrN0+7nUWBuGoGzbI=;
+        b=a0DDAQdhdZZUMHd8PPJTRm/3a+4sR3nga5JmfHcDYLVJysPvnlUSGABcFqP1pIVq3x
+         dsL98ylbGm6xP8/ql2JKvoDoyTfmiHCMuvwCxy3RHgDWZbLxf3XWspj2m5Vx1CL9+ilU
+         Dmx00NlszsdAWbgah5G5r3ZYCLEpSADuph+chcXoq5PUpGcFQCShSh7HTX/X+klrZCN1
+         K69iD+37ErdFNZJiA3X3x7v3vWuDOpFFqzW2yfFIQQCwHOaIuPmF5YDAQxCRt3Tu+DQk
+         oBYmp3ZtDgF+fpWjuaiuwO9O2vXrN58hoF8zrqDXYIJMu+BhQ+iSGAADIkfS8W1a4AJQ
+         obIQ==
+X-Gm-Message-State: APjAAAWMdCsZHQBBSo5c9vCyP3BesUzwe2p6kSWXE0rrPqg5JWYcedf0
+        fMxnGrmFgfHY5p/lXuVqGuxeHUw=
+X-Google-Smtp-Source: APXvYqzJvnK1s6UOpaxFEdvEcJ3Bw6Mh437NhoRzotRpwK6fSKE5IJWYi7CGh3MjxZGTDTSpff+Czw==
+X-Received: by 2002:aca:d484:: with SMTP id l126mr2584473oig.114.1582216241151;
+        Thu, 20 Feb 2020 08:30:41 -0800 (PST)
+Received: from serve.minyard.net (serve.minyard.net. [2001:470:b8f6:1b::1])
+        by smtp.gmail.com with ESMTPSA id 9sm1299958otx.75.2020.02.20.08.30.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2020 08:30:40 -0800 (PST)
+Received: from minyard.net (unknown [IPv6:2001:470:b8f6:1b:9129:b2b8:445c:a4ff])
+        by serve.minyard.net (Postfix) with ESMTPSA id D290B18000D;
+        Thu, 20 Feb 2020 16:30:39 +0000 (UTC)
+Date:   Thu, 20 Feb 2020 10:30:38 -0600
+From:   Corey Minyard <minyard@acm.org>
+To:     Will Deacon <will@kernel.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Corey Minyard <cminyard@mvista.com>
+Subject: Re: [PATCH v2] arm64:kgdb: Fix kernel single-stepping
+Message-ID: <20200220163038.GJ3704@minyard.net>
+Reply-To: minyard@acm.org
+References: <20200219152403.3495-1-minyard@acm.org>
+ <20200220142214.GC14459@willie-the-truck>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200220162027.GA20772@iweiny-DESK2.sc.intel.com>
+In-Reply-To: <20200220142214.GC14459@willie-the-truck>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9537 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxlogscore=999 mlxscore=0
- adultscore=0 spamscore=0 suspectscore=0 malwarescore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002200121
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9537 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 impostorscore=0
- mlxlogscore=999 malwarescore=0 mlxscore=0 suspectscore=0
- priorityscore=1501 bulkscore=0 adultscore=0 spamscore=0 lowpriorityscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002200121
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 08:20:28AM -0800, Ira Weiny wrote:
-> On Tue, Feb 18, 2020 at 03:54:30PM -0800, 'Ira Weiny' wrote:
-> > On Tue, Feb 18, 2020 at 09:22:58AM -0500, Jeff Moyer wrote:
-> > > Ira Weiny <ira.weiny@intel.com> writes:
-> > > > If my disassembly of read_pages is correct it looks like readpage is null which
-> > > > makes sense because all files should be IS_DAX() == true due to the mount option...
-> > > >
-> > > > But tracing code indicates that the patch:
-> > > >
-> > > > 	fs: remove unneeded IS_DAX() check
-> > > >
-> > > > ... may be the culprit and the following fix may work...
-> > > >
-> > > > diff --git a/mm/filemap.c b/mm/filemap.c
-> > > > index 3a7863ba51b9..7eaf74a2a39b 100644
-> > > > --- a/mm/filemap.c
-> > > > +++ b/mm/filemap.c
-> > > > @@ -2257,7 +2257,7 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
-> > > >         if (!count)
-> > > >                 goto out; /* skip atime */
-> > > >  
-> > > > -       if (iocb->ki_flags & IOCB_DIRECT) {
-> > > > +       if (iocb->ki_flags & IOCB_DIRECT || IS_DAX(inode)) {
-> > > >                 struct file *file = iocb->ki_filp;
-> > > >                 struct address_space *mapping = file->f_mapping;
-> > > >                 struct inode *inode = mapping->host;
-> > > 
-> > > Well, you'll have to up-level the inode variable instantiation,
-> > > obviously.  That solves this particular issue.
+On Thu, Feb 20, 2020 at 02:22:14PM +0000, Will Deacon wrote:
+> On Wed, Feb 19, 2020 at 09:24:03AM -0600, minyard@acm.org wrote:
+> > From: Corey Minyard <cminyard@mvista.com>
 > > 
-> > Well...  This seems to be a random issue.  I've had BMC issues with
-> > my server most of the day...  But even with this patch I still get the failure
-> > in read_pages().  :-/
+> > I was working on a single-step bug on kgdb on an ARM64 system, and I saw
+> > this scenario:
 > > 
-> > And I have gotten it to both succeed and fail with qemu...  :-/
+> > * A single step is setup to return to el1
+> > * The ERET return to el1
+> > * An interrupt is pending and runs before the instruction
+> > * As soon as PSTATE.D (the debug disable bit) is cleared, the single
+> >     step happens in that location, not where it should have.
+> > 
+> > This appears to be due to PSTATE.SS not being cleared when the exception
+> > happens.  Per section D.2.12.5 of the ARMv8 reference manual, that
+> > appears to be incorrect, it says "As part of exception entry, the PE
+> > does all of the following: ...  Sets PSTATE.SS to 0."
 > 
-> ... here is the fix.  I made the change in xfs_diflags_to_linux() early on with
-> out factoring in the flag logic changes we have agreed upon...
-> 
-> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> index 62d9f622bad1..d592949ad396 100644
-> --- a/fs/xfs/xfs_ioctl.c
-> +++ b/fs/xfs/xfs_ioctl.c
-> @@ -1123,11 +1123,11 @@ xfs_diflags_to_linux(
->                 inode->i_flags |= S_NOATIME;
->         else
->                 inode->i_flags &= ~S_NOATIME;
-> -       if (xflags & FS_XFLAG_DAX)
-> +
-> +       if (xfs_inode_enable_dax(ip))
->                 inode->i_flags |= S_DAX;
->         else
->                 inode->i_flags &= ~S_DAX;
-> -
->  }
-> 
-> But the one thing which tripped me up, and concerns me, is we have 2 functions
-> which set the inode flags.
-> 
-> xfs_diflags_to_iflags()
-> xfs_diflags_to_linux()
-> 
-> xfs_diflags_to_iflags() is geared toward initialization but logically they do
-> the same thing.  I see no reason to keep them separate.  Does anyone?
-> 
-> Based on this find, the discussion on behavior in this thread, and the comments
-> from Dave I'm reworking the series because the flag check/set functions have
-> all changed and I really want to be as clear as possible with both the patches
-> and the resulting code.[*]  So v4 should be out today including attempting to
-> document what we have discussed here and being as clear as possible on the
-> behavior.  :-D
-> 
-> Thanks so much for testing this!
-> 
-> Ira
-> 
-> [*] I will probably throw in a patch to remove xfs_diflags_to_iflags() as I
-> really don't see a reason to keep it.
-> 
+> Sorry, but I don't follow you here. If PSTATE.SS is not cleared, why would
+> you take the step exception?
 
-I prefer you keep the one in xfs_iops.c since ioctls are a higher level
-function than general inode operations.
+I don't follow.  If PSTATE.SS is set and MDSCR_EL1.SS is set, the
+processor will take a single-step exception as soon as the debug
+exceptions are enabled.  That's what I'm seeing.  The hardware bug is
+that PSTATE.SS is not cleared on an exception, and MDSCR_EL1.SS is not
+cleared on kernel entry from el1.
 
---D
+I'm not 100% sure that PSTATE.SS is supposed to clear on an exception.
+The debug handling documentation in the ARM64 manual is extremely hard
+to follow.  But I'm pretty sure about this, as you would see this
+problem on every processor and it would be obvious.  You could never
+continue from a breakpoint, because the following happens when
+continuing from a breakpoint in what I'm seeing:
+
+* gdb disables the breakpoint
+* gdb does a single step
+* The single step triggers when debug excecption are enabled, not
+  after the instruction in question.
+* gdb restores the breakpoint and continues
+* The breakpoint occurs again because the single step never really
+  happened.
+
+> 
+> > However, I appear to not be the first person who has noticed this.  In
+> > the el0-only portion of the kernel_entry macro in entry.S, I found the
+> > following comment: "Ensure MDSCR_EL1.SS is clear, since we can unmask
+> > debug exceptions when scheduling."  Exactly the same scenario, except
+> > coming from a userland single step, not a kernel one.
+> 
+> No, I think you might be conflating PSTATE.SS and MDSCR_EL1.SS.
+
+Not exactly.  If the processor clears PSTATE.SS, why would you need to
+clear MDSCR_EL1.SS?  You can just ignore it.  But looking at the git
+commit where that code was introduced, I can see that wasn't the reason.
+
+> 
+> > As I was studying this, though, I realized that the following scenario
+> > had an issue:
+> > 
+> > * Kernel enables MDSCR.SS, MDSCR.KDE, MDSCR.MDE (unnecessary), and
+> >   PSTATE.SS to enable a single step in el1, for kgdb or kprobes,
+> >   on the current CPU's MDSCR register and the process' PSTATE.SS
+> >   register.
+> > * Kernel returns from the exception with ERET.
+> > * An interrupt or page fault happens on the instruction, causing the
+> >   instruction to not be run, but the exception handler runs.
+> > * The exception causes the task to migrate to a new core.
+> > * The return from the exception runs on a different processor now,
+> >   where the MDSCR values are not set up for a single step.
+> > * The single step fails to happen.
+> > 
+> > This is bad for kgdb, of course, but it seems really bad for kprobes if
+> > this happens.
+> 
+> I don't see how this can happen for kprobes. Have you managed to reproduce
+> the failure?
+
+Can a migration happen if kprobes sets up a single-step, does the step,
+and an interrupt or page fault happens before the single step occurs?
+If so, that single-step will never happen.
+
+I would be hard to reproduce.  I think I could force this to happen by
+modifying the kernel to force a migration in the single-step code, but
+it would be hard without modifying the kernel.
+
+> 
+> > To fix both these problems, rework the handling of single steps to clear
+> > things out upon entry to the kernel from el1, and then to set up single
+> > step when returning to el1, and not do the setup in debug-monitors.c.
+> > This means that single stepping does not use
+> > enable/disable_debug_monitors(); it is no longer necessary to track
+> > those flags for single stepping.  This is much like single stepping is
+> > handled for el0.  A new flag is added in pt_regs to enable single
+> > stepping from el1.  Unfortunately, the old value of PSTATE.SS cannot be
+> > used for this because of the hardware bug mentioned earlier.
+> 
+> I don't think there's a hardware bug.
+> 
+> It sound like you're trying to make kernel debugging per-task instead
+> of per-cpu, but I don't think that's the right thing to do. What if I /want/
+> to debug an interrupt handler? For example, I might have a watchpoint on
+> something accessed by timer interrupt.
+> 
+> > As part of this, there is an interaction between single stepping and the
+> > other users of debug monitors with the MDSCR.KDE bit.  That bit has to
+> > be set for both hardware breakpoints at el1 and single stepping at el1.
+> > A new variable was created to store the cpu-wide value of MDSCR.KDE; the
+> > single stepping code makes sure not to clear that bit on kernel entry if
+> > it's set in the per-cpu variable.
+> > 
+> > After fixing this and doing some more testing, I ran into another issue:
+> > 
+> > * Kernel enables the pt_regs single step
+> > * Kernel returns from the exception with ERET.
+> > * An interrupt or page fault happens on the instruction, causing the
+> >   instruction to not be run, but the exception handler runs.
+> 
+> This sounds like you've broken debug; we should take the step exception
+> in the exception handler. That's the way this is supposed to work.
+
+Ok, here is the disconnect, I think.  If that is the case, then what I'm
+seeing is working like it should.  That doesn't work with gdb, though,
+gdb expects to be able to single-step and get to the next instruction.
+The scenario I mentioned at the top of this email.
+
+Let me look at this a bit more.  I'll look at this on qemu and maybe a
+pi.
+
+-corey
+
+> 
+> > There's no easy way to find the pt_regs that has the single step flag
+> > set.  So a thread info flag was added so that the single step could be
+> > disabled in this case.  Both that flag and the flag in pt_regs must be
+> > set to enable a single step.
+> 
+> Honestly, I get the feeling that you don't really understand the code
+> you're changing here and it's a tonne of effort to try to untangle what
+> you're doing. That's not necessarily your fault because the debug
+> architecture is a nightmare to comprehend, but I'm not keen to change it
+> unless we have a really good justification. I'm sure kgdb is riddled with
+> bugs but, as I said before, the fixes should be in kgdb, not by tearing
+> up the low-level debug code (which has the potential to break other users).
+> 
+> Maybe it would be easier if you tried to fix one problem per patch,
+> preferably with a way to reproduce the issue you're seeing each time?
+> 
+> Will
