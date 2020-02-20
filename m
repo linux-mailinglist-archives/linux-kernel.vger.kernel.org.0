@@ -2,113 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73C4416602D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 15:58:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C9A616605E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 16:01:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728295AbgBTO6i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 09:58:38 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:45805 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728206AbgBTO6h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 09:58:37 -0500
-Received: by mail-oi1-f196.google.com with SMTP id v19so27785227oic.12
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 06:58:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fpwkKx7E4F4iGPP1d6IgP9CAngaHu/jtsv9MUOt6i20=;
-        b=rhM3j0x8usrirIjQD0qjSQ9jCCkuL46j6a4GYkPXKtnSgcJhk6Hx9Th+jZf4OPWbqZ
-         EDZz3oWYIE9EiZWJqp2PUKigyRRw/t6Q8UH8RqgRNGsTWV2dv9mCr2DcH4z2bQQ+xk2z
-         kYwaMe7GObMMSex4qojHOfzhjSgF0C0TaHxJYt1mQa7h1Ewq+OWpkkTj9lDdiomRk5M6
-         rRTAz/AFKDZMNW7yS5X69XPQn0UBAe7qzflPdGZWJ08eh9do95UBp6tUxa/M6BwZpMHp
-         3HF+uapICKyFdhOCgDzsKDrdTMOx5Xl1lWUMDmdY/3QoY8XGcpsi8+IoC8lTU4JBx+35
-         OQiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fpwkKx7E4F4iGPP1d6IgP9CAngaHu/jtsv9MUOt6i20=;
-        b=QeHjGzzT0MnZnBeA0duXHhrCA9aL00cdRC4aVCl5WWm5LS2QMTXLFPe3RGhLtE6nL4
-         H42yD7tEaaUR5MxB2HK30A9lDgOKnMpGMtOfIkXveZ9rUy4D66XQIpzrL5BbPrCJxL5h
-         ExLN/5FPlquAWUGmrQcORWYxbCJ8N0xp/tSQ+PpiqmHlEh5+qaTYz/bPQ6tpEDrvN2yq
-         ZWv47gMW8su3X0wtj0irpyz/MDkbu7NgXABJ8ZXqMszacgHGLWYSqaJZ7AXupKxUavIx
-         3ocdJvPBo7vpk3kPZmi+WTSmaMmPuJViJfK74bf7DbkaML7b0upBsMUUvUdJwNqVakKB
-         sxSQ==
-X-Gm-Message-State: APjAAAX6ckBYOlA8nSsGhNYvPp8XKN+MC91ltpKDeyfH9oMSnJ/I1G9W
-        XmEQuD9WUIHeqMDSg/gdsofTov+m1F6PulhCqXTQAQ==
-X-Google-Smtp-Source: APXvYqwLZrWv2noarPLEsgl5QTqzBVLNEume/NYspxHkGbrXT7XqrvirpoDtoOYD8R+IEePb15ICBTNX5VckUg08Qbg=
-X-Received: by 2002:aca:b187:: with SMTP id a129mr2344580oif.175.1582210716581;
- Thu, 20 Feb 2020 06:58:36 -0800 (PST)
+        id S1728526AbgBTPBZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 10:01:25 -0500
+Received: from mout.web.de ([212.227.15.3]:45187 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728133AbgBTPBY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 10:01:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1582210826;
+        bh=n11cANuCYcYzok7hdryvNdn5gFdTh5KMCQi2bv2OokY=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=TFl3cW21AuBB2Qb7a2xXjgsFzeuKfJAPhJme42dPyN0TWt11/1MA/8M2432dO11RC
+         eWVNFHPGJnArke4ZKvtVWa1tk7bpfq/VX9Sui8JsFB2AYu3EdQgBPoJUC/O3STCJSp
+         lTBPV0d/gRNT7YaFgb0mpjVtZDC3xpEyr1zm4Ymc=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([2.244.175.64]) by smtp.web.de (mrweb002
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0LtXDY-1jU3TS2CaC-010shM; Thu, 20
+ Feb 2020 16:00:26 +0100
+Subject: Re: [for-next][PATCH 12/26] Documentation: bootconfig: Add a doc for
+ extended boot config
+To:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tim Bird <Tim.Bird@sony.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+References: <23e371ca-5df8-3ae3-c685-b01c07b55540@web.de>
+ <20200220221340.2b66fd2051a5da74775c474b@kernel.org>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <5ed96b7b-7485-1ea0-16e2-d39c14ae266d@web.de>
+Date:   Thu, 20 Feb 2020 16:00:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-References: <158204549488.3299825.3783690177353088425.stgit@warthog.procyon.org.uk>
- <158204558110.3299825.5080605285325995873.stgit@warthog.procyon.org.uk>
- <CAG48ez0fsB_XTmNfE-2tuabH7JHyQdih8bu7Qwu9HGWJXti7tQ@mail.gmail.com> <628199.1582203532@warthog.procyon.org.uk>
-In-Reply-To: <628199.1582203532@warthog.procyon.org.uk>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 20 Feb 2020 15:58:10 +0100
-Message-ID: <CAG48ez03VMKEmJEmViSkxbF9J5dW=6vny9vKGdenBewtjF+nqQ@mail.gmail.com>
-Subject: Re: [PATCH 11/19] afs: Support fsinfo() [ver #16]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200220221340.2b66fd2051a5da74775c474b@kernel.org>
+Content-Type: text/plain; charset=iso-2022-jp
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Uzw/wNVQzv5DyR9QsuqeuvLwmDEkJ6oQn7Ts9yNKnpZpUepc/zr
+ hhYU0w8ZE0MUw5TcKrCUgL1vimqkMoFYSu9itN2ekJWpWGsJUvMhzmedtzzYPYjVGeegm/G
+ ga4Tobs3N/5P6hD8gq+2COTpMmsICWpXlPTuGp3k8Idfx4X+bBXX8Gvaijp3rAS5HDdkFDe
+ +/Hkmk3cTkWQsGmUCO4yw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:wfeZLuJjyg0=:X10QpggogGWCsvM5cRIPXL
+ Y3d+109y2KmfhbY/c3VcC9Pe/6CbsFmE4edaqmzFidMLe13nJs3sZga48rhgSMSfYkuPYvG1N
+ skRaqExZEDdeMUl2385rRPKNn5HYQaaa8GVLQqjhshoKtktHhtCPltvMaHP+r9uVo+bCTgetX
+ SzUBYbx8lXeCvh5mAYtLqRoRM0ZnUGKMigK4mJ8Q5jk8y1bZr46rfJ3dI2t58NaFA/DI0xkV7
+ pvhGLtzHNh14ZvT3GG+OO/gBEwFACSdmQLibK6IYFTuTSH2kj5HTTAdNxWSqn7bVif4TGNtxV
+ wH1s5X9yYS3vB/cE+7lZxTz6RjLT8mXLn8oJFYGG4gFrJ28QmzpqS4uPTNIRzv/804H61S2P6
+ rfz6YpqHakUR8vPGfNRQUKkx+SEdTNO2eU6GOZ5VXh1j6IwJ6zrgED4w4A06jEyBQ8z5E961z
+ PeB8W20qqs89qSkCaVd+GcZg7JCrZvzD2kfKlnX5cnWbNG4kFrUI/U2t6oEhrFUzUE7wMiAXv
+ MZ40rIBPinqgAdQ9KTN5fEkIWpLVuj+HlJoCkfYDHv7aewnYLABgqEhD1TVGIjq1bONNzxyCT
+ pXzYTlqmpu0qEXmm2tAnIAvNH5G9xWbcH2PiC0dm2MPxwURvPuFwVV13xwDc6RBbzaxyu/DWq
+ UD5qMpNGCim64BeBBBJdTI6TT7oVcQFGdFOyy4WN3gR5Vj9uNL1HA6MKSREwxHF/ejtZulb+p
+ j2Ym9RInQr0sx1XlUCgFcGsbYUSgwiq/yPuzxH/yhaPJjzuWmg/EXKVBgFK6JPY6SsbywV2W/
+ UmDkZh0nSFgf5s8/F3r/A8ZO4dMo0mTrMMWbuu2aDYXavdzdS2WKcgyRPJR/uKs/kWUWLPwi5
+ IGxTBkIbV/0iz1aYNbUqAY0555hDUBVdBmUoGhMoDEJcseGFDlm2nOVLQnEpVJFSYnOtWplQZ
+ 2FpmWsmIjONJZM6dOR9J9lPKcTAS0pOdygD+hoW59BM7BeSF8UJwvVq0tQStEoR040ESDP4Px
+ E7uip761QuInqSzaHoc4NjxIz+blx2cIQdgTIsBIqQs/Tmdjdj9USZ6XHBVY47BeAvYcmVwwf
+ 3uQRXlgzt4HUImUuplF410M7zNl3OaVbw+cTnQzvqRGyFvM3ZHmNzkSJZUkxOn6TtoNq6r4S0
+ NhCEaLL8O3tGM4beEMbel99OMAa3Ela/64nllaPuYbayHUON7s2KXUS0Stqd3HPPJVPY4ZZvb
+ l6QlDkfms/KL1PAS1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 1:59 PM David Howells <dhowells@redhat.com> wrote:
-> Jann Horn <jannh@google.com> wrote:
+>>> +Currently the maximum config size size is 32KB =1B$B!D=1B(B
+>>
+>> Would you like to avoid a word duplication here?
 >
-> > Ewww. So basically, having one static set of .fsinfo_attributes is not
-> > sufficiently flexible for everyone, but instead of allowing the
-> > filesystem to dynamically provide a list of supported attributes, you
-> > just duplicate the super_operations? Seems to me like it'd be cleaner
-> > to add a function pointer to the super_operations that can dynamically
-> > fill out the supported fsinfo attributes.
-> >
-> > It seems to me like the current API is going to be a dead end if you
-> > ever want to have decent passthrough of these things for e.g. FUSE, or
-> > overlayfs, or VirtFS?
->
-> Ummm...
->
-> Would it be sufficient to have a function that returns a list of attributes?
-> Or does it need to be able to call to vfs_do_fsinfo() if it supports an
-> attribute?
->
-> There are two things I want to be able to do:
->
->  (1) Do the buffer wrangling in the core - which means the core needs to see
->      the type of the attribute.  That's fine if, say, afs_fsinfo() can call
->      vfs_do_fsinfo() with the definition for any attribute it wants to handle
->      and, say, return -ENOPKG otherways so that the core can then fall back to
->      its private list.
->
->  (2) Be able to retrieve the list of attributes and/or query an attribute.
->      Now, I can probably manage this even through the same interface.  If,
->      say, seeing FSINFO_ATTR_FSINFO_ATTRIBUTES causes the handler to simply
->      append on the IDs of its own supported attributes (a helper can be
->      provided for that).
->
->      If it sees FSINFO_ATR_FSINFO_ATTRIBUTE_INFO, it can just look to see if
->      it has the attribute with the ID matching Nth and return that, else
->      ENOPKG - again a helper could be provided.
->
-> Chaining through overlayfs gets tricky.  You end up with multiple contributory
-> filesystems with different properties - and any one of those layers could
-> perhaps be another overlay.  Overlayfs would probably needs to integrate the
-> info and derive the lowest common set.
+> Oops, still exist.
 
-Hm - I guess just returning a list of attributes ought to be fine?
-Then AFS can just return one of its two statically-allocated attribute
-lists there, and a filesystem with more complicated circumstances
-(like FUSE or overlayfs or whatever) can compute a heap-allocated list
-on mount that is freed when the superblock goes away, or something
-like that?
+Is there a need to separate the number from the following unit?
+
+
+> Indeed, "node" is not well defined. What about this?
+> ---
+> Each key consists of words separated by dot, and value also consists of
+> values separated by comma. Here, each word and each value is generally
+> called a "node".
+
+I have got still understanding difficulties with such an interpretation.
+
+* Do other contributors find an other word also more appropriate for this =
+use case?
+
+* How will the influence evolve for naming these items?
+
+* Is each element just a string (according to specific rules)?
+
+
+>> Could an other wording be nicer than the abbreviation =1B$B!H=1B(Ba doc=
+ for =1B$B!D=1B(B config=1B$B!I=1B(B
+>> in the commit subject?
+>
+> OK, I'll try next time.
+
+Will words like =1B$B!H=1B(Bdescriptions=1B$B!I=1B(Band =1B$B!H=1B(Bconfig=
+uration=1B$B!I=1B(Bbe helpful?
+
+Regards,
+Markus
