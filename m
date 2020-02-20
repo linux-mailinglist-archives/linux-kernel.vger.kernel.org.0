@@ -2,68 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A635A166421
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 18:16:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02FE5166425
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 18:16:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728659AbgBTRQ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 12:16:28 -0500
-Received: from foss.arm.com ([217.140.110.172]:47306 "EHLO foss.arm.com"
+        id S1728779AbgBTRQo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 12:16:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56294 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728173AbgBTRQ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 12:16:27 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 53E5431B;
-        Thu, 20 Feb 2020 09:16:27 -0800 (PST)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 53EAC3F68F;
-        Thu, 20 Feb 2020 09:16:26 -0800 (PST)
-Date:   Thu, 20 Feb 2020 17:16:21 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] misc: vexpress: Replace zero-length array with
- flexible-array member
-Message-ID: <20200220171621.GA44840@bogus>
-References: <20200211211010.GA32239@embeddedor>
+        id S1728111AbgBTRQo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 12:16:44 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14FD324672;
+        Thu, 20 Feb 2020 17:16:42 +0000 (UTC)
+Date:   Thu, 20 Feb 2020 12:16:41 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Borislav Petkov <bp@alien8.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v2 6/8] bootconfig: Overwrite value on same key by
+ default
+Message-ID: <20200220121641.6c0d611a@gandalf.local.home>
+In-Reply-To: <158220116248.26565.12553080867501195108.stgit@devnote2>
+References: <158220110257.26565.4812934676257459744.stgit@devnote2>
+        <158220116248.26565.12553080867501195108.stgit@devnote2>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200211211010.GA32239@embeddedor>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 03:10:10PM -0600, Gustavo A. R. Silva wrote:
-> The current codebase makes use of the zero-length array language
-> extension to the C90 standard, but the preferred mechanism to declare
-> variable-length types such as these ones is a flexible array member[1][2],
-> introduced in C99:
-> 
-> struct foo {
->         int stuff;
->         struct boo array[];
-> };
-> 
-> By making use of the mechanism above, we will get a compiler warning
-> in case the flexible array does not occur last in the structure, which
-> will help us prevent some kind of undefined behavior bugs from being
-> inadvertenly introduced[3] to the codebase from now on.
-> 
-> This issue was found with the help of Coccinelle.
-> 
-> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-> [2] https://github.com/KSPP/linux/issues/21
-> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-> 
+On Thu, 20 Feb 2020 21:19:22 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-Applied for v5.7
+> Currently, bootconfig does not overwrite existing value
+> on same key, but add new value to the tail of an array.
+> But this looks a bit confusing because similar syntax
+> configuration always overwrite the value by default.
 
---
-Regards,
-Sudeep
+Should we even allow this case? Or at the very least, some output
+should be made that a value is being overwritten.
+
+-- Steve
+
+
+> 
+> This changes the behavior to overwrite value on same key.
+> 
+> For example, if there are 2 entries
+> 
+>   key = value
+>   ...
+>   key = value2
+> 
+> Then, the key is updated as below.
+> 
+>   key = value2
+> 
+> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
