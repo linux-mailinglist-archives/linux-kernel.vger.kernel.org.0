@@ -2,189 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFEF51656EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 06:29:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A71891656DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 06:28:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727001AbgBTF3S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 00:29:18 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:33497 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726921AbgBTF3R (ORCPT
+        id S1726149AbgBTF1q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 00:27:46 -0500
+Received: from mail-vk1-f201.google.com ([209.85.221.201]:56239 "EHLO
+        mail-vk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725942AbgBTF1q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 00:29:17 -0500
-Received: by mail-pg1-f195.google.com with SMTP id 6so1341593pgk.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 21:29:17 -0800 (PST)
+        Thu, 20 Feb 2020 00:27:46 -0500
+Received: by mail-vk1-f201.google.com with SMTP id a20so938123vkm.22
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 21:27:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=EjE4Cf7VSGmXDtiO9wfyAofjvoP2FRT6B4UQ7hLR5AY=;
-        b=Ub0zzd8dWNfTsDTewN1jODEFnVsMOTPD5316AMePvfM0o+2Um4n9L/wKg+jmamqCXq
-         8XJPquqFIDrrkvHZluYuz/9foLpjkiu1cwtAW+C6ixGT2XEtt1997AUR+VbqkhkTZdzl
-         o5Mvsf40nekLYIMcM3FQU1MgEUFl7BiExQQPPXuxeVKXp8HfH+JhvF2wo4AC3khFtn3M
-         SXAy+mVO5lNQeWedTjZgBj4OTWbmRklis6gQDEcVDjVAOWHLBjuDP8m2jXw0slsHtjfW
-         oqRmzzpv94v3l2QQrjT0rFWu7CnwcuidgwMR+onqK+HtBbaZRXFThQpJGkT0KXKOYy47
-         zlkg==
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=W0+Qsok4oHbZGyXChyR+IRt/a8kG5juFEyjjlXhevNk=;
+        b=HRqIYU6n2M7e6jh89sZo+ewE85AfSOVSBO6wrBhPQxUWmonRwRL/cVevuwJlBmUkq+
+         mf8c7FYI8Ij9jDFC4a/cNViBWezTTOxOpQ2AUGMXCNwfKYXmrUvGBNU8P4H9ee+oo8Ow
+         xFweVMIM4cFWNU/PqnR0vV7F1r0prxw96JLLVvrjN9xwQOxei++rgT52wvJG7Jk4htJR
+         /mNBjD8XGIReyvHAUqC28rWyjuj4ynOTIQbIszhzm704hS6FbbclqLJzvQOoyXOrMswJ
+         B9lcHqt0qmuhEC6L46zxn9JzIvok153AWcs0dE6upTC0UpkU13aIUu96I6yxRRFmmpTs
+         p1Yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=EjE4Cf7VSGmXDtiO9wfyAofjvoP2FRT6B4UQ7hLR5AY=;
-        b=nhX9DaDJ5q5Wd+wTZXGY3iw25qSFCOjQd9oNLSpYlldx3/hUEqBEJEFtkupYu6wP9d
-         cFR1xbRiv7s2WadhKyTWuagGbYNxNDxV9Fvw8S/a/8t8efzw6SYdIiFC316wL6fDQ2dZ
-         nKYVqCs1xlCJXKA5OM16OJo0RVHMQUSZr0ybRzIGBDbJP/eJj9viZ1YedAS2MF4tJYZb
-         G2TNh9nk68s2TFAWjGzPFv1tFbP07o7k9iup4XlTk91xyi13I3LbqZ9A4WF8UlF05o4m
-         B8ttde/doQJ3+h2kljCREha57G/emB8MDM0NwxUq4FujxzhUO5RVMn7WaeHYiGGC5iro
-         kV1Q==
-X-Gm-Message-State: APjAAAUm7qRY+dmnXLiEmazScGEa44bQMRs+31wbLVwKPBSRz2xZncFZ
-        cUhLBxXmt+KUFlgq+aEg8hy4DA==
-X-Google-Smtp-Source: APXvYqzXGCJ8KKqo2Ke8Te55VXSZTK7rRAQmCpM2W+Cmx3hGbcok220pWXGhNqhw2DaGZEJJib1fwg==
-X-Received: by 2002:a62:1456:: with SMTP id 83mr30897343pfu.186.1582176557002;
-        Wed, 19 Feb 2020 21:29:17 -0800 (PST)
-Received: from localhost.localdomain (li1441-214.members.linode.com. [45.118.134.214])
-        by smtp.gmail.com with ESMTPSA id l69sm1535663pgd.1.2020.02.19.21.29.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 21:29:16 -0800 (PST)
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        Robert Walker <robert.walker@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Coresight ML <coresight@lists.linaro.org>
-Cc:     Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v5 9/9] perf cs-etm: Fixup exception exit for thread stack
-Date:   Thu, 20 Feb 2020 13:27:01 +0800
-Message-Id: <20200220052701.7754-10-leo.yan@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200220052701.7754-1-leo.yan@linaro.org>
-References: <20200220052701.7754-1-leo.yan@linaro.org>
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=W0+Qsok4oHbZGyXChyR+IRt/a8kG5juFEyjjlXhevNk=;
+        b=ZNHP6pND30mV+Xv75V9vwRmiaAhZMno0qYjNQMwV0RlXJ2z/6YoVypdQM0Wz84bwAq
+         3Mxf8CFIaMqcISPw0O8IXDMWqxsi2xn2rCgwLYAg5+Pg0cXJQGsZ7gX/tkMkygU9mily
+         YHhL+GPeqctMPf6WFJDdD8377jrm4t/vCa8i80J2oie0ZcO1TnJC0EqG6/uZzEDpMJE5
+         ptuWnNGhnBGgnjgBk80cfGQeYd6GfcaqvwkNv7aDvajw2mzuam2Sn7auYRTdlDu5srNw
+         XmJrQDgAaqdLijuVeX/CCFADI0iGqKiAqZThMcd9fPPjI5+FHzamDRECQ+NS4HM2mMUO
+         9IxA==
+X-Gm-Message-State: APjAAAUGUXSMIGIxT8JnY5kVIQgEgc+DEDfo4DXoZEwm2CZBVEoE0DGH
+        Xm1GCeEqz/HXEFEfikT0Zw8G4+25QQmItq4=
+X-Google-Smtp-Source: APXvYqx7UYZrF+NELBJAur5GTkT83RGTPAinxyJ9i+Zwuqnu1BZtsoXFlzXAlTuDLzNZIRGYaheylatSL73RSao=
+X-Received: by 2002:a67:320c:: with SMTP id y12mr15995010vsy.47.1582176464977;
+ Wed, 19 Feb 2020 21:27:44 -0800 (PST)
+Date:   Wed, 19 Feb 2020 21:27:38 -0800
+In-Reply-To: <20200218220748.54823-1-john.stultz@linaro.org>
+Message-Id: <20200220052739.87057-1-saravanak@google.com>
+Mime-Version: 1.0
+References: <20200218220748.54823-1-john.stultz@linaro.org>
+X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
+Subject: Re: [PATCH v3 1/2] driver core: Rework logic in __driver_deferred_probe_check_state
+ to allow EPROBE_DEFER to be returned for longer
+From:   Saravana Kannan <saravanak@google.com>
+To:     john.stultz@linaro.org, lkml <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>
+Cc:     bjorn.andersson@linaro.org, broonie@kernel.org,
+        gregkh@linuxfoundation.org, khilman@kernel.org,
+        len.brown@intel.com, lgirdwood@gmail.com, linux-pm@vger.kernel.org,
+        pavel@ucw.cz, rjw@rjwysocki.net, tkjos@google.com,
+        ulf.hansson@linaro.org, Saravana Kannan <saravanak@google.com>,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For instruction emulation or other cases (like ptrace), the program will
-be trapped into kernel and the kernel executes the instruction with
-single step, so the exception return address will be one instruction
-ahead than the recorded address 'ret_addr' in the thread stack.
-Finally, it's impossible to pop up the thread stack due to the mismatch
-between the return address and 'ret_addr'.
+Apologies in advance for replying to this one email but discussing the
+points raised in all the other replies. I'm not cc'ed in this thread and
+replying to each email individually is a pain.
 
-To fix this issue, this patch reads out the 'ret_addr' from the top of
-thread stack, and if detects the exception return address is one
-instruction ahead than 'ret_addr', it implies the kernel has executed
-single step.  For this case, calibrate 'to_ip' to 'ret_addr' so can
-allow the thread stack to pop up.
+On Tue, Feb 18, 2020 at 4:07 PM John Stultz wrote:
+> Due to commit e01afc3250255 ("PM / Domains: Stop deferring probe
+> at the end of initcall"), along with commit 25b4e70dcce9
+> ("driver core: allow stopping deferred probe after init") after
+> late_initcall, drivers will stop getting EPROBE_DEFER, and
+> instead see an error causing the driver to fail to load.
 
-Before:
+Both of those patches were the best solution at that point in time. But
+the kernel has changed a lot since then. Power domain and IOMMU drivers
+can work as modules now. We have of_devlink and sync_state().
 
-  main  3258        100      instructions:
-          ffff800010095f48 do_emulate_mrs+0x48 ([kernel.kallsyms])
-          ffff800010096060 emulate_mrs+0x48 ([kernel.kallsyms])
-          ffff8000100904ec do_undefinstr+0x1f4 ([kernel.kallsyms])
-          ffff80001008788c el0_sync_handler+0x124 ([kernel.kallsyms])
-          ffff800010082d00 el0_sync+0x140 ([kernel.kallsyms])
-              ffffad8137d8 _dl_sysdep_start+0x2f8 (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
-              ffffad800884 _dl_start_final+0xac (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
-              ffffad800b00 _dl_start+0x200 (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
-              ffffad800048 _start+0x8 (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
+So, while a delay might have been the ideal solution back then, I think
+we need to work towards removing arbitrary timeouts instead of making
+the timeout mechanism more elaborate.
 
-  main  3258        100      instructions:
-          ffff8000100835fc finish_ret_to_user+0xbc ([kernel.kallsyms])
-              ffffad8137d8 _dl_sysdep_start+0x2f8 (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
-              ffffad800884 _dl_start_final+0xac (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
-              ffffad800b00 _dl_start+0x200 (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
-              ffffad800048 _start+0x8 (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
+I think driver_deferred_probe_check_state() logic should boiled down
+to something like:
 
-  main  3258        100      instructions:
-              ffffad801138 dl_main+0x70 (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
-              ffffad81384c _dl_sysdep_start+0x36c (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
-              ffffad8137d8 _dl_sysdep_start+0x2f8 (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
-              ffffad800884 _dl_start_final+0xac (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
-              ffffad800b00 _dl_start+0x200 (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
-              ffffad800048 _start+0x8 (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
+int driver_deferred_probe_check_state(struct device *dev)
+{
+	/* No modules and init done, deferred probes are pointless from
+	 * now. */
+	if (!defined(CONFIG_MODULES) && initcall_done)
+		return -ENODEV;
 
-Note: after return back from instruction emulation with emulate_mrs(),
-_dl_sysdep_start+0x2f8 cannot be popped up.
+	/* If modules and of_devlink then you clean want dependencies to
+	 * be enforced.
+	 */
+	if (defined(CONFIG_MODULES) && of_devlink)
+		return -EPROBE_DEFER;
 
-After:
+	/* Whatever other complexity (including timeouts) we want to
+	 * add. Hopefully none - we can discuss in this thread. */
+	if (.....)
+		return -Exxxx;
+	
+	/* When in doubt, allow probe deferral. */
+	return -EPROBE_DEFER;
+}
 
-  main  3258        100      instructions:
-          ffff800010095f48 do_emulate_mrs+0x48 ([kernel.kallsyms])
-          ffff800010096060 emulate_mrs+0x48 ([kernel.kallsyms])
-          ffff8000100904ec do_undefinstr+0x1f4 ([kernel.kallsyms])
-          ffff80001008788c el0_sync_handler+0x124 ([kernel.kallsyms])
-          ffff800010082d00 el0_sync+0x140 ([kernel.kallsyms])
-              ffffad8137d8 _dl_sysdep_start+0x2f8 (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
-              ffffad800884 _dl_start_final+0xac (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
-              ffffad800b00 _dl_start+0x200 (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
-              ffffad800048 _start+0x8 (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
+Rob, for the original use case those two patches were added for, do they need
+to support CONFIG_MODULES?
 
-  main  3258        100      instructions:
-          ffff8000100835fc finish_ret_to_user+0xbc ([kernel.kallsyms])
-              ffffad8137d8 _dl_sysdep_start+0x2f8 (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
-              ffffad800884 _dl_start_final+0xac (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
-              ffffad800b00 _dl_start+0x200 (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
-              ffffad800048 _start+0x8 (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
+> That change causes trouble when trying to use many clk drivers
+> as modules, as the clk modules may not load until much later
+> after init has started. If a dependent driver loads and gets an
+> error instead of EPROBE_DEFER, it won't try to reload later when
+> the dependency is met, and will thus fail to load.
 
-  main  3258        100      instructions:
-              ffffad801138 dl_main+0x70 (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
-              ffffad81384c _dl_sysdep_start+0x36c (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
-              ffffad800884 _dl_start_final+0xac (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
-              ffffad800b00 _dl_start+0x200 (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
-              ffffad800048 _start+0x8 (/usr/lib/aarch64-linux-gnu/ld-2.28.so)
+Once we add of_devlink support for power-domains, you won't even hit the
+genpd error path if you have of_devlink enabled. I believe in the case
+you are testing DB 845c, of_devlink is enabled?
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- tools/perf/util/cs-etm.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+If of_devlink is enabled, the devices depending on the unprobed power
+domains would be deferred without even calling the driver's probe()
+function.
 
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 4800daf0dc3d..7ff55704de5c 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -1190,6 +1190,34 @@ static void cs_etm__add_stack_event(struct cs_etm_queue *etmq,
- 		    tidq->prev_packet->end_addr)
- 			insn_len = 0;
- 
-+		/*
-+		 * Fixup the exception exit.
-+		 *
-+		 * For instruction emulation or single step cases, when return
-+		 * from exception, since an extra instruction has been executed
-+		 * in kernel, the exception return address 'top_ip' is an
-+		 * instruction ahead than the expected address 'ret_addr' in
-+		 * thread stack.
-+		 *
-+		 * When detects this case, calibrate 'to_ip' to 'ret_addr' so
-+		 * can pop up thread stack.
-+		 */
-+		flags = PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_RETURN |
-+			PERF_IP_FLAG_INTERRUPT;
-+		if (tidq->prev_packet->flags == flags) {
-+			u64 ret_addr;
-+			int ret_insn_len;
-+
-+			ret_addr = thread_stack__get_top_ret_addr(tidq->thread,
-+						tidq->prev_packet->cpu);
-+			ret_insn_len = cs_etm__instr_size(etmq,
-+							  trace_chan_id,
-+							  tidq->packet->isa,
-+							  ret_addr);
-+			if (to_ip == ret_addr + ret_insn_len)
-+				to_ip = ret_addr;
-+		}
-+
- 		/*
- 		 * Create thread stacks by keeping track of calls and returns;
- 		 * any call pushes thread stack, return pops the stack, and
--- 
-2.17.1
+Adding power-domain support to of_devlink is a 2 line change. I'll send
+it out soon.
 
+Also, regulator_init_complete() can be replaced by a sync_state() based
+implementation. I have a downstream implementation that works. But it's
+definitely not upstream ready. I plan to rewrite it and send it upstream
+at some point, but it's fairly straightforward if anyone else want to
+implement it. My main point being, we shouldn't have to make the timeout
+logic more complex (or even need one) for regulator clean up either.
+
+On Tue, Feb 18, 2020 at 6:07 PM Rob Herring wrote:
+> The one complication which I mentioned already is with consoles. A
+> timeout (and dependencies in modules) there doesn't work. You have to
+> probe and register the console before init is done.
+
+Rob,
+
+I've seen you say this a couple of times before. But I don't think this
+is true any more. With of_devlink enabled I've booted hardware countless
+times with the console device probing after userspace comes up. The only
+limitation for console drivers is that they need to be built-in if they
+need to support earlycon. If you don't care to support earlycon (very
+useful for bringup debugging), I think the console driver can even be a
+module. I don't think even of_devlink needs to be enabled technically if
+you load the modules in the right order.
+
+Thanks,
+Saravana
