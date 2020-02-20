@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 557AA166316
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:33:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF59D166305
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:33:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729031AbgBTQc2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 11:32:28 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:38791 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728910AbgBTQbg (ORCPT
+        id S1728929AbgBTQbj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 11:31:39 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:36963 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728909AbgBTQbf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 11:31:36 -0500
+        Thu, 20 Feb 2020 11:31:35 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582216295;
+        s=mimecast20190719; t=1582216294;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=9p8DfFh4LDgRTv+VZI0mGqV/kjyY8x0K2QPT4Z6z4hI=;
-        b=NS+hDbRyj0cJ7ViSkQDA3Ihi4yg0bFWrlncmI/ErHC4nygPeCEKf2+HSKtiNsu+k2x1Fp4
-        O/a3xYZ/DYZwsJ34U9VCNWIFw6GW19XuBqN1rFNMZMwVaL0Bue34jZpWb70NjIyC14EcIC
-        DIf+3xXLfZLWVgaYUx7GdiZjp5aF+mY=
+        bh=7CcQ3+IAeYTGH9do6IO2FxfgSZnvINmGfGHXGlbg3PU=;
+        b=L+MsdqegttqMdquJhFPjl63u+SsXRnB9eLxx2+MWdKU8/lMVH5cqjpL0K61o7nOJ2FX1ek
+        eSgsd3Qw3GOqc+aOtDQuI/xKIc9sWoVf+fltwqog1A2hJfeQ8qFd/Zp6rRiBMJ8tcVFKqh
+        wdp7iwKY8nRZd/LXlIjI3FC4qNepHQI=
 Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
  [209.85.222.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-355-hOJLXRkhPmS6KMSEN8BF0w-1; Thu, 20 Feb 2020 11:31:30 -0500
-X-MC-Unique: hOJLXRkhPmS6KMSEN8BF0w-1
-Received: by mail-qk1-f197.google.com with SMTP id w126so3082186qkb.23
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 08:31:30 -0800 (PST)
+ us-mta-220-xEyoUCFFOHiRoS0tUO5y-A-1; Thu, 20 Feb 2020 11:31:32 -0500
+X-MC-Unique: xEyoUCFFOHiRoS0tUO5y-A-1
+Received: by mail-qk1-f197.google.com with SMTP id q123so3126039qkb.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 08:31:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=9p8DfFh4LDgRTv+VZI0mGqV/kjyY8x0K2QPT4Z6z4hI=;
-        b=Ygvl8J3HUR3MLLLWPf2/gg5h8nNCpT6EjmoaTEI1G+6peLxZ3gB5UAoT2wl5YlHGge
-         Qhvvwqnz9w4mjbFvB8EzezB9bNgoe0B9CFVcF8n/d+dp2WrLvnXE0a5TsMLrJhlnw+lb
-         r5gTJfKaoFk9jseo0Tg6Vx0CJBBpQrDzWXIAEXiuEVJSRXbs7a9BQD6OLjjF1Al/34C/
-         8u7kwq3jFQTaGoPqwhsvNcLlF3hSM8gWHMkcH6t+8B5ui9YS65wOtgH/RvvcFHnsPtXZ
-         IuKWS6qMsmB6TEy0PCMl11HuDuBQ+584Oz3DLr/RXeuuHIjRrdotXiSa3b8wqjmkjR+A
-         3QkA==
-X-Gm-Message-State: APjAAAVRY/ZKtopIqUrjlhP5ghCqWTWkkMbHdNKi5up4b/opFwKXLF/L
-        E2vgeY4MBCdbWwAcfY87XsN0dmza1VO/uLmRzkwlNVlqZwnXUD+EGw88SAcmc/TW2O8O/VLQHH6
-        ORrU+1naqkKqxVOnwWvXYY0Au
-X-Received: by 2002:ac8:6f09:: with SMTP id g9mr27612446qtv.275.1582216290038;
-        Thu, 20 Feb 2020 08:31:30 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwsnOU5LWdon8Q11QY9e4+1W5bENddKTz44hj+9UCZ2Yyh27gd4WB1LUA2w5xbsoq6RUPQx5Q==
-X-Received: by 2002:ac8:6f09:: with SMTP id g9mr27612422qtv.275.1582216289803;
-        Thu, 20 Feb 2020 08:31:29 -0800 (PST)
+        bh=7CcQ3+IAeYTGH9do6IO2FxfgSZnvINmGfGHXGlbg3PU=;
+        b=r0LfnnAzKkAS+LEQ/nXd9X5Ivs8+2FZgy85N4mEuetsIFyJQNfVJPm8qShpnuenjPw
+         75O0eKcYZ2LT+7iYf8LiM5lMZBBEe1qTncL+TSSDea5fGr9LVJlsn7LA3ZUy1uVmcANC
+         mhFe7MW1gMoxxF1IwcUGNK24SOhCctzJpEdiWA5LgChcLgm40VaMn/RxfFbcwryk0dv8
+         o7FeOwTlRfOYI7+LEPhGkbTIMpItc3q6fc8Mo1VAW5HARv+Hyu7VWWwCwJjTN4xN03i7
+         JQWGWTZHoz4PbRkO4h3BFkKj2qkTUPdmEn+HxQuc6WaOL36B8HkDZ1E968LlwBKVM42q
+         ma/w==
+X-Gm-Message-State: APjAAAXau8YWH3Bdwh2TDmAw+oiG09fhOjcbxB78kQEvSR6ti2E0aB2B
+        0zxBpN7rXNs81eP6BGCKpyslz7d6LU2CJayo1ZyTr/fAsgEkUZgKsesREcSXl5ovCvlHe2z391W
+        pc3dC45JolZI6mMmA/V8IWTGZ
+X-Received: by 2002:a05:6214:450:: with SMTP id cc16mr26379230qvb.175.1582216291755;
+        Thu, 20 Feb 2020 08:31:31 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyx1wLJHNN7bX0JIiwvsibPAVG4lfhOifN1KcvsGrtR3sMPF4XG8/cMRjTEzqSZIM61UByx4Q==
+X-Received: by 2002:a05:6214:450:: with SMTP id cc16mr26379203qvb.175.1582216291482;
+        Thu, 20 Feb 2020 08:31:31 -0800 (PST)
 Received: from xz-x1.redhat.com ([104.156.64.75])
-        by smtp.gmail.com with ESMTPSA id l19sm42366qkl.3.2020.02.20.08.31.27
+        by smtp.gmail.com with ESMTPSA id l19sm42366qkl.3.2020.02.20.08.31.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2020 08:31:28 -0800 (PST)
+        Thu, 20 Feb 2020 08:31:30 -0800 (PST)
 From:   Peter Xu <peterx@redhat.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     Brian Geffon <bgeffon@google.com>,
@@ -70,9 +70,9 @@ Cc:     Brian Geffon <bgeffon@google.com>,
         Hugh Dickins <hughd@google.com>,
         "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
         Jerome Glisse <jglisse@redhat.com>
-Subject: [PATCH v6 08/19] userfaultfd: wp: drop _PAGE_UFFD_WP properly when fork
-Date:   Thu, 20 Feb 2020 11:31:01 -0500
-Message-Id: <20200220163112.11409-9-peterx@redhat.com>
+Subject: [PATCH v6 09/19] userfaultfd: wp: add pmd_swp_*uffd_wp() helpers
+Date:   Thu, 20 Feb 2020 11:31:02 -0500
+Message-Id: <20200220163112.11409-10-peterx@redhat.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200220163112.11409-1-peterx@redhat.com>
 References: <20200220163112.11409-1-peterx@redhat.com>
@@ -83,58 +83,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-UFFD_EVENT_FORK support for uffd-wp should be already there, except
-that we should clean the uffd-wp bit if uffd fork event is not
-enabled.  Detect that to avoid _PAGE_UFFD_WP being set even if the VMA
-is not being tracked by VM_UFFD_WP.  Do this for both small PTEs and
-huge PMDs.
+Adding these missing helpers for uffd-wp operations with pmd
+swap/migration entries.
 
 Reviewed-by: Jerome Glisse <jglisse@redhat.com>
 Reviewed-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- mm/huge_memory.c | 8 ++++++++
- mm/memory.c      | 8 ++++++++
- 2 files changed, 16 insertions(+)
+ arch/x86/include/asm/pgtable.h     | 15 +++++++++++++++
+ include/asm-generic/pgtable_uffd.h | 15 +++++++++++++++
+ 2 files changed, 30 insertions(+)
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index c56a83e0a184..134bef68a1de 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1011,6 +1011,14 @@ int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
- 	ret = -EAGAIN;
- 	pmd = *src_pmd;
- 
-+	/*
-+	 * Make sure the _PAGE_UFFD_WP bit is cleared if the new VMA
-+	 * does not have the VM_UFFD_WP, which means that the uffd
-+	 * fork event is not enabled.
-+	 */
-+	if (!(vma->vm_flags & VM_UFFD_WP))
-+		pmd = pmd_clear_uffd_wp(pmd);
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 74f16d7e5b47..75a04ac97ef2 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -1427,6 +1427,21 @@ static inline pte_t pte_swp_clear_uffd_wp(pte_t pte)
+ {
+ 	return pte_clear_flags(pte, _PAGE_SWP_UFFD_WP);
+ }
 +
- #ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
- 	if (unlikely(is_swap_pmd(pmd))) {
- 		swp_entry_t entry = pmd_to_swp_entry(pmd);
-diff --git a/mm/memory.c b/mm/memory.c
-index 21cd818dfede..557837ec29c3 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -785,6 +785,14 @@ copy_one_pte(struct mm_struct *dst_mm, struct mm_struct *src_mm,
- 		pte = pte_mkclean(pte);
- 	pte = pte_mkold(pte);
- 
-+	/*
-+	 * Make sure the _PAGE_UFFD_WP bit is cleared if the new VMA
-+	 * does not have the VM_UFFD_WP, which means that the uffd
-+	 * fork event is not enabled.
-+	 */
-+	if (!(vm_flags & VM_UFFD_WP))
-+		pte = pte_clear_uffd_wp(pte);
++static inline pmd_t pmd_swp_mkuffd_wp(pmd_t pmd)
++{
++	return pmd_set_flags(pmd, _PAGE_SWP_UFFD_WP);
++}
 +
- 	page = vm_normal_page(vma, addr, pte);
- 	if (page) {
- 		get_page(page);
++static inline int pmd_swp_uffd_wp(pmd_t pmd)
++{
++	return pmd_flags(pmd) & _PAGE_SWP_UFFD_WP;
++}
++
++static inline pmd_t pmd_swp_clear_uffd_wp(pmd_t pmd)
++{
++	return pmd_clear_flags(pmd, _PAGE_SWP_UFFD_WP);
++}
+ #endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
+ 
+ #define PKRU_AD_BIT 0x1
+diff --git a/include/asm-generic/pgtable_uffd.h b/include/asm-generic/pgtable_uffd.h
+index 643d1bf559c2..828966d4c281 100644
+--- a/include/asm-generic/pgtable_uffd.h
++++ b/include/asm-generic/pgtable_uffd.h
+@@ -46,6 +46,21 @@ static __always_inline pte_t pte_swp_clear_uffd_wp(pte_t pte)
+ {
+ 	return pte;
+ }
++
++static inline pmd_t pmd_swp_mkuffd_wp(pmd_t pmd)
++{
++	return pmd;
++}
++
++static inline int pmd_swp_uffd_wp(pmd_t pmd)
++{
++	return 0;
++}
++
++static inline pmd_t pmd_swp_clear_uffd_wp(pmd_t pmd)
++{
++	return pmd;
++}
+ #endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
+ 
+ #endif /* _ASM_GENERIC_PGTABLE_UFFD_H */
 -- 
 2.24.1
 
