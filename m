@@ -2,182 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04DAB16646B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 18:23:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EA4016646A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 18:23:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728971AbgBTRWg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 12:22:36 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:33043 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726959AbgBTRWR (ORCPT
+        id S1728964AbgBTRW3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 12:22:29 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:55503 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728926AbgBTRW0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 12:22:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582219336;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4zSPAFD+pq1zzy8dMD3rvr6m7tZzVDJbOvdVC9ghOhg=;
-        b=fDW5mfzePmyEcutRQZgQDLLWdAUP9vCfr0SqnudvF8myoGbZLjmCNflGCLiN//XYcLXzzD
-        hN+nRrYyIZrWzaiLyS2fq3FRfPRsfSoS8UoO4aytQ9DzjO/pGDfPowQX6SPOWoG9b7d/mv
-        DyFXer5lUxbFTR/Dy8ZQ4yK7Jo6GMi0=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-19-F8OHhkEvMNiisYxtqkM80g-1; Thu, 20 Feb 2020 12:22:12 -0500
-X-MC-Unique: F8OHhkEvMNiisYxtqkM80g-1
-Received: by mail-wm1-f71.google.com with SMTP id m4so845291wmi.5
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 09:22:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4zSPAFD+pq1zzy8dMD3rvr6m7tZzVDJbOvdVC9ghOhg=;
-        b=QDatkQgji/AZOugnBYEyyGgDOsFOHmxsbS2xF5WQ3rSGbR4SC2wIspJ9Q6EhI/3UMG
-         4Nf8LxDKUnZfNfAigcFIz1LNV16alnQrJ8nVqFD852xAgVm32WObB7QwEvDRv6YTu2ox
-         Qhq6sCD8RnZ3VU0PUr0Rr7lThIXKB4UIpJdyGzsZTLpoj+761n4QwTPL7BjC1cAg501D
-         fyLxLtdPiG34rBxNCYUPweKXwcHuJe/npel+IpAEmYSmDtnTPzH5wGl6YhE42tthn9BD
-         11EOwtWyvX7bvBFfLIH56x4TIPNLOC7uzCZwq0WUkrmz14uaiq6zHUWzj4PGk5C/zAvC
-         ZW5A==
-X-Gm-Message-State: APjAAAVXqCIBIz6SgWbHEHBp3F4Omk9grNeFXFuAR8UieaSeYiKCSGbT
-        DmOjb0/QEueIcHDZND6KflIehE5WWAXBjyEWEb6FT2QDpg3jMQa/2MF4qpzm4nEp4IBTu6prSCK
-        unewpDyaoVNmrWQ6PS6eF61Fg
-X-Received: by 2002:a7b:c3cd:: with SMTP id t13mr5561886wmj.88.1582219330729;
-        Thu, 20 Feb 2020 09:22:10 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyaovZTBPl60h/IscrnJlDVyp+IMSAuBmQqHyvNDD+J1VGVoB56M/2PEkihV8OeoQNnZMmPIw==
-X-Received: by 2002:a7b:c3cd:: with SMTP id t13mr5561873wmj.88.1582219330489;
-        Thu, 20 Feb 2020 09:22:10 -0800 (PST)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id a184sm5355891wmf.29.2020.02.20.09.22.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2020 09:22:09 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Jim Mattson <jmattson@google.com>, kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH RFC 2/2] KVM: nVMX: handle nested posted interrupts when apicv is disabled for L1
-Date:   Thu, 20 Feb 2020 18:22:05 +0100
-Message-Id: <20200220172205.197767-3-vkuznets@redhat.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200220172205.197767-1-vkuznets@redhat.com>
-References: <20200220172205.197767-1-vkuznets@redhat.com>
+        Thu, 20 Feb 2020 12:22:26 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 8147D21DC4;
+        Thu, 20 Feb 2020 12:22:25 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Thu, 20 Feb 2020 12:22:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=Y/LbR6Gks9hLwTyOoP+fgUalI9X
+        hENSr9+HkBd7I4X0=; b=rsy8BLO9wTPt5VT1koKQ++7YX/JqNw2f4K45TBjw61K
+        NtrqK/J1EBgQYnqC7YFDQPkqZud22SIAPgJcoWT1ILayHtkQybaoMehemsVvBOBi
+        7i4cjcDq32I/E6S7ES4KB9TOOHVCGcgp/fyVvtwoQCfFifhSp5kciq5ibEkWYDe1
+        vBeJnDgdYC4kOTn0TAxST6lK9Q06nJmiz3J9CNHN5WTPfhIOA/RYaKUvmMSP7adg
+        6V/I3RyaRAUirYnz7zoHoz/3c16LsVMd7iYu8/WazO0hySSg26lrRksqXVPUTR0A
+        mrA0PIKjrsYYowLE9VSNMolVdQtSiK7ArAhC/FN9x9Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=Y/LbR6
+        Gks9hLwTyOoP+fgUalI9XhENSr9+HkBd7I4X0=; b=R6+adF2rysmiZatF269DgT
+        q08nniKYJWkj3UoyZ3iJ+fY3LO725EKt5QN4tZKZDzjX6/k7+2GW7Spq18637cD7
+        U4AQd2t8kfp8TD5J/wEARU4iKSzOEpVC2/0PLbenrhZL82ERj3vWnSIATeOoEwpL
+        iwUGrGk2vslNFmYqiMW68Y97o29byM5cAEAeVBPpIYYTEmJaFy8+zz9/oo02k9Yp
+        FK+jow0+EK7+VqaIExL5nUyzcCtsXsyWzSH6x9gamO0KCyCJmEKXbX4adHxHPpLX
+        ixd0C4lGZKHLmllIMh8GwRnX3gVCU4Q70qnrgdbLG6s8AepecQpqApSTbkNjGJ4g
+        ==
+X-ME-Sender: <xms:UcBOXsPtVx0Kka06Pp2MdvillpDUXARbRezhJYZRxRyd50uUz3e8fg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrkedvgddutddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecukfhppeeltd
+    drkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghi
+    lhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:UcBOXsBjQCEDGuAQPtHvcaGoQYDBDoTV055YxBXU0LEHR3T7Flnw0A>
+    <xmx:UcBOXsVVdXtbCRvybu_vV20qG23UUQWSRJ_Qd1v8pAfqkFgtpAX1uw>
+    <xmx:UcBOXgcCgwQTIL6hBrah-yD2DId9vI6gCTT-bv9kTSOCkSnuzrcR5Q>
+    <xmx:UcBOXsQNGzQYx5UzJP61oxMDyeIbxa33Yk2aL31PWJoqbHgwtnGR8Q>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 331E03060BE4;
+        Thu, 20 Feb 2020 12:22:25 -0500 (EST)
+Date:   Thu, 20 Feb 2020 18:22:23 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Andrey Lebedev <andrey.lebedev@gmail.com>
+Cc:     wens@csie.org, airlied@linux.ie, daniel@ffwll.ch,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Andrey Lebedev <andrey@lebedev.lt>
+Subject: Re: [PATCH 2/5] drm/sun4i: tcon: Separate quirks for tcon0 and tcon1
+ on A20
+Message-ID: <20200220172223.xoy6e3njmsb2vcon@gilmour.lan>
+References: <20200210195633.GA21832@kedthinkpad>
+ <20200219180858.4806-1-andrey.lebedev@gmail.com>
+ <20200219180858.4806-3-andrey.lebedev@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="bi7wpjn7s3dhfi3c"
+Content-Disposition: inline
+In-Reply-To: <20200219180858.4806-3-andrey.lebedev@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Even when APICv is disabled for L1 it can (and, actually, is) still
-available for L2, this means we need to always call
-vmx_deliver_nested_posted_interrupt() when attempting an interrupt
-delivery.
 
-Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- arch/x86/include/asm/kvm_host.h |  2 +-
- arch/x86/kvm/lapic.c            |  5 +----
- arch/x86/kvm/svm.c              |  7 ++++++-
- arch/x86/kvm/vmx/vmx.c          | 13 +++++++++----
- 4 files changed, 17 insertions(+), 10 deletions(-)
+--bi7wpjn7s3dhfi3c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 40a0c0fd95ca..a84e8c5acda8 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1146,7 +1146,7 @@ struct kvm_x86_ops {
- 	void (*load_eoi_exitmap)(struct kvm_vcpu *vcpu, u64 *eoi_exit_bitmap);
- 	void (*set_virtual_apic_mode)(struct kvm_vcpu *vcpu);
- 	void (*set_apic_access_page_addr)(struct kvm_vcpu *vcpu, hpa_t hpa);
--	void (*deliver_posted_interrupt)(struct kvm_vcpu *vcpu, int vector);
-+	int (*deliver_posted_interrupt)(struct kvm_vcpu *vcpu, int vector);
- 	int (*sync_pir_to_irr)(struct kvm_vcpu *vcpu);
- 	int (*set_tss_addr)(struct kvm *kvm, unsigned int addr);
- 	int (*set_identity_map_addr)(struct kvm *kvm, u64 ident_addr);
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index afcd30d44cbb..cc8ee8125712 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -1046,11 +1046,8 @@ static int __apic_accept_irq(struct kvm_lapic *apic, int delivery_mode,
- 						       apic->regs + APIC_TMR);
- 		}
- 
--		if (vcpu->arch.apicv_active)
--			kvm_x86_ops->deliver_posted_interrupt(vcpu, vector);
--		else {
-+		if (kvm_x86_ops->deliver_posted_interrupt(vcpu, vector)) {
- 			kvm_lapic_set_irr(vector, apic);
--
- 			kvm_make_request(KVM_REQ_EVENT, vcpu);
- 			kvm_vcpu_kick(vcpu);
- 		}
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index bef0ba35f121..970a3ab2e926 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -5255,8 +5255,11 @@ static void svm_load_eoi_exitmap(struct kvm_vcpu *vcpu, u64 *eoi_exit_bitmap)
- 	return;
- }
- 
--static void svm_deliver_avic_intr(struct kvm_vcpu *vcpu, int vec)
-+static int svm_deliver_avic_intr(struct kvm_vcpu *vcpu, int vec)
- {
-+	if (!vcpu->arch.apicv_active)
-+		return -1;
-+
- 	kvm_lapic_set_irr(vec, vcpu->arch.apic);
- 	smp_mb__after_atomic();
- 
-@@ -5268,6 +5271,8 @@ static void svm_deliver_avic_intr(struct kvm_vcpu *vcpu, int vec)
- 		put_cpu();
- 	} else
- 		kvm_vcpu_wake_up(vcpu);
-+
-+	return 0;
- }
- 
- static bool svm_dy_apicv_has_pending_interrupt(struct kvm_vcpu *vcpu)
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 946c74e661e2..92a14ea4be69 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -3818,24 +3818,29 @@ static int vmx_deliver_nested_posted_interrupt(struct kvm_vcpu *vcpu,
-  * 2. If target vcpu isn't running(root mode), kick it to pick up the
-  * interrupt from PIR in next vmentry.
-  */
--static void vmx_deliver_posted_interrupt(struct kvm_vcpu *vcpu, int vector)
-+static int vmx_deliver_posted_interrupt(struct kvm_vcpu *vcpu, int vector)
- {
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
- 	int r;
- 
- 	r = vmx_deliver_nested_posted_interrupt(vcpu, vector);
- 	if (!r)
--		return;
-+		return 0;
-+
-+	if (!vcpu->arch.apicv_active)
-+		return -1;
- 
- 	if (pi_test_and_set_pir(vector, &vmx->pi_desc))
--		return;
-+		return 0;
- 
- 	/* If a previous notification has sent the IPI, nothing to do.  */
- 	if (pi_test_and_set_on(&vmx->pi_desc))
--		return;
-+		return 0;
- 
- 	if (!kvm_vcpu_trigger_posted_interrupt(vcpu, false))
- 		kvm_vcpu_kick(vcpu);
-+
-+	return 0;
- }
- 
- /*
--- 
-2.24.1
+On Wed, Feb 19, 2020 at 08:08:55PM +0200, Andrey Lebedev wrote:
+> From: Andrey Lebedev <andrey@lebedev.lt>
+>
+> Timing controllers on A20 are not equivalent: tcon0 on A20 supports
+> LVDS output and tcon1 does not. Separate the capabilities by
+> introducing independent set of quirks for each of the tcons.
+>
+> Signed-off-by: Andrey Lebedev <andrey@lebedev.lt>
+> ---
+>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> index cc6b05ca2c69..b7234eef3c7b 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> @@ -1508,6 +1508,8 @@ const struct of_device_id sun4i_tcon_of_table[] = {
+>  	{ .compatible = "allwinner,sun5i-a13-tcon", .data = &sun5i_a13_quirks },
+>  	{ .compatible = "allwinner,sun6i-a31-tcon", .data = &sun6i_a31_quirks },
+>  	{ .compatible = "allwinner,sun6i-a31s-tcon", .data = &sun6i_a31s_quirks },
+> +	{ .compatible = "allwinner,sun7i-a20-tcon0", .data = &sun7i_a20_quirks },
+> +	{ .compatible = "allwinner,sun7i-a20-tcon1", .data = &sun7i_a20_quirks },
 
+It wasn't ordered alphabetically, I've fixed it up while applying.
+
+Maxime
+
+--bi7wpjn7s3dhfi3c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXk7ATwAKCRDj7w1vZxhR
+xaxkAQC4slxXfrNAlNDduUqdbx09RyWm5i9BjI+oi87n++Sj7wEA+3wqikR7D1eY
+1FTAfdjEbPqk07Awe1jmsHs2OYbK2gQ=
+=Um74
+-----END PGP SIGNATURE-----
+
+--bi7wpjn7s3dhfi3c--
