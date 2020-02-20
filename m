@@ -2,320 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 382E0165E9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 14:21:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01419165EBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 14:28:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728145AbgBTNVj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 08:21:39 -0500
-Received: from gateway22.websitewelcome.com ([192.185.47.179]:30850 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727996AbgBTNVj (ORCPT
+        id S1728226AbgBTN14 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 08:27:56 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:44412 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726959AbgBTN1z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 08:21:39 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 86B145F27
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 07:21:37 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 4llpjvNqSRP4z4llpjLRj6; Thu, 20 Feb 2020 07:21:37 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=aBVqKO+u3fecGVX4F0/4pATO5Sy+gKRtKWeV4k7qRzo=; b=x7h8Orqvf8KxMai8yvij1HqxiF
-        GxEp7yxJNcdmd0JZlW7bZconjwlIuu657HChS6j8ndOOaAuDbbJJB76LrNag9KyRwjd1BuSeOohB0
-        GNRLWnfXVTLFgH+Bqk6TtpyzFVIedbEgchwnMJmtuXdnRM35CCR6yutu994l0ocdjGuM8rB1S0ScT
-        NklxiPZea+ehf+TAvoxd9p132/UW/FWDtVko2d72G3idzES/pDk6OtpyNkhjrG8GKfiyhTWoyA/hl
-        d5Y7qUrGkJmiBFXbZG8C3CHcC4RKh+nvAT+BqUu8JrHWJyolTDALC2b2IxR02mIbdarlgJZ2+tTXa
-        RkHzKCpQ==;
-Received: from [201.144.174.47] (port=7747 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j4lln-003avg-Mu; Thu, 20 Feb 2020 07:21:35 -0600
-Date:   Thu, 20 Feb 2020 07:24:20 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Cezary Rojewski <cezary.rojewski@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] sound: Replace zero-length array with flexible-array member
-Message-ID: <20200220132420.GA29765@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.144.174.47
-X-Source-L: No
-X-Exim-ID: 1j4lln-003avg-Mu
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.144.174.47]:7747
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 25
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Thu, 20 Feb 2020 08:27:55 -0500
+Received: by mail-pg1-f195.google.com with SMTP id g3so1939695pgs.11
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 05:27:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=hF0MYOxyxn24x/ZYtlarhD9w/8tgL/0AbysCyIWUqB0=;
+        b=lWPdtbceOs2cC0MFwqkm4JZMtIDewpsnrzs+5eIkhjoMV2SJvYChWk3tQPO3sjcpkM
+         0JRFxORvBnqb715+jTuwsvbkljzaEdBcepRokDPscyhItPgPH+t4fPcI5jox0PwRS3BU
+         gv11eSFh0I619wG7GnAGNs+xrvC5o5Bj5h+wo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=hF0MYOxyxn24x/ZYtlarhD9w/8tgL/0AbysCyIWUqB0=;
+        b=ijnomhxC4SY/rAMYHJn27CY35qLx7qhQ1A1opz27MBEeiaErJ5v7G93rjsC2TDvcYX
+         PkiWbMNwh7ugwrYFZIv2ybDknyBK7SbBPHw0foNoA1KSSa5QR3g5oOJ5rWBSqWE2C9Fo
+         5dUUEb7zuDfT7QicjrxrdQRcViDB+vldR/QfPrUgizTZ8qn1qwlQZQsIij6BbnL6I3PH
+         NGZkxsB7Hw+/wgjPB1HY1J3aGnp2ajJI2GMM0F7M8hehG72jGsc5y8tFqLNxl77xrCmT
+         4hmeo9avTAzPJJa6w2xUohEFx70hZ6sHKqhr3iXuhind3pMtrTT0PiK3Snt7MyFWsvle
+         9brQ==
+X-Gm-Message-State: APjAAAURRkHBdaBMy52hRGo7P5oQze0/cVFTJ8QXUGPml8kPe5rdzRUC
+        n4Ka52QlkqGSkGmpJr90gA2f0Q==
+X-Google-Smtp-Source: APXvYqwLKJcZDrK2vGjpR2o1+UZVY6CiHiTRMZ76Tp2Fd8qa2KqcFHdMflOCt8bmXidsxemy6zDUHg==
+X-Received: by 2002:a63:df02:: with SMTP id u2mr31473112pgg.403.1582205274678;
+        Thu, 20 Feb 2020 05:27:54 -0800 (PST)
+Received: from localhost.localdomain ([49.206.201.34])
+        by smtp.gmail.com with ESMTPSA id 84sm3974646pgg.90.2020.02.20.05.27.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 20 Feb 2020 05:27:53 -0800 (PST)
+From:   sunil@amarulasolutions.com
+To:     heiko@sntech.de, catalin.marinas@arm.com, will@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Markus Reichl <m.reichl@fivetechno.de>
+Subject: [PATCH] arm64: defconfig: Enable REGULATOR_MP8859
+Date:   Thu, 20 Feb 2020 18:57:39 +0530
+Message-Id: <1582205259-15274-1-git-send-email-sunil@amarulasolutions.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+From: Jagan Teki <jagan@amarulasolutions.com>
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+RK3399 boards like ROC-RK3399-PC is using MP8859 DC/DC converter
+for 12V supply.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+roc-rk3399-pc initially used 12V fixed regulator for this supply,
+but the below commit has switched to use MP8859.
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+commit <1fc61ed04d309b0b8b3562acf701ab988eee12de> "arm64: dts: rockchip:
+Enable mp8859 regulator on rk3399-roc-pc"
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
+So, enable bydefault on the defconfig.
 
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Markus Reichl <m.reichl@fivetechno.de>
+Tested-by: Suniel Mahesh <sunil@amarulasolutions.com>
 ---
- include/sound/control.h                  | 2 +-
- include/sound/intel-nhlt.h               | 6 +++---
- include/sound/soc-dapm.h                 | 2 +-
- include/sound/soc.h                      | 2 +-
- include/uapi/sound/asound.h              | 2 +-
- include/uapi/sound/skl-tplg-interface.h  | 2 +-
- sound/core/oss/pcm_plugin.h              | 2 +-
- sound/firewire/fireworks/fireworks.h     | 2 +-
- sound/soc/intel/atom/sst-atom-controls.h | 2 +-
- sound/soc/intel/skylake/skl-i2s.h        | 2 +-
- sound/soc/intel/skylake/skl-topology.h   | 4 ++--
- sound/soc/intel/skylake/skl.h            | 2 +-
- sound/usb/usx2y/usbusx2y.h               | 2 +-
- 13 files changed, 16 insertions(+), 16 deletions(-)
+Note:
+This change set is applied on top of linux-rockchip, branch v5.7-armsoc/dts64.
+(git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git -b v5.7-armsoc/dts64)
+This change set was tested on ROC-RK3399-PC, an rk3399 based target.
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/sound/control.h b/include/sound/control.h
-index 11feeee31e35..aeaed2a05bae 100644
---- a/include/sound/control.h
-+++ b/include/sound/control.h
-@@ -75,7 +75,7 @@ struct snd_kcontrol {
- 	unsigned long private_value;
- 	void *private_data;
- 	void (*private_free)(struct snd_kcontrol *kcontrol);
--	struct snd_kcontrol_volatile vd[0];	/* volatile data */
-+	struct snd_kcontrol_volatile vd[];	/* volatile data */
- };
- 
- #define snd_kcontrol(n) list_entry(n, struct snd_kcontrol, list)
-diff --git a/include/sound/intel-nhlt.h b/include/sound/intel-nhlt.h
-index f657fd8fc0ad..743c2f442280 100644
---- a/include/sound/intel-nhlt.h
-+++ b/include/sound/intel-nhlt.h
-@@ -50,7 +50,7 @@ enum nhlt_device_type {
- 
- struct nhlt_specific_cfg {
- 	u32 size;
--	u8 caps[0];
-+	u8 caps[];
- } __packed;
- 
- struct nhlt_fmt_cfg {
-@@ -60,7 +60,7 @@ struct nhlt_fmt_cfg {
- 
- struct nhlt_fmt {
- 	u8 fmt_count;
--	struct nhlt_fmt_cfg fmt_config[0];
-+	struct nhlt_fmt_cfg fmt_config[];
- } __packed;
- 
- struct nhlt_endpoint {
-@@ -80,7 +80,7 @@ struct nhlt_endpoint {
- struct nhlt_acpi_table {
- 	struct acpi_table_header header;
- 	u8 endpoint_count;
--	struct nhlt_endpoint desc[0];
-+	struct nhlt_endpoint desc[];
- } __packed;
- 
- struct nhlt_resource_desc  {
-diff --git a/include/sound/soc-dapm.h b/include/sound/soc-dapm.h
-index 1a9c5dd40228..f870f927b70c 100644
---- a/include/sound/soc-dapm.h
-+++ b/include/sound/soc-dapm.h
-@@ -688,7 +688,7 @@ struct snd_soc_dapm_context {
- /* A list of widgets associated with an object, typically a snd_kcontrol */
- struct snd_soc_dapm_widget_list {
- 	int num_widgets;
--	struct snd_soc_dapm_widget *widgets[0];
-+	struct snd_soc_dapm_widget *widgets[];
- };
- 
- #define for_each_dapm_widgets(list, i, widget)				\
-diff --git a/include/sound/soc.h b/include/sound/soc.h
-index f0e4f36f83bf..9944b978ae70 100644
---- a/include/sound/soc.h
-+++ b/include/sound/soc.h
-@@ -1146,7 +1146,7 @@ struct snd_soc_pcm_runtime {
- 	unsigned int fe_compr:1; /* for Dynamic PCM */
- 
- 	int num_components;
--	struct snd_soc_component *components[0]; /* CPU/Codec/Platform */
-+	struct snd_soc_component *components[]; /* CPU/Codec/Platform */
- };
- #define for_each_rtd_components(rtd, i, component)			\
- 	for ((i) = 0;							\
-diff --git a/include/uapi/sound/asound.h b/include/uapi/sound/asound.h
-index 535a7229e1d9..3809993f6cb4 100644
---- a/include/uapi/sound/asound.h
-+++ b/include/uapi/sound/asound.h
-@@ -1071,7 +1071,7 @@ struct snd_ctl_elem_value {
- struct snd_ctl_tlv {
- 	unsigned int numid;	/* control element numeric identification */
- 	unsigned int length;	/* in bytes aligned to 4 */
--	unsigned int tlv[0];	/* first TLV */
-+	unsigned int tlv[];	/* first TLV */
- };
- 
- #define SNDRV_CTL_IOCTL_PVERSION	_IOR('U', 0x00, int)
-diff --git a/include/uapi/sound/skl-tplg-interface.h b/include/uapi/sound/skl-tplg-interface.h
-index 9eee32f5e407..62f76f154d19 100644
---- a/include/uapi/sound/skl-tplg-interface.h
-+++ b/include/uapi/sound/skl-tplg-interface.h
-@@ -149,7 +149,7 @@ struct skl_dfw_algo_data {
- 	__u32 rsvd:30;
- 	__u32 param_id;
- 	__u32 max;
--	char params[0];
-+	char params[];
- } __packed;
- 
- enum skl_tkn_dir {
-diff --git a/sound/core/oss/pcm_plugin.h b/sound/core/oss/pcm_plugin.h
-index 8d2f7a4e3ab6..46e273bd4a78 100644
---- a/sound/core/oss/pcm_plugin.h
-+++ b/sound/core/oss/pcm_plugin.h
-@@ -64,7 +64,7 @@ struct snd_pcm_plugin {
- 	char *buf;
- 	snd_pcm_uframes_t buf_frames;
- 	struct snd_pcm_plugin_channel *buf_channels;
--	char extra_data[0];
-+	char extra_data[];
- };
- 
- int snd_pcm_plugin_build(struct snd_pcm_substream *handle,
-diff --git a/sound/firewire/fireworks/fireworks.h b/sound/firewire/fireworks/fireworks.h
-index dda797209a27..654e28a6669f 100644
---- a/sound/firewire/fireworks/fireworks.h
-+++ b/sound/firewire/fireworks/fireworks.h
-@@ -177,7 +177,7 @@ struct snd_efw_phys_meters {
- 	u32 in_meters;
- 	u32 reserved4;
- 	u32 reserved5;
--	u32 values[0];
-+	u32 values[];
- } __packed;
- enum snd_efw_clock_source {
- 	SND_EFW_CLOCK_SOURCE_INTERNAL	= 0,
-diff --git a/sound/soc/intel/atom/sst-atom-controls.h b/sound/soc/intel/atom/sst-atom-controls.h
-index 5356e954a732..620b48d2a064 100644
---- a/sound/soc/intel/atom/sst-atom-controls.h
-+++ b/sound/soc/intel/atom/sst-atom-controls.h
-@@ -410,7 +410,7 @@ struct sst_cmd_set_gain_dual {
- struct sst_cmd_set_params {
- 	struct sst_destination_id dst;
- 	u16 command_id;
--	char params[0];
-+	char params[];
- } __packed;
- 
- 
-diff --git a/sound/soc/intel/skylake/skl-i2s.h b/sound/soc/intel/skylake/skl-i2s.h
-index d7c15873c0d4..dfce91e11be1 100644
---- a/sound/soc/intel/skylake/skl-i2s.h
-+++ b/sound/soc/intel/skylake/skl-i2s.h
-@@ -46,7 +46,7 @@ struct skl_i2s_config_mclk {
- struct skl_i2s_config_mclk_ext {
- 	u32 mdivctrl;
- 	u32 mdivr_count;
--	u32 mdivr[0];
-+	u32 mdivr[];
- } __packed;
- 
- struct skl_i2s_config_blob_signature {
-diff --git a/sound/soc/intel/skylake/skl-topology.h b/sound/soc/intel/skylake/skl-topology.h
-index e967800dbb62..d2cd8ef8e97f 100644
---- a/sound/soc/intel/skylake/skl-topology.h
-+++ b/sound/soc/intel/skylake/skl-topology.h
-@@ -119,7 +119,7 @@ struct skl_cpr_gtw_cfg {
- struct skl_dma_control {
- 	u32 node_id;
- 	u32 config_length;
--	u32 config_data[0];
-+	u32 config_data[];
- } __packed;
- 
- struct skl_cpr_cfg {
-@@ -152,7 +152,7 @@ struct skl_up_down_mixer_cfg {
- 
- struct skl_algo_cfg {
- 	struct skl_base_cfg  base_cfg;
--	char params[0];
-+	char params[];
- } __packed;
- 
- struct skl_base_outfmt_cfg {
-diff --git a/sound/soc/intel/skylake/skl.h b/sound/soc/intel/skylake/skl.h
-index 2bfbf59277c4..26057f38a014 100644
---- a/sound/soc/intel/skylake/skl.h
-+++ b/sound/soc/intel/skylake/skl.h
-@@ -49,7 +49,7 @@ struct skl_astate_param {
- 
- struct skl_astate_config {
- 	u32 count;
--	struct skl_astate_param astate_table[0];
-+	struct skl_astate_param astate_table[];
- };
- 
- struct skl_fw_config {
-diff --git a/sound/usb/usx2y/usbusx2y.h b/sound/usb/usx2y/usbusx2y.h
-index e0f77172ce8f..144b85f57bd2 100644
---- a/sound/usb/usx2y/usbusx2y.h
-+++ b/sound/usb/usx2y/usbusx2y.h
-@@ -18,7 +18,7 @@ struct snd_usX2Y_AsyncSeq {
- struct snd_usX2Y_urbSeq {
- 	int	submitted;
- 	int	len;
--	struct urb	*urb[0];
-+	struct urb	*urb[];
- };
- 
- #include "usx2yhwdeppcm.h"
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 0f21288..973a493 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -505,6 +505,7 @@ CONFIG_REGULATOR_QCOM_RPMH=y
+ CONFIG_REGULATOR_QCOM_SMD_RPM=y
+ CONFIG_REGULATOR_QCOM_SPMI=y
+ CONFIG_REGULATOR_RK808=y
++CONFIG_REGULATOR_MP8859=y
+ CONFIG_REGULATOR_S2MPS11=y
+ CONFIG_REGULATOR_VCTRL=m
+ CONFIG_RC_CORE=m
 -- 
-2.25.0
-
+2.7.4
