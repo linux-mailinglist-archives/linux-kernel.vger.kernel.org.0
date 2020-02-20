@@ -2,132 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66ABC1664E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 18:32:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E0EA1664EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 18:33:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728714AbgBTRcY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 12:32:24 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:42972 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726959AbgBTRcX (ORCPT
+        id S1728839AbgBTRc6 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 20 Feb 2020 12:32:58 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:32850 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726959AbgBTRc5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 12:32:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582219942;
-        h=from:from:reply-to:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qhtQcGBTl4nwp8gN4Hlxs7R2XI/3YERGs+eAbVjqzyU=;
-        b=HNepBQpK5p5wD9t8EY45sY1m5BeVZiQFgsJaIAia+jtlFLB5hgwxL6PLpwKkP2hRmAcvkj
-        BuTqK1RS4k1tCtgyptTCIK8DDwRwC4FQrZnnmnSBUX25ROk5iEKU+IzN+N8JmSTJLC2auk
-        Pb6S0E3J/+TFhv8cw6LsmE0ntYP3lsE=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-352-C4v2X6LRPTO6ofN5xEULvA-1; Thu, 20 Feb 2020 12:32:16 -0500
-X-MC-Unique: C4v2X6LRPTO6ofN5xEULvA-1
-Received: by mail-qv1-f69.google.com with SMTP id c1so3043783qvw.17
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 09:32:16 -0800 (PST)
+        Thu, 20 Feb 2020 12:32:57 -0500
+Received: by mail-vs1-f68.google.com with SMTP id n27so3229077vsa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 09:32:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:reply-to
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to;
-        bh=qhtQcGBTl4nwp8gN4Hlxs7R2XI/3YERGs+eAbVjqzyU=;
-        b=NKrQxrZPqIOJiKeozfYfo6vjkir1dM5Y5q8UPiuDLl9KZ/thMZGkCHaGTC2mL+XU3u
-         61J9rz6dsTvJvZ/lbqZf6+fYZS8VsAnO7qwxLGIDbU78GC7XyHFUxinEodDbpA2p4gfD
-         sH1/0AT35k5e2hOqMld1dkOSQ1hIQns66B69/ozrfhs+AsxXJqqgEtTlaBNGddg2od4k
-         NgS+xBXMw7l39bcZLhSYvA89xHw8nYGve7GFNy1dfZkXio8GkBDlTIahnrxnBMT+bGcT
-         nlfLswCG+dg9nXAvbJBzvWTVv4Nxhhb2dq3fc52+AYEVTbUzl2Jjm11Ci2BgIBEqxBq6
-         +VkQ==
-X-Gm-Message-State: APjAAAXMptHXlfH7pyPumRkGQSA0naJOfWXe0SynKwNIKi+ZzuPrcrgX
-        HFNhGLWkTKj4vqm1bjsORQREt7QHJl4iElpy/KUPA5Yr2pMbsBrhiXZNYEOJODLjNlF+jEa3CB6
-        ZehVpyVjbpwZ3ecisR4vKSkkm
-X-Received: by 2002:ae9:c318:: with SMTP id n24mr30412679qkg.38.1582219936268;
-        Thu, 20 Feb 2020 09:32:16 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwhBKg1zI+voTYvvRjbz8lPgbIU+/Asipm4OXQD300Mfs8AbIlFl3jf+jI9oBXC1LvQU7lC9g==
-X-Received: by 2002:ae9:c318:: with SMTP id n24mr30412640qkg.38.1582219935836;
-        Thu, 20 Feb 2020 09:32:15 -0800 (PST)
-Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
-        by smtp.gmail.com with ESMTPSA id t187sm118485qke.85.2020.02.20.09.32.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2020 09:32:15 -0800 (PST)
-Date:   Thu, 20 Feb 2020 10:32:13 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: question about iommu_need_mapping
-Message-ID: <20200220173213.moynvygrdzc66zqg@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-References: <20200219235516.zl44y7ydgqqja6x5@cantor>
- <af5a148e-76bc-4aa4-dd1c-b04a5ffc56b1@linux.intel.com>
- <20200220162441.bhnpwgsmj4vlp3ve@cantor>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=FQc9DcjywetNpCF4Lbw4T0x+cYC+tfLtotoC3/DL5NA=;
+        b=t1SVsJ6ptsGzlQQe8yAvc5y7R4/NMISZ1HD4UF8nZgaWq2bLbf+l1QKOfkKIzaxxK7
+         0qk4vWX0RG1EylGWqR38mCXxs/0YkXsfMzQdcg7pMrCGU2V6KHdGDFTxi6ywwFjGuYS7
+         wbIItvVnDpsnjKw/Hp+wYgnWTks2i1cdoEspclp2vs5zZ4xwleolPY2d//ziTnU8nDmy
+         zENWK7Kjsfm6gRPoHR+D7CdZFQZ15d1dAVSE8MZZw6pjmUYZVzPAUSJ/MGMiJUzenpt3
+         hrQVTjNYYcQ98K/f9FQYH7NU7s6sodRDuoj26+SGCDs9qUQMspb9F52S+8pKgEF/lc+S
+         zRjg==
+X-Gm-Message-State: APjAAAUMNV7S0CM8bRwmdUYbAEkjglqZkM2bpF3fjxCYnHwOnr/SJ10d
+        7xeJY2Cs7Yz45QZ6z71FJJPIBNhdy43wf3XVSKyokdkz
+X-Google-Smtp-Source: APXvYqx4kt7MHHbKi0SjwgZkjp+H3tuQgvLnGV4lQ1Qi1dUUjvSAWJLZlwr3QRTs60UyN+0mHesS993+k7i+NF7ntmI=
+X-Received: by 2002:a67:f412:: with SMTP id p18mr18444585vsn.207.1582219976717;
+ Thu, 20 Feb 2020 09:32:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200220162441.bhnpwgsmj4vlp3ve@cantor>
+References: <dac89843-5258-5bed-ee86-7038e94e56da@qubes-os.org> <c94ce223-56d5-e31a-2a2c-59defb988b28@qubes-os.org>
+In-Reply-To: <c94ce223-56d5-e31a-2a2c-59defb988b28@qubes-os.org>
+From:   Ilia Mirkin <imirkin@alum.mit.edu>
+Date:   Thu, 20 Feb 2020 12:32:45 -0500
+Message-ID: <CAKb7Uvh8Ob592LOizH9FGZz5ag=VJ3R=dh0G5iZSg2-JzWZFMQ@mail.gmail.com>
+Subject: Re: [Nouveau] [PATCH] nv50_disp_chan_mthd: ensure mthd is not NULL
+To:     =?UTF-8?B?RnLDqWTDqXJpYyBQaWVycmV0?= 
+        <frederic.pierret@qubes-os.org>
+Cc:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu Feb 20 20, Jerry Snitselaar wrote:
->On Thu Feb 20 20, Lu Baolu wrote:
->>Hi Jerry,
->>
->>On 2020/2/20 7:55, Jerry Snitselaar wrote:
->>>Is it possible for a device to end up with dev->archdata.iommu == NULL
->>>on iommu_need_mapping in the following instance:
->>>
->>>1. iommu_group has dma domain for default
->>>2. device gets private identity domain in intel_iommu_add_device
->>>3. iommu_need_mapping gets called with that device.
->>>4. dmar_remove_one_dev_info sets dev->archdata.iommu = NULL via 
->>>unlink_domain_info.
->>>5. request_default_domain_for_dev exits after checking that 
->>>group->default_domain
->>>   exists, and group->default_domain->type is dma.
->>>6. iommu_request_dma_domain_for_dev returns 0 from 
->>>request_default_domain_for_dev
->>>   and a private dma domain isn't created for the device.
->>>
->>
->>Yes. It's possible.
->>
->>>The case I was seeing went away with commit 9235cb13d7d1 ("iommu/vt-d:
->>>Allow devices with RMRRs to use identity domain"), because it changed
->>>which domain the group and devices were using, but it seems like it is
->>>still a possibility with the code. Baolu, you mentioned possibly
->>>removing the domain switch. Commit 98b2fffb5e27 ("iommu/vt-d: Handle
->>>32bit device with identity default domain") makes it sound like the
->>>domain switch is required.
->>
->>It's more "nice to have" than "required" if the iommu driver doesn't
->>disable swiotlb explicitly. The device access of system memory higher
->>than the device's addressing capability could go through the bounced
->>buffer implemented in swiotlb.
->>
->>Best regards,
->>baolu
->
->Hi Baolu,
->
->Would this mean switching to bounce_dma_ops instead?
->
+Hi Frédéric,
 
-Never mind. I see that it would go into the dma_direct code.
+It appears Ben made his own version of this patch (probably based on
+the one you added to the kernel bz), and it's already upstream:
 
->Regards,
->Jerry
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?h=v5.6-rc2&id=0e6176c6d286316e9431b4f695940cfac4ffe6c2
+
+Cheers,
+
+  -ilia
+
+On Thu, Feb 20, 2020 at 12:19 PM Frédéric Pierret
+<frederic.pierret@qubes-os.org> wrote:
 >
->>_______________________________________________
->>iommu mailing list
->>iommu@lists.linux-foundation.org
->>https://lists.linuxfoundation.org/mailman/listinfo/iommu
-
+> Hi,
+> Is anything missing here? How can I get this merged?
+>
+> Best regards,
+> Frédéric Pierret
+>
+> On 2020-02-08 20:43, Frédéric Pierret wrote:
+> > Pointer to structure array is assumed not NULL by default. It has
+> > the consequence to raise a kernel panic when it's not the case.
+> >
+> > Basically, running at least a RTX2080TI on Xen makes a bad mmio error
+> > which causes having 'mthd' pointer to be NULL in 'channv50.c'. From the
+> > code, it's assumed to be not NULL by accessing directly 'mthd->data[0]'
+> > which is the reason of the kernel panic. Simply check if the pointer
+> > is not NULL before continuing.
+> >
+> > BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=206299
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Frédéric Pierret (fepitre) <frederic.pierret@qubes-os.org>
+> > ---
+> >  drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c b/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
+> > index bcf32d92ee5a..50e3539f33d2 100644
+> > --- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
+> > +++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
+> > @@ -74,6 +74,8 @@ nv50_disp_chan_mthd(struct nv50_disp_chan *chan, int debug)
+> >
+> >       if (debug > subdev->debug)
+> >               return;
+> > +     if (!mthd)
+> > +             return;
+> >
+> >       for (i = 0; (list = mthd->data[i].mthd) != NULL; i++) {
+> >               u32 base = chan->head * mthd->addr;
+> >
+>
+> _______________________________________________
+> Nouveau mailing list
+> Nouveau@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/nouveau
