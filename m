@@ -2,139 +2,206 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0431C166AE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 00:22:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92178166AE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 00:24:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729301AbgBTXWS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 18:22:18 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:50459 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729027AbgBTXWS (ORCPT
+        id S1729372AbgBTXYE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 18:24:04 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33653 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729258AbgBTXYE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 18:22:18 -0500
-Received: by mail-wm1-f65.google.com with SMTP id a5so339026wmb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 15:22:16 -0800 (PST)
+        Thu, 20 Feb 2020 18:24:04 -0500
+Received: by mail-lj1-f196.google.com with SMTP id y6so274347lji.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 15:24:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lAGe+i3LubNXS3mS7OrXMjcEN50SIJqaNo7uJEQXNWE=;
-        b=h7MnYZvECmHl3d29/SfmjKEd2LO8J5IoeA+e1M3u9qBoVgt/hMmnLnnjXNhCldskHc
-         N3OAUX5vmVPJwhJ7mWSTCmnQvav8xtNMCiGPHayj/pYGaIK+eTMZ6LM+f0YSJZcVR/Eh
-         yhwPl/cjAtvlV3sa8TMz5OjHPoBeGFlsK78OPR7u4O2ooTwW2J+ceuyxZcJcF0Hvuiyt
-         XRMlrhyYAWDgQUon2AWvtHTVHdEKp4CzcQtYmwIfQPMgpBgaJOuz0pejKhf8PPeoYcs8
-         mz3Uvn1gCW3kOO43eH10vmM0Q/fGvZfp/1Q1DIQ60zTvSvUZJJbkRL5euHkz5TvS6TDo
-         En1Q==
+         :cc:content-transfer-encoding;
+        bh=XIeBZDogNfaTWSyvaUAomCKZ8CEnFBAh/xMXEs0iMRU=;
+        b=jbnmAXzsLQ7KRZ5bLhIAqCC9dJBGm537bHk5dY+iNKRAWNXr8iJM42DaqbMqdp8snm
+         DK4FrswCJtyE//7/bU+cHi9lL51gtdHrtJtfjNazLBOxcfjXGERoZUx7yBL1zT4xzThk
+         ROMPSiJX81blZe/I+zPgU2DWzWeMGCRmNg2KG8JDJNjacFYQQn6BFYIQogcCckyrzAKZ
+         FQcqJluSLsrncvSNBCNAZ1B6ye6ZrGVkFYR/dXw0USISC6dRHwZB4vd2EmlcAz1klrOA
+         s4kLdW8spYly14p4JazHiWXgePXoJTS1jH2srp1FffbfRdNBTHEngmQBYZJMr0C2TBVl
+         9Org==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lAGe+i3LubNXS3mS7OrXMjcEN50SIJqaNo7uJEQXNWE=;
-        b=VuUXLjRHI0enJJF+Pv67YaYxdB/IOuz3tTLul7xL1aR8UiVz5ytioox9dbcAvw9yeA
-         7EVjFmUOIK+uOBIs7VMomhbquBjev5EoOvHQvyXg19BmqVzlLYG3/rdIvZcMElkVHP3G
-         ldOTyAAff1E3PKMb9kOXic2OXqgrR1UdV+WrWW0Cyoo2ns7A01q0PCBzOmVtTHonxUCb
-         WGE/calWpUSeQGLFh0QPe7jQh6SCA23uZREZuZF5gsbq/i3bp6uUGEcQR43g2RmCzAeC
-         5q12oeFcKRALKsKW++i1snPiI+e9yszoxIpah4MmEUYC5rZMnuX3nvJifxJZkkNlYY+Q
-         L2nA==
-X-Gm-Message-State: APjAAAU+fulmJX3jsBhB7fRRjAvFP+3hwKOtQfN9vSwxQ8/QdQk1q3HM
-        7tHEbuel0TVxDuNXd6/a+b8YXr+3mJRVkNduSsv6Bg==
-X-Google-Smtp-Source: APXvYqzD9Lsa2RnghfzDZKCPGUHchYplA9ZvVVBuCIjF1ONPxRB4HOMNohwpiCmhi3B6eXhmolZ9tM47vt7IZRDf7gs=
-X-Received: by 2002:a1c:9ad6:: with SMTP id c205mr6672584wme.78.1582240935818;
- Thu, 20 Feb 2020 15:22:15 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=XIeBZDogNfaTWSyvaUAomCKZ8CEnFBAh/xMXEs0iMRU=;
+        b=hn4KPMZANySD6adFHDar8WegDU+Wg0MfOaVYFrwMeqXehb2FY3tOk5HfrWlpaD4tlc
+         8Xt161ymb3DKmCwbi1RlalNC5yPVKem8Vso3pCBrON9150rTpOH374es49VFcXgBMEkW
+         07ZVSBDHwvShcO4HKN28bSPrfBhyg1Pfdny2V20QaapGhNmby8RfR7SKtRdJUdL5RsO+
+         SarFrmH+umGJ1QzRXV4zAWwzyjKUUesUFiZ0N+lRruvpAoNWrp3IIBqzmEiodX7Sps2S
+         bOazj5k3gKEmDfjiCFnPjw82lyP+Rh9GsV8s7d3pUIc9h27+a0qIduH1loI0vsKqJKS8
+         /O6Q==
+X-Gm-Message-State: APjAAAW+52Gx8M8fVU3iU6s3IqjMAzrrw3FLXq1FOZk6foIN3YfzpU9s
+        oSJcRYlE/QoeL3QaQw7nPVp8ulJMeFBlJy7GIDIGnQ==
+X-Google-Smtp-Source: APXvYqypcU/r1i45FPqCupRHRb73pHgOjAIxggW06CsnHK9DRgJT7I31tHfuM0OA63RqhRTqCvU4JP+OmLyEAqIOs9I=
+X-Received: by 2002:a2e:580c:: with SMTP id m12mr20328632ljb.150.1582241040193;
+ Thu, 20 Feb 2020 15:24:00 -0800 (PST)
 MIME-Version: 1.0
-References: <20200217145711.4af495a3@canb.auug.org.au> <CAOFY-A1nfPjf3EcQB6KiEifbFR+aUtdSgK=CHGt_k3ziSG6T_Q@mail.gmail.com>
- <CAOFY-A3q_pmtHKAoOJdbB09wy=dxs9SdpXjCsU1wBxU5EDHVmw@mail.gmail.com> <20200221101845.21c0c8c5@canb.auug.org.au>
-In-Reply-To: <20200221101845.21c0c8c5@canb.auug.org.au>
-From:   Arjun Roy <arjunroy@google.com>
-Date:   Thu, 20 Feb 2020 15:22:04 -0800
-Message-ID: <CAOFY-A2ndGCSEDstOmXs-u1XjNsaj8wkLezYsMbzeZeVTJGC5g@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Miller <davem@davemloft.net>
+References: <CABayD+ch3XBvJgJc+uoF6JSP0qZGq2zKHN-hTc0Vode-pi80KA@mail.gmail.com>
+ <52450536-AF7B-4206-8F05-CF387A216031@amacapital.net> <3de6e962-3277-ddbd-8c78-eaf754973928@amd.com>
+ <CABayD+fBpP-W_jfVuy_+shh+Sj_id79+ECG+R5H=W9Jmcii8qg@mail.gmail.com> <e5ef78d4-2764-cbbb-d3d6-69621e1d6490@amd.com>
+In-Reply-To: <e5ef78d4-2764-cbbb-d3d6-69621e1d6490@amd.com>
+From:   Steve Rutherford <srutherford@google.com>
+Date:   Thu, 20 Feb 2020 15:23:23 -0800
+Message-ID: <CABayD+fTa=dtbb3E4+kgQkNqDHYUfJGJTUfN5PirBit6Xp4JeQ@mail.gmail.com>
+Subject: Re: [PATCH 10/12] mm: x86: Invoke hypercall when page encryption
+ status is changed
+To:     Brijesh Singh <brijesh.singh@amd.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Ashish Kalra <ashish.kalra@amd.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Joerg Roedel <joro@8bytes.org>,
+        Borislav Petkov <bp@suse.de>,
+        Tom Lendacky <Thomas.Lendacky@amd.com>,
+        David Rientjes <rientjes@google.com>, x86@kernel.org,
+        KVM list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 3:18 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Thu, Feb 20, 2020 at 2:43 PM Brijesh Singh <brijesh.singh@amd.com> wrote=
+:
 >
-> Hi all,
 >
-> On Sun, 16 Feb 2020 22:45:35 -0800 Arjun Roy <arjunroy@google.com> wrote:
-> >
-> > On Sun, Feb 16, 2020 at 8:12 PM Arjun Roy <arjunroy@google.com> wrote:
-> > >
-> > > On Sun, Feb 16, 2020 at 7:57 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > >
-> > > > After merging the akpm tree, today's linux-next build (sparc64 defconfig)
-> > > > failed like this:
-> > > >
-> > > > mm/memory.c: In function 'insert_pages':
-> > > > mm/memory.c:1523:56: error: macro "pte_index" requires 2 arguments, but only 1 given
-> > > >    remaining_pages_total, PTRS_PER_PTE - pte_index(addr));
-> > > >                                                         ^
-> > > >
-> > > > Caused by commit
-> > > >
-> > > >   366142f0b000 ("mm/memory.c: add vm_insert_pages()")
-> > > >
-> > > > This is the first use of pte_index() outside arch specific code and the
-> > > > sparc64 version of pte_index() nas an extra argument.
-> > >
-> > > Looks like this happens for sparc, and also metag. Other platforms
-> > > just take the addr parameter based on a quick search.
-> >
-> > And actually I guess there's no metag anyways now.
-> > Looking further, then, it looks like in every non-sparc pte_index() is
-> > an actual numerical index, while on sparc it goes a step further to
-> > yield a pte_t *.
-> > As far as I can tell, the sparc incarnation of this is only used by
-> > the pte_offset_(kernel/map) macros.
-> >
-> > So I think a possibly sane way to fix this would be:
-> > 1. Define pte_index() to be a numerical index, like the other architectures,
-> > 2. Define something like pte_entry() that uses pte_index(), and
-> > 3. Have pte_offset_(kernel/map) be defined as pte_entry() instead.
-> >
-> > Then pte_index would be operating on just an address for all
-> > platforms, and the reverted patchset would work without any changes.
-> >
-> > If this sounds acceptable, I can send a patch.
-> >
-> > > > I have reverted these commits for today:
-> > > >
-> > > >   219ae14a9686 ("net-zerocopy-use-vm_insert_pages-for-tcp-rcv-zerocopy-fix")
-> > > >   cb912fdf96bf ("net-zerocopy: use vm_insert_pages() for tcp rcv zerocopy")
-> > > >   72c684430b94 ("add missing page_count() check to vm_insert_pages().")
-> > > >   dbd9553775f3 ("mm-add-vm_insert_pages-fix")
-> > > >   366142f0b000 ("mm/memory.c: add vm_insert_pages()")
-> > > >
-> > >
-> > > In terms of fixing this; passing in an appropriate dir parameter is
-> > > not really a problem, but what is concerning that it seems messy to
-> > > have a per-platform ifdef to pass it either two arguments or one in
-> > > this case. But it seems like either that would be one way to fix it,
-> > > or having some arch method across all arches that takes two arguments
-> > > (and ignores one of them for most arches).
-> > >
-> > > Is there a general preference for the right way forward, in this case?
 >
-> Has there been any progress with this?  I am still reverting the above
-> commits, so they are not getting any linux-next testing ...
+> On 2/20/20 2:43 PM, Steve Rutherford wrote:
+> > On Thu, Feb 20, 2020 at 7:55 AM Brijesh Singh <brijesh.singh@amd.com> w=
+rote:
+> >>
+> >>
+> >>
+> >> On 2/19/20 8:12 PM, Andy Lutomirski wrote:
+> >>>
+> >>>
+> >>>> On Feb 19, 2020, at 5:58 PM, Steve Rutherford <srutherford@google.co=
+m> wrote:
+> >>>>
+> >>>> =EF=BB=BFOn Wed, Feb 12, 2020 at 5:18 PM Ashish Kalra <Ashish.Kalra@=
+amd.com> wrote:
+> >>>>>
+> >>>>> From: Brijesh Singh <brijesh.singh@amd.com>
+> >>>>>
+> >>>>> Invoke a hypercall when a memory region is changed from encrypted -=
 >
+> >>>>> decrypted and vice versa. Hypervisor need to know the page encrypti=
+on
+> >>>>> status during the guest migration.
+> >>>>
+> >>>> One messy aspect, which I think is fine in practice, is that this
+> >>>> presumes that pages are either treated as encrypted or decrypted. If
+> >>>> also done on SEV, the in-place re-encryption supported by SME would
+> >>>> break SEV migration. Linux doesn't do this now on SEV, and I don't
+> >>>> have an intuition for why Linux might want this, but we will need to
+> >>>> ensure it is never done in order to ensure that migration works down
+> >>>> the line. I don't believe the AMD manual promises this will work
+> >>>> anyway.
+> >>>>
+> >>>> Something feels a bit wasteful about having all future kernels
+> >>>> universally announce c-bit status when SEV is enabled, even if KVM
+> >>>> isn't listening, since it may be too old (or just not want to know).
+> >>>> Might be worth eliding the hypercalls if you get ENOSYS back? There
+> >>>> might be a better way of passing paravirt config metadata across tha=
+n
+> >>>> just trying and seeing if the hypercall succeeds, but I'm not super
+> >>>> familiar with it.
+> >>>
+> >>> I actually think this should be a hard requirement to merge this. The=
+ host needs to tell the guest that it supports this particular migration st=
+rategy and the guest needs to tell the host that it is using it.  And the g=
+uest needs a way to tell the host that it=E2=80=99s *not* using it right no=
+w due to kexec, for example.
+> >>>
+> >>> I=E2=80=99m still uneasy about a guest being migrated in the window w=
+here the hypercall tracking and the page encryption bit don=E2=80=99t match=
+.  I guess maybe corruption in this window doesn=E2=80=99t matter?
+> >>>
+> >>
+> >> I don't think there is a corruption issue here. Let's consider the bel=
+ow
+> >> case:
+> >>
+> >> 1) A page is transmitted as C=3D1 (encrypted)
+> >>
+> >> 2) During the migration window, the page encryption bit is changed
+> >>    to C=3D0 (decrypted)
+> >>
+> >> 3) #2 will cause a change in page table memory, thus dirty memory
+> >>    the tracker will create retransmission of the page table memory.
+> >>
+> >> 4) The page itself will not be re-transmitted because there was
+> >>    no change to the content of the page.
+> >>
+> >> On destination, the read from the page will get the ciphertext.
+> >>
+> >> The encryption bit change in the page table is used on the next access=
+.
+> >> The user of the page needs to ensure that data is written with the
+> >> correct encryption bit before reading.
+> >>
+> >> thanks
+> >
+> >
+> > I think the issue results from a slightly different perspective than
+> > the one you are using. I think the situation Andy is interested in is
+> > when a c-bit change and a write happen close in time. There are five
+> > events, and the ordering matters:
+> > 1) Guest dirties the c-bit in the guest
+> > 2) Guest dirties the page
+> > 3) Host userspace observes the c-bit logs
+> > 4) Host userspace observes the page dirty logs
+> > 5) Host transmits the page
+> >
+> > If these are reordered to:
+> > 3) Host userspace observes the c-bit logs
+> > 1) Guest dirties the c-bit in the guest
+> > 2) Guest dirties the page
+> > 4) Host userspace observes the page dirty logs
+> > 5) Host transmits the page (from the wrong c-bit perspective!)
+> >
+> > Then the host will transmit a page with the wrong c-bit status and
+> > clear the dirty bit for that page. If the guest page is not
+> > retransmitted incidentally later, then this page will be corrupted.
+> >
+> > If you treat pages with dirty c-bits as dirty pages, then you will
+> > check the c-bit logs later and observe the dirty c-bit and retransmit.
+> > There might be some cleverness around enforcing that you always fetch
+> > the c-bit logs after fetching the dirty logs, but I haven't convinced
+> > myself that this works yet. I think it might, since then the c-bits
+> > are at least as fresh as the dirty bits.
+> >
+>
+> Unlike the dirty log, the c-bit log maintains the complete state.
+> So, I think it is the Host userspace responsibility to ensure that it
+> either keeps track of any c-bit log changes since it last sync'ed.
+> During the migration, after pausing the guest it can get the recent
+> c-bit log and compare if something has changed since it last sync'ed.
+> If so, then retransmit the page with new c-bit state.
+>
+> > The main uncertainty that comes to mind for that strategy is if, on
+> > multi-vCPU VMs, the page dirtying event (from the new c-bit
+> > perspective) and the c-bit status change hypercall can themselves
+> > race. If a write from the new c-bit perspective can arrive before the
+> > c-bit status change arrives in the c-bit logs, we will need to treat
+> > pages with dirty c-bits as dirty pages.
+> >
+>
+> I believe if host userspace tracks the changes in the c-bit log since
+> it last synced then this problem can be avoided. Do you think we should
+> consider tracking the last sync changes in KVM or let the host userspace
+> handle it.
+Punting this off to userspace to handle works. If storing the old
+c-bit statuses in userspace becomes a memory issue (unlikely), we can
+fix that down the line.
 
-I have a possible solution in mind, but it would involve a slight
-change in the SPARC macro (to be more inline with the semantics of the
-other platforms).
-If you're open to such a change, I can send it out.
-
-Thanks,
--Arjun
-
-> --
-> Cheers,
-> Stephen Rothwell
+Andy, are your concerns about the raceyness of c-bit tracking resolved?
