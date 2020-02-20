@@ -2,141 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4389166053
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 16:01:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 680E2166068
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 16:03:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728471AbgBTPAr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 10:00:47 -0500
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:42226 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727761AbgBTPAq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 10:00:46 -0500
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01KEhtlN010953;
-        Thu, 20 Feb 2020 10:00:44 -0500
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2y8ucu4ekx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 20 Feb 2020 10:00:44 -0500
-Received: from SCSQMBX10.ad.analog.com (scsqmbx10.ad.analog.com [10.77.17.5])
-        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 01KF0gaU031870
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Thu, 20 Feb 2020 10:00:43 -0500
-Received: from SCSQMBX11.ad.analog.com (10.77.17.10) by
- SCSQMBX10.ad.analog.com (10.77.17.5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Thu, 20 Feb 2020 07:00:41 -0800
-Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX11.ad.analog.com
- (10.77.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Thu, 20 Feb 2020 07:00:41 -0800
-Received: from saturn.ad.analog.com ([10.48.65.124])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 01KF0UqC025958;
-        Thu, 20 Feb 2020 10:00:38 -0500
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-CC:     <robh+dt@kernel.org>, <jic23@kernel.org>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH 5/5] dt-bindings: iio: adc: add bindings doc for AD9467 ADC
-Date:   Thu, 20 Feb 2020 17:03:17 +0200
-Message-ID: <20200220150317.1864-5-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200220150317.1864-1-alexandru.ardelean@analog.com>
-References: <20200220150317.1864-1-alexandru.ardelean@analog.com>
+        id S1728414AbgBTPDt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 10:03:49 -0500
+Received: from foss.arm.com ([217.140.110.172]:44526 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728134AbgBTPDt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 10:03:49 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F291D31B;
+        Thu, 20 Feb 2020 07:03:48 -0800 (PST)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1E0993F703;
+        Thu, 20 Feb 2020 07:03:47 -0800 (PST)
+Date:   Thu, 20 Feb 2020 15:03:44 +0000
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     chris hyser <chris.hyser@oracle.com>
+Cc:     Parth Shah <parth@linux.ibm.com>, vincent.guittot@linaro.org,
+        patrick.bellasi@matbug.net, valentin.schneider@arm.com,
+        dhaval.giani@oracle.com, dietmar.eggemann@arm.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        mingo@redhat.com, pavel@ucw.cz, qperret@qperret.net,
+        David.Laight@ACULAB.COM, pjt@google.com, tj@kernel.org
+Subject: Re: [PATCH v3 0/3] Introduce per-task latency_nice for scheduler
+ hints
+Message-ID: <20200220150343.dvweamfnk257pg7z@e107158-lin.cambridge.arm.com>
+References: <20200116120230.16759-1-parth@linux.ibm.com>
+ <8ed0f40c-eeb4-c487-5420-a8eb185b5cdd@linux.ibm.com>
+ <c7e5b9da-66a3-3d69-d7aa-0319de3aa736@oracle.com>
+ <971909ed-d4e0-6afa-d20b-365ede5a195e@linux.ibm.com>
+ <8e984496-e89b-d96c-d84e-2be7f0958ea4@oracle.com>
+ <1e216d18-7ec0-4a0d-e124-b730d6e03e6f@oracle.com>
+ <de5d8886-6f70-a3fa-8061-5877cd1d98f5@linux.ibm.com>
+ <7429e0ae-41ff-e9c4-dd65-3ef1919f5f50@linux.ibm.com>
+ <a332d633-7826-b85d-5d9f-5e34f9de084a@oracle.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-20_04:2020-02-19,2020-02-20 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
- suspectscore=0 mlxscore=0 clxscore=1015 phishscore=0 priorityscore=1501
- mlxlogscore=999 lowpriorityscore=0 adultscore=0 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002200109
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <a332d633-7826-b85d-5d9f-5e34f9de084a@oracle.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change adds the binding doc for the AD9467 ADC.
+On 02/20/20 09:30, chris hyser wrote:
+> > The below diff works out well enough in-order to align permission checks
+> > with NICE.
+> > 
+> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > index 2bfcff5623f9..ef4a397c9170 100644
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -4878,6 +4878,10 @@ static int __sched_setscheduler(struct task_struct *p,
+> >                          return -EINVAL;
+> >                  if (attr->sched_latency_nice < MIN_LATENCY_NICE)
+> >                          return -EINVAL;
+> > +               /* Use the same security checks as NICE */
+> > +               if (attr->sched_latency_nice < p->latency_nice &&
+> > +                   !can_nice(p, attr->sched_latency_nice))
+> > +                       return -EPERM;
+> >          }
+> > 
+> >          if (pi)
+> > 
+> > With the above in effect,
+> > A non-root user can only increase the value upto +19, and once increased
+> > cannot be decreased. e.g., a user once sets the value latency_nice = 19,
+> > the same user cannot set the value latency_nice = 18. This is the same
+> > effect as with NICE.
+> > 
+> > Is such permission checks required?
+> > 
+> > Unlike NICE, we are going to use latency_nice for scheduler hints only, and
+> > so won't it make more sense to allow a user to increase/decrease the values
+> > of their owned tasks?
+> 
+> Whether called a hint or not, it is a trade-off to reduce latency of select
+> tasks at the expense of the throughput of the other tasks in the the system.
 
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
- .../bindings/iio/adc/adi,ad9467.yaml          | 63 +++++++++++++++++++
- 1 file changed, 63 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad9467.yaml
+Does it actually affect the throughput of the other tasks? I thought this will
+allow the scheduler to reduce latencies, for instance, when selecting which cpu
+it should land on. I can't see how this could hurt other tasks.
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad9467.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad9467.yaml
-new file mode 100644
-index 000000000000..e94d9ba294d8
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/adc/adi,ad9467.yaml
-@@ -0,0 +1,63 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/iio/adc/adi,ad9467.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Analog Devices AD9467 High-Speed ADC
-+
-+maintainers:
-+  - Michael Hennerich <michael.hennerich@analog.com>
-+  - Alexandru Ardelean <alexandru.ardelean@analog.com>
-+
-+description: |
-+  The AD9467 is a 16-bit, monolithic, IF sampling analog-to-digital
-+  converter (ADC).
-+
-+  https://www.analog.com/media/en/technical-documentation/data-sheets/AD9467.pdf
-+
-+properties:
-+  compatible:
-+    enum:
-+      - adi,ad9467
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - const: sample-clock
-+
-+  powerdown-gpios:
-+    description:
-+      Pin that controls the powerdown mode of the device.
-+    maxItems: 1
-+
-+  reset-gpios:
-+    description:
-+      Reset pin for the device.
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    spi {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        adc@0 {
-+          compatible = "adi,ad9467";
-+          reg = <0>;
-+        };
-+    };
-+...
--- 
-2.20.1
+Can you expand on the scenario you have in mind please?
 
+> If any of the other tasks belong to other users, you would presumably
+> require permission.
+
+AFAIU security_task_setscheduler() will only allow a change if the task is
+changing its own attribute value or has SYS_CAP_NICE.
+
+If you're able to change the attribute of another task, then its not only
+latency_nice that's broken here.
+
+Thanks
+
+--
+Qais Yousef
