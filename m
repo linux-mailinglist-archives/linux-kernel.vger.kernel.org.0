@@ -2,213 +2,226 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68237165955
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 09:36:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DB0A165993
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 09:46:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727163AbgBTIgC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 03:36:02 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:41595 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727036AbgBTIgA (ORCPT
+        id S1727039AbgBTIqX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 03:46:23 -0500
+Received: from esa3.hc3370-68.iphmx.com ([216.71.145.155]:19254 "EHLO
+        esa3.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726501AbgBTIqW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 03:36:00 -0500
-Received: by mail-pl1-f193.google.com with SMTP id t14so1268905plr.8
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 00:36:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=yOuik/xQdjhmgeRHVU1F9OsoH/tgDDUcKjmqkiPVOZc=;
-        b=GTuFKk9sVnbtm+TPdAJUPyFffbMj1DJ+Rq88BP21LKKkeKiGW+wCr7hsWkdu7ER8NT
-         NAA1NRJv6+V2QGPJSri6UdTNdQTinJbxpLTAGyZayu2rv0DsRXTpm34mpyAmGI1+mp1g
-         SgXCqUVLwGD2J1gLOa8WBYApqlJLK6Ra2CUEdSnKCbor9k7VUmvzpTxjJpx+ooEwDZVg
-         yltg69Q6c0t0vynFAUjlc8NIKqVFERTTP4XSE6LpDhGFLMyT0xeWtPHU32YCspuiBpCe
-         Hj2LJJ8Ow1f8dt07GHr0P0kBMTCc9Vp96EDwrU9dwMLg6PW+PGZ9lUAaX8CdJxNxgWjj
-         QRVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=yOuik/xQdjhmgeRHVU1F9OsoH/tgDDUcKjmqkiPVOZc=;
-        b=kmQ5L7CryrGoyZhX5UsKxF+CTAwK6kfjDw1H5ztdBkY9BgLErN01+y69dSIN4BOELo
-         EdnnLjkjT7V/RcHFyw7hknwRndpDDTEOseVMfII/ujFuM7XYYuFzWkCWgLzsWBckZAEm
-         lP3vwVSyvCqYD87LIe7xfMdS1zuJI2KoxAf0pg3KLtduiPWvnqc9SfwQ/aCkilT+J3bv
-         DJtRoCSTL2pkYqOvhw+EU64UINumh4ZKiPM5ZHk8nW/XiRNGOb9MI66uFCHy/sFDFVUw
-         zSMt41sgkGFjb2yL9/VkrYXiWDOMOac9JLLLZyC60B6sa6l5LlqvtN7eGkgAfQOkoG0S
-         01xg==
-X-Gm-Message-State: APjAAAVbW4lEiFZ4Q9PQ7SDdMWdWUYWzqwDJUODPHYTUz+u1fg4YkiHn
-        huV/H04/REpWD4R8SZ5ZrnY=
-X-Google-Smtp-Source: APXvYqx61DAP56pqHMjI66GBxwpRYUpggqeu+U1edpVHeDuWzdLliNY2/SWqE8LcxSU8RBlwVPhkhA==
-X-Received: by 2002:a17:90a:e397:: with SMTP id b23mr2218837pjz.135.1582187759650;
-        Thu, 20 Feb 2020 00:35:59 -0800 (PST)
-Received: from anarsoul-thinkpad.lan (216-71-213-236.dyn.novuscom.net. [216.71.213.236])
-        by smtp.gmail.com with ESMTPSA id l13sm2319038pjq.23.2020.02.20.00.35.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2020 00:35:59 -0800 (PST)
-From:   Vasily Khoruzhick <anarsoul@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Icenowy Zheng <icenowy@aosc.io>, Torsten Duwe <duwe@suse.de>,
-        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Mark Brown <broonie@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Samuel Holland <samuel@sholland.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: [PATCH 6/6] arm64: allwinner: a64: enable LCD-related hardware for Pinebook
-Date:   Thu, 20 Feb 2020 00:35:08 -0800
-Message-Id: <20200220083508.792071-7-anarsoul@gmail.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200220083508.792071-1-anarsoul@gmail.com>
-References: <20200220083508.792071-1-anarsoul@gmail.com>
+        Thu, 20 Feb 2020 03:46:22 -0500
+X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Thu, 20 Feb 2020 03:46:22 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=citrix.com; s=securemail; t=1582188382;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=JwHl4quXWDG9itkjDYku543f/vfU0gx98KV7jgfEzIs=;
+  b=deUwhqPq14V103UTUp8rLwhZ+mSjnmQ8rHFGKXIkn1HB22dXM9EEfTig
+   RNf1pAFhMnJv2dsF1UVrOXjAyszfVw/E0qwwKWK8iZcO1USzg/ekjgnDb
+   9Yv1HYp7KLYWy31ulaQZq1icmXdEpBUTlBvSvYWJCLjtc1fmZ8MI6agG1
+   M=;
+Authentication-Results: esa3.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=roger.pau@citrix.com; spf=Pass smtp.mailfrom=roger.pau@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
+Received-SPF: None (esa3.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  roger.pau@citrix.com) identity=pra; client-ip=162.221.158.21;
+  receiver=esa3.hc3370-68.iphmx.com;
+  envelope-from="roger.pau@citrix.com";
+  x-sender="roger.pau@citrix.com";
+  x-conformance=sidf_compatible
+Received-SPF: Pass (esa3.hc3370-68.iphmx.com: domain of
+  roger.pau@citrix.com designates 162.221.158.21 as permitted
+  sender) identity=mailfrom; client-ip=162.221.158.21;
+  receiver=esa3.hc3370-68.iphmx.com;
+  envelope-from="roger.pau@citrix.com";
+  x-sender="roger.pau@citrix.com";
+  x-conformance=sidf_compatible; x-record-type="v=spf1";
+  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
+  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
+  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
+  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83
+  ip4:168.245.78.127 ~all"
+Received-SPF: None (esa3.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@mail.citrix.com) identity=helo;
+  client-ip=162.221.158.21; receiver=esa3.hc3370-68.iphmx.com;
+  envelope-from="roger.pau@citrix.com";
+  x-sender="postmaster@mail.citrix.com";
+  x-conformance=sidf_compatible
+IronPort-SDR: MM0J4GlVDlB8jW19M11+P9HrOGhNxD8WXYL9vu3YBiAQ460tEWfz3gUg2Lw6ArGektClf8Nbag
+ ZDMsNn+bIaHgvmiQrWsOTOXSdwNZIukFIJ+v8ThpcN5voCcqc9fpCjOv1dFXfaPkJlXRiaocNz
+ Ey3nz+5z5gJ8Z3tkNDhfq+2pULZijq4YhGeqIYtykJ4RyOTbAeqOEVpuzrpMAKyUgCJObCNTDs
+ ys4QXG50X3UKLzLY0I+Ya9hAkPZ3tBMhdhqXVkrciAd+JgmZ9nUhR/Mfl0wZ+8MU2oflNLNG06
+ Zow=
+X-SBRS: 2.7
+X-MesageID: 12723432
+X-Ironport-Server: esa3.hc3370-68.iphmx.com
+X-Remote-IP: 162.221.158.21
+X-Policy: $RELAYED
+X-IronPort-AV: E=Sophos;i="5.70,463,1574139600"; 
+   d="scan'208";a="12723432"
+Date:   Thu, 20 Feb 2020 09:39:04 +0100
+From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To:     Anchal Agarwal <anchalag@amazon.com>
+CC:     <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+        <hpa@zytor.com>, <x86@kernel.org>, <boris.ostrovsky@oracle.com>,
+        <jgross@suse.com>, <linux-pm@vger.kernel.org>,
+        <linux-mm@kvack.org>, <kamatam@amazon.com>,
+        <sstabellini@kernel.org>, <konrad.wilk@oracle.com>,
+        <axboe@kernel.dk>, <davem@davemloft.net>, <rjw@rjwysocki.net>,
+        <len.brown@intel.com>, <pavel@ucw.cz>, <peterz@infradead.org>,
+        <eduval@amazon.com>, <sblbir@amazon.com>,
+        <xen-devel@lists.xenproject.org>, <vkuznets@redhat.com>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dwmw@amazon.co.uk>, <fllinden@amaozn.com>,
+        <benh@kernel.crashing.org>
+Subject: Re: [RFC PATCH v3 06/12] xen-blkfront: add callbacks for PM suspend
+ and hibernation
+Message-ID: <20200220083904.GI4679@Air-de-Roger>
+References: <cover.1581721799.git.anchalag@amazon.com>
+ <890c404c585d7790514527f0c021056a7be6e748.1581721799.git.anchalag@amazon.com>
+ <20200217100509.GE4679@Air-de-Roger>
+ <20200217230553.GA8100@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com>
+ <20200218091611.GN4679@Air-de-Roger>
+ <20200219180424.GA17584@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200219180424.GA17584@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com>
+X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
+ AMSPEX02CL01.citrite.net (10.69.22.125)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Icenowy Zheng <icenowy@aosc.io>
+Thanks for this work, please see below.
 
-Pinebook has an ANX6345 bridge connected to the RGB666 LCD output and
-eDP panel input. The bridge is controlled via I2C that's connected to
-R_I2C bus.
+On Wed, Feb 19, 2020 at 06:04:24PM +0000, Anchal Agarwal wrote:
+> On Tue, Feb 18, 2020 at 10:16:11AM +0100, Roger Pau Monné wrote:
+> > On Mon, Feb 17, 2020 at 11:05:53PM +0000, Anchal Agarwal wrote:
+> > > On Mon, Feb 17, 2020 at 11:05:09AM +0100, Roger Pau Monné wrote:
+> > > > On Fri, Feb 14, 2020 at 11:25:34PM +0000, Anchal Agarwal wrote:
+> > > > > From: Munehisa Kamata <kamatam@amazon.com
+> > > > > 
+> > > > > Add freeze, thaw and restore callbacks for PM suspend and hibernation
+> > > > > support. All frontend drivers that needs to use PM_HIBERNATION/PM_SUSPEND
+> > > > > events, need to implement these xenbus_driver callbacks.
+> > > > > The freeze handler stops a block-layer queue and disconnect the
+> > > > > frontend from the backend while freeing ring_info and associated resources.
+> > > > > The restore handler re-allocates ring_info and re-connect to the
+> > > > > backend, so the rest of the kernel can continue to use the block device
+> > > > > transparently. Also, the handlers are used for both PM suspend and
+> > > > > hibernation so that we can keep the existing suspend/resume callbacks for
+> > > > > Xen suspend without modification. Before disconnecting from backend,
+> > > > > we need to prevent any new IO from being queued and wait for existing
+> > > > > IO to complete.
+> > > > 
+> > > > This is different from Xen (xenstore) initiated suspension, as in that
+> > > > case Linux doesn't flush the rings or disconnects from the backend.
+> > > Yes, AFAIK in xen initiated suspension backend takes care of it. 
+> > 
+> > No, in Xen initiated suspension backend doesn't take care of flushing
+> > the rings, the frontend has a shadow copy of the ring contents and it
+> > re-issues the requests on resume.
+> > 
+> Yes, I meant suspension in general where both xenstore and backend knows
+> system is going under suspension and not flushing of rings.
 
-Enable all this hardware in device tree.
+backend has no idea the guest is going to be suspended. Backend code
+is completely agnostic to suspension/resume.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
----
- .../dts/allwinner/sun50i-a64-pinebook.dts     | 69 ++++++++++++++++++-
- 1 file changed, 68 insertions(+), 1 deletion(-)
+> That happens
+> in frontend when backend indicates that state is closing and so on.
+> I may have written it in wrong context.
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
-index c06c540e6c08..f5633f550d8a 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
-@@ -48,6 +48,18 @@ lid_switch {
- 		};
- 	};
- 
-+	panel_edp: panel-edp {
-+		compatible = "neweast,wjfh116008a";
-+		backlight = <&backlight>;
-+		power-supply = <&reg_dc1sw>;
-+
-+		port {
-+			panel_edp_in: endpoint {
-+				remote-endpoint = <&anx6345_out_edp>;
-+			};
-+		};
-+	};
-+
- 	reg_vbklt: vbklt {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vbklt";
-@@ -109,6 +121,10 @@ &dai {
- 	status = "okay";
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	phys = <&usbphy 0>;
- 	phy-names = "usb";
-@@ -119,6 +135,10 @@ &ehci1 {
- 	status = "okay";
- };
- 
-+&mixer0 {
-+	status = "okay";
-+};
-+
- &mmc0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins>;
-@@ -177,12 +197,45 @@ &pwm {
- 	status = "okay";
- };
- 
--/* The ANX6345 eDP-bridge is on r_i2c */
- &r_i2c {
- 	clock-frequency = <100000>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&r_i2c_pl89_pins>;
- 	status = "okay";
-+
-+	anx6345: anx6345@38 {
-+		compatible = "analogix,anx6345";
-+		reg = <0x38>;
-+		reset-gpios = <&pio 3 24 GPIO_ACTIVE_LOW>; /* PD24 */
-+		dvdd25-supply = <&reg_dldo2>;
-+		dvdd12-supply = <&reg_fldo1>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			anx6345_in: port@0 {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				reg = <0>;
-+				anx6345_in_tcon0: endpoint@0 {
-+					reg = <0>;
-+					remote-endpoint = <&tcon0_out_anx6345>;
-+				};
-+			};
-+
-+			anx6345_out: port@1 {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				reg = <1>;
-+
-+				anx6345_out_edp: endpoint@0 {
-+					reg = <0>;
-+					remote-endpoint = <&panel_edp_in>;
-+				};
-+			};
-+		};
-+	};
- };
- 
- &r_pio {
-@@ -357,6 +410,20 @@ &sound {
- 			"MIC2", "Internal Microphone Right";
- };
- 
-+&tcon0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&lcd_rgb666_pins>;
-+
-+	status = "okay";
-+};
-+
-+&tcon0_out {
-+	tcon0_out_anx6345: endpoint@0 {
-+		reg = <0>;
-+		remote-endpoint = <&anx6345_in_tcon0>;
-+	};
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pb_pins>;
--- 
-2.25.0
+I'm afraid I'm not sure I fully understand this last sentence.
 
+> > > > > +static int blkfront_freeze(struct xenbus_device *dev)
+> > > > > +{
+> > > > > +	unsigned int i;
+> > > > > +	struct blkfront_info *info = dev_get_drvdata(&dev->dev);
+> > > > > +	struct blkfront_ring_info *rinfo;
+> > > > > +	/* This would be reasonable timeout as used in xenbus_dev_shutdown() */
+> > > > > +	unsigned int timeout = 5 * HZ;
+> > > > > +	int err = 0;
+> > > > > +
+> > > > > +	info->connected = BLKIF_STATE_FREEZING;
+> > > > > +
+> > > > > +	blk_mq_freeze_queue(info->rq);
+> > > > > +	blk_mq_quiesce_queue(info->rq);
+> > > > > +
+> > > > > +	for (i = 0; i < info->nr_rings; i++) {
+> > > > > +		rinfo = &info->rinfo[i];
+> > > > > +
+> > > > > +		gnttab_cancel_free_callback(&rinfo->callback);
+> > > > > +		flush_work(&rinfo->work);
+> > > > > +	}
+> > > > > +
+> > > > > +	/* Kick the backend to disconnect */
+> > > > > +	xenbus_switch_state(dev, XenbusStateClosing);
+> > > > 
+> > > > Are you sure this is safe?
+> > > > 
+> > > In my testing running multiple fio jobs, other test scenarios running
+> > > a memory loader works fine. I did not came across a scenario that would
+> > > have failed resume due to blkfront issues unless you can sugest some?
+> > 
+> > AFAICT you don't wait for the in-flight requests to be finished, and
+> > just rely on blkback to finish processing those. I'm not sure all
+> > blkback implementations out there can guarantee that.
+> > 
+> > The approach used by Xen initiated suspension is to re-issue the
+> > in-flight requests when resuming. I have to admit I don't think this
+> > is the best approach, but I would like to keep both the Xen and the PM
+> > initiated suspension using the same logic, and hence I would request
+> > that you try to re-use the existing resume logic (blkfront_resume).
+> > 
+> > > > I don't think you wait for all requests pending on the ring to be
+> > > > finished by the backend, and hence you might loose requests as the
+> > > > ones on the ring would not be re-issued by blkfront_restore AFAICT.
+> > > > 
+> > > AFAIU, blk_mq_freeze_queue/blk_mq_quiesce_queue should take care of no used
+> > > request on the shared ring. Also, we I want to pause the queue and flush all
+> > > the pending requests in the shared ring before disconnecting from backend.
+> > 
+> > Oh, so blk_mq_freeze_queue does wait for in-flight requests to be
+> > finished. I guess it's fine then.
+> > 
+> Ok.
+> > > Quiescing the queue seemed a better option here as we want to make sure ongoing
+> > > requests dispatches are totally drained.
+> > > I should accept that some of these notion is borrowed from how nvme freeze/unfreeze 
+> > > is done although its not apple to apple comparison.
+> > 
+> > That's fine, but I would still like to requests that you use the same
+> > logic (as much as possible) for both the Xen and the PM initiated
+> > suspension.
+> > 
+> > So you either apply this freeze/unfreeze to the Xen suspension (and
+> > drop the re-issuing of requests on resume) or adapt the same approach
+> > as the Xen initiated suspension. Keeping two completely different
+> > approaches to suspension / resume on blkfront is not suitable long
+> > term.
+> > 
+> I agree with you on overhaul of xen suspend/resume wrt blkfront is a good
+> idea however, IMO that is a work for future and this patch series should 
+> not be blocked for it. What do you think?
+
+It's not so much that I think an overhaul of suspend/resume in
+blkfront is needed, it's just that I don't want to have two completely
+different suspend/resume paths inside blkfront.
+
+So from my PoV I think the right solution is to either use the same
+code (as much as possible) as it's currently used by Xen initiated
+suspend/resume, or to also switch Xen initiated suspension to use the
+newly introduced code.
+
+Having two different approaches to suspend/resume in the same driver
+is a recipe for disaster IMO: it adds complexity by forcing developers
+to take into account two different suspend/resume approaches when
+there's no need for it.
+
+Thanks, Roger.
