@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B4C616585E
+	by mail.lfdr.de (Postfix) with ESMTP id 7553A16585F
 	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 08:28:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727227AbgBTH1j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 02:27:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50836 "EHLO mail.kernel.org"
+        id S1727285AbgBTH1t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 02:27:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51196 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726771AbgBTH1j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 02:27:39 -0500
+        id S1726766AbgBTH1t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 02:27:49 -0500
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE49624654;
-        Thu, 20 Feb 2020 07:27:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 687072467A;
+        Thu, 20 Feb 2020 07:27:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582183658;
-        bh=g09eWAq+ZPGg1WTVfAAG0QWbptpBF9XSfGLKxydLU6k=;
+        s=default; t=1582183668;
+        bh=ZfvP0/waC5M8XVQY066oJvqxQW8C54uBoxnMBMRCNaw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=agKlFUTadqnj0pIo1+4ZezAda8JsGz7e8Yoak5Z5Gsmj0bnVnwcoRiFmdrNDoacFu
-         KbN6iQ+4WZv97cYizLHUQXfkmRnkHhO1D5OIC7ft1MBV6qHsIZzaw+X8I2NcgW7jzR
-         JWH4oPL/oV+mqDVkeHAglyELu6C+X3DfTPo0yKPU=
+        b=BmCQZr7Y1WjnkuKc/1+l8sB+OLT1kh2Fq0UNpAG/xP6DQ2tSIWz4aPzVC60m2eqtH
+         IGQ/1qCY7vqf0ILtpRpT1FyHEONFNAvQjiXgsubBnvj6KWZQtqb8xjFrpOOUrF/9mi
+         /To9cDp7jKb4+pRrLWrcAidteZ55+O0KyguoX5yc=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Steven Rostedt <rostedt@goodmis.org>
 Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
@@ -32,9 +32,9 @@ Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 7/8] bootconfig: Add append value operator support
-Date:   Thu, 20 Feb 2020 16:27:33 +0900
-Message-Id: <158218365319.6940.463995421395321587.stgit@devnote2>
+Subject: [PATCH 8/8] bootconfig: Print array as multiple commands for legacy command line
+Date:   Thu, 20 Feb 2020 16:27:44 +0900
+Message-Id: <158218366394.6940.17725577299878032543.stgit@devnote2>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <158218358363.6940.18380270211351882136.stgit@devnote2>
 References: <158218358363.6940.18380270211351882136.stgit@devnote2>
@@ -47,112 +47,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add append value operator "+=" support to bootconfig syntax.
-With this operator, user can add new value to the key as
-an entry of array instead of overwriting.
-For example,
+Print arraied values as multiple same options for legacy
+kernel command line. With this rule, if the "kernel.*" and
+"init.*" array entries in bootconfig are printed out as
+multiple same options, e.g.
 
-  foo = bar
-  ...
-  foo += baz
+kernel {
+ console = "ttyS0,115200"
+ console += "tty0"
+}
 
-Then the key "foo" has "bar" and "baz" values as an array.
+will be correctly converted to
 
+console="ttyS0,115200" console="tty0"
+
+in the kernel command line.
+
+Reported-by: Borislav Petkov <bp@alien8.de>
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- Documentation/admin-guide/bootconfig.rst |    8 ++++++++
- lib/bootconfig.c                         |   14 ++++++++++----
- tools/bootconfig/test-bootconfig.sh      |   13 +++++++++++++
- 3 files changed, 31 insertions(+), 4 deletions(-)
+ init/main.c |   22 ++++++++--------------
+ 1 file changed, 8 insertions(+), 14 deletions(-)
 
-diff --git a/Documentation/admin-guide/bootconfig.rst b/Documentation/admin-guide/bootconfig.rst
-index 0c18e3f540e6..abe2432b8eec 100644
---- a/Documentation/admin-guide/bootconfig.rst
-+++ b/Documentation/admin-guide/bootconfig.rst
-@@ -74,6 +74,14 @@ For example,::
- In this case ``bar`` and ``baz`` is overwritten by ``qux``, and ``foo = qux``
- remains.
- 
-+If you want to append the value to existing key as an array member,
-+you can use ``+=`` operator. For example::
-+
-+ foo = bar, baz
-+ foo += qux
-+
-+In this case, the key ``foo`` has ``bar``, ``baz`` and ``qux``.
-+
- Note that a sub-key and a value can not co-exist under a parent key.
- For example, following config is NOT allowed.::
- 
-diff --git a/lib/bootconfig.c b/lib/bootconfig.c
-index 9a094162ea3e..4afc768489cd 100644
---- a/lib/bootconfig.c
-+++ b/lib/bootconfig.c
-@@ -586,7 +586,7 @@ static void xbc_node_overwrite(struct xbc_node *node, char *v)
- 	node->next = 0;
- }
- 
--static int __init xbc_parse_kv(char **k, char *v)
-+static int __init xbc_parse_kv(char **k, char *v, int op)
+diff --git a/init/main.c b/init/main.c
+index 7c4ca805562a..606c702f5fc8 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -268,7 +268,6 @@ static int __init xbc_snprint_cmdline(char *buf, size_t size,
  {
- 	struct xbc_node *prev_parent = last_parent;
- 	struct xbc_node *child;
-@@ -605,7 +605,7 @@ static int __init xbc_parse_kv(char **k, char *v)
- 	if (c < 0)
- 		return c;
+ 	struct xbc_node *knode, *vnode;
+ 	char *end = buf + size;
+-	char c = '\"';
+ 	const char *val;
+ 	int ret;
  
--	if (!child) {
-+	if (op == '+' || !child) {
- 		if (!xbc_add_sibling(v, XBC_VALUE))
- 			return -ENOMEM;
- 	} else
-@@ -781,7 +781,7 @@ int __init xbc_init(char *buf)
+@@ -279,25 +278,20 @@ static int __init xbc_snprint_cmdline(char *buf, size_t size,
+ 			return ret;
  
- 	p = buf;
- 	do {
--		q = strpbrk(p, "{}=;\n#");
-+		q = strpbrk(p, "{}=+;\n#");
- 		if (!q) {
- 			p = skip_spaces(p);
- 			if (*p != '\0')
-@@ -792,8 +792,14 @@ int __init xbc_init(char *buf)
- 		c = *q;
- 		*q++ = '\0';
- 		switch (c) {
-+		case '+':
-+			if (*q++ != '=') {
-+				ret = xbc_parse_error("Wrong + operator", q - 2);
-+				break;
-+			}
-+			/* Fall through */
- 		case '=':
--			ret = xbc_parse_kv(&p, q);
-+			ret = xbc_parse_kv(&p, q, c);
- 			break;
- 		case '{':
- 			ret = xbc_open_brace(&p, q);
-diff --git a/tools/bootconfig/test-bootconfig.sh b/tools/bootconfig/test-bootconfig.sh
-index f6948790c693..04f65548ca1e 100755
---- a/tools/bootconfig/test-bootconfig.sh
-+++ b/tools/bootconfig/test-bootconfig.sh
-@@ -108,6 +108,19 @@ xfail grep -q "bar" $OUTFILE
- xfail grep -q "baz" $OUTFILE
- xpass grep -q "qux" $OUTFILE
+ 		vnode = xbc_node_get_child(knode);
+-		ret = snprintf(buf, rest(buf, end), "%s%c", xbc_namebuf,
+-				vnode ? '=' : ' ');
+-		if (ret < 0)
+-			return ret;
+-		buf += ret;
+-		if (!vnode)
++		if (!vnode) {
++			ret = snprintf(buf, rest(buf, end), "%s ", xbc_namebuf);
++			if (ret < 0)
++				return ret;
++			buf += ret;
+ 			continue;
+-
+-		c = '\"';
++		}
+ 		xbc_array_for_each_value(vnode, val) {
+-			ret = snprintf(buf, rest(buf, end), "%c%s", c, val);
++			ret = snprintf(buf, rest(buf, end), "%s=\"%s\" ",
++				       xbc_namebuf, val);
+ 			if (ret < 0)
+ 				return ret;
+ 			buf += ret;
+-			c = ',';
+ 		}
+-		if (rest(buf, end) > 2)
+-			strcpy(buf, "\" ");
+-		buf += 2;
+ 	}
  
-+echo "Adding same-key values"
-+cat > $TEMPCONF << EOF
-+key = bar, baz
-+key += qux
-+EOF
-+echo > $INITRD
-+
-+xpass $BOOTCONF -a $TEMPCONF $INITRD
-+$BOOTCONF $INITRD > $OUTFILE
-+xpass grep -q "bar" $OUTFILE
-+xpass grep -q "baz" $OUTFILE
-+xpass grep -q "qux" $OUTFILE
-+
- echo "=== expected failure cases ==="
- for i in samples/bad-* ; do
-   xfail $BOOTCONF -a $i $INITRD
+ 	return buf - (end - size);
 
