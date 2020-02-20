@@ -2,111 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 006B51655B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 04:33:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC84E1655C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 04:40:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727974AbgBTDdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 22:33:24 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:57112 "EHLO huawei.com"
+        id S1727922AbgBTDkN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 22:40:13 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:10654 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727555AbgBTDdX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 22:33:23 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id C5214A729CD34109C880;
-        Thu, 20 Feb 2020 11:33:21 +0800 (CST)
-Received: from [127.0.0.1] (10.173.221.195) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Thu, 20 Feb 2020
- 11:33:13 +0800
-Subject: Re: [PATCH v3 0/6] implement KASLR for powerpc/fsl_booke/64
-From:   Jason Yan <yanaijie@huawei.com>
-To:     <mpe@ellerman.id.au>, <linuxppc-dev@lists.ozlabs.org>,
-        <diana.craciun@nxp.com>, <christophe.leroy@c-s.fr>,
-        <benh@kernel.crashing.org>, <paulus@samba.org>,
-        <npiggin@gmail.com>, <keescook@chromium.org>,
-        <kernel-hardening@lists.openwall.com>, <oss@buserror.net>
-CC:     <linux-kernel@vger.kernel.org>, <zhaohongjiang@huawei.com>
-References: <20200206025825.22934-1-yanaijie@huawei.com>
- <636f16fd-cc7b-ee2e-7496-c06bdc10c7af@huawei.com>
-Message-ID: <c20b8e8b-5e70-4897-85c3-2d8d3c5454d7@huawei.com>
-Date:   Thu, 20 Feb 2020 11:33:12 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        id S1727476AbgBTDkN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 22:40:13 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 4F7AF69BE5179A3B8D1E;
+        Thu, 20 Feb 2020 11:40:11 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 20 Feb 2020 11:40:03 +0800
+From:   Chen Zhou <chenzhou10@huawei.com>
+To:     <rajneesh.bhardwaj@intel.com>, <vishwanath.somayaji@intel.com>
+CC:     <dvhart@infradead.org>, <andy@infradead.org>,
+        <platform-driver-x86@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <chenzhou10@huawei.com>
+Subject: [PATCH -next] platform/x86: intel_pmc_core: fix build error without CONFIG_DEBUG_FS
+Date:   Thu, 20 Feb 2020 11:33:35 +0800
+Message-ID: <20200220033335.106963-1-chenzhou10@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <636f16fd-cc7b-ee2e-7496-c06bdc10c7af@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.173.221.195]
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping...
+If CONFIG_DEBUG_FS is n, build fails:
 
-on 2020/2/13 11:00, Jason Yan wrote:
-> Hi everyone, any comments or suggestions?
-> 
-> Thanks,
-> Jason
-> 
-> on 2020/2/6 10:58, Jason Yan wrote:
->> This is a try to implement KASLR for Freescale BookE64 which is based on
->> my earlier implementation for Freescale BookE32:
->> https://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=131718
->>
->> The implementation for Freescale BookE64 is similar as BookE32. One
->> difference is that Freescale BookE64 set up a TLB mapping of 1G during
->> booting. Another difference is that ppc64 needs the kernel to be
->> 64K-aligned. So we can randomize the kernel in this 1G mapping and make
->> it 64K-aligned. This can save some code to creat another TLB map at
->> early boot. The disadvantage is that we only have about 1G/64K = 16384
->> slots to put the kernel in.
->>
->>      KERNELBASE
->>
->>            64K                     |--> kernel <--|
->>             |                      |              |
->>          +--+--+--+    +--+--+--+--+--+--+--+--+--+    +--+--+
->>          |  |  |  |....|  |  |  |  |  |  |  |  |  |....|  |  |
->>          +--+--+--+    +--+--+--+--+--+--+--+--+--+    +--+--+
->>          |                         |                        1G
->>          |----->   offset    <-----|
->>
->>                                kernstart_virt_addr
->>
->> I'm not sure if the slot numbers is enough or the design has any
->> defects. If you have some better ideas, I would be happy to hear that.
->>
->> Thank you all.
->>
->> v2->v3:
->>    Fix build error when KASLR is disabled.
->> v1->v2:
->>    Add __kaslr_offset for the secondary cpu boot up.
->>
->> Jason Yan (6):
->>    powerpc/fsl_booke/kaslr: refactor kaslr_legal_offset() and
->>      kaslr_early_init()
->>    powerpc/fsl_booke/64: introduce reloc_kernel_entry() helper
->>    powerpc/fsl_booke/64: implement KASLR for fsl_booke64
->>    powerpc/fsl_booke/64: do not clear the BSS for the second pass
->>    powerpc/fsl_booke/64: clear the original kernel if randomized
->>    powerpc/fsl_booke/kaslr: rename kaslr-booke32.rst to kaslr-booke.rst
->>      and add 64bit part
->>
->>   .../{kaslr-booke32.rst => kaslr-booke.rst}    | 35 +++++++--
->>   arch/powerpc/Kconfig                          |  2 +-
->>   arch/powerpc/kernel/exceptions-64e.S          | 23 ++++++
->>   arch/powerpc/kernel/head_64.S                 | 14 ++++
->>   arch/powerpc/kernel/setup_64.c                |  4 +-
->>   arch/powerpc/mm/mmu_decl.h                    | 19 ++---
->>   arch/powerpc/mm/nohash/kaslr_booke.c          | 71 +++++++++++++------
->>   7 files changed, 132 insertions(+), 36 deletions(-)
->>   rename Documentation/powerpc/{kaslr-booke32.rst => kaslr-booke.rst} 
->> (59%)
->>
-> 
-> 
-> .
+drivers/platform/x86/intel_pmc_core.c: In function pmc_core_resume:
+drivers/platform/x86/intel_pmc_core.c:1327:3: error: implicit declaration of function pmc_core_slps0_display; did you mean pmc_core_is_pc10_failed? [-Werror=implicit-function-declaration]
+   pmc_core_slps0_display(pmcdev, dev, NULL);
+      ^~~~~~~~~~~~~~~~~~~~~~
+
+Function pmc_core_slps0_display() is responsible for displaying debug
+registers, which is under CONFIG_DEBUG_FS.
+
+Providing the static inline stub whenever CONFIG_DEBUG_FS is disabled
+to fix this. Function pmc_core_lpm_display() is the same.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+---
+ drivers/platform/x86/intel_pmc_core.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
+index f4a36fb..939f8e0 100644
+--- a/drivers/platform/x86/intel_pmc_core.c
++++ b/drivers/platform/x86/intel_pmc_core.c
+@@ -1117,6 +1117,20 @@ static void pmc_core_dbgfs_register(struct pmc_dev *pmcdev)
+ 	}
+ }
+ #else
++static inline void pmc_core_slps0_display(struct pmc_dev *pmcdev,
++					   struct device *dev,
++					   struct seq_file *s)
++{
++}
++
++static inline void pmc_core_lpm_display(struct pmc_dev *pmcdev,
++					 struct device *dev,
++					 struct seq_file *s, u32 offset,
++					 const char *str,
++					 const struct pmc_bit_map **maps)
++{
++}
++
+ static inline void pmc_core_dbgfs_register(struct pmc_dev *pmcdev)
+ {
+ }
+-- 
+2.7.4
 
