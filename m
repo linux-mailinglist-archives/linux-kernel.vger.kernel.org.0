@@ -2,112 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1979E166711
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 20:23:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 884CB16672C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 20:30:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728390AbgBTTXM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 14:23:12 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:38973 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728334AbgBTTXM (ORCPT
+        id S1729000AbgBTTaB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 14:30:01 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:53176 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728336AbgBTTaA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 14:23:12 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 77so4748578oty.6
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 11:23:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Bk1eIitMT2MS22kRJrkHf2a6nr5vMQhVA+AkCVP3xms=;
-        b=aTmzlFn5tqMffO4aaSdqSmOjwnlwPlhLBMDWmHM5hEgVohGoR95LIESWPin+FgU3m5
-         6SBKmIyXfz3mR7ZJGUztrCkEqttjywHypYPY01n74LbVdLtnW3lI3mGg/tCdRKylIrWc
-         Jq7asmZQKCD4pm93CxVIrFT9tn3nfGJqSSm8Vsd6HIo/Kcxe7LRKiOXtJ1R+KmDSgYri
-         yOJUHQv1/vVwu32bZ3WZIRFgjHFVUSuwrRUtJOBVFSUsAgNS/5PGnC2AW02w3iZZp4zg
-         Ia0U7nlOur/8FVS0Sgvy3hruRsr6xz+P5Rcb6cHozsula5vu8Q6sy6WkorjtHYEKafsR
-         OD5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Bk1eIitMT2MS22kRJrkHf2a6nr5vMQhVA+AkCVP3xms=;
-        b=l6S/bB9rUqrYHVrQLITv06yeqtRwzn3goLIxwFvYP5HLSmUKEtYhtSdH8cDDs1p3T7
-         MHw0ZW05UZfCmUcEgTom3pOcXdMFLlr7HCSaaeGRP2NNqaMiKixwy4jl59VhjHh8csue
-         VgZJE+rvEH49qxkc2GFAzPm/ExEc2IlJhIEYB+tGFCkX4+d3EQ8WOD9K5U+EHRyYeyD5
-         zFWF7RseOMcx6IOMRdrut2kQti958Z7WeiabNTeXR/Supl0fhK6IZM4IHUSRIcFw+8y9
-         W7IQfSNvPmAHk6I4HBBDmZ0jpDA9goitBqR09Ub8OZVl+cEXXEUlVPwqKFEeQ7l5OclB
-         CJ2A==
-X-Gm-Message-State: APjAAAWl9YVqu7z7R2YRp9ujAdWVxOWszVt5+iHJFPdKfJEz3lJ0laXW
-        41hFtsqQsXdjypd5dfh77zFXsbvkvHiPnGkyX0MQHQ==
-X-Google-Smtp-Source: APXvYqzc0r7mnwBlUc3tSqHO71Kmj09WeY278uUEiCztDiRqODK1P9Hy8XAqcMq8l4Nh1mPh3JVbkAAfzAHEF3HNj0E=
-X-Received: by 2002:a9d:7b4e:: with SMTP id f14mr24990667oto.355.1582226589659;
- Thu, 20 Feb 2020 11:23:09 -0800 (PST)
+        Thu, 20 Feb 2020 14:30:00 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01KJTJ7k059691;
+        Thu, 20 Feb 2020 13:29:19 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582226959;
+        bh=7VYc8CJ2y2APcsIbYj7iN6/uBegeLD4mvzWH1dQDQa8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=DApX65vZNJ/d9RG5qjp3W88p5qEPBfEW3+vakGKqMQ7Rg95D2WdiaIzJoDke+qBf/
+         OwfGlJlU90vBDTsyxmfAL3/tWP76RSUQz81JHgqtqLrA0y06FGLdQFkUJLls4N55LS
+         1gRh9F39eST9pH4TnaE/wa7Px0KKSPOIc6UE7imQ=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01KJTJRN003290;
+        Thu, 20 Feb 2020 13:29:19 -0600
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 20
+ Feb 2020 13:29:19 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 20 Feb 2020 13:29:19 -0600
+Received: from [128.247.59.107] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01KJTJPt053232;
+        Thu, 20 Feb 2020 13:29:19 -0600
+Subject: Re: [PATCH v3 0/2] Introduce the TLV320ADCx140 codec family
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+References: <20200219125942.22013-1-dmurphy@ti.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <1d2b79f5-a928-adc5-b6f8-e73e0c061f75@ti.com>
+Date:   Thu, 20 Feb 2020 13:24:14 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200211213128.73302-1-almasrymina@google.com>
- <20200211151906.637d1703e4756066583b89da@linux-foundation.org>
- <CAHS8izPUFQWq3PzhhRzp7u11173_-cmRkNuQWEswS51Xz6ZM0Q@mail.gmail.com> <20200219130648.83e6810848774c6fd649c445@linux-foundation.org>
-In-Reply-To: <20200219130648.83e6810848774c6fd649c445@linux-foundation.org>
-From:   Mina Almasry <almasrymina@google.com>
-Date:   Thu, 20 Feb 2020 11:22:58 -0800
-Message-ID: <CAHS8izN_FJektipBwiLsCO8ysMTM7k=CR_k3OV7+_y0ZbrGw+A@mail.gmail.com>
-Subject: Re: [PATCH v12 1/9] hugetlb_cgroup: Add hugetlb_cgroup reservation counter
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Mike Kravetz <mike.kravetz@oracle.com>, shuah <shuah@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Greg Thelen <gthelen@google.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, linux-kselftest@vger.kernel.org,
-        cgroups@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200219125942.22013-1-dmurphy@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 1:06 PM Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> On Wed, 19 Feb 2020 11:05:41 -0800 Mina Almasry <almasrymina@google.com> wrote:
->
-> > On Tue, Feb 11, 2020 at 3:19 PM Andrew Morton <akpm@linux-foundation.org> wrote:
-> > >
-> > > On Tue, 11 Feb 2020 13:31:20 -0800 Mina Almasry <almasrymina@google.com> wrote:
-> > >
-> > > > These counters will track hugetlb reservations rather than hugetlb
-> > > > memory faulted in. This patch only adds the counter, following patches
-> > > > add the charging and uncharging of the counter.
-> > >
-> > > We're still pretty thin on review here, but as it's v12 and Mike
-> > > appears to be signed up to look at this work, I'll add them to -next to
-> > > help move things forward.
-> > >
-> >
-> > Hi Andrew,
-> >
-> > Since the patches were merged into -next there have been build fixes
-> > and test fixes and some review comments. Would you like me to submit
-> > *new* patches to address these, or would you like me to squash the
-> > fixes into my existing patch series and submit another iteration of
-> > the patch series?
->
-> What you did worked OK ;)
->
-> Please check the end result next time I release a kernel.
+Hello
 
-Thanks Andrew! Things definitely moved along after the patchseries got
-into -next :D
+On 2/19/20 6:59 AM, Dan Murphy wrote:
+> Hello
+>
+> Introducing the Texas Instruments TLV320ADCx140 quad channel audio ADC.
+> This device supports 4 analog inputs, 8 digital inputs or a combination of
+> analog and digital microphones.
+>
+> TLV320ADC3140 - http://www.ti.com/lit/gpn/tlv320adc3140
+> TLV320ADC5140 - http://www.ti.com/lit/gpn/tlv320adc5140
+> TLV320ADC6140 - http://www.ti.com/lit/gpn/tlv320adc6140
 
-By my count I think all my patches outside of the tests patch have
-been acked or reviewed. When you have a chance I have a couple of
-questions:
+Please let me know if there are any additional review comments on this 
+code I have 2 more feature add patches on top of this patch that I 
+developed a couple days ago and don't want to submit them for review 
+until this driver is integrated.
 
-1. For the non-tests patch, anything pending on those preventing
-eventual submission to linus's tree?
-2. For the tests patch, I only have a Tested-by from Sandipan. Is that
-good enough? If the worst comes to worst and I don't get a review on
-that patch I would rather (if possible) that 'tests' patch can be
-dropped while I nag folks for a review, rather than block submission
-of the entire patch series. I ask because it's been out for review for
-some time and it's the one I got least discussion on so I'm not sure
-I'll have a review by the time it's needed.
+Dan
 
-Thanks again!
