@@ -2,68 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 747571667D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 21:00:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EAE191667DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 21:00:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729131AbgBTUAA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 15:00:00 -0500
-Received: from muru.com ([72.249.23.125]:56588 "EHLO muru.com"
+        id S1729050AbgBTUAe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 15:00:34 -0500
+Received: from mga14.intel.com ([192.55.52.115]:57235 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729108AbgBTT77 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 14:59:59 -0500
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id C9A3981BC;
-        Thu, 20 Feb 2020 20:00:42 +0000 (UTC)
-From:   Tony Lindgren <tony@atomide.com>
-To:     Lee Jones <lee.jones@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>, Jiri Slaby <jslaby@suse.cz>,
-        Johan Hovold <johan@kernel.org>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Peter Hurley <peter@hurleysoftware.com>,
-        Rob Herring <robh@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] ARM: dts: omap4-droid4: Enable basic modem support
-Date:   Thu, 20 Feb 2020 11:59:43 -0800
-Message-Id: <20200220195943.15314-5-tony@atomide.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200220195943.15314-1-tony@atomide.com>
-References: <20200220195943.15314-1-tony@atomide.com>
+        id S1728927AbgBTUAe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 15:00:34 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2020 12:00:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,465,1574150400"; 
+   d="scan'208";a="349230931"
+Received: from moriol-mobl.ger.corp.intel.com (HELO localhost) ([10.252.25.78])
+  by fmsmga001.fm.intel.com with ESMTP; 20 Feb 2020 12:00:30 -0800
+Date:   Thu, 20 Feb 2020 22:00:29 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, aik@ozlabs.ru,
+        david@gibson.dropbear.id.au, linux-kernel@vger.kernel.org,
+        nayna@linux.vnet.ibm.com, gcwilson@linux.ibm.com, jgg@ziepe.ca
+Subject: Re: [PATCH v2 0/4] Enable vTPM 2.0 for the IBM vTPM driver
+Message-ID: <20200220200029.GC23349@linux.intel.com>
+References: <20200213202329.898607-1-stefanb@linux.vnet.ibm.com>
+ <f76ce5e5-0552-bc2c-4548-ae9552d4e3ba@linux.ibm.com>
+ <20200220195906.GB23349@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200220195906.GB23349@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This allows apps to use /dev/motmdm1 for voice call AT commands,
-/dev/motmdm3 for sending SMS, and /dev/motmdm9 for reading SMS.
+On Thu, Feb 20, 2020 at 09:59:06PM +0200, Jarkko Sakkinen wrote:
+> On Wed, Feb 19, 2020 at 02:23:29PM -0500, Stefan Berger wrote:
+> > On 2/13/20 3:23 PM, Stefan Berger wrote:
+> > > From: Stefan Berger <stefanb@linux.ibm.com>
+> > > 
+> > > QEMU 5.0 will support the PAPR vTPM device model for TPM 1.2 and TPM 2.0.
+> > > This series of patches enables vTPM 2.0 support for the IBM vTPM driver.
+> > 
+> > 
+> > If there are no more comments to this series, maybe Jarkko can queue it?
+> 
+> Do not recall seeing this series before. Probably have missed it.
+> I'll look into it next week.
 
-Voice call audio mixer and GNSS are not yet supported.
+Yup, did not have CC to me. If you have rush to get something queued,
+then should at least CC to series.
 
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- arch/arm/boot/dts/motorola-mapphone-common.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/arch/arm/boot/dts/motorola-mapphone-common.dtsi b/arch/arm/boot/dts/motorola-mapphone-common.dtsi
---- a/arch/arm/boot/dts/motorola-mapphone-common.dtsi
-+++ b/arch/arm/boot/dts/motorola-mapphone-common.dtsi
-@@ -689,6 +689,12 @@ &uart1 {
- 	pinctrl-0 = <&uart1_pins>;
- 	interrupts-extended = <&wakeupgen GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH
- 			       &omap4_pmx_core 0xfc>;
-+
-+	modem {
-+		compatible = "motorola,mapphone-mdm6600-serial";
-+		phys = <&fsusb1_phy>;
-+		phy-names = "usb";
-+	};
- };
- 
- &uart3 {
--- 
-2.25.1
+/Jarkko
