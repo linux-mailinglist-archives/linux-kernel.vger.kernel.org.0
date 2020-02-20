@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EB271661A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 16:59:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B79A16619F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 16:59:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728760AbgBTP7l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 10:59:41 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:47612 "EHLO
+        id S1728730AbgBTP71 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 10:59:27 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:47606 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728684AbgBTP7X (ORCPT
+        with ESMTP id S1728699AbgBTP7Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 10:59:23 -0500
+        Thu, 20 Feb 2020 10:59:24 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: eballetbo)
-        with ESMTPSA id 5A61C2951A3
+        with ESMTPSA id 122CC29519F
 From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Collabora Kernel ML <kernel@collabora.com>, groeck@chromium.org,
         bleung@chromium.org, dtor@chromium.org, gwendal@chromium.org,
         pmalani@chromium.org
-Subject: [PATCH 6/8] platform/chrome: cros_ec_lightbar: Use cros_ec_cmd_xfer_status helper
-Date:   Thu, 20 Feb 2020 16:58:57 +0100
-Message-Id: <20200220155859.906647-7-enric.balletbo@collabora.com>
+Subject: [PATCH 7/8] platform/chrome: cros_ec: Use cros_ec_cmd_xfer_status helper
+Date:   Thu, 20 Feb 2020 16:58:58 +0100
+Message-Id: <20200220155859.906647-8-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200220155859.906647-1-enric.balletbo@collabora.com>
 References: <20200220155859.906647-1-enric.balletbo@collabora.com>
@@ -34,146 +34,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 This patch makes use of cros_ec_cmd_xfer_status() instead of
-cros_ec_cmd_xfer(). It allows us to remove some redundand code. In this
-case, though, we are changing a bit the behaviour because of returning
--EINVAL on protocol error we propagate the error return for
-cros_ec_cmd_xfer_status() function, but I think it will be fine, even
-more clear as we don't mask the Linux error code.
+cros_ec_cmd_xfer(). In this case the change is trivial and the only
+reason to do it is because we want to make cros_ec_cmd_xfer() a private
+function for the EC protocol and let people only use the
+cros_ec_cmd_xfer_status() to return Linux standard error codes.
 
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
- drivers/platform/chrome/cros_ec_lightbar.c | 50 ++++++----------------
- 1 file changed, 13 insertions(+), 37 deletions(-)
+ drivers/platform/chrome/cros_ec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/platform/chrome/cros_ec_lightbar.c
-index b4c110c5fee0..b59180bff5a3 100644
---- a/drivers/platform/chrome/cros_ec_lightbar.c
-+++ b/drivers/platform/chrome/cros_ec_lightbar.c
-@@ -116,7 +116,7 @@ static int get_lightbar_version(struct cros_ec_dev *ec,
+diff --git a/drivers/platform/chrome/cros_ec.c b/drivers/platform/chrome/cros_ec.c
+index 6fc8f2c3ac51..e179411bdfbe 100644
+--- a/drivers/platform/chrome/cros_ec.c
++++ b/drivers/platform/chrome/cros_ec.c
+@@ -120,7 +120,7 @@ static int cros_ec_sleep_event(struct cros_ec_device *ec_dev, u8 sleep_event)
  
- 	param = (struct ec_params_lightbar *)msg->data;
- 	param->cmd = LIGHTBAR_CMD_VERSION;
--	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
-+	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
- 	if (ret < 0) {
- 		ret = 0;
- 		goto exit;
-@@ -193,15 +193,10 @@ static ssize_t brightness_store(struct device *dev,
- 	if (ret)
- 		goto exit;
+ 	buf.msg.command = EC_CMD_HOST_SLEEP_EVENT;
  
--	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
-+	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
- 	if (ret < 0)
- 		goto exit;
+-	ret = cros_ec_cmd_xfer(ec_dev, &buf.msg);
++	ret = cros_ec_cmd_xfer_status(ec_dev, &buf.msg);
  
--	if (msg->result != EC_RES_SUCCESS) {
--		ret = -EINVAL;
--		goto exit;
--	}
--
- 	ret = count;
- exit:
- 	kfree(msg);
-@@ -258,13 +253,10 @@ static ssize_t led_rgb_store(struct device *dev, struct device_attribute *attr,
- 					goto exit;
- 			}
- 
--			ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
-+			ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
- 			if (ret < 0)
- 				goto exit;
- 
--			if (msg->result != EC_RES_SUCCESS)
--				goto exit;
--
- 			i = 0;
- 			ok = 1;
- 		}
-@@ -305,14 +297,13 @@ static ssize_t sequence_show(struct device *dev,
- 	if (ret)
- 		goto exit;
- 
--	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
--	if (ret < 0)
--		goto exit;
--
--	if (msg->result != EC_RES_SUCCESS) {
-+	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
-+	if (ret == -EPROTO) {
- 		ret = scnprintf(buf, PAGE_SIZE,
- 				"ERROR: EC returned %d\n", msg->result);
- 		goto exit;
-+	} else if (ret < 0) {
-+		goto exit;
- 	}
- 
- 	resp = (struct ec_response_lightbar *)msg->data;
-@@ -344,13 +335,10 @@ static int lb_send_empty_cmd(struct cros_ec_dev *ec, uint8_t cmd)
- 	if (ret)
- 		goto error;
- 
--	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
-+	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
- 	if (ret < 0)
- 		goto error;
--	if (msg->result != EC_RES_SUCCESS) {
--		ret = -EINVAL;
--		goto error;
--	}
-+
- 	ret = 0;
- error:
- 	kfree(msg);
-@@ -377,13 +365,10 @@ static int lb_manual_suspend_ctrl(struct cros_ec_dev *ec, uint8_t enable)
- 	if (ret)
- 		goto error;
- 
--	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
-+	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
- 	if (ret < 0)
- 		goto error;
--	if (msg->result != EC_RES_SUCCESS) {
--		ret = -EINVAL;
--		goto error;
--	}
-+
- 	ret = 0;
- error:
- 	kfree(msg);
-@@ -425,15 +410,10 @@ static ssize_t sequence_store(struct device *dev, struct device_attribute *attr,
- 	if (ret)
- 		goto exit;
- 
--	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
-+	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
- 	if (ret < 0)
- 		goto exit;
- 
--	if (msg->result != EC_RES_SUCCESS) {
--		ret = -EINVAL;
--		goto exit;
--	}
--
- 	ret = count;
- exit:
- 	kfree(msg);
-@@ -487,13 +467,9 @@ static ssize_t program_store(struct device *dev, struct device_attribute *attr,
- 	 */
- 	msg->outsize = count + extra_bytes;
- 
--	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
-+	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
- 	if (ret < 0)
- 		goto exit;
--	if (msg->result != EC_RES_SUCCESS) {
--		ret = -EINVAL;
--		goto exit;
--	}
- 
- 	ret = count;
- exit:
+ 	/* For now, report failure to transition to S0ix with a warning. */
+ 	if (ret >= 0 && ec_dev->host_sleep_v1 &&
 -- 
 2.25.0
 
