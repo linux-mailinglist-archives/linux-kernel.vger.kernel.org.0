@@ -2,86 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CCD91654AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 02:46:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04AAF1654C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 02:58:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbgBTBqJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 20:46:09 -0500
-Received: from mx.socionext.com ([202.248.49.38]:33097 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727211AbgBTBqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 20:46:09 -0500
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 20 Feb 2020 10:46:07 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 4F39418008C;
-        Thu, 20 Feb 2020 10:46:07 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Thu, 20 Feb 2020 10:46:07 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 27FAC40376;
-        Thu, 20 Feb 2020 10:46:07 +0900 (JST)
-Received: from [10.213.132.48] (unknown [10.213.132.48])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id EC1FE12047F;
-        Thu, 20 Feb 2020 10:46:06 +0900 (JST)
-Date:   Thu, 20 Feb 2020 10:46:07 +0900
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 1/2] dt-bindings: dmaengine: Add UniPhier external DMA controller bindings
-Cc:     Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-In-Reply-To: <20200219135344.GA15319@bogus>
-References: <1582077141-16793-2-git-send-email-hayashi.kunihiko@socionext.com> <20200219135344.GA15319@bogus>
-Message-Id: <20200220104606.53AA.4A936039@socionext.com>
+        id S1727833AbgBTB6k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 20:58:40 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:42997 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727211AbgBTB6j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 20:58:39 -0500
+Received: by mail-lf1-f68.google.com with SMTP id 83so335428lfh.9
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 17:58:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=APKRCoSFNxgib98sarPirgAXkcwav8pwl6BIBPHcdbs=;
+        b=NKdThx0bPVxpHUb69NDgwzZbIykBF1BDDoum+P7X0dNF/aReMWIoaxxfBX+ziIRcbt
+         x69msV8BMwWGab0wDYywrLJLsx/6grxnE3BGe7sgxSI7V+I+zyj+2xzEXqkIis0+TaFk
+         EsjKXVvbxnwgjXISXG8ERjXHmQLzZLqzzdNODf4EhAujT0WmSSn/4BLd3qSjAyREfzzd
+         nSg41EKqK5Jj9FTLdFL+RtPxEG4/PzuP5HVihs61P4gWBTvswmlsPMTVswBUm8i29ctT
+         xXgphN+c00ABnXeMpTFqm4fNETxtJx9E0OEDQiL2ry1pOZm8kd6OOVvuEw5a8uAOzaWd
+         IYcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=APKRCoSFNxgib98sarPirgAXkcwav8pwl6BIBPHcdbs=;
+        b=NjfaIGLM1D3A6g7n+M9beRnhbWxf7E1mw2SzJWQXE1XfeO1K9cn5oyGZS5EfhAt3Xw
+         lAAktCLACUkdfUBN1HamwytB3qzPXyeGszxxIveBVbYcFTMnELqW6EiTg41K/KFtyeub
+         O74/OqZq6iCenIHUbXSF/qB7+HF1So4SSzYWY+AdREGhRf55n7sSp9zqNEWbPQWK4U0n
+         WpImEQvnvok0yjnpOKFOwUdopj/BIyCjTsfgM2hhBYLWJL31dsOfGhxslvi8bRngPSxN
+         riXb3DLxiLO1EtM5tr2Gnke+DxaYR9V6vjbfGco3hU0UfpUj2SGqz49uPIxLCCBkV8Iv
+         SOjg==
+X-Gm-Message-State: APjAAAU0X+NIPErpbeRSMz4diTx/13APR04MQ/cVzw0sk5BJbzaHbbKO
+        1jK3NfMLbF+dYyErw2b+0OGzseD9KQoU/+oGd2i+6w==
+X-Google-Smtp-Source: APXvYqxhcK30GYHUtU/QVX8+NpEMN+/95AGHygz0x023NJRD6I1ewYSL8zwfq/EFS3IR7n9vr06IsIXLyn2e2AKiMKo=
+X-Received: by 2002:a19:dc1e:: with SMTP id t30mr14962222lfg.34.1582163917327;
+ Wed, 19 Feb 2020 17:58:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Becky! ver. 2.70 [ja]
+References: <cover.1581555616.git.ashish.kalra@amd.com> <a22c5b534fa035b23e549669fd5ac617b6031158.1581555616.git.ashish.kalra@amd.com>
+In-Reply-To: <a22c5b534fa035b23e549669fd5ac617b6031158.1581555616.git.ashish.kalra@amd.com>
+From:   Steve Rutherford <srutherford@google.com>
+Date:   Wed, 19 Feb 2020 17:58:00 -0800
+Message-ID: <CABayD+ch3XBvJgJc+uoF6JSP0qZGq2zKHN-hTc0Vode-pi80KA@mail.gmail.com>
+Subject: Re: [PATCH 10/12] mm: x86: Invoke hypercall when page encryption
+ status is changed
+To:     Ashish Kalra <Ashish.Kalra@amd.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@suse.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        David Rientjes <rientjes@google.com>, x86@kernel.org,
+        KVM list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
-Thanks for pointing out.
+On Wed, Feb 12, 2020 at 5:18 PM Ashish Kalra <Ashish.Kalra@amd.com> wrote:
+>
+> From: Brijesh Singh <brijesh.singh@amd.com>
+>
+> Invoke a hypercall when a memory region is changed from encrypted ->
+> decrypted and vice versa. Hypervisor need to know the page encryption
+> status during the guest migration.
 
-On Wed, 19 Feb 2020 07:53:44 -0600 <robh@kernel.org> wrote:
+One messy aspect, which I think is fine in practice, is that this
+presumes that pages are either treated as encrypted or decrypted. If
+also done on SEV, the in-place re-encryption supported by SME would
+break SEV migration. Linux doesn't do this now on SEV, and I don't
+have an intuition for why Linux might want this, but we will need to
+ensure it is never done in order to ensure that migration works down
+the line. I don't believe the AMD manual promises this will work
+anyway.
 
-> On Wed, 19 Feb 2020 10:52:20 +0900, Kunihiko Hayashi wrote:
-> > Add devicetree binding documentation for external DMA controller
-> > implemented on Socionext UniPhier SOCs.
-> > 
-> > Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> > ---
-> >  .../bindings/dma/socionext,uniphier-xdmac.yaml     | 63 ++++++++++++++++++++++
-> >  1 file changed, 63 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.yaml
-> > 
-> 
-> My bot found errors running 'make dt_binding_check' on your patch:
-> 
-> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.yaml: Additional properties are not allowed ('additinalProperties' was unexpected)
-> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.yaml: Additional properties are not allowed ('additinalProperties' was unexpected)
-> Documentation/devicetree/bindings/Makefile:12: recipe for target 'Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.example.dts' failed
-> make[1]: *** [Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.example.dts] Error 1
-> Makefile:1263: recipe for target 'dt_binding_check' failed
-> make: *** [dt_binding_check] Error 2
-> 
-> See https://patchwork.ozlabs.org/patch/1240464
-> Please check and re-submit.
-
-Something was missing the string by mistake.
-I'll resubmit it.
-
-Thank you,
-
----
-Best Regards,
-Kunihiko Hayashi
-
+Something feels a bit wasteful about having all future kernels
+universally announce c-bit status when SEV is enabled, even if KVM
+isn't listening, since it may be too old (or just not want to know).
+Might be worth eliding the hypercalls if you get ENOSYS back? There
+might be a better way of passing paravirt config metadata across than
+just trying and seeing if the hypercall succeeds, but I'm not super
+familiar with it.
