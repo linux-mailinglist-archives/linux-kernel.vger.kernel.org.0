@@ -2,128 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5ACF61655A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 04:29:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3576E165582
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 04:17:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727780AbgBTD3k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 22:29:40 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42606 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727476AbgBTD3k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 22:29:40 -0500
-Received: by mail-lj1-f195.google.com with SMTP id d10so2609804ljl.9
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 19:29:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=zQzKM3EWlegYhIhG2vsY/POL8dqhlVMAf2W///2/x1o=;
-        b=qB9aPXppTTKV60rpaUzPdqGseteuOVaug0J72YAqsarKZrI7gNyEDpwuazj6fU3aWK
-         DNQwi0MqTcXHe9WtgHCG3x3f6sMi44RVnvt+b7u4G6Q+2t/WYco5A9gjG6gG8a2TuL0o
-         BFcSH8nh4n3BxglY56Ga77T1dskxvd2psR2Jrdme+9F8SfyLhYNNpbE5qiB56KjwGnVl
-         EgL49uSWkdesaHTRB1oCynMwbvqA9nxCC9rIeD+1KsruL1Mg9xYtRi4pZqNTzQ+rSkcG
-         sz+Vt7CN5Sn9m4aBFv5ZNeV7nNe7RZvu+RLK896bmID+o8eTaU8TOT9h+NR4wCEw9Xl5
-         3s7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=zQzKM3EWlegYhIhG2vsY/POL8dqhlVMAf2W///2/x1o=;
-        b=UxzOXVy5tJw0U8A4KpDk205zz3Oqo3WTWhGbKeMe8iEL1yEgkROv3WPlyktx55c/rU
-         pF7VtBRM2QwTC64XTMiIESMD58RRU7UnbwvssZMYUzsFBj9jV4yy9g5BoY12c6+ZjaTZ
-         BBWZEARnKYKtOfICkYsHdnW3FNM+dWBF3q2wuKQ0NTlHsR9tRswzzYsDxoDqxJ/I2LvS
-         XJxDT1/E6ICG7bGDwr8te3QNatY5cC7DZRkx5LPRRwZo9ut3KCXDkb47xfZWbvBdGrXV
-         C6QuNWXFL1CEVmUbaapZpWA+S00jBGfurAb9DeX/n9sdBsV3Ahf7cFtmuOEOsGhN3OPn
-         5zFg==
-X-Gm-Message-State: APjAAAXTZ4QUEWYY/WYXVt5Hw2ARdNgqO8RrW0CXUbIelZIJ5jS1jBWN
-        WSa0psHWWmcchH+51qEu1C/ZcaeyPGINe0iMgda5Vw==
-X-Google-Smtp-Source: APXvYqzXMyzsrKWTqzpK+/08jWLPSUYdXNhcS0b3gFs33w89sq7KXEGLQ27/pBh8Q0PdsMk5UILaF2JuEbHRuCsP/Qw=
-X-Received: by 2002:a2e:580c:: with SMTP id m12mr17723911ljb.150.1582169378127;
- Wed, 19 Feb 2020 19:29:38 -0800 (PST)
+        id S1727666AbgBTDRB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 22:17:01 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:39596 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727208AbgBTDRB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 22:17:01 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 254FA61EE444AE7C7B70;
+        Thu, 20 Feb 2020 11:16:59 +0800 (CST)
+Received: from huawei.com (10.175.101.78) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Thu, 20 Feb 2020
+ 11:16:56 +0800
+From:   Yang Yingliang <yangyingliang@huawei.com>
+To:     <linux-kernel@vger.kernel.org>
+CC:     <tglx@linutronix.de>, <john.stultz@linaro.org>, <sboyd@kernel.org>
+Subject: [PATCH] timer_list: avoid other cpu soft lockup when printing timer list
+Date:   Thu, 20 Feb 2020 11:42:32 +0800
+Message-ID: <1582170152-69418-1-git-send-email-yangyingliang@huawei.com>
+X-Mailer: git-send-email 1.8.3
 MIME-Version: 1.0
-References: <CABayD+ch3XBvJgJc+uoF6JSP0qZGq2zKHN-hTc0Vode-pi80KA@mail.gmail.com>
- <52450536-AF7B-4206-8F05-CF387A216031@amacapital.net>
-In-Reply-To: <52450536-AF7B-4206-8F05-CF387A216031@amacapital.net>
-From:   Steve Rutherford <srutherford@google.com>
-Date:   Wed, 19 Feb 2020 19:29:01 -0800
-Message-ID: <CABayD+f1tBoWefdkRqjG0YLojJNsgKtEvPCD-mG6xs0hk1EZNg@mail.gmail.com>
-Subject: Re: [PATCH 10/12] mm: x86: Invoke hypercall when page encryption
- status is changed
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Ashish Kalra <ashish.kalra@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@suse.de>,
-        Tom Lendacky <Thomas.Lendacky@amd.com>,
-        David Rientjes <rientjes@google.com>, x86@kernel.org,
-        KVM list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [10.175.101.78]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 6:12 PM Andy Lutomirski <luto@amacapital.net> wrote=
-:
->
->
->
-> > On Feb 19, 2020, at 5:58 PM, Steve Rutherford <srutherford@google.com> =
-wrote:
-> >
-> > =EF=BB=BFOn Wed, Feb 12, 2020 at 5:18 PM Ashish Kalra <Ashish.Kalra@amd=
-.com> wrote:
-> >>
-> >> From: Brijesh Singh <brijesh.singh@amd.com>
-> >>
-> >> Invoke a hypercall when a memory region is changed from encrypted ->
-> >> decrypted and vice versa. Hypervisor need to know the page encryption
-> >> status during the guest migration.
-> >
-> > One messy aspect, which I think is fine in practice, is that this
-> > presumes that pages are either treated as encrypted or decrypted. If
-> > also done on SEV, the in-place re-encryption supported by SME would
-> > break SEV migration. Linux doesn't do this now on SEV, and I don't
-> > have an intuition for why Linux might want this, but we will need to
-> > ensure it is never done in order to ensure that migration works down
-> > the line. I don't believe the AMD manual promises this will work
-> > anyway.
-> >
-> > Something feels a bit wasteful about having all future kernels
-> > universally announce c-bit status when SEV is enabled, even if KVM
-> > isn't listening, since it may be too old (or just not want to know).
-> > Might be worth eliding the hypercalls if you get ENOSYS back? There
-> > might be a better way of passing paravirt config metadata across than
-> > just trying and seeing if the hypercall succeeds, but I'm not super
-> > familiar with it.
->
-> I actually think this should be a hard requirement to merge this. The hos=
-t needs to tell the guest that it supports this particular migration strate=
-gy and the guest needs to tell the host that it is using it.  And the guest=
- needs a way to tell the host that it=E2=80=99s *not* using it right now du=
-e to kexec, for example.
->
-> I=E2=80=99m still uneasy about a guest being migrated in the window where=
- the hypercall tracking and the page encryption bit don=E2=80=99t match.  I=
- guess maybe corruption in this window doesn=E2=80=99t matter?
-It does matter, since you don't want to accidentally clear the dirty
-bit when you are migrating the page from the wrong perspective.
-Treating pages with dirty c-bits as dirty pages should solve this
-problem. It's probably reasonable to expect userspace to handle this?
-Downside is that you would then need ~3 copies of the c-bit tracking
-buffer: one as the kernel version, one as the "old" usermode version,
-and one as the "current" usermode version (which is smaller, since you
-can fetch smaller sections than the full buffer). The kernel could
-probably directly twiddle the dirty tracking bits and avoid the extra
-userspace version, but this doesn't seem required.
+If system has many cpus (e.g. 128), it will spend a lot of time to
+print message to the console when execute echo q > /proc/sysrq-trigger.
 
-That said, this does balloon the c-bit tracking overhead. Tracking
-100GB of guest pages requires 3MB per instance of these buffers, which
-isn't that bad but also isn't free (assuming my back of the envelope
-math is right).
+When /proc/sys/kernel/numa_balancing is enabled, if the migration threads
+are woke up, the migration thread that on print mesasage cpu can't run
+until the print finish, another migration thread may trigger soft lockup.
+
+PID: 619    TASK: ffffa02fdd8bec80  CPU: 121  COMMAND: "migration/121"
+  #0 [ffff00000a103b10] __crash_kexec at ffff0000081bf200
+  #1 [ffff00000a103ca0] panic at ffff0000080ec93c
+  #2 [ffff00000a103d80] watchdog_timer_fn at ffff0000081f8a14
+  #3 [ffff00000a103e00] __run_hrtimer at ffff00000819701c
+  #4 [ffff00000a103e40] __hrtimer_run_queues at ffff000008197420
+  #5 [ffff00000a103ea0] hrtimer_interrupt at ffff00000819831c
+  #6 [ffff00000a103f10] arch_timer_dying_cpu at ffff000008b53144
+  #7 [ffff00000a103f30] handle_percpu_devid_irq at ffff000008174e34
+  #8 [ffff00000a103f70] generic_handle_irq at ffff00000816c5e8
+  #9 [ffff00000a103f90] __handle_domain_irq at ffff00000816d1f4
+ #10 [ffff00000a103fd0] gic_handle_irq at ffff000008081860
+ --- <IRQ stack> ---
+ #11 [ffff00000d6e3d50] el1_irq at ffff0000080834c8
+ #12 [ffff00000d6e3d60] multi_cpu_stop at ffff0000081d9964
+ #13 [ffff00000d6e3db0] cpu_stopper_thread at ffff0000081d9cfc
+ #14 [ffff00000d6e3e10] smpboot_thread_fn at ffff00000811e0a8
+ #15 [ffff00000d6e3e70] kthread at ffff000008118988
+
+To avoid this soft lockup, add touch_all_softlockup_watchdogs()
+in sysrq_timer_list_show()
+
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+---
+ kernel/time/timer_list.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/time/timer_list.c b/kernel/time/timer_list.c
+index acb326f..4cb0e6f 100644
+--- a/kernel/time/timer_list.c
++++ b/kernel/time/timer_list.c
+@@ -289,13 +289,17 @@ void sysrq_timer_list_show(void)
+ 
+ 	timer_list_header(NULL, now);
+ 
+-	for_each_online_cpu(cpu)
++	for_each_online_cpu(cpu) {
++		touch_all_softlockup_watchdogs();
+ 		print_cpu(NULL, cpu, now);
++	}
+ 
+ #ifdef CONFIG_GENERIC_CLOCKEVENTS
+ 	timer_list_show_tickdevices_header(NULL);
+-	for_each_online_cpu(cpu)
++	for_each_online_cpu(cpu) {
++		touch_all_softlockup_watchdogs();
+ 		print_tickdevice(NULL, tick_get_device(cpu), cpu);
++	}
+ #endif
+ 	return;
+ }
+-- 
+1.8.3
+
