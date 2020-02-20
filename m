@@ -2,95 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD33916564E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 05:34:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34705165662
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 05:48:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728112AbgBTEeR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 23:34:17 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:24984 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727476AbgBTEeR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 23:34:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582173256;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-        bh=WBTkH8NFztz9hV99W9A9KyCR3kKGKSPFetvSYFlBOK4=;
-        b=U+JjR+SRWurzsjjw2UUiGgelx1EiiI8apnj5j3hSlID18RJbNaCNBuH3XmLq1poDHT7X3I
-        Kg+nuX0cN4ClAVbXCa69gSX/AGam7D6xUPPsIizDWIbYl/r0XKtMAoai4d1kIXFxv3eewx
-        JiDOIDsa09FWyL1OZDiU/7nsi72gZEU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-251-9XzCVf-KMBCXGMKnWeEqWA-1; Wed, 19 Feb 2020 23:34:10 -0500
-X-MC-Unique: 9XzCVf-KMBCXGMKnWeEqWA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7C866800D53;
-        Thu, 20 Feb 2020 04:34:08 +0000 (UTC)
-Received: from MiWiFi-R3L-srv.redhat.com (ovpn-12-32.pek2.redhat.com [10.72.12.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2356C5DA60;
-        Thu, 20 Feb 2020 04:33:59 +0000 (UTC)
-From:   Baoquan He <bhe@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
-        richardw.yang@linux.intel.com, david@redhat.com, osalvador@suse.de,
-        dan.j.williams@intel.com, mhocko@suse.com, bhe@redhat.com,
-        rppt@linux.ibm.com, robin.murphy@arm.com
-Subject: [PATCH v2 7/7] mm/sparse.c: Use __get_free_pages() instead in populate_section_memmap()
-Date:   Thu, 20 Feb 2020 12:33:16 +0800
-Message-Id: <20200220043316.19668-8-bhe@redhat.com>
-In-Reply-To: <20200220043316.19668-1-bhe@redhat.com>
-References: <20200220043316.19668-1-bhe@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+        id S1727993AbgBTEr6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 23:47:58 -0500
+Received: from mga09.intel.com ([134.134.136.24]:53932 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727576AbgBTEr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 23:47:57 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2020 20:47:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,462,1574150400"; 
+   d="scan'208";a="283305850"
+Received: from joy-optiplex-7040.sh.intel.com (HELO joy-OptiPlex-7040) ([10.239.13.16])
+  by FMSMGA003.fm.intel.com with ESMTP; 19 Feb 2020 20:47:55 -0800
+Date:   Wed, 19 Feb 2020 23:38:35 -0500
+From:   Yan Zhao <yan.y.zhao@intel.com>
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 0/3] vfio/type1: Reduce vfio_iommu.lock contention
+Message-ID: <20200220043835.GB30338@joy-OptiPlex-7040>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <157919849533.21002.4782774695733669879.stgit@gimli.home>
+ <20200117011050.GC1759@joy-OptiPlex-7040>
+ <20200219090417.GA30338@joy-OptiPlex-7040>
+ <20200219135247.42d18bb2@w520.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200219135247.42d18bb2@w520.home>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This removes the unnecessary goto, and simplify codes.
+On Thu, Feb 20, 2020 at 04:52:47AM +0800, Alex Williamson wrote:
+> On Wed, 19 Feb 2020 04:04:17 -0500
+> Yan Zhao <yan.y.zhao@intel.com> wrote:
+> 
+> > On Fri, Jan 17, 2020 at 09:10:51AM +0800, Yan Zhao wrote:
+> > > Thank you, Alex!
+> > > I'll try it and let you know the result soon. :)
+> > > 
+> > > On Fri, Jan 17, 2020 at 02:17:49AM +0800, Alex Williamson wrote:  
+> > > > Hi Yan,
+> > > > 
+> > > > I wonder if this might reduce the lock contention you're seeing in the
+> > > > vfio_dma_rw series.  These are only compile tested on my end, so I hope
+> > > > they're not too broken to test.  Thanks,
+> > > > 
+> > > > Alex
+> > > > 
+> > > > ---
+> > > > 
+> > > > Alex Williamson (3):
+> > > >       vfio/type1: Convert vfio_iommu.lock from mutex to rwsem
+> > > >       vfio/type1: Replace obvious read lock instances
+> > > >       vfio/type1: Introduce pfn_list mutex
+> > > > 
+> > > > 
+> > > >  drivers/vfio/vfio_iommu_type1.c |   67 ++++++++++++++++++++++++---------------
+> > > >  1 file changed, 41 insertions(+), 26 deletions(-)
+> > > >  
+> > 
+> > hi Alex
+> > I have finished testing of this series.
+> > It's quite stable and passed our MTBF testing :)
+> > 
+> > However, after comparing the performance data obtained from several
+> > benchmarks in guests (see below),
+> > it seems that this series does not bring in obvious benefit.
+> > (at least to cases we have tested, and though I cannot fully explain it yet).
+> > So, do you think it's good for me not to include this series into my next
+> > version of "use vfio_dma_rw to read/write IOVAs from CPU side"?
+> 
+> Yes, I would not include it in your series.  No reason to bloat your
+> series for a feature that doesn't clearly show an improvement.  Thanks
+> for the additional testing, we can revive them if this lock ever
+> resurfaces.  I'm was actually more hopeful that holding an external
+> group reference might provide a better performance improvement, the
+> lookup on every vfio_dma_rw is not very efficient.  Thanks,
+> 
+got it. thanks~
 
-Signed-off-by: Baoquan He <bhe@redhat.com>
-Reviewed-by: Wei Yang <richardw.yang@linux.intel.com>
----
- mm/sparse.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
-
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 053d6c2e5c1f..572b71bd15aa 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -754,23 +754,19 @@ static void free_map_bootmem(struct page *memmap)
- struct page * __meminit populate_section_memmap(unsigned long pfn,
- 		unsigned long nr_pages, int nid, struct vmem_altmap *altmap)
- {
--	struct page *page, *ret;
-+	struct page *ret;
- 	unsigned long memmap_size = sizeof(struct page) * PAGES_PER_SECTION;
- 
--	page = alloc_pages(GFP_KERNEL|__GFP_NOWARN, get_order(memmap_size));
--	if (page)
--		goto got_map_page;
-+	ret = (void *)__get_free_pages(GFP_KERNEL|__GFP_NOWARN,
-+				get_order(memmap_size));
-+	if (ret)
-+		return ret;
- 
- 	ret = vmalloc(memmap_size);
- 	if (ret)
--		goto got_map_ptr;
-+		return ret;
- 
- 	return NULL;
--got_map_page:
--	ret = (struct page *)pfn_to_kaddr(page_to_pfn(page));
--got_map_ptr:
--
--	return ret;
- }
- 
- static void depopulate_section_memmap(unsigned long pfn, unsigned long nr_pages,
--- 
-2.17.2
-
+Yan
