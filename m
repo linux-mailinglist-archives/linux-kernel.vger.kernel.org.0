@@ -2,217 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4A96165B98
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 11:34:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DD25165B9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 11:35:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727393AbgBTKep (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 05:34:45 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:43784 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727088AbgBTKeo (ORCPT
+        id S1727709AbgBTKfd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 05:35:33 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:39333 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726501AbgBTKfd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 05:34:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582194882;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=IbRiHn2UAAo1XhaSQjnQaPYh19kM6Kh7056eiuL/Ryo=;
-        b=NjDV+Hdyxg0zMBZB8zr582tLfOk1YjRYU+3uvqFltugQn9LSf5bHAY1Jhol7FQ3zJVF6dN
-        j3OrKzU47eKawxteomPfgxACihDdS8iB+A5wY9xOWT1UzWxSla7cUgDwFirqQBX7wNTKfT
-        idPoF+/t41ftlu5eP4Yj/Clk4E+iLBc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-117-qU9IaiWhN92zMfQkTauxHw-1; Thu, 20 Feb 2020 05:34:40 -0500
-X-MC-Unique: qU9IaiWhN92zMfQkTauxHw-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9F8D1801FA6;
-        Thu, 20 Feb 2020 10:34:38 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-122-163.rdu2.redhat.com [10.10.122.163])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BBEF85DA76;
-        Thu, 20 Feb 2020 10:34:36 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200219163128.GB9496@magnolia>
-References: <20200219163128.GB9496@magnolia> <158204549488.3299825.3783690177353088425.stgit@warthog.procyon.org.uk> <158204550281.3299825.6344518327575765653.stgit@warthog.procyon.org.uk>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk, raven@themaw.net,
-        mszeredi@redhat.com, christian@brauner.io,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/19] vfs: syscall: Add fsinfo() to query filesystem information [ver #16]
+        Thu, 20 Feb 2020 05:35:33 -0500
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1j4jB1-0003kB-U3; Thu, 20 Feb 2020 10:35:28 +0000
+Date:   Thu, 20 Feb 2020 11:35:26 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH net-next v3 6/9] drivers/base/power: add
+ dpm_sysfs_change_owner()
+Message-ID: <20200220103526.5iqh3vhdjo7mp7ko@wittgenstein>
+References: <20200218162943.2488012-1-christian.brauner@ubuntu.com>
+ <20200218162943.2488012-7-christian.brauner@ubuntu.com>
+ <CAJZ5v0hJwXH8Oc4spzDDemHhBVGKqtbrV2UG6-gmT-F0hA4ynA@mail.gmail.com>
+ <20200220102107.grkyypt7swrufzas@wittgenstein>
+ <CAJZ5v0itDdfdNd6TzLi=2J517CyjEBbKb+K4OfkkSt-B+w9taw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <542410.1582194875.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Thu, 20 Feb 2020 10:34:35 +0000
-Message-ID: <542411.1582194875@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0itDdfdNd6TzLi=2J517CyjEBbKb+K4OfkkSt-B+w9taw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Darrick J. Wong <darrick.wong@oracle.com> wrote:
+On Thu, Feb 20, 2020 at 11:30:32AM +0100, Rafael J. Wysocki wrote:
+> On Thu, Feb 20, 2020 at 11:21 AM Christian Brauner
+> <christian.brauner@ubuntu.com> wrote:
+> >
+> > On Thu, Feb 20, 2020 at 11:02:04AM +0100, Rafael J. Wysocki wrote:
+> > > On Tue, Feb 18, 2020 at 5:30 PM Christian Brauner
+> > > <christian.brauner@ubuntu.com> wrote:
+> > > >
+> > > > Add a helper to change the owner of a device's power entries. This
+> > > > needs to happen when the ownership of a device is changed, e.g. when
+> > > > moving network devices between network namespaces.
+> > > > This function will be used to correctly account for ownership changes,
+> > > > e.g. when moving network devices between network namespaces.
+> > > >
+> > > > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> > > > ---
+> > > > /* v2 */
+> > > > - "Rafael J. Wysocki" <rafael@kernel.org>:
+> > > >   -  Fold if (dev->power.wakeup && dev->power.wakeup->dev) check into
+> > > >      if (device_can_wakeup(dev)) check since the former can never be true if
+> > > >      the latter is false.
+> > > >
+> > > > - Christian Brauner <christian.brauner@ubuntu.com>:
+> > > >   - Place (dev->power.wakeup && dev->power.wakeup->dev) check under
+> > > >     CONFIG_PM_SLEEP ifdefine since it will wakeup_source will only be available
+> > > >     when this config option is set.
+> > > >
+> > > > /* v3 */
+> > > > -  Greg Kroah-Hartman <gregkh@linuxfoundation.org>:
+> > > >    - Add explicit uid/gid parameters.
+> > > > ---
+> > > >  drivers/base/core.c        |  4 ++++
+> > > >  drivers/base/power/power.h |  3 +++
+> > > >  drivers/base/power/sysfs.c | 42 ++++++++++++++++++++++++++++++++++++++
+> > > >  3 files changed, 49 insertions(+)
+> > > >
+> > > > diff --git a/drivers/base/core.c b/drivers/base/core.c
+> > > > index ec0d5e8cfd0f..efec2792f5d7 100644
+> > > > --- a/drivers/base/core.c
+> > > > +++ b/drivers/base/core.c
+> > > > @@ -3522,6 +3522,10 @@ int device_change_owner(struct device *dev, kuid_t kuid, kgid_t kgid)
+> > > >         if (error)
+> > > >                 goto out;
+> > > >
+> > > > +       error = dpm_sysfs_change_owner(dev, kuid, kgid);
+> > > > +       if (error)
+> > > > +               goto out;
+> > > > +
+> > > >  #ifdef CONFIG_BLOCK
+> > > >         if (sysfs_deprecated && dev->class == &block_class)
+> > > >                 goto out;
+> > > > diff --git a/drivers/base/power/power.h b/drivers/base/power/power.h
+> > > > index 444f5c169a0b..54292cdd7808 100644
+> > > > --- a/drivers/base/power/power.h
+> > > > +++ b/drivers/base/power/power.h
+> > > > @@ -74,6 +74,7 @@ extern int pm_qos_sysfs_add_flags(struct device *dev);
+> > > >  extern void pm_qos_sysfs_remove_flags(struct device *dev);
+> > > >  extern int pm_qos_sysfs_add_latency_tolerance(struct device *dev);
+> > > >  extern void pm_qos_sysfs_remove_latency_tolerance(struct device *dev);
+> > > > +extern int dpm_sysfs_change_owner(struct device *dev, kuid_t kuid, kgid_t kgid);
+> > > >
+> > > >  #else /* CONFIG_PM */
+> > > >
+> > > > @@ -88,6 +89,8 @@ static inline void pm_runtime_remove(struct device *dev) {}
+> > > >
+> > > >  static inline int dpm_sysfs_add(struct device *dev) { return 0; }
+> > > >  static inline void dpm_sysfs_remove(struct device *dev) {}
+> > > > +static inline int dpm_sysfs_change_owner(struct device *dev, kuid_t kuid,
+> > > > +                                        kgid_t kgid) { return 0; }
+> > > >
+> > > >  #endif
+> > > >
+> > > > diff --git a/drivers/base/power/sysfs.c b/drivers/base/power/sysfs.c
+> > > > index d7d82db2e4bc..4e79afcd5ca8 100644
+> > > > --- a/drivers/base/power/sysfs.c
+> > > > +++ b/drivers/base/power/sysfs.c
+> > > > @@ -684,6 +684,48 @@ int dpm_sysfs_add(struct device *dev)
+> > > >         return rc;
+> > > >  }
+> > > >
+> > > > +int dpm_sysfs_change_owner(struct device *dev, kuid_t kuid, kgid_t kgid)
+> > > > +{
+> > > > +       int rc;
+> > > > +
+> > > > +       if (device_pm_not_required(dev))
+> > > > +               return 0;
+> > > > +
+> > > > +       rc = sysfs_group_change_owner(&dev->kobj, &pm_attr_group, kuid, kgid);
+> > > > +       if (rc)
+> > > > +               return rc;
+> > > > +
+> > > > +       if (pm_runtime_callbacks_present(dev)) {
+> > > > +               rc = sysfs_group_change_owner(
+> > > > +                       &dev->kobj, &pm_runtime_attr_group, kuid, kgid);
+> > > > +               if (rc)
+> > > > +                       return rc;
+> > > > +       }
+> > > > +       if (device_can_wakeup(dev)) {
+> > > > +               rc = sysfs_group_change_owner(&dev->kobj, &pm_wakeup_attr_group,
+> > > > +                                             kuid, kgid);
+> > > > +               if (rc)
+> > > > +                       return rc;
+> > > > +
+> > > > +#ifdef CONFIG_PM_SLEEP
+> > > > +               if (dev->power.wakeup && dev->power.wakeup->dev) {
+> > > > +                       rc = device_change_owner(dev->power.wakeup->dev, kuid,
+> > > > +                                                kgid);
+> > > > +                       if (rc)
+> > > > +                               return rc;
+> > > > +               }
+> > > > +#endif
+> > >
+> > > First off, I don't particularly like #ifdefs in function bodies.  In
+> > > particular, there is a CONFIG_PM_SLEEP block in this file already and
+> > > you could define a new function in there to carry out the above
+> > > operations, and provide an empty stub of it for the "unset" case.
+> > > Failing to do so is somewhat on the "rushing things in" side in my
+> > > view.
+> >
+> > How ifdefines are used is highly dependent on the subsystem; networking
+> > ofen uses in-place ifdefines in some parts and not in others. That has
+> > nothing to do with rushing things. I'm happy to change it to your
+> > preferences.
+> 
+> Thanks!
+> 
+> > Thanks for pointing out your expectations. But please don't
+> > assume bad intentions on my part because I'm not meeting them right
+> > away. It often is the case that adding a helper that is called in one
+> > place is not well-received.
+> 
+> Fair enough, sorry for being harsh.
 
-> > +	p->f_blocks.hi	=3D 0;
-> > +	p->f_blocks.lo	=3D buf.f_blocks;
-> =
+Np, I didn't read it as such. I was really just worried you thought
+that I was trying to rush things in. It's Thursday anyway, usually about
+the time where we're all grumpy because we can't wait until we made it
+to Friday. :)
 
-> Er... are there filesystems (besides that (xfs++)++ one) that require
-> u128 counters?  I suspect that the Very Large Fields are for future
-> expandability, but I also wonder about the whether it's worth the
-> complexity of doing this, since the structures can always be
-> version-revved later.
-
-I'm making a relatively cheap allowance for future expansion.  Dave Chinne=
-r
-has mentioned at one of the LSFs that 16EiB may be exceeded soon (though I
-hate to think of fscking such a beastie).  I know that the YFS variant of =
-AFS
-supports 96-bit vnode numbers (which I translate to inode numbers).  What =
-I'm
-trying to avoid is the problem we have with stat/statfs where under some
-circumstances we have to return an error (ERANGE?) because we can't repres=
-ent
-the number if someone asks for an older version of the struct.
-
-Since the buffer is (meant to be) pre-cleared, the filesystem can just ign=
-ore
-the high word if it's never going to set it.  In fact, fsinfo_generic_stat=
-fs
-doesn't need to set them either.
-
-> XFS inodes are u64 values...
-> ...and the max symlink target length is 1k, not PAGE_SIZE...
-
-Yeah, and AFS(YFS) has 96-bit inode numbers.  The filesystem's fsinfo tabl=
-e is
-read first so that the filesystem can override this.
-
-> ...so is the usage model here that XFS should call fsinfo_generic_limits
-> to fill out the fsinfo_limits structure, modify the values in
-> ctx->buffer as appropriate for XFS, and then return the structure size?
-
-Actually, I should export some these so that you can do that.  I'll export
-fsinfo_generic_{timestamp_info,supports,limits} for now.
-
-> > +#define FSINFO_ATTR_VOLUME_ID		0x05	/* Volume ID (string) */
-> > +#define FSINFO_ATTR_VOLUME_UUID		0x06	/* Volume UUID (LE uuid) */
-> > +#define FSINFO_ATTR_VOLUME_NAME		0x07	/* Volume name (string) */
-> =
-
-> I think I've muttered about the distinction between volume id and
-> volume name before, but I'm still wondering how confusing that will be
-> for users?  Let me check my assumptions, though:
-> =
-
-> Volume ID is whatever's in super_block.s_id, which (at least for xfs and
-> ext4) is the device name (e.g. "sda1").  I guess that's useful for
-> correlating a thing you can call fsinfo() on against strings that were
-> logged in dmesg.
->
-> Volume name I think is the fs label (e.g. "home"), which I think will
-> have to be implemented separately by each filesystem, and that's why
-> there's no generic vfs implementation.
-
-Yes.  For AFS, for example, this would be the name of the volume (which ma=
-y be
-changed), whereas the volume ID is the number in the protocol that actuall=
-y
-refers to the volume (which cannot be changed).
-
-And, as you say, for blockdev mounts, the ID is the device name and the vo=
-lume
-name is filesystem specific.
-
-> The 7 -> 0 -> 1 sequence here confused me until I figured out that
-> QUERY_TYPE is the mask for QUERY_{PATH,FD}.
-
-Changed to FSINFO_FLAGS_QUERY_MASK.
-
-> > +struct fsinfo_limits {
-> > +...
-> > +	__u32	__reserved[1];
-> =
-
-> I wonder if these structures ought to reserve more space than a single u=
-32...
-
-No need.  Part of the way the interface is designed is that the version nu=
-mber
-for a particular VSTRUCT-type attribute is also the length.  So a newer
-version is also longer.  All the old fields must be retained and filled in=
-.
-New fields are tagged on the end.
-
-If userspace asks for an older version than is supported, it gets a trunca=
-ted
-return.  If it asks for a newer version, the extra fields it is expecting =
-are
-all set to 0.  Either way, the length (and thus the version) the kernel
-supports is returned - not the length copied.
-
-The __reserved fields are there because they represent padding (the struct=
- is
-going to be aligned/padded according to __u64 in this case).  Ideally, I'd
-mark the structs __packed, but this messes with the alignment and may make=
- the
-compiler do funny tricks to get out any field larger than a byte.
-
-I've renamed them to __padding.
-
-> > +struct fsinfo_supports {
-> > +	__u64	stx_attributes;		/* What statx::stx_attributes are supported *=
-/
-> > +	__u32	stx_mask;		/* What statx::stx_mask bits are supported */
-> > +	__u32	ioc_flags;		/* What FS_IOC_* flags are supported */
-> =
-
-> "IOC"?  That just means 'ioctl'.  Is this field supposed to return the
-> supported FS_IOC_GETFLAGS flags, or the supported FS_IOC_FSGETXATTR
-> flags?
-
-FS_IOC_[GS]ETFLAGS is what I meant.
-
-> I suspect it would also be a big help to be able to tell userspace which
-> of the flags can be set, and which can be cleared.
-
-How about:
-
-	__u32	fs_ioc_getflags;	/* What FS_IOC_GETFLAGS may return */
-	__u32	fs_ioc_setflags_set;	/* What FS_IOC_SETFLAGS may set */
-	__u32	fs_ioc_setflags_clear;	/* What FS_IOC_SETFLAGS may clear */
-
-> > +struct fsinfo_timestamp_one {
-> > +	__s64	minimum;	/* Minimum timestamp value in seconds */
-> > +	__u64	maximum;	/* Maximum timestamp value in seconds */
-> =
-
-> Given that time64_t is s64, why is the maximum here u64?
-
-Well, I assume it extremely unlikely that the maximum can be before 1970, =
-so
-there doesn't seem any need to allow the maximum to be negative.  Furtherm=
-ore,
-it would be feasible that you could encounter a filesystem with a u64
-filesystem that doesn't support dates before 1970.
-
-On the other hand, if Linux is still going when __s64 seconds from 1970 wr=
-aps,
-it will be impressive, but I'm not sure we'll be around to see it...  Some=
-one
-will have to cast a resurrection spell on Arnd to fix that one.
-
-However, since signed/unsigned comparisons may have issues, I can turn it =
-into
-an __s64 also if that is preferred.
-
-David
-
+Christian
