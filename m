@@ -2,226 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DB0A165993
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 09:46:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FC76165964
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 09:40:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727039AbgBTIqX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 03:46:23 -0500
-Received: from esa3.hc3370-68.iphmx.com ([216.71.145.155]:19254 "EHLO
-        esa3.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726501AbgBTIqW (ORCPT
+        id S1726813AbgBTIj4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 03:39:56 -0500
+Received: from mail27.static.mailgun.info ([104.130.122.27]:63241 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726637AbgBTIjz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 03:46:22 -0500
-X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Thu, 20 Feb 2020 03:46:22 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=citrix.com; s=securemail; t=1582188382;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=JwHl4quXWDG9itkjDYku543f/vfU0gx98KV7jgfEzIs=;
-  b=deUwhqPq14V103UTUp8rLwhZ+mSjnmQ8rHFGKXIkn1HB22dXM9EEfTig
-   RNf1pAFhMnJv2dsF1UVrOXjAyszfVw/E0qwwKWK8iZcO1USzg/ekjgnDb
-   9Yv1HYp7KLYWy31ulaQZq1icmXdEpBUTlBvSvYWJCLjtc1fmZ8MI6agG1
-   M=;
-Authentication-Results: esa3.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=roger.pau@citrix.com; spf=Pass smtp.mailfrom=roger.pau@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
-Received-SPF: None (esa3.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  roger.pau@citrix.com) identity=pra; client-ip=162.221.158.21;
-  receiver=esa3.hc3370-68.iphmx.com;
-  envelope-from="roger.pau@citrix.com";
-  x-sender="roger.pau@citrix.com";
-  x-conformance=sidf_compatible
-Received-SPF: Pass (esa3.hc3370-68.iphmx.com: domain of
-  roger.pau@citrix.com designates 162.221.158.21 as permitted
-  sender) identity=mailfrom; client-ip=162.221.158.21;
-  receiver=esa3.hc3370-68.iphmx.com;
-  envelope-from="roger.pau@citrix.com";
-  x-sender="roger.pau@citrix.com";
-  x-conformance=sidf_compatible; x-record-type="v=spf1";
-  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
-  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
-  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
-  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83
-  ip4:168.245.78.127 ~all"
-Received-SPF: None (esa3.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@mail.citrix.com) identity=helo;
-  client-ip=162.221.158.21; receiver=esa3.hc3370-68.iphmx.com;
-  envelope-from="roger.pau@citrix.com";
-  x-sender="postmaster@mail.citrix.com";
-  x-conformance=sidf_compatible
-IronPort-SDR: MM0J4GlVDlB8jW19M11+P9HrOGhNxD8WXYL9vu3YBiAQ460tEWfz3gUg2Lw6ArGektClf8Nbag
- ZDMsNn+bIaHgvmiQrWsOTOXSdwNZIukFIJ+v8ThpcN5voCcqc9fpCjOv1dFXfaPkJlXRiaocNz
- Ey3nz+5z5gJ8Z3tkNDhfq+2pULZijq4YhGeqIYtykJ4RyOTbAeqOEVpuzrpMAKyUgCJObCNTDs
- ys4QXG50X3UKLzLY0I+Ya9hAkPZ3tBMhdhqXVkrciAd+JgmZ9nUhR/Mfl0wZ+8MU2oflNLNG06
- Zow=
-X-SBRS: 2.7
-X-MesageID: 12723432
-X-Ironport-Server: esa3.hc3370-68.iphmx.com
-X-Remote-IP: 162.221.158.21
-X-Policy: $RELAYED
-X-IronPort-AV: E=Sophos;i="5.70,463,1574139600"; 
-   d="scan'208";a="12723432"
-Date:   Thu, 20 Feb 2020 09:39:04 +0100
-From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
-To:     Anchal Agarwal <anchalag@amazon.com>
-CC:     <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-        <hpa@zytor.com>, <x86@kernel.org>, <boris.ostrovsky@oracle.com>,
-        <jgross@suse.com>, <linux-pm@vger.kernel.org>,
-        <linux-mm@kvack.org>, <kamatam@amazon.com>,
-        <sstabellini@kernel.org>, <konrad.wilk@oracle.com>,
-        <axboe@kernel.dk>, <davem@davemloft.net>, <rjw@rjwysocki.net>,
-        <len.brown@intel.com>, <pavel@ucw.cz>, <peterz@infradead.org>,
-        <eduval@amazon.com>, <sblbir@amazon.com>,
-        <xen-devel@lists.xenproject.org>, <vkuznets@redhat.com>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dwmw@amazon.co.uk>, <fllinden@amaozn.com>,
-        <benh@kernel.crashing.org>
-Subject: Re: [RFC PATCH v3 06/12] xen-blkfront: add callbacks for PM suspend
- and hibernation
-Message-ID: <20200220083904.GI4679@Air-de-Roger>
-References: <cover.1581721799.git.anchalag@amazon.com>
- <890c404c585d7790514527f0c021056a7be6e748.1581721799.git.anchalag@amazon.com>
- <20200217100509.GE4679@Air-de-Roger>
- <20200217230553.GA8100@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com>
- <20200218091611.GN4679@Air-de-Roger>
- <20200219180424.GA17584@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com>
+        Thu, 20 Feb 2020 03:39:55 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1582187994; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=7LPj5WqUryWegMigWujZeMgopaFTsdUb2SSnoYMCyNg=;
+ b=O2lUUkc6cepBFh35qt4Pmeq789Lb6aExmNH+YrVcH6+cjn7gs8jpkLLxl3KajK6Fa/6E9OI2
+ 3psC9lbCsn5a3T103TwcWJdh9dcnuMPjLTrJc3TnwACWo7yNF+DKk+5K+GitphHQ2vKV4HtK
+ hXgW1cWUCuLBuFbopjHdNGNXE94=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e4e45d6.7f0e0786a880-smtp-out-n03;
+ Thu, 20 Feb 2020 08:39:50 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 5A804C447A5; Thu, 20 Feb 2020 08:39:50 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4FF5BC433A2;
+        Thu, 20 Feb 2020 08:39:49 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200219180424.GA17584@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com>
-X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
- AMSPEX02CL01.citrite.net (10.69.22.125)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 20 Feb 2020 14:09:49 +0530
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+To:     Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+Cc:     ulf.hansson@linaro.org, robh+dt@kernel.org,
+        asutoshd@codeaurora.org, stummala@codeaurora.org,
+        sayalil@codeaurora.org, cang@codeaurora.org,
+        rampraka@codeaurora.org, dianders@google.com,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Allison Randal <allison@lohutok.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-msm-owner@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH V2] mmc: mmc_test: Pass different sg lists for
+ non-blocking requests
+In-Reply-To: <1582105474-27866-1-git-send-email-vbadigan@codeaurora.org>
+References: <1581413771-18005-1-git-send-email-vbadigan@codeaurora.org>
+ <1582105474-27866-1-git-send-email-vbadigan@codeaurora.org>
+Message-ID: <b12ac35f4f896a786ae5a109cf196b12@codeaurora.org>
+X-Sender: saiprakash.ranjan@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for this work, please see below.
+On 2020-02-19 15:14, Veerabhadrarao Badiganti wrote:
+> Supply a separate sg list for each of the request in non-blocking
+> IO test cases where two requests will be issued at same time.
+> 
+> Otherwise, sg memory may get unmapped when a request is done while
+> same memory is being accessed by controller from the other request,
+> and it leads to iommu errors with below call stack:
+> 
+> 	__arm_lpae_unmap+0x2e0/0x478
+> 	arm_lpae_unmap+0x54/0x70
+> 	arm_smmu_unmap+0x64/0xa4
+> 	__iommu_unmap+0xb8/0x1f0
+> 	iommu_unmap_fast+0x38/0x48
+> 	__iommu_dma_unmap+0x88/0x108
+> 	iommu_dma_unmap_sg+0x90/0xa4
+> 	sdhci_post_req+0x5c/0x78
+> 	mmc_test_start_areq+0x10c/0x120 [mmc_test]
+> 	mmc_test_area_io_seq+0x150/0x264 [mmc_test]
+> 	mmc_test_rw_multiple+0x174/0x1c0 [mmc_test]
+> 	mmc_test_rw_multiple_sg_len+0x44/0x6c [mmc_test]
+> 	mmc_test_profile_sglen_wr_nonblock_perf+0x6c/0x94 [mmc_test]
+> 	mtf_test_write+0x238/0x3cc [mmc_test]
+> 
+> Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+> 
 
-On Wed, Feb 19, 2020 at 06:04:24PM +0000, Anchal Agarwal wrote:
-> On Tue, Feb 18, 2020 at 10:16:11AM +0100, Roger Pau Monné wrote:
-> > On Mon, Feb 17, 2020 at 11:05:53PM +0000, Anchal Agarwal wrote:
-> > > On Mon, Feb 17, 2020 at 11:05:09AM +0100, Roger Pau Monné wrote:
-> > > > On Fri, Feb 14, 2020 at 11:25:34PM +0000, Anchal Agarwal wrote:
-> > > > > From: Munehisa Kamata <kamatam@amazon.com
-> > > > > 
-> > > > > Add freeze, thaw and restore callbacks for PM suspend and hibernation
-> > > > > support. All frontend drivers that needs to use PM_HIBERNATION/PM_SUSPEND
-> > > > > events, need to implement these xenbus_driver callbacks.
-> > > > > The freeze handler stops a block-layer queue and disconnect the
-> > > > > frontend from the backend while freeing ring_info and associated resources.
-> > > > > The restore handler re-allocates ring_info and re-connect to the
-> > > > > backend, so the rest of the kernel can continue to use the block device
-> > > > > transparently. Also, the handlers are used for both PM suspend and
-> > > > > hibernation so that we can keep the existing suspend/resume callbacks for
-> > > > > Xen suspend without modification. Before disconnecting from backend,
-> > > > > we need to prevent any new IO from being queued and wait for existing
-> > > > > IO to complete.
-> > > > 
-> > > > This is different from Xen (xenstore) initiated suspension, as in that
-> > > > case Linux doesn't flush the rings or disconnects from the backend.
-> > > Yes, AFAIK in xen initiated suspension backend takes care of it. 
-> > 
-> > No, in Xen initiated suspension backend doesn't take care of flushing
-> > the rings, the frontend has a shadow copy of the ring contents and it
-> > re-issues the requests on resume.
-> > 
-> Yes, I meant suspension in general where both xenstore and backend knows
-> system is going under suspension and not flushing of rings.
+Tested-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
 
-backend has no idea the guest is going to be suspended. Backend code
-is completely agnostic to suspension/resume.
+This is reproducible on Dragonboard845c as well when performing 
+nonblocking tests
+and the patch fixes the issue.
 
-> That happens
-> in frontend when backend indicates that state is closing and so on.
-> I may have written it in wrong context.
+/ # emmc_dev=mmc0:0002
+  / # echo $emmc_dev > /sys/bus/mmc/drivers/mmcblk/unbind
+  / # echo $emmc_dev > /sys/bus/mmc/drivers/mmc_test/bind
+  [   23.715673] mmc_test mmc0:0002: Card claimed for testing.
+  / # cd /sys/kernel/debug/mmc*/${emmc_dev}
+  /sys/kernel/debug/mmc0/mmc0:0002 # echo 42 > test
+  [   32.074182] mmc0: Starting tests of card mmc0:0002...
+  [   32.079484] mmc0: Test case 42. Write performance non-blocking req 1 
+to 512 sg elems...
+  [   32.783439] mmc0: ADMA error: 0x02000000
+  [   32.787411] mmc0: sdhci: ============ SDHCI REGISTER DUMP 
+===========
+  [   32.796336] mmc0: sdhci: Sys addr:  0x00000000 | Version:  
+0x00006c02
+  [   32.804533] mmc0: sdhci: Blk size:  0x00000200 | Blk cnt:  
+0x00000280
+  [   32.811046] mmc0: sdhci: Argument:  0x001d0400 | Trn mode: 
+0x00000023
+  [   32.817555] mmc0: sdhci: Present:   0x01f801f6 | Host ctl: 
+0x0000001f
+  [   32.824062] mmc0: sdhci: Power:     0x00000001 | Blk gap:  
+0x00000000
+  [   32.830566] mmc0: sdhci: Wake-up:   0x00000000 | Clock:    
+0x00000007
+  [   32.837074] mmc0: sdhci: Timeout:   0x0000000e | Int stat: 
+0x02008000
+  [   32.843582] mmc0: sdhci: Int enab:  0x03ff100b | Sig enab: 
+0x03ff100b
+  [   32.850089] mmc0: sdhci: ACmd stat: 0x00000000 | Slot int: 
+0x00000000
+  [   32.856596] mmc0: sdhci: Caps:      0x362dc8b2 | Caps_1:   
+0x0000808f
+  [   32.863104] mmc0: sdhci: Cmd:       0x0000193a | Max curr: 
+0x00000000
+  [   32.869612] mmc0: sdhci: Resp[0]:   0x00000900 | Resp[1]:  
+0x5b590000
+  [   32.876121] mmc0: sdhci: Resp[2]:   0x1d9b7f80 | Resp[3]:  
+0x0a40003a
+  [   32.882627] mmc0: sdhci: Host ctl2: 0x00000000
+  [   32.887121] mmc0: sdhci: ADMA Err:  0x00000001 | ADMA Ptr: 
+0x0000000ffffff248
+  [   32.894320] mmc0: sdhci: 
+============================================
+  [   32.900831] mmc0: sdhci: ffffff200: DMA 0x0000000fffe80000, LEN 
+0x0000, Attr=0x21
+  [   32.908391] mmc0: sdhci: ffffff20c: DMA 0x0000000fffe90000, LEN 
+0x0000, Attr=0x21
+  [   32.915951] mmc0: sdhci: ffffff218: DMA 0x0000000fffea0000, LEN 
+0x0000, Attr=0x21
+  [   32.923511] mmc0: sdhci: ffffff224: DMA 0x0000000fffeb0000, LEN 
+0x0000, Attr=0x21
+  [   32.931070] mmc0: sdhci: ffffff230: DMA 0x0000000fffec0000, LEN 
+0x0000, Attr=0x21
+  [   32.938630] mmc0: sdhci: ffffff23c: DMA 0x0000000fffed0000, LEN 
+0x0000, Attr=0x21
+  [   32.946190] mmc0: sdhci: ffffff248: DMA 0x0000000fffee0000, LEN 
+0x0000, Attr=0x21
+  [   32.953750] mmc0: sdhci: ffffff254: DMA 0x0000000fffef0000, LEN 
+0x0000, Attr=0x21
+  [   32.961309] mmc0: sdhci: ffffff260: DMA 0x0000000000000000, LEN 
+0x0000, Attr=0x03
+  [   32.968982] arm-smmu 15000000.iommu: Unhandled context fault: 
+fsr=0x402, iova=0xfffe80480, fsynr=0x390003, cbfrsynra=0xa0, cb=1
+<snip>...
+  [   33.424884] [mmc_test_rw_multiple] error
+  [   33.428849] mmc0: Result: ERROR (-5)
+  [   33.432465] mmc0: Tests completed.
+  /sys/kernel/debug/mmc0/mmc0:0002 #
 
-I'm afraid I'm not sure I fully understand this last sentence.
+-Sai
 
-> > > > > +static int blkfront_freeze(struct xenbus_device *dev)
-> > > > > +{
-> > > > > +	unsigned int i;
-> > > > > +	struct blkfront_info *info = dev_get_drvdata(&dev->dev);
-> > > > > +	struct blkfront_ring_info *rinfo;
-> > > > > +	/* This would be reasonable timeout as used in xenbus_dev_shutdown() */
-> > > > > +	unsigned int timeout = 5 * HZ;
-> > > > > +	int err = 0;
-> > > > > +
-> > > > > +	info->connected = BLKIF_STATE_FREEZING;
-> > > > > +
-> > > > > +	blk_mq_freeze_queue(info->rq);
-> > > > > +	blk_mq_quiesce_queue(info->rq);
-> > > > > +
-> > > > > +	for (i = 0; i < info->nr_rings; i++) {
-> > > > > +		rinfo = &info->rinfo[i];
-> > > > > +
-> > > > > +		gnttab_cancel_free_callback(&rinfo->callback);
-> > > > > +		flush_work(&rinfo->work);
-> > > > > +	}
-> > > > > +
-> > > > > +	/* Kick the backend to disconnect */
-> > > > > +	xenbus_switch_state(dev, XenbusStateClosing);
-> > > > 
-> > > > Are you sure this is safe?
-> > > > 
-> > > In my testing running multiple fio jobs, other test scenarios running
-> > > a memory loader works fine. I did not came across a scenario that would
-> > > have failed resume due to blkfront issues unless you can sugest some?
-> > 
-> > AFAICT you don't wait for the in-flight requests to be finished, and
-> > just rely on blkback to finish processing those. I'm not sure all
-> > blkback implementations out there can guarantee that.
-> > 
-> > The approach used by Xen initiated suspension is to re-issue the
-> > in-flight requests when resuming. I have to admit I don't think this
-> > is the best approach, but I would like to keep both the Xen and the PM
-> > initiated suspension using the same logic, and hence I would request
-> > that you try to re-use the existing resume logic (blkfront_resume).
-> > 
-> > > > I don't think you wait for all requests pending on the ring to be
-> > > > finished by the backend, and hence you might loose requests as the
-> > > > ones on the ring would not be re-issued by blkfront_restore AFAICT.
-> > > > 
-> > > AFAIU, blk_mq_freeze_queue/blk_mq_quiesce_queue should take care of no used
-> > > request on the shared ring. Also, we I want to pause the queue and flush all
-> > > the pending requests in the shared ring before disconnecting from backend.
-> > 
-> > Oh, so blk_mq_freeze_queue does wait for in-flight requests to be
-> > finished. I guess it's fine then.
-> > 
-> Ok.
-> > > Quiescing the queue seemed a better option here as we want to make sure ongoing
-> > > requests dispatches are totally drained.
-> > > I should accept that some of these notion is borrowed from how nvme freeze/unfreeze 
-> > > is done although its not apple to apple comparison.
-> > 
-> > That's fine, but I would still like to requests that you use the same
-> > logic (as much as possible) for both the Xen and the PM initiated
-> > suspension.
-> > 
-> > So you either apply this freeze/unfreeze to the Xen suspension (and
-> > drop the re-issuing of requests on resume) or adapt the same approach
-> > as the Xen initiated suspension. Keeping two completely different
-> > approaches to suspension / resume on blkfront is not suitable long
-> > term.
-> > 
-> I agree with you on overhaul of xen suspend/resume wrt blkfront is a good
-> idea however, IMO that is a work for future and this patch series should 
-> not be blocked for it. What do you think?
-
-It's not so much that I think an overhaul of suspend/resume in
-blkfront is needed, it's just that I don't want to have two completely
-different suspend/resume paths inside blkfront.
-
-So from my PoV I think the right solution is to either use the same
-code (as much as possible) as it's currently used by Xen initiated
-suspend/resume, or to also switch Xen initiated suspension to use the
-newly introduced code.
-
-Having two different approaches to suspend/resume in the same driver
-is a recipe for disaster IMO: it adds complexity by forcing developers
-to take into account two different suspend/resume approaches when
-there's no need for it.
-
-Thanks, Roger.
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a 
+member
+of Code Aurora Forum, hosted by The Linux Foundation
