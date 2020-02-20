@@ -2,98 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6B9316605F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 16:01:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88CCE16605A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 16:01:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728534AbgBTPBf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 10:01:35 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:21700 "EHLO
+        id S1728503AbgBTPBT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 10:01:19 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:58773 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728133AbgBTPBf (ORCPT
+        by vger.kernel.org with ESMTP id S1728133AbgBTPBT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 10:01:35 -0500
+        Thu, 20 Feb 2020 10:01:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582210894;
+        s=mimecast20190719; t=1582210878;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=akPGLEa5++8awpmZaCXevB0Sy30q2hFWMSty4YYV3yA=;
-        b=HsHPYZzEw6D5Z9q62uLlAPKXEFdJ5icXZntPhGVEf2TQnrQzWr3XkZnMT7bBmaRoGczJok
-        e55e0bh/Y3LFHp/2u9xuA2evWn7bzcBzZitvYyfozycqaXpMHv6qJ4hY6D3HKjTGKfPeHB
-        osl5gVshiLfcNaK+8NiS85LCuUNO5Uw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-384-2zfB-8laOpmnJ97p9pu7aA-1; Thu, 20 Feb 2020 10:01:29 -0500
-X-MC-Unique: 2zfB-8laOpmnJ97p9pu7aA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 32C60800D5E;
-        Thu, 20 Feb 2020 15:01:28 +0000 (UTC)
-Received: from jsavitz.bos.com (dhcp-17-196.bos.redhat.com [10.18.17.196])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CE08D1001B2C;
-        Thu, 20 Feb 2020 15:01:23 +0000 (UTC)
-From:   Joel Savitz <jsavitz@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Joel Savitz <jsavitz@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Rafael Aquini <aquini@redhat.com>, linux-mm@kvack.org
-Subject: [PATCH] mm/page_alloc: increase default min_free_kbytes bound
-Date:   Thu, 20 Feb 2020 10:01:03 -0500
-Message-Id: <20200220150103.5183-1-jsavitz@redhat.com>
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=3cu+nCrF0vUC0DWPMISJ46Dyo+A/qgWPAj0jcXPlop0=;
+        b=jIpVD7yDzPArBpmNA9pVWXG+fHyz+z5yapxCqgLJ1N18pROHBI0i0dDhm1YU3VeW84cMz+
+        TKZYC7Ftz68wwPYKgE4jZk9zER6Og23uSgNb7367JJpkbVwEJNzdhO8JlWuBoj0D7rBupC
+        Pwjm+yLbmVRKdDbnf1cn8LFJDXvAa+g=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-427-WGM2PYZaN-iSSeJQorZHrQ-1; Thu, 20 Feb 2020 10:01:17 -0500
+X-MC-Unique: WGM2PYZaN-iSSeJQorZHrQ-1
+Received: by mail-qt1-f198.google.com with SMTP id p12so2742591qtu.6
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 07:01:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=3cu+nCrF0vUC0DWPMISJ46Dyo+A/qgWPAj0jcXPlop0=;
+        b=DlaO0iPl7PkN+x0/11HArbxj9tRXJ4DkoDaihqNpgnzzXEEjJk8C6hilQNXDm7B5tM
+         xuoL8qYig20stv3eXlWDv3wGlDBRH77pHqIIUp4a53B0MwfW+f5/v86n7NDAqxbTtE9H
+         P6j9/XzeGeV/8BEvdxdxpE4NGlRFtH49by/AqAqaf4WP3uGjnsUZnCi/mhpeDiBuhi79
+         0vSms0RkaQgcKlHAOk3YbSG8uboZwj0UAEJgbPmVaZz/UT2UNSvim3PBi0i66MoFF98p
+         nzVNnnDjcz+qoxkwcN0pyo3ISktAlVrG/Ajs6eQfq2thI5CqLfbICcquTU0W2y/uahlk
+         zwmw==
+X-Gm-Message-State: APjAAAVFTivB6CqALKf0OoHPIUUXyU5zoMY++JwnhmERFhBuwJSYRn8r
+        ECRySyIDI/MhOr6q3BLkoA9PEJCbe7YbDyPr+pqz1QpWh5IluAf7NkcikAxtYxYtZbyxgrgOCqL
+        WR7JbEIqFEHNSuvy9qPdUPp/V
+X-Received: by 2002:ac8:4085:: with SMTP id p5mr26819749qtl.132.1582210876703;
+        Thu, 20 Feb 2020 07:01:16 -0800 (PST)
+X-Google-Smtp-Source: APXvYqx3QTVRkqA3yCavJV1bZCFrD3Tv4+JyoN+xrMyrd+Av7qoa1Y1pRsiT3dE9WPHn/5LgDfZBFw==
+X-Received: by 2002:ac8:4085:: with SMTP id p5mr26819716qtl.132.1582210876390;
+        Thu, 20 Feb 2020 07:01:16 -0800 (PST)
+Received: from xz-x1.redhat.com ([104.156.64.75])
+        by smtp.gmail.com with ESMTPSA id m23sm1844583qtp.6.2020.02.20.07.01.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2020 07:01:15 -0800 (PST)
+From:   Peter Xu <peterx@redhat.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     Peter Xu <peterx@redhat.com>, Martin Cracauer <cracauer@cons.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Brian Geffon <bgeffon@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        David Hildenbrand <david@redhat.com>,
+        Bobby Powers <bobbypowers@gmail.com>,
+        Mel Gorman <mgorman@suse.de>
+Subject: [PATCH v6 04/16] x86/mm: Use helper fault_signal_pending()
+Date:   Thu, 20 Feb 2020 10:01:13 -0500
+Message-Id: <20200220150113.5068-1-peterx@redhat.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200220145432.4561-1-peterx@redhat.com
+References: 
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Let's move the fatal signal check even earlier so that we can directly
+use the new fault_signal_pending() in x86 mm code.
 
-Currently, the vm.min_free_kbytes sysctl value is capped at a hardcoded
-64M in init_per_zone_wmark_min (unless it is overridden by khugepaged
-initialization).
-
-This value has not been modified since 2005, and enterprise-grade
-systems now frequently have hundreds of GB of RAM and multiple 10, 40,
-or even 100 GB NICs. We have seen page allocation failures on heavily
-loaded systems related to NIC drivers. These issues were resolved by an
-increase to vm.min_free_kbytes.
-
-This patch increases the hardcoded value by a factor of 4 as a temporary
-solution.
-
-Further work to make the calculation of vm.min_free_kbytes more
-consistent throughout the kernel would be desirable.
-
-As an example of the inconsistency of the current method, this value is
-recalculated by init_per_zone_wmark_min() in the case of memory hotplug
-which will override the value set by set_recommended_min_free_kbytes()
-called during khugepaged initialization even if khugepaged remains
-enabled, however an on/off toggle of khugepaged will then recalculate
-and set the value via set_recommended_min_free_kbytes().
-
-Signed-off-by: Joel Savitz <jsavitz@redhat.com>
+Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- mm/page_alloc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/mm/fault.c | 28 +++++++++++++---------------
+ 1 file changed, 13 insertions(+), 15 deletions(-)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 3c4eb750a199..32cbfb13e958 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -7867,8 +7867,8 @@ int __meminit init_per_zone_wmark_min(void)
- 		min_free_kbytes =3D new_min_free_kbytes;
- 		if (min_free_kbytes < 128)
- 			min_free_kbytes =3D 128;
--		if (min_free_kbytes > 65536)
--			min_free_kbytes =3D 65536;
-+		if (min_free_kbytes > 262144)
-+			min_free_kbytes =3D 262144;
- 	} else {
- 		pr_warn("min_free_kbytes is not updated to %d because user defined val=
-ue %d is preferred\n",
- 				new_min_free_kbytes, user_min_free_kbytes);
---=20
-2.23.0
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index fa4ea09593ab..6a00bc8d047f 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -1442,27 +1442,25 @@ void do_user_addr_fault(struct pt_regs *regs,
+ 	fault = handle_mm_fault(vma, address, flags);
+ 	major |= fault & VM_FAULT_MAJOR;
+ 
++	/* Quick path to respond to signals */
++	if (fault_signal_pending(fault, regs)) {
++		if (!user_mode(regs))
++			no_context(regs, hw_error_code, address, SIGBUS,
++				   BUS_ADRERR);
++		return;
++	}
++
+ 	/*
+ 	 * If we need to retry the mmap_sem has already been released,
+ 	 * and if there is a fatal signal pending there is no guarantee
+ 	 * that we made any progress. Handle this case first.
+ 	 */
+-	if (unlikely(fault & VM_FAULT_RETRY)) {
++	if (unlikely((fault & VM_FAULT_RETRY) &&
++		     (flags & FAULT_FLAG_ALLOW_RETRY))) {
+ 		/* Retry at most once */
+-		if (flags & FAULT_FLAG_ALLOW_RETRY) {
+-			flags &= ~FAULT_FLAG_ALLOW_RETRY;
+-			flags |= FAULT_FLAG_TRIED;
+-			if (!fatal_signal_pending(tsk))
+-				goto retry;
+-		}
+-
+-		/* User mode? Just return to handle the fatal exception */
+-		if (flags & FAULT_FLAG_USER)
+-			return;
+-
+-		/* Not returning to user mode? Handle exceptions or die: */
+-		no_context(regs, hw_error_code, address, SIGBUS, BUS_ADRERR);
+-		return;
++		flags &= ~FAULT_FLAG_ALLOW_RETRY;
++		flags |= FAULT_FLAG_TRIED;
++		goto retry;
+ 	}
+ 
+ 	up_read(&mm->mmap_sem);
+-- 
+2.24.1
 
