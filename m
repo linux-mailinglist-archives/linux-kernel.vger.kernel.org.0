@@ -2,83 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10126166277
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:26:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 139FC166279
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:26:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728680AbgBTQZs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 11:25:48 -0500
-Received: from out28-53.mail.aliyun.com ([115.124.28.53]:60884 "EHLO
-        out28-53.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728484AbgBTQZl (ORCPT
+        id S1728699AbgBTQZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 11:25:57 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:46460 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728685AbgBTQZx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 11:25:41 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.2492674|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.0681795-0.00555843-0.926262;DS=CONTINUE|ham_system_inform|0.00918235-0.000516274-0.990301;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03300;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=23;RT=23;SR=0;TI=SMTPD_---.GqC0FCl_1582215911;
-Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.GqC0FCl_1582215911)
-          by smtp.aliyun-inc.com(10.147.40.2);
-          Fri, 21 Feb 2020 00:25:32 +0800
-From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
-        <zhouyanjie@wanyeetech.com>
-To:     linux-mips@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, tglx@linutronix.de,
-        ralf@linux-mips.org, paulburton@kernel.org,
-        jiaxun.yang@flygoat.com, chenhc@lemote.com, sboyd@kernel.org,
-        mturquette@baylibre.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        daniel.lezcano@linaro.org, paul@crapouillou.net,
-        geert+renesas@glider.be, krzk@kernel.org, ebiederm@xmission.com,
-        miquel.raynal@bootlin.com, keescook@chromium.org,
-        sernia.zhou@foxmail.com, zhenwenjin@gmail.com,
-        dongsheng.qiu@ingenic.com
-Subject: [PATCH v6 7/7] MIPS: CI20: Update defconfig to support SMP.
-Date:   Fri, 21 Feb 2020 00:24:49 +0800
-Message-Id: <1582215889-113034-9-git-send-email-zhouyanjie@wanyeetech.com>
+        Thu, 20 Feb 2020 11:25:53 -0500
+Received: by mail-lj1-f196.google.com with SMTP id x14so4815690ljd.13;
+        Thu, 20 Feb 2020 08:25:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=kLCeh2hYjGPl6+22S9skiaS6Lwi7X9cC+fUScfOkfNs=;
+        b=KN4+M85MvqR5gFb7czqWImi4xpcDKLXmqdj8vJd13/UVhbm+Ehz8HjJ45PCdv9t5hr
+         EMiY0KvpZQfVFhJsYFB9ydYiaae3jiLf9CHCXv2yXKpHOBH0+QGl+/notDZh2iWObg4t
+         niwC1nF9zN8OoE2gcR38Hqv2yu1jtyT3rVENUGhTKctAL/JQo0un1O3sTope2C/JCe3J
+         9gPtSyu2s3GJ7wXuFTx/MpR8+K/A04Vh1ylVtqS0smwGUcHMC3+tir5AgZUl8V4KQD//
+         hHPWYv06Drm2IxW8GGSZ41Aj7lekNPbGqULcbtgoyvYMn6gXNG5ytM+omknRtTv8sAzJ
+         uNjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=kLCeh2hYjGPl6+22S9skiaS6Lwi7X9cC+fUScfOkfNs=;
+        b=qemP5QpWVL9H4+ZYfo/7pkzOIFr3Uj2fmBKgUq66h5Mb5PlUvrhmj7T0O7IyGwjtlH
+         4ysx6cwTHC37T5j2LHb2UKlMz+64Y4WnuoyAjMBETO1dfwr9OUnKtvd/EkvSoV8cSn9X
+         rFse6eAIS98wbrw7PVq2RE15XjxV9CRYyLLjoQR93yZxd3iV/hhnna7rC9ZPOP6HJHz5
+         Ff4lhpuzl8RTDBX6+mvXwu1zejEp1WXqnN2ETHDqfdnxmZNv5icnWiM4luIhB5GZv6Th
+         QwGV82saf3GtXf+b/Sh8S9A8shJWOMMJN3CyzaWUlHewSFs08bcHnPOjgCNAeeysIxmz
+         7/MA==
+X-Gm-Message-State: APjAAAWVqEr80G3LDLAHzlaZHkc9AKluM88oChmSjC/jp6jjXoW5vKUC
+        1JNNN6aN6I3JnlYG20gey3w=
+X-Google-Smtp-Source: APXvYqzbjfJc19VrvFIqTzezHsniNvpL9Nn/rt4Xov1EelOo+z+JciRkBvpVmCJuqeULxMU6fKE13w==
+X-Received: by 2002:a2e:868c:: with SMTP id l12mr19455557lji.194.1582215951463;
+        Thu, 20 Feb 2020 08:25:51 -0800 (PST)
+Received: from localhost.localdomain ([87.200.95.144])
+        by smtp.gmail.com with ESMTPSA id b13sm2217956lfi.77.2020.02.20.08.25.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 20 Feb 2020 08:25:50 -0800 (PST)
+From:   Christian Hewitt <christianshewitt@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Christian Hewitt <christianshewitt@gmail.com>,
+        Oleg Ivanov <balbes-150@yandex.ru>
+Subject: [PATCH] arm64: dts: meson-gxbb-vega-s95: fix bindings and bluetooth node
+Date:   Thu, 20 Feb 2020 20:25:00 +0400
+Message-Id: <1582215900-12716-1-git-send-email-christianshewitt@gmail.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1582215889-113034-1-git-send-email-zhouyanjie@wanyeetech.com>
-References: <1582215889-113034-1-git-send-email-zhouyanjie@wanyeetech.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add "CONFIG_SMP=y" and "CONFIG_NR_CPUS=2" to support SMP.
+This adds missing bindings and fixes BT output.
 
-Tested-by: H. Nikolaus Schaller <hns@goldelico.com>
-Tested-by: Paul Boddie <paul@boddie.org.uk>
-Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+Fixes: b07a11dbdfeb ("arm64: dts: meson-gxbb-vega-s95: fix WiFi/BT module support")
+
+Suggested-by: Oleg Ivanov <balbes-150@yandex.ru>
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
 ---
+ arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Notes:
-    v1->v2:
-    No change.
-    
-    v2->v3:
-    No change.
-    
-    v3->v4:
-    Rebase on top of kernel 5.6-rc1.
-    
-    v4->v5:
-    No change.
-    
-    v5->v6:
-    No change.
-
- arch/mips/configs/ci20_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/mips/configs/ci20_defconfig b/arch/mips/configs/ci20_defconfig
-index be41df2..3aadb2e 100644
---- a/arch/mips/configs/ci20_defconfig
-+++ b/arch/mips/configs/ci20_defconfig
-@@ -1,3 +1,5 @@
-+CONFIG_SMP=y
-+CONFIG_NR_CPUS=2
- # CONFIG_LOCALVERSION_AUTO is not set
- CONFIG_KERNEL_XZ=y
- CONFIG_SYSVIPC=y
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
+index 5eab3df..0012779 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
+@@ -4,6 +4,8 @@
+  */
+ 
+ #include "meson-gxbb.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
+ 
+ / {
+ 	compatible = "tronsmart,vega-s95", "amlogic,meson-gxbb";
+@@ -245,6 +247,9 @@
+ 	bluetooth {
+ 		compatible = "brcm,bcm43438-bt";
+ 		shutdown-gpios = <&gpio GPIOX_20 GPIO_ACTIVE_HIGH>;
++		max-speed = <2000000>;
++		clocks = <&wifi32k>;
++		clock-names = "lpo";
+ 	};
+ };
+ 
 -- 
 2.7.4
 
