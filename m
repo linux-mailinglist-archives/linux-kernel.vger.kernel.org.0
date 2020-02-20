@@ -2,117 +2,363 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1095216624B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:22:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A7F1166278
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:26:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728339AbgBTQW1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 11:22:27 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:45030 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728021AbgBTQW1 (ORCPT
+        id S1728712AbgBTQZz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 11:25:55 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:6730 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728484AbgBTQZx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 11:22:27 -0500
-Received: by mail-qt1-f195.google.com with SMTP id j23so3243733qtr.11
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 08:22:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BxjPH3EKrwjdqvJZzEhss/or1cFxBJl747SKit3fjVY=;
-        b=jYlXHI4XuUHkbBKFFTHD5pozvgeTxolhwS1FHSg7CapmHEqP7QtnMCtDcpKqINrc+B
-         ziSq73euelc4iNJiiQvJMTCvINcEQQWt6MzkE1CWc/XcJ/EPNOQyAmTDBt4PiHXl0s07
-         ZqKSGffn7i8qxeb9ZM4feXBaT7tYbnAt+stDrBmAs6/B6KO5lyRloU77dfXuIEvK7Bk1
-         XizIgRwyAsWd4V4av0Wreugx1lBRroooh9U8nBzZ4ANGPvWDyFcStHeA7irS0UUDSefJ
-         LF3aZxrA7y+hmKksghM7hdZSIIwzw7o0c4oUpFxIFlCLYlPSbMj6AKR953pzg2ZB/Dde
-         pWVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BxjPH3EKrwjdqvJZzEhss/or1cFxBJl747SKit3fjVY=;
-        b=hDcBMWfQnHFIqSB7QCVwlKYRpes02eI5D1G0h5k0ZppZkrb0iXcYCzCLAxhV1Q7ZDU
-         FZBBfNEV1KzyFo5GkYGsOF4ZA1B9SR+8CP3mPXV4gJjp4zey3yLzbm7ocuvwDwI3MxVP
-         DkwgfOd49KW6hDgWz2YefHeDibq3swhV6f+f3yJMNWzmjWXqHFWLOIj7Vzn25B1YBBSW
-         nmbw3HgKCff2kKXhy/Fd/0y0yL+sDDjeaDL9woPBETVfIEFj8pqkWGhpAgrvfSpYO4K8
-         YZnhn4CbMreIYbZ5kTqnw+mlkXVn0OcQmx4IuSAYtDFDdsUgUmYqRpnnQvr/pZ1ujg7n
-         dkww==
-X-Gm-Message-State: APjAAAWq4qAud7+RYeuBilaI9/enHJYRHzk+chjhzNLC8XL7H63IIaND
-        wFwg0siNMRdX17ReYd++CLHxpmm+sHwcw20Q0t3LdA==
-X-Google-Smtp-Source: APXvYqza1eEnxPl1LnCg7HX1oJToV/DVBCAxwi8IXvCVDQa1gLTlGDIhz4sKEvXrv9VIyYXqOqBosOBKijh3tPCKmlY=
-X-Received: by 2002:ac8:1b18:: with SMTP id y24mr26811345qtj.158.1582215745116;
- Thu, 20 Feb 2020 08:22:25 -0800 (PST)
+        Thu, 20 Feb 2020 11:25:53 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01KGCSmP001645;
+        Thu, 20 Feb 2020 17:22:51 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=nTDlVJH/Y3ujsg5OIDFpnBgY6+HvDT4YZaEntj70+n8=;
+ b=UqPUQmDklrDwskJiqXMiQcq8Z/Y0byQSCsp5IXd+E4qHXr2m7kxsaQZeE9O3HzWZKVaI
+ Scmuf4iwlb1lNsK5fQLc+TdK9DiJCaZNqd6RrpB6jdQhld3F1Ahf4vR3Oqi0lJqwph9Y
+ Hbbg6SgJWF9Nc2OBw6bJUFeXfbbdDtTj15JbDrJVrsfP0Wej3rbVQMR6g+iwoPdwUxW3
+ iCXGp7lYFgKjg0X1526H1GQzYN8+X/fPDeoa5xYbHEZARHPXp0d+Fyz2PlsjsuyMDiyY
+ INWDVBgIIbwj6ZFTCujjtp7s1ZYIrfATurVnYDwz1MmmEdPkxJt4a6EzTo8s5Xltl7A8 Pw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2y8ub5t6b1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 20 Feb 2020 17:22:51 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CE07610003B;
+        Thu, 20 Feb 2020 17:22:48 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9D1A12C1597;
+        Thu, 20 Feb 2020 17:22:48 +0100 (CET)
+Received: from localhost (10.75.127.45) by SFHDAG3NODE3.st.com (10.75.127.9)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 20 Feb 2020 17:22:47
+ +0100
+From:   Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     <lee.jones@linaro.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.co>, <alexandre.torgue@st.com>,
+        <linus.walleij@linaro.org>, <amelie.delaunay@st.com>
+CC:     <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH v3] dt-bindings: mfd: Convert stmfx bindings to json-schema
+Date:   Thu, 20 Feb 2020 17:22:46 +0100
+Message-ID: <20200220162246.8334-1-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
 MIME-Version: 1.0
-References: <20200219144724.800607165@infradead.org> <20200219150745.651901321@infradead.org>
- <CACT4Y+Y+nPcnbb8nXGQA1=9p8BQYrnzab_4SvuPwbAJkTGgKOQ@mail.gmail.com>
- <20200219163025.GH18400@hirez.programming.kicks-ass.net> <20200219172014.GI14946@hirez.programming.kicks-ass.net>
- <CACT4Y+ZfxqMuiL_UF+rCku628hirJwp3t3vW5WGM8DWG6OaCeg@mail.gmail.com> <20200220120631.GX18400@hirez.programming.kicks-ass.net>
-In-Reply-To: <20200220120631.GX18400@hirez.programming.kicks-ass.net>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 20 Feb 2020 17:22:14 +0100
-Message-ID: <CACT4Y+bj_Onff8jUP97AVRhmdeN0QRrGcd9KRPSfnFTHAHyxtA@mail.gmail.com>
-Subject: Re: [PATCH v3 22/22] x86/int3: Ensure that poke_int3_handler() is not sanitized
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>, tony.luck@intel.com,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        kasan-dev <kasan-dev@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG3NODE3.st.com
+ (10.75.127.9)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-20_04:2020-02-19,2020-02-20 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 1:06 PM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Thu, Feb 20, 2020 at 11:37:32AM +0100, Dmitry Vyukov wrote:
-> > On Wed, Feb 19, 2020 at 6:20 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> > >
-> > > On Wed, Feb 19, 2020 at 05:30:25PM +0100, Peter Zijlstra wrote:
-> > >
-> > > > By inlining everything in poke_int3_handler() (except bsearch :/) we can
-> > > > mark the whole function off limits to everything and call it a day. That
-> > > > simplicity has been the guiding principle so far.
-> > > >
-> > > > Alternatively we can provide an __always_inline variant of bsearch().
-> > >
-> > > This reduces the __no_sanitize usage to just the exception entry
-> > > (do_int3) and the critical function: poke_int3_handler().
-> > >
-> > > Is this more acceptible?
-> >
-> > Let's say it's more acceptable.
-> >
-> > Acked-by: Dmitry Vyukov <dvyukov@google.com>
->
-> Thanks, I'll go make it happen.
->
-> > I guess there is no ideal solution here.
-> >
-> > Just a straw man proposal: expected number of elements is large enough
-> > to make bsearch profitable, right? I see 1 is a common case, but the
-> > other case has multiple entries.
->
-> Latency was the consideration; the linear search would dramatically
-> increase the runtime of the exception.
->
-> The current limit is 256 entries and we're hitting that quite often.
->
-> (we can trivially increase, but nobody has been able to show significant
-> benefits for that -- as of yet)
+Convert stmfx bindings to json-schema
 
-I see. Thanks for explaining. Just wanted to check because inlining a
-linear search would free us from all these unpleasant problems.
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+---
+ .../devicetree/bindings/mfd/st,stmfx.yaml          | 124 +++++++++++++++++++++
+ Documentation/devicetree/bindings/mfd/stmfx.txt    |  28 -----
+ .../devicetree/bindings/pinctrl/pinctrl-stmfx.txt  | 116 -------------------
+ 3 files changed, 124 insertions(+), 144 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/st,stmfx.yaml
+ delete mode 100644 Documentation/devicetree/bindings/mfd/stmfx.txt
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-stmfx.txt
+
+diff --git a/Documentation/devicetree/bindings/mfd/st,stmfx.yaml b/Documentation/devicetree/bindings/mfd/st,stmfx.yaml
+new file mode 100644
+index 000000000000..0ce56a0da553
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/st,stmfx.yaml
+@@ -0,0 +1,124 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mfd/st,stmfx.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: STMicroelectonics Multi-Function eXpander (STMFX) bindings
++
++description: ST Multi-Function eXpander (STMFX) is a slave controller using I2C for
++               communication with the main MCU. Its main features are GPIO expansion,
++               main MCU IDD measurement (IDD is the amount of current that flows
++               through VDD) and resistive touchscreen controller.
++
++maintainers:
++  - Amelie Delaunay <amelie.delaunay@st.com>
++
++properties:
++  compatible:
++    const: st,stmfx-0300
++
++  reg:
++    enum: [ 0x42, 0x43 ]
++
++  interrupts:
++    maxItems: 1
++
++  drive-open-drain: true
++
++  vdd-supply:
++    maxItems: 1
++
++  pinctrl:
++    type: object
++
++    properties:
++      compatible:
++        const: st,stmfx-0300-pinctrl
++
++      "#gpio-cells":
++        const: 2
++
++      "#interrupt-cells":
++        const: 2
++
++      gpio-controller: true
++
++      interrupt-controller: true
++
++      gpio-ranges:
++        description: if all STMFX pins[24:0] are available (no other STMFX function in use),
++                     you should use gpio-ranges = <&stmfx_pinctrl 0 0 24>;
++                     if agpio[3:0] are not available (STMFX Touchscreen function in use),
++                     you should use gpio-ranges = <&stmfx_pinctrl 0 0 16>, <&stmfx_pinctrl 20 20 4>;
++                     if agpio[7:4] are not available (STMFX IDD function in use),
++                     you should use gpio-ranges = <&stmfx_pinctrl 0 0 20>;
++        maxItems: 1
++
++    patternProperties:
++      "^[a-zA-Z]*-pins$":
++        type: object
++
++        allOf:
++          - $ref: ../pinctrl/pinmux-node.yaml
++
++        properties:
++          pins: true
++          bias-disable: true
++          bias-pull-up: true
++          bias-pull-pin-default: true
++          bias-pull-down: true
++          drive-open-drain: true
++          drive-push-pull: true
++          output-high: true
++          output-low: true
++
++      additionalProperties: false
++
++    additionalProperties: false
++
++    required:
++      - compatible
++      - "#gpio-cells"
++      - "#interrupt-cells"
++      - gpio-controller
++      - interrupt-controller
++      - gpio-ranges
++
++additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - interrupts
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    i2c@0 {
++      #address-cells = <1>;
++      #size-cells = <0>;
++      stmfx@42 {
++        compatible = "st,stmfx-0300";
++        reg = <0x42>;
++        interrupts = <8 IRQ_TYPE_EDGE_RISING>;
++        interrupt-parent = <&gpioi>;
++        vdd-supply = <&v3v3>;
++
++        stmfx_pinctrl: pinctrl {
++          compatible = "st,stmfx-0300-pinctrl";
++          #gpio-cells = <2>;
++          #interrupt-cells = <2>;
++          gpio-controller;
++          interrupt-controller;
++          gpio-ranges = <&stmfx_pinctrl 0 0 24>;
++
++          joystick_pins: joystick-pins {
++            pins = "gpio0", "gpio1", "gpio2", "gpio3", "gpio4";
++            drive-push-pull;
++            bias-pull-up;
++          };
++        };
++      };
++    };
++...
+diff --git a/Documentation/devicetree/bindings/mfd/stmfx.txt b/Documentation/devicetree/bindings/mfd/stmfx.txt
+deleted file mode 100644
+index f0c2f7fcf5c7..000000000000
+--- a/Documentation/devicetree/bindings/mfd/stmfx.txt
++++ /dev/null
+@@ -1,28 +0,0 @@
+-STMicroelectonics Multi-Function eXpander (STMFX) Core bindings
+-
+-ST Multi-Function eXpander (STMFX) is a slave controller using I2C for
+-communication with the main MCU. Its main features are GPIO expansion, main
+-MCU IDD measurement (IDD is the amount of current that flows through VDD) and
+-resistive touchscreen controller.
+-
+-Required properties:
+-- compatible: should be "st,stmfx-0300".
+-- reg: I2C slave address of the device.
+-- interrupts: interrupt specifier triggered by MFX_IRQ_OUT signal.
+-  Please refer to ../interrupt-controller/interrupt.txt
+-
+-Optional properties:
+-- drive-open-drain: configure MFX_IRQ_OUT as open drain.
+-- vdd-supply: phandle of the regulator supplying STMFX.
+-
+-Example:
+-
+-	stmfx: stmfx@42 {
+-		compatible = "st,stmfx-0300";
+-		reg = <0x42>;
+-		interrupts = <8 IRQ_TYPE_EDGE_RISING>;
+-		interrupt-parent = <&gpioi>;
+-		vdd-supply = <&v3v3>;
+-	};
+-
+-Please refer to ../pinctrl/pinctrl-stmfx.txt for STMFX GPIO expander function bindings.
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-stmfx.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-stmfx.txt
+deleted file mode 100644
+index c1b4c1819b84..000000000000
+--- a/Documentation/devicetree/bindings/pinctrl/pinctrl-stmfx.txt
++++ /dev/null
+@@ -1,116 +0,0 @@
+-STMicroelectronics Multi-Function eXpander (STMFX) GPIO expander bindings
+-
+-ST Multi-Function eXpander (STMFX) offers up to 24 GPIOs expansion.
+-Please refer to ../mfd/stmfx.txt for STMFX Core bindings.
+-
+-Required properties:
+-- compatible: should be "st,stmfx-0300-pinctrl".
+-- #gpio-cells: should be <2>, the first cell is the GPIO number and the second
+-  cell is the gpio flags in accordance with <dt-bindings/gpio/gpio.h>.
+-- gpio-controller: marks the device as a GPIO controller.
+-- #interrupt-cells: should be <2>, the first cell is the GPIO number and the
+-  second cell is the interrupt flags in accordance with
+-  <dt-bindings/interrupt-controller/irq.h>.
+-- interrupt-controller: marks the device as an interrupt controller.
+-- gpio-ranges: specifies the mapping between gpio controller and pin
+-  controller pins. Check "Concerning gpio-ranges property" below.
+-Please refer to ../gpio/gpio.txt.
+-
+-Please refer to pinctrl-bindings.txt for pin configuration.
+-
+-Required properties for pin configuration sub-nodes:
+-- pins: list of pins to which the configuration applies.
+-
+-Optional properties for pin configuration sub-nodes (pinconf-generic ones):
+-- bias-disable: disable any bias on the pin.
+-- bias-pull-up: the pin will be pulled up.
+-- bias-pull-pin-default: use the pin-default pull state.
+-- bias-pull-down: the pin will be pulled down.
+-- drive-open-drain: the pin will be driven with open drain.
+-- drive-push-pull: the pin will be driven actively high and low.
+-- output-high: the pin will be configured as an output driving high level.
+-- output-low: the pin will be configured as an output driving low level.
+-
+-Note that STMFX pins[15:0] are called "gpio[15:0]", and STMFX pins[23:16] are
+-called "agpio[7:0]". Example, to refer to pin 18 of STMFX, use "agpio2".
+-
+-Concerning gpio-ranges property:
+-- if all STMFX pins[24:0] are available (no other STMFX function in use), you
+-  should use gpio-ranges = <&stmfx_pinctrl 0 0 24>;
+-- if agpio[3:0] are not available (STMFX Touchscreen function in use), you
+-  should use gpio-ranges = <&stmfx_pinctrl 0 0 16>, <&stmfx_pinctrl 20 20 4>;
+-- if agpio[7:4] are not available (STMFX IDD function in use), you
+-  should use gpio-ranges = <&stmfx_pinctrl 0 0 20>;
+-
+-
+-Example:
+-
+-	stmfx: stmfx@42 {
+-		...
+-
+-		stmfx_pinctrl: stmfx-pin-controller {
+-			compatible = "st,stmfx-0300-pinctrl";
+-			#gpio-cells = <2>;
+-			#interrupt-cells = <2>;
+-			gpio-controller;
+-			interrupt-controller;
+-			gpio-ranges = <&stmfx_pinctrl 0 0 24>;
+-
+-			joystick_pins: joystick {
+-				pins = "gpio0", "gpio1", "gpio2", "gpio3", "gpio4";
+-				drive-push-pull;
+-				bias-pull-up;
+-			};
+-		};
+-	};
+-
+-Example of STMFX GPIO consumers:
+-
+-	joystick {
+-		compatible = "gpio-keys";
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		pinctrl-0 = <&joystick_pins>;
+-		pinctrl-names = "default";
+-		button-0 {
+-			label = "JoySel";
+-			linux,code = <KEY_ENTER>;
+-			interrupt-parent = <&stmfx_pinctrl>;
+-			interrupts = <0 IRQ_TYPE_EDGE_RISING>;
+-		};
+-		button-1 {
+-			label = "JoyDown";
+-			linux,code = <KEY_DOWN>;
+-			interrupt-parent = <&stmfx_pinctrl>;
+-			interrupts = <1 IRQ_TYPE_EDGE_RISING>;
+-		};
+-		button-2 {
+-			label = "JoyLeft";
+-			linux,code = <KEY_LEFT>;
+-			interrupt-parent = <&stmfx_pinctrl>;
+-			interrupts = <2 IRQ_TYPE_EDGE_RISING>;
+-		};
+-		button-3 {
+-			label = "JoyRight";
+-			linux,code = <KEY_RIGHT>;
+-			interrupt-parent = <&stmfx_pinctrl>;
+-			interrupts = <3 IRQ_TYPE_EDGE_RISING>;
+-		};
+-		button-4 {
+-			label = "JoyUp";
+-			linux,code = <KEY_UP>;
+-			interrupt-parent = <&stmfx_pinctrl>;
+-			interrupts = <4 IRQ_TYPE_EDGE_RISING>;
+-		};
+-	};
+-
+-	leds {
+-		compatible = "gpio-leds";
+-		orange {
+-			gpios = <&stmfx_pinctrl 17 1>;
+-		};
+-
+-		blue {
+-			gpios = <&stmfx_pinctrl 19 1>;
+-		};
+-	}
+-- 
+2.15.0
+
