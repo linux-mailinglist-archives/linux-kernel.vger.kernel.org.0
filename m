@@ -2,105 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D529B1667C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 20:58:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1B9D16679A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 20:53:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729036AbgBTT6p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 14:58:45 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:33792 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728556AbgBTT6p (ORCPT
+        id S1728964AbgBTTxz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 14:53:55 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:23065 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728556AbgBTTxz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 14:58:45 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01KJw089091321;
-        Thu, 20 Feb 2020 13:58:00 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1582228680;
-        bh=QY2p35jnOX+tGMplVPO4s4YGc5syAWgGNS1/5A3DBp4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=DTsCqBR8FtIjnpDh/l+lhfbk3Uaf2ZuGIQnnwepawTxhnlRLQq/vwMf2gSXIm+su6
-         DcCUfK5eEA5uhGD2WpPt4Sz/JAxEGpqiSkTm/VMQlFlVtPpuoSBlp9yw7s12F8QlWh
-         NNtp49MsOZXo3kpznuKug7aTIpSh+ypPWf5h1ypA=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01KJw0NP012754
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 20 Feb 2020 13:58:00 -0600
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 20
- Feb 2020 13:58:00 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 20 Feb 2020 13:58:00 -0600
-Received: from [128.247.59.107] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01KJw0q5053040;
-        Thu, 20 Feb 2020 13:58:00 -0600
-Subject: Re: [PATCH] ASoC: tas2562: Add support for digital volume control
-To:     Mark Brown <broonie@kernel.org>
-CC:     <lgirdwood@gmail.com>, <perex@perex.cz>, <tiwai@suse.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-References: <20200220172721.10547-1-dmurphy@ti.com>
- <20200220184507.GF3926@sirena.org.uk>
- <de0e8a5b-8c2a-ee04-856f-f0d678a3c66b@ti.com>
- <20200220191803.GH3926@sirena.org.uk>
- <6f3ff810-5e75-cb33-10d6-198a7c5cd202@ti.com>
- <20200220194048.GI3926@sirena.org.uk>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <7e08798f-ec91-1eb2-c082-cfbccc6d6202@ti.com>
-Date:   Thu, 20 Feb 2020 13:52:55 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Thu, 20 Feb 2020 14:53:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582228433;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=aCcTytOP234Bpez2/x/ttANB+L1zPQGu6RuaOR8/cjA=;
+        b=R/+g2KqP5hVOiDlEPrdthY0zZipHrIiOT8zX8UaWWGwk/yQPN2c2kTpX0TSJd+PTAPvsS3
+        3ObNYlXXOxyIDbwzKMN3e1UN8fZw+HjwN3RIms5njE0snpq2U2yuVtF3AKsmWADPu6mIBl
+        JI/Vo925y0OwOBBM5hToeYbuC94Q+Xg=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-460-eixVDyz7OtGZCB7eiNrKyQ-1; Thu, 20 Feb 2020 14:53:51 -0500
+X-MC-Unique: eixVDyz7OtGZCB7eiNrKyQ-1
+Received: by mail-qt1-f197.google.com with SMTP id o18so3379345qtt.19
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 11:53:51 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=aCcTytOP234Bpez2/x/ttANB+L1zPQGu6RuaOR8/cjA=;
+        b=SmCOYl6Wa8Y7aBhc2OOcHlVHvrzWILV8qmM4MKPzgAWcJ3Q9nW8wqnw92aiVEhqc61
+         dr+/u1ug887K1KNuOMvMSr89UWylFIUzVIxAnvfLm5hw3Vesx5CX5LSnUC0jsqB8OfPb
+         yZjJh0YqXiZa6PM0UV7ok6sc+BumO/I/q4fogB+YIUvmHk69M5dRlfHEM9Djjj8xlQRG
+         Shk3QdQAx4q36X998n0oO6U8YIunuqV7cFxuFCXX5revNl5O4YDJpF+sM6nq0/SthLI8
+         PPk3R+tiWDPfulVmYYABqE0/6QV0KPxPWRMx8CPqs+XYrvNp+cVj9QCwZrGu168HBhyD
+         1brQ==
+X-Gm-Message-State: APjAAAUeVhwq2mds2Fm5loxWgjdGJiyHWxIYOcc7ylRunIHPPRwqUIDl
+        SxeV/ws8PgG56WTEBBB0gLcemNeDMInsnGaPBHs2jYVwrWN9wtc7rJzTg/Ycpw3AtffaharEyLk
+        6u0gmOwDcGmeRqaFtwEyoafU5
+X-Received: by 2002:a0c:eacb:: with SMTP id y11mr27802170qvp.68.1582228431160;
+        Thu, 20 Feb 2020 11:53:51 -0800 (PST)
+X-Google-Smtp-Source: APXvYqz93atG3z/lnFBir34YOlOdzPMcROHMRiL5PAnpOXXRYB9KUMpanhKW+UUPSuYBC/9MetdmXg==
+X-Received: by 2002:a0c:eacb:: with SMTP id y11mr27802131qvp.68.1582228430870;
+        Thu, 20 Feb 2020 11:53:50 -0800 (PST)
+Received: from xz-x1.redhat.com ([104.156.64.75])
+        by smtp.gmail.com with ESMTPSA id r37sm293401qtj.44.2020.02.20.11.53.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2020 11:53:50 -0800 (PST)
+From:   Peter Xu <peterx@redhat.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     Peter Xu <peterx@redhat.com>, Martin Cracauer <cracauer@cons.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Brian Geffon <bgeffon@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        David Hildenbrand <david@redhat.com>,
+        Bobby Powers <bobbypowers@gmail.com>,
+        Mel Gorman <mgorman@suse.de>
+Subject: [PATCH RESEND v6 12/16] mm: Introduce FAULT_FLAG_INTERRUPTIBLE
+Date:   Thu, 20 Feb 2020 14:53:48 -0500
+Message-Id: <20200220195348.16302-1-peterx@redhat.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200220155353.8676-1-peterx@redhat.com>
+References: 
 MIME-Version: 1.0
-In-Reply-To: <20200220194048.GI3926@sirena.org.uk>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mark
+handle_userfaultfd() is currently the only one place in the kernel
+page fault procedures that can respond to non-fatal userspace signals.
+It was trying to detect such an allowance by checking against USER &
+KILLABLE flags, which was "un-official".
 
-On 2/20/20 1:40 PM, Mark Brown wrote:
-> On Thu, Feb 20, 2020 at 01:22:34PM -0600, Dan Murphy wrote:
->> On 2/20/20 1:18 PM, Mark Brown wrote:
->>> decisions causing changes in the driver.  The system may have an
->>> external amplifier they prefer to use for hardware volume control, may
->>> prefer to do entirely soft volume control in their sound server or
->>> something like that.
->> But this is an amplifier.  Not sure why the system designer would design
->> cascading amplifiers.
->> And if that was the case wouldn't you want the output to be low so you don't
->> overdrive the ext amplifier front end?
-> The point is that we don't know what people are doing and should try to
-> keep the kernel out of policy decisions unless there's something that's
-> clearly just unconditionaly right for all systems.  It's a lot easier to
-> just have a clear rule that we defer to the wisdom of the silicon vendor
-> than try to get into defaults, and it's a lot easier to just do this as
-> consistently as we can rather than debating individual configuration
-> changes.
->
-I completely agree on keeping policy decisions out of the kernel.
+In this patch, we introduced a new flag (FAULT_FLAG_INTERRUPTIBLE) to
+show that the fault handler allows the fault procedure to respond even
+to non-fatal signals.  Meanwhile, add this new flag to the default
+fault flags so that all the page fault handlers can benefit from the
+new flag.  With that, replacing the userfault check to this one.
 
->> I was considering safety in that the device is on at full blast (not sure
->> why the HW is defaulted that way but it is).
-> I bet there's been issues with people turning things on and not
-> realising they need register writes to hear anything, and the volume
-> control here is a bit complex as well.
-Ack
->
->> But if volume is adjusted prior to playback then this is not an issue.  But
->> if volume is not adjusted then it plays full blast.
-> Wouldn't be the first time.  See all the dual purpose headphone/line
-> outputs that people build, sensible defaults for headphones and line
-> outputs are rather different.
+Since the line is getting even longer, clean up the fault flags a bit
+too to ease TTY users.
 
-OK.  I will remove them. Will do v3 tomorrow as v2 rearranged the values 
-properly.  V3 will remove them.
+Although we've got a new flag and applied it, we shouldn't have any
+functional change with this patch so far.
 
-Dan
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Peter Xu <peterx@redhat.com>
+---
+ fs/userfaultfd.c   |  4 +---
+ include/linux/mm.h | 39 ++++++++++++++++++++++++++++-----------
+ 2 files changed, 29 insertions(+), 14 deletions(-)
+
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index 888272621f38..c076d3295958 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -462,9 +462,7 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
+ 	uwq.ctx = ctx;
+ 	uwq.waken = false;
+ 
+-	return_to_userland =
+-		(vmf->flags & (FAULT_FLAG_USER|FAULT_FLAG_KILLABLE)) ==
+-		(FAULT_FLAG_USER|FAULT_FLAG_KILLABLE);
++	return_to_userland = vmf->flags & FAULT_FLAG_INTERRUPTIBLE;
+ 	blocking_state = return_to_userland ? TASK_INTERRUPTIBLE :
+ 			 TASK_KILLABLE;
+ 
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 08ca35d3c341..ff653f9136dd 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -378,22 +378,38 @@ extern unsigned int kobjsize(const void *objp);
+  */
+ extern pgprot_t protection_map[16];
+ 
+-#define FAULT_FLAG_WRITE	0x01	/* Fault was a write access */
+-#define FAULT_FLAG_MKWRITE	0x02	/* Fault was mkwrite of existing pte */
+-#define FAULT_FLAG_ALLOW_RETRY	0x04	/* Retry fault if blocking */
+-#define FAULT_FLAG_RETRY_NOWAIT	0x08	/* Don't drop mmap_sem and wait when retrying */
+-#define FAULT_FLAG_KILLABLE	0x10	/* The fault task is in SIGKILL killable region */
+-#define FAULT_FLAG_TRIED	0x20	/* Second try */
+-#define FAULT_FLAG_USER		0x40	/* The fault originated in userspace */
+-#define FAULT_FLAG_REMOTE	0x80	/* faulting for non current tsk/mm */
+-#define FAULT_FLAG_INSTRUCTION  0x100	/* The fault was during an instruction fetch */
++/**
++ * Fault flag definitions.
++ *
++ * @FAULT_FLAG_WRITE: Fault was a write fault.
++ * @FAULT_FLAG_MKWRITE: Fault was mkwrite of existing PTE.
++ * @FAULT_FLAG_ALLOW_RETRY: Allow to retry the fault if blocked.
++ * @FAULT_FLAG_RETRY_NOWAIT: Don't drop mmap_sem and wait when retrying.
++ * @FAULT_FLAG_KILLABLE: The fault task is in SIGKILL killable region.
++ * @FAULT_FLAG_TRIED: The fault has been tried once.
++ * @FAULT_FLAG_USER: The fault originated in userspace.
++ * @FAULT_FLAG_REMOTE: The fault is not for current task/mm.
++ * @FAULT_FLAG_INSTRUCTION: The fault was during an instruction fetch.
++ * @FAULT_FLAG_INTERRUPTIBLE: The fault can be interrupted by non-fatal signals.
++ */
++#define FAULT_FLAG_WRITE			0x01
++#define FAULT_FLAG_MKWRITE			0x02
++#define FAULT_FLAG_ALLOW_RETRY			0x04
++#define FAULT_FLAG_RETRY_NOWAIT			0x08
++#define FAULT_FLAG_KILLABLE			0x10
++#define FAULT_FLAG_TRIED			0x20
++#define FAULT_FLAG_USER				0x40
++#define FAULT_FLAG_REMOTE			0x80
++#define FAULT_FLAG_INSTRUCTION  		0x100
++#define FAULT_FLAG_INTERRUPTIBLE		0x200
+ 
+ /*
+  * The default fault flags that should be used by most of the
+  * arch-specific page fault handlers.
+  */
+ #define FAULT_FLAG_DEFAULT  (FAULT_FLAG_ALLOW_RETRY | \
+-			     FAULT_FLAG_KILLABLE)
++			     FAULT_FLAG_KILLABLE | \
++			     FAULT_FLAG_INTERRUPTIBLE)
+ 
+ #define FAULT_FLAG_TRACE \
+ 	{ FAULT_FLAG_WRITE,		"WRITE" }, \
+@@ -404,7 +420,8 @@ extern pgprot_t protection_map[16];
+ 	{ FAULT_FLAG_TRIED,		"TRIED" }, \
+ 	{ FAULT_FLAG_USER,		"USER" }, \
+ 	{ FAULT_FLAG_REMOTE,		"REMOTE" }, \
+-	{ FAULT_FLAG_INSTRUCTION,	"INSTRUCTION" }
++	{ FAULT_FLAG_INSTRUCTION,	"INSTRUCTION" }, \
++	{ FAULT_FLAG_INTERRUPTIBLE,	"INTERRUPTIBLE" }
+ 
+ /*
+  * vm_fault is filled by the the pagefault handler and passed to the vma's
+-- 
+2.24.1
 
