@@ -2,106 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7057E16698E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 22:07:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F6201669A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 22:13:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729130AbgBTVHX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 16:07:23 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:56561 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727889AbgBTVHW (ORCPT
+        id S1729167AbgBTVNx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 16:13:53 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:35710 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726670AbgBTVNw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 16:07:22 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1j4t2W-000495-Ch; Thu, 20 Feb 2020 22:07:20 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1j4t2V-0002Rs-0N; Thu, 20 Feb 2020 22:07:19 +0100
-Date:   Thu, 20 Feb 2020 22:07:18 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        linux-kernel@vger.kernel.org,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>,
-        Scott Branden <sbranden@broadcom.com>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Ray Jui <rjui@broadcom.com>,
-        "maintainer:BROADCOM BCM281XX/BCM11XXX/BCM216XX ARM ARCHITE..." 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>
-Subject: Re: [PATCH] pwm: bcm2835: Dynamically allocate base
-Message-ID: <20200220210718.4vrn6u2c2remeuhm@pengutronix.de>
-References: <20200203213536.32226-1-f.fainelli@gmail.com>
- <08e2b640f0a7713d905295fc4f75df49617be6c1.camel@suse.de>
- <3b22decc-9ebd-3522-4fd7-e5721c8b25b2@gmail.com>
+        Thu, 20 Feb 2020 16:13:52 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01KLD6wG084761;
+        Thu, 20 Feb 2020 15:13:06 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582233186;
+        bh=ynCjxXweptI6/mZZDVJwkVnEDhsgrD6T/mCvCUNWJEI=;
+        h=From:To:CC:Subject:Date;
+        b=mgkZcrZnSdw15tSCFI2hv0A52+9p4TKcbkP6Rsu5oa8ML5dKRLtfCwnuhvyhCAIfg
+         3xppUlZjXIO78bAwEPsp5tXTsZAkxxW2yCmjGe5qz4Jn3cQGKdV9sips+ClT6yod84
+         r6/WmZ45wB70FwBSVJrdBsS9UZOfrOxgPsIWQn0c=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01KLD61b002433
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 20 Feb 2020 15:13:06 -0600
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 20
+ Feb 2020 15:13:05 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 20 Feb 2020 15:13:05 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01KLD5eP061531;
+        Thu, 20 Feb 2020 15:13:05 -0600
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH for-next v3 0/2] Introduce the TLV320ADCx140 codec family
+Date:   Thu, 20 Feb 2020 15:07:57 -0600
+Message-ID: <20200220210759.31466-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3b22decc-9ebd-3522-4fd7-e5721c8b25b2@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Dropping Bart Tanghe from recipents as the address bounces]
+Hello
 
-Hello Thierry,
+Introducing the Texas Instruments TLV320ADCx140 quad channel audio ADC.
+This device supports 4 analog inputs, 8 digital inputs or a combination of
+analog and digital microphones.
 
-On Thu, Feb 20, 2020 at 11:14:00AM -0800, Florian Fainelli wrote:
-> On 2/4/20 1:17 AM, Nicolas Saenz Julienne wrote:
-> > On Mon, 2020-02-03 at 13:35 -0800, Florian Fainelli wrote:
-> >> The newer 2711 and 7211 chips have two PWM controllers and failure to
-> >> dynamically allocate the PWM base would prevent the second PWM
-> >> controller instance being probed for succeeding with an -EEXIST error
-> >> from alloc_pwms().
-> >>
-> >> Fixes: e5a06dc5ac1f ("pwm: Add BCM2835 PWM driver")
-> >> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> >> ---
-> > 
-> > Reviewed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> 
-> Thierry, is there any chance we can get this applied for an upcoming
-> 5.6-rcX? Thank you!
+TLV320ADC3140 - http://www.ti.com/lit/gpn/tlv320adc3140
+TLV320ADC5140 - http://www.ti.com/lit/gpn/tlv320adc5140
+TLV320ADC6140 - http://www.ti.com/lit/gpn/tlv320adc6140
 
-to assist you with patch sorting:
 
-# revisions < v6 of "Convert period and duty cycle to u64"
-pwclient -s Superseded 1237020 1237019 1229049 1229050 1222396
+Dan Murphy (2):
+  dt-bindings: sound: Add TLV320ADCx140 dt bindings
+  ASoC: tlv320adcx140: Add the tlv320adcx140 codec driver family
 
-# most of "Add support for Azoteq IQS620A/621/622/624/625" v5 isn't for pwm
-pwclient -s "Not Applicable" 1238908 1238907 1238906 1238904 1238903 1238901
-
-# most of "Add support for Azoteq IQS620A/621/622/624/625" v4 isn't for pwm
-pwclient -s "Not Applicable" 1224598 1224597 1224596 1224594 1224593 1224592
-pwclient -s "Superseeded" 1224595
-
-# "backlight: pwm_bl: Use gpiod_get_value_cansleep() to get initial
-# state" already applied by Lee Jones
-pwclient -s "Not Applicable" 1031586
-
-# Problem resolved by Michal Vokáč
-pwclient -s "Rejected"  1059267
-
-(Not sure "Rejected" is the right state.)
-
-Best regards
-Uwe
+ .../bindings/sound/tlv320adcx140.yaml         |  83 ++
+ sound/soc/codecs/Kconfig                      |   9 +
+ sound/soc/codecs/Makefile                     |   2 +
+ sound/soc/codecs/tlv320adcx140.c              | 849 ++++++++++++++++++
+ sound/soc/codecs/tlv320adcx140.h              | 130 +++
+ 5 files changed, 1073 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/tlv320adcx140.yaml
+ create mode 100644 sound/soc/codecs/tlv320adcx140.c
+ create mode 100644 sound/soc/codecs/tlv320adcx140.h
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+2.25.0
+
