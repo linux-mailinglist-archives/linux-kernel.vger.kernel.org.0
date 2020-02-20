@@ -2,95 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4659D165A08
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 10:21:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8036165A1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 10:26:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726989AbgBTJVo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 04:21:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53534 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726501AbgBTJVn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 04:21:43 -0500
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F44B2467B
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 09:21:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582190503;
-        bh=o7emLQ8G4ybHBADSYTkl7UcF8plupI0v+fzIXCTR3s0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=K3suDMIOMPfg0PyCMSwGTsI6vmhxg3dG7cTiQPqDNHyGwHzOTvd6OceOzoQIXrQ+t
-         hhIm7PK1PLr5nFZLfm2vI63EGcUi4bkeMibxf0jVsTd+eCBXwAc1QexlWya+zkNvRf
-         ThtTaAf5zvF+7DEEaOE99l+LCdIGsTjhOaPpe7vk=
-Received: by mail-wm1-f53.google.com with SMTP id a5so1186997wmb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 01:21:43 -0800 (PST)
-X-Gm-Message-State: APjAAAVO9SYLAFtHOcMve/b2eTgiLd74lm7IREfJkgUvslO0LVxhalaZ
-        5SET5lBG84eVVpLyddyvifs7hqF9gN3CaC2Tod8FSQ==
-X-Google-Smtp-Source: APXvYqylKi+HKLokR0+lqgERlKcgEjSrkJqeR5Xg1UtM54odKXFIDNYSdZxM+tDoCulLawQ2Z1FxlrES8lM3xvPTQGI=
-X-Received: by 2002:a1c:bc46:: with SMTP id m67mr3245339wmf.40.1582190501386;
- Thu, 20 Feb 2020 01:21:41 -0800 (PST)
+        id S1726839AbgBTJ0T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 04:26:19 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:41648 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726637AbgBTJ0T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 04:26:19 -0500
+Received: by mail-lf1-f68.google.com with SMTP id m30so2496614lfp.8;
+        Thu, 20 Feb 2020 01:26:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jWL4OlWg/ImsZ63WRta4BWWVgqBXfj6sTueyX2l3ehw=;
+        b=FRjY7eWoShhLInLVqivCbDZmz3Tzaed2/S4StccntngX7sjwsp+gpyCqhLFxFaOSOO
+         ujSEGd9NgGayusZyXzghE2ftdkD7kZQPajX4sB6sxR0ajJxcJW9AEjSEtBg/7Z8J+y+U
+         Q7cRJRA1L7NdgmBMdEXVSJtfRJzdjNu5o7NBFaOzUuEActSwDZHIlikxvHOmN2PlnWhe
+         ADvc9wsv1SIHgb3pfcSx9Cr8Q3de6uKcYR5H8hDTCx3mfYdEGU6Obf9NIKJ990Ucw3zC
+         wcU+sCbS73CcMQx8hAkJ5U0bNWT7lqIX6Gm6vjDS2XtFk07wa2ZmDzhQNUSNMjZlnMjV
+         92YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jWL4OlWg/ImsZ63WRta4BWWVgqBXfj6sTueyX2l3ehw=;
+        b=s6SHG9KShoeA60Y/HkS7NIQ5bM8w0pGNN/AZdya2zaUSya3NmnXHoJAsSsa1AqiZfe
+         6hpElPRlNuup5ptFQUJC/DNpcxRb1wItMLjlA0JeHR1KHUxgaYajRbRQn+Myz0U/YCkB
+         68J0RHMJtTwcffIb8CkawWOVEAtE/ExauZ6W/NBZxkCG/xiXOU+8l2omy1CVr9phhz+V
+         xM3M83/LSOmg50wa8RjBXazgvaiIXCt6UAb9xRQ+6aJAHoagKfJT8Xq7BBXWGD9r0HKj
+         /PCroNAU3ZOQgIKLUwtqWsMbSH2KOHuY41ogJavmoZMtWsa7t78IX+QK6Mgpbf6lhr4C
+         jKSg==
+X-Gm-Message-State: APjAAAXGyZbO0MvCUQ/0U17rTurZcEPAt1cF4LKMVsS8ULIhUTop5Plp
+        wsI7c/J/wXnGZGuXIWV93S9NYBzAaoQfC05Ps83LKQ==
+X-Google-Smtp-Source: APXvYqy0eAlphZlkrP7jg0My9wepzrhcr9QemESkO8toScsiMUqiVlVjsI/0k8VPy9q2ShDz5AEXeGmqrYrpWAGcG6k=
+X-Received: by 2002:ac2:4199:: with SMTP id z25mr16242179lfh.26.1582190775281;
+ Thu, 20 Feb 2020 01:26:15 -0800 (PST)
 MIME-Version: 1.0
-References: <1582289580-24045-1-git-send-email-jingxiangfeng@huawei.com>
-In-Reply-To: <1582289580-24045-1-git-send-email-jingxiangfeng@huawei.com>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Thu, 20 Feb 2020 10:21:29 +0100
-X-Gmail-Original-Message-ID: <CAKv+Gu930691BaDLuoVOU_gz0V8MtfWbfSTKcYuHxDvLz5hAiA@mail.gmail.com>
-Message-ID: <CAKv+Gu930691BaDLuoVOU_gz0V8MtfWbfSTKcYuHxDvLz5hAiA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] arm64: Support to find mirrored memory ranges
-To:     Jing Xiangfeng <jingxiangfeng@huawei.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+References: <20200220071140.14080-1-masahiroy@kernel.org> <20200220071140.14080-2-masahiroy@kernel.org>
+In-Reply-To: <20200220071140.14080-2-masahiroy@kernel.org>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Thu, 20 Feb 2020 10:26:04 +0100
+Message-ID: <CANiq72nWs3c2MWGTsG=zvDQ21B_=_Yaw3AhRhHDBAr2xFJwF_g@mail.gmail.com>
+Subject: Re: [PATCH 2/2] compiler: Remove CONFIG_OPTIMIZE_INLINING entirely
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        sparclinux@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        platform-driver-x86@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Feb 2020 at 04:43, Jing Xiangfeng <jingxiangfeng@huawei.com> wrote:
+On Thu, Feb 20, 2020 at 8:12 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
 >
-> This series enable finding mirrored memory ranges
-> functionality on arm64 platform. This feature has been
-> implemented on the x86 platform, so we move some
-> functions from x86.
+> Commit ac7c3e4ff401 ("compiler: enable CONFIG_OPTIMIZE_INLINING
+> forcibly") made this always-on option. We released v5.4 and v5.5
+> including that commit.
 >
+> Remove the CONFIG option and clean up the code now.
 
-Hello Jing Xiangfeng,
+Yes, please!
 
-Could you explain your use case a bit better? Usually, the firmware is
-a better place to make modifications to the EFI memory map.
+Reviewed-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 
-The reason I am asking is that currently, on ARM and arm64, we never
-make *any* changes to the firmware provided tables (EFI system table,
-EFI memory map, DT/ACPI/SMBIOS tables etc), in order to ensure that
-kexec is idempotent, i.e., it will always see the exact same state as
-far as the firmware is concerned. This is a bit different from x86,
-where the memory map is already modified for various other reasons, so
-using it for fake memory regions is not such a big deal.
-
-Do you see a use case for this in production?
-
-> Jing Xiangfeng (2):
->   efi: allow EFI_FAKE_MEMMAP on arm64 platform
->   arm64/efi: support to find mirrored memory ranges
->
->  arch/x86/include/asm/efi.h      |  5 -----
->  arch/x86/platform/efi/efi.c     | 39 ---------------------------------------
->  drivers/firmware/efi/Kconfig    |  2 +-
->  drivers/firmware/efi/arm-init.c |  2 ++
->  drivers/firmware/efi/efi.c      | 23 +++++++++++++++++++++++
->  drivers/firmware/efi/memmap.c   | 16 ++++++++++++++++
->  include/linux/efi.h             |  5 +++++
->  7 files changed, 47 insertions(+), 45 deletions(-)
->
-> --
-> 1.8.3.1
->
+Cheers,
+Miguel
