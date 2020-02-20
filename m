@@ -2,150 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9694D1654C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 03:01:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C16E1654D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 03:12:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbgBTCBD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 21:01:03 -0500
-Received: from mail5.windriver.com ([192.103.53.11]:36858 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727370AbgBTCBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 21:01:03 -0500
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id 01K1x2kD023823
-        (version=TLSv1 cipher=AES256-SHA bits=256 verify=FAIL);
-        Wed, 19 Feb 2020 17:59:13 -0800
-Received: from pek-lpg-core2.corp.ad.wrs.com (128.224.153.41) by
- ALA-HCA.corp.ad.wrs.com (147.11.189.40) with Microsoft SMTP Server id
- 14.3.468.0; Wed, 19 Feb 2020 17:58:52 -0800
-From:   <zhe.he@windriver.com>
-To:     <rostedt@goodmis.org>, <acme@redhat.com>, <tstoyanov@vmware.com>,
-        <hewenliang4@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <zhe.he@windriver.com>
-Subject: [PATCH v3] tools lib traceevent: Take care of return value of asprintf
-Date:   Thu, 20 Feb 2020 09:58:50 +0800
-Message-ID: <1582163930-233692-1-git-send-email-zhe.he@windriver.com>
+        id S1727648AbgBTCME (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 21:12:04 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:22203 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727125AbgBTCMD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 21:12:03 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1582164723; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=krljadlfWUlVstbceTJH6Iska/S9qoO8kda4t3UJPeQ=; b=J3k/adXH/sBhvIiVkbrTS64wFLfrs7G33j2fUEKqS9ndpG2BR0Q/qzgcpBzF3AOWB4X0X0qd
+ p1/0DPcqHKq5jodXO0n+2BkiCObSbpmkK9OM3vgJChMx0L4Ip7A48+CwCdn3KUtNOaRPcmIr
+ fHVb9VGdw1drvECuHKFdM0QPkS8=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e4deaf1.7f4a24e26ed8-smtp-out-n03;
+ Thu, 20 Feb 2020 02:12:01 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 8A08BC4479C; Thu, 20 Feb 2020 02:12:01 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from sidgup-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sidgup)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B788AC43383;
+        Thu, 20 Feb 2020 02:12:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B788AC43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sidgup@codeaurora.org
+From:   Siddharth Gupta <sidgup@codeaurora.org>
+To:     ohad@wizery.com, bjorn.andersson@linaro.org
+Cc:     Siddharth Gupta <sidgup@codeaurora.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org,
+        psodagud@codeaurora.org, rishabhb@codeaurora.org
+Subject: [PATCH 0/2] remoteproc: core: Add core functionality to the remoteproc framework
+Date:   Wed, 19 Feb 2020 18:11:51 -0800
+Message-Id: <1582164713-6413-1-git-send-email-sidgup@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: He Zhe <zhe.he@windriver.com>
+This patch series adds core functionality to the remoteproc framework.
 
-According to the API, if memory allocation wasn't possible, or some other
-error occurs, asprintf will return -1, and the contents of strp below are
-undefined.
+Patch 1 adds a new API to the framework which allows kernel clients to update
+        the firmware name for the specified remoteproc.
+Patch 2 intends to improve the user experience by preventing the system from
+        going to sleep while the remoteproc is recovering from a crash.
 
-int asprintf(char **strp, const char *fmt, ...);
+Siddharth Gupta (2):
+  remoteproc: core: Add an API for booting with firmware name
+  remoteproc: core: Prevent sleep when rproc crashes
 
-This patch takes care of return value of asprintf to make it less error
-prone and prevent the following build warning.
+ drivers/remoteproc/remoteproc_core.c | 38 ++++++++++++++++++++++++++++++++++++
+ include/linux/remoteproc.h           |  1 +
+ 2 files changed, 39 insertions(+)
 
-ignoring return value of ‘asprintf’, declared with attribute warn_unused_result [-Wunused-result]
-
-Signed-off-by: He Zhe <zhe.he@windriver.com>
----
-v2: directly check the return value without saving to a variable
-v3: as asked, not remove those that already save the return value
-
- tools/lib/traceevent/parse-filter.c | 29 +++++++++++++++++++----------
- 1 file changed, 19 insertions(+), 10 deletions(-)
-
-diff --git a/tools/lib/traceevent/parse-filter.c b/tools/lib/traceevent/parse-filter.c
-index 20eed71..c271aee 100644
---- a/tools/lib/traceevent/parse-filter.c
-+++ b/tools/lib/traceevent/parse-filter.c
-@@ -1958,7 +1958,8 @@ static char *op_to_str(struct tep_event_filter *filter, struct tep_filter_arg *a
- 				default:
- 					break;
- 				}
--				asprintf(&str, val ? "TRUE" : "FALSE");
-+				if (asprintf(&str, val ? "TRUE" : "FALSE") < 0)
-+					str = NULL;
- 				break;
- 			}
- 		}
-@@ -1976,7 +1977,8 @@ static char *op_to_str(struct tep_event_filter *filter, struct tep_filter_arg *a
- 			break;
- 		}
- 
--		asprintf(&str, "(%s) %s (%s)", left, op, right);
-+		if (asprintf(&str, "(%s) %s (%s)", left, op, right) < 0)
-+			str = NULL;
- 		break;
- 
- 	case TEP_FILTER_OP_NOT:
-@@ -1992,10 +1994,12 @@ static char *op_to_str(struct tep_event_filter *filter, struct tep_filter_arg *a
- 			right_val = 0;
- 		if (right_val >= 0) {
- 			/* just return the opposite */
--			asprintf(&str, right_val ? "FALSE" : "TRUE");
-+			if (asprintf(&str, right_val ? "FALSE" : "TRUE") < 0)
-+				str = NULL;
- 			break;
- 		}
--		asprintf(&str, "%s(%s)", op, right);
-+		if (asprintf(&str, "%s(%s)", op, right) < 0)
-+			str = NULL;
- 		break;
- 
- 	default:
-@@ -2011,7 +2015,8 @@ static char *val_to_str(struct tep_event_filter *filter, struct tep_filter_arg *
- {
- 	char *str = NULL;
- 
--	asprintf(&str, "%lld", arg->value.val);
-+	if (asprintf(&str, "%lld", arg->value.val) < 0)
-+		str = NULL;
- 
- 	return str;
- }
-@@ -2069,7 +2074,8 @@ static char *exp_to_str(struct tep_event_filter *filter, struct tep_filter_arg *
- 		break;
- 	}
- 
--	asprintf(&str, "%s %s %s", lstr, op, rstr);
-+	if (asprintf(&str, "%s %s %s", lstr, op, rstr) < 0)
-+		str = NULL;
- out:
- 	free(lstr);
- 	free(rstr);
-@@ -2113,7 +2119,8 @@ static char *num_to_str(struct tep_event_filter *filter, struct tep_filter_arg *
- 		if (!op)
- 			op = "<=";
- 
--		asprintf(&str, "%s %s %s", lstr, op, rstr);
-+		if (asprintf(&str, "%s %s %s", lstr, op, rstr) < 0)
-+			str = NULL;
- 		break;
- 
- 	default:
-@@ -2148,8 +2155,9 @@ static char *str_to_str(struct tep_event_filter *filter, struct tep_filter_arg *
- 		if (!op)
- 			op = "!~";
- 
--		asprintf(&str, "%s %s \"%s\"",
--			 arg->str.field->name, op, arg->str.val);
-+		if (asprintf(&str, "%s %s \"%s\"",
-+			 arg->str.field->name, op, arg->str.val) < 0)
-+			str = NULL;
- 		break;
- 
- 	default:
-@@ -2165,7 +2173,8 @@ static char *arg_to_str(struct tep_event_filter *filter, struct tep_filter_arg *
- 
- 	switch (arg->type) {
- 	case TEP_FILTER_ARG_BOOLEAN:
--		asprintf(&str, arg->boolean.value ? "TRUE" : "FALSE");
-+		if (asprintf(&str, arg->boolean.value ? "TRUE" : "FALSE") < 0)
-+			str = NULL;
- 		return str;
- 
- 	case TEP_FILTER_ARG_OP:
 -- 
-2.7.4
-
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
