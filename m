@@ -2,180 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9E6F1668C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 21:46:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA7FC1668C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 21:46:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729277AbgBTUoo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 15:44:44 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33518 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729231AbgBTUom (ORCPT
+        id S1729303AbgBTUpA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 15:45:00 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51667 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728618AbgBTUo7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 15:44:42 -0500
-Received: by mail-lj1-f196.google.com with SMTP id y6so5699398lji.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 12:44:38 -0800 (PST)
+        Thu, 20 Feb 2020 15:44:59 -0500
+Received: by mail-wm1-f67.google.com with SMTP id t23so1836wmi.1;
+        Thu, 20 Feb 2020 12:44:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=IWKv+CThwOSAcFDicDDkW6IxDXx0lTgPGsxbr+yUlKk=;
-        b=TVQhrreHbf17hU30aWa/y+NBiuV9Q4d2JKpj0/fRjks4Rycw9ZM9syDOBQC+MZvyjA
-         GasB9n67jaYQ3ymLvKx78uDjNdKsqdKks8gCJc5rsStSk4Tc1VqJyT56JCrcYMSkUwnC
-         iQX+bBtvhysn0NRSvlgI4JTli8yYHDOizn0T/HTIs7sCCv0G0NQZn1Rm3bwNL9nZDyz+
-         a38lYxDmYOjSy3RuKpEiyESSCw3NCJZ7Dsi2GNBHrSBk6L2mtmjw8oYsNufrs8PaYam2
-         h2Z/HB9mljDnv2RM/IQdLQCSth1u6PEI5CcWGoWBgipkIP72A+Edrc2wSIAsScsw+O/u
-         ogvw==
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=n76MR2hfIZsf6g57SD/GC8wwOFNZ4gbM6KJt3yOpBLs=;
+        b=RZe84KTgVDumaVTivMwcyl7kEwDt57yX76+EH+ZLQWwRzv5k62azpHW8GqTx8mxI5J
+         6d86J/N/tD47TrjzY+73UOYpQtyxsiHyf/yJ2PAbvRbUgF4WGlHmAwxGRofiMzBIfWmu
+         DajDDq/fyp1k7BZfgCAdwxbHMfLZDowqN2cq23QtzZkTbeMw66pO0GdihywqH6QEC4LI
+         W/C3nTVpiEI4DWCMfTY8/yGtanqaqmcWk9EqVf+SKkCo+CAiF39bmSCyuPXOucKkcvc6
+         9BqwCvhOH5psaYpONEy2grDTT/ygotPLzUdunW6SVTK8+dcLurn4nftvXiPC+pd1vuuM
+         yTqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=IWKv+CThwOSAcFDicDDkW6IxDXx0lTgPGsxbr+yUlKk=;
-        b=gEinwP0vzVCEMiDAOgZC/KnBR1qJLWwDqWzaidNTxp11zCaCUu1m4y95zYEnbHqOl6
-         eb25jKAxqxH80gXAeh0TmHI3j8cBp6rnKZzcruScoBVdGJOwMLZVGdAjzUrBcXhQPwsh
-         E6JGGCYC1J2fRqYXum0JjocIFMzFaaa1Nrd2KsnI2NcVJKKaQFzQKG80KRjd7UIVJgPQ
-         d0Md56Lzy6qYUk/JDUP1VjuzCfpXDmNXpuRsRFtFe6akYquf2kKw3dq33CH/XfSDV+u9
-         WR3QMxntrg1X9210uMpGOSolWebP3EF83dQ+rPxz5/ofdJnM+vULs80ySTzMaHV4Bqsz
-         AUIQ==
-X-Gm-Message-State: APjAAAWPCIwPdKI0l1V6EE523vOgqYsF0spMFgQTNGbbtJcCpbEaYGL9
-        0e/YlKBP6a6S7braQBTm8f1wcu0cKE0DSYnkzFwTRw==
-X-Google-Smtp-Source: APXvYqwooZIqlD5lJXNGmxCHDE66yRocSA5LDyvW8+AijnQERqL8v/ziSqz7UPiFAr1QEKFZ15WV464xfqknmXj3IPE=
-X-Received: by 2002:a05:651c:448:: with SMTP id g8mr20233966ljg.35.1582231477601;
- Thu, 20 Feb 2020 12:44:37 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=n76MR2hfIZsf6g57SD/GC8wwOFNZ4gbM6KJt3yOpBLs=;
+        b=c+798zZHLvXHnD3IlxbFlaXVbhJsptzJwNDGRTZ0wwWX5ss6AnqQipmd2aWJjsMSXO
+         LAOT3dHDz+b5KQbwSeGWkMZryI0xqjsDxlBr109xuJnf8lLjur6AkfaOCptB0p5HI2OL
+         D4DyEw4Hc9+8GfMRgjuiPlwxPi4iUVwFUShkqh9g9WqY1GIJaX0kDJ3kwIVAjtxb4wsq
+         mkeGcSWPAmtYHeLPsA09EUwCsgIZEUD+MyMZFN1azUF+vxG8sJ5rXFPSZQkR44AYTt+Z
+         en0yczjTxBUiN2DmS09zEOHQzjfFotmVIqZoJDQ1ljNesM+V4Y3/ga2MfSXKfV7g9R1h
+         FxOQ==
+X-Gm-Message-State: APjAAAW1lP9eQBAkcTB8tSgmNGcUSXqiWVaLSwSyYpUDM2BMWMlI1D6b
+        6SX4DOwRPh8zPFoUo1a8obw=
+X-Google-Smtp-Source: APXvYqxch3aaikANJA018nryWRbnsmAci2QcLCKH9CNx4CfFPp5Gcf4OfNOPQkVxewFpcm91NxbQvg==
+X-Received: by 2002:a7b:c204:: with SMTP id x4mr6326147wmi.20.1582231497318;
+        Thu, 20 Feb 2020 12:44:57 -0800 (PST)
+Received: from localhost.localdomain (p200300F1373A1900428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:f1:373a:1900:428d:5cff:feb9:9db8])
+        by smtp.googlemail.com with ESMTPSA id r6sm902544wrp.95.2020.02.20.12.44.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2020 12:44:56 -0800 (PST)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     linux-amlogic@lists.infradead.org, jbrunet@baylibre.com
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org,
+        mturquette@baylibre.com, narmstrong@baylibre.com,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH] clk: meson: meson8b: set audio output clock hierarchy
+Date:   Thu, 20 Feb 2020 21:44:33 +0100
+Message-Id: <20200220204433.67113-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <CABayD+ch3XBvJgJc+uoF6JSP0qZGq2zKHN-hTc0Vode-pi80KA@mail.gmail.com>
- <52450536-AF7B-4206-8F05-CF387A216031@amacapital.net> <3de6e962-3277-ddbd-8c78-eaf754973928@amd.com>
-In-Reply-To: <3de6e962-3277-ddbd-8c78-eaf754973928@amd.com>
-From:   Steve Rutherford <srutherford@google.com>
-Date:   Thu, 20 Feb 2020 12:43:59 -0800
-Message-ID: <CABayD+fBpP-W_jfVuy_+shh+Sj_id79+ECG+R5H=W9Jmcii8qg@mail.gmail.com>
-Subject: Re: [PATCH 10/12] mm: x86: Invoke hypercall when page encryption
- status is changed
-To:     Brijesh Singh <brijesh.singh@amd.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Ashish Kalra <ashish.kalra@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@suse.de>,
-        Tom Lendacky <Thomas.Lendacky@amd.com>,
-        David Rientjes <rientjes@google.com>, x86@kernel.org,
-        KVM list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 7:55 AM Brijesh Singh <brijesh.singh@amd.com> wrote=
-:
->
->
->
-> On 2/19/20 8:12 PM, Andy Lutomirski wrote:
-> >
-> >
-> >> On Feb 19, 2020, at 5:58 PM, Steve Rutherford <srutherford@google.com>=
- wrote:
-> >>
-> >> =EF=BB=BFOn Wed, Feb 12, 2020 at 5:18 PM Ashish Kalra <Ashish.Kalra@am=
-d.com> wrote:
-> >>>
-> >>> From: Brijesh Singh <brijesh.singh@amd.com>
-> >>>
-> >>> Invoke a hypercall when a memory region is changed from encrypted ->
-> >>> decrypted and vice versa. Hypervisor need to know the page encryption
-> >>> status during the guest migration.
-> >>
-> >> One messy aspect, which I think is fine in practice, is that this
-> >> presumes that pages are either treated as encrypted or decrypted. If
-> >> also done on SEV, the in-place re-encryption supported by SME would
-> >> break SEV migration. Linux doesn't do this now on SEV, and I don't
-> >> have an intuition for why Linux might want this, but we will need to
-> >> ensure it is never done in order to ensure that migration works down
-> >> the line. I don't believe the AMD manual promises this will work
-> >> anyway.
-> >>
-> >> Something feels a bit wasteful about having all future kernels
-> >> universally announce c-bit status when SEV is enabled, even if KVM
-> >> isn't listening, since it may be too old (or just not want to know).
-> >> Might be worth eliding the hypercalls if you get ENOSYS back? There
-> >> might be a better way of passing paravirt config metadata across than
-> >> just trying and seeing if the hypercall succeeds, but I'm not super
-> >> familiar with it.
-> >
-> > I actually think this should be a hard requirement to merge this. The h=
-ost needs to tell the guest that it supports this particular migration stra=
-tegy and the guest needs to tell the host that it is using it.  And the gue=
-st needs a way to tell the host that it=E2=80=99s *not* using it right now =
-due to kexec, for example.
-> >
-> > I=E2=80=99m still uneasy about a guest being migrated in the window whe=
-re the hypercall tracking and the page encryption bit don=E2=80=99t match. =
- I guess maybe corruption in this window doesn=E2=80=99t matter?
-> >
->
-> I don't think there is a corruption issue here. Let's consider the below
-> case:
->
-> 1) A page is transmitted as C=3D1 (encrypted)
->
-> 2) During the migration window, the page encryption bit is changed
->   to C=3D0 (decrypted)
->
-> 3) #2 will cause a change in page table memory, thus dirty memory
->   the tracker will create retransmission of the page table memory.
->
-> 4) The page itself will not be re-transmitted because there was
->   no change to the content of the page.
->
-> On destination, the read from the page will get the ciphertext.
->
-> The encryption bit change in the page table is used on the next access.
-> The user of the page needs to ensure that data is written with the
-> correct encryption bit before reading.
->
-> thanks
+The aiu devices peripheral clocks needs the aiu and aiu_glue clocks to
+operate. Reflect this hierarchy in the clock tree.
+
+Fixes: e31a1900c1ff73 ("meson: clk: Add support for clock gates")
+Suggested-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+This takes Jerome's patch for GXBB and ports it to the Meson8* SoCs.
+Hence the Suggested-by.
 
 
-I think the issue results from a slightly different perspective than
-the one you are using. I think the situation Andy is interested in is
-when a c-bit change and a write happen close in time. There are five
-events, and the ordering matters:
-1) Guest dirties the c-bit in the guest
-2) Guest dirties the page
-3) Host userspace observes the c-bit logs
-4) Host userspace observes the page dirty logs
-5) Host transmits the page
+ drivers/clk/meson/meson8b.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
-If these are reordered to:
-3) Host userspace observes the c-bit logs
-1) Guest dirties the c-bit in the guest
-2) Guest dirties the page
-4) Host userspace observes the page dirty logs
-5) Host transmits the page (from the wrong c-bit perspective!)
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 9fd31f23b2a9..34a70c4b4899 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -2605,14 +2605,6 @@ static MESON_GATE(meson8b_spi, HHI_GCLK_MPEG0, 30);
+ static MESON_GATE(meson8b_i2s_spdif, HHI_GCLK_MPEG1, 2);
+ static MESON_GATE(meson8b_eth, HHI_GCLK_MPEG1, 3);
+ static MESON_GATE(meson8b_demux, HHI_GCLK_MPEG1, 4);
+-static MESON_GATE(meson8b_aiu_glue, HHI_GCLK_MPEG1, 6);
+-static MESON_GATE(meson8b_iec958, HHI_GCLK_MPEG1, 7);
+-static MESON_GATE(meson8b_i2s_out, HHI_GCLK_MPEG1, 8);
+-static MESON_GATE(meson8b_amclk, HHI_GCLK_MPEG1, 9);
+-static MESON_GATE(meson8b_aififo2, HHI_GCLK_MPEG1, 10);
+-static MESON_GATE(meson8b_mixer, HHI_GCLK_MPEG1, 11);
+-static MESON_GATE(meson8b_mixer_iface, HHI_GCLK_MPEG1, 12);
+-static MESON_GATE(meson8b_adc, HHI_GCLK_MPEG1, 13);
+ static MESON_GATE(meson8b_blkmv, HHI_GCLK_MPEG1, 14);
+ static MESON_GATE(meson8b_aiu, HHI_GCLK_MPEG1, 15);
+ static MESON_GATE(meson8b_uart1, HHI_GCLK_MPEG1, 16);
+@@ -2659,6 +2651,19 @@ static MESON_GATE(meson8b_vclk2_vencl, HHI_GCLK_OTHER, 25);
+ static MESON_GATE(meson8b_vclk2_other, HHI_GCLK_OTHER, 26);
+ static MESON_GATE(meson8b_edp, HHI_GCLK_OTHER, 31);
+ 
++/* AIU gates */
++#define MESON_AIU_GLUE_GATE(_name, _reg, _bit) \
++	MESON_PCLK(_name, _reg, _bit, &meson8b_aiu_glue.hw)
++
++static MESON_PCLK(meson8b_aiu_glue, HHI_GCLK_MPEG1, 6, &meson8b_aiu.hw);
++static MESON_AIU_GLUE_GATE(meson8b_iec958, HHI_GCLK_MPEG1, 7);
++static MESON_AIU_GLUE_GATE(meson8b_i2s_out, HHI_GCLK_MPEG1, 8);
++static MESON_AIU_GLUE_GATE(meson8b_amclk, HHI_GCLK_MPEG1, 9);
++static MESON_AIU_GLUE_GATE(meson8b_aififo2, HHI_GCLK_MPEG1, 10);
++static MESON_AIU_GLUE_GATE(meson8b_mixer, HHI_GCLK_MPEG1, 11);
++static MESON_AIU_GLUE_GATE(meson8b_mixer_iface, HHI_GCLK_MPEG1, 12);
++static MESON_AIU_GLUE_GATE(meson8b_adc, HHI_GCLK_MPEG1, 13);
++
+ /* Always On (AO) domain gates */
+ 
+ static MESON_GATE(meson8b_ao_media_cpu, HHI_GCLK_AO, 0);
+-- 
+2.25.1
 
-Then the host will transmit a page with the wrong c-bit status and
-clear the dirty bit for that page. If the guest page is not
-retransmitted incidentally later, then this page will be corrupted.
-
-If you treat pages with dirty c-bits as dirty pages, then you will
-check the c-bit logs later and observe the dirty c-bit and retransmit.
-There might be some cleverness around enforcing that you always fetch
-the c-bit logs after fetching the dirty logs, but I haven't convinced
-myself that this works yet. I think it might, since then the c-bits
-are at least as fresh as the dirty bits.
-
-The main uncertainty that comes to mind for that strategy is if, on
-multi-vCPU VMs, the page dirtying event (from the new c-bit
-perspective) and the c-bit status change hypercall can themselves
-race. If a write from the new c-bit perspective can arrive before the
-c-bit status change arrives in the c-bit logs, we will need to treat
-pages with dirty c-bits as dirty pages.
-
-Note that I do agree that if the c-bit status flips, and no one writes
-to the page, it doesn't really matter if you retransmit that page. If
-a guest wants to read nonsense, it can.
