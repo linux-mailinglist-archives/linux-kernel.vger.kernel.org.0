@@ -2,160 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85178165457
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 02:37:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44B5816545B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 02:37:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727836AbgBTBhF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 20:37:05 -0500
-Received: from mga02.intel.com ([134.134.136.20]:8059 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727135AbgBTBhD (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 20:37:03 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2020 17:37:02 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,462,1574150400"; 
-   d="scan'208";a="259114772"
-Received: from kbl.sh.intel.com ([10.239.159.24])
-  by fmsmga004.fm.intel.com with ESMTP; 19 Feb 2020 17:37:00 -0800
-From:   Jin Yao <yao.jin@linux.intel.com>
-To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com
-Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com,
-        Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH v7 3/3] perf report: support hotkey to let user select any event for sorting
-Date:   Thu, 20 Feb 2020 09:36:16 +0800
-Message-Id: <20200220013616.19916-4-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200220013616.19916-1-yao.jin@linux.intel.com>
-References: <20200220013616.19916-1-yao.jin@linux.intel.com>
+        id S1727885AbgBTBhO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 20:37:14 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:41586 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727224AbgBTBhN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Feb 2020 20:37:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1582162631; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=g/qGIDqkgIozFpdOtlMp+Dtu76f8lgaOYvJWkuAfEMw=;
+        b=wz426QWDY0aAgnJ0mydROr4g5rQFH4aMNVQWOmSvFmaQc3DLt1kqFqoSyu8wLMHEuYNlgv
+        32i2A1fLG0X2CksRvPxLmRzlItTLSlcUIB9oJmJihRxyNXSEErZozb1HRXj/MvvJBBM/Od
+        XWvUxzlU/1w/+gVPITvNW9s4CyLTe84=
+Date:   Wed, 19 Feb 2020 22:36:57 -0300
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH] pinctrl: ingenic: Make unreachable path more robust
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+Message-Id: <1582162617.3.1@crapouillou.net>
+In-Reply-To: <20200217151804.yymflofpbiqjqnnz@treble>
+References: <73f0c9915473d9e4b3681fb5cc55144291a43192.1581698101.git.jpoimboe@redhat.com>
+        <1581706938.3.5@crapouillou.net> <20200214203738.af3y4gskukctvvum@treble>
+        <1581734224.3.14@crapouillou.net> <20200217151804.yymflofpbiqjqnnz@treble>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When performing "perf report --group", it shows the event group information
-together. In previous patch, we have supported a new option "--group-sort-idx"
-to sort the output by the event at the index n in event group.
+Hi Josh,
 
-It would be nice if we can use a hotkey in browser to select a event
-to sort.
+Le lun., f=E9vr. 17, 2020 at 09:18, Josh Poimboeuf <jpoimboe@redhat.com>=20
+a =E9crit :
+> On Fri, Feb 14, 2020 at 11:37:04PM -0300, Paul Cercueil wrote:
+>>  > >  I don't like the idea that you change this driver's code just=20
+>> to
+>>  > > work around
+>>  > >  a bug in objtool, and I don't like the idea of working around a
+>>  > > future bug
+>>  > >  that shouldn't be introduced in the first place.
+>>  >
+>>  > It's not an objtool bug.  It's a byproduct of the fact that GCC's
+>>  > undefined behavior is inscrutable, and there's no way to=20
+>> determine that
+>>  > it actually *wants* to jump to a random function.
+>>  >
+>>  > And anyway, regardless of objtool, the patch is meant to make the=20
+>> code
+>>  > more robust.
+>>  >
+>>  > Do you not agree that BUG (defined behavior) is more robust than
+>>  > unreachable (undefined behavior)?
+>>=20
+>>  It's a dead code path. That would be an undefined behaviour, if it=20
+>> was
+>>  taken, but it's not.
+>=20
+> Given your confidence that humans don't introduce bugs, would you
+> recommend that we
+>=20
+>   s/BUG()/unreachable()/
+>=20
+> tree-wide?
 
-For example,
+Of course not.
 
-  # perf report --group
+> Another option would be to remove the unreachable() statement, which
+> would actually improve the generated code by making it more compact=20
+> (16
+> bytes of i-cache savings), on top of removing the "fallthrough to next
+> function" nastiness.
 
- Samples: 12K of events 'cpu/instructions,period=2000003/, cpu/cpu-cycles,period=200003/, ...
-                        Overhead  Command    Shared Object            Symbol
-  92.19%  98.68%   0.00%  93.30%  mgen       mgen                     [.] LOOP1
-   3.12%   0.29%   0.00%   0.16%  gsd-color  libglib-2.0.so.0.5600.4  [.] 0x0000000000049515
-   1.56%   0.03%   0.00%   0.04%  gsd-color  libglib-2.0.so.0.5600.4  [.] 0x00000000000494b7
-   1.56%   0.01%   0.00%   0.00%  gsd-color  libglib-2.0.so.0.5600.4  [.] 0x00000000000494ce
-   1.56%   0.00%   0.00%   0.00%  mgen       [kernel.kallsyms]        [k] task_tick_fair
-   0.00%   0.15%   0.00%   0.04%  perf       [kernel.kallsyms]        [k] smp_call_function_single
-   0.00%   0.13%   0.00%   6.08%  swapper    [kernel.kallsyms]        [k] intel_idle
-   0.00%   0.03%   0.00%   0.00%  gsd-color  libglib-2.0.so.0.5600.4  [.] g_main_context_check
-   0.00%   0.03%   0.00%   0.00%  swapper    [kernel.kallsyms]        [k] apic_timer_interrupt
-   0.00%   0.03%   0.00%   0.00%  swapper    [kernel.kallsyms]        [k] check_preempt_curr
+I'd prefer that, yes.
 
-When user press hotkey '3' (event index, starting from 0), it indicates
-to sort output by the forth event in group.
+-Paul
 
-  Samples: 12K of events 'cpu/instructions,period=2000003/, cpu/cpu-cycles,period=200003/, ...
-                        Overhead  Command    Shared Object            Symbol
-  92.19%  98.68%   0.00%  93.30%  mgen       mgen                     [.] LOOP1
-   0.00%   0.13%   0.00%   6.08%  swapper    [kernel.kallsyms]        [k] intel_idle
-   3.12%   0.29%   0.00%   0.16%  gsd-color  libglib-2.0.so.0.5600.4  [.] 0x0000000000049515
-   0.00%   0.00%   0.00%   0.06%  swapper    [kernel.kallsyms]        [k] hrtimer_start_range_ns
-   1.56%   0.03%   0.00%   0.04%  gsd-color  libglib-2.0.so.0.5600.4  [.] 0x00000000000494b7
-   0.00%   0.15%   0.00%   0.04%  perf       [kernel.kallsyms]        [k] smp_call_function_single
-   0.00%   0.00%   0.00%   0.02%  mgen       [kernel.kallsyms]        [k] update_curr
-   0.00%   0.00%   0.00%   0.02%  mgen       [kernel.kallsyms]        [k] apic_timer_interrupt
-   0.00%   0.00%   0.00%   0.02%  mgen       [kernel.kallsyms]        [k] native_apic_msr_eoi_write
-   0.00%   0.00%   0.00%   0.02%  mgen       [kernel.kallsyms]        [k] __update_load_avg_se
+> diff --git a/drivers/pinctrl/pinctrl-ingenic.c=20
+> b/drivers/pinctrl/pinctrl-ingenic.c
+> index 96f04d121ebd..13c7d3351ed5 100644
+> --- a/drivers/pinctrl/pinctrl-ingenic.c
+> +++ b/drivers/pinctrl/pinctrl-ingenic.c
+> @@ -2158,7 +2158,8 @@ static int ingenic_pinconf_set(struct=20
+> pinctrl_dev *pctldev, unsigned int pin,
+>  			break;
+>=20
+>  		default:
+> -			unreachable();
+> +			/* unreachable */
+> +			break;
+>  		}
+>  	}
+>=20
+>=20
 
- v7:
- ---
- Rebase to perf/core, no other change.
-
- v6:
- ---
- Jiri provided a good improvement to eliminate unneeded refresh.
- This improvement is added to v6.
-
- v5:
- ---
- No change
-
- v4:
- ---
- No change
-
- v3:
- ---
- No change
-
- v2:
- ---
- 1. Report warning at helpline when index is invalid.
- 2. Report warning at helpline when it's not group event.
- 3. Use "case '0' ... '9'" to refine the code
- 4. Split K_RELOAD implementation to another patch.
-
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
----
- tools/perf/ui/browsers/hists.c | 28 +++++++++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
-
-diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
-index 7c091fa51a5c..fa4548459c46 100644
---- a/tools/perf/ui/browsers/hists.c
-+++ b/tools/perf/ui/browsers/hists.c
-@@ -2964,7 +2964,8 @@ static int perf_evsel__hists_browse(struct evsel *evsel, int nr_events,
- 	"s             Switch to another data file in PWD\n"
- 	"t             Zoom into current Thread\n"
- 	"V             Verbose (DSO names in callchains, etc)\n"
--	"/             Filter symbol by name";
-+	"/             Filter symbol by name\n"
-+	"0-9           Sort by event n in group";
- 	static const char top_help[] = HIST_BROWSER_HELP_COMMON
- 	"P             Print histograms to perf.hist.N\n"
- 	"t             Zoom into current Thread\n"
-@@ -3025,6 +3026,31 @@ static int perf_evsel__hists_browse(struct evsel *evsel, int nr_events,
- 			 * go to the next or previous
- 			 */
- 			goto out_free_stack;
-+		case '0' ... '9':
-+			if (!symbol_conf.event_group ||
-+			    evsel->core.nr_members < 2) {
-+				snprintf(buf, sizeof(buf),
-+					 "Sort by index only available with group events!");
-+				helpline = buf;
-+				continue;
-+			}
-+
-+			if (key - '0' == symbol_conf.group_sort_idx)
-+				continue;
-+
-+			symbol_conf.group_sort_idx = key - '0';
-+
-+			if (symbol_conf.group_sort_idx >= evsel->core.nr_members) {
-+				snprintf(buf, sizeof(buf),
-+					 "Max event group index to sort is %d (index from 0 to %d)",
-+					 evsel->core.nr_members - 1,
-+					 evsel->core.nr_members - 1);
-+				helpline = buf;
-+				continue;
-+			}
-+
-+			key = K_RELOAD;
-+			goto out_free_stack;
- 		case 'a':
- 			if (!hists__has(hists, sym)) {
- 				ui_browser__warning(&browser->b, delay_secs * 2,
--- 
-2.17.1
+=
 
