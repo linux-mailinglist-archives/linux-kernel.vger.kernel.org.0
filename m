@@ -2,122 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9020C165B94
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 11:34:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C51B165B9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 11:34:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbgBTKeR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 05:34:17 -0500
-Received: from mail-oi1-f176.google.com ([209.85.167.176]:34818 "EHLO
-        mail-oi1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726501AbgBTKeR (ORCPT
+        id S1727649AbgBTKeu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 05:34:50 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:54182 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727088AbgBTKet (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 05:34:17 -0500
-Received: by mail-oi1-f176.google.com with SMTP id b18so27076827oie.2;
-        Thu, 20 Feb 2020 02:34:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VAP40k6HR+6LKosbEIXZrUrjkDmLImj5HhCg+dOGS6g=;
-        b=hCXCxjaL0arZq7Mt6L0VY1KmxZ3S4aTZLSRFXbg4e3Ralvtzr3fWxZ2Z6vIcbkT0BL
-         csNWls07d4p3WpWqojOy9sejBvNvJPxEuLO70+h/mxr7WIhZOd7DdSUWGqahgddBHOJV
-         2bUi38qlgAZ7S6i1NSe7QcVg3rMZtRSFGfola/ztzFyCyMANObqTbB9u6fq1M5bdH5XD
-         NL0NgftZBUfgTY3xwiPDKzdb0x8ZM55D8BQvwzNoWxYzaOXSKFn05vth3rhh4AkMZQbg
-         YcnjLT40iamQOiajmgmky5tX1k0V29dmNXCaUqNSjmx+gV1GhXNzd1A705y2Y6KUEzCJ
-         elXQ==
-X-Gm-Message-State: APjAAAU4URjUlmGWEPorwgAEsqIIRAYdfZgT9PPTFbsHaGpgIQSo1/HA
-        jYHEY9/i+ax4dkjDGTywQjtQbRwv7Ogl5usUqMM=
-X-Google-Smtp-Source: APXvYqxofCC5wkjMP+nnXS7Hd45Hjl/OC5qNpLdFit8SZ20DA4UkgIppGZx0Jh5bzPvWsHc4pCJIzjWzfolo2wunR4k=
-X-Received: by 2002:a54:4e96:: with SMTP id c22mr1527235oiy.110.1582194856166;
- Thu, 20 Feb 2020 02:34:16 -0800 (PST)
+        Thu, 20 Feb 2020 05:34:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=HKt6/QuqsefyaXBGYt8iU89pRbakH3QRmMyWQxstXMM=; b=qfu31yBcYEcO8yaVXfWXV/w2op
+        6YXlnCa4XOchCnRmTTQK8OtquM1q9Oaq4/ysovfP+8/gnzBqLkjHYZPCFkIj23iPnPRhv5VOZgHDI
+        91HMbU09ScgS62iSfds9clOJ3ArWK7D5bHRTgv1Y7suzfwalRAwaadMdF5SOIOTeufkAVD6fThfa+
+        ECH2E/gfoKLYnFft0qMXS+222TC/8sFu0n8tgf78wcJbAWNMToa2rSlXvi0L9qNtbW09r0xs0qP/H
+        3PkbNKFHp3x8aiLYJ/HsMx6SK4bRPbD3BQSC0gs/JU45DdZMGOA+3GIbSJP5miicgJi76OqKKj8ci
+        DV27kL8Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j4jA0-0000tq-B0; Thu, 20 Feb 2020 10:34:24 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E9840300606;
+        Thu, 20 Feb 2020 11:32:28 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 8C0F32B2A8A9F; Thu, 20 Feb 2020 11:34:21 +0100 (CET)
+Date:   Thu, 20 Feb 2020 11:34:21 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, mingo@kernel.org,
+        joel@joelfernandes.org, gregkh@linuxfoundation.org,
+        gustavo@embeddedor.com, tglx@linutronix.de, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+        luto@kernel.org, tony.luck@intel.com, frederic@kernel.org,
+        dan.carpenter@oracle.com, mhiramat@kernel.org
+Subject: Re: [PATCH v3 08/22] rcu,tracing: Create trace_rcu_{enter,exit}()
+Message-ID: <20200220103421.GV18400@hirez.programming.kicks-ass.net>
+References: <20200219144724.800607165@infradead.org>
+ <20200219150744.832297480@infradead.org>
+ <20200219104903.46686b81@gandalf.local.home>
+ <20200219155828.GF18400@hirez.programming.kicks-ass.net>
+ <20200219111532.719c0a6b@gandalf.local.home>
+ <20200219163535.GJ18400@hirez.programming.kicks-ass.net>
+ <20200219164449.GC2935@paulmck-ThinkPad-P72>
 MIME-Version: 1.0
-References: <0955D72C-D24D-402E-884F-C706578BF477@canonical.com>
- <a9fd25cd0a151d20e975ce79ab70197e39ef01e1.camel@linux.intel.com>
- <235CF4F8-19BF-4B00-8C92-E59CB2D476A7@canonical.com> <CAJZ5v0jXvo0ceNMp=kstTi24Ne7F-ZGMcD0T0TSMpcZZWsJsUA@mail.gmail.com>
- <CA007B3C-C084-429E-B774-70264A9E609F@canonical.com>
-In-Reply-To: <CA007B3C-C084-429E-B774-70264A9E609F@canonical.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 20 Feb 2020 11:34:05 +0100
-Message-ID: <CAJZ5v0in-v9iu88Wj0gAg_th-E-QWDSHZ_XvgyoOuqE=CZPtqQ@mail.gmail.com>
-Subject: Re: Hard Disk consumes lots of power in s2idle
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" 
-        <linux-ide@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Kent Lin <kent.lin@canonical.com>, Tejun Heo <tj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200219164449.GC2935@paulmck-ThinkPad-P72>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 11:25 AM Kai-Heng Feng
-<kai.heng.feng@canonical.com> wrote:
->
->
->
-> > On Feb 20, 2020, at 18:12, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> >
-> > On Thu, Feb 20, 2020 at 9:08 AM Kai-Heng Feng
-> > <kai.heng.feng@canonical.com> wrote:
-> >>
-> >> Hi Srinivas,
-> >>
-> >>> On Feb 20, 2020, at 02:36, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com> wrote:
-> >>>
-> >>> Hi Kai,
-> >>>
-> >>> On Wed, 2020-02-19 at 22:22 +0800, Kai-Heng Feng wrote:
-> >>>> Hi Srinivas,
-> >>>>
-> >>>> Your previous work to support DEVSLP works well on SATA SSDs, so I am
-> >>>> asking you the issue I am facing:
-> >>>> Once a laptop has a HDD installed, the power consumption during
-> >>>> S2Idle increases ~0.4W, which is quite a lot.
-> >>>> However, HDDs don't seem to support DEVSLP, so I wonder if you know
-> >>>> to do proper power management for HDDs?
-> >>> What is the default here
-> >>> cat /sys/power/mem_sleep
-> >>> s2idle or deep?
-> >>
-> >> It defaults to s2idle.
-> >>
-> >>>
-> >>> Please follow debug steps here:
-> >>> https://01.org/blogs/qwang59/2018/how-achieve-s0ix-states-linux
-> >>>
-> >>> We need to check whether you get any PC10 residency or not.
-> >>
-> >> Yes it reaches PC10. It doesn't reach SLP_S0 though.
-> >> The real number on S2Idle power consumption:
-> >> No HDD: ~1.4W
-> >> One HDD: ~1.8W
-> >>
-> >> If the SoC doesn't hit PC10 the number should be significantly higher.
-> >> That's why I think the issue is the power management on HDD itself.
-> >
-> > I'm assuming that you mean a non-SSD device here.
->
-> Yes, it's spinning rust here.
->
-> >
-> > That would be handled via ata_port_suspend() I gather and whatever
-> > that does should do the right thing.
-> >
-> > Do you think that the disk doesn't spin down or it spins down, but the
-> > logic stays on?
->
-> The spin sound is audible, so I am certain the HDD spins down during S2Idle.
+On Wed, Feb 19, 2020 at 08:44:50AM -0800, Paul E. McKenney wrote:
+> On Wed, Feb 19, 2020 at 05:35:35PM +0100, Peter Zijlstra wrote:
 
-OK
+> > Possibly, and I suppose the current version is less obviously dependent
+> > on the in_nmi() functionality as was the previous, seeing how Paul
+> > frobbed that all the way into the rcu_irq_enter*() implementation.
+> > 
+> > So sure, I can go move it I suppose.
+> 
+> No objections here.
 
-> How do I know if the logic is on or off?
+It now looks like so:
 
-Well, if it were off, it would not draw power. :-)
+---
+Subject: rcu,tracing: Create trace_rcu_{enter,exit}()
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Wed Feb 12 09:18:57 CET 2020
 
-So IMO it is reasonable to assume that the logic on the drive stays
-on.  I'm not aware of anything that can be done to turn it off,
-however.
+To facilitate tracers that need RCU, add some helpers to wrap the
+magic required.
+
+The problem is that we can call into tracers (trace events and
+function tracing) while RCU isn't watching and this can happen from
+any context, including NMI.
+
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ include/linux/rcupdate.h |   29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -175,6 +175,35 @@ do { \
+ #error "Unknown RCU implementation specified to kernel configuration"
+ #endif
+ 
++/**
++ * trace_rcu_enter - Force RCU to be active, for code that needs RCU readers
++ *
++ * Very similar to RCU_NONIDLE() above.
++ *
++ * Tracing can happen while RCU isn't active yet, for instance in the idle loop
++ * between rcu_idle_enter() and rcu_idle_exit(), or early in exception entry.
++ * RCU will happily ignore any read-side critical sections in this case.
++ *
++ * This function ensures that RCU is aware hereafter and the code can readily
++ * rely on RCU read-side critical sections working as expected.
++ *
++ * This function is NMI safe -- provided in_nmi() is correct and will nest up-to
++ * INT_MAX/2 times.
++ */
++static inline int trace_rcu_enter(void)
++{
++	int state = !rcu_is_watching();
++	if (state)
++		rcu_irq_enter_irqsave();
++	return state;
++}
++
++static inline void trace_rcu_exit(int state)
++{
++	if (state)
++		rcu_irq_exit_irqsave();
++}
++
+ /*
+  * The init_rcu_head_on_stack() and destroy_rcu_head_on_stack() calls
+  * are needed for dynamic initialization and destruction of rcu_head
