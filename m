@@ -2,63 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA7381665B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 19:01:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D80281665C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 19:02:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728866AbgBTSBA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 13:01:00 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:56742 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728072AbgBTSBA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 13:01:00 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id A1DC615AC0C01;
-        Thu, 20 Feb 2020 10:00:59 -0800 (PST)
-Date:   Thu, 20 Feb 2020 10:00:59 -0800 (PST)
-Message-Id: <20200220.100059.272327778939406260.davem@davemloft.net>
-To:     keescook@chromium.org
-Cc:     pshelar@ovn.org, glider@google.com, netdev@vger.kernel.org,
-        dev@openvswitch.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] openvswitch: Distribute switch variables for
- initialization
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200220062309.69077-1-keescook@chromium.org>
-References: <20200220062309.69077-1-keescook@chromium.org>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-7
-Content-Transfer-Encoding: base64
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 20 Feb 2020 10:00:59 -0800 (PST)
+        id S1728869AbgBTSCy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 13:02:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44532 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727298AbgBTSCw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 13:02:52 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9CE1624673;
+        Thu, 20 Feb 2020 18:02:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582221771;
+        bh=37+6kRfe020nr3eTo55dbdOiwQoX7FUjUISiaAj1H6w=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=m9xMxs8WLpZ1tJSTx12u4kJ78qow2BN0C/TsjYyITx052s7EDMb/8bu27UZaEaKQC
+         H7QOJcDNsK/KnboXjYJA7tTRsrQRUXUYO9KooPvCYVrO6GtCB9OR6Ad8q7QChfs8qv
+         gReuLai284/7HyoFHLCd3CtiEsSTtgxNdxqidEew=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1582190446-4778-2-git-send-email-sayalil@codeaurora.org>
+References: <1582190446-4778-1-git-send-email-sayalil@codeaurora.org> <1582190446-4778-2-git-send-email-sayalil@codeaurora.org>
+Subject: Re: [PATCH RFC] mmc: sdhci-msm: Toggle fifo write clk after ungating sdcc clk
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        agross@kernel.org, linux-mmc-owner@vger.kernel.org,
+        Sayali Lokhande <sayalil@codeaurora.org>
+To:     Sayali Lokhande <sayalil@codeaurora.org>, adrian.hunter@intel.com,
+        asutoshd@codeaurora.org, bjorn.andersson@linaro.org,
+        georgi.djakov@linaro.org, mka@chromium.org, ppvk@codeaurora.org,
+        rampraka@codeaurora.org, robh+dt@kernel.org,
+        stummala@codeaurora.org, ulf.hansson@linaro.org,
+        vbadigan@codeaurora.org
+Date:   Thu, 20 Feb 2020 10:02:50 -0800
+Message-ID: <158222177078.184098.4974715009961694108@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogS2VlcyBDb29rIDxrZWVzY29va0BjaHJvbWl1bS5vcmc+DQpEYXRlOiBXZWQsIDE5IEZl
-YiAyMDIwIDIyOjIzOjA5IC0wODAwDQoNCj4gVmFyaWFibGVzIGRlY2xhcmVkIGluIGEgc3dpdGNo
-IHN0YXRlbWVudCBiZWZvcmUgYW55IGNhc2Ugc3RhdGVtZW50cw0KPiBjYW5ub3QgYmUgYXV0b21h
-dGljYWxseSBpbml0aWFsaXplZCB3aXRoIGNvbXBpbGVyIGluc3RydW1lbnRhdGlvbiAoYXMNCj4g
-dGhleSBhcmUgbm90IHBhcnQgb2YgYW55IGV4ZWN1dGlvbiBmbG93KS4gV2l0aCBHQ0MncyBwcm9w
-b3NlZCBhdXRvbWF0aWMNCj4gc3RhY2sgdmFyaWFibGUgaW5pdGlhbGl6YXRpb24gZmVhdHVyZSwg
-dGhpcyB0cmlnZ2VycyBhIHdhcm5pbmcgKGFuZCB0aGV5DQo+IGRvbid0IGdldCBpbml0aWFsaXpl
-ZCkuIENsYW5nJ3MgYXV0b21hdGljIHN0YWNrIHZhcmlhYmxlIGluaXRpYWxpemF0aW9uDQo+ICh2
-aWEgQ09ORklHX0lOSVRfU1RBQ0tfQUxMPXkpIGRvZXNuJ3QgdGhyb3cgYSB3YXJuaW5nLCBidXQg
-aXQgYWxzbw0KPiBkb2Vzbid0IGluaXRpYWxpemUgc3VjaCB2YXJpYWJsZXNbMV0uIE5vdGUgdGhh
-dCB0aGVzZSB3YXJuaW5ncyAob3Igc2lsZW50DQo+IHNraXBwaW5nKSBoYXBwZW4gYmVmb3JlIHRo
-ZSBkZWFkLXN0b3JlIGVsaW1pbmF0aW9uIG9wdGltaXphdGlvbiBwaGFzZSwNCj4gc28gZXZlbiB3
-aGVuIHRoZSBhdXRvbWF0aWMgaW5pdGlhbGl6YXRpb25zIGFyZSBsYXRlciBlbGlkZWQgaW4gZmF2
-b3Igb2YNCj4gZGlyZWN0IGluaXRpYWxpemF0aW9ucywgdGhlIHdhcm5pbmdzIHJlbWFpbi4NCj4g
-DQo+IFRvIGF2b2lkIHRoZXNlIHByb2JsZW1zLCBtb3ZlIHN1Y2ggdmFyaWFibGVzIGludG8gdGhl
-ICJjYXNlIiB3aGVyZQ0KPiB0aGV5J3JlIHVzZWQgb3IgbGlmdCB0aGVtIHVwIGludG8gdGhlIG1h
-aW4gZnVuY3Rpb24gYm9keS4NCj4gDQo+IG5ldC9vcGVudnN3aXRjaC9mbG93X25ldGxpbmsuYzog
-SW4gZnVuY3Rpb24goXZhbGlkYXRlX3NldKI6DQo+IG5ldC9vcGVudnN3aXRjaC9mbG93X25ldGxp
-bmsuYzoyNzExOjI5OiB3YXJuaW5nOiBzdGF0ZW1lbnQgd2lsbCBuZXZlciBiZSBleGVjdXRlZCBb
-LVdzd2l0Y2gtdW5yZWFjaGFibGVdDQo+ICAyNzExIHwgIGNvbnN0IHN0cnVjdCBvdnNfa2V5X2lw
-djQgKmlwdjRfa2V5Ow0KPiAgICAgICB8ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBefn5+
-fn5+fg0KPiANCj4gWzFdIGh0dHBzOi8vYnVncy5sbHZtLm9yZy9zaG93X2J1Zy5jZ2k/aWQ9NDQ5
-MTYNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEtlZXMgQ29vayA8a2Vlc2Nvb2tAY2hyb21pdW0ub3Jn
-Pg0KDQpBcHBsaWVkLg0K
+Quoting Sayali Lokhande (2020-02-20 01:20:46)
+> From: Ram Prakash Gupta <rampraka@codeaurora.org>
+>=20
+> During GCC level clock gating of MCLK, the async FIFO
+
+Is this automatic hardware clock gating?
+
+> gets into some hang condition, such that for the next
+> transfer after MCLK ungating, first bit of CMD response
+> doesn't get written in to the FIFO. This cause the CPSM
+> to hang eventually leading to SW timeout.
+>=20
+> To fix the issue, toggle the FIFO write clock after
+> MCLK ungated to get the FIFO pointers and flags to
+> valid states.
+>=20
+> Change-Id: Ibef2d1d283ac0b6983c609a4abc98bc574d31fa6
+> Signed-off-by: Ram Prakash Gupta <rampraka@codeaurora.org>
+> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+> ---
+>  drivers/mmc/host/sdhci-msm.c | 43 ++++++++++++++++++++++++++++++++++++++=
++++++
+>  1 file changed, 43 insertions(+)
+>=20
+> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> index c3a160c..eaa3e95 100644
+> --- a/drivers/mmc/host/sdhci-msm.c
+> +++ b/drivers/mmc/host/sdhci-msm.c
+> @@ -1554,6 +1556,43 @@ static void __sdhci_msm_set_clock(struct sdhci_hos=
+t *host, unsigned int clock)
+>         sdhci_enable_clk(host, clk);
+>  }
+> =20
+> +/*
+> + * After MCLK ugating, toggle the FIFO write clock to get
+
+What is ugating?
+
+> + * the FIFO pointers and flags to valid state.
+> + */
+> +static void sdhci_msm_toggle_fifo_write_clk(struct sdhci_host *host)
+> +{
+> +       struct sdhci_pltfm_host *pltfm_host =3D sdhci_priv(host);
+> +       struct sdhci_msm_host *msm_host =3D sdhci_pltfm_priv(pltfm_host);
+> +       const struct sdhci_msm_offset *msm_offset =3D
+> +                                       msm_host->offset;
+> +       struct mmc_card *card =3D host->mmc->card;
+> +
+> +       if (msm_host->tuning_done ||
+> +                       (card && card->ext_csd.strobe_support &&
+> +                       card->host->ios.enhanced_strobe)) {
+> +               /*
+> +                * set HC_REG_DLL_CONFIG_3[1] to select MCLK as
+> +                * DLL input clock
+> +                */
