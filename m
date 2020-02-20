@@ -2,137 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C455416620B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:14:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC56516620D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:14:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728119AbgBTQOW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 11:14:22 -0500
-Received: from mga11.intel.com ([192.55.52.93]:58024 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726871AbgBTQOW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 11:14:22 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2020 08:14:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,464,1574150400"; 
-   d="scan'208";a="283447982"
-Received: from linux.intel.com ([10.54.29.200])
-  by FMSMGA003.fm.intel.com with ESMTP; 20 Feb 2020 08:14:11 -0800
-Received: from [10.251.25.159] (kliang2-mobl.ccr.corp.intel.com [10.251.25.159])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id 2055358056A;
-        Thu, 20 Feb 2020 08:14:10 -0800 (PST)
-Subject: Re: [PATCH 4/5] perf metricgroup: Support metric constraint
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     acme@kernel.org, mingo@redhat.com, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        namhyung@kernel.org, ravi.bangoria@linux.ibm.com,
-        yao.jin@linux.intel.com, ak@linux.intel.com
-References: <1582139320-75181-1-git-send-email-kan.liang@linux.intel.com>
- <1582139320-75181-5-git-send-email-kan.liang@linux.intel.com>
- <20200220113530.GA565976@krava>
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <fea147db-2af3-e9ec-fb23-f9db8cf1c77a@linux.intel.com>
-Date:   Thu, 20 Feb 2020 11:14:09 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1728620AbgBTQOa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 11:14:30 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:36007 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726871AbgBTQOa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 11:14:30 -0500
+Received: by mail-ot1-f68.google.com with SMTP id j20so4178582otq.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 08:14:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=72qCgtbemVTUpvzrdd2T6FECaArR3GQue5QrhrOMv0E=;
+        b=TIEOGn6XFb93D0r1VwBrT/LgDHFtGlmXmsE/nQTfq9Qx+pJHvmcEe+64sd5qhjWj5A
+         k8BsotqLGvw3pcwLCw94vrTtv1dHA5M/HVx80o3VTXBUGmSaBdTKzIXUHgozOJ5YBAcy
+         mGWNDJqpsSRTQeTDcg5TSNg7Nf3PpXcy+VzhGGqncBhloo22NhlLr1DDDUKJ9rH+nCLU
+         Gc9PGAEr9dAHVs/9c4rDaJhWZtF5wgcikgPm2x31en9i9kRZhzZMwe7l5PFqUHxja98B
+         iN2FXQW4n0onFxZXyvkXW7QoNBU46EqU+C3GFDiBFqkTrhAF0JIelp/Nfbo34eWkNd4J
+         uFRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=72qCgtbemVTUpvzrdd2T6FECaArR3GQue5QrhrOMv0E=;
+        b=bDu1kSRv+q6E2f1L4LIZ7WB9ddWqZJ+VPNsE9cymYpBtEee43UCqlkGvtOQZY6IOhf
+         DyVLgHB5G6kHK0aZA6VgZa7GYY30jrEODsZn/MgtE3jsI6goD+FJAe7D0O6zfmQkFZGp
+         wuogeOtgCksDcxy6vYpRpXUxkl/dx6sPsQNo9suDIoTPLqHe+GfqicplVbjTM+OcYJXU
+         N2MowojjWGaMH7beoeeT3wnPg1V1lKjbCaqQhQIkx3Ed5zfIX2pd8pK/92s88ZX3iYDJ
+         S6BmRI1cVY74lhFoGQRaL9kysxqBKLI+1wrkZZgrmhfG3eW+uu7H3olpDTzswBHIoUJN
+         68Dg==
+X-Gm-Message-State: APjAAAWqCXbmwnuMruCQHpkDt6nu0ZCMRhGqq7w5KGq1z2IPnBWLfUBs
+        4s3bhk7MNfoXbT8l6W+pja3pPYpqXXSr1VR9RQ==
+X-Google-Smtp-Source: APXvYqwA6YQxhTw0A8s2h09O5LhWtnqYrhNT4SOedC8dXkqcF1ocY8Bc3fs2qNRG4oKAaqmnRxHKKVlU0TqsFqBsl64=
+X-Received: by 2002:a05:6830:1608:: with SMTP id g8mr23039081otr.169.1582215268637;
+ Thu, 20 Feb 2020 08:14:28 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200220113530.GA565976@krava>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a05:6838:d38b:0:0:0:0 with HTTP; Thu, 20 Feb 2020 08:14:27
+ -0800 (PST)
+Reply-To: mualixx1@gmail.com
+From:   MUSSA ALI <larsnbarro06@gmail.com>
+Date:   Thu, 20 Feb 2020 08:14:27 -0800
+Message-ID: <CAFgd+_ub1eaM4ZXnppUfZKYj9cnKEjrxg6fsuzC2VWwSSxrT=A@mail.gmail.com>
+Subject: Urgent Reply
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Dear  friend,
 
+I know this means of communication may not be morally right to you as
+a person but I also have had a great thought about it and I have come
+to this conclusion which I am about to share with you.
 
-On 2/20/2020 6:35 AM, Jiri Olsa wrote:
-> On Wed, Feb 19, 2020 at 11:08:39AM -0800, kan.liang@linux.intel.com wrote:
-> 
-> SNIP
-> 
->> +static bool violate_nmi_constraint;
->> +
->> +static bool metricgroup__has_constraint(struct pmu_event *pe)
->> +{
->> +	if (!pe->metric_constraint)
->> +		return false;
->> +
->> +	if (!strcmp(pe->metric_constraint, "NO_NMI_WATCHDOG") &&
->> +	    sysctl__nmi_watchdog_enabled()) {
->> +		pr_warning("Splitting metric group %s into standalone metrics.\n",
->> +			   pe->metric_name);
->> +		violate_nmi_constraint = true;
-> 
-> no static flags plz.. can't you just print that rest of the warning in here?
->
+INTRODUCTION: I am a banker   and in one way or the other was hoping
+you will cooperate with me as a partner in a project of transferring
+an abandoned fund of a late customer of the bank worth of $18,000,000
+(Eighteen Million Dollars US).
 
-Because we only want to print the NMI watchdog warning once.
-If there are more than one metric groups with constraint, the warning 
-may be printed several times. For example,
-   $ perf stat -M Page_Walks_Utilization,Page_Walks_Utilization
-   Splitting metric group Page_Walks_Utilization into standalone metrics.
-   Try disabling the NMI watchdog to comply NO_NMI_WATCHDOG metric 
-constraint:
-       echo 0 > /proc/sys/kernel/nmi_watchdog
-       perf stat ...
-       echo 1 > /proc/sys/kernel/nmi_watchdog
-   Splitting metric group Page_Walks_Utilization into standalone metrics.
-   Try disabling the NMI watchdog to comply NO_NMI_WATCHDOG metric 
-constraint:
-       echo 0 > /proc/sys/kernel/nmi_watchdog
-       perf stat ...
-       echo 1 > /proc/sys/kernel/nmi_watchdog
-Is it OK?
+This will be disbursed or shared between the both of us in these
+percentages, 60% for me and 40% for you. Contact me immediately if
+that is alright for you so that we can enter in agreement before we
+start processing for the transfer of the funds. If you are satisfied
+with this proposal, please provide the below details for the Mutual
+Confidential Agreement:
 
-If it's OK, I think we can remove the flag.
+1. Full Name and Address
+2. Occupation and Country of Origin
+3. Telephone Number
 
-Thanks,
-Kan
+I wait for your response so that we can commence on this project as
+soon as possible.
 
-> jirka
-> 
->> +		return true;
->> +	}
->> +
->> +	return false;
->> +}
->> +
->>   static int metricgroup__add_metric(const char *metric, struct strbuf *events,
->>   				   struct list_head *group_list)
->>   {
->> @@ -460,7 +490,10 @@ static int metricgroup__add_metric(const char *metric, struct strbuf *events,
->>   			if (events->len > 0)
->>   				strbuf_addf(events, ",");
->>   
->> -			metricgroup__add_metric_weak_group(events, ids, idnum);
->> +			if (metricgroup__has_constraint(pe))
->> +				metricgroup__add_metric_non_group(events, ids, idnum);
->> +			else
->> +				metricgroup__add_metric_weak_group(events, ids, idnum);
->>   
->>   			eg = malloc(sizeof(struct egroup));
->>   			if (!eg) {
->> @@ -544,6 +577,13 @@ int metricgroup__parse_groups(const struct option *opt,
->>   	strbuf_release(&extra_events);
->>   	ret = metricgroup__setup_events(&group_list, perf_evlist,
->>   					metric_events);
->> +
->> +	if (violate_nmi_constraint) {
->> +		pr_warning("Try disabling the NMI watchdog to comply NO_NMI_WATCHDOG metric constraint:\n"
->> +			   "    echo 0 > /proc/sys/kernel/nmi_watchdog\n"
->> +			   "    perf stat ...\n"
->> +			   "    echo 1 > /proc/sys/kernel/nmi_watchdog\n");
->> +	}
->>   out:
->>   	metricgroup__free_egroups(&group_list);
->>   	return ret;
->> -- 
->> 2.7.4
->>
-> 
+Regards,
+Mr. Mussa  Ali
