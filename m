@@ -2,268 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D7631658B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 08:47:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EB171658B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 08:49:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbgBTHr4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 02:47:56 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:60522 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726248AbgBTHrz (ORCPT
+        id S1726976AbgBTHs0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 02:48:26 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41593 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726764AbgBTHsZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 02:47:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=E3T563SF0eKEHoviTTxB3y6ZGmgRDG+L2KrkBZJ8dno=; b=OPTgFSrZoBEjxRwh4HmFXrbEoV
-        qiDx0U0lhfLIESR79Dln5kgHaSrj5vRKjhFLFrWJrnaNugG9qcUrIR1HrBE9g2HGeCgtgpAGqySCu
-        VqZxd2fNzdW58mJKtE9cbWEl3yHmIcyNQT7naYMMkmO6WwXH3OirVwFCWffMMAYPwfL5wm7fX/1bD
-        2wXCR1yCB3qOi6eXBz5Jp40xczg0uVGUmEK5vYLU274nMZargLsDjIk0OuPY8i4Cqc/p0ttafsFhT
-        G5uIL8INi2oW/n3NMTTso7pklEoCd/9sQdyxlTyMf2WN8KsFS8v1buFz3HpJERKdtdeTi0LUagvWn
-        sM4FYqIQ==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j4gYs-0002eN-Or; Thu, 20 Feb 2020 07:47:54 +0000
-Subject: Re: [RFC PATCH v3 3/8] drivers: base: add linear ranges helpers
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        mazziesaccount@gmail.com
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Markus Laine <markus.laine@fi.rohmeurope.com>,
-        Mikko Mutanen <mikko.mutanen@fi.rohmeurope.com>
-References: <cover.1582182989.git.matti.vaittinen@fi.rohmeurope.com>
- <1f6cb9fb9dbc429dc48110f18ad3a8c0c40196c6.1582182989.git.matti.vaittinen@fi.rohmeurope.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <2f0755df-4bc6-c53d-edea-45bc99e6a47b@infradead.org>
-Date:   Wed, 19 Feb 2020 23:47:52 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Thu, 20 Feb 2020 02:48:25 -0500
+Received: by mail-wr1-f66.google.com with SMTP id c9so3435164wrw.8
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 23:48:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=D7/ilOTv/yfu8Ewt4axgtGDzooZ+foxh4W/MQRjliDM=;
+        b=jMbZPFgAztkpn/Loio4h8rIr0dDunFm7z6lTmGUQtV5OJrvz92wbttJ/+tMh8NowL2
+         z1vThmc3N71RgnHF2+g5tJWWOdEsN4mp5kowlGnMiCD73SOu47thpDOMDGL701pUi5aP
+         ryZN4nJLqy7fpegqQeTnLcP4zK0Nf8lysNGi6+569kWsh1Q4kXWMG5Ujv2+fD/U6sq3P
+         hH5UD9uG3vxYW5fhUP7Ew97APi3TU6OakDzhqdgDf7ExXffBeuYg09pk5uXU6x26uAYX
+         HeBk4GGYaDVxODy/6shfrytrKglqKSrWfHtdQGvW2lstWoKJApx+P3W5W9ayhiRUBZec
+         kouw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=D7/ilOTv/yfu8Ewt4axgtGDzooZ+foxh4W/MQRjliDM=;
+        b=iMyq+oH6EuoMZWEhJ6QmG7Mz5hq7udwa6KnsFYQYHgZJrHxPip/WXsHzMEOcJkkOSM
+         I0ny/1Et0ZEB6Cw2De1OawFY5Hbmwxl4IIQMN3k1Q4fv8wQBmQXhmEDxgojnhnoOoOTg
+         qc4oLl3zMAuBkVdOkgbltAfRLPcdMPcC2UvInuTND0yCL/4xPW2U97ACcg7MEqjs0hSu
+         yE/tdDNCi4YGm+XWUliaCXEJURrWgPfG0NHQ4rYh83+0ZFJnBK8wC9QxVgVRvKp0LNxR
+         aqbjlvHUjJ4M0/iXGYc/rIUuKDq/g+NH1MZQ7Z5zvzijABSCrd3MWXkV2s7SzFtKl5MH
+         yjSQ==
+X-Gm-Message-State: APjAAAX1N94gnoy1edIyptcEbWS9vumt9JZf8Nafnihm8gFzmp38o78Y
+        NmpQLWuPDCxehheJb+bWHRgpaQ==
+X-Google-Smtp-Source: APXvYqzdP9CBfyqkStiBpbb7vc3kk+lFEglaLS3RelisPlykfjRR3shD5qopiw1lOITr4YUmZpWffw==
+X-Received: by 2002:adf:f787:: with SMTP id q7mr40744149wrp.297.1582184902510;
+        Wed, 19 Feb 2020 23:48:22 -0800 (PST)
+Received: from dell ([2.31.163.122])
+        by smtp.gmail.com with ESMTPSA id t187sm3571099wmt.25.2020.02.19.23.48.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2020 23:48:21 -0800 (PST)
+Date:   Thu, 20 Feb 2020 07:48:49 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Pavel Machek <pavel@ucw.cz>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, sre@kernel.org, nekit1000@gmail.com,
+        mpartap@gmx.net, merlijn@wizzup.org, martin_rysavy@centrum.cz,
+        agx@sigxcpu.org, daniel.thompson@linaro.org, jingoohan1@gmail.com,
+        dri-devel@lists.freedesktop.org, tomi.valkeinen@ti.com,
+        jjhiblot@ti.com
+Subject: Re: [PATCH] backlight: add led-backlight driver
+Message-ID: <20200220074849.GF3494@dell>
+References: <20200219191412.GA15905@amd>
+ <20200219194540.GD37466@atomide.com>
 MIME-Version: 1.0
-In-Reply-To: <1f6cb9fb9dbc429dc48110f18ad3a8c0c40196c6.1582182989.git.matti.vaittinen@fi.rohmeurope.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200219194540.GD37466@atomide.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-Here are some kernel-doc comments for you:
+On Wed, 19 Feb 2020, Tony Lindgren wrote:
 
-On 2/19/20 11:35 PM, Matti Vaittinen wrote:
-> ---
->  drivers/base/Kconfig         |   3 +
->  drivers/base/Makefile        |   1 +
->  drivers/base/linear_ranges.c | 246 +++++++++++++++++++++++++++++++++++
->  include/linux/linear_range.h |  48 +++++++
->  4 files changed, 298 insertions(+)
->  create mode 100644 drivers/base/linear_ranges.c
->  create mode 100644 include/linux/linear_range.h
+> * Pavel Machek <pavel@ucw.cz> [200219 19:15]:
+> > From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> > 
+> > This patch adds a led-backlight driver (led_bl), which is similar to
+> > pwm_bl except the driver uses a LED class driver to adjust the
+> > brightness in the HW. Multiple LEDs can be used for a single backlight.
+> > 
+> > Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> > Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+> > Acked-by: Pavel Machek <pavel@ucw.cz>
+> > Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+> > Acked-by: Lee Jones <lee.jones@linaro.org>
+> > Acked-by: Tony Lindgren <tony@atomide.com>
+> > Tested-by: Tony Lindgren <tony@atomide.com>
+> > Signed-off-by: Pavel Machek <pavel@ucw.cz>
+> > ---
+> >  drivers/video/backlight/Kconfig  |   7 ++
+> >  drivers/video/backlight/Makefile |   1 +
+> >  drivers/video/backlight/led_bl.c | 260 +++++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 268 insertions(+)
+> >  create mode 100644 drivers/video/backlight/led_bl.c
+> > 
+> > Hi!
+> > 
+> > Here's the version of the driver I have. AFAICT
+> > default-brightness-level handling is ok, so does not need to be
+> > changed.
+> > 
+> > Lee, it would be easiest for me if you could apply it to your tree and
+> > push, but given enough time I can push it to Linus, too.
+> 
+> Oh you're using quoted-printable for patches.. Got it applied now,
+> and it still works. Below is also the related dts change that
+> I tested with.
+> 
+> Feel free to pick the dts change too, naturally that should
+> not be applied before the driver.
+> 
+> If you guys instead want me to pick these both into my fixes
+> branch, just let me know and I'll do the explaining why these
+> are needed as fixes. Basically we no longer have a way to enable
+> the LCD backlight for droid4 manually starting with v5.6-rc1
+> unlike earlier.
 
-> diff --git a/drivers/base/linear_ranges.c b/drivers/base/linear_ranges.c
-> new file mode 100644
-> index 000000000000..5fa3b96bf2b8
-> --- /dev/null
-> +++ b/drivers/base/linear_ranges.c
-> @@ -0,0 +1,246 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * linear_ranges.c -- helpers to map values in a linear range to range index
-> + *
-> + * Original idea borrowed from regulator framework
-> + *
-> + * It might be useful if we could support also inversely proportional ranges?
-> + * Copyright 2020 ROHM Semiconductors
-> + */
-> +
-> +#include <linux/errno.h>
-> +#include <linux/export.h>
-> +#include <linux/kernel.h>
-> +#include <linux/linear_range.h>
-> +
-> +/**
-> + * linear_range_values_in_range - return the amount of values in a range
-> + *
-> + * @r:		pointer to linear range where values are counted
-> + *
-> + * Compute the amount of values in range pointed by @r. Note, values can
-> + * be all equal - range with selectors 0,...,2 with step 0 still contains
-> + * 3 values even though they are all equal.
-> + *
-> + * Returns the amount of values in range pointed by @r
+Please do.  You already have my Ack.
 
-    * Return: ...
-
-> + */
-> +
-> +/**
-> + * linear_range_values_in_range_array - return the amount of values in ranges
-> + *
-> + * @r:		pointer to array of linear ranges where values are counted
-> + * @ranges:	amount of ranges we include in computation.
-> + *
-> + * Compute the amount of values in ranges pointed by @r. Note, values can
-> + * be all equal - range with selectors 0,...,2 with step 0 still contains
-> + * 3 values even though they are all equal.
-> + *
-> + * Returns the amount of values in first @ranges ranges pointed by @r
-
-    * Return: ...
-
-> + */
-> +
-> +/**
-> + * linear_range_get_max_value - return the largest value in a range
-> + *
-> + * @r:		pointer to linear range where value is looked from
-> + *
-> + * Returns the largest value in the given range
-
-ditto.
-
-> + */
-> +
-> +/**
-> + * linear_range_get_value - fetch a value from given range
-> + *
-> + * @r:		pointer to linear range where value is looked from
-> + * @selector:	selector for which the value is searched
-> + * @val:	address where found value is updated
-> + *
-> + * Search given ranges for value which matches given selector.
-> + *
-> + * Returns 0 on success, -EINVAL given selector is not found from any of the
-
-ditto.
-
-> + * ranges.
-> + */
-> +
-> +/**
-> + * linear_range_get_value_array - fetch a value from array of ranges
-> + *
-> + * @r:		pointer to array of linear ranges where value is looked from
-> + * @ranges:	amount of ranges in an array
-> + * @selector:	selector for which the value is searched
-> + * @val:	address where found value is updated
-> + *
-> + * Search through an array of ranges for value which matches given selector.
-> + *
-> + * Returns 0 on success, -EINVAL given selector is not found from any of the
-
-same, again.
-
-> + * ranges.
-> + */
-> +
-> +/**
-> + * linear_range_get_selector_low - return linear range selector for value
-> + *
-> + * @r:		pointer to linear range where selector is looked from
-> + * @val:	value for which the selcetor is searched
-
-                                    selector
-
-> + * @selector:	address where found selector value is updated
-> + * @found:	flag to indicate that given value was in the range
-> + *
-> + * Return selector which which range value is closest match for given
-
-    * Return:
-
-> + * input value. Value is matching if it is equal or smaller than given
-> + * value. If given value is in the range, then @found is set true.
-> + *
-> + * Returns 0 on success, -EINVAL if range is invalid or does not contain
-> + * value smaller or equal to given value
-> + */
-> +int linear_range_get_selector_low(const struct linear_range *r,
-> +				  unsigned int val, unsigned int *selector,
-> +				  bool *found)
-> +{
-> +	*found = false;
-> +
-> +	if (r->min > val)
-> +		return -EINVAL;
-> +
-> +	if (linear_range_get_max_value(r) >= val)
-> +		*found = true;
-> +
-> +	if (!r->step)
-> +		*selector = r->min_sel;
-> +	else
-> +		*selector = (val - r->min) / r->step + r->min_sel;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(linear_range_get_selector_low);
-> +
-> +/**
-> + * linear_range_get_selector_low_array - return linear range selector for value
-> + *
-> + * @r:		pointer to array of linear ranges where selector is looked from
-> + * @ranges:	amount of ranges to scan from array
-> + * @val:	value for which the selcetor is searched
-
-                                    selector
-
-> + * @selector:	address where found selector value is updated
-> + * @found:	flag to indicate that given value was in the range
-> + *
-> + * Return Scan array of ranges for selector which which range value matches
-
-drop "Return" ?
-
-> + * given input value. Value is matching if it is equal or smaller than given
-> + * value. If given value is found to be in a range scannins is stopped and
-
-                                                      scanning
-
-> + * @found is set true. If a range with values smaller than given value is found
-> + * but the range max is being smaller than given value, then the ranges
-> + * biggest selector is updated to @selector but scanning ranges is continued
-> + * and @found is set to false.
-> + *
-> + * Returns 0 on success, -EINVAL if range array is invalid or does not contain
-
-    * Return:
-
-> + * range with a value smaller or equal to given value
-> + */
-
-> +
-> +/**
-> + * linear_range_get_selector_high - return linear range selector for value
-> + *
-> + * @r:		pointer to linear range where selector is looked from
-> + * @val:	value for which the selcetor is searched
-
-                                    selector
-
-> + * @selector:	address where found selector value is updated
-> + * @found:	flag to indicate that given value was in the range
-> + *
-> + * Return selector which which range value is closest match for given
-> + * input value. Value is matching if it is equal or higher than given
-> + * value. If given value is in the range, then @found is set true.
-> + *
-> + * Returns 0 on success, -EINVAL if range is invalid or does not contain
-
-    * Return:
-
-> + * value greater or equal to given value
-> + */
-
-
-cheers.
--- 
-~Randy
-
+--
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
