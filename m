@@ -2,118 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 391AD16610A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 16:34:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75F3D166148
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 16:46:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728499AbgBTPeh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 10:34:37 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:59448 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1728351AbgBTPeh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 10:34:37 -0500
-Received: (qmail 1597 invoked by uid 2102); 20 Feb 2020 10:34:36 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 20 Feb 2020 10:34:36 -0500
-Date:   Thu, 20 Feb 2020 10:34:36 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Kees Cook <keescook@chromium.org>
-cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Alexander Potapenko <glider@google.com>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] usb: gadget: net2280: Distribute switch variables for
- initialization
-In-Reply-To: <20200220062315.69253-1-keescook@chromium.org>
-Message-ID: <Pine.LNX.4.44L0.2002201028070.1453-100000@iolanthe.rowland.org>
+        id S1728583AbgBTPqb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 10:46:31 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35314 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728305AbgBTPqb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 10:46:31 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id C8CFCAC23;
+        Thu, 20 Feb 2020 15:46:29 +0000 (UTC)
+Date:   Thu, 20 Feb 2020 07:35:04 -0800
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     oneukum@suse.com
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH] usbnet: optimize barrier usage for Rmw atomic bitops
+Message-ID: <20200220153504.fozuwsurbyt6hhcm@linux-p48b>
+References: <20200129181646.25487-1-dave@stgolabs.net>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20200129181646.25487-1-dave@stgolabs.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 19 Feb 2020, Kees Cook wrote:
-
-> Variables declared in a switch statement before any case statements
-> cannot be automatically initialized with compiler instrumentation (as
-> they are not part of any execution flow). With GCC's proposed automatic
-> stack variable initialization feature, this triggers a warning (and they
-> don't get initialized). Clang's automatic stack variable initialization
-> (via CONFIG_INIT_STACK_ALL=y) doesn't throw a warning, but it also
-> doesn't initialize such variables[1]. Note that these warnings (or silent
-> skipping) happen before the dead-store elimination optimization phase,
-> so even when the automatic initializations are later elided in favor of
-> direct initializations, the warnings remain.
-> 
-> To avoid these problems, move such variables into the "case" where
-> they're used or lift them up into the main function body.
-> 
-> drivers/usb/gadget/udc/net2280.c: In function ‘handle_stat0_irqs_superspeed’:
-> drivers/usb/gadget/udc/net2280.c:2871:22: warning: statement will never be executed [-Wswitch-unreachable]
->  2871 |   struct net2280_ep *e;
->       |                      ^
-> 
-> [1] https://bugs.llvm.org/show_bug.cgi?id=44916
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  drivers/usb/gadget/udc/net2280.c |   10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/usb/gadget/udc/net2280.c b/drivers/usb/gadget/udc/net2280.c
-> index 1fd1b9186e46..cc5869363298 100644
-> --- a/drivers/usb/gadget/udc/net2280.c
-> +++ b/drivers/usb/gadget/udc/net2280.c
-> @@ -2861,6 +2861,7 @@ static void ep_clear_seqnum(struct net2280_ep *ep)
->  static void handle_stat0_irqs_superspeed(struct net2280 *dev,
->  		struct net2280_ep *ep, struct usb_ctrlrequest r)
->  {
-> +	struct net2280_ep *e;
->  	int tmp = 0;
->  
->  #define	w_value		le16_to_cpu(r.wValue)
-> @@ -2868,14 +2869,13 @@ static void handle_stat0_irqs_superspeed(struct net2280 *dev,
->  #define	w_length	le16_to_cpu(r.wLength)
->  
->  	switch (r.bRequest) {
-> -		struct net2280_ep *e;
-> -		u16 status;
-> -
->  	case USB_REQ_SET_CONFIGURATION:
->  		dev->addressed_state = !w_value;
->  		goto usb3_delegate;
->  
-> -	case USB_REQ_GET_STATUS:
-> +	case USB_REQ_GET_STATUS: {
-> +		u16 status;
-> +
->  		switch (r.bRequestType) {
->  		case (USB_DIR_IN | USB_TYPE_STANDARD | USB_RECIP_DEVICE):
->  			status = dev->wakeup_enable ? 0x02 : 0x00;
-> @@ -2905,7 +2905,7 @@ static void handle_stat0_irqs_superspeed(struct net2280 *dev,
->  			goto usb3_delegate;
->  		}
->  		break;
-> -
-> +	}
-
-This is an unusual use of nested blocks (i.e., a block immediately 
-following a "case" label, and it throws the indentation off -- there 
-will now be two nested closing braces at the same indentation level: 
-this one and the one preceding do_stall3:.
-
-Just define status at the function level, along with e, and don't 
-worry about it.
-
-Alan Stern
-
->  	case USB_REQ_CLEAR_FEATURE:
->  		switch (r.bRequestType) {
->  		case (USB_DIR_OUT | USB_TYPE_STANDARD | USB_RECIP_DEVICE):
-> 
-> 
-> 
-
+ping?
