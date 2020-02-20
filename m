@@ -2,110 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55A62166686
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 19:46:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E8BC166684
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 19:45:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728907AbgBTSqN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 13:46:13 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:37694 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726959AbgBTSqM (ORCPT
+        id S1728820AbgBTSps (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 13:45:48 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:41259 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728111AbgBTSpr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 13:46:12 -0500
-Received: by mail-ed1-f65.google.com with SMTP id t7so23310186edr.4
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 10:46:11 -0800 (PST)
+        Thu, 20 Feb 2020 13:45:47 -0500
+Received: by mail-qt1-f193.google.com with SMTP id l21so3617558qtr.8;
+        Thu, 20 Feb 2020 10:45:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3pzTOf6vYrNpBzwrv5P8vGUEMGl4yTghrNTGfR5M7Oc=;
-        b=t/iabB7zJkaoluyOjIOJfc2zOAmtCMc0F/y/TF2fj7jW83AkZqMCidXI1cWAbd1seh
-         NrPIkCTa7wgPP3M5+5W4Nd8wCviO86LJDU/66mUTKdZUNRZSGcNC+WNlPLabRaKp4SR+
-         orsRRi/sfSaMIAGI3SoDi7MDtWF06zukVhMxyMS8/yfYakd+jGja2CyT12U5oXkmI8sN
-         z5jMtx62wuJh4j4W5bIO2P70wW6bBQ278/BBWp++v1TyluKJlkdg9fCLT1VNOntUyF2q
-         Dp4wBg6EPgY/049JRWKGl3hU5FeH12hRn285BsTec8q28s4O1DhJH6apj0UVzQYbrXgZ
-         AeHA==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ajjnncCD8dG0G18fVGbEVN7FP1csi2qzGtdLhYXXJTU=;
+        b=k/vpOSde9bMUoOkP1G2/1I25Nn9Pkv0cytj97/bjAuSIclk+m4KQ9S0ziULuviFMs9
+         c6vb59sXLtBdSul8JNMDN9b22s/HaXZqEDqZVUUgXxNzpc7+RQuul8Lh87CBQrY8TG3b
+         yeVKaW3Bcp9oIDJS2uYK6b0btASzCNPTQaNt4mwNERLhrW2G+KqIsbMBhMm9SXREycvV
+         j/K7EMs16439ppT5r1FvGQRPftTQKxEEa69Oq9TofNUu2SJGZM7OqXVNPpPTYwvgce4v
+         wW8oxpMW8jTdFf8kowzQY6+ON6pmqStIvwfyWeN0NhVNmwZhaMHrCqR6Xy/TfGZu19ch
+         YULQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3pzTOf6vYrNpBzwrv5P8vGUEMGl4yTghrNTGfR5M7Oc=;
-        b=Yc3zVj9adW96Bg4Qr0s202qSM2F376FODoPQ4on7EawK6yY28XUOurYM9f8XTywMdp
-         bGoYEHt1RCqF+yp98IYIlHuKQG/Jt0swZJBvlnqVG9x4iD8ofTaybCpgqSV8hDjllB1R
-         KatsyYqiCRYwlatQ/m/2wv+wFsvYnu0R/5ipbchRJ6pEkg8AIxoikZ1HAZBN2jEXBogX
-         lFsaz0ZMPFUy+6A5mRUakwVnzf+rcqqSgMa+JBA1ZTzWNIvVuULvxGZEKw08Tpct740f
-         t6hEcP0Iumqjchy6EolOqduWuNkS/RoqZzXewsY2dwrfWwK4C9tCP4EMClF5F4VwSytV
-         tkYQ==
-X-Gm-Message-State: APjAAAW008hs5bTJJ7Z++gH4JCttcn+3Wke+UcCnWAEQwkJjEDdUU0Nq
-        w4lRcJE44bR7DD0f78LUT9ADWt2Bh5XvjaaLS/tmcA==
-X-Google-Smtp-Source: APXvYqxLLjMlzm9n1gTBdsGBP2Dd4mIMoNz+RxUJ/scsjYrcKm8cv5eKltlsAg/aIqFp91+eAChxVZYEb3UQBPTKYf4=
-X-Received: by 2002:a17:906:1e48:: with SMTP id i8mr28875694ejj.189.1582224370598;
- Thu, 20 Feb 2020 10:46:10 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=ajjnncCD8dG0G18fVGbEVN7FP1csi2qzGtdLhYXXJTU=;
+        b=MiRq1M5z2j8Q9wqPG6frhWM+vPmm7WO6XyCCCs/Tkm+ipxqpG7nxmbtmnTxbw6orvV
+         L5/Ljy5/uDNrRftJNHdUqtsyFRd4cSGn8eZPrX4hgtYWBwRg1uXLmumZkoSVhauxnVqW
+         QzBoHYp5aad9hI4Ong2BMmZEq9mVkEesJEtCjQ0yTN0Dzc/M2LMyRXLYqWVeYgsDkNbh
+         UMmuFXr+pd4jg/ReTrOaj/yw1mXdZjxqfHMb+3wzCu4njHXRPMdZwuQvpjOj8ymSCtmw
+         Q8HVtmWsg234cz5o3AUV+AqHQ6q3wJ0QSwoctPZO9F02qUr70pD6BJPRCZp1fnid3J8D
+         sc5g==
+X-Gm-Message-State: APjAAAVEAyNUc9I0VTRjqQ/EL+4ly9eTOpgY56rZoYBULxIXD+HBp07s
+        YNassZs/2UiOtopRp1L2YsQ=
+X-Google-Smtp-Source: APXvYqwr8QZEGjR+02xUZfnyfEhH/c3g1ZpRFCpisQx2XA9vthKAPCCYNwk1zQ/xPc6ejfIm8rgcFQ==
+X-Received: by 2002:ac8:6054:: with SMTP id k20mr27102688qtm.92.1582224346333;
+        Thu, 20 Feb 2020 10:45:46 -0800 (PST)
+Received: from localhost ([2620:10d:c091:500::55b1])
+        by smtp.gmail.com with ESMTPSA id z1sm194156qtq.69.2020.02.20.10.45.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2020 10:45:45 -0800 (PST)
+Date:   Thu, 20 Feb 2020 13:45:45 -0500
+From:   Tejun Heo <tj@kernel.org>
+To:     Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH] mm: memcontrol: asynchronous reclaim for memory.high
+Message-ID: <20200220184545.GH698990@mtj.thefacebook.com>
+References: <20200219181219.54356-1-hannes@cmpxchg.org>
+ <20200219183731.GC11847@dhcp22.suse.cz>
+ <20200219191618.GB54486@cmpxchg.org>
+ <20200219195332.GE11847@dhcp22.suse.cz>
+ <20200219214112.4kt573kyzbvmbvn3@ca-dmjordan1.us.oracle.com>
+ <20200219220859.GF54486@cmpxchg.org>
+ <20200220154524.dql3i5brnjjwecft@ca-dmjordan1.us.oracle.com>
+ <20200220155651.GG698990@mtj.thefacebook.com>
+ <20200220182326.ubcjycaubgykiy6e@ca-dmjordan1.us.oracle.com>
 MIME-Version: 1.0
-References: <20200218173221.237674-1-bgeffon@google.com> <20200220171554.GA44866@google.com>
- <CADyq12zUEq9kcyuR_Qm9MrU1ii-+9n8T2hK6QNzj=kH5zn0VrA@mail.gmail.com>
-In-Reply-To: <CADyq12zUEq9kcyuR_Qm9MrU1ii-+9n8T2hK6QNzj=kH5zn0VrA@mail.gmail.com>
-From:   Brian Geffon <bgeffon@google.com>
-Date:   Thu, 20 Feb 2020 10:45:44 -0800
-Message-ID: <CADyq12xz-g1geCBE5ie+Uffvp1YAgdsVq1yjQGydu=AZH-FxGA@mail.gmail.com>
-Subject: Re: [PATCH v6 1/2] mm: Add MREMAP_DONTUNMAP to mremap().
-To:     Minchan Kim <minchan@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Deacon <will@kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Yu Zhao <yuzhao@google.com>,
-        Jesse Barnes <jsbarnes@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200220182326.ubcjycaubgykiy6e@ca-dmjordan1.us.oracle.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry I should clarify that this is the behavior with MREMAP_FIXED is
-used, and to expand on that, it would potentially even have unmapped
-the region at the destination address and then fail in vma_to_resize
-too, so I hope that explains why that check landed there. But should
-these situations be considered a bug?
+Hello,
 
-Brian
+On Thu, Feb 20, 2020 at 01:23:26PM -0500, Daniel Jordan wrote:
+> The amount of work wouldn't seem to matter as long as the kernel thread stays
+> in the cgroup and lives long enough.  There's only the one-time cost of
+> attaching it when it's forked.  That seems doable for unbound workqueues (the
+> async reclaim), but may not be for the network packets.
 
-On Thu, Feb 20, 2020 at 10:36 AM Brian Geffon <bgeffon@google.com> wrote:
->
-> Hi Minchan,
->
-> > And here we got error if the addr is in non-anonymous-private vma so the
-> > syscall will fail but old vma is gone? I guess it's not your intention?
->
-> This is exactly what happens today in several situations, because
-> vma_to_resize is called unconditionally. For example if the old vma
-> has VM_HUGETLB and old_len < new_len it would have unmapped a portion
-> and then in vma_to_resize returned -EINVAL, similarly when old_len = 0
-> with a non-sharable mapping it will have called do_munmap only to fail
-> in vma_to_resize, if the vma has VM_DONTEXPAND set and you shrink the
-> size with old_len < new_len it would return -EFAULT after having done
-> the unmap on the decreased portion. So I followed the pattern to keep
-> the change simple and maintain consistency with existing behavior.
->
-> But with that being said, Kirill made the point that resizing a VMA
-> while also using MREMAP_DONTUNMAP doesn't have any clear use case and
-> I agree with that, I'm unable to think of a situation where you'd want
-> to resize a VMA and use MREMAP_DONTUNMAP. So I'm tempted to mail a new
-> version which returns -EINVAL if old_len != new_len that would resolve
-> this concern here as nothing would be unmapped ever at the old
-> position add it would clean up the change to very few lines of code.
->
-> What do you think?
->
-> Thank you for taking the time to review.
->
-> Brian
+The setup cost can be lazy optimized but it'd still have to bounce the
+tiny pieces of work to different threads instead of processing them in
+one fell swoop from the same context, which most likely is gonna be
+untenably expensive.
+
+Thanks.
+
+-- 
+tejun
