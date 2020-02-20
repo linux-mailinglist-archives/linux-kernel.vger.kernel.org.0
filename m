@@ -2,88 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72F001664AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 18:26:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37BA9166485
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 18:24:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728846AbgBTR0G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 12:26:06 -0500
-Received: from sauhun.de ([88.99.104.3]:35170 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728858AbgBTRZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 12:25:57 -0500
-Received: from localhost (p5486CC48.dip0.t-ipconnect.de [84.134.204.72])
-        by pokefinder.org (Postfix) with ESMTPSA id 721632C1EC5;
-        Thu, 20 Feb 2020 18:25:54 +0100 (CET)
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org, linux-i3c@lists.infradead.org,
-        Kieran Bingham <kieran@ksquared.org.uk>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Luca Ceresoli <luca@lucaceresoli.net>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 7/7] i2c: core: hand over reserved devices when requesting ancillary addresses
-Date:   Thu, 20 Feb 2020 18:24:03 +0100
-Message-Id: <20200220172403.26062-8-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200220172403.26062-1-wsa+renesas@sang-engineering.com>
-References: <20200220172403.26062-1-wsa+renesas@sang-engineering.com>
+        id S1728701AbgBTRYu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 12:24:50 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:36427 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727979AbgBTRYu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 12:24:50 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 339E821D6E;
+        Thu, 20 Feb 2020 12:24:49 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Thu, 20 Feb 2020 12:24:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=te6hdqtQBQi0OFmy4I46vtfMUfG
+        loiIkQJHlJUAw1Po=; b=jYZ2RHNbhZSEidhluJIDU6jVeGxE/iCJM/du3cp/Ae9
+        aC4NNCcOaF5a1u04qZeMKjF/fHiD/BikSUcTZwytD6iTqppOcXkJ58ic50VnNNhy
+        tP/IJMdwKd9AKmEVi0E6f9qa5eo88DcSggqpz4wU1boO8YxeiUk7CO1MmtHoXyCy
+        oFqdEQJ6tf9/kd7YM+bZ+/PDvfQUn/Kc31mrtnryLvWBGrnv3UbE3FCg5s4Miw1D
+        d6uoNw0SGFFL+lcArMkzdMEEcBbW5SBnbngpACskbT5QjRvhMQP4uIEuIkUdcAoF
+        SddU2/FJtpCtLTMF/Gtiw2ifA3oo1JcFYXOjl694scA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=te6hdq
+        tQBQi0OFmy4I46vtfMUfGloiIkQJHlJUAw1Po=; b=iKlzhwNoehwx38inZe86Sp
+        MEMG6KRTstc2sT9ZNSGtmbr1E7eP0D7Wlk6tBBR7Vg6HsexHL8EnLv4AW1HSD18K
+        jFc4hhQ+1d2MbnG9qWCNHR68jfuxgAUJCoz0vz5FiT6TQt1bE5Iul3hktQmfAAlV
+        yyfbiMsQjCeM2ipKCcEkWt/KDRJ4Qd5TZA7TwK0xjJytTrmdJP/7+x+khplgNbeV
+        WXKixC2GXYDnwAm8VswRgMGGcRzpVLoa2zJNbVVyWnAn2VxSwqcwDoAUAKawYKWI
+        4ml3miuKfjbSmsooTvL1MOvngeQWb21Ih7TY5CG9bucivKaeVQTQ8UJr/8AQ2kwg
+        ==
+X-ME-Sender: <xms:38BOXsUyNFFHbTkUI4L6lSmEuBpN2to3bnumg5QKeZUwpWa5nK7cQA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrkedvgddutddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecukfhppeeltd
+    drkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgepfeenucfrrghrrghmpehmrghi
+    lhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:38BOXtPnDlk2fotdqkIJYqsppoZXUNXEjhVlabcenoCtDlaazpySgQ>
+    <xmx:38BOXmysRKSbfQ9lAMIu7F-OMkpWLMdLX4gSC0sTV_i62YKi3muq7Q>
+    <xmx:38BOXlMIRB3K6gQeHz6LwzDvEyJ_gJSb0Rb_WfV1HHEj4OKssfzQaQ>
+    <xmx:4cBOXprXyGmrPIxveegUBiPvy01hCRzkkJlR9OlNDZ7shuWsZoqYFA>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 6E60C3060C21;
+        Thu, 20 Feb 2020 12:24:47 -0500 (EST)
+Date:   Thu, 20 Feb 2020 18:24:46 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Andrey Lebedev <andrey.lebedev@gmail.com>
+Cc:     wens@csie.org, airlied@linux.ie, daniel@ffwll.ch,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Andrey Lebedev <andrey@lebedev.lt>
+Subject: Re: [PATCH 4/5] dt-bindings: display: sun4i: New compatibles for A20
+ tcons
+Message-ID: <20200220172446.gg746z5efmzwtfdz@gilmour.lan>
+References: <20200210195633.GA21832@kedthinkpad>
+ <20200219180858.4806-1-andrey.lebedev@gmail.com>
+ <20200219180858.4806-5-andrey.lebedev@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="j2564guncf3jyy2w"
+Content-Disposition: inline
+In-Reply-To: <20200219180858.4806-5-andrey.lebedev@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With i2c_new_ancillary_address, we can check if the intended driver is
-requesting a reserved address. Update the function to do these checks.
-If the check passes, the "reserved" device will become a regular "dummy"
-device.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/i2c-core-base.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+--j2564guncf3jyy2w
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index 4000a4384306..ba325f8107a3 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -975,6 +975,8 @@ struct i2c_client *i2c_new_ancillary_device(struct i2c_client *client,
- 						u16 default_addr)
- {
- 	struct device_node *np = client->dev.of_node;
-+	struct device *reserved_dev, *adapter_dev = &client->adapter->dev;
-+	struct i2c_client *reserved_client;
- 	u32 addr = default_addr;
- 	int i;
- 
-@@ -984,7 +986,21 @@ struct i2c_client *i2c_new_ancillary_device(struct i2c_client *client,
- 			of_property_read_u32_index(np, "reg", i, &addr);
- 	}
- 
--	dev_dbg(&client->adapter->dev, "Address for %s : 0x%x\n", name, addr);
-+	dev_info(adapter_dev, "Address for %s : 0x%x\n", name, addr);
-+
-+	/* No need to scan muxes, siblings must sit on the same adapter */
-+	reserved_dev = device_find_child(adapter_dev, &addr, __i2c_check_addr_busy);
-+	reserved_client = i2c_verify_client(reserved_dev);
-+
-+	if (reserved_client) {
-+		if (reserved_client->dev.of_node != np ||
-+		    strcmp(reserved_client->name, I2C_RESERVED_DRV_NAME) != 0)
-+			return ERR_PTR(-EBUSY);
-+
-+		strlcpy(reserved_client->name, I2C_DUMMY_DRV_NAME, sizeof(client->name));
-+		return reserved_client;
-+	}
-+
- 	return i2c_new_dummy_device(client->adapter, addr);
- }
- EXPORT_SYMBOL_GPL(i2c_new_ancillary_device);
--- 
-2.20.1
+On Wed, Feb 19, 2020 at 08:08:57PM +0200, Andrey Lebedev wrote:
+> From: Andrey Lebedev <andrey@lebedev.lt>
+>
+> Document new compatibles used to differentiate between timing
+> controllers on A20 (sun7i)
+>
+> Signed-off-by: Andrey Lebedev <andrey@lebedev.lt>
+> ---
+>  .../bindings/display/allwinner,sun4i-a10-tcon.yaml          | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/display/allwinner,sun4i-a10-tcon.yaml b/Documentation/devicetree/bindings/display/allwinner,sun4i-a10-tcon.yaml
+> index 86ad617d2327..c0f6bb16fa34 100644
+> --- a/Documentation/devicetree/bindings/display/allwinner,sun4i-a10-tcon.yaml
+> +++ b/Documentation/devicetree/bindings/display/allwinner,sun4i-a10-tcon.yaml
+> @@ -46,6 +46,12 @@ properties:
+>            - allwinner,sun50i-h6-tcon-tv
+>          - const: allwinner,sun8i-a83t-tcon-tv
+>
+> +      - items:
+> +        - enum:
+> +          - allwinner,sun7i-a20-tcon0
+> +          - allwinner,sun7i-a20-tcon1
+> +        - const: allwinner,sun7i-a20-tcon
+> +
+>    reg:
+>      maxItems: 1
 
+It wasn't ordered propertly, I've fixed it up while applying
+
+Maxime
+
+--j2564guncf3jyy2w
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXk7A3gAKCRDj7w1vZxhR
+xfwVAP9fqMR6S5QNlK723niU/vA0ow7ntEjfO/d+1F6+P/qUHgEA8pTIZG3N0KC4
+EDlYflE0dcgyudMkCjaHcAa7PgUxPAY=
+=41w8
+-----END PGP SIGNATURE-----
+
+--j2564guncf3jyy2w--
