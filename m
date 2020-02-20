@@ -2,104 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D60A016575F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 07:13:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C271516576B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 07:14:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbgBTGM7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 01:12:59 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54073 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726198AbgBTGM5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 01:12:57 -0500
-Received: by mail-wm1-f66.google.com with SMTP id s10so684255wmh.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 22:12:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8LXBy0Uexw62kag86kt07J2cNSFL92+mtSCX46spkX8=;
-        b=MruqT/lLwSAY/zZMkWPYyZnUdokPOkKShNCtKtMf/VykASByq7CcqXkeJtyAFtaE9d
-         mO5avU+Ye1J1rSsVQYiZYzVTh2UcMw4oSNd88QTH2ZnWcqW0y7X903SrT2LBN6Ueo7Ak
-         O5/k8vc51viBHlk9Pst4jGvSCHEng4S2zFufuqaWQfdgxgF9RbTM9i1kKH49Pq3Jd9rD
-         axORqzyd3aaOYT00FJIWvjhDCfrUDCcjo5qiuTg6N764cg04CVA5hMMv2EwNCak1jiYg
-         rYWGXwLF4qexYdwemsf2asYFk6VP4ARRR5pqJKviz3lLKi4EhKWXt2ktUm+WEMyDy1sq
-         +7Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8LXBy0Uexw62kag86kt07J2cNSFL92+mtSCX46spkX8=;
-        b=FGvoXFgWcohuLZ3mapnwnsp4BK2MsDvVWU+RLkmcOGHycs+/EQK+HPzDJrscpjmhgc
-         ijOPi5yj8ZnPdgTUV+NHXOXs1ofVPu78yjcxbo9vQtIMamrfT2j9CyvUiDK+87upK2pI
-         my9J8fFS1Mjs8Wnkegnr4h5xsLwv2vCJjDVSHaTS2NZnslHo3cS1/aQOs1WZ/DhUhf5w
-         7ij61WemRh20lU06vofqSMitVc041TyKJLh8ksPKQctQW3l1bNyFqAF+p7Y6QgvmITnv
-         tfkwxXVyGgVz+MTSp8O3ZrlDRHM/Wn+jDfSaPIsLfH1lJM6p0SbAUEjzHzabEV4C/CCp
-         mgBw==
-X-Gm-Message-State: APjAAAXtIYBSHW1iwC4uWHbFc3sNKKbwWsx2Jx4P3jpmGwwueMY8hO8B
-        OmFL6KP3MacjSOeC93giQyNwj0LcVLxmOyPRJ0Li4A==
-X-Google-Smtp-Source: APXvYqzeQceJiDvtYYc92q/YMWZtyrFqJ1ahaVG9IrTJOyiVw37zCRGbeNeYXxtFFERU8m8iCnxSB/q+gcv23p72kzA=
-X-Received: by 2002:a1c:1984:: with SMTP id 126mr2342646wmz.78.1582179175373;
- Wed, 19 Feb 2020 22:12:55 -0800 (PST)
+        id S1726856AbgBTGOM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 01:14:12 -0500
+Received: from mga09.intel.com ([134.134.136.24]:51786 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726150AbgBTGOL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 01:14:11 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2020 22:14:10 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,463,1574150400"; 
+   d="scan'208";a="436484554"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by fmsmga006.fm.intel.com with ESMTP; 19 Feb 2020 22:14:08 -0800
+Date:   Thu, 20 Feb 2020 14:14:27 +0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, richardw.yang@linux.intel.com,
+        david@redhat.com, osalvador@suse.de, dan.j.williams@intel.com,
+        mhocko@suse.com, rppt@linux.ibm.com, robin.murphy@arm.com
+Subject: Re: [PATCH v2 2/7] mm/sparse.c: introduce new function
+ fill_subsection_map()
+Message-ID: <20200220061427.GB32521@richard>
+Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+References: <20200220043316.19668-1-bhe@redhat.com>
+ <20200220043316.19668-3-bhe@redhat.com>
 MIME-Version: 1.0
-References: <20200220061023.958-1-alex@ghiti.fr>
-In-Reply-To: <20200220061023.958-1-alex@ghiti.fr>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Thu, 20 Feb 2020 11:42:44 +0530
-Message-ID: <CAAhSdy1=xwzcJuKtyyv_d1fL6=v2kB_rq2F06081Bc68WGXH_A@mail.gmail.com>
-Subject: Re: [PATCH] riscv: Use p*d_leaf macros to define p*d_huge
-To:     Alexandre Ghiti <alex@ghiti.fr>
-Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200220043316.19668-3-bhe@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 11:41 AM Alexandre Ghiti <alex@ghiti.fr> wrote:
+On Thu, Feb 20, 2020 at 12:33:11PM +0800, Baoquan He wrote:
+>Wrap the codes filling subsection map from section_activate() into
+>fill_subsection_map(), this makes section_activate() cleaner and
+>easier to follow.
 >
-> The newly introduced p*d_leaf macros allow to check if an entry of the
-> page table map to a physical page instead of the next level. To avoid
-> duplication of code, use those macros to determine if a page table entry
-> points to a hugepage.
->
-> Suggested-by: Paul Walmsley <paul.walmsley@sifive.com>
-> Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
-> ---
->  arch/riscv/mm/hugetlbpage.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/riscv/mm/hugetlbpage.c b/arch/riscv/mm/hugetlbpage.c
-> index 0d4747e9d5b5..a6189ed36c5f 100644
-> --- a/arch/riscv/mm/hugetlbpage.c
-> +++ b/arch/riscv/mm/hugetlbpage.c
-> @@ -4,14 +4,12 @@
->
->  int pud_huge(pud_t pud)
->  {
-> -       return pud_present(pud) &&
-> -               (pud_val(pud) & (_PAGE_READ | _PAGE_WRITE | _PAGE_EXEC));
-> +       return pud_leaf(pud);
->  }
->
->  int pmd_huge(pmd_t pmd)
->  {
-> -       return pmd_present(pmd) &&
-> -               (pmd_val(pmd) & (_PAGE_READ | _PAGE_WRITE | _PAGE_EXEC));
-> +       return pmd_leaf(pmd);
->  }
->
->  static __init int setup_hugepagesz(char *opt)
-> --
-> 2.20.1
->
+>Signed-off-by: Baoquan He <bhe@redhat.com>
 
-Looks good to me.
+Reviewed-by: Wei Yang <richardw.yang@linux.intel.com>
 
-Reviewed-by: Anup Patel <anup@brainfault.org>
+>---
+> mm/sparse.c | 45 ++++++++++++++++++++++++++++++++++-----------
+> 1 file changed, 34 insertions(+), 11 deletions(-)
+>
+>diff --git a/mm/sparse.c b/mm/sparse.c
+>index b8e52c8fed7f..977b47acd38d 100644
+>--- a/mm/sparse.c
+>+++ b/mm/sparse.c
+>@@ -790,24 +790,28 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
+> 		ms->section_mem_map = (unsigned long)NULL;
+> }
+> 
+>-static struct page * __meminit section_activate(int nid, unsigned long pfn,
+>-		unsigned long nr_pages, struct vmem_altmap *altmap)
+>+/**
+>+ * fill_subsection_map - fill subsection map of a memory region
+>+ * @pfn - start pfn of the memory range
+>+ * @nr_pages - number of pfns to add in the region
+>+ *
+>+ * This fills the related subsection map inside one section, and only
+>+ * intended for hotplug.
+>+ *
+>+ * Return:
+>+ * * 0		- On success.
+>+ * * -EINVAL	- Invalid memory region.
+>+ * * -EEXIST	- Subsection map has been set.
+>+ */
+>+static int fill_subsection_map(unsigned long pfn, unsigned long nr_pages)
+> {
+>-	DECLARE_BITMAP(map, SUBSECTIONS_PER_SECTION) = { 0 };
+> 	struct mem_section *ms = __pfn_to_section(pfn);
+>-	struct mem_section_usage *usage = NULL;
+>+	DECLARE_BITMAP(map, SUBSECTIONS_PER_SECTION) = { 0 };
+> 	unsigned long *subsection_map;
+>-	struct page *memmap;
+> 	int rc = 0;
+> 
+> 	subsection_mask_set(map, pfn, nr_pages);
+> 
+>-	if (!ms->usage) {
+>-		usage = kzalloc(mem_section_usage_size(), GFP_KERNEL);
+>-		if (!usage)
+>-			return ERR_PTR(-ENOMEM);
+>-		ms->usage = usage;
+>-	}
+> 	subsection_map = &ms->usage->subsection_map[0];
+> 
+> 	if (bitmap_empty(map, SUBSECTIONS_PER_SECTION))
+>@@ -818,6 +822,25 @@ static struct page * __meminit section_activate(int nid, unsigned long pfn,
+> 		bitmap_or(subsection_map, map, subsection_map,
+> 				SUBSECTIONS_PER_SECTION);
+> 
+>+	return rc;
+>+}
+>+
+>+static struct page * __meminit section_activate(int nid, unsigned long pfn,
+>+		unsigned long nr_pages, struct vmem_altmap *altmap)
+>+{
+>+	struct mem_section *ms = __pfn_to_section(pfn);
+>+	struct mem_section_usage *usage = NULL;
+>+	struct page *memmap;
+>+	int rc = 0;
+>+
+>+	if (!ms->usage) {
+>+		usage = kzalloc(mem_section_usage_size(), GFP_KERNEL);
+>+		if (!usage)
+>+			return ERR_PTR(-ENOMEM);
+>+		ms->usage = usage;
+>+	}
+>+
+>+	rc = fill_subsection_map(pfn, nr_pages);
+> 	if (rc) {
+> 		if (usage)
+> 			ms->usage = NULL;
+>-- 
+>2.17.2
 
-Regards,
-Anup
+-- 
+Wei Yang
+Help you, Help me
