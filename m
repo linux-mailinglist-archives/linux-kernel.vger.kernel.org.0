@@ -2,223 +2,233 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0272F16633F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:38:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C93D166350
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:40:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728404AbgBTQiC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 11:38:02 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:42820 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728133AbgBTQiA (ORCPT
+        id S1728589AbgBTQkI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 11:40:08 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36236 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728090AbgBTQkH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 11:38:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582216679;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=JPLN0ouhhg0blmU2M9hGNXZisumAqDkHlC1AmG0Un74=;
-        b=UTRyRkSdntoX2PFaw8n1gjamNUbZ6/G+3s5quOm1upUdl/qonAfcK39Hx+wEBqrVHiLmkK
-        o0xVN+Sav/sI1PVbfc2pll3gMU5wGj8rAn/KlGNdbIus8t41k1nZcwco78oC4mOtJwso4J
-        dm9Ft5lMZYk/nr2ciZ7RhCwtmeS+qzA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-290-8c5kERyLNBuMfxt3ogkWqQ-1; Thu, 20 Feb 2020 11:37:55 -0500
-X-MC-Unique: 8c5kERyLNBuMfxt3ogkWqQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0F529477;
-        Thu, 20 Feb 2020 16:37:53 +0000 (UTC)
-Received: from carbon (ovpn-200-26.brq.redhat.com [10.40.200.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F41DF9051B;
-        Thu, 20 Feb 2020 16:37:42 +0000 (UTC)
-Date:   Thu, 20 Feb 2020 17:37:40 +0100
-From:   Jesper Dangaard Brouer <brouer@redhat.com>
-To:     shuah <shuah@kernel.org>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Daniel =?UTF-8?B?RMOtYXo=?= <daniel.diaz@linaro.org>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        BPF-dev-list <bpf@vger.kernel.org>,
-        Daniel Borkmann <borkmann@iogearbox.net>,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Toke =?UTF-8?B?SMO4aWxhbmQtSsO4cmdlbnNlbg==?= <toke@redhat.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, brouer@redhat.com
-Subject: Re: Kernel 5.5.4 build fail for BPF-selftests with latest LLVM
-Message-ID: <20200220173740.7a3f9ad7@carbon>
-In-Reply-To: <4a26e6c6-500e-7b92-1e26-16e1e0233889@kernel.org>
-References: <20200219133012.7cb6ac9e@carbon>
-        <CAADnVQKQRKtDz0Boy=-cudc4eKGXB-yParGZv6qvYcQR4uMUQQ@mail.gmail.com>
-        <20200219180348.40393e28@carbon>
-        <CAEf4Bza9imKymHfv_LpSFE=kNB5=ZapTS3SCdeZsDdtrUrUGcg@mail.gmail.com>
-        <20200219192854.6b05b807@carbon>
-        <CAEf4BzaRAK6-7aCCVOA6hjTevKuxgvZZnHeVgdj_ZWNn8wibYQ@mail.gmail.com>
-        <20200219210609.20a097fb@carbon>
-        <CAEUSe79Vn8wr=BOh0RzccYij_snZDY=2XGmHmR494wsQBBoo5Q@mail.gmail.com>
-        <20200220002748.kpwvlz5xfmjm5fd5@ast-mbp>
-        <4a26e6c6-500e-7b92-1e26-16e1e0233889@kernel.org>
+        Thu, 20 Feb 2020 11:40:07 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p17so2791635wma.1;
+        Thu, 20 Feb 2020 08:40:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=T8wvKjlefqfXFqJVlV8HQ9fed6fOUrFPLYsYuyXQJsc=;
+        b=KD4LUyGZ/1BVloNtPKSarAXfsISTN4xbWaVgWNfdncTz/qaUX7KgNrisc3m+qPHasq
+         majehoINj2pN2ZjotnmBIc6qKQBT1zAlcubRL6XzzC2JV9WfEhbS55FXQMjAyyEpK3ws
+         kocGdv5IBgiQNZ7C7Y8lokT4ylrl90UjwP9+PKzvi6ftyxeLTu5IcEcPeBphtdeyx5i2
+         OsahYJsAu4J84u1LShmSseucLBtGEUVcy+f2iPFiBx0WnqBNaIp9M2SknwADSXzjuOm0
+         jj/3tVodyJrQGbGEHdjxaqhUKwBH+iT30cl0fDl098/5mKG1Pv5qLIG4ixGLc/cd6xe1
+         TN5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=T8wvKjlefqfXFqJVlV8HQ9fed6fOUrFPLYsYuyXQJsc=;
+        b=SO2d5hgt+vDKUo9URKJopPiApsB/AKbHWgwkHdj6P7D/rn0Bj+fcHxMxF0tRY9iOTb
+         gfHJMdDN14cMW+RhW+drFqiBnLxmXeDIy00MZ1/K9J11kI6/qzpUO43Pla9V1w8mR0HG
+         3R7vVDOvDRTHe3Pn5tdhDNSVQMYshxmu0rTzaeh1LBcgLqqDtI6/+0lA2lcu3Ojvcf2A
+         XVO5s2U5Vo+McYJ7d6ZV7Lal9yzyplO4Jy5kEniDwG4THHs2f28xhaUirf7JSdPj1hQW
+         AQ17I7nkPQYcEISPQhnVCJ1SYLg1wtiRL/vcQRYn2MJrkFQEMvzBFZCh6Az7FCuHHMzU
+         yM8w==
+X-Gm-Message-State: APjAAAUt9sspWZxsmvOe+1UV6gbe2a8LSlEpQMgunC1nJ7c3dHOV1JNH
+        l30KZHMXC5K4VjTSYYTR4schVIjigqiuRI/LxhSrXcLZ
+X-Google-Smtp-Source: APXvYqwkf835f50UsguvjN0cQ7ua7prvHuBgeEK5CQM0QeHyuBi4EBfRDg+VxNRdJlYg3S55ARTKcRM1btGen1oBtTk=
+X-Received: by 2002:a05:600c:230d:: with SMTP id 13mr5645941wmo.13.1582216805562;
+ Thu, 20 Feb 2020 08:40:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+References: <20200114170231.16421-1-andrew.smirnov@gmail.com>
+In-Reply-To: <20200114170231.16421-1-andrew.smirnov@gmail.com>
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+Date:   Thu, 20 Feb 2020 08:39:54 -0800
+Message-ID: <CAHQ1cqGYkJA6a6KZ8fbyM=x-Uo7fJ23u-Ywv___0zHWx8swa2w@mail.gmail.com>
+Subject: Re: [PATCH] PCI: imx6: Add L1SS support for i.MX8MQ
+To:     linux-pci@vger.kernel.org
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 19 Feb 2020 17:47:23 -0700
-shuah <shuah@kernel.org> wrote:
+On Tue, Jan 14, 2020 at 9:02 AM Andrey Smirnov <andrew.smirnov@gmail.com> wrote:
+>
+> Add code to configure PCI IP block to utilize supported ASPM features.
+>
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Richard Zhu <hongxing.zhu@nxp.com>
+> Cc: linux-imx@nxp.com
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-pci@vger.kernel.org
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 72 ++++++++++++++++++++++-----
+>  1 file changed, 60 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index acfbd34032a8..3cc94ab7d22b 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -40,6 +40,9 @@
+>  #define IMX8MQ_GPR12_PCIE2_CTRL_DEVICE_TYPE    GENMASK(11, 8)
+>  #define IMX8MQ_PCIE2_BASE_ADDR                 0x33c00000
+>
+> +#define IMX8MQ_PCIE_LINK_CAP_L1EL_64US         (0x6 << 15)
+> +#define IMX8MQ_PCIE_CTRL_APPS_CLK_REQ          BIT(4)
+> +
+>  #define to_imx6_pcie(x)        dev_get_drvdata((x)->dev)
+>
+>  enum imx6_pcie_variants {
+> @@ -64,12 +67,14 @@ struct imx6_pcie {
+>         struct dw_pcie          *pci;
+>         int                     reset_gpio;
+>         bool                    gpio_active_high;
+> +       bool                    supports_clkreq;
+>         struct clk              *pcie_bus;
+>         struct clk              *pcie_phy;
+>         struct clk              *pcie_inbound_axi;
+>         struct clk              *pcie;
+>         struct clk              *pcie_aux;
+>         struct regmap           *iomuxc_gpr;
+> +       struct regmap           *src;
+>         u32                     controller_id;
+>         struct reset_control    *pciephy_reset;
+>         struct reset_control    *apps_reset;
+> @@ -421,11 +426,17 @@ static unsigned int imx6_pcie_grp_offset(const struct imx6_pcie *imx6_pcie)
+>         return imx6_pcie->controller_id == 1 ? IOMUXC_GPR16 : IOMUXC_GPR14;
+>  }
+>
+> +static unsigned int
+> +imx6_pcie_pciphy_rcr_offset(const struct imx6_pcie *imx6_pcie)
+> +{
+> +       WARN_ON(imx6_pcie->drvdata->variant != IMX8MQ);
+> +       return imx6_pcie->controller_id == 1 ? 0x48 : 0x2C;
+> +}
+> +
+>  static int imx6_pcie_enable_ref_clk(struct imx6_pcie *imx6_pcie)
+>  {
+>         struct dw_pcie *pci = imx6_pcie->pci;
+>         struct device *dev = pci->dev;
+> -       unsigned int offset;
+>         int ret = 0;
+>
+>         switch (imx6_pcie->drvdata->variant) {
+> @@ -463,17 +474,19 @@ static int imx6_pcie_enable_ref_clk(struct imx6_pcie *imx6_pcie)
+>                         break;
+>                 }
+>
+> -               offset = imx6_pcie_grp_offset(imx6_pcie);
+> -               /*
+> -                * Set the over ride low and enabled
+> -                * make sure that REF_CLK is turned on.
+> -                */
+> -               regmap_update_bits(imx6_pcie->iomuxc_gpr, offset,
+> -                                  IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE,
+> -                                  0);
+> -               regmap_update_bits(imx6_pcie->iomuxc_gpr, offset,
+> -                                  IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE_EN,
+> -                                  IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE_EN);
+> +               if (!imx6_pcie->supports_clkreq) {
+> +                       unsigned int offset = imx6_pcie_grp_offset(imx6_pcie);
+> +                       /*
+> +                        * Set the over ride low and enabled
+> +                        * make sure that REF_CLK is turned on.
+> +                        */
+> +                       regmap_update_bits(imx6_pcie->iomuxc_gpr, offset,
+> +                                          IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE,
+> +                                          0);
+> +                       regmap_update_bits(imx6_pcie->iomuxc_gpr, offset,
+> +                                        IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE_EN,
+> +                                        IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE_EN);
+> +               }
 
-> On 2/19/20 5:27 PM, Alexei Starovoitov wrote:
-> > On Wed, Feb 19, 2020 at 03:59:41PM -0600, Daniel D=C3=ADaz wrote: =20
-> >>>
-> >>> When I download a specific kernel release, how can I know what LLVM
-> >>> git-hash or version I need (to use BPF-selftests)? =20
-> >=20
-> > as discussed we're going to add documentation-like file that will
-> > list required commits in tools.
-> > This will be enforced for future llvm/pahole commits.
-> >  =20
-> >>> Do you think it is reasonable to require end-users to compile their o=
-wn
-> >>> bleeding edge version of LLVM, to use BPF-selftests? =20
-> >=20
-> > absolutely. =20
->=20
-> + linux-kselftest@vger.kernel.org
->=20
-> End-users in this context are users and not necessarily developers.
+Ugh, I just realized all of my testing was implicitly relying on
+bootloader configuring those CLKREQ overrides bits, so all of the code
+related to in in this patch is bogus and broken. Glad it didn't get
+applied. Will submit corrected v2 once I work out the right way to do
+this.
 
-I agree.  And I worry that we are making it increasingly hard for
-non-developer users.
-
-
-> > If a developer wants to send a patch they must run all selftests and
-> > all of them must pass in their environment.
-> > "but I'm adding a tracing feature and don't care about networking tests
-> > failing"... is not acceptable. =20
->=20
-> This is a reasonable expectation when a developers sends bpf patches.
-
-Sure. I have several versions on LLVM that I've compiled manually.
-
-> >  =20
-> >>> I do hope that some end-users of BPF-selftests will be CI-systems.
-> >>> That also implies that CI-system maintainers need to constantly do
-> >>> "latest built from sources" of LLVM git-tree to keep up.  Is that a
-> >>> reasonable requirement when buying a CI-system in the cloud? =20
-> >=20
-> > "buying CI-system in the cloud" ?
-> > If I could buy such system I would pay for it out of my own pocket to s=
-ave
-> > maintainer's and developer's time.
-
-And Daniel D=C3=ADaz want to provide his help below (to tests it on arch
-that you likely don't even have access to). That sounds like a good
-offer, and you don't even have to pay.
-
-> >  =20
-> >> We [1] are end users of kselftests and many other test suites [2]. We
-> >> run all of our testing on every git-push on linux-stable-rc, mainline,
-> >> and linux-next -- approximately 1 million tests per week. We have a
-> >> dedicated engineering team looking after this CI infrastructure and
-> >> test results, and as such, I can wholeheartedly echo Jesper's
-> >> sentiment here: We would really like to help kernel maintainers and
-> >> developers by automatically testing their code in real hardware, but
-> >> the BPF kselftests are difficult to work with from a CI perspective.
-> >> We have caught and reported [3] many [4] build [5] failures [6] in the
-> >> past for libbpf/Perf, but building is just one of the pieces. We are
-> >> unable to run the entire BPF kselftests because only a part of the
-> >> code builds, so our testing is very limited there.
-> >>
-> >> We hope that this situation can be improved and that our and everyone
-> >> else's automated testing can help you guys too. For this to work out,
-> >> we need some help. =20
-> >  =20
->=20
-> It would be helpful understand what "help" is in this context.
->=20
-> > I don't understand what kind of help you need. Just install the
-> > latest tools. =20
-
-I admire that you want to push *everybody* forward to use the latest
-LLVM, but saying latest is LLVM devel git tree HEAD is too extreme.
-I can support saying latest LLVM release is required.
-
-As soon as your LLVM patches are accepted into llvm-git-tree, you will
-add some BPF selftests that util this. Then CI-systems pull latest
-bpf-next they will start to fail to compile BPF-selftests, and CI
-stops.  Now you want to force CI-system maintainer to recompile LLVM
-from git.  This will likely take some time.  Until that happens
-CI-system doesn't catch stuff. E.g. I really want the ARM tests that
-Linaro can run for us (which isn't run before you apply patches...).
-
-
-> What would be helpful is to write bpf tests such that older tests that
-> worked on older llvm versions continue to work and with some indication
-> on which tests require new bleeding edge tools.
->=20
-> > Both the latest llvm and the latest pahole are required. =20
->=20
-> It would be helpful if you can elaborate why latest tools are a
-> requirement.
->=20
-> > If by 'help' you mean to tweak selftests to skip tests then it's a nack.
-> > We have human driven CI. Every developer must run selftests/bpf before
-> > emailing the patches. Myself and Daniel run them as well before applyin=
-g.
-> > These manual runs is the only thing that keeps bpf tree going.
-> > If selftests get to skip tests humans will miss those errors.
-> > When I don't see '0 SKIPPED, 0 FAILED' I go and investigate.
-> > Anything but zero is a path to broken kernels.
-> >=20
-> > Imagine the tests would get skipped when pahole is too old.
-> > That would mean all of the kernel features from year 2019
-> > would get skipped. Is there a point of running such selftests?
-> > I think the value is not just zero. The value is negative.
-> > Such selftests that run old stuff would give false believe
-> > that they do something meaningful.
-> > "but CI can do build only tests"... If 'helping' such CI means hurting =
-the
-> > key developer/maintainer workflow such CI is on its own.
-> >  =20
->=20
-> Skipping tests will be useless. I am with you on that. However,
-> figuring out how to maintain some level of backward compatibility
-> to run at least older tests and warn users to upgrade would be
-> helpful.
-
-What I propose is that a BPF-selftest that use a new LLVM feature,
-should return FAIL (or perhaps SKIP), when it is compiled with say one
-release old LLVM. This will allow new-tests to show up in CI-systems
-reports as FAIL, and give everybody breathing room to upgrade their LLVM
-compiler.
-
-> I suspect currently users are ignoring bpf failures because they
-> are unable to keep up with the requirement to install newer tools
-> to run the tests. This isn't great either.
-
-Yes, my worry is also that we are simply making it too difficult for
-non-developer users to run these tests.  And I specifically want to
-attract CI-systems to run these.  And especially Linaro, who have
-dedicated engineering team looking after their CI infrastructure, and
-they explicitly in this email confirm my worry.
-
-
-> Users that care are sharing their pain to see if they can get some
-> help or explanation on why new tools are required every so often.
-> I don't think everybody understands why. :)
-
---=20
-Best regards,
-  Jesper Dangaard Brouer
-  MSc.CS, Principal Kernel Engineer at Red Hat
-  LinkedIn: http://www.linkedin.com/in/brouer
-
+>                 break;
+>         }
+>
+> @@ -547,6 +560,27 @@ static void imx6_pcie_deassert_core_reset(struct imx6_pcie *imx6_pcie)
+>         switch (imx6_pcie->drvdata->variant) {
+>         case IMX8MQ:
+>                 reset_control_deassert(imx6_pcie->pciephy_reset);
+> +               if (imx6_pcie->supports_clkreq) {
+> +                       u32 lcr;
+> +
+> +                       regmap_update_bits(imx6_pcie->src,
+> +                               imx6_pcie_pciphy_rcr_offset(imx6_pcie),
+> +                               IMX8MQ_PCIE_CTRL_APPS_CLK_REQ,
+> +                               IMX8MQ_PCIE_CTRL_APPS_CLK_REQ);
+> +                       /*
+> +                        * Configure the L1 latency of rc to less than
+> +                        * 64us Otherwise, the L1/L1SUB wouldn't be
+> +                        * enable by ASPM.
+> +                        */
+> +                       dw_pcie_dbi_ro_wr_en(pci);
+> +
+> +                       lcr  = dw_pcie_readl_dbi2(pci, PCIE_RC_LCR);
+> +                       lcr &= ~PCI_EXP_LNKCAP_L1EL;
+> +                       lcr |= IMX8MQ_PCIE_LINK_CAP_L1EL_64US;
+> +                       dw_pcie_writel_dbi2(pci, PCIE_RC_LCR, lcr);
+> +
+> +                       dw_pcie_dbi_ro_wr_dis(pci);
+> +               }
+>                 break;
+>         case IMX7D:
+>                 reset_control_deassert(imx6_pcie->pciephy_reset);
+> @@ -1054,6 +1088,11 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+>         pci->dbi_base = devm_ioremap_resource(dev, dbi_base);
+>         if (IS_ERR(pci->dbi_base))
+>                 return PTR_ERR(pci->dbi_base);
+> +       /*
+> +        * Configure dbi_base2 to access DBI space with CS2
+> +        * asserted
+> +        */
+> +       pci->dbi_base2 = pci->dbi_base + SZ_1M;
+>
+>         /* Fetch GPIOs */
+>         imx6_pcie->reset_gpio = of_get_named_gpio(node, "reset-gpio", 0);
+> @@ -1107,6 +1146,13 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+>                         dev_err(dev, "pcie_aux clock source missing or invalid\n");
+>                         return PTR_ERR(imx6_pcie->pcie_aux);
+>                 }
+> +               imx6_pcie->src =
+> +                       syscon_regmap_lookup_by_compatible("fsl,imx8mq-src");
+> +               if (IS_ERR(imx6_pcie->src)) {
+> +                       dev_err(dev, "SRC regmap is missing or invalid\n");
+> +                       return PTR_ERR(imx6_pcie->src);
+> +               }
+> +
+>                 /* fall through */
+>         case IMX7D:
+>                 if (dbi_base->start == IMX8MQ_PCIE2_BASE_ADDR)
+> @@ -1179,6 +1225,8 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+>                 imx6_pcie->vpcie = NULL;
+>         }
+>
+> +       imx6_pcie->supports_clkreq = of_property_read_bool(node,
+> +                                                          "supports-clkreq");
+>         platform_set_drvdata(pdev, imx6_pcie);
+>
+>         ret = imx6_pcie_attach_pd(dev);
+> --
+> 2.21.0
