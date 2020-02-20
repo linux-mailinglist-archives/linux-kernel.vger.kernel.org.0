@@ -2,62 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5CFD165739
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 06:55:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73B33165741
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 07:00:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbgBTFza (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 00:55:30 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:34320 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726027AbgBTFza (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 00:55:30 -0500
+        id S1726466AbgBTGAs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 01:00:48 -0500
+Received: from mail.andi.de1.cc ([85.214.55.253]:55158 "EHLO mail.andi.de1.cc"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725942AbgBTGAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 01:00:47 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=+eNQsSzMxKIRXtkGmW5paSfUyPGKx+4eYCIxkVfvX10=; b=CbW97kDsBMkSuye8j1XAw2xR5D
-        YSkCbLJMFiY+iRIlFyoRLpawmeKmIOk+5gVTH5Sg7sHgXOU+wwCS5O4gmigAFvEUPvG5gdSPXUdqi
-        enY6GcL+k3lAH7W9pxA7dLwp5d9MdZNLqTgW6eV73LDnpr+UTm4kHX8/51dYNojH7EdStbJjF3v71
-        actu0U/bLh7l97IJTUY4MoWWliC7yXGLX1cl4xfcGDQ7EEfnLMUWLjUECJBoDGcm4kbtx1E7gsmhj
-        ng9EB4LskVIDJw1m4GHnfl6PboX3DEg906vqlFDWH0se+opylFZHN1jMKlv5OIQDcCEQY8OiKWsiN
-        cEuw7arw==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j4eo4-0004pf-6J; Thu, 20 Feb 2020 05:55:28 +0000
-Subject: Re: linux-next: Tree for Feb 20 (mmc/mmc_hsq.c)
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-References: <20200220144408.359a7e02@canb.auug.org.au>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <dba0c486-46e9-0b96-bd71-b9e81b362c85@infradead.org>
-Date:   Wed, 19 Feb 2020 21:55:27 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        d=kemnade.info; s=20180802; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=GGaI48ID+RANcSnbSgDavldeijLO9g3YzgPX5PpG8fI=; b=ijPjguYP7Zt3epKkXf4L+PGD+o
+        c+7c8P7oEmieCGXVUeVhZ101mqBnhqONhJq77kzfHl8hPbqjKpo8xLDgv4o5TGAq69fdqMT2s9ngz
+        W09rbd2kuPFK4ID32zV4qssJsccAQbsrg0mY64zEXMykYKf5nYgxRwT3hKFCbaODPYak=;
+Received: from [77.247.85.102] (helo=localhost)
+        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1j4et8-0002hm-8L; Thu, 20 Feb 2020 07:00:42 +0100
+Received: from andi by localhost with local (Exim 4.92)
+        (envelope-from <andreas@kemnade.info>)
+        id 1j4et6-0006jD-Nf; Thu, 20 Feb 2020 07:00:40 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>,
+        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Mathieu Malaterre <malat@debian.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mips@vger.kernel.org
+Cc:     Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH RFC] Bindings: nvmem: add bindings for JZ4780 efuse
+Date:   Thu, 20 Feb 2020 07:00:01 +0100
+Message-Id: <20200220060001.25807-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <CFE9AEF5-FFF9-44A9-90D8-DE6AC7E7DD4F@goldelico.com>
+References: <CFE9AEF5-FFF9-44A9-90D8-DE6AC7E7DD4F@goldelico.com>
 MIME-Version: 1.0
-In-Reply-To: <20200220144408.359a7e02@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -1.0 (-)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/19/20 7:44 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20200219:
-> 
+From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
 
-on i386:
+This patch brings support for the JZ4780 efuse. Currently it only expose
+a read only access to the entire 8K bits efuse memory.
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/mmc/host/mmc_hsq.o
+Tested-by: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+[converted to yaml]
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+---
+I will not update/maintain this, just have the impression that here some
+more work is needed to make somebody comfortable with yaml than stick
+to the usual pointing to documentation and I have not the ingredients 
+for doing
+cat  Antihistamines >/dev/brain ;-)
+and I do not want to see the other patches get lost.
 
+ .../bindings/nvmem/ingenic,jz4780-efuse.yaml  | 51 +++++++++++++++++++
+ 1 file changed, 51 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/nvmem/ingenic,jz4780-efuse.yaml
 
+diff --git a/Documentation/devicetree/bindings/nvmem/ingenic,jz4780-efuse.yaml b/Documentation/devicetree/bindings/nvmem/ingenic,jz4780-efuse.yaml
+new file mode 100644
+index 000000000000..ad56c17b0bd5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/nvmem/ingenic,jz4780-efuse.yaml
+@@ -0,0 +1,51 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/nvmem/ingenic,jz4780-efuse.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Ingenic JZ EFUSE driver bindings
++
++maintainers:
++  - tbd <tbd@tbd>
++
++allOf:
++  - $ref: "nvmem.yaml#"
++
++properties:
++  compatible:
++    enum:
++      - ingenic,jz4780-efuse
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    # Handle for the ahb for the efuse.
++    maxItems: 1
++
++  clock-names:
++   items:
++     - const:  bus_clk
++
++required:
++  - compatible
++  - reg
++  - clock
++  - clock-names
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/jz4780-cgu.h>
++
++    efuse@134100d0 {
++        compatible = "ingenic,jz4780-efuse";
++        reg = <0x134100d0 0x2c>;
++
++        clocks = <&cgu JZ4780_CLK_AHB2>;
++        clock-names = "bus_clk";
++    };
++
++...
 -- 
-~Randy
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
+2.20.1
+
