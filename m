@@ -2,128 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44E2C1661A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 16:59:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A4681661AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:00:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728749AbgBTP7f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 10:59:35 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:30295 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728733AbgBTP7d (ORCPT
+        id S1728643AbgBTQAo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 11:00:44 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42432 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728414AbgBTQAn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 10:59:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582214372;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=clSHatG5ia5Xw2+IhpCP8KXnor3d1UGZTno0w+4svMM=;
-        b=LSDjMOnhNivKgKlNKUAYMHym//QPZRb+ja8KzSYsmx9ZJItrvTBw413+WZ81u3H+772xOW
-        PmKx12CNO0nRpAWXedWmVh85yji9dMsG0k1GeAAJfGv60+G99U6KXPDgsggr5QUW3LQ3Rz
-        reoCZFBXr/XXDVmzGRiMVPJ1ZEFsayA=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-262-Y2w0sKgxN7qOaG0SWtlsIA-1; Thu, 20 Feb 2020 10:59:30 -0500
-X-MC-Unique: Y2w0sKgxN7qOaG0SWtlsIA-1
-Received: by mail-qt1-f197.google.com with SMTP id d9so2881239qtq.13
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 07:59:30 -0800 (PST)
+        Thu, 20 Feb 2020 11:00:43 -0500
+Received: by mail-pg1-f196.google.com with SMTP id w21so2134974pgl.9
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 08:00:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=wbab2MAyBGVFVIVKjVgIjH6RybCXv9GVcrcCbqRwpPY=;
+        b=O4dI7IVoeleTa/KTNc+v5co+jsDKZweNB2IF6C3xqrIzT0bxEB0NBuTB+MCDauj3Tz
+         EWQGjCZe10yjw2XC/dNUcCIzTxrtqZyn2plgoLERrMscLyewavaOoOb6hRVx/5n3a2cT
+         ehtRlLd0yRn5/udp5PrDlr1wWmYHfDa+kwFCU7LsqCZIBrW6UYvnVOdBDXL6spfk5SZm
+         fw03faaIcHXM6DmDRecW4lOuwAB+NlnE1wXF5KuqVTFSvDi5VfS766kzxhfb9XLPq3bW
+         3U7sFKREGC29PT99UYrxu/0SSp3YzvL4A2zqvKYcOOkg9sJ5de0Mp9/l+mBkZqxqk0AF
+         zdBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=clSHatG5ia5Xw2+IhpCP8KXnor3d1UGZTno0w+4svMM=;
-        b=Pk0G3YVMqVep7B9k97NMxpxUdzBsmpeSbhGV37NF2O99vx09NfpvoOWx2yFIWco2IT
-         N4er1+BhjODDoie+HqEy1zjvJhu9+/AcvSw+1WwIklF7Oi5WslXoybY1/xTUCSyWLixS
-         WHicP4YCLbGBLp8QmgCE1X0esPND6NHx2/mfZdePAmQKOVdVEADS6FIG2bXYCXptAjKE
-         3FQkRoa/CH/87Sxl5FGYDgyfnVO6KIkiDS6MNA180Buc/vJR9ia96gDMnWKBZfc0QX8A
-         6BCpt15GJiwtfoU6OPsvvMzSZfb5limq7B+Q5XABwwgNNEk+XNOH+ezkIblFPFrcNP4M
-         nvog==
-X-Gm-Message-State: APjAAAX8eRoOdveueQ9dEWE6SvD2QZ8+GR9f++VEGcO6/O5sSLj8Ev37
-        aQxGRp1h34BjXc/FFgjeLwoxe3aHAPTmHms9bx503cS2UItntd+3fg/qIKZKcDWzKDl68ptYmXo
-        YA5TFRc9YaaoCxR12HpWkbcGp
-X-Received: by 2002:ac8:498f:: with SMTP id f15mr27215519qtq.123.1582214370319;
-        Thu, 20 Feb 2020 07:59:30 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyd0Ii6YqQTuro4Ca0AkNt1/BWMO+NYngxZwnnSIE26fYpZaltQKEapAWU5vn2SxzQrYlBfBg==
-X-Received: by 2002:ac8:498f:: with SMTP id f15mr27215485qtq.123.1582214370052;
-        Thu, 20 Feb 2020 07:59:30 -0800 (PST)
-Received: from xz-x1.redhat.com ([104.156.64.75])
-        by smtp.gmail.com with ESMTPSA id f2sm1705818qkm.81.2020.02.20.07.59.28
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=wbab2MAyBGVFVIVKjVgIjH6RybCXv9GVcrcCbqRwpPY=;
+        b=SmUEBjPDUx2oGczc1jaG1DtDM+oBmfKOpqr+PAquS1crvp37emvViHLZvBJgA4pykh
+         nKqF+mgebwrFd1lnsrv4mmlSUVgB9g4QGaYye+wD0aRW7us0/itktszCIY8BIrHb0x3b
+         YtdNALduCsi0iu4ma7sXEDXX5FkUCybSBvRrPejqumGt2WVHWRbVPhunA44aWeTSc3/C
+         FiBhT1nGk/bpZfuovCXIHwWH2KxzN2TTG2bopl0pW4sXCOklLemoiBicopstFOVuo8Ed
+         IuHxazs4M033KxuyOv/do8piZuX19QmXP81YCudRHlharK8UAW1iBQgjgd9uBNM0xSBo
+         atvg==
+X-Gm-Message-State: APjAAAXK12Fw7tcpVnsVormMMJyy/4PXUZRoUbldNYZ7gduGXe91+k73
+        tdMjd7iQa6yBTA/Skq47X1mpWw==
+X-Google-Smtp-Source: APXvYqyniQeB0JwM3bF6YAJywLFqtTnmJzv22eYSwTjFbne1ZebTYK1xGgrm2MzYxjPWpf3OBOZIBQ==
+X-Received: by 2002:a62:1456:: with SMTP id 83mr33251094pfu.186.1582214442159;
+        Thu, 20 Feb 2020 08:00:42 -0800 (PST)
+Received: from ripper (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id 199sm41506pfu.71.2020.02.20.08.00.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2020 07:59:29 -0800 (PST)
-From:   Peter Xu <peterx@redhat.com>
-To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc:     Peter Xu <peterx@redhat.com>, Martin Cracauer <cracauer@cons.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Brian Geffon <bgeffon@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        David Hildenbrand <david@redhat.com>,
-        Bobby Powers <bobbypowers@gmail.com>,
-        Mel Gorman <mgorman@suse.de>
-Subject: [PATCH RESEND v6 06/16] arm64/mm: Use helper fault_signal_pending()
-Date:   Thu, 20 Feb 2020 10:59:27 -0500
-Message-Id: <20200220155927.9264-1-peterx@redhat.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200220155353.8676-1-peterx@redhat.com>
-References: 
+        Thu, 20 Feb 2020 08:00:41 -0800 (PST)
+Date:   Thu, 20 Feb 2020 07:59:46 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Todd Kjos <tkjos@google.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] driver core: Remove
+ driver_deferred_probe_check_state_continue()
+Message-ID: <20200220155946.GF955802@ripper>
+References: <20200220050440.45878-1-john.stultz@linaro.org>
+ <20200220050440.45878-5-john.stultz@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200220050440.45878-5-john.stultz@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let the arm64 fault handling to use the new fault_signal_pending()
-helper, by moving the signal handling out of the retry logic.
+On Wed 19 Feb 21:04 PST 2020, John Stultz wrote:
 
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- arch/arm64/mm/fault.c | 19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
+> Now that driver_deferred_probe_check_state() works better, and
+> we've converted the only user of
+> driver_deferred_probe_check_state_continue() we can simply
+> remove it and simplify some of the logic.
+> 
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Kevin Hilman <khilman@kernel.org>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Len Brown <len.brown@intel.com>
+> Cc: Todd Kjos <tkjos@google.com>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Liam Girdwood <lgirdwood@gmail.com>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Thierry Reding <treding@nvidia.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: linux-pm@vger.kernel.org
+> Signed-off-by: John Stultz <john.stultz@linaro.org>
+> Change-Id: Id5cd5e9264cfb0fbd70a702715174cc4b10006f4
 
-diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index 85566d32958f..6f4b69d712b1 100644
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -513,19 +513,14 @@ static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
- 	fault = __do_page_fault(mm, addr, mm_flags, vm_flags);
- 	major |= fault & VM_FAULT_MAJOR;
- 
--	if (fault & VM_FAULT_RETRY) {
--		/*
--		 * If we need to retry but a fatal signal is pending,
--		 * handle the signal first. We do not need to release
--		 * the mmap_sem because it would already be released
--		 * in __lock_page_or_retry in mm/filemap.c.
--		 */
--		if (fatal_signal_pending(current)) {
--			if (!user_mode(regs))
--				goto no_context;
--			return 0;
--		}
-+	/* Quick path to respond to signals */
-+	if (fault_signal_pending(fault, regs)) {
-+		if (!user_mode(regs))
-+			goto no_context;
-+		return 0;
-+	}
- 
-+	if (fault & VM_FAULT_RETRY) {
- 		/*
- 		 * Clear FAULT_FLAG_ALLOW_RETRY to avoid any risk of
- 		 * starvation.
--- 
-2.24.1
+Change-Id...
 
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
+> ---
+>  drivers/base/dd.c             | 49 +++++------------------------------
+>  include/linux/device/driver.h |  1 -
+>  2 files changed, 6 insertions(+), 44 deletions(-)
+> 
+> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> index fa138f24e2d3..408e4da081da 100644
+> --- a/drivers/base/dd.c
+> +++ b/drivers/base/dd.c
+> @@ -244,19 +244,6 @@ static int __init deferred_probe_timeout_setup(char *str)
+>  }
+>  __setup("deferred_probe_timeout=", deferred_probe_timeout_setup);
+>  
+> -static int __driver_deferred_probe_check_state(struct device *dev)
+> -{
+> -	if (!initcalls_done || deferred_probe_timeout > 0)
+> -		return -EPROBE_DEFER;
+> -
+> -	if (!deferred_probe_timeout) {
+> -		dev_WARN(dev, "deferred probe timeout, ignoring dependency");
+> -		return -ETIMEDOUT;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+>  /**
+>   * driver_deferred_probe_check_state() - Check deferred probe state
+>   * @dev: device to check
+> @@ -272,43 +259,19 @@ static int __driver_deferred_probe_check_state(struct device *dev)
+>   */
+>  int driver_deferred_probe_check_state(struct device *dev)
+>  {
+> -	int ret;
+> +	if (!initcalls_done || deferred_probe_timeout > 0)
+> +		return -EPROBE_DEFER;
+>  
+> -	ret = __driver_deferred_probe_check_state(dev);
+> -	if (ret < 0)
+> -		return ret;
+> +	if (!deferred_probe_timeout) {
+> +		dev_WARN(dev, "deferred probe timeout, ignoring dependency");
+> +		return -ETIMEDOUT;
+> +	}
+>  
+>  	dev_warn(dev, "ignoring dependency for device, assuming no driver");
+>  
+>  	return -ENODEV;
+>  }
+>  
+> -/**
+> - * driver_deferred_probe_check_state_continue() - check deferred probe state
+> - * @dev: device to check
+> - *
+> - * Returns -ETIMEDOUT if deferred probe debug timeout has expired, or
+> - * -EPROBE_DEFER otherwise.
+> - *
+> - * Drivers or subsystems can opt-in to calling this function instead of
+> - * directly returning -EPROBE_DEFER.
+> - *
+> - * This is similar to driver_deferred_probe_check_state(), but it allows the
+> - * subsystem to keep deferring probe after built-in drivers have had a chance
+> - * to probe. One scenario where that is useful is if built-in drivers rely on
+> - * resources that are provided by modular drivers.
+> - */
+> -int driver_deferred_probe_check_state_continue(struct device *dev)
+> -{
+> -	int ret;
+> -
+> -	ret = __driver_deferred_probe_check_state(dev);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	return -EPROBE_DEFER;
+> -}
+> -
+>  static void deferred_probe_timeout_work_func(struct work_struct *work)
+>  {
+>  	struct device_private *private, *p;
+> diff --git a/include/linux/device/driver.h b/include/linux/device/driver.h
+> index 1188260f9a02..5242afabfaba 100644
+> --- a/include/linux/device/driver.h
+> +++ b/include/linux/device/driver.h
+> @@ -238,7 +238,6 @@ driver_find_device_by_acpi_dev(struct device_driver *drv, const void *adev)
+>  
+>  void driver_deferred_probe_add(struct device *dev);
+>  int driver_deferred_probe_check_state(struct device *dev);
+> -int driver_deferred_probe_check_state_continue(struct device *dev);
+>  void driver_init(void);
+>  
+>  /**
+> -- 
+> 2.17.1
+> 
