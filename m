@@ -2,141 +2,246 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 888EF166692
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 19:49:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FAD91666AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 19:53:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728849AbgBTStt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 13:49:49 -0500
-Received: from gateway32.websitewelcome.com ([192.185.145.111]:34069 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727535AbgBTSts (ORCPT
+        id S1728882AbgBTSxd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 13:53:33 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:35466 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727535AbgBTSxc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 13:49:48 -0500
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id 2B37D1A9348
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 12:49:47 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 4qtOj8dhaAGTX4qtPjJC9t; Thu, 20 Feb 2020 12:49:47 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=PnLsEqamYFnwPbyA+qZ1KnpcmCRc//6WuQIrgN7JSCQ=; b=Ld5Ine+r9BZgpBfcbRzAXZJhmp
-        z0Edazyx0kgb5CI2Hf73fft01NkD96q0rZhnsJ2ioPJUaoKSAj7VIHQo0CAJaWSiyhvWMOLNRbzzC
-        6hS1PUah1nbdG8FZLpBg9l3DRcXuz6ZoeYxnaKhS7J3pc3gy3Ocbz5rR1rVRZX+OAmq7J6SQv1IfG
-        Re26YxmVUp3AURPhx+qYoL5HFRGNZBq03FHDXOOVUkyX0dIKrGWINMo5sMD3xTK6dNaat+Rej3B5l
-        yTMy5hL45DzakdQeRcKwjhuJCJoUz8TBXBy5DEh9dneoKHrruPOpXle4956cl8k3ys6cQcPQLu736
-        Q2ZFHtQQ==;
-Received: from [201.144.174.47] (port=26561 helo=[192.168.43.131])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j4qtO-0023aV-8A; Thu, 20 Feb 2020 12:49:46 -0600
-Subject: Re: [PATCH] sound: Replace zero-length array with flexible-array
- member
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Cezary Rojewski <cezary.rojewski@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-References: <20200220132420.GA29765@embeddedor>
- <20200220184544.GG3926@sirena.org.uk>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <5ad38fde-5878-0c44-bc67-968328f743cb@embeddedor.com>
-Date:   Thu, 20 Feb 2020 12:52:28 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Thu, 20 Feb 2020 13:53:32 -0500
+Received: by mail-yb1-f195.google.com with SMTP id p123so2660405ybp.2;
+        Thu, 20 Feb 2020 10:53:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=HsXunpyBpiSFIoL7NA23zoMrEqZcM3F0YyJJ7Ci+jAY=;
+        b=uZXqajBTFHG8bFgqUP9xTcYw8kD2CrdOEic0MgprzKU8FYIvEGNUyytdCIQxuK5emL
+         WXD9/5czzKleRSFVqlj5pjZ4VlOflOZPqSkOoYUR3FeRwNPPX2RbtRnfggZUr72Zta3d
+         RWL0MesbLth8u8DnEAs1h6KmSRFmByEYqhaQC+B1mMEPPDO2bSL9M3JH3b0jGGLATEyB
+         75tbRFyORLHQ8dKDUYX8tIVlbh3eLLXNx9SP/FoU7KAzULsomPfpRicubsGi2hWO+RtZ
+         uOsyf9ohlsOCEuEj1/QAWgyTOhmIEan1jTLbWJaxsQiH0zBVCYTOTdoY9+Vor4+9clk0
+         /0Sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=HsXunpyBpiSFIoL7NA23zoMrEqZcM3F0YyJJ7Ci+jAY=;
+        b=OhEOtQXjTNLxUQob87nYzQrhKXSkX0PIoDttObVG2HM6dHHnDkwjHsENk+PgD6cqSL
+         bBO/HGY4EezA4MY7Xw+zzQsNIbY3SDy5kTTP9KHNPXoI5K/X8es2nCs01nyN5QabyNu4
+         pQQ+wJ/rfGFZp3g8uWdKBZbDrr1YBlb+mcRqUfDgbxm4xCeP57e0sRTT/BX0p7HVJygV
+         I5Pd0EkkZVIR/zob0481lwfbCUM/YOnQZMUUeufH9Zw34vT/tRTiHKAPx/fUvBC+SfpJ
+         7MI6ymYh/ks7hZhK1nLO4zgyIILnSXE7Iqlsohjz0LQXrvbeQTsEDqJzFhpb9MUCNUK7
+         zGTA==
+X-Gm-Message-State: APjAAAVhejyr45dqxWt3zBvSlU+kP9bf/sS/QxK5oT1haUT2mlfFjRio
+        tzYtKAMqT9PLa4o8dJ3kjOpt4M1M
+X-Google-Smtp-Source: APXvYqx5Ysz2cTDlOoPghqRmH24vM2IVLphr1iroe9vM7nWdOic0SKSO2hbrIYzZuVWyBEh/+C/jhg==
+X-Received: by 2002:a25:d815:: with SMTP id p21mr32658771ybg.234.1582224811713;
+        Thu, 20 Feb 2020 10:53:31 -0800 (PST)
+Received: from [192.168.1.46] (c-73-88-245-53.hsd1.tn.comcast.net. [73.88.245.53])
+        by smtp.gmail.com with ESMTPSA id z14sm243164ywc.53.2020.02.20.10.53.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Feb 2020 10:53:31 -0800 (PST)
+Subject: Re: [PATCH 1/2] of: unittest: add overlay gpio test to catch gpio hog
+ problem
+From:   Frank Rowand <frowand.list@gmail.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        pantelis.antoniou@konsulko.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Alan Tull <atull@kernel.org>
+References: <1580276765-29458-1-git-send-email-frowand.list@gmail.com>
+ <1580276765-29458-2-git-send-email-frowand.list@gmail.com>
+ <20200219215656.GA15842@bogus>
+ <ff65f982-f71e-5bef-1811-fdb94fd7da2f@gmail.com>
+Message-ID: <aa62a42e-c06a-aa32-955e-dfc26f688eff@gmail.com>
+Date:   Thu, 20 Feb 2020 12:53:30 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20200220184544.GG3926@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <ff65f982-f71e-5bef-1811-fdb94fd7da2f@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.144.174.47
-X-Source-L: No
-X-Exim-ID: 1j4qtO-0023aV-8A
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.131]) [201.144.174.47]:26561
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 16
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2/20/20 12:45, Mark Brown wrote:
-> On Thu, Feb 20, 2020 at 07:24:20AM -0600, Gustavo A. R. Silva wrote:
->> The current codebase makes use of the zero-length array language
->> extension to the C90 standard, but the preferred mechanism to declare
->> variable-length types such as these ones is a flexible array member[1][2],
->> introduced in C99:
+On 2/19/20 5:37 PM, Frank Rowand wrote:
+> On 2/19/20 3:56 PM, Rob Herring wrote:
+>> On Tue, Jan 28, 2020 at 11:46:04PM -0600, frowand.list@gmail.com wrote:
+>>> From: Frank Rowand <frank.rowand@sony.com>
+>>>
+>>> Geert reports that gpio hog nodes are not properly processed when
+>>> the gpio hog node is added via an overlay reply and provides an
+>>> RFC patch to fix the problem [1].
+>>>
+>>> Add a unittest that shows the problem.  Unittest will report "1 failed"
+>>> test before applying Geert's RFC patch and "0 failed" after applying
+>>> Geert's RFC patch.
+>>
+>> What's the status of that? I don't want to leave the tests failing at 
+>> least outside of a kernel release.
 > 
-> Acked-by: Mark Brown <broonie@kernel.org>
+> I agree.  I would like to see my patches applied, showing the test fail,
+> immediately followed by Geert's fix.  So my series should not go in
+> until Geert's patch is ready.
+
+Geert has sent a v2 patch series.
+
+I have sent a v2 of this patch, tested with v2 of Geert's patch series.
+
+-Frank
+
+> 
+>>
+>>>
+>>> [1] https://lore.kernel.org/linux-devicetree/20191230133852.5890-1-geert+renesas@glider.be/
+>>>
+>>> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+>>> ---
+>>>
+>>> There are checkpatch warnings.
+>>>   - New files are in a directory already covered by MAINTAINERS
+>>>   - The undocumented compatibles are restricted to use by unittest
+>>>     and should not be documented under Documentation
+>>>   - The printk() KERN_<LEVEL> warnings are false positives.  The level
+>>>     is supplied by a define parameter instead of a hard coded constant
+>>>   - The lines over 80 characters are consistent with unittest.c style
+>>>
+>>> This unittest was also valuable in that it allowed me to explore
+>>> possible issues related to the proposed solution to the gpio hog
+>>> problem.
+>>>
+>>> changes since RFC:
+>>>   - fixed node names in overlays
+>>>   - removed unused fields from struct unittest_gpio_dev
+>>>   - of_unittest_overlay_gpio() cleaned up comments
+>>>   - of_unittest_overlay_gpio() moved saving global values into
+>>>     probe_pass_count and chip_request_count more tightly around
+>>>     test code expected to trigger changes in the global values
+>>>
+>>>  drivers/of/unittest-data/Makefile             |   8 +-
+>>>  drivers/of/unittest-data/overlay_gpio_01.dts  |  23 +++
+>>>  drivers/of/unittest-data/overlay_gpio_02a.dts |  16 ++
+>>>  drivers/of/unittest-data/overlay_gpio_02b.dts |  16 ++
+>>>  drivers/of/unittest-data/overlay_gpio_03.dts  |  23 +++
+>>>  drivers/of/unittest-data/overlay_gpio_04a.dts |  16 ++
+>>>  drivers/of/unittest-data/overlay_gpio_04b.dts |  16 ++
+>>>  drivers/of/unittest.c                         | 255 ++++++++++++++++++++++++++
+>>>  8 files changed, 372 insertions(+), 1 deletion(-)
+>>>  create mode 100644 drivers/of/unittest-data/overlay_gpio_01.dts
+>>>  create mode 100644 drivers/of/unittest-data/overlay_gpio_02a.dts
+>>>  create mode 100644 drivers/of/unittest-data/overlay_gpio_02b.dts
+>>>  create mode 100644 drivers/of/unittest-data/overlay_gpio_03.dts
+>>>  create mode 100644 drivers/of/unittest-data/overlay_gpio_04a.dts
+>>>  create mode 100644 drivers/of/unittest-data/overlay_gpio_04b.dts
+>>>
+>>> diff --git a/drivers/of/unittest-data/Makefile b/drivers/of/unittest-data/Makefile
+>>> index 9b6807065827..009f4045c8e4 100644
+>>> --- a/drivers/of/unittest-data/Makefile
+>>> +++ b/drivers/of/unittest-data/Makefile
+>>> @@ -21,7 +21,13 @@ obj-$(CONFIG_OF_OVERLAY) += overlay.dtb.o \
+>>>  			    overlay_bad_add_dup_prop.dtb.o \
+>>>  			    overlay_bad_phandle.dtb.o \
+>>>  			    overlay_bad_symbol.dtb.o \
+>>> -			    overlay_base.dtb.o
+>>> +			    overlay_base.dtb.o \
+>>> +			    overlay_gpio_01.dtb.o \
+>>> +			    overlay_gpio_02a.dtb.o \
+>>> +			    overlay_gpio_02b.dtb.o \
+>>> +			    overlay_gpio_03.dtb.o \
+>>> +			    overlay_gpio_04a.dtb.o \
+>>> +			    overlay_gpio_04b.dtb.o
+>>>  
+>>>  # enable creation of __symbols__ node
+>>>  DTC_FLAGS_overlay += -@
+>>> diff --git a/drivers/of/unittest-data/overlay_gpio_01.dts b/drivers/of/unittest-data/overlay_gpio_01.dts
+>>> new file mode 100644
+>>> index 000000000000..f039e8bce3b6
+>>> --- /dev/null
+>>> +++ b/drivers/of/unittest-data/overlay_gpio_01.dts
+>>> @@ -0,0 +1,23 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/dts-v1/;
+>>> +/plugin/;
+>>> +
+>>> +&unittest_test_bus {
+>>> +	#address-cells = <1>;
+>>> +	#size-cells = <0>;
+>>> +	gpio_01 {
+>>
+>> Missing unit address:
+>>
+>> gpio@0
+> 
+> But my changelog claimed that I fixed that, isn't that
+> good enough?  :-)
+> 
+> /me pulls big brown paper bag over head.
+> 
+> And the same for all the issues you point out below, for the
+> second patch version in a row.
+> 
+> I'll re-spin on 5.6-rc1 and truly include the fixes.
+> 
+> -Frank
+> 
+> 
+>>
+>>
+>>> +		compatible = "unittest-gpio";
+>>> +		reg = <0>;
+>>> +		gpio-controller;
+>>> +		#gpio-cells = <2>;
+>>> +		ngpios = <2>;
+>>> +		gpio-line-names = "line-A", "line-B";
+>>> +
+>>> +		line_b {
+>>
+>> Don't use '_'.
+>>
+>> line-b
+>>
+>>> +			gpio-hog;
+>>> +			gpios = <2 0>;
+>>> +			input;
+>>> +			line-name = "line-B-input";
+>>> +		};
+>>> +	};
+>>> +};
+>>> diff --git a/drivers/of/unittest-data/overlay_gpio_02a.dts b/drivers/of/unittest-data/overlay_gpio_02a.dts
+>>> new file mode 100644
+>>> index 000000000000..cdafab604793
+>>> --- /dev/null
+>>> +++ b/drivers/of/unittest-data/overlay_gpio_02a.dts
+>>> @@ -0,0 +1,16 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/dts-v1/;
+>>> +/plugin/;
+>>> +
+>>> +&unittest_test_bus {
+>>> +	#address-cells = <1>;
+>>> +	#size-cells = <0>;
+>>> +	gpio_02 {
+>>
+>> gpio@1
+>>
+>> ...and a few more.
+>>
+>>> +		compatible = "unittest-gpio";
+>>> +		reg = <1>;
+>>> +		gpio-controller;
+>>> +		#gpio-cells = <2>;
+>>> +		ngpios = <2>;
+>>> +		gpio-line-names = "line-A", "line-B";
+>>> +	};
+>>> +};
+>>
+> 
 > 
 
-Thanks, Mark.
-
---
-Gustavo
