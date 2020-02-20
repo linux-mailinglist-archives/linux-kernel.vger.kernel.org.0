@@ -2,86 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E8C6166A5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 23:32:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D52BA166A5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 23:33:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729213AbgBTWcc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 17:32:32 -0500
-Received: from mga09.intel.com ([134.134.136.24]:18456 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728582AbgBTWcc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 17:32:32 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2020 14:32:31 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,466,1574150400"; 
-   d="scan'208";a="283540360"
-Received: from jbrandeb-desk4.amr.corp.intel.com (HELO localhost) ([10.166.241.50])
-  by FMSMGA003.fm.intel.com with ESMTP; 20 Feb 2020 14:32:30 -0800
-Date:   Thu, 20 Feb 2020 14:32:29 -0800
-From:   Jesse Brandeburg <jesse.brandeburg@intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-        <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux@rasmusvillemoes.dk>, <andriy.shevchenko@intel.com>,
-        <dan.j.williams@intel.com>
-Subject: Re: [PATCH v2 1/2] x86: fix bitops.h warning with a moved cast
-Message-ID: <20200220143229.00002d4d@intel.com>
-In-Reply-To: <20200220181236.GC18400@hirez.programming.kicks-ass.net>
-References: <20200220173722.2034546-1-jesse.brandeburg@intel.com>
-        <20200220181236.GC18400@hirez.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; i686-w64-mingw32)
+        id S1729264AbgBTWdc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 17:33:32 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:37319 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729109AbgBTWda (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 17:33:30 -0500
+Received: by mail-lf1-f68.google.com with SMTP id b15so532lfc.4
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 14:33:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WrNmlOpMVxzFXh2A2oJzXRWZK2fGDe1+SPIAN4gWybk=;
+        b=QiMLUGsRq9HWg+G+gXiEaS3g8vcEPOTXS0nkdYQXIsCA2EjphiI1+TGu1HVJ3od+BY
+         4nIUXqbNSwvfL1zzmPatevn6ccupRjp+aZGa5eL8bOeMqUiv7Bg7Hz5IKilERFOA99sS
+         jMLLQ3OrRmjEMgFi9TJzZnDfd0rXWYetgu1bs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WrNmlOpMVxzFXh2A2oJzXRWZK2fGDe1+SPIAN4gWybk=;
+        b=cpKkUYiNwidk7Blo16tT7rz1FB5tA6QCfEjuQkWVkx4ED65qzPeRCKLf+Tn8P5RxSw
+         Hn3Sg0Ul1rcLbf6BjyyyqAsdPZYKB1pFieyNIeFdsKDTmMKbtuslPJy70fHUFbwYlLyf
+         roeLNufDzeR5h3soVE3DEGjP3sL5qXGjq63Cn7XVbOg7VmJqWuIywf7DUFrgVWSVQFby
+         52L+G4rUa8jhuIWQO8f6WIeoUbT7X6JD1lWWBd2AdFAelCSryo9laOQ63zqy8fIHJ3y9
+         hWlA0npb6dpmopPDFH0+U8CBEteM91AegkJZAMG1Th21S+pjrjz3P2MBL9Wxycjqe6/w
+         Mvxw==
+X-Gm-Message-State: APjAAAUDZueqMfgHrk1UvIW361rJHF1ZR5dfde2/4cv3LXuC/ejFk+6h
+        4SbyTvqJpXXGEFnSKiYFF8frZCnJGZ8=
+X-Google-Smtp-Source: APXvYqyUNwKD2WDj16QkB3x/SO3VBozWwt32oYyW3vPRVKx3/nTzlG09C9g3Qv3atE29VO463egxXw==
+X-Received: by 2002:a05:6512:31c3:: with SMTP id j3mr2554120lfe.144.1582238008271;
+        Thu, 20 Feb 2020 14:33:28 -0800 (PST)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
+        by smtp.gmail.com with ESMTPSA id l1sm475804lfg.56.2020.02.20.14.33.26
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2020 14:33:27 -0800 (PST)
+Received: by mail-lj1-f177.google.com with SMTP id e18so112920ljn.12
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 14:33:26 -0800 (PST)
+X-Received: by 2002:a2e:97cc:: with SMTP id m12mr19716647ljj.241.1582238006401;
+ Thu, 20 Feb 2020 14:33:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20200210150519.538333-8-gladkov.alexey@gmail.com>
+ <87v9odlxbr.fsf@x220.int.ebiederm.org> <20200212144921.sykucj4mekcziicz@comp-core-i7-2640m-0182e6>
+ <87tv3vkg1a.fsf@x220.int.ebiederm.org> <CAHk-=wg52stFtUxMOxs3afkwDWmWn1JXC7RJ7dPsTrJbnxpZVg@mail.gmail.com>
+ <87v9obipk9.fsf@x220.int.ebiederm.org> <CAHk-=wgwmu4jpmOqW0+Lz0dcem1Fub=ThLHvmLobf_WqCq7bwg@mail.gmail.com>
+ <20200212200335.GO23230@ZenIV.linux.org.uk> <CAHk-=wi+1CPShMFvJNPfnrJ8DD8uVKUOQ5TQzQUNGLUkeoahkg@mail.gmail.com>
+ <20200212203833.GQ23230@ZenIV.linux.org.uk> <20200212204124.GR23230@ZenIV.linux.org.uk>
+ <CAHk-=wi5FOGV_3tALK3n6E2fK3Oa_yCYkYQtCSaXLSEm2DUCKg@mail.gmail.com>
+ <87lfp7h422.fsf@x220.int.ebiederm.org> <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
+ <87pnejf6fz.fsf@x220.int.ebiederm.org> <871rqpaswu.fsf_-_@x220.int.ebiederm.org>
+ <87h7zl9e7u.fsf_-_@x220.int.ebiederm.org>
+In-Reply-To: <87h7zl9e7u.fsf_-_@x220.int.ebiederm.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 20 Feb 2020 14:33:10 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wht3ZWRaYs8QBXuftfuiFGOTjjZ9zj3-Dz7dkiBhJNBrQ@mail.gmail.com>
+Message-ID: <CAHk-=wht3ZWRaYs8QBXuftfuiFGOTjjZ9zj3-Dz7dkiBhJNBrQ@mail.gmail.com>
+Subject: Re: [PATCH 3/7] proc: Mov rcu_read_(lock|unlock) in proc_prune_siblings_dcache
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Solar Designer <solar@openwall.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Feb 2020 19:12:36 +0100 Peter wrote:
-> On Thu, Feb 20, 2020 at 09:37:21AM -0800, Jesse Brandeburg wrote:
-> > @@ -72,9 +74,11 @@ static __always_inline void
-> >  arch_clear_bit(long nr, volatile unsigned long *addr)
-> >  {
-> >  	if (__builtin_constant_p(nr)) {
-> > +		u8 cmaski = ~CONST_MASK(nr);
-> > +
-> >  		asm volatile(LOCK_PREFIX "andb %1,%0"
-> >  			: CONST_MASK_ADDR(nr, addr)
-> > -			: "iq" ((u8)~CONST_MASK(nr)));
-> > +			: "iq" (cmaski));
-> 
-> Urgh, that's sad. So why doesn't this still generate a warning, ~ should
-> promote your u8 to int, and then you down-cast to u8 on assignment
-> again.
+On Thu, Feb 20, 2020 at 12:51 PM Eric W. Biederman
+<ebiederm@xmission.com> wrote:
+>
+> Don't make it look like rcu_read_lock is held over the entire loop
+> instead just take the rcu_read_lock over the part of the loop that
+> matters.  This makes the intent of the code a little clearer.
 
-My suspicion is that using the right size types on the lvalue causes
-the compiler (and sparse) to know that the type and number of bits in
-the "iq" statement is unambiguous.
+No, this is horrid.
 
-> 
-> So now you have more lines, more ugly casts and exactly the same
-> generated code; where the win?
+Maybe it makes the intent clearer, but it also causes that "continue"
+case to unlock and relock immediately.
 
-The win as I see it is that sparse (C=1) doesn't warn, but you're right,
-it wasn't my first choice to do it the way I ended up with (see below) 
+And maybe that case never triggers, and that's ok. But then it needs a
+big comment about it.
 
-> Perhaps you should write it like:
-> 
-> 		: "iq" (0xFF ^ CONST_MASK(nr))
-> 
-> hmm?
-
-Thanks! That works, for my tests at least. FWIW, at one point during
-review I got some feedback from a build bot (zero day tester) that
-certain compilers like gcc 7.5.0 interpret ~CONST_MASK(nr) into needing
-32 bits. So I solved that issue by using correctly typed (and width)
-local variables, but I didn't try the 0xff^ way at that time.
-
-I'll change back to the simpler version of the changes (without locals)
-and with your 0xff^ change, we'll see if anything comes up from build
-bots.
-
+              Linus
