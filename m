@@ -2,126 +2,212 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09C6216612F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 16:43:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4D5616613E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 16:45:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728428AbgBTPnP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 10:43:15 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45755 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728236AbgBTPnO (ORCPT
+        id S1728534AbgBTPpc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 10:45:32 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39617 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728497AbgBTPpb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 10:43:14 -0500
-Received: by mail-pf1-f193.google.com with SMTP id 2so2092248pfg.12;
-        Thu, 20 Feb 2020 07:43:14 -0800 (PST)
+        Thu, 20 Feb 2020 10:45:31 -0500
+Received: by mail-pg1-f196.google.com with SMTP id j15so2126058pgm.6
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 07:45:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1DIMRV6Iqi1rLe5wMgz5eqoASoBEhZAuJOJhLs9EWXg=;
-        b=SDcgv1u/KxtAEvGdFod3asgbcGb/ypcbFpJI7L5wvrxLVXG1G1OG4sNftp87QbjuaC
-         9btXUMC6BSz/MvATW7U0uLF796Pv6wbNHLRCnzQfpAzngStKBcreMdIjAqyNPgAK5O4Q
-         dSdHoLLGdEuyf2kPK+06V6aHgQcbCxM2V5f73DfwvE+OwAfGcoKwat+U4zRHFQury1qi
-         o4NtU3HAcF6o9aR6mxYkzvNkvZJMS0/bHZYsVPhyaMxi8NH//AFvGjFRchAyBRWWSrwf
-         0pBi8Wg4pcJeKyQFOCSeYp4/bqB+Ywvwx0woG7UYS4r7PlZoChbDJTAxMMnLEXikqugP
-         TJ3Q==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=CwUtQG3ysdjtoTwY2Er+T+4K6J2ZCQx9iACvDy/itGY=;
+        b=fh3smCJZVlzJ+zKEK1STSDsQr2MUvxqPxp+V4hZs1mLi9cW1cA1De7jQCu/XYaLFv5
+         h3/BIQGd/PnZ9WZrW3lrqnlZ7+kfrw84qy4pZgzB9HD/wqHFDqZIYhvr148g1Lum7fz7
+         ikzS0lWugw5jN3RBadxu9U3WIBSlOq6wxgunFzWBD27l1oFfKj2YtSSQN4nB6KLzwqE6
+         ApU8m+KQsJCH7VorbPl/uyWpq/3yFCNh1YaTP7SSU9tyYfvYoYUc3oqrv6eM/bYP70KK
+         8lX6gJ5+zFt9Qwy9SAdrd2wthxXSyW8i7FauH2OgBcsAuTbSJx5y/lyYfe+Mp8Xj4Llt
+         FjbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1DIMRV6Iqi1rLe5wMgz5eqoASoBEhZAuJOJhLs9EWXg=;
-        b=tRQ9gho07qWIj05MjlXHT0MMvtopu537UAjHLGWck4DRg7NJ0sMcz9qrSVby9MiJ27
-         fjcBAYiJzZeLFRZB9vQI1Gaaswdr6UuE1lwnX7TDpOzvldAlAOtgUFDgoZm9iGTBC6Zv
-         bu2S5VPBf9RgK3dM5gtLi15Dec3pIsG8/P1oeB6JzqdtdLWSSepuQjIptqvSOGrZfxFc
-         vsFGCdtZwUaxQYF5hxqdWRo7G9rD3X7+IgV7ZOQ3qD6G4pbwEMzGWddhoPkrtbKFIPtS
-         YahkrYr+8FMHkLVMtfloCQ7fa7DRaj1Ql6WcpPMHV1WMEHn+Y6loCRrelySvpvkLIjeK
-         j5Sg==
-X-Gm-Message-State: APjAAAVE3SM2sM3FdL3ZgdVFXcuoRTKLbKM+nsm5NDzAxl7WBYJfY8mC
-        I9R500f/IuZfaa53G9mn81Q=
-X-Google-Smtp-Source: APXvYqwO3lW26bxqaJCMoOlpFAJtB3c1MIjoPwgFw5WTaUDCxMX3q2sVzXJyUPW4sVxi/vPZ2XA3Gg==
-X-Received: by 2002:a62:6409:: with SMTP id y9mr32901598pfb.30.1582213393847;
-        Thu, 20 Feb 2020 07:43:13 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id x28sm4161696pgc.83.2020.02.20.07.43.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Feb 2020 07:43:12 -0800 (PST)
-Date:   Thu, 20 Feb 2020 07:43:11 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Evan Benn <evanbenn@chromium.org>
-Cc:     xingyu.chen@amlogic.com, Julius Werner <jwerner@chromium.org>,
-        Rob Herring <robh@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: watchdog: Add arm,smc-wdt watchdog
- arm,smc-wdt compatible
-Message-ID: <20200220154311.GA29658@roeck-us.net>
-References: <20200214062637.216209-1-evanbenn@chromium.org>
- <20200214172512.1.I02ebc5b8743b1a71e0e15f68ea77e506d4e6f840@changeid>
- <20200219223046.GA16537@bogus>
- <CAODwPW8JspiUtyU4CC95w9rbNRyUF-Aeb9TuPm1PzmP6u=y1EA@mail.gmail.com>
- <20200219232005.GA9737@roeck-us.net>
- <CAKz_xw2hvHL=a4s37dmuCTWDbxefQFR3rfcaNiWYJY4T+jqabA@mail.gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=CwUtQG3ysdjtoTwY2Er+T+4K6J2ZCQx9iACvDy/itGY=;
+        b=NU/QlipSbBBEyrv8yrK5Dy/U7eYphQF4cZo8bLrk/cj68pXrQfkaKAcPwZo+hTLt8k
+         M44HQb4ai5Ss6GdxQTYb1GNcAkLVyyl8TA0dA2E7fBwu8SUy+c+tGjEL32QjO05IRm0P
+         1/Fn/tAbjMCvGfWBbf1OJ8OrsjFF0Szq+NQyX5//pVWXyl+Mg1O0Me9V/UFBPRIpsZkS
+         2XLmP7QZ1yuBryR6pTUR+qfQOmqFMo6hHrRdTjWfeh/iCdaON1VUF5tneCcqQYUjx64m
+         KPr+Lv3NFeQKnb3hT7CmDbUVBokFHmSU/1cEoIDjSXY2qBcBpKPXQ8QwtawJVt3x4ytO
+         sjFA==
+X-Gm-Message-State: APjAAAU1eLD7XpjLmf0rfoUmZo7V15h3qPHz8iOOH0M29CT1onOzyY+U
+        IoIcDxU6xwAGNezkNX5Zjwv3xg==
+X-Google-Smtp-Source: APXvYqxjPjf7mAWjfTxykHdMiP9gdlPASYKiphcSgbc+VtRyHB9Kt/+CXzy72wijKoU2NbNFfhuppw==
+X-Received: by 2002:a63:de0d:: with SMTP id f13mr34823815pgg.12.1582213530706;
+        Thu, 20 Feb 2020 07:45:30 -0800 (PST)
+Received: from ripper (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id i2sm3888292pjs.21.2020.02.20.07.45.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2020 07:45:29 -0800 (PST)
+Date:   Thu, 20 Feb 2020 07:44:34 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Sayali Lokhande <sayalil@codeaurora.org>
+Cc:     adrian.hunter@intel.com, robh+dt@kernel.org,
+        ulf.hansson@linaro.org, asutoshd@codeaurora.org,
+        stummala@codeaurora.org, ppvk@codeaurora.org,
+        rampraka@codeaurora.org, vbadigan@codeaurora.org, sboyd@kernel.org,
+        georgi.djakov@linaro.org, mka@chromium.org,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        agross@kernel.org, linux-mmc-owner@vger.kernel.org
+Subject: Re: [PATCH RFC] mmc: sdhci-msm: Toggle fifo write clk after ungating
+ sdcc clk
+Message-ID: <20200220154434.GB955802@ripper>
+References: <1582190446-4778-1-git-send-email-sayalil@codeaurora.org>
+ <1582190446-4778-2-git-send-email-sayalil@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKz_xw2hvHL=a4s37dmuCTWDbxefQFR3rfcaNiWYJY4T+jqabA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1582190446-4778-2-git-send-email-sayalil@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 05:41:09PM +1100, Evan Benn wrote:
-> Dear Xingyu,
-> 
-> Could this driver also cover your usecase? I am not familiar with
-> meson, but it seems like the meson calls could
-> be replaced with arm_smccc calls. Then this driver will cover both
-> chips. I am not sure if your firmware is upstream
-> somewhere, but this might be adapted;
-> https://review.trustedfirmware.org/c/TF-A/trusted-firmware-a/+/3405
-> 
-FWIW, the Meson driver has more functionality.
+On Thu 20 Feb 01:20 PST 2020, Sayali Lokhande wrote:
 
-Guenter
+> From: Ram Prakash Gupta <rampraka@codeaurora.org>
+> 
+> During GCC level clock gating of MCLK, the async FIFO
+> gets into some hang condition, such that for the next
+> transfer after MCLK ungating, first bit of CMD response
+> doesn't get written in to the FIFO. This cause the CPSM
+> to hang eventually leading to SW timeout.
 
-> Thanks
+Does this always happen, on what platforms does this happen? How does
+this manifest itself? Can you please elaborate.
+
 > 
+> To fix the issue, toggle the FIFO write clock after
+> MCLK ungated to get the FIFO pointers and flags to
+> valid states.
 > 
-> On Thu, Feb 20, 2020 at 10:20 AM Guenter Roeck <linux@roeck-us.net> wrote:
-> >
-> > On Wed, Feb 19, 2020 at 03:04:54PM -0800, Julius Werner wrote:
-> > > > You are not the first 'watchdog in firmware accessed via an SMC call'.
-> > > > Is there some more detail about what implementation this is? Part of
-> > > > TF-A? Defined by some spec (I can dream)?
-> > >
-> > > This is just some random implementation written by me because we
-> > > needed one. I would like it to be the new generic implementation, but
-> > > it sounds like people here prefer the naming to be MediaTek specific
-> > > (at least for now). The other SMC watchdog we're aware of is
-> > > imx_sc_wdt but unfortunately that seems to hardcode platform-specific
-> >
-> > There is one more pending, for Meson SMC.
-> >
-> > https://patchwork.kernel.org/project/linux-watchdog/list/?series=227733
-> >
-> > Unfortunately it uses Meson firmware API functions, though it has pretty
-> > much the same functionality since those ultimately end up calling
-> > arm_smccc_smc().
-> >
-> > Guenter
-> >
-> > > details in the interface (at least in the pretimeout SMC) so we can't
-> > > just expand that. With this driver I tried to directly wrap the kernel
-> > > watchdog interface so it should be platform-agnostic and possible to
-> > > expand this driver to other platforms later if desired. The SMC
-> > > function ID would still always have to be platform-specific,
-> > > unfortunately (but we could pass it in through the device tree), since
-> > > the Arm SMC spec doesn't really leave any room for OS-generic SMCs
-> > > like this.
+> Change-Id: Ibef2d1d283ac0b6983c609a4abc98bc574d31fa6
+
+Please drop the Change-Id and please add
+
+Cc: stable@vger.kernel.org
+
+If this is a bug fix that should be backported to e.g. 5.4.
+
+> Signed-off-by: Ram Prakash Gupta <rampraka@codeaurora.org>
+> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+> ---
+>  drivers/mmc/host/sdhci-msm.c | 43 +++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 43 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> index c3a160c..eaa3e95 100644
+> --- a/drivers/mmc/host/sdhci-msm.c
+> +++ b/drivers/mmc/host/sdhci-msm.c
+> @@ -127,6 +127,8 @@
+>  #define CQHCI_VENDOR_CFG1	0xA00
+>  #define CQHCI_VENDOR_DIS_RST_ON_CQ_EN	(0x3 << 13)
+>  
+> +#define RCLK_TOGGLE 0x2
+
+Please use BIT(1) instead.
+
+> +
+>  struct sdhci_msm_offset {
+>  	u32 core_hc_mode;
+>  	u32 core_mci_data_cnt;
+> @@ -1554,6 +1556,43 @@ static void __sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
+>  	sdhci_enable_clk(host, clk);
+>  }
+>  
+> +/*
+> + * After MCLK ugating, toggle the FIFO write clock to get
+> + * the FIFO pointers and flags to valid state.
+> + */
+> +static void sdhci_msm_toggle_fifo_write_clk(struct sdhci_host *host)
+> +{
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+> +	const struct sdhci_msm_offset *msm_offset =
+> +					msm_host->offset;
+
+This doesn't look to be > 80 chars, please unwrap.
+
+> +	struct mmc_card *card = host->mmc->card;
+> +
+> +	if (msm_host->tuning_done ||
+> +			(card && card->ext_csd.strobe_support &&
+> +			card->host->ios.enhanced_strobe)) {
+> +		/*
+> +		 * set HC_REG_DLL_CONFIG_3[1] to select MCLK as
+> +		 * DLL input clock
+
+You can shorten this to /* Select MCLK as DLL input clock */ if you make
+the below readl/writel a little bit easier to read.
+
+> +		 */
+> +		writel_relaxed(((readl_relaxed(host->ioaddr +
+> +			msm_offset->core_dll_config_3))
+> +			| RCLK_TOGGLE), host->ioaddr +
+> +			msm_offset->core_dll_config_3);
+
+Please use a local variable and write this out as:
+		val = readl(addr);
+		val |= RCLK_TOGGLE;
+		writel(val, addr);
+
+> +		/* ensure above write as toggling same bit quickly */
+> +		wmb();
+
+This ensures ordering of writes, if you want to make sure the write has
+hit the hardware before the delay perform a readl() on the address.
+
+> +		udelay(2);
+> +		/*
+> +		 * clear HC_REG_DLL_CONFIG_3[1] to select RCLK as
+> +		 * DLL input clock
+> +		 */
+
+		/* Select RCLK as DLL input clock */
+
+> +		writel_relaxed(((readl_relaxed(host->ioaddr +
+> +			msm_offset->core_dll_config_3))
+> +			& ~RCLK_TOGGLE), host->ioaddr +
+> +			msm_offset->core_dll_config_3);
+
+Same as above, readl(); val &= ~RCLK_TOGGLE; writel(); will make this
+easier on the eyes.
+
+> +	}
+> +}
+> +
+>  /* sdhci_msm_set_clock - Called with (host->lock) spinlock held. */
+>  static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
+>  {
+> @@ -2149,6 +2188,10 @@ static __maybe_unused int sdhci_msm_runtime_resume(struct device *dev)
+>  				       msm_host->bulk_clks);
+>  	if (ret)
+>  		return ret;
+
+An empty line please.
+
+> +	if (host->mmc &&
+
+Afaict host->mmc can't be NULL, can you please confirm that you need
+this check.
+
+> +			(host->mmc->ios.timing == MMC_TIMING_MMC_HS400))
+> +		sdhci_msm_toggle_fifo_write_clk(host);
+> +
+
+Regards,
+Bjorn
+
+>  	/*
+>  	 * Whenever core-clock is gated dynamically, it's needed to
+>  	 * restore the SDR DLL settings when the clock is ungated.
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
