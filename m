@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4CA71661C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:03:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DC2E1661C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:03:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728792AbgBTQDE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 11:03:04 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:36534 "EHLO
+        id S1728639AbgBTQDJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 11:03:09 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:53802 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728428AbgBTQDD (ORCPT
+        by vger.kernel.org with ESMTP id S1728798AbgBTQDI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 11:03:03 -0500
+        Thu, 20 Feb 2020 11:03:08 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582214582;
+        s=mimecast20190719; t=1582214586;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=q5FY/Zzd2u2AdqZ3/YqXWZ85ciAIFYLeZe5XKvNHEBI=;
-        b=VMsPovzaISRD9wCO+kDY0A5ajPO5z4kfxdo78c3KRKqEzDoBhUmtK3dHiIP4y9TnlUu1ZK
-        v7Pg+n81bd6GlrhWM3/V0DRA5uX6cwQF3cW0ERNNfWiY93G6DW868v0Y5oBUL3C/L26XDb
-        sR1JIt4Nz+eab5kaRAaynHsgtCfro9k=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-240-DRN7CqDQMnO2cDTxRFP9AA-1; Thu, 20 Feb 2020 11:02:59 -0500
-X-MC-Unique: DRN7CqDQMnO2cDTxRFP9AA-1
-Received: by mail-qk1-f199.google.com with SMTP id b23so3028198qkg.17
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 08:02:59 -0800 (PST)
+        bh=lwNlsBs8NIb6Y77atButveT5DrFFM9+Zoa3o5H5cFjw=;
+        b=YGCOgwayF1eIniQUiuMWQrwnb7zw4PewZ7uDvVbwX7M1skSHBKDi00aXpPYla5g8E/yFGh
+        BiDvsj2244nRors6aALOJ1cJQTeKSVKs5y8K9N6vitjD3wSSEZgaBc+9YOPh+l0L6ze7dH
+        BL/PhWdMWF1JpmHNjLr6+P2R5ncheSo=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-414-95rLSdHiNVmGtj-_hRhBNw-1; Thu, 20 Feb 2020 11:03:03 -0500
+X-MC-Unique: 95rLSdHiNVmGtj-_hRhBNw-1
+Received: by mail-qv1-f70.google.com with SMTP id s5so2855714qvr.15
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 08:03:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=q5FY/Zzd2u2AdqZ3/YqXWZ85ciAIFYLeZe5XKvNHEBI=;
-        b=MbWzRvI0eEUuSu6xWLzo+k0xsGdazPwFjffRcDbsfIktqtiYt1sNxHJwVzjp9kBmSy
-         4QafWddqjDLwbChCGwWvCj1Ui+KcWV3SxVTvK9vOSkb8xSXr40q0ZKqK8xznuLmkrXSA
-         tQTPlZ9Gg9BkMhwwdP29NZL1OGYXafeDkaeoVX+VMfMOn0suGPoccqMRYy5u3hFT0tAZ
-         ufiNzc6P+PDvJmgtLpcbvc12VIzDYbIfQwT6kxGCtBGrNVVQjpp/dgzEZwCwNq+o7azI
-         3ZoQYUyqaG23/qat6n+k9PS6MHLh4CEH1TthISBeb+6ASZTKN3KUVaCqB1ivEL1gIJmY
-         STWQ==
-X-Gm-Message-State: APjAAAXqBE71yoZHtcT6q+FUzu2NKc4w4CL3WbI0HF1MHUd5qncfdv/M
-        8h1FptBzaCQLuoZoA5jt80+TLq6gnvmZZcOPHWRsWwDAjDj03QIOc9wgaJUI6gUxJZ8hzd21rEY
-        Mbh1QIL+qYoTK+7XAvhoiujcn
-X-Received: by 2002:ac8:76d7:: with SMTP id q23mr26733648qtr.198.1582214579291;
-        Thu, 20 Feb 2020 08:02:59 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwoNuezOvlo55PbKbVDuaGVM6RJ8MihIsmeXUiSVkGz8jhyvlUwzF/7iq9KMKbFy8anvbkKyw==
-X-Received: by 2002:ac8:76d7:: with SMTP id q23mr26733627qtr.198.1582214579032;
-        Thu, 20 Feb 2020 08:02:59 -0800 (PST)
+        bh=lwNlsBs8NIb6Y77atButveT5DrFFM9+Zoa3o5H5cFjw=;
+        b=kWtPrmA0tUuAYOipXZ/G1LK05nXfMg01ajl/+JeeEPcfe11ZKFRZ08YB02UVRgDRyz
+         OFgfXMBwtj/VPczwqPZRPLrKxdk4riTsLlSNSmrW4FG9Dzs/Bu7QoBK1Fo45LdeXYWi2
+         iq/nA7nxJ9xNZ2TbSfR3VLcTnrYsvzifJA7L6LMeUP5FjS8s8bhg0E/U1JeV2PhU7jab
+         99qImn2WcAgnWl0Y96EIo3LfR0lFfoAnWjh5zq/M6V0vFX5NMsLS5rYvIzN6sMjxlGq0
+         LdcyXlg9JQ1v4CtnvYEs/bcCUhmEZgvkIQ9TZYtVaw0laHhV8/nG0qJK2e2y5bdOpGWw
+         WFnw==
+X-Gm-Message-State: APjAAAUBqLS4bezDn7nhfc6sSgtNsC+vc3RIMrOJDNFZsGE/yiMepkdw
+        qch7gxv+P0xM88dzNAADGqlW3U5fA3ypf18YTllKIsvf2UHs3NW2sEmq7ZoVuaewUN6d5yNjkN1
+        oFTKDmIgOBDBs0RC+caFX1T9P
+X-Received: by 2002:a37:6343:: with SMTP id x64mr12490176qkb.469.1582214582493;
+        Thu, 20 Feb 2020 08:03:02 -0800 (PST)
+X-Google-Smtp-Source: APXvYqx2aPDTTJLSGD106eUq72NgEiCCqnnnqxrNnv6B6KzmA2UMTNOcP0AD9i+lrW6IWJ9nODQY9g==
+X-Received: by 2002:a37:6343:: with SMTP id x64mr12490151qkb.469.1582214582267;
+        Thu, 20 Feb 2020 08:03:02 -0800 (PST)
 Received: from xz-x1.redhat.com ([104.156.64.75])
-        by smtp.gmail.com with ESMTPSA id 139sm1821617qkg.79.2020.02.20.08.02.57
+        by smtp.gmail.com with ESMTPSA id n123sm1857635qke.58.2020.02.20.08.03.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2020 08:02:58 -0800 (PST)
+        Thu, 20 Feb 2020 08:03:01 -0800 (PST)
 From:   Peter Xu <peterx@redhat.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     Peter Xu <peterx@redhat.com>, Martin Cracauer <cracauer@cons.org>,
@@ -72,9 +72,9 @@ Cc:     Peter Xu <peterx@redhat.com>, Martin Cracauer <cracauer@cons.org>,
         David Hildenbrand <david@redhat.com>,
         Bobby Powers <bobbypowers@gmail.com>,
         Mel Gorman <mgorman@suse.de>
-Subject: [PATCH RESEND v6 15/16] mm/gup: Allow to react to fatal signals
-Date:   Thu, 20 Feb 2020 11:02:56 -0500
-Message-Id: <20200220160256.9887-1-peterx@redhat.com>
+Subject: [PATCH RESEND v6 16/16] mm/userfaultfd: Honor FAULT_FLAG_KILLABLE in fault path
+Date:   Thu, 20 Feb 2020 11:03:00 -0500
+Message-Id: <20200220160300.9941-1-peterx@redhat.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200220155353.8676-1-peterx@redhat.com>
 References: 
@@ -85,74 +85,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The existing gup code does not react to the fatal signals in many code
-paths.  For example, in one retry path of gup we're still using
-down_read() rather than down_read_killable().  Also, when doing page
-faults we don't pass in FAULT_FLAG_KILLABLE as well, which means that
-within the faulting process we'll wait in non-killable way as well.
-These were spotted by Linus during the code review of some other
-patches.
+Userfaultfd fault path was by default killable even if the caller does
+not have FAULT_FLAG_KILLABLE.  That makes sense before in that when
+with gup we don't have FAULT_FLAG_KILLABLE properly set before.  Now
+after previous patch we've got FAULT_FLAG_KILLABLE applied even for
+gup code so it should also make sense to let userfaultfd to honor the
+FAULT_FLAG_KILLABLE.
 
-Let's allow the gup code to react to fatal signals to improve the
-responsiveness of threads when during gup and being killed.
+Because we're unconditionally setting FAULT_FLAG_KILLABLE in gup code
+right now, this patch should have no functional change.  It also
+cleaned the code a little bit by introducing some helpers.
 
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- mm/gup.c     | 12 +++++++++---
- mm/hugetlb.c |  3 ++-
- 2 files changed, 11 insertions(+), 4 deletions(-)
+ fs/userfaultfd.c | 36 ++++++++++++++++++++++++++++--------
+ 1 file changed, 28 insertions(+), 8 deletions(-)
 
-diff --git a/mm/gup.c b/mm/gup.c
-index ec2b76f44a01..3f0cb14334ac 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -648,7 +648,7 @@ static int faultin_page(struct task_struct *tsk, struct vm_area_struct *vma,
- 	if (*flags & FOLL_REMOTE)
- 		fault_flags |= FAULT_FLAG_REMOTE;
- 	if (locked)
--		fault_flags |= FAULT_FLAG_ALLOW_RETRY;
-+		fault_flags |= FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
- 	if (*flags & FOLL_NOWAIT)
- 		fault_flags |= FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_RETRY_NOWAIT;
- 	if (*flags & FOLL_TRIED) {
-@@ -991,7 +991,7 @@ int fixup_user_fault(struct task_struct *tsk, struct mm_struct *mm,
- 	address = untagged_addr(address);
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index c076d3295958..703c1c3faa6e 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -334,6 +334,30 @@ static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
+ 	return ret;
+ }
  
- 	if (unlocked)
--		fault_flags |= FAULT_FLAG_ALLOW_RETRY;
-+		fault_flags |= FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
++/* Should pair with userfaultfd_signal_pending() */
++static inline long userfaultfd_get_blocking_state(unsigned int flags)
++{
++	if (flags & FAULT_FLAG_INTERRUPTIBLE)
++		return TASK_INTERRUPTIBLE;
++
++	if (flags & FAULT_FLAG_KILLABLE)
++		return TASK_KILLABLE;
++
++	return TASK_UNINTERRUPTIBLE;
++}
++
++/* Should pair with userfaultfd_get_blocking_state() */
++static inline bool userfaultfd_signal_pending(unsigned int flags)
++{
++	if (flags & FAULT_FLAG_INTERRUPTIBLE)
++		return signal_pending(current);
++
++	if (flags & FAULT_FLAG_KILLABLE)
++		return fatal_signal_pending(current);
++
++	return false;
++}
++
+ /*
+  * The locking rules involved in returning VM_FAULT_RETRY depending on
+  * FAULT_FLAG_ALLOW_RETRY, FAULT_FLAG_RETRY_NOWAIT and
+@@ -355,7 +379,7 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
+ 	struct userfaultfd_ctx *ctx;
+ 	struct userfaultfd_wait_queue uwq;
+ 	vm_fault_t ret = VM_FAULT_SIGBUS;
+-	bool must_wait, return_to_userland;
++	bool must_wait;
+ 	long blocking_state;
  
- retry:
- 	vma = find_extend_vma(mm, address);
-@@ -1113,7 +1113,13 @@ static __always_inline long __get_user_pages_locked(struct task_struct *tsk,
- 			break;
+ 	/*
+@@ -462,9 +486,7 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
+ 	uwq.ctx = ctx;
+ 	uwq.waken = false;
  
- 		*locked = 1;
--		down_read(&mm->mmap_sem);
-+		ret = down_read_killable(&mm->mmap_sem);
-+		if (ret) {
-+			BUG_ON(ret > 0);
-+			if (!pages_done)
-+				pages_done = ret;
-+			break;
-+		}
+-	return_to_userland = vmf->flags & FAULT_FLAG_INTERRUPTIBLE;
+-	blocking_state = return_to_userland ? TASK_INTERRUPTIBLE :
+-			 TASK_KILLABLE;
++	blocking_state = userfaultfd_get_blocking_state(vmf->flags);
  
- 		ret = __get_user_pages(tsk, mm, start, 1, flags | FOLL_TRIED,
- 				       pages, NULL, locked);
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index ac9a28d51674..c342b091a7a4 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -4338,7 +4338,8 @@ long follow_hugetlb_page(struct mm_struct *mm, struct vm_area_struct *vma,
- 			if (flags & FOLL_WRITE)
- 				fault_flags |= FAULT_FLAG_WRITE;
- 			if (locked)
--				fault_flags |= FAULT_FLAG_ALLOW_RETRY;
-+				fault_flags |= FAULT_FLAG_ALLOW_RETRY |
-+					FAULT_FLAG_KILLABLE;
- 			if (flags & FOLL_NOWAIT)
- 				fault_flags |= FAULT_FLAG_ALLOW_RETRY |
- 					FAULT_FLAG_RETRY_NOWAIT;
+ 	spin_lock_irq(&ctx->fault_pending_wqh.lock);
+ 	/*
+@@ -490,8 +512,7 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
+ 	up_read(&mm->mmap_sem);
+ 
+ 	if (likely(must_wait && !READ_ONCE(ctx->released) &&
+-		   (return_to_userland ? !signal_pending(current) :
+-		    !fatal_signal_pending(current)))) {
++		   !userfaultfd_signal_pending(vmf->flags))) {
+ 		wake_up_poll(&ctx->fd_wqh, EPOLLIN);
+ 		schedule();
+ 		ret |= VM_FAULT_MAJOR;
+@@ -513,8 +534,7 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
+ 			set_current_state(blocking_state);
+ 			if (READ_ONCE(uwq.waken) ||
+ 			    READ_ONCE(ctx->released) ||
+-			    (return_to_userland ? signal_pending(current) :
+-			     fatal_signal_pending(current)))
++			    userfaultfd_signal_pending(vmf->flags))
+ 				break;
+ 			schedule();
+ 		}
 -- 
 2.24.1
 
