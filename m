@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09CA316630A
+	by mail.lfdr.de (Postfix) with ESMTP id 7F64616630B
 	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:33:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728964AbgBTQbo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 11:31:44 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36760 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728937AbgBTQbl (ORCPT
+        id S1728972AbgBTQbs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 11:31:48 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:47742 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728788AbgBTQbq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 11:31:41 -0500
+        Thu, 20 Feb 2020 11:31:46 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582216300;
+        s=mimecast20190719; t=1582216305;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=aG1PP/azsdciMGR9kcbYgDDygB48VmVQwcR6SsxMpCc=;
-        b=Wed6S5Ckmb8vvsfqCgxKZTz+KR17ShdTU/Wh+5NClPnQybMUwz+KvZLUVPnOFrsVvHYayr
-        1zYcn4330X2hu4Q8ZoUhY2S96k8iWsZwrqeD8bL3TfWa0p15TY/kq3a1L773YillHundn8
-        6Nxjm1LfMUqDb5E+BWeH27kjfx3iSXM=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-210-c7451vLHPTi2bAUfe4F-tQ-1; Thu, 20 Feb 2020 11:31:37 -0500
-X-MC-Unique: c7451vLHPTi2bAUfe4F-tQ-1
-Received: by mail-qv1-f69.google.com with SMTP id d7so2917508qvq.12
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 08:31:37 -0800 (PST)
+        bh=pNbMD8h94PEyk7ZB2quMRa+mQt+SyNS5feRUb7MU+eY=;
+        b=YQGCGDfiz84f1F/Rwoh/8gM/0jTW6kutNj1gQROeKH0E6TmzSxTwZWHrDkJNqp408MMB9J
+        pXI3s3NcuXE2UFuGLI/UCuAnbbHh00eimE+9SjPK4m48ayDRn5P1zP8+uPcI6juwl+hNlO
+        kN0gbRn+QeJD4uMvRvoFfucgciSBPHo=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-236-F5OHVlcxPcqs-fV-8sDe8w-1; Thu, 20 Feb 2020 11:31:43 -0500
+X-MC-Unique: F5OHVlcxPcqs-fV-8sDe8w-1
+Received: by mail-qt1-f197.google.com with SMTP id m8so2951079qta.20
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 08:31:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=aG1PP/azsdciMGR9kcbYgDDygB48VmVQwcR6SsxMpCc=;
-        b=VdMajL2XTX/PiT6KqIzWDgKvWrl0aAYIYD3p9eBRxZz77+saVZR7n+3Crx7vzHcJhS
-         TFBgFK4rTcgAE7+cVbo184yvrEd2pkIbodTHlPSNv8DV+9wczJPobZInT6BlOwEzuvK3
-         NoVbwxWTeCYEexqjf5eS7qG1MPgtFf7Gte5kIAuMSwSuX1BHnH8o/dMhPC1VB5iAWRlF
-         W+BnA8pqjEOQXWdHQL1bTWnO3gQzwzxmafD6+e9FvWMhQ+5nA1IZXXNY8Kd8oW+tpVCz
-         d3m+fTWTaBKNHWTb+CL1TiSiyyCoRPv56nDjygs+TFDVV4YRz4pw3ksYV4HBwhUGtdh7
-         uizw==
-X-Gm-Message-State: APjAAAULS5akI2fK674ByVX5b6SZqxKuyhLdX8fH0W96MAxwhe3JNBdd
-        GuKnZPjaElXcdNfw6V8AMH1ffVmO0mNHLE1Gb1QhfFC/m/vzevArJHQ8PbWB366PMN+ok+dCcI7
-        T2F9r6eikI8qhx4zAe1WwLNV4
-X-Received: by 2002:a37:a12:: with SMTP id 18mr29827808qkk.249.1582216296631;
-        Thu, 20 Feb 2020 08:31:36 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyeeoJmBfxz+eoE07FIBfNGkpp7QPDv14l0vh9lWzGoCTi5/u4us5+ZDy8T66tGi8PhjGv1Og==
-X-Received: by 2002:a37:a12:: with SMTP id 18mr29827758qkk.249.1582216296306;
-        Thu, 20 Feb 2020 08:31:36 -0800 (PST)
+        bh=pNbMD8h94PEyk7ZB2quMRa+mQt+SyNS5feRUb7MU+eY=;
+        b=bu4Dbdndd4TLi0/QxfJgN1Qu+8Sv2+ereBVn3RAEUoazUq6YeH4iIFPo3Cdi3MqZwV
+         vM7c2cfTcMSLfBxvwtqLSaWVl3b7WKTPztXL+FZntx0sPLncZOwJ5KEML0ukJYU6O7ey
+         oVEWsVCHhIXdOdXs+xlw9UqN2hR4rsU6Opq7X+VaRgMMOvDOms62kJ0DloPwfTr/0J9T
+         no6QN0WR9SNvUBK0+FwP2WueGkznrMbrraFv4fyOrrEY8dEgs0/BBVnqciFLnM/SBuMD
+         QBNc6k2WFzFUZPIQfXMHwJQkHD7Us246NTNYgPfQ4KoD+yA9q7cdjCvozqdhc71zzMga
+         iZoQ==
+X-Gm-Message-State: APjAAAUnudLC1l6OP+sdMVvzze2dXprNHFXLa7I0qWv8y5+gFrZxkh2C
+        3txtpnYLj67Y54UDWWjnO+63Qjmgm0Z1hvFPUM1aNIZa9lc167OmFBqHNdaq6KdWVe3SZdPI/mD
+        0t86I4ebt0prHeKM3AhD40os6
+X-Received: by 2002:a0c:f412:: with SMTP id h18mr26792907qvl.124.1582216302765;
+        Thu, 20 Feb 2020 08:31:42 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyzpD7dCbZe5R9YUkLsh6bUSiBnhC9LIv4j2aOfGaXadHL8Np9pCBbqpRrmVNzc8iZ2PzkM8Q==
+X-Received: by 2002:a0c:f412:: with SMTP id h18mr26792469qvl.124.1582216297889;
+        Thu, 20 Feb 2020 08:31:37 -0800 (PST)
 Received: from xz-x1.redhat.com ([104.156.64.75])
-        by smtp.gmail.com with ESMTPSA id l19sm42366qkl.3.2020.02.20.08.31.34
+        by smtp.gmail.com with ESMTPSA id l19sm42366qkl.3.2020.02.20.08.31.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2020 08:31:35 -0800 (PST)
+        Thu, 20 Feb 2020 08:31:37 -0800 (PST)
 From:   Peter Xu <peterx@redhat.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     Brian Geffon <bgeffon@google.com>,
@@ -69,10 +69,11 @@ Cc:     Brian Geffon <bgeffon@google.com>,
         Denis Plotnikov <dplotnikov@virtuozzo.com>,
         Hugh Dickins <hughd@google.com>,
         "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Jerome Glisse <jglisse@redhat.com>
-Subject: [PATCH v6 11/19] khugepaged: skip collapse if uffd-wp detected
-Date:   Thu, 20 Feb 2020 11:31:04 -0500
-Message-Id: <20200220163112.11409-12-peterx@redhat.com>
+        Jerome Glisse <jglisse@redhat.com>, Shaohua Li <shli@fb.com>,
+        Rik van Riel <riel@redhat.com>
+Subject: [PATCH v6 12/19] userfaultfd: wp: support write protection for userfault vma range
+Date:   Thu, 20 Feb 2020 11:31:05 -0500
+Message-Id: <20200220163112.11409-13-peterx@redhat.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200220163112.11409-1-peterx@redhat.com>
 References: <20200220163112.11409-1-peterx@redhat.com>
@@ -83,82 +84,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Don't collapse the huge PMD if there is any userfault write protected
-small PTEs.  The problem is that the write protection is in small page
-granularity and there's no way to keep all these write protection
-information if the small pages are going to be merged into a huge PMD.
+From: Shaohua Li <shli@fb.com>
 
-The same thing needs to be considered for swap entries and migration
-entries.  So do the check as well disregarding khugepaged_max_ptes_swap.
+Add API to enable/disable writeprotect a vma range. Unlike mprotect,
+this doesn't split/merge vmas.
 
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Kirill A. Shutemov <kirill@shutemov.name>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Signed-off-by: Shaohua Li <shli@fb.com>
+Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+[peterx:
+ - use the helper to find VMA;
+ - return -ENOENT if not found to match mcopy case;
+ - use the new MM_CP_UFFD_WP* flags for change_protection
+ - check against mmap_changing for failures
+ - replace find_dst_vma with vma_find_uffd]
 Reviewed-by: Jerome Glisse <jglisse@redhat.com>
 Reviewed-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- include/trace/events/huge_memory.h |  1 +
- mm/khugepaged.c                    | 23 +++++++++++++++++++++++
- 2 files changed, 24 insertions(+)
+ include/linux/userfaultfd_k.h |  3 ++
+ mm/userfaultfd.c              | 54 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 57 insertions(+)
 
-diff --git a/include/trace/events/huge_memory.h b/include/trace/events/huge_memory.h
-index d82a0f4e824d..70e32ff096ec 100644
---- a/include/trace/events/huge_memory.h
-+++ b/include/trace/events/huge_memory.h
-@@ -13,6 +13,7 @@
- 	EM( SCAN_PMD_NULL,		"pmd_null")			\
- 	EM( SCAN_EXCEED_NONE_PTE,	"exceed_none_pte")		\
- 	EM( SCAN_PTE_NON_PRESENT,	"pte_non_present")		\
-+	EM( SCAN_PTE_UFFD_WP,		"pte_uffd_wp")			\
- 	EM( SCAN_PAGE_RO,		"no_writable_page")		\
- 	EM( SCAN_LACK_REFERENCED_PAGE,	"lack_referenced_page")		\
- 	EM( SCAN_PAGE_NULL,		"page_null")			\
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index b679908743cb..789485cc9387 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -29,6 +29,7 @@ enum scan_result {
- 	SCAN_PMD_NULL,
- 	SCAN_EXCEED_NONE_PTE,
- 	SCAN_PTE_NON_PRESENT,
-+	SCAN_PTE_UFFD_WP,
- 	SCAN_PAGE_RO,
- 	SCAN_LACK_REFERENCED_PAGE,
- 	SCAN_PAGE_NULL,
-@@ -1141,6 +1142,15 @@ static int khugepaged_scan_pmd(struct mm_struct *mm,
- 		pte_t pteval = *_pte;
- 		if (is_swap_pte(pteval)) {
- 			if (++unmapped <= khugepaged_max_ptes_swap) {
-+				/*
-+				 * Always be strict with uffd-wp
-+				 * enabled swap entries.  Please see
-+				 * comment below for pte_uffd_wp().
-+				 */
-+				if (pte_swp_uffd_wp(pteval)) {
-+					result = SCAN_PTE_UFFD_WP;
-+					goto out_unmap;
-+				}
- 				continue;
- 			} else {
- 				result = SCAN_EXCEED_SWAP_PTE;
-@@ -1160,6 +1170,19 @@ static int khugepaged_scan_pmd(struct mm_struct *mm,
- 			result = SCAN_PTE_NON_PRESENT;
- 			goto out_unmap;
- 		}
-+		if (pte_uffd_wp(pteval)) {
-+			/*
-+			 * Don't collapse the page if any of the small
-+			 * PTEs are armed with uffd write protection.
-+			 * Here we can also mark the new huge pmd as
-+			 * write protected if any of the small ones is
-+			 * marked but that could bring uknown
-+			 * userfault messages that falls outside of
-+			 * the registered range.  So, just be simple.
-+			 */
-+			result = SCAN_PTE_UFFD_WP;
-+			goto out_unmap;
-+		}
- 		if (pte_write(pteval))
- 			writable = true;
+diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
+index dcd33172b728..a8e5f3ea9bb2 100644
+--- a/include/linux/userfaultfd_k.h
++++ b/include/linux/userfaultfd_k.h
+@@ -41,6 +41,9 @@ extern ssize_t mfill_zeropage(struct mm_struct *dst_mm,
+ 			      unsigned long dst_start,
+ 			      unsigned long len,
+ 			      bool *mmap_changing);
++extern int mwriteprotect_range(struct mm_struct *dst_mm,
++			       unsigned long start, unsigned long len,
++			       bool enable_wp, bool *mmap_changing);
  
+ /* mm helpers */
+ static inline bool is_mergeable_vm_userfaultfd_ctx(struct vm_area_struct *vma,
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index 4a06613525ee..cf1217e6f956 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -631,3 +631,57 @@ ssize_t mfill_zeropage(struct mm_struct *dst_mm, unsigned long start,
+ {
+ 	return __mcopy_atomic(dst_mm, start, 0, len, true, mmap_changing, 0);
+ }
++
++int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
++			unsigned long len, bool enable_wp, bool *mmap_changing)
++{
++	struct vm_area_struct *dst_vma;
++	pgprot_t newprot;
++	int err;
++
++	/*
++	 * Sanitize the command parameters:
++	 */
++	BUG_ON(start & ~PAGE_MASK);
++	BUG_ON(len & ~PAGE_MASK);
++
++	/* Does the address range wrap, or is the span zero-sized? */
++	BUG_ON(start + len <= start);
++
++	down_read(&dst_mm->mmap_sem);
++
++	/*
++	 * If memory mappings are changing because of non-cooperative
++	 * operation (e.g. mremap) running in parallel, bail out and
++	 * request the user to retry later
++	 */
++	err = -EAGAIN;
++	if (mmap_changing && READ_ONCE(*mmap_changing))
++		goto out_unlock;
++
++	err = -ENOENT;
++	dst_vma = find_dst_vma(dst_mm, start, len);
++	/*
++	 * Make sure the vma is not shared, that the dst range is
++	 * both valid and fully within a single existing vma.
++	 */
++	if (!dst_vma || (dst_vma->vm_flags & VM_SHARED))
++		goto out_unlock;
++	if (!userfaultfd_wp(dst_vma))
++		goto out_unlock;
++	if (!vma_is_anonymous(dst_vma))
++		goto out_unlock;
++
++	if (enable_wp)
++		newprot = vm_get_page_prot(dst_vma->vm_flags & ~(VM_WRITE));
++	else
++		newprot = vm_get_page_prot(dst_vma->vm_flags);
++
++	change_protection(dst_vma, start, start + len, newprot,
++			  enable_wp ? MM_CP_UFFD_WP : MM_CP_UFFD_WP_RESOLVE);
++
++	err = 0;
++out_unlock:
++	up_read(&dst_mm->mmap_sem);
++	return err;
++}
 -- 
 2.24.1
 
