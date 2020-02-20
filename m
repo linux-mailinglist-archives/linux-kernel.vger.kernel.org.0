@@ -2,59 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD1DA166313
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:33:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1D0916631B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:33:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729012AbgBTQcG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 11:32:06 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40465 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728995AbgBTQb5 (ORCPT
+        id S1728162AbgBTQci (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 11:32:38 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37509 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728336AbgBTQcf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 11:31:57 -0500
-Received: by mail-wr1-f65.google.com with SMTP id t3so5327849wru.7
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 08:31:55 -0800 (PST)
+        Thu, 20 Feb 2020 11:32:35 -0500
+Received: by mail-wm1-f67.google.com with SMTP id a6so2762770wme.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 08:32:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:autocrypt:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=subject:to:cc:references:from:autocrypt:organization:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=amlZd6viWlESrGSSjzDoEUuoF9cpBj3Z6d9jmF9pQ0s=;
-        b=K8yy+C+5IfxCxH3cgBkEK/Jp/WYJx3BB/swb0Rpn8OtnBeeC8zkVe4zRYKRar6k4Am
-         RKSwz9AV1Zna2JAi9keFOw71ofcJ2dyJkHYC1eJUWq1Iwu4up7J9FdJJIpGDDeuwolVQ
-         /iGGYwpWAe6KFdHZZT91SCPlNrnMSLu11LUaY7uRUd+wh+UAVs+uUZrvUOIbH8gCjB52
-         H3lcobuY7b2Hua3oYanUEVo7HZQ6p5jpa7Qn6MwQLX4I5/pPQGwNfWp50vppuvzVFse4
-         7yDQuvB+YcSQbJbthSOCs1W8kxlir5BdAs35G1f1TAKR8M7/3fnr46y8y0D8JI9MF5mW
-         n7GA==
+        bh=SlOadTqO4661gOcRE/x8L7NHs37N4MIhxZsmaIWZDtw=;
+        b=nPiz7WQ1K72haWRhB7vvw6uc2rkrLHju6NWwjrZ5uRZry6kdeBVkFRH19WZw3ruxOp
+         tUG21kchNQVqifWPI61PHaKJl5yMPsuelRcsdoZGoRku47O0YYTITDo7S+ZSLOfmJqqx
+         ml9fiX3PcNo3k5EzIN7Q4nfNoa8didONXjcYIwbi22HNxrNfDrgCncX+LJytJCVqE37T
+         H1DllCVyqRsv8EGehsMlUurBMJRXktwECXuRQjYBug9BHDHz3kB584enyPL3qAfrXU46
+         UHRfOXoYEq0B0gwSKgTcSfxshh3fkl2Rc0MPkKOp9YIg+TNoT/PUb97hK/bQl+ZZJuOh
+         oQVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:autocrypt
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=amlZd6viWlESrGSSjzDoEUuoF9cpBj3Z6d9jmF9pQ0s=;
-        b=V+xnLnElP/e60x1AIEtj5uhWOcdFj+3fIJ1eDOhXqmRJ6d+YlmF3zkB8yA5nO7LpGk
-         /xUeyFL+xCgskjBZ4q739J+K1aAm2i4UA1GxOjJUcdAvwceyul/EnwPNmkfpVLKWDjSM
-         YHpqPHrcOE/fxpSqdxe9oBf9uAL/Ekq+v/vmiN3r9QPWCiVMOQq4EQtlskEPfSrNxr73
-         ECKVjXeKxRIEQe5kgPOlhYF3kUr5+lBuNo/rBLRg8YBw5BYUNxfSjuxsBZl5EnW4lKS2
-         BWMhpfVxCqQsk8D+IN5tx4bTn5jFVLq60EgX4yrTVk9vl60KVgQCsZtyHgX8RZOLixEz
-         6wfQ==
-X-Gm-Message-State: APjAAAVOKz3xDGwbu5nVbs8tJKrBo8pMWEF6vDp+qUiFX3QXM69UQdc0
-        UwisN/cnAkpQafRsvJDlw86DlXmrStr1dQ==
-X-Google-Smtp-Source: APXvYqxXR+WLtnmowmCs+gspOuKz0mLwPsKVBjkcc3RsvnpxuwlIUb9h04EBP+jIz8aOgsA/71UWPg==
-X-Received: by 2002:a5d:4bd0:: with SMTP id l16mr45681402wrt.271.1582216313995;
-        Thu, 20 Feb 2020 08:31:53 -0800 (PST)
+        bh=SlOadTqO4661gOcRE/x8L7NHs37N4MIhxZsmaIWZDtw=;
+        b=CwpOdOuEv+h2Ofo/3ISF1o+WpPsI7LqpOe6x617ZsQbXaZ2fPbq80Y9Pm+h1Boq6rr
+         IORcGAldz1WRh9a78djVgasLcdF18ZtPWGlca2Pa3lA7hDGDJp3D3TNDCaLF8VWJVqIo
+         yRnOSqltxn0Rln+ZTtU3AOF7PxpJkpIudDN1RnHsTVoBnNpLfu9ylnZwfdkAaRn+X4b3
+         2ET0RjFn7G5SZy6ezTfBdf/7uxJRoUCuiwFxilBKpY6yx/a+pNE7KLmtPEo5x6FDTbki
+         wQyqSG5B++Qp4B4jBwtMo9ruTR+m7j/aeYggstlYP1fVwiZWG/HoWJb06mc+g5bVVhwU
+         DDmw==
+X-Gm-Message-State: APjAAAX9j7k7m+d/YpuLbthIEwXhN3aV7/+OAa3n3lo6UoWy5XyvaNEA
+        XYdJuSYUgei0/T5d8TroW/MS4g==
+X-Google-Smtp-Source: APXvYqxzT2QNf+URqPUbi7Om9QRwBVp+9U7uey9+4dgbM4AbexWtkVYaeYbOEzHMYaoUpPCKOAoX5g==
+X-Received: by 2002:a1c:7fd7:: with SMTP id a206mr1462842wmd.171.1582216353724;
+        Thu, 20 Feb 2020 08:32:33 -0800 (PST)
 Received: from [10.1.3.173] (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id z6sm42254wrs.96.2020.02.20.08.31.52
+        by smtp.gmail.com with ESMTPSA id n3sm116468wrs.8.2020.02.20.08.32.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2020 08:31:53 -0800 (PST)
-Subject: Re: [PATCH] arm64: dts: meson-gxbb-odroid-c2: add rc-odroid ir keymap
+        Thu, 20 Feb 2020 08:32:33 -0800 (PST)
+Subject: Re: [PATCH] arm64: dts: meson-gxbb-vega-s95: fix bindings and
+ bluetooth node
 To:     Christian Hewitt <christianshewitt@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Kevin Hilman <khilman@baylibre.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1582213085-11656-1-git-send-email-christianshewitt@gmail.com>
+Cc:     Oleg Ivanov <balbes-150@yandex.ru>
+References: <1582215900-12716-1-git-send-email-christianshewitt@gmail.com>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -106,12 +108,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  zR8QplXA5kogS4kLe/7/JmlDMO8Zgm9vKLHSUeesLOrjdZ59EcjldNNBszRZQgEhwaarfz46
  BSwxi7g3Mu7u5kUByanqHyA=
 Organization: Baylibre
-Message-ID: <a08e4db8-5086-12b8-6a13-c4f443fd61be@baylibre.com>
-Date:   Thu, 20 Feb 2020 17:31:52 +0100
+Message-ID: <8f66d0cf-f5ed-045c-6ab6-2c83593ccf9b@baylibre.com>
+Date:   Thu, 20 Feb 2020 17:32:32 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <1582213085-11656-1-git-send-email-christianshewitt@gmail.com>
+In-Reply-To: <1582215900-12716-1-git-send-email-christianshewitt@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -120,27 +122,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/02/2020 16:38, Christian Hewitt wrote:
-> Add the rc-odroid keymap to the Odroid C2 device-tree.
+On 20/02/2020 17:25, Christian Hewitt wrote:
+> This adds missing bindings and fixes BT output.
 > 
+> Fixes: b07a11dbdfeb ("arm64: dts: meson-gxbb-vega-s95: fix WiFi/BT module support")
+> 
+> Suggested-by: Oleg Ivanov <balbes-150@yandex.ru>
 > Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
 > ---
->  arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts | 1 +
->  1 file changed, 1 insertion(+)
+>  arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-> index 6ded279..b46ef98 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-> @@ -248,6 +248,7 @@
->  	status = "okay";
->  	pinctrl-0 = <&remote_input_ao_pins>;
->  	pinctrl-names = "default";
-> +	linux,rc-map-name = "rc-odroid";
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
+> index 5eab3df..0012779 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
+> @@ -4,6 +4,8 @@
+>   */
+>  
+>  #include "meson-gxbb.dtsi"
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/input/input.h>
+
+These includes seems unnecessary otherwise the DT wouldn't build actually.
+
+>  
+>  / {
+>  	compatible = "tronsmart,vega-s95", "amlogic,meson-gxbb";
+> @@ -245,6 +247,9 @@
+>  	bluetooth {
+>  		compatible = "brcm,bcm43438-bt";
+>  		shutdown-gpios = <&gpio GPIOX_20 GPIO_ACTIVE_HIGH>;
+> +		max-speed = <2000000>;
+> +		clocks = <&wifi32k>;
+> +		clock-names = "lpo";
+>  	};
 >  };
 >  
->  &gpio_ao {
 > 
 
+Ok for this part.
 
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Neil
