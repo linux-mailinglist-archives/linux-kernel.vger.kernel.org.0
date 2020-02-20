@@ -2,120 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66BAF16583D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 08:12:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EABC516584F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 08:14:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbgBTHJ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 02:09:58 -0500
-Received: from lizzard.sbs.de ([194.138.37.39]:44914 "EHLO lizzard.sbs.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725942AbgBTHJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 02:09:58 -0500
-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-        by lizzard.sbs.de (8.15.2/8.15.2) with ESMTPS id 01K79rg6007338
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 20 Feb 2020 08:09:53 +0100
-Received: from [167.87.7.122] ([167.87.7.122])
-        by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 01K79pNX027400;
-        Thu, 20 Feb 2020 08:09:52 +0100
-Subject: Re: [ANNOUNCE] Jailhouse 0.12 released
-To:     Peng Fan <peng.fan@nxp.com>,
-        Jailhouse <jailhouse-dev@googlegroups.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alice Guo <alice.guo@nxp.com>
-References: <dd4344b9-ca04-0ef2-0810-6b98e30f68b4@siemens.com>
- <AM0PR04MB4481C65800CCE42E448B7D2788130@AM0PR04MB4481.eurprd04.prod.outlook.com>
-From:   Jan Kiszka <jan.kiszka@siemens.com>
-Message-ID: <9bdd0eae-dbaf-f5a3-d067-81b0ae88522f@siemens.com>
-Date:   Thu, 20 Feb 2020 08:09:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-MIME-Version: 1.0
-In-Reply-To: <AM0PR04MB4481C65800CCE42E448B7D2788130@AM0PR04MB4481.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726878AbgBTHOC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 02:14:02 -0500
+Received: from conuserg-08.nifty.com ([210.131.2.75]:36906 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725942AbgBTHOC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 02:14:02 -0500
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-08.nifty.com with ESMTP id 01K7Bl6d011059;
+        Thu, 20 Feb 2020 16:11:48 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com 01K7Bl6d011059
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1582182709;
+        bh=RGjdzwfQtcxcoKdnoWUCQmUyQN1VFbdpPZmhgB3NQTg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=AWHBX0UdXgGdhv2cpgdj49Y1GSquysKyrkVwyMwJbateXpitUPdtm1oyYUf0n5cPe
+         zutHkgNQJ2DO/MNHEuFQOVml5GdlGqb291UoCA2/SP0G9xhvUEXPuqcK2QopZ+KVsi
+         DAAzVmHYxXU/uhr4gaxXcUvB+LOUOmqFSWsuSaY2hTBMDw7E4T8B4IOje6fYgFbHD4
+         3pyg00EK0d9WBtL6pPADmrbyn4XQkxTYqaWPTM5xusKG4sgf15N2fbGbV8xoOc8/ta
+         i2FS1sneF/UM/Kb9t0JE9o37m3Zl/ixLhkNU8o2zAruo62J6F8RmYehjA8EW4sEwZT
+         nv+juHiW9uAmA==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <masahiroy@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        clang-built-linux@googlegroups.com,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        sparclinux@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] vdso: remove meaningless undefining CONFIG_OPTIMIZE_INLINING
+Date:   Thu, 20 Feb 2020 16:11:39 +0900
+Message-Id: <20200220071140.14080-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20.02.20 03:39, Peng Fan wrote:
->> Subject: [ANNOUNCE] Jailhouse 0.12 released
->>
->> This release is an important milestone for Jailhouse because it comes with a
->> reworked inter-cell communication device with better driver support and
->> even an experimental virtio transport model for this.
-> 
-> Great to know this.
+The code, #undef CONFIG_OPTIMIZE_INLINING, is not working as expected.
 
-If there is interest, please provide feedback, ideally also in the 
-circle where I started spec discussions and QEMU implementation.
+It is because <linux/compiler_types.h> is parsed before vclock_gettime.c
+since 28128c61e08e ("kconfig.h: Include compiler types to avoid missed
+struct attributes").
 
-> 
->>
->> While this shared memory device model is still in discussion with virtio and
->> QEMU communities, thus may undergo some further smaller changes, it was
->> important to move forward with it because there is an increasing demand for
->> it on the Jailhouse side. We now support multi-peer connection, have a secure
->> (unprivileged) and efficient UIO driver and can even start working on virtio
->> integration - without having to touch the hypervisor any further. More
->> information also in [1].
-> 
-> Do we need to use qemu for virtio backend?
-> 
+Since then, <linux/compiler_types.h> is included really early by
+using the '-include' option. So, you cannot negate the decision of
+<linux/compiler_types.h> in this way.
 
-Nope, in fact there are only primitive demo backends for block and 
-console available that make use of UIO, see
+You can confirm it by checking the pre-processed code, like this:
 
-http://git.kiszka.org/?p=linux.git;a=blob;f=tools/virtio/virtio-ivshmem-block.c;h=c97aa5076a6d22ccd01862f3e4db0e12641825c3;hb=refs/heads/queues/ivshmem2
+  $ make arch/x86/entry/vdso/vdso32/vclock_gettime.i
 
-and
+There is no difference with/without CONFIG_CC_OPTIMIZE_FOR_SIZE.
 
-http://git.kiszka.org/?p=linux.git;a=blob;f=tools/virtio/virtio-ivshmem-console.c;h=c79be22c6a7aa4c2eb49561e8c0d7c9a052e393d;hb=refs/heads/queues/ivshmem2
+It it about two years since 28128c61e08e. Nobody has reported a
+problem (or, nobody has even noticed the fact that this code is not
+working).
 
-I was hoping to find something useful in ACRN but didn't succeed. So I 
-hacked up these two (basically in two evenings, that's why these two are 
-copy&paste). For the future, when the transport is more stable, looking 
-into a vhost mapping could be beneficial, specifically for networking. 
-Another direction could be https://github.com/rust-vmm/vm-virtio.
+It is ugly and unreliable to attempt to undefine a CONFIG option from
+C files, and anyway the inlining heuristic is up to the compiler.
 
->>
->> The release has another important new, and that is SMMUv3 for ARM64
->> target, as well as the TI-specific MPU-like Peripheral Virtualization Unit (PVU).
->> SMMUv2 support is unfortunately still waiting in some NXP downstream
->> branch for being pushed upstream.
-> 
-> Alice in Cc is doing this effort together with i.MX8QM upstreaming.
-> 
+Just remove the broken code.
 
-Great, looking forward!
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
 
->>
->> Note that there are several changes to the configuration format that require
->> adjustments of own configs. Please study related changes in our reference
->> configurations or, on x86, re-generate the system configuration.
->>
->> Due to all these significant changes, statistics for this release look about more
->> heavyweight than usual:
->> 195 files changed, 7185 insertions(+), 2612 deletions(-)
-> 
-> Yeah!! Besides this, any people still interested in booting jailhouse before Linux?
-> I have achieved this on i.MX8MM with Linux + gic-demo cell, with a baremetal
-> program and using U-Boot FIT to load all images.
+ arch/sparc/vdso/vdso32/vclock_gettime.c     | 4 ----
+ arch/x86/entry/vdso/vdso32/vclock_gettime.c | 4 ----
+ 2 files changed, 8 deletions(-)
 
-Yes, there is definitely interest, for various reasons. One can be cache 
-coloring. We are also considering to look into this boot mode in the 
-context of the just started RISC-V port. And there might be a case on 
-x86 again, but the boot environment is still not clear to me there 
-(likely not UEFI).
-
-If you have a prototype for ARM64 and U-Boot, that would be great to see 
-it, maybe let more people play with it. Eventually, I want to start 
-discussing requirements and potentially required new interfaces.
-
-Jan
-
+diff --git a/arch/sparc/vdso/vdso32/vclock_gettime.c b/arch/sparc/vdso/vdso32/vclock_gettime.c
+index 026abb3b826c..d7f99e6745ea 100644
+--- a/arch/sparc/vdso/vdso32/vclock_gettime.c
++++ b/arch/sparc/vdso/vdso32/vclock_gettime.c
+@@ -4,10 +4,6 @@
+ 
+ #define	BUILD_VDSO32
+ 
+-#ifndef	CONFIG_CC_OPTIMIZE_FOR_SIZE
+-#undef	CONFIG_OPTIMIZE_INLINING
+-#endif
+-
+ #ifdef	CONFIG_SPARC64
+ 
+ /*
+diff --git a/arch/x86/entry/vdso/vdso32/vclock_gettime.c b/arch/x86/entry/vdso/vdso32/vclock_gettime.c
+index 9242b28418d5..3c26488db94d 100644
+--- a/arch/x86/entry/vdso/vdso32/vclock_gettime.c
++++ b/arch/x86/entry/vdso/vdso32/vclock_gettime.c
+@@ -1,10 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #define BUILD_VDSO32
+ 
+-#ifndef CONFIG_CC_OPTIMIZE_FOR_SIZE
+-#undef CONFIG_OPTIMIZE_INLINING
+-#endif
+-
+ #ifdef CONFIG_X86_64
+ 
+ /*
 -- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+2.17.1
+
