@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B72316619D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 16:59:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C80D1661AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 16:59:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728706AbgBTP7Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 10:59:24 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:47606 "EHLO
+        id S1728776AbgBTP7s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 10:59:48 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:47612 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728585AbgBTP7V (ORCPT
+        with ESMTP id S1728653AbgBTP7W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 10:59:21 -0500
+        Thu, 20 Feb 2020 10:59:22 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: eballetbo)
-        with ESMTPSA id 37C272951A9
+        with ESMTPSA id E421529519F
 From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Collabora Kernel ML <kernel@collabora.com>, groeck@chromium.org,
         bleung@chromium.org, dtor@chromium.org, gwendal@chromium.org,
         pmalani@chromium.org
-Subject: [PATCH 3/8] platform/chrome: cros_ec_vbc: Use cros_ec_cmd_xfer_status helper
-Date:   Thu, 20 Feb 2020 16:58:54 +0100
-Message-Id: <20200220155859.906647-4-enric.balletbo@collabora.com>
+Subject: [PATCH 4/8] platform/chrome: cros_ec_chardev: Use cros_ec_cmd_xfer_status helper
+Date:   Thu, 20 Feb 2020 16:58:55 +0100
+Message-Id: <20200220155859.906647-5-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200220155859.906647-1-enric.balletbo@collabora.com>
 References: <20200220155859.906647-1-enric.balletbo@collabora.com>
@@ -42,31 +42,22 @@ cros_ec_cmd_xfer_status() to return Linux standard error codes.
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
- drivers/platform/chrome/cros_ec_vbc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/platform/chrome/cros_ec_chardev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/platform/chrome/cros_ec_vbc.c b/drivers/platform/chrome/cros_ec_vbc.c
-index 8edae465105c..46482d12cffe 100644
---- a/drivers/platform/chrome/cros_ec_vbc.c
-+++ b/drivers/platform/chrome/cros_ec_vbc.c
-@@ -40,7 +40,7 @@ static ssize_t vboot_context_read(struct file *filp, struct kobject *kobj,
- 	msg->outsize = para_sz;
- 	msg->insize = resp_sz;
+diff --git a/drivers/platform/chrome/cros_ec_chardev.c b/drivers/platform/chrome/cros_ec_chardev.c
+index c65e70bc168d..b51ab24055f3 100644
+--- a/drivers/platform/chrome/cros_ec_chardev.c
++++ b/drivers/platform/chrome/cros_ec_chardev.c
+@@ -301,7 +301,7 @@ static long cros_ec_chardev_ioctl_xcmd(struct cros_ec_dev *ec, void __user *arg)
+ 	}
  
--	err = cros_ec_cmd_xfer(ecdev, msg);
-+	err = cros_ec_cmd_xfer_status(ecdev, msg);
- 	if (err < 0) {
- 		dev_err(dev, "Error sending read request: %d\n", err);
- 		kfree(msg);
-@@ -83,7 +83,7 @@ static ssize_t vboot_context_write(struct file *filp, struct kobject *kobj,
- 	msg->outsize = para_sz;
- 	msg->insize = 0;
- 
--	err = cros_ec_cmd_xfer(ecdev, msg);
-+	err = cros_ec_cmd_xfer_status(ecdev, msg);
- 	if (err < 0) {
- 		dev_err(dev, "Error sending write request: %d\n", err);
- 		kfree(msg);
+ 	s_cmd->command += ec->cmd_offset;
+-	ret = cros_ec_cmd_xfer(ec->ec_dev, s_cmd);
++	ret = cros_ec_cmd_xfer_status(ec->ec_dev, s_cmd);
+ 	/* Only copy data to userland if data was received. */
+ 	if (ret < 0)
+ 		goto exit;
 -- 
 2.25.0
 
