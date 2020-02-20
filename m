@@ -2,55 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F214E1653A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 01:36:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62AF41653AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 01:37:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727187AbgBTAgh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Feb 2020 19:36:37 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34296 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726736AbgBTAgh (ORCPT
+        id S1727469AbgBTAhM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Feb 2020 19:37:12 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44885 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727402AbgBTAhJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Feb 2020 19:36:37 -0500
-Received: by mail-pg1-f196.google.com with SMTP id j4so995201pgi.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 16:36:37 -0800 (PST)
+        Wed, 19 Feb 2020 19:37:09 -0500
+Received: by mail-pl1-f194.google.com with SMTP id d9so798861plo.11
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 16:37:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=DHH6Cxa30NDrImHrLr3z5k1RDXrDB96aHEdjNpf39yY=;
-        b=EeQQVTCXUnySDxGyHZNJe2fiADhSnLgaxqxoasZKZkkX94JvxBVzSG9usWYcBgU7Uw
-         fUb+rqhwp4lIPzT63pxxLrb2Uc5nwtuoTUxPsrcPCBI0EwOu/XVR1dk2Pqn7dc9aWIe6
-         aaSyPo4tJm01XDFeCH0kEl+Uqt6M92FNelWsU=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=pLE4I3o8jdwDvZKVU55StRKqxAvQ7TlkptivTca4Ny4=;
+        b=Vr6Q6uK0kl5NcofH4ISt9CiKdHe7ophokugjLDVEsbzHItf0SRuPltxv2eNshnaFnX
+         tzXWw7G7ZPeV48mFn3GKA+YCgJpWxuBx0a0ItFomklLbv9foIetJ5LQ9uxRnm71oZxMM
+         3JPQNn4MzoiKGpng/VXK89odXM9H0BOgHZXHQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=DHH6Cxa30NDrImHrLr3z5k1RDXrDB96aHEdjNpf39yY=;
-        b=ajQzgw7ufZWAJ1HfZ8Qzv+khE60dccgsCQxuJYttsP6aF9AYE4LrkCQt0Hi+T1cbCh
-         mZGRSUq94Z+uNuRvp9pBfq+Qn92C1DOZUAmuzSc2yQt9mZ8KTpwlkD1lExmjttwxzLpz
-         i0WlnAeF8/E6HkH/1ghzg4ua5YItTld4gKFMFz5X/TmLhVZ8g8qycAY2SQHY1os+kxjI
-         2n8Mzs0dQv65hn0V513h1V6+BM/Ky8QEWRYbzROol7ozd6fDDtxau9gV0WN6x0Tt1iid
-         yO3McoXA5YwEhuXDY1mcUhqfBTITpM/ZyGRbO1SXMqmU1kXxlKoGlFM2G8obVVU2HyZu
-         b9Hg==
-X-Gm-Message-State: APjAAAWDSlM8uVXEDucx7uQKe7NNI9h1XgNR7iMb5//xWIQGUhxxyYK3
-        FLnowav6jU3C6q660wGsyZ+myWDj4hc=
-X-Google-Smtp-Source: APXvYqzfcskQAyzM9AYEC6o0vJ7n46W6+Nu86B95+RjYp7QUNvfXpkFoBvazutkUcczUJhl1GttPbw==
-X-Received: by 2002:aa7:9562:: with SMTP id x2mr29388803pfq.147.1582158996546;
-        Wed, 19 Feb 2020 16:36:36 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=pLE4I3o8jdwDvZKVU55StRKqxAvQ7TlkptivTca4Ny4=;
+        b=Kij09HRwvoyuU6Ys516qSTQqEeBfZvDVlt7NudK7xRzA29V0tIJvU9hf7UQXJy3bIG
+         IIySNNJgrAStBcBXIOsfz+tl94LyV+AOGMrAcv+czJ8cfvKqrQpQQzORuECL04NdrBnJ
+         Z/ntjESGlh8aHoZOM7YcgSwjPwAWCi5UPrNEB8lqN0+iPWgUe3pwCvYUnQbljmkkTchx
+         6aayjnvBjUNfdXS4wk9jLc2ayhhV2/3Tqx+Qu5DY6ZODPNnPP65yOHiQHEaB3pmAKpnE
+         2Jr2Zq8quGfQ9gOjndm4QlorP1bDeyoR9zny2pG2Pfb0sRWMC0XWLs3J5KUqm9sbeswu
+         pN9w==
+X-Gm-Message-State: APjAAAXi1vAQ9pNHb/FvORvpIYPkTbBvIEzOmqZhBoSTQKsaAD9bJ5fX
+        sWXo52DCblLKNbmrAUw4gr+tEPbOV5c=
+X-Google-Smtp-Source: APXvYqwaEmiwYs193DX5Hllk0uSWLf8xyMKiFwgGAeMwRH5GmXZrxWaaubXFUZQDM/BtqGFUQfRq5A==
+X-Received: by 2002:a17:90a:da03:: with SMTP id e3mr419652pjv.57.1582159026908;
+        Wed, 19 Feb 2020 16:37:06 -0800 (PST)
 Received: from pmalani2.mtv.corp.google.com ([2620:15c:202:201:172e:4646:c089:ce59])
-        by smtp.gmail.com with ESMTPSA id g24sm788773pfk.92.2020.02.19.16.36.35
+        by smtp.gmail.com with ESMTPSA id g24sm788773pfk.92.2020.02.19.16.37.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 16:36:35 -0800 (PST)
+        Wed, 19 Feb 2020 16:37:06 -0800 (PST)
 From:   Prashant Malani <pmalani@chromium.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     heikki.krogerus@intel.com, enric.balletbo@collabora.com,
         bleung@chromium.org, Prashant Malani <pmalani@chromium.org>,
+        Jon Flatley <jflat@chromium.org>,
         Guenter Roeck <groeck@chromium.org>
-Subject: [PATCH v3 3/4] platform/chrome: typec: Get PD_CONTROL cmd version
-Date:   Wed, 19 Feb 2020 16:36:30 -0800
-Message-Id: <20200220003631.206078-1-pmalani@chromium.org>
+Subject: [PATCH v3 4/4] platform/chrome: typec: Update port info from EC
+Date:   Wed, 19 Feb 2020 16:36:32 -0800
+Message-Id: <20200220003631.206078-2-pmalani@chromium.org>
 X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
+In-Reply-To: <20200220003631.206078-1-pmalani@chromium.org>
+References: <20200220003631.206078-1-pmalani@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,81 +61,137 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Query the EC to determine the version number of the PD_CONTROL
-command which is supported by the EC. Also store this value in the Type
-C data struct since it will be used to determine how to parse the
-response to queries for port information from the EC.
+After registering the ports at probe, get the current port information
+from EC and update the Type C connector class ports accordingly.
 
+Co-developed-by: Jon Flatley <jflat@chromium.org>
 Signed-off-by: Prashant Malani <pmalani@chromium.org>
 ---
 
 Changes in v3:
-- Moved if statement check in the end of probe() from this patch to a
-  previous patch.
+- No changes.
 
 Changes in v2:
 - No changes.
 
- drivers/platform/chrome/cros_ec_typec.c | 32 +++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ drivers/platform/chrome/cros_ec_typec.c | 89 ++++++++++++++++++++++++-
+ 1 file changed, 88 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/chrome/cros_ec_typec.c
-index 6cac41f246b99f..5e025c3442bed1 100644
+index 5e025c3442bed1..eebe526155a9c3 100644
 --- a/drivers/platform/chrome/cros_ec_typec.c
 +++ b/drivers/platform/chrome/cros_ec_typec.c
-@@ -21,6 +21,7 @@ struct cros_typec_data {
- 	struct device *dev;
- 	struct cros_ec_device *ec;
- 	int num_ports;
-+	unsigned int cmd_ver;
- 	/* Array of ports, indexed by port number. */
- 	struct typec_port *ports[EC_USB_PD_MAX_PORTS];
- };
-@@ -154,6 +155,31 @@ static int cros_typec_ec_command(struct cros_typec_data *typec,
+@@ -155,6 +155,81 @@ static int cros_typec_ec_command(struct cros_typec_data *typec,
  	return ret;
  }
  
-+static int cros_typec_get_cmd_version(struct cros_typec_data *typec)
++static void cros_typec_set_port_params_v0(struct cros_typec_data *typec,
++		int port_num, struct ec_response_usb_pd_control *resp)
 +{
-+	struct ec_params_get_cmd_versions_v1 req_v1;
-+	struct ec_response_get_cmd_versions resp;
++	struct typec_port *port = typec->ports[port_num];
++	enum typec_orientation polarity;
++
++	if (!resp->enabled)
++		polarity = TYPEC_ORIENTATION_NONE;
++	else if (!resp->polarity)
++		polarity = TYPEC_ORIENTATION_NORMAL;
++	else
++		polarity = TYPEC_ORIENTATION_REVERSE;
++
++	typec_set_pwr_role(port, resp->role ? TYPEC_SOURCE : TYPEC_SINK);
++	typec_set_orientation(port, polarity);
++}
++
++static void cros_typec_set_port_params_v1(struct cros_typec_data *typec,
++		int port_num, struct ec_response_usb_pd_control_v1 *resp)
++{
++	struct typec_port *port = typec->ports[port_num];
++	enum typec_orientation polarity;
++
++	if (!(resp->enabled & PD_CTRL_RESP_ENABLED_CONNECTED))
++		polarity = TYPEC_ORIENTATION_NONE;
++	else if (!resp->polarity)
++		polarity = TYPEC_ORIENTATION_NORMAL;
++	else
++		polarity = TYPEC_ORIENTATION_REVERSE;
++	typec_set_orientation(port, polarity);
++	typec_set_data_role(port, resp->role & PD_CTRL_RESP_ROLE_DATA ?
++			TYPEC_HOST : TYPEC_DEVICE);
++	typec_set_pwr_role(port, resp->role & PD_CTRL_RESP_ROLE_POWER ?
++			TYPEC_SOURCE : TYPEC_SINK);
++	typec_set_vconn_role(port, resp->role & PD_CTRL_RESP_ROLE_VCONN ?
++			TYPEC_SOURCE : TYPEC_SINK);
++}
++
++static int cros_typec_port_update(struct cros_typec_data *typec, int port_num)
++{
++	struct ec_params_usb_pd_control req;
++	struct ec_response_usb_pd_control_v1 resp;
 +	int ret;
 +
-+	/* We're interested in the PD control command version. */
-+	req_v1.cmd = EC_CMD_USB_PD_CONTROL;
-+	ret = cros_typec_ec_command(typec, 1, EC_CMD_GET_CMD_VERSIONS,
-+				    &req_v1, sizeof(req_v1), &resp,
-+				    sizeof(resp));
++	if (port_num < 0 || port_num >= typec->num_ports) {
++		dev_err(typec->dev, "cannot get status for invalid port %d\n",
++			port_num);
++		return -EINVAL;
++	}
++
++	req.port = port_num;
++	req.role = USB_PD_CTRL_ROLE_NO_CHANGE;
++	req.mux = USB_PD_CTRL_MUX_NO_CHANGE;
++	req.swap = USB_PD_CTRL_SWAP_NONE;
++
++	ret = cros_typec_ec_command(typec, typec->cmd_ver,
++				    EC_CMD_USB_PD_CONTROL, &req, sizeof(req),
++				    &resp, sizeof(resp));
 +	if (ret < 0)
 +		return ret;
 +
-+	if (resp.version_mask & EC_VER_MASK(1))
-+		typec->cmd_ver = 1;
-+	else
-+		typec->cmd_ver = 0;
++	dev_dbg(typec->dev, "Enabled %d: 0x%hhx\n", port_num, resp.enabled);
++	dev_dbg(typec->dev, "Role %d: 0x%hhx\n", port_num, resp.role);
++	dev_dbg(typec->dev, "Polarity %d: 0x%hhx\n", port_num, resp.polarity);
++	dev_dbg(typec->dev, "State %d: %s\n", port_num, resp.state);
 +
-+	dev_dbg(typec->dev, "PD Control has version mask 0x%hhx\n",
-+		typec->cmd_ver);
++	if (typec->cmd_ver == 1)
++		cros_typec_set_port_params_v1(typec, port_num, &resp);
++	else
++		cros_typec_set_port_params_v0(typec, port_num,
++			(struct ec_response_usb_pd_control *) &resp);
 +
 +	return 0;
 +}
 +
- #ifdef CONFIG_ACPI
- static const struct acpi_device_id cros_typec_acpi_id[] = {
- 	{ "GOOG0014", 0 },
-@@ -185,6 +211,12 @@ static int cros_typec_probe(struct platform_device *pdev)
- 	typec->ec = dev_get_drvdata(pdev->dev.parent);
- 	platform_set_drvdata(pdev, typec);
+ static int cros_typec_get_cmd_version(struct cros_typec_data *typec)
+ {
+ 	struct ec_params_get_cmd_versions_v1 req_v1;
+@@ -201,7 +276,7 @@ static int cros_typec_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct cros_typec_data *typec;
+ 	struct ec_response_usb_pd_ports resp;
+-	int ret;
++	int ret, i;
  
-+	ret = cros_typec_get_cmd_version(typec);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to get PD command version info\n");
-+		return ret;
+ 	typec = devm_kzalloc(dev, sizeof(*typec), GFP_KERNEL);
+ 	if (!typec)
+@@ -234,7 +309,19 @@ static int cros_typec_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	for (i = 0; i < typec->num_ports; i++) {
++		ret = cros_typec_port_update(typec, i);
++		if (ret < 0)
++			goto unregister_ports;
 +	}
 +
- 	ret = cros_typec_ec_command(typec, 0, EC_CMD_USB_PD_PORTS, NULL, 0,
- 				    &resp, sizeof(resp));
- 	if (ret < 0)
+ 	return 0;
++
++unregister_ports:
++	for (i = 0; i < typec->num_ports; i++)
++		if (typec->ports[i])
++			typec_unregister_port(typec->ports[i]);
++	return ret;
+ }
+ 
+ static struct platform_driver cros_typec_driver = {
 -- 
 2.25.0.265.gbab2e86ba0-goog
 
