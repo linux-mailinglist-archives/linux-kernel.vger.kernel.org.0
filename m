@@ -2,77 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBE29166A9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 23:56:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E49E166AA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 00:00:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729300AbgBTW4g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 17:56:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50076 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729130AbgBTW4g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 17:56:36 -0500
-Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 685DC206F4;
-        Thu, 20 Feb 2020 22:56:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582239395;
-        bh=MqnugRcvRyxMKhg+YAUlSRgmEzmHtz5ojXiyZUM287s=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=usgIpvoHgHrASYKfE/E71nr1K+UQRzQSgh1soWdSr6uKzFaE4HCvOAkGmTy6hjdx8
-         FkLp/sunNCNT4zGgS9it0Ld2ydVFuSlTy06PFr/7rFoxUQLWHjBazf6ZjgMntVsmAq
-         +koN7oiCwUAVH6TDqoFdyvLFvpGNwKuknpTiefGA=
-Message-ID: <1582239393.12738.10.camel@kernel.org>
-Subject: Re: [PATCH 1/2] tracing: Fix synth event test to avoid using
- smp_processor_id()
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     artem.bityutskiy@linux.intel.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Date:   Thu, 20 Feb 2020 16:56:33 -0600
-In-Reply-To: <20200220174801.2b793ae1@gandalf.local.home>
-References: <158193313870.8868.10793333111731425487.stgit@devnote2>
-         <158193314931.8868.11386672578933699881.stgit@devnote2>
-         <20200220174801.2b793ae1@gandalf.local.home>
+        id S1729272AbgBTXAg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 18:00:36 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:45299 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727135AbgBTXAf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 18:00:35 -0500
+Received: by mail-lj1-f195.google.com with SMTP id e18so166436ljn.12
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 15:00:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oW+dHyuXcdgcpFOp9rkCYNNzyvxL/1mmVUWMW1tVkn8=;
+        b=HsJYplXHj9WIosfuyYDxgCIpizr4Q2QTncG0r8kQoBcqx1jdtsR9fFVeYAPGlhnI5Y
+         7UWBHhKU9LT9oEd08VowjnmWRULPbdq+faWGzRjHU4lCzwffnnc4X3O8+YTbupxrOXam
+         he3lTa6POmGxUb6ylyx451mYPhWfQQq6/MfdM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oW+dHyuXcdgcpFOp9rkCYNNzyvxL/1mmVUWMW1tVkn8=;
+        b=geEL0LwjBGWKCMrDMeQOR2XMIkhrN97TRkl3NDuhGBtskzpwwpxLPS9f03RzCmTDgs
+         wz06DXUNwybEpiO4CRS3Hn5PBUEhkg0VRd2iOT+Ko1afQvuCiGc0tAtKnbI8u7ElexwG
+         36hFV8Jie/hwnTleBYmfAjcfYf1Qg66xCvHRry/YbKV5ibA9EJWFx/MurXLBQUSX0Bq3
+         cTOA6Nbw4Yk+AsMNdEvEsdRNuiuHUBu4TNQz/v0hV4Pk6ZH557Oli0ESDf+0NICag0Ju
+         3vEJhm/zB9DYvdSuy5ZgPK5FMAGDTEYKhNAU3w2Nlk9QmOYt97yJjeuc4P/ONUUMaJDB
+         GoHQ==
+X-Gm-Message-State: APjAAAXOIgfp7Y9y1DJ0ogN/0MLN3U8e/hy4UTyaxzdzwMrvaXql8OCs
+        MEkm4foDd7qORuqPiEGrkItdz78KsLQ=
+X-Google-Smtp-Source: APXvYqwxeEgopvmtBbMD+4ih7zX46XAmpH+f+d2wde+BlCccq0CSLIIAJU2dgwSoTOvLtiI1dUnOdw==
+X-Received: by 2002:a2e:b4f6:: with SMTP id s22mr19041327ljm.218.1582239632310;
+        Thu, 20 Feb 2020 15:00:32 -0800 (PST)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id m21sm492516lfb.59.2020.02.20.15.00.30
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2020 15:00:30 -0800 (PST)
+Received: by mail-lj1-f169.google.com with SMTP id q8so172693ljj.11
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 15:00:30 -0800 (PST)
+X-Received: by 2002:a2e:88c5:: with SMTP id a5mr20496205ljk.201.1582239629960;
+ Thu, 20 Feb 2020 15:00:29 -0800 (PST)
+MIME-Version: 1.0
+References: <20200212200335.GO23230@ZenIV.linux.org.uk> <CAHk-=wi+1CPShMFvJNPfnrJ8DD8uVKUOQ5TQzQUNGLUkeoahkg@mail.gmail.com>
+ <20200212203833.GQ23230@ZenIV.linux.org.uk> <20200212204124.GR23230@ZenIV.linux.org.uk>
+ <CAHk-=wi5FOGV_3tALK3n6E2fK3Oa_yCYkYQtCSaXLSEm2DUCKg@mail.gmail.com>
+ <87lfp7h422.fsf@x220.int.ebiederm.org> <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
+ <87pnejf6fz.fsf@x220.int.ebiederm.org> <871rqpaswu.fsf_-_@x220.int.ebiederm.org>
+ <87blpt9e6m.fsf_-_@x220.int.ebiederm.org> <20200220225420.GR23230@ZenIV.linux.org.uk>
+In-Reply-To: <20200220225420.GR23230@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 20 Feb 2020 15:00:13 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whPwMTTaGtphubBXeiKitKigutddx9Fcp4Sf1sw4tpyeA@mail.gmail.com>
+Message-ID: <CAHk-=whPwMTTaGtphubBXeiKitKigutddx9Fcp4Sf1sw4tpyeA@mail.gmail.com>
+Subject: Re: [PATCH 4/7] proc: Use d_invalidate in proc_prune_siblings_dcache
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Solar Designer <solar@openwall.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve,
+On Thu, Feb 20, 2020 at 2:54 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> s/no inode.*/it's a directory inode./
 
-On Thu, 2020-02-20 at 17:48 -0500, Steven Rostedt wrote:
-> On Mon, 17 Feb 2020 18:52:29 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> > Since smp_processor_id() requires irq-disabled or preempt-disabled,
-> > synth event generation test module made some warnings. To prevent
-> > that, use get_cpu()/put_cpu() instead of smp_processor_id().
-> > 
-> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > ---
-> >  kernel/trace/synth_event_gen_test.c |   23 +++++++++++++++++------
-> >  1 file changed, 17 insertions(+), 6 deletions(-)
-> > 
-> 
-> I just noticed this patch, after applying my version that just uses
-> the
-> raw_smp_processor_id(). We don't really care what CPU it is do we?
-> 
-> I didn't want a test to muck with preemption disabling and all that
-> fun.
-> 
+That actually makes my worry go away too. We don't allow aliases for
+directory inodes, iirc.
 
-Right, we don't really care, it's just to test the trace API - for this
-it could even be a constant.  I just happened to pick that as an
-example, and wasn't expecting unrelated complications.
+So then it doesn't depend on some /proc implementation issue any more,
+then it's fundamental that there's only one dentry.
 
-Tom 
-
-> -- Steve
+            Linus
