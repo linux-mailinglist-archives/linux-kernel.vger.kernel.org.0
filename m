@@ -2,148 +2,392 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A61C165E91
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 14:18:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A3C2165E89
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 14:17:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728205AbgBTNSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 08:18:54 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:19949 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727953AbgBTNSy (ORCPT
+        id S1728167AbgBTNRh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 08:17:37 -0500
+Received: from gateway31.websitewelcome.com ([192.185.144.96]:27221 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728129AbgBTNRh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 08:18:54 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e4e86f40000>; Thu, 20 Feb 2020 05:17:41 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 20 Feb 2020 05:18:53 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 20 Feb 2020 05:18:53 -0800
-Received: from [10.2.160.62] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 20 Feb
- 2020 13:18:51 +0000
-From:   Zi Yan <ziy@nvidia.com>
-To:     "Huang, Ying" <ying.huang@intel.com>
-CC:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH] mm: Fix possible PMD dirty bit lost in
- set_pmd_migration_entry()
-Date:   Thu, 20 Feb 2020 08:18:49 -0500
-X-Mailer: MailMate (1.13.1r5676)
-Message-ID: <51A5D10D-0ABA-4FA2-A749-EBF60DB4FEE6@nvidia.com>
-In-Reply-To: <20200220075220.2327056-1-ying.huang@intel.com>
-References: <20200220075220.2327056-1-ying.huang@intel.com>
+        Thu, 20 Feb 2020 08:17:37 -0500
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id 1682811432
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 07:17:35 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 4lhujcJP5XVkQ4lhvjyrEY; Thu, 20 Feb 2020 07:17:35 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=z1nik/sLu1rWe1J16Res5lnb/I2LgkK5u9A27nU3ovY=; b=WkfFysgNRAo+UWyPV48G7KJxrr
+        QdENWL2WZlpyux/qZ58g4YNrrdODyN/3/5cURbxev/i8i5y9/fNa5+YyCQqKV2OF1pfuypyeMs6Lw
+        Y92EXY+tFP+JEI7zuhJ9u/F6GFh7jn0iMXQaIrEbM3+gaYf84/xhX9DUaDN6ZeBMHJoz95ht6epCx
+        mwmOwqv+ZxjhNYtjful6ZZFIlk487O59qsgsT0VioFBEeGpH9HBiP4Jg6ntzqB0+xPpRVA0H+Bz77
+        pcSB4jcakHBCa6z+/lfyyqg19of677C4vhYE8WCxtJPfP7j9vA8WbGR6YsuqF2vp5ilM+33vEmh8f
+        GwMVz72w==;
+Received: from [201.144.174.47] (port=28175 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j4lht-003Yvz-1W; Thu, 20 Feb 2020 07:17:33 -0600
+Date:   Thu, 20 Feb 2020 07:20:17 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Minas Harutyunyan <hminas@synopsys.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
+        Felipe Balbi <balbi@kernel.org>
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] USB: Replace zero-length array with flexible-array member
+Message-ID: <20200220132017.GA29262@embeddedor>
 MIME-Version: 1.0
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: multipart/signed;
-        boundary="=_MailMate_EFBAB02F-7B4D-42C6-BD8F-4DD342D56792_=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1582204661; bh=ia8C50FcJ9IqTIPFRX/pHZ9Hj3Et0GVBStcW+vilTEY=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:X-Mailer:Message-ID:
-         In-Reply-To:References:MIME-Version:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type;
-        b=eNYosroi46W+zx8zsp1OtVS6ILZzDW/iAZHv00QPonKlRd9u/3lAW1OB49/bAfd8Y
-         mOuo5+A+VaurchlLr1UD7/hEqc0oNoB2fJKX0vE7r/6AwW9hJur36lpnwcL0ceBTmd
-         0pfgWaS+kktCppKn7ibyslh8bv+3nK+1YuNgayW70MTmgLwoQX0MB07HPrGNennver
-         j/s/KsjurG0LIOV0746RCTeuJv/R2BOaj9OAySwycML9q5NBDaDw5XBervQUORXOOu
-         b7ylJMV5eSckq6nhGwvY3mK6jBG5QzUumXNdHg8Yv42RRa0wUjwbs/HIWpISA+c8NG
-         W2GvzTowuUdEQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.144.174.47
+X-Source-L: No
+X-Exim-ID: 1j4lht-003Yvz-1W
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [201.144.174.47]:28175
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 11
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=_MailMate_EFBAB02F-7B4D-42C6-BD8F-4DD342D56792_=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-On 20 Feb 2020, at 2:52, Huang, Ying wrote:
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-> From: Huang Ying <ying.huang@intel.com>
->
-> In set_pmd_migration_entry(), pmdp_invalidate() is used to change PMD
-> atomically.  But the PMD is read before that with an ordinary memory
-> reading.  If the THP (transparent huge page) is written between the
-> PMD reading and pmdp_invalidate(), the PMD dirty bit may be lost, and
-> cause data corruption.  The race window is quite small, but still
-> possible in theory, so need to be fixed.
->
-> The race is fixed via using the return value of pmdp_invalidate() to
-> get the original content of PMD, which is a read/modify/write atomic
-> operation.  So no THP writing can occur in between.
->
-> The race has been introduced when the THP migration support is added
-> in the commit 616b8371539a ("mm: thp: enable thp migration in generic
-> path").  But this fix depends on the commit d52605d7cb30 ("mm: do not
-> lose dirty and accessed bits in pmdp_invalidate()").  So it's easy to
-> be backported after v4.16.  But the race window is really small, so it
-> may be fine not to backport the fix at all.
->
-> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-> Cc: Zi Yan <ziy@nvidia.com>
-> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Cc: Andrea Arcangeli <aarcange@redhat.com>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> ---
->  mm/huge_memory.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 580098e115bd..b1e069e68189 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -3060,8 +3060,7 @@ void set_pmd_migration_entry(struct page_vma_mapp=
-ed_walk *pvmw,
->                 return;
->
->         flush_cache_range(vma, address, address + HPAGE_PMD_SIZE);
-> -       pmdval =3D *pvmw->pmd;
-> -       pmdp_invalidate(vma, address, pvmw->pmd);
-> +       pmdval =3D pmdp_invalidate(vma, address, pvmw->pmd);
->         if (pmd_dirty(pmdval))
->                 set_page_dirty(page);
->         entry =3D make_migration_entry(page, pmd_write(pmdval));
-> --
-> 2.25.0
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
-Looks good to me. Thanks.
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
 
-Reviewed-by: Zi Yan <ziy@nvidia.com>
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
 
+This issue was found with the help of Coccinelle.
 
-=E2=80=94
-Best Regards,
-Yan Zi
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
 
---=_MailMate_EFBAB02F-7B4D-42C6-BD8F-4DD342D56792_=
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-Content-Type: application/pgp-signature; name="signature.asc"
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/usb/atm/usbatm.h              | 2 +-
+ drivers/usb/dwc2/hcd.h                | 2 +-
+ drivers/usb/host/ehci-tegra.c         | 2 +-
+ drivers/usb/host/ehci.h               | 4 ++--
+ drivers/usb/host/fotg210.h            | 2 +-
+ drivers/usb/host/ohci.h               | 4 ++--
+ drivers/usb/host/xhci-mtk.h           | 2 +-
+ drivers/usb/host/xhci.h               | 4 ++--
+ drivers/usb/serial/io_usbvend.h       | 4 ++--
+ drivers/usb/serial/ti_usb_3410_5052.c | 4 ++--
+ include/linux/usb.h                   | 4 ++--
+ include/linux/usb/audio-v2.h          | 2 +-
+ include/linux/usb/audio-v3.h          | 2 +-
+ include/linux/usb/gadget.h            | 2 +-
+ include/linux/usb/hcd.h               | 2 +-
+ include/linux/usbdevice_fs.h          | 2 +-
+ 16 files changed, 22 insertions(+), 22 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/drivers/usb/atm/usbatm.h b/drivers/usb/atm/usbatm.h
+index d3bdc4cc47aa..8725755bd53d 100644
+--- a/drivers/usb/atm/usbatm.h
++++ b/drivers/usb/atm/usbatm.h
+@@ -164,7 +164,7 @@ struct usbatm_data {
+ 	unsigned char *cell_buf;	/* holds partial rx cell */
+ 	unsigned int buf_usage;
+ 
+-	struct urb *urbs[0];
++	struct urb *urbs[];
+ };
+ 
+ static inline void *to_usbatm_driver_data(struct usb_interface *intf)
+diff --git a/drivers/usb/dwc2/hcd.h b/drivers/usb/dwc2/hcd.h
+index 8ca6d12a6f57..1224fa9df604 100644
+--- a/drivers/usb/dwc2/hcd.h
++++ b/drivers/usb/dwc2/hcd.h
+@@ -199,7 +199,7 @@ struct dwc2_hcd_urb {
+ 	u32 flags;
+ 	u16 interval;
+ 	struct dwc2_hcd_pipe_info pipe_info;
+-	struct dwc2_hcd_iso_packet_desc iso_descs[0];
++	struct dwc2_hcd_iso_packet_desc iso_descs[];
+ };
+ 
+ /* Phases for control transfers */
+diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
+index d6433f206c17..10d51daa6a1b 100644
+--- a/drivers/usb/host/ehci-tegra.c
++++ b/drivers/usb/host/ehci-tegra.c
+@@ -282,7 +282,7 @@ static int tegra_ehci_hub_control(
+ struct dma_aligned_buffer {
+ 	void *kmalloc_ptr;
+ 	void *old_xfer_buffer;
+-	u8 data[0];
++	u8 data[];
+ };
+ 
+ static void free_dma_aligned_buffer(struct urb *urb)
+diff --git a/drivers/usb/host/ehci.h b/drivers/usb/host/ehci.h
+index ac5e967907d1..229b3de319e6 100644
+--- a/drivers/usb/host/ehci.h
++++ b/drivers/usb/host/ehci.h
+@@ -255,7 +255,7 @@ struct ehci_hcd {			/* one per controller */
+ 	struct list_head	tt_list;
+ 
+ 	/* platform-specific data -- must come last */
+-	unsigned long		priv[0] __aligned(sizeof(s64));
++	unsigned long		priv[] __aligned(sizeof(s64));
+ };
+ 
+ /* convert between an HCD pointer and the corresponding EHCI_HCD */
+@@ -460,7 +460,7 @@ struct ehci_iso_sched {
+ 	struct list_head	td_list;
+ 	unsigned		span;
+ 	unsigned		first_packet;
+-	struct ehci_iso_packet	packet[0];
++	struct ehci_iso_packet	packet[];
+ };
+ 
+ /*
+diff --git a/drivers/usb/host/fotg210.h b/drivers/usb/host/fotg210.h
+index 1b4db95e5c43..6cee40ec65b4 100644
+--- a/drivers/usb/host/fotg210.h
++++ b/drivers/usb/host/fotg210.h
+@@ -490,7 +490,7 @@ struct fotg210_iso_packet {
+ struct fotg210_iso_sched {
+ 	struct list_head	td_list;
+ 	unsigned		span;
+-	struct fotg210_iso_packet	packet[0];
++	struct fotg210_iso_packet	packet[];
+ };
+ 
+ /*
+diff --git a/drivers/usb/host/ohci.h b/drivers/usb/host/ohci.h
+index b015b00774b2..27c26ca10bfd 100644
+--- a/drivers/usb/host/ohci.h
++++ b/drivers/usb/host/ohci.h
+@@ -337,7 +337,7 @@ typedef struct urb_priv {
+ 	u16			length;		// # tds in this request
+ 	u16			td_cnt;		// tds already serviced
+ 	struct list_head	pending;
+-	struct td		*td [0];	// all TDs in this request
++	struct td		*td[];		// all TDs in this request
+ 
+ } urb_priv_t;
+ 
+@@ -435,7 +435,7 @@ struct ohci_hcd {
+ 	struct dentry		*debug_dir;
+ 
+ 	/* platform-specific data -- must come last */
+-	unsigned long           priv[0] __aligned(sizeof(s64));
++	unsigned long           priv[] __aligned(sizeof(s64));
+ 
+ };
+ 
+diff --git a/drivers/usb/host/xhci-mtk.h b/drivers/usb/host/xhci-mtk.h
+index 5ac458b7d2e0..acd56517215a 100644
+--- a/drivers/usb/host/xhci-mtk.h
++++ b/drivers/usb/host/xhci-mtk.h
+@@ -95,7 +95,7 @@ struct mu3h_sch_ep_info {
+ 	u32 pkts;
+ 	u32 cs_count;
+ 	u32 burst_mode;
+-	u32 bw_budget_table[0];
++	u32 bw_budget_table[];
+ };
+ 
+ #define MU3C_U3_PORT_MAX 4
+diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+index 3ecee10fdcdc..685180e1b98a 100644
+--- a/drivers/usb/host/xhci.h
++++ b/drivers/usb/host/xhci.h
+@@ -1642,7 +1642,7 @@ struct xhci_scratchpad {
+ struct urb_priv {
+ 	int	num_tds;
+ 	int	num_tds_done;
+-	struct	xhci_td	td[0];
++	struct	xhci_td	td[];
+ };
+ 
+ /*
+@@ -1901,7 +1901,7 @@ struct xhci_hcd {
+ 
+ 	void			*dbc;
+ 	/* platform-specific data -- must come last */
+-	unsigned long		priv[0] __aligned(sizeof(s64));
++	unsigned long		priv[] __aligned(sizeof(s64));
+ };
+ 
+ /* Platform specific overrides to generic XHCI hc_driver ops */
+diff --git a/drivers/usb/serial/io_usbvend.h b/drivers/usb/serial/io_usbvend.h
+index c38e87ac5ea9..0d1a5bb4636e 100644
+--- a/drivers/usb/serial/io_usbvend.h
++++ b/drivers/usb/serial/io_usbvend.h
+@@ -593,7 +593,7 @@ struct ti_i2c_desc {
+ 	__u8	Type;			// Type of descriptor
+ 	__le16	Size;			// Size of data only not including header
+ 	__u8	CheckSum;		// Checksum (8 bit sum of data only)
+-	__u8	Data[0];		// Data starts here
++	__u8	Data[];		// Data starts here
+ } __attribute__((packed));
+ 
+ // for 5152 devices only (type 2 record)
+@@ -601,7 +601,7 @@ struct ti_i2c_desc {
+ struct ti_i2c_firmware_rec {
+ 	__u8	Ver_Major;		// Firmware Major version number
+ 	__u8	Ver_Minor;		// Firmware Minor version number
+-	__u8	Data[0];		// Download starts here
++	__u8	Data[];		// Download starts here
+ } __attribute__((packed));
+ 
+ 
+diff --git a/drivers/usb/serial/ti_usb_3410_5052.c b/drivers/usb/serial/ti_usb_3410_5052.c
+index ef23acc9b9ce..73075b9351c5 100644
+--- a/drivers/usb/serial/ti_usb_3410_5052.c
++++ b/drivers/usb/serial/ti_usb_3410_5052.c
+@@ -219,7 +219,7 @@ struct ti_write_data_bytes {
+ 	u8	bDataCounter;
+ 	__be16	wBaseAddrHi;
+ 	__be16	wBaseAddrLo;
+-	u8	bData[0];
++	u8	bData[];
+ } __packed;
+ 
+ struct ti_read_data_request {
+@@ -234,7 +234,7 @@ struct ti_read_data_bytes {
+ 	__u8	bCmdCode;
+ 	__u8	bModuleId;
+ 	__u8	bErrorCode;
+-	__u8	bData[0];
++	__u8	bData[];
+ } __packed;
+ 
+ /* Interrupt struct */
+diff --git a/include/linux/usb.h b/include/linux/usb.h
+index ca1a5f1e1c5e..9f3c721c70dc 100644
+--- a/include/linux/usb.h
++++ b/include/linux/usb.h
+@@ -325,7 +325,7 @@ struct usb_interface_cache {
+ 
+ 	/* variable-length array of alternate settings for this interface,
+ 	 * stored in no particular order */
+-	struct usb_host_interface altsetting[0];
++	struct usb_host_interface altsetting[];
+ };
+ #define	ref_to_usb_interface_cache(r) \
+ 		container_of(r, struct usb_interface_cache, ref)
+@@ -1589,7 +1589,7 @@ struct urb {
+ 	int error_count;		/* (return) number of ISO errors */
+ 	void *context;			/* (in) context for completion */
+ 	usb_complete_t complete;	/* (in) completion routine */
+-	struct usb_iso_packet_descriptor iso_frame_desc[0];
++	struct usb_iso_packet_descriptor iso_frame_desc[];
+ 					/* (in) ISO ONLY */
+ };
+ 
+diff --git a/include/linux/usb/audio-v2.h b/include/linux/usb/audio-v2.h
+index cb9900b34b67..ead8c9a47c6a 100644
+--- a/include/linux/usb/audio-v2.h
++++ b/include/linux/usb/audio-v2.h
+@@ -153,7 +153,7 @@ struct uac2_feature_unit_descriptor {
+ 	__u8 bSourceID;
+ 	/* bmaControls is actually u32,
+ 	 * but u8 is needed for the hybrid parser */
+-	__u8 bmaControls[0]; /* variable length */
++	__u8 bmaControls[]; /* variable length */
+ } __attribute__((packed));
+ 
+ /* 4.7.2.10 Effect Unit Descriptor */
+diff --git a/include/linux/usb/audio-v3.h b/include/linux/usb/audio-v3.h
+index 6b708434b7f9..c69a6f2e6837 100644
+--- a/include/linux/usb/audio-v3.h
++++ b/include/linux/usb/audio-v3.h
+@@ -109,7 +109,7 @@ struct uac3_feature_unit_descriptor {
+ 	__u8 bSourceID;
+ 	/* bmaControls is actually u32,
+ 	 * but u8 is needed for the hybrid parser */
+-	__u8 bmaControls[0]; /* variable length */
++	__u8 bmaControls[]; /* variable length */
+ 	/* wFeatureDescrStr omitted */
+ } __attribute__((packed));
+ 
+diff --git a/include/linux/usb/gadget.h b/include/linux/usb/gadget.h
+index 124462d65eac..9411c08a5c7e 100644
+--- a/include/linux/usb/gadget.h
++++ b/include/linux/usb/gadget.h
+@@ -767,7 +767,7 @@ struct usb_gadget_strings {
+ 
+ struct usb_gadget_string_container {
+ 	struct list_head        list;
+-	u8                      *stash[0];
++	u8                      *stash[];
+ };
+ 
+ /* put descriptor for string with that id into buf (buflen >= 256) */
+diff --git a/include/linux/usb/hcd.h b/include/linux/usb/hcd.h
+index 712b2a603645..e12105ed3834 100644
+--- a/include/linux/usb/hcd.h
++++ b/include/linux/usb/hcd.h
+@@ -228,7 +228,7 @@ struct usb_hcd {
+ 	/* The HC driver's private data is stored at the end of
+ 	 * this structure.
+ 	 */
+-	unsigned long hcd_priv[0]
++	unsigned long hcd_priv[]
+ 			__attribute__ ((aligned(sizeof(s64))));
+ };
+ 
+diff --git a/include/linux/usbdevice_fs.h b/include/linux/usbdevice_fs.h
+index 79aab0065ec8..14ea197ce37f 100644
+--- a/include/linux/usbdevice_fs.h
++++ b/include/linux/usbdevice_fs.h
+@@ -69,7 +69,7 @@ struct usbdevfs_urb32 {
+ 	compat_int_t error_count;
+ 	compat_uint_t signr;
+ 	compat_caddr_t usercontext; /* unused */
+-	struct usbdevfs_iso_packet_desc iso_frame_desc[0];
++	struct usbdevfs_iso_packet_desc iso_frame_desc[];
+ };
+ 
+ struct usbdevfs_ioctl32 {
+-- 
+2.25.0
 
-iQJDBAEBCgAtFiEEh7yFAW3gwjwQ4C9anbJR82th+ooFAl5OhzkPHHppeUBudmlk
-aWEuY29tAAoJEJ2yUfNrYfqKjrYP+wRxjEtsawolB0Qpu1nGeCQaY62q6Ow0XfrE
-86x1IysDD+KB1PFZskbi3Ju/uwWtnKXNDam1Uh1onWzCs6oBT1vuBuzUkHFRfRa1
-B0ZEflHKkCX0Ns1s567TUNBL00uxFUVIcDazppXTozHyDnnAXyD0IeHlJIRasglj
-XqZYwFs4QD1LBZsHd6RSzFqP5iOoWdYn4LzMlTWoJF3sxup9ARpthb89gfNlIgMU
-xCuHeenQsDLVJtfq48qiK8yVyLTx0DMjCdbz2/VENOJmTvNEalY7F5V/4o/I3GMy
-OTQnwu+oy74ovXA6ZFYsvHogqs/M2bzNAfF5UHP7HKNLkn1eMG0XL6q/HXymESoQ
-w+yOVRrv+KoyQ8dB+7Vlw8ZXjUTh2LjjWhS2/AhIKkskDO7IiISU9rCFtR4x5twI
-+hpmwnjmIIbJxEjcb9AsmAezW64n3ZMduf9SJsdIyumT7K5n3WTjf+1FQiN4TUMF
-AjovWJdhIRiY3iPVuBw1khiCB1UO9H4ISWvRWhHEyMuAmht7De9fn9Mo6A5GGHrA
-Y9yvHCqSAluoptFDaJwemUvO2WxIEAgoWxeQF5uhjNsUcBu2cnXd2Sm+fARJMZxF
-Kabw8mVOu9+bn7LZGnh/QjwsK15lyC4WULedD8Wbhwe0CnOJ53uTCteeKS1daHtr
-D5e/tIaV
-=T38A
------END PGP SIGNATURE-----
-
---=_MailMate_EFBAB02F-7B4D-42C6-BD8F-4DD342D56792_=--
