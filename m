@@ -2,27 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B79A16619F
+	by mail.lfdr.de (Postfix) with ESMTP id C55341661A0
 	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 16:59:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728730AbgBTP71 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 10:59:27 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:47606 "EHLO
+        id S1728739AbgBTP7c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 10:59:32 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:47622 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728699AbgBTP7Y (ORCPT
+        with ESMTP id S1728716AbgBTP70 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 10:59:24 -0500
+        Thu, 20 Feb 2020 10:59:26 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: eballetbo)
-        with ESMTPSA id 122CC29519F
+        with ESMTPSA id C96B92951A0
 From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Collabora Kernel ML <kernel@collabora.com>, groeck@chromium.org,
         bleung@chromium.org, dtor@chromium.org, gwendal@chromium.org,
-        pmalani@chromium.org
-Subject: [PATCH 7/8] platform/chrome: cros_ec: Use cros_ec_cmd_xfer_status helper
-Date:   Thu, 20 Feb 2020 16:58:58 +0100
-Message-Id: <20200220155859.906647-8-enric.balletbo@collabora.com>
+        pmalani@chromium.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Enrico Granata <egranata@chromium.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Pi-Hsun Shih <pihsun@chromium.org>,
+        Evan Green <evgreen@chromium.org>
+Subject: [PATCH 8/8] platform/chrome: cros_ec_proto: Do not export cros_ec_cmd_xfer()
+Date:   Thu, 20 Feb 2020 16:58:59 +0100
+Message-Id: <20200220155859.906647-9-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200220155859.906647-1-enric.balletbo@collabora.com>
 References: <20200220155859.906647-1-enric.balletbo@collabora.com>
@@ -33,31 +39,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch makes use of cros_ec_cmd_xfer_status() instead of
-cros_ec_cmd_xfer(). In this case the change is trivial and the only
-reason to do it is because we want to make cros_ec_cmd_xfer() a private
-function for the EC protocol and let people only use the
-cros_ec_cmd_xfer_status() to return Linux standard error codes.
+Now that all the remaining users of cros_ec_cmd_xfer() has been removed,
+make this function private to the cros_ec_proto module.
 
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
- drivers/platform/chrome/cros_ec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/platform/chrome/cros_ec_proto.c     | 5 ++---
+ include/linux/platform_data/cros_ec_proto.h | 3 ---
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/platform/chrome/cros_ec.c b/drivers/platform/chrome/cros_ec.c
-index 6fc8f2c3ac51..e179411bdfbe 100644
---- a/drivers/platform/chrome/cros_ec.c
-+++ b/drivers/platform/chrome/cros_ec.c
-@@ -120,7 +120,7 @@ static int cros_ec_sleep_event(struct cros_ec_device *ec_dev, u8 sleep_event)
+diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
+index 3e745e0fe092..11a2db7cd0f7 100644
+--- a/drivers/platform/chrome/cros_ec_proto.c
++++ b/drivers/platform/chrome/cros_ec_proto.c
+@@ -496,8 +496,8 @@ EXPORT_SYMBOL(cros_ec_query_all);
+  *
+  * Return: 0 on success or negative error code.
+  */
+-int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
+-		     struct cros_ec_command *msg)
++static int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
++			    struct cros_ec_command *msg)
+ {
+ 	int ret;
  
- 	buf.msg.command = EC_CMD_HOST_SLEEP_EVENT;
+@@ -541,7 +541,6 @@ int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
  
--	ret = cros_ec_cmd_xfer(ec_dev, &buf.msg);
-+	ret = cros_ec_cmd_xfer_status(ec_dev, &buf.msg);
+ 	return ret;
+ }
+-EXPORT_SYMBOL(cros_ec_cmd_xfer);
  
- 	/* For now, report failure to transition to S0ix with a warning. */
- 	if (ret >= 0 && ec_dev->host_sleep_v1 &&
+ /**
+  * cros_ec_cmd_xfer_status() - Send a command to the ChromeOS EC.
+diff --git a/include/linux/platform_data/cros_ec_proto.h b/include/linux/platform_data/cros_ec_proto.h
+index ba5914770191..1334fedc07cb 100644
+--- a/include/linux/platform_data/cros_ec_proto.h
++++ b/include/linux/platform_data/cros_ec_proto.h
+@@ -212,9 +212,6 @@ int cros_ec_prepare_tx(struct cros_ec_device *ec_dev,
+ int cros_ec_check_result(struct cros_ec_device *ec_dev,
+ 			 struct cros_ec_command *msg);
+ 
+-int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
+-		     struct cros_ec_command *msg);
+-
+ int cros_ec_cmd_xfer_status(struct cros_ec_device *ec_dev,
+ 			    struct cros_ec_command *msg);
+ 
 -- 
 2.25.0
 
