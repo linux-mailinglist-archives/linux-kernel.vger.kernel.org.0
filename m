@@ -2,207 +2,264 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85DE9165C14
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 11:45:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BD0B165C1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 11:49:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbgBTKpc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 05:45:32 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:1461 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726707AbgBTKpb (ORCPT
+        id S1727088AbgBTKtF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 05:49:05 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:35824 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726708AbgBTKtF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 05:45:31 -0500
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01KAi29q028248;
-        Thu, 20 Feb 2020 11:45:11 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=STMicroelectronics;
- bh=SDLZfN1PVeIeP/oOuE8HENlAFs0IpyTU/Nnjdty9yds=;
- b=IixsFQVL+jgkNMKo+P9LaxgTZZfri46T2GD8br/B8mN71/ZLgHHRSDxp3oG9oT4MLdtA
- +XH/1212Z4GtB+72p6qxZjDzpuyIg9EnpmZnzVh0/azD80xba8VdBaX7MN0rRBwZqtjd
- LRSEmA/AUiaX/eAHPp3glPVR9jufAp6bSvOcQ/Z7g7wJ3Ljar/eo7wVzUbZAABjEBSPV
- mwRxFr4MhFfcYDyXtUVxReOqHj6WHWs4JBlLHdMXhqxntgfDWYobvr464d9ctcpfTFK+
- SX/c8e9Pqp0c7Ytu68FJhHxxyuena0DiZijktOBIDOAMx3vM6aiz38k5YncJ5nMAKAtl kA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2y8ub1gdap-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 20 Feb 2020 11:45:11 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0E1B910002A;
-        Thu, 20 Feb 2020 11:45:06 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag5node1.st.com [10.75.127.13])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CCACC2AAEB9;
-        Thu, 20 Feb 2020 11:45:06 +0100 (CET)
-Received: from SFHDAG3NODE3.st.com (10.75.127.9) by SFHDAG5NODE1.st.com
- (10.75.127.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 20 Feb
- 2020 11:45:06 +0100
-Received: from SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476]) by
- SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476%20]) with mapi id
- 15.00.1347.000; Thu, 20 Feb 2020 11:45:05 +0100
-From:   Benjamin GAIGNARD <benjamin.gaignard@st.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        Fabrice GASNIER <fabrice.gasnier@st.com>
-CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Pascal PAILLET-LME <p.paillet@st.com>
-Subject: Re: [PATCH v4 3/3] clocksource: Add Low Power STM32 timers driver
-Thread-Topic: [PATCH v4 3/3] clocksource: Add Low Power STM32 timers driver
-Thread-Index: AQHV59mpsik/WRqXdUuknFgx3rC1tqgj1SiA
-Date:   Thu, 20 Feb 2020 10:45:05 +0000
-Message-ID: <9cc4af9e-27d0-96c3-b3f1-20c88f89b70a@st.com>
-References: <20200217134546.14562-1-benjamin.gaignard@st.com>
- <20200217134546.14562-4-benjamin.gaignard@st.com>
- <687ab83c-6381-57aa-3bc1-3628e27644b5@linaro.org>
-In-Reply-To: <687ab83c-6381-57aa-3bc1-3628e27644b5@linaro.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <875F2F9A967A304E9315302279A4D65A@st.com>
-Content-Transfer-Encoding: base64
+        Thu, 20 Feb 2020 05:49:05 -0500
+Received: by mail-lf1-f68.google.com with SMTP id l16so2716745lfg.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 02:49:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cumulusnetworks.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=elqBx5qccKeWXFeijHzzj4zGRQz8csEMjCt6nrBw4jQ=;
+        b=CHhJlEw/vJPZsldcecLhsNr9vJBUsjd+yCmC4+PBQIAB615g+m/bmsbCm+smfp7kha
+         ZzzR7qBrZKmM+Uz5iGeodwjQdkX/Ut3SXtKiQIT1eQIfRDIbtwyYtGiPfj2fDoVYOtSP
+         OtZmYLVoQokm4mW7qjklFDKYsSoncHr88Q9Qo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=elqBx5qccKeWXFeijHzzj4zGRQz8csEMjCt6nrBw4jQ=;
+        b=QCzGAva+w2bYlwU7ICp2hi7Is7wvMn9NcSxbyNZm/bqCd3Oai6J7ALtJ+xhCRpRzCQ
+         C2tjFutTvIu5ItAAfeiS4xxYU+/BoXkVAnaEocIK5fqHyqSFMhhdPGJ6ZVyPgT4ZTJCF
+         JNRM5EzTHQKT3s6o7iwVA5C4/RlSshbjOMFv9oAp//VtpVQOKgRHoUO6wWuUnLtLPD/c
+         SGSXEWtDgKLqZmHFE331exB8zMABixqZgAzjKUaLvo7m4A57towhpf9QTJuz6OcHRX2R
+         1t9lauqDNnVto1kphOEwkN6pRa4dnxs513KfnOWEEUxcjFhqopaQ8QkLVNGm7CNSKJJX
+         8gUw==
+X-Gm-Message-State: APjAAAXTaTpiQZv35anbIWoMgCafcMJPRxEYgCYIsZ0ZJXj8+ClLxzMj
+        gIDt0PmKcuFi5H+OeA2/W/NVbw==
+X-Google-Smtp-Source: APXvYqzwTiE0c0qFnS0kqXN9/jTJ63pSwZ0ewsJGx6WkU0dJzhGtkP8ca1/5onXvO0CBGVp2kmGjiQ==
+X-Received: by 2002:a19:48c5:: with SMTP id v188mr16578879lfa.100.1582195741352;
+        Thu, 20 Feb 2020 02:49:01 -0800 (PST)
+Received: from [192.168.0.109] (84-238-136-197.ip.btc-net.bg. [84.238.136.197])
+        by smtp.gmail.com with ESMTPSA id m16sm1559879ljb.47.2020.02.20.02.48.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2020 02:49:00 -0800 (PST)
+Subject: Re: [RFC net-next v3 00/10] net: bridge: mrp: Add support for Media
+ Redundancy Protocol (MRP)
+To:     "Allan W. Nielsen" <allan.nielsen@microchip.com>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        bridge@lists.linux-foundation.org, jiri@resnulli.us,
+        ivecera@redhat.com, davem@davemloft.net, roopa@cumulusnetworks.com,
+        anirudh.venkataramanan@intel.com, olteanv@gmail.com,
+        andrew@lunn.ch, jeffrey.t.kirsher@intel.com,
+        UNGLinuxDriver@microchip.com
+References: <20200124161828.12206-1-horatiu.vultur@microchip.com>
+ <20200218121811.xo3o6zzrhl5p3j2s@lx-anielsen.microsemi.net>
+From:   Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Message-ID: <3afba55f-f953-7aaa-8425-14777db1b27d@cumulusnetworks.com>
+Date:   Thu, 20 Feb 2020 12:48:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-20_02:2020-02-19,2020-02-20 signatures=0
+In-Reply-To: <20200218121811.xo3o6zzrhl5p3j2s@lx-anielsen.microsemi.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDIvMjAvMjAgMTE6MzYgQU0sIERhbmllbCBMZXpjYW5vIHdyb3RlOg0KPiBPbiAxNy8w
-Mi8yMDIwIDE0OjQ1LCBCZW5qYW1pbiBHYWlnbmFyZCB3cm90ZToNCj4+IEZyb206IEJlbmphbWlu
-IEdhaWduYXJkIDxiZW5qYW1pbi5nYWlnbmFyZEBsaW5hcm8ub3JnPg0KPj4NCj4+IEltcGxlbWVu
-dCBjbG9jayBldmVudCBkcml2ZXIgdXNpbmcgbG93IHBvd2VyIFNUTTMyIHRpbWVycy4NCj4+IExv
-dyBwb3dlciB0aW1lciBjb3VudGVycyBydW5uaW5nIGV2ZW4gd2hlbiBDUFVzIGFyZSBzdG9wcGVk
-Lg0KPj4gSXQgY291bGQgYmUgdXNlZCBhcyBjbG9jayBldmVudCBicm9hZGNhc3RlciB0byB3YWtl
-IHVwIENQVXMgYnV0IG5vdCBsaWtlDQo+PiBhIGNsb2Nrc291cmNlIGJlY2F1c2UgZWFjaCBpdCBy
-aXNlIGFuIGludGVycnVwdCB0aGUgY291bnRlciByZXN0YXJ0IGZyb20gMC4NCj4+DQo+PiBMb3cg
-cG93ZXIgdGltZXJzIGhhdmUgYSAxNiBiaXRzIGNvdW50ZXIgYW5kIGEgcHJlc2NhbGVyIHdoaWNo
-IGFsbG93IHRvDQo+PiBkaXZpZGUgdGhlIGNsb2NrIHBlciBwb3dlciBvZiAyIHRvIHVwIDEyOCB0
-byB0YXJnZXQgYSAzMktIeiByYXRlLg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IEJlbmphbWluIEdh
-aWduYXJkIDxiZW5qYW1pbi5nYWlnbmFyZEBsaW5hcm8ub3JnPg0KPj4gU2lnbmVkLW9mZi1ieTog
-UGFzY2FsIFBhaWxsZXQgPHAucGFpbGxldEBzdC5jb20+DQo+PiAtLS0NCj4+IHZlcnNpb24gNDoN
-Cj4+IC0gbW92ZSBkZWZpbmVzIGluIG1mZC9zdG0zMi1scHRpbWVyLmgNCj4+IC0gY2hhbmdlIGNv
-bXBhdGlibGVuYW1lDQo+PiAtIHJld29yZCBjb21taXQgbWVzc2FnZQ0KPj4gLSBtYWtlIGRyaXZl
-ciBLY29uZmlnIGRlcGVuZHMgb2YgTUZEX1NUTTMyX0xQVElNRVINCj4+IC0gcmVtb3ZlIHVzZWxl
-c3MgaW5jbHVkZQ0KPj4gLSByZW1vdmUgcmF0ZSBhbmQgY2xrIGZpZWxkcyBmcm9tIHRoZSBwcml2
-YXRlIHN0cnVjdHVyZQ0KPj4gLSB0byBhZGQgY29tbWVudHMgYWJvdXQgdGhlIHJlZ2lzdGVycyBz
-ZXF1ZW5jZSBpbiBzdG0zMl9jbGtldmVudF9scF9zZXRfdGltZXINCj4+IC0gcmV3b3JrIHByb2Jl
-IGZ1bmN0aW9uIGFuZCB1c2UgZGV2bV9yZXF1ZXN0X2lycSgpDQo+PiAtIGRvIG5vdCBhbGxvdyBt
-b2R1bGUgdG8gYmUgcmVtb3ZlZA0KPj4gLSBtYWtlIHN1cmUgdGhhdCB3YWtldXAgaW50ZXJydXB0
-IGlzIHNldA0KPj4NCj4+ICAgZHJpdmVycy9jbG9ja3NvdXJjZS9LY29uZmlnICAgICAgICAgIHwg
-ICA3ICsrDQo+PiAgIGRyaXZlcnMvY2xvY2tzb3VyY2UvTWFrZWZpbGUgICAgICAgICB8ICAgMSAr
-DQo+PiAgIGRyaXZlcnMvY2xvY2tzb3VyY2UvdGltZXItc3RtMzItbHAuYyB8IDIxMyArKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPj4gICAzIGZpbGVzIGNoYW5nZWQsIDIyMSBp
-bnNlcnRpb25zKCspDQo+PiAgIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Nsb2Nrc291cmNl
-L3RpbWVyLXN0bTMyLWxwLmMNCj4+DQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbG9ja3NvdXJj
-ZS9LY29uZmlnIGIvZHJpdmVycy9jbG9ja3NvdXJjZS9LY29uZmlnDQo+PiBpbmRleCBjYzkwOWU0
-NjU4MjMuLjlmYzJiNTEzZGI2ZiAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvY2xvY2tzb3VyY2Uv
-S2NvbmZpZw0KPj4gKysrIGIvZHJpdmVycy9jbG9ja3NvdXJjZS9LY29uZmlnDQo+PiBAQCAtMjky
-LDYgKzI5MiwxMyBAQCBjb25maWcgQ0xLU1JDX1NUTTMyDQo+PiAgIAlzZWxlY3QgQ0xLU1JDX01N
-SU8NCj4+ICAgCXNlbGVjdCBUSU1FUl9PRg0KPj4gICANCj4+ICtjb25maWcgQ0xLU1JDX1NUTTMy
-X0xQDQo+PiArCWJvb2wgIkxvdyBwb3dlciBjbG9ja3NvdXJjZSBmb3IgU1RNMzIgU29DcyINCj4+
-ICsJZGVwZW5kcyBvbiBNRkRfU1RNMzJfTFBUSU1FUiB8fCBDT01QSUxFX1RFU1QNCj4+ICsJaGVs
-cA0KPj4gKwkgIFRoaXMgb3B0aW9uIGVuYWJsZXMgc3VwcG9ydCBmb3IgU1RNMzIgbG93IHBvd2Vy
-IGNsb2NrZXZlbnQgYXZhaWxhYmxlDQo+PiArCSAgb24gU1RNMzIgU29Dcw0KPj4gKw0KPj4gICBj
-b25maWcgQ0xLU1JDX01QUzINCj4+ICAgCWJvb2wgIkNsb2Nrc291cmNlIGZvciBNUFMyIFNvQ3Mi
-IGlmIENPTVBJTEVfVEVTVA0KPj4gICAJZGVwZW5kcyBvbiBHRU5FUklDX1NDSEVEX0NMT0NLDQo+
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbG9ja3NvdXJjZS9NYWtlZmlsZSBiL2RyaXZlcnMvY2xv
-Y2tzb3VyY2UvTWFrZWZpbGUNCj4+IGluZGV4IDcxMzY4NmZhYTU0OS4uYzAwZmZmYmQ0NzY5IDEw
-MDY0NA0KPj4gLS0tIGEvZHJpdmVycy9jbG9ja3NvdXJjZS9NYWtlZmlsZQ0KPj4gKysrIGIvZHJp
-dmVycy9jbG9ja3NvdXJjZS9NYWtlZmlsZQ0KPj4gQEAgLTQ0LDYgKzQ0LDcgQEAgb2JqLSQoQ09O
-RklHX0JDTV9LT05BX1RJTUVSKQkrPSBiY21fa29uYV90aW1lci5vDQo+PiAgIG9iai0kKENPTkZJ
-R19DQURFTkNFX1RUQ19USU1FUikJKz0gdGltZXItY2FkZW5jZS10dGMubw0KPj4gICBvYmotJChD
-T05GSUdfQ0xLU1JDX0VGTTMyKQkrPSB0aW1lci1lZm0zMi5vDQo+PiAgIG9iai0kKENPTkZJR19D
-TEtTUkNfU1RNMzIpCSs9IHRpbWVyLXN0bTMyLm8NCj4+ICtvYmotJChDT05GSUdfQ0xLU1JDX1NU
-TTMyX0xQKQkrPSB0aW1lci1zdG0zMi1scC5vDQo+PiAgIG9iai0kKENPTkZJR19DTEtTUkNfRVhZ
-Tk9TX01DVCkJKz0gZXh5bm9zX21jdC5vDQo+PiAgIG9iai0kKENPTkZJR19DTEtTUkNfTFBDMzJY
-WCkJKz0gdGltZXItbHBjMzJ4eC5vDQo+PiAgIG9iai0kKENPTkZJR19DTEtTUkNfTVBTMikJKz0g
-bXBzMi10aW1lci5vDQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbG9ja3NvdXJjZS90aW1lci1z
-dG0zMi1scC5jIGIvZHJpdmVycy9jbG9ja3NvdXJjZS90aW1lci1zdG0zMi1scC5jDQo+PiBuZXcg
-ZmlsZSBtb2RlIDEwMDY0NA0KPj4gaW5kZXggMDAwMDAwMDAwMDAwLi41MGVlY2RiODgyMTYNCj4+
-IC0tLSAvZGV2L251bGwNCj4+ICsrKyBiL2RyaXZlcnMvY2xvY2tzb3VyY2UvdGltZXItc3RtMzIt
-bHAuYw0KPj4gQEAgLTAsMCArMSwyMTMgQEANCj4+ICsvLyBTUERYLUxpY2Vuc2UtSWRlbnRpZmll
-cjogR1BMLTIuMA0KPj4gKy8qDQo+PiArICogQ29weXJpZ2h0IChDKSBTVE1pY3JvZWxlY3Ryb25p
-Y3MgMjAxOSAtIEFsbCBSaWdodHMgUmVzZXJ2ZWQNCj4+ICsgKiBBdXRob3JzOiBCZW5qYW1pbiBH
-YWlnbmFyZCA8YmVuamFtaW4uZ2FpZ25hcmRAc3QuY29tPiBmb3IgU1RNaWNyb2VsZWN0cm9uaWNz
-Lg0KPj4gKyAqCSAgICBQYXNjYWwgUGFpbGxldCA8cC5wYWlsbGV0QHN0LmNvbT4gZm9yIFNUTWlj
-cm9lbGVjdHJvbmljcy4NCj4+ICsgKi8NCj4+ICsNCj4+ICsjaW5jbHVkZSA8bGludXgvY2xrLmg+
-DQo+PiArI2luY2x1ZGUgPGxpbnV4L2Nsb2NrY2hpcHMuaD4NCj4+ICsjaW5jbHVkZSA8bGludXgv
-aW50ZXJydXB0Lmg+DQo+PiArI2luY2x1ZGUgPGxpbnV4L21mZC9zdG0zMi1scHRpbWVyLmg+DQo+
-PiArI2luY2x1ZGUgPGxpbnV4L21vZHVsZS5oPg0KPj4gKyNpbmNsdWRlIDxsaW51eC9vZl9hZGRy
-ZXNzLmg+DQo+PiArI2luY2x1ZGUgPGxpbnV4L29mX2lycS5oPg0KPj4gKyNpbmNsdWRlIDxsaW51
-eC9wbGF0Zm9ybV9kZXZpY2UuaD4NCj4+ICsjaW5jbHVkZSA8bGludXgvcG1fd2FrZWlycS5oPg0K
-Pj4gKw0KPj4gKyNkZWZpbmUgQ0ZHUl9QU0NfT0ZGU0VUCQk5DQo+PiArI2RlZmluZSBTVE0zMl9M
-UF9SQVRJTkcJCTQwMA0KPj4gKyNkZWZpbmUgU1RNMzJfVEFSR0VUX0NMS1JBVEUJKDMyMDAwICog
-SFopDQo+PiArI2RlZmluZSBTVE0zMl9MUF9NQVhfUFNDCTcNCj4+ICsNCj4+ICtzdHJ1Y3Qgc3Rt
-MzJfbHBfcHJpdmF0ZSB7DQo+PiArCXN0cnVjdCByZWdtYXAgKnJlZzsNCj4+ICsJc3RydWN0IGNs
-b2NrX2V2ZW50X2RldmljZSBjbGtldnQ7DQo+PiArCXVuc2lnbmVkIGxvbmcgcGVyaW9kOw0KPj4g
-K307DQo+PiArDQo+PiArc3RhdGljIHN0cnVjdCBzdG0zMl9scF9wcml2YXRlKg0KPj4gK3RvX3By
-aXYoc3RydWN0IGNsb2NrX2V2ZW50X2RldmljZSAqY2xrZXZ0KQ0KPj4gK3sNCj4+ICsJcmV0dXJu
-IGNvbnRhaW5lcl9vZihjbGtldnQsIHN0cnVjdCBzdG0zMl9scF9wcml2YXRlLCBjbGtldnQpOw0K
-Pj4gK30NCj4+ICsNCj4+ICtzdGF0aWMgaW50IHN0bTMyX2Nsa2V2ZW50X2xwX3NodXRkb3duKHN0
-cnVjdCBjbG9ja19ldmVudF9kZXZpY2UgKmNsa2V2dCkNCj4+ICt7DQo+PiArCXN0cnVjdCBzdG0z
-Ml9scF9wcml2YXRlICpwcml2ID0gdG9fcHJpdihjbGtldnQpOw0KPj4gKw0KPj4gKwlyZWdtYXBf
-d3JpdGUocHJpdi0+cmVnLCBTVE0zMl9MUFRJTV9DUiwgMCk7DQo+PiArCXJlZ21hcF93cml0ZShw
-cml2LT5yZWcsIFNUTTMyX0xQVElNX0lFUiwgMCk7DQo+PiArCS8qIGNsZWFyIHBlbmRpbmcgZmxh
-Z3MgKi8NCj4+ICsJcmVnbWFwX3dyaXRlKHByaXYtPnJlZywgU1RNMzJfTFBUSU1fSUNSLCBTVE0z
-Ml9MUFRJTV9BUlJNQ0YpOw0KPj4gKw0KPj4gKwlyZXR1cm4gMDsNCj4+ICt9DQo+PiArDQo+PiAr
-c3RhdGljIGludCBzdG0zMl9jbGtldmVudF9scF9zZXRfdGltZXIodW5zaWduZWQgbG9uZyBldnQs
-DQo+PiArCQkJCSAgICAgICBzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2aWNlICpjbGtldnQsDQo+PiAr
-CQkJCSAgICAgICBpbnQgaXNfcGVyaW9kaWMpDQo+PiArew0KPj4gKwlzdHJ1Y3Qgc3RtMzJfbHBf
-cHJpdmF0ZSAqcHJpdiA9IHRvX3ByaXYoY2xrZXZ0KTsNCj4+ICsNCj4+ICsJLyogZGlzYWJsZSBM
-UFRJTUVSIHRvIGJlIGFibGUgdG8gd3JpdGUgaW50byBJRVIgcmVnaXN0ZXIqLw0KPj4gKwlyZWdt
-YXBfd3JpdGUocHJpdi0+cmVnLCBTVE0zMl9MUFRJTV9DUiwgMCk7DQo+PiArCS8qIGVuYWJsZSBB
-UlIgaW50ZXJydXB0ICovDQo+PiArCXJlZ21hcF93cml0ZShwcml2LT5yZWcsIFNUTTMyX0xQVElN
-X0lFUiwgU1RNMzJfTFBUSU1fQVJSTUlFKTsNCj4+ICsJLyogZW5hYmxlIExQVElNRVIgdG8gYmUg
-YWJsZSB0byB3cml0ZSBpbnRvIEFSUiByZWdpc3RlciAqLw0KPj4gKwlyZWdtYXBfd3JpdGUocHJp
-di0+cmVnLCBTVE0zMl9MUFRJTV9DUiwgU1RNMzJfTFBUSU1fRU5BQkxFKTsNCj4+ICsJLyogc2V0
-IG5leHQgZXZlbnQgY291bnRlciAqLw0KPj4gKwlyZWdtYXBfd3JpdGUocHJpdi0+cmVnLCBTVE0z
-Ml9MUFRJTV9BUlIsIGV2dCk7DQo+PiArDQo+PiArCS8qIHN0YXJ0IGNvdW50ZXIgKi8NCj4+ICsJ
-aWYgKGlzX3BlcmlvZGljKQ0KPj4gKwkJcmVnbWFwX3dyaXRlKHByaXYtPnJlZywgU1RNMzJfTFBU
-SU1fQ1IsDQo+PiArCQkJICAgICBTVE0zMl9MUFRJTV9DTlRTVFJUIHwgU1RNMzJfTFBUSU1fRU5B
-QkxFKTsNCj4+ICsJZWxzZQ0KPj4gKwkJcmVnbWFwX3dyaXRlKHByaXYtPnJlZywgU1RNMzJfTFBU
-SU1fQ1IsDQo+PiArCQkJICAgICBTVE0zMl9MUFRJTV9TTkdTVFJUIHwgU1RNMzJfTFBUSU1fRU5B
-QkxFKTsNCj4gVGhlIHJlZ21hcCBjb25maWcgaW4gc3RtMzItbHB0aW1lciBpcyBub3QgZGVmaW5l
-ZCB3aXRoIHRoZSBmYXN0X2lvIGZsYWcNCj4gKG9uIHB1cnBvc2Ugb3Igbm90PykgdGhhdCBtZWFu
-cyB3ZSBjYW4gcG90ZW50aWFsbHkgZGVhZGxvY2sgaGVyZSBhcyB0aGUNCj4gbG9jayBpcyBhIG11
-dGV4Lg0KPg0KPiBJc24ndCBpdCBkZXRlY3RlZCB3aXRoIHRoZSBsb2NrIHZhbGlkYXRpb24gc2No
-ZW1lPw0KSXQgd2Fzbid0IGEgcHJvYmxlbSB3aXRoIG90aGVyIHBhcnRzIG9mIHRoZSBtZmQgYW5k
-IEkgZG9uJ3Qgbm90aWNlIA0KaXNzdWVzIHNvIEkgZ3Vlc3MgaXQgaXMgb2suDQo+DQo+PiArCXJl
-dHVybiAwOw0KPj4gK30NCj4+ICtzdGF0aWMgaW50IHN0bTMyX2Nsa2V2ZW50X2xwX3JlbW92ZShz
-dHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPj4gK3sNCj4+ICsJcmV0dXJuIC1FQlVTWTsg
-LyogY2Fubm90IHVucmVnaXN0ZXIgY2xvY2tldmVudCAqLw0KPj4gK30NCj4gV29uJ3QgYmUgdGhl
-IG1mZCBpbnRvIGFuIGluY29uc2lzdGVudCBzdGF0ZSBoZXJlPyBUaGUgb3RoZXIgc3Vic3lzdGVt
-cw0KPiB3aWxsIGJlIHJlbW92ZWQgYnV0IHRoaXMgb25lIHdpbGwgcHJldmVudCB0byB1bmxvYWQg
-dGhlIG1vZHVsZSBsZWFkaW5nDQo+IHRvIGEgc2l0dWF0aW9uIHdoZXJlIHRoZSBtZmQgaXMgcGFy
-dGlhbGx5IHJlbW92ZWQgYnV0IHN0aWxsIHRoZXJlDQo+IHdpdGhvdXQgYSBwb3NzaWJsZSByZWNv
-dmVyeSwgbm8/DQpXZSBjYW4ndCBlbmFibGUgdGhlIHRpbWVyIHBhcnQgb2YgdGhlIG1mZCBhdCB0
-aGUgc2FtZSB0aW1lIHRoYW4gdGhlIA0Kb3RoZXIgZmVhdHVyZXMuDQpJdCBoYXMgYmUgZXhjbHVz
-aXZlIGFuZCB0aGF0IGV4Y2x1ZGUgdGhlIHByb2JsZW0geW91IGRlc2NyaWJlIGFib3ZlLg0KDQo+
-DQo+PiArc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgc3RtMzJfY2xrZXZlbnRfbHBf
-b2ZfbWF0Y2hbXSA9IHsNCj4+ICsJeyAuY29tcGF0aWJsZSA9ICJzdCxzdG0zMi1scHRpbWVyLXRp
-bWVyIiwgfSwNCj4+ICsJe30sDQo+PiArfTsNCj4+ICtNT0RVTEVfREVWSUNFX1RBQkxFKG9mLCBz
-dG0zMl9jbGtldmVudF9scF9vZl9tYXRjaCk7DQo+PiArDQo+PiArc3RhdGljIHN0cnVjdCBwbGF0
-Zm9ybV9kcml2ZXIgc3RtMzJfY2xrZXZlbnRfbHBfZHJpdmVyID0gew0KPj4gKwkucHJvYmUJPSBz
-dG0zMl9jbGtldmVudF9scF9wcm9iZSwNCj4+ICsJLnJlbW92ZSA9IHN0bTMyX2Nsa2V2ZW50X2xw
-X3JlbW92ZSwNCj4+ICsJLmRyaXZlcgk9IHsNCj4+ICsJCS5uYW1lID0gInN0bTMyLWxwdGltZXIt
-dGltZXIiLA0KPj4gKwkJLm9mX21hdGNoX3RhYmxlID0gb2ZfbWF0Y2hfcHRyKHN0bTMyX2Nsa2V2
-ZW50X2xwX29mX21hdGNoKSwNCj4+ICsJfSwNCj4+ICt9Ow0KPg0K
+On 18/02/2020 14:18, Allan W. Nielsen wrote:
+> 
+> Hi All,
+> 
+> Its been a while since posting this serie. We got some good and very
+> specific comments, but there has not been much discussion on the overall
+> architecture.
+> 
+> Here is the list of items we have noted to be fixed in the next version:
+> - The headless chicken (it keeps sending test frames if user-space
+>   daemon dies)
+> - Avoid loops when bringing up the network - meaning we need to let MRP
+>   do its work before the br0 device is set to up, and we need to
+>   preserve that state.
+> - Unnessecary ifdef on the include.
+> - Extend the existing mac-table flush instead of adding
+>   BR_MRP_GENL_FLUSH
+> - Further optimize the changes in br_handle_frame
+> 
+> In v1 & v2 we had the entire protocol implemented in kernel-space.
+> Everybody told us this is a bad idea, and in v3 we have moved as much as
+> possible to user-space, and only kept the HW offload facilites in
+> kernel-space. The protocol is then implemented in user-space.
+> 
+> This is nice because it simplifies the code in the kernel and moves it
+> to user-space where such complexity is easier to handle. The downside of
+> this is that it makes the netlink interface more specific to our HW.
+> 
+> The way v3 is implemented, the netlink API returns an error if a given
+> operation cannot be HW offloaded. If the netlink calls return Ok,
+> user-space will trust that HW do the offloading as requested, if the
+> netlink calls return an error, it will implement all the functionallity
+> in user-space.
+> 
+> This works at-least in 2 scenarios: The HW we have with full MRP offload
+> capabilities, and a pure SW bridge.
+> 
+> But we should try make sure this also works in a backwards compatible
+> way with future MRP aware HW, and with existing (and future) SwitchDev
+> offloaded HW. At the very least we want to make this run on Ocelot, HW
+> offload the MRC role, but do the MRM in SW (as the HW is not capable of
+> this).
+> 
+> If we use the kernel to abstract the MRP forwarding (not the entire
+> protocol like we did in v1/v2, not just the HW like we did in v3) then
+> we will have more flxibility to support other HW with a different set of
+> offload facilities, we can most likely achieve better performance, and
+> it would be a cleaner design.
+> 
+> This will mean, that if user-space ask for MRP frame to be generated,
+> the kernel should make sure it will happen. The kernel can try to
+> offload this via the switchdev API, or it can do it in kernel-space.
+> 
+> Again, it will mean putting back some code into kernel space, but I
+> think it is worth it.
+> 
+> What do you think, what is the right design.
+> 
+> /Allan
+> 
+> 
+
+In light of all the discussions and details that were explained, and as you've
+noted above, I think more code should be put in kernel space at the very least
+the performance/latency critical parts would benefit from being executed in the
+kernel (kind of control/data-plane separation). It seems from the switchdev calls there's
+a minimal state working set which define the behaviour and can be used to make
+decisions (similar to STP) in the kernel, but the complex logic how to set them can be
+executed in user-space meaning that maybe these hw-offload calls can have a simple SW
+fallback logic based on their current values. I think it is worth considering if this can
+be achieved before going to full in-kernel implementation of the state machine.
+Since you intend to hw-offload it then putting in some SW fallback logic would be good
+when the HW can't offload everything, what you suggest above also sounds good to me and
+I think you'll have to extend mdb and the multicast code to do it, but IIRC you already
+have code to do that based on previous discussions.
+
+As was already suggested you can put the MRP options in the bridge's options and
+process them from the bridge netlink code, that should simplify your code. You could
+also make the port's "mrp_aware" bool into an internal port flag (use net_bridge_port's
+flags field) so it can be quickly tested and in a hot cache line.
+
+> On 24.01.2020 17:18, Horatiu Vultur wrote:
+>> Media Redundancy Protocol is a data network protocol standardized by
+>> International Electrotechnical Commission as IEC 62439-2. It allows rings of
+>> Ethernet switches to overcome any single failure with recovery time faster than
+>> STP. It is primarily used in Industrial Ethernet applications.
+>>
+>> Based on the previous RFC[1][2], the MRP state machine and all the
+>> timers were moved to userspace. A generic netlink interface is added to
+>> allow configuring the HW, and logic added to to implement the MRP
+>> specific forwarding rules.
+>>
+>> The userspace application that is using the new netlink can be found here[3].
+>>
+>> The current implementation both in kernel and userspace supports only 2 roles:
+>>
+>>  MRM - this one is responsible to send MRP_Test and MRP_Topo frames on both
+>>  ring ports. It needs to process MRP_Test to know if the ring is open or
+>>  closed. This operation is desired to be offloaded to the HW because it
+>>  requires to generate and process up to 4000 frames per second. Whenever it
+>>  detects that the ring open it sends MRP_Topo frames to notify all MRC about
+>>  changes in the topology. MRM needs also to process MRP_LinkChange frames,
+>>  these frames are generated by the MRC. When the ring is open the the state
+>>  of both ports is to forward frames and when the ring is closed then the
+>>  secondary port is blocked.
+>>
+>>  MRC - this one is responsible to forward MRP frames between the ring ports.
+>>  In case one of the ring ports gets a link down or up, then MRC will generate
+>>  a MRP_LinkChange frames. This node should also process MRP_Topo frames and to
+>>  clear its FDB when it receives this frame.
+>>
+>> Userspace
+>>               Deamon +----------+ Client
+>>                +
+>>                |
+>> +--------------|-----------------------------------------+
+>>  Kernel        |
+>>                + Netlink
+>>
+>>                |                              + Interrupt
+>>                |                              |
+>> +--------------|------------------------------|----------+
+>>  HW            | Switchdev                    |
+>>                +                              |
+>>
+>> The user interacts using the client (called 'mrp'), the client talks to the
+>> deamon (called 'mrp_server'), which talks with the kernel using netlink. The
+>> kernel will try to offload the requests to the HW via switchdev API. For this a
+>> new generic netlink interface was added to the bridge.
+>>
+>> If the kernel cannot offload MRP to HW (maybe it does not have a switchdev
+>> driver, or it is just not supported), then all the netlink calls will return
+>> -EOPNOTSUPP. In this case the user-space deamon fallback to SW only
+>> implementation.
+>>
+>> There are required changes to the SW bridge to be able to run the MRP. First the
+>> bridge needs to initialize the netlink interface. And second it needs to know if
+>> a MRP frame was received on a MRP ring port. In case it was received the SW
+>> bridge should not forward the frame it needs to redirected to upper layes. In
+>> case it was not received on a ring port then it just forwards it as usual.
+>>
+>> To be able to offload this to the HW, it was required to extend the switchdev
+>> API.
+>>
+>> If this will be accepted then in the future the netlink interface can be
+>> expended with multiple attributes which are required by different roles of the
+>> MRP. Like Media Redundancy Automanager(MRA), Media Interconnect Manager(MIM) and
+>> Media Interconnect Client(MIC).
+>>
+>> [1] https://www.spinics.net/lists/netdev/msg623647.html
+>> [2] https://www.spinics.net/lists/netdev/msg624378.html
+>> [3] https://github.com/microchip-ung/mrp/tree/patch-v3
+>>
+>> Horatiu Vultur (10):
+>>  net: bridge: mrp: Expose mrp attributes.
+>>  net: bridge: mrp: Expose function br_mrp_port_open
+>>  net: bridge: mrp: Add MRP interface used by netlink
+>>  net: bridge: mrp: Add generic netlink interface to configure MRP
+>>  net: bridge: mrp: Update MRP interface to add switchdev support
+>>  net: bridge: mrp: switchdev: Extend switchdev API to offload MRP
+>>  net: bridge: mrp: switchdev: Implement MRP API for switchdev
+>>  net: bridge: mrp: Connect MRP api with the switchev API
+>>  net: bridge: mrp: Integrate MRP into the bridge
+>>  net: bridge: mrp: Update Kconfig and Makefile
+>>
+>> include/linux/mrp_bridge.h      |  25 ++
+>> include/net/switchdev.h         |  51 +++
+>> include/uapi/linux/if_ether.h   |   1 +
+>> include/uapi/linux/mrp_bridge.h | 118 ++++++
+>> net/bridge/Kconfig              |  12 +
+>> net/bridge/Makefile             |   2 +
+>> net/bridge/br.c                 |  11 +
+>> net/bridge/br_device.c          |   3 +
+>> net/bridge/br_if.c              |   6 +
+>> net/bridge/br_input.c           |  14 +
+>> net/bridge/br_mrp.c             | 193 ++++++++++
+>> net/bridge/br_mrp_netlink.c     | 655 ++++++++++++++++++++++++++++++++
+>> net/bridge/br_mrp_switchdev.c   | 147 +++++++
+>> net/bridge/br_private.h         |  14 +
+>> net/bridge/br_private_mrp.h     |  58 +++
+>> 15 files changed, 1310 insertions(+)
+>> create mode 100644 include/linux/mrp_bridge.h
+>> create mode 100644 include/uapi/linux/mrp_bridge.h
+>> create mode 100644 net/bridge/br_mrp.c
+>> create mode 100644 net/bridge/br_mrp_netlink.c
+>> create mode 100644 net/bridge/br_mrp_switchdev.c
+>> create mode 100644 net/bridge/br_private_mrp.h
+>>
+>> -- 
+>> 2.17.1
+>>
+> /Allan
+
