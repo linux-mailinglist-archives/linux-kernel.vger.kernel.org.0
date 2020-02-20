@@ -2,155 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 413AC165B5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 11:21:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7161D165B5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 11:23:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727576AbgBTKVV convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 20 Feb 2020 05:21:21 -0500
-Received: from mga14.intel.com ([192.55.52.115]:14094 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726799AbgBTKVT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 05:21:19 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2020 02:21:19 -0800
-X-IronPort-AV: E=Sophos;i="5.70,464,1574150400"; 
-   d="scan'208";a="224819481"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.161])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2020 02:21:16 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Kees Cook <keescook@chromium.org>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc:     Alexander Potapenko <glider@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/i915: Distribute switch variables for initialization
-In-Reply-To: <20200220062258.68854-1-keescook@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20200220062258.68854-1-keescook@chromium.org>
-Date:   Thu, 20 Feb 2020 12:21:14 +0200
-Message-ID: <877e0hv9t1.fsf@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+        id S1727614AbgBTKWt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 05:22:49 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:47146 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726825AbgBTKWr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 05:22:47 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01KAJ0Ye095952;
+        Thu, 20 Feb 2020 10:22:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2020-01-29; bh=5UKDu7l3UNxspcPIx9HSKdFAH6sgOkJpPpiv9ECBSfg=;
+ b=sI2eZY5rGOBRoS15GFUXiIhyaDvJm40S+ZOt8fdaWYrChDMJ8+nTePMoUpi1e7oZ/kKT
+ ttbnBuBc2Mon7XwE1p03VlOOLvBbuoqiYueM23vfdwnBJ4jFbIxZemcv0sCqXZpntDJi
+ 9CISvBHII29w+asX5+JRzkXdVbYh/2lrt/LlYl/BvBNrnxCURlPIz84LTsrseO3iRLcT
+ D8nBhOjucPao8h2H5Jx2C+e+XaCTIhXIM5GElbYI2gmR/lZvpfR6wWZL2IPlr+JnYuNA
+ oUCjhHWaGLKaYcMd2ZdTvl4oJc6Nfz5a/KHckF9atFE7Ap9omGPzPjjNyhLziS5YwJHE /w== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2y8udd8tjx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Feb 2020 10:22:36 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01KAK8kS014174;
+        Thu, 20 Feb 2020 10:22:36 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2y8ud3dr5p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Feb 2020 10:22:36 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01KAMXqd025211;
+        Thu, 20 Feb 2020 10:22:33 GMT
+Received: from [192.168.0.110] (/73.243.10.6)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 20 Feb 2020 02:22:33 -0800
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.80.19\))
+Subject: Re: [PATCH] mm: Fix possible PMD dirty bit lost in
+ set_pmd_migration_entry()
+From:   William Kucharski <william.kucharski@oracle.com>
+In-Reply-To: <20200220075220.2327056-1-ying.huang@intel.com>
+Date:   Thu, 20 Feb 2020 03:22:29 -0700
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Zi Yan <ziy@nvidia.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <BCA5401A-6EB6-49D9-B673-86A89808FA15@oracle.com>
+References: <20200220075220.2327056-1-ying.huang@intel.com>
+To:     "Huang, Ying" <ying.huang@intel.com>
+X-Mailer: Apple Mail (2.3608.80.19)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9536 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0
+ mlxlogscore=999 suspectscore=0 adultscore=0 spamscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002200076
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9536 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 impostorscore=0
+ mlxlogscore=999 malwarescore=0 mlxscore=0 suspectscore=0
+ priorityscore=1501 bulkscore=0 adultscore=0 spamscore=0 lowpriorityscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002200076
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 19 Feb 2020, Kees Cook <keescook@chromium.org> wrote:
-> Variables declared in a switch statement before any case statements
-> cannot be automatically initialized with compiler instrumentation (as
-> they are not part of any execution flow). With GCC's proposed automatic
-> stack variable initialization feature, this triggers a warning (and they
-> don't get initialized). Clang's automatic stack variable initialization
-> (via CONFIG_INIT_STACK_ALL=y) doesn't throw a warning, but it also
-> doesn't initialize such variables[1]. Note that these warnings (or silent
-> skipping) happen before the dead-store elimination optimization phase,
-> so even when the automatic initializations are later elided in favor of
-> direct initializations, the warnings remain.
->
-> To avoid these problems, move such variables into the "case" where
-> they're used or lift them up into the main function body.
->
-> drivers/gpu/drm/i915/display/intel_display.c: In function ‘check_digital_port_conflicts’:
-> drivers/gpu/drm/i915/display/intel_display.c:12963:17: warning: statement will never be executed [-Wswitch-unreachable]
-> 12963 |    unsigned int port_mask;
->       |                 ^~~~~~~~~
->
-> drivers/gpu/drm/i915/intel_pm.c: In function ‘vlv_get_fifo_size’:
-> drivers/gpu/drm/i915/intel_pm.c:474:7: warning: statement will never be executed [-Wswitch-unreachable]
->   474 |   u32 dsparb, dsparb2, dsparb3;
->       |       ^~~~~~
-> drivers/gpu/drm/i915/intel_pm.c: In function ‘vlv_atomic_update_fifo’:
-> drivers/gpu/drm/i915/intel_pm.c:1997:7: warning: statement will never be executed [-Wswitch-unreachable]
->  1997 |   u32 dsparb, dsparb2, dsparb3;
->       |       ^~~~~~
->
-> [1] https://bugs.llvm.org/show_bug.cgi?id=44916
->
-> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+> On Feb 20, 2020, at 12:52 AM, Huang, Ying <ying.huang@intel.com> =
+wrote:
+>=20
+> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
 
-If you look at i915/Makefile, you'll see that we don't shy away from
-enabling lots of extra warnings, and we run our CI with -Werror to keep
-it clean. It does not seem like -Wswitch-unreachable does me any good,
-though... is it new?
+Looks good to me.
 
-BR,
-Jani.
+Reviewed-by: William Kucharski <william.kucharski@oracle.com>
 
-
+> Cc: Zi Yan <ziy@nvidia.com>
+> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Cc: Andrea Arcangeli <aarcange@redhat.com>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
 > ---
->  drivers/gpu/drm/i915/display/intel_display.c |    6 ++++--
->  drivers/gpu/drm/i915/intel_pm.c              |    4 ++--
->  2 files changed, 6 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/i915/display/intel_display.c b/drivers/gpu/drm/i915/display/intel_display.c
-> index 064dd99bbc49..c829cd26f99e 100644
-> --- a/drivers/gpu/drm/i915/display/intel_display.c
-> +++ b/drivers/gpu/drm/i915/display/intel_display.c
-> @@ -12960,14 +12960,15 @@ static bool check_digital_port_conflicts(struct intel_atomic_state *state)
->  		WARN_ON(!connector_state->crtc);
->  
->  		switch (encoder->type) {
-> -			unsigned int port_mask;
->  		case INTEL_OUTPUT_DDI:
->  			if (WARN_ON(!HAS_DDI(to_i915(dev))))
->  				break;
->  			/* else, fall through */
->  		case INTEL_OUTPUT_DP:
->  		case INTEL_OUTPUT_HDMI:
-> -		case INTEL_OUTPUT_EDP:
-> +		case INTEL_OUTPUT_EDP: {
-> +			unsigned int port_mask;
-> +
->  			port_mask = 1 << encoder->port;
->  
->  			/* the same port mustn't appear more than once */
-> @@ -12976,6 +12977,7 @@ static bool check_digital_port_conflicts(struct intel_atomic_state *state)
->  
->  			used_ports |= port_mask;
->  			break;
-> +		}
->  		case INTEL_OUTPUT_DP_MST:
->  			used_mst_ports |=
->  				1 << encoder->port;
-> diff --git a/drivers/gpu/drm/i915/intel_pm.c b/drivers/gpu/drm/i915/intel_pm.c
-> index bd2d30ecc030..17d8833787c4 100644
-> --- a/drivers/gpu/drm/i915/intel_pm.c
-> +++ b/drivers/gpu/drm/i915/intel_pm.c
-> @@ -469,9 +469,9 @@ static void vlv_get_fifo_size(struct intel_crtc_state *crtc_state)
->  	struct vlv_fifo_state *fifo_state = &crtc_state->wm.vlv.fifo_state;
->  	enum pipe pipe = crtc->pipe;
->  	int sprite0_start, sprite1_start;
-> +	u32 dsparb, dsparb2, dsparb3;
->  
->  	switch (pipe) {
-> -		u32 dsparb, dsparb2, dsparb3;
->  	case PIPE_A:
->  		dsparb = I915_READ(DSPARB);
->  		dsparb2 = I915_READ(DSPARB2);
-> @@ -1969,6 +1969,7 @@ static void vlv_atomic_update_fifo(struct intel_atomic_state *state,
->  	const struct vlv_fifo_state *fifo_state =
->  		&crtc_state->wm.vlv.fifo_state;
->  	int sprite0_start, sprite1_start, fifo_size;
-> +	u32 dsparb, dsparb2, dsparb3;
->  
->  	if (!crtc_state->fifo_changed)
->  		return;
-> @@ -1994,7 +1995,6 @@ static void vlv_atomic_update_fifo(struct intel_atomic_state *state,
->  	spin_lock(&uncore->lock);
->  
->  	switch (crtc->pipe) {
-> -		u32 dsparb, dsparb2, dsparb3;
->  	case PIPE_A:
->  		dsparb = intel_uncore_read_fw(uncore, DSPARB);
->  		dsparb2 = intel_uncore_read_fw(uncore, DSPARB2);
->
+> mm/huge_memory.c | 3 +--
+> 1 file changed, 1 insertion(+), 2 deletions(-)
+>=20
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 580098e115bd..b1e069e68189 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -3060,8 +3060,7 @@ void set_pmd_migration_entry(struct =
+page_vma_mapped_walk *pvmw,
+> 		return;
+>=20
+> 	flush_cache_range(vma, address, address + HPAGE_PMD_SIZE);
+> -	pmdval =3D *pvmw->pmd;
+> -	pmdp_invalidate(vma, address, pvmw->pmd);
+> +	pmdval =3D pmdp_invalidate(vma, address, pvmw->pmd);
+> 	if (pmd_dirty(pmdval))
+> 		set_page_dirty(page);
+> 	entry =3D make_migration_entry(page, pmd_write(pmdval));
+> --=20
+> 2.25.0
+>=20
+>=20
 
--- 
-Jani Nikula, Intel Open Source Graphics Center
