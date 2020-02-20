@@ -2,116 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1079165B89
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 11:30:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 217D2165B8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 11:31:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727747AbgBTKav (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 05:30:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39528 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726885AbgBTKau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 05:30:50 -0500
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E03EB24672;
-        Thu, 20 Feb 2020 10:30:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582194650;
-        bh=uWiTS8YgHPdo3MANnuhWHXoq+v/QRNnUmDA8sfhf8Bk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RbCX7TQv3skc2aoG9+L6JIaQJnX2npmUZ93js6YaP63bVUSIDSySPmRrCugANIO42
-         qVsWcpQ8PWkjcLRzJAQp3NoUEnVEYDYLmzdY2G+7m/ipJJqJb26g4N04KVDR0h2rgS
-         RtaaVKotVzuJB0D2J344nJa3ZP3ZiZw1HGdYZ3gg=
-Date:   Thu, 20 Feb 2020 10:30:45 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Carter Li =?utf-8?B?5p2O6YCa5rSy?= <carter.li@eoitek.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring <io-uring@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] asm-generic/atomic: Add try_cmpxchg() fallbacks
-Message-ID: <20200220103044.GA13608@willie-the-truck>
-References: <7c4c3996-4886-eb58-cdee-fe0951907ab5@kernel.dk>
- <addcd44e-ed9b-5f82-517d-c1ed3ee2d85c@kernel.dk>
- <b8069e62-7ea4-c7f3-55a3-838241951068@kernel.dk>
- <20200217120920.GQ14914@hirez.programming.kicks-ass.net>
- <53de3581-b902-89ba-3f53-fd46b052df40@kernel.dk>
- <43c066d1-a892-6a02-82e7-7be850d9454d@kernel.dk>
- <20200217174610.GU14897@hirez.programming.kicks-ass.net>
- <592cf069-41ee-0bc1-1f83-e058e5dd53ff@kernel.dk>
- <20200218131310.GZ14914@hirez.programming.kicks-ass.net>
- <20200218142700.GB14946@hirez.programming.kicks-ass.net>
+        id S1727833AbgBTKbi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 05:31:38 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41603 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726871AbgBTKbh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 05:31:37 -0500
+Received: by mail-lj1-f194.google.com with SMTP id h23so3643559ljc.8
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 02:31:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ombemeBuSWqa0cr6v8Icg8IDYVOYL7pKXjeA/5N6FzM=;
+        b=L95S4k+QmoSueLaeSj3bsP8Cf9yA01n5JDC8JpELKhHbDR5xkkjjQXDe/+1HONIaFl
+         Fi6PRFHV9ZVoVQ8DbMN/wxni9kBThoUZHw24GGeLFgb6snambZACeGM+7CL8jKN5mjNu
+         lPj0MSeii4XJyQZ1u67d3k+oQbu6pCLeg4IOsg79YT67xMHBePNJOA9c84JG/u48v5UO
+         ksl0v0Qt3Nh94vIrrxmb/d/4HLJhciaCUpwqC4Rsqv+PVYQs2LM6LhchzrHdEjY9ZueJ
+         rvtzi38RZbbgefIiFJY7xWnK1R7h1yY6xIpdwDSFXj89ivGg36M4QSYlPxevKS5KGI8T
+         Q3SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ombemeBuSWqa0cr6v8Icg8IDYVOYL7pKXjeA/5N6FzM=;
+        b=eCjCfSO4Iwfvu8kAvFQ9AO88gXYWWhtkQeKWu3ssh/ATVai2fY3lWvRwzqI7zOwvq9
+         1v0VWDeYTwuPbJRxU6C8+N4z13aZHNsCreQFKwqS1mRj9v0zEK2F9cldtBR1ZFqdorh6
+         Xr1AwHS9axp9ljyFvUHrQqQL06UpVAw2L4flfATRY7+vSUqVd282Tm6PS5VwOVRnJWjD
+         m2abfv1Hj9oV8coE/wR9E1Y109X06/SakMT+CPo7skJePmjZ+wjKKzZZ1fsr8i2phlr0
+         XTAxhbBcPrsdMwtgRhqDE/zKnxBbKD2uMgy05NM/NjwH9gWHua9OPlVD4ZBdmZULlCc2
+         iyEA==
+X-Gm-Message-State: APjAAAUXWPyoU28Qjogbfcv5VjXJZlrvdES2biLlMzhbfZ3OTySe9W8F
+        /3Dft7ff/APdwIK/rKYESLeZiam7ddE8589caXEL0Q==
+X-Google-Smtp-Source: APXvYqwnkhN82t7bmsO6FQeHCgOkS46PlgZ3YUcENV9JCtgDVFgH3zadu7vOARUTzKxgvF5miRfOu5+vUG+6DG8dTMI=
+X-Received: by 2002:a2e:8699:: with SMTP id l25mr17761213lji.137.1582194695210;
+ Thu, 20 Feb 2020 02:31:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200218142700.GB14946@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1582183784-13502-1-git-send-email-qiwuchen55@gmail.com>
+ <CAKfTPtDzb9XD5wrMhcvGn+dz27nh58taDrdp36YHKNusp739Og@mail.gmail.com> <20200220100915.GA14721@cqw-OptiPlex-7050>
+In-Reply-To: <20200220100915.GA14721@cqw-OptiPlex-7050>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Thu, 20 Feb 2020 11:31:23 +0100
+Message-ID: <CAKfTPtCm-Vn1YAC8j-XFLritQxQ-B7d=pqO9U6=c2vCuTNUpsg@mail.gmail.com>
+Subject: Re: [PATCH] sched/fair: add !se->on_rq check before dequeue entity
+To:     chenqiwu <qiwuchen55@gmail.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        chenqiwu <chenqiwu@xiaomi.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 03:27:00PM +0100, Peter Zijlstra wrote:
-> On Tue, Feb 18, 2020 at 02:13:10PM +0100, Peter Zijlstra wrote:
-> > (with the caveat that try_cmpxchg() doesn't seem available on !x86 -- I
-> > should go fix that)
-> 
-> Completely untested (lemme go do that shortly), but something like so I
-> suppose.
-> 
-> ---
-> Subject: asm-generic/atomic: Add try_cmpxchg() fallbacks
-> 
-> Only x86 provides try_cmpxchg() outside of the atomic_t interfaces,
-> provide generic fallbacks to create this interface from the widely
-> available cmpxchg() function.
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
-> diff --git a/include/linux/atomic-fallback.h b/include/linux/atomic-fallback.h
-> index 656b5489b673..243f61d6c35f 100644
-> --- a/include/linux/atomic-fallback.h
-> +++ b/include/linux/atomic-fallback.h
-> @@ -77,6 +77,50 @@
->  
->  #endif /* cmpxchg64_relaxed */
->  
-> +#ifndef try_cmpxchg
-> +#define try_cmpxchg(_ptr, _oldp, _new) \
-> +({ \
-> +	typeof(*ptr) ___r, ___o = *(_oldp); \
+On Thu, 20 Feb 2020 at 11:09, chenqiwu <qiwuchen55@gmail.com> wrote:
+>
+> On Thu, Feb 20, 2020 at 10:38:02AM +0100, Vincent Guittot wrote:
+> > On Thu, 20 Feb 2020 at 08:29, <qiwuchen55@gmail.com> wrote:
+> > >
+> > > From: chenqiwu <chenqiwu@xiaomi.com>
+> > >
+> > > We igonre checking for !se->on_rq condition before dequeue one
+> > > entity from cfs rq. It must be required in case the entity has
+> > > been dequeued.
+> >
+> > Do you have a use case that triggers this situation ?
+> >
+> > This is the only way to reach this situation seems to be dequeuing a
+> > task on a throttled cfs_rq
+> >
+> Sorry, I have no use case triggers this situation. It's just found by
+> reading code.
+> I agree the situation you mentioned above may have a racy with
+> dequeue_task_fair() in the following code path:
+> __schedule
+>         pick_next_task_fair
+>                 put_prev_entity
+>                         check_cfs_rq_runtime
+>                                 throttle_cfs_rq
+>                                         dequeue_entity
+>
+> So this check is worth to be added for dequeue_task_fair().
 
-Probably worth pointing out that this will have the nasty behaviour
-for volatile pointers that we're tackling for READ_ONCE. Obviously no
-need to hold this up, but just mentioning it here in the hope that one
-of us remembers to fix it later on.
-
-> diff --git a/scripts/atomic/gen-atomic-fallback.sh b/scripts/atomic/gen-atomic-fallback.sh
-> index b6c6f5d306a7..3c9be8d550e0 100755
-> --- a/scripts/atomic/gen-atomic-fallback.sh
-> +++ b/scripts/atomic/gen-atomic-fallback.sh
-> @@ -140,6 +140,32 @@ cat <<EOF
->  EOF
->  }
->  
-> +gen_try_cmpxchg_fallback()
-> +{
-> +	local order="$1"; shift;
-> +
-> +cat <<EOF
-> +#ifndef try_cmpxchg${order}
-> +#define try_cmpxchg${order}(_ptr, _oldp, _new) \\
-> +({ \\
-> +	typeof(*ptr) ___r, ___o = *(_oldp); \\
-> +	___r = cmpxchg${order}((_ptr), ___o, (_new)); \\
-> +	if (unlikely(___r != ___o)) \\
-> +		*(_old) = ___r; \\
-
-This doesn't compile because _old isn't declared. Probably best to avoid
-evaluating _oldp twice though.
-
-Will
+In fact the check is already done thanks to the: if (cfs_rq_throttled(cfs_rq))
+AFAICT, there is no other way to enqueue a task on a cfs_rq for which
+the group entity is not enqueued
