@@ -2,65 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14141166A26
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 23:03:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5C9A166A23
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 23:02:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729205AbgBTWDb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 17:03:31 -0500
-Received: from hetz10.newshell.it ([78.47.125.135]:38425 "EHLO
-        hetz10.newshell.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728936AbgBTWDb (ORCPT
+        id S1729090AbgBTWCl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 17:02:41 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:42755 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727656AbgBTWCl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 17:03:31 -0500
-X-Greylist: delayed 645 seconds by postgrey-1.27 at vger.kernel.org; Thu, 20 Feb 2020 17:03:30 EST
-Received: from webmail.sanniosport.it (hetz10.newshell.it [127.0.0.1])
-        by hetz10.newshell.it (Postfix) with ESMTPSA id 981A3245BF;
-        Thu, 20 Feb 2020 22:48:00 +0100 (CET)
+        Thu, 20 Feb 2020 17:02:41 -0500
+Received: by mail-qk1-f193.google.com with SMTP id o28so24038qkj.9
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 14:02:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Qs+LhNiBMIj9A7PLEkqadpwwdn4t7ZJVTcZjDGn03PM=;
+        b=1sM+flAalAjdf9H+ABF4RBpnc7mgf/EB1PkQ3GIvPhatEPuYG/+kZZYytUx2breYo9
+         oBS4Cz3/NHUDHKrF1wClmlsU2wMQWRh9jUeUVFlKDnYU1XDy2DbPjMAN6/dFKk+WparC
+         n2mnFSbEJsFPwZS1Vkfj9gnphTLnT9mqRYcdYb3mcnuK5c108UQ0b24WLrAoGSNFpyha
+         iPLMyEc4PN5W+kfi2o4BOepzuEVVQ0MwF8HwWATiYKm8p4b2uSETdNaNTVOHwu7ULX5K
+         9cl6gc557oQYGhjYLQyYi1BtFt0PWyzSVcxVJSRFwVQAzbgf64CESMf7EXkdNMTvkNc/
+         T1Tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Qs+LhNiBMIj9A7PLEkqadpwwdn4t7ZJVTcZjDGn03PM=;
+        b=ULxBLP9CBFbF2sIPUgaEiAVtFUfK43VzLUy8BmdtjNyw29MgKcQstZwZYr42dfRZbr
+         ek0NStSWKHH7qKE5FPX3H2xL0yRXwazjK8fmqakUvVUS+cuvoLUo6jxwwBMn2mw2e7V8
+         ejYUT/+jgXbd25rtn+Q7yISFi+tpVENIuclfxYnka3zEPtSdeunQkAnujJGS4wST3gzB
+         P7mJRqeG3obafYF4xR7LU5BdQUxYF4hfLjJWjJw70q4JLbDAtziEPfXmx9Bhd7vX4p6n
+         17RpM9s8wz96qpMvMKrgyMJ6r/9AF1QPyfOLfrJQ7v9CcVHUY+muursuVHg7uaU/N9C0
+         +aAg==
+X-Gm-Message-State: APjAAAVaNnQy1nmGqea8ZdzhjAgsderc9NVFeotBErhJx0NJXEDFk5Im
+        6RrkN/G5Hmv+OMp2IXa9aQZYiw==
+X-Google-Smtp-Source: APXvYqzeLjYnxMcLPrrXE8eCyXI/Ol0Il3CHL5hbzaE2ieHBb3/wY1MEQ7PKwGJEA0oW/FVjRgCOZA==
+X-Received: by 2002:a05:620a:1037:: with SMTP id a23mr29030822qkk.82.1582236160287;
+        Thu, 20 Feb 2020 14:02:40 -0800 (PST)
+Received: from localhost ([2620:10d:c091:500::1:3504])
+        by smtp.gmail.com with ESMTPSA id e16sm518875qkl.32.2020.02.20.14.02.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2020 14:02:39 -0800 (PST)
+Date:   Thu, 20 Feb 2020 17:02:38 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Dan Schatzberg <schatzberg.dan@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>, Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Chris Down <chris@chrisdown.name>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+        "open list:CONTROL GROUP - MEMORY RESOURCE CONTROLLER (MEMCG)" 
+        <linux-mm@kvack.org>
+Subject: Re: [PATCH v3 3/3] loop: Charge i/o to mem and blk cg
+Message-ID: <20200220220238.GB68937@cmpxchg.org>
+References: <cover.1582216294.git.schatzberg.dan@gmail.com>
+ <78060dcbf6578b4da6081f9f48b24b33726c5083.1582216295.git.schatzberg.dan@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 20 Feb 2020 22:48:00 +0100
-From:   Ambassador Patricia Mahoney <redazione@sanniosport.it>
-To:     undisclosed-recipients:;
-Subject: SCAM VICTIM COMPENSATION $6.5M USD
-Reply-To: ambassador_pmahoney@yahoo.com
-Mail-Reply-To: ambassador_pmahoney@yahoo.com
-Message-ID: <0da1329a246d565e255c8d78dd7b4bef@sanniosport.it>
-X-Sender: redazione@sanniosport.it
-User-Agent: Roundcube Webmail/1.3.8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <78060dcbf6578b4da6081f9f48b24b33726c5083.1582216295.git.schatzberg.dan@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Feb 20, 2020 at 11:51:53AM -0500, Dan Schatzberg wrote:
+> The current code only associates with the existing blkcg when aio is
+> used to access the backing file. This patch covers all types of i/o to
+> the backing file and also associates the memcg so if the backing file is
+> on tmpfs, memory is charged appropriately.
+> 
+> This patch also exports cgroup_get_e_css so it can be used by the loop
+> module.
+> 
+> Signed-off-by: Dan Schatzberg <schatzberg.dan@gmail.com>
 
+The cgroup bits look good to me.
 
--- 
-Attention Beneficiary,
-
-I am Patricia Mahoney, the new U.S Ambassador to Benin.
-
-  I have received today the total of $6.5M USD from the Benin Government 
-as a compensation to you for what you went through in the name of their 
-Country.
-
-How do you wish to receive your compensation funds?
-
-Kindly re-confirm the following
-
-Name:
-Address:
-Phone:
-Occupation:
-Age:
-Country:
-How much you lost to the impostors:
-
-I hope to read from you soon.
-
-Yours in Service
-
-Ambassador Patricia Mahoney.
-U.S Ambassador to Benin.
-Direct Tel: +229 542512890
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
