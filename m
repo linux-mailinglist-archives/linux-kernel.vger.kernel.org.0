@@ -2,155 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E37F71665A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 19:00:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2BCC1665BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 19:02:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728486AbgBTR75 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 20 Feb 2020 12:59:57 -0500
-Received: from mailoutvs13.siol.net ([185.57.226.204]:57929 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727298AbgBTR75 (ORCPT
+        id S1728410AbgBTSCb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 13:02:31 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:37892 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727298AbgBTSCb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 12:59:57 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 925215246B1;
-        Thu, 20 Feb 2020 18:59:54 +0100 (CET)
-X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 9gCUlovdAPR5; Thu, 20 Feb 2020 18:59:54 +0100 (CET)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 1F4BF524768;
-        Thu, 20 Feb 2020 18:59:54 +0100 (CET)
-Received: from jernej-laptop.localnet (cpe-194-152-20-232.static.triera.net [194.152.20.232])
-        (Authenticated sender: jernej.skrabec@siol.net)
-        by mail.siol.net (Postfix) with ESMTPA id EADDA5246B1;
-        Thu, 20 Feb 2020 18:59:52 +0100 (CET)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        a.zummo@towertech.it, alexandre.belloni@bootlin.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH 1/2] rtc: sun6i: Make external 32k oscillator optional
-Date:   Thu, 20 Feb 2020 18:59:52 +0100
-Message-ID: <4534371.31r3eYUQgx@jernej-laptop>
-In-Reply-To: <20200220174749.ih3pcj3oxiwvuurz@gilmour.lan>
-References: <20200213211427.33004-1-jernej.skrabec@siol.net> <5326350.DvuYhMxLoT@jernej-laptop> <20200220174749.ih3pcj3oxiwvuurz@gilmour.lan>
+        Thu, 20 Feb 2020 13:02:31 -0500
+Received: by mail-pj1-f66.google.com with SMTP id j17so1211627pjz.3;
+        Thu, 20 Feb 2020 10:02:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ftBWuGNfX8JZVFhSKwA+KUVSKGZwfK/v4xpQCMt5JjU=;
+        b=Z7GTb5OmY58dJNwVcxhr2Zj89JXbSLjrDt4/98xY5f4eLOjssVN04Amn+cXaYaGh5l
+         DqGzKkLXy6FQdjPU5cvEewJ6TExOsg4coQmE8aLyUVNiZJeKgREQ+EioOVrzQafZWyNX
+         wNvlAJ5Fb9NdNKVQ2I3U1JQne5b6IWABjyuRdWxbKtJQ4G74F9KFxf5vOCsvr/b0qplb
+         +hwhkPo4ggypZi/5u5PXoEK2bsl6sK5/+2swDHR2TOMLOfl4pp+W/C1jTXyYfH5WCyBb
+         NIlAzn4HpQm5ASJ6q5OHtRY32pO3LRQSAlUXhWyTEECClcAPOwqaIqQ4Ktfhudf/VTO2
+         S/dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ftBWuGNfX8JZVFhSKwA+KUVSKGZwfK/v4xpQCMt5JjU=;
+        b=lbZt/Ur2OtRchwzBV2hR6OLCI6hiOX3HleaJHcx/0nGzi0adNP+tH2WRhdr6IRmNPO
+         rrv/+l7B11lz3eQTD8tAJaO+AH/KfGLldcUKqNCALxfQRPEXTX4s7/3uhRkFKGUC/Q+C
+         V1AFRVNx/5EEZMv47hdIOHHO9niMW0EZ5DaU/vBrfgzM0/wI4Kqp3fsp1EKK1eUE83GW
+         CHPN5XD5wC1rFdcFS9PlB6R6wTUoHcUnIbR4aV8UmjZkOH2+jwfRTpi83Zes2A7K8xs7
+         oKSjRwvNSdRGNH3BchThJnGGF/MpekGhjxqRGGE3ZIh1coXH2EzUs1ufIE3MtIYy7HDG
+         pfIQ==
+X-Gm-Message-State: APjAAAWXErVVNMOMoc5ppaVLJ0/kWdWjimTCcDqbwuWUPMRi+Qf6ZlSA
+        kMKV8frESunk+2Iq9R7LXI8=
+X-Google-Smtp-Source: APXvYqyP5wnC/UIA6uYZG1iIuCpdhd4BbS2S2UPeJf7Xo5CCRsLnOqSay/+AmWkBoDqxi6cI3omECg==
+X-Received: by 2002:a17:90a:8001:: with SMTP id b1mr4948972pjn.39.1582221749423;
+        Thu, 20 Feb 2020 10:02:29 -0800 (PST)
+Received: from localhost ([100.118.89.211])
+        by smtp.gmail.com with ESMTPSA id l69sm2019pgd.1.2020.02.20.10.02.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2020 10:02:28 -0800 (PST)
+From:   Rob Clark <robdclark@gmail.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Rob Clark <robdclark@chromium.org>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        linux-arm-msm@vger.kernel.org (open list:DRM DRIVER FOR MSM ADRENO GPU),
+        freedreno@lists.freedesktop.org (open list:DRM DRIVER FOR MSM ADRENO
+        GPU), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] drm/msm/a6xx: Fix CP_MEMPOOL state name
+Date:   Thu, 20 Feb 2020 10:00:09 -0800
+Message-Id: <20200220180013.1120750-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne četrtek, 20. februar 2020 ob 18:47:49 CET je Maxime Ripard napisal(a):
-> On Fri, Feb 14, 2020 at 05:42:13PM +0100, Jernej Škrabec wrote:
-> > Hi Maxime,
-> > 
-> > Dne petek, 14. februar 2020 ob 09:14:43 CET je Maxime Ripard napisal(a):
-> > > Hi Jernej,
-> > > 
-> > > Thanks for taking care of this
-> > > 
-> > > On Thu, Feb 13, 2020 at 10:14:26PM +0100, Jernej Skrabec wrote:
-> > > > Some boards, like OrangePi PC2 (H5), OrangePi Plus 2E (H3) and Tanix
-> > > > TX6
-> > > > (H6) don't have external 32kHz oscillator. Till H6, it didn't really
-> > > > matter if external oscillator was enabled because HW detected error
-> > > > and
-> > > > fall back to internal one. H6 has same functionality but it's the
-> > > > first
-> > > > SoC which have "auto switch bypass" bit documented and always enabled
-> > > > in
-> > > > driver. This prevents RTC to work correctly if external crystal is not
-> > > > present on board. There are other side effects - all peripherals which
-> > > > depends on this clock also don't work (HDMI CEC for example).
-> > > > 
-> > > > Make clocks property optional. If it is present, select external
-> > > > oscillator. If not, stay on internal.
-> > > > 
-> > > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > > > ---
-> > > > 
-> > > >  drivers/rtc/rtc-sun6i.c | 14 ++++++--------
-> > > >  1 file changed, 6 insertions(+), 8 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
-> > > > index 852f5f3b3592..538cf7e19034 100644
-> > > > --- a/drivers/rtc/rtc-sun6i.c
-> > > > +++ b/drivers/rtc/rtc-sun6i.c
-> > > > @@ -250,19 +250,17 @@ static void __init sun6i_rtc_clk_init(struct
-> > > > device_node *node,>
-> > > > 
-> > > >  		writel(reg, rtc->base + SUN6I_LOSC_CTRL);
-> > > >  	
-> > > >  	}
-> > > > 
-> > > > -	/* Switch to the external, more precise, oscillator */
-> > > > -	reg |= SUN6I_LOSC_CTRL_EXT_OSC;
-> > > > -	if (rtc->data->has_losc_en)
-> > > > -		reg |= SUN6I_LOSC_CTRL_EXT_LOSC_EN;
-> > > > +	/* Switch to the external, more precise, oscillator, if present 
-*/
-> > > > +	if (of_get_property(node, "clocks", NULL)) {
-> > > > +		reg |= SUN6I_LOSC_CTRL_EXT_OSC;
-> > > > +		if (rtc->data->has_losc_en)
-> > > > +			reg |= SUN6I_LOSC_CTRL_EXT_LOSC_EN;
-> > > > +	}
-> > > > 
-> > > >  	writel(reg, rtc->base + SUN6I_LOSC_CTRL);
-> > > >  	
-> > > >  	/* Yes, I know, this is ugly. */
-> > > >  	sun6i_rtc = rtc;
-> > > > 
-> > > > -	/* Deal with old DTs */
-> > > > -	if (!of_get_property(node, "clocks", NULL))
-> > > > -		goto err;
-> > > > -
-> > > 
-> > > Doesn't that prevent the parents to be properly set if there's an
-> > > external crystal?
-> > 
-> > No, why?
-> > 
-> > Check these two clk_summary:
-> > http://ix.io/2bHY Tanix TX6 (no external crystal)
-> > http://ix.io/2bI2 OrangePi 3 (external crystal present)
-> 
-> I was concerned about the "other" parent. In the case where you don't
-> have a clocks property (so the check that you are removing), the code
-> then registers a clock with two parents: the one that we create (the
-> internal oscillator) and the one coming from the clocks property.
-> 
-> clk_summary only shows the current parent, which is going to be right
-> with your patch, but in the case where you have no clocks property,
-> you still (attempts to) register two parents, the second one being
-> non-functional.
-> 
-> Further looking at it, we might be good because we allocate an array
-> of two clocks, but only register of_clk_get_parent_count(node) + 1
-> clocks, so 1 if clocks is missing.
+From: Rob Clark <robdclark@chromium.org>
 
-Yes, my patch rely on "of_clk_get_parent_count(node) + 1". If there is no 
-property, it will return 1 thus only first parent (internal RC oscilator) will 
-be registered.
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+---
+ drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Anyway, following line:
-parents[1] = of_clk_get_parent_name(node, 0);
-should evaluate to null. I didn't research further what clk framework does 
-with null parent because number of parents will be set to 1 and this null 
-value will be ignored anyway.
-
-> 
-> Still, I think this should be more obvious, through a comment or
-> shuffling a bit the parent registration maybe?
-
-I think code is in correct order, just maybe a bit more explanation in form of 
-comment(s) to make it more obvious how it works for either case.
-
-Best regards,
-Jernej
-
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h
+index 68cccfa2870a..bbbec8d26870 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h
+@@ -370,7 +370,7 @@ static const struct a6xx_indexed_registers {
+ };
+ 
+ static const struct a6xx_indexed_registers a6xx_cp_mempool_indexed = {
+-	"CP_MEMPOOOL", REG_A6XX_CP_MEM_POOL_DBG_ADDR,
++	"CP_MEMPOOL", REG_A6XX_CP_MEM_POOL_DBG_ADDR,
+ 		REG_A6XX_CP_MEM_POOL_DBG_DATA, 0x2060,
+ };
+ 
+-- 
+2.24.1
 
