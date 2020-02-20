@@ -2,72 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D62E16634E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:40:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 917C2166355
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 17:41:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728510AbgBTQkD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 11:40:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45550 "EHLO mail.kernel.org"
+        id S1728639AbgBTQlO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 11:41:14 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43744 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728090AbgBTQkD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 11:40:03 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EFDE207FD;
-        Thu, 20 Feb 2020 16:40:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582216802;
-        bh=PqIjxGt93AjPELMvVrU2wYetUIUHuYPZgdc3HCIgm3k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=H4j8QyF/I0J6liLlhOQF7i+TJe+fnAR9AOelLlYOgFf9aMhnhS8+ZHGbNtogrpEJ2
-         Og9Qk1IZiQSugdI+6weBt8zE3GT7ui+HqCZHRwYRUwJKJJeJcu7Imez1kZ5/1kNHwW
-         NTdKgGYOj28UpU3emLOrJ+Udzya/NyJijlVU4IwY=
-Date:   Thu, 20 Feb 2020 11:40:01 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>, rsiddoji@codeaurora.org,
-        selinux@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 5.5 190/542] selinux: ensure we cleanup the
- internal AVC counters on error in avc_insert()
-Message-ID: <20200220164001.GD1734@sasha-vm>
-References: <20200214154854.6746-1-sashal@kernel.org>
- <20200214154854.6746-190-sashal@kernel.org>
- <64b56666-4e4a-10e0-0a1d-60ee28615d23@tycho.nsa.gov>
+        id S1728245AbgBTQlO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 11:41:14 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id DDBB7AFF7;
+        Thu, 20 Feb 2020 16:41:11 +0000 (UTC)
+Message-ID: <d8f1d9729c73ca0bdfafe13b3d57c16edec6f293.camel@suse.de>
+Subject: Re: [PATCH v2 2/4] firmware: raspberrypi: Introduce vl805 init
+ routine
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        linux-kernel@vger.kernel.org, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com
+Cc:     linux-usb@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org,
+        tim.gover@raspberrypi.org, linux-pci@vger.kernel.org,
+        wahrenst@gmx.net
+Date:   Thu, 20 Feb 2020 17:41:08 +0100
+In-Reply-To: <538b8ba7-e6d3-e8f2-0cc6-ce3485bc7848@gmail.com>
+References: <20200219123933.2792-1-nsaenzjulienne@suse.de>
+         <20200219123933.2792-3-nsaenzjulienne@suse.de>
+         <538b8ba7-e6d3-e8f2-0cc6-ce3485bc7848@gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-9L+CAkWKlVlZC8VcHjhe"
+User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <64b56666-4e4a-10e0-0a1d-60ee28615d23@tycho.nsa.gov>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 11:07:37AM -0500, Stephen Smalley wrote:
->On 2/14/20 10:43 AM, Sasha Levin wrote:
->>From: Paul Moore <paul@paul-moore.com>
->>
->>[ Upstream commit d8db60cb23e49a92cf8cada3297395c7fa50fdf8 ]
->>
->>Fix avc_insert() to call avc_node_kill() if we've already allocated
->>an AVC node and the code fails to insert the node in the cache.
->>
->>Fixes: fa1aa143ac4a ("selinux: extended permissions for ioctls")
->>Reported-by: rsiddoji@codeaurora.org
->>Suggested-by: Stephen Smalley <sds@tycho.nsa.gov>
->>Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
->>Signed-off-by: Paul Moore <paul@paul-moore.com>
->>Signed-off-by: Sasha Levin <sashal@kernel.org>
->
->You should also apply 030b995ad9ece9fa2d218af4429c1c78c2342096 
->("selinux: ensure we cleanup the internal AVC counters on error in 
->avc_update()") which fixes one additional instance of the same kind of 
->bug not addressed by this patch.
 
-I took that patch as well, thank you.
+--=-9L+CAkWKlVlZC8VcHjhe
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Thanks,
-Sasha
+On Wed, 2020-02-19 at 11:13 -0800, Florian Fainelli wrote:
+> On 2/19/20 4:39 AM, Nicolas Saenz Julienne wrote:
+> > On the Raspberry Pi 4, after a PCI reset, VL805's firmware may either b=
+e
+> > loaded directly from an EEPROM or, if not present, by the SoC's
+> > VideCore. The function informs VideCore that VL805 was just reset, or
+> > requests for a probe defer.
+> >=20
+> > Based on Tim Gover's downstream implementation.
+> >=20
+> > Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> > ---
+>=20
+> [snip]
+>=20
+>=20
+> > diff --git a/include/soc/bcm2835/raspberrypi-firmware.h
+> > b/include/soc/bcm2835/raspberrypi-firmware.h
+> > index cc9cdbc66403..a37c3a461d2a 100644
+> > --- a/include/soc/bcm2835/raspberrypi-firmware.h
+> > +++ b/include/soc/bcm2835/raspberrypi-firmware.h
+> > @@ -8,6 +8,7 @@
+> > =20
+> >  #include <linux/types.h>
+> >  #include <linux/of_device.h>
+> > +#include <linux/pci.h>
+>=20
+> I would move this inclusion where we need it, which is in
+> drivers/firmware/raspberrypi.c and only provide a forward declaration
+> here (avoids needless rebuilds).
+
+Noted
+
+
+--=-9L+CAkWKlVlZC8VcHjhe
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl5OtqQACgkQlfZmHno8
+x/5/BQf/Q7Dm3FnyxJnB6OEt0XKSK9nzNb/iq0RrYo9FcRhaWHUkzfbR5o+SIcVP
+vcd3a/3jKnNsczupJqC6NrBtAsAmxQnyxgUJ0QyZ39+0U7GOzBZ6mGZqf9zSNHQL
+feOHiAdV/dg8mG/pSFp13f+nDbACArTdk5+w72u+goZtc8RzOC8OZA0eAXDS3YDD
+D7nbAm4KsDleR/3yygc58it5DONAvPy0Zf/Afek+CtSqMvOCvZtyPEqQ7x6buJCb
+UURCuwxRPRq165Ebja2eUhsJKou6t/eMzbiXK+ZfwaNDGsUDhKYcGp5JCkjGT+NO
+LHEUOVY4+VPrliTKoP4Z2QGMDHm3Aw==
+=6Ngk
+-----END PGP SIGNATURE-----
+
+--=-9L+CAkWKlVlZC8VcHjhe--
+
