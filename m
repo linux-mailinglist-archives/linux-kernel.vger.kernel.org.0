@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B764A165949
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 09:35:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B218C165958
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 09:36:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbgBTIf5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 03:35:57 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46008 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726501AbgBTIfz (ORCPT
+        id S1727393AbgBTIgP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 03:36:15 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36716 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726940AbgBTIf4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 03:35:55 -0500
-Received: by mail-pg1-f193.google.com with SMTP id b9so1558506pgk.12
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 00:35:54 -0800 (PST)
+        Thu, 20 Feb 2020 03:35:56 -0500
+Received: by mail-pl1-f195.google.com with SMTP id a6so1280932plm.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 00:35:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=HWD5EoDnyMEVvpGTdgYdYgLmYJyVRNy3T597G1z67yk=;
-        b=u2FtSKFX4CacAKc8xWvJmhxD5qhhvbDyLNtsCKVsbW1YAKLuZBig5n/p3kq7e8EU11
-         A2acQdgTcIYY9/kwND534EI9ZMMShoCdkmAQpIPWxLnz962zv2gfqDQq/4K6ylaR9Jbo
-         SyrMJL+10pzYzYGLSs/1D1e0s6OEJazqdlzokcnEWs7xeO1Ss6ibEz9huIEXImHUxqtM
-         Ej1JkK/PfA1iy+ho3uFebNt8Xh+0xOR8p/omxgOGvMiXm7Vj42KJnX4CsdB651XJjT1g
-         /kyf+TQlbPI6znulHlYcWYzg6BnCPDZY0DiAujkZHHj8DM9QToA0H/ofmXjyMrjpL3DE
-         sU/Q==
+        bh=wYQONlA9lvcFld0G+NwhV5rBbyIu6fNUKkg/bhapB14=;
+        b=N+fgwF/6e6JTKFlrJgQIRnbOLpsKCtZYnIYWWcKNnfKNY9CCUMr6V9Gw9TGF6pjJIB
+         EHSAyjOJyfeCwqQkmI4hUnJOnoferabWuW52Jemsyz3ozxX45q3P64AnHJpigGKXMWzg
+         wBZNL9EgTQWFnkbTSNbeoeGpldgIni5ogrZfMmarImqShr+dejWNmNW96uI2OQSM/DiG
+         TbWyOd6OuhzcE+KwC0rYa/X8GMZFSoOWT0/63ZQIGG5D9x0EvG1IvBxr9J8jYpAcdO0a
+         4Za6FD12Z2xqA0PCoc8lNH2bo+yCBkGwRyZmRXN6uApIHstunbaeA/WX/yObPRwoUFUG
+         f+NQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=HWD5EoDnyMEVvpGTdgYdYgLmYJyVRNy3T597G1z67yk=;
-        b=BYyyH37JgRi8E3uoHHc4XSZWtsAMPlmn4pd16udcCYqYrbbNdGMrldVVvIPKSNGVaq
-         8+h8Kca/wBTksvnOLfG3++Hyacg/bTduqiXRgWTsb82lIDzz4KAf4hDEiO/1gbApJPnK
-         kZMoyEYygXsRYY5XdMtojTl4IB8Ejmho9TQ5jjJQLD6Wlr0k6CftYceBZzi+GTEcTEst
-         wORw9P5adoj3Kjuoy5Q/dFKBB7M1+VxpR/SHoB8t8irpjZnBDT6MDRe2kK13Ybg0skak
-         t66KA1Q+/pBMylYXJ0xvxNui4YEPvRz9Z1wS+1pFm/t2JpMpqt8VcIWPTt90MizYo67V
-         8zpw==
-X-Gm-Message-State: APjAAAWf6uYfD5oKGvgHmN8ctdqnaEoX5ldFrqCNsEXcGcvyvvMaf6oT
-        uXm/kNrhbYa6tt76r3YiQmE=
-X-Google-Smtp-Source: APXvYqzs7/Gqt1xQfGHj7U15rIDiPo8TglS71njYt+orbfTk1syKkenp7pbBfokhD2s4o1o8orXINg==
-X-Received: by 2002:a63:2c50:: with SMTP id s77mr13673718pgs.182.1582187754273;
-        Thu, 20 Feb 2020 00:35:54 -0800 (PST)
+        bh=wYQONlA9lvcFld0G+NwhV5rBbyIu6fNUKkg/bhapB14=;
+        b=jnFT6diFITU+b5gHGaIu7Dk2ppvu7UIeP3+k3evXq8Z3+iPTvqfvK6rq45a9G6u/0A
+         8cQwc6PSofVkmz1uuwk6nlQyTm/a3tCRzGV/53n2ekEaMoVez7IJ1itrCAVh0pY9sk8j
+         Q9r7msR0suJNt2NKwvwbxvJlfO4ZLjv7BQ2OwK83lLoomcTghaMyQBE6as3Im09dgcCS
+         AaRPMeUqV2RA/bnXfNCT8fM/3HBnTaymiAKx8RDZlty+yrsR6BvS1FRBXtoY7BeKQHcT
+         EvGAol7uWO1DdBCYBxNG6Y++AXP64JwkK2f5JIaHeQs+UHVk/nrUoL9lWVnasqeRplnv
+         D7Dw==
+X-Gm-Message-State: APjAAAVL3ixtTod76Pm7EmOlz1Nh23HUE7R5mb+sAshFTbVg2jKpcfDi
+        5Noz5/lQ7WsJlxaCqEUF1NI=
+X-Google-Smtp-Source: APXvYqwAMzlg3ox1kckOd8OArhVChc+fFh1B8FYzsDIg77886p2/0Fs+/up3ECkbKsMtzNNlm8jUUQ==
+X-Received: by 2002:a17:90a:c216:: with SMTP id e22mr2300961pjt.134.1582187755353;
+        Thu, 20 Feb 2020 00:35:55 -0800 (PST)
 Received: from anarsoul-thinkpad.lan (216-71-213-236.dyn.novuscom.net. [216.71.213.236])
-        by smtp.gmail.com with ESMTPSA id l13sm2319038pjq.23.2020.02.20.00.35.53
+        by smtp.gmail.com with ESMTPSA id l13sm2319038pjq.23.2020.02.20.00.35.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2020 00:35:53 -0800 (PST)
+        Thu, 20 Feb 2020 00:35:54 -0800 (PST)
 From:   Vasily Khoruzhick <anarsoul@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Sam Ravnborg <sam@ravnborg.org>,
@@ -69,9 +69,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
 Cc:     Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: [PATCH 1/6] drm/bridge: anx6345: Fix getting anx6345 regulators
-Date:   Thu, 20 Feb 2020 00:35:03 -0800
-Message-Id: <20200220083508.792071-2-anarsoul@gmail.com>
+Subject: [PATCH 2/6] drm/bridge: anx6345: Clean up error handling in probe()
+Date:   Thu, 20 Feb 2020 00:35:04 -0800
+Message-Id: <20200220083508.792071-3-anarsoul@gmail.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200220083508.792071-1-anarsoul@gmail.com>
 References: <20200220083508.792071-1-anarsoul@gmail.com>
@@ -82,38 +82,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Samuel Holland <samuel@sholland.org>
+devm_regulator_get() returns either a dummy regulator or -EPROBE_DEFER,
+we don't need to print scary message in either case.
 
-We don't need to pass '-supply' suffix to devm_get_regulator()
-
-Fixes: 6aa192698089 ("drm/bridge: Add Analogix anx6345 support")
-Signed-off-by: Samuel Holland <samuel@sholland.org>
 Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
 ---
- drivers/gpu/drm/bridge/analogix/analogix-anx6345.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/bridge/analogix/analogix-anx6345.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c b/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c
-index 56f55c53abfd..0d8d083b0207 100644
+index 0d8d083b0207..0204bbe4f0a0 100644
 --- a/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c
 +++ b/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c
-@@ -712,14 +712,14 @@ static int anx6345_i2c_probe(struct i2c_client *client,
- 		DRM_DEBUG("No panel found\n");
+@@ -713,17 +713,13 @@ static int anx6345_i2c_probe(struct i2c_client *client,
  
  	/* 1.2V digital core power regulator  */
--	anx6345->dvdd12 = devm_regulator_get(dev, "dvdd12-supply");
-+	anx6345->dvdd12 = devm_regulator_get(dev, "dvdd12");
- 	if (IS_ERR(anx6345->dvdd12)) {
- 		DRM_ERROR("dvdd12-supply not found\n");
+ 	anx6345->dvdd12 = devm_regulator_get(dev, "dvdd12");
+-	if (IS_ERR(anx6345->dvdd12)) {
+-		DRM_ERROR("dvdd12-supply not found\n");
++	if (IS_ERR(anx6345->dvdd12))
  		return PTR_ERR(anx6345->dvdd12);
- 	}
+-	}
  
  	/* 2.5V digital core power regulator  */
--	anx6345->dvdd25 = devm_regulator_get(dev, "dvdd25-supply");
-+	anx6345->dvdd25 = devm_regulator_get(dev, "dvdd25");
- 	if (IS_ERR(anx6345->dvdd25)) {
- 		DRM_ERROR("dvdd25-supply not found\n");
+ 	anx6345->dvdd25 = devm_regulator_get(dev, "dvdd25");
+-	if (IS_ERR(anx6345->dvdd25)) {
+-		DRM_ERROR("dvdd25-supply not found\n");
++	if (IS_ERR(anx6345->dvdd25))
  		return PTR_ERR(anx6345->dvdd25);
+-	}
+ 
+ 	/* GPIO for chip reset */
+ 	anx6345->gpiod_reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
 -- 
 2.25.0
 
