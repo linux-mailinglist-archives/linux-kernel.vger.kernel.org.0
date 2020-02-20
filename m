@@ -2,146 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 566C816648C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 18:25:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE8B61664BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 18:26:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728829AbgBTRZa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 12:25:30 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52092 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728217AbgBTRZa (ORCPT
+        id S1728986AbgBTR0U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 12:26:20 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:46991 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728386AbgBTR0R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 12:25:30 -0500
-Received: by mail-wm1-f65.google.com with SMTP id t23so2892334wmi.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 09:25:28 -0800 (PST)
+        Thu, 20 Feb 2020 12:26:17 -0500
+Received: by mail-pl1-f196.google.com with SMTP id y8so1789999pll.13;
+        Thu, 20 Feb 2020 09:26:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thegoodpenguin-co-uk.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=6yo/wEFYTgODGKnbWEUDj+nf8O3PSpjHxesG5sknQ/A=;
-        b=KYzgbjNX1K0CzUdOqySZxyADNE1VkZOd+lFmYKJzXNKvDdxhmo4+L5Z+A9zUWAZm6Y
-         MXOaTeHGZYDQeZuL9/XRuAHG6o5QpfwBWIuhIi5k5Fh112a1u4Fy+65475Ko8TjrjHTu
-         FgBtGghky4L0w6i64qMwjwuWxgYOPPL2kH1i7YYoOQOnEglhbyux1AeBVzsvu79Qb9yH
-         cVXsZLya4qevlYaCviYxBRU7Rp93DncQYLGRYjBwiKZSlR8z36kiIve9ZIjVmQdw3uaF
-         Q0wZ0sFjblB5LjlFdl3ZxALrBPX/05fn/MH2oRzRc5ZYx3PmJCjJ7Q8CsgXrKtlI95ne
-         kXwQ==
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=rd9V9UVot8QU4dxlhd2hiItv4T8JnKu0tmvJU9d76Mc=;
+        b=DVJVOjF/NpMyaCti9AT2IcWEgTOh97ItS+8v/GkN/axFHO6cpdKDcNjVaIYzNsuW4d
+         pWVzXr8VWbeXYsSazvJEpGEylMBOahWyJ4WkjtDLIB2j7HIy6OgrIKmpVWyWmhsWa/y1
+         6UCKir+Oze+XMJ6f94yZ3zOWO86YlzTcvXmwK5CyBXMR4Pt2nNef7jVpLkvk/xLN5FRO
+         EiHyf9bVz8GkJ7LlFTTAUxMHwqGZMPls8OY2nXQ9iWn4OUMD145nBXumjibd4qk3sJGK
+         UgPkVby+Eqk8+08do88I0FqUrgGwFmu047iGhPxL4qKsTQxYoVkh3PfaTwgGuq3TA/sN
+         4Y1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=6yo/wEFYTgODGKnbWEUDj+nf8O3PSpjHxesG5sknQ/A=;
-        b=F3w9UIgUoC9/tl3B9gJZTho2PNFf4BXu+zXcX3B+DNgYMROq4irrqaIXBH7GMbwPTA
-         jzWcvNp5s63ScEZ7L8XrAYU22YpZYjN1bDKzVqGJ8BLSB8u1ZirP3GNS68a1wM6meToH
-         FSS68b0JsFGOjCXM0DFnpbcX8cJILW6B9MG66D2H68b8y4ecKMl/HgOf+6V40JQh0RxL
-         jJne9J/0+D7wenQDkcAM59q67fxuq4sdhch/o0KvEitaULwNbWS4ofYMVEFD8Okh/TdS
-         LIdAIbsBYdnEKyfIwN9xtztmdyJl9Q2z5D16ofFfsD6qAzgLKz4pFGzWbZqSw97QOsT7
-         EtNw==
-X-Gm-Message-State: APjAAAUHT3YrkvU4Ehzo2/jiyOKQ3qJYvmbsrGBrm8Qxr81pcCFL3sqL
-        TEC0TltkLx4302PYmbw7aPuR5w==
-X-Google-Smtp-Source: APXvYqxFOHbigA4u8XgOj9oDgXx9MToMJN0LilNw8H81qX/4WzYdOGoBOHPXL6cb43VJZ9gbrJzAmQ==
-X-Received: by 2002:a7b:c8c5:: with SMTP id f5mr5442945wml.44.1582219528295;
-        Thu, 20 Feb 2020 09:25:28 -0800 (PST)
-Received: from big-machine ([2a00:23c5:dd80:8400:98d8:49e6:cdcc:25df])
-        by smtp.gmail.com with ESMTPSA id r1sm267897wrx.11.2020.02.20.09.25.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2020 09:25:27 -0800 (PST)
-Date:   Thu, 20 Feb 2020 17:25:25 +0000
-From:   Andrew Murray <amurray@thegoodpenguin.co.uk>
-To:     Zhiqiang Hou <Zhiqiang.Hou@nxp.com>
-Cc:     linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bhelgaas@google.com, robh+dt@kernel.org, andrew.murray@arm.com,
-        arnd@arndb.de, mark.rutland@arm.com, l.subrahmanya@mobiveil.co.in,
-        shawnguo@kernel.org, m.karthikeyan@mobiveil.co.in,
-        leoyang.li@nxp.com, lorenzo.pieralisi@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com, Mingkai.Hu@nxp.com,
-        Minghuan.Lian@nxp.com, Xiaowei.Bao@nxp.com
-Subject: Re: [PATCHv10 05/13] PCI: mobiveil: Add callback function for
- interrupt initialization
-Message-ID: <20200220172525.GG19388@big-machine>
-References: <20200213040644.45858-1-Zhiqiang.Hou@nxp.com>
- <20200213040644.45858-6-Zhiqiang.Hou@nxp.com>
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=rd9V9UVot8QU4dxlhd2hiItv4T8JnKu0tmvJU9d76Mc=;
+        b=qC9plWDVAz+9o5T2Usn6Bv+YB4TEdvT16ihDnZp3QTTZGTBfy22JBDzWm5DwSO5xmF
+         BV2qnhmJxPdFMZW/ZjGavHEBcPMFok07FJ5obn209XJ7MglBFl0UyN2/7kuiMEGXyMu6
+         uPkHqOKaXisS37ZqWwtpegUVkJ6RyFbiWDaa4sN96djKFU7jOCKL4jNNXYWJZ9wcTeut
+         ZeET4qtoH5GYvs3lMa+brrmQR22hQ5zsMyqgCaMCG2fDkB65uel0W5jJrS+6c78Ugnvd
+         Tr2tS+St6eZ9pkDqQ2BU92i042XKqdikYsmQAlTc6+VshdYGVLJWO48zxXafgDsLCpFA
+         axGQ==
+X-Gm-Message-State: APjAAAVf2+ND9h3krY5n2rdzqZs9QkeWQqlgt5OR4d3oPvHQjCho0lze
+        0J4h6f+xkJZ8Uiipl1cwJSM=
+X-Google-Smtp-Source: APXvYqzzYrRNU74LyvTtgsiXF8m+qglQOpoFbG3DJDW9Hmj/MkCj/EzGIFcOmbG/UgoZKBG8o9QuvQ==
+X-Received: by 2002:a17:902:fe13:: with SMTP id g19mr32897315plj.216.1582219576802;
+        Thu, 20 Feb 2020 09:26:16 -0800 (PST)
+Received: from ast-mbp ([2620:10d:c090:500::5:f03d])
+        by smtp.gmail.com with ESMTPSA id c3sm177528pfj.159.2020.02.20.09.26.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Feb 2020 09:26:15 -0800 (PST)
+Date:   Thu, 20 Feb 2020 09:26:13 -0800
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     "Bird, Tim" <Tim.Bird@sony.com>
+Cc:     Jesper Dangaard Brouer <brouer@redhat.com>,
+        shuah <shuah@kernel.org>,
+        Daniel =?utf-8?B?RMOtYXo=?= <daniel.diaz@linaro.org>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        BPF-dev-list <bpf@vger.kernel.org>,
+        Daniel Borkmann <borkmann@iogearbox.net>,
+        David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+Subject: Re: Kernel 5.5.4 build fail for BPF-selftests with latest LLVM
+Message-ID: <20200220172612.7aqmiwrnizgsukvm@ast-mbp>
+References: <20200219180348.40393e28@carbon>
+ <CAEf4Bza9imKymHfv_LpSFE=kNB5=ZapTS3SCdeZsDdtrUrUGcg@mail.gmail.com>
+ <20200219192854.6b05b807@carbon>
+ <CAEf4BzaRAK6-7aCCVOA6hjTevKuxgvZZnHeVgdj_ZWNn8wibYQ@mail.gmail.com>
+ <20200219210609.20a097fb@carbon>
+ <CAEUSe79Vn8wr=BOh0RzccYij_snZDY=2XGmHmR494wsQBBoo5Q@mail.gmail.com>
+ <20200220002748.kpwvlz5xfmjm5fd5@ast-mbp>
+ <4a26e6c6-500e-7b92-1e26-16e1e0233889@kernel.org>
+ <20200220173740.7a3f9ad7@carbon>
+ <MWHPR13MB0895649219625C5F7380314FFD130@MWHPR13MB0895.namprd13.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20200213040644.45858-6-Zhiqiang.Hou@nxp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <MWHPR13MB0895649219625C5F7380314FFD130@MWHPR13MB0895.namprd13.prod.outlook.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 12:06:36PM +0800, Zhiqiang Hou wrote:
-> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+On Thu, Feb 20, 2020 at 05:02:25PM +0000, Bird, Tim wrote:
 > 
-> The Mobiveil GPEX internal MSI/INTx controller may not be used
-> by other platforms in which the Mobiveil GPEX is integrated.
-> This patch is to allow these platforms to implement their
-> specific interrupt initialization.
 > 
-> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> > -----Original Message-----
+> > From:  Jesper Dangaard Brouer
+> > 
+> > On Wed, 19 Feb 2020 17:47:23 -0700
+> > shuah <shuah@kernel.org> wrote:
+> > 
+> > > On 2/19/20 5:27 PM, Alexei Starovoitov wrote:
+> > > > On Wed, Feb 19, 2020 at 03:59:41PM -0600, Daniel Díaz wrote:
+> > > >>>
+> > > >>> When I download a specific kernel release, how can I know what LLVM
+> > > >>> git-hash or version I need (to use BPF-selftests)?
+> > > >
+> > > > as discussed we're going to add documentation-like file that will
+> > > > list required commits in tools.
+> > > > This will be enforced for future llvm/pahole commits.
+> > > >
+> > > >>> Do you think it is reasonable to require end-users to compile their own
+> > > >>> bleeding edge version of LLVM, to use BPF-selftests?
+> > > >
+> > > > absolutely.
+> 
+> Is it just the BPF-selftests that require the bleeding edge version of LLVM,
+> or do BPF features themselves need the latest LLVM.  If the latter, then this
+> is quite worrisome, and I fear the BPF developers are getting ahead of themselves.
+> We don't usually have a kernel dependency on the latest compiler version (some
+> recent security fixes are an anomaly).  In fact deprecating support for older compiler
+> versions has been quite slow and methodical over the years.
+> 
+> It's quite dangerous to be baking stuff into the kernel that depends on features
+> from compilers that haven't even made it to release yet.
+> 
+> I'm sorry, but I'm coming into the middle of this thread.  Can you please explain
+> what the features are in the latest LLVM that are required for BPF-selftests?
 
-Reviewed-by: Andrew Murray <amurray@thegoodpenguin.co.uk>
+Above is correct. bpf kernel features do depend on the latest pahole and llvm
+features that did not make it into a release. That was the case for many years
+now and still the case. The first commit 8 years ago relied on something that
+can generate those instructions. For many years llvm was the only compiler that
+could generate them. Right now there is GCC backend as well. New features (like
+new instructions) depend on the compiler.
 
-> ---
-> V10:
->  - Introduced a helper function mobiveil_pcie_integrated_interrupt_init().
-> 
->  drivers/pci/controller/mobiveil/pcie-mobiveil-host.c | 12 +++++++++++-
->  drivers/pci/controller/mobiveil/pcie-mobiveil.h      |  7 +++++++
->  2 files changed, 18 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c b/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
-> index ea90d2f8692e..53ab8412a1de 100644
-> --- a/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
-> +++ b/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
-> @@ -499,7 +499,7 @@ static int mobiveil_pcie_init_irq_domain(struct mobiveil_pcie *pcie)
->  	return 0;
->  }
->  
-> -static int mobiveil_pcie_interrupt_init(struct mobiveil_pcie *pcie)
-> +static int mobiveil_pcie_integrated_interrupt_init(struct mobiveil_pcie *pcie)
->  {
->  	struct platform_device *pdev = pcie->pdev;
->  	struct device *dev = &pdev->dev;
-> @@ -539,6 +539,16 @@ static int mobiveil_pcie_interrupt_init(struct mobiveil_pcie *pcie)
->  	return 0;
->  }
->  
-> +static int mobiveil_pcie_interrupt_init(struct mobiveil_pcie *pcie)
-> +{
-> +	struct mobiveil_root_port *rp = &pcie->rp;
-> +
-> +	if (rp->ops->interrupt_init)
-> +		return rp->ops->interrupt_init(pcie);
-> +
-> +	return mobiveil_pcie_integrated_interrupt_init(pcie);
-> +}
-> +
->  int mobiveil_pcie_host_probe(struct mobiveil_pcie *pcie)
->  {
->  	struct mobiveil_root_port *rp = &pcie->rp;
-> diff --git a/drivers/pci/controller/mobiveil/pcie-mobiveil.h b/drivers/pci/controller/mobiveil/pcie-mobiveil.h
-> index 81ffbbd48c08..0e6b5468c026 100644
-> --- a/drivers/pci/controller/mobiveil/pcie-mobiveil.h
-> +++ b/drivers/pci/controller/mobiveil/pcie-mobiveil.h
-> @@ -130,10 +130,17 @@ struct mobiveil_msi {			/* MSI information */
->  	DECLARE_BITMAP(msi_irq_in_use, PCI_NUM_MSI);
->  };
->  
-> +struct mobiveil_pcie;
-> +
-> +struct mobiveil_rp_ops {
-> +	int (*interrupt_init)(struct mobiveil_pcie *pcie);
-> +};
-> +
->  struct mobiveil_root_port {
->  	char root_bus_nr;
->  	void __iomem *config_axi_slave_base;	/* endpoint config base */
->  	struct resource *ob_io_res;
-> +	struct mobiveil_rp_ops *ops;
->  	int irq;
->  	raw_spinlock_t intx_mask_lock;
->  	struct irq_domain *intx_domain;
-> -- 
-> 2.17.1
-> 
+selftests/bpf are not testing kernel's bpf features. They are testing the whole
+bpf ecosystem. They test llvm, pahole, libbpf, bpftool, and kernel together.
+Hence it's a requirement to install the latest pahole and llvm.
+
+When I'm talking about selftests/bpf I'm talking about all the tests in that
+directory combined. There are several unit tests scattered across repos. The
+unit tests for llvm bpf backend are inside llvm repo.
+selftests/bpf/test_verifier and test_maps are unit tests for the verifier and
+for maps. They are llvm independent. They test a combination of kernel and
+libbpf only. But majority of the selftests/bpf are done via test_progs which
+are the whole ecosystem tests.
