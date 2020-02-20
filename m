@@ -2,184 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF554166AE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 00:22:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0431C166AE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 00:22:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729376AbgBTXWZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 18:22:25 -0500
-Received: from mga06.intel.com ([134.134.136.31]:29032 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729330AbgBTXWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 18:22:22 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2020 15:22:20 -0800
-X-IronPort-AV: E=Sophos;i="5.70,466,1574150400"; 
-   d="scan'208";a="225026470"
-Received: from jbrandeb-desk.jf.intel.com ([10.166.244.152])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2020 15:22:20 -0800
-From:   Jesse Brandeburg <jesse.brandeburg@intel.com>
-To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de
-Cc:     Jesse Brandeburg <jesse.brandeburg@intel.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk,
-        andriy.shevchenko@intel.com, dan.j.williams@intel.com,
-        peterz@infradead.org
-Subject: [PATCH v3 2/2] lib: make a test module with set/clear bit
-Date:   Thu, 20 Feb 2020 15:21:55 -0800
-Message-Id: <20200220232155.2123827-2-jesse.brandeburg@intel.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200220232155.2123827-1-jesse.brandeburg@intel.com>
-References: <20200220232155.2123827-1-jesse.brandeburg@intel.com>
+        id S1729301AbgBTXWS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 18:22:18 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:50459 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729027AbgBTXWS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 18:22:18 -0500
+Received: by mail-wm1-f65.google.com with SMTP id a5so339026wmb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 15:22:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lAGe+i3LubNXS3mS7OrXMjcEN50SIJqaNo7uJEQXNWE=;
+        b=h7MnYZvECmHl3d29/SfmjKEd2LO8J5IoeA+e1M3u9qBoVgt/hMmnLnnjXNhCldskHc
+         N3OAUX5vmVPJwhJ7mWSTCmnQvav8xtNMCiGPHayj/pYGaIK+eTMZ6LM+f0YSJZcVR/Eh
+         yhwPl/cjAtvlV3sa8TMz5OjHPoBeGFlsK78OPR7u4O2ooTwW2J+ceuyxZcJcF0Hvuiyt
+         XRMlrhyYAWDgQUon2AWvtHTVHdEKp4CzcQtYmwIfQPMgpBgaJOuz0pejKhf8PPeoYcs8
+         mz3Uvn1gCW3kOO43eH10vmM0Q/fGvZfp/1Q1DIQ60zTvSvUZJJbkRL5euHkz5TvS6TDo
+         En1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lAGe+i3LubNXS3mS7OrXMjcEN50SIJqaNo7uJEQXNWE=;
+        b=VuUXLjRHI0enJJF+Pv67YaYxdB/IOuz3tTLul7xL1aR8UiVz5ytioox9dbcAvw9yeA
+         7EVjFmUOIK+uOBIs7VMomhbquBjev5EoOvHQvyXg19BmqVzlLYG3/rdIvZcMElkVHP3G
+         ldOTyAAff1E3PKMb9kOXic2OXqgrR1UdV+WrWW0Cyoo2ns7A01q0PCBzOmVtTHonxUCb
+         WGE/calWpUSeQGLFh0QPe7jQh6SCA23uZREZuZF5gsbq/i3bp6uUGEcQR43g2RmCzAeC
+         5q12oeFcKRALKsKW++i1snPiI+e9yszoxIpah4MmEUYC5rZMnuX3nvJifxJZkkNlYY+Q
+         L2nA==
+X-Gm-Message-State: APjAAAU+fulmJX3jsBhB7fRRjAvFP+3hwKOtQfN9vSwxQ8/QdQk1q3HM
+        7tHEbuel0TVxDuNXd6/a+b8YXr+3mJRVkNduSsv6Bg==
+X-Google-Smtp-Source: APXvYqzD9Lsa2RnghfzDZKCPGUHchYplA9ZvVVBuCIjF1ONPxRB4HOMNohwpiCmhi3B6eXhmolZ9tM47vt7IZRDf7gs=
+X-Received: by 2002:a1c:9ad6:: with SMTP id c205mr6672584wme.78.1582240935818;
+ Thu, 20 Feb 2020 15:22:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200217145711.4af495a3@canb.auug.org.au> <CAOFY-A1nfPjf3EcQB6KiEifbFR+aUtdSgK=CHGt_k3ziSG6T_Q@mail.gmail.com>
+ <CAOFY-A3q_pmtHKAoOJdbB09wy=dxs9SdpXjCsU1wBxU5EDHVmw@mail.gmail.com> <20200221101845.21c0c8c5@canb.auug.org.au>
+In-Reply-To: <20200221101845.21c0c8c5@canb.auug.org.au>
+From:   Arjun Roy <arjunroy@google.com>
+Date:   Thu, 20 Feb 2020 15:22:04 -0800
+Message-ID: <CAOFY-A2ndGCSEDstOmXs-u1XjNsaj8wkLezYsMbzeZeVTJGC5g@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Miller <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Test some bit clears/sets to make sure assembly doesn't change, and
-that the set_bit and clear_bit functions work and don't cause sparse
-warnings.
+On Thu, Feb 20, 2020 at 3:18 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> On Sun, 16 Feb 2020 22:45:35 -0800 Arjun Roy <arjunroy@google.com> wrote:
+> >
+> > On Sun, Feb 16, 2020 at 8:12 PM Arjun Roy <arjunroy@google.com> wrote:
+> > >
+> > > On Sun, Feb 16, 2020 at 7:57 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > > >
+> > > > After merging the akpm tree, today's linux-next build (sparc64 defconfig)
+> > > > failed like this:
+> > > >
+> > > > mm/memory.c: In function 'insert_pages':
+> > > > mm/memory.c:1523:56: error: macro "pte_index" requires 2 arguments, but only 1 given
+> > > >    remaining_pages_total, PTRS_PER_PTE - pte_index(addr));
+> > > >                                                         ^
+> > > >
+> > > > Caused by commit
+> > > >
+> > > >   366142f0b000 ("mm/memory.c: add vm_insert_pages()")
+> > > >
+> > > > This is the first use of pte_index() outside arch specific code and the
+> > > > sparc64 version of pte_index() nas an extra argument.
+> > >
+> > > Looks like this happens for sparc, and also metag. Other platforms
+> > > just take the addr parameter based on a quick search.
+> >
+> > And actually I guess there's no metag anyways now.
+> > Looking further, then, it looks like in every non-sparc pte_index() is
+> > an actual numerical index, while on sparc it goes a step further to
+> > yield a pte_t *.
+> > As far as I can tell, the sparc incarnation of this is only used by
+> > the pte_offset_(kernel/map) macros.
+> >
+> > So I think a possibly sane way to fix this would be:
+> > 1. Define pte_index() to be a numerical index, like the other architectures,
+> > 2. Define something like pte_entry() that uses pte_index(), and
+> > 3. Have pte_offset_(kernel/map) be defined as pte_entry() instead.
+> >
+> > Then pte_index would be operating on just an address for all
+> > platforms, and the reverted patchset would work without any changes.
+> >
+> > If this sounds acceptable, I can send a patch.
+> >
+> > > > I have reverted these commits for today:
+> > > >
+> > > >   219ae14a9686 ("net-zerocopy-use-vm_insert_pages-for-tcp-rcv-zerocopy-fix")
+> > > >   cb912fdf96bf ("net-zerocopy: use vm_insert_pages() for tcp rcv zerocopy")
+> > > >   72c684430b94 ("add missing page_count() check to vm_insert_pages().")
+> > > >   dbd9553775f3 ("mm-add-vm_insert_pages-fix")
+> > > >   366142f0b000 ("mm/memory.c: add vm_insert_pages()")
+> > > >
+> > >
+> > > In terms of fixing this; passing in an appropriate dir parameter is
+> > > not really a problem, but what is concerning that it seems messy to
+> > > have a per-platform ifdef to pass it either two arguments or one in
+> > > this case. But it seems like either that would be one way to fix it,
+> > > or having some arch method across all arches that takes two arguments
+> > > (and ignores one of them for most arches).
+> > >
+> > > Is there a general preference for the right way forward, in this case?
+>
+> Has there been any progress with this?  I am still reverting the above
+> commits, so they are not getting any linux-next testing ...
+>
 
-Instruct Kbuild to build this file with extra warning level -Wextra,
-to catch new issues, and also doesn't hurt to build with C=1.
+I have a possible solution in mind, but it would involve a slight
+change in the SPARC macro (to be more inline with the semantics of the
+other platforms).
+If you're open to such a change, I can send it out.
 
-This was used to test changes to arch/x86/include/asm/bitops.h.
+Thanks,
+-Arjun
 
-In particular, sparse (C=1) was very concerned when the last bit
-before a natural boundary, like 7, or 31, was being tested, as this
-causes sign extension (0xffffff7f) for instance when clearing bit 7.
-
-Recommended usage:
-make defconfig
-scripts/config -m CONFIG_TEST_BITOPS
-make modules_prepare
-make C=1 W=1 lib/test_bitops.ko
-objdump -S -d lib/test_bitops.ko
-
-Signed-off-by: Jesse Brandeburg <jesse.brandeburg@intel.com>
-
----
-v3: update the test to fail if bits aren't cleared, and make the
-test reproduce the original issue without patch 1/2, showing that
-the issue is fixed in patch 1/2. Thanks PeterZ!
-v2: correct CC: list
----
- lib/Kconfig.debug                  | 13 +++++++
- lib/Makefile                       |  2 ++
- lib/test_bitops.c                  | 55 ++++++++++++++++++++++++++++++
- tools/testing/selftests/lib/config |  1 +
- 4 files changed, 71 insertions(+)
- create mode 100644 lib/test_bitops.c
-
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 69def4a9df00..61a5d00ea064 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1947,6 +1947,19 @@ config TEST_LKM
- 
- 	  If unsure, say N.
- 
-+config TEST_BITOPS
-+	tristate "Test module for compilation of clear_bit/set_bit operations"
-+	depends on m
-+	help
-+	  This builds the "test_bitops" module that is much like the
-+	  TEST_LKM module except that it does a basic exercise of the
-+	  clear_bit and set_bit macros to make sure there are no compiler
-+	  warnings from C=1 sparse checker or -Wextra compilations. It has
-+	  no dependencies and doesn't run or load unless explicitly requested
-+	  by name.  for example: modprobe test_bitops.
-+
-+	  If unsure, say N.
-+
- config TEST_VMALLOC
- 	tristate "Test module for stress/performance analysis of vmalloc allocator"
- 	default n
-diff --git a/lib/Makefile b/lib/Makefile
-index 611872c06926..b18db565b355 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -89,6 +89,8 @@ obj-$(CONFIG_TEST_OBJAGG) += test_objagg.o
- obj-$(CONFIG_TEST_STACKINIT) += test_stackinit.o
- obj-$(CONFIG_TEST_BLACKHOLE_DEV) += test_blackhole_dev.o
- obj-$(CONFIG_TEST_MEMINIT) += test_meminit.o
-+obj-$(CONFIG_TEST_BITOPS) += test_bitops.o
-+CFLAGS_test_bitops.o += -Werror
- 
- obj-$(CONFIG_TEST_LIVEPATCH) += livepatch/
- 
-diff --git a/lib/test_bitops.c b/lib/test_bitops.c
-new file mode 100644
-index 000000000000..97339d6455b0
---- /dev/null
-+++ b/lib/test_bitops.c
-@@ -0,0 +1,55 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/printk.h>
-+
-+/* a tiny module only meant to compile-test set/clear_bit */
-+
-+/* use an enum because thats the most common BITMAP usage */
-+enum bitops_fun {
-+	BITOPS_4 = 4,
-+	BITOPS_7 = 7,
-+	BITOPS_11 = 11,
-+	BITOPS_31 = 31,
-+	BITOPS_88 = 88,
-+	BITOPS_LAST = 255
-+};
-+
-+static DECLARE_BITMAP(g_bitmap, BITOPS_LAST);
-+
-+static int __init test_bitops_startup(void)
-+{
-+	pr_warn("Loaded test module\n");
-+	set_bit(BITOPS_4, g_bitmap);
-+	set_bit(BITOPS_7, g_bitmap);
-+	set_bit(BITOPS_11, g_bitmap);
-+	set_bit(BITOPS_31, g_bitmap);
-+	set_bit(BITOPS_88, g_bitmap);
-+	return 0;
-+}
-+
-+static void __exit test_bitops_unstartup(void)
-+{
-+	int bit_set;
-+
-+	clear_bit(BITOPS_4, g_bitmap);
-+	clear_bit(BITOPS_7, g_bitmap);
-+	clear_bit(BITOPS_11, g_bitmap);
-+	clear_bit(BITOPS_31, g_bitmap);
-+	clear_bit(BITOPS_88, g_bitmap);
-+
-+	bit_set = find_first_bit(g_bitmap, BITOPS_LAST);
-+	if (bit_set != BITOPS_LAST)
-+		pr_err("ERROR: FOUND SET BIT %d\n", bit_set);
-+
-+	pr_warn("Unloaded test module\n");
-+}
-+
-+module_init(test_bitops_startup);
-+module_exit(test_bitops_unstartup);
-+
-+MODULE_AUTHOR("Jesse Brandeburg <jesse.brandeburg@intel.com>");
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Bit testing module");
-diff --git a/tools/testing/selftests/lib/config b/tools/testing/selftests/lib/config
-index 14a77ea4a8da..b80ee3f6e265 100644
---- a/tools/testing/selftests/lib/config
-+++ b/tools/testing/selftests/lib/config
-@@ -2,3 +2,4 @@ CONFIG_TEST_PRINTF=m
- CONFIG_TEST_BITMAP=m
- CONFIG_PRIME_NUMBERS=m
- CONFIG_TEST_STRSCPY=m
-+CONFIG_TEST_BITOPS=m
--- 
-2.24.1
-
+> --
+> Cheers,
+> Stephen Rothwell
