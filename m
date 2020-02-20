@@ -2,156 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 692791657A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 07:31:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB69D1657A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 07:31:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726821AbgBTGbF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 01:31:05 -0500
-Received: from mail-eopbgr40079.outbound.protection.outlook.com ([40.107.4.79]:42308
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726379AbgBTGbF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 01:31:05 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MSl6TMNcIUKOAHxdA3znBJ7kskzpyRhkR3xdc2W+EclIyB28/JP9wbnbL9yaxzEmDLZQDelJNEf/H9ctuKE84TVJKQu/Xj6Qw66sPY00UEdIQA6Cx2aJdMv3HtaPYWtPwTNE+G0NGGO0OX4Zw2a1eNZz4iw3qSOEvriGV67Eu3py9bgCoKLxMrSozT2q4GDGiGWAQkRau6zzC+9YUPA9PhKE7xbOLflc3km/hfZhI7FFbpaQClvc92kpnv4dvfb8qNvvldQ+5+gCFw4CdXWBxCiCpBpIzX6D8vLmhIApJFEF+CZ74aEDq+qw/bYCAsW2TER9zQZcs1szY+mq1H3TCQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2DoQ2c0wWcVtlw44EiO8dgJ20B75pVwEVOAPkPcH9fA=;
- b=NkeGw/oX0dcMfm0RgBOhdPOmtSYHGtpn+PgAHq2PgGG01cYvI2D0+QUjA4GhUPeq71F/Nki3TmIWuO40hUv0A+79GrKSzQbwEeBvi0MIWIh1bcJwHI4GP5yt2idxvdpPRyT7Ip5nQ1/p8XjtklElv6AXe//jN93gKE5agLhOXjSmktDB++dmJXq9VTAggm1IZRzuquuHx319Pfuzcr55R0OM4uORXtNO80l55traMP7o8WuxUO+1XJt5JEaZfWJVCfYXij2PYtsHwB0Hp027KcGjElslMUzZ3mSfDEnSeVpAyaea0Z+3lG4KL9Rv59PCGBO1gmu8xLmlsgvSVBVRHA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2DoQ2c0wWcVtlw44EiO8dgJ20B75pVwEVOAPkPcH9fA=;
- b=DHbTLI7Z8bIM9Ctk8z/Tf5xTe/+kkGg+o82h+WiY9QqvudFMAr99LOzTnYY4mnjL7d/zqNbTsrLEhj4YXc7+NmTt+WLOaoIDHBeRxmx++NDMwiBXV1xVXaynFckUNJO7To7Hpei/Wz9puPaqS4ypEgr5xnIR6bBOZ5szvALVHEE=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-Received: from DB7PR04MB4490.eurprd04.prod.outlook.com (52.135.138.150) by
- DB7PR04MB4860.eurprd04.prod.outlook.com (20.176.233.17) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2729.29; Thu, 20 Feb 2020 06:30:27 +0000
-Received: from DB7PR04MB4490.eurprd04.prod.outlook.com
- ([fe80::59e6:140:b2df:a5b0]) by DB7PR04MB4490.eurprd04.prod.outlook.com
- ([fe80::59e6:140:b2df:a5b0%7]) with mapi id 15.20.2729.033; Thu, 20 Feb 2020
- 06:30:27 +0000
-From:   peng.fan@nxp.com
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de
-Cc:     festevam@gmail.com, kernel@pengutronix.de, linux-imx@nxp.com,
-        olof@lixom.net, aisheng.dong@nxp.com, leonard.crestez@nxp.com,
-        abel.vesa@nxp.com, krzk@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V4 2/2] soc: imx: increase build coverage for imx8m soc driver
-Date:   Thu, 20 Feb 2020 14:24:03 +0800
-Message-Id: <1582179843-14375-3-git-send-email-peng.fan@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1582179843-14375-1-git-send-email-peng.fan@nxp.com>
-References: <1582179843-14375-1-git-send-email-peng.fan@nxp.com>
-Content-Type: text/plain
-X-ClientProxiedBy: HK2PR02CA0133.apcprd02.prod.outlook.com
- (2603:1096:202:16::17) To DB7PR04MB4490.eurprd04.prod.outlook.com
- (2603:10a6:5:36::22)
+        id S1726885AbgBTGbP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 01:31:15 -0500
+Received: from mail-io1-f69.google.com ([209.85.166.69]:56110 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbgBTGbP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 01:31:15 -0500
+Received: by mail-io1-f69.google.com with SMTP id z21so1922785iob.22
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 22:31:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=DDqMJ8JPj7oJO/ZR8xGUg6VFAFuonxwUf5QT8gnpMlI=;
+        b=MAkelopB02icbiK4NbxVaHXoBrZ98GQcHLFDoelbiIkWH8Huhf17DaOBhinanqn4xe
+         kiMS0wb+7StfFvhwP9Ljwv91neKAsGFxTnQ9xsgG/hyWyAgLCrZ7de6Sz1SwNq6Fd7/b
+         lxmGMXWI0BaphGF2YeV5T+KCwZWMvT+h0WRJAxH2X3ts6l8J0gEoApiqazhw2h/Dpwt6
+         le4P37KAlCba3r3jAPItKSTp67bwRdRMyYVfE9fqfUOXN/O73Kc1wlT7C3Bv7URMUqfr
+         wicG8owJoTvHofy1Nm4FJpWgGi/XoU7Bh21E1f0mm4IH7fH+ZTnAVxD6NNTJpSbAG8y0
+         Hj2w==
+X-Gm-Message-State: APjAAAVjaG8pV90BLd66bC5YBApc+CaV+0kde9lT8qWXRdQbxltn1Ls8
+        qWBQGsWKpaPifRlwdBVroe0CyXnUKgFaV1RHwUz6IusOdxAD
+X-Google-Smtp-Source: APXvYqxOsNiTKh+qdqttr1Rz5Xoag30BA+Qf5UFs3ZfyNMV1nBh7iGpymuj0iWTB8mx5mFnbL62z472NbkKQFR/ecoPKcwCxKaZz
 MIME-Version: 1.0
-Received: from localhost.localdomain (119.31.174.66) by HK2PR02CA0133.apcprd02.prod.outlook.com (2603:1096:202:16::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2750.18 via Frontend Transport; Thu, 20 Feb 2020 06:30:23 +0000
-X-Mailer: git-send-email 2.7.4
-X-Originating-IP: [119.31.174.66]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 87f28521-a8a7-419e-e7dd-08d7b5ce5f8a
-X-MS-TrafficTypeDiagnostic: DB7PR04MB4860:|DB7PR04MB4860:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DB7PR04MB48607946E4DCEDA6456842A188130@DB7PR04MB4860.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6430;
-X-Forefront-PRVS: 031996B7EF
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(376002)(136003)(346002)(396003)(199004)(189003)(8936002)(6666004)(66946007)(66556008)(66476007)(81166006)(5660300002)(69590400006)(81156014)(8676002)(6486002)(9686003)(6512007)(4326008)(36756003)(478600001)(2906002)(86362001)(2616005)(16526019)(316002)(956004)(186003)(26005)(6506007)(52116002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4860;H:DB7PR04MB4490.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: RyZf88UBonv62gk8mOvjlhnDu3KyAX8ldpnEARUVrlQDa+ru3I5DBonPucyQBB5hNkwhntuhcd7yKnjGihKmm/s1ZcDFVrKLF0RHJgzwtjOAwLvW7Gj5hR3AU94BVBpJ221s8jXiYKwoPHi+nd4mRqbTmmwdNLUUOQVK5/Xls/qGeaJkyAPmn7ENT/RK6PqeSHyiUlxkJETDcQTaFTImdPMMfMRFApMgbht+b+9FBjlg6IrRkPSXwJ52tDfcGOtybCS9v9vr8yZtCLU3cfwKnod8VUwUCH7UPA/V3h7W7xchIRpQ+SWvd02kq+XXq0nyFIa4fYCOdMKzpcjdCr31Nx6m+dfgUPj8Jn/4CNk0qseugxbpmV5aYeKRKNac5Z1B/LnTajZbhSZbZCZyFdLZBsP+gjGTmAX8EoQm6SY0pFQlLHzaT+qIsUQF4bQTDFJ9iWC4fK3MeEECwvrWHtNIUhOshQYNstPcSk8l9m9LxokkiONKjc502Qu7RMT0Gn4ugYYLoL9AB7Z/HeVRm/eh1BXaZdU2kyf2VXjUAyYMhB+I6nqugVz9KIqnjfoO5ZMH
-X-MS-Exchange-AntiSpam-MessageData: bPg24R6C5x3zwL9lQpAgNdSRZl3Ydtyn74tpgLaiiCNR6zWPfjioZqH4FiyBQu2S4kOzQGudQmphGWWnMPLSL7S+Vofpc3yBJfoOquzf372b5EKakLv+Tlvht/ndkiK510kF7Ts2qn87PQWR6q9LAg==
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 87f28521-a8a7-419e-e7dd-08d7b5ce5f8a
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2020 06:30:26.9182
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AHDahOaHNROd1xiXUTXymQ9ggULmsEx+h7JHMTmuP227lrtasTNSdGLgdSIL/z9DzNV5F0oW5HOAE9vFLzIHzQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4860
+X-Received: by 2002:a92:cb8c:: with SMTP id z12mr26095480ilo.5.1582180274590;
+ Wed, 19 Feb 2020 22:31:14 -0800 (PST)
+Date:   Wed, 19 Feb 2020 22:31:14 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003cdd26059efc0db3@google.com>
+Subject: KASAN: null-ptr-deref Write in kcm_tx_work
+From:   syzbot <syzbot+867331f5ea7690d840b4@syzkaller.appspotmail.com>
+To:     andriin@fb.com, ast@kernel.org, bpf@vger.kernel.org,
+        daniel@iogearbox.net, davem@davemloft.net, edumazet@google.com,
+        jslaby@suse.cz, kafai@fb.com, kuba@kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        songliubraving@fb.com, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, willy@infradead.org, yhs@fb.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+Hello,
 
-The soc-imx8.c driver is actually for i.MX8M family, so rename it
-to soc-imx8m.c.
+syzbot found the following crash on:
 
-Use CONFIG_SOC_IMX8M as build gate, not CONFIG_ARCH_MXC, to control
-whether build this driver, also make it possible for compile test.
+HEAD commit:    2019fc96 Merge git://git.kernel.org/pub/scm/linux/kernel/g..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=159f2701e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=735296e4dd620b10
+dashboard link: https://syzkaller.appspot.com/bug?extid=867331f5ea7690d840b4
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-Default set it to y for ARCH_MXC && ARM64
+Unfortunately, I don't have any reproducer for this crash yet.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
-Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+867331f5ea7690d840b4@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: null-ptr-deref in clear_bit include/asm-generic/bitops/instrumented-atomic.h:41 [inline]
+BUG: KASAN: null-ptr-deref in kcm_tx_work+0x10e/0x170 net/kcm/kcmsock.c:743
+Write of size 8 at addr 0000000000000008 by task kworker/u4:4/280
+
+CPU: 0 PID: 280 Comm: kworker/u4:4 Not tainted 5.6.0-rc1-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: kkcmd kcm_tx_work
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x197/0x210 lib/dump_stack.c:118
+ __kasan_report.cold+0x5/0x32 mm/kasan/report.c:510
+ kasan_report+0x12/0x20 mm/kasan/common.c:641
+ check_memory_region_inline mm/kasan/generic.c:185 [inline]
+ check_memory_region+0x134/0x1a0 mm/kasan/generic.c:192
+ __kasan_check_write+0x14/0x20 mm/kasan/common.c:101
+ clear_bit include/asm-generic/bitops/instrumented-atomic.h:41 [inline]
+ kcm_tx_work+0x10e/0x170 net/kcm/kcmsock.c:743
+ process_one_work+0xa05/0x17a0 kernel/workqueue.c:2264
+ worker_thread+0x98/0xe40 kernel/workqueue.c:2410
+ kthread+0x361/0x430 kernel/kthread.c:255
+ ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+==================================================================
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 280 Comm: kworker/u4:4 Tainted: G    B             5.6.0-rc1-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: kkcmd kcm_tx_work
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x197/0x210 lib/dump_stack.c:118
+ panic+0x2e3/0x75c kernel/panic.c:221
+ end_report+0x47/0x4f mm/kasan/report.c:96
+ __kasan_report.cold+0xe/0x32 mm/kasan/report.c:513
+ kasan_report+0x12/0x20 mm/kasan/common.c:641
+ check_memory_region_inline mm/kasan/generic.c:185 [inline]
+ check_memory_region+0x134/0x1a0 mm/kasan/generic.c:192
+ __kasan_check_write+0x14/0x20 mm/kasan/common.c:101
+ clear_bit include/asm-generic/bitops/instrumented-atomic.h:41 [inline]
+ kcm_tx_work+0x10e/0x170 net/kcm/kcmsock.c:743
+ process_one_work+0xa05/0x17a0 kernel/workqueue.c:2264
+ worker_thread+0x98/0xe40 kernel/workqueue.c:2410
+ kthread+0x361/0x430 kernel/kthread.c:255
+ ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
 ---
- drivers/soc/Makefile                        | 2 +-
- drivers/soc/imx/Kconfig                     | 9 +++++++++
- drivers/soc/imx/Makefile                    | 2 +-
- drivers/soc/imx/{soc-imx8.c => soc-imx8m.c} | 0
- 4 files changed, 11 insertions(+), 2 deletions(-)
- rename drivers/soc/imx/{soc-imx8.c => soc-imx8m.c} (100%)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
-index 8b49d782a1ab..a39f17cea376 100644
---- a/drivers/soc/Makefile
-+++ b/drivers/soc/Makefile
-@@ -11,7 +11,7 @@ obj-$(CONFIG_ARCH_DOVE)		+= dove/
- obj-$(CONFIG_MACH_DOVE)		+= dove/
- obj-y				+= fsl/
- obj-$(CONFIG_ARCH_GEMINI)	+= gemini/
--obj-$(CONFIG_ARCH_MXC)		+= imx/
-+obj-y				+= imx/
- obj-$(CONFIG_ARCH_IXP4XX)	+= ixp4xx/
- obj-$(CONFIG_SOC_XWAY)		+= lantiq/
- obj-y				+= mediatek/
-diff --git a/drivers/soc/imx/Kconfig b/drivers/soc/imx/Kconfig
-index 0281ef9a1800..70019cefa617 100644
---- a/drivers/soc/imx/Kconfig
-+++ b/drivers/soc/imx/Kconfig
-@@ -17,4 +17,13 @@ config IMX_SCU_SOC
- 	  Controller Unit SoC info module, it will provide the SoC info
- 	  like SoC family, ID and revision etc.
- 
-+config SOC_IMX8M
-+	bool "i.MX8M SoC family support"
-+	depends on ARCH_MXC || COMPILE_TEST
-+	default ARCH_MXC && ARM64
-+	help
-+	  If you say yes here you get support for the NXP i.MX8M family
-+	  support, it will provide the SoC info like SoC family,
-+	  ID and revision etc.
-+
- endmenu
-diff --git a/drivers/soc/imx/Makefile b/drivers/soc/imx/Makefile
-index cf9ca42ff739..103e2c93c342 100644
---- a/drivers/soc/imx/Makefile
-+++ b/drivers/soc/imx/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0-only
- obj-$(CONFIG_HAVE_IMX_GPC) += gpc.o
- obj-$(CONFIG_IMX_GPCV2_PM_DOMAINS) += gpcv2.o
--obj-$(CONFIG_ARCH_MXC) += soc-imx8.o
-+obj-$(CONFIG_SOC_IMX8M) += soc-imx8m.o
- obj-$(CONFIG_IMX_SCU_SOC) += soc-imx-scu.o
-diff --git a/drivers/soc/imx/soc-imx8.c b/drivers/soc/imx/soc-imx8m.c
-similarity index 100%
-rename from drivers/soc/imx/soc-imx8.c
-rename to drivers/soc/imx/soc-imx8m.c
--- 
-2.16.4
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
