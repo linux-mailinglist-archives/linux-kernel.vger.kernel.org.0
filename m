@@ -2,136 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C38A165CA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 12:22:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EEFC165CB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 12:25:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727589AbgBTLWZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 06:22:25 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:34382 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726837AbgBTLWY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 06:22:24 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01KBMKba084599;
-        Thu, 20 Feb 2020 05:22:20 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1582197740;
-        bh=7sz7UwaYZhfjapq4XXvQj1Y6KtkYa1bY7xLS+tvWAGI=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=nc7wid8d9t08+Dan465M+ZZoUxq7lTo1+N4hTYNScWBMbsAwPhyi1dUwCzqbkYyTo
-         D1VqyqwHU7Q/DpAl8N87v2AF8RzW+3WJ8ypo57Wv4DKnPMWe0zvpoEzxmXKdTs0w9h
-         eRdFLNAeArVE7qO1SeWeaMSCUHEJ2FVO9N9YiZF8=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01KBMKmm092249;
-        Thu, 20 Feb 2020 05:22:20 -0600
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 20
- Feb 2020 05:22:20 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 20 Feb 2020 05:22:20 -0600
-Received: from [172.24.190.4] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01KBMHn7048242;
-        Thu, 20 Feb 2020 05:22:18 -0600
-Subject: Re: [PATCH 1/3] dt-bindings: mmc: sdhci-am654: Update Output tap
- delay binding
-From:   Faiz Abbas <faiz_abbas@ti.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <ulf.hansson@linaro.org>,
-        <adrian.hunter@intel.com>
-References: <20200108150920.14547-1-faiz_abbas@ti.com>
- <20200108150920.14547-2-faiz_abbas@ti.com> <20200115015037.GA26114@bogus>
- <a437675a-6a18-14bd-f316-77bdd2bc1efb@ti.com>
- <bff6f9d2-6713-e8c1-177e-f5d9ed5adbf1@ti.com>
- <24e6ac71-00c7-f140-86d8-fa5ec0dcaff0@ti.com>
-Message-ID: <76a0c96a-b83d-ac21-1e24-6d68e2b70c9c@ti.com>
-Date:   Thu, 20 Feb 2020 16:54:00 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727921AbgBTLZQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 06:25:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52730 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726837AbgBTLZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 06:25:16 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E6E42071E;
+        Thu, 20 Feb 2020 11:25:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582197915;
+        bh=79ixthYwiZXZ5uYd6owAPf1t4ZeXoH8DH9rSjQ8vPy4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZN0EBeuYDJRGU/2HM5cOBHEChC5qutvLimQgrHC+Q6lt8Rbp07ZnOLGVDHiCKWSzf
+         qUhJ6R638E6kt97exa+eS72EzsLQsqBvo6vibfUpJXYpyXu1+pUhnvZ2jWQK5ItSB7
+         Th9mLEyxVStZL8ZBO9/oQ+0jedUbjygjn4EgVB80=
+Date:   Thu, 20 Feb 2020 12:25:13 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, Jakub Kicinski <kuba@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH net-next v3 5/9] device: add device_change_owner()
+Message-ID: <20200220112513.GH3374196@kroah.com>
+References: <20200218162943.2488012-1-christian.brauner@ubuntu.com>
+ <20200218162943.2488012-6-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-In-Reply-To: <24e6ac71-00c7-f140-86d8-fa5ec0dcaff0@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200218162943.2488012-6-christian.brauner@ubuntu.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rob,
-
-On 14/02/20 4:28 pm, Faiz Abbas wrote:
-> Rob,
+On Tue, Feb 18, 2020 at 05:29:39PM +0100, Christian Brauner wrote:
+> Add a helper to change the owner of a device's sysfs entries. This
+> needs to happen when the ownership of a device is changed, e.g. when
+> moving network devices between network namespaces.
+> This function will be used to correctly account for ownership changes,
+> e.g. when moving network devices between network namespaces.
 > 
-> On 07/02/20 3:07 pm, Faiz Abbas wrote:
->> Rob,
->>
->> On 20/01/20 11:00 am, Faiz Abbas wrote:
->>> Hi Rob,
->>>
->>> On 15/01/20 7:20 am, Rob Herring wrote:
->>>> On Wed, Jan 08, 2020 at 08:39:18PM +0530, Faiz Abbas wrote:
->>>>> According to latest AM65x Data Manual[1], a different output tap delay
->>>>> value is recommended for all speed modes. Therefore, replace the
->>>>> ti,otap-del-sel binding with one ti,otap-del-sel- for each MMC/SD speed
->>>>> mode.
->>>>>
->>>>> [1] http://www.ti.com/lit/gpn/am6526
->>>>>
->>>>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
->>>>> ---
->>>>>  .../devicetree/bindings/mmc/sdhci-am654.txt   | 21 +++++++++++++++++--
->>>>>  1 file changed, 19 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-am654.txt b/Documentation/devicetree/bindings/mmc/sdhci-am654.txt
->>>>> index 50e87df47971..c6ccecb9ae5a 100644
->>>>> --- a/Documentation/devicetree/bindings/mmc/sdhci-am654.txt
->>>>> +++ b/Documentation/devicetree/bindings/mmc/sdhci-am654.txt
->>>>> @@ -18,7 +18,20 @@ Required Properties:
->>>>>  	- clocks: Handles to the clock inputs.
->>>>>  	- clock-names: Tuple including "clk_xin" and "clk_ahb"
->>>>>  	- interrupts: Interrupt specifiers
->>>>> -	- ti,otap-del-sel: Output Tap Delay select
->>>>> +	Output tap delay for each speed mode:
->>>>> +	- ti,otap-del-sel-legacy
->>>>> +	- ti,otap-del-sel-mmc-hs
->>>>> +	- ti,otap-del-sel-sd-hs
->>>>> +	- ti,otap-del-sel-sdr12
->>>>> +	- ti,otap-del-sel-sdr25
->>>>> +	- ti,otap-del-sel-sdr50
->>>>> +	- ti,otap-del-sel-sdr104
->>>>> +	- ti,otap-del-sel-ddr50
->>>>> +	- ti,otap-del-sel-ddr52
->>>>> +	- ti,otap-del-sel-hs200
->>>>> +	- ti,otap-del-sel-hs400
->>>>> +	  These bindings must be provided otherwise the driver will disable the
->>>>> +	  corresponding speed mode (i.e. all nodes must provide at least -legacy)
->>>>
->>>> Why not just extend the existing property to be an array. We already 
->>>> have properties to enable/disable speed modes.
->>>>
->>>
->>> Its hard to keep track of which modes have values and which don't when
->>> you add an array. This scheme is just easier on anyone adding new values
->>> or updating old values.
->>>
->>> We already disable speed modes based on platform specific properties in
->>> other drivers. In sdhci-omap.c, the driver disables the corresponding
->>> speed mode if the corresponding pinmux and iodelay values are not populated.
->>>
->>
->> Do you agree on above?
->>
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> ---
+> /* v2 */
+> unchanged
 > 
-> Gentle ping.
+> /* v3 */
+> -  Greg Kroah-Hartman <gregkh@linuxfoundation.org>:
+>    - Add explicit uid/gid parameters.
+> ---
+>  drivers/base/core.c    | 80 ++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/device.h |  1 +
+>  2 files changed, 81 insertions(+)
 > 
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index 42a672456432..ec0d5e8cfd0f 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -3458,6 +3458,86 @@ int device_move(struct device *dev, struct device *new_parent,
+>  }
+>  EXPORT_SYMBOL_GPL(device_move);
+>  
+> +static int device_attrs_change_owner(struct device *dev, kuid_t kuid,
+> +				     kgid_t kgid)
+> +{
+> +	struct kobject *kobj = &dev->kobj;
+> +	struct class *class = dev->class;
+> +	const struct device_type *type = dev->type;
+> +	int error;
+> +
+> +	if (class) {
+> +		error = sysfs_groups_change_owner(kobj, class->dev_groups, kuid,
+> +						  kgid);
+> +		if (error)
+> +			return error;
+> +	}
+> +
+> +	if (type) {
+> +		error = sysfs_groups_change_owner(kobj, type->groups, kuid,
+> +						  kgid);
+> +		if (error)
+> +			return error;
+> +	}
+> +
+> +	error = sysfs_groups_change_owner(kobj, dev->groups, kuid, kgid);
+> +	if (error)
+> +		return error;
+> +
+> +	if (device_supports_offline(dev) && !dev->offline_disabled) {
+> +		error = sysfs_file_change_owner_by_name(
+> +			kobj, dev_attr_online.attr.name, kuid, kgid);
+> +		if (error)
+> +			return error;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * device_change_owner - change the owner of an existing device.
 
-Ping.
+The "owner" and what else gets changed here?  Please document this
+better.
 
-Thanks,
-Faiz
+
+> + * @dev: device.
+> + * @kuid: new owner's kuid
+> + * @kgid: new owner's kgid
+> + */
+> +int device_change_owner(struct device *dev, kuid_t kuid, kgid_t kgid)
+> +{
+> +	int error;
+> +	struct kobject *kobj = &dev->kobj;
+> +
+> +	dev = get_device(dev);
+> +	if (!dev)
+> +		return -EINVAL;
+> +
+> +	error = sysfs_change_owner(kobj, kuid, kgid);
+
+the kobject of the device is changed, good.
+
+> +	if (error)
+> +		goto out;
+> +
+> +	error = sysfs_file_change_owner_by_name(kobj, dev_attr_uevent.attr.name,
+> +						kuid, kgid);
+
+Why call out the uevent file explicitly here?
+
+> +	if (error)
+> +		goto out;
+> +
+> +	error = device_attrs_change_owner(dev, kuid, kgid);
+> +	if (error)
+> +		goto out;
+
+Doesn't this also change the uevent file?
+
+> +
+> +#ifdef CONFIG_BLOCK
+> +	if (sysfs_deprecated && dev->class == &block_class)
+> +		goto out;
+> +#endif
+
+Ugh, we still need this?
+
+> +
+> +	error = sysfs_link_change_owner(&dev->class->p->subsys.kobj, &dev->kobj,
+> +					dev_name(dev), kuid, kgid);
+
+Now what is this changing?
+
+Again, more documentation please as to exactly what is being changed in
+this function is needed.
+
+thanks,
+
+greg k-h
