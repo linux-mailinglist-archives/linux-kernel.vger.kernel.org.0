@@ -2,85 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64FA8166818
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 21:09:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BFB616681D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 21:10:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729148AbgBTUJ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 15:09:29 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:43880 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729067AbgBTUJ1 (ORCPT
+        id S1729008AbgBTUKk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 15:10:40 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41566 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728770AbgBTUKk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 15:09:27 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1j4s8I-0006hX-G3; Thu, 20 Feb 2020 21:09:14 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 17C381C20D8;
-        Thu, 20 Feb 2020 21:09:14 +0100 (CET)
-Date:   Thu, 20 Feb 2020 20:09:13 -0000
-From:   "tip-bot2 for Scott Wood" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/core: Remove duplicate assignment in
- sched_tick_remote()
-Cc:     Scott Wood <swood@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <1580776558-12882-1-git-send-email-swood@redhat.com>
-References: <1580776558-12882-1-git-send-email-swood@redhat.com>
+        Thu, 20 Feb 2020 15:10:40 -0500
+Received: by mail-pf1-f193.google.com with SMTP id j9so2446678pfa.8
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 12:10:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=es-iitr-ac-in.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=2w+R3Z75BVcBJL4mHaaewYE8ej5x4YeGxTQpsg56oM0=;
+        b=qe7hPOoCCTMNdxtIg3f5Pg5ViViUneZC/ftBiK39R+KVP0JYxDL98CFA0YNadsMx/O
+         GGsjFOFhKwL8Dvxs5SCZQpNJ5gOJIPlgouPjCxdNRQp+s+RFDuDAXO9/krV4g++BYW9e
+         jUYlrUfhlkzvoQAw7wlqGZRWjNjf/75L6hTA0vG08+8mrmHo7+JtHFFfm6y8viK6NmHD
+         CBxpa3ASk5oqLVuxb3mJTy+0cOGMBm5lzDsJXgAYiWGZRC68iYsB0jRPc6DmaRBZNVzu
+         f3Lph20DUJ5Xf4OOvB2aB9VxfUVK8VMWveuVv4tTteDBeKfIqKl2E8naXchVBmNTXEc9
+         fV1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=2w+R3Z75BVcBJL4mHaaewYE8ej5x4YeGxTQpsg56oM0=;
+        b=ALpXbZxSs91JodwHQC04EUdEadfnZAJk3eMFVWsJyNuBLC86Do1gBv8EjiKZUEwSS/
+         +1pttlS8pFTo9RpccaR8xqP2fPHiJbEuSX4hGjJFggPaSAB1X6VLyCqXCOfwwtu7wgok
+         3zkagWzS77CQJeySYu39Yjw5NTRbt8hffdn5nD7liVBB51tLRAT8B3SfbSUjHJLB9Fyq
+         JYn5OoFl6pozVyfUvXkcoKaZ1G+wG/fUkdd8VU7pjvtZtnVA/uhm1b+jNH8CdvFyBUxP
+         Fg3+okBLfNmpGzR0QcOs06azDVXzs4FjAWBukVygpcInukSED0H3fRB/0BTxBfzcfDE6
+         JxlQ==
+X-Gm-Message-State: APjAAAXS1QGP2F5JXU5WJpvKiGsOfRpIuPfjONCXOYvM+tgi9XbKn373
+        IJP1rIznTZkoM8N/198VRHCryt5E2O6Gmcwo
+X-Google-Smtp-Source: APXvYqzHNbmO1s9R3NGefmrkNGHZZe0xixDdrQKTauLTfQfkXcLz68TcQ+ehcG7N+NwoOzOY7LsmHg==
+X-Received: by 2002:a62:6d01:: with SMTP id i1mr32854344pfc.94.1582229439310;
+        Thu, 20 Feb 2020 12:10:39 -0800 (PST)
+Received: from kaaira-HP-Pavilion-Notebook ([103.37.201.175])
+        by smtp.gmail.com with ESMTPSA id l1sm262100pjb.28.2020.02.20.12.10.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Feb 2020 12:10:38 -0800 (PST)
+Date:   Fri, 21 Feb 2020 01:40:33 +0530
+From:   Kaaira Gupta <kgupta@es.iitr.ac.in>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: octeon: match parentheses alignment
+Message-ID: <20200220201033.GA14855@kaaira-HP-Pavilion-Notebook>
 MIME-Version: 1.0
-Message-ID: <158222935381.13786.9032916402923624715.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the sched/core branch of tip:
+match the next line with open parentheses by giving appropriate tabs.
 
-Commit-ID:     82e0516ce3a147365a5dd2a9bedd5ba43a18663d
-Gitweb:        https://git.kernel.org/tip/82e0516ce3a147365a5dd2a9bedd5ba43a18663d
-Author:        Scott Wood <swood@redhat.com>
-AuthorDate:    Mon, 03 Feb 2020 19:35:58 -05:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 20 Feb 2020 21:03:13 +01:00
-
-sched/core: Remove duplicate assignment in sched_tick_remote()
-
-A redundant "curr = rq->curr" was added; remove it.
-
-Fixes: ebc0f83c78a2 ("timers/nohz: Update NOHZ load in remote tick")
-Signed-off-by: Scott Wood <swood@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/1580776558-12882-1-git-send-email-swood@redhat.com
-
+Signed-off-by: Kaaira Gupta <kgupta@es.iitr.ac.in>
 ---
- kernel/sched/core.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/staging/octeon/octeon-stubs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 45f79bc..377ec26 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -3683,7 +3683,6 @@ static void sched_tick_remote(struct work_struct *work)
- 	if (cpu_is_offline(cpu))
- 		goto out_unlock;
+diff --git a/drivers/staging/octeon/octeon-stubs.h b/drivers/staging/octeon/octeon-stubs.h
+index ea33c94fa12b..d06743504f2b 100644
+--- a/drivers/staging/octeon/octeon-stubs.h
++++ b/drivers/staging/octeon/octeon-stubs.h
+@@ -1345,7 +1345,7 @@ static inline void cvmx_pow_work_request_async_nocheck(int scr_addr,
+ { }
  
--	curr = rq->curr;
- 	update_rq_clock(rq);
+ static inline void cvmx_pow_work_request_async(int scr_addr,
+-						       cvmx_pow_wait_t wait)
++					       cvmx_pow_wait_t wait)
+ { }
  
- 	if (!is_idle_task(curr)) {
+ static inline struct cvmx_wqe *cvmx_pow_work_response_async(int scr_addr)
+-- 
+2.17.1
+
