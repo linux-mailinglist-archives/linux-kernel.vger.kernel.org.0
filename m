@@ -2,79 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F952165DA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 13:33:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C2EC165DAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 13:38:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728035AbgBTMdT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 07:33:19 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:60214 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727705AbgBTMdT (ORCPT
+        id S1727987AbgBTMid (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 07:38:33 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:52392 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726885AbgBTMid (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 07:33:19 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01KCXIfl021187
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 06:33:18 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1582201998;
-        bh=3QjZhVJXywmkkIz5VsnKq4ynXsbpPSzj49Z9+IjI8AM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=CcFuu6SzQH1BGGTykgNU1O/8jFJlltzyAPxPUF5CYixVW9EY5msArPbCicppStdxJ
-         KPiyQz61OnZyl3kW+VRT1D7C4ZuRfw2pEwj/b75d97ZbNLboV5Wkqxtp9a+i8988B3
-         fsB9sx1HKlial0K5hfOJLtFJ5eVmSs1Gt1MbqMuw=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01KCXIFE113446
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL)
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 06:33:18 -0600
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 20
- Feb 2020 06:33:18 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 20 Feb 2020 06:33:18 -0600
-Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01KCX14x115841;
-        Thu, 20 Feb 2020 06:33:02 -0600
-Subject: Re: [PATCH 0/2] phy: ti: gmii-sel: two fixes
-To:     Grygorii Strashko <grygorii.strashko@ti.com>,
-        <linux-kernel@vger.kernel.org>
-CC:     Sekhar Nori <nsekhar@ti.com>
-References: <20200214190801.3030-1-grygorii.strashko@ti.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <150d63c7-19d8-6172-89df-e2ebdc1b9d2c@ti.com>
-Date:   Thu, 20 Feb 2020 18:06:42 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        Thu, 20 Feb 2020 07:38:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=bcJGrENIxStVO5U2yoDpjYTpnIM80UF8M699WOXfM+8=; b=PmaWFZbV67o/inyTG2Fa5dNjrZ
+        Wvcg2n6QFFc10N1cG2b/GrrA0ArZL1vuzUxp3zuGX8RiH6wMjoH7SWkVcM+WX9D6yQG7j1EUSjkxb
+        +4ebrcrc3Znbvvjv1rNT29Dugq6FH5A4a8gM8CmT6hr8KUwvZPXjrMrAKBK53msZmPjhnFvHn2WkZ
+        x80Dt3WM+FAShlSx44RIinSrAfbJEaV5H0B9WpJGfxTAsZnKc/mOkky6ACxDtd4XF4GGsIY0vaIsn
+        m7RkFTIS2b6UIk8wz9KNPNebJRl28+/evRKyqHKXstnknH1dR5kpyUFDAEyA9VTP4X44ZJiIayOAf
+        451yDgQw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j4l5O-0003xf-4U; Thu, 20 Feb 2020 12:37:46 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id BB2F6300565;
+        Thu, 20 Feb 2020 13:35:49 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 7EAAA2B4D9BC7; Thu, 20 Feb 2020 13:37:42 +0100 (CET)
+Date:   Thu, 20 Feb 2020 13:37:42 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, mingo@kernel.org,
+        joel@joelfernandes.org, gregkh@linuxfoundation.org,
+        gustavo@embeddedor.com, tglx@linutronix.de, paulmck@kernel.org,
+        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
+        jiangshanlai@gmail.com, luto@kernel.org, tony.luck@intel.com,
+        frederic@kernel.org, dan.carpenter@oracle.com, mhiramat@kernel.org
+Subject: Re: [PATCH v3 04/22] x86/doublefault: Make memmove() notrace/NOKPROBE
+Message-ID: <20200220123742.GZ18400@hirez.programming.kicks-ass.net>
+References: <20200219144724.800607165@infradead.org>
+ <20200219150744.604459293@infradead.org>
+ <20200219103614.2299ff61@gandalf.local.home>
+ <20200219154031.GE18400@hirez.programming.kicks-ass.net>
+ <20200219155715.GD14946@hirez.programming.kicks-ass.net>
+ <20200220121727.GB507@zn.tnic>
 MIME-Version: 1.0
-In-Reply-To: <20200214190801.3030-1-grygorii.strashko@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200220121727.GB507@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 15/02/20 12:37 am, Grygorii Strashko wrote:
-> Hi Kishon,
+On Thu, Feb 20, 2020 at 01:17:27PM +0100, Borislav Petkov wrote:
+> On Wed, Feb 19, 2020 at 04:57:15PM +0100, Peter Zijlstra wrote:
+> > -		memmove(&gpregs->ip, (void *)regs->sp, 5*8);
+> > +		for (i = 0; i < count; i++) {
+> > +			int idx = (dst <= src) ? i : count - i;
+> > +			dst[idx] = src[idx];
+> > +		}
 > 
-> Here the two minor fixes for TI phy-gmii-sel PHY.
->  - Patch 1: few minor copy-paste errors.
->  - Patch 2: enables back gmii mode (not used now, so no issues reported til now)
+> Or, you can actually unroll it. This way it even documents clearly what
+> it does:
 > 
-> Grygorii Strashko (2):
->   phy: ti: gmii-sel: fix set of copy-paste errors
->   phy: ti: gmii-sel: do not fail in case of gmii
+> diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+> index fe38015ed50a..2b790a574ba5 100644
+> --- a/arch/x86/kernel/traps.c
+> +++ b/arch/x86/kernel/traps.c
+> @@ -298,6 +298,7 @@ dotraplinkage void do_double_fault(struct pt_regs *regs, long error_code, unsign
+>  		regs->ip == (unsigned long)native_irq_return_iret)
+>  	{
+>  		struct pt_regs *gpregs = (struct pt_regs *)this_cpu_read(cpu_tss_rw.x86_tss.sp0) - 1;
+> +		unsigned long *p = (unsigned long *)regs->sp;
+>  
+>  		/*
+>  		 * regs->sp points to the failing IRET frame on the
+> @@ -305,7 +306,11 @@ dotraplinkage void do_double_fault(struct pt_regs *regs, long error_code, unsign
+>  		 * in gpregs->ss through gpregs->ip.
+>  		 *
+>  		 */
+> -		memmove(&gpregs->ip, (void *)regs->sp, 5*8);
+> +		gpregs->ip	= *p;
+> +		gpregs->cs	= *(p + 1);
+> +		gpregs->flags	= *(p + 2);
+> +		gpregs->sp	= *(p + 3);
+> +		gpregs->ss	= *(p + 4);
+>  		gpregs->orig_ax = 0;  /* Missing (lost) #GP error code */
+>  
+>  		/*
 
-merged, thanks!
+While I love that; is that actually correct? This is an unroll of
+memcpy() not memmove(). IFF the ranges overlap, the above is buggered.
 
--Kishon
-> 
->  drivers/phy/ti/phy-gmii-sel.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
+Was the original memmove() really needed?
