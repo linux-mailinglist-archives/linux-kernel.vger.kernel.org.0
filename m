@@ -2,176 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 855D316569A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 06:12:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0541A16569B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 06:13:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728064AbgBTFMe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 00:12:34 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38065 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727993AbgBTFMc (ORCPT
+        id S1728073AbgBTFNC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 00:13:02 -0500
+Received: from mail27.static.mailgun.info ([104.130.122.27]:34662 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725957AbgBTFNB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 00:12:32 -0500
-Received: by mail-pf1-f196.google.com with SMTP id x185so1302229pfc.5
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 21:12:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=g874qtH2FamHKBLRETQ33+Q4l9Bm0XlV9Wb41fCpvWM=;
-        b=iuR2s7ALYpV+p+LVObQEHTEMPOPb2hSGesSsYkxL+upywjFAjIarBkJXRdbDc2OQhy
-         XSlhKj4irnk+7Ty5Plfeur0PZ/KCPwYifZoVYWn6hR0dJ5b0utdOnsn+PmXyidTKokno
-         MtrPb/tBeofsA/SBU1gCfkorsXANljSfVYgN4t3gqJLS4IuMjLCqRVod+HXfeF3Li86v
-         pxPYQFf0X8/Eax7SuGeUuqONH9b43S/sx9orlzrehDrmVmuBbs/j+qA1UruVZbSY5bDR
-         6e+bNJ9JtZgBryKCx2RHDjVrBVDuuvAs8ajihthpDxeRcR4077LeOGa7YK3vo/nP3l07
-         MVlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=g874qtH2FamHKBLRETQ33+Q4l9Bm0XlV9Wb41fCpvWM=;
-        b=f+LCJ8QSDLxSWc65jnnB+6gp56nGzqVTvh71f70qtJXo+xqWA4pV7MHCVVkxbzT0Wr
-         jvK6Wc/bSYbCFF4oJHADevdSfmOmQ4dK//NwS1A3/BLXmzWGMVDV9RDwBrfpmKKVULjJ
-         qM682EkTu1TpuO0ItIS2N/9sNt0MSFzpLBr8G4hoCUx3SlSsS3AKhFlRUSBtWddydj8U
-         4ej1AT1KivGDCWsza9d4KC4qZ3RtC4GoDpyMpzw1UPZfLwVpe1/6x84bieB0cJLGE1zO
-         NBRB6RGPqeCDa8tn7lH5yz8psM8gMBsw1+A2K5qjsqbkb/a1EW6vA/R5kS9FsgFSqeiR
-         PKRw==
-X-Gm-Message-State: APjAAAXGApsGId84iA+u0zkC0ZWNRvdmGP2XAXSAWnv54IRhBh6xybZO
-        4iqxtMRnDWlQ8rhOvl0VqAD6fmpvPZI=
-X-Google-Smtp-Source: APXvYqxQ3mMSDGRBWA+ztkuKVfMCOgJK3xR/QL786epXK9GeVmEzkdahr1JeJTpSt5/dH2Wt6SY2vQ==
-X-Received: by 2002:aa7:8708:: with SMTP id b8mr31049948pfo.120.1582175551553;
-        Wed, 19 Feb 2020 21:12:31 -0800 (PST)
-Received: from localhost.localdomain ([114.206.198.176])
-        by smtp.gmail.com with ESMTPSA id t15sm1472599pgr.60.2020.02.19.21.12.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 19 Feb 2020 21:12:31 -0800 (PST)
-From:   js1304@gmail.com
-X-Google-Original-From: iamjoonsoo.kim@lge.com
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>, kernel-team@lge.com,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Subject: [PATCH v2 9/9] mm/swap: count a new anonymous page as a reclaim_state's rotate
-Date:   Thu, 20 Feb 2020 14:11:53 +0900
-Message-Id: <1582175513-22601-10-git-send-email-iamjoonsoo.kim@lge.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1582175513-22601-1-git-send-email-iamjoonsoo.kim@lge.com>
-References: <1582175513-22601-1-git-send-email-iamjoonsoo.kim@lge.com>
+        Thu, 20 Feb 2020 00:13:01 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1582175581; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=Ao1uwixRp+mRr4IVPkNGuxraZYvp+rb//Bou7aXajek=;
+ b=SjzIXiSSBhskYb4oNvCHmSzBmyzNbOFVXBAsMnW3OdKYT2dwR66oIwdRaHnCmuNlQjomVXCG
+ PGiAtUyxnrfTuRGWXYVXknFGR/7r60rsDXalrEyqKwD6pcuOCENUktpeX7ffSNXdppChPfL2
+ i5rA2/q5YKw/dQTVyP6spg9zFUg=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e4e1556.7fad6d94e848-smtp-out-n01;
+ Thu, 20 Feb 2020 05:12:54 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 1EA5CC4479F; Thu, 20 Feb 2020 05:12:53 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: vjitta)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 11D60C43383;
+        Thu, 20 Feb 2020 05:12:52 +0000 (UTC)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 20 Feb 2020 10:42:52 +0530
+From:   vjitta@codeaurora.org
+To:     Christopher Lameter <cl@linux.com>
+Cc:     penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, vinmenon@codeaurora.org,
+        kernel-team@android.com, linux-kernel-owner@vger.kernel.org
+Subject: Re: [PATCH] mm: slub: reinitialize random sequence cache on slab
+ object update
+In-Reply-To: <7bf56496-7b8a-c60f-b261-9505068f9130@codeaurora.org>
+References: <1580379523-32272-1-git-send-email-vjitta@codeaurora.org>
+ <alpine.DEB.2.21.2001301826130.9861@www.lameter.com>
+ <7bf56496-7b8a-c60f-b261-9505068f9130@codeaurora.org>
+Message-ID: <f5c4c74ecb1f43992285bb5f57ee874c@codeaurora.org>
+X-Sender: vjitta@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+On 2020-02-03 12:27, Vijayanand Jitta wrote:
+> On 1/30/2020 11:58 PM, Christopher Lameter wrote:
+>> On Thu, 30 Jan 2020, vjitta@codeaurora.org wrote:
+>> 
+>>> Random sequence cache is precomputed during slab object creation
+>>> based up on the object size and no of objects per slab. These could
+>>> be changed when flags like SLAB_STORE_USER, SLAB_POISON are updated
+>>> from sysfs. So when shuffle_freelist is called during slab_alloc it
+>> 
+>> Sorry no. That cannot happen. Changing the size of the slab is only
+>> possible if no slab pages are allocated. Any sysfs changes that affect 
+>> the
+>> object size must fail if object and slab pages are already allocated.
+>> 
+>> If you were able to change the object size then we need to prevent 
+>> that
+>> from happening.
+>> 
+> 
+> Yes, size of slab can't be changed after objects are allocated, that 
+> holds
+> true even with this change. Let me explain a bit more about the use 
+> case here
+> 
+> ZRAM compression uses the slub allocator, by enabling the slub debug 
+> flags like
+> SLAB_STORE_USER etc.. the memory consumption will rather be increased
+> which doesn't
+> serve the purpose of ZRAM compression. So, such flags are to be
+> disabled before the
+> allocations happen, this requires updation of random sequence cache as 
+> object
+> size and number of objects change after these flags are disabled.
+> 
+> So, the sequence will be
+> 
+> 1. Slab creation (this will set a precomputed random sequence cache)
+> 2. Remove the debug flags
+> 3. update the random sequence cache
+> 4. Mount zram and then start using it for allocations.
+> 
+> Thanks,
+> Vijay
 
-reclaim_stat's rotate is used for controlling the ratio of scanning page
-between file and anonymous LRU. All new anonymous pages are counted
-for rotate before the patch, protecting anonymous pages on active LRU, and,
-it makes that reclaim on anonymous LRU is less happened than file LRU.
+Waiting for your response.
 
-Now, situation is changed. all new anonymous pages are not added
-to the active LRU so rotate would be far less than before. It will cause
-that reclaim on anonymous LRU happens more and it would result in bad
-effect on some system that is optimized for previous setting.
-
-Therefore, this patch counts a new anonymous page as a reclaim_state's
-rotate. Although it is non-logical to add this count to
-the reclaim_state's rotate in current algorithm, reducing the regression
-would be more important.
-
-I found this regression on kernel-build test and it is roughly 2~5%
-performance degradation. With this workaround, performance is completely
-restored.
-
-v2: fix a bug that reuses the rotate value for previous page
-
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Joonsoo Kim <iamjoonsoo.kim@lge.com>
----
- mm/swap.c | 29 ++++++++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
-
-diff --git a/mm/swap.c b/mm/swap.c
-index 18b2735..9001d81 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -187,6 +187,9 @@ int get_kernel_page(unsigned long start, int write, struct page **pages)
- }
- EXPORT_SYMBOL_GPL(get_kernel_page);
- 
-+static void __pagevec_lru_add_fn(struct page *page, struct lruvec *lruvec,
-+				 void *arg);
-+
- static void pagevec_lru_move_fn(struct pagevec *pvec,
- 	void (*move_fn)(struct page *page, struct lruvec *lruvec, void *arg),
- 	void *arg)
-@@ -199,6 +202,7 @@ static void pagevec_lru_move_fn(struct pagevec *pvec,
- 	for (i = 0; i < pagevec_count(pvec); i++) {
- 		struct page *page = pvec->pages[i];
- 		struct pglist_data *pagepgdat = page_pgdat(page);
-+		void *arg_orig = arg;
- 
- 		if (pagepgdat != pgdat) {
- 			if (pgdat)
-@@ -207,8 +211,22 @@ static void pagevec_lru_move_fn(struct pagevec *pvec,
- 			spin_lock_irqsave(&pgdat->lru_lock, flags);
- 		}
- 
-+		if (move_fn == __pagevec_lru_add_fn) {
-+			struct list_head *entry = &page->lru;
-+			unsigned long next = (unsigned long)entry->next;
-+			unsigned long rotate = next & 2;
-+
-+			if (rotate) {
-+				VM_BUG_ON(arg);
-+
-+				next = next & ~2;
-+				entry->next = (struct list_head *)next;
-+				arg = (void *)rotate;
-+			}
-+		}
- 		lruvec = mem_cgroup_page_lruvec(page, pgdat);
- 		(*move_fn)(page, lruvec, arg);
-+		arg = arg_orig;
- 	}
- 	if (pgdat)
- 		spin_unlock_irqrestore(&pgdat->lru_lock, flags);
-@@ -475,6 +493,14 @@ void lru_cache_add_inactive_or_unevictable(struct page *page,
- 				    hpage_nr_pages(page));
- 		count_vm_event(UNEVICTABLE_PGMLOCKED);
- 	}
-+
-+	if (PageSwapBacked(page) && evictable) {
-+		struct list_head *entry = &page->lru;
-+		unsigned long next = (unsigned long)entry->next;
-+
-+		next = next | 2;
-+		entry->next = (struct list_head *)next;
-+	}
- 	lru_cache_add(page);
- }
- 
-@@ -927,6 +953,7 @@ static void __pagevec_lru_add_fn(struct page *page, struct lruvec *lruvec,
- {
- 	enum lru_list lru;
- 	int was_unevictable = TestClearPageUnevictable(page);
-+	unsigned long rotate = (unsigned long)arg;
- 
- 	VM_BUG_ON_PAGE(PageLRU(page), page);
- 
-@@ -962,7 +989,7 @@ static void __pagevec_lru_add_fn(struct page *page, struct lruvec *lruvec,
- 	if (page_evictable(page)) {
- 		lru = page_lru(page);
- 		update_page_reclaim_stat(lruvec, page_is_file_cache(page),
--					 PageActive(page));
-+					 PageActive(page) | rotate);
- 		if (was_unevictable)
- 			count_vm_event(UNEVICTABLE_PGRESCUED);
- 	} else {
--- 
-2.7.4
-
+Thanks,
+Vijay
