@@ -2,80 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C07401659FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 10:18:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E92981659B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 10:04:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbgBTJSi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 04:18:38 -0500
-Received: from mx21.baidu.com ([220.181.3.85]:44128 "EHLO baidu.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726759AbgBTJSi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 04:18:38 -0500
-X-Greylist: delayed 1857 seconds by postgrey-1.27 at vger.kernel.org; Thu, 20 Feb 2020 04:18:34 EST
-Received: from BJHW-Mail-Ex14.internal.baidu.com (unknown [10.127.64.37])
-        by Forcepoint Email with ESMTPS id 6299E3CC4DF0E1EDB5B5;
-        Thu, 20 Feb 2020 16:31:33 +0800 (CST)
-Received: from BJHW-Mail-Ex13.internal.baidu.com (10.127.64.36) by
- BJHW-Mail-Ex14.internal.baidu.com (10.127.64.37) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Thu, 20 Feb 2020 16:31:32 +0800
-Received: from BJHW-Mail-Ex13.internal.baidu.com ([100.100.100.36]) by
- BJHW-Mail-Ex13.internal.baidu.com ([100.100.100.36]) with mapi id
- 15.01.1713.004; Thu, 20 Feb 2020 16:31:32 +0800
-From:   "Li,Rongqing" <lirongqing@baidu.com>
-To:     linmiaohe <linmiaohe@huawei.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>
-CC:     Liran Alon <liran.alon@oracle.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: =?gb2312?B?tPC4tDogW1BBVENIXVtyZXNlbmRdIEtWTTogZml4IGVycm9yIGhhbmRsaW5n?=
- =?gb2312?B?IGluIHN2bV9jcHVfaW5pdA==?=
-Thread-Topic: [PATCH][resend] KVM: fix error handling in svm_cpu_init
-Thread-Index: AdXnxCuvQCn2ngYdSyKWLfuyXd13zwAA6TeA
-Date:   Thu, 20 Feb 2020 08:31:32 +0000
-Message-ID: <4d0b722be5cc4343a9fc9557dfbd00a1@baidu.com>
-References: <4cf5d767b570430a9e0b515a9d6d8fbd@huawei.com>
-In-Reply-To: <4cf5d767b570430a9e0b515a9d6d8fbd@huawei.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.21.156.28]
-x-baidu-bdmsfe-datecheck: 1_BJHW-Mail-Ex14_2020-02-20 16:31:33:229
-x-baidu-bdmsfe-viruscheck: BJHW-Mail-Ex14_GRAY_Inside_WithoutAtta_2020-02-20
- 16:31:33:198
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        id S1726805AbgBTJDz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 04:03:55 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36610 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726669AbgBTJDy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 04:03:54 -0500
+Received: by mail-wr1-f67.google.com with SMTP id z3so3718246wru.3;
+        Thu, 20 Feb 2020 01:03:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kMRJMCeq8NZAOuDhnXD2Su6XH/Sug9+vybd1xVTnymM=;
+        b=Oy34RglTmxJLtibBbGM0mOjmtCzIfi1VS84tpOVQPStsdzxw9bmDP/ccxGzVt8EqPJ
+         QgLiArXg4cjojuSERHhIa8fgsIP1QgM9Y4K2rm2zhkxpu0w437Y9GZmAO3VH0xMokTRz
+         k2FKaPRh7wlIh0Y5psMsLLpt9MsedKuXboQgLTepMW028eMy0jzy+79GZyDB5g4hAoJq
+         Qx4XnhKsULmuMEOYNSwksD/UxjfS7UUshP7vMMiaZx7nx8msR2ipdxYAbwN4S2EapKrU
+         YeQSP1DqMUaFtolcdN9QHhpD0ftXFGsefLviHaerCUre5Vivd3fft/J8fGZIIi8XtGvq
+         ygXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kMRJMCeq8NZAOuDhnXD2Su6XH/Sug9+vybd1xVTnymM=;
+        b=ZW2/5sH+4vvNJe7PY1mU8bMLj+LpA1vKCHhLc+gc0n1jTt0P7j5pRC5/17W9i7OQKw
+         2TFl+P/WrVc1FrIuXoagb3sAZBulJ74Vd1+99YW/84imnyF3bdncZ3eTEAfBEU+D9Qhj
+         i0gW1XvKCM0jo0ZYcwZSH/yI2vUn0rWIARj2/tgvvRrSsvUiB3MzESVAEo2S9Mjofd0Z
+         HA6+Erv0UFh4dWtzgRa31kg7V7isAQfvub1N+4TRewJN11zwc2P2c/S82+P4124zrNQr
+         h7jB+TJPLqFnr5p6YKYT7yeBeir6BawQMf4sEcHV4DO3fK+ZmDrn45FNg7mAC+WydcDA
+         LdVw==
+X-Gm-Message-State: APjAAAXiePPidOBBibMCFOInmt+qWxS334n2MhsvhvbHuvWpRwOlYRbx
+        4QTulN5Ij8dZE+YdmIej3Kk=
+X-Google-Smtp-Source: APXvYqyCkswrHjGraF8RCaW0bFvKpMzVB9ieAPAAGbQvXepjaII3MJ2D1bNhg/qX3pKIgcJCJ4JAbQ==
+X-Received: by 2002:a5d:5152:: with SMTP id u18mr40578019wrt.214.1582189432341;
+        Thu, 20 Feb 2020 01:03:52 -0800 (PST)
+Received: from Red ([2a01:cb1d:3d5:a100:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id b21sm3635764wmd.37.2020.02.20.01.03.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2020 01:03:51 -0800 (PST)
+Date:   Thu, 20 Feb 2020 10:03:50 +0100
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc:     tj@kernel.org, jiangshanlai@gmail.com, will@kernel.org,
+        mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org
+Subject: Re: WARNING: at kernel/workqueue.c:1473 __queue_work+0x3b8/0x3d0
+Message-ID: <20200220090350.GA19858@Red>
+References: <20200217204803.GA13479@Red>
+ <20200218163504.y5ofvaejleuf5tbh@ca-dmjordan1.us.oracle.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200218163504.y5ofvaejleuf5tbh@ca-dmjordan1.us.oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS3Tyrz+1K28/i0tLS0tDQo+ILeivP7IyzogbGlubWlhb2hlIFttYWlsdG86bGlu
-bWlhb2hlQGh1YXdlaS5jb21dDQo+ILeiy83KsbzkOiAyMDIwxOoy1MIyMMjVIDE2OjE4DQo+IMrV
-vP7IyzogTGksUm9uZ3FpbmcgPGxpcm9uZ3FpbmdAYmFpZHUuY29tPjsgcGJvbnppbmlAcmVkaGF0
-LmNvbTsNCj4gdmt1em5ldHNAcmVkaGF0LmNvbQ0KPiCzrcvNOiBMaXJhbiBBbG9uIDxsaXJhbi5h
-bG9uQG9yYWNsZS5jb20+OyBrdm1Admdlci5rZXJuZWwub3JnOw0KPiBsaW51eC1rZXJuZWxAdmdl
-ci5rZXJuZWwub3JnOyB4ODZAa2VybmVsLm9yZw0KPiDW98ziOiBSZTogW1BBVENIXVtyZXNlbmRd
-IEtWTTogZml4IGVycm9yIGhhbmRsaW5nIGluIHN2bV9jcHVfaW5pdA0KPiANCj4gSGksDQo+IExp
-IFJvbmdRaW5nIDxsaXJvbmdxaW5nQGJhaWR1LmNvbT4gd3JpdGVzOg0KPiA+DQo+ID5zZC0+c2F2
-ZV9hcmVhIHNob3VsZCBiZSBmcmVlZCBpbiBlcnJvciBwYXRoDQo+ID4NCj4gPkZpeGVzOiA3MGNk
-OTRlNjBjNzMzICgiS1ZNOiBTVk06IFZNUlVOIHNob3VsZCB1c2UgYXNzb2NpYXRlZCBBU0lEIHdo
-ZW4NCj4gPlNFViBpcyBlbmFibGVkIikNCj4gPlNpZ25lZC1vZmYtYnk6IExpIFJvbmdRaW5nIDxs
-aXJvbmdxaW5nQGJhaWR1LmNvbT4NCj4gPlJldmlld2VkLWJ5OiBCcmlqZXNoIFNpbmdoIDxicmlq
-ZXNoLnNpbmdoQGFtZC5jb20+DQo+ID5SZXZpZXdlZC1ieTogVml0YWx5IEt1em5ldHNvdiA8dmt1
-em5ldHNAcmVkaGF0LmNvbT4NCj4gPi0tLQ0KPiA+IGFyY2gveDg2L2t2bS9zdm0uYyB8IDggKysr
-KystLS0NCj4gPiAxIGZpbGUgY2hhbmdlZCwgNSBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygt
-KQ0KPiANCj4gT2gsIGl0J3Mgc3RyYW5nZS4gVGhpcyBpcyBhbHJlYWR5IGZpeGVkIGluIG15IHBy
-ZXZpb3VzIHBhdGNoIDogW1BBVENIIHYyXSBLVk06DQo+IFNWTTogRml4IHBvdGVudGlhbCBtZW1v
-cnkgbGVhayBpbiBzdm1fY3B1X2luaXQoKS4NCj4gQW5kIFZpdGFseSBhbmQgTGlyYW4gZ2F2ZSBt
-ZSBSZXZpZXdlZC1ieSB0YWdzIGFuZCBQYW9sbyBxdWV1ZWQgaXQgb25lIG1vbnRoDQo+IGFnby4g
-QnV0IEkgY2FuJ3QgZm91bmQgaXQgaW4gbWFzdGVyIG9yIHF1ZXVlIGJyYW5jaC4gVGhlcmUgbWln
-aHQgYmUgc29tZXRoaW5nDQo+IHdyb25nLiA6KA0KDQoNCkluIGZhY3QsIEkgc2VuZCB0aGlzIHBh
-dGNoIDIwMTkvMDIvLCBhbmQgZ2V0IFJldmlld2VkLWJ5LCAgYnV0IGRpZCBub3QgcXVldWUNCg0K
-aHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8xMDg1Mzk3My8NCg0KYW5kIHJlc2Vu
-ZCBpdCAyMDE5LzA3DQoNCmh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTEwMzIw
-ODEvDQoNCg0KLUxpDQoNCg0K
+On Tue, Feb 18, 2020 at 11:35:04AM -0500, Daniel Jordan wrote:
+> Hi Corentin,
+> 
+> On Mon, Feb 17, 2020 at 09:48:03PM +0100, Corentin Labbe wrote:
+> > When running some CI test jobs (targeting crypto tests), I always get the following WARNING:
+> 
+> Can you be more specific about which test triggers this?  I used the config
+> option you mention and failed to reproduce after doing the boot-time crypto
+> tests and running various tcrypt incantations.
+> 
+
+Hello
+
+It appears before any user space start. But according to the "Modules linked", probably ghash is already loaded and perhaps tested.
+
+Removing GHASH lead to:
+[    7.920931] ------------[ cut here ]------------
+[    7.920955] WARNING: CPU: 1 PID: 120 at kernel/workqueue.c:1469 __queue_work+0x370/0x388
+[    7.920960] Modules linked in: ccm
+
+And removing CCM lead to
+[    7.798877] ------------[ cut here ]------------
+[    7.798902] WARNING: CPU: 2 PID: 127 at kernel/workqueue.c:1469 __queue_work+0x370/0x388
+[    7.798907] Modules linked in: ctr
+
+So it confirm that the problem is not related to the tested crypto algorithm.
+
+> > [    7.886361] ------------[ cut here ]------------
+> > [    7.886388] WARNING: CPU: 2 PID: 147 at kernel/workqueue.c:1473 __queue_work+0x3b8/0x3d0
+> > [    7.886394] Modules linked in: ghash_generic
+> > [    7.886409] CPU: 2 PID: 147 Comm: modprobe Not tainted 5.6.0-rc1-next-20200214-00068-g166c9264f0b1-dirty #545
+> 
+> I was using just plain next-20200214.  Can't find 166c9264f0b1, what tag/branch
+> were you using exactly?
+> 
+
+The pasted example has some commit to try to debug it.
+But I got the same with plain next (like yesterday 5.6.0-rc2-next-20200219 and tomorow 5.6.0-rc2-next-20200220) and master got the same issue.
+
+But for reproductability on different hardware, I agree it is difficult.
+For the moment, I got it only on Allwinner H5, A64, H6 SoCs and imx8q.
+[    6.611449] ------------[ cut here ]------------
+[    6.613234] WARNING: CPU: 1 PID: 157 at /srv/data/clabbe/linux-next/kernel/workqueue.c:1471 __queue_work+0x324/0x3b0
+[    6.623809] Modules linked in: ghash_generic
+[    6.628101] CPU: 1 PID: 157 Comm: modprobe Not tainted 5.6.0-rc2-next-20200220 #82
+[    6.635710] Hardware name: NXP i.MX8MNano DDR4 EVK board (DT)
+
+I tried amlogic boards and some qemu "virt" without success.
+
+(I have added linux-crypto@vger.kernel.org to the CC)
