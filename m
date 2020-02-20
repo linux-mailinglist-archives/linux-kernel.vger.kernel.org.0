@@ -2,54 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B63716578A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 07:24:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF28A16578E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 07:24:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727525AbgBTGXU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 01:23:20 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35914 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727134AbgBTGXR (ORCPT
+        id S1727720AbgBTGX1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 01:23:27 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45678 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727405AbgBTGXU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 01:23:17 -0500
-Received: by mail-pf1-f194.google.com with SMTP id 185so1396160pfv.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 22:23:17 -0800 (PST)
+        Thu, 20 Feb 2020 01:23:20 -0500
+Received: by mail-pg1-f194.google.com with SMTP id b9so1379489pgk.12
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2020 22:23:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=ZkFzAyiQkuIY4OgoadL7s02yLv9HXFDGuWlNHtkrNfw=;
-        b=TfabCTw33Y600VFVjLJV55rlwc33y6kKvX8TxXWbijlsTVqlUba5Niwa/JBiutCthO
-         jMad8OfeGUwcatRkh3D4/F8geoUT1j1vGoWoXOMFaxYqopiShU7z6BH0/8Wu1hWV5snZ
-         D9GLXv/rKLZDksCs9Gf7zKZu5dfxicbTn6ZjE=
+        bh=r7W1IeYO5luNyCIfOI+KTpss0yVfj4B4P/bY+7anUj4=;
+        b=GtMY8VRryc4tgEAZGFnHgZwifnQLW90Ls2V3FbDv7DGB/HQqIksqO+WTqzfYGx9yL/
+         v0WMmt16AUT4OP+0CDmzqdVSg4knv8RD+RRV7JrC9tnF63W+hQyCQSJJLTvGjBPKR6AS
+         dgWP+eUZvmip3PM89KktbrcAIjM7V+++IHS2I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=ZkFzAyiQkuIY4OgoadL7s02yLv9HXFDGuWlNHtkrNfw=;
-        b=ukhENwYp6C1FUw92ORz9RbBJmVx55WAly1erMTBCHKS8Tbzx8tklC+x851tN/TqeO+
-         qcDgsOEOvqw/DEaoy0iBuJDrwU4cU4lIR5Rj3ZoIVTKt+53o0lyLbwvC7m4SUyp2r+SP
-         vE+Nl+CILo2femO5HSgaOKTqFGF7S48RAhMB9PiOX8ucTIXfAbYqOGOIDxmQi6RHKgUP
-         mmn/tad5qfhV0LRKC1xpfP7MjOZ1xiZWrxwxj4YiVH7MDNTmR2w7LDOKWY1R3TiG44p+
-         roU2YSw3Rtrhx4E9M/C+3p489YeL0FO9JQQpNKxqSv3KYODlXCI7X9+mL8zKpyfImUVD
-         K00Q==
-X-Gm-Message-State: APjAAAXgHAVCCfIkzJo2hmHdZLJCa7VG9J2eF8e37hm8Y/I2KdA2d4K5
-        4paM+Iniaha1deOYgNeEdCdhbQ==
-X-Google-Smtp-Source: APXvYqznyjp0bqgxF8BOP7nJzR51Bm8TnwobNo/7tVCUWQIVuW7jGT233SsDd/qGjC3WqFim/atHcg==
-X-Received: by 2002:a63:7453:: with SMTP id e19mr3912580pgn.50.1582179796667;
-        Wed, 19 Feb 2020 22:23:16 -0800 (PST)
+        bh=r7W1IeYO5luNyCIfOI+KTpss0yVfj4B4P/bY+7anUj4=;
+        b=D2g3PT9oiglM3r0dNjq0i8XWjEJCLWdu39CA6uNhmWvBLa0q0V8C3jzoA1qIm3a+wG
+         KEiYXuBBGifzbySCJ0uSh8bH7FLvMxL+vK/sDKV1JkPlhdndnwwLtuge2K14JNa2gEK9
+         bFOng3hsqCbH46a9LKIv9Jl0QPUumFF0dXaHEYlqW2YtB843AAVoC2PBgMC+FABOLuVV
+         m4cR+vsJKw2+h5rXxuTBbOTjnpx+b9aUuZX4xK+wUVl+soru6Lj9Dr14cx2MHE5nGWM+
+         0J4ufuEIPJRXUUBo7TnFlWZT87YEKhP5t81nw44TPOrsT/xrbMFmFLJcjFQxXocg+w72
+         DdZw==
+X-Gm-Message-State: APjAAAXMRk4xGr8l0h65qu8Js1KcagdGmla2p+qs1yscuSKCnm/roYkK
+        a61uFluTArme4najDRjZLYnAwA==
+X-Google-Smtp-Source: APXvYqzyLQqVUdbOMVTIixpgCSWP3Hc4yP/kWSP5g3dy+5aQAi9rqzpohQ6OfqeemMzgq/kJqNBUFg==
+X-Received: by 2002:a62:7696:: with SMTP id r144mr30710610pfc.177.1582179799553;
+        Wed, 19 Feb 2020 22:23:19 -0800 (PST)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id a2sm1818190pfi.30.2020.02.19.22.23.15
+        by smtp.gmail.com with ESMTPSA id x6sm1701090pfi.83.2020.02.19.22.23.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 22:23:15 -0800 (PST)
+        Wed, 19 Feb 2020 22:23:18 -0800 (PST)
 From:   Kees Cook <keescook@chromium.org>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
+        Felipe Balbi <balbi@kernel.org>
 Cc:     Alexander Potapenko <glider@google.com>,
-        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] n_tty: Distribute switch variables for initialization
-Date:   Wed, 19 Feb 2020 22:23:13 -0800
-Message-Id: <20200220062313.69209-1-keescook@chromium.org>
+        Kees Cook <keescook@chromium.org>, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: gadget: net2280: Distribute switch variables for initialization
+Date:   Wed, 19 Feb 2020 22:23:15 -0800
+Message-Id: <20200220062315.69253-1-keescook@chromium.org>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -73,40 +74,55 @@ direct initializations, the warnings remain.
 To avoid these problems, move such variables into the "case" where
 they're used or lift them up into the main function body.
 
-drivers/tty/n_tty.c: In function ‘__process_echoes’:
-drivers/tty/n_tty.c:657:18: warning: statement will never be executed [-Wswitch-unreachable]
-  657 |     unsigned int num_chars, num_bs;
-      |                  ^~~~~~~~~
+drivers/usb/gadget/udc/net2280.c: In function ‘handle_stat0_irqs_superspeed’:
+drivers/usb/gadget/udc/net2280.c:2871:22: warning: statement will never be executed [-Wswitch-unreachable]
+ 2871 |   struct net2280_ep *e;
+      |                      ^
 
 [1] https://bugs.llvm.org/show_bug.cgi?id=44916
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- drivers/tty/n_tty.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/gadget/udc/net2280.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/tty/n_tty.c b/drivers/tty/n_tty.c
-index f9c584244f72..1d1a398f4981 100644
---- a/drivers/tty/n_tty.c
-+++ b/drivers/tty/n_tty.c
-@@ -654,9 +654,9 @@ static size_t __process_echoes(struct tty_struct *tty)
- 			op = echo_buf(ldata, tail + 1);
+diff --git a/drivers/usb/gadget/udc/net2280.c b/drivers/usb/gadget/udc/net2280.c
+index 1fd1b9186e46..cc5869363298 100644
+--- a/drivers/usb/gadget/udc/net2280.c
++++ b/drivers/usb/gadget/udc/net2280.c
+@@ -2861,6 +2861,7 @@ static void ep_clear_seqnum(struct net2280_ep *ep)
+ static void handle_stat0_irqs_superspeed(struct net2280 *dev,
+ 		struct net2280_ep *ep, struct usb_ctrlrequest r)
+ {
++	struct net2280_ep *e;
+ 	int tmp = 0;
  
- 			switch (op) {
-+			case ECHO_OP_ERASE_TAB: {
- 				unsigned int num_chars, num_bs;
+ #define	w_value		le16_to_cpu(r.wValue)
+@@ -2868,14 +2869,13 @@ static void handle_stat0_irqs_superspeed(struct net2280 *dev,
+ #define	w_length	le16_to_cpu(r.wLength)
  
--			case ECHO_OP_ERASE_TAB:
- 				if (MASK(ldata->echo_commit) == MASK(tail + 2))
- 					goto not_yet_stored;
- 				num_chars = echo_buf(ldata, tail + 2);
-@@ -687,7 +687,7 @@ static size_t __process_echoes(struct tty_struct *tty)
- 				}
- 				tail += 3;
- 				break;
+ 	switch (r.bRequest) {
+-		struct net2280_ep *e;
+-		u16 status;
 -
-+			}
- 			case ECHO_OP_SET_CANON_COL:
- 				ldata->canon_column = ldata->column;
- 				tail += 2;
+ 	case USB_REQ_SET_CONFIGURATION:
+ 		dev->addressed_state = !w_value;
+ 		goto usb3_delegate;
+ 
+-	case USB_REQ_GET_STATUS:
++	case USB_REQ_GET_STATUS: {
++		u16 status;
++
+ 		switch (r.bRequestType) {
+ 		case (USB_DIR_IN | USB_TYPE_STANDARD | USB_RECIP_DEVICE):
+ 			status = dev->wakeup_enable ? 0x02 : 0x00;
+@@ -2905,7 +2905,7 @@ static void handle_stat0_irqs_superspeed(struct net2280 *dev,
+ 			goto usb3_delegate;
+ 		}
+ 		break;
+-
++	}
+ 	case USB_REQ_CLEAR_FEATURE:
+ 		switch (r.bRequestType) {
+ 		case (USB_DIR_OUT | USB_TYPE_STANDARD | USB_RECIP_DEVICE):
 
