@@ -2,102 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C2EC165DAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 13:38:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85E29165DCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2020 13:45:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727987AbgBTMid (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 07:38:33 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:52392 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726885AbgBTMid (ORCPT
+        id S1728123AbgBTMpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 07:45:08 -0500
+Received: from out28-218.mail.aliyun.com ([115.124.28.218]:43039 "EHLO
+        out28-218.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726885AbgBTMpG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 07:38:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=bcJGrENIxStVO5U2yoDpjYTpnIM80UF8M699WOXfM+8=; b=PmaWFZbV67o/inyTG2Fa5dNjrZ
-        Wvcg2n6QFFc10N1cG2b/GrrA0ArZL1vuzUxp3zuGX8RiH6wMjoH7SWkVcM+WX9D6yQG7j1EUSjkxb
-        +4ebrcrc3Znbvvjv1rNT29Dugq6FH5A4a8gM8CmT6hr8KUwvZPXjrMrAKBK53msZmPjhnFvHn2WkZ
-        x80Dt3WM+FAShlSx44RIinSrAfbJEaV5H0B9WpJGfxTAsZnKc/mOkky6ACxDtd4XF4GGsIY0vaIsn
-        m7RkFTIS2b6UIk8wz9KNPNebJRl28+/evRKyqHKXstnknH1dR5kpyUFDAEyA9VTP4X44ZJiIayOAf
-        451yDgQw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j4l5O-0003xf-4U; Thu, 20 Feb 2020 12:37:46 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id BB2F6300565;
-        Thu, 20 Feb 2020 13:35:49 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 7EAAA2B4D9BC7; Thu, 20 Feb 2020 13:37:42 +0100 (CET)
-Date:   Thu, 20 Feb 2020 13:37:42 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, mingo@kernel.org,
-        joel@joelfernandes.org, gregkh@linuxfoundation.org,
-        gustavo@embeddedor.com, tglx@linutronix.de, paulmck@kernel.org,
-        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
-        jiangshanlai@gmail.com, luto@kernel.org, tony.luck@intel.com,
-        frederic@kernel.org, dan.carpenter@oracle.com, mhiramat@kernel.org
-Subject: Re: [PATCH v3 04/22] x86/doublefault: Make memmove() notrace/NOKPROBE
-Message-ID: <20200220123742.GZ18400@hirez.programming.kicks-ass.net>
-References: <20200219144724.800607165@infradead.org>
- <20200219150744.604459293@infradead.org>
- <20200219103614.2299ff61@gandalf.local.home>
- <20200219154031.GE18400@hirez.programming.kicks-ass.net>
- <20200219155715.GD14946@hirez.programming.kicks-ass.net>
- <20200220121727.GB507@zn.tnic>
+        Thu, 20 Feb 2020 07:45:06 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1386076|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.196715-0.0112271-0.792058;DS=CONTINUE|ham_regular_dialog|0.189735-0.00256273-0.807702;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03293;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=10;RT=10;SR=0;TI=SMTPD_---.Gq8NPLt_1582202431;
+Received: from 192.168.10.227(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.Gq8NPLt_1582202431)
+          by smtp.aliyun-inc.com(10.147.41.138);
+          Thu, 20 Feb 2020 20:40:31 +0800
+Subject: Re: [PATCH 2/2] MAINTAINERS: Set MIPS status to Odd Fixes
+To:     YunQiang Su <wzssyqa@gmail.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+References: <20200219191730.1277800-1-paulburton@kernel.org>
+ <20200219191730.1277800-3-paulburton@kernel.org>
+ <20200220112330.GA3053@alpha.franken.de>
+ <CAKcpw6UDik=K6MdEayDPVaZP+BsqrbKoKAXJaHLERrxDmFF7+A@mail.gmail.com>
+Cc:     Paul Burton <paulburton@kernel.org>,
+        linux-mips <linux-mips@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, wayne.sun@cipunited.com,
+        chris.wang@neocore.cn, Yunqiang Su <ysu@wavecomp.com>,
+        dongsheng.qiu@ingenic.com, xuwanhao@wanyeetech.com
+From:   Zhou Yanjie <zhouyanjie@wanyeetech.com>
+Message-ID: <5E4E7E3E.6070608@wanyeetech.com>
+Date:   Thu, 20 Feb 2020 20:40:30 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200220121727.GB507@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAKcpw6UDik=K6MdEayDPVaZP+BsqrbKoKAXJaHLERrxDmFF7+A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 01:17:27PM +0100, Borislav Petkov wrote:
-> On Wed, Feb 19, 2020 at 04:57:15PM +0100, Peter Zijlstra wrote:
-> > -		memmove(&gpregs->ip, (void *)regs->sp, 5*8);
-> > +		for (i = 0; i < count; i++) {
-> > +			int idx = (dst <= src) ? i : count - i;
-> > +			dst[idx] = src[idx];
-> > +		}
-> 
-> Or, you can actually unroll it. This way it even documents clearly what
-> it does:
-> 
-> diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-> index fe38015ed50a..2b790a574ba5 100644
-> --- a/arch/x86/kernel/traps.c
-> +++ b/arch/x86/kernel/traps.c
-> @@ -298,6 +298,7 @@ dotraplinkage void do_double_fault(struct pt_regs *regs, long error_code, unsign
->  		regs->ip == (unsigned long)native_irq_return_iret)
->  	{
->  		struct pt_regs *gpregs = (struct pt_regs *)this_cpu_read(cpu_tss_rw.x86_tss.sp0) - 1;
-> +		unsigned long *p = (unsigned long *)regs->sp;
->  
->  		/*
->  		 * regs->sp points to the failing IRET frame on the
-> @@ -305,7 +306,11 @@ dotraplinkage void do_double_fault(struct pt_regs *regs, long error_code, unsign
->  		 * in gpregs->ss through gpregs->ip.
->  		 *
->  		 */
-> -		memmove(&gpregs->ip, (void *)regs->sp, 5*8);
-> +		gpregs->ip	= *p;
-> +		gpregs->cs	= *(p + 1);
-> +		gpregs->flags	= *(p + 2);
-> +		gpregs->sp	= *(p + 3);
-> +		gpregs->ss	= *(p + 4);
->  		gpregs->orig_ax = 0;  /* Missing (lost) #GP error code */
->  
->  		/*
+Hi,
 
-While I love that; is that actually correct? This is an unroll of
-memcpy() not memmove(). IFF the ranges overlap, the above is buggered.
+CC people from Ingenic Semi and Wanyee Tech.
 
-Was the original memmove() really needed?
+On 2020年02月20日 20:11, YunQiang Su wrote:
+> CC people from NeoCore and CIP United, and my Wave Computing's mail address.
+>
+> Thomas Bogendoerfer <tsbogend@alpha.franken.de> 于2020年2月20日周四 下午7:23写道：
+>> On Wed, Feb 19, 2020 at 11:17:30AM -0800, Paul Burton wrote:
+>>> My time with MIPS the company has reached its end, and so at best I'll
+>>> have little time spend on maintaining arch/mips/. Reflect that in
+>>> MAINTAINERS by changing status to Odd Fixes. Hopefully this might spur
+>>> the involvement of someone with more time, but even if not it should
+>>> help serve to avoid unrealistic expectations.
+>> I'd like to jump in as MIPS maintainer. I'm doing Linux MIPS kernel
+> It is a great news that you are willing to act as maintainer as Linux-MIPS.
+>
+>> development since ages (started with an Olivetti M700 and kernel version
+>> 2.x) and right now time for doing the jobs isn't issue:-)
+>>
+> I noticed that you are mainly working some old machines.
+> And recently years, there are some new machines from Ingenic, Loongson, MTK etc.
+> MIPS Inc also have some MIPSr6 IPs.
+> I think that you need some of these machines.
+
+I can provide some new Ingenic platform machines as a gift to Thomas.
+Ingenic X1000 can be provided in a short time, it has been directly 
+supported by kernel 5.6.
+X1830 and X2000 will be available later.
+
+> In the last years, we see that the single maintainer is not enough as people may
+> quite busy.
+> Do you think that we need co-maintainers?
+>
+>> Thomas.
+>>
+>> --
+>> Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+>> good idea.                                                [ RFC1925, 2.3 ]
+>
+>
+
