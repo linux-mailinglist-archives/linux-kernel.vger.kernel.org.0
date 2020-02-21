@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27436167860
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:48:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61CCA16785C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:48:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729430AbgBUIr6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:47:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43732 "EHLO mail.kernel.org"
+        id S1732352AbgBUIro (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:47:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44310 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728312AbgBUHrr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:47:47 -0500
+        id S1728730AbgBUHsT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:48:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DC6720801;
-        Fri, 21 Feb 2020 07:47:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87DEF207FD;
+        Fri, 21 Feb 2020 07:48:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271266;
-        bh=Qt8Et4Nmv72ffbqegZAEOEqYIFv83EAW38M0+ZpuCtQ=;
+        s=default; t=1582271299;
+        bh=idBDqzu2y3o0QPiMY39TEUWKHEZlHWZnr1qSgzMQ1lU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pK2WtX/AHOVokGTtKsRk6JJ9B0KSFKAucmdJVpBmgTyseFHMpvqNkUCCgIS8MKw2Z
-         DqOSvng1nkAma1lwW44CO/NtaPNnNwn6tVTjrpbEUTEYIgyGQCQ/E80hVN2cFyfFZj
-         07yvzHe4F3Hmt5qWrSppvp0NMYdMuQkSNgVcUUh0=
+        b=P+424neCDuDf2ioVFH4l83NwuTi4xoh3D65F0aZ2BwWlxnJPSkkATvbwBuSyuHy8N
+         sh/Ccxcn5qTpdcLOPt6AD+IDn4xOnNhLnrZ4PdFBTPNKmgT2dXUTAbCPStM+q9RkBX
+         zwFN7d6q4y0kcOTQdn90xlWWfXFXq9+dv2o7hcoI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christopher Head <chead@chead.ca>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Borislav Petkov <bp@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 074/399] x86/sysfb: Fix check for bad VRAM size
-Date:   Fri, 21 Feb 2020 08:36:39 +0100
-Message-Id: <20200221072409.547692841@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 076/399] udf: Allow writing to Rewritable partitions
+Date:   Fri, 21 Feb 2020 08:36:41 +0100
+Message-Id: <20200221072409.731406618@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -44,48 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arvind Sankar <nivedita@alum.mit.edu>
+From: Jan Kara <jack@suse.cz>
 
-[ Upstream commit dacc9092336be20b01642afe1a51720b31f60369 ]
+[ Upstream commit 15fb05fd286ac57a0802d71624daeb5c1c2d5b07 ]
 
-When checking whether the reported lfb_size makes sense, the height
-* stride result is page-aligned before seeing whether it exceeds the
-reported size.
+UDF 2.60 standard states in section 2.2.14.2:
 
-This doesn't work if height * stride is not an exact number of pages.
-For example, as reported in the kernel bugzilla below, an 800x600x32 EFI
-framebuffer gets skipped because of this.
+    A partition with Access Type 3 (rewritable) shall define a Freed
+    Space Bitmap or a Freed Space Table, see 2.3.3. All other partitions
+    shall not define a Freed Space Bitmap or a Freed Space Table.
 
-Move the PAGE_ALIGN to after the check vs size.
+    Rewritable partitions are used on media that require some form of
+    preprocessing before re-writing data (for example legacy MO). Such
+    partitions shall use Access Type 3.
 
-Reported-by: Christopher Head <chead@chead.ca>
-Tested-by: Christopher Head <chead@chead.ca>
-Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=206051
-Link: https://lkml.kernel.org/r/20200107230410.2291947-1-nivedita@alum.mit.edu
+    Overwritable partitions are used on media that do not require
+    preprocessing before overwriting data (for example: CD-RW, DVD-RW,
+    DVD+RW, DVD-RAM, BD-RE, HD DVD-Rewritable). Such partitions shall
+    use Access Type 4.
+
+however older versions of the standard didn't have this wording and
+there are tools out there that create UDF filesystems with rewritable
+partitions but that don't contain a Freed Space Bitmap or a Freed Space
+Table on media that does not require pre-processing before overwriting a
+block. So instead of forcing media with rewritable partition read-only,
+base this decision on presence of a Freed Space Bitmap or a Freed Space
+Table.
+
+Reported-by: Pali Rohár <pali.rohar@gmail.com>
+Reviewed-by: Pali Rohár <pali.rohar@gmail.com>
+Fixes: b085fbe2ef7f ("udf: Fix crash during mount")
+Link: https://lore.kernel.org/linux-fsdevel/20200112144735.hj2emsoy4uwsouxz@pali
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/sysfb_simplefb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/udf/super.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/x86/kernel/sysfb_simplefb.c b/arch/x86/kernel/sysfb_simplefb.c
-index 01f0e2263b86b..298fc1edd9c95 100644
---- a/arch/x86/kernel/sysfb_simplefb.c
-+++ b/arch/x86/kernel/sysfb_simplefb.c
-@@ -90,11 +90,11 @@ __init int create_simplefb(const struct screen_info *si,
- 	if (si->orig_video_isVGA == VIDEO_TYPE_VLFB)
- 		size <<= 16;
- 	length = mode->height * mode->stride;
--	length = PAGE_ALIGN(length);
- 	if (length > size) {
- 		printk(KERN_WARNING "sysfb: VRAM smaller than advertised\n");
- 		return -EINVAL;
+diff --git a/fs/udf/super.c b/fs/udf/super.c
+index 8c28e93e9b730..008bf96b1732d 100644
+--- a/fs/udf/super.c
++++ b/fs/udf/super.c
+@@ -1035,7 +1035,6 @@ static int check_partition_desc(struct super_block *sb,
+ 	switch (le32_to_cpu(p->accessType)) {
+ 	case PD_ACCESS_TYPE_READ_ONLY:
+ 	case PD_ACCESS_TYPE_WRITE_ONCE:
+-	case PD_ACCESS_TYPE_REWRITABLE:
+ 	case PD_ACCESS_TYPE_NONE:
+ 		goto force_ro;
  	}
-+	length = PAGE_ALIGN(length);
- 
- 	/* setup IORESOURCE_MEM as framebuffer memory */
- 	memset(&res, 0, sizeof(res));
 -- 
 2.20.1
 
