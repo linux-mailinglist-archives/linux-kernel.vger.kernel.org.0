@@ -2,52 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D2B4167FDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 15:14:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A242167FE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 15:15:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728803AbgBUOOh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 09:14:37 -0500
-Received: from verein.lst.de ([213.95.11.211]:55653 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727851AbgBUOOg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 09:14:36 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 3716C68C4E; Fri, 21 Feb 2020 15:14:34 +0100 (CET)
-Date:   Fri, 21 Feb 2020 15:14:33 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Will Deacon <will@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
-        akpm@linux-foundation.org,
-        "K . Prasad" <prasad@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Quentin Perret <qperret@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH 3/3] kallsyms: Unexport kallsyms_lookup_name() and
- kallsyms_on_each_symbol()
-Message-ID: <20200221141433.GD6968@lst.de>
-References: <20200221114404.14641-1-will@kernel.org> <20200221114404.14641-4-will@kernel.org>
+        id S1728880AbgBUOPO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 09:15:14 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:33105 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728512AbgBUOPO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 09:15:14 -0500
+Received: by mail-lf1-f65.google.com with SMTP id n25so1617733lfl.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 06:15:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AkDE61A38BuP/ygTbozBgf5MHpH9Vo95SRLvSWO439k=;
+        b=t6Dtm2xouaekc2EYrWLEiRUk9zuzsx/ycSUdwto1vsa8hH21/0n0fsS5EpTujeRKQY
+         8cObip8/t43obcYamNuVdIlHszzzCp5VGj6iyMSEieDfy/vR/lx5E6LccTtYZ83AOfyP
+         oZECnvFBM1fTQI9Hc933Gn3ZkAOWB0Exf7IQsnk3yy+tySMBmH1NCFPCdUsmF7AiPWXH
+         VKMqvJr6BsuzUCZxCOut1irILOrmr8G6HWBoZcUMvtJbz6e6OPfpV0CUqlZO9WuoScWy
+         Nt4NTixxcAszC3FBbeBToY0zMqja6JoruuxoS5PaAyrp82LcAs4KNPi7QOHqHXoKyOdB
+         Ap/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AkDE61A38BuP/ygTbozBgf5MHpH9Vo95SRLvSWO439k=;
+        b=NxpRkQs/tBsy+rhQJqlO+1H9jxfuEW3HX6eDLcwkOcAEdUgh0ZCBRQpJlG2+hzz0Vi
+         Nq+7oIDS33BxIttDdhuOmIrb3PfBW32Za98CNbeHNwdIkHQGWgx1oOoSYA9T24YAo89S
+         DzXYnIRgU6Xv8SnuebYJYEazLm0pAZaMMecGfT9xma6SE/ST6j+aPKH2zQzTMW0JGvKV
+         xYjyNCisYdWuaTP0SCCtco7BI6ank2KqXRBeoX56jsTYaEaxpPlc70Ea7aA2afGqdH0F
+         tieG1ir8VfI5Usgk+horKT1VDTduT+X8Jvn01//drBQ0zer/5xBbk2JkfNu2Dw53yAZU
+         953A==
+X-Gm-Message-State: APjAAAVjKmaLdmqXrcFxaRhgMW7bxgCo/w7VeisMCNmO4/5/DuldPgcm
+        mGpOK77BfN1wwd69Gw5fB1htevcq42UFCM+14Yni2A==
+X-Google-Smtp-Source: APXvYqzecyE8QpYi6cdaz/TQalK+k7VYi+YdD5LPqzgQdo1IqXlfsRa0zlv4Hf96qBf+2V4EYlojhnrFM8/XTBOXs04=
+X-Received: by 2002:a19:5e1d:: with SMTP id s29mr20122200lfb.21.1582294511956;
+ Fri, 21 Feb 2020 06:15:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200221114404.14641-4-will@kernel.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <20200117213340.47714-1-samuel@sholland.org>
+In-Reply-To: <20200117213340.47714-1-samuel@sholland.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 21 Feb 2020 15:15:01 +0100
+Message-ID: <CACRpkdYtmRWai8X4yAxNt57zT2eUyLdkDaYCmB=0BU62zAa81g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: sunxi: Forward calls to irq_set_irq_wake
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 11:44:04AM +0000, Will Deacon wrote:
-> kallsyms_lookup_name() and kallsyms_on_each_symbol() are exported to
-> modules despite having no in-tree users and being wide open to abuse by
-> out-of-tree modules that can use them as a method to invoke arbitrary
-> non-exported kernel functions.
-> 
-> Unexport kallsyms_lookup_name() and kallsyms_on_each_symbol().
+On Fri, Jan 17, 2020 at 10:33 PM Samuel Holland <samuel@sholland.org> wrote:
 
-Looks good,
+> The pinctrl irqchip may be connected to an irqchip that implements the
+> .irq_set_wake callback, such as the R_INTC on A31 and newer sunxi SoCs.
+> In order for GPIOs to be able to trigger wakeup, the IRQ from the
+> pinctrl to the upper irqchip must also be enabled for wakeup. Since the
+> kernel's IRQ core already manages the "wake_depth" of each IRQ, no
+> additional accounting is needed in the pinctrl driver.
+>
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Patch applied with Maxime's ACK.
+
+Yours,
+Linus Walleij
