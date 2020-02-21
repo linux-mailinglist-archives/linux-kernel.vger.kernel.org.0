@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6D231670A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:46:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37FDD167079
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:45:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728798AbgBUHqt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:46:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42392 "EHLO mail.kernel.org"
+        id S1728416AbgBUHpc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:45:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728779AbgBUHqp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:46:45 -0500
+        id S1728398AbgBUHpa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:45:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D773222C4;
-        Fri, 21 Feb 2020 07:46:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5817924672;
+        Fri, 21 Feb 2020 07:45:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271204;
-        bh=JqQmPfLAZJXhisUZizc6HtTiGx32zdBvxS/MOj0sltw=;
+        s=default; t=1582271129;
+        bh=fP4BNmy6YTGQ/kUrF8MftGazkbu/Bi3doDRYRXabpSA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SJejF+TXCWh8SSMJoNU0TUOWEGwNgi/Rrdo2uYnqyc6CgraJuf3QxO1MI3IbD3CmX
-         d7sDRh4pBtFsNXGng9QuWnPxhNY3nXmZqz36z9z7Xx8NbTahOF9fMIs22TevY3Bd/3
-         KSUoGaOBnakykI06Ks2q+3xqQSs21bGrBBvvuTuo=
+        b=GXpG1ZcEJSAvgvCwedBTrvzkKdXYSLumQztoXUTFKKU42vjyROeTOBISAP3aK8QAX
+         VNjaqmCQZmtVKGTM35xEjMI3wL8Gvd4WpEEf1RWxcyXG8nn5ICbDitPT2oluNLgqW1
+         wGuIDLotkbgpF0htw5Yt6LiyCGoSIpX1cXB7JPcQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        Theodore Tso <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 031/399] ext4: fix ext4_dax_read/write inode locking sequence for IOCB_NOWAIT
-Date:   Fri, 21 Feb 2020 08:35:56 +0100
-Message-Id: <20200221072405.381988654@linuxfoundation.org>
+        stable@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 033/399] gianfar: Fix TX timestamping with a stacked DSA driver
+Date:   Fri, 21 Feb 2020 08:35:58 +0100
+Message-Id: <20200221072405.596677008@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -46,57 +45,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ritesh Harjani <riteshh@linux.ibm.com>
+From: Vladimir Oltean <olteanv@gmail.com>
 
-[ Upstream commit f629afe3369e9885fd6e9cc7a4f514b6a65cf9e9 ]
+[ Upstream commit c26a2c2ddc0115eb088873f5c309cf46b982f522 ]
 
-Apparently our current rwsem code doesn't like doing the trylock, then
-lock for real scheme.  So change our dax read/write methods to just do the
-trylock for the RWF_NOWAIT case.
-This seems to fix AIM7 regression in some scalable filesystems upto ~25%
-in some cases. Claimed in commit 942491c9e6d6 ("xfs: fix AIM7 regression")
+The driver wrongly assumes that it is the only entity that can set the
+SKBTX_IN_PROGRESS bit of the current skb. Therefore, in the
+gfar_clean_tx_ring function, where the TX timestamp is collected if
+necessary, the aforementioned bit is used to discriminate whether or not
+the TX timestamp should be delivered to the socket's error queue.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Tested-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
-Link: https://lore.kernel.org/r/20191212055557.11151-2-riteshh@linux.ibm.com
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+But a stacked driver such as a DSA switch can also set the
+SKBTX_IN_PROGRESS bit, which is actually exactly what it should do in
+order to denote that the hardware timestamping process is undergoing.
+
+Therefore, gianfar would misinterpret the "in progress" bit as being its
+own, and deliver a second skb clone in the socket's error queue,
+completely throwing off a PTP process which is not expecting to receive
+it, _even though_ TX timestamping is not enabled for gianfar.
+
+There have been discussions [0] as to whether non-MAC drivers need or
+not to set SKBTX_IN_PROGRESS at all (whose purpose is to avoid sending 2
+timestamps, a sw and a hw one, to applications which only expect one).
+But as of this patch, there are at least 2 PTP drivers that would break
+in conjunction with gianfar: the sja1105 DSA switch and the felix
+switch, by way of its ocelot core driver.
+
+So regardless of that conclusion, fix the gianfar driver to not do stuff
+based on flags set by others and not intended for it.
+
+[0]: https://www.spinics.net/lists/netdev/msg619699.html
+
+Fixes: f0ee7acfcdd4 ("gianfar: Add hardware TX timestamping support")
+Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
+Acked-by: Richard Cochran <richardcochran@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ext4/file.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/freescale/gianfar.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index 6a7293a5cda2d..977ac58dc718d 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -88,9 +88,10 @@ static ssize_t ext4_dax_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 	struct inode *inode = file_inode(iocb->ki_filp);
- 	ssize_t ret;
+diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/ethernet/freescale/gianfar.c
+index 72868a28b621d..7d08bf6370ae1 100644
+--- a/drivers/net/ethernet/freescale/gianfar.c
++++ b/drivers/net/ethernet/freescale/gianfar.c
+@@ -2205,13 +2205,17 @@ static void gfar_clean_tx_ring(struct gfar_priv_tx_q *tx_queue)
+ 	skb_dirtytx = tx_queue->skb_dirtytx;
  
--	if (!inode_trylock_shared(inode)) {
--		if (iocb->ki_flags & IOCB_NOWAIT)
-+	if (iocb->ki_flags & IOCB_NOWAIT) {
-+		if (!inode_trylock_shared(inode))
- 			return -EAGAIN;
-+	} else {
- 		inode_lock_shared(inode);
- 	}
- 	/*
-@@ -487,9 +488,10 @@ ext4_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	bool extend = false;
- 	struct inode *inode = file_inode(iocb->ki_filp);
+ 	while ((skb = tx_queue->tx_skbuff[skb_dirtytx])) {
++		bool do_tstamp;
++
++		do_tstamp = (skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) &&
++			    priv->hwts_tx_en;
  
--	if (!inode_trylock(inode)) {
--		if (iocb->ki_flags & IOCB_NOWAIT)
-+	if (iocb->ki_flags & IOCB_NOWAIT) {
-+		if (!inode_trylock(inode))
- 			return -EAGAIN;
-+	} else {
- 		inode_lock(inode);
- 	}
+ 		frags = skb_shinfo(skb)->nr_frags;
  
+ 		/* When time stamping, one additional TxBD must be freed.
+ 		 * Also, we need to dma_unmap_single() the TxPAL.
+ 		 */
+-		if (unlikely(skb_shinfo(skb)->tx_flags & SKBTX_IN_PROGRESS))
++		if (unlikely(do_tstamp))
+ 			nr_txbds = frags + 2;
+ 		else
+ 			nr_txbds = frags + 1;
+@@ -2225,7 +2229,7 @@ static void gfar_clean_tx_ring(struct gfar_priv_tx_q *tx_queue)
+ 		    (lstatus & BD_LENGTH_MASK))
+ 			break;
+ 
+-		if (unlikely(skb_shinfo(skb)->tx_flags & SKBTX_IN_PROGRESS)) {
++		if (unlikely(do_tstamp)) {
+ 			next = next_txbd(bdp, base, tx_ring_size);
+ 			buflen = be16_to_cpu(next->length) +
+ 				 GMAC_FCB_LEN + GMAC_TXPAL_LEN;
+@@ -2235,7 +2239,7 @@ static void gfar_clean_tx_ring(struct gfar_priv_tx_q *tx_queue)
+ 		dma_unmap_single(priv->dev, be32_to_cpu(bdp->bufPtr),
+ 				 buflen, DMA_TO_DEVICE);
+ 
+-		if (unlikely(skb_shinfo(skb)->tx_flags & SKBTX_IN_PROGRESS)) {
++		if (unlikely(do_tstamp)) {
+ 			struct skb_shared_hwtstamps shhwtstamps;
+ 			u64 *ns = (u64 *)(((uintptr_t)skb->data + 0x10) &
+ 					  ~0x7UL);
 -- 
 2.20.1
 
