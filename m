@@ -2,88 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAD95168191
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:29:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3A55168190
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:28:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729198AbgBUP2t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 10:28:49 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37552 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729072AbgBUP2p (ORCPT
+        id S1729153AbgBUP2q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 10:28:46 -0500
+Received: from isilmar-4.linta.de ([136.243.71.142]:43828 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727851AbgBUP2p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 21 Feb 2020 10:28:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=teQadSX0wyV4ftQ41M/03hMOBJ7nffcslPnRS4n1cL0=; b=FO11uySWYfI+CHf4sRD/ycCuie
-        nHo0JseQxPLSNhugXNfrjWpNpFYClG0EJ6ZhsJjnA4J8gErKszWCl2gM2wO95J1dA7ORGjeTOGc1r
-        ACXPYJgq/Z/oTLUEJHHzz7Xdsva/ZoWzEWoZzpXzjqmFOpHtcqXLVo1H7eqSwhMds4sMo58AJLwd3
-        DQxRWRpw/60TICg7PHg/Yvr/nKsTJozL7slseewvBlRg2iJclSKEdCwigvnRCsG6s3/W0LVfgx8Gx
-        I7ZnmxVYGvd9qPsMMO2IjpDbUYh/g62/J/7dywfdJbrXUmeZ4kb5O7zWAqdEeFzLy6xXDrQmkLmQd
-        n1fjTRkQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j5AE7-0001jI-81; Fri, 21 Feb 2020 15:28:27 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id D4B5D306151;
-        Fri, 21 Feb 2020 16:26:30 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 29990209DB0F7; Fri, 21 Feb 2020 16:28:24 +0100 (CET)
-Date:   Fri, 21 Feb 2020 16:28:24 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     =?utf-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-Cc:     Mel Gorman <mgorman@suse.de>, Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Michal Koutn? <mkoutny@suse.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH RESEND v8 1/2] sched/numa: introduce per-cgroup NUMA
- locality info
-Message-ID: <20200221152824.GH18400@hirez.programming.kicks-ass.net>
-References: <fe56d99d-82e0-498c-ae44-f7cde83b5206@linux.alibaba.com>
- <cde13472-46c0-7e17-175f-4b2ba4d8148a@linux.alibaba.com>
- <20200214151048.GL14914@hirez.programming.kicks-ass.net>
- <20200217115810.GA3420@suse.de>
- <881deb50-163e-442a-41ec-b375cc445e4d@linux.alibaba.com>
+Received: by isilmar-4.linta.de (Postfix, from userid 1000)
+        id 19552200B44; Fri, 21 Feb 2020 15:28:44 +0000 (UTC)
+Date:   Fri, 21 Feb 2020 16:28:44 +0100
+From:   Dominik Brodowski <linux@dominikbrodowski.net>
+To:     Brian Gerst <brgerst@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH 0/5] Enable pt_regs based syscalls for x86-32 native
+Message-ID: <20200221152843.rxz4ptfi5lh3udud@isilmar-4.linta.de>
+References: <20200221050934.719152-1-brgerst@gmail.com>
+ <20200221060756.GA3368@light.dominikbrodowski.net>
+ <CAMzpN2iQuaNdTdL6G1rGbUFo+r16iRFo1zbiD_VMrrjtGf0acw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <881deb50-163e-442a-41ec-b375cc445e4d@linux.alibaba.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAMzpN2iQuaNdTdL6G1rGbUFo+r16iRFo1zbiD_VMrrjtGf0acw@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 17, 2020 at 09:23:52PM +0800, 王贇 wrote:
-> FYI, by monitoring locality, we found that the kvm vcpu thread is not
-> covered by NUMA Balancing, whatever how many maximum period passed, the
-> counters are not increasing, or very slowly, although inside guest we are
-> copying memory.
+On Fri, Feb 21, 2020 at 08:15:19AM -0500, Brian Gerst wrote:
+> On Fri, Feb 21, 2020 at 2:07 AM Dominik Brodowski
+> <linux@dominikbrodowski.net> wrote:
+> >
+> > Brian,
+> >
+> > On Fri, Feb 21, 2020 at 12:09:29AM -0500, Brian Gerst wrote:
+> > > This patch series cleans up the x86 syscall wrapper code and converts
+> > > the 32-bit native kernel over to pt_regs based syscalls.
+> >
+> > thanks for your patchset. Could you explain a bit more what the rationale
+> > is. Due to asmlinkage, it doesn't leak "random user-provided register
+> > content down the call chain" (as was the case for x86-64). But it may be
+> > cleaner, and you mention in patch 5/5 that the new way is "a bit more
+> > efficient" -- do you have numbers?
 > 
-> Later we found such task rarely exit to user space to trigger task
-> work callbacks, and NUMA Balancing scan depends on that, which help us
-> realize the importance to enable NUMA Balancing inside guest, with the
-> correct NUMA topo, a big performance risk I'll say :-P
+> The main rationale for this patch set is to make the 32-bit native
+> kernel consistent with the 64-bit kernel.  It's also slightly more
+> efficient because the old code pushed all 6 arguments onto the stack
+> whereas the new code only reads the args the syscall needs, with the
+> pt_regs pointer passed in through a register.  By efficient I mean
+> that it uses fewer instructions and stack accesses, not that it will
+> actually have a significant difference on a benchmark.
 
-That's a bug in KVM, see:
-
-  https://lkml.kernel.org/r/20190801143657.785902257@linutronix.de
-  https://lkml.kernel.org/r/20190801143657.887648487@linutronix.de
-
-ISTR there being newer versions of that patch-set, but I can't seem to
-find them in a hurry.
+OK, could you add such an explanation to the patchset then, please? Thanks,
+Dominik
