@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8331168948
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 22:26:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53D5416893A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 22:25:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729833AbgBUV0W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 16:26:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39274 "EHLO mail.kernel.org"
+        id S1729595AbgBUVZd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 16:25:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39314 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729372AbgBUVZa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 16:25:30 -0500
+        id S1729503AbgBUVZb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 16:25:31 -0500
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 328172467D;
-        Fri, 21 Feb 2020 21:25:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29C0B208C4;
+        Fri, 21 Feb 2020 21:25:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582320329;
-        bh=au/cT7hvKSj34WqOFe/k9PkkTiQcR9jMkSiGWA8g5os=;
+        s=default; t=1582320330;
+        bh=ErSXUHeYK0f2Fj/VgiRkVyhrdKK30DcgL1yKKZH0grA=;
         h=From:To:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=irwuujBHy7VjxeWOlXyIw9F4m/13iVJ0Qkpf1CM0Li7+wGqgC94hEvC23gfl2O82Q
-         JdAZrQp30G81pOYFMKhWm8uljCjGrePkZgFOU3a1WqO9GHuLx1JZz33KrS+/7wmqLk
-         AZCcS/hSk2C5yGJ1ZMZ4PKPbnrrWI8465PsFXuKI=
+        b=jWb5E3zrjxUMUJpScEqkK0cHtoxfHjrTJLWSUJ950BEdHeadjVu6kBihgxz7ut5aD
+         JRLOBf115VMb7sxNA7y1P4uOijijrl41NIgGaXjmSqfr32ArqZNtwg2nWrqc67XL39
+         ZaVpU1RjykH65crDq30L3LL/py6YQlP8lTc28ge4=
 From:   zanussi@kernel.org
 To:     LKML <linux-kernel@vger.kernel.org>,
         linux-rt-users <linux-rt-users@vger.kernel.org>,
@@ -34,9 +34,9 @@ To:     LKML <linux-kernel@vger.kernel.org>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Daniel Wagner <wagi@monom.org>,
         Tom Zanussi <zanussi@kernel.org>
-Subject: [PATCH RT 15/25] sched: migrate_enable: Use select_fallback_rq()
-Date:   Fri, 21 Feb 2020 15:24:43 -0600
-Message-Id: <eb183ce95bb3d92b426bdadf36f0648cda474379.1582320278.git.zanussi@kernel.org>
+Subject: [PATCH RT 16/25] Revert "ARM: Initialize split page table locks for vector page"
+Date:   Fri, 21 Feb 2020 15:24:44 -0600
+Message-Id: <0862e594250ce236c9e324e7fc3ff1eee44925b2.1582320278.git.zanussi@kernel.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1582320278.git.zanussi@kernel.org>
 References: <cover.1582320278.git.zanussi@kernel.org>
@@ -47,7 +47,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Scott Wood <swood@redhat.com>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
 v4.14.170-rt75-rc1 stable review patch.
 If anyone has any objections, please let me know.
@@ -55,63 +55,83 @@ If anyone has any objections, please let me know.
 -----------
 
 
-[ Upstream commit adfa969d4cfcc995a9d866020124e50f1827d2d1 ]
+[ Upstream commit 247074c44d8c3e619dfde6404a52295d8d671d38 ]
 
-migrate_enable() currently open-codes a variant of select_fallback_rq().
-However, it does not have the "No more Mr. Nice Guy" fallback and thus
-it will pass an invalid CPU to the migration thread if cpus_mask only
-contains a CPU that is !active.
+I'm dropping this patch, with its original description:
 
-Signed-off-by: Scott Wood <swood@redhat.com>
+|ARM: Initialize split page table locks for vector page
+|
+|Without this patch, ARM can not use SPLIT_PTLOCK_CPUS if
+|PREEMPT_RT_FULL=y because vectors_user_mapping() creates a
+|VM_ALWAYSDUMP mapping of the vector page (address 0xffff0000), but no
+|ptl->lock has been allocated for the page.  An attempt to coredump
+|that page will result in a kernel NULL pointer dereference when
+|follow_page() attempts to lock the page.
+|
+|The call tree to the NULL pointer dereference is:
+|
+|   do_notify_resume()
+|      get_signal_to_deliver()
+|         do_coredump()
+|            elf_core_dump()
+|               get_dump_page()
+|                  __get_user_pages()
+|                     follow_page()
+|                        pte_offset_map_lock() <----- a #define
+|                           ...
+|                              rt_spin_lock()
+|
+|The underlying problem is exposed by mm-shrink-the-page-frame-to-rt-size.patch.
+
+The patch named mm-shrink-the-page-frame-to-rt-size.patch was dropped
+from the RT queue once the SPLIT_PTLOCK_CPUS feature (in a slightly
+different shape) went upstream (somewhere between v3.12 and v3.14).
+
+I can see that the patch still allocates a lock which wasn't there
+before. However I can't trigger a kernel oops like described in the
+patch by triggering a coredump.
+
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Tom Zanussi <zanussi@kernel.org>
 ---
- kernel/sched/core.c | 25 ++++++++++---------------
- 1 file changed, 10 insertions(+), 15 deletions(-)
+ arch/arm/kernel/process.c | 24 ------------------------
+ 1 file changed, 24 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 189e6f08575e..46324d2099e3 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -7008,6 +7008,7 @@ void migrate_enable(void)
- 	if (p->migrate_disable_update) {
- 		struct rq *rq;
- 		struct rq_flags rf;
-+		int cpu = task_cpu(p);
+diff --git a/arch/arm/kernel/process.c b/arch/arm/kernel/process.c
+index cf4e1452d4b4..d96714e1858c 100644
+--- a/arch/arm/kernel/process.c
++++ b/arch/arm/kernel/process.c
+@@ -325,30 +325,6 @@ unsigned long arch_randomize_brk(struct mm_struct *mm)
+ }
  
- 		rq = task_rq_lock(p, &rf);
- 		update_rq_clock(rq);
-@@ -7017,21 +7018,15 @@ void migrate_enable(void)
- 
- 		p->migrate_disable_update = 0;
- 
--		WARN_ON(smp_processor_id() != task_cpu(p));
--		if (!cpumask_test_cpu(task_cpu(p), &p->cpus_mask)) {
--			const struct cpumask *cpu_valid_mask = cpu_active_mask;
--			struct migration_arg arg;
--			unsigned int dest_cpu;
+ #ifdef CONFIG_MMU
+-/*
+- * CONFIG_SPLIT_PTLOCK_CPUS results in a page->ptl lock.  If the lock is not
+- * initialized by pgtable_page_ctor() then a coredump of the vector page will
+- * fail.
+- */
+-static int __init vectors_user_mapping_init_page(void)
+-{
+-	struct page *page;
+-	unsigned long addr = 0xffff0000;
+-	pgd_t *pgd;
+-	pud_t *pud;
+-	pmd_t *pmd;
 -
--			if (p->flags & PF_KTHREAD) {
--				/*
--				 * Kernel threads are allowed on online && !active CPUs
--				 */
--				cpu_valid_mask = cpu_online_mask;
--			}
--			dest_cpu = cpumask_any_and(cpu_valid_mask, &p->cpus_mask);
--			arg.task = p;
--			arg.dest_cpu = dest_cpu;
-+		WARN_ON(smp_processor_id() != cpu);
-+		if (!cpumask_test_cpu(cpu, &p->cpus_mask)) {
-+			struct migration_arg arg = { p };
-+			struct rq_flags rf;
-+
-+			rq = task_rq_lock(p, &rf);
-+			update_rq_clock(rq);
-+			arg.dest_cpu = select_fallback_rq(cpu, p);
-+			task_rq_unlock(rq, p, &rf);
- 
- 			unpin_current_cpu();
- 			preempt_lazy_enable();
+-	pgd = pgd_offset_k(addr);
+-	pud = pud_offset(pgd, addr);
+-	pmd = pmd_offset(pud, addr);
+-	page = pmd_page(*(pmd));
+-
+-	pgtable_page_ctor(page);
+-
+-	return 0;
+-}
+-late_initcall(vectors_user_mapping_init_page);
+-
+ #ifdef CONFIG_KUSER_HELPERS
+ /*
+  * The vectors page is always readable from user space for the
 -- 
 2.14.1
 
