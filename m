@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73F1B1677F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:46:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F65616767F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:37:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729677AbgBUHvG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:51:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48166 "EHLO mail.kernel.org"
+        id S1732888AbgBUIfd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:35:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728602AbgBUHvC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:51:02 -0500
+        id S1732062AbgBUIH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:07:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D59620801;
-        Fri, 21 Feb 2020 07:51:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD6FF24676;
+        Fri, 21 Feb 2020 08:07:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271461;
-        bh=6z/t0VhggveAqMfKd+GXVB1VM3eyWMPeYQwd11GIHLM=;
+        s=default; t=1582272449;
+        bh=90xH7MbIWSlxTb7JOoi5JSHeWHhEROcPLkgtjk5gdr4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MoF3SSDUamvraDZFIq8E2BdVO3EapRJLf3BSnW6NsYdcX0uROte3xZaRLHU7r1yTI
-         jFN3dSsk9PPEtRhQ/Mh57h/FVNABVMzbqH68ARHNxDmN5Uti0F4Lfq3CQu4kfjArRm
-         bCCshXT/c94CdHIDJ+9zgHRkkuzlQeRR6VhoZk3s=
+        b=l5vrqEZkI4ZZm6oUyfQ7gu9YSDpB0H7G0UOwu3nkD2pQx96Sm4VUHk+o6ygagQyvb
+         PhGPSLziap40oxA7KIvF4Y2sp1NzShW5hw4CWLkwKWsoAzGt8HpJprQSVWksi88Yk/
+         9yjWrmty37FGR1dOO9q2mmkFBPccXQiIE8tEMTRA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <jsmart2021@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 175/399] scsi: lpfc: Fix: Rework setting of fdmi symbolic node name registration
-Date:   Fri, 21 Feb 2020 08:38:20 +0100
-Message-Id: <20200221072419.672458726@linuxfoundation.org>
+Subject: [PATCH 5.4 103/344] regulator: rk808: Lower log level on optional GPIOs being not available
+Date:   Fri, 21 Feb 2020 08:38:22 +0100
+Message-Id: <20200221072358.282985139@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
-References: <20200221072402.315346745@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,91 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Smart <jsmart2021@gmail.com>
+From: Miquel Raynal <miquel.raynal@bootlin.com>
 
-[ Upstream commit df9166bfa7750bade5737ffc91fbd432e0354442 ]
+[ Upstream commit b8a039d37792067c1a380dc710361905724b9b2f ]
 
-This patch reworks the fdmi symbolic node name data for the following two
-issues:
+RK808 can leverage a couple of GPIOs to tweak the ramp rate during DVS
+(Dynamic Voltage Scaling). These GPIOs are entirely optional but a
+dev_warn() appeared when cleaning this driver to use a more up-to-date
+gpiod API. At least reduce the log level to 'info' as it is totally
+fine to not populate these GPIO on a hardware design.
 
- - Correcting extraneous periods following the DV and HN fdmi data fields.
+This change is trivial but it is worth not polluting the logs during
+bringup phase by having real warnings and errors sorted out
+correctly.
 
- - Avoiding buffer overflow issues when formatting the data.
-
-The fix to the fist issue is to just remove the characters.
-
-The fix to the second issue has all data being staged in temporary storage
-before being moved to the real buffer.
-
-Link: https://lore.kernel.org/r/20191218235808.31922-3-jsmart2021@gmail.com
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <jsmart2021@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: a13eaf02e2d6 ("regulator: rk808: make better use of the gpiod API")
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Link: https://lore.kernel.org/r/20191203164709.11127-1-miquel.raynal@bootlin.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/lpfc/lpfc_ct.c | 42 +++++++++++++++++++------------------
- 1 file changed, 22 insertions(+), 20 deletions(-)
+ drivers/regulator/rk808-regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_ct.c b/drivers/scsi/lpfc/lpfc_ct.c
-index 99c9bb249758c..1b4dbb28fb419 100644
---- a/drivers/scsi/lpfc/lpfc_ct.c
-+++ b/drivers/scsi/lpfc/lpfc_ct.c
-@@ -1493,33 +1493,35 @@ int
- lpfc_vport_symbolic_node_name(struct lpfc_vport *vport, char *symbol,
- 	size_t size)
- {
--	char fwrev[FW_REV_STR_SIZE];
--	int n;
-+	char fwrev[FW_REV_STR_SIZE] = {0};
-+	char tmp[MAXHOSTNAMELEN] = {0};
+diff --git a/drivers/regulator/rk808-regulator.c b/drivers/regulator/rk808-regulator.c
+index 61bd5ef0806c2..97c846c19c2f6 100644
+--- a/drivers/regulator/rk808-regulator.c
++++ b/drivers/regulator/rk808-regulator.c
+@@ -1297,7 +1297,7 @@ static int rk808_regulator_dt_parse_pdata(struct device *dev,
+ 		}
  
--	lpfc_decode_firmware_rev(vport->phba, fwrev, 0);
-+	memset(symbol, 0, size);
+ 		if (!pdata->dvs_gpio[i]) {
+-			dev_warn(dev, "there is no dvs%d gpio\n", i);
++			dev_info(dev, "there is no dvs%d gpio\n", i);
+ 			continue;
+ 		}
  
--	n = scnprintf(symbol, size, "Emulex %s", vport->phba->ModelName);
--	if (size < n)
--		return n;
-+	scnprintf(tmp, sizeof(tmp), "Emulex %s", vport->phba->ModelName);
-+	if (strlcat(symbol, tmp, size) >= size)
-+		goto buffer_done;
- 
--	n += scnprintf(symbol + n, size - n, " FV%s", fwrev);
--	if (size < n)
--		return n;
-+	lpfc_decode_firmware_rev(vport->phba, fwrev, 0);
-+	scnprintf(tmp, sizeof(tmp), " FV%s", fwrev);
-+	if (strlcat(symbol, tmp, size) >= size)
-+		goto buffer_done;
- 
--	n += scnprintf(symbol + n, size - n, " DV%s.",
--		      lpfc_release_version);
--	if (size < n)
--		return n;
-+	scnprintf(tmp, sizeof(tmp), " DV%s", lpfc_release_version);
-+	if (strlcat(symbol, tmp, size) >= size)
-+		goto buffer_done;
- 
--	n += scnprintf(symbol + n, size - n, " HN:%s.",
--		      init_utsname()->nodename);
--	if (size < n)
--		return n;
-+	scnprintf(tmp, sizeof(tmp), " HN:%s", init_utsname()->nodename);
-+	if (strlcat(symbol, tmp, size) >= size)
-+		goto buffer_done;
- 
- 	/* Note :- OS name is "Linux" */
--	n += scnprintf(symbol + n, size - n, " OS:%s",
--		      init_utsname()->sysname);
--	return n;
-+	scnprintf(tmp, sizeof(tmp), " OS:%s", init_utsname()->sysname);
-+	strlcat(symbol, tmp, size);
-+
-+buffer_done:
-+	return strnlen(symbol, size);
-+
- }
- 
- static uint32_t
 -- 
 2.20.1
 
