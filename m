@@ -2,107 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52F7F16855E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 18:48:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C008168573
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 18:48:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728594AbgBURsE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 12:48:04 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:29418 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727655AbgBURsD (ORCPT
+        id S1729471AbgBURsg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 12:48:36 -0500
+Received: from ssl.serverraum.org ([176.9.125.105]:47131 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729205AbgBURsR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 12:48:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582307282;
+        Fri, 21 Feb 2020 12:48:17 -0500
+Received: from mwalle01.sab.local. (unknown [213.135.10.150])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id BB1B623E61;
+        Fri, 21 Feb 2020 18:48:14 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1582307294;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=RrMvZJoVJBWqnzqNr9KyLlzqZ46CEJlOdAIqg//g6XU=;
-        b=dIe+RgCzUCc+j7/6priU5r1awTTJQpfHKW2bI2qO6EjtMl47Qz3hE64Uw/VgBVyGkzxC42
-        2zU1dBq0ERQMUFnIFWtvhrgWHJRJfV3GxpUdsIJ1MhKCGjYxobTul+jQSvkfmgaPas+dOm
-        /FAGwnA7Pd7J02ViLqFWSUZZGWvZkEY=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-365-HnvsnQK8MFOUa1iSTmOF2Q-1; Fri, 21 Feb 2020 12:47:56 -0500
-X-MC-Unique: HnvsnQK8MFOUa1iSTmOF2Q-1
-Received: by mail-wr1-f70.google.com with SMTP id o6so1332880wrp.8
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 09:47:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=RrMvZJoVJBWqnzqNr9KyLlzqZ46CEJlOdAIqg//g6XU=;
-        b=F+w8aoOhRU2eJ19HOBrQ125PdslAb2zEVy9aDd4igyQin8IaB+6GXbrf3ase6+Aca7
-         92zMh2YoLqkMAPQaxf/MOHi7gTndLrRD/ywm/3u8yLAvdtUidhbo6DKdqoWhax3+YXTR
-         aTOEc0FZN7ZL+DUSvexCfF5Q8JfczwIOZI2N7+r3EHjsYOWt/eeqVSzKsnLiWviN1K00
-         uNoSHdS3g8OJNrwzds1YNQh1JhlYu9D7+5W2IDQSPU9an7Xpvln4Oi0MXfE00AKc1PkA
-         i77PNJILEqlta1U01UtyYEs38KiJGxprx7FNFiw+0EIOASOGUsqtcD3U+KNK4x8LUTqt
-         33rg==
-X-Gm-Message-State: APjAAAXm6/HJxN81IEuKmn4Xn9mj/X7zE+3wDgqPF4nuH5nox5B9TV4M
-        d8JCpU0zWnA0xRCfg+7fGB+CWb3IRgSlddOpQEJEpVZA0UGPLy+7cNyJ4ILAhInD8kH7FV5jtAj
-        ZroXAqdwSELzHzD27CkDGJqlH
-X-Received: by 2002:adf:e68d:: with SMTP id r13mr49225905wrm.349.1582307275646;
-        Fri, 21 Feb 2020 09:47:55 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzI29TQnMTxhegOPTR5SZPy7HDTeZP8mdmwqeW3b3wvRv6t/VcN7GX1ZnOVCmuZ9M9Iv9A8Vg==
-X-Received: by 2002:adf:e68d:: with SMTP id r13mr49225876wrm.349.1582307275388;
-        Fri, 21 Feb 2020 09:47:55 -0800 (PST)
-Received: from [192.168.178.40] ([151.20.135.128])
-        by smtp.gmail.com with ESMTPSA id x6sm4531952wmi.44.2020.02.21.09.47.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2020 09:47:54 -0800 (PST)
-Subject: Re: [PATCH v6 17/22] KVM: Terminate memslot walks via used_slots
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paul Mackerras <paulus@ozlabs.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, Marc Zyngier <maz@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-mips@vger.kernel.org, kvm@vger.kernel.org,
-        kvm-ppc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Peter Xu <peterx@redhat.com>,
-        =?UTF-8?Q?Philippe_Mathieu-Daud=c3=a9?= <f4bug@amsat.org>
-References: <20200218210736.16432-1-sean.j.christopherson@intel.com>
- <20200218210736.16432-18-sean.j.christopherson@intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <216d647a-e598-d5d6-e20f-9c44c9ca157f@redhat.com>
+        bh=zwfhoROdjBSTF6IWwTv6hSpPF+gjYKWiLJQMYXqgx2s=;
+        b=LO7HgpaKPV4EW/wQ6bAuzyEYUhWjwaOj7E9Alkf+nmnV+PjA1bBrp0qcsFUnpyF34MkWmG
+        s7ySCQf0ssdop9YpE+RmRdWyrpIUYiUhJDMVCcSAkXGL9I/mGJi+jys8BQYqg8GBZS/sd9
+        UU2/0vbhKFM3TuJxqezlurCc3kFi7r4=
+From:   Michael Walle <michael@walle.cc>
+To:     linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Jiri Slaby <jslaby@suse.com>, Peng Fan <peng.fan@nxp.com>,
+        Vabhav Sharma <vabhav.sharma@nxp.com>,
+        Michael Walle <michael@walle.cc>
+Subject: [PATCH v2 7/9] tty: serial: fsl_lpuart: add LS1028A earlycon support
 Date:   Fri, 21 Feb 2020 18:47:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+Message-Id: <20200221174754.5295-8-michael@walle.cc>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200221174754.5295-1-michael@walle.cc>
+References: <20200221174754.5295-1-michael@walle.cc>
 MIME-Version: 1.0
-In-Reply-To: <20200218210736.16432-18-sean.j.christopherson@intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spamd-Bar: ++++++
+X-Spam-Level: ******
+X-Rspamd-Server: web
+X-Spam-Status: Yes, score=6.40
+X-Spam-Score: 6.40
+X-Rspamd-Queue-Id: BB1B623E61
+X-Spamd-Result: default: False [6.40 / 15.00];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         R_MISSING_CHARSET(2.50)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         BROKEN_CONTENT_TYPE(1.50)[];
+         NEURAL_SPAM(0.00)[0.757];
+         DKIM_SIGNED(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[13];
+         MID_CONTAINS_FROM(1.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         ASN(0.00)[asn:12941, ipnet:213.135.0.0/19, country:DE];
+         SUSPICIOUS_RECIPS(1.50)[]
+X-Spam: Yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/02/20 22:07, Sean Christopherson wrote:
->  	tmp = id_to_memslot(__kvm_memslots(kvm, as_id), id);
-> -	old = *tmp;
-> -	tmp = NULL;
-> +	if (tmp) {
-> +		old = *tmp;
-> +		tmp = NULL;
-> +	} else {
-> +		memset(&old, 0, sizeof(old));
-> +		old.id = id;
-> +	}
->  
+Add a early_console_setup() for the LS1028A SoC with 32bit, little
+endian access. If the bootloader does a fixup of the clock-frequency
+node the baudrate divisor register will automatically be set.
 
-So much for my previous brilliant suggestion. :)
+Signed-off-by: Michael Walle <michael@walle.cc>
+---
+ drivers/tty/serial/fsl_lpuart.c | 51 +++++++++++++++++++++++++++------
+ 1 file changed, 43 insertions(+), 8 deletions(-)
 
-Paolo
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index d5a67e02f06a..e8e5c60e5b71 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -1841,11 +1841,12 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	spin_unlock_irqrestore(&sport->port.lock, flags);
+ }
+ 
+-static void
+-lpuart32_serial_setbrg(struct lpuart_port *sport, unsigned int baudrate)
++static void __lpuart32_serial_setbrg(struct uart_port *port,
++				     unsigned int baudrate, bool use_rx_dma,
++				     bool use_tx_dma)
+ {
+ 	u32 sbr, osr, baud_diff, tmp_osr, tmp_sbr, tmp_diff, tmp;
+-	u32 clk = sport->port.uartclk;
++	u32 clk = port->uartclk;
+ 
+ 	/*
+ 	 * The idea is to use the best OSR (over-sampling rate) possible.
+@@ -1891,10 +1892,10 @@ lpuart32_serial_setbrg(struct lpuart_port *sport, unsigned int baudrate)
+ 
+ 	/* handle buadrate outside acceptable rate */
+ 	if (baud_diff > ((baudrate / 100) * 3))
+-		dev_warn(sport->port.dev,
++		dev_warn(port->dev,
+ 			 "unacceptable baud rate difference of more than 3%%\n");
+ 
+-	tmp = lpuart32_read(&sport->port, UARTBAUD);
++	tmp = lpuart32_read(port, UARTBAUD);
+ 
+ 	if ((osr > 3) && (osr < 8))
+ 		tmp |= UARTBAUD_BOTHEDGE;
+@@ -1905,14 +1906,23 @@ lpuart32_serial_setbrg(struct lpuart_port *sport, unsigned int baudrate)
+ 	tmp &= ~UARTBAUD_SBR_MASK;
+ 	tmp |= sbr & UARTBAUD_SBR_MASK;
+ 
+-	if (!sport->lpuart_dma_rx_use)
++	if (!use_rx_dma)
+ 		tmp &= ~UARTBAUD_RDMAE;
+-	if (!sport->lpuart_dma_tx_use)
++	if (!use_tx_dma)
+ 		tmp &= ~UARTBAUD_TDMAE;
+ 
+-	lpuart32_write(&sport->port, tmp, UARTBAUD);
++	lpuart32_write(port, tmp, UARTBAUD);
++}
++
++static void lpuart32_serial_setbrg(struct lpuart_port *sport,
++				   unsigned int baudrate)
++{
++	__lpuart32_serial_setbrg(&sport->port, baudrate,
++				 sport->lpuart_dma_rx_use,
++				 sport->lpuart_dma_tx_use);
+ }
+ 
++
+ static void
+ lpuart32_set_termios(struct uart_port *port, struct ktermios *termios,
+ 		   struct ktermios *old)
+@@ -2406,6 +2416,30 @@ static int __init lpuart32_early_console_setup(struct earlycon_device *device,
+ 	return 0;
+ }
+ 
++static int __init ls1028a_early_console_setup(struct earlycon_device *device,
++					      const char *opt)
++{
++	u32 cr;
++
++	if (!device->port.membase)
++		return -ENODEV;
++
++	device->port.iotype = UPIO_MEM32;
++	device->con->write = lpuart32_early_write;
++
++	/* set the baudrate */
++	if (device->port.uartclk && device->baud)
++		__lpuart32_serial_setbrg(&device->port, device->baud,
++					 false, false);
++
++	/* enable transmitter */
++	cr = lpuart32_read(&device->port, UARTCTRL);
++	cr |= UARTCTRL_TE;
++	lpuart32_write(&device->port, cr, UARTCTRL);
++
++	return 0;
++}
++
+ static int __init lpuart32_imx_early_console_setup(struct earlycon_device *device,
+ 						   const char *opt)
+ {
+@@ -2420,6 +2454,7 @@ static int __init lpuart32_imx_early_console_setup(struct earlycon_device *devic
+ }
+ OF_EARLYCON_DECLARE(lpuart, "fsl,vf610-lpuart", lpuart_early_console_setup);
+ OF_EARLYCON_DECLARE(lpuart32, "fsl,ls1021a-lpuart", lpuart32_early_console_setup);
++OF_EARLYCON_DECLARE(lpuart32, "fsl,ls1028a-lpuart", ls1028a_early_console_setup);
+ OF_EARLYCON_DECLARE(lpuart32, "fsl,imx7ulp-lpuart", lpuart32_imx_early_console_setup);
+ EARLYCON_DECLARE(lpuart, lpuart_early_console_setup);
+ EARLYCON_DECLARE(lpuart32, lpuart32_early_console_setup);
+-- 
+2.20.1
 
