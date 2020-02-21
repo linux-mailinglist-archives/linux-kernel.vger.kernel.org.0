@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D61316776E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:42:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5300E167743
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:42:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730345AbgBUHzd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:55:33 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:39130 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730254AbgBUHza (ORCPT
+        id S1731177AbgBUIlM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:41:12 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:50435 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730683AbgBUH5x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:55:30 -0500
+        Fri, 21 Feb 2020 02:57:53 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582271729;
+        s=mimecast20190719; t=1582271872;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=KVCnnoi6wVTChFDkUlf2zuvKVv3+WsxMSBarJbh7sxI=;
-        b=e6Xf5x9RI3KnDVncXz5EUPjC537jNIE43WFtaT5pKQ4RIUmyk2T9wTqmjozqiUn0kJhnhB
-        oeSlsLDvqToyvY/AdErqVQqCTGpp8bgdL1KYxOvjV4qAuBVWqZ10osu04Oe1HWcJ6Eq4DJ
-        0r67wNHsGWKoadLBNS2k/WhpDk9uxbc=
+        bh=qZ2vYX6aTEtYA+Rmtsl2PSnzUra/4wEX+6A+xs3OWnE=;
+        b=fICJukfYhcyMyFkOqBlQi6nnMvVXDkasO/fHBO4MvkX33xhY7jiPQbioiDX7/DQktAMZVy
+        L3sFBD3s/TTKuZ0NtGge89eKIL1o8fV1jQFNHw9YxruLPMQ/aQq6TnmWn5smQgWkbnxd9B
+        zU6S0yr0b6bUzkhn3IntLZjHwUlHZ/g=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-332-72rAjlVNP2aS6JJL5_kEjQ-1; Fri, 21 Feb 2020 02:55:25 -0500
-X-MC-Unique: 72rAjlVNP2aS6JJL5_kEjQ-1
+ us-mta-347-s328FKtIP_GiYZgic4bVwg-1; Fri, 21 Feb 2020 02:57:50 -0500
+X-MC-Unique: s328FKtIP_GiYZgic4bVwg-1
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C8955DB60;
-        Fri, 21 Feb 2020 07:55:22 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 89523107ACC5;
+        Fri, 21 Feb 2020 07:57:47 +0000 (UTC)
 Received: from [10.72.13.208] (ovpn-13-208.pek2.redhat.com [10.72.13.208])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 433D99076C;
-        Fri, 21 Feb 2020 07:54:52 +0000 (UTC)
-Subject: Re: [PATCH V4 3/5] vDPA: introduce vDPA bus
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A094B8ECFD;
+        Fri, 21 Feb 2020 07:57:31 +0000 (UTC)
+Subject: Re: [PATCH V4 5/5] vdpasim: vDPA device simulator
 To:     Jason Gunthorpe <jgg@mellanox.com>
 Cc:     "mst@redhat.com" <mst@redhat.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
@@ -63,16 +63,16 @@ Cc:     "mst@redhat.com" <mst@redhat.com>,
         "hanand@xilinx.com" <hanand@xilinx.com>,
         "mhabets@solarflare.com" <mhabets@solarflare.com>
 References: <20200220061141.29390-1-jasowang@redhat.com>
- <20200220061141.29390-4-jasowang@redhat.com>
- <20200220151412.GV23930@mellanox.com>
+ <20200220061141.29390-6-jasowang@redhat.com>
+ <20200220151215.GU23930@mellanox.com>
 From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <5d7de10a-dcce-7aa7-c033-2394718aa56b@redhat.com>
-Date:   Fri, 21 Feb 2020 15:54:50 +0800
+Message-ID: <6c341a77-a297-b7c7-dea5-b3f7b920b1f3@redhat.com>
+Date:   Fri, 21 Feb 2020 15:57:29 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20200220151412.GV23930@mellanox.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <20200220151215.GU23930@mellanox.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Content-Transfer-Encoding: quoted-printable
@@ -82,100 +82,132 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 2020/2/20 =E4=B8=8B=E5=8D=8811:14, Jason Gunthorpe wrote:
-> On Thu, Feb 20, 2020 at 02:11:39PM +0800, Jason Wang wrote:
->> vDPA device is a device that uses a datapath which complies with the
->> virtio specifications with vendor specific control path. vDPA devices
->> can be both physically located on the hardware or emulated by
->> software. vDPA hardware devices are usually implemented through PCIE
->> with the following types:
->>
->> - PF (Physical Function) - A single Physical Function
->> - VF (Virtual Function) - Device that supports single root I/O
->>    virtualization (SR-IOV). Its Virtual Function (VF) represents a
->>    virtualized instance of the device that can be assigned to differen=
-t
->>    partitions
->> - ADI (Assignable Device Interface) and its equivalents - With
->>    technologies such as Intel Scalable IOV, a virtual device (VDEV)
->>    composed by host OS utilizing one or more ADIs. Or its equivalent
->>    like SF (Sub function) from Mellanox.
->>
->>  From a driver's perspective, depends on how and where the DMA
->> translation is done, vDPA devices are split into two types:
->>
->> - Platform specific DMA translation - From the driver's perspective,
->>    the device can be used on a platform where device access to data in
->>    memory is limited and/or translated. An example is a PCIE vDPA whos=
-e
->>    DMA request was tagged via a bus (e.g PCIE) specific way. DMA
->>    translation and protection are done at PCIE bus IOMMU level.
->> - Device specific DMA translation - The device implements DMA
->>    isolation and protection through its own logic. An example is a vDP=
-A
->>    device which uses on-chip IOMMU.
->>
->> To hide the differences and complexity of the above types for a vDPA
->> device/IOMMU options and in order to present a generic virtio device
->> to the upper layer, a device agnostic framework is required.
->>
->> This patch introduces a software vDPA bus which abstracts the
->> common attributes of vDPA device, vDPA bus driver and the
->> communication method (vdpa_config_ops) between the vDPA device
->> abstraction and the vDPA bus driver. This allows multiple types of
->> drivers to be used for vDPA device like the virtio_vdpa and vhost_vdpa
->> driver to operate on the bus and allow vDPA device could be used by
->> either kernel virtio driver or userspace vhost drivers as:
->>
->>     virtio drivers  vhost drivers
->>            |             |
->>      [virtio bus]   [vhost uAPI]
->>            |             |
->>     virtio device   vhost device
->>     virtio_vdpa drv vhost_vdpa drv
->>               \       /
->>              [vDPA bus]
->>                   |
->>              vDPA device
->>              hardware drv
->>                   |
->>              [hardware bus]
->>                   |
->>              vDPA hardware
-> I still don't like this strange complexity, vhost should have been
-> layered on top of the virtio device instead of adding an extra bus
-> just for vdpa.
+On 2020/2/20 =E4=B8=8B=E5=8D=8811:12, Jason Gunthorpe wrote:
+> On Thu, Feb 20, 2020 at 02:11:41PM +0800, Jason Wang wrote:
+>> +static void vdpasim_device_release(struct device *dev)
+>> +{
+>> +	struct vdpasim *vdpasim =3D dev_to_sim(dev);
+>> +
+>> +	cancel_work_sync(&vdpasim->work);
+>> +	kfree(vdpasim->buffer);
+>> +	vhost_iotlb_free(vdpasim->iommu);
+>> +	kfree(vdpasim);
+>> +}
+>> +
+>> +static struct vdpasim *vdpasim_create(void)
+>> +{
+>> +	struct virtio_net_config *config;
+>> +	struct vhost_iotlb *iommu;
+>> +	struct vdpasim *vdpasim;
+>> +	struct device *dev;
+>> +	void *buffer;
+>> +	int ret =3D -ENOMEM;
+>> +
+>> +	iommu =3D vhost_iotlb_alloc(2048, 0);
+>> +	if (!iommu)
+>> +		goto err;
+>> +
+>> +	buffer =3D kmalloc(PAGE_SIZE, GFP_KERNEL);
+>> +	if (!buffer)
+>> +		goto err_buffer;
+>> +
+>> +	vdpasim =3D kzalloc(sizeof(*vdpasim), GFP_KERNEL);
+>> +	if (!vdpasim)
+>> +		goto err_alloc;
+>> +
+>> +	vdpasim->buffer =3D buffer;
+>> +	vdpasim->iommu =3D iommu;
+>> +
+>> +	config =3D &vdpasim->config;
+>> +	config->mtu =3D 1500;
+>> +	config->status =3D VIRTIO_NET_S_LINK_UP;
+>> +	eth_random_addr(config->mac);
+>> +
+>> +	INIT_WORK(&vdpasim->work, vdpasim_work);
+>> +	spin_lock_init(&vdpasim->lock);
+>> +
+>> +	vringh_set_iotlb(&vdpasim->vqs[0].vring, vdpasim->iommu);
+>> +	vringh_set_iotlb(&vdpasim->vqs[1].vring, vdpasim->iommu);
+>> +
+>> +	dev =3D &vdpasim->dev;
+>> +	dev->release =3D vdpasim_device_release;
+>> +	dev->coherent_dma_mask =3D DMA_BIT_MASK(64);
+>> +	set_dma_ops(dev, &vdpasim_dma_ops);
+>> +	dev_set_name(dev, "%s", VDPASIM_NAME);
+>> +
+>> +	ret =3D device_register(&vdpasim->dev);
+>> +	if (ret)
+>> +		goto err_init;
+> It is a bit weird to be creating this dummy parent, couldn't this be
+> done by just passing a NULL parent to vdpa_alloc_device, doing
+> set_dma_ops() on the vdpasim->vdpa->dev and setting dma_device to
+> vdpasim->vdpa->dev ?
 
 
-We've considered such method and I think why we choose a bus is:
+I think it works.
 
-- vDPA device was originally named as "vhost Datapath Acceleration"=20
-which means the datapath complies virtio specification but not control=20
-path. This means the device should behave like vhost. And in order to=20
-support vhost, vDPA device requires more function than virtio. E.g the=20
-ability to query the device state (virtqueue indices, counters etc) and=20
-track dirty pages. This mean even a pure virtio hardware may not work=20
-for vhost. That's why a multi inheritance is used for a new type of vDPA=20
-device.
 
-- As we've already discussed, virtio bus is designed for kernel driver=20
-and a brunches of devices, drivers or even buses have been implemented=20
-around that. It requires a major refactoring not only with the virtio=20
-bus but also with the drivers and devices to make it behave more like a=20
-vhost. Abstract vDPA as a kind of transport for virtio greatly simplify=20
-the work and have almost zero impact on the exist virtio core. VOP=20
-(vop_bus) use similar design.
+>> +	vdpasim->vdpa =3D vdpa_alloc_device(dev, dev, &vdpasim_net_config_op=
+s);
+>> +	if (ret)
+>> +		goto err_vdpa;
+>> +	ret =3D vdpa_register_device(vdpasim->vdpa);
+>> +	if (ret)
+>> +		goto err_register;
+>> +
+>> +	return vdpasim;
+>> +
+>> +err_register:
+>> +	put_device(&vdpasim->vdpa->dev);
+>> +err_vdpa:
+>> +	device_del(&vdpasim->dev);
+>> +	goto err;
+>> +err_init:
+>> +	put_device(&vdpasim->dev);
+>> +	goto err;
+> If you do the vdmasim alloc first, and immediately do
+> device_initialize() then all the failure paths can do put_device
+> instead of having this ugly goto unwind split. Just check for
+> vdpasim->iommu =3D=3D NULL during release.
+
+
+Yes, that looks simpler.
 
 
 >
-> However, I don't see any technical problems with this patch now.
+>> +static int __init vdpasim_dev_init(void)
+>> +{
+>> +	vdpasim_dev =3D vdpasim_create();
+>> +
+>> +	if (!IS_ERR(vdpasim_dev))
+>> +		return 0;
+>> +
+>> +	return PTR_ERR(vdpasim_dev);
+>> +}
+>> +
+>> +static int vdpasim_device_remove_cb(struct device *dev, void *data)
+>> +{
+>> +	struct vdpa_device *vdpa =3D dev_to_vdpa(dev);
+>> +
+>> +	vdpa_unregister_device(vdpa);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void __exit vdpasim_dev_exit(void)
+>> +{
+>> +	device_for_each_child(&vdpasim_dev->dev, NULL,
+>> +			      vdpasim_device_remove_cb);
+> Why the loop? There is only one device, and it is in the global
+> varaible vdmasim_dev ?
 
 
-Thanks, your review is greatly appreciated.
+Not necessary but doesn't harm, will remove this.
+
+Thanks
 
 
 >
-> Thanks,
 > Jason
 >
 
