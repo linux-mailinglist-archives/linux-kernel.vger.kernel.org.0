@@ -2,94 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D056D16780E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:46:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2DC31677C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:44:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730545AbgBUIpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:45:47 -0500
-Received: from mail-pj1-f74.google.com ([209.85.216.74]:44657 "EHLO
-        mail-pj1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729613AbgBUHuv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:50:51 -0500
-Received: by mail-pj1-f74.google.com with SMTP id c31so512631pje.9
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 23:50:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=kdc4/GnqQPZSDbeLZD4M7jzkDGk/HjdnvHVdHj4Ph1s=;
-        b=PpD0YIFQSiCN6/cJEmqaMhNsOaqoM1d0SGbkSAwumb3ksIASRK5XXky8vX5TIdhpm4
-         /bDdgSmB6qTiSar/CGLibKdbb+lUsbwPazA+iQqEzHUxBeBQBUBfP/6dIevtAtvuHvkL
-         CZd1RWIuD/dJpBwNl5IY6vZXWeaWdIFV90y6B1Q3JF+zZ7k962WuaixETt4WnZU1Aduz
-         RAMFYRIosDRR6ChxzXE+DrNutlEbV2ju2ya+KW3PcJpetbQSHW3ze1pi5CdclE5autEB
-         YncQn+IIRKcF/mj6RyAxriVHOW6gmVKxMvcZXjg2ti/9g1KGaB0YmHnbdQ00KDKDIx9i
-         QbBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=kdc4/GnqQPZSDbeLZD4M7jzkDGk/HjdnvHVdHj4Ph1s=;
-        b=jhHUKtfEhQKWRVHsBcO/AI8sZyl3MIY3juHvdDk7vaHn4s+ZhXY3rPUk7fz6Q9uQXO
-         /iG7nZcCXt9D/JJcqAHoAS711XiJNQWRT52Q5JA2JAxG3nqc3vFs3AqIultAJ0KyD9S2
-         NYEctVBuJq2R6XzzAkk9puu86Y1c7/cFxjJHXZkFX5gb/RiJcmvi69sFW0KKf2X1LNdg
-         QVDfDzSw660xe0MyhYK3eLscudSRd0ViPnJ/CQjBS/ilb9sDsc9wzUzYu8K7FawWLp+u
-         yccxHAPrC35LJxFfKEzGrckSe+hYbtJdwp5fAJQwDG1Hda1fFIPHql/lY1sJWLP0sHVu
-         ePNA==
-X-Gm-Message-State: APjAAAW0joZ7wtiUW7M3L/KqMn0GHebW3Gtm13UEN4GZrMrHWHHHjyhq
-        /kWe5kp9LQlvFRUVComvZaeIKXQGY3xsPRY=
-X-Google-Smtp-Source: APXvYqzX1iAQ0imJq9JjSnyOkJDF3o4y8ej3cF2kW91EygZYqxE5N1B5FAuwvLiwaHz9hDTaJ1N6Yn2H1pJK6nI=
-X-Received: by 2002:a63:505b:: with SMTP id q27mr37081699pgl.39.1582271449861;
- Thu, 20 Feb 2020 23:50:49 -0800 (PST)
-Date:   Thu, 20 Feb 2020 23:50:36 -0800
-In-Reply-To: <20200221075036.181885-1-saravanak@google.com>
-Message-Id: <20200221075036.181885-4-saravanak@google.com>
-Mime-Version: 1.0
-References: <20200221075036.181885-1-saravanak@google.com>
-X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
-Subject: [PATCH v1 3/3] driver core: Skip unnecessary work when device doesn't
- have sync_state()
-From:   Saravana Kannan <saravanak@google.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Saravana Kannan <saravanak@google.com>, kernel-team@android.com,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1730631AbgBUIoS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:44:18 -0500
+Received: from mx.socionext.com ([202.248.49.38]:51003 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729717AbgBUHwh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:52:37 -0500
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 21 Feb 2020 16:52:36 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 7385918008C;
+        Fri, 21 Feb 2020 16:52:36 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Fri, 21 Feb 2020 16:52:36 +0900
+Received: from plum.e01.socionext.com (unknown [10.213.132.32])
+        by kinkan.css.socionext.com (Postfix) with ESMTP id 154471A01BB;
+        Fri, 21 Feb 2020 16:52:36 +0900 (JST)
+From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To:     Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Subject: [RESEND PATCH v4 0/2] dmaengine: Add UniPhier XDMAC driver
+Date:   Fri, 21 Feb 2020 16:52:28 +0900
+Message-Id: <1582271550-3403-1-git-send-email-hayashi.kunihiko@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A bunch of busy work is done for devices that don't have sync_state()
-support. Stop doing the busy work.
+Add support for UniPhier external DMA controller (XDMAC), that is
+implemented in Pro4, Pro5, PXs2, LD11, LD20 and PXs3 SoCs.
 
-Signed-off-by: Saravana Kannan <saravanak@google.com>
----
- drivers/base/core.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Changes since v3:
+- dt-bindings: Fix typo
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 3306d5ae92a6..1ecd69d26837 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -718,6 +718,8 @@ static void __device_links_queue_sync_state(struct device *dev,
- {
- 	struct device_link *link;
- 
-+	if (!dev_has_sync_state(dev))
-+		return;
- 	if (dev->state_synced)
- 		return;
- 
-@@ -819,7 +821,7 @@ late_initcall(sync_state_resume_initcall);
- 
- static void __device_links_supplier_defer_sync(struct device *sup)
- {
--	if (list_empty(&sup->links.defer_sync))
-+	if (list_empty(&sup->links.defer_sync) && dev_has_sync_state(dev))
- 		list_add_tail(&sup->links.defer_sync, &deferred_sync);
- }
- 
+Changes since v2:
+- dt-bindings: Fix SPDX and some properties
+- Fix iteration count calculation for memcpy
+- Replace zero-length array with flexible-array member in struct
+  uniphier_xdmac_device.
+
+Changes since v1:
+- dt-bindings: Rewrite with DT schema.
+- Change return type of uniphier_xdmac_chan_init() to void,
+  and remove error return in probe.
+
+Kunihiko Hayashi (2):
+  dt-bindings: dmaengine: Add UniPhier external DMA controller bindings
+  dmaengine: uniphier-xdmac: Add UniPhier external DMA controller driver
+
+ .../bindings/dma/socionext,uniphier-xdmac.yaml     |  63 +++
+ drivers/dma/Kconfig                                |  11 +
+ drivers/dma/Makefile                               |   1 +
+ drivers/dma/uniphier-xdmac.c                       | 611 +++++++++++++++++++++
+ 4 files changed, 686 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.yaml
+ create mode 100644 drivers/dma/uniphier-xdmac.c
+
 -- 
-2.25.0.265.gbab2e86ba0-goog
+2.7.4
 
