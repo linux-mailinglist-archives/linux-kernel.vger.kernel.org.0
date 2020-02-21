@@ -2,103 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0511F168379
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 17:31:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8834F168381
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 17:32:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727553AbgBUQbu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 11:31:50 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:23273 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726032AbgBUQbu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 11:31:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582302708;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=x+/PwYVfKF+sGaYhdBB/ka7rcNSOJveuT3O5v5Xs6QM=;
-        b=XGrGbbf7Z4mAPjbwexqJ7IsLnJ5yHXohgwfNxReFPISrRudkd7aLJt8yY5ImgqBQzHqQUY
-        vnIyoWFr1zkYlaoJGlHJTL5DTH/OcCLUCoHQrsZsnMX4gcbTVFqVwrZarB8XUt4fjY65gS
-        nPh39pTOAKiAHwSwrhLivBRM5r5M5bw=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-61--R_eFUj0NvKTyAVnVWCB1g-1; Fri, 21 Feb 2020 11:31:47 -0500
-X-MC-Unique: -R_eFUj0NvKTyAVnVWCB1g-1
-Received: by mail-wm1-f69.google.com with SMTP id p26so834033wmg.5
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 08:31:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=x+/PwYVfKF+sGaYhdBB/ka7rcNSOJveuT3O5v5Xs6QM=;
-        b=YgVLOSdY9OhKaVoH0nvpHaUIFyUDmIOJx0KMVLBF2YzJ5oSJwYoqPnsDwpcx8Sq/Kl
-         /FN5YP019t8XwHnzQU7e6S2IUxHzryG/5qSSCDUrlXUavEXSRC9KzunxxTGkgdCD5+Iy
-         UuuDi7B/O4xvvEF5grXvf/R02GISAw1gYlf3Zkg+bSVBT378O1jSIBViJ59/VLzmyqDn
-         +VfRfCyGZ25vkIZdsEy4UX+9pxnALYUen3WsnfI4Lw/tNhJgzl9u/pruqQ0mt61QnWRP
-         a/vOgDDs+5dxZvCpkO9YCiWbUuNDzbOU2pavFOgVh4vBSpbE9HPyce6p/aI1Tm66oo3D
-         vD8w==
-X-Gm-Message-State: APjAAAXhrxNZ33bsTmTxUC47ga5brZeVUKG9bk57T1NEDfOEAHL1C2wY
-        5ia9Y3+OCcieCUWFKvaC7p7G3+TPR30KpdMrzW6HZXnYgHZjL1RuoZHttP6pt7L9ov/mdjW9Ync
-        T8QK4Ri8/XiV/iQMjOtID3xir
-X-Received: by 2002:a1c:f606:: with SMTP id w6mr4632378wmc.109.1582302706099;
-        Fri, 21 Feb 2020 08:31:46 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzHPzw+vtsYsE0OyDcSB1eD9HXtMyBCN3d5TeUuNu7HSh1hgyKVqB1VcO5l07mSlsTnqf40YA==
-X-Received: by 2002:a1c:f606:: with SMTP id w6mr4632358wmc.109.1582302705882;
-        Fri, 21 Feb 2020 08:31:45 -0800 (PST)
-Received: from [192.168.178.40] ([151.20.135.128])
-        by smtp.gmail.com with ESMTPSA id w1sm4297148wmc.11.2020.02.21.08.31.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2020 08:31:44 -0800 (PST)
-Subject: Re: [PATCH] KVM: X86: eliminate some meaningless code
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        linmiaohe <linmiaohe@huawei.com>
-Cc:     rkrcmar@redhat.com, vkuznets@redhat.com, wanpengli@tencent.com,
-        jmattson@google.com, joro@8bytes.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-References: <1582293926-23388-1-git-send-email-linmiaohe@huawei.com>
- <20200221152358.GC12665@linux.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <e393431b-9e5e-9bcb-c03a-d40baeafa435@redhat.com>
-Date:   Fri, 21 Feb 2020 17:31:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S1727881AbgBUQcG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 11:32:06 -0500
+Received: from mail-dm6nam12on2046.outbound.protection.outlook.com ([40.107.243.46]:6208
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726710AbgBUQcG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 11:32:06 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bUFUoKX5BXvfrTilKzmHC7UvJ/osY0FNtorEbhAODDIUqfC0L2f5opR1fcQ0Dg/mWlNOUZRK6SgLsxppPMgjsNvP5EzBj1oRcLR/gG49KcHfJu2sMuis8SDYXzlBHyU3sF+veknT3++HER/Et+zD/UkRz9Nh7iOjz/Xfr4XsoyXMSOYyhQIzVUBOEwnkZCU8895hp3CO3457zhWzjktOjug7GOWqd8TCPqbq/OzbawiV36IyUUywkbhJjPoCg2W0g41VvLG08Ir3zVdfaj/HDYjv5qZsHgMAbY3Tl9lJC3qjEdxI9BB9qxMiqniu7jVgKu2wAjrl7yK08na8dg2IcQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=f1d7SU74WxrWjz+LQ+cB0iMwuNx0+QLq05WnJof3gRI=;
+ b=TRT3y3kRl22hxovnFUn03+3qrdhCJUVwyoPllOgZRGuMehfa90MI85YPdMvhDMfpW0j/9syXX05U9PFH0m7iAtgd4ONnvVL7U7Gj1i/m1kxqO/MLTqAMMseTfamwKxvgm/6S+SK2/seX+HW+twZiaFNefu2SzMgjG+9mhbAaNI7CtXvk9EDtyB4KlOwUhWHD51gDyc1NYQZp2q5WdzhQaCeAC3UywdmvAfICe3SrQXjo3jq2vDpHrpfQZS4DIkYs8dyD1IhOU1RKuvGhcRpueyJ3lhG7q58sa6jtyhZnifhdO5kGVWZlVDgN8R7NOAtNq5quFb2SovLe/ynFChIviw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=silabs.com; dmarc=pass action=none header.from=silabs.com;
+ dkim=pass header.d=silabs.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=silabs.onmicrosoft.com; s=selector2-silabs-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=f1d7SU74WxrWjz+LQ+cB0iMwuNx0+QLq05WnJof3gRI=;
+ b=GM+69Gs8zbYLsJvAsp0q6evNV65k0aRimMjIgptn1hyvR4sKN9pzDnFbqRg/vWLEmI5FuWPcccJxiH/+VYVQc5oMA96n/q7Dh+Yf6m9iOloe1dcX7ueQr3YXS1+t76mNCQqjpGEi5XlTWybBvROIXwhT4ffFY/MC2sHNgwfpQ0g=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Jerome.Pouiller@silabs.com; 
+Received: from MN2PR11MB4063.namprd11.prod.outlook.com (2603:10b6:208:13f::22)
+ by MN2PR11MB4351.namprd11.prod.outlook.com (2603:10b6:208:193::31) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2750.17; Fri, 21 Feb
+ 2020 16:32:03 +0000
+Received: from MN2PR11MB4063.namprd11.prod.outlook.com
+ ([fe80::ade4:5702:1c8b:a2b3]) by MN2PR11MB4063.namprd11.prod.outlook.com
+ ([fe80::ade4:5702:1c8b:a2b3%7]) with mapi id 15.20.2729.033; Fri, 21 Feb 2020
+ 16:32:02 +0000
+From:   Jerome Pouiller <Jerome.Pouiller@silabs.com>
+To:     linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-kernel@vger.kernel.org,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Pouiller?= 
+        <jerome.pouiller@silabs.com>
+Subject: [PATCH v2] mmc: core: Fix indentation
+Date:   Fri, 21 Feb 2020 17:31:47 +0100
+Message-Id: <20200221163147.608677-1-Jerome.Pouiller@silabs.com>
+X-Mailer: git-send-email 2.25.1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
+X-ClientProxiedBy: PR0P264CA0047.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:100:1::35) To MN2PR11MB4063.namprd11.prod.outlook.com
+ (2603:10b6:208:13f::22)
 MIME-Version: 1.0
-In-Reply-To: <20200221152358.GC12665@linux.intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: from pc-42.silabs.com (37.71.187.125) by PR0P264CA0047.FRAP264.PROD.OUTLOOK.COM (2603:10a6:100:1::35) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2750.18 via Frontend Transport; Fri, 21 Feb 2020 16:32:01 +0000
+X-Mailer: git-send-email 2.25.1
+X-Originating-IP: [37.71.187.125]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 1f92253c-5bc6-4fbc-4f10-08d7b6eb94a4
+X-MS-TrafficTypeDiagnostic: MN2PR11MB4351:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <MN2PR11MB435127A53537880437C8724693120@MN2PR11MB4351.namprd11.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1303;
+X-Forefront-PRVS: 0320B28BE1
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(136003)(366004)(376002)(396003)(346002)(39850400004)(199004)(189003)(66946007)(86362001)(8936002)(4326008)(478600001)(81166006)(1076003)(81156014)(66556008)(16526019)(2906002)(107886003)(66476007)(186003)(26005)(8676002)(6916009)(316002)(956004)(5660300002)(6666004)(36756003)(6486002)(2616005)(52116002)(7696005);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB4351;H:MN2PR11MB4063.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: silabs.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 95MnRCPAlpYxBD6onASDlpIq9/++OsVROe13KPIstYCHORsRVkynsuBeoQ14ntlOiQOxQN3McVsZbmerE2Ks+DHCzVp2+yhyeXQh/oNvhNVz0eI71fYXl7mCLwqKmctCCh8nuramBB9/AkIwbTKU/d/x7EK7v7COkJhBNx5usU3luKTCLDPp2d8ESTWntxmsq/BpCyhfcY0PB16M9ARywMz7gBY5ebmKj9IJpPxd3Vu8F9fc/gUGcpfNL+C/+gI0hReH8hiPnEq3l84m4EPvBR/LA6YjCijqoSFU1nXfp4GeQ5i6tewBvKJ4tp3jr4aMeJokUFYOz/UkD+oRHvLbDYnlwj6RTuBZ65TMZcxSVnZX1GFmp4wonxBtZ7JXp9QIY6GOS/I2GRV4/qs7Z5jfibtf+mTGlKPqQ0CHVjJQxNvfMbrXFP3Bb4FFEtVA5/G1
+X-MS-Exchange-AntiSpam-MessageData: 52QnGQHyqBTyJucdbCBxNVObq6tizMoIT6e9VDZ7w9F51+hsvTQ9dJcoSqsl9600/Smbva/xTMAqkw/n9A1TNoWO3quaSztMFUArN/SbGk1xvdHR+lR+9gA+Lazhuf29awVyyM2To94K7oA/ae1/Mg==
+X-OriginatorOrg: silabs.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f92253c-5bc6-4fbc-4f10-08d7b6eb94a4
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2020 16:32:02.6788
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 54dbd822-5231-4b20-944d-6f4abcd541fb
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0C1Gn6OZd8wZun2H8VB2stglc7x8QYfX/imb9AXZ8lNTbXqZPbpeZdc4NlB70DWrO/12vSR5ipX+0TPxwoOPxQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4351
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/02/20 16:23, Sean Christopherson wrote:
-> 
-> I'm guessing no VMM actually uses this ioctl(), e.g. neither Qemu or CrosVM
-> use it, which is why the broken behavior has gone unnoticed.  Don't suppose
-> you'd want to write a selftest to hammer KVM_{SET,GET}_CPUID2?
-> 
-> int kvm_vcpu_ioctl_get_cpuid2(struct kvm_vcpu *vcpu,
->                               struct kvm_cpuid2 *cpuid,
->                               struct kvm_cpuid_entry2 __user *entries)
-> {
->         if (cpuid->nent < vcpu->arch.cpuid_nent)
->                 return -E2BIG;
-> 
->         if (copy_to_user(entries, &vcpu->arch.cpuid_entries,
->                          vcpu->arch.cpuid_nent * sizeof(struct kvm_cpuid_entry2)))
->                 return -EFAULT;
-> 
-> 	cpuid->nent = vcpu->arch.cpuid_nent;
-> 
->         return 0;
-> }
-
-I would just drop KVM_GET_CPUID2 altogether and see if someone complains.
-
-Paolo
-
+RnJvbTogSsOpcsO0bWUgUG91aWxsZXIgPGplcm9tZS5wb3VpbGxlckBzaWxhYnMuY29tPgoKc2Rp
+b19zaW5nbGVfaXJxX3NldCgpIHdhcyBpbmRlbnRlZCB3aXRoIGEgbWl4IG9mIHRhYnMgYW5kIHNw
+YWNlcy4KClNpZ25lZC1vZmYtYnk6IErDqXLDtG1lIFBvdWlsbGVyIDxqZXJvbWUucG91aWxsZXJA
+c2lsYWJzLmNvbT4KLS0tCnYyOgogIC0gQWxzbyBhZGQgYnJhY2VzIGFyb3VuZiBmb3IgbG9vcCAo
+c3VnZ2VzdGVkIGJ5IEpvZSkKCiBkcml2ZXJzL21tYy9jb3JlL3NkaW9faXJxLmMgfCAxNSArKysr
+KysrKy0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDcgZGVsZXRpb25z
+KC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9tbWMvY29yZS9zZGlvX2lycS5jIGIvZHJpdmVycy9t
+bWMvY29yZS9zZGlvX2lycS5jCmluZGV4IDkwMDg3MTA3M2JkNy4uM2ZmZTRmZjQ5YWE3IDEwMDY0
+NAotLS0gYS9kcml2ZXJzL21tYy9jb3JlL3NkaW9faXJxLmMKKysrIGIvZHJpdmVycy9tbWMvY29y
+ZS9zZGlvX2lycS5jCkBAIC0yNzYsMTQgKzI3NiwxNSBAQCBzdGF0aWMgdm9pZCBzZGlvX3Npbmds
+ZV9pcnFfc2V0KHN0cnVjdCBtbWNfY2FyZCAqY2FyZCkKIAogCWNhcmQtPnNkaW9fc2luZ2xlX2ly
+cSA9IE5VTEw7CiAJaWYgKChjYXJkLT5ob3N0LT5jYXBzICYgTU1DX0NBUF9TRElPX0lSUSkgJiYK
+LQkgICAgY2FyZC0+aG9zdC0+c2Rpb19pcnFzID09IDEpCisJICAgIGNhcmQtPmhvc3QtPnNkaW9f
+aXJxcyA9PSAxKSB7CiAJCWZvciAoaSA9IDA7IGkgPCBjYXJkLT5zZGlvX2Z1bmNzOyBpKyspIHsK
+LQkJICAgICAgIGZ1bmMgPSBjYXJkLT5zZGlvX2Z1bmNbaV07Ci0JCSAgICAgICBpZiAoZnVuYyAm
+JiBmdW5jLT5pcnFfaGFuZGxlcikgewotCQkJICAgICAgIGNhcmQtPnNkaW9fc2luZ2xlX2lycSA9
+IGZ1bmM7Ci0JCQkgICAgICAgYnJlYWs7Ci0JCSAgICAgICB9Ci0JICAgICAgIH0KKwkJCWZ1bmMg
+PSBjYXJkLT5zZGlvX2Z1bmNbaV07CisJCQlpZiAoZnVuYyAmJiBmdW5jLT5pcnFfaGFuZGxlcikg
+eworCQkJCWNhcmQtPnNkaW9fc2luZ2xlX2lycSA9IGZ1bmM7CisJCQkJYnJlYWs7CisJCQl9CisJ
+CX0KKwl9CiB9CiAKIC8qKgotLSAKMi4yNS4xCgo=
