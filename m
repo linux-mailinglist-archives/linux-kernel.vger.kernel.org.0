@@ -2,114 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 486D716821D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:45:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0C2316822B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:47:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728815AbgBUPo7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 10:44:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37932 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728299AbgBUPo6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 10:44:58 -0500
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2EBC206E2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 15:44:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582299898;
-        bh=48BvdhEQtUJU8+6OGE8cEsvGVyAAiBApYV9aIFVank0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=EeetZYvCiRffEBrR3vT2K7sU04weXZLuuKpi/lSjnx858FiAS8Vuw5I21HOLAMJav
-         V6v5Ik2uyu3LOuJIvFJCG41DwAhNvAa8DVH2Vpw1BtGiNeCsC6yHm+NeeXWSOX89Xg
-         WNOFMnRpBOvnsYjFnkheYpBZB1XIrgbvhylxC5Uw=
-Received: by mail-wm1-f50.google.com with SMTP id p9so2264690wmc.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 07:44:57 -0800 (PST)
-X-Gm-Message-State: APjAAAUwcTWjUuVU7alau2ubJJ6zEbyIm43wQ/Uqqd3biaNMC3FKZUIW
-        8gHBD+88XvnG8YyvTGophjFY3x0H8Te7Xzw0iZlU1g==
-X-Google-Smtp-Source: APXvYqxzVHxjianXZjn/dPOJ4coC5k84JaxX22gy7hY+6Ilv2pBdV7pd1dPSP/HhLDtWoyZe+gt8xKr0YvD2FW5TBY8=
-X-Received: by 2002:a05:600c:248:: with SMTP id 8mr4493608wmj.1.1582299896175;
- Fri, 21 Feb 2020 07:44:56 -0800 (PST)
+        id S1728512AbgBUPr2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 10:47:28 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:43784 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727312AbgBUPr2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 10:47:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=8Rh9xF8Ip+2XcAggrOCPjsFTFtbK8F8PUpCWjSbTVZU=; b=GLzUnTFNRf5WlpOSGlBaxxK1ZC
+        IpoU1NE44kNrImK1uh9Sef+I0YAdgnqwG1Pkhh7KtJ70ldksZ923AfJu7Uq9wzl0RzXmMxUna3bxY
+        FOINcJWjHZV56i8v5AqYZx1o4FhLnFILkOxt/jIjvPTg++KVb3LQKGWrIaCg34EMdUegjJe4Ao8h2
+        6Yw618dxo9zCnjgA8G8znMLAP2JDiMaZDGeQUQbe32RmYzbdo7kelLvdyKPjMTQV/QfJPi5u4HARf
+        E0X6deyikcdxVDGDGvg0Aaf2ppErTkox1UMU1QjthyaXNKn3O5NKgKPdv9KfySiS7Vlfv1xCIyjjo
+        wCTf5cfA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j5AWF-0001Zj-0o; Fri, 21 Feb 2020 15:47:11 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id D0EB1300478;
+        Fri, 21 Feb 2020 16:45:13 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 0B17B209DB0F7; Fri, 21 Feb 2020 16:47:07 +0100 (CET)
+Date:   Fri, 21 Feb 2020 16:47:07 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Mel Gorman <mgorman@suse.de>
+Cc:     ?????? <yun.wang@linux.alibaba.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Michal Koutn? <mkoutny@suse.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH RESEND v8 1/2] sched/numa: introduce per-cgroup NUMA
+ locality info
+Message-ID: <20200221154706.GI18400@hirez.programming.kicks-ass.net>
+References: <fe56d99d-82e0-498c-ae44-f7cde83b5206@linux.alibaba.com>
+ <cde13472-46c0-7e17-175f-4b2ba4d8148a@linux.alibaba.com>
+ <20200214151048.GL14914@hirez.programming.kicks-ass.net>
+ <20200217115810.GA3420@suse.de>
+ <881deb50-163e-442a-41ec-b375cc445e4d@linux.alibaba.com>
+ <20200217141616.GB3420@suse.de>
+ <114519ab-4e9e-996a-67b8-4f5fcecba72a@linux.alibaba.com>
+ <20200221142010.GT3420@suse.de>
 MIME-Version: 1.0
-References: <20200221152430.GA20788@embeddedor>
-In-Reply-To: <20200221152430.GA20788@embeddedor>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Fri, 21 Feb 2020 16:44:43 +0100
-X-Gmail-Original-Message-ID: <CAKv+Gu9wZ1PjDVQmFPaoxwyDZRYev2LAXr5vBkBGAstdf-5W7w@mail.gmail.com>
-Message-ID: <CAKv+Gu9wZ1PjDVQmFPaoxwyDZRYev2LAXr5vBkBGAstdf-5W7w@mail.gmail.com>
-Subject: Re: [PATCH] efi/apple-properties: Replace zero-length array with
- flexible-array member
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200221142010.GT3420@suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Feb 2020 at 16:41, Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
->
-> The current codebase makes use of the zero-length array language
-> extension to the C90 standard, but the preferred mechanism to declare
-> variable-length types such as these ones is a flexible array member[1][2],
-> introduced in C99:
->
-> struct foo {
->         int stuff;
->         struct boo array[];
-> };
->
-> By making use of the mechanism above, we will get a compiler warning
-> in case the flexible array does not occur last in the structure, which
-> will help us prevent some kind of undefined behavior bugs from being
-> inadvertently introduced[3] to the codebase from now on.
->
-> Also, notice that, dynamic memory allocations won't be affected by
-> this change:
->
-> "Flexible array members have incomplete type, and so the sizeof operator
-> may not be applied. As a quirk of the original implementation of
-> zero-length arrays, sizeof evaluates to zero."[1]
->
-> This issue was found with the help of Coccinelle.
->
-> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-> [2] https://github.com/KSPP/linux/issues/21
-> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
->
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+On Fri, Feb 21, 2020 at 02:20:10PM +0000, Mel Gorman wrote:
+> I fully acknowledge that this may have value for sysadmins and may be a
+> good enough reason to merge it for environments that typically build and
+> configure their own kernels. I doubt that general distributions would
+> enable it but that's a guess.
 
-Please don't send duplicates. I already queued this in efi/next, and
-responded accordingly.
+OTOH, many sysadmins seem to 'rely' on BPF scripts and other such fancy
+things these days.
 
-> ---
->  drivers/firmware/efi/apple-properties.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/firmware/efi/apple-properties.c b/drivers/firmware/efi/apple-properties.c
-> index 5ccf39986a14..084942846f4d 100644
-> --- a/drivers/firmware/efi/apple-properties.c
-> +++ b/drivers/firmware/efi/apple-properties.c
-> @@ -31,7 +31,7 @@ __setup("dump_apple_properties", dump_properties_enable);
->  struct dev_header {
->         u32 len;
->         u32 prop_count;
-> -       struct efi_dev_path path[0];
-> +       struct efi_dev_path path[];
->         /*
->          * followed by key/value pairs, each key and value preceded by u32 len,
->          * len includes itself, value may be empty (in which case its len is 4)
-> @@ -42,7 +42,7 @@ struct properties_header {
->         u32 len;
->         u32 version;
->         u32 dev_count;
-> -       struct dev_header dev_header[0];
-> +       struct dev_header dev_header[];
->  };
->
->  static void __init unmarshal_key_value_pairs(struct dev_header *dev_header,
-> --
-> 2.25.0
->
+ ( of course, we have the open question on what happens when we break
+   one of those BPF 'important' scripts ... )
+
+My main reservation with this patch is that it exposes, to userspace, an
+ABI that is very hard to interpret and subject to implementation
+details.
+
+So while it can be disabled; people who have it enabled might suddenly
+complain when we change the meaning/interpretation/whatever of these
+magic numbers.
+
+Michael; you seem to have ignored the tracepoint / BPF angle earlier in
+this discussion; that is not something that could/would work for you?
