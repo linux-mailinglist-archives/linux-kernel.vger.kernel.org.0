@@ -2,78 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF0E8168788
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 20:40:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDC37168798
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 20:44:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbgBUTkP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 14:40:15 -0500
-Received: from mail-pf1-f180.google.com ([209.85.210.180]:36667 "EHLO
-        mail-pf1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726160AbgBUTkO (ORCPT
+        id S1727362AbgBUToe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 14:44:34 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:15668 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726443AbgBUTod (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 14:40:14 -0500
-Received: by mail-pf1-f180.google.com with SMTP id 185so1777292pfv.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 11:40:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=727EAsMQRz3BzcKFq+yjaGZ0smZaJ6wq5lYL4hCxQBw=;
-        b=eCmldwwmaGs6a9choQrTabZ5muMpoPYd8pgAxRa2sPm9ihylVfr8YYvavuA8os4vI5
-         lJ3Yvnf196RWlWv5F8A28esZrv737PYuvntY+Ld1Yk/K50DesbseV60ri7BfqTQ93LsS
-         y9j6cc4e3NrOsQ3mCtn3QVwYGVV07mts18kio=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=727EAsMQRz3BzcKFq+yjaGZ0smZaJ6wq5lYL4hCxQBw=;
-        b=Nv8gLAwwwxzDNwTa/W3xMb6TbL6IRv2drgu1TpCvTuCgWwc8E/4JUsiguCVOf+pdgF
-         /jmf38d1qcvAQ5Utzutk5zxIGWO37wNV2p2dYSRoSnpCGCaEulDKRdpBfAXtjTopmZW3
-         vVbbdrKzRU4zxcp/VX5+hvX6l0Hf8bjrD4qaL7uvyeNlGMRu8Y0MDtkiqdmSooff2x4E
-         3CUrkN+vwf8yCdFgRXE4BdwGE8hwrWKjwS/vtlEB0bl6O4HxgQTr8OZe0bCJHIo3XjW9
-         CNWVqRPx0GZg7EAvSGPNW6WUbDMC92nYOuX9DxGvPM/kkrCNdnqiKugYj9Ju6S6J+2Fv
-         R9HA==
-X-Gm-Message-State: APjAAAX7uEnxUCIDbBQjFTaPkuoqMWpWMPZUSRhGdARKXwsA/QiZXzGY
-        MbBpkfqOLG5T79yCPPPZBmxBMg==
-X-Google-Smtp-Source: APXvYqzbFTpLuLBYG3azYe9VcGVTO7fozeU4ULbuEPbtS0mD0Bzq7RD4RTc+o/ZXgvYmXYycUD12+w==
-X-Received: by 2002:aa7:8699:: with SMTP id d25mr38752067pfo.139.1582314014078;
-        Fri, 21 Feb 2020 11:40:14 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
-        by smtp.gmail.com with ESMTPSA id q8sm3289342pgt.57.2020.02.21.11.40.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2020 11:40:13 -0800 (PST)
-Date:   Fri, 21 Feb 2020 11:40:12 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Odelu Kukatla <okukatla@codeaurora.org>
-Cc:     georgi.djakov@linaro.org, daidavid1@codeaurora.org,
-        bjorn.andersson@linaro.org, evgreen@google.com,
-        Andy Gross <agross@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org,
-        ilina@codeaurora.org, seansw@qti.qualcomm.com, elder@linaro.org,
-        linux-pm@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
-Subject: Re: [V3, 3/3] dt-bindings: interconnect: Add Qualcomm SC7180 DT
- bindings
-Message-ID: <20200221194012.GF24720@google.com>
-References: <1582277450-27382-1-git-send-email-okukatla@codeaurora.org>
- <1582277450-27382-4-git-send-email-okukatla@codeaurora.org>
+        Fri, 21 Feb 2020 14:44:33 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e5033120000>; Fri, 21 Feb 2020 11:44:18 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 21 Feb 2020 11:44:32 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 21 Feb 2020 11:44:32 -0800
+Received: from [10.2.166.200] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 21 Feb
+ 2020 19:44:32 +0000
+Subject: Re: [PATCH v7 11/24] mm: Move end_index check out of readahead loop
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <linux-btrfs@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, <linux-ext4@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <cluster-devel@redhat.com>, <ocfs2-devel@oss.oracle.com>,
+        <linux-xfs@vger.kernel.org>
+References: <20200219210103.32400-1-willy@infradead.org>
+ <20200219210103.32400-12-willy@infradead.org>
+ <e6ef2075-b849-299e-0f11-c6ee82b0a3c7@nvidia.com>
+ <20200221153537.GE24185@bombadil.infradead.org>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <1fd052ce-cd5e-60ce-e494-cbf6427d3ed3@nvidia.com>
+Date:   Fri, 21 Feb 2020 11:41:28 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1582277450-27382-4-git-send-email-okukatla@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200221153537.GE24185@bombadil.infradead.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1582314258; bh=pQKOwwEmNmp5lZ+eX1Ols5QNnW+OORTLQJDMCsPxtEc=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=lYdo4NH8M7SXphPat6doJg0oOA1V6kLXukQ7JIEh5FVkfFb0/CxKOhHQdMiRNYy87
+         Q6EhPR2Fph1xqpiZaGm+fIV8Ra4pJE8E5H2Ofj6LlTy0+Qb+/+y64EhZcbjIYXrOqI
+         IXR7s2kX4Yi3hnWXNuj2sU2+Joh83jXJxvw8pHXSeKQS/7ccswnLmpLkros2lxWTg/
+         2U8B/Ar6NYNMOQFqfCj3j5XpjUwSHVdi0BMHCh2YVMnazsUm42RddLEt+ZRAKHCaXa
+         IlYO+1WyQ2QxlFvwnZy2R5xtgMwusy7sT9ZlwHQi2bqndUATGT9KLiH14aMZETjP0i
+         ow4Jt857PEIiA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Odelu,
+On 2/21/20 7:35 AM, Matthew Wilcox wrote:
+> On Thu, Feb 20, 2020 at 07:50:39PM -0800, John Hubbard wrote:
+>> This tiny patch made me pause, because I wasn't sure at first of the exact
+>> intent of the lines above. Once I worked it out, it seemed like it might
+>> be helpful (or overkill??) to add a few hints for the reader, especially since
+>> there are no hints in the function's (minimal) documentation header. What
+>> do you think of this?
+>>
+>> 	/*
+>> 	 * If we can't read *any* pages without going past the inodes's isize
+>> 	 * limit, give up entirely:
+>> 	 */
+>> 	if (index > end_index)
+>> 		return;
+>>
+>> 	/* Cap nr_to_read, in order to avoid overflowing the ULONG type: */
+>> 	if (index + nr_to_read < index)
+>> 		nr_to_read = ULONG_MAX - index + 1;
+>>
+>> 	/* Cap nr_to_read, to avoid reading past the inode's isize limit: */
+>> 	if (index + nr_to_read >= end_index)
+>> 		nr_to_read = end_index - index + 1;
+> 
+> A little verbose for my taste ... How about this?
 
-> Subject: dt-bindings: interconnect: Add Qualcomm SC7180 DT bindings
 
-This patch doesn't add a binding, but DT entries for SC7180.
+Mine too, actually. :)  I think your version below looks good.
 
-The subject of v2 was "arm64: dts: sc7180: Add interconnect provider
-DT nodes", please go back to that or something similar.
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
+
+> 
+>          end_index = (isize - 1) >> PAGE_SHIFT;
+>          if (index > end_index)
+>                  return;
+>          /* Avoid wrapping to the beginning of the file */
+>          if (index + nr_to_read < index)
+>                  nr_to_read = ULONG_MAX - index + 1;
+>          /* Don't read past the page containing the last byte of the file */
+>          if (index + nr_to_read >= end_index)
+>                  nr_to_read = end_index - index + 1;
+> 
+
