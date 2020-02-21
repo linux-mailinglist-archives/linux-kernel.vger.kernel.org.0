@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF143167517
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:30:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A3DB1675B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:31:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388434AbgBUIXL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:23:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35060 "EHLO mail.kernel.org"
+        id S2388702AbgBUIat (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:30:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388161AbgBUIXJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:23:09 -0500
+        id S1733312AbgBUIPa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:15:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AAA672467A;
-        Fri, 21 Feb 2020 08:23:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 117DA24680;
+        Fri, 21 Feb 2020 08:15:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273388;
-        bh=oUGotKBzy2j3QIRjeLXO0AHupuNeztgdJnNv5snOaDE=;
+        s=default; t=1582272929;
+        bh=21U/1a7d6mQjvZS+p4suqgModgU1QDnOz+aloeZnv8A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RbbWOS8bE/wdGSGAm5x1bVgaPMAiHM/pa9inBNEEh7RTRLzlb8dDE1HKfHf2QYEFy
-         IiGTKC/IeUXIrBJ6OPj7yN+isj2QS+R9C9ar1yGEv/WlCC9DE65ei/Z/nz3QjCOCDd
-         JtntqtsgNNNDLxPHh3gmuvBap3hykhWX0klo1YV0=
+        b=yxHamMdBjC8Wb7cQJxsCGvYyJHDi/XiUmO9+eMCsD5yOaVD6haI8aRxxNQk6obtf3
+         TGoMKVBV/1wPYuDwsKHEa1cvZ/a39LKXKBUkLxbEhaGeoYNsEWPb/C0FLTBD+HIF45
+         YKLgk9epfbfVWAKRM4vNxBXUNV+w/xCPntdEsenA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Borislav Petkov <bp@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 152/191] x86/decoder: Add TEST opcode to Group3-2
-Date:   Fri, 21 Feb 2020 08:42:05 +0100
-Message-Id: <20200221072309.059926659@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Edmund Nadolski <edmund.nadolski@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Keith Busch <kbusch@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 327/344] nvme-pci: remove nvmeq->tags
+Date:   Fri, 21 Feb 2020 08:42:06 +0100
+Message-Id: <20200221072419.956367258@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,78 +46,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Christoph Hellwig <hch@lst.de>
 
-[ Upstream commit 8b7e20a7ba54836076ff35a28349dabea4cec48f ]
+[ Upstream commit cfa27356f835dc7755192e7b941d4f4851acbcc7 ]
 
-Add TEST opcode to Group3-2 reg=001b as same as Group3-1 does.
+There is no real need to have a pointer to the tagset in
+struct nvme_queue, as we only need it in a single place, and that place
+can derive the used tagset from the device and qid trivially.  This
+fixes a problem with stale pointer exposure when tagsets are reset,
+and also shrinks the nvme_queue structure.  It also matches what most
+other transports have done since day 1.
 
-Commit
-
-  12a78d43de76 ("x86/decoder: Add new TEST instruction pattern")
-
-added a TEST opcode assignment to f6 XX/001/XXX (Group 3-1), but did
-not add f7 XX/001/XXX (Group 3-2).
-
-Actually, this TEST opcode variant (ModRM.reg /1) is not described in
-the Intel SDM Vol2 but in AMD64 Architecture Programmer's Manual Vol.3,
-Appendix A.2 Table A-6. ModRM.reg Extensions for the Primary Opcode Map.
-
-Without this fix, Randy found a warning by insn_decoder_test related
-to this issue as below.
-
-    HOSTCC  arch/x86/tools/insn_decoder_test
-    HOSTCC  arch/x86/tools/insn_sanity
-    TEST    posttest
-  arch/x86/tools/insn_decoder_test: warning: Found an x86 instruction decoder bug, please report this.
-  arch/x86/tools/insn_decoder_test: warning: ffffffff81000bf1:	f7 0b 00 01 08 00    	testl  $0x80100,(%rbx)
-  arch/x86/tools/insn_decoder_test: warning: objdump says 6 bytes, but insn_get_length() says 2
-  arch/x86/tools/insn_decoder_test: warning: Decoded and checked 11913894 instructions with 1 failures
-    TEST    posttest
-  arch/x86/tools/insn_sanity: Success: decoded and checked 1000000 random instructions with 0 errors (seed:0x871ce29c)
-
-To fix this error, add the TEST opcode according to AMD64 APM Vol.3.
-
- [ bp: Massage commit message. ]
-
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-Link: https://lkml.kernel.org/r/157966631413.9580.10311036595431878351.stgit@devnote2
+Reported-by: Edmund Nadolski <edmund.nadolski@intel.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Keith Busch <kbusch@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/lib/x86-opcode-map.txt               | 2 +-
- tools/objtool/arch/x86/lib/x86-opcode-map.txt | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/nvme/host/pci.c | 23 ++++++++---------------
+ 1 file changed, 8 insertions(+), 15 deletions(-)
 
-diff --git a/arch/x86/lib/x86-opcode-map.txt b/arch/x86/lib/x86-opcode-map.txt
-index 0a0e9112f2842..5cb9f009f2be3 100644
---- a/arch/x86/lib/x86-opcode-map.txt
-+++ b/arch/x86/lib/x86-opcode-map.txt
-@@ -909,7 +909,7 @@ EndTable
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 14d513087a14b..f34a56d588d31 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -167,7 +167,6 @@ struct nvme_queue {
+ 	 /* only used for poll queues: */
+ 	spinlock_t cq_poll_lock ____cacheline_aligned_in_smp;
+ 	volatile struct nvme_completion *cqes;
+-	struct blk_mq_tags **tags;
+ 	dma_addr_t sq_dma_addr;
+ 	dma_addr_t cq_dma_addr;
+ 	u32 __iomem *q_db;
+@@ -377,29 +376,17 @@ static int nvme_admin_init_hctx(struct blk_mq_hw_ctx *hctx, void *data,
  
- GrpTable: Grp3_2
- 0: TEST Ev,Iz
--1:
-+1: TEST Ev,Iz
- 2: NOT Ev
- 3: NEG Ev
- 4: MUL rAX,Ev
-diff --git a/tools/objtool/arch/x86/lib/x86-opcode-map.txt b/tools/objtool/arch/x86/lib/x86-opcode-map.txt
-index 0a0e9112f2842..5cb9f009f2be3 100644
---- a/tools/objtool/arch/x86/lib/x86-opcode-map.txt
-+++ b/tools/objtool/arch/x86/lib/x86-opcode-map.txt
-@@ -909,7 +909,7 @@ EndTable
+ 	WARN_ON(hctx_idx != 0);
+ 	WARN_ON(dev->admin_tagset.tags[0] != hctx->tags);
+-	WARN_ON(nvmeq->tags);
  
- GrpTable: Grp3_2
- 0: TEST Ev,Iz
--1:
-+1: TEST Ev,Iz
- 2: NOT Ev
- 3: NEG Ev
- 4: MUL rAX,Ev
+ 	hctx->driver_data = nvmeq;
+-	nvmeq->tags = &dev->admin_tagset.tags[0];
+ 	return 0;
+ }
+ 
+-static void nvme_admin_exit_hctx(struct blk_mq_hw_ctx *hctx, unsigned int hctx_idx)
+-{
+-	struct nvme_queue *nvmeq = hctx->driver_data;
+-
+-	nvmeq->tags = NULL;
+-}
+-
+ static int nvme_init_hctx(struct blk_mq_hw_ctx *hctx, void *data,
+ 			  unsigned int hctx_idx)
+ {
+ 	struct nvme_dev *dev = data;
+ 	struct nvme_queue *nvmeq = &dev->queues[hctx_idx + 1];
+ 
+-	if (!nvmeq->tags)
+-		nvmeq->tags = &dev->tagset.tags[hctx_idx];
+-
+ 	WARN_ON(dev->tagset.tags[hctx_idx] != hctx->tags);
+ 	hctx->driver_data = nvmeq;
+ 	return 0;
+@@ -950,6 +937,13 @@ static inline void nvme_ring_cq_doorbell(struct nvme_queue *nvmeq)
+ 		writel(head, nvmeq->q_db + nvmeq->dev->db_stride);
+ }
+ 
++static inline struct blk_mq_tags *nvme_queue_tagset(struct nvme_queue *nvmeq)
++{
++	if (!nvmeq->qid)
++		return nvmeq->dev->admin_tagset.tags[0];
++	return nvmeq->dev->tagset.tags[nvmeq->qid - 1];
++}
++
+ static inline void nvme_handle_cqe(struct nvme_queue *nvmeq, u16 idx)
+ {
+ 	volatile struct nvme_completion *cqe = &nvmeq->cqes[idx];
+@@ -975,7 +969,7 @@ static inline void nvme_handle_cqe(struct nvme_queue *nvmeq, u16 idx)
+ 		return;
+ 	}
+ 
+-	req = blk_mq_tag_to_rq(*nvmeq->tags, cqe->command_id);
++	req = blk_mq_tag_to_rq(nvme_queue_tagset(nvmeq), cqe->command_id);
+ 	trace_nvme_sq(req, cqe->sq_head, nvmeq->sq_tail);
+ 	nvme_end_request(req, cqe->status, cqe->result);
+ }
+@@ -1578,7 +1572,6 @@ static const struct blk_mq_ops nvme_mq_admin_ops = {
+ 	.queue_rq	= nvme_queue_rq,
+ 	.complete	= nvme_pci_complete_rq,
+ 	.init_hctx	= nvme_admin_init_hctx,
+-	.exit_hctx      = nvme_admin_exit_hctx,
+ 	.init_request	= nvme_init_request,
+ 	.timeout	= nvme_timeout,
+ };
 -- 
 2.20.1
 
