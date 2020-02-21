@@ -2,60 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4ED9C1670D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:50:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57FB81670A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:46:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729129AbgBUHsi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:48:38 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:48900 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729093AbgBUHsh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:48:37 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 15BF75A4DAF002EA0A8B;
-        Fri, 21 Feb 2020 15:48:26 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Fri, 21 Feb 2020
- 15:48:18 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <dhowells@redhat.com>, <jmorris@namei.org>
-CC:     <casey@schaufler-ca.com>, <sds@tycho.nsa.gov>,
-        <zohar@linux.vnet.ibm.com>, <linux-kernel@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] security: remove duplicated include from security.h
-Date:   Fri, 21 Feb 2020 15:43:42 +0800
-Message-ID: <20200221074342.16788-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1728786AbgBUHqr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:46:47 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:54898 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726940AbgBUHqh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:46:37 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 8BF432904EA
+Subject: Re: [PATCH v8 1/6] drm/mediatek: Use regmap for register access
+To:     Randy Dunlap <rdunlap@infradead.org>, robh+dt@kernel.org,
+        mark.rutland@arm.com, ck.hu@mediatek.com, p.zabel@pengutronix.de,
+        airlied@linux.ie, mturquette@baylibre.com, sboyd@kernel.org,
+        ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        dri-devel@lists.freedesktop.org, Weiyi Lu <weiyi.lu@mediatek.com>,
+        Seiya Wang <seiya.wang@mediatek.com>,
+        linux-clk@vger.kernel.org,
+        Collabora Kernel ML <kernel@collabora.com>,
+        mtk01761 <wendell.lin@mediatek.com>,
+        Allison Randal <allison@lohutok.net>,
+        Thomas Gleixner <tglx@linutronix.de>, wens@csie.org,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        sean.wang@mediatek.com, frank-w@public-files.de,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        linux-mediatek@lists.infradead.org, hsinyi@chromium.org,
+        Matthias Brugger <mbrugger@suse.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Richard Fontana <rfontana@redhat.com>,
+        linux-kernel@vger.kernel.org, matthias.bgg@kernel.org,
+        Daniel Vetter <daniel@ffwll.ch>
+References: <20200220172147.919996-1-enric.balletbo@collabora.com>
+ <20200220172147.919996-2-enric.balletbo@collabora.com>
+ <0b2046b9-90de-c894-7502-993b5df12e7a@infradead.org>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <5c19af7a-170b-2cd1-da98-e4125504eb34@collabora.com>
+Date:   Fri, 21 Feb 2020 08:46:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+In-Reply-To: <0b2046b9-90de-c894-7502-993b5df12e7a@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove duplicated include.
+Hi Randy,
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- include/linux/security.h | 1 -
- 1 file changed, 1 deletion(-)
+On 21/2/20 0:48, Randy Dunlap wrote:
+> On 2/20/20 9:21 AM, Enric Balletbo i Serra wrote:
+>> From: Matthias Brugger <mbrugger@suse.com>
+>>
+>> The mmsys memory space is shared between the drm and the
+>> clk driver. Use regmap to access it.
+>>
+>> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+>> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+>> Reviewed-by: CK Hu <ck.hu@mediatek.com>
+>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>> ---
+>>
+>> Changes in v8: None
+>> Changes in v7:
+>> - Add R-by from CK
+>>
+>>  drivers/gpu/drm/mediatek/mtk_drm_crtc.c |  4 +-
+>>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c  | 50 +++++++++++--------------
+>>  drivers/gpu/drm/mediatek/mtk_drm_ddp.h  |  4 +-
+>>  drivers/gpu/drm/mediatek/mtk_drm_drv.c  | 13 ++-----
+>>  drivers/gpu/drm/mediatek/mtk_drm_drv.h  |  2 +-
+>>  5 files changed, 30 insertions(+), 43 deletions(-)
+> 
+> Hi. Just a quick question:
+> 
+> Do you need to select REGMAP or one of its derivatives to make sure
+> that the proper interfaces are available for this driver?
+> 
 
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 910a1ef..fe2c566 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -30,7 +30,6 @@
- #include <linux/err.h>
- #include <linux/string.h>
- #include <linux/mm.h>
--#include <linux/fs.h>
- 
- struct linux_binprm;
- struct cred;
--- 
-2.7.4
+Right, I will fix this in next version.
 
-
+> thanks.
+> 
