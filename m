@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 923BF167230
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:01:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D89216738D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:13:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731153AbgBUIBD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:01:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33254 "EHLO mail.kernel.org"
+        id S1732995AbgBUINZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:13:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731142AbgBUIBA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:01:00 -0500
+        id S1732537AbgBUINX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:13:23 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8E2D2073A;
-        Fri, 21 Feb 2020 08:00:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E5C420722;
+        Fri, 21 Feb 2020 08:13:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272059;
-        bh=mKJXdC1spszpUhOmwpzsp8VjgJ+xnq6JmhBX2kjg/Cs=;
+        s=default; t=1582272802;
+        bh=vhv9ahD5jt/VGshNDEu0h4s5rHcm99nOExO90XMU3HQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UvVnbCCKKWA+54eRtau/wQAK7ot3CI/L6cT9e16Yk2dMOqX0XsBlfxLQ8Cc3OYdRl
-         YwdEGCtss+BFLBQ1mF+VDt5vPnY8/oJC3QzhcLMrpg44Peh5Lw7ERCMfao/zEcuz6j
-         xGmV3Z1xKalgZyvTrRyyz6mv4XxguE3BjUw3SLEc=
+        b=T3dxmM+CtllzzXGLjEEJmc0xLSyculEao95b28H1nBzbrcy3KXE5LAuYGB5zF2i8C
+         j7pzsnoSiD/3poBzYs5bPB3q3r/ZE/ltoHwH0JNPEMobJhtht3/AWD00rDLEvQLhex
+         L08vtpt5WALhUx725By1LMn6HIg6U3NattoUglLU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 353/399] bpf: map_seq_next should always increase position index
-Date:   Fri, 21 Feb 2020 08:41:18 +0100
-Message-Id: <20200221072435.276879379@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Peter=20Gro=C3=9Fe?= <pegro@friiks.de>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 280/344] ALSA: hda - Add docking station support for Lenovo Thinkpad T420s
+Date:   Fri, 21 Feb 2020 08:41:19 +0100
+Message-Id: <20200221072415.195560600@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
-References: <20200221072402.315346745@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,46 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Peter Große <pegro@friiks.de>
 
-[ Upstream commit 90435a7891a2259b0f74c5a1bc5600d0d64cba8f ]
+[ Upstream commit ef7d84caa5928b40b1c93a26dbe5a3f12737c6ab ]
 
-If seq_file .next fuction does not change position index,
-read after some lseek can generate an unexpected output.
+Lenovo Thinkpad T420s uses the same codec as T420, so apply the
+same quirk to enable audio output on a docking station.
 
-See also: https://bugzilla.kernel.org/show_bug.cgi?id=206283
-
-v1 -> v2: removed missed increment in end of function
-
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Link: https://lore.kernel.org/bpf/eca84fdd-c374-a154-d874-6c7b55fc3bc4@virtuozzo.com
+Signed-off-by: Peter Große <pegro@friiks.de>
+Link: https://lore.kernel.org/r/20200122180106.9351-1-pegro@friiks.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/inode.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ sound/pci/hda/patch_conexant.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
-index ecf42bec38c00..6f22e0e74ef24 100644
---- a/kernel/bpf/inode.c
-+++ b/kernel/bpf/inode.c
-@@ -196,6 +196,7 @@ static void *map_seq_next(struct seq_file *m, void *v, loff_t *pos)
- 	void *key = map_iter(m)->key;
- 	void *prev_key;
- 
-+	(*pos)++;
- 	if (map_iter(m)->done)
- 		return NULL;
- 
-@@ -208,8 +209,6 @@ static void *map_seq_next(struct seq_file *m, void *v, loff_t *pos)
- 		map_iter(m)->done = true;
- 		return NULL;
- 	}
--
--	++(*pos);
- 	return key;
- }
- 
+diff --git a/sound/pci/hda/patch_conexant.c b/sound/pci/hda/patch_conexant.c
+index 90aa0f400a57d..1e20e85e9b466 100644
+--- a/sound/pci/hda/patch_conexant.c
++++ b/sound/pci/hda/patch_conexant.c
+@@ -922,6 +922,7 @@ static const struct snd_pci_quirk cxt5066_fixups[] = {
+ 	SND_PCI_QUIRK(0x17aa, 0x215f, "Lenovo T510", CXT_PINCFG_LENOVO_TP410),
+ 	SND_PCI_QUIRK(0x17aa, 0x21ce, "Lenovo T420", CXT_PINCFG_LENOVO_TP410),
+ 	SND_PCI_QUIRK(0x17aa, 0x21cf, "Lenovo T520", CXT_PINCFG_LENOVO_TP410),
++	SND_PCI_QUIRK(0x17aa, 0x21d2, "Lenovo T420s", CXT_PINCFG_LENOVO_TP410),
+ 	SND_PCI_QUIRK(0x17aa, 0x21da, "Lenovo X220", CXT_PINCFG_LENOVO_TP410),
+ 	SND_PCI_QUIRK(0x17aa, 0x21db, "Lenovo X220-tablet", CXT_PINCFG_LENOVO_TP410),
+ 	SND_PCI_QUIRK(0x17aa, 0x38af, "Lenovo IdeaPad Z560", CXT_FIXUP_MUTE_LED_EAPD),
 -- 
 2.20.1
 
