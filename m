@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0C02167347
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:10:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 107501674E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:30:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732604AbgBUIKz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:10:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46118 "EHLO mail.kernel.org"
+        id S2387856AbgBUISd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:18:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731940AbgBUIKt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:10:49 -0500
+        id S2387548AbgBUIS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:18:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF30320578;
-        Fri, 21 Feb 2020 08:10:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53D6324692;
+        Fri, 21 Feb 2020 08:18:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272649;
-        bh=5jtGsCSjRRpD360ikcBkCoYPXgSmQEYS0wrNFktcNKQ=;
+        s=default; t=1582273106;
+        bh=jEj5vj6rTmN0KRMTw6UUhT9B/y/Cgc6kZ9BcXBDAkvs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kKpFvxaEzCHzBXb65R2khT2Y6LP2OCaz3TBD8879JNV99ergyqtbYfIon3GqENLri
-         F8z3xQKQMwlA7U16G+6BehZBlcxdXCyHhpi0nm89zqRDS/ECtNPF4/iyjX+dobDJdo
-         eEm2I1A5U53utHqMUr00UUfwOVEPFDaVE9ZVPMwI=
+        b=uqgFobikW1irbmDhX8FyTxhAbipQPeHAcWJ89OD2ebfEXEA4SDQL1yhrr4P0RWQag
+         NVeNo05H+xH/21g0caAtdmPiSm7TNIi8K8Wp4ux8XcolOitQlqhYAoKkbHrsCSqG04
+         lyKmXLTCJD5n5zZQbOdDJfoO4DN+9nNW2weoR07s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Kuehling <Felix.Kuehling@amd.com>,
-        shaoyunl <shaoyun.liu@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 187/344] drm/amdkfd: Fix permissions of hang_hws
-Date:   Fri, 21 Feb 2020 08:39:46 +0100
-Message-Id: <20200221072406.004844192@linuxfoundation.org>
+Subject: [PATCH 4.19 014/191] brcmfmac: Fix use after free in brcmf_sdio_readframes()
+Date:   Fri, 21 Feb 2020 08:39:47 +0100
+Message-Id: <20200221072252.894264114@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,35 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Felix Kuehling <Felix.Kuehling@amd.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 2bdac179e217a0c0b548a8c60524977586621b19 ]
+[ Upstream commit 216b44000ada87a63891a8214c347e05a4aea8fe ]
 
-Reading from /sys/kernel/debug/kfd/hang_hws would cause a kernel
-oops because we didn't implement a read callback. Set the permission
-to write-only to prevent that.
+The brcmu_pkt_buf_free_skb() function frees "pkt" so it leads to a
+static checker warning:
 
-Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
-Reviewed-by: shaoyunl  <shaoyun.liu@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+    drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c:1974 brcmf_sdio_readframes()
+    error: dereferencing freed memory 'pkt'
+
+It looks like there was supposed to be a continue after we free "pkt".
+
+Fixes: 4754fceeb9a6 ("brcmfmac: streamline SDIO read frame routine")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Franky Lin <franky.lin@broadcom.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdkfd/kfd_debugfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_debugfs.c b/drivers/gpu/drm/amd/amdkfd/kfd_debugfs.c
-index 15c523027285c..511712c2e382d 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_debugfs.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_debugfs.c
-@@ -93,7 +93,7 @@ void kfd_debugfs_init(void)
- 			    kfd_debugfs_hqds_by_device, &kfd_debugfs_fops);
- 	debugfs_create_file("rls", S_IFREG | 0444, debugfs_root,
- 			    kfd_debugfs_rls_by_device, &kfd_debugfs_fops);
--	debugfs_create_file("hang_hws", S_IFREG | 0644, debugfs_root,
-+	debugfs_create_file("hang_hws", S_IFREG | 0200, debugfs_root,
- 			    NULL, &kfd_debugfs_hang_hws_fops);
- }
- 
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+index 5c3b62e619807..e0211321fe9e8 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+@@ -1934,6 +1934,7 @@ static uint brcmf_sdio_readframes(struct brcmf_sdio *bus, uint maxframes)
+ 					       BRCMF_SDIO_FT_NORMAL)) {
+ 				rd->len = 0;
+ 				brcmu_pkt_buf_free_skb(pkt);
++				continue;
+ 			}
+ 			bus->sdcnt.rx_readahead_cnt++;
+ 			if (rd->len != roundup(rd_new.len, 16)) {
 -- 
 2.20.1
 
