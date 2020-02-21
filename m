@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4961E16750F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:30:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4951D1676F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:41:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388320AbgBUIWc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:22:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34114 "EHLO mail.kernel.org"
+        id S1730914AbgBUIA2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:00:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388184AbgBUIW3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:22:29 -0500
+        id S1730888AbgBUIAY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:00:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A3F662467D;
-        Fri, 21 Feb 2020 08:22:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7DC02465D;
+        Fri, 21 Feb 2020 08:00:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273349;
-        bh=nZ6V4uw3ZrXBLfZspGcx/9cmZIdgngtSWXyEIL1Y0As=;
+        s=default; t=1582272024;
+        bh=z45Deq5jpfh5BBTwJ6zU+HtvdTraWuKGso37UKduEvs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=teaghmC5fVjkc5wCDWvwRk5EqNPo9MwTH0/kvfBDlbdEgcK1+xbTsvWY8ojl573/J
-         CwfXhGOVgq6jrvoIB/SDchbR5k2gTa5W9rtFx9MBuCBOZexIoAN6Mfm611QCQI9Gg8
-         wYA+yAjWx1vvQCnJesUzWTdA6DGOoRG61Vqufcew=
+        b=AWgHJMOZCkvVEuuW9B8YKsM642y1jpU5pSbuTWtPwhwseWDbT1FBFV6/r9zSY9XT9
+         jYE++/fuznOb/bGvx3Oa/luT+YpBs5Dy6Y4V+lLodQYChcdDX5vFU9S9KmfXHcnxww
+         DxhBr45enlurn2nU4QdzBbAKQA0oC8v1BtXEF9q0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Evan Quan <evan.quan@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 138/191] f2fs: fix memleak of kobject
+Subject: [PATCH 5.5 386/399] drm/amdgpu/smu10: fix smu10_get_clock_by_type_with_latency
 Date:   Fri, 21 Feb 2020 08:41:51 +0100
-Message-Id: <20200221072307.261675924@linuxfoundation.org>
+Message-Id: <20200221072437.595796227@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
+In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
+References: <20200221072402.315346745@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-[ Upstream commit fe396ad8e7526f059f7b8c7290d33a1b84adacab ]
+[ Upstream commit 4d0a72b66065dd7e274bad6aa450196d42fd8f84 ]
 
-If kobject_init_and_add() failed, caller needs to invoke kobject_put()
-to release kobject explicitly.
+Only send non-0 clocks to DC for validation.  This mirrors
+what the windows driver does.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Bug: https://gitlab.freedesktop.org/drm/amd/issues/963
+Reviewed-by: Evan Quan <evan.quan@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/sysfs.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index b405548202d3b..9a59f49ba4050 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -658,10 +658,12 @@ int __init f2fs_init_sysfs(void)
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
+index 1115761982a78..627a42e8fd318 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
+@@ -1026,12 +1026,15 @@ static int smu10_get_clock_by_type_with_latency(struct pp_hwmgr *hwmgr,
  
- 	ret = kobject_init_and_add(&f2fs_feat, &f2fs_feat_ktype,
- 				   NULL, "features");
--	if (ret)
-+	if (ret) {
-+		kobject_put(&f2fs_feat);
- 		kset_unregister(&f2fs_kset);
--	else
-+	} else {
- 		f2fs_proc_root = proc_mkdir("fs/f2fs", NULL);
-+	}
- 	return ret;
- }
+ 	clocks->num_levels = 0;
+ 	for (i = 0; i < pclk_vol_table->count; i++) {
+-		clocks->data[i].clocks_in_khz = pclk_vol_table->entries[i].clk * 10;
+-		clocks->data[i].latency_in_us = latency_required ?
+-						smu10_get_mem_latency(hwmgr,
+-						pclk_vol_table->entries[i].clk) :
+-						0;
+-		clocks->num_levels++;
++		if (pclk_vol_table->entries[i].clk) {
++			clocks->data[clocks->num_levels].clocks_in_khz =
++				pclk_vol_table->entries[i].clk * 10;
++			clocks->data[clocks->num_levels].latency_in_us = latency_required ?
++				smu10_get_mem_latency(hwmgr,
++						      pclk_vol_table->entries[i].clk) :
++				0;
++			clocks->num_levels++;
++		}
+ 	}
  
-@@ -682,8 +684,11 @@ int f2fs_register_sysfs(struct f2fs_sb_info *sbi)
- 	init_completion(&sbi->s_kobj_unregister);
- 	err = kobject_init_and_add(&sbi->s_kobj, &f2fs_sb_ktype, NULL,
- 				"%s", sb->s_id);
--	if (err)
-+	if (err) {
-+		kobject_put(&sbi->s_kobj);
-+		wait_for_completion(&sbi->s_kobj_unregister);
- 		return err;
-+	}
- 
- 	if (f2fs_proc_root)
- 		sbi->s_proc = proc_mkdir(sb->s_id, f2fs_proc_root);
+ 	return 0;
 -- 
 2.20.1
 
