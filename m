@@ -2,80 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A6E51674BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:24:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EE7F167270
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:03:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732728AbgBUIYW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:24:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36774 "EHLO mail.kernel.org"
+        id S1731351AbgBUIDd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:03:33 -0500
+Received: from mga01.intel.com ([192.55.52.88]:39992 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729774AbgBUIYV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:24:21 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93201206ED;
-        Fri, 21 Feb 2020 08:24:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273461;
-        bh=Uh+F+K4G4VhwM0jMFoF67RQma0Fxf9NzqW3BVuHHRXk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BiM65XVQWpFmRlm4O30S+ixV0NJofpW+2ElnigM/EsFOQgBo4o8nKokE37A6+n0GX
-         3NI9n88jakif6hJZH21yL85mZRkYz70OpZiYE2Ufa1ZNTZum5lqzin7BEk55SSpNZ/
-         P+wYAX6U6V/PtSqzxeOpNAGAGm/8kZ1IC8mYs5oQ=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zenghui Yu <yuzenghui@huawei.com>,
-        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 180/191] irqchip/gic-v3-its: Reference to its_invall_cmd descriptor when building INVALL
-Date:   Fri, 21 Feb 2020 08:42:33 +0100
-Message-Id: <20200221072312.432680973@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1731477AbgBUIDa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:03:30 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2020 00:03:29 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,467,1574150400"; 
+   d="scan'208";a="229139800"
+Received: from shbuild999.sh.intel.com (HELO localhost) ([10.239.147.113])
+  by fmsmga007.fm.intel.com with ESMTP; 21 Feb 2020 00:03:26 -0800
+Date:   Fri, 21 Feb 2020 16:03:25 +0800
+From:   Feng Tang <feng.tang@intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     kernel test robot <rong.a.chen@intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
+        andi.kleen@intel.com, ying.huang@intel.com
+Subject: Re: [LKP] Re: [perf/x86] 81ec3f3c4c: will-it-scale.per_process_ops
+ -5.5% regression
+Message-ID: <20200221080325.GA67807@shbuild999.sh.intel.com>
+References: <20200205123216.GO12867@shao2-debian>
+ <20200205125804.GM14879@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200205125804.GM14879@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zenghui Yu <yuzenghui@huawei.com>
 
-[ Upstream commit 107945227ac5d4c37911c7841b27c64b489ce9a9 ]
-
-It looks like an obvious mistake to use its_mapc_cmd descriptor when
-building the INVALL command block. It so far worked by luck because
-both its_mapc_cmd.col and its_invall_cmd.col sit at the same offset of
-the ITS command descriptor, but we should not rely on it.
-
-Fixes: cc2d3216f53c ("irqchip: GICv3: ITS command queue")
-Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/20191202071021.1251-1-yuzenghui@huawei.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/irqchip/irq-gic-v3-its.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index 050d6e040128d..bf7b69449b438 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -578,7 +578,7 @@ static struct its_collection *its_build_invall_cmd(struct its_node *its,
- 						   struct its_cmd_desc *desc)
- {
- 	its_encode_cmd(cmd, GITS_CMD_INVALL);
--	its_encode_collection(cmd, desc->its_mapc_cmd.col->col_id);
-+	its_encode_collection(cmd, desc->its_invall_cmd.col->col_id);
- 
- 	its_fixup_cmd(cmd);
- 
--- 
-2.20.1
+On Wed, Feb 05, 2020 at 01:58:04PM +0100, Peter Zijlstra wrote:
+> On Wed, Feb 05, 2020 at 08:32:16PM +0800, kernel test robot wrote:
+> > Greeting,
+> > 
+> > FYI, we noticed a -5.5% regression of will-it-scale.per_process_ops due to commit:
+> > 
+> > 
+> > commit: 81ec3f3c4c4d78f2d3b6689c9816bfbdf7417dbb ("perf/x86: Add check_period PMU callback")
+> > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+> > 
+> 
+> I'm fairly sure this bisect/result is bogus.
 
 
+Hi Peter,
 
+Some updates:
+
+We checked more on this. We run 14 times test for it, and the
+results are consistent about the 5.5% degradation, and we
+run the same test on several other platforms, whose test results
+are also consistent, though there are no such -5.5% seen.
+
+We are also curious that the commit seems to be completely not
+relative to this scalability test of signal, which starts a task
+for each online CPU, and keeps calling raise(), and calculating
+the run numbers.
+
+One experiment we did is checking which part of the commit
+really affects the test, and it turned out to be the change of
+"struct pmu". Effectively, applying this patch upon 5.0-rc6 
+which triggers the same regression.
+
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 1d5c551..e1a0517 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -447,6 +447,11 @@ struct pmu {
+ 	 * Filter events for PMU-specific reasons.
+ 	 */
+ 	int (*filter_match)		(struct perf_event *event); /* optional */
++
++	/*
++	 * Check period value for PERF_EVENT_IOC_PERIOD ioctl.
++	 */
++	int (*check_period)		(struct perf_event *event, u64 value); /* optional */
+ };
+
+So likely, this commit changes the layout of the kernel text
+and data, which may trigger some cacheline level change. From
+the system map of the 2 kernels, a big trunk of symbol's address
+changes which follow the global "pmu",
+
+5.0-rc6-systemap:
+
+ffffffff8221d000 d pmu
+ffffffff8221d100 d pmc_reserve_mutex
+ffffffff8221d120 d amd_f15_PMC53
+ffffffff8221d160 d amd_f15_PMC50
+
+5.0-rc6+pmu-change-systemap:
+
+ffffffff8221d000 d pmu
+ffffffff8221d120 d pmc_reserve_mutex
+ffffffff8221d140 d amd_f15_PMC53
+ffffffff8221d180 d amd_f15_PMC50
+
+But we can hardly identify which exact symbol is responsible
+for the change, as too many symbols are offseted. 
+
+btw, we've seen similar case that an irrelevant commit changes
+the benchmark, like a hugetlb patch improves pagefault test on
+a platform that never uses hugetlb https://lkml.org/lkml/2020/1/14/150  
+
+Thanks,
+Feng
+
+> _______________________________________________
+> LKP mailing list -- lkp@lists.01.org
+> To unsubscribe send an email to lkp-leave@lists.01.org
