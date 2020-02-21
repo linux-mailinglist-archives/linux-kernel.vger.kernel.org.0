@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B67EA16769B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:37:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 512AA167816
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:46:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731863AbgBUIFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:05:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39156 "EHLO mail.kernel.org"
+        id S1731437AbgBUIq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:46:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731626AbgBUIFg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:05:36 -0500
+        id S1728008AbgBUHtp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:49:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7EC8320801;
-        Fri, 21 Feb 2020 08:05:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C72620801;
+        Fri, 21 Feb 2020 07:49:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272336;
-        bh=xhY7BV3Ql3HJ94mAkEn0dm358OpGYEaUApGgi1BxkN4=;
+        s=default; t=1582271384;
+        bh=k3VHynw8rDv6gnu2039yCPRNdfOZ1y2P1trvZkmC6Ss=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pw1Z9WHIndAUAZ4h0NchY9ZdMmZo3/MFP/qvQWs/9D9QzSpPG3w4WkL5xQlHd1Wvl
-         6zzcRvjOIJxnxN+81tp60YiuBJoLIGlv9KJqEhjRS0Sf34StrDtc/HdtZv1nodWkjY
-         XTNMwK7AivRZhYpsGMhVWbN73FcLb+yWXxu2c6Ow=
+        b=DgoQAkujKIf9uD8MQnANNCwqw06px9sG+feGsWYP+yMYgtgx3XP5tycUkAQTb7ah7
+         T8rcig7cMYQQ7tlyyVtdZ/daE2RVAshR/0QSKlg2mDbP9Ow0kXdLflFcl2Qu4Da27S
+         lcqoTWuo51HGAsxrnlht61tcX/SUeqxb3jqZVYdg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        stable@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 068/344] pwm: omap-dmtimer: Simplify error handling
-Date:   Fri, 21 Feb 2020 08:37:47 +0100
-Message-Id: <20200221072355.178250233@linuxfoundation.org>
+Subject: [PATCH 5.5 144/399] r8169: check that Realtek PHY driver module is loaded
+Date:   Fri, 21 Feb 2020 08:37:49 +0100
+Message-Id: <20200221072416.495118208@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
+References: <20200221072402.315346745@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,80 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+From: Heiner Kallweit <hkallweit1@gmail.com>
 
-[ Upstream commit c4cf7aa57eb83b108d2d9c6c37c143388fee2a4d ]
+[ Upstream commit f325937735498afb054a0195291bbf68d0b60be5 ]
 
-Instead of doing error handling in the middle of ->probe(), move error
-handling and freeing the reference to timer to the end.
+Some users complained about problems with r8169 and it turned out that
+the generic PHY driver was used instead instead of the dedicated one.
+In all cases reason was that r8169.ko was in initramfs, but realtek.ko
+not. Manually adding realtek.ko to initramfs fixed the issues.
+Root cause seems to be that tools like dracut and genkernel don't
+consider softdeps. Add a check for loaded Realtek PHY driver module
+and provide the user with a hint if it's not loaded.
 
-This fixes a resource leak as dm_timer wasn't freed when allocating
-*omap failed.
-
-Implementation note: The put: label was never reached without a goto and
-ret being unequal to 0, so the removed return statement is fine.
-
-Fixes: 6604c6556db9 ("pwm: Add PWM driver for OMAP using dual-mode timers")
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pwm/pwm-omap-dmtimer.c | 28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
+ drivers/net/ethernet/realtek/r8169_main.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/pwm/pwm-omap-dmtimer.c b/drivers/pwm/pwm-omap-dmtimer.c
-index 00772fc534906..6cfeb0e1cc679 100644
---- a/drivers/pwm/pwm-omap-dmtimer.c
-+++ b/drivers/pwm/pwm-omap-dmtimer.c
-@@ -298,15 +298,10 @@ static int pwm_omap_dmtimer_probe(struct platform_device *pdev)
- 		goto put;
- 	}
+diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
+index 92a590154bb9f..2d2d22f86dc6f 100644
+--- a/drivers/net/ethernet/realtek/r8169_main.c
++++ b/drivers/net/ethernet/realtek/r8169_main.c
+@@ -6831,6 +6831,15 @@ static int rtl_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	int chipset, region;
+ 	int jumbo_max, rc;
  
--put:
--	of_node_put(timer);
--	if (ret < 0)
--		return ret;
--
- 	omap = devm_kzalloc(&pdev->dev, sizeof(*omap), GFP_KERNEL);
- 	if (!omap) {
--		pdata->free(dm_timer);
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto err_alloc_omap;
- 	}
- 
- 	omap->pdata = pdata;
-@@ -339,13 +334,28 @@ put:
- 	ret = pwmchip_add(&omap->chip);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed to register PWM\n");
--		omap->pdata->free(omap->dm_timer);
--		return ret;
-+		goto err_pwmchip_add;
- 	}
- 
-+	of_node_put(timer);
-+
- 	platform_set_drvdata(pdev, omap);
- 
- 	return 0;
-+
-+err_pwmchip_add:
-+
-+	/*
-+	 * *omap is allocated using devm_kzalloc,
-+	 * so no free necessary here
++	/* Some tools for creating an initramfs don't consider softdeps, then
++	 * r8169.ko may be in initramfs, but realtek.ko not. Then the generic
++	 * PHY driver is used that doesn't work with most chip versions.
 +	 */
-+err_alloc_omap:
++	if (!driver_find("RTL8201CP Ethernet", &mdio_bus_type)) {
++		dev_err(&pdev->dev, "realtek.ko not loaded, maybe it needs to be added to initramfs?\n");
++		return -ENOENT;
++	}
 +
-+	pdata->free(dm_timer);
-+put:
-+	of_node_put(timer);
-+
-+	return ret;
- }
- 
- static int pwm_omap_dmtimer_remove(struct platform_device *pdev)
+ 	dev = devm_alloc_etherdev(&pdev->dev, sizeof (*tp));
+ 	if (!dev)
+ 		return -ENOMEM;
 -- 
 2.20.1
 
