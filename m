@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 487FA16893F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 22:26:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31CF2168944
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 22:26:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729694AbgBUVZk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 16:25:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39372 "EHLO mail.kernel.org"
+        id S1729655AbgBUVZh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 16:25:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729261AbgBUVZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729599AbgBUVZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 21 Feb 2020 16:25:34 -0500
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E3AA24689;
-        Fri, 21 Feb 2020 21:25:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1B192468C;
+        Fri, 21 Feb 2020 21:25:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582320332;
-        bh=3uTiPfIG7wpkQkEHdtA6AbWRr9Vhwfb/STdSFMRNs8g=;
+        s=default; t=1582320333;
+        bh=uW3tfUlR4IC1gt95wVGRNkZwAxUbH/UJHPnIk28PIYo=;
         h=From:To:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=XHnMeivhoxOd+zIxwUw7YWqPqnupoV3v5C9TTxKk71/AhRiaAX0diJOq72Mt2j2Pt
-         3vBulrJv+z2/1ZO/sA9YBJFv90fnhH7XW60zuvqJ3rB+EbdRM4wFcXWIyLGvWudwAm
-         pTy7j6KeyiKgNOszAzmwpG0cq2TiSj9wlDQSrYyI=
+        b=TCnwDtU5tuAUa2J6/tovhTcWZziCvRkKAITd6zsleuKVAHBezHAjQxTqwv/hQ/J1L
+         qjqJCj1w/dapVD//F4ngQPjL/xs7nrAhMO+a06MbkEwlDMvtTR/oRfxKrnS/3jFpDp
+         a8f3zmqNfmoOMIpo+AZqPjv2jP/pd3/53B/9GExw=
 From:   zanussi@kernel.org
 To:     LKML <linux-kernel@vger.kernel.org>,
         linux-rt-users <linux-rt-users@vger.kernel.org>,
@@ -34,9 +34,9 @@ To:     LKML <linux-kernel@vger.kernel.org>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Daniel Wagner <wagi@monom.org>,
         Tom Zanussi <zanussi@kernel.org>
-Subject: [PATCH RT 18/25] locking: Make spinlock_t and rwlock_t a RCU section on RT
-Date:   Fri, 21 Feb 2020 15:24:46 -0600
-Message-Id: <65e43fbb29570e76b45baa0cd9012782b06b0083.1582320278.git.zanussi@kernel.org>
+Subject: [PATCH RT 19/25] userfaultfd: Use a seqlock instead of seqcount
+Date:   Fri, 21 Feb 2020 15:24:47 -0600
+Message-Id: <889f5b989b28eb7b29f21092432948cd12d97c48.1582320278.git.zanussi@kernel.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1582320278.git.zanussi@kernel.org>
 References: <cover.1582320278.git.zanussi@kernel.org>
@@ -55,125 +55,77 @@ If anyone has any objections, please let me know.
 -----------
 
 
-[ Upstream commit 84440022a0e1c8c936d61f8f97593674a295d409 ]
+[ Upstream commit dc952a564d02997330654be9628bbe97ba2a05d3 ]
 
-On !RT a locked spinlock_t and rwlock_t disables preemption which
-implies a RCU read section. There is code that relies on that behaviour.
+On RT write_seqcount_begin() disables preemption which leads to warning
+in add_wait_queue() while the spinlock_t is acquired.
+The waitqueue can't be converted to swait_queue because
+userfaultfd_wake_function() is used as a custom wake function.
 
-Add an explicit RCU read section on RT while a sleeping lock (a lock
-which would disables preemption on !RT) acquired.
+Use seqlock instead seqcount to avoid the preempt_disable() section
+during add_wait_queue().
 
+Cc: stable-rt@vger.kernel.org
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Tom Zanussi <zanussi@kernel.org>
 ---
- kernel/locking/rtmutex.c   | 6 ++++++
- kernel/locking/rwlock-rt.c | 6 ++++++
- 2 files changed, 12 insertions(+)
+ fs/userfaultfd.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
-index 4bc01a2a9a88..848d9ed6f053 100644
---- a/kernel/locking/rtmutex.c
-+++ b/kernel/locking/rtmutex.c
-@@ -1142,6 +1142,7 @@ void __sched rt_spin_lock_slowunlock(struct rt_mutex *lock)
- void __lockfunc rt_spin_lock(spinlock_t *lock)
- {
- 	sleeping_lock_inc();
-+	rcu_read_lock();
- 	migrate_disable();
- 	spin_acquire(&lock->dep_map, 0, 0, _RET_IP_);
- 	rt_spin_lock_fastlock(&lock->lock, rt_spin_lock_slowlock);
-@@ -1157,6 +1158,7 @@ void __lockfunc __rt_spin_lock(struct rt_mutex *lock)
- void __lockfunc rt_spin_lock_nested(spinlock_t *lock, int subclass)
- {
- 	sleeping_lock_inc();
-+	rcu_read_lock();
- 	migrate_disable();
- 	spin_acquire(&lock->dep_map, subclass, 0, _RET_IP_);
- 	rt_spin_lock_fastlock(&lock->lock, rt_spin_lock_slowlock);
-@@ -1170,6 +1172,7 @@ void __lockfunc rt_spin_unlock(spinlock_t *lock)
- 	spin_release(&lock->dep_map, 1, _RET_IP_);
- 	rt_spin_lock_fastunlock(&lock->lock, rt_spin_lock_slowunlock);
- 	migrate_enable();
-+	rcu_read_unlock();
- 	sleeping_lock_dec();
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index e2b2196fd942..71886a8e8f71 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -51,7 +51,7 @@ struct userfaultfd_ctx {
+ 	/* waitqueue head for events */
+ 	wait_queue_head_t event_wqh;
+ 	/* a refile sequence protected by fault_pending_wqh lock */
+-	struct seqcount refile_seq;
++	seqlock_t refile_seq;
+ 	/* pseudo fd refcounting */
+ 	atomic_t refcount;
+ 	/* userfaultfd syscall flags */
+@@ -1047,7 +1047,7 @@ static ssize_t userfaultfd_ctx_read(struct userfaultfd_ctx *ctx, int no_wait,
+ 			 * waitqueue could become empty if this is the
+ 			 * only userfault.
+ 			 */
+-			write_seqcount_begin(&ctx->refile_seq);
++			write_seqlock(&ctx->refile_seq);
+ 
+ 			/*
+ 			 * The fault_pending_wqh.lock prevents the uwq
+@@ -1073,7 +1073,7 @@ static ssize_t userfaultfd_ctx_read(struct userfaultfd_ctx *ctx, int no_wait,
+ 			list_del(&uwq->wq.entry);
+ 			__add_wait_queue(&ctx->fault_wqh, &uwq->wq);
+ 
+-			write_seqcount_end(&ctx->refile_seq);
++			write_sequnlock(&ctx->refile_seq);
+ 
+ 			/* careful to always initialize msg if ret == 0 */
+ 			*msg = uwq->msg;
+@@ -1246,11 +1246,11 @@ static __always_inline void wake_userfault(struct userfaultfd_ctx *ctx,
+ 	 * sure we've userfaults to wake.
+ 	 */
+ 	do {
+-		seq = read_seqcount_begin(&ctx->refile_seq);
++		seq = read_seqbegin(&ctx->refile_seq);
+ 		need_wakeup = waitqueue_active(&ctx->fault_pending_wqh) ||
+ 			waitqueue_active(&ctx->fault_wqh);
+ 		cond_resched();
+-	} while (read_seqcount_retry(&ctx->refile_seq, seq));
++	} while (read_seqretry(&ctx->refile_seq, seq));
+ 	if (need_wakeup)
+ 		__wake_userfault(ctx, range);
  }
- EXPORT_SYMBOL(rt_spin_unlock);
-@@ -1201,6 +1204,7 @@ int __lockfunc rt_spin_trylock(spinlock_t *lock)
- 	ret = __rt_mutex_trylock(&lock->lock);
- 	if (ret) {
- 		spin_acquire(&lock->dep_map, 0, 1, _RET_IP_);
-+		rcu_read_lock();
- 	} else {
- 		migrate_enable();
- 		sleeping_lock_dec();
-@@ -1217,6 +1221,7 @@ int __lockfunc rt_spin_trylock_bh(spinlock_t *lock)
- 	ret = __rt_mutex_trylock(&lock->lock);
- 	if (ret) {
- 		sleeping_lock_inc();
-+		rcu_read_lock();
- 		migrate_disable();
- 		spin_acquire(&lock->dep_map, 0, 1, _RET_IP_);
- 	} else
-@@ -1233,6 +1238,7 @@ int __lockfunc rt_spin_trylock_irqsave(spinlock_t *lock, unsigned long *flags)
- 	ret = __rt_mutex_trylock(&lock->lock);
- 	if (ret) {
- 		sleeping_lock_inc();
-+		rcu_read_lock();
- 		migrate_disable();
- 		spin_acquire(&lock->dep_map, 0, 1, _RET_IP_);
- 	}
-diff --git a/kernel/locking/rwlock-rt.c b/kernel/locking/rwlock-rt.c
-index c3b91205161c..0ae8c62ea832 100644
---- a/kernel/locking/rwlock-rt.c
-+++ b/kernel/locking/rwlock-rt.c
-@@ -310,6 +310,7 @@ int __lockfunc rt_read_trylock(rwlock_t *rwlock)
- 	ret = do_read_rt_trylock(rwlock);
- 	if (ret) {
- 		rwlock_acquire_read(&rwlock->dep_map, 0, 1, _RET_IP_);
-+		rcu_read_lock();
- 	} else {
- 		migrate_enable();
- 		sleeping_lock_dec();
-@@ -327,6 +328,7 @@ int __lockfunc rt_write_trylock(rwlock_t *rwlock)
- 	ret = do_write_rt_trylock(rwlock);
- 	if (ret) {
- 		rwlock_acquire(&rwlock->dep_map, 0, 1, _RET_IP_);
-+		rcu_read_lock();
- 	} else {
- 		migrate_enable();
- 		sleeping_lock_dec();
-@@ -338,6 +340,7 @@ EXPORT_SYMBOL(rt_write_trylock);
- void __lockfunc rt_read_lock(rwlock_t *rwlock)
- {
- 	sleeping_lock_inc();
-+	rcu_read_lock();
- 	migrate_disable();
- 	rwlock_acquire_read(&rwlock->dep_map, 0, 0, _RET_IP_);
- 	do_read_rt_lock(rwlock);
-@@ -347,6 +350,7 @@ EXPORT_SYMBOL(rt_read_lock);
- void __lockfunc rt_write_lock(rwlock_t *rwlock)
- {
- 	sleeping_lock_inc();
-+	rcu_read_lock();
- 	migrate_disable();
- 	rwlock_acquire(&rwlock->dep_map, 0, 0, _RET_IP_);
- 	do_write_rt_lock(rwlock);
-@@ -358,6 +362,7 @@ void __lockfunc rt_read_unlock(rwlock_t *rwlock)
- 	rwlock_release(&rwlock->dep_map, 1, _RET_IP_);
- 	do_read_rt_unlock(rwlock);
- 	migrate_enable();
-+	rcu_read_unlock();
- 	sleeping_lock_dec();
+@@ -1915,7 +1915,7 @@ static void init_once_userfaultfd_ctx(void *mem)
+ 	init_waitqueue_head(&ctx->fault_wqh);
+ 	init_waitqueue_head(&ctx->event_wqh);
+ 	init_waitqueue_head(&ctx->fd_wqh);
+-	seqcount_init(&ctx->refile_seq);
++	seqlock_init(&ctx->refile_seq);
  }
- EXPORT_SYMBOL(rt_read_unlock);
-@@ -367,6 +372,7 @@ void __lockfunc rt_write_unlock(rwlock_t *rwlock)
- 	rwlock_release(&rwlock->dep_map, 1, _RET_IP_);
- 	do_write_rt_unlock(rwlock);
- 	migrate_enable();
-+	rcu_read_unlock();
- 	sleeping_lock_dec();
- }
- EXPORT_SYMBOL(rt_write_unlock);
+ 
+ /**
 -- 
 2.14.1
 
