@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4909C1671B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:56:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D2811671BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:56:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730485AbgBUH4e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:56:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55784 "EHLO mail.kernel.org"
+        id S1730514AbgBUH4n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:56:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727872AbgBUH42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:56:28 -0500
+        id S1730139AbgBUH4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:56:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29DFE20578;
-        Fri, 21 Feb 2020 07:56:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34F5D20578;
+        Fri, 21 Feb 2020 07:56:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271787;
-        bh=7oaIDcG5sR819ZC9N4iXtsmUArGfUPkCaLdu3IjP0BA=;
+        s=default; t=1582271797;
+        bh=HYuxXEHOswdXA1U7g6qCOuKe8dawVBoP8iksu7Ddq5c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IWYu+s8imCHyhI4L+ZxzMwkPnXNLBvyxOskXRmlDhthGfiZYQ86pzFH5fGKQsimVh
-         pIQBC814OMVFyat7HXwM8V8CQ9NR3lkLj80Mno9u5KLo1ffnYYf7a0zV05aS3rPGrF
-         L0ry1TKBBv4ssX7Nxg/8j7I6VibrzRZGmlJbXZoU=
+        b=ZRtdFSNb3bbBKIIVVzizJmc1/u4gjpbYzGnODWGc2+CsbTs2UYHF8OX9a7S4LZwFc
+         V90534Jw6fbLEu2LQD3/yoPuH0kTkJa2MaeM2XeY+enOPheMktJs+cWyl1PzmMcd+G
+         UL0U5WeFKYv5GkexCA6Y89PDNNlz2AzsuKv3f4+c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 298/399] regulator: vctrl-regulator: Avoid deadlock getting and setting the voltage
-Date:   Fri, 21 Feb 2020 08:40:23 +0100
-Message-Id: <20200221072430.711864171@linuxfoundation.org>
+Subject: [PATCH 5.5 302/399] x86/boot/compressed: Relax sed symbol type regex for LLVM ld.lld
+Date:   Fri, 21 Feb 2020 08:40:27 +0100
+Message-Id: <20200221072431.053041429@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -45,171 +45,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+From: Ard Biesheuvel <ardb@kernel.org>
 
-[ Upstream commit e9153311491da9d9863ead9888a1613531cb4a1b ]
+[ Upstream commit bc310baf2ba381c648983c7f4748327f17324562 ]
 
-`cat /sys/kernel/debug/regulator/regulator_summary` ends on a deadlock
-when you have a voltage controlled regulator (vctrl).
+The final build stage of the x86 kernel captures some symbol
+addresses from the decompressor binary and copies them into zoffset.h.
+It uses sed with a regular expression that matches the address, symbol
+type and symbol name, and mangles the captured addresses and the names
+of symbols of interest into #define directives that are added to
+zoffset.h
 
-The problem is that the vctrl_get_voltage() and vctrl_set_voltage() calls the
-regulator_get_voltage() and regulator_set_voltage() and that will try to lock
-again the dependent regulators (the regulator supplying the control voltage).
+The symbol type is indicated by a single letter, which we match
+strictly: only letters in the set 'ABCDGRSTVW' are matched, even
+though the actual symbol type is relevant and therefore ignored.
 
-Fix the issue by exporting the unlocked version of the regulator_get_voltage()
-and regulator_set_voltage() API so drivers that need it, like the voltage
-controlled regulator driver can use it.
+Commit bc7c9d620 ("efi/libstub/x86: Force 'hidden' visibility for
+extern declarations") made a change to the way external symbol
+references are classified, resulting in 'startup_32' now being
+emitted as a hidden symbol. This prevents the use of GOT entries to
+refer to this symbol via its absolute address, which recent toolchains
+(including Clang based ones) already avoid by default, making this
+change a no-op in the majority of cases.
 
-Fixes: f8702f9e4aa7 ("regulator: core: Use ww_mutex for regulators locking")
-Reported-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Link: https://lore.kernel.org/r/20200116094543.2847321-1-enric.balletbo@collabora.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+However, as it turns out, the LLVM linker classifies such hidden
+symbols as symbols with static linkage in fully linked ELF binaries,
+causing tools such as NM to output a lowercase 't' rather than an upper
+case 'T' for the type of such symbols. Since our sed expression only
+matches upper case letters for the symbol type, the line describing
+startup_32 is disregarded, resulting in a build error like the following
+
+  arch/x86/boot/header.S:568:18: error: symbol 'ZO_startup_32' can not be
+                                        undefined in a subtraction expression
+  init_size: .long (0x00000000008fd000 - ZO_startup_32 +
+                    (((0x0000000001f6361c + ((0x0000000001f6361c >> 8) + 65536)
+                     - 0x00000000008c32e5) + 4095) & ~4095)) # kernel initialization size
+
+Given that we are only interested in the value of the symbol, let's match
+any character in the set 'a-zA-Z' instead.
+
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Tested-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/regulator/core.c            |  2 ++
- drivers/regulator/vctrl-regulator.c | 38 +++++++++++++++++------------
- 2 files changed, 25 insertions(+), 15 deletions(-)
+ arch/x86/boot/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 03d79fee2987e..e7d167ce326cb 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -3470,6 +3470,7 @@ int regulator_set_voltage_rdev(struct regulator_dev *rdev, int min_uV,
- out:
- 	return ret;
- }
-+EXPORT_SYMBOL(regulator_set_voltage_rdev);
+diff --git a/arch/x86/boot/Makefile b/arch/x86/boot/Makefile
+index 95410d6ee2ff8..748b6d28a91de 100644
+--- a/arch/x86/boot/Makefile
++++ b/arch/x86/boot/Makefile
+@@ -88,7 +88,7 @@ $(obj)/vmlinux.bin: $(obj)/compressed/vmlinux FORCE
  
- static int regulator_limit_voltage_step(struct regulator_dev *rdev,
- 					int *current_uV, int *min_uV)
-@@ -4034,6 +4035,7 @@ int regulator_get_voltage_rdev(struct regulator_dev *rdev)
- 		return ret;
- 	return ret - rdev->constraints->uV_offset;
- }
-+EXPORT_SYMBOL(regulator_get_voltage_rdev);
+ SETUP_OBJS = $(addprefix $(obj)/,$(setup-y))
  
- /**
-  * regulator_get_voltage - get regulator output voltage
-diff --git a/drivers/regulator/vctrl-regulator.c b/drivers/regulator/vctrl-regulator.c
-index 9a9ee81881098..cbadb1c996790 100644
---- a/drivers/regulator/vctrl-regulator.c
-+++ b/drivers/regulator/vctrl-regulator.c
-@@ -11,10 +11,13 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-+#include <linux/regulator/coupler.h>
- #include <linux/regulator/driver.h>
- #include <linux/regulator/of_regulator.h>
- #include <linux/sort.h>
+-sed-zoffset := -e 's/^\([0-9a-fA-F]*\) [ABCDGRSTVW] \(startup_32\|startup_64\|efi32_stub_entry\|efi64_stub_entry\|efi_pe_entry\|input_data\|kernel_info\|_end\|_ehead\|_text\|z_.*\)$$/\#define ZO_\2 0x\1/p'
++sed-zoffset := -e 's/^\([0-9a-fA-F]*\) [a-zA-Z] \(startup_32\|startup_64\|efi32_stub_entry\|efi64_stub_entry\|efi_pe_entry\|input_data\|kernel_info\|_end\|_ehead\|_text\|z_.*\)$$/\#define ZO_\2 0x\1/p'
  
-+#include "internal.h"
-+
- struct vctrl_voltage_range {
- 	int min_uV;
- 	int max_uV;
-@@ -79,7 +82,7 @@ static int vctrl_calc_output_voltage(struct vctrl_data *vctrl, int ctrl_uV)
- static int vctrl_get_voltage(struct regulator_dev *rdev)
- {
- 	struct vctrl_data *vctrl = rdev_get_drvdata(rdev);
--	int ctrl_uV = regulator_get_voltage(vctrl->ctrl_reg);
-+	int ctrl_uV = regulator_get_voltage_rdev(vctrl->ctrl_reg->rdev);
- 
- 	return vctrl_calc_output_voltage(vctrl, ctrl_uV);
- }
-@@ -90,16 +93,16 @@ static int vctrl_set_voltage(struct regulator_dev *rdev,
- {
- 	struct vctrl_data *vctrl = rdev_get_drvdata(rdev);
- 	struct regulator *ctrl_reg = vctrl->ctrl_reg;
--	int orig_ctrl_uV = regulator_get_voltage(ctrl_reg);
-+	int orig_ctrl_uV = regulator_get_voltage_rdev(ctrl_reg->rdev);
- 	int uV = vctrl_calc_output_voltage(vctrl, orig_ctrl_uV);
- 	int ret;
- 
- 	if (req_min_uV >= uV || !vctrl->ovp_threshold)
- 		/* voltage rising or no OVP */
--		return regulator_set_voltage(
--			ctrl_reg,
-+		return regulator_set_voltage_rdev(ctrl_reg->rdev,
- 			vctrl_calc_ctrl_voltage(vctrl, req_min_uV),
--			vctrl_calc_ctrl_voltage(vctrl, req_max_uV));
-+			vctrl_calc_ctrl_voltage(vctrl, req_max_uV),
-+			PM_SUSPEND_ON);
- 
- 	while (uV > req_min_uV) {
- 		int max_drop_uV = (uV * vctrl->ovp_threshold) / 100;
-@@ -114,9 +117,10 @@ static int vctrl_set_voltage(struct regulator_dev *rdev,
- 		next_uV = max_t(int, req_min_uV, uV - max_drop_uV);
- 		next_ctrl_uV = vctrl_calc_ctrl_voltage(vctrl, next_uV);
- 
--		ret = regulator_set_voltage(ctrl_reg,
-+		ret = regulator_set_voltage_rdev(ctrl_reg->rdev,
-+					    next_ctrl_uV,
- 					    next_ctrl_uV,
--					    next_ctrl_uV);
-+					    PM_SUSPEND_ON);
- 		if (ret)
- 			goto err;
- 
-@@ -130,7 +134,8 @@ static int vctrl_set_voltage(struct regulator_dev *rdev,
- 
- err:
- 	/* Try to go back to original voltage */
--	regulator_set_voltage(ctrl_reg, orig_ctrl_uV, orig_ctrl_uV);
-+	regulator_set_voltage_rdev(ctrl_reg->rdev, orig_ctrl_uV, orig_ctrl_uV,
-+				   PM_SUSPEND_ON);
- 
- 	return ret;
- }
-@@ -155,9 +160,10 @@ static int vctrl_set_voltage_sel(struct regulator_dev *rdev,
- 
- 	if (selector >= vctrl->sel || !vctrl->ovp_threshold) {
- 		/* voltage rising or no OVP */
--		ret = regulator_set_voltage(ctrl_reg,
-+		ret = regulator_set_voltage_rdev(ctrl_reg->rdev,
-+					    vctrl->vtable[selector].ctrl,
- 					    vctrl->vtable[selector].ctrl,
--					    vctrl->vtable[selector].ctrl);
-+					    PM_SUSPEND_ON);
- 		if (!ret)
- 			vctrl->sel = selector;
- 
-@@ -173,9 +179,10 @@ static int vctrl_set_voltage_sel(struct regulator_dev *rdev,
- 		else
- 			next_sel = vctrl->vtable[vctrl->sel].ovp_min_sel;
- 
--		ret = regulator_set_voltage(ctrl_reg,
-+		ret = regulator_set_voltage_rdev(ctrl_reg->rdev,
- 					    vctrl->vtable[next_sel].ctrl,
--					    vctrl->vtable[next_sel].ctrl);
-+					    vctrl->vtable[next_sel].ctrl,
-+					    PM_SUSPEND_ON);
- 		if (ret) {
- 			dev_err(&rdev->dev,
- 				"failed to set control voltage to %duV\n",
-@@ -195,9 +202,10 @@ static int vctrl_set_voltage_sel(struct regulator_dev *rdev,
- err:
- 	if (vctrl->sel != orig_sel) {
- 		/* Try to go back to original voltage */
--		if (!regulator_set_voltage(ctrl_reg,
-+		if (!regulator_set_voltage_rdev(ctrl_reg->rdev,
-+					   vctrl->vtable[orig_sel].ctrl,
- 					   vctrl->vtable[orig_sel].ctrl,
--					   vctrl->vtable[orig_sel].ctrl))
-+					   PM_SUSPEND_ON))
- 			vctrl->sel = orig_sel;
- 		else
- 			dev_warn(&rdev->dev,
-@@ -482,7 +490,7 @@ static int vctrl_probe(struct platform_device *pdev)
- 		if (ret)
- 			return ret;
- 
--		ctrl_uV = regulator_get_voltage(vctrl->ctrl_reg);
-+		ctrl_uV = regulator_get_voltage_rdev(vctrl->ctrl_reg->rdev);
- 		if (ctrl_uV < 0) {
- 			dev_err(&pdev->dev, "failed to get control voltage\n");
- 			return ctrl_uV;
+ quiet_cmd_zoffset = ZOFFSET $@
+       cmd_zoffset = $(NM) $< | sed -n $(sed-zoffset) > $@
 -- 
 2.20.1
 
