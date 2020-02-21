@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3792B167211
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:00:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74AE1167489
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:23:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730975AbgBUH74 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:59:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60034 "EHLO mail.kernel.org"
+        id S2388292AbgBUIWY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:22:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730401AbgBUH7x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:59:53 -0500
+        id S1732397AbgBUIWU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:22:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B818A2073A;
-        Fri, 21 Feb 2020 07:59:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9668206ED;
+        Fri, 21 Feb 2020 08:22:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271992;
-        bh=XoLjqGzT8TlCe9ldxSJPulUGD353dP5/aXwrHZtpYuw=;
+        s=default; t=1582273340;
+        bh=YIGZT7Mw55e964DtErPouRe21GxqEoy89dkTezE1Oy8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UOSx7aV9LTuL20Qkk+0P7MNUqsbSREMqgScSlvflf42pRuX8PAsKSF+vRohjE8yVp
-         18kBMAKtkVnqcewt9EUyxJTHFBZgQZ/0iyqk5NQZiByDx+iKDXYFV/l0xGa4FotMXS
-         F+avV7wnvcDtoaYYwUCwo7AmDvV0JVduIl1CB9rg=
+        b=lhVICAlalTpaWpfL1Q6nWT+pL85nf2eNmAW/WujH8qB/Eq5JJpKtBKpm5osMtnf0B
+         ApWO6uVOYPRr31QOQo/WkeX7P561gQQa8npGWZMYAx1EJq9vFpxOBtEgaq2F9Vyajn
+         VXKJRjYmi542Gx09DSk+qlvNSYhmBjibwO+xjoQU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 375/399] bcache: fix incorrect data type usage in btree_flush_write()
+Subject: [PATCH 4.19 127/191] drm/nouveau/fault/gv100-: fix memory leak on module unload
 Date:   Fri, 21 Feb 2020 08:41:40 +0100
-Message-Id: <20200221072436.813495037@linuxfoundation.org>
+Message-Id: <20200221072306.171221239@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
-References: <20200221072402.315346745@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,85 +43,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Coly Li <colyli@suse.de>
+From: Ben Skeggs <bskeggs@redhat.com>
 
-[ Upstream commit d1c3cc34f5a78b38d2b809b289d912c3560545df ]
+[ Upstream commit 633cc9beeb6f9b5fa2f17a2a9d0e2790cb6c3de7 ]
 
-Dan Carpenter points out that from commit 2aa8c529387c ("bcache: avoid
-unnecessary btree nodes flushing in btree_flush_write()"), there is a
-incorrect data type usage which leads to the following static checker
-warning:
-	drivers/md/bcache/journal.c:444 btree_flush_write()
-	warn: 'ref_nr' unsigned <= 0
-
-drivers/md/bcache/journal.c
-   422  static void btree_flush_write(struct cache_set *c)
-   423  {
-   424          struct btree *b, *t, *btree_nodes[BTREE_FLUSH_NR];
-   425          unsigned int i, nr, ref_nr;
-                                    ^^^^^^
-
-   426          atomic_t *fifo_front_p, *now_fifo_front_p;
-   427          size_t mask;
-   428
-   429          if (c->journal.btree_flushing)
-   430                  return;
-   431
-   432          spin_lock(&c->journal.flush_write_lock);
-   433          if (c->journal.btree_flushing) {
-   434                  spin_unlock(&c->journal.flush_write_lock);
-   435                  return;
-   436          }
-   437          c->journal.btree_flushing = true;
-   438          spin_unlock(&c->journal.flush_write_lock);
-   439
-   440          /* get the oldest journal entry and check its refcount */
-   441          spin_lock(&c->journal.lock);
-   442          fifo_front_p = &fifo_front(&c->journal.pin);
-   443          ref_nr = atomic_read(fifo_front_p);
-   444          if (ref_nr <= 0) {
-                    ^^^^^^^^^^^
-Unsigned can't be less than zero.
-
-   445                  /*
-   446                   * do nothing if no btree node references
-   447                   * the oldest journal entry
-   448                   */
-   449                  spin_unlock(&c->journal.lock);
-   450                  goto out;
-   451          }
-   452          spin_unlock(&c->journal.lock);
-
-As the warning information indicates, local varaible ref_nr in unsigned
-int type is wrong, which does not matche atomic_read() and the "<= 0"
-checking.
-
-This patch fixes the above error by defining local variable ref_nr as
-int type.
-
-Fixes: 2aa8c529387c ("bcache: avoid unnecessary btree nodes flushing in btree_flush_write()")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Coly Li <colyli@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/bcache/journal.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/nouveau/nvkm/subdev/fault/base.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
-index 33ddc5269e8dc..6730820780b06 100644
---- a/drivers/md/bcache/journal.c
-+++ b/drivers/md/bcache/journal.c
-@@ -422,7 +422,8 @@ err:
- static void btree_flush_write(struct cache_set *c)
- {
- 	struct btree *b, *t, *btree_nodes[BTREE_FLUSH_NR];
--	unsigned int i, nr, ref_nr;
-+	unsigned int i, nr;
-+	int ref_nr;
- 	atomic_t *fifo_front_p, *now_fifo_front_p;
- 	size_t mask;
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/fault/base.c b/drivers/gpu/drm/nouveau/nvkm/subdev/fault/base.c
+index 16ad91c91a7be..f18ce6ff5b7ed 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/fault/base.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/fault/base.c
+@@ -150,6 +150,7 @@ nvkm_fault_dtor(struct nvkm_subdev *subdev)
+ 	struct nvkm_fault *fault = nvkm_fault(subdev);
+ 	int i;
  
++	nvkm_notify_fini(&fault->nrpfb);
+ 	nvkm_event_fini(&fault->event);
+ 
+ 	for (i = 0; i < fault->buffer_nr; i++) {
 -- 
 2.20.1
 
