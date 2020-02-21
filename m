@@ -2,112 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDC37168798
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 20:44:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFF4F168792
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 20:42:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727362AbgBUToe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 14:44:34 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:15668 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726443AbgBUTod (ORCPT
+        id S1727095AbgBUTmA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 14:42:00 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:36507 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726767AbgBUTl7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 14:44:33 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e5033120000>; Fri, 21 Feb 2020 11:44:18 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 21 Feb 2020 11:44:32 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 21 Feb 2020 11:44:32 -0800
-Received: from [10.2.166.200] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 21 Feb
- 2020 19:44:32 +0000
-Subject: Re: [PATCH v7 11/24] mm: Move end_index check out of readahead loop
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>, <linux-btrfs@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, <linux-ext4@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <cluster-devel@redhat.com>, <ocfs2-devel@oss.oracle.com>,
-        <linux-xfs@vger.kernel.org>
-References: <20200219210103.32400-1-willy@infradead.org>
- <20200219210103.32400-12-willy@infradead.org>
- <e6ef2075-b849-299e-0f11-c6ee82b0a3c7@nvidia.com>
- <20200221153537.GE24185@bombadil.infradead.org>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <1fd052ce-cd5e-60ce-e494-cbf6427d3ed3@nvidia.com>
-Date:   Fri, 21 Feb 2020 11:41:28 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Fri, 21 Feb 2020 14:41:59 -0500
+Received: by mail-io1-f67.google.com with SMTP id d15so3633301iog.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 11:41:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WPEkVNQNo6+YwuuDTJ8f8LWVOUVBTxJ7HCWvWKezvwM=;
+        b=OOj04mF2+3yRsYgUDM4psSLvDVhPp3+mkxUO1ZzxFRyV2BpOHmDVNSaSg0Nf+m0Jvv
+         g0iOef6Ch4C7hb4JDOA4KgPfcuXgKOre6matGbVL9twWijFXGJ0NeeRfME4dB6V33VJK
+         mrf7dJ5OaUo00VZfHhlyludpRW1y7L1C8zfQI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WPEkVNQNo6+YwuuDTJ8f8LWVOUVBTxJ7HCWvWKezvwM=;
+        b=pt77OkZPe7c+uVSN0OJ3zh+92n5t5+gHlXXhNt0OuWyN7O0/ebBS+ThYPq3xJk8L7Z
+         KifysTsHVaEqX9/TYBJhFhd78Jk/dAIpocRMBnaZ68ajl/Qoy3wC18D5YKozJvXPuCAL
+         ITu3GM4XZpNe/rF/b/Owv1yEOelnNzsMnReRn3z4SfRlQCNs9zDh9rxin8BWKByaeTFa
+         qvwvIHP3DwAubgZiEPod76zp024cactEf522ewjh/wxAhlJCeEBwUOw3325I+Soulr81
+         cdEGwjBpX+bMMorQk8zSqurMIms5zjeTuq8EeOmuSnSsqzd8wH+7RgW4TDY+7KdZmyx+
+         fqMw==
+X-Gm-Message-State: APjAAAVJVtB4OTk1y4J0r6Qq3yEJtJUAYLd8YVAmBSznDnAYJX7P5O7X
+        L90QujNjVOFs25yiDeBnHI8ymmr+OEGIbUuA3R74Vw==
+X-Google-Smtp-Source: APXvYqyhv6yoRrvJUuENNKPAWV05pjT3Uyf9H3bCQETX5SOA9ofYJ2wSIn+d5yP6cxreX1ktp9sFgfx2+GHoYNL0c/U=
+X-Received: by 2002:a6b:7117:: with SMTP id q23mr31725213iog.153.1582314118577;
+ Fri, 21 Feb 2020 11:41:58 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200221153537.GE24185@bombadil.infradead.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1582314258; bh=pQKOwwEmNmp5lZ+eX1Ols5QNnW+OORTLQJDMCsPxtEc=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=lYdo4NH8M7SXphPat6doJg0oOA1V6kLXukQ7JIEh5FVkfFb0/CxKOhHQdMiRNYy87
-         Q6EhPR2Fph1xqpiZaGm+fIV8Ra4pJE8E5H2Ofj6LlTy0+Qb+/+y64EhZcbjIYXrOqI
-         IXR7s2kX4Yi3hnWXNuj2sU2+Joh83jXJxvw8pHXSeKQS/7ccswnLmpLkros2lxWTg/
-         2U8B/Ar6NYNMOQFqfCj3j5XpjUwSHVdi0BMHCh2YVMnazsUm42RddLEt+ZRAKHCaXa
-         IlYO+1WyQ2QxlFvwnZy2R5xtgMwusy7sT9ZlwHQi2bqndUATGT9KLiH14aMZETjP0i
-         ow4Jt857PEIiA==
+References: <20200214062637.216209-1-evanbenn@chromium.org>
+ <20200214172512.1.I02ebc5b8743b1a71e0e15f68ea77e506d4e6f840@changeid>
+ <20200219223046.GA16537@bogus> <CAODwPW8JspiUtyU4CC95w9rbNRyUF-Aeb9TuPm1PzmP6u=y1EA@mail.gmail.com>
+ <20200219232005.GA9737@roeck-us.net> <CAKz_xw2hvHL=a4s37dmuCTWDbxefQFR3rfcaNiWYJY4T+jqabA@mail.gmail.com>
+ <e42320b8-266f-0b0e-b20b-b72228510e81@amlogic.com>
+In-Reply-To: <e42320b8-266f-0b0e-b20b-b72228510e81@amlogic.com>
+From:   Julius Werner <jwerner@chromium.org>
+Date:   Fri, 21 Feb 2020 11:41:47 -0800
+Message-ID: <CAODwPW94KX46PzSrf_uuEFPKudXor=26d=g3Qta5veRfxmMDUA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: watchdog: Add arm,smc-wdt watchdog
+ arm,smc-wdt compatible
+To:     Xingyu Chen <xingyu.chen@amlogic.com>
+Cc:     Evan Benn <evanbenn@chromium.org>,
+        Julius Werner <jwerner@chromium.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-watchdog@vger.kernel.org,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Yonghui Yu <yonghui.yu@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/21/20 7:35 AM, Matthew Wilcox wrote:
-> On Thu, Feb 20, 2020 at 07:50:39PM -0800, John Hubbard wrote:
->> This tiny patch made me pause, because I wasn't sure at first of the exact
->> intent of the lines above. Once I worked it out, it seemed like it might
->> be helpful (or overkill??) to add a few hints for the reader, especially since
->> there are no hints in the function's (minimal) documentation header. What
->> do you think of this?
->>
->> 	/*
->> 	 * If we can't read *any* pages without going past the inodes's isize
->> 	 * limit, give up entirely:
->> 	 */
->> 	if (index > end_index)
->> 		return;
->>
->> 	/* Cap nr_to_read, in order to avoid overflowing the ULONG type: */
->> 	if (index + nr_to_read < index)
->> 		nr_to_read = ULONG_MAX - index + 1;
->>
->> 	/* Cap nr_to_read, to avoid reading past the inode's isize limit: */
->> 	if (index + nr_to_read >= end_index)
->> 		nr_to_read = end_index - index + 1;
-> 
-> A little verbose for my taste ... How about this?
+> Because the ATF does not define standard wdt index, each vendor defines
+> its own index.
+> So I don't think that the current driver[0] can fully cover my usecases.
 
-
-Mine too, actually. :)  I think your version below looks good.
-
-
-thanks,
--- 
-John Hubbard
-NVIDIA
-
-> 
->          end_index = (isize - 1) >> PAGE_SHIFT;
->          if (index > end_index)
->                  return;
->          /* Avoid wrapping to the beginning of the file */
->          if (index + nr_to_read < index)
->                  nr_to_read = ULONG_MAX - index + 1;
->          /* Don't read past the page containing the last byte of the file */
->          if (index + nr_to_read >= end_index)
->                  nr_to_read = end_index - index + 1;
-> 
-
+I think the best way to solve this would be to put the SMC function ID
+as another field into the device tree, so that multiple vendors could
+share the same driver even if their firmware interface uses a
+different SMC. But they still have to implement the same API for that
+SMC, of course, not sure if the Meson driver is suitable for that (but
+if it is then I think merging those drivers would be a good idea).
