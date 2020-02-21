@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B771216743F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:23:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CD28167375
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:13:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388054AbgBUITk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:19:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58302 "EHLO mail.kernel.org"
+        id S1732862AbgBUIMa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:12:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388045AbgBUITi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:19:38 -0500
+        id S1732852AbgBUIM3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:12:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD96F24694;
-        Fri, 21 Feb 2020 08:19:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1229D24650;
+        Fri, 21 Feb 2020 08:12:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273177;
-        bh=sgwlTZtHceOcXQlBCBMlRKJUHnRjwhhrQxZY8HOsp7I=;
+        s=default; t=1582272748;
+        bh=XF+uKzWVjCkasEVsHuILsvLeJGCAQ0To9bSluYuOIk4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WUyoQuaPRrrrx+E/0bVXYsPC7P8Nnh1wcFRff0on1UhFOT0mZbNxfFswDcbmIz0GF
-         rU/VqyVl3xiSZ/61ULgQkYbma683eYAOAvZM3I1h97P2jJfn/hw9eJ6oJ9dU14Y6qn
-         cZY1x/O9HHFFjci6EcOCf+BK+rCvst9xy9Qysav8=
+        b=vdo6LmH1McQIXlag6UPoGVC8T4B/K+pzgf35q0Iq443satfOJThYFijGBAU68f5BJ
+         xdv+XlVsPNehN28Iu6sxwzGj88JTHHfA1wQtkip7405SX0z7k4vQ0p7lK4XNCbsPkH
+         WVVwVTgMMpIFDb4B9fLLgW2IkXPizrU9YbzkEuqY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sun Ke <sunke32@huawei.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 047/191] nbd: add a flush_workqueue in nbd_start_device
-Date:   Fri, 21 Feb 2020 08:40:20 +0100
-Message-Id: <20200221072257.378789807@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 223/344] drm/nouveau/secboot/gm20b: initialize pointer in gm20b_secboot_new()
+Date:   Fri, 21 Feb 2020 08:40:22 +0100
+Message-Id: <20200221072409.465402995@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,54 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sun Ke <sunke32@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 5c0dd228b5fc30a3b732c7ae2657e0161ec7ed80 ]
+[ Upstream commit 3613a9bea95a1470dd42e4ed1cc7d86ebe0a2dc0 ]
 
-When kzalloc fail, may cause trying to destroy the
-workqueue from inside the workqueue.
+We accidentally set "psb" which is a no-op instead of "*psb" so it
+generates a static checker warning.  We should probably set it before
+the first error return so that it's always initialized.
 
-If num_connections is m (2 < m), and NO.1 ~ NO.n
-(1 < n < m) kzalloc are successful. The NO.(n + 1)
-failed. Then, nbd_start_device will return ENOMEM
-to nbd_start_device_ioctl, and nbd_start_device_ioctl
-will return immediately without running flush_workqueue.
-However, we still have n recv threads. If nbd_release
-run first, recv threads may have to drop the last
-config_refs and try to destroy the workqueue from
-inside the workqueue.
-
-To fix it, add a flush_workqueue in nbd_start_device.
-
-Fixes: e9e006f5fcf2 ("nbd: fix max number of supported devs")
-Signed-off-by: Sun Ke <sunke32@huawei.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 923f1bd27bf1 ("drm/nouveau/secboot/gm20b: add secure boot support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/nbd.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index b9d321bdaa8a7..226103af30f05 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -1216,6 +1216,16 @@ static int nbd_start_device(struct nbd_device *nbd)
- 		args = kzalloc(sizeof(*args), GFP_KERNEL);
- 		if (!args) {
- 			sock_shutdown(nbd);
-+			/*
-+			 * If num_connections is m (2 < m),
-+			 * and NO.1 ~ NO.n(1 < n < m) kzallocs are successful.
-+			 * But NO.(n + 1) failed. We still have n recv threads.
-+			 * So, add flush_workqueue here to prevent recv threads
-+			 * dropping the last config_refs and trying to destroy
-+			 * the workqueue from inside the workqueue.
-+			 */
-+			if (i)
-+				flush_workqueue(nbd->recv_workq);
- 			return -ENOMEM;
- 		}
- 		sk_set_memalloc(config->socks[i]->sock->sk);
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c
+index df8b919dcf09b..ace6fefba4280 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c
+@@ -108,6 +108,7 @@ gm20b_secboot_new(struct nvkm_device *device, int index,
+ 	struct gm200_secboot *gsb;
+ 	struct nvkm_acr *acr;
+ 
++	*psb = NULL;
+ 	acr = acr_r352_new(BIT(NVKM_SECBOOT_FALCON_FECS) |
+ 			   BIT(NVKM_SECBOOT_FALCON_PMU));
+ 	if (IS_ERR(acr))
+@@ -116,10 +117,8 @@ gm20b_secboot_new(struct nvkm_device *device, int index,
+ 	acr->optional_falcons = BIT(NVKM_SECBOOT_FALCON_PMU);
+ 
+ 	gsb = kzalloc(sizeof(*gsb), GFP_KERNEL);
+-	if (!gsb) {
+-		psb = NULL;
++	if (!gsb)
+ 		return -ENOMEM;
+-	}
+ 	*psb = &gsb->base;
+ 
+ 	ret = nvkm_secboot_ctor(&gm20b_secboot, acr, device, index, &gsb->base);
 -- 
 2.20.1
 
