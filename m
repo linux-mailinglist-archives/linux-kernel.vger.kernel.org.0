@@ -2,100 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EE7A16828B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 17:01:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06CC2168287
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 17:01:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729388AbgBUQBn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 11:01:43 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:38360 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728822AbgBUQBn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 11:01:43 -0500
-Received: by mail-ot1-f65.google.com with SMTP id z9so2429330oth.5
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 08:01:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wLXxnQp7HIaEPOKqosq0pF27kK5rqBwu9jtY7ZzaZNg=;
-        b=Zg7t7aQs1mHUnhU9aTiekAaV+Bp3+M0P+YZeKti3TISeAY9CQdUrdOFmjsqepztxOx
-         48Dv1/D7WO6nWGRwPKlWwvIYThN07XeuH0zDZUdCQwJ+myRzcg5LnEG7ZVdKxGD26lTK
-         KVCopA4uqWUz+vUYIyv/B2l6y8PvqMHJ0cFB6loBx4vuTfe/wfetHc0eAkd6jfENDH+p
-         TXLTe/XjYDfrfxzrF+PgaQOaoeW0mhvhTp2yRu3bcltFFeuIsb7D8biIrvg7SoZduJja
-         kDZBbYU7R7e3gNPkSuTe0potbG8q/lX5OTUkpIedz5/7ibHouBzgPG4LLKgPybONZvUE
-         9pkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wLXxnQp7HIaEPOKqosq0pF27kK5rqBwu9jtY7ZzaZNg=;
-        b=GrQU48LAfAWgVXazRGCPk0hf+sCSAGWpjjktVGDIbwffeEc7Hy44AY4uL0fB6D3zvn
-         Znv9WSRI8PHU2fLALJJLijWub1fmjPUVwmJV6DXIj4URLnJEI6iWqKlP2P4s+6T/cJa8
-         NvgKkD9UF+NO207acDjIjiTjMM1nS7nUe0qUMuiBCK0KEquldMJmAormsdfNPuoGFJr3
-         FpLjFH16Um4l1c9RGV9WoR5SGSdF567zaNpUGDaWaJg2tpcoSt++e4EUfX6OS3eUxnol
-         xVgl/035dxRLPlXDEHhYXHy4jaMSVojrfk2sN+OWz2ZDOUIcGXcxTm5f1zN2o0X23NU+
-         Le8A==
-X-Gm-Message-State: APjAAAXSF4mFnlCZCk7I5oNHOWKCJWNGWsBBKPYMMdg83w3zN2ky4Usd
-        G+jPX5TuwkuJErHM4nBhNelGbGT21AXmKQ0kjLxafg==
-X-Google-Smtp-Source: APXvYqzaURoo4lqFhOzDSfM/yflLXGfwIE9mGC1jzOlYcjOmVHK4/ZIENpO+WI50lxlAFBPJA1F5KORZeiw2+L9fEio=
-X-Received: by 2002:a9d:3b09:: with SMTP id z9mr28988967otb.195.1582300888825;
- Fri, 21 Feb 2020 08:01:28 -0800 (PST)
+        id S1729128AbgBUQBA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 11:01:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48556 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728512AbgBUQA7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 11:00:59 -0500
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2D2A2067D;
+        Fri, 21 Feb 2020 16:00:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582300859;
+        bh=ITbRrKDrqN+aE+B/tpRjh8TrcZ7Qb5orGLC5oVu6KnE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=j41qS++6t6eNCnmNP73LXa89xPl3ZGhlzmGwSAn+v6apsDIgVNVsxCAk5yJC5c5o1
+         8GUvFSHY1szfuMnQNBjq0Oz4B34tzD6jsqmvfECN36Wjx7PhZlmP/BRml0MIdr0dVl
+         v/fxsksG8/y4GOMhv7MGsEJ6MSv87uSQodi1AwsE=
+Date:   Fri, 21 Feb 2020 16:00:54 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Jann Horn <jannh@google.com>
+Cc:     kernel test robot <rong.a.chen@intel.com>,
+        Maddie Stone <maddiestone@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>, lkp@lists.01.org
+Subject: Re: [kernel] 247f5d7caa: will-it-scale.per_process_ops 9.6%
+ improvement
+Message-ID: <20200221160053.GA19330@willie-the-truck>
+References: <20200221115542.GL14493@shao2-debian>
+ <CAG48ez0N9rTEtrA1TrL07r5Om_yK-10XO2XtsWOn3Nde0PXsZA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20200221080510.197337-1-saravanak@google.com> <20200221080510.197337-2-saravanak@google.com>
- <20200221092540.GA71325@kroah.com> <CAGETcx_yQZtU4O2KgMxVt-hSJCBtNsOpyWsSXc+OZcjjJ91M3g@mail.gmail.com>
- <20200221103233.GA101069@kroah.com>
-In-Reply-To: <20200221103233.GA101069@kroah.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Fri, 21 Feb 2020 08:00:00 -0800
-Message-ID: <CAGETcx-YhSBf2r8wAjqkupnrsYKZHkvCWyMvo01gvdPTzQa7zA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] driver core: Call sync_state() even if supplier
- has no consumers
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez0N9rTEtrA1TrL07r5Om_yK-10XO2XtsWOn3Nde0PXsZA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 2:32 AM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Fri, Feb 21, 2020 at 01:48:49AM -0800, Saravana Kannan wrote:
-> > On Fri, Feb 21, 2020 at 1:25 AM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > On Fri, Feb 21, 2020 at 12:05:08AM -0800, Saravana Kannan wrote:
-> > > > The initial patch that added sync_state() support didn't handle the case
-> > > > where a supplier has no consumers. This was because when a device is
-> > > > successfully bound with a driver, only its suppliers were checked to see
-> > > > if they are eligible to get a sync_state(). This is not sufficient for
-> > > > devices that have no consumers but still need to do device state clean
-> > > > up. So fix this.
-> > > >
-> > > > Fixes: fc5a251d0fd7ca90 (driver core: Add sync_state driver/bus callback)
-> > >
-> > > Should be:
-> > > Fixes: fc5a251d0fd7 ("driver core: Add sync_state driver/bus callback")
+On Fri, Feb 21, 2020 at 04:55:42PM +0100, Jann Horn wrote:
+> On Fri, Feb 21, 2020 at 12:56 PM kernel test robot
+> <rong.a.chen@intel.com> wrote:
+> > FYI, we noticed a 9.6% improvement of will-it-scale.per_process_ops due to commit:
 > >
-> > Sorry, late night sleepy patches are never good!
-> > Btw I thought the sha should be only 12 characters but then saw
-> > another instance where you used 16 chars. What's the right one?
->
-> I used 16 chars?  12 should be all that is needed.
->
-> > > > Signed-off-by: Saravana Kannan <saravanak@google.com>
-> > >
-> > > So this needs to go to 5.5 also, right?
 > >
-> > Did you mean 5.4? Yes.
->
-> fc5a251d0fd7 is only in 5.5, not 5.4 from what I can see, right?
+> > commit: 247f5d7caa443d0ea5f1992aeda875e679e9bd35 ("kernel-hacking: Make DEBUG_{LIST,PLIST,SG,NOTIFIERS} non-debug options")
+> > https://git.kernel.org/cgit/linux/kernel/git/will/linux.git debug-list
+> 
+> I'm guessing this might mean that the test bot had the DEBUG_LIST
+> stuff enabled in its Kconfig, whereas after the rename, the default is
+> used, which is off?
 
-Ah, right!
+I thought that at first, but scrolling down in the logs of the report
+I got totally confused by the softirqs and interrupts stuff.
 
+> This seems a bit problematic if people had DEBUG_LIST enabled in their
+> old kernel config and then try to reuse that config for a new kernel.
+> I wonder whether it'd be acceptable to keep the options under their
+> old names and let them "select" the new ones, or whether we have to
+> choose between "keep the old bad name" and "discard people's old
+> config flags".
 
--Saravana
+I can keep DEBUG_LIST kicking around and have the options default to that.
+Once I've finished updated lkdtm, I'll post this all out to the list.
+
+Will
