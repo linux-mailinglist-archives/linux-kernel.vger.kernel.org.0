@@ -2,128 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87AC9168160
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:21:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDAC516817A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:25:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729081AbgBUPVu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 10:21:50 -0500
-Received: from gateway23.websitewelcome.com ([192.185.50.108]:43558 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727161AbgBUPVt (ORCPT
+        id S1729075AbgBUPZU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 10:25:20 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35525 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727851AbgBUPZU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 10:21:49 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id 383E9137BA
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 09:21:48 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 5A7gjQAxFRP4z5A7gjq16w; Fri, 21 Feb 2020 09:21:48 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=mbhHTsBgIffHJnD7OUNCvU+hJ6hifOkFE9ZfyrbhK7c=; b=HYvMQ3Yfb1whcHJDfjqzPEwLEy
-        KC+iRTimOeHW3Vps+7wMOwwyM/FxW1HAQ5rJj9T5BiZ4QoprE5t/oXk27d/bjFZM8KYohWQBX5O5V
-        n7CDhSN2phieFPdb4070Yuy0ylRzxuPKGR2mDpfkDQkf6LXoeb6Kbu75LG4W1FYYS3wLpZNb4gOMs
-        6F2aN0Vdmg5hwVNIXwNDlllfUGKu7lFFCkhSHO/9Tz1QhRUmAFWmpVVUFG7X0qI5YgauNFhc2/wbQ
-        qfUsNEzXak2oFbYFKC1hxhxTNDFE8+JGuSxKT0NJtsAn/jHV+icGo9z9ECkIyKPkKB3tOMbXZv/HE
-        wCf8LNfQ==;
-Received: from [200.68.141.13] (port=15204 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j5A7e-003dbj-4k; Fri, 21 Feb 2020 09:21:46 -0600
-Date:   Fri, 21 Feb 2020 09:24:30 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Ard Biesheuvel <ardb@kernel.org>
-Cc:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] efi/apple-properties: Replace zero-length array with
- flexible-array member
-Message-ID: <20200221152430.GA20788@embeddedor>
+        Fri, 21 Feb 2020 10:25:20 -0500
+Received: by mail-wr1-f67.google.com with SMTP id w12so2515829wrt.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 07:25:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ssZD75jnMR4hkpMZQUIaBV1XsPq4KUUD/45GvDXOh8w=;
+        b=yX6oeuzDqFoZotjwwRgZd5CJF3eHAtckqPKNrFkSSKUDFAL1TVu9g61iJVR0q4hHyW
+         epgF3jHjPOWQNa6WvdAnZZrzQtDlOrSuHdhobX7Y+3sUBfCK6GPrx8vuaWJLi+JUh1S0
+         RYm49beZQuMWbbzg/5bWn2uN27+wBKRv7RcXThQR+Pr3swRb9hG3E88MOMckycX14led
+         z8lJSPmTA4LPMZU/rdFJe2feUGN5EEDV/mzy+5itKq0TRuiTl1vYk3LqW1WGKJLXG2QK
+         gghGgkMqjtPYzdu8l4TDJUuLl+UNj5SpAJKfdbg838eN9hE58QjK/EsTpkej5LXnFk95
+         m5Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ssZD75jnMR4hkpMZQUIaBV1XsPq4KUUD/45GvDXOh8w=;
+        b=tmGxA1xMS88mpMmEZhHlZGEC1R+93SUPXAEA7WUIQuwHohG428pSlDY122WJsSp51H
+         WMet1gXh0l6fyf87pCwwHV19ECpkEtTy//JuPoKui7vAalSwQ34C+XDFUpjCoNCbZ1Qx
+         ++8RBlp+s0H9h3GBpn9MraVtzuUH87QuVtX92hotTQWsShYnzTLerYJE0zMadgju7+pY
+         CWBIf+yBAR2cOBUucb4pO1+ReOcE8d/WAtLS8OgwBwcnPw8lcR49a3yiIsFgoGgQPYZT
+         RB2vSiALmclvnkKSlLLh9cqZDw2hHuNgnsKJbKUpNbdOqMFjjDOSEiVufEf1EJ3jbr0Y
+         UXGA==
+X-Gm-Message-State: APjAAAVtMx8EwzmmrxqkVsntRWQhUgNGMQwZyrLe7PFFuK2UDFzHQVlr
+        Fwogebos7WTp1Y3mC+IUvwVosA==
+X-Google-Smtp-Source: APXvYqw8hWuDjGFL1KGZLrxDnhUgXxseZzDmu9i2/+jn5uput9GGc8z+ISI5Gbt27cwRskGJrGca9Q==
+X-Received: by 2002:a5d:610c:: with SMTP id v12mr46836567wrt.88.1582298718203;
+        Fri, 21 Feb 2020 07:25:18 -0800 (PST)
+Received: from linaro.org ([2a01:e34:ed2f:f020:903b:a048:f296:e3ae])
+        by smtp.gmail.com with ESMTPSA id t187sm4488863wmt.25.2020.02.21.07.25.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 21 Feb 2020 07:25:17 -0800 (PST)
+Date:   Fri, 21 Feb 2020 16:25:15 +0100
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Jasper Korten <jja2000@gmail.com>,
+        David Heidelberg <david@ixit.cz>,
+        Peter Geis <pgwipeout@gmail.com>, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 10/17] arm: tegra20: cpuidle: Make abort_flag atomic
+Message-ID: <20200221152515.GM10516@linaro.org>
+References: <20200212235134.12638-1-digetx@gmail.com>
+ <20200212235134.12638-11-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20200212235134.12638-11-digetx@gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.68.141.13
-X-Source-L: No
-X-Exim-ID: 1j5A7e-003dbj-4k
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.141.13]:15204
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 16
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On Thu, Feb 13, 2020 at 02:51:27AM +0300, Dmitry Osipenko wrote:
+> Replace memory accessors with atomic API just to make code consistent
+> with the abort_barrier. The new variant may be even more correct now since
+> atomic_read() will prevent compiler from generating wrong things like
+> carrying abort_flag value in a register instead of re-fetching it from
+> memory.
+> 
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Tested-by: Peter Geis <pgwipeout@gmail.com>
+> Tested-by: Jasper Korten <jja2000@gmail.com>
+> Tested-by: David Heidelberg <david@ixit.cz>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
-
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
-
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
-
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/firmware/efi/apple-properties.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/firmware/efi/apple-properties.c b/drivers/firmware/efi/apple-properties.c
-index 5ccf39986a14..084942846f4d 100644
---- a/drivers/firmware/efi/apple-properties.c
-+++ b/drivers/firmware/efi/apple-properties.c
-@@ -31,7 +31,7 @@ __setup("dump_apple_properties", dump_properties_enable);
- struct dev_header {
- 	u32 len;
- 	u32 prop_count;
--	struct efi_dev_path path[0];
-+	struct efi_dev_path path[];
- 	/*
- 	 * followed by key/value pairs, each key and value preceded by u32 len,
- 	 * len includes itself, value may be empty (in which case its len is 4)
-@@ -42,7 +42,7 @@ struct properties_header {
- 	u32 len;
- 	u32 version;
- 	u32 dev_count;
--	struct dev_header dev_header[0];
-+	struct dev_header dev_header[];
- };
- 
- static void __init unmarshal_key_value_pairs(struct dev_header *dev_header,
--- 
-2.25.0
-
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
