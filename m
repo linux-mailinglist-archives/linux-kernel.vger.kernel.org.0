@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ED371672A2
+	by mail.lfdr.de (Postfix) with ESMTP id 9EEAD1672A3
 	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:05:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731807AbgBUIFW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:05:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38728 "EHLO mail.kernel.org"
+        id S1731820AbgBUIFZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:05:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731615AbgBUIFS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:05:18 -0500
+        id S1731615AbgBUIFX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:05:23 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 174FC222C4;
-        Fri, 21 Feb 2020 08:05:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C4482073A;
+        Fri, 21 Feb 2020 08:05:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272317;
-        bh=vwGKyhXHR/VC6+b9YGNFulZZs4DD0OXFatVpw++SAo0=;
+        s=default; t=1582272322;
+        bh=2RobnehjzjN4gENd8OlyjC+tVLtjWRcD/KaqApge1Ss=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sZNDAvL6o2LwDUZa4m/KELyP/RBi/DmKgfMlB8vwaTWoFBGJw81b3A3MaXziA8Zs+
-         o6TBLOr4pH5P7I1kE3ea70bCbPdyWXIROLDWqNqo9qgG0ARebix2Q/xFyHizr536De
-         gb3Lw1MzbbOd7z7EtExDy9hOrknZdCIBiy8rRHKk=
+        b=jdInb4wTHcO+2f3TUIReIJJI3lBXJg11a3RJtyovTRg8p+6L0/vrdrrm6IkTUSj3U
+         eM09Rk37+P9x1oEZrdC9bsSnquR+mImqBqqKKvywc8SCSjO6Hr6iBllwGJvetLgZzS
+         mpjNDoYEH7GOUwHbI0LaZZx1p160Fmo6n2KrSZVM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Gong <wgong@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Adam Ford <aford173@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 096/344] ath10k: correct the tlv len of ath10k_wmi_tlv_op_gen_config_pno_start
-Date:   Fri, 21 Feb 2020 08:38:15 +0100
-Message-Id: <20200221072357.671708900@linuxfoundation.org>
+Subject: [PATCH 5.4 098/344] drm/panel: simple: Add Logic PD Type 28 display support
+Date:   Fri, 21 Feb 2020 08:38:17 +0100
+Message-Id: <20200221072357.849363469@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
 References: <20200221072349.335551332@linuxfoundation.org>
@@ -44,51 +44,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen Gong <wgong@codeaurora.org>
+From: Adam Ford <aford173@gmail.com>
 
-[ Upstream commit e01cc82c4d1ec3bddcbb7cd991cf5dc0131ed9a1 ]
+[ Upstream commit 0d35408afbeb603bc9972ae91e4dd2638bcffe52 ]
 
-the tlv len is set to the total len of the wmi cmd, it will trigger
-firmware crash, correct the tlv len.
+Previously, there was an omap panel-dpi driver that would
+read generic timings from the device tree and set the display
+timing accordingly.  This driver was removed so the screen
+no longer functions.  This patch modifies the panel-simple
+file to setup the timings to the same values previously used.
 
-Tested with QCA6174 SDIO with firmware
-WLAN.RMH.4.4.1-00017-QCARMSWP-1 and QCA6174
-PCIE with firmware WLAN.RM.4.4.1-00110-QCARMSWPZ-1.
+Fixes: 8bf4b1621178 ("drm/omap: Remove panel-dpi driver")
 
-Fixes: ce834e280f2f875 ("ath10k: support NET_DETECT WoWLAN feature")
-Signed-off-by: Wen Gong <wgong@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Adam Ford <aford173@gmail.com>
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20191016135147.7743-1-aford173@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/wmi-tlv.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/panel/panel-simple.c | 37 ++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-diff --git a/drivers/net/wireless/ath/ath10k/wmi-tlv.c b/drivers/net/wireless/ath/ath10k/wmi-tlv.c
-index 4d5d10c010645..eb0c963d9fd51 100644
---- a/drivers/net/wireless/ath/ath10k/wmi-tlv.c
-+++ b/drivers/net/wireless/ath/ath10k/wmi-tlv.c
-@@ -3650,6 +3650,7 @@ ath10k_wmi_tlv_op_gen_config_pno_start(struct ath10k *ar,
- 	struct wmi_tlv *tlv;
- 	struct sk_buff *skb;
- 	__le32 *channel_list;
-+	u16 tlv_len;
- 	size_t len;
- 	void *ptr;
- 	u32 i;
-@@ -3707,10 +3708,12 @@ ath10k_wmi_tlv_op_gen_config_pno_start(struct ath10k *ar,
- 	/* nlo_configured_parameters(nlo_list) */
- 	cmd->no_of_ssids = __cpu_to_le32(min_t(u8, pno->uc_networks_count,
- 					       WMI_NLO_MAX_SSIDS));
-+	tlv_len = __le32_to_cpu(cmd->no_of_ssids) *
-+		sizeof(struct nlo_configured_parameters);
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index 28fa6ba7b7673..8abb31f83ffc7 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -2048,6 +2048,40 @@ static const struct drm_display_mode mitsubishi_aa070mc01_mode = {
+ 	.flags = DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC,
+ };
  
- 	tlv = ptr;
- 	tlv->tag = __cpu_to_le16(WMI_TLV_TAG_ARRAY_STRUCT);
--	tlv->len = __cpu_to_le16(len);
-+	tlv->len = __cpu_to_le16(tlv_len);
- 
- 	ptr += sizeof(*tlv);
- 	nlo_list = ptr;
++static const struct drm_display_mode logicpd_type_28_mode = {
++	.clock = 9000,
++	.hdisplay = 480,
++	.hsync_start = 480 + 3,
++	.hsync_end = 480 + 3 + 42,
++	.htotal = 480 + 3 + 42 + 2,
++
++	.vdisplay = 272,
++	.vsync_start = 272 + 2,
++	.vsync_end = 272 + 2 + 11,
++	.vtotal = 272 + 2 + 11 + 3,
++	.vrefresh = 60,
++	.flags = DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC,
++};
++
++static const struct panel_desc logicpd_type_28 = {
++	.modes = &logicpd_type_28_mode,
++	.num_modes = 1,
++	.bpc = 8,
++	.size = {
++		.width = 105,
++		.height = 67,
++	},
++	.delay = {
++		.prepare = 200,
++		.enable = 200,
++		.unprepare = 200,
++		.disable = 200,
++	},
++	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
++	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_DRIVE_POSEDGE |
++		     DRM_BUS_FLAG_SYNC_DRIVE_NEGEDGE,
++};
++
+ static const struct panel_desc mitsubishi_aa070mc01 = {
+ 	.modes = &mitsubishi_aa070mc01_mode,
+ 	.num_modes = 1,
+@@ -3264,6 +3298,9 @@ static const struct of_device_id platform_of_match[] = {
+ 	}, {
+ 		.compatible = "lg,lp129qe",
+ 		.data = &lg_lp129qe,
++	}, {
++		.compatible = "logicpd,type28",
++		.data = &logicpd_type_28,
+ 	}, {
+ 		.compatible = "mitsubishi,aa070mc01-ca1",
+ 		.data = &mitsubishi_aa070mc01,
 -- 
 2.20.1
 
