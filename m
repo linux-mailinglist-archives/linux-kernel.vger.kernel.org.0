@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6830E167357
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:11:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5977C167432
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:23:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732701AbgBUILa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:11:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46852 "EHLO mail.kernel.org"
+        id S2387620AbgBUITP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:19:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731756AbgBUILZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:11:25 -0500
+        id S2387962AbgBUITL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:19:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A701C20578;
-        Fri, 21 Feb 2020 08:11:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD0FC24689;
+        Fri, 21 Feb 2020 08:19:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272685;
-        bh=z9lZsmTV7165P7cffCuoQ2Igv1tMoJpZxY/bd3jhAiI=;
+        s=default; t=1582273150;
+        bh=eIfNHxaTaF6oemS/jKYLYEWreka0CQ5m1S3ahstw9uc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aip4s1HDByiFbfFkihe+SUocGr9DSvJJ+io359DcnIsKC7Ekeiwz4iL3vtaTLWGT/
-         n+Fm5S3ro7UZ0v6oRyHH12VPemIDbSYhSSjhHq5/YDAzYNQG2239DoEeL84g8NhToh
-         P32S2QPUcZu9co8bOvN71DT6wOwpiY3tL+8blwVc=
+        b=HcM0tDXcYOOe5dIoT1tBnJUM4TWki5GCwC7AKYiF23xYTd83Z5cZXJITjlHEmuYGl
+         cvC6F+XozD1iHYlXp2h4GLMEAQBltHIuVkjhDykhts6OyUw2pz0q7YY4UvdC6AdbyB
+         gFGB3pI5VjGu5+2EKdOWxBxG7juExQ1diop0aLpM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Wei Liu <wei.liu@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 237/344] f2fs: free sysfs kobject
-Date:   Fri, 21 Feb 2020 08:40:36 +0100
-Message-Id: <20200221072410.848453998@linuxfoundation.org>
+Subject: [PATCH 4.19 064/191] PCI: iproc: Apply quirk_paxc_bridge() for module as well as built-in
+Date:   Fri, 21 Feb 2020 08:40:37 +0100
+Message-Id: <20200221072259.070206163@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,29 +44,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Wei Liu <wei.liu@kernel.org>
 
-[ Upstream commit 820d366736c949ffe698d3b3fe1266a91da1766d ]
+[ Upstream commit 574f29036fce385e28617547955dd6911d375025 ]
 
-Detected kmemleak.
+Previously quirk_paxc_bridge() was applied when the iproc driver was
+built-in, but not when it was compiled as a module.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+This happened because it was under #ifdef CONFIG_PCIE_IPROC_PLATFORM:
+PCIE_IPROC_PLATFORM=y causes CONFIG_PCIE_IPROC_PLATFORM to be defined, but
+PCIE_IPROC_PLATFORM=m causes CONFIG_PCIE_IPROC_PLATFORM_MODULE to be
+defined.
+
+Move quirk_paxc_bridge() to pcie-iproc.c and drop the #ifdef so the quirk
+is always applied, whether iproc is built-in or a module.
+
+[bhelgaas: commit log, move to pcie-iproc.c, not pcie-iproc-platform.c]
+Link: https://lore.kernel.org/r/20191211174511.89713-1-wei.liu@kernel.org
+Signed-off-by: Wei Liu <wei.liu@kernel.org>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/sysfs.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pci/controller/pcie-iproc.c | 24 ++++++++++++++++++++++++
+ drivers/pci/quirks.c                | 26 --------------------------
+ 2 files changed, 24 insertions(+), 26 deletions(-)
 
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index b558b64a4c9ca..8544c0ab7b32b 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -782,4 +782,5 @@ void f2fs_unregister_sysfs(struct f2fs_sb_info *sbi)
- 		remove_proc_entry(sbi->sb->s_id, f2fs_proc_root);
- 	}
- 	kobject_del(&sbi->s_kobj);
-+	kobject_put(&sbi->s_kobj);
- }
+diff --git a/drivers/pci/controller/pcie-iproc.c b/drivers/pci/controller/pcie-iproc.c
+index 9d5cbc75d5ae0..ec86414216f97 100644
+--- a/drivers/pci/controller/pcie-iproc.c
++++ b/drivers/pci/controller/pcie-iproc.c
+@@ -1526,6 +1526,30 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd802,
+ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd804,
+ 			quirk_paxc_disable_msi_parsing);
+ 
++static void quirk_paxc_bridge(struct pci_dev *pdev)
++{
++	/*
++	 * The PCI config space is shared with the PAXC root port and the first
++	 * Ethernet device.  So, we need to workaround this by telling the PCI
++	 * code that the bridge is not an Ethernet device.
++	 */
++	if (pdev->hdr_type == PCI_HEADER_TYPE_BRIDGE)
++		pdev->class = PCI_CLASS_BRIDGE_PCI << 8;
++
++	/*
++	 * MPSS is not being set properly (as it is currently 0).  This is
++	 * because that area of the PCI config space is hard coded to zero, and
++	 * is not modifiable by firmware.  Set this to 2 (e.g., 512 byte MPS)
++	 * so that the MPS can be set to the real max value.
++	 */
++	pdev->pcie_mpss = 2;
++}
++DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0x16cd, quirk_paxc_bridge);
++DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0x16f0, quirk_paxc_bridge);
++DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd750, quirk_paxc_bridge);
++DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd802, quirk_paxc_bridge);
++DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd804, quirk_paxc_bridge);
++
+ MODULE_AUTHOR("Ray Jui <rjui@broadcom.com>");
+ MODULE_DESCRIPTION("Broadcom iPROC PCIe common driver");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+index 5b4c36ab15962..84f10cda539ea 100644
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -2358,32 +2358,6 @@ DECLARE_PCI_FIXUP_ENABLE(PCI_VENDOR_ID_BROADCOM,
+ 			 PCI_DEVICE_ID_TIGON3_5719,
+ 			 quirk_brcm_5719_limit_mrrs);
+ 
+-#ifdef CONFIG_PCIE_IPROC_PLATFORM
+-static void quirk_paxc_bridge(struct pci_dev *pdev)
+-{
+-	/*
+-	 * The PCI config space is shared with the PAXC root port and the first
+-	 * Ethernet device.  So, we need to workaround this by telling the PCI
+-	 * code that the bridge is not an Ethernet device.
+-	 */
+-	if (pdev->hdr_type == PCI_HEADER_TYPE_BRIDGE)
+-		pdev->class = PCI_CLASS_BRIDGE_PCI << 8;
+-
+-	/*
+-	 * MPSS is not being set properly (as it is currently 0).  This is
+-	 * because that area of the PCI config space is hard coded to zero, and
+-	 * is not modifiable by firmware.  Set this to 2 (e.g., 512 byte MPS)
+-	 * so that the MPS can be set to the real max value.
+-	 */
+-	pdev->pcie_mpss = 2;
+-}
+-DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0x16cd, quirk_paxc_bridge);
+-DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0x16f0, quirk_paxc_bridge);
+-DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd750, quirk_paxc_bridge);
+-DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd802, quirk_paxc_bridge);
+-DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd804, quirk_paxc_bridge);
+-#endif
+-
+ /*
+  * Originally in EDAC sources for i82875P: Intel tells BIOS developers to
+  * hide device 6 which configures the overflow device access containing the
 -- 
 2.20.1
 
