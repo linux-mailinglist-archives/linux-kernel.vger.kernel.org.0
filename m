@@ -2,156 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C95E166FB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 07:41:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C4B9166FBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 07:47:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727015AbgBUGlu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 01:41:50 -0500
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:44021 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726045AbgBUGlu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 01:41:50 -0500
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id 01L6fOtD002177;
-        Fri, 21 Feb 2020 15:41:25 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com 01L6fOtD002177
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1582267285;
-        bh=w9qQFtOkV425rrij+z9xWleLToj7ihi//PoOcVDN2Ls=;
-        h=From:Date:Subject:To:Cc:From;
-        b=EmYHYFjxJeWWjuE7FpRIcMpVpbQvYa1azVujiZpRCPSsyY35BcDmkIm6LuFWO7LcC
-         quQEOk/Xtic26YqcHn3Cq1abtW3zfwR/SVViwXi0dDjkOGrGdjh31hDSxgMbECUPJu
-         Y0hjbsmhVLbjvw3wXRR4jroZ/0wt4KcEJtO5T98t5qWueJKOnxZP0N/73Dp3La8Kni
-         CF1ajTgMlpDvjwbBXI9iQsGIgWMU3k74egfDmlG1gTirzv03lbmOxjWWn8xEiNQPrL
-         7wgEpfQKHtoYHGBWJZ64zvG2edbyRtEuMFua2NLVbAJsB4I4SpwMVTJWxSXPwDqF88
-         c5ZSz/hYUYN+g==
-X-Nifty-SrcIP: [209.85.217.48]
-Received: by mail-vs1-f48.google.com with SMTP id p6so561576vsj.11;
-        Thu, 20 Feb 2020 22:41:25 -0800 (PST)
-X-Gm-Message-State: APjAAAXmOB3023VSu11MbMsXkEZ8wfmiV131CyhJMk9kxQSkir8locVM
-        BmejnN+4CwCFoIxzKFqwdYN1ZXt5JbDrqtUpLe0=
-X-Google-Smtp-Source: APXvYqxlurREctTusUbI4NfwEoWK1BdgrIss1QRpDZcokNud451FRNaB4WBxWTzCUckU19r/OoH75MaXPz0bIJE05q4=
-X-Received: by 2002:a67:fa4b:: with SMTP id j11mr19540806vsq.155.1582267284130;
- Thu, 20 Feb 2020 22:41:24 -0800 (PST)
+        id S1727150AbgBUGrN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 01:47:13 -0500
+Received: from first.geanix.com ([116.203.34.67]:55352 "EHLO first.geanix.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726100AbgBUGrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 01:47:13 -0500
+Received: from localhost (87-49-45-242-mobile.dk.customer.tdc.net [87.49.45.242])
+        by first.geanix.com (Postfix) with ESMTPSA id 845BDAEB4D;
+        Fri, 21 Feb 2020 06:47:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=geanix.com; s=first;
+        t=1582267630; bh=v8hfyWw4kbOSf4Vr8iOqNpwVN5vkMHP3BbYopvXwRbo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=fwDB4CLntBUZXODVM2cahRr/VQAtZPn9lNpIVIiNpOosKQMFtOvNweEJwPzrQFEqz
+         Ej22eU/HJg+Stttbh4O+BGQL2Oz9L+X0uhqlsyxSW/75MM61yAuPH1lXmG1bXqcaKB
+         tF5R9LhsLcCTV7qCLodEdc/W52+THIAcHgbwhQL5oRVSYDuPbnY/68GZ2o7gOv9xb/
+         9GN0tBryV5QcONGfisqhk9N4RnENk3oC24JC5nR0JNP2sksliUajyqCfl+7/lRU+Ag
+         HrwnJZN/HTr11ASBMKqVtl8Yc6W9NGNIUY+QnhdRdG1CkyuHii+aaht1d2RrTqom43
+         CPmXrxArJA32g==
+From:   Esben Haabendal <esben@geanix.com>
+To:     netdev@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Andrew Lunn <andrew@lunn.ch>,
+        "David S . Miller" <davem@davemloft.net>,
+        Michal Simek <michal.simek@xilinx.com>,
+        =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>
+Subject: [PATCH net v2 0/4] net: ll_temac: Bugfixes
+Date:   Fri, 21 Feb 2020 07:47:09 +0100
+Message-Id: <cover.1582267079.git.esben@geanix.com>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <cover.1582108989.git.esben@geanix.com>
+References: <cover.1582108989.git.esben@geanix.com>
 MIME-Version: 1.0
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Fri, 21 Feb 2020 15:40:48 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASS5CCLi=7LNBHqHgdtaYgAFkcgTGYvmGds7y8cnWzBMw@mail.gmail.com>
-Message-ID: <CAK7LNASS5CCLi=7LNBHqHgdtaYgAFkcgTGYvmGds7y8cnWzBMw@mail.gmail.com>
-Subject: Some questions about DT-schema
-To:     Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        DTML <devicetree@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=4.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,UNPARSEABLE_RELAY,URIBL_BLOCKED
+        autolearn=disabled version=3.4.4
+X-Spam-Checker-Version: SpamAssassin 3.4.4 (2020-01-24) on 05ff821c8cf1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Q1] Order of reset-names, clock-names, etc.
+Fix a number of bugs which have been present since the first commit.
 
-I have nodes that describe multiple reset lines:
+The bugs fixed in patch 1,2 and 4 have all been observed in real systems, and
+was relatively easy to reproduce given an appropriate stress setup.
 
-It looks like this:
+Changes since v1:
 
-    reset-names = "host", "bridge";
-    resets = <&rst 0>, <&rst 1>;
+- Changed error handling of of dma_map_single() in temac_start_xmit() to drop
+  packet instead of returning NETDEV_TX_BUSY.
 
+Esben Haabendal (4):
+  net: ll_temac: Fix race condition causing TX hang
+  net: ll_temac: Add more error handling of dma_map_single() calls
+  net: ll_temac: Fix RX buffer descriptor handling on GFP_ATOMIC
+    pressure
+  net: ll_temac: Handle DMA halt condition caused by buffer underrun
 
-I looks into some existing schema files
-to figure out how to describe this.
-
-We typically do this.
-
-reset-names:
-  - items:
-    - const: host
-    - const: bridge
-
-
-Since 'items' checks each item against the corresponding index,
-it is order-sensitive.
-
-
-So, the following DT passes the schema.
-
-    reset-names = "host", "bridge";
-    resets = <&rst 0>, <&rst 1>;
-
-
-However, the following DT fails in the schema checking.
-
-    reset-names = "bridge", "host";
-    resets = <&rst 1>, <&rst 0>;
-
-The latter is as correct as the former,
-and should work equivalently.
-
-If we are always required to write the "host", "bridge", in this order,
-there is no point of 'reset-names'.
-So, this is a restriction we should not impose.
-
-
-So, if we want to accept both cases,
-we need to write like this:
-
-reset-names:
-  - oneOf:
-    - items:
-      - const: host
-      - const: bridge
-    - items:
-      - const: bridge
-      - const: host
-
-
-If we have 3 reset singles, we end up with listing 6 patterns.
-Is there a good way to describe this?
-
-Or, the policy is,
-there is only one way to do one thing ?
-
-
-[Q2] Tupling reg, range, etc.
-
-In the context of dt-schema,
-'reg' is essentially, array of array,
-and it is important to how you tuple values.
-
-    reg = <1 2>, <3 4>;
-
-    reg = <1>, <2>, <3>, <4>;
-
-    reg = <1 2 3 4>;
-
-All of the three are compiled into the equivalent DTB,
-but in the context of schema checking,
-the number of items is, 2, 4, 1, respectively.
-
-So, we need to care about tuple values correctly
-based on #address-cells and #size-cells.
-
-
-In some DT, I previously wrote ranges like this
-
-   ranges = <1 0x00000000 0x42000000 0x02000000,
-             5 0x00000000 0x46000000 0x01000000>;
-
-But, now probably more correct way is:
-
-   ranges = <1 0x00000000 0x42000000 0x02000000>,
-            <5 0x00000000 0x46000000 0x01000000>;
-
-
-This is a new restriction, and it also means
-we cannot perform schema checking against
-dis-assembled DT  (dtb->dts).
-
-Is this correct?
-
+ drivers/net/ethernet/xilinx/ll_temac.h      |   4 +
+ drivers/net/ethernet/xilinx/ll_temac_main.c | 209 ++++++++++++++++----
+ 2 files changed, 175 insertions(+), 38 deletions(-)
 
 -- 
-Best Regards
-Masahiro Yamada
+2.25.0
+
