@@ -2,102 +2,209 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BF2D167C83
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 12:49:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99A28167C96
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 12:51:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727616AbgBULtz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 06:49:55 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2454 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726934AbgBULtz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 06:49:55 -0500
-Received: from lhreml709-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 07C42219BF6427A28D49;
-        Fri, 21 Feb 2020 11:49:53 +0000 (GMT)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- lhreml709-cah.china.huawei.com (10.201.108.32) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 21 Feb 2020 11:49:52 +0000
-Received: from [127.0.0.1] (10.202.226.45) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Fri, 21 Feb
- 2020 11:49:51 +0000
-From:   John Garry <john.garry@huawei.com>
-Subject: Re: Questions about logic_pio
-To:     Jiaxun Yang <jiaxun.yang@flygoat.com>
-CC:     "xuwei (O)" <xuwei5@huawei.com>, bhelgaas <bhelgaas@google.com>,
-        andyshevchenko <andy.shevchenko@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux Mips <linux-mips@vger.kernel.org>
-References: <1705dbe62ce.10ae800394772.9222265269135747883@flygoat.com>
- <5E4E55F7.70800@hisilicon.com>
- <e3ddd7de-54b2-bdba-2233-6ace40072430@huawei.com>
- <17062738bc0.c380503c6222.6801557833645076299@flygoat.com>
- <1ebf4461-eb37-ff58-1faf-dd24d83f85cf@huawei.com>
- <170632822e1.12fede49a6919.5706082545515934736@flygoat.com>
- <e54a9936-5cf3-777d-3e91-58d2be96bf1c@huawei.com>
- <6c49e5e0-b6f2-fe23-caec-4742c3d1d3a0@huawei.com>
- <1706531b3a8.108e582396993.7792774458896054798@flygoat.com>
-Message-ID: <65fffffa-2c74-aa09-7fdb-29a7200d7ac4@huawei.com>
-Date:   Fri, 21 Feb 2020 11:49:45 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
-MIME-Version: 1.0
-In-Reply-To: <1706531b3a8.108e582396993.7792774458896054798@flygoat.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+        id S1728137AbgBULvI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 06:51:08 -0500
+Received: from us03-smtprelay2.synopsys.com ([149.117.87.133]:44710 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727315AbgBULvG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 06:51:06 -0500
+Received: from mailhost.synopsys.com (badc-mailhost1.synopsys.com [10.192.0.17])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 52AEBC0093;
+        Fri, 21 Feb 2020 11:51:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1582285865; bh=iX0IbWkgWKSzRTe8jiP6K2Yc0udFXUFnlBuct9VDRgM=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=XxMaVqfrayf3++KXFRpUaxB2OMDBD/2pHUyKXm9EiTT88L2cbIvPpW8NNiik5+rBv
+         ksNtVhisGUoigdlsk3FHX00tMSRdVw2wwrnofuFz2RuQ25VsvQeg99RG1dM6gp3290
+         tcoglXjNIE1m6ZFysffWJKBULOVxjgI1+bm/3OX3RBVNHB9Uia6xDnKrNxkd5bohQF
+         sGOyksfocGoL+OuKrtsprx7fX6ZXGBzydUjmFsMs2a16DtUFtNegQimdg+p++DWVZ4
+         7n3ricnsDYSr4eKDur+8uksdQkMhlSCCGfwUIIHPSV6iMq3wbh9A/VfJ0SKn1caNVn
+         27DtYiD0cfJcA==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id E6EE0A00AE;
+        Fri, 21 Feb 2020 11:51:01 +0000 (UTC)
+Received: from US01HYBRID2.internal.synopsys.com (10.15.246.24) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 21 Feb 2020 03:50:45 -0800
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (10.202.3.67) by
+ mrs.synopsys.com (10.15.246.24) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Fri, 21 Feb 2020 03:50:44 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=a/Acf55kQ+Uq5s1ah/A2kxwPbrqFHpyjcrGmP7IUAejW3/sycg+aYrvJF2YNCkPRaaw5hLCfiDsykBSaStD7pcWyGvz5JkfQ/JHluSO739W3LDewOklSjPXbmQtHngzBg+wEthVGELiE4PXr25V7ndVL5q7B0yb8K9rT11iJ+hnRvvxArYrQ8Cj5UAT6TfL1UEEMjIzKAdjvA9uzDJVoZAbb3lXpBuFau9r8ZtQ9WYA973p4DeUtauBgESup0r7r+1A2hLzXPYAA7eyCeKVVoJ/LdK5Nuj3EUzSzXvnWggUd6C8xFB+FTjTH8Mjoo2VVyOtB/dvSlZXX+B9/AFrBjg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iX0IbWkgWKSzRTe8jiP6K2Yc0udFXUFnlBuct9VDRgM=;
+ b=B8Qb1tDirc7PlHVlm6f0LoKNJrNgtZJ+I50QiZjWfg7mgflp5c8W1lDU4zW8mpPJk5K83TXS0GWd1ob+3pK0CpbG4x4pVsln/4APpWaYWnk6pYUP5PK0w3sH+nbSv0b8G3+NEvEOTcB/Eg7MqmdRk+DYGy63vK5OPvHqn1OJhKSkTdRn/wPcf7sEtq6+XhjZzudxhJUJYo+6DrWEiYVjeJ7jh66pD2+bERwVuHSlt0DTDyINR/OoAVaEfim4pD2ZI7+9AzVGMh33W8nhmFSjUkFe7pW1hlqZ3LpCO/oRo6zEf5lleGKFDidPjtPplqwnyQG8g2xKu0SRyq5FhMhUVA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
+ dkim=pass header.d=synopsys.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=synopsys.onmicrosoft.com; s=selector2-synopsys-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iX0IbWkgWKSzRTe8jiP6K2Yc0udFXUFnlBuct9VDRgM=;
+ b=VdEp+rgxNMgt+mv0Y7ABtRBLC2CspbZ94mUkooJV/e3nh91SfPQ4y54ZzSyjgPOl3NkEhmylkD/zgUM/2I4PpQLAxqbHb+7vzVkF+blakITI0/NguW1HEu12/uGFtDG6CrB3vnsDfC1efTETTvCeur2EQ2qtUKvm2B5kCLjG42I=
+Received: from CH2PR12MB4216.namprd12.prod.outlook.com (2603:10b6:610:a8::23)
+ by CH2PR12MB3701.namprd12.prod.outlook.com (2603:10b6:610:23::27) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2750.17; Fri, 21 Feb
+ 2020 11:50:43 +0000
+Received: from CH2PR12MB4216.namprd12.prod.outlook.com
+ ([fe80::c8d1:bea7:c855:bcfe]) by CH2PR12MB4216.namprd12.prod.outlook.com
+ ([fe80::c8d1:bea7:c855:bcfe%5]) with mapi id 15.20.2729.033; Fri, 21 Feb 2020
+ 11:50:43 +0000
+From:   Vitor Soares <Vitor.Soares@synopsys.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
+        "wsa@the-dreams.de" <wsa@the-dreams.de>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "corbet@lwn.net" <corbet@lwn.net>
+Subject: RE: [PATCH v3 4/5] i3c: add i3cdev module to expose i3c dev in /dev
+Thread-Topic: [PATCH v3 4/5] i3c: add i3cdev module to expose i3c dev in /dev
+Thread-Index: AQHV5rqGCzs/XZoBrU+kjYi0pz6mk6giIdiAgANqbLA=
+Date:   Fri, 21 Feb 2020 11:50:42 +0000
+Message-ID: <CH2PR12MB4216BFDAAD3EC267136856D7AE120@CH2PR12MB4216.namprd12.prod.outlook.com>
+References: <cover.1582069402.git.vitor.soares@synopsys.com>
+ <e093ae9da81e7702c188a20d1e8b9d7f8024bfeb.1582069402.git.vitor.soares@synopsys.com>
+ <20200219073901.GC2728338@kroah.com>
+In-Reply-To: <20200219073901.GC2728338@kroah.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.45]
-X-ClientProxiedBy: lhreml712-chm.china.huawei.com (10.201.108.63) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: =?us-ascii?Q?PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcc29hcmVzXGFw?=
+ =?us-ascii?Q?cGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEy?=
+ =?us-ascii?Q?OWUzNWJcbXNnc1xtc2ctNjFiNDhmMDUtNTRhMC0xMWVhLTgyOGUtYjgwOGNm?=
+ =?us-ascii?Q?NTlkN2ZjXGFtZS10ZXN0XDYxYjQ4ZjA3LTU0YTAtMTFlYS04MjhlLWI4MDhj?=
+ =?us-ascii?Q?ZjU5ZDdmY2JvZHkudHh0IiBzej0iNDEzIiB0PSIxMzIyNjc1OTQ0MDkxMTQx?=
+ =?us-ascii?Q?MzQiIGg9ImtjbXFpUm85M2l0WW55TGUrQzlJTFNuZVRKYz0iIGlkPSIiIGJs?=
+ =?us-ascii?Q?PSIwIiBibz0iMSIgY2k9ImNBQUFBRVJIVTFSU1JVRk5DZ1VBQUJRSkFBQVcr?=
+ =?us-ascii?Q?Z3drcmVqVkFYbWk1Tld1NG14RmVhTGsxYTdpYkVVT0FBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFIQUFBQUNrQ0FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFF?=
+ =?us-ascii?Q?QUFRQUJBQUFBc1BwUkdRQUFBQUFBQUFBQUFBQUFBSjRBQUFCbUFHa0FiZ0Jo?=
+ =?us-ascii?Q?QUc0QVl3QmxBRjhBY0FCc0FHRUFiZ0J1QUdrQWJnQm5BRjhBZHdCaEFIUUFa?=
+ =?us-ascii?Q?UUJ5QUcwQVlRQnlBR3NBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUVB?=
+ =?us-ascii?Q?QUFBQUFBQUFBZ0FBQUFBQW5nQUFBR1lBYndCMUFHNEFaQUJ5QUhrQVh3QndB?=
+ =?us-ascii?Q?R0VBY2dCMEFHNEFaUUJ5QUhNQVh3Qm5BR1lBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFRQUFBQUFBQUFBQ0FBQUFB?=
+ =?us-ascii?Q?QUNlQUFBQVpnQnZBSFVBYmdCa0FISUFlUUJmQUhBQVlRQnlBSFFBYmdCbEFI?=
+ =?us-ascii?Q?SUFjd0JmQUhNQVlRQnRBSE1BZFFCdUFHY0FYd0JqQUc4QWJnQm1BQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFCQUFBQUFBQUFBQUlBQUFBQUFKNEFBQUJtQUc4QWRR?=
+ =?us-ascii?Q?QnVBR1FBY2dCNUFGOEFjQUJoQUhJQWRBQnVBR1VBY2dCekFGOEFjd0JoQUcw?=
+ =?us-ascii?Q?QWN3QjFBRzRBWndCZkFISUFaUUJ6QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?RUFBQUFBQUFBQUFnQUFBQUFBbmdBQUFHWUFid0IxQUc0QVpBQnlBSGtBWHdC?=
+ =?us-ascii?Q?d0FHRUFjZ0IwQUc0QVpRQnlBSE1BWHdCekFHMEFhUUJqQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQVFBQUFBQUFBQUFDQUFB?=
+ =?us-ascii?Q?QUFBQ2VBQUFBWmdCdkFIVUFiZ0JrQUhJQWVRQmZBSEFBWVFCeUFIUUFiZ0Js?=
+ =?us-ascii?Q?QUhJQWN3QmZBSE1BZEFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUJBQUFBQUFBQUFBSUFBQUFBQUo0QUFBQm1BRzhB?=
+ =?us-ascii?Q?ZFFCdUFHUUFjZ0I1QUY4QWNBQmhBSElBZEFCdUFHVUFjZ0J6QUY4QWRBQnpB?=
+ =?us-ascii?Q?RzBBWXdBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFFQUFBQUFBQUFBQWdBQUFBQUFuZ0FBQUdZQWJ3QjFBRzRBWkFCeUFIa0FY?=
+ =?us-ascii?Q?d0J3QUdFQWNnQjBBRzRBWlFCeUFITUFYd0IxQUcwQVl3QUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBUUFBQUFBQUFBQUNB?=
+ =?us-ascii?Q?QUFBQUFDZUFBQUFad0IwQUhNQVh3QndBSElBYndCa0FIVUFZd0IwQUY4QWRB?=
+ =?us-ascii?Q?QnlBR0VBYVFCdUFHa0FiZ0JuQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQkFBQUFBQUFBQUFJQUFBQUFBSjRBQUFCekFH?=
+ =?us-ascii?Q?RUFiQUJsQUhNQVh3QmhBR01BWXdCdkFIVUFiZ0IwQUY4QWNBQnNBR0VBYmdB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUVBQUFBQUFBQUFBZ0FBQUFBQW5nQUFBSE1BWVFCc0FHVUFjd0JmQUhF?=
+ =?us-ascii?Q?QWRRQnZBSFFBWlFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFRQUFBQUFBQUFB?=
+ =?us-ascii?Q?Q0FBQUFBQUNlQUFBQWN3QnVBSEFBY3dCZkFHd0FhUUJqQUdVQWJnQnpBR1VB?=
+ =?us-ascii?Q?WHdCMEFHVUFjZ0J0QUY4QU1RQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFCQUFBQUFBQUFBQUlBQUFBQUFKNEFBQUJ6?=
+ =?us-ascii?Q?QUc0QWNBQnpBRjhBYkFCcEFHTUFaUUJ1QUhNQVpRQmZBSFFBWlFCeUFHMEFY?=
+ =?us-ascii?Q?d0J6QUhRQWRRQmtBR1VBYmdCMEFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBRUFBQUFBQUFBQUFnQUFBQUFBbmdBQUFIWUFad0JmQUdzQVpRQjVB?=
+ =?us-ascii?Q?SGNBYndCeUFHUUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQVFBQUFBQUFB?=
+ =?us-ascii?Q?QUFDQUFBQUFBQT0iLz48L21ldGE+?=
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=soares@synopsys.com; 
+x-originating-ip: [83.174.63.141]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e8a4a012-61ae-4f3f-c61a-08d7b6c447d4
+x-ms-traffictypediagnostic: CH2PR12MB3701:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <CH2PR12MB37018E2939C9CB0463CFC018AE120@CH2PR12MB3701.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:214;
+x-forefront-prvs: 0320B28BE1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(39860400002)(346002)(376002)(366004)(199004)(189003)(71200400001)(9686003)(186003)(5660300002)(558084003)(2906002)(7696005)(4326008)(52536014)(76116006)(66946007)(6506007)(316002)(54906003)(26005)(64756008)(66446008)(81166006)(6916009)(81156014)(8676002)(86362001)(66556008)(478600001)(66476007)(8936002)(55016002)(33656002)(42413003)(32563001);DIR:OUT;SFP:1102;SCL:1;SRVR:CH2PR12MB3701;H:CH2PR12MB4216.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: synopsys.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: xga/I6zPIBv5W4sL/awKLPynS/awxCyRAcCmmrtsLJljz0v9QxfX/pVx3kfEUq4nz1wXlMf4zn+/MfGt4lzmCNbv2Pdq8+Fl3QRB4c2MxLLpvSoEDghFbYaRXYvdfWiktoknrzp4OlAUnQAsIKmnqx2pGAXM4umABSnYxIl4BtGZoyaCHlsoCKMLQum8YRLoqbDmxFbIvmnJCtqdeIaJIhUtufFYKl2IWDhHyHgI89vFVZkZlGFv1tqJZewaiKVPhPtvWJISjOrMx0SfPaMJQiXVZn7JD+chXGkblqnOXcRcsi2D59jd22QRHQxeMw21DNDO1lk5XX5GoJU4tYPYQL2DyxQlQoDbYmbRF0E18d32vFg7sVpZS/SsjNGDhd4+dz6msqzSMbGRZ+FZe1WEXiCsDurTQGSQP0KlKqCyIcKvHCtmTDVd4cn0GmuKqnpdshnW8ohiq0H8G+r1WQvPoCRpiSve9E0N60GOcAaQBwquh42hvWtPzY9LeAmJvz0LzRZi2gPPF0kcf0zQngP3Sg==
+x-ms-exchange-antispam-messagedata: dWM1MZBDFKNdNwDOYdSiz+MA2OA1RZY/WGWfVXMHImyYtHJLgokYbHDhCxuafI0O1edJCsJih5p7tBKE9DG/fR+oeeH7+00PG29lbQGi29ZjgaMDLa2t0wIRb+yAiDfKUpA9hf3mMtfDhm3Gatn5ug==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: e8a4a012-61ae-4f3f-c61a-08d7b6c447d4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2020 11:50:42.9523
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: WM72mt1aTErvxfRd6AZZSK2r5dWbQJqm+YZgZ7kQQaAYTsJLTSHYSLA9cP+kNEi7/xQFfsowFCTdnOORRkGIhw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB3701
+X-OriginatorOrg: synopsys.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/02/2020 00:42, Jiaxun Yang wrote:
->   >
->   > I will add this may not cover your need, as you probably cannot deal
->   > with any logical PIO <-> ISA translation without modifying the device
->   > driver. For this, we may need to reserve the first 0x4000 in logical PIO
->   > space for this sort of legacy host.
-> 
-> Hi,
-> 
-> After thinking twice, I realized that the most convenient way for me is
-> adding an option to get rid of the mess of logic PIO. MIPS system is emulating
-> x86's behavior, while logic PIO isn't designed for such platform.
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Wed, Feb 19, 2020 at 07:39:01
 
-It was designed for archs which define PCI_IOBASE for PCI MMIO-based or 
-IndirectIO-based IO port access.
+> On Wed, Feb 19, 2020 at 01:20:42AM +0100, Vitor Soares wrote:
+> > +
+> > +static DEFINE_IDA(i3cdev_ida);
+>=20
+> You never destroy this when the code is unloaded :(
 
-> 
-> Or probably I need a variation of Logic PIO, which leave MMIO space AS-IS
-> (not try to reallocate it)
+You are right, I need to destroy it.
 
-That does not work if add a PCI host with MMIO-based IO port regions 
-into the mix.
-
-It only so happens today that for mips you have a single MMIO-based IO 
-port region, and you have IO port base for that region conveniently @ 
-0x0. Then your drivers can have fixed IO port addresses.
-
-For dealing with multiple MMIO-based IO ports regions - which is the 
-case for PCI host bridges - then you need to map those MMIO-based IO 
-port regions to different regions in IO port space.
-
-> but still preserving higher 0x4000 for indirect access.
-
-Then there is no space for PCI MMIO-based IO ports.
-
-> 
-> Thanks a lot!
->   >
->   > That would not be a bad thing - see
->   >https://lore.kernel.org/linux-pci/1560262374-67875-1-git-send-email-john.garry@huawei.com/
->   >
->   >
->   > >
->   > > This driver deals with legacy IO ports where we need to bitbang
-
+Thanks,
+Vitor Soares
