@@ -2,88 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38DAC1689E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 23:21:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 921411689E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 23:22:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728405AbgBUWVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 17:21:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51716 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726731AbgBUWVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 17:21:32 -0500
-Received: from localhost (lfbn-ncy-1-985-231.w90-101.abo.wanadoo.fr [90.101.63.231])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9E95206EF;
-        Fri, 21 Feb 2020 22:21:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582323692;
-        bh=U/Oe2Su9cuXS7/C3XLr+LnlhDygRGvtF3EzpD4iJeKY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mwDTTULy0+GJiAIQNMKNw6SrH+g+EQukVaXs8PSIYZHhbcGmJvpqFnWHqZi0/yrfU
-         n/6ZtG9Olr90e7B1THF5lFr7PosQFm0DVYE3beSXlddM9Lm5s+vnntqCZARt3ocu+r
-         khkX0m5CocedMaPFXA22dN3eoErFRG9lMJbiOOQc=
-Date:   Fri, 21 Feb 2020 23:21:30 +0100
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        rostedt@goodmis.org, mingo@kernel.org, joel@joelfernandes.org,
-        gregkh@linuxfoundation.org, gustavo@embeddedor.com,
-        tglx@linutronix.de, paulmck@kernel.org, josh@joshtriplett.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        luto@kernel.org, tony.luck@intel.com, dan.carpenter@oracle.com,
-        mhiramat@kernel.org, Will Deacon <will@kernel.org>,
-        Petr Mladek <pmladek@suse.com>, Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH v4 02/27] hardirq/nmi: Allow nested nmi_enter()
-Message-ID: <20200221222129.GB28251@lenoir>
-References: <20200221133416.777099322@infradead.org>
- <20200221134215.149193474@infradead.org>
+        id S1729019AbgBUWW4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 17:22:56 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:38362 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726731AbgBUWW4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 17:22:56 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 8C1681C0411; Fri, 21 Feb 2020 23:22:53 +0100 (CET)
+Date:   Fri, 21 Feb 2020 23:22:53 +0100
+From:   Pavel Machek <pavel@denx.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Changbin Du <changbin.du@gmail.com>,
+        Borislav Petkov <bp@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.19 112/191] x86/nmi: Remove irq_work from the long
+ duration NMI handler
+Message-ID: <20200221222252.GA14067@amd>
+References: <20200221072250.732482588@linuxfoundation.org>
+ <20200221072304.373890261@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="Q68bSM7Ycu6FN28Q"
 Content-Disposition: inline
-In-Reply-To: <20200221134215.149193474@infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200221072304.373890261@linuxfoundation.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 02:34:18PM +0100, Peter Zijlstra wrote:
-> Since there are already a number of sites (ARM64, PowerPC) that
-> effectively nest nmi_enter(), lets make the primitive support this
-> before adding even more.
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Reviewed-by: Petr Mladek <pmladek@suse.com>
-> Acked-by: Will Deacon <will@kernel.org>
-> Acked-by: Marc Zyngier <maz@kernel.org>
-> ---
->  arch/arm64/include/asm/hardirq.h |    4 ++--
->  arch/arm64/kernel/sdei.c         |   14 ++------------
->  arch/arm64/kernel/traps.c        |    8 ++------
->  arch/powerpc/kernel/traps.c      |   22 ++++++----------------
->  include/linux/hardirq.h          |    5 ++++-
->  include/linux/preempt.h          |    4 ++--
->  kernel/printk/printk_safe.c      |    6 ++++--
->  7 files changed, 22 insertions(+), 41 deletions(-)
-> 
-> --- a/kernel/printk/printk_safe.c
-> +++ b/kernel/printk/printk_safe.c
-> @@ -296,12 +296,14 @@ static __printf(1, 0) int vprintk_nmi(co
->  
->  void notrace printk_nmi_enter(void)
->  {
-> -	this_cpu_or(printk_context, PRINTK_NMI_CONTEXT_MASK);
-> +	if (!in_nmi())
-> +		this_cpu_or(printk_context, PRINTK_NMI_CONTEXT_MASK);
->  }
->  
->  void notrace printk_nmi_exit(void)
->  {
-> -	this_cpu_and(printk_context, ~PRINTK_NMI_CONTEXT_MASK);
-> +	if (!in_nmi())
-> +		this_cpu_and(printk_context, ~PRINTK_NMI_CONTEXT_MASK);
->  }
 
-If the outermost NMI is interrupted while between printk_nmi_enter()
-and preempt_count_add(), there is still a risk that we race and clear?
+--Q68bSM7Ycu6FN28Q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+On Fri 2020-02-21 08:41:25, Greg Kroah-Hartman wrote:
+> From: Changbin Du <changbin.du@gmail.com>
+>=20
+> [ Upstream commit 248ed51048c40d36728e70914e38bffd7821da57 ]
+>=20
+> First, printk() is NMI-context safe now since the safe printk() has been
+> implemented and it already has an irq_work to make NMI-context safe.
+>=20
+> Second, this NMI irq_work actually does not work if a NMI handler causes
+> panic by watchdog timeout. It has no chance to run in such case, while
+> the safe printk() will flush its per-cpu buffers before panicking.
+>=20
+> While at it, repurpose the irq_work callback into a function which
+> concentrates the NMI duration checking and makes the code easier to
+> follow.
+
+I know there were printk() changes recently, but are they all in 4.19?
+
+Does this actually fix any bug in 4.19?
+
+Best regards,
+								Pavel
+							=09
+> diff --git a/arch/x86/kernel/nmi.c b/arch/x86/kernel/nmi.c
+> index 086cf1d1d71d8..0f8b9b900b0e7 100644
+> --- a/arch/x86/kernel/nmi.c
+> +++ b/arch/x86/kernel/nmi.c
+> @@ -102,18 +102,22 @@ static int __init nmi_warning_debugfs(void)
+>  }
+>  fs_initcall(nmi_warning_debugfs);
+> =20
+> -static void nmi_max_handler(struct irq_work *w)
+> +static void nmi_check_duration(struct nmiaction *action, u64 duration)
+>  {
+> -	struct nmiaction *a =3D container_of(w, struct nmiaction, irq_work);
+> +	u64 whole_msecs =3D READ_ONCE(action->max_duration);
+>  	int remainder_ns, decimal_msecs;
+> -	u64 whole_msecs =3D READ_ONCE(a->max_duration);
+> +
+> +	if (duration < nmi_longest_ns || duration < action->max_duration)
+> +		return;
+> +
+> +	action->max_duration =3D duration;
+> =20
+>  	remainder_ns =3D do_div(whole_msecs, (1000 * 1000));
+>  	decimal_msecs =3D remainder_ns / 1000;
+> =20
+>  	printk_ratelimited(KERN_INFO
+>  		"INFO: NMI handler (%ps) took too long to run: %lld.%03d msecs\n",
+> -		a->handler, whole_msecs, decimal_msecs);
+> +		action->handler, whole_msecs, decimal_msecs);
+>  }
+> =20
+>  static int nmi_handle(unsigned int type, struct pt_regs *regs)
+> @@ -140,11 +144,7 @@ static int nmi_handle(unsigned int type, struct pt_r=
+egs *regs)
+>  		delta =3D sched_clock() - delta;
+>  		trace_nmi_handler(a->handler, (int)delta, thishandled);
+> =20
+> -		if (delta < nmi_longest_ns || delta < a->max_duration)
+> -			continue;
+> -
+> -		a->max_duration =3D delta;
+> -		irq_work_queue(&a->irq_work);
+> +		nmi_check_duration(a, delta);
+>  	}
+> =20
+>  	rcu_read_unlock();
+> @@ -162,8 +162,6 @@ int __register_nmi_handler(unsigned int type, struct =
+nmiaction *action)
+>  	if (!action->handler)
+>  		return -EINVAL;
+> =20
+> -	init_irq_work(&action->irq_work, nmi_max_handler);
+> -
+>  	raw_spin_lock_irqsave(&desc->lock, flags);
+> =20
+>  	/*
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--Q68bSM7Ycu6FN28Q
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl5QWDwACgkQMOfwapXb+vK8pQCfXc7L7u+EWDJS97tDbbXFdWo0
+VmcAn1KMa2N/gyXeOJZWraFurLztLMMk
+=pvgT
+-----END PGP SIGNATURE-----
+
+--Q68bSM7Ycu6FN28Q--
