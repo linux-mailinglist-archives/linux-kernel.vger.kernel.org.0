@@ -2,60 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87D1A1684E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 18:26:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6A9C1684E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 18:26:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728487AbgBUR0R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 12:26:17 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:42988 "EHLO mail.skyhub.de"
+        id S1728684AbgBUR0g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 12:26:36 -0500
+Received: from muru.com ([72.249.23.125]:56738 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728356AbgBUR0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 12:26:17 -0500
-Received: from zn.tnic (p200300EC2F090A002034B94CF5910173.dip0.t-ipconnect.de [IPv6:2003:ec:2f09:a00:2034:b94c:f591:173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B94441EC0591;
-        Fri, 21 Feb 2020 18:26:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1582305975;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=Ux0GEY+Iwsw38URwfJVMeEYqbnqDCSe7QtkDeSxHdgk=;
-        b=gh7Zl8K4VO07gkAP7kQQoLOgccbH03cGy0s8FmUJFP3NSSfL4h/TG3uvpFO5JvaGNHv97V
-        6cS6A4cmbE8e1NfKGNxPJG5tJYfSgS6zqvWzM+0ZDSlHRB3Zbz8f4nppDE8pMBMrQIYo9z
-        sBdYtKMNkJ1pzTjd3hfkoTeuyDfzR4E=
-Date:   Fri, 21 Feb 2020 18:26:11 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH resend 0/1] drm: Add DRM_MODE_TYPE_USERDEF flag to probed
- modes
-Message-ID: <20200221172611.GK25747@zn.tnic>
-References: <20200221172209.509686-1-hdegoede@redhat.com>
+        id S1728103AbgBUR0f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 12:26:35 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 90018807E;
+        Fri, 21 Feb 2020 17:27:19 +0000 (UTC)
+Date:   Fri, 21 Feb 2020 09:26:31 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     "Andrew F. Davis" <afd@ti.com>
+Cc:     kbuild-all@lists.01.org, linux-kernel@vger.kernel.org,
+        kbuild test robot <lkp@intel.com>,
+        linux-omap@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Marc Zyngier <maz@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>
+Subject: Re: omap-secure.c:undefined reference to `__arm_smccc_smc'
+Message-ID: <20200221172631.GY37466@atomide.com>
+References: <20200220155429.GH37466@atomide.com>
+ <55ddcd29-ed8b-529e-dd54-cbac5cf74e42@ti.com>
+ <20200220162012.GI37466@atomide.com>
+ <d7b685b6-16a2-3743-1786-a5240726ed9c@ti.com>
+ <20200220163703.GK37466@atomide.com>
+ <20200220171305.GL37466@atomide.com>
+ <281e895b-720d-5bab-63cf-8b3e389dc767@ti.com>
+ <20200220175744.GQ37466@atomide.com>
+ <20200220181141.GR37466@atomide.com>
+ <333dd36f-e760-64b3-9e0f-3a316df9ad10@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200221172209.509686-1-hdegoede@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <333dd36f-e760-64b3-9e0f-3a316df9ad10@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 06:22:08PM +0100, Hans de Goede wrote:
-> Hi All,
+* Andrew F. Davis <afd@ti.com> [200220 10:23]:
+> On 2/20/20 1:11 PM, Tony Lindgren wrote:
+> > * Tony Lindgren <tony@atomide.com> [200220 17:58]:
+> >> * Andrew F. Davis <afd@ti.com> [200220 17:39]:
+> >>> If the machine has SMCCC then it will also have the
+> >>> CONFIG_HAVE_ARM_SMCCC set and so nothing would change.
+> >>
+> >> Hmm yeah good point.
+> > 
+> > So the patch below seems like the way to go then. Anybody have issues
+> > with the patch below?
+> > 
+> > Regards,
+> > 
+> > Tony
+> > 
+> > 8< -------------------------
+> > diff --git a/include/linux/arm-smccc.h b/include/linux/arm-smccc.h
+> > --- a/include/linux/arm-smccc.h
+> > +++ b/include/linux/arm-smccc.h
+> > @@ -121,6 +121,7 @@ struct arm_smccc_quirk {
+> >  	} state;
+> >  };
+> >  
+> > +#ifdef CONFIG_HAVE_ARM_SMCCC
+> >  /**
+> >   * __arm_smccc_smc() - make SMC calls
+> >   * @a0-a7: arguments passed in registers 0 to 7
+> > @@ -137,6 +138,14 @@ asmlinkage void __arm_smccc_smc(unsigned long a0, unsigned long a1,
+> >  			unsigned long a2, unsigned long a3, unsigned long a4,
+> >  			unsigned long a5, unsigned long a6, unsigned long a7,
+> >  			struct arm_smccc_res *res, struct arm_smccc_quirk *quirk);
+> > +#else
+> > +static inline void __arm_smccc_smc(unsigned long a0, unsigned long a1,
+> > +			unsigned long a2, unsigned long a3, unsigned long a4,
+> > +			unsigned long a5, unsigned long a6, unsigned long a7,
+> > +			struct arm_smccc_res *res, struct arm_smccc_quirk *quirk)
+> > +{
 > 
-> I'm resending this patch since the discussion on it has fallen
-> silent for a while now.
+> 
+> Maybe a warning? If you do not have SMC on your platform but are still
+> making SMC calls then something is broken and it looks like it would
+> fail silently here.
 
-Might fall silent this time too with those recipients. :-)
+OK I'll add that and send out a  proper patch.
 
--- 
-Regards/Gruss,
-    Boris.
+Thanks,
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Tony
