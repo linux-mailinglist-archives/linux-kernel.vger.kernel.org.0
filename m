@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D199167235
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:01:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9191E1673C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731195AbgBUIBW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:01:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33570 "EHLO mail.kernel.org"
+        id S1733298AbgBUIPS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:15:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731024AbgBUIBR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:01:17 -0500
+        id S1733267AbgBUIPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:15:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8E592073A;
-        Fri, 21 Feb 2020 08:01:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0611F24672;
+        Fri, 21 Feb 2020 08:15:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272077;
-        bh=0yf6ce4sDrBOesE1j8wafwtcfGWYWuH7tZjl7vWwWFs=;
+        s=default; t=1582272910;
+        bh=ghfHmbsHqcAaTT8fpcwffk7RwHomEhJQzeyQkH2KBl8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ImkZpzxJspaB5ieOOs0GoFlH9baWE2BjBVc/cvhcxP5QEvtkOyxqtvY7thKRNxd3w
-         9PPXtll6dhYxqtmy16hefQulu4+QOtC37eSzVb4snsgWSgm3FMH7h15J2dN5GsukMU
-         PJ0rDIVCuDWQloEhqH4/uknp9cYJshuuORO7uIRc=
+        b=rYuS06Ay/L+M9c+qm5SQxlnu5NZaRA7aqDaQTfSqiutfJRPf1A8B1wFMb8lyxv9ho
+         dP+cJMsetrErzYwRmexJxBBdC22l7/fSejl8t58OqXwNZoBGjgycN8CRIswTIJ1ilW
+         53eN0z99Y9CqV25E+fVaYMS4Gb+OgWdsVwnCWYH4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 393/399] virtio_balloon: prevent pfn array overflow
-Date:   Fri, 21 Feb 2020 08:41:58 +0100
-Message-Id: <20200221072438.118804855@linuxfoundation.org>
+Subject: [PATCH 5.4 320/344] lib/scatterlist.c: adjust indentation in __sg_alloc_table
+Date:   Fri, 21 Feb 2020 08:41:59 +0100
+Message-Id: <20200221072419.239171262@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
-References: <20200221072402.315346745@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +46,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael S. Tsirkin <mst@redhat.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 6e9826e77249355c09db6ba41cd3f84e89f4b614 ]
+[ Upstream commit 4e456fee215677584cafa7f67298a76917e89c64 ]
 
-Make sure, at build time, that pfn array is big enough to hold a single
-page.  It happens to be true since the PAGE_SHIFT value at the moment is
-20, which is 1M - exactly 256 4K balloon pages.
+Clang warns:
 
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
+  ../lib/scatterlist.c:314:5: warning: misleading indentation; statement
+  is not part of the previous 'if' [-Wmisleading-indentation]
+                          return -ENOMEM;
+                          ^
+  ../lib/scatterlist.c:311:4: note: previous statement is here
+                          if (prv)
+                          ^
+  1 warning generated.
+
+This warning occurs because there is a space before the tab on this
+line.  Remove it so that the indentation is consistent with the Linux
+kernel coding style and clang no longer warns.
+
+Link: http://lkml.kernel.org/r/20191218033606.11942-1-natechancellor@gmail.com
+Link: https://github.com/ClangBuiltLinux/linux/issues/830
+Fixes: edce6820a9fd ("scatterlist: prevent invalid free when alloc fails")
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/virtio/virtio_balloon.c | 2 ++
- 1 file changed, 2 insertions(+)
+ lib/scatterlist.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
-index 7e5d84caeb940..7bfe365d93720 100644
---- a/drivers/virtio/virtio_balloon.c
-+++ b/drivers/virtio/virtio_balloon.c
-@@ -158,6 +158,8 @@ static void set_page_pfns(struct virtio_balloon *vb,
- {
- 	unsigned int i;
+diff --git a/lib/scatterlist.c b/lib/scatterlist.c
+index c2cf2c311b7db..5813072bc5895 100644
+--- a/lib/scatterlist.c
++++ b/lib/scatterlist.c
+@@ -311,7 +311,7 @@ int __sg_alloc_table(struct sg_table *table, unsigned int nents,
+ 			if (prv)
+ 				table->nents = ++table->orig_nents;
  
-+	BUILD_BUG_ON(VIRTIO_BALLOON_PAGES_PER_PAGE > VIRTIO_BALLOON_ARRAY_PFNS_MAX);
-+
- 	/*
- 	 * Set balloon pfns pointing at this page.
- 	 * Note that the first pfn points at start of the page.
+- 			return -ENOMEM;
++			return -ENOMEM;
+ 		}
+ 
+ 		sg_init_table(sg, alloc_size);
 -- 
 2.20.1
 
