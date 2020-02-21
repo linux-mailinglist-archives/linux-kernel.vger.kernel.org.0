@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0141167257
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:02:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E511167238
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:01:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731384AbgBUICf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:02:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35052 "EHLO mail.kernel.org"
+        id S1731220AbgBUIBc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:01:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33810 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731377AbgBUICd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:02:33 -0500
+        id S1731211AbgBUIBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:01:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7522020801;
-        Fri, 21 Feb 2020 08:02:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03CC224650;
+        Fri, 21 Feb 2020 08:01:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272152;
-        bh=A9NrYlbZ6Aa9AtuWy0phP9yGoo3ATEXL5jhHCHQYWBM=;
+        s=default; t=1582272090;
+        bh=UYqKx2O8ccgfc2BEmoOMtLzRV0341XwG6c3PzYFulew=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r3WORYOBZH+OImPgHPoaZbeUtDUtK83eYrTW7bL6Wka4MfJKeyUQ1pBtGbWt7Wylh
-         PpysKNoM7+6+otDx61u7xNwejUWPVyikinJ2qq7pQ3unnjWI+jIoRdFqy5TRobvt0x
-         SPJsPycLVZLYEvjFHlYIyCOqZ68ywZTrAWMRql1g=
+        b=H1G3Y6obPmZmuy0U18fryAC3MLUZvdzjygBRPRUM7Fuubrb32LwxfIr59SWXlm9rM
+         24fc5G6QkGUaaNIEB75YVkOHFNvrDzsSBUhZDuq4R0wzHEG5DeCjZfjRPJwDoi7Moh
+         eBzv7P1uIi6rvVbYcYwo+or7vD+FjUBmDwtXLCjE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Maya Erez <merez@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Neeraj Upadhyay <neeraju@codeaurora.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 009/344] wil6210: fix break that is never reached because of zeroing of a retry counter
-Date:   Fri, 21 Feb 2020 08:36:48 +0100
-Message-Id: <20200221072350.109609254@linuxfoundation.org>
+Subject: [PATCH 5.4 013/344] rcu: Fix missed wakeup of exp_wq waiters
+Date:   Fri, 21 Feb 2020 08:36:52 +0100
+Message-Id: <20200221072350.452224944@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
 References: <20200221072349.335551332@linuxfoundation.org>
@@ -45,48 +44,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Neeraj Upadhyay <neeraju@codeaurora.org>
 
-[ Upstream commit 5b1413f00b5beb9f5fed94e43ea0c497d5db9633 ]
+[ Upstream commit fd6bc19d7676a060a171d1cf3dcbf6fd797eb05f ]
 
-There is a check on the retry counter invalid_buf_id_retry that is always
-false because invalid_buf_id_retry is initialized to zero on each iteration
-of a while-loop.  Fix this by initializing the retry counter before the
-while-loop starts.
+Tasks waiting within exp_funnel_lock() for an expedited grace period to
+elapse can be starved due to the following sequence of events:
 
-Addresses-Coverity: ("Logically dead code")
-Fixes: b4a967b7d0f5 ("wil6210: reset buff id in status message after completion")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Maya Erez <merez@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+1.	Tasks A and B both attempt to start an expedited grace
+	period at about the same time.	This grace period will have
+	completed when the lower four bits of the rcu_state structure's
+	->expedited_sequence field are 0b'0100', for example, when the
+	initial value of this counter is zero.	Task A wins, and thus
+	does the actual work of starting the grace period, including
+	acquiring the rcu_state structure's .exp_mutex and sets the
+	counter to 0b'0001'.
+
+2.	Because task B lost the race to start the grace period, it
+	waits on ->expedited_sequence to reach 0b'0100' inside of
+	exp_funnel_lock(). This task therefore blocks on the rcu_node
+	structure's ->exp_wq[1] field, keeping in mind that the
+	end-of-grace-period value of ->expedited_sequence (0b'0100')
+	is shifted down two bits before indexing the ->exp_wq[] field.
+
+3.	Task C attempts to start another expedited grace period,
+	but blocks on ->exp_mutex, which is still held by Task A.
+
+4.	The aforementioned expedited grace period completes, so that
+	->expedited_sequence now has the value 0b'0100'.  A kworker task
+	therefore acquires the rcu_state structure's ->exp_wake_mutex
+	and starts awakening any tasks waiting for this grace period.
+
+5.	One of the first tasks awakened happens to be Task A.  Task A
+	therefore releases the rcu_state structure's ->exp_mutex,
+	which allows Task C to start the next expedited grace period,
+	which causes the lower four bits of the rcu_state structure's
+	->expedited_sequence field to become 0b'0101'.
+
+6.	Task C's expedited grace period completes, so that the lower four
+	bits of the rcu_state structure's ->expedited_sequence field now
+	become 0b'1000'.
+
+7.	The kworker task from step 4 above continues its wakeups.
+	Unfortunately, the wake_up_all() refetches the rcu_state
+	structure's .expedited_sequence field:
+
+	wake_up_all(&rnp->exp_wq[rcu_seq_ctr(rcu_state.expedited_sequence) & 0x3]);
+
+	This results in the wakeup being applied to the rcu_node
+	structure's ->exp_wq[2] field, which is unfortunate given that
+	Task B is instead waiting on ->exp_wq[1].
+
+On a busy system, no harm is done (or at least no permanent harm is done).
+Some later expedited grace period will redo the wakeup.  But on a quiet
+system, such as many embedded systems, it might be a good long time before
+there was another expedited grace period.  On such embedded systems,
+this situation could therefore result in a system hang.
+
+This issue manifested as DPM device timeout during suspend (which
+usually qualifies as a quiet time) due to a SCSI device being stuck in
+_synchronize_rcu_expedited(), with the following stack trace:
+
+	schedule()
+	synchronize_rcu_expedited()
+	synchronize_rcu()
+	scsi_device_quiesce()
+	scsi_bus_suspend()
+	dpm_run_callback()
+	__device_suspend()
+
+This commit therefore prevents such delays, timeouts, and hangs by
+making rcu_exp_wait_wake() use its "s" argument consistently instead of
+refetching from rcu_state.expedited_sequence.
+
+Fixes: 3b5f668e715b ("rcu: Overlap wakeups with next expedited grace period")
+Signed-off-by: Neeraj Upadhyay <neeraju@codeaurora.org>
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/wil6210/txrx_edma.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ kernel/rcu/tree_exp.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/wil6210/txrx_edma.c b/drivers/net/wireless/ath/wil6210/txrx_edma.c
-index 04d576deae72c..6cb0d7bcfe765 100644
---- a/drivers/net/wireless/ath/wil6210/txrx_edma.c
-+++ b/drivers/net/wireless/ath/wil6210/txrx_edma.c
-@@ -880,6 +880,7 @@ static struct sk_buff *wil_sring_reap_rx_edma(struct wil6210_priv *wil,
- 	u8 data_offset;
- 	struct wil_rx_status_extended *s;
- 	u16 sring_idx = sring - wil->srings;
-+	int invalid_buff_id_retry;
- 
- 	BUILD_BUG_ON(sizeof(struct wil_rx_status_extended) > sizeof(skb->cb));
- 
-@@ -893,9 +894,9 @@ again:
- 	/* Extract the buffer ID from the status message */
- 	buff_id = le16_to_cpu(wil_rx_status_get_buff_id(msg));
- 
-+	invalid_buff_id_retry = 0;
- 	while (!buff_id) {
- 		struct wil_rx_status_extended *s;
--		int invalid_buff_id_retry = 0;
- 
- 		wil_dbg_txrx(wil,
- 			     "buff_id is not updated yet by HW, (swhead 0x%x)\n",
+diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+index 69c5aa64fcfd6..f504ac8317797 100644
+--- a/kernel/rcu/tree_exp.h
++++ b/kernel/rcu/tree_exp.h
+@@ -558,7 +558,7 @@ static void rcu_exp_wait_wake(unsigned long s)
+ 			spin_unlock(&rnp->exp_lock);
+ 		}
+ 		smp_mb(); /* All above changes before wakeup. */
+-		wake_up_all(&rnp->exp_wq[rcu_seq_ctr(rcu_state.expedited_sequence) & 0x3]);
++		wake_up_all(&rnp->exp_wq[rcu_seq_ctr(s) & 0x3]);
+ 	}
+ 	trace_rcu_exp_grace_period(rcu_state.name, s, TPS("endwake"));
+ 	mutex_unlock(&rcu_state.exp_wake_mutex);
 -- 
 2.20.1
 
