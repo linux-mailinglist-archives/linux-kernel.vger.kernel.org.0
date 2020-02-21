@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0F2016748C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:24:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4D711673B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388328AbgBUIWe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:22:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34182 "EHLO mail.kernel.org"
+        id S1733250AbgBUIOy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:14:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388317AbgBUIWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:22:32 -0500
+        id S1733236AbgBUIOu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:14:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 246ED24672;
-        Fri, 21 Feb 2020 08:22:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 274AB24680;
+        Fri, 21 Feb 2020 08:14:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273351;
-        bh=3TZXsTWy+GWOyXb49qV/Qbo9WyB4oDNA5l7odcnIJfE=;
+        s=default; t=1582272889;
+        bh=qy/UrVKJD9Yzo9V6luGLjIKHtwLML0Xd8oiQh3MDx2c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qVVl8XBXZ+rr7q61qBQYW3BYn/zVPxuKiRdh6Fl8ei5w+sQ6bMPDLF1ZhGC1uVagu
-         xF7TI7tRmi/NgA839KcR8RNG9/HRuks1ztU7XC3yklkU4oDOeQqAUGUH8jTboEm/TK
-         v8Dpc+gcZJpan6QdaeGOXraJ6b17aMdGK+mhAF9E=
+        b=EVO9+7mGfNnl2di7lk7P8gNiebOM0xQumb9oAXkLQ9VMnmcxsVXGk8gTjKYyUHRMg
+         AjOzLeE5zcIxjj0SELe4HOIIZwxJOJWa7xfS0dl4UcgQr+yQ+kMJJvNaRabVbRp4US
+         U8BaRUK9NKRZUIsJlx6B37zwEPqoLza4X3mlom2A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 139/191] x86/mm: Fix NX bit clearing issue in kernel_map_pages_in_pgd
+        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 313/344] ftrace: fpid_next() should increase position index
 Date:   Fri, 21 Feb 2020 08:41:52 +0100
-Message-Id: <20200221072307.386508422@linuxfoundation.org>
+Message-Id: <20200221072418.491462997@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,58 +44,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ardb@kernel.org>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-[ Upstream commit 75fbef0a8b6b4bb19b9a91b5214f846c2dc5139e ]
+[ Upstream commit e4075e8bdffd93a9b6d6e1d52fabedceeca5a91b ]
 
-The following commit:
+if seq_file .next fuction does not change position index,
+read after some lseek can generate unexpected output.
 
-  15f003d20782 ("x86/mm/pat: Don't implicitly allow _PAGE_RW in kernel_map_pages_in_pgd()")
+Without patch:
+ # dd bs=4 skip=1 if=/sys/kernel/tracing/set_ftrace_pid
+ dd: /sys/kernel/tracing/set_ftrace_pid: cannot skip to specified offset
+ id
+ no pid
+ 2+1 records in
+ 2+1 records out
+ 10 bytes copied, 0.000213285 s, 46.9 kB/s
 
-modified kernel_map_pages_in_pgd() to manage writable permissions
-of memory mappings in the EFI page table in a different way, but
-in the process, it removed the ability to clear NX attributes from
-read-only mappings, by clobbering the clear mask if _PAGE_RW is not
-being requested.
+Notice the "id" followed by "no pid".
 
-Failure to remove the NX attribute from read-only mappings is
-unlikely to be a security issue, but it does prevent us from
-tightening the permissions in the EFI page tables going forward,
-so let's fix it now.
+With the patch:
+ # dd bs=4 skip=1 if=/sys/kernel/tracing/set_ftrace_pid
+ dd: /sys/kernel/tracing/set_ftrace_pid: cannot skip to specified offset
+ id
+ 0+1 records in
+ 0+1 records out
+ 3 bytes copied, 0.000202112 s, 14.8 kB/s
 
-Fixes: 15f003d20782 ("x86/mm/pat: Don't implicitly allow _PAGE_RW in kernel_map_pages_in_pgd()
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/20200113172245.27925-5-ardb@kernel.org
+Notice that it only prints "id" and not the "no pid" afterward.
+
+Link: http://lkml.kernel.org/r/4f87c6ad-f114-30bb-8506-c32274ce2992@virtuozzo.com
+
+https://bugzilla.kernel.org/show_bug.cgi?id=206283
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/mm/pageattr.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ kernel/trace/ftrace.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-index e2d4b25c7aa44..101f3ad0d6ad1 100644
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -2126,19 +2126,13 @@ int kernel_map_pages_in_pgd(pgd_t *pgd, u64 pfn, unsigned long address,
- 		.pgd = pgd,
- 		.numpages = numpages,
- 		.mask_set = __pgprot(0),
--		.mask_clr = __pgprot(0),
-+		.mask_clr = __pgprot(~page_flags & (_PAGE_NX|_PAGE_RW)),
- 		.flags = 0,
- 	};
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 407d8bf4ed93e..15160d707da45 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -6537,9 +6537,10 @@ static void *fpid_next(struct seq_file *m, void *v, loff_t *pos)
+ 	struct trace_array *tr = m->private;
+ 	struct trace_pid_list *pid_list = rcu_dereference_sched(tr->function_pids);
  
- 	if (!(__supported_pte_mask & _PAGE_NX))
- 		goto out;
- 
--	if (!(page_flags & _PAGE_NX))
--		cpa.mask_clr = __pgprot(_PAGE_NX);
+-	if (v == FTRACE_NO_PIDS)
++	if (v == FTRACE_NO_PIDS) {
++		(*pos)++;
+ 		return NULL;
 -
--	if (!(page_flags & _PAGE_RW))
--		cpa.mask_clr = __pgprot(_PAGE_RW);
--
- 	if (!(page_flags & _PAGE_ENC))
- 		cpa.mask_clr = pgprot_encrypted(cpa.mask_clr);
++	}
+ 	return trace_pid_next(pid_list, v, pos);
+ }
  
 -- 
 2.20.1
