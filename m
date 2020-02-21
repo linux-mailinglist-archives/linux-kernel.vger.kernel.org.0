@@ -2,41 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 119351677D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:45:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0005F167695
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:37:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729784AbgBUHvj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:51:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49046 "EHLO mail.kernel.org"
+        id S1732520AbgBUIgl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:36:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729326AbgBUHvh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:51:37 -0500
+        id S1731552AbgBUIGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:06:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3147E2073A;
-        Fri, 21 Feb 2020 07:51:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A01C72073A;
+        Fri, 21 Feb 2020 08:06:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271496;
-        bh=WbO+uEKXoG/iwhQ7nd5kQE3ky3wQoI1Lapj7wUubyT4=;
+        s=default; t=1582272366;
+        bh=e1O9gRId/5Nnkv0pkYMKzLfZnhFV6fUZqb3Gwk/Dgew=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z7wjN85Ivel6B7jLJGwNNDiH98yNZ5USiW8kuX8H+5J/2yQ1TYTkvv7j3lTTRogDF
-         j1YXdCeZivq73XUBwFUvuZnq5UzZHtua7q4ZQehhakhWHd7Ovcy1ZIXzS68BuF1Dc8
-         uxVe/COP0nL1I9zVkMTd5Q7i4gdYZUBCLsaOqGnY=
+        b=FYbJiJrzpxep8fI0tp70YZCDv6b606O7pHVJXM70vkwUzj5EiSl2XgDVvjJHJFZXs
+         xlQdlPobPG99JCZ66uMeHsO9yBfkMGSgKy2d1KEH90nPV3fPvnwufJGXBP7/ocvCHf
+         Yj6rQToJkNcZuv76AamlnMfDWbgVPVyB/FvmJI8U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 187/399] net: phy: realtek: add logging for the RGMII TX delay configuration
-Date:   Fri, 21 Feb 2020 08:38:32 +0100
-Message-Id: <20200221072420.996253867@linuxfoundation.org>
+Subject: [PATCH 5.4 116/344] ARM: dts: imx6: rdu2: Disable WP for USDHC2 and USDHC3
+Date:   Fri, 21 Feb 2020 08:38:35 +0100
+Message-Id: <20200221072359.422976479@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
-References: <20200221072402.315346745@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,72 +48,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
 
-[ Upstream commit 3aec743d69822d22d4a5b60deb9518ed8be6fa67 ]
+[ Upstream commit cd58a174e58649426fb43d7456e5f7d7eab58af1 ]
 
-RGMII requires a delay of 2ns between the data and the clock signal.
-There are at least three ways this can happen. One possibility is by
-having the PHY generate this delay.
-This is a common source for problems (for example with slow TX speeds or
-packet loss when sending data). The TX delay configuration of the
-RTL8211F PHY can be set either by pin-strappping the RXD1 pin (HIGH
-means enabled, LOW means disabled) or through configuring a paged
-register. The setting from the RXD1 pin is also reflected in the
-register.
+RDU2 production units come with resistor connecting WP pin to
+correpsonding GPIO DNPed for both SD card slots. Drop any WP related
+configuration and mark both slots with "disable-wp".
 
-Add debug logging to the TX delay configuration on RTL8211F so it's
-easier to spot these issues (for example if the TX delay is enabled for
-both, the RTL8211F PHY and the MAC).
-This is especially helpful because there is no public datasheet for the
-RTL8211F PHY available with all the RX/TX delay specifics.
-
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Chris Healy <cphealy@gmail.com>
+Reviewed-by: Chris Healy <cphealy@gmail.com>
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/phy/realtek.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
-index 476db5345e1af..879ca37c85081 100644
---- a/drivers/net/phy/realtek.c
-+++ b/drivers/net/phy/realtek.c
-@@ -171,7 +171,9 @@ static int rtl8211c_config_init(struct phy_device *phydev)
+diff --git a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
+index 93be00a60c887..7b5c0e9b0fcff 100644
+--- a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
+@@ -627,7 +627,7 @@
+ 	pinctrl-0 = <&pinctrl_usdhc2>;
+ 	bus-width = <4>;
+ 	cd-gpios = <&gpio2 2 GPIO_ACTIVE_LOW>;
+-	wp-gpios = <&gpio2 3 GPIO_ACTIVE_HIGH>;
++	disable-wp;
+ 	vmmc-supply = <&reg_3p3v_sd>;
+ 	vqmmc-supply = <&reg_3p3v>;
+ 	no-1-8-v;
+@@ -640,7 +640,7 @@
+ 	pinctrl-0 = <&pinctrl_usdhc3>;
+ 	bus-width = <4>;
+ 	cd-gpios = <&gpio2 0 GPIO_ACTIVE_LOW>;
+-	wp-gpios = <&gpio2 1 GPIO_ACTIVE_HIGH>;
++	disable-wp;
+ 	vmmc-supply = <&reg_3p3v_sd>;
+ 	vqmmc-supply = <&reg_3p3v>;
+ 	no-1-8-v;
+@@ -1055,7 +1055,6 @@
+ 			MX6QDL_PAD_SD2_DAT1__SD2_DATA1		0x17059
+ 			MX6QDL_PAD_SD2_DAT2__SD2_DATA2		0x17059
+ 			MX6QDL_PAD_SD2_DAT3__SD2_DATA3		0x17059
+-			MX6QDL_PAD_NANDF_D3__GPIO2_IO03		0x40010040
+ 			MX6QDL_PAD_NANDF_D2__GPIO2_IO02		0x40010040
+ 		>;
+ 	};
+@@ -1068,7 +1067,6 @@
+ 			MX6QDL_PAD_SD3_DAT1__SD3_DATA1		0x17059
+ 			MX6QDL_PAD_SD3_DAT2__SD3_DATA2		0x17059
+ 			MX6QDL_PAD_SD3_DAT3__SD3_DATA3		0x17059
+-			MX6QDL_PAD_NANDF_D1__GPIO2_IO01		0x40010040
+ 			MX6QDL_PAD_NANDF_D0__GPIO2_IO00		0x40010040
  
- static int rtl8211f_config_init(struct phy_device *phydev)
- {
-+	struct device *dev = &phydev->mdio.dev;
- 	u16 val;
-+	int ret;
- 
- 	/* enable TX-delay for rgmii-{id,txid}, and disable it for rgmii and
- 	 * rgmii-rxid. The RX-delay can be enabled by the external RXDLY pin.
-@@ -189,7 +191,22 @@ static int rtl8211f_config_init(struct phy_device *phydev)
- 		return 0;
- 	}
- 
--	return phy_modify_paged(phydev, 0xd08, 0x11, RTL8211F_TX_DELAY, val);
-+	ret = phy_modify_paged_changed(phydev, 0xd08, 0x11, RTL8211F_TX_DELAY,
-+				       val);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to update the TX delay register\n");
-+		return ret;
-+	} else if (ret) {
-+		dev_dbg(dev,
-+			"%s 2ns TX delay (and changing the value from pin-strapping RXD1 or the bootloader)\n",
-+			val ? "Enabling" : "Disabling");
-+	} else {
-+		dev_dbg(dev,
-+			"2ns TX delay was already %s (by pin-strapping RXD1 or bootloader configuration)\n",
-+			val ? "enabled" : "disabled");
-+	}
-+
-+	return 0;
- }
- 
- static int rtl8211e_config_init(struct phy_device *phydev)
+ 		>;
 -- 
 2.20.1
 
