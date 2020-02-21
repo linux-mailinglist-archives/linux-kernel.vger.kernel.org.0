@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DBAC16706A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:45:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCB39167069
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:45:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728212AbgBUHo4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:44:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39728 "EHLO mail.kernel.org"
+        id S1728191AbgBUHox (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:44:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39802 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728177AbgBUHot (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:44:49 -0500
+        id S1726395AbgBUHow (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:44:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D65CD207FD;
-        Fri, 21 Feb 2020 07:44:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BCCC222C4;
+        Fri, 21 Feb 2020 07:44:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271089;
-        bh=FQqG5CuWZNvAahuC516eH5urLJCxfYr2WeJpFtvzYYE=;
+        s=default; t=1582271091;
+        bh=5X0WupEnFfrRuUFOQtt2nR3NK/iuICCSLiohKNtFgtE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vasUqHngF7uIsOKocp+7DlYcOJMNlR6uhE9cIt9N0v7+24or+SfiWSwG3pCY930kv
-         T5DB++gRkD52alA8RlJS9ugX+Bn9RDKP+jPjbus1U8Ut+NH5YzkBARRtyHT4JTOyiG
-         ZyHXLRvTz9s5V5YgM+ZR0ZNltpBn5R4yBZ23x+vA=
+        b=JdjWPsCjRMSJBKpeu8HTzNhZeRlN6md52vCcCgex7fYL4/+7Vz44DSV+tcRWW6Xpv
+         NsWGbdvMMVe/MJC0j/MM0MGJMgVkXsqDjtUp0Ba8TWFH+9QDLQQz8ZYzGQGstEd706
+         h6L/kuswvECxvAcwh0GpboWcjoqhGU55INKGGSDU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 007/399] drm/gma500: Fixup fbdev stolen size usage evaluation
-Date:   Fri, 21 Feb 2020 08:35:32 +0100
-Message-Id: <20200221072403.038691186@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Lyude Paul <lyude@redhat.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 008/399] drm/dp_mst: fix multiple frees of tx->bytes
+Date:   Fri, 21 Feb 2020 08:35:33 +0100
+Message-Id: <20200221072403.123394889@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -45,59 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit fd1a5e521c3c083bb43ea731aae0f8b95f12b9bd ]
+[ Upstream commit 2c8bc91488fc57438c43b3bb19deb7fdbc1e5119 ]
 
-psbfb_probe performs an evaluation of the required size from the stolen
-GTT memory, but gets it wrong in two distinct ways:
-- The resulting size must be page-size-aligned;
-- The size to allocate is derived from the surface dimensions, not the fb
-  dimensions.
+Currently tx->bytes is being freed r->num_transactions number of
+times because tx is not being set correctly. Fix this by setting
+tx to &r->transactions[i] so that the correct objects are being
+freed on each loop iteration.
 
-When two connectors are connected with different modes, the smallest will
-be stored in the fb dimensions, but the size that needs to be allocated must
-match the largest (surface) dimensions. This is what is used in the actual
-allocation code.
-
-Fix this by correcting the evaluation to conform to the two points above.
-It allows correctly switching to 16bpp when one connector is e.g. 1920x1080
-and the other is 1024x768.
-
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Signed-off-by: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20191107153048.843881-1-paul.kocialkowski@bootlin.com
+Addresses-Coverity: ("Double free")
+Fixes: 2f015ec6eab6 ("drm/dp_mst: Add sideband down request tracing + selftests")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20191120173509.347490-1-colin.king@canonical.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/gma500/framebuffer.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/drm_dp_mst_topology.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/gma500/framebuffer.c b/drivers/gpu/drm/gma500/framebuffer.c
-index 218f3bb15276e..90237abee0885 100644
---- a/drivers/gpu/drm/gma500/framebuffer.c
-+++ b/drivers/gpu/drm/gma500/framebuffer.c
-@@ -462,6 +462,7 @@ static int psbfb_probe(struct drm_fb_helper *helper,
- 		container_of(helper, struct psb_fbdev, psb_fb_helper);
- 	struct drm_device *dev = psb_fbdev->psb_fb_helper.dev;
- 	struct drm_psb_private *dev_priv = dev->dev_private;
-+	unsigned int fb_size;
- 	int bytespp;
+diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
+index 6cd90cb4b6b10..4a65ef8d8bff3 100644
+--- a/drivers/gpu/drm/drm_dp_mst_topology.c
++++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+@@ -517,8 +517,10 @@ drm_dp_decode_sideband_req(const struct drm_dp_sideband_msg_tx *raw,
+ 			}
  
- 	bytespp = sizes->surface_bpp / 8;
-@@ -471,8 +472,11 @@ static int psbfb_probe(struct drm_fb_helper *helper,
- 	/* If the mode will not fit in 32bit then switch to 16bit to get
- 	   a console on full resolution. The X mode setting server will
- 	   allocate its own 32bit GEM framebuffer */
--	if (ALIGN(sizes->fb_width * bytespp, 64) * sizes->fb_height >
--	                dev_priv->vram_stolen_size) {
-+	fb_size = ALIGN(sizes->surface_width * bytespp, 64) *
-+		  sizes->surface_height;
-+	fb_size = ALIGN(fb_size, PAGE_SIZE);
-+
-+	if (fb_size > dev_priv->vram_stolen_size) {
-                 sizes->surface_bpp = 16;
-                 sizes->surface_depth = 16;
-         }
+ 			if (failed) {
+-				for (i = 0; i < r->num_transactions; i++)
++				for (i = 0; i < r->num_transactions; i++) {
++					tx = &r->transactions[i];
+ 					kfree(tx->bytes);
++				}
+ 				return -ENOMEM;
+ 			}
+ 
 -- 
 2.20.1
 
