@@ -2,97 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57FB81670A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:46:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A53D41670BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:48:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728786AbgBUHqr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:46:47 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:54898 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726940AbgBUHqh (ORCPT
+        id S1728977AbgBUHrr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:47:47 -0500
+Received: from eddie.linux-mips.org ([148.251.95.138]:56486 "EHLO
+        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728567AbgBUHrq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:46:37 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 8BF432904EA
-Subject: Re: [PATCH v8 1/6] drm/mediatek: Use regmap for register access
-To:     Randy Dunlap <rdunlap@infradead.org>, robh+dt@kernel.org,
-        mark.rutland@arm.com, ck.hu@mediatek.com, p.zabel@pengutronix.de,
-        airlied@linux.ie, mturquette@baylibre.com, sboyd@kernel.org,
-        ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        dri-devel@lists.freedesktop.org, Weiyi Lu <weiyi.lu@mediatek.com>,
-        Seiya Wang <seiya.wang@mediatek.com>,
-        linux-clk@vger.kernel.org,
-        Collabora Kernel ML <kernel@collabora.com>,
-        mtk01761 <wendell.lin@mediatek.com>,
-        Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>, wens@csie.org,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        sean.wang@mediatek.com, frank-w@public-files.de,
-        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        linux-mediatek@lists.infradead.org, hsinyi@chromium.org,
-        Matthias Brugger <mbrugger@suse.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Richard Fontana <rfontana@redhat.com>,
-        linux-kernel@vger.kernel.org, matthias.bgg@kernel.org,
-        Daniel Vetter <daniel@ffwll.ch>
-References: <20200220172147.919996-1-enric.balletbo@collabora.com>
- <20200220172147.919996-2-enric.balletbo@collabora.com>
- <0b2046b9-90de-c894-7502-993b5df12e7a@infradead.org>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <5c19af7a-170b-2cd1-da98-e4125504eb34@collabora.com>
-Date:   Fri, 21 Feb 2020 08:46:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Fri, 21 Feb 2020 02:47:46 -0500
+Received: (from localhost user: 'ladis' uid#1021 fake: STDIN
+        (ladis@eddie.linux-mips.org)) by eddie.linux-mips.org
+        id S23993981AbgBUHrmjARU3 (ORCPT <rfc822;linux-omap@vger.kernel.org>
+        + 1 other); Fri, 21 Feb 2020 08:47:42 +0100
+Date:   Fri, 21 Feb 2020 08:47:40 +0100
+From:   Ladislav Michl <ladis@linux-mips.org>
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     "H. Nikolaus Schaller" <hns@goldelico.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com, linux-omap@vger.kernel.org
+Subject: Re: [PATCH v3] extcon: palmas: hide error messages if gpio returns
+ -EPROBE_DEFER
+Message-ID: <20200221074740.GA44103@lenoch>
+References: <CGME20200217133832epcas1p329af393e88fa76189ca141d2534f9ad2@epcas1p3.samsung.com>
+ <d5c2826a5f00fcaee62f00662ae2a44dc4a5395d.1581946695.git.hns@goldelico.com>
+ <b2655a58-6541-a2c9-c44d-536e5cef1ee3@samsung.com>
+ <20200218102140.GA193069@lenoch>
+ <cbee6f0b-f268-2e77-f7b7-f19114fdf178@samsung.com>
+ <20200218104810.GA194120@lenoch>
+ <34f3cd11-321b-9aab-31a7-a3fb03691980@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <0b2046b9-90de-c894-7502-993b5df12e7a@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <34f3cd11-321b-9aab-31a7-a3fb03691980@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Randy,
+On Tue, Feb 18, 2020 at 08:09:16PM +0900, Chanwoo Choi wrote:
+> On 2/18/20 7:48 PM, Ladislav Michl wrote:
+> > On Tue, Feb 18, 2020 at 07:35:47PM +0900, Chanwoo Choi wrote:
+> >> On 2/18/20 7:21 PM, Ladislav Michl wrote:
+> >>> On Tue, Feb 18, 2020 at 12:28:25PM +0900, Chanwoo Choi wrote:
+> >>>> On 2/17/20 10:38 PM, H. Nikolaus Schaller wrote:
+> >>>>> If the gpios are probed after this driver (e.g. if they
+> >>>>> come from an i2c expander) there is no need to print an
+> >>>>> error message.
+> >>>>>
+> >>>>> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+> >>>>> ---
+> >>>>>  drivers/extcon/extcon-palmas.c | 8 ++++++--
+> >>>>>  1 file changed, 6 insertions(+), 2 deletions(-)
+> >>>>>
+> >>>>> diff --git a/drivers/extcon/extcon-palmas.c b/drivers/extcon/extcon-palmas.c
+> >>>>> index edc5016f46f1..cea58d0cb457 100644
+> >>>>> --- a/drivers/extcon/extcon-palmas.c
+> >>>>> +++ b/drivers/extcon/extcon-palmas.c
+> >>>>> @@ -205,14 +205,18 @@ static int palmas_usb_probe(struct platform_device *pdev)
+> >>>>>  
+> >>>>>  	palmas_usb->id_gpiod = devm_gpiod_get_optional(&pdev->dev, "id",
+> >>>>>  							GPIOD_IN);
+> >>>>> -	if (IS_ERR(palmas_usb->id_gpiod)) {
+> >>>>> +	if (PTR_ERR(palmas_usb->id_gpiod) == -EPROBE_DEFER) {
+> >>>>> +		return -EPROBE_DEFER;
+> > 
+> > Here we returned...
+> 
+> hmm. you better to suggest the result of cocci script
+> to understand why it is matter.
 
-On 21/2/20 0:48, Randy Dunlap wrote:
-> On 2/20/20 9:21 AM, Enric Balletbo i Serra wrote:
->> From: Matthias Brugger <mbrugger@suse.com>
->>
->> The mmsys memory space is shared between the drm and the
->> clk driver. Use regmap to access it.
->>
->> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
->> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
->> Reviewed-by: CK Hu <ck.hu@mediatek.com>
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->> ---
->>
->> Changes in v8: None
->> Changes in v7:
->> - Add R-by from CK
->>
->>  drivers/gpu/drm/mediatek/mtk_drm_crtc.c |  4 +-
->>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c  | 50 +++++++++++--------------
->>  drivers/gpu/drm/mediatek/mtk_drm_ddp.h  |  4 +-
->>  drivers/gpu/drm/mediatek/mtk_drm_drv.c  | 13 ++-----
->>  drivers/gpu/drm/mediatek/mtk_drm_drv.h  |  2 +-
->>  5 files changed, 30 insertions(+), 43 deletions(-)
-> 
-> Hi. Just a quick question:
-> 
-> Do you need to select REGMAP or one of its derivatives to make sure
-> that the proper interfaces are available for this driver?
-> 
+You can browse similar fixes online :)
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/?qt=grep&q=else+after+return
 
-Right, I will fix this in next version.
-
-> thanks.
-> 
+Best regards,
+	ladis
