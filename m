@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 868B4167396
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:14:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07462167469
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:23:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733048AbgBUINq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:13:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49970 "EHLO mail.kernel.org"
+        id S2388228AbgBUIVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:21:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732447AbgBUINo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:13:44 -0500
+        id S2388208AbgBUIU7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:20:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35E8420578;
-        Fri, 21 Feb 2020 08:13:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C624E206ED;
+        Fri, 21 Feb 2020 08:20:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272823;
-        bh=BOAuucgOG9GcK1LGryZaUi2poccOqBLsVdu3ZCwoLF8=;
+        s=default; t=1582273259;
+        bh=GRvpBHdwaRmGyhqFV9SutAkddtjGkMHJbBSngALE17A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=km+1WM3tZUHBZ0aKS3V+TiQzw762ZXNrQV6wOedty0UySn4NTA+C5bi6SSDEznYan
-         DdkCPBJlD+8UUz3LoRhaaqyuoZtl2OUjgLqiFy6tHDpIZdl/6y2Uc89xwSSR+6a50e
-         KKh8Q92qtpyGDUIsJH8GIjm6b3wx0jvRKhzD+wRM=
+        b=kRpEf1FPcZLkTXzMhwqOA0Cs3clMncHDg4x/okiEyDIt1Uoa300LZNVpxy19ojq94
+         Zd8NwXlqz7iB9Lw4SOkLgsKfj/1I0X7/243xNX/EqCVM7+ind7m6y33Frkl6lO0Ndu
+         jgqTigRD+x8gkV6yLdZ/GyztA10jPitoxBY2rIvQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
+        Robin Gong <yibin.gong@nxp.com>, Vinod Koul <vkoul@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 261/344] cmd64x: potential buffer overflow in cmd64x_program_timings()
+Subject: [PATCH 4.19 087/191] dmaengine: imx-sdma: Fix memory leak
 Date:   Fri, 21 Feb 2020 08:41:00 +0100
-Message-Id: <20200221072413.314603922@linuxfoundation.org>
+Message-Id: <20200221072301.597359445@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +44,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Sascha Hauer <s.hauer@pengutronix.de>
 
-[ Upstream commit 117fcc3053606d8db5cef8821dca15022ae578bb ]
+[ Upstream commit 02939cd167095f16328a1bd5cab5a90b550606df ]
 
-The "drive->dn" value is a u8 and it is controlled by root only, but
-it could be out of bounds here so let's check.
+The current descriptor is not on any list of the virtual DMA channel.
+Once sdma_terminate_all() is called when a descriptor is currently
+in flight then this one is forgotten to be freed. We have to call
+vchan_terminate_vdesc() on this descriptor to re-add it to the lists.
+Now that we also free the currently running descriptor we can (and
+actually have to) remove the current descriptor from its list also
+for the cyclic case.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+Reviewed-by: Robin Gong <yibin.gong@nxp.com>
+Tested-by: Robin Gong <yibin.gong@nxp.com>
+Link: https://lore.kernel.org/r/20191216105328.15198-10-s.hauer@pengutronix.de
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ide/cmd64x.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/dma/imx-sdma.c | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/ide/cmd64x.c b/drivers/ide/cmd64x.c
-index a1898e11b04e6..943bf944bf722 100644
---- a/drivers/ide/cmd64x.c
-+++ b/drivers/ide/cmd64x.c
-@@ -66,6 +66,9 @@ static void cmd64x_program_timings(ide_drive_t *drive, u8 mode)
- 	struct ide_timing t;
- 	u8 arttim = 0;
- 
-+	if (drive->dn >= ARRAY_SIZE(drwtim_regs))
-+		return;
+diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
+index ceb82e74f5b4e..d66a7fdff898e 100644
+--- a/drivers/dma/imx-sdma.c
++++ b/drivers/dma/imx-sdma.c
+@@ -738,12 +738,8 @@ static void sdma_start_desc(struct sdma_channel *sdmac)
+ 		return;
+ 	}
+ 	sdmac->desc = desc = to_sdma_desc(&vd->tx);
+-	/*
+-	 * Do not delete the node in desc_issued list in cyclic mode, otherwise
+-	 * the desc allocated will never be freed in vchan_dma_desc_free_list
+-	 */
+-	if (!(sdmac->flags & IMX_DMA_SG_LOOP))
+-		list_del(&vd->node);
 +
- 	ide_timing_compute(drive, mode, &t, T, 0);
++	list_del(&vd->node);
  
- 	/*
+ 	sdma->channel_control[channel].base_bd_ptr = desc->bd_phys;
+ 	sdma->channel_control[channel].current_bd_ptr = desc->bd_phys;
+@@ -1044,7 +1040,6 @@ static void sdma_channel_terminate_work(struct work_struct *work)
+ 
+ 	spin_lock_irqsave(&sdmac->vc.lock, flags);
+ 	vchan_get_all_descriptors(&sdmac->vc, &head);
+-	sdmac->desc = NULL;
+ 	spin_unlock_irqrestore(&sdmac->vc.lock, flags);
+ 	vchan_dma_desc_free_list(&sdmac->vc, &head);
+ }
+@@ -1052,11 +1047,19 @@ static void sdma_channel_terminate_work(struct work_struct *work)
+ static int sdma_disable_channel_async(struct dma_chan *chan)
+ {
+ 	struct sdma_channel *sdmac = to_sdma_chan(chan);
++	unsigned long flags;
++
++	spin_lock_irqsave(&sdmac->vc.lock, flags);
+ 
+ 	sdma_disable_channel(chan);
+ 
+-	if (sdmac->desc)
++	if (sdmac->desc) {
++		vchan_terminate_vdesc(&sdmac->desc->vd);
++		sdmac->desc = NULL;
+ 		schedule_work(&sdmac->terminate_worker);
++	}
++
++	spin_unlock_irqrestore(&sdmac->vc.lock, flags);
+ 
+ 	return 0;
+ }
 -- 
 2.20.1
 
