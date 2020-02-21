@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3087C1670B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:48:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24D161670BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:48:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728445AbgBUHro (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:47:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43610 "EHLO mail.kernel.org"
+        id S1728985AbgBUHru (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:47:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728567AbgBUHrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:47:41 -0500
+        id S1728324AbgBUHrn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:47:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 413A3222C4;
-        Fri, 21 Feb 2020 07:47:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D327424653;
+        Fri, 21 Feb 2020 07:47:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271260;
-        bh=j10t5HO3W2ltOm3+De7grvLgQUA7DCKNukRC3XW6FKE=;
+        s=default; t=1582271263;
+        bh=LUMQ4dfbhY9whkPxnaGYGSz/mst3o4nhse0JeJl/eyc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OIoavv12lfHqrk/Kvtp1brFnhfrzDWtv6uUK+cEmkz8/PClvkPxY8cCU1a4l5E6fz
-         imIPGeyyOqR/wH0mHed7JNo8n2u3Lus2bMB+G47hMzWjAd2lxA2IdDw+9JR34OLKWG
-         P/+zssTfKciwQhnJYogU1UpuSju3u0gAX/teaIRY=
+        b=oABAnRl+HH9nzkMGPvZyNm0MW6P0YTpRgsZ8krghQxqrDVaYw8U/20BeAkiIu4qRk
+         o9oATgDbjVZwIEvkyG70GUOBObHfmjDWh/P5icCNWoGqSq5JR9yyr3/FkftMrKfXad
+         SKrXep1vIMrjRvxJVKpOE6cMLk89Bxt4tmX6L6dE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
+        stable@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 099/399] kconfig: fix broken dependency in randconfig-generated .config
-Date:   Fri, 21 Feb 2020 08:37:04 +0100
-Message-Id: <20200221072412.031746752@linuxfoundation.org>
+Subject: [PATCH 5.5 100/399] clk: qcom: Dont overwrite cfg in clk_rcg2_dfs_populate_freq()
+Date:   Fri, 21 Feb 2020 08:37:05 +0100
+Message-Id: <20200221072412.125206758@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -45,44 +44,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <masahiroy@kernel.org>
+From: Stephen Boyd <sboyd@kernel.org>
 
-[ Upstream commit c8fb7d7e48d11520ad24808cfce7afb7b9c9f798 ]
+[ Upstream commit 21e157c62eeded8b1558a991b4820b761d48a730 ]
 
-Running randconfig on arm64 using KCONFIG_SEED=0x40C5E904 (e.g. on v5.5)
-produces the .config with CONFIG_EFI=y and CONFIG_CPU_BIG_ENDIAN=y,
-which does not meet the !CONFIG_CPU_BIG_ENDIAN dependency.
+The DFS frequency table logic overwrites 'cfg' while detecting the
+parent clk and then later on in clk_rcg2_dfs_populate_freq() we use that
+same variable to figure out the mode of the clk, either MND or not. Add
+a new variable to hold the parent clk bit so that 'cfg' is left
+untouched for use later.
 
-This is because the user choice for CONFIG_CPU_LITTLE_ENDIAN vs
-CONFIG_CPU_BIG_ENDIAN is set by randomize_choice_values() after the
-value of CONFIG_EFI is calculated.
+This fixes problems in detecting the supported frequencies for any clks
+in DFS mode.
 
-When this happens, the has_changed flag should be set.
-
-Currently, it takes the result from the last iteration. It should
-accumulate all the results of the loop.
-
-Fixes: 3b9a19e08960 ("kconfig: loop as long as we changed some symbols in randconfig")
-Reported-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Fixes: cc4f6944d0e3 ("clk: qcom: Add support for RCG to register for DFS")
+Reported-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Link: https://lkml.kernel.org/r/20200128193329.45635-1-sboyd@kernel.org
+Tested-by: Rajendra Nayak <rnayak@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/kconfig/confdata.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/qcom/clk-rcg2.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
-index 3569d2dec37ce..17298239e3633 100644
---- a/scripts/kconfig/confdata.c
-+++ b/scripts/kconfig/confdata.c
-@@ -1353,7 +1353,7 @@ bool conf_set_all_new_symbols(enum conf_def_mode mode)
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 8f4b9bec29565..5e0f7d8f168dd 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -952,7 +952,7 @@ static void clk_rcg2_dfs_populate_freq(struct clk_hw *hw, unsigned int l,
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+ 	struct clk_hw *p;
+ 	unsigned long prate = 0;
+-	u32 val, mask, cfg, mode;
++	u32 val, mask, cfg, mode, src;
+ 	int i, num_parents;
  
- 		sym_calc_value(csym);
- 		if (mode == def_random)
--			has_changed = randomize_choice_values(csym);
-+			has_changed |= randomize_choice_values(csym);
- 		else {
- 			set_all_choice_values(csym);
- 			has_changed = true;
+ 	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + SE_PERF_DFSR(l), &cfg);
+@@ -962,12 +962,12 @@ static void clk_rcg2_dfs_populate_freq(struct clk_hw *hw, unsigned int l,
+ 	if (cfg & mask)
+ 		f->pre_div = cfg & mask;
+ 
+-	cfg &= CFG_SRC_SEL_MASK;
+-	cfg >>= CFG_SRC_SEL_SHIFT;
++	src = cfg & CFG_SRC_SEL_MASK;
++	src >>= CFG_SRC_SEL_SHIFT;
+ 
+ 	num_parents = clk_hw_get_num_parents(hw);
+ 	for (i = 0; i < num_parents; i++) {
+-		if (cfg == rcg->parent_map[i].cfg) {
++		if (src == rcg->parent_map[i].cfg) {
+ 			f->src = rcg->parent_map[i].src;
+ 			p = clk_hw_get_parent_by_index(&rcg->clkr.hw, i);
+ 			prate = clk_hw_get_rate(p);
 -- 
 2.20.1
 
