@@ -2,202 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA2CE168590
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 18:50:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1145A16859E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 18:52:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728071AbgBURu3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 12:50:29 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41865 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbgBURu3 (ORCPT
+        id S1728385AbgBURwo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 12:52:44 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:54136 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725947AbgBURwo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 12:50:29 -0500
-Received: by mail-pl1-f195.google.com with SMTP id t14so1153979plr.8
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 09:50:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BTYBxRjxL6j9jRa5am8wcAfH9hghQz4giKAxNHy2xK4=;
-        b=FzTSLxgkZT4cxDaHBStgUqU87ldVzo/bNsdhWZMxTdso97FTZfmxRDZzASr4GMAC5U
-         10aX+WUWPsbGFzeWKUukY2TcbDA+wPz8O0wuCuZrO1yBwIyh50cOW1NIMhtyJHJihGZj
-         TQdELxqazapE2l4nLK4UcgPEs4v86pzAUojGf5KPPZd15eMs9WGRXo6gV3htuLvA++yR
-         R5k+oU7oZmryU7dDL1blPrfAQpj/cGy5ozvZq87NOXC6LRYv/4aI6bT+hjNtPXybnVgt
-         xuA3Hl7h+/kr2VPQ2OXdBB4pcrrft++V0M0dvnsVo5J5SEA7Fu/ZraWTUPcN+BzwtUSu
-         GPWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BTYBxRjxL6j9jRa5am8wcAfH9hghQz4giKAxNHy2xK4=;
-        b=L/3Kv4dCZRuH+IMJeSYlvEaD7FJ4NDWbRfpgTowDTOVDGMHBxzulZRZVkfHtKdkfaF
-         XpKGWsITYHrKPD8daDjo2FitPfkB949Bszw/7+qIaV0xcgOHCsYbjElu+9RPN9LHg6yi
-         2DD4IGHlbtYg65vVk+djfXUBhPWORA7O4YUxX+Rk8UmaDb72sQ4mWLGYbvjF6efeiezf
-         faDxdYV+3MJF2JM1PTx1eTF3H5Eje1PIpw2VIP5XUAzBrz1GbcgJYeL8mtbdjC13As5N
-         IMXul57pqcjrFKp786oStEI16BCvmFtl+TcNeziIPJvzHaUVtn7SeA0ZtF0JKsbczEwp
-         LGOw==
-X-Gm-Message-State: APjAAAVc5j50QyOzzLzZSTmsxdma1hDAGLRhOApIK35iqxKSHwIExvnI
-        KA9eQa/4fFKOYaBEPheEOb0=
-X-Google-Smtp-Source: APXvYqxFGA8qOE0zV8w0G6DGlTadJbX7gGbhCdt+y+ZbsNrPZ8eNdi/7bpZfOZvHh0hccPyg8He0cg==
-X-Received: by 2002:a17:90a:e509:: with SMTP id t9mr4217996pjy.110.1582307427862;
-        Fri, 21 Feb 2020 09:50:27 -0800 (PST)
-Received: from google.com ([2620:15c:211:1:3e01:2939:5992:52da])
-        by smtp.gmail.com with ESMTPSA id c26sm3591866pfj.8.2020.02.21.09.50.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2020 09:50:26 -0800 (PST)
-Date:   Fri, 21 Feb 2020 09:50:24 -0800
-From:   Minchan Kim <minchan@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH v2 2/2] mm: fix long time stall from mm_populate
-Message-ID: <20200221175024.GC226145@google.com>
-References: <20200214192951.29430-1-minchan@kernel.org>
- <20200214192951.29430-2-minchan@kernel.org>
+        Fri, 21 Feb 2020 12:52:44 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01LHlRcF003163;
+        Fri, 21 Feb 2020 17:52:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=RZgv87m8kiMmEbPjo4rGSbu6PXXl2pD15JjxGmUadck=;
+ b=Rcjn0tP9Ib+ozuSxftRVNQXLa1PxDcIbFB/mUcLjEk7u+e0RoW1Aq8+/v5lX0/SRDXBn
+ sL2YzO4P+gzp1L8j4RVxgwZfBW89OImA37xfz1XW37IjPotMh284bOMDFUy4bhFEOBm+
+ QWxI0RgH00WntHg/+RpOGSMfwdEE1VRsKEJymhn/LxrANOkQBfhcNiS0Ql6sCUw0trG2
+ URSTzXVeAROxfdTg3Ed0pbIRdNWjW0fdztVKFCIwV/kexP9whyTG3brYSIPSLvBYMt4F
+ MkYXOG19ObY+yoxYfyOQY7b6wzAOSsYs2Ls764zw1e4RZmWPBWZh2CjCUrA1fOelNV52 aQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2y8udkt1fm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Feb 2020 17:52:18 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01LHpw0Z054916;
+        Fri, 21 Feb 2020 17:52:17 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2y8ud768y7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Feb 2020 17:52:17 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01LHqFSr019810;
+        Fri, 21 Feb 2020 17:52:15 GMT
+Received: from [192.168.0.195] (/69.207.174.138)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 21 Feb 2020 09:52:14 -0800
+Subject: Re: [PATCH v3 0/3] Introduce per-task latency_nice for scheduler
+ hints
+To:     Parth Shah <parth@linux.ibm.com>, vincent.guittot@linaro.org,
+        patrick.bellasi@matbug.net, valentin.schneider@arm.com,
+        dhaval.giani@oracle.com, dietmar.eggemann@arm.com
+Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
+        mingo@redhat.com, qais.yousef@arm.com, pavel@ucw.cz,
+        qperret@qperret.net, David.Laight@ACULAB.COM, pjt@google.com,
+        tj@kernel.org
+References: <20200116120230.16759-1-parth@linux.ibm.com>
+ <8ed0f40c-eeb4-c487-5420-a8eb185b5cdd@linux.ibm.com>
+ <c7e5b9da-66a3-3d69-d7aa-0319de3aa736@oracle.com>
+ <971909ed-d4e0-6afa-d20b-365ede5a195e@linux.ibm.com>
+From:   chris hyser <chris.hyser@oracle.com>
+Message-ID: <28b912d0-cfce-8abe-ad14-d64c3e36e723@oracle.com>
+Date:   Fri, 21 Feb 2020 12:52:09 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200214192951.29430-2-minchan@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <971909ed-d4e0-6afa-d20b-365ede5a195e@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9538 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0
+ mlxlogscore=999 suspectscore=0 adultscore=0 spamscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002210136
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9538 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 suspectscore=0
+ spamscore=0 priorityscore=1501 adultscore=0 mlxscore=0 clxscore=1015
+ malwarescore=0 mlxlogscore=999 phishscore=0 impostorscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002210135
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bumping up.
+On 2/19/20 5:09 AM, Parth Shah wrote:
+> Hi Chris,
 
-On Fri, Feb 14, 2020 at 11:29:51AM -0800, Minchan Kim wrote:
-> Basically, fault handler releases mmap_sem before requesting readahead
-> and then it is supposed to retry lookup the page from page cache with
-> FAULT_FLAG_TRIED so that it avoids the live lock of infinite retry.
+>> Parth, I've been using your v3 patchset as the basis of an investigation
+>> into the measurable effects of short-circuiting this search. I'm not quite
+>> ready to put anything out, but the patchset is working well. The only
 > 
-> However, what happens if the fault handler find a page from page
-> cache and the page has readahead marker but are waiting under
-> writeback? Plus one more condition, it happens under mm_populate
-> which repeats faulting unless it encounters error. So let's assemble
-> conditions below.
-> 
->        CPU 1                                                        CPU 2
-> 
-> - first loop
->     mm_populate
->      for ()
->        ..
->        ret = populate_vma_page_range
->          __get_user_pages
->            faultin_page
->              handle_mm_fault
->                filemap_fault
->                  do_async_mmap_readahead
->                    if (PageReadahead(pageA))
->                      maybe_unlock_mmap_for_io
->                        up_read(mmap_sem)
-> 					                    shrink_page_list
->                                                               pageout
->                                                                 SetPageReclaim(=SetPageReadahead)(pageA)
->                                                                 writepage
->                                                                   SetPageWriteback(pageA)
-> 
->                      page_cache_async_readahead()
-> 		       ClearPageReadahead(pageA)
->                  do_async_mmap_readahead
-> 		 lock_page_maybe_drop_mmap
-> 		   goto out_retry
-> 
-> 					                    the pageA is reclaimed
-> 							    and new pageB is populated to the file offset
-> 							    and finally has become PG_readahead
-> 
-> - second loop
-> 
-> 	  __get_user_pages
->            faultin_page
->              handle_mm_fault
->                filemap_fault
->                  do_async_mmap_readahead
->                    if (PageReadahead(pageB))
->                      maybe_unlock_mmap_for_io
->                        up_read(mmap_sem)
-> 					                    shrink_page_list
->                                                               pageout
->                                                                 SetPageReclaim(=SetPageReadahead)(pageB)
->                                                                 writepage
->                                                                   SetPageWriteback(pageB)
-> 
->                      page_cache_async_readahead()
-> 		       ClearPageReadahead(pageB)
->                  do_async_mmap_readahead
-> 		 lock_page_maybe_drop_mmap
-> 		   goto out_retry
-> 
-> It could be repeated forever so it's livelock. without involving reclaim,
-> it could happens if ra_pages become zero by fadvise/other threads who
-> have same fd one doing randome while the other one is sequential
-> because page_cache_async_readahead has following condition check like
-> PageWriteback and ra_pages are never synchrnized with fadvise and
-> shrink_readahead_size_eio from other threads.
-> 
-> void page_cache_async_readahead(struct address_space *mapping,
->                            unsigned long req_size)
-> {
->         /* no read-ahead */
->         if (!ra->ra_pages)
->                 return;
-> 
-> Thus, we need to limit fault retry from mm_populate like page
-> fault handler.
-> 
-> Fixes: 6b4c9f446981 ("filemap: drop the mmap_sem for all blocking operations")
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Minchan Kim <minchan@kernel.org>
-> ---
->  mm/gup.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 1b521e0ac1de..6f6548c63ad5 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -1133,7 +1133,7 @@ static __always_inline long __get_user_pages_locked(struct task_struct *tsk,
->   *
->   * This takes care of mlocking the pages too if VM_LOCKED is set.
->   *
-> - * return 0 on success, negative error code on error.
-> + * return number of pages pinned on success, negative error code on error.
->   *
->   * vma->vm_mm->mmap_sem must be held.
->   *
-> @@ -1196,6 +1196,7 @@ int __mm_populate(unsigned long start, unsigned long len, int ignore_errors)
->  	struct vm_area_struct *vma = NULL;
->  	int locked = 0;
->  	long ret = 0;
-> +	bool tried = false;
->  
->  	end = start + len;
->  
-> @@ -1226,14 +1227,18 @@ int __mm_populate(unsigned long start, unsigned long len, int ignore_errors)
->  		 * double checks the vma flags, so that it won't mlock pages
->  		 * if the vma was already munlocked.
->  		 */
-> -		ret = populate_vma_page_range(vma, nstart, nend, &locked);
-> +		ret = populate_vma_page_range(vma, nstart, nend,
-> +						tried ? NULL : &locked);
->  		if (ret < 0) {
->  			if (ignore_errors) {
->  				ret = 0;
->  				continue;	/* continue at next VMA */
->  			}
->  			break;
-> -		}
-> +		} else if (ret == 0)
-> +			tried = true;
-> +		else
-> +			tried = false;
->  		nend = nstart + ret * PAGE_SIZE;
->  		ret = 0;
->  	}
-> -- 
-> 2.25.0.265.gbab2e86ba0-goog
-> 
+> That's a good news as you are able to get a usecase of this patch-set.
+
+Parth, I wanted to make sure to thank you for all this effort. It has made it really easy to start experimenting with 
+these ideas and concepts and that's been an enormous help. Thanks again.
+
+-chrish
