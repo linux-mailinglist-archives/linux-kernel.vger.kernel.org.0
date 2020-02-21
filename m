@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CA871670A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:46:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F9BC1670CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:50:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728804AbgBUHqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:46:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42458 "EHLO mail.kernel.org"
+        id S1729068AbgBUHsV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:48:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728792AbgBUHqs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:46:48 -0500
+        id S1728465AbgBUHsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:48:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A724207FD;
-        Fri, 21 Feb 2020 07:46:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11CC72465D;
+        Fri, 21 Feb 2020 07:48:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271207;
-        bh=5pz5VyVlGIkxJd83Kh8BCjSgf0Ktw6Y4y60XftuSGmE=;
+        s=default; t=1582271296;
+        bh=xhY7BV3Ql3HJ94mAkEn0dm358OpGYEaUApGgi1BxkN4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ws1GSnl8DssBSy5bi8+XSA1wkjZo/ck9wA5dsXtN1QT6/17a2K5L4EU/B/AhbVHut
-         orvbGMCBlFFoT7rUdCjPw5QWdQhQj7JXkb6oii4mzpFOxC9q6M967zXHOLYWeNPj9Z
-         vDGIceZ0iRDfIrZR6OM74MV1B9JwjPjRRFAQIVeI=
+        b=uqyK5D1/u8JiAMprpx3vPM454aYsNdDS0UGjVxnn53thAD3qWEvOtU4YhWn41aYki
+         FPYxrLjur5CjvTaXRxcAGVIm++VqQyU8gzc1SF1OkD256sNwA3FgnvZ2B4gkbCbQsH
+         Q13XmW6kzC6ciRtn6O11/89w/xPjbF7/vOv9S0S0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Theodore Tso <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 072/399] ext4: fix deadlock allocating bio_post_read_ctx from mempool
-Date:   Fri, 21 Feb 2020 08:36:37 +0100
-Message-Id: <20200221072409.361481698@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 075/399] pwm: omap-dmtimer: Simplify error handling
+Date:   Fri, 21 Feb 2020 08:36:40 +0100
+Message-Id: <20200221072409.638032066@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -43,79 +46,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-[ Upstream commit 68e45330e341dad2d3a0a3f8ef2ec46a2a0a3bbc ]
+[ Upstream commit c4cf7aa57eb83b108d2d9c6c37c143388fee2a4d ]
 
-Without any form of coordination, any case where multiple allocations
-from the same mempool are needed at a time to make forward progress can
-deadlock under memory pressure.
+Instead of doing error handling in the middle of ->probe(), move error
+handling and freeing the reference to timer to the end.
 
-This is the case for struct bio_post_read_ctx, as one can be allocated
-to decrypt a Merkle tree page during fsverity_verify_bio(), which itself
-is running from a post-read callback for a data bio which has its own
-struct bio_post_read_ctx.
+This fixes a resource leak as dm_timer wasn't freed when allocating
+*omap failed.
 
-Fix this by freeing the first bio_post_read_ctx before calling
-fsverity_verify_bio().  This works because verity (if enabled) is always
-the last post-read step.
+Implementation note: The put: label was never reached without a goto and
+ret being unequal to 0, so the removed return statement is fine.
 
-This deadlock can be reproduced by trying to read from an encrypted
-verity file after reducing NUM_PREALLOC_POST_READ_CTXS to 1 and patching
-mempool_alloc() to pretend that pool->alloc() always fails.
-
-Note that since NUM_PREALLOC_POST_READ_CTXS is actually 128, to actually
-hit this bug in practice would require reading from lots of encrypted
-verity files at the same time.  But it's theoretically possible, as N
-available objects isn't enough to guarantee forward progress when > N/2
-threads each need 2 objects at a time.
-
-Fixes: 22cfe4b48ccb ("ext4: add fs-verity read support")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Link: https://lore.kernel.org/r/20191231181222.47684-1-ebiggers@kernel.org
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Fixes: 6604c6556db9 ("pwm: Add PWM driver for OMAP using dual-mode timers")
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ext4/readpage.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ drivers/pwm/pwm-omap-dmtimer.c | 28 +++++++++++++++++++---------
+ 1 file changed, 19 insertions(+), 9 deletions(-)
 
-diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-index fef7755300c35..410c904cf59b9 100644
---- a/fs/ext4/readpage.c
-+++ b/fs/ext4/readpage.c
-@@ -57,6 +57,7 @@ enum bio_post_read_step {
- 	STEP_INITIAL = 0,
- 	STEP_DECRYPT,
- 	STEP_VERITY,
-+	STEP_MAX,
- };
+diff --git a/drivers/pwm/pwm-omap-dmtimer.c b/drivers/pwm/pwm-omap-dmtimer.c
+index 00772fc534906..6cfeb0e1cc679 100644
+--- a/drivers/pwm/pwm-omap-dmtimer.c
++++ b/drivers/pwm/pwm-omap-dmtimer.c
+@@ -298,15 +298,10 @@ static int pwm_omap_dmtimer_probe(struct platform_device *pdev)
+ 		goto put;
+ 	}
  
- struct bio_post_read_ctx {
-@@ -106,10 +107,22 @@ static void verity_work(struct work_struct *work)
- {
- 	struct bio_post_read_ctx *ctx =
- 		container_of(work, struct bio_post_read_ctx, work);
-+	struct bio *bio = ctx->bio;
+-put:
+-	of_node_put(timer);
+-	if (ret < 0)
+-		return ret;
+-
+ 	omap = devm_kzalloc(&pdev->dev, sizeof(*omap), GFP_KERNEL);
+ 	if (!omap) {
+-		pdata->free(dm_timer);
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto err_alloc_omap;
+ 	}
  
--	fsverity_verify_bio(ctx->bio);
-+	/*
-+	 * fsverity_verify_bio() may call readpages() again, and although verity
-+	 * will be disabled for that, decryption may still be needed, causing
-+	 * another bio_post_read_ctx to be allocated.  So to guarantee that
-+	 * mempool_alloc() never deadlocks we must free the current ctx first.
-+	 * This is safe because verity is the last post-read step.
-+	 */
-+	BUILD_BUG_ON(STEP_VERITY + 1 != STEP_MAX);
-+	mempool_free(ctx, bio_post_read_ctx_pool);
-+	bio->bi_private = NULL;
+ 	omap->pdata = pdata;
+@@ -339,13 +334,28 @@ put:
+ 	ret = pwmchip_add(&omap->chip);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "failed to register PWM\n");
+-		omap->pdata->free(omap->dm_timer);
+-		return ret;
++		goto err_pwmchip_add;
+ 	}
  
--	bio_post_read_processing(ctx);
-+	fsverity_verify_bio(bio);
++	of_node_put(timer);
 +
-+	__read_end_io(bio);
+ 	platform_set_drvdata(pdev, omap);
+ 
+ 	return 0;
++
++err_pwmchip_add:
++
++	/*
++	 * *omap is allocated using devm_kzalloc,
++	 * so no free necessary here
++	 */
++err_alloc_omap:
++
++	pdata->free(dm_timer);
++put:
++	of_node_put(timer);
++
++	return ret;
  }
  
- static void bio_post_read_processing(struct bio_post_read_ctx *ctx)
+ static int pwm_omap_dmtimer_remove(struct platform_device *pdev)
 -- 
 2.20.1
 
