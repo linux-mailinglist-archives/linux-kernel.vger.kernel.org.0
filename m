@@ -2,61 +2,236 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02566167F63
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 14:57:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49B5D167F5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 14:56:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728683AbgBUN5Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 08:57:24 -0500
-Received: from smtprelay0077.hostedemail.com ([216.40.44.77]:60343 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728672AbgBUN5X (ORCPT
+        id S1728469AbgBUN4L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 08:56:11 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:24050 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728086AbgBUN4L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 08:57:23 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id CDB7018224D78;
-        Fri, 21 Feb 2020 13:57:21 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1567:1593:1594:1711:1714:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3622:3871:3872:3873:3874:3876:4250:4321:5007:6119:8531:8603:10004:10400:10848:11232:11658:11914:12296:12297:12679:12740:12895:13069:13146:13230:13311:13357:13439:13894:14181:14659:14721:21080:21220:21611:21627:21990,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: noise65_4028b1475993c
-X-Filterd-Recvd-Size: 1339
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf04.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 21 Feb 2020 13:57:20 +0000 (UTC)
-Message-ID: <0f2c5adb37454dacbd57d65ba8743bb6092876ff.camel@perches.com>
-Subject: Re: [trivial PATCH] cifs: Use #define in cifs_dbg
-From:   Joe Perches <joe@perches.com>
-To:     =?ISO-8859-1?Q?Aur=E9lien?= Aptel <aaptel@suse.com>,
-        Steve French <sfrench@samba.org>
-Cc:     linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Fri, 21 Feb 2020 05:55:56 -0800
-In-Reply-To: <87eeuo5a2y.fsf@suse.com>
-References: <862518f826b35cd010a2e46f64f6f4cfa0d44582.camel@perches.com>
-         <87eeuo5a2y.fsf@suse.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Fri, 21 Feb 2020 08:56:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582293369;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0wJ2DcRu2iM9J+IFuY4fwVGeerGyayvqPTgEiY7hGPg=;
+        b=EWp3kbhcaW7L1To7+Sjs1mmcjY6WYKb5fHhz2B/DuGVzaMCBc8Sr7PVDxTGvzqg+zGLnWz
+        svd+Wr8kB5InVwyUqTMHvQfmmrq1vqTyFU6CL/TNENEA16HVhdEuLYi6kDubxUOUoiwBif
+        IH2X0A450SQQEkioEjk6v7OV8+lYZTs=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-241-DqvMvV5AOk6IGeTfsAjkgQ-1; Fri, 21 Feb 2020 08:56:07 -0500
+X-MC-Unique: DqvMvV5AOk6IGeTfsAjkgQ-1
+Received: by mail-wr1-f69.google.com with SMTP id u8so1048872wrp.10
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 05:56:07 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=0wJ2DcRu2iM9J+IFuY4fwVGeerGyayvqPTgEiY7hGPg=;
+        b=Bjmdp7vLVOagGpr2lxLNBYyr2oiPQ/fKZJoCGncK4QhVPAhgfFgG+WJmtD8sxLvPda
+         axWIAe0t+7Q2BG8NZ8u/JTBisdnm7I4Z4q8Hp6hPumsoaDYYWuPmcydHXGrJ6prhEyad
+         sqgVqF8HXLIOi6RrYSd1HFWezdSCNz+rCWJ+1dAxpA1wpAnkEV7mXt2T15+7TwGipQLW
+         b6qSHmR/RNYAr9+ruaVAWwmUV5u7HoWqIomt2lhWnaWGShPzy3LZtWojdVrzHfYkzlwg
+         sI1Wd0WRB2R3+nEczYByyWcK6G5xxSPhwHB6k5/DbeIzz1mAXvOr6RjW7PFaWeE7gXZ0
+         rTCA==
+X-Gm-Message-State: APjAAAV/mEn+oqA50D9WzYseYJ/WHBzFmlrQAfuPUl35pyUolTgFpzx3
+        bePqOL73MRUnxvZKEa8F/94xp9vbTuvQSEbmd0/+jj7A0a8zslbY6XkV6JvkQVKeyqqaRKv7W3B
+        X8nvDu1RL0s2H9UF9JurZBMAs
+X-Received: by 2002:a5d:4dc5:: with SMTP id f5mr50305963wru.114.1582293365879;
+        Fri, 21 Feb 2020 05:56:05 -0800 (PST)
+X-Google-Smtp-Source: APXvYqx6vLP++U6NB2kRzMQ6ua4noqwRRJdokUKIN/5ekAbUa4srP/tvoSymVT19IWwmFOr+YIcIMA==
+X-Received: by 2002:a5d:4dc5:: with SMTP id f5mr50305934wru.114.1582293365592;
+        Fri, 21 Feb 2020 05:56:05 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id x7sm3972669wrq.41.2020.02.21.05.56.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2020 05:56:05 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/10] KVM: x86: Drop @invalidate_gpa param from kvm_x86_ops' tlb_flush()
+In-Reply-To: <20200220204356.8837-9-sean.j.christopherson@intel.com>
+References: <20200220204356.8837-1-sean.j.christopherson@intel.com> <20200220204356.8837-9-sean.j.christopherson@intel.com>
+Date:   Fri, 21 Feb 2020 14:56:04 +0100
+Message-ID: <87o8tsrqmj.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2020-02-21 at 14:44 +0100, Aurélien Aptel wrote:
-> Joe Perches <joe@perches.com> writes:
-> > +			cifs_dbg(VFS, "bogus file nlink value %u\n",
-> > +				 fattr->cf_nlink);
-> 
-> Good catch :)
-> I realize that 1 is VFS but this should probably be FYI.
+Sean Christopherson <sean.j.christopherson@intel.com> writes:
 
-change it as you please.
+> Drop @invalidate_gpa from ->tlb_flush() and kvm_vcpu_flush_tlb() now
+> that all callers pass %true for said param.
+>
+> Note, vmx_flush_tlb() now unconditionally passes %true to
+> __vmx_flush_tlb(), the less straightforward VMX change will be handled
+> in a future patch.
+>
+> No functional change intended.
+>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>  arch/x86/include/asm/kvm_host.h |  2 +-
+>  arch/x86/kvm/mmu/mmu.c          |  2 +-
+>  arch/x86/kvm/svm.c              | 10 +++++-----
+>  arch/x86/kvm/vmx/vmx.c          |  4 ++--
+>  arch/x86/kvm/vmx/vmx.h          |  4 ++--
+>  arch/x86/kvm/x86.c              |  6 +++---
+>  6 files changed, 14 insertions(+), 14 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 86aed64b9a88..2d5ef0081d50 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1095,7 +1095,7 @@ struct kvm_x86_ops {
+>  	unsigned long (*get_rflags)(struct kvm_vcpu *vcpu);
+>  	void (*set_rflags)(struct kvm_vcpu *vcpu, unsigned long rflags);
+>  
+> -	void (*tlb_flush)(struct kvm_vcpu *vcpu, bool invalidate_gpa);
+> +	void (*tlb_flush)(struct kvm_vcpu *vcpu);
+>  	int  (*tlb_remote_flush)(struct kvm *kvm);
+>  	int  (*tlb_remote_flush_with_range)(struct kvm *kvm,
+>  			struct kvm_tlb_range *range);
+> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> index 7011a4e54866..7fefe58dd7ab 100644
+> --- a/arch/x86/kvm/mmu/mmu.c
+> +++ b/arch/x86/kvm/mmu/mmu.c
+> @@ -5186,7 +5186,7 @@ int kvm_mmu_load(struct kvm_vcpu *vcpu)
+>  	if (r)
+>  		goto out;
+>  	kvm_mmu_load_cr3(vcpu);
+> -	kvm_x86_ops->tlb_flush(vcpu, true);
+> +	kvm_x86_ops->tlb_flush(vcpu);
+>  out:
+>  	return r;
+>  }
+> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+> index e549811f51c6..16d58ffc7aff 100644
+> --- a/arch/x86/kvm/svm.c
+> +++ b/arch/x86/kvm/svm.c
+> @@ -385,7 +385,7 @@ module_param(dump_invalid_vmcb, bool, 0644);
+>  static u8 rsm_ins_bytes[] = "\x0f\xaa";
+>  
+>  static void svm_set_cr0(struct kvm_vcpu *vcpu, unsigned long cr0);
+> -static void svm_flush_tlb(struct kvm_vcpu *vcpu, bool invalidate_gpa);
+> +static void svm_flush_tlb(struct kvm_vcpu *vcpu);
+>  static void svm_complete_interrupts(struct vcpu_svm *svm);
+>  static void svm_toggle_avic_for_irq_window(struct kvm_vcpu *vcpu, bool activate);
+>  static inline void avic_post_state_restore(struct kvm_vcpu *vcpu);
+> @@ -2634,7 +2634,7 @@ static int svm_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
+>  		return 1;
+>  
+>  	if (npt_enabled && ((old_cr4 ^ cr4) & X86_CR4_PGE))
+> -		svm_flush_tlb(vcpu, true);
+> +		svm_flush_tlb(vcpu);
+>  
+>  	vcpu->arch.cr4 = cr4;
+>  	if (!npt_enabled)
+> @@ -3588,7 +3588,7 @@ static void enter_svm_guest_mode(struct vcpu_svm *svm, u64 vmcb_gpa,
+>  	svm->nested.intercept_exceptions = nested_vmcb->control.intercept_exceptions;
+>  	svm->nested.intercept            = nested_vmcb->control.intercept;
+>  
+> -	svm_flush_tlb(&svm->vcpu, true);
+> +	svm_flush_tlb(&svm->vcpu);
+>  	svm->vmcb->control.int_ctl = nested_vmcb->control.int_ctl | V_INTR_MASKING_MASK;
+>  	if (nested_vmcb->control.int_ctl & V_INTR_MASKING_MASK)
+>  		svm->vcpu.arch.hflags |= HF_VINTR_MASK;
+> @@ -5591,7 +5591,7 @@ static int svm_set_identity_map_addr(struct kvm *kvm, u64 ident_addr)
+>  	return 0;
+>  }
+>  
+> -static void svm_flush_tlb(struct kvm_vcpu *vcpu, bool invalidate_gpa)
+> +static void svm_flush_tlb(struct kvm_vcpu *vcpu)
+>  {
+>  	struct vcpu_svm *svm = to_svm(vcpu);
+>  
+> @@ -5610,7 +5610,7 @@ static void svm_flush_tlb_gva(struct kvm_vcpu *vcpu, gva_t gva)
+>  
+>  static void svm_flush_tlb_guest(struct kvm_vcpu *vcpu)
+>  {
+> -	svm_flush_tlb(vcpu, true);
+> +	svm_flush_tlb(vcpu);
+>  }
+>  
+>  static void svm_prepare_guest_switch(struct kvm_vcpu *vcpu)
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 906e9d9aa09e..8bb380d22dc2 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -6043,7 +6043,7 @@ void vmx_set_virtual_apic_mode(struct kvm_vcpu *vcpu)
+>  		if (flexpriority_enabled) {
+>  			sec_exec_control |=
+>  				SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES;
+> -			vmx_flush_tlb(vcpu, true);
+> +			vmx_flush_tlb(vcpu);
+>  		}
+>  		break;
+>  	case LAPIC_MODE_X2APIC:
+> @@ -6061,7 +6061,7 @@ static void vmx_set_apic_access_page_addr(struct kvm_vcpu *vcpu, hpa_t hpa)
+>  {
+>  	if (!is_guest_mode(vcpu)) {
+>  		vmcs_write64(APIC_ACCESS_ADDR, hpa);
+> -		vmx_flush_tlb(vcpu, true);
+> +		vmx_flush_tlb(vcpu);
+>  	}
+>  }
+>  
+> diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+> index 7f42cf3dcd70..6e588d238318 100644
+> --- a/arch/x86/kvm/vmx/vmx.h
+> +++ b/arch/x86/kvm/vmx/vmx.h
+> @@ -514,9 +514,9 @@ static inline void __vmx_flush_tlb(struct kvm_vcpu *vcpu, int vpid,
+>  	}
+>  }
+>  
+> -static inline void vmx_flush_tlb(struct kvm_vcpu *vcpu, bool invalidate_gpa)
+> +static inline void vmx_flush_tlb(struct kvm_vcpu *vcpu)
+>  {
+> -	__vmx_flush_tlb(vcpu, to_vmx(vcpu)->vpid, invalidate_gpa);
+> +	__vmx_flush_tlb(vcpu, to_vmx(vcpu)->vpid, true);
+>  }
+>  
+>  static inline void decache_tsc_multiplier(struct vcpu_vmx *vmx)
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 72f7ca4baa6d..e26ffebe6f6e 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -2646,10 +2646,10 @@ static void kvmclock_reset(struct kvm_vcpu *vcpu)
+>  	vcpu->arch.time = 0;
+>  }
+>  
+> -static void kvm_vcpu_flush_tlb(struct kvm_vcpu *vcpu, bool invalidate_gpa)
+> +static void kvm_vcpu_flush_tlb(struct kvm_vcpu *vcpu)
+>  {
+>  	++vcpu->stat.tlb_flush;
+> -	kvm_x86_ops->tlb_flush(vcpu, invalidate_gpa);
+> +	kvm_x86_ops->tlb_flush(vcpu);
+>  }
+>  
+>  static void record_steal_time(struct kvm_vcpu *vcpu)
+> @@ -8166,7 +8166,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
+>  		if (kvm_check_request(KVM_REQ_LOAD_CR3, vcpu))
+>  			kvm_mmu_load_cr3(vcpu);
+>  		if (kvm_check_request(KVM_REQ_TLB_FLUSH, vcpu))
+> -			kvm_vcpu_flush_tlb(vcpu, true);
+> +			kvm_vcpu_flush_tlb(vcpu);
+>  		if (kvm_check_request(KVM_REQ_REPORT_TPR_ACCESS, vcpu)) {
+>  			vcpu->run->exit_reason = KVM_EXIT_TPR_ACCESS;
+>  			r = 0;
 
-fyi:
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-Perhaps commit f2f176b41 ("CIFS: add ONCE flag for cifs_dbg type")
-may have increased object size quite a bit as it now tests
-an external variable.
-
+-- 
+Vitaly
 
