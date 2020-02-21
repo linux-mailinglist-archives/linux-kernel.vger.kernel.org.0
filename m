@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9063816788D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:50:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A961B16786F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:48:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728255AbgBUHpD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:45:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39990 "EHLO mail.kernel.org"
+        id S2387804AbgBUIsi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:48:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728208AbgBUHpB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:45:01 -0500
+        id S1728259AbgBUHqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:46:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE448222C4;
-        Fri, 21 Feb 2020 07:44:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A88124656;
+        Fri, 21 Feb 2020 07:46:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271100;
-        bh=CqYiNBMlMWHKkp/lCav82O14317gOiqR2e73IbrS+zI=;
+        s=default; t=1582271199;
+        bh=t+HGHp5WXwS0C0Tt94knmpE+cBtGP+NH5K22SJzMyk0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q5qnbLbsXZrQSl3BDKtpj9wK3vkWvDP5EDAGG+2gT605+chwOlSBkxCY8hz+VuYjz
-         XDQn7K09j3Sh4ob+ja4DeA3kk8roN7vPxIQER1Z5mNZ+VW+Djd81xNepw2KZlRT7sw
-         ayZklIBm3YvJMVBVt0MT9606dEvqX+VD/1Nb1ewo=
+        b=Jgb9oTYQ2Yw7f265m5QzMYnNQg9m0HBLli1n7S/TWxH5Lmoo2hh/ZaS4sN416A8Gt
+         3wjIHQA2YAT0+0p62FL5NnslGHmoORcxct6XWWYGngapHpPBLBS1FjD1fXlcywK0PV
+         lCOxjWCR6T1QwLOk4Q+cyKdhrn+0wjDutDpKOznA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>,
+        stable@vger.kernel.org, Adam Ford <aford173@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 032/399] ALSA: ctl: allow TLV read operation for callback type of element in locked case
-Date:   Fri, 21 Feb 2020 08:35:57 +0100
-Message-Id: <20200221072405.496012264@linuxfoundation.org>
+Subject: [PATCH 5.5 039/399] media: ov5640: Fix check for PLL1 exceeding max allowed rate
+Date:   Fri, 21 Feb 2020 08:36:04 +0100
+Message-Id: <20200221072406.165679359@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -44,58 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Adam Ford <aford173@gmail.com>
 
-[ Upstream commit d61fe22c2ae42d9fd76c34ef4224064cca4b04b0 ]
+[ Upstream commit 2e3df204f9af42a47823ee955c08950373417420 ]
 
-A design of ALSA control core allows applications to execute three
-operations for TLV feature; read, write and command. Furthermore, it
-allows driver developers to process the operations by two ways; allocated
-array or callback function. In the former, read operation is just allowed,
-thus developers uses the latter when device driver supports variety of
-models or the target model is expected to dynamically change information
-stored in TLV container.
+The variable _rate is by ov5640_compute_sys_clk() which returns
+zero if the PLL exceeds 1GHz.  Unfortunately, the check to see
+if the max PLL1 output is checking 'rate' and not '_rate' and
+'rate' does not ever appear to be 0.
 
-The core also allows applications to lock any element so that the other
-applications can't perform write operation to the element for element
-value and TLV information. When the element is locked, write and command
-operation for TLV information are prohibited as well as element value.
-Any read operation should be allowed in the case.
+This patch changes the check against the returned value of
+'_rate' to determine if the PLL1 output exceeds 1GHz.
 
-At present, when an element has callback function for TLV information,
-TLV read operation returns EPERM if the element is locked. On the
-other hand, the read operation is success when an element has allocated
-array for TLV information. In both cases, read operation is success for
-element value expectedly.
-
-This commit fixes the bug. This change can be backported to v4.14
-kernel or later.
-
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Reviewed-by: Jaroslav Kysela <perex@perex.cz>
-Link: https://lore.kernel.org/r/20191223093347.15279-1-o-takashi@sakamocchi.jp
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: aa2882481cad ("media: ov5640: Adjust the clock based on the expected rate")
+Signed-off-by: Adam Ford <aford173@gmail.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/core/control.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/media/i2c/ov5640.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/core/control.c b/sound/core/control.c
-index 7a4d8690ce41f..08ca7666e84cf 100644
---- a/sound/core/control.c
-+++ b/sound/core/control.c
-@@ -1430,8 +1430,9 @@ static int call_tlv_handler(struct snd_ctl_file *file, int op_flag,
- 	if (kctl->tlv.c == NULL)
- 		return -ENXIO;
+diff --git a/drivers/media/i2c/ov5640.c b/drivers/media/i2c/ov5640.c
+index 5e495c833d329..bb968e764f318 100644
+--- a/drivers/media/i2c/ov5640.c
++++ b/drivers/media/i2c/ov5640.c
+@@ -874,7 +874,7 @@ static unsigned long ov5640_calc_sys_clk(struct ov5640_dev *sensor,
+ 			 * We have reached the maximum allowed PLL1 output,
+ 			 * increase sysdiv.
+ 			 */
+-			if (!rate)
++			if (!_rate)
+ 				break;
  
--	/* When locked, this is unavailable. */
--	if (vd->owner != NULL && vd->owner != file)
-+	/* Write and command operations are not allowed for locked element. */
-+	if (op_flag != SNDRV_CTL_TLV_OP_READ &&
-+	    vd->owner != NULL && vd->owner != file)
- 		return -EPERM;
- 
- 	return kctl->tlv.c(kctl, op_flag, size, buf);
+ 			/*
 -- 
 2.20.1
 
