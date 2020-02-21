@@ -2,111 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B360916803A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 15:31:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A10A16804B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 15:32:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728910AbgBUObM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 09:31:12 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:13884 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728068AbgBUObM (ORCPT
+        id S1727315AbgBUOcZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 09:32:25 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:33214 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728436AbgBUOcZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 09:31:12 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e4fe9660000>; Fri, 21 Feb 2020 06:29:58 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 21 Feb 2020 06:31:11 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 21 Feb 2020 06:31:11 -0800
-Received: from [10.21.133.51] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 21 Feb
- 2020 14:31:07 +0000
-Subject: Re: [PATCH v3 03/10] ASoC: tegra: add Tegra210 based DMIC driver
-To:     Mark Brown <broonie@kernel.org>, Sameer Pujar <spujar@nvidia.com>
-CC:     <perex@perex.cz>, <tiwai@suse.com>, <robh+dt@kernel.org>,
-        <lgirdwood@gmail.com>, <thierry.reding@gmail.com>,
-        <digetx@gmail.com>, <alsa-devel@alsa-project.org>,
-        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <sharadg@nvidia.com>,
-        <mkumard@nvidia.com>, <viswanathl@nvidia.com>,
-        <rlokhande@nvidia.com>, <dramesh@nvidia.com>,
-        <atalambedu@nvidia.com>
-References: <1582180492-25297-1-git-send-email-spujar@nvidia.com>
- <1582180492-25297-4-git-send-email-spujar@nvidia.com>
- <20200221130005.GD5546@sirena.org.uk>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <316ce0d5-318d-0533-ef06-bd7e8672f893@nvidia.com>
-Date:   Fri, 21 Feb 2020 14:31:05 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Fri, 21 Feb 2020 09:32:25 -0500
+Received: by mail-vs1-f68.google.com with SMTP id n27so1338008vsa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 06:32:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+T/nTWLVypJORJXCwa4ga2EPqUEuusIhThd5QwEDQx8=;
+        b=DWp3YZG8XfF7W2prVBJFn5HThD5MWoDpKktRNcwWcpCqIKD8lelQAFToMLxIa0olSE
+         vBsASDg+j005oqdt0G1etW5BGqLH3l2UgNQFOsZ4XfNzgkNg5g1bQZznAjREwP4wmsig
+         m8tjoAiLNpMK9CFQzF42YuwT1D93Xk+aGBztwPDfmWPwYuLge7pNAOzhzx3N6v/+tpqu
+         +2LRnCCXR8DrRCRJH6BhBT0zX0Zn4lFjD4EOteoj0lMY7s4fsaAv6dCxHYnfPp9He/kp
+         zwStf447IOANO9O15VrzRk0q+8GIHFppzGinr0DEUgrNxJnj+3VgHax1qA4N13D/vR5j
+         ttTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+T/nTWLVypJORJXCwa4ga2EPqUEuusIhThd5QwEDQx8=;
+        b=c5G8ovqkvt8on4s68FGmE13N33PsFcCWlf2RfiegBhjm9nsQ4lySI8GyoLFxGpb9IE
+         nkEHvoZtnEcWBAbQhtQnSKx0WD/Pj1uX871UV1gktpQIcuH0JS/yqVXcsyBrYN8A1Do7
+         VuAtP6f4ZeSNuJNMGaVandbw+N1IpAxBHG+w0Ym3KcxgLozfsXiD/Eu2pNstN60CclqH
+         znTnqCSMxuDGHtZSR0HU0/texDf0BHkqXy5lql6CAg7W66YX6w2xnIDsWgygVG6POn1H
+         OWy9dCyOKC3wLc8DwDv20GJ5WuurKFbHis9C4hiZ03etOXE0NwfB7vhuCl0M1Q21qrH3
+         6avQ==
+X-Gm-Message-State: APjAAAVMIZNbCVoI6wOdPih+IVqu/Mnt3AAR7Rt2joKJo1+0nHXv9BHW
+        14rxFYQCmMjaONMlwpRY2BSaDHxGYNdmaG/qDfHlsrDa
+X-Google-Smtp-Source: APXvYqwLbEtXvUZZ7ZM9CPw45EAOE34hAzqT0GbPWeSsCuzxil/wD30auUF1dvD2oftm+PT4KM4ou9K4GK6TZgakSws=
+X-Received: by 2002:a67:5e45:: with SMTP id s66mr20602876vsb.200.1582295543699;
+ Fri, 21 Feb 2020 06:32:23 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200221130005.GD5546@sirena.org.uk>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1582295398; bh=Ii2FU53gxBnbRqvrbMjLj3GOVXtejYjy/v1iyuD+MP8=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=goEbRFoIBBxyJcX7uUg+O3y3ialsPS2BhhIdSG+PMqy/jzg3qcJr4jSjnDUgktNhN
-         0HMt1u0Cou33Sg1w5vG96Apvi3i59DVCCWQeADi8BdBRjSFldcGhf5GaoowpbRlB7B
-         azp2fKoZ9qBcj1jefWii8s+8RcbMoYb+xU7R9Ar7+7GEZvg7nFo9/shcynm4qCbilI
-         qhrgOd5wYI/zvViDPhH3Z2p5q+9BtUiOXig8mubW93E4mG+bgZ+x50yA7pf6I5dwoZ
-         UKElyundJcSXSPGoORNjZV80p/NtA/NXJAuJ6RcnDVttOH9FCrSmo4LtzD76ANi36x
-         jI7K6IoobDD8A==
+References: <98ce471185f037fce57520763621590588766381.1582161803.git.baolin.wang7@gmail.com>
+In-Reply-To: <98ce471185f037fce57520763621590588766381.1582161803.git.baolin.wang7@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 21 Feb 2020 15:31:47 +0100
+Message-ID: <CAPDyKFrKe9vRpx6mKze98oM50Ux3JnHa-_2GL3PXdU=c_M1uZg@mail.gmail.com>
+Subject: Re: [PATCH] mmc: host: hsq: Add missing MODULE_LICENSE() and MODULE_DESCRIPTION()
+To:     Baolin Wang <baolin.wang7@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 20 Feb 2020 at 02:31, Baolin Wang <baolin.wang7@gmail.com> wrote:
+>
+> Add missing MODULE_LICENSE() and MODULE_DESCRIPTION() in hsq driver to
+> fix below warning when compiling the hsq as a module.
+>
+> "WARNING: modpost: missing MODULE_LICENSE() in drivers/mmc/host/mmc_hsq.o".
+>
+> Fixes: eb1814dd49d5 ("mmc: Add MMC host software queue support")
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
 
-On 21/02/2020 13:00, Mark Brown wrote:
-> On Thu, Feb 20, 2020 at 12:04:45PM +0530, Sameer Pujar wrote:
-> 
->> +++ b/sound/soc/tegra/tegra210_dmic.c
->> @@ -0,0 +1,515 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * tegra210_dmic.c - Tegra210 DMIC driver
->> + *
->> + * Copyright (c) 2020 NVIDIA CORPORATION.  All rights reserved.
-> 
-> Please make the entire comment a C++ one so things look more
-> intentional.
-> 
->> +	/* Below enables all filters - DCR, LP and SC */
->> +	{ TEGRA210_DMIC_DBG_CTRL, 0xe },
-> 
-> So this isn't the hardware default?
-> 
->> +	srate = params_rate(params);
->> +	if (dmic->srate_override)
->> +		srate = dmic->srate_override;
-> 
-> How does this work for userspace?  If we just ignore the sample rate we
-> were asked for I'd expect that the application would get upset.
+Applied for next, thanks!
 
-Tegra has a hardware sample rate converter (though driver not yet
-upstream or part of this initial series) and if using the sample-rate
-converter, then the actual rate captured by the DMIC interface could be
-different from the resulting sample-rate.
+Kind regards
+Uffe
 
-So we want a way to indicate to the DMIC it is capturing at rate X,
-while the resulting sample-rate is Y.
-
-I am not sure if there is a better way to do this? Ideally, the DMIC
-would query the rate from the upstream MUX it is connected to, but I am
-not sure if there is a way to do that. So right now it is a manual
-process and the user has to configure these which are not ideal.
-
-Cheers
-Jon
-
--- 
-nvpublic
+> ---
+>  drivers/mmc/host/mmc_hsq.c |    4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/mmc/host/mmc_hsq.c b/drivers/mmc/host/mmc_hsq.c
+> index 2011988..59d2776 100644
+> --- a/drivers/mmc/host/mmc_hsq.c
+> +++ b/drivers/mmc/host/mmc_hsq.c
+> @@ -8,6 +8,7 @@
+>
+>  #include <linux/mmc/card.h>
+>  #include <linux/mmc/host.h>
+> +#include <linux/module.h>
+>
+>  #include "mmc_hsq.h"
+>
+> @@ -341,3 +342,6 @@ int mmc_hsq_resume(struct mmc_host *mmc)
+>         return mmc_hsq_enable(mmc, NULL);
+>  }
+>  EXPORT_SYMBOL_GPL(mmc_hsq_resume);
+> +
+> +MODULE_DESCRIPTION("MMC Host Software Queue support");
+> +MODULE_LICENSE("GPL v2");
+> --
+> 1.7.9.5
+>
