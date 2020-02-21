@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33A8A16740E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BB8316733B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:10:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387434AbgBUISF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:18:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55706 "EHLO mail.kernel.org"
+        id S1732542AbgBUIKb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:10:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387739AbgBUISA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:18:00 -0500
+        id S1732082AbgBUIK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:10:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F0292468A;
-        Fri, 21 Feb 2020 08:17:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D4D4C20801;
+        Fri, 21 Feb 2020 08:10:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273079;
-        bh=Uy+uU0lTHozrOu7Zp3nMGr4SJBMZzKyAgAl9QYPUfTE=;
+        s=default; t=1582272627;
+        bh=EfqTLV/Ja2CAc990v9LG2sf9f+XqMnZ58KAWfhoHIno=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IxZN/l1Dqgwp/n9TxiSKBbMveJKURM6EdUEiY9vQQqqpeRmm8JwlEkD2tqLHAcds5
-         gn1mD+ywoUzXxhrsyewWPitenYsgvVwp6/PsChOUY+rE/yQvVHieUk9+MHEIy4TaeX
-         SgwwJVxpXTzczQ4iiEgJ9g1MLxAyUJZ4rNwZAxI4=
+        b=b3dBiTKoxEq7pB8R7Nd00UMmef2KHxGfwU8UZ+uXl6tE70IQw8uEV/09nYeP7lR0W
+         gWJsQQhGU7JbyXWTO6Inq4YYV+FVp5MtSylxAEQzVXJjs/3gTxQvNuxh4hX8k5DkVl
+         AQk2HH/xZmsTv5IwMtzycfLAWLtTH3CDTWpgYGws=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        stable@vger.kernel.org, Michael Guralnik <michaelgur@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 038/191] pwm: omap-dmtimer: Simplify error handling
-Date:   Fri, 21 Feb 2020 08:40:11 +0100
-Message-Id: <20200221072256.150152720@linuxfoundation.org>
+Subject: [PATCH 5.4 213/344] RDMA/uverbs: Remove needs_kfree_rcu from uverbs_obj_type_class
+Date:   Fri, 21 Feb 2020 08:40:12 +0100
+Message-Id: <20200221072408.545629391@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,80 +44,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+From: Jason Gunthorpe <jgg@mellanox.com>
 
-[ Upstream commit c4cf7aa57eb83b108d2d9c6c37c143388fee2a4d ]
+[ Upstream commit 8bdf9dd984c18375d1090ddeb1792511f619c5c1 ]
 
-Instead of doing error handling in the middle of ->probe(), move error
-handling and freeing the reference to timer to the end.
+After device disassociation the uapi_objects are destroyed and freed,
+however it is still possible that core code can be holding a kref on the
+uobject. When it finally goes to uverbs_uobject_free() via the kref_put()
+it can trigger a use-after-free on the uapi_object.
 
-This fixes a resource leak as dm_timer wasn't freed when allocating
-*omap failed.
+Since needs_kfree_rcu is a micro optimization that only benefits file
+uobjects, just get rid of it. There is no harm in using kfree_rcu even if
+it isn't required, and the number of involved objects is small.
 
-Implementation note: The put: label was never reached without a goto and
-ret being unequal to 0, so the removed return statement is fine.
-
-Fixes: 6604c6556db9 ("pwm: Add PWM driver for OMAP using dual-mode timers")
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
+Link: https://lore.kernel.org/r/20200113143306.GA28717@ziepe.ca
+Signed-off-by: Michael Guralnik <michaelgur@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pwm/pwm-omap-dmtimer.c | 28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
+ drivers/infiniband/core/rdma_core.c | 23 +----------------------
+ include/rdma/uverbs_types.h         |  1 -
+ 2 files changed, 1 insertion(+), 23 deletions(-)
 
-diff --git a/drivers/pwm/pwm-omap-dmtimer.c b/drivers/pwm/pwm-omap-dmtimer.c
-index f45798679e3c0..2d585c101d52e 100644
---- a/drivers/pwm/pwm-omap-dmtimer.c
-+++ b/drivers/pwm/pwm-omap-dmtimer.c
-@@ -301,15 +301,10 @@ static int pwm_omap_dmtimer_probe(struct platform_device *pdev)
- 		goto put;
- 	}
+diff --git a/drivers/infiniband/core/rdma_core.c b/drivers/infiniband/core/rdma_core.c
+index ccf4d069c25c9..7dd9bd1e4d118 100644
+--- a/drivers/infiniband/core/rdma_core.c
++++ b/drivers/infiniband/core/rdma_core.c
+@@ -49,13 +49,7 @@ void uverbs_uobject_get(struct ib_uobject *uobject)
  
--put:
--	of_node_put(timer);
--	if (ret < 0)
--		return ret;
+ static void uverbs_uobject_free(struct kref *ref)
+ {
+-	struct ib_uobject *uobj =
+-		container_of(ref, struct ib_uobject, ref);
 -
- 	omap = devm_kzalloc(&pdev->dev, sizeof(*omap), GFP_KERNEL);
- 	if (!omap) {
--		pdata->free(dm_timer);
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto err_alloc_omap;
- 	}
- 
- 	omap->pdata = pdata;
-@@ -342,13 +337,28 @@ put:
- 	ret = pwmchip_add(&omap->chip);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed to register PWM\n");
--		omap->pdata->free(omap->dm_timer);
--		return ret;
-+		goto err_pwmchip_add;
- 	}
- 
-+	of_node_put(timer);
-+
- 	platform_set_drvdata(pdev, omap);
- 
- 	return 0;
-+
-+err_pwmchip_add:
-+
-+	/*
-+	 * *omap is allocated using devm_kzalloc,
-+	 * so no free necessary here
-+	 */
-+err_alloc_omap:
-+
-+	pdata->free(dm_timer);
-+put:
-+	of_node_put(timer);
-+
-+	return ret;
+-	if (uobj->uapi_object->type_class->needs_kfree_rcu)
+-		kfree_rcu(uobj, rcu);
+-	else
+-		kfree(uobj);
++	kfree_rcu(container_of(ref, struct ib_uobject, ref), rcu);
  }
  
- static int pwm_omap_dmtimer_remove(struct platform_device *pdev)
+ void uverbs_uobject_put(struct ib_uobject *uobject)
+@@ -744,20 +738,6 @@ const struct uverbs_obj_type_class uverbs_idr_class = {
+ 	.lookup_put = lookup_put_idr_uobject,
+ 	.destroy_hw = destroy_hw_idr_uobject,
+ 	.remove_handle = remove_handle_idr_uobject,
+-	/*
+-	 * When we destroy an object, we first just lock it for WRITE and
+-	 * actually DESTROY it in the finalize stage. So, the problematic
+-	 * scenario is when we just started the finalize stage of the
+-	 * destruction (nothing was executed yet). Now, the other thread
+-	 * fetched the object for READ access, but it didn't lock it yet.
+-	 * The DESTROY thread continues and starts destroying the object.
+-	 * When the other thread continue - without the RCU, it would
+-	 * access freed memory. However, the rcu_read_lock delays the free
+-	 * until the rcu_read_lock of the READ operation quits. Since the
+-	 * exclusive lock of the object is still taken by the DESTROY flow, the
+-	 * READ operation will get -EBUSY and it'll just bail out.
+-	 */
+-	.needs_kfree_rcu = true,
+ };
+ EXPORT_SYMBOL(uverbs_idr_class);
+ 
+@@ -919,7 +899,6 @@ const struct uverbs_obj_type_class uverbs_fd_class = {
+ 	.lookup_put = lookup_put_fd_uobject,
+ 	.destroy_hw = destroy_hw_fd_uobject,
+ 	.remove_handle = remove_handle_fd_uobject,
+-	.needs_kfree_rcu = false,
+ };
+ EXPORT_SYMBOL(uverbs_fd_class);
+ 
+diff --git a/include/rdma/uverbs_types.h b/include/rdma/uverbs_types.h
+index d57a5ba00c743..0b0f5a5f392de 100644
+--- a/include/rdma/uverbs_types.h
++++ b/include/rdma/uverbs_types.h
+@@ -98,7 +98,6 @@ struct uverbs_obj_type_class {
+ 				       enum rdma_remove_reason why,
+ 				       struct uverbs_attr_bundle *attrs);
+ 	void (*remove_handle)(struct ib_uobject *uobj);
+-	u8    needs_kfree_rcu;
+ };
+ 
+ struct uverbs_obj_type {
 -- 
 2.20.1
 
