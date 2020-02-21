@@ -2,61 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9464F167878
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:49:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94C45167896
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:50:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729155AbgBUIsu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:48:50 -0500
-Received: from ms.lwn.net ([45.79.88.28]:54224 "EHLO ms.lwn.net"
+        id S1729805AbgBUItK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:49:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728259AbgBUIss (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:48:48 -0500
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726325AbgBUItH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:49:07 -0500
+Received: from e123331-lin.home (amontpellier-657-1-18-247.w109-210.abo.wanadoo.fr [109.210.65.247])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id D3C77382;
-        Fri, 21 Feb 2020 08:48:46 +0000 (UTC)
-Date:   Fri, 21 Feb 2020 01:48:41 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-Subject: Re: [Regression] Docs build broken by commit 51e46c7a4007
-Message-ID: <20200221014841.3137229d@lwn.net>
-In-Reply-To: <CAJZ5v0gu_2wkncukKK7u340KLzSCVL_7F9cJTz3wVhxfogR8NQ@mail.gmail.com>
-References: <CAJZ5v0he=WQ6159fyaYYffdi66y596rVo7z1yLyGFcH45PXNUg@mail.gmail.com>
-        <202002201158.2911CE2388@keescook>
-        <CAJZ5v0hkKUi7FUOneEy2nO-=RM8ZbcoG1uHRYNWzrjONEhKYxQ@mail.gmail.com>
-        <202002201448.62894C394@keescook>
-        <CAJZ5v0gu_2wkncukKK7u340KLzSCVL_7F9cJTz3wVhxfogR8NQ@mail.gmail.com>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+        by mail.kernel.org (Postfix) with ESMTPSA id 421C520722;
+        Fri, 21 Feb 2020 08:49:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582274946;
+        bh=vUoHx5b0NGH+KG1C5W/cD75EpwMd7Q8IxzBf8FXvVgM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=S+rbV3QxSFMhLqddXEi8BSEabnbypAT7ZdrmpA62l3bbkI8s6lY4WGQJBIYKJfTNa
+         7V34FbrJdsWkBDdBbujs2qBf5c6vgtw/84QhsHfx0GoA2yFLdp2ocfgezA/dE9jXfJ
+         5kgr1PZUSvjSvu73O5td6YiQQRbATxLQn5ogB+FA=
+From:   Ard Biesheuvel <ardb@kernel.org>
+To:     linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>
+Subject: [GIT PULL 0/4] EFI fixes for v5.6-rc
+Date:   Fri, 21 Feb 2020 09:48:45 +0100
+Message-Id: <20200221084849.26878-1-ardb@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Feb 2020 09:40:01 +0100
-"Rafael J. Wysocki" <rafael@kernel.org> wrote:
+The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
 
-> 1.6.5 (I realize that it is older than recommended, but it had been
-> working fine before 5.5-rc1 :-)).
+  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
 
-We still intend to support back to 1.4; this version should work.
+are available in the Git repository at:
 
-> I've tried that too, but most often I do something like "make
-> O=../build/somewhere/ htmldocs".
-> 
-> But I can do "make O=../build/somewhere/ -j 2 htmldocs" too just fine. :-)
+  git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git tags/efi-urgent
 
-I suspect that the O= plays into this somehow; that's not something I do
-in my own testing.  I'll try to take a look at this, but I'm on the road
-and somewhat distracted at the moment...
+for you to fetch changes up to 4905450b9255089ec1828882e0480831e535ccc5:
 
-Thanks,
+  efi: READ_ONCE rng seed size before munmap (2020-02-17 17:46:26 +0100)
 
-jon
+----------------------------------------------------------------
+EFI fixes for v5.6-rcX:
+- some mixed mode fixes that came about after Hans reported issues in
+  the VA to PA translation code used by the mixed mode EFI runtime
+  service call wrappers.
+- use READ_ONCE() to dereference the UEFI rng seed structure, which gets
+  mapped, unmapped and remapped without the compiler being aware of it.
+
+----------------------------------------------------------------
+Ard Biesheuvel (3):
+      efi/x86: align GUIDs to their size in the mixed mode runtime wrapper
+      efi/x86: remove support for EFI time and counter services in mixed mode
+      efi/x86: Handle by-ref arguments covering multiple pages in mixed mode
+
+Jason A. Donenfeld (1):
+      efi: READ_ONCE rng seed size before munmap
+
+ arch/x86/platform/efi/efi_64.c | 151 ++++++++++++++---------------------------
+ drivers/firmware/efi/efi.c     |   4 +-
+ 2 files changed, 54 insertions(+), 101 deletions(-)
