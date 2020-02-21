@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3873F167513
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:30:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D435167701
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:41:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388389AbgBUIW5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:22:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34666 "EHLO mail.kernel.org"
+        id S1731162AbgBUIBL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:01:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388376AbgBUIWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:22:53 -0500
+        id S1730649AbgBUIBC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:01:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3DF342469D;
-        Fri, 21 Feb 2020 08:22:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BBD324670;
+        Fri, 21 Feb 2020 08:01:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273372;
-        bh=LO9osZihFUTbpG6o//SCjgXWqG9dLGPwwMhlrka+frI=;
+        s=default; t=1582272061;
+        bh=xMt+/WZJ7JX4l2wXXyGzZfDgtpkGtXEWwqSlZvxiJAE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=THU0b81WdrI00j90vi0oBVOhfUVnrDo4UKbdOcoDCCJXDrKk6gNyTIC+A9hXskGlm
-         HqbYTEfT5E/MYdGsg/azPYN0XhOitumEdWYOH8QjAbU6rYLIFZpW9XOhk4hwL/aKul
-         afTUCkc8rMTPU5vbTGmagYKE8t9VNuRAGsg2zIRI=
+        b=FHGJma7MRfYf8T1TInTgV45LswH5mgutdTi1vI2590SLiUjCApOltJE+oyUMkhqp9
+         1l7Lhv1GCnRB+cQuSWguVHbf3iux9Jed16LyULe+MnqjBmVp1Iwbnxw7vwmUbR74LU
+         gsCsFrdInh8TC1kml7DJHkJsaSxPYgCFxg1ysxPQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, philip@philip-seeger.de,
-        Josef Bacik <josef@toxicpanda.com>,
-        Anand Jain <anand.jain@oracle.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Xiao Yang <ice_yangxiao@163.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 146/191] btrfs: device stats, log when stats are zeroed
+Subject: [PATCH 5.5 394/399] fuse: dont overflow LLONG_MAX with end offset
 Date:   Fri, 21 Feb 2020 08:41:59 +0100
-Message-Id: <20200221072308.109191972@linuxfoundation.org>
+Message-Id: <20200221072438.196078759@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
+In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
+References: <20200221072402.315346745@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,45 +44,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anand Jain <anand.jain@oracle.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-[ Upstream commit a69976bc69308aa475d0ba3b8b3efd1d013c0460 ]
+[ Upstream commit 2f1398291bf35fe027914ae7a9610d8e601fbfde ]
 
-We had a report indicating that some read errors aren't reported by the
-device stats in the userland. It is important to have the errors
-reported in the device stat as user land scripts might depend on it to
-take the reasonable corrective actions. But to debug these issue we need
-to be really sure that request to reset the device stat did not come
-from the userland itself. So log an info message when device error reset
-happens.
+Handle the special case of fuse_readpages() wanting to read the last page
+of a hugest file possible and overflowing the end offset in the process.
 
-For example:
- BTRFS info (device sdc): device stats zeroed by btrfs(9223)
+This is basically to unbreak xfstests:generic/525 and prevent filesystems
+from doing bad things with an overflowing offset.
 
-Reported-by: philip@philip-seeger.de
-Link: https://www.spinics.net/lists/linux-btrfs/msg96528.html
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Anand Jain <anand.jain@oracle.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Reported-by: Xiao Yang <ice_yangxiao@163.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/volumes.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/fuse/file.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index 5bbcdcff68a9e..9c3b394b99fa2 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -7260,6 +7260,8 @@ int btrfs_get_dev_stats(struct btrfs_fs_info *fs_info,
- 			else
- 				btrfs_dev_stat_reset(dev, i);
- 		}
-+		btrfs_info(fs_info, "device stats zeroed by %s (%d)",
-+			   current->comm, task_pid_nr(current));
- 	} else {
- 		for (i = 0; i < BTRFS_DEV_STAT_VALUES_MAX; i++)
- 			if (stats->nr_items > i)
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 695369f46f92d..3dd37a998ea93 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -803,6 +803,10 @@ static int fuse_do_readpage(struct file *file, struct page *page)
+ 
+ 	attr_ver = fuse_get_attr_version(fc);
+ 
++	/* Don't overflow end offset */
++	if (pos + (desc.length - 1) == LLONG_MAX)
++		desc.length--;
++
+ 	fuse_read_args_fill(&ia, file, pos, desc.length, FUSE_READ);
+ 	res = fuse_simple_request(fc, &ia.ap.args);
+ 	if (res < 0)
+@@ -888,6 +892,14 @@ static void fuse_send_readpages(struct fuse_io_args *ia, struct file *file)
+ 	ap->args.out_pages = true;
+ 	ap->args.page_zeroing = true;
+ 	ap->args.page_replace = true;
++
++	/* Don't overflow end offset */
++	if (pos + (count - 1) == LLONG_MAX) {
++		count--;
++		ap->descs[ap->num_pages - 1].length--;
++	}
++	WARN_ON((loff_t) (pos + count) < 0);
++
+ 	fuse_read_args_fill(ia, file, pos, count, FUSE_READ);
+ 	ia->read.attr_ver = fuse_get_attr_version(fc);
+ 	if (fc->async_read) {
 -- 
 2.20.1
 
