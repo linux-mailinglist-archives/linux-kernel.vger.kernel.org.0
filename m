@@ -2,70 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A93AF168038
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 15:30:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B360916803A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 15:31:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728898AbgBUOas (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 09:30:48 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:37079 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728312AbgBUOar (ORCPT
+        id S1728910AbgBUObM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 09:31:12 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:13884 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728068AbgBUObM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 09:30:47 -0500
-Received: by mail-io1-f68.google.com with SMTP id k24so2565373ioc.4
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 06:30:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=C8TBYsp4oPRzhINL9K4MI/wQlk5Wnl++a8rZYlJnB9w=;
-        b=pK33OLg3DRWctrinmd420+pVypnrsv5nxgarEUZml+cRqhPYluskS6w0ce/yzYxJ5S
-         DJnRcxKZ3NpsYxSFJG3wudDtIQqJgnDdrnhmfNkalFTHDc5j7C9oHkeWmfYqvShWWaHY
-         KxmWejnAvWvuCC63EERL6sirP0W+tl7WE6LfnCrhSlPkeLj2QcCBEH1tjOfAdPiILRGe
-         s0adMEKPk9rxfQvUY1I8i6EclS8oi1+pCiHkzIQd7sXxVSOZoH2BKymgMiDHXctfTF25
-         XG4c6fpOPttgTMix1c0B964f+7YPWpgAkuqQqnZ2bDwS3SA2n2XJiaIgWNy0ZdKjihC1
-         4Owg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=C8TBYsp4oPRzhINL9K4MI/wQlk5Wnl++a8rZYlJnB9w=;
-        b=FY511IxUCC9ayAGLdDHYw0SbYyBeZCGruS7Mh9kIWsq4vMbyi7gaz1pMFZ8AMJJeMu
-         v9YnBLD5UIlES9Oerth9vafG+ZbH8LtR9HYp7Oh+VNDrhbO5pYrMxHbVCrJmqHM20PdK
-         RXyv8hBO8ZY9RZCjB4wBUyR9XicCyjzhdpzkmrRO9aOd//ItsBY+4LnVVyUoYYnXZ/C4
-         NH0Esm/t9gQrs+46ygag3+M4oag2ylOoJPGy4f0H5/VqfFJwl+33o3tkLO+/S1bcbETA
-         fJsP4MpeEg+6b9S7/jt9kANzyLsYZjLcKeC3PiYQHowPoUd8kYl4eHCIQvpBdhJdRMBF
-         5BWw==
-X-Gm-Message-State: APjAAAULW5F6HZYKhfOozSsl3WaTzhLJoj8ayVjbKOpwMI29w00/ko4J
-        LNHvm0qDgkfPU94V1pqjTn6/041lUFPKqcMCKcc=
-X-Google-Smtp-Source: APXvYqy5CBtrjZP5LTzZl2bpR1UU7YNMsYKnQhe9lZKOtUxiqa181a7XthaDMauIdrR0dOMiR5jnFOtk54z4dYvS6xE=
-X-Received: by 2002:a6b:8f55:: with SMTP id r82mr32026085iod.134.1582295446976;
- Fri, 21 Feb 2020 06:30:46 -0800 (PST)
+        Fri, 21 Feb 2020 09:31:12 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e4fe9660000>; Fri, 21 Feb 2020 06:29:58 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 21 Feb 2020 06:31:11 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 21 Feb 2020 06:31:11 -0800
+Received: from [10.21.133.51] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 21 Feb
+ 2020 14:31:07 +0000
+Subject: Re: [PATCH v3 03/10] ASoC: tegra: add Tegra210 based DMIC driver
+To:     Mark Brown <broonie@kernel.org>, Sameer Pujar <spujar@nvidia.com>
+CC:     <perex@perex.cz>, <tiwai@suse.com>, <robh+dt@kernel.org>,
+        <lgirdwood@gmail.com>, <thierry.reding@gmail.com>,
+        <digetx@gmail.com>, <alsa-devel@alsa-project.org>,
+        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sharadg@nvidia.com>,
+        <mkumard@nvidia.com>, <viswanathl@nvidia.com>,
+        <rlokhande@nvidia.com>, <dramesh@nvidia.com>,
+        <atalambedu@nvidia.com>
+References: <1582180492-25297-1-git-send-email-spujar@nvidia.com>
+ <1582180492-25297-4-git-send-email-spujar@nvidia.com>
+ <20200221130005.GD5546@sirena.org.uk>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <316ce0d5-318d-0533-ef06-bd7e8672f893@nvidia.com>
+Date:   Fri, 21 Feb 2020 14:31:05 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Received: by 2002:a02:6616:0:0:0:0:0 with HTTP; Fri, 21 Feb 2020 06:30:46
- -0800 (PST)
-Reply-To: koffiapo232@gmail.com
-From:   Mr Koffi Apo <tonykoffi400@gmail.com>
-Date:   Fri, 21 Feb 2020 15:30:46 +0100
-Message-ID: <CAAps3qQBFLxHCVs1DLOn=qUH=B+XhzFyBjHtLuxbRvYZ2-4qeg@mail.gmail.com>
-Subject: Greetings. sir
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200221130005.GD5546@sirena.org.uk>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1582295398; bh=Ii2FU53gxBnbRqvrbMjLj3GOVXtejYjy/v1iyuD+MP8=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=goEbRFoIBBxyJcX7uUg+O3y3ialsPS2BhhIdSG+PMqy/jzg3qcJr4jSjnDUgktNhN
+         0HMt1u0Cou33Sg1w5vG96Apvi3i59DVCCWQeADi8BdBRjSFldcGhf5GaoowpbRlB7B
+         azp2fKoZ9qBcj1jefWii8s+8RcbMoYb+xU7R9Ar7+7GEZvg7nFo9/shcynm4qCbilI
+         qhrgOd5wYI/zvViDPhH3Z2p5q+9BtUiOXig8mubW93E4mG+bgZ+x50yA7pf6I5dwoZ
+         UKElyundJcSXSPGoORNjZV80p/NtA/NXJAuJ6RcnDVttOH9FCrSmo4LtzD76ANi36x
+         jI7K6IoobDD8A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings Sir
 
-I am Barrister Koffi Apokovi, A personal attorney to a deceased client
-of mine who deposited the sum of $ 16.5 Million with a bank here in
-Togo West Africa. He died as the result of a heart-related condition
-His heart condition was due to the death of
-his wife and only son involve in the Air Flight Crashes. without any
-registered next of kin, I contacted you because you have the same
-surname with my late client. And the funds now have an open
-beneficiary mandate. Upon your response will give you the details.
+On 21/02/2020 13:00, Mark Brown wrote:
+> On Thu, Feb 20, 2020 at 12:04:45PM +0530, Sameer Pujar wrote:
+> 
+>> +++ b/sound/soc/tegra/tegra210_dmic.c
+>> @@ -0,0 +1,515 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * tegra210_dmic.c - Tegra210 DMIC driver
+>> + *
+>> + * Copyright (c) 2020 NVIDIA CORPORATION.  All rights reserved.
+> 
+> Please make the entire comment a C++ one so things look more
+> intentional.
+> 
+>> +	/* Below enables all filters - DCR, LP and SC */
+>> +	{ TEGRA210_DMIC_DBG_CTRL, 0xe },
+> 
+> So this isn't the hardware default?
+> 
+>> +	srate = params_rate(params);
+>> +	if (dmic->srate_override)
+>> +		srate = dmic->srate_override;
+> 
+> How does this work for userspace?  If we just ignore the sample rate we
+> were asked for I'd expect that the application would get upset.
 
-Thank You,
-Barr. Koffi Apo Esq
-Tel...+228 9362 7519
+Tegra has a hardware sample rate converter (though driver not yet
+upstream or part of this initial series) and if using the sample-rate
+converter, then the actual rate captured by the DMIC interface could be
+different from the resulting sample-rate.
+
+So we want a way to indicate to the DMIC it is capturing at rate X,
+while the resulting sample-rate is Y.
+
+I am not sure if there is a better way to do this? Ideally, the DMIC
+would query the rate from the upstream MUX it is connected to, but I am
+not sure if there is a way to do that. So right now it is a manual
+process and the user has to configure these which are not ideal.
+
+Cheers
+Jon
+
+-- 
+nvpublic
