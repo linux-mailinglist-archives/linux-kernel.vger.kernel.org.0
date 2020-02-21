@@ -2,135 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EE7F167270
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:03:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 202391672A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:05:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731351AbgBUIDd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:03:33 -0500
-Received: from mga01.intel.com ([192.55.52.88]:39992 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731477AbgBUIDa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:03:30 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2020 00:03:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,467,1574150400"; 
-   d="scan'208";a="229139800"
-Received: from shbuild999.sh.intel.com (HELO localhost) ([10.239.147.113])
-  by fmsmga007.fm.intel.com with ESMTP; 21 Feb 2020 00:03:26 -0800
-Date:   Fri, 21 Feb 2020 16:03:25 +0800
-From:   Feng Tang <feng.tang@intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     kernel test robot <rong.a.chen@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Ingo Molnar <mingo@kernel.org>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
-        andi.kleen@intel.com, ying.huang@intel.com
-Subject: Re: [LKP] Re: [perf/x86] 81ec3f3c4c: will-it-scale.per_process_ops
- -5.5% regression
-Message-ID: <20200221080325.GA67807@shbuild999.sh.intel.com>
-References: <20200205123216.GO12867@shao2-debian>
- <20200205125804.GM14879@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200205125804.GM14879@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1731636AbgBUIF1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:05:27 -0500
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:33256 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731809AbgBUIFX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:05:23 -0500
+Received: by mail-pg1-f201.google.com with SMTP id 37so774115pgq.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 00:05:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=TmMGk/2HBR1UCtTSik3KGPjlUzxkj3b3kzWXZC6WT9Q=;
+        b=iFjRi2lXT3xCMYDE9bXhtNTLTPvc/qH/k0oZFPXOxEmT77SupUGzWbQlxjIkYDvepJ
+         J9m8yzaSxeNODkQo4SNsHB7r3mdbZphkPoMS8nwejEWyCm1o2Yi5799rE1NpThTna3G2
+         OmBhe0RsQMPWgbObAglt1/23z6cPD70Hwh0LuccpHztgX4nyAsbugqpyb6VzLlsm/2r0
+         O1um1spjp+JKFiTI5jmugktkX6EarXzwznHkso5Se6zh48jpoyM7P5rLyUKLy41HPvnQ
+         7K/avBOyXpvJoulZfo/ANUTrpc7dfVv/OyVX/611NoYiOVEeSq5GpQBwA7CLcn29E+MC
+         I4+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=TmMGk/2HBR1UCtTSik3KGPjlUzxkj3b3kzWXZC6WT9Q=;
+        b=uhgfbOhQVJWVChQ3Fp32/OmlwTfuwyhNgpc9E+47DjmtwKdG3Sy1DkB0uUKv45rCXX
+         Os5G1j/qPeJmOmi7DoNHxBKggeWBA7y4Vhyhubc9BJLrgbucvNgbCxCNFtQvGrnOs4Xo
+         PQyYFwTJAHCEOmasIVT5+/tl2LBmhUsPUkQpkT+Uqu2BdRltfnWsxrAdpHpV4glQxI8v
+         bkUe0KQFoomrYQ2hdlxUF10Ukeii+kfxjiYn0+Tl2dW9QKzr1YZZ2s8U5Cfns1JNA9F8
+         YOI4xfiAin/QGAfRL+rA1c+gKpodu+P3xRNiqGsAsR07yK6SHoYWVwy11YkYd94V6GGT
+         oMUg==
+X-Gm-Message-State: APjAAAWn/Khw+BlBmCk23Meiyk76BQBq/aM526ZyUBPAKegidTJMxA3N
+        3mRUGHBXMrsHht4giJKeVPqZtCOOtKhzEHg=
+X-Google-Smtp-Source: APXvYqwwT8HrJMcRaQcjbMBtfXoB9pFj05Vh7NYFLdWIETzC1+E/D7owCTf4aiQ+/33i/qwrW6L5AmqEXOqk5Rc=
+X-Received: by 2002:a63:d49:: with SMTP id 9mr36176560pgn.249.1582272322794;
+ Fri, 21 Feb 2020 00:05:22 -0800 (PST)
+Date:   Fri, 21 Feb 2020 00:05:09 -0800
+In-Reply-To: <20200221080510.197337-1-saravanak@google.com>
+Message-Id: <20200221080510.197337-3-saravanak@google.com>
+Mime-Version: 1.0
+References: <20200221080510.197337-1-saravanak@google.com>
+X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
+Subject: [PATCH v2 2/3] driver core: Add dev_has_sync_state()
+From:   Saravana Kannan <saravanak@google.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Saravana Kannan <saravanak@google.com>, kernel-team@android.com,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add an API to check if a device has sync_state support in its driver or
+bus.
 
-On Wed, Feb 05, 2020 at 01:58:04PM +0100, Peter Zijlstra wrote:
-> On Wed, Feb 05, 2020 at 08:32:16PM +0800, kernel test robot wrote:
-> > Greeting,
-> > 
-> > FYI, we noticed a -5.5% regression of will-it-scale.per_process_ops due to commit:
-> > 
-> > 
-> > commit: 81ec3f3c4c4d78f2d3b6689c9816bfbdf7417dbb ("perf/x86: Add check_period PMU callback")
-> > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
-> > 
-> 
-> I'm fairly sure this bisect/result is bogus.
+Signed-off-by: Saravana Kannan <saravanak@google.com>
+---
+ include/linux/device.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-
-Hi Peter,
-
-Some updates:
-
-We checked more on this. We run 14 times test for it, and the
-results are consistent about the 5.5% degradation, and we
-run the same test on several other platforms, whose test results
-are also consistent, though there are no such -5.5% seen.
-
-We are also curious that the commit seems to be completely not
-relative to this scalability test of signal, which starts a task
-for each online CPU, and keeps calling raise(), and calculating
-the run numbers.
-
-One experiment we did is checking which part of the commit
-really affects the test, and it turned out to be the change of
-"struct pmu". Effectively, applying this patch upon 5.0-rc6 
-which triggers the same regression.
-
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 1d5c551..e1a0517 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -447,6 +447,11 @@ struct pmu {
- 	 * Filter events for PMU-specific reasons.
- 	 */
- 	int (*filter_match)		(struct perf_event *event); /* optional */
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 0cd7c647c16c..fa04dfd22bbc 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -798,6 +798,17 @@ static inline struct device_node *dev_of_node(struct device *dev)
+ 	return dev->of_node;
+ }
+ 
++static inline bool dev_has_sync_state(struct device *dev)
++{
++	if (!dev)
++		return false;
++	if (dev->driver && dev->driver->sync_state)
++		return true;
++	if (dev->bus && dev->bus->sync_state)
++		return true;
++	return false;
++}
 +
-+	/*
-+	 * Check period value for PERF_EVENT_IOC_PERIOD ioctl.
-+	 */
-+	int (*check_period)		(struct perf_event *event, u64 value); /* optional */
- };
+ /*
+  * High level routines for use by the bus drivers
+  */
+-- 
+2.25.0.265.gbab2e86ba0-goog
 
-So likely, this commit changes the layout of the kernel text
-and data, which may trigger some cacheline level change. From
-the system map of the 2 kernels, a big trunk of symbol's address
-changes which follow the global "pmu",
-
-5.0-rc6-systemap:
-
-ffffffff8221d000 d pmu
-ffffffff8221d100 d pmc_reserve_mutex
-ffffffff8221d120 d amd_f15_PMC53
-ffffffff8221d160 d amd_f15_PMC50
-
-5.0-rc6+pmu-change-systemap:
-
-ffffffff8221d000 d pmu
-ffffffff8221d120 d pmc_reserve_mutex
-ffffffff8221d140 d amd_f15_PMC53
-ffffffff8221d180 d amd_f15_PMC50
-
-But we can hardly identify which exact symbol is responsible
-for the change, as too many symbols are offseted. 
-
-btw, we've seen similar case that an irrelevant commit changes
-the benchmark, like a hugetlb patch improves pagefault test on
-a platform that never uses hugetlb https://lkml.org/lkml/2020/1/14/150  
-
-Thanks,
-Feng
-
-> _______________________________________________
-> LKP mailing list -- lkp@lists.01.org
-> To unsubscribe send an email to lkp-leave@lists.01.org
