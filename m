@@ -2,74 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB8B116813C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:15:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FD2E168142
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:16:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728980AbgBUPPN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 10:15:13 -0500
-Received: from imap2.colo.codethink.co.uk ([78.40.148.184]:36054 "EHLO
-        imap2.colo.codethink.co.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728804AbgBUPPN (ORCPT
+        id S1729080AbgBUPQ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 10:16:27 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:41025 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727053AbgBUPQ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 10:15:13 -0500
-Received: from [167.98.27.226] (helo=xylophone)
-        by imap2.colo.codethink.co.uk with esmtpsa  (Exim 4.92 #3 (Debian))
-        id 1j5A19-0007bf-5j; Fri, 21 Feb 2020 15:15:03 +0000
-Message-ID: <9a4b6a0a2cbc6264e691b501ac962767283f08ad.camel@codethink.co.uk>
-Subject: Re: [PATCH 5.4 000/344] 5.4.22-stable review
-From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Date:   Fri, 21 Feb 2020 15:15:02 +0000
-In-Reply-To: <45ea9919-8924-fd56-6c78-3cf7f23bb7ff@roeck-us.net>
-References: <20200221072349.335551332@linuxfoundation.org>
-         <45ea9919-8924-fd56-6c78-3cf7f23bb7ff@roeck-us.net>
-Organization: Codethink Ltd.
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        Fri, 21 Feb 2020 10:16:26 -0500
+Received: by mail-pf1-f195.google.com with SMTP id j9so1360485pfa.8;
+        Fri, 21 Feb 2020 07:16:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tt5oxns5lx1f646f1QThGbvv5Sl7/0SEXMWJEeaTqzA=;
+        b=XHqUsWyZpog7dGkF2/1vy0XTPQVmrc3GfB3/7gzT7AU3Ppp54bRgKBWQQpv+YyAVRN
+         jDMqH+xq/B+yeFSi3bYiI5FZNGGHqK1r8BV2ERyHgdHhpiDtRrQqVvZwvTfuFtru9nVj
+         qI1rsAUke55VKP+GCASFz9QPRyXZi88rhE4eonRwFKX5c+tHUZmF4plFiYnLG1twO6Ey
+         5gYd8TzBIrgRhdlORR8VXXZH4ghI84aGmmCZZPfXxqBlDMCWfWUt/ldK26EhaK77/toL
+         Act9AWx73QCjqqZswcrdKNb/fKAGr8OhCdHETSjBXF45dUAyf/cMMUEwKFVX00cZR9qN
+         JA3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tt5oxns5lx1f646f1QThGbvv5Sl7/0SEXMWJEeaTqzA=;
+        b=Q1vJMywX3nYNdkwFrSezoxNoWq5tGP56idpTEQ3sdxwQcO0/00RTue+GSmJDYoD3ve
+         QureQxs0c6eYPAcqax2bbNy6O5umMcjvD9bTLyxeG0tZGNk9hNWkB2wh9XoWYk5Q0zCz
+         lXlrbNepZqYw3zw//0eMHEMycb0Z1m10DX92lve3sKuyA91hKH9eWiRB7BuEMb0XgDti
+         vBi92Mf9/7KYAmfEfALdnmXrWrvK6TuZQdFcc0ng3fMMb/YqLHyHsRCiHdoRsjI0bs6J
+         R6HOrq8DkgtXZPzT+/72Md7aEN+U/rbLEkNw5m/HRsBG7mypykM3zNL84+kyNp2c8DIb
+         1F1Q==
+X-Gm-Message-State: APjAAAW+ZOXxiCrEyuyvcLMlpq0Qoq67QHWWyeOp+1nfYWKpjX8BTI5N
+        1c3EqaYaFKc2YCehfHuAUbHwTOcc81I=
+X-Google-Smtp-Source: APXvYqwS0Ob3VOCEHDxy3+rkM8vo9z+IVglG6FEY74TcvgDu8IUNl4kEuR2PSPfRYJ/RKzHHRSRkaQ==
+X-Received: by 2002:a63:5124:: with SMTP id f36mr1105111pgb.288.1582298186030;
+        Fri, 21 Feb 2020 07:16:26 -0800 (PST)
+Received: from localhost.localdomain ([103.87.57.170])
+        by smtp.googlemail.com with ESMTPSA id q25sm3239490pfg.41.2020.02.21.07.16.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2020 07:16:25 -0800 (PST)
+From:   Amol Grover <frextrite@gmail.com>
+To:     Eric Dumazet <edumazet@google.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Jakub Kicinski <kuba@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>, netdev@vger.kernel.org,
+        Amol Grover <frextrite@gmail.com>
+Subject: [PATCH] tcp, ulp: Pass lockdep expression to RCU lists
+Date:   Fri, 21 Feb 2020 20:45:38 +0530
+Message-Id: <20200221151537.12334-1-frextrite@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2020-02-21 at 06:22 -0800, Guenter Roeck wrote:
-> On 2/20/20 11:36 PM, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.4.22 release.
-> > There are 344 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sun, 23 Feb 2020 07:19:49 +0000.
-> > Anything received after that time might be too late.
-> > 
-> 
-> Build reference: v5.4.21-345-gbae6e9bf73af
-> gcc version: x86_64-linux-gcc (GCC) 9.2.0
-> 
-> Building x86_64:allnoconfig ... failed
-> --------------
-> Error log:
-> arch/x86/kernel/unwind_orc.c: In function 'unwind_init':
-> arch/x86/kernel/unwind_orc.c:278:56: error: 'orc_sort_cmp' undeclared (first use in this function)
-> 
-> Affects v{4.14,4.19,5,4,5,5}.y.queue.
+tcp_ulp_list is traversed using list_for_each_entry_rcu
+outside an RCU read-side critical section but under the protection
+of tcp_ulp_list_lock.
 
-This seems to be due to commit 22a7fa8848c5 (x86-unwind-orc-fix-
-config_modules-build-warning.patch), which is only valid after commit
-f14bf6a350df "x86/unwind/orc: Remove boot-time ORC unwind tables
-sorting".
+Hence, add corresponding lockdep expression to silence false-positive
+warnings, and harden RCU lists.t
 
-Ben.
+Signed-off-by: Amol Grover <frextrite@gmail.com>
+---
+ net/ipv4/tcp_ulp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> 
+diff --git a/net/ipv4/tcp_ulp.c b/net/ipv4/tcp_ulp.c
+index 38d3ad141161..b9e55759054e 100644
+--- a/net/ipv4/tcp_ulp.c
++++ b/net/ipv4/tcp_ulp.c
+@@ -22,7 +22,8 @@ static struct tcp_ulp_ops *tcp_ulp_find(const char *name)
+ {
+ 	struct tcp_ulp_ops *e;
+ 
+-	list_for_each_entry_rcu(e, &tcp_ulp_list, list) {
++	list_for_each_entry_rcu(e, &tcp_ulp_list, list,
++				lockdep_is_held(&tcp_ulp_list_lock)) {
+ 		if (strcmp(e->name, name) == 0)
+ 			return e;
+ 	}
 -- 
-Ben Hutchings, Software Developer                         Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+2.24.1
 
