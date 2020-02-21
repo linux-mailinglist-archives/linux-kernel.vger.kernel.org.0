@@ -2,120 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D54E167E91
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 14:29:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 029E5167EA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 14:30:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728656AbgBUN3E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 08:29:04 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:39587 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728395AbgBUN3E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 08:29:04 -0500
-Received: by mail-lf1-f66.google.com with SMTP id n30so682117lfh.6
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 05:29:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8NATODsU2yjaJrA6FSD/IewEgDQ5Oohivlua/nWpA3M=;
-        b=bc2yIIOE7wkIMGyad4qn7bu3AxsOsBLEg/0ViMXFg9Kh7TOjkbFUDYIs0QeUD0iIL1
-         1Yvsd0l0+eAr4LXVLoNWPWZykKEcqax4lX4vAnjjxcfHpFWIlt5nvNYq3UWU6J4SELQt
-         RT5AoqFu//UZMeRDl4djtYxzARROJ7qbdlDDzzX0UGlAgLOzTXm5cWafJix/CsMSPy6V
-         EWZOwjXlPnvc0/O9dgp/Qz9l9GKmcGmHWpzgWxDI3QvimNKpUeea6JBC/46YJhoCV+tP
-         4/kLtCFOjBqMGHEFaId1fbX8fEXNk38H8WiOHG+/bxZSPw7RXo4x1Rq9upkwCtUGyhPO
-         LsHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8NATODsU2yjaJrA6FSD/IewEgDQ5Oohivlua/nWpA3M=;
-        b=Lnsq6J4I3AhXTsVVBa/uq83wi8ZKBw3Sx19iIgpxKugzrIRjzIDJ2HX5tAN6uqOzJs
-         AmCuIlKu6dN6kcuQbn/harz+/z/N+9D7T6Qy4lC+b1/M3hNNbO9ibbBtWtuc4o05juUx
-         zloatY3PceyB7x7/9CiHMnzmsVOtJeLYedZdhT/ScD0zyhn1amlvUGLpp2WU/TWlq2J5
-         c/ZtY/olSjBok1jtkxGfAWBnKQwywRolwHdf9RWC5lHqCnYhSSpPviZPiZUCVTZo/81k
-         KtS9f7xnCmh+1sq3i31GM8DbCXYDJrBbTHXldkH7pnIe882UAWwGaw/9yskcK5g+eKEU
-         M5zA==
-X-Gm-Message-State: APjAAAWGGs/WbbPLg+FpOalPsp6paKkkzn2iVJoUEbdsdmVQc4z/OsnF
-        RYZ/M1utz8efE3kAMXDyCJ+8CSqmxCoqntnIrNkZyA==
-X-Google-Smtp-Source: APXvYqyb+M2CIaNBeAgYY8KsqoMswRx7p6cPD+rt9zsxw7Toqetk2C0psjthf2j5Haq8E/EaKKB7j/fr+s5PNStqi+Y=
-X-Received: by 2002:ac2:52a3:: with SMTP id r3mr19896983lfm.189.1582291742525;
- Fri, 21 Feb 2020 05:29:02 -0800 (PST)
+        id S1728630AbgBUNaF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 08:30:05 -0500
+Received: from mail-eopbgr50050.outbound.protection.outlook.com ([40.107.5.50]:52545
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727213AbgBUNaE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 08:30:04 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cGlu7G02+7eVdC+5vujdqfdxzLTPzu/f7zfVgoc9p5hxRA0a6zOwXweC1P8MiJZGrDEYN/AUw1Qj3qyDUMBhSVSD/0D+uORjDZVeGJ5wofSw8sRVCdXsq2/4Xsac83S7z+a/yLaS+htsn7cWaDmatSlGenlNMkPNg2zyIkpKZNLsvnwecY0AUQVbKMRK2gsxfl4YJFjKBB/HEBftUhZi7uEnbEVNNvO/zIw4+VJ7uwKSkNrPHn2dMFN6nktuKX3BO1yCgqXzapNfitq2/WO2LBpaiE/x9fqZN6sbVJ2O6ud1uEXICZ1A3p4BlbCwe+R9oED4L1VB+NSJ38SKZt5HDg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=S2lG73Dfc9pfN5uo2c0xlXXVl4G5Z7jyD3WkW2m+CuA=;
+ b=OjcfPAFiEPJO9Waopdisj2CnwThsgIgIOX4QtaLJlnDOJKD2KYZTjWaoY3U3l2KZNLvLzdrHFLQ7RwacexlMMg1Bcyq95vYR757LNq9jc/yPsLvg29epSptPhpXJUQc3sziaEP+OuUI0eyyTKMqB9dJkh5QxKadlpWhqC5MgldzDpY7cNibgHKOF1+WvPnq+HycEGi0ntdT9e88c18+74iCC6i/47nIYGMhPC52ofAwmc+YInGdB7aGeZS2bH1sln9s1EbSyApwC/6g3J6GzRhDF0YEYx1WCpaBpWrlteaixkdJEz0yFnH4AXyoDkUR6CUo6G2yM5oIOMMZSQ02Exw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
+ dkim=pass header.d=mellanox.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=S2lG73Dfc9pfN5uo2c0xlXXVl4G5Z7jyD3WkW2m+CuA=;
+ b=jFP4gHowMN8zEWX14V6q9gnu6hV4N+LkKWWfPqKKgY9m2z2rK0ztxWGkX5aeWvunTagDEx7elkJWFb3I/KzvMO7zJVFsy+BRVwSbNH4Wusv2ZsrcCcd+vIFetu0CCzoKPTwUCso742iiIwebeQTrMG8zB/MuO3WqRnpB68GTsbM=
+Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (52.133.14.15) by
+ VI1PR05MB5392.eurprd05.prod.outlook.com (20.177.201.21) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2729.22; Fri, 21 Feb 2020 13:30:01 +0000
+Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
+ ([fe80::1c00:7925:d5c6:d60d]) by VI1PR05MB4141.eurprd05.prod.outlook.com
+ ([fe80::1c00:7925:d5c6:d60d%7]) with mapi id 15.20.2729.033; Fri, 21 Feb 2020
+ 13:30:01 +0000
+Received: from mlx.ziepe.ca (142.68.57.212) by BL0PR02CA0046.namprd02.prod.outlook.com (2603:10b6:207:3d::23) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2750.18 via Frontend Transport; Fri, 21 Feb 2020 13:30:00 +0000
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)     (envelope-from <jgg@mellanox.com>)      id 1j58NP-0008Cb-9D; Fri, 21 Feb 2020 09:29:55 -0400
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+CC:     Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Aya Levin <ayal@mellanox.com>,
+        Moshe Shemesh <moshe@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "clang-built-linux@googlegroups.com" 
+        <clang-built-linux@googlegroups.com>
+Subject: Re: [PATCH net-next] net/mlx5: Fix header guard in rsc_dump.h
+Thread-Topic: [PATCH net-next] net/mlx5: Fix header guard in rsc_dump.h
+Thread-Index: AQHV6LsE8xwjf/8iO0OS/aKAEPk75Q==
+Date:   Fri, 21 Feb 2020 13:30:00 +0000
+Message-ID: <20200221132955.GG31668@ziepe.ca>
+References: <20200221052437.2884-1-natechancellor@gmail.com>
+In-Reply-To: <20200221052437.2884-1-natechancellor@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BL0PR02CA0046.namprd02.prod.outlook.com
+ (2603:10b6:207:3d::23) To VI1PR05MB4141.eurprd05.prod.outlook.com
+ (2603:10a6:803:44::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [142.68.57.212]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: a54afecd-6743-4f9b-899c-08d7b6d226e1
+x-ms-traffictypediagnostic: VI1PR05MB5392:|VI1PR05MB5392:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR05MB5392E510BFA3FCAFA044A067CF120@VI1PR05MB5392.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:38;
+x-forefront-prvs: 0320B28BE1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(136003)(396003)(39850400004)(366004)(189003)(199004)(64756008)(4326008)(66556008)(66476007)(52116002)(5660300002)(66446008)(4744005)(26005)(186003)(6916009)(71200400001)(9686003)(6666004)(478600001)(66946007)(1076003)(8676002)(81156014)(8936002)(81166006)(33656002)(86362001)(9786002)(316002)(36756003)(54906003)(2906002)(9746002)(24400500001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB5392;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 1AGz9pcePRLGylvwO/satUiJ+bKfP5JBpECL7xVOTrMrSO4SXOIaMwTkoEGTR+PDQPm3ZL0ygQZ7S9eKw0kF5jikRhMWig+hKFWsOEM/rcu0muhrdKyDaLuZwYgPpsKAoPDF+S7GM/b7bB9ydgp071hnE+yQRrvv7ec0p4KcOp8n7MfMpQh1+CC4I2tXtwLLfJK7eHVT7PhX9RtpdMz4gQEchyuKUN7mDS4zvadwzKHyjlYYRbq0/W7RcsyJNQLtRupJMJa0nnbVZ7obVvhWdL0H7DSuOdBK2d9eyoCV0UGp+/Wg4T9hMwQDGQwSRHuQ9zNIiasj74wCw45qwcjVHsdjKQrwgBdD/Tv5vPz8PX1RSyeYAyJ9q1yI0wDb7bfyfGF6oGX7oQ+FdN0SpRiz4TTZoE8MpqsLq90Y+BR4xz0/Y8Yl88T7WCUIlZGJ+TakZ21o0lhgiZwWkSYzvLc3H1QF/e4GHoXyrUXLa/uGbq8nHMdX5yZwfyxGGtQILs9k
+x-ms-exchange-antispam-messagedata: ivPDiEgcpKZJYKSOIwatorFmjCqfs9P21oVV2A+ei5D5qGOFUbFRUv0SGUwTS2cPEOiT/fl1Cbg7r9Y9eT6RuS8gGsP1gNgF7SWLI5KWf5YCJUbAtc76/Rj9+BK2dEJ2/JrrCccQYgYGDX9Hw1nQKw==
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <48F8E0500442464EACAB3B57E17FCEF9@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20200214152729.6059-5-vincent.guittot@linaro.org>
- <20200219125513.8953-1-vincent.guittot@linaro.org> <9fe822fc-c311-2b97-ae14-b9269dd99f1e@arm.com>
- <CAKfTPtD4kz07hikCuU2_cm67ntruopN9CdJEP+fg5L4_N=qEgg@mail.gmail.com>
- <d9f78b94-2455-e000-82bd-c00cfb9bbc8e@arm.com> <20200221090448.GQ3420@suse.de>
- <CAKfTPtAgyGrYaiUEm-MjLxH+pSYMnk4LFJ+_ogJ=cWVvaHMnsg@mail.gmail.com> <20200221104018.GR3420@suse.de>
-In-Reply-To: <20200221104018.GR3420@suse.de>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Fri, 21 Feb 2020 14:28:50 +0100
-Message-ID: <CAKfTPtC+sfkZgSzWdYqtHoZu4a8-LF+qsKYAvZ+DHJyOqh-Rqg@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] sched/pelt: Add a new runnable average signal
-To:     Mel Gorman <mgorman@suse.de>
-Cc:     Valentin Schneider <valentin.schneider@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Phil Auld <pauld@redhat.com>, Parth Shah <parth@linux.ibm.com>,
-        Hillf Danton <hdanton@sina.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a54afecd-6743-4f9b-899c-08d7b6d226e1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2020 13:30:01.0345
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: izA57u8IGLIut9rYxTsq7q4UxIUNwEAa0S1TAghrF2OCm+c4IZwSFCY/8u3NW/4uEAiIOd4sChBLEIhECoFJbw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB5392
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Feb 2020 at 11:40, Mel Gorman <mgorman@suse.de> wrote:
->
-> On Fri, Feb 21, 2020 at 10:25:27AM +0100, Vincent Guittot wrote:
-> > On Fri, 21 Feb 2020 at 10:04, Mel Gorman <mgorman@suse.de> wrote:
-> > >
-> > > On Thu, Feb 20, 2020 at 04:11:18PM +0000, Valentin Schneider wrote:
-> > > > On 20/02/2020 14:36, Vincent Guittot wrote:
-> > > > > I agree that setting by default to SCHED_CAPACITY_SCALE is too much
-> > > > > for little core.
-> > > > > The problem for little core can be fixed by using the cpu capacity instead
-> > > > >
-> > > >
-> > > > So that's indeed better for big.LITTLE & co. Any reason however for not
-> > > > aligning with the initialization of util_avg ?
-> > > >
-> > > > With the default MC imbalance_pct (117), it takes 875 utilization to make
-> > > > a single CPU group (with 1024 capacity) overloaded (group_is_overloaded()).
-> > > > For a completely idle CPU, that means forking at least 3 tasks (512 + 256 +
-> > > > 128 util_avg)
-> > > >
-> > > > With your change, it only takes 2 tasks. I know I'm being nitpicky here, but
-> > > > I feel like those should be aligned, unless we have a proper argument against
-> > > > it - in which case this should also appear in the changelog with so far only
-> > > > mentions issues with util_avg migration, not the fork time initialization.
-> > > >
-> > >
-> > > So, what is the way forward here? Should this patch be modified now,
-> > > a patch be placed on top or go with what we have for the moment that
-> > > works for symmetric CPUs and deal with the asym case later?
-> > >
-> > > I do not have any asym systems at all so I've no means of checking
-> > > whether there is a problem or not.
-> >
-> > I'm going to send a new version at least for patch 4 and 5 using
-> > cpu_scale as initial value and fixing update_sg_wakeup_stats()
-> >
->
-> No problem. FWIW, when I see them, I'll slot them in and rerun the tests
-> as the previous results will be invalidated. Obviously the asym case will
+On Thu, Feb 20, 2020 at 10:24:37PM -0700, Nathan Chancellor wrote:
+> Clang warns:
+>=20
+>  In file included from
+>  ../drivers/net/ethernet/mellanox/mlx5/core/main.c:73:
+>  ../drivers/net/ethernet/mellanox/mlx5/core/diag/rsc_dump.h:4:9: warning:
+>  '__MLX5_RSC_DUMP_H' is used as a header guard here, followed by #define
+>  of a different macro [-Wheader-guard]
+>  #ifndef __MLX5_RSC_DUMP_H
+>          ^~~~~~~~~~~~~~~~~
+>  ../drivers/net/ethernet/mellanox/mlx5/core/diag/rsc_dump.h:5:9: note:
+>  '__MLX5_RSC_DUMP__H' is defined here; did you mean '__MLX5_RSC_DUMP_H'?
+>  #define __MLX5_RSC_DUMP__H
+>          ^~~~~~~~~~~~~~~~~~
+>          __MLX5_RSC_DUMP_H
+>  1 warning generated.
 
-I have just sent the new version.
-Thanks for testing
+Wow, that is a neat warning
 
-> not be tested by me but I imagine you or Valentin have that covered.
->
-> Thanks.
->
-> --
-> Mel Gorman
-> SUSE Labs
+Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
+
+Jason
