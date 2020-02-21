@@ -2,135 +2,373 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FAF2167C5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 12:42:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D2BD167C56
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 12:39:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbgBULmX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 06:42:23 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:52773 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726909AbgBULmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 06:42:22 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48P8hD20VMz9sRk;
-        Fri, 21 Feb 2020 22:42:20 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
-        s=201909; t=1582285340;
-        bh=NiF+bAhi1skEMdJThTrM5/fv2rDtBJ34wkpPNzl4/Es=;
-        h=From:To:Cc:Subject:Date:From;
-        b=MgvZsxBSUc/fzQWExGRyxW6ivm9Ea4SxJJoljMGwOkhsvbS68717+YuDDjuikChA0
-         L/Ayp+X7FGl1GMApgDX2jP29Yo6C4txm0GWoKON/Btkm9XqWfEQWSv8FSr5hVVEGXK
-         JK6bePekDkoRqBbx3KKJ3SIWuEHqAFosIf9DeR32TJ9L0h1Er/r11Muy60uTPMnhIA
-         z1mtmOnnJqaBjjEVQaVIGnpKQO08hQ0OV5FT8PwbI9AawzUUwziKkGf77WWxA32WMI
-         bF4Gt+UZWKqkhnyshiXrpBKAphvtcGa7xdM50ZVuab7jS4xbRBq7bFIUlPG+XeZrwP
-         63rYJDx9fRFHQ==
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     christophe.leroy@c-s.fr, gustavold@linux.ibm.com,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        mikey@neuling.org, oohall@gmail.com, sbobroff@linux.ibm.com
-Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-5.6-3 tag
-Date:   Fri, 21 Feb 2020 22:42:15 +1100
-Message-ID: <87lfowdv54.fsf@mpe.ellerman.id.au>
+        id S1727836AbgBULjb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 06:39:31 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:40420 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726395AbgBULjb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 06:39:31 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01LBdPmA047298;
+        Fri, 21 Feb 2020 05:39:25 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582285165;
+        bh=Wp9yZZ7soOUUEPSzWV6+OWbcx9kzM0BEUtBdRi3sqcU=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=pEYMtsuu6fctx/WUdWq/MixgG1HeRH5zs946P69VH0RkZRejLZ04z7pjcQhNPlJNi
+         JkuxOxbgHy5kTwamc2Z7UAwOCvOYscXUe3ekWqLYtlJTbbYZAiwsQ9zAk1RzHbf5LY
+         NjS8w+pkMmi0z302tP8OfNaX4MF94H2YuaSR9vA0=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01LBdPME097363
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 21 Feb 2020 05:39:25 -0600
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 21
+ Feb 2020 05:39:25 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 21 Feb 2020 05:39:25 -0600
+Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01LBdMA9075782;
+        Fri, 21 Feb 2020 05:39:23 -0600
+Subject: Re: [PATCH] PCI: dwc: pci-dra7xx: Fix MSI IRQ handling
+To:     Vignesh Raghavendra <vigneshr@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC:     Andrew Murray <andrew.murray@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        <linux-omap@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20200124163650.4457-1-vigneshr@ti.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <abdd33fa-be45-9d2e-bf27-91e8c02be6ae@ti.com>
+Date:   Fri, 21 Feb 2020 17:13:04 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20200124163650.4457-1-vigneshr@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA256
 
-Hi Linus,
+On 24/01/20 10:06 pm, Vignesh Raghavendra wrote:
+> Due an issue with PCIe wrapper around DWC PCIe IP on dra7xx, driver
+> needs to ensure that there are no pending MSI IRQ vector set (i.e
+> PCIE_MSI_INTR0_STATUS reads 0 at least once) before exiting IRQ handler.
+> Else, the dra7xx PCIe wrapper will not register new MSI IRQs even though
+> PCIE_MSI_INTR0_STATUS shows IRQs are pending.
+> 
+> Therefore its no longer possible to use default IRQ handler provided by
+> DWC library. So, add irqchip implementation inside pci-dra7xx.c and
+> install new MSI IRQ handler to handle above errata.
+> 
+> This fixes a bug, where PCIe wifi cards with 4 DMA queues like Intel
+> 8260 used to throw following error and stall during ping/iperf3 tests.
+> 
+> [   97.776310] iwlwifi 0000:01:00.0: Queue 9 stuck for 2500 ms.
+> 
+> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
+> ---
+> Based on discussions here: https://www.spinics.net/lists/linux-pci/msg70462.html
 
-Please pull some more powerpc fixes for 5.6. This is two weeks worth as I was
-out sick last week.
+This also fixed an issue I observed in NVMe card.
 
-The following changes since commit 11a48a5a18c63fd7621bb050228cebf13566e4d8:
-
-  Linux 5.6-rc2 (2020-02-16 13:16:59 -0800)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-5.6-3
-
-for you to fetch changes up to 9eb425b2e04e0e3006adffea5bf5f227a896f128:
-
-  powerpc/entry: Fix an #if which should be an #ifdef in entry_32.S (2020-02-19 10:35:22 +1100)
-
-- ------------------------------------------------------------------
-powerpc fixes for 5.6 #3
-
- - Three fixes for the recently added VMAP_STACK on 32-bit.
-
- - Three fixes related to hugepages on 8xx (32-bit).
-
- - A fix for a bug in our transactional memory handling that could lead to a
-   kernel crash if we saw a page fault during signal delivery.
-
- - A fix for a deadlock in our PCI EEH (Enhanced Error Handling) code.
-
- - A couple of other minor fixes.
-
-Thanks to:
-  Christophe Leroy, Erhard F, Frederic Barrat, Gustavo Luiz Duarte, Larry
-  Finger, Leonardo Bras, Oliver O'Halloran, Sam Bobroff.
-
-- ------------------------------------------------------------------
-Christophe Leroy (7):
-      powerpc/hugetlb: Fix 512k hugepages on 8xx with 16k page size
-      powerpc/hugetlb: Fix 8M hugepages on 8xx
-      powerpc/8xx: Fix clearing of bits 20-23 in ITLB miss
-      powerpc/32s: Fix DSI and ISI exceptions for CONFIG_VMAP_STACK
-      powerpc/chrp: Fix enter_rtas() with CONFIG_VMAP_STACK
-      powerpc/6xx: Fix power_save_ppc32_restore() with CONFIG_VMAP_STACK
-      powerpc/entry: Fix an #if which should be an #ifdef in entry_32.S
-
-Gustavo Luiz Duarte (1):
-      powerpc/tm: Fix clearing MSR[TS] in current when reclaiming on signal delivery
-
-Oliver O'Halloran (1):
-      powerpc/xmon: Fix whitespace handling in getstring()
-
-Sam Bobroff (1):
-      powerpc/eeh: Fix deadlock handling dead PHB
-
-
- arch/powerpc/include/asm/page.h       |   5 +
- arch/powerpc/include/asm/processor.h  |   4 +
- arch/powerpc/kernel/asm-offsets.c     |  12 ++
- arch/powerpc/kernel/eeh_driver.c      |  21 +--
- arch/powerpc/kernel/entry_32.S        |  13 +-
- arch/powerpc/kernel/head_32.S         | 155 +++++++++++++++++++-
- arch/powerpc/kernel/head_32.h         |  21 ++-
- arch/powerpc/kernel/head_8xx.S        |   2 +-
- arch/powerpc/kernel/idle_6xx.S        |   8 +
- arch/powerpc/kernel/signal.c          |  17 ++-
- arch/powerpc/kernel/signal_32.c       |  28 ++--
- arch/powerpc/kernel/signal_64.c       |  22 ++-
- arch/powerpc/mm/book3s32/hash_low.S   |  52 +++----
- arch/powerpc/mm/book3s32/mmu.c        |  10 +-
- arch/powerpc/mm/hugetlbpage.c         |  29 ++--
- arch/powerpc/mm/kasan/kasan_init_32.c |   3 +-
- arch/powerpc/xmon/xmon.c              |   5 +
- 17 files changed, 308 insertions(+), 99 deletions(-)
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEJFGtCPCthwEv2Y/bUevqPMjhpYAFAl5PwfYACgkQUevqPMjh
-pYBuFg//b2i/1wn5+CQiqCM4B7Z0fbNvAWH0CFrseR1f72OnO0c9h92vTMjNDIVf
-SItrgl4bBstVq/1YjHnZn00WpJPihIFcXPveQbiH+9yb89Mkcwjj3jLrV/DYIpRW
-gtHxCJImc4/A4tLOUhRA2armXL4AoFlolF/Pbe2m/2lGeH1+tfY4Xd50FJF8c9Zc
-zLdIN4B5Y+IkROQO23LFKiYV0tarvc4q5z6VOY5WlaGd/dpK4OQmheymeDMTYiNN
-CH81u4b6jiiq9uwAWRXao2RTotac3m3Q4XnEswf3obDNGF2mDkAWvpqIgKxRxPNu
-7vtmlamHxhpuqtZpRPPYIaH57j0pGZH63gvCThjJ+V9SL7J856cml9mv4UJOcmI3
-Fkyk8S/QbiP5Rt9KV+CELHGcWaVt+uCuKPwlFrkoEMw1HZ6GErhpKzBNHyoNA1mG
-xLMR4joCHZig62WBEHlZXgLzPVsetO7ZpY+j7tYEWrllfmOeL0F8HzNQ2e6ukF1R
-gyF7eEThKajDhCwgz8pGnE2te+mz56oLHv9lcqU/wEgxHadyzeMjkiRUfxgiQ+K1
-sOWzQjYEt7dhocavOAJb3qtfNMhwSfvSk75P6x8PQNFhQ+KhbNi6JpkOYSTmESBP
-T8po1xh7Hm7IiIROT0hvcdnNb2fIIBNrKaheUlmvOOObEfWaa2Q=
-=rC3U
------END PGP SIGNATURE-----
+FWIW:
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+Tested-by: Kishon Vijay Abraham I <kishon@ti.com>
+> 
+>  drivers/pci/controller/dwc/pci-dra7xx.c | 227 ++++++++++++++++++++----
+>  1 file changed, 189 insertions(+), 38 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
+> index 9bf7fa99b103..07f242539ce9 100644
+> --- a/drivers/pci/controller/dwc/pci-dra7xx.c
+> +++ b/drivers/pci/controller/dwc/pci-dra7xx.c
+> @@ -215,10 +215,6 @@ static int dra7xx_pcie_host_init(struct pcie_port *pp)
+>  	return 0;
+>  }
+>  
+> -static const struct dw_pcie_host_ops dra7xx_pcie_host_ops = {
+> -	.host_init = dra7xx_pcie_host_init,
+> -};
+> -
+>  static int dra7xx_pcie_intx_map(struct irq_domain *domain, unsigned int irq,
+>  				irq_hw_number_t hwirq)
+>  {
+> @@ -233,43 +229,69 @@ static const struct irq_domain_ops intx_domain_ops = {
+>  	.xlate = pci_irqd_intx_xlate,
+>  };
+>  
+> -static int dra7xx_pcie_init_irq_domain(struct pcie_port *pp)
+> +static int dra7xx_pcie_handle_msi_irq(struct pcie_port *pp)
+>  {
+>  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> -	struct device *dev = pci->dev;
+> -	struct dra7xx_pcie *dra7xx = to_dra7xx_pcie(pci);
+> -	struct device_node *node = dev->of_node;
+> -	struct device_node *pcie_intc_node =  of_get_next_child(node, NULL);
+> -
+> -	if (!pcie_intc_node) {
+> -		dev_err(dev, "No PCIe Intc node found\n");
+> -		return -ENODEV;
+> -	}
+> -
+> -	dra7xx->irq_domain = irq_domain_add_linear(pcie_intc_node, PCI_NUM_INTX,
+> -						   &intx_domain_ops, pp);
+> -	of_node_put(pcie_intc_node);
+> -	if (!dra7xx->irq_domain) {
+> -		dev_err(dev, "Failed to get a INTx IRQ domain\n");
+> -		return -ENODEV;
+> +	int i, pos, irq;
+> +	unsigned long val;
+> +	u32 status, num_ctrls;
+> +	int ret = 0;
+> +
+> +	num_ctrls = pp->num_vectors / MAX_MSI_IRQS_PER_CTRL;
+> +
+> +	for (i = 0; i < num_ctrls; i++) {
+> +		status = dw_pcie_readl_dbi(pci, PCIE_MSI_INTR0_STATUS +
+> +					   (i * MSI_REG_CTRL_BLOCK_SIZE));
+> +		if (!status)
+> +			continue;
+> +
+> +		ret = 1;
+> +		val = status;
+> +		pos = 0;
+> +		while ((pos = find_next_bit(&val, MAX_MSI_IRQS_PER_CTRL,
+> +					    pos)) != MAX_MSI_IRQS_PER_CTRL) {
+> +			irq = irq_find_mapping(pp->irq_domain,
+> +					       (i * MAX_MSI_IRQS_PER_CTRL) +
+> +					       pos);
+> +			generic_handle_irq(irq);
+> +			pos++;
+> +		}
+>  	}
+>  
+> -	return 0;
+> +	return ret;
+>  }
+>  
+> -static irqreturn_t dra7xx_pcie_msi_irq_handler(int irq, void *arg)
+> +static void dra7xx_pcie_msi_irq_handler(struct irq_desc *desc)
+>  {
+> -	struct dra7xx_pcie *dra7xx = arg;
+> -	struct dw_pcie *pci = dra7xx->pci;
+> -	struct pcie_port *pp = &pci->pp;
+> +	struct irq_chip *chip = irq_desc_get_chip(desc);
+> +	struct dra7xx_pcie *dra7xx;
+> +	struct dw_pcie *pci;
+> +	struct pcie_port *pp;
+>  	unsigned long reg;
+>  	u32 virq, bit;
+> +	int count = 0;
+> +
+> +	chained_irq_enter(chip, desc);
+> +
+> +	pp = irq_desc_get_handler_data(desc);
+> +	pci = to_dw_pcie_from_pp(pp);
+> +	dra7xx = to_dra7xx_pcie(pci);
+>  
+>  	reg = dra7xx_pcie_readl(dra7xx, PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI);
+> +	dra7xx_pcie_writel(dra7xx, PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI, reg);
+>  
+>  	switch (reg) {
+>  	case MSI:
+> -		dw_handle_msi_irq(pp);
+> +		/**
+> +		 * Need to make sure all MSI status bits read 0 before
+> +		 * exiting. Else, new MSI IRQs are not registered by the
+> +		 * wrapper. Have an upperbound for the loop and exit the
+> +		 * IRQ in case of IRQ flood to avoid locking up system
+> +		 * in interrupt context.
+> +		 */
+> +		while (dra7xx_pcie_handle_msi_irq(pp) && count < 1000)
+> +			count++;
+> +
+>  		break;
+>  	case INTA:
+>  	case INTB:
+> @@ -283,9 +305,7 @@ static irqreturn_t dra7xx_pcie_msi_irq_handler(int irq, void *arg)
+>  		break;
+>  	}
+>  
+> -	dra7xx_pcie_writel(dra7xx, PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI, reg);
+> -
+> -	return IRQ_HANDLED;
+> +	chained_irq_exit(chip, desc);
+>  }
+>  
+>  static irqreturn_t dra7xx_pcie_irq_handler(int irq, void *arg)
+> @@ -347,6 +367,145 @@ static irqreturn_t dra7xx_pcie_irq_handler(int irq, void *arg)
+>  	return IRQ_HANDLED;
+>  }
+>  
+> +static int dra7xx_pcie_init_irq_domain(struct pcie_port *pp)
+> +{
+> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> +	struct device *dev = pci->dev;
+> +	struct dra7xx_pcie *dra7xx = to_dra7xx_pcie(pci);
+> +	struct device_node *node = dev->of_node;
+> +	struct device_node *pcie_intc_node =  of_get_next_child(node, NULL);
+> +
+> +	if (!pcie_intc_node) {
+> +		dev_err(dev, "No PCIe Intc node found\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	irq_set_chained_handler_and_data(pp->irq, dra7xx_pcie_msi_irq_handler,
+> +					 pp);
+> +	dra7xx->irq_domain = irq_domain_add_linear(pcie_intc_node, PCI_NUM_INTX,
+> +						   &intx_domain_ops, pp);
+> +	of_node_put(pcie_intc_node);
+> +	if (!dra7xx->irq_domain) {
+> +		dev_err(dev, "Failed to get a INTx IRQ domain\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void dra7xx_pcie_setup_msi_msg(struct irq_data *d, struct msi_msg *msg)
+> +{
+> +	struct pcie_port *pp = irq_data_get_irq_chip_data(d);
+> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> +	u64 msi_target;
+> +
+> +	msi_target = (u64)pp->msi_data;
+> +
+> +	msg->address_lo = lower_32_bits(msi_target);
+> +	msg->address_hi = upper_32_bits(msi_target);
+> +
+> +	msg->data = d->hwirq;
+> +
+> +	dev_dbg(pci->dev, "msi#%d address_hi %#x address_lo %#x\n",
+> +		(int)d->hwirq, msg->address_hi, msg->address_lo);
+> +}
+> +
+> +static int dra7xx_pcie_msi_set_affinity(struct irq_data *d,
+> +					const struct cpumask *mask,
+> +					bool force)
+> +{
+> +	return -EINVAL;
+> +}
+> +
+> +static void dra7xx_pcie_bottom_mask(struct irq_data *d)
+> +{
+> +	struct pcie_port *pp = irq_data_get_irq_chip_data(d);
+> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> +	unsigned int res, bit, ctrl;
+> +	unsigned long flags;
+> +
+> +	raw_spin_lock_irqsave(&pp->lock, flags);
+> +
+> +	ctrl = d->hwirq / MAX_MSI_IRQS_PER_CTRL;
+> +	res = ctrl * MSI_REG_CTRL_BLOCK_SIZE;
+> +	bit = d->hwirq % MAX_MSI_IRQS_PER_CTRL;
+> +
+> +	pp->irq_mask[ctrl] |= BIT(bit);
+> +	dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_MASK + res,
+> +			   pp->irq_mask[ctrl]);
+> +
+> +	raw_spin_unlock_irqrestore(&pp->lock, flags);
+> +}
+> +
+> +static void dra7xx_pcie_bottom_unmask(struct irq_data *d)
+> +{
+> +	struct pcie_port *pp = irq_data_get_irq_chip_data(d);
+> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> +	unsigned int res, bit, ctrl;
+> +	unsigned long flags;
+> +
+> +	raw_spin_lock_irqsave(&pp->lock, flags);
+> +
+> +	ctrl = d->hwirq / MAX_MSI_IRQS_PER_CTRL;
+> +	res = ctrl * MSI_REG_CTRL_BLOCK_SIZE;
+> +	bit = d->hwirq % MAX_MSI_IRQS_PER_CTRL;
+> +
+> +	pp->irq_mask[ctrl] &= ~BIT(bit);
+> +	dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_MASK + res,
+> +			   pp->irq_mask[ctrl]);
+> +
+> +	raw_spin_unlock_irqrestore(&pp->lock, flags);
+> +}
+> +
+> +static void dra7xx_pcie_bottom_ack(struct irq_data *d)
+> +{
+> +	struct pcie_port *pp  = irq_data_get_irq_chip_data(d);
+> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> +	unsigned int res, bit, ctrl;
+> +
+> +	ctrl = d->hwirq / MAX_MSI_IRQS_PER_CTRL;
+> +	res = ctrl * MSI_REG_CTRL_BLOCK_SIZE;
+> +	bit = d->hwirq % MAX_MSI_IRQS_PER_CTRL;
+> +
+> +	dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_STATUS + res, BIT(bit));
+> +}
+> +
+> +static struct irq_chip dra7xx_pci_msi_bottom_irq_chip = {
+> +	.name = "DRA7XX-PCI-MSI",
+> +	.irq_ack = dra7xx_pcie_bottom_ack,
+> +	.irq_compose_msi_msg = dra7xx_pcie_setup_msi_msg,
+> +	.irq_set_affinity = dra7xx_pcie_msi_set_affinity,
+> +	.irq_mask = dra7xx_pcie_bottom_mask,
+> +	.irq_unmask = dra7xx_pcie_bottom_unmask,
+> +};
+> +
+> +static int dra7xx_pcie_msi_host_init(struct pcie_port *pp)
+> +{
+> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> +	u32 ctrl, num_ctrls;
+> +
+> +	pp->msi_irq_chip = &dra7xx_pci_msi_bottom_irq_chip;
+> +
+> +	num_ctrls = pp->num_vectors / MAX_MSI_IRQS_PER_CTRL;
+> +	/* Initialize IRQ Status array */
+> +	for (ctrl = 0; ctrl < num_ctrls; ctrl++) {
+> +		pp->irq_mask[ctrl] = ~0;
+> +		dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_MASK +
+> +				    (ctrl * MSI_REG_CTRL_BLOCK_SIZE),
+> +				    pp->irq_mask[ctrl]);
+> +		dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_ENABLE +
+> +				    (ctrl * MSI_REG_CTRL_BLOCK_SIZE),
+> +				    ~0);
+> +	}
+> +
+> +	return dw_pcie_allocate_domains(pp);
+> +}
+> +
+> +static const struct dw_pcie_host_ops dra7xx_pcie_host_ops = {
+> +	.host_init = dra7xx_pcie_host_init,
+> +	.msi_host_init = dra7xx_pcie_msi_host_init,
+> +};
+> +
+>  static void dra7xx_pcie_ep_init(struct dw_pcie_ep *ep)
+>  {
+>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+> @@ -467,14 +626,6 @@ static int __init dra7xx_add_pcie_port(struct dra7xx_pcie *dra7xx,
+>  		return pp->irq;
+>  	}
+>  
+> -	ret = devm_request_irq(dev, pp->irq, dra7xx_pcie_msi_irq_handler,
+> -			       IRQF_SHARED | IRQF_NO_THREAD,
+> -			       "dra7-pcie-msi",	dra7xx);
+> -	if (ret) {
+> -		dev_err(dev, "failed to request irq\n");
+> -		return ret;
+> -	}
+> -
+>  	ret = dra7xx_pcie_init_irq_domain(pp);
+>  	if (ret < 0)
+>  		return ret;
+> 
