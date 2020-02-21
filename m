@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6F3B16750A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:30:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BC2216757E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:31:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388275AbgBUIWT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:22:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33822 "EHLO mail.kernel.org"
+        id S2388772AbgBUI2O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:28:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388038AbgBUIWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:22:15 -0500
+        id S1732385AbgBUIUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:20:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CBD5424673;
-        Fri, 21 Feb 2020 08:22:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0BA7A2469E;
+        Fri, 21 Feb 2020 08:20:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273335;
-        bh=tUg751Affnoyn3FW3QZPYI49oz153hfQFyw6kq9w/7c=;
+        s=default; t=1582273237;
+        bh=sRSHDjt1zfYM/QXsil6XobwK6csvrwRtCUObDsVdiHU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vfG3vU2GIwfGshzYa6JUlYpF4b7KVSx5rhRVwg4unap1Q+nkxnKQJ9tgawE+Thu7G
-         LYyBkIhqTifISsWaUp26vp0qffscjXnJhYtt+miwipNn/ivs/16vMV+WD5y1XT+L8K
-         +M8wZ7POIyu8P+4myyjcvrnoJFHU+XlTC8IiaA0E=
+        b=rTIIaRBYFNJXf/yrO4yi0rpdX02+bSEwv9sSrU6EyZiEsys5KIWfkIqwn17w/+wd/
+         qWZbTT8I6JGzhp/GXxESrgT5rQ1Dbaw5kPCR+fSgvbxldtwnTTEASw6T7o7/UBGTjl
+         iROkXKkUhWObvjNJSMWvySdCznuKVayE2eXrS/f8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Maxime Ripard <maxime@cerno.tech>,
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 094/191] clk: sunxi-ng: add mux and pll notifiers for A64 CPU clock
-Date:   Fri, 21 Feb 2020 08:41:07 +0100
-Message-Id: <20200221072302.330809496@linuxfoundation.org>
+Subject: [PATCH 4.19 097/191] ALSA: sh: Fix compile warning wrt const
+Date:   Fri, 21 Feb 2020 08:41:10 +0100
+Message-Id: <20200221072302.830601727@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
 References: <20200221072250.732482588@linuxfoundation.org>
@@ -45,77 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Icenowy Zheng <icenowy@aosc.io>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit ec97faff743b398e21f74a54c81333f3390093aa ]
+[ Upstream commit f1dd4795b1523fbca7ab4344dd5a8bb439cc770d ]
 
-The A64 PLL_CPU clock has the same instability if some factor changed
-without the PLL gated like other SoCs with sun6i-style CCU, e.g. A33,
-H3.
+A long-standing compile warning was seen during build test:
+  sound/sh/aica.c: In function 'load_aica_firmware':
+  sound/sh/aica.c:521:25: warning: passing argument 2 of 'spu_memload' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
 
-Add the mux and pll notifiers for A64 CPU clock to workaround the
-problem.
-
-Fixes: c6a0637460c2 ("clk: sunxi-ng: Add A64 clocks")
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Fixes: 198de43d758c ("[ALSA] Add ALSA support for the SEGA Dreamcast PCM device")
+Link: https://lore.kernel.org/r/20200105144823.29547-69-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 28 ++++++++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
+ sound/sh/aica.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-index dec4a130390a3..9ac6c299e0744 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-@@ -901,11 +901,26 @@ static const struct sunxi_ccu_desc sun50i_a64_ccu_desc = {
- 	.num_resets	= ARRAY_SIZE(sun50i_a64_ccu_resets),
- };
- 
-+static struct ccu_pll_nb sun50i_a64_pll_cpu_nb = {
-+	.common	= &pll_cpux_clk.common,
-+	/* copy from pll_cpux_clk */
-+	.enable	= BIT(31),
-+	.lock	= BIT(28),
-+};
-+
-+static struct ccu_mux_nb sun50i_a64_cpu_nb = {
-+	.common		= &cpux_clk.common,
-+	.cm		= &cpux_clk.mux,
-+	.delay_us	= 1, /* > 8 clock cycles at 24 MHz */
-+	.bypass_index	= 1, /* index of 24 MHz oscillator */
-+};
-+
- static int sun50i_a64_ccu_probe(struct platform_device *pdev)
- {
- 	struct resource *res;
- 	void __iomem *reg;
- 	u32 val;
-+	int ret;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	reg = devm_ioremap_resource(&pdev->dev, res);
-@@ -919,7 +934,18 @@ static int sun50i_a64_ccu_probe(struct platform_device *pdev)
- 
- 	writel(0x515, reg + SUN50I_A64_PLL_MIPI_REG);
- 
--	return sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
-+	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
-+	if (ret)
-+		return ret;
-+
-+	/* Gate then ungate PLL CPU after any rate changes */
-+	ccu_pll_notifier_register(&sun50i_a64_pll_cpu_nb);
-+
-+	/* Reparent CPU during PLL CPU rate changes */
-+	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
-+				  &sun50i_a64_cpu_nb);
-+
-+	return 0;
+diff --git a/sound/sh/aica.c b/sound/sh/aica.c
+index ad3f71358486a..69ac44b335602 100644
+--- a/sound/sh/aica.c
++++ b/sound/sh/aica.c
+@@ -117,10 +117,10 @@ static void spu_memset(u32 toi, u32 what, int length)
  }
  
- static const struct of_device_id sun50i_a64_ccu_ids[] = {
+ /* spu_memload - write to SPU address space */
+-static void spu_memload(u32 toi, void *from, int length)
++static void spu_memload(u32 toi, const void *from, int length)
+ {
+ 	unsigned long flags;
+-	u32 *froml = from;
++	const u32 *froml = from;
+ 	u32 __iomem *to = (u32 __iomem *) (SPU_MEMORY_BASE + toi);
+ 	int i;
+ 	u32 val;
 -- 
 2.20.1
 
