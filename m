@@ -2,42 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A9241677A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:44:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF5C016775F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:42:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730311AbgBUHzZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:55:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54272 "EHLO mail.kernel.org"
+        id S1730994AbgBUIls (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:41:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729878AbgBUHzV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:55:21 -0500
+        id S1730481AbgBUH4k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:56:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C386222C4;
-        Fri, 21 Feb 2020 07:55:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0ED820578;
+        Fri, 21 Feb 2020 07:56:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271720;
-        bh=5tGjCaR0U/4Sbp7vkRaZfh3f9+5qvqqeBO9WpmTPe1E=;
+        s=default; t=1582271800;
+        bh=qkr6acl5AOx9HxzNSn2Ffkl5YYxSy9LryyRo9RewjuA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ygHF0y8Q+HJ0x0TnwU0udJJLuM7f83JRscktqh/Gx52B325bVgOGzuE6BM6Wg60l4
-         R/RnoQQ+UPfqaV7paknmJrB3ja4sCKUReS5akltDtXlsnEkKvwVn8vq1HJW3mUySQb
-         Ej+Zr5NxeAoHjXZ11n3/bluqW7U6GM9FFYtxzV6M=
+        b=BmzB5hL3xkLVZ3nAxA65I7L94eI3pmDBLAWE9Xt1VhcZj7gOez0DgsiGuEnbE6Hc4
+         lAYd8g24Eayvbo1a6lbVh91lUN1aP1HG1oR0qjo8bBo3r5VuXSNfH43qAo7MeV841D
+         R9PXPM03PDFBGttTVWrbb5XH7xwYzecRytU2yF40=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Avri Altman <avri.altman@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Bean Huo <beanhuo@micron.com>, Can Guo <cang@codeaurora.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 272/399] scsi: ufs-mediatek: add apply_dev_quirks variant operation
-Date:   Fri, 21 Feb 2020 08:39:57 +0100
-Message-Id: <20200221072428.629053490@linuxfoundation.org>
+Subject: [PATCH 5.5 276/399] crypto: essiv - fix AEAD capitalization and preposition use in help text
+Date:   Fri, 21 Feb 2020 08:40:01 +0100
+Message-Id: <20200221072428.921963176@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -50,66 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stanley Chu <stanley.chu@mediatek.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
 
-[ Upstream commit ea92c32bd336efba89c5b09cf609e6e26e963796 ]
+[ Upstream commit ab3d436bf3e9d05f58ceaa85ff7475bfcd6e45af ]
 
-Add vendor-specific variant callback "apply_dev_quirks" to MediaTek UFS
-driver.
+"AEAD" is capitalized everywhere else.
+Use "an" when followed by a written or spoken vowel.
 
-Cc: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Asutosh Das <asutoshd@codeaurora.org>
-Cc: Avri Altman <avri.altman@wdc.com>
-Cc: Bart Van Assche <bvanassche@acm.org>
-Cc: Bean Huo <beanhuo@micron.com>
-Cc: Can Guo <cang@codeaurora.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Link: https://lore.kernel.org/r/1578726707-6596-3-git-send-email-stanley.chu@mediatek.com
-Reviewed-by: Avri Altman <avri.altman@wdc.com>
-Reviewed-by: Bean Huo <beanhuo@micron.com>
-Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: be1eb7f78aa8fbe3 ("crypto: essiv - create wrapper template for ESSIV generation")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/ufs/ufs-mediatek.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ crypto/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/ufs/ufs-mediatek.c b/drivers/scsi/ufs/ufs-mediatek.c
-index 83e28edc3ac5b..8a21f49caf0d9 100644
---- a/drivers/scsi/ufs/ufs-mediatek.c
-+++ b/drivers/scsi/ufs/ufs-mediatek.c
-@@ -13,6 +13,7 @@
+diff --git a/crypto/Kconfig b/crypto/Kconfig
+index 5575d48473bd4..cdb51d4272d0c 100644
+--- a/crypto/Kconfig
++++ b/crypto/Kconfig
+@@ -511,10 +511,10 @@ config CRYPTO_ESSIV
+ 	  encryption.
  
- #include "ufshcd.h"
- #include "ufshcd-pltfrm.h"
-+#include "ufs_quirks.h"
- #include "unipro.h"
- #include "ufs-mediatek.h"
- 
-@@ -289,6 +290,15 @@ static int ufs_mtk_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
- 	return 0;
- }
- 
-+static int ufs_mtk_apply_dev_quirks(struct ufs_hba *hba,
-+				    struct ufs_dev_desc *card)
-+{
-+	if (card->wmanufacturerid == UFS_VENDOR_SAMSUNG)
-+		ufshcd_dme_set(hba, UIC_ARG_MIB(PA_TACTIVATE), 6);
-+
-+	return 0;
-+}
-+
- /**
-  * struct ufs_hba_mtk_vops - UFS MTK specific variant operations
-  *
-@@ -301,6 +311,7 @@ static struct ufs_hba_variant_ops ufs_hba_mtk_vops = {
- 	.setup_clocks        = ufs_mtk_setup_clocks,
- 	.link_startup_notify = ufs_mtk_link_startup_notify,
- 	.pwr_change_notify   = ufs_mtk_pwr_change_notify,
-+	.apply_dev_quirks    = ufs_mtk_apply_dev_quirks,
- 	.suspend             = ufs_mtk_suspend,
- 	.resume              = ufs_mtk_resume,
- };
+ 	  This driver implements a crypto API template that can be
+-	  instantiated either as a skcipher or as a aead (depending on the
++	  instantiated either as an skcipher or as an AEAD (depending on the
+ 	  type of the first template argument), and which defers encryption
+ 	  and decryption requests to the encapsulated cipher after applying
+-	  ESSIV to the input IV. Note that in the aead case, it is assumed
++	  ESSIV to the input IV. Note that in the AEAD case, it is assumed
+ 	  that the keys are presented in the same format used by the authenc
+ 	  template, and that the IV appears at the end of the authenticated
+ 	  associated data (AAD) region (which is how dm-crypt uses it.)
 -- 
 2.20.1
 
