@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C521B16725A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:03:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0E55167272
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:03:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731226AbgBUICl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:02:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35160 "EHLO mail.kernel.org"
+        id S1731512AbgBUIDk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:03:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730046AbgBUICj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:02:39 -0500
+        id S1731382AbgBUIDh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:03:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB08720801;
-        Fri, 21 Feb 2020 08:02:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33F8B2073A;
+        Fri, 21 Feb 2020 08:03:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272158;
-        bh=rFOELsaO4yvZI6+IqnVAnJzFvKetvArBL8zQbNS0zxA=;
+        s=default; t=1582272216;
+        bh=di8khRlYDSskFUMn8Lp9Smww22MVmawjUEsgEdLehbA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YLfh4iy4SAD/Ky6G63PjI/HZNBMUNbxV5mmqmAbY5EkUhxhAcRTyy+jzKMykk8ZZm
-         VYJ8aLvjIeJTFrcusGd1OheoYdVP9XNMBPCV/eLvNZE7scO7Q2jc8tpG/usTl4y+Cc
-         /YcqDkIIslbEWPuTmPMmXJWet/7ew9K/YzBRzJq4=
+        b=s4bmnBDoX6x6SL97l3DKFlrr4Bfs+KF3xdDPJ8GqAU2D06luuRsvAuy1nNitYawt0
+         LYfQHX2ETcx8IwrkEjse+a+bhG6BHbD9Jo/6qDpjkGjeHAflJxsYnlGs41V66pDEZP
+         tpJtf+2vZjdTARnP0psj+B6yrsVZebD/ptnogINU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        John Ogness <john.ogness@linutronix.de>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Petr Mladek <pmladek@suse.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 030/344] printk: fix exclusive_console replaying
-Date:   Fri, 21 Feb 2020 08:37:09 +0100
-Message-Id: <20200221072351.886120922@linuxfoundation.org>
+        stable@vger.kernel.org, Rob Clark <robdclark@chromium.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 032/344] drm/msm/adreno: fix zap vs no-zap handling
+Date:   Fri, 21 Feb 2020 08:37:11 +0100
+Message-Id: <20200221072352.071700387@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
 References: <20200221072349.335551332@linuxfoundation.org>
@@ -45,56 +43,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Ogness <john.ogness@linutronix.de>
+From: Rob Clark <robdclark@chromium.org>
 
-[ Upstream commit def97da136515cb289a14729292c193e0a93bc64 ]
+[ Upstream commit 15ab987c423df561e0949d77fb5043921ae59956 ]
 
-Commit f92b070f2dc8 ("printk: Do not miss new messages when replaying
-the log") introduced a new variable @exclusive_console_stop_seq to
-store when an exclusive console should stop printing. It should be
-set to the @console_seq value at registration. However, @console_seq
-is previously set to @syslog_seq so that the exclusive console knows
-where to begin. This results in the exclusive console immediately
-reactivating all the other consoles and thus repeating the messages
-for those consoles.
+We can have two cases, when it comes to "zap" fw.  Either the fw
+requires zap fw to take the GPU out of secure mode at boot, or it does
+not and we can write RBBM_SECVID_TRUST_CNTL directly.  Previously we
+decided based on whether zap fw load succeeded, but this is not a great
+plan because:
 
-Set @console_seq after @exclusive_console_stop_seq has stored the
-current @console_seq value.
+1) we could have zap fw in the filesystem on a device where it is not
+   required
+2) we could have the inverse case
 
-Fixes: f92b070f2dc8 ("printk: Do not miss new messages when replaying the log")
-Link: http://lkml.kernel.org/r/20191219115322.31160-1-john.ogness@linutronix.de
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: John Ogness <john.ogness@linutronix.de>
-Acked-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
+Instead, shift to deciding based on whether we have a 'zap-shader' node
+in dt.  In practice, there is only one device (currently) with upstream
+dt that does not use zap (cheza), and it already has a /delete-node/ for
+the zap-shader node.
+
+Fixes: abccb9fe3267 ("drm/msm/a6xx: Add zap shader load")
+Signed-off-by: Rob Clark <robdclark@chromium.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/printk/printk.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/msm/adreno/a5xx_gpu.c | 11 +++++++++--
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 11 +++++++++--
+ 2 files changed, 18 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index ca65327a6de8c..c0a5b56aea4e8 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -2770,8 +2770,6 @@ void register_console(struct console *newcon)
- 		 * for us.
- 		 */
- 		logbuf_lock_irqsave(flags);
--		console_seq = syslog_seq;
--		console_idx = syslog_idx;
- 		/*
- 		 * We're about to replay the log buffer.  Only do this to the
- 		 * just-registered console to avoid excessive message spam to
-@@ -2783,6 +2781,8 @@ void register_console(struct console *newcon)
- 		 */
- 		exclusive_console = newcon;
- 		exclusive_console_stop_seq = console_seq;
-+		console_seq = syslog_seq;
-+		console_idx = syslog_idx;
- 		logbuf_unlock_irqrestore(flags);
+diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+index e9c55d1d6c044..99cd6e62a9715 100644
+--- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+@@ -726,11 +726,18 @@ static int a5xx_hw_init(struct msm_gpu *gpu)
+ 		gpu->funcs->flush(gpu, gpu->rb[0]);
+ 		if (!a5xx_idle(gpu, gpu->rb[0]))
+ 			return -EINVAL;
+-	} else {
+-		/* Print a warning so if we die, we know why */
++	} else if (ret == -ENODEV) {
++		/*
++		 * This device does not use zap shader (but print a warning
++		 * just in case someone got their dt wrong.. hopefully they
++		 * have a debug UART to realize the error of their ways...
++		 * if you mess this up you are about to crash horribly)
++		 */
+ 		dev_warn_once(gpu->dev->dev,
+ 			"Zap shader not enabled - using SECVID_TRUST_CNTL instead\n");
+ 		gpu_write(gpu, REG_A5XX_RBBM_SECVID_TRUST_CNTL, 0x0);
++	} else {
++		return ret;
  	}
- 	console_unlock();
+ 
+ 	/* Last step - yield the ringbuffer */
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+index dc8ec2c94301b..686c34d706b0d 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+@@ -537,12 +537,19 @@ static int a6xx_hw_init(struct msm_gpu *gpu)
+ 		a6xx_flush(gpu, gpu->rb[0]);
+ 		if (!a6xx_idle(gpu, gpu->rb[0]))
+ 			return -EINVAL;
+-	} else {
+-		/* Print a warning so if we die, we know why */
++	} else if (ret == -ENODEV) {
++		/*
++		 * This device does not use zap shader (but print a warning
++		 * just in case someone got their dt wrong.. hopefully they
++		 * have a debug UART to realize the error of their ways...
++		 * if you mess this up you are about to crash horribly)
++		 */
+ 		dev_warn_once(gpu->dev->dev,
+ 			"Zap shader not enabled - using SECVID_TRUST_CNTL instead\n");
+ 		gpu_write(gpu, REG_A6XX_RBBM_SECVID_TRUST_CNTL, 0x0);
+ 		ret = 0;
++	} else {
++		return ret;
+ 	}
+ 
+ out:
 -- 
 2.20.1
 
