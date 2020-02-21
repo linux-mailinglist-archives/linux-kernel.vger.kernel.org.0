@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F843167621
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:37:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FFE81677B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:44:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731017AbgBUIIv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:08:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43444 "EHLO mail.kernel.org"
+        id S1731566AbgBUIm7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:42:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732243AbgBUIIs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:08:48 -0500
+        id S1729510AbgBUHyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:54:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E56520722;
-        Fri, 21 Feb 2020 08:08:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 499F220578;
+        Fri, 21 Feb 2020 07:54:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272527;
-        bh=Ub8G3HeCiVqwopxkJ/unRKyVlD9x9u4VUfXKklzVoKI=;
+        s=default; t=1582271659;
+        bh=LXbfIfF8CgqKhgJwGP25Eq5JnnzHgEojWUNMKLKkmb4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pz5RB1YVFdoxc24Kyg31r5GepYLmJ/7fvG2WLifTDywpvulOyKoIc42ai+RBCq549
-         4NMFd/HF/rpCyCgCnGf8t3z6BtCuIvUzpqeTCdnPMCxN+mPEcF8YVEdT6f0/EUJTPg
-         aho/Lrlg9ntzD2PO2B6p+lZsr2LMeJ+L0b69Si10=
+        b=jIfVjwPH4+FU6NpGTojd++RmL0jMVtISt77BvJ79EU1gPQQpAEDF2SVghRltjriii
+         +qM+lr4tDRDABNRgdEMAfuprl5qvckinq3NPnAgCAPJNx64XwLjH/FN6A9vRY+iOkz
+         UALbPCO/plpMowqNSSWk5ZwddZXAap1P0j5FDlgE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Niklas Cassel <nks@flawful.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 175/344] clk: Use parent node pointer during registration if necessary
-Date:   Fri, 21 Feb 2020 08:39:34 +0100
-Message-Id: <20200221072404.862674329@linuxfoundation.org>
+Subject: [PATCH 5.5 251/399] driver core: Print device when resources present in really_probe()
+Date:   Fri, 21 Feb 2020 08:39:36 +0100
+Message-Id: <20200221072426.839318724@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
+References: <20200221072402.315346745@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,92 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Boyd <sboyd@kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 9011f92622e5ef2d075f45e5fa818776d4feb8c0 ]
+[ Upstream commit 7c35e699c88bd60734277b26962783c60e04b494 ]
 
-Sometimes clk drivers are attached to devices which are children of a
-parent device that is connected to a node in DT. This happens when
-devices are MFD-ish and the parent device driver mostly registers child
-devices to match against drivers placed in their respective subsystem
-directories like drivers/clk, drivers/regulator, etc. When the clk
-driver calls clk_register() with a device pointer, that struct device
-pointer won't have a device_node associated with it because it was
-created purely in software as a way to partition logic to a subsystem.
+If a device already has devres items attached before probing, a warning
+backtrace is printed.  However, this backtrace does not reveal the
+offending device, leaving the user uninformed.  Furthermore, using
+WARN_ON() causes systems with panic-on-warn to reboot.
 
-This causes problems for the way we find parent clks for the clks
-registered by these child devices because we look at the registering
-device's device_node pointer to lookup 'clocks' and 'clock-names'
-properties. Let's use the parent device's device_node pointer if the
-registering device doesn't have a device_node but the parent does. This
-simplifies clk registration code by avoiding the need to assign some
-device_node to the device registering the clk.
+Fix this by replacing the WARN_ON() by a dev_crit() message.
+Abort probing the device, to prevent doing more damage to the device's
+resources.
 
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Reported-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Link: https://lkml.kernel.org/r/20191230190455.141339-1-sboyd@kernel.org
-[sboyd@kernel.org: Fixup kernel-doc notation]
-Reviewed-by: Niklas Cassel <nks@flawful.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Tested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20191206132219.28908-1-geert+renesas@glider.be
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk.c | 27 +++++++++++++++++++++++++--
- 1 file changed, 25 insertions(+), 2 deletions(-)
+ drivers/base/dd.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index b0344a1a03704..62d0fc486d3a2 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3718,6 +3718,28 @@ fail_out:
- 	return ERR_PTR(ret);
- }
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index d811e60610d33..b25bcab2a26bd 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -516,7 +516,10 @@ static int really_probe(struct device *dev, struct device_driver *drv)
+ 	atomic_inc(&probe_count);
+ 	pr_debug("bus: '%s': %s: probing driver %s with device %s\n",
+ 		 drv->bus->name, __func__, drv->name, dev_name(dev));
+-	WARN_ON(!list_empty(&dev->devres_head));
++	if (!list_empty(&dev->devres_head)) {
++		dev_crit(dev, "Resources present before probing\n");
++		return -EBUSY;
++	}
  
-+/**
-+ * dev_or_parent_of_node() - Get device node of @dev or @dev's parent
-+ * @dev: Device to get device node of
-+ *
-+ * Return: device node pointer of @dev, or the device node pointer of
-+ * @dev->parent if dev doesn't have a device node, or NULL if neither
-+ * @dev or @dev->parent have a device node.
-+ */
-+static struct device_node *dev_or_parent_of_node(struct device *dev)
-+{
-+	struct device_node *np;
-+
-+	if (!dev)
-+		return NULL;
-+
-+	np = dev_of_node(dev);
-+	if (!np)
-+		np = dev_of_node(dev->parent);
-+
-+	return np;
-+}
-+
- /**
-  * clk_register - allocate a new clock, register it and return an opaque cookie
-  * @dev: device that is registering this clock
-@@ -3733,7 +3755,7 @@ fail_out:
-  */
- struct clk *clk_register(struct device *dev, struct clk_hw *hw)
- {
--	return __clk_register(dev, dev_of_node(dev), hw);
-+	return __clk_register(dev, dev_or_parent_of_node(dev), hw);
- }
- EXPORT_SYMBOL_GPL(clk_register);
- 
-@@ -3749,7 +3771,8 @@ EXPORT_SYMBOL_GPL(clk_register);
-  */
- int clk_hw_register(struct device *dev, struct clk_hw *hw)
- {
--	return PTR_ERR_OR_ZERO(__clk_register(dev, dev_of_node(dev), hw));
-+	return PTR_ERR_OR_ZERO(__clk_register(dev, dev_or_parent_of_node(dev),
-+			       hw));
- }
- EXPORT_SYMBOL_GPL(clk_hw_register);
- 
+ re_probe:
+ 	dev->driver = drv;
 -- 
 2.20.1
 
