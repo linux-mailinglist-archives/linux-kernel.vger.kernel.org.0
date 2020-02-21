@@ -2,146 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1019167810
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:46:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3E4B1677F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:46:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731675AbgBUIp4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:45:56 -0500
-Received: from mail-pj1-f74.google.com ([209.85.216.74]:60337 "EHLO
-        mail-pj1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729598AbgBUHup (ORCPT
+        id S1729617AbgBUHuw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:50:52 -0500
+Received: from mail-pf1-f201.google.com ([209.85.210.201]:43938 "EHLO
+        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729605AbgBUHur (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:50:45 -0500
-Received: by mail-pj1-f74.google.com with SMTP id z5so498007pjq.9
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 23:50:44 -0800 (PST)
+        Fri, 21 Feb 2020 02:50:47 -0500
+Received: by mail-pf1-f201.google.com with SMTP id x199so786302pfc.10
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 23:50:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=y7uM3w77h2Gn0yEivNMhyewHaqjCcqiwBI+mwPIiJHs=;
-        b=mMsmaYKZyOgfxwfcOwYdJ2ReONJjt8mM0r6AXOMXja/R2IRChUNdp94NPI6lmzReEx
-         BFzSbHQ72mSIJxAPQsSVz1kRxHRpLs3HNbXjNd6khqX7+Mjg3OxP8ZGguXksSnXT/waV
-         Uh2yf30YkA7GYVQjErpdmOX2z2HQ/k0drAQ7CpuFYdciiAzjfUNK4ZWfYceLujMbIiKP
-         EI32HujwIYSsx3PuyFLjIifzfAWgDRV5F1uwy6pwvw0KTyTwvTZRV+nPdisf8tIeoFNh
-         vjhBCGH7/hHdLLsOSEPtdqTibT6c+BAF3DeNZLWmo8vEd6jAmXm73I3gNwKRGSK61x0Y
-         RCsg==
+        bh=TmMGk/2HBR1UCtTSik3KGPjlUzxkj3b3kzWXZC6WT9Q=;
+        b=HnA22rj1dxnIqlA9T0G3M9hI7Ol0tPKBHB3zgMhpLpfKsZh8/7rGFL+VpJhCzde6Nu
+         KcE1Q8zAzVUc/5Pm34mVfvY0+9krjUAjkpmGtkonB048819Z48M+YWQacJJ340JKu+ue
+         x7jFulnQWyRBstsM4STMH8HFqMQwRJgZGycic6yiIPk4zOOgqYt0OF7JY3fIDkeE9ay/
+         vBGfyigOc4ICKdyI0inEGExZ9v733oWf1prfVUKJKrLGnDN1LlbIQUr/hv2jbk7vkLpX
+         cpO/cJXDixOMfE035fqyXvCsGbWDCU/ZBudmXUOPchl1J32YneGL6Hynb3WxV2w1p7ZF
+         amcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=y7uM3w77h2Gn0yEivNMhyewHaqjCcqiwBI+mwPIiJHs=;
-        b=boOYhA7svv+nbYttij5KIa+IQj7gm61BJFtyjSZum0AU9su45MoknYw6M2kK+gM9Dd
-         5nhFZ2/hwcRIpAUCYeS6SBo5Rytvba61PTgqrAjAZ8zilt9g9C2JqSVBjoZPhfg6XSxM
-         aJHceUX8AJXhFWgXS5G88vK3I1hVvFSQvUf0rNmkiUKIHUKzDc+gg3f97TrailnJ1WwD
-         rScT1mRj0QjTnRamZ+Akr0JjgVEtZJeHNrVHQmU4mx47FPsF1CTBaBy+EGnYWWKXXw6U
-         j26BV3x/nvYhG3zj2Wp8lCfzZBoh+MciWBfyKMTq5cjeux4WWQIJ/ZD3lndKZ7q//SUl
-         u+WA==
-X-Gm-Message-State: APjAAAVSxQO02jws55njKMT7MpK/t4wnx7HDHc4u+ZawGlFcUOPvyuMa
-        KH3gOIYmI0dmZ3+/lQ5mRG1dVqJI5DnuvZU=
-X-Google-Smtp-Source: APXvYqwvn0TRoYG5IVsuf8uE6IYzDa/7iWpibKKcHNtYS1Io3OaX4OCU9hjgP/VmyC2CsgX/iEqv9AGlkn/DXog=
-X-Received: by 2002:a63:354b:: with SMTP id c72mr32817161pga.99.1582271443680;
- Thu, 20 Feb 2020 23:50:43 -0800 (PST)
-Date:   Thu, 20 Feb 2020 23:50:34 -0800
+        bh=TmMGk/2HBR1UCtTSik3KGPjlUzxkj3b3kzWXZC6WT9Q=;
+        b=bDIC5icCd1ipu6RIDQfFSNw1S/+AbTLlvYCALJTTbXeNxfCPVfkqb4MqVB55fEWCCJ
+         AAGFwqdwXf9OjOWAKhP4cYNniBeCLzvIpzEXulbdw2HQyGF1FRKYHpOhZcL+TfXvcnVq
+         K/1Jn8UB16o9qFNqSNDrjFQREo81Ys2Q4Ri54Jtw4Meih/PaapIzRg/PRVacBQO9pncT
+         TjGDxhGGsSGQcOriPpS8cWhUWTfW88OIFaCbiKQwUh0okrusww1D3ituHv9bQkKQ5sEF
+         Ke8jKzXte8baU8bqc1ZpCSBsQeZLSaMBWOEDKSqZI+/STjdzix3BbXSW8vzyt+ha+Tsk
+         Cynw==
+X-Gm-Message-State: APjAAAWzr7nIR2U51aU/kQHBmF4mpK4FvffK3gsP8D3Q+x4FzA6G4lEY
+        +2zjXy5Q1Hq0taLaiPv5G1BYMbAOflDF7Fo=
+X-Google-Smtp-Source: APXvYqwt26QxPKqFuPdNRe/xB5a2LF+NSPwWWlHVhdOULpbO8o8NeieDv3STiJzdiNCnYZDbmc/xqiEqVNxQlLQ=
+X-Received: by 2002:a63:5a11:: with SMTP id o17mr37742004pgb.60.1582271446721;
+ Thu, 20 Feb 2020 23:50:46 -0800 (PST)
+Date:   Thu, 20 Feb 2020 23:50:35 -0800
 In-Reply-To: <20200221075036.181885-1-saravanak@google.com>
-Message-Id: <20200221075036.181885-2-saravanak@google.com>
+Message-Id: <20200221075036.181885-3-saravanak@google.com>
 Mime-Version: 1.0
 References: <20200221075036.181885-1-saravanak@google.com>
 X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
-Subject: [PATCH v1 1/3] driver core: Call sync_state() even if supplier has no consumers
+Subject: [PATCH v1 2/3] driver core: Add dev_has_sync_state()
 From:   Saravana Kannan <saravanak@google.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Saravana Kannan <saravanak@google.com>
-Cc:     kernel-team@android.com, linux-kernel@vger.kernel.org
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Saravana Kannan <saravanak@google.com>, kernel-team@android.com,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The initial patch that added sync_state() support didn't handle the case
-where a supplier has no consumers. This was because when a device is
-successfully bound with a driver, only its suppliers were checked to see
-if they are eligible to get a sync_state(). This is not sufficient for
-devices that have no consumers but still need to do device state clean
-up. So fix this.
+Add an API to check if a device has sync_state support in its driver or
+bus.
 
-Fixes: fc5a251d0fd7ca90 (driver core: Add sync_state driver/bus callback)
 Signed-off-by: Saravana Kannan <saravanak@google.com>
 ---
- drivers/base/core.c | 23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
+ include/linux/device.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 42a672456432..3306d5ae92a6 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -745,25 +745,31 @@ static void __device_links_queue_sync_state(struct device *dev,
- /**
-  * device_links_flush_sync_list - Call sync_state() on a list of devices
-  * @list: List of devices to call sync_state() on
-+ * @dont_lock_dev: Device for which lock is already held by the caller
-  *
-  * Calls sync_state() on all the devices that have been queued for it. This
-- * function is used in conjunction with __device_links_queue_sync_state().
-+ * function is used in conjunction with __device_links_queue_sync_state(). The
-+ * @dont_lock_dev parameter is useful when this function is called from a
-+ * context where a device lock is already held.
-  */
--static void device_links_flush_sync_list(struct list_head *list)
-+static void device_links_flush_sync_list(struct list_head *list,
-+					 struct device *dont_lock_dev)
- {
- 	struct device *dev, *tmp;
- 
- 	list_for_each_entry_safe(dev, tmp, list, links.defer_sync) {
- 		list_del_init(&dev->links.defer_sync);
- 
--		device_lock(dev);
-+		if (dev != dont_lock_dev)
-+			device_lock(dev);
- 
- 		if (dev->bus->sync_state)
- 			dev->bus->sync_state(dev);
- 		else if (dev->driver && dev->driver->sync_state)
- 			dev->driver->sync_state(dev);
- 
--		device_unlock(dev);
-+		if (dev != dont_lock_dev)
-+			device_unlock(dev);
- 
- 		put_device(dev);
- 	}
-@@ -801,7 +807,7 @@ void device_links_supplier_sync_state_resume(void)
- out:
- 	device_links_write_unlock();
- 
--	device_links_flush_sync_list(&sync_list);
-+	device_links_flush_sync_list(&sync_list, NULL);
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 0cd7c647c16c..fa04dfd22bbc 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -798,6 +798,17 @@ static inline struct device_node *dev_of_node(struct device *dev)
+ 	return dev->of_node;
  }
  
- static int sync_state_resume_initcall(void)
-@@ -865,6 +871,11 @@ void device_links_driver_bound(struct device *dev)
- 			driver_deferred_probe_add(link->consumer);
- 	}
- 
-+	if (defer_sync_state_count)
-+		__device_links_supplier_defer_sync(dev);
-+	else
-+		__device_links_queue_sync_state(dev, &sync_list);
++static inline bool dev_has_sync_state(struct device *dev)
++{
++	if (!dev)
++		return false;
++	if (dev->driver && dev->driver->sync_state)
++		return true;
++	if (dev->bus && dev->bus->sync_state)
++		return true;
++	return false;
++}
 +
- 	list_for_each_entry(link, &dev->links.suppliers, c_node) {
- 		if (!(link->flags & DL_FLAG_MANAGED))
- 			continue;
-@@ -883,7 +894,7 @@ void device_links_driver_bound(struct device *dev)
- 
- 	device_links_write_unlock();
- 
--	device_links_flush_sync_list(&sync_list);
-+	device_links_flush_sync_list(&sync_list, dev);
- }
- 
- static void device_link_drop_managed(struct device_link *link)
+ /*
+  * High level routines for use by the bus drivers
+  */
 -- 
 2.25.0.265.gbab2e86ba0-goog
 
