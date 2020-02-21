@@ -2,113 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6D7A1682F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 17:14:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD948168308
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 17:15:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729334AbgBUQOK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 11:14:10 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:48418 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727095AbgBUQOK (ORCPT
+        id S1729497AbgBUQOw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 11:14:52 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:30886 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729444AbgBUQOt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 11:14:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582301649;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=sG/qxfL50KvHqT7UfD+irY9EmnZdcQz1VfBLgZqPoxs=;
-        b=iRr5f2G6w5ZhNFN3KIwSi1kcCP8wRmI4UG5x7tXqgy6WpGc44VA+CHOjUBU0RfyFVonVVq
-        0D6W1L3k5UGhWX5psPd/dMCBYYIgWtNrRGf/RaWQllB/+061lVTkL86JyCJ2cCQylomCwP
-        amnBetO2exkZzbXoVP/V4/1/bAIciHM=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-333-hDVb990JPuekuvKSDovStw-1; Fri, 21 Feb 2020 11:14:07 -0500
-X-MC-Unique: hDVb990JPuekuvKSDovStw-1
-Received: by mail-wm1-f69.google.com with SMTP id p2so774938wma.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 08:14:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=sG/qxfL50KvHqT7UfD+irY9EmnZdcQz1VfBLgZqPoxs=;
-        b=TLw3Aj1aEREeFez3X1pqfm8PSCEBgBVWfOzcwkLRqdO9tco03SU+y1QwpHBtVJLfto
-         iLEjqHCaISpj9wQaqCmavWCIdZYkq4Spm1XPRteC5qYgoXCEq+liq0jTrCxU5R1gxLmu
-         zJ8rVrnitau0aAsoY24bmAamWRkO95n9Pq+Qmb8T0sZyRXPLRT3NO4JbAajLIVDlBuPr
-         G5MoSsxcd0KxyJ1ELrkTVft3tpsvOhA57fxKMPQGwtC/x2a6GnQMOZjsVTMTbl4GIkoh
-         EWWTxaqV3gHtFD+5vKjtWARIr6KSZU2v8kzSCy3pyrPhel57VN4jvR/tFjTzSOsKjtOj
-         w5oA==
-X-Gm-Message-State: APjAAAW5GAyJEXU2Np8S0EJxPcj/+/YACokDSVlfu7aNhD1VQFD05UwM
-        XTw7zXOivcBG30oR7FjbVEXq0ieJtQ3SdAFqxmmQy8O09QLlxTBaHTwqVT6+kgTF/7zAOajtP05
-        jpkdYzVKrDF0JPZoVAze8l2tM
-X-Received: by 2002:a7b:cf01:: with SMTP id l1mr4605526wmg.86.1582301646486;
-        Fri, 21 Feb 2020 08:14:06 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwke2sDU6jfLxQYJRrrHGm8vyfSBWYb99TFtIKX5F/sdOW44JfeZnpvYOIhr+mQWgUjE1ASJw==
-X-Received: by 2002:a7b:cf01:: with SMTP id l1mr4605492wmg.86.1582301646173;
-        Fri, 21 Feb 2020 08:14:06 -0800 (PST)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id 4sm4205116wmg.22.2020.02.21.08.14.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2020 08:14:05 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     linmiaohe <linmiaohe@huawei.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-        pbonzini@redhat.com, rkrcmar@redhat.com,
-        sean.j.christopherson@intel.com, wanpengli@tencent.com,
-        jmattson@google.com, joro@8bytes.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com
-Subject: Re: [PATCH v2] KVM: apic: avoid calculating pending eoi from an uninitialized val
-In-Reply-To: <1582293886-23335-1-git-send-email-linmiaohe@huawei.com>
-References: <1582293886-23335-1-git-send-email-linmiaohe@huawei.com>
-Date:   Fri, 21 Feb 2020 17:14:04 +0100
-Message-ID: <8736b3rk8j.fsf@vitty.brq.redhat.com>
+        Fri, 21 Feb 2020 11:14:49 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01LGCUZ2018389;
+        Fri, 21 Feb 2020 17:14:26 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=E9Mb7ngTP/ckY+QpFtc5xQAaCA17yjjNEfie0ZjjfD4=;
+ b=qGaTrw5GZf1kCZgxRHU4BDd8dykC3GSYuEMYWIlBPcFeGZHZ2bIdMw0LPrSAPErA4sjz
+ xRXEKNAFircbnm14WNVqPm2+6AI3f+mavYuY8cRgRe5UvPntdyZ6qLgNleeYOAtgmEDe
+ WefAZgSmeaiZAlZoN9PBrlpXRMEGWciOKZ05252u8+nU3QG2rcdOVcc0EnwwbsTtsUg1
+ WlZw98IUIcSsIXWYcIxP+v0f00qr5VUBQXBEpF56IgmOs4COKJ//InRgrL1yeqhyWK0P
+ fms1UdhM9r1zMDqbyb8xIyqfWBgaykhu2YEXDaead8Y4IPsT5I4y5nhbvmpzkBO8EthA 2A== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2y8ub60bse-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 21 Feb 2020 17:14:26 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B0F7210002A;
+        Fri, 21 Feb 2020 17:14:20 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A0EE32BE258;
+        Fri, 21 Feb 2020 17:14:20 +0100 (CET)
+Received: from localhost (10.75.127.49) by SFHDAG3NODE2.st.com (10.75.127.8)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 21 Feb 2020 17:14:19
+ +0100
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+To:     <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        <david@gibson.dropbear.id.au>, <sjg@chromium.org>
+CC:     <devicetree@vger.kernel.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-kernel@vger.kernel.org>, <linux-kbuild@vger.kernel.org>,
+        <devicetree-compiler@vger.kernel.org>, Ian Lepore <ian@freebsd.org>
+Subject: [RFC PATCH v2 0/4] Add device tree build information
+Date:   Fri, 21 Feb 2020 17:14:14 +0100
+Message-ID: <20200221161418.20225-1-alexandre.torgue@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG8NODE1.st.com (10.75.127.22) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-21_05:2020-02-21,2020-02-21 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-linmiaohe <linmiaohe@huawei.com> writes:
+(with title it's better ;)
 
-> From: Miaohe Lin <linmiaohe@huawei.com>
->
-> When pv_eoi_get_user() fails, 'val' may remain uninitialized and the return
-> value of pv_eoi_get_pending() becomes random. Fix the issue by initializing
-> the variable.
+Hi,
 
-Well, now the 'perfect' commit message doesn't match the patch :-). I
-think you (or Paolo upon commit) can just drop the last sentence.
+The goal of this series is to add device tree build information in dtb.
+This information can be dtb build date, where devicetree files come from,
+who built the dtb ... Actually, same kind of information that you can find
+in the Linux banner which is printout during kernel boot. Having the same
+kind of information for device tree is useful for debugging and maintenance.
 
->
-> Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-> ---
-> v1->v2:
-> Collect Vitaly' R-b.
-> Use Vitaly' alternative wording.
-> Explicitly handle the error, as suggested by Sean.
-> ---
->  arch/x86/kvm/lapic.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> index 4f14ec7525f6..b4aca77efc8e 100644
-> --- a/arch/x86/kvm/lapic.c
-> +++ b/arch/x86/kvm/lapic.c
-> @@ -627,9 +627,11 @@ static inline bool pv_eoi_enabled(struct kvm_vcpu *vcpu)
->  static bool pv_eoi_get_pending(struct kvm_vcpu *vcpu)
->  {
->  	u8 val;
-> -	if (pv_eoi_get_user(vcpu, &val) < 0)
-> +	if (pv_eoi_get_user(vcpu, &val) < 0) {
->  		printk(KERN_WARNING "Can't read EOI MSR value: 0x%llx\n",
->  			   (unsigned long long)vcpu->arch.pv_eoi.msr_val);
-> +		return false;
-> +	}
->  	return val & 0x1;
->  }
+A file (dtb-build.txt) containing a string with build information (e.g.,
+From Linux 5.5.0-rc1 by alex the Mon Jan 13 18:25:38 CET 2020) is generated by
+"gen_dtb_build_info.sh" script. 
+
+This file has to be included manually in each dts file that would like to use 
+this build information.
+
+of/fdt.c is modified to printout "build-info" property during Kernel boot and 
+scripts/Makefile.lib is modified to call "gen_dtb_build_info.sh" script.
+
+Patch 1 & 2 script and of/fdt.c updates
+Patch 3 is an example of use in stm32mp157c-dk2.dts file.
+Patch 4 is a tentative to make it automatic (not yet 100% functional).
+
+regards
+Alex
+
+Changes since v1;
+ - Remove modification in dtc (no more -B option)
+ - Generate a file containing build info which is directly included in dts
+   file.
+
+
+Regards
+Alex
+
+Alexandre Torgue (4):
+  scripts: Add script to generate dtb build information
+  of: fdt: print dtb build information
+  ARM: dts: stm32: Add dtb build information entry for stm32mp157c-dk2
+  script: make automatic dtb build info generation
+
+ arch/arm/boot/dts/stm32mp157c-dk2.dts |  1 +
+ drivers/of/fdt.c                      |  9 +++++++++
+ scripts/Makefile.lib                  |  3 +++
+ scripts/gen_dtb_build_info.sh         | 12 ++++++++++++
+ 4 files changed, 25 insertions(+)
+ create mode 100755 scripts/gen_dtb_build_info.sh
 
 -- 
-Vitaly
+2.17.1
 
