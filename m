@@ -2,321 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B21C0167F73
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 15:00:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C86B167F5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 14:57:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728692AbgBUOAT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 09:00:19 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:49332 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727876AbgBUOAT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 09:00:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=DUS+EmWp3BnEtQcaCSSQ3GT2kvfjvXg5CBdYcOkRXJ4=; b=SzdrmBSh747A00kZn0SoQnsCg
-        1R0sWdSJAc4IKmCv0Dg9MDnDvejDJBsy+Eqj0mGf2WaWYROn7Y1YKCG7ZSsRSZMxkcTcRU021fEDm
-        brKqHTfHxyYGc2KYgEC+1gXIk6UTNZrwedg8jPq2WskGgPkaztFu1vGgMHghGwqMmMJw6GQV9iwOt
-        YUDvcMleuTFUgF4WeG121PwWVSrPNBIM9VGsNNzaPKvCcpGDJr8wNjZZuY1BJcV0A2eTVkfXewk8T
-        XiVNvIrOlQrwGrNZ8PCF66s8NreCLKPMN2xCi9T/Q85izXb7iLh3b5tXKVLTHN4r9X/02ARDj/oHs
-        KQcr3Z5CQ==;
-Received: from shell.armlinux.org.uk ([2002:4e20:1eda:1:5054:ff:fe00:4ec]:50856)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1j58qd-0001bd-V5; Fri, 21 Feb 2020 14:00:08 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1j58qc-0003YR-Rl; Fri, 21 Feb 2020 14:00:06 +0000
-Date:   Fri, 21 Feb 2020 14:00:06 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     ansuelsmth@gmail.com
-Cc:     'Andy Gross' <agross@kernel.org>,
-        'Bjorn Andersson' <bjorn.andersson@linaro.org>,
-        "'David S. Miller'" <davem@davemloft.net>,
-        'Rob Herring' <robh+dt@kernel.org>,
-        'Mark Rutland' <mark.rutland@arm.com>,
-        'Andrew Lunn' <andrew@lunn.ch>,
-        'Florian Fainelli' <f.fainelli@gmail.com>,
-        'Heiner Kallweit' <hkallweit1@gmail.com>,
-        linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: R: [PATCH v4 1/2] net: mdio: add ipq8064 mdio driver
-Message-ID: <20200221140006.GJ25745@shell.armlinux.org.uk>
-References: <20200221132834.20719-1-ansuelsmth@gmail.com>
- <20200221135325.GI25745@shell.armlinux.org.uk>
- <006d01d5e8bf$0f02ffb0$2d08ff10$@gmail.com>
+        id S1728646AbgBUN5N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 08:57:13 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10669 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728177AbgBUN5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 08:57:13 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id E0FC9C6B6B8C4734654A;
+        Fri, 21 Feb 2020 21:57:10 +0800 (CST)
+Received: from huawei.com (10.90.53.225) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Fri, 21 Feb 2020
+ 21:57:00 +0800
+From:   Zhihao Cheng <chengzhihao1@huawei.com>
+To:     <richard@nod.at>, <s.hauer@pengutronix.de>, <yi.zhang@huawei.com>
+CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] ubifs: Don't discard nodes in recovery when ecc err detected
+Date:   Fri, 21 Feb 2020 22:04:13 +0800
+Message-ID: <1582293853-136727-1-git-send-email-chengzhihao1@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <006d01d5e8bf$0f02ffb0$2d08ff10$@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 02:58:55PM +0100, ansuelsmth@gmail.com wrote:
-> > On Fri, Feb 21, 2020 at 02:28:31PM +0100, Ansuel Smith wrote:
-> > > Currently ipq806x soc use generi bitbang driver to
-> > > comunicate with the gmac ethernet interface.
-> > > Add a dedicated driver created by chunkeey to fix this.
-> > >
-> > > Christian Lamparter <chunkeey@gmail.com>
-> > > Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-> > > ---
-> > >  drivers/net/phy/Kconfig        |   8 ++
-> > >  drivers/net/phy/Makefile       |   1 +
-> > >  drivers/net/phy/mdio-ipq8064.c | 166
-> > +++++++++++++++++++++++++++++++++
-> > >  3 files changed, 175 insertions(+)
-> > >  create mode 100644 drivers/net/phy/mdio-ipq8064.c
-> > >
-> > > diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
-> > > index 9dabe03a668c..ec2a5493a7e8 100644
-> > > --- a/drivers/net/phy/Kconfig
-> > > +++ b/drivers/net/phy/Kconfig
-> > > @@ -157,6 +157,14 @@ config MDIO_I2C
-> > >
-> > >  	  This is library mode.
-> > >
-> > > +config MDIO_IPQ8064
-> > > +	tristate "Qualcomm IPQ8064 MDIO interface support"
-> > > +	depends on HAS_IOMEM && OF_MDIO
-> > > +	depends on MFD_SYSCON
-> > > +	help
-> > > +	  This driver supports the MDIO interface found in the network
-> > > +	  interface units of the IPQ8064 SoC
-> > > +
-> > >  config MDIO_MOXART
-> > >  	tristate "MOXA ART MDIO interface support"
-> > >  	depends on ARCH_MOXART || COMPILE_TEST
-> > > diff --git a/drivers/net/phy/Makefile b/drivers/net/phy/Makefile
-> > > index fe5badf13b65..8f02bd2089f3 100644
-> > > --- a/drivers/net/phy/Makefile
-> > > +++ b/drivers/net/phy/Makefile
-> > > @@ -36,6 +36,7 @@ obj-$(CONFIG_MDIO_CAVIUM)	+= mdio-
-> > cavium.o
-> > >  obj-$(CONFIG_MDIO_GPIO)		+= mdio-gpio.o
-> > >  obj-$(CONFIG_MDIO_HISI_FEMAC)	+= mdio-hisi-femac.o
-> > >  obj-$(CONFIG_MDIO_I2C)		+= mdio-i2c.o
-> > > +obj-$(CONFIG_MDIO_IPQ8064)	+= mdio-ipq8064.o
-> > >  obj-$(CONFIG_MDIO_MOXART)	+= mdio-moxart.o
-> > >  obj-$(CONFIG_MDIO_MSCC_MIIM)	+= mdio-mscc-miim.o
-> > >  obj-$(CONFIG_MDIO_OCTEON)	+= mdio-octeon.o
-> > > diff --git a/drivers/net/phy/mdio-ipq8064.c b/drivers/net/phy/mdio-
-> > ipq8064.c
-> > > new file mode 100644
-> > > index 000000000000..fd856b798194
-> > > --- /dev/null
-> > > +++ b/drivers/net/phy/mdio-ipq8064.c
-> > > @@ -0,0 +1,166 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +//
-> > > +// Qualcomm IPQ8064 MDIO interface driver
-> > > +//
-> > > +// Copyright (C) 2019 Christian Lamparter <chunkeey@gmail.com>
-> > > +
-> > > +#include <linux/delay.h>
-> > > +#include <linux/kernel.h>
-> > > +#include <linux/module.h>
-> > > +#include <linux/regmap.h>
-> > > +#include <linux/of_mdio.h>
-> > > +#include <linux/phy.h>
-> > > +#include <linux/platform_device.h>
-> > > +#include <linux/mfd/syscon.h>
-> > > +
-> > > +/* MII address register definitions */
-> > > +#define MII_ADDR_REG_ADDR                       0x10
-> > > +#define MII_BUSY                                BIT(0)
-> > > +#define MII_WRITE                               BIT(1)
-> > > +#define MII_CLKRANGE_60_100M                    (0 << 2)
-> > > +#define MII_CLKRANGE_100_150M                   (1 << 2)
-> > > +#define MII_CLKRANGE_20_35M                     (2 << 2)
-> > > +#define MII_CLKRANGE_35_60M                     (3 << 2)
-> > > +#define MII_CLKRANGE_150_250M                   (4 << 2)
-> > > +#define MII_CLKRANGE_250_300M                   (5 << 2)
-> > > +#define MII_CLKRANGE_MASK			GENMASK(4, 2)
-> > > +#define MII_REG_SHIFT				6
-> > > +#define MII_REG_MASK				GENMASK(10, 6)
-> > > +#define MII_ADDR_SHIFT				11
-> > > +#define MII_ADDR_MASK				GENMASK(15, 11)
-> > > +
-> > > +#define MII_DATA_REG_ADDR                       0x14
-> > > +
-> > > +#define MII_MDIO_DELAY                          (1000)
-> > > +#define MII_MDIO_RETRY                          (10)
-> > 
-> > You've missed my comments on these.
+The following process will lead TNC to find no corresponding inode node
+(Reproduce method see Link):
 
-And did you miss this again?
+  1. Garbage collection.
+     1) move valid inode nodes from leb A to leb B
+        (The leb number of B has been written as GC type bud node in log)
+     2) unmap leb A, and corresponding peb is erased
+        (GCed inode nodes exist only on leb B)
+  2. Poweroff. A node near the end of the LEB is corrupted before power
+     on, which is uncorrectable error of ECC.
+  3. Replay and return success.
+     1) replay_buds -> bud for leb B is the last GC type record in log
+     2) ubifs_recover_leb:
+        For SCANNED_A_CORRUPT_NODE error caused by node_B, UBIFS will
+        discard node_A ... node_C, such nodes are in the same max_io unit.
 
-> > 
-> > > +
-> > > +struct ipq8064_mdio {
-> > > +	struct regmap *base; /* NSS_GMAC0_BASE */
-> > > +};
-> > > +
-> > > +static int
-> > > +ipq8064_mdio_wait_busy(struct ipq8064_mdio *priv)
-> > > +{
-> > > +	u32 busy;
-> > > +
-> > > +	return regmap_read_poll_timeout(priv->base,
-> > MII_ADDR_REG_ADDR, busy,
-> > > +				   !(busy & MII_BUSY), MII_MDIO_DELAY,
-> > > +				   MII_MDIO_RETRY * USEC_PER_MSEC);
-> > > +}
-> > > +
-> > > +static int
-> > > +ipq8064_mdio_read(struct mii_bus *bus, int phy_addr, int reg_offset)
-> > > +{
-> > > +	struct ipq8064_mdio *priv = bus->priv;
-> > > +	u32 miiaddr = MII_BUSY | MII_CLKRANGE_250_300M;
-> > > +	u32 ret_val;
-> > > +	int err;
-> > > +
-> > > +	/* Reject clause 45 */
-> > > +	if (reg_offset & MII_ADDR_C45)
-> > > +		return -EOPNOTSUPP;
-> > > +
-> > > +	miiaddr |= ((phy_addr << MII_ADDR_SHIFT) & MII_ADDR_MASK) |
-> > > +		   ((reg_offset << MII_REG_SHIFT) & MII_REG_MASK);
-> > > +
-> > > +	regmap_write(priv->base, MII_ADDR_REG_ADDR, miiaddr);
-> > > +	usleep_range(10, 20);
-> > > +
-> > > +	err = ipq8064_mdio_wait_busy(priv);
-> > > +	if (err)
-> > > +		return err;
-> > > +
-> > > +	regmap_read(priv->base, MII_DATA_REG_ADDR, &ret_val);
-> > > +	return (int)ret_val;
-> > > +}
-> > > +
-> > > +static int
-> > > +ipq8064_mdio_write(struct mii_bus *bus, int phy_addr, int reg_offset,
-> > u16 data)
-> > > +{
-> > > +	struct ipq8064_mdio *priv = bus->priv;
-> > > +	u32 miiaddr = MII_WRITE | MII_BUSY | MII_CLKRANGE_250_300M;
-> > > +
-> > > +	/* Reject clause 45 */
-> > > +	if (reg_offset & MII_ADDR_C45)
-> > > +		return -EOPNOTSUPP;
-> > > +
-> > > +	regmap_write(priv->base, MII_DATA_REG_ADDR, data);
-> > > +
-> > > +	miiaddr |= ((phy_addr << MII_ADDR_SHIFT) & MII_ADDR_MASK) |
-> > > +		   ((reg_offset << MII_REG_SHIFT) & MII_REG_MASK);
-> > > +
-> > > +	regmap_write(priv->base, MII_ADDR_REG_ADDR, miiaddr);
-> > > +	usleep_range(10, 20);
-> > > +
-> > > +	return ipq8064_mdio_wait_busy(priv);
-> > > +}
-> > > +
-> > > +static int
-> > > +ipq8064_mdio_probe(struct platform_device *pdev)
-> > > +{
-> > > +	struct device_node *np = pdev->dev.of_node;
-> > > +	struct ipq8064_mdio *priv;
-> > > +	struct mii_bus *bus;
-> > > +	int ret;
-> > > +
-> > > +	bus = devm_mdiobus_alloc_size(&pdev->dev, sizeof(*priv));
-> > > +	if (!bus)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	bus->name = "ipq8064_mdio_bus";
-> > > +	bus->read = ipq8064_mdio_read;
-> > > +	bus->write = ipq8064_mdio_write;
-> > > +	snprintf(bus->id, MII_BUS_ID_SIZE, "%s-mii", dev_name(&pdev-
-> > >dev));
-> > > +	bus->parent = &pdev->dev;
-> > > +
-> > > +	priv = bus->priv;
-> > > +	priv->base = syscon_node_to_regmap(np);
-> > > +	if (IS_ERR(priv->base) && priv->base != ERR_PTR(-EPROBE_DEFER))
-> > > +		priv->base = syscon_regmap_lookup_by_phandle(np,
-> > "master");
-> > > +
-> > > +	if (priv->base == ERR_PTR(-EPROBE_DEFER)) {
-> > > +		return -EPROBE_DEFER;
-> > > +	} else if (IS_ERR(priv->base)) {
-> > > +		dev_err(&pdev->dev, "error getting syscon regmap,
-> > error=%ld\n",
-> > > +			PTR_ERR(priv->base));
-> > 
-> > Why not %pe as I suggested, which is documented in printk-formats to
-> > optionally give a symbolic error string.
-> > 
-> I thought that print the error code was better than error=(ptrval)
-> If I need to follow the documentation then sorry, I will restore %pe
-> > > +		return PTR_ERR(priv->base);
-> > > +	}
-> > 
-> > And have you even tested the above - you haven't said whether you have
-> > or not...
-> > 
-> Yes I tested the changes, it does errors correctly.
-> > > +
-> > > +	ret = of_mdiobus_register(bus, np);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	platform_set_drvdata(pdev, bus);
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static int
-> > > +ipq8064_mdio_remove(struct platform_device *pdev)
-> > > +{
-> > > +	struct mii_bus *bus = platform_get_drvdata(pdev);
-> > > +
-> > > +	mdiobus_unregister(bus);
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static const struct of_device_id ipq8064_mdio_dt_ids[] = {
-> > > +	{ .compatible = "qcom,ipq8064-mdio" },
-> > > +	{ }
-> > > +};
-> > > +MODULE_DEVICE_TABLE(of, ipq8064_mdio_dt_ids);
-> > > +
-> > > +static struct platform_driver ipq8064_mdio_driver = {
-> > > +	.probe = ipq8064_mdio_probe,
-> > > +	.remove = ipq8064_mdio_remove,
-> > > +	.driver = {
-> > > +		.name = "ipq8064-mdio",
-> > > +		.of_match_table = ipq8064_mdio_dt_ids,
-> > > +	},
-> > > +};
-> > > +
-> > > +module_platform_driver(ipq8064_mdio_driver);
-> > > +
-> > > +MODULE_DESCRIPTION("Qualcomm IPQ8064 MDIO interface driver");
-> > > +MODULE_AUTHOR("Christian Lamparter <chunkeey@gmail.com>");
-> > > +MODULE_LICENSE("GPL");
-> > > --
-> > > 2.25.0
-> > >
-> > >
-> > 
-> > --
-> > RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> > FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down
-> > 622kbps up
-> > According to speedtest.net: 11.9Mbps down 500kbps up
-> 
-> 
+               corrupt
+                  ↓
+        node_A  node_B ... node_C
+        XXXXXXXXXXXXXXXXXXXXXXXXX  XXXXXX...   ← Replay GC LEB
+        |←   max_write_size    →|
+   4. Finding a missing inode node triggers an error, as follows:
+      [ 2276.992557] UBIFS error (ubi0:0 pid 2509): ubifs_read_node
+      [ubifs]: bad node type (255 but expected 2)
+      [ 2276.996814] UBIFS error (ubi0:0 pid 2509): ubifs_read_node
+      [ubifs]: bad node at LEB 15:73728, LEB mapping status 0
+      [ 2276.998439] Not a node, first 24 bytes:
+      [ 2276.998442] 00000000: ff ff ff ff ff ff ff ff ff ff ff ff
 
+Fix this by returning fail when scan bad data with ecc error detected in
+ubifs_recover_leb(). This reduces the fault tolerance of the file system.
+In the case of pad node ecc error at the end of LEB without affecting the
+file system data, it also returns fail, but the probability is very low.
+
+Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
+Cc: <Stable@vger.kernel.org>
+Fixes: 1e51764a3c2ac05a23a22b2a95 ("UBIFS: add new flash file system")
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=206625
+---
+ fs/ubifs/recovery.c | 41 +++++++++++++++++++++++++++++++++++------
+ 1 file changed, 35 insertions(+), 6 deletions(-)
+
+diff --git a/fs/ubifs/recovery.c b/fs/ubifs/recovery.c
+index f116f7b3f9e5..e60f23ea4575 100644
+--- a/fs/ubifs/recovery.c
++++ b/fs/ubifs/recovery.c
+@@ -624,14 +624,28 @@ struct ubifs_scan_leb *ubifs_recover_leb(struct ubifs_info *c, int lnum,
+ {
+ 	int ret = 0, err, len = c->leb_size - offs, start = offs, min_io_unit;
+ 	int grouped = jhead == -1 ? 0 : c->jheads[jhead].grouped;
++	int ecc_err = 0;
+ 	struct ubifs_scan_leb *sleb;
+ 	void *buf = sbuf + offs;
+ 
+ 	dbg_rcvry("%d:%d, jhead %d, grouped %d", lnum, offs, jhead, grouped);
+ 
+-	sleb = ubifs_start_scan(c, lnum, offs, sbuf);
+-	if (IS_ERR(sleb))
+-		return sleb;
++	sleb = kzalloc(sizeof(struct ubifs_scan_leb), GFP_NOFS);
++	if (!sleb)
++		return ERR_PTR(-ENOMEM);
++
++	sleb->lnum = lnum;
++	INIT_LIST_HEAD(&sleb->nodes);
++	sleb->buf = sbuf;
++
++	err = ubifs_leb_read(c, lnum, sbuf + offs, offs, c->leb_size - offs, 0);
++	if (err && err != -EBADMSG) {
++		ubifs_err(c, "cannot read %d bytes from LEB %d:%d, error %d",
++			  c->leb_size - offs, lnum, offs, err);
++		kfree(sleb);
++		return ERR_PTR(err);
++	} else if (err == -EBADMSG)
++		ecc_err = 1;
+ 
+ 	ubifs_assert(c, len >= 8);
+ 	while (len >= 8) {
+@@ -677,10 +691,24 @@ struct ubifs_scan_leb *ubifs_recover_leb(struct ubifs_info *c, int lnum,
+ 	}
+ 
+ 	if (ret == SCANNED_GARBAGE || ret == SCANNED_A_BAD_PAD_NODE) {
+-		if (!is_last_write(c, buf, offs))
++		/*
++		 * If the garbage area or bad pad node is caused by ecc
++		 * error, skipping valid nodes in the aligned max write
++		 * size unit will lead tnc to mismatch node (inode,
++		 * data, etc.). But if the ecc error infects only a pad
++		 * node, which doesn't corrupt data nodes on UBIFS, still
++		 * failed. We choose robustness here at the cost of
++		 * giving up tolerating some small probability mistakes.
++		 */
++		if (!is_last_write(c, buf, offs) || ecc_err)
+ 			goto corrupted_rescan;
+ 	} else if (ret == SCANNED_A_CORRUPT_NODE) {
+-		if (!no_more_nodes(c, buf, len, lnum, offs))
++		/*
++		 * If the corrupt node is caused by ecc error, skipping
++		 * valid nodes in the aligned max write size unit will
++		 * lead tnc to mismatch node (inode, data, etc.).
++		 */
++		if (!no_more_nodes(c, buf, len, lnum, offs) || ecc_err)
+ 			goto corrupted_rescan;
+ 	} else if (!is_empty(buf, len)) {
+ 		if (!is_last_write(c, buf, offs)) {
+@@ -782,7 +810,8 @@ struct ubifs_scan_leb *ubifs_recover_leb(struct ubifs_info *c, int lnum,
+ 	ubifs_scanned_corruption(c, lnum, offs, buf);
+ 	err = -EUCLEAN;
+ error:
+-	ubifs_err(c, "LEB %d scanning failed", lnum);
++	ubifs_err(c, "LEB %d scanning failed%s", lnum,
++		  ecc_err ? ", ecc error detected!" : "");
+ 	ubifs_scan_destroy(sleb);
+ 	return ERR_PTR(err);
+ }
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+2.7.4
+
