@@ -2,126 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A855516766B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:37:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F54516767B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:37:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388689AbgBUIdl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:33:41 -0500
-Received: from mail-dm6nam10on2070.outbound.protection.outlook.com ([40.107.93.70]:58944
-        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732190AbgBUIdj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:33:39 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jsfHkWq5mS93R1KBKL7cvMLaw4G84zl5lmT/RKCauhyTFploOUPhtGlmgC1BqZ+/wzKF1Tp+Kt/8s+BNnfqfvuXt0tGuPOHu/yu+69MtiG57Ud/f8bVEUr4QP1lfufARVyciQgFEfFutCXXaUENkQR01tWMgAOmdqaalIeIHpMXcbMA4HlYw6FlMfo2fQh/6BrbgJBwKQtD45YuWzInKGeq2Wf9QgzvFGfWiEuBncfRrkpXrFOVESp25gjscVQoimkKCl4CgdakHD5V0c0U1N/XezUFA4jmcsi1Wrhk1lk3ijm7fOQqteGy2mq9ZaJldwEsxQuCzfYrae+5VD3dXuw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V9c9BfSUueBxLzB7X8rszAGxPEVjr5ZoEMXt+TsFFXI=;
- b=C67kIxaWWyD4LynpYLZWEACJ2LyvvooHxlNTN4D9+kXt9/EEozIomu5bOdcSNWMbqxRymCgEZRLn5FeJHLq25eLo0aigWLQLcKfnbxqjQ3GjB8X3vjoMlv3lfM7s5jwjQXxmLfI3pEo0Fm1sUA8B9e6Pf2Alocewj6YybCw9pY3QLJK76H6WOHE+qQbR1nYP0jSWU1WCkEJ8Y70UG+XtITK0r0FdOm0ZxlHiCiSIL+Tm28htNjtBR/5k5JeJRUOxzoYAbChhPmm7OOtFU+IHchZnENQVuJB3tRCFYFo7tXcbncMLp+tGBUDTEwSnvIbfdfrh1OjYNo1XTO2Q+kfx1A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
- dkim=pass header.d=xilinx.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V9c9BfSUueBxLzB7X8rszAGxPEVjr5ZoEMXt+TsFFXI=;
- b=pdQrJaWzXkA2owp2WSJQVndH7TUvWvubn4+jIOxS8t0kRcObjU6Ptd4BGEYEa9DenVRossxR0Zh6pzDyKKcQtkCbDzYfRqjldC5+8NVuBtwBf09OF2podQxRtDnCV7uGZUAOeSmQw6UEU4RReWaMKKslvJmZ1I/LEXN5S0veFYc=
-Received: from BY5PR02MB6371.namprd02.prod.outlook.com (2603:10b6:a03:1fd::30)
- by BY5PR02MB7042.namprd02.prod.outlook.com (2603:10b6:a03:23b::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2750.18; Fri, 21 Feb
- 2020 08:33:37 +0000
-Received: from BY5PR02MB6371.namprd02.prod.outlook.com
- ([fe80::a9b0:3f4f:bc1b:6af9]) by BY5PR02MB6371.namprd02.prod.outlook.com
- ([fe80::a9b0:3f4f:bc1b:6af9%7]) with mapi id 15.20.2729.033; Fri, 21 Feb 2020
- 08:33:36 +0000
-From:   Harpreet Singh Anand <hanand@xilinx.com>
-To:     Jason Wang <jasowang@redhat.com>,
-        "mst@redhat.com" <mst@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-CC:     "tiwei.bie@intel.com" <tiwei.bie@intel.com>,
-        "jgg@mellanox.com" <jgg@mellanox.com>,
-        "maxime.coquelin@redhat.com" <maxime.coquelin@redhat.com>,
-        "cunming.liang@intel.com" <cunming.liang@intel.com>,
-        "zhihong.wang@intel.com" <zhihong.wang@intel.com>,
-        "rob.miller@broadcom.com" <rob.miller@broadcom.com>,
-        "xiao.w.wang@intel.com" <xiao.w.wang@intel.com>,
-        "haotian.wang@sifive.com" <haotian.wang@sifive.com>,
-        "lingshan.zhu@intel.com" <lingshan.zhu@intel.com>,
-        "eperezma@redhat.com" <eperezma@redhat.com>,
-        "lulu@redhat.com" <lulu@redhat.com>,
-        "parav@mellanox.com" <parav@mellanox.com>,
-        "kevin.tian@intel.com" <kevin.tian@intel.com>,
-        "stefanha@redhat.com" <stefanha@redhat.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "aadam@redhat.com" <aadam@redhat.com>,
-        "jiri@mellanox.com" <jiri@mellanox.com>,
-        "shahafs@mellanox.com" <shahafs@mellanox.com>,
-        "mhabets@solarflare.com" <mhabets@solarflare.com>
-Subject: RE: [PATCH V4 5/5] vdpasim: vDPA device simulator
-Thread-Topic: [PATCH V4 5/5] vdpasim: vDPA device simulator
-Thread-Index: AQHV57Tnjl2/vAGwKU24MSzCkROB/aglAeaQ
-Date:   Fri, 21 Feb 2020 08:33:36 +0000
-Message-ID: <BY5PR02MB637195ECE0879F5F7CB72CE3BB120@BY5PR02MB6371.namprd02.prod.outlook.com>
-References: <20200220061141.29390-1-jasowang@redhat.com>
- <20200220061141.29390-6-jasowang@redhat.com>
-In-Reply-To: <20200220061141.29390-6-jasowang@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=hanand@xilinx.com; 
-x-originating-ip: [182.71.24.30]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: c81cb41f-726a-458e-0702-08d7b6a8bedf
-x-ms-traffictypediagnostic: BY5PR02MB7042:
-x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
-x-microsoft-antispam-prvs: <BY5PR02MB70425FE097B24175F4B20D15BB120@BY5PR02MB7042.namprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3968;
-x-forefront-prvs: 0320B28BE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39850400004)(136003)(396003)(376002)(346002)(366004)(189003)(199004)(33656002)(86362001)(9686003)(2906002)(81166006)(55016002)(7696005)(81156014)(52536014)(558084003)(8676002)(7416002)(4326008)(8936002)(6506007)(54906003)(26005)(186003)(71200400001)(110136005)(478600001)(316002)(66946007)(66556008)(66446008)(5660300002)(76116006)(64756008)(66476007);DIR:OUT;SFP:1101;SCL:1;SRVR:BY5PR02MB7042;H:BY5PR02MB6371.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Drd68hkeu2HsFOjSiBEPSU7470yMpC/hL6ILsjyoQCcQu7yiyscQfcNiLYvZljzNgCnrVs9Qtv86BXXQ6DCIaGTkz7X4X4lDHix8Bt4OGzr7wtceSfG6gkzF1/hR5H0j+42vdTjqi0K3NvVs6swA7StZ/Dkb9FIpWtS9+1+EkqNzgjakrntalNGym1ditiv4JwG7mit8O7qed0lxgiX1jO4aAYK23NXD5XvIU5huWuaFtXv4hGRAS6vRIuGmdRe1MuS9AA6nIYQ6ozA32XqYrUrIRYowxwjbFw51pXQ9GZO4TTMb5kpxGupJ0YZOq0VVVrgM8F157Pu85a3xESzolHCWuofXECamuy4NwbV2E5niFtJy0LKJz1pyHVub7osANnoNpWDoNgRXqkgjDgrs95OB6JoelscW/WMQVyDBxiuDt0ArfGRPJNjYCA06QKu6
-x-ms-exchange-antispam-messagedata: 4Kf2hXqIGZbPucgKdQCVm9KdSE3gc809TfemxDiza9geF0fVEgGmh+SF4uWOKLHSBNUqWQvceh0hDyPs6XDc81bQFoVNleFE/bvqVU8wEPGbVtMwmL5t0YIKtokrWAtapsJSL01Jjb4F7XWXNZihpg==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1732544AbgBUIfQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:35:16 -0500
+Received: from mout.kundenserver.de ([212.227.126.134]:57359 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729703AbgBUIfN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:35:13 -0500
+Received: from mail-qt1-f174.google.com ([209.85.160.174]) by
+ mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1Mbzdn-1ja00W1B5r-00dSWR; Fri, 21 Feb 2020 09:35:11 +0100
+Received: by mail-qt1-f174.google.com with SMTP id d9so707892qte.12;
+        Fri, 21 Feb 2020 00:35:10 -0800 (PST)
+X-Gm-Message-State: APjAAAXTd9Yo3qP11M/nKjS1oclRFXGQK78xdiuVvehz0Bo4Sf1yDBRR
+        kmGtcWFBJ46Pu/ZGhnxTz+ATQpXD3hLnj1bABS4=
+X-Google-Smtp-Source: APXvYqzMtKpji2kHcAwVfJDYkwxyhgoIO+eLhAK993sRWmxCI9kRi7QXQGVX8kksKrQac1lTZAK5TBBxLKggVruJ36Y=
+X-Received: by 2002:ac8:1977:: with SMTP id g52mr29831842qtk.18.1582274109872;
+ Fri, 21 Feb 2020 00:35:09 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c81cb41f-726a-458e-0702-08d7b6a8bedf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2020 08:33:36.7373
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 0Qnuyg7uZBgWAX0NmO958nircwn9gid6gteoJowuzUiecre5HzcDWF64IjxaUo/7NBRbRO3kvl2mEYGKs66jPQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR02MB7042
+References: <20200220004825.23372-1-scott.branden@broadcom.com>
+ <20200220004825.23372-6-scott.branden@broadcom.com> <20200220075045.GB3261162@kroah.com>
+ <030219dc-539a-a2db-5ab2-1de7336a811c@broadcom.com>
+In-Reply-To: <030219dc-539a-a2db-5ab2-1de7336a811c@broadcom.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 21 Feb 2020 09:34:53 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a1v7S4Ma67vRyfSY=v9z9bt9ZrftOYhgYvsECWXykGTJg@mail.gmail.com>
+Message-ID: <CAK8P3a1v7S4Ma67vRyfSY=v9z9bt9ZrftOYhgYvsECWXykGTJg@mail.gmail.com>
+Subject: Re: [PATCH v2 5/7] bcm-vk: add bcm_vk UAPI
+To:     Scott Branden <scott.branden@broadcom.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, Andy Gross <agross@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:uKsCb7o+WwoRn2H66DIerL3UeOyZ5PMu17VhbxdEL4me0biPjB6
+ o7WZmnQ0rrYrtZccp+dGHRstPYT/AL1SEm/3IYCsEAqVHCgMbQ4ksER5Jxxky8Jnoh51X2G
+ /JnrA6gQfGsmJj8e1K4e9enaF7zgs4g/BCYaMmvJ3m+rCoMGhz2lndHIOExjZ86K2oepGhd
+ JtCJNVmjLyn1iCoVpAc5w==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Vx6+2EQVCCk=:3nyhniYPMKUTdjUW1WlS1X
+ dizBB8ISTpfxLCiIjgNUDM13W0KZ67gyO2bh1Md9wdY/kVxGvwYn5gX55onS553yW1D/SV+Ic
+ chWqDqJSktTofpps+FghQQa1v46eU7cKssNfN8Yc5x0PxCWaq+Dn/qfZO9DsbuQ8gyxIGaYZX
+ vGVVHjT0SaIwbZR8VtUba1pNnpuJshQeY6oNsIEsbUL2lRa2xJZnzvD88GlgA5zM5Om437HEy
+ gOaK0KA9PdAzgJOOWU90JqA1J6yt4lf74KKOKl1vCuAK94O3hnFO4F3R5G4SACx4G7udFL8ex
+ GA7RPATiwpR4N1jVm2OiTuYBtfHBhc5GTADdJ5FvuoPhcku9U/0rb7kUh22ttL6NtwCWXZuAk
+ tXw1kO4kCzWlqYg+iiTw8R4YCq46iHwDp/DUZk5OALtRfeEhaLhzi3F/xL8N1/gxCXoWTKA6g
+ 6PpoBgcNI7fvKOcpty/X070DM/shiGQidrOO7rshPTPihkdG3cZS0zqwqq8mR96G2CYmYGPw6
+ i9vo7npjwiZczbygEsU+NPQc5JqzPcfnJ6Eagw8FfOhKBlLUUIof6oR45sX8I6NHqevSwKJCd
+ 4zcIVZ72l9Rq3yCMGY2sF0QJ/od3s04YZePgn/NksbpSbt1QLDCMweHqD6LI1q543KzCsvfp9
+ bOpMBR7BXHdKcJ2lgZYXS5IiWXGGv6LiBx0GbTliLojyx0it0vRXHgAagHJx/HKaHdXGB/XJS
+ NCA/yU0Pz+mb4mur480nqWi9BBWKph6RjCG4AG3QPdqHVluVN0h5FBMeycbQlbjO2/APQUko5
+ 6umjBaVTqYwERcD6UZfHWF1CEOUkqNWlmw+YmOH0ZTKghgBdMU=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+       ret =3D device_register(&vdpasim->dev);
-+       if (ret)
-+               goto err_init;
-+
-+       vdpasim->vdpa =3D vdpa_alloc_device(dev, dev, &vdpasim_net_config_o=
-ps);
-+       if (ret)
-+               goto err_vdpa;
-
-[HSA] Incorrect checking of the return value of vdpa_alloc_device.
+On Fri, Feb 21, 2020 at 2:16 AM Scott Branden
+<scott.branden@broadcom.com> wrote:
 
 
+> >> +struct vk_access {
+> >> +    __u8 barno;     /* BAR number to use */
+> >> +    __u8 type;      /* Type of access */
+> >> +#define VK_ACCESS_READ 0
+> >> +#define VK_ACCESS_WRITE 1
+> >> +    __u32 len;      /* length of data */
+> > Horrible padding issues, are you sure this all works properly?
+> Haven't had any issues.
+> >
+> >> +    __u64 offset;   /* offset in BAR */
+> >> +    __u32 *data;    /* where to read/write data to */
+> > Are you _SURE_ you want a pointer here?  How do you handle the compat
+> > issues with 32/64 user/kernel space?
+> Don't care about 32-bit user space for this driver.
+> I don't think there isn't even enough memory in such systems for the
+> number of streams of video buffers needed for transcoding.
+> This driver is only used in high end 64-bit x86 servers.
 
+Please see Documentation/core-api/ioctl.rst
+
+All ioctl interfaces should be written in a portable way that works with
+compat user space and avoids all padding in order to not leak kernel
+data into user space.
+
+If the driver is passing video buffers for transcoding, shouldn't the driver
+use the existing drivers/media interfaces for that? If it needs features
+that are not present there, they can probably be added.
+
+        Arnd
