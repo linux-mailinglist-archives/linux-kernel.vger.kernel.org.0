@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 713711675B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:31:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DED08167571
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:31:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733291AbgBUIPQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:15:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51856 "EHLO mail.kernel.org"
+        id S2388598AbgBUI1g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:27:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731814AbgBUIPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:15:08 -0500
+        id S1730303AbgBUIVq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:21:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81CA124680;
-        Fri, 21 Feb 2020 08:15:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6AC6220578;
+        Fri, 21 Feb 2020 08:21:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272908;
-        bh=ZRxvlopwdj/ZPtbwhnXfZ5htJU2YT/tx5DBERp0QAfM=;
+        s=default; t=1582273305;
+        bh=H7Q6UGkUDohsAqgIcQdUPnUGdO92IToU1TSe781EBNM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f2tH1myNnfRtV9ABGeqC2w/ssHrJpuojBSIJymP1TOuR9sTZMNxL/UGZzXCODVdD3
-         MAzt8FTfOJ4jOtYWd+2x3iZU1m7juwANQeGdEpv2Epr1/3FPN4JISKuKQMOUsXyPbM
-         GQYPf5oUdcNfpXrik2mywDvomcSZ58DCVb5EMVKU=
+        b=bJZeTYiHXWq6XK9lxFIIdi733E90l/sCV1RkQOrJ3p9lQ72unS95lsX0l8Kq0mFQZ
+         GKBCO+QEYzFWDskG2q8bvnJDDQUVxIaoSjn5OUxPoUPnFhh37DOFZpTf+jDe9JtjS0
+         mWFyPJKKSx9nmZuLixFxLC+HnU/t1zKMSCtKh0e4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "zhangyi (F)" <yi.zhang@huawei.com>,
-        Jan Kara <jack@suse.cz>, Theodore Tso <tytso@mit.edu>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 293/344] jbd2: switch to use jbd2_journal_abort() when failed to submit the commit record
-Date:   Fri, 21 Feb 2020 08:41:32 +0100
-Message-Id: <20200221072416.481669508@linuxfoundation.org>
+Subject: [PATCH 4.19 120/191] driver core: Print device when resources present in really_probe()
+Date:   Fri, 21 Feb 2020 08:41:33 +0100
+Message-Id: <20200221072305.278715977@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,48 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhangyi (F) <yi.zhang@huawei.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit d0a186e0d3e7ac05cc77da7c157dae5aa59f95d9 ]
+[ Upstream commit 7c35e699c88bd60734277b26962783c60e04b494 ]
 
-We invoke jbd2_journal_abort() to abort the journal and record errno
-in the jbd2 superblock when committing journal transaction besides the
-failure on submitting the commit record. But there is no need for the
-case and we can also invoke jbd2_journal_abort() instead of
-__jbd2_journal_abort_hard().
+If a device already has devres items attached before probing, a warning
+backtrace is printed.  However, this backtrace does not reveal the
+offending device, leaving the user uninformed.  Furthermore, using
+WARN_ON() causes systems with panic-on-warn to reboot.
 
-Fixes: 818d276ceb83a ("ext4: Add the journal checksum feature")
-Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Link: https://lore.kernel.org/r/20191204124614.45424-2-yi.zhang@huawei.com
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Fix this by replacing the WARN_ON() by a dev_crit() message.
+Abort probing the device, to prevent doing more damage to the device's
+resources.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20191206132219.28908-1-geert+renesas@glider.be
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/jbd2/commit.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/base/dd.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
-index 2a42904bcd62c..754ec3c47d6fb 100644
---- a/fs/jbd2/commit.c
-+++ b/fs/jbd2/commit.c
-@@ -784,7 +784,7 @@ start_journal_io:
- 		err = journal_submit_commit_record(journal, commit_transaction,
- 						 &cbh, crc32_sum);
- 		if (err)
--			__jbd2_journal_abort_hard(journal);
-+			jbd2_journal_abort(journal, err);
- 	}
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index 11d24a552ee49..5f6416e6ba96b 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -470,7 +470,10 @@ static int really_probe(struct device *dev, struct device_driver *drv)
+ 	atomic_inc(&probe_count);
+ 	pr_debug("bus: '%s': %s: probing driver %s with device %s\n",
+ 		 drv->bus->name, __func__, drv->name, dev_name(dev));
+-	WARN_ON(!list_empty(&dev->devres_head));
++	if (!list_empty(&dev->devres_head)) {
++		dev_crit(dev, "Resources present before probing\n");
++		return -EBUSY;
++	}
  
- 	blk_finish_plug(&plug);
-@@ -877,7 +877,7 @@ start_journal_io:
- 		err = journal_submit_commit_record(journal, commit_transaction,
- 						&cbh, crc32_sum);
- 		if (err)
--			__jbd2_journal_abort_hard(journal);
-+			jbd2_journal_abort(journal, err);
- 	}
- 	if (cbh)
- 		err = journal_wait_on_commit_record(journal, cbh);
+ re_probe:
+ 	dev->driver = drv;
 -- 
 2.20.1
 
