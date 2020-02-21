@@ -2,97 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E279A167C75
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 12:47:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BF2D167C83
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 12:49:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728094AbgBULrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 06:47:08 -0500
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:7090 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726989AbgBULrG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 06:47:06 -0500
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01LBiJKk027029;
-        Fri, 21 Feb 2020 06:47:05 -0500
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2y8udupy15-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 21 Feb 2020 06:47:05 -0500
-Received: from ASHBMBX8.ad.analog.com (ashbmbx8.ad.analog.com [10.64.17.5])
-        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 01LBl4op029355
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Fri, 21 Feb 2020 06:47:04 -0500
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Fri, 21 Feb
- 2020 06:47:01 -0500
-Received: from zeus.spd.analog.com (10.64.82.11) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Fri, 21 Feb 2020 06:47:01 -0500
-Received: from saturn.ad.analog.com ([10.48.65.124])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 01LBku5O017142;
-        Fri, 21 Feb 2020 06:46:59 -0500
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <jic23@kernel.org>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH 3/3] iio: imu: adis: add a note better explaining state_lock
-Date:   Fri, 21 Feb 2020 13:49:43 +0200
-Message-ID: <20200221114943.2056-3-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200221114943.2056-1-alexandru.ardelean@analog.com>
-References: <20200221114943.2056-1-alexandru.ardelean@analog.com>
+        id S1727616AbgBULtz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 06:49:55 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2454 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726934AbgBULtz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 06:49:55 -0500
+Received: from lhreml709-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 07C42219BF6427A28D49;
+        Fri, 21 Feb 2020 11:49:53 +0000 (GMT)
+Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
+ lhreml709-cah.china.huawei.com (10.201.108.32) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 21 Feb 2020 11:49:52 +0000
+Received: from [127.0.0.1] (10.202.226.45) by lhreml724-chm.china.huawei.com
+ (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Fri, 21 Feb
+ 2020 11:49:51 +0000
+From:   John Garry <john.garry@huawei.com>
+Subject: Re: Questions about logic_pio
+To:     Jiaxun Yang <jiaxun.yang@flygoat.com>
+CC:     "xuwei (O)" <xuwei5@huawei.com>, bhelgaas <bhelgaas@google.com>,
+        andyshevchenko <andy.shevchenko@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux Mips <linux-mips@vger.kernel.org>
+References: <1705dbe62ce.10ae800394772.9222265269135747883@flygoat.com>
+ <5E4E55F7.70800@hisilicon.com>
+ <e3ddd7de-54b2-bdba-2233-6ace40072430@huawei.com>
+ <17062738bc0.c380503c6222.6801557833645076299@flygoat.com>
+ <1ebf4461-eb37-ff58-1faf-dd24d83f85cf@huawei.com>
+ <170632822e1.12fede49a6919.5706082545515934736@flygoat.com>
+ <e54a9936-5cf3-777d-3e91-58d2be96bf1c@huawei.com>
+ <6c49e5e0-b6f2-fe23-caec-4742c3d1d3a0@huawei.com>
+ <1706531b3a8.108e582396993.7792774458896054798@flygoat.com>
+Message-ID: <65fffffa-2c74-aa09-7fdb-29a7200d7ac4@huawei.com>
+Date:   Fri, 21 Feb 2020 11:49:45 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-21_03:2020-02-19,2020-02-21 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 impostorscore=0 spamscore=0 suspectscore=0 mlxlogscore=890
- phishscore=0 mlxscore=0 priorityscore=1501 clxscore=1015 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002210090
+In-Reply-To: <1706531b3a8.108e582396993.7792774458896054798@flygoat.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.45]
+X-ClientProxiedBy: lhreml712-chm.china.huawei.com (10.201.108.63) To
+ lhreml724-chm.china.huawei.com (10.201.108.75)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 'state_lock' mutex was renamed from 'txrx_lock' in a previous patch and
-is intended to be used by ADIS drivers to protect the state of devices
-during consecutive R/W ops.
-The initial patch that introduced this change did not do a good [well, any]
-job at explaining this. This patch adds a comment to the 'state_lock'
-better explaining it's use.
+On 21/02/2020 00:42, Jiaxun Yang wrote:
+>   >
+>   > I will add this may not cover your need, as you probably cannot deal
+>   > with any logical PIO <-> ISA translation without modifying the device
+>   > driver. For this, we may need to reserve the first 0x4000 in logical PIO
+>   > space for this sort of legacy host.
+> 
+> Hi,
+> 
+> After thinking twice, I realized that the most convenient way for me is
+> adding an option to get rid of the mess of logic PIO. MIPS system is emulating
+> x86's behavior, while logic PIO isn't designed for such platform.
 
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
- include/linux/iio/imu/adis.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+It was designed for archs which define PCI_IOBASE for PCI MMIO-based or 
+IndirectIO-based IO port access.
 
-diff --git a/include/linux/iio/imu/adis.h b/include/linux/iio/imu/adis.h
-index 11c915b61ae2..a3110c097fa1 100644
---- a/include/linux/iio/imu/adis.h
-+++ b/include/linux/iio/imu/adis.h
-@@ -98,6 +98,17 @@ struct adis {
- 	const struct adis_data	*data;
- 	struct adis_burst	*burst;
- 
-+	/**
-+	 * The state_lock is meant to be used during operations that require
-+	 * a sequence of SPI R/W in order to protect the SPI transfer
-+	 * information (fields 'xfer', 'msg' & 'current_page') between
-+	 * potential concurrent accesses.
-+	 * This lock is used by all "adis_{functions}" that have to read/write
-+	 * registers. These functions also have unlocked variants
-+	 * (see "__adis_{functions}"), which don't hold this lock.
-+	 * This allows users of the ADIS library to group SPI R/W into
-+	 * the drivers, but they also must manage this lock themselves.
-+	 */
- 	struct mutex		state_lock;
- 	struct spi_message	msg;
- 	struct spi_transfer	*xfer;
--- 
-2.20.1
+> 
+> Or probably I need a variation of Logic PIO, which leave MMIO space AS-IS
+> (not try to reallocate it)
+
+That does not work if add a PCI host with MMIO-based IO port regions 
+into the mix.
+
+It only so happens today that for mips you have a single MMIO-based IO 
+port region, and you have IO port base for that region conveniently @ 
+0x0. Then your drivers can have fixed IO port addresses.
+
+For dealing with multiple MMIO-based IO ports regions - which is the 
+case for PCI host bridges - then you need to map those MMIO-based IO 
+port regions to different regions in IO port space.
+
+> but still preserving higher 0x4000 for indirect access.
+
+Then there is no space for PCI MMIO-based IO ports.
+
+> 
+> Thanks a lot!
+>   >
+>   > That would not be a bad thing - see
+>   >https://lore.kernel.org/linux-pci/1560262374-67875-1-git-send-email-john.garry@huawei.com/
+>   >
+>   >
+>   > >
+>   > > This driver deals with legacy IO ports where we need to bitbang
 
