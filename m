@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4951D1676F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:41:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 727071675C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:32:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730914AbgBUIA2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:00:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60818 "EHLO mail.kernel.org"
+        id S2388850AbgBUIbF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:31:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730888AbgBUIAY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:00:24 -0500
+        id S1733242AbgBUIOw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:14:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7DC02465D;
-        Fri, 21 Feb 2020 08:00:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 99EE320578;
+        Fri, 21 Feb 2020 08:14:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272024;
-        bh=z45Deq5jpfh5BBTwJ6zU+HtvdTraWuKGso37UKduEvs=;
+        s=default; t=1582272892;
+        bh=o+o0M9tu1mUFpsW0wcJx7bRm3a8dmU2NUuterE4EqvM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AWgHJMOZCkvVEuuW9B8YKsM642y1jpU5pSbuTWtPwhwseWDbT1FBFV6/r9zSY9XT9
-         jYE++/fuznOb/bGvx3Oa/luT+YpBs5Dy6Y4V+lLodQYChcdDX5vFU9S9KmfXHcnxww
-         DxhBr45enlurn2nU4QdzBbAKQA0oC8v1BtXEF9q0=
+        b=a1BkZ84gdFnoiOS+uGordZUE5n9f72ayEpyD9ruHEHSL+2Etnm89qKjcnfBxPYR/E
+         Zpr67HtEswV8oaVgsQJDl62KYZGhtDFYiozDKYdJjDMI4oG0kzsnlAwhaIlpZAOHGK
+         yeii/YJ7NUYTAhjj9FxeOkHpJGdGk+pVpuvKDFHg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 386/399] drm/amdgpu/smu10: fix smu10_get_clock_by_type_with_latency
-Date:   Fri, 21 Feb 2020 08:41:51 +0100
-Message-Id: <20200221072437.595796227@linuxfoundation.org>
+Subject: [PATCH 5.4 314/344] trigger_next should increase position index
+Date:   Fri, 21 Feb 2020 08:41:53 +0100
+Message-Id: <20200221072418.600688688@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
-References: <20200221072402.315346745@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,47 +44,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alex Deucher <alexander.deucher@amd.com>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-[ Upstream commit 4d0a72b66065dd7e274bad6aa450196d42fd8f84 ]
+[ Upstream commit 6722b23e7a2ace078344064a9735fb73e554e9ef ]
 
-Only send non-0 clocks to DC for validation.  This mirrors
-what the windows driver does.
+if seq_file .next fuction does not change position index,
+read after some lseek can generate unexpected output.
 
-Bug: https://gitlab.freedesktop.org/drm/amd/issues/963
-Reviewed-by: Evan Quan <evan.quan@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Without patch:
+ # dd bs=30 skip=1 if=/sys/kernel/tracing/events/sched/sched_switch/trigger
+ dd: /sys/kernel/tracing/events/sched/sched_switch/trigger: cannot skip to specified offset
+ n traceoff snapshot stacktrace enable_event disable_event enable_hist disable_hist hist
+ # Available triggers:
+ # traceon traceoff snapshot stacktrace enable_event disable_event enable_hist disable_hist hist
+ 6+1 records in
+ 6+1 records out
+ 206 bytes copied, 0.00027916 s, 738 kB/s
+
+Notice the printing of "# Available triggers:..." after the line.
+
+With the patch:
+ # dd bs=30 skip=1 if=/sys/kernel/tracing/events/sched/sched_switch/trigger
+ dd: /sys/kernel/tracing/events/sched/sched_switch/trigger: cannot skip to specified offset
+ n traceoff snapshot stacktrace enable_event disable_event enable_hist disable_hist hist
+ 2+1 records in
+ 2+1 records out
+ 88 bytes copied, 0.000526867 s, 167 kB/s
+
+It only prints the end of the file, and does not restart.
+
+Link: http://lkml.kernel.org/r/3c35ee24-dd3a-8119-9c19-552ed253388a@virtuozzo.com
+
+https://bugzilla.kernel.org/show_bug.cgi?id=206283
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ kernel/trace/trace_events_trigger.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
-index 1115761982a78..627a42e8fd318 100644
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
-@@ -1026,12 +1026,15 @@ static int smu10_get_clock_by_type_with_latency(struct pp_hwmgr *hwmgr,
+diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
+index 40106fff06a48..287d77eae59b3 100644
+--- a/kernel/trace/trace_events_trigger.c
++++ b/kernel/trace/trace_events_trigger.c
+@@ -116,9 +116,10 @@ static void *trigger_next(struct seq_file *m, void *t, loff_t *pos)
+ {
+ 	struct trace_event_file *event_file = event_file_data(m->private);
  
- 	clocks->num_levels = 0;
- 	for (i = 0; i < pclk_vol_table->count; i++) {
--		clocks->data[i].clocks_in_khz = pclk_vol_table->entries[i].clk * 10;
--		clocks->data[i].latency_in_us = latency_required ?
--						smu10_get_mem_latency(hwmgr,
--						pclk_vol_table->entries[i].clk) :
--						0;
--		clocks->num_levels++;
-+		if (pclk_vol_table->entries[i].clk) {
-+			clocks->data[clocks->num_levels].clocks_in_khz =
-+				pclk_vol_table->entries[i].clk * 10;
-+			clocks->data[clocks->num_levels].latency_in_us = latency_required ?
-+				smu10_get_mem_latency(hwmgr,
-+						      pclk_vol_table->entries[i].clk) :
-+				0;
-+			clocks->num_levels++;
-+		}
- 	}
+-	if (t == SHOW_AVAILABLE_TRIGGERS)
++	if (t == SHOW_AVAILABLE_TRIGGERS) {
++		(*pos)++;
+ 		return NULL;
+-
++	}
+ 	return seq_list_next(t, &event_file->triggers, pos);
+ }
  
- 	return 0;
 -- 
 2.20.1
 
