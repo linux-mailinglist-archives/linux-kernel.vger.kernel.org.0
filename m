@@ -2,160 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFEEB16855A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 18:47:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A816C168562
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 18:48:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728289AbgBURrt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 12:47:49 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:36542 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726150AbgBURrt (ORCPT
+        id S1729010AbgBURsP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 12:48:15 -0500
+Received: from ssl.serverraum.org ([176.9.125.105]:58235 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725995AbgBURsP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 12:47:49 -0500
-Received: by mail-yb1-f195.google.com with SMTP id u26so1502120ybd.3;
-        Fri, 21 Feb 2020 09:47:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=vJE8mbTg+EqCG56Tu0+ggaMIT/oTLKaNGToyz1VhJn0=;
-        b=mJFaZOiMn4SLJ1LLt01opUO977i2inPUITceDJCxUi2tyWDpllUafj/JvVHC6Zkgrh
-         SYAdUSny0/ThfejOU1q7ZGlney19fmLx6x/cxYdmXwJNe4GyWRNqfLJ+3udZrySRQmED
-         uR+y7mMsElDkCG4AQAUoD5hZCT4uWgXB0ggpQGsr7fqQuhrWuQ+mDtCnfDPnCwHnoH94
-         g8+CDglEYTdpPuMYEkEuBBslYQnomlBfGBapJMchN6wHIqwktYyJIF8E9tH1ChRkimGp
-         InDPtCUmVlYPYBsrGLDpKL++VjfCrpnr1nPWOlOX3qkv/db6yrfjriPUkKbZZwvw3A5V
-         lfcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=vJE8mbTg+EqCG56Tu0+ggaMIT/oTLKaNGToyz1VhJn0=;
-        b=g41CeF40CiMQg1AfACBRhn9oFREmIlqdtlz4ncdMM9YJ+EHuvgDW/7nL+SuxMCBME8
-         1EHhzgnQRtuAG5/CxCC9WbyZaGABHoaMDDQK/97r+B3ReQ/Ny6nRchaEo7xOfelrgqws
-         4dSBYcfQ9a41kfFGOXSjMJglze33+oFKXPXDt3PAVJL2BaadY4bSI90etaa7lKNWoPqt
-         vTyFFAItbpRCnTYieapXMwHFeZVAN1rvq+UIhTMrs+ZbgRp+InTrul5SiKV5spM/Vb+5
-         O5RYQvqhD9dr8/9+Qv9N46LM4Dh1dbUjTsibxFDWB9tkFtFKtkwr95IRZp8s76Itf3v1
-         s4jQ==
-X-Gm-Message-State: APjAAAV0R9dJI+ewI5Gu6SbmKST5sv9vdtVf/Iz9yvb0Ncckt+RFNBiv
-        2pVbVyce68N9U/oTY3zDK4A=
-X-Google-Smtp-Source: APXvYqzmo2BtZCVvY3XpIxWiwjd2MXnNDsld7UgNaLBdEQyfuxTBX7rstuL2CwZqHNH+A8pjy6xBBA==
-X-Received: by 2002:a25:e758:: with SMTP id e85mr37264859ybh.173.1582307266578;
-        Fri, 21 Feb 2020 09:47:46 -0800 (PST)
-Received: from [192.168.1.46] (c-73-88-245-53.hsd1.tn.comcast.net. [73.88.245.53])
-        by smtp.gmail.com with ESMTPSA id p2sm1620487ywd.58.2020.02.21.09.47.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Feb 2020 09:47:46 -0800 (PST)
-Subject: Re: [RFC PATCH v2 0/4] Add device tree build information
-To:     Alexandre Torgue <alexandre.torgue@st.com>, robh+dt@kernel.org,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        david@gibson.dropbear.id.au, sjg@chromium.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, devicetree-compiler@vger.kernel.org,
-        Ian Lepore <ian@freebsd.org>
-References: <20200221161418.20225-1-alexandre.torgue@st.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <1b946fcf-47a9-012d-1b04-f4bbd2682607@gmail.com>
-Date:   Fri, 21 Feb 2020 11:47:44 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Fri, 21 Feb 2020 12:48:15 -0500
+Received: from mwalle01.sab.local. (unknown [213.135.10.150])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 2574C23D09;
+        Fri, 21 Feb 2020 18:48:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1582307292;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=bC6qDTC4k9cKBmVPiBFXfJbFBlREttiFm87AHMXXcFQ=;
+        b=GOT/7lSkX4I/ogNMgucjXNWWlAjUnQ+RQKD+h91JIsKRY/i8hRs20skUQHa5Jcc4ajA1CU
+        ITxjiXgFFElpSebBnKGuHsxu0o7TkdsgUnLg64U9L9n8MoknT8syV+AtLNcWG84PEgMpgv
+        umf5vs0EfJx0Xuk79S/56pURAmgwbKA=
+From:   Michael Walle <michael@walle.cc>
+To:     linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Jiri Slaby <jslaby@suse.com>, Peng Fan <peng.fan@nxp.com>,
+        Vabhav Sharma <vabhav.sharma@nxp.com>,
+        Michael Walle <michael@walle.cc>
+Subject: [PATCH v2 0/9] tty: serial: fsl_lpuart various fixes and LS1028A support
+Date:   Fri, 21 Feb 2020 18:47:45 +0100
+Message-Id: <20200221174754.5295-1-michael@walle.cc>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20200221161418.20225-1-alexandre.torgue@st.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spamd-Bar: ++++++
+X-Spam-Level: ******
+X-Rspamd-Server: web
+X-Spam-Status: Yes, score=6.40
+X-Spam-Score: 6.40
+X-Rspamd-Queue-Id: 2574C23D09
+X-Spamd-Result: default: False [6.40 / 15.00];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         R_MISSING_CHARSET(2.50)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         BROKEN_CONTENT_TYPE(1.50)[];
+         NEURAL_SPAM(0.00)[0.764];
+         DKIM_SIGNED(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[13];
+         MID_CONTAINS_FROM(1.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         ASN(0.00)[asn:12941, ipnet:213.135.0.0/19, country:DE];
+         SUSPICIOUS_RECIPS(1.50)[]
+X-Spam: Yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/21/20 10:14 AM, Alexandre Torgue wrote:
-> (with title it's better ;)
-> 
-> Hi,
-> 
-> The goal of this series is to add device tree build information in dtb.
-> This information can be dtb build date, where devicetree files come from,
-> who built the dtb ... Actually, same kind of information that you can find
-> in the Linux banner which is printout during kernel boot. Having the same
-> kind of information for device tree is useful for debugging and maintenance.
-> 
-> A file (dtb-build.txt) containing a string with build information (e.g.,
->>From Linux 5.5.0-rc1 by alex the Mon Jan 13 18:25:38 CET 2020) is generated by
-> "gen_dtb_build_info.sh" script. 
-> 
-> This file has to be included manually in each dts file that would like to use 
-> this build information.
+These are various fixes for problems I found during development of the
+LS1028A support for the LPUART. Sorry for the quick v2, but I didn't
+thought I could fix the DMA issue that fast.
 
-In the RFC series, you said:
+Also, I'm not sure if this series should be split between the "tty: serial:
+fsl_lpuart" patches and the devicetree patches. So unless someone tell me
+otherwise I keep them together to avoid mention any dependencies.
 
-  "I gonna prepare a V2 with David proposition (to use overlay format) by
-   keeping in mind not to modify existing dts(i) files."
+Changes since v1:
+ - DMA support fixes.
 
-   https://lore.kernel.org/linux-devicetree/9d83a36c-78c5-3452-bb48-209d68c46038@st.com/
+New patches:
+  tty: serial: fsl_lpuart: fix DMA mapping
+  arm64: dts: ls1028a: add "fsl,vf610-edma" compatible
 
-But here in v2 instead requires including dtb-build.txt.
+Modified patches:
+  arm64: dts: ls1028a: add missing LPUART nodes
+   - add dma phandles
 
-This would require modifying every single main .dts file to get the build info.
-I would prefer the method that Ian and David came up with (sorry, no lore link,
-it did not go to lkml).  Extract from David's email:
 
-   Date:   Tue, 21 Jan 2020 13:05:25 +1100
-   From:   David Gibson <david@gibson.dropbear.id.au>
-   Subject: Re: [RFC PATCH 1/3] dtc: Add dtb build information option
+Michael Walle (9):
+  Revert "tty: serial: fsl_lpuart: drop EARLYCON_DECLARE"
+  tty: serial: fsl_lpuart: free IDs allocated by IDA
+  tty: serial: fsl_lpuart: handle EPROBE_DEFER for DMA
+  tty: serial: fsl_lpuart: fix DMA mapping
+  dt-bindings: serial: lpuart: add ls1028a compatibility
+  tty: serial: fsl_lpuart: add LS1028A support
+  tty: serial: fsl_lpuart: add LS1028A earlycon support
+  arm64: dts: ls1028a: add "fsl,vf610-edma" compatible
+  arm64: dts: ls1028a: add missing LPUART nodes
 
-   > Given that dts files are run through the C preprocessor before being
-   > fed to dtc, the build script could use the '-include' flag to force-
-   > include a fragment containing generated build info without any need to
-   > modify existing dts files.
+ .../devicetree/bindings/serial/fsl-lpuart.txt |  10 +-
+ .../arm64/boot/dts/freescale/fsl-ls1028a.dtsi |  75 ++++++-
+ drivers/tty/serial/fsl_lpuart.c               | 201 +++++++++++++-----
+ 3 files changed, 226 insertions(+), 60 deletions(-)
 
-   Uh... maybe.  -include will essentially prepend the forced file, which
-   is a bit awkward for our purposes.  It means that the prepended file
-   would need the /dts-v1/ tag, and we couldn't have it in the main files
-   which would be a bit confusing.  I think it would also cause problems
-   with any /memreserve/ tags and means that the main tree could in
-   theory overwrite the build information which we don't necessarily
-   want.
-
-   I guess we could build things the other way around: have the main .dts
-   file specified with -include and have the dts on the dtc commandline
-   be a fixed one with the build information.  It'd be a little weird,
-   though.
-
--Frank
-
-> 
-> of/fdt.c is modified to printout "build-info" property during Kernel boot and 
-> scripts/Makefile.lib is modified to call "gen_dtb_build_info.sh" script.
-> 
-> Patch 1 & 2 script and of/fdt.c updates
-> Patch 3 is an example of use in stm32mp157c-dk2.dts file.
-> Patch 4 is a tentative to make it automatic (not yet 100% functional).
-> 
-> regards
-> Alex
-> 
-> Changes since v1;
->  - Remove modification in dtc (no more -B option)
->  - Generate a file containing build info which is directly included in dts
->    file.
-> 
-> 
-> Regards
-> Alex
-> 
-> Alexandre Torgue (4):
->   scripts: Add script to generate dtb build information
->   of: fdt: print dtb build information
->   ARM: dts: stm32: Add dtb build information entry for stm32mp157c-dk2
->   script: make automatic dtb build info generation
-> 
->  arch/arm/boot/dts/stm32mp157c-dk2.dts |  1 +
->  drivers/of/fdt.c                      |  9 +++++++++
->  scripts/Makefile.lib                  |  3 +++
->  scripts/gen_dtb_build_info.sh         | 12 ++++++++++++
->  4 files changed, 25 insertions(+)
->  create mode 100755 scripts/gen_dtb_build_info.sh
-> 
+-- 
+2.20.1
 
