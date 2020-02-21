@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 727071675C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:32:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B314C1676F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:41:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388850AbgBUIbF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:31:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51496 "EHLO mail.kernel.org"
+        id S1731077AbgBUIAd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:00:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733242AbgBUIOw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:14:52 -0500
+        id S1731068AbgBUIAa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:00:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99EE320578;
-        Fri, 21 Feb 2020 08:14:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92031206ED;
+        Fri, 21 Feb 2020 08:00:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272892;
-        bh=o+o0M9tu1mUFpsW0wcJx7bRm3a8dmU2NUuterE4EqvM=;
+        s=default; t=1582272030;
+        bh=fWkVieqX4+okU8uVSg0m7NTofCEOdf4K60FWuuLXt9s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a1BkZ84gdFnoiOS+uGordZUE5n9f72ayEpyD9ruHEHSL+2Etnm89qKjcnfBxPYR/E
-         Zpr67HtEswV8oaVgsQJDl62KYZGhtDFYiozDKYdJjDMI4oG0kzsnlAwhaIlpZAOHGK
-         yeii/YJ7NUYTAhjj9FxeOkHpJGdGk+pVpuvKDFHg=
+        b=x9iksqhNfoGA8XiYKQWXYwQIIzhnYXFDRgu/pGrd8ouLdUhbn9rXj2z2qfQh10Tz6
+         siwM0yT8C1go77NP8K+kags2aN8SXgeBYC4ZL0wUwOx1GYi7/kvYeWSkvxEyD5QTuF
+         0Esg9HJTrukBoDFgMOBNhbzZop0NqoeNZOzG9bfY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 314/344] trigger_next should increase position index
+Subject: [PATCH 5.5 388/399] NFS: Fix memory leaks
 Date:   Fri, 21 Feb 2020 08:41:53 +0100
-Message-Id: <20200221072418.600688688@linuxfoundation.org>
+Message-Id: <20200221072437.736264325@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
+References: <20200221072402.315346745@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,62 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Wenwen Wang <wenwen@cs.uga.edu>
 
-[ Upstream commit 6722b23e7a2ace078344064a9735fb73e554e9ef ]
+[ Upstream commit 123c23c6a7b7ecd2a3d6060bea1d94019f71fd66 ]
 
-if seq_file .next fuction does not change position index,
-read after some lseek can generate unexpected output.
+In _nfs42_proc_copy(), 'res->commit_res.verf' is allocated through
+kzalloc() if 'args->sync' is true. In the following code, if
+'res->synchronous' is false, handle_async_copy() will be invoked. If an
+error occurs during the invocation, the following code will not be executed
+and the error will be returned . However, the allocated
+'res->commit_res.verf' is not deallocated, leading to a memory leak. This
+is also true if the invocation of process_copy_commit() returns an error.
 
-Without patch:
- # dd bs=30 skip=1 if=/sys/kernel/tracing/events/sched/sched_switch/trigger
- dd: /sys/kernel/tracing/events/sched/sched_switch/trigger: cannot skip to specified offset
- n traceoff snapshot stacktrace enable_event disable_event enable_hist disable_hist hist
- # Available triggers:
- # traceon traceoff snapshot stacktrace enable_event disable_event enable_hist disable_hist hist
- 6+1 records in
- 6+1 records out
- 206 bytes copied, 0.00027916 s, 738 kB/s
+To fix the above leaks, redirect the execution to the 'out' label if an
+error is encountered.
 
-Notice the printing of "# Available triggers:..." after the line.
-
-With the patch:
- # dd bs=30 skip=1 if=/sys/kernel/tracing/events/sched/sched_switch/trigger
- dd: /sys/kernel/tracing/events/sched/sched_switch/trigger: cannot skip to specified offset
- n traceoff snapshot stacktrace enable_event disable_event enable_hist disable_hist hist
- 2+1 records in
- 2+1 records out
- 88 bytes copied, 0.000526867 s, 167 kB/s
-
-It only prints the end of the file, and does not restart.
-
-Link: http://lkml.kernel.org/r/3c35ee24-dd3a-8119-9c19-552ed253388a@virtuozzo.com
-
-https://bugzilla.kernel.org/show_bug.cgi?id=206283
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/trace/trace_events_trigger.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/nfs/nfs42proc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
-index 40106fff06a48..287d77eae59b3 100644
---- a/kernel/trace/trace_events_trigger.c
-+++ b/kernel/trace/trace_events_trigger.c
-@@ -116,9 +116,10 @@ static void *trigger_next(struct seq_file *m, void *t, loff_t *pos)
- {
- 	struct trace_event_file *event_file = event_file_data(m->private);
+diff --git a/fs/nfs/nfs42proc.c b/fs/nfs/nfs42proc.c
+index 9637aad36bdca..e2ae54b35dfe1 100644
+--- a/fs/nfs/nfs42proc.c
++++ b/fs/nfs/nfs42proc.c
+@@ -343,14 +343,14 @@ static ssize_t _nfs42_proc_copy(struct file *src,
+ 		status = handle_async_copy(res, dst_server, src_server, src,
+ 				dst, &args->src_stateid, restart);
+ 		if (status)
+-			return status;
++			goto out;
+ 	}
  
--	if (t == SHOW_AVAILABLE_TRIGGERS)
-+	if (t == SHOW_AVAILABLE_TRIGGERS) {
-+		(*pos)++;
- 		return NULL;
--
-+	}
- 	return seq_list_next(t, &event_file->triggers, pos);
- }
+ 	if ((!res->synchronous || !args->sync) &&
+ 			res->write_res.verifier.committed != NFS_FILE_SYNC) {
+ 		status = process_copy_commit(dst, pos_dst, res);
+ 		if (status)
+-			return status;
++			goto out;
+ 	}
  
+ 	truncate_pagecache_range(dst_inode, pos_dst,
 -- 
 2.20.1
 
