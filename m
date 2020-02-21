@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6C9A16771E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:41:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB7F216783D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:48:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729025AbgBUIDP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:03:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35804 "EHLO mail.kernel.org"
+        id S1729028AbgBUHsH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:48:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731133AbgBUIDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:03:08 -0500
+        id S1727903AbgBUHsE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:48:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87747206ED;
-        Fri, 21 Feb 2020 08:03:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 734C9207FD;
+        Fri, 21 Feb 2020 07:48:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272188;
-        bh=XVGy6iK7CadxPsP1+MFoAhGr6E5YoTKUWdF1RoQobYU=;
+        s=default; t=1582271283;
+        bh=5wSt0wIPpairgOjqX2Ote1SXc2lETYQtdfc1fuGY1FM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wUeT3dDr+JnOGsmfPR4OGFpDFvvDOfpunr1zujMKpP9f2e55MTtCEk5FUvcBAiIug
-         sUWDyJIe6VLRm+XpVZaWfsjIleVG7NP9Wwp8TPDdOZEp4+T8Rz+wQ2fOev6qrK6so0
-         sNnMvHYqAbtRlJc0ax2hptHeOiGu5A2se7Oa+70c=
+        b=GgWnqk/HdkO67T6hWPov9TAZEul4f5pzop8ACg2x1BtdCxJ24Al5NnCXtjp1Fc3ZN
+         0WYgTGsZNWxikdPBMuBcq/tNgsjA1ujRCrOn4iJbcpW6C05T+JiEuRML+hTwdCabJ1
+         LcqrbknFMl+f7sF6rrQXZ46XOYRtu7GJHCL2fmGw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Jean Delvare <jdelvare@suse.de>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 031/344] drm/mipi_dbi: Fix off-by-one bugs in mipi_dbi_blank()
-Date:   Fri, 21 Feb 2020 08:37:10 +0100
-Message-Id: <20200221072351.967212900@linuxfoundation.org>
+Subject: [PATCH 5.5 106/399] drm/amdgpu/dm: Do not throw an error for a display with no audio
+Date:   Fri, 21 Feb 2020 08:37:11 +0100
+Message-Id: <20200221072412.729892969@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
+References: <20200221072402.315346745@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +46,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-[ Upstream commit 2ce18249af5a28031b3f909cfafccc88ea966c9d ]
+[ Upstream commit 852a91d627e9ce849d68df9d3f5336689003bdc7 ]
 
-When configuring the frame memory window, the last column and row
-numbers are written to the column resp. page address registers.  These
-numbers are thus one less than the actual window width resp. height.
+An old display with no audio may not have an EDID with a CEA block, or
+it may simply be too old to support audio. This is not a driver error,
+so don't flag it as such.
 
-While this is handled correctly in mipi_dbi_fb_dirty() since commit
-03ceb1c8dfd1e293 ("drm/tinydrm: Fix setting of the column/page end
-addresses."), it is not in mipi_dbi_blank().  The latter still forgets
-to subtract one when calculating the most significant bytes of the
-column and row numbers, thus programming wrong values when the display
-width or height is a multiple of 256.
-
-Fixes: 02dd95fe31693626 ("drm/tinydrm: Add MIPI DBI support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Noralf Trønnes <noralf@tronnes.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20191230130604.31006-1-geert+renesas@glider.be
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=112140
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Harry Wentland <harry.wentland@amd.com>
+Cc: Jean Delvare <jdelvare@suse.de>
+Cc: Alex Deucher <alexander.deucher@amd.com>
+Reviewed-by: Harry Wentland <harry.wentland@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_mipi_dbi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_mipi_dbi.c b/drivers/gpu/drm/drm_mipi_dbi.c
-index f8154316a3b0d..a05e64e3d80bb 100644
---- a/drivers/gpu/drm/drm_mipi_dbi.c
-+++ b/drivers/gpu/drm/drm_mipi_dbi.c
-@@ -367,9 +367,9 @@ static void mipi_dbi_blank(struct mipi_dbi_dev *dbidev)
- 	memset(dbidev->tx_buf, 0, len);
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
+index 0b401dfbe98a9..34f483ac36ca4 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
+@@ -97,8 +97,6 @@ enum dc_edid_status dm_helpers_parse_edid_caps(
+ 			(struct edid *) edid->raw_edid);
  
- 	mipi_dbi_command(dbi, MIPI_DCS_SET_COLUMN_ADDRESS, 0, 0,
--			 (width >> 8) & 0xFF, (width - 1) & 0xFF);
-+			 ((width - 1) >> 8) & 0xFF, (width - 1) & 0xFF);
- 	mipi_dbi_command(dbi, MIPI_DCS_SET_PAGE_ADDRESS, 0, 0,
--			 (height >> 8) & 0xFF, (height - 1) & 0xFF);
-+			 ((height - 1) >> 8) & 0xFF, (height - 1) & 0xFF);
- 	mipi_dbi_command_buf(dbi, MIPI_DCS_WRITE_MEMORY_START,
- 			     (u8 *)dbidev->tx_buf, len);
+ 	sad_count = drm_edid_to_sad((struct edid *) edid->raw_edid, &sads);
+-	if (sad_count < 0)
+-		DRM_ERROR("Couldn't read SADs: %d\n", sad_count);
+ 	if (sad_count <= 0)
+ 		return result;
  
 -- 
 2.20.1
