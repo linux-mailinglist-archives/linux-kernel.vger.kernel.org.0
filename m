@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1F99167729
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:41:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51E90167865
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:48:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731719AbgBUIjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:39:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33946 "EHLO mail.kernel.org"
+        id S2387715AbgBUIsN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:48:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730797AbgBUIBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:01:39 -0500
+        id S1728169AbgBUHrU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:47:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E46A120801;
-        Fri, 21 Feb 2020 08:01:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2897120801;
+        Fri, 21 Feb 2020 07:47:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272098;
-        bh=tNTO4ct9SDI8I9KV6SDwnENGAUGgcphrJePh9bylMEQ=;
+        s=default; t=1582271239;
+        bh=WqaG5AzvhJERv+jxrahx7FcSznI7YlI6rgAoKinkqlo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ojJr7tagSiqXGwpyfhu1nyCyf4vxOAahFOAg4OSEcwsQPv9ahy9cmcV0faOD2KzWJ
-         KkQiP/JYWJp2rjFWmUv7WgVAPLktSgf/ZEJihl5hcz5++47kAgJADJz6jQaPLh2TpX
-         FCr8OWWN3oBm7/EUvxcqGWN8U/olNkHfkhzJ8Dok=
+        b=HioetwjL12PpoMCB9PwW1KiShGVk2F63TT6D5uDklzePFV6tRNjvzZ33nWgGutcvK
+         kPFXM8jLBCsdT162Ht3528YqQHg3l2RYxofrm55XU+RkovZ/HhSPVJLWgaMSM8COF3
+         GtDeaDXnPsVrWpucpv9AQpGUeoDmq0LB3zRxHPoU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
-        Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-        Chao Yu <yuchao0@huawei.com>,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
+        kbuild test robot <lkp@intel.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 016/344] f2fs: preallocate DIO blocks when forcing buffered_io
-Date:   Fri, 21 Feb 2020 08:36:55 +0100
-Message-Id: <20200221072350.716190611@linuxfoundation.org>
+Subject: [PATCH 5.5 091/399] rtc: i2c/spi: Avoid inclusion of REGMAP support when not needed
+Date:   Fri, 21 Feb 2020 08:36:56 +0100
+Message-Id: <20200221072411.186325710@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
+References: <20200221072402.315346745@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,119 +45,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
 
-[ Upstream commit 47501f87c61ad2aa234add63e1ae231521dbc3f5 ]
+[ Upstream commit 34719de919af07682861cb0fa2bcf64da33ecf44 ]
 
-The previous preallocation and DIO decision like below.
+Merely enabling I2C and RTC selects REGMAP_I2C and REGMAP_SPI, even when
+no driver needs it.  While the former can be moduler, the latter cannot,
+and thus becomes built-in.
 
-                         allow_outplace_dio              !allow_outplace_dio
-f2fs_force_buffered_io   (*) No_Prealloc / Buffered_IO   Prealloc / Buffered_IO
-!f2fs_force_buffered_io  No_Prealloc / DIO               Prealloc / DIO
+Fix this by moving the select statements for REGMAP_I2C and REGMAP_SPI
+from the RTC_I2C_AND_SPI helper to the individual drivers that depend on
+it.
 
-But, Javier reported Case (*) where zoned device bypassed preallocation but
-fell back to buffered writes in f2fs_direct_IO(), resulting in stale data
-being read.
+Note that the comment for RTC_I2C_AND_SPI refers to SND_SOC_I2C_AND_SPI
+for more information, but the latter does not select REGMAP_{I2C,SPI}
+itself, and defers that to the individual drivers, too.
 
-In order to fix the issue, actually we need to preallocate blocks whenever
-we fall back to buffered IO like this. No change is made in the other cases.
-
-                         allow_outplace_dio              !allow_outplace_dio
-f2fs_force_buffered_io   (*) Prealloc / Buffered_IO      Prealloc / Buffered_IO
-!f2fs_force_buffered_io  No_Prealloc / DIO               Prealloc / DIO
-
-Reported-and-tested-by: Javier Gonzalez <javier@javigon.com>
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-Tested-by: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Reviewed-by: Javier González <javier@javigon.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Fixes: 080481f54ef62121 ("rtc: merge ds3232 and ds3234")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: kbuild test robot <lkp@intel.com>
+Link: https://lore.kernel.org/r/20200112171349.22268-1-geert@linux-m68k.org
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/data.c | 13 -------------
- fs/f2fs/file.c | 43 +++++++++++++++++++++++++++++++++----------
- 2 files changed, 33 insertions(+), 23 deletions(-)
+ drivers/rtc/Kconfig | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 2e9c731658008..5d6fd940aab2e 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1074,19 +1074,6 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
- 	int err = 0;
- 	bool direct_io = iocb->ki_flags & IOCB_DIRECT;
+diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+index d77515d8382c7..738fa07188409 100644
+--- a/drivers/rtc/Kconfig
++++ b/drivers/rtc/Kconfig
+@@ -848,14 +848,14 @@ config RTC_I2C_AND_SPI
+ 	default m if I2C=m
+ 	default y if I2C=y
+ 	default y if SPI_MASTER=y
+-	select REGMAP_I2C if I2C
+-	select REGMAP_SPI if SPI_MASTER
  
--	/* convert inline data for Direct I/O*/
--	if (direct_io) {
--		err = f2fs_convert_inline_inode(inode);
--		if (err)
--			return err;
--	}
--
--	if (direct_io && allow_outplace_dio(inode, iocb, from))
--		return 0;
--
--	if (is_inode_flag_set(inode, FI_NO_PREALLOC))
--		return 0;
--
- 	map.m_lblk = F2FS_BLK_ALIGN(iocb->ki_pos);
- 	map.m_len = F2FS_BYTES_TO_BLK(iocb->ki_pos + iov_iter_count(from));
- 	if (map.m_len > map.m_lblk)
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 72f308790a8e5..44bc5f4a9ce19 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -3348,18 +3348,41 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 				ret = -EAGAIN;
- 				goto out;
- 			}
--		} else {
--			preallocated = true;
--			target_size = iocb->ki_pos + iov_iter_count(from);
-+			goto write;
-+		}
+ comment "SPI and I2C RTC drivers"
  
--			err = f2fs_preallocate_blocks(iocb, from);
--			if (err) {
--				clear_inode_flag(inode, FI_NO_PREALLOC);
--				inode_unlock(inode);
--				ret = err;
--				goto out;
--			}
-+		if (is_inode_flag_set(inode, FI_NO_PREALLOC))
-+			goto write;
-+
-+		if (iocb->ki_flags & IOCB_DIRECT) {
-+			/*
-+			 * Convert inline data for Direct I/O before entering
-+			 * f2fs_direct_IO().
-+			 */
-+			err = f2fs_convert_inline_inode(inode);
-+			if (err)
-+				goto out_err;
-+			/*
-+			 * If force_buffere_io() is true, we have to allocate
-+			 * blocks all the time, since f2fs_direct_IO will fall
-+			 * back to buffered IO.
-+			 */
-+			if (!f2fs_force_buffered_io(inode, iocb, from) &&
-+					allow_outplace_dio(inode, iocb, from))
-+				goto write;
-+		}
-+		preallocated = true;
-+		target_size = iocb->ki_pos + iov_iter_count(from);
-+
-+		err = f2fs_preallocate_blocks(iocb, from);
-+		if (err) {
-+out_err:
-+			clear_inode_flag(inode, FI_NO_PREALLOC);
-+			inode_unlock(inode);
-+			ret = err;
-+			goto out;
- 		}
-+write:
- 		ret = __generic_file_write_iter(iocb, from);
- 		clear_inode_flag(inode, FI_NO_PREALLOC);
- 
+ config RTC_DRV_DS3232
+ 	tristate "Dallas/Maxim DS3232/DS3234"
+ 	depends on RTC_I2C_AND_SPI
++	select REGMAP_I2C if I2C
++	select REGMAP_SPI if SPI_MASTER
+ 	help
+ 	  If you say yes here you get support for Dallas Semiconductor
+ 	  DS3232 and DS3234 real-time clock chips. If an interrupt is associated
+@@ -875,6 +875,8 @@ config RTC_DRV_DS3232_HWMON
+ config RTC_DRV_PCF2127
+ 	tristate "NXP PCF2127"
+ 	depends on RTC_I2C_AND_SPI
++	select REGMAP_I2C if I2C
++	select REGMAP_SPI if SPI_MASTER
+ 	select WATCHDOG_CORE if WATCHDOG
+ 	help
+ 	  If you say yes here you get support for the NXP PCF2127/29 RTC
+@@ -891,6 +893,8 @@ config RTC_DRV_PCF2127
+ config RTC_DRV_RV3029C2
+ 	tristate "Micro Crystal RV3029/3049"
+ 	depends on RTC_I2C_AND_SPI
++	select REGMAP_I2C if I2C
++	select REGMAP_SPI if SPI_MASTER
+ 	help
+ 	  If you say yes here you get support for the Micro Crystal
+ 	  RV3029 and RV3049 RTC chips.
 -- 
 2.20.1
 
