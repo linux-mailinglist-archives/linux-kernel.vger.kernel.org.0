@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D31051672D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:06:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A12D1672D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:07:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731865AbgBUIGx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:06:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40852 "EHLO mail.kernel.org"
+        id S1732020AbgBUIG7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:06:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731992AbgBUIGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:06:51 -0500
+        id S1732016AbgBUIG4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:06:56 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40CF920722;
-        Fri, 21 Feb 2020 08:06:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3557720722;
+        Fri, 21 Feb 2020 08:06:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272410;
-        bh=GOeJ1Am3Wg4tRNg8HglrIbM7WUIYtK8v9/ojJJPnBX8=;
+        s=default; t=1582272415;
+        bh=sYHwINYDTcWh7EmWRxPDfsVNBX9NO+F8ciF4WJXac0s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zTFE9CbLd6oslFKJQ0eFxz0eoSk4YltIBMlSme1dKKtEcXhej5yrwryrKb9nU9vz3
-         oSu3N6Albo92oadfuyKtC7CJg8iMRgp14iva43A3MBN/p9/gn1gA0BlYexk2eUUEF4
-         fRXUlQ0UMQnGvzTkc4Ue/q+N7pmBN/KHnlo3J5Ww=
+        b=mFpCa/ZfsY5UQURB5UG35AEsPUtyIMDd7Dhw4U0c5oBaLUOuYDC/dJzCaNFGRp9f4
+         jvfaUCgBb0sepdY/AsGHfT25BG+hfXDdGlMnzl5KQjqeG8UZPuQ8HSxujDFuPJqv6I
+         GytFCigDr8qTS/RS/7maOM+Okvl/HIlBDoiI2p6k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tero Kristo <t-kristo@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
+        Simon Horman <simon.horman@netronome.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 132/344] ARM: OMAP2+: pdata-quirks: add PRM data for reset support
-Date:   Fri, 21 Feb 2020 08:38:51 +0100
-Message-Id: <20200221072400.824135935@linuxfoundation.org>
+Subject: [PATCH 5.4 133/344] netfilter: nft_tunnel: add the missing ERSPAN_VERSION nla_policy
+Date:   Fri, 21 Feb 2020 08:38:52 +0100
+Message-Id: <20200221072400.909595150@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
 References: <20200221072349.335551332@linuxfoundation.org>
@@ -44,53 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tero Kristo <t-kristo@ti.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit 8de44fb70659a5bc0c53a443e6129ea1bf00fd8b ]
+[ Upstream commit 0705f95c332081036d85f26691e9d3cd7d901c31 ]
 
-The parent clockdomain for reset must be in force wakeup mode, otherwise
-the reset may never complete. Add pdata quirks for this purpose for PRM
-driver.
+ERSPAN_VERSION is an attribute parsed in kernel side, nla_policy
+type should be added for it, like other attributes.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Acked-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Fixes: af308b94a2a4 ("netfilter: nf_tables: add tunnel support")
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Reviewed-by: Simon Horman <simon.horman@netronome.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-omap2/pdata-quirks.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ net/netfilter/nft_tunnel.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-omap2/pdata-quirks.c b/arch/arm/mach-omap2/pdata-quirks.c
-index 247e3f8acffe6..2657752b90670 100644
---- a/arch/arm/mach-omap2/pdata-quirks.c
-+++ b/arch/arm/mach-omap2/pdata-quirks.c
-@@ -24,6 +24,7 @@
- #include <linux/platform_data/ti-sysc.h>
- #include <linux/platform_data/wkup_m3.h>
- #include <linux/platform_data/asoc-ti-mcbsp.h>
-+#include <linux/platform_data/ti-prm.h>
- 
- #include "clockdomain.h"
- #include "common.h"
-@@ -463,6 +464,12 @@ void omap_pcs_legacy_init(int irq, void (*rearm)(void))
- 	pcs_pdata.rearm = rearm;
+diff --git a/net/netfilter/nft_tunnel.c b/net/netfilter/nft_tunnel.c
+index 5284fcf16be73..f8d2919cf9fdc 100644
+--- a/net/netfilter/nft_tunnel.c
++++ b/net/netfilter/nft_tunnel.c
+@@ -248,8 +248,9 @@ static int nft_tunnel_obj_vxlan_init(const struct nlattr *attr,
  }
  
-+static struct ti_prm_platform_data ti_prm_pdata = {
-+	.clkdm_deny_idle = clkdm_deny_idle,
-+	.clkdm_allow_idle = clkdm_allow_idle,
-+	.clkdm_lookup = clkdm_lookup,
-+};
-+
- /*
-  * GPIOs for TWL are initialized by the I2C bus and need custom
-  * handing until DSS has device tree bindings.
-@@ -565,6 +572,7 @@ static struct of_dev_auxdata omap_auxdata_lookup[] = {
- 	/* Common auxdata */
- 	OF_DEV_AUXDATA("ti,sysc", 0, NULL, &ti_sysc_pdata),
- 	OF_DEV_AUXDATA("pinctrl-single", 0, NULL, &pcs_pdata),
-+	OF_DEV_AUXDATA("ti,omap-prm-inst", 0, NULL, &ti_prm_pdata),
- 	{ /* sentinel */ },
+ static const struct nla_policy nft_tunnel_opts_erspan_policy[NFTA_TUNNEL_KEY_ERSPAN_MAX + 1] = {
++	[NFTA_TUNNEL_KEY_ERSPAN_VERSION]	= { .type = NLA_U32 },
+ 	[NFTA_TUNNEL_KEY_ERSPAN_V1_INDEX]	= { .type = NLA_U32 },
+-	[NFTA_TUNNEL_KEY_ERSPAN_V2_DIR]	= { .type = NLA_U8 },
++	[NFTA_TUNNEL_KEY_ERSPAN_V2_DIR]		= { .type = NLA_U8 },
+ 	[NFTA_TUNNEL_KEY_ERSPAN_V2_HWID]	= { .type = NLA_U8 },
  };
  
 -- 
