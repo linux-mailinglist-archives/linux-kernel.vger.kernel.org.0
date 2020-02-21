@@ -2,108 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C350E168655
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 19:20:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2426A168659
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 19:21:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729413AbgBUSUh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 13:20:37 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36511 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726946AbgBUSUh (ORCPT
+        id S1729497AbgBUSVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 13:21:24 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:33542 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725947AbgBUSVX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 13:20:37 -0500
-Received: by mail-lj1-f195.google.com with SMTP id r19so3170973ljg.3;
-        Fri, 21 Feb 2020 10:20:35 -0800 (PST)
+        Fri, 21 Feb 2020 13:21:23 -0500
+Received: by mail-il1-f193.google.com with SMTP id s18so2415999iln.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 10:21:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=C/E0xAjOCzonbvn0GhLbHdAipH5CVwsvYZUDR+hNQS4=;
-        b=LKGAvzC9Qi31ga4E7gObDwA/wkunftsW36SXCKS+z3e2ryzms7/Kk1l7WHrD8SLY68
-         zMGyCaAV/OjRq+1HlLtIAg/SFZsk531KCh2QvMVkykPPWYJO1nifmzxsfBKw8mmxPioj
-         LoKGhkwkTB4uj6iIpnwCgYmN7Q2FDeV+TVxe9VIXg/ZqmbA3UNfpmyRsS1tXQUGlvUd2
-         ZyHpZdYn4x+dFVYZaGCvQPQuv1lHbLRsibFJVqB7WX7yBNH0k2hU9NOC54j+cqlU5l+8
-         vB6pZAVFuGDLVEvSV8dr2IPL9Ku47JjQAHWWulD0uVj2CAEHN/mXnFPadG3YF89LQ+ZS
-         kwIw==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=G+cK2mC91PpoKPuuQapIOX9FR9b5Qc4ESPnNis4hpgk=;
+        b=EfQDyeEgUQ+Qrg3DR0QoNoIzub5X+GGPRyCL4wxAaHasogsRptEb4Bd3oZsiAj8JJ7
+         lZn/hkEDEXRyzUqAvCl8cr2JD5Etvb+cmEs2s2Cad1bwkk9ILLelnGoUv4F+/saa00vv
+         gqwYX4mkB0NB72J6Qn96FnMf9CGb77Rf7KzjqNz+zrg3cOV3eZQakrvLwdYV9z7bZzYO
+         +RdslPjKKhdH8UD7/xTT4KTldsxXYQouOP/G+Fd35reI8X69P35eURChBNjaWhGNwKVx
+         6IGayzQZ/e/Cpo5wAsHckqVGWuTzf1BXh4Mma+S0NgI9/YX5hK5XBkzCUJ2+ZUe3ael4
+         6PGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=C/E0xAjOCzonbvn0GhLbHdAipH5CVwsvYZUDR+hNQS4=;
-        b=WptLRENIlGu+CHr38hduF2Ov3aX1oBvlg+wGileoEb0BPqoLbfI+Q7gHDzaCyvInHj
-         0vMA7GfVkkgc22MgI/+RqsC66K5EImlFVgmz7Ra4c7FCCdAgvEYhp3XD7kTMUEgnWcSH
-         S45S55zqmKpuf7SuCkjCjx638Bdiuo7WVMTsDixrvpYgDM3LENsxdyP6KipM94tjisIm
-         K8rCA+rJhZzRnGib0Gt7lEXAgdlKVcfVRDMab5wZlG8+Ksuy7l+isUqZ5ytGNyJzZNXI
-         KfPFvtmPsCwFatQPKjp11rybpcDa3vUaz0f9ZgMkAceNA2/Yu30NpHi3YdGgl/+Zn7ja
-         IjzQ==
-X-Gm-Message-State: APjAAAUH6eXWV2iOu6mWLn3Fd7fVH21CiRTZaRo9xfMuKEEkZJijPqsK
-        ZPNX3pKzkTL5kcE5N8jHkXrRRed+
-X-Google-Smtp-Source: APXvYqyOq+v4Eh6q5hcFWzhG0NPLOok3SvgWv8r5p2HWHU7QWWRYRDbO/750ZdsoHcCoZyDQdoKjOg==
-X-Received: by 2002:a2e:844e:: with SMTP id u14mr22731544ljh.183.1582309234179;
-        Fri, 21 Feb 2020 10:20:34 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id u22sm2084441lff.65.2020.02.21.10.20.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2020 10:20:33 -0800 (PST)
-Subject: Re: [PATCH v9 13/17] cpuidle: tegra: Squash Tegra30 driver into the
- common driver
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Jasper Korten <jja2000@gmail.com>,
-        David Heidelberg <david@ixit.cz>,
-        Peter Geis <pgwipeout@gmail.com>, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200212235134.12638-1-digetx@gmail.com>
- <20200212235134.12638-14-digetx@gmail.com>
- <20200221162951.GQ10516@linaro.org>
- <89a9838c-faf3-b890-cea2-aad53df1eac3@gmail.com>
- <20200221174128.GW10516@linaro.org>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <9de1aad1-1926-db4d-73e3-d10f77bb8a36@gmail.com>
-Date:   Fri, 21 Feb 2020 21:20:32 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=G+cK2mC91PpoKPuuQapIOX9FR9b5Qc4ESPnNis4hpgk=;
+        b=Opyd6qjcbJakgOjpzyCy3x6DVPH8RuT2cvRoFPKsTBFH1oZDZzaYh2hwG4953K/vfA
+         cankzZuwqlsFmnSro/OYm6wG8x/9oKqLY+5PZbQ0hY3bdi40ZF7QQZuUa5va9boLKo+4
+         DiEjWuBi525cnErKu5VTaaxLOqAaIgojLfWI0wfJbT36LO/eljzT6cDJs8uSLVMRMpxD
+         fd3NdnnlfOLAOnO0j3qF4eFuuMceQ/V+R04tZR3nLCV/iCL+8A9+oGGgraUnv7/x/6np
+         EeN1F/CeWayJIRGSpnoD6+CVRx3ibaQQgWxVCG6bVVnWWmOq4A1KJcozkhjxRdxtsDgN
+         8V5A==
+X-Gm-Message-State: APjAAAXH9Gwki9onOZ+4u/UMUHZGW0LO6HEWnOWb9D0Rgmy04CgiRS+O
+        TGYmKu6bfScWcIM3AWa2IVIIYQ==
+X-Google-Smtp-Source: APXvYqzTx1bJI3NV1Je5vKEqfQz6Se6Ip4sz6bG67kElIeHlfVsBUh/m8L5U5SI49Ara8F0hgbMlPQ==
+X-Received: by 2002:a92:d18a:: with SMTP id z10mr39526131ilz.48.1582309281689;
+        Fri, 21 Feb 2020 10:21:21 -0800 (PST)
+Received: from google.com ([2620:15c:183:200:855f:8919:84a7:4794])
+        by smtp.gmail.com with ESMTPSA id f16sm1147037ilq.16.2020.02.21.10.21.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2020 10:21:20 -0800 (PST)
+Date:   Fri, 21 Feb 2020 11:21:19 -0700
+From:   Ross Zwisler <zwisler@google.com>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Raul Rangel <rrangel@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Mattias Nissler <mnissler@chromium.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org,
+        Benjamin Gordon <bmgordon@google.com>,
+        Micah Morton <mortonm@google.com>,
+        Dmitry Torokhov <dtor@google.com>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v5] Add a "nosymfollow" mount option.
+Message-ID: <20200221182119.GA89482@google.com>
+References: <20200204215014.257377-1-zwisler@google.com>
+ <CAHQZ30BgsCodGofui2kLwtpgzmpqcDnaWpS4hYf7Z+mGgwxWQw@mail.gmail.com>
+ <CAGRrVHwQimihNNVs434jNGF3BL5_Qov+1eYqBYKPCecQ0yjxpw@mail.gmail.com>
+ <CAGRrVHyzX4zOpO2nniv42BHOCbyCdPV9U7GE3FVhjzeFonb0bQ@mail.gmail.com>
+ <20200205032110.GR8731@bombadil.infradead.org>
+ <20200205034500.x3omkziqwu3g5gpx@yavin>
+ <CAGRrVHxRdLMx5axcB1Fyea8RZhfd-EO3TTpQtOvpOP0yxnAsbQ@mail.gmail.com>
+ <20200213154642.GA38197@google.com>
+ <20200221012142.4onrcfjtyghg237d@yavin.dot.cyphar.com>
 MIME-Version: 1.0
-In-Reply-To: <20200221174128.GW10516@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200221012142.4onrcfjtyghg237d@yavin.dot.cyphar.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-21.02.2020 20:41, Daniel Lezcano пишет:
-> On Fri, Feb 21, 2020 at 07:59:14PM +0300, Dmitry Osipenko wrote:
->> 21.02.2020 19:29, Daniel Lezcano пишет:
->>> On Thu, Feb 13, 2020 at 02:51:30AM +0300, Dmitry Osipenko wrote:
->>>> Tegra20 and Terga30 SoCs have common C1 and CC6 idling states and thus
->>>> share the same code paths, there is no point in having separate drivers
->>>> for a similar hardware. This patch merely moves functionality of the old
->>>> driver into the new, although the CC6 state is kept disabled for now since
->>>> old driver had a rudimentary support for this state (allowing to enter
->>>> into CC6 only when secondary CPUs are put offline), while new driver can
->>>> provide a full-featured support. The new feature will be enabled by
->>>> another patch.
->>>>
->>>> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
->>>> Tested-by: Peter Geis <pgwipeout@gmail.com>
->>>> Tested-by: Jasper Korten <jja2000@gmail.com>
->>>> Tested-by: David Heidelberg <david@ixit.cz>
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
->>>>  arch/arm/mach-tegra/Makefile          |   3 -
->>>>  arch/arm/mach-tegra/cpuidle-tegra30.c | 123 --------------------------
->>>
->>> Add the -M option when resending please.
->>
->> Okay, thank you very much for taking a look at the patches!
+On Fri, Feb 21, 2020 at 12:21:42PM +1100, Aleksa Sarai wrote:
+> On 2020-02-13, Ross Zwisler <zwisler@google.com> wrote:
+> > On Thu, Feb 06, 2020 at 12:10:45PM -0700, Ross Zwisler wrote:
+<>
+> > > As far as I can tell, SB_SUBMOUNT doesn't actually have any dependence on
+> > > MS_SUBMOUNT. Nothing ever sets or checks MS_SUBMOUNT from within the kernel,
+> > > and whether or not it's set from userspace has no bearing on how SB_SUBMOUNT
+> > > is used.  SB_SUBMOUNT is set independently inside of the kernel in
+> > > vfs_submount().
+> > > 
+> > > I agree that their association seems to be historical, introduced in this
+> > > commit from David Howells:
+> > > 
+> > > e462ec50cb5fa VFS: Differentiate mount flags (MS_*) from internal superblock flags
+> > > 
+> > > In that commit message David notes:
+> > > 
+> > >      (1) Some MS_* flags get translated to MNT_* flags (such as MS_NODEV ->
+> > >          MNT_NODEV) without passing this on to the filesystem, but some
+> > >          filesystems set such flags anyway.
+> > > 
+> > > I think this is sort of what we are trying to do with MS_NOSYMFOLLOW: have a
+> > > userspace flag that translates to MNT_NOSYMFOLLOW, but which doesn't need an
+> > > associated SB_* flag.  Is it okay to reclaim the bit currently owned by
+> > > MS_SUBMOUNT and use it for MS_NOSYMFOLLOW.
+> > > 
+> > > A second option would be to choose one of the unused MS_* values from the
+> > > middle of the range, such as 256 or 512.  Looking back as far as git will let
+> > > me, I don't think that these flags have been used for MS_* values at least
+> > > since v2.6.12:
+> > > 
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/include/linux/fs.h?id=1da177e4c3f41524e886b7f1b8a0c1fc7321cac2
+> > > 
+> > > I think maybe these used to be S_WRITE and S_APPEND, which weren't filesystem
+> > > mount flags?
+> > > 
+> > > https://sites.uclouvain.be/SystInfo/usr/include/sys/mount.h.html
+> > > 
+> > > A third option would be to create this flag using the new mount system:
+> > > 
+> > > https://lwn.net/Articles/753473/
+> > > https://lwn.net/Articles/759499/
+> > > 
+> > > My main concern with this option is that for Chrome OS we'd like to be able to
+> > > backport whatever solution we come up with to a variety of older kernels, and
+> > > if we go with the new mount system this would require us to backport the
+> > > entire new mount system to those kernels, which I think is infeasible.  
+> > > 
+> > > David, what are your thoughts on this?  Of these three options for supporting
+> > > a new MS_NOSYMFOLLOW flag:
+> > > 
+> > > 1) reclaim the bit currently used by MS_SUBMOUNT
+> > > 2) use a smaller unused value for the flag, 256 or 512
+> > > 3) implement the new flag only in the new mount system
+> > > 
+> > > do you think either #1 or #2 are workable?  If so, which would you prefer?
+> > 
+> > Gentle ping on this - do either of the options using the existing mount API
+> > seem possible?  Would it be useful for me to send out example patches in one
+> > of those directions?  Or is it out of the question, and I should spend my time
+> > on making patches using the new mount system?  Thanks!
 > 
-> Yeah, sorry for the delay. Nice cleanup BTW.
+> I think (1) or (2) sound reasonable, but I'm not really the right person
+> to ask.
 
-No problems, thank you :)
+Cool, I appreciate the feedback. :)  I'll go ahead and implement #2 and send
+it out, along with example man page updates.
