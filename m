@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45C111673D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1529116720C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:00:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732110AbgBUIP4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:15:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52672 "EHLO mail.kernel.org"
+        id S1730834AbgBUH7v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:59:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59994 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387432AbgBUIPt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:15:49 -0500
+        id S1730626AbgBUH7t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:59:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4115624670;
-        Fri, 21 Feb 2020 08:15:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73ED8222C4;
+        Fri, 21 Feb 2020 07:59:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272948;
-        bh=Ryr712IRyEGx3V2UFQBgJGfJ7BJcj/Aea1W03uMesHg=;
+        s=default; t=1582271988;
+        bh=zgVsgEnnXQ7LrYe7AE7KvemzilGGhK+OX2oKdOz0gEs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hVWAGuPI3Xpss5tDPCh0J0A+mGHwZG0X3k6ney2ynoBUDP5XmPmzrYkLN/Y8F58wS
-         Vp2fBd5qJVVwMxgSKE1G1WuCvzeH5Uvp9ZJOWF+Wi3OyNyFUz3ORgY6u4H7LjnzTG5
-         rccV10Z52X7K8iKgTFGCEBw+VVSqDCdeDQLeUsxM=
+        b=GqgQVrmz3eoARox4mz8EHj7VU/QqnhXEepWBykuZJKYjQsMl7b74SWpVNS2HKpwyX
+         quqb39HeX1eztOnOzIoMWoUC/4Kd+UT4/8qOpVH9qYhjLpEMlDOZT901yQcGcddnzH
+         +ZDuipg4VJUvVZXtFUwY/X1DFVUZxLkHBwBE6qRA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 299/344] hostap: Adjust indentation in prism2_hostapd_add_sta
-Date:   Fri, 21 Feb 2020 08:41:38 +0100
-Message-Id: <20200221072417.056092666@linuxfoundation.org>
+Subject: [PATCH 5.5 374/399] bcache: explicity type cast in bset_bkey_last()
+Date:   Fri, 21 Feb 2020 08:41:39 +0100
+Message-Id: <20200221072436.745148874@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
+References: <20200221072402.315346745@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,50 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Coly Li <colyli@suse.de>
 
-[ Upstream commit b61156fba74f659d0bc2de8f2dbf5bad9f4b8faf ]
+[ Upstream commit 7c02b0055f774ed9afb6e1c7724f33bf148ffdc0 ]
 
-Clang warns:
+In bset.h, macro bset_bkey_last() is defined as,
+    bkey_idx((struct bkey *) (i)->d, (i)->keys)
 
-../drivers/net/wireless/intersil/hostap/hostap_ap.c:2511:3: warning:
-misleading indentation; statement is not part of the previous 'if'
-[-Wmisleading-indentation]
-        if (sta->tx_supp_rates & WLAN_RATE_5M5)
-        ^
-../drivers/net/wireless/intersil/hostap/hostap_ap.c:2509:2: note:
-previous statement is here
-        if (sta->tx_supp_rates & WLAN_RATE_2M)
-        ^
-1 warning generated.
+Parameter i can be variable type of data structure, the macro always
+works once the type of struct i has member 'd' and 'keys'.
 
-This warning occurs because there is a space before the tab on this
-line. Remove it so that the indentation is consistent with the Linux
-kernel coding style and clang no longer warns.
+bset_bkey_last() is also used in macro csum_set() to calculate the
+checksum of a on-disk data structure. When csum_set() is used to
+calculate checksum of on-disk bcache super block, the parameter 'i'
+data type is struct cache_sb_disk. Inside struct cache_sb_disk (also in
+struct cache_sb) the member keys is __u16 type. But bkey_idx() expects
+unsigned int (a 32bit width), so there is problem when sending
+parameters via stack to call bkey_idx().
 
-Fixes: ff1d2767d5a4 ("Add HostAP wireless driver.")
-Link: https://github.com/ClangBuiltLinux/linux/issues/813
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Sparse tool from Intel 0day kbuild system reports this incompatible
+problem. bkey_idx() is part of user space API, so the simplest fix is
+to cast the (i)->keys to unsigned int type in macro bset_bkey_last().
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Coly Li <colyli@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intersil/hostap/hostap_ap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/bcache/bset.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/intersil/hostap/hostap_ap.c b/drivers/net/wireless/intersil/hostap/hostap_ap.c
-index 0094b1d2b5770..3ec46f48cfde1 100644
---- a/drivers/net/wireless/intersil/hostap/hostap_ap.c
-+++ b/drivers/net/wireless/intersil/hostap/hostap_ap.c
-@@ -2508,7 +2508,7 @@ static int prism2_hostapd_add_sta(struct ap_data *ap,
- 		sta->supported_rates[0] = 2;
- 	if (sta->tx_supp_rates & WLAN_RATE_2M)
- 		sta->supported_rates[1] = 4;
-- 	if (sta->tx_supp_rates & WLAN_RATE_5M5)
-+	if (sta->tx_supp_rates & WLAN_RATE_5M5)
- 		sta->supported_rates[2] = 11;
- 	if (sta->tx_supp_rates & WLAN_RATE_11M)
- 		sta->supported_rates[3] = 22;
+diff --git a/drivers/md/bcache/bset.h b/drivers/md/bcache/bset.h
+index c71365e7c1fac..a50dcfda656f5 100644
+--- a/drivers/md/bcache/bset.h
++++ b/drivers/md/bcache/bset.h
+@@ -397,7 +397,8 @@ void bch_btree_keys_stats(struct btree_keys *b, struct bset_stats *state);
+ 
+ /* Bkey utility code */
+ 
+-#define bset_bkey_last(i)	bkey_idx((struct bkey *) (i)->d, (i)->keys)
++#define bset_bkey_last(i)	bkey_idx((struct bkey *) (i)->d, \
++					 (unsigned int)(i)->keys)
+ 
+ static inline struct bkey *bset_bkey_idx(struct bset *i, unsigned int idx)
+ {
 -- 
 2.20.1
 
