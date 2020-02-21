@@ -2,145 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94EC4167E9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 14:30:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D54E167E91
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 14:29:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728732AbgBUN3j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 08:29:39 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39533 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728255AbgBUN3h (ORCPT
+        id S1728656AbgBUN3E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 08:29:04 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:39587 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728395AbgBUN3E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 08:29:37 -0500
-Received: by mail-wr1-f66.google.com with SMTP id y11so2077107wrt.6;
-        Fri, 21 Feb 2020 05:29:35 -0800 (PST)
+        Fri, 21 Feb 2020 08:29:04 -0500
+Received: by mail-lf1-f66.google.com with SMTP id n30so682117lfh.6
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 05:29:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=kGlgDo9M9XGHB0o0rwRFWRiv//bvSK3bYB5+0sd515M=;
-        b=dktp3WIZYxljosWl/N7+aNj0PVy8ipvMQAriSCCnpFrElA4gwCfPQxZGp+21YScCEx
-         xlqCE84EJKbJcc/r+yFzKP2ZoXHa8iTQ8AMGo9TxolR8njR+cWtvH2U14R+epE2bOo8D
-         gZtc/2xYWjXH7eUo/IRk6XcwLycWoVE9fA10JliR9278tEkVRMcK6kn5cUD81rE3bi3h
-         PJTywOJes8pKwfndZflffgyzBnHH+6eQKKZUm5+hWLqYDtw3OjvLlupOtfBou0THOSP4
-         IUvRM8iF0mhO/STzV90f50nESnOM0dzIuGh/TGEh3WnSmmqRGh9aBig4r5Yv2ABluun/
-         ojKw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8NATODsU2yjaJrA6FSD/IewEgDQ5Oohivlua/nWpA3M=;
+        b=bc2yIIOE7wkIMGyad4qn7bu3AxsOsBLEg/0ViMXFg9Kh7TOjkbFUDYIs0QeUD0iIL1
+         1Yvsd0l0+eAr4LXVLoNWPWZykKEcqax4lX4vAnjjxcfHpFWIlt5nvNYq3UWU6J4SELQt
+         RT5AoqFu//UZMeRDl4djtYxzARROJ7qbdlDDzzX0UGlAgLOzTXm5cWafJix/CsMSPy6V
+         EWZOwjXlPnvc0/O9dgp/Qz9l9GKmcGmHWpzgWxDI3QvimNKpUeea6JBC/46YJhoCV+tP
+         4/kLtCFOjBqMGHEFaId1fbX8fEXNk38H8WiOHG+/bxZSPw7RXo4x1Rq9upkwCtUGyhPO
+         LsHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=kGlgDo9M9XGHB0o0rwRFWRiv//bvSK3bYB5+0sd515M=;
-        b=F1aW9e4isABiXzlVZGl8ee1zJGBe0DepWNlpfU7LjM/zrSopT1AmncvBsnrKNyI7Lu
-         gdtuDrx48mmCK83N6BuHOtqMlLGoBaGJZdodgZlOpd96ubuCCPZ7UkMLmCABjpgjjD7m
-         KI49DqxV7YR0JBLx8hFjApWP4CB45te6LEseHbkTkpaQZLKBHmc6apagqRvD56GEAu0u
-         cCP0fCSmT3waLPA2pZYXKDQ52ZN2iH85bUUHUW6iai7gr2ubL7wv3LKXKzyGBETJU+OT
-         TrInT0lm581lExE56QyWbh1pIOkNj9ttchf/D0ufD+zi1PFI3g9EATWamzdSmOileZ1Y
-         qIYg==
-X-Gm-Message-State: APjAAAUaKTblzRcFk5FdAZDZx4nokrXdADtiyhm4wPK3d0UA7paGdOBN
-        ViGVfSecZd/EWPDdEKBqnGc=
-X-Google-Smtp-Source: APXvYqz68j2XrpShir0+OUe+uyLOCXmz4RlALj+fnMj6xsUiTLw8BzSmMUr34KGBTqAqNt0uxpRxIg==
-X-Received: by 2002:adf:f586:: with SMTP id f6mr46834031wro.46.1582291774763;
-        Fri, 21 Feb 2020 05:29:34 -0800 (PST)
-Received: from Ansuel-XPS.localdomain (93-39-149-95.ip76.fastwebnet.it. [93.39.149.95])
-        by smtp.googlemail.com with ESMTPSA id h5sm4172178wmf.8.2020.02.21.05.29.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2020 05:29:34 -0800 (PST)
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-Cc:     Ansuel Smith <ansuelsmth@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/2] Documentation: devictree: Add ipq806x mdio bindings
-Date:   Fri, 21 Feb 2020 14:28:32 +0100
-Message-Id: <20200221132834.20719-2-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200221132834.20719-1-ansuelsmth@gmail.com>
-References: <20200221132834.20719-1-ansuelsmth@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8NATODsU2yjaJrA6FSD/IewEgDQ5Oohivlua/nWpA3M=;
+        b=Lnsq6J4I3AhXTsVVBa/uq83wi8ZKBw3Sx19iIgpxKugzrIRjzIDJ2HX5tAN6uqOzJs
+         AmCuIlKu6dN6kcuQbn/harz+/z/N+9D7T6Qy4lC+b1/M3hNNbO9ibbBtWtuc4o05juUx
+         zloatY3PceyB7x7/9CiHMnzmsVOtJeLYedZdhT/ScD0zyhn1amlvUGLpp2WU/TWlq2J5
+         c/ZtY/olSjBok1jtkxGfAWBnKQwywRolwHdf9RWC5lHqCnYhSSpPviZPiZUCVTZo/81k
+         KtS9f7xnCmh+1sq3i31GM8DbCXYDJrBbTHXldkH7pnIe882UAWwGaw/9yskcK5g+eKEU
+         M5zA==
+X-Gm-Message-State: APjAAAWGGs/WbbPLg+FpOalPsp6paKkkzn2iVJoUEbdsdmVQc4z/OsnF
+        RYZ/M1utz8efE3kAMXDyCJ+8CSqmxCoqntnIrNkZyA==
+X-Google-Smtp-Source: APXvYqyb+M2CIaNBeAgYY8KsqoMswRx7p6cPD+rt9zsxw7Toqetk2C0psjthf2j5Haq8E/EaKKB7j/fr+s5PNStqi+Y=
+X-Received: by 2002:ac2:52a3:: with SMTP id r3mr19896983lfm.189.1582291742525;
+ Fri, 21 Feb 2020 05:29:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+References: <20200214152729.6059-5-vincent.guittot@linaro.org>
+ <20200219125513.8953-1-vincent.guittot@linaro.org> <9fe822fc-c311-2b97-ae14-b9269dd99f1e@arm.com>
+ <CAKfTPtD4kz07hikCuU2_cm67ntruopN9CdJEP+fg5L4_N=qEgg@mail.gmail.com>
+ <d9f78b94-2455-e000-82bd-c00cfb9bbc8e@arm.com> <20200221090448.GQ3420@suse.de>
+ <CAKfTPtAgyGrYaiUEm-MjLxH+pSYMnk4LFJ+_ogJ=cWVvaHMnsg@mail.gmail.com> <20200221104018.GR3420@suse.de>
+In-Reply-To: <20200221104018.GR3420@suse.de>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Fri, 21 Feb 2020 14:28:50 +0100
+Message-ID: <CAKfTPtC+sfkZgSzWdYqtHoZu4a8-LF+qsKYAvZ+DHJyOqh-Rqg@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] sched/pelt: Add a new runnable average signal
+To:     Mel Gorman <mgorman@suse.de>
+Cc:     Valentin Schneider <valentin.schneider@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Phil Auld <pauld@redhat.com>, Parth Shah <parth@linux.ibm.com>,
+        Hillf Danton <hdanton@sina.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add documentations for ipq806x mdio driver.
+On Fri, 21 Feb 2020 at 11:40, Mel Gorman <mgorman@suse.de> wrote:
+>
+> On Fri, Feb 21, 2020 at 10:25:27AM +0100, Vincent Guittot wrote:
+> > On Fri, 21 Feb 2020 at 10:04, Mel Gorman <mgorman@suse.de> wrote:
+> > >
+> > > On Thu, Feb 20, 2020 at 04:11:18PM +0000, Valentin Schneider wrote:
+> > > > On 20/02/2020 14:36, Vincent Guittot wrote:
+> > > > > I agree that setting by default to SCHED_CAPACITY_SCALE is too much
+> > > > > for little core.
+> > > > > The problem for little core can be fixed by using the cpu capacity instead
+> > > > >
+> > > >
+> > > > So that's indeed better for big.LITTLE & co. Any reason however for not
+> > > > aligning with the initialization of util_avg ?
+> > > >
+> > > > With the default MC imbalance_pct (117), it takes 875 utilization to make
+> > > > a single CPU group (with 1024 capacity) overloaded (group_is_overloaded()).
+> > > > For a completely idle CPU, that means forking at least 3 tasks (512 + 256 +
+> > > > 128 util_avg)
+> > > >
+> > > > With your change, it only takes 2 tasks. I know I'm being nitpicky here, but
+> > > > I feel like those should be aligned, unless we have a proper argument against
+> > > > it - in which case this should also appear in the changelog with so far only
+> > > > mentions issues with util_avg migration, not the fork time initialization.
+> > > >
+> > >
+> > > So, what is the way forward here? Should this patch be modified now,
+> > > a patch be placed on top or go with what we have for the moment that
+> > > works for symmetric CPUs and deal with the asym case later?
+> > >
+> > > I do not have any asym systems at all so I've no means of checking
+> > > whether there is a problem or not.
+> >
+> > I'm going to send a new version at least for patch 4 and 5 using
+> > cpu_scale as initial value and fixing update_sg_wakeup_stats()
+> >
+>
+> No problem. FWIW, when I see them, I'll slot them in and rerun the tests
+> as the previous results will be invalidated. Obviously the asym case will
 
-Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
----
- .../bindings/net/qcom,ipq8064-mdio.yaml       | 55 +++++++++++++++++++
- 1 file changed, 55 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/qcom,ipq8064-mdio.yaml
+I have just sent the new version.
+Thanks for testing
 
-diff --git a/Documentation/devicetree/bindings/net/qcom,ipq8064-mdio.yaml b/Documentation/devicetree/bindings/net/qcom,ipq8064-mdio.yaml
-new file mode 100644
-index 000000000000..d2254a5ff2ad
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/qcom,ipq8064-mdio.yaml
-@@ -0,0 +1,55 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/qcom,ipq8064-mdio.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm ipq806x MDIO bus controller
-+
-+maintainers:
-+  - Ansuel Smith <ansuelsmth@gmail.com>
-+
-+description: |+
-+  The ipq806x soc have a MDIO dedicated controller that is
-+  used to comunicate with the gmac phy conntected.
-+  Child nodes of this MDIO bus controller node are standard
-+  Ethernet PHY device nodes as described in
-+  Documentation/devicetree/bindings/net/phy.txt
-+
-+allOf:
-+  - $ref: "mdio.yaml#"
-+
-+properties:
-+  compatible:
-+    const: qcom,ipq8064-mdio
-+  reg:
-+    maxItems: 1
-+    description: address and length of the register set for the device
-+  clocks:
-+    maxItems: 1
-+    description: A reference to the clock supplying the MDIO bus controller
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - "#address-cells"
-+  - "#size-cells"
-+
-+examples:
-+  - |
-+    mdio0: mdio@37000000 {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        compatible = "qcom,ipq8064-mdio", "syscon";
-+        reg = <0x37000000 0x200000>;
-+        resets = <&gcc GMAC_CORE1_RESET>;
-+        reset-names = "stmmaceth";
-+        clocks = <&gcc GMAC_CORE1_CLK>;
-+
-+        switch@10 {
-+            compatible = "qca,qca8337";
-+            ...
-+        }
-+    };
--- 
-2.25.0
-
+> not be tested by me but I imagine you or Valentin have that covered.
+>
+> Thanks.
+>
+> --
+> Mel Gorman
+> SUSE Labs
