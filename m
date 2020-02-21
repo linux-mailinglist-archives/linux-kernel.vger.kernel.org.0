@@ -2,87 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAB351676A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:37:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E116167668
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:37:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732265AbgBUIhT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:37:19 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:37472 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731796AbgBUIhS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:37:18 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id C9E63AF9379C8FF77510;
-        Fri, 21 Feb 2020 16:37:15 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Fri, 21 Feb 2020
- 16:37:07 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <Roy.Pledge@nxp.com>, <leoyang.li@nxp.com>,
-        <youri.querry_1@nxp.com>
-CC:     <linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] soc: fsl: dpio: remove set but not used variable 'addr_cena'
-Date:   Fri, 21 Feb 2020 16:36:37 +0800
-Message-ID: <20200221083637.13392-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S2388407AbgBUIdZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:33:25 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:58058 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732609AbgBUIdX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:33:23 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01L8XJsc015920;
+        Fri, 21 Feb 2020 02:33:19 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582273999;
+        bh=HS1Md6M0KSfcAvB5AaAuTKyUy/n3WhhTB/+q8IGl1yc=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=hI/LwG2KS7nyGndqeFXCyRBVuIBvFnzyPcYsynXqpEpEBLfYP470xHU+CssX/b9S4
+         IXB4EXF5EMHAfKgC7b1aPySMu1193wD5DoTydMdcE4bO38Q03kFFwBVHs22v8zx9/D
+         HaAru45OYb/JFKjjXUibT0CpAxiEgHnWbwuScXCg=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01L8XJNN072114
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 21 Feb 2020 02:33:19 -0600
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 21
+ Feb 2020 02:33:18 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 21 Feb 2020 02:33:18 -0600
+Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01L8XGLE004067;
+        Fri, 21 Feb 2020 02:33:17 -0600
+Subject: Re: [PATCH v4 0/3] phy: qcom-qmp: Add SDM845 QMP and QHP PHYs
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20200106081821.3192922-1-bjorn.andersson@linaro.org>
+ <20200220063837.GX1908628@ripper>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <ec401b79-b0af-78b3-ba8a-03aee5ba3584@ti.com>
+Date:   Fri, 21 Feb 2020 14:06:58 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20200220063837.GX1908628@ripper>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 3b2abda7d28c ("soc: fsl: dpio: Replace QMAN array
-mode with ring mode enqueue") introduced this, but not
-used, so remove it.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/soc/fsl/dpio/qbman-portal.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/drivers/soc/fsl/dpio/qbman-portal.c b/drivers/soc/fsl/dpio/qbman-portal.c
-index 740ee0d..350de56 100644
---- a/drivers/soc/fsl/dpio/qbman-portal.c
-+++ b/drivers/soc/fsl/dpio/qbman-portal.c
-@@ -658,7 +658,6 @@ int qbman_swp_enqueue_multiple_direct(struct qbman_swp *s,
- 	const uint32_t *cl = (uint32_t *)d;
- 	uint32_t eqcr_ci, eqcr_pi, half_mask, full_mask;
- 	int i, num_enqueued = 0;
--	uint64_t addr_cena;
- 
- 	spin_lock(&s->access_spinlock);
- 	half_mask = (s->eqcr.pi_ci_mask>>1);
-@@ -711,7 +710,6 @@ int qbman_swp_enqueue_multiple_direct(struct qbman_swp *s,
- 
- 	/* Flush all the cacheline without load/store in between */
- 	eqcr_pi = s->eqcr.pi;
--	addr_cena = (size_t)s->addr_cena;
- 	for (i = 0; i < num_enqueued; i++)
- 		eqcr_pi++;
- 	s->eqcr.pi = eqcr_pi & full_mask;
-@@ -822,7 +820,6 @@ int qbman_swp_enqueue_multiple_desc_direct(struct qbman_swp *s,
- 	const uint32_t *cl;
- 	uint32_t eqcr_ci, eqcr_pi, half_mask, full_mask;
- 	int i, num_enqueued = 0;
--	uint64_t addr_cena;
- 
- 	half_mask = (s->eqcr.pi_ci_mask>>1);
- 	full_mask = s->eqcr.pi_ci_mask;
-@@ -866,7 +863,6 @@ int qbman_swp_enqueue_multiple_desc_direct(struct qbman_swp *s,
- 
- 	/* Flush all the cacheline without load/store in between */
- 	eqcr_pi = s->eqcr.pi;
--	addr_cena = (uint64_t)s->addr_cena;
- 	for (i = 0; i < num_enqueued; i++)
- 		eqcr_pi++;
- 	s->eqcr.pi = eqcr_pi & full_mask;
--- 
-2.7.4
 
 
+On 20/02/20 12:08 pm, Bjorn Andersson wrote:
+> On Mon 06 Jan 00:18 PST 2020, Bjorn Andersson wrote:
+> 
+>> Add support for the two PCIe PHYs found in Qualcomm SDM845
+>>
+> 
+> Kishon, these patches still applies cleanly, could you please pick them
+> up?
+
+merged now, thanks!
+
+-Kishon
+
+> 
+> Regards,
+> Bjorn
+> 
+>> Bjorn Andersson (3):
+>>   dt-bindings: phy-qcom-qmp: Add SDM845 PCIe to binding
+>>   phy: qcom: qmp: Add SDM845 PCIe QMP PHY support
+>>   phy: qcom: qmp: Add SDM845 QHP PCIe PHY
+>>
+>>  .../devicetree/bindings/phy/qcom-qmp-phy.txt  |  10 +
+>>  drivers/phy/qualcomm/phy-qcom-qmp.c           | 313 ++++++++++++++++++
+>>  drivers/phy/qualcomm/phy-qcom-qmp.h           | 114 +++++++
+>>  3 files changed, 437 insertions(+)
+>>
+>> -- 
+>> 2.24.0
+>>
