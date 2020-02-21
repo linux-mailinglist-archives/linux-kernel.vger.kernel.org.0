@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5307E167457
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:23:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0DA516737B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:13:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732254AbgBUIU3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:20:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59492 "EHLO mail.kernel.org"
+        id S1732905AbgBUIMo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:12:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732212AbgBUIU1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:20:27 -0500
+        id S1732638AbgBUIMl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:12:41 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 433E024696;
-        Fri, 21 Feb 2020 08:20:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC4DF20722;
+        Fri, 21 Feb 2020 08:12:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273226;
-        bh=u6S3yZCvhJ85JEu9QpP7tqvyuJ74zd9mfDlmQQv16MI=;
+        s=default; t=1582272761;
+        bh=VE72fj0GrvsmScHPaEP/ZnlRnMn2L0iaATmIuBbj9ic=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ogqJenz0UwWtYRjff1+O/Mz2MRuxKYTj3crz0GPP8fjh9BmQBmxB+FwNsP/pHSxjM
-         ARJwu2jSNDYq1+wMQ7SJprGqtRIXxIDnxKrGU3fuMaY//svvO3XSinYaIpJotHIExz
-         JfJFyVqWC2tOi6dmsAyW9/L9zA717M9Bu30GOIUY=
+        b=It7S1HN4aSFx+tY6sepwWI/VH69Eutodm3muinbT/LRodx98RbGGzktvBQLOpHrfV
+         dGXZI2NKk3KlaxM5jg6ZZXZ6OLkk2pCpS7PX+hZq9GkV/f6wlkwRrvkIAY/elfX+Y6
+         wuBAw5WevWpE77OspUCfAamFrZ7gMgPkhF1QPDIA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "zhangyi (F)" <yi.zhang@huawei.com>,
-        Jan Kara <jack@suse.cz>, Theodore Tso <tytso@mit.edu>,
+        stable@vger.kernel.org,
+        Simon Schwartz <kern.simon@theschwartz.xyz>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 044/191] ext4, jbd2: ensure panic when aborting with zero errno
+Subject: [PATCH 5.4 218/344] driver core: platform: Prevent resouce overflow from causing infinite loops
 Date:   Fri, 21 Feb 2020 08:40:17 +0100
-Message-Id: <20200221072257.117975168@linuxfoundation.org>
+Message-Id: <20200221072409.005849916@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,74 +44,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhangyi (F) <yi.zhang@huawei.com>
+From: Simon Schwartz <kern.simon@theschwartz.xyz>
 
-[ Upstream commit 51f57b01e4a3c7d7bdceffd84de35144e8c538e7 ]
+[ Upstream commit 39cc539f90d035a293240c9443af50be55ee81b8 ]
 
-JBD2_REC_ERR flag used to indicate the errno has been updated when jbd2
-aborted, and then __ext4_abort() and ext4_handle_error() can invoke
-panic if ERRORS_PANIC is specified. But if the journal has been aborted
-with zero errno, jbd2_journal_abort() didn't set this flag so we can
-no longer panic. Fix this by always record the proper errno in the
-journal superblock.
+num_resources in the platform_device struct is declared as a u32.  The
+for loops that iterate over num_resources use an int as the counter,
+which can cause infinite loops on architectures with smaller ints.
+Change the loop counters to u32.
 
-Fixes: 4327ba52afd03 ("ext4, jbd2: ensure entering into panic after recording an error in superblock")
-Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Link: https://lore.kernel.org/r/20191204124614.45424-3-yi.zhang@huawei.com
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Simon Schwartz <kern.simon@theschwartz.xyz>
+Link: https://lore.kernel.org/r/2201ce63a2a171ffd2ed14e867875316efcf71db.camel@theschwartz.xyz
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/jbd2/checkpoint.c |  2 +-
- fs/jbd2/journal.c    | 15 ++++-----------
- 2 files changed, 5 insertions(+), 12 deletions(-)
+ drivers/base/platform.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/fs/jbd2/checkpoint.c b/fs/jbd2/checkpoint.c
-index 26f8d7e46462e..66409cbd3ed54 100644
---- a/fs/jbd2/checkpoint.c
-+++ b/fs/jbd2/checkpoint.c
-@@ -165,7 +165,7 @@ void __jbd2_log_wait_for_space(journal_t *journal)
- 				       "journal space in %s\n", __func__,
- 				       journal->j_devname);
- 				WARN_ON(1);
--				jbd2_journal_abort(journal, 0);
-+				jbd2_journal_abort(journal, -EIO);
- 			}
- 			write_lock(&journal->j_state_lock);
- 		} else {
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index 568ca0ca0127c..1a96287f92647 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -2142,12 +2142,10 @@ static void __journal_abort_soft (journal_t *journal, int errno)
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 3c0cd20925b71..ee99b15581290 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -27,6 +27,7 @@
+ #include <linux/limits.h>
+ #include <linux/property.h>
+ #include <linux/kmemleak.h>
++#include <linux/types.h>
  
- 	__jbd2_journal_abort_hard(journal);
+ #include "base.h"
+ #include "power/power.h"
+@@ -48,7 +49,7 @@ EXPORT_SYMBOL_GPL(platform_bus);
+ struct resource *platform_get_resource(struct platform_device *dev,
+ 				       unsigned int type, unsigned int num)
+ {
+-	int i;
++	u32 i;
  
--	if (errno) {
--		jbd2_journal_update_sb_errno(journal);
--		write_lock(&journal->j_state_lock);
--		journal->j_flags |= JBD2_REC_ERR;
--		write_unlock(&journal->j_state_lock);
--	}
-+	jbd2_journal_update_sb_errno(journal);
-+	write_lock(&journal->j_state_lock);
-+	journal->j_flags |= JBD2_REC_ERR;
-+	write_unlock(&journal->j_state_lock);
- }
+ 	for (i = 0; i < dev->num_resources; i++) {
+ 		struct resource *r = &dev->resource[i];
+@@ -226,7 +227,7 @@ struct resource *platform_get_resource_byname(struct platform_device *dev,
+ 					      unsigned int type,
+ 					      const char *name)
+ {
+-	int i;
++	u32 i;
  
- /**
-@@ -2189,11 +2187,6 @@ static void __journal_abort_soft (journal_t *journal, int errno)
-  * failure to disk.  ext3_error, for example, now uses this
-  * functionality.
-  *
-- * Errors which originate from within the journaling layer will NOT
-- * supply an errno; a null errno implies that absolutely no further
-- * writes are done to the journal (unless there are any already in
-- * progress).
-- *
+ 	for (i = 0; i < dev->num_resources; i++) {
+ 		struct resource *r = &dev->resource[i];
+@@ -473,7 +474,8 @@ EXPORT_SYMBOL_GPL(platform_device_add_properties);
   */
+ int platform_device_add(struct platform_device *pdev)
+ {
+-	int i, ret;
++	u32 i;
++	int ret;
  
- void jbd2_journal_abort(journal_t *journal, int errno)
+ 	if (!pdev)
+ 		return -EINVAL;
+@@ -562,7 +564,7 @@ EXPORT_SYMBOL_GPL(platform_device_add);
+  */
+ void platform_device_del(struct platform_device *pdev)
+ {
+-	int i;
++	u32 i;
+ 
+ 	if (!IS_ERR_OR_NULL(pdev)) {
+ 		device_del(&pdev->dev);
 -- 
 2.20.1
 
