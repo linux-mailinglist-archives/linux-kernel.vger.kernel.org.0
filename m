@@ -2,157 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E56C716856A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 18:48:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52F7F16855E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 18:48:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729385AbgBURsW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 12:48:22 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:35863 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729050AbgBURsR (ORCPT
+        id S1728594AbgBURsE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 12:48:04 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:29418 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727655AbgBURsD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 12:48:17 -0500
-Received: from mwalle01.sab.local. (unknown [213.135.10.150])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 7B50223E5A;
-        Fri, 21 Feb 2020 18:48:14 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1582307294;
+        Fri, 21 Feb 2020 12:48:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582307282;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=mErOnXP7jBu0zlkAT1Qf3sYsSoWcyb3v89fIv9KUFbA=;
-        b=O9t5dQdrzEsLzNCdAtq3xYCajucy1LnHN30hh/kMF6aXNfZg58hxXpy5h65dgUxX8RUnRl
-        DgMsca/SyOKJY+ULCJCNmFDAESfFqfSBgunq5sCSWLQKAyu9mkNmeznqzkHIfZUXZMVolW
-        CheLUddu6Y4DZumyYXfFhz3WrYU26KI=
-From:   Michael Walle <michael@walle.cc>
-To:     linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Jiri Slaby <jslaby@suse.com>, Peng Fan <peng.fan@nxp.com>,
-        Vabhav Sharma <vabhav.sharma@nxp.com>,
-        Michael Walle <michael@walle.cc>
-Subject: [PATCH v2 6/9] tty: serial: fsl_lpuart: add LS1028A support
-Date:   Fri, 21 Feb 2020 18:47:51 +0100
-Message-Id: <20200221174754.5295-7-michael@walle.cc>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200221174754.5295-1-michael@walle.cc>
-References: <20200221174754.5295-1-michael@walle.cc>
+        bh=RrMvZJoVJBWqnzqNr9KyLlzqZ46CEJlOdAIqg//g6XU=;
+        b=dIe+RgCzUCc+j7/6priU5r1awTTJQpfHKW2bI2qO6EjtMl47Qz3hE64Uw/VgBVyGkzxC42
+        2zU1dBq0ERQMUFnIFWtvhrgWHJRJfV3GxpUdsIJ1MhKCGjYxobTul+jQSvkfmgaPas+dOm
+        /FAGwnA7Pd7J02ViLqFWSUZZGWvZkEY=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-365-HnvsnQK8MFOUa1iSTmOF2Q-1; Fri, 21 Feb 2020 12:47:56 -0500
+X-MC-Unique: HnvsnQK8MFOUa1iSTmOF2Q-1
+Received: by mail-wr1-f70.google.com with SMTP id o6so1332880wrp.8
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 09:47:56 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=RrMvZJoVJBWqnzqNr9KyLlzqZ46CEJlOdAIqg//g6XU=;
+        b=F+w8aoOhRU2eJ19HOBrQ125PdslAb2zEVy9aDd4igyQin8IaB+6GXbrf3ase6+Aca7
+         92zMh2YoLqkMAPQaxf/MOHi7gTndLrRD/ywm/3u8yLAvdtUidhbo6DKdqoWhax3+YXTR
+         aTOEc0FZN7ZL+DUSvexCfF5Q8JfczwIOZI2N7+r3EHjsYOWt/eeqVSzKsnLiWviN1K00
+         uNoSHdS3g8OJNrwzds1YNQh1JhlYu9D7+5W2IDQSPU9an7Xpvln4Oi0MXfE00AKc1PkA
+         i77PNJILEqlta1U01UtyYEs38KiJGxprx7FNFiw+0EIOASOGUsqtcD3U+KNK4x8LUTqt
+         33rg==
+X-Gm-Message-State: APjAAAXm6/HJxN81IEuKmn4Xn9mj/X7zE+3wDgqPF4nuH5nox5B9TV4M
+        d8JCpU0zWnA0xRCfg+7fGB+CWb3IRgSlddOpQEJEpVZA0UGPLy+7cNyJ4ILAhInD8kH7FV5jtAj
+        ZroXAqdwSELzHzD27CkDGJqlH
+X-Received: by 2002:adf:e68d:: with SMTP id r13mr49225905wrm.349.1582307275646;
+        Fri, 21 Feb 2020 09:47:55 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzI29TQnMTxhegOPTR5SZPy7HDTeZP8mdmwqeW3b3wvRv6t/VcN7GX1ZnOVCmuZ9M9Iv9A8Vg==
+X-Received: by 2002:adf:e68d:: with SMTP id r13mr49225876wrm.349.1582307275388;
+        Fri, 21 Feb 2020 09:47:55 -0800 (PST)
+Received: from [192.168.178.40] ([151.20.135.128])
+        by smtp.gmail.com with ESMTPSA id x6sm4531952wmi.44.2020.02.21.09.47.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2020 09:47:54 -0800 (PST)
+Subject: Re: [PATCH v6 17/22] KVM: Terminate memslot walks via used_slots
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Paul Mackerras <paulus@ozlabs.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, Marc Zyngier <maz@kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-mips@vger.kernel.org, kvm@vger.kernel.org,
+        kvm-ppc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Peter Xu <peterx@redhat.com>,
+        =?UTF-8?Q?Philippe_Mathieu-Daud=c3=a9?= <f4bug@amsat.org>
+References: <20200218210736.16432-1-sean.j.christopherson@intel.com>
+ <20200218210736.16432-18-sean.j.christopherson@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <216d647a-e598-d5d6-e20f-9c44c9ca157f@redhat.com>
+Date:   Fri, 21 Feb 2020 18:47:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Bar: ++++++
-X-Spam-Level: ******
-X-Rspamd-Server: web
-X-Spam-Status: Yes, score=6.40
-X-Spam-Score: 6.40
-X-Rspamd-Queue-Id: 7B50223E5A
-X-Spamd-Result: default: False [6.40 / 15.00];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         R_MISSING_CHARSET(2.50)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         BROKEN_CONTENT_TYPE(1.50)[];
-         NEURAL_SPAM(0.00)[0.765];
-         DKIM_SIGNED(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[13];
-         MID_CONTAINS_FROM(1.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         ASN(0.00)[asn:12941, ipnet:213.135.0.0/19, country:DE];
-         SUSPICIOUS_RECIPS(1.50)[]
-X-Spam: Yes
+In-Reply-To: <20200218210736.16432-18-sean.j.christopherson@intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The LS1028A uses little endian register access and has a different FIFO
-size encoding.
+On 18/02/20 22:07, Sean Christopherson wrote:
+>  	tmp = id_to_memslot(__kvm_memslots(kvm, as_id), id);
+> -	old = *tmp;
+> -	tmp = NULL;
+> +	if (tmp) {
+> +		old = *tmp;
+> +		tmp = NULL;
+> +	} else {
+> +		memset(&old, 0, sizeof(old));
+> +		old.id = id;
+> +	}
+>  
 
-Signed-off-by: Michael Walle <michael@walle.cc>
----
- drivers/tty/serial/fsl_lpuart.c | 27 +++++++++++++++++++++++++--
- 1 file changed, 25 insertions(+), 2 deletions(-)
+So much for my previous brilliant suggestion. :)
 
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index b65db29a1cd0..d5a67e02f06a 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -234,6 +234,7 @@ static DEFINE_IDA(fsl_lpuart_ida);
- enum lpuart_type {
- 	VF610_LPUART,
- 	LS1021A_LPUART,
-+	LS1028A_LPUART,
- 	IMX7ULP_LPUART,
- 	IMX8QXP_LPUART,
- };
-@@ -278,11 +279,16 @@ static const struct lpuart_soc_data vf_data = {
- 	.iotype = UPIO_MEM,
- };
- 
--static const struct lpuart_soc_data ls_data = {
-+static const struct lpuart_soc_data ls1021a_data = {
- 	.devtype = LS1021A_LPUART,
- 	.iotype = UPIO_MEM32BE,
- };
- 
-+static const struct lpuart_soc_data ls1028a_data = {
-+	.devtype = LS1028A_LPUART,
-+	.iotype = UPIO_MEM32,
-+};
-+
- static struct lpuart_soc_data imx7ulp_data = {
- 	.devtype = IMX7ULP_LPUART,
- 	.iotype = UPIO_MEM32,
-@@ -297,7 +303,8 @@ static struct lpuart_soc_data imx8qxp_data = {
- 
- static const struct of_device_id lpuart_dt_ids[] = {
- 	{ .compatible = "fsl,vf610-lpuart",	.data = &vf_data, },
--	{ .compatible = "fsl,ls1021a-lpuart",	.data = &ls_data, },
-+	{ .compatible = "fsl,ls1021a-lpuart",	.data = &ls1021a_data, },
-+	{ .compatible = "fsl,ls1028a-lpuart",	.data = &ls1028a_data, },
- 	{ .compatible = "fsl,imx7ulp-lpuart",	.data = &imx7ulp_data, },
- 	{ .compatible = "fsl,imx8qxp-lpuart",	.data = &imx8qxp_data, },
- 	{ /* sentinel */ }
-@@ -307,6 +314,11 @@ MODULE_DEVICE_TABLE(of, lpuart_dt_ids);
- /* Forward declare this for the dma callbacks*/
- static void lpuart_dma_tx_complete(void *arg);
- 
-+static inline bool is_ls1028a_lpuart(struct lpuart_port *sport)
-+{
-+	return sport->devtype == LS1028A_LPUART;
-+}
-+
- static inline bool is_imx8qxp_lpuart(struct lpuart_port *sport)
- {
- 	return sport->devtype == IMX8QXP_LPUART;
-@@ -1596,6 +1608,17 @@ static int lpuart32_startup(struct uart_port *port)
- 
- 	spin_lock_irqsave(&sport->port.lock, flags);
- 
-+	/*
-+	 * The LS1028A has a fixed length of 16 words. Although it supports the
-+	 * RX/TXSIZE fields their encoding is different. Eg the reference manual
-+	 * states 0b101 is 16 words.
-+	 */
-+	if (is_ls1028a_lpuart(sport)) {
-+		sport->rxfifo_size = 16;
-+		sport->txfifo_size = 16;
-+		sport->port.fifosize = sport->txfifo_size;
-+	}
-+
- 	lpuart32_setup_watermark_enable(sport);
- 
- 
--- 
-2.20.1
+Paolo
 
