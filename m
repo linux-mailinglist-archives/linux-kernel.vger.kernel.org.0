@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66D2C167398
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:14:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FD6B167483
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:23:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733084AbgBUINy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:13:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50184 "EHLO mail.kernel.org"
+        id S1731026AbgBUIWG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:22:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733060AbgBUINw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:13:52 -0500
+        id S1732486AbgBUIWA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:22:00 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A93C20578;
-        Fri, 21 Feb 2020 08:13:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48FD1222C4;
+        Fri, 21 Feb 2020 08:21:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272831;
-        bh=tKutHQzqUEtlGwZgT4t3m5DF0mw5khkEEf3otkXuA88=;
+        s=default; t=1582273319;
+        bh=5V8SWZ6KE+h38jugiRV8yIUeJZVT+9gKHm+N4Sh0huE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2GXHztXM5G/IYVLFapJkGDbQuorwcKMOmId8X4hq1s/I5t8NueZOVzcbph2IaJ64T
-         5toCFmPPngTUXWqLtnWcmRzNXNpUcC/4BnfP0WfCANuWsC1wYzL9zxtsnO3ZzbCpii
-         VC2LfkI1z8hikXmP40TTVH4/fwjlTdEKRNLQDVMs=
+        b=MJajZRu9igorMl+SbLZo4l9Id+otHFvSK1UUOvtDK0bvLcJ/HDhhOr3q7RXPcBXIR
+         /CMyh0Ial6diF6onWj/ucWETBWkV5cxKFqCwKALtohUxy/a6ZEVhfkZNvegkVp2kFm
+         sDwGNsBGxipLlThQ8wWAhx11++EzsOXGvFbBcM0o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 262/344] ide: serverworks: potential overflow in svwks_set_pio_mode()
-Date:   Fri, 21 Feb 2020 08:41:01 +0100
-Message-Id: <20200221072413.414324787@linuxfoundation.org>
+Subject: [PATCH 4.19 089/191] x86/vdso: Provide missing include file
+Date:   Fri, 21 Feb 2020 08:41:02 +0100
+Message-Id: <20200221072301.782964536@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +47,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Valdis Klētnieks <valdis.kletnieks@vt.edu>
 
-[ Upstream commit ce1f31b4c0b9551dd51874dd5364654ed4ca13ae ]
+[ Upstream commit bff47c2302cc249bcd550b17067f8dddbd4b6f77 ]
 
-The "drive->dn" variable is a u8 controlled by root.
+When building with C=1, sparse issues a warning:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+  CHECK   arch/x86/entry/vdso/vdso32-setup.c
+  arch/x86/entry/vdso/vdso32-setup.c:28:28: warning: symbol 'vdso32_enabled' was not declared. Should it be static?
+
+Provide the missing header file.
+
+Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/36224.1575599767@turing-police
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ide/serverworks.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/x86/entry/vdso/vdso32-setup.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/ide/serverworks.c b/drivers/ide/serverworks.c
-index ac6fc3fffa0de..458e72e034b09 100644
---- a/drivers/ide/serverworks.c
-+++ b/drivers/ide/serverworks.c
-@@ -115,6 +115,9 @@ static void svwks_set_pio_mode(ide_hwif_t *hwif, ide_drive_t *drive)
- 	struct pci_dev *dev = to_pci_dev(hwif->dev);
- 	const u8 pio = drive->pio_mode - XFER_PIO_0;
+diff --git a/arch/x86/entry/vdso/vdso32-setup.c b/arch/x86/entry/vdso/vdso32-setup.c
+index 42d4c89f990ed..ddff0ca6f5098 100644
+--- a/arch/x86/entry/vdso/vdso32-setup.c
++++ b/arch/x86/entry/vdso/vdso32-setup.c
+@@ -11,6 +11,7 @@
+ #include <linux/smp.h>
+ #include <linux/kernel.h>
+ #include <linux/mm_types.h>
++#include <linux/elf.h>
  
-+	if (drive->dn >= ARRAY_SIZE(drive_pci))
-+		return;
-+
- 	pci_write_config_byte(dev, drive_pci[drive->dn], pio_modes[pio]);
- 
- 	if (svwks_csb_check(dev)) {
-@@ -141,6 +144,9 @@ static void svwks_set_dma_mode(ide_hwif_t *hwif, ide_drive_t *drive)
- 
- 	u8 ultra_enable	 = 0, ultra_timing = 0, dma_timing = 0;
- 
-+	if (drive->dn >= ARRAY_SIZE(drive_pci2))
-+		return;
-+
- 	pci_read_config_byte(dev, (0x56|hwif->channel), &ultra_timing);
- 	pci_read_config_byte(dev, 0x54, &ultra_enable);
- 
+ #include <asm/processor.h>
+ #include <asm/vdso.h>
 -- 
 2.20.1
 
