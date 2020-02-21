@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BED11671DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:58:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C5381671ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:58:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730718AbgBUH6B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:58:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57660 "EHLO mail.kernel.org"
+        id S1730787AbgBUH6d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:58:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730707AbgBUH56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:57:58 -0500
+        id S1730776AbgBUH62 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:58:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A748A206ED;
-        Fri, 21 Feb 2020 07:57:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB838206ED;
+        Fri, 21 Feb 2020 07:58:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271878;
-        bh=BUOOIABxjFARvL7gHrijQqmmIT1LUnzmkZ+eCUq/m8A=;
+        s=default; t=1582271907;
+        bh=FSZNZhAOFhYYMThmr+oCAnsLgXdPEgdWYjoPiw6Ulfs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XVh7mFkfp0N2ESAVFsN21eVl3vnLybDlOySGJybhTGlp/JevXnBeLtyNHA9sZA+CI
-         MCzLRgQvOpU3OQIoD1qWndflh2Uc/tpUIOK9pDAeByvWfRs+4OgVx76JpVuiLXUfwK
-         YsOZX9Zk123SB/LMtrYqQlmlZ7jc5Uz3pNCUmeeE=
+        b=v34Cg5drAv/RGS7/77AhPqIwS39Ay7+v7Frs802BNN5nXXt2NSyIdYbfTmaBeju22
+         9WYpxTsQCFU3fG6eDZgPZ0kiUEUZNwxxfcFhVJTom0HIsvw3qQPQiJ0Bc3MQXlfXmO
+         8gN6MJPbyDEMqb5lUedEkn98adpo26svcImhZDfs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Walle <michael@walle.cc>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 315/399] spi: spi-fsl-qspi: Ensure width is respected in spi-mem operations
-Date:   Fri, 21 Feb 2020 08:40:40 +0100
-Message-Id: <20200221072432.067070944@linuxfoundation.org>
+Subject: [PATCH 5.5 316/399] kbuild: use -S instead of -E for precise cc-option test in Kconfig
+Date:   Fri, 21 Feb 2020 08:40:41 +0100
+Message-Id: <20200221072432.144557510@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -44,39 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Walle <michael@walle.cc>
+From: Masahiro Yamada <masahiroy@kernel.org>
 
-[ Upstream commit b0177aca7aea7e8917d4e463334b51facb293d02 ]
+[ Upstream commit 3bed1b7b9d79ca40e41e3af130931a3225e951a3 ]
 
-Make use of a core helper to ensure the desired width is respected
-when calling spi-mem operators.
+Currently, -E (stop after the preprocessing stage) is used to check
+whether the given compiler flag is supported.
 
-Otherwise only the SPI controller will be matched with the flash chip,
-which might lead to wrong widths. Also consider the width specified by
-the user in the device tree.
+While it is faster than -S (or -c), it can be false-positive. You need
+to run the compilation proper to check the flag more precisely.
 
-Fixes: 84d043185dbe ("spi: Add a driver for the Freescale/NXP QuadSPI controller")
-Signed-off-by: Michael Walle <michael@walle.cc>
-Link: https://lore.kernel.org/r/20200114154613.8195-1-michael@walle.cc
-Signed-off-by: Mark Brown <broonie@kernel.org>
+For example, -E and -S disagree about the support of
+"--param asan-instrument-allocas=1".
+
+$ gcc -Werror --param asan-instrument-allocas=1 -E -x c /dev/null -o /dev/null
+$ echo $?
+0
+
+$ gcc -Werror --param asan-instrument-allocas=1 -S -x c /dev/null -o /dev/null
+cc1: error: invalid --param name ‘asan-instrument-allocas’; did you mean ‘asan-instrument-writes’?
+$ echo $?
+1
+
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-fsl-qspi.c | 2 +-
+ scripts/Kconfig.include | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-fsl-qspi.c b/drivers/spi/spi-fsl-qspi.c
-index 79b1558b74b8a..e8a499cd1f135 100644
---- a/drivers/spi/spi-fsl-qspi.c
-+++ b/drivers/spi/spi-fsl-qspi.c
-@@ -410,7 +410,7 @@ static bool fsl_qspi_supports_op(struct spi_mem *mem,
- 	    op->data.nbytes > q->devtype_data->txfifo)
- 		return false;
+diff --git a/scripts/Kconfig.include b/scripts/Kconfig.include
+index d4adfbe426903..bfb44b265a948 100644
+--- a/scripts/Kconfig.include
++++ b/scripts/Kconfig.include
+@@ -25,7 +25,7 @@ failure = $(if-success,$(1),n,y)
  
--	return true;
-+	return spi_mem_default_supports_op(mem, op);
- }
+ # $(cc-option,<flag>)
+ # Return y if the compiler supports <flag>, n otherwise
+-cc-option = $(success,$(CC) -Werror $(CLANG_FLAGS) $(1) -E -x c /dev/null -o /dev/null)
++cc-option = $(success,$(CC) -Werror $(CLANG_FLAGS) $(1) -S -x c /dev/null -o /dev/null)
  
- static void fsl_qspi_prepare_lut(struct fsl_qspi *q,
+ # $(ld-option,<flag>)
+ # Return y if the linker supports <flag>, n otherwise
 -- 
 2.20.1
 
