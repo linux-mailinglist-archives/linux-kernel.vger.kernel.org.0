@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 618CA1674AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:24:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A4741673E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387964AbgBUIXh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:23:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35642 "EHLO mail.kernel.org"
+        id S2387541AbgBUIQa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:16:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388490AbgBUIXe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:23:34 -0500
+        id S1733191AbgBUIQX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:16:23 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B25A206ED;
-        Fri, 21 Feb 2020 08:23:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7ED2D2467B;
+        Fri, 21 Feb 2020 08:16:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273413;
-        bh=Mtlh610rIh1oU57Gn79F/DgIvT7mImV8G06VW8H0y+o=;
+        s=default; t=1582272983;
+        bh=JPF2rN+8oq6r0Z+/bpVeXmqbRRqTwGoYbApl8cGhl/g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LjXPLC8KO1sTPvesVluFmCBVO4Bwbu0QW2KMLNrsW9vlCVzfhW+w+31E58O9VtqKe
-         ejC7IlvsiwKA8cb2G6/lTo2Kdja9oXNmW1hQ99eARIBmvCTIouEzokTwVM/3dpgG6A
-         ZrLhcbuvK/ochwS+OF/GT2trMjxOM+tAbuESr1vk=
+        b=TZFVjKu4TbfSGI+JCKzGpR97jYGYff0u56Eyw/Zflyz5EZMkwIiSlinZ4ARLX2njQ
+         I+jOyqDWgFOt8M2cE0O0omnEE2C3n91jXin3sTBbUzc/GgRF9Qh3uJOAnieKYFWJI+
+         LDEsohcOzRcXvMbl3PQjfXzPdFoW7jtsxsnRgeX4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Sasha Levin <sashal@kernel.org>, Frank <fgndev@posteo.de>
-Subject: [PATCH 4.19 160/191] iommu/vt-d: Remove unnecessary WARN_ON_ONCE()
-Date:   Fri, 21 Feb 2020 08:42:13 +0100
-Message-Id: <20200221072310.035950622@linuxfoundation.org>
+        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 335/344] NFS: Fix memory leaks
+Date:   Fri, 21 Feb 2020 08:42:14 +0100
+Message-Id: <20200221072420.818808992@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,47 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lu Baolu <baolu.lu@linux.intel.com>
+From: Wenwen Wang <wenwen@cs.uga.edu>
 
-[ Upstream commit 857f081426e5aa38313426c13373730f1345fe95 ]
+[ Upstream commit 123c23c6a7b7ecd2a3d6060bea1d94019f71fd66 ]
 
-Address field in device TLB invalidation descriptor is qualified
-by the S field. If S field is zero, a single page at page address
-specified by address [63:12] is requested to be invalidated. If S
-field is set, the least significant bit in the address field with
-value 0b (say bit N) indicates the invalidation address range. The
-spec doesn't require the address [N - 1, 0] to be cleared, hence
-remove the unnecessary WARN_ON_ONCE().
+In _nfs42_proc_copy(), 'res->commit_res.verf' is allocated through
+kzalloc() if 'args->sync' is true. In the following code, if
+'res->synchronous' is false, handle_async_copy() will be invoked. If an
+error occurs during the invocation, the following code will not be executed
+and the error will be returned . However, the allocated
+'res->commit_res.verf' is not deallocated, leading to a memory leak. This
+is also true if the invocation of process_copy_commit() returns an error.
 
-Otherwise, the caller might set "mask = MAX_AGAW_PFN_WIDTH" in order
-to invalidating all the cached mappings on an endpoint, and below
-overflow error will be triggered.
+To fix the above leaks, redirect the execution to the 'out' label if an
+error is encountered.
 
-[...]
-UBSAN: Undefined behaviour in drivers/iommu/dmar.c:1354:3
-shift exponent 64 is too large for 64-bit type 'long long unsigned int'
-[...]
-
-Reported-and-tested-by: Frank <fgndev@posteo.de>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/dmar.c | 1 -
- 1 file changed, 1 deletion(-)
+ fs/nfs/nfs42proc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-index 7f9824b0609e7..72994d67bc5b9 100644
---- a/drivers/iommu/dmar.c
-+++ b/drivers/iommu/dmar.c
-@@ -1345,7 +1345,6 @@ void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 pfsid,
- 	struct qi_desc desc;
+diff --git a/fs/nfs/nfs42proc.c b/fs/nfs/nfs42proc.c
+index 5196bfa7894d2..9b61c80a93e9e 100644
+--- a/fs/nfs/nfs42proc.c
++++ b/fs/nfs/nfs42proc.c
+@@ -283,14 +283,14 @@ static ssize_t _nfs42_proc_copy(struct file *src,
+ 		status = handle_async_copy(res, server, src, dst,
+ 				&args->src_stateid);
+ 		if (status)
+-			return status;
++			goto out;
+ 	}
  
- 	if (mask) {
--		WARN_ON_ONCE(addr & ((1ULL << (VTD_PAGE_SHIFT + mask)) - 1));
- 		addr |= (1ULL << (VTD_PAGE_SHIFT + mask - 1)) - 1;
- 		desc.high = QI_DEV_IOTLB_ADDR(addr) | QI_DEV_IOTLB_SIZE;
- 	} else
+ 	if ((!res->synchronous || !args->sync) &&
+ 			res->write_res.verifier.committed != NFS_FILE_SYNC) {
+ 		status = process_copy_commit(dst, pos_dst, res);
+ 		if (status)
+-			return status;
++			goto out;
+ 	}
+ 
+ 	truncate_pagecache_range(dst_inode, pos_dst,
 -- 
 2.20.1
 
