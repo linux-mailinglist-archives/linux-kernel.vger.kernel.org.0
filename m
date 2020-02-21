@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7505216741B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89A5616731B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:09:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387866AbgBUISe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:18:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56546 "EHLO mail.kernel.org"
+        id S1732339AbgBUIJV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:09:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732908AbgBUISc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:18:32 -0500
+        id S1732183AbgBUIJT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:09:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E474C24694;
-        Fri, 21 Feb 2020 08:18:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 572EB20722;
+        Fri, 21 Feb 2020 08:09:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273112;
-        bh=oEKpmrzqCgSu7PgM1D8SMqu8f8GXJSZ7tAmg5JtYbvg=;
+        s=default; t=1582272558;
+        bh=IL0DlRLZwPFnTOfxoGC0+a/kYVgGNy0nkZp7u869IZc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U8Dk/fLePPKfNof9Ch0i93S+mZclcFpM2X4oTorHILNkIPlQAZgzDYJDBxzGQuTOP
-         HyCoCl407dsxlE5ZZdh94nFw7l1XR5TYDh9QJ8PSz2ZfUfvqlLVjHjSAVYh9DyhejM
-         HCjbhYrFsU0LtT/Jhs50p5JIAK4Wa5YZbEqA5VMg=
+        b=O/ekA8uLFdbuxygQlg21NwYsnUi2CQ8lDKp3S5/j8ToZlhgYc2CbkvvRrHQTBUf+w
+         RotKfH4nPGUOT5K80vQmsTItq/dVCKZtjo8WcyYVS98Hsu4tEYdR3XhyRJCmiVvxBQ
+         RenVJNbU7qlV0Ho3ZufDrvNf07Irs670uB6eDSEk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 006/191] net/sched: flower: add missing validation of TCA_FLOWER_FLAGS
-Date:   Fri, 21 Feb 2020 08:39:39 +0100
-Message-Id: <20200221072251.690370899@linuxfoundation.org>
+        stable@vger.kernel.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 181/344] vfio/spapr/nvlink2: Skip unpinning pages on error exit
+Date:   Fri, 21 Feb 2020 08:39:40 +0100
+Message-Id: <20200221072405.436944838@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Davide Caratti <dcaratti@redhat.com>
+From: Alexey Kardashevskiy <aik@ozlabs.ru>
 
-[ Upstream commit e2debf0852c4d66ba1a8bde12869b196094c70a7 ]
+[ Upstream commit 338b4e10f939a71194d8ecef7ece205a942cec05 ]
 
-unlike other classifiers that can be offloaded (i.e. users can set flags
-like 'skip_hw' and 'skip_sw'), 'cls_flower' doesn't validate the size of
-netlink attribute 'TCA_FLOWER_FLAGS' provided by user: add a proper entry
-to fl_policy.
+The nvlink2 subdriver for IBM Witherspoon machines preregisters
+GPU memory in the IOMMI API so KVM TCE code can map this memory
+for DMA as well. This is done by mm_iommu_newdev() called from
+vfio_pci_nvgpu_regops::mmap.
 
-Fixes: 5b33f48842fa ("net/flower: Introduce hardware offload support")
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+In an unlikely event of failure the data->mem remains NULL and
+since mm_iommu_put() (which unregisters the region and unpins memory
+if that was regular memory) does not expect mem=NULL, it should not be
+called.
+
+This adds a check to only call mm_iommu_put() for a valid data->mem.
+
+Fixes: 7f92891778df ("vfio_pci: Add NVIDIA GV100GL [Tesla V100 SXM2] subdriver")
+Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sched/cls_flower.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/vfio/pci/vfio_pci_nvlink2.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/net/sched/cls_flower.c
-+++ b/net/sched/cls_flower.c
-@@ -486,6 +486,7 @@ static const struct nla_policy fl_policy
- 	[TCA_FLOWER_KEY_ENC_IP_TTL_MASK] = { .type = NLA_U8 },
- 	[TCA_FLOWER_KEY_ENC_OPTS]	= { .type = NLA_NESTED },
- 	[TCA_FLOWER_KEY_ENC_OPTS_MASK]	= { .type = NLA_NESTED },
-+	[TCA_FLOWER_FLAGS]		= { .type = NLA_U32 },
- };
+diff --git a/drivers/vfio/pci/vfio_pci_nvlink2.c b/drivers/vfio/pci/vfio_pci_nvlink2.c
+index f2983f0f84bea..3f5f8198a6bb1 100644
+--- a/drivers/vfio/pci/vfio_pci_nvlink2.c
++++ b/drivers/vfio/pci/vfio_pci_nvlink2.c
+@@ -97,8 +97,10 @@ static void vfio_pci_nvgpu_release(struct vfio_pci_device *vdev,
  
- static const struct nla_policy
+ 	/* If there were any mappings at all... */
+ 	if (data->mm) {
+-		ret = mm_iommu_put(data->mm, data->mem);
+-		WARN_ON(ret);
++		if (data->mem) {
++			ret = mm_iommu_put(data->mm, data->mem);
++			WARN_ON(ret);
++		}
+ 
+ 		mmdrop(data->mm);
+ 	}
+-- 
+2.20.1
+
 
 
