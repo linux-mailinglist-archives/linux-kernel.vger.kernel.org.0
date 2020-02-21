@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3D1416710A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:50:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3D4316710C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:50:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729593AbgBUHuo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:50:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47666 "EHLO mail.kernel.org"
+        id S1728864AbgBUHut (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:50:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729400AbgBUHum (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:50:42 -0500
+        id S1728897AbgBUHuo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:50:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 970A8208C4;
-        Fri, 21 Feb 2020 07:50:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 42FC220801;
+        Fri, 21 Feb 2020 07:50:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271441;
-        bh=42j6HsxEV+mB9OekVp/npQB8mx27Un5zy3jqLhdFvWc=;
+        s=default; t=1582271443;
+        bh=jVYpPF/XTTCfs3ewKAAQahe25GceYAwTatt+NUdKAOw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tykWB9ltnx5ycJ8QEstYmjrAnPidIZHOmR6uVu+oCJJcAkpXfn3mhBMfwmoZ91MZP
-         VmGSZXwBb/EsF73tsD0sdWlaSNufXdiYH4RIkj3rKMyQu5Zyly28rKQmX1r8eUT5n9
-         Ly4dkg7eWmG2I8lVYuNKnv4GdCfQHU+jH6UcVdG4=
+        b=mVx/Iv2ouclhG2g7JsEvkcpr8XvmhHvaf5bDSX9tJJpKsV0Uie2InKgV7f1/1+bPM
+         K3FHuMm6oKVvNfQLFEbkjx5ZHUfDapzxSwMBe19TECek9sqcSccNKM7TIWmv0JX86f
+         RDQZCFkl9ORx6ZQ9kLAWpkcJ4W5hU+R1PkXgd1eo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Brendan Higgins <brendanhiggins@google.com>,
+        Corentin Labbe <clabbe@baylibre.com>,
         Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 168/399] crypto: inside-secure - add unspecified HAS_IOMEM dependency
-Date:   Fri, 21 Feb 2020 08:38:13 +0100
-Message-Id: <20200221072418.968722224@linuxfoundation.org>
+Subject: [PATCH 5.5 169/399] crypto: amlogic - add unspecified HAS_IOMEM dependency
+Date:   Fri, 21 Feb 2020 08:38:14 +0100
+Message-Id: <20200221072419.064611085@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -47,38 +48,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Brendan Higgins <brendanhiggins@google.com>
 
-[ Upstream commit 6dc0e310623fdcb27a1486eb436f0118c45e95a5 ]
+[ Upstream commit 7d07de2c18abd95f72efb28f78a4825e0fc1aa6a ]
 
-Currently CONFIG_CRYPTO_DEV_SAFEXCEL=y implicitly depends on
+Currently CONFIG_CRYPTO_DEV_AMLOGIC_GXL=y implicitly depends on
 CONFIG_HAS_IOMEM=y; consequently, on architectures without IOMEM we get
 the following build error:
 
-ld: drivers/crypto/inside-secure/safexcel.o: in function `safexcel_probe':
-drivers/crypto/inside-secure/safexcel.c:1692: undefined reference to `devm_platform_ioremap_resource'
+ld: drivers/crypto/amlogic/amlogic-gxl-core.o: in function `meson_crypto_probe':
+drivers/crypto/amlogic/amlogic-gxl-core.c:240: undefined reference to `devm_platform_ioremap_resource'
 
 Fix the build error by adding the unspecified dependency.
 
 Reported-by: Brendan Higgins <brendanhiggins@google.com>
 Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+Acked-by: Corentin Labbe <clabbe@baylibre.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/crypto/amlogic/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
-index 91eb768d4221a..0a73bebd04e5d 100644
---- a/drivers/crypto/Kconfig
-+++ b/drivers/crypto/Kconfig
-@@ -716,7 +716,7 @@ source "drivers/crypto/stm32/Kconfig"
- 
- config CRYPTO_DEV_SAFEXCEL
- 	tristate "Inside Secure's SafeXcel cryptographic engine driver"
--	depends on OF || PCI || COMPILE_TEST
-+	depends on (OF || PCI || COMPILE_TEST) && HAS_IOMEM
- 	select CRYPTO_LIB_AES
- 	select CRYPTO_AUTHENC
+diff --git a/drivers/crypto/amlogic/Kconfig b/drivers/crypto/amlogic/Kconfig
+index b90850d18965f..cf95476026708 100644
+--- a/drivers/crypto/amlogic/Kconfig
++++ b/drivers/crypto/amlogic/Kconfig
+@@ -1,5 +1,6 @@
+ config CRYPTO_DEV_AMLOGIC_GXL
+ 	tristate "Support for amlogic cryptographic offloader"
++	depends on HAS_IOMEM
+ 	default y if ARCH_MESON
  	select CRYPTO_SKCIPHER
+ 	select CRYPTO_ENGINE
 -- 
 2.20.1
 
