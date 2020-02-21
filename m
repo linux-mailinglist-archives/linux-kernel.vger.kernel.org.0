@@ -2,73 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BAA51690B8
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 18:29:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A68941690D0
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 18:49:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726767AbgBVR3z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 12:29:55 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:33546 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726198AbgBVR3z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 12:29:55 -0500
-Received: from zn.tnic (p200300EC2F1C5400329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2f1c:5400:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D39C21EC027B;
-        Sat, 22 Feb 2020 18:29:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1582392594;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=Q8Zz/tPA4c0tTFwY1epydrU6u1758UfizTFQVuBcSzA=;
-        b=SLFjpd8ZFH2Vok4UxC27nQVm9hf43UKl1gOgWfkI7SH03l3M8vJMMxavJUEBjj19AFEX88
-        8mCuORff+CcWJ5Fkmqo6fudfKCjkw2o+w35G3D+IbVW2faZjEN0aVjclKHqC9PCSqTH4Cq
-        eqkUcbBZeEGNxnU0XCzu2Fnq0h9pudg=
-Date:   Sat, 22 Feb 2020 18:29:48 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Arvind Sankar <nivedita@alum.mit.edu>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Fangrui Song <maskray@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
-        Michael Matz <matz@suse.de>
-Subject: Re: [PATCH 2/2] x86/boot/compressed: Remove unnecessary sections
- from bzImage
-Message-ID: <20200222172948.GC11284@zn.tnic>
-References: <20200109150218.16544-1-nivedita@alum.mit.edu>
- <20200109150218.16544-2-nivedita@alum.mit.edu>
- <20200222050845.GA19912@ubuntu-m2-xlarge-x86>
- <20200222065521.GA11284@zn.tnic>
- <20200222070218.GA27571@ubuntu-m2-xlarge-x86>
- <20200222072144.asqaxlv364s6ezbv@google.com>
- <20200222074242.GA17358@ubuntu-m2-xlarge-x86>
- <20200222153747.GA3234293@rani.riverdale.lan>
- <20200222164419.GB3326744@rani.riverdale.lan>
+        id S1727053AbgBVRtk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 12:49:40 -0500
+Received: from [167.172.150.84] ([167.172.150.84]:36150 "EHLO
+        centos-s-1vcpu-2gb-nyc1-01.localdomain" rhost-flags-FAIL-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726707AbgBVRti (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Feb 2020 12:49:38 -0500
+Received: from localhost (centos-s-1vcpu-2gb-nyc1-01 [127.0.0.1])
+        by centos-s-1vcpu-2gb-nyc1-01.localdomain (Postfix) with SMTP id 81F0017732;
+        Fri, 21 Feb 2020 16:50:47 +0000 (UTC)
+Received: from [51.7.194.114] by localhost with ESMTP id 61145412 for <linda_278@centurytel.net>; Fri, 21 Feb 2020 21:47:38 +0500
+Message-ID: <qo$48v09x4c2--5-$f9@r5u1c0kgq>
+From:   "RECEIVE AND SECURE THIS MONEY FOR ME" <fta447447@gmail.com>
+Reply-To: "RECEIVE AND SECURE THIS MONEY FOR ME" <fta447447@gmail.com>
+To:     linda_278@centurytel.net
+Subject: RECEIVE MONEY IN BANK ACCOUNT REPLY TO fta447447@gmail.com
+Date:   Fri, 21 Feb 20 21:47:38 GMT
+X-Mailer: AOL 7.0 for Windows US sub 118
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200222164419.GB3326744@rani.riverdale.lan>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/alternative;
+        boundary="A..C8.._3321CEA_"
+X-Priority: 3
+X-MSMail-Priority: Normal
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 22, 2020 at 11:44:20AM -0500, Arvind Sankar wrote:
-> Boris, should I send the fix as a diff to the current patch in tip, or
-> as a fresh one that can replace it?
 
-The offending commit is the top commit on tip:x86/boot so I'll merge
-your new one with it and thus "convert" the former one into the new one
-discarding .eh_frame only.
+--A..C8.._3321CEA_--
 
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
