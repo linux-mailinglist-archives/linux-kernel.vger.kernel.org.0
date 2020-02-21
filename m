@@ -2,153 +2,249 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F83A168767
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 20:25:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44D4C16876B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 20:26:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729658AbgBUTZv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 14:25:51 -0500
-Received: from mga11.intel.com ([192.55.52.93]:31811 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726423AbgBUTZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 14:25:51 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2020 11:25:50 -0800
-X-IronPort-AV: E=Sophos;i="5.70,469,1574150400"; 
-   d="scan'208";a="316143032"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2020 11:25:50 -0800
-Message-ID: <2e4ff237de090dd4760995d948b9a1788c2f351d.camel@linux.intel.com>
-Subject: Re: [PATCH v17 4/9] mm: Introduce Reported pages
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Alexander Duyck <alexander.duyck@gmail.com>, kvm@vger.kernel.org,
-        david@redhat.com, mst@redhat.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, akpm@linux-foundation.org,
-        yang.zhang.wz@gmail.com, pagupta@redhat.com,
-        konrad.wilk@oracle.com, nitesh@redhat.com, riel@surriel.com,
-        willy@infradead.org, lcapitulino@redhat.com, dave.hansen@intel.com,
-        wei.w.wang@intel.com, aarcange@redhat.com, pbonzini@redhat.com,
-        dan.j.williams@intel.com, mhocko@kernel.org, vbabka@suse.cz,
-        osalvador@suse.de
-Date:   Fri, 21 Feb 2020 11:25:49 -0800
-In-Reply-To: <20200220223508.GX3466@techsingularity.net>
-References: <20200211224416.29318.44077.stgit@localhost.localdomain>
-         <20200211224635.29318.19750.stgit@localhost.localdomain>
-         <20200219145511.GS3466@techsingularity.net>
-         <7d3c732d9ec7725dcb5a90c1dc8e9859fbe6ccc0.camel@linux.intel.com>
-         <20200220223508.GX3466@techsingularity.net>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+        id S1729766AbgBUT0n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 14:26:43 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:35783 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729454AbgBUT0n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 14:26:43 -0500
+Received: by mail-ed1-f66.google.com with SMTP id c7so3736343edu.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 11:26:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xr60A1dzj1G3mLhY1jqSdwMVifVQF6aHlkkVpy0bbho=;
+        b=icakTwtYl5pI7U6NFJp2r+HgbtShFbRiXPZBLmgMOx0GSuOC44mvFu8ThHgk9SSMUn
+         4r5hs3AmplvrrDiQDtcZ5xX/qpDgb3/w1hcjG0sz3pZTDdQdVJA+ZV7ikcpX1vXiSl+b
+         mUwQM9V88QfLiiv6ZPLxIoc3GDflxNT+mLd/QuQCZ9guGmM1vhTnoJW0LCG2u0cBBQAX
+         l3uskjE5qyzoRgB1igCARjVzD1XUc23M/6gnHHB8sia6F6UBeZZm2OefqBR4zXb8lwkj
+         oMwJuXGIcazxggPh+edkpIC+1qqPBxqaTfncaQonKQrVAdUjJKxUZfSp1bf0z/71AEhY
+         XUwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xr60A1dzj1G3mLhY1jqSdwMVifVQF6aHlkkVpy0bbho=;
+        b=CMAKgL9lAKRStdc8gxYFN5Dpuj+HBcFy/7ONef3vsTxe4UIoDcyj2Z6F0NPyozJGBr
+         SArgpQx43q1l8S16P7FHvfVHdituodWh+hiLGOg5qo9mOD4cg31VPlsbjGDZKSvUiIbX
+         87C4D9HtPsM8WdQ88jqPTUTtnqcLjvBmuKVkigY7IjtakMlrvQjUMuNvPlBVGnyELHYv
+         lkNRzZHKA8yC0hA8TBSVRqXiSASO6dvPuU+bZd1X5k95z55oeVeZp5fwUKUu8lv4OZnb
+         7kM16VTT1Y08z7ZAZwJpgAJwB3LMMejmAa+D6cAOb6QlVCmLegplVJSJAAw770tNEe1W
+         CRrA==
+X-Gm-Message-State: APjAAAWlULhay62TrOmCMbSb3BCMYn8tC+dnsxjXZbyebkUhEZd0GLfn
+        xn+z70XCsdSG8fyGIjkSaabVrLz7RhDNjjt39H8fHw==
+X-Google-Smtp-Source: APXvYqy8vEdFmgXmuuacz26gihQ4SanMmW0EWiVxOCriNW08x3bQoHTba7lbgrwfZrbUhbDKzHSlvT1ampqGnakzHus=
+X-Received: by 2002:a17:906:6888:: with SMTP id n8mr7946052ejr.171.1582313198670;
+ Fri, 21 Feb 2020 11:26:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20200220155353.8676-1-peterx@redhat.com>
+In-Reply-To: <20200220155353.8676-1-peterx@redhat.com>
+From:   Brian Geffon <bgeffon@google.com>
+Date:   Fri, 21 Feb 2020 11:26:12 -0800
+Message-ID: <CADyq12wFKwzUYipU4g4Ey9X9J3qY0S=PEhSMBAeLfzpETUWVWQ@mail.gmail.com>
+Subject: Re: [PATCH RESEND v6 00/16] mm: Page fault enhancements
+To:     Peter Xu <peterx@redhat.com>
+Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Martin Cracauer <cracauer@cons.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Bobby Powers <bobbypowers@gmail.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Mel Gorman <mgorman@suse.de>, Hugh Dickins <hughd@google.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2020-02-20 at 22:35 +0000, Mel Gorman wrote:
-> On Thu, Feb 20, 2020 at 10:44:21AM -0800, Alexander Duyck wrote:
-> > > > +static int
-> > > > +page_reporting_cycle(struct page_reporting_dev_info *prdev, struct zone *zone,
-> > > > +		     unsigned int order, unsigned int mt,
-> > > > +		     struct scatterlist *sgl, unsigned int *offset)
-> > > > +{
-> > > > +	struct free_area *area = &zone->free_area[order];
-> > > > +	struct list_head *list = &area->free_list[mt];
-> > > > +	unsigned int page_len = PAGE_SIZE << order;
-> > > > +	struct page *page, *next;
-> > > > +	int err = 0;
-> > > > +
-> > > > +	/*
-> > > > +	 * Perform early check, if free area is empty there is
-> > > > +	 * nothing to process so we can skip this free_list.
-> > > > +	 */
-> > > > +	if (list_empty(list))
-> > > > +		return err;
-> > > > +
-> > > > +	spin_lock_irq(&zone->lock);
-> > > > +
-> > > > +	/* loop through free list adding unreported pages to sg list */
-> > > > +	list_for_each_entry_safe(page, next, list, lru) {
-> > > > +		/* We are going to skip over the reported pages. */
-> > > > +		if (PageReported(page))
-> > > > +			continue;
-> > > > +
-> > > > +		/* Attempt to pull page from list */
-> > > > +		if (!__isolate_free_page(page, order))
-> > > > +			break;
-> > > > +
-> > > 
-> > > Might want to note that you are breaking because the only reason to fail
-> > > the isolation is that watermarks are not met and we are likely under
-> > > memory pressure. It's not a big issue.
-> > > 
-> > > However, while I think this is correct, it's hard to follow. This loop can
-> > > be broken out of with pages still on the scatter gather list. The current
-> > > flow guarantees that err will not be set at this point so the caller
-> > > cleans it up so we always drain the list either here or in the caller.
-> > 
-> > I can probably submit a follow-up patch to update the comments. The reason
-> > for not returning an error is because I didn't consider it an error that
-> > we encountered the watermark and were not able to pull any more pages.
-> > Instead I considered that the "stop" point for this pass and have it just
-> > exit out of the loop and flush the data.
-> > 
-> 
-> I don't consider it an error and I don't think you should return an
-> error. The comment just needs to explain that the draining happens in
-> the caller in this case. That should be enough of a warning to a future
-> developer to double check the flow after any changes to make sure the
-> drain is reached.
+I tested the entire patchset because I'm very interested in fault
+retries with userfaultfd and the series has been stable and worked
+well on x86.
 
-The comment I can do, that shouldn't be an issue. The point I was getting
-at is that a separate drain call is expected for this any time the
-function is not returning an error, and the only way it can return an
-error is if there was a reporting issue.
+Tested-by: Brian Geffon <bgeffon@google.com>
 
-> > > While I think it works, it's a bit fragile. I recommend putting a comment
-> > > above this noting why it's safe and put a VM_WARN_ON_ONCE(err) before the
-> > > break in case someone tries to change this in a years time and does not
-> > > spot that the flow to reach page_reporting_drain *somewhere* is critical.
-> > 
-> > I assume this isn't about this section, but the section below?
-> > 
-> 
-> I meant something like
-> 
-> if (!__isolate_free_page(page, order)) {
-> 	VM_WARN_ON_ONCE(err);
-> 	break;
-> }
-> 
-> Because at this point it's possible there are entries that should go
-> through page_reporting_drain() but the caller will not call
-> page_reporting_drain() in the event of an error.
 
-I would think adding that would confuse things even more. There is a break
-statement at the end of the loop that will break out if err is set. So we
-should never hit the VM_WARN_ON_ONCE because err should always be 0 before
-we even attempt to isolate the page. I think something like the following
-would probably make more sense:
-
-        err = page_reporting_cycle(prdev, zone, order, mt,
-                                   sgl, &offset);
-        if (err) {
-                /*
-                 * We should have drained the scatterlist
-                 * prior to exiting page_reporting_cycle if
-                 * we encountered an error. If we did not
-                 * then this could result in a memory leak.
-                 * Verify that the end of the scatterlist
-                 * was cleared prior to us getting here.
-                 */
-                sgl = &sgl[PAGE_REPORTING_CAPACITY - 1];
-                VM_WARN_ON_ONCE(sg_page(sgl));
-                return err;
-        }
-
-With that we are more-or-less making certain that they called
-page_reporting_drain which will zero the scatterlist.
-
+On Thu, Feb 20, 2020 at 7:54 AM Peter Xu <peterx@redhat.com> wrote:
+>
+> [Resend v6]
+>
+> This is v6 of the series.  It is majorly a rebase to 5.6-rc2, nothing
+> else to be expected (plus some tests after the rebase).  Instead of
+> rewrite the cover letter I decided to use what we have for v5.
+>
+> Adding extra CCs for both Bobby Powers <bobbypowers@gmail.com> and
+> Brian Geffon <bgeffon@google.com>.
+>
+> Online repo: https://github.com/xzpeter/linux/tree/mm-pf-signal-retry
+>
+> Any review comment is appreciated.  Thanks,
+>
+> =============== v5 cover letter ==================
+>
+> This is v5 of the series.  As Matthew suggested, I split the previous
+> patch "mm: Return faster for non-fatal signals in user mode faults"
+> into a few smaller ones:
+>
+>   1. One patch to introduce fatal_signal_pending(), and use it in
+>      archs that can directly apply
+>
+>   2. A few more patches to let the rest archs to use the new helper.
+>      With that we can have an unified entry for signal detection
+>
+>   3. One last patch to change fatal_signal_pending() to detect
+>      userspace non-fatal signal
+>
+> Nothing should have changed in the rest patches.  Because the fault
+> retry patches will depend on the previous ones, I decided to simply
+> repost all the patches.
+>
+> Here's the new patchset layout:
+>
+> Patch 1-2:      cleanup, and potential bugfix of hugetlbfs on fault retry
+>
+> Patch 3-9:      let page fault to respond to non-fatal signals faster
+>
+> Patch 10:       remove the userfaultfd NOPAGE emulation
+>
+> Patch 11-14:    allow page fault to retry more than once
+>
+> Patch 15-16:    let gup code to use FAULT_FLAG_KILLABLE too
+>
+> I would really appreciate any review comments for the series,
+> especially for the first two patches which IMHO are even not related
+> to this patchset and they should either cleanup or fix things.
+>
+> Smoke tested on x86 only.
+>
+> Thanks,
+>
+> v5:
+> - split "mm: Return faster for non-fatal signals in user mode faults"
+>   into a few more patches, let all archs to use an unified entry for
+>   fast signal handling (fatal_signal_pending)
+>
+> v4:
+> - use lore.kernel.org for all the links in commit messages [Kirill]
+> - one more patch ("mm/gup: Fix __get_user_pages() on fault retry of
+>   hugetlb") to fix hugetlb path on fault retry
+> - one more patch ("mm/gup: Allow to react to fatal signals") to:
+>   - use down_read_killable() properly [Linus]
+>   - pass in FAULT_FLAG_KILLABLE for all GUP [Linus]
+> - one more patch ("mm/userfaultfd: Honor FAULT_FLAG_KILLABLE in fault
+>   path") to let handle_userfaultfd() respect FAULT_FLAG_KILLABLE.
+>   Should have no functional change after previous two new patches.
+>
+> v3:
+> - check fatal signals in __get_user_page_locked() [Linus]
+> - add r-bs
+>
+> v2:
+> - resent previous version, rebase only
+>
+> =============== v1 cover letter ==================
+>
+> This series is split out of userfaultfd-wp series to only cover the
+> general page fault changes, since it seems to make sense itself.
+>
+> Basically it does two things:
+>
+>   (a) Allows the page fault handlers to be more interactive on not
+>       only SIGKILL, but also the rest of userspace signals (especially
+>       for user-mode faults), and,
+>
+>   (b) Allows the page fault retry (VM_FAULT_RETRY) to happen for more
+>       than once.
+>
+> I'm keeping the CC list as in uffd-wp v5, hopefully I'm not sending
+> too much spams...
+>
+> And, instead of writting again the cover letter, I'm just copy-pasting
+> my previous link here which has more details on why we do this:
+>
+>   https://patchwork.kernel.org/cover/10691991/
+>
+> The major change from that latest version should be that we introduced
+> a new page fault flag FAULT_FLAG_INTERRUPTIBLE as suggested by Linus
+> [1] to represents that we would like the fault handler to respond to
+> non-fatal signals.  Also, we're more careful now on when to do the
+> immediate return of the page fault for such signals.  For example, now
+> we'll only check against signal_pending() for user-mode page faults
+> and we keep the kernel-mode page fault patch untouched for it.  More
+> information can be found in separate patches.
+>
+> The patchset is only lightly tested on x86.
+>
+> All comments are greatly welcomed.  Thanks,
+>
+> [1] https://lkml.org/lkml/2019/6/25/1382
+>
+> Peter Xu (16):
+>   mm/gup: Rename "nonblocking" to "locked" where proper
+>   mm/gup: Fix __get_user_pages() on fault retry of hugetlb
+>   mm: Introduce fault_signal_pending()
+>   x86/mm: Use helper fault_signal_pending()
+>   arc/mm: Use helper fault_signal_pending()
+>   arm64/mm: Use helper fault_signal_pending()
+>   powerpc/mm: Use helper fault_signal_pending()
+>   sh/mm: Use helper fault_signal_pending()
+>   mm: Return faster for non-fatal signals in user mode faults
+>   userfaultfd: Don't retake mmap_sem to emulate NOPAGE
+>   mm: Introduce FAULT_FLAG_DEFAULT
+>   mm: Introduce FAULT_FLAG_INTERRUPTIBLE
+>   mm: Allow VM_FAULT_RETRY for multiple times
+>   mm/gup: Allow VM_FAULT_RETRY for multiple times
+>   mm/gup: Allow to react to fatal signals
+>   mm/userfaultfd: Honor FAULT_FLAG_KILLABLE in fault path
+>
+>  arch/alpha/mm/fault.c           |  6 +--
+>  arch/arc/mm/fault.c             | 35 +++++--------
+>  arch/arm/mm/fault.c             |  7 +--
+>  arch/arm64/mm/fault.c           | 26 +++------
+>  arch/hexagon/mm/vm_fault.c      |  5 +-
+>  arch/ia64/mm/fault.c            |  5 +-
+>  arch/m68k/mm/fault.c            |  7 +--
+>  arch/microblaze/mm/fault.c      |  5 +-
+>  arch/mips/mm/fault.c            |  5 +-
+>  arch/nds32/mm/fault.c           |  5 +-
+>  arch/nios2/mm/fault.c           |  7 +--
+>  arch/openrisc/mm/fault.c        |  5 +-
+>  arch/parisc/mm/fault.c          |  8 ++-
+>  arch/powerpc/mm/fault.c         | 20 ++-----
+>  arch/riscv/mm/fault.c           |  9 +---
+>  arch/s390/mm/fault.c            | 10 ++--
+>  arch/sh/mm/fault.c              | 13 +++--
+>  arch/sparc/mm/fault_32.c        |  5 +-
+>  arch/sparc/mm/fault_64.c        |  5 +-
+>  arch/um/kernel/trap.c           |  3 +-
+>  arch/unicore32/mm/fault.c       |  8 ++-
+>  arch/x86/mm/fault.c             | 30 +++++------
+>  arch/xtensa/mm/fault.c          |  5 +-
+>  drivers/gpu/drm/ttm/ttm_bo_vm.c | 12 +++--
+>  fs/userfaultfd.c                | 62 ++++++++++------------
+>  include/linux/mm.h              | 81 ++++++++++++++++++++++++----
+>  include/linux/sched/signal.h    | 14 +++++
+>  mm/filemap.c                    |  2 +-
+>  mm/gup.c                        | 93 +++++++++++++++++++++------------
+>  mm/hugetlb.c                    | 17 +++---
+>  mm/internal.h                   |  6 +--
+>  31 files changed, 281 insertions(+), 240 deletions(-)
+>
+> --
+> 2.24.1
+>
