@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FD6B167483
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:23:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D09A6167399
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:14:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731026AbgBUIWG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:22:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33438 "EHLO mail.kernel.org"
+        id S1733094AbgBUIN4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:13:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732486AbgBUIWA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:22:00 -0500
+        id S1733060AbgBUINy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:13:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48FD1222C4;
-        Fri, 21 Feb 2020 08:21:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE8B824650;
+        Fri, 21 Feb 2020 08:13:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273319;
-        bh=5V8SWZ6KE+h38jugiRV8yIUeJZVT+9gKHm+N4Sh0huE=;
+        s=default; t=1582272834;
+        bh=y2KdCYZvWSq0h8YAq2s31CMB/GuJJswO/YD0CnIzWXQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MJajZRu9igorMl+SbLZo4l9Id+otHFvSK1UUOvtDK0bvLcJ/HDhhOr3q7RXPcBXIR
-         /CMyh0Ial6diF6onWj/ucWETBWkV5cxKFqCwKALtohUxy/a6ZEVhfkZNvegkVp2kFm
-         sDwGNsBGxipLlThQ8wWAhx11++EzsOXGvFbBcM0o=
+        b=GuWWPATWq0XnbovVUTzagPDrpfJcfiuoRrWOymJc/yAU1EWemSoIB5OVGFcz6MvrQ
+         KMnDPGjpYhE6yzhRTDSy3AxNNy/vEHffU3H++8vGfO3OTBx8+x6svcDwCJMtnsqXnC
+         CvmTsTA245ow7KFITMC8PoAmS9ZvvK992djpVY0I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
+        stable@vger.kernel.org, yu kuai <yukuai3@huawei.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 089/191] x86/vdso: Provide missing include file
+Subject: [PATCH 5.4 263/344] pwm: Remove set but not set variable pwm
 Date:   Fri, 21 Feb 2020 08:41:02 +0100
-Message-Id: <20200221072301.782964536@linuxfoundation.org>
+Message-Id: <20200221072413.519394099@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,42 +46,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Valdis Klētnieks <valdis.kletnieks@vt.edu>
+From: yu kuai <yukuai3@huawei.com>
 
-[ Upstream commit bff47c2302cc249bcd550b17067f8dddbd4b6f77 ]
+[ Upstream commit 9871abffc81048e20f02e15d6aa4558a44ad53ea ]
 
-When building with C=1, sparse issues a warning:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-  CHECK   arch/x86/entry/vdso/vdso32-setup.c
-  arch/x86/entry/vdso/vdso32-setup.c:28:28: warning: symbol 'vdso32_enabled' was not declared. Should it be static?
+	drivers/pwm/pwm-pca9685.c: In function ‘pca9685_pwm_gpio_free’:
+	drivers/pwm/pwm-pca9685.c:162:21: warning: variable ‘pwm’ set but not used [-Wunused-but-set-variable]
 
-Provide the missing header file.
+It is never used, and so can be removed. In that case, hold and release
+the lock 'pca->lock' can be removed since nothing will be done between
+them.
 
-Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/36224.1575599767@turing-police
+Fixes: e926b12c611c ("pwm: Clear chip_data in pwm_put()")
+Signed-off-by: yu kuai <yukuai3@huawei.com>
+Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/entry/vdso/vdso32-setup.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pwm/pwm-pca9685.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/arch/x86/entry/vdso/vdso32-setup.c b/arch/x86/entry/vdso/vdso32-setup.c
-index 42d4c89f990ed..ddff0ca6f5098 100644
---- a/arch/x86/entry/vdso/vdso32-setup.c
-+++ b/arch/x86/entry/vdso/vdso32-setup.c
-@@ -11,6 +11,7 @@
- #include <linux/smp.h>
- #include <linux/kernel.h>
- #include <linux/mm_types.h>
-+#include <linux/elf.h>
+diff --git a/drivers/pwm/pwm-pca9685.c b/drivers/pwm/pwm-pca9685.c
+index 168684b02ebce..b07bdca3d510d 100644
+--- a/drivers/pwm/pwm-pca9685.c
++++ b/drivers/pwm/pwm-pca9685.c
+@@ -159,13 +159,9 @@ static void pca9685_pwm_gpio_set(struct gpio_chip *gpio, unsigned int offset,
+ static void pca9685_pwm_gpio_free(struct gpio_chip *gpio, unsigned int offset)
+ {
+ 	struct pca9685 *pca = gpiochip_get_data(gpio);
+-	struct pwm_device *pwm;
  
- #include <asm/processor.h>
- #include <asm/vdso.h>
+ 	pca9685_pwm_gpio_set(gpio, offset, 0);
+ 	pm_runtime_put(pca->chip.dev);
+-	mutex_lock(&pca->lock);
+-	pwm = &pca->chip.pwms[offset];
+-	mutex_unlock(&pca->lock);
+ }
+ 
+ static int pca9685_pwm_gpio_get_direction(struct gpio_chip *chip,
 -- 
 2.20.1
 
