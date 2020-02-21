@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC496167751
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:42:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD715167587
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:31:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730572AbgBUH5I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:57:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56556 "EHLO mail.kernel.org"
+        id S2388295AbgBUI2w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:28:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730563AbgBUH5F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:57:05 -0500
+        id S1730626AbgBUITT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:19:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7EA01206ED;
-        Fri, 21 Feb 2020 07:57:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 841EA24689;
+        Fri, 21 Feb 2020 08:19:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271824;
-        bh=hJpTG0cA0Qyjfs8Wam/B6OJISPBTcrtGIB1DwmrP8Kw=;
+        s=default; t=1582273159;
+        bh=Xs1RqRXIkyN0/rD5GmpQxSzni0ZbVlti+J5ScEHxGAg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jYtDe2JWOcfLamvAX7UoejLySB+/sSoqKcK6eDCkpLlDLEI6FZMdoDtX1CUBuTr7O
-         Y1d+K0LpwYw/rmmThjdMpYjJJ4g+J5Xb+mYp/dUrSA5jn+KxTJpZQaZN9rHFTPNXQT
-         nMOx9Lmd/x3RmYWzlSKZ0NYB/nHeUew4xpbnyb/A=
+        b=ffA4cKa2BL/Tf41xqSWDE/gXcTePe8icPiNtUKqt5Ofi91LqWZYlk5mHcGsuQjnm9
+         1TUsS0KU78+DiPQJCTYIFpdCuZ0S632sEBoC/9vP9QopwyJbT9Cb755+pv4LPdWIvf
+         BnnIwEj8qQF6Kwvctp+QdDSQhYdEzAn2xkWTxTg4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Brandon Maier <brandon.maier@rockwellcollins.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        stable@vger.kernel.org, Daniel Drake <drake@endlessm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 311/399] remoteproc: Initialize rproc_class before use
-Date:   Fri, 21 Feb 2020 08:40:36 +0100
-Message-Id: <20200221072431.760379740@linuxfoundation.org>
+Subject: [PATCH 4.19 067/191] PCI: Increase D3 delay for AMD Ryzen5/7 XHCI controllers
+Date:   Fri, 21 Feb 2020 08:40:40 +0100
+Message-Id: <20200221072259.414117602@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
-References: <20200221072402.315346745@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,70 +45,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brandon Maier <brandon.maier@rockwellcollins.com>
+From: Daniel Drake <drake@endlessm.com>
 
-[ Upstream commit a8f40111d184098cd2b3dc0c7170c42250a5fa09 ]
+[ Upstream commit 3030df209aa8cf831b9963829bd9f94900ee8032 ]
 
-The remoteproc_core and remoteproc drivers all initialize with module_init().
-However remoteproc drivers need the rproc_class during their probe. If one of
-the remoteproc drivers runs init and gets through probe before
-remoteproc_init() runs, a NULL pointer access of rproc_class's `glue_dirs`
-spinlock occurs.
+On Asus UX434DA (AMD Ryzen7 3700U) and Asus X512DK (AMD Ryzen5 3500U), the
+XHCI controller fails to resume from runtime suspend or s2idle, and USB
+becomes unusable from that point.
 
-> Unable to handle kernel NULL pointer dereference at virtual address 000000dc
-> pgd = c0004000
-> [000000dc] *pgd=00000000
-> Internal error: Oops: 5 [#1] PREEMPT ARM
-> Modules linked in:
-> CPU: 0 PID: 1 Comm: swapper Tainted: G        W       4.14.106-rt56 #1
-> Hardware name: Generic OMAP36xx (Flattened Device Tree)
-> task: c6050000 task.stack: c604a000
-> PC is at rt_spin_lock+0x40/0x6c
-> LR is at rt_spin_lock+0x28/0x6c
-> pc : [<c0523c90>]    lr : [<c0523c78>]    psr: 60000013
-> sp : c604bdc0  ip : 00000000  fp : 00000000
-> r10: 00000000  r9 : c61c7c10  r8 : c6269c20
-> r7 : c0905888  r6 : c6269c20  r5 : 00000000  r4 : 000000d4
-> r3 : 000000dc  r2 : c6050000  r1 : 00000002  r0 : 000000d4
-> Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-...
-> [<c0523c90>] (rt_spin_lock) from [<c03b65a4>] (get_device_parent+0x54/0x17c)
-> [<c03b65a4>] (get_device_parent) from [<c03b6bec>] (device_add+0xe0/0x5b4)
-> [<c03b6bec>] (device_add) from [<c042adf4>] (rproc_add+0x18/0xd8)
-> [<c042adf4>] (rproc_add) from [<c01110e4>] (my_rproc_probe+0x158/0x204)
-> [<c01110e4>] (my_rproc_probe) from [<c03bb6b8>] (platform_drv_probe+0x34/0x70)
-> [<c03bb6b8>] (platform_drv_probe) from [<c03b9dd4>] (driver_probe_device+0x2c8/0x420)
-> [<c03b9dd4>] (driver_probe_device) from [<c03ba02c>] (__driver_attach+0x100/0x11c)
-> [<c03ba02c>] (__driver_attach) from [<c03b7d08>] (bus_for_each_dev+0x7c/0xc0)
-> [<c03b7d08>] (bus_for_each_dev) from [<c03b910c>] (bus_add_driver+0x1cc/0x264)
-> [<c03b910c>] (bus_add_driver) from [<c03ba714>] (driver_register+0x78/0xf8)
-> [<c03ba714>] (driver_register) from [<c010181c>] (do_one_initcall+0x100/0x190)
-> [<c010181c>] (do_one_initcall) from [<c0800de8>] (kernel_init_freeable+0x130/0x1d0)
-> [<c0800de8>] (kernel_init_freeable) from [<c051eee8>] (kernel_init+0x8/0x114)
-> [<c051eee8>] (kernel_init) from [<c01175b0>] (ret_from_fork+0x14/0x24)
-> Code: e2843008 e3c2203f f5d3f000 e5922010 (e193cf9f)
-> ---[ end trace 0000000000000002 ]---
+  xhci_hcd 0000:03:00.4: Refused to change power state, currently in D3
+  xhci_hcd 0000:03:00.4: enabling device (0000 -> 0002)
+  xhci_hcd 0000:03:00.4: WARN: xHC restore state timeout
+  xhci_hcd 0000:03:00.4: PCI post-resume error -110!
+  xhci_hcd 0000:03:00.4: HC died; cleaning up
 
-Signed-off-by: Brandon Maier <brandon.maier@rockwellcollins.com>
-Link: https://lore.kernel.org/r/20190530225223.136420-1-brandon.maier@rockwellcollins.com
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+During suspend, a transition to D3cold is attempted, however the affected
+platforms do not seem to cut the power to the PCI device when in this
+state, so the device stays in D3hot.
+
+Upon resume, the D3hot-to-D0 transition is successful only if the D3 delay
+is increased to 20ms. The transition failure does not appear to be
+detectable as a CRS condition. Add a PCI quirk to increase the delay on the
+affected hardware.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=205587
+Link: http://lkml.kernel.org/r/CAD8Lp47Vh69gQjROYG69=waJgL7hs1PwnLonL9+27S_TcRhixA@mail.gmail.com
+Link: https://lore.kernel.org/r/20191127053836.31624-2-drake@endlessm.com
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pci/quirks.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 307df98347ba2..8115f945151b3 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -2223,7 +2223,7 @@ static int __init remoteproc_init(void)
- 
- 	return 0;
+diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+index 798d46a266037..419dda6dbd166 100644
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -1866,6 +1866,22 @@ static void quirk_radeon_pm(struct pci_dev *dev)
  }
--module_init(remoteproc_init);
-+subsys_initcall(remoteproc_init);
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_ATI, 0x6741, quirk_radeon_pm);
  
- static void __exit remoteproc_exit(void)
++/*
++ * Ryzen5/7 XHCI controllers fail upon resume from runtime suspend or s2idle.
++ * https://bugzilla.kernel.org/show_bug.cgi?id=205587
++ *
++ * The kernel attempts to transition these devices to D3cold, but that seems
++ * to be ineffective on the platforms in question; the PCI device appears to
++ * remain on in D3hot state. The D3hot-to-D0 transition then requires an
++ * extended delay in order to succeed.
++ */
++static void quirk_ryzen_xhci_d3hot(struct pci_dev *dev)
++{
++	quirk_d3hot_delay(dev, 20);
++}
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_AMD, 0x15e0, quirk_ryzen_xhci_d3hot);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_AMD, 0x15e1, quirk_ryzen_xhci_d3hot);
++
+ #ifdef CONFIG_X86_IO_APIC
+ static int dmi_disable_ioapicreroute(const struct dmi_system_id *d)
  {
 -- 
 2.20.1
