@@ -2,131 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31472166D7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 04:27:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 284D7166D3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 04:04:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729660AbgBUD1u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 22:27:50 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:46591 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729636AbgBUD1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 22:27:50 -0500
-Received: by ozlabs.org (Postfix, from userid 1007)
-        id 48Nxjc3tDHz9sS3; Fri, 21 Feb 2020 14:27:48 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=gibson.dropbear.id.au; s=201602; t=1582255668;
-        bh=iKptlhtjkgkIsdcJEVAHVMwjI89lNKjQ7HEHAkGj37o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SvbdaUavxTvf/pdBCZS/hwo/cFcJDx3AXHEPeo4dmS4LjE0QO1ICTIBLbdDUDwlSD
-         TluHdPFcvWasZDuu181i/bcrOfbjrL2e+mMAYoEn8M3ITyswpVSktDPN5OrymYv2SV
-         Pj6SH8iB+ZxgjkUtDEduBd1iw2b04kGhl6O37f+s=
-Date:   Fri, 21 Feb 2020 13:59:15 +1100
-From:   David Gibson <david@gibson.dropbear.id.au>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Halil Pasic <pasic@linux.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-s390@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Viktor Mihajlovski <mihajlov@linux.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        Michael Mueller <mimu@linux.ibm.com>
-Subject: Re: [PATCH 2/2] virtio: let virtio use DMA API when guest RAM is
- protected
-Message-ID: <20200221025915.GB2298@umbus.fritz.box>
-References: <20200220160606.53156-1-pasic@linux.ibm.com>
- <20200220160606.53156-3-pasic@linux.ibm.com>
- <20200220161309.GB12709@lst.de>
+        id S1729576AbgBUDEa convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 20 Feb 2020 22:04:30 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:46444 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729371AbgBUDEa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 22:04:30 -0500
+Received: by mail-ed1-f65.google.com with SMTP id p14so544791edy.13
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 19:04:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=NnuOIkH/k/PEJ/s73MC7n0P8o0WQzooeJ7sSj3zBbiE=;
+        b=Q2IFLX+fw1k8xDyTRf2+308ErQEUd/ITsE6kNMzfGbnJBf97p2gRh2IkFmpjZl88s1
+         6YDvh1F6lA4X1CpgbIiFMnH+XBJNKluxSpPWtgxweV0IFansE82bLCW95tm/xwFQ62vU
+         j6dU9g8O2L0S4BF7U7C+DtwBjzA/aL1FZKSdQDALnJLomSW+ZfuguPkXnH1zK8l73PBc
+         r21AFrkYwODjLb3gHIpr4rftjINTb4ms17r0MXFiqBGg22O8nKDsKbliGHLa9RZhnzND
+         HfFjXOcApgpqWnYtP0FjBvuURGUEqWb/7jsJWa9AfIcscvD5K2YE1Xdml2iaXgzqqIKV
+         WdWw==
+X-Gm-Message-State: APjAAAW+pqG0C04SDDRlhJl+2lct2xHS6pjQ9Mm/BWnKRclW4h7TI0+F
+        q1Ck8cSy+VoGW9hw651rexRwlGRVVBM=
+X-Google-Smtp-Source: APXvYqzG3I4Yrsdt4AJsy6HdZVOeMAUcwplkggF0R8DW4ch9c118IgcQs+DIsisvBVQvh6O+WDrxVg==
+X-Received: by 2002:a17:906:1a05:: with SMTP id i5mr31255518ejf.347.1582254266350;
+        Thu, 20 Feb 2020 19:04:26 -0800 (PST)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com. [209.85.221.54])
+        by smtp.gmail.com with ESMTPSA id a10sm155950edt.50.2020.02.20.19.04.25
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2020 19:04:25 -0800 (PST)
+Received: by mail-wr1-f54.google.com with SMTP id k11so324486wrd.9
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 19:04:25 -0800 (PST)
+X-Received: by 2002:a5d:6805:: with SMTP id w5mr47051708wru.64.1582254264966;
+ Thu, 20 Feb 2020 19:04:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="5/uDoXvLw7AC5HRs"
-Content-Disposition: inline
-In-Reply-To: <20200220161309.GB12709@lst.de>
+References: <20200219010951.395599-1-megous@megous.com> <CAGb2v67BLODmDmQOJH-m-KWVtXS2EGrnPxi9czj6oipHPDTfjw@mail.gmail.com>
+ <20200219121424.dfvrwfcavupmwbvw@core.my.home>
+In-Reply-To: <20200219121424.dfvrwfcavupmwbvw@core.my.home>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Fri, 21 Feb 2020 11:04:14 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64+C1Q8au_cR0PjY=0GJx1c+kk7Tw0=12+fFEhBF_Q-Rg@mail.gmail.com>
+Message-ID: <CAGb2v64+C1Q8au_cR0PjY=0GJx1c+kk7Tw0=12+fFEhBF_Q-Rg@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH] bus: sunxi-rsb: Return correct data
+ when mixing 16-bit and 8-bit reads
+To:     =?UTF-8?Q?Ond=C5=99ej_Jirman?= <megous@megous.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        "moderated list:ARM/Allwinner sunXi SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Feb 19, 2020 at 8:14 PM Ondřej Jirman <megous@megous.com> wrote:
+>
+> On Wed, Feb 19, 2020 at 10:49:18AM +0800, Chen-Yu Tsai wrote:
+> > On Wed, Feb 19, 2020 at 9:10 AM Ondrej Jirman <megous@megous.com> wrote:
+> > >
+> > > When doing a 16-bit read that returns data in the MSB byte, the
+> > > RSB_DATA register will keep the MSB byte unchanged when doing
+> > > the following 8-bit read. sunxi_rsb_read() will then return
+> > > a result that contains high byte from 16-bit read mixed with
+> > > the 8-bit result.
+> > >
+> > > The consequence is that after this happens the PMIC's regmap will
+> > > look like this: (0x33 is the high byte from the 16-bit read)
+> > >
+> > > % cat /sys/kernel/debug/regmap/sunxi-rsb-3a3/registers
+> > > 00: 33
+> > > 01: 33
+> > > 02: 33
+> > > 03: 33
+> > > 04: 33
+> > > 05: 33
+> > > 06: 33
+> > > 07: 33
+> > > 08: 33
+> > > 09: 33
+> > > 0a: 33
+> > > 0b: 33
+> > > 0c: 33
+> > > 0d: 33
+> > > 0e: 33
+> > > [snip]
+> > >
+> > > Fix this by masking the result of the read with the correct mask
+> > > based on the size of the read. There are no 16-bit users in the
+> > > mainline kernel, so this doesn't need to get into the stable tree.
+> > >
+> > > Signed-off-by: Ondrej Jirman <megous@megous.com>
+> >
+> > Acked-by: Chen-Yu Tsai <wens@csie.org>
+> >
+> > for the fix, however it's not entirely clear to me how the MSB 0x33
+> > value got into the regmap. Looks like I expected the regmap core to
+> > handle any overflows, or didn't expect the lingering MSB from 16-bit
+> > reads, as I didn't have any 16-bit register devices back when I wrote
+> > this.
+>
+> Now I feel like I masked some other bug. Though explanation may be quite simple.
+>
+> For example when AXP core does regmap_read on some values for showing charging
+> current or battery voltage, because regmap_read works with unsigned int, it
+> will simply get a number that's too big. And that was the major symptom
+> I observed. I got readings from sysfs that my tablet is consuming 600A or 200A,
+> etc. And this value was jumping around based on AC100 activity (as the MSB
+> byte got changed).
+>
+> In other places where the driver does regmap_update_bits, I think nothing bad
+> happened. The write after the read would simply discard the MSB byte.
+>
+> And for the debugfs/regmap/*/registers, those are printed such:
+>
+> https://elixir.bootlin.com/linux/latest/source/drivers/base/regmap/regmap-debugfs.c#L256
+>
+>         snprintf(buf + buf_pos, count - buf_pos,
+>                 "%.*x", map->debugfs_val_len, val);
+>
+> This doesn't truncate values, so the larger number gets printed to (for example):
+>
+>         33fe
+>
+> But regmap debugfs code truncates this by cutting off the formatted string to
+> this length:
+>
+>   https://elixir.bootlin.com/linux/latest/source/drivers/base/regmap/regmap-debugfs.c#L189
+>
+> So in the end, only:
+>
+>         00: 33
+>
+> remains, instead of the correct value of:
+>
+>         00: fe
+>
+> So in the case of debugfs this is just a cosmetic/formatting issue, that didn't
+> affect anything else.
+>
+> I think regmap_bus->reg_read API simply expects the returned value to not exceed
+> the sensible range.
 
---5/uDoXvLw7AC5HRs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sounds good. Thanks for digging through this. My ack still stands.
 
-On Thu, Feb 20, 2020 at 05:13:09PM +0100, Christoph Hellwig wrote:
-> On Thu, Feb 20, 2020 at 05:06:06PM +0100, Halil Pasic wrote:
-> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > index 867c7ebd3f10..fafc8f924955 100644
-> > --- a/drivers/virtio/virtio_ring.c
-> > +++ b/drivers/virtio/virtio_ring.c
-> > @@ -243,6 +243,9 @@ static bool vring_use_dma_api(struct virtio_device =
-*vdev)
-> >  	if (!virtio_has_iommu_quirk(vdev))
-> >  		return true;
-> > =20
-> > +	if (force_dma_unencrypted(&vdev->dev))
-> > +		return true;
->=20
-> Hell no.  This is a detail of the platform DMA direct implementation.
-> Drivers have no business looking at this flag, and virtio finally needs
-> to be fixed to use the DMA API properly for everything but legacy devices.
+ChenYu
 
-So, this patch definitely isn't right as it stands, but I'm struggling
-to understand what it is you're saying is the right way.
-
-By "legacy devices" I assume you mean pre-virtio-1.0 devices, that
-lack the F_VERSION_1 feature flag.  Is that right?  Because I don't
-see how being a legacy device or not relates to use of the DMA API.
-
-I *think* what you are suggesting here is that virtio devices that
-have !F_IOMMU_PLATFORM should have their dma_ops set up so that the
-DMA API treats IOVA=3D=3DPA, which will satisfy what the device expects.
-Then the virtio driver can use the DMA API the same way for both
-F_IOMMU_PLATFORM and !F_IOMMU_PLATFORM devices.
-
-But if that works for !F_IOMMU_PLATFORM_DEVICES+F_VERSION_1 devices,
-then AFAICT it will work equally well for legacy devices.
-
-Using the DMA API for *everything* in virtio, legacy or not, seems
-like a reasonable approach to me.  But, AFAICT, that does require the
-DMA layer to have some kind of explicit call to turn on this
-behaviour, which the virtio driver would call during initializsation.
-I don't think we can do it 100% within the DMA layer, because only the
-driver can reasonably know when a device has this weird non-standard
-DMA behaviour.
-
---=20
-David Gibson			| I'll have my music baroque, and my code
-david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
-				| _way_ _around_!
-http://www.ozlabs.org/~dgibson
-
---5/uDoXvLw7AC5HRs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAl5PR4EACgkQbDjKyiDZ
-s5LraA/+KQYlg3wZ+0krCgI0rnOA1c4Rh7dkchkUxj0XPpjfegrcik9vB4AEk1uV
-NViHfw9TklofjnE59FOo9Rexy90uk2aepCPMiba2Aidm0X+E9OMWIZ75l+9IyNod
-fnTLSUCP45wGHQUcjIE1iL3TNJrTZ+F0bQkuu1rwZhtBHx+mKYmS005cUmOuiYQi
-+gZAl8VlR/Ar3QktvDq1ChJai/rB22k+AWL9eL6fgpFGZv/E13hM25tKU61acUZh
-WbtOBNEDoDs792CWCbIs9gqoeq1Whd555JS3nbAlDqNykTUMrfqDbbX/FdJlciPu
-b1TlYEWQLmJDCv8xdPNj8Iep747a3Pc8pDhe7cALeEGvR8dEgbXE7+cx6l5rX6FW
-glvHUQbw8/iD2tRbMLEfk1z/uyL7Gzugk7P6Xfeg+fNcGoL6ADR3DFCBUn1eD0Bf
-EHyBM/WOmi1kn9p52fC3waAPg5BqftyrxFdGd2dI7mUjLvGeT/gxPnqfdaEDbdku
-nlBw4/tcIdlesiIAiI+bCe4bX111KgcJvqVSjaRiS1YqFumJ1aySBzXpAfjqWW/p
-2MU+m6v1xqCEDc7UY+aFtHrRw+CsByowyIFYfNcfSgDMvB9uFkvme4opmrdyAe+g
-G/3fLNvewrGHvqTITJtkyQGQnyJEmHbcQMnWbSdQyqbQU+qO8tg=
-=dMlk
------END PGP SIGNATURE-----
-
---5/uDoXvLw7AC5HRs--
+> regards,
+>         o.
+>
+>
+> > ChenYu
+> >
+> >
+> > > ---
+> > >  drivers/bus/sunxi-rsb.c | 6 +++++-
+> > >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/bus/sunxi-rsb.c b/drivers/bus/sunxi-rsb.c
+> > > index b8043b58568ac..8ab6a3865f569 100644
+> > > --- a/drivers/bus/sunxi-rsb.c
+> > > +++ b/drivers/bus/sunxi-rsb.c
+> > > @@ -316,6 +316,7 @@ static int sunxi_rsb_read(struct sunxi_rsb *rsb, u8 rtaddr, u8 addr,
+> > >  {
+> > >         u32 cmd;
+> > >         int ret;
+> > > +       u32 mask;
+> > >
+> > >         if (!buf)
+> > >                 return -EINVAL;
+> > > @@ -323,12 +324,15 @@ static int sunxi_rsb_read(struct sunxi_rsb *rsb, u8 rtaddr, u8 addr,
+> > >         switch (len) {
+> > >         case 1:
+> > >                 cmd = RSB_CMD_RD8;
+> > > +               mask = 0xffu;
+> > >                 break;
+> > >         case 2:
+> > >                 cmd = RSB_CMD_RD16;
+> > > +               mask = 0xffffu;
+> > >                 break;
+> > >         case 4:
+> > >                 cmd = RSB_CMD_RD32;
+> > > +               mask = 0xffffffffu;
+> > >                 break;
+> > >         default:
+> > >                 dev_err(rsb->dev, "Invalid access width: %zd\n", len);
+> > > @@ -345,7 +349,7 @@ static int sunxi_rsb_read(struct sunxi_rsb *rsb, u8 rtaddr, u8 addr,
+> > >         if (ret)
+> > >                 goto unlock;
+> > >
+> > > -       *buf = readl(rsb->regs + RSB_DATA);
+> > > +       *buf = readl(rsb->regs + RSB_DATA) & mask;
+> > >
+> > >  unlock:
+> > >         mutex_unlock(&rsb->lock);
+> > > --
+> > > 2.25.1
+> > >
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> To view this discussion on the web, visit https://groups.google.com/d/msgid/linux-sunxi/20200219121424.dfvrwfcavupmwbvw%40core.my.home.
