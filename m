@@ -2,194 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 044901679B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 10:47:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BF781679C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 10:49:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728297AbgBUJro (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 04:47:44 -0500
-Received: from esa4.hc3370-68.iphmx.com ([216.71.155.144]:45069 "EHLO
-        esa4.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727592AbgBUJro (ORCPT
+        id S1728314AbgBUJtB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 04:49:01 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:34039 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728085AbgBUJtB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 04:47:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=citrix.com; s=securemail; t=1582278463;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=GGvy69JckNgFz+hczURopPTJOBE9gpMRPOIkan44JhQ=;
-  b=VCCjy4dYV0EZTkVSv56tLk6En85Tlo8p9dU+qrzMiiBQBx8Rdh08ubVq
-   7FNCnPhvYf7Yc3dfRce2D+MkfqHzR4r812XSWvv1USUsLclPpeiA/MeIt
-   AYUrf4AtrT2javLdJcDKmycZFXzQk+ahpCTHjo65Y3beNEk7bOV15ZLXU
-   c=;
-Authentication-Results: esa4.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=roger.pau@citrix.com; spf=Pass smtp.mailfrom=roger.pau@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
-Received-SPF: None (esa4.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  roger.pau@citrix.com) identity=pra; client-ip=162.221.158.21;
-  receiver=esa4.hc3370-68.iphmx.com;
-  envelope-from="roger.pau@citrix.com";
-  x-sender="roger.pau@citrix.com";
-  x-conformance=sidf_compatible
-Received-SPF: Pass (esa4.hc3370-68.iphmx.com: domain of
-  roger.pau@citrix.com designates 162.221.158.21 as permitted
-  sender) identity=mailfrom; client-ip=162.221.158.21;
-  receiver=esa4.hc3370-68.iphmx.com;
-  envelope-from="roger.pau@citrix.com";
-  x-sender="roger.pau@citrix.com";
-  x-conformance=sidf_compatible; x-record-type="v=spf1";
-  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
-  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
-  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
-  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83
-  ip4:168.245.78.127 ~all"
-Received-SPF: None (esa4.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@mail.citrix.com) identity=helo;
-  client-ip=162.221.158.21; receiver=esa4.hc3370-68.iphmx.com;
-  envelope-from="roger.pau@citrix.com";
-  x-sender="postmaster@mail.citrix.com";
-  x-conformance=sidf_compatible
-IronPort-SDR: RbCXnuRrHuq0rKPJfUulfq14400bSrZsUVVOUEIBDlqmlN8pUmdWOt6Bofx+4GBNKTj7tXep72
- 9vxVJK+d0ivzIZkgMrlGXeox5zAu1OCeEr2Ez4mnpXvI5PIgQ1hTg8ewMgvN1n8c2bl48r5ETn
- 7JSiKBwC4qAktm3GNIEwjNvzqWy+D/Pjf4pr8wWc2sJoRDpZ6VqXhZpJu6EM01eFLHZixtanzu
- 4kLP5nzJUewYYv90/U34x9c3+1srhcr+v+hpLMGf+rXn1PkrRxSVxMp1R3+2iSbpig8r41NJzc
- xbc=
-X-SBRS: 2.7
-X-MesageID: 13431981
-X-Ironport-Server: esa4.hc3370-68.iphmx.com
-X-Remote-IP: 162.221.158.21
-X-Policy: $RELAYED
-X-IronPort-AV: E=Sophos;i="5.70,467,1574139600"; 
-   d="scan'208";a="13431981"
-Date:   Fri, 21 Feb 2020 10:47:35 +0100
-From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
-To:     Anchal Agarwal <anchalag@amazon.com>
-CC:     "Durrant, Paul" <pdurrant@amazon.co.uk>,
-        "Valentin, Eduardo" <eduval@amazon.com>,
-        "len.brown@intel.com" <len.brown@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>, "hpa@zytor.com" <hpa@zytor.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "sstabellini@kernel.org" <sstabellini@kernel.org>,
-        "fllinden@amaozn.com" <fllinden@amaozn.com>,
-        "Kamata, Munehisa" <kamatam@amazon.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "Singh, Balbir" <sblbir@amazon.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
-        "jgross@suse.com" <jgross@suse.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>
-Subject: Re: [Xen-devel] [RFC PATCH v3 06/12] xen-blkfront: add callbacks for
- PM suspend and hibernation
-Message-ID: <20200221094735.GV4679@Air-de-Roger>
-References: <20200217230553.GA8100@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com>
- <20200218091611.GN4679@Air-de-Roger>
- <20200219180424.GA17584@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com>
- <20200220083904.GI4679@Air-de-Roger>
- <f986b845491b47cc8469d88e2e65e2a7@EX13D32EUC003.ant.amazon.com>
- <20200220154507.GO4679@Air-de-Roger>
- <c9662397256a4568a5cc7d70a84940e5@EX13D32EUC003.ant.amazon.com>
- <20200220164839.GR4679@Air-de-Roger>
- <e42fa35800f04b6f953e4af87f2c1a02@EX13D32EUC003.ant.amazon.com>
- <20200221004918.GA13221@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com>
+        Fri, 21 Feb 2020 04:49:01 -0500
+Received: by mail-vs1-f67.google.com with SMTP id g15so852962vsf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 01:49:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NiubFi99EPYJ/n2rj3yTrsNaDIZ6xoOQx9Jr6SvpoR4=;
+        b=VDGmJFutt04VedpvKWAZ6kMFeFwm6k4hIHn0h4jsA5Ke3Nr81Ifna4QyMk/xMZNqHu
+         9JJVbtDerM3lWcLd6Zfusk1fq9Zt4pLQg16o4mE3ATox5uakBQS/gK6ci3/GuoyErE7A
+         dmfanSLS9WV8TpbC8JZp44r11OLIk444gHgv30w1F7oCtBUisMLTXObrbTcX0znv7V4r
+         g7YuneHNVRkw1fIlPZXx8sY6DVWKEjOytK8d4TLDZcXOBjG0cSbxdQCsmOJrzJiEgrvx
+         PSxYw3OAYUrlbKnHEtDgRjcqoTKsI1FNXxUQQ0Ye8NFdA2t44jpoOx/a7KTeM8ilMjr9
+         AbtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NiubFi99EPYJ/n2rj3yTrsNaDIZ6xoOQx9Jr6SvpoR4=;
+        b=YfWNNkywXu+0n+/6SRj1LnLNJxaEo3o37iOC04hxxpnBZ2wXkc2TTeIVMMgQBdqEB2
+         ST3W5XWfKX3E3twGqm9sCMVlwoHCYG4TCTjYycFxCI26ChMfMP5gNoCCnZUGRvi9uwku
+         tpyiymbcgA3xsSg6HsuOj6+8myd8FspcxkqF2kN8lL2c1ZuaD112ZxQhWJFHOP1SZHhH
+         sNT/kp6hNJ6/i4Kyatfc1sK3xVwh3wsUXtI8iubmjo3pYnTXmL4ksCF4E0b613heFMHm
+         AIKpJwuhTISIurWRnJGr0R9jN7iY/sRKcQGJbGRXnFMC6ilzJk6cGGnBQpGgcX+BBcWE
+         NvMw==
+X-Gm-Message-State: APjAAAXixdRC9o+RAMiYf3ja0LR9WfmIW3r6XDDQ0fvwUtRfd242qZfQ
+        Rkm/fs5KjVGIavL79ezC+7Gb/pLUNKOZXJ0FzoUSBw==
+X-Google-Smtp-Source: APXvYqxIRRKXnARX9u6btKQ3O9gJaec7WIe9eCcj9XZJ870sXHNxs5I8Z8nwuzduLJgoO7/z/UNDEdOwwm1N++0cxlU=
+X-Received: by 2002:a67:5e45:: with SMTP id s66mr19891897vsb.200.1582278539428;
+ Fri, 21 Feb 2020 01:48:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200221004918.GA13221@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com>
-X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
- AMSPEX02CL01.citrite.net (10.69.22.125)
+References: <CA+G9fYuqAQfhzF2BzHr7vMHx68bo8-jT+ob_F3eHQ3=oFjgYdg@mail.gmail.com>
+ <CAPDyKFqqhxC-pmV_j8PLY-D=AbqCAbiipAAHXLpJ4N_BiYYOFw@mail.gmail.com> <CA+G9fYugQuAERqp3VXUFG-3QxXoF8bz7OSMh6WGSZcrGkbfDSQ@mail.gmail.com>
+In-Reply-To: <CA+G9fYugQuAERqp3VXUFG-3QxXoF8bz7OSMh6WGSZcrGkbfDSQ@mail.gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 21 Feb 2020 10:48:23 +0100
+Message-ID: <CAPDyKFo-vEO7zN_F+NqcKtnKmAo_deOZx3gYNiks3yTAQAjv-Q@mail.gmail.com>
+Subject: Re: LKFT: arm x15: mmc1: cache flush error -110
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Alexei Starovoitov <ast@kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        lkft-triage@lists.linaro.org,
+        open list <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        John Stultz <john.stultz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 12:49:18AM +0000, Anchal Agarwal wrote:
-> On Thu, Feb 20, 2020 at 10:01:52AM -0700, Durrant, Paul wrote:
-> > > -----Original Message-----
-> > > From: Roger Pau Monné <roger.pau@citrix.com>
-> > > Sent: 20 February 2020 16:49
-> > > To: Durrant, Paul <pdurrant@amazon.co.uk>
-> > > Cc: Agarwal, Anchal <anchalag@amazon.com>; Valentin, Eduardo
-> > > <eduval@amazon.com>; len.brown@intel.com; peterz@infradead.org;
-> > > benh@kernel.crashing.org; x86@kernel.org; linux-mm@kvack.org;
-> > > pavel@ucw.cz; hpa@zytor.com; tglx@linutronix.de; sstabellini@kernel.org;
-> > > fllinden@amaozn.com; Kamata, Munehisa <kamatam@amazon.com>;
-> > > mingo@redhat.com; xen-devel@lists.xenproject.org; Singh, Balbir
-> > > <sblbir@amazon.com>; axboe@kernel.dk; konrad.wilk@oracle.com;
-> > > bp@alien8.de; boris.ostrovsky@oracle.com; jgross@suse.com;
-> > > netdev@vger.kernel.org; linux-pm@vger.kernel.org; rjw@rjwysocki.net;
-> > > linux-kernel@vger.kernel.org; vkuznets@redhat.com; davem@davemloft.net;
-> > > Woodhouse, David <dwmw@amazon.co.uk>
-> > > Subject: Re: [Xen-devel] [RFC PATCH v3 06/12] xen-blkfront: add callbacks
-> > > for PM suspend and hibernation
-> > > For example one necessary difference will be that xenbus initiated
-> > > suspend won't close the PV connection, in case suspension fails. On PM
-> > > suspend you seem to always close the connection beforehand, so you
-> > > will always have to re-negotiate on resume even if suspension failed.
+On Thu, 20 Feb 2020 at 18:54, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+>
+> On Wed, 19 Feb 2020 at 21:54, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> >
+> > On Thu, 13 Feb 2020 at 16:43, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
 > > >
-> I don't get what you mean, 'suspension failure' during disconnecting frontend from 
-> backend? [as in this case we mark frontend closed and then wait for completion]
-> Or do you mean suspension fail in general post bkacend is disconnected from
-> frontend for blkfront? 
+> >
+> > Try to restore the value for the cache flush timeout, by updating the
+> > define MMC_CACHE_FLUSH_TIMEOUT_MS to 10 * 60 * 1000".
+>
+> I have increased the timeout to 10 minutes but it did not help.
+> Same error found.
+> [  608.679353] mmc1: Card stuck being busy! mmc_poll_for_busy
+> [  608.684964] mmc1: cache flush error -110
+> [  608.689005] blk_update_request: I/O error, dev mmcblk1, sector
+> 4302400 op 0x1:(WRITE) flags 0x20800 phys_seg 1 prio class 0
+>
+> OTOH, What best i could do for my own experiment to revert all three patches and
+> now the reported error gone and device mount successfully [1].
+>
+> List of patches reverted,
+>   mmc: core: Specify timeouts for BKOPS and CACHE_FLUSH for eMMC
+>   mmc: block: Use generic_cmd6_time when modifying
+>     INAND_CMD38_ARG_EXT_CSD
+>   mmc: core: Default to generic_cmd6_time as timeout in __mmc_switch()
+>
+> [1] https://lkft.validation.linaro.org/scheduler/job/1238275#L4346
+>
+> - Naresh
 
-I don't think you strictly need to disconnect from the backend when
-suspending. Just waiting for all requests to finish should be enough.
+Thanks for testing!
 
-This has the benefit of not having to renegotiate if the suspension
-fails, and thus you can recover from suspension faster in case of
-failure. Since you haven't closed the connection with the backend just
-unfreezing the queues should get you working again, and avoids all the
-renegotiation.
+This sounds a bit weird, I must say. Also, while looking into the
+logs, it seems like you are comparing a v5.5 kernel with v5.6-rc2, but
+maybe I didn't read the logs carefully enough.
 
-> In case of later, if anything fails after the dpm_suspend(),
-> things need to be thawed or set back up so it should ok to always 
-> re-negotitate just to avoid errors. 
-> 
-> > > What I'm mostly worried about is the different approach to ring
-> > > draining. Ie: either xenbus is changed to freeze the queues and drain
-> > > the shared rings, or PM uses the already existing logic of not
-> > > flushing the rings an re-issuing in-flight requests on resume.
-> > > 
-> > 
-> > Yes, that's needs consideration. I don’t think the same semantic can be suitable for both. E.g. in a xen-suspend we need to freeze with as little processing as possible to avoid dirtying RAM late in the migration cycle, and we know that in-flight data can wait. But in a transition to S4 we need to make sure that at least all the in-flight blkif requests get completed, since they probably contain bits of the guest's memory image and that's not going to get saved any other way.
-> > 
-> >   Paul
-> I agree with Paul here. Just so as you know, I did try a hacky way in the past 
-> to re-queue requests in the past and failed miserably.
+ In any case, I am looking into creating a debug patch so we can
+narrow down the problem a bit further.
 
-Well, it works AFAIK for xenbus initiated suspension, so I would be
-interested to know why it doesn't work with PM suspension.
-
-> I doubt[just from my experimentation]re-queuing the requests will work for PM 
-> Hibernation for the same reason Paul mentioned above unless you give me pressing
-> reason why it should work.
-
-My main reason is that I don't want to maintain two different
-approaches to suspend/resume without a technical argument for it. I'm
-not happy to take a bunch of new code just because the current one
-doesn't seem to work in your use-case.
-
-That being said, if there's a justification for doing it differently
-it needs to be stated clearly in the commit. From the current commit
-message I didn't gasp that there was a reason for not using the
-current xenbus suspend/resume logic.
-
-> Also, won't it effect the migration time if we start waiting for all the
-> inflight requests to complete[last min page faults] ?
-
-Well, it's going to dirty pages that would have to be re-send to the
-destination side.
-
-Roger.
+Kind regards
+Uffe
