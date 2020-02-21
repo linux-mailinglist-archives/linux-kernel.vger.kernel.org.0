@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7542A16775C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:42:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50CCD167661
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:37:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730507AbgBUH4m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:56:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55992 "EHLO mail.kernel.org"
+        id S1733175AbgBUIdM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:33:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728972AbgBUH4f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:56:35 -0500
+        id S1732295AbgBUILK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:11:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91531222C4;
-        Fri, 21 Feb 2020 07:56:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A140920578;
+        Fri, 21 Feb 2020 08:11:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271795;
-        bh=GiqdFSZEoNy8iXjcP7SuRT0i4X8ZFZZeuCykkBIh0EQ=;
+        s=default; t=1582272670;
+        bh=+fwgImkEezDVmS4t4jTfRR0PxOi7aPqrYXalgbjRkDY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j/LVxLr2BK4/HY9IVHqV12B7qAqBqdPf/O4914cozZAYn9Ci0zxYJ0tsozOkw8YCA
-         9Bvnc0K8qhKeqXVJreFfkgsqRBO+HPSPe0H0k2h9+Xk36xHd8nhUWfl6uI5UVI5sCT
-         B54HixdXDhWrMvmq+/ZeVP6HSnvDmqS97H65WFTo=
+        b=IO5BzaCIvS6RmR0VFFJEX/lJOuxifqXFOTzuJq8FLUn67VdV0Wcv/jJlY0FrnToIs
+         nciy/y9v81FkMejQ/n2CUkLjlTddTggLK3WN1kGnVqn+Px3R7DVHOOUVfYYWWzjr/B
+         aiBMcC7AkBJdLDlGWf0wOKg7YI9bLVKW8SQKm7Ww=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 301/399] efi/arm: Defer probe of PCIe backed efifb on DT systems
-Date:   Fri, 21 Feb 2020 08:40:26 +0100
-Message-Id: <20200221072430.971379101@linuxfoundation.org>
+        stable@vger.kernel.org, Joakim Zhang <qiangqing.zhang@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 231/344] perf/imx_ddr: Fix cpu hotplug state cleanup
+Date:   Fri, 21 Feb 2020 08:40:30 +0100
+Message-Id: <20200221072410.239585109@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
-References: <20200221072402.315346745@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,166 +44,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ardb@kernel.org>
+From: Leonard Crestez <leonard.crestez@nxp.com>
 
-[ Upstream commit 64c8a0cd0a535891d5905c3a1651150f0f141439 ]
+[ Upstream commit 9ee68b314e9aa63ed11b98beb8a68810b8234dcf ]
 
-The new of_devlink support breaks PCIe probing on ARM platforms booting
-via UEFI if the firmware exposes a EFI framebuffer that is backed by a
-PCI device. The reason is that the probing order gets reversed,
-resulting in a resource conflict on the framebuffer memory window when
-the PCIe probes last, causing it to give up entirely.
+This driver allocates a dynamic cpu hotplug state but never releases it.
+If reloaded in a loop it will quickly trigger a WARN message:
 
-Given that we rely on PCI quirks to deal with EFI framebuffers that get
-moved around in memory, we cannot simply drop the memory reservation, so
-instead, let's use the device link infrastructure to register this
-dependency, and force the probing to occur in the expected order.
+	"No more dynamic states available for CPU hotplug"
 
-Co-developed-by: Saravana Kannan <saravanak@google.com>
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Saravana Kannan <saravanak@google.com>
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/20200113172245.27925-9-ardb@kernel.org
+Fix by calling cpuhp_remove_multi_state on remove like several other
+perf pmu drivers.
+
+Also fix the cleanup logic on probe error paths: add the missing
+cpuhp_remove_multi_state call and properly check the return value from
+cpuhp_state_add_instant_nocalls.
+
+Fixes: 9a66d36cc7ac ("drivers/perf: imx_ddr: Add DDR performance counter support to perf")
+Acked-by: Joakim Zhang <qiangqing.zhang@nxp.com>
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/firmware/efi/arm-init.c | 107 ++++++++++++++++++++++++++++++--
- 1 file changed, 103 insertions(+), 4 deletions(-)
+ drivers/perf/fsl_imx8_ddr_perf.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/firmware/efi/arm-init.c b/drivers/firmware/efi/arm-init.c
-index 904fa09e6a6b0..d99f5b0c8a090 100644
---- a/drivers/firmware/efi/arm-init.c
-+++ b/drivers/firmware/efi/arm-init.c
-@@ -10,10 +10,12 @@
- #define pr_fmt(fmt)	"efi: " fmt
+diff --git a/drivers/perf/fsl_imx8_ddr_perf.c b/drivers/perf/fsl_imx8_ddr_perf.c
+index 2a3966d059e70..0e51baa48b149 100644
+--- a/drivers/perf/fsl_imx8_ddr_perf.c
++++ b/drivers/perf/fsl_imx8_ddr_perf.c
+@@ -572,13 +572,17 @@ static int ddr_perf_probe(struct platform_device *pdev)
  
- #include <linux/efi.h>
-+#include <linux/fwnode.h>
- #include <linux/init.h>
- #include <linux/memblock.h>
- #include <linux/mm_types.h>
- #include <linux/of.h>
-+#include <linux/of_address.h>
- #include <linux/of_fdt.h>
- #include <linux/platform_device.h>
- #include <linux/screen_info.h>
-@@ -276,15 +278,112 @@ void __init efi_init(void)
- 		efi_memmap_unmap();
- }
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "cpuhp_setup_state_multi failed\n");
+-		goto ddr_perf_err;
++		goto cpuhp_state_err;
+ 	}
  
-+static bool efifb_overlaps_pci_range(const struct of_pci_range *range)
-+{
-+	u64 fb_base = screen_info.lfb_base;
-+
-+	if (screen_info.capabilities & VIDEO_CAPABILITY_64BIT_BASE)
-+		fb_base |= (u64)(unsigned long)screen_info.ext_lfb_base << 32;
-+
-+	return fb_base >= range->cpu_addr &&
-+	       fb_base < (range->cpu_addr + range->size);
-+}
-+
-+static struct device_node *find_pci_overlap_node(void)
-+{
-+	struct device_node *np;
-+
-+	for_each_node_by_type(np, "pci") {
-+		struct of_pci_range_parser parser;
-+		struct of_pci_range range;
-+		int err;
-+
-+		err = of_pci_range_parser_init(&parser, np);
-+		if (err) {
-+			pr_warn("of_pci_range_parser_init() failed: %d\n", err);
-+			continue;
-+		}
-+
-+		for_each_of_pci_range(&parser, &range)
-+			if (efifb_overlaps_pci_range(&range))
-+				return np;
+ 	pmu->cpuhp_state = ret;
+ 
+ 	/* Register the pmu instance for cpu hotplug */
+-	cpuhp_state_add_instance_nocalls(pmu->cpuhp_state, &pmu->node);
++	ret = cpuhp_state_add_instance_nocalls(pmu->cpuhp_state, &pmu->node);
++	if (ret) {
++		dev_err(&pdev->dev, "Error %d registering hotplug\n", ret);
++		goto cpuhp_instance_err;
 +	}
-+	return NULL;
-+}
-+
-+/*
-+ * If the efifb framebuffer is backed by a PCI graphics controller, we have
-+ * to ensure that this relation is expressed using a device link when
-+ * running in DT mode, or the probe order may be reversed, resulting in a
-+ * resource reservation conflict on the memory window that the efifb
-+ * framebuffer steals from the PCIe host bridge.
-+ */
-+static int efifb_add_links(const struct fwnode_handle *fwnode,
-+			   struct device *dev)
-+{
-+	struct device_node *sup_np;
-+	struct device *sup_dev;
-+
-+	sup_np = find_pci_overlap_node();
-+
-+	/*
-+	 * If there's no PCI graphics controller backing the efifb, we are
-+	 * done here.
-+	 */
-+	if (!sup_np)
-+		return 0;
-+
-+	sup_dev = get_dev_from_fwnode(&sup_np->fwnode);
-+	of_node_put(sup_np);
-+
-+	/*
-+	 * Return -ENODEV if the PCI graphics controller device hasn't been
-+	 * registered yet.  This ensures that efifb isn't allowed to probe
-+	 * and this function is retried again when new devices are
-+	 * registered.
-+	 */
-+	if (!sup_dev)
-+		return -ENODEV;
-+
-+	/*
-+	 * If this fails, retrying this function at a later point won't
-+	 * change anything. So, don't return an error after this.
-+	 */
-+	if (!device_link_add(dev, sup_dev, 0))
-+		dev_warn(dev, "device_link_add() failed\n");
-+
-+	put_device(sup_dev);
-+
-+	return 0;
-+}
-+
-+static const struct fwnode_operations efifb_fwnode_ops = {
-+	.add_links = efifb_add_links,
-+};
-+
-+static struct fwnode_handle efifb_fwnode = {
-+	.ops = &efifb_fwnode_ops,
-+};
-+
- static int __init register_gop_device(void)
- {
--	void *pd;
-+	struct platform_device *pd;
-+	int err;
  
- 	if (screen_info.orig_video_isVGA != VIDEO_TYPE_EFI)
- 		return 0;
+ 	/* Request irq */
+ 	irq = of_irq_get(np, 0);
+@@ -612,9 +616,10 @@ static int ddr_perf_probe(struct platform_device *pdev)
+ 	return 0;
  
--	pd = platform_device_register_data(NULL, "efi-framebuffer", 0,
--					   &screen_info, sizeof(screen_info));
--	return PTR_ERR_OR_ZERO(pd);
-+	pd = platform_device_alloc("efi-framebuffer", 0);
-+	if (!pd)
-+		return -ENOMEM;
-+
-+	if (IS_ENABLED(CONFIG_PCI))
-+		pd->dev.fwnode = &efifb_fwnode;
-+
-+	err = platform_device_add_data(pd, &screen_info, sizeof(screen_info));
-+	if (err)
-+		return err;
-+
-+	return platform_device_add(pd);
- }
- subsys_initcall(register_gop_device);
+ ddr_perf_err:
+-	if (pmu->cpuhp_state)
+-		cpuhp_state_remove_instance_nocalls(pmu->cpuhp_state, &pmu->node);
+-
++	cpuhp_state_remove_instance_nocalls(pmu->cpuhp_state, &pmu->node);
++cpuhp_instance_err:
++	cpuhp_remove_multi_state(pmu->cpuhp_state);
++cpuhp_state_err:
+ 	ida_simple_remove(&ddr_ida, pmu->id);
+ 	dev_warn(&pdev->dev, "i.MX8 DDR Perf PMU failed (%d), disabled\n", ret);
+ 	return ret;
+@@ -625,6 +630,7 @@ static int ddr_perf_remove(struct platform_device *pdev)
+ 	struct ddr_pmu *pmu = platform_get_drvdata(pdev);
+ 
+ 	cpuhp_state_remove_instance_nocalls(pmu->cpuhp_state, &pmu->node);
++	cpuhp_remove_multi_state(pmu->cpuhp_state);
+ 	irq_set_affinity_hint(pmu->irq, NULL);
+ 
+ 	perf_pmu_unregister(&pmu->pmu);
 -- 
 2.20.1
 
