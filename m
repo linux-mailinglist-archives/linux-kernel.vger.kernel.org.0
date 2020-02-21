@@ -2,74 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7D4816818E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:28:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAD95168191
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:29:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729120AbgBUP2T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 10:28:19 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39071 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727851AbgBUP2S (ORCPT
+        id S1729198AbgBUP2t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 10:28:49 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:37552 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729072AbgBUP2p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 10:28:18 -0500
-Received: by mail-lj1-f196.google.com with SMTP id o15so2602443ljg.6
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 07:28:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UN+CWiVcnl1t3iZVzq1TQm7oj61jG5zfG5blHJVYlAI=;
-        b=ipsLkFmM7mX3UmnaWZVKbi5pG0qQJn3b0UAAel0eQqHf0WXtgcQwKNwvfRoIsD37O1
-         3zMEFbpBJiuC5/Og5GSvuWtysk8901K+gI8JMIy1Tw8rcVmYv4CKFhoSyJlVGk4WRR2d
-         zB2Kuo8EQP39F1O7bolUPpLaYWQM7x8ifZq1Q65owiKRk2GrnNvBlwgg+CstAhKLA+lG
-         dCjpfhI6GJh+8bYAspFB24GBKGVogPDsclfK8UdTplP18IMIjuO93ydyKj/xMIcVINxl
-         f9a/ri6ZvEpVz5XIpJn41uPWE91lWaMjyQD+A93dNBtzTKx+ho+LlJ7OlvfSbxRvRq4/
-         BZbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UN+CWiVcnl1t3iZVzq1TQm7oj61jG5zfG5blHJVYlAI=;
-        b=t0QdltDQ8b5TAG55AE0EtaEtmJw7PJd0f1cuwzhduXPZsX/ssEv3GktIpkQrjabT4w
-         DbXvfOnz9Z935EUpyihKLqO5rt3U0g/4PDadKUur2oAEcT2/L8Yk9AnLDWFTySirheDk
-         qi9C/ELs7iMGvRKLDuhxu2s8CbFIaF8ZrjXpP/UK9Dbl82M4og7NyVn7I+gCuyhRp7xo
-         f/rjmRkGR0HYIQQE8V1A2/WdXO0p9pirdkkRP1U6N/LAbzrhzQr2uDaM0cN1DNzgXPjr
-         gHHuZU8V+aThvS5Q3l2Rq9pN7FtCGmuqVqTzHsLbG3hp2q+D8nJFZd0ZHUNdfnGY19Z2
-         3D8A==
-X-Gm-Message-State: APjAAAWxsw9kmlhUNbQ0dsQlDFdKbwpeo/zS2g40gBwQaCtHAUReKEYg
-        ao93cWSmkVttOE/xVYH78zhQbOqgb78IBsgLApnfzQ==
-X-Google-Smtp-Source: APXvYqzmRFe5+aD/XXxN155ljO/M/dRWkcx3FCLqbfPxZB8aGlo1hrJcZ2FMwgK4758C1WxaFEeTRiAAgqNT/nNrtts=
-X-Received: by 2002:a2e:9013:: with SMTP id h19mr23121445ljg.223.1582298895959;
- Fri, 21 Feb 2020 07:28:15 -0800 (PST)
+        Fri, 21 Feb 2020 10:28:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=teQadSX0wyV4ftQ41M/03hMOBJ7nffcslPnRS4n1cL0=; b=FO11uySWYfI+CHf4sRD/ycCuie
+        nHo0JseQxPLSNhugXNfrjWpNpFYClG0EJ6ZhsJjnA4J8gErKszWCl2gM2wO95J1dA7ORGjeTOGc1r
+        ACXPYJgq/Z/oTLUEJHHzz7Xdsva/ZoWzEWoZzpXzjqmFOpHtcqXLVo1H7eqSwhMds4sMo58AJLwd3
+        DQxRWRpw/60TICg7PHg/Yvr/nKsTJozL7slseewvBlRg2iJclSKEdCwigvnRCsG6s3/W0LVfgx8Gx
+        I7ZnmxVYGvd9qPsMMO2IjpDbUYh/g62/J/7dywfdJbrXUmeZ4kb5O7zWAqdEeFzLy6xXDrQmkLmQd
+        n1fjTRkQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j5AE7-0001jI-81; Fri, 21 Feb 2020 15:28:27 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id D4B5D306151;
+        Fri, 21 Feb 2020 16:26:30 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 29990209DB0F7; Fri, 21 Feb 2020 16:28:24 +0100 (CET)
+Date:   Fri, 21 Feb 2020 16:28:24 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     =?utf-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Cc:     Mel Gorman <mgorman@suse.de>, Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Michal Koutn? <mkoutny@suse.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH RESEND v8 1/2] sched/numa: introduce per-cgroup NUMA
+ locality info
+Message-ID: <20200221152824.GH18400@hirez.programming.kicks-ass.net>
+References: <fe56d99d-82e0-498c-ae44-f7cde83b5206@linux.alibaba.com>
+ <cde13472-46c0-7e17-175f-4b2ba4d8148a@linux.alibaba.com>
+ <20200214151048.GL14914@hirez.programming.kicks-ass.net>
+ <20200217115810.GA3420@suse.de>
+ <881deb50-163e-442a-41ec-b375cc445e4d@linux.alibaba.com>
 MIME-Version: 1.0
-References: <1582204512-7582-1-git-send-email-nbelin@baylibre.com>
-In-Reply-To: <1582204512-7582-1-git-send-email-nbelin@baylibre.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 21 Feb 2020 16:28:05 +0100
-Message-ID: <CACRpkdajEO3HvqG+4SNj1UoUpAZJoq9RHT+bqvHDbvP6UUjA+Q@mail.gmail.com>
-Subject: Re: [PATCH RESEND] pinctrl: meson-gxl: fix GPIOX sdio pins
-To:     Nicolas Belin <nbelin@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <881deb50-163e-442a-41ec-b375cc445e4d@linux.alibaba.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 2:15 PM Nicolas Belin <nbelin@baylibre.com> wrote:
+On Mon, Feb 17, 2020 at 09:23:52PM +0800, 王贇 wrote:
+> FYI, by monitoring locality, we found that the kvm vcpu thread is not
+> covered by NUMA Balancing, whatever how many maximum period passed, the
+> counters are not increasing, or very slowly, although inside guest we are
+> copying memory.
+> 
+> Later we found such task rarely exit to user space to trigger task
+> work callbacks, and NUMA Balancing scan depends on that, which help us
+> realize the importance to enable NUMA Balancing inside guest, with the
+> correct NUMA topo, a big performance risk I'll say :-P
 
-> In the gxl driver, the sdio cmd and clk pins are inverted. It has not caused
-> any issue so far because devices using these pins always take both pins
-> so the resulting configuration is OK.
->
-> Fixes: 0f15f500ff2c ("pinctrl: meson: Add GXL pinctrl definitions")
-> Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
-> Signed-off-by: Nicolas Belin <nbelin@baylibre.com>
+That's a bug in KVM, see:
 
-Patch applied!
+  https://lkml.kernel.org/r/20190801143657.785902257@linutronix.de
+  https://lkml.kernel.org/r/20190801143657.887648487@linutronix.de
 
-Yours,
-Linus Walleij
+ISTR there being newer versions of that patch-set, but I can't seem to
+find them in a hurry.
