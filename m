@@ -2,147 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FBC8166F36
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 06:35:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E783166F52
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 06:45:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726331AbgBUFfU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 00:35:20 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57074 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726100AbgBUFfT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 00:35:19 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01L5P5Rx067632
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 00:35:18 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2y8ubxm2mm-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 00:35:18 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ajd@linux.ibm.com>;
-        Fri, 21 Feb 2020 05:35:16 -0000
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 21 Feb 2020 05:35:08 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01L5Z73035062270
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 21 Feb 2020 05:35:07 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8858A5204E;
-        Fri, 21 Feb 2020 05:35:07 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 3A62452057;
-        Fri, 21 Feb 2020 05:35:07 +0000 (GMT)
-Received: from [10.61.2.125] (haven.au.ibm.com [9.192.254.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 7FFC2A0209;
-        Fri, 21 Feb 2020 16:35:02 +1100 (AEDT)
-Subject: Re: [PATCH v3 27/27] MAINTAINERS: Add myself & nvdimm/ocxl to ocxl
-To:     "Alastair D'Silva" <alastair@au1.ibm.com>, alastair@d-silva.org
-Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Anton Blanchard <anton@ozlabs.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kurz <groug@kaod.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org
-References: <20200221032720.33893-1-alastair@au1.ibm.com>
- <20200221032720.33893-28-alastair@au1.ibm.com>
-From:   Andrew Donnellan <ajd@linux.ibm.com>
-Date:   Fri, 21 Feb 2020 16:35:01 +1100
+        id S1726836AbgBUFp4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 00:45:56 -0500
+Received: from smtp.infotech.no ([82.134.31.41]:48826 "EHLO smtp.infotech.no"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725800AbgBUFpz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 00:45:55 -0500
+X-Greylist: delayed 462 seconds by postgrey-1.27 at vger.kernel.org; Fri, 21 Feb 2020 00:45:55 EST
+Received: from localhost (localhost [127.0.0.1])
+        by smtp.infotech.no (Postfix) with ESMTP id 52A5A204190;
+        Fri, 21 Feb 2020 06:38:12 +0100 (CET)
+X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
+Received: from smtp.infotech.no ([127.0.0.1])
+        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id SqWLuvmLguZy; Fri, 21 Feb 2020 06:38:04 +0100 (CET)
+Received: from [192.168.48.23] (host-23-251-188-50.dyn.295.ca [23.251.188.50])
+        by smtp.infotech.no (Postfix) with ESMTPA id 4DB692040E4;
+        Fri, 21 Feb 2020 06:38:02 +0100 (CET)
+Reply-To: dgilbert@interlog.com
+To:     SCSI development list <linux-scsi@vger.kernel.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        David Sommerseth <davids@redhat.com>,
+        Hannes Reinecke <hare@suse.de>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+From:   Douglas Gilbert <dgilbert@interlog.com>
+Subject: [ANNOUNCE] lsscsi version 0.31 released
+Message-ID: <435f80a2-ab55-9df2-c59c-c1ec113461ff@interlog.com>
+Date:   Fri, 21 Feb 2020 00:37:57 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200221032720.33893-28-alastair@au1.ibm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Language: en-CA
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20022105-4275-0000-0000-000003A40507
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20022105-4276-0000-0000-000038B8133F
-Message-Id: <1df3e93b-74da-850b-ba21-881b2e34a2da@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-20_19:2020-02-19,2020-02-20 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- lowpriorityscore=0 spamscore=0 suspectscore=0 mlxlogscore=835
- clxscore=1015 malwarescore=0 adultscore=0 impostorscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002210035
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/2/20 2:27 pm, Alastair D'Silva wrote:
-> From: Alastair D'Silva <alastair@d-silva.org>
-> 
-> The OpenCAPI Persistent Memory driver will be maintained as part ofi
-> the ppc tree.
-> 
-> I'm also adding myself as an author of the driver & contributor to
-> the generic ocxl driver.
-> 
-> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+lsscsi is a command line utility that probes sysfs in Linux 2.6, 3,
+4 and 5 series kernels in order to list information about SCSI
+devices and SCSI hosts. The default format is one device (e.g. disk)
+per line. Other storage devices that use the SCSI subsystem such as
+SATA disks and USB keys are also listed. The previous version (0.30)
+added listings of NVMe namespaces (devices)
 
-You need to update the title of this patch :)
+This version is mainly for bug fixes. Version 0.31 is available at:
+     http://sg.danny.cz/scsi/lsscsi.html
+More information can be found on that page including examples
+plus a Download and Build information section.
 
-> ---
->   MAINTAINERS | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index f8670989ec91..3fb9a9f576a7 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -12064,13 +12064,16 @@ F:	tools/objtool/
->   OCXL (Open Coherent Accelerator Processor Interface OpenCAPI) DRIVER
->   M:	Frederic Barrat <fbarrat@linux.ibm.com>
->   M:	Andrew Donnellan <ajd@linux.ibm.com>
-> +M:	Alastair D'Silva <alastair@d-silva.org>
->   L:	linuxppc-dev@lists.ozlabs.org
->   S:	Supported
->   F:	arch/powerpc/platforms/powernv/ocxl.c
-> +F:	arch/powerpc/platforms/powernv/pmem/*
->   F:	arch/powerpc/include/asm/pnv-ocxl.h
->   F:	drivers/misc/ocxl/
->   F:	include/misc/ocxl*
->   F:	include/uapi/misc/ocxl.h
-> +F:	include/uapi/nvdimm/ocxl-pmem.h
->   F:	Documentation/userspace-api/accelerators/ocxl.rst
+ChangeLog:
+Version 0.31 2020/02/20 [svn: r160]
+   - fix issue where host managed ZBC devices don't
+     output their size. [Fix also for RBC and CD/DVD.]
+   - exclude NVMe listings when --classic given
+   - fix hex counting issues
+   - supply "-" for generic NVMe device one line output
+     so 'lsscsi -gb' output is consistent
+   - cleanup gcc-8 warnings, no cleanup needed for gcc-9
 
-Should this be part of the ocxl entry or a separate entry? I guess I 
-don't care too much either way.
+Version 0.30 2018/06/12 [svn: r154]
+   - add support for NVMe devices and controllers
+   ....
 
--- 
-Andrew Donnellan              OzLabs, ADL Canberra
-ajd@linux.ibm.com             IBM Australia Limited
+
+Doug Gilbert
 
