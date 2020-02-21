@@ -2,113 +2,388 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36FCC16801E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 15:24:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E499D168023
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 15:25:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728922AbgBUOYB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 09:24:01 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:56141 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728392AbgBUOYB (ORCPT
+        id S1728824AbgBUOYz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 09:24:55 -0500
+Received: from esa5.hc3370-68.iphmx.com ([216.71.155.168]:38890 "EHLO
+        esa5.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728312AbgBUOYy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 09:24:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582295040;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=c8mWqxlRjMqzWv3h3wuv1G8u9oII3zP+jyI9+XnLcJA=;
-        b=HR2+2PNt7ChpqxRVT0QC6isaDDjOcejMK69/XW7Y7Soo4lkjqgNIX+DehWrJ6orfJm3rUt
-        WZnCE8Yb358XKbwBCSo/z9818lph/gNENv5tRs/2OirLRZMvwGkPdYXl1ryf2i60FwvHMB
-        LK99pTUUsX+aAHFwTPSdEuX0VtULCrg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-295-K3W4URiHOyKQlUHyroESXw-1; Fri, 21 Feb 2020 09:23:58 -0500
-X-MC-Unique: K3W4URiHOyKQlUHyroESXw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 086AF8010EB;
-        Fri, 21 Feb 2020 14:23:57 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-122-163.rdu2.redhat.com [10.10.122.163])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6B95A60BE0;
-        Fri, 21 Feb 2020 14:23:55 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAG48ez2B2J_3-+EjR20ukRu3noPnAccZsOTaea0jtKK4=+bkhQ@mail.gmail.com>
-References: <CAG48ez2B2J_3-+EjR20ukRu3noPnAccZsOTaea0jtKK4=+bkhQ@mail.gmail.com> <158204549488.3299825.3783690177353088425.stgit@warthog.procyon.org.uk> <158204561120.3299825.5242636508455859327.stgit@warthog.procyon.org.uk>
-To:     Jann Horn <jannh@google.com>
-Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        raven@themaw.net, Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 15/19] vfs: Add superblock notifications [ver #16]
+        Fri, 21 Feb 2020 09:24:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=citrix.com; s=securemail; t=1582295093;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5V6wc+9mpRmkGpMuMTV0BZEnZVMwxN1rjEGXohUW4aU=;
+  b=XO2u267DmYFgZMPHzg6annFBNSgma9U1RX4+QJ+EHi2RwzPoKSEHhu0f
+   7UrYpjuUS6FZ5UY5tbTIsHOVFUGcufvpKZBttlkmF1UykzrkrXsNFRoat
+   qCY23xX/IIlbQXZRE1zUXKGlTPmbiGPCm2z8lIHmsuKAJglLanw5s7YxZ
+   Y=;
+Authentication-Results: esa5.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=roger.pau@citrix.com; spf=Pass smtp.mailfrom=roger.pau@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
+Received-SPF: None (esa5.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  roger.pau@citrix.com) identity=pra; client-ip=162.221.158.21;
+  receiver=esa5.hc3370-68.iphmx.com;
+  envelope-from="roger.pau@citrix.com";
+  x-sender="roger.pau@citrix.com";
+  x-conformance=sidf_compatible
+Received-SPF: Pass (esa5.hc3370-68.iphmx.com: domain of
+  roger.pau@citrix.com designates 162.221.158.21 as permitted
+  sender) identity=mailfrom; client-ip=162.221.158.21;
+  receiver=esa5.hc3370-68.iphmx.com;
+  envelope-from="roger.pau@citrix.com";
+  x-sender="roger.pau@citrix.com";
+  x-conformance=sidf_compatible; x-record-type="v=spf1";
+  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
+  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
+  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
+  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83
+  ip4:168.245.78.127 ~all"
+Received-SPF: None (esa5.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@mail.citrix.com) identity=helo;
+  client-ip=162.221.158.21; receiver=esa5.hc3370-68.iphmx.com;
+  envelope-from="roger.pau@citrix.com";
+  x-sender="postmaster@mail.citrix.com";
+  x-conformance=sidf_compatible
+IronPort-SDR: y8RSahKbtmuA+ejK3hSCJcCTV55gfvG8rZeZN6TdFVwt04Ma9pf7AlAws+kUAiG0upZFUcg7+/
+ gUsgrWpPuCp8BFMcGaNAS3INbpdzW9ielDy0b4uKNh1xpMtYbK/obK8NeMDyTsxfyjeUQC8+XT
+ lz/bv7VFxepsDa2CRJe1izjDrWTbhwYZe+tBx6cw/uQ2td/MVMa/AieyA8rvUf9RHc9pgZvvfP
+ emjIhmU535ZkYSo71v6vIWzFBt/g/gVcWFp1rquVByq8voL1a6WEZ2O2Oc18SI2agQw+MzKaCC
+ 0Y4=
+X-SBRS: 2.7
+X-MesageID: 13176928
+X-Ironport-Server: esa5.hc3370-68.iphmx.com
+X-Remote-IP: 162.221.158.21
+X-Policy: $RELAYED
+X-IronPort-AV: E=Sophos;i="5.70,468,1574139600"; 
+   d="scan'208";a="13176928"
+Date:   Fri, 21 Feb 2020 15:24:45 +0100
+From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To:     Anchal Agarwal <anchalag@amazon.com>
+CC:     <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+        <hpa@zytor.com>, <x86@kernel.org>, <boris.ostrovsky@oracle.com>,
+        <jgross@suse.com>, <linux-pm@vger.kernel.org>,
+        <linux-mm@kvack.org>, <kamatam@amazon.com>,
+        <sstabellini@kernel.org>, <konrad.wilk@oracle.com>,
+        <axboe@kernel.dk>, <davem@davemloft.net>, <rjw@rjwysocki.net>,
+        <len.brown@intel.com>, <pavel@ucw.cz>, <peterz@infradead.org>,
+        <eduval@amazon.com>, <sblbir@amazon.com>,
+        <xen-devel@lists.xenproject.org>, <vkuznets@redhat.com>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dwmw@amazon.co.uk>, <fllinden@amaozn.com>,
+        <benh@kernel.crashing.org>
+Subject: Re: [RFC PATCH v3 06/12] xen-blkfront: add callbacks for PM suspend
+ and hibernation
+Message-ID: <20200221142445.GZ4679@Air-de-Roger>
+References: <cover.1581721799.git.anchalag@amazon.com>
+ <890c404c585d7790514527f0c021056a7be6e748.1581721799.git.anchalag@amazon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1897787.1582295034.1@warthog.procyon.org.uk>
-Date:   Fri, 21 Feb 2020 14:23:54 +0000
-Message-ID: <1897788.1582295034@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <890c404c585d7790514527f0c021056a7be6e748.1581721799.git.anchalag@amazon.com>
+X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
+ AMSPEX02CL01.citrite.net (10.69.22.125)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jann Horn <jannh@google.com> wrote:
-
-> > +               if (!s->s_watchers) {
+On Fri, Feb 14, 2020 at 11:25:34PM +0000, Anchal Agarwal wrote:
+> From: Munehisa Kamata <kamatam@amazon.com
 > 
-> READ_ONCE() ?
-
-I'm not sure it matters.  It can only be set once, and the next time we read
-it we're inside the lock.  And at this point, I don't actually dereference it,
-and if it's non-NULL, it's not going to change.
-
-> > +                       ret = add_watch_to_object(watch, s->s_watchers);
-> > +                       if (ret == 0) {
-> > +                               spin_lock(&sb_lock);
-> > +                               s->s_count++;
-> > +                               spin_unlock(&sb_lock);
+> Add freeze, thaw and restore callbacks for PM suspend and hibernation
+> support. All frontend drivers that needs to use PM_HIBERNATION/PM_SUSPEND
+> events, need to implement these xenbus_driver callbacks.
+> The freeze handler stops a block-layer queue and disconnect the
+> frontend from the backend while freeing ring_info and associated resources.
+> The restore handler re-allocates ring_info and re-connect to the
+> backend, so the rest of the kernel can continue to use the block device
+> transparently. Also, the handlers are used for both PM suspend and
+> hibernation so that we can keep the existing suspend/resume callbacks for
+> Xen suspend without modification. Before disconnecting from backend,
+> we need to prevent any new IO from being queued and wait for existing
+> IO to complete. Freeze/unfreeze of the queues will guarantee that there
+> are no requests in use on the shared ring.
 > 
-> Where is the corresponding decrement of s->s_count? I'm guessing that
-> it should be in the ->release_watch() handler, except that there isn't
-> one...
-
-Um.  Good question.  I think this should do the job:
-
-	static void sb_release_watch(struct watch *watch)
-	{
-		put_super(watch->private);
-	}
-
-And this then has to be set later:
-
-	init_watch_list(wlist, sb_release_watch);
-
-> > +       } else {
-> > +               ret = -EBADSLT;
-> > +               if (READ_ONCE(s->s_watchers)) {
+> Note:For older backends,if a backend doesn't have commit'12ea729645ace'
+> xen/blkback: unmap all persistent grants when frontend gets disconnected,
+> the frontend may see massive amount of grant table warning when freeing
+> resources.
+> [   36.852659] deferring g.e. 0xf9 (pfn 0xffffffffffffffff)
+> [   36.855089] xen:grant_table: WARNING:e.g. 0x112 still in use!
 > 
-> (Nit: I don't get why you do a lockless check here before taking the
-> lock - it'd be more straightforward to take the lock first, and it's
-> not like you want to optimize for the case where someone calls
-> sys_watch_sb() with invalid arguments...)
-
-Fair enough.  I'll remove it.
-
-> > +#ifdef CONFIG_SB_NOTIFICATIONS
-> > +       if (unlikely(s->s_watchers)) {
+> In this case, persistent grants would need to be disabled.
 > 
-> READ_ONCE() ?
+> [Anchal Changelog: Removed timeout/request during blkfront freeze.
+> Fixed major part of the code to work with blk-mq]
+> Signed-off-by: Anchal Agarwal <anchalag@amazon.com>
+> Signed-off-by: Munehisa Kamata <kamatam@amazon.com>
+> ---
+>  drivers/block/xen-blkfront.c | 119 ++++++++++++++++++++++++++++++++---
+>  1 file changed, 112 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
+> index 478120233750..d715ed3cb69a 100644
+> --- a/drivers/block/xen-blkfront.c
+> +++ b/drivers/block/xen-blkfront.c
+> @@ -47,6 +47,8 @@
+>  #include <linux/bitmap.h>
+>  #include <linux/list.h>
+>  #include <linux/workqueue.h>
+> +#include <linux/completion.h>
+> +#include <linux/delay.h>
+>  
+>  #include <xen/xen.h>
+>  #include <xen/xenbus.h>
+> @@ -79,6 +81,8 @@ enum blkif_state {
+>  	BLKIF_STATE_DISCONNECTED,
+>  	BLKIF_STATE_CONNECTED,
+>  	BLKIF_STATE_SUSPENDED,
+> +	BLKIF_STATE_FREEZING,
+> +	BLKIF_STATE_FROZEN
+>  };
+>  
+>  struct grant {
+> @@ -220,6 +224,7 @@ struct blkfront_info
+>  	struct list_head requests;
+>  	struct bio_list bio_list;
+>  	struct list_head info_list;
+> +	struct completion wait_backend_disconnected;
+>  };
+>  
+>  static unsigned int nr_minors;
+> @@ -261,6 +266,7 @@ static DEFINE_SPINLOCK(minor_lock);
+>  static int blkfront_setup_indirect(struct blkfront_ring_info *rinfo);
+>  static void blkfront_gather_backend_features(struct blkfront_info *info);
+>  static int negotiate_mq(struct blkfront_info *info);
+> +static void __blkif_free(struct blkfront_info *info);
 
-Shouldn't matter.  It's only read once and then a decision is made on it
-immediately thereafter.  And if it's non-NULL, the value cannot change
-thereafter.
+I'm not particularly found of adding underscore prefixes to functions,
+I would rather use a more descriptive name if possible.
+blkif_free_{queues/rings} maybe?
 
-David
+>  
+>  static int get_id_from_freelist(struct blkfront_ring_info *rinfo)
+>  {
+> @@ -995,6 +1001,7 @@ static int xlvbd_init_blk_queue(struct gendisk *gd, u16 sector_size,
+>  	info->sector_size = sector_size;
+>  	info->physical_sector_size = physical_sector_size;
+>  	blkif_set_queue_limits(info);
+> +	init_completion(&info->wait_backend_disconnected);
+>  
+>  	return 0;
+>  }
+> @@ -1218,6 +1225,8 @@ static void xlvbd_release_gendisk(struct blkfront_info *info)
+>  /* Already hold rinfo->ring_lock. */
+>  static inline void kick_pending_request_queues_locked(struct blkfront_ring_info *rinfo)
+>  {
+> +	if (unlikely(rinfo->dev_info->connected == BLKIF_STATE_FREEZING))
+> +		return;
 
+Do you really need this check here?
+
+The queue will be frozen and quiesced in blkfront_freeze when the state
+is set to BLKIF_STATE_FREEZING, and then the call to
+blk_mq_start_stopped_hw_queues is just a noop as long as the queue is
+quiesced (see blk_mq_run_hw_queue).
+
+>  	if (!RING_FULL(&rinfo->ring))
+>  		blk_mq_start_stopped_hw_queues(rinfo->dev_info->rq, true);
+>  }
+> @@ -1341,8 +1350,6 @@ static void blkif_free_ring(struct blkfront_ring_info *rinfo)
+>  
+>  static void blkif_free(struct blkfront_info *info, int suspend)
+>  {
+> -	unsigned int i;
+> -
+>  	/* Prevent new requests being issued until we fix things up. */
+>  	info->connected = suspend ?
+>  		BLKIF_STATE_SUSPENDED : BLKIF_STATE_DISCONNECTED;
+> @@ -1350,6 +1357,13 @@ static void blkif_free(struct blkfront_info *info, int suspend)
+>  	if (info->rq)
+>  		blk_mq_stop_hw_queues(info->rq);
+>  
+> +	__blkif_free(info);
+> +}
+> +
+> +static void __blkif_free(struct blkfront_info *info)
+> +{
+> +	unsigned int i;
+> +
+>  	for (i = 0; i < info->nr_rings; i++)
+>  		blkif_free_ring(&info->rinfo[i]);
+>  
+> @@ -1553,8 +1567,10 @@ static irqreturn_t blkif_interrupt(int irq, void *dev_id)
+>  	struct blkfront_ring_info *rinfo = (struct blkfront_ring_info *)dev_id;
+>  	struct blkfront_info *info = rinfo->dev_info;
+>  
+> -	if (unlikely(info->connected != BLKIF_STATE_CONNECTED))
+> -		return IRQ_HANDLED;
+> +	if (unlikely(info->connected != BLKIF_STATE_CONNECTED)) {
+> +		if (info->connected != BLKIF_STATE_FREEZING)
+
+Please fold this into the previous if condition:
+
+if (unlikely(info->connected != BLKIF_STATE_CONNECTED &&
+             info->connected != BLKIF_STATE_FREEZING))
+	return IRQ_HANDLED;
+
+> +	}
+>  
+>  	spin_lock_irqsave(&rinfo->ring_lock, flags);
+>   again:
+> @@ -2020,6 +2036,7 @@ static int blkif_recover(struct blkfront_info *info)
+>  	struct bio *bio;
+>  	unsigned int segs;
+>  
+> +	bool frozen = info->connected == BLKIF_STATE_FROZEN;
+
+Please place this together with the rest of the local variable
+declarations.
+
+>  	blkfront_gather_backend_features(info);
+>  	/* Reset limits changed by blk_mq_update_nr_hw_queues(). */
+>  	blkif_set_queue_limits(info);
+> @@ -2046,6 +2063,9 @@ static int blkif_recover(struct blkfront_info *info)
+>  		kick_pending_request_queues(rinfo);
+>  	}
+>  
+> +	if (frozen)
+> +		return 0;
+
+I have to admit my memory is fuzzy here, but don't you need to
+re-queue requests in case the backend has different limits of indirect
+descriptors per request for example?
+
+Or do we expect that the frontend is always going to be resumed on the
+same backend, and thus features won't change?
+
+> +
+>  	list_for_each_entry_safe(req, n, &info->requests, queuelist) {
+>  		/* Requeue pending requests (flush or discard) */
+>  		list_del_init(&req->queuelist);
+> @@ -2359,6 +2379,7 @@ static void blkfront_connect(struct blkfront_info *info)
+>  
+>  		return;
+>  	case BLKIF_STATE_SUSPENDED:
+> +	case BLKIF_STATE_FROZEN:
+>  		/*
+>  		 * If we are recovering from suspension, we need to wait
+>  		 * for the backend to announce it's features before
+> @@ -2476,12 +2497,37 @@ static void blkback_changed(struct xenbus_device *dev,
+>  		break;
+>  
+>  	case XenbusStateClosed:
+> -		if (dev->state == XenbusStateClosed)
+> +		if (dev->state == XenbusStateClosed) {
+> +			if (info->connected == BLKIF_STATE_FREEZING) {
+> +				__blkif_free(info);
+> +				info->connected = BLKIF_STATE_FROZEN;
+> +				complete(&info->wait_backend_disconnected);
+> +				break;
+> +			}
+> +
+>  			break;
+> +		}
+> +
+> +		/*
+> +		 * We may somehow receive backend's Closed again while thawing
+> +		 * or restoring and it causes thawing or restoring to fail.
+> +		 * Ignore such unexpected state anyway.
+> +		 */
+> +		if (info->connected == BLKIF_STATE_FROZEN &&
+> +				dev->state == XenbusStateInitialised) {
+
+I'm not sure you need the extra dev->state == XenbusStateInitialised.
+If the frotnend is in state BLKIF_STATE_FROZEN you can likely ignore
+the notification of the backend switched to closed state, regardless
+of the frontend state?
+
+> +			dev_dbg(&dev->dev,
+> +					"ignore the backend's Closed state: %s",
+> +					dev->nodename);
+> +			break;
+> +		}
+>  		/* fall through */
+>  	case XenbusStateClosing:
+> -		if (info)
+> -			blkfront_closing(info);
+> +		if (info) {
+> +			if (info->connected == BLKIF_STATE_FREEZING)
+> +				xenbus_frontend_closed(dev);
+> +			else
+> +				blkfront_closing(info);
+> +		}
+>  		break;
+>  	}
+>  }
+> @@ -2625,6 +2671,62 @@ static void blkif_release(struct gendisk *disk, fmode_t mode)
+>  	mutex_unlock(&blkfront_mutex);
+>  }
+>  
+> +static int blkfront_freeze(struct xenbus_device *dev)
+> +{
+> +	unsigned int i;
+> +	struct blkfront_info *info = dev_get_drvdata(&dev->dev);
+> +	struct blkfront_ring_info *rinfo;
+> +	/* This would be reasonable timeout as used in xenbus_dev_shutdown() */
+> +	unsigned int timeout = 5 * HZ;
+> +	int err = 0;
+> +
+> +	info->connected = BLKIF_STATE_FREEZING;
+> +
+> +	blk_mq_freeze_queue(info->rq);
+> +	blk_mq_quiesce_queue(info->rq);
+
+Don't you need to also drain the queue and make sure it's empty?
+
+> +
+> +	for (i = 0; i < info->nr_rings; i++) {
+> +		rinfo = &info->rinfo[i];
+> +
+> +		gnttab_cancel_free_callback(&rinfo->callback);
+> +		flush_work(&rinfo->work);
+> +	}
+> +
+> +	/* Kick the backend to disconnect */
+> +	xenbus_switch_state(dev, XenbusStateClosing);
+> +
+> +	/*
+> +	 * We don't want to move forward before the frontend is diconnected
+> +	 * from the backend cleanly.
+> +	 */
+> +	timeout = wait_for_completion_timeout(&info->wait_backend_disconnected,
+> +					      timeout);
+> +	if (!timeout) {
+> +		err = -EBUSY;
+> +		xenbus_dev_error(dev, err, "Freezing timed out;"
+> +				 "the device may become inconsistent state");
+> +	}
+> +
+> +	return err;
+> +}
+> +
+> +static int blkfront_restore(struct xenbus_device *dev)
+> +{
+> +	struct blkfront_info *info = dev_get_drvdata(&dev->dev);
+> +	int err = 0;
+> +
+> +	err = talk_to_blkback(dev, info);
+> +	blk_mq_unquiesce_queue(info->rq);
+> +	blk_mq_unfreeze_queue(info->rq);
+> +
+> +	if (err)
+> +		goto out;
+
+There's no need for an out label here, just return err, or even
+simpler:
+
+if (!err)
+	blk_mq_update_nr_hw_queues(&info->tag_set, info->nr_rings);
+
+return err;
+
+Thanks, Roger.
