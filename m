@@ -2,118 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 448C31684EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 18:28:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90E421684E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 18:26:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728385AbgBUR2N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 12:28:13 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:59807 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725957AbgBUR2N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 12:28:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582306092;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=M7Mf64hpMBasfDiIU6phFS9p20JIfzD0ekOkjx1qN/c=;
-        b=L+otHOqgc7Fo7+oTEo/f8mcvILbnkDrkwossMNLwkgN6wh7fcaVOND3JrF96qEt4uc/MDL
-        gpMMoRbIkRmSnh6j95o/mnTEIgs3BjXPngHbP5LV8AkHcqeuqAVAjYKsInAowMRP2+uvni
-        jfKygZZZeXi8n97k3SdRiIypQmlXkz8=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-24-3XlxiK6wPUy4h6Lf0RK8UQ-1; Fri, 21 Feb 2020 12:28:10 -0500
-X-MC-Unique: 3XlxiK6wPUy4h6Lf0RK8UQ-1
-Received: by mail-wm1-f70.google.com with SMTP id p2so850718wma.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 09:28:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=M7Mf64hpMBasfDiIU6phFS9p20JIfzD0ekOkjx1qN/c=;
-        b=ZI6gwy38Cx7H394dxyq6o91hCeizZbiXXEm+6AA6RbWUfEidTEV/6bJl9hBieiEJVP
-         z7j4eSSYruaED7NPyzOnHACM6Ys+RxiKqg+VWYrSn2a1IvV+6PYwYe788fcfBDAhtTyC
-         v8CMxlA42XU4lqvZHlx3KE00Hfp5UyYXN03i+LMxcTnpBlnpLll6FQ6yHFGoWYJSk0ab
-         tJr3Irpf9OmPaACRdfUBl7PWqc+WMIPM0uDNsUxAQZN2S7gohmZa8QX0zMyGCNkHZtQZ
-         i0oz9a+ixrUkm5JTrxOr5xlhjLP/GqCcWyeGDrI7T1Nc4euwuC1t/+KFrUq4rNLzLNLp
-         41Jg==
-X-Gm-Message-State: APjAAAVLrMDMgfznO8WlSoJgjHIRCLTbc/5CByRW40K/jeopI8ZvmZdC
-        h+wft+coKoWZC9FIe008abFITwuCYZmMFPAUYPtl4u766XzZQL0dClqimTNiLsaCdL0IZhvsi6H
-        OIh2oCdiESKpYktasBD/CHOFo
-X-Received: by 2002:a05:6000:1289:: with SMTP id f9mr47748930wrx.381.1582306089245;
-        Fri, 21 Feb 2020 09:28:09 -0800 (PST)
-X-Google-Smtp-Source: APXvYqz2hwqrWQ+Xv4wufLWVs/IPNmmZxQDAPd6VAd7ervfhXQWz6yUUfUoV8VyMG6OR3LrEZSYNsg==
-X-Received: by 2002:a05:6000:1289:: with SMTP id f9mr47748917wrx.381.1582306089024;
-        Fri, 21 Feb 2020 09:28:09 -0800 (PST)
-Received: from [192.168.178.40] ([151.20.135.128])
-        by smtp.gmail.com with ESMTPSA id g19sm4602188wmh.36.2020.02.21.09.28.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2020 09:28:08 -0800 (PST)
-Subject: Re: [PATCH 04/10] KVM: VMX: Fold vpid_sync_vcpu_{single,global}()
- into vpid_sync_context()
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200220204356.8837-1-sean.j.christopherson@intel.com>
- <20200220204356.8837-5-sean.j.christopherson@intel.com>
- <87zhdcrrdk.fsf@vitty.brq.redhat.com>
- <20200221153244.GD12665@linux.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <c117f11a-bd57-2929-d5bc-47f4eaffe279@redhat.com>
-Date:   Fri, 21 Feb 2020 18:28:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
-MIME-Version: 1.0
-In-Reply-To: <20200221153244.GD12665@linux.intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1728550AbgBUR0W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 12:26:22 -0500
+Received: from mga17.intel.com ([192.55.52.151]:8972 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728103AbgBUR0W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 12:26:22 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2020 09:26:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,469,1574150400"; 
+   d="scan'208";a="270058658"
+Received: from unknown (HELO linuxpc.iind.intel.com) ([10.223.107.129])
+  by fmsmga002.fm.intel.com with ESMTP; 21 Feb 2020 09:26:20 -0800
+From:   Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>
+To:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rui.zhang@intel.com, srinivas.pandruvada@linux.intel.com
+Cc:     sumeet.r.pawnikar@intel.com
+Subject: [PATCH] thermal: int340x: processor_thermal: Add Tiger Lake support
+Date:   Fri, 21 Feb 2020 23:02:39 +0530
+Message-Id: <1582306359-17846-1-git-send-email-sumeet.r.pawnikar@intel.com>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/02/20 16:32, Sean Christopherson wrote:
->> In the original code it's only vpid_sync_vcpu_single() which has 'vpid
->> == 0' check, vpid_sync_vcpu_global() doesn't have it. So in the
->> hypothetical situation when cpu_has_vmx_invvpid_single() is false AND
->> we've e.g. exhausted our VPID space and allocate_vpid() returned zero,
->> the new code just won't do anything while the old one would've done
->> __invvpid(VMX_VPID_EXTENT_ALL_CONTEXT, 0, 0), right?
-> Ah rats.  I lost track of that functional change between making the commit
-> and writing the changelog.
-> 
-> I'll spin a v2 to rewrite the changelog, and maybe add the "vpid == 0"
-> check in a separate patch.
-> 
+Added new PCI id for Tiger Lake processor thermal device
+along with MMIO RAPL support.
 
-What about this:
+Signed-off-by: Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>
+---
+ .../int340x_thermal/processor_thermal_device.c     |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/x86/kvm/vmx/ops.h b/arch/x86/kvm/vmx/ops.h
-index eb6adc77a55d..2ab88984b22f 100644
---- a/arch/x86/kvm/vmx/ops.h
-+++ b/arch/x86/kvm/vmx/ops.h
-@@ -255,13 +255,10 @@ static inline void __invept(unsigned long ext, u64 eptp, gpa_t gpa)
+diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
+index b1fd345..11cab67 100644
+--- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
++++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
+@@ -45,6 +45,9 @@
+ /* JasperLake thermal reporting device */
+ #define PCI_DEVICE_ID_PROC_JSL_THERMAL	0x4503
  
- static inline void vpid_sync_context(int vpid)
- {
--	if (vpid == 0)
--		return;
--
--	if (cpu_has_vmx_invvpid_single())
--		__invvpid(VMX_VPID_EXTENT_SINGLE_CONTEXT, vpid, 0);
--	else
-+	if (!cpu_has_vmx_invvpid_single())
- 		__invvpid(VMX_VPID_EXTENT_ALL_CONTEXT, 0, 0);
-+	else if (vpid != 0)
-+		__invvpid(VMX_VPID_EXTENT_SINGLE_CONTEXT, vpid, 0);
- }
++/* TigerLake thermal reporting device */
++#define PCI_DEVICE_ID_PROC_TGL_THERMAL	0x9A03
++
+ #define DRV_NAME "proc_thermal"
  
- static inline void vpid_sync_vcpu_addr(int vpid, gva_t addr)
+ struct power_config {
+@@ -728,6 +731,8 @@ static int proc_thermal_resume(struct device *dev)
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_PROC_ICL_THERMAL),
+ 		.driver_data = (kernel_ulong_t)&rapl_mmio_hsw, },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_PROC_JSL_THERMAL)},
++	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_PROC_TGL_THERMAL)},
++		.driver_data = (kernel_ulong_t)&rapl_mmio_hsw, },
+ 	{ 0, },
+ };
+ 
+-- 
+1.7.9.5
 
