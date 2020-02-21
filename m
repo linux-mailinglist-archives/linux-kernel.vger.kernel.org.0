@@ -2,79 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55DD7166B88
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 01:22:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 513A8166B92
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 01:26:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729446AbgBUAWe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 19:22:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41434 "EHLO mail.kernel.org"
+        id S1729456AbgBUA0R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 19:26:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729413AbgBUAWe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 19:22:34 -0500
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        id S1729413AbgBUA0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 19:26:17 -0500
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B53E207FD;
-        Fri, 21 Feb 2020 00:22:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 63626206DB;
+        Fri, 21 Feb 2020 00:26:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582244554;
-        bh=3zzigx0wsPNwcqVybdA7xBVz/mTSBm8jN2Gi+VxS/zw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=iKNJCd68G3Msz/J6bM51p7M3hGTkXIfusPfoNOqGx3KT4S94bSxoLTscqWYY4FpPX
-         gUZmZz2O97guy5NOwJeqF16N+Kr0AnuMB9u/ddr3GqnqCLuKb0wzQBG+nyrLZVI7qZ
-         slOsl6RA33UAap6MArD8/i2Tz2dSil4w1ozr/iPw=
-Date:   Fri, 21 Feb 2020 09:22:30 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Tom Zanussi <zanussi@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH] tracing: Have synthetic event test use
- raw_smp_processor_id()
-Message-Id: <20200221092230.6ec9160d0ae135b14f29fd8c@kernel.org>
-In-Reply-To: <1582236880.12738.5.camel@kernel.org>
-References: <20200220162950.35162579@gandalf.local.home>
-        <1582236880.12738.5.camel@kernel.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        s=default; t=1582244776;
+        bh=CLYAumZ3ce877LEKU8KuyZT0P7iDSwE2QUSVz1GNFmM=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=KeM+GMOrFH0n1PDQaAaKJVEmwkr8BcF9DGfFI+EPltjB9CHzUP7QgrtOqXtKJOOMm
+         MSVIbFT50LSv7gohTO2bWZZlV0Oan38a4+Hv3VIUjygW/j32V8ZiWPs/AJ7VkLmaI/
+         1RTH8iHrL38P00ggHONkXWowfvqAD4up3nzE9/ak=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 385CC35208E2; Thu, 20 Feb 2020 16:26:16 -0800 (PST)
+Date:   Thu, 20 Feb 2020 16:26:16 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 12/14] torture: Replace cpu_up/down with
+ device_online/offline
+Message-ID: <20200221002616.GB2935@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20191125112754.25223-1-qais.yousef@arm.com>
+ <20191125112754.25223-13-qais.yousef@arm.com>
+ <20191127214725.GG2889@paulmck-ThinkPad-P72>
+ <20191128165611.7lmjaszjl4gbo7u2@e107158-lin.cambridge.arm.com>
+ <20191128170025.ii3vqbj4jpcyghut@e107158-lin.cambridge.arm.com>
+ <20191128210246.GJ2889@paulmck-ThinkPad-P72>
+ <20191129091344.hf5demtjytv5dw5q@e107158-lin.cambridge.arm.com>
+ <20191129203856.GN2889@paulmck-ThinkPad-P72>
+ <20200220153159.mzpagvbwptxlehvd@e107158-lin.cambridge.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200220153159.mzpagvbwptxlehvd@e107158-lin.cambridge.arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Feb 2020 16:14:40 -0600
-Tom Zanussi <zanussi@kernel.org> wrote:
-
-> Hi Steve,
-> 
-> On Thu, 2020-02-20 at 16:29 -0500, Steven Rostedt wrote:
-> > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+On Thu, Feb 20, 2020 at 03:31:59PM +0000, Qais Yousef wrote:
+> On 11/29/19 12:38, Paul E. McKenney wrote:
+> > On Fri, Nov 29, 2019 at 09:13:45AM +0000, Qais Yousef wrote:
+> > > On 11/28/19 13:02, Paul E. McKenney wrote:
+> > > > On Thu, Nov 28, 2019 at 05:00:26PM +0000, Qais Yousef wrote:
+> > > > > On 11/28/19 16:56, Qais Yousef wrote:
+> > > > > > On 11/27/19 13:47, Paul E. McKenney wrote:
+> > > > > > > On Mon, Nov 25, 2019 at 11:27:52AM +0000, Qais Yousef wrote:
+> > > > > > > > The core device API performs extra housekeeping bits that are missing
+> > > > > > > > from directly calling cpu_up/down.
+> > > > > > > > 
+> > > > > > > > See commit a6717c01ddc2 ("powerpc/rtas: use device model APIs and
+> > > > > > > > serialization during LPM") for an example description of what might go
+> > > > > > > > wrong.
+> > > > > > > > 
+> > > > > > > > This also prepares to make cpu_up/down a private interface for anything
+> > > > > > > > but the cpu subsystem.
+> > > > > > > > 
+> > > > > > > > Signed-off-by: Qais Yousef <qais.yousef@arm.com>
+> > > > > > > > CC: Davidlohr Bueso <dave@stgolabs.net>
+> > > > > > > > CC: "Paul E. McKenney" <paulmck@kernel.org>
+> > > > > > > > CC: Josh Triplett <josh@joshtriplett.org>
+> > > > > > > > CC: linux-kernel@vger.kernel.org
+> > > > > > > 
+> > > > > > > Looks fine from an rcutorture viewpoint, but why not provide an API
+> > > > > > > that pulled lock_device_hotplug() and unlock_device_hotplug() into the
+> > > > > > > online/offline calls?
+> > > > > > 
+> > > > > > I *think* the right way to do what you say is by doing lock_device_hotplug()
+> > > > > > inside device_{online, offline}() - which affects all drivers not just the CPU.
+> > > > 
+> > > > Or there could be a CPU-specific wrapper function that did the needed
+> > > > locking.  (Whether this is worth it or not of course depends on the
+> > > > number of invocations.)
+> > > 
+> > > Okay I see what you mean now. driver/base/memory.c have {add,remove}_memory()
+> > > that does what you say. I think we can replicate this in driver/base/cpu.c too.
+> > > 
+> > > I can certainly do that, better as an improvement on top as I need to audit the
+> > > code to make sure the critical sections weren't relying on this lock to protect
+> > > something else beside the online/offline operation.
 > > 
-> > The test code that tests synthetic event creation pushes in as one of
-> > its
-> > test fields the current CPU using "smp_processor_id()". As this is
-> > just
-> > something to see if the value is correctly passed in, and the actual
-> > CPU
-> > used does not matter, use raw_smp_processor_id(), otherwise with
-> > debug
-> > preemption enabled, a warning happens as the smp_processor_id() is
-> > called
-> > without preemption enabled.
-> > 
-> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > Works for me!
 > 
-> Makes sense - I guess it's simpler than Masami's and fine for this
-> purpose.
+> I'm taking that as reviewed-by, which I'll add to v3. Please shout if you still
+> need to have a look further.
 > 
-> Reviewed-by: Tom Zanussi <zanussi@kernel.org>
+> Once this is taken I'll add the suggested API!
 
-Hmm, can we reserve ring buffer on CPU1 and commit it on CPU2?
-Shouldn't we disable preemption between them?
+OK, I will bite...
 
-Thank you,
+Why not right now?
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+							Thanx, Paul
