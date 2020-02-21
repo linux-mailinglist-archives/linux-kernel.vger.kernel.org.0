@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 145D21673A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:17:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30BEC167213
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:00:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733172AbgBUIOW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:14:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50782 "EHLO mail.kernel.org"
+        id S1730998AbgBUIAD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:00:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732548AbgBUIOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:14:20 -0500
+        id S1730986AbgBUIAB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:00:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEFED20578;
-        Fri, 21 Feb 2020 08:14:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFD52206ED;
+        Fri, 21 Feb 2020 07:59:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272860;
-        bh=WgQL7+GbhR6kljUvHY2XQ7tGW6A7NHb7v1vA6LNW3yg=;
+        s=default; t=1582272000;
+        bh=AQyN84R5YGMyWpb9NCPcHNHXXRYjZNMbDO4ty2yJ4Is=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GiffggMGLm3ummY0EfeIlEnA4UrsFbW35VtrEbD+Ou4ztn/nyCRtrYMsgy0i4uGk7
-         XfBdBVq7TSMD5PqcY9mp0NDpjq448rTf7bETO+23+nr3/PBsVvqi+au0cpWfnLYgHO
-         37MdCvb15r84TYYsRBQ/IvYDM80y4T9ISeQlNJRY=
+        b=l9I34nVYXg8C3UXcnEKnOrn+AwqmWAxlLEA2e1NzGkz+pJkemOF6yiK8KZnbkH3v0
+         rzqFkvXquj5rBDZTUTxR5drSdNHHlXiOA7TL6blq+JYJB2lPI/Qm3wTK1SNB8xN9nl
+         mcFj/9s+CzrKrOZB7RTw7ljbqvNT/egs0JCw5NXU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Paulo Alcantara (SUSE)" <pc@cjr.nz>,
-        Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>,
-        Steve French <stfrench@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 303/344] cifs: Fix mount options set in automount
-Date:   Fri, 21 Feb 2020 08:41:42 +0100
-Message-Id: <20200221072417.427398473@linuxfoundation.org>
+        stable@vger.kernel.org, Dakshaja Uppalapati <dakshaja@chelsio.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Keith Busch <kbusch@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, Christoph Hellwig <hch@lst.de>
+Subject: [PATCH 5.5 378/399] nvmet: fix dsm failure when payload does not match sgl descriptor
+Date:   Fri, 21 Feb 2020 08:41:43 +0100
+Message-Id: <20200221072437.020455451@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
+References: <20200221072402.315346745@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,213 +46,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paulo Alcantara (SUSE) <pc@cjr.nz>
+From: Sagi Grimberg <sagi@grimberg.me>
 
-[ Upstream commit 5739375ee4230980166807d347cc21c305532bbc ]
+[ Upstream commit b716e6889c95f64ba32af492461f6cc9341f3f05 ]
 
-Starting from 4a367dc04435, we must set the mount options based on the
-DFS full path rather than the resolved target, that is, cifs_mount()
-will be responsible for resolving the DFS link (cached) as well as
-performing failover to any other targets in the referral.
+The host is allowed to pass the controller an sgl describing a buffer
+that is larger than the dsm payload itself, allow it when executing
+dsm.
 
-Signed-off-by: Paulo Alcantara (SUSE) <pc@cjr.nz>
-Reported-by: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
-Fixes: 4a367dc04435 ("cifs: Add support for failover in cifs_mount()")
-Link: https://lore.kernel.org/linux-cifs/39643d7d-2abb-14d3-ced6-c394fab9a777@prodrive-technologies.com
-Tested-by: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Reported-by: Dakshaja Uppalapati <dakshaja@chelsio.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>,
+Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
+Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Keith Busch <kbusch@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/cifs_dfs_ref.c | 97 +++++++++++++++++++-----------------------
- 1 file changed, 43 insertions(+), 54 deletions(-)
+ drivers/nvme/target/core.c        | 11 +++++++++++
+ drivers/nvme/target/io-cmd-bdev.c |  2 +-
+ drivers/nvme/target/io-cmd-file.c |  2 +-
+ drivers/nvme/target/nvmet.h       |  1 +
+ 4 files changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/fs/cifs/cifs_dfs_ref.c b/fs/cifs/cifs_dfs_ref.c
-index 41957b82d7960..606f26d862dc1 100644
---- a/fs/cifs/cifs_dfs_ref.c
-+++ b/fs/cifs/cifs_dfs_ref.c
-@@ -120,17 +120,17 @@ cifs_build_devname(char *nodename, const char *prepath)
- 
- 
- /**
-- * cifs_compose_mount_options	-	creates mount options for refferral
-+ * cifs_compose_mount_options	-	creates mount options for referral
-  * @sb_mountdata:	parent/root DFS mount options (template)
-  * @fullpath:		full path in UNC format
-- * @ref:		server's referral
-+ * @ref:		optional server's referral
-  * @devname:		optional pointer for saving device name
-  *
-  * creates mount options for submount based on template options sb_mountdata
-  * and replacing unc,ip,prefixpath options with ones we've got form ref_unc.
-  *
-  * Returns: pointer to new mount options or ERR_PTR.
-- * Caller is responcible for freeing retunrned value if it is not error.
-+ * Caller is responsible for freeing returned value if it is not error.
-  */
- char *cifs_compose_mount_options(const char *sb_mountdata,
- 				   const char *fullpath,
-@@ -150,18 +150,27 @@ char *cifs_compose_mount_options(const char *sb_mountdata,
- 	if (sb_mountdata == NULL)
- 		return ERR_PTR(-EINVAL);
- 
--	if (strlen(fullpath) - ref->path_consumed) {
--		prepath = fullpath + ref->path_consumed;
--		/* skip initial delimiter */
--		if (*prepath == '/' || *prepath == '\\')
--			prepath++;
--	}
-+	if (ref) {
-+		if (strlen(fullpath) - ref->path_consumed) {
-+			prepath = fullpath + ref->path_consumed;
-+			/* skip initial delimiter */
-+			if (*prepath == '/' || *prepath == '\\')
-+				prepath++;
-+		}
- 
--	name = cifs_build_devname(ref->node_name, prepath);
--	if (IS_ERR(name)) {
--		rc = PTR_ERR(name);
--		name = NULL;
--		goto compose_mount_options_err;
-+		name = cifs_build_devname(ref->node_name, prepath);
-+		if (IS_ERR(name)) {
-+			rc = PTR_ERR(name);
-+			name = NULL;
-+			goto compose_mount_options_err;
-+		}
-+	} else {
-+		name = cifs_build_devname((char *)fullpath, NULL);
-+		if (IS_ERR(name)) {
-+			rc = PTR_ERR(name);
-+			name = NULL;
-+			goto compose_mount_options_err;
-+		}
- 	}
- 
- 	rc = dns_resolve_server_name_to_ip(name, &srvIP);
-@@ -225,6 +234,8 @@ char *cifs_compose_mount_options(const char *sb_mountdata,
- 
- 	if (devname)
- 		*devname = name;
-+	else
-+		kfree(name);
- 
- 	/*cifs_dbg(FYI, "%s: parent mountdata: %s\n", __func__, sb_mountdata);*/
- 	/*cifs_dbg(FYI, "%s: submount mountdata: %s\n", __func__, mountdata );*/
-@@ -241,23 +252,23 @@ compose_mount_options_err:
+diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
+index 35810a0a8d212..461987f669c50 100644
+--- a/drivers/nvme/target/core.c
++++ b/drivers/nvme/target/core.c
+@@ -939,6 +939,17 @@ bool nvmet_check_data_len(struct nvmet_req *req, size_t data_len)
  }
+ EXPORT_SYMBOL_GPL(nvmet_check_data_len);
  
- /**
-- * cifs_dfs_do_refmount - mounts specified path using provided refferal
-+ * cifs_dfs_do_mount - mounts specified path using DFS full path
-+ *
-+ * Always pass down @fullpath to smb3_do_mount() so we can use the root server
-+ * to perform failover in case we failed to connect to the first target in the
-+ * referral.
-+ *
-  * @cifs_sb:		parent/root superblock
-  * @fullpath:		full path in UNC format
-- * @ref:		server's referral
-  */
--static struct vfsmount *cifs_dfs_do_refmount(struct dentry *mntpt,
--		struct cifs_sb_info *cifs_sb,
--		const char *fullpath, const struct dfs_info3_param *ref)
-+static struct vfsmount *cifs_dfs_do_mount(struct dentry *mntpt,
-+					  struct cifs_sb_info *cifs_sb,
-+					  const char *fullpath)
++bool nvmet_check_data_len_lte(struct nvmet_req *req, size_t data_len)
++{
++	if (unlikely(data_len > req->transfer_len)) {
++		req->error_loc = offsetof(struct nvme_common_command, dptr);
++		nvmet_req_complete(req, NVME_SC_SGL_INVALID_DATA | NVME_SC_DNR);
++		return false;
++	}
++
++	return true;
++}
++
+ int nvmet_req_alloc_sgl(struct nvmet_req *req)
  {
- 	struct vfsmount *mnt;
- 	char *mountdata;
- 	char *devname;
+ 	struct pci_dev *p2p_dev = NULL;
+diff --git a/drivers/nvme/target/io-cmd-bdev.c b/drivers/nvme/target/io-cmd-bdev.c
+index b6fca0e421ef1..ea0e596be15dc 100644
+--- a/drivers/nvme/target/io-cmd-bdev.c
++++ b/drivers/nvme/target/io-cmd-bdev.c
+@@ -280,7 +280,7 @@ static void nvmet_bdev_execute_discard(struct nvmet_req *req)
  
--	/*
--	 * Always pass down the DFS full path to smb3_do_mount() so we
--	 * can use it later for failover.
--	 */
- 	devname = kstrndup(fullpath, strlen(fullpath), GFP_KERNEL);
- 	if (!devname)
- 		return ERR_PTR(-ENOMEM);
-@@ -266,7 +277,7 @@ static struct vfsmount *cifs_dfs_do_refmount(struct dentry *mntpt,
- 
- 	/* strip first '\' from fullpath */
- 	mountdata = cifs_compose_mount_options(cifs_sb->mountdata,
--					       fullpath + 1, ref, NULL);
-+					       fullpath + 1, NULL, NULL);
- 	if (IS_ERR(mountdata)) {
- 		kfree(devname);
- 		return (struct vfsmount *)mountdata;
-@@ -278,28 +289,16 @@ static struct vfsmount *cifs_dfs_do_refmount(struct dentry *mntpt,
- 	return mnt;
- }
- 
--static void dump_referral(const struct dfs_info3_param *ref)
--{
--	cifs_dbg(FYI, "DFS: ref path: %s\n", ref->path_name);
--	cifs_dbg(FYI, "DFS: node path: %s\n", ref->node_name);
--	cifs_dbg(FYI, "DFS: fl: %d, srv_type: %d\n",
--		 ref->flags, ref->server_type);
--	cifs_dbg(FYI, "DFS: ref_flags: %d, path_consumed: %d\n",
--		 ref->ref_flag, ref->path_consumed);
--}
--
- /*
-  * Create a vfsmount that we can automount
-  */
- static struct vfsmount *cifs_dfs_do_automount(struct dentry *mntpt)
+ static void nvmet_bdev_execute_dsm(struct nvmet_req *req)
  {
--	struct dfs_info3_param referral = {0};
- 	struct cifs_sb_info *cifs_sb;
- 	struct cifs_ses *ses;
- 	struct cifs_tcon *tcon;
- 	char *full_path, *root_path;
- 	unsigned int xid;
--	int len;
- 	int rc;
- 	struct vfsmount *mnt;
+-	if (!nvmet_check_data_len(req, nvmet_dsm_len(req)))
++	if (!nvmet_check_data_len_lte(req, nvmet_dsm_len(req)))
+ 		return;
  
-@@ -357,7 +356,7 @@ static struct vfsmount *cifs_dfs_do_automount(struct dentry *mntpt)
- 	if (!rc) {
- 		rc = dfs_cache_find(xid, ses, cifs_sb->local_nls,
- 				    cifs_remap(cifs_sb), full_path + 1,
--				    &referral, NULL);
-+				    NULL, NULL);
- 	}
+ 	switch (le32_to_cpu(req->cmd->dsm.attributes)) {
+diff --git a/drivers/nvme/target/io-cmd-file.c b/drivers/nvme/target/io-cmd-file.c
+index caebfce066056..cd5670b83118f 100644
+--- a/drivers/nvme/target/io-cmd-file.c
++++ b/drivers/nvme/target/io-cmd-file.c
+@@ -336,7 +336,7 @@ static void nvmet_file_dsm_work(struct work_struct *w)
  
- 	free_xid(xid);
-@@ -366,26 +365,16 @@ static struct vfsmount *cifs_dfs_do_automount(struct dentry *mntpt)
- 		mnt = ERR_PTR(rc);
- 		goto free_root_path;
- 	}
--
--	dump_referral(&referral);
--
--	len = strlen(referral.node_name);
--	if (len < 2) {
--		cifs_dbg(VFS, "%s: Net Address path too short: %s\n",
--			 __func__, referral.node_name);
--		mnt = ERR_PTR(-EINVAL);
--		goto free_dfs_ref;
--	}
- 	/*
--	 * cifs_mount() will retry every available node server in case
--	 * of failures.
-+	 * OK - we were able to get and cache a referral for @full_path.
-+	 *
-+	 * Now, pass it down to cifs_mount() and it will retry every available
-+	 * node server in case of failures - no need to do it here.
- 	 */
--	mnt = cifs_dfs_do_refmount(mntpt, cifs_sb, full_path, &referral);
--	cifs_dbg(FYI, "%s: cifs_dfs_do_refmount:%s , mnt:%p\n", __func__,
--		 referral.node_name, mnt);
-+	mnt = cifs_dfs_do_mount(mntpt, cifs_sb, full_path);
-+	cifs_dbg(FYI, "%s: cifs_dfs_do_mount:%s , mnt:%p\n", __func__,
-+		 full_path + 1, mnt);
- 
--free_dfs_ref:
--	free_dfs_info_param(&referral);
- free_root_path:
- 	kfree(root_path);
- free_full_path:
+ static void nvmet_file_execute_dsm(struct nvmet_req *req)
+ {
+-	if (!nvmet_check_data_len(req, nvmet_dsm_len(req)))
++	if (!nvmet_check_data_len_lte(req, nvmet_dsm_len(req)))
+ 		return;
+ 	INIT_WORK(&req->f.work, nvmet_file_dsm_work);
+ 	schedule_work(&req->f.work);
+diff --git a/drivers/nvme/target/nvmet.h b/drivers/nvme/target/nvmet.h
+index 46df45e837c95..eda28b22a2c87 100644
+--- a/drivers/nvme/target/nvmet.h
++++ b/drivers/nvme/target/nvmet.h
+@@ -374,6 +374,7 @@ bool nvmet_req_init(struct nvmet_req *req, struct nvmet_cq *cq,
+ 		struct nvmet_sq *sq, const struct nvmet_fabrics_ops *ops);
+ void nvmet_req_uninit(struct nvmet_req *req);
+ bool nvmet_check_data_len(struct nvmet_req *req, size_t data_len);
++bool nvmet_check_data_len_lte(struct nvmet_req *req, size_t data_len);
+ void nvmet_req_complete(struct nvmet_req *req, u16 status);
+ int nvmet_req_alloc_sgl(struct nvmet_req *req);
+ void nvmet_req_free_sgl(struct nvmet_req *req);
 -- 
 2.20.1
 
