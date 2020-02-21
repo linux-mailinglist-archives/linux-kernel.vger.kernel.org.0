@@ -2,147 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C750E167561
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:31:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9711167581
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:31:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388602AbgBUIZv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:25:51 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40868 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388830AbgBUIZt (ORCPT
+        id S2388804AbgBUI2V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:28:21 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:34285 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388432AbgBUI2S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:25:49 -0500
-Received: by mail-wr1-f66.google.com with SMTP id t3so940121wru.7
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 00:25:47 -0800 (PST)
+        Fri, 21 Feb 2020 03:28:18 -0500
+Received: by mail-ua1-f68.google.com with SMTP id 1so374570uao.1;
+        Fri, 21 Feb 2020 00:28:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:autocrypt:organization:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TXvq+EuElcafseyPa7Xn9BIOxypv/HGxoGPqvN1nfZA=;
-        b=0vR7OpRWb43/h5/gI3hfsOzbo8AUJRSYzECLw98e+lDQF7+xvGznDeOc2G3WpPAQkx
-         msqWiqCw5bHAate/jXi91zGVeflcUoUvr2K9M+T85G0KWwTRcpU/eNYQ/hSaG/FK++El
-         ZOP4g5IrXVoiB1UhWTS5xu/wvkdVO+l0TQUB3w5JPSSv/1rF1QYbx0aaqPvh+zd1UxIZ
-         hkvUB1iXdtefkWb8Le7+KtoKPUVs3Zu3NLrrrNO2chU9C/6+8FVt4Q2PZbBrm2xkcR/t
-         fsAq+07bhFEbHFLwd8V0UDLiibpnqxdi5ANL8EkyNxwlXaPJMsRpqeXnrXH8Non/ak5F
-         Tfvg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kpZqkjJzq7maU5wRD/SzaYqTKkPoc6vJaalUsryW+8I=;
+        b=RWVYOsnefJ75cq6QAR9uBhrSY2wGv/IxxoO4tFK384goCjUffuRjVzizn58R9YvaW7
+         X31yruFrt6MSw7clKgt3OEMjdI5ShxL4K0YTbH5Ev0+WURhB/7lqvARcxgGxLiwCez/A
+         a034X2eq+189Iip0KOY7CbfjU8yQ10KCa/N8afzgU4F0HtIdeQh+Cz7oOWbg9n2YkfvT
+         IrZoeMlGPqk3uSUW1wdg/roL8/1BRqxR+UpPfbWMu7IVJAgT3ghT1TRxn59CgD53xBIQ
+         EJZ4o2oteTWqO68IOwZc6gMq2B2gIadDTXUEXU+G/TnheC3jxEeatzIbdYddSgIJQxoB
+         3DMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=TXvq+EuElcafseyPa7Xn9BIOxypv/HGxoGPqvN1nfZA=;
-        b=VFuwfk0vJXPq5/J2AQRI6hx/fHuuAsLGwLtvfqpXCo3n3el5wJ/0oMwQ31LiwhaEDa
-         wJiWrtictJfg6/J32oY5ilr0Dh0BtCta7W4/HIQa0UhRaBiE/jB1pHNw2hSdIT8x5JwA
-         QLap20qTVSfOSV7N0eTzXwm4oHysA+NlfcJlmMGQX6sAUbUPF6uJuwTlz1CMH/6J69Oi
-         nnuUaIokvhnr80f/dTppUVqrqovU0xHKq8JQEGJCOaZHDK3F1yWUvODhqIXGNF115Art
-         Jnx1xl2SuZT2Mtsz5Yyuf+c0RthYsw5/jAd6t7Lic4+MpmW6aDXaveq/6ho90RhmkXWc
-         MRaA==
-X-Gm-Message-State: APjAAAU8h7952EPywV5mr3pKY8zShe3L71tfvYtbNKJOsQtYu6XXYbUP
-        mKXwr9iVFb44sGeGL37nNMrJuQ==
-X-Google-Smtp-Source: APXvYqwWNTLg5jYxYhcBRVc0+kdrHr6iJ8Fa1H5VxAKW7NSwQQEg6HjJBqUFt17tnQm+zo2bJx1O5A==
-X-Received: by 2002:a5d:5347:: with SMTP id t7mr47046590wrv.401.1582273546143;
-        Fri, 21 Feb 2020 00:25:46 -0800 (PST)
-Received: from ?IPv6:2a01:e35:2ec0:82b0:4ca8:b25b:98e4:858? ([2a01:e35:2ec0:82b0:4ca8:b25b:98e4:858])
-        by smtp.gmail.com with ESMTPSA id f65sm2752337wmf.29.2020.02.21.00.25.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2020 00:25:45 -0800 (PST)
-Subject: Re: [PATCH] dt-bindings: power: Fix dt_binding_check error
-To:     Jianxin Pan <jianxin.pan@amlogic.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-pm@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Victor Wan <victor.wan@amlogic.com>
-References: <1582269169-17557-1-git-send-email-jianxin.pan@amlogic.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- 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
- BSwxi7g3Mu7u5kUByanqHyA=
-Organization: Baylibre
-Message-ID: <b3da2987-a226-b230-4379-1ff4d57ef7fe@baylibre.com>
-Date:   Fri, 21 Feb 2020 09:25:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kpZqkjJzq7maU5wRD/SzaYqTKkPoc6vJaalUsryW+8I=;
+        b=bPg3/OZhaV4spZRR30uBM8XqX6LsesHQvcPsoW8E5zLmx3EqBXFxl/6s88IyDgStNr
+         2DU2OAIokVFD96PuQVynO5Xm1U6Qrog8ctqQ9XvVnoJNmD+sZV9LPe7HyM7g1kGafZNX
+         3V3b9+N79Pb9ZmJGRPFrh8f5ENfjEg0RCchEctK4HFPIcmq3TltUhq9oj6Ux3DxOcYKe
+         nY79sbEwWQIsZ00El8FgTOle34hOf+cBom+/P+rjsgE4a9YlycHoaPDDtoWFlHY0J92x
+         WwN9mC154kdagl/SH2MggqqhomxT8KXAVr3YFFCsEqNVLE+oik2IKA6QFdYyMYUZ3ax0
+         04qw==
+X-Gm-Message-State: APjAAAXtsTkcg1RW8W5Jn1BnAUD4MyhRUICTa7CjdYMBFpACL3gIYD0l
+        cBwVnMtCaWzd4W0BheUhhoq+wjRa2FbrG318voppVCbB
+X-Google-Smtp-Source: APXvYqxmLNkqW8mBwz0Iwb261cEY9aqyNNS8+/2m7CnN8EFRUA4/6WuhWMOyAGVA8CFlptNzcQE7DsGzQPkFHHDQR/k=
+X-Received: by 2002:ab0:3395:: with SMTP id y21mr9862260uap.124.1582273697648;
+ Fri, 21 Feb 2020 00:28:17 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1582269169-17557-1-git-send-email-jianxin.pan@amlogic.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200106104339.215511-1-christian.gmeiner@gmail.com>
+In-Reply-To: <20200106104339.215511-1-christian.gmeiner@gmail.com>
+From:   Christian Gmeiner <christian.gmeiner@gmail.com>
+Date:   Fri, 21 Feb 2020 09:28:06 +0100
+Message-ID: <CAH9NwWcW-kq_GzhsfZboLKfGZj6=40Qi6Pf8-WoO4J6VOqzgoQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/etnaviv: rework perfmon query infrastructure
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>, stable@vger.kernel.org,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        The etnaviv authors <etnaviv@lists.freedesktop.org>,
+        DRI mailing list <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/02/2020 08:12, Jianxin Pan wrote:
-> Missing ';' in the end of secure-monitor example node.
-> 
-> Fixes: f50b4108ede1 ("dt-bindings: power: add Amlogic secure power domains bindings")
-> Reported-by: Rob Herring<robh+dt@kernel.org>
-> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+Am Mo., 6. Jan. 2020 um 11:43 Uhr schrieb Christian Gmeiner
+<christian.gmeiner@gmail.com>:
+>
+> Report the correct perfmon domains and signals depending
+> on the supported feature flags.
+>
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Fixes: 9e2c2e273012 ("drm/etnaviv: add infrastructure to query perf counter")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Christian Gmeiner <christian.gmeiner@gmail.com>
 > ---
->  Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml b/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
-> index af32209..bc4e037 100644
-> --- a/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
-> +++ b/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
-> @@ -36,5 +36,5 @@ examples:
->              compatible = "amlogic,meson-a1-pwrc";
->              #power-domain-cells = <1>;
->          };
-> -    }
-> +    };
->  
-> 
+>  drivers/gpu/drm/etnaviv/etnaviv_perfmon.c | 57 ++++++++++++++++++++---
+>  1 file changed, 50 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_perfmon.c b/drivers/gpu/drm/etnaviv/etnaviv_perfmon.c
+> index 8adbf2861bff..7ae8f347ca06 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_perfmon.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_perfmon.c
+> @@ -32,6 +32,7 @@ struct etnaviv_pm_domain {
+>  };
+>
+>  struct etnaviv_pm_domain_meta {
+> +       unsigned int feature;
+>         const struct etnaviv_pm_domain *domains;
+>         u32 nr_domains;
+>  };
+> @@ -410,36 +411,78 @@ static const struct etnaviv_pm_domain doms_vg[] = {
+>
+>  static const struct etnaviv_pm_domain_meta doms_meta[] = {
+>         {
+> +               .feature = chipFeatures_PIPE_3D,
+>                 .nr_domains = ARRAY_SIZE(doms_3d),
+>                 .domains = &doms_3d[0]
+>         },
+>         {
+> +               .feature = chipFeatures_PIPE_2D,
+>                 .nr_domains = ARRAY_SIZE(doms_2d),
+>                 .domains = &doms_2d[0]
+>         },
+>         {
+> +               .feature = chipFeatures_PIPE_VG,
+>                 .nr_domains = ARRAY_SIZE(doms_vg),
+>                 .domains = &doms_vg[0]
+>         }
+>  };
+>
+> +static unsigned int num_pm_domains(const struct etnaviv_gpu *gpu)
+> +{
+> +       unsigned int num = 0, i;
+> +
+> +       for (i = 0; i < ARRAY_SIZE(doms_meta); i++) {
+> +               const struct etnaviv_pm_domain_meta *meta = &doms_meta[i];
+> +
+> +               if (gpu->identity.features & meta->feature)
+> +                       num += meta->nr_domains;
+> +       }
+> +
+> +       return num;
+> +}
+> +
+> +static const struct etnaviv_pm_domain *pm_domain(const struct etnaviv_gpu *gpu,
+> +       unsigned int index)
+> +{
+> +       const struct etnaviv_pm_domain *domain = NULL;
+> +       unsigned int offset = 0, i;
+> +
+> +       for (i = 0; i < ARRAY_SIZE(doms_meta); i++) {
+> +               const struct etnaviv_pm_domain_meta *meta = &doms_meta[i];
+> +
+> +               if (!(gpu->identity.features & meta->feature))
+> +                       continue;
+> +
+> +               if (meta->nr_domains < (index - offset)) {
+> +                       offset += meta->nr_domains;
+> +                       continue;
+> +               }
+> +
+> +               domain = meta->domains + (index - offset);
+> +       }
+> +
+> +       BUG_ON(!domain);
+> +
+> +       return domain;
+> +}
+> +
+>  int etnaviv_pm_query_dom(struct etnaviv_gpu *gpu,
+>         struct drm_etnaviv_pm_domain *domain)
+>  {
+> -       const struct etnaviv_pm_domain_meta *meta = &doms_meta[domain->pipe];
+> +       const unsigned int nr_domains = num_pm_domains(gpu);
+>         const struct etnaviv_pm_domain *dom;
+>
+> -       if (domain->iter >= meta->nr_domains)
+> +       if (domain->iter >= nr_domains)
+>                 return -EINVAL;
+>
+> -       dom = meta->domains + domain->iter;
+> +       dom = pm_domain(gpu, domain->iter);
+>
+>         domain->id = domain->iter;
+>         domain->nr_signals = dom->nr_signals;
+>         strncpy(domain->name, dom->name, sizeof(domain->name));
+>
+>         domain->iter++;
+> -       if (domain->iter == meta->nr_domains)
+> +       if (domain->iter == nr_domains)
+>                 domain->iter = 0xff;
+>
+>         return 0;
+> @@ -448,14 +491,14 @@ int etnaviv_pm_query_dom(struct etnaviv_gpu *gpu,
+>  int etnaviv_pm_query_sig(struct etnaviv_gpu *gpu,
+>         struct drm_etnaviv_pm_signal *signal)
+>  {
+> -       const struct etnaviv_pm_domain_meta *meta = &doms_meta[signal->pipe];
+> +       const unsigned int nr_domains = num_pm_domains(gpu);
+>         const struct etnaviv_pm_domain *dom;
+>         const struct etnaviv_pm_signal *sig;
+>
+> -       if (signal->domain >= meta->nr_domains)
+> +       if (signal->domain >= nr_domains)
+>                 return -EINVAL;
+>
+> -       dom = meta->domains + signal->domain;
+> +       dom = pm_domain(gpu, signal->domain);
+>
+>         if (signal->iter >= dom->nr_signals)
+>                 return -EINVAL;
+> --
+> 2.24.1
+>
 
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+ping
+
+-- 
+greets
+--
+Christian Gmeiner, MSc
+
+https://christian-gmeiner.info/privacypolicy
