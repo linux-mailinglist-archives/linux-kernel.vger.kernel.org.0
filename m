@@ -2,65 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3A55168190
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:28:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B3E9168195
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:29:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729153AbgBUP2q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 10:28:46 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:43828 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727851AbgBUP2p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 10:28:45 -0500
-Received: by isilmar-4.linta.de (Postfix, from userid 1000)
-        id 19552200B44; Fri, 21 Feb 2020 15:28:44 +0000 (UTC)
-Date:   Fri, 21 Feb 2020 16:28:44 +0100
-From:   Dominik Brodowski <linux@dominikbrodowski.net>
-To:     Brian Gerst <brgerst@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH 0/5] Enable pt_regs based syscalls for x86-32 native
-Message-ID: <20200221152843.rxz4ptfi5lh3udud@isilmar-4.linta.de>
-References: <20200221050934.719152-1-brgerst@gmail.com>
- <20200221060756.GA3368@light.dominikbrodowski.net>
- <CAMzpN2iQuaNdTdL6G1rGbUFo+r16iRFo1zbiD_VMrrjtGf0acw@mail.gmail.com>
+        id S1729224AbgBUP3A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 10:29:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54058 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727053AbgBUP3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 10:29:00 -0500
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 928972073A;
+        Fri, 21 Feb 2020 15:28:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582298938;
+        bh=sovFRNSWr9oiXk1/2FyZ6Ia9xsa9PpAS7U371jfo0L4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=TBPNo5akJ/ZZeY2M0r1tgB0W3Lk5xckDMpCnjXBYoQinyW97IllFPWYOQb1hLPc1P
+         Z8vSy1+dMN9Ye0CfXAT+QrdjioQAYbm8CBiUDYZZ1sqxqwZMwfa3B7qjSrcGQ0VK7Q
+         uFXb4rJMVsR1FJzIglLUgeT8v5kaUcuSgj0Onv0M=
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1j5AEa-0074Aq-Sa; Fri, 21 Feb 2020 15:28:57 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMzpN2iQuaNdTdL6G1rGbUFo+r16iRFo1zbiD_VMrrjtGf0acw@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 21 Feb 2020 15:28:56 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, linux@armlinux.org.uk, luto@kernel.org,
+        tglx@linutronix.de, m.szyprowski@samsung.com, mark.rutland@arm.com
+Subject: Re: [PATCH] clocksource: Fix arm_arch_timer clockmode when vDSO
+ disabled
+In-Reply-To: <c438aa7e-2c96-8c11-bb87-204929a01a20@arm.com>
+References: <20200221130355.21373-1-vincenzo.frascino@arm.com>
+ <a81251e813d54caddd56b9aac4b55e85@kernel.org>
+ <c438aa7e-2c96-8c11-bb87-204929a01a20@arm.com>
+Message-ID: <6df28d31cf6d4dd6109415fbd73a9c48@kernel.org>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/1.3.10
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: vincenzo.frascino@arm.com, linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, catalin.marinas@arm.com, will.deacon@arm.com, linux@armlinux.org.uk, luto@kernel.org, tglx@linutronix.de, m.szyprowski@samsung.com, mark.rutland@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 08:15:19AM -0500, Brian Gerst wrote:
-> On Fri, Feb 21, 2020 at 2:07 AM Dominik Brodowski
-> <linux@dominikbrodowski.net> wrote:
-> >
-> > Brian,
-> >
-> > On Fri, Feb 21, 2020 at 12:09:29AM -0500, Brian Gerst wrote:
-> > > This patch series cleans up the x86 syscall wrapper code and converts
-> > > the 32-bit native kernel over to pt_regs based syscalls.
-> >
-> > thanks for your patchset. Could you explain a bit more what the rationale
-> > is. Due to asmlinkage, it doesn't leak "random user-provided register
-> > content down the call chain" (as was the case for x86-64). But it may be
-> > cleaner, and you mention in patch 5/5 that the new way is "a bit more
-> > efficient" -- do you have numbers?
+On 2020-02-21 14:48, Vincenzo Frascino wrote:
+> Hi Marc,
 > 
-> The main rationale for this patch set is to make the 32-bit native
-> kernel consistent with the 64-bit kernel.  It's also slightly more
-> efficient because the old code pushed all 6 arguments onto the stack
-> whereas the new code only reads the args the syscall needs, with the
-> pt_regs pointer passed in through a register.  By efficient I mean
-> that it uses fewer instructions and stack accesses, not that it will
-> actually have a significant difference on a benchmark.
+> On 21/02/2020 13:34, Marc Zyngier wrote:
+>> Vincenzo,
+>> 
+>> Please include Mark and myself for anything that touches the arch 
+>> timers
+>> (get_maintainer.pl will tell you who you need to cc).
+>> 
+> 
+> Sorry about that, I posted it too quickly without the proper Cc on the 
+> patch.
+> 
+>> On 2020-02-21 13:03, Vincenzo Frascino wrote:
+> 
+> [...]
+> 
+>> 
+>> This feels pretty clunky.
+>> 
+>> I'd extect VDSO_ARCH_CLOCKMODES (or some similar architecture-specific
+>> symbol) to be used for vdso_default, and that symbol to be defined as
+>> VDSO_CLOCKMODE_NONE when CONFIG_GENERIC_GETTIMEOFDAY isn't selected.
+>> 
+> 
+> My understanding is that currently VDSO_ARCH_CLOCKMODES depending on 
+> the
+> architecture can identify one or more clocks. In the case of arm and 
+> the
+> arm_arch_timer the arch specific symbol is VDSO_CLOCKMODE_ARCHTIMER 
+> (used for
+> vdso_default), which as you are correctly stating has to be defined as
+> VDSO_CLOCKMODE_NONE when CONFIG_GENERIC_GETTIMEOFDAY isn't selected.
 
-OK, could you add such an explanation to the patchset then, please? Thanks,
-Dominik
+This isn't what I'm saying. What I'm suggesting here is that there is
+possibly a missing indirection, which defaults to ARCH_TIMER when the
+VDSO is selected, and NONE when it isn't.
+
+Overloading a known symbol feels like papering over the issue.
+
+Ideally, this default symbol would be provided by asm/clocksource.h, but
+that may not even be the right thing to do.
+
+>> Otherwise, you'll end-up replicating the same pattern in every
+>> clock-source that gets used by the VDSO.
+> 
+> Based on my investigation this fix should be replicated for all the 
+> clocksources
+> used by architectures supported by Unified VDSO and of which VDSOs can 
+> be
+> disabled (otherwise the current solution works). After a quick grep on 
+> the
+> kernel tree:
+> 
+>  $ grep -nr "config VDSO" *
+> 
+> arch/arm/mm/Kconfig:895:config VDSO
+> 
+> Since the only clocksource that falls into these conditions seems to be
+> arm_arch_timer I modified its driver.
+
+Fair enough. But don't override the symbol locally. Create a new one:
+
+diff --git a/drivers/clocksource/arm_arch_timer.c 
+b/drivers/clocksource/arm_arch_timer.c
+index ee2420d56f67..7eb3db75211d 100644
+--- a/drivers/clocksource/arm_arch_timer.c
++++ b/drivers/clocksource/arm_arch_timer.c
+@@ -69,7 +69,12 @@ static enum arch_timer_ppi_nr arch_timer_uses_ppi = 
+ARCH_TIMER_VIRT_PPI;
+  static bool arch_timer_c3stop;
+  static bool arch_timer_mem_use_virtual;
+  static bool arch_counter_suspend_stop;
+-static enum vdso_clock_mode vdso_default = VDSO_CLOCKMODE_ARCHTIMER;
++#ifdef CONFIG_GENERIC_GETTIMEOFDAY
++#define __VDSO_DEFAULT VDSO_CLOCKMODE_ARCHTIMER
++#else
++#define __VDSO_DEFAULT VDSO_CLOCKMODE_NONE
++#endif
++static enum vdso_clock_mode vdso_default = __VDSO_DEFAULT;
+
+  static cpumask_t evtstrm_available = CPU_MASK_NONE;
+  static bool evtstrm_enable = 
+IS_ENABLED(CONFIG_ARM_ARCH_TIMER_EVTSTREAM);
+
+Or even this (no, I'm not suggesting this seriously):
+
+diff --git a/drivers/clocksource/arm_arch_timer.c 
+b/drivers/clocksource/arm_arch_timer.c
+index ee2420d56f67..836b500d1bf1 100644
+--- a/drivers/clocksource/arm_arch_timer.c
++++ b/drivers/clocksource/arm_arch_timer.c
+@@ -69,7 +69,7 @@ static enum arch_timer_ppi_nr arch_timer_uses_ppi = 
+ARCH_TIMER_VIRT_PPI;
+  static bool arch_timer_c3stop;
+  static bool arch_timer_mem_use_virtual;
+  static bool arch_counter_suspend_stop;
+-static enum vdso_clock_mode vdso_default = VDSO_CLOCKMODE_ARCHTIMER;
++static enum vdso_clock_mode vdso_default = VDSO_CLOCKMODE_MAX - 1;
+
+  static cpumask_t evtstrm_available = CPU_MASK_NONE;
+  static bool evtstrm_enable = 
+IS_ENABLED(CONFIG_ARM_ARCH_TIMER_EVTSTREAM);
+
+         M.
+-- 
+Jazz is not dead. It just smells funny...
