@@ -2,92 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 192D6168264
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:55:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 590E7168269
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:56:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729067AbgBUPzJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 10:55:09 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45609 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728235AbgBUPzJ (ORCPT
+        id S1729196AbgBUP4K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 10:56:10 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:38361 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728235AbgBUP4K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 10:55:09 -0500
-Received: by mail-pf1-f195.google.com with SMTP id 2so1406604pfg.12;
-        Fri, 21 Feb 2020 07:55:09 -0800 (PST)
+        Fri, 21 Feb 2020 10:56:10 -0500
+Received: by mail-oi1-f194.google.com with SMTP id r137so2022209oie.5
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 07:56:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ekbFi1JrdrBaSIhbrYWsoTR1L3NmdFrPXDaskjaSV08=;
-        b=VvlOezARFA7ysub9DaAEuYzcPxhJBQLdj3BNgEEN1Yen96uESaJUh75EeYN2Z9DbWR
-         cPJ9yGdG76nJJvR6am38eRDX2GzPxZiMBc4ylAyXFswvRtz/avOlwLFB995/ltdPIBlr
-         LnVFvvHsvGR6N3dAxA8pYN0jUIxinKHEX/6yETYLF83v068SzNDwZ74dzxS8p2G6rgOa
-         gC2zobt0cS6L3kpOmJlWTqW1dtueXMWCIh/0S6wTjHTPBp0PPLRXaYuplXRT7pAjLKpE
-         NVCfnqUgjKJnu1vwglluoxgBHSXWySm4cVVcuBBh2BqSP78n1aSz5oJpr5aMeiJCjar5
-         CXvQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BKBghbRAKP9QhobnCOoAGO7u3NjOVcuitpAQvo+uhIs=;
+        b=AEmaDPGs2OGz7X5CmVOGuMK/00V1LDIKZ5E7Jint2UWSzny4NtyvrYAvc5CsL7jgJL
+         f9Cc/q+fo0+Lbz77gebQUW2htgU8OrFm9JcH5yzuhvbrqff5sPoT1SiModPTXzbMLgLQ
+         KhVrnH0VRmJFbs+BxccjkCC1D3MU+apbgcAlh45e9FCqKOIJs+zNV/gjAV4z2MViAUaC
+         wtTne6QZdfSJACLyAotREx+e8yENsBw6cCI1QSB0o/BUxskuL0RmE9+7cPS0bWpCCFIo
+         HrW+FGyxbyM4rPZuWWwxxyhcs+xcQCTeWTYeZMJ5Wimm6XJX25lYgF6h5t9c4PxD4dtI
+         ylCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ekbFi1JrdrBaSIhbrYWsoTR1L3NmdFrPXDaskjaSV08=;
-        b=cCsU707z45DX57w3deW5PqsSxnfKqbcw0PHAKY4R4dMGgjycv7yawD8lF6omJFJ2WW
-         Zte7oru0mm7v4YC6gQJC8vJekq52U22qAlNjHJ0uIC1c0E/tPcn0h0gWEPDYGmcGeQGj
-         umgYgV+sSgLJtWMWUW/BlCqKjZyrFThAGosqQxZOSsM1r2X+yKybWBTxL4CXjRYc7/qY
-         vPrg2Wk3Flht1D2a/195VYi1Qzlq747e6f5iJGvvaOj3dlrDFJpdgiMLwaE9iIHWdNhR
-         I7hqWXgnAuHGrTXmQHASum2BpnZRL/IZLEBZPOIfDkGQETTiG+V+d44kcwkDb5oh8cr7
-         yFAg==
-X-Gm-Message-State: APjAAAXhLFMfuNDuMoK4PWVz5/TZbKB74xHLOCaKXUsz8gS0R2mcduCv
-        NHSU39TOJ1FjXsnXsLspqZU=
-X-Google-Smtp-Source: APXvYqynFCvB5OxdEfwsSIXpwGNYYVKgvQMIMhTYKtaNJtKpRVhqDuEoq80VRIyNGM+spNGzhyWptQ==
-X-Received: by 2002:aa7:84c4:: with SMTP id x4mr37969255pfn.144.1582300508795;
-        Fri, 21 Feb 2020 07:55:08 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id m128sm3298688pfm.183.2020.02.21.07.55.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Feb 2020 07:55:08 -0800 (PST)
-Date:   Fri, 21 Feb 2020 07:55:07 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 5.4 000/344] 5.4.22-stable review
-Message-ID: <20200221155507.GB11868@roeck-us.net>
-References: <20200221072349.335551332@linuxfoundation.org>
- <4e8cb265-4745-4249-45e4-86bd84f068ed@roeck-us.net>
- <9f719752c33321fca7280a5cc59a886e1dd0dfda.camel@codethink.co.uk>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BKBghbRAKP9QhobnCOoAGO7u3NjOVcuitpAQvo+uhIs=;
+        b=aZ3hkAujh5wSdj+SQofkYf84v1l+TOPA14ZgbiRMzOXs1SoIB5MygvqVN41aw80hbN
+         y1MCCtM4IkFDKUMT408JoMIIoLibDfWzHZTJ7tK0swrHOJUuPBQDMdGABZ0R6/QJ5Gu5
+         ykgPCiU+9hKeFCkNeeB2oUI1pvxjd88fYGdyRx9jKbM80oG/IP/M1Q1aXoGGSssnTzZr
+         oF9+gWDCZEyvxjipcc/HPbDeJTnyUiFk4iV3Pfg59kjNKjBtFGiNcrJJlX1U1VAK0PQC
+         ItcoJGkU6tDFaO5pcX4oYq4QdTBv+6/Iq3YC+s0QOVUIRmyxF5tWi4zBBJVG9OcXDB6E
+         uH1w==
+X-Gm-Message-State: APjAAAUUQGKjEoxlTKVa6EOuMgBBgNZ/Bn7RxLq4w5eP7Kw/IxCydbrs
+        DTromwc/AUFQXCaLFl3GKG+88LkoStN6f6Sl8HRL0w==
+X-Google-Smtp-Source: APXvYqxTqByRXFGjZ428h8ZQHUjIgqjgq9ayO9zBZH9w6my5xzz105rNyl4IkAW/GMziP566XI8PObQu1ptnWIcWiyE=
+X-Received: by 2002:aca:b187:: with SMTP id a129mr2523890oif.175.1582300568793;
+ Fri, 21 Feb 2020 07:56:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9f719752c33321fca7280a5cc59a886e1dd0dfda.camel@codethink.co.uk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200221115542.GL14493@shao2-debian>
+In-Reply-To: <20200221115542.GL14493@shao2-debian>
+From:   Jann Horn <jannh@google.com>
+Date:   Fri, 21 Feb 2020 16:55:42 +0100
+Message-ID: <CAG48ez0N9rTEtrA1TrL07r5Om_yK-10XO2XtsWOn3Nde0PXsZA@mail.gmail.com>
+Subject: Re: [kernel] 247f5d7caa: will-it-scale.per_process_ops 9.6% improvement
+To:     kernel test robot <rong.a.chen@intel.com>
+Cc:     Will Deacon <will@kernel.org>,
+        Maddie Stone <maddiestone@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>, lkp@lists.01.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 03:21:30PM +0000, Ben Hutchings wrote:
-> On Fri, 2020-02-21 at 06:28 -0800, Guenter Roeck wrote:
-> [...]
-> > Building powerpc:defconfig ... failed
-> > Building powerpc:mpc83xx_defconfig ... failed
-> > --------------
-> > Error log:
-> > drivers/rtc/rtc-ds1307.c:1570:21: error: variable 'regmap_config' has initializer but incomplete type
-> > 
-> > as well as various follow-up errors.
-> >
-> > The second problem affects both v5.4.y and v5.5.y.
-> 
-> This seems to be caused by commit 34719de919af (rtc-i2c-spi-avoid-
-> inclusion-of-regmap-support-when-n.patch).  These branches will need
-> commit 578c2b661e2b "rtc: Kconfig: select REGMAP_I2C when necessary" as
-> well.
-> 
+On Fri, Feb 21, 2020 at 12:56 PM kernel test robot
+<rong.a.chen@intel.com> wrote:
+> FYI, we noticed a 9.6% improvement of will-it-scale.per_process_ops due to commit:
+>
+>
+> commit: 247f5d7caa443d0ea5f1992aeda875e679e9bd35 ("kernel-hacking: Make DEBUG_{LIST,PLIST,SG,NOTIFIERS} non-debug options")
+> https://git.kernel.org/cgit/linux/kernel/git/will/linux.git debug-list
 
-Yes, I recall we had the same problem before, and the offending patch
-was removed from the queue. Wonder how it made it back in without the
-context patch (which either you or someone else also reported at the time).
+I'm guessing this might mean that the test bot had the DEBUG_LIST
+stuff enabled in its Kconfig, whereas after the rename, the default is
+used, which is off?
 
-Guenter
+This seems a bit problematic if people had DEBUG_LIST enabled in their
+old kernel config and then try to reuse that config for a new kernel.
+I wonder whether it'd be acceptable to keep the options under their
+old names and let them "select" the new ones, or whether we have to
+choose between "keep the old bad name" and "discard people's old
+config flags".
