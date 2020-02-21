@@ -2,248 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CEC4166CFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 03:39:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E42E166D0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 03:43:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729656AbgBUCjU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 21:39:20 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:46869 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729607AbgBUCjS (ORCPT
+        id S1729548AbgBUCne (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 21:43:34 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:9206 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729259AbgBUCnd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 21:39:18 -0500
-X-UUID: f9765ca49b034fed948f5ed4b3114941-20200221
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=NGRWbUEybKuJdghF57xuKN/afOcKN7GZqEttpP7MgxI=;
-        b=CVgmLmmKj+1U5PLic66/lvje4EpKKyC38Gh6nOJSkjjQBaihbZHR+lZ+/00DWgt+Gc/0Lpm8mgmLFG5YJO2p5lPUL8bOLtqO6TPtHaiFSCyjJaqV0MW70WkmbpdbY7qCbvdt2mAfQI8fcY/FatES5es/veJoOVz3jIU+yNOM0XQ=;
-X-UUID: f9765ca49b034fed948f5ed4b3114941-20200221
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <wen.su@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 2015666392; Fri, 21 Feb 2020 10:39:11 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 21 Feb 2020 10:38:19 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 21 Feb 2020 10:38:51 +0800
-From:   Wen Su <Wen.Su@mediatek.com>
-To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <wsd_upstream@mediatek.com>, <wen.su@mediatek.com>
-Subject: [RESEND v2 4/4] arm64: dts: mt6359: add PMIC MT6359 related nodes
-Date:   Fri, 21 Feb 2020 10:39:06 +0800
-Message-ID: <1582252746-8149-5-git-send-email-Wen.Su@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1582252746-8149-1-git-send-email-Wen.Su@mediatek.com>
-References: <1582252746-8149-1-git-send-email-Wen.Su@mediatek.com>
+        Thu, 20 Feb 2020 21:43:33 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e4f43b30000>; Thu, 20 Feb 2020 18:42:59 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 20 Feb 2020 18:43:32 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 20 Feb 2020 18:43:32 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 21 Feb
+ 2020 02:43:32 +0000
+Subject: Re: [PATCH v7 01/24] mm: Move readahead prototypes from mm.h
+To:     Matthew Wilcox <willy@infradead.org>,
+        <linux-fsdevel@vger.kernel.org>
+CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        <linux-btrfs@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
+        <linux-ext4@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <cluster-devel@redhat.com>, <ocfs2-devel@oss.oracle.com>,
+        <linux-xfs@vger.kernel.org>
+References: <20200219210103.32400-1-willy@infradead.org>
+ <20200219210103.32400-2-willy@infradead.org>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <e065679e-222f-7323-9782-0c4471bb9233@nvidia.com>
+Date:   Thu, 20 Feb 2020 18:43:31 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+In-Reply-To: <20200219210103.32400-2-willy@infradead.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1582252979; bh=FupvP/7fBUSXeaHkpIPB/6auVkQxSnSk5TKtwtzmqZs=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=PTZvZBMqGka5juXI/K7VSjqGZuA2OQhrqobKWw47A6aYHII6j1MhFAvbELI3dGadM
+         PrgKfenh6ZhddOY03XwMVWxrJdpVuH9XaaraajiQH62Xt5kO01Jn6Qq64S3BQBsQnu
+         FX+2chIKaTlsU4YvxA1ANZxAzhOAPicsBXho8Xa1oRypUcTkxEzLnDv0caGzVLZrPo
+         FwY554vv2RX9xx1O6PYXsc2ug3Oc5f7qahsBWhrzIuj6pupPO0et9/uor0PLX1V8Yf
+         Sgy5K80isbnmNaNcnOFvHQt/nevDdWbyhIlyy/b+G7tAh95wVP/qHY4GiW4ZIyVq2q
+         Oo9GNFt84iUNA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogIldlbiBTdSIgPHdlbi5zdUBtZWRpYXRlay5jb20+DQoNCmFkZCBQTUlDIE1UNjM1OSBy
-ZWxhdGVkIG5vZGVzIHdoaWNoIGlzIGZvciBNVDY3NzkgcGxhdGZvcm0NCg0KU2lnbmVkLW9mZi1i
-eTogV2VuIFN1IDx3ZW4uc3VAbWVkaWF0ZWsuY29tPg0KLS0tDQogYXJjaC9hcm02NC9ib290L2R0
-cy9tZWRpYXRlay9tdDYzNTkuZHRzaSB8IDMwNiArKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrDQogMSBmaWxlIGNoYW5nZWQsIDMwNiBpbnNlcnRpb25zKCspDQogY3JlYXRlIG1vZGUgMTAw
-NjQ0IGFyY2gvYXJtNjQvYm9vdC9kdHMvbWVkaWF0ZWsvbXQ2MzU5LmR0c2kNCg0KZGlmZiAtLWdp
-dCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvbWVkaWF0ZWsvbXQ2MzU5LmR0c2kgYi9hcmNoL2FybTY0
-L2Jvb3QvZHRzL21lZGlhdGVrL210NjM1OS5kdHNpDQpuZXcgZmlsZSBtb2RlIDEwMDY0NA0KaW5k
-ZXggMDAwMDAwMC4uNGNhZmUxZg0KLS0tIC9kZXYvbnVsbA0KKysrIGIvYXJjaC9hcm02NC9ib290
-L2R0cy9tZWRpYXRlay9tdDYzNTkuZHRzaQ0KQEAgLTAsMCArMSwzMDYgQEANCisvLyBTUERYLUxp
-Y2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMA0KKy8qDQorICogQ29weXJpZ2h0IChjKSAyMDE5IE1l
-ZGlhVGVrIEluYy4NCisgKi8NCisNCismcHdyYXAgew0KKwlwbWljOiBwbWljIHsNCisJCW10NjM1
-OXJlZ3VsYXRvcjogbXQ2MzU5cmVndWxhdG9yIHsNCisJCQljb21wYXRpYmxlID0gIm1lZGlhdGVr
-LG10NjM1OS1yZWd1bGF0b3IiOw0KKwkJCW10NjM1OV92czFfYnVja19yZWc6IGJ1Y2tfdnMxIHsN
-CisJCQkJcmVndWxhdG9yLW5hbWUgPSAidnMxIjsNCisJCQkJcmVndWxhdG9yLW1pbi1taWNyb3Zv
-bHQgPSA8ODAwMDAwPjsNCisJCQkJcmVndWxhdG9yLW1heC1taWNyb3ZvbHQgPSA8MjIwMDAwMD47
-DQorCQkJCXJlZ3VsYXRvci1lbmFibGUtcmFtcC1kZWxheSA9IDwwPjsNCisJCQkJcmVndWxhdG9y
-LWFsd2F5cy1vbjsNCisJCQl9Ow0KKwkJCW10NjM1OV92Z3B1MTFfYnVja19yZWc6IGJ1Y2tfdmdw
-dTExIHsNCisJCQkJcmVndWxhdG9yLW5hbWUgPSAidmdwdTExIjsNCisJCQkJcmVndWxhdG9yLW1p
-bi1taWNyb3ZvbHQgPSA8NDAwMDAwPjsNCisJCQkJcmVndWxhdG9yLW1heC1taWNyb3ZvbHQgPSA8
-MTE5Mzc1MD47DQorCQkJCXJlZ3VsYXRvci1yYW1wLWRlbGF5ID0gPDUwMDA+Ow0KKwkJCQlyZWd1
-bGF0b3ItZW5hYmxlLXJhbXAtZGVsYXkgPSA8MjAwPjsNCisJCQkJcmVndWxhdG9yLWFsd2F5cy1v
-bjsNCisJCQkJcmVndWxhdG9yLWFsbG93ZWQtbW9kZXMgPSA8MCAxIDI+Ow0KKwkJCX07DQorCQkJ
-bXQ2MzU5X3Ztb2RlbV9idWNrX3JlZzogYnVja192bW9kZW0gew0KKwkJCQlyZWd1bGF0b3ItbmFt
-ZSA9ICJ2bW9kZW0iOw0KKwkJCQlyZWd1bGF0b3ItbWluLW1pY3Jvdm9sdCA9IDw0MDAwMDA+Ow0K
-KwkJCQlyZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwxMTAwMDAwPjsNCisJCQkJcmVndWxhdG9y
-LXJhbXAtZGVsYXkgPSA8MTA3NjA+Ow0KKwkJCQlyZWd1bGF0b3ItZW5hYmxlLXJhbXAtZGVsYXkg
-PSA8MjAwPjsNCisJCQkJcmVndWxhdG9yLWFsd2F5cy1vbjsNCisJCQl9Ow0KKwkJCW10NjM1OV92
-cHVfYnVja19yZWc6IGJ1Y2tfdnB1IHsNCisJCQkJcmVndWxhdG9yLW5hbWUgPSAidnB1IjsNCisJ
-CQkJcmVndWxhdG9yLW1pbi1taWNyb3ZvbHQgPSA8NDAwMDAwPjsNCisJCQkJcmVndWxhdG9yLW1h
-eC1taWNyb3ZvbHQgPSA8MTE5Mzc1MD47DQorCQkJCXJlZ3VsYXRvci1yYW1wLWRlbGF5ID0gPDUw
-MDA+Ow0KKwkJCQlyZWd1bGF0b3ItZW5hYmxlLXJhbXAtZGVsYXkgPSA8MjAwPjsNCisJCQkJcmVn
-dWxhdG9yLWFsbG93ZWQtbW9kZXMgPSA8MCAxIDI+Ow0KKwkJCX07DQorCQkJbXQ2MzU5X3Zjb3Jl
-X2J1Y2tfcmVnOiBidWNrX3Zjb3JlIHsNCisJCQkJcmVndWxhdG9yLW5hbWUgPSAidmNvcmUiOw0K
-KwkJCQlyZWd1bGF0b3ItbWluLW1pY3Jvdm9sdCA9IDw0MDAwMDA+Ow0KKwkJCQlyZWd1bGF0b3It
-bWF4LW1pY3Jvdm9sdCA9IDwxMTkzNzUwPjsNCisJCQkJcmVndWxhdG9yLXJhbXAtZGVsYXkgPSA8
-NTAwMD47DQorCQkJCXJlZ3VsYXRvci1lbmFibGUtcmFtcC1kZWxheSA9IDwyMDA+Ow0KKwkJCQly
-ZWd1bGF0b3ItYWx3YXlzLW9uOw0KKwkJCQlyZWd1bGF0b3ItYWxsb3dlZC1tb2RlcyA9IDwwIDEg
-Mj47DQorCQkJfTsNCisJCQltdDYzNTlfdnMyX2J1Y2tfcmVnOiBidWNrX3ZzMiB7DQorCQkJCXJl
-Z3VsYXRvci1uYW1lID0gInZzMiI7DQorCQkJCXJlZ3VsYXRvci1taW4tbWljcm92b2x0ID0gPDgw
-MDAwMD47DQorCQkJCXJlZ3VsYXRvci1tYXgtbWljcm92b2x0ID0gPDE2MDAwMDA+Ow0KKwkJCQly
-ZWd1bGF0b3ItZW5hYmxlLXJhbXAtZGVsYXkgPSA8MD47DQorCQkJCXJlZ3VsYXRvci1hbHdheXMt
-b247DQorCQkJfTsNCisJCQltdDYzNTlfdnBhX2J1Y2tfcmVnOiBidWNrX3ZwYSB7DQorCQkJCXJl
-Z3VsYXRvci1uYW1lID0gInZwYSI7DQorCQkJCXJlZ3VsYXRvci1taW4tbWljcm92b2x0ID0gPDUw
-MDAwMD47DQorCQkJCXJlZ3VsYXRvci1tYXgtbWljcm92b2x0ID0gPDM2NTAwMDA+Ow0KKwkJCQly
-ZWd1bGF0b3ItZW5hYmxlLXJhbXAtZGVsYXkgPSA8MzAwPjsNCisJCQl9Ow0KKwkJCW10NjM1OV92
-cHJvYzJfYnVja19yZWc6IGJ1Y2tfdnByb2MyIHsNCisJCQkJcmVndWxhdG9yLW5hbWUgPSAidnBy
-b2MyIjsNCisJCQkJcmVndWxhdG9yLW1pbi1taWNyb3ZvbHQgPSA8NDAwMDAwPjsNCisJCQkJcmVn
-dWxhdG9yLW1heC1taWNyb3ZvbHQgPSA8MTE5Mzc1MD47DQorCQkJCXJlZ3VsYXRvci1yYW1wLWRl
-bGF5ID0gPDc1MDA+Ow0KKwkJCQlyZWd1bGF0b3ItZW5hYmxlLXJhbXAtZGVsYXkgPSA8MjAwPjsN
-CisJCQkJcmVndWxhdG9yLWFsd2F5cy1vbjsNCisJCQkJcmVndWxhdG9yLWFsbG93ZWQtbW9kZXMg
-PSA8MCAxIDI+Ow0KKwkJCX07DQorCQkJbXQ2MzU5X3Zwcm9jMV9idWNrX3JlZzogYnVja192cHJv
-YzEgew0KKwkJCQlyZWd1bGF0b3ItbmFtZSA9ICJ2cHJvYzEiOw0KKwkJCQlyZWd1bGF0b3ItbWlu
-LW1pY3Jvdm9sdCA9IDw0MDAwMDA+Ow0KKwkJCQlyZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwx
-MTkzNzUwPjsNCisJCQkJcmVndWxhdG9yLXJhbXAtZGVsYXkgPSA8NzUwMD47DQorCQkJCXJlZ3Vs
-YXRvci1lbmFibGUtcmFtcC1kZWxheSA9IDwyMDA+Ow0KKwkJCQlyZWd1bGF0b3ItYWx3YXlzLW9u
-Ow0KKwkJCQlyZWd1bGF0b3ItYWxsb3dlZC1tb2RlcyA9IDwwIDEgMj47DQorCQkJfTsNCisJCQlt
-dDYzNTlfdmNvcmVfc3NodWJfYnVja19yZWc6IGJ1Y2tfdmNvcmVfc3NodWIgew0KKwkJCQlyZWd1
-bGF0b3ItbmFtZSA9ICJ2Y29yZV9zc2h1YiI7DQorCQkJCXJlZ3VsYXRvci1taW4tbWljcm92b2x0
-ID0gPDQwMDAwMD47DQorCQkJCXJlZ3VsYXRvci1tYXgtbWljcm92b2x0ID0gPDExOTM3NTA+Ow0K
-KwkJCX07DQorCQkJbXQ2MzU5X3ZhdWQxOF9sZG9fcmVnOiBsZG9fdmF1ZDE4IHsNCisJCQkJcmVn
-dWxhdG9yLW5hbWUgPSAidmF1ZDE4IjsNCisJCQkJcmVndWxhdG9yLW1pbi1taWNyb3ZvbHQgPSA8
-MTgwMDAwMD47DQorCQkJCXJlZ3VsYXRvci1tYXgtbWljcm92b2x0ID0gPDE4MDAwMDA+Ow0KKwkJ
-CQlyZWd1bGF0b3ItZW5hYmxlLXJhbXAtZGVsYXkgPSA8MjQwPjsNCisJCQl9Ow0KKwkJCW10NjM1
-OV92c2ltMV9sZG9fcmVnOiBsZG9fdnNpbTEgew0KKwkJCQlyZWd1bGF0b3ItbmFtZSA9ICJ2c2lt
-MSI7DQorCQkJCXJlZ3VsYXRvci1taW4tbWljcm92b2x0ID0gPDE3MDAwMDA+Ow0KKwkJCQlyZWd1
-bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwzMTAwMDAwPjsNCisJCQkJcmVndWxhdG9yLWVuYWJsZS1y
-YW1wLWRlbGF5ID0gPDQ4MD47DQorCQkJfTsNCisJCQltdDYzNTlfdmlicl9sZG9fcmVnOiBsZG9f
-dmliciB7DQorCQkJCXJlZ3VsYXRvci1uYW1lID0gInZpYnIiOw0KKwkJCQlyZWd1bGF0b3ItbWlu
-LW1pY3Jvdm9sdCA9IDwxMjAwMDAwPjsNCisJCQkJcmVndWxhdG9yLW1heC1taWNyb3ZvbHQgPSA8
-MzMwMDAwMD47DQorCQkJCXJlZ3VsYXRvci1lbmFibGUtcmFtcC1kZWxheSA9IDwyNDA+Ow0KKwkJ
-CX07DQorCQkJbXQ2MzU5X3ZyZjEyX2xkb19yZWc6IGxkb192cmYxMiB7DQorCQkJCXJlZ3VsYXRv
-ci1uYW1lID0gInZyZjEyIjsNCisJCQkJcmVndWxhdG9yLW1pbi1taWNyb3ZvbHQgPSA8MTEwMDAw
-MD47DQorCQkJCXJlZ3VsYXRvci1tYXgtbWljcm92b2x0ID0gPDEzMDAwMDA+Ow0KKwkJCQlyZWd1
-bGF0b3ItZW5hYmxlLXJhbXAtZGVsYXkgPSA8MTIwPjsNCisJCQl9Ow0KKwkJCW10NjM1OV92dXNi
-X2xkb19yZWc6IGxkb192dXNiIHsNCisJCQkJcmVndWxhdG9yLW5hbWUgPSAidnVzYiI7DQorCQkJ
-CXJlZ3VsYXRvci1taW4tbWljcm92b2x0ID0gPDMwMDAwMDA+Ow0KKwkJCQlyZWd1bGF0b3ItbWF4
-LW1pY3Jvdm9sdCA9IDwzMDAwMDAwPjsNCisJCQkJcmVndWxhdG9yLWVuYWJsZS1yYW1wLWRlbGF5
-ID0gPDI0MD47DQorCQkJCXJlZ3VsYXRvci1hbHdheXMtb247DQorCQkJfTsNCisJCQltdDYzNTlf
-dnNyYW1fcHJvYzJfbGRvX3JlZzogbGRvX3ZzcmFtX3Byb2MyIHsNCisJCQkJcmVndWxhdG9yLW5h
-bWUgPSAidnNyYW1fcHJvYzIiOw0KKwkJCQlyZWd1bGF0b3ItbWluLW1pY3Jvdm9sdCA9IDw1MDAw
-MDA+Ow0KKwkJCQlyZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwxMTkzNzUwPjsNCisJCQkJcmVn
-dWxhdG9yLXJhbXAtZGVsYXkgPSA8NzUwMD47DQorCQkJCXJlZ3VsYXRvci1lbmFibGUtcmFtcC1k
-ZWxheSA9IDwyNDA+Ow0KKwkJCQlyZWd1bGF0b3ItYWx3YXlzLW9uOw0KKwkJCX07DQorCQkJbXQ2
-MzU5X3ZpbzE4X2xkb19yZWc6IGxkb192aW8xOCB7DQorCQkJCXJlZ3VsYXRvci1uYW1lID0gInZp
-bzE4IjsNCisJCQkJcmVndWxhdG9yLW1pbi1taWNyb3ZvbHQgPSA8MTcwMDAwMD47DQorCQkJCXJl
-Z3VsYXRvci1tYXgtbWljcm92b2x0ID0gPDE5MDAwMDA+Ow0KKwkJCQlyZWd1bGF0b3ItZW5hYmxl
-LXJhbXAtZGVsYXkgPSA8OTYwPjsNCisJCQkJcmVndWxhdG9yLWFsd2F5cy1vbjsNCisJCQl9Ow0K
-KwkJCW10NjM1OV92Y2FtaW9fbGRvX3JlZzogbGRvX3ZjYW1pbyB7DQorCQkJCXJlZ3VsYXRvci1u
-YW1lID0gInZjYW1pbyI7DQorCQkJCXJlZ3VsYXRvci1taW4tbWljcm92b2x0ID0gPDE3MDAwMDA+
-Ow0KKwkJCQlyZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwxOTAwMDAwPjsNCisJCQkJcmVndWxh
-dG9yLWVuYWJsZS1yYW1wLWRlbGF5ID0gPDE5MjA+Ow0KKwkJCX07DQorCQkJbXQ2MzU5X3ZjbjE4
-X2xkb19yZWc6IGxkb192Y24xOCB7DQorCQkJCXJlZ3VsYXRvci1uYW1lID0gInZjbjE4IjsNCisJ
-CQkJcmVndWxhdG9yLW1pbi1taWNyb3ZvbHQgPSA8MTgwMDAwMD47DQorCQkJCXJlZ3VsYXRvci1t
-YXgtbWljcm92b2x0ID0gPDE4MDAwMDA+Ow0KKwkJCQlyZWd1bGF0b3ItZW5hYmxlLXJhbXAtZGVs
-YXkgPSA8MjQwPjsNCisJCQl9Ow0KKwkJCW10NjM1OV92ZmUyOF9sZG9fcmVnOiBsZG9fdmZlMjgg
-ew0KKwkJCQlyZWd1bGF0b3ItbmFtZSA9ICJ2ZmUyOCI7DQorCQkJCXJlZ3VsYXRvci1taW4tbWlj
-cm92b2x0ID0gPDI4MDAwMDA+Ow0KKwkJCQlyZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwyODAw
-MDAwPjsNCisJCQkJcmVndWxhdG9yLWVuYWJsZS1yYW1wLWRlbGF5ID0gPDEyMD47DQorCQkJCXJl
-Z3VsYXRvci1hbHdheXMtb247DQorCQkJfTsNCisJCQltdDYzNTlfdmNuMTNfbGRvX3JlZzogbGRv
-X3ZjbjEzIHsNCisJCQkJcmVndWxhdG9yLW5hbWUgPSAidmNuMTMiOw0KKwkJCQlyZWd1bGF0b3It
-bWluLW1pY3Jvdm9sdCA9IDw5MDAwMDA+Ow0KKwkJCQlyZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9
-IDwxMzAwMDAwPjsNCisJCQkJcmVndWxhdG9yLWVuYWJsZS1yYW1wLWRlbGF5ID0gPDI0MD47DQor
-CQkJfTsNCisJCQltdDYzNTlfdmNuMzNfMV9idF9sZG9fcmVnOiBsZG9fdmNuMzNfMV9idCB7DQor
-CQkJCXJlZ3VsYXRvci1uYW1lID0gInZjbjMzXzFfYnQiOw0KKwkJCQlyZWd1bGF0b3ItbWluLW1p
-Y3Jvdm9sdCA9IDwyODAwMDAwPjsNCisJCQkJcmVndWxhdG9yLW1heC1taWNyb3ZvbHQgPSA8MzUw
-MDAwMD47DQorCQkJCXJlZ3VsYXRvci1lbmFibGUtcmFtcC1kZWxheSA9IDwyNDA+Ow0KKwkJCX07
-DQorCQkJbXQ2MzU5X3ZjbjMzXzFfd2lmaV9sZG9fcmVnOiBsZG9fdmNuMzNfMV93aWZpIHsNCisJ
-CQkJcmVndWxhdG9yLW5hbWUgPSAidmNuMzNfMV93aWZpIjsNCisJCQkJcmVndWxhdG9yLW1pbi1t
-aWNyb3ZvbHQgPSA8MjgwMDAwMD47DQorCQkJCXJlZ3VsYXRvci1tYXgtbWljcm92b2x0ID0gPDM1
-MDAwMDA+Ow0KKwkJCQlyZWd1bGF0b3ItZW5hYmxlLXJhbXAtZGVsYXkgPSA8MjQwPjsNCisJCQl9
-Ow0KKwkJCW10NjM1OV92YXV4MThfbGRvX3JlZzogbGRvX3ZhdXgxOCB7DQorCQkJCXJlZ3VsYXRv
-ci1uYW1lID0gInZhdXgxOCI7DQorCQkJCXJlZ3VsYXRvci1taW4tbWljcm92b2x0ID0gPDE4MDAw
-MDA+Ow0KKwkJCQlyZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwxODAwMDAwPjsNCisJCQkJcmVn
-dWxhdG9yLWVuYWJsZS1yYW1wLWRlbGF5ID0gPDI0MD47DQorCQkJCXJlZ3VsYXRvci1hbHdheXMt
-b247DQorCQkJfTsNCisJCQltdDYzNTlfdnNyYW1fb3RoZXJzX2xkb19yZWc6IGxkb192c3JhbV9v
-dGhlcnMgew0KKwkJCQlyZWd1bGF0b3ItbmFtZSA9ICJ2c3JhbV9vdGhlcnMiOw0KKwkJCQlyZWd1
-bGF0b3ItbWluLW1pY3Jvdm9sdCA9IDw1MDAwMDA+Ow0KKwkJCQlyZWd1bGF0b3ItbWF4LW1pY3Jv
-dm9sdCA9IDwxMTkzNzUwPjsNCisJCQkJcmVndWxhdG9yLXJhbXAtZGVsYXkgPSA8NTAwMD47DQor
-CQkJCXJlZ3VsYXRvci1lbmFibGUtcmFtcC1kZWxheSA9IDwyNDA+Ow0KKwkJCQlyZWd1bGF0b3It
-YWx3YXlzLW9uOw0KKwkJCX07DQorCQkJbXQ2MzU5X3ZlZnVzZV9sZG9fcmVnOiBsZG9fdmVmdXNl
-IHsNCisJCQkJcmVndWxhdG9yLW5hbWUgPSAidmVmdXNlIjsNCisJCQkJcmVndWxhdG9yLW1pbi1t
-aWNyb3ZvbHQgPSA8MTcwMDAwMD47DQorCQkJCXJlZ3VsYXRvci1tYXgtbWljcm92b2x0ID0gPDIw
-MDAwMDA+Ow0KKwkJCQlyZWd1bGF0b3ItZW5hYmxlLXJhbXAtZGVsYXkgPSA8MjQwPjsNCisJCQl9
-Ow0KKwkJCW10NjM1OV92eG8yMl9sZG9fcmVnOiBsZG9fdnhvMjIgew0KKwkJCQlyZWd1bGF0b3It
-bmFtZSA9ICJ2eG8yMiI7DQorCQkJCXJlZ3VsYXRvci1taW4tbWljcm92b2x0ID0gPDE4MDAwMDA+
-Ow0KKwkJCQlyZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwyMjAwMDAwPjsNCisJCQkJcmVndWxh
-dG9yLWVuYWJsZS1yYW1wLWRlbGF5ID0gPDEyMD47DQorCQkJCXJlZ3VsYXRvci1hbHdheXMtb247
-DQorCQkJfTsNCisJCQltdDYzNTlfdnJmY2tfbGRvX3JlZzogbGRvX3ZyZmNrIHsNCisJCQkJcmVn
-dWxhdG9yLW5hbWUgPSAidnJmY2siOw0KKwkJCQlyZWd1bGF0b3ItbWluLW1pY3Jvdm9sdCA9IDwx
-NTAwMDAwPjsNCisJCQkJcmVndWxhdG9yLW1heC1taWNyb3ZvbHQgPSA8MTcwMDAwMD47DQorCQkJ
-CXJlZ3VsYXRvci1lbmFibGUtcmFtcC1kZWxheSA9IDw0ODA+Ow0KKwkJCX07DQorCQkJbXQ2MzU5
-X3ZiaWYyOF9sZG9fcmVnOiBsZG9fdmJpZjI4IHsNCisJCQkJcmVndWxhdG9yLW5hbWUgPSAidmJp
-ZjI4IjsNCisJCQkJcmVndWxhdG9yLW1pbi1taWNyb3ZvbHQgPSA8MjgwMDAwMD47DQorCQkJCXJl
-Z3VsYXRvci1tYXgtbWljcm92b2x0ID0gPDI4MDAwMDA+Ow0KKwkJCQlyZWd1bGF0b3ItZW5hYmxl
-LXJhbXAtZGVsYXkgPSA8MjQwPjsNCisJCQkJcmVndWxhdG9yLWFsd2F5cy1vbjsNCisJCQl9Ow0K
-KwkJCW10NjM1OV92aW8yOF9sZG9fcmVnOiBsZG9fdmlvMjggew0KKwkJCQlyZWd1bGF0b3ItbmFt
-ZSA9ICJ2aW8yOCI7DQorCQkJCXJlZ3VsYXRvci1taW4tbWljcm92b2x0ID0gPDI4MDAwMDA+Ow0K
-KwkJCQlyZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwzMzAwMDAwPjsNCisJCQkJcmVndWxhdG9y
-LWVuYWJsZS1yYW1wLWRlbGF5ID0gPDI0MD47DQorCQkJCXJlZ3VsYXRvci1hbHdheXMtb247DQor
-CQkJfTsNCisJCQltdDYzNTlfdmVtY19sZG9fcmVnOiBsZG9fdmVtYyB7DQorCQkJCXJlZ3VsYXRv
-ci1uYW1lID0gInZlbWMiOw0KKwkJCQlyZWd1bGF0b3ItbWluLW1pY3Jvdm9sdCA9IDwyOTAwMDAw
-PjsNCisJCQkJcmVndWxhdG9yLW1heC1taWNyb3ZvbHQgPSA8MzMwMDAwMD47DQorCQkJCXJlZ3Vs
-YXRvci1lbmFibGUtcmFtcC1kZWxheSA9IDwyNDA+Ow0KKwkJCX07DQorCQkJbXQ2MzU5X3ZjbjMz
-XzJfYnRfbGRvX3JlZzogbGRvX3ZjbjMzXzJfYnQgew0KKwkJCQlyZWd1bGF0b3ItbmFtZSA9ICJ2
-Y24zM18yX2J0IjsNCisJCQkJcmVndWxhdG9yLW1pbi1taWNyb3ZvbHQgPSA8MjgwMDAwMD47DQor
-CQkJCXJlZ3VsYXRvci1tYXgtbWljcm92b2x0ID0gPDM1MDAwMDA+Ow0KKwkJCQlyZWd1bGF0b3It
-ZW5hYmxlLXJhbXAtZGVsYXkgPSA8MjQwPjsNCisJCQl9Ow0KKwkJCW10NjM1OV92Y24zM18yX3dp
-ZmlfbGRvX3JlZzogbGRvX3ZjbjMzXzJfd2lmaSB7DQorCQkJCXJlZ3VsYXRvci1uYW1lID0gInZj
-bjMzXzJfd2lmaSI7DQorCQkJCXJlZ3VsYXRvci1taW4tbWljcm92b2x0ID0gPDI4MDAwMDA+Ow0K
-KwkJCQlyZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwzNTAwMDAwPjsNCisJCQkJcmVndWxhdG9y
-LWVuYWJsZS1yYW1wLWRlbGF5ID0gPDI0MD47DQorCQkJfTsNCisJCQltdDYzNTlfdmExMl9sZG9f
-cmVnOiBsZG9fdmExMiB7DQorCQkJCXJlZ3VsYXRvci1uYW1lID0gInZhMTIiOw0KKwkJCQlyZWd1
-bGF0b3ItbWluLW1pY3Jvdm9sdCA9IDwxMjAwMDAwPjsNCisJCQkJcmVndWxhdG9yLW1heC1taWNy
-b3ZvbHQgPSA8MTMwMDAwMD47DQorCQkJCXJlZ3VsYXRvci1lbmFibGUtcmFtcC1kZWxheSA9IDwy
-NDA+Ow0KKwkJCQlyZWd1bGF0b3ItYWx3YXlzLW9uOw0KKwkJCX07DQorCQkJbXQ2MzU5X3ZhMDlf
-bGRvX3JlZzogbGRvX3ZhMDkgew0KKwkJCQlyZWd1bGF0b3ItbmFtZSA9ICJ2YTA5IjsNCisJCQkJ
-cmVndWxhdG9yLW1pbi1taWNyb3ZvbHQgPSA8ODAwMDAwPjsNCisJCQkJcmVndWxhdG9yLW1heC1t
-aWNyb3ZvbHQgPSA8MTIwMDAwMD47DQorCQkJCXJlZ3VsYXRvci1lbmFibGUtcmFtcC1kZWxheSA9
-IDwyNDA+Ow0KKwkJCQlyZWd1bGF0b3ItYWx3YXlzLW9uOw0KKwkJCX07DQorCQkJbXQ2MzU5X3Zy
-ZjE4X2xkb19yZWc6IGxkb192cmYxOCB7DQorCQkJCXJlZ3VsYXRvci1uYW1lID0gInZyZjE4IjsN
-CisJCQkJcmVndWxhdG9yLW1pbi1taWNyb3ZvbHQgPSA8MTcwMDAwMD47DQorCQkJCXJlZ3VsYXRv
-ci1tYXgtbWljcm92b2x0ID0gPDE4MTAwMDA+Ow0KKwkJCQlyZWd1bGF0b3ItZW5hYmxlLXJhbXAt
-ZGVsYXkgPSA8MTIwPjsNCisJCQkJcmVndWxhdG9yLWFsd2F5cy1vbjsNCisJCQl9Ow0KKwkJCW10
-NjM1OV92c3JhbV9tZF9sZG9fcmVnOiBsZG9fdnNyYW1fbWQgew0KKwkJCQlyZWd1bGF0b3ItbmFt
-ZSA9ICJ2c3JhbV9tZCI7DQorCQkJCXJlZ3VsYXRvci1taW4tbWljcm92b2x0ID0gPDUwMDAwMD47
-DQorCQkJCXJlZ3VsYXRvci1tYXgtbWljcm92b2x0ID0gPDExMDAwMDA+Ow0KKwkJCQlyZWd1bGF0
-b3ItcmFtcC1kZWxheSA9IDwxMDc2MD47DQorCQkJCXJlZ3VsYXRvci1lbmFibGUtcmFtcC1kZWxh
-eSA9IDwyNDA+Ow0KKwkJCQlyZWd1bGF0b3ItYWx3YXlzLW9uOw0KKwkJCX07DQorCQkJbXQ2MzU5
-X3Z1ZnNfbGRvX3JlZzogbGRvX3Z1ZnMgew0KKwkJCQlyZWd1bGF0b3ItbmFtZSA9ICJ2dWZzIjsN
-CisJCQkJcmVndWxhdG9yLW1pbi1taWNyb3ZvbHQgPSA8MTcwMDAwMD47DQorCQkJCXJlZ3VsYXRv
-ci1tYXgtbWljcm92b2x0ID0gPDE5MDAwMDA+Ow0KKwkJCQlyZWd1bGF0b3ItZW5hYmxlLXJhbXAt
-ZGVsYXkgPSA8MTkyMD47DQorCQkJCXJlZ3VsYXRvci1hbHdheXMtb247DQorCQkJfTsNCisJCQlt
-dDYzNTlfdm0xOF9sZG9fcmVnOiBsZG9fdm0xOCB7DQorCQkJCXJlZ3VsYXRvci1uYW1lID0gInZt
-MTgiOw0KKwkJCQlyZWd1bGF0b3ItbWluLW1pY3Jvdm9sdCA9IDwxNzAwMDAwPjsNCisJCQkJcmVn
-dWxhdG9yLW1heC1taWNyb3ZvbHQgPSA8MTkwMDAwMD47DQorCQkJCXJlZ3VsYXRvci1lbmFibGUt
-cmFtcC1kZWxheSA9IDwxOTIwPjsNCisJCQkJcmVndWxhdG9yLWFsd2F5cy1vbjsNCisJCQl9Ow0K
-KwkJCW10NjM1OV92YmJja19sZG9fcmVnOiBsZG9fdmJiY2sgew0KKwkJCQlyZWd1bGF0b3ItbmFt
-ZSA9ICJ2YmJjayI7DQorCQkJCXJlZ3VsYXRvci1taW4tbWljcm92b2x0ID0gPDExMDAwMDA+Ow0K
-KwkJCQlyZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwxMjAwMDAwPjsNCisJCQkJcmVndWxhdG9y
-LWVuYWJsZS1yYW1wLWRlbGF5ID0gPDI0MD47DQorCQkJfTsNCisJCQltdDYzNTlfdnNyYW1fcHJv
-YzFfbGRvX3JlZzogbGRvX3ZzcmFtX3Byb2MxIHsNCisJCQkJcmVndWxhdG9yLW5hbWUgPSAidnNy
-YW1fcHJvYzEiOw0KKwkJCQlyZWd1bGF0b3ItbWluLW1pY3Jvdm9sdCA9IDw1MDAwMDA+Ow0KKwkJ
-CQlyZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwxMTkzNzUwPjsNCisJCQkJcmVndWxhdG9yLXJh
-bXAtZGVsYXkgPSA8NzUwMD47DQorCQkJCXJlZ3VsYXRvci1lbmFibGUtcmFtcC1kZWxheSA9IDwy
-NDA+Ow0KKwkJCQlyZWd1bGF0b3ItYWx3YXlzLW9uOw0KKwkJCX07DQorCQkJbXQ2MzU5X3ZzaW0y
-X2xkb19yZWc6IGxkb192c2ltMiB7DQorCQkJCXJlZ3VsYXRvci1uYW1lID0gInZzaW0yIjsNCisJ
-CQkJcmVndWxhdG9yLW1pbi1taWNyb3ZvbHQgPSA8MTcwMDAwMD47DQorCQkJCXJlZ3VsYXRvci1t
-YXgtbWljcm92b2x0ID0gPDMxMDAwMDA+Ow0KKwkJCQlyZWd1bGF0b3ItZW5hYmxlLXJhbXAtZGVs
-YXkgPSA8NDgwPjsNCisJCQl9Ow0KKwkJCW10NjM1OV92c3JhbV9vdGhlcnNfc3NodWJfbGRvOiBs
-ZG9fdnNyYW1fb3RoZXJzX3NzaHViIHsNCisJCQkJcmVndWxhdG9yLW5hbWUgPSAidnNyYW1fb3Ro
-ZXJzX3NzaHViIjsNCisJCQkJcmVndWxhdG9yLW1pbi1taWNyb3ZvbHQgPSA8NTAwMDAwPjsNCisJ
-CQkJcmVndWxhdG9yLW1heC1taWNyb3ZvbHQgPSA8MTE5Mzc1MD47DQorCQkJfTsNCisJCX07DQor
-CX07DQorfTsNCi0tIA0KMS45LjENCg==
+On 2/19/20 1:00 PM, Matthew Wilcox wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> 
+> The readahead code is part of the page cache so should be found in the
+> pagemap.h file.  force_page_cache_readahead is only used within mm,
+> so move it to mm/internal.h instead.  Remove the parameter names where
+> they add no value, and rename the ones which were actively misleading.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  block/blk-core.c        |  1 +
+>  include/linux/mm.h      | 19 -------------------
+>  include/linux/pagemap.h |  8 ++++++++
+>  mm/fadvise.c            |  2 ++
+>  mm/internal.h           |  2 ++
+>  5 files changed, 13 insertions(+), 19 deletions(-)
+> 
+> diff --git a/block/blk-core.c b/block/blk-core.c
+> index 089e890ab208..41417bb93634 100644
+> --- a/block/blk-core.c
+> +++ b/block/blk-core.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/blk-mq.h>
+>  #include <linux/highmem.h>
+>  #include <linux/mm.h>
+> +#include <linux/pagemap.h>
+
+Yes. But I think these files also need a similar change:
+
+    fs/btrfs/disk-io.c
+    fs/nfs/super.c
+    
+
+...because they also use VM_READAHEAD_PAGES, and do not directly include
+pagemap.h yet.
+
+
+>  #include <linux/kernel_stat.h>
+>  #include <linux/string.h>
+>  #include <linux/init.h>
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 52269e56c514..68dcda9a2112 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -2401,25 +2401,6 @@ extern vm_fault_t filemap_page_mkwrite(struct vm_fault *vmf);
+>  int __must_check write_one_page(struct page *page);
+>  void task_dirty_inc(struct task_struct *tsk);
+>  
+> -/* readahead.c */
+> -#define VM_READAHEAD_PAGES	(SZ_128K / PAGE_SIZE)
+> -
+> -int force_page_cache_readahead(struct address_space *mapping, struct file *filp,
+> -			pgoff_t offset, unsigned long nr_to_read);
+> -
+> -void page_cache_sync_readahead(struct address_space *mapping,
+> -			       struct file_ra_state *ra,
+> -			       struct file *filp,
+> -			       pgoff_t offset,
+> -			       unsigned long size);
+> -
+> -void page_cache_async_readahead(struct address_space *mapping,
+> -				struct file_ra_state *ra,
+> -				struct file *filp,
+> -				struct page *pg,
+> -				pgoff_t offset,
+> -				unsigned long size);
+> -
+>  extern unsigned long stack_guard_gap;
+>  /* Generic expand stack which grows the stack according to GROWS{UP,DOWN} */
+>  extern int expand_stack(struct vm_area_struct *vma, unsigned long address);
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index ccb14b6a16b5..24894b9b90c9 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -614,6 +614,14 @@ int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask);
+>  void delete_from_page_cache_batch(struct address_space *mapping,
+>  				  struct pagevec *pvec);
+>  
+> +#define VM_READAHEAD_PAGES	(SZ_128K / PAGE_SIZE)
+> +
+> +void page_cache_sync_readahead(struct address_space *, struct file_ra_state *,
+> +		struct file *, pgoff_t index, unsigned long req_count);
+
+
+Yes, "struct address_space *mapping" is weird, but I don't know if it's
+"misleading", given that it's actually one of the things you have to learn
+right from the beginning, with linux-mm, right? Or is that about to change?
+
+I'm not asking to restore this to "struct address_space *mapping", but I thought
+it's worth mentioning out loud, especially if you or others are planning on
+changing those names or something. Just curious.
+
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
+
+
+> +void page_cache_async_readahead(struct address_space *, struct file_ra_state *,
+> +		struct file *, struct page *, pgoff_t index,
+> +		unsigned long req_count);
+> +
+>  /*
+>   * Like add_to_page_cache_locked, but used to add newly allocated pages:
+>   * the page is new, so we can just run __SetPageLocked() against it.
+> diff --git a/mm/fadvise.c b/mm/fadvise.c
+> index 4f17c83db575..3efebfb9952c 100644
+> --- a/mm/fadvise.c
+> +++ b/mm/fadvise.c
+> @@ -22,6 +22,8 @@
+>  
+>  #include <asm/unistd.h>
+>  
+> +#include "internal.h"
+> +
+>  /*
+>   * POSIX_FADV_WILLNEED could set PG_Referenced, and POSIX_FADV_NOREUSE could
+>   * deactivate the pages and clear PG_Referenced.
+> diff --git a/mm/internal.h b/mm/internal.h
+> index 3cf20ab3ca01..83f353e74654 100644
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -49,6 +49,8 @@ void unmap_page_range(struct mmu_gather *tlb,
+>  			     unsigned long addr, unsigned long end,
+>  			     struct zap_details *details);
+>  
+> +int force_page_cache_readahead(struct address_space *, struct file *,
+> +		pgoff_t index, unsigned long nr_to_read);
+>  extern unsigned int __do_page_cache_readahead(struct address_space *mapping,
+>  		struct file *filp, pgoff_t offset, unsigned long nr_to_read,
+>  		unsigned long lookahead_size);
+> 
+
+
 
