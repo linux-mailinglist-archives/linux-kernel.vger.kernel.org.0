@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3B1A167616
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:36:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D753416776F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:42:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731003AbgBUIIO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:08:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42654 "EHLO mail.kernel.org"
+        id S1731959AbgBUImQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:42:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54540 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732156AbgBUIIM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:08:12 -0500
+        id S1730336AbgBUHzd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:55:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38F182073A;
-        Fri, 21 Feb 2020 08:08:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8D9520801;
+        Fri, 21 Feb 2020 07:55:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272491;
-        bh=Jz7VOT6IJFOysEqQ77WGLAWBfmUApaFC614EZYGS230=;
+        s=default; t=1582271732;
+        bh=MRoXizrDdNo5LVjqVL+dFy8VuIsDO+eoD/g3sbT6HT8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2W65gMxFSalPTdGQv2fsTCeIBOK5ZcFAOc6ofm4+YGkIPRdd5scy4NppZc7CS/+6w
-         Y8isGYghfMsILUi2DmpleQ3XpoAaImtHF0uDql8NwtHeN+5aJjCsPYmDhnLv6nk//2
-         xU2bMshX4bBRhZvjQ6LuvX2NC3iJRKYacpSOjJpo=
+        b=mVXaD8ZKPXhEjflw8OMO430uTvK+WEGjVBBVlKI6BmadOCpAjZ4SHA4eAkUL4u/He
+         wJPV5eFGK1fAeXGoCgJ/StVm2+7NrKWyvG5FhNSMeK2TvukWoNUPDRGIZ97CC/zQEW
+         v4BiMBgamrXKhhbs+mUN2geoJV8xOzZM1wvfDrVU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vinay Kumar Yadav <vinay.yadav@chelsio.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 163/344] crypto: chtls - Fixed memory leak
-Date:   Fri, 21 Feb 2020 08:39:22 +0100
-Message-Id: <20200221072403.646851238@linuxfoundation.org>
+        stable@vger.kernel.org, Alexander Tsoy <alexander@tsoy.me>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 240/399] ALSA: usb-audio: Add boot quirk for MOTU M Series
+Date:   Fri, 21 Feb 2020 08:39:25 +0100
+Message-Id: <20200221072425.892256060@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
+References: <20200221072402.315346745@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,143 +43,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vinay Kumar Yadav <vinay.yadav@chelsio.com>
+From: Alexander Tsoy <alexander@tsoy.me>
 
-[ Upstream commit 93e23eb2ed6c11b4f483c8111ac155ec2b1f3042 ]
+[ Upstream commit 73ac9f5e5b43a5dbadb61f27dae7a971f7ec0d22 ]
 
-Freed work request skbs when connection terminates.
-enqueue_wr()/ dequeue_wr() is shared between softirq
-and application contexts, should be protected by socket
-lock. Moved dequeue_wr() to appropriate file.
+Add delay to make sure that audio urbs are not sent too early.
+Otherwise the device hangs. Windows driver makes ~2s delay, so use
+about the same time delay value.
 
-Signed-off-by: Vinay Kumar Yadav <vinay.yadav@chelsio.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+snd_usb_apply_boot_quirk() is called 3 times for my MOTU M4, which
+is an overkill. Thus a quirk that is called only once is implemented.
+
+Also send two vendor-specific control messages before and after
+the delay. This behaviour is blindly copied from the Windows driver.
+
+Signed-off-by: Alexander Tsoy <alexander@tsoy.me>
+Link: https://lore.kernel.org/r/20200112102358.18085-1-alexander@tsoy.me
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/chelsio/chtls/chtls_cm.c | 27 +++++++++++++------------
- drivers/crypto/chelsio/chtls/chtls_cm.h | 21 +++++++++++++++++++
- drivers/crypto/chelsio/chtls/chtls_hw.c |  3 +++
- 3 files changed, 38 insertions(+), 13 deletions(-)
+ sound/usb/card.c   |  4 ++++
+ sound/usb/quirks.c | 38 ++++++++++++++++++++++++++++++++++++++
+ sound/usb/quirks.h |  5 +++++
+ 3 files changed, 47 insertions(+)
 
-diff --git a/drivers/crypto/chelsio/chtls/chtls_cm.c b/drivers/crypto/chelsio/chtls/chtls_cm.c
-index aca75237bbcf8..dffa2aa855fdd 100644
---- a/drivers/crypto/chelsio/chtls/chtls_cm.c
-+++ b/drivers/crypto/chelsio/chtls/chtls_cm.c
-@@ -727,6 +727,14 @@ static int chtls_close_listsrv_rpl(struct chtls_dev *cdev, struct sk_buff *skb)
+diff --git a/sound/usb/card.c b/sound/usb/card.c
+index 9f743ebae615d..2f582ac7cf789 100644
+--- a/sound/usb/card.c
++++ b/sound/usb/card.c
+@@ -600,6 +600,10 @@ static int usb_audio_probe(struct usb_interface *intf,
+ 		}
+ 	}
+ 	if (! chip) {
++		err = snd_usb_apply_boot_quirk_once(dev, intf, quirk, id);
++		if (err < 0)
++			return err;
++
+ 		/* it's a fresh one.
+ 		 * now look for an empty slot and create a new card instance
+ 		 */
+diff --git a/sound/usb/quirks.c b/sound/usb/quirks.c
+index 1ed25b1d2a6a2..7448ab07bd363 100644
+--- a/sound/usb/quirks.c
++++ b/sound/usb/quirks.c
+@@ -1113,6 +1113,31 @@ free_buf:
+ 	return err;
+ }
+ 
++static int snd_usb_motu_m_series_boot_quirk(struct usb_device *dev)
++{
++	int ret;
++
++	if (snd_usb_pipe_sanity_check(dev, usb_sndctrlpipe(dev, 0)))
++		return -EINVAL;
++	ret = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
++			      1, USB_TYPE_VENDOR | USB_RECIP_DEVICE,
++			      0x0, 0, NULL, 0, 1000);
++
++	if (ret < 0)
++		return ret;
++
++	msleep(2000);
++
++	ret = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
++			      1, USB_TYPE_VENDOR | USB_RECIP_DEVICE,
++			      0x20, 0, NULL, 0, 1000);
++
++	if (ret < 0)
++		return ret;
++
++	return 0;
++}
++
+ /*
+  * Setup quirks
+  */
+@@ -1297,6 +1322,19 @@ int snd_usb_apply_boot_quirk(struct usb_device *dev,
  	return 0;
  }
  
-+static void chtls_purge_wr_queue(struct sock *sk)
++int snd_usb_apply_boot_quirk_once(struct usb_device *dev,
++				  struct usb_interface *intf,
++				  const struct snd_usb_audio_quirk *quirk,
++				  unsigned int id)
 +{
-+	struct sk_buff *skb;
-+
-+	while ((skb = dequeue_wr(sk)) != NULL)
-+		kfree_skb(skb);
-+}
-+
- static void chtls_release_resources(struct sock *sk)
- {
- 	struct chtls_sock *csk = rcu_dereference_sk_user_data(sk);
-@@ -741,6 +749,11 @@ static void chtls_release_resources(struct sock *sk)
- 	kfree_skb(csk->txdata_skb_cache);
- 	csk->txdata_skb_cache = NULL;
- 
-+	if (csk->wr_credits != csk->wr_max_credits) {
-+		chtls_purge_wr_queue(sk);
-+		chtls_reset_wr_list(csk);
++	switch (id) {
++	case USB_ID(0x07fd, 0x0008): /* MOTU M Series */
++		return snd_usb_motu_m_series_boot_quirk(dev);
 +	}
 +
- 	if (csk->l2t_entry) {
- 		cxgb4_l2t_release(csk->l2t_entry);
- 		csk->l2t_entry = NULL;
-@@ -1735,6 +1748,7 @@ static void chtls_peer_close(struct sock *sk, struct sk_buff *skb)
- 		else
- 			sk_wake_async(sk, SOCK_WAKE_WAITD, POLL_IN);
- 	}
-+	kfree_skb(skb);
- }
- 
- static void chtls_close_con_rpl(struct sock *sk, struct sk_buff *skb)
-@@ -2062,19 +2076,6 @@ rel_skb:
- 	return 0;
- }
- 
--static struct sk_buff *dequeue_wr(struct sock *sk)
--{
--	struct chtls_sock *csk = rcu_dereference_sk_user_data(sk);
--	struct sk_buff *skb = csk->wr_skb_head;
--
--	if (likely(skb)) {
--	/* Don't bother clearing the tail */
--		csk->wr_skb_head = WR_SKB_CB(skb)->next_wr;
--		WR_SKB_CB(skb)->next_wr = NULL;
--	}
--	return skb;
--}
--
- static void chtls_rx_ack(struct sock *sk, struct sk_buff *skb)
- {
- 	struct cpl_fw4_ack *hdr = cplhdr(skb) + RSS_HDR;
-diff --git a/drivers/crypto/chelsio/chtls/chtls_cm.h b/drivers/crypto/chelsio/chtls/chtls_cm.h
-index 129d7ac649a93..3fac0c74a41fa 100644
---- a/drivers/crypto/chelsio/chtls/chtls_cm.h
-+++ b/drivers/crypto/chelsio/chtls/chtls_cm.h
-@@ -185,6 +185,12 @@ static inline void chtls_kfree_skb(struct sock *sk, struct sk_buff *skb)
- 	kfree_skb(skb);
- }
- 
-+static inline void chtls_reset_wr_list(struct chtls_sock *csk)
-+{
-+	csk->wr_skb_head = NULL;
-+	csk->wr_skb_tail = NULL;
++	return 0;
 +}
 +
- static inline void enqueue_wr(struct chtls_sock *csk, struct sk_buff *skb)
- {
- 	WR_SKB_CB(skb)->next_wr = NULL;
-@@ -197,4 +203,19 @@ static inline void enqueue_wr(struct chtls_sock *csk, struct sk_buff *skb)
- 		WR_SKB_CB(csk->wr_skb_tail)->next_wr = skb;
- 	csk->wr_skb_tail = skb;
- }
-+
-+static inline struct sk_buff *dequeue_wr(struct sock *sk)
-+{
-+	struct chtls_sock *csk = rcu_dereference_sk_user_data(sk);
-+	struct sk_buff *skb = NULL;
-+
-+	skb = csk->wr_skb_head;
-+
-+	if (likely(skb)) {
-+	 /* Don't bother clearing the tail */
-+		csk->wr_skb_head = WR_SKB_CB(skb)->next_wr;
-+		WR_SKB_CB(skb)->next_wr = NULL;
-+	}
-+	return skb;
-+}
- #endif
-diff --git a/drivers/crypto/chelsio/chtls/chtls_hw.c b/drivers/crypto/chelsio/chtls/chtls_hw.c
-index 2a34035d3cfbc..a217fe72602d4 100644
---- a/drivers/crypto/chelsio/chtls/chtls_hw.c
-+++ b/drivers/crypto/chelsio/chtls/chtls_hw.c
-@@ -350,6 +350,7 @@ int chtls_setkey(struct chtls_sock *csk, u32 keylen, u32 optname)
- 	kwr->sc_imm.cmd_more = cpu_to_be32(ULPTX_CMD_V(ULP_TX_SC_IMM));
- 	kwr->sc_imm.len = cpu_to_be32(klen);
+ /*
+  * check if the device uses big-endian samples
+  */
+diff --git a/sound/usb/quirks.h b/sound/usb/quirks.h
+index a80e0ddd07364..df0355843a4c1 100644
+--- a/sound/usb/quirks.h
++++ b/sound/usb/quirks.h
+@@ -20,6 +20,11 @@ int snd_usb_apply_boot_quirk(struct usb_device *dev,
+ 			     const struct snd_usb_audio_quirk *quirk,
+ 			     unsigned int usb_id);
  
-+	lock_sock(sk);
- 	/* key info */
- 	kctx = (struct _key_ctx *)(kwr + 1);
- 	ret = chtls_key_info(csk, kctx, keylen, optname);
-@@ -388,8 +389,10 @@ int chtls_setkey(struct chtls_sock *csk, u32 keylen, u32 optname)
- 		csk->tlshws.txkey = keyid;
- 	}
++int snd_usb_apply_boot_quirk_once(struct usb_device *dev,
++				  struct usb_interface *intf,
++				  const struct snd_usb_audio_quirk *quirk,
++				  unsigned int usb_id);
++
+ void snd_usb_set_format_quirk(struct snd_usb_substream *subs,
+ 			      struct audioformat *fmt);
  
-+	release_sock(sk);
- 	return ret;
- out_notcb:
-+	release_sock(sk);
- 	free_tls_keyid(sk);
- out_nokey:
- 	kfree_skb(skb);
 -- 
 2.20.1
 
