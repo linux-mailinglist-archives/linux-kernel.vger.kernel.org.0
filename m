@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50D541674EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:30:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2557A167365
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:13:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388013AbgBUIT2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:19:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57966 "EHLO mail.kernel.org"
+        id S1732745AbgBUILv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:11:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47402 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732901AbgBUIT1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:19:27 -0500
+        id S1732466AbgBUILs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:11:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24DD124689;
-        Fri, 21 Feb 2020 08:19:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8EE420722;
+        Fri, 21 Feb 2020 08:11:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273166;
-        bh=m9ywS9W5sFzIk8yj1UQGFY10lpinxn5x/nVWAjNi0g8=;
+        s=default; t=1582272708;
+        bh=/eTuMA1+EKSBwjBLo0bimCwtlU8PRo/V9j/mbKbSwU4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=utprmOLffRwq0ZeN6xWi1UEw7XCd7WmP5i+UxPak8kXEEUjtw/tYnkKWIQ4TGPopT
-         OgHT43nPWU3FELmQYpEGybK5ROIrWc45NOsx1wpQ6T6ELTfY4kmEj6KJy3zJPyX0ox
-         O0kXS3fJUdpjVHGA8UcsZF1TjHgeWfUnQjDdmurA=
+        b=w8ZeF1qx2jagMbURjq80fhdAyX/3FthZHNbjGZ7OKV+zITPc1omeS85S4jmrbTBHN
+         XTCUC29VDJ+7++gXS8gKc59i/6gPYwklVfSwBzPU5srJtwWYsiwzIOebCwQCHBlurs
+         QH9d+ACbbVE35lALyPtcmj5MSnOs5o9Zbe6XZ000=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 070/191] r8169: check that Realtek PHY driver module is loaded
-Date:   Fri, 21 Feb 2020 08:40:43 +0100
-Message-Id: <20200221072259.750344401@linuxfoundation.org>
+        stable@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 245/344] arm64: fix alternatives with LLVMs integrated assembler
+Date:   Fri, 21 Feb 2020 08:40:44 +0100
+Message-Id: <20200221072411.649211484@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,45 +45,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Heiner Kallweit <hkallweit1@gmail.com>
+From: Sami Tolvanen <samitolvanen@google.com>
 
-[ Upstream commit f325937735498afb054a0195291bbf68d0b60be5 ]
+[ Upstream commit c54f90c2627cc316d365e3073614731e17dbc631 ]
 
-Some users complained about problems with r8169 and it turned out that
-the generic PHY driver was used instead instead of the dedicated one.
-In all cases reason was that r8169.ko was in initramfs, but realtek.ko
-not. Manually adding realtek.ko to initramfs fixed the issues.
-Root cause seems to be that tools like dracut and genkernel don't
-consider softdeps. Add a check for loaded Realtek PHY driver module
-and provide the user with a hint if it's not loaded.
+LLVM's integrated assembler fails with the following error when
+building KVM:
 
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+  <inline asm>:12:6: error: expected absolute expression
+   .if kvm_update_va_mask == 0
+       ^
+  <inline asm>:21:6: error: expected absolute expression
+   .if kvm_update_va_mask == 0
+       ^
+  <inline asm>:24:2: error: unrecognized instruction mnemonic
+          NOT_AN_INSTRUCTION
+          ^
+  LLVM ERROR: Error parsing inline asm
+
+These errors come from ALTERNATIVE_CB and __ALTERNATIVE_CFG,
+which test for the existence of the callback parameter in inline
+assembly using the following expression:
+
+  " .if " __stringify(cb) " == 0\n"
+
+This works with GNU as, but isn't supported by LLVM. This change
+splits __ALTERNATIVE_CFG and ALTINSTR_ENTRY into separate macros
+to fix the LLVM build.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/472
+Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/realtek/r8169.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm64/include/asm/alternative.h | 32 ++++++++++++++++++----------
+ 1 file changed, 21 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
-index 4ab87fe845427..6ea43e48d5f97 100644
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -7433,6 +7433,15 @@ static int rtl_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	int chipset, region, i;
- 	int jumbo_max, rc;
+diff --git a/arch/arm64/include/asm/alternative.h b/arch/arm64/include/asm/alternative.h
+index b9f8d787eea9f..324e7d5ab37ed 100644
+--- a/arch/arm64/include/asm/alternative.h
++++ b/arch/arm64/include/asm/alternative.h
+@@ -35,13 +35,16 @@ void apply_alternatives_module(void *start, size_t length);
+ static inline void apply_alternatives_module(void *start, size_t length) { }
+ #endif
  
-+	/* Some tools for creating an initramfs don't consider softdeps, then
-+	 * r8169.ko may be in initramfs, but realtek.ko not. Then the generic
-+	 * PHY driver is used that doesn't work with most chip versions.
-+	 */
-+	if (!driver_find("RTL8201CP Ethernet", &mdio_bus_type)) {
-+		dev_err(&pdev->dev, "realtek.ko not loaded, maybe it needs to be added to initramfs?\n");
-+		return -ENOENT;
-+	}
+-#define ALTINSTR_ENTRY(feature,cb)					      \
++#define ALTINSTR_ENTRY(feature)					              \
+ 	" .word 661b - .\n"				/* label           */ \
+-	" .if " __stringify(cb) " == 0\n"				      \
+ 	" .word 663f - .\n"				/* new instruction */ \
+-	" .else\n"							      \
++	" .hword " __stringify(feature) "\n"		/* feature bit     */ \
++	" .byte 662b-661b\n"				/* source len      */ \
++	" .byte 664f-663f\n"				/* replacement len */
 +
- 	dev = devm_alloc_etherdev(&pdev->dev, sizeof (*tp));
- 	if (!dev)
- 		return -ENOMEM;
++#define ALTINSTR_ENTRY_CB(feature, cb)					      \
++	" .word 661b - .\n"				/* label           */ \
+ 	" .word " __stringify(cb) "- .\n"		/* callback */	      \
+-	" .endif\n"							      \
+ 	" .hword " __stringify(feature) "\n"		/* feature bit     */ \
+ 	" .byte 662b-661b\n"				/* source len      */ \
+ 	" .byte 664f-663f\n"				/* replacement len */
+@@ -62,15 +65,14 @@ static inline void apply_alternatives_module(void *start, size_t length) { }
+  *
+  * Alternatives with callbacks do not generate replacement instructions.
+  */
+-#define __ALTERNATIVE_CFG(oldinstr, newinstr, feature, cfg_enabled, cb)	\
++#define __ALTERNATIVE_CFG(oldinstr, newinstr, feature, cfg_enabled)	\
+ 	".if "__stringify(cfg_enabled)" == 1\n"				\
+ 	"661:\n\t"							\
+ 	oldinstr "\n"							\
+ 	"662:\n"							\
+ 	".pushsection .altinstructions,\"a\"\n"				\
+-	ALTINSTR_ENTRY(feature,cb)					\
++	ALTINSTR_ENTRY(feature)						\
+ 	".popsection\n"							\
+-	" .if " __stringify(cb) " == 0\n"				\
+ 	".pushsection .altinstr_replacement, \"a\"\n"			\
+ 	"663:\n\t"							\
+ 	newinstr "\n"							\
+@@ -78,17 +80,25 @@ static inline void apply_alternatives_module(void *start, size_t length) { }
+ 	".popsection\n\t"						\
+ 	".org	. - (664b-663b) + (662b-661b)\n\t"			\
+ 	".org	. - (662b-661b) + (664b-663b)\n"			\
+-	".else\n\t"							\
++	".endif\n"
++
++#define __ALTERNATIVE_CFG_CB(oldinstr, feature, cfg_enabled, cb)	\
++	".if "__stringify(cfg_enabled)" == 1\n"				\
++	"661:\n\t"							\
++	oldinstr "\n"							\
++	"662:\n"							\
++	".pushsection .altinstructions,\"a\"\n"				\
++	ALTINSTR_ENTRY_CB(feature, cb)					\
++	".popsection\n"							\
+ 	"663:\n\t"							\
+ 	"664:\n\t"							\
+-	".endif\n"							\
+ 	".endif\n"
+ 
+ #define _ALTERNATIVE_CFG(oldinstr, newinstr, feature, cfg, ...)	\
+-	__ALTERNATIVE_CFG(oldinstr, newinstr, feature, IS_ENABLED(cfg), 0)
++	__ALTERNATIVE_CFG(oldinstr, newinstr, feature, IS_ENABLED(cfg))
+ 
+ #define ALTERNATIVE_CB(oldinstr, cb) \
+-	__ALTERNATIVE_CFG(oldinstr, "NOT_AN_INSTRUCTION", ARM64_CB_PATCH, 1, cb)
++	__ALTERNATIVE_CFG_CB(oldinstr, ARM64_CB_PATCH, 1, cb)
+ #else
+ 
+ #include <asm/assembler.h>
 -- 
 2.20.1
 
