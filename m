@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6D59167565
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:31:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E490916752F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:30:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732739AbgBUI0R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:26:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36472 "EHLO mail.kernel.org"
+        id S2388656AbgBUIY0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:24:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388598AbgBUIYI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:24:08 -0500
+        id S1729774AbgBUIYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:24:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7B072469D;
-        Fri, 21 Feb 2020 08:24:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 189D32467D;
+        Fri, 21 Feb 2020 08:24:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273448;
-        bh=WfyRji/FvQF4TG98tKGWVFWrcCVN4w/9py2R/eS+vXo=;
+        s=default; t=1582273463;
+        bh=EaFYSLWwD9gekvKvQ2KakS9kbGL/UANEAU+960lU688=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V7oxcgSus5ePOaTghRoAV4woKtuoiHHoNrR7anGhgqJliEKrJwkPAQO4zNOZri11J
-         sSmCEf7dZFP83+mBe1ZLl8Bpy4fd4B+wQJfEh7NeE1p8azVl5q/ucYAAOzhHiMW5g6
-         UpHwbGFnCF+vETMseK28nX2TGAfFs64C0ZfBh0B4=
+        b=lpHkb0G/EOh20dp+PgbPBk+N/UQKDd1dO8PC/NPmpWHwVHB+BHfS0cU0lBTSPMy3a
+         uNcvfo+QDWytpOI9Krab6Q40VAkFidN9c8b66kq3m7E6ptLRzXVQDLUkNYfyPNoo5s
+         rs1zA+BTwK8OjaZvd/uFMcMkYBonRWaj7zsOFVxw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
+        stable@vger.kernel.org,
+        Andrei Otcheretianski <andrei.otcheretianski@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 175/191] radeon: insert 10ms sleep in dce5_crtc_load_lut
-Date:   Fri, 21 Feb 2020 08:42:28 +0100
-Message-Id: <20200221072311.718262780@linuxfoundation.org>
+Subject: [PATCH 4.19 181/191] iwlwifi: mvm: Fix thermal zone registration
+Date:   Fri, 21 Feb 2020 08:42:34 +0100
+Message-Id: <20200221072312.531291659@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
 References: <20200221072250.732482588@linuxfoundation.org>
@@ -45,47 +46,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
+From: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
 
-[ Upstream commit ec3d65082d7dabad6fa8f66a8ef166f2d522d6b2 ]
+[ Upstream commit baa6cf8450b72dcab11f37c47efce7c5b9b8ad0f ]
 
-Per at least one tester this is enough magic to recover the regression
-introduced for some people (but not all) in
+Use a unique name when registering a thermal zone. Otherwise, with
+multiple NICS, we hit the following warning during the unregistration.
 
-commit b8e2b0199cc377617dc238f5106352c06dcd3fa2
-Author: Peter Rosin <peda@axentia.se>
-Date:   Tue Jul 4 12:36:57 2017 +0200
+WARNING: CPU: 2 PID: 3525 at fs/sysfs/group.c:255
+ RIP: 0010:sysfs_remove_group+0x80/0x90
+ Call Trace:
+  dpm_sysfs_remove+0x57/0x60
+  device_del+0x5a/0x350
+  ? sscanf+0x4e/0x70
+  device_unregister+0x1a/0x60
+  hwmon_device_unregister+0x4a/0xa0
+  thermal_remove_hwmon_sysfs+0x175/0x1d0
+  thermal_zone_device_unregister+0x188/0x1e0
+  iwl_mvm_thermal_exit+0xe7/0x100 [iwlmvm]
+  iwl_op_mode_mvm_stop+0x27/0x180 [iwlmvm]
+  _iwl_op_mode_stop.isra.3+0x2b/0x50 [iwlwifi]
+  iwl_opmode_deregister+0x90/0xa0 [iwlwifi]
+  __exit_compat+0x10/0x2c7 [iwlmvm]
+  __x64_sys_delete_module+0x13f/0x270
+  do_syscall_64+0x5a/0x110
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-    drm/fb-helper: factor out pseudo-palette
-
-which for radeon had the side-effect of refactoring out a seemingly
-redudant writing of the color palette.
-
-10ms in a fairly slow modeset path feels like an acceptable form of
-duct-tape, so maybe worth a shot and see what sticks.
-
-Cc: Alex Deucher <alexander.deucher@amd.com>
-Cc: Michel Dänzer <michel.daenzer@amd.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/radeon/radeon_display.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/wireless/intel/iwlwifi/mvm/tt.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/radeon/radeon_display.c b/drivers/gpu/drm/radeon/radeon_display.c
-index d8e2d7b3b8365..7d1e14f0140a2 100644
---- a/drivers/gpu/drm/radeon/radeon_display.c
-+++ b/drivers/gpu/drm/radeon/radeon_display.c
-@@ -121,6 +121,8 @@ static void dce5_crtc_load_lut(struct drm_crtc *crtc)
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+index 1232f63278eb6..319103f4b432e 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+@@ -739,7 +739,8 @@ static  struct thermal_zone_device_ops tzone_ops = {
+ static void iwl_mvm_thermal_zone_register(struct iwl_mvm *mvm)
+ {
+ 	int i;
+-	char name[] = "iwlwifi";
++	char name[16];
++	static atomic_t counter = ATOMIC_INIT(0);
  
- 	DRM_DEBUG_KMS("%d\n", radeon_crtc->crtc_id);
+ 	if (!iwl_mvm_is_tt_in_fw(mvm)) {
+ 		mvm->tz_device.tzone = NULL;
+@@ -749,6 +750,7 @@ static void iwl_mvm_thermal_zone_register(struct iwl_mvm *mvm)
  
-+	msleep(10);
-+
- 	WREG32(NI_INPUT_CSC_CONTROL + radeon_crtc->crtc_offset,
- 	       (NI_INPUT_CSC_GRPH_MODE(NI_INPUT_CSC_BYPASS) |
- 		NI_INPUT_CSC_OVL_MODE(NI_INPUT_CSC_BYPASS)));
+ 	BUILD_BUG_ON(ARRAY_SIZE(name) >= THERMAL_NAME_LENGTH);
+ 
++	sprintf(name, "iwlwifi_%u", atomic_inc_return(&counter) & 0xFF);
+ 	mvm->tz_device.tzone = thermal_zone_device_register(name,
+ 							IWL_MAX_DTS_TRIPS,
+ 							IWL_WRITABLE_TRIPS_MSK,
 -- 
 2.20.1
 
