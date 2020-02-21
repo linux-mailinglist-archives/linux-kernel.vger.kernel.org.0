@@ -2,153 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03F4F16831B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 17:18:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF762168328
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 17:21:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728835AbgBUQSd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 11:18:33 -0500
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:52386 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727213AbgBUQSd (ORCPT
+        id S1728910AbgBUQVe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 11:21:34 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:54642 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727213AbgBUQVe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 11:18:33 -0500
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01LGIVlp009407;
-        Fri, 21 Feb 2020 11:18:31 -0500
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2y8ucu7ma6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 21 Feb 2020 11:18:31 -0500
-Received: from ASHBMBX8.ad.analog.com (ashbmbx8.ad.analog.com [10.64.17.5])
-        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 01LGIUFj011166
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Fri, 21 Feb 2020 11:18:30 -0500
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Fri, 21 Feb
- 2020 11:18:29 -0500
-Received: from zeus.spd.analog.com (10.64.82.11) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Fri, 21 Feb 2020 11:18:29 -0500
-Received: from saturn.ad.analog.com ([10.48.65.124])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 01LGIR75026502;
-        Fri, 21 Feb 2020 11:18:27 -0500
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <jic23@kernel.org>, Sergiu Cuciurean <sergiu.cuciurean@analog.com>
-Subject: [PATCH v2] iio: amplifiers: ad8366: add support for HMC1119 Attenuator
-Date:   Fri, 21 Feb 2020 18:18:26 +0200
-Message-ID: <20200221161826.21291-1-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200220092821.11050-1-sergiu.cuciurean@analog.com>
-References: <20200220092821.11050-1-sergiu.cuciurean@analog.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-21_05:2020-02-21,2020-02-21 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
- suspectscore=0 mlxscore=0 clxscore=1015 phishscore=0 priorityscore=1501
- mlxlogscore=999 lowpriorityscore=0 adultscore=0 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002210122
+        Fri, 21 Feb 2020 11:21:34 -0500
+Received: by mail-pj1-f67.google.com with SMTP id dw13so952118pjb.4;
+        Fri, 21 Feb 2020 08:21:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=JyA56Sz4rDYUzhUKZvP6bdIvgdElbbaajnOFHJnaXLc=;
+        b=DE+SrDBPDDTb1TICMcYIxzYdqSDYAiveqSaQQvK4xYbNYQrkmkO3WErz1+/yhArJPk
+         ZzWT7gaLw2np4/JB9+AZDLNiYB+ohDTEJhXPjkXUHmxJ5b/QhbAjMchUAQmJLJ03wuMo
+         FMoSfPkDz5CscZa217W/Qk9bjgHhYDniErdBHlGDZJS1p555vqsMg/rRpsK3N0PG8WCN
+         ZZh2aDcsREILdE753ELtLSyt+pye1kQ0+mL4v7N0cMIAYEi5mZL3NDlCcZ7JcBGpQezL
+         JGyZJd8jQf97o6Qd7kGLc/T5e3F2847OD23UKX20gkd4EqMgXd9CFDX/VO2dkqEVMQVr
+         856A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=JyA56Sz4rDYUzhUKZvP6bdIvgdElbbaajnOFHJnaXLc=;
+        b=tesQURX3KVk8pZn7qDSMF9cEEYyAsyC/bFqtfpliAtlCqFRxeikTgPZ/Q1ZUY43wor
+         m+4Q4dE+/2NAOneAbfi1maHfXD3vnD0vgd+TkAVVAUaYNju66o/haG2IpbvUojvwuy+i
+         A6FdbT2hFZjbDNlZsldt2Xz5suffjOwQ89Mw4EpNl83i794XHBZOD4+9Qj64edgOE/Xh
+         jm8tjVytq+Y7ZudbfBEOimJBFLd2toUBQwHYp95faV+9IkIWkopQ7z2tW+8O+cgIPUNK
+         o03xmjAb0QLeN8hqzBJ+X9HExepQ9ESqZaD8RO9Dm40oQndbZAVIGMwedr9+uY2J8lgI
+         2WIQ==
+X-Gm-Message-State: APjAAAWusyH9lO9/cDOGzFbm/NXl8VL1PDEIcxF3T08590ElinlhGz7O
+        Bjo7i7TsxeklkJ5lhvu3tQ==
+X-Google-Smtp-Source: APXvYqwXCzQMECdVFGJVUJX++W20f3DOsoPhx7ymDk5W84p9+jpmBSJLZBPQFXOtSP4alzuXmkRpHA==
+X-Received: by 2002:a17:90a:5d97:: with SMTP id t23mr3957136pji.61.1582302093578;
+        Fri, 21 Feb 2020 08:21:33 -0800 (PST)
+Received: from madhuparna-HP-Notebook.nitk.ac.in ([2402:3a80:1ee0:fe5e:d03d:769b:c838:c146])
+        by smtp.gmail.com with ESMTPSA id j15sm2440183pga.11.2020.02.21.08.21.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2020 08:21:32 -0800 (PST)
+From:   madhuparnabhowmik10@gmail.com
+To:     davem@davemloft.net, gregkh@linuxfoundation.org,
+        tglx@linutronix.de, allison@lohutok.net
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        joel@joelfernandes.org, frextrite@gmail.com,
+        linux-kernel-mentees@lists.linuxfoundation.org, paulmck@kernel.org,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+Subject: [PATCH] net: 802: psnap.c: Use built-in RCU list checking
+Date:   Fri, 21 Feb 2020 21:49:47 +0530
+Message-Id: <20200221161947.11536-1-madhuparnabhowmik10@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
 
-This change adds support for the HMC1119 Silicon Digial Attenuator. The
-HMC1119 is a broadband, highly accurate, 7-bit digital attenuator,
-operating from 0.1 GHz to 6.0 GHz with 31.5 dB attenuation control range
-in 0.25 dB steps.
+list_for_each_entry_rcu() has built-in RCU and lock checking.
 
-Link: https://www.analog.com/media/en/technical-documentation/data-sheets/hmc1119.pdf
+Pass cond argument to list_for_each_entry_rcu() to silence
+false lockdep warning when CONFIG_PROVE_RCU_LIST is enabled
+by default.
 
-Signed-off-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
 ---
- drivers/iio/amplifiers/ad8366.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ net/802/psnap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/amplifiers/ad8366.c b/drivers/iio/amplifiers/ad8366.c
-index 95972ab60f42..62167b87caea 100644
---- a/drivers/iio/amplifiers/ad8366.c
-+++ b/drivers/iio/amplifiers/ad8366.c
-@@ -5,6 +5,7 @@
-  *   AD8366 Dual-Digital Variable Gain Amplifier (VGA)
-  *   ADA4961 BiCMOS RF Digital Gain Amplifier (DGA)
-  *   ADL5240 Digitally controlled variable gain amplifier (VGA)
-+ *   HMC1119 0.25 dB LSB, 7-Bit, Silicon Digital Attenuator
-  *
-  * Copyright 2012-2019 Analog Devices Inc.
-  */
-@@ -27,6 +28,7 @@ enum ad8366_type {
- 	ID_AD8366,
- 	ID_ADA4961,
- 	ID_ADL5240,
-+	ID_HMC1119,
- };
+diff --git a/net/802/psnap.c b/net/802/psnap.c
+index 40ab2aea7b31..4492e8d7ad20 100644
+--- a/net/802/psnap.c
++++ b/net/802/psnap.c
+@@ -30,7 +30,7 @@ static struct datalink_proto *find_snap_client(const unsigned char *desc)
+ {
+ 	struct datalink_proto *proto = NULL, *p;
  
- struct ad8366_info {
-@@ -62,6 +64,10 @@ static struct ad8366_info ad8366_infos[] = {
- 		.gain_min = -11500,
- 		.gain_max = 20000,
- 	},
-+	[ID_HMC1119] = {
-+		.gain_min = -31750,
-+		.gain_max = 0,
-+	},
- };
- 
- static int ad8366_write(struct iio_dev *indio_dev,
-@@ -84,6 +90,9 @@ static int ad8366_write(struct iio_dev *indio_dev,
- 	case ID_ADL5240:
- 		st->data[0] = (ch_a & 0x3F);
- 		break;
-+	case ID_HMC1119:
-+		st->data[0] = ch_a;
-+		break;
- 	}
- 
- 	ret = spi_write(st->spi, st->data, indio_dev->num_channels);
-@@ -118,6 +127,9 @@ static int ad8366_read_raw(struct iio_dev *indio_dev,
- 		case ID_ADL5240:
- 			gain = 20000 - 31500 + code * 500;
+-	list_for_each_entry_rcu(p, &snap_list, node) {
++	list_for_each_entry_rcu(p, &snap_list, node, lockdep_is_held(&snap_lock)) {
+ 		if (!memcmp(p->type, desc, 5)) {
+ 			proto = p;
  			break;
-+		case ID_HMC1119:
-+			gain = -1 * code * 250;
-+			break;
- 		}
- 
- 		/* Values in dB */
-@@ -164,6 +176,9 @@ static int ad8366_write_raw(struct iio_dev *indio_dev,
- 	case ID_ADL5240:
- 		code = ((gain - 500 - 20000) / 500) & 0x3F;
- 		break;
-+	case ID_HMC1119:
-+		code = (abs(gain) / 250) & 0x7F;
-+		break;
- 	}
- 
- 	mutex_lock(&st->lock);
-@@ -246,6 +261,7 @@ static int ad8366_probe(struct spi_device *spi)
- 		break;
- 	case ID_ADA4961:
- 	case ID_ADL5240:
-+	case ID_HMC1119:
- 		st->reset_gpio = devm_gpiod_get(&spi->dev, "reset",
- 			GPIOD_OUT_HIGH);
- 		indio_dev->channels = ada4961_channels;
-@@ -298,6 +314,7 @@ static const struct spi_device_id ad8366_id[] = {
- 	{"ad8366",  ID_AD8366},
- 	{"ada4961", ID_ADA4961},
- 	{"adl5240", ID_ADL5240},
-+	{"hmc1119", ID_HMC1119},
- 	{}
- };
- MODULE_DEVICE_TABLE(spi, ad8366_id);
 -- 
-2.20.1
+2.17.1
 
