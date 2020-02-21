@@ -2,173 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67FB816856D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 18:48:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA2CE168590
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 18:50:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729416AbgBURs0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 12:48:26 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:54297 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729240AbgBURsT (ORCPT
+        id S1728071AbgBURu3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 12:50:29 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:41865 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725995AbgBURu3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 12:48:19 -0500
-Received: from mwalle01.sab.local. (unknown [213.135.10.150])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 4B2CE23E6A;
-        Fri, 21 Feb 2020 18:48:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1582307295;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=oKAX3BGInq2OpMzz4CsyiOeJ6b7EAJW7O+YBkeufuTY=;
-        b=pr+O3RDJKJVx39YNuuUF41ggl/uH01I8Uo0r4VvIMWSG5v2Caf5W1MKnecoQ5+wIcXAX6v
-        xZ6oQalKR3sLVAfXhqKr0o53HRp3WYlVHeqDX5Llb+6RnNBPUaXuoJijteH1LZXrV2zYHP
-        q4g07IdN/4n+bRa5vuD1mPXo5mupF2s=
-From:   Michael Walle <michael@walle.cc>
-To:     linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Jiri Slaby <jslaby@suse.com>, Peng Fan <peng.fan@nxp.com>,
-        Vabhav Sharma <vabhav.sharma@nxp.com>,
-        Michael Walle <michael@walle.cc>
-Subject: [PATCH v2 9/9] arm64: dts: ls1028a: add missing LPUART nodes
-Date:   Fri, 21 Feb 2020 18:47:54 +0100
-Message-Id: <20200221174754.5295-10-michael@walle.cc>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200221174754.5295-1-michael@walle.cc>
-References: <20200221174754.5295-1-michael@walle.cc>
+        Fri, 21 Feb 2020 12:50:29 -0500
+Received: by mail-pl1-f195.google.com with SMTP id t14so1153979plr.8
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 09:50:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BTYBxRjxL6j9jRa5am8wcAfH9hghQz4giKAxNHy2xK4=;
+        b=FzTSLxgkZT4cxDaHBStgUqU87ldVzo/bNsdhWZMxTdso97FTZfmxRDZzASr4GMAC5U
+         10aX+WUWPsbGFzeWKUukY2TcbDA+wPz8O0wuCuZrO1yBwIyh50cOW1NIMhtyJHJihGZj
+         TQdELxqazapE2l4nLK4UcgPEs4v86pzAUojGf5KPPZd15eMs9WGRXo6gV3htuLvA++yR
+         R5k+oU7oZmryU7dDL1blPrfAQpj/cGy5ozvZq87NOXC6LRYv/4aI6bT+hjNtPXybnVgt
+         xuA3Hl7h+/kr2VPQ2OXdBB4pcrrft++V0M0dvnsVo5J5SEA7Fu/ZraWTUPcN+BzwtUSu
+         GPWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BTYBxRjxL6j9jRa5am8wcAfH9hghQz4giKAxNHy2xK4=;
+        b=L/3Kv4dCZRuH+IMJeSYlvEaD7FJ4NDWbRfpgTowDTOVDGMHBxzulZRZVkfHtKdkfaF
+         XpKGWsITYHrKPD8daDjo2FitPfkB949Bszw/7+qIaV0xcgOHCsYbjElu+9RPN9LHg6yi
+         2DD4IGHlbtYg65vVk+djfXUBhPWORA7O4YUxX+Rk8UmaDb72sQ4mWLGYbvjF6efeiezf
+         faDxdYV+3MJF2JM1PTx1eTF3H5Eje1PIpw2VIP5XUAzBrz1GbcgJYeL8mtbdjC13As5N
+         IMXul57pqcjrFKp786oStEI16BCvmFtl+TcNeziIPJvzHaUVtn7SeA0ZtF0JKsbczEwp
+         LGOw==
+X-Gm-Message-State: APjAAAVc5j50QyOzzLzZSTmsxdma1hDAGLRhOApIK35iqxKSHwIExvnI
+        KA9eQa/4fFKOYaBEPheEOb0=
+X-Google-Smtp-Source: APXvYqxFGA8qOE0zV8w0G6DGlTadJbX7gGbhCdt+y+ZbsNrPZ8eNdi/7bpZfOZvHh0hccPyg8He0cg==
+X-Received: by 2002:a17:90a:e509:: with SMTP id t9mr4217996pjy.110.1582307427862;
+        Fri, 21 Feb 2020 09:50:27 -0800 (PST)
+Received: from google.com ([2620:15c:211:1:3e01:2939:5992:52da])
+        by smtp.gmail.com with ESMTPSA id c26sm3591866pfj.8.2020.02.21.09.50.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2020 09:50:26 -0800 (PST)
+Date:   Fri, 21 Feb 2020 09:50:24 -0800
+From:   Minchan Kim <minchan@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [PATCH v2 2/2] mm: fix long time stall from mm_populate
+Message-ID: <20200221175024.GC226145@google.com>
+References: <20200214192951.29430-1-minchan@kernel.org>
+ <20200214192951.29430-2-minchan@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Bar: ++++++
-X-Spam-Level: ******
-X-Rspamd-Server: web
-X-Spam-Status: Yes, score=6.40
-X-Spam-Score: 6.40
-X-Rspamd-Queue-Id: 4B2CE23E6A
-X-Spamd-Result: default: False [6.40 / 15.00];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         R_MISSING_CHARSET(2.50)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         BROKEN_CONTENT_TYPE(1.50)[];
-         NEURAL_SPAM(0.00)[0.782];
-         DKIM_SIGNED(0.00)[];
-         DBL_PROHIBIT(0.00)[0.34.163.48:email,0.34.202.64:email,0.34.124.32:email,0.34.241.80:email];
-         RCPT_COUNT_TWELVE(0.00)[13];
-         MID_CONTAINS_FROM(1.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         ASN(0.00)[asn:12941, ipnet:213.135.0.0/19, country:DE];
-         SUSPICIOUS_RECIPS(1.50)[]
-X-Spam: Yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200214192951.29430-2-minchan@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The LS1028A has six LPUART controllers. Add the nodes.
+Bumping up.
 
-This was tested on a custom board.
-
-Signed-off-by: Michael Walle <michael@walle.cc>
----
- .../arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 73 +++++++++++++++++++
- 1 file changed, 73 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-index f1909fee391d..3ece3f8446d3 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-@@ -390,6 +390,79 @@
- 			status = "disabled";
- 		};
- 
-+
-+		lpuart0: serial@2260000 {
-+			compatible = "fsl,ls1028a-lpuart";
-+			reg = <0x0 0x2260000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 232 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clockgen 4 1>;
-+			clock-names = "ipg";
-+			dma-names = "rx","tx";
-+			dmas = <&edma0 1 32>,
-+			       <&edma0 1 33>;
-+			status = "disabled";
-+		};
-+
-+		lpuart1: serial@2270000 {
-+			compatible = "fsl,ls1028a-lpuart";
-+			reg = <0x0 0x2270000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 233 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clockgen 4 1>;
-+			clock-names = "ipg";
-+			dma-names = "rx","tx";
-+			dmas = <&edma0 1 30>,
-+			       <&edma0 1 31>;
-+			status = "disabled";
-+		};
-+
-+		lpuart2: serial@2280000 {
-+			compatible = "fsl,ls1028a-lpuart";
-+			reg = <0x0 0x2280000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 234 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clockgen 4 1>;
-+			clock-names = "ipg";
-+			dma-names = "rx","tx";
-+			dmas = <&edma0 1 28>,
-+			       <&edma0 1 29>;
-+			status = "disabled";
-+		};
-+
-+		lpuart3: serial@2290000 {
-+			compatible = "fsl,ls1028a-lpuart";
-+			reg = <0x0 0x2290000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 235 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clockgen 4 1>;
-+			clock-names = "ipg";
-+			dma-names = "rx","tx";
-+			dmas = <&edma0 1 26>,
-+			       <&edma0 1 27>;
-+			status = "disabled";
-+		};
-+
-+		lpuart4: serial@22a0000 {
-+			compatible = "fsl,ls1028a-lpuart";
-+			reg = <0x0 0x22a0000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 236 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clockgen 4 1>;
-+			clock-names = "ipg";
-+			dma-names = "rx","tx";
-+			dmas = <&edma0 1 24>,
-+			       <&edma0 1 25>;
-+			status = "disabled";
-+		};
-+
-+		lpuart5: serial@22b0000 {
-+			compatible = "fsl,ls1028a-lpuart";
-+			reg = <0x0 0x22b0000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 237 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clockgen 4 1>;
-+			clock-names = "ipg";
-+			dma-names = "rx","tx";
-+			dmas = <&edma0 1 22>,
-+			       <&edma0 1 23>;
-+			status = "disabled";
-+		};
-+
- 		edma0: dma-controller@22c0000 {
- 			#dma-cells = <2>;
- 			compatible = "fsl,ls1028a-edma", "fsl,vf610-edma";
--- 
-2.20.1
-
+On Fri, Feb 14, 2020 at 11:29:51AM -0800, Minchan Kim wrote:
+> Basically, fault handler releases mmap_sem before requesting readahead
+> and then it is supposed to retry lookup the page from page cache with
+> FAULT_FLAG_TRIED so that it avoids the live lock of infinite retry.
+> 
+> However, what happens if the fault handler find a page from page
+> cache and the page has readahead marker but are waiting under
+> writeback? Plus one more condition, it happens under mm_populate
+> which repeats faulting unless it encounters error. So let's assemble
+> conditions below.
+> 
+>        CPU 1                                                        CPU 2
+> 
+> - first loop
+>     mm_populate
+>      for ()
+>        ..
+>        ret = populate_vma_page_range
+>          __get_user_pages
+>            faultin_page
+>              handle_mm_fault
+>                filemap_fault
+>                  do_async_mmap_readahead
+>                    if (PageReadahead(pageA))
+>                      maybe_unlock_mmap_for_io
+>                        up_read(mmap_sem)
+> 					                    shrink_page_list
+>                                                               pageout
+>                                                                 SetPageReclaim(=SetPageReadahead)(pageA)
+>                                                                 writepage
+>                                                                   SetPageWriteback(pageA)
+> 
+>                      page_cache_async_readahead()
+> 		       ClearPageReadahead(pageA)
+>                  do_async_mmap_readahead
+> 		 lock_page_maybe_drop_mmap
+> 		   goto out_retry
+> 
+> 					                    the pageA is reclaimed
+> 							    and new pageB is populated to the file offset
+> 							    and finally has become PG_readahead
+> 
+> - second loop
+> 
+> 	  __get_user_pages
+>            faultin_page
+>              handle_mm_fault
+>                filemap_fault
+>                  do_async_mmap_readahead
+>                    if (PageReadahead(pageB))
+>                      maybe_unlock_mmap_for_io
+>                        up_read(mmap_sem)
+> 					                    shrink_page_list
+>                                                               pageout
+>                                                                 SetPageReclaim(=SetPageReadahead)(pageB)
+>                                                                 writepage
+>                                                                   SetPageWriteback(pageB)
+> 
+>                      page_cache_async_readahead()
+> 		       ClearPageReadahead(pageB)
+>                  do_async_mmap_readahead
+> 		 lock_page_maybe_drop_mmap
+> 		   goto out_retry
+> 
+> It could be repeated forever so it's livelock. without involving reclaim,
+> it could happens if ra_pages become zero by fadvise/other threads who
+> have same fd one doing randome while the other one is sequential
+> because page_cache_async_readahead has following condition check like
+> PageWriteback and ra_pages are never synchrnized with fadvise and
+> shrink_readahead_size_eio from other threads.
+> 
+> void page_cache_async_readahead(struct address_space *mapping,
+>                            unsigned long req_size)
+> {
+>         /* no read-ahead */
+>         if (!ra->ra_pages)
+>                 return;
+> 
+> Thus, we need to limit fault retry from mm_populate like page
+> fault handler.
+> 
+> Fixes: 6b4c9f446981 ("filemap: drop the mmap_sem for all blocking operations")
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Minchan Kim <minchan@kernel.org>
+> ---
+>  mm/gup.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/mm/gup.c b/mm/gup.c
+> index 1b521e0ac1de..6f6548c63ad5 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -1133,7 +1133,7 @@ static __always_inline long __get_user_pages_locked(struct task_struct *tsk,
+>   *
+>   * This takes care of mlocking the pages too if VM_LOCKED is set.
+>   *
+> - * return 0 on success, negative error code on error.
+> + * return number of pages pinned on success, negative error code on error.
+>   *
+>   * vma->vm_mm->mmap_sem must be held.
+>   *
+> @@ -1196,6 +1196,7 @@ int __mm_populate(unsigned long start, unsigned long len, int ignore_errors)
+>  	struct vm_area_struct *vma = NULL;
+>  	int locked = 0;
+>  	long ret = 0;
+> +	bool tried = false;
+>  
+>  	end = start + len;
+>  
+> @@ -1226,14 +1227,18 @@ int __mm_populate(unsigned long start, unsigned long len, int ignore_errors)
+>  		 * double checks the vma flags, so that it won't mlock pages
+>  		 * if the vma was already munlocked.
+>  		 */
+> -		ret = populate_vma_page_range(vma, nstart, nend, &locked);
+> +		ret = populate_vma_page_range(vma, nstart, nend,
+> +						tried ? NULL : &locked);
+>  		if (ret < 0) {
+>  			if (ignore_errors) {
+>  				ret = 0;
+>  				continue;	/* continue at next VMA */
+>  			}
+>  			break;
+> -		}
+> +		} else if (ret == 0)
+> +			tried = true;
+> +		else
+> +			tried = false;
+>  		nend = nstart + ret * PAGE_SIZE;
+>  		ret = 0;
+>  	}
+> -- 
+> 2.25.0.265.gbab2e86ba0-goog
+> 
