@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7DCC1673E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3309E1673D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387558AbgBUIQk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:16:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53608 "EHLO mail.kernel.org"
+        id S2387468AbgBUIQF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:16:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387544AbgBUIQc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:16:32 -0500
+        id S1733143AbgBUIP7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:15:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5A8E24682;
-        Fri, 21 Feb 2020 08:16:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7B672467B;
+        Fri, 21 Feb 2020 08:15:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272991;
-        bh=FJog/hBzuEntMPGFGJZEiaIKgbnfeYjzMZKVtSXEULw=;
+        s=default; t=1582272959;
+        bh=xMt+/WZJ7JX4l2wXXyGzZfDgtpkGtXEWwqSlZvxiJAE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Rsut+D/Pm0b3RGqDwdKHmBKWYpUdj1AuV3obOHCo9u2zBYMxfZSIfHdUalNj+JDHt
-         1FlNTI1peN/1ekFF7WtqX8jQfgQwSUSeGQpj0OXS5ZPrkkSuADZkjSy3ccuDuRrR0L
-         NcePLLRpSr1RXextp0SqxR6+dARJlb+VgYgHdu5Q=
+        b=hQFJ7Zp9wVecj4XjvebzxDFdR9UjwrJEihfWrS1aF6S5BV1AtJhYgmYzUKNkjsBIz
+         0k9TUvFQaMsdvMjq0w/PFAnc/jkujaLwuGi7Qe8a/YfXAE1drIX3yqREB88vBHcHpQ
+         L2BB5Yw/6TsQFlcG6KCZ14NS8PUyyE8Sn8DObRz4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
-        Oleg Kravtsov <oleg@tuxera.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Pavel Shilovsky <pshilov@microsoft.com>,
+        stable@vger.kernel.org, Xiao Yang <ice_yangxiao@163.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 338/344] cifs: log warning message (once) if out of disk space
-Date:   Fri, 21 Feb 2020 08:42:17 +0100
-Message-Id: <20200221072421.125048821@linuxfoundation.org>
+Subject: [PATCH 5.4 340/344] fuse: dont overflow LLONG_MAX with end offset
+Date:   Fri, 21 Feb 2020 08:42:19 +0100
+Message-Id: <20200221072421.321737639@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
 References: <20200221072349.335551332@linuxfoundation.org>
@@ -46,40 +44,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steve French <stfrench@microsoft.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-[ Upstream commit d6fd41905ec577851734623fb905b1763801f5ef ]
+[ Upstream commit 2f1398291bf35fe027914ae7a9610d8e601fbfde ]
 
-We ran into a confusing problem where an application wasn't checking
-return code on close and so user didn't realize that the application
-ran out of disk space.  log a warning message (once) in these
-cases. For example:
+Handle the special case of fuse_readpages() wanting to read the last page
+of a hugest file possible and overflowing the end offset in the process.
 
-  [ 8407.391909] Out of space writing to \\oleg-server\small-share
+This is basically to unbreak xfstests:generic/525 and prevent filesystems
+from doing bad things with an overflowing offset.
 
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reported-by: Oleg Kravtsov <oleg@tuxera.com>
-Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Reported-by: Xiao Yang <ice_yangxiao@163.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/smb2pdu.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/fuse/file.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
-index 06d932ed097e5..c6fc6582ee7bc 100644
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -3917,6 +3917,9 @@ smb2_writev_callback(struct mid_q_entry *mid)
- 				     wdata->cfile->fid.persistent_fid,
- 				     tcon->tid, tcon->ses->Suid, wdata->offset,
- 				     wdata->bytes, wdata->result);
-+		if (wdata->result == -ENOSPC)
-+			printk_once(KERN_WARNING "Out of space writing to %s\n",
-+				    tcon->treeName);
- 	} else
- 		trace_smb3_write_done(0 /* no xid */,
- 				      wdata->cfile->fid.persistent_fid,
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 695369f46f92d..3dd37a998ea93 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -803,6 +803,10 @@ static int fuse_do_readpage(struct file *file, struct page *page)
+ 
+ 	attr_ver = fuse_get_attr_version(fc);
+ 
++	/* Don't overflow end offset */
++	if (pos + (desc.length - 1) == LLONG_MAX)
++		desc.length--;
++
+ 	fuse_read_args_fill(&ia, file, pos, desc.length, FUSE_READ);
+ 	res = fuse_simple_request(fc, &ia.ap.args);
+ 	if (res < 0)
+@@ -888,6 +892,14 @@ static void fuse_send_readpages(struct fuse_io_args *ia, struct file *file)
+ 	ap->args.out_pages = true;
+ 	ap->args.page_zeroing = true;
+ 	ap->args.page_replace = true;
++
++	/* Don't overflow end offset */
++	if (pos + (count - 1) == LLONG_MAX) {
++		count--;
++		ap->descs[ap->num_pages - 1].length--;
++	}
++	WARN_ON((loff_t) (pos + count) < 0);
++
+ 	fuse_read_args_fill(ia, file, pos, count, FUSE_READ);
+ 	ia->read.attr_ver = fuse_get_attr_version(fc);
+ 	if (fc->async_read) {
 -- 
 2.20.1
 
