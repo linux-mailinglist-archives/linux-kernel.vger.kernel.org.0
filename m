@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6AD2167392
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:14:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E812A16746F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:23:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733030AbgBUINh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:13:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49658 "EHLO mail.kernel.org"
+        id S1730501AbgBUIVW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:21:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733019AbgBUINd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:13:33 -0500
+        id S1730511AbgBUIVT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:21:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62BBA20578;
-        Fri, 21 Feb 2020 08:13:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04D09206ED;
+        Fri, 21 Feb 2020 08:21:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272812;
-        bh=A5M/b60pryRVMCK7wWtj9FXnrBwc8azvr0jEhFC4aWQ=;
+        s=default; t=1582273278;
+        bh=aTkwBG4IKOurcW/xcYirLZ4nz5+6vBqxuGUZY+UNv+U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tWjSCX/QAqeeqNp5hVn6L74Ca+ZChId7PFJlWk0PIu4ay/oLJVXQ/ungg6GEsTi//
-         iNfTm/scehoRQmQDYYoHRlnOkkM8ejfZ/FU5u1uRNspHXXm6lqHGkJ4DDrgihsqCGI
-         uvqgEwCIGirV2l+4uRK6ThXFrIYlmCVsBPD/OYBQ=
+        b=N085+n/qXmu2oYZ7D1BslX7tn5P9covALIKXK0cRQJJYjv1wfS5E3uSBJTsj4fan2
+         JXSkx6Pj75qfOxNKulJs7cr0ZGbcgz3cyLWRNpE4/6qB6qgbR6Bpx5In2crZh8xxuC
+         qmaskZmGl5vX9cMukpiydeJa5gIcASWbNkrn/TrY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sergey Zakharchenko <szakharchenko@digital-loggers.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        stable@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
+        Marco Felsch <m.felsch@pengutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 284/344] media: uvcvideo: Add a quirk to force GEO GC6500 Camera bits-per-pixel value
-Date:   Fri, 21 Feb 2020 08:41:23 +0100
-Message-Id: <20200221072415.577606331@linuxfoundation.org>
+Subject: [PATCH 4.19 111/191] Input: edt-ft5x06 - work around first register access error
+Date:   Fri, 21 Feb 2020 08:41:24 +0100
+Message-Id: <20200221072304.214199503@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,82 +46,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sergey Zakharchenko <szakharchenko@digital-loggers.com>
+From: Philipp Zabel <p.zabel@pengutronix.de>
 
-[ Upstream commit 1dd2e8f942574e2be18374ebb81751082d8d467c ]
+[ Upstream commit e112324cc0422c046f1cf54c56f333d34fa20885 ]
 
-This device does not function correctly in raw mode in kernel
-versions validating buffer sizes in bulk mode. It erroneously
-announces 16 bits per pixel instead of 12 for NV12 format, so it
-needs this quirk to fix computed frame size and avoid legitimate
-frames getting discarded.
+The EP0700MLP1 returns bogus data on the first register read access
+(reading the threshold parameter from register 0x00):
 
-[Move info and div variables to local scope]
+    edt_ft5x06 2-0038: crc error: 0xfc expected, got 0x40
 
-Signed-off-by: Sergey Zakharchenko <szakharchenko@digital-loggers.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+It ignores writes until then. This patch adds a dummy read after which
+the number of sensors and parameter read/writes work correctly.
+
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/usb/uvc/uvc_driver.c | 25 +++++++++++++++++++++++++
- drivers/media/usb/uvc/uvcvideo.h   |  1 +
- 2 files changed, 26 insertions(+)
+ drivers/input/touchscreen/edt-ft5x06.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index 2b688cc39bb81..99883550375e9 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -497,6 +497,22 @@ static int uvc_parse_format(struct uvc_device *dev,
- 			}
- 		}
+diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
+index 1e18ca0d1b4e1..3fdaa644a82c1 100644
+--- a/drivers/input/touchscreen/edt-ft5x06.c
++++ b/drivers/input/touchscreen/edt-ft5x06.c
+@@ -968,6 +968,7 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client,
+ {
+ 	const struct edt_i2c_chip_data *chip_data;
+ 	struct edt_ft5x06_ts_data *tsdata;
++	u8 buf[2] = { 0xfc, 0x00 };
+ 	struct input_dev *input;
+ 	unsigned long irq_flags;
+ 	int error;
+@@ -1037,6 +1038,12 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client,
+ 		return error;
+ 	}
  
-+		/* Some devices report bpp that doesn't match the format. */
-+		if (dev->quirks & UVC_QUIRK_FORCE_BPP) {
-+			const struct v4l2_format_info *info =
-+				v4l2_format_info(format->fcc);
++	/*
++	 * Dummy read access. EP0700MLP1 returns bogus data on the first
++	 * register read access and ignores writes.
++	 */
++	edt_ft5x06_ts_readwrite(tsdata->client, 2, buf, 2, buf);
 +
-+			if (info) {
-+				unsigned int div = info->hdiv * info->vdiv;
-+
-+				n = info->bpp[0] * div;
-+				for (i = 1; i < info->comp_planes; i++)
-+					n += info->bpp[i];
-+
-+				format->bpp = DIV_ROUND_UP(8 * n, div);
-+			}
-+		}
-+
- 		if (buffer[2] == UVC_VS_FORMAT_UNCOMPRESSED) {
- 			ftype = UVC_VS_FRAME_UNCOMPRESSED;
- 		} else {
-@@ -2874,6 +2890,15 @@ static const struct usb_device_id uvc_ids[] = {
- 	  .bInterfaceSubClass	= 1,
- 	  .bInterfaceProtocol	= 0,
- 	  .driver_info		= (kernel_ulong_t)&uvc_quirk_force_y8 },
-+	/* GEO Semiconductor GC6500 */
-+	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
-+				| USB_DEVICE_ID_MATCH_INT_INFO,
-+	  .idVendor		= 0x29fe,
-+	  .idProduct		= 0x4d53,
-+	  .bInterfaceClass	= USB_CLASS_VIDEO,
-+	  .bInterfaceSubClass	= 1,
-+	  .bInterfaceProtocol	= 0,
-+	  .driver_info		= UVC_INFO_QUIRK(UVC_QUIRK_FORCE_BPP) },
- 	/* Intel RealSense D4M */
- 	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
- 				| USB_DEVICE_ID_MATCH_INT_INFO,
-diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-index c7c1baa90dea8..24e3d8c647e77 100644
---- a/drivers/media/usb/uvc/uvcvideo.h
-+++ b/drivers/media/usb/uvc/uvcvideo.h
-@@ -198,6 +198,7 @@
- #define UVC_QUIRK_RESTRICT_FRAME_RATE	0x00000200
- #define UVC_QUIRK_RESTORE_CTRLS_ON_INIT	0x00000400
- #define UVC_QUIRK_FORCE_Y8		0x00000800
-+#define UVC_QUIRK_FORCE_BPP		0x00001000
- 
- /* Format flags */
- #define UVC_FMT_FLAG_COMPRESSED		0x00000001
+ 	edt_ft5x06_ts_set_regs(tsdata);
+ 	edt_ft5x06_ts_get_defaults(&client->dev, tsdata);
+ 	edt_ft5x06_ts_get_parameters(tsdata);
 -- 
 2.20.1
 
