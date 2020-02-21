@@ -2,73 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFF8A167033
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:37:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 965C21670FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:50:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbgBUHha (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:37:30 -0500
-Received: from mx.socionext.com ([202.248.49.38]:50777 "EHLO mx.socionext.com"
+        id S1729524AbgBUHuR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:50:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726100AbgBUHha (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:37:30 -0500
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 21 Feb 2020 16:37:28 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 20ED3603AB;
-        Fri, 21 Feb 2020 16:37:29 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Fri, 21 Feb 2020 16:37:29 +0900
-Received: from plum.e01.socionext.com (unknown [10.213.132.32])
-        by kinkan.css.socionext.com (Postfix) with ESMTP id 9E7961A01BB;
-        Fri, 21 Feb 2020 16:37:28 +0900 (JST)
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: [PATCH v4 0/2] dmaengine: Add UniPhier XDMAC driver
-Date:   Fri, 21 Feb 2020 16:37:24 +0900
-Message-Id: <1582270646-29161-1-git-send-email-hayashi.kunihiko@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        id S1729101AbgBUHuQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:50:16 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 102DF24650;
+        Fri, 21 Feb 2020 07:50:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582271415;
+        bh=xn0c89TUYb91GwJwguGAuyRfda2/y67RUJKduA4/pk4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=MpRc6k1T/FLVA9pzj8oIH6UekEhxfiREWmWx3QFlhK1kS1Pn/tKouQnl+YPBVLFTf
+         lKhCLiFMMxd3KHyvDsxP08r3vuVCY0YZRB2vrJMYSEAbiN+bvO9E9yGuJajhTmZi5W
+         9QxdDXsdsvWFqu9FbktGG+4jSG35u+JYNyPuLSvg=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 119/399] arm64: dts: allwinner: H6: Add PMU mode
+Date:   Fri, 21 Feb 2020 08:37:24 +0100
+Message-Id: <20200221072414.042546952@linuxfoundation.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
+References: <20200221072402.315346745@linuxfoundation.org>
+User-Agent: quilt/0.66
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for UniPhier external DMA controller (XDMAC), that is
-implemented in Pro4, Pro5, PXs2, LD11, LD20 and PXs3 SoCs.
+From: Andre Przywara <andre.przywara@arm.com>
 
-Changes since v3:
-- dt-bindings: Fix typo
+[ Upstream commit 7aa9b9eb7d6a8fde7acbe0446444f7e3fae1fe3b ]
 
-Changes since v2:
-- dt-bindings: Fix SPDX and some properties
-- Fix iteration count calculation for memcpy
-- Replace zero-length array with flexible-array member in struct
-  uniphier_xdmac_device.
+Add the Performance Monitoring Unit (PMU) device tree node to the H6
+.dtsi, which tells DT users which interrupts are triggered by PMU
+overflow events on each core. The numbers come from the manual and have
+been checked in U-Boot and with perf in Linux.
 
-Changes since v1:
-- dt-bindings: Rewrite with DT schema.
-- Change return type of uniphier_xdmac_chan_init() to void,
-  and remove error return in probe.
+Tested with perf record and taskset on a Pine H64.
 
-Kunihiko Hayashi (2):
-  dt-bindings: dmaengine: Add UniPhier external DMA controller bindings
-  dmaengine: uniphier-xdmac: Add UniPhier external DMA controller driver
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
- .../bindings/dma/socionext,uniphier-xdmac.yaml     |  63 +++
- drivers/dma/Kconfig                                |  11 +
- drivers/dma/Makefile                               |   1 +
- drivers/dma/uniphier-xdmac.c                       | 611 +++++++++++++++++++++
- 4 files changed, 686 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.yaml
- create mode 100644 drivers/dma/uniphier-xdmac.c
-
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+index 29824081b43b0..24ffe2dcbddbf 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+@@ -70,6 +70,16 @@
+ 		clock-output-names = "ext_osc32k";
+ 	};
+ 
++	pmu {
++		compatible = "arm,cortex-a53-pmu",
++			     "arm,armv8-pmuv3";
++		interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>;
++	};
++
+ 	psci {
+ 		compatible = "arm,psci-0.2";
+ 		method = "smc";
 -- 
-2.7.4
+2.20.1
+
+
 
