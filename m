@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF7181676C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:38:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 931621676C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:38:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731470AbgBUID3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:03:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36238 "EHLO mail.kernel.org"
+        id S1731488AbgBUIDc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:03:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731001AbgBUID1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:03:27 -0500
+        id S1731469AbgBUID3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:03:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31B0A2465D;
-        Fri, 21 Feb 2020 08:03:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF906222C4;
+        Fri, 21 Feb 2020 08:03:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272206;
-        bh=lF92hF88zHd33XQxLnxONLpWHtNulppo4iZqNdajo2M=;
+        s=default; t=1582272209;
+        bh=zHTUh5PHMgFWU1edZPn6wQntKg1Dv1p7HKF4+eFYTeo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=otaDJvE2VSmfFgu7Jc60jYvs5hvIYOp7gR8LDCnG9iNcs3jYsVWWhIhHYNKnav4pR
-         MzqktORIv7jUbJ1E5hCz/NGxWBwzveCM05FpjvdnuoB3jor70H9rdjbXoGuD8NPTh6
-         QvnW4IVnhhhernNLGw1gARXKK5w2SqfABYZUJ8A4=
+        b=ZlChRam1iI5epj+4gs6+Cyx/SDW/elb7LsCFZj44zdF61qZDs4kwQpzkSZeLlGtiO
+         fenbpLwTK6ydUoWFH4YIGD2lUHX5mJwbMJJdHRYqDPBKG6JpXLFlI22gZY64ueR1Dq
+         lzVXCaUUkuxIPFGbAJ7RsuVH2VHjPJ1JTWxX+wPk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        stable@vger.kernel.org, Tiecheng Zhou <Tiecheng.Zhou@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 055/344] uio: fix a sleep-in-atomic-context bug in uio_dmem_genirq_irqcontrol()
-Date:   Fri, 21 Feb 2020 08:37:34 +0100
-Message-Id: <20200221072354.062239864@linuxfoundation.org>
+Subject: [PATCH 5.4 056/344] drm/amdgpu/sriov: workaround on rev_id for Navi12 under sriov
+Date:   Fri, 21 Feb 2020 08:37:35 +0100
+Message-Id: <20200221072354.149936285@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
 References: <20200221072349.335551332@linuxfoundation.org>
@@ -43,54 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Tiecheng Zhou <Tiecheng.Zhou@amd.com>
 
-[ Upstream commit b74351287d4bd90636c3f48bc188c2f53824c2d4 ]
+[ Upstream commit df5e984c8bd414561c320d6cbbb66d53abf4c7e2 ]
 
-The driver may sleep while holding a spinlock.
-The function call path (from bottom to top) in Linux 4.19 is:
+guest vm gets 0xffffffff when reading RCC_DEV0_EPF0_STRAP0,
+as a consequence, the rev_id and external_rev_id are wrong.
 
-kernel/irq/manage.c, 523:
-	synchronize_irq in disable_irq
-drivers/uio/uio_dmem_genirq.c, 140:
-	disable_irq in uio_dmem_genirq_irqcontrol
-drivers/uio/uio_dmem_genirq.c, 134:
-	_raw_spin_lock_irqsave in uio_dmem_genirq_irqcontrol
+workaround it by hardcoding the rev_id to 0, which is the default value.
 
-synchronize_irq() can sleep at runtime.
+v2. add comment in the code
 
-To fix this bug, disable_irq() is called without holding the spinlock.
-
-This bug is found by a static analysis tool STCheck written by myself.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Link: https://lore.kernel.org/r/20191218094405.6009-1-baijiaju1990@gmail.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Tiecheng Zhou <Tiecheng.Zhou@amd.com>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/uio/uio_dmem_genirq.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/nv.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/uio/uio_dmem_genirq.c b/drivers/uio/uio_dmem_genirq.c
-index ebcf1434e296d..44858f70f5f52 100644
---- a/drivers/uio/uio_dmem_genirq.c
-+++ b/drivers/uio/uio_dmem_genirq.c
-@@ -132,11 +132,13 @@ static int uio_dmem_genirq_irqcontrol(struct uio_info *dev_info, s32 irq_on)
- 	if (irq_on) {
- 		if (test_and_clear_bit(0, &priv->flags))
- 			enable_irq(dev_info->irq);
-+		spin_unlock_irqrestore(&priv->lock, flags);
- 	} else {
--		if (!test_and_set_bit(0, &priv->flags))
-+		if (!test_and_set_bit(0, &priv->flags)) {
-+			spin_unlock_irqrestore(&priv->lock, flags);
- 			disable_irq(dev_info->irq);
-+		}
- 	}
--	spin_unlock_irqrestore(&priv->lock, flags);
- 
- 	return 0;
- }
+diff --git a/drivers/gpu/drm/amd/amdgpu/nv.c b/drivers/gpu/drm/amd/amdgpu/nv.c
+index de9b995b65b1a..2d780820ba00e 100644
+--- a/drivers/gpu/drm/amd/amdgpu/nv.c
++++ b/drivers/gpu/drm/amd/amdgpu/nv.c
+@@ -660,6 +660,12 @@ static int nv_common_early_init(void *handle)
+ 		adev->pg_flags = AMD_PG_SUPPORT_VCN |
+ 			AMD_PG_SUPPORT_VCN_DPG |
+ 			AMD_PG_SUPPORT_ATHUB;
++		/* guest vm gets 0xffffffff when reading RCC_DEV0_EPF0_STRAP0,
++		 * as a consequence, the rev_id and external_rev_id are wrong.
++		 * workaround it by hardcoding rev_id to 0 (default value).
++		 */
++		if (amdgpu_sriov_vf(adev))
++			adev->rev_id = 0;
+ 		adev->external_rev_id = adev->rev_id + 0xa;
+ 		break;
+ 	default:
 -- 
 2.20.1
 
