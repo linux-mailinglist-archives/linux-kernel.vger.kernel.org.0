@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E88141675F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:32:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 879B816773F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:41:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388398AbgBUIcR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:32:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48932 "EHLO mail.kernel.org"
+        id S1731382AbgBUIkr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:40:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732925AbgBUIM7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:12:59 -0500
+        id S1730355AbgBUH6i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:58:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5CCAF20722;
-        Fri, 21 Feb 2020 08:12:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66BEA2073A;
+        Fri, 21 Feb 2020 07:58:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272778;
-        bh=CrklaBiUioe+mVh4Rp2M/EJyuKZsxC1/zAFqxqUbUMA=;
+        s=default; t=1582271917;
+        bh=Ryr712IRyEGx3V2UFQBgJGfJ7BJcj/Aea1W03uMesHg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VDgjTHOqBuxyoM/BAKPPsXMqNE4azlY6uI1MHQVY/U6KjIZrjW4eDaAYgrCUQnznP
-         Ey0pgFu/R5HiRnzmBoEp3PspQbdGVHm/ONSu0wWX4CVx19kuJEpuJeoU7/07vID4G/
-         AE6/DehUaqmKTUbV4RYw6O4xRDK8penJJf8fWNiI=
+        b=QBFziBgGaC3wlJVyHdZVAZCrUWEP1aIItfd9zAJbcm8W1p6U0EAUXvVTNYtCxNAix
+         al97iqkIEYSTWd0Ao0INozYmk6Yi37bvIT4fH0WOWNMgRAhC0KPqFg+ZPLbbDU+hp6
+         KZP9NGM45NgDEpkWjOd9C6YWVJOlvHi0uLZgFklk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Walle <michael@walle.cc>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 272/344] spi: spi-fsl-qspi: Ensure width is respected in spi-mem operations
+Subject: [PATCH 5.5 346/399] hostap: Adjust indentation in prism2_hostapd_add_sta
 Date:   Fri, 21 Feb 2020 08:41:11 +0100
-Message-Id: <20200221072414.420079212@linuxfoundation.org>
+Message-Id: <20200221072434.377479482@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
+References: <20200221072402.315346745@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +46,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Walle <michael@walle.cc>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit b0177aca7aea7e8917d4e463334b51facb293d02 ]
+[ Upstream commit b61156fba74f659d0bc2de8f2dbf5bad9f4b8faf ]
 
-Make use of a core helper to ensure the desired width is respected
-when calling spi-mem operators.
+Clang warns:
 
-Otherwise only the SPI controller will be matched with the flash chip,
-which might lead to wrong widths. Also consider the width specified by
-the user in the device tree.
+../drivers/net/wireless/intersil/hostap/hostap_ap.c:2511:3: warning:
+misleading indentation; statement is not part of the previous 'if'
+[-Wmisleading-indentation]
+        if (sta->tx_supp_rates & WLAN_RATE_5M5)
+        ^
+../drivers/net/wireless/intersil/hostap/hostap_ap.c:2509:2: note:
+previous statement is here
+        if (sta->tx_supp_rates & WLAN_RATE_2M)
+        ^
+1 warning generated.
 
-Fixes: 84d043185dbe ("spi: Add a driver for the Freescale/NXP QuadSPI controller")
-Signed-off-by: Michael Walle <michael@walle.cc>
-Link: https://lore.kernel.org/r/20200114154613.8195-1-michael@walle.cc
-Signed-off-by: Mark Brown <broonie@kernel.org>
+This warning occurs because there is a space before the tab on this
+line. Remove it so that the indentation is consistent with the Linux
+kernel coding style and clang no longer warns.
+
+Fixes: ff1d2767d5a4 ("Add HostAP wireless driver.")
+Link: https://github.com/ClangBuiltLinux/linux/issues/813
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-fsl-qspi.c | 2 +-
+ drivers/net/wireless/intersil/hostap/hostap_ap.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-fsl-qspi.c b/drivers/spi/spi-fsl-qspi.c
-index 63c9f7edaf6cb..43078ba3def5d 100644
---- a/drivers/spi/spi-fsl-qspi.c
-+++ b/drivers/spi/spi-fsl-qspi.c
-@@ -398,7 +398,7 @@ static bool fsl_qspi_supports_op(struct spi_mem *mem,
- 	    op->data.nbytes > q->devtype_data->txfifo)
- 		return false;
- 
--	return true;
-+	return spi_mem_default_supports_op(mem, op);
- }
- 
- static void fsl_qspi_prepare_lut(struct fsl_qspi *q,
+diff --git a/drivers/net/wireless/intersil/hostap/hostap_ap.c b/drivers/net/wireless/intersil/hostap/hostap_ap.c
+index 0094b1d2b5770..3ec46f48cfde1 100644
+--- a/drivers/net/wireless/intersil/hostap/hostap_ap.c
++++ b/drivers/net/wireless/intersil/hostap/hostap_ap.c
+@@ -2508,7 +2508,7 @@ static int prism2_hostapd_add_sta(struct ap_data *ap,
+ 		sta->supported_rates[0] = 2;
+ 	if (sta->tx_supp_rates & WLAN_RATE_2M)
+ 		sta->supported_rates[1] = 4;
+- 	if (sta->tx_supp_rates & WLAN_RATE_5M5)
++	if (sta->tx_supp_rates & WLAN_RATE_5M5)
+ 		sta->supported_rates[2] = 11;
+ 	if (sta->tx_supp_rates & WLAN_RATE_11M)
+ 		sta->supported_rates[3] = 22;
 -- 
 2.20.1
 
