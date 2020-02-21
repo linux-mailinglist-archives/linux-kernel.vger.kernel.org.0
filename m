@@ -2,50 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64B60167000
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:07:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 592E6166FF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:05:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727616AbgBUHH1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:07:27 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:34380 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726278AbgBUHH0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:07:26 -0500
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-Received: from light.dominikbrodowski.net (brodo.linta [10.1.0.102])
-        by isilmar-4.linta.de (Postfix) with ESMTPSA id 7E96B200701;
-        Fri, 21 Feb 2020 07:07:24 +0000 (UTC)
-Received: by light.dominikbrodowski.net (Postfix, from userid 1000)
-        id 7AF2C20AAF; Fri, 21 Feb 2020 07:56:58 +0100 (CET)
-Date:   Fri, 21 Feb 2020 07:56:58 +0100
-From:   Dominik Brodowski <linux@dominikbrodowski.net>
-To:     Brian Gerst <brgerst@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH 4/5] x86-64: Use syscall wrappers for x32_rt_sigreturn
-Message-ID: <20200221065658.GD3368@light.dominikbrodowski.net>
-References: <20200221050934.719152-1-brgerst@gmail.com>
- <20200221050934.719152-5-brgerst@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200221050934.719152-5-brgerst@gmail.com>
+        id S1726930AbgBUHFk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:05:40 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:37148 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726244AbgBUHFj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:05:39 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 78435206BD2;
+        Fri, 21 Feb 2020 08:05:37 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 68574206BCF;
+        Fri, 21 Feb 2020 08:05:30 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id CD73A40246;
+        Fri, 21 Feb 2020 15:05:21 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        abel.vesa@nxp.com, john@phrozen.org, heiko@sntech.de,
+        jonas.gorski@gmail.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] clk: imx: clk-sscg-pll: Drop unnecessary initialization
+Date:   Fri, 21 Feb 2020 14:59:36 +0800
+Message-Id: <1582268376-1672-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 12:09:33AM -0500, Brian Gerst wrote:
-> Signed-off-by: Brian Gerst <brgerst@gmail.com>
-Reviewed-by: Dominik Brodowski <linux@dominikbrodowski.net>
+No need to initialize 'ret' in many functions, as it will get
+the return value from function call, so remove the initializtion
+of 'ret'.
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/clk/imx/clk-sscg-pll.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-sscg-pll.c b/drivers/clk/imx/clk-sscg-pll.c
+index acd1b90..d4a2be1 100644
+--- a/drivers/clk/imx/clk-sscg-pll.c
++++ b/drivers/clk/imx/clk-sscg-pll.c
+@@ -195,10 +195,10 @@ static int clk_sscg_pll2_find_setup(struct clk_sscg_pll_setup *setup,
+ 					uint64_t ref)
+ {
+ 
+-	int ret = -EINVAL;
++	int ret;
+ 
+ 	if (ref < PLL_STAGE1_MIN_FREQ || ref > PLL_STAGE1_MAX_FREQ)
+-		return ret;
++		return -EINVAL;
+ 
+ 	temp_setup->vco1 = ref;
+ 
+@@ -254,10 +254,10 @@ static int clk_sscg_pll1_find_setup(struct clk_sscg_pll_setup *setup,
+ 					uint64_t ref)
+ {
+ 
+-	int ret = -EINVAL;
++	int ret;
+ 
+ 	if (ref < PLL_REF_MIN_FREQ || ref > PLL_REF_MAX_FREQ)
+-		return ret;
++		return -EINVAL;
+ 
+ 	temp_setup->ref = ref;
+ 
+@@ -428,7 +428,7 @@ static int __clk_sscg_pll_determine_rate(struct clk_hw *hw,
+ 	struct clk_sscg_pll_setup *setup = &pll->setup;
+ 	struct clk_hw *parent_hw = NULL;
+ 	int bypass_parent_index;
+-	int ret = -EINVAL;
++	int ret;
+ 
+ 	req->max_rate = max;
+ 	req->min_rate = min;
+@@ -467,10 +467,10 @@ static int clk_sscg_pll_determine_rate(struct clk_hw *hw,
+ 	uint64_t rate = req->rate;
+ 	uint64_t min = req->min_rate;
+ 	uint64_t max = req->max_rate;
+-	int ret = -EINVAL;
++	int ret;
+ 
+ 	if (rate < PLL_OUT_MIN_FREQ || rate > PLL_OUT_MAX_FREQ)
+-		return ret;
++		return -EINVAL;
+ 
+ 	ret = __clk_sscg_pll_determine_rate(hw, req, req->rate, req->rate,
+ 						rate, PLL_BYPASS2);
+-- 
+2.7.4
+
