@@ -2,133 +2,356 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C3A1166D7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 04:27:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67E8D166DDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 04:38:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729678AbgBUD1w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 22:27:52 -0500
-Received: from ozlabs.org ([203.11.71.1]:38589 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729229AbgBUD1v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 22:27:51 -0500
-Received: by ozlabs.org (Postfix, from userid 1007)
-        id 48Nxjc3QBLz9sRk; Fri, 21 Feb 2020 14:27:48 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=gibson.dropbear.id.au; s=201602; t=1582255668;
-        bh=y3lVtMpiI83RZRQFRmOykg/5zxHYT5D2zzjV2uwjV3s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AzVjCTlMyorNgEHOIaIpCqwmc5f/HP95xbBaFBc3b6BE149F7e/ZfSyTrQYJcAhWg
-         UsHiPoIQtmjVabo+7H9zIstBLyAgo3Pda472sqcCTQUopX4set3xYqJ7sSrBgq2kM6
-         TnKBFOgI5IOo+NmbVrJgt4SEJKsed3roEsQY9FCo=
-Date:   Fri, 21 Feb 2020 14:27:27 +1100
-From:   David Gibson <david@gibson.dropbear.id.au>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-s390@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Viktor Mihajlovski <mihajlov@linux.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        Michael Mueller <mimu@linux.ibm.com>
-Subject: Re: [PATCH 1/2] mm: move force_dma_unencrypted() to mem_encrypt.h
-Message-ID: <20200221032727.GC2298@umbus.fritz.box>
-References: <20200220160606.53156-1-pasic@linux.ibm.com>
- <20200220160606.53156-2-pasic@linux.ibm.com>
- <20200220161146.GA12709@lst.de>
- <4369f099-e4e4-4a58-b38b-642cf53ccca6@de.ibm.com>
- <20200220163135.GA13192@lst.de>
+        id S1729670AbgBUDif (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 22:38:35 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:2234 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729547AbgBUDif (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 22:38:35 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01L3YB0e125289
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 22:38:33 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2y9tkcgrvf-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 22:38:33 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
+        Fri, 21 Feb 2020 03:28:21 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 21 Feb 2020 03:28:11 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01L3SAF852232288
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Feb 2020 03:28:10 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B1D98A405B;
+        Fri, 21 Feb 2020 03:28:10 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 16A03A405C;
+        Fri, 21 Feb 2020 03:28:10 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 21 Feb 2020 03:28:10 +0000 (GMT)
+Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
+        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id ACDD4A03E0;
+        Fri, 21 Feb 2020 14:28:03 +1100 (AEDT)
+From:   "Alastair D'Silva" <alastair@au1.ibm.com>
+To:     alastair@d-silva.org
+Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Anton Blanchard <anton@ozlabs.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kurz <groug@kaod.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org
+Subject: [PATCH v3 19/27] powerpc/powernv/pmem: Add an IOCTL to report controller statistics
+Date:   Fri, 21 Feb 2020 14:27:12 +1100
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200221032720.33893-1-alastair@au1.ibm.com>
+References: <20200221032720.33893-1-alastair@au1.ibm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xesSdrSSBC0PokLI"
-Content-Disposition: inline
-In-Reply-To: <20200220163135.GA13192@lst.de>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20022103-0012-0000-0000-00000388D1D2
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20022103-0013-0000-0000-000021C56A71
+Message-Id: <20200221032720.33893-20-alastair@au1.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-20_19:2020-02-19,2020-02-20 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 suspectscore=1 spamscore=0 malwarescore=0 adultscore=0
+ phishscore=0 priorityscore=1501 impostorscore=0 bulkscore=0 mlxscore=0
+ mlxlogscore=613 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002210022
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Alastair D'Silva <alastair@d-silva.org>
 
---xesSdrSSBC0PokLI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The controller can report a number of statistics that are useful
+in evaluating the performance and reliability of the card.
 
-On Thu, Feb 20, 2020 at 05:31:35PM +0100, Christoph Hellwig wrote:
-> On Thu, Feb 20, 2020 at 05:23:20PM +0100, Christian Borntraeger wrote:
-> > >From a users perspective it makes absolutely perfect sense to use the
-> > bounce buffers when they are NEEDED.=20
-> > Forcing the user to specify iommu_platform just because you need bounce=
- buffers
-> > really feels wrong. And obviously we have a severe performance issue
-> > because of the indirections.
->=20
-> The point is that the user should not have to specify iommu_platform.
-> We need to make sure any new hypervisor (especially one that might require
-> bounce buffering) always sets it,
+This patch exposes this information via an IOCTL.
 
-So, I have draft qemu patches which enable iommu_platform by default.
-But that's really because of other problems with !iommu_platform, not
-anything to do with bounce buffering or secure VMs.
+Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+---
+ arch/powerpc/platforms/powernv/pmem/ocxl.c | 185 +++++++++++++++++++++
+ include/uapi/nvdimm/ocxl-pmem.h            |  17 ++
+ 2 files changed, 202 insertions(+)
 
-The thing is that the hypervisor *doesn't* require bounce buffering.
-In the POWER (and maybe s390 as well) models for Secure VMs, it's the
-*guest*'s choice to enter secure mode, so the hypervisor has no reason
-to know whether the guest needs bounce buffering.  As far as the
-hypervisor and qemu are concerned that's a guest internal detail, it
-just expects to get addresses it can access whether those are GPAs
-(iommu_platform=3Doff) or IOVAs (iommu_platform=3Don).
+diff --git a/arch/powerpc/platforms/powernv/pmem/ocxl.c b/arch/powerpc/platforms/powernv/pmem/ocxl.c
+index 2cabafe1fc58..009d4fd29e7d 100644
+--- a/arch/powerpc/platforms/powernv/pmem/ocxl.c
++++ b/arch/powerpc/platforms/powernv/pmem/ocxl.c
+@@ -758,6 +758,186 @@ static int ioctl_controller_dump_complete(struct ocxlpmem *ocxlpmem)
+ 				    GLOBAL_MMIO_HCI_CONTROLLER_DUMP_COLLECTED);
+ }
+ 
++/**
++ * controller_stats_header_parse() - Parse the first 64 bits of the controller stats admin command response
++ * @ocxlpmem: the device metadata
++ * @length: out, returns the number of bytes in the response (excluding the 64 bit header)
++ */
++static int controller_stats_header_parse(struct ocxlpmem *ocxlpmem,
++	u32 *length)
++{
++	int rc;
++	u64 val;
++
++	u16 data_identifier;
++	u32 data_length;
++
++	rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu,
++				     ocxlpmem->admin_command.data_offset,
++				     OCXL_LITTLE_ENDIAN, &val);
++	if (rc)
++		return rc;
++
++	data_identifier = val >> 48;
++	data_length = val & 0xFFFFFFFF;
++
++	if (data_identifier != 0x4353) { // 'CS'
++		dev_err(&ocxlpmem->dev,
++			"Bad data identifier for controller stats, expected 'CS', got '%-.*s'\n",
++			2, (char *)&data_identifier);
++		return -EINVAL;
++	}
++
++	*length = data_length;
++	return 0;
++}
++
++static int ioctl_controller_stats(struct ocxlpmem *ocxlpmem,
++				  struct ioctl_ocxl_pmem_controller_stats __user *uarg)
++{
++	struct ioctl_ocxl_pmem_controller_stats args;
++	u32 length;
++	int rc;
++	u64 val;
++
++	memset(&args, '\0', sizeof(args));
++
++	mutex_lock(&ocxlpmem->admin_command.lock);
++
++	rc = admin_command_request(ocxlpmem, ADMIN_COMMAND_CONTROLLER_STATS);
++	if (rc)
++		goto out;
++
++	rc = ocxl_global_mmio_write64(ocxlpmem->ocxl_afu,
++				      ocxlpmem->admin_command.request_offset + 0x08,
++				      OCXL_LITTLE_ENDIAN, 0);
++	if (rc)
++		goto out;
++
++	rc = admin_command_execute(ocxlpmem);
++	if (rc)
++		goto out;
++
++
++	rc = admin_command_complete_timeout(ocxlpmem,
++					    ADMIN_COMMAND_CONTROLLER_STATS);
++	if (rc < 0) {
++		dev_warn(&ocxlpmem->dev, "Controller stats timed out\n");
++		goto out;
++	}
++
++	rc = admin_response(ocxlpmem);
++	if (rc < 0)
++		goto out;
++	if (rc != STATUS_SUCCESS) {
++		warn_status(ocxlpmem,
++			    "Unexpected status from controller stats", rc);
++		goto out;
++	}
++
++	rc = controller_stats_header_parse(ocxlpmem, &length);
++	if (rc)
++		goto out;
++
++	if (length != 0x140)
++		warn_status(ocxlpmem,
++			    "Unexpected length for controller stats data, expected 0x140, got 0x%x",
++			    length);
++
++	rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu,
++				     ocxlpmem->admin_command.data_offset + 0x08 + 0x08,
++				     OCXL_LITTLE_ENDIAN, &val);
++	if (rc)
++		goto out;
++
++	args.reset_count = val >> 32;
++	args.reset_uptime = val & 0xFFFFFFFF;
++
++	rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu,
++				     ocxlpmem->admin_command.data_offset + 0x08 + 0x10,
++				     OCXL_LITTLE_ENDIAN, &val);
++	if (rc)
++		goto out;
++
++	args.power_on_uptime = val >> 32;
++
++	rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu,
++				     ocxlpmem->admin_command.data_offset + 0x08 + 0x40 + 0x08,
++				     OCXL_LITTLE_ENDIAN, &args.host_load_count);
++	if (rc)
++		goto out;
++
++	rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu,
++				     ocxlpmem->admin_command.data_offset + 0x08 + 0x40 + 0x10,
++				     OCXL_LITTLE_ENDIAN, &args.host_store_count);
++	if (rc)
++		goto out;
++
++	rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu,
++				     ocxlpmem->admin_command.data_offset + 0x08 + 0x40 + 0x18,
++				     OCXL_LITTLE_ENDIAN, &args.media_read_count);
++	if (rc)
++		goto out;
++
++	rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu,
++				     ocxlpmem->admin_command.data_offset + 0x08 + 0x40 + 0x20,
++				     OCXL_LITTLE_ENDIAN, &args.media_write_count);
++	if (rc)
++		goto out;
++
++	rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu,
++				     ocxlpmem->admin_command.data_offset + 0x08 + 0x40 + 0x28,
++				     OCXL_LITTLE_ENDIAN, &args.cache_hit_count);
++	if (rc)
++		goto out;
++
++	rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu,
++				     ocxlpmem->admin_command.data_offset + 0x08 + 0x40 + 0x30,
++				     OCXL_LITTLE_ENDIAN, &args.cache_miss_count);
++	if (rc)
++		goto out;
++
++	rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu,
++				     ocxlpmem->admin_command.data_offset + 0x08 + 0x40 + 0x38,
++				     OCXL_LITTLE_ENDIAN, &args.media_read_latency);
++	if (rc)
++		goto out;
++
++	rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu,
++				     ocxlpmem->admin_command.data_offset + 0x08 + 0x40 + 0x40,
++				     OCXL_LITTLE_ENDIAN, &args.media_write_latency);
++	if (rc)
++		goto out;
++
++	rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu,
++				     ocxlpmem->admin_command.data_offset + 0x08 + 0x40 + 0x48,
++				     OCXL_LITTLE_ENDIAN, &args.cache_read_latency);
++	if (rc)
++		goto out;
++
++	rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu,
++				     ocxlpmem->admin_command.data_offset + 0x08 + 0x40 + 0x50,
++				     OCXL_LITTLE_ENDIAN, &args.cache_write_latency);
++	if (rc)
++		goto out;
++
++	if (copy_to_user(uarg, &args, sizeof(args))) {
++		rc = -EFAULT;
++		goto out;
++	}
++
++	rc = admin_response_handled(ocxlpmem);
++	if (rc)
++		goto out;
++
++	rc = 0;
++	goto out;
++
++out:
++	mutex_unlock(&ocxlpmem->admin_command.lock);
++	return rc;
++}
++
+ static long file_ioctl(struct file *file, unsigned int cmd, unsigned long args)
+ {
+ 	struct ocxlpmem *ocxlpmem = file->private_data;
+@@ -781,6 +961,11 @@ static long file_ioctl(struct file *file, unsigned int cmd, unsigned long args)
+ 	case IOCTL_OCXL_PMEM_CONTROLLER_DUMP_COMPLETE:
+ 		rc = ioctl_controller_dump_complete(ocxlpmem);
+ 		break;
++
++	case IOCTL_OCXL_PMEM_CONTROLLER_STATS:
++		rc = ioctl_controller_stats(ocxlpmem,
++					    (struct ioctl_ocxl_pmem_controller_stats __user *)args);
++		break;
+ 	}
+ 
+ 	return rc;
+diff --git a/include/uapi/nvdimm/ocxl-pmem.h b/include/uapi/nvdimm/ocxl-pmem.h
+index d4d8512d03f7..add223aa2fdb 100644
+--- a/include/uapi/nvdimm/ocxl-pmem.h
++++ b/include/uapi/nvdimm/ocxl-pmem.h
+@@ -50,6 +50,22 @@ struct ioctl_ocxl_pmem_controller_dump_data {
+ 	__u64 reserved[8];
+ };
+ 
++struct ioctl_ocxl_pmem_controller_stats {
++	__u32 reset_count;
++	__u32 reset_uptime; /* seconds */
++	__u32 power_on_uptime; /* seconds */
++	__u64 host_load_count;
++	__u64 host_store_count;
++	__u64 media_read_count;
++	__u64 media_write_count;
++	__u64 cache_hit_count;
++	__u64 cache_miss_count;
++	__u64 media_read_latency; /* nanoseconds */
++	__u64 media_write_latency; /* nanoseconds */
++	__u64 cache_read_latency; /* nanoseconds */
++	__u64 cache_write_latency; /* nanoseconds */
++};
++
+ /* ioctl numbers */
+ #define OCXL_PMEM_MAGIC 0x5C
+ /* SCM devices */
+@@ -57,5 +73,6 @@ struct ioctl_ocxl_pmem_controller_dump_data {
+ #define IOCTL_OCXL_PMEM_CONTROLLER_DUMP			_IO(OCXL_PMEM_MAGIC, 0x02)
+ #define IOCTL_OCXL_PMEM_CONTROLLER_DUMP_DATA		_IOWR(OCXL_PMEM_MAGIC, 0x03, struct ioctl_ocxl_pmem_controller_dump_data)
+ #define IOCTL_OCXL_PMEM_CONTROLLER_DUMP_COMPLETE	_IO(OCXL_PMEM_MAGIC, 0x04)
++#define IOCTL_OCXL_PMEM_CONTROLLER_STATS		_IO(OCXL_PMEM_MAGIC, 0x05)
+ 
+ #endif /* _UAPI_OCXL_SCM_H */
+-- 
+2.24.1
 
-> as was a rather bogus legacy hack
-
-It was certainly a bad idea, but it was a bad idea that went into a
-public spec and has been widely deployed for many years.  We can't
-just pretend it didn't happen and move on.
-
-Turning iommu_platform=3Don by default breaks old guests, some of which
-we still care about.  We can't (automatically) do it only for guests
-that need bounce buffering, because the hypervisor doesn't know that
-ahead of time.
-
-> that isn't extensibe for cases that for example require bounce buffering.
-
-In fact bounce buffering isn't really the issue from the hypervisor
-(or spec's) point of view.  It's the fact that not all of guest memory
-is accessible to the hypervisor.  Bounce buffering is just one way the
-guest might deal with that.
-
---=20
-David Gibson			| I'll have my music baroque, and my code
-david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
-				| _way_ _around_!
-http://www.ozlabs.org/~dgibson
-
---xesSdrSSBC0PokLI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAl5PTh0ACgkQbDjKyiDZ
-s5KxuA/8Dp0u3ClHJcvgYS9sPsWYf3cIiL0ssD718l7m06uHYCC8BZhGbCeMhbfK
-jDV3bIOPMI6f+L4KTSrPkH71KAYKLKbt52Si354kI/7xkDmCu3B8SmL/u+ptC0Y/
-UYD0ZFkgyOLQaOS/jN5zMae3337n6qPRZuOP12epFWZ9QpP4v55Dba2ICuJXkbU1
-5QaQIcCLwSBcEYxZOuLqc7s7tWfOt/NeNmvgMnCGJie035XlK0c8q2v7XqRnH8ec
-5tej0mQvwOyKgZkYhr35Q/4t2V0LxPDvD+8W636WdH0O9h6wjeMeKlVoq8IpgMyz
-NkYNX7yaPfnkh3fvqWa7NMmmi32Rt9/85Kk/3I4YD1KCMSzv7AGJ1TBnUMumisYJ
-F2rB+Q07oGi/r/UNg2VSUE2S4rGgq1k9hD2Xb0yE+3+l1TvowJ+2ly30W1TSo5Hu
-LZZ/XX0uzsCnrlw4aqzyh4+u4++QcgnlwvDgdfadNXVd3gQdPEoxAP+vV6FhTinx
-29Dus3s83/aCpkNeU63NfDWXSIOPTUspWC8Ny1qGE1Vt0Dfie5K+6j7iZdYX0HZT
-duIb419GYkR2DBTS0vS6jFh9QFN+jThVs4qc4uRqR6ibwocNlXSdxt+jT7QNkaqO
-8HtGwkfqQZCCm4Z0uNnoFv4NY9kLB21wa/z0xOVmDJZtVD8Jgto=
-=NO4r
------END PGP SIGNATURE-----
-
---xesSdrSSBC0PokLI--
