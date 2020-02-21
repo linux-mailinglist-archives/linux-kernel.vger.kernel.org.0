@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C1B11677D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:45:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 021C616778C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:44:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730688AbgBUIov (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:44:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49262 "EHLO mail.kernel.org"
+        id S1730136AbgBUHxk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:53:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729786AbgBUHvo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:51:44 -0500
+        id S1730120AbgBUHxf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:53:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CBB932073A;
-        Fri, 21 Feb 2020 07:51:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3418F24672;
+        Fri, 21 Feb 2020 07:53:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271504;
-        bh=K+GbBvUYMrSGOr40poPKHl1+OJzijRKgppJ0R0XLZ9M=;
+        s=default; t=1582271614;
+        bh=TKNR1RggkVSKFIYabLZR0PfqLGHp4WwX0Rzzf+yWMoQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nOrmEFvFhWy07iWiJmi3xh8hW2JP3I+vjLPNsg2+lbienWoHTwjW4GBcuhZ9pjrjK
-         jkO6ft05xDO3zt6uqTy1B9A61t1AuiVMw8OK9WVPUoOXiea1rdLgUHpXxgC8bZ2N18
-         lUnEi6s61PvbOjVmZnjsKS/t3JTEpySuX/kGjTgc=
+        b=fUhhvPgLbaSD5G+UFdhWsiaoudfm1bk+E5koFql3VtaytVs/asCqLKcQz4uXTcbgL
+         l5tQ4quMsApC+VK8F+77Y4Rkbkwc4ghIX7i/utSDNJo4HH1VGU9EyOTFWTzXXZeaFu
+         m/LBSpTOCTnOMCLyUEK3wxhrFOc+pK1q7DUa4kdo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+        stable@vger.kernel.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 190/399] PM / devfreq: exynos-ppmu: Fix excessive stack usage
-Date:   Fri, 21 Feb 2020 08:38:35 +0100
-Message-Id: <20200221072421.275322914@linuxfoundation.org>
+Subject: [PATCH 5.5 196/399] ASoC: soc-topology: fix endianness issues
+Date:   Fri, 21 Feb 2020 08:38:41 +0100
+Message-Id: <20200221072421.870562286@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -44,72 +45,142 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-[ Upstream commit d4556f5e99d5f603913bac01adaff8670cb2d08b ]
+[ Upstream commit 72bbeda0222bcd382ee33b3aff71346074410c21 ]
 
-Putting a 'struct devfreq_event_dev' object on the stack is generally
-a bad idea and here it leads to a warnig about potential stack overflow:
+Sparse complains about a series of easy warnings, fix.
 
-drivers/devfreq/event/exynos-ppmu.c:643:12: error: stack frame size of 1040 bytes in function 'exynos_ppmu_probe' [-Werror,-Wframe-larger-than=]
-
-There is no real need for the device structure, only the string inside
-it, so add an internal helper function that simply takes the string
-as its argument and remove the device structure.
-
-Fixes: 1dd62c66d345 ("PM / devfreq: events: extend events by type of counted data")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-[cw00.choi: Fix the issue from 'desc->name' to 'desc[j].name']
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Link: https://lore.kernel.org/r/20200102195952.9465-3-pierre-louis.bossart@linux.intel.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/devfreq/event/exynos-ppmu.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ sound/soc/soc-topology.c | 42 +++++++++++++++++++++-------------------
+ 1 file changed, 22 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
-index 85c7a77bf3f0d..055deea42c373 100644
---- a/drivers/devfreq/event/exynos-ppmu.c
-+++ b/drivers/devfreq/event/exynos-ppmu.c
-@@ -101,17 +101,22 @@ static struct __exynos_ppmu_events {
- 	PPMU_EVENT(dmc1_1),
- };
+diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
+index 4e1fe623c3908..0119f07cece6f 100644
+--- a/sound/soc/soc-topology.c
++++ b/sound/soc/soc-topology.c
+@@ -604,9 +604,11 @@ static int soc_tplg_kcontrol_bind_io(struct snd_soc_tplg_ctl_hdr *hdr,
+ 		ext_ops = tplg->bytes_ext_ops;
+ 		num_ops = tplg->bytes_ext_ops_count;
+ 		for (i = 0; i < num_ops; i++) {
+-			if (!sbe->put && ext_ops[i].id == be->ext_ops.put)
++			if (!sbe->put &&
++			    ext_ops[i].id == le32_to_cpu(be->ext_ops.put))
+ 				sbe->put = ext_ops[i].put;
+-			if (!sbe->get && ext_ops[i].id == be->ext_ops.get)
++			if (!sbe->get &&
++			    ext_ops[i].id == le32_to_cpu(be->ext_ops.get))
+ 				sbe->get = ext_ops[i].get;
+ 		}
  
--static int exynos_ppmu_find_ppmu_id(struct devfreq_event_dev *edev)
-+static int __exynos_ppmu_find_ppmu_id(const char *edev_name)
- {
- 	int i;
+@@ -621,11 +623,11 @@ static int soc_tplg_kcontrol_bind_io(struct snd_soc_tplg_ctl_hdr *hdr,
+ 	num_ops = tplg->io_ops_count;
+ 	for (i = 0; i < num_ops; i++) {
  
- 	for (i = 0; i < ARRAY_SIZE(ppmu_events); i++)
--		if (!strcmp(edev->desc->name, ppmu_events[i].name))
-+		if (!strcmp(edev_name, ppmu_events[i].name))
- 			return ppmu_events[i].id;
+-		if (k->put == NULL && ops[i].id == hdr->ops.put)
++		if (k->put == NULL && ops[i].id == le32_to_cpu(hdr->ops.put))
+ 			k->put = ops[i].put;
+-		if (k->get == NULL && ops[i].id == hdr->ops.get)
++		if (k->get == NULL && ops[i].id == le32_to_cpu(hdr->ops.get))
+ 			k->get = ops[i].get;
+-		if (k->info == NULL && ops[i].id == hdr->ops.info)
++		if (k->info == NULL && ops[i].id == le32_to_cpu(hdr->ops.info))
+ 			k->info = ops[i].info;
+ 	}
  
- 	return -EINVAL;
- }
+@@ -638,11 +640,11 @@ static int soc_tplg_kcontrol_bind_io(struct snd_soc_tplg_ctl_hdr *hdr,
+ 	num_ops = ARRAY_SIZE(io_ops);
+ 	for (i = 0; i < num_ops; i++) {
  
-+static int exynos_ppmu_find_ppmu_id(struct devfreq_event_dev *edev)
-+{
-+	return __exynos_ppmu_find_ppmu_id(edev->desc->name);
-+}
-+
- /*
-  * The devfreq-event ops structure for PPMU v1.1
-  */
-@@ -556,13 +561,11 @@ static int of_get_devfreq_events(struct device_node *np,
- 			 * use default if not.
- 			 */
- 			if (info->ppmu_type == EXYNOS_TYPE_PPMU_V2) {
--				struct devfreq_event_dev edev;
- 				int id;
- 				/* Not all registers take the same value for
- 				 * read+write data count.
- 				 */
--				edev.desc = &desc[j];
--				id = exynos_ppmu_find_ppmu_id(&edev);
-+				id = __exynos_ppmu_find_ppmu_id(desc[j].name);
+-		if (k->put == NULL && ops[i].id == hdr->ops.put)
++		if (k->put == NULL && ops[i].id == le32_to_cpu(hdr->ops.put))
+ 			k->put = ops[i].put;
+-		if (k->get == NULL && ops[i].id == hdr->ops.get)
++		if (k->get == NULL && ops[i].id == le32_to_cpu(hdr->ops.get))
+ 			k->get = ops[i].get;
+-		if (k->info == NULL && ops[i].id == hdr->ops.info)
++		if (k->info == NULL && ops[i].id == le32_to_cpu(hdr->ops.info))
+ 			k->info = ops[i].info;
+ 	}
  
- 				switch (id) {
- 				case PPMU_PMNCNT0:
+@@ -931,7 +933,7 @@ static int soc_tplg_denum_create_texts(struct soc_enum *se,
+ 	if (se->dobj.control.dtexts == NULL)
+ 		return -ENOMEM;
+ 
+-	for (i = 0; i < ec->items; i++) {
++	for (i = 0; i < le32_to_cpu(ec->items); i++) {
+ 
+ 		if (strnlen(ec->texts[i], SNDRV_CTL_ELEM_ID_NAME_MAXLEN) ==
+ 			SNDRV_CTL_ELEM_ID_NAME_MAXLEN) {
+@@ -1325,7 +1327,7 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_dmixer_create(
+ 		if (kc[i].name == NULL)
+ 			goto err_sm;
+ 		kc[i].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
+-		kc[i].access = mc->hdr.access;
++		kc[i].access = le32_to_cpu(mc->hdr.access);
+ 
+ 		/* we only support FL/FR channel mapping atm */
+ 		sm->reg = tplc_chan_get_reg(tplg, mc->channel,
+@@ -1337,10 +1339,10 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_dmixer_create(
+ 		sm->rshift = tplc_chan_get_shift(tplg, mc->channel,
+ 			SNDRV_CHMAP_FR);
+ 
+-		sm->max = mc->max;
+-		sm->min = mc->min;
+-		sm->invert = mc->invert;
+-		sm->platform_max = mc->platform_max;
++		sm->max = le32_to_cpu(mc->max);
++		sm->min = le32_to_cpu(mc->min);
++		sm->invert = le32_to_cpu(mc->invert);
++		sm->platform_max = le32_to_cpu(mc->platform_max);
+ 		sm->dobj.index = tplg->index;
+ 		INIT_LIST_HEAD(&sm->dobj.list);
+ 
+@@ -1401,7 +1403,7 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_denum_create(
+ 			goto err_se;
+ 
+ 		tplg->pos += (sizeof(struct snd_soc_tplg_enum_control) +
+-				ec->priv.size);
++			      le32_to_cpu(ec->priv.size));
+ 
+ 		dev_dbg(tplg->dev, " adding DAPM widget enum control %s\n",
+ 			ec->hdr.name);
+@@ -1411,7 +1413,7 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_denum_create(
+ 		if (kc[i].name == NULL)
+ 			goto err_se;
+ 		kc[i].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
+-		kc[i].access = ec->hdr.access;
++		kc[i].access = le32_to_cpu(ec->hdr.access);
+ 
+ 		/* we only support FL/FR channel mapping atm */
+ 		se->reg = tplc_chan_get_reg(tplg, ec->channel, SNDRV_CHMAP_FL);
+@@ -1420,8 +1422,8 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_denum_create(
+ 		se->shift_r = tplc_chan_get_shift(tplg, ec->channel,
+ 						  SNDRV_CHMAP_FR);
+ 
+-		se->items = ec->items;
+-		se->mask = ec->mask;
++		se->items = le32_to_cpu(ec->items);
++		se->mask = le32_to_cpu(ec->mask);
+ 		se->dobj.index = tplg->index;
+ 
+ 		switch (le32_to_cpu(ec->hdr.ops.info)) {
+@@ -1523,9 +1525,9 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_dbytes_create(
+ 		if (kc[i].name == NULL)
+ 			goto err_sbe;
+ 		kc[i].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
+-		kc[i].access = be->hdr.access;
++		kc[i].access = le32_to_cpu(be->hdr.access);
+ 
+-		sbe->max = be->max;
++		sbe->max = le32_to_cpu(be->max);
+ 		INIT_LIST_HEAD(&sbe->dobj.list);
+ 
+ 		/* map standard io handlers and check for external handlers */
 -- 
 2.20.1
 
