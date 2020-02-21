@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF5C016775F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:42:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8855316766D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:37:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730994AbgBUIls (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:41:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56120 "EHLO mail.kernel.org"
+        id S1732857AbgBUId7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:33:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730481AbgBUH4k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:56:40 -0500
+        id S1732248AbgBUIKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:10:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0ED820578;
-        Fri, 21 Feb 2020 07:56:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2D9A20578;
+        Fri, 21 Feb 2020 08:10:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271800;
-        bh=qkr6acl5AOx9HxzNSn2Ffkl5YYxSy9LryyRo9RewjuA=;
+        s=default; t=1582272601;
+        bh=P1plHYGMYC1qyi04bgC3z1Yfbf1bTSu9ZEsG1MsEc/s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BmzB5hL3xkLVZ3nAxA65I7L94eI3pmDBLAWE9Xt1VhcZj7gOez0DgsiGuEnbE6Hc4
-         lAYd8g24Eayvbo1a6lbVh91lUN1aP1HG1oR0qjo8bBo3r5VuXSNfH43qAo7MeV841D
-         R9PXPM03PDFBGttTVWrbb5XH7xwYzecRytU2yF40=
+        b=lZPEVVC1andCgEH0lKq7PVXP9M0Sxd55WZwoJpzJJPnloLljSxYlHrwo+c1d3wlz0
+         KjFwmuCViOm7lHgOoYrsXXNOMuBzUSMPjNry1G/4KhztOSAkX9L6dZQcetrTUjxQO+
+         ZkNoxay2ShEg1lSjpIax7ZPViOIy+7h8UQVM2bNg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@vger.kernel.org, Changbin Du <changbin.du@gmail.com>,
+        Borislav Petkov <bp@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 276/399] crypto: essiv - fix AEAD capitalization and preposition use in help text
-Date:   Fri, 21 Feb 2020 08:40:01 +0100
-Message-Id: <20200221072428.921963176@linuxfoundation.org>
+Subject: [PATCH 5.4 204/344] x86/nmi: Remove irq_work from the long duration NMI handler
+Date:   Fri, 21 Feb 2020 08:40:03 +0100
+Message-Id: <20200221072407.639683769@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
-References: <20200221072402.315346745@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +45,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Changbin Du <changbin.du@gmail.com>
 
-[ Upstream commit ab3d436bf3e9d05f58ceaa85ff7475bfcd6e45af ]
+[ Upstream commit 248ed51048c40d36728e70914e38bffd7821da57 ]
 
-"AEAD" is capitalized everywhere else.
-Use "an" when followed by a written or spoken vowel.
+First, printk() is NMI-context safe now since the safe printk() has been
+implemented and it already has an irq_work to make NMI-context safe.
 
-Fixes: be1eb7f78aa8fbe3 ("crypto: essiv - create wrapper template for ESSIV generation")
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Second, this NMI irq_work actually does not work if a NMI handler causes
+panic by watchdog timeout. It has no chance to run in such case, while
+the safe printk() will flush its per-cpu buffers before panicking.
+
+While at it, repurpose the irq_work callback into a function which
+concentrates the NMI duration checking and makes the code easier to
+follow.
+
+ [ bp: Massage. ]
+
+Signed-off-by: Changbin Du <changbin.du@gmail.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20200111125427.15662-1-changbin.du@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/nmi.h |  1 -
+ arch/x86/kernel/nmi.c      | 20 +++++++++-----------
+ 2 files changed, 9 insertions(+), 12 deletions(-)
 
-diff --git a/crypto/Kconfig b/crypto/Kconfig
-index 5575d48473bd4..cdb51d4272d0c 100644
---- a/crypto/Kconfig
-+++ b/crypto/Kconfig
-@@ -511,10 +511,10 @@ config CRYPTO_ESSIV
- 	  encryption.
+diff --git a/arch/x86/include/asm/nmi.h b/arch/x86/include/asm/nmi.h
+index 75ded1d13d98d..9d5d949e662e1 100644
+--- a/arch/x86/include/asm/nmi.h
++++ b/arch/x86/include/asm/nmi.h
+@@ -41,7 +41,6 @@ struct nmiaction {
+ 	struct list_head	list;
+ 	nmi_handler_t		handler;
+ 	u64			max_duration;
+-	struct irq_work		irq_work;
+ 	unsigned long		flags;
+ 	const char		*name;
+ };
+diff --git a/arch/x86/kernel/nmi.c b/arch/x86/kernel/nmi.c
+index e676a9916c498..54c21d6abd5ac 100644
+--- a/arch/x86/kernel/nmi.c
++++ b/arch/x86/kernel/nmi.c
+@@ -104,18 +104,22 @@ static int __init nmi_warning_debugfs(void)
+ }
+ fs_initcall(nmi_warning_debugfs);
  
- 	  This driver implements a crypto API template that can be
--	  instantiated either as a skcipher or as a aead (depending on the
-+	  instantiated either as an skcipher or as an AEAD (depending on the
- 	  type of the first template argument), and which defers encryption
- 	  and decryption requests to the encapsulated cipher after applying
--	  ESSIV to the input IV. Note that in the aead case, it is assumed
-+	  ESSIV to the input IV. Note that in the AEAD case, it is assumed
- 	  that the keys are presented in the same format used by the authenc
- 	  template, and that the IV appears at the end of the authenticated
- 	  associated data (AAD) region (which is how dm-crypt uses it.)
+-static void nmi_max_handler(struct irq_work *w)
++static void nmi_check_duration(struct nmiaction *action, u64 duration)
+ {
+-	struct nmiaction *a = container_of(w, struct nmiaction, irq_work);
++	u64 whole_msecs = READ_ONCE(action->max_duration);
+ 	int remainder_ns, decimal_msecs;
+-	u64 whole_msecs = READ_ONCE(a->max_duration);
++
++	if (duration < nmi_longest_ns || duration < action->max_duration)
++		return;
++
++	action->max_duration = duration;
+ 
+ 	remainder_ns = do_div(whole_msecs, (1000 * 1000));
+ 	decimal_msecs = remainder_ns / 1000;
+ 
+ 	printk_ratelimited(KERN_INFO
+ 		"INFO: NMI handler (%ps) took too long to run: %lld.%03d msecs\n",
+-		a->handler, whole_msecs, decimal_msecs);
++		action->handler, whole_msecs, decimal_msecs);
+ }
+ 
+ static int nmi_handle(unsigned int type, struct pt_regs *regs)
+@@ -142,11 +146,7 @@ static int nmi_handle(unsigned int type, struct pt_regs *regs)
+ 		delta = sched_clock() - delta;
+ 		trace_nmi_handler(a->handler, (int)delta, thishandled);
+ 
+-		if (delta < nmi_longest_ns || delta < a->max_duration)
+-			continue;
+-
+-		a->max_duration = delta;
+-		irq_work_queue(&a->irq_work);
++		nmi_check_duration(a, delta);
+ 	}
+ 
+ 	rcu_read_unlock();
+@@ -164,8 +164,6 @@ int __register_nmi_handler(unsigned int type, struct nmiaction *action)
+ 	if (!action->handler)
+ 		return -EINVAL;
+ 
+-	init_irq_work(&action->irq_work, nmi_max_handler);
+-
+ 	raw_spin_lock_irqsave(&desc->lock, flags);
+ 
+ 	/*
 -- 
 2.20.1
 
