@@ -2,221 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C82751680C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 15:51:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B205B1680D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 15:52:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728846AbgBUOvX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 09:51:23 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:55426 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727096AbgBUOvW (ORCPT
+        id S1728981AbgBUOwS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 09:52:18 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:43573 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727315AbgBUOwS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 09:51:22 -0500
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j59e6-0006ov-S2; Fri, 21 Feb 2020 14:51:14 +0000
-Date:   Fri, 21 Feb 2020 15:51:14 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, raven@themaw.net, mszeredi@redhat.com,
-        christian@brauner.io, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/19] fsinfo: Add syscalls to other arches [ver #16]
-Message-ID: <20200221145114.satmwy7u6mqfluzs@wittgenstein>
-References: <158204549488.3299825.3783690177353088425.stgit@warthog.procyon.org.uk>
- <158204551308.3299825.11782813238111590104.stgit@warthog.procyon.org.uk>
+        Fri, 21 Feb 2020 09:52:18 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1j59eZ-0000J6-Uu; Fri, 21 Feb 2020 15:51:43 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1j59eX-0003X7-KU; Fri, 21 Feb 2020 15:51:41 +0100
+Date:   Fri, 21 Feb 2020 15:51:41 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [PATCH v1] lib/vsprintf: update comment about
+ simple_strto<foo>() functions
+Message-ID: <20200221145141.pchim24oht7nxfir@pengutronix.de>
+References: <20200221085723.42469-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <158204551308.3299825.11782813238111590104.stgit@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200221085723.42469-1-andriy.shevchenko@linux.intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 05:05:13PM +0000, David Howells wrote:
-> Add the fsinfo syscall to the other arches.
+Hello,
 
-Over the last couple of kernel releases we have established the
-convention that we wire-up a syscall for all arches at the same time and
-not e.g. x86 and then the other separately.
-
+On Fri, Feb 21, 2020 at 10:57:23AM +0200, Andy Shevchenko wrote:
+> The commit 885e68e8b7b1 ("kernel.h: update comment about simple_strto<foo>()
+> functions") updated a comment regard to simple_strto<foo>() functions, but
+> missed similar change in the vsprintf.c module.
 > 
-> Signed-off-by: David Howells <dhowells@redhat.com>
+> Update comments in vsprintf.c as well for simple_strto<foo>() functions.
+> 
+> Reported-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > ---
+>  lib/vsprintf.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
->  arch/alpha/kernel/syscalls/syscall.tbl      |    1 +
->  arch/arm/tools/syscall.tbl                  |    1 +
->  arch/arm64/include/asm/unistd.h             |    2 +-
->  arch/arm64/include/asm/unistd32.h           |    2 +-
->  arch/ia64/kernel/syscalls/syscall.tbl       |    1 +
->  arch/m68k/kernel/syscalls/syscall.tbl       |    2 ++
->  arch/microblaze/kernel/syscalls/syscall.tbl |    1 +
->  arch/mips/kernel/syscalls/syscall_n32.tbl   |    1 +
->  arch/mips/kernel/syscalls/syscall_n64.tbl   |    1 +
->  arch/mips/kernel/syscalls/syscall_o32.tbl   |    1 +
->  arch/parisc/kernel/syscalls/syscall.tbl     |    1 +
->  arch/powerpc/kernel/syscalls/syscall.tbl    |    1 +
->  arch/s390/kernel/syscalls/syscall.tbl       |    1 +
->  arch/sh/kernel/syscalls/syscall.tbl         |    1 +
->  arch/sparc/kernel/syscalls/syscall.tbl      |    1 +
->  arch/xtensa/kernel/syscalls/syscall.tbl     |    1 +
->  16 files changed, 17 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-> index 36d42da7466a..961750417ef2 100644
-> --- a/arch/alpha/kernel/syscalls/syscall.tbl
-> +++ b/arch/alpha/kernel/syscalls/syscall.tbl
-> @@ -477,3 +477,4 @@
->  # 545 reserved for clone3
->  547	common	openat2				sys_openat2
->  548	common	pidfd_getfd			sys_pidfd_getfd
-> +549	common	fsinfo				sys_fsinfo
-> diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-> index 4d1cf74a2caa..e6b9dfe01471 100644
-> --- a/arch/arm/tools/syscall.tbl
-> +++ b/arch/arm/tools/syscall.tbl
-> @@ -451,3 +451,4 @@
->  435	common	clone3				sys_clone3
->  437	common	openat2				sys_openat2
->  438	common	pidfd_getfd			sys_pidfd_getfd
-> +439	common	fsinfo				sys_fsinfo
-> diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
-> index 1dd22da1c3a9..75f04a1023be 100644
-> --- a/arch/arm64/include/asm/unistd.h
-> +++ b/arch/arm64/include/asm/unistd.h
-> @@ -38,7 +38,7 @@
->  #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
->  #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
->  
-> -#define __NR_compat_syscalls		439
-> +#define __NR_compat_syscalls		440
->  #endif
->  
->  #define __ARCH_WANT_SYS_CLONE
-> diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-> index c1c61635f89c..7d1225de47e6 100644
-> --- a/arch/arm64/include/asm/unistd32.h
-> +++ b/arch/arm64/include/asm/unistd32.h
-> @@ -873,7 +873,7 @@ __SYSCALL(__NR_fsopen, sys_fsopen)
->  __SYSCALL(__NR_fsconfig, sys_fsconfig)
->  #define __NR_fsmount 432
->  __SYSCALL(__NR_fsmount, sys_fsmount)
-> -#define __NR_fspick 433
-> +#define __NR_fspick 434
->  __SYSCALL(__NR_fspick, sys_fspick)
->  #define __NR_pidfd_open 434
->  __SYSCALL(__NR_pidfd_open, sys_pidfd_open)
-> diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
-> index 042911e670b8..9018a3a6b067 100644
-> --- a/arch/ia64/kernel/syscalls/syscall.tbl
-> +++ b/arch/ia64/kernel/syscalls/syscall.tbl
-> @@ -358,3 +358,4 @@
->  # 435 reserved for clone3
->  437	common	openat2				sys_openat2
->  438	common	pidfd_getfd			sys_pidfd_getfd
-> +439	common	fsinfo				sys_fsinfo
-> diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
-> index f4f49fcb76d0..10172bb6ba1f 100644
-> --- a/arch/m68k/kernel/syscalls/syscall.tbl
-> +++ b/arch/m68k/kernel/syscalls/syscall.tbl
-> @@ -437,3 +437,5 @@
->  435	common	clone3				__sys_clone3
->  437	common	openat2				sys_openat2
->  438	common	pidfd_getfd			sys_pidfd_getfd
-> +# 435 reserved for clone3
-> +439	common	fsinfo				sys_fsinfo
-> diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
-> index 4c67b11f9c9e..58665073c1f0 100644
-> --- a/arch/microblaze/kernel/syscalls/syscall.tbl
-> +++ b/arch/microblaze/kernel/syscalls/syscall.tbl
-> @@ -443,3 +443,4 @@
->  435	common	clone3				sys_clone3
->  437	common	openat2				sys_openat2
->  438	common	pidfd_getfd			sys_pidfd_getfd
-> +439	common	fsinfo				sys_fsinfo
-> diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
-> index 1f9e8ad636cc..1f07a89473c3 100644
-> --- a/arch/mips/kernel/syscalls/syscall_n32.tbl
-> +++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
-> @@ -376,3 +376,4 @@
->  435	n32	clone3				__sys_clone3
->  437	n32	openat2				sys_openat2
->  438	n32	pidfd_getfd			sys_pidfd_getfd
-> +439	n32	fsinfo				sys_fsinfo
-> diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
-> index c0b9d802dbf6..3c853ca54901 100644
-> --- a/arch/mips/kernel/syscalls/syscall_n64.tbl
-> +++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
-> @@ -352,3 +352,4 @@
->  435	n64	clone3				__sys_clone3
->  437	n64	openat2				sys_openat2
->  438	n64	pidfd_getfd			sys_pidfd_getfd
-> +439	n64	fsinfo				sys_fsinfo
-> diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-> index ac586774c980..727f54542bf4 100644
-> --- a/arch/mips/kernel/syscalls/syscall_o32.tbl
-> +++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-> @@ -425,3 +425,4 @@
->  435	o32	clone3				__sys_clone3
->  437	o32	openat2				sys_openat2
->  438	o32	pidfd_getfd			sys_pidfd_getfd
-> +439	o32	fsinfo				sys_fsinfo
-> diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
-> index 52a15f5cd130..2e9576638d80 100644
-> --- a/arch/parisc/kernel/syscalls/syscall.tbl
-> +++ b/arch/parisc/kernel/syscalls/syscall.tbl
-> @@ -435,3 +435,4 @@
->  435	common	clone3				sys_clone3_wrapper
->  437	common	openat2				sys_openat2
->  438	common	pidfd_getfd			sys_pidfd_getfd
-> +439	common	fsinfo				sys_fsinfo
-> diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-> index 35b61bfc1b1a..397190734ca7 100644
-> --- a/arch/powerpc/kernel/syscalls/syscall.tbl
-> +++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-> @@ -519,3 +519,4 @@
->  435	nospu	clone3				ppc_clone3
->  437	common	openat2				sys_openat2
->  438	common	pidfd_getfd			sys_pidfd_getfd
-> +439	common	fsinfo				sys_fsinfo
-> diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
-> index bd7bd3581a0f..e9340d712dcd 100644
-> --- a/arch/s390/kernel/syscalls/syscall.tbl
-> +++ b/arch/s390/kernel/syscalls/syscall.tbl
-> @@ -440,3 +440,4 @@
->  435  common	clone3			sys_clone3			sys_clone3
->  437  common	openat2			sys_openat2			sys_openat2
->  438  common	pidfd_getfd		sys_pidfd_getfd			sys_pidfd_getfd
-> +439  common	fsinfo			sys_fsinfo			sys_fsinfo
-> diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
-> index c7a30fcd135f..7bb5ec284fbb 100644
-> --- a/arch/sh/kernel/syscalls/syscall.tbl
-> +++ b/arch/sh/kernel/syscalls/syscall.tbl
-> @@ -440,3 +440,4 @@
->  # 435 reserved for clone3
->  437	common	openat2				sys_openat2
->  438	common	pidfd_getfd			sys_pidfd_getfd
-> +439	common	fsinfo				sys_fsinfo
-> diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
-> index f13615ecdecc..a902b757ace2 100644
-> --- a/arch/sparc/kernel/syscalls/syscall.tbl
-> +++ b/arch/sparc/kernel/syscalls/syscall.tbl
-> @@ -483,3 +483,4 @@
->  # 435 reserved for clone3
->  437	common	openat2			sys_openat2
->  438	common	pidfd_getfd			sys_pidfd_getfd
-> +439	common	fsinfo				sys_fsinfo
-> diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
-> index 85a9ab1bc04d..f82702a7ab38 100644
-> --- a/arch/xtensa/kernel/syscalls/syscall.tbl
-> +++ b/arch/xtensa/kernel/syscalls/syscall.tbl
-> @@ -408,3 +408,4 @@
->  435	common	clone3				sys_clone3
->  437	common	openat2				sys_openat2
->  438	common	pidfd_getfd			sys_pidfd_getfd
-> +439	common	fsinfo				sys_fsinfo
-> 
-> 
+> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+> index 7c488a1ce318..d5641a217685 100644
+> --- a/lib/vsprintf.c
+> +++ b/lib/vsprintf.c
+> @@ -58,7 +58,7 @@
+>   * @endp: A pointer to the end of the parsed string will be placed here
+>   * @base: The number base to use
+>   *
+> - * This function is obsolete. Please use kstrtoull instead.
+> + * This function has caveats. Please use kstrtoull instead.
+>   */
+
+I wonder if we instead want to create a set of functions that is
+versatile enough to cover kstrtoull and simple_strtoull. i.e. fix the
+rounding problems (that are the caveats, right?) and as calling
+convention use an errorvalued int return + an output-parameter of the
+corresponding type.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
