@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B45816719D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:56:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FDC71671AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:56:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730274AbgBUHzr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:55:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54780 "EHLO mail.kernel.org"
+        id S1730286AbgBUH4P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:56:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730133AbgBUHzn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:55:43 -0500
+        id S1730439AbgBUH4M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:56:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDC0F2073A;
-        Fri, 21 Feb 2020 07:55:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B1CFD222C4;
+        Fri, 21 Feb 2020 07:56:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271742;
-        bh=6vAb/3AnW2cySkICFJWn4lWI0wr0JfuL5Ldafl3W6AE=;
+        s=default; t=1582271771;
+        bh=7cQc4SRp6iphGymWqLpNl7n+Za/QHc3wM/3uBQapzDQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DqzanF0gIE7WVeneMew76uPuQhULdVf7W5e4tBvIrk0O2p2w+qWQAABxMzuC8fAFa
-         rESPUPR03/4nfYM3Nsy7/4Ec3CzLfFTIG+wJjBxukdOqzvn9OpTd5pcahbBI/dDGh6
-         mK8K/34RQio9g2jhee6o4MAMqZhMHPBGP0C+UszA=
+        b=YwB3IcRYnIgBuSxUozpzvNygj5HB6rVkG7sW1yKvSbTNDprj3QsHE+QU1wxRidWsf
+         +DSLH6Zi00gUvg1Wx/TsjgIkGNovQrXB3hmsVvkgMPGs/WSUnGHB0Bm0Y8ezmbkecG
+         MZp8avVCSdHfGyQaZUbZ5AgSVF2imBDCV4jBdX94=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Marco Elver <elver@google.com>, Zaibo Xu <xuzaibo@huawei.com>,
+        stable@vger.kernel.org, Zaibo Xu <xuzaibo@huawei.com>,
         Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 274/399] crypto: hisilicon - Update debugfs usage of SEC V2
-Date:   Fri, 21 Feb 2020 08:39:59 +0100
-Message-Id: <20200221072428.775202511@linuxfoundation.org>
+Subject: [PATCH 5.5 275/399] crypto: hisilicon - Bugfixed tfm leak
+Date:   Fri, 21 Feb 2020 08:40:00 +0100
+Message-Id: <20200221072428.849850793@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -47,108 +46,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Zaibo Xu <xuzaibo@huawei.com>
 
-[ Upstream commit ca0d158dc9e5dc0902c1d507d82178d97f6f5709 ]
+[ Upstream commit dfee9955abc7ec9364413d16316181322cf44f2f ]
 
-Applied some advices of Marco Elver on atomic usage of Debugfs,
-which is carried out by basing on Arnd Bergmann's fixing patch.
+1.Fixed the bug of software tfm leakage.
+2.Update HW error log message.
 
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Reported-by: Marco Elver <elver@google.com>
 Signed-off-by: Zaibo Xu <xuzaibo@huawei.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/hisilicon/sec2/sec.h        |  2 +-
- drivers/crypto/hisilicon/sec2/sec_crypto.c |  8 ++++----
- drivers/crypto/hisilicon/sec2/sec_main.c   | 18 +++++++++---------
- 3 files changed, 14 insertions(+), 14 deletions(-)
+ drivers/crypto/hisilicon/hpre/hpre_crypto.c |  7 +++++-
+ drivers/crypto/hisilicon/hpre/hpre_main.c   | 24 ++++++++++-----------
+ 2 files changed, 18 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/crypto/hisilicon/sec2/sec.h b/drivers/crypto/hisilicon/sec2/sec.h
-index b846d73d9a855..841f4c56ca73c 100644
---- a/drivers/crypto/hisilicon/sec2/sec.h
-+++ b/drivers/crypto/hisilicon/sec2/sec.h
-@@ -40,7 +40,7 @@ struct sec_req {
- 	int req_id;
+diff --git a/drivers/crypto/hisilicon/hpre/hpre_crypto.c b/drivers/crypto/hisilicon/hpre/hpre_crypto.c
+index 98f037e6ea3e4..d8b015266ee49 100644
+--- a/drivers/crypto/hisilicon/hpre/hpre_crypto.c
++++ b/drivers/crypto/hisilicon/hpre/hpre_crypto.c
+@@ -1043,6 +1043,7 @@ static unsigned int hpre_rsa_max_size(struct crypto_akcipher *tfm)
+ static int hpre_rsa_init_tfm(struct crypto_akcipher *tfm)
+ {
+ 	struct hpre_ctx *ctx = akcipher_tfm_ctx(tfm);
++	int ret;
  
- 	/* Status of the SEC request */
--	atomic_t fake_busy;
-+	bool fake_busy;
- };
- 
- /**
-diff --git a/drivers/crypto/hisilicon/sec2/sec_crypto.c b/drivers/crypto/hisilicon/sec2/sec_crypto.c
-index 0a5391fff485c..2475aaf0d59b9 100644
---- a/drivers/crypto/hisilicon/sec2/sec_crypto.c
-+++ b/drivers/crypto/hisilicon/sec2/sec_crypto.c
-@@ -141,7 +141,7 @@ static int sec_bd_send(struct sec_ctx *ctx, struct sec_req *req)
- 		return -ENOBUFS;
- 
- 	if (!ret) {
--		if (atomic_read(&req->fake_busy))
-+		if (req->fake_busy)
- 			ret = -EBUSY;
- 		else
- 			ret = -EINPROGRESS;
-@@ -641,7 +641,7 @@ static void sec_skcipher_callback(struct sec_ctx *ctx, struct sec_req *req)
- 	if (ctx->c_ctx.c_mode == SEC_CMODE_CBC && req->c_req.encrypt)
- 		sec_update_iv(req);
- 
--	if (atomic_cmpxchg(&req->fake_busy, 1, 0) != 1)
-+	if (req->fake_busy)
- 		sk_req->base.complete(&sk_req->base, -EINPROGRESS);
- 
- 	sk_req->base.complete(&sk_req->base, req->err_type);
-@@ -672,9 +672,9 @@ static int sec_request_init(struct sec_ctx *ctx, struct sec_req *req)
+ 	ctx->rsa.soft_tfm = crypto_alloc_akcipher("rsa-generic", 0, 0);
+ 	if (IS_ERR(ctx->rsa.soft_tfm)) {
+@@ -1050,7 +1051,11 @@ static int hpre_rsa_init_tfm(struct crypto_akcipher *tfm)
+ 		return PTR_ERR(ctx->rsa.soft_tfm);
  	}
  
- 	if (ctx->fake_req_limit <= atomic_inc_return(&qp_ctx->pending_reqs))
--		atomic_set(&req->fake_busy, 1);
-+		req->fake_busy = true;
- 	else
--		atomic_set(&req->fake_busy, 0);
-+		req->fake_busy = false;
+-	return hpre_ctx_init(ctx);
++	ret = hpre_ctx_init(ctx);
++	if (ret)
++		crypto_free_akcipher(ctx->rsa.soft_tfm);
++
++	return ret;
+ }
  
- 	ret = ctx->req_op->get_res(ctx, req);
- 	if (ret) {
-diff --git a/drivers/crypto/hisilicon/sec2/sec_main.c b/drivers/crypto/hisilicon/sec2/sec_main.c
-index ab742dfbab997..d40e2da3b05da 100644
---- a/drivers/crypto/hisilicon/sec2/sec_main.c
-+++ b/drivers/crypto/hisilicon/sec2/sec_main.c
-@@ -608,13 +608,13 @@ static const struct file_operations sec_dbg_fops = {
- 	.write = sec_debug_write,
+ static void hpre_rsa_exit_tfm(struct crypto_akcipher *tfm)
+diff --git a/drivers/crypto/hisilicon/hpre/hpre_main.c b/drivers/crypto/hisilicon/hpre/hpre_main.c
+index 34e0424410bfc..0c98c37e39f4a 100644
+--- a/drivers/crypto/hisilicon/hpre/hpre_main.c
++++ b/drivers/crypto/hisilicon/hpre/hpre_main.c
+@@ -106,18 +106,18 @@ static const char * const hpre_debug_file_name[] = {
  };
  
--static int debugfs_atomic64_t_get(void *data, u64 *val)
-+static int sec_debugfs_atomic64_get(void *data, u64 *val)
- {
--        *val = atomic64_read((atomic64_t *)data);
--        return 0;
-+	*val = atomic64_read((atomic64_t *)data);
-+	return 0;
- }
--DEFINE_DEBUGFS_ATTRIBUTE(fops_atomic64_t_ro, debugfs_atomic64_t_get, NULL,
--                        "%lld\n");
-+DEFINE_DEBUGFS_ATTRIBUTE(sec_atomic64_ops, sec_debugfs_atomic64_get,
-+			 NULL, "%lld\n");
+ static const struct hpre_hw_error hpre_hw_errors[] = {
+-	{ .int_msk = BIT(0), .msg = "hpre_ecc_1bitt_err" },
+-	{ .int_msk = BIT(1), .msg = "hpre_ecc_2bit_err" },
+-	{ .int_msk = BIT(2), .msg = "hpre_data_wr_err" },
+-	{ .int_msk = BIT(3), .msg = "hpre_data_rd_err" },
+-	{ .int_msk = BIT(4), .msg = "hpre_bd_rd_err" },
+-	{ .int_msk = BIT(5), .msg = "hpre_ooo_2bit_ecc_err" },
+-	{ .int_msk = BIT(6), .msg = "hpre_cltr1_htbt_tm_out_err" },
+-	{ .int_msk = BIT(7), .msg = "hpre_cltr2_htbt_tm_out_err" },
+-	{ .int_msk = BIT(8), .msg = "hpre_cltr3_htbt_tm_out_err" },
+-	{ .int_msk = BIT(9), .msg = "hpre_cltr4_htbt_tm_out_err" },
+-	{ .int_msk = GENMASK(15, 10), .msg = "hpre_ooo_rdrsp_err" },
+-	{ .int_msk = GENMASK(21, 16), .msg = "hpre_ooo_wrrsp_err" },
++	{ .int_msk = BIT(0), .msg = "core_ecc_1bit_err_int_set" },
++	{ .int_msk = BIT(1), .msg = "core_ecc_2bit_err_int_set" },
++	{ .int_msk = BIT(2), .msg = "dat_wb_poison_int_set" },
++	{ .int_msk = BIT(3), .msg = "dat_rd_poison_int_set" },
++	{ .int_msk = BIT(4), .msg = "bd_rd_poison_int_set" },
++	{ .int_msk = BIT(5), .msg = "ooo_ecc_2bit_err_int_set" },
++	{ .int_msk = BIT(6), .msg = "cluster1_shb_timeout_int_set" },
++	{ .int_msk = BIT(7), .msg = "cluster2_shb_timeout_int_set" },
++	{ .int_msk = BIT(8), .msg = "cluster3_shb_timeout_int_set" },
++	{ .int_msk = BIT(9), .msg = "cluster4_shb_timeout_int_set" },
++	{ .int_msk = GENMASK(15, 10), .msg = "ooo_rdrsp_err_int_set" },
++	{ .int_msk = GENMASK(21, 16), .msg = "ooo_wrrsp_err_int_set" },
+ 	{ /* sentinel */ }
+ };
  
- static int sec_core_debug_init(struct sec_dev *sec)
- {
-@@ -636,11 +636,11 @@ static int sec_core_debug_init(struct sec_dev *sec)
- 
- 	debugfs_create_regset32("regs", 0444, tmp_d, regset);
- 
--	debugfs_create_file("send_cnt", 0444, tmp_d, &dfx->send_cnt,
--			    &fops_atomic64_t_ro);
-+	debugfs_create_file("send_cnt", 0444, tmp_d,
-+			    &dfx->send_cnt, &sec_atomic64_ops);
- 
--	debugfs_create_file("recv_cnt", 0444, tmp_d, &dfx->recv_cnt,
--			    &fops_atomic64_t_ro);
-+	debugfs_create_file("recv_cnt", 0444, tmp_d,
-+			    &dfx->recv_cnt, &sec_atomic64_ops);
- 
- 	return 0;
- }
 -- 
 2.20.1
 
