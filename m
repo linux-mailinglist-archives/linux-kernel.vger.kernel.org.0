@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0437F1673FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46688167330
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:10:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387680AbgBUIRa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:17:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54912 "EHLO mail.kernel.org"
+        id S1732267AbgBUIKA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:10:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732716AbgBUIR2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:17:28 -0500
+        id S1732248AbgBUIJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:09:56 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F0B32468F;
-        Fri, 21 Feb 2020 08:17:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DED9320578;
+        Fri, 21 Feb 2020 08:09:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273047;
-        bh=3PVLJrqaJl9uhHKgtcMPw4Br+U8VD6bT3U6kqZszuVU=;
+        s=default; t=1582272596;
+        bh=7FMsyWcS1dwfyUSPF3+9JWESGJIhRRVt1a5N6xGkfDs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HydWzvaQq7IZFqV//o4aiYIB2O8/voE+p2RFgbm/auIzDTfzotM61I5gnGF5fU3bl
-         jD256c+M5bXjZ8A6gta8nM8B4yd2R7PtWlwwSgjr/YEP8RZzblnmHAucgk5vyxzx3e
-         R7XEqyJFmXT56BXp/V5HH5lF+1GG7qvxZw53os/8=
+        b=YpvCi5NU0gjKThVxvzaFbzXI9uevdtBZiRk2hEvpHJb7eegQdMxzuB3l28jyn6Z+v
+         NnRnyUQfYyDKf/gyZdfvZImXSbwK5w7RNQ9lBbs8A0u7y9AwlQO84T+WRiDHJIy9GE
+         IPIIvlGPaPzNMVFnyom028/NvVyxp9lLmmvOBUXA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
+        Marco Felsch <m.felsch@pengutronix.de>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 027/191] pinctrl: baytrail: Do not clear IRQ flags on direct-irq enabled pins
-Date:   Fri, 21 Feb 2020 08:40:00 +0100
-Message-Id: <20200221072254.498538861@linuxfoundation.org>
+Subject: [PATCH 5.4 202/344] Input: edt-ft5x06 - work around first register access error
+Date:   Fri, 21 Feb 2020 08:40:01 +0100
+Message-Id: <20200221072407.425903135@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,58 +46,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Philipp Zabel <p.zabel@pengutronix.de>
 
-[ Upstream commit a23680594da7a9e2696dbcf4f023e9273e2fa40b ]
+[ Upstream commit e112324cc0422c046f1cf54c56f333d34fa20885 ]
 
-Suspending Goodix touchscreens requires changing the interrupt pin to
-output before sending them a power-down command. Followed by wiggling
-the interrupt pin to wake the device up, after which it is put back
-in input mode.
+The EP0700MLP1 returns bogus data on the first register read access
+(reading the threshold parameter from register 0x00):
 
-On Bay Trail devices with a Goodix touchscreen direct-irq mode is used
-in combination with listing the pin as a normal GpioIo resource.
+    edt_ft5x06 2-0038: crc error: 0xfc expected, got 0x40
 
-This works fine, until the goodix driver gets rmmod-ed and then insmod-ed
-again. In this case byt_gpio_disable_free() calls
-byt_gpio_clear_triggering() which clears the IRQ flags and after that the
-(direct) IRQ no longer triggers.
+It ignores writes until then. This patch adds a dummy read after which
+the number of sensors and parameter read/writes work correctly.
 
-This commit fixes this by adding a check for the BYT_DIRECT_IRQ_EN flag
-to byt_gpio_clear_triggering().
-
-Note that byt_gpio_clear_triggering() only gets called from
-byt_gpio_disable_free() for direct-irq enabled pins, as these are excluded
-from the irq_valid mask by byt_init_irq_valid_mask().
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/intel/pinctrl-baytrail.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/input/touchscreen/edt-ft5x06.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-index 021e28ff1194e..a760d8bda0af7 100644
---- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-+++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-@@ -950,7 +950,13 @@ static void byt_gpio_clear_triggering(struct byt_gpio *vg, unsigned int offset)
+diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
+index 5525f1fb1526e..240e8de24cd24 100644
+--- a/drivers/input/touchscreen/edt-ft5x06.c
++++ b/drivers/input/touchscreen/edt-ft5x06.c
+@@ -1041,6 +1041,7 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client,
+ {
+ 	const struct edt_i2c_chip_data *chip_data;
+ 	struct edt_ft5x06_ts_data *tsdata;
++	u8 buf[2] = { 0xfc, 0x00 };
+ 	struct input_dev *input;
+ 	unsigned long irq_flags;
+ 	int error;
+@@ -1110,6 +1111,12 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client,
+ 		return error;
+ 	}
  
- 	raw_spin_lock_irqsave(&byt_lock, flags);
- 	value = readl(reg);
--	value &= ~(BYT_TRIG_POS | BYT_TRIG_NEG | BYT_TRIG_LVL);
++	/*
++	 * Dummy read access. EP0700MLP1 returns bogus data on the first
++	 * register read access and ignores writes.
++	 */
++	edt_ft5x06_ts_readwrite(tsdata->client, 2, buf, 2, buf);
 +
-+	/* Do not clear direct-irq enabled IRQs (from gpio_disable_free) */
-+	if (value & BYT_DIRECT_IRQ_EN)
-+		/* nothing to do */ ;
-+	else
-+		value &= ~(BYT_TRIG_POS | BYT_TRIG_NEG | BYT_TRIG_LVL);
-+
- 	writel(value, reg);
- 	raw_spin_unlock_irqrestore(&byt_lock, flags);
- }
+ 	edt_ft5x06_ts_set_regs(tsdata);
+ 	edt_ft5x06_ts_get_defaults(&client->dev, tsdata);
+ 	edt_ft5x06_ts_get_parameters(tsdata);
 -- 
 2.20.1
 
