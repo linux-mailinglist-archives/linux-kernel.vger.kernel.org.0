@@ -2,77 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 603A1167D99
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 13:39:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6EF3167D9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 13:41:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728235AbgBUMjF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 07:39:05 -0500
-Received: from foss.arm.com ([217.140.110.172]:38474 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726976AbgBUMjE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 07:39:04 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 590A130E;
-        Fri, 21 Feb 2020 04:39:04 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C5D5B3F68F;
-        Fri, 21 Feb 2020 04:39:03 -0800 (PST)
-Date:   Fri, 21 Feb 2020 12:39:02 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Sameer Pujar <spujar@nvidia.com>
-Cc:     perex@perex.cz, tiwai@suse.com, robh+dt@kernel.org,
-        lgirdwood@gmail.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, digetx@gmail.com,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sharadg@nvidia.com, mkumard@nvidia.com, viswanathl@nvidia.com,
-        rlokhande@nvidia.com, dramesh@nvidia.com, atalambedu@nvidia.com
-Subject: Re: [PATCH v3 01/10] dt-bindings: sound: tegra: add DT binding for
- AHUB
-Message-ID: <20200221123902.GC5546@sirena.org.uk>
-References: <1582180492-25297-1-git-send-email-spujar@nvidia.com>
- <1582180492-25297-2-git-send-email-spujar@nvidia.com>
+        id S1728130AbgBUMlb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 07:41:31 -0500
+Received: from s3.sipsolutions.net ([144.76.43.62]:59042 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727039AbgBUMlb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 07:41:31 -0500
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+        (Exim 4.93)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1j57cU-00FGMO-BX; Fri, 21 Feb 2020 13:41:26 +0100
+Message-ID: <1cbc48003d249d3ce14941adbb32089b57573cd0.camel@sipsolutions.net>
+Subject: Re: [PATCH 09/10] cfg80211: align documentation style of
+ ieee80211_iface_combination
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     =?ISO-8859-1?Q?J=E9r=F4me?= Pouiller <Jerome.Pouiller@silabs.com>
+Cc:     "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>
+Date:   Fri, 21 Feb 2020 13:41:24 +0100
+In-Reply-To: <10411162.7U3r8zC6Ku@pc-42>
+References: <20200221115604.594035-1-Jerome.Pouiller@silabs.com>
+         <20200221115604.594035-9-Jerome.Pouiller@silabs.com>
+         <bc10669e0572d69d22ee7ca67a19c7d03bacd6ed.camel@sipsolutions.net>
+         <10411162.7U3r8zC6Ku@pc-42>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="32u276st3Jlj2kUU"
-Content-Disposition: inline
-In-Reply-To: <1582180492-25297-2-git-send-email-spujar@nvidia.com>
-X-Cookie: Dead? No excuse for laying off work.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 2020-02-21 at 12:38 +0000, Jérôme Pouiller wrote:
+> 
+> > > -      * = 0
+> > > -      *   all beacon intervals for different interface must be same.
+> > > -      * > 0
+> > > -      *   any beacon interval for the interface part of this combination AND
+> > > -      *   GCD of all beacon intervals from beaconing interfaces of this
+> > > -      *   combination must be greater or equal to this value.
+> > 
+> > This generates the nicer output, not with bullets but as a definition
+> > list or something.
+> Indeed.
+> 
+> Unfortunately, I hasn't been able to use the same syntax in struct
+> description: if sphinx find a blank line, it considers that the rest of
+> the input is the long description of the struct.
 
---32u276st3Jlj2kUU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+So let's just leave it as is. I don't consider using the same style
+(inline or header) everywhere to be even nearly as important as the
+output :)
 
-On Thu, Feb 20, 2020 at 12:04:43PM +0530, Sameer Pujar wrote:
-> Audio Hub (AHUB) comprises a collection of hardware accelerators for audio
-> pre-processing and post-processing and a programmable full crossbar for
-> audio routing across these accelerators. This patch adds YAML schema for DT
+johannes
 
-Please submit patches using subject lines reflecting the style for the
-subsystem, this makes it easier for people to identify relevant patches.
-Look at what existing commits in the area you're changing are doing and
-make sure your subject lines visually resemble what they're doing.
-There's no need to resubmit to fix this alone.
-
---32u276st3Jlj2kUU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5Pz2UACgkQJNaLcl1U
-h9AHeQf+Piae6cY2B5ePno99lDsl5PHxfR24xDy2XG2/hPqCtEqWXT3EcJlRacLQ
-a6tlKMXvOgdQ4wYzctGGH1SBj00qM6k/Wl4hYaCqxyNdk/6L9VlDM/3S2Aab8Src
-CQ9RHkGUgsWqeAH5KsZ/nFWy9jJ43f+s6hhuJXizxMhAylNlMMvFF7cbahu0nqnu
-K/sB0GN3f+TYIkqCjbuSRdIobC54aMU2mubTk7a0dgEKHfl69Zb8HBVHgjhkSBGf
-r8av9AKtl0yOFQIqVA9PhlOkgwsYdCa5mJKULWK728W/pbPGr+c96RqEgo8vijQg
-bKLrSY6B+ljUVJnpaT5KvMMEYSPevQ==
-=SKbZ
------END PGP SIGNATURE-----
-
---32u276st3Jlj2kUU--
