@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6725116757A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:31:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B1F21675EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:32:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388737AbgBUI2C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:28:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60008 "EHLO mail.kernel.org"
+        id S1732962AbgBUINK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:13:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49126 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732493AbgBUIUp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:20:45 -0500
+        id S1732948AbgBUINH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:13:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B33AE24673;
-        Fri, 21 Feb 2020 08:20:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 897012467A;
+        Fri, 21 Feb 2020 08:13:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273245;
-        bh=GrMvaoHiW8mqPaedW80LgmLZTHUhiLrqAUih5cuG+FQ=;
+        s=default; t=1582272787;
+        bh=w8oOzN/MuS/Grjr1/hWfb3MV/kWKCyQn5q65rT9Fg5s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GLkqvRxCSopf1KruuAe9Z5nsRhgjG8BR8FWNcktgSDbmpJSTAkpRbUB/xHyI9yu8n
-         nYdFCWacrC8IeKXmd08eem0de25/CKaruMDcHFzg8kkP+XSL1OYyhD/rUn2WOlXqcQ
-         wZpiMS4ZTgs8Ibz5gJt9/BTsKs9I3J/XeNXY86F0=
+        b=StD77bz3bKzpXFAjGpozax7//IN64a0WQF4rHsae7fm+IdtBW91suuPQAWv4B+aZF
+         AvVwZUa8StLLSL80Mlf0bDAxYeqNWr4MyipyEbreFhLd993AbFy5KF1pkXFama0m4y
+         jy41awFG+JZYwHCDiOAu4yt68zwuuO/Wd5cnl9ns=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Ekstrand <jason@jlekstrand.net>,
-        Hans de Goede <hdegoede@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 100/191] ACPI: button: Add DMI quirk for Razer Blade Stealth 13 late 2019 lid switch
-Date:   Fri, 21 Feb 2020 08:41:13 +0100
-Message-Id: <20200221072303.080004751@linuxfoundation.org>
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Borislav Petkov <bp@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 275/344] x86/decoder: Add TEST opcode to Group3-2
+Date:   Fri, 21 Feb 2020 08:41:14 +0100
+Message-Id: <20200221072414.708715415@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +44,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Ekstrand <jason@jlekstrand.net>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit 0528904926aab19bffb2068879aa44db166c6d5f ]
+[ Upstream commit 8b7e20a7ba54836076ff35a28349dabea4cec48f ]
 
-Running evemu-record on the lid switch event shows that the lid reports
-the first "close" but then never reports an "open".  This causes systemd
-to continuously re-suspend the laptop every 30s.  Resetting the _LID to
-"open" fixes the issue.
+Add TEST opcode to Group3-2 reg=001b as same as Group3-1 does.
 
-Signed-off-by: Jason Ekstrand <jason@jlekstrand.net>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Commit
+
+  12a78d43de76 ("x86/decoder: Add new TEST instruction pattern")
+
+added a TEST opcode assignment to f6 XX/001/XXX (Group 3-1), but did
+not add f7 XX/001/XXX (Group 3-2).
+
+Actually, this TEST opcode variant (ModRM.reg /1) is not described in
+the Intel SDM Vol2 but in AMD64 Architecture Programmer's Manual Vol.3,
+Appendix A.2 Table A-6. ModRM.reg Extensions for the Primary Opcode Map.
+
+Without this fix, Randy found a warning by insn_decoder_test related
+to this issue as below.
+
+    HOSTCC  arch/x86/tools/insn_decoder_test
+    HOSTCC  arch/x86/tools/insn_sanity
+    TEST    posttest
+  arch/x86/tools/insn_decoder_test: warning: Found an x86 instruction decoder bug, please report this.
+  arch/x86/tools/insn_decoder_test: warning: ffffffff81000bf1:	f7 0b 00 01 08 00    	testl  $0x80100,(%rbx)
+  arch/x86/tools/insn_decoder_test: warning: objdump says 6 bytes, but insn_get_length() says 2
+  arch/x86/tools/insn_decoder_test: warning: Decoded and checked 11913894 instructions with 1 failures
+    TEST    posttest
+  arch/x86/tools/insn_sanity: Success: decoded and checked 1000000 random instructions with 0 errors (seed:0x871ce29c)
+
+To fix this error, add the TEST opcode according to AMD64 APM Vol.3.
+
+ [ bp: Massage commit message. ]
+
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+Link: https://lkml.kernel.org/r/157966631413.9580.10311036595431878351.stgit@devnote2
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/button.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/x86/lib/x86-opcode-map.txt       | 2 +-
+ tools/arch/x86/lib/x86-opcode-map.txt | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/acpi/button.c b/drivers/acpi/button.c
-index a25d77b3a16ad..d5c19e25ddf59 100644
---- a/drivers/acpi/button.c
-+++ b/drivers/acpi/button.c
-@@ -102,6 +102,17 @@ static const struct dmi_system_id lid_blacklst[] = {
- 		},
- 		.driver_data = (void *)(long)ACPI_BUTTON_LID_INIT_OPEN,
- 	},
-+	{
-+		/*
-+		 * Razer Blade Stealth 13 late 2019, notification of the LID device
-+		 * only happens on close, not on open and _LID always returns closed.
-+		 */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Razer"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Razer Blade Stealth 13 Late 2019"),
-+		},
-+		.driver_data = (void *)(long)ACPI_BUTTON_LID_INIT_OPEN,
-+	},
- 	{}
- };
+diff --git a/arch/x86/lib/x86-opcode-map.txt b/arch/x86/lib/x86-opcode-map.txt
+index 0a0e9112f2842..5cb9f009f2be3 100644
+--- a/arch/x86/lib/x86-opcode-map.txt
++++ b/arch/x86/lib/x86-opcode-map.txt
+@@ -909,7 +909,7 @@ EndTable
  
+ GrpTable: Grp3_2
+ 0: TEST Ev,Iz
+-1:
++1: TEST Ev,Iz
+ 2: NOT Ev
+ 3: NEG Ev
+ 4: MUL rAX,Ev
+diff --git a/tools/arch/x86/lib/x86-opcode-map.txt b/tools/arch/x86/lib/x86-opcode-map.txt
+index 0a0e9112f2842..5cb9f009f2be3 100644
+--- a/tools/arch/x86/lib/x86-opcode-map.txt
++++ b/tools/arch/x86/lib/x86-opcode-map.txt
+@@ -909,7 +909,7 @@ EndTable
+ 
+ GrpTable: Grp3_2
+ 0: TEST Ev,Iz
+-1:
++1: TEST Ev,Iz
+ 2: NOT Ev
+ 3: NEG Ev
+ 4: MUL rAX,Ev
 -- 
 2.20.1
 
