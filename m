@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CBE916730F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:09:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E05C31673EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732283AbgBUII6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:08:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43608 "EHLO mail.kernel.org"
+        id S2387579AbgBUIQs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:16:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732273AbgBUIIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:08:55 -0500
+        id S2387566AbgBUIQp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:16:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4B6E20722;
-        Fri, 21 Feb 2020 08:08:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E45E2467B;
+        Fri, 21 Feb 2020 08:16:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272535;
-        bh=XXuW7JzIbkyZH1HN0+8zkHQTFS+HQMpPRX/xz57n+ic=;
+        s=default; t=1582273004;
+        bh=Xj9uPktyd8h+TZiCVSTuf3BHXFC+ByLgoE3KHYSHwf8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aHcKXUnyIigprWqPpPzh25UQ2ivLgX6tFuaggrDVZ9hw5fHdPBnkp/El+8yTJqu0u
-         vTlKG95snZ3SuqaTzZeIfza5gW4yqcD54sT8cJn/yUxLLMeA1254lBJSTE8/KxlXw6
-         bObld1H2CIOcFwI9GmVz49fQD865NZuqvmR73T5I=
+        b=gedwdtq6OSh5BupJWC2fdQaneo4MRZJ/MTgngS+57p/ZEDy8BsF4pJnZvMzc9B2Y9
+         wF8wG1N6TYMLVedH2aiwaoMIXVeUfqw2Jmhst88iUVVCg6EWRxyUNqt96k4j4SXZRd
+         5NxYCCm0qBdeR5KotceYUxjUqFAexyQ2pj/PKhyY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 178/344] ALSA: sh: Fix compile warning wrt const
+        stable@vger.kernel.org, Per Forlin <perfn@axis.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 004/191] net: dsa: tag_qca: Make sure there is headroom for tag
 Date:   Fri, 21 Feb 2020 08:39:37 +0100
-Message-Id: <20200221072405.136351500@linuxfoundation.org>
+Message-Id: <20200221072251.310188750@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,41 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Per Forlin <per.forlin@axis.com>
 
-[ Upstream commit f1dd4795b1523fbca7ab4344dd5a8bb439cc770d ]
+[ Upstream commit 04fb91243a853dbde216d829c79d9632e52aa8d9 ]
 
-A long-standing compile warning was seen during build test:
-  sound/sh/aica.c: In function 'load_aica_firmware':
-  sound/sh/aica.c:521:25: warning: passing argument 2 of 'spu_memload' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+Passing tag size to skb_cow_head will make sure
+there is enough headroom for the tag data.
+This change does not introduce any overhead in case there
+is already available headroom for tag.
 
-Fixes: 198de43d758c ("[ALSA] Add ALSA support for the SEGA Dreamcast PCM device")
-Link: https://lore.kernel.org/r/20200105144823.29547-69-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Per Forlin <perfn@axis.com>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/sh/aica.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/dsa/tag_qca.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/sh/aica.c b/sound/sh/aica.c
-index 52e9cfb4f8197..8421b2f9c9f38 100644
---- a/sound/sh/aica.c
-+++ b/sound/sh/aica.c
-@@ -101,10 +101,10 @@ static void spu_memset(u32 toi, u32 what, int length)
- }
+--- a/net/dsa/tag_qca.c
++++ b/net/dsa/tag_qca.c
+@@ -41,7 +41,7 @@ static struct sk_buff *qca_tag_xmit(stru
+ 	struct dsa_port *dp = dsa_slave_to_port(dev);
+ 	u16 *phdr, hdr;
  
- /* spu_memload - write to SPU address space */
--static void spu_memload(u32 toi, void *from, int length)
-+static void spu_memload(u32 toi, const void *from, int length)
- {
- 	unsigned long flags;
--	u32 *froml = from;
-+	const u32 *froml = from;
- 	u32 __iomem *to = (u32 __iomem *) (SPU_MEMORY_BASE + toi);
- 	int i;
- 	u32 val;
--- 
-2.20.1
-
+-	if (skb_cow_head(skb, 0) < 0)
++	if (skb_cow_head(skb, QCA_HDR_LEN) < 0)
+ 		return NULL;
+ 
+ 	skb_push(skb, QCA_HDR_LEN);
 
 
