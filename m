@@ -2,109 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB85E168410
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 17:50:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7F10168425
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 17:51:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728000AbgBUQuv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 11:50:51 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:44799 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727799AbgBUQuv (ORCPT
+        id S1728095AbgBUQvs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 11:51:48 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:53010 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726550AbgBUQvr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 11:50:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582303850;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=4h82rv0PoKdnsyNmTUn/xy7ivRxE79f7MGtv9RQvsxs=;
-        b=K1shmBu8+u1/EsmCeJcLOaIF0aoRRyv11djXs6M4qTDQnYzkGX9nfNXZ9iN8RNF2H0Geqx
-        rhLBJHFP4V21MftI7Z0FB/e2f+X8aWlloY8W5R8ppMf7/Ef+syM8Q0q/5B1X78Y5bOVIDf
-        dKba6K/A0nDhzTG3K4b5gihJ92t+a3Q=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-493-NEfudibLOf2BUHT9bNEyZQ-1; Fri, 21 Feb 2020 11:50:46 -0500
-X-MC-Unique: NEfudibLOf2BUHT9bNEyZQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C638119057C2;
-        Fri, 21 Feb 2020 16:50:42 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.70])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 229DC1001B0B;
-        Fri, 21 Feb 2020 16:50:37 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Fri, 21 Feb 2020 17:50:42 +0100 (CET)
-Date:   Fri, 21 Feb 2020 17:50:37 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Solar Designer <solar@openwall.com>
-Subject: Re: [PATCH 7/7] proc: Ensure we see the exit of each process tid
- exactly once
-Message-ID: <20200221165036.GB16646@redhat.com>
-References: <20200212200335.GO23230@ZenIV.linux.org.uk>
- <CAHk-=wi+1CPShMFvJNPfnrJ8DD8uVKUOQ5TQzQUNGLUkeoahkg@mail.gmail.com>
- <20200212203833.GQ23230@ZenIV.linux.org.uk>
- <20200212204124.GR23230@ZenIV.linux.org.uk>
- <CAHk-=wi5FOGV_3tALK3n6E2fK3Oa_yCYkYQtCSaXLSEm2DUCKg@mail.gmail.com>
- <87lfp7h422.fsf@x220.int.ebiederm.org>
- <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
- <87pnejf6fz.fsf@x220.int.ebiederm.org>
- <871rqpaswu.fsf_-_@x220.int.ebiederm.org>
- <87r1yp7zhc.fsf_-_@x220.int.ebiederm.org>
+        Fri, 21 Feb 2020 11:51:47 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01LGmvhZ192967;
+        Fri, 21 Feb 2020 16:51:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=71MavVmrPvpOGPamK3jUDjcxHU6zKPseRfT+7KN2tgQ=;
+ b=eAXmvtsTsAaXneK94skMatt/ZRC7xJqrX92pwi2EVGp9kTZSAbH/3aMXYD+aLbxSz5VT
+ yGgVyUOcOvyEVu82LGCXSzHKlAs86RZm0zKP1xu/lnwXDfRxI42RkGzvoR9HlK9Vwpq3
+ jyW5A6xUtsCJtVILdMjJ0KRbrLEi+ABj/5c/UsjU0dZBqLDebJ6KqiBuGjdK52X8zliH
+ vZjSW3kuhmzdYlZ0ty3FsiFcaP1W03SDgARBzQEZUraX2s+8FcwehCWFwG8DXJ3cT4o8
+ zjC5d+3Yi5qbJOiZD0xF0z5i4+o8mXplDLYNe7IBpQzAKICVaGsl+yZN0b0Pt5dkX2pF Lw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2y8uddhqe2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Feb 2020 16:51:19 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01LGmt7D043940;
+        Fri, 21 Feb 2020 16:51:18 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2y8udnw61c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Feb 2020 16:51:18 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01LGpBo7017970;
+        Fri, 21 Feb 2020 16:51:12 GMT
+Received: from [192.168.0.195] (/69.207.174.138)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 21 Feb 2020 08:51:11 -0800
+Subject: Re: [PATCH v3 0/3] Introduce per-task latency_nice for scheduler
+ hints
+To:     Parth Shah <parth@linux.ibm.com>, Qais Yousef <qais.yousef@arm.com>
+Cc:     vincent.guittot@linaro.org, patrick.bellasi@matbug.net,
+        valentin.schneider@arm.com, dhaval.giani@oracle.com,
+        dietmar.eggemann@arm.com, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, mingo@redhat.com, pavel@ucw.cz,
+        qperret@qperret.net, David.Laight@ACULAB.COM, pjt@google.com,
+        tj@kernel.org
+References: <8ed0f40c-eeb4-c487-5420-a8eb185b5cdd@linux.ibm.com>
+ <c7e5b9da-66a3-3d69-d7aa-0319de3aa736@oracle.com>
+ <971909ed-d4e0-6afa-d20b-365ede5a195e@linux.ibm.com>
+ <8e984496-e89b-d96c-d84e-2be7f0958ea4@oracle.com>
+ <1e216d18-7ec0-4a0d-e124-b730d6e03e6f@oracle.com>
+ <de5d8886-6f70-a3fa-8061-5877cd1d98f5@linux.ibm.com>
+ <7429e0ae-41ff-e9c4-dd65-3ef1919f5f50@linux.ibm.com>
+ <a332d633-7826-b85d-5d9f-5e34f9de084a@oracle.com>
+ <20200220150343.dvweamfnk257pg7z@e107158-lin.cambridge.arm.com>
+ <9bb1437b-3de0-b0ca-6319-6be903b0758d@oracle.com>
+ <20200221092956.jpsfps2dgmhiu5vg@e107158-lin.cambridge.arm.com>
+ <bf063130-cd08-2d7b-40eb-84575b4ba271@linux.ibm.com>
+From:   chris hyser <chris.hyser@oracle.com>
+Message-ID: <2983937b-d2de-d1ab-e387-271c7caf2a81@oracle.com>
+Date:   Fri, 21 Feb 2020 11:51:07 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87r1yp7zhc.fsf_-_@x220.int.ebiederm.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+In-Reply-To: <bf063130-cd08-2d7b-40eb-84575b4ba271@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9538 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
+ phishscore=0 suspectscore=2 mlxscore=0 malwarescore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002210126
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9538 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 impostorscore=0
+ mlxlogscore=999 malwarescore=0 mlxscore=0 suspectscore=2
+ priorityscore=1501 bulkscore=0 adultscore=0 spamscore=0 lowpriorityscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002210126
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/20, Eric W. Biederman wrote:
->
-> +void exchange_tids(struct task_struct *ntask, struct task_struct *otask)
-> +{
-> +	/* pid_links[PIDTYPE_PID].next is always NULL */
-> +	struct pid *npid = READ_ONCE(ntask->thread_pid);
-> +	struct pid *opid = READ_ONCE(otask->thread_pid);
-> +
-> +	rcu_assign_pointer(opid->tasks[PIDTYPE_PID].first, &ntask->pid_links[PIDTYPE_PID]);
-> +	rcu_assign_pointer(npid->tasks[PIDTYPE_PID].first, &otask->pid_links[PIDTYPE_PID]);
-> +	rcu_assign_pointer(ntask->thread_pid, opid);
-> +	rcu_assign_pointer(otask->thread_pid, npid);
+On 2/21/20 5:01 AM, Parth Shah wrote:
+> 
+> 
+> On 2/21/20 2:59 PM, Qais Yousef wrote:
+>> On 02/20/20 11:34, chris hyser wrote:
+>>>>> Whether called a hint or not, it is a trade-off to reduce latency of select
+>>>>> tasks at the expense of the throughput of the other tasks in the the system.
+>>>>
+>>>> Does it actually affect the throughput of the other tasks? I thought this will
+>>>> allow the scheduler to reduce latencies, for instance, when selecting which cpu
+>>>> it should land on. I can't see how this could hurt other tasks.
+>>>
+>>> This is why it is hard to argue about pure abstractions. The primary idea
+>>> mentioned so far for how these latencies are reduced is by short cutting the
+>>> brute-force search for something idle. If you don't find an idle cpu because
+>>> you didn't spend the time to look, then you pre-empted a task, possibly with
+>>> a large nice warm cache footprint that was cranking away on throughput. It
+>>> is ultimately going to be the usual latency vs throughput trade off. If
+>>> latency reduction were "free" we wouldn't need a per task attribute. We
+>>> would just do the reduction for all tasks, everywhere, all the time.
+>>
+>> This could still happen without the latency nice bias. I'm not sure if this
+>> falls under DoS; maybe if you end up spawning a lot of task with high latency
+>> nice value, then you might end up cramming a lot of tasks on a small subset of
+>> CPUs. But then, shouldn't the logic that uses latency_nice try to handle this
+>> case anyway since it could be legit?
+>>
+>> Not sure if this can be used by someone to trigger timing based attacks on
+>> another process.
+>>
+>> I can't fully see the whole security implications, but regardless. I do agree
+>> it is prudent to not allow tasks to set their own latency_nice. Mainly because
+>> the meaning of this flag will be system dependent and I think Admins are the
+>> better ones to decide how to use this flag for the system they're running on.
+>> I don't think application writers should be able to tweak their tasks
+>> latency_nice value. Not if they can't get the right privilege at least.
+>>
+> 
+> AFAICT if latency_nice is really used for scheduler hints to provide
+> latency requirements, then the worst that can happen is the user can
+> request to have all the created tasks get least latency (which might not
+> even be possible). Hence, unless we bias priority or vruntime, I don't see
+> the DoS possibility with latency_nice.
 
-this breaks has_group_leader_pid()...
+A latency nice that does not allow reducing the latency of select tasks at the expense of the throughput of other tasks 
+(ie the classic trade-off) doesn't seem to be all that useful and would fail to meet the requirements. Latency nice in 
+this view is a directive on how to make that trade-off much like nice is a directive on how to trade-off what should get 
+to run next and we don't accept the system optionally treating +19 and -20 tasks the same. Even when we don't get 
+exactly what we want we expect "best effort" and that is not the same as optional.
 
-proc_pid_readdir() can miss a process doing mt-exec but this looks fixable,
-just we need to update ntask->thread_pid before updating ->first.
+-chrish
 
-The more problematic case is __exit_signal() which does
-		
-		if (unlikely(has_group_leader_pid(tsk)))
-			posix_cpu_timers_exit_group(tsk);
-
-Oleg.
 
