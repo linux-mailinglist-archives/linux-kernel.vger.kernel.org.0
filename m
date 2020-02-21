@@ -2,101 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0935A1681FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:40:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFD2116820F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:43:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729002AbgBUPkN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 10:40:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33888 "EHLO mail.kernel.org"
+        id S1728914AbgBUPne (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 10:43:34 -0500
+Received: from mga05.intel.com ([192.55.52.43]:42653 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728815AbgBUPkM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 10:40:12 -0500
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3325F208E4;
-        Fri, 21 Feb 2020 15:40:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582299612;
-        bh=+DoRoBMJXa06a9s5rF/Tg0R2Bb7OUU1w4NYR6LGt5us=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=C50UxxIIkUBAA2owQJBxXLzj5mfErfF8Pc2OBetl4t/cV2KyEMFMjn8eC4BwC7mmB
-         kCwDosbSs53gE4Sdr5Fg43Ax+XA9Ho+WY/6Ra20KzNoV0s1vrbxL2eSWxW29kf/Mqk
-         pkg+U+QsIhllO3E7zJbObensr46EDR31k4fiVQ/w=
-Received: by mail-qk1-f176.google.com with SMTP id u124so2142822qkh.13;
-        Fri, 21 Feb 2020 07:40:12 -0800 (PST)
-X-Gm-Message-State: APjAAAVWTnkvg0TT+tYQ0dwv4VG90sEhb2AlHYq/UYKheOekFsdrUtva
-        UyaKIOjoiDlVrAqb3AWsHyj9DjU4LPJxqKXl/g==
-X-Google-Smtp-Source: APXvYqy0D6b0D+YPb02EPEVdZaz7+H9RHdQphCR7I5xx5+N9sBx4J8AdIN+Hdpb187sXHw7HfZ4TtvWRgV6uosWTKgo=
-X-Received: by 2002:a05:620a:1237:: with SMTP id v23mr17847336qkj.223.1582299611320;
- Fri, 21 Feb 2020 07:40:11 -0800 (PST)
+        id S1728177AbgBUPnd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 10:43:33 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2020 07:43:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,468,1574150400"; 
+   d="scan'208";a="236603814"
+Received: from mdiamon1-mobl.amr.corp.intel.com (HELO [10.252.143.193]) ([10.252.143.193])
+  by orsmga003.jf.intel.com with ESMTP; 21 Feb 2020 07:43:30 -0800
+Subject: Re: [PATCH] Intel: Skylake: Fix inconsistent IS_ERR and PTR_ERR
+To:     Joe Perches <joe@perches.com>, Xu Wang <vulab@iscas.ac.cn>,
+        perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org
+Cc:     linux-kernel@vger.kernel.org,
+        "Rojewski, Cezary" <cezary.rojewski@intel.com>,
+        "Slawinski, AmadeuszX" <amadeuszx.slawinski@intel.com>
+References: <20200221101112.3104-1-vulab@iscas.ac.cn>
+ <1247da797bc0a860e845989241385e124e589063.camel@perches.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <8e96c207-cdf8-2d1f-755e-be60555c8728@linux.intel.com>
+Date:   Fri, 21 Feb 2020 09:40:13 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200221041631.10960-1-chris.packham@alliedtelesis.co.nz> <20200221041631.10960-4-chris.packham@alliedtelesis.co.nz>
-In-Reply-To: <20200221041631.10960-4-chris.packham@alliedtelesis.co.nz>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 21 Feb 2020 09:40:00 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqK+jKyRr98_YX1GGwk-rHrLMOq_v7Z_57dQWYYQPuLS7A@mail.gmail.com>
-Message-ID: <CAL_JsqK+jKyRr98_YX1GGwk-rHrLMOq_v7Z_57dQWYYQPuLS7A@mail.gmail.com>
-Subject: Re: [PATCH v4 3/5] dt-bindings: hwmon: Document adt7475 invert-pwm property
-To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc:     Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux HWMON List <linux-hwmon@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Logan Shaw <logan.shaw@alliedtelesis.co.nz>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1247da797bc0a860e845989241385e124e589063.camel@perches.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 10:16 PM Chris Packham
-<chris.packham@alliedtelesis.co.nz> wrote:
->
-> Add binding information for the invert-pwm property.
->
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> ---
->
-> Notes:
->     Changes in v4:
->     - use $ref uint32 and enum
->     - add adi vendor prefix
->
->     Cahnges in v3:
->     - new
->
->  Documentation/devicetree/bindings/hwmon/adt7475.yaml | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/hwmon/adt7475.yaml b/Documentation/devicetree/bindings/hwmon/adt7475.yaml
-> index e40612ee075f..6a358b30586c 100644
-> --- a/Documentation/devicetree/bindings/hwmon/adt7475.yaml
-> +++ b/Documentation/devicetree/bindings/hwmon/adt7475.yaml
-> @@ -50,6 +50,17 @@ patternProperties:
->       - $ref: /schemas/types.yaml#/definitions/uint32
->       - enum: [0, 1]
->
-> +  "^adi,invert-pwm[1-3]$":
-> +    description: |
-> +      Configures the pwm output to use inverted logic. If set to 1
-> +      the pwm uses a logic low output for 100% duty cycle. If set
-> +      to 0 the pwm uses a logic high output for 100% duty cycle.
-> +      If the property is absent the pwm retains it's configuration
-> +      from the bios/bootloader.
 
-I believe we already have an inverted flag for consumers. That doesn't
-work if you don't have a consumer described in DT, but then the
-question is should you? Or is this something the user will want to
-configure from userspace.
 
-The problem with 'invert' properties is they assume you know what the
-not inverted state is. I would also make this an array:
+On 2/21/20 8:41 AM, Joe Perches wrote:
+> On Fri, 2020-02-21 at 18:11 +0800, Xu Wang wrote:
+>> PTR_ERR should access the value just tested by IS_ERR.
+>> In skl_clk_dev_probe(),it is inconsistent.
+> []
+>> diff --git a/sound/soc/intel/skylake/skl-ssp-clk.c b/sound/soc/intel/skylake/skl-ssp-clk.c
+> []
+>> @@ -384,7 +384,7 @@ static int skl_clk_dev_probe(struct platform_device *pdev)
+>>   				&clks[i], clk_pdata, i);
+>>   
+>>   		if (IS_ERR(data->clk[data->avail_clk_cnt])) {
+>> -			ret = PTR_ERR(data->clk[data->avail_clk_cnt++]);
+>> +			ret = PTR_ERR(data->clk[data->avail_clk_cnt]);
+> 
+> NAK.
+> 
+> This is not inconsistent and you are removing the ++
+> which is a post increment.  Likely that is necessary.
+> 
+> You could write the access and the increment as two
+> separate statements if it confuses you.
 
-adi,pwm-active-state = <1 0 0 1>; // PWM1 and PWM2 active low
+Well to be fair the code is far from clear.
 
-And not present means <1 1 1 1>.
+the post-increment is likely needed because of the error handling in 
+unregister_src_clk 1
+		data->clk[data->avail_clk_cnt] = register_skl_clk(dev,
+				&clks[i], clk_pdata, i);
 
-Rob
+		if (IS_ERR(data->clk[data->avail_clk_cnt])) {
+			ret = PTR_ERR(data->clk[data->avail_clk_cnt++]);
+			goto err_unreg_skl_clk;
+		}
+	}
+
+	platform_set_drvdata(pdev, data);
+
+	return 0;
+
+err_unreg_skl_clk:
+	unregister_src_clk(data);
+
+static void unregister_src_clk(struct skl_clk_data *dclk)
+{
+	while (dclk->avail_clk_cnt--)
+		clkdev_drop(dclk->clk[dclk->avail_clk_cnt]->lookup);
+}
+
+So the post-increment is cancelled in the while().
+
+That said, the avail_clk_cnt field is never initialized or incremented 
+in normal usages so the code looks quite suspicious indeed.
+
+gitk tells me this patch is likely the culprit:
+
+6ee927f2f01466 ('ASoC: Intel: Skylake: Fix NULL ptr dereference when 
+unloading clk dev')
+
+-		data->clk[i] = register_skl_clk(dev, &clks[i], clk_pdata, i);
+-		if (IS_ERR(data->clk[i])) {
+-			ret = PTR_ERR(data->clk[i]);
++		data->clk[data->avail_clk_cnt] = register_skl_clk(dev,
++				&clks[i], clk_pdata, i);
++
++		if (IS_ERR(data->clk[data->avail_clk_cnt])) {
++			ret = PTR_ERR(data->clk[data->avail_clk_cnt++]);
+  			goto err_unreg_skl_clk;
+  		}
+-
+-		data->avail_clk_cnt++;
+
+That last removal is probably wrong. Cezary and Amadeusz, you may want 
+to look at this?
