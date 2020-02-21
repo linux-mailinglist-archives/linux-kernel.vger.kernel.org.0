@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F6E116786E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:48:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 411701678A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:50:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728590AbgBUIse (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:48:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42310 "EHLO mail.kernel.org"
+        id S2388240AbgBUItj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:49:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728776AbgBUHqm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:46:42 -0500
+        id S1727063AbgBUHpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:45:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E002208C4;
-        Fri, 21 Feb 2020 07:46:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 16DD624656;
+        Fri, 21 Feb 2020 07:45:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271202;
-        bh=c7JCE0FUS+3bdwXpx4DK8SQXjElF8rXBOwR4c3H51RI=;
+        s=default; t=1582271105;
+        bh=uTLnBEJERTGry/cuDv6VzwuoL0a2YHXZt5HbDHNk0wA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jO8mCzjn9na203pNXUOrvWMDANOWe+f/Ptdqon0ZAw2uTBBxf8J1xDgxPOLOO0/mP
-         NjON7K6Ow1At9dKjAuhPnWFxPjkHW/NGqEeZsZU7jqBH4RokrnqiAlK9VmIzzX4el6
-         YtnFoLcPBdLQAKBK/Q+8SnIwONHC2hMjjqZiXBFk=
+        b=XWoqsMAwUM5Mb3shTyj0gwLwHjjAY4w6T0DKPSIWiVJe8fyTRW4p2oQ7HGuKZ2WHU
+         utBwYZ7H4p7EgkW9DA3wImisSTNZwC3VVztI4M0MY76OzJ5XZ6KUB8bs9v0zGbRw/L
+         qR/vq3gqON/I7ysO1OANOlhwVqYVxlpnGXlf2YC8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenyou Yang <wenyou.yang@microchip.com>,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        stable@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <mripard@kernel.org>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 040/399] media: i2c: mt9v032: fix enum mbus codes and frame sizes
-Date:   Fri, 21 Feb 2020 08:36:05 +0100
-Message-Id: <20200221072406.249690333@linuxfoundation.org>
+Subject: [PATCH 5.5 042/399] media: sun4i-csi: Fix data sampling polarity handling
+Date:   Fri, 21 Feb 2020 08:36:07 +0100
+Message-Id: <20200221072406.455489326@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -47,61 +46,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugen Hristev <eugen.hristev@microchip.com>
+From: Chen-Yu Tsai <wens@csie.org>
 
-[ Upstream commit 1451d5ae351d938a0ab1677498c893f17b9ee21d ]
+[ Upstream commit cf9e6d5dbdd56ef2aa72f28c806711c4293c8848 ]
 
-This driver supports both the mt9v032 (color) and the mt9v022 (mono)
-sensors. Depending on which sensor is used, the format from the sensor is
-different. The format.code inside the dev struct holds this information.
-The enum mbus and enum frame sizes need to take into account both type of
-sensors, not just the color one. To solve this, use the format.code in
-these functions instead of the hardcoded bayer color format (which is only
-used for mt9v032).
+The CLK_POL field specifies whether data is sampled on the falling or
+rising edge of PCLK, not whether the data lines are active high or low.
+Evidence of this can be found in the timing diagram labeled "horizontal
+size setting and pixel clock timing".
 
-[Sakari Ailus: rewrapped commit message]
+Fix the setting by checking the correct flag, V4L2_MBUS_PCLK_SAMPLE_RISING.
+While at it, reorder the three polarity flag checks so HSYNC and VSYNC
+are grouped together.
 
-Suggested-by: Wenyou Yang <wenyou.yang@microchip.com>
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Fixes: 577bbf23b758 ("media: sunxi: Add A10 CSI driver")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/mt9v032.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/media/platform/sunxi/sun4i-csi/sun4i_dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/i2c/mt9v032.c b/drivers/media/i2c/mt9v032.c
-index 4b9b98cf6674c..5bd3ae82992f3 100644
---- a/drivers/media/i2c/mt9v032.c
-+++ b/drivers/media/i2c/mt9v032.c
-@@ -428,10 +428,12 @@ static int mt9v032_enum_mbus_code(struct v4l2_subdev *subdev,
- 				  struct v4l2_subdev_pad_config *cfg,
- 				  struct v4l2_subdev_mbus_code_enum *code)
- {
-+	struct mt9v032 *mt9v032 = to_mt9v032(subdev);
-+
- 	if (code->index > 0)
- 		return -EINVAL;
+diff --git a/drivers/media/platform/sunxi/sun4i-csi/sun4i_dma.c b/drivers/media/platform/sunxi/sun4i-csi/sun4i_dma.c
+index d6979e11a67b2..8b567d0f019bf 100644
+--- a/drivers/media/platform/sunxi/sun4i-csi/sun4i_dma.c
++++ b/drivers/media/platform/sunxi/sun4i-csi/sun4i_dma.c
+@@ -279,8 +279,8 @@ static int sun4i_csi_start_streaming(struct vb2_queue *vq, unsigned int count)
+ 	       csi->regs + CSI_WIN_CTRL_H_REG);
  
--	code->code = MEDIA_BUS_FMT_SGRBG10_1X10;
-+	code->code = mt9v032->format.code;
- 	return 0;
- }
- 
-@@ -439,7 +441,11 @@ static int mt9v032_enum_frame_size(struct v4l2_subdev *subdev,
- 				   struct v4l2_subdev_pad_config *cfg,
- 				   struct v4l2_subdev_frame_size_enum *fse)
- {
--	if (fse->index >= 3 || fse->code != MEDIA_BUS_FMT_SGRBG10_1X10)
-+	struct mt9v032 *mt9v032 = to_mt9v032(subdev);
-+
-+	if (fse->index >= 3)
-+		return -EINVAL;
-+	if (mt9v032->format.code != fse->code)
- 		return -EINVAL;
- 
- 	fse->min_width = MT9V032_WINDOW_WIDTH_DEF / (1 << fse->index);
+ 	hsync_pol = !!(bus->flags & V4L2_MBUS_HSYNC_ACTIVE_HIGH);
+-	pclk_pol = !!(bus->flags & V4L2_MBUS_DATA_ACTIVE_HIGH);
+ 	vsync_pol = !!(bus->flags & V4L2_MBUS_VSYNC_ACTIVE_HIGH);
++	pclk_pol = !!(bus->flags & V4L2_MBUS_PCLK_SAMPLE_RISING);
+ 	writel(CSI_CFG_INPUT_FMT(csi_fmt->input) |
+ 	       CSI_CFG_OUTPUT_FMT(csi_fmt->output) |
+ 	       CSI_CFG_VSYNC_POL(vsync_pol) |
 -- 
 2.20.1
 
