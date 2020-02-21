@@ -2,82 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBA89167C7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 12:48:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98DF7167C72
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 12:47:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728215AbgBULrw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 06:47:52 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:37934 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727161AbgBULrv (ORCPT
+        id S1727958AbgBULrE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 06:47:04 -0500
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:4674 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727655AbgBULrD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 06:47:51 -0500
-Received: by mail-lf1-f67.google.com with SMTP id r14so1272978lfm.5
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 03:47:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=s+0DXDQC4PSdbGf9Pveh1mXtQ4AEBvLtlHWHBl3nZk4=;
-        b=cje4o0gr9878CZnZBPlek0YbZ4348Bfnnrasdx4MzpEGFBGd04rCnExlhCNsdTm37p
-         MoaYVf6B9PSnR0fB9iYxopLEyUOtH87COidRAzw300rdYoMHGEVsH/IwoA/4RwrY3SGn
-         KtHkK8217BbNcftVxtNOkdvGaTCw7DtAT85IyMBHxTSQgBfPGcCFSIwdDz+ysp9WHFpl
-         4L57kOi43X0NBbEJ71fPNVwP3/tT2k7mEJBjFrrGAk4KRm417t7w0LZLRhXQHbHq/IHL
-         fab7mjg69gzOJBNO/t45Fx6aVde2y3MHG9DARreBrousRWpsLxJ5UkcTH5PCIOFqLwX8
-         FErQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=s+0DXDQC4PSdbGf9Pveh1mXtQ4AEBvLtlHWHBl3nZk4=;
-        b=MBF01QNf8QZS6n3FPllcFqQffIcPTpQwBTnCQFu8KbfXMR2c1qy2HI+lK8rVV1wn+s
-         pLdM9iqrkN5dZTeoZfaq/8LvAgcXdUCTK5QAj/TUdcxeM8r7ds/Si2djkDuQ56+iiSGo
-         po0iHJWSqIVfee5rBGlV3eoXV4ddneni65dV2YLJ6FOr9VrGhOmXDAi+CI803376A5xH
-         LSdHAj9V1UmlJ6vInt348KimVGYEtcf+GD7viQmqViuaNg2wK37kqWhPmaqx/cULiLha
-         pu/elistQq5VIrijam4nWhBDAC8MyN4OQ+V0nNcyrDrnnWNqf90o1s5RiJtllbfg6Lhb
-         W85w==
-X-Gm-Message-State: APjAAAU4NRHQ/P46jUQor3x7CGjx5/+rM1TfNmwM8oEJFfKutEvThU9h
-        3IVNMn0YjU9wVqoNrm283yKIC6dGN7O07GqRciGWlA==
-X-Google-Smtp-Source: APXvYqxaHpR0d8dRAx6vXF4ZbAjZjXLUgDelk2CdK8hqc66hWq6gY2dtxVbfmoylqUgJ9KRjYq270pK1gjkQ143vvxQ=
-X-Received: by 2002:ac2:4add:: with SMTP id m29mr19649122lfp.190.1582285667764;
- Fri, 21 Feb 2020 03:47:47 -0800 (PST)
+        Fri, 21 Feb 2020 06:47:03 -0500
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01LBiAFI026928;
+        Fri, 21 Feb 2020 06:47:01 -0500
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+        by mx0a-00128a01.pphosted.com with ESMTP id 2y8udupy14-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 21 Feb 2020 06:47:01 -0500
+Received: from ASHBMBX9.ad.analog.com (ashbmbx9.ad.analog.com [10.64.17.10])
+        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 01LBl0Nu063040
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+        Fri, 21 Feb 2020 06:47:00 -0500
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Fri, 21 Feb
+ 2020 06:46:59 -0500
+Received: from zeus.spd.analog.com (10.64.82.11) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
+ Transport; Fri, 21 Feb 2020 06:46:59 -0500
+Received: from saturn.ad.analog.com ([10.48.65.124])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 01LBku5M017142;
+        Fri, 21 Feb 2020 06:46:57 -0500
+From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
+To:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <jic23@kernel.org>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>
+Subject: [PATCH 1/3] iio: imu: adis: add doc-string for 'adis' struct
+Date:   Fri, 21 Feb 2020 13:49:41 +0200
+Message-ID: <20200221114943.2056-1-alexandru.ardelean@analog.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20200214152729.6059-5-vincent.guittot@linaro.org>
- <20200219125513.8953-1-vincent.guittot@linaro.org> <e6b4bcbb-82a2-137f-8801-bab561cb7343@arm.com>
-In-Reply-To: <e6b4bcbb-82a2-137f-8801-bab561cb7343@arm.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Fri, 21 Feb 2020 12:47:36 +0100
-Message-ID: <CAKfTPtCJ4ARMeypmmNRasdrPaPynbvuKraQA4Q6A=AA1g-iG3Q@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] sched/pelt: Add a new runnable average signal
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Phil Auld <pauld@redhat.com>, Parth Shah <parth@linux.ibm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Hillf Danton <hdanton@sina.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-ADIRoutedOnPrem: True
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-21_03:2020-02-19,2020-02-21 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 impostorscore=0 spamscore=0 suspectscore=0 mlxlogscore=988
+ phishscore=0 mlxscore=0 priorityscore=1501 clxscore=1015 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002210090
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Feb 2020 at 10:45, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
->
-> On 19/02/2020 13:55, Vincent Guittot wrote:
->
-> [...]
->
-> > +static inline long se_runnable(struct sched_entity *se)
-> > +{
->
-> Why returning long here? sched_entity::runnable_weight is unsigned long
-> but could be unsigned int (cfs_rq::h_nr_running is unsigned int).
+This change adds a doc-string for the 'adis' struct. It details the fields
+and their roles.
 
-I have reused the same prototype as for runnable_laod_avg
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+---
+ include/linux/iio/imu/adis.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
->
-> ___update_load_sum() has 'unsigned long runnable' as parameter.
+diff --git a/include/linux/iio/imu/adis.h b/include/linux/iio/imu/adis.h
+index ac7cfd073804..0787a3aabd05 100644
+--- a/include/linux/iio/imu/adis.h
++++ b/include/linux/iio/imu/adis.h
+@@ -73,6 +73,20 @@ struct adis_data {
+ 	bool has_paging;
+ };
+ 
++/**
++ * struct adis - ADIS device instance data
++ * @spi: Reference to SPI device which owns this ADIS IIO device
++ * @trig: IIO trigger object data
++ * @data: ADIS chip variant specific data
++ * @burst: ADIS burst transfer information
++ * @state_lock: Lock used by the device to protect state
++ * @msg: SPI message object
++ * @xfer: SPI transfer objects to be used for a @msg
++ * @current_page: Some ADIS devices have registers, this selects current page
++ * @buffer: Data buffer for information read from the device
++ * @tx: Cacheline aligned TX buffer for SPI transfers
++ * @rx: Cacheline aligned RX buffer for SPI transfers
++ */
+ struct adis {
+ 	struct spi_device	*spi;
+ 	struct iio_trigger	*trig;
+-- 
+2.20.1
+
