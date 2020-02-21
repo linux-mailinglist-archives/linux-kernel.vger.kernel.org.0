@@ -2,125 +2,316 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2665C166F4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 06:44:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22B63166F55
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 06:53:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727053AbgBUFoP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 00:44:15 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:36810 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725800AbgBUFoO (ORCPT
+        id S1726369AbgBUFwX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 00:52:23 -0500
+Received: from mail-oi1-f169.google.com ([209.85.167.169]:40334 "EHLO
+        mail-oi1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725800AbgBUFwX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 00:44:14 -0500
-Received: by mail-lf1-f65.google.com with SMTP id f24so588263lfh.3;
-        Thu, 20 Feb 2020 21:44:13 -0800 (PST)
+        Fri, 21 Feb 2020 00:52:23 -0500
+Received: by mail-oi1-f169.google.com with SMTP id a142so509025oii.7
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 21:52:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2UgAnj6jZp1qG1YLmVU+s8neLldQ2RYmNJhZiIaSc/0=;
-        b=eMNaCUJEGRDUtZkbDe8gOuqJY4E/7nOx7YQNd/AXSD9oN1/VBQk4tkoCZl+ogomTUr
-         7wAsVSWMAtiUG+nYc0I49wT/MdT77hECH6riPK5hWQ/oVhMIdUUyZXfdZqhz1Kbf/mMA
-         V07lLX5i4aHYK32v9caq6E/oILqdGvuIvzDtJP0T1LPMGn1rtkiubshymLKZAlmDwBWd
-         oXffxa8Q17ZlYFjBUT7WnEuZQtWKATSeMWN+XjUQcAv/6vg2ToWCA5DDJtEp26cjRNtn
-         uhtZi5EcBOwkMWHChUJPAQUbad/7znFyx2tum31Y9tEVmYRT4oSn4Tp2Mr4yTOvQ7ww7
-         tbXQ==
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=mqeICZcUxu4LuwyGnA3qI8w5qh4uiHvHEFBa89ydINo=;
+        b=sSol/wrAVRFF3bef2sdrfZQOxW8WILk7+xXzBMuKBoft9jdjmHnyn4iutTzAar6w0d
+         RFwXTF9Nmix5D6nRZUTyAk9IIX1+npXoZ6fxkonS6AU/3NoufyjCyCWl3BZ6l+yt0Kbz
+         iJRkrW+runEQ58GhcLlvIYCwTNlb1Vs3o16NIKRP/zwjCin9P+4opkMIHtBkqwBAOlsB
+         4L93mJEi3OgivcOXC6djAFCEYwFz9nJ9SyXhs1Fr5BxMoVUSyhRaVvAah2kfZ00s8tt2
+         ZxrNK43a059DRiX5Ihz+UMqpFUQXhOQMmDGYKGZt0KqjoCkYS/M894Cs4dun3XlTMzuw
+         yrEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2UgAnj6jZp1qG1YLmVU+s8neLldQ2RYmNJhZiIaSc/0=;
-        b=gbBg7jt6YX1vZr5qqcuAK2fQcy8/APgP9cIriDET6Z7sSINxxZKwrHTb2WEGtg1/lb
-         fWhaUU05+aP8Tk4BkPGMg6oMY2szN+tWqFAWmhTJNgbmdBBAOAT/derIioJoKofuIYYr
-         HfQPXek/YNdqF3dubiSW3YDNbsPgsG71vcMmPpTo1Djt2QR05m3jyS79ja+EUZXwD5e9
-         FeygUE/RHXh78yF0xlCQyn0wDxjZ8io5svqU+DT1KfeVZIocSzlBfxhPjAG1zPKI4dOF
-         3fOUX+kOxQnbZrhw2QvVRUkg9yaldWnYIlVyIoggNmQf9y09CCQ79Guvxt5Gx2wlnQsP
-         q65g==
-X-Gm-Message-State: APjAAAXJvvxpCejmdf0rtv8heC6Fecio62ROIADZXP4SXEjFhnYu0SqH
-        swy9+SiozaWtX209x92qhkI=
-X-Google-Smtp-Source: APXvYqzgn8/o821KnPadYfAQcIxUDrXlnyZSa/bLptkr5D3/jPIQ303Yf3UYNNBuGJs94SgI0ruKEw==
-X-Received: by 2002:ac2:54b5:: with SMTP id w21mr18980569lfk.175.1582263852420;
-        Thu, 20 Feb 2020 21:44:12 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id d20sm878742ljg.95.2020.02.20.21.44.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2020 21:44:11 -0800 (PST)
-Subject: Re: [PATCH v3 10/10] arm64: defconfig: enable AHUB components for
- Tegra210 and later
-To:     Sameer Pujar <spujar@nvidia.com>, perex@perex.cz, tiwai@suse.com,
-        robh+dt@kernel.org
-Cc:     broonie@kernel.org, lgirdwood@gmail.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sharadg@nvidia.com,
-        mkumard@nvidia.com, viswanathl@nvidia.com, rlokhande@nvidia.com,
-        dramesh@nvidia.com, atalambedu@nvidia.com
-References: <1582180492-25297-1-git-send-email-spujar@nvidia.com>
- <1582180492-25297-11-git-send-email-spujar@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <2276bbe3-b01f-33b3-b28a-2b579678a745@gmail.com>
-Date:   Fri, 21 Feb 2020 08:44:10 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=mqeICZcUxu4LuwyGnA3qI8w5qh4uiHvHEFBa89ydINo=;
+        b=PewL9OMv/kp0lKoQ+CPBJOetpFYyA/g5NHknvLR5vsDN+e3vcqnXBf9GiDClQ5KmzG
+         7AHPEOjtOQkuX+YFHBFdbJ+Fdl5odWOrl4HtRn/WHsWZ/3A91X9PPuEQSzXmrWeaSsUX
+         CqUB3ZfHfEOpip7oCjuBSPZ1RhVtAsVo1C83WYPTQUwTdi6j2qgnKkvgWVnqi7dEPZyW
+         cqgpoKhKDZ+5na/s7nE0vm78/+4acobZDsb+VwoObH1zUbOc65/l/WUzZw1Xp+J2F2Ja
+         UPvfxWOOUUsz/3QNFOi7QDyou9No+mtU+2gS95WiiXSwhWPZeAcEP5P0GxeHU5uU6RV4
+         in4g==
+X-Gm-Message-State: APjAAAWCzOJxyKTHD7dzfLYCeGYu7nL73NB2koT40VIAc8nDrG6dgyEm
+        Bk/EEGrzVAg6fg5/rD67XSfc+GSG1S2KfX2BN80=
+X-Google-Smtp-Source: APXvYqwlrKB5tCAb/ZclvlwPq65jLkSayN26DwXfW42EjiEXj9b5JW0VTvVClhd/ZAzBHQyhA+BOJO/nodnSd9CvpWA=
+X-Received: by 2002:aca:4d06:: with SMTP id a6mr652759oib.27.1582264341675;
+ Thu, 20 Feb 2020 21:52:21 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1582180492-25297-11-git-send-email-spujar@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+From:   Dave Airlie <airlied@gmail.com>
+Date:   Fri, 21 Feb 2020 15:52:10 +1000
+Message-ID: <CAPM=9tyKU17ntxT9JEbWf+ZhiQ3pMOQtjLVGmDViR43Boj7zdA@mail.gmail.com>
+Subject: [git pull] drm fixes for 5.6-rc3
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-20.02.2020 09:34, Sameer Pujar пишет:
-> This patch enables following configs:
->  +CONFIG_TEGRA_ACONNECT=m
->  +CONFIG_SND_SOC_TEGRA=m
->  +CONFIG_SND_SOC_TEGRA210_AHUB=m
->  +CONFIG_SND_SOC_TEGRA210_DMIC=m
->  +CONFIG_SND_SOC_TEGRA210_I2S=m
->  +CONFIG_SND_SOC_TEGRA186_DSPK=m
->  +CONFIG_SND_SOC_TEGRA210_ADMAIF=m
+Hey Linus,
 
-There is no needed to duplicate contents of the patch in the commit's
-description, otherwise:
+Varied PR for rc3, i915 is the largest, they are seeing some ACPI
+problems with their CI which hopefully get solved soon. msm has a
+bunch of fixes for new hw added in the merge, a bunch of amdgpu fixes,
+and nouveau adds support for some new firmwares for turing tu11x GPUs
+that were just released into linux-firmware by nvidia, they operate
+the same as the ones we already have for tu10x so should be fine to
+hook up. Otherwise it's just misc fixes for panfrost and sun4i.
 
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Regards,
+Dave.
 
-> This patch helps to register AHUB and its clients (I2S, DMIC, DSPK, ADMAIF)
-> with ASoC core. Since AHUB is child of ACONNECT, config TEGRA_ACONNECT is
-> enabled as well.
-> 
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> ---
->  arch/arm64/configs/defconfig | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index c8801be..784ca4f 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -207,6 +207,7 @@ CONFIG_FW_LOADER_USER_HELPER=y
->  CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y
->  CONFIG_HISILICON_LPC=y
->  CONFIG_SIMPLE_PM_BUS=y
-> +CONFIG_TEGRA_ACONNECT=m
->  CONFIG_MTD=y
->  CONFIG_MTD_BLOCK=y
->  CONFIG_MTD_RAW_NAND=y
-> @@ -590,6 +591,12 @@ CONFIG_SND_SOC_RK3399_GRU_SOUND=m
->  CONFIG_SND_SOC_SAMSUNG=y
->  CONFIG_SND_SOC_RCAR=m
->  CONFIG_SND_SUN4I_SPDIF=m
-> +CONFIG_SND_SOC_TEGRA=m
-> +CONFIG_SND_SOC_TEGRA210_AHUB=m
-> +CONFIG_SND_SOC_TEGRA210_DMIC=m
-> +CONFIG_SND_SOC_TEGRA210_I2S=m
-> +CONFIG_SND_SOC_TEGRA186_DSPK=m
-> +CONFIG_SND_SOC_TEGRA210_ADMAIF=m
->  CONFIG_SND_SOC_AK4613=m
->  CONFIG_SND_SOC_ES7134=m
->  CONFIG_SND_SOC_ES7241=m
-> 
+drm-fixes-2020-02-21:
+drm fixes for 5.6-rc3
 
+core:
+- Allow only 1 rotation argument, and allow 0 rotation in video cmdline.
+
+i915:
+- Workaround missing Display Stream Compression (DSC) state readout by
+ forcing modeset when its enabled at probe
+- Fix EHL port clock voltage level requirements
+- Fix queuing retire workers on the virtual engine
+- Fix use of partially initialized waiters
+- Stop using drm_pci_alloc/drm_pci/free
+- Fix rewind of RING_TAIL by forcing a context reload
+- Fix locking on resetting ring->head
+- Propagate our bug filing URL change to stable kernels
+
+panfrost:
+- Small compiler warning fix for panfrost.
+- Fix when using performance counters in panfrost when using per fd
+address space.
+
+sun4xi:
+- Fix dt binding
+
+nouveau:
+- tu11x modesetting fix
+- ACR/GR firmware support for tu11x (fw is public now)
+
+msm:
+- fix UBWC on GPU and display side for sc7180
+- fix DSI suspend/resume issue encountered on sc7180
+- fix some breakage on so called "linux-android" devices
+  (fallout from sc7180/a618 support, not seen earlier
+  due to bootloader/firmware differences)
+- couple other misc fixes
+
+amdgpu:
+- HDCP fixes
+- xclk fix for raven
+- GFXOFF fixes
+The following changes since commit 11a48a5a18c63fd7621bb050228cebf13566e4d8:
+
+  Linux 5.6-rc2 (2020-02-16 13:16:59 -0800)
+
+are available in the Git repository at:
+
+  git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2020-02-21
+
+for you to fetch changes up to 97d9a4e9619a822c5baf6a63e6f5b80fee4d4213:
+
+  Merge tag 'drm-intel-fixes-2020-02-20' of
+git://anongit.freedesktop.org/drm/drm-intel into drm-fixes (2020-02-21
+12:46:54 +1000)
+
+----------------------------------------------------------------
+drm fixes for 5.6-rc3
+
+core:
+- Allow only 1 rotation argument, and allow 0 rotation in video cmdline.
+
+i915:
+- Workaround missing Display Stream Compression (DSC) state readout by
+ forcing modeset when its enabled at probe
+- Fix EHL port clock voltage level requirements
+- Fix queuing retire workers on the virtual engine
+- Fix use of partially initialized waiters
+- Stop using drm_pci_alloc/drm_pci/free
+- Fix rewind of RING_TAIL by forcing a context reload
+- Fix locking on resetting ring->head
+- Propagate our bug filing URL change to stable kernels
+
+panfrost:
+- Small compiler warning fix for panfrost.
+- Fix when using performance counters in panfrost when using per fd
+address space.
+
+sun4xi:
+- Fix dt binding
+
+nouveau:
+- tu11x modesetting fix
+- ACR/GR firmware support for tu11x (fw is public now)
+
+msm:
+- fix UBWC on GPU and display side for sc7180
+- fix DSI suspend/resume issue encountered on sc7180
+- fix some breakage on so called "linux-android" devices
+  (fallout from sc7180/a618 support, not seen earlier
+  due to bootloader/firmware differences)
+- couple other misc fixes
+
+amdgpu:
+- HDCP fixes
+- xclk fix for raven
+- GFXOFF fixes
+
+----------------------------------------------------------------
+Akhil P Oommen (1):
+      drm/msm/a6xx: Correct the highestbank configuration
+
+Alex Deucher (4):
+      drm/amdgpu/soc15: fix xclk for raven
+      drm/amdgpu/gfx9: disable gfxoff when reading rlc clock
+      drm/amdgpu/gfx10: disable gfxoff when reading rlc clock
+      drm/amdgpu/display: clean up hdcp workqueue handling
+
+Ben Skeggs (2):
+      drm/nouveau/acr/tu11x: initial support
+      drm/nouveau/gr/tu11x: initial support
+
+Bhawanpreet Lakha (2):
+      drm/amd/display: fix backwards byte order in rx_caps.
+      drm/amd/display: fix dtm unloading
+
+Boris Brezillon (1):
+      drm/panfrost: perfcnt: Reserve/use the AS attached to the
+perfcnt MMU context
+
+Brian Masney (1):
+      drm/msm/mdp5: rate limit pp done timeout warnings
+
+Chris Wilson (7):
+      drm/i915/gem: Require per-engine reset support for non-persistent contexts
+      drm/i915: Initialise basic fence before acquiring seqno
+      drm/i915/gt: Prevent queuing retire workers on the virtual engine
+      drm/i915/gt: Protect defer_request() from new waiters
+      drm/i915: Wean off drm_pci_alloc/drm_pci_free
+      drm/i915/execlists: Always force a context reload when rewinding RING_TAIL
+      drm/i915/gt: Avoid resetting ring->head outside of its timeline mutex
+
+Dave Airlie (5):
+      Merge tag 'amd-drm-fixes-5.6-2020-02-19' of
+git://people.freedesktop.org/~agd5f/linux into drm-fixes
+      Merge tag 'drm-msm-fixes-2020-02-16' of
+https://gitlab.freedesktop.org/drm/msm into drm-fixes
+      Merge branch 'linux-5.6' of git://github.com/skeggsb/linux into drm-fixes
+      Merge tag 'drm-misc-fixes-2020-02-20' of
+git://anongit.freedesktop.org/drm/drm-misc into drm-fixes
+      Merge tag 'drm-intel-fixes-2020-02-20' of
+git://anongit.freedesktop.org/drm/drm-intel into drm-fixes
+
+Evan Quan (1):
+      drm/amd/powerplay: always refetch the enabled features status on
+dpm enablement
+
+Geert Uytterhoeven (1):
+      drm/bridge: ti-tfp410: Update drm_connector_init_with_ddc() error message
+
+Harigovindan P (2):
+      drm/msm/dsi: save pll state before dsi host is powered off
+      drm/msm/dsi/pll: call vco set rate explicitly
+
+Jani Nikula (3):
+      MAINTAINERS: Update drm/i915 bug filing URL
+      drm/i915: Update drm/i915 bug filing URL
+      drm/i915/dsc: force full modeset whenever DSC is enabled at probe
+
+John Stultz (1):
+      drm: msm: Fix return type of dsi_mgr_connector_mode_valid for kCFI
+
+Jordan Crouse (3):
+      drm/msm/a6xx: Remove unneeded GBIF unhalt
+      drm/msm/a6xx: Update the GMU bus tables for sc7180
+      drm/msm: Fix a6xx GMU shutdown sequence
+
+Kalyan Thota (1):
+      msm:disp:dpu1: add UBWC support for display on SC7180
+
+Lyude Paul (1):
+      drm/nouveau/kms/gv100-: Re-set LUT after clearing for modesets
+
+Maarten Lankhorst (1):
+      Merge v5.6-rc1 into drm-misc-fixes
+
+Matt Roper (1):
+      drm/i915/ehl: Update port clock voltage level requirements
+
+Maxime Ripard (1):
+      dt-bindings: display: sunxi: Fix compatible
+
+Rob Clark (1):
+      drm/msm/dpu: fix BGR565 vs RGB565 confusion
+
+Stephan Gerhold (2):
+      drm/modes: Make sure to parse valid rotation value from cmdline
+      drm/modes: Allow DRM_MODE_ROTATE_0 when applying video mode parameters
+
+Tomi Valkeinen (1):
+      drm/bridge: tc358767: fix poll timeouts
+
+YueHaibing (1):
+      drm/panfrost: Remove set but not used variable 'bo'
+
+changzhu (1):
+      drm/amdgpu: add is_raven_kicker judgement for raven1
+
+ .../bindings/display/allwinner,sun4i-a10-tcon.yaml |  6 +-
+ MAINTAINERS                                        |  2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c            | 26 +++++-
+ drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c             |  2 +
+ drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c              | 13 ++-
+ drivers/gpu/drm/amd/amdgpu/soc15.c                 |  7 +-
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  | 10 ++-
+ .../drm/amd/display/modules/hdcp/hdcp2_execution.c |  4 +-
+ drivers/gpu/drm/amd/powerplay/smu_v11_0.c          |  6 +-
+ drivers/gpu/drm/bridge/tc358767.c                  |  8 +-
+ drivers/gpu/drm/bridge/ti-tfp410.c                 |  3 +-
+ drivers/gpu/drm/drm_client_modeset.c               |  3 +-
+ drivers/gpu/drm/drm_modes.c                        |  7 ++
+ drivers/gpu/drm/i915/Kconfig                       |  5 +-
+ drivers/gpu/drm/i915/display/intel_ddi.c           |  4 +-
+ drivers/gpu/drm/i915/display/intel_display.c       | 20 ++++-
+ drivers/gpu/drm/i915/gem/i915_gem_context.c        | 16 ++++
+ drivers/gpu/drm/i915/gem/i915_gem_object_types.h   |  3 -
+ drivers/gpu/drm/i915/gem/i915_gem_phys.c           | 98 +++++++++++-----------
+ drivers/gpu/drm/i915/gt/intel_breadcrumbs.c        |  3 +
+ drivers/gpu/drm/i915/gt/intel_gt_requests.c        |  3 +
+ drivers/gpu/drm/i915/gt/intel_lrc.c                | 61 +++++++-------
+ drivers/gpu/drm/i915/gt/intel_ring.c               |  1 +
+ drivers/gpu/drm/i915/gt/intel_ring.h               |  8 ++
+ drivers/gpu/drm/i915/gt/intel_ring_types.h         |  7 +-
+ drivers/gpu/drm/i915/gt/selftest_lrc.c             |  2 +-
+ drivers/gpu/drm/i915/i915_gem.c                    |  8 +-
+ drivers/gpu/drm/i915/i915_gpu_error.c              |  3 +-
+ drivers/gpu/drm/i915/i915_request.c                | 21 +++--
+ drivers/gpu/drm/i915/i915_scheduler.c              |  6 +-
+ drivers/gpu/drm/i915/i915_utils.c                  |  5 +-
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c              | 37 ++++++--
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c              | 65 ++------------
+ drivers/gpu/drm/msm/adreno/a6xx_hfi.c              | 85 +++++++++++++------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c        |  4 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c           | 58 ++++++++++++-
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c          |  4 +-
+ drivers/gpu/drm/msm/dsi/dsi_manager.c              |  7 +-
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy.c              |  4 -
+ drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c         |  6 ++
+ drivers/gpu/drm/nouveau/dispnv50/wndw.c            |  2 +
+ drivers/gpu/drm/nouveau/nvkm/engine/device/base.c  |  4 +
+ drivers/gpu/drm/nouveau/nvkm/engine/gr/tu102.c     | 26 ++++++
+ drivers/gpu/drm/nouveau/nvkm/subdev/acr/tu102.c    | 14 ++++
+ drivers/gpu/drm/nouveau/nvkm/subdev/fb/gv100.c     |  2 +
+ drivers/gpu/drm/panfrost/panfrost_job.c            |  6 +-
+ drivers/gpu/drm/panfrost/panfrost_mmu.c            |  7 +-
+ drivers/gpu/drm/panfrost/panfrost_perfcnt.c        | 11 +--
+ drivers/gpu/drm/selftests/drm_cmdline_selftests.h  |  1 +
+ .../gpu/drm/selftests/test-drm_cmdline_parser.c    | 15 +++-
+ 50 files changed, 486 insertions(+), 243 deletions(-)
