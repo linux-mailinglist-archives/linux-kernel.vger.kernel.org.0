@@ -2,44 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D05BA167659
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:37:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C7A816774A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:42:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387582AbgBUIce (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:32:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47974 "EHLO mail.kernel.org"
+        id S1730773AbgBUIlX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:41:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57462 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732797AbgBUIMQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:12:16 -0500
+        id S1729037AbgBUH5t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:57:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0BF620722;
-        Fri, 21 Feb 2020 08:12:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9354B20578;
+        Fri, 21 Feb 2020 07:57:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272735;
-        bh=PCRHLSZbmJqJViTJ0dB1E8Xa4H57b8wOz/Mff5gZdes=;
+        s=default; t=1582271868;
+        bh=wV0lBlScGsvZs+a12E4IqKgnQqyNxyfFky+kMRcA+SA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YgJOhrcROnHoyABSAtFQsNAwhp3zn4wV3v0GebXOmuS4sC60auGgYcob3VgCbBdY4
-         6zotinC2jVmAAaj6lV+2ftEVZl187/uvEHDxvojmSwIPIh9m5xgBufnEj0F7WpzO7m
-         zVpWJ+KClb1JiBj+JIMz8WLgffAH/UyNIUeRBaH8=
+        b=iLF6+YbtYMqmCD3P+FwxMBuao4a3n0gnf/ZbX6VgTT28JajWGD1pPphQ9SxqOhOU5
+         Y+fsVQBXD3oNFmG5OG0ow7hpn80RMHJ7BQ+YfmyIYYFpFoB3GIeM4aeBbrcZKiw4Ez
+         KMxP4MJpKuMdOrmiNbrpXxV380u6D0AGdC6kqG1I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pankaj Bansal <pankaj.bansal@nxp.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
+        stable@vger.kernel.org,
+        Sergey Zakharchenko <szakharchenko@digital-loggers.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 254/344] ACPI/IORT: Fix Number of IDs handling in iort_id_map()
-Date:   Fri, 21 Feb 2020 08:40:53 +0100
-Message-Id: <20200221072412.606392874@linuxfoundation.org>
+Subject: [PATCH 5.5 329/399] media: uvcvideo: Add a quirk to force GEO GC6500 Camera bits-per-pixel value
+Date:   Fri, 21 Feb 2020 08:40:54 +0100
+Message-Id: <20200221072433.157164784@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
+References: <20200221072402.315346745@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,154 +46,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hanjun Guo <guohanjun@huawei.com>
+From: Sergey Zakharchenko <szakharchenko@digital-loggers.com>
 
-[ Upstream commit 3c23b83a88d00383e1d498cfa515249aa2fe0238 ]
+[ Upstream commit 1dd2e8f942574e2be18374ebb81751082d8d467c ]
 
-The IORT specification [0] (Section 3, table 4, page 9) defines the
-'Number of IDs' as 'The number of IDs in the range minus one'.
+This device does not function correctly in raw mode in kernel
+versions validating buffer sizes in bulk mode. It erroneously
+announces 16 bits per pixel instead of 12 for NV12 format, so it
+needs this quirk to fix computed frame size and avoid legitimate
+frames getting discarded.
 
-However, the IORT ID mapping function iort_id_map() treats the 'Number
-of IDs' field as if it were the full IDs mapping count, with the
-following check in place to detect out of boundary input IDs:
+[Move info and div variables to local scope]
 
-InputID >= Input base + Number of IDs
-
-This check is flawed in that it considers the 'Number of IDs' field as
-the full number of IDs mapping and disregards the 'minus one' from
-the IDs count.
-
-The correct check in iort_id_map() should be implemented as:
-
-InputID > Input base + Number of IDs
-
-this implements the specification correctly but unfortunately it breaks
-existing firmwares that erroneously set the 'Number of IDs' as the full
-IDs mapping count rather than IDs mapping count minus one.
-
-e.g.
-
-PCI hostbridge mapping entry 1:
-Input base:  0x1000
-ID Count:    0x100
-Output base: 0x1000
-Output reference: 0xC4  //ITS reference
-
-PCI hostbridge mapping entry 2:
-Input base:  0x1100
-ID Count:    0x100
-Output base: 0x2000
-Output reference: 0xD4  //ITS reference
-
-Two mapping entries which the second entry's Input base = the first
-entry's Input base + ID count, so for InputID 0x1100 and with the
-correct InputID check in place in iort_id_map() the kernel would map
-the InputID to ITS 0xC4 not 0xD4 as it would be expected.
-
-Therefore, to keep supporting existing flawed firmwares, introduce a
-workaround that instructs the kernel to use the old InputID range check
-logic in iort_id_map(), so that we can support both firmwares written
-with the flawed 'Number of IDs' logic and the correct one as defined in
-the specifications.
-
-[0]: http://infocenter.arm.com/help/topic/com.arm.doc.den0049d/DEN0049D_IO_Remapping_Table.pdf
-
-Reported-by: Pankaj Bansal <pankaj.bansal@nxp.com>
-Link: https://lore.kernel.org/linux-acpi/20191215203303.29811-1-pankaj.bansal@nxp.com/
-Signed-off-by: Hanjun Guo <guohanjun@huawei.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Pankaj Bansal <pankaj.bansal@nxp.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Will Deacon <will@kernel.org>
+Signed-off-by: Sergey Zakharchenko <szakharchenko@digital-loggers.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/arm64/iort.c | 57 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 55 insertions(+), 2 deletions(-)
+ drivers/media/usb/uvc/uvc_driver.c | 25 +++++++++++++++++++++++++
+ drivers/media/usb/uvc/uvcvideo.h   |  1 +
+ 2 files changed, 26 insertions(+)
 
-diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-index 5a7551d060f25..161b609e4cdfb 100644
---- a/drivers/acpi/arm64/iort.c
-+++ b/drivers/acpi/arm64/iort.c
-@@ -298,6 +298,59 @@ out:
- 	return status;
- }
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index 2b688cc39bb81..99883550375e9 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -497,6 +497,22 @@ static int uvc_parse_format(struct uvc_device *dev,
+ 			}
+ 		}
  
-+struct iort_workaround_oem_info {
-+	char oem_id[ACPI_OEM_ID_SIZE + 1];
-+	char oem_table_id[ACPI_OEM_TABLE_ID_SIZE + 1];
-+	u32 oem_revision;
-+};
++		/* Some devices report bpp that doesn't match the format. */
++		if (dev->quirks & UVC_QUIRK_FORCE_BPP) {
++			const struct v4l2_format_info *info =
++				v4l2_format_info(format->fcc);
 +
-+static bool apply_id_count_workaround;
++			if (info) {
++				unsigned int div = info->hdiv * info->vdiv;
 +
-+static struct iort_workaround_oem_info wa_info[] __initdata = {
-+	{
-+		.oem_id		= "HISI  ",
-+		.oem_table_id	= "HIP07   ",
-+		.oem_revision	= 0,
-+	}, {
-+		.oem_id		= "HISI  ",
-+		.oem_table_id	= "HIP08   ",
-+		.oem_revision	= 0,
-+	}
-+};
++				n = info->bpp[0] * div;
++				for (i = 1; i < info->comp_planes; i++)
++					n += info->bpp[i];
 +
-+static void __init
-+iort_check_id_count_workaround(struct acpi_table_header *tbl)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(wa_info); i++) {
-+		if (!memcmp(wa_info[i].oem_id, tbl->oem_id, ACPI_OEM_ID_SIZE) &&
-+		    !memcmp(wa_info[i].oem_table_id, tbl->oem_table_id, ACPI_OEM_TABLE_ID_SIZE) &&
-+		    wa_info[i].oem_revision == tbl->oem_revision) {
-+			apply_id_count_workaround = true;
-+			pr_warn(FW_BUG "ID count for ID mapping entry is wrong, applying workaround\n");
-+			break;
++				format->bpp = DIV_ROUND_UP(8 * n, div);
++			}
 +		}
-+	}
-+}
 +
-+static inline u32 iort_get_map_max(struct acpi_iort_id_mapping *map)
-+{
-+	u32 map_max = map->input_base + map->id_count;
-+
-+	/*
-+	 * The IORT specification revision D (Section 3, table 4, page 9) says
-+	 * Number of IDs = The number of IDs in the range minus one, but the
-+	 * IORT code ignored the "minus one", and some firmware did that too,
-+	 * so apply a workaround here to keep compatible with both the spec
-+	 * compliant and non-spec compliant firmwares.
-+	 */
-+	if (apply_id_count_workaround)
-+		map_max--;
-+
-+	return map_max;
-+}
-+
- static int iort_id_map(struct acpi_iort_id_mapping *map, u8 type, u32 rid_in,
- 		       u32 *rid_out)
- {
-@@ -314,8 +367,7 @@ static int iort_id_map(struct acpi_iort_id_mapping *map, u8 type, u32 rid_in,
- 		return -ENXIO;
- 	}
+ 		if (buffer[2] == UVC_VS_FORMAT_UNCOMPRESSED) {
+ 			ftype = UVC_VS_FRAME_UNCOMPRESSED;
+ 		} else {
+@@ -2874,6 +2890,15 @@ static const struct usb_device_id uvc_ids[] = {
+ 	  .bInterfaceSubClass	= 1,
+ 	  .bInterfaceProtocol	= 0,
+ 	  .driver_info		= (kernel_ulong_t)&uvc_quirk_force_y8 },
++	/* GEO Semiconductor GC6500 */
++	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
++				| USB_DEVICE_ID_MATCH_INT_INFO,
++	  .idVendor		= 0x29fe,
++	  .idProduct		= 0x4d53,
++	  .bInterfaceClass	= USB_CLASS_VIDEO,
++	  .bInterfaceSubClass	= 1,
++	  .bInterfaceProtocol	= 0,
++	  .driver_info		= UVC_INFO_QUIRK(UVC_QUIRK_FORCE_BPP) },
+ 	/* Intel RealSense D4M */
+ 	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
+ 				| USB_DEVICE_ID_MATCH_INT_INFO,
+diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+index f773dc5d802cd..6ab972c643e37 100644
+--- a/drivers/media/usb/uvc/uvcvideo.h
++++ b/drivers/media/usb/uvc/uvcvideo.h
+@@ -198,6 +198,7 @@
+ #define UVC_QUIRK_RESTRICT_FRAME_RATE	0x00000200
+ #define UVC_QUIRK_RESTORE_CTRLS_ON_INIT	0x00000400
+ #define UVC_QUIRK_FORCE_Y8		0x00000800
++#define UVC_QUIRK_FORCE_BPP		0x00001000
  
--	if (rid_in < map->input_base ||
--	    (rid_in >= map->input_base + map->id_count))
-+	if (rid_in < map->input_base || rid_in > iort_get_map_max(map))
- 		return -ENXIO;
- 
- 	*rid_out = map->output_base + (rid_in - map->input_base);
-@@ -1637,5 +1689,6 @@ void __init acpi_iort_init(void)
- 		return;
- 	}
- 
-+	iort_check_id_count_workaround(iort_table);
- 	iort_init_platform_devices();
- }
+ /* Format flags */
+ #define UVC_FMT_FLAG_COMPRESSED		0x00000001
 -- 
 2.20.1
 
