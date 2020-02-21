@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F1DE167625
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:37:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2C0E167612
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:36:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731932AbgBUIJT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:09:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44014 "EHLO mail.kernel.org"
+        id S1731380AbgBUIHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:07:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732322AbgBUIJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:09:13 -0500
+        id S1732076AbgBUIHi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:07:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D1FD20722;
-        Fri, 21 Feb 2020 08:09:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 42E3F24670;
+        Fri, 21 Feb 2020 08:07:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272552;
-        bh=M5bDtOSaKOorgrGmBZmg62PQvqREkOUogOkzfz94Uy8=;
+        s=default; t=1582272457;
+        bh=HnagLcugEPxKRMVeDKW3PpwSXLKSbWNBKXlVLtNoHMA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZrhSOpTNqinFZWLi1ihQykLkp/uc9h/sBWHJRJXIM1Ti/t6zH7oWDazEq4u+ozDZB
-         zZcU1C0tw5D8FkWfksQSbQ/HlTl1VraO8hlbnxUJlILUK0ABgxAXWmMdjuQdXwPzAw
-         SfAeTrQvhj/aEBIcDf1kg/fCqL+EmWHvRXiaRDkI=
+        b=KcPIT6/w2SF6Nu0GRGC9a8gQlSBLyoiPbQFhqE8rBp7qmYnydGj7Z160vKPJ+1dHJ
+         a22aMG1AQa+mXL4BVHZwanv7T/7aGhF58CD/IPuxklwkaua95V+JKWppBJGeV+Ds9l
+         QY2sjmBTkN/wBz1I0BBgIhMzgws8jExdsWn485ow=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bibby Hsieh <bibby.hsieh@mediatek.com>,
-        CK Hu <ck.hu@mediatek.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 149/344] drm/mediatek: handle events when enabling/disabling crtc
-Date:   Fri, 21 Feb 2020 08:39:08 +0100
-Message-Id: <20200221072402.322430311@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 151/344] ARM: dts: r8a7779: Add device node for ARM global timer
+Date:   Fri, 21 Feb 2020 08:39:10 +0100
+Message-Id: <20200221072402.503293381@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
 References: <20200221072349.335551332@linuxfoundation.org>
@@ -43,49 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bibby Hsieh <bibby.hsieh@mediatek.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 411f5c1eacfebb1f6e40b653d29447cdfe7282aa ]
+[ Upstream commit 8443ffd1bbd5be74e9b12db234746d12e8ea93e2 ]
 
-The driver currently handles vblank events only when updating planes on
-an already enabled CRTC. The atomic update API however allows requesting
-an event when enabling or disabling a CRTC. This currently leads to
-event objects being leaked in the kernel and to events not being sent
-out. Fix it.
+Add a device node for the global timer, which is part of the Cortex-A9
+MPCore.
 
-Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
-Signed-off-by: CK Hu <ck.hu@mediatek.com>
+The global timer can serve as an accurate (4 ns) clock source for
+scheduling and delay loops.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20191211135222.26770-4-geert+renesas@glider.be
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 8 ++++++++
+ arch/arm/boot/dts/r8a7779.dtsi | 8 ++++++++
  1 file changed, 8 insertions(+)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-index 34a7317557912..0b3d284d19569 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-@@ -298,6 +298,7 @@ err_pm_runtime_put:
- static void mtk_crtc_ddp_hw_fini(struct mtk_drm_crtc *mtk_crtc)
- {
- 	struct drm_device *drm = mtk_crtc->base.dev;
-+	struct drm_crtc *crtc = &mtk_crtc->base;
- 	int i;
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index ebf5b7cfe2159..63341635bddf8 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -68,6 +68,14 @@
+ 		      <0xf0000100 0x100>;
+ 	};
  
- 	DRM_DEBUG_DRIVER("%s\n", __func__);
-@@ -319,6 +320,13 @@ static void mtk_crtc_ddp_hw_fini(struct mtk_drm_crtc *mtk_crtc)
- 	mtk_disp_mutex_unprepare(mtk_crtc->mutex);
- 
- 	pm_runtime_put(drm->dev);
++	timer@f0000200 {
++		compatible = "arm,cortex-a9-global-timer";
++		reg = <0xf0000200 0x100>;
++		interrupts = <GIC_PPI 11
++			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_EDGE_RISING)>;
++		clocks = <&cpg_clocks R8A7779_CLK_ZS>;
++	};
 +
-+	if (crtc->state->event && !crtc->state->active) {
-+		spin_lock_irq(&crtc->dev->event_lock);
-+		drm_crtc_send_vblank_event(crtc, crtc->state->event);
-+		crtc->state->event = NULL;
-+		spin_unlock_irq(&crtc->dev->event_lock);
-+	}
- }
- 
- static void mtk_crtc_ddp_config(struct drm_crtc *crtc)
+ 	timer@f0000600 {
+ 		compatible = "arm,cortex-a9-twd-timer";
+ 		reg = <0xf0000600 0x20>;
 -- 
 2.20.1
 
