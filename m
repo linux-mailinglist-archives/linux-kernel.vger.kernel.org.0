@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 818731672F9
+	by mail.lfdr.de (Postfix) with ESMTP id EBB9D1672FA
 	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:08:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732024AbgBUIIL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:08:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42508 "EHLO mail.kernel.org"
+        id S1732177AbgBUIIQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:08:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731539AbgBUIIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:08:04 -0500
+        id S1732156AbgBUIIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:08:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A955C2073A;
-        Fri, 21 Feb 2020 08:08:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A47702465D;
+        Fri, 21 Feb 2020 08:08:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272484;
-        bh=Cnisj9RKGQR/FA7XIim+1rtIYd3BMtJlvkxzs51h6yw=;
+        s=default; t=1582272494;
+        bh=t+CZ/Xrc3LGCVh6lVgMRcMaaEwqkKuYLyhpdG8JoK2A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h0eI8bCYAuYDZpR3Uw/k4+0AAwZ8ucjB2s7uk+W3j75xrq/wEuiHh1ycb/cak1V3h
-         8WVT8G2f5taOVEYzQ1SjuMqJ+WCYW8g+k4mjaaor2Wi4dHMDWCooaup/RAsNez+7Rj
-         xGtS0b+pmAL9QtaT8X5aWbIHyB0GHR0UA+JV/zIY=
+        b=McHsdVwM9kx8Jbm7jEH7khXE6537iEK2D0LAJ8bjZDjIvfYHs3wddr+PecoODGp2D
+         UGd4TVCicGRElgrcjfRfOysNW+JGOFalwQpI/2h9lJNM10Z7Sp4FoBcpX2+W7TvIpI
+         peSMo0Uz9dLWK0FgtWUMN28zzszkbLRsftxVtEjY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
-        Robin Gong <yibin.gong@nxp.com>, Vinod Koul <vkoul@kernel.org>,
+        stable@vger.kernel.org, Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 160/344] dmaengine: imx-sdma: Fix memory leak
-Date:   Fri, 21 Feb 2020 08:39:19 +0100
-Message-Id: <20200221072403.369335694@linuxfoundation.org>
+Subject: [PATCH 5.4 164/344] x86/vdso: Provide missing include file
+Date:   Fri, 21 Feb 2020 08:39:23 +0100
+Message-Id: <20200221072403.766800703@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
 References: <20200221072349.335551332@linuxfoundation.org>
@@ -44,76 +47,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sascha Hauer <s.hauer@pengutronix.de>
+From: Valdis Klētnieks <valdis.kletnieks@vt.edu>
 
-[ Upstream commit 02939cd167095f16328a1bd5cab5a90b550606df ]
+[ Upstream commit bff47c2302cc249bcd550b17067f8dddbd4b6f77 ]
 
-The current descriptor is not on any list of the virtual DMA channel.
-Once sdma_terminate_all() is called when a descriptor is currently
-in flight then this one is forgotten to be freed. We have to call
-vchan_terminate_vdesc() on this descriptor to re-add it to the lists.
-Now that we also free the currently running descriptor we can (and
-actually have to) remove the current descriptor from its list also
-for the cyclic case.
+When building with C=1, sparse issues a warning:
 
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-Reviewed-by: Robin Gong <yibin.gong@nxp.com>
-Tested-by: Robin Gong <yibin.gong@nxp.com>
-Link: https://lore.kernel.org/r/20191216105328.15198-10-s.hauer@pengutronix.de
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+  CHECK   arch/x86/entry/vdso/vdso32-setup.c
+  arch/x86/entry/vdso/vdso32-setup.c:28:28: warning: symbol 'vdso32_enabled' was not declared. Should it be static?
+
+Provide the missing header file.
+
+Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/36224.1575599767@turing-police
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/imx-sdma.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+ arch/x86/entry/vdso/vdso32-setup.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-index c27e206a764c3..66f1b2ac5cde4 100644
---- a/drivers/dma/imx-sdma.c
-+++ b/drivers/dma/imx-sdma.c
-@@ -760,12 +760,8 @@ static void sdma_start_desc(struct sdma_channel *sdmac)
- 		return;
- 	}
- 	sdmac->desc = desc = to_sdma_desc(&vd->tx);
--	/*
--	 * Do not delete the node in desc_issued list in cyclic mode, otherwise
--	 * the desc allocated will never be freed in vchan_dma_desc_free_list
--	 */
--	if (!(sdmac->flags & IMX_DMA_SG_LOOP))
--		list_del(&vd->node);
-+
-+	list_del(&vd->node);
+diff --git a/arch/x86/entry/vdso/vdso32-setup.c b/arch/x86/entry/vdso/vdso32-setup.c
+index 240626e7f55aa..43842fade8fa1 100644
+--- a/arch/x86/entry/vdso/vdso32-setup.c
++++ b/arch/x86/entry/vdso/vdso32-setup.c
+@@ -11,6 +11,7 @@
+ #include <linux/smp.h>
+ #include <linux/kernel.h>
+ #include <linux/mm_types.h>
++#include <linux/elf.h>
  
- 	sdma->channel_control[channel].base_bd_ptr = desc->bd_phys;
- 	sdma->channel_control[channel].current_bd_ptr = desc->bd_phys;
-@@ -1071,7 +1067,6 @@ static void sdma_channel_terminate_work(struct work_struct *work)
- 
- 	spin_lock_irqsave(&sdmac->vc.lock, flags);
- 	vchan_get_all_descriptors(&sdmac->vc, &head);
--	sdmac->desc = NULL;
- 	spin_unlock_irqrestore(&sdmac->vc.lock, flags);
- 	vchan_dma_desc_free_list(&sdmac->vc, &head);
- 	sdmac->context_loaded = false;
-@@ -1080,11 +1075,19 @@ static void sdma_channel_terminate_work(struct work_struct *work)
- static int sdma_disable_channel_async(struct dma_chan *chan)
- {
- 	struct sdma_channel *sdmac = to_sdma_chan(chan);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&sdmac->vc.lock, flags);
- 
- 	sdma_disable_channel(chan);
- 
--	if (sdmac->desc)
-+	if (sdmac->desc) {
-+		vchan_terminate_vdesc(&sdmac->desc->vd);
-+		sdmac->desc = NULL;
- 		schedule_work(&sdmac->terminate_worker);
-+	}
-+
-+	spin_unlock_irqrestore(&sdmac->vc.lock, flags);
- 
- 	return 0;
- }
+ #include <asm/processor.h>
+ #include <asm/vdso.h>
 -- 
 2.20.1
 
