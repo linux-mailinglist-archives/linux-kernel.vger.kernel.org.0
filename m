@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61B4B1677B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:44:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F74F16761F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:37:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731822AbgBUInJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:43:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52416 "EHLO mail.kernel.org"
+        id S1732245AbgBUIIs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:08:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729616AbgBUHx7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:53:59 -0500
+        id S1732082AbgBUIIn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:08:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 072AA24650;
-        Fri, 21 Feb 2020 07:53:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F71D20722;
+        Fri, 21 Feb 2020 08:08:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271638;
-        bh=ab0ALA7QeyFFt8xfeX1sv16lhosGZFNhWcq5ie5xykg=;
+        s=default; t=1582272522;
+        bh=y3cLW9E43Gt6K/m046jOyePIA/a7L/iQ/HgdNX4WiRg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Yg2on6zcCJC/yWp27CGATPdnysutNpdUcCI5CDtWpKQFhAYphKshMB9OoWkaRXOfR
-         x4JLYAOUF/qicPv8VSRGhoS9nbo79nnXsO6QB2qRLqVOjtBF+5CZXk6WmdRINhzRDL
-         FJ+aIZVObCNUqg+Mrl6krID72pIOqvhmbIHojcwU=
+        b=lRyrWOv427mRO8Jq1Rf10xd/NmRkaWJvsK+qRxUE2rBuPZm1Yj9rNY19EVjYBvYxt
+         N8F7Rg86kju0doWq9pZhqFE26SHlrszlF02lDiEKk0gqIzd0PtXb4+Jst1x0su8U7o
+         lTEqbUlpozH1x3bVAZHbuH7bHMPsuA4speqoA85s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhengyuan Liu <liuzhengyuan@kylinos.cn>,
-        Song Liu <songliubraving@fb.com>,
+        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Maxime Ripard <maxime@cerno.tech>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 243/399] raid6/test: fix a compilation warning
-Date:   Fri, 21 Feb 2020 08:39:28 +0100
-Message-Id: <20200221072426.124477833@linuxfoundation.org>
+Subject: [PATCH 5.4 173/344] clk: sunxi-ng: add mux and pll notifiers for A64 CPU clock
+Date:   Fri, 21 Feb 2020 08:39:32 +0100
+Message-Id: <20200221072404.662321653@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
-References: <20200221072402.315346745@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,57 +45,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhengyuan Liu <liuzhengyuan@kylinos.cn>
+From: Icenowy Zheng <icenowy@aosc.io>
 
-[ Upstream commit 5e5ac01c2b8802921fee680518a986011cb59820 ]
+[ Upstream commit ec97faff743b398e21f74a54c81333f3390093aa ]
 
-The compilation warning is redefination showed as following:
+The A64 PLL_CPU clock has the same instability if some factor changed
+without the PLL gated like other SoCs with sun6i-style CCU, e.g. A33,
+H3.
 
-        In file included from tables.c:2:
-        ../../../include/linux/export.h:180: warning: "EXPORT_SYMBOL" redefined
-         #define EXPORT_SYMBOL(sym)  __EXPORT_SYMBOL(sym, "")
+Add the mux and pll notifiers for A64 CPU clock to workaround the
+problem.
 
-        In file included from tables.c:1:
-        ../../../include/linux/raid/pq.h:61: note: this is the location of the previous definition
-         #define EXPORT_SYMBOL(sym)
-
-Fixes: 69a94abb82ee ("export.h, genksyms: do not make genksyms calculate CRC of trimmed symbols")
-Signed-off-by: Zhengyuan Liu <liuzhengyuan@kylinos.cn>
-Signed-off-by: Song Liu <songliubraving@fb.com>
+Fixes: c6a0637460c2 ("clk: sunxi-ng: Add A64 clocks")
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/raid/pq.h | 2 ++
- lib/raid6/mktables.c    | 2 +-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 28 ++++++++++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/raid/pq.h b/include/linux/raid/pq.h
-index 0b6e7ad9cd2a8..e0ddb47f44020 100644
---- a/include/linux/raid/pq.h
-+++ b/include/linux/raid/pq.h
-@@ -58,7 +58,9 @@ extern const char raid6_empty_zero_page[PAGE_SIZE];
- #define enable_kernel_altivec()
- #define disable_kernel_altivec()
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+index 49bd7a4c015c4..5f66bf8797723 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+@@ -921,11 +921,26 @@ static const struct sunxi_ccu_desc sun50i_a64_ccu_desc = {
+ 	.num_resets	= ARRAY_SIZE(sun50i_a64_ccu_resets),
+ };
  
-+#undef	EXPORT_SYMBOL
- #define EXPORT_SYMBOL(sym)
-+#undef	EXPORT_SYMBOL_GPL
- #define EXPORT_SYMBOL_GPL(sym)
- #define MODULE_LICENSE(licence)
- #define MODULE_DESCRIPTION(desc)
-diff --git a/lib/raid6/mktables.c b/lib/raid6/mktables.c
-index 9c485df1308fb..f02e10fa62381 100644
---- a/lib/raid6/mktables.c
-+++ b/lib/raid6/mktables.c
-@@ -56,8 +56,8 @@ int main(int argc, char *argv[])
- 	uint8_t v;
- 	uint8_t exptbl[256], invtbl[256];
++static struct ccu_pll_nb sun50i_a64_pll_cpu_nb = {
++	.common	= &pll_cpux_clk.common,
++	/* copy from pll_cpux_clk */
++	.enable	= BIT(31),
++	.lock	= BIT(28),
++};
++
++static struct ccu_mux_nb sun50i_a64_cpu_nb = {
++	.common		= &cpux_clk.common,
++	.cm		= &cpux_clk.mux,
++	.delay_us	= 1, /* > 8 clock cycles at 24 MHz */
++	.bypass_index	= 1, /* index of 24 MHz oscillator */
++};
++
+ static int sun50i_a64_ccu_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res;
+ 	void __iomem *reg;
+ 	u32 val;
++	int ret;
  
--	printf("#include <linux/raid/pq.h>\n");
- 	printf("#include <linux/export.h>\n");
-+	printf("#include <linux/raid/pq.h>\n");
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	reg = devm_ioremap_resource(&pdev->dev, res);
+@@ -939,7 +954,18 @@ static int sun50i_a64_ccu_probe(struct platform_device *pdev)
  
- 	/* Compute multiplication table */
- 	printf("\nconst u8  __attribute__((aligned(256)))\n"
+ 	writel(0x515, reg + SUN50I_A64_PLL_MIPI_REG);
+ 
+-	return sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
++	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
++	if (ret)
++		return ret;
++
++	/* Gate then ungate PLL CPU after any rate changes */
++	ccu_pll_notifier_register(&sun50i_a64_pll_cpu_nb);
++
++	/* Reparent CPU during PLL CPU rate changes */
++	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
++				  &sun50i_a64_cpu_nb);
++
++	return 0;
+ }
+ 
+ static const struct of_device_id sun50i_a64_ccu_ids[] = {
 -- 
 2.20.1
 
