@@ -2,55 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85579168902
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 22:10:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05F7F168903
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 22:10:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729574AbgBUVKD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 16:10:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35676 "EHLO mail.kernel.org"
+        id S1729615AbgBUVKR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 16:10:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726878AbgBUVKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 16:10:03 -0500
-Subject: Re: [GIT PULL REQUEST] watchdog - v5.6 Fixes
+        id S1726731AbgBUVKR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 16:10:17 -0500
+Subject: Re: [GIT] Networking
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582319402;
-        bh=EAhw5aKVp633Mjlm8PjcZ587/Y5BkFMb7kGbuTm3fIc=;
+        s=default; t=1582319416;
+        bh=tcqUTbXERzLhJ6IJiuGbUnJpSAGeR78e7ZABn9/QIyc=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=bMhZ1+x6Mfh9hG/nj0RCVK5RuI4vCTUD/LZmtP3stQYjgmchh6p+5mJRR3lKN6da6
-         DX4RJcG74kpnv9VA3jAQYis81ZpikQb78fxwFcbcevCHdPW+4j4gsk8dQZotR/CG+i
-         r046DkodS4Qj4xu/tlfamEvkSNOLUKFNzObVUipE=
+        b=XKc46LBq854BGlqaXgrJpdDVQGd4eSwJd8WbJJL+Dav/dE/GtBCoIa64RxhGH9Kh4
+         1WVgN6v5RnYhsCsVEOV/CSQOTqofdkkR23KFmnnSBojet2FS6w2Px0KlYe1Yq0Ax/+
+         795am2E/uLJYxSVtEqwteyfFtzYpxpfIN+RFGV7w=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200221131549.GA13194@www.linux-watchdog.org>
-References: <20200221131549.GA13194@www.linux-watchdog.org>
-X-PR-Tracked-List-Id: <linux-watchdog.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200221131549.GA13194@www.linux-watchdog.org>
-X-PR-Tracked-Remote: git://www.linux-watchdog.org/linux-watchdog.git
- tags/linux-watchdog-5.6-rc3
-X-PR-Tracked-Commit-Id: 44144c809e39d64ff9931c7e8956c42b2baa89e6
+In-Reply-To: <20200220.165005.109882010805629679.davem@davemloft.net>
+References: <20200220.165005.109882010805629679.davem@davemloft.net>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20200220.165005.109882010805629679.davem@davemloft.net>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git
+ refs/heads/master
+X-PR-Tracked-Commit-Id: 36a44bcdd8df092d76c11bc213e81c5817d4e302
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 0c0ddd6ae47c9238c18f475bcca675ca74c9dc31
-Message-Id: <158231940241.18249.17078932166893961335.pr-tracker-bot@kernel.org>
-Date:   Fri, 21 Feb 2020 21:10:02 +0000
-To:     Wim Van Sebroeck <wim@linux-watchdog.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        Randy Dunlap <rdunlap@infradead.org>
+X-PR-Merge-Commit-Id: 3dc55dba67231fc22352483f5ca737df96cdc1e6
+Message-Id: <158231941648.18249.3932995613583047299.pr-tracker-bot@kernel.org>
+Date:   Fri, 21 Feb 2020 21:10:16 +0000
+To:     David Miller <davem@davemloft.net>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 21 Feb 2020 14:15:49 +0100:
+The pull request you sent on Thu, 20 Feb 2020 16:50:05 -0800 (PST):
 
-> git://www.linux-watchdog.org/linux-watchdog.git tags/linux-watchdog-5.6-rc3
+> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git refs/heads/master
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/0c0ddd6ae47c9238c18f475bcca675ca74c9dc31
+https://git.kernel.org/torvalds/c/3dc55dba67231fc22352483f5ca737df96cdc1e6
 
 Thank you!
 
