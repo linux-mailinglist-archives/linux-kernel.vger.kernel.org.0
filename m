@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B8A916764D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:37:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B44E167755
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:42:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732669AbgBUILT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:11:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46634 "EHLO mail.kernel.org"
+        id S1730278AbgBUH44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:56:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732652AbgBUILN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:11:13 -0500
+        id S1730370AbgBUH4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:56:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2610A222C4;
-        Fri, 21 Feb 2020 08:11:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6F7920578;
+        Fri, 21 Feb 2020 07:56:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272672;
-        bh=S8L5RthTJ+fg8I4Qt4oWmfh6Upifu+P+RmgF9/5QYys=;
+        s=default; t=1582271811;
+        bh=y2KdCYZvWSq0h8YAq2s31CMB/GuJJswO/YD0CnIzWXQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V0AoVGQXLoenrHFYj2kjibttDTvTo7XUYnckr12hV/nFkmXGo51NwjcmFw0uBy3hM
-         k1ElCQlUpedH7SdQWGgkMCiPSRZu+2/tLdy/WrFVRaRYIFHbfAdaS6Vq602iymR13I
-         8ime/GKbwALEmwVtKEqHi+11Bj3GQxOXchrenUAY=
+        b=bsWkmGaEt+MEpMarvMfD78CoD/qH2HLoI6okP9/WfiQa5+6d6ADK01z4+UZ+mmOP2
+         B15eXXxEz+bBjagcEbCxQlQQ+p0KfYCVm/oPOE/WZCZ1/tqROSHpz1fIJcb8YYfq/l
+         rCuHdExpI7hoYX5Tbxf58Fe6o40jCeQ+6MvIjI/A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        Tony Lindgren <tony@atomide.com>, Bin Liu <b-liu@ti.com>,
+        stable@vger.kernel.org, yu kuai <yukuai3@huawei.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 232/344] usb: musb: omap2430: Get rid of musb .set_vbus for omap2430 glue
+Subject: [PATCH 5.5 306/399] pwm: Remove set but not set variable pwm
 Date:   Fri, 21 Feb 2020 08:40:31 +0100
-Message-Id: <20200221072410.339688276@linuxfoundation.org>
+Message-Id: <20200221072431.363511352@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
+References: <20200221072402.315346745@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,54 +46,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
+From: yu kuai <yukuai3@huawei.com>
 
-[ Upstream commit 91b6dec32e5c25fbdbb564d1e5af23764ec17ef1 ]
+[ Upstream commit 9871abffc81048e20f02e15d6aa4558a44ad53ea ]
 
-We currently have musb_set_vbus() called from two different paths. Mostly
-it gets called from the USB PHY via omap_musb_set_mailbox(), but in some
-cases it can get also called from musb_stage0_irq() rather via .set_vbus:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-(musb_set_host [musb_hdrc])
-(omap2430_musb_set_vbus [omap2430])
-(musb_stage0_irq [musb_hdrc])
-(musb_interrupt [musb_hdrc])
-(omap2430_musb_interrupt [omap2430])
+	drivers/pwm/pwm-pca9685.c: In function ‘pca9685_pwm_gpio_free’:
+	drivers/pwm/pwm-pca9685.c:162:21: warning: variable ‘pwm’ set but not used [-Wunused-but-set-variable]
 
-This is racy and will not work with introducing generic helper functions
-for musb_set_host() and musb_set_peripheral(). We want to get rid of the
-busy loops in favor of usleep_range().
+It is never used, and so can be removed. In that case, hold and release
+the lock 'pca->lock' can be removed since nothing will be done between
+them.
 
-Let's just get rid of .set_vbus for omap2430 glue layer and let the PHY
-code handle VBUS with musb_set_vbus(). Note that in the follow-up patch
-we can completely remove omap2430_musb_set_vbus(), but let's do it in a
-separate patch as this change may actually turn out to be needed as a
-fix.
-
-Reported-by: Pavel Machek <pavel@ucw.cz>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Bin Liu <b-liu@ti.com>
-Link: https://lore.kernel.org/r/20200115132547.364-5-b-liu@ti.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: e926b12c611c ("pwm: Clear chip_data in pwm_put()")
+Signed-off-by: yu kuai <yukuai3@huawei.com>
+Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/musb/omap2430.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/pwm/pwm-pca9685.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/usb/musb/omap2430.c b/drivers/usb/musb/omap2430.c
-index a3d2fef677468..5c93226e0e20a 100644
---- a/drivers/usb/musb/omap2430.c
-+++ b/drivers/usb/musb/omap2430.c
-@@ -361,8 +361,6 @@ static const struct musb_platform_ops omap2430_ops = {
- 	.init		= omap2430_musb_init,
- 	.exit		= omap2430_musb_exit,
+diff --git a/drivers/pwm/pwm-pca9685.c b/drivers/pwm/pwm-pca9685.c
+index 168684b02ebce..b07bdca3d510d 100644
+--- a/drivers/pwm/pwm-pca9685.c
++++ b/drivers/pwm/pwm-pca9685.c
+@@ -159,13 +159,9 @@ static void pca9685_pwm_gpio_set(struct gpio_chip *gpio, unsigned int offset,
+ static void pca9685_pwm_gpio_free(struct gpio_chip *gpio, unsigned int offset)
+ {
+ 	struct pca9685 *pca = gpiochip_get_data(gpio);
+-	struct pwm_device *pwm;
  
--	.set_vbus	= omap2430_musb_set_vbus,
--
- 	.enable		= omap2430_musb_enable,
- 	.disable	= omap2430_musb_disable,
+ 	pca9685_pwm_gpio_set(gpio, offset, 0);
+ 	pm_runtime_put(pca->chip.dev);
+-	mutex_lock(&pca->lock);
+-	pwm = &pca->chip.pwms[offset];
+-	mutex_unlock(&pca->lock);
+ }
  
+ static int pca9685_pwm_gpio_get_direction(struct gpio_chip *chip,
 -- 
 2.20.1
 
