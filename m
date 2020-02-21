@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D753416776F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:42:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61B4B1677B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:44:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731959AbgBUImQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:42:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54540 "EHLO mail.kernel.org"
+        id S1731822AbgBUInJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:43:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730336AbgBUHzd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:55:33 -0500
+        id S1729616AbgBUHx7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:53:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8D9520801;
-        Fri, 21 Feb 2020 07:55:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 072AA24650;
+        Fri, 21 Feb 2020 07:53:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271732;
-        bh=MRoXizrDdNo5LVjqVL+dFy8VuIsDO+eoD/g3sbT6HT8=;
+        s=default; t=1582271638;
+        bh=ab0ALA7QeyFFt8xfeX1sv16lhosGZFNhWcq5ie5xykg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mVXaD8ZKPXhEjflw8OMO430uTvK+WEGjVBBVlKI6BmadOCpAjZ4SHA4eAkUL4u/He
-         wJPV5eFGK1fAeXGoCgJ/StVm2+7NrKWyvG5FhNSMeK2TvukWoNUPDRGIZ97CC/zQEW
-         v4BiMBgamrXKhhbs+mUN2geoJV8xOzZM1wvfDrVU=
+        b=Yg2on6zcCJC/yWp27CGATPdnysutNpdUcCI5CDtWpKQFhAYphKshMB9OoWkaRXOfR
+         x4JLYAOUF/qicPv8VSRGhoS9nbo79nnXsO6QB2qRLqVOjtBF+5CZXk6WmdRINhzRDL
+         FJ+aIZVObCNUqg+Mrl6krID72pIOqvhmbIHojcwU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Tsoy <alexander@tsoy.me>,
-        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 240/399] ALSA: usb-audio: Add boot quirk for MOTU M Series
-Date:   Fri, 21 Feb 2020 08:39:25 +0100
-Message-Id: <20200221072425.892256060@linuxfoundation.org>
+        stable@vger.kernel.org, Zhengyuan Liu <liuzhengyuan@kylinos.cn>,
+        Song Liu <songliubraving@fb.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 243/399] raid6/test: fix a compilation warning
+Date:   Fri, 21 Feb 2020 08:39:28 +0100
+Message-Id: <20200221072426.124477833@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -43,117 +44,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Tsoy <alexander@tsoy.me>
+From: Zhengyuan Liu <liuzhengyuan@kylinos.cn>
 
-[ Upstream commit 73ac9f5e5b43a5dbadb61f27dae7a971f7ec0d22 ]
+[ Upstream commit 5e5ac01c2b8802921fee680518a986011cb59820 ]
 
-Add delay to make sure that audio urbs are not sent too early.
-Otherwise the device hangs. Windows driver makes ~2s delay, so use
-about the same time delay value.
+The compilation warning is redefination showed as following:
 
-snd_usb_apply_boot_quirk() is called 3 times for my MOTU M4, which
-is an overkill. Thus a quirk that is called only once is implemented.
+        In file included from tables.c:2:
+        ../../../include/linux/export.h:180: warning: "EXPORT_SYMBOL" redefined
+         #define EXPORT_SYMBOL(sym)  __EXPORT_SYMBOL(sym, "")
 
-Also send two vendor-specific control messages before and after
-the delay. This behaviour is blindly copied from the Windows driver.
+        In file included from tables.c:1:
+        ../../../include/linux/raid/pq.h:61: note: this is the location of the previous definition
+         #define EXPORT_SYMBOL(sym)
 
-Signed-off-by: Alexander Tsoy <alexander@tsoy.me>
-Link: https://lore.kernel.org/r/20200112102358.18085-1-alexander@tsoy.me
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 69a94abb82ee ("export.h, genksyms: do not make genksyms calculate CRC of trimmed symbols")
+Signed-off-by: Zhengyuan Liu <liuzhengyuan@kylinos.cn>
+Signed-off-by: Song Liu <songliubraving@fb.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/usb/card.c   |  4 ++++
- sound/usb/quirks.c | 38 ++++++++++++++++++++++++++++++++++++++
- sound/usb/quirks.h |  5 +++++
- 3 files changed, 47 insertions(+)
+ include/linux/raid/pq.h | 2 ++
+ lib/raid6/mktables.c    | 2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/sound/usb/card.c b/sound/usb/card.c
-index 9f743ebae615d..2f582ac7cf789 100644
---- a/sound/usb/card.c
-+++ b/sound/usb/card.c
-@@ -600,6 +600,10 @@ static int usb_audio_probe(struct usb_interface *intf,
- 		}
- 	}
- 	if (! chip) {
-+		err = snd_usb_apply_boot_quirk_once(dev, intf, quirk, id);
-+		if (err < 0)
-+			return err;
-+
- 		/* it's a fresh one.
- 		 * now look for an empty slot and create a new card instance
- 		 */
-diff --git a/sound/usb/quirks.c b/sound/usb/quirks.c
-index 1ed25b1d2a6a2..7448ab07bd363 100644
---- a/sound/usb/quirks.c
-+++ b/sound/usb/quirks.c
-@@ -1113,6 +1113,31 @@ free_buf:
- 	return err;
- }
+diff --git a/include/linux/raid/pq.h b/include/linux/raid/pq.h
+index 0b6e7ad9cd2a8..e0ddb47f44020 100644
+--- a/include/linux/raid/pq.h
++++ b/include/linux/raid/pq.h
+@@ -58,7 +58,9 @@ extern const char raid6_empty_zero_page[PAGE_SIZE];
+ #define enable_kernel_altivec()
+ #define disable_kernel_altivec()
  
-+static int snd_usb_motu_m_series_boot_quirk(struct usb_device *dev)
-+{
-+	int ret;
-+
-+	if (snd_usb_pipe_sanity_check(dev, usb_sndctrlpipe(dev, 0)))
-+		return -EINVAL;
-+	ret = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
-+			      1, USB_TYPE_VENDOR | USB_RECIP_DEVICE,
-+			      0x0, 0, NULL, 0, 1000);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	msleep(2000);
-+
-+	ret = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
-+			      1, USB_TYPE_VENDOR | USB_RECIP_DEVICE,
-+			      0x20, 0, NULL, 0, 1000);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	return 0;
-+}
-+
- /*
-  * Setup quirks
-  */
-@@ -1297,6 +1322,19 @@ int snd_usb_apply_boot_quirk(struct usb_device *dev,
- 	return 0;
- }
++#undef	EXPORT_SYMBOL
+ #define EXPORT_SYMBOL(sym)
++#undef	EXPORT_SYMBOL_GPL
+ #define EXPORT_SYMBOL_GPL(sym)
+ #define MODULE_LICENSE(licence)
+ #define MODULE_DESCRIPTION(desc)
+diff --git a/lib/raid6/mktables.c b/lib/raid6/mktables.c
+index 9c485df1308fb..f02e10fa62381 100644
+--- a/lib/raid6/mktables.c
++++ b/lib/raid6/mktables.c
+@@ -56,8 +56,8 @@ int main(int argc, char *argv[])
+ 	uint8_t v;
+ 	uint8_t exptbl[256], invtbl[256];
  
-+int snd_usb_apply_boot_quirk_once(struct usb_device *dev,
-+				  struct usb_interface *intf,
-+				  const struct snd_usb_audio_quirk *quirk,
-+				  unsigned int id)
-+{
-+	switch (id) {
-+	case USB_ID(0x07fd, 0x0008): /* MOTU M Series */
-+		return snd_usb_motu_m_series_boot_quirk(dev);
-+	}
-+
-+	return 0;
-+}
-+
- /*
-  * check if the device uses big-endian samples
-  */
-diff --git a/sound/usb/quirks.h b/sound/usb/quirks.h
-index a80e0ddd07364..df0355843a4c1 100644
---- a/sound/usb/quirks.h
-+++ b/sound/usb/quirks.h
-@@ -20,6 +20,11 @@ int snd_usb_apply_boot_quirk(struct usb_device *dev,
- 			     const struct snd_usb_audio_quirk *quirk,
- 			     unsigned int usb_id);
+-	printf("#include <linux/raid/pq.h>\n");
+ 	printf("#include <linux/export.h>\n");
++	printf("#include <linux/raid/pq.h>\n");
  
-+int snd_usb_apply_boot_quirk_once(struct usb_device *dev,
-+				  struct usb_interface *intf,
-+				  const struct snd_usb_audio_quirk *quirk,
-+				  unsigned int usb_id);
-+
- void snd_usb_set_format_quirk(struct snd_usb_substream *subs,
- 			      struct audioformat *fmt);
- 
+ 	/* Compute multiplication table */
+ 	printf("\nconst u8  __attribute__((aligned(256)))\n"
 -- 
 2.20.1
 
