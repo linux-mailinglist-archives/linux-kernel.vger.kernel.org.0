@@ -2,93 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 434DD16825E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:54:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E6B9168266
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:55:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728822AbgBUPya (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 10:54:30 -0500
-Received: from foss.arm.com ([217.140.110.172]:42312 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728441AbgBUPy3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 10:54:29 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 04E8230E;
-        Fri, 21 Feb 2020 07:54:29 -0800 (PST)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DF4293F68F;
-        Fri, 21 Feb 2020 07:54:27 -0800 (PST)
-Date:   Fri, 21 Feb 2020 15:54:20 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Andrew Murray <amurray@thegoodpenguin.co.uk>,
-        Vidya Sagar <vidyas@nvidia.com>,
-        Athani Nadeem Ladkhan <nadeem@cadence.com>,
-        Tom Joseph <tjoseph@cadence.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] PCI: Endpoint: Miscellaneous improvements
-Message-ID: <20200221155258.GA16729@e121166-lin.cambridge.arm.com>
-References: <20200212112514.2000-1-kishon@ti.com>
+        id S1729179AbgBUPzX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 10:55:23 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:35764 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728235AbgBUPzX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 10:55:23 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01LFhAUN005224;
+        Fri, 21 Feb 2020 16:54:59 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=ROT/iOnqrfVSU9ijMpaQxfKfuAyFkTIabMfISg7FtfU=;
+ b=jYGxGa9j/+XAP2+y41QpABkqTrowJtuZQyejHh2XeJPqio5sbPSNKrq7RXTksUw/w61J
+ bvJIl3pI2htB7ykpduKO8XZTNzjfn26vK6tAYAmV8MY6SjbY0/FOessi0qSytIlPbSO1
+ 9vwLamnm7ZDFiabh0Zor9eWPuZkH79g9AkcAgI+IcPuSQsOVD64CqAG7nvlq/Q/+kpQk
+ QCrivJ91JhTcpwoxDvsZI6rMb2H4XibBMUJiGKOj3jDQH4KcsvqZQLyERXrk5Or+D5bg
+ G0/4nnvdpYL/u1VXwzAoBOEO9bVmZyPAlQODkhT19v4MFe8Wp9LNtlXtdL6Ns0TeVPdv Xg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2y8uag090q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 21 Feb 2020 16:54:59 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A1B71100034;
+        Fri, 21 Feb 2020 16:54:51 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 794412BC7C1;
+        Fri, 21 Feb 2020 16:54:51 +0100 (CET)
+Received: from SFHDAG3NODE1.st.com (10.75.127.7) by SFHDAG3NODE3.st.com
+ (10.75.127.9) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 21 Feb
+ 2020 16:54:51 +0100
+Received: from SFHDAG3NODE1.st.com ([fe80::1166:1abb:aad4:5f86]) by
+ SFHDAG3NODE1.st.com ([fe80::1166:1abb:aad4:5f86%20]) with mapi id
+ 15.00.1473.003; Fri, 21 Feb 2020 16:54:51 +0100
+From:   Erwan LE RAY <erwan.leray@st.com>
+To:     =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+CC:     Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        "Arnd Bergmann" <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Olof Johansson" <olof@lixom.net>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Nathan Huckleberry <nhuck15@gmail.com>,
+        Gerald BAEZA <gerald.baeza@st.com>,
+        Fabrice GASNIER <fabrice.gasnier@st.com>
+Subject: Re: [PATCH v3 0/4] STM32 early console
+Thread-Topic: [PATCH v3 0/4] STM32 early console
+Thread-Index: AQHV2prax5EEBcSNuEGO1gU2i+LKNqgJeEAAgBxgRQA=
+Date:   Fri, 21 Feb 2020 15:54:51 +0000
+Message-ID: <889ce6c3-bcce-c0fa-69fd-3a05f6e44973@st.com>
+References: <20200203140425.26579-1-erwan.leray@st.com>
+ <CAJiuCcfRuHXajo7+cDMpQ73vhGuerW3_ObrfG0YOEzogKaH-sA@mail.gmail.com>
+In-Reply-To: <CAJiuCcfRuHXajo7+cDMpQ73vhGuerW3_ObrfG0YOEzogKaH-sA@mail.gmail.com>
+Accept-Language: en-US, fr-FR
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.51]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <22961633DE64E3408A1C412FCA67F660@st.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200212112514.2000-1-kishon@ti.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-21_05:2020-02-21,2020-02-21 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 04:55:09PM +0530, Kishon Vijay Abraham I wrote:
-> Changes from v1:
-> Rebased to Linux 5.6-rc1 and removed dependencies to my other series
-> to unblock [1]
-> 
-> [1] -> http://lore.kernel.org/r/20200103100736.27627-1-vidyas@nvidia.com
-> 
-> v1 of this patch series can be found @
-> http://lore.kernel.org/r/20191231100331.6316-1-kishon@ti.com
-> 
-> This series adds miscellaneous improvements to PCIe endpoint core.
-> 1) Protect concurrent access to memory allocation in pci-epc-mem
-> 2) Replace spinlock with mutex in pci-epc-core and also use
->    notification chain mechanism to notify EPC events to EPF driver.
-> 3) Since endpoint function device can be created by multiple
->    mechanisms (configfs, devicetree, etc..), allowing each of these
->    mechanisms to assign a function number would result in mutliple
->    endpoint function devices having the same function number. In order
->    to avoid this, let EPC core assign a function number to the
->    endpoint device.
-
-Hi Kishon,
-
-I am about to apply this series but I could not help notice that
-some of these patches are fixes rather than improvements, it would
-be good to propagate the changes to older kernels too provided
-we explain the bugs in the respective logs, in particular for (3)
-above it should not be complicated to reproduce a failure.
-
-Thanks,
-Lorenzo
-
-> Kishon Vijay Abraham I (5):
->   PCI: endpoint: Use notification chain mechanism to notify EPC events
->     to EPF
->   PCI: endpoint: Replace spinlock with mutex
->   PCI: endpoint: Protect concurrent access to memory allocation with
->     mutex
->   PCI: endpoint: Protect concurrent access to pci_epf_ops with mutex
->   PCI: endpoint: Assign function number for each PF in EPC core
-> 
->  drivers/pci/endpoint/functions/pci-epf-test.c |  13 +-
->  drivers/pci/endpoint/pci-ep-cfs.c             |  27 +----
->  drivers/pci/endpoint/pci-epc-core.c           | 113 ++++++++----------
->  drivers/pci/endpoint/pci-epc-mem.c            |  10 +-
->  drivers/pci/endpoint/pci-epf-core.c           |  33 ++---
->  include/linux/pci-epc.h                       |  19 ++-
->  include/linux/pci-epf.h                       |   9 +-
->  7 files changed, 108 insertions(+), 116 deletions(-)
-> 
-> -- 
-> 2.17.1
-> 
+SGkgUnVzc2VsLCBNYXgsIEFsZXgsIEFybmQsIExpbnVzIGFuZCBPbG9mLA0KDQpHZW50bGUgcmVt
+aW5kZXIuDQoNCkNhbiB5b3UgcGxlYXNlIHByb3ZpZGUgeW91ciBmZWVkYmFjayBvbiB0aGlzIHNl
+cmllcyA/DQoNCkJlc3QgUmVnYXJkcywgRXJ3YW4uDQoNCg0KT24gMi8zLzIwIDM6MzUgUE0sIENs
+w6ltZW50IFDDqXJvbiB3cm90ZToNCj4gSGkgRXJ3YW4sDQo+DQo+IE9uIE1vbiwgMyBGZWIgMjAy
+MCBhdCAxNTowNCwgRXJ3YW4gTGUgUmF5IDxlcndhbi5sZXJheUBzdC5jb20+IHdyb3RlOg0KPj4g
+QWRkIFVBUlQgaW5zdGFuY2UgY29uZmlndXJhdGlvbiB0byBTVE0zMiBGNCBhbmQgRjcgZWFybHkg
+Y29uc29sZS4NCj4+IEFkZCBTVE0zMiBINyBhbmQgTVAxIGVhcmx5IGNvbnNvbGUgc3VwcG9ydC4N
+Cj4+DQo+PiBDaGFuZ2VzIGluIHYzOg0KPj4gLSBmaXggYSBtaXNzaW5nIGNvbmRpdGlvbiBmb3Ig
+U1RNMzJNUDENCj4+DQo+PiBDaGFuZ2VzIGluIHYyOg0KPj4gLSBzcGxpdCAiW1BBVENIXSBBUk06
+IGRlYnVnOiBzdG0zMjogYWRkIFVBUlQgZWFybHkgY29uc29sZSBjb25maWd1cmF0aW9uIg0KPj4g
+ICAgaW50byBzZXBhcmF0ZSBwYXRjaGVzIGFzIHN1Z2dlc3RlZCBieSBDbGVtZW50IGludG8gWzFd
+DQo+IFRoYW5rcyBmb3Igc3BsaXR0aW5nIHRoZSBwYXRjaCwgdGhlIHdob2xlIHNlcmllcyBsb29r
+cyBmaW5lIHRvIG1lLg0KPg0KPiBBY2tlZC1ieTogQ2zDqW1lbnQgUMOpcm9uIDxwZXJvbi5jbGVt
+QGdtYWlsLmNvbT4NCj4NCj4gQ2zDqW1lbnQNCj4NCj4NCj4NCj4+IFsxXSBodHRwczovL2xrbWwu
+b3JnL2xrbWwvMjAxOS80LzEwLzE5OQ0KPj4NCj4+IEVyd2FuIExlIFJheSAoNCk6DQo+PiAgICBB
+Uk06IGRlYnVnOiBzdG0zMjogYWRkIFVBUlQgZWFybHkgY29uc29sZSBjb25maWd1cmF0aW9uIGZv
+ciBTVE0zMkY0DQo+PiAgICBBUk06IGRlYnVnOiBzdG0zMjogYWRkIFVBUlQgZWFybHkgY29uc29s
+ZSBjb25maWd1cmF0aW9uIGZvciBTVE0zMkY3DQo+PiAgICBBUk06IGRlYnVnOiBzdG0zMjogYWRk
+IFVBUlQgZWFybHkgY29uc29sZSBzdXBwb3J0IGZvciBTVE0zMkg3DQo+PiAgICBBUk06IGRlYnVn
+OiBzdG0zMjogYWRkIFVBUlQgZWFybHkgY29uc29sZSBzdXBwb3J0IGZvciBTVE0zMk1QMQ0KPj4N
+Cj4+ICAgYXJjaC9hcm0vS2NvbmZpZy5kZWJ1ZyAgICAgICAgIHwgNDIgKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKystLS0tLQ0KPj4gICBhcmNoL2FybS9pbmNsdWRlL2RlYnVnL3N0bTMyLlMg
+fCAgOSArKysrLS0tLQ0KPj4gICAyIGZpbGVzIGNoYW5nZWQsIDQwIGluc2VydGlvbnMoKyksIDEx
+IGRlbGV0aW9ucygtKQ0KPj4NCj4+IC0tDQo+PiAyLjE3LjENCj4+
