@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E28BD167101
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:50:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EAED1670D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:50:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728567AbgBUHuW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:50:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47170 "EHLO mail.kernel.org"
+        id S1729146AbgBUHso (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:48:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729528AbgBUHuS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:50:18 -0500
+        id S1729106AbgBUHsi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:48:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 939ED24653;
-        Fri, 21 Feb 2020 07:50:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 435B82467A;
+        Fri, 21 Feb 2020 07:48:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271418;
-        bh=eBLejqYBNJZKgtBkhP+tpe58QdQ8fptkUqSNNoPg7is=;
+        s=default; t=1582271317;
+        bh=Gq5rf7u/9z+VyLshbO6znJXsbmBI15OFp5FIdk80igY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1QErbDmMl50I5MO61UPt6dJO6E/zfw0sZOxbURqiiYd7gNP7xLApsoD0ppxIJmsmt
-         GGgK32Ck09GA9LmHuyql13JlzVFXZIxS+o0zsB5y0DiKNpXcSxRKYq1m616iGG47H2
-         eFjkhDUHEIAFMonjS6GXNtVWcDl0jbjlH41A4+B8=
+        b=Jea5k31pEPpo+75kGCet57DiKPnOoIqKbQlY/h8ixCgA4WkaV6UnY91+4T136zmCG
+         emrKaPv8ev5ek1aTc8WIAcGqGOEFwGNLaUW0rVB0lgA9AbXDJa/daIy2CtazhwIqFP
+         +SZDMFIAaXGFLjzXRWTHRrryw2H0hgpRJx6QdmAw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
         Maxime Ripard <maxime@cerno.tech>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 120/399] arm64: dts: allwinner: H5: Add PMU node
-Date:   Fri, 21 Feb 2020 08:37:25 +0100
-Message-Id: <20200221072414.135035491@linuxfoundation.org>
+Subject: [PATCH 5.5 121/399] arm: dts: allwinner: H3: Add PMU node
+Date:   Fri, 21 Feb 2020 08:37:26 +0100
+Message-Id: <20200221072414.236321563@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -46,70 +46,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andre Przywara <andre.przywara@arm.com>
 
-[ Upstream commit c35a516a46187c8eeb7a56c64505ec6f7e22a0c7 ]
+[ Upstream commit 0388a110747bec0c9d9de995842bb2a03a26aae1 ]
 
-Add the Performance Monitoring Unit (PMU) device tree node to the H5
+Add the Performance Monitoring Unit (PMU) device tree node to the H3
 .dtsi, which tells DT users which interrupts are triggered by PMU
-overflow events on each core.
-As with the A64, the interrupt numbers from the manual were wrong (off
-by 4), the actual SPI IDs have been gathered in U-Boot, and were
-verified with perf in Linux.
+overflow events on each core. The numbers come from the manual and have
+been checked in U-Boot and with perf in Linux.
 
-Tested with perf record and taskset on an OrangePi PC2.
+Tested with perf record and taskset on an OrangePi Zero.
 
 Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/sun8i-h3.dtsi | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-index e92c4de5bf3b4..7c775a918a4e7 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-@@ -54,21 +54,21 @@
- 			enable-method = "psci";
+diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
+index fe773c72a69b7..b4f1673df9ee0 100644
+--- a/arch/arm/boot/dts/sun8i-h3.dtsi
++++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+@@ -80,7 +80,7 @@
+ 			#cooling-cells = <2>;
  		};
  
 -		cpu@1 {
 +		cpu1: cpu@1 {
- 			compatible = "arm,cortex-a53";
+ 			compatible = "arm,cortex-a7";
  			device_type = "cpu";
  			reg = <1>;
- 			enable-method = "psci";
+@@ -90,7 +90,7 @@
+ 			#cooling-cells = <2>;
  		};
  
 -		cpu@2 {
 +		cpu2: cpu@2 {
- 			compatible = "arm,cortex-a53";
+ 			compatible = "arm,cortex-a7";
  			device_type = "cpu";
  			reg = <2>;
- 			enable-method = "psci";
+@@ -100,7 +100,7 @@
+ 			#cooling-cells = <2>;
  		};
  
 -		cpu@3 {
 +		cpu3: cpu@3 {
- 			compatible = "arm,cortex-a53";
+ 			compatible = "arm,cortex-a7";
  			device_type = "cpu";
  			reg = <3>;
-@@ -76,6 +76,16 @@
+@@ -111,6 +111,15 @@
  		};
  	};
  
 +	pmu {
-+		compatible = "arm,cortex-a53-pmu",
-+			     "arm,armv8-pmuv3";
-+		interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>;
++		compatible = "arm,cortex-a7-pmu";
++		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
 +		interrupt-affinity = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>;
 +	};
 +
- 	psci {
- 		compatible = "arm,psci-0.2";
- 		method = "smc";
+ 	timer {
+ 		compatible = "arm,armv7-timer";
+ 		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
 -- 
 2.20.1
 
