@@ -2,202 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8159166D34
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 03:59:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31472166D7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 04:27:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729602AbgBUC72 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 21:59:28 -0500
-Received: from mga07.intel.com ([134.134.136.100]:33230 "EHLO mga07.intel.com"
+        id S1729660AbgBUD1u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 22:27:50 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:46591 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729268AbgBUC71 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 21:59:27 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2020 18:59:26 -0800
-X-IronPort-AV: E=Sophos;i="5.70,466,1574150400"; 
-   d="scan'208";a="229702755"
-Received: from xiaoyaol-mobl.ccr.corp.intel.com (HELO [10.249.174.151]) ([10.249.174.151])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 20 Feb 2020 18:59:23 -0800
-Subject: Re: [PATCH v2 1/3] KVM: x86: Add EMULTYPE_PF when emulation is
- triggered by a page fault
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200218230310.29410-1-sean.j.christopherson@intel.com>
- <20200218230310.29410-2-sean.j.christopherson@intel.com>
- <7d564331-9a77-d59a-73d3-a7452fd7b15f@intel.com>
- <20200220201145.GI3972@linux.intel.com>
-From:   Xiaoyao Li <xiaoyao.li@intel.com>
-Message-ID: <cd6d5d20-c533-009c-35ba-9f1777a4ec5d@intel.com>
-Date:   Fri, 21 Feb 2020 10:59:21 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1729636AbgBUD1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 22:27:50 -0500
+Received: by ozlabs.org (Postfix, from userid 1007)
+        id 48Nxjc3tDHz9sS3; Fri, 21 Feb 2020 14:27:48 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=gibson.dropbear.id.au; s=201602; t=1582255668;
+        bh=iKptlhtjkgkIsdcJEVAHVMwjI89lNKjQ7HEHAkGj37o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SvbdaUavxTvf/pdBCZS/hwo/cFcJDx3AXHEPeo4dmS4LjE0QO1ICTIBLbdDUDwlSD
+         TluHdPFcvWasZDuu181i/bcrOfbjrL2e+mMAYoEn8M3ITyswpVSktDPN5OrymYv2SV
+         Pj6SH8iB+ZxgjkUtDEduBd1iw2b04kGhl6O37f+s=
+Date:   Fri, 21 Feb 2020 13:59:15 +1100
+From:   David Gibson <david@gibson.dropbear.id.au>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Halil Pasic <pasic@linux.ibm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-s390@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Viktor Mihajlovski <mihajlov@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        Michael Mueller <mimu@linux.ibm.com>
+Subject: Re: [PATCH 2/2] virtio: let virtio use DMA API when guest RAM is
+ protected
+Message-ID: <20200221025915.GB2298@umbus.fritz.box>
+References: <20200220160606.53156-1-pasic@linux.ibm.com>
+ <20200220160606.53156-3-pasic@linux.ibm.com>
+ <20200220161309.GB12709@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20200220201145.GI3972@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5/uDoXvLw7AC5HRs"
+Content-Disposition: inline
+In-Reply-To: <20200220161309.GB12709@lst.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/21/2020 4:11 AM, Sean Christopherson wrote:
-> On Wed, Feb 19, 2020 at 05:01:41PM +0800, Xiaoyao Li wrote:
->> On 2/19/2020 7:03 AM, Sean Christopherson wrote:
->>> Add a new emulation type flag to explicitly mark emulation related to a
->>> page fault.  Move the propation of the GPA into the emulator from the
->>> page fault handler into x86_emulate_instruction, using EMULTYPE_PF as an
->>> indicator that cr2 is valid.  Similarly, don't propagate cr2 into the
->>> exception.address when it's *not* valid.
->>>
->>> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
->>> ---
->>>   arch/x86/include/asm/kvm_host.h | 12 +++++++++---
->>>   arch/x86/kvm/mmu/mmu.c          | 10 ++--------
->>>   arch/x86/kvm/x86.c              | 25 +++++++++++++++++++------
->>>   3 files changed, 30 insertions(+), 17 deletions(-)
->>>
->>> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
->>> index 4dffbc10d3f8..10c1e8f472b6 100644
->>> --- a/arch/x86/include/asm/kvm_host.h
->>> +++ b/arch/x86/include/asm/kvm_host.h
->>> @@ -1370,8 +1370,9 @@ extern u64 kvm_mce_cap_supported;
->>>    *		   decode the instruction length.  For use *only* by
->>>    *		   kvm_x86_ops->skip_emulated_instruction() implementations.
->>>    *
->>> - * EMULTYPE_ALLOW_RETRY - Set when the emulator should resume the guest to
->>> - *			  retry native execution under certain conditions.
->>> + * EMULTYPE_ALLOW_RETRY_PF - Set when the emulator should resume the guest to
->>> + *			     retry native execution under certain conditions,
->>> + *			     Can only be set in conjunction with EMULTYPE_PF.
->>>    *
->>>    * EMULTYPE_TRAP_UD_FORCED - Set when emulating an intercepted #UD that was
->>>    *			     triggered by KVM's magic "force emulation" prefix,
->>> @@ -1384,13 +1385,18 @@ extern u64 kvm_mce_cap_supported;
->>>    *			backdoor emulation, which is opt in via module param.
->>>    *			VMware backoor emulation handles select instructions
->>>    *			and reinjects the #GP for all other cases.
->>> + *
->>> + * EMULTYPE_PF - Set when emulating MMIO by way of an intercepted #PF, in which
->>> + *		 case the CR2/GPA value pass on the stack is valid.
->>>    */
->>>   #define EMULTYPE_NO_DECODE	    (1 << 0)
->>>   #define EMULTYPE_TRAP_UD	    (1 << 1)
->>>   #define EMULTYPE_SKIP		    (1 << 2)
->>> -#define EMULTYPE_ALLOW_RETRY	    (1 << 3)
->>> +#define EMULTYPE_ALLOW_RETRY_PF	    (1 << 3)
->>
->> How about naming it as EMULTYPE_PF_ALLOW_RETRY and exchanging the bit
->> position with EMULTYPE_PF ?
-> 
-> Hmm, EMULTYPE_PF_ALLOW_RETRY does sound better.  I'm on the fence regarding
-> shuffling the bits.  If I were to shuffle the bits, I'd do a more thorough
-> reorder so that the #UD and #PF types are consecutive, e.g.
-> 
-> 	#define EMULTYPE_NO_DECODE	    (1 << 0)
-> 	#define EMULTYPE_TRAP_UD	    (1 << 1)
-> 	#define EMULTYPE_TRAP_UD_FORCED	    (1 << 2)
-> 	#define EMULTYPE_SKIP		    (1 << 3)
-> 	#define EMULTYPE_VMWARE_GP	    (1 << 4)
-> 	#define EMULTYPE_PF		    (1 << 5)
-> 	#define EMULTYPE_PF_ALLOW_RETRY	    (1 << 6)
-> 
-> Part of me really wants to do that, the other part of me thinks it's
-> unnecessary thrash.
->
 
-I'm fine with thorough reorder, it helps read the codes.
-It's up to Paolo, anyway.
+--5/uDoXvLw7AC5HRs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->>>   #define EMULTYPE_TRAP_UD_FORCED	    (1 << 4)
->>>   #define EMULTYPE_VMWARE_GP	    (1 << 5)
->>> +#define EMULTYPE_PF		    (1 << 6)
->>> +
->>>   int kvm_emulate_instruction(struct kvm_vcpu *vcpu, int emulation_type);
->>>   int kvm_emulate_instruction_from_buffer(struct kvm_vcpu *vcpu,
->>>   					void *insn, int insn_len);
->>> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
->>> index 7011a4e54866..258624d46588 100644
->>> --- a/arch/x86/kvm/mmu/mmu.c
->>> +++ b/arch/x86/kvm/mmu/mmu.c
->>> @@ -5416,18 +5416,12 @@ EXPORT_SYMBOL_GPL(kvm_mmu_unprotect_page_virt);
->>>   int kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u64 error_code,
->>>   		       void *insn, int insn_len)
->>>   {
->>> -	int r, emulation_type = 0;
->>> +	int r, emulation_type = EMULTYPE_PF;
->>>   	bool direct = vcpu->arch.mmu->direct_map;
->>>   	if (WARN_ON(!VALID_PAGE(vcpu->arch.mmu->root_hpa)))
->>>   		return RET_PF_RETRY;
->>> -	/* With shadow page tables, fault_address contains a GVA or nGPA.  */
->>> -	if (vcpu->arch.mmu->direct_map) {
->>> -		vcpu->arch.gpa_available = true;
->>> -		vcpu->arch.gpa_val = cr2_or_gpa;
->>> -	}
->>> -
->>>   	r = RET_PF_INVALID;
->>>   	if (unlikely(error_code & PFERR_RSVD_MASK)) {
->>>   		r = handle_mmio_page_fault(vcpu, cr2_or_gpa, direct);
->>> @@ -5472,7 +5466,7 @@ int kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u64 error_code,
->>>   	 * for L1 isn't going to magically fix whatever issue cause L2 to fail.
->>>   	 */
->>>   	if (!mmio_info_in_cache(vcpu, cr2_or_gpa, direct) && !is_guest_mode(vcpu))
->>> -		emulation_type = EMULTYPE_ALLOW_RETRY;
->>> +		emulation_type |= EMULTYPE_ALLOW_RETRY_PF;
->>>   emulate:
->>>   	/*
->>>   	 * On AMD platforms, under certain conditions insn_len may be zero on #NPF.
->>> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
->>> index fbabb2f06273..92af6c5a69e3 100644
->>> --- a/arch/x86/kvm/x86.c
->>> +++ b/arch/x86/kvm/x86.c
->>> @@ -6483,10 +6483,11 @@ static bool reexecute_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
->>>   	gpa_t gpa = cr2_or_gpa;
->>>   	kvm_pfn_t pfn;
->>> -	if (!(emulation_type & EMULTYPE_ALLOW_RETRY))
->>> +	if (!(emulation_type & EMULTYPE_ALLOW_RETRY_PF))
->>>   		return false;
->>> -	if (WARN_ON_ONCE(is_guest_mode(vcpu)))
->>> +	if (WARN_ON_ONCE(is_guest_mode(vcpu)) ||
->>> +	    WARN_ON_ONCE(!(emulation_type & EMULTYPE_PF)))
->>>   		return false;
->>>   	if (!vcpu->arch.mmu->direct_map) {
->>> @@ -6574,10 +6575,11 @@ static bool retry_instruction(struct x86_emulate_ctxt *ctxt,
->>>   	 */
->>>   	vcpu->arch.last_retry_eip = vcpu->arch.last_retry_addr = 0;
->>> -	if (!(emulation_type & EMULTYPE_ALLOW_RETRY))
->>> +	if (!(emulation_type & EMULTYPE_ALLOW_RETRY_PF))
->>>   		return false;
->>> -	if (WARN_ON_ONCE(is_guest_mode(vcpu)))
->>> +	if (WARN_ON_ONCE(is_guest_mode(vcpu)) ||
->>> +	    WARN_ON_ONCE(!(emulation_type & EMULTYPE_PF)))
->>>   		return false;
->>>   	if (x86_page_table_writing_insn(ctxt))
->>> @@ -6830,8 +6832,19 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
->>>   	}
->>>   restart:
->>> -	/* Save the faulting GPA (cr2) in the address field */
->>> -	ctxt->exception.address = cr2_or_gpa;
->>> +	if (emulation_type & EMULTYPE_PF) {
->>> +		/* Save the faulting GPA (cr2) in the address field */
->>> +		ctxt->exception.address = cr2_or_gpa;
->>> +
->>> +		/* With shadow page tables, cr2 contains a GVA or nGPA. */
->>> +		if (vcpu->arch.mmu->direct_map) {
->>> +			vcpu->arch.gpa_available = true;
->>> +			vcpu->arch.gpa_val = cr2_or_gpa;
->>> +		}
->>> +	} else {
->>> +		/* Sanitize the address out of an abundance of paranoia. */
->>> +		ctxt->exception.address = 0;
->>> +	}
->>>   	r = x86_emulate_insn(ctxt);
->>>
->>
+On Thu, Feb 20, 2020 at 05:13:09PM +0100, Christoph Hellwig wrote:
+> On Thu, Feb 20, 2020 at 05:06:06PM +0100, Halil Pasic wrote:
+> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> > index 867c7ebd3f10..fafc8f924955 100644
+> > --- a/drivers/virtio/virtio_ring.c
+> > +++ b/drivers/virtio/virtio_ring.c
+> > @@ -243,6 +243,9 @@ static bool vring_use_dma_api(struct virtio_device =
+*vdev)
+> >  	if (!virtio_has_iommu_quirk(vdev))
+> >  		return true;
+> > =20
+> > +	if (force_dma_unencrypted(&vdev->dev))
+> > +		return true;
+>=20
+> Hell no.  This is a detail of the platform DMA direct implementation.
+> Drivers have no business looking at this flag, and virtio finally needs
+> to be fixed to use the DMA API properly for everything but legacy devices.
 
+So, this patch definitely isn't right as it stands, but I'm struggling
+to understand what it is you're saying is the right way.
+
+By "legacy devices" I assume you mean pre-virtio-1.0 devices, that
+lack the F_VERSION_1 feature flag.  Is that right?  Because I don't
+see how being a legacy device or not relates to use of the DMA API.
+
+I *think* what you are suggesting here is that virtio devices that
+have !F_IOMMU_PLATFORM should have their dma_ops set up so that the
+DMA API treats IOVA=3D=3DPA, which will satisfy what the device expects.
+Then the virtio driver can use the DMA API the same way for both
+F_IOMMU_PLATFORM and !F_IOMMU_PLATFORM devices.
+
+But if that works for !F_IOMMU_PLATFORM_DEVICES+F_VERSION_1 devices,
+then AFAICT it will work equally well for legacy devices.
+
+Using the DMA API for *everything* in virtio, legacy or not, seems
+like a reasonable approach to me.  But, AFAICT, that does require the
+DMA layer to have some kind of explicit call to turn on this
+behaviour, which the virtio driver would call during initializsation.
+I don't think we can do it 100% within the DMA layer, because only the
+driver can reasonably know when a device has this weird non-standard
+DMA behaviour.
+
+--=20
+David Gibson			| I'll have my music baroque, and my code
+david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
+				| _way_ _around_!
+http://www.ozlabs.org/~dgibson
+
+--5/uDoXvLw7AC5HRs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAl5PR4EACgkQbDjKyiDZ
+s5LraA/+KQYlg3wZ+0krCgI0rnOA1c4Rh7dkchkUxj0XPpjfegrcik9vB4AEk1uV
+NViHfw9TklofjnE59FOo9Rexy90uk2aepCPMiba2Aidm0X+E9OMWIZ75l+9IyNod
+fnTLSUCP45wGHQUcjIE1iL3TNJrTZ+F0bQkuu1rwZhtBHx+mKYmS005cUmOuiYQi
++gZAl8VlR/Ar3QktvDq1ChJai/rB22k+AWL9eL6fgpFGZv/E13hM25tKU61acUZh
+WbtOBNEDoDs792CWCbIs9gqoeq1Whd555JS3nbAlDqNykTUMrfqDbbX/FdJlciPu
+b1TlYEWQLmJDCv8xdPNj8Iep747a3Pc8pDhe7cALeEGvR8dEgbXE7+cx6l5rX6FW
+glvHUQbw8/iD2tRbMLEfk1z/uyL7Gzugk7P6Xfeg+fNcGoL6ADR3DFCBUn1eD0Bf
+EHyBM/WOmi1kn9p52fC3waAPg5BqftyrxFdGd2dI7mUjLvGeT/gxPnqfdaEDbdku
+nlBw4/tcIdlesiIAiI+bCe4bX111KgcJvqVSjaRiS1YqFumJ1aySBzXpAfjqWW/p
+2MU+m6v1xqCEDc7UY+aFtHrRw+CsByowyIFYfNcfSgDMvB9uFkvme4opmrdyAe+g
+G/3fLNvewrGHvqTITJtkyQGQnyJEmHbcQMnWbSdQyqbQU+qO8tg=
+=dMlk
+-----END PGP SIGNATURE-----
+
+--5/uDoXvLw7AC5HRs--
