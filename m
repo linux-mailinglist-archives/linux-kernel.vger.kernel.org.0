@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67A221671CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:57:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F36116719F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:56:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730624AbgBUH53 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:57:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56926 "EHLO mail.kernel.org"
+        id S1728112AbgBUHzu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:55:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730270AbgBUH5Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:57:25 -0500
+        id S1730133AbgBUHzr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:55:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC429222C4;
-        Fri, 21 Feb 2020 07:57:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E33332073A;
+        Fri, 21 Feb 2020 07:55:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271844;
-        bh=/eTuMA1+EKSBwjBLo0bimCwtlU8PRo/V9j/mbKbSwU4=;
+        s=default; t=1582271747;
+        bh=ArAV1wIJAw8GbPbESMsY8CMZNSZCkxxKmAv4655zdek=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2cUxPIRnoz0sEPP/rdP4UApZCXFImpVoEobqFjkrGyrK1cPtQhkKkgqaPnd+vm7w6
-         2mLsyD6BwJuQk1L3dlfSp++AFLGdcun7ZpP+I4hbPgRZYcrguwTik2hT578hA6k9gd
-         dEC4h44ps5gWmAGtWWH+6eTqDPzHhFRfMEHzv0cE=
+        b=oHZH6Egog3B3RtnNOslSxlvVVySrKSEZR7iuGCjxw1k/Pxf4M4zC7XpQytCHGK5XD
+         EvduGEvcDRZ8rjfz/vV9MkeqxE3uNlVvGeAh2+u+FudWPuPC+iJAgzpbZvSikmSoXg
+         akWdGcCeuaaZQrMFaATMqkjiqVBDvLUEGM36DZYY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 282/399] arm64: fix alternatives with LLVMs integrated assembler
-Date:   Fri, 21 Feb 2020 08:40:07 +0100
-Message-Id: <20200221072429.379585529@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Pouiller?= 
+        <jerome.pouiller@silabs.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 284/399] staging: wfx: fix possible overflow on jiffies comparaison
+Date:   Fri, 21 Feb 2020 08:40:09 +0100
+Message-Id: <20200221072429.526807691@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -45,117 +44,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sami Tolvanen <samitolvanen@google.com>
+From: Jérôme Pouiller <jerome.pouiller@silabs.com>
 
-[ Upstream commit c54f90c2627cc316d365e3073614731e17dbc631 ]
+[ Upstream commit def39be019b6494acd3570ce6f3f11ba1c3203a3 ]
 
-LLVM's integrated assembler fails with the following error when
-building KVM:
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-  <inline asm>:12:6: error: expected absolute expression
-   .if kvm_update_va_mask == 0
-       ^
-  <inline asm>:21:6: error: expected absolute expression
-   .if kvm_update_va_mask == 0
-       ^
-  <inline asm>:24:2: error: unrecognized instruction mnemonic
-          NOT_AN_INSTRUCTION
-          ^
-  LLVM ERROR: Error parsing inline asm
+It is recommended to use function time_*() to compare jiffies.
 
-These errors come from ALTERNATIVE_CB and __ALTERNATIVE_CFG,
-which test for the existence of the callback parameter in inline
-assembly using the following expression:
-
-  " .if " __stringify(cb) " == 0\n"
-
-This works with GNU as, but isn't supported by LLVM. This change
-splits __ALTERNATIVE_CFG and ALTINSTR_ENTRY into separate macros
-to fix the LLVM build.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/472
-Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Will Deacon <will@kernel.org>
+Signed-off-by: Jérôme Pouiller <jerome.pouiller@silabs.com>
+Link: https://lore.kernel.org/r/20200115135338.14374-45-Jerome.Pouiller@silabs.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/include/asm/alternative.h | 32 ++++++++++++++++++----------
- 1 file changed, 21 insertions(+), 11 deletions(-)
+ drivers/staging/wfx/data_tx.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm64/include/asm/alternative.h b/arch/arm64/include/asm/alternative.h
-index b9f8d787eea9f..324e7d5ab37ed 100644
---- a/arch/arm64/include/asm/alternative.h
-+++ b/arch/arm64/include/asm/alternative.h
-@@ -35,13 +35,16 @@ void apply_alternatives_module(void *start, size_t length);
- static inline void apply_alternatives_module(void *start, size_t length) { }
- #endif
+diff --git a/drivers/staging/wfx/data_tx.c b/drivers/staging/wfx/data_tx.c
+index b13d7341f8bba..0c6a3a1a1ddfd 100644
+--- a/drivers/staging/wfx/data_tx.c
++++ b/drivers/staging/wfx/data_tx.c
+@@ -282,8 +282,7 @@ void wfx_tx_policy_init(struct wfx_vif *wvif)
+ static int wfx_alloc_link_id(struct wfx_vif *wvif, const u8 *mac)
+ {
+ 	int i, ret = 0;
+-	unsigned long max_inactivity = 0;
+-	unsigned long now = jiffies;
++	unsigned long oldest;
  
--#define ALTINSTR_ENTRY(feature,cb)					      \
-+#define ALTINSTR_ENTRY(feature)					              \
- 	" .word 661b - .\n"				/* label           */ \
--	" .if " __stringify(cb) " == 0\n"				      \
- 	" .word 663f - .\n"				/* new instruction */ \
--	" .else\n"							      \
-+	" .hword " __stringify(feature) "\n"		/* feature bit     */ \
-+	" .byte 662b-661b\n"				/* source len      */ \
-+	" .byte 664f-663f\n"				/* replacement len */
-+
-+#define ALTINSTR_ENTRY_CB(feature, cb)					      \
-+	" .word 661b - .\n"				/* label           */ \
- 	" .word " __stringify(cb) "- .\n"		/* callback */	      \
--	" .endif\n"							      \
- 	" .hword " __stringify(feature) "\n"		/* feature bit     */ \
- 	" .byte 662b-661b\n"				/* source len      */ \
- 	" .byte 664f-663f\n"				/* replacement len */
-@@ -62,15 +65,14 @@ static inline void apply_alternatives_module(void *start, size_t length) { }
-  *
-  * Alternatives with callbacks do not generate replacement instructions.
-  */
--#define __ALTERNATIVE_CFG(oldinstr, newinstr, feature, cfg_enabled, cb)	\
-+#define __ALTERNATIVE_CFG(oldinstr, newinstr, feature, cfg_enabled)	\
- 	".if "__stringify(cfg_enabled)" == 1\n"				\
- 	"661:\n\t"							\
- 	oldinstr "\n"							\
- 	"662:\n"							\
- 	".pushsection .altinstructions,\"a\"\n"				\
--	ALTINSTR_ENTRY(feature,cb)					\
-+	ALTINSTR_ENTRY(feature)						\
- 	".popsection\n"							\
--	" .if " __stringify(cb) " == 0\n"				\
- 	".pushsection .altinstr_replacement, \"a\"\n"			\
- 	"663:\n\t"							\
- 	newinstr "\n"							\
-@@ -78,17 +80,25 @@ static inline void apply_alternatives_module(void *start, size_t length) { }
- 	".popsection\n\t"						\
- 	".org	. - (664b-663b) + (662b-661b)\n\t"			\
- 	".org	. - (662b-661b) + (664b-663b)\n"			\
--	".else\n\t"							\
-+	".endif\n"
-+
-+#define __ALTERNATIVE_CFG_CB(oldinstr, feature, cfg_enabled, cb)	\
-+	".if "__stringify(cfg_enabled)" == 1\n"				\
-+	"661:\n\t"							\
-+	oldinstr "\n"							\
-+	"662:\n"							\
-+	".pushsection .altinstructions,\"a\"\n"				\
-+	ALTINSTR_ENTRY_CB(feature, cb)					\
-+	".popsection\n"							\
- 	"663:\n\t"							\
- 	"664:\n\t"							\
--	".endif\n"							\
- 	".endif\n"
+ 	spin_lock_bh(&wvif->ps_state_lock);
+ 	for (i = 0; i < WFX_MAX_STA_IN_AP_MODE; ++i) {
+@@ -292,13 +291,10 @@ static int wfx_alloc_link_id(struct wfx_vif *wvif, const u8 *mac)
+ 			break;
+ 		} else if (wvif->link_id_db[i].status != WFX_LINK_HARD &&
+ 			   !wvif->wdev->tx_queue_stats.link_map_cache[i + 1]) {
+-			unsigned long inactivity =
+-				now - wvif->link_id_db[i].timestamp;
+-
+-			if (inactivity < max_inactivity)
+-				continue;
+-			max_inactivity = inactivity;
+-			ret = i + 1;
++			if (!ret || time_after(oldest, wvif->link_id_db[i].timestamp)) {
++				oldest = wvif->link_id_db[i].timestamp;
++				ret = i + 1;
++			}
+ 		}
+ 	}
  
- #define _ALTERNATIVE_CFG(oldinstr, newinstr, feature, cfg, ...)	\
--	__ALTERNATIVE_CFG(oldinstr, newinstr, feature, IS_ENABLED(cfg), 0)
-+	__ALTERNATIVE_CFG(oldinstr, newinstr, feature, IS_ENABLED(cfg))
- 
- #define ALTERNATIVE_CB(oldinstr, cb) \
--	__ALTERNATIVE_CFG(oldinstr, "NOT_AN_INSTRUCTION", ARM64_CB_PATCH, 1, cb)
-+	__ALTERNATIVE_CFG_CB(oldinstr, ARM64_CB_PATCH, 1, cb)
- #else
- 
- #include <asm/assembler.h>
 -- 
 2.20.1
 
