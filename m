@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19A9F167842
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:48:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCB0C167714
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:41:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728687AbgBUHs2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:48:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44496 "EHLO mail.kernel.org"
+        id S1731360AbgBUIC3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:02:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728122AbgBUHsZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:48:25 -0500
+        id S1731353AbgBUICZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:02:25 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1DF20207FD;
-        Fri, 21 Feb 2020 07:48:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E28E8222C4;
+        Fri, 21 Feb 2020 08:02:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271304;
-        bh=wySVuzOAKsVfP2zWPLQgRaUCUUY7XFfw5EC5uuHR3qU=;
+        s=default; t=1582272145;
+        bh=ADrNRk9Xu2Bg/SkJkQl9rV35sOxTlaMCztQvFTIMKlw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jXa1KmZpqWhVVlI8JpTD3AtfbPxm+4SJS9yJU+CfJaAssPlIEKjtFUQHJSExffmAu
-         CJkthCUE9PXhxsRwIPdIYptlJxRTxV9MtujtBz+Ou40sgIY3pGpGAvnO25/VdJadGx
-         jkKQsPdfUD9UngwRULmgaBdQOy5J1rQGV9XpWyLE=
+        b=wIQL2znBts8xrR/MhTo3OT83KqwXiEDrfmGAeTiNjwcadrmAdVqAGTo0jInAJ3djf
+         qynh/1jIJ8lKz0d4Lp9l9Fzd+/1bPanDIzYFqSlE0qom2VDgeOpatXbpHunZK4KvJA
+         Vj/ko2DOWTTa54Kkve9R/Q1XiXpQDSEoNy9hvv0M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Schiller <ms@dev.tdt.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 078/399] wan/hdlc_x25: fix skb handling
-Date:   Fri, 21 Feb 2020 08:36:43 +0100
-Message-Id: <20200221072409.927263069@linuxfoundation.org>
+        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.4 006/344] net/sched: flower: add missing validation of TCA_FLOWER_FLAGS
+Date:   Fri, 21 Feb 2020 08:36:45 +0100
+Message-Id: <20200221072349.866786649@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
-References: <20200221072402.315346745@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,70 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Schiller <ms@dev.tdt.de>
+From: Davide Caratti <dcaratti@redhat.com>
 
-[ Upstream commit 953c4a08dfc9ffe763a8340ac10f459d6c6cc4eb ]
+[ Upstream commit e2debf0852c4d66ba1a8bde12869b196094c70a7 ]
 
-o call skb_reset_network_header() before hdlc->xmit()
- o change skb proto to HDLC (0x0019) before hdlc->xmit()
- o call dev_queue_xmit_nit() before hdlc->xmit()
+unlike other classifiers that can be offloaded (i.e. users can set flags
+like 'skip_hw' and 'skip_sw'), 'cls_flower' doesn't validate the size of
+netlink attribute 'TCA_FLOWER_FLAGS' provided by user: add a proper entry
+to fl_policy.
 
-This changes make it possible to trace (tcpdump) outgoing layer2
-(ETH_P_HDLC) packets
-
-Additionally call skb_reset_network_header() after each skb_push() /
-skb_pull().
-
-Signed-off-by: Martin Schiller <ms@dev.tdt.de>
+Fixes: 5b33f48842fa ("net/flower: Introduce hardware offload support")
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wan/hdlc_x25.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ net/sched/cls_flower.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/wan/hdlc_x25.c b/drivers/net/wan/hdlc_x25.c
-index 5643675ff7241..bf78073ee7fd9 100644
---- a/drivers/net/wan/hdlc_x25.c
-+++ b/drivers/net/wan/hdlc_x25.c
-@@ -62,11 +62,12 @@ static int x25_data_indication(struct net_device *dev, struct sk_buff *skb)
- {
- 	unsigned char *ptr;
+--- a/net/sched/cls_flower.c
++++ b/net/sched/cls_flower.c
+@@ -689,6 +689,7 @@ static const struct nla_policy fl_policy
+ 					    .len = 128 / BITS_PER_BYTE },
+ 	[TCA_FLOWER_KEY_CT_LABELS_MASK]	= { .type = NLA_BINARY,
+ 					    .len = 128 / BITS_PER_BYTE },
++	[TCA_FLOWER_FLAGS]		= { .type = NLA_U32 },
+ };
  
--	skb_push(skb, 1);
--
- 	if (skb_cow(skb, 1))
- 		return NET_RX_DROP;
- 
-+	skb_push(skb, 1);
-+	skb_reset_network_header(skb);
-+
- 	ptr  = skb->data;
- 	*ptr = X25_IFACE_DATA;
- 
-@@ -79,6 +80,13 @@ static int x25_data_indication(struct net_device *dev, struct sk_buff *skb)
- static void x25_data_transmit(struct net_device *dev, struct sk_buff *skb)
- {
- 	hdlc_device *hdlc = dev_to_hdlc(dev);
-+
-+	skb_reset_network_header(skb);
-+	skb->protocol = hdlc_type_trans(skb, dev);
-+
-+	if (dev_nit_active(dev))
-+		dev_queue_xmit_nit(skb, dev);
-+
- 	hdlc->xmit(skb, dev); /* Ignore return value :-( */
- }
- 
-@@ -93,6 +101,7 @@ static netdev_tx_t x25_xmit(struct sk_buff *skb, struct net_device *dev)
- 	switch (skb->data[0]) {
- 	case X25_IFACE_DATA:	/* Data to be transmitted */
- 		skb_pull(skb, 1);
-+		skb_reset_network_header(skb);
- 		if ((result = lapb_data_request(dev, skb)) != LAPB_OK)
- 			dev_kfree_skb(skb);
- 		return NETDEV_TX_OK;
--- 
-2.20.1
-
+ static const struct nla_policy
 
 
