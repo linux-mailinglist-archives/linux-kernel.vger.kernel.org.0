@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D428C16730D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:08:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CBE916730F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:09:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732276AbgBUIIz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:08:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43544 "EHLO mail.kernel.org"
+        id S1732283AbgBUII6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:08:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732265AbgBUIIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:08:52 -0500
+        id S1732273AbgBUIIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:08:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9C7420722;
-        Fri, 21 Feb 2020 08:08:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4B6E20722;
+        Fri, 21 Feb 2020 08:08:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272532;
-        bh=cZWF5B+oqnadoyrCckaRV5YoXWc4Oiv38tJwjPMVSmI=;
+        s=default; t=1582272535;
+        bh=XXuW7JzIbkyZH1HN0+8zkHQTFS+HQMpPRX/xz57n+ic=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bNO2TZNjik01NfESDSa1YkrCgHlUnJsPxpn3t/oK8AiBIFSZutIfdu0tN/yB7vDVb
-         PoeUuxFQdHtFJ1DLgen/zCrwxVijLowYCTFsI3uplsuaymvluDnwShn2xYk3KQ6wCS
-         gul4MBhOz20j5Xx9qDpP1zaBqEXMY5Ee8aNsk4zg=
+        b=aHcKXUnyIigprWqPpPzh25UQ2ivLgX6tFuaggrDVZ9hw5fHdPBnkp/El+8yTJqu0u
+         vTlKG95snZ3SuqaTzZeIfza5gW4yqcD54sT8cJn/yUxLLMeA1254lBJSTE8/KxlXw6
+         bObld1H2CIOcFwI9GmVz49fQD865NZuqvmR73T5I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 177/344] ALSA: hda/realtek - Apply mic mute LED quirk for Dell E7xx laptops, too
-Date:   Fri, 21 Feb 2020 08:39:36 +0100
-Message-Id: <20200221072405.051898397@linuxfoundation.org>
+Subject: [PATCH 5.4 178/344] ALSA: sh: Fix compile warning wrt const
+Date:   Fri, 21 Feb 2020 08:39:37 +0100
+Message-Id: <20200221072405.136351500@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
 References: <20200221072349.335551332@linuxfoundation.org>
@@ -45,56 +45,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 5fab5829674c279839a7408ab30c71c6dfe726b9 ]
+[ Upstream commit f1dd4795b1523fbca7ab4344dd5a8bb439cc770d ]
 
-Dell E7xx laptops have also mic mute LED that is driven by the
-dell-laptop platform driver.  Bind it with the capture control as
-already done for other models.
+A long-standing compile warning was seen during build test:
+  sound/sh/aica.c: In function 'load_aica_firmware':
+  sound/sh/aica.c:521:25: warning: passing argument 2 of 'spu_memload' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
 
-A caveat is that the fixup hook for the mic mute LED has to be applied
-at last, otherwise it results in the invalid override of the callback.
-
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=205529
-Link: https://lore.kernel.org/r/20200105081119.21396-1-tiwai@suse.de
+Fixes: 198de43d758c ("[ALSA] Add ALSA support for the SEGA Dreamcast PCM device")
+Link: https://lore.kernel.org/r/20200105144823.29547-69-tiwai@suse.de
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/patch_realtek.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ sound/sh/aica.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index a66d4be3516e6..f162e607fc6c3 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -5852,6 +5852,7 @@ enum {
- 	ALC288_FIXUP_DELL1_MIC_NO_PRESENCE,
- 	ALC288_FIXUP_DELL_XPS_13,
- 	ALC288_FIXUP_DISABLE_AAMIX,
-+	ALC292_FIXUP_DELL_E7X_AAMIX,
- 	ALC292_FIXUP_DELL_E7X,
- 	ALC292_FIXUP_DISABLE_AAMIX,
- 	ALC293_FIXUP_DISABLE_AAMIX_MULTIJACK,
-@@ -6547,12 +6548,19 @@ static const struct hda_fixup alc269_fixups[] = {
- 		.chained = true,
- 		.chain_id = ALC293_FIXUP_DELL1_MIC_NO_PRESENCE
- 	},
--	[ALC292_FIXUP_DELL_E7X] = {
-+	[ALC292_FIXUP_DELL_E7X_AAMIX] = {
- 		.type = HDA_FIXUP_FUNC,
- 		.v.func = alc_fixup_dell_xps13,
- 		.chained = true,
- 		.chain_id = ALC292_FIXUP_DISABLE_AAMIX
- 	},
-+	[ALC292_FIXUP_DELL_E7X] = {
-+		.type = HDA_FIXUP_FUNC,
-+		.v.func = snd_hda_gen_fixup_micmute_led,
-+		/* micmute fixup must be applied at last */
-+		.chained_before = true,
-+		.chain_id = ALC292_FIXUP_DELL_E7X_AAMIX,
-+	},
- 	[ALC298_FIXUP_ALIENWARE_MIC_NO_PRESENCE] = {
- 		.type = HDA_FIXUP_PINS,
- 		.v.pins = (const struct hda_pintbl[]) {
+diff --git a/sound/sh/aica.c b/sound/sh/aica.c
+index 52e9cfb4f8197..8421b2f9c9f38 100644
+--- a/sound/sh/aica.c
++++ b/sound/sh/aica.c
+@@ -101,10 +101,10 @@ static void spu_memset(u32 toi, u32 what, int length)
+ }
+ 
+ /* spu_memload - write to SPU address space */
+-static void spu_memload(u32 toi, void *from, int length)
++static void spu_memload(u32 toi, const void *from, int length)
+ {
+ 	unsigned long flags;
+-	u32 *froml = from;
++	const u32 *froml = from;
+ 	u32 __iomem *to = (u32 __iomem *) (SPU_MEMORY_BASE + toi);
+ 	int i;
+ 	u32 val;
 -- 
 2.20.1
 
