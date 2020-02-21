@@ -2,35 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C5381671ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:58:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73CA51671F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:59:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730787AbgBUH6d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:58:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58288 "EHLO mail.kernel.org"
+        id S1730850AbgBUH67 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:58:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730776AbgBUH62 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:58:28 -0500
+        id S1730694AbgBUH64 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:58:56 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB838206ED;
-        Fri, 21 Feb 2020 07:58:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A6F72073A;
+        Fri, 21 Feb 2020 07:58:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271907;
-        bh=FSZNZhAOFhYYMThmr+oCAnsLgXdPEgdWYjoPiw6Ulfs=;
+        s=default; t=1582271935;
+        bh=xR3TCnZhgPJN93bqdEvo5BwP1dB3RHfGLzJ+ceAVSPg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v34Cg5drAv/RGS7/77AhPqIwS39Ay7+v7Frs802BNN5nXXt2NSyIdYbfTmaBeju22
-         9WYpxTsQCFU3fG6eDZgPZ0kiUEUZNwxxfcFhVJTom0HIsvw3qQPQiJ0Bc3MQXlfXmO
-         8gN6MJPbyDEMqb5lUedEkn98adpo26svcImhZDfs=
+        b=1emjY1Bw7EC4L7zXsgaGtCEoXj9KtsD5GjtIPLkvqy1pEEPKwVK37Rt4CO3Va3A03
+         lHmwkiKO684uo0jr3Y9mRhGZeqJ/VGThLgivZY5PtcEJBawgANPSpt9ltVd7MGwu7W
+         aFt6Mb9JWPdOW9PhCtzhnVQFaygHLjCwf3UO8BGM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
+        stable@vger.kernel.org,
+        Shile Zhang <shile.zhang@linux.alibaba.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 316/399] kbuild: use -S instead of -E for precise cc-option test in Kconfig
-Date:   Fri, 21 Feb 2020 08:40:41 +0100
-Message-Id: <20200221072432.144557510@linuxfoundation.org>
+Subject: [PATCH 5.5 317/399] objtool: Fix ARCH=x86_64 build error
+Date:   Fri, 21 Feb 2020 08:40:42 +0100
+Message-Id: <20200221072432.218300175@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -43,47 +47,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <masahiroy@kernel.org>
+From: Shile Zhang <shile.zhang@linux.alibaba.com>
 
-[ Upstream commit 3bed1b7b9d79ca40e41e3af130931a3225e951a3 ]
+[ Upstream commit 8580bed7e751e6d4f17881e059daf3cb37ba4717 ]
 
-Currently, -E (stop after the preprocessing stage) is used to check
-whether the given compiler flag is supported.
+Building objtool with ARCH=x86_64 fails with:
 
-While it is faster than -S (or -c), it can be false-positive. You need
-to run the compilation proper to check the flag more precisely.
+   $make ARCH=x86_64 -C tools/objtool
+   ...
+     CC       arch/x86/decode.o
+   arch/x86/decode.c:10:22: fatal error: asm/insn.h: No such file or directory
+    #include <asm/insn.h>
+                         ^
+   compilation terminated.
+   mv: cannot stat ‘arch/x86/.decode.o.tmp’: No such file or directory
+   make[2]: *** [arch/x86/decode.o] Error 1
+   ...
 
-For example, -E and -S disagree about the support of
-"--param asan-instrument-allocas=1".
+The root cause is that the command-line variable 'ARCH' cannot be
+overridden.  It can be replaced by 'SRCARCH', which is defined in
+'tools/scripts/Makefile.arch'.
 
-$ gcc -Werror --param asan-instrument-allocas=1 -E -x c /dev/null -o /dev/null
-$ echo $?
-0
-
-$ gcc -Werror --param asan-instrument-allocas=1 -S -x c /dev/null -o /dev/null
-cc1: error: invalid --param name ‘asan-instrument-allocas’; did you mean ‘asan-instrument-writes’?
-$ echo $?
-1
-
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Signed-off-by: Shile Zhang <shile.zhang@linux.alibaba.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Link: https://lore.kernel.org/r/d5d11370ae116df6c653493acd300ec3d7f5e925.1579543924.git.jpoimboe@redhat.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/Kconfig.include | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/objtool/Makefile | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/scripts/Kconfig.include b/scripts/Kconfig.include
-index d4adfbe426903..bfb44b265a948 100644
---- a/scripts/Kconfig.include
-+++ b/scripts/Kconfig.include
-@@ -25,7 +25,7 @@ failure = $(if-success,$(1),n,y)
+diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
+index d2a19b0bc05aa..ee08aeff30a19 100644
+--- a/tools/objtool/Makefile
++++ b/tools/objtool/Makefile
+@@ -2,10 +2,6 @@
+ include ../scripts/Makefile.include
+ include ../scripts/Makefile.arch
  
- # $(cc-option,<flag>)
- # Return y if the compiler supports <flag>, n otherwise
--cc-option = $(success,$(CC) -Werror $(CLANG_FLAGS) $(1) -E -x c /dev/null -o /dev/null)
-+cc-option = $(success,$(CC) -Werror $(CLANG_FLAGS) $(1) -S -x c /dev/null -o /dev/null)
+-ifeq ($(ARCH),x86_64)
+-ARCH := x86
+-endif
+-
+ # always use the host compiler
+ HOSTAR	?= ar
+ HOSTCC	?= gcc
+@@ -33,7 +29,7 @@ all: $(OBJTOOL)
  
- # $(ld-option,<flag>)
- # Return y if the linker supports <flag>, n otherwise
+ INCLUDES := -I$(srctree)/tools/include \
+ 	    -I$(srctree)/tools/arch/$(HOSTARCH)/include/uapi \
+-	    -I$(srctree)/tools/arch/$(ARCH)/include
++	    -I$(srctree)/tools/arch/$(SRCARCH)/include
+ WARNINGS := $(EXTRA_WARNINGS) -Wno-switch-default -Wno-switch-enum -Wno-packed
+ CFLAGS   := -Werror $(WARNINGS) $(KBUILD_HOSTCFLAGS) -g $(INCLUDES) $(LIBELF_FLAGS)
+ LDFLAGS  += $(LIBELF_LIBS) $(LIBSUBCMD) $(KBUILD_HOSTLDFLAGS)
 -- 
 2.20.1
 
