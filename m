@@ -2,199 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5994166CD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 03:23:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8A0C166CE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 03:26:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729420AbgBUCXJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 21:23:09 -0500
-Received: from mga17.intel.com ([192.55.52.151]:44492 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729226AbgBUCXJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 21:23:09 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2020 18:23:08 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,466,1574150400"; 
-   d="scan'208";a="283586698"
-Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
-  by FMSMGA003.fm.intel.com with ESMTP; 20 Feb 2020 18:23:08 -0800
-Received: from fmsmsx118.amr.corp.intel.com (10.18.116.18) by
- FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 20 Feb 2020 18:23:08 -0800
-Received: from fmsmsx117.amr.corp.intel.com ([169.254.3.129]) by
- fmsmsx118.amr.corp.intel.com ([169.254.1.229]) with mapi id 14.03.0439.000;
- Thu, 20 Feb 2020 18:23:08 -0800
-From:   "Souza, Jose" <jose.souza@intel.com>
-To:     "airlied@gmail.com" <airlied@gmail.com>,
-        "sinisa@4net.rs" <sinisa@4net.rs>,
-        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [Intel-gfx] Linux 5.6-rc2
-Thread-Topic: [Intel-gfx] Linux 5.6-rc2
-Thread-Index: AQHV6Fe4HIpbjqtpMk6JnnbbXh11raglcVQA
-Date:   Fri, 21 Feb 2020 02:23:07 +0000
-Message-ID: <f9081410ef1135003720fa29d27aa10b9d12d509.camel@intel.com>
-References: <CAHk-=wgqwiBLGvwTqU2kJEPNmafPpPe_K0XgBU-A58M+mkwpgQ@mail.gmail.com>
-         <99fb887f-4a1b-6c15-64a6-9d089773cdd4@4net.rs>
-         <CAPM=9ty3NuSHBd+StNGxVCE9jkmppQ_VTr+jMRgB07qW3dRwrA@mail.gmail.com>
-In-Reply-To: <CAPM=9ty3NuSHBd+StNGxVCE9jkmppQ_VTr+jMRgB07qW3dRwrA@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.24.14.178]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5CCCD2877C984F4CB49676F76F7ED801@intel.com>
-Content-Transfer-Encoding: base64
+        id S1729615AbgBUC0F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 21:26:05 -0500
+Received: from smtprelay0127.hostedemail.com ([216.40.44.127]:57479 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729222AbgBUC0E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 21:26:04 -0500
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave03.hostedemail.com (Postfix) with ESMTP id A7A1F181C965D
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 02:26:03 +0000 (UTC)
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id D4E4E100E7B44;
+        Fri, 21 Feb 2020 02:26:02 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1543:1593:1594:1605:1711:1730:1747:1777:1792:2393:2525:2553:2560:2563:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3622:3865:3866:3867:3868:3870:3871:3872:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:4605:5007:6119:7875:7903:7974:8531:8985:9025:10004:10400:10848:10967:11232:11657:11658:11854:11914:12043:12050:12291:12296:12297:12438:12555:12683:12740:12760:12895:13149:13161:13229:13230:13255:13439:14180:14181:14659:14721:14877:21080:21324:21433:21611:21627:21740:21811:30054:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: kiss25_8bfb524244a5a
+X-Filterd-Recvd-Size: 4638
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf13.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 21 Feb 2020 02:26:01 +0000 (UTC)
+Message-ID: <a588204afbfe4c8dd56d0cb00d8e6e14dc561a62.camel@perches.com>
+Subject: Re: [PATCH] cvt_fallthrough: A tool to convert /* fallthrough */
+ comments to fallthrough;
+From:   Joe Perches <joe@perches.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Date:   Thu, 20 Feb 2020 18:24:38 -0800
+In-Reply-To: <20200220162114.138f976ae16a5e58e13a51ae@linux-foundation.org>
+References: <b56602fcf79f849e733e7b521bb0e17895d390fa.1582230379.git.joe@perches.com>
+         <20200220162114.138f976ae16a5e58e13a51ae@linux-foundation.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-V2UgaGF2ZSBhIGZpeCBmb3IgdGhpcyBpc3N1ZSwgc3RpbGwgZ29pbmcgdGhyb3VnaCByZXZpZXcu
-DQoNCmh0dHBzOi8vZ2l0bGFiLmZyZWVkZXNrdG9wLm9yZy9kcm0vaW50ZWwvaXNzdWVzLzExNTEN
-Cg0KT24gRnJpLCAyMDIwLTAyLTIxIGF0IDExOjM4ICsxMDAwLCBEYXZlIEFpcmxpZSB3cm90ZToN
-Cj4gbG9vcGluZyBpbiBpbnRlbC1nZnggKyBKYW5pLg0KPiANCj4gT24gVHVlLCAxOCBGZWIgMjAy
-MCBhdCAwNToyMCwgc2luaXNhIDxzaW5pc2FANG5ldC5ycz4gd3JvdGU6DQo+ID4gDQo+ID4gT24g
-MjAyMC0wMi0xNiAyMjozMiwgTGludXMgVG9ydmFsZHMgd3JvdGU6DQo+ID4gID4gLi4uDQo+ID4g
-ID4gQ2hyaXMgV2lsc29uICgxOSk6DQo+ID4gID4gICAgICAgZHJtL2k5MTUvcG11OiBDb3JyZWN0
-IHRoZSByYzYgb2Zmc2V0IHVwb24gZW5hYmxpbmcNCj4gPiAgPiAgICAgICBkcm0vaTkxNS9nZW06
-IFRha2UgbG9jYWwgdm1hIHJlZmVyZW5jZXMgZm9yIHRoZSBwYXJzZXINCj4gPiAgPiAgICAgICBk
-cm0vaTkxNS9zZWxmdGVzdHM6IEFkZCBhIG1vY2sgaTkxNV92bWEgdG8gdGhlIG1vY2tfcmluZw0K
-PiA+ICA+ICAgICAgIGRybS9pOTE1L2d0OiBVc2UgdGhlIEJJVCB3aGVuIGNoZWNraW5nIHRoZSBm
-bGFncywgbm90IHRoZQ0KPiA+IGluZGV4DQo+ID4gID4gICAgICAgZHJtL2k5MTUvZXhlY2xpc3Rz
-OiBMZWF2ZSByZXNldHRpbmcgcmluZyB0byBpbnRlbF9yaW5nDQo+ID4gID4gICAgICAgZHJtL2k5
-MTUvZ2VtOiBTdG9yZSBtbWFwX29mZnNldHMgaW4gYW4gcmJ0cmVlIHJhdGhlciB0aGFuDQo+ID4g
-YQ0KPiA+IHBsYWluIGxpc3QNCj4gPiAgPiAgICAgICBkcm0vaTkxNTogRG9uJ3Qgc2hvdyB0aGUg
-YmxhbmsgcHJvY2VzcyBuYW1lIGZvcg0KPiA+IGludGVybmFsL3NpbXVsYXRlZCBlcnJvcnMNCj4g
-PiAgPiAgICAgICBkcm0vaTkxNS9nZW06IERldGVjdCBvdmVyZmxvdyBpbiBjYWxjdWxhdGluZyBk
-dW1iIGJ1ZmZlcg0KPiA+IHNpemUNCj4gPiAgPiAgICAgICBkcm0vaTkxNTogQ2hlY2sgYWN0aXZp
-dHkgb24gaTkxNV92bWEgYWZ0ZXIgY29uZmlybWluZw0KPiA+IHBpbl9jb3VudD09MA0KPiA+ICA+
-ICAgICAgIGRybS9pOTE1OiBTdHViIG91dCBpOTE1X2dwdV9jb3JlZHVtcF9wdXQNCj4gPiAgPiAg
-ICAgICBkcm0vaTkxNTogVGlnaHRlbiBhdG9taWNpdHkgb2YgaTkxNV9hY3RpdmVfYWNxdWlyZSB2
-cw0KPiA+IGk5MTVfYWN0aXZlX3JlbGVhc2UNCj4gPiAgPiAgICAgICBkcm0vaTkxNS9ndDogQWNx
-dWlyZSBjZS0+YWN0aXZlIGJlZm9yZSBjZS0+cGluX2NvdW50L2NlLQ0KPiA+ID5waW5fbXV0ZXgN
-Cj4gPiAgPiAgICAgICBkcm0vaTkxNS9nZW06IFRpZ2h0ZW4gY2hlY2tzIGFuZCBhY3F1aXJpbmcg
-dGhlIG1tYXAgb2JqZWN0DQo+ID4gID4gICAgICAgZHJtL2k5MTU6IEtlZXAgdHJhY2sgb2YgcmVx
-dWVzdCBhbW9uZyB0aGUgc2NoZWR1bGluZyBsaXN0cw0KPiA+ICA+ICAgICAgIGRybS9pOTE1L2d0
-OiBBbGxvdyB0ZW1wb3Jhcnkgc3VzcGVuc2lvbiBvZiBpbmZsaWdodA0KPiA+IHJlcXVlc3RzDQo+
-ID4gID4gICAgICAgZHJtL2k5MTUvZXhlY2xpc3RzOiBPZmZsaW5lIGVycm9yIGNhcHR1cmUNCj4g
-PiAgPiAgICAgICBkcm0vaTkxNS9leGVjbGlzdHM6IFRha2UgYSByZWZlcmVuY2Ugd2hpbGUgY2Fw
-dHVyaW5nIHRoZQ0KPiA+IGd1aWx0eQ0KPiA+IHJlcXVlc3QNCj4gPiAgPiAgICAgICBkcm0vaTkx
-NS9leGVjbGlzdHM6IFJlY2xhaW0gdGhlIGhhbmdpbmcgdmlydHVhbCByZXF1ZXN0DQo+ID4gID4g
-ICAgICAgZHJtL2k5MTU6IE1hcmsgdGhlIHJlbW92YWwgb2YgdGhlIGk5MTVfcmVxdWVzdCBmcm9t
-IHRoZQ0KPiA+IHNjaGVkLmxpbmsNCj4gPiAgPiAuLi4NCj4gPiANCj4gPiBTb21ldGhpbmcgZnJv
-bSBoZXJlIG1ha2VzIG15IFRvc2hpYmEgUG9ydGVnZSBaMzAtQSAoQ1BVIGlzIGk1LTQyMTBVIA0K
-PiA+IHdpdGgNCj4gPiBpbnRlZ3JhdGVkIGdyYXBoaWNzKSB0byB0byBvbmx5IGdldCBibGFjayBz
-Y3JlZW4gd2hlbiBsb2FkaW5nIGk5MTUNCj4gPiBkcml2ZXIuDQo+ID4gDQo+ID4gSGFwcGVucyB0
-aGUgc2FtZSBpbiByYzEgYW5kIHJjMiwgd29ya3MgT0sgd2l0aCBhbGwgcHJldmlvdXMNCj4gPiBr
-ZXJuZWxzLg0KPiA+IA0KPiA+IA0KPiA+IEhlcmUgaXMgcmVsZXZhbnQgcGFydCBvZiB0aGUgZG1l
-c2cgb3V0cHV0Og0KPiA+IA0KPiA+IA0KPiA+IFsgICAgNC42NDM4NDhdIGk5MTUgMDAwMDowMDow
-Mi4wOiB2Z2FhcmI6IGRlYWN0aXZhdGUgdmdhIGNvbnNvbGUNCj4gPiBbICAgIDQuNjQ1MzYzXSBD
-b25zb2xlOiBzd2l0Y2hpbmcgdG8gY29sb3VyIGR1bW15IGRldmljZSA4MHgyNQ0KPiA+IFsgICAg
-NC42NjczNzJdIFtkcm1dIFN1cHBvcnRzIHZibGFuayB0aW1lc3RhbXAgY2FjaGluZyBSZXYgMg0K
-PiA+ICgyMS4xMC4yMDEzKS4NCj4gPiBbICAgIDQuNjY3Mzc5XSBbZHJtXSBEcml2ZXIgc3VwcG9y
-dHMgcHJlY2lzZSB2YmxhbmsgdGltZXN0YW1wDQo+ID4gcXVlcnkuDQo+ID4gWyAgICA0LjY2Nzc0
-M10gaTkxNSAwMDAwOjAwOjAyLjA6IHZnYWFyYjogY2hhbmdlZCBWR0EgZGVjb2RlczoNCj4gPiBv
-bGRkZWNvZGVzPWlvK21lbSxkZWNvZGVzPWlvK21lbTpvd25zPWlvK21lbQ0KPiA+IFsgICAgNC42
-ODIzNTVdIC0tLS0tLS0tLS0tLVsgY3V0IGhlcmUgXS0tLS0tLS0tLS0tLQ0KPiA+IFsgICAgNC42
-ODIzODldIFdBUk5JTkc6IENQVTogMyBQSUQ6IDQ1OSBhdA0KPiA+IGRyaXZlcnMvZ3B1L2RybS9k
-cm1fYXRvbWljLmM6Mjk2DQo+ID4gZHJtX2F0b21pY19nZXRfY3J0Y19zdGF0ZSsweGY4LzB4MTEw
-IFtkcm1dDQo+ID4gWyAgICA0LjY4MjM5NF0gTW9kdWxlcyBsaW5rZWQgaW46IGlUQ09fd2R0IGlU
-Q09fdmVuZG9yX3N1cHBvcnQNCj4gPiBubHNfaXNvODg1OV8xIHNuZF9oZGFfY29kZWNfcmVhbHRl
-ayBpOTE1KCspIGZ1c2UgbmxzX2NwNDM3DQo+ID4gc25kX2hkYV9jb2RlY19nZW5lcmljIHZmYXQg
-ZmF0IGl3bHdpZmkgdXZjdmlkZW8gbGVkdHJpZ19hdWRpbw0KPiA+IGFlc25pX2ludGVsKCspIGRy
-bV9rbXNfaGVscGVyIHZpZGVvYnVmMl92bWFsbG9jIGNyeXB0b19zaW1kDQo+ID4gc25kX2hkYV9p
-bnRlbCB2aWRlb2J1ZjJfbWVtb3BzIGNlYyBzbmRfaW50ZWxfZHNwY2ZnIHJjX2NvcmUNCj4gPiB2
-aWRlb2J1ZjJfdjRsMiBjcnlwdGQgc25kX2hkYV9jb2RlYyBnbHVlX2hlbHBlciB2aWRlb2J1ZjJf
-Y29tbW9uDQo+ID4gY2ZnODAyMTEgZHJtIHBjc3BrciB2aWRlb2RldiBzbmRfaGRhX2NvcmUgd21p
-X2Jtb2Ygc25kX2h3ZGVwDQo+ID4gc25kX3BjbQ0KPiA+IHRvc2hpYmFfYWNwaSBtYyBlMTAwMGUg
-c25kX3RpbWVyIHNwYXJzZV9rZXltYXAgZmJfc3lzX2ZvcHMNCj4gPiBzeXNjb3B5YXJlYQ0KPiA+
-IHN5c2ZpbGxyZWN0IGluZHVzdHJpYWxpbyBscGNfaWNoIHNuZCBzeXNpbWdibHQgaTJjX2FsZ29f
-Yml0DQo+ID4gdG9zaGliYV9ibHVldG9vdGggc291bmRjb3JlIHRoZXJtYWwgcmZraWxsIGludGVs
-X3NtYXJ0Y29ubmVjdCBhYw0KPiA+IGJ1dHRvbg0KPiA+IHhmcyBsaWJjcmMzMmMgeGhjaV9wY2kg
-eGhjaV9oY2QgcnRzeF9wY2lfc2RtbWMgbW1jX2NvcmUgZWhjaV9wY2kNCj4gPiBlaGNpX2hjZCB1
-c2Jjb3JlIGNyYzMyY19pbnRlbCBydHN4X3BjaSBzZXJpb19yYXcgYmF0dGVyeSB3bWkgdmlkZW8N
-Cj4gPiBsMnRwX3BwcCBsMnRwX25ldGxpbmsgbDJ0cF9jb3JlIGlwNl91ZHBfdHVubmVsIHVkcF90
-dW5uZWwgcHBwb3ggc2cNCj4gPiBwcHBfbXBwZSBwcHBfZ2VuZXJpYyBzbGhjIGxpYmFyYzQgZG1f
-bXVsdGlwYXRoIGRtX21vZCBzY3NpX2RoX3JkYWMNCj4gPiBzY3NpX2RoX2VtYyBzY3NpX2RoX2Fs
-dWENCj4gPiBbICAgIDQuNjgyNDU1XSBDUFU6IDMgUElEOiA0NTkgQ29tbTogc3lzdGVtZC11ZGV2
-ZCBOb3QgdGFpbnRlZA0KPiA+IDUuNi4wLXJjMi0xLmczMjdhYmM5LWRlZmF1bHQgIzEgb3BlblNV
-U0UgVHVtYmxld2VlZCAodW5yZWxlYXNlZCkNCj4gPiBbICAgIDQuNjgyNDYwXSBIYXJkd2FyZSBu
-YW1lOiBUT1NISUJBIFBPUlRFR0UgWjMwLUEvUE9SVEVHRSBaMzAtQSwNCj4gPiBCSU9TDQo+ID4g
-VmVyc2lvbiA0LjMwICAgMDQvMjYvMjAxOA0KPiA+IFsgICAgNC42ODI0ODZdIFJJUDogMDAxMDpk
-cm1fYXRvbWljX2dldF9jcnRjX3N0YXRlKzB4ZjgvMHgxMTAgW2RybV0NCj4gPiBbICAgIDQuNjgy
-NDkwXSBDb2RlOiA4OSAyYyAxMSA0OCA4OSA5OCBmMCAwMSAwMCAwMCA0OCA4YiA0ZCAyMCA4Yg0K
-PiA+IDU1IDYwDQo+ID4gZTggMmMgYWEgMDAgMDAgNDggOGIgMDQgMjQgNDggODMgYzQgMDggNWIg
-NWQgNDEgNWMgYzMgNDggOTggZTkgNGUNCj4gPiBmZiBmZg0KPiA+IGZmIDwwZj4gMGIgZTkgMjgg
-ZmYgZmYgZmYgNDggYzcgYzAgZjQgZmYgZmYgZmYgZTkgM2IgZmYgZmYgZmYgMGYgMWYNCj4gPiA0
-NA0KPiA+IFsgICAgNC42ODI0OTddIFJTUDogMDAwMDpmZmZmYWE1YmMwNDMzOGE4IEVGTEFHUzog
-MDAwMTAyNDYNCj4gPiBbICAgIDQuNjgyNTAwXSBSQVg6IDAwMDAwMDAwMDAwMDAwMDAgUkJYOiBm
-ZmZmOWM5Nzg2MmMxMDAwIFJDWDoNCj4gPiBmZmZmOWM5NzkxMDFlZDA4DQo+ID4gWyAgICA0LjY4
-MjUwNF0gUkRYOiAwMDAwMDAwMDAwMDAwMDJkIFJTSTogMDAwMDAwMDAwMDAwMDAwMCBSREk6DQo+
-ID4gZmZmZjljOTc4NjJjMTAwMA0KPiA+IFsgICAgNC42ODI1MDddIFJCUDogZmZmZjljOTc4NjJj
-NzgwMCBSMDg6IDAwMDAwMDAwMDAwMDAwNzkgUjA5Og0KPiA+IDAwMDAwMDAwMDAwMDAwNzkNCj4g
-PiBbICAgIDQuNjgyNTEwXSBSMTA6IDAwMDAwMDAwMDAwMDAwMmQgUjExOiAwMDAwMDAwMDAwMDAw
-MDA1IFIxMjoNCj4gPiAwMDAwMDAwMDAwMDAwMDAwDQo+ID4gWyAgICA0LjY4MjUxM10gUjEzOiBm
-ZmZmOWM5Nzg2MmM3ODAwIFIxNDogZmZmZjljOTc4NjJjMDgwMCBSMTU6DQo+ID4gZmZmZmZmZmZj
-MGVlMGY4MA0KPiA+IFsgICAgNC42ODI1MTddIEZTOiAgMDAwMDdmNjVkMmM5MmRjMCgwMDAwKQ0K
-PiA+IEdTOmZmZmY5Yzk3OTJlYzAwMDAoMDAwMCkNCj4gPiBrbmxHUzowMDAwMDAwMDAwMDAwMDAw
-DQo+ID4gWyAgICA0LjY4MjUyMV0gQ1M6ICAwMDEwIERTOiAwMDAwIEVTOiAwMDAwIENSMDogMDAw
-MDAwMDA4MDA1MDAzMw0KPiA+IFsgICAgNC42ODI1MjRdIENSMjogMDAwMDdmMDE2ZDI1YjYxMCBD
-UjM6IDAwMDAwMDAzMGY2MzQwMDQgQ1I0Og0KPiA+IDAwMDAwMDAwMDAxNjA2ZTANCj4gPiBbICAg
-IDQuNjgyNTI3XSBDYWxsIFRyYWNlOg0KPiA+IFsgICAgNC42ODI1NTFdICBkcm1fYXRvbWljX2Fk
-ZF9hZmZlY3RlZF9jb25uZWN0b3JzKzB4MmUvMHgxMTAgW2RybV0NCj4gPiBbICAgIDQuNjgyNTY5
-XSAgZHJtX2F0b21pY19oZWxwZXJfY2hlY2tfbW9kZXNldCsweDQ5Mi8weDc3MA0KPiA+IFtkcm1f
-a21zX2hlbHBlcl0NCj4gPiBbICAgIDQuNjgyNjQxXSAgaW50ZWxfYXRvbWljX2NoZWNrKzB4OTMv
-MHhjYzAgW2k5MTVdDQo+ID4gWyAgICA0LjY4MjY1N10gID8gZHJtX2F0b21pY19oZWxwZXJfZHVw
-bGljYXRlX3N0YXRlKzB4MTQ4LzB4MTcwDQo+ID4gW2RybV9rbXNfaGVscGVyXQ0KPiA+IFsgICAg
-NC42ODI3MjNdICBpbnRlbF9tb2Rlc2V0X2luaXQrMHhlNTUvMHgxMTgwIFtpOTE1XQ0KPiA+IFsg
-ICAgNC42ODI3NzddICBpOTE1X2RyaXZlcl9wcm9iZSsweDQ4ZS8weDU4MCBbaTkxNV0NCj4gPiBb
-ICAgIDQuNjgyNzg0XSAgPyBfY29uZF9yZXNjaGVkKzB4MTUvMHgzMA0KPiA+IFsgICAgNC42ODI3
-ODhdICA/IG11dGV4X2xvY2srMHhlLzB4MzANCj4gPiBbICAgIDQuNjgyODM5XSAgaTkxNV9wY2lf
-cHJvYmUrMHg1NC8weDE0MCBbaTkxNV0NCj4gPiBbICAgIDQuNjgyODQ1XSAgbG9jYWxfcGNpX3By
-b2JlKzB4NDIvMHg4MA0KPiA+IFsgICAgNC42ODI4NTFdICBwY2lfZGV2aWNlX3Byb2JlKzB4MTA3
-LzB4MWIwDQo+ID4gWyAgICA0LjY4Mjg1Nl0gIHJlYWxseV9wcm9iZSsweDE0Ny8weDNjMA0KPiA+
-IFsgICAgNC42ODI4NjBdICBkcml2ZXJfcHJvYmVfZGV2aWNlKzB4YjYvMHgxMDANCj4gPiBbICAg
-IDQuNjgyODY0XSAgZGV2aWNlX2RyaXZlcl9hdHRhY2grMHg1My8weDYwDQo+ID4gWyAgICA0LjY4
-Mjg2N10gIF9fZHJpdmVyX2F0dGFjaCsweDhhLzB4MTUwDQo+ID4gWyAgICA0LjY4Mjg3MF0gID8g
-ZGV2aWNlX2RyaXZlcl9hdHRhY2grMHg2MC8weDYwDQo+ID4gWyAgICA0LjY4Mjg3NF0gID8gZGV2
-aWNlX2RyaXZlcl9hdHRhY2grMHg2MC8weDYwDQo+ID4gWyAgICA0LjY4Mjg3OF0gIGJ1c19mb3Jf
-ZWFjaF9kZXYrMHg3OC8weGMwDQo+ID4gWyAgICA0LjY4Mjg4M10gIGJ1c19hZGRfZHJpdmVyKzB4
-MTRkLzB4MWYwDQo+ID4gWyAgICA0LjY4Mjg4N10gIGRyaXZlcl9yZWdpc3RlcisweDZjLzB4YzAN
-Cj4gPiBbICAgIDQuNjgyODkxXSAgPyAweGZmZmZmZmZmYzBmZjUwMDANCj4gPiBbICAgIDQuNjgy
-OTQ2XSAgaTkxNV9pbml0KzB4NWQvMHg3MCBbaTkxNV0NCj4gPiBbICAgIDQuNjgyOTUyXSAgZG9f
-b25lX2luaXRjYWxsKzB4NDYvMHgyMDANCj4gPiBbICAgIDQuNjgyOTU3XSAgPyBfY29uZF9yZXNj
-aGVkKzB4MTUvMHgzMA0KPiA+IFsgICAgNC42ODI5NjFdICA/IGttZW1fY2FjaGVfYWxsb2NfdHJh
-Y2UrMHgxODkvMHgyODANCj4gPiBbICAgIDQuNjgyOTY2XSAgPyBkb19pbml0X21vZHVsZSsweDIz
-LzB4MjMwDQo+ID4gWyAgICA0LjY4Mjk3MF0gIGRvX2luaXRfbW9kdWxlKzB4NWMvMHgyMzANCj4g
-PiBbICAgIDQuNjgyOTczXSAgbG9hZF9tb2R1bGUrMHgxNGIyLzB4MTY1MA0KPiA+IFsgICAgNC42
-ODI5ODBdICA/IF9fZG9fc3lzX2luaXRfbW9kdWxlKzB4MTZlLzB4MWEwDQo+ID4gWyAgICA0LjY4
-Mjk4M10gIF9fZG9fc3lzX2luaXRfbW9kdWxlKzB4MTZlLzB4MWEwDQo+ID4gWyAgICA0LjY4Mjk4
-OV0gIGRvX3N5c2NhbGxfNjQrMHg2NC8weDI0MA0KPiA+IFsgICAgNC42ODI5OTRdICBlbnRyeV9T
-WVNDQUxMXzY0X2FmdGVyX2h3ZnJhbWUrMHg0OS8weGJlDQo+ID4gWyAgICA0LjY4Mjk5OF0gUklQ
-OiAwMDMzOjB4N2Y2NWQzOGE5ZDlhDQo+ID4gWyAgICA0LjY4MzAwMV0gQ29kZTogNDggOGIgMGQg
-ZTkgMDAgMGMgMDAgZjcgZDggNjQgODkgMDEgNDggODMgYzgNCj4gPiBmZiBjMw0KPiA+IDY2IDJl
-IDBmIDFmIDg0IDAwIDAwIDAwIDAwIDAwIDBmIDFmIDQ0IDAwIDAwIDQ5IDg5IGNhIGI4IGFmIDAw
-IDAwDQo+ID4gMDAgMGYNCj4gPiAwNSA8NDg+IDNkIDAxIGYwIGZmIGZmIDczIDAxIGMzIDQ4IDhi
-IDBkIGI2IDAwIDBjIDAwIGY3IGQ4IDY0IDg5IDAxDQo+ID4gNDgNCj4gPiBbICAgIDQuNjgzMDA3
-XSBSU1A6IDAwMmI6MDAwMDdmZmZhZTM0MTAwOCBFRkxBR1M6IDAwMDAwMjQ2DQo+ID4gT1JJR19S
-QVg6DQo+ID4gMDAwMDAwMDAwMDAwMDBhZg0KPiA+IFsgICAgNC42ODMwMTJdIFJBWDogZmZmZmZm
-ZmZmZmZmZmZkYSBSQlg6IDAwMDA1NjNjMWQ0Y2I5MzAgUkNYOg0KPiA+IDAwMDA3ZjY1ZDM4YTlk
-OWENCj4gPiBbICAgIDQuNjgzMDE1XSBSRFg6IDAwMDA3ZjY1ZDM1NjY4OWQgUlNJOiAwMDAwMDAw
-MDAwNGJkZGU3IFJESToNCj4gPiAwMDAwN2Y2NWNkNjBjMDEwDQo+ID4gWyAgICA0LjY4MzAxOF0g
-UkJQOiAwMDAwN2Y2NWNkNjBjMDEwIFIwODogMDAwMDAwMDAwMDAwMDAwMCBSMDk6DQo+ID4gMDAw
-MDdmNjVkMzI2NDllMA0KPiA+IFsgICAgNC42ODMwMjJdIFIxMDogMDAwMDAwMDAwMDAwMDAwMSBS
-MTE6IDAwMDAwMDAwMDAwMDAyNDYgUjEyOg0KPiA+IDAwMDA3ZjY1ZDM1NjY4OWQNCj4gPiBbICAg
-IDQuNjgzMDI1XSBSMTM6IDAwMDAwMDAwMDAwMDAwMDAgUjE0OiAwMDAwNTYzYzFkMjJmMGMwIFIx
-NToNCj4gPiAwMDAwNTYzYzFkNGNiOTMwDQo+ID4gWyAgICA0LjY4MzAzMF0gLS0tWyBlbmQgdHJh
-Y2UgMmI1NjlhODg3OGNkNWI5OSBdLS0tDQo+ID4gDQo+ID4gDQo+ID4gDQo+ID4gLS0NCj4gPiBT
-cmRhxI1hbiBwb3pkcmF2L0Jlc3QgcmVnYXJkcy9GcmV1bmRsaWNoZSBHcsO8w59lL0NvcmRpYWxl
-bWVudA0KPiA+IFNpbmnFoWEgQmFuZGluDQo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fDQo+IEludGVsLWdmeCBtYWlsaW5nIGxpc3QNCj4gSW50ZWwtZ2Z4
-QGxpc3RzLmZyZWVkZXNrdG9wLm9yZw0KPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
-YWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeA0K
+On Thu, 2020-02-20 at 16:21 -0800, Andrew Morton wrote:
+> On Thu, 20 Feb 2020 12:30:21 -0800 Joe Perches <joe@perches.com> wrote:
+> 
+> > Convert /* fallthrough */ style comments to the pseudo-keyword fallthrough
+> > to allow clang 10 and higher to work at finding missing fallthroughs too.
+> > 
+> > Requires a git repository and overwrites the input files.
+> > 
+> > Typical command use:
+> >     ./scripts/cvt_fallthrough.pl <path|file>
+> > 
+> > i.e.:
+> > 
+> >    $ ./scripts/cvt_fallthrough.pl block
+> >      converts all files in block and its subdirectories
+> >    $ ./scripts/cvt_fallthrough.pl drivers/net/wireless/zydas/zd1201.c
+> >      converts a single file
+> > 
+> > A fallthrough comment with additional comments is converted akin to:
+> > 
+> > -		/* fall through - maybe userspace knows this conn_id. */
+> > +		fallthrough;    /* maybe userspace knows this conn_id */
+> > 
+> > A fallthrough comment or fallthrough; between successive case statements
+> > is deleted.
+> > 
+> > e.g.:
+> > 
+> >     case FOO:
+> >     	/* fallthrough */ (or fallthrough;)
+> >     case BAR:
+> > 
+> > is converted to:
+> > 
+> >     case FOO:
+> >     case BAR:
+> > 
+> > Signed-off-by: Joe Perches <joe@perches.com>
+> > ---
+> >  scripts/cvt_fallthrough.pl | 215 +++++++++++++++++++++++++++++++++++++
+> 
+> Do we need this in the tree long-term?
+
+Out-of-tree scripts aren't used by trivial patch submitters.
+
+So no, not really.  I think it's a 'good to have, short term'
+script useful until at least most all of the conversions occur.
+
+And I think having multiple concurrent styles for fallthrough
+isn't great.
+
+And I don't have the patience of someone like Gustavo Silva to
+painstakin
+gly shepherd hundreds of little patches either.
+(thanks Gustavo, good
+work...)
+
+And it would be nice though to have some mechanism to get
+scripted patches applied, either by subsystem or treewide.
+
+> Or is it a matters of "hey
+> Linus, please run this" then something like add a checkpatch rule to
+> catch future slipups?
+
+The checkpatch rule was added a week ago.
+https://lore.kernel.org/lkml/8b6c1b9031ab9f3cdebada06b8d46467f1492d68.camel@perches.com/
+
+Adding a --fix option wouldn't work as well as this script
+to do conversions as the script is moderately complicated.
+
+It does seem a treewide conversion like this could have a
+small impact on stable trees, so any conversion should
+probably be done by subsystem.
+
+Anyway, the script does a pretty reasonable job at
+conversions of the various styles of fallthrough comments.
+
+Though there are some conversion that are not done when a
+/* fallthrough */ comment is followed by another comment
+before another case like:
+
+	case FOO:
+		/* fall through */
+		/* another comment */
+	case BAR:
+
+Anyway, using today's -next, a treewide diffstat is:
+
+$ git diff --shortstat
+ 1861 files changed, 4113 insertions(+), 4762 deletions(-)
+
+And these are the most common conversions:
+
+   2278 /* fall through */
+    441 /* Fall through */
+    253 /* fallthrough */
+    164 /* FALLTHROUGH */
+    116 /* fall-through */
+     84 /* Fallthrough */
+     33 /* FALL THROUGH */
+     31 /* Fall through */				\
+     27 /* FALLTHRU */
+     24 /*FALLTHRU*/
+     24 /* fallthru */
+     19 /* fall thru */
+     19 /* Fall Through */
+     19 /* Fall-through */
+     16 /* Else, fall through */
+     15 /* fall-thru */
+     13 /* Intentional fallthrough */
+     13 /*FALLTHROUGH*/
+     12 /* Fall thru */
+     12 /* else, fall through */
+     10 /*lint -fallthrough */
+      9 /* Fall through. */
+      9 }	/* fallthrough */
+      8 /*fall through*/
+
+
