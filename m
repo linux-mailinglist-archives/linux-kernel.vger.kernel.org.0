@@ -2,107 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67BC81684CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 18:22:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05AE31684DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 18:26:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728393AbgBURWV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 12:22:21 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:60209 "EHLO
+        id S1728289AbgBUR0I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 12:26:08 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:52550 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725957AbgBURWV (ORCPT
+        with ESMTP id S1725957AbgBUR0I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 12:22:21 -0500
+        Fri, 21 Feb 2020 12:26:08 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582305740;
+        s=mimecast20190719; t=1582305966;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Bcpyz6Uxa5gpVE2jBpBWG5lNqmVXOPAXzpEnMnIkWFk=;
-        b=eQK1eZ1SeNLku1kngH9eibpkU4lDt5SsDK2eTBjAZwAxfkjqDH3QVOdM8fXKl4aBXZKGJp
-        33DAW4ueIuYzx8IVu+svII4VZt6xfC9U8l2nV86izRYNCZEkegwgY56yVvc4N29F+6uWbh
-        rz9TfYkrcXVN9OWasyI/oDpPwJlcV4U=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-141-gcmbGllcPYSksIPZNSkGUg-1; Fri, 21 Feb 2020 12:22:16 -0500
-X-MC-Unique: gcmbGllcPYSksIPZNSkGUg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2DE4A18A5500;
-        Fri, 21 Feb 2020 17:22:15 +0000 (UTC)
-Received: from x1.localdomain.com (ovpn-116-191.ams2.redhat.com [10.36.116.191])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4183F5D9E2;
-        Fri, 21 Feb 2020 17:22:13 +0000 (UTC)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>, x86@kernel.org,
+        bh=aa4zbJiGMg7M3QmslZBzxRFUBeWyQYNCsrPB0JpL0lk=;
+        b=hbuVidS3w7hRzltx2PkWfU+hahbVtWzivyW0GnyT59LaWakUBenTj1sg9udXHNJrfgjzUy
+        cYTU/e8SsZ9uZ6c97CpgH4MUaoVQRdTkxKeQTJXBolNX8lXqFS+1uTtqi9eusLEi5GG7px
+        lGUjjHTGKtpNxyWHHVtnwaSEhWEwZtE=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-392-Jvo9SbKJMbay7ehJ8Wco6w-1; Fri, 21 Feb 2020 12:26:04 -0500
+X-MC-Unique: Jvo9SbKJMbay7ehJ8Wco6w-1
+Received: by mail-wm1-f71.google.com with SMTP id f66so847561wmf.9
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 09:26:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=aa4zbJiGMg7M3QmslZBzxRFUBeWyQYNCsrPB0JpL0lk=;
+        b=TdmGpxZo/sWkkMwWRDaydVovblofeBQ3SMAk6IztPgINi/FgifXR/NNmTP7wsfoTQ/
+         +OhCQp7smvPPX/iWxepyGZ7oi19z2HaJX4HyNAAN+pbELQF89PCJ7zrMcUUu0f1AkN//
+         EfPnShUyNLU36n0my0Fg7hrt5c5EKigtMPtPcJ0nXoYKKN9eF9cPtnMtjpn5CjhKtGD1
+         BOuHPpeEbvact3etdhCPfxybP/709tGxsB8iGYoBRaig2FHfQTrT5/Hm9DIOmgOjFH5F
+         P4CIZPqF5GMiV+NcrJXTL8bwei6je48i9EOXvvaShSUpLM+SHLTEIFFw4ZXkM11BvdeK
+         WVaQ==
+X-Gm-Message-State: APjAAAVyLq9pErIp/L9SgQrHlYk7/lk6XpP89U4oVjdHxlBfncjEGkOp
+        fzmXl5WYCafe9ZYVaylzMXpq/hqwJTdIgsExFEDnbkOhD2sONfvkzxql0qhmYOpXKizsMjJbz+C
+        yvAHajoYfjJgFPxscJ6iiMuLU
+X-Received: by 2002:adf:f8c8:: with SMTP id f8mr49551484wrq.331.1582305963517;
+        Fri, 21 Feb 2020 09:26:03 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzfBUjuDSSdiZSSO9suK49MMgtyvOMcRngBUhZB6jOyM+FsBg+E+dvkna0uZ8vrz9sbtbKk5g==
+X-Received: by 2002:adf:f8c8:: with SMTP id f8mr49551468wrq.331.1582305963261;
+        Fri, 21 Feb 2020 09:26:03 -0800 (PST)
+Received: from [192.168.178.40] ([151.20.135.128])
+        by smtp.gmail.com with ESMTPSA id q124sm10395988wme.2.2020.02.21.09.26.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2020 09:26:02 -0800 (PST)
+Subject: Re: [PATCH 01/10] KVM: VMX: Use vpid_sync_context() directly when
+ possible
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH resend] drm: Add DRM_MODE_TYPE_USERDEF flag to probed modes matching a video= argument
-Date:   Fri, 21 Feb 2020 18:22:09 +0100
-Message-Id: <20200221172209.509686-2-hdegoede@redhat.com>
-In-Reply-To: <20200221172209.509686-1-hdegoede@redhat.com>
-References: <20200221172209.509686-1-hdegoede@redhat.com>
+References: <20200220204356.8837-1-sean.j.christopherson@intel.com>
+ <20200220204356.8837-2-sean.j.christopherson@intel.com>
+ <878skwt6yt.fsf@vitty.brq.redhat.com>
+ <20200221153619.GE12665@linux.intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <24835177-ecab-8b84-d31b-e6f93df544ef@redhat.com>
+Date:   Fri, 21 Feb 2020 18:26:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200221153619.GE12665@linux.intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-drm_helper_probe_add_cmdline_mode() prefers using a probed mode matching
-a video=3D argument over calculating our own timings for the user specifi=
-ed
-mode using CVT or GTF.
+On 21/02/20 16:36, Sean Christopherson wrote:
+>>>  				vmx->nested.last_vpid = vmcs12->virtual_processor_id;
+>>> -				__vmx_flush_tlb(vcpu, nested_get_vpid02(vcpu), false);
+>>> +				vpid_sync_context(nested_get_vpid02(vcpu));
+>>>  			}
+>>>  		} else {
+>>>  			/*
+>>> @@ -5154,17 +5154,17 @@ static int handle_invvpid(struct kvm_vcpu *vcpu)
+>>>  			__invvpid(VMX_VPID_EXTENT_INDIVIDUAL_ADDR,
+>>>  				vpid02, operand.gla);
+>>>  		} else
+>>> -			__vmx_flush_tlb(vcpu, vpid02, false);
+>>> +			vpid_sync_context(vpid02);
+>> This is a pre-existing condition but coding style requires braces even
+>> for single statements when they were used in another branch.
+> I'll fix this in v2.
+> 
 
-But userspace code which is auto-configuring the mode may want to know th=
-at
-the user has specified that mode on the kernel commandline so that it can
-pick that mode over the mode which is marked as DRM_MODE_TYPE_PREFERRED.
+Can also remove the braces from the "then" branch.
 
-This commit sets the DRM_MODE_TYPE_USERDEF flag on the matching mode, jus=
-t
-as we would do on the user-specified mode when no matching probed mode is
-found.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/gpu/drm/drm_probe_helper.c | 2 ++
- include/drm/drm_modes.h            | 3 ++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/drm_probe_helper.c b/drivers/gpu/drm/drm_pro=
-be_helper.c
-index 576b4b7dcd89..466dfbba8256 100644
---- a/drivers/gpu/drm/drm_probe_helper.c
-+++ b/drivers/gpu/drm/drm_probe_helper.c
-@@ -159,6 +159,8 @@ static int drm_helper_probe_add_cmdline_mode(struct d=
-rm_connector *connector)
- 				continue;
- 		}
-=20
-+		/* Mark the matching mode as being preferred by the user */
-+		mode->type |=3D DRM_MODE_TYPE_USERDEF;
- 		return 0;
- 	}
-=20
-diff --git a/include/drm/drm_modes.h b/include/drm/drm_modes.h
-index e946e20c61d8..c7efb7487e9b 100644
---- a/include/drm/drm_modes.h
-+++ b/include/drm/drm_modes.h
-@@ -256,7 +256,8 @@ struct drm_display_mode {
- 	 *  - DRM_MODE_TYPE_DRIVER: Mode created by the driver, which is all of
- 	 *    them really. Drivers must set this bit for all modes they create
- 	 *    and expose to userspace.
--	 *  - DRM_MODE_TYPE_USERDEF: Mode defined via kernel command line
-+	 *  - DRM_MODE_TYPE_USERDEF: Mode defined or selected via the kernel
-+	 *    command line.
- 	 *
- 	 * Plus a big list of flags which shouldn't be used at all, but are
- 	 * still around since these flags are also used in the userspace ABI.
---=20
-2.25.0
+Paolo
 
