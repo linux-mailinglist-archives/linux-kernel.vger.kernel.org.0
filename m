@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F74F16761F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:37:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 800571677B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:44:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732245AbgBUIIs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:08:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43328 "EHLO mail.kernel.org"
+        id S1731727AbgBUInE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:43:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732082AbgBUIIn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:08:43 -0500
+        id S1730005AbgBUHyK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:54:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F71D20722;
-        Fri, 21 Feb 2020 08:08:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 322E220578;
+        Fri, 21 Feb 2020 07:54:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272522;
-        bh=y3cLW9E43Gt6K/m046jOyePIA/a7L/iQ/HgdNX4WiRg=;
+        s=default; t=1582271649;
+        bh=+0812Eg5+LNOtMVydZcCyoOxN83vHjF8PnFw8dcCjhE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lRyrWOv427mRO8Jq1Rf10xd/NmRkaWJvsK+qRxUE2rBuPZm1Yj9rNY19EVjYBvYxt
-         N8F7Rg86kju0doWq9pZhqFE26SHlrszlF02lDiEKk0gqIzd0PtXb4+Jst1x0su8U7o
-         lTEqbUlpozH1x3bVAZHbuH7bHMPsuA4speqoA85s=
+        b=Z7j86t5LnsKrVbdUsBm0HndEtH3Ko0hvJPqAMWHW/Qp/NOM4u1ZOABTph1bbFBDzt
+         GCc2LRwfmhvw8bybV5ckXtBBlRofi9qj5b/On1shNfifFnIcTFC4FkRCUtyfkl8PHp
+         F4CoiFBHd6P1w9NWzIIHVB/9KHsuz/dUtTSzs/JA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Maxime Ripard <maxime@cerno.tech>,
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 173/344] clk: sunxi-ng: add mux and pll notifiers for A64 CPU clock
+Subject: [PATCH 5.5 247/399] bus: fsl-mc: properly empty-initialize structure
 Date:   Fri, 21 Feb 2020 08:39:32 +0100
-Message-Id: <20200221072404.662321653@linuxfoundation.org>
+Message-Id: <20200221072426.464236212@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
+References: <20200221072402.315346745@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,77 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Icenowy Zheng <icenowy@aosc.io>
+From: Ioana Ciornei <ioana.ciornei@nxp.com>
 
-[ Upstream commit ec97faff743b398e21f74a54c81333f3390093aa ]
+[ Upstream commit cff081ea9d0962defd733daf6778f62b1dac3daa ]
 
-The A64 PLL_CPU clock has the same instability if some factor changed
-without the PLL gated like other SoCs with sun6i-style CCU, e.g. A33,
-H3.
+Use the proper form of the empty initializer when working with
+structures that contain an array. Otherwise, older gcc versions (eg gcc
+4.9) will complain about this.
 
-Add the mux and pll notifiers for A64 CPU clock to workaround the
-problem.
-
-Fixes: c6a0637460c2 ("clk: sunxi-ng: Add A64 clocks")
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Fixes: 1ac210d128ef ("bus: fsl-mc: add the fsl_mc_get_endpoint function")
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+Acked-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Link: https://lore.kernel.org/r/20191204142950.30206-1-ioana.ciornei@nxp.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 28 ++++++++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
+ drivers/bus/fsl-mc/fsl-mc-bus.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-index 49bd7a4c015c4..5f66bf8797723 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-@@ -921,11 +921,26 @@ static const struct sunxi_ccu_desc sun50i_a64_ccu_desc = {
- 	.num_resets	= ARRAY_SIZE(sun50i_a64_ccu_resets),
- };
- 
-+static struct ccu_pll_nb sun50i_a64_pll_cpu_nb = {
-+	.common	= &pll_cpux_clk.common,
-+	/* copy from pll_cpux_clk */
-+	.enable	= BIT(31),
-+	.lock	= BIT(28),
-+};
-+
-+static struct ccu_mux_nb sun50i_a64_cpu_nb = {
-+	.common		= &cpux_clk.common,
-+	.cm		= &cpux_clk.mux,
-+	.delay_us	= 1, /* > 8 clock cycles at 24 MHz */
-+	.bypass_index	= 1, /* index of 24 MHz oscillator */
-+};
-+
- static int sun50i_a64_ccu_probe(struct platform_device *pdev)
+diff --git a/drivers/bus/fsl-mc/fsl-mc-bus.c b/drivers/bus/fsl-mc/fsl-mc-bus.c
+index a07cc19becdba..c78d10ea641fb 100644
+--- a/drivers/bus/fsl-mc/fsl-mc-bus.c
++++ b/drivers/bus/fsl-mc/fsl-mc-bus.c
+@@ -715,9 +715,9 @@ EXPORT_SYMBOL_GPL(fsl_mc_device_remove);
+ struct fsl_mc_device *fsl_mc_get_endpoint(struct fsl_mc_device *mc_dev)
  {
- 	struct resource *res;
- 	void __iomem *reg;
- 	u32 val;
-+	int ret;
+ 	struct fsl_mc_device *mc_bus_dev, *endpoint;
+-	struct fsl_mc_obj_desc endpoint_desc = { 0 };
+-	struct dprc_endpoint endpoint1 = { 0 };
+-	struct dprc_endpoint endpoint2 = { 0 };
++	struct fsl_mc_obj_desc endpoint_desc = {{ 0 }};
++	struct dprc_endpoint endpoint1 = {{ 0 }};
++	struct dprc_endpoint endpoint2 = {{ 0 }};
+ 	int state, err;
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	reg = devm_ioremap_resource(&pdev->dev, res);
-@@ -939,7 +954,18 @@ static int sun50i_a64_ccu_probe(struct platform_device *pdev)
- 
- 	writel(0x515, reg + SUN50I_A64_PLL_MIPI_REG);
- 
--	return sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
-+	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
-+	if (ret)
-+		return ret;
-+
-+	/* Gate then ungate PLL CPU after any rate changes */
-+	ccu_pll_notifier_register(&sun50i_a64_pll_cpu_nb);
-+
-+	/* Reparent CPU during PLL CPU rate changes */
-+	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
-+				  &sun50i_a64_cpu_nb);
-+
-+	return 0;
- }
- 
- static const struct of_device_id sun50i_a64_ccu_ids[] = {
+ 	mc_bus_dev = to_fsl_mc_device(mc_dev->dev.parent);
 -- 
 2.20.1
 
