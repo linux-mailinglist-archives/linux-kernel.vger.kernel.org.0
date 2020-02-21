@@ -2,62 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92E5C16823C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:48:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C35416824A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:49:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729153AbgBUPsr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 10:48:47 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:57331 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728364AbgBUPsr (ORCPT
+        id S1729375AbgBUPtc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 10:49:32 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:43457 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728235AbgBUPtb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 10:48:47 -0500
-Received: from [82.43.126.140] (helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1j5AXi-0002Np-Pl; Fri, 21 Feb 2020 15:48:42 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     James Smart <james.smart@broadcom.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] scsi: lpfc: fix spelling mistake "Notication" -> "Notification"
-Date:   Fri, 21 Feb 2020 15:48:41 +0000
-Message-Id: <20200221154841.77791-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.25.0
+        Fri, 21 Feb 2020 10:49:31 -0500
+Received: by mail-oi1-f193.google.com with SMTP id p125so1976249oif.10
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 07:49:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tZq1kXcTzLYMO34ccHleJXhWtfhzhvYI72RXtYcu7d0=;
+        b=CdmQEUm8JFubqCiKsGRRwXaaEn4qDiBSqM15yM/guhBqxH9V3QOcf/DPFyjJx3SIXM
+         sSKrSthI73C8sGegIXkZRqWATeanB5j2t3Lberqg2CMBchFEPYrStpZ8+fxLyqaeiGG+
+         cQm4GkqXK/TmylwKp39PXCVweb+KMzgJ0aox0FOipONF3hu+eaIDomovULMYNUb5FxVI
+         Cqq7lrK+ojtFa1C2FZjIb7Ff/Uqb9nHpH+g1vs6gebvrESJbMVm73IvPmLooQ91ao5RV
+         ymwGGJagi9SrtWu8R4Abmlj1JTK2CaTlZbXXS007p4Z383xXzfZJn/zrmkIaqZirnaRx
+         bR0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tZq1kXcTzLYMO34ccHleJXhWtfhzhvYI72RXtYcu7d0=;
+        b=P64K+QZnQLauhPTVNohdOAykBFuWzSB3W5jLCcqmpis1RGjIUPDJUmULA0wgMLLm40
+         xB4s2AAYIX52544V5gZZ6xb7l76734CUxdIILlP+ck0/5Qi3hxezlTpgE06MF8u9NZrN
+         u9bp0idt27LK9sFzesrCxCpp+4egV1+EeqH9lmLXypmi9IUYOjYjg+H6WdsjWEG8tqIM
+         LdcjIIP2KwnuKDSplp8q/46X+JdxnbAGkNaDknH1NJ8ygvn8x5tLuU+GKo5PT26Ip4Sn
+         Eq1POY8T+WhCTtVypdpXcHbfEuUyam/EgcCvC8GZdCS3bPqt7jLdblp55IUdEU1AG9we
+         zx7A==
+X-Gm-Message-State: APjAAAUPkR1FZcUh5+rDq70ExDTXu8LTw3Jk1vMZIL6Jp1tFEyzYuqul
+        UMfKmOsIHbULFAQ589JrfvgI0VI3Gjl0IAmHpxT5fg==
+X-Google-Smtp-Source: APXvYqx6oYoFCUHz9LVEwbxSzLX1UA9ybF3b+klYwrM1272ykReKNgP4dv2zTdA7aiz1zUlVmIn0Cga9Tqdx35yo8Ww=
+X-Received: by 2002:aca:d954:: with SMTP id q81mr2492691oig.157.1582300170627;
+ Fri, 21 Feb 2020 07:49:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <158204549488.3299825.3783690177353088425.stgit@warthog.procyon.org.uk>
+ <158204559631.3299825.5358385352169781990.stgit@warthog.procyon.org.uk>
+ <CAG48ez3ZMg4O5US3n=p1CYK-2AAgLRY+pjnUXp2p5hdwbjCRSA@mail.gmail.com> <1808070.1582287889@warthog.procyon.org.uk>
+In-Reply-To: <1808070.1582287889@warthog.procyon.org.uk>
+From:   Jann Horn <jannh@google.com>
+Date:   Fri, 21 Feb 2020 16:49:04 +0100
+Message-ID: <CAG48ez0+_kO_YL6iO9uA+HjjnHRVHVD-bFq0C=ZLeaGtTMss5A@mail.gmail.com>
+Subject: Re: [PATCH 13/19] vfs: Add a mount-notification facility [ver #16]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, Feb 21, 2020 at 1:24 PM David Howells <dhowells@redhat.com> wrote:
+> Jann Horn <jannh@google.com> wrote:
+>
+> > > + * Post mount notifications to all watches going rootwards along the tree.
+> > > + *
+> > > + * Must be called with the mount_lock held.
+> >
+> > Please put such constraints into lockdep assertions instead of
+> > comments; that way, violations can actually be detected.
+>
+> What's the best way to write a lockdep assertion?
+>
+>         BUG_ON(!lockdep_is_held(lock));
 
-There is a spelling mistake in a lpfc_printf_vlog info messgae. Fix it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/lpfc/lpfc_els.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
-index a712f15bc88c..80d1e661b0d4 100644
---- a/drivers/scsi/lpfc/lpfc_els.c
-+++ b/drivers/scsi/lpfc/lpfc_els.c
-@@ -3128,7 +3128,7 @@ lpfc_cmpl_els_disc_cmd(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
- 		for (i = 0; i < ELS_RDF_REG_TAG_CNT &&
- 			    i < be32_to_cpu(prdf->reg_d1.reg_desc.count); i++)
- 			lpfc_printf_vlog(vport, KERN_INFO, LOG_ELS,
--				 "4677 Fabric RDF Notication Grant Data: "
-+				 "4677 Fabric RDF Notification Grant Data: "
- 				 "0x%08x\n",
- 				 be32_to_cpu(
- 					prdf->reg_d1.desc_tags[i]));
--- 
-2.25.0
-
+lockdep_assert_held(lock) is the normal way, I think - that will
+WARN() if lockdep is enabled and the lock is not held.
