@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 220FB16778A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:44:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92B9F167674
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:37:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729924AbgBUHxh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:53:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51832 "EHLO mail.kernel.org"
+        id S1732616AbgBUIfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:35:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729337AbgBUHxd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:53:33 -0500
+        id S1730543AbgBUIIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:08:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61EAD2465D;
-        Fri, 21 Feb 2020 07:53:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B5B620578;
+        Fri, 21 Feb 2020 08:08:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271611;
-        bh=6j1K92uXQHGUNZx44H0eiABCvbiGImXRdsQbp3X8P6A=;
+        s=default; t=1582272486;
+        bh=MMvYnTh/h4R2QL5OTCI5uAa2vYTgJROedZx4TjC11Sw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xn8jmPn1MEhpos4bca0VKzERWXQ/J8fYjte8gDmz/O4+w1BqhLdoTssuMzC9wLoSL
-         YATxcvBIKf45UBUE2vMvhHvzmwZrl1m1u0KpkSyv9jK2v39Cee4q+wmhvQuH/nfpmB
-         +CkKzTZQc8NmgJ2oJW/oqpY1uIKF5Lm2r/M+58Mo=
+        b=z0qFLQvkU5OUyra2SBtAWOAg89V1XyvGTtDicHfyGaSX4lg1b83PKaQdz0lilkggv
+         Sx30QVU60EVZhA5Iqlx2C6k6/H036J/cGg/u9OIvGQ2RRs9VTgPWy1K4b2gS/+sx7P
+         FH2fsafwyHmAMb3QMxnv+j7xOCCces1SW+g2S7Dg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        stable@vger.kernel.org, Hechao Li <hechaol@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 231/399] Input: edt-ft5x06 - work around first register access error
-Date:   Fri, 21 Feb 2020 08:39:16 +0100
-Message-Id: <20200221072425.239736964@linuxfoundation.org>
+Subject: [PATCH 5.4 161/344] bpf: Print error message for bpftool cgroup show
+Date:   Fri, 21 Feb 2020 08:39:20 +0100
+Message-Id: <20200221072403.456352807@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
-References: <20200221072402.315346745@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,53 +44,138 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Philipp Zabel <p.zabel@pengutronix.de>
+From: Hechao Li <hechaol@fb.com>
 
-[ Upstream commit e112324cc0422c046f1cf54c56f333d34fa20885 ]
+[ Upstream commit 1162f844030ac1ac7321b5e8f6c9badc7a11428f ]
 
-The EP0700MLP1 returns bogus data on the first register read access
-(reading the threshold parameter from register 0x00):
+Currently, when bpftool cgroup show <path> has an error, no error
+message is printed. This is confusing because the user may think the
+result is empty.
 
-    edt_ft5x06 2-0038: crc error: 0xfc expected, got 0x40
+Before the change:
 
-It ignores writes until then. This patch adds a dummy read after which
-the number of sensors and parameter read/writes work correctly.
+$ bpftool cgroup show /sys/fs/cgroup
+ID       AttachType      AttachFlags     Name
+$ echo $?
+255
 
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+After the change:
+$ ./bpftool cgroup show /sys/fs/cgroup
+Error: can't query bpf programs attached to /sys/fs/cgroup: Operation
+not permitted
+
+v2: Rename check_query_cgroup_progs to cgroup_has_attached_progs
+
+Signed-off-by: Hechao Li <hechaol@fb.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Link: https://lore.kernel.org/bpf/20191224011742.3714301-1-hechaol@fb.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/touchscreen/edt-ft5x06.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ tools/bpf/bpftool/cgroup.c | 56 ++++++++++++++++++++++++++------------
+ 1 file changed, 39 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
-index d61731c0037d1..b87b1e074f624 100644
---- a/drivers/input/touchscreen/edt-ft5x06.c
-+++ b/drivers/input/touchscreen/edt-ft5x06.c
-@@ -1050,6 +1050,7 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client,
+diff --git a/tools/bpf/bpftool/cgroup.c b/tools/bpf/bpftool/cgroup.c
+index 1ef45e55039e1..2f017caa678dc 100644
+--- a/tools/bpf/bpftool/cgroup.c
++++ b/tools/bpf/bpftool/cgroup.c
+@@ -117,6 +117,25 @@ static int count_attached_bpf_progs(int cgroup_fd, enum bpf_attach_type type)
+ 	return prog_cnt;
+ }
+ 
++static int cgroup_has_attached_progs(int cgroup_fd)
++{
++	enum bpf_attach_type type;
++	bool no_prog = true;
++
++	for (type = 0; type < __MAX_BPF_ATTACH_TYPE; type++) {
++		int count = count_attached_bpf_progs(cgroup_fd, type);
++
++		if (count < 0 && errno != EINVAL)
++			return -1;
++
++		if (count > 0) {
++			no_prog = false;
++			break;
++		}
++	}
++
++	return no_prog ? 0 : 1;
++}
+ static int show_attached_bpf_progs(int cgroup_fd, enum bpf_attach_type type,
+ 				   int level)
  {
- 	const struct edt_i2c_chip_data *chip_data;
- 	struct edt_ft5x06_ts_data *tsdata;
-+	u8 buf[2] = { 0xfc, 0x00 };
- 	struct input_dev *input;
- 	unsigned long irq_flags;
- 	int error;
-@@ -1140,6 +1141,12 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client,
- 		return error;
+@@ -161,6 +180,7 @@ static int show_attached_bpf_progs(int cgroup_fd, enum bpf_attach_type type,
+ static int do_show(int argc, char **argv)
+ {
+ 	enum bpf_attach_type type;
++	int has_attached_progs;
+ 	const char *path;
+ 	int cgroup_fd;
+ 	int ret = -1;
+@@ -192,6 +212,16 @@ static int do_show(int argc, char **argv)
+ 		goto exit;
  	}
  
-+	/*
-+	 * Dummy read access. EP0700MLP1 returns bogus data on the first
-+	 * register read access and ignores writes.
-+	 */
-+	edt_ft5x06_ts_readwrite(tsdata->client, 2, buf, 2, buf);
++	has_attached_progs = cgroup_has_attached_progs(cgroup_fd);
++	if (has_attached_progs < 0) {
++		p_err("can't query bpf programs attached to %s: %s",
++		      path, strerror(errno));
++		goto exit_cgroup;
++	} else if (!has_attached_progs) {
++		ret = 0;
++		goto exit_cgroup;
++	}
 +
- 	edt_ft5x06_ts_set_regs(tsdata);
- 	edt_ft5x06_ts_get_defaults(&client->dev, tsdata);
- 	edt_ft5x06_ts_get_parameters(tsdata);
+ 	if (json_output)
+ 		jsonw_start_array(json_wtr);
+ 	else
+@@ -212,6 +242,7 @@ static int do_show(int argc, char **argv)
+ 	if (json_output)
+ 		jsonw_end_array(json_wtr);
+ 
++exit_cgroup:
+ 	close(cgroup_fd);
+ exit:
+ 	return ret;
+@@ -228,7 +259,7 @@ static int do_show_tree_fn(const char *fpath, const struct stat *sb,
+ 			   int typeflag, struct FTW *ftw)
+ {
+ 	enum bpf_attach_type type;
+-	bool skip = true;
++	int has_attached_progs;
+ 	int cgroup_fd;
+ 
+ 	if (typeflag != FTW_D)
+@@ -240,22 +271,13 @@ static int do_show_tree_fn(const char *fpath, const struct stat *sb,
+ 		return SHOW_TREE_FN_ERR;
+ 	}
+ 
+-	for (type = 0; type < __MAX_BPF_ATTACH_TYPE; type++) {
+-		int count = count_attached_bpf_progs(cgroup_fd, type);
+-
+-		if (count < 0 && errno != EINVAL) {
+-			p_err("can't query bpf programs attached to %s: %s",
+-			      fpath, strerror(errno));
+-			close(cgroup_fd);
+-			return SHOW_TREE_FN_ERR;
+-		}
+-		if (count > 0) {
+-			skip = false;
+-			break;
+-		}
+-	}
+-
+-	if (skip) {
++	has_attached_progs = cgroup_has_attached_progs(cgroup_fd);
++	if (has_attached_progs < 0) {
++		p_err("can't query bpf programs attached to %s: %s",
++		      fpath, strerror(errno));
++		close(cgroup_fd);
++		return SHOW_TREE_FN_ERR;
++	} else if (!has_attached_progs) {
+ 		close(cgroup_fd);
+ 		return 0;
+ 	}
 -- 
 2.20.1
 
