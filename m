@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62EE716736A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:13:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 410191674F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:30:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732794AbgBUIMH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:12:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47776 "EHLO mail.kernel.org"
+        id S2388083AbgBUITy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:19:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58574 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732781AbgBUIMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:12:05 -0500
+        id S2387785AbgBUITt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:19:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5B8D24650;
-        Fri, 21 Feb 2020 08:12:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C54124691;
+        Fri, 21 Feb 2020 08:19:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272725;
-        bh=xFhBmw0OsCRZLZGUfObY3W1rt2hlf52F5D9bNt+4aaA=;
+        s=default; t=1582273189;
+        bh=o3yfZ/jJwJgO7mG0CVWrxOfRI2C8fJSUwc8Kp+NOKCo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WZ8Vy0jPSLxQB25pYiAgwJd7NrUyGln1sr3z//iBmNHoT1NwN7ZUHylm6+slY9UC2
-         dQPaEhtopqRGQg2xvFiGejYDkvmLYg601tA612H0qq2l90YCrRR6HclCdGvOA9gJGo
-         rrmEajlxABHG4lk9bxuSM6O9pE2rkdy1rGM6x7l4=
+        b=YnekADWhefoRRWgbw/W22yyrzh7Cm9nD7OA7GJsebBs9WCsiWHJsuHF0omMSDZ0Ni
+         vDV8HKH2m+abnkkRm88zNs8djO1YSTPl75sKm4zgYH0QxJm37vaJ+F0CGxqg9FmUty
+         /6fP1kZ88Ojf9ElUdqLvDkqalSL97G33clhfTMvc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Li Guanglei <guanglei.li@unisoc.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Qais Yousef <qais.yousef@arm.com>,
+        stable@vger.kernel.org, Phong Tran <tranmanphong@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 250/344] sched/core: Fix size of rq::uclamp initialization
-Date:   Fri, 21 Feb 2020 08:40:49 +0100
-Message-Id: <20200221072412.189178126@linuxfoundation.org>
+Subject: [PATCH 4.19 077/191] iwlegacy: Fix -Wcast-function-type
+Date:   Fri, 21 Feb 2020 08:40:50 +0100
+Message-Id: <20200221072300.518721770@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +45,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Li Guanglei <guanglei.li@unisoc.com>
+From: Phong Tran <tranmanphong@gmail.com>
 
-[ Upstream commit dcd6dffb0a75741471297724640733fa4e958d72 ]
+[ Upstream commit da5e57e8a6a3e69dac2937ba63fa86355628fbb2 ]
 
-rq::uclamp is an array of struct uclamp_rq, make sure we clear the
-whole thing.
+correct usage prototype of callback in tasklet_init().
+Report by https://github.com/KSPP/linux/issues/20
 
-Fixes: 69842cba9ace ("sched/uclamp: Add CPU's clamp buckets refcountinga")
-Signed-off-by: Li Guanglei <guanglei.li@unisoc.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Qais Yousef <qais.yousef@arm.com>
-Link: https://lkml.kernel.org/r/1577259844-12677-1-git-send-email-guangleix.li@gmail.com
+Signed-off-by: Phong Tran <tranmanphong@gmail.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sched/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/intel/iwlegacy/3945-mac.c | 5 +++--
+ drivers/net/wireless/intel/iwlegacy/4965-mac.c | 5 +++--
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index dfaefb175ba05..e6c65725b7ce0 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1252,7 +1252,8 @@ static void __init init_uclamp(void)
- 	mutex_init(&uclamp_mutex);
+diff --git a/drivers/net/wireless/intel/iwlegacy/3945-mac.c b/drivers/net/wireless/intel/iwlegacy/3945-mac.c
+index 57e3b6cca2341..b536ec20eaccb 100644
+--- a/drivers/net/wireless/intel/iwlegacy/3945-mac.c
++++ b/drivers/net/wireless/intel/iwlegacy/3945-mac.c
+@@ -1392,8 +1392,9 @@ il3945_dump_nic_error_log(struct il_priv *il)
+ }
  
- 	for_each_possible_cpu(cpu) {
--		memset(&cpu_rq(cpu)->uclamp, 0, sizeof(struct uclamp_rq));
-+		memset(&cpu_rq(cpu)->uclamp, 0,
-+				sizeof(struct uclamp_rq)*UCLAMP_CNT);
- 		cpu_rq(cpu)->uclamp_flags = 0;
- 	}
+ static void
+-il3945_irq_tasklet(struct il_priv *il)
++il3945_irq_tasklet(unsigned long data)
+ {
++	struct il_priv *il = (struct il_priv *)data;
+ 	u32 inta, handled = 0;
+ 	u32 inta_fh;
+ 	unsigned long flags;
+@@ -3419,7 +3420,7 @@ il3945_setup_deferred_work(struct il_priv *il)
+ 	timer_setup(&il->watchdog, il_bg_watchdog, 0);
+ 
+ 	tasklet_init(&il->irq_tasklet,
+-		     (void (*)(unsigned long))il3945_irq_tasklet,
++		     il3945_irq_tasklet,
+ 		     (unsigned long)il);
+ }
+ 
+diff --git a/drivers/net/wireless/intel/iwlegacy/4965-mac.c b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
+index 280cd8ae1696d..6fc51c74cdb86 100644
+--- a/drivers/net/wireless/intel/iwlegacy/4965-mac.c
++++ b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
+@@ -4360,8 +4360,9 @@ il4965_synchronize_irq(struct il_priv *il)
+ }
+ 
+ static void
+-il4965_irq_tasklet(struct il_priv *il)
++il4965_irq_tasklet(unsigned long data)
+ {
++	struct il_priv *il = (struct il_priv *)data;
+ 	u32 inta, handled = 0;
+ 	u32 inta_fh;
+ 	unsigned long flags;
+@@ -6257,7 +6258,7 @@ il4965_setup_deferred_work(struct il_priv *il)
+ 	timer_setup(&il->watchdog, il_bg_watchdog, 0);
+ 
+ 	tasklet_init(&il->irq_tasklet,
+-		     (void (*)(unsigned long))il4965_irq_tasklet,
++		     il4965_irq_tasklet,
+ 		     (unsigned long)il);
+ }
  
 -- 
 2.20.1
