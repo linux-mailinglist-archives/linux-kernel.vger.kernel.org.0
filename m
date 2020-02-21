@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCB39167069
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:45:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28DB716706C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:45:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728191AbgBUHox (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:44:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39802 "EHLO mail.kernel.org"
+        id S1728228AbgBUHo5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:44:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39858 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726395AbgBUHow (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:44:52 -0500
+        id S1728208AbgBUHoz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:44:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BCCC222C4;
-        Fri, 21 Feb 2020 07:44:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55D3C207FD;
+        Fri, 21 Feb 2020 07:44:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271091;
-        bh=5X0WupEnFfrRuUFOQtt2nR3NK/iuICCSLiohKNtFgtE=;
+        s=default; t=1582271094;
+        bh=QMlfEDdx30p0dC5zoeW0s2ObL8tfzyH+ZQLZg5secJQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JdjWPsCjRMSJBKpeu8HTzNhZeRlN6md52vCcCgex7fYL4/+7Vz44DSV+tcRWW6Xpv
-         NsWGbdvMMVe/MJC0j/MM0MGJMgVkXsqDjtUp0Ba8TWFH+9QDLQQz8ZYzGQGstEd706
-         h6L/kuswvECxvAcwh0GpboWcjoqhGU55INKGGSDU=
+        b=2N3d4/3IZ7GeL/7fGf4QP8VSGelQaVoc1EIH69anqmBySh71x17PKMBtkeFezKUrB
+         JDL3cdrKr13DRtPMT9DkGK/DKdTmq/BHGdLK9eV5cXg6ZUex1CSopKBCU18pJKhw30
+         oxqz7zq32N1ADleOZz8UcRl+RqYbKRfSTwLkq79A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Lyude Paul <lyude@redhat.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 008/399] drm/dp_mst: fix multiple frees of tx->bytes
-Date:   Fri, 21 Feb 2020 08:35:33 +0100
-Message-Id: <20200221072403.123394889@linuxfoundation.org>
+        stable@vger.kernel.org, Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 009/399] ath10k: Fix qmi init error handling
+Date:   Fri, 21 Feb 2020 08:35:34 +0100
+Message-Id: <20200221072403.210533167@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -43,40 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
 
-[ Upstream commit 2c8bc91488fc57438c43b3bb19deb7fdbc1e5119 ]
+[ Upstream commit f8a595a87e93a33a10879f4b856be818d2f53c84 ]
 
-Currently tx->bytes is being freed r->num_transactions number of
-times because tx is not being set correctly. Fix this by setting
-tx to &r->transactions[i] so that the correct objects are being
-freed on each loop iteration.
+When ath10k_qmi_init() fails, the error handling does not free the irq
+resources, which causes an issue if we EPROBE_DEFER as we'll attempt to
+(re-)register irqs which are already registered.
 
-Addresses-Coverity: ("Double free")
-Fixes: 2f015ec6eab6 ("drm/dp_mst: Add sideband down request tracing + selftests")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20191120173509.347490-1-colin.king@canonical.com
+Fix this by doing a power off since we just powered on the hardware, and
+freeing the irqs as error handling.
+
+Fixes: ba94c753ccb4 ("ath10k: add QMI message handshake for wcn3990 client")
+Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_dp_mst_topology.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath10k/snoc.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
-index 6cd90cb4b6b10..4a65ef8d8bff3 100644
---- a/drivers/gpu/drm/drm_dp_mst_topology.c
-+++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-@@ -517,8 +517,10 @@ drm_dp_decode_sideband_req(const struct drm_dp_sideband_msg_tx *raw,
- 			}
+diff --git a/drivers/net/wireless/ath/ath10k/snoc.c b/drivers/net/wireless/ath/ath10k/snoc.c
+index 16177497bba76..7e85c4916e7f5 100644
+--- a/drivers/net/wireless/ath/ath10k/snoc.c
++++ b/drivers/net/wireless/ath/ath10k/snoc.c
+@@ -1563,13 +1563,16 @@ static int ath10k_snoc_probe(struct platform_device *pdev)
+ 	ret = ath10k_qmi_init(ar, msa_size);
+ 	if (ret) {
+ 		ath10k_warn(ar, "failed to register wlfw qmi client: %d\n", ret);
+-		goto err_core_destroy;
++		goto err_power_off;
+ 	}
  
- 			if (failed) {
--				for (i = 0; i < r->num_transactions; i++)
-+				for (i = 0; i < r->num_transactions; i++) {
-+					tx = &r->transactions[i];
- 					kfree(tx->bytes);
-+				}
- 				return -ENOMEM;
- 			}
+ 	ath10k_dbg(ar, ATH10K_DBG_SNOC, "snoc probe\n");
+ 
+ 	return 0;
+ 
++err_power_off:
++	ath10k_hw_power_off(ar);
++
+ err_free_irq:
+ 	ath10k_snoc_free_irq(ar);
  
 -- 
 2.20.1
