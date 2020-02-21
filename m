@@ -2,248 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DBF81677BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:44:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C3731677DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:45:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730454AbgBUIns (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:43:48 -0500
-Received: from mx1.tq-group.com ([62.157.118.193]:63503 "EHLO mx1.tq-group.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730127AbgBUInq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:43:46 -0500
-IronPort-SDR: VOLac6V/tQXPcJ3dGxdub1nTzBvhoCDb09oeNI2J2RELlZCa2vZln8OAsUkHqFEpHmGgtcC7yf
- ANhIgG8dxlgD+JsLSViuP6xBX5+IxKNIaATb/0ApC+VMAKOn9vs7v5ebB86txgXjGR/nOVyPH6
- PocCkTMR1+wfL2QScRUcue+gU1yO4hkhThCxAKoe9ppBBRGICdtRZthl22wYGtM1/MhFA0puM1
- nGz+i81f29BJ0MlEZtp6///IcyxTd+qeybWBfFiXxLxyiJ+66DeaVMFXj2dzzFbNTv/5mZgqTQ
- rIw=
-X-IronPort-AV: E=Sophos;i="5.70,467,1574118000"; 
-   d="scan'208";a="11051213"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 21 Feb 2020 09:43:44 +0100
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Fri, 21 Feb 2020 09:43:44 +0100
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Fri, 21 Feb 2020 09:43:44 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1582274624; x=1613810624;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=oflfLwYqW5xFExYToNds3TpPpBbjgoa1J9+oBBMC8D4=;
-  b=UEJqXgOB148Nqx80QcL4FmjjfhdCTSc/QlekE1+uooidjzkmxPOZYvOl
-   tjY7CZ/xKaSfAqii5MQJo7/RfsGVz/0F/aPdILCz37i5CvSDKHzAtlT8Z
-   ZZF4HxsqKxRqF6kBwN/7Ifwe1pwqHGUIwOb3zdc7YZlMfxQy8hpooXu65
-   BtUDskF32YGADsFuU3iFgNmI+SC+x7Be95HID9EGfmnOtMay+5se3LLzy
-   ZkkjLi5DhdF8sZkGXHy+H2pv39C0lDwo87CgiF2Qu2Ay/HJNHLJZin+0r
-   wA3fl+39G+70Ms8SQYlE14GhGgRC6SUJvR49LAaUKMfrcmD4vzqUF3Amb
-   g==;
-IronPort-SDR: rTRCYoXQqhnGRFfeir1O7hIu2Cs2JQwqGtp4Nsz3f76Ax0PXoEo/CHuCPj2qdMeTkM5xAKdFkV
- jxu2TReDm2mIX10N752Aq/g+c/gQyB845zY3D7v1bawchfR/vR1/AlfsJJESmDexofDCb+wPpb
- EtBaGajN5/1QObbpgQVw0yWmf9NtupHz1TMhKtKsqXfPpitHUX6G+SVxKB7EDL/VcCBowOQ6Yz
- 0cjWOxz62xMC48tLBfwGoTuy6sDIU+mdtYEDpKwRthmxsvZvXs2Q89KNm2K1Xal83hMXyJ5hCS
- ZqQ=
-X-IronPort-AV: E=Sophos;i="5.70,467,1574118000"; 
-   d="scan'208";a="11051212"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 21 Feb 2020 09:43:44 +0100
-Received: from schifferm-ubuntu4.tq-net.de (schifferm-ubuntu4.tq-net.de [10.117.49.26])
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPA id E277C280065;
-        Fri, 21 Feb 2020 09:43:45 +0100 (CET)
-Message-ID: <eca3c07767f2451590496bc890b235c8285f1a0b.camel@ew.tq-group.com>
-Subject: Re: [RFC] crypto: caam: re-init JR on resume
-From:   Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To:     horia.geanta@nxp.com, aymen.sghaier@nxp.com
-Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 21 Feb 2020 09:43:41 +0100
-In-Reply-To: <20200203101850.22570-1-matthias.schiffer@ew.tq-group.com>
-References: <20200203101850.22570-1-matthias.schiffer@ew.tq-group.com>
+        id S1732136AbgBUIo5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:44:57 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:46791 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729786AbgBUIoy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:44:54 -0500
+Received: from mail-qv1-f42.google.com ([209.85.219.42]) by
+ mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1Mcp3E-1jdZfK1u6s-00Zwen; Fri, 21 Feb 2020 09:44:52 +0100
+Received: by mail-qv1-f42.google.com with SMTP id s6so677553qvq.4;
+        Fri, 21 Feb 2020 00:44:51 -0800 (PST)
+X-Gm-Message-State: APjAAAVAU/ImSor+Ax3laoPhdKX5HRhehG0LGNGTI/C3F2tU/AC+9LXl
+        LPR4Dha7noghjKvkCg8FI3YIhvkEzHm1xzWsFfg=
+X-Google-Smtp-Source: APXvYqzj1wLcyLw4ngVb5K8R3sXCBn2n0mT50jnZtzTAPCNVFsS4L0kHny9k1yvtFZI5LzSCmfqqMbz+qs/vG+JMXNI=
+X-Received: by 2002:ad4:52eb:: with SMTP id p11mr27330655qvu.211.1582274691062;
+ Fri, 21 Feb 2020 00:44:51 -0800 (PST)
+MIME-Version: 1.0
+References: <20190822192451.5983-1-scott.branden@broadcom.com>
+ <20190822192451.5983-3-scott.branden@broadcom.com> <s5hef1crybq.wl-tiwai@suse.de>
+ <10461fcf-9eca-32b6-0f9d-23c63b3f3442@broadcom.com> <s5hr258j6ln.wl-tiwai@suse.de>
+ <93b8285a-e5eb-d4a4-545d-426bbbeb8008@broadcom.com> <s5ho90byhnv.wl-tiwai@suse.de>
+ <b440f372-45be-c06c-94a1-44ae6b1e7eb8@broadcom.com> <s5hwoeyj3i5.wl-tiwai@suse.de>
+ <20191011133120.GP16384@42.do-not-panic.com> <e65a3ba1-d064-96fe-077e-59bf8ffff377@broadcom.com>
+In-Reply-To: <e65a3ba1-d064-96fe-077e-59bf8ffff377@broadcom.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 21 Feb 2020 09:44:35 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a2NJurg_hxVbWYZwJVhYM5-xjWt12Kh0DdyfTGqQPrPAQ@mail.gmail.com>
+Message-ID: <CAK8P3a2NJurg_hxVbWYZwJVhYM5-xjWt12Kh0DdyfTGqQPrPAQ@mail.gmail.com>
+Subject: Re: [PATCH 2/7] firmware: add offset to request_firmware_into_buf
+To:     Scott Branden <scott.branden@broadcom.com>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>, Takashi Iwai <tiwai@suse.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:R+5/2IwZLX0GpLbPDDVE48wJ9xBdmfM+8J7qrFfyCmHlAdtRw1R
+ /K5hbg4vcItdPyeaI2gMUPQvAe3KI+g8fgumg/ys5OrFhj8SXXMHDaRwP/jTMjNeqk1Ihux
+ tdMUA47Dtk2OinScdeJ30BbZ6Kq/L/WCgUa4fXW5HpJBIROPbCh5l0wVoloceAtugRhPeXX
+ AmXilR8SPDoKmyxcwyyGA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:eW7GHi9pDno=:KM/eM3AxK8K6bT4Ho8Ua8x
+ DoTGO8zJuIuTsCjvL3EX3mLRg/BDoTwyy2kDNAI3C/EFolMNYvPhaOemr5GeZPvaEkZyyrb3P
+ Vtymm4/0ToYA8ChWUkYnYC//AiL6lBLZ1ce4MpOx61HYqLuByrn4dEtFseN/SzMbJhWQB8c6y
+ e12I3t7jcpcF5tTuRUOG5zi5vy7hfgfWxc4lSvmun6RQO7I7Injs0jJICjMhiY+QM4jY8rSyJ
+ twMj/WT9zxXZlKzHJYeyjymFxx5cOSX3uV4K9adpGym4r93DbjjY/aZzYDOauH51rhZV1y4Ow
+ isS71V71BjskgDHI040qtt18alRqXXlmPLpJSBUYtiZ8+As4zojeKOwfKFwANYUnYUU5Ksmh2
+ dyhTXohPPEaWKCWks5K3WK321Pg9ADnjGoQH5z8aeCRXoqJtZcSG5jovP05xjsjz2GT6RBcUn
+ NZA8LRg9eBbu/Y9G+x9inOZ7q2GVnPoofJ0mplDc7ly4Aw+MIFgp7WxOtry6zeN8Z+Eoav75l
+ EnJCA07/eED8AdHSqhuK2KKPagerm1mhIuySFhfhhexH3sIYwMfLrTj7mCvCetuVz6fYgUBb7
+ 6+8789HV4V74skaCgtCwunj/qLwA85KCuZCUxaMCnv1Co126ZNaNLwu11I4pXMawMHeP3t6q6
+ pCW0zHSUHfKwNW7wejLqzdaV1Ya47jba1lRzvDqfNz6MHSLIL0vHS0zbYRQz/Sg2KdaZ6gted
+ 2j5SL4SlxBeg7UtcsUOTP6j+MWHIr7HFSySoxw1nIt6nJldnGFXx3wSd8gworWeqIHaEfKzDv
+ 7z2wxMGTrgTuerVtnbyrJfJ8+2CkBIj0/7pjWy4kNAazDzt7Bk=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2020-02-03 at 11:18 +0100, Matthias Schiffer wrote:
-> The JR loses its configuration during suspend-to-RAM (at least on
-> i.MX6UL). Re-initialize the hardware on resume.
-> 
-> Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-> ---
-> 
-> I've come across the issue that the CAAM would not work anymore after
-> deep sleep on i.MX6UL. It turned out that the CAAM loses its state
-> during suspend-to-RAM, so all registers read as zero and need to be
-> reinitialized.
-> 
-> This patch is my first attempt at fixing the issue. It seems to work
-> well enough, but I assume I'm missing some synchronization to prevent
-> that some CAAM operation is currently under way when the suspend
-> happens? I don't know the PM and crypto subsystems well enough to
-> judge
-> if this is possible, and if it is, how to prevent it.
-> 
-> I've only compile-tested this version of the patch, as I had to port
-> it
-> from our board kernel, which is based on the heavily-modified NXP
-> branch.
+On Fri, Feb 21, 2020 at 1:11 AM Scott Branden
+<scott.branden@broadcom.com> wrote:
+> On 2019-10-11 6:31 a.m., Luis Chamberlain wrote:
+> > On Tue, Aug 27, 2019 at 12:40:02PM +0200, Takashi Iwai wrote:
+> >> On Mon, 26 Aug 2019 19:24:22 +0200,
+> >> Scott Branden wrote:
+> >>> I will admit I am not familiar with every subtlety of PCI
+> >>> accesses. Any comments to the Valkyrie driver in this patch series are
+> >>> appreciated.
+> >>> But not all drivers need to work on all architectures. I can add a
+> >>> depends on x86 64bit architectures to the driver to limit it to such.
+> >> But it's an individual board on PCIe, and should work no matter which
+> >> architecture is?  Or is this really exclusive to x86?
+> >
+> > Poke Scott.
+>
+> Yes, this is exclusive to x86.
+> In particular, 64-bit x86 server class machines with PCIe gen3 support.
+> There is no reason for these PCIe boards to run in other lower end
+> machines or architectures.
 
-It would be great to get some feedback on this patch. Is the hardware
-support to lose its state? Does my fix look correct?
+It doesn't really matter that much what you expect your customers to
+do with your product, or what works a particular machine today, drivers
+should generally be written in a portable manner anyway and use
+the documented APIs. memcpy() into an __iomem pointer is not
+portable and while it probably works on any x86 machine today, please
+just don't do it. If you use 'sparse' to check your code, that would normally
+result in an address space warning, unless you add __force and a
+long comment explaining why you cannot just use memcpy_to_io()
+instead. At that point, you are already better off usingn memcpy_to_io() ;-)
 
-Kind regards,
-Matthias
-
-
-
-> 
-> 
->  drivers/crypto/caam/intern.h |  3 ++
->  drivers/crypto/caam/jr.c     | 62 +++++++++++++++++++++++++---------
-> --
->  2 files changed, 46 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/crypto/caam/intern.h
-> b/drivers/crypto/caam/intern.h
-> index c7c10c90464b..5d2e9091d5c2 100644
-> --- a/drivers/crypto/caam/intern.h
-> +++ b/drivers/crypto/caam/intern.h
-> @@ -47,6 +47,9 @@ struct caam_drv_private_jr {
->  	struct tasklet_struct irqtask;
->  	int irq;			/* One per queue */
->  
-> +	dma_addr_t inpbusaddr;
-> +	dma_addr_t outbusaddr;
-> +
->  	/* Number of scatterlist crypt transforms active on the JobR */
->  	atomic_t tfm_count ____cacheline_aligned;
->  
-> diff --git a/drivers/crypto/caam/jr.c b/drivers/crypto/caam/jr.c
-> index fc97cde27059..2dabf5fd7818 100644
-> --- a/drivers/crypto/caam/jr.c
-> +++ b/drivers/crypto/caam/jr.c
-> @@ -418,13 +418,31 @@ int caam_jr_enqueue(struct device *dev, u32
-> *desc,
->  }
->  EXPORT_SYMBOL(caam_jr_enqueue);
->  
-> +static void caam_jr_setup_rings(struct caam_drv_private_jr *jrp)
-> +{
-> +	jrp->out_ring_read_index = 0;
-> +	jrp->head = 0;
-> +	jrp->tail = 0;
-> +
-> +	wr_reg64(&jrp->rregs->inpring_base, jrp->inpbusaddr);
-> +	wr_reg64(&jrp->rregs->outring_base, jrp->outbusaddr);
-> +	wr_reg32(&jrp->rregs->inpring_size, JOBR_DEPTH);
-> +	wr_reg32(&jrp->rregs->outring_size, JOBR_DEPTH);
-> +
-> +	jrp->inpring_avail = JOBR_DEPTH;
-> +
-> +	/* Select interrupt coalescing parameters */
-> +	clrsetbits_32(&jrp->rregs->rconfig_lo, 0, JOBR_INTC |
-> +		      (JOBR_INTC_COUNT_THLD << JRCFG_ICDCT_SHIFT) |
-> +		      (JOBR_INTC_TIME_THLD << JRCFG_ICTT_SHIFT));
-> +}
-> +
->  /*
->   * Init JobR independent of platform property detection
->   */
->  static int caam_jr_init(struct device *dev)
->  {
->  	struct caam_drv_private_jr *jrp;
-> -	dma_addr_t inpbusaddr, outbusaddr;
->  	int i, error;
->  
->  	jrp = dev_get_drvdata(dev);
-> @@ -434,13 +452,13 @@ static int caam_jr_init(struct device *dev)
->  		return error;
->  
->  	jrp->inpring = dmam_alloc_coherent(dev, SIZEOF_JR_INPENTRY *
-> -					   JOBR_DEPTH, &inpbusaddr,
-> +					   JOBR_DEPTH, &jrp-
-> >inpbusaddr,
->  					   GFP_KERNEL);
->  	if (!jrp->inpring)
->  		return -ENOMEM;
->  
->  	jrp->outring = dmam_alloc_coherent(dev, SIZEOF_JR_OUTENTRY *
-> -					   JOBR_DEPTH, &outbusaddr,
-> +					   JOBR_DEPTH, &jrp-
-> >outbusaddr,
->  					   GFP_KERNEL);
->  	if (!jrp->outring)
->  		return -ENOMEM;
-> @@ -453,24 +471,9 @@ static int caam_jr_init(struct device *dev)
->  	for (i = 0; i < JOBR_DEPTH; i++)
->  		jrp->entinfo[i].desc_addr_dma = !0;
->  
-> -	/* Setup rings */
-> -	jrp->out_ring_read_index = 0;
-> -	jrp->head = 0;
-> -	jrp->tail = 0;
-> -
-> -	wr_reg64(&jrp->rregs->inpring_base, inpbusaddr);
-> -	wr_reg64(&jrp->rregs->outring_base, outbusaddr);
-> -	wr_reg32(&jrp->rregs->inpring_size, JOBR_DEPTH);
-> -	wr_reg32(&jrp->rregs->outring_size, JOBR_DEPTH);
-> -
-> -	jrp->inpring_avail = JOBR_DEPTH;
-> -
->  	spin_lock_init(&jrp->inplock);
->  
-> -	/* Select interrupt coalescing parameters */
-> -	clrsetbits_32(&jrp->rregs->rconfig_lo, 0, JOBR_INTC |
-> -		      (JOBR_INTC_COUNT_THLD << JRCFG_ICDCT_SHIFT) |
-> -		      (JOBR_INTC_TIME_THLD << JRCFG_ICTT_SHIFT));
-> +	caam_jr_setup_rings(jrp);
->  
->  	tasklet_init(&jrp->irqtask, caam_jr_dequeue, (unsigned
-> long)dev);
->  
-> @@ -486,6 +489,20 @@ static int caam_jr_init(struct device *dev)
->  	return error;
->  }
->  
-> +static int caam_jr_reinit(struct device *dev)
-> +{
-> +	struct caam_drv_private_jr *jrp = dev_get_drvdata(dev);
-> +	int error;
-> +
-> +	error = caam_reset_hw_jr(dev);
-> +	if (error)
-> +		return error;
-> +
-> +	caam_jr_setup_rings(jrp);
-> +
-> +	return 0;
-> +}
-> +
->  static void caam_jr_irq_dispose_mapping(void *data)
->  {
->  	irq_dispose_mapping((unsigned long)data);
-> @@ -578,10 +595,17 @@ static const struct of_device_id
-> caam_jr_match[] = {
->  };
->  MODULE_DEVICE_TABLE(of, caam_jr_match);
->  
-> +#ifdef CONFIG_PM
-> +static SIMPLE_DEV_PM_OPS(caam_jr_pm_ops, caam_reset_hw_jr,
-> caam_jr_reinit);
-> +#endif
-> +
->  static struct platform_driver caam_jr_driver = {
->  	.driver = {
->  		.name = "caam_jr",
->  		.of_match_table = caam_jr_match,
-> +#ifdef CONFIG_PM
-> +		.pm = &caam_jr_pm_ops,
-> +#endif
->  	},
->  	.probe       = caam_jr_probe,
->  	.remove      = caam_jr_remove,
-
+        Arnd
