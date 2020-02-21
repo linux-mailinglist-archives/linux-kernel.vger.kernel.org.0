@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DED08167571
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:31:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CF4F1675B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:31:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388598AbgBUI1g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:27:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33134 "EHLO mail.kernel.org"
+        id S2387413AbgBUIPo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:15:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730303AbgBUIVq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:21:46 -0500
+        id S2387405AbgBUIPi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:15:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6AC6220578;
-        Fri, 21 Feb 2020 08:21:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71A0B2467B;
+        Fri, 21 Feb 2020 08:15:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273305;
-        bh=H7Q6UGkUDohsAqgIcQdUPnUGdO92IToU1TSe781EBNM=;
+        s=default; t=1582272937;
+        bh=VxGyWnEba5VNmYC+QZbrZ1DU0OE8ldnVhLLrAP06RRA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bJZeTYiHXWq6XK9lxFIIdi733E90l/sCV1RkQOrJ3p9lQ72unS95lsX0l8Kq0mFQZ
-         GKBCO+QEYzFWDskG2q8bvnJDDQUVxIaoSjn5OUxPoUPnFhh37DOFZpTf+jDe9JtjS0
-         mWFyPJKKSx9nmZuLixFxLC+HnU/t1zKMSCtKh0e4=
+        b=MaaPCfRoFfUN+62z89gSFXNzwY2K9qzJBy03nUQcI7b8brV9tG/9cOuPwqkTTOaIX
+         F6dCDV5lG/eNgk1cAWDDI5A58ZejUA1g3aGIMuqngraY2Bf2DgpOPJBjR2tC3Kxq9L
+         PBc4Gx7jURUBqqRXainZWZqwy/8PARM7L/HpP5uA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        stable@vger.kernel.org, Michael Bringmann <mwb@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 120/191] driver core: Print device when resources present in really_probe()
-Date:   Fri, 21 Feb 2020 08:41:33 +0100
-Message-Id: <20200221072305.278715977@linuxfoundation.org>
+Subject: [PATCH 5.4 295/344] powerpc/pseries/lparcfg: Fix display of Maximum Memory
+Date:   Fri, 21 Feb 2020 08:41:34 +0100
+Message-Id: <20200221072416.668300071@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Michael Bringmann <mwb@linux.ibm.com>
 
-[ Upstream commit 7c35e699c88bd60734277b26962783c60e04b494 ]
+[ Upstream commit f1dbc1c5c70d0d4c60b5d467ba941fba167c12f6 ]
 
-If a device already has devres items attached before probing, a warning
-backtrace is printed.  However, this backtrace does not reveal the
-offending device, leaving the user uninformed.  Furthermore, using
-WARN_ON() causes systems with panic-on-warn to reboot.
+Correct overflow problem in calculation and display of Maximum Memory
+value to syscfg.
 
-Fix this by replacing the WARN_ON() by a dev_crit() message.
-Abort probing the device, to prevent doing more damage to the device's
-resources.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20191206132219.28908-1-geert+renesas@glider.be
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Michael Bringmann <mwb@linux.ibm.com>
+[mpe: Only n_lmbs needs casting to unsigned long]
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/5577aef8-1d5a-ca95-ff0a-9c7b5977e5bf@linux.ibm.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/base/dd.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/powerpc/platforms/pseries/lparcfg.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-index 11d24a552ee49..5f6416e6ba96b 100644
---- a/drivers/base/dd.c
-+++ b/drivers/base/dd.c
-@@ -470,7 +470,10 @@ static int really_probe(struct device *dev, struct device_driver *drv)
- 	atomic_inc(&probe_count);
- 	pr_debug("bus: '%s': %s: probing driver %s with device %s\n",
- 		 drv->bus->name, __func__, drv->name, dev_name(dev));
--	WARN_ON(!list_empty(&dev->devres_head));
-+	if (!list_empty(&dev->devres_head)) {
-+		dev_crit(dev, "Resources present before probing\n");
-+		return -EBUSY;
-+	}
+diff --git a/arch/powerpc/platforms/pseries/lparcfg.c b/arch/powerpc/platforms/pseries/lparcfg.c
+index e33e8bc4b69bd..38c306551f76b 100644
+--- a/arch/powerpc/platforms/pseries/lparcfg.c
++++ b/arch/powerpc/platforms/pseries/lparcfg.c
+@@ -435,10 +435,10 @@ static void maxmem_data(struct seq_file *m)
+ {
+ 	unsigned long maxmem = 0;
  
- re_probe:
- 	dev->driver = drv;
+-	maxmem += drmem_info->n_lmbs * drmem_info->lmb_size;
++	maxmem += (unsigned long)drmem_info->n_lmbs * drmem_info->lmb_size;
+ 	maxmem += hugetlb_total_pages() * PAGE_SIZE;
+ 
+-	seq_printf(m, "MaxMem=%ld\n", maxmem);
++	seq_printf(m, "MaxMem=%lu\n", maxmem);
+ }
+ 
+ static int pseries_lparcfg_data(struct seq_file *m, void *v)
 -- 
 2.20.1
 
