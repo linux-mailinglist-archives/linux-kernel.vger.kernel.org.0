@@ -2,82 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C83F167F06
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 14:50:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB700167F4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 14:53:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728469AbgBUNuQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 08:50:16 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:41889 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727213AbgBUNuP (ORCPT
+        id S1728971AbgBUNwW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 08:52:22 -0500
+Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:28289 "EHLO
+        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727876AbgBUNwW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 08:50:15 -0500
-Received: by mail-lf1-f67.google.com with SMTP id m30so1529327lfp.8
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 05:50:14 -0800 (PST)
+        Fri, 21 Feb 2020 08:52:22 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Sf0tmWDionUelC4/eEP2OfX8tKBTBWojUFpEbrDtJPI=;
-        b=w1ko8Q38gPPhRlUWLFuBF+6XHvtbBVeQklCnr8Gw/u8ROuTSyq04eYQM0bdmspxzCp
-         dr+C/U8tS7ilCuKVMfB19EOudBucFcWH32l4Z/4WjId23QTMMxZVtzKwqdk2ciPsHnHf
-         c3/e1Q+mKv0Z53+lJ0F1acoE8nUlDnTXtrzIAXvQwEMaRv9fu8QlWIg8wve+w0sdVpQQ
-         xKWPTYRyH1m3kSosukY9S5C1QHlvGg4HNvN/rXzAE7Z+IuKKzGkobxWuzjf0ml7BHoVZ
-         CMdG0jLsOjr4PHjV1a/BHHuJHHqG8uiBDqVgiH2/Ba2mcZS4crO3QyhZH2iaKJ7tTRx2
-         WrdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Sf0tmWDionUelC4/eEP2OfX8tKBTBWojUFpEbrDtJPI=;
-        b=bjs3FA9KPm5fxtdDECJ8iMnkBuvj7FQrf856FMxgZ/XOVHdOxETMWO+sEWlRGhUDoN
-         +ZsB/8DQqzkSdfaUyUVJv0d+oAvpYm/brShl+X1j1fmrexGiYG1PEmrmv8CKRWk0+ivB
-         onIqywfRwWQRcFj+OPHY/Yrl//GjCyUEvR+hekAqKZx019cGcGrrQBlGUf2OfXSl5aW4
-         fFY4BkbYyB9/SgiEYhtp2R44nlAwIrGuvUUMeGFdunwZmjr02yeaZoK/98sIhkC8sZba
-         qB2XIvdE0LKWFMcz1zrP9fWfukWiVU5ITTsH4Qcvw1wPi7RTdl77xqhMp2aaJyyaGyE0
-         Kpyw==
-X-Gm-Message-State: APjAAAVWXNnl5hCwCGe9gRo850oiqJ+A0S3EjczVFG1DFc2QvOORARft
-        AKUVBFmd0JzF5Y1bt6DCNeHj5kOEzfJ00xTmNQRB6Q==
-X-Google-Smtp-Source: APXvYqym050fla+7rVCMpBCZ6/aTMWJZ+KVkmueegzulH2SioUXqzwGBCOQZip0WoqthmngGhqwS/5mD0MnafMEDZPU=
-X-Received: by 2002:ac2:44a5:: with SMTP id c5mr8062209lfm.4.1582293013774;
- Fri, 21 Feb 2020 05:50:13 -0800 (PST)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1582293142; x=1613829142;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   mime-version;
+  bh=TtBhTe+Xk+Dj8T9pKB7s2pqvj4w2Mw9Dz/MJKOk2uyo=;
+  b=SolkEdh6yBGn93WVFggoGJP/RSG+YIpuqY/51VtGaA0f6NYtGh7x41sq
+   JTtlIRv/m2HWgl8bOQFDV7Y6pKWl7weRKFbO0rpmzPJIHuSK4o2eAtWP4
+   yG0UJlF4se87lJYYop5pXgULn5Cnx5VRFNdANRYP+Cwx3iyQ8AnmnsTOW
+   k=;
+IronPort-SDR: 89UMV0sd3/ZhGS2vJ8ck00hlSuyDYSrGH2TmQNJ4+L6eQe/dBDCECyVQ0zLGu1ZiGpUIAKVgrZ
+ T4DoVvCD6RMQ==
+X-IronPort-AV: E=Sophos;i="5.70,468,1574121600"; 
+   d="scan'208";a="18321703"
+Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1d-38ae4ad2.us-east-1.amazon.com) ([10.47.23.38])
+  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP; 21 Feb 2020 13:52:18 +0000
+Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
+        by email-inbound-relay-1d-38ae4ad2.us-east-1.amazon.com (Postfix) with ESMTPS id B3E2CA2D93;
+        Fri, 21 Feb 2020 13:52:09 +0000 (UTC)
+Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
+ EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
+ id 15.0.1236.3; Fri, 21 Feb 2020 13:52:09 +0000
+Received: from u886c93fd17d25d.ant.amazon.com (10.43.162.118) by
+ EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 21 Feb 2020 13:51:57 +0000
+From:   SeongJae Park <sjpark@amazon.com>
+To:     SeongJae Park <sjpark@amazon.com>
+CC:     <akpm@linux-foundation.org>, SeongJae Park <sjpark@amazon.de>,
+        <acme@kernel.org>, <alexander.shishkin@linux.intel.com>,
+        <amit@kernel.org>, <brendan.d.gregg@gmail.com>,
+        <brendanhiggins@google.com>, <cai@lca.pw>,
+        <colin.king@canonical.com>, <corbet@lwn.net>, <dwmw@amazon.com>,
+        <jolsa@redhat.com>, <kirill@shutemov.name>, <mark.rutland@arm.com>,
+        <mgorman@suse.de>, <minchan@kernel.org>, <mingo@redhat.com>,
+        <namhyung@kernel.org>, <peterz@infradead.org>,
+        <rdunlap@infradead.org>, <rostedt@goodmis.org>, <shuah@kernel.org>,
+        <sj38.park@gmail.com>, <vdavydov.dev@gmail.com>,
+        <linux-mm@kvack.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 02/14] mm/damon: Implement region based sampling
+Date:   Fri, 21 Feb 2020 14:51:42 +0100
+Message-ID: <20200221135142.8182-1-sjpark@amazon.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200217102544.29012-3-sjpark@amazon.com> (raw)
 MIME-Version: 1.0
-References: <cover.1581597365.git.matti.vaittinen@fi.rohmeurope.com> <a851b8c54662e6fdabfb9e1c9990de59649c1fdb.1581597365.git.matti.vaittinen@fi.rohmeurope.com>
-In-Reply-To: <a851b8c54662e6fdabfb9e1c9990de59649c1fdb.1581597365.git.matti.vaittinen@fi.rohmeurope.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 21 Feb 2020 14:50:02 +0100
-Message-ID: <CACRpkdbkVv_NocFBxjbupkwgXiio3qmZJuXOssuQxyhnzt7Yxg@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 4/5] power: supply: add battery parameters
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
-        mikko.mutanen@fi.rohmeurope.com, markus.laine@fi.rohmeurope.com,
-        Mark Brown <broonie@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.43.162.118]
+X-ClientProxiedBy: EX13D30UWC001.ant.amazon.com (10.43.162.128) To
+ EX13D31EUA001.ant.amazon.com (10.43.165.15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 8:38 AM Matti Vaittinen
-<matti.vaittinen@fi.rohmeurope.com> wrote:
+On Mon, 17 Feb 2020 11:25:32 +0100 SeongJae Park <sjpark@amazon.com> wrote:
 
-> Add parsing of new device-tree battery bindings.
->
->      - tricklecharge-current-microamp
->      - precharge-upper-limit-microvolt
->      - re-charge-voltage-microvolt
->      - over-voltage-threshold-microvolt
->
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> From: SeongJae Park <sjpark@amazon.de>
+> 
+> This commit implements DAMON's basic access check and region based
+> sampling mechanisms.  This change would seems make no sense, mainly
+> because it is only a part of the DAMON's logics.  Following two commits
+> will make more sense.
+> 
+[...]
+> +/*
+> + * Check whether the given region has accessed since the last check
+> + *
+> + * mm	'mm_struct' for the given virtual address space
+> + * r	the region to be checked
+> + */
+> +static void kdamond_check_access(struct damon_ctx *ctx,
+> +			struct mm_struct *mm, struct damon_region *r)
+> +{
+> +	pte_t *pte = NULL;
+> +	pmd_t *pmd = NULL;
+> +	spinlock_t *ptl;
+> +
+> +	if (follow_pte_pmd(mm, r->sampling_addr, NULL, &pte, &pmd, &ptl))
+> +		goto mkold;
+> +
+> +	/* Read the page table access bit of the page */
+> +	if (pte && pte_young(*pte))
+> +		r->nr_accesses++;
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> +	else if (pmd && pmd_young(*pmd))
+> +		r->nr_accesses++;
+> +#endif	/* CONFIG_TRANSPARENT_HUGEPAGE */
+> +
+> +	spin_unlock(ptl);
+> +
+> +mkold:
+> +	/* mkold next target */
+> +	r->sampling_addr = damon_rand(ctx, r->vm_start, r->vm_end);
+> +
+> +	if (follow_pte_pmd(mm, r->sampling_addr, NULL, &pte, &pmd, &ptl))
+> +		return;
+> +
+> +	if (pte) {
+> +		if (pte_young(*pte)) {
+> +			clear_page_idle(pte_page(*pte));
+> +			set_page_young(pte_page(*pte));
+> +		}
+> +		*pte = pte_mkold(*pte);
+> +	}
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> +	else if (pmd) {
+> +		if (pmd_young(*pmd)) {
+> +			clear_page_idle(pmd_page(*pmd));
+> +			set_page_young(pte_page(*pte));
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Oops, This should be `set_page_young(pmd_page(*pmd))`.  Will fix in next spin.
 
-Yours,
-Linus Walleij
+
+Thanks,
+SeongJae Park
