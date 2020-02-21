@@ -2,64 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A7E8167F5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 14:56:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02566167F63
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 14:57:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728643AbgBUN42 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 08:56:28 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:45490 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728477AbgBUN42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 08:56:28 -0500
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 672E2DF8E568B6A01DC6;
-        Fri, 21 Feb 2020 21:56:24 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Fri, 21 Feb 2020
- 21:56:13 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>
-CC:     <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] crypto: md5: remove unused macros
-Date:   Fri, 21 Feb 2020 21:55:15 +0800
-Message-ID: <20200221135515.14948-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1728683AbgBUN5Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 08:57:24 -0500
+Received: from smtprelay0077.hostedemail.com ([216.40.44.77]:60343 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728672AbgBUN5X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 08:57:23 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id CDB7018224D78;
+        Fri, 21 Feb 2020 13:57:21 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1567:1593:1594:1711:1714:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3622:3871:3872:3873:3874:3876:4250:4321:5007:6119:8531:8603:10004:10400:10848:11232:11658:11914:12296:12297:12679:12740:12895:13069:13146:13230:13311:13357:13439:13894:14181:14659:14721:21080:21220:21611:21627:21990,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: noise65_4028b1475993c
+X-Filterd-Recvd-Size: 1339
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf04.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 21 Feb 2020 13:57:20 +0000 (UTC)
+Message-ID: <0f2c5adb37454dacbd57d65ba8743bb6092876ff.camel@perches.com>
+Subject: Re: [trivial PATCH] cifs: Use #define in cifs_dbg
+From:   Joe Perches <joe@perches.com>
+To:     =?ISO-8859-1?Q?Aur=E9lien?= Aptel <aaptel@suse.com>,
+        Steve French <sfrench@samba.org>
+Cc:     linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Fri, 21 Feb 2020 05:55:56 -0800
+In-Reply-To: <87eeuo5a2y.fsf@suse.com>
+References: <862518f826b35cd010a2e46f64f6f4cfa0d44582.camel@perches.com>
+         <87eeuo5a2y.fsf@suse.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-crypto/md5.c:26:0: warning: macro "MD5_DIGEST_WORDS" is not used [-Wunused-macros]
-crypto/md5.c:27:0: warning: macro "MD5_MESSAGE_BYTES" is not used [-Wunused-macros]
+On Fri, 2020-02-21 at 14:44 +0100, Aurélien Aptel wrote:
+> Joe Perches <joe@perches.com> writes:
+> > +			cifs_dbg(VFS, "bogus file nlink value %u\n",
+> > +				 fattr->cf_nlink);
+> 
+> Good catch :)
+> I realize that 1 is VFS but this should probably be FYI.
 
-They are never used since commit 3c7eb3cc8360 ("md5: remove from
-lib and only live in crypto").
+change it as you please.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- crypto/md5.c | 3 ---
- 1 file changed, 3 deletions(-)
+fyi:
 
-diff --git a/crypto/md5.c b/crypto/md5.c
-index 22dc60b..72c0c46 100644
---- a/crypto/md5.c
-+++ b/crypto/md5.c
-@@ -23,9 +23,6 @@
- #include <linux/types.h>
- #include <asm/byteorder.h>
- 
--#define MD5_DIGEST_WORDS 4
--#define MD5_MESSAGE_BYTES 64
--
- const u8 md5_zero_message_hash[MD5_DIGEST_SIZE] = {
- 	0xd4, 0x1d, 0x8c, 0xd9, 0x8f, 0x00, 0xb2, 0x04,
- 	0xe9, 0x80, 0x09, 0x98, 0xec, 0xf8, 0x42, 0x7e,
--- 
-2.7.4
+Perhaps commit f2f176b41 ("CIFS: add ONCE flag for cifs_dbg type")
+may have increased object size quite a bit as it now tests
+an external variable.
 
 
