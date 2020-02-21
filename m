@@ -2,257 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29EE1168129
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:08:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AED3C168124
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:06:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729087AbgBUPHx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 10:07:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39486 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727315AbgBUPHx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 10:07:53 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF7DC206EF;
-        Fri, 21 Feb 2020 15:07:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582297671;
-        bh=QbzsH1rdu5rS8dVWQGh+5kwltd8Y/KBAWxKBBTeFYm8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=zh9Qq9O2QoH+szrVZUv/fd0qB2W1LWpnfcP1Us/p9f3Rvf2JB31XobGAay/yJ/oAn
-         WhgcK859xlt7vOrpAuM9oh1/+8RHxuakHGanMZ+9wS+nf8ZsRdctAn7s3PCLS9GO1e
-         J2V1w/EXZDhm5xNf3YVn3d3Bx7iseeRQ+JV8DhQo=
-Date:   Fri, 21 Feb 2020 15:07:47 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Alexandru Tachici <alexandru.tachici@analog.com>
-Cc:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Mircea Caprioru <mircea.caprioru@analog.com>
-Subject: Re: [PATCH v4 2/2] dt-bindings: iio: dac: Add docs for AD5770R DAC
-Message-ID: <20200221150748.2b7c0b2a@archlinux>
-In-Reply-To: <20200218121031.27233-3-alexandru.tachici@analog.com>
-References: <20200218121031.27233-1-alexandru.tachici@analog.com>
-        <20200218121031.27233-3-alexandru.tachici@analog.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1729163AbgBUPF5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 10:05:57 -0500
+Received: from gateway22.websitewelcome.com ([192.185.46.225]:35239 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727315AbgBUPF4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 10:05:56 -0500
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id D71DC120A0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 09:05:54 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 59sIjVGuRAGTX59sIjfeoA; Fri, 21 Feb 2020 09:05:54 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=cRboVsbWUEPwGuWfgqo+v5EtxXTlBTRHmRBEEMttca4=; b=A9eCgCb71huWTqs9SOPBKMuYwO
+        kEfPPdcGnmXb8mZRplFMKZNbkAWcQSnEFgFSpzVq0FzlAhFidI/haLmlO1wTILipUSKdY7Hu1TjYc
+        UpxENZfWd0xNx7EwefdEWZ+zZNneAlc5YATUgl7yw2/NHiZFKnK24oCSZfAHh8JM6haiqpjOX6H7h
+        +a3BLkmEiVGhZIBuSfkek6C9GrLNE3NH8x3hhjWWamQppyjbOHs8KRcYy3ZxH8JumrRhGBKRA7g7t
+        o3wQdBmOpjZzkqYiEENu1RW+dxhAcyR+32eVXpLI5ocfc1qfHeJboEkE8OlD0T9IoKlVmiSQZGxSh
+        vu2LYb+g==;
+Received: from [200.68.141.13] (port=18808 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j59sI-003VkV-Hk; Fri, 21 Feb 2020 09:05:54 -0600
+Subject: Re: [PATCH] firmware: arm_scmi: driver: Replace zero-length array
+ with flexible-array member
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20200211231045.GA13956@embeddedor> <20200220171840.GB44840@bogus>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <b79e117f-1e1f-c3ab-9622-ed57914b530b@embeddedor.com>
+Date:   Fri, 21 Feb 2020 09:08:38 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20200220171840.GB44840@bogus>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.68.141.13
+X-Source-L: No
+X-Exim-ID: 1j59sI-003VkV-Hk
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [200.68.141.13]:18808
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 12
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Feb 2020 14:10:31 +0200
-Alexandru Tachici <alexandru.tachici@analog.com> wrote:
 
-> Adding dt-bindings documentation for AD5770R DAC.
+
+On 2/20/20 11:18, Sudeep Holla wrote:
+
+>>
+>> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+>> [2] https://github.com/KSPP/linux/issues/21
+>> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > 
-> Signed-off-by: Mircea Caprioru <mircea.caprioru@analog.com>
-> Signed-off-by: Alexandru Tachici <alexandru.tachici@analog.com>
-> ---
->  .../bindings/iio/dac/adi,ad5770r.yaml         | 185 ++++++++++++++++++
->  1 file changed, 185 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml
+> Applied these 3 patches [0][1][2] for v5.7
 > 
-> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml
-> new file mode 100644
-> index 000000000000..13d6b5ff479d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml
-> @@ -0,0 +1,185 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +# Copyright 2020 Analog Devices Inc.
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/bindings/iio/adc/adi,ad5770r.yaml#
-Umm. adc?  Please make sure you run the build tests on bindings and that
-you have a recent version of the dt schema stuff.
 
-I have applied with that fixed, but will be looking to add an Ack from Rob
-ideally before I push this out as a non rebasing tree.
-
-Thanks,
-
-Jonathan
-
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices AD5770R DAC device driver
-> +
-> +maintainers:
-> +  - Mircea Caprioru <mircea.caprioru@analog.com>
-> +
-> +description: |
-> +  Bindings for the Analog Devices AD5770R current DAC device. Datasheet can be
-> +  found here:
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/AD5770R.pdf
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - adi,ad5770r
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  avdd-supply:
-> +    description:
-> +      AVdd voltage supply. Represents two different supplies in the datasheet
-> +      that are in fact the same.
-> +
-> +  iovdd-supply:
-> +    description:
-> +      Voltage supply for the chip interface.
-> +
-> +  vref-supply:
-> +    description: Specify the voltage of the external reference used.
-> +      Available reference options are 1.25 V or 2.5 V. If no
-> +      external reference declared then the device will use the
-> +      internal reference of 1.25 V.
-> +
-> +  adi,external-resistor:
-> +    description: Specify if an external 2.5k ohm resistor is used. If not
-> +      specified the device will use an internal 2.5k ohm resistor.
-> +      The precision resistor is used for reference current generation.
-> +    type: boolean
-> +
-> +  reset-gpios:
-> +    description: GPIO spec for the RESET pin. If specified, it will be
-> +      asserted during driver probe.
-> +    maxItems: 1
-> +
-> +  channel0:
-> +    description: Represents an external channel which are
-> +      connected to the DAC. Channel 0 can act both as a current
-> +      source and sink.
-> +    type: object
-> +
-> +    properties:
-> +      num:
-> +        description: This represents the channel number.
-> +        items:
-> +          const: 0
-> +
-> +      adi,range-microamp:
-> +          description: Output range of the channel.
-> +          oneOf:
-> +            - $ref: /schemas/types.yaml#/definitions/int32-array
-> +            - items:
-> +                - enum: [0 300000]
-> +                - enum: [-60000 0]
-> +                - enum: [-60000 300000]
-> +
-> +  channel1:
-> +    description: Represents an external channel which are
-> +      connected to the DAC.
-> +    type: object
-> +
-> +    properties:
-> +      num:
-> +        description: This represents the channel number.
-> +        items:
-> +          const: 1
-> +
-> +      adi,range-microamp:
-> +          description: Output range of the channel.
-> +          oneOf:
-> +            - $ref: /schemas/types.yaml#/definitions/uint32-array
-> +            - items:
-> +                - enum: [0 140000]
-> +                - enum: [0 250000]
-> +
-> +  channel2:
-> +    description: Represents an external channel which are
-> +      connected to the DAC.
-> +    type: object
-> +
-> +    properties:
-> +      num:
-> +        description: This represents the channel number.
-> +        items:
-> +          const: 2
-> +
-> +      adi,range-microamp:
-> +          description: Output range of the channel.
-> +          oneOf:
-> +            - $ref: /schemas/types.yaml#/definitions/uint32-array
-> +            - items:
-> +                - enum: [0 140000]
-> +                - enum: [0 250000]
-> +
-> +patternProperties:
-> +  "^channel@([3-5])$":
-> +    type: object
-> +    description: Represents the external channels which are connected to the DAC.
-> +    properties:
-> +      num:
-> +        description: This represents the channel number.
-> +        items:
-> +          minimum: 3
-> +          maximum: 5
-> +
-> +      adi,range-microamp:
-> +          description: Output range of the channel.
-> +          oneOf:
-> +            - $ref: /schemas/types.yaml#/definitions/uint32-array
-> +            - items:
-> +                - enum: [0 45000]
-> +                - enum: [0 100000]
-> +
-> +required:
-> +- reg
-> +- diff-channels
-> +- channel0
-> +- channel1
-> +- channel2
-> +- channel3
-> +- channel4
-> +- channel5
-> +
-> +examples:
-> +  - |
-> +        spi {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                ad5770r@0 {
-> +                        compatible = "ad5770r";
-> +                        reg = <0>;
-> +                        spi-max-frequency = <1000000>;
-> +                        vref-supply = <&vref>;
-> +                        adi,external-resistor;
-> +                        reset-gpios = <&gpio 22 0>;
-> +
-> +                        channel@0 {
-> +                                num = <0>;
-> +                                adi,range-microamp = <(-60000) 300000>;
-> +                        };
-> +
-> +                        channel@1 {
-> +                                num = <1>;
-> +                                adi,range-microamp = <0 140000>;
-> +                        };
-> +
-> +                        channel@2 {
-> +                                num = <2>;
-> +                                adi,range-microamp = <0 55000>;
-> +                        };
-> +
-> +                        channel@3 {
-> +                                num = <3>;
-> +                                adi,range-microamp = <0 45000>;
-> +                        };
-> +
-> +                        channel@4 {
-> +                                num = <4>;
-> +                                adi,range-microamp = <0 45000>;
-> +                        };
-> +
-> +                        channel@5 {
-> +                                num = <5>;
-> +                                adi,range-microamp = <0 45000>;
-> +                        };
-> +                };
-> +        };
-> +...
-
+Thanks, Sudeep.
+--
+Gustavo
