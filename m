@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7695716733C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:10:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A577167410
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732550AbgBUIKd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:10:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45736 "EHLO mail.kernel.org"
+        id S1733182AbgBUISI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:18:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55868 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732343AbgBUIKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:10:30 -0500
+        id S2387494AbgBUISG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:18:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 587D920578;
-        Fri, 21 Feb 2020 08:10:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D7FF24689;
+        Fri, 21 Feb 2020 08:18:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272629;
-        bh=GxeaPn+Hi8p0/CIxFlRsxVrH5otHDsR5tXjDQcI6rFI=;
+        s=default; t=1582273085;
+        bh=prr9loutUhzcxUyUY0QhUlgVNDxML2mvrs3HklSUOkE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BypTbVMPKB9JGWuplNJDTwNKdXhR7SQafmeZkU6GVyivScxQoOyPnE0nH33GKGSkw
-         t890AnkLqkB1/vdSWdP6vg+B0BzdAHWJWiudQcKTQ64dCioLpo884Jk+VJfme1gEzN
-         d17sfYwhf46q2NcROo5myoZZj+s53iG/a49yjlBc=
+        b=rHpqt7vDWCd58s2CSHZ5mVlTiizI94zHtwaz/p/UVACEDNXGhSrnjnJB2z5Q5/KEw
+         tJC8Ng8AWGqdvVDD5EEi1N9VA7Wb+8/kern1xeKlMaV73g/3xCzMUl521/RAgo54I+
+         iJMSBdZ1MMP8uC2TdQ5L8X+nkGU57G8VvT8yO6WE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
+        stable@vger.kernel.org, Oliver OHalloran <oohall@gmail.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 214/344] tty: synclinkmp: Adjust indentation in several functions
+Subject: [PATCH 4.19 040/191] powerpc/iov: Move VF pdev fixup into pcibios_fixup_iov()
 Date:   Fri, 21 Feb 2020 08:40:13 +0100
-Message-Id: <20200221072408.633897173@linuxfoundation.org>
+Message-Id: <20200221072256.370855841@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,157 +45,121 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Oliver O'Halloran <oohall@gmail.com>
 
-[ Upstream commit 1feedf61e7265128244f6993f23421f33dd93dbc ]
+[ Upstream commit 965c94f309be58fbcc6c8d3e4f123376c5970d79 ]
 
-Clang warns:
+An ioda_pe for each VF is allocated in pnv_pci_sriov_enable() before
+the pci_dev for the VF is created. We need to set the pe->pdev pointer
+at some point after the pci_dev is created. Currently we do that in:
 
-../drivers/tty/synclinkmp.c:1456:3: warning: misleading indentation;
-statement is not part of the previous 'if' [-Wmisleading-indentation]
-        if (C_CRTSCTS(tty)) {
-        ^
-../drivers/tty/synclinkmp.c:1453:2: note: previous statement is here
-        if (I_IXOFF(tty))
-        ^
-../drivers/tty/synclinkmp.c:2473:8: warning: misleading indentation;
-statement is not part of the previous 'if' [-Wmisleading-indentation]
-                                                info->port.tty->hw_stopped = 0;
-                                                ^
-../drivers/tty/synclinkmp.c:2471:7: note: previous statement is here
-                                                if ( debug_level >= DEBUG_LEVEL_ISR )
-                                                ^
-../drivers/tty/synclinkmp.c:2482:8: warning: misleading indentation;
-statement is not part of the previous 'if' [-Wmisleading-indentation]
-                                                info->port.tty->hw_stopped = 1;
-                                                ^
-../drivers/tty/synclinkmp.c:2480:7: note: previous statement is here
-                                                if ( debug_level >= DEBUG_LEVEL_ISR )
-                                                ^
-../drivers/tty/synclinkmp.c:2809:3: warning: misleading indentation;
-statement is not part of the previous 'if' [-Wmisleading-indentation]
-        if (I_BRKINT(info->port.tty) || I_PARMRK(info->port.tty))
-        ^
-../drivers/tty/synclinkmp.c:2807:2: note: previous statement is here
-        if (I_INPCK(info->port.tty))
-        ^
-../drivers/tty/synclinkmp.c:3246:3: warning: misleading indentation;
-statement is not part of the previous 'else' [-Wmisleading-indentation]
-        set_signals(info);
-        ^
-../drivers/tty/synclinkmp.c:3244:2: note: previous statement is here
-        else
-        ^
-5 warnings generated.
+pcibios_bus_add_device()
+	pnv_pci_dma_dev_setup() (via phb->ops.dma_dev_setup)
+		/* fixup is done here */
+		pnv_pci_ioda_dma_dev_setup() (via pnv_phb->dma_dev_setup)
 
-The indentation on these lines is not at all consistent, tabs and spaces
-are mixed together. Convert to just using tabs to be consistent with the
-Linux kernel coding style and eliminate these warnings from clang.
+The fixup needs to be done before setting up DMA for for the VF's PE,
+but there's no real reason to delay it until this point. Move the
+fixup into pnv_pci_ioda_fixup_iov() so the ordering is:
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/823
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Link: https://lore.kernel.org/r/20191218024720.3528-1-natechancellor@gmail.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+	pcibios_add_device()
+		pnv_pci_ioda_fixup_iov() (via ppc_md.pcibios_fixup_sriov)
+
+	pcibios_bus_add_device()
+		...
+
+This isn't strictly required, but it's a slightly more logical place
+to do the fixup and it simplifies pnv_pci_dma_dev_setup().
+
+Signed-off-by: Oliver O'Halloran <oohall@gmail.com>
+Reviewed-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20200110070207.439-4-oohall@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/synclinkmp.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ arch/powerpc/platforms/powernv/pci-ioda.c | 29 +++++++++++++++++++----
+ arch/powerpc/platforms/powernv/pci.c      | 14 -----------
+ 2 files changed, 25 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/tty/synclinkmp.c b/drivers/tty/synclinkmp.c
-index fcb91bf7a15ba..54b897a646d02 100644
---- a/drivers/tty/synclinkmp.c
-+++ b/drivers/tty/synclinkmp.c
-@@ -1453,10 +1453,10 @@ static void throttle(struct tty_struct * tty)
- 	if (I_IXOFF(tty))
- 		send_xchar(tty, STOP_CHAR(tty));
+diff --git a/arch/powerpc/platforms/powernv/pci-ioda.c b/arch/powerpc/platforms/powernv/pci-ioda.c
+index 28adfe4dd04c5..ecd211c5f24a5 100644
+--- a/arch/powerpc/platforms/powernv/pci-ioda.c
++++ b/arch/powerpc/platforms/powernv/pci-ioda.c
+@@ -3015,9 +3015,6 @@ static void pnv_pci_ioda_fixup_iov_resources(struct pci_dev *pdev)
+ 	struct pci_dn *pdn;
+ 	int mul, total_vfs;
  
-- 	if (C_CRTSCTS(tty)) {
-+	if (C_CRTSCTS(tty)) {
- 		spin_lock_irqsave(&info->lock,flags);
- 		info->serial_signals &= ~SerialSignal_RTS;
--	 	set_signals(info);
-+		set_signals(info);
- 		spin_unlock_irqrestore(&info->lock,flags);
+-	if (!pdev->is_physfn || pci_dev_is_added(pdev))
+-		return;
+-
+ 	pdn = pci_get_pdn(pdev);
+ 	pdn->vfs_expanded = 0;
+ 	pdn->m64_single_mode = false;
+@@ -3092,6 +3089,30 @@ truncate_iov:
+ 		res->end = res->start - 1;
  	}
  }
-@@ -1482,10 +1482,10 @@ static void unthrottle(struct tty_struct * tty)
- 			send_xchar(tty, START_CHAR(tty));
- 	}
++
++static void pnv_pci_ioda_fixup_iov(struct pci_dev *pdev)
++{
++	if (WARN_ON(pci_dev_is_added(pdev)))
++		return;
++
++	if (pdev->is_virtfn) {
++		struct pnv_ioda_pe *pe = pnv_ioda_get_pe(pdev);
++
++		/*
++		 * VF PEs are single-device PEs so their pdev pointer needs to
++		 * be set. The pdev doesn't exist when the PE is allocated (in
++		 * (pcibios_sriov_enable()) so we fix it up here.
++		 */
++		pe->pdev = pdev;
++		WARN_ON(!(pe->flags & PNV_IODA_PE_VF));
++	} else if (pdev->is_physfn) {
++		/*
++		 * For PFs adjust their allocated IOV resources to match what
++		 * the PHB can support using it's M64 BAR table.
++		 */
++		pnv_pci_ioda_fixup_iov_resources(pdev);
++	}
++}
+ #endif /* CONFIG_PCI_IOV */
  
-- 	if (C_CRTSCTS(tty)) {
-+	if (C_CRTSCTS(tty)) {
- 		spin_lock_irqsave(&info->lock,flags);
- 		info->serial_signals |= SerialSignal_RTS;
--	 	set_signals(info);
-+		set_signals(info);
- 		spin_unlock_irqrestore(&info->lock,flags);
- 	}
- }
-@@ -2470,7 +2470,7 @@ static void isr_io_pin( SLMP_INFO *info, u16 status )
- 					if (status & SerialSignal_CTS) {
- 						if ( debug_level >= DEBUG_LEVEL_ISR )
- 							printk("CTS tx start...");
--			 			info->port.tty->hw_stopped = 0;
-+						info->port.tty->hw_stopped = 0;
- 						tx_start(info);
- 						info->pending_bh |= BH_TRANSMIT;
- 						return;
-@@ -2479,7 +2479,7 @@ static void isr_io_pin( SLMP_INFO *info, u16 status )
- 					if (!(status & SerialSignal_CTS)) {
- 						if ( debug_level >= DEBUG_LEVEL_ISR )
- 							printk("CTS tx stop...");
--			 			info->port.tty->hw_stopped = 1;
-+						info->port.tty->hw_stopped = 1;
- 						tx_stop(info);
- 					}
- 				}
-@@ -2806,8 +2806,8 @@ static void change_params(SLMP_INFO *info)
- 	info->read_status_mask2 = OVRN;
- 	if (I_INPCK(info->port.tty))
- 		info->read_status_mask2 |= PE | FRME;
-- 	if (I_BRKINT(info->port.tty) || I_PARMRK(info->port.tty))
-- 		info->read_status_mask1 |= BRKD;
-+	if (I_BRKINT(info->port.tty) || I_PARMRK(info->port.tty))
-+		info->read_status_mask1 |= BRKD;
- 	if (I_IGNPAR(info->port.tty))
- 		info->ignore_status_mask2 |= PE | FRME;
- 	if (I_IGNBRK(info->port.tty)) {
-@@ -3177,7 +3177,7 @@ static int tiocmget(struct tty_struct *tty)
-  	unsigned long flags;
+ static void pnv_ioda_setup_pe_res(struct pnv_ioda_pe *pe,
+@@ -3985,7 +4006,7 @@ static void __init pnv_pci_init_ioda_phb(struct device_node *np,
+ 	ppc_md.pcibios_default_alignment = pnv_pci_default_alignment;
  
- 	spin_lock_irqsave(&info->lock,flags);
-- 	get_signals(info);
-+	get_signals(info);
- 	spin_unlock_irqrestore(&info->lock,flags);
+ #ifdef CONFIG_PCI_IOV
+-	ppc_md.pcibios_fixup_sriov = pnv_pci_ioda_fixup_iov_resources;
++	ppc_md.pcibios_fixup_sriov = pnv_pci_ioda_fixup_iov;
+ 	ppc_md.pcibios_iov_resource_alignment = pnv_pci_iov_resource_alignment;
+ 	ppc_md.pcibios_sriov_enable = pnv_pcibios_sriov_enable;
+ 	ppc_md.pcibios_sriov_disable = pnv_pcibios_sriov_disable;
+diff --git a/arch/powerpc/platforms/powernv/pci.c b/arch/powerpc/platforms/powernv/pci.c
+index aa95b8e0f66ad..b6fa900af5da5 100644
+--- a/arch/powerpc/platforms/powernv/pci.c
++++ b/arch/powerpc/platforms/powernv/pci.c
+@@ -820,20 +820,6 @@ void pnv_pci_dma_dev_setup(struct pci_dev *pdev)
+ {
+ 	struct pci_controller *hose = pci_bus_to_host(pdev->bus);
+ 	struct pnv_phb *phb = hose->private_data;
+-#ifdef CONFIG_PCI_IOV
+-	struct pnv_ioda_pe *pe;
+-
+-	/* Fix the VF pdn PE number */
+-	if (pdev->is_virtfn) {
+-		list_for_each_entry(pe, &phb->ioda.pe_list, list) {
+-			if (pe->rid == ((pdev->bus->number << 8) |
+-			    (pdev->devfn & 0xff))) {
+-				pe->pdev = pdev;
+-				break;
+-			}
+-		}
+-	}
+-#endif /* CONFIG_PCI_IOV */
  
- 	result = ((info->serial_signals & SerialSignal_RTS) ? TIOCM_RTS : 0) |
-@@ -3215,7 +3215,7 @@ static int tiocmset(struct tty_struct *tty,
- 		info->serial_signals &= ~SerialSignal_DTR;
- 
- 	spin_lock_irqsave(&info->lock,flags);
-- 	set_signals(info);
-+	set_signals(info);
- 	spin_unlock_irqrestore(&info->lock,flags);
- 
- 	return 0;
-@@ -3227,7 +3227,7 @@ static int carrier_raised(struct tty_port *port)
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&info->lock,flags);
-- 	get_signals(info);
-+	get_signals(info);
- 	spin_unlock_irqrestore(&info->lock,flags);
- 
- 	return (info->serial_signals & SerialSignal_DCD) ? 1 : 0;
-@@ -3243,7 +3243,7 @@ static void dtr_rts(struct tty_port *port, int on)
- 		info->serial_signals |= SerialSignal_RTS | SerialSignal_DTR;
- 	else
- 		info->serial_signals &= ~(SerialSignal_RTS | SerialSignal_DTR);
-- 	set_signals(info);
-+	set_signals(info);
- 	spin_unlock_irqrestore(&info->lock,flags);
- }
- 
+ 	if (phb && phb->dma_dev_setup)
+ 		phb->dma_dev_setup(phb, pdev);
 -- 
 2.20.1
 
