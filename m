@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EFD9167386
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:13:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C5EA167461
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:23:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732953AbgBUINH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:13:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49066 "EHLO mail.kernel.org"
+        id S2387976AbgBUIUx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:20:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732943AbgBUINE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:13:04 -0500
+        id S2387967AbgBUIUt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:20:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 12C7320722;
-        Fri, 21 Feb 2020 08:13:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 10637206ED;
+        Fri, 21 Feb 2020 08:20:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272784;
-        bh=xR3TCnZhgPJN93bqdEvo5BwP1dB3RHfGLzJ+ceAVSPg=;
+        s=default; t=1582273248;
+        bh=k4MAyLiQvbkcRfoaIpeTeeZXxVI0Sn7O1+qJM6lHONc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vOK6eeXPu0So8KVaAxJrm4olxWvvL9lbaF/dpYW1NdnkzSShE5LMT1QM0hBb4mOBE
-         fVIneWNsLENCL5OcSJ8EZY9BAFwDVHTyQRBzHgi257EG8wDQkbjipfh5bcDgX23Zo7
-         qR7QKMjmxliz7gqVrNJ7SDJCL7T+QRTe/6vUkvSw=
+        b=oGW5tyB5ynxFVwYj3riM72+LaJCEnIm+StXlqbCHiEsiHw2GgEYWdUdoQt6U8YIbE
+         bj56rKoWB4400JKeCAXmz0a+r9Z23pMCeUrx4W9t3JJ7dwV0SZYGkRM4am0vLfL12n
+         qK5DRXzzVK+ZH07ZbVQQPwDyYScwii6suzEj6/AE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Shile Zhang <shile.zhang@linux.alibaba.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
+        Adhemerval Zanella <adhemerval.zanella@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Saeed Mahameed <saeedm@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 274/344] objtool: Fix ARCH=x86_64 build error
-Date:   Fri, 21 Feb 2020 08:41:13 +0100
-Message-Id: <20200221072414.609965291@linuxfoundation.org>
+Subject: [PATCH 4.19 101/191] mlx5: work around high stack usage with gcc
+Date:   Fri, 21 Feb 2020 08:41:14 +0100
+Message-Id: <20200221072303.164897797@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,61 +46,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shile Zhang <shile.zhang@linux.alibaba.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 8580bed7e751e6d4f17881e059daf3cb37ba4717 ]
+[ Upstream commit 42ae1a5c76691928ed217c7e40269db27f5225e9 ]
 
-Building objtool with ARCH=x86_64 fails with:
+In some configurations, gcc tries too hard to optimize this code:
 
-   $make ARCH=x86_64 -C tools/objtool
-   ...
-     CC       arch/x86/decode.o
-   arch/x86/decode.c:10:22: fatal error: asm/insn.h: No such file or directory
-    #include <asm/insn.h>
-                         ^
-   compilation terminated.
-   mv: cannot stat ‘arch/x86/.decode.o.tmp’: No such file or directory
-   make[2]: *** [arch/x86/decode.o] Error 1
-   ...
+drivers/net/ethernet/mellanox/mlx5/core/en_stats.c: In function 'mlx5e_grp_sw_update_stats':
+drivers/net/ethernet/mellanox/mlx5/core/en_stats.c:302:1: error: the frame size of 1336 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
 
-The root cause is that the command-line variable 'ARCH' cannot be
-overridden.  It can be replaced by 'SRCARCH', which is defined in
-'tools/scripts/Makefile.arch'.
+As was stated in the bug report, the reason is that gcc runs into a corner
+case in the register allocator that is rather hard to fix in a good way.
 
-Signed-off-by: Shile Zhang <shile.zhang@linux.alibaba.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Link: https://lore.kernel.org/r/d5d11370ae116df6c653493acd300ec3d7f5e925.1579543924.git.jpoimboe@redhat.com
+As there is an easy way to work around it, just add a comment and the
+barrier that stops gcc from trying to overoptimize the function.
+
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=92657
+Cc: Adhemerval Zanella <adhemerval.zanella@linaro.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/objtool/Makefile | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_stats.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
-index d2a19b0bc05aa..ee08aeff30a19 100644
---- a/tools/objtool/Makefile
-+++ b/tools/objtool/Makefile
-@@ -2,10 +2,6 @@
- include ../scripts/Makefile.include
- include ../scripts/Makefile.arch
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_stats.c b/drivers/net/ethernet/mellanox/mlx5/core/en_stats.c
+index 8255d797ea943..9a68dee588c1a 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_stats.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_stats.c
+@@ -211,6 +211,9 @@ void mlx5e_grp_sw_update_stats(struct mlx5e_priv *priv)
+ 			s->tx_tls_resync_bytes	+= sq_stats->tls_resync_bytes;
+ #endif
+ 			s->tx_cqes		+= sq_stats->cqes;
++
++			/* https://gcc.gnu.org/bugzilla/show_bug.cgi?id=92657 */
++			barrier();
+ 		}
+ 	}
  
--ifeq ($(ARCH),x86_64)
--ARCH := x86
--endif
--
- # always use the host compiler
- HOSTAR	?= ar
- HOSTCC	?= gcc
-@@ -33,7 +29,7 @@ all: $(OBJTOOL)
- 
- INCLUDES := -I$(srctree)/tools/include \
- 	    -I$(srctree)/tools/arch/$(HOSTARCH)/include/uapi \
--	    -I$(srctree)/tools/arch/$(ARCH)/include
-+	    -I$(srctree)/tools/arch/$(SRCARCH)/include
- WARNINGS := $(EXTRA_WARNINGS) -Wno-switch-default -Wno-switch-enum -Wno-packed
- CFLAGS   := -Werror $(WARNINGS) $(KBUILD_HOSTCFLAGS) -g $(INCLUDES) $(LIBELF_FLAGS)
- LDFLAGS  += $(LIBELF_LIBS) $(LIBSUBCMD) $(KBUILD_HOSTLDFLAGS)
 -- 
 2.20.1
 
