@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69A351673CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAE8316747D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:23:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732774AbgBUIPk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:15:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52444 "EHLO mail.kernel.org"
+        id S2388124AbgBUIVx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:21:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732657AbgBUIPg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:15:36 -0500
+        id S1731304AbgBUIVt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:21:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00B9C24670;
-        Fri, 21 Feb 2020 08:15:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E935B222C4;
+        Fri, 21 Feb 2020 08:21:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272935;
-        bh=tHzSWHCdyVFWI5DrEYz+/oYVT8reW7bX7g380mK4cOs=;
+        s=default; t=1582273308;
+        bh=Y7jB+ZV6za5sKFnujUyx0EMJDwQuK6xqKOM5vsnZ9L8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AKo/AbW+GZdcOKzFC8KoJC6wznCJg+c/KbsCtRvMxE9ZqT0z/3nCsp7PZd0uqVTkH
-         RdqV/QIUn//4WV0EoFmwuTdL3Z40dI4mRfmGFP6i9y2gavFU6EMjWQJE+XPz0dAPHl
-         z9q9+9PVXK+95bUR1fL2dBsE335IZFN19rSJP99g=
+        b=ZhHN1oEAuXCAiE1rA2hF5Mwk1i1YeghQ41iAyCLdHnbIOqzu8p3HDPqI1aNnZ8tpz
+         6+MSC5MYGURsDloRyraF18xWFKG/MX2KptLXi7eygxxBFOY9mLVZzszh9YaT8eoNIe
+         K5X6cEqUWxQ1nN1dKW77uLQZutZHnP0cyc9MDXqg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "zhangyi (F)" <yi.zhang@huawei.com>,
-        Jan Kara <jack@suse.cz>, Theodore Tso <tytso@mit.edu>,
+        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        Li RongQing <lirongqing@baidu.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 294/344] jbd2: make sure ESHUTDOWN to be recorded in the journal superblock
-Date:   Fri, 21 Feb 2020 08:41:33 +0100
-Message-Id: <20200221072416.569187874@linuxfoundation.org>
+Subject: [PATCH 4.19 121/191] bpf: Return -EBADRQC for invalid map type in __bpf_tx_xdp_map
+Date:   Fri, 21 Feb 2020 08:41:34 +0100
+Message-Id: <20200221072305.382868842@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhangyi (F) <yi.zhang@huawei.com>
+From: Li RongQing <lirongqing@baidu.com>
 
-[ Upstream commit 0e98c084a21177ef136149c6a293b3d1eb33ff92 ]
+[ Upstream commit 0a29275b6300f39f78a87f2038bbfe5bdbaeca47 ]
 
-Commit fb7c02445c49 ("ext4: pass -ESHUTDOWN code to jbd2 layer") want
-to allow jbd2 layer to distinguish shutdown journal abort from other
-error cases. So the ESHUTDOWN should be taken precedence over any other
-errno which has already been recoded after EXT4_FLAGS_SHUTDOWN is set,
-but it only update errno in the journal suoerblock now if the old errno
-is 0.
+A negative value should be returned if map->map_type is invalid
+although that is impossible now, but if we run into such situation
+in future, then xdpbuff could be leaked.
 
-Fixes: fb7c02445c49 ("ext4: pass -ESHUTDOWN code to jbd2 layer")
-Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Link: https://lore.kernel.org/r/20191204124614.45424-4-yi.zhang@huawei.com
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Daniel Borkmann suggested:
+
+-EBADRQC should be returned to stay consistent with generic XDP
+for the tracepoint output and not to be confused with -EOPNOTSUPP
+from other locations like dev_map_enqueue() when ndo_xdp_xmit is
+missing and such.
+
+Suggested-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Link: https://lore.kernel.org/bpf/1578618277-18085-1-git-send-email-lirongqing@baidu.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/jbd2/journal.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ net/core/filter.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index 65e78d3a2f64c..c1ce2805c5639 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -2114,8 +2114,7 @@ static void __journal_abort_soft (journal_t *journal, int errno)
- 
- 	if (journal->j_flags & JBD2_ABORT) {
- 		write_unlock(&journal->j_state_lock);
--		if (!old_errno && old_errno != -ESHUTDOWN &&
--		    errno == -ESHUTDOWN)
-+		if (old_errno != -ESHUTDOWN && errno == -ESHUTDOWN)
- 			jbd2_journal_update_sb_errno(journal);
- 		return;
+diff --git a/net/core/filter.c b/net/core/filter.c
+index 9daf1a4118b51..40b3af05c883c 100644
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -3207,7 +3207,7 @@ static int __bpf_tx_xdp_map(struct net_device *dev_rx, void *fwd,
+ 		return err;
  	}
+ 	default:
+-		break;
++		return -EBADRQC;
+ 	}
+ 	return 0;
+ }
 -- 
 2.20.1
 
