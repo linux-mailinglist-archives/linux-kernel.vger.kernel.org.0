@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FB62167340
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:10:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86E25167417
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732585AbgBUIKp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:10:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45940 "EHLO mail.kernel.org"
+        id S2387820AbgBUISX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:18:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727872AbgBUIKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:10:41 -0500
+        id S2387813AbgBUISU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:18:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BFD820578;
-        Fri, 21 Feb 2020 08:10:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92C9E24695;
+        Fri, 21 Feb 2020 08:18:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272640;
-        bh=AQZv439aPs3a3pzVfoFsckJvPrDHpgNa6VOlnBmXrqI=;
+        s=default; t=1582273099;
+        bh=kfQa1v1OuiAExi15uWYc+fe150B8w8uPydminWzQMrE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H1XG7gshdvbg1LZ1bW73IIv2w4ta4bHjOJ3DqBD3dyowl+Br1aiHe/LKC2WAbwqjx
-         W6a64BUSzxbLZXt5A+Wh7JowaiOLLlhCChrcn5gJ88KmAYjnjByftT43HNEq0JjwP7
-         DhGfjmYaXjpJBjjgpnJKo8urMFsCJwJ3IwFQ5Wuc=
+        b=m7T0A0VTafgt0SKjazD70SEym5So/yHXS5NCX+hEGulso3GFNpoBG96EUBHhWpjtU
+         C92uSeHNhkunFHBVzuh1zKUnTGs06RY8CixpTGJHtw/hmqNzGAG4fY3yBy2bWeKGHQ
+         xP8LghGnJcswTSmJg1Ap9sbkur3yEnpr4FkEHrjc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Ekstrand <jason@jlekstrand.net>,
-        Hans de Goede <hdegoede@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 184/344] ACPI: button: Add DMI quirk for Razer Blade Stealth 13 late 2019 lid switch
-Date:   Fri, 21 Feb 2020 08:39:43 +0100
-Message-Id: <20200221072405.733307500@linuxfoundation.org>
+Subject: [PATCH 4.19 011/191] nfsd4: avoid NULL deference on strange COPY compounds
+Date:   Fri, 21 Feb 2020 08:39:44 +0100
+Message-Id: <20200221072252.497508893@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Ekstrand <jason@jlekstrand.net>
+From: J. Bruce Fields <bfields@redhat.com>
 
-[ Upstream commit 0528904926aab19bffb2068879aa44db166c6d5f ]
+[ Upstream commit d781e3df710745fbbaee4eb07fd5b64331a1b175 ]
 
-Running evemu-record on the lid switch event shows that the lid reports
-the first "close" but then never reports an "open".  This causes systemd
-to continuously re-suspend the laptop every 30s.  Resetting the _LID to
-"open" fixes the issue.
+With cross-server COPY we've introduced the possibility that the current
+or saved filehandle might not have fh_dentry/fh_export filled in, but we
+missed a place that assumed it was.  I think this could be triggered by
+a compound like:
 
-Signed-off-by: Jason Ekstrand <jason@jlekstrand.net>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+	PUTFH(foreign filehandle)
+	GETATTR
+	SAVEFH
+	COPY
+
+First, check_if_stalefh_allowed sets no_verify on the first (PUTFH) op.
+Then op_func = nfsd4_putfh runs and leaves current_fh->fh_export NULL.
+need_wrongsec_check returns true, since this PUTFH has OP_IS_PUTFH_LIKE
+set and GETATTR does not have OP_HANDLES_WRONGSEC set.
+
+We should probably also consider tightening the checks in
+check_if_stalefh_allowed and double-checking that we don't assume the
+filehandle is verified elsewhere in the compound.  But I think this
+fixes the immediate issue.
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 4e48f1cccab3 "NFSD: allow inter server COPY to have... "
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/button.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ fs/nfsd/nfs4proc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/button.c b/drivers/acpi/button.c
-index ce93a355bd1c8..985afc62da82a 100644
---- a/drivers/acpi/button.c
-+++ b/drivers/acpi/button.c
-@@ -89,6 +89,17 @@ static const struct dmi_system_id lid_blacklst[] = {
- 		},
- 		.driver_data = (void *)(long)ACPI_BUTTON_LID_INIT_OPEN,
- 	},
-+	{
-+		/*
-+		 * Razer Blade Stealth 13 late 2019, notification of the LID device
-+		 * only happens on close, not on open and _LID always returns closed.
-+		 */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Razer"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Razer Blade Stealth 13 Late 2019"),
-+		},
-+		.driver_data = (void *)(long)ACPI_BUTTON_LID_INIT_OPEN,
-+	},
- 	{}
- };
+diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
+index f35aa9f88b5ec..895123518fd42 100644
+--- a/fs/nfsd/nfs4proc.c
++++ b/fs/nfsd/nfs4proc.c
+@@ -1789,7 +1789,8 @@ nfsd4_proc_compound(struct svc_rqst *rqstp)
+ 			if (op->opdesc->op_flags & OP_CLEAR_STATEID)
+ 				clear_current_stateid(cstate);
  
+-			if (need_wrongsec_check(rqstp))
++			if (current_fh->fh_export &&
++					need_wrongsec_check(rqstp))
+ 				op->status = check_nfsd_access(current_fh->fh_export, rqstp);
+ 		}
+ encode_op:
 -- 
 2.20.1
 
