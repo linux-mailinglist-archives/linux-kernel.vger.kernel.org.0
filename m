@@ -2,119 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFD2116820F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:43:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7EE4168204
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:41:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728914AbgBUPne (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 10:43:34 -0500
-Received: from mga05.intel.com ([192.55.52.43]:42653 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728177AbgBUPnd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 10:43:33 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2020 07:43:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,468,1574150400"; 
-   d="scan'208";a="236603814"
-Received: from mdiamon1-mobl.amr.corp.intel.com (HELO [10.252.143.193]) ([10.252.143.193])
-  by orsmga003.jf.intel.com with ESMTP; 21 Feb 2020 07:43:30 -0800
-Subject: Re: [PATCH] Intel: Skylake: Fix inconsistent IS_ERR and PTR_ERR
-To:     Joe Perches <joe@perches.com>, Xu Wang <vulab@iscas.ac.cn>,
-        perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org
-Cc:     linux-kernel@vger.kernel.org,
-        "Rojewski, Cezary" <cezary.rojewski@intel.com>,
-        "Slawinski, AmadeuszX" <amadeuszx.slawinski@intel.com>
-References: <20200221101112.3104-1-vulab@iscas.ac.cn>
- <1247da797bc0a860e845989241385e124e589063.camel@perches.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <8e96c207-cdf8-2d1f-755e-be60555c8728@linux.intel.com>
-Date:   Fri, 21 Feb 2020 09:40:13 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <1247da797bc0a860e845989241385e124e589063.camel@perches.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1728643AbgBUPll convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 21 Feb 2020 10:41:41 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:21840 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728249AbgBUPlk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 10:41:40 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-34-znG9C_rnOd---4JYyePm1w-1; Fri, 21 Feb 2020 15:41:36 +0000
+X-MC-Unique: znG9C_rnOd---4JYyePm1w-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Fri, 21 Feb 2020 15:41:35 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Fri, 21 Feb 2020 15:41:35 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Will Deacon' <will@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "kernel-team@android.com" <kernel-team@android.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "K . Prasad" <prasad@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Quentin Perret <qperret@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: RE: [PATCH 0/3] Unexport kallsyms_lookup_name() and
+ kallsyms_on_each_symbol()
+Thread-Topic: [PATCH 0/3] Unexport kallsyms_lookup_name() and
+ kallsyms_on_each_symbol()
+Thread-Index: AQHV6Kw/G1ZhChcu+kqJa3R2blwF06glyM6A
+Date:   Fri, 21 Feb 2020 15:41:35 +0000
+Message-ID: <d31bc2e2718247a7b1db38593564262e@AcuMS.aculab.com>
+References: <20200221114404.14641-1-will@kernel.org>
+In-Reply-To: <20200221114404.14641-1-will@kernel.org>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2/21/20 8:41 AM, Joe Perches wrote:
-> On Fri, 2020-02-21 at 18:11 +0800, Xu Wang wrote:
->> PTR_ERR should access the value just tested by IS_ERR.
->> In skl_clk_dev_probe(),it is inconsistent.
-> []
->> diff --git a/sound/soc/intel/skylake/skl-ssp-clk.c b/sound/soc/intel/skylake/skl-ssp-clk.c
-> []
->> @@ -384,7 +384,7 @@ static int skl_clk_dev_probe(struct platform_device *pdev)
->>   				&clks[i], clk_pdata, i);
->>   
->>   		if (IS_ERR(data->clk[data->avail_clk_cnt])) {
->> -			ret = PTR_ERR(data->clk[data->avail_clk_cnt++]);
->> +			ret = PTR_ERR(data->clk[data->avail_clk_cnt]);
+From: Will Deacon
+> Sent: 21 February 2020 11:44
+> Hi folks,
 > 
-> NAK.
-> 
-> This is not inconsistent and you are removing the ++
-> which is a post increment.  Likely that is necessary.
-> 
-> You could write the access and the increment as two
-> separate statements if it confuses you.
+> Despite having just a single modular in-tree user that I could spot,
+> kallsyms_lookup_name() is exported to modules and provides a mechanism
+> for out-of-tree modules to access and invoke arbitrary, non-exported
+> kernel symbols when kallsyms is enabled.
 
-Well to be fair the code is far from clear.
+Now where did I put that kernel code that opens /proc/kallsyms and
+then reads it to find the addresses of symbols ...
 
-the post-increment is likely needed because of the error handling in 
-unregister_src_clk 1
-		data->clk[data->avail_clk_cnt] = register_skl_clk(dev,
-				&clks[i], clk_pdata, i);
+	David
 
-		if (IS_ERR(data->clk[data->avail_clk_cnt])) {
-			ret = PTR_ERR(data->clk[data->avail_clk_cnt++]);
-			goto err_unreg_skl_clk;
-		}
-	}
-
-	platform_set_drvdata(pdev, data);
-
-	return 0;
-
-err_unreg_skl_clk:
-	unregister_src_clk(data);
-
-static void unregister_src_clk(struct skl_clk_data *dclk)
-{
-	while (dclk->avail_clk_cnt--)
-		clkdev_drop(dclk->clk[dclk->avail_clk_cnt]->lookup);
-}
-
-So the post-increment is cancelled in the while().
-
-That said, the avail_clk_cnt field is never initialized or incremented 
-in normal usages so the code looks quite suspicious indeed.
-
-gitk tells me this patch is likely the culprit:
-
-6ee927f2f01466 ('ASoC: Intel: Skylake: Fix NULL ptr dereference when 
-unloading clk dev')
-
--		data->clk[i] = register_skl_clk(dev, &clks[i], clk_pdata, i);
--		if (IS_ERR(data->clk[i])) {
--			ret = PTR_ERR(data->clk[i]);
-+		data->clk[data->avail_clk_cnt] = register_skl_clk(dev,
-+				&clks[i], clk_pdata, i);
-+
-+		if (IS_ERR(data->clk[data->avail_clk_cnt])) {
-+			ret = PTR_ERR(data->clk[data->avail_clk_cnt++]);
-  			goto err_unreg_skl_clk;
-  		}
 -
--		data->avail_clk_cnt++;
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
-That last removal is probably wrong. Cezary and Amadeusz, you may want 
-to look at this?
