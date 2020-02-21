@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C75921672D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:06:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E7CE1672DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:07:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732015AbgBUIGz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:06:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40880 "EHLO mail.kernel.org"
+        id S1732042AbgBUIHQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:07:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41384 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732007AbgBUIGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:06:53 -0500
+        id S1731133AbgBUIHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:07:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2AC020578;
-        Fri, 21 Feb 2020 08:06:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5D1720578;
+        Fri, 21 Feb 2020 08:07:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272413;
-        bh=dL1C9ZtwKKPWFltFPjdkV6dCvn5rHMctGRPlSveN5sc=;
+        s=default; t=1582272434;
+        bh=8HUB1l7K/kfrc9BPVRbNuWolaKKk6PF6kPZqwuYtyTg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mPEg8gafDDE5I0EOj4FT87Vf0c2owLB96FCd0nvF9z2+FXp/dUeu0fjpvDb3ak4Ga
-         Jw5PSJsWXVBDRu2TxOShOcBIQQDruj5Ao2XhpFz6FDxULU3SrLbmQkrrosXmvD9EWj
-         vR5xNwx0E37grVS6hzh3b1ol66+6CmT9S/6KZaEU=
+        b=eHH6PQr1oS0ut1NUEhJA8PvVqAWMPlJ2gyZYHpZ+JK9ZpSPkQdJZGrVq0P4RmDyl1
+         RQtuSxlz6Gt8JcETFl2YcozJpAeYnQWIquKUcpdB1q7pCRm/pRAvqRwAh0PYJ+XqEo
+         NuqQt2Oy4kMv8sqE/EPGw2BbJVuXor0UswwCyyVs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
         Maxime Ripard <maxime@cerno.tech>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 106/344] arm64: dts: allwinner: H6: Add PMU mode
-Date:   Fri, 21 Feb 2020 08:38:25 +0100
-Message-Id: <20200221072358.547442478@linuxfoundation.org>
+Subject: [PATCH 5.4 107/344] arm64: dts: allwinner: H5: Add PMU node
+Date:   Fri, 21 Feb 2020 08:38:26 +0100
+Message-Id: <20200221072358.635552303@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
 References: <20200221072349.335551332@linuxfoundation.org>
@@ -46,37 +46,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andre Przywara <andre.przywara@arm.com>
 
-[ Upstream commit 7aa9b9eb7d6a8fde7acbe0446444f7e3fae1fe3b ]
+[ Upstream commit c35a516a46187c8eeb7a56c64505ec6f7e22a0c7 ]
 
-Add the Performance Monitoring Unit (PMU) device tree node to the H6
+Add the Performance Monitoring Unit (PMU) device tree node to the H5
 .dtsi, which tells DT users which interrupts are triggered by PMU
-overflow events on each core. The numbers come from the manual and have
-been checked in U-Boot and with perf in Linux.
+overflow events on each core.
+As with the A64, the interrupt numbers from the manual were wrong (off
+by 4), the actual SPI IDs have been gathered in U-Boot, and were
+verified with perf in Linux.
 
-Tested with perf record and taskset on a Pine H64.
+Tested with perf record and taskset on an OrangePi PC2.
 
 Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-index 0d5ea19336a19..d192538916724 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-@@ -70,6 +70,16 @@
- 		clock-output-names = "ext_osc32k";
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+index f002a496d7cbb..1d34e3eefda3f 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+@@ -54,21 +54,21 @@
+ 			enable-method = "psci";
+ 		};
+ 
+-		cpu@1 {
++		cpu1: cpu@1 {
+ 			compatible = "arm,cortex-a53";
+ 			device_type = "cpu";
+ 			reg = <1>;
+ 			enable-method = "psci";
+ 		};
+ 
+-		cpu@2 {
++		cpu2: cpu@2 {
+ 			compatible = "arm,cortex-a53";
+ 			device_type = "cpu";
+ 			reg = <2>;
+ 			enable-method = "psci";
+ 		};
+ 
+-		cpu@3 {
++		cpu3: cpu@3 {
+ 			compatible = "arm,cortex-a53";
+ 			device_type = "cpu";
+ 			reg = <3>;
+@@ -76,6 +76,16 @@
+ 		};
  	};
  
 +	pmu {
 +		compatible = "arm,cortex-a53-pmu",
 +			     "arm,armv8-pmuv3";
-+		interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>;
 +		interrupt-affinity = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>;
 +	};
 +
