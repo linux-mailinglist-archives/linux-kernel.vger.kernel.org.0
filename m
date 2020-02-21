@@ -2,44 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DFC816734C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:11:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DF161674E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:30:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732558AbgBUILI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:11:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46452 "EHLO mail.kernel.org"
+        id S2387898AbgBUISr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:18:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732642AbgBUILF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:11:05 -0500
+        id S1733146AbgBUISp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:18:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D77420578;
-        Fri, 21 Feb 2020 08:11:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B31C224689;
+        Fri, 21 Feb 2020 08:18:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272664;
-        bh=k65vaB9WYKI4hSIjHv6Sr2FrMdKp5GeOuXVbJvq6R90=;
+        s=default; t=1582273124;
+        bh=nfuiEToh8iAo7zF9jE6osmZpRN7Rd4q3isqck//PNyo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gbcxe4yV60j9/nHt6oVE0It6Cp4v+VV6zI4jqUyMyzAkAkc448FD1/vZ0teK2105r
-         bVTlOnjEH22OwIMetJPZh7w54rDWIg0Pg1ZOoP7UFH7cDMIvUf/fu0YULxuBft87gt
-         jmGRMa2j9bBT9ASyzOzXYay2pNP747p2vUkE3Z4U=
+        b=dAHcNA7En+iQi9tFfBOWJV6bHyQLTI0Vq66loPsbRL6jfxVFVcS7Wbh8EXs1olh6s
+         zwMztvGlR5opLv/dn0yYwISqLnm7+t7L3ACsEL16pykL0L7lZQ5FT14VRTHYEGuBqh
+         Vrgae8hUisNMQKAxWeuPSjYUUwFU6Ph3QJN2ZGwg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
-        Brian Masney <masneyb@onstation.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Maulik Shah <mkshah@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Will Deacon <will@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 229/344] gpiolib: Set lockdep class for hierarchical irq domains
-Date:   Fri, 21 Feb 2020 08:40:28 +0100
-Message-Id: <20200221072410.053232159@linuxfoundation.org>
+Subject: [PATCH 4.19 056/191] selinux: fall back to ref-walk if audit is required
+Date:   Fri, 21 Feb 2020 08:40:29 +0100
+Message-Id: <20200221072258.232661027@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,118 +46,156 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Boyd <swboyd@chromium.org>
+From: Stephen Smalley <sds@tycho.nsa.gov>
 
-[ Upstream commit c34f6dc8c9e6bbe9fba1d53acd6d9a3889599da3 ]
+[ Upstream commit 0188d5c025ca8fe756ba3193bd7d150139af5a88 ]
 
-I see the following lockdep splat in the qcom pinctrl driver when
-attempting to suspend the device.
+commit bda0be7ad994 ("security: make inode_follow_link RCU-walk aware")
+passed down the rcu flag to the SELinux AVC, but failed to adjust the
+test in slow_avc_audit() to also return -ECHILD on LSM_AUDIT_DATA_DENTRY.
+Previously, we only returned -ECHILD if generating an audit record with
+LSM_AUDIT_DATA_INODE since this was only relevant from inode_permission.
+Move the handling of MAY_NOT_BLOCK to avc_audit() and its inlined
+equivalent in selinux_inode_permission() immediately after we determine
+that audit is required, and always fall back to ref-walk in this case.
 
- ============================================
- WARNING: possible recursive locking detected
- 5.4.2 #2 Tainted: G S
- --------------------------------------------
- cat/6536 is trying to acquire lock:
- ffffff814787ccc0 (&irq_desc_lock_class){-.-.}, at: __irq_get_desc_lock+0x64/0x94
-
- but task is already holding lock:
- ffffff81436740c0 (&irq_desc_lock_class){-.-.}, at: __irq_get_desc_lock+0x64/0x94
-
- other info that might help us debug this:
-  Possible unsafe locking scenario:
-
-        CPU0
-        ----
-   lock(&irq_desc_lock_class);
-   lock(&irq_desc_lock_class);
-
-  *** DEADLOCK ***
-
-  May be due to missing lock nesting notation
-
- 7 locks held by cat/6536:
-  #0: ffffff8140e0c420 (sb_writers#7){.+.+}, at: vfs_write+0xc8/0x19c
-  #1: ffffff8121eec480 (&of->mutex){+.+.}, at: kernfs_fop_write+0x128/0x1f4
-  #2: ffffff8147cad668 (kn->count#263){.+.+}, at: kernfs_fop_write+0x130/0x1f4
-  #3: ffffffd011446000 (system_transition_mutex){+.+.}, at: pm_suspend+0x108/0x354
-  #4: ffffff814302b970 (&dev->mutex){....}, at: __device_suspend+0x16c/0x420
-  #5: ffffff81436740c0 (&irq_desc_lock_class){-.-.}, at: __irq_get_desc_lock+0x64/0x94
-  #6: ffffff81479b8c10 (&pctrl->lock){....}, at: msm_gpio_irq_set_wake+0x48/0x7c
-
- stack backtrace:
- CPU: 4 PID: 6536 Comm: cat Tainted: G S                5.4.2 #2
- Call trace:
-  dump_backtrace+0x0/0x174
-  show_stack+0x20/0x2c
-  dump_stack+0xdc/0x144
-  __lock_acquire+0x52c/0x2268
-  lock_acquire+0x1dc/0x220
-  _raw_spin_lock_irqsave+0x64/0x80
-  __irq_get_desc_lock+0x64/0x94
-  irq_set_irq_wake+0x40/0x144
-  msm_gpio_irq_set_wake+0x5c/0x7c
-  set_irq_wake_real+0x40/0x5c
-  irq_set_irq_wake+0x70/0x144
-  cros_ec_rtc_suspend+0x38/0x4c
-  platform_pm_suspend+0x34/0x60
-  dpm_run_callback+0x64/0xcc
-  __device_suspend+0x314/0x420
-  dpm_suspend+0xf8/0x298
-  dpm_suspend_start+0x84/0xb4
-  suspend_devices_and_enter+0xbc/0x628
-  pm_suspend+0x214/0x354
-  state_store+0xb0/0x108
-  kobj_attr_store+0x14/0x24
-  sysfs_kf_write+0x4c/0x64
-  kernfs_fop_write+0x158/0x1f4
-  __vfs_write+0x54/0x18c
-  vfs_write+0xdc/0x19c
-  ksys_write+0x7c/0xe4
-  __arm64_sys_write+0x20/0x2c
-  el0_svc_common+0xa8/0x160
-  el0_svc_compat_handler+0x2c/0x38
-  el0_svc_compat+0x8/0x10
-
-This is because the msm_gpio_irq_set_wake() function calls
-irq_set_irq_wake() as a backup in case the irq comes in during the path
-to idle. Given that we're calling irqchip functions from within an
-irqchip we need to set the lockdep class to be different for this child
-controller vs. the default one that the parent irqchip gets.
-
-This used to be done before this driver was converted to hierarchical
-irq domains in commit e35a6ae0eb3a ("pinctrl/msm: Setup GPIO chip in
-hierarchy") via the gpiochip_irq_map() function. With hierarchical irq
-domains this function has been replaced by
-gpiochip_hierarchy_irq_domain_alloc(). Therefore, set the lockdep class
-like was done previously in the irq domain path so we can avoid this
-lockdep warning.
-
-Fixes: fdd61a013a24 ("gpio: Add support for hierarchical IRQ domains")
-Cc: Thierry Reding <treding@nvidia.com>
-Cc: Brian Masney <masneyb@onstation.org>
-Cc: Lina Iyer <ilina@codeaurora.org>
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Maulik Shah <mkshah@codeaurora.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-Link: https://lore.kernel.org/r/20200114231103.85641-1-swboyd@chromium.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: bda0be7ad994 ("security: make inode_follow_link RCU-walk aware")
+Reported-by: Will Deacon <will@kernel.org>
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpiolib.c | 1 +
- 1 file changed, 1 insertion(+)
+ security/selinux/avc.c         | 24 +++++-------------------
+ security/selinux/hooks.c       | 11 +++++++----
+ security/selinux/include/avc.h |  8 +++++---
+ 3 files changed, 17 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 22506e4614b3f..484fa6560adcd 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1924,6 +1924,7 @@ static int gpiochip_hierarchy_irq_domain_alloc(struct irq_domain *d,
- 				     parent_type);
- 	chip_info(gc, "alloc_irqs_parent for %d parent hwirq %d\n",
- 		  irq, parent_hwirq);
-+	irq_set_lockdep_class(irq, gc->irq.lock_key, gc->irq.request_key);
- 	ret = irq_domain_alloc_irqs_parent(d, irq, 1, &parent_fwspec);
- 	if (ret)
- 		chip_err(gc,
+diff --git a/security/selinux/avc.c b/security/selinux/avc.c
+index 5de18a6d5c3f0..0622cae510461 100644
+--- a/security/selinux/avc.c
++++ b/security/selinux/avc.c
+@@ -496,7 +496,7 @@ static inline int avc_xperms_audit(struct selinux_state *state,
+ 	if (likely(!audited))
+ 		return 0;
+ 	return slow_avc_audit(state, ssid, tsid, tclass, requested,
+-			audited, denied, result, ad, 0);
++			audited, denied, result, ad);
+ }
+ 
+ static void avc_node_free(struct rcu_head *rhead)
+@@ -766,8 +766,7 @@ static void avc_audit_post_callback(struct audit_buffer *ab, void *a)
+ noinline int slow_avc_audit(struct selinux_state *state,
+ 			    u32 ssid, u32 tsid, u16 tclass,
+ 			    u32 requested, u32 audited, u32 denied, int result,
+-			    struct common_audit_data *a,
+-			    unsigned int flags)
++			    struct common_audit_data *a)
+ {
+ 	struct common_audit_data stack_data;
+ 	struct selinux_audit_data sad;
+@@ -777,17 +776,6 @@ noinline int slow_avc_audit(struct selinux_state *state,
+ 		a->type = LSM_AUDIT_DATA_NONE;
+ 	}
+ 
+-	/*
+-	 * When in a RCU walk do the audit on the RCU retry.  This is because
+-	 * the collection of the dname in an inode audit message is not RCU
+-	 * safe.  Note this may drop some audits when the situation changes
+-	 * during retry. However this is logically just as if the operation
+-	 * happened a little later.
+-	 */
+-	if ((a->type == LSM_AUDIT_DATA_INODE) &&
+-	    (flags & MAY_NOT_BLOCK))
+-		return -ECHILD;
+-
+ 	sad.tclass = tclass;
+ 	sad.requested = requested;
+ 	sad.ssid = ssid;
+@@ -860,16 +848,14 @@ static int avc_update_node(struct selinux_avc *avc,
+ 	/*
+ 	 * If we are in a non-blocking code path, e.g. VFS RCU walk,
+ 	 * then we must not add permissions to a cache entry
+-	 * because we cannot safely audit the denial.  Otherwise,
++	 * because we will not audit the denial.  Otherwise,
+ 	 * during the subsequent blocking retry (e.g. VFS ref walk), we
+ 	 * will find the permissions already granted in the cache entry
+ 	 * and won't audit anything at all, leading to silent denials in
+ 	 * permissive mode that only appear when in enforcing mode.
+ 	 *
+-	 * See the corresponding handling in slow_avc_audit(), and the
+-	 * logic in selinux_inode_follow_link and selinux_inode_permission
+-	 * for the VFS MAY_NOT_BLOCK flag, which is transliterated into
+-	 * AVC_NONBLOCKING for avc_has_perm_noaudit().
++	 * See the corresponding handling of MAY_NOT_BLOCK in avc_audit()
++	 * and selinux_inode_permission().
+ 	 */
+ 	if (flags & AVC_NONBLOCKING)
+ 		return 0;
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 040c843968dc6..c574285966f9d 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -3171,8 +3171,7 @@ static int selinux_inode_follow_link(struct dentry *dentry, struct inode *inode,
+ 
+ static noinline int audit_inode_permission(struct inode *inode,
+ 					   u32 perms, u32 audited, u32 denied,
+-					   int result,
+-					   unsigned flags)
++					   int result)
+ {
+ 	struct common_audit_data ad;
+ 	struct inode_security_struct *isec = inode->i_security;
+@@ -3183,7 +3182,7 @@ static noinline int audit_inode_permission(struct inode *inode,
+ 
+ 	rc = slow_avc_audit(&selinux_state,
+ 			    current_sid(), isec->sid, isec->sclass, perms,
+-			    audited, denied, result, &ad, flags);
++			    audited, denied, result, &ad);
+ 	if (rc)
+ 		return rc;
+ 	return 0;
+@@ -3230,7 +3229,11 @@ static int selinux_inode_permission(struct inode *inode, int mask)
+ 	if (likely(!audited))
+ 		return rc;
+ 
+-	rc2 = audit_inode_permission(inode, perms, audited, denied, rc, flags);
++	/* fall back to ref-walk if we have to generate audit */
++	if (flags & MAY_NOT_BLOCK)
++		return -ECHILD;
++
++	rc2 = audit_inode_permission(inode, perms, audited, denied, rc);
+ 	if (rc2)
+ 		return rc2;
+ 	return rc;
+diff --git a/security/selinux/include/avc.h b/security/selinux/include/avc.h
+index 74ea50977c201..cf4cc3ef959b5 100644
+--- a/security/selinux/include/avc.h
++++ b/security/selinux/include/avc.h
+@@ -100,8 +100,7 @@ static inline u32 avc_audit_required(u32 requested,
+ int slow_avc_audit(struct selinux_state *state,
+ 		   u32 ssid, u32 tsid, u16 tclass,
+ 		   u32 requested, u32 audited, u32 denied, int result,
+-		   struct common_audit_data *a,
+-		   unsigned flags);
++		   struct common_audit_data *a);
+ 
+ /**
+  * avc_audit - Audit the granting or denial of permissions.
+@@ -135,9 +134,12 @@ static inline int avc_audit(struct selinux_state *state,
+ 	audited = avc_audit_required(requested, avd, result, 0, &denied);
+ 	if (likely(!audited))
+ 		return 0;
++	/* fall back to ref-walk if we have to generate audit */
++	if (flags & MAY_NOT_BLOCK)
++		return -ECHILD;
+ 	return slow_avc_audit(state, ssid, tsid, tclass,
+ 			      requested, audited, denied, result,
+-			      a, flags);
++			      a);
+ }
+ 
+ #define AVC_STRICT 1 /* Ignore permissive mode. */
 -- 
 2.20.1
 
