@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCCD2167677
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:37:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DED51677BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:44:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732806AbgBUIfH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:35:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42428 "EHLO mail.kernel.org"
+        id S1731015AbgBUIn4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:43:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732136AbgBUIIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:08:02 -0500
+        id S1729581AbgBUHw6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:52:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 409D72465D;
-        Fri, 21 Feb 2020 08:08:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 190B420578;
+        Fri, 21 Feb 2020 07:52:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272481;
-        bh=Ib/kJYQoRP9+Z4hzql8Gs1MBOxNuMCCSr6QAxvEN8RM=;
+        s=default; t=1582271577;
+        bh=8Yb5HhRfNtu90zyqPHEgbqHDjAy4hSB8qwaNWc47P64=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rLG9RZL3t4Wj4B8qeJC2gcgCU2/HHcA0WP4ZBRDxHebzJL7ym83JOCc/pUr8Tm32F
-         YqYVAxSg6OfRf1pcdztOTzHUaVTwhVZCzgK/gw6TS40+I1b6/13Jzp54ITL7VMUc11
-         Mw3e2vRCZF9uAmEwKKu/R3DKwe24oqK6FKxaWR8M=
+        b=AEnKq3ThMpZlW+et7qcjGC+wl6KfdYV9Gs+z9yEDLRUEwam4OUXYJfGRXulxWJN1u
+         MnQNolX6QMXgNslOV6aa07Esc0rbqFv0ySqzp18SG+cIjhRwYsLxwfLBtz9RO4CbGI
+         5LN/xmVopeujnNMDBp3Hq0byBPHLgKheJ0wmiykA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Monk Liu <Monk.Liu@amd.com>,
-        Emily Deng <Emily.Deng@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org,
+        Benjamin Gaignard <benjamin.gaignard@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 142/344] drm/amdgpu: fix KIQ ring test fail in TDR of SRIOV
-Date:   Fri, 21 Feb 2020 08:39:01 +0100
-Message-Id: <20200221072401.715012699@linuxfoundation.org>
+Subject: [PATCH 5.5 219/399] ARM: dts: stm32: Add power-supply for DSI panel on stm32f469-disco
+Date:   Fri, 21 Feb 2020 08:39:04 +0100
+Message-Id: <20200221072424.287292973@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
+References: <20200221072402.315346745@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Monk Liu <Monk.Liu@amd.com>
+From: Benjamin Gaignard <benjamin.gaignard@st.com>
 
-[ Upstream commit 5a7489a7e189ee2be889485f90c8cf24ea4b9a40 ]
+[ Upstream commit 0ff15a86d0c5a3f004fee2e92d65b88e56a3bc58 ]
 
-issues:
-MEC is ruined by the amdkfd_pre_reset after VF FLR done
+Add a fixed regulator and use it as power supply for DSI panel.
 
-fix:
-amdkfd_pre_reset() would ruin MEC after hypervisor finished the VF FLR,
-the correct sequence is do amdkfd_pre_reset before VF FLR but there is
-a limitation to block this sequence:
-if we do pre_reset() before VF FLR, it would go KIQ way to do register
-access and stuck there, because KIQ probably won't work by that time
-(e.g. you already made GFX hang)
+Fixes: 18c8866266 ("ARM: dts: stm32: Add display support on stm32f469-disco")
 
-so the best way right now is to simply remove it.
-
-Signed-off-by: Monk Liu <Monk.Liu@amd.com>
-Reviewed-by: Emily Deng <Emily.Deng@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 2 --
- 1 file changed, 2 deletions(-)
+ arch/arm/boot/dts/stm32f469-disco.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-index 7a6c837c0a85f..13694d5eba474 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-@@ -3466,8 +3466,6 @@ static int amdgpu_device_reset_sriov(struct amdgpu_device *adev,
- 	if (r)
- 		return r;
+diff --git a/arch/arm/boot/dts/stm32f469-disco.dts b/arch/arm/boot/dts/stm32f469-disco.dts
+index f3ce477b7bae6..9397db0c43de2 100644
+--- a/arch/arm/boot/dts/stm32f469-disco.dts
++++ b/arch/arm/boot/dts/stm32f469-disco.dts
+@@ -76,6 +76,13 @@
+ 		regulator-max-microvolt = <3300000>;
+ 	};
  
--	amdgpu_amdkfd_pre_reset(adev);
--
- 	/* Resume IP prior to SMC */
- 	r = amdgpu_device_ip_reinit_early_sriov(adev);
- 	if (r)
++	vdd_dsi: vdd-dsi {
++		compatible = "regulator-fixed";
++		regulator-name = "vdd_dsi";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++	};
++
+ 	soc {
+ 		dma-ranges = <0xc0000000 0x0 0x10000000>;
+ 	};
+@@ -155,6 +162,7 @@
+ 		compatible = "orisetech,otm8009a";
+ 		reg = <0>; /* dsi virtual channel (0..3) */
+ 		reset-gpios = <&gpioh 7 GPIO_ACTIVE_LOW>;
++		power-supply = <&vdd_dsi>;
+ 		status = "okay";
+ 
+ 		port {
 -- 
 2.20.1
 
