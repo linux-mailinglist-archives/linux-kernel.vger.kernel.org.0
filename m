@@ -2,73 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E783166F52
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 06:45:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C07CF166F3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 06:38:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbgBUFp4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 00:45:56 -0500
-Received: from smtp.infotech.no ([82.134.31.41]:48826 "EHLO smtp.infotech.no"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725800AbgBUFpz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 00:45:55 -0500
-X-Greylist: delayed 462 seconds by postgrey-1.27 at vger.kernel.org; Fri, 21 Feb 2020 00:45:55 EST
-Received: from localhost (localhost [127.0.0.1])
-        by smtp.infotech.no (Postfix) with ESMTP id 52A5A204190;
-        Fri, 21 Feb 2020 06:38:12 +0100 (CET)
-X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
-Received: from smtp.infotech.no ([127.0.0.1])
-        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id SqWLuvmLguZy; Fri, 21 Feb 2020 06:38:04 +0100 (CET)
-Received: from [192.168.48.23] (host-23-251-188-50.dyn.295.ca [23.251.188.50])
-        by smtp.infotech.no (Postfix) with ESMTPA id 4DB692040E4;
-        Fri, 21 Feb 2020 06:38:02 +0100 (CET)
-Reply-To: dgilbert@interlog.com
-To:     SCSI development list <linux-scsi@vger.kernel.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        David Sommerseth <davids@redhat.com>,
-        Hannes Reinecke <hare@suse.de>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-From:   Douglas Gilbert <dgilbert@interlog.com>
-Subject: [ANNOUNCE] lsscsi version 0.31 released
-Message-ID: <435f80a2-ab55-9df2-c59c-c1ec113461ff@interlog.com>
-Date:   Fri, 21 Feb 2020 00:37:57 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1726836AbgBUFiU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 00:38:20 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:35727 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726201AbgBUFiU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 00:38:20 -0500
+Received: by mail-pf1-f195.google.com with SMTP id i19so623413pfa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 21:38:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xR1GRxFdUV2TwDvxuNR/pK3VYzRWJYZmKivDEUcKc5w=;
+        b=QVp/FC2NiAc3rBycqqqlyoa0rlWBGhP8nW8nvvVd1pRXp9Io6ugF1YFhOrlCramk4m
+         maGakRF1l77Fn3JdI/QLF3uqnkV56NYnLn0ct7McCl8jjFS/RuIzCVK4rKwS0eMsanTp
+         JJZ6xUxzRnD685IHKwcVyvWnx6ogkbaou6bhU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xR1GRxFdUV2TwDvxuNR/pK3VYzRWJYZmKivDEUcKc5w=;
+        b=raNCCWwU/65UhAlLl4YVwt8wxPgS5kT0NX91TcxKyoBSLT1kTAV9DEY4pXxL3S44bw
+         pgLkb99EvI/SQSVakk+brQDD7GWy9jAiyn6XxbGj7Qg6bksZNLp+WBMjBkkMU7HD49xc
+         KOnaJGGlweVekegIHMs9eAQNEzN5IgpL2eWdxyw0k6TbcwHFljAuvUXzbshoRxs6YV9K
+         PlwIAcHNXFwQ2jFzaMuKz6aFl4maOWZUO/dY2HnUO4+/QiOgoLrckfw6B7U4ry1I91lW
+         W+GfNQnDrdoilDNIJd6tTrAvpYam/EFA/4Yms2+hJtqfMzIxzygZU165zLQPLwghlcTd
+         M1eQ==
+X-Gm-Message-State: APjAAAWM7gea3Ps/6pnLZrmdlzRK9xpHn72ZuT5BZkR6BW4NdGkC5zz+
+        1oNIOFbZ6cJ0cuC9GlsWDFkIUfZEJOWaRA==
+X-Google-Smtp-Source: APXvYqwNbEeASGO4ArQ+KQ49tlopvldlo5/I0QneTu45MVpD2X1Vvxvy9falEjB7Hs8GL48/Mzv+xA==
+X-Received: by 2002:a62:486:: with SMTP id 128mr36207829pfe.236.1582263499298;
+        Thu, 20 Feb 2020 21:38:19 -0800 (PST)
+Received: from localhost ([2401:fa00:9:14:1105:3e8a:838d:e326])
+        by smtp.gmail.com with ESMTPSA id b25sm1329060pfo.38.2020.02.20.21.38.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2020 21:38:18 -0800 (PST)
+From:   Evan Benn <evanbenn@chromium.org>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     jwerner@chromium.org, Evan Benn <evanbenn@chromium.org>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Will Deacon <will@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-watchdog@vger.kernel.org
+Subject: [PATCH v2 0/2] Add a watchdog driver that uses ARM Secure Monitor Calls.
+Date:   Fri, 21 Feb 2020 16:38:00 +1100
+Message-Id: <20200221053802.70716-1-evanbenn@chromium.org>
+X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-lsscsi is a command line utility that probes sysfs in Linux 2.6, 3,
-4 and 5 series kernels in order to list information about SCSI
-devices and SCSI hosts. The default format is one device (e.g. disk)
-per line. Other storage devices that use the SCSI subsystem such as
-SATA disks and USB keys are also listed. The previous version (0.30)
-added listings of NVMe namespaces (devices)
+This is currently supported in firmware deployed on oak, hana and elm mt8173
+chromebook devices. The kernel driver is written to be a generic SMC
+watchdog driver.
 
-This version is mainly for bug fixes. Version 0.31 is available at:
-     http://sg.danny.cz/scsi/lsscsi.html
-More information can be found on that page including examples
-plus a Download and Build information section.
+Arm Trusted Firmware upstreaming review:
+    https://review.trustedfirmware.org/c/TF-A/trusted-firmware-a/+/3405
 
-ChangeLog:
-Version 0.31 2020/02/20 [svn: r160]
-   - fix issue where host managed ZBC devices don't
-     output their size. [Fix also for RBC and CD/DVD.]
-   - exclude NVMe listings when --classic given
-   - fix hex counting issues
-   - supply "-" for generic NVMe device one line output
-     so 'lsscsi -gb' output is consistent
-   - cleanup gcc-8 warnings, no cleanup needed for gcc-9
+Patch to add oak, hana, elm device tree:
+    https://lore.kernel.org/linux-arm-kernel/20200110073730.213789-1-hsinyi@chromium.org/
+I would like to add the device tree support after the above patch is
+accepted.
 
-Version 0.30 2018/06/12 [svn: r154]
-   - add support for NVMe devices and controllers
-   ....
+Changes in v2:
+- Change name arm > mt8173
+- use watchdog_stop_on_reboot
+- use watchdog_stop_on_unregister
+- use devm_watchdog_register_device
+- remove smcwd_shutdown, smcwd_remove
+- change error codes
 
+Evan Benn (1):
+  dt-bindings: watchdog: Add mt8173,smc-wdt watchdog
 
-Doug Gilbert
+Julius Werner (1):
+  watchdog: Add new mt8173_smc_wdt watchdog driver
+
+ .../bindings/watchdog/mt8173,smc-wdt.yaml     |  30 ++++
+ MAINTAINERS                                   |   7 +
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/watchdog/Kconfig                      |  13 ++
+ drivers/watchdog/Makefile                     |   1 +
+ drivers/watchdog/mt8173_smc_wdt.c             | 160 ++++++++++++++++++
+ 6 files changed, 212 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/watchdog/mt8173,smc-wdt.yaml
+ create mode 100644 drivers/watchdog/mt8173_smc_wdt.c
+
+-- 
+2.25.0.265.gbab2e86ba0-goog
 
