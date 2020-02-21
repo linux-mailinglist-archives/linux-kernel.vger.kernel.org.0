@@ -2,76 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 633F0167F81
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 15:03:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC569167F90
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 15:05:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728804AbgBUODa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 09:03:30 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10662 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727876AbgBUODa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 09:03:30 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 7F25D60998780C0EA439;
-        Fri, 21 Feb 2020 22:03:22 +0800 (CST)
-Received: from huawei.com (10.175.105.18) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Fri, 21 Feb 2020
- 22:03:13 +0800
-From:   linmiaohe <linmiaohe@huawei.com>
-To:     <pbonzini@redhat.com>, <rkrcmar@redhat.com>,
-        <sean.j.christopherson@intel.com>, <vkuznets@redhat.com>,
-        <wanpengli@tencent.com>, <jmattson@google.com>, <joro@8bytes.org>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-        <hpa@zytor.com>
-CC:     <linmiaohe@huawei.com>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <x86@kernel.org>
-Subject: [PATCH v2] KVM: apic: avoid calculating pending eoi from an uninitialized val
-Date:   Fri, 21 Feb 2020 22:04:46 +0800
-Message-ID: <1582293886-23335-1-git-send-email-linmiaohe@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.105.18]
-X-CFilter-Loop: Reflected
+        id S1728881AbgBUOE7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 09:04:59 -0500
+Received: from verein.lst.de ([213.95.11.211]:55568 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728530AbgBUOE6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 09:04:58 -0500
+Received: by verein.lst.de (Postfix, from userid 2005)
+        id 8713068BFE; Fri, 21 Feb 2020 15:04:55 +0100 (CET)
+From:   Torsten Duwe <duwe@lst.de>
+To:     Vasily Khoruzhick <anarsoul@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Thierry Reding <treding@nvidia.com>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        David Airlie <airlied@linux.ie>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Maxime Ripard <maxime@cerno.tech>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [RESEND2][PATCH] drm/bridge: analogix-anx6345: Fix drm_dp_link helper removal
+Message-Id: <20200221140455.8713068BFE@verein.lst.de>
+Date:   Fri, 21 Feb 2020 15:04:55 +0100 (CET)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miaohe Lin <linmiaohe@huawei.com>
+drm_dp_link_rate_to_bw_code and ...bw_code_to_link_rate simply divide by
+and multiply with 27000, respectively. Avoid an overflow in the u8 dpcd[0]
+and the multiply+divide alltogether.
 
-When pv_eoi_get_user() fails, 'val' may remain uninitialized and the return
-value of pv_eoi_get_pending() becomes random. Fix the issue by initializing
-the variable.
-
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+fixes: e1cff82c1097bda2478 ("fix anx6345 compilation for v5.5")
+Signed-off-by: Torsten Duwe <duwe@suse.de>
 ---
-v1->v2:
-Collect Vitaly' R-b.
-Use Vitaly' alternative wording.
-Explicitly handle the error, as suggested by Sean.
----
- arch/x86/kvm/lapic.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+https://patchwork.freedesktop.org/patch/343004/
+https://lists.freedesktop.org/archives/dri-devel/2020-January/253535.html
 
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index 4f14ec7525f6..b4aca77efc8e 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -627,9 +627,11 @@ static inline bool pv_eoi_enabled(struct kvm_vcpu *vcpu)
- static bool pv_eoi_get_pending(struct kvm_vcpu *vcpu)
- {
- 	u8 val;
--	if (pv_eoi_get_user(vcpu, &val) < 0)
-+	if (pv_eoi_get_user(vcpu, &val) < 0) {
- 		printk(KERN_WARNING "Can't read EOI MSR value: 0x%llx\n",
- 			   (unsigned long long)vcpu->arch.pv_eoi.msr_val);
-+		return false;
-+	}
- 	return val & 0x1;
- }
+Can someone please review this? It's equivalent to commit
+3e138a63d6674a4567a018a31 which just made it into drm-tip.
+
+--- a/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c
+@@ -210,10 +210,9 @@ static int anx6345_dp_link_training(struct anx6345 *anx6345)
+ 	if (err)
+ 		return err;
  
--- 
-2.19.1
-
+-	dpcd[0] = drm_dp_max_link_rate(anx6345->dpcd);
+-	dpcd[0] = drm_dp_link_rate_to_bw_code(dpcd[0]);
+ 	err = regmap_write(anx6345->map[I2C_IDX_DPTX],
+-			   SP_DP_MAIN_LINK_BW_SET_REG, dpcd[0]);
++			   SP_DP_MAIN_LINK_BW_SET_REG,
++			   anx6345->dpcd[DP_MAX_LINK_RATE]);
+ 	if (err)
+ 		return err;
+ 
