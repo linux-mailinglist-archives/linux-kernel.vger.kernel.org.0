@@ -2,59 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8150116701C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:16:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C0D4167021
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:21:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726853AbgBUHQc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:16:32 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:10666 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726045AbgBUHQc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:16:32 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 0170ABA3D270B408D46D;
-        Fri, 21 Feb 2020 15:16:24 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Fri, 21 Feb 2020
- 15:16:16 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <axboe@kernel.dk>, <arnd@arndb.de>
-CC:     <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] block: scsi-ioctl: remove duplicated include <scsi/sg.h>
-Date:   Fri, 21 Feb 2020 15:16:00 +0800
-Message-ID: <20200221071600.17032-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1727034AbgBUHVh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:21:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33860 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726369AbgBUHVh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:21:37 -0500
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B189124653
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 07:21:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582269697;
+        bh=CPb5OW0JlKsE8ViERc40V89U9i1HGaI8WCaHwOzkRN8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=UciLNuJZiP2UVKpopK6OuxIn8b7Zlnm7pVUFSP1GN7jWow7T2kKit7jsUP2YF7M/1
+         /134K+4bxs5em714Ih2IwXp8vKx+ENGHynAB1qhgsY0WXtV4QoIAq0/786pA1eY8ah
+         DlIoPgg/IW13ol3wV9vGmTUdfqqtsgBMlRnbPu7g=
+Received: by mail-wm1-f41.google.com with SMTP id b17so571374wmb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 23:21:36 -0800 (PST)
+X-Gm-Message-State: APjAAAWnSSQ8YDU8l4FKrd+kXTS4CUHeo+evCAyr1EwiOQMoFxtp1xS8
+        DXmpCwMUL0aRr3L5D0Pw2uQjhC+oTIJo3sLjCrUq3A==
+X-Google-Smtp-Source: APXvYqwqrTtiwQIzqjuxHFCEFgbFvBdqK+b56BiKaasesQf/GaxUoNGf/h6pB6njcQrt4bymWg6VsUpMzXXteQQgr0U=
+X-Received: by 2002:a05:600c:248:: with SMTP id 8mr1911428wmj.1.1582269694990;
+ Thu, 20 Feb 2020 23:21:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+References: <20200221035832.144960-1-xypron.glpk@gmx.de>
+In-Reply-To: <20200221035832.144960-1-xypron.glpk@gmx.de>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Fri, 21 Feb 2020 08:21:23 +0100
+X-Gmail-Original-Message-ID: <CAKv+Gu_9T3fVSRiJg5DnWb83pjbVRHK21DCOxQCww4bd_NgxAg@mail.gmail.com>
+Message-ID: <CAKv+Gu_9T3fVSRiJg5DnWb83pjbVRHK21DCOxQCww4bd_NgxAg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] efi/libstub: add libstub/mem.c to documentation tree
+To:     Heinrich Schuchardt <xypron.glpk@gmx.de>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove duplicated include.
+On Fri, 21 Feb 2020 at 04:58, Heinrich Schuchardt <xypron.glpk@gmx.de> wrot=
+e:
+>
+> Let the description of the efi/libstub/mem.c functions appear in the Kern=
+el
+> API documentation in chapter
+>
+>     The Linux driver implementer=E2=80=99s API guide
+>         Linux Firmware API
+>             UEFI Support
+>                 UEFI stub library functions
+>
+> Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- block/scsi_ioctl.c | 2 --
- 1 file changed, 2 deletions(-)
+Acked-by: Ard Biesheuvel <ardb@kernel.org>
 
-diff --git a/block/scsi_ioctl.c b/block/scsi_ioctl.c
-index b4e73d5..20addda 100644
---- a/block/scsi_ioctl.c
-+++ b/block/scsi_ioctl.c
-@@ -37,8 +37,6 @@ const unsigned char scsi_command_size_tbl[8] =
- };
- EXPORT_SYMBOL(scsi_command_size_tbl);
- 
--#include <scsi/sg.h>
--
- static int sg_get_version(int __user *p)
- {
- 	static const int sg_version_num = 30527;
--- 
-2.7.4
-
-
+> ---
+> The corresponding source patches are still in efi/next.
+>
+> https://lkml.org/lkml/2020/2/20/115
+> https://lkml.org/lkml/2020/2/18/37
+> https://lkml.org/lkml/2020/2/16/154
+> ---
+>  Documentation/driver-api/firmware/efi/index.rst | 11 +++++++++++
+>  Documentation/driver-api/firmware/index.rst     |  1 +
+>  2 files changed, 12 insertions(+)
+>  create mode 100644 Documentation/driver-api/firmware/efi/index.rst
+>
+> diff --git a/Documentation/driver-api/firmware/efi/index.rst b/Documentat=
+ion/driver-api/firmware/efi/index.rst
+> new file mode 100644
+> index 000000000000..4fe8abba9fc6
+> --- /dev/null
+> +++ b/Documentation/driver-api/firmware/efi/index.rst
+> @@ -0,0 +1,11 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +UEFI Support
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +UEFI stub library functions
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+> +
+> +.. kernel-doc:: drivers/firmware/efi/libstub/mem.c
+> +   :internal:
+> diff --git a/Documentation/driver-api/firmware/index.rst b/Documentation/=
+driver-api/firmware/index.rst
+> index 29da39ec4b8a..57415d657173 100644
+> --- a/Documentation/driver-api/firmware/index.rst
+> +++ b/Documentation/driver-api/firmware/index.rst
+> @@ -6,6 +6,7 @@ Linux Firmware API
+>
+>     introduction
+>     core
+> +   efi/index
+>     request_firmware
+>     other_interfaces
+>
+> --
+> 2.25.0
+>
