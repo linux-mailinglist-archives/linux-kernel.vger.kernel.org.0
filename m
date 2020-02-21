@@ -2,76 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12AE4167B09
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 11:44:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EA0D167AD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 11:32:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728032AbgBUKob (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 05:44:31 -0500
-Received: from smtp21.cstnet.cn ([159.226.251.21]:52974 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726325AbgBUKob (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 05:44:31 -0500
-Received: from ubuntu.localdomain (unknown [183.131.110.113])
-        by APP-01 (Coremail) with SMTP id qwCowACXdzCQsU9eDiW+BA--.42124S2;
-        Fri, 21 Feb 2020 18:31:47 +0800 (CST)
-From:   Xu Wang <vulab@iscas.ac.cn>
-To:     alex@digriz.org.uk, jason@lakedaemon.net, andrew@lunn.ch
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: orion5x: ts78xx: Remove unneeded variable ret
-Date:   Fri, 21 Feb 2020 18:31:41 +0800
-Message-Id: <20200221103141.3633-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID: qwCowACXdzCQsU9eDiW+BA--.42124S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7JFW3uFWUAFykJrWUuF1DGFg_yoWfArcE9r
-        4Sgwn7WryfAF4j9r15G3Z3Gr17Ka4vqFs0gryqqwsxAr17Zw13urWDZwnxGry8WFy8Gr4S
-        qrZ7Ja4ak3ZrGjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbwkYjsxI4VWkKwAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I
-        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
-        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0
-        cI8IcVCY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I
-        8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-        64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8Jr0_Cr
-        1UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwIxGrwCF
-        x2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14
-        v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY
-        67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2
-        IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAF
-        wI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU59jjPUUUUU==
-X-Originating-IP: [183.131.110.113]
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAMNA1z4ixYqcgADsj
+        id S1727616AbgBUKch (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 05:32:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54470 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726100AbgBUKch (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 05:32:37 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92D88207FD;
+        Fri, 21 Feb 2020 10:32:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582281156;
+        bh=28w4tF8+nJO7Wfx8ImCYA2NdorvJ+P431dmFqTMjq8I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZnGxUZ2QpCHmhv5qOZp0G08sGbK1AztHqYn35ryNv9A3JQSFXmisDUpeivEMySmJA
+         i11/TTbYcbjxnZdQ9SYpGQWTZRtTRjGrL+MzKztXlhl9gQxdRCzTksBfnbNRgk4b03
+         xcYeQfq/xrqBo8zrgWM6QxoG6KjKwzMi4d9pqs5Y=
+Date:   Fri, 21 Feb 2020 11:32:33 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/3] driver core: Call sync_state() even if supplier
+ has no consumers
+Message-ID: <20200221103233.GA101069@kroah.com>
+References: <20200221080510.197337-1-saravanak@google.com>
+ <20200221080510.197337-2-saravanak@google.com>
+ <20200221092540.GA71325@kroah.com>
+ <CAGETcx_yQZtU4O2KgMxVt-hSJCBtNsOpyWsSXc+OZcjjJ91M3g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGETcx_yQZtU4O2KgMxVt-hSJCBtNsOpyWsSXc+OZcjjJ91M3g@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unneeded variable ret used to store return value,just return 0.
+On Fri, Feb 21, 2020 at 01:48:49AM -0800, Saravana Kannan wrote:
+> On Fri, Feb 21, 2020 at 1:25 AM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Fri, Feb 21, 2020 at 12:05:08AM -0800, Saravana Kannan wrote:
+> > > The initial patch that added sync_state() support didn't handle the case
+> > > where a supplier has no consumers. This was because when a device is
+> > > successfully bound with a driver, only its suppliers were checked to see
+> > > if they are eligible to get a sync_state(). This is not sufficient for
+> > > devices that have no consumers but still need to do device state clean
+> > > up. So fix this.
+> > >
+> > > Fixes: fc5a251d0fd7ca90 (driver core: Add sync_state driver/bus callback)
+> >
+> > Should be:
+> > Fixes: fc5a251d0fd7 ("driver core: Add sync_state driver/bus callback")
+> 
+> Sorry, late night sleepy patches are never good!
+> Btw I thought the sha should be only 12 characters but then saw
+> another instance where you used 16 chars. What's the right one?
 
-Signed-off-by: Xu Wang <vulab@iscas.ac.cn>
----
- arch/arm/mach-orion5x/ts78xx-setup.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+I used 16 chars?  12 should be all that is needed.
 
-diff --git a/arch/arm/mach-orion5x/ts78xx-setup.c b/arch/arm/mach-orion5x/ts78xx-setup.c
-index fda9b75c3a33..a39764faf2a0 100644
---- a/arch/arm/mach-orion5x/ts78xx-setup.c
-+++ b/arch/arm/mach-orion5x/ts78xx-setup.c
-@@ -398,7 +398,6 @@ static int ts78xx_fpga_load_devices(void)
- 
- static int ts78xx_fpga_unload_devices(void)
- {
--	int ret = 0;
- 
- 	if (ts78xx_fpga.supports.ts_rtc.present == 1)
- 		ts78xx_ts_rtc_unload();
-@@ -407,7 +406,7 @@ static int ts78xx_fpga_unload_devices(void)
- 	if (ts78xx_fpga.supports.ts_rng.present == 1)
- 		ts78xx_ts_rng_unload();
- 
--	return ret;
-+	return 0;
- }
- 
- static int ts78xx_fpga_load(void)
--- 
-2.17.1
+> > > Signed-off-by: Saravana Kannan <saravanak@google.com>
+> >
+> > So this needs to go to 5.5 also, right?
+> 
+> Did you mean 5.4? Yes.
 
+fc5a251d0fd7 is only in 5.5, not 5.4 from what I can see, right?
+
+thanks,
+
+greg k-h
